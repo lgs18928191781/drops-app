@@ -1,0 +1,18 @@
+@import '@/assets/styles/var.scss';
+.home{
+    
+    .more-warp{
+        cursor: pointer;
+        text-align: center;
+        .tips{
+            font-size: 16px;
+        }
+        .icon{
+            margin-top: 10px;
+            img{
+                width: 12px;
+                height: 12px;
+            }
+        }
+    }
+}

@@ -1,11 +1,20 @@
 <template>
-  <div class="justify-center flex-1">
-    <div class="container pt-8 mx-auto">
-      <HelloWorld msg="Hello Vue 3 + Vite + Tailwind CSS" />
-    </div>
+  <Header />
+  <div class="main">
+    <transition name="fade">
+      <router-view />
+    </transition>
   </div>
+  <Footer/>
 </template>
 
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import Header from './components/Header/Header.vue'
+import Footer from './components/Footer/Footer.vue'
 </script>
+<style>
+.main{
+  padding-top: 60px;
+  padding-bottom: 100px;
+}
+</style>

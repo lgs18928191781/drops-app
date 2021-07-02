@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="22" height="22" viewBox="0 0 22 22">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+        stroke: #707070;
+      }
+
+      .cls-2 {
+        clip-path: url(#clip-path);
+      }
+
+      .cls-3, .cls-4, .cls-5 {
+        fill: none;
+      }
+
+      .cls-4, .cls-5 {
+        stroke: #303133;
+        stroke-linejoin: round;
+        stroke-width: 1.125px;
+      }
+
+      .cls-5 {
+        stroke-linecap: round;
+      }
+    </style>
+    <clipPath id="clip-path">
+      <rect id="mask" class="cls-1" width="22" height="22" transform="translate(915 169)"/>
+    </clipPath>
+  </defs>
+  <g id="list_icon_calendar" class="cls-2" transform="translate(-915 -169)">
+    <g id="icon" transform="translate(915 169)">
+      <rect id="矩形_6" data-name="矩形 6" class="cls-3" width="22" height="22"/>
+      <path id="路径_1" data-name="路径 1" class="cls-4" d="M1.875,7.125H19.292V16.75a.917.917,0,0,1-.917.917H2.792a.917.917,0,0,1-.917-.917Z" transform="translate(0.417 1.583)"/>
+      <path id="路径_2" data-name="路径 2" class="cls-4" d="M1.875,3.542a.917.917,0,0,1,.917-.917H18.375a.917.917,0,0,1,.917.917V8.125H1.875Z" transform="translate(0.417 0.583)"/>
+      <path id="路径_3" data-name="路径 3" class="cls-5" d="M6,1.5V5.167" transform="translate(1.333 0.333)"/>
+      <path id="路径_4" data-name="路径 4" class="cls-5" d="M12,1.5V5.167" transform="translate(2.667 0.333)"/>
+      <path id="路径_5" data-name="路径 5" class="cls-5" d="M10.5,12.75h2.75" transform="translate(2.333 2.833)"/>
+      <path id="路径_6" data-name="路径 6" class="cls-5" d="M5.25,12.75H8" transform="translate(1.167 2.833)"/>
+      <path id="路径_7" data-name="路径 7" class="cls-5" d="M10.5,9.75h2.75" transform="translate(2.333 2.167)"/>
+      <path id="路径_8" data-name="路径 8" class="cls-5" d="M5.25,9.75H8" transform="translate(1.167 2.167)"/>
+    </g>
+  </g>
+</svg>
