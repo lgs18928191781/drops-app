@@ -68,6 +68,12 @@
   -ms-flex-align: start;
   align-items: flex-start;
 }
+.flex-align-baseline {
+  -webkit-box-align: baseline;
+  -webkit-align-items: baseline;
+  -ms-flex-align: baseline;
+  align-items: baseline;
+}
 .flex-align-center {
   -webkit-box-align: center;
   -webkit-align-items: center;

@@ -8,196 +8,208 @@
             background: rgba(0, 0, 0, 0);
             opacity: 1;
             border-radius: 6px;
-            margin-right: 120px;
+            margin-right: 60px;
         }
         .cont{
             .name{
-                font-size: 40px;
-                font-weight: 500;
-                line-height: 48px;
-            }
-            .count-down{
-                .title{
-                    font-size: 16px;
-                    font-weight: 400;
-                    line-height: 19px;
-                    color: #909399;
+                .text{
+                    font-size: 34px;
+                    font-weight: 500;
                 }
-                .count-down-list{
-                    margin-top: 10px;
-                    .count-down-item{
-                        margin-right: 37px;
-                        &:last-child{
-                            margin-right: 0;
-                        }
-                        .num{
-                            font-size: 30px;
-                            font-family: DIN Alternate;
-                            font-weight: bold;
-                            line-height: 35px;
-                        }
-                        .label{
-                            margin-top: 5px;
-                            font-size: 14px;
-                            font-weight: 400;
-                            line-height: 16px;
-                            color: #909399;
-                            text-align: center;
-                        }
-                    }
+                img{
+                    width: 44px;
+                    height: 44px;
+                    margin-left: 26px;
                 }
             }
-            .price{
-                .title{
-                    font-size: 16px;
-                    font-weight: 400;
-                    line-height: 19px;
-                    color: #909399;
+            .creater-msg{
+                border-radius: 8px;
+                background: #FFFFFF;
+                padding: 20px;
+                margin-top: 20px;
+                .author{
+                    @include author(48px, 12px, 18px, 14px, 2px);
                 }
-                .amount{
-                    margin-top: 10px;
-                    font-size: 30px;
-                    font-family: DIN Alternate;
-                    font-weight: bold;
-                    line-height: 35px;
-                }
-                .btn{
+                .cert {
                     margin-top: 30px;
                 }
             }
-
+            .drsc{
+                margin-top: 20px;
+                .title{
+                    font-size: 18px;
+                }
+                .cont{
+                    font-size: 14px;
+                    color: #606266;
+                    margin-top: 10px;
+                    line-height: 24px;
+                }
+            }
+            .timeleft{
+                font-size: 14px;
+                margin-top: 20px;
+            }
+            .btn{
+                margin-top: 20px;
+            }
         }
     }
     .bottom{
-        margin-top: 90px;
-        .left{
-            width: 440px;
-            height: 440px;
-            margin-right: 120px;
-            .tags{
-                a{
-
-                }
-            }
-            
-            .drsc{
-                margin-top: 30px;
-                .title{
-                    font-size: 14px;
-                    font-weight: 400;
-                    line-height: 16px;
-                    color: #909399;
-                }
-                .cont{
-                    margin-top: 20px;
-                    font-size: 18px;
-                    font-weight: 400;
-                    line-height: 27px;
-                }
-            }
-            .author{
-                margin-top: 32px;
-                @include author(40px, 15px, 16px, 14px, 2px);
-            }
-            .nft-info{
-                margin-top: 60px;
-                .nft-info-item{
-                    margin-bottom: 30px;
-                    &:last-child{
-                        margin-bottom: 0;
-                    }
-                    .key{
-                        font-size: 14px;
-                        font-weight: 400;
-                        color: #909399;
-                    }
-                    .value{
-                        margin-top: 7px;
-                        font-size: 14px;
-                        font-weight: 400;
-                    }
-                }
-            }
-
+        margin-top: 60px;
+        padding-top: 60px;
+        padding-bottom: 60px;
+        background: #FFFFFF;
+        .bottom-warp{
+            max-width: 720px;
+            margin: 0 auto;
         }
-        .right{
-            .tab{
-                a{
-                    display: inline-block;
-                    padding: 15px;
-                    font-size: 20px;
-                    font-weight: 400;
-                    color: #909399;
-                    &.active{
-                        color: #FFFFFF;
-                        position: relative;
-                        &::after{
-                            content: '';
-                            display: block;
-                            width: 10px;
-                            height: 2px;
-                            background: #2FC78C;
-                            border-radius: 2px;
-                            position: absolute;
-                            left: 50%;
-                            margin-left: -5px;
-                            bottom: 0;
-                        }
+        .tab{
+            text-align: center;
+            a{
+                display: inline-block;
+                padding: 15px;
+                font-size: 20px;
+                font-weight: 400;
+                margin-right: 90px;
+                cursor: pointer;
+                &:last-child{
+                    margin-right: 0;
+                }
+                &.active{
+                    position: relative;
+                    &::after{
+                        content: '';
+                        display: block;
+                        width: 10Px;
+                        height: 2Px;
+                        background: $mainColor;
+                        border-radius: 2Px;
+                        position: absolute;
+                        left: 50%;
+                        margin-left: -5Px;
+                        bottom: 0;
                     }
                 }
             }
-            .tab-cont{
-                margin-top: 23px;
-                .record{
-                    
-                    
-                    .record-item{
-                        @include author(40px, 15px, 16px, 14px, 2px);
-                        margin-bottom: 40px;
-                        position: relative;
-                        &::after{
-                            content: '';
-                            position: absolute;
-                            display: block;
-                            width:1px;
-                            border-right: 1px dashed #606266;
-                            left: 18px;
-                            bottom: 0;
-                            height: 70%;
-                            margin-bottom: -35px;
-                            z-index: -1;
-                        }
+        }
+        .tab-cont{
+            margin-top: 23px;
+
+            .work-deail{
+                .work-deail-section{
+                    margin-bottom: 60px;
+                    .work-detail-item{
+                        margin-bottom: 10px;
                         &:last-child{
-                            &::after{
-                                display: none;
-                            }
+                            margin-bottom: 0;
                         }
-                    }
-                }
-                .more-info{
-                    .more-info-item{
-                        margin-bottom: 30px;
                         .key{
-                            font-size: 14px;
-                            font-weight: 400;
+                            font-size: 16px;
                             color: #909399;
+                            width: 90px;
+                            flex-flow:  row nowrap;
+                            display: flex;
+                            justify-content: space-between;
+                            margin-right: 15px;
                         }
                         .value{
-                            margin-top: 5px;
-                            font-size: 14px;
-                            font-weight: 400;
+                            min-width: 0;
+                            font-size: 16px;
+                            line-height: 26px;
+                            word-break: break-all;
                         }
                     }
-                    .link{
-                        a{
-                            font-size: 14px;
-                            font-weight: 400;
-                            color: #0CA3E6;
-                            text-decoration: underline;
+                }
+                a{
+                    color: #456FC4;
+                    text-decoration: none;
+                    margin-left: 10px;
+                    cursor: pointer;
+                }
+                .remark{
+                    .remark-item{
+                        margin-bottom: 10px;
+                        &:last-child{
+                            margin-bottom: 0;
                         }
                     }
+                }
+            }
+
+            .haved-record{
+                .th{
+                    text-align: center;
+                    color: #909399;
+                    font-size: 16px;
+                    border-bottom: 1px solid #EDEFF2;
+                }
+                .tr{
+                    padding: 20px 0;
+                }
+                .td{
+                    font-size: 16px;
+                }
+                .user{
+                    img{
+                        width: 22px;
+                        height: 22px;
+                        border-radius: 50%;
+                        margin-right: 6px;
+                    }
+                }
+                .role{
+                    img{
+                        width: 18px;
+                        height: 18px;
+                        margin-right: 5px;
+                    }
+                }
+                .time, .price{
+                    text-align: center;
                 }
             }
         }
     } 
+}
+
+@media only screen and (max-width: 836px){
+    .nft-detail{
+        .work-detail-item{
+            .key{
+                width: 120px !important;
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 720px){
+    .nft-detail{
+        .bottom{
+            .bottom-warp{
+                padding: 0 40px;
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 500px){
+    .nft-detail{
+        .top{
+            flex-direction: column;
+            .cover{
+                margin-right: 0;
+                width: 100%;
+            }
+            .cont{
+                margin-top: 30px;
+            }
+        }
+
+        .remark{
+            .remark-item{
+                line-height: 30px;
+            }
+        }
+    }
 }

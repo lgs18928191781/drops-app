@@ -3,7 +3,8 @@
 body{
     background: $bgColor;
     font-size: 16px;
-    color: #fff;
+    color: #303133;
+    font-family: "SF Pro","Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
     .container{
         max-width: 1000Px;
         margin: 0 auto;
@@ -16,6 +17,7 @@ body{
         width: calc((100% - (20px * 3)) / 4);
         margin-right: 20px;
         margin-bottom: 30px;
+        background: #fff;
         &:nth-child(4n){
             margin-right: 0;
         }
@@ -26,16 +28,15 @@ body{
 .tags{
     a{
         display: inline-block;
-        font-family: 'SF Pro';
-        display: inline-block;
-        padding: 6px 20px;
-        border: 1px solid rgba(255, 255, 255, 0.050980392156862744);
-        border-radius: 6px;
+        padding: 8px 16px;
+        border-radius: 8px;
         margin-right: 20px;
+        font-size: 14px;
         cursor: pointer;
+        background: #FFFFFF;
+        line-height: normal;
         &.active{
-            color: #181C24;
-            background: #fff;
+            background: $mainColor;
         }
         &.add{
             border-color: #fff;
@@ -48,21 +49,17 @@ body{
     font-family: 'SF Pro';
     display: inline-block;
     padding: 8px 14px;
-    width: 88px;
-    height: 30px;
-    line-height: 30px;
     border-radius: 6px;
     text-align: center;
     font-size: 14px;
-    background: #2FC78C;
+    background: $mainColor;
+    border: 1px solid $mainColor;
     cursor: pointer;
-    color: #fff;
     overflow: hidden;
     &.btn-block{
         display: block;
         width: auto;
-        height: 54px;
-        line-height: 54px;
+        padding: 16px;
         font-size: 16px;
         font-weight: 500;
     }
@@ -71,7 +68,16 @@ body{
         width: 10px;
         display: inline-block;
         vertical-align: middle;
-        line-height: 30px;
+    }
+
+    &.btn-min{
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+
+    &.btn-plain{
+        background: transparent;
+        color: $mainColor;
     }
 }
 
@@ -81,12 +87,7 @@ body{
     font-size: 18px;
     font-weight: bold;
     span{
-        color: #2FC78C;
-    }
-    img{
-        width: 18px;
-        height: 24px;
-        margin-right: 10px;
+        color: $mainColor;
     }
 }
 
@@ -126,7 +127,13 @@ body{
         font-size: 20px;
     }
 }
-
+.el-loading-spinner .path{
+    stroke: $mainColor;
+}
+.el-dropdown-menu__item:not(.is-disabled):hover, .el-dropdown-menu__item:focus{
+    background-color: #fff4e2;
+    color: $mainColor;
+}
 
 .v-enter-from,
 .v-leave-to {

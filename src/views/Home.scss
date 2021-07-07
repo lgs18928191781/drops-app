@@ -1,6 +1,28 @@
 @import '@/assets/styles/var.scss';
 .home{
-    
+    .section{
+        margin-bottom: 90px;
+        &:last-child{
+            margin-bottom: 0;
+        }
+        .section-screen{
+            .search-warp{
+                background: #fff;
+                border-radius: 8px;
+                input{
+                    padding: 8px 12px;
+                    font-size: 14px;
+                    border: none;
+                    outline: none;
+                }
+                img{
+                    width: 18px;
+                    height: 18px;
+                    margin-right: 12px;
+                }
+            }
+        }
+    }
     .more-warp{
         cursor: pointer;
         text-align: center;
@@ -12,6 +34,26 @@
             img{
                 width: 12px;
                 height: 12px;
+            }
+        }
+    }
+}
+
+
+@media only screen and (max-width: 500px){
+    .home{
+        .section{
+            .section-screen{
+                flex-direction: column-reverse;
+                .search-warp{
+                    width: 100%;
+                }
+                .tags{
+                    margin-top: 15px;
+                    a{
+                        margin-bottom: 15px;
+                    }
+                }
             }
         }
     }

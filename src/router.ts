@@ -3,6 +3,7 @@ import Home from '@/views/Home.vue'
 import Create from '@/views/Create.vue'
 import Detail from '@/views/Detail.vue'
 import Login from '@/views/Login.vue'
+import Self from '@/views/Self.vue'
 import { useStore, Action } from '@/store/index'
 const store = useStore()
 let removeRoute: (() => void) | undefined
@@ -13,9 +14,10 @@ export const router = createRouter({
   strict: true,
   routes: [
     { path: '/', component: Home },
-    { path: '/create', component: Create },
-    { path: '/detail', component: Detail },
-    { path: '/login', component: Login },
+    { path: '/create', name: 'create', component: Create },
+    { path: '/detail', name: 'detail', component: Detail },
+    { path: '/self', name: 'self', component: Self },
+    { path: '/login', name: 'login', component: Login },
   ],
   async scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {

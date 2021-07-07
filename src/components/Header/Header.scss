@@ -1,11 +1,17 @@
+@import '@/assets/styles/var.scss';
 header{
-    background: #1A1E26;
     padding: 0 40px;
     height: 70px;
     width: 100%;
     box-sizing: border-box;
-    
+    border-bottom: 1px solid #EDEFF2;
+    position: relative;
     nav{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
         text-align: center;
         a{
             cursor: pointer;
@@ -14,9 +20,8 @@ header{
             margin-right: 30px;
             color: inherit;
             text-decoration: none;
-            color: #909399;
             &.router-link-active{
-                color: #fff;
+                color: $mainColor;
             }
             &:last-child{
                 margin-right: 0;
@@ -25,15 +30,7 @@ header{
     }
     .operate{
         .btn{
-            font-family: 'SF Pro';
-            display: inline-block;
-            width: 88px;
-            height: 30px;
-            line-height: 30px;
-            border-radius: 6px;
-            text-align: center;
-            font-size: 14px;
-            background: #2FC78C;
+            padding: 4px 14px;
         }
         .user-info{
             cursor: pointer;
@@ -46,17 +43,30 @@ header{
                 background: #eee;
                 outline: none;
             }
+            .username {
+                max-width: 120px;
+                @extend %text-ellipsis;
+            }
         }
         .line{
             height: 16px;
             width: 1px;
-            background: #31343C;
+            background: #eaeaea;
             display: inline-block;
             margin: 0 18px;
         }
         .lang{
-            color: #fff;
             cursor: pointer;
+        }
+    }
+}
+
+@media only screen and (max-width: 500px){
+    header {
+        .operate{
+            .line,.lang{
+                display: none;
+            }
         }
     }
 }

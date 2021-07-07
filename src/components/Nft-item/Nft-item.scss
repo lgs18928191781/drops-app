@@ -1,6 +1,11 @@
 @import '@/assets/styles/var.scss';
 .nft-item{
     cursor: pointer;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    color: inherit;
+    text-decoration: none;
     .cover{
         height: 0;
         padding-bottom: 100%;
@@ -15,34 +20,79 @@
             display: block;
         }
     }
-    .name{
-        margin-top: 15px;
-        font-size: 18px;
-        @extend %text-ellipsis;
+    .cont{
+        padding: 15px;
+
+        .name{
+            font-size: 18px;
+            font-weight: 500;
+            @extend %text-ellipsis;
+        }
+        .price{
+            margin-top: 10px;
+            .label{
+                font-size: 12px;
+                color: #909399;
+            }
+            .aount{
+                font-size: 14px;
+                font-weight: bold;
+                margin-top: 2px;
+                font-family: "DIN Alternate";
+            }
+        }
+        .author{
+            margin-top: 15px;
+            img{
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                margin-right: 10px;
+                background: #fff;
+            }
+            .username{
+                font-size: 14px;
+                font-weight: 400;
+            }
+        }
+        .operate{
+            text-align: right;
+            margin-top: 15px;
+        }
     }
-    .price{
-        margin-top: 10px;
-        .label{
-            font-size: 12px;
-            color: #909399;
+    .recommend-card{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        background: linear-gradient(180deg, #FFC86E 0%, #FEB338 100%);
+        padding: 40px;
+        box-sizing: border-box;
+        .icon{
+            img{
+                width: 30px;
+                height: 30px;
+            }
         }
-        .aount{
+        .title{
+            font-size: 24px;
+            font-weight: 500;
+            margin-top: 30px;
+        }
+        .drsc{
+            margin-top: 20px;
             font-size: 14px;
-            font-weight: bold;
-            margin-top: 2px;
+            line-height: 30px;
+            color: #947441;
         }
-    }
-    .author{
-        margin-top: 15px;
-        img{
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            margin-right: 10px;
-            background: #fff;
-        }
-        .username{
+        .more{
             font-size: 14px;
+            text-align: right;
+            img{
+                width: 10px;
+                height: 10px;
+            }
         }
     }
 }

@@ -4,6 +4,7 @@ import vue from '@vitejs/plugin-vue'
 import pkg from './package.json'
 import styleImport from 'vite-plugin-style-import'
 import vueI18n from '@intlify/vite-plugin-vue-i18n'
+import { svgBuilder } from './svgBuilder'
 export default ((mode) => {
   // 加载环境配置文件
   const env = loadEnv(mode, process.cwd())
@@ -32,7 +33,8 @@ export default ((mode) => {
   
         // you need to set i18n resource including paths !
         include: path.resolve(__dirname, './src/languages/**')
-      })
+      }),
+      svgBuilder('./src/assets/svg/')
     ],
     resolve: {
       alias: {
@@ -46,7 +48,7 @@ export default ((mode) => {
       host: env.VITE_Hosts.replace(/https:\/\//, '').replace(/http:\/\//, ''),
       port: 443,
       https: true,
-      open: true
+      open: false
     }
   })
 })

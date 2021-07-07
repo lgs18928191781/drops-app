@@ -21,15 +21,15 @@
           docEl.dataset.width = width;
           docEl.dataset.percent = htmlFontSize * (width / designSize);
           var fontSize = htmlFontSize * (width / designSize)
-          if(fontSize < 90) {
-            fontSize = 90
+          if(fontSize < 50) {
+            fontSize = 50
           }
           docEl.style.fontSize = fontSize + 'px';
         };
         recalc();
         if (!doc.addEventListener) return;
         win.addEventListener(resizeEvt, recalc, false);
-      })(document, window, 1366, 119);
+      })(document, window, 1366, 85.375);
     </script>
   </head>
   <body>

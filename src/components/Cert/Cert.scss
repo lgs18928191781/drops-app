@@ -1,0 +1,15 @@
+.cert{
+    font-size: 14px;
+    text-align: right;
+    .icon-cert{
+        width:  18px;
+        height: 18px;
+        margin-right: 6px;
+    }
+    .icon-right{
+        width: 10px;
+        height: 10px;
+        transform: rotate(-90deg);
+        transform-origin: center center;
+    }
+}

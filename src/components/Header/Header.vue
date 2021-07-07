@@ -1,10 +1,11 @@
 <template>
   <header class="flex flex-align-center">
-      <a class="logo flex flex-align-center">
-        <img src="@/assets/images/logo_shownft.svg" />
-        Show<span>NFT</span>
-      </a>
-      <nav class="flex1">
+      <div class="flex1">
+        <a class="logo flex flex-align-center">
+          <span>NFT</span>onShow
+        </a>
+      </div>
+      <nav class="flex flex-align-center flex-pack-center">
         <router-link to="/">{{ $t('marketplace') }}</router-link>
         <router-link to="/create">{{ $t('createnft') }}</router-link>
       </nav>
@@ -15,12 +16,13 @@
         <!-- 登录用户 -->
         <ElDropdown trigger="click" v-else>
           <div class="user-info flex flex-align-center">
-            <img :src="store.state.userInfo?.headUrl" :alt="store.state.userInfo?.name" />
-            {{ store.state.userInfo?.name}}
+            <img :src="$filters.avatar(store.state.userInfo?.showId)" :alt="store.state.userInfo?.name" />
+            <div class="username">{{store.state.userInfo?.name}}</div> 
           </div>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item>中文</el-dropdown-item>
+              <el-dropdown-item @click="toSelf">我的NFT</el-dropdown-item>
+              <el-dropdown-item @click="toWallet">我的钱包</el-dropdown-item>
               <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -47,6 +49,7 @@ import { ElDropdown, ElDropdownItem, ElDropdownMenu, ElLoading } from 'element-p
 import { computed, defineProps } from 'vue'
 import { useStore, Mutation } from '@/store/index'
 import { useI18n } from "vue-i18n";
+import { router } from '@/router';
 
 const i18n = useI18n();
 const env = import.meta.env
@@ -72,6 +75,12 @@ function logout() {
 // 设置语言
 function setLang(lang: string) {
   i18n.locale.value = lang
+}
+function toSelf() {
+  router.push('/self')
+}
+function toWallet() {
+  window.location.href = import.meta.env.VITE_AuthUrl
 }
 </script>
 
