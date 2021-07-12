@@ -49,6 +49,9 @@
             .timeleft{
                 font-size: 14px;
                 margin-top: 20px;
+                span{
+                    margin: 0 5px;
+                }
             }
             .btn{
                 margin-top: 20px;
@@ -187,7 +190,7 @@
     .nft-detail{
         .bottom{
             .bottom-warp{
-                padding: 0 40px;
+                padding: 0 30px;
             }
         }
     }

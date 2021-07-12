@@ -2,8 +2,8 @@ import { ActionTree, ActionContext } from 'vuex'
 
 import { State, UserInfo } from './state'
 import { Mutations, Mutation } from './mutations'
-import MetaIdJs from 'metaidjs'
 import { GetToken } from '@/api'
+import Sdk from '@/utils/sdk'
 
 export enum Action {
   initApp = 'initApp',
@@ -31,9 +31,9 @@ export const actions: ActionTree<State, State> & Actions = {
     console.log('app inited!')
   },
   [Action.initSdk]({ state, commit, dispatch }) {
-    state.metaidjsInitIng = true
+    state.sdkInitIng = true
     state.userInfoLoading = true
-    state.metaidjs = new MetaIdJs({
+    state.sdk = new Sdk({
       baseUri: import.meta.env.VITE_AuthUrl,
       oauthSettings: {
         clientId: import.meta.env.VITE_AppId,
@@ -41,18 +41,18 @@ export const actions: ActionTree<State, State> & Actions = {
         clientSecret: import.meta.env.VITE_AppSecret,
       },
       onLoaded: () => {
-        state.metaidjsInitIng = false
+        state.sdkInitIng = false
         dispatch(Action.getUserInfo)
       },
       onError: () => {
-        state.metaidjsInitIng = false
+        state.sdkInitIng = false
         state.userInfoLoading = false
-        state.metaidjs = null
+        state.sdk = null
       }
     })
   },
   async [Action.getUserInfo]({ state, commit, dispatch }) {
-    state.metaidjs?.getUserInfo({
+    state.sdk?.getUserInfo({
       accessToken: state.token ? state.token?.access_token : '',
       callback: (res: { data: UserInfo }) => {
         commit(Mutation.SETUSERINFO, res.data)

@@ -24,7 +24,7 @@
           </div>
         </div>
 
-        <div class="timeleft">{{ $t('timeleft')}}：21{{ $t('day')}}4{{ $t('hour')}}30{{ $t('minu')}}12{{ $t('second')}}</div>
+        <div class="timeleft">{{ $t('timeleft')}}：<span>21</span>{{ $t('day')}}<span>21</span>{{ $t('hour')}}<span>21</span>{{ $t('minu')}}<span>21</span>{{ $t('second')}}</div>
         <div class="btn btn-block">{{$t('use')}} 0.52BSV {{$t('buy')}}</div>
       </div>
     </div>

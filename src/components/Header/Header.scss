@@ -1,11 +1,30 @@
 @import '@/assets/styles/var.scss';
 header{
-    padding: 0 40px;
+    padding: 0 30px;
     height: 70px;
+    min-height: 46px;
     width: 100%;
     box-sizing: border-box;
     border-bottom: 1px solid #EDEFF2;
-    position: relative;
+    position: sticky;
+    left: 0;
+    top: 0;
+    background: $bgColor;
+    z-index: 4;
+    .header-left{
+        .menu{
+            display: none;
+            width: 30px;
+            cursor: pointer;
+            img{
+                width: 100%;
+                display: block;
+            }
+        }
+        .line{
+            display: none;
+        }
+    }
     nav{
         position: absolute;
         width: 100%;
@@ -28,16 +47,25 @@ header{
             }
         }
     }
+    .line{
+        height: 16px;
+        width: 1px;
+        background: #eaeaea;
+        display: inline-block;
+        margin: 0 18px;
+    }
     .operate{
         .btn{
             padding: 4px 14px;
+            position: relative;
+            z-index: 2;
         }
         .user-info{
             cursor: pointer;
             font-size: 14px;
             img{
-                width: 22px;
-                height: 22px;
+                width: 22Px;
+                height: 22Px;
                 margin-right: 6px;
                 border-radius: 50%;
                 background: #eee;
@@ -48,24 +76,47 @@ header{
                 @extend %text-ellipsis;
             }
         }
-        .line{
-            height: 16px;
-            width: 1px;
-            background: #eaeaea;
-            display: inline-block;
-            margin: 0 18px;
-        }
+        
         .lang{
             cursor: pointer;
         }
     }
 }
-
-@media only screen and (max-width: 500px){
+.mobile-nav-modal{
+    padding: 0 30px 30px 30px;
+    display: block;
+    a{
+        display: block;
+        line-height: 60px;
+        border-radius: 8px;
+        text-align: center;
+        text-decoration: none;
+        color: inherit;
+        &.router-link-active{
+            background: $mainColor;
+        }
+    }
+}
+.menu-drawer{
+    min-height: 200px;
+}
+@media only screen and (max-width: 600px){
     header {
-        .operate{
-            .line,.lang{
-                display: none;
+        .line{
+            margin: 0 8px;
+        }
+        .username {
+            display: none;
+        }
+        nav{
+            display: none;
+        }
+        .header-left{
+            .menu{
+                display: inline-block;
+            }
+            .line{
+                display: inline-block;
             }
         }
     }

@@ -1,4 +1,4 @@
-import MetaIdJs from "metaidjs"
+import Sdk from "@/utils/sdk"
 export interface State {
   debug: boolean
   version: string
@@ -7,40 +7,24 @@ export interface State {
   token: null | Token
   userInfo: null | UserInfo
   userInfoLoading: boolean
-  metaidjs: null | MetaIdJs
-  metaidjsInitIng: boolean
+  sdk: null | Sdk
+  sdkInitIng: boolean,
+  isApp: boolean,
+  pagination: Pagination
 }
 
-export interface Token {
-  access_token: string
-  token_type: string
-  refresh_token: string
-  expires_in: number
-  expires_time: number
-}
-export interface UserInfo {
-  showId: string
-  metaId: string
-  xpub: string
-  address: string
-  pubKey: string
-  infoTxId: string
-  protocolTxId: string
-  name: string
-  nameEncrypt: string
-  phone: string
-  phoneEncrypt: string
-  email: string
-  emailEncrypt: string
-  headUrl: string
-  headUrlEncrypt: string
-  avatarTxId: string
-  timestamp: number
+
+
+// @ts-ignore
+const appMetaIdJs: null | MetaIdJs = window?.appMetaIdJsV2 ? window?.appMetaIdJsV2 : window?.appMetaIdJs ? window?.appMetaIdJs : null
+if (appMetaIdJs) {
+  
 }
 
 const versionString = import.meta.env.MODE === 'development' ? _APP_VERSION + '-dev' : _APP_VERSION
 const tokenString = localStorage.getItem('token')
 const token = tokenString ? JSON.parse(tokenString) : null
+
 export const state: State = {
   debug: import.meta.env.MODE === 'development',
   version: versionString,
@@ -49,6 +33,16 @@ export const state: State = {
   token,
   userInfo: null,
   userInfoLoading: false,
-  metaidjs: null,
-  metaidjsInitIng: false
+  sdkInitIng: false,
+  // @ts-ignore
+  isApp: window?.appMetaIdJsV2 || window?.appMetaIdJs ? true : false,
+  // @ts-ignore
+  sdk: window.appMetaIdJsV2 || window?.appMetaIdJs  ? new Sdk() : null,
+  // 分页参数
+  pagination: {
+    page: 1,
+    pageSize: 12,
+    loading: false,
+    nothing: false
+  }
 }

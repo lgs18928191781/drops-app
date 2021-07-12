@@ -16,7 +16,7 @@
       </div>
       <!-- txId 铸造 -->
       <div class="create-form-item" v-if="createTypeIndex === 1">
-        <div class="title">NFT txId</div>
+        <div class="title">NFT TXID</div>
         <div class="cont">
           <div class="input-warp flex flex-align-center">
             <div class="input-value flex1">
@@ -310,11 +310,13 @@ import {
   ElSelect,
   ElOption,
 } from 'element-plus'
+// import ElDatePicker from 'element-plus/lib/el-date-picker'
 import NftItem from '@/components/Nft-item/Nft-item.vue'
 import CertTemp from '@/components/Cert/Cert.vue'
 import { tranfromImgFile } from '@/utils/util'
 import { ref, reactive } from '@vue/reactivity'
 import { useI18n } from "vue-i18n";
+
 
 const i18n = useI18n();
 
@@ -323,11 +325,6 @@ const tags = [
   { name: '图片'},
 ]
 const tagIndex = ref(0)
-
-const createTypes = [
-  { name: i18n.t('createbylocal')},
-  { name: i18n.t('createbytx')},
-]
 
 // 0: create by local 1:create by tx
 const createTypeIndex = ref(0) 
@@ -340,14 +337,14 @@ const isShowSetModal = true
 
 let nftName = ref('')
 let nftDrsc =  ref('')
-let originalFile: ImageFile = reactive({
+let originalFile: MetaFile = reactive({
   base64Data: '',
   BufferData: '',
   hexData: '',
   name: '',
   type: ''
 })
-let coverFile: ImageFile = reactive({
+let coverFile: MetaFile = reactive({
   base64Data: '',
   BufferData: '',
   hexData: '',

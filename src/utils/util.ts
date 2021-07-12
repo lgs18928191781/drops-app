@@ -1,28 +1,28 @@
 import { Buffer } from 'buffer'
 
-export function tranfromImgFile(file) {
-    return new Promise<ImageFile>((resolve, reject) => {
+export function tranfromImgFile(file: File) {
+    return new Promise<MetaFile>((resolve, reject) => {
         const fileType = file.type;
         const reader = new FileReader();
-        let fileBinary;
+        let fileBinary: string;
         reader.onload = () => {
             const arrayBuffer = reader.result;
-            let buffer;
-            let hex;
+            let buffer: string = ''
+            let hex: string = ''
             if (arrayBuffer) {
                 buffer = Buffer.from(arrayBuffer);
-                hex = buffer.toString("hex");
+                hex = buffer.toString('hex');
                 fileBinary = buffer;
             }
             const fileData =
             "data:" + fileType + ";base64," + hexToBase64(hex);
-            const imgData = {};
-            imgData.base64Data = fileData;
-            imgData.BufferData = fileBinary;
-            imgData.hexData = hex;
-            imgData.name = file.name;
-            imgData.type = fileType;
-
+            const imgData: MetaFile = {
+              base64Data: fileData,
+              BufferData: fileBinary,
+              hexData: hex,
+              name: file.name,
+              type: fileType
+            };
             /*
             fileBinary二进制流
             fileData 图片base64编码
@@ -31,7 +31,7 @@ export function tranfromImgFile(file) {
             resolve(imgData)
         };
         reader.onerror = (error) => {
-            new Errot('handleFileChange error', error)
+            new Error(`handleFileChange error /n ${error}`, )
             reject(reject)
         }
         reader.readAsArrayBuffer(file);

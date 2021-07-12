@@ -1,4 +1,3 @@
-import { GetToken } from '@/api'
 import { MutationTree } from 'vuex'
 import { State, Token, UserInfo } from './state'
 
@@ -37,6 +36,6 @@ export const mutations: MutationTree<State> & Mutations = {
     localStorage.removeItem('token')
     state.token = null
     state.userInfo = null
-    state.metaidjs = null
+    state.sdk = null
   },
 }

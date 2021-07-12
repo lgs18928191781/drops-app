@@ -91,6 +91,14 @@ body{
     }
 }
 
+// pagination
+.nothing{
+    text-align: center;
+    color: #909399;
+    font-size: 14px;
+    margin-top: 75px;
+}
+
 
 .section{
     margin-bottom: 60px;
@@ -135,6 +143,12 @@ body{
     color: $mainColor;
 }
 
+.el-drawer{
+    &.ttb{
+        height: auto !important;
+    }
+}
+
 .v-enter-from,
 .v-leave-to {
     transition: opacity 0.5s ease;
@@ -156,7 +170,7 @@ body{
 }
 @media only screen and (max-width: 1040px){
     .container{
-        padding: 0 40px;
+        padding: 0 30px;
     }
 }
 
@@ -178,6 +192,10 @@ body{
 }
 
 @media only screen and (max-width: 500px){
+    .main{
+        padding-top: 40px;
+        padding-bottom: 60px;
+    }
     .nft-list {
         .nft-item{
             width: calc((100% - (20px * 1)) / 2);

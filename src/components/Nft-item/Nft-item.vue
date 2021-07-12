@@ -1,20 +1,20 @@
 <template>
-  <router-link :to="{ name: 'detail' }" class="nft-item">
+  <router-link :to="{ name: 'detail', params: { tokenId: item?.tokenId} }" class="nft-item" :key="item?.tokenId">
     <div class="cover">
-      <img alt="" />
+      <img :src="item?.head" :alt="item?.name" />
     </div>
     <div class="cont">
-      <div class="name">Saint Sophia</div>
+      <div class="name">{{ item?.name ? item?.name : 'recommend'}}</div>
       <div class="price" v-if="!isSelf">
         <div class="label">{{ $t('price') }}</div>
-        <div class="aount">0.5 BSV</div>
+        <div class="aount">{{item?.amount}} BSV</div>
       </div>
       <div class="author flex flex-align-center">
-        <img class="" alt="" />
-        <span class="username">HamzaKirbas</span>
+        <img :src="item?.head" :alt="item?.foundryName" />
+        <span class="username">{{ item?.foundryName }}</span>
       </div>
       <div class="operate" v-if="props.isSelf">
-        <a class="btn btn-min btn-plain">上架出售</a>
+        <a class="btn btn-min btn-plain">{{ $t('sale') }}</a>
       </div>
     </div>
     <div class="recommend-card flex flex-v" v-if="props.isRecommendCard">
@@ -40,6 +40,7 @@ const store = useStore()
 const appVersion = store.state.version // not reactive!
 const count = computed(() => store.state.count)
 const props = defineProps<{
+  item?: NftItem,
   isRecommendCard?: boolean,
   isSelf?: boolean
 }>()

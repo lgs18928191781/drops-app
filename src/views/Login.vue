@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router'
-import metaidjs from 'metaidjs'
 import { useStore, Mutation, Action } from '@/store/index'
 
 onBeforeRouteUpdate((to, from, next) => {

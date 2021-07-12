@@ -22,6 +22,11 @@
                 }
             }
         }
+        &.recommend-section{
+            .section-cont{
+                margin-top: 0;
+            }
+        }
     }
     .more-warp{
         cursor: pointer;
@@ -43,6 +48,7 @@
 @media only screen and (max-width: 500px){
     .home{
         .section{
+            margin-bottom: 60px;
             .section-screen{
                 flex-direction: column-reverse;
                 .search-warp{

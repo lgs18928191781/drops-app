@@ -9,6 +9,7 @@
         margin-top: 10px;
     }
     .cont-warp{
+        min-width: 0;
         .title{
             font-size: 30px;
             a{
@@ -57,10 +58,12 @@
                             color: #BFC2CC;
                         }
                         input{
+                            min-width: 0;
                             opacity: 1;
                             border: none;
                             outline: none;
                             padding: 0 14px;
+                            box-sizing: border-box;
                             &::placeholder {
                                 color: #BFC2CC
                             }
@@ -107,6 +110,8 @@
                     .icon{
                         font-size: 24px;
                         height: 24px;
+                        margin-right: 0;
+                        margin-top: 0;
                     }
                     .close{
                         width: 100%;
@@ -382,10 +387,10 @@
                     .arrow{
                         height: 0;
                         width: 0;
-                        border-left: 4px solid transparent;
-                        border-right: 4px solid transparent;
-                        border-top: 5px solid $mainColor;
-                        margin-left: 5px;
+                        border-left: 4Px solid transparent;
+                        border-right: 4Px solid transparent;
+                        border-top: 5Px solid $mainColor;
+                        margin-left: 5Px;
                     }
                 }
                 .type, .icon{
@@ -428,7 +433,7 @@
 @media only screen and (max-width: 500px){
     .create{
         max-width: none;
-        padding: 0 40px;
+        padding: 0 30px;
         .cont-warp{
             .tips{
                 line-height: 30px;

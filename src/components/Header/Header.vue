@@ -1,6 +1,9 @@
 <template>
   <header class="flex flex-align-center">
-      <div class="flex1">
+      <div class="header-left flex1 flex flex-align-center">
+        <a class="menu" @click="isShowDrawer = true"><img src="@/assets/images/menu.svg" alt="menu" /></a>
+        <!-- 分割线 -->
+        <span class="line"></span>
         <a class="logo flex flex-align-center">
           <span>NFT</span>onShow
         </a>
@@ -11,7 +14,7 @@
       </nav>
       <div class="operate flex flex-align-center">
         <!-- 登录按钮 -->
-        <a v-if="!store.state.userInfo" class="btn" @click="auth" v-loading="store.state.userInfoLoading" element-loading-background="rgba(255, 255, 255, 0.7)">登录/注册</a>
+        <a v-if="!store.state.userInfo" class="btn" @click="auth" v-loading="store.state.userInfoLoading" element-loading-background="rgba(255, 255, 255, 0.7)">{{$t('signinandout')}}</a>
         
         <!-- 登录用户 -->
         <ElDropdown trigger="click" v-else>
@@ -42,11 +45,22 @@
         </ElDropdown>
       </div>
   </header>
+
+  <!-- ElDrawer -->
+  <el-drawer
+  modal-class="menu-drawer"
+  v-model="isShowDrawer"
+  direction="ttb">
+  <nav class="mobile-nav-modal flex flex-align-center flex-pack-center">
+        <router-link  to="/" @click.stop="isShowDrawer = false">{{ $t('marketplace') }}</router-link>
+        <router-link  to="/create" @click.stop="isShowDrawer = false">{{ $t('createnft') }}</router-link>
+  </nav>
+</el-drawer>
 </template>
 
 <script setup lang="ts">
-import { ElDropdown, ElDropdownItem, ElDropdownMenu, ElLoading } from 'element-plus'
-import { computed, defineProps } from 'vue'
+import { ElDropdown, ElDropdownItem, ElDropdownMenu, ElLoading, ElDrawer } from 'element-plus'
+import { computed, defineProps, ref } from 'vue'
 import { useStore, Mutation } from '@/store/index'
 import { useI18n } from "vue-i18n";
 import { router } from '@/router';
@@ -54,6 +68,7 @@ import { router } from '@/router';
 const i18n = useI18n();
 const env = import.meta.env
 const store = useStore()
+const isShowDrawer = ref(false)
 const appVersion = store.state.version // not reactive!
 const count = computed(() => store.state.count)
 const props = defineProps<{
@@ -63,6 +78,8 @@ const props = defineProps<{
 // 跳转授权
 function auth() {
   if (store.state.userInfoLoading) return
+  // 清楚缓存的信息，避免意外
+  store.commit(Mutation.LOGOUT, undefined)
   const url = `${env.VITE_AuthUrl}/userLogin?response_type=code&client_id=${env.VITE_AppId}&redirect_uri=${env.VITE_Hosts}${env.VITE_RedirectPath}&scope=app&from=${env.VITE_Hosts}`
   window.location.href = url
 }

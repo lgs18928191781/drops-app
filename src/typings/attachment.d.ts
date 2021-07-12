@@ -1,4 +1,4 @@
-declare interface ImageFile {
+declare interface MetaFile {
     base64Data: string
     BufferData: string
     hexData: string;

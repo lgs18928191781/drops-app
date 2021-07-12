@@ -15,7 +15,7 @@ export const router = createRouter({
   routes: [
     { path: '/', component: Home },
     { path: '/create', name: 'create', component: Create },
-    { path: '/detail', name: 'detail', component: Detail },
+    { path: '/detail/:tokenId', name: 'detail', component: Detail },
     { path: '/self', name: 'self', component: Self },
     { path: '/login', name: 'login', component: Login },
   ],
@@ -58,15 +58,28 @@ export const router = createRouter({
 // })
 
 router.beforeEach(async (to, from, next) => {
-  const token = store.state.token
-  if (token) {
-    const now = new Date().getTime()
-    if (now >= token.expires_time) { // token 过期先刷新token
-      await store.dispatch(Action.refreshToken)
+  // app
+  const isApp = store.state.isApp
+  if (isApp) {
+    //  没有用户信息， 也没有正在加载用户信息, 则去获取用户信息
+    if (!store.state.userInfo && !store.state.userInfoLoading) {
+      store.dispatch(Action.getUserInfo)
     }
-    // 有token 没有初始化metaidjs
-    if (!store.state.metaidjs && !store.state.metaidjsInitIng){
-      store.dispatch(Action.initSdk)
+  } else {
+    // web
+    const token = store.state.token
+    if (token) {
+      if(!isApp){
+        const now = new Date().getTime()
+        // token 过期先刷新token, 没过期直接用
+        if (now >= token.expires_time) { 
+          await store.dispatch(Action.refreshToken)
+        }
+      }
+      // 有token 没有初始化sdk 就去初始化sdk
+      if (!store.state.sdk && !store.state.sdkInitIng){
+        store.dispatch(Action.initSdk)
+      }
     }
   }
   next()
