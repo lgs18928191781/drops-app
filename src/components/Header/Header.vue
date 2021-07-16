@@ -4,9 +4,9 @@
         <a class="menu" @click="isShowDrawer = true"><img src="@/assets/images/menu.svg" alt="menu" /></a>
         <!-- 分割线 -->
         <span class="line"></span>
-        <a class="logo flex flex-align-center">
+        <router-link to="/" class="logo flex flex-align-center">
           <span>NFT</span>onShow
-        </a>
+        </router-link>
       </div>
       <nav class="flex flex-align-center flex-pack-center">
         <router-link to="/">{{ $t('marketplace') }}</router-link>
@@ -60,20 +60,17 @@
 
 <script setup lang="ts">
 import { ElDropdown, ElDropdownItem, ElDropdownMenu, ElLoading, ElDrawer } from 'element-plus'
-import { computed, defineProps, ref } from 'vue'
+import { ref } from 'vue'
 import { useStore, Mutation } from '@/store/index'
 import { useI18n } from "vue-i18n";
-import { router } from '@/router';
+import { useRoute, useRouter } from 'vue-router';
 
 const i18n = useI18n();
 const env = import.meta.env
 const store = useStore()
+const route = useRoute()
+const router = useRouter()
 const isShowDrawer = ref(false)
-const appVersion = store.state.version // not reactive!
-const count = computed(() => store.state.count)
-const props = defineProps<{
-  // msg: string
-}>()
 
 // 跳转授权
 function auth() {
@@ -87,6 +84,9 @@ function auth() {
 // 退出登录
 function logout() {
   store.commit(Mutation.LOGOUT, undefined)
+  if (route.meta && route.meta.isAuth) {
+    router.replace('/')
+  }
 }
 
 // 设置语言

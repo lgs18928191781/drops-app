@@ -1,6 +1,6 @@
+import { store } from '@/store'
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
 import { ElMessage } from 'element-plus'
-
 export default class HttpRequest {
   request
   constructor(baseUrl: string) {
@@ -9,6 +9,9 @@ export default class HttpRequest {
     })
     this.request.interceptors.request.use(
       (config) => {
+        if (store.state.token) {
+          config.headers['Authorization'] = `Bearer ${store.state.token.access_token}`
+        }
         return config
       },
       function (error) {

@@ -7,7 +7,9 @@ declare interface NftItem{
     head?: string,
     tokenId: string,
     coverUrl: string,
-    putAway?: boolean
+    putAway?: boolean,
+    metaId: string
+    productName?: string
 }
 declare interface NftItemDetail{
     foundryName: string,
@@ -25,5 +27,8 @@ declare interface NftItemDetail{
     ownerMetaId: string,
     ownerHead: string,
     type: string,
-    revenue: string
+    revenue: string,
+    coverUrl: string,
+    tx: string,
+    putAway: boolean
 }

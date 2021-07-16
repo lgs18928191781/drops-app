@@ -2,9 +2,13 @@ import { createRouter, createWebHistory, RouterView } from 'vue-router'
 import Home from '@/views/Home.vue'
 import Create from '@/views/Create.vue'
 import Detail from '@/views/Detail.vue'
+import Sale from '@/views/sale/Sale.vue'
+import SaleLegend from '@/views/sale/Legend.vue'
 import Login from '@/views/Login.vue'
 import Self from '@/views/Self.vue'
 import { useStore, Action } from '@/store/index'
+import { ElMessage } from 'element-plus'
+import i18n from '@/utils/i18n'
 const store = useStore()
 let removeRoute: (() => void) | undefined
 
@@ -14,9 +18,11 @@ export const router = createRouter({
   strict: true,
   routes: [
     { path: '/', component: Home },
-    { path: '/create', name: 'create', component: Create },
+    { path: '/create', name: 'create', component: Create, meta: { isAuth: true } },
     { path: '/detail/:tokenId', name: 'detail', component: Detail },
-    { path: '/self', name: 'self', component: Self },
+    { path: '/sale/:tokenId', name: 'sale', component: Sale, meta: { isAuth: true } },
+    { path: '/saleLegend', name: 'saleLegend', component: SaleLegend },
+    { path: '/self', name: 'self', component: Self, meta: { isAuth: true } },
     { path: '/login', name: 'login', component: Login },
   ],
   async scrollBehavior(to, from, savedPosition) {
@@ -69,16 +75,22 @@ router.beforeEach(async (to, from, next) => {
     // web
     const token = store.state.token
     if (token) {
-      if(!isApp){
-        const now = new Date().getTime()
+      const now = new Date().getTime()
         // token 过期先刷新token, 没过期直接用
-        if (now >= token.expires_time) { 
-          await store.dispatch(Action.refreshToken)
-        }
+      if (now >= token.expires_time) { 
+        await store.dispatch(Action.refreshToken)
       }
       // 有token 没有初始化sdk 就去初始化sdk
       if (!store.state.sdk && !store.state.sdkInitIng){
         store.dispatch(Action.initSdk)
+      }
+    }  else {
+      // 没有token
+      const isAuth = to.meta && to.meta.isAuth ? to.meta.isAuth : false
+      if (isAuth) {
+        // 需要权限的提示先登陆且不给予跳转
+        ElMessage.error(i18n.global.t('toLoginTip'))
+        return
       }
     }
   }

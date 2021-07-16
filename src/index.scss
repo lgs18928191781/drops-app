@@ -86,18 +86,15 @@ body{
     font-family: 'Ubuntu-Bold';
     font-size: 18px;
     font-weight: bold;
+    position: relative;
+    z-index: 2;
+    text-decoration: none;
+    color: inherit;
     span{
         color: $mainColor;
     }
 }
 
-// pagination
-.nothing{
-    text-align: center;
-    color: #909399;
-    font-size: 14px;
-    margin-top: 75px;
-}
 
 
 .section{

@@ -2,7 +2,8 @@ declare interface Pagination {
     page: number,
     pageSize: number,
     loading?: boolean,
-    nothing?: boolean
+    nothing?: boolean,
+    totalPages?: number
 }
 
 declare interface Token {

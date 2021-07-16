@@ -121,6 +121,10 @@
                             font-size: 16px;
                             line-height: 26px;
                             word-break: break-all;
+                            .author{
+                                @include author(38px, 12px, 16px, 14px, 2px);
+                                line-height: normal;
+                            }
                         }
                     }
                 }
@@ -129,6 +133,9 @@
                     text-decoration: none;
                     margin-left: 10px;
                     cursor: pointer;
+                    &.link{
+                        margin-left: 0;
+                    }
                 }
                 .remark{
                     .remark-item{

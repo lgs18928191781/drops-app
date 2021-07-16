@@ -1,4 +1,9 @@
+import { CreateNftParams } from "@/api"
+import { rejects } from "assert/strict";
 import MetaIdJs, { ProtocolOptions } from "metaidjs"
+import { resolve } from "path/posix";
+// @ts-ignore
+import { v4 as uuid } from 'uuid';
 
 export interface ConstructorOptionsTypes {
     baseUri?: string;
@@ -28,6 +33,31 @@ export interface appMetaIdJsParams {
     data: any;
     onCancel?: Function;
 }
+
+export interface NftFunParams { 
+    accessToken: string
+}
+
+export interface CreateMetaFileFunParams extends NftFunParams{
+    data: {
+        name: string,
+        data: string,
+        encrypt: 1,
+        data_type: string
+    }
+}
+export interface MetaIdJsRes extends NftFunParams{
+    code: number,
+    data: any,
+    status: string,
+    handlerId: string
+}
+
+export interface CreateNftFunParams extends NftFunParams{
+    data: CreateNftParams
+}
+
+const metaIdTag = import.meta.env.VITE_MetaIdTag
 export default class Sdk{
     metaidjs: null | MetaIdJs = null
     appMetaidjs: null | {
@@ -103,5 +133,68 @@ export default class Sdk{
         } else {
             this.metaidjs?.eciesDecryptData(params)
         }
+    }
+
+    
+    createMetaFile (params: CreateMetaFileFunParams) {
+        return new Promise((resolve, reject) => {
+            const { name, ...data } = params.data
+            const nameArry =  name.split('.')
+            let node_name: string = ''
+            nameArry.map((item, index) => {
+                node_name += item
+                if (index === nameArry.length - 2){
+                    node_name += uuid()
+                }
+            }) 
+            this.sendMetaDataTx({
+                accessToken: params.accessToken,
+                nodeName: 'NftIssue-6d3eaf759bbc',
+                brfcId: '6d3eaf759bbc',
+                path: '/Protocols/MetaFile',
+                payCurrency: 'bsv',
+                // payTo: [
+                //     { address: 'XXXXXXXXXX', amount: 1000 }
+                // ],
+                data: JSON.stringify({
+                    ...data,
+                    encoding: 'binary',
+                    node_name
+                }),
+                needConfirm: false,
+                isFirstProtocolChild: false,
+                metaIdTag,
+                callback: (res: MetaIdJsRes) => {
+                    resolve(res)
+                },
+                onCancel: (res: MetaIdJsRes) => {
+                    reject(res)
+                },
+            })
+        })
+    }
+
+    createNft (params: CreateNftFunParams) {
+        return new Promise<MetaIdJsRes>((resolve, reject) => {
+            this.sendMetaDataTx({
+                accessToken: params.accessToken,
+                nodeName: 'NftIssue-f18d5098a90d',
+                brfcId: 'f18d5098a90d',
+                path: '/Protocols/NftIssue',
+                payCurrency: 'bsv',
+                // payTo: [
+                //     {   address: 'XXXXXXXXXX', amount: 1000 }
+                // ],
+                data: JSON.stringify(params.data),
+                isFirstProtocolChild: false,
+                metaIdTag,
+                callback: (res: MetaIdJsRes) => {
+                    resolve(res)
+                },
+                onCancel: (res: MetaIdJsRes) => {
+                    reject(res)
+                }
+            })
+        })
     }
 }

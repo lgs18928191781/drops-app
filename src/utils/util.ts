@@ -1,4 +1,7 @@
 import { Buffer } from 'buffer'
+import { store } from '@/store'
+import { ElMessage } from 'element-plus';
+import i18n from '@/utils/i18n';
 
 export function tranfromImgFile(file: File) {
     return new Promise<MetaFile>((resolve, reject) => {
@@ -10,7 +13,9 @@ export function tranfromImgFile(file: File) {
             let buffer: string = ''
             let hex: string = ''
             if (arrayBuffer) {
+                // @ts-ignore
                 buffer = Buffer.from(arrayBuffer);
+                // @ts-ignore
                 hex = buffer.toString('hex');
                 fileBinary = buffer;
             }
@@ -21,7 +26,8 @@ export function tranfromImgFile(file: File) {
               BufferData: fileBinary,
               hexData: hex,
               name: file.name,
-              type: fileType
+              raw: file,
+              data_type: fileType
             };
             /*
             fileBinary二进制流
@@ -39,7 +45,7 @@ export function tranfromImgFile(file: File) {
 }
 
 // 转换为图片
-export function hexToBase64(str) {
+export function hexToBase64(str: string) {
     if (!str) {
       return "https://showjob.oss-cn-hangzhou.aliyuncs.com/index/img_photo_default.png";
     }
@@ -55,4 +61,16 @@ export function hexToBase64(str) {
     }
     const sty = window.btoa(binary);
     return sty;
+}
+
+export function checkSdkStaut() {
+  if (!store.state.token){
+    ElMessage.warning(i18n.global.t('toLoginTip'))
+    return false
+  } else {
+    if (store.state.sdkInitIng) {
+      ElMessage.warning(i18n.global.t('loginingTip'))
+      return false
+    }
+  }
 }

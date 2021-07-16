@@ -1,20 +1,21 @@
 <template>
-  <router-link :to="{ name: 'detail', params: { tokenId: item?.tokenId} }" class="nft-item" :key="item?.tokenId">
+  <a @click="toDetail(item?.tokenId)" class="nft-item" :key="item?.tokenId">
     <div class="cover">
-      <img :src="item?.head" :alt="item?.name" />
+      <img :src="item?.coverUrl" :alt="item?.name" />
     </div>
     <div class="cont">
-      <div class="name">{{ item?.name ? item?.name : 'recommend'}}</div>
+      <div class="name">{{ isSelf ? item.productName : item?.name }}</div>
       <div class="price" v-if="!isSelf">
         <div class="label">{{ $t('price') }}</div>
         <div class="aount">{{item?.amount}} BSV</div>
       </div>
       <div class="author flex flex-align-center">
-        <img :src="item?.head" :alt="item?.foundryName" />
+        <img :src="$filters.avatar(item?.metaId)" :alt="item?.foundryName" />
         <span class="username">{{ item?.foundryName }}</span>
       </div>
       <div class="operate" v-if="props.isSelf">
-        <a class="btn btn-min btn-plain">{{ $t('sale') }}</a>
+        <a class="btn btn-min btn-plain" v-if="item?.putAway" @click.stop="offSale">{{ $t('offsale') }}</a>
+        <a class="btn btn-min" v-else @click.stop="toSale">{{ $t('sale') }}</a>
       </div>
     </div>
     <div class="recommend-card flex flex-v" v-if="props.isRecommendCard">
@@ -29,24 +30,51 @@
         <a>{{ $t('getmore') }}<img src="@/assets/images/card_icon_ins.svg" /></a>
       </div>
     </div>
-  </router-link>
+  </a>
 </template>
 
 <script setup lang="ts">
 import { computed, defineProps } from 'vue'
 import { useStore, Mutation } from '@/store/index'
+import { useRouter } from 'vue-router'
+import { NftApiCode, OffSale } from '@/api'
+import { ElDialog, ElMessage, ElMessageBox } from 'element-plus'
+import { useI18n } from 'vue-i18n'
 
 const store = useStore()
+const router = useRouter()
+const i18n = useI18n()
 const appVersion = store.state.version // not reactive!
 const count = computed(() => store.state.count)
 const props = defineProps<{
-  item?: NftItem,
+  item: NftItem,
   isRecommendCard?: boolean,
   isSelf?: boolean
 }>()
 
-function increment() {
-  store.commit(Mutation.INCREMENT, 1)
+function toDetail(tokenId: string | undefined) {
+  if (tokenId) {
+    router.push({ name: 'detail', params: { tokenId }})
+  }
+}
+
+function toSale () {
+  if (props.item?.tokenId) {
+    router.push({ name: 'sale', params: { tokenId: props.item?.tokenId } })
+  }
+}
+
+function offSale () {
+  ElMessageBox.confirm(`${i18n.t('offsaleConfirm')} ${props.item.productName} ?`, i18n.t('niceWarning'))
+  .then(async () => {
+    const res = await OffSale({ tokenId: props.item!.tokenId})
+    if (res.code === NftApiCode.success) {
+      props.item!.putAway = false
+      ElMessage.success(i18n.t('offsale') + i18n.t('success'))
+    } else {
+      ElMessage.success(i18n.t('offsale') + i18n.t('fail'))
+    }
+  })
 }
 </script>
 

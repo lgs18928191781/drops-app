@@ -4,12 +4,16 @@ import qs from 'qs'
 
 const env = import.meta.env
 
+export enum NftApiCode {
+  success = 0
+}
 declare interface apiResponse{
-  code: number
-  msg: string
+  code: NftApiCode
+  msg: string,
+  count: number
 }
 const apiHttp = new HttpRequest(env.VITE_WalletApi).request
-const nftHttp = new HttpRequest('').request
+const nftHttp = new HttpRequest(env.VITE_NftApi).request
 export const GetToken = (params: object) => {
     return apiHttp.post('/showmoney/oauth2/oauth/token', params, {
         headers: {
@@ -38,33 +42,41 @@ export const QueryFindMetaDataForPost = (params: string) => {
 interface GetProductListResponstData extends apiResponse {
   data: NftItem []
 }
-export const GetProductList = (params: { pageSize: number, page: number }):Promise<GetProductListResponstData> => {
-  return apiHttp.post(`/nftonshow/api/v2/product/productList`, params);
+export const GetProductList = (params: { pageSize: number, page: number, classifyName?: string}):Promise<GetProductListResponstData> => {
+  return nftHttp.post(`/api/v2/product/productList`, params);
+} 
+
+export const GetProductClassifyList = (params: { pageSize: number, page: number, classifyName?: string}):Promise<GetProductListResponstData> => {
+  return nftHttp.post(`/api/v2/product/classify`, params);
 } 
 
 interface GetProductDetailResponstData extends apiResponse {
   data: NftItemDetail
 }
-export const GetProductDetail = (params: { tokenId: string }):Promise<GetProductDetailResponstData> => {
-  return apiHttp.post(`/nftonshow/api/v2/product/productDetails`, params);
+export const GetNftDetail = (params: { tokenId: string }):Promise<GetProductDetailResponstData> => {
+  return nftHttp.post(`/api/v2/product/productDetails`, params);
 }
 
+
+
 interface TransactionRecordResponstData extends apiResponse {
-  data: {
-    username: string,
-    ownerTime: number,
-    amount: string
-  }
+  data: TransactionRecordItem []
 }
+
 export const TransactionRecord = (params: { tokenId: string }):Promise<TransactionRecordResponstData> => {
-  return apiHttp.post(`/nftonshow/api/v2/productTransaction/transactionRecord`, params);
+  return nftHttp.post(`/api/v2/productTransaction/transactionRecord`, params);
 } 
 
 
 interface CreateNftResponstData extends apiResponse {
-  data: string
+  data: {
+    tokenId: string
+  }
 }
-export const CreateNft = (params: { 
+
+
+export interface CreateNftParams { 
+  nftName: string,
   type: string,
   fileUrl: string,
   coverUrl: string,
@@ -73,16 +85,17 @@ export const CreateNft = (params: {
   seriesNumber: number,
   tx?: string,
   classify?: string,
-}):Promise<CreateNftResponstData> => {
-  return apiHttp.post(`/nftonshow/api/v2/found/foundNft`, params);
+}
+export const CreateNft = (params: CreateNftParams):Promise<CreateNftResponstData> => {
+  return nftHttp.post(`/api/v2/found/foundNft`, params);
 } 
 
 interface MyNftsResponstData extends apiResponse {
   data: NftItem []
 }
 export const MyNfts = (params: Pagination):Promise<MyNftsResponstData> => {
-  return apiHttp.post(`/nftonshow/api/v2/product/myProduct`, params);
-} 
+  return nftHttp.post(`/api/v2/product/myProduct`, params);
+}
 
 interface SaleNftResponstData extends apiResponse {
   data: {
@@ -91,8 +104,40 @@ interface SaleNftResponstData extends apiResponse {
 }
 export const SaleNft = (params: {
   sellValidTime: number,
-  amount: number,
+  amount: number | string,
   tokenId: string
 }):Promise<SaleNftResponstData> => {
-  return apiHttp.post(`/nftonshow/api/v2/productTransaction/sell`, params);
+  return nftHttp.post(`/api/v2/productTransaction/sell`, params);
+} 
+
+export const Upload = (params: FormData):Promise<string> => {
+  return nftHttp.post(`/api/v2/oss/upload`, params);
+} 
+
+
+interface GetSeriestData extends apiResponse {
+  data: any []
+}
+export const GetSeries = ():Promise<GetSeriestData> => {
+  return nftHttp.post(`/api/v2/series/getSeries`);
+} 
+
+export const Search = (params: { likeName: string }):Promise<GetProductListResponstData> => {
+  return nftHttp.post(`/api/v2/product/productLike`, params);
+} 
+
+
+interface GetClassiesData extends apiResponse {
+  data: Classify []
+}
+export const GetClassies = ():Promise<GetClassiesData> => {
+  return nftHttp.post(`/api/v2/classify/classifyList`);
+} 
+
+export const OffSale = (params: { tokenId: string }):Promise<apiResponse> => {
+  return nftHttp.post(`/api/v2/productTransaction/unshelve`, params);
+} 
+
+export const BuyNft = (params: { tokenId: string, payMentAddress: string, collectionAddress: string }):Promise<apiResponse> => {
+  return nftHttp.post(`/api/v2/productTransaction/transactionProduct`, params);
 } 
