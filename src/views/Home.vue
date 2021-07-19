@@ -23,7 +23,7 @@
                     <a :class="{ 'active': classify === item.classify }" v-for="item in classies" :key="item.id" @click="changeClassify(item.classify)">{{ item.classify }}</a>
                 </div>
                 <div class="search-warp flex flex-align-center">
-                    <input class="flex1" v-model="keyword.val" :placeholder="$t('search')" @keyup.enter="search" type="text" />
+                    <input class="flex1" v-model="keyword" :placeholder="$t('search')" @keyup.enter="search" type="text" />
                     <img src="@/assets/images/icon_search.svg" @click="search">
                 </div>
             </div>
@@ -53,9 +53,7 @@ let Nfts = reactive<NftItem []>([])
 const pagination = reactive({
     ...store.state.pagination    
 })
-const keyword = reactive({
-    val: ''
-})
+const keyword = ref('')
 const classify = ref('all')
 
 async function  getNftList (isCover: boolean = false) {
@@ -114,11 +112,13 @@ async function search () {
     pagination.loading = false,
     pagination.nothing = false,
     pagination.page = 1
-    if (keyword.val === '') {
+    if (keyword.value === '') {
+        classify.value = 'all'
         getNftList()
     } else {
+        classify.value = ''
         const res = await Search({
-            likeName: keyword.val
+            likeName: keyword.value
         })
         if (res.code === NftApiCode.success) {
             Nfts.length = 0
@@ -147,6 +147,8 @@ function changeClassify (classifyName: string) {
     } else {
         getNftClassifyList(true)
     }
+
+    keyword.value = ''
 }
 
 getRecommendNftList()
