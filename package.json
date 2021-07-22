@@ -2,9 +2,9 @@
   "name": "show-nft",
   "version": "0.0.1",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --mode dev",
     "test": "vite --mode test",
-    "build": "vite build",
+    "build": "vite build --mode dev",
     "start": "yarn dev & wait-on tcp:3000 -v",
     "test:ci": "cypress run --headless"
   },
