@@ -50,6 +50,9 @@ export default ((mode) => {
       port: 80,
       https: false,
       open: false
+    },
+    build: {
+      target: 'es2015'
     }
   })
 })
