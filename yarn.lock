@@ -2940,10 +2940,10 @@ merge2@^1.3.0:
   resolved "https://registry.yarnpkg.com/merge2/-/merge2-1.4.1.tgz#4368892f885e907455a6fd7dc55c0c9d404990ae"
   integrity sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==
 
-metaidjs@^1.5.2:
-  version "1.5.2"
-  resolved "https://registry.nlark.com/metaidjs/download/metaidjs-1.5.2.tgz#948d078e68696145ed2c694382a2410e79884474"
-  integrity sha1-lI0HjmhpYUXtLGlDgqJBDnmIRHQ=
+metaidjs@1.7.0:
+  version "1.7.0"
+  resolved "https://registry.nlark.com/metaidjs/download/metaidjs-1.7.0.tgz#7bbedbf93ac0ddf3c8df9cc941e71430a47d8f8f"
+  integrity sha1-e77b+TrA3fPI35zJQecUMKR9j48=
 
 micromatch@3.1.0:
   version "3.1.0"

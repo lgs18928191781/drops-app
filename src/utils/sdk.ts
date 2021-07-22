@@ -64,6 +64,7 @@ export default class Sdk{
         sendMetaDataTx: (accessToken: string, data: string, functionName: string) => Function
         decryptData: (accessToken: string, data: string, functionName: string) => Function
         getUserInfo: (appId: string, appScrect: string, functionName: string) => Function
+        genesisNFT: (nftTotal: number, functionName: string) => Function
     } = null
     isApp: boolean = false
     appId: string = ''
@@ -174,27 +175,50 @@ export default class Sdk{
         })
     }
 
-    createNft (params: CreateNftFunParams) {
+    genesisNFT (params: {
+        nftTotal: number,
+        callback?: () => any
+    }) {
         return new Promise<MetaIdJsRes>((resolve, reject) => {
-            this.sendMetaDataTx({
-                accessToken: params.accessToken,
-                nodeName: 'NftIssue-f18d5098a90d',
-                brfcId: 'f18d5098a90d',
-                path: '/Protocols/NftIssue',
-                payCurrency: 'bsv',
-                // payTo: [
-                //     {   address: 'XXXXXXXXXX', amount: 1000 }
-                // ],
-                data: JSON.stringify(params.data),
-                isFirstProtocolChild: false,
-                metaIdTag,
-                callback: (res: MetaIdJsRes) => {
-                    resolve(res)
-                },
-                onCancel: (res: MetaIdJsRes) => {
-                    reject(res)
-                }
-            })
+            if (this.isApp) {
+                const functionName: string = `genesisNFTCallBack`
+                // @ts-ignore
+                window[functionName] = params.callback
+                this.appMetaidjs?.genesisNFT(
+                    params.nftTotal,
+                    functionName
+                )
+            } else {
+                this.metaidjs?.genesisNFT(params)
+            }
+        })
+    }
+
+    issueNFT (params: {
+        receiverAddress: string; //  创建者接收地址
+        genesisId: string;  //
+        genesisTxid: string;
+        codehash: string;
+        nftname: string;
+        nftdesc: string;
+        nfticon: string;
+        nftwebsite: string;
+        nftissuerName: string;
+        callback?: () => any;
+        handlerId?: any;
+    }) {
+        return new Promise<MetaIdJsRes>((resolve, reject) => {
+            if (this.isApp) {
+                const functionName: string = `issueNFTCallBack`
+                // @ts-ignore
+                window[functionName] = params.callback
+                this.appMetaidjs?.issueNFT(
+                    params.nftTotal,
+                    functionName
+                )
+            } else {
+                this.metaidjs?.issueNFT(params)
+            }
         })
     }
 }
