@@ -14,7 +14,7 @@
     "axios": "^0.21.1",
     "buffer": "^6.0.3",
     "element-plus": "^1.0.2-beta.53",
-    "metaidjs": "file:.yalc/metaidjs",
+    "metaidjs": "^1.7.0",
     "normalize.css": "^8.0.1",
     "qs": "^6.10.1",
     "uuid": "^8.3.2",
