@@ -97,7 +97,7 @@
 import { GetNftDetail, NftApiCode, SaleNft } from '@/api'
 import { reactive, ref } from '@vue/reactivity'
 import { useRoute, useRouter } from 'vue-router'
-import { ElDropdown, ElDropdownItem, ElDropdownMenu, ElMessage } from 'element-plus'
+import { ElDropdown, ElDropdownItem, ElDropdownMenu, ElMessage, ElDatePicker } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 
 const i18n = useI18n()
