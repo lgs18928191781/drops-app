@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20" viewBox="0 0 20 20">
+  <defs>
+    <style>
+      .cls-1, .cls-3, .cls-4 {
+        fill: none;
+      }
+
+      .cls-2 {
+        clip-path: url(#clip-path);
+      }
+
+      .cls-3, .cls-4 {
+        stroke: #303133;
+        stroke-width: 1.463px;
+      }
+
+      .cls-3 {
+        stroke-linejoin: round;
+      }
+
+      .cls-4 {
+        stroke-linecap: round;
+      }
+    </style>
+    <clipPath id="clip-path">
+      <rect id="mask" class="cls-1" width="20" height="20" transform="translate(416 14)"/>
+    </clipPath>
+  </defs>
+  <g id="file_upload" class="cls-2" transform="translate(-416 -14)">
+    <g id="文件夹-添加_folder-plus" transform="translate(414.293 12.293)">
+      <path id="路径_11" data-name="路径 11" class="cls-3" d="M2.439,3.9a.976.976,0,0,1,.976-.976H9.268l2.439,2.927H20a.976.976,0,0,1,.976.976V19.512a.976.976,0,0,1-.976.976H3.415a.976.976,0,0,1-.976-.976Z"/>
+      <path id="路径_12" data-name="路径 12" class="cls-4" d="M8.78,13.171h5.854"/>
+      <path id="路径_13" data-name="路径 13" class="cls-4" d="M11.707,10.244V16.1"/>
+    </g>
+  </g>
+</svg>

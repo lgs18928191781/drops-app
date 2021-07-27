@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="15.999" height="17.342" viewBox="0 0 15.999 17.342">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #000;
+      }
+    </style>
+  </defs>
+  <path id="bannet_icon_ins" class="cls-1" d="M13.162,15.175l4.97-4.97H8V7.139H18.133l-4.97-4.97L15.331,0,24,8.672,21.834,10.84h0l-6.5,6.5Z" transform="translate(24.001 17.343) rotate(180)"/>
+</svg>
