@@ -47,7 +47,7 @@ export default ((mode) => {
     server: {
       host: env.VITE_Hosts.replace(/https:\/\//, '').replace(/http:\/\//, ''),
       // host: '0.0.0.0',
-      port: 80,
+      port: 443,
       https: false,
       open: false,
       // proxy: {
