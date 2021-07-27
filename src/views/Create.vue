@@ -22,7 +22,7 @@
         <div class="cont">
           <div class="input-warp flex flex-align-center">
             <div class="input-value flex1">
-              <input class="flex1"  v-model="nft.tx" type="text" :placeholder="$t('txIdTips')" @change="originalFileInputChage" />
+              <input class="flex1"  v-model="nft.tx" type="text" @blur="checkTxIdStatus" :placeholder="$t('txIdTips')" @change="originalFileInputChage" />
             </div>
           </div>
         </div>
@@ -41,6 +41,7 @@
           </div>
         </div>
       </div>
+      <!-- 封面图 -->
       <div class="create-form-item">
         <div class="title">{{$t('nftbase')}}</div>
         <div class="cont">
@@ -78,7 +79,7 @@
             <span v-else class="placeholder">{{$t('choose')}}</span>
             <i class="el-icon-arrow-right"></i>
           </div>
-          <PickerModel :title="$t('choosetype')" :multiple="true" :visible="isShowClassifyModal" @confirm="isShowClassifyModal = false" :list="classifies" :selecteds="nft.classify" />
+          <PickerModel name="classify" listKey="classify" :title="$t('choosetype')" :multiple="true" :visible="isShowClassifyModal" @confirm="isShowClassifyModal = false" :list="classifies" :selecteds="nft.classify" />
         </div>
       </div>
 
@@ -97,8 +98,13 @@
                 <span v-else class="placeholder">{{$t('choose')}}</span>
                 <i class="el-icon-arrow-right"></i>
               </div>
-              <PickerModel name="name" listKey="name" :title="$t('chooseserices')" :visible="isShowSeriesModal" @confirm="isShowSeriesModal = false" :list="series" :selecteds="selectedSeries">
-                <div class="btn btn-block create-series-btn" @click="isShowCreateSeriesModal = true">{{ $t('createSerie') }}</div>
+              <PickerModel name="series" listKey="series" :title="$t('chooseserices')" :visible="isShowSeriesModal" @confirm="isShowSeriesModal = false" :list="series" :selecteds="selectedSeries">
+                <template v-slot:item="{ item }">
+                  <span>{{item.currentNumber}}/{{item.maxNumber}}</span>
+                </template>
+                <template v-slot:bottom>
+                  <div class="btn btn-block create-series-btn" @click="isShowCreateSeriesModal = true">{{ $t('createSerie') }}</div>
+                </template>
               </PickerModel>
             </div>
           </div>
@@ -185,7 +191,8 @@ import {
   ElSelect,
   ElOption,
   ElImage,
-ElMessage
+ElMessage,
+ElLoading
 } from 'element-plus'
 // import ElDatePicker from 'element-plus/lib/el-date-picker'
 import NftItem from '@/components/Nft-item/Nft-item.vue'
@@ -193,7 +200,7 @@ import CertTemp from '@/components/Cert/Cert.vue'
 import { tranfromImgFile } from '@/utils/util'
 import { ref, reactive } from '@vue/reactivity'
 import { useI18n } from "vue-i18n";
-import { CreateNft, GetSeries, NftApiCode, Upload } from '@/api'
+import { CreateNft, CreateSerice, GetClassies, GetSeries, GetTxData, GetTxStatus, NftApiCode, Upload } from '@/api'
 import { useStore } from '@/store'
 import { router } from '@/router'
 import PickerModel from '@/components/PickerModal/PickerModel.vue'
@@ -203,11 +210,20 @@ import { nftTypes } from '@/config'
 const i18n = useI18n();
 const store = useStore()
 
+
 //分类
-const classifies = reactive(['艺术', '运动', '电影'])
+const classifies = reactive([])
+async function getClassifies () {
+  const res = await GetClassies()
+  if (res.code === NftApiCode.success) {
+    classifies.length = 0
+    // @ts-ignore
+    classifies.push(...res.data)
+  }
+}
+getClassifies()
 
-
-const nft: any = reactive({
+const nft = reactive({
   nftName: '',
   type: '',
   fileUrl: '',
@@ -224,6 +240,9 @@ const isShowClassifyModal = ref(false)
 const createTypeIndex = ref(0) 
 function changeCreateType () {
   createTypeIndex.value = createTypeIndex.value === 0 ? 1 : 0
+  if (createTypeIndex.value === 1) {
+    nft.type = ''
+  }
 }
 
 const dialogVisible = false
@@ -235,14 +254,16 @@ let originalFile: MetaFile = reactive({
   BufferData: '',
   hexData: '',
   name: '',
-  data_type: ''
+  data_type: '',
+  raw: null
 })
 let coverFile: MetaFile = reactive({
   base64Data: '',
   BufferData: '',
   hexData: '',
   name: '',
-  data_type: ''
+  data_type: '',
+  raw: null
 })
 
 
@@ -256,7 +277,6 @@ async function originalFileInputChage(e: Event) {
       originalFile.name = res.name
       originalFile.base64Data = res.base64Data
       originalFile.hexData = res.hexData
-      originalFile.name = res.name
       originalFile.raw = res.raw
       originalFile.data_type = res.data_type
       // const response = await store.state.sdk?.createMetaFile({
@@ -282,7 +302,7 @@ async function coverFileInputChage(e: Event) {
       coverFile.raw = res.raw
       coverFile.base64Data = res.base64Data
       coverFile.hexData = res.hexData
-      coverFile.name = res.name
+      coverFile.data_type = res.data_type
     }
   }
 }
@@ -297,14 +317,14 @@ const isShowCreateSeriesModal = ref(false)
 const isShowSeriesModal = ref(false) 
 const series: any []  = reactive([])
 async function getSeries () {
-  const res = await GetSeries()
+  const res = await GetSeries({ page: 1, pageSize: 99 })
   if (res.code === NftApiCode.success) {
     series.length = 0
     series.push(...res.data)
   }
 }
-function createSerie () {
-  debugger
+//  创建系列
+async function createSerie () {
   if (serie.name === '') {
     ElMessage.error(i18n.t('createSeriesNamePlar'))
     return
@@ -318,11 +338,19 @@ function createSerie () {
     ElMessage.error(i18n.t('havedSameNameSeries'))
     return
   }
-  ElMessage.success(i18n.t('createdSuccess'))
-  series.push(JSON.parse(JSON.stringify(serie)))
-  serie.name = ''
-  serie.number = ''
-  isShowCreateSeriesModal.value = false
+  const params= {
+    name: serie.name,
+    count: parseInt(serie.number)
+  }
+  const res = await CreateSerice(params)
+  if (res.code === NftApiCode.success) {
+    ElMessage.success(i18n.t('createdSuccess'))
+    series.push({ ...params })
+    serie.name = ''
+    serie.number = ''
+    isShowCreateSeriesModal.value = false
+  }
+  
 }
 getSeries ()
 
@@ -334,12 +362,42 @@ function removeCover () {
 }
 
 function changeTag (index: number) {
+  if (createTypeIndex.value === 1) return
   const value = nftTypes[index].value
   if (nft.type === value) return
   nft.type = value
 }
 
+// 检测txId是否可以铸造
+async function checkTxIdStatus () {
+  const res = await GetTxStatus({
+    txId: nft.tx
+  })
+  if (res.code === NftApiCode.success) {
+    const response = await GetTxData(nft.tx)
+    if (response.code == 200 && response.result.data.length > 0) {
+      const data = response.result.data[0]
+      // MetaFile
+      if (data.parentNodeName === 'MetaFile') {
+        nft.type = '1'
+      } else if (data.parentNodeName === 'MetaAccessContent') {
+        nft.type = '3'
+        nft.nftName = data.data.title
+        nft.intro = data.data.artMark
+        coverFile = data.data.artCover
+      } else {
+        nft.tx === ''
+        ElMessage.error(i18n.t('txidToNftFaile'))
+      }
+    }
+  } else {
+    nft.tx === ''
+    ElMessage.error(i18n.t('txidToNftFaile'))
+  }
+}
+
 async function createNft () {
+
   // nft 类型
   if (nft.type === '') {
       ElMessage.warning(i18n.t('nftTypeTips'))
@@ -386,37 +444,69 @@ async function createNft () {
 
   
 
-  
-  // 上传源文件到阿里云
-  const originalFileForm = new FormData()
-  originalFileForm.append('file', originalFile.raw)
-  const fileUrl = await Upload(originalFileForm)
+  // 先创建 NftData
+  const createNftDataRes = await store.state.sdk?.createNftData({
+    type: createTypeIndex.value,
+    name: nft.nftName, // nft名称
+    intro: nft.intro, // nft描述
+    cover: coverFile, // nft封面 MetaFile协议地址
+    originalFile: originalFile, // nft原文件 MetaFile协议地址
+    txId: nft.tx
+  })
+  let loading
+  if (createNftDataRes && createNftDataRes.code === 200) {
+    // 先创建 NftData
+    loading = ElLoading.service({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+    })
+    const result = await store.state.sdk?.genesisNFT({ nftTotal: 1 })
+    if (result && result.code === 200) {
+      const sdkCreateNftRes = await store.state.sdk?.issueNFT({
+        receiverAddress: store.state.userInfo ? store.state.userInfo?.address : '',
+        genesisId: result.data.genesisId,
+        genesisTxid: result.data.genesisTxid,
+        codehash: result.data.codehash,
+        nftname: createNftDataRes.data.txId,
+        nftdesc: '',
+        nfticon: '',
+        nftwebsite: '',
+        nftissuerName: store.state.userInfo?.name ? store.state.userInfo?.name : ''
+      })
+      if (sdkCreateNftRes && sdkCreateNftRes.code === 200) {
+        // 上传源文件到阿里云
+        const originalFileForm = new FormData()
+        originalFileForm.append('file', originalFile.raw ? originalFile.raw : '')
+        const fileUrl = await Upload(originalFileForm)
 
-  // 上传封面图到阿里云
-  const coverForm = new FormData()
-  coverForm.append('file', coverFile.raw)
-  const coverUrl = await Upload(coverForm)
-  
-  const params = {
-    ...nft,
-    classify: nft.classify.join(','),
-    fileUrl,
-    coverUrl,
-    tokenId: 'nftId',
-    nftId: 'nftId'
+        // 上传封面图到阿里云
+        const coverForm = new FormData()
+        coverForm.append('file', coverFile.raw ? coverFile.raw : '')
+        const coverUrl = await Upload(coverForm)
+        const params = {
+          nftName: nft.nftName,
+          intro: nft.intro,
+          type: nft.type,
+          seriesName: selectedSeries[0],
+          tx: sdkCreateNftRes.data.txId,
+          classify: nft.classify.join(','),
+          fileUrl,
+          coverUrl,
+          tokenId: sdkCreateNftRes.data.nftId,
+          nftId: sdkCreateNftRes.data.nftId
+        }
+        const response = await CreateNft(params)
+        if (response.code === NftApiCode.success) {
+          ElMessage.success(i18n.t('castingsuccess'))
+          router.replace({ name: 'detail', params: { tokenId: sdkCreateNftRes.data.nftId }})
+        }
+      }
+    }
   }
-
-  if (selectedSeries.length > 0) {
-    const item = series.find(_item => _item.name === selectedSeries[0])
-    params.series = item.name
-    params.seriesNumber = item.number
-  }
-
-  const res = await CreateNft(params)
-  
-  if (res.code === NftApiCode.success) {
-    ElMessage.success(i18n.t('castingsuccess'))
-    router.push({ name: 'detail', params: { tokenId: res.data.tokenId }})
+  if(loading) {
+    loading.close()
   }
 }
 

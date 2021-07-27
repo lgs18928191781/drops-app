@@ -7,14 +7,17 @@
     <div class="picker-model-body">
       <div class="picker-model-list" v-if="props.list.length > 0">
         <div class="picker-model-item flex flex-align-center" v-for="(item, index) in props.list" :key="item.toString()" @click="itemClick(props.listKey ? item[props.listKey] : item)">
-          <div class="label flex1">{{ props.name ? item[props.name] : item }}</div>
+          <div class="label flex1">
+            {{ props.name ? item[props.name] : item }}
+            <slot name="item" v-bind:item="item"></slot>
+          </div>
           <div class="icon">
             <img class="secected" src="@/assets/images/pop_icon_hook.svg" v-if="isSellected(props.listKey ? item[props.listKey] : item)" />
           </div>
         </div>
       </div>
       <div class="null" v-else>{{ $t('null') }}</div>
-      <slot></slot>
+      <slot name="bottom"></slot>
     </div>
   </div>
 </template>
@@ -38,20 +41,12 @@ function confirm() {
 }
 
 function isSellected (item:any) {
-    if (props.listKey) {
-        return props.selecteds.find((_item:any) => props.listKey && _item[props.listKey] === item)
-    } else {
-        return props.selecteds.find((_item:any) => _item === item)
-    }
+  return props.selecteds.find((_item:any) => _item === item)
 }
 
 function itemClick (item: any) {
     let index
-    if (props.listKey) {
-        index = props.selecteds.findIndex((_item:any) => props.listKey && _item[props.listKey] === item)
-    } else {
-        index = props.selecteds.findIndex((_item:any) => _item === item)
-    }
+    index = props.selecteds.findIndex((_item:any) => _item === item)
     if (index === -1) {
         if (!props.multiple) {
             props.selecteds.length = 0

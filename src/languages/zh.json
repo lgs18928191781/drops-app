@@ -105,5 +105,6 @@
   "offsaleConfirm": "确认要下架",
   "niceWarning": "温馨提示",
   "buySuccess": "购买成功",
-  "loginingTip": "正在登录，请稍后操作"
+  "loginingTip": "正在登录，请稍后操作",
+  "txidToNftFaile": "此TXID内容不能被铸造成NFT,请填写其他TXID"
 }

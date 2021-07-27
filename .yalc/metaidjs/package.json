@@ -1,6 +1,6 @@
 {
   "name": "metaidjs",
-  "version": "1.7.1",
+  "version": "1.7.4",
   "description": "",
   "keywords": [],
   "main": "dist/metaidjs.cjs.js",
@@ -20,5 +20,5 @@
     "build": "tsc --module commonjs && rollup -c rollup.config.ts"
   },
   "dependencies": {},
-  "yalcSig": "701fe7ec93a0c7201ef8fe3258b5b837"
+  "yalcSig": "e20bb727bfafcf106f1773120b113b4d"
 }

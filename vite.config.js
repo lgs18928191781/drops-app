@@ -49,7 +49,14 @@ export default ((mode) => {
       // host: '0.0.0.0',
       port: 80,
       https: false,
-      open: false
+      open: false,
+      // proxy: {
+      //   '/api/showMANDB': {
+      //     target: env.VITE_WalletApi,
+      //     changeOrigin: true,
+      //     rewrite: (path) => path.replace(/^\/api/, '')
+      //   },
+      // }
     },
     build: {
       target: 'es2015'

@@ -104,5 +104,6 @@
   "offsaleConfirm": "Are you sure offsale",
   "niceWarning": "Confir Tips ",
   "buySuccess": "Successful purchase ",
-  "loginingTip": "Logging in, please operate later "
+  "loginingTip": "Logging in, please operate later ",
+  "txidToNftFaile": "This TXID content cannot be minted into NFT, please fill in other TXID "
 }

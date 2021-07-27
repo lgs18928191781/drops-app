@@ -4,5 +4,5 @@ declare interface MetaFile {
     hexData: string;
     name: string;
     data_type: string;
-    raw: File
+    raw: null | File
 }
