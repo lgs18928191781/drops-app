@@ -5,8 +5,11 @@ import pkg from './package.json'
 import styleImport from 'vite-plugin-style-import'
 import vueI18n from '@intlify/vite-plugin-vue-i18n'
 import { svgBuilder } from './svgBuilder'
-export default ((mode) => {
+export default (({mode}) => {
+  console.log('mode')
+  console.log(mode)
   // 加载环境配置文件
+  // const env = require('dotenv').config({ path: `./.env.${mode}` });
   const env = loadEnv(mode, process.cwd())
   return defineConfig({
     plugins: [
@@ -48,7 +51,7 @@ export default ((mode) => {
       host: env.VITE_Hosts.replace(/https:\/\//, '').replace(/http:\/\//, ''),
       // host: '0.0.0.0',
       port: 443,
-      https: false,
+      https: true,
       open: false,
       // proxy: {
       //   '/api/showMANDB': {
