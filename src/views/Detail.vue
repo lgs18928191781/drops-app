@@ -314,7 +314,7 @@ function toLink () {
 }
 
 async function buy () {
-  checkSdkStaut()
+  await checkSdkStaut()
   const loading = ElLoading.service({
       lock: true,
       text: 'Loading',

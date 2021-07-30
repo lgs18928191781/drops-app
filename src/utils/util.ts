@@ -1,5 +1,5 @@
 import { Buffer } from 'buffer'
-import { store } from '@/store'
+import { Action, store } from '@/store'
 import { ElMessage } from 'element-plus';
 import i18n from '@/utils/i18n';
 
@@ -64,13 +64,18 @@ export function hexToBase64(str: string) {
 }
 
 export function checkSdkStaut() {
-  if (!store.state.token){
-    ElMessage.warning(i18n.global.t('toLoginTip'))
-    return false
-  } else {
-    if (store.state.sdkInitIng) {
-      ElMessage.warning(i18n.global.t('loginingTip'))
+  return new Promise<void>(resolve => {
+    // const token = store.dispatch(Action.checkToken)
+    const token = store.state.token
+    if (!token){
+      ElMessage.warning(i18n.global.t('toLoginTip'))
       return false
+    } else {
+      if (store.state.sdkInitIng) {
+        ElMessage.warning(i18n.global.t('loginingTip'))
+        return false
+      }
     }
-  }
+    resolve()
+  })
 }

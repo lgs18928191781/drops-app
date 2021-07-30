@@ -9,7 +9,7 @@ export default class HttpRequest {
     })
     this.request.interceptors.request.use(
       async (config) => {
-        const token = store.dispatch(Action.checkToken)
+        const token = store.state.token ? store.state.token.access_token : null
         if (token) {
           config.headers['Authorization'] = `Bearer ${token}`
         }
