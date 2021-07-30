@@ -70,7 +70,7 @@
   "salenft": "NFT on sale ",
   "saledrsc": "Shelf description ",
   "timeplac": "Choose to be available for a limited time",
-  "priceplac": "Set sale price",
+  "priceplac": "Set the selling price, minimum 0.00001",
   "seehistoryprice": "View historical prices",
   "confirmsale": "Confirm listing",
   "copysuccess": "Copy successfully",

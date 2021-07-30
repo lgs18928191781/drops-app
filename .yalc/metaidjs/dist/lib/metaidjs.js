@@ -117,47 +117,6 @@ var MetaIdJs = /** @class */ (function () {
                 buttonUrl2: _this.SHOWMONEY_URL
             });
         };
-        this.genesisNFT = function (params) {
-            if (_this.isInjectMainFrame) {
-                if (params.callback) {
-                    var handlerId = generateRandomId();
-                    _this._handlers[handlerId] = {};
-                    if (params.callback) {
-                        _this._handlers[handlerId]['callback'] = params.callback;
-                    }
-                    params = __assign(__assign({}, params), { handlerId: handlerId });
-                    if (params.callback) {
-                        delete params.callback;
-                    }
-                }
-                window.mainFrameMessage.send('genesisNFT', params);
-                // console.log(this._handlers)
-            }
-            else {
-                throw new Error('showmoney frame 未加载');
-            }
-        };
-        this.issueNFT = function (params) {
-            debugger;
-            if (params.callback) {
-                var handlerId = generateRandomId();
-                _this._handlers[handlerId] = {};
-                if (params.callback) {
-                    _this._handlers[handlerId]['callback'] = params.callback;
-                }
-                params = __assign(__assign({}, params), { handlerId: handlerId });
-                if (params.callback) {
-                    delete params.callback;
-                }
-            }
-            if (_this.isInjectMainFrame) {
-                window.mainFrameMessage.send('issueNFT', params);
-                // console.log(this._handlers)
-            }
-            else {
-                throw new Error('showmoney frame 未加载');
-            }
-        };
         this.SHOWMONEY_URL = options.baseUri || "https://www.showmoney.app";
         this.onLoaded = options.onLoaded;
         if (typeof options.onError === 'function') {
@@ -200,6 +159,11 @@ var MetaIdJs = /** @class */ (function () {
             "isSupportedFt",
             "swapft",
             "getBalance",
+            "nftBuy",
+            "nftCancel",
+            "nftSell",
+            "genesisNFT",
+            "issueNFT",
         ];
         var _loop_1 = function (item) {
             this_1[item] = function (params) {

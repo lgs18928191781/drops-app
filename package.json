@@ -14,6 +14,7 @@
     "amfe-flexible": "^2.2.1",
     "axios": "^0.21.1",
     "buffer": "^6.0.3",
+    "decimal.js-light": "^2.5.1",
     "dotenv": "^10.0.0",
     "element-plus": "^1.0.2-beta.53",
     "metaidjs": "file:.yalc/metaidjs",

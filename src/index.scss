@@ -96,6 +96,20 @@ body{
 }
 
 
+.full-loading{
+    .el-loading-spinner{
+        .el-icon-loading{
+            color: $mainColor;
+            font-size: 60px;
+        }
+        .el-loading-text{
+            color: $mainColor;
+            font-size: 20px;
+            margin-top: 10px;
+        }
+    }
+}
+
 
 .section{
     margin-bottom: 60px;

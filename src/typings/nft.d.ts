@@ -31,4 +31,9 @@ declare interface NftItemDetail{
     coverUrl: string,
     tx: string,
     putAway: boolean
+    codeHash: string
+    genesis: string
+    tokenIndex: string
+    genesisTxId: string
+    sellTxId: string
 }

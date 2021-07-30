@@ -9,6 +9,7 @@ declare interface TransactionRecordItem {
   username: string
   ownerTime: number
   amount: string
+  metaId: string
 }
 
 declare interface Classify {
@@ -63,10 +64,15 @@ declare interface CreateNftParams {
   fileUrl: string
   coverUrl: string
   intro: string
-  series: string
-  seriesNumber: number
-  tx?: string
-  classify?: string
+  seriesName: string
+  tx: string
+  classify: string
+  codeHash: string
+  genesis: string
+  nftId: string
+  tokenId: string,
+  tokenIndex: string,
+  genesisTxId: string,
 }
 
 declare interface MyNftsResponstData extends apiResponse {

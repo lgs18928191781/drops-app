@@ -2,8 +2,7 @@
   "version": "v1",
   "packages": {
     "metaidjs": {
-      "version": "1.7.4",
-      "signature": "e20bb727bfafcf106f1773120b113b4d",
+      "signature": "401d198ebbce45a63b021665a31d61ae",
       "file": true,
       "replaced": "^1.7.0"
     }

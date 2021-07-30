@@ -39,7 +39,7 @@
             }}<span>{{ minute }}</span>{{ $t('minu') }}<span>{{ second }}</span>{{ $t('second') }}
           </div>
           <!-- <div class="btn btn-block"  @click="buy">{{ $t('use') }} {{ nft.val.amount }} BSV {{ $t('buy') }}</div> -->
-          <div class="btn btn-block" v-if="!store.state.userInfo || (store.state.userInfo && store.state.userInfo.metaId !== nft.val.ownerMetaId)" @click="buy">{{ $t('use') }} {{ nft.val.amount }} BSV {{ $t('buy') }}</div>
+          <div class="btn btn-block"  @click="buy">{{ $t('use') }} {{ nft.val.amount }} BSV {{ $t('buy') }}</div>
         </template>
       </div>
     </div>
@@ -79,7 +79,7 @@
             <div class="work-deail-section">
               <div class="work-detail-item flex flex-align-center">
                 <div class="key">{{ $t('createtime') }}：</div>
-                <div class="value flex1">{{ nft.val.forgeTime }}</div>
+                <div class="value flex1">{{ $filters.dateTimeFormat(nft.val.forgeTime) }}</div>
               </div>
               <div class="work-detail-item flex flex flex-align-baseline">
                 <div class="key">{{ $t('contractaddr') }}：</div>
@@ -164,7 +164,7 @@
               :key="record.ownerTime"
             >
               <span class="td flex1 user flex flex-align-center">
-                <img :src="record.headUrl" :alt="record.username" />
+                <img :src="$filters.avatar(record.metaId)" :alt="record.username" />
                 <span class="name">{{ record.username }}</span>
               </span>
               <span class="td role flex1 flex flex-align-center flex-pack-center">
@@ -190,14 +190,16 @@ import { ref, reactive } from 'vue'
 import CertTemp from '@/components/Cert/Cert.vue'
 import { useI18n } from 'vue-i18n'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
-import { ElMessage } from 'element-plus'
+import { ElLoading, ElMessage } from 'element-plus'
 import { useRoute } from 'vue-router'
 // @ts-ignore
 import { BuyNft, GetNftDetail, NftApiCode, TransactionRecord } from '@/api'
-import * as dayjs from 'dayjs'
+// @ts-ignore
+import dayjs from 'dayjs'
 import { useStore } from '@/store'
 import { nftTypes } from '@/config'
 import { checkSdkStaut } from '@/utils/util'
+import Decimal from 'decimal.js-light'
 
 const i18n = useI18n()
 const route = useRoute()
@@ -207,22 +209,22 @@ let tabIndex = ref(0)
 
 const nft: { val: NftItemDetail } = reactive({
   val: {
-    foundryName: 'string',
-    foundryMetaId: 'string',
-    foundryHead: 'string',
+    foundryName: '',
+    foundryMetaId: '',
+    foundryHead: '',
     amount: 0,
     remainingTime: 0,
-    nftName: 'string',
-    classify: 'string',
-    describe: 'string',
+    nftName: '',
+    classify: '',
+    describe: '',
     forgeTime: 0,
-    contractAddress: 'string',
-    tokenId: 'string',
-    ownerName: 'string',
-    ownerMetaId: 'string',
-    ownerHead: 'string',
-    type: 'string',
-    revenue: 'string',
+    contractAddress: '',
+    tokenId: '',
+    ownerName: '',
+    ownerMetaId: '',
+    ownerHead: '',
+    type: '',
+    revenue: '',
     coverUrl: '',
     tx: '',
     putAway: false,
@@ -238,7 +240,7 @@ function getDetail() {
       })
       if (res.code === NftApiCode.success) {
         nft.val = res.data
-        countDownTimeLeft()
+        // countDownTimeLeft()
       }
     }
     resolve()
@@ -313,15 +315,49 @@ function toLink () {
 
 async function buy () {
   checkSdkStaut()
-  const res = await BuyNft({
-    tokenId: nft.val.tokenId,
-    payMentAddress: store.state.userInfo!.address,
-    collectionAddress: store.state.userInfo!.address
+  const loading = ElLoading.service({
+      lock: true,
+      text: 'Loading',
+      spinner: 'el-icon-loading',
+      background: 'rgba(0, 0, 0, 0.7)',
+      customClass: 'full-loading',
   })
-  if (res.code === NftApiCode.success) {
-    debugger
-    ElMessage.success(i18n.t('buySuccess'))
+  const params = {
+    codehash: nft.val.codeHash,
+    genesis: nft.val.genesis,
+    tokenIndex: nft.val.tokenIndex,
+    opreturnData: nft.val.sellTxId,
+    genesisTxid: nft.val.genesisTxId
   }
+  const response = await store.state.sdk?.nftBuy({
+    txId: nft.val.sellTxId,
+    ... params
+  })
+  if (response?.code === 200) {
+    // 购买完要上链 nft buy 协议
+    const buyProtocolRes = await store.state.sdk?.createNftBuyProtocol({
+      txId: response.data.txid,
+      sellTxId: nft.val.sellTxId,
+      createdAt: new Date().getTime(),
+      txHex: response.data.txHex,
+      satoshisPrice: new Decimal(nft.val.amount).mul(10**8).toString(),
+      buyerMetaId: store.state.userInfo!.metaId,
+      ... params
+    })
+    if (buyProtocolRes?.code === 200) {
+      // 上链完 nft buy 协议 要 上报服务器
+      const res = await BuyNft({
+        tokenId: nft.val.tokenId,
+        payMentAddress: store.state.userInfo!.address,
+        collectionAddress: store.state.userInfo!.address
+      })
+      if (res.code === NftApiCode.success) {
+        ElMessage.success(i18n.t('buySuccess'))
+      }
+    }
+  }
+  
+  loading.close()
 }
 
 if (route.params.tokenId) {

@@ -139,27 +139,5 @@ export default class MetaIdJs {
     private handleLoading;
     private handleNotEnoughMoney;
     private init;
-    genesisNFT: (params: {
-        data: {
-            nftTotal: number;
-        };
-        callback?: (() => any) | undefined;
-        handlerId?: any;
-    }) => void;
-    issueNFT: (params: {
-        data: {
-            receiverAddress: string;
-            genesisId: string;
-            genesisTxid: string;
-            codehash: string;
-            nftname: string;
-            nftdesc: string;
-            nfticon: string;
-            nftwebsite: string;
-            nftissuerName: string;
-        };
-        callback?: (() => any) | undefined;
-        handlerId?: any;
-    }) => void;
 }
 export {};

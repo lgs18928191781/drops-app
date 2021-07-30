@@ -1,7 +1,6 @@
 import HttpRequest from '@/utils/request'
 // @ts-ignore
 import qs from 'qs'
-import { apiResponse, CreateNftParams, CreateNftResponstData, GetClassiesData, GetProductDetailResponstData, GetProductListResponstData, GetSeriestData, GetTxStatusData, MyNftsResponstData, SaleNftResponstData, TransactionRecordResponstData } from './typings/api'
 
 const env = import.meta.env
 
@@ -84,6 +83,7 @@ export const SaleNft = (params: {
   sellValidTime: number,
   amount: number | string,
   tokenId: string
+  sellTxId: string
 }):Promise<SaleNftResponstData> => {
   return nftHttp.post(`/api/v2/productTransaction/sell`, params);
 } 

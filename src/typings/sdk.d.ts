@@ -53,6 +53,7 @@ export interface SdkGenesisNFTRes extends MetaIdJsRes{
         codehash: string
         genesisId: string
         genesisTxid: string
+        sensibleId: string
     }
 }
 
@@ -83,5 +84,31 @@ export interface IssueNFTResData extends MetaIdJsRes {
       nftId: string
       tokenId: string
       txId: string
+      tokenIndex: string
+    }
+}
+
+export interface NFTCancelResData extends MetaIdJsRes {
+    data: {
+        tx: any
+        txHex: string
+        txid: string
+    }
+}
+
+export interface NftBuyResData extends MetaIdJsRes {
+    data:{
+        tx: any
+        txHex: string
+        txid: string
+    }
+}
+
+export interface NftSellResData extends MetaIdJsRes {
+    data:{
+        sellTxHex: string
+        sellTxId: string
+        txHex: string
+        txId: string
     }
 }

@@ -15,7 +15,7 @@
         <div class="section container">
             <div class="section-header flex flex-align-center">
                 <div class="title flex1">{{ $t('allmenu') }}</div>
-                <img class="search-icon" src="@/assets/images/hom_icon_search.svg" />
+                <!-- <img class="search-icon" src="@/assets/images/hom_icon_search.svg" /> -->
             </div>
             <div class="section-screen flex flex-align-center">
                 <div class="tags flex1 flex flex-align-center flex-wrap-wrap">
