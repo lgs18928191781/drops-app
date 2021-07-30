@@ -1,4 +1,4 @@
-import { CreateNftParams } from "@/api";
+
 import { ProtocolOptions } from "metaidjs";
 
 export interface ConstructorOptionsTypes {

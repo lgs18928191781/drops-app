@@ -1,4 +1,4 @@
-import { store } from '@/store'
+import { Action, store } from '@/store'
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
 import { ElMessage } from 'element-plus'
 export default class HttpRequest {
@@ -8,9 +8,10 @@ export default class HttpRequest {
       baseURL: baseUrl,
     })
     this.request.interceptors.request.use(
-      (config) => {
-        if (store.state.token) {
-          config.headers['Authorization'] = `Bearer ${store.state.token.access_token}`
+      async (config) => {
+        const token = store.dispatch(Action.checkToken)
+        if (token) {
+          config.headers['Authorization'] = `Bearer ${token}`
         }
         return config
       },

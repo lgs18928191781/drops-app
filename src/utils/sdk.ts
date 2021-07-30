@@ -319,9 +319,9 @@ export default class Sdk {
   }) {
     return this.sendMetaDataTx({
         data: JSON.stringify(params),
-        nodeName: 'NftBuy',
-        brfcId: '19c35f7b9813',
-        path: '/Protocols/NftBuy',
+        nodeName: 'NftBuyData',
+        brfcId: '39772451f4fd',
+        path: '/Protocols/NftBuyData',
         needConfirm: false
     })
   }
@@ -403,9 +403,9 @@ export default class Sdk {
   }) {
     return this.sendMetaDataTx({
         data: JSON.stringify(params),
-        nodeName: 'NftSell',
-        brfcId: '5b17b7375fc6',
-        path: '/Protocols/NftSell',
+        nodeName: 'NftSellData',
+        brfcId: 'a45d22a2bf14',
+        path: '/Protocols/NftSellData',
         needConfirm: false
     })
   }
@@ -458,9 +458,9 @@ export default class Sdk {
   }) {
     return this.sendMetaDataTx({
         data: JSON.stringify(params),
-        nodeName: 'NftCancel',
-        brfcId: '3575a0e95c22',
-        path: '/Protocols/NftCancel',
+        nodeName: 'NftCancelData',
+        brfcId: '66f21f678aa6',
+        path: '/Protocols/NftCancelData',
         needConfirm: false
     })
   }
@@ -477,9 +477,9 @@ export default class Sdk {
     const { data, attachments } = await this.setAttachments(params, [ { name: 'cover', encrypt: '0'}, { name: 'originalFile', encrypt: '1'}])
     return this.sendMetaDataTx({
         data: JSON.stringify(data),
-        nodeName: 'NFTData',
-        brfcId: '123456789',
-        path: '/Protocols/NFTData',
+        nodeName: 'NftData',
+        brfcId: '6d25cc56661b',
+        path: '/Protocols/NftData',
         attachments,
     })
   }
