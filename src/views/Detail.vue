@@ -39,7 +39,7 @@
             }}<span>{{ minute }}</span>{{ $t('minu') }}<span>{{ second }}</span>{{ $t('second') }}
           </div>
           <!-- <div class="btn btn-block"  @click="buy">{{ $t('use') }} {{ nft.val.amount }} BSV {{ $t('buy') }}</div> -->
-          <div class="btn btn-block"  @click="buy">{{ $t('use') }} {{ nft.val.amount }} BSV {{ $t('buy') }}</div>
+          <div class="btn btn-block"  @click="buy" v-if="!store.state.userInfo || (store.state.userInfo && store.state.userInfo.metaId !== nft.val.ownerMetaId)">{{ $t('use') }} {{ nft.val.amount }} BSV {{ $t('buy') }}</div>
         </template>
       </div>
     </div>
@@ -240,7 +240,7 @@ function getDetail() {
       })
       if (res.code === NftApiCode.success) {
         nft.val = res.data
-        // countDownTimeLeft()
+        countDownTimeLeft()
       }
     }
     resolve()
