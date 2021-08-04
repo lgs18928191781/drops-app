@@ -50,7 +50,7 @@
   "time": "Time",
   "nomore": "no more",
   "createbytx": "Cast by TX",
-  "createtips1": "Cast your electronic version of pictures, photographic works and other types of files into NFT.",
+  "nftImageDrsc": "Cast your electronic version of pictures, photographic works and other types of files into NFT.",
   "createtips2": "Improving the NFT work information will not only make your NFT work easier to expose, but also have the opportunity to add additional value to it.",
   "createtips3": "After the NFT casting is completed, the work information is open and transparent and cannot be tampered with. ",
   "nftoriginal": "NFT source file",
@@ -105,5 +105,9 @@
   "niceWarning": "Confir Tips ",
   "buySuccess": "Successful purchase ",
   "loginingTip": "Logging in, please operate later ",
-  "txidToNftFaile": "This TXID content cannot be minted into NFT, please fill in other TXID "
+  "txidToNftFaile": "This TXID content cannot be minted into NFT, please fill in other TXID ",
+  "stayTuned": "Stay tuned ",
+  "nftCopyrightDrsc": "Cast your copyright income right work into an NFT. When the NFT is transferred, the owner of the NFT will inherit the income right of your work.",
+  "createdSuccessTitle": "Congratulations, NFT casting is successful!",
+  "lookNftDetail": "View this NFT"
 }

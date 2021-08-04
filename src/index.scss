@@ -42,6 +42,9 @@ body{
             border-color: #fff;
             border-style: dashed;
         }
+        &.disabled{
+            background: #cbcccf;
+        }
     }
 }
 

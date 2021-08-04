@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, RouterView } from 'vue-router'
 import Home from '@/views/Home.vue'
 import Create from '@/views/Create.vue'
+import CreateSuccess from '@/views/CreateSuccess.vue'
 import Detail from '@/views/Detail.vue'
 import Sale from '@/views/sale/Sale.vue'
 import SaleLegend from '@/views/sale/Legend.vue'
@@ -19,6 +20,7 @@ export const router = createRouter({
   routes: [
     { path: '/', component: Home },
     { path: '/create', name: 'create', component: Create, meta: { isAuth: true } },
+    { path: '/CreateSucsses/:tokenId', name: 'createSuccess', component: CreateSuccess, meta: { isAuth: true } },
     { path: '/detail/:tokenId', name: 'detail', component: Detail },
     { path: '/sale/:tokenId', name: 'sale', component: Sale, meta: { isAuth: true } },
     { path: '/saleLegend', name: 'saleLegend', component: SaleLegend },

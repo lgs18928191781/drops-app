@@ -54,12 +54,16 @@ export const actions: ActionTree<State, State> & Actions = {
     })
   },
   async [Action.getUserInfo]({ state, commit, dispatch }) {
-    state.sdk?.getUserInfo({
-      accessToken: state.token ? state.token?.access_token : '',
-      callback: (res: { data: UserInfo }) => {
-        commit(Mutation.SETUSERINFO, res.data)
-      }
-    })
+    const res = await state.sdk?.getUserInfo()
+    if (res && res.code === 200) {
+      commit(Mutation.SETUSERINFO, res.data)
+    }
+    // state.sdk?.getUserInfo({
+    //   accessToken: state.token ? state.token?.access_token : '',
+    //   callback: (res: { data: UserInfo }) => {
+    //     commit(Mutation.SETUSERINFO, res.data)
+    //   }
+    // })
   },
   [Action.refreshToken]({ state, commit, dispatch }) {
     return new Promise<void>(async (resolve, reject) => {

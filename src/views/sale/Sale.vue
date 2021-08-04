@@ -10,34 +10,9 @@
     
     <div class="cont-warp">
       <div class="nft-sale-set">
-        <div class="msg flex">
-          <!-- <img class="cover" :src="nft.val.coverUrl" :alt="nft.val.nftName" /> -->
-          <el-image class="cover"
-            :src="nft.val.coverUrl"
-            :alt="nft.val.nftName"
-            fit="cover"
-            :preview-src-list="[nft.val.coverUrl]">
-          </el-image>
-          <div class="cont flex1 flex flex-v">
-            <div class="flex1">
-              <div class="name">{{ nft.val.nftName }}</div>
-              <div class="msg-item flex flex-align-center">
-                <span class="key">{{ $t('creater') }}：</span>
-                <div class="value  flex1 flex flex-align-center">
-                  <div class="author flex flex-align-center">
-                    <img class="" :src="$filters.avatar(nft.val.foundryMetaId)" :alt="nft.val.foundryName" />
-                    <span class="username">{{ nft.val.foundryName }}</span>
-                  </div>
-                </div>
-              </div>
-              <div class="msg-item flex flex-align-center">
-                <span class="key">{{ $t('createtime') }}：</span>
-                <div class="value flex1">{{ $filters.dateTimeFormat(nft.val.forgeTime) }}</div>
-              </div>
-            </div>
-            <CertTemp />
-          </div>
-        </div>
+        <!-- NFT 信息 卡片 -->
+        <NftMsgCard :user-name="nft.val.foundryName" :cover-url="nft.val.coverUrl" :is-show-cert="true" :name="nft.val.nftName" :created-at="nft.val.forgeTime" :meta-id="nft.val.foundryMetaId" />
+
         <div class="form">
           <div class="form-item">
             <!-- <div class="title">时间</div> -->
@@ -101,37 +76,14 @@ import { ElDropdown, ElDropdownItem, ElDropdownMenu, ElMessage, ElDatePicker, El
 import { useI18n } from 'vue-i18n'
 import { store } from '@/store'
 import Decimal from 'decimal.js-light'
+import NftMsgCard from '@/components/NftMsgCard/NftMsgCard.vue'
 
 const i18n = useI18n()
 const route = useRoute()
 const router = useRouter()
+// @ts-ignore
 const nft: { val: NftItemDetail } = reactive({
-  val: {
-    foundryName: '',
-    foundryMetaId: '',
-    foundryHead: '',
-    amount: 0,
-    remainingTime: 0,
-    nftName: '',
-    classify: '',
-    describe: '',
-    forgeTime: 0,
-    contractAddress: '',
-    tokenId: '',
-    ownerName: '',
-    ownerMetaId: '',
-    ownerHead: '',
-    type: '',
-    revenue: '',
-    coverUrl: '',
-    tx: '',
-    putAway: false,
-    codeHash: '',
-    genesis: '',
-    tokenIndex: '',
-    genesisTxId: '',
-    sellTxId: ''
-  },
+  val: {}
 })
 
 const saleTime = ref('')
@@ -180,30 +132,46 @@ async function confirmSale() {
     opreturnData: nft.val!.tx,
     genesisTxid: nft.val!.genesisTxId
   }
-  const lineRes = await store.state.sdk?.nftSell(params)
-  if (lineRes && lineRes.code === 200) {
-    // 上架完 要上链 sell 协议 
-    const sellProtocolRes = await store.state.sdk?.createNftSellProtocol({
-      txid: lineRes.data.txId, // sell txId string
-      sellTxId: lineRes.data.sellTxId, // sellUtxoTxId
-      sellTxHex: lineRes.data.sellTxHex,  // sell的utxo
-      createdAt: new Date().getTime(), // 创建时间
-      ...params
-    })
-    if (sellProtocolRes && sellProtocolRes.code === 200) {
+
+  const res = await store.state.sdk?.sellNFT(params).catch(() => { loading.close() })
+  if (res && res.sellTxId) {
       // sell协议上完 要上报服务器
-      const res = await SaleNft({
+      const response = await SaleNft({
         sellValidTime: new Date(saleTime.value).getTime(),
         amount: saleAmount.value,
         tokenId: nft.val!.tokenId,
-        sellTxId: lineRes.data.sellTxId
+        sellTxId: res.sellTxId
       })
-      if (res.code === NftApiCode.success) {
+      if (response.code === NftApiCode.success) {
         ElMessage.success(i18n.t('saleSuccess'))
         router.back()
       }
     }
-  }
+
+  // const lineRes = await store.state.sdk?.nftSell(params)
+  // if (lineRes && lineRes.code === 200) {
+  //   // 上架完 要上链 sell 协议 
+  //   const sellProtocolRes = await store.state.sdk?.createNftSellProtocol({
+  //     txid: lineRes.data.txId, // sell txId string
+  //     sellTxId: lineRes.data.sellTxId, // sellUtxoTxId
+  //     sellTxHex: lineRes.data.sellTxHex,  // sell的utxo
+  //     createdAt: new Date().getTime(), // 创建时间
+  //     ...params
+  //   })
+  //   if (sellProtocolRes && sellProtocolRes.code === 200) {
+  //     // sell协议上完 要上报服务器
+  //     const res = await SaleNft({
+  //       sellValidTime: new Date(saleTime.value).getTime(),
+  //       amount: saleAmount.value,
+  //       tokenId: nft.val!.tokenId,
+  //       sellTxId: lineRes.data.sellTxId
+  //     })
+  //     if (res.code === NftApiCode.success) {
+  //       ElMessage.success(i18n.t('saleSuccess'))
+  //       router.back()
+  //     }
+  //   }
+  // }
   loading.close()
 }
 

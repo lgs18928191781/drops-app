@@ -50,7 +50,7 @@
   "time": "时间",
   "nomore": "没有更多了",
   "createbytx": "由TX铸造",
-  "createtips1": "将您的电子版图片、摄影作品等类型的文件铸造成NFT。",
+  "nftImageDrsc": "将您的电子版图片、摄影作品等类型的文件铸造成NFT。",
   "createtips2": "完善NFT作品信息，不仅能让你的NFT作品更容易曝光，还有机会为它增加额外价值。",
   "createtips3": "NFT铸造完成后，作品信息公开透明，不可篡改。",
   "nftoriginal": "NFT源文件",
@@ -100,11 +100,15 @@
   "fail": "失败",
   "image": "图片",
   "inkind": "实物",
-  "copyright": "版权",
+  "copyright": "权益",
   "worklink": "作品链接",
   "offsaleConfirm": "确认要下架",
   "niceWarning": "温馨提示",
   "buySuccess": "购买成功",
   "loginingTip": "正在登录，请稍后操作",
-  "txidToNftFaile": "此TXID内容不能被铸造成NFT,请填写其他TXID"
+  "txidToNftFaile": "此TXID内容不能被铸造成NFT,请填写其他TXID",
+  "stayTuned": "开发中，敬请期待",
+  "nftCopyrightDrsc": "将您的版权收益权作品铸造成NFT，当NFT发生转移时，NFT的拥有者将会继承您的作品的收益权。",
+  "createdSuccessTitle": "恭喜您，NFT铸造成功啦！",
+  "lookNftDetail": "查看此NFT"
 }

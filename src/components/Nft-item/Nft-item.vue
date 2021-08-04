@@ -1,7 +1,7 @@
 <template>
   <a @click="toDetail(item?.tokenId)" class="nft-item" :key="item?.tokenId">
     <div class="cover">
-      <img :src="item?.coverUrl" :alt="item?.name" />
+      <img class="cover-image" :src="item?.coverUrl" :alt="item?.name" />
     </div>
     <div class="cont">
       <div class="name">{{ isSelf ? item.productName : item?.name }}</div>
@@ -40,6 +40,9 @@ import { useRouter } from 'vue-router'
 import { GetNftDetail, NftApiCode, OffSale } from '@/api'
 import { ElDialog, ElLoading, ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import { Decimal } from 'decimal.js-light'
+import NftOffSale from '@/utils/offSale'
+
 
 const store = useStore()
 const router = useRouter()
@@ -67,14 +70,6 @@ function toSale () {
 function offSale () {
   ElMessageBox.confirm(`${i18n.t('offsaleConfirm')} ${props.item.productName} ?`, i18n.t('niceWarning'))
   .then(async () => {
-
-    // const res = await OffSale({ tokenId: props.item!.tokenId})
-    //     if (res.code === NftApiCode.success) {
-    //       props.item!.putAway = false
-    //       ElMessage.success(i18n.t('offsale') + i18n.t('success'))
-    //     } else {
-    //       ElMessage.success(i18n.t('offsale') + i18n.t('fail'))
-    //     }
     
   const loading = ElLoading.service({
       lock: true,
@@ -89,42 +84,63 @@ function offSale () {
       tokenId: props.item.tokenId
     })
     if (detailRes.code === NftApiCode.success) {
-      const data = detailRes.data
-      // 链上下架
-      const params = {
-        codehash: data.codeHash,
-        genesis: data.genesis,
-        tokenIndex: data.tokenIndex,
-        opreturnData: data.tx,
-        genesisTxid: data.genesisTxId,
-      }
-      const lineRes = await store.state.sdk?.nftCancel({
-        txId: data.sellTxId,
-        ...params
+      NftOffSale(detailRes.data)
+      .then(() => {
+        loading.close()
       })
-      debugger
-      if (lineRes?.code === 200) {
-        // 下架完要 上链 cancel sell 协议
-        const cancelProtocol = await store.state.sdk?.createNftCancelSellProtocol({
-          txId: lineRes.data.txid,
-          sellTxId: data.sellTxId,
-          txHex: lineRes.data.txHex,
-          satoshisPrice: 1,
-          createdAt: new Date().getTime(),
-          ...params
-        })
-        debugger
-        if (cancelProtocol?.code === 200) {
-          // 上链 cancel sell 协议 成功后 上报给服务器
-          const res = await OffSale({ tokenId: props.item!.tokenId})
-          if (res.code === NftApiCode.success) {
-            props.item!.putAway = false
-            ElMessage.success(i18n.t('offsale') + i18n.t('success'))
-          } else {
-            ElMessage.success(i18n.t('offsale') + i18n.t('fail'))
-          }
-        }
-      }
+      .catch(() => {
+        loading.close()
+      })
+      // const data = detailRes.data
+      // const params = {
+      //   codehash: data.codeHash,
+      //   genesis: data.genesis,
+      //   tokenIndex: data.tokenIndex,
+      //   opreturnData: data.tx,
+      //   genesisTxid: data.genesisTxId,
+      //   txId: data.sellTxId,
+      //   sellTxId: data.sellTxId,
+      //   satoshisPrice: new Decimal(data.amount).mul(10**8).toString()
+      // }
+      // const res = await store.state.sdk?.cancelSellNFT(params).catch(() => { loading.close() })
+      // if (res && res.code === 200) {
+      //   // 上链 cancel sell 协议 成功后 上报给服务器
+      //   const res = await OffSale({ tokenId: props.item!.tokenId})
+      //   if (res.code === NftApiCode.success) {
+      //     props.item!.putAway = false
+      //     ElMessage.success(i18n.t('offsale') + i18n.t('success'))
+      //   } else {
+      //     ElMessage.success(i18n.t('offsale') + i18n.t('fail'))
+      //   }
+      // }
+
+      // const lineRes = await store.state.sdk?.nftCancel({
+      //   txId: data.sellTxId,
+      //   ...params
+      // })
+      // debugger
+      // if (lineRes?.code === 200) {
+      //   // 下架完要 上链 cancel sell 协议
+      //   const cancelProtocol = await store.state.sdk?.createNftCancelSellProtocol({
+      //     txId: lineRes.data.txid,
+      //     sellTxId: data.sellTxId,
+      //     txHex: lineRes.data.txHex,
+      //     satoshisPrice: '1',
+      //     createdAt: new Date().getTime(),
+      //     ...params
+      //   })
+      //   debugger
+      //   if (cancelProtocol?.code === 200) {
+      //     // 上链 cancel sell 协议 成功后 上报给服务器
+      //     const res = await OffSale({ tokenId: props.item!.tokenId})
+      //     if (res.code === NftApiCode.success) {
+      //       props.item!.putAway = false
+      //       ElMessage.success(i18n.t('offsale') + i18n.t('success'))
+      //     } else {
+      //       ElMessage.success(i18n.t('offsale') + i18n.t('fail'))
+      //     }
+      //   }
+      // }
     }
     
     loading.close()

@@ -1,14 +1,24 @@
 import {
+  BuyNFTParams,
+  CancelSellNFTParams,
   ConstructorOptionsTypes,
   CreateMetaFileFunParams,
+  CreateNFTParams,
+  CreateNFTRes,
+  CreateNftSellProtocolParams,
   IssueNFTResData,
   MetaIdJsRes,
+  NftBuyParams,
   NftBuyResData,
+  NftCancelParams,
   NFTCancelResData,
+  NftDataProtocolParams,
+  NftSellParams,
   NftSellResData,
   ProtocolParamsTypes,
   SdkCallBack,
   SdkGenesisNFTRes,
+  SellNFTParams,
   SendMetaDataTxRes,
 } from '@/typings/sdk'
 import { rejects } from 'assert/strict'
@@ -19,9 +29,12 @@ import { v4 as uuid } from 'uuid'
 import { ElMessage } from 'element-plus'
 
 import { store } from '@/store'
+import { Decimal } from 'decimal.js-light'
 
 
 const metaIdTag = import.meta.env.VITE_MetaIdTag
+
+const doubleTimeOut = 2000 // 防止双花 定时器时间
 export default class Sdk {
   metaidjs: null | MetaIdJs = null
   appMetaidjs: null | {
@@ -66,7 +79,7 @@ export default class Sdk {
   }) {
     return new Promise<SendMetaDataTxRes>((resolve, reject) => {
       if (!params.payCurrency) params.payCurrency = 'BSV'
-      if (!params.needConfirm) params.needConfirm = true
+      if (typeof params.needConfirm === 'undefined') params.needConfirm = true
       if (!params.encrypt) params.encrypt = '0'
       if (!params.dataType) params.dataType = 'application/json'
       const accessToken = store.state.token ? store.state.token?.access_token : ''
@@ -78,11 +91,14 @@ export default class Sdk {
       } else {
         const _params = {
           callback: (res: MetaIdJsRes) => {
+            debugger
             this.callback(res, resolve)
           },
           onCancel: (res: MetaIdJsRes) => {
+            debugger
             reject(res)
           },
+          metaIdTag,
           accessToken,
           ...params,
         }
@@ -101,16 +117,25 @@ export default class Sdk {
     })
   }
 
-  getUserInfo(params: { accessToken: string; callback?: Function }) {
-    if (this.isApp) {
-      const functionName: string = `getUserInfoCallBack`
-      // @ts-ignore
-      window[functionName] = params.callback
-      this.appMetaidjs?.getUserInfo(this.appId, this.appScrect, functionName)
-    } else {
-      this.metaidjs?.getUserInfo(params)
-    }
+  getUserInfo() {
+    return new Promise<MetaIdJsRes>(resolve => {
+      const params = {
+          accessToken: store.state.token ? store.state.token?.access_token : '',
+          callback: (res: MetaIdJsRes) => {
+              this.callback(res, resolve)
+          }
+      }
+        if (this.isApp) {
+          const functionName: string = `getUserInfoCallBack`
+          // @ts-ignore
+          window[functionName] = params.callback
+          this.appMetaidjs?.getUserInfo(this.appId, this.appScrect, functionName)
+        } else {
+          this.metaidjs?.getUserInfo(params)
+        }
+    })
   }
+
 
   eciesDecryptData(params: { accessToken: string; callback?: Function; data: string }) {
     if (this.isApp) {
@@ -150,7 +175,58 @@ export default class Sdk {
     })
   }
 
-  // 
+  // 铸造 nft 1. genesisNFT  2.createNftDataProtocol 3.issueNFT
+  createNFT (params: CreateNFTParams) {
+    return new Promise<CreateNFTRes>(async (resolve, reject) => {
+      const { nftTotal, ...nftDataParams } = params
+      // 1. genesisNFT
+      const res  = await this.genesisNFT({ nftTotal: params.nftTotal ? params.nftTotal : '1' })
+      if (res.code === 200) {
+        // 延迟一秒防止双花
+        setTimeout(async () => {
+          // 2.createNftDataProtocol
+          const nftDataRes = await this.createNftDataProtocol(nftDataParams)
+          if (nftDataRes.code === 200) {
+            // 延迟一秒防止双花
+            setTimeout(async () => {
+              // 3.issueNFT
+              const issueRes = await this.issueNFT({
+                receiverAddress: store.state.userInfo ? store.state.userInfo?.address : '',
+                genesisId: res.data.genesisId,
+                genesisTxid: res.data.genesisTxid,
+                codehash: res.data.codehash,
+                nftname: nftDataRes.data.txId,
+                nftdesc: '',
+                nfticon: '',
+                nftwebsite: '',
+                nftissuerName: store.state.userInfo?.name ? store.state.userInfo?.name : '',
+                sensibleId: res.data.sensibleId,
+              })
+              if (issueRes.code === 200) {
+                resolve({
+                  code: issueRes.code,
+                  data: {
+                    ...issueRes.data,
+                    ...res.data
+                  },
+                  status: 'success',
+                  handlerId: '',
+                  accessToken: ''
+                })
+              } else {
+                reject('createNFT error')
+              }
+            }, doubleTimeOut)
+          } else {
+            reject('createNFT error')
+          }
+        }, doubleTimeOut)
+      } else {
+        reject('createNFT error')
+      }
+    })
+  }
+
   genesisNFT(params: { nftTotal: string }): Promise<SdkGenesisNFTRes> {
     return new Promise<SdkGenesisNFTRes>((resolve, reject) => {
       const _params = {
@@ -185,7 +261,7 @@ export default class Sdk {
               satotxPubKey:
                 "19d9193ee2e95d09445d28408e8a3da730b2d557cd8d39a7ae4ebbfbceb17ed5d745623529ad33d043511f3e205c1f92b6322833424d19823c3b611b3adabb74e1006e0e93a8f1e0b97ab801c6060a4c060f775998d9f003568ab4ea7633a0395eb761c36106e229394f2c271b8522a44a5ae759254f5d22927923ba85b3729460ecccca07a5556299aa7f2518814c74a2a4d48b48013d609002631f2d93c906d07077ef58d473e3d971362d1129c1ab9b8f9b1365519f0c023c1cadad5ab57240d19e256e08022fd0708951ff90a8af0655aff806c6382d0a72c13f1e52b88222d7dfc6357179b06ffcf937f9da3b0419908aa589a731e26bbaba2fa0b754bf722e338c5627b11dc24aadc4d83c35851c034936cf0df18167e856a5f0a7121d23cd48b3f8a420869a37bd1362905d7f76ff18a991f75a0f9d1bcfc18416d76691cc357cbdcc8cc0df9dbd9318a40e08adb2fb4e78b3c47bdf07eeed4f3f4e0f7e81e37460a09b857e0194c72ec03bb564b5b409d8a1b84c153186ecbb4cfdfd"
             }
-          ]
+          ],
         },
         callback: (res: SdkGenesisNFTRes) => {
           debugger
@@ -240,15 +316,43 @@ export default class Sdk {
     })
   }
 
-  // nft 购买
-  nftBuy(params: {
-    codehash: string
-    genesis: string
-    tokenIndex: string
-    txId: String
-    opreturnData: string
-    genesisTxid: string
-  }) {
+  // 购买NFT 逻辑 1.nftBuy 2.createNftBuyProtocol
+  buyNFT (params: BuyNFTParams) {
+    return new Promise<MetaIdJsRes>(async (resolve, reject) => {
+      const { txId, amount, ..._params } = params
+      // 1.nftBuy
+      const res = await this.nftBuy({
+        ..._params,
+        txId
+      })
+      debugger
+      if (res.code === 200) {
+        // 延迟一秒防止双花
+        setTimeout(async () => {
+          // 2.createNftBuyProtocol
+          const protocolRes = await this.createNftBuyProtocol({
+            txId: res.data.txid,
+            sellTxId: txId,
+            createdAt: new Date().getTime(),
+            txHex: res.data.txHex,
+            satoshisPrice: new Decimal(amount).mul(10**8).toString(),
+            buyerMetaId: store.state.userInfo!.metaId,
+            ... _params
+          })
+          if (protocolRes.code === 200) {
+            resolve(protocolRes)
+          } else {
+            reject('buyNFT fail')
+          }
+        }, doubleTimeOut)
+      } else {
+        reject('buyNFT fail')
+      }
+    })
+  }
+
+  // metaidjs nft 购买
+  nftBuy(params: NftBuyParams) {
     return new Promise<NftBuyResData>((resolve, reject) => {
       const _params = {
         data: {
@@ -296,22 +400,46 @@ export default class Sdk {
     })
   }
 
+  // nft 上架/销售 逻辑 1. nftSell 2. createNftSellProtocol
+  sellNFT (params: SellNFTParams) {
+    return new Promise<{ sellTxId: string }>(async (reslove, reject) => {
+      // 1. nftSell
+      const res = await this.nftSell(params)
+      if (res.code === 200) {
+        // 延迟一秒，防止双花
+        setTimeout(async () =>{
+          // 2. createNftSellProtocol
+          const response = await this.createNftSellProtocol({
+            txid: res.data.txId, // sell txId string
+            sellTxId: res.data.sellTxId, // sellUtxoTxId
+            sellTxHex: res.data.sellTxHex,  // sell的utxo
+            createdAt: new Date().getTime(), // 创建时间
+            ...params
+          }).catch(() => {
+            debugger
+          })
+          if(response && response.code === 200) {
+            reslove({
+              sellTxId: res.data.sellTxId
+            })
+          } else{
+            reject('sellNFT fail')
+          }
+        }, doubleTimeOut)
+      } else {
+        reject('sellNFT fail')
+      }
+    })
+  }
+
   // nft 上架/销售
-  nftSell(params: {
-    codehash: string
-    genesis: string
-    tokenIndex: string,
-    satoshisPrice: string,
-    opreturnData: string
-    genesisTxid: string
-  }) {
+  nftSell(params: NftSellParams) {
     return new Promise<NftSellResData>((resolve, reject) => {
       const _params = {
         data: {
           ...params
         },
         callback: (res: MetaIdJsRes) => {
-          debugger
           this.callback(res, resolve)
         },
       }
@@ -329,18 +457,7 @@ export default class Sdk {
   }
 
   // nft 上架/销售 上链
-  createNftSellProtocol(params: {
-    txid: string // sell交易tx
-    codehash: string // nft codehash
-    genesis: string // nft genesis
-    genesisTxid: string // nft genesisTxId
-    tokenIndex: string // nft tokenIndex
-    sellTxId: string // sellUtxoTxId
-    sellTxHex: any  // sell的utxo
-    satoshisPrice: string // 出售的价格，单位聪
-    opreturnData: string  // sell 备注信息
-    createdAt: number // 创建时间
-  }) {
+  createNftSellProtocol(params: CreateNftSellProtocolParams) {
     return this.sendMetaDataTx({
         data: JSON.stringify(params),
         nodeName: 'NftSellData',
@@ -350,15 +467,38 @@ export default class Sdk {
     })
   }
 
+  // nft 下架/取消销售 逻辑 1.nftCancel 2.createNftCancelSellProtocol
+  cancelSellNFT (params: CancelSellNFTParams) {
+    return new Promise<MetaIdJsRes>(async (resolve, reject) => {
+      const { txId, sellTxId, satoshisPrice,  ..._params } = params
+      // 1.nftCancel
+      const res = await this.nftCancel(params)
+      if (res.code === 200) {
+        // 延迟一秒，防止双花
+        setTimeout(async () => {
+          // 2.createNftCancelSellProtocol
+          const response = await this.createNftCancelSellProtocol({
+            txId: res.data.txid,
+            txHex: res.data.txHex,
+            createdAt: new Date().getTime(),
+            sellTxId,
+            satoshisPrice,
+            ..._params
+          })
+          if (response.code === 200) {
+            resolve(response)
+          } else {
+            reject('cancelSellNFT fail')
+          }
+        })
+      } else {
+        reject('cancelSellNFT fail')
+      }
+    })
+  }
+
   // nft 下架/取消销售
-  nftCancel(params: {
-    codehash: string
-    genesis: string
-    tokenIndex: string
-    txId: string
-    opreturnData: string,
-    genesisTxid: string
-  }) {
+  nftCancel(params: NftCancelParams) {
     return new Promise<NFTCancelResData>((resolve, reject) => {
       const _params = {
         data: {
@@ -392,7 +532,7 @@ export default class Sdk {
     genesisTxid: string // nft genesisTxid
     tokenIndex: string // nft tokenIndex
     txHex: string  // sell的utxo
-    satoshisPrice: number // 出售的价格，单位聪
+    satoshisPrice: string // 出售的价格，单位聪
     opreturnData: string  // cancel sell 备注信息
     createdAt: number // 创建时间
   }) {
@@ -405,14 +545,8 @@ export default class Sdk {
     })
   }
 
-  async createNftDataProtocol(params: {
-    type: number,
-    name: string, // nft名称
-    intro: string, // nft描述
-    cover: MetaFile, // nft封面 MetaFile协议地址
-    originalFile?: MetaFile, // nft原文件 MetaFile协议地址
-    txId?: string // 使用txId创建时的txId
-  }) {
+  
+  async createNftDataProtocol(params: NftDataProtocolParams) {
     debugger
     const { data, attachments } = await this.setAttachments(params, [ { name: 'cover', encrypt: '0'}, { name: 'originalFile', encrypt: '1'}])
     return this.sendMetaDataTx({
@@ -420,6 +554,7 @@ export default class Sdk {
         nodeName: 'NftData',
         brfcId: '6d25cc56661b',
         path: '/Protocols/NftData',
+        needConfirm: false,
         attachments,
     })
   }

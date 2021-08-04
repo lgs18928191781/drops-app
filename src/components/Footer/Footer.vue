@@ -1,7 +1,7 @@
 <template>
   <footer>
     <a class="logo flex flex-align-center">
-        <span>NFT</span>onShow
+        <span>NFT</span>OnShow
     </a>
     <div class="cro">{{ $t('contactus') }}</div>
     <div class="bottom flex">

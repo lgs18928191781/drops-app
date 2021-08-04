@@ -6,21 +6,34 @@
         <span class="flex1">{{ $t('createnft') }}</span>
         <a @click="changeCreateType"
           >{{ createTypeIndex === 0 ? $t('createbytx') : $t('createbylocal')
-          }}<i class="el-icon-arrow-right"></i></a>
+          }}<i class="el-icon-arrow-right"></i
+        ></a>
       </div>
     </div>
     <div class="cont-warp">
       <div class="tags">
-        <a
-          v-for="(type, index) in nftTypes"
-          :key="type.value"
-          :class="{ active: type.value === nft.type }"
+        <template v-for="(type, index) in nftTypes">
+          <template v-if="type.disabled">
+            <ElTooltip effect="dark" :content="$t('stayTuned')" placement="top">
+              <a :class="{ active: type.value === nft.type, disabled: type.disabled }"
           @click="changeTag(index)"
-          >{{ type.name }}</a
-        >
+          >{{ type.name }}</a>
+            </ElTooltip>
+          </template>
+          <template v-else>
+            <a :class="{ active: type.value === nft.type, disabled: type.disabled }"
+          @click="changeTag(index)"
+          >{{ type.name }}</a>
+          </template>
+        </template>
       </div>
       <div class="tips">
-        {{ $t('createtips1') }}<br />
+        <template v-if="nft.type === '1'">
+          {{ $t('nftImageDrsc') }}<br />
+        </template>
+        <template v-if="nft.type === '3'">
+          {{ $t('nftCopyrightDrsc') }}<br />
+        </template>
         {{ $t('createtips2') }}<br />
         {{ $t('createtips3') }}
       </div>
@@ -246,6 +259,7 @@ import {
   ElImage,
   ElMessage,
   ElLoading,
+  ElTooltip
 } from 'element-plus'
 
 import { tranfromImgFile } from '@/utils/util'
@@ -284,7 +298,7 @@ getClassifies()
 
 const nft = reactive({
   nftName: '',
-  type: '',
+  type: '1',
   fileUrl: '',
   coverUrl: '',
   intro: '',
@@ -411,7 +425,9 @@ function removeCover() {
 
 function changeTag(index: number) {
   if (createTypeIndex.value === 1) return
-  const value = nftTypes[index].value
+  const type = nftTypes[index]
+  if (type.disabled) return
+  const value = type.value
   if (nft.type === value) return
   nft.type = value
 }
@@ -497,61 +513,54 @@ async function createNft() {
     return
   }
 
-  let loading
+  const loading = ElLoading.service({
+      lock: true,
+      text: 'Loading',
+      spinner: 'el-icon-loading',
+      background: 'rgba(0, 0, 0, 0.7)',
+      customClass: 'full-loading',
+  })
 
-  // 先创建 NftData
-  const createNftDataRes = await store.state.sdk?.createNftDataProtocol({
+  const res = await await store.state.sdk?.createNFT({
     type: createTypeIndex.value,
     name: nft.nftName, // nft名称
     intro: nft.intro, // nft描述
     cover: coverFile, // nft封面 MetaFile协议地址
     originalFile: originalFile, // nft原文件 MetaFile协议地址
     txId: nft.tx,
+  }).catch(() => {
+    loading.close()
   })
-  if (createNftDataRes && createNftDataRes.code === 200) {
-    // 先创建 NftData
-    loading = ElLoading.service({
-      lock: true,
-      text: 'Loading',
-      spinner: 'el-icon-loading',
-      background: 'rgba(0, 0, 0, 0.7)',
-      customClass: 'full-loading',
-    })
-    const result = await store.state.sdk?.genesisNFT({ nftTotal: '1' })
-    if (result && result.code === 200) {
-      const sdkCreateNftRes = await issueNft(result)
-      if (sdkCreateNftRes && sdkCreateNftRes.code === 200) {
-        // 上传源文件到阿里云
-        const originalFileForm = new FormData()
-        originalFileForm.append('file', originalFile.raw ? originalFile.raw : '')
-        const fileUrl = await Upload(originalFileForm)
+  if (res && res.code === 200) {
+    // 上传源文件到阿里云
+    const originalFileForm = new FormData()
+    originalFileForm.append('file', originalFile.raw ? originalFile.raw : '')
+    const fileUrl = await Upload(originalFileForm)
 
-        // 上传封面图到阿里云
-        const coverForm = new FormData()
-        coverForm.append('file', coverFile.raw ? coverFile.raw : '')
-        const coverUrl = await Upload(coverForm)
-        const params = {
-          nftName: nft.nftName,
-          intro: nft.intro,
-          type: nft.type,
-          seriesName: selectedSeries[0],
-          tx: sdkCreateNftRes.data.txId,
-          classify: nft.classify.join(','),
-          fileUrl,
-          coverUrl,
-          tokenId: sdkCreateNftRes.data.txId,
-          nftId: sdkCreateNftRes.data.txId,
-          codeHash: result.data.codehash,
-          genesis: result.data.genesisId,
-          genesisTxId: result.data.genesisTxid,
-          tokenIndex: sdkCreateNftRes.data.tokenIndex,
-        }
-        const response = await CreateNft(params)
-        if (response.code === NftApiCode.success) {
-          ElMessage.success(i18n.t('castingsuccess'))
-          router.replace({ name: 'detail', params: { tokenId: sdkCreateNftRes.data.txId } })
-        }
-      }
+    // 上传封面图到阿里云
+    const coverForm = new FormData()
+    coverForm.append('file', coverFile.raw ? coverFile.raw : '')
+    const coverUrl = await Upload(coverForm)
+    const params = {
+      nftName: nft.nftName,
+      intro: nft.intro,
+      type: nft.type,
+      seriesName: selectedSeries[0],
+      tx: res.data.txId,
+      classify: nft.classify.join(','),
+      fileUrl,
+      coverUrl,
+      tokenId: res.data.txId,
+      nftId: res.data.txId,
+      codeHash: res.data.codehash,
+      genesis: res.data.genesisId,
+      genesisTxId: res.data.genesisTxid,
+      tokenIndex: res.data.tokenIndex,
+    }
+    const response = await CreateNft(params)
+    if (response.code === NftApiCode.success) {
+      ElMessage.success(i18n.t('castingsuccess'))
+      router.replace({ name: 'createSuccess', params: { tokenId: res.data.txId } })
     }
   }
   if (loading) {
@@ -559,31 +568,6 @@ async function createNft() {
   }
 }
 
-function issueNft (result: any) {
-  return new Promise<any>((resolve) => {
-    setTimeout(async () => {
-      const sdkCreateNftRes = await store.state.sdk?.issueNFT({
-        receiverAddress: store.state.userInfo ? store.state.userInfo?.address : '',
-        genesisId: result.data.genesisId,
-        genesisTxid: result.data.genesisTxid,
-        codehash: result.data.codehash,
-        // nftname: createNftDataRes.data.txId,
-        nftname: 'asdad',
-        nftdesc: '',
-        nfticon: '',
-        nftwebsite: '',
-        nftissuerName: store.state.userInfo?.name ? store.state.userInfo?.name : '',
-        sensibleId: result.data.sensibleId,
-      })
-      if (sdkCreateNftRes){
-        resolve(sdkCreateNftRes)
-      }
-    }, 2000)
-  })
-}
 
-function confirmClassify() {
-  isShowClassifyModal.value = !isShowClassifyModal.value
-}
 </script>
 <style lang="scss" scoped src="./Create.scss"></style>

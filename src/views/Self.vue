@@ -19,11 +19,19 @@
             <div class="section-header flex flex-align-center">
                 <div class="title flex1">{{$t('mynft')}}</div>
             </div>
-            <div class="section-cont nft-list">
-                <template v-for="nft in nfts" :key="nft.tokenId">
-                    <NftItem :item="nft" :isSelf="true" />
+            <NftSkeleton
+                :loading="isShowNftListSkeleton"
+                :count="pagination.pageSize"
+                class="section-cont nft-list"
+            >
+                <template #default>
+                    <div class="section-cont nft-list">
+                        <template v-for="nft in nfts" :key="nft.tokenId">
+                            <NftItem :item="nft" :isSelf="true" />
+                        </template>
+                    </div>
                 </template>
-            </div>
+            </NftSkeleton>
         </div>
 
         <LoadMore :pagination="pagination" @getMore="getMore" />
@@ -33,14 +41,16 @@
 import { MyNfts, NftApiCode } from '@/api';
 import NftItem from '@/components/Nft-item/Nft-item.vue'
 import { useStore } from '@/store';
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import LoadMore from '@/components/LoadMore/LoadMore.vue';
+import NftSkeleton from '@/components/NftSkeleton/NftSkeleton.vue'
 
 const store = useStore()
 const pagination = reactive({
     ...store.state.pagination    
 })
 const nfts: NftItem [] = reactive([])
+const isShowNftListSkeleton = ref(true)
 
 function getMyNfts (isCover: boolean = false) {
     return new Promise(async resolve => {
@@ -54,6 +64,7 @@ function getMyNfts (isCover: boolean = false) {
             if (pagination.page >= totalPages) {
                 pagination.nothing = true
             }
+            isShowNftListSkeleton.value = false
         }
     })
 }
