@@ -57,6 +57,10 @@ export const actions: ActionTree<State, State> & Actions = {
     const res = await state.sdk?.getUserInfo()
     if (res && res.code === 200) {
       commit(Mutation.SETUSERINFO, res.data)
+    } else {
+      state.sdkInitIng = false
+      state.userInfoLoading = false
+      commit(Mutation.LOGOUT)
     }
     // state.sdk?.getUserInfo({
     //   accessToken: state.token ? state.token?.access_token : '',

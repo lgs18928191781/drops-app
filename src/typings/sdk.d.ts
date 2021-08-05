@@ -196,7 +196,8 @@ export interface NftCancelParams {
     tokenIndex: string
     txId: string
     opreturnData: string,
-    genesisTxid: string
+    genesisTxid: string,
+    satoshis: string
 }
 export interface CancelSellNFTParams extends NftCancelParams {
     sellTxId: string

@@ -153,6 +153,7 @@
                 >{{ $t('minu') }}<span>{{ second }}</span
                 >{{ $t('second') }}
               </div>
+            </template>
               <!-- <div class="btn btn-block"  @click="buy">{{ $t('use') }} {{ nft.val.amount }} BSV {{ $t('buy') }}</div> -->
               <div
                 class="btn btn-block"
@@ -174,7 +175,7 @@
                 </div>
                 <div class="btn btn-block" v-else @click="onSale">{{ $t('sale') }}</div>
               </template>
-            </template>
+            
           </div>
         </div>
 
@@ -442,7 +443,6 @@ function countDownTimeLeft() {
 
 function imgError(error: string) {
   console.log(error)
-  debugger
 }
 
 function toLink() {
@@ -501,7 +501,6 @@ async function buy() {
     .catch(() => {
       loading.close()
     })
-  debugger
   if (res && res.code === 200) {
     // 上链完 nft buy 协议 要 上报服务器
     const response = await BuyNft({

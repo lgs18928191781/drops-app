@@ -3,7 +3,7 @@ import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router'
 import { useStore, Mutation, Action } from '@/store/index'
 
 onBeforeRouteUpdate((to, from, next) => {
-    debugger
+    
 })
 const route = useRoute()
 const router = useRouter()

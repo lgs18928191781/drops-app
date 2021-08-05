@@ -30,11 +30,12 @@ import { ElMessage } from 'element-plus'
 
 import { store } from '@/store'
 import { Decimal } from 'decimal.js-light'
+import { Resolve } from 'element-plus/lib/el-cascader-panel'
 
 
 const metaIdTag = import.meta.env.VITE_MetaIdTag
 
-const doubleTimeOut = 2000 // 防止双花 定时器时间
+const doubleTimeOut = 4000 // 防止双花 定时器时间
 export default class Sdk {
   metaidjs: null | MetaIdJs = null
   appMetaidjs: null | {
@@ -65,6 +66,25 @@ export default class Sdk {
     }
   }
 
+  getUserInfo() {
+    return new Promise<MetaIdJsRes>(resolve => {
+      const params = {
+          accessToken: store.state.token ? store.state.token?.access_token : '',
+          callback: (res: MetaIdJsRes) => {
+              this.callback(res, resolve)
+          }
+      }
+        if (this.isApp) {
+          const functionName: string = `getUserInfoCallBack`
+          // @ts-ignore
+          window[functionName] = params.callback
+          this.appMetaidjs?.getUserInfo(this.appId, this.appScrect, functionName)
+        } else {
+          this.metaidjs?.getUserInfo(params)
+        }
+    })
+  }
+
   sendMetaDataTx(params: {
     data: string,
     nodeName: string,
@@ -91,7 +111,6 @@ export default class Sdk {
       } else {
         const _params = {
           callback: (res: MetaIdJsRes) => {
-            debugger
             this.callback(res, resolve)
           },
           onCancel: (res: MetaIdJsRes) => {
@@ -114,25 +133,6 @@ export default class Sdk {
           ...params,
         })
       }
-    })
-  }
-
-  getUserInfo() {
-    return new Promise<MetaIdJsRes>(resolve => {
-      const params = {
-          accessToken: store.state.token ? store.state.token?.access_token : '',
-          callback: (res: MetaIdJsRes) => {
-              this.callback(res, resolve)
-          }
-      }
-        if (this.isApp) {
-          const functionName: string = `getUserInfoCallBack`
-          // @ts-ignore
-          window[functionName] = params.callback
-          this.appMetaidjs?.getUserInfo(this.appId, this.appScrect, functionName)
-        } else {
-          this.metaidjs?.getUserInfo(params)
-        }
     })
   }
 
@@ -264,7 +264,6 @@ export default class Sdk {
           ],
         },
         callback: (res: SdkGenesisNFTRes) => {
-          debugger
           this.callback(res, resolve)
         },
       }
@@ -291,15 +290,22 @@ export default class Sdk {
     nfticon: string
     nftwebsite: string
     nftissuerName: string
-  }) {
+  }, parentResolve?: ((value: IssueNFTResData | PromiseLike<IssueNFTResData>) => void) | undefined) {
     return new Promise<IssueNFTResData>((resolve, reject) => {
       const _params = {
         data: {
           ...params
         },
-        callback: (res: MetaIdJsRes) => {
-          debugger
-          this.callback(res, resolve)
+        callback: (res: MetaIdJsRes) => { 
+          // 当报错是token supply is fixed 时， 一直轮询，直到成功或其他报错
+          if (res.data && res.data.message === 'token supply is fixed'){
+                setTimeout(() => {
+                  this.issueNFT(params, resolve)
+                }, doubleTimeOut)
+          } else {
+            debugger
+            this.callback(res, parentResolve ? parentResolve : resolve)
+          }
         },
         
       }
@@ -325,7 +331,6 @@ export default class Sdk {
         ..._params,
         txId
       })
-      debugger
       if (res.code === 200) {
         // 延迟一秒防止双花
         setTimeout(async () => {
@@ -360,7 +365,6 @@ export default class Sdk {
           ...params
         },
         callback: (res: MetaIdJsRes) => {
-          debugger
           this.callback(res, resolve)
         },
       }
@@ -473,6 +477,7 @@ export default class Sdk {
       const { txId, sellTxId, satoshisPrice,  ..._params } = params
       // 1.nftCancel
       const res = await this.nftCancel(params)
+      debugger
       if (res.code === 200) {
         // 延迟一秒，防止双花
         setTimeout(async () => {
@@ -490,7 +495,7 @@ export default class Sdk {
           } else {
             reject('cancelSellNFT fail')
           }
-        })
+        }, doubleTimeOut)
       } else {
         reject('cancelSellNFT fail')
       }
@@ -506,7 +511,6 @@ export default class Sdk {
           ...params
         },
         callback: (res: MetaIdJsRes) => {
-          debugger
           this.callback(res, resolve)
         },
       }
@@ -547,7 +551,6 @@ export default class Sdk {
 
   
   async createNftDataProtocol(params: NftDataProtocolParams) {
-    debugger
     const { data, attachments } = await this.setAttachments(params, [ { name: 'cover', encrypt: '0'}, { name: 'originalFile', encrypt: '1'}])
     return this.sendMetaDataTx({
         data: JSON.stringify(data),
