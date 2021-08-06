@@ -30,7 +30,6 @@ import { ElMessage } from 'element-plus'
 
 import { store } from '@/store'
 import { Decimal } from 'decimal.js-light'
-import { Resolve } from 'element-plus/lib/el-cascader-panel'
 
 
 const metaIdTag = import.meta.env.VITE_MetaIdTag
@@ -114,7 +113,6 @@ export default class Sdk {
             this.callback(res, resolve)
           },
           onCancel: (res: MetaIdJsRes) => {
-            debugger
             reject(res)
           },
           metaIdTag,
@@ -297,13 +295,14 @@ export default class Sdk {
           ...params
         },
         callback: (res: MetaIdJsRes) => { 
+          console.log('issueNFT res')
+          console.log(res)
           // 当报错是token supply is fixed 时， 一直轮询，直到成功或其他报错
           if (res.data && res.data.message === 'token supply is fixed'){
                 setTimeout(() => {
                   this.issueNFT(params, resolve)
                 }, doubleTimeOut)
           } else {
-            debugger
             this.callback(res, parentResolve ? parentResolve : resolve)
           }
         },
@@ -420,7 +419,6 @@ export default class Sdk {
             createdAt: new Date().getTime(), // 创建时间
             ...params
           }).catch(() => {
-            debugger
           })
           if(response && response.code === 200) {
             reslove({
@@ -477,7 +475,6 @@ export default class Sdk {
       const { txId, sellTxId, satoshisPrice,  ..._params } = params
       // 1.nftCancel
       const res = await this.nftCancel(params)
-      debugger
       if (res.code === 200) {
         // 延迟一秒，防止双花
         setTimeout(async () => {

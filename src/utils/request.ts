@@ -32,6 +32,10 @@ export default class HttpRequest {
         let message
         if (error.response.data.error_description){
           message = error.response.data.error_description
+        } else if (error.response.data.message && error.response.data.message !== '') {
+          message = error.response.data.message
+        } else if (error.response.data.error && error.response.data.error !== '') {
+          message = error.response.data.error
         }
         if (message) {
           ElMessage.error(message)

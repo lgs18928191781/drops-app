@@ -160,7 +160,7 @@ export interface CreateNftBuyProtocolParams {
     genesis: string // nft genesis
     genesisTxid: string // nft genesisTxid
     tokenIndex: string // nft tokenIndex
-    satoshisPrice: string // 出售的价格，单位聪
+    satoshisPrice: number // 出售的价格，单位聪
     opreturnData: string  // buy 备注信息
     createdAt: number // 创建时间
     buyerMetaId: string // 购买者metaId
@@ -174,7 +174,7 @@ export interface NftSellParams {
     codehash: string
     genesis: string
     tokenIndex: string,
-    satoshisPrice: string,
+    satoshisPrice: number,
     opreturnData: string
     genesisTxid: string
 }
@@ -197,9 +197,9 @@ export interface NftCancelParams {
     txId: string
     opreturnData: string,
     genesisTxid: string,
-    satoshis: string
+    satoshis: number
 }
 export interface CancelSellNFTParams extends NftCancelParams {
     sellTxId: string
-    satoshisPrice: string
+    satoshisPrice: number
 }

@@ -122,3 +122,6 @@ export const CreateSerice = (params: { name: string, count: number }):Promise<Ge
   return nftHttp.post(`/api/v2/series/foundSeries`, params);
 } 
 
+export const GetNFTOwnerAddress = (params: { tokenId: string }):Promise<apiResponse> => {
+  return nftHttp.post(`/api/v2/productTransaction/ownerAddress`, params);
+} 

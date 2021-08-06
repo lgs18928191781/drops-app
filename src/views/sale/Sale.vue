@@ -87,7 +87,7 @@ const nft: { val: NftItemDetail } = reactive({
 })
 
 const saleTime = ref('')
-const saleAmount = ref()
+const saleAmount = ref('')
 
 function getDetail () {
   return new Promise<void>(async (resolve) => {
@@ -109,8 +109,9 @@ if (route.params.tokenId) {
 }
 
 function saleAmountChange () {
+  
   const min = 0.00001
-  if (parseFloat(saleAmount.value) <= min){
+  if (new Decimal(saleAmount.value).toNumber() <= min){
     saleAmount.value = min.toString()
   }
 }
@@ -123,7 +124,7 @@ async function confirmSale() {
       background: 'rgba(0, 0, 0, 0.7)',
       customClass: 'full-loading',
   })
-  const price = new Decimal(saleAmount.value).mul(10**8).toString()
+  const price = new Decimal(saleAmount.value).mul(10**8).toNumber()
   const params = {
     codehash: nft.val!.codeHash,
     genesis: nft.val!.genesis,

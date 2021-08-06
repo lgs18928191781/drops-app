@@ -82,10 +82,13 @@ function offSale () {
     // 先获取详情
     const detailRes = await GetNftDetail({
       tokenId: props.item.tokenId
+    }).catch(() => {
+        loading.close()
     })
-    if (detailRes.code === NftApiCode.success) {
+    if (detailRes && detailRes.code === NftApiCode.success) {
       NftOffSale(detailRes.data)
       .then(() => {
+        props.item.putAway = false
         loading.close()
       })
       .catch(() => {
@@ -100,7 +103,7 @@ function offSale () {
       //   genesisTxid: data.genesisTxId,
       //   txId: data.sellTxId,
       //   sellTxId: data.sellTxId,
-      //   satoshisPrice: new Decimal(data.amount).mul(10**8).toString()
+      //   satoshisPrice: new Decimal(data.amount).mul(10**8).toNumber()
       // }
       // const res = await store.state.sdk?.cancelSellNFT(params).catch(() => { loading.close() })
       // if (res && res.code === 200) {
@@ -142,8 +145,6 @@ function offSale () {
       //   }
       // }
     }
-    
-    loading.close()
   })
 }
 </script>

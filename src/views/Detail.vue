@@ -343,7 +343,7 @@ import { toClipboard } from '@soerenmartius/vue3-clipboard'
 import { ElLoading, ElMessage, ElSkeleton, ElSkeletonItem, ElMessageBox } from 'element-plus'
 import { useRoute } from 'vue-router'
 // @ts-ignore
-import { BuyNft, GetNftDetail, NftApiCode, TransactionRecord } from '@/api'
+import { BuyNft, GetNftDetail, GetNFTOwnerAddress, NftApiCode, TransactionRecord } from '@/api'
 // @ts-ignore
 import dayjs from 'dayjs'
 import { useStore } from '@/store'
@@ -492,7 +492,9 @@ async function buy() {
     genesisTxid: nft.val.genesisTxId,
   }
 
-  const res = await store.state.sdk
+  const getAddressRes = await GetNFTOwnerAddress({ tokenId: nft.val.tokenId }).catch(() => loading.close())
+  if (getAddressRes && getAddressRes.code === NftApiCode.success) {
+    const res = await store.state.sdk
     ?.buyNFT({
       txId: nft.val.sellTxId,
       amount: nft.val.amount,
@@ -501,18 +503,19 @@ async function buy() {
     .catch(() => {
       loading.close()
     })
-  if (res && res.code === 200) {
-    // 上链完 nft buy 协议 要 上报服务器
-    const response = await BuyNft({
-      tokenId: nft.val.tokenId,
-      payMentAddress: store.state.userInfo!.address,
-      collectionAddress: store.state.userInfo!.address,
-      payTxId: res.data.txId,
-    })
-    if (response.code === NftApiCode.success) {
-      nft.val.ownerMetaId = store.state.userInfo!.metaId
-      nft.val.ownerName = store.state.userInfo!.name
-      ElMessage.success(i18n.t('buySuccess'))
+    if (res && res.code === 200) {
+      // 上链完 nft buy 协议 要 上报服务器
+      const response = await BuyNft({
+        tokenId: nft.val.tokenId,
+        payMentAddress: store.state.userInfo!.address,
+        collectionAddress: getAddressRes.data.address,
+        payTxId: res.data.txId,
+      }).catch(() => loading.close())
+      if (response && response.code === NftApiCode.success) {
+        nft.val.ownerMetaId = store.state.userInfo!.metaId
+        nft.val.ownerName = store.state.userInfo!.name
+        ElMessage.success(i18n.t('buySuccess'))
+      }
     }
   }
   loading.close()
