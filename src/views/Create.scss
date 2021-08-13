@@ -45,6 +45,7 @@
                     font-size: 14px;
                     color: #456FC4;
                     margin-left: 10px;
+                    cursor: pointer;
                 }
             }
             .cont{
@@ -53,6 +54,7 @@
                     position: relative;
                     background: #fff;
                     padding: 0 14px;
+                    border-radius: 6px;
                     .input-value{
                         height: 48px;
                         line-height: 48px;
@@ -165,6 +167,9 @@
             }
             textarea{
                 height: 144px;
+                min-height: 144px;
+                max-width: 100%;
+                min-width: 100%;
             }
             .select-warp{
                 background: #fff;

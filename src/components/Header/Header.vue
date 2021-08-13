@@ -35,14 +35,14 @@
         <span class="line"></span>
 
         <!-- 语言 -->
-        <ElDropdown trigger="click">
-          <a class="lang">{{ $t(i18n.locale.value) }}</a>
+        <a class="lang" @click="setLang">{{ $t(i18n.locale.value) }}</a>
+        <!-- <ElDropdown trigger="click">
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item v-for="lang in i18n.availableLocales" :key="lang" :disabled="lang === i18n.locale.value" @click="setLang(lang)">{{ $t(lang) }}</el-dropdown-item>
+              <el-dropdown-item v-for="lang in i18n.availableLocales" :key="lang" :disabled="lang === i18n.locale.value" >{{ $t(lang) }}</el-dropdown-item>
             </el-dropdown-menu>
           </template>
-        </ElDropdown>
+        </ElDropdown> -->
       </div>
   </header>
 
@@ -90,14 +90,15 @@ function logout() {
 }
 
 // 设置语言
-function setLang(lang: string) {
+function setLang() {
+  const lang  = i18n.locale.value === 'en' ? 'zh' : 'en'
   i18n.locale.value = lang
 }
 function toSelf() {
   router.push('/self')
 }
 function toWallet() {
-  window.location.href = import.meta.env.VITE_AuthUrl
+  window.open(import.meta.env.VITE_AuthUrl)
 }
 </script>
 

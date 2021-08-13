@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <!-- 推荐作品 -->
-    <div class="section container recommend-section">
+    <div class="section container recommend-section ">
       <NftSkeleton :loading="isShowRecommendSkeleton" :count="8" class="section-cont nft-list">
         <template #default>
           <div class="section-cont nft-list">
@@ -24,6 +24,22 @@
           </div>
         </template>
       </NftSkeleton>
+      <!-- 把推荐浮到骨架屏上 -->
+      <div class="nft-list recommend-skeleton-list" v-if="isShowRecommendSkeleton">
+        <!-- @ts-ignore -->
+        <NftItem
+              :isRecommendCard="true"
+              :item="{
+                name: 'recommend',
+                amount: 0,
+                foundryName: '',
+                classify: '',
+                tokenId: '',
+                coverUrl: '',
+                metaId: '',
+              }"
+        />
+      </div>
     </div>
 
     <!-- 所有类别 -->

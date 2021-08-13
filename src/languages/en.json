@@ -42,7 +42,7 @@
   "second": "second",
   "copy": "copy",
   "remark1": "This is a signed and limited edition digital creation.",
-  "remark2": "After purchase, this creation will be transferred to your ShowMoney digital wallet. If you don't have one, we will provide you with one.",
+  "remark2": "After purchase, this creation will be transferred to your ShowMoney digital wallet. \nIf you don't have one, you can get one by registering.",
   "remark3": "All sales are final, no return or exchange is supported.",
   "knowmore": "understand more",
   "owner": "Owner",
@@ -109,5 +109,15 @@
   "stayTuned": "Stay tuned ",
   "nftCopyrightDrsc": "Cast your copyright income right work into an NFT. When the NFT is transferred, the owner of the NFT will inherit the income right of your work.",
   "createdSuccessTitle": "Congratulations, NFT casting is successful!",
-  "lookNftDetail": "View this NFT"
+  "lookNftDetail": "View this NFT",
+  "share": "share",
+  "shareText1": "Come take a look at this signature and limited edition digital creation!",
+  "shareText2": "MetaID Creation Memorial NFT",
+  "copyShareSuccess": "Shared link copied",
+  "whatNftSeies": "Works of the same style or meaning can be cast into a series of works, the number of which is limited and does not support modification",
+  "isCert": "ShowPay certified",
+  "unCert": "not certified",
+  "loading": "Loading...",
+  "nftCopyrightDrsc2": "Currently, equity NFT only supports TX creation.",
+  "nftTxidTips": "Fill in pictures, rights and interests, etc. TX to cast NFT, TX that does not meet the rules can not cast NFT."
 }

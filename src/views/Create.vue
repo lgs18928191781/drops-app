@@ -11,8 +11,8 @@
       </div>
     </div>
     <div class="cont-warp">
-      <div class="tags">
-        <template v-for="(type, index) in nftTypes">
+      <div class="tags" v-if="createTypeIndex === 0">
+        <template v-for="(type, index) in _nftTypes">
           <template v-if="type.disabled">
             <ElTooltip effect="dark" :content="$t('stayTuned')" placement="top">
               <a :class="{ active: type.value === nft.type, disabled: type.disabled }"
@@ -28,18 +28,24 @@
         </template>
       </div>
       <div class="tips">
-        <template v-if="nft.type === '1'">
-          {{ $t('nftImageDrsc') }}<br />
+        <template v-if="createTypeIndex === 0">
+          <template v-if="nft.type === '1'">
+            {{ $t('nftImageDrsc') }}<br />
+          </template>
+          <template v-if="nft.type === '3'">
+            {{ $t('nftCopyrightDrsc') }}<br />
+            {{ $t('nftCopyrightDrsc2')}}<br />
+          </template>
         </template>
-        <template v-if="nft.type === '3'">
-          {{ $t('nftCopyrightDrsc') }}<br />
+        <template v-else>
+          {{ $t('nftTxidTips') }}<br />
         </template>
         {{ $t('createtips2') }}<br />
         {{ $t('createtips3') }}
       </div>
       <!-- txId 铸造 -->
       <div class="create-form-item" v-if="createTypeIndex === 1">
-        <div class="title">NFT TXID</div>
+        <div class="title">TXID</div>
         <div class="cont">
           <div class="input-warp flex flex-align-center">
             <div class="input-value flex1">
@@ -132,7 +138,16 @@
       <div class="create-form-item seices">
         <div class="title flex flex-align-center">
           <span class="flex1">{{ $t('isserices') }}</span>
-          <a>{{ $t('whatserices') }}</a>
+          <ElPopover 
+            placement="top-start"
+            :width="200"
+            trigger="hover"
+            :content="$t('whatNftSeies')"
+            >
+            <template #reference>
+              <a>{{ $t('whatserices') }}</a>
+          </template>
+          </ElPopover>
         </div>
         <div class="cont">
           <div
@@ -259,10 +274,11 @@ import {
   ElImage,
   ElMessage,
   ElLoading,
-  ElTooltip
+  ElTooltip,
+  ElPopover
 } from 'element-plus'
 
-import { tranfromImgFile } from '@/utils/util'
+import { checkSdkStatus, tranfromImgFile } from '@/utils/util'
 import { ref, reactive } from '@vue/reactivity'
 import { useI18n } from 'vue-i18n'
 import {
@@ -280,6 +296,8 @@ import { router } from '@/router'
 import PickerModel from '@/components/PickerModal/PickerModel.vue'
 import { nftTypes } from '@/config'
 // import { IssueNFTResData, SdkGenesisNFTRes } from '@/typings/sdk'
+
+const _nftTypes = reactive(nftTypes)
 
 const i18n = useI18n()
 const store = useStore()
@@ -469,6 +487,8 @@ async function checkTxIdStatus() {
 //     })
 
 async function createNft() {
+  await checkSdkStatus()
+
   // nft 类型
   if (nft.type === '') {
     ElMessage.warning(i18n.t('nftTypeTips'))

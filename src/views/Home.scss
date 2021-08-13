@@ -24,6 +24,13 @@
             }
         }
         &.recommend-section{
+            position: relative;
+            .recommend-skeleton-list{
+                position: absolute;
+                width: 100%;
+                left: 0;
+                top: 0;
+            }
             .section-cont{
                 margin-top: 0;
             }

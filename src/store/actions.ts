@@ -47,6 +47,7 @@ export const actions: ActionTree<State, State> & Actions = {
         dispatch(Action.getUserInfo)
       },
       onError: () => {
+        commit(Mutation.LOGOUT)
         state.sdkInitIng = false
         state.userInfoLoading = false
         state.sdk = null

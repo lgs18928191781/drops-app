@@ -7,6 +7,7 @@ import Sale from '@/views/sale/Sale.vue'
 import SaleLegend from '@/views/sale/Legend.vue'
 import Login from '@/views/Login.vue'
 import Self from '@/views/Self.vue'
+import Recommend from '@/views/Recommend.vue'
 import { useStore, Action } from '@/store/index'
 import { ElMessage } from 'element-plus'
 import i18n from '@/utils/i18n'
@@ -26,6 +27,7 @@ export const router = createRouter({
     { path: '/saleLegend', name: 'saleLegend', component: SaleLegend },
     { path: '/self', name: 'self', component: Self, meta: { isAuth: true } },
     { path: '/login', name: 'login', component: Login },
+    { path: '/recommned', name: 'recommned', component: Recommend },
   ],
   async scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {

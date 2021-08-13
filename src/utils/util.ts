@@ -63,17 +63,21 @@ export function hexToBase64(str: string) {
     return sty;
 }
 
-export function checkSdkStaut() {
-  return new Promise<void>(resolve => {
-    // const token = store.dispatch(Action.checkToken)
+export function checkSdkStatus() {
+  return new Promise<void>((resolve, reject) => {
     const token = store.state.token
     if (!token){
       ElMessage.warning(i18n.global.t('toLoginTip'))
-      return false
+      reject()
     } else {
       if (store.state.sdkInitIng) {
         ElMessage.warning(i18n.global.t('loginingTip'))
-        return false
+        reject()
+      } else {
+        if (!store.state.sdk) {
+          ElMessage.warning(i18n.global.t('toLoginTip'))
+          reject()
+        }
       }
     }
     resolve()

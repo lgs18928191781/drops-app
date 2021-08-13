@@ -49,10 +49,10 @@
               />
               <div class="type">
                 <ElDropdown trigger="click">
-                  <span class="flex flex-align-center"> BSV <span class="arrow"></span> </span>
+                  <span class="flex flex-align-center"> {{ units[unitIndex].unit }} <span class="arrow"></span> </span>
                   <template #dropdown>
                     <el-dropdown-menu>
-                      <el-dropdown-item>BSV</el-dropdown-item>
+                      <el-dropdown-item v-for="(unit, index) in units" :key="index" @click="changeUnitIndex(index)">{{ unit.unit }}</el-dropdown-item>
                     </el-dropdown-menu>
                   </template>
                 </ElDropdown>
@@ -77,10 +77,13 @@ import { useI18n } from 'vue-i18n'
 import { store } from '@/store'
 import Decimal from 'decimal.js-light'
 import NftMsgCard from '@/components/NftMsgCard/NftMsgCard.vue'
+import { units } from '@/config'
 
 const i18n = useI18n()
 const route = useRoute()
 const router = useRouter()
+const unitIndex = ref(0)
+
 // @ts-ignore
 const nft: { val: NftItemDetail } = reactive({
   val: {}
@@ -180,6 +183,17 @@ async function confirmSale() {
 const setDisabledDate = (time: string) => {
   const now = new Date().getTime() + (1000 * 60 * 30)
   return new Date(time).getTime() < now
+}
+
+// 更改单位
+function changeUnitIndex (index: number) {
+  if (unitIndex.value === index) return
+  if (saleAmount.value !== '') {
+    const oldSats = units[unitIndex.value].sats
+    const newSats = units[index].sats
+    saleAmount.value = new Decimal(oldSats).div(newSats).mul(saleAmount.value).toString()
+  }
+  unitIndex.value = index
 }
 </script>
 <style lang="scss" scoped src="./Sale.scss"></style>

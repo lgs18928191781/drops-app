@@ -114,8 +114,7 @@
         <div class="top flex container">
           <!-- {{ nft.val.coverUrl }} -->
           <el-image
-            class="cover"
-            fit="contain"
+            class="cover flex flex-align-center flex-pack-center"
             :lazy="true"
             :alt="nft.val.nftName"
             :src="nft.val.coverUrl"
@@ -124,9 +123,9 @@
           </el-image>
           <!-- <img class="cover" :src="nft.val.coverUrl" /> -->
           <div class="cont flex1 flex flex-v">
-            <div class="name flex flex-align-center">
+            <div class="name flex flex-align-center" >
               <span class="text flex1">{{ nft.val.nftName }}</span>
-              <img src="@/assets/images/icon_share.svg" alt="分享" />
+              <img src="@/assets/images/icon_share.svg" :alt="$t('share')" @click="share" />
             </div>
             <div class="creater-msg">
               <div class="author flex flex-align-center">
@@ -136,7 +135,7 @@
                   <div class="metaid">MetaID:{{ nft.val.foundryMetaId.slice(0, 6) }}</div>
                 </div>
               </div>
-              <CertTemp />
+              <CertTemp @click="toCert" />
             </div>
             <div class="drsc flex1 flex flex-v">
               <div class="title">{{ $t('drsc') }}：</div>
@@ -220,14 +219,14 @@
                   </div>
                   <div class="work-detail-item flex flex flex-align-baseline">
                     <div class="key">{{ $t('contractaddr') }}：</div>
-                    <div class="value flex1">
+                    <div class="value flex1 nowrap">
                       {{ nft.val.contractAddress }}
                       <a class="copy" @click="copy(nft.val.contractAddress)">{{ $t('copy') }}</a>
                     </div>
                   </div>
                   <div class="work-detail-item flex flex-align-center">
                     <div class="key">TokenID：</div>
-                    <div class="value flex1">
+                    <div class="value flex1 nowrap">
                       {{ nft.val.tokenId }}
                       <a class="copy" @click="copy(nft.val.tokenId)">{{ $t('copy') }}</a>
                     </div>
@@ -244,7 +243,7 @@
                           :alt="nft.val.foundryName"
                         />
                         <div class="author-msg flex1">
-                          <div class="creater">{{ $t('creater') }}: {{ nft.val.foundryName }}</div>
+                          <div class="creater">{{ nft.val.foundryName }}</div>
                           <div class="metaid">MetaID: {{ nft.val.foundryMetaId.slice(0, 6) }}</div>
                         </div>
                       </div>
@@ -260,7 +259,7 @@
                           :alt="nft.val.ownerName"
                         />
                         <div class="author-msg flex1">
-                          <div class="creater">{{ $t('creater') }}: {{ nft.val.ownerName }}</div>
+                          <div class="creater">{{ nft.val.ownerName }}</div>
                           <div class="metaid">MetaID:{{ nft.val.ownerMetaId.slice(0, 6) }}</div>
                         </div>
                       </div>
@@ -291,7 +290,7 @@
 
                 <div class="remark">
                   <div class="remark-item">
-                    {{ $t('remark1') }}<a>{{ $t('knowmore') }}</a>
+                    {{ $t('remark1') }}<a @click="more">{{ $t('knowmore') }}</a>
                   </div>
                   <div class="remark-item">{{ $t('remark2') }}</div>
                   <div class="remark-item">{{ $t('remark3') }}</div>
@@ -315,13 +314,14 @@
                     <img :src="$filters.avatar(record.metaId)" :alt="record.username" />
                     <span class="name">{{ record.username }}</span>
                   </span>
-                  <span class="td role flex1 flex flex-align-center flex-pack-center">
+                  <span class="td role flex1 flex flex-align-center">
+                    <img src="@/assets/images/icon_casting.svg" v-if="index === 0" />
                     {{
                       index === 0
                         ? $t('creater')
                         : index === records.length - 1
-                        ? $t('histsoryowner')
-                        : $t('haveder')
+                        ? $t('haveder')
+                        : $t('histsoryowner')
                     }}
                   </span>
                   <span class="td time flex1">{{ $filters.dateTimeFormat(record.ownerTime) }}</span>
@@ -348,7 +348,7 @@ import { BuyNft, GetNftDetail, GetNFTOwnerAddress, NftApiCode, TransactionRecord
 import dayjs from 'dayjs'
 import { useStore } from '@/store'
 import { nftTypes } from '@/config'
-import { checkSdkStaut } from '@/utils/util'
+import { checkSdkStatus } from '@/utils/util'
 import Decimal from 'decimal.js-light'
 import { router } from '@/router'
 import NftOffSale from '@/utils/offSale'
@@ -475,7 +475,7 @@ function onSale() {
 }
 
 async function buy() {
-  await checkSdkStaut()
+  await checkSdkStatus()
   const loading = ElLoading.service({
     lock: true,
     text: 'Loading',
@@ -551,6 +551,26 @@ async function buy() {
   // loading.close()
 }
 
+// 分享
+function share () {
+  const value = `${i18n.t('shareText1')}\r\n ${nft.val.nftName}：${window.location.href}`
+  toClipboard(value)
+    .then(() => {
+      ElMessage.success(i18n.t('copyShareSuccess'))
+    })
+    .catch(() => {
+      ElMessage.success(i18n.t('copyerror'))
+    })
+}
+
+// 
+function toCert () {
+  ElMessage.info(i18n.t('stayTuned'))
+}
+
+function more () {
+  ElMessage.info(i18n.t('stayTuned'))
+}
 if (route.params.tokenId) {
   getDetail()
   getRecord()

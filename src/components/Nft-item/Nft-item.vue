@@ -27,7 +27,7 @@
         {{ $t('recommenttext') }}
       </div>
       <div class="more">
-        <a>{{ $t('getmore') }}<img src="@/assets/images/card_icon_ins.svg" /></a>
+        <router-link :to="{ name: 'recommned' }">{{ $t('getmore') }}<img src="@/assets/images/card_icon_ins.svg" /></router-link>
       </div>
     </div>
   </a>

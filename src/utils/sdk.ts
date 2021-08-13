@@ -271,6 +271,7 @@ export default class Sdk {
         window[functionName] = _params.callback
         this.appMetaidjs?.genesisNFT(params.nftTotal, functionName)
       } else {
+        // @ts-ignore
         this.metaidjs?.genesisNFT(_params)
       }
     })
@@ -533,7 +534,7 @@ export default class Sdk {
     genesisTxid: string // nft genesisTxid
     tokenIndex: string // nft tokenIndex
     txHex: string  // sell的utxo
-    satoshisPrice: string // 出售的价格，单位聪
+    satoshisPrice: number // 出售的价格，单位聪
     opreturnData: string  // cancel sell 备注信息
     createdAt: number // 创建时间
   }) {

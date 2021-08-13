@@ -2,7 +2,8 @@
 declare interface apiResponse {
   code: number
   msg: string
-  count: number
+  count: number,
+  data: any
 }
 declare interface TransactionRecordItem {
   headUrl: string

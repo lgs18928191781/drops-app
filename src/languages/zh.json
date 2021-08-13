@@ -42,7 +42,7 @@
   "second": "秒",
   "copy": "复制",
   "remark1": "这是一个签名和限量版的数字创作。",
-  "remark2": "购买后，此创作将转移到您的ShowMoney数字钱包。如果您没有，我们将为您提供一个。",
+  "remark2": "购买后，此创作将转移到您的ShowMoney数字钱包。如果您没有，可以通过注册获得一个。",
   "remark3": "所有销售都是最终的，不支持退换。",
   "knowmore": "了解更多",
   "owner": "所有者",
@@ -110,5 +110,15 @@
   "stayTuned": "开发中，敬请期待",
   "nftCopyrightDrsc": "将您的版权收益权作品铸造成NFT，当NFT发生转移时，NFT的拥有者将会继承您的作品的收益权。",
   "createdSuccessTitle": "恭喜您，NFT铸造成功啦！",
-  "lookNftDetail": "查看此NFT"
+  "lookNftDetail": "查看此NFT",
+  "share": "分享",
+  "shareText1": "快来看看这个签名和限量版的数字创作吧！",
+  "shareText2": "MetaID创世纪念NFT",
+  "copyShareSuccess": "已复制分享链接",
+  "whatNftSeies": "相同风格或寓意的作品可以铸造成系列作品，其数量限定且不支持更改",
+  "isCert": "已ShowPay认证",
+  "unCert": "未认证",
+  "loading": "加载中...",
+  "nftCopyrightDrsc2": "目前权益类NFT仅支持TX创建。",
+  "nftTxidTips": "填写图片、权益性内容等TX铸造NFT，不符合规则的TX无法铸造NFT。"
 }

@@ -11,6 +11,10 @@ body{
     }
 }
 
+.nowrap{
+    white-space: nowrap;
+}
+
 .nft-list{
     .nft-item{
         display: inline-block;
@@ -144,7 +148,7 @@ body{
     width: 90% !important;
     max-width: 560px !important;
     .el-dialog__close{
-        border: 1px dashed #909399 !important;
+        // border: 1px dashed #909399 !important;
         font-weight: bold;
         font-size: 20px;
     }
