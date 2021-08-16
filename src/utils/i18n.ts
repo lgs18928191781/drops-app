@@ -5,6 +5,7 @@ import enLocale from 'element-plus/lib/locale/lang/en'
 import zhLocale from 'element-plus/lib/locale/lang/zh-cn'
 import messages from '@intlify/vite-plugin-vue-i18n/messages'
 
+const lang = localStorage.getItem('lang') || 'zh'
 // languages
 for (let i in messages){
     if (i === 'en') {
@@ -14,7 +15,7 @@ for (let i in messages){
     }
 }
 const i18n = createI18n({
-    locale: 'zh', // set locale
+    locale: lang, // set locale
     fallbackLocale: enLocale.name,
     legacy: false,  
     globalInjection: true,

@@ -17,17 +17,18 @@
             <ElTooltip effect="dark" :content="$t('stayTuned')" placement="top">
               <a :class="{ active: type.value === nft.type}"
           @click="changeTag(index)"
-          >{{ type.name }}</a>
+          >{{ $t(type.key) }}</a>
             </ElTooltip>
           </template>
           <template v-else>
             <a :class="{ active: type.value === nft.type, disabled: type.disabled }"
           @click="changeTag(index)"
-          >{{ type.name }}</a>
+          >{{ $t(type.key) }}</a>
           </template>
         </template>
       </div>
       <div class="tips">
+        <template v-if="createTypeIndex === 1">{{$t('nftTxidTips')}}</template>
         <template v-if="nft.type === '1'">
             {{ $t('nftImageDrsc') }}<br />
           </template>
@@ -35,8 +36,6 @@
             {{ $t('nftCopyrightDrsc') }}<br />
             {{ $t('nftCopyrightDrsc2')}}<br />
           </template>
-
-          <template v-if="createTypeIndex === 1">{{$t('nftTxidTips')}}</template>
         {{ $t('createtips2') }}<br />
         {{ $t('createtips3') }}
       </div>
@@ -137,6 +136,7 @@
           <span class="flex1">{{ $t('isserices') }}</span>
           <ElPopover 
             placement="top-start"
+            style="word-wrap: break-word; word-break: break-all;"
             :width="200"
             trigger="hover"
             :content="$t('whatNftSeies')"

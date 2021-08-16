@@ -59,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElDropdown, ElDropdownItem, ElDropdownMenu, ElLoading, ElDrawer } from 'element-plus'
+import { ElDropdown, ElDropdownItem, ElDropdownMenu, ElLoading, ElDrawer, locale } from 'element-plus'
 import { ref } from 'vue'
 import { useStore, Mutation } from '@/store/index'
 import { useI18n } from "vue-i18n";
@@ -91,9 +91,9 @@ function logout() {
 
 // 设置语言
 function setLang() {
-  debugger
   const lang  = i18n.locale.value === 'en' ? 'zh' : 'en'
   i18n.locale.value = lang
+  window.localStorage.setItem('lang', lang)
 }
 function toSelf() {
   router.push('/self')

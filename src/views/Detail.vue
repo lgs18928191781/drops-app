@@ -162,7 +162,7 @@
                   (store.state.userInfo && store.state.userInfo.metaId !== nft.val.ownerMetaId)
                 "
               >
-                {{ i18n.locale.value === 'zh' ? `以 ${nft.val.amount} BSV 购买`: `Buy Now at ${nft.val.amount} BSV`}}
+                {{ i18n.locale.value === 'zh' ? `以 ${nft.val.amount} BSV 购买`: `Buy Now At ${nft.val.amount} BSV`}}
               </div>
               <template
                 v-else-if="
@@ -186,7 +186,7 @@
                 v-for="(tab, index) in tabs"
                 :key="index"
                 @click="changeTabIndex(index)"
-                >{{ tab.name }}</a
+                >{{ $t(tab.key) }}</a
               >
             </div>
             <div class="tab-cont">
@@ -357,7 +357,7 @@ import NftOffSale from '@/utils/offSale'
 const i18n = useI18n()
 const route = useRoute()
 const store = useStore()
-const tabs = [{ name: i18n.t('workdetail') }, { name: i18n.t('possessionrecord') }]
+const tabs = [{ name: i18n.t('workdetail'), key: 'workdetail' }, { name: i18n.t('possessionrecord'), key: 'possessionrecord' }]
 let tabIndex = ref(0)
 const isShowSkeleton = ref(true)
 

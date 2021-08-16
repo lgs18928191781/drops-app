@@ -38,6 +38,11 @@
         }
         .create-form-item{
             margin-top: 30px;
+
+            :deep(.el-popover){
+                word-wrap: break-word;
+                word-break: break-all;
+            }
             .title{
                 font-size: 14px;
                 color: #606266;

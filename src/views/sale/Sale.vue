@@ -42,7 +42,7 @@
             <div class="cont flex flex-align-center">
               <input
                 v-model="saleAmount"
-                :placeholder="$t('priceplac')"
+                :placeholder="$t('priceplac') + new Decimal(Math.pow(10, 8)).div(units[unitIndex].sats).mul(0.00001)"
                 @change="saleAmountChange"
                 type="number"
                 class="flex1"
