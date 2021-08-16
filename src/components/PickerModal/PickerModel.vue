@@ -6,9 +6,9 @@
     </div>
     <div class="picker-model-body">
       <div class="picker-model-list" v-if="props.list.length > 0">
-        <div class="picker-model-item flex flex-align-center" v-for="(item, index) in props.list" :key="item.toString()" @click="itemClick(props.listKey ? item[props.listKey] : item)">
+        <div class="picker-model-item flex flex-align-center" :class="{ 'disabled': props.disabled ? item[props.disabled] : false }" v-for="(item, index) in props.list" :key="item.toString()" @click="itemClick(item)">
           <div class="label flex1">
-            {{ props.name ? item[props.name] : item }}
+            {{ props.name ? $t(item[props.name]) : $t(item) }}
             <slot name="item" v-bind:item="item"></slot>
           </div>
           <div class="icon">
@@ -32,6 +32,7 @@ const props = defineProps<{
   selecteds: any [],
   multiple?: boolean,
   title: string
+  disabled?: string
 }>()
 
 const emit = defineEmit(['confirm'])
@@ -45,14 +46,18 @@ function isSellected (item:any) {
 }
 
 function itemClick (item: any) {
+    if (props.disabled && item[props.disabled]) return 
     let index
-    index = props.selecteds.findIndex((_item:any) => _item === item)
+    if (typeof item === 'string') {
+      index = props.selecteds.findIndex((_item:any) => _item === item)
+    } else {
+      index = props.selecteds.findIndex((_item:any) => _item === item[props.listKey!])
+    }
     if (index === -1) {
         if (!props.multiple) {
             props.selecteds.length = 0
         }
-        props.selecteds.push(item)
-        
+        props.selecteds.push(typeof item === 'string' ? item : item[props.listKey!])
     } else {
         props.selecteds.splice(index, 1)
     }

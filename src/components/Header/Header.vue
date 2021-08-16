@@ -5,7 +5,7 @@
         <!-- 分割线 -->
         <span class="line"></span>
         <router-link to="/" class="logo flex flex-align-center">
-          <span>NFT</span>OnShow
+          <img src="@/assets/images/logo_nos.svg" alt="NFTOnShow" /><span>NFT</span>OnShow
         </router-link>
       </div>
       <nav class="flex flex-align-center flex-pack-center">
@@ -24,9 +24,9 @@
           </div>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item @click="toSelf">我的NFT</el-dropdown-item>
-              <el-dropdown-item @click="toWallet">我的钱包</el-dropdown-item>
-              <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
+              <el-dropdown-item @click="toSelf">{{$t('mynft')}}</el-dropdown-item>
+              <el-dropdown-item @click="toWallet">{{$t('mywallet')}}</el-dropdown-item>
+              <el-dropdown-item @click="logout">{{$t('logout')}}</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </ElDropdown>
@@ -35,7 +35,7 @@
         <span class="line"></span>
 
         <!-- 语言 -->
-        <a class="lang" @click="setLang">{{ $t(i18n.locale.value) }}</a>
+        <a class="lang" @click="setLang">{{ $t(i18n.locale.value === 'en' ? 'zh' : 'en') }}</a>
         <!-- <ElDropdown trigger="click">
           <template #dropdown>
             <el-dropdown-menu>
@@ -91,6 +91,7 @@ function logout() {
 
 // 设置语言
 function setLang() {
+  debugger
   const lang  = i18n.locale.value === 'en' ? 'zh' : 'en'
   i18n.locale.value = lang
 }

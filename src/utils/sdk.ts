@@ -330,8 +330,8 @@ export default class Sdk {
       const res = await this.nftBuy({
         ..._params,
         txId
-      })
-      if (res.code === 200) {
+      }).catch(() => reject())
+      if (res && res.code === 200) {
         // 延迟一秒防止双花
         setTimeout(async () => {
           // 2.createNftBuyProtocol
@@ -365,8 +365,12 @@ export default class Sdk {
           ...params
         },
         callback: (res: MetaIdJsRes) => {
+          debugger
           this.callback(res, resolve)
         },
+        // onCancel: (msg: any) => {
+        //   debugger
+        // }
       }
       if (this.isApp) {
         const functionName: string = `nftBuyCallBack`
@@ -375,6 +379,7 @@ export default class Sdk {
         // @ts-ignore
         this.appMetaidjs?.nftBuy(functionName)
       } else {
+        debugger
         // @ts-ignore
         this.metaidjs?.nftBuy(_params)
       }
@@ -511,6 +516,9 @@ export default class Sdk {
         callback: (res: MetaIdJsRes) => {
           this.callback(res, resolve)
         },
+        // onCancel: (msg: any) => {
+        //   debugger
+        // }
       }
       if (this.isApp) {
         const functionName: string = `nftCancelCallBack`

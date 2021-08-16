@@ -15,6 +15,9 @@
                     font-size: 14px;
                     border: none;
                     outline: none;
+                    &::placeholder {
+                        color: #BFC2CC;
+                    }
                 }
                 img{
                     width: 18px;

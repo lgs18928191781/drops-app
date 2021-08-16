@@ -162,7 +162,7 @@
                   (store.state.userInfo && store.state.userInfo.metaId !== nft.val.ownerMetaId)
                 "
               >
-                {{ $t('use') }} {{ nft.val.amount }} BSV {{ $t('buy') }}
+                {{ i18n.locale.value === 'zh' ? `以 ${nft.val.amount} BSV 购买`: `Buy Now at ${nft.val.amount} BSV`}}
               </div>
               <template
                 v-else-if="
@@ -290,7 +290,8 @@
 
                 <div class="remark">
                   <div class="remark-item">
-                    {{ $t('remark1') }}<a @click="more">{{ $t('knowmore') }}</a>
+                    {{ $t('remark1') }}
+                    <!-- <a @click="more">{{ $t('knowmore') }}</a> -->
                   </div>
                   <div class="remark-item">{{ $t('remark2') }}</div>
                   <div class="remark-item">{{ $t('remark3') }}</div>
@@ -493,6 +494,7 @@ async function buy() {
   }
 
   const getAddressRes = await GetNFTOwnerAddress({ tokenId: nft.val.tokenId }).catch(() => loading.close())
+  debugger
   if (getAddressRes && getAddressRes.code === NftApiCode.success) {
     const res = await store.state.sdk
     ?.buyNFT({

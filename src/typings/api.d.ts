@@ -16,6 +16,7 @@ declare interface TransactionRecordItem {
 declare interface Classify {
   id: number
   classify: string
+  disabled?: boolean
 }
 
 declare interface SaleNftResponstData extends apiResponse {

@@ -3,7 +3,7 @@
     <div class="create-header flex flex-align-center">
       <img class="icon" src="@/assets/images/icon_casting.svg" />
       <div class="title flex1 flex flex-align-center">
-        <span class="flex1">{{ $t('createnft') }}</span>
+        <span class="flex1">{{ $t('createNft') }}</span>
         <a @click="changeCreateType"
           >{{ createTypeIndex === 0 ? $t('createbytx') : $t('createbylocal')
           }}<i class="el-icon-arrow-right"></i
@@ -15,7 +15,7 @@
         <template v-for="(type, index) in _nftTypes">
           <template v-if="type.disabled">
             <ElTooltip effect="dark" :content="$t('stayTuned')" placement="top">
-              <a :class="{ active: type.value === nft.type, disabled: type.disabled }"
+              <a :class="{ active: type.value === nft.type}"
           @click="changeTag(index)"
           >{{ type.name }}</a>
             </ElTooltip>
@@ -28,18 +28,15 @@
         </template>
       </div>
       <div class="tips">
-        <template v-if="createTypeIndex === 0">
-          <template v-if="nft.type === '1'">
+        <template v-if="nft.type === '1'">
             {{ $t('nftImageDrsc') }}<br />
           </template>
           <template v-if="nft.type === '3'">
             {{ $t('nftCopyrightDrsc') }}<br />
             {{ $t('nftCopyrightDrsc2')}}<br />
           </template>
-        </template>
-        <template v-else>
-          {{ $t('nftTxidTips') }}<br />
-        </template>
+
+          <template v-if="createTypeIndex === 1">{{$t('nftTxidTips')}}</template>
         {{ $t('createtips2') }}<br />
         {{ $t('createtips3') }}
       </div>
@@ -55,7 +52,6 @@
                 type="text"
                 @blur="checkTxIdStatus"
                 :placeholder="$t('txIdTips')"
-                @change="originalFileInputChage"
               />
             </div>
           </div>
@@ -126,6 +122,7 @@
             listKey="classify"
             :title="$t('choosetype')"
             :multiple="true"
+            disabled="disabled"
             :visible="isShowClassifyModal"
             @confirm="isShowClassifyModal = false"
             :list="classifies"
@@ -206,43 +203,6 @@
     </div>
   </div> -->
 
-  <!-- nft 详情modal -->
-  <ElDialog v-model="dialogVisible">
-    <div class="nft-msg">
-      <div class="nft-msg-main flex">
-        <div class="cover">
-          <img src="" />
-          <a class="tag">艺术</a>
-        </div>
-        <div class="cont flex1">
-          <div class="name">Saint Sophia</div>
-          <div class="author flex flex-align-center">
-            <img class="avatar" />
-            <div class="author-msg flex1">
-              <div class="creater">铸造者: 范特西</div>
-              <div class="metaid">MetaID:34c5em</div>
-            </div>
-          </div>
-          <div class="drsc">
-            Outside the spring mountains, the master-disciple the crowd, outing in late spring,
-            preaching and teaching karma to solve puzzles.
-            画意：春山外，春衫短。夫子徒众，暮春踏青，传道授业解惑者也。
-          </div>
-        </div>
-      </div>
-      <div class="nft-msg-other">
-        <div class="nft-msg-other-item">
-          <div class="key">合约地址</div>
-          <div class="value">0x1dDB2C0897daF18632662E71fdD2dbDC0eB3a9Ec</div>
-        </div>
-        <div class="nft-msg-other-item">
-          <div class="key">TokenID</div>
-          <div class="value">0x1dDB2C0897daF18632662E71fdD2dbDC0eB3a9Ec</div>
-        </div>
-      </div>
-      <div class="btn btn-block">上架出售</div>
-    </div>
-  </ElDialog>
 
   <!-- 创建系列 -->
   <ElDialog v-model="isShowCreateSeriesModal">
@@ -307,11 +267,19 @@ const classifies = reactive([])
 async function getClassifies() {
   const res = await GetClassies()
   if (res.code === NftApiCode.success) {
+    const disabledClassify = ['纪念卡', '别名', '头像', '权益']
     classifies.length = 0
+    for (let i = 0; i < disabledClassify.length; i++) {
+      const index = res.data.findIndex(_item => _item.classify === disabledClassify[i])
+      if (index !== -1) {
+        res.data[index].disabled = true
+      }
+    }
     // @ts-ignore
     classifies.push(...res.data)
   }
 }
+
 getClassifies()
 
 const nft = reactive({
@@ -332,6 +300,8 @@ function changeCreateType() {
   createTypeIndex.value = createTypeIndex.value === 0 ? 1 : 0
   if (createTypeIndex.value === 1) {
     nft.type = ''
+  } else {
+    nft.type = '1'
   }
 }
 
@@ -448,6 +418,10 @@ function changeTag(index: number) {
   const value = type.value
   if (nft.type === value) return
   nft.type = value
+  // 权益类智能有txId铸造
+  if (type.value === '3') {
+    createTypeIndex.value = 1
+  }
 }
 
 // 检测txId是否可以铸造
@@ -468,12 +442,15 @@ async function checkTxIdStatus() {
         nft.intro = data.data.artMark
         coverFile = data.data.artCover
       } else {
-        nft.tx === ''
+        nft.tx = ''
         ElMessage.error(i18n.t('txidToNftFaile'))
       }
+    } else {
+      nft.tx = ''
+      ElMessage.error(i18n.t('txidToNftFaile'))
     }
   } else {
-    nft.tx === ''
+    nft.tx = ''
     ElMessage.error(i18n.t('txidToNftFaile'))
   }
 }

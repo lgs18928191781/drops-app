@@ -6,10 +6,10 @@
                 <div class="cont">
                     <div class="cont-warp">
                         <div>
-                            <div class="title">铸造属于您的NFT</div>
-                            <div class="drsc">您的数字资产，从这里开始</div>
+                            <div class="title">{{$t('selfTitle')}}</div>
+                            <div class="drsc">{{$t('selfDrsc')}}</div>
                         </div>
-                        <router-link :to="{ name: 'create' }" class="btn">开始<img class="icon-right" src="@/assets/images/btn_ins.svg" /></router-link>
+                        <router-link :to="{ name: 'create' }" class="btn">{{$t('start')}}<img class="icon-right" src="@/assets/images/btn_ins.svg" /></router-link>
                     </div>
                 </div>
             </a>

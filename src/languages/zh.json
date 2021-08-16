@@ -1,6 +1,6 @@
 {
   "zh": "中文",
-  "en": "英文",
+  "en": "EN",
   "marketplace": "交易市场",
   "createnft": "铸造NFT",
   "mynft": "我的NFT",
@@ -108,7 +108,7 @@
   "loginingTip": "正在登录，请稍后操作",
   "txidToNftFaile": "此TXID内容不能被铸造成NFT,请填写其他TXID",
   "stayTuned": "开发中，敬请期待",
-  "nftCopyrightDrsc": "将您的版权收益权作品铸造成NFT，当NFT发生转移时，NFT的拥有者将会继承您的作品的收益权。",
+  "nftCopyrightDrsc": "把您的版权收益权作品铸造成NFT，当NFT发生转移时，NFT的拥有者将会继承您的作品的收益权。",
   "createdSuccessTitle": "恭喜您，NFT铸造成功啦！",
   "lookNftDetail": "查看此NFT",
   "share": "分享",
@@ -117,8 +117,18 @@
   "copyShareSuccess": "已复制分享链接",
   "whatNftSeies": "相同风格或寓意的作品可以铸造成系列作品，其数量限定且不支持更改",
   "isCert": "已ShowPay认证",
-  "unCert": "未认证",
+  "unCert": "未ShowPay认证",
   "loading": "加载中...",
   "nftCopyrightDrsc2": "目前权益类NFT仅支持TX创建。",
-  "nftTxidTips": "填写图片、权益性内容等TX铸造NFT，不符合规则的TX无法铸造NFT。"
+  "nftTxidTips": "填写图片、权益性内容等TX铸造NFT，不符合规则的TX无法铸造NFT。",
+  "createNft": "铸造NFT",
+  "艺术": "艺术",
+  "纪念卡": "纪念卡",
+  "别名": "别名",
+  "头像": "头像",
+  "权益": "权益",
+  "游戏": "游戏",
+  "selfTitle": "铸造属于您的NFT",
+  "selfDrsc": "您的数字资产，从这里开始",
+  "start": "开始"
 }
