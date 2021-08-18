@@ -127,12 +127,12 @@ async function confirmSale() {
       background: 'rgba(0, 0, 0, 0.7)',
       customClass: 'full-loading',
   })
-  const price = new Decimal(saleAmount.value).mul(10**8).toNumber()
+  const stasPrice = units[unitIndex.value].unit === 'BSV' ? new Decimal(saleAmount.value).mul(10**8).toNumber() : new Decimal(saleAmount.value).toNumber()
   const params = {
     codehash: nft.val!.codeHash,
     genesis: nft.val!.genesis,
     tokenIndex: nft.val!.tokenIndex,
-    satoshisPrice: price,
+    satoshisPrice: stasPrice,
     opreturnData: nft.val!.tx,
     genesisTxid: nft.val!.genesisTxId
   }
@@ -142,7 +142,7 @@ async function confirmSale() {
       // sell协议上完 要上报服务器
       const response = await SaleNft({
         sellValidTime: new Date(saleTime.value).getTime(),
-        amount: price,
+        amount: stasPrice,
         tokenId: nft.val!.tokenId,
         sellTxId: res.sellTxId
       })

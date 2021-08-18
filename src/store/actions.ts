@@ -4,6 +4,7 @@ import { State } from './state'
 import { Mutations, Mutation } from './mutations'
 import { GetToken } from '@/api'
 import Sdk from '@/utils/sdk'
+import { store } from '.'
 
 export enum Action {
   initApp = 'initApp',
@@ -123,6 +124,8 @@ function refreshToken (refresh_token: string) {
       client_id: import.meta.env.VITE_AppId,
       client_secret: import.meta.env.VITE_AppSecret,
       refresh_token: refresh_token,
+    }).catch(() => {
+      store.commit(Mutation.LOGOUT)
     })
     if (res) {
       resolve(res)
