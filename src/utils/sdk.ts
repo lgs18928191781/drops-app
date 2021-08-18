@@ -325,7 +325,7 @@ export default class Sdk {
   // 购买NFT 逻辑 1.nftBuy 2.createNftBuyProtocol
   buyNFT (params: BuyNFTParams) {
     return new Promise<MetaIdJsRes>(async (resolve, reject) => {
-      const { txId, amount, ..._params } = params
+      const { txId, amount, address, ..._params } = params
       // 1.nftBuy
       const res = await this.nftBuy({
         ..._params,
@@ -336,13 +336,18 @@ export default class Sdk {
         setTimeout(async () => {
           // 2.createNftBuyProtocol
           const protocolRes = await this.createNftBuyProtocol({
-            txId: res.data.txid,
-            sellTxId: txId,
-            createdAt: new Date().getTime(),
-            txHex: res.data.txHex,
-            satoshisPrice: new Decimal(amount).mul(10**8).toString(),
-            buyerMetaId: store.state.userInfo!.metaId,
-            ... _params
+            payTo: [
+              { 'amount': new Decimal(amount).mul(10**8).toNumber(), address}
+            ],
+            data: {
+              txId: res.data.txid,
+              sellTxId: txId,
+              createdAt: new Date().getTime(),
+              txHex: res.data.txHex,
+              satoshisPrice: new Decimal(amount).mul(10**8).toString(),
+              buyerMetaId: store.state.userInfo!.metaId,
+              ... _params
+            }
           })
           if (protocolRes.code === 200) {
             resolve(protocolRes)
@@ -388,24 +393,28 @@ export default class Sdk {
 
   // nft 购买 上链
   createNftBuyProtocol(params: {
-    txId: string // nft bug txId
-    txHex: string  // sell的utxo
-    sellTxId: string // sell txId
-    codehash: string // nft codehash
-    genesis: string // nft genesis
-    genesisTxid: string // nft genesisTxid
-    tokenIndex: string // nft tokenIndex
-    satoshisPrice: string // 出售的价格，单位聪
-    opreturnData: string  // buy 备注信息
-    createdAt: number // 创建时间
-    buyerMetaId: string // 购买者metaId
+    payTo: { amount: number, address: string } [],
+    data: {
+      txId: string // nft bug txId
+      txHex: string  // sell的utxo
+      sellTxId: string // sell txId
+      codehash: string // nft codehash
+      genesis: string // nft genesis
+      genesisTxid: string // nft genesisTxid
+      tokenIndex: string // nft tokenIndex
+      satoshisPrice: string // 出售的价格，单位聪
+      opreturnData: string  // buy 备注信息
+      createdAt: number // 创建时间
+      buyerMetaId: string // 购买者metaId
+    }
   }) {
     return this.sendMetaDataTx({
-        data: JSON.stringify(params),
+        data: JSON.stringify(params.data),
         nodeName: 'NftBuyData',
         brfcId: '39772451f4fd',
         path: '/Protocols/NftBuyData',
-        needConfirm: false
+        needConfirm: false,
+        payTo: params.payTo
     })
   }
 

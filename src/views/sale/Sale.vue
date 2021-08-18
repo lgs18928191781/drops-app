@@ -142,7 +142,7 @@ async function confirmSale() {
       // sell协议上完 要上报服务器
       const response = await SaleNft({
         sellValidTime: new Date(saleTime.value).getTime(),
-        amount: saleAmount.value,
+        amount: price,
         tokenId: nft.val!.tokenId,
         sellTxId: res.sellTxId
       })

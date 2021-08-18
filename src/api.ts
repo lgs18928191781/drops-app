@@ -109,7 +109,7 @@ export const OffSale = (params: { tokenId: string }):Promise<apiResponse> => {
   return nftHttp.post(`/api/v2/productTransaction/unshelve`, params);
 } 
 
-export const BuyNft = (params: { tokenId: string, payMentAddress: string, collectionAddress: string, payTxId: string}):Promise<apiResponse> => {
+export const BuyNft = (params: { tokenId: string, payMentAddress: string, collectionAddress: string, payTxId: string, amount: number}):Promise<apiResponse> => {
   return nftHttp.post(`/api/v2/productTransaction/transactionProduct`, params);
 } 
 

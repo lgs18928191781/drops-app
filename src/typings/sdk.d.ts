@@ -167,7 +167,8 @@ export interface CreateNftBuyProtocolParams {
 }
 
 export interface BuyNFTParams extends NftBuyParams{
-    amount: number
+    amount: number,
+    address: string
 }
 
 export interface NftSellParams {

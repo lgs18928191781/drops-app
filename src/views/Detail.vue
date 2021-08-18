@@ -162,7 +162,7 @@
                   (store.state.userInfo && store.state.userInfo.metaId !== nft.val.ownerMetaId)
                 "
               >
-                {{ i18n.locale.value === 'zh' ? `以 ${nft.val.amount} BSV 购买`: `Buy Now At ${nft.val.amount} BSV`}}
+                {{ i18n.locale.value === 'zh' ? `以 ${price} BSV 购买`: `Buy Now At ${price} BSV`}}
               </div>
               <template
                 v-else-if="
@@ -326,7 +326,7 @@
                     }}
                   </span>
                   <span class="td time flex1">{{ $filters.dateTimeFormat(record.ownerTime) }}</span>
-                  <span class="td price flex1">{{ record.amount }}BSV</span>
+                  <span class="td price flex1">{{ record.amount ? new Decimal(record.amount).div(10**8).toString() : '--'}}BSV</span>
                 </div>
               </div>
             </div>
@@ -337,7 +337,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import CertTemp from '@/components/Cert/Cert.vue'
 import { useI18n } from 'vue-i18n'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
@@ -381,6 +381,15 @@ function getDetail() {
     resolve()
   })
 }
+
+// NFT价格 stas 转 bsv
+const price = computed(() => {
+  if (nft.val.amount) {
+    return new Decimal(nft.val.amount).div(10**8).toString()
+  } else {
+    return '--'
+  }
+})
 
 const records: TransactionRecordItem[] = reactive([])
 function getRecord() {
@@ -498,6 +507,7 @@ async function buy() {
   if (getAddressRes && getAddressRes.code === NftApiCode.success) {
     const res = await store.state.sdk
     ?.buyNFT({
+      address: getAddressRes.data.address,
       txId: nft.val.sellTxId,
       amount: nft.val.amount,
       ...params,
@@ -505,6 +515,7 @@ async function buy() {
     .catch(() => {
       loading.close()
     })
+    debugger
     if (res && res.code === 200) {
       // 上链完 nft buy 协议 要 上报服务器
       const response = await BuyNft({
@@ -512,6 +523,7 @@ async function buy() {
         payMentAddress: store.state.userInfo!.address,
         collectionAddress: getAddressRes.data.address,
         payTxId: res.data.txId,
+        amount: new Decimal(nft.val.amount).mul(10**8).toNumber()
       }).catch(() => loading.close())
       if (response && response.code === NftApiCode.success) {
         nft.val.ownerMetaId = store.state.userInfo!.metaId

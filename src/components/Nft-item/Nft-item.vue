@@ -7,7 +7,7 @@
       <div class="name">{{ isSelf ? item.productName : item?.name }}</div>
       <div class="price" v-if="!isSelf">
         <div class="label">{{ $t('price') }}</div>
-        <div class="aount">{{item?.amount}} BSV</div>
+        <div class="aount">{{ new Decimal(item?.amount).div(10**8).toString() }} BSV</div>
       </div>
       <div class="author flex flex-align-center">
         <img :src="$filters.avatar(item?.metaId)" :alt="item?.foundryName" />
@@ -94,56 +94,6 @@ function offSale () {
       .catch(() => {
         loading.close()
       })
-      // const data = detailRes.data
-      // const params = {
-      //   codehash: data.codeHash,
-      //   genesis: data.genesis,
-      //   tokenIndex: data.tokenIndex,
-      //   opreturnData: data.tx,
-      //   genesisTxid: data.genesisTxId,
-      //   txId: data.sellTxId,
-      //   sellTxId: data.sellTxId,
-      //   satoshisPrice: new Decimal(data.amount).mul(10**8).toNumber()
-      // }
-      // const res = await store.state.sdk?.cancelSellNFT(params).catch(() => { loading.close() })
-      // if (res && res.code === 200) {
-      //   // 上链 cancel sell 协议 成功后 上报给服务器
-      //   const res = await OffSale({ tokenId: props.item!.tokenId})
-      //   if (res.code === NftApiCode.success) {
-      //     props.item!.putAway = false
-      //     ElMessage.success(i18n.t('offsale') + i18n.t('success'))
-      //   } else {
-      //     ElMessage.success(i18n.t('offsale') + i18n.t('fail'))
-      //   }
-      // }
-
-      // const lineRes = await store.state.sdk?.nftCancel({
-      //   txId: data.sellTxId,
-      //   ...params
-      // })
-      // debugger
-      // if (lineRes?.code === 200) {
-      //   // 下架完要 上链 cancel sell 协议
-      //   const cancelProtocol = await store.state.sdk?.createNftCancelSellProtocol({
-      //     txId: lineRes.data.txid,
-      //     sellTxId: data.sellTxId,
-      //     txHex: lineRes.data.txHex,
-      //     satoshisPrice: '1',
-      //     createdAt: new Date().getTime(),
-      //     ...params
-      //   })
-      //   debugger
-      //   if (cancelProtocol?.code === 200) {
-      //     // 上链 cancel sell 协议 成功后 上报给服务器
-      //     const res = await OffSale({ tokenId: props.item!.tokenId})
-      //     if (res.code === NftApiCode.success) {
-      //       props.item!.putAway = false
-      //       ElMessage.success(i18n.t('offsale') + i18n.t('success'))
-      //     } else {
-      //       ElMessage.success(i18n.t('offsale') + i18n.t('fail'))
-      //     }
-      //   }
-      // }
     }
   })
 }
