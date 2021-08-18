@@ -509,7 +509,7 @@ async function buy() {
     ?.buyNFT({
       address: getAddressRes.data.address,
       txId: nft.val.sellTxId,
-      amount: nft.val.amount,
+      amount: new Decimal(nft.val.amount).toNumber(),
       ...params,
     })
     .catch(() => {
@@ -523,7 +523,7 @@ async function buy() {
         payMentAddress: store.state.userInfo!.address,
         collectionAddress: getAddressRes.data.address,
         payTxId: res.data.txId,
-        amount: new Decimal(nft.val.amount).mul(10**8).toNumber()
+        amount: new Decimal(nft.val.amount).toNumber()
       }).catch(() => loading.close())
       if (response && response.code === NftApiCode.success) {
         nft.val.ownerMetaId = store.state.userInfo!.metaId

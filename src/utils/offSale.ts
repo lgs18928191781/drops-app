@@ -15,8 +15,8 @@ export default function NftOffSale (nft: NftItemDetail) {
             genesisTxid: nft.genesisTxId,
             txId: nft.sellTxId,
             sellTxId: nft.sellTxId,
-            satoshisPrice: new Decimal(nft.amount).mul(10**8).toNumber(),
-            satoshis: new Decimal(nft.amount).mul(10**8).toNumber()
+            satoshisPrice: new Decimal(nft.amount).toNumber(),
+            satoshis: new Decimal(nft.amount).toNumber()
           }
           const res = await store.state.sdk?.cancelSellNFT(params).catch(() => { reject() })
           debugger

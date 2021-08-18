@@ -337,14 +337,14 @@ export default class Sdk {
           // 2.createNftBuyProtocol
           const protocolRes = await this.createNftBuyProtocol({
             payTo: [
-              { 'amount': new Decimal(amount).mul(10**8).toNumber(), address}
+              { 'amount': amount, address}
             ],
             data: {
               txId: res.data.txid,
               sellTxId: txId,
               createdAt: new Date().getTime(),
               txHex: res.data.txHex,
-              satoshisPrice: new Decimal(amount).mul(10**8).toString(),
+              satoshisPrice: amount,
               buyerMetaId: store.state.userInfo!.metaId,
               ... _params
             }
@@ -402,7 +402,7 @@ export default class Sdk {
       genesis: string // nft genesis
       genesisTxid: string // nft genesisTxid
       tokenIndex: string // nft tokenIndex
-      satoshisPrice: string // 出售的价格，单位聪
+      satoshisPrice: number // 出售的价格，单位聪
       opreturnData: string  // buy 备注信息
       createdAt: number // 创建时间
       buyerMetaId: string // 购买者metaId

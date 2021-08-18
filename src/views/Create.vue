@@ -518,14 +518,15 @@ async function createNft() {
       customClass: 'full-loading',
   })
 
-  const res = await await store.state.sdk?.createNFT({
+  const params = {
     type: createTypeIndex.value,
     name: nft.nftName, // nft名称
     intro: nft.intro, // nft描述
     cover: coverFile, // nft封面 MetaFile协议地址
     originalFile: originalFile, // nft原文件 MetaFile协议地址
     txId: nft.tx,
-  }).catch(() => {
+  }
+  const res = await await store.state.sdk?.createNFT(params).catch(() => {
     loading.close()
   })
   if (res && res.code === 200) {
