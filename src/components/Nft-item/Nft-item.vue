@@ -13,7 +13,17 @@
         <img :src="$filters.avatar(item?.metaId)" :alt="item?.foundryName" />
         <span class="username">{{ item?.foundryName }}</span>
       </div>
-      <div class="operate" v-if="props.isSelf">
+      <div class="operate flex flex-align-center" v-if="props.isSelf">
+        <div class="timeleft flex1" >
+          <template v-if="item.putAway">
+            <template v-if="overTime">
+              {{$t('overTime')}}
+            </template>
+            <template v-else>
+              21{{$t('day')}}4{{$t('hour')}}
+            </template>
+          </template>
+        </div>
         <a class="btn btn-min btn-plain" v-if="item?.putAway" @click.stop="offSale">{{ $t('offsale') }}</a>
         <a class="btn btn-min" v-else @click.stop="toSale">{{ $t('sale') }}</a>
       </div>
@@ -34,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps } from 'vue'
+import { computed, defineProps, ref } from 'vue'
 import { useStore, Mutation } from '@/store/index'
 import { useRouter } from 'vue-router'
 import { GetNftDetail, NftApiCode, OffSale } from '@/api'
@@ -42,13 +52,25 @@ import { ElDialog, ElLoading, ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { Decimal } from 'decimal.js-light'
 import NftOffSale from '@/utils/offSale'
+// @ts-ignore
+import dayjs from 'dayjs'
 
 
 const store = useStore()
 const router = useRouter()
 const i18n = useI18n()
+const now = new Date().getTime()
 const appVersion = store.state.version // not reactive!
-const count = computed(() => store.state.count)
+const day = computed(() => {
+  if (now > props.item.deadlineTime!) return 0
+  return parseInt(dayjs(now).diff(dayjs(props.item.deadlineTime!), 'day'))
+}) // 剩余天数
+const hour = computed(() => {
+  if (now > props.item.deadlineTime!) return 0
+  const day = dayjs(now).diff(dayjs(props.item.deadlineTime!), 'day')
+  return parseInt(dayjs(props.item.deadlineTime!).subtract(day, 'day').hour())
+}) // 剩余小时
+const overTime = computed(() => (props.item.deadlineTime!) <= now) // 是否超过时间
 const props = defineProps<{
   item: NftItem,
   isRecommendCard?: boolean,
@@ -68,7 +90,11 @@ function toSale () {
 }
 
 function offSale () {
-  ElMessageBox.confirm(`${i18n.t('offsaleConfirm')} ${props.item.productName} ?`, i18n.t('niceWarning'))
+  ElMessageBox.confirm(`${i18n.t('offsaleConfirm')} ${props.item.productName} ?`, i18n.t('niceWarning'), {
+    confirmButtonText: i18n.t('confirm'),
+    cancelButtonText: i18n.t('cancel'),
+    closeOnClickModal: false
+  })
   .then(async () => {
     
   const loading = ElLoading.service({
@@ -86,7 +112,7 @@ function offSale () {
         loading.close()
     })
     if (detailRes && detailRes.code === NftApiCode.success) {
-      NftOffSale(detailRes.data)
+      NftOffSale(detailRes.data, loading)
       .then(() => {
         props.item.putAway = false
         loading.close()

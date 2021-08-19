@@ -130,5 +130,9 @@
   "游戏": "游戏",
   "selfTitle": "铸造属于您的NFT",
   "selfDrsc": "您的数字资产，从这里开始",
-  "start": "开始"
+  "start": "开始",
+  "insufficientBalance": "余额不足，请充值后再重试",
+  "useAmountTips": "此次操作需要支付",
+  "cancel": "取消",
+  "overTime": "展示已结束"
 }

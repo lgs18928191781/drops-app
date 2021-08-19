@@ -58,6 +58,12 @@
         .operate{
             text-align: right;
             margin-top: 15px;
+            .timeleft{
+                font-size: 13px;
+                font-weight: 400;
+                color: #909399;
+                text-align: left;
+            }
         }
     }
     .recommend-card{

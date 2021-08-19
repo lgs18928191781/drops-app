@@ -123,7 +123,7 @@
           </el-image>
           <!-- <img class="cover" :src="nft.val.coverUrl" /> -->
           <div class="cont flex1 flex flex-v">
-            <div class="name flex flex-align-center" >
+            <div class="name flex flex-align-center">
               <span class="text flex1">{{ nft.val.nftName }}</span>
               <img src="@/assets/images/icon_share.svg" :alt="$t('share')" @click="share" />
             </div>
@@ -153,28 +153,27 @@
                 >{{ $t('second') }}
               </div>
             </template>
-              <!-- <div class="btn btn-block"  @click="buy">{{ $t('use') }} {{ nft.val.amount }} BSV {{ $t('buy') }}</div> -->
-              <div
-                class="btn btn-block"
-                @click="buy"
-                v-if="
-                  !store.state.userInfo ||
-                  (store.state.userInfo && store.state.userInfo.metaId !== nft.val.ownerMetaId)
-                "
-              >
-                {{ i18n.locale.value === 'zh' ? `以 ${price} BSV 购买`: `Buy Now At ${price} BSV`}}
+            <!-- <div class="btn btn-block"  @click="buy">{{ $t('use') }} {{ nft.val.amount }} BSV {{ $t('buy') }}</div> -->
+            <div
+              class="btn btn-block"
+              @click="buy"
+              v-if="
+                !store.state.userInfo ||
+                (store.state.userInfo && store.state.userInfo.metaId !== nft.val.ownerMetaId)
+              "
+            >
+              {{ i18n.locale.value === 'zh' ? `以 ${price} BSV 购买` : `Buy Now At ${price} BSV` }}
+            </div>
+            <template
+              v-else-if="
+                store.state.userInfo && store.state.userInfo.metaId === nft.val.ownerMetaId
+              "
+            >
+              <div class="btn btn-block btn-plain" v-if="nft.val.putAway" @click="offSale">
+                {{ $t('offsale') }}
               </div>
-              <template
-                v-else-if="
-                  store.state.userInfo && store.state.userInfo.metaId === nft.val.ownerMetaId
-                "
-              >
-                <div class="btn btn-block btn-plain" v-if="nft.val.putAway" @click="offSale">
-                  {{ $t('offsale') }}
-                </div>
-                <div class="btn btn-block" v-else @click="onSale">{{ $t('sale') }}</div>
-              </template>
-            
+              <div class="btn btn-block" v-else @click="onSale">{{ $t('sale') }}</div>
+            </template>
           </div>
         </div>
 
@@ -326,7 +325,11 @@
                     }}
                   </span>
                   <span class="td time flex1">{{ $filters.dateTimeFormat(record.ownerTime) }}</span>
-                  <span class="td price flex1">{{ record.amount ? new Decimal(record.amount).div(10**8).toString() : '--'}}BSV</span>
+                  <span class="td price flex1"
+                    >{{
+                      record.amount ? new Decimal(record.amount).div(10 ** 8).toString() : '--'
+                    }}BSV</span
+                  >
                 </div>
               </div>
             </div>
@@ -357,13 +360,16 @@ import NftOffSale from '@/utils/offSale'
 const i18n = useI18n()
 const route = useRoute()
 const store = useStore()
-const tabs = [{ name: i18n.t('workdetail'), key: 'workdetail' }, { name: i18n.t('possessionrecord'), key: 'possessionrecord' }]
+const tabs = [
+  { name: i18n.t('workdetail'), key: 'workdetail' },
+  { name: i18n.t('possessionrecord'), key: 'possessionrecord' },
+]
 let tabIndex = ref(0)
 const isShowSkeleton = ref(true)
 
 // @ts-ignore
 const nft: { val: NftItemDetail } = reactive({
-  val: {}
+  val: {},
 })
 
 function getDetail() {
@@ -385,7 +391,7 @@ function getDetail() {
 // NFT价格 stas 转 bsv
 const price = computed(() => {
   if (nft.val.amount) {
-    return new Decimal(nft.val.amount).div(10**8).toString()
+    return new Decimal(nft.val.amount).div(10 ** 8).toString()
   } else {
     return '--'
   }
@@ -461,16 +467,19 @@ function toLink() {
 }
 
 function offSale() {
-  ElMessageBox.confirm(`${i18n.t('offsaleConfirm')} ${ nft.val.nftName } ?`, i18n.t('niceWarning'))
-  .then(async () => {
+  ElMessageBox.confirm(`${i18n.t('offsaleConfirm')} ${nft.val.nftName} ?`, i18n.t('niceWarning'), {
+    confirmButtonText: i18n.t('confirm'),
+    cancelButtonText: i18n.t('cancel'),
+    closeOnClickModal: false
+  }).then(async () => {
     const loading = ElLoading.service({
-        lock: true,
-        text: 'Loading',
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)',
-        customClass: 'full-loading',
+      lock: true,
+      text: 'Loading',
+      spinner: 'el-icon-loading',
+      background: 'rgba(0, 0, 0, 0.7)',
+      customClass: 'full-loading',
     })
-    NftOffSale(nft.val)
+    NftOffSale(nft.val, loading)
       .then(() => {
         loading.close()
       })
@@ -502,37 +511,79 @@ async function buy() {
     genesisTxid: nft.val.genesisTxId,
   }
 
-  const getAddressRes = await GetNFTOwnerAddress({ tokenId: nft.val.tokenId }).catch(() => loading.close())
-  debugger
+  const getAddressRes = await GetNFTOwnerAddress({ tokenId: nft.val.tokenId }).catch(() =>
+    loading.close()
+  )
   if (getAddressRes && getAddressRes.code === NftApiCode.success) {
-    const res = await store.state.sdk
-    ?.buyNFT({
+    const buyNftParams = {
       address: getAddressRes.data.address,
       txId: nft.val.sellTxId,
       amount: new Decimal(nft.val.amount).toNumber(),
       ...params,
-    })
-    .catch(() => {
-      loading.close()
-    })
-    debugger
-    if (res && res.code === 200) {
-      // 上链完 nft buy 协议 要 上报服务器
-      const response = await BuyNft({
-        tokenId: nft.val.tokenId,
-        payMentAddress: store.state.userInfo!.address,
-        collectionAddress: getAddressRes.data.address,
-        payTxId: res.data.txId,
-        amount: new Decimal(nft.val.amount).toNumber()
-      }).catch(() => loading.close())
-      if (response && response.code === NftApiCode.success) {
-        nft.val.ownerMetaId = store.state.userInfo!.metaId
-        nft.val.ownerName = store.state.userInfo!.name
-        ElMessage.success(i18n.t('buySuccess'))
+    }
+    // 需要消费金额
+    const useAmount = await store.state.sdk
+      ?.buyNFT({
+        checkOnly: true,
+        ...buyNftParams,
+      })
+      .catch(() => {
+        loading.close()
+      })
+
+    // 查询用户余额
+    const userBalanceRes = await store.state.sdk?.getBalance()
+    if (userBalanceRes && userBalanceRes.code === 200) {
+      if (typeof useAmount === 'number' && userBalanceRes.data.satoshis > useAmount) {
+        // 余额足够
+        ElMessageBox.confirm(
+          `${i18n.t('useAmountTips')}: ${useAmount} SATS`,
+          i18n.t('niceWarning'),
+          {
+            confirmButtonText: i18n.t('confirm'),
+            cancelButtonText: i18n.t('cancel'),
+            closeOnClickModal: false
+          }
+        ).then(async () => {
+          // 确认支付
+          const res = await store.state.sdk?.buyNFT(buyNftParams).catch(() => {
+            loading.close()
+          })
+          if (res && typeof res !== 'number' && res.code === 200) {
+            // 上链完 nft buy 协议 要 上报服务器
+            const response = await BuyNft({
+              tokenId: nft.val.tokenId,
+              payMentAddress: store.state.userInfo!.address,
+              collectionAddress: getAddressRes.data.address,
+              payTxId: res.data.txId,
+              amount: new Decimal(nft.val.amount).toNumber(),
+            }).catch(() => loading.close())
+            if (response && response.code === NftApiCode.success) {
+              nft.val.ownerMetaId = store.state.userInfo!.metaId
+              nft.val.ownerName = store.state.userInfo!.name
+              nft.val.putAway = false
+              ElMessage.success(i18n.t('buySuccess'))
+              loading.close()
+            }
+          }
+        })
+      } else {
+        // 余额不足
+        loading.close()
+        ElMessageBox.alert(
+          `
+        <p>${i18n.t('useAmountTips')}: ${useAmount} SATS</p>
+        <p>${i18n.t('insufficientBalance')}</p>
+      `,
+          {
+            confirmButtonText: i18n.t('confirm'),
+            dangerouslyUseHTMLString: true,
+          }
+        )
+        return
       }
     }
   }
-  loading.close()
 
   // const response = await store.state.sdk?.nftBuy({
   //   txId: nft.val.sellTxId,
@@ -566,7 +617,7 @@ async function buy() {
 }
 
 // 分享
-function share () {
+function share() {
   const value = `${i18n.t('shareText1')}\r\n ${nft.val.nftName}：${window.location.href}`
   toClipboard(value)
     .then(() => {
@@ -577,12 +628,12 @@ function share () {
     })
 }
 
-// 
-function toCert () {
+//
+function toCert() {
   ElMessage.info(i18n.t('stayTuned'))
 }
 
-function more () {
+function more() {
   ElMessage.info(i18n.t('stayTuned'))
 }
 if (route.params.tokenId) {

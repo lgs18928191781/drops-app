@@ -15,27 +15,27 @@
         <template v-for="(type, index) in _nftTypes">
           <template v-if="type.disabled">
             <ElTooltip effect="dark" :content="$t('stayTuned')" placement="top">
-              <a :class="{ active: type.value === nft.type}"
-          @click="changeTag(index)"
-          >{{ $t(type.key) }}</a>
+              <a :class="{ active: type.value === nft.type }" @click="changeTag(index)">{{
+                $t(type.key)
+              }}</a>
             </ElTooltip>
           </template>
           <template v-else>
-            <a :class="{ active: type.value === nft.type, disabled: type.disabled }"
-          @click="changeTag(index)"
-          >{{ $t(type.key) }}</a>
+            <a
+              :class="{ active: type.value === nft.type, disabled: type.disabled }"
+              @click="changeTag(index)"
+              >{{ $t(type.key) }}</a
+            >
           </template>
         </template>
       </div>
       <div class="tips">
-        <template v-if="createTypeIndex === 1">{{$t('nftTxidTips')}}</template>
-        <template v-if="nft.type === '1'">
-            {{ $t('nftImageDrsc') }}<br />
-          </template>
-          <template v-if="nft.type === '3'">
-            {{ $t('nftCopyrightDrsc') }}<br />
-            {{ $t('nftCopyrightDrsc2')}}<br />
-          </template>
+        <template v-if="createTypeIndex === 1">{{ $t('nftTxidTips') }}</template>
+        <template v-if="nft.type === '1'"> {{ $t('nftImageDrsc') }}<br /> </template>
+        <template v-if="nft.type === '3'">
+          {{ $t('nftCopyrightDrsc') }}<br />
+          {{ $t('nftCopyrightDrsc2') }}<br />
+        </template>
         {{ $t('createtips2') }}<br />
         {{ $t('createtips3') }}
       </div>
@@ -107,7 +107,7 @@
       </div>
       <div
         class="input-item type flex flex-align-center"
-        @click="isShowClassifyModal = true; isShowSeriesModal = false"
+        @click="isShowClassifyModal = true; isShowSeriesModal = false "
       >
         <div class="select-warp flex flex-align-center">
           <div class="key flex1">{{ $t('choosetype') }}</div>
@@ -134,16 +134,16 @@
       <div class="create-form-item seices">
         <div class="title flex flex-align-center">
           <span class="flex1">{{ $t('isserices') }}</span>
-          <ElPopover 
+          <ElPopover
             placement="top-start"
-            style="word-wrap: break-word; word-break: break-all;"
+            style="word-wrap: break-word; word-break: break-all"
             :width="200"
             trigger="hover"
             :content="$t('whatNftSeies')"
-            >
+          >
             <template #reference>
               <a>{{ $t('whatserices') }}</a>
-          </template>
+            </template>
           </ElPopover>
         </div>
         <div class="cont">
@@ -203,7 +203,6 @@
     </div>
   </div> -->
 
-
   <!-- 创建系列 -->
   <ElDialog v-model="isShowCreateSeriesModal">
     <div class="create-series">
@@ -235,7 +234,8 @@ import {
   ElMessage,
   ElLoading,
   ElTooltip,
-  ElPopover
+  ElPopover,
+  ElMessageBox,
 } from 'element-plus'
 
 import { checkSdkStatus, tranfromImgFile } from '@/utils/util'
@@ -270,7 +270,7 @@ async function getClassifies() {
     const disabledClassify = ['纪念卡', '别名', '头像', '权益']
     classifies.length = 0
     for (let i = 0; i < disabledClassify.length; i++) {
-      const index = res.data.findIndex(_item => _item.classify === disabledClassify[i])
+      const index = res.data.findIndex((_item) => _item.classify === disabledClassify[i])
       if (index !== -1) {
         res.data[index].disabled = true
       }
@@ -511,11 +511,11 @@ async function createNft() {
   }
 
   const loading = ElLoading.service({
-      lock: true,
-      text: 'Loading',
-      spinner: 'el-icon-loading',
-      background: 'rgba(0, 0, 0, 0.7)',
-      customClass: 'full-loading',
+    lock: true,
+    text: 'Loading',
+    spinner: 'el-icon-loading',
+    background: 'rgba(0, 0, 0, 0.7)',
+    customClass: 'full-loading',
   })
 
   const params = {
@@ -526,46 +526,73 @@ async function createNft() {
     originalFile: originalFile, // nft原文件 MetaFile协议地址
     txId: nft.tx,
   }
-  const res = await await store.state.sdk?.createNFT(params).catch(() => {
-    loading.close()
-  })
-  if (res && res.code === 200) {
-    // 上传源文件到阿里云
-    const originalFileForm = new FormData()
-    originalFileForm.append('file', originalFile.raw ? originalFile.raw : '')
-    const fileUrl = await Upload(originalFileForm)
+  const useAmount = await await store.state.sdk
+    ?.createNFT({
+      checkOnly: true,
+      ...params,
+    })
+    .catch(() => {
+      loading.close()
+    })
 
-    // 上传封面图到阿里云
-    const coverForm = new FormData()
-    coverForm.append('file', coverFile.raw ? coverFile.raw : '')
-    const coverUrl = await Upload(coverForm)
-    const params = {
-      nftName: nft.nftName,
-      intro: nft.intro,
-      type: nft.type,
-      seriesName: selectedSeries[0],
-      tx: res.data.txId,
-      classify: nft.classify.join(','),
-      fileUrl,
-      coverUrl,
-      tokenId: res.data.txId,
-      nftId: res.data.txId,
-      codeHash: res.data.codehash,
-      genesis: res.data.genesisId,
-      genesisTxId: res.data.genesisTxid,
-      tokenIndex: res.data.tokenIndex,
-    }
-    const response = await CreateNft(params)
-    if (response.code === NftApiCode.success) {
-      ElMessage.success(i18n.t('castingsuccess'))
-      router.replace({ name: 'createSuccess', params: { tokenId: res.data.txId } })
-    }
-  }
-  if (loading) {
+  const userBalanceRes = await store.state.sdk?.getBalance()
+  if (userBalanceRes && userBalanceRes.code === 200 && typeof useAmount === 'number' && userBalanceRes.data.satoshis > useAmount) {
+    ElMessageBox.confirm(`${i18n.t('useAmountTips')}: ${useAmount} SATS`, i18n.t('niceWarning'), {
+      confirmButtonText: i18n.t('confirm'),
+      cancelButtonText: i18n.t('cancel'),
+      closeOnClickModal: false
+    }).then(async () => {
+      // 余额足够且确认支付
+      const res = await store.state.sdk?.createNFT(params).catch(() => {
+        loading.close()
+      })
+      if (res && typeof res !== 'number') {
+        // 上传源文件到阿里云
+        const originalFileForm = new FormData()
+        originalFileForm.append('file', originalFile.raw ? originalFile.raw : '')
+        const fileUrl = await Upload(originalFileForm)
+
+        // 上传封面图到阿里云
+        const coverForm = new FormData()
+        coverForm.append('file', coverFile.raw ? coverFile.raw : '')
+        const coverUrl = await Upload(coverForm)
+        const params = {
+          nftName: nft.nftName,
+          intro: nft.intro,
+          type: nft.type,
+          seriesName: selectedSeries[0],
+          tx: res.txId,
+          classify: nft.classify.join(','),
+          fileUrl,
+          coverUrl,
+          tokenId: res.txId,
+          nftId: res.txId,
+          codeHash: res.codehash,
+          genesis: res.genesisId,
+          genesisTxId: res.genesisTxid,
+          tokenIndex: res.tokenIndex,
+        }
+        const response = await CreateNft(params)
+        if (response.code === NftApiCode.success) {
+          ElMessage.success(i18n.t('castingsuccess'))
+          router.replace({ name: 'createSuccess', params: { tokenId: res.txId } })
+        }
+      }
+      if (loading) {
+        loading.close()
+      }
+    })
+  } else {
     loading.close()
+    ElMessageBox.alert(`
+      <p>${i18n.t('useAmountTips')}: ${useAmount} SATS</p>
+      <p>${i18n.t('insufficientBalance')}</p>
+    `, {
+        confirmButtonText: i18n.t('confirm'),
+        dangerouslyUseHTMLString: true
+    })
+    return
   }
 }
-
-
 </script>
 <style lang="scss" scoped src="./Create.scss"></style>

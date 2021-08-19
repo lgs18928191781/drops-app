@@ -10,6 +10,7 @@ declare interface NftItem{
     putAway?: boolean,
     metaId: string
     productName?: string
+    deadlineTime?: number
 }
 declare interface NftItemDetail{
     foundryName: string,

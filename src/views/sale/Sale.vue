@@ -4,14 +4,23 @@
       <img class="icon" src="@/assets/images/bannet_icon_ins.svg" @click="$router.back()" />
       <div class="title flex1 flex flex-align-center">
         <span class="flex1">{{ $t('salenft') }}</span>
-        <router-link :to="{ name: 'saleLegend'}">{{ $t('saledrsc') }}<i class="el-icon-arrow-right" /></router-link>
+        <router-link :to="{ name: 'saleLegend' }"
+          >{{ $t('saledrsc') }}<i class="el-icon-arrow-right"
+        /></router-link>
       </div>
     </div>
-    
+
     <div class="cont-warp">
       <div class="nft-sale-set">
         <!-- NFT 信息 卡片 -->
-        <NftMsgCard :user-name="nft.val.foundryName" :cover-url="nft.val.coverUrl" :is-show-cert="true" :name="nft.val.nftName" :created-at="nft.val.forgeTime" :meta-id="nft.val.foundryMetaId" />
+        <NftMsgCard
+          :user-name="nft.val.foundryName"
+          :cover-url="nft.val.coverUrl"
+          :is-show-cert="true"
+          :name="nft.val.nftName"
+          :created-at="nft.val.forgeTime"
+          :meta-id="nft.val.foundryMetaId"
+        />
 
         <div class="form">
           <div class="form-item">
@@ -42,17 +51,27 @@
             <div class="cont flex flex-align-center">
               <input
                 v-model="saleAmount"
-                :placeholder="$t('priceplac') + new Decimal(Math.pow(10, 8)).div(units[unitIndex].sats).mul(0.00001)"
+                :placeholder="
+                  $t('priceplac') +
+                  new Decimal(Math.pow(10, 8)).div(units[unitIndex].sats).mul(0.00001)
+                "
                 @change="saleAmountChange"
                 type="number"
                 class="flex1"
               />
               <div class="type">
                 <ElDropdown trigger="click">
-                  <span class="flex flex-align-center"> {{ units[unitIndex].unit }} <span class="arrow"></span> </span>
+                  <span class="flex flex-align-center">
+                    {{ units[unitIndex].unit }} <span class="arrow"></span>
+                  </span>
                   <template #dropdown>
                     <el-dropdown-menu>
-                      <el-dropdown-item v-for="(unit, index) in units" :key="index" @click="changeUnitIndex(index)">{{ unit.unit }}</el-dropdown-item>
+                      <el-dropdown-item
+                        v-for="(unit, index) in units"
+                        :key="index"
+                        @click="changeUnitIndex(index)"
+                        >{{ unit.unit }}</el-dropdown-item
+                      >
                     </el-dropdown-menu>
                   </template>
                 </ElDropdown>
@@ -72,7 +91,15 @@
 import { GetNftDetail, NftApiCode, SaleNft } from '@/api'
 import { reactive, ref } from '@vue/reactivity'
 import { useRoute, useRouter } from 'vue-router'
-import { ElDropdown, ElDropdownItem, ElDropdownMenu, ElMessage, ElDatePicker, ElLoading } from 'element-plus'
+import {
+  ElDropdown,
+  ElDropdownItem,
+  ElDropdownMenu,
+  ElMessage,
+  ElDatePicker,
+  ElLoading,
+  ElMessageBox,
+} from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { store } from '@/store'
 import Decimal from 'decimal.js-light'
@@ -86,13 +113,13 @@ const unitIndex = ref(0)
 
 // @ts-ignore
 const nft: { val: NftItemDetail } = reactive({
-  val: {}
+  val: {},
 })
 
 const saleTime = ref('')
 const saleAmount = ref('')
 
-function getDetail () {
+function getDetail() {
   return new Promise<void>(async (resolve) => {
     if (typeof route.params.tokenId === 'string') {
       const res = await GetNftDetail({
@@ -106,55 +133,89 @@ function getDetail () {
   })
 }
 
-
 if (route.params.tokenId) {
   getDetail()
 }
 
-function saleAmountChange () {
-  
+function saleAmountChange() {
   const min = 0.00001
-  if (new Decimal(saleAmount.value).toNumber() <= min){
+  if (new Decimal(saleAmount.value).toNumber() <= min) {
     saleAmount.value = min.toString()
   }
 }
 
 async function confirmSale() {
   const loading = ElLoading.service({
-      lock: true,
-      text: 'Loading',
-      spinner: 'el-icon-loading',
-      background: 'rgba(0, 0, 0, 0.7)',
-      customClass: 'full-loading',
+    lock: true,
+    text: 'Loading',
+    spinner: 'el-icon-loading',
+    background: 'rgba(0, 0, 0, 0.7)',
+    customClass: 'full-loading',
   })
-  const stasPrice = units[unitIndex.value].unit === 'BSV' ? new Decimal(saleAmount.value).mul(10**8).toNumber() : new Decimal(saleAmount.value).toNumber()
+  const stasPrice =
+    units[unitIndex.value].unit === 'BSV'
+      ? new Decimal(saleAmount.value).mul(10 ** 8).toNumber()
+      : new Decimal(saleAmount.value).toNumber()
   const params = {
     codehash: nft.val!.codeHash,
     genesis: nft.val!.genesis,
     tokenIndex: nft.val!.tokenIndex,
     satoshisPrice: stasPrice,
     opreturnData: nft.val!.tx,
-    genesisTxid: nft.val!.genesisTxId
+    genesisTxid: nft.val!.genesisTxId,
+  }
+  const useAmount = await store.state.sdk?.sellNFT({ checkOnly: true, ...params }).catch(() => {
+    loading.close()
+  })
+  const userBalanceRes = await store.state.sdk?.getBalance()
+  if (userBalanceRes?.code === 200) {
+    if (typeof useAmount === 'number' && userBalanceRes.data.satoshis > useAmount) {
+      // 余额足够
+      ElMessageBox.confirm(`${i18n.t('useAmountTips')}: ${useAmount} SATS`, i18n.t('niceWarning'), {
+        confirmButtonText: i18n.t('confirm'),
+        cancelButtonText: i18n.t('cancel'),
+        closeOnClickModal: false
+      }).then(async () => {
+        // 确认支付
+        const res = await store.state.sdk?.sellNFT(params).catch(() => {
+          loading.close()
+        })
+        if (typeof res !== 'number' && res && res.sellTxId) {
+          // sell协议上完 要上报服务器
+          const response = await SaleNft({
+            sellValidTime: new Date(saleTime.value).getTime(),
+            amount: stasPrice,
+            tokenId: nft.val!.tokenId,
+            sellTxId: res.sellTxId,
+          })
+          if (response.code === NftApiCode.success) {
+            ElMessage.success(i18n.t('saleSuccess'))
+            router.back()
+          }
+        }
+        loading.close()
+      })
+    } else {
+      loading.close()
+      ElMessageBox.alert(
+        `
+        <p>${i18n.t('useAmountTips')}: ${useAmount} SATS</p>
+        <p>${i18n.t('insufficientBalance')}</p>
+      `,
+        {
+          confirmButtonText: i18n.t('confirm'),
+          dangerouslyUseHTMLString: true,
+        }
+      )
+      return
+    }
   }
 
-  const res = await store.state.sdk?.sellNFT(params).catch(() => { loading.close() })
-  if (res && res.sellTxId) {
-      // sell协议上完 要上报服务器
-      const response = await SaleNft({
-        sellValidTime: new Date(saleTime.value).getTime(),
-        amount: stasPrice,
-        tokenId: nft.val!.tokenId,
-        sellTxId: res.sellTxId
-      })
-      if (response.code === NftApiCode.success) {
-        ElMessage.success(i18n.t('saleSuccess'))
-        router.back()
-      }
-    }
+  
 
   // const lineRes = await store.state.sdk?.nftSell(params)
   // if (lineRes && lineRes.code === 200) {
-  //   // 上架完 要上链 sell 协议 
+  //   // 上架完 要上链 sell 协议
   //   const sellProtocolRes = await store.state.sdk?.createNftSellProtocol({
   //     txid: lineRes.data.txId, // sell txId string
   //     sellTxId: lineRes.data.sellTxId, // sellUtxoTxId
@@ -176,17 +237,16 @@ async function confirmSale() {
   //     }
   //   }
   // }
-  loading.close()
+  
 }
 
-
 const setDisabledDate = (time: string) => {
-  const now = new Date().getTime() + (1000 * 60 * 30)
+  const now = new Date().getTime() + 1000 * 60 * 30
   return new Date(time).getTime() < now
 }
 
 // 更改单位
-function changeUnitIndex (index: number) {
+function changeUnitIndex(index: number) {
   if (unitIndex.value === index) return
   if (saleAmount.value !== '') {
     const oldSats = units[unitIndex.value].sats

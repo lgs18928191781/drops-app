@@ -84,7 +84,12 @@ function toSale() {
 function offSale() {
   ElMessageBox.confirm(
     `${i18n.t('offsaleConfirm')} ${nft.val.nftName} ?`,
-    i18n.t('niceWarning')
+    i18n.t('niceWarning'),
+    {
+      confirmButtonText: i18n.t('confirm'),
+      cancelButtonText: i18n.t('cancel'),
+      closeOnClickModal: false
+    }
   ).then(async () => {
     const loading = ElLoading.service({
       lock: true,
@@ -93,7 +98,7 @@ function offSale() {
       background: 'rgba(0, 0, 0, 0.7)',
       customClass: 'full-loading',
     })
-    NftOffSale(nft.val)
+    NftOffSale(nft.val, loading)
       .then(() => {
         nft.val.putAway = false
         loading.close()

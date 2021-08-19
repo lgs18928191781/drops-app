@@ -177,6 +177,16 @@ body{
 .el-skeleton__text{
     background: #F2F4F7 !important;
 }
+.el-button--primary{
+    color: #303133 !important;
+    background-color: $mainColor !important;
+    border-color: $mainColor !important;
+}
+
+.el-message-box{
+    border-radius: 8px !important;
+}
+
 
 
 .v-enter-from,

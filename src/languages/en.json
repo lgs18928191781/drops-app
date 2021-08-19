@@ -130,5 +130,9 @@
   "selfTitle": "Create your NFT on MetaNet!",
   "selfDrsc": "Start your NFT Journey now",
   "start": "Create",
-  "txIdTips": "Please enter the txid."
+  "txIdTips": "Please enter the txid.",
+  "insufficientBalance": "Insufficient balance, please recharge and try again",
+  "useAmountTips": "This operation requires payment",
+  "cancel": "Cancel",
+  "overTime": "Show has ended"
 }

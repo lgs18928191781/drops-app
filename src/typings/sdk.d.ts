@@ -54,12 +54,17 @@ export interface SdkGenesisNFTRes extends MetaIdJsRes{
         genesisId: string
         genesisTxid: string
         sensibleId: string
+        amount?: number
     }
 }
 
 export interface SendMetaDataTxRes extends MetaIdJsRes{
     data: {
         txId: string
+        // checkOnly = true
+        usedAmount?: number
+        usedAmountCent?: number
+        nodeAddress?: string
     }
 }
 
@@ -85,6 +90,14 @@ export interface IssueNFTResData extends MetaIdJsRes {
       tokenId: string
       txId: string
       tokenIndex: string
+      amount?: number
+    }
+}
+
+export interface GetBalanceRes extends MetaIdJsRes{
+    data:{
+        bsv: number,
+        satoshis: number
     }
 }
 
@@ -92,7 +105,8 @@ export interface NFTCancelResData extends MetaIdJsRes {
     data: {
         tx: any
         txHex: string
-        txid: string
+        txid: string,
+        amount?: number
     }
 }
 
@@ -101,6 +115,7 @@ export interface NftBuyResData extends MetaIdJsRes {
         tx: any
         txHex: string
         txid: string
+        amount?: number
     }
 }
 
@@ -110,6 +125,7 @@ export interface NftSellResData extends MetaIdJsRes {
         sellTxId: string
         txHex: string
         txId: string
+        amount?: number
     }
 }
 
@@ -124,6 +140,7 @@ export interface NftDataProtocolParams {
     cover: MetaFile, // nft封面 MetaFile协议地址
     originalFile?: MetaFile, // nft原文件 MetaFile协议地址
     txId?: string // 使用txId创建时的txId
+    checkOnly?: boolean //
 }
 
 export interface CreateNFTRes extends MetaIdJsRes {
@@ -148,7 +165,8 @@ export interface NftBuyParams {
     tokenIndex: string
     txId: string
     opreturnData: string
-    genesisTxid: string
+    genesisTxid: string,
+    checkOnly?: boolean
 }
 
 
@@ -168,7 +186,7 @@ export interface CreateNftBuyProtocolParams {
 
 export interface BuyNFTParams extends NftBuyParams{
     amount: number,
-    address: string
+    address: string,
 }
 
 export interface NftSellParams {
@@ -177,7 +195,8 @@ export interface NftSellParams {
     tokenIndex: string,
     satoshisPrice: number,
     opreturnData: string
-    genesisTxid: string
+    genesisTxid: string,
+    checkOnly?: boolean
 }
 
 export interface SellNFTParams extends NftSellParams {
@@ -198,7 +217,8 @@ export interface NftCancelParams {
     txId: string
     opreturnData: string,
     genesisTxid: string,
-    satoshis: number
+    satoshis: number,
+    checkOnly?: boolean
 }
 export interface CancelSellNFTParams extends NftCancelParams {
     sellTxId: string
