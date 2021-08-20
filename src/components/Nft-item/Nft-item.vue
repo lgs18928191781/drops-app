@@ -19,9 +19,9 @@
             <template v-if="overTime">
               {{$t('overTime')}}
             </template>
-            <template v-else>
-              21{{$t('day')}}4{{$t('hour')}}
-            </template>
+            <div v-else class="flex flex-align-center">
+              <img src="@/assets/images/icon_time.svg" /><span>21{{$t('day')}}4{{$t('hour')}}</span>
+            </div>
           </template>
         </div>
         <a class="btn btn-min btn-plain" v-if="item?.putAway" @click.stop="offSale">{{ $t('offsale') }}</a>

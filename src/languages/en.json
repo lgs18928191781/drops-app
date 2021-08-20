@@ -69,7 +69,7 @@
   "sale": "Sale",
   "salenft": "NFT on sale ",
   "saledrsc": "Shelf description ",
-  "timeplac": "Choose to be available for a limited time",
+  "timeplac": "Set market display time",
   "priceplac": "Set the selling price, minimum",
   "seehistoryprice": "View historical prices",
   "confirmsale": "Confirm listing",
@@ -134,5 +134,6 @@
   "insufficientBalance": "Insufficient balance, please recharge and try again",
   "useAmountTips": "This operation requires payment",
   "cancel": "Cancel",
-  "overTime": "Show has ended"
+  "overTime": "Show has ended",
+  "saleAgain": "Redisplay"
 }

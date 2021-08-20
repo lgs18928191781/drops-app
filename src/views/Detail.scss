@@ -62,9 +62,16 @@
                     margin: 0 5px;
                 }
             }
-            .btn{
+            .operate-warp{
                 margin-top: 20px;
+                .btn{
+                    margin-right: 20px;
+                    &:last-child{
+                        margin-right: 0;
+                    }
+                }
             }
+            
         }
     }
     .bottom{

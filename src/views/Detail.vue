@@ -154,26 +154,31 @@
               </div>
             </template>
             <!-- <div class="btn btn-block"  @click="buy">{{ $t('use') }} {{ nft.val.amount }} BSV {{ $t('buy') }}</div> -->
-            <div
-              class="btn btn-block"
-              @click="buy"
-              v-if="
-                !store.state.userInfo ||
-                (store.state.userInfo && store.state.userInfo.metaId !== nft.val.ownerMetaId)
-              "
-            >
-              {{ i18n.locale.value === 'zh' ? `以 ${price} BSV 购买` : `Buy Now At ${price} BSV` }}
-            </div>
-            <template
-              v-else-if="
-                store.state.userInfo && store.state.userInfo.metaId === nft.val.ownerMetaId
-              "
-            >
-              <div class="btn btn-block btn-plain" v-if="nft.val.putAway" @click="offSale">
-                {{ $t('offsale') }}
+            <div class="operate-warp">
+              <div
+                class="btn btn-block"
+                @click="buy"
+                v-if="
+                  !store.state.userInfo ||
+                  (store.state.userInfo && store.state.userInfo.metaId !== nft.val.ownerMetaId)
+                "
+              >
+                {{ i18n.locale.value === 'zh' ? `以 ${price} BSV 购买` : `Buy Now At ${price} BSV` }}
               </div>
-              <div class="btn btn-block" v-else @click="onSale">{{ $t('sale') }}</div>
-            </template>
+              <template
+                v-else-if="
+                  store.state.userInfo && store.state.userInfo.metaId === nft.val.ownerMetaId
+                "
+              >
+                <div class="flex flex-align-center  putAway-warp" v-if="nft.val.putAway" >
+                  <div class="btn btn-block btn-plain flex1" @click="offSale">{{ $t('offsale') }}</div>
+                  <template v-if="nft.val.remainingTime > now">
+                    <div class="btn btn-block flex1" @click="toSale">{{$t('saleAgain')}}</div>
+                  </template>
+                </div>
+                <div class="btn btn-block" v-else @click="onSale">{{ $t('sale') }}</div>
+              </template>
+            </div>
           </div>
         </div>
 
@@ -360,6 +365,7 @@ import NftOffSale from '@/utils/offSale'
 const i18n = useI18n()
 const route = useRoute()
 const store = useStore()
+const now = new Date().getTime()
 const tabs = [
   { name: i18n.t('workdetail'), key: 'workdetail' },
   { name: i18n.t('possessionrecord'), key: 'possessionrecord' },
@@ -631,6 +637,15 @@ function share() {
 //
 function toCert() {
   ElMessage.info(i18n.t('stayTuned'))
+}
+
+function toSale () {
+  router.push({
+    name: 'sale',
+    params: {
+      tokenId: nft.val.tokenId
+    }
+  })
 }
 
 function more() {

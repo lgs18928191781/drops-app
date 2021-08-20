@@ -69,7 +69,7 @@
   "sale": "上架出售",
   "salenft": "上架出售NFT",
   "saledrsc": "上架说明",
-  "timeplac": "选择上架有限时间",
+  "timeplac": "设置市场展示时间",
   "priceplac": "设置出售价格,最小",
   "seehistoryprice": "查看历史售价",
   "confirmsale": "确认上架",
@@ -134,5 +134,6 @@
   "insufficientBalance": "余额不足，请充值后再重试",
   "useAmountTips": "此次操作需要支付",
   "cancel": "取消",
-  "overTime": "展示已结束"
+  "overTime": "展示已结束",
+  "saleAgain": "重新展示"
 }
