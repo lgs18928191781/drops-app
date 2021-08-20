@@ -195,6 +195,7 @@ async function confirmSale() {
         }
         loading.close()
       })
+      .catch(() => loading.close())
     } else {
       loading.close()
       ElMessageBox.alert(

@@ -246,6 +246,7 @@ export default class Sdk {
         }
         // 2.createNftDataProtocol
         const nftDataRes = await this.createNftDataProtocol(nftDataParams)
+        debugger
         if (nftDataRes.code === 200 || nftDataRes.code === 205) {
           // issueNFT没法checkOnly， 因为需要genesisNFT交易信息， 但费率在9200左右，固定写死为10000
           if (params.checkOnly) {
@@ -327,6 +328,7 @@ export default class Sdk {
         window[functionName] = _params.callback
         this.appMetaidjs?.genesisNFT(params.nftTotal, functionName)
       } else {
+        debugger
         // @ts-ignore
         this.metaidjs?.genesisNFT(_params)
       }

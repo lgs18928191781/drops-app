@@ -582,6 +582,7 @@ async function createNft() {
         loading.close()
       }
     })
+    .catch(() => loading.close())
   } else {
     loading.close()
     ElMessageBox.alert(`

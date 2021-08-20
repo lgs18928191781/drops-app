@@ -172,7 +172,7 @@
               >
                 <div class="flex flex-align-center  putAway-warp" v-if="nft.val.putAway" >
                   <div class="btn btn-block btn-plain flex1" @click="offSale">{{ $t('offsale') }}</div>
-                  <template v-if="nft.val.remainingTime > now">
+                  <template v-if="now > nft.val.remainingTime">
                     <div class="btn btn-block flex1" @click="toSale">{{$t('saleAgain')}}</div>
                   </template>
                 </div>
@@ -473,18 +473,18 @@ function toLink() {
 }
 
 function offSale() {
-  ElMessageBox.confirm(`${i18n.t('offsaleConfirm')} ${nft.val.nftName} ?`, i18n.t('niceWarning'), {
-    confirmButtonText: i18n.t('confirm'),
-    cancelButtonText: i18n.t('cancel'),
-    closeOnClickModal: false
-  }).then(async () => {
-    const loading = ElLoading.service({
+  const loading = ElLoading.service({
       lock: true,
       text: 'Loading',
       spinner: 'el-icon-loading',
       background: 'rgba(0, 0, 0, 0.7)',
       customClass: 'full-loading',
-    })
+  })
+  ElMessageBox.confirm(`${i18n.t('offsaleConfirm')} ${nft.val.nftName} ?`, i18n.t('niceWarning'), {
+    confirmButtonText: i18n.t('confirm'),
+    cancelButtonText: i18n.t('cancel'),
+    closeOnClickModal: false
+  }).then(async () => {
     NftOffSale(nft.val, loading)
       .then(() => {
         loading.close()
@@ -493,6 +493,7 @@ function offSale() {
         loading.close()
       })
   })
+  .catch(() => loading.close())
 }
 
 function onSale() {
@@ -573,6 +574,7 @@ async function buy() {
             }
           }
         })
+        .catch(() => loading.close())
       } else {
         // 余额不足
         loading.close()

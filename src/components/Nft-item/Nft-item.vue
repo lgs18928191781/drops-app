@@ -90,13 +90,6 @@ function toSale () {
 }
 
 function offSale () {
-  ElMessageBox.confirm(`${i18n.t('offsaleConfirm')} ${props.item.productName} ?`, i18n.t('niceWarning'), {
-    confirmButtonText: i18n.t('confirm'),
-    cancelButtonText: i18n.t('cancel'),
-    closeOnClickModal: false
-  })
-  .then(async () => {
-    
   const loading = ElLoading.service({
       lock: true,
       text: 'Loading',
@@ -104,7 +97,12 @@ function offSale () {
       background: 'rgba(0, 0, 0, 0.7)',
       customClass: 'full-loading',
   })
-  
+  ElMessageBox.confirm(`${i18n.t('offsaleConfirm')} ${props.item.productName} ?`, i18n.t('niceWarning'), {
+    confirmButtonText: i18n.t('confirm'),
+    cancelButtonText: i18n.t('cancel'),
+    closeOnClickModal: false
+  })
+  .then(async () => {
     // 先获取详情
     const detailRes = await GetNftDetail({
       tokenId: props.item.tokenId
@@ -122,6 +120,8 @@ function offSale () {
       })
     }
   })
+  .catch(() => loading.close())
+  
 }
 </script>
 

@@ -82,6 +82,13 @@ function toSale() {
 }
 
 function offSale() {
+  const loading = ElLoading.service({
+      lock: true,
+      text: 'Loading',
+      spinner: 'el-icon-loading',
+      background: 'rgba(0, 0, 0, 0.7)',
+      customClass: 'full-loading',
+  })
   ElMessageBox.confirm(
     `${i18n.t('offsaleConfirm')} ${nft.val.nftName} ?`,
     i18n.t('niceWarning'),
@@ -91,13 +98,6 @@ function offSale() {
       closeOnClickModal: false
     }
   ).then(async () => {
-    const loading = ElLoading.service({
-      lock: true,
-      text: 'Loading',
-      spinner: 'el-icon-loading',
-      background: 'rgba(0, 0, 0, 0.7)',
-      customClass: 'full-loading',
-    })
     NftOffSale(nft.val, loading)
       .then(() => {
         nft.val.putAway = false
@@ -107,6 +107,7 @@ function offSale() {
         loading.close()
       })
   })
+  .catch(() => loading.close())
 }
 
 if (route.params.tokenId) {
