@@ -124,7 +124,7 @@ export interface NftSellResData extends MetaIdJsRes {
         sellTxHex: string
         sellTxId: string
         txHex: string
-        txId: string
+        txid: string
         amount?: number
     }
 }

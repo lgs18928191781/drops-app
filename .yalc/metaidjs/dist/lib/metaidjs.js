@@ -164,6 +164,7 @@ var MetaIdJs = /** @class */ (function () {
             "nftSell",
             "genesisNFT",
             "issueNFT",
+            "nftList",
         ];
         var _loop_1 = function (item) {
             this_1[item] = function (params) {

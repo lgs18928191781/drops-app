@@ -274,8 +274,9 @@
                   <div class="work-detail-item flex flex-align-center">
                     <div class="key">{{ $t('worktype') }}：</div>
                     <div class="value flex1">
-                      {{ nftTypes.find((item) => item.value === nft.val.type)?.name }} 1920*1080PX
-                      5.2M
+                      {{ nftTypes.find((item) => item.value === nft.val.type)?.name }} 
+                      <!-- 1920*1080PX
+                      5.2M -->
                     </div>
                   </div>
                   <div class="work-detail-item flex flex-align-center" v-if="nft.val.type === '3'">

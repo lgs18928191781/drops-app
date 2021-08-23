@@ -76,7 +76,7 @@
   "copysuccess": "复制成功",
   "copyerror": "复制失败，请手动复制",
   "txIdTips": "请填写txId",
-  "createbylocal": "由本地文件铸造",
+  "createbylocal": "选择类型铸造",
   "seriesNumberPlac": "请填写系列个数",
   "seriesNumberTips": "一个系列含有多少个NFT",
   "nftTypeTips": "请选择NFT类型",

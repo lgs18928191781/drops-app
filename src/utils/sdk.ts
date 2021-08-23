@@ -551,7 +551,7 @@ export default class Sdk {
           await this.checkNftTxIdStatus(res.data.sellTxId).catch(() => reject('sellNFT fail'))
         }
         const response = await this.createNftSellProtocol({
-          txid: res.data.txId, // sell txId string
+          txid: res.data.txid, // sell txId string
           sellTxId: res.data.sellTxId, // sellUtxoTxId
           sellTxHex: res.data.sellTxHex, // sell的utxo
           createdAt: new Date().getTime(), // 创建时间

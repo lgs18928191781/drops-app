@@ -11,7 +11,7 @@
       </div>
     </div>
     <div class="cont-warp">
-      <div class="tags">
+      <div class="tags" v-if="createTypeIndex !== 1">
         <template v-for="(type, index) in _nftTypes">
           <template v-if="type.disabled">
             <ElTooltip effect="dark" :content="$t('stayTuned')" placement="top">
@@ -30,7 +30,6 @@
         </template>
       </div>
       <div class="tips">
-        <template v-if="createTypeIndex === 1">{{ $t('tagCreateTx') }}<br /></template>
         <template v-if="createTypeIndex === 1">{{ $t('nftTxidTips') }} <br /></template>
         <template v-if="nft.type === '1'"> {{ $t('nftImageDrsc') }}<br /> </template>
         <template v-if="nft.type === '3'">
@@ -41,7 +40,7 @@
         {{ $t('createtips3') }}
       </div>
       <!-- txId 铸造 -->
-      <div class="create-form-item" v-if="createTypeIndex === 1">
+      <div class="create-form-item" v-if="createTypeIndex === 1 || nft.type === '3'">
         <div class="title">TXID</div>
         <div class="cont">
           <div class="input-warp flex flex-align-center">
@@ -58,7 +57,7 @@
         </div>
       </div>
       <!-- 源文件 铸造 -->
-      <div class="create-form-item" v-else-if="createTypeIndex === 0">
+      <div class="create-form-item" v-else-if="createTypeIndex === 0 && nft.type !== '3'">
         <div class="title">{{ $t('nftoriginal') }}</div>
         <div class="cont">
           <div class="input-warp flex flex-align-center">
@@ -299,11 +298,7 @@ const isShowClassifyModal = ref(false)
 const createTypeIndex = ref(0)
 function changeCreateType() {
   createTypeIndex.value = createTypeIndex.value === 0 ? 1 : 0
-  if (createTypeIndex.value === 1) {
-    nft.type = ''
-  } else {
-    nft.type = '1'
-  }
+  
 }
 
 const dialogVisible = false
@@ -419,10 +414,6 @@ function changeTag(index: number) {
   const value = type.value
   if (nft.type === value) return
   nft.type = value
-  // 权益类智能有txId铸造
-  if (type.value === '3') {
-    createTypeIndex.value = 1
-  }
 }
 
 // 检测txId是否可以铸造
