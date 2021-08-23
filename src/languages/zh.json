@@ -135,5 +135,6 @@
   "useAmountTips": "此次操作需要支付",
   "cancel": "取消",
   "overTime": "展示已结束",
-  "saleAgain": "重新展示"
+  "saleAgain": "重新展示",
+  "tagCreateTx": "TX铸造NFT时,类型由TX的内容决定，不可选"
 }

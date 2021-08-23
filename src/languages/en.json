@@ -135,5 +135,6 @@
   "useAmountTips": "This operation requires payment",
   "cancel": "Cancel",
   "overTime": "Show has ended",
-  "saleAgain": "Redisplay"
+  "saleAgain": "Redisplay",
+  "tagCreateTx": "When TX casting NFT, the type is determined by the content of TX, not selectable"
 }

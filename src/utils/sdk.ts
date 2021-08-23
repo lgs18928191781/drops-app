@@ -214,6 +214,56 @@ export default class Sdk {
     })
   }
 
+  // 检查txid状态，成功后才可继续其他上链操作，否则容易双花
+  checkTxIdStatus(
+    txId: string,
+    timer?: number,
+    parentResolve?: (value: void | PromiseLike<void>) => void,
+    parentReject?: any
+  ) {
+    return new Promise<void>((resolve, reject) => {
+      fetch(`${import.meta.env.VITE_WalletApi}/showMANDB/api/v1/metanet/getTree/${txId}`)
+        .then(function (response) {
+          return response.json()
+        })
+        .then((response) => {
+          debugger
+          if (response) {
+            if (response.code === 200) {
+              if (parentResolve) parentResolve()
+              else resolve()
+            } else {
+              // 超过30次还不成功就 回调失败
+              if (timer && timer > 30) {
+                if (parentReject) parentReject()
+                else reject()
+              } else {
+                setTimeout(() => {
+                  this.checkNftTxIdStatus(
+                    txId,
+                    timer ? timer + 1 : 1,
+                    parentResolve ? parentResolve : resolve,
+                    parentReject ? parentReject : reject
+                  )
+                }, 1000)
+              }
+            }
+          } else {
+            this.checkNftTxIdStatus(
+              txId,
+              timer ? timer + 1 : 1,
+              parentResolve ? parentResolve : resolve,
+              parentReject ? parentReject : reject
+            )
+          }
+        })
+        .catch(() => {
+          if (parentReject) parentReject()
+          else reject()
+        })
+    })
+  }
+
   // 铸造 nft 1. genesisNFT  2.createNftDataProtocol 3.issueNFT
   createNFT(params: CreateNFTParams) {
     return new Promise<
@@ -252,6 +302,8 @@ export default class Sdk {
           if (params.checkOnly) {
             resolve(Math.ceil(res.data.amount! + nftDataRes.data.usedAmount! + 10000))
           } else {
+            // 检查txId状态 防止双花
+            await this.checkTxIdStatus(nftDataRes.data.txId)
             // 3.issueNFT
             const issueRes = await this.issueNFT({
               receiverAddress: store.state.userInfo ? store.state.userInfo?.address : '',

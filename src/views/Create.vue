@@ -11,7 +11,7 @@
       </div>
     </div>
     <div class="cont-warp">
-      <div class="tags" v-if="createTypeIndex === 0">
+      <div class="tags">
         <template v-for="(type, index) in _nftTypes">
           <template v-if="type.disabled">
             <ElTooltip effect="dark" :content="$t('stayTuned')" placement="top">
@@ -30,7 +30,8 @@
         </template>
       </div>
       <div class="tips">
-        <template v-if="createTypeIndex === 1">{{ $t('nftTxidTips') }}</template>
+        <template v-if="createTypeIndex === 1">{{ $t('tagCreateTx') }}<br /></template>
+        <template v-if="createTypeIndex === 1">{{ $t('nftTxidTips') }} <br /></template>
         <template v-if="nft.type === '1'"> {{ $t('nftImageDrsc') }}<br /> </template>
         <template v-if="nft.type === '3'">
           {{ $t('nftCopyrightDrsc') }}<br />

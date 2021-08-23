@@ -5,9 +5,15 @@ body{
     font-size: 16px;
     color: #303133;
     font-family: "SF Pro","Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+    min-height: 100vh;
     .container{
         max-width: 1000Px;
         margin: 0 auto;
+    }
+    #app{
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
     }
 }
 
@@ -185,6 +191,12 @@ body{
 
 .el-message-box{
     border-radius: 8px !important;
+}
+
+.el-skeleton__image{
+    svg{
+        display: none;
+    }
 }
 
 
