@@ -137,5 +137,6 @@
   "overTime": "Show has ended",
   "saleAgain": "Redisplay",
   "tagCreateTx": "When TX casting NFT, the type is determined by the content of TX, not selectable",
-  "txIdNotOwner": "Can't cast other people's TxId content"
+  "txIdNotOwner": "Can't cast other people's TxId content",
+  "notRightTxId": "This TxId content cannot be cast into equity NFT, please re-enter"
 }

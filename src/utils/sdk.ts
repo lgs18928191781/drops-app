@@ -299,9 +299,7 @@ export default class Sdk {
           await this.checkNftTxIdStatus(res.data.genesisTxid).catch(() => reject('createNFT error'))
         }
         // 2.createNftDataProtocol
-        const nftDataRes = await this.createNftDataProtocol(nftDataParams).catch(() => {
-          debugger
-        })
+        const nftDataRes = await this.createNftDataProtocol(nftDataParams).catch(() => reject('createNFT error'))
         debugger
         if (nftDataRes && nftDataRes.code === 200 || nftDataRes && nftDataRes.code === 205) {
           // issueNFT没法checkOnly， 因为需要genesisNFT交易信息， 但费率在9200左右，固定写死为10000
@@ -322,6 +320,7 @@ export default class Sdk {
               nftwebsite: '',
               nftissuerName: store.state.userInfo?.name ? store.state.userInfo?.name : '',
               sensibleId: res.data.sensibleId,
+              dataTxId: nftDataRes.data.txId,
               checkOnly: nftDataParams.checkOnly,
             })
             if (issueRes.code === 200) {
@@ -409,6 +408,7 @@ export default class Sdk {
       nftdesc: string
       nfticon: string
       nftwebsite: string
+      dataTxId: string
       nftissuerName: string
       checkOnly?: boolean
     },
@@ -420,6 +420,7 @@ export default class Sdk {
           ...params,
         },
         callback: (res: MetaIdJsRes) => {
+          debugger
           console.log('issueNFT res')
           console.log(res)
           // 当报错是token supply is fixed 时， 一直轮询，直到成功或其他报错

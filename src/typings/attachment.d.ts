@@ -3,6 +3,7 @@ declare interface MetaFile {
     BufferData: string
     hexData: string;
     name: string;
-    data_type: string;
+    data_type: string
     raw: null | File
+    metaFileTxId?: string
 }

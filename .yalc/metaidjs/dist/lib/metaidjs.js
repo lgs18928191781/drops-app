@@ -359,5 +359,5 @@ var MetaIdJs = /** @class */ (function () {
     };
     return MetaIdJs;
 }());
-exports.default = MetaIdJs;
+exports.MetaIdJs = MetaIdJs;
 //# sourceMappingURL=metaidjs.js.map

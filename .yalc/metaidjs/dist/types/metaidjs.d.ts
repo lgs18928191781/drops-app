@@ -54,7 +54,7 @@ interface ProtocolParamsTypes extends ProtocolOptions, BaseParamsType {
     accessToken: string;
     handlerId?: string;
 }
-export default class MetaIdJs {
+export declare class MetaIdJs {
     postMessage: PostmessageClient;
     oauthSettings: OauthSettingsTypes;
     mainFrameEl: HTMLIFrameElement | null;

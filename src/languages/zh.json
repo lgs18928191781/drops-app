@@ -137,5 +137,6 @@
   "overTime": "展示已结束",
   "saleAgain": "重新展示",
   "tagCreateTx": "TX铸造NFT时,类型由TX的内容决定，不可选",
-  "txIdNotOwner": "不能铸造别人的TxId内容"
+  "txIdNotOwner": "不能铸造别人的TxId内容",
+  "notRightTxId": "此TxId内容不能铸造成权益类NFT,请重新输入"
 }

@@ -1,4 +1,4 @@
-import MetaIdJs from "./metaidjs";
+import { MetaIdJs } from "./metaidjs";
 declare global {
     interface Window {
         MetaIdJs?: Function;

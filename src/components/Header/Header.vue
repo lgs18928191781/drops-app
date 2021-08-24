@@ -5,7 +5,7 @@
         <!-- 分割线 -->
         <span class="line"></span>
         <router-link to="/" class="logo flex flex-align-center">
-          <img src="@/assets/images/logo_nos.svg" alt="NFTOnShow" /><span>NFT</span>OnShow
+          <img src="@/assets/images/logo_nos.svg" alt="NFTOnShow" />
         </router-link>
       </div>
       <nav class="flex flex-align-center flex-pack-center">

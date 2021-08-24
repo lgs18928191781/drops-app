@@ -255,6 +255,7 @@ import { useStore } from '@/store'
 import { router } from '@/router'
 import PickerModel from '@/components/PickerModal/PickerModel.vue'
 import { nftTypes } from '@/config'
+import { stringify } from 'querystring'
 // import { IssueNFTResData, SdkGenesisNFTRes } from '@/typings/sdk'
 
 const _nftTypes = reactive(nftTypes)
@@ -425,6 +426,9 @@ async function checkTxIdStatus() {
   } else if (result.status === TxIdStatus.NotOwner) {
     nft.tx = ''
     ElMessage.error(i18n.t('txIdNotOwner'))
+  } else if (result.status === TxIdStatus.NotRightTxId) {
+    nft.tx = ''
+    ElMessage.error(i18n.t('notRightTxId'))
   } else if (result.status === TxIdStatus.Success) {
     if (result.data){
       // MetaFile
@@ -446,8 +450,10 @@ async function checkTxIdStatus() {
 const enum TxIdStatus {
   NotCreate = 1,
   NotOwner = 2,
-  Success = 3
+  Success = 3,
+  NotRightTxId = 4
 }
+
 async function checkTxId () {
   return new Promise<{
     status: TxIdStatus,
@@ -460,23 +466,24 @@ async function checkTxId () {
     const response = await GetTxData(nft.tx)
     if (response.code == 200 && response.result.data.length > 0) {
       const data = response.result.data[0]
+      debugger
       // check user owner 
       if (data.rootTxId === store.state.userInfo?.metaId) {
-        resolve({
-          status: TxIdStatus.Success,
-          data
-        })
-        // MetaFile
-        if (data.parentNodeName === 'MetaFile') {
-          nft.type = '1'
-        } else if (data.parentNodeName === 'MetaAccessContent') {
-          nft.type = '3'
-          nft.nftName = data.data.title
-          nft.intro = data.data.artMark
-          coverFile = data.data.artCover
+        if (nft.type === '3' && createTypeIndex.value !== 1) {
+          if (data.parentNodeName !== 'MetaAccessContent') {
+            resolve({
+              status: TxIdStatus.NotRightTxId,
+              data
+            })
+          } else {
+            resolve({
+              status: TxIdStatus.Success,
+              data
+            })
+          }
         } else {
           resolve({
-            status: TxIdStatus.NotCreate,
+            status: TxIdStatus.Success,
             data
           })
         }
@@ -563,7 +570,7 @@ async function createNft() {
   })
 
   const params = {
-    type: createTypeIndex.value,
+    type: nft.type,
     name: nft.nftName, // nft名称
     intro: nft.intro, // nft描述
     cover: coverFile, // nft封面 MetaFile协议地址

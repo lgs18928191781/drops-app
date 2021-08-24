@@ -134,11 +134,11 @@ export interface CreateNFTParams extends NftDataProtocolParams{
 }
 
 export interface NftDataProtocolParams {
-    type: number,
+    type: string,
     name: string, // nft名称
     intro: string, // nft描述
     cover: MetaFile, // nft封面 MetaFile协议地址
-    originalFile?: MetaFile, // nft原文件 MetaFile协议地址
+    originalFile?: MetaFile | string, // nft原文件 MetaFile协议地址
     txId?: string // 使用txId创建时的txId
     checkOnly?: boolean //
 }
