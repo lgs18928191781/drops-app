@@ -119,8 +119,12 @@ export default class Sdk {
           metaIdTag,
           accessToken,
           ...params,
+        };
+        
+        // 处理余额不足回调
+        (window as any).handleNotEnoughMoney = (res: MetaIdJsRes) => {
+          reject()
         }
-        console.log(_params)
         this.metaidjs?.sendMetaDataTx({
           callback: (res: MetaIdJsRes) => {
             this.callback(res, resolve)
@@ -282,22 +286,24 @@ export default class Sdk {
         }
       | number
     >(async (resolve, reject) => {
-      const { nftTotal, ...nftDataParams } = params
+      try {
+        const { nftTotal, ...nftDataParams } = params
       // 1. genesisNFT
       const res = await this.genesisNFT({
         nftTotal: params.nftTotal ? params.nftTotal : '1',
         checkOnly: params.checkOnly ? true : false,
       })
-      debugger
       if (res.code === 200) {
         // 检查txId状态， 防止双花
         if (!params.checkOnly) {
           await this.checkNftTxIdStatus(res.data.genesisTxid).catch(() => reject('createNFT error'))
         }
         // 2.createNftDataProtocol
-        const nftDataRes = await this.createNftDataProtocol(nftDataParams)
+        const nftDataRes = await this.createNftDataProtocol(nftDataParams).catch(() => {
+          debugger
+        })
         debugger
-        if (nftDataRes.code === 200 || nftDataRes.code === 205) {
+        if (nftDataRes && nftDataRes.code === 200 || nftDataRes && nftDataRes.code === 205) {
           // issueNFT没法checkOnly， 因为需要genesisNFT交易信息， 但费率在9200左右，固定写死为10000
           if (params.checkOnly) {
             resolve(Math.ceil(res.data.amount! + nftDataRes.data.usedAmount! + 10000))
@@ -331,6 +337,10 @@ export default class Sdk {
           reject('createNFT error')
         }
       } else {
+        reject('createNFT error')
+      }
+      }
+      catch {
         reject('createNFT error')
       }
     })

@@ -136,5 +136,6 @@
   "cancel": "取消",
   "overTime": "展示已结束",
   "saleAgain": "重新展示",
-  "tagCreateTx": "TX铸造NFT时,类型由TX的内容决定，不可选"
+  "tagCreateTx": "TX铸造NFT时,类型由TX的内容决定，不可选",
+  "txIdNotOwner": "不能铸造别人的TxId内容"
 }

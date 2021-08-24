@@ -418,33 +418,85 @@ function changeTag(index: number) {
 
 // 检测txId是否可以铸造
 async function checkTxIdStatus() {
-  const res = await GetTxStatus({
+  const result = await checkTxId()
+  if (result.status === TxIdStatus.NotCreate) {
+    nft.tx = ''
+    ElMessage.error(i18n.t('txidToNftFaile'))
+  } else if (result.status === TxIdStatus.NotOwner) {
+    nft.tx = ''
+    ElMessage.error(i18n.t('txIdNotOwner'))
+  } else if (result.status === TxIdStatus.Success) {
+    if (result.data){
+      // MetaFile
+    if (result.data.parentNodeName === 'MetaFile') {
+        nft.type = '1'
+      } else if (result.data.parentNodeName === 'MetaAccessContent') {
+        nft.type = '3'
+        nft.nftName = result.data.data.title
+        nft.intro = result.data.data.artMark
+        coverFile = result.data.data.artCover
+      } else {
+        nft.tx = ''
+        ElMessage.error(i18n.t('txidToNftFaile'))
+      }
+    }
+  }
+}
+
+const enum TxIdStatus {
+  NotCreate = 1,
+  NotOwner = 2,
+  Success = 3
+}
+async function checkTxId () {
+  return new Promise<{
+    status: TxIdStatus,
+    data?: any
+  }>(async resolve => {
+    const res = await GetTxStatus({
     txId: nft.tx,
   })
   if (res.code === NftApiCode.success) {
     const response = await GetTxData(nft.tx)
     if (response.code == 200 && response.result.data.length > 0) {
       const data = response.result.data[0]
-      // MetaFile
-      if (data.parentNodeName === 'MetaFile') {
-        nft.type = '1'
-      } else if (data.parentNodeName === 'MetaAccessContent') {
-        nft.type = '3'
-        nft.nftName = data.data.title
-        nft.intro = data.data.artMark
-        coverFile = data.data.artCover
+      // check user owner 
+      if (data.rootTxId === store.state.userInfo?.metaId) {
+        resolve({
+          status: TxIdStatus.Success,
+          data
+        })
+        // MetaFile
+        if (data.parentNodeName === 'MetaFile') {
+          nft.type = '1'
+        } else if (data.parentNodeName === 'MetaAccessContent') {
+          nft.type = '3'
+          nft.nftName = data.data.title
+          nft.intro = data.data.artMark
+          coverFile = data.data.artCover
+        } else {
+          resolve({
+            status: TxIdStatus.NotCreate,
+            data
+          })
+        }
       } else {
-        nft.tx = ''
-        ElMessage.error(i18n.t('txidToNftFaile'))
+        resolve({
+          status: TxIdStatus.NotOwner,
+          data
+        })
       }
     } else {
-      nft.tx = ''
-      ElMessage.error(i18n.t('txidToNftFaile'))
+      resolve({
+        status: TxIdStatus.NotCreate
+      })
     }
   } else {
-    nft.tx = ''
-    ElMessage.error(i18n.t('txidToNftFaile'))
+    resolve({
+      status: TxIdStatus.NotCreate
+    })
   }
+  })
 }
 
 // ElLoading.service({
@@ -528,6 +580,7 @@ async function createNft() {
     })
 
   const userBalanceRes = await store.state.sdk?.getBalance()
+  debugger
   if (userBalanceRes && userBalanceRes.code === 200 && typeof useAmount === 'number' && userBalanceRes.data.satoshis > useAmount) {
     ElMessageBox.confirm(`${i18n.t('useAmountTips')}: ${useAmount} SATS`, i18n.t('niceWarning'), {
       confirmButtonText: i18n.t('confirm'),
@@ -577,13 +630,15 @@ async function createNft() {
     .catch(() => loading.close())
   } else {
     loading.close()
-    ElMessageBox.alert(`
-      <p>${i18n.t('useAmountTips')}: ${useAmount} SATS</p>
-      <p>${i18n.t('insufficientBalance')}</p>
-    `, {
-        confirmButtonText: i18n.t('confirm'),
-        dangerouslyUseHTMLString: true
-    })
+    if (typeof useAmount === 'number') {
+      ElMessageBox.alert(`
+        <p>${i18n.t('useAmountTips')}: ${useAmount} SATS</p>
+        <p>${i18n.t('insufficientBalance')}</p>
+      `, {
+          confirmButtonText: i18n.t('confirm'),
+          dangerouslyUseHTMLString: true
+      })
+    }
     return
   }
 }

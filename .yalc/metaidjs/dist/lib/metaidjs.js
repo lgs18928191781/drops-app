@@ -114,7 +114,17 @@ var MetaIdJs = /** @class */ (function () {
                 showClose: false,
                 buttonText: 'Cancel',
                 buttonText2: 'Top up BSV',
-                buttonUrl2: _this.SHOWMONEY_URL
+                buttonUrl2: _this.SHOWMONEY_URL,
+                buttonAction: function () {
+                    popup_1.default.close();
+                    if (window.handleNotEnoughMoney) {
+                        window.handleNotEnoughMoney(payload);
+                    }
+                    // const callback = this._handlers[payload.handlerId].callback
+                    // if (callback) {
+                    //   callback(payload)
+                    // }
+                }
             });
         };
         this.SHOWMONEY_URL = options.baseUri || "https://www.showmoney.app";
@@ -164,7 +174,6 @@ var MetaIdJs = /** @class */ (function () {
             "nftSell",
             "genesisNFT",
             "issueNFT",
-            "nftList",
         ];
         var _loop_1 = function (item) {
             this_1[item] = function (params) {
