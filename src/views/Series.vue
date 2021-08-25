@@ -17,7 +17,7 @@
 
         <div class="section container">
             <div class="section-header flex flex-align-center">
-                <div class="title flex1">{{$t('myUnSellNftSeries')}}</div>
+                <div class="title flex1">{{$t('myUnSellNft')}}</div>
             </div>
             <NftSkeleton
                 :loading="isShowNftListSkeleton"
@@ -26,97 +26,68 @@
             >
                 <template #default>
                     <div class="section-cont nft-list">
-                        <template v-for="series in seriesList">
-                            <SeriesItem :item="series" />
-                        </template>
-                    </div>
-                </template>
-            </NftSkeleton>
-        </div>
-        <LoadMore :pagination="pagination" @getMore="getMore" />
-
-        <div class="section container">
-            <div class="section-header flex flex-align-center">
-                <div class="title flex1">{{$t('mySellNft')}}</div>
-            </div>
-            <NftSkeleton
-                :loading="isShowSelledNftListSkeleton"
-                :count="selledPagination.pageSize"
-                class="section-cont nft-list"
-            >
-                <template #default>
-                    <div class="section-cont nft-list">
-                        <template v-for="nft in selledNfts" :key="nft.tokenId">
+                        <template v-for="nft in nfts" :key="nft.tokenId">
                             <NftItem :item="nft" :isSelf="true" />
                         </template>
                     </div>
                 </template>
             </NftSkeleton>
         </div>
-        <LoadMore :pagination="selledPagination" @getMore="getSelledMore" />
+        <LoadMore :pagination="pagination" @getMore="getMore" />
     </div>
 </template>
 <script setup lang="ts">
-import { GetMyNftSummaryList, GetMySelledNfts, GetNftIssue, MyNfts, NftApiCode } from '@/api';
+import { GetMySelledNfts, GetNftIssue, GetSeriesNftList, MyNfts, NftApiCode } from '@/api';
 import NftItem from '@/components/Nft-item/Nft-item.vue'
 import { useStore } from '@/store';
 import { reactive, ref } from 'vue';
-import SeriesItem from '@/components/SeriesItem/SeriesItem.vue'
 import LoadMore from '@/components/LoadMore/LoadMore.vue';
 import NftSkeleton from '@/components/NftSkeleton/NftSkeleton.vue'
+import { useRoute } from 'vue-router';
 
 const store = useStore()
+const route = useRoute()
 const pagination = reactive({
     ...store.state.pagination,
     pageSize: 6    
 })
-const selledPagination = reactive({
-    ...store.state.pagination,
-    pageSize: 6   
-})
 const nfts: NftItem [] = reactive([])
-const selledNfts: NftItem [] = reactive([])
 const isShowNftListSkeleton = ref(true)
-const isShowSelledNftListSkeleton = ref(true)
-const seriesList: NFTSeriesItem [] = reactive([])
 
 
 
 function getMyNfts (isCover: boolean = false) {
     return new Promise<void>(async resolve => {
-        const res = await GetMyNftSummaryList({
-            Address: store.state.userInfo!.address,
+        const res = await GetSeriesNftList({
             Page: pagination.page.toString(),
             PageSize: pagination.pageSize.toString(),
+            Address: store.state.userInfo!.address,
+            codehash: typeof route.params.codehash === 'string' ? route.params.codehash : '',
+            genesis: typeof route.params.genesisId === 'string' ? route.params.genesisId : '',
         })
-        debugger
         if (res && res.code === 0) {
+            debugger
             if (res.data.results.items.length > 0) {
                 res.data.results.items.map(item => {
-                    const data: {
-                        nftname: string
-                        nftdesc: string
-                        nfticon: string
-                        nftwebsite: string
-                        nftissuerName: string
-                        nftType: string
-                        classifyList: string
-                        originalFileTxid: string
-                        contentTxId: string
-                    } | undefined = item.nftDataStr ? JSON.parse(item.nftDataStr) : undefined
-                    seriesList.push({
-                        cover: data ?  data.nfticon : item.nftIcon,
+                    const data = item.nftDataStr ? JSON.parse(item.nftDataStr) : undefined
+                    nfts.push({
                         name: data ? data.nftname : item.nftName,
-                        nftDesc: data ? data.nftdesc : item.nftDesc,
-                        total: item.nftTotalSupply,
-                        hasCount: item.nftMyCount,
-                        genesis: item.nftGenesis,
-                        codehash: item.nftCodehash
+                        amount: 0,
+                        foundryName: 'string',
+                        classify: data ? data.classifyList : '',
+                        tokenId: item.nftGenesis + item.nftTokenIndex,
+                        coverUrl: data ? data.nfticon : item.nftIcon,
+                        putAway: false,
+                        metaId: store.state.userInfo!.metaId,
+                        productName: data ? data.nftname : item.nftName,
+                        genesis: item.nftGenesis
                     })
                 })
             }
-            const totalPages = Math.ceil(res.data.total / pagination.pageSize)
-            if (pagination.page >= totalPages) pagination.nothing = true  
+            const totalPage = Math.ceil(res.data.total / pagination.pageSize)
+            if (pagination.page >= totalPage){
+                pagination.nothing = false
+            }
         }
         isShowNftListSkeleton.value = false
         resolve()
@@ -125,10 +96,7 @@ function getMyNfts (isCover: boolean = false) {
 
 // function getMyNfts (isCover: boolean = false) {
 //     return new Promise<void>(async resolve => {
-//         const res = await GetMyNftSummaryList({
-//             address: store.state.userInfo!.address,
-//             ...pagination
-//         })
+//         const res = await store.state.sdk?.nftList(store.state.userInfo!.address)
 //         if (res && res.code === 200) {
 //             if (res.data.length > 0) {
 //                 res.data.map(item => {
@@ -161,33 +129,9 @@ function getMore() {
     })
 }
 
-function getSelledMore() {
-    selledPagination.loading = true
-    selledPagination.page++
-    getMySelledNfts().then(() => {
-        pagination.loading = false
-    })
-}
-
 getMyNfts()
 
 
-
-function getMySelledNfts (isCover: boolean = false) {
-    return new Promise<void>(async resolve => {
-        const res = await GetMySelledNfts(selledPagination)
-        if (res && res.code === 200) {
-            if (isCover) {
-                selledNfts.length = 0
-            }
-            selledNfts.push(...res.data)
-        }
-        isShowSelledNftListSkeleton.value = false
-        resolve()
-    })
-}
-
-getMySelledNfts()
 
 </script>
 <style lang="scss" scoped src="./self.scss"></style>

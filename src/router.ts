@@ -7,6 +7,7 @@ import Sale from '@/views/sale/Sale.vue'
 import SaleLegend from '@/views/sale/Legend.vue'
 import Login from '@/views/Login.vue'
 import Self from '@/views/Self.vue'
+import Series from '@/views/Series.vue'
 import Recommend from '@/views/Recommend.vue'
 import { useStore, Action } from '@/store/index'
 import { ElMessage } from 'element-plus'
@@ -22,10 +23,11 @@ export const router = createRouter({
     { path: '/', component: Home },
     { path: '/create', name: 'create', component: Create, meta: { isAuth: true } },
     { path: '/CreateSucsses/:tokenId', name: 'createSuccess', component: CreateSuccess, meta: { isAuth: true } },
-    { path: '/detail/:tokenId', name: 'detail', component: Detail },
+    { path: '/detail/:tokenId/:genesisId', name: 'detail', component: Detail },
     { path: '/sale/:tokenId', name: 'sale', component: Sale, meta: { isAuth: true } },
     { path: '/saleLegend', name: 'saleLegend', component: SaleLegend },
     { path: '/self', name: 'self', component: Self, meta: { isAuth: true } },
+    { path: '/series/:genesisId/:codehash', name: 'series', component: Series },
     { path: '/login', name: 'login', component: Login },
     { path: '/recommned', name: 'recommned', component: Recommend },
   ],

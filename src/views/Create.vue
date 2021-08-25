@@ -383,20 +383,37 @@ async function createSerie() {
     return
   }
   const params = {
-    name: serie.name,
-    count: parseInt(serie.number),
+    
   }
-  const res = await CreateSerice(params)
-  if (res.code === NftApiCode.success) {
-    ElMessage.success(i18n.t('createdSuccess'))
-    series.push({
-      series: serie.name,
-      maxNumber: serie.number,
-      currentNumber: 0,
+
+  const response = await store.state.sdk?.genesisNFT({
+    seriesName: serie.name,
+    nftTotal: serie.number
+  })
+  if (response && response.code === 200) {
+    const res = await CreateSerice({
+      name: serie.name,
+      count: parseInt(serie.number),
+      codeHash: response.data.codehash,
+      genesis: response.data.genesisId,
+      genesisTxId: response.data.genesisTxid,
+      sensibleId: response.data.sensibleId,
     })
-    serie.name = ''
-    serie.number = ''
-    isShowCreateSeriesModal.value = false
+    if (res.code === NftApiCode.success) {
+      ElMessage.success(i18n.t('createdSuccess'))
+      series.push({
+        series: serie.name,
+        maxNumber: serie.number,
+        currentNumber: 0,
+        codeHash: response.data.codehash,
+        genesis: response.data.genesisId,
+        genesisTxId: response.data.genesisTxid,
+        sensibleId: response.data.sensibleId
+      })
+      serie.name = ''
+      serie.number = ''
+      isShowCreateSeriesModal.value = false
+    }
   }
 }
 getSeries()
@@ -466,7 +483,7 @@ async function checkTxId () {
     const response = await GetTxData(nft.tx)
     if (response.code == 200 && response.result.data.length > 0) {
       const data = response.result.data[0]
-      debugger
+
       // check user owner 
       if (data.rootTxId === store.state.userInfo?.metaId) {
         if (nft.type === '3' && createTypeIndex.value !== 1) {
@@ -570,12 +587,18 @@ async function createNft() {
   })
 
   const params = {
-    type: nft.type,
-    name: nft.nftName, // nft名称
-    intro: nft.intro, // nft描述
-    cover: coverFile, // nft封面 MetaFile协议地址
-    originalFile: originalFile, // nft原文件 MetaFile协议地址
-    txId: nft.tx,
+    receiverAddress: store.state.userInfo!.address, //  创建者接收地址
+    content: {
+      nftname: nft.nftName,
+      nftdesc: nft.intro,
+      nfticon: coverFile.hexData!,
+      nftwebsite: '',
+      nftissuerName: store.state.userInfo!.name,
+      nftType: nft.type,
+      classifyList: JSON.stringify(nft.classify),
+      originalFileTxid: originalFile.hexData!,
+      contentTxId: nft.tx
+    }
   }
   const useAmount = await await store.state.sdk
     ?.createNFT({
@@ -587,7 +610,6 @@ async function createNft() {
     })
 
   const userBalanceRes = await store.state.sdk?.getBalance()
-  debugger
   if (userBalanceRes && userBalanceRes.code === 200 && typeof useAmount === 'number' && userBalanceRes.data.satoshis > useAmount) {
     ElMessageBox.confirm(`${i18n.t('useAmountTips')}: ${useAmount} SATS`, i18n.t('niceWarning'), {
       confirmButtonText: i18n.t('confirm'),
@@ -598,6 +620,7 @@ async function createNft() {
       const res = await store.state.sdk?.createNFT(params).catch(() => {
         loading.close()
       })
+      debugger
       if (res && typeof res !== 'number') {
         // 上传源文件到阿里云
         const originalFileForm = new FormData()
@@ -617,7 +640,7 @@ async function createNft() {
           classify: nft.classify.join(','),
           fileUrl,
           coverUrl,
-          tokenId: res.txId,
+          tokenId: res.genesisId + res.tokenIndex,
           nftId: res.txId,
           codeHash: res.codehash,
           genesis: res.genesisId,
@@ -627,7 +650,7 @@ async function createNft() {
         const response = await CreateNft(params)
         if (response.code === NftApiCode.success) {
           ElMessage.success(i18n.t('castingsuccess'))
-          router.replace({ name: 'createSuccess', params: { tokenId: res.txId } })
+          router.replace({ name: 'createSuccess', params: { tokenId: res.genesisId + res.tokenIndex } })
         }
       }
       if (loading) {

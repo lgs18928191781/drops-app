@@ -1,5 +1,5 @@
 
-import { ProtocolOptions } from "metaidjs";
+import { MetaIdJs, ProtocolOptions } from "metaidjs";
 
 export interface ConstructorOptionsTypes {
     baseUri?: string;
@@ -129,9 +129,6 @@ export interface NftSellResData extends MetaIdJsRes {
     }
 }
 
-export interface CreateNFTParams extends NftDataProtocolParams{
-    nftTotal?: string
-}
 
 export interface NftDataProtocolParams {
     type: string,
@@ -213,14 +210,83 @@ export interface CreateNftSellProtocolParams extends NftSellParams{
 export interface NftCancelParams {
     codehash: string
     genesis: string
+    genesisTxid: string
     tokenIndex: string
     txId: string
-    opreturnData: string,
-    genesisTxid: string,
+    opreturnData: string
     satoshis: number,
     checkOnly?: boolean
 }
 export interface CancelSellNFTParams extends NftCancelParams {
     sellTxId: string
     satoshisPrice: number
+}
+
+export interface NFTIssueParams {
+    receiverAddress: string //  创建者接收地址
+    genesisId?: string //
+    genesisTxid?: string
+    codehash?: string
+    sensibleId?: string
+    content: NFTIssueData
+    checkOnly?: boolean
+}
+
+
+export interface NFTIssueData{
+    nftname: string
+    nftdesc: string
+    nfticon: string
+    nftwebsite: string
+    nftissuerName: string
+    nftType: string
+    classifyList: string
+    originalFileTxid: string
+    contentTxId: string
+}
+
+export interface NFTGenesisParams {
+    nftTotal?: string
+    seriesName?: string,
+    checkOnly?: boolean
+}
+
+export interface CreateNFTParams extends NFTGenesisParams, NFTIssueParams{
+    codeHash?: string,
+    genesis?: string,
+    genesisTxId?: string,
+    sensibleId?: string
+}
+
+
+export interface NFTLIstRes extends MetaIdJsRes{
+    data: NFTListItem []
+}
+
+export interface NFTListItem {
+    nftBalance: number
+    nftCodehash: string
+    nftDesc: string
+    nftGenesis: string
+    nftGenesisTxid: string
+    nftIcon: string
+    nftIssuer: string
+    nftName: string
+    nftSymbol: undefined
+    nftTimestamp: number
+    nftTokenIndex: string
+    nftTotalSupply: number
+    nftWebsite: string
+    data: {
+        nftname: string
+        nftdesc: string
+        nfticon: string
+        nftwebsite: string
+        nftissuerName: string
+        nftType: string
+        classifyList: string
+        originalFileTxid: string
+        contentTxId?: string
+    }
+    nftDataStr?: string
 }

@@ -1,5 +1,5 @@
 <template>
-  <a @click="toDetail(item?.tokenId)" class="nft-item" :key="item?.tokenId">
+  <a @click="toDetail()" class="nft-item" :key="item?.tokenId">
     <div class="cover">
       <img class="cover-image" :src="item?.coverUrl" :alt="item?.name" />
     </div>
@@ -54,6 +54,7 @@ import { Decimal } from 'decimal.js-light'
 import NftOffSale from '@/utils/offSale'
 // @ts-ignore
 import dayjs from 'dayjs'
+import _FormItem from 'element-plus/lib/el-form-item'
 
 
 const store = useStore()
@@ -77,10 +78,9 @@ const props = defineProps<{
   isSelf?: boolean
 }>()
 
-function toDetail(tokenId: string | undefined) {
-  if (tokenId) {
-    router.push({ name: 'detail', params: { tokenId }})
-  }
+function toDetail() {
+  debugger
+  router.push({ name: 'detail', params: { tokenId: props.item.tokenId, genesisId: props.item.genesis}})
 }
 
 function toSale () {

@@ -138,5 +138,8 @@
   "saleAgain": "重新展示",
   "tagCreateTx": "TX铸造NFT时,类型由TX的内容决定，不可选",
   "txIdNotOwner": "不能铸造别人的TxId内容",
-  "notRightTxId": "此TxId内容不能铸造成权益类NFT,请重新输入"
+  "notRightTxId": "此TxId内容不能铸造成权益类NFT,请重新输入",
+  "myUnSellNft": "我的未上架NFT",
+  "mySellNft": "我已上架的NFT",
+  "myUnSellNftSeries": "我未上架的NFT系列"
 }

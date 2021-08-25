@@ -14,6 +14,9 @@ import {
   NftCancelParams,
   NFTCancelResData,
   NftDataProtocolParams,
+  NFTGenesisParams,
+  NFTIssueParams,
+  NFTLIstRes,
   NftSellParams,
   NftSellResData,
   ProtocolParamsTypes,
@@ -119,10 +122,10 @@ export default class Sdk {
           metaIdTag,
           accessToken,
           ...params,
-        };
-        
+        }
+
         // 处理余额不足回调
-        (window as any).handleNotEnoughMoney = (res: MetaIdJsRes) => {
+        ;(window as any).handleNotEnoughMoney = (res: MetaIdJsRes) => {
           reject()
         }
         this.metaidjs?.sendMetaDataTx({
@@ -185,12 +188,11 @@ export default class Sdk {
     parentReject?: any
   ) {
     return new Promise<void>((resolve, reject) => {
-      fetch(`https://api.sensible.satoplay.cn/tx/${txId}`)
+      fetch(`https://api.sensiblequery.com/tx/${txId}`)
         .then(function (response) {
           return response.json()
         })
         .then((response) => {
-          debugger
           if (response.code === 0) {
             if (parentResolve) parentResolve()
             else resolve()
@@ -286,66 +288,71 @@ export default class Sdk {
         }
       | number
     >(async (resolve, reject) => {
-      try {
-        const { nftTotal, ...nftDataParams } = params
-      // 1. genesisNFT
-      const res = await this.genesisNFT({
-        nftTotal: params.nftTotal ? params.nftTotal : '1',
-        checkOnly: params.checkOnly ? true : false,
-      })
-      if (res.code === 200) {
-        // 检查txId状态， 防止双花
+      let { nftTotal, codeHash, genesis, genesisTxId, sensibleId, ..._params } = params
+      let amount = 0
+      const issueOperate = async () => {
         if (!params.checkOnly) {
-          await this.checkNftTxIdStatus(res.data.genesisTxid).catch(() => reject('createNFT error'))
+          await this.checkNftTxIdStatus(genesisTxId!).catch(() => reject('createNFT error'))
         }
-        // 2.createNftDataProtocol
-        const nftDataRes = await this.createNftDataProtocol(nftDataParams).catch(() => reject('createNFT error'))
-        debugger
-        if (nftDataRes && nftDataRes.code === 200 || nftDataRes && nftDataRes.code === 205) {
-          // issueNFT没法checkOnly， 因为需要genesisNFT交易信息， 但费率在9200左右，固定写死为10000
+        if (params.checkOnly) {
+          genesis = import.meta.env.VITE_Genesis
+          genesisTxId = import.meta.env.VITE_GenesisTxId
+          codeHash = import.meta.env.VITE_CodeHash
+          sensibleId = import.meta.env.VITE_SensibleId
+        }
+        // 3.issueNFT
+        const issueRes = await this.issueNFT({
+          genesisId: genesis!,
+          genesisTxid: genesisTxId!,
+          codehash: codeHash!,
+          sensibleId: sensibleId,
+          ..._params,
+        })
+        if (issueRes.code === 200) {
+          debugger
+          if (issueRes.data.amount) {
+            amount += issueRes.data.amount
+          }
           if (params.checkOnly) {
-            resolve(Math.ceil(res.data.amount! + nftDataRes.data.usedAmount! + 10000))
+            resolve(amount)
           } else {
-            // 检查txId状态 防止双花
-            await this.checkTxIdStatus(nftDataRes.data.txId)
-            // 3.issueNFT
-            const issueRes = await this.issueNFT({
-              receiverAddress: store.state.userInfo ? store.state.userInfo?.address : '',
-              genesisId: res.data.genesisId,
-              genesisTxid: res.data.genesisTxid,
-              codehash: res.data.codehash,
-              nftname: nftDataRes.data.txId,
-              nftdesc: '',
-              nfticon: '',
-              nftwebsite: '',
-              nftissuerName: store.state.userInfo?.name ? store.state.userInfo?.name : '',
-              sensibleId: res.data.sensibleId,
-              dataTxId: nftDataRes.data.txId,
-              checkOnly: nftDataParams.checkOnly,
+            resolve({
+              ...issueRes.data,
+              codehash: codeHash!,
+              sensibleId: sensibleId!,
+              genesisId: genesis!,
+              genesisTxid: genesisTxId!,
             })
-            if (issueRes.code === 200) {
-              resolve({
-                ...issueRes.data,
-                ...res.data,
-              })
-            } else {
-              reject('createNFT error')
-            }
           }
         } else {
           reject('createNFT error')
         }
+      }
+      if (!codeHash || !genesis || !genesisTxId || !sensibleId) {
+        // genesisNFT
+        const res = await this.genesisNFT({
+          nftTotal: nftTotal ? nftTotal : '1',
+          checkOnly: params.checkOnly ? true : false,
+        })
+        if (res.code === 200) {
+          codeHash = res.data.codehash
+          genesis = res.data.genesisId
+          genesisTxId = res.data.genesisTxid
+          sensibleId = res.data.sensibleId
+          if (res.data.amount) {
+            amount += res.data.amount
+          }
+          issueOperate()
+        } else {
+          reject('createNFT error')
+        }
       } else {
-        reject('createNFT error')
-      }
-      }
-      catch {
-        reject('createNFT error')
+        issueOperate()
       }
     })
   }
 
-  genesisNFT(params: { nftTotal: string; checkOnly?: boolean }): Promise<SdkGenesisNFTRes> {
+  genesisNFT(params: NFTGenesisParams): Promise<SdkGenesisNFTRes> {
     return new Promise<SdkGenesisNFTRes>((resolve, reject) => {
       const _params = {
         data: {
@@ -380,6 +387,7 @@ export default class Sdk {
           checkOnly: params.checkOnly,
         },
         callback: (res: SdkGenesisNFTRes) => {
+          debugger
           this.callback(res, resolve)
         },
       }
@@ -398,20 +406,7 @@ export default class Sdk {
 
   // nft 铸造
   issueNFT(
-    params: {
-      receiverAddress: string //  创建者接收地址
-      genesisId: string //
-      genesisTxid: string
-      codehash: string
-      sensibleId: string
-      nftname: string
-      nftdesc: string
-      nfticon: string
-      nftwebsite: string
-      dataTxId: string
-      nftissuerName: string
-      checkOnly?: boolean
-    },
+    params: NFTIssueParams,
     parentResolve?: ((value: IssueNFTResData | PromiseLike<IssueNFTResData>) => void) | undefined
   ) {
     return new Promise<IssueNFTResData>((resolve, reject) => {
@@ -445,6 +440,7 @@ export default class Sdk {
       }
     })
   }
+  
 
   // 购买NFT 逻辑 1.nftBuy 2.createNftBuyProtocol
   buyNFT(params: BuyNFTParams) {
@@ -454,7 +450,7 @@ export default class Sdk {
       const res = await this.nftBuy({
         ..._params,
         txId,
-        checkOnly
+        checkOnly,
       }).catch(() => reject())
       if (res && res.code === 200) {
         // 检查txid 防止双花
@@ -474,7 +470,7 @@ export default class Sdk {
             buyerMetaId: store.state.userInfo!.metaId,
             ..._params,
           },
-          checkOnly
+          checkOnly,
         })
         if (protocolRes.code === 200 || protocolRes.code === 205) {
           if (params.checkOnly) {
@@ -546,7 +542,7 @@ export default class Sdk {
       path: '/Protocols/NftBuyData',
       needConfirm: false,
       payTo: params.payTo,
-      checkOnly: params.checkOnly
+      checkOnly: params.checkOnly,
     })
   }
 
@@ -569,12 +565,13 @@ export default class Sdk {
           ...params,
         }).catch(() => {})
         debugger
-        if (response && response.code === 200 || response && response.code === 205) {
+        if ((response && response.code === 200) || (response && response.code === 205)) {
           if (params.checkOnly) {
             reslove(Math.ceil(res.data.amount! + response.data.usedAmount!))
-          } else reslove({
-            sellTxId: res.data.sellTxId,
-          })
+          } else
+            reslove({
+              sellTxId: res.data.sellTxId,
+            })
         } else {
           reject('sellNFT fail')
         }
@@ -617,7 +614,7 @@ export default class Sdk {
       brfcId: 'a45d22a2bf14',
       path: '/Protocols/NftSellData',
       needConfirm: false,
-      checkOnly
+      checkOnly,
     })
   }
 
@@ -645,8 +642,7 @@ export default class Sdk {
         if (response.code === 200 || response.code === 205) {
           if (params.checkOnly) {
             resolve(Math.ceil(res.data.amount! + response.data.usedAmount!))
-          }
-          else resolve(response)
+          } else resolve(response)
         } else {
           reject('cancelSellNFT fail')
         }
@@ -684,17 +680,39 @@ export default class Sdk {
     })
   }
 
-  // 获取用户余额
-  getBalance () {
-    return new Promise<GetBalanceRes>(resolve => {
+  // nft 列表查询
+  nftList(address: string) {
+    return new Promise<NFTLIstRes>(resolve => {
+      debugger
+      const params = {
+        callback: (res: MetaIdJsRes) => {
+          this.callback(res, resolve)
+        },
+        address
+      }
       if (this.isApp) {
-      
+        const functionName: string = `nftList`
+        // @ts-ignore
+        window[functionName] = params.callback
+        // @ts-ignore
+        this.appMetaidjs?.nftSell(functionName)
+      } else {
+        // @ts-ignore
+        this.metaidjs?.nftList(params)
+      }
+    })
+  }
+
+  // 获取用户余额
+  getBalance() {
+    return new Promise<GetBalanceRes>((resolve) => {
+      if (this.isApp) {
       } else {
         //@ts-ignore
         this.metaidjs.getBalance({
           callback: (res: GetBalanceRes) => {
             this.callback(res, resolve)
-          }
+          },
         })
       }
     })
@@ -710,18 +728,18 @@ export default class Sdk {
     tokenIndex: string // nft tokenIndex
     txHex: string // sell的utxo
     satoshisPrice: number // 出售的价格，单位聪
-    opreturnData: string // cancel sell 备注信息
+    remark: string // cancel sell 备注信息
     createdAt: number // 创建时间
     checkOnly?: boolean
   }) {
-     const { checkOnly, ..._params } = params
+    const { checkOnly, ..._params } = params
     return this.sendMetaDataTx({
       data: JSON.stringify(_params),
       nodeName: 'NftCancelData',
       brfcId: '66f21f678aa6',
       path: '/Protocols/NftCancelData',
       needConfirm: false,
-      checkOnly
+      checkOnly,
     })
   }
 

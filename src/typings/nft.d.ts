@@ -11,6 +11,7 @@ declare interface NftItem{
     metaId: string
     productName?: string
     deadlineTime?: number
+    genesis: string
 }
 declare interface NftItemDetail{
     foundryName: string,

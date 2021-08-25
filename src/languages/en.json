@@ -138,5 +138,7 @@
   "saleAgain": "Redisplay",
   "tagCreateTx": "When TX casting NFT, the type is determined by the content of TX, not selectable",
   "txIdNotOwner": "Can't cast other people's TxId content",
-  "notRightTxId": "This TxId content cannot be cast into equity NFT, please re-enter"
+  "notRightTxId": "This TxId content cannot be cast into equity NFT, please re-enter",
+  "myUnSellNft": "My unlisted NFT",
+  "myUnSellNftSeries": "NFT series that I have not listed"
 }

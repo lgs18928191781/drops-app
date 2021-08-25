@@ -288,7 +288,7 @@
                   <div class="work-detail-item flex flex-align-center" v-else>
                     <div class="key">{{ $t('worklink') }}：</div>
                     <div class="value flex1">
-                      <a class="link" @click="toLink">{{ $t('workdetaillink') }}</a>
+                      <a class="link" @click="toCert">{{ $t('workdetaillink') }}</a>
                     </div>
                   </div>
                 </div>
@@ -353,7 +353,7 @@ import { toClipboard } from '@soerenmartius/vue3-clipboard'
 import { ElLoading, ElMessage, ElSkeleton, ElSkeletonItem, ElMessageBox } from 'element-plus'
 import { useRoute } from 'vue-router'
 // @ts-ignore
-import { BuyNft, GetNftDetail, GetNFTOwnerAddress, NftApiCode, TransactionRecord } from '@/api'
+import { BuyNft, GetMySelledNfts, GetNftDetail, GetNftIssue, GetNftIssueyTxId, GetNFTOwnerAddress, NftApiCode, TransactionRecord } from '@/api'
 // @ts-ignore
 import dayjs from 'dayjs'
 import { useStore } from '@/store'
@@ -379,12 +379,28 @@ const nft: { val: NftItemDetail } = reactive({
   val: {},
 })
 
+// function getDetail() {
+//   return new Promise<void>(async (resolve) => {
+//     if (typeof route.params.tokenId === 'string') {
+//       const res = await GetNftDetail({
+//         tokenId: route.params.tokenId,
+//       })
+//       if (res.code === NftApiCode.success) {
+//         nft.val = res.data
+//         countDownTimeLeft()
+//         isShowSkeleton.value = false
+//       }
+//     }
+//     resolve()
+//   })
+// }
 function getDetail() {
   return new Promise<void>(async (resolve) => {
     if (typeof route.params.tokenId === 'string') {
-      const res = await GetNftDetail({
-        tokenId: route.params.tokenId,
+      const res = await GetNftIssueyTxId({
+        txId: route.params.tokenId,
       })
+      debugger
       if (res.code === NftApiCode.success) {
         nft.val = res.data
         countDownTimeLeft()
@@ -442,6 +458,7 @@ const day = ref(0)
 const hour = ref(0)
 const minute = ref(0)
 const second = ref(0)
+
 function countDownTimeLeft() {
   interval = setInterval(() => {
     if (nft.val.remainingTime) {
@@ -641,6 +658,16 @@ function share() {
 function toCert() {
   ElMessage.info(i18n.t('stayTuned'))
 }
+
+async function getNft () {
+  const res = await GetNftIssue({
+    tokenId: typeof route.params.tokenId === 'string' ? route.params.tokenId: '',
+    genesisId: typeof route.params.genesisId === 'string' ? route.params.genesisId: '',
+  })
+  debugger
+}
+
+getNft()
 
 function toSale () {
   router.push({

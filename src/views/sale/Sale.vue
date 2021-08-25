@@ -78,9 +78,9 @@
               </div>
             </div>
           </div>
-          <div class="to-histiry">
+          <!-- <div class="to-histiry">
             <a>{{ $t('seehistoryprice') }}</a>
-          </div>
+          </div> -->
         </div>
         <div class="btn btn-block" @click="confirmSale">{{ $t('confirmsale') }}</div>
       </div>

@@ -9,4 +9,8 @@ interface ImportMetaEnv {
     VITE_NftApi: string
     VITE_MetaIdTag: string
     VITE_WhatsonChain: string
+    VITE_Genesis: string
+    VITE_GenesisTxId: string
+    VITE_CodeHash: string
+    VITE_SensibleId: string
 }
