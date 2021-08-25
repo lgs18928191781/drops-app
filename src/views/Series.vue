@@ -65,15 +65,16 @@ function getMyNfts (isCover: boolean = false) {
             codehash: typeof route.params.codehash === 'string' ? route.params.codehash : '',
             genesis: typeof route.params.genesisId === 'string' ? route.params.genesisId : '',
         })
+        debugger
         if (res && res.code === 0) {
-            debugger
+            
             if (res.data.results.items.length > 0) {
                 res.data.results.items.map(item => {
                     const data = item.nftDataStr ? JSON.parse(item.nftDataStr) : undefined
                     nfts.push({
                         name: data ? data.nftname : item.nftName,
                         amount: 0,
-                        foundryName: 'string',
+                        foundryName: store.state.userInfo!.name,
                         classify: data ? data.classifyList : '',
                         tokenId: item.nftGenesis + item.nftTokenIndex,
                         coverUrl: data ? data.nfticon : item.nftIcon,

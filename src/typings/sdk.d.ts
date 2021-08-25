@@ -236,12 +236,20 @@ export interface NFTIssueParams {
 export interface NFTIssueData{
     nftname: string
     nftdesc: string
-    nfticon: string
+    nfticon: {
+        fileType: string,
+        fileName: string,
+        data: string
+    }
     nftwebsite: string
     nftissuerName: string
     nftType: string
     classifyList: string
-    originalFileTxid: string
+    originalFileTxid: {
+        fileType: string,
+        fileName: string,
+        data: string
+    }
     contentTxId: string
 }
 

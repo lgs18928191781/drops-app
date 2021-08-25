@@ -591,12 +591,20 @@ async function createNft() {
     content: {
       nftname: nft.nftName,
       nftdesc: nft.intro,
-      nfticon: coverFile.hexData!,
+      nfticon: {
+        fileType: coverFile.data_type,
+        fileName: coverFile.name,
+        data: coverFile.hexData,
+      },
       nftwebsite: '',
       nftissuerName: store.state.userInfo!.name,
       nftType: nft.type,
       classifyList: JSON.stringify(nft.classify),
-      originalFileTxid: originalFile.hexData!,
+      originalFileTxid: {
+        fileType: originalFile.data_type,
+        fileName: originalFile.name,
+        data: originalFile.hexData,
+      },
       contentTxId: nft.tx
     }
   }

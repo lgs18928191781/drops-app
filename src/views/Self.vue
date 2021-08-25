@@ -190,4 +190,4 @@ function getMySelledNfts (isCover: boolean = false) {
 getMySelledNfts()
 
 </script>
-<style lang="scss" scoped src="./self.scss"></style>
+<style lang="scss" scoped src="./Self.scss"></style>

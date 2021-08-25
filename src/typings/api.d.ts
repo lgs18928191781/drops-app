@@ -177,3 +177,24 @@ declare interface GetSeriesNftListRes extends apiResponse{
     }
   }
 }
+declare interface GetNftIssueyTxIdRes extends apiResponse{
+  data: {
+    dataStr: string
+    desc: string
+    genesisId: string
+    genesisTxId: string
+    icon: string
+    issuerName: string
+    metaId: string
+    metaIdName: string
+    metanetId: string
+    name: string
+    receiverAddress: string
+    timestamp: number
+    tokenId: string
+    txId: string
+    type: string
+    version: string
+    website: string
+  }
+}

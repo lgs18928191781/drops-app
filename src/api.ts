@@ -143,7 +143,7 @@ export const GetNftIssue = (params: {
 }): Promise<GetNftIssueRes> => {
   return apiHttp.post(`/aggregation/v2/app/sensible/getNftIssue`, params)
 }
-export const GetNftIssueyTxId = (params: { txId: string }): Promise<apiResponse> => {
+export const GetNftIssueyTxId = (params: { txId: string }): Promise<GetNftIssueyTxIdRes> => {
   return apiHttp.post(`/aggregation/v2/app/sensible/getNftIssueByTxId`, params)
 }
 

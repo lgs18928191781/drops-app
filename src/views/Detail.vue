@@ -398,11 +398,36 @@ function getDetail() {
   return new Promise<void>(async (resolve) => {
     if (typeof route.params.tokenId === 'string') {
       const res = await GetNftIssueyTxId({
-        txId: route.params.tokenId,
+        txId: "679730c5735e6aeb1b82d0008db3daf86da4bbd573cedbc9e505ba0756643b26",
       })
-      debugger
       if (res.code === NftApiCode.success) {
-        nft.val = res.data
+        const data = res.data.dataStr ?  JSON.parse(res.data.dataStr) : undefined
+        nft.val = {
+          foundryName: res.data.metaIdName,
+          foundryMetaId: res.data.metaId,
+          foundryHead: '',
+          amount: 0,
+          remainingTime: new Date().getTime(),
+          nftName: res.data.name,
+          classify: data ? data.classifyList : '',
+          describe: data ? data.nftdesc : res.data.desc,
+          forgeTime: res.data.timestamp,
+          contractAddress: res.data.txId,
+          tokenId: res.data.tokenId,
+          ownerName: res.data.metaIdName,
+          ownerMetaId: res.data.metaId,
+          ownerHead: '',
+          type: data ? data.nftType : '',
+          revenue: 'string',
+          coverUrl: data ? data.nfticon : res.data.icon,
+          tx: data ? data.contentTxId : '',
+          putAway: false,
+          codeHash: '',
+          genesis: 'string',
+          tokenIndex: 'string',
+          genesisTxId: 'string',
+          sellTxId: 'string'
+        }
         countDownTimeLeft()
         isShowSkeleton.value = false
       }
@@ -659,15 +684,17 @@ function toCert() {
   ElMessage.info(i18n.t('stayTuned'))
 }
 
-async function getNft () {
-  const res = await GetNftIssue({
-    tokenId: typeof route.params.tokenId === 'string' ? route.params.tokenId: '',
-    genesisId: typeof route.params.genesisId === 'string' ? route.params.genesisId: '',
-  })
-  debugger
-}
+// async function getNft () {
+//   const res = await GetNftIssue({
+//     tokenId: typeof route.params.tokenId === 'string' ? route.params.tokenId: '',
+//     genesisId: typeof route.params.genesisId === 'string' ? route.params.genesisId: '',
+//   })
+//   debugger
+// }
 
-getNft()
+// getNft()
+
+
 
 function toSale () {
   router.push({
