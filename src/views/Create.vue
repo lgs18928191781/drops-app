@@ -255,7 +255,6 @@ import { useStore } from '@/store'
 import { router } from '@/router'
 import PickerModel from '@/components/PickerModal/PickerModel.vue'
 import { nftTypes } from '@/config'
-import { stringify } from 'querystring'
 // import { IssueNFTResData, SdkGenesisNFTRes } from '@/typings/sdk'
 
 const _nftTypes = reactive(nftTypes)
@@ -342,6 +341,7 @@ async function coverFileInputChage(e: Event) {
   if (files) {
     const res = await tranfromImgFile(files[0])
     if (res) {
+      console.log(res.hexData)
       coverFile.name = res.name
       coverFile.raw = res.raw
       coverFile.base64Data = res.base64Data

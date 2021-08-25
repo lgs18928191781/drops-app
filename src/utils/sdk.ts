@@ -294,12 +294,6 @@ export default class Sdk {
         if (!params.checkOnly) {
           await this.checkNftTxIdStatus(genesisTxId!).catch(() => reject('createNFT error'))
         }
-        if (params.checkOnly) {
-          genesis = import.meta.env.VITE_Genesis
-          genesisTxId = import.meta.env.VITE_GenesisTxId
-          codeHash = import.meta.env.VITE_CodeHash
-          sensibleId = import.meta.env.VITE_SensibleId
-        }
         // 3.issueNFT
         const issueRes = await this.issueNFT({
           genesisId: genesis!,
@@ -309,12 +303,11 @@ export default class Sdk {
           ..._params,
         })
         if (issueRes.code === 200) {
-          debugger
           if (issueRes.data.amount) {
             amount += issueRes.data.amount
           }
           if (params.checkOnly) {
-            resolve(amount)
+            resolve(Math.ceil(amount + 12000))
           } else {
             resolve({
               ...issueRes.data,
@@ -335,13 +328,20 @@ export default class Sdk {
           checkOnly: params.checkOnly ? true : false,
         })
         if (res.code === 200) {
-          codeHash = res.data.codehash
-          genesis = res.data.genesisId
-          genesisTxId = res.data.genesisTxid
-          sensibleId = res.data.sensibleId
+          
           if (res.data.amount) {
             amount += res.data.amount
+            codeHash = 'res.data.codehash'
+            genesis = 'res.data.genesisId'
+            genesisTxId = 'res.data.genesisTxid'
+            sensibleId = 'res.data.sensibleId'
+          } else {
+            codeHash = res.data.codehash
+            genesis = res.data.genesisId
+            genesisTxId = res.data.genesisTxid
+            sensibleId = res.data.sensibleId
           }
+          debugger
           issueOperate()
         } else {
           reject('createNFT error')
