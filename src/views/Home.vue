@@ -6,9 +6,7 @@
         <template #default>
           <div class="section-cont nft-list">
             <!-- @ts-ignore -->
-            <NftItem
-              :isRecommendCard="true"
-              :item="{
+            <NftItem :isRecommendCard="true" :item="{
                 name: 'recommend',
                 amount: 0,
                 foundryName: '',
@@ -16,6 +14,9 @@
                 tokenId: '',
                 coverUrl: '',
                 metaId: '',
+                genesis: '',
+                tokenIndex: '',
+                codehash: ''
               }"
             />
             <template v-for="item in recommendNfts">
@@ -42,7 +43,9 @@
             v-for="item in classies"
             :key="item.id"
             @click="changeClassify(item.classify)"
-            >{{ $t(item.classify) }}</a
+            >
+              <!-- {{ $t(item.classify) }} -->
+            </a
           >
         </div>
         <div class="search-warp flex flex-align-center">

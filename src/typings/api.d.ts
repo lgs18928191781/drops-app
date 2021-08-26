@@ -198,3 +198,40 @@ declare interface GetNftIssueyTxIdRes extends apiResponse{
     website: string
   }
 }
+
+declare interface NFTApiGetNFTDetailRes extends apiResponse{
+  data: {
+    total: number
+    results: {
+      info: {
+        version: string
+        responseTime: string
+      }
+      items: NFTApiGetNFTDetailResDataItem []
+    }
+  }
+}
+
+declare interface NFTApiGetNFTDetailResDataItem {
+  nftCodehash: string
+  nftGenesis: string
+  nftGenesisTxid: string
+  nftSensibleId: string
+  nftSymbol: symbol
+  nftBalance: number
+  nftName: string
+  nftDesc: string
+  nftIcon: string
+  nftWebsite: string
+  nftIssuer: string
+  nftTimestamp: number
+  nftTotalSupply: number
+  nftTokenIndex: string
+  nftIssueVersion: string
+  nftDataStr: string
+  nftOwnerAddress: string
+  nftOwnerAvatarTxId: string
+  nftOwnerMetaId: string
+  nftOwnerName: string
+  nftSellTxId: string
+}

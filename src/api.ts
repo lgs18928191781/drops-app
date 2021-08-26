@@ -165,3 +165,12 @@ export const GetSeriesNftList = (params: {
 }): Promise<GetSeriesNftListRes> => {
   return apiHttp.post(`/aggregation/v2/app/sensible/getMyNftSummaryDetailList`, params)
 }
+
+
+export const NFTApiGetNFTDetail = (params: {
+  tokenIndex: string,
+  codehash: string
+  genesis: string
+}): Promise<NFTApiGetNFTDetailRes> => {
+  return apiHttp.post(`/aggregation/v2/app/sensible/getOneNftSummaryDetail`, params)
+}

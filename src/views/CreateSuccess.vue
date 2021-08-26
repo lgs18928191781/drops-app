@@ -46,6 +46,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElSkeleton, ElSkeletonItem, ElMessageBox, ElLoading } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import NftOffSale from '@/utils/offSale'
+import { checkSdkStatus } from '@/utils/util'
 
 const route = useRoute()
 const router = useRouter()
@@ -81,7 +82,8 @@ function toSale() {
   router.push({ name: 'sale', params: { tokenId: route.params.tokenId } })
 }
 
-function offSale() {
+async function offSale() {
+  await checkSdkStatus()
   const loading = ElLoading.service({
       lock: true,
       text: 'Loading',

@@ -164,51 +164,54 @@ async function confirmSale() {
     opreturnData: nft.val!.tx,
     genesisTxid: nft.val!.genesisTxId,
   }
-  const useAmount = await store.state.sdk?.sellNFT({ checkOnly: true, ...params }).catch(() => {
+  const useAmountRes = await store.state.sdk?.nftSell({ checkOnly: true, ...params }).catch(() => {
     loading.close()
   })
-  const userBalanceRes = await store.state.sdk?.getBalance()
-  if (userBalanceRes?.code === 200) {
-    if (typeof useAmount === 'number' && userBalanceRes.data.satoshis > useAmount) {
-      // 余额足够
-      ElMessageBox.confirm(`${i18n.t('useAmountTips')}: ${useAmount} SATS`, i18n.t('niceWarning'), {
-        confirmButtonText: i18n.t('confirm'),
-        cancelButtonText: i18n.t('cancel'),
-        closeOnClickModal: false
-      }).then(async () => {
-        // 确认支付
-        const res = await store.state.sdk?.sellNFT(params).catch(() => {
+  if (useAmountRes && useAmountRes.code === 200) {
+    const useAmount = useAmountRes.data.amount!
+    const userBalanceRes = await store.state.sdk?.getBalance()
+    if (userBalanceRes?.code === 200) {
+      if (userBalanceRes.data.satoshis > useAmount) {
+        // 余额足够
+        ElMessageBox.confirm(`${i18n.t('useAmountTips')}: ${useAmount} SATS`, i18n.t('niceWarning'), {
+          confirmButtonText: i18n.t('confirm'),
+          cancelButtonText: i18n.t('cancel'),
+          closeOnClickModal: false
+        }).then(async () => {
+          // 确认支付
+          const res = await store.state.sdk?.nftSell(params).catch(() => {
+            loading.close()
+          })
+          if (res?.code === 200) {
+            // sell协议上完 要上报服务器
+            const response = await SaleNft({
+              sellValidTime: new Date(saleTime.value).getTime(),
+              amount: stasPrice,
+              tokenId: nft.val!.tokenId,
+              sellTxId: res.data.sellTxId,
+            })
+            if (response.code === NftApiCode.success) {
+              ElMessage.success(i18n.t('saleSuccess'))
+              router.back()
+            }
+          }
           loading.close()
         })
-        if (typeof res !== 'number' && res && res.sellTxId) {
-          // sell协议上完 要上报服务器
-          const response = await SaleNft({
-            sellValidTime: new Date(saleTime.value).getTime(),
-            amount: stasPrice,
-            tokenId: nft.val!.tokenId,
-            sellTxId: res.sellTxId,
-          })
-          if (response.code === NftApiCode.success) {
-            ElMessage.success(i18n.t('saleSuccess'))
-            router.back()
-          }
-        }
+        .catch(() => loading.close())
+      } else {
         loading.close()
-      })
-      .catch(() => loading.close())
-    } else {
-      loading.close()
-      ElMessageBox.alert(
-        `
-        <p>${i18n.t('useAmountTips')}: ${useAmount} SATS</p>
-        <p>${i18n.t('insufficientBalance')}</p>
-      `,
-        {
-          confirmButtonText: i18n.t('confirm'),
-          dangerouslyUseHTMLString: true,
-        }
-      )
-      return
+        ElMessageBox.alert(
+          `
+          <p>${i18n.t('useAmountTips')}: ${useAmount} SATS</p>
+          <p>${i18n.t('insufficientBalance')}</p>
+        `,
+          {
+            confirmButtonText: i18n.t('confirm'),
+            dangerouslyUseHTMLString: true,
+          }
+        )
+        return
+      }
     }
   }
 

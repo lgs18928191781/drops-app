@@ -79,8 +79,7 @@ const props = defineProps<{
 }>()
 
 function toDetail() {
-  debugger
-  router.push({ name: 'detail', params: { tokenId: props.item.tokenId, genesisId: props.item.genesis}})
+  router.push({ name: 'detail', params: { tokenIndex: props.item.tokenIndex, genesisId: props.item.genesis, codehash: props.item.codeHash }})
 }
 
 function toSale () {

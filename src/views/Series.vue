@@ -81,7 +81,9 @@ function getMyNfts (isCover: boolean = false) {
                         putAway: false,
                         metaId: store.state.userInfo!.metaId,
                         productName: data ? data.nftname : item.nftName,
-                        genesis: item.nftGenesis
+                        genesis: item.nftGenesis,
+                        codehash: item.nftCodehash,
+                        tokenIndex: item.nftTokenIndex
                     })
                 })
             }

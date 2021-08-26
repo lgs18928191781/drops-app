@@ -163,6 +163,8 @@ export interface NftBuyParams {
     txId: string
     opreturnData: string
     genesisTxid: string,
+    address: string
+    amount: number
     checkOnly?: boolean
 }
 

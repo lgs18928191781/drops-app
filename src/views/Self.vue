@@ -114,9 +114,9 @@ function getMyNfts (isCover: boolean = false) {
                         codehash: item.nftCodehash
                     })
                 })
+            } else {
+                pagination.nothing = true
             }
-            const totalPages = Math.ceil(res.data.total / pagination.pageSize)
-            if (pagination.page >= totalPages) pagination.nothing = true  
         }
         isShowNftListSkeleton.value = false
         resolve()

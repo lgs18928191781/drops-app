@@ -23,7 +23,7 @@ export const router = createRouter({
     { path: '/', component: Home },
     { path: '/create', name: 'create', component: Create, meta: { isAuth: true } },
     { path: '/CreateSucsses/:tokenId', name: 'createSuccess', component: CreateSuccess, meta: { isAuth: true } },
-    { path: '/detail/:tokenId/:genesisId', name: 'detail', component: Detail },
+    { path: '/detail/:genesisId/:codehash/:tokenIndex', name: 'detail', component: Detail },
     { path: '/sale/:tokenId', name: 'sale', component: Sale, meta: { isAuth: true } },
     { path: '/saleLegend', name: 'saleLegend', component: SaleLegend },
     { path: '/self', name: 'self', component: Self, meta: { isAuth: true } },

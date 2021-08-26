@@ -204,9 +204,9 @@
                   <div class="work-detail-item flex flex-align-center">
                     <div class="key">{{ $t('workclass') }}：</div>
                     <div class="value flex1">
-                      <span v-for="item in nft.val.classify.split(',')" :key="item">{{
+                      <!-- <span v-for="item in nft.val.classify.split(',')" :key="item">{{
                         item
-                      }}</span>
+                      }}</span> -->
                     </div>
                   </div>
                   <div class="work-detail-item flex flex-align-baseline">
@@ -353,7 +353,7 @@ import { toClipboard } from '@soerenmartius/vue3-clipboard'
 import { ElLoading, ElMessage, ElSkeleton, ElSkeletonItem, ElMessageBox } from 'element-plus'
 import { useRoute } from 'vue-router'
 // @ts-ignore
-import { BuyNft, GetMySelledNfts, GetNftDetail, GetNftIssue, GetNftIssueyTxId, GetNFTOwnerAddress, NftApiCode, TransactionRecord } from '@/api'
+import { BuyNft, GetMySelledNfts, GetNftDetail, GetNftIssue, GetNftIssueyTxId, GetNFTOwnerAddress, NftApiCode, NFTApiGetNFTDetail, TransactionRecord } from '@/api'
 // @ts-ignore
 import dayjs from 'dayjs'
 import { useStore } from '@/store'
@@ -394,44 +394,48 @@ const nft: { val: NftItemDetail } = reactive({
 //     resolve()
 //   })
 // }
+
 function getDetail() {
   return new Promise<void>(async (resolve) => {
-    if (typeof route.params.tokenId === 'string') {
-      const res = await GetNftIssueyTxId({
-        txId: "679730c5735e6aeb1b82d0008db3daf86da4bbd573cedbc9e505ba0756643b26",
+    const res = await NFTApiGetNFTDetail({
+        genesis: typeof route.params.genesisId === 'string' ? route.params.genesisId : '',
+        codehash: typeof route.params.codehash === 'string' ? route.params.codehash : '',
+        tokenIndex: typeof route.params.tokenIndex === 'string' ? route.params.tokenIndex : '',
       })
-      if (res.code === NftApiCode.success) {
-        const data = res.data.dataStr ?  JSON.parse(res.data.dataStr) : undefined
-        nft.val = {
-          foundryName: res.data.metaIdName,
-          foundryMetaId: res.data.metaId,
-          foundryHead: '',
-          amount: 0,
-          remainingTime: new Date().getTime(),
-          nftName: res.data.name,
-          classify: data ? data.classifyList : '',
-          describe: data ? data.nftdesc : res.data.desc,
-          forgeTime: res.data.timestamp,
-          contractAddress: res.data.txId,
-          tokenId: res.data.tokenId,
-          ownerName: res.data.metaIdName,
-          ownerMetaId: res.data.metaId,
-          ownerHead: '',
-          type: data ? data.nftType : '',
-          revenue: 'string',
-          coverUrl: data ? data.nfticon : res.data.icon,
-          tx: data ? data.contentTxId : '',
-          putAway: false,
-          codeHash: '',
-          genesis: 'string',
-          tokenIndex: 'string',
-          genesisTxId: 'string',
-          sellTxId: 'string'
+      if (res.code === 0) {
+        if (res.data.results.items.length > 0) {
+          const item = res.data.results.items[0]
+          const data = item.nftDataStr ? JSON.parse(item.nftDataStr) : ''
+          nft.val = {
+            foundryName: item.nftIssuer,
+            foundryMetaId: item.nftIssuer,
+            foundryHead: '',
+            amount: item.nftBalance,
+            remainingTime: new Date().getTime(),
+            nftName: data ? data.nftname : item.nftName,
+            classify: data ? data.classifyList : '',
+            describe: data ? data.nftdesc : item.nftDesc,
+            forgeTime: item.nftTimestamp,
+            contractAddress: '',
+            tokenId: item.nftGenesis + item.nftTokenIndex,
+            ownerName: item.nftOwnerName,
+            ownerMetaId: item.nftOwnerMetaId,
+            ownerHead: '',
+            type: data ? data.nftType : '',
+            revenue: '',
+            coverUrl: data ? data.nfticon : item.nftIcon,
+            tx: data ? data.contentTxId : '',
+            putAway: false,
+            codeHash: item.nftCodehash,
+            genesis: item.nftGenesis,
+            tokenIndex: item.nftTokenIndex,
+            genesisTxId: item.nftGenesisTxid,
+            sellTxId: item.nftSellTxId
+          }
         }
         countDownTimeLeft()
         isShowSkeleton.value = false
       }
-    }
     resolve()
   })
 }
@@ -446,6 +450,7 @@ const price = computed(() => {
 })
 
 const records: TransactionRecordItem[] = reactive([])
+
 function getRecord() {
   return new Promise<void>(async (resolve) => {
     if (typeof route.params.tokenId === 'string') {
@@ -506,9 +511,6 @@ function countDownTimeLeft() {
   }, 1000)
 }
 
-function imgError(error: string) {
-  console.log(error)
-}
 
 function toLink() {
   const url = `${import.meta.env.VITE_WhatsonChain}/tx/${nft.val.tx}`
@@ -553,38 +555,40 @@ async function buy() {
     customClass: 'full-loading',
   })
 
-  const params = {
-    codehash: nft.val.codeHash,
-    genesis: nft.val.genesis,
-    tokenIndex: nft.val.tokenIndex,
-    opreturnData: nft.val.sellTxId,
-    genesisTxid: nft.val.genesisTxId,
-  }
+  
 
-  const getAddressRes = await GetNFTOwnerAddress({ tokenId: nft.val.tokenId }).catch(() =>
-    loading.close()
-  )
-  if (getAddressRes && getAddressRes.code === NftApiCode.success) {
-    const buyNftParams = {
-      address: getAddressRes.data.address,
+  // const getAddressRes = await GetNFTOwnerAddress({ tokenId: nft.val.tokenId }).catch(() =>
+  //   loading.close()
+  // )
+  // if (getAddressRes && getAddressRes.code === NftApiCode.success) {
+    
+  // }
+
+  const params = {
+      codehash: nft.val.codeHash,
+      genesis: nft.val.genesis,
+      tokenIndex: nft.val.tokenIndex,
+      opreturnData: nft.val.sellTxId,
+      genesisTxid: nft.val.genesisTxId,
       txId: nft.val.sellTxId,
-      amount: new Decimal(nft.val.amount).toNumber(),
-      ...params,
+      // address: getAddressRes.data.address,
+      amount: new Decimal(nft.val.amount).toNumber()
     }
     // 需要消费金额
-    const useAmount = await store.state.sdk
-      ?.buyNFT({
+    const useAmountRes = await store.state.sdk
+      ?.nftBuy({
         checkOnly: true,
-        ...buyNftParams,
+        ...params,
       })
       .catch(() => {
         loading.close()
       })
-
-    // 查询用户余额
+    if (useAmountRes?.code === 200) {
+      const useAmount = useAmountRes.data.amount!
+      // 查询用户余额
     const userBalanceRes = await store.state.sdk?.getBalance()
     if (userBalanceRes && userBalanceRes.code === 200) {
-      if (typeof useAmount === 'number' && userBalanceRes.data.satoshis > useAmount) {
+      if (userBalanceRes.data.satoshis > useAmount) {
         // 余额足够
         ElMessageBox.confirm(
           `${i18n.t('useAmountTips')}: ${useAmount} SATS`,
@@ -596,45 +600,45 @@ async function buy() {
           }
         ).then(async () => {
           // 确认支付
-          const res = await store.state.sdk?.buyNFT(buyNftParams).catch(() => {
+          const res = await store.state.sdk?.nftBuy(params).catch(() => {
             loading.close()
           })
-          if (res && typeof res !== 'number' && res.code === 200) {
+          if (res?.code === 200) {
             // 上链完 nft buy 协议 要 上报服务器
             const response = await BuyNft({
               tokenId: nft.val.tokenId,
               payMentAddress: store.state.userInfo!.address,
-              collectionAddress: getAddressRes.data.address,
-              payTxId: res.data.txId,
+              // collectionAddress: getAddressRes.data.address,
+              payTxId: res.data.txid,
               amount: new Decimal(nft.val.amount).toNumber(),
             }).catch(() => loading.close())
-            if (response && response.code === NftApiCode.success) {
-              nft.val.ownerMetaId = store.state.userInfo!.metaId
-              nft.val.ownerName = store.state.userInfo!.name
-              nft.val.putAway = false
-              ElMessage.success(i18n.t('buySuccess'))
-              loading.close()
+              if (response && response.code === NftApiCode.success) {
+                nft.val.ownerMetaId = store.state.userInfo!.metaId
+                nft.val.ownerName = store.state.userInfo!.name
+                nft.val.putAway = false
+                ElMessage.success(i18n.t('buySuccess'))
+                loading.close()
+              }
             }
-          }
-        })
-        .catch(() => loading.close())
-      } else {
-        // 余额不足
-        loading.close()
-        ElMessageBox.alert(
-          `
-        <p>${i18n.t('useAmountTips')}: ${useAmount} SATS</p>
-        <p>${i18n.t('insufficientBalance')}</p>
-      `,
-          {
-            confirmButtonText: i18n.t('confirm'),
-            dangerouslyUseHTMLString: true,
-          }
-        )
-        return
+          })
+          .catch(() => loading.close())
+        } else {
+          // 余额不足
+          loading.close()
+          ElMessageBox.alert(
+            `
+          <p>${i18n.t('useAmountTips')}: ${useAmount} SATS</p>
+          <p>${i18n.t('insufficientBalance')}</p>
+        `,
+            {
+              confirmButtonText: i18n.t('confirm'),
+              dangerouslyUseHTMLString: true,
+            }
+          )
+          return
+        }
       }
     }
-  }
 
   // const response = await store.state.sdk?.nftBuy({
   //   txId: nft.val.sellTxId,
@@ -708,7 +712,7 @@ function toSale () {
 function more() {
   ElMessage.info(i18n.t('stayTuned'))
 }
-if (route.params.tokenId) {
+if (route.params.genesisId && route.params.codehash && route.params.tokenIndex) {
   getDetail()
   getRecord()
 }
