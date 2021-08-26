@@ -163,7 +163,7 @@
                   (store.state.userInfo && store.state.userInfo.metaId !== nft.val.ownerMetaId)
                 "
               >
-                {{ i18n.locale.value === 'zh' ? `以 ${price} BSV 购买` : `Buy Now At ${price} BSV` }}
+                {{ i18n.locale.value === 'zh' ? `以 ${nft.val.amount} BSV 购买` : `Buy Now At ${nft.val.amount} BSV` }}
               </div>
               <template
                 v-else-if="
@@ -405,12 +405,13 @@ function getDetail() {
       if (res.code === 0) {
         if (res.data.results.items.length > 0) {
           const item = res.data.results.items[0]
+          debugger
           const data = item.nftDataStr ? JSON.parse(item.nftDataStr) : ''
           nft.val = {
             foundryName: item.nftIssuer,
             foundryMetaId: item.nftIssuer,
             foundryHead: '',
-            amount: item.nftBalance,
+            amount: item.nftPrice,
             remainingTime: new Date().getTime(),
             nftName: data ? data.nftname : item.nftName,
             classify: data ? data.classifyList : '',
@@ -429,7 +430,7 @@ function getDetail() {
             codeHash: item.nftCodehash,
             genesis: item.nftGenesis,
             tokenIndex: item.nftTokenIndex,
-            genesisTxId: item.nftGenesisTxid,
+            genesisTxId: item.nftGenesisTxId,
             sellTxId: item.nftSellTxId
           }
         }
@@ -441,13 +442,13 @@ function getDetail() {
 }
 
 // NFT价格 stas 转 bsv
-const price = computed(() => {
-  if (nft.val.amount) {
-    return new Decimal(nft.val.amount).div(10 ** 8).toString()
-  } else {
-    return '--'
-  }
-})
+// const price = computed(() => {
+//   if (nft.val.amount) {
+//     return new Decimal(nft.val.amount).div(10 ** 8).toString()
+//   } else {
+//     return '--'
+//   }
+// })
 
 const records: TransactionRecordItem[] = reactive([])
 
@@ -564,6 +565,7 @@ async function buy() {
     
   // }
 
+  debugger
   const params = {
       codehash: nft.val.codeHash,
       genesis: nft.val.genesis,
@@ -600,9 +602,11 @@ async function buy() {
           }
         ).then(async () => {
           // 确认支付
+          loading.close()
           const res = await store.state.sdk?.nftBuy(params).catch(() => {
             loading.close()
           })
+          debugger
           if (res?.code === 200) {
             // 上链完 nft buy 协议 要 上报服务器
             const response = await BuyNft({
@@ -619,6 +623,8 @@ async function buy() {
                 ElMessage.success(i18n.t('buySuccess'))
                 loading.close()
               }
+            } else {
+              loading.close()
             }
           })
           .catch(() => loading.close())

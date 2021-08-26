@@ -464,6 +464,7 @@ export default class Sdk {
 
   // metaidjs nft 购买
   nftBuy(params: NftBuyParams) {
+    debugger
     return new Promise<NftBuyResData>((resolve, reject) => {
       const _params = {
         data: {
@@ -471,6 +472,7 @@ export default class Sdk {
           ...params,
         },
         callback: (res: MetaIdJsRes) => {
+          debugger
           this.callback(res, resolve)
         },
         // onCancel: (msg: any) => {
@@ -524,6 +526,7 @@ export default class Sdk {
           ...params,
         },
         callback: (res: MetaIdJsRes) => {
+          debugger
           this.callback(res, resolve)
         },
         // onCancel: (msg: any) => {
