@@ -301,6 +301,7 @@ export default class Sdk {
         //   sensibleId: sensibleId,
         //   ..._params,
         // })
+
         // 3.issueNFT
         const issueRes = await this.issueNFT({
           genesisId: genesis!,
@@ -456,6 +457,7 @@ export default class Sdk {
         this.appMetaidjs?.issueNFT(functionName)
       } else {
         // @ts-ignore
+        debugger
         this.metaidjs?.issueNFT(_params)
       }
     })
@@ -468,7 +470,7 @@ export default class Sdk {
     return new Promise<NftBuyResData>((resolve, reject) => {
       const _params = {
         data: {
-          sellUtxo: { txId: params.txId, outputIndex: 0 },
+          outputIndex: 0,
           ...params,
         },
         callback: (res: MetaIdJsRes) => {
@@ -522,11 +524,11 @@ export default class Sdk {
     return new Promise<NFTCancelResData>((resolve, reject) => {
       const _params = {
         data: {
-          sellUtxo: { txId: params.txId, outputIndex: 0 },
+          sellTxId: params.txId,
+           outputIndex: 0,
           ...params,
         },
         callback: (res: MetaIdJsRes) => {
-          debugger
           this.callback(res, resolve)
         },
         // onCancel: (msg: any) => {

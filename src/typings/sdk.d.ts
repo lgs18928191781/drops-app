@@ -165,6 +165,7 @@ export interface NftBuyParams {
     genesisTxid: string,
     address: string
     amount: number
+    sensibleId: string
     checkOnly?: boolean
 }
 
@@ -192,9 +193,10 @@ export interface NftSellParams {
     codehash: string
     genesis: string
     tokenIndex: string,
-    satoshisPrice: number,
+    satoshisPrice: number
     opreturnData: string
-    genesisTxid: string,
+    genesisTxid: string
+    sensibleId: string
     checkOnly?: boolean
 }
 
@@ -216,7 +218,8 @@ export interface NftCancelParams {
     tokenIndex: string
     txId: string
     opreturnData: string
-    satoshis: number,
+    satoshis: number
+    sensibleId: string
     checkOnly?: boolean
 }
 export interface CancelSellNFTParams extends NftCancelParams {
@@ -230,21 +233,21 @@ export interface NFTIssueParams {
     genesisTxid?: string
     codehash?: string
     sensibleId?: string
+    nftname: string
+    nftdesc: string
+    nfticon: {
+        fileType: string,
+        fileName: string,
+        data: string,
+    }
+    nftwebsite: string
+    nftissuerName: string
     content: NFTIssueData
     checkOnly?: boolean
 }
 
 
 export interface NFTIssueData{
-    nftname: string
-    nftdesc: string
-    nfticon: {
-        fileType: string,
-        fileName: string,
-        data: string
-    }
-    nftwebsite: string
-    nftissuerName: string
     nftType: string
     classifyList: string
     originalFileTxid: {

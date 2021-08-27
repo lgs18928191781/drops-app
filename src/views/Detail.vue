@@ -369,7 +369,7 @@ const store = useStore()
 const now = new Date().getTime()
 const tabs = [
   { name: i18n.t('workdetail'), key: 'workdetail' },
-  { name: i18n.t('possessionrecord'), key: 'possessionrecord' },
+  // { name: i18n.t('possessionrecord'), key: 'possessionrecord' },
 ]
 let tabIndex = ref(0)
 const isShowSkeleton = ref(true)
@@ -409,7 +409,7 @@ function getDetail() {
           const data = item.nftDataStr ? JSON.parse(item.nftDataStr) : ''
           nft.val = {
             foundryName: item.nftIssuer,
-            foundryMetaId: item.nftIssuer,
+            foundryMetaId: item.nftIssueMetaId,
             foundryHead: '',
             amount: item.nftPrice,
             remainingTime: new Date().getTime(),
@@ -422,6 +422,7 @@ function getDetail() {
             ownerName: item.nftOwnerName,
             ownerMetaId: item.nftOwnerMetaId,
             ownerHead: '',
+            ownerAddress: item.nftOwnerAddress,
             type: data ? data.nftType : '',
             revenue: '',
             coverUrl: data ? data.nfticon : item.nftIcon,

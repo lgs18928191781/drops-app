@@ -8,7 +8,7 @@
       <div class="picker-model-list" v-if="props.list.length > 0">
         <div class="picker-model-item flex flex-align-center" :class="{ 'disabled': props.disabled ? item[props.disabled] : false }" v-for="(item, index) in props.list" :key="item.toString()" @click="itemClick(item)">
           <div class="label flex1">
-            <!-- {{ props.name ? $t(item[props.name]) : $t(item) }} -->
+            {{ props.name ? $t(item[props.name]) : $t(item) }}
             <slot name="item" v-bind:item="item"></slot>
           </div>
           <div class="icon">

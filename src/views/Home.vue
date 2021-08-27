@@ -40,11 +40,11 @@
           }}</a>
           <a
             :class="{ active: classify === item.classify }"
-            v-for="item in classies"
-            :key="item.id"
+            v-for="item in classifyList"
+            :key="item.classify"
             @click="changeClassify(item.classify)"
             >
-              <!-- {{ $t(item.classify) }} -->
+              {{ $t(item.classify) }}
             </a
           >
         </div>
@@ -90,6 +90,7 @@ import { useStore } from '@/store'
 import { reactive, ref } from 'vue'
 import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import IsNull from '../components/IsNull/IsNull.vue'
+import { classifyList } from '@/config'
 
 const store = useStore()
 let recommendNfts = reactive<NftItem[]>([])
@@ -175,14 +176,14 @@ async function search() {
   }
 }
 
-const classies: Classify[] = reactive([])
+// const classies: Classify[] = reactive([])
 
-async function getClassies() {
-  const res = await GetClassies()
-  if (res.code === NftApiCode.success) {
-    classies.push(...res.data)
-  }
-}
+// async function getClassies() {
+//   const res = await GetClassies()
+//   if (res.code === NftApiCode.success) {
+//     classies.push(...res.data)
+//   }
+// }
 
 function changeClassify(classifyName: string) {
   if (classify.value === classifyName) return
@@ -201,6 +202,6 @@ function changeClassify(classifyName: string) {
 
 getRecommendNftList()
 getNftList()
-getClassies()
+// getClassies()
 </script>
 <style lang="scss" scoped src="./Home.scss"></style>

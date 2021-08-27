@@ -20,6 +20,16 @@ export const units: Unit [] = [
     }
 ]
 
+export const classifyList = [
+  { classify: '艺术' },
+  { classify: '纪念卡', disabled: true, },
+  { classify: '别名', disabled: true, },
+  { classify: '头像', disabled: true, },
+  { classify: '权益', disabled: true, },
+  { classify: '游戏' },
+] 
+
+
 export const pagination: Pagination = {
   page: 1,
   pageSize: 16,

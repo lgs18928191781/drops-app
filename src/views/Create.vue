@@ -124,7 +124,7 @@
             disabled="disabled"
             :visible="isShowClassifyModal"
             @confirm="isShowClassifyModal = false"
-            :list="classifies"
+            :list="classifyList"
             :selecteds="nft.classify"
           />
         </div>
@@ -254,7 +254,7 @@ import {
 import { useStore } from '@/store'
 import { router } from '@/router'
 import PickerModel from '@/components/PickerModal/PickerModel.vue'
-import { nftTypes } from '@/config'
+import { nftTypes, classifyList } from '@/config'
 // import { IssueNFTResData, SdkGenesisNFTRes } from '@/typings/sdk'
 
 const _nftTypes = reactive(nftTypes)
@@ -263,24 +263,24 @@ const i18n = useI18n()
 const store = useStore()
 
 //分类
-const classifies = reactive([])
-async function getClassifies() {
-  const res = await GetClassies()
-  if (res.code === NftApiCode.success) {
-    const disabledClassify = ['纪念卡', '别名', '头像', '权益']
-    classifies.length = 0
-    for (let i = 0; i < disabledClassify.length; i++) {
-      const index = res.data.findIndex((_item) => _item.classify === disabledClassify[i])
-      if (index !== -1) {
-        res.data[index].disabled = true
-      }
-    }
-    // @ts-ignore
-    classifies.push(...res.data)
-  }
-}
+// const classifies = reactive([])
+// async function getClassifies() {
+//   const res = await GetClassies()
+//   if (res.code === NftApiCode.success) {
+//     const disabledClassify = ['纪念卡', '别名', '头像', '权益']
+//     classifies.length = 0
+//     for (let i = 0; i < disabledClassify.length; i++) {
+//       const index = res.data.findIndex((_item) => _item.classify === disabledClassify[i])
+//       if (index !== -1) {
+//         res.data[index].disabled = true
+//       }
+//     }
+//     // @ts-ignore
+//     classifies.push(...res.data)
+//   }
+// }
 
-getClassifies()
+// getClassifies()
 
 const nft = reactive({
   nftName: '',
@@ -588,16 +588,16 @@ async function createNft() {
 
   const params = {
     receiverAddress: store.state.userInfo!.address, //  创建者接收地址
-    content: {
-      nftname: nft.nftName,
-      nftdesc: nft.intro,
-      nfticon: {
+    nftname: nft.nftName,
+    nftdesc: nft.intro,
+    nfticon: {
         fileType: coverFile.data_type,
         fileName: coverFile.name,
         data: coverFile.hexData,
-      },
-      nftwebsite: '',
-      nftissuerName: store.state.userInfo!.name,
+    },
+    nftwebsite: '',
+    nftissuerName: store.state.userInfo!.name,
+    content: {
       nftType: nft.type,
       classifyList: JSON.stringify(nft.classify),
       originalFileTxid: {
