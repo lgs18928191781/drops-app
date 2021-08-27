@@ -362,6 +362,7 @@ import { checkSdkStatus } from '@/utils/util'
 import Decimal from 'decimal.js-light'
 import { router } from '@/router'
 import NftOffSale from '@/utils/offSale'
+import NFTDetail from '@/utils/nftDetail'
 
 const i18n = useI18n()
 const route = useRoute()
@@ -397,47 +398,16 @@ const nft: { val: NftItemDetail } = reactive({
 
 function getDetail() {
   return new Promise<void>(async (resolve) => {
-    const res = await NFTApiGetNFTDetail({
-        genesis: typeof route.params.genesisId === 'string' ? route.params.genesisId : '',
-        codehash: typeof route.params.codehash === 'string' ? route.params.codehash : '',
-        tokenIndex: typeof route.params.tokenIndex === 'string' ? route.params.tokenIndex : '',
-      })
-      if (res.code === 0) {
-        if (res.data.results.items.length > 0) {
-          const item = res.data.results.items[0]
-          debugger
-          const data = item.nftDataStr ? JSON.parse(item.nftDataStr) : ''
-          nft.val = {
-            foundryName: item.nftIssuer,
-            foundryMetaId: item.nftIssueMetaId,
-            foundryHead: '',
-            amount: item.nftPrice,
-            remainingTime: new Date().getTime(),
-            nftName: data ? data.nftname : item.nftName,
-            classify: data ? data.classifyList : '',
-            describe: data ? data.nftdesc : item.nftDesc,
-            forgeTime: item.nftTimestamp,
-            contractAddress: '',
-            tokenId: item.nftGenesis + item.nftTokenIndex,
-            ownerName: item.nftOwnerName,
-            ownerMetaId: item.nftOwnerMetaId,
-            ownerHead: '',
-            ownerAddress: item.nftOwnerAddress,
-            type: data ? data.nftType : '',
-            revenue: '',
-            coverUrl: data ? data.nfticon : item.nftIcon,
-            tx: data ? data.contentTxId : '',
-            putAway: false,
-            codeHash: item.nftCodehash,
-            genesis: item.nftGenesis,
-            tokenIndex: item.nftTokenIndex,
-            genesisTxId: item.nftGenesisTxId,
-            sellTxId: item.nftSellTxId
-          }
-        }
-        countDownTimeLeft()
-        isShowSkeleton.value = false
-      }
+    const _nft = await NFTDetail(
+      typeof route.params.genesisId === 'string' ? route.params.genesisId : '',
+      typeof route.params.codehash === 'string' ? route.params.codehash : '',
+      typeof route.params.tokenIndex === 'string' ? route.params.tokenIndex : '',
+    ).catch(() => isShowSkeleton.value = false)
+    if (_nft && typeof _nft !== 'boolean') {
+      nft.val = _nft
+      countDownTimeLeft()
+      isShowSkeleton.value = false
+    }
     resolve()
   })
 }
@@ -613,7 +583,7 @@ async function buy() {
             const response = await BuyNft({
               tokenId: nft.val.tokenId,
               payMentAddress: store.state.userInfo!.address,
-              // collectionAddress: getAddressRes.data.address,
+              collectionAddress: nft.val.ownerAddress,
               payTxId: res.data.txid,
               amount: new Decimal(nft.val.amount).toNumber(),
             }).catch(() => loading.close())
@@ -711,7 +681,9 @@ function toSale () {
   router.push({
     name: 'sale',
     params: {
-      tokenId: nft.val.tokenId
+      genesisId: nft.val.genesis,
+      codehash: nft.val.codeHash,
+      tokenIndex: nft.val.tokenIndex
     }
   })
 }

@@ -47,6 +47,7 @@ import { ElSkeleton, ElSkeletonItem, ElMessageBox, ElLoading } from 'element-plu
 import { useI18n } from 'vue-i18n'
 import NftOffSale from '@/utils/offSale'
 import { checkSdkStatus } from '@/utils/util'
+import NFTDetail from '@/utils/nftDetail'
 
 const route = useRoute()
 const router = useRouter()
@@ -61,25 +62,47 @@ const isShowSkeleton = ref(true)
 
 function getDetail() {
   return new Promise<void>(async (resolve) => {
-    if (typeof route.params.tokenId === 'string') {
-      const res = await GetNftDetail({
-        tokenId: route.params.tokenId,
-      })
-      if (res.code === NftApiCode.success) {
-        nft.val = res.data
-        isShowSkeleton.value = false
-      }
+    const _nft = await NFTDetail(
+      typeof route.params.genesisId === 'string' ? route.params.genesisId : '',
+      typeof route.params.codehash === 'string' ? route.params.codehash : '',
+      typeof route.params.tokenIndex === 'string' ? route.params.tokenIndex : '',
+    ).catch(() => isShowSkeleton.value = false)
+    if (_nft && typeof _nft !== 'boolean') {
+      nft.val = _nft
+      isShowSkeleton.value = false
     }
     resolve()
   })
 }
+// function getDetail() {
+//   return new Promise<void>(async (resolve) => {
+//     if (typeof route.params.tokenId === 'string') {
+//       const res = await GetNftDetail({
+//         tokenId: route.params.tokenId,
+//       })
+//       if (res.code === NftApiCode.success) {
+//         nft.val = res.data
+//         isShowSkeleton.value = false
+//       }
+//     }
+//     resolve()
+//   })
+// }
 
 function toDetail() {
-  router.push({ name: 'detail', params: { tokenId: route.params.tokenId } })
+  router.push({ name: 'detail', params: { 
+    genesisId: nft.val.genesis,
+    codehash: nft.val.codeHash,
+    tokenIndex: nft.val.tokenIndex
+  } })
 }
 
 function toSale() {
-  router.push({ name: 'sale', params: { tokenId: route.params.tokenId } })
+  router.push({ name: 'sale', params: { 
+    genesisId: nft.val.genesis,
+    codehash: nft.val.codeHash,
+    tokenIndex: nft.val.tokenIndex
+  } })
 }
 
 async function offSale() {

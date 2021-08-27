@@ -213,9 +213,10 @@ declare interface NFTApiGetNFTDetailRes extends apiResponse{
 }
 
 declare interface NFTApiGetNFTDetailResDataItem {
+  nftPrice: number
   nftCodehash: string
   nftGenesis: string
-  nftGenesisTxid: string
+  nftGenesisTxId: string
   nftSensibleId: string
   nftSymbol: symbol
   nftBalance: number
@@ -228,6 +229,7 @@ declare interface NFTApiGetNFTDetailResDataItem {
   nftTotalSupply: number
   nftTokenIndex: string
   nftIssueVersion: string
+  nftIssueMetaId: string
   nftDataStr: string
   nftOwnerAddress: string
   nftOwnerAvatarTxId: string

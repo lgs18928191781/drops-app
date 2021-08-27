@@ -433,6 +433,7 @@ export default class Sdk {
     return new Promise<IssueNFTResData>((resolve, reject) => {
       const _params = {
         data: {
+          iconType: 'pic',
           ...params,
         },
         callback: (res: MetaIdJsRes) => {

@@ -105,6 +105,7 @@ import { store } from '@/store'
 import Decimal from 'decimal.js-light'
 import NftMsgCard from '@/components/NftMsgCard/NftMsgCard.vue'
 import { units } from '@/config'
+import NFTDetail from '@/utils/nftDetail'
 
 const i18n = useI18n()
 const route = useRoute()
@@ -121,19 +122,19 @@ const saleAmount = ref('')
 
 function getDetail() {
   return new Promise<void>(async (resolve) => {
-    if (typeof route.params.tokenId === 'string') {
-      const res = await GetNftDetail({
-        tokenId: route.params.tokenId,
-      })
-      if (res.code === NftApiCode.success) {
-        nft.val = res.data
-      }
+    const _nft = await NFTDetail(
+      typeof route.params.genesisId === 'string' ? route.params.genesisId : '',
+      typeof route.params.codehash === 'string' ? route.params.codehash : '',
+      typeof route.params.tokenIndex === 'string' ? route.params.tokenIndex : '',
+    ).catch(() => {})
+    if (_nft && typeof _nft !== 'boolean') {
+      nft.val = _nft
     }
     resolve()
   })
 }
 
-if (route.params.tokenId) {
+if (route.params.genesisId && route.params.codehash && route.params.tokenIndex) {
   getDetail()
 }
 

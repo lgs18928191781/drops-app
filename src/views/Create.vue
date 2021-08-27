@@ -658,7 +658,13 @@ async function createNft() {
         const response = await CreateNft(params)
         if (response.code === NftApiCode.success) {
           ElMessage.success(i18n.t('castingsuccess'))
-          router.replace({ name: 'createSuccess', params: { tokenId: res.genesisId + res.tokenIndex } })
+          router.replace({ name: 'createSuccess', 
+            params: { 
+              genesisId: res.genesisId,
+              tokenIndex: res.tokenIndex,
+              codehash: res.codehash,
+            }
+          })
         }
       }
       if (loading) {

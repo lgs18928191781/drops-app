@@ -40,4 +40,5 @@ declare interface NftItemDetail{
     tokenIndex: string
     genesisTxId: string
     sellTxId: string
+    ownerAddress: string
 }
