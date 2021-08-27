@@ -137,4 +137,4 @@ getMyNfts()
 
 
 </script>
-<style lang="scss" scoped src="./self.scss"></style>
+<style lang="scss" scoped src="./Self.scss"></style>
