@@ -57,7 +57,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import { GetMyNftSummaryList, GetMySelledNfts, GetNftIssue, MyNfts, NftApiCode } from '@/api';
+import { GetMyNftSummaryList, GetMyOnSellNftList, GetMySelledNfts, GetNftIssue, MyNfts, NftApiCode } from '@/api';
 import NftItem from '@/components/Nft-item/Nft-item.vue'
 import { useStore } from '@/store';
 import { reactive, ref } from 'vue';
@@ -105,9 +105,9 @@ function getMyNfts (isCover: boolean = false) {
                         contentTxId: string
                     } | undefined = item.nftDataStr ? JSON.parse(item.nftDataStr) : undefined
                     seriesList.push({
-                        cover: data ?  data.nfticon : item.nftIcon,
-                        name: data ? data.nftname : item.nftName,
-                        nftDesc: data ? data.nftdesc : item.nftDesc,
+                        cover: item.nftIcon,
+                        name: item.nftSeriesName && item.nftSeriesName !== '' ? item.nftSeriesName : item.nftName,
+                        nftDesc: '',
                         total: item.nftTotalSupply,
                         hasCount: item.nftMyCount,
                         genesis: item.nftGenesis,
@@ -175,12 +175,43 @@ getMyNfts()
 
 function getMySelledNfts (isCover: boolean = false) {
     return new Promise<void>(async resolve => {
-        const res = await GetMySelledNfts(selledPagination)
-        if (res && res.code === 200) {
+        debugger
+        const res = await GetMyOnSellNftList({
+            Page: selledPagination.page.toString(),
+            PageSize: selledPagination.pageSize.toString(),
+            Address: store.state.userInfo!.address
+        })
+        debugger
+        if (res && res.code === 0) {
             if (isCover) {
                 selledNfts.length = 0
             }
-            selledNfts.push(...res.data)
+            if (res.data.results.items.length > 0) {
+                res.data.results.items.map(item => {
+                    debugger
+                    const data = item.nftDataStr ? JSON.parse(item.nftDataStr) : null
+                    selledNfts.push({
+                        name: item.nftName,
+                        amount: item.nftPrice,
+                        foundryName: item.nftIssuer,
+                        classify: data ? data.classify : '',
+                        head: '',
+                        tokenId: item.nftGenesis + item.nftTokenIndex,
+                        coverUrl: item.nftIcon,
+                        putAway: item.nftIsReady,
+                        metaId: item.nftIssuer,
+                        productName: item.nftName,
+                        deadlineTime: item.nftTimestamp,
+                        genesis: item.nftGenesis,
+                        tokenIndex: item.nftTokenIndex,
+                        codehash: item.nftCodehash
+                    })
+                })
+            } else {
+                selledPagination.nothing = true
+            }
+            
+            console.log(selledNfts)
         }
         isShowSelledNftListSkeleton.value = false
         resolve()

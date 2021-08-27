@@ -62,6 +62,7 @@ function getMyNfts (isCover: boolean = false) {
             Page: pagination.page.toString(),
             PageSize: pagination.pageSize.toString(),
             Address: store.state.userInfo!.address,
+            // Address: store.state.userInfo!.address,
             codehash: typeof route.params.codehash === 'string' ? route.params.codehash : '',
             genesis: typeof route.params.genesisId === 'string' ? route.params.genesisId : '',
         })
@@ -72,15 +73,15 @@ function getMyNfts (isCover: boolean = false) {
                 res.data.results.items.map(item => {
                     const data = item.nftDataStr ? JSON.parse(item.nftDataStr) : undefined
                     nfts.push({
-                        name: data ? data.nftname : item.nftName,
+                        name: item.nftName,
                         amount: 0,
                         foundryName: store.state.userInfo!.name,
                         classify: data ? data.classifyList : '',
                         tokenId: item.nftGenesis + item.nftTokenIndex,
-                        coverUrl: data ? data.nfticon : item.nftIcon,
-                        putAway: false,
-                        metaId: store.state.userInfo!.metaId,
-                        productName: data ? data.nftname : item.nftName,
+                        coverUrl: item.nftIcon,
+                        putAway: item.nftIsReady,
+                        metaId: item.nftOwnerMetaId,
+                        productName: item.nftName,
                         genesis: item.nftGenesis,
                         codehash: item.nftCodehash,
                         tokenIndex: item.nftTokenIndex
@@ -137,4 +138,4 @@ getMyNfts()
 
 
 </script>
-<style lang="scss" scoped src="./Self.scss"></style>
+<style lang="scss" scoped src="./Series.scss"></style>

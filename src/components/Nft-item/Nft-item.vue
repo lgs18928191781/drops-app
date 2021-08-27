@@ -1,7 +1,7 @@
 <template>
   <a @click="toDetail()" class="nft-item" :key="item?.tokenId">
     <div class="cover">
-      <img class="cover-image" :src="item?.coverUrl" :alt="item?.name" />
+      <img class="cover-image" :src="metafileUrl(item?.coverUrl)" :alt="item?.name" />
     </div>
     <div class="cont">
       <div class="name">{{ isSelf ? item.productName : item?.name }}</div>
@@ -55,6 +55,7 @@ import NftOffSale from '@/utils/offSale'
 // @ts-ignore
 import dayjs from 'dayjs'
 import _FormItem from 'element-plus/lib/el-form-item'
+import { metafileUrl } from '@/utils/util'
 
 
 const store = useStore()
@@ -79,12 +80,12 @@ const props = defineProps<{
 }>()
 
 function toDetail() {
-  router.push({ name: 'detail', params: { tokenIndex: props.item.tokenIndex, genesisId: props.item.genesis, codehash: props.item.codeHash }})
+  router.push({ name: 'detail', params: { tokenIndex: props.item.tokenIndex, genesisId: props.item.genesis, codehash: props.item.codehash }})
 }
 
 function toSale () {
   if (props.item?.tokenId) {
-    router.push({ name: 'sale', params: { tokenId: props.item?.tokenId } })
+    router.push({ name: 'sale', params: { tokenIndex: props.item.tokenIndex, genesisId: props.item.genesis, codehash: props.item.codehash } })
   }
 }
 

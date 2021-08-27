@@ -83,3 +83,8 @@ export function checkSdkStatus() {
     resolve()
   })
 }
+
+export function metafileUrl (metafile: string) {
+  metafile = metafile.replace('metafile://', '')
+  return `${import.meta.env.VITE_ShowMan}/metafile/${metafile}`
+}

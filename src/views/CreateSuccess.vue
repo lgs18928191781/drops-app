@@ -135,7 +135,7 @@ async function offSale() {
   .catch(() => loading.close())
 }
 
-if (route.params.tokenId) {
+if (route.params.genesisId && route.params.codehash && route.params.tokenIndex) {
   getDetail()
 }
 </script>

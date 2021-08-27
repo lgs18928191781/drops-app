@@ -17,9 +17,9 @@ export default function NFTDetail (genesis: string, codehash: string, tokenIndex
                 foundryHead: '',
                 amount: item.nftPrice,
                 remainingTime: new Date().getTime(),
-                nftName: data ? data.nftname : item.nftName,
+                nftName: item.nftName,
                 classify: data ? data.classifyList : '',
-                describe: data ? data.nftdesc : item.nftDesc,
+                describe: item.nftDesc,
                 forgeTime: item.nftTimestamp,
                 contractAddress: '',
                 tokenId: item.nftGenesis + item.nftTokenIndex,
@@ -29,14 +29,15 @@ export default function NFTDetail (genesis: string, codehash: string, tokenIndex
                 ownerAddress: item.nftOwnerAddress,
                 type: data ? data.nftType : '',
                 revenue: '',
-                coverUrl: data ? data.nfticon : item.nftIcon,
+                coverUrl: item.nftIcon,
                 tx: data ? data.contentTxId : '',
-                putAway: false,
+                putAway: item.nftIsReady,
                 codeHash: item.nftCodehash,
                 genesis: item.nftGenesis,
                 tokenIndex: item.nftTokenIndex,
                 genesisTxId: item.nftGenesisTxId,
-                sellTxId: item.nftSellTxId
+                sellTxId: item.nftSellTxId,
+                sensibleId: item.nftSensibleId
               }
               resolve(nft)
             } else {

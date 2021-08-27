@@ -83,7 +83,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { GetClassies, GetProductClassifyList, GetProductList, NftApiCode, Search } from '@/api'
+import { GetAllOnSellNftList, GetClassies, GetProductClassifyList, GetProductList, NftApiCode, Search } from '@/api'
 import NftItem from '@/components/Nft-item/Nft-item.vue'
 import NftSkeleton from '@/components/NftSkeleton/NftSkeleton.vue'
 import { useStore } from '@/store'
@@ -106,10 +106,33 @@ const isShowRecommendSkeleton = ref(true)
 const isShowNftListSkeleton = ref(true)
 
 async function getNftList(isCover: boolean = false) {
-  const res = await GetProductList(pagination)
+  const res = await GetAllOnSellNftList({
+    PageSize: pagination.pageSize.toString(),
+    Page: pagination.page.toString()
+  })
   if (res.code === NftApiCode.success) {
     if (isCover) Nfts.length = 0
-    Nfts.push(...res.data)
+    if (res.data.results.items.length > 0) {
+      res.data.results.items.map(item => {
+        const data = item.nftDataStr ? JSON.parse(item.nftDataStr) : null
+        Nfts.push({
+          name: item.nftName,
+          amount: item.nftPrice,
+          foundryName: item.nftIssuer,
+          classify: data ? data.classify : '',
+          head: '',
+          tokenId: item.nftGenesis + item.nftTokenIndex,
+          coverUrl: item.nftIcon,
+          putAway: item.nftIsReady,
+          metaId: '',
+          productName: item.nftName,
+          deadlineTime: item.nftTimestamp,
+          genesis: item.nftGenesis,
+          tokenIndex: item.nftTokenIndex,
+          codehash: item.nftCodehash
+        })
+      })
+    }
     const totalPages = Math.ceil(res.count / pagination.pageSize)
     if (pagination.page >= totalPages) {
       pagination.nothing = true
@@ -117,6 +140,18 @@ async function getNftList(isCover: boolean = false) {
     isShowNftListSkeleton.value = false
   }
 }
+// async function getNftList(isCover: boolean = false) {
+//   const res = await GetProductList(pagination)
+//   if (res.code === NftApiCode.success) {
+//     if (isCover) Nfts.length = 0
+//     Nfts.push(...res.data)
+//     const totalPages = Math.ceil(res.count / pagination.pageSize)
+//     if (pagination.page >= totalPages) {
+//       pagination.nothing = true
+//     }
+//     isShowNftListSkeleton.value = false
+//   }
+// }
 
 async function getNftClassifyList(isCover: boolean = false) {
   const res = await GetProductClassifyList({

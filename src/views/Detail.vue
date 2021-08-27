@@ -163,7 +163,7 @@
                   (store.state.userInfo && store.state.userInfo.metaId !== nft.val.ownerMetaId)
                 "
               >
-                {{ i18n.locale.value === 'zh' ? `以 ${nft.val.amount} BSV 购买` : `Buy Now At ${nft.val.amount} BSV` }}
+                {{ i18n.locale.value === 'zh' ? `以 ${ new Decimal(nft.val.amount).div(10 ** 8).toString() } BSV 购买` : `Buy Now At ${new Decimal(nft.val.amount).div(10 ** 8).toString()} BSV` }}
               </div>
               <template
                 v-else-if="
@@ -545,7 +545,8 @@ async function buy() {
       genesisTxid: nft.val.genesisTxId,
       txId: nft.val.sellTxId,
       // address: getAddressRes.data.address,
-      amount: new Decimal(nft.val.amount).toNumber()
+      amount: new Decimal(nft.val.amount).toNumber(),
+      sensibleId: nft.val.sensibleId
     }
     // 需要消费金额
     const useAmountRes = await store.state.sdk

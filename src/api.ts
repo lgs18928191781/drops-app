@@ -156,6 +156,21 @@ export const GetMyNftSummaryList = (params: GetMyNftSummaryListParams): Promise<
 }
 
 
+
+export const GetMyOnSellNftList = (params: GetMyNftSummaryListParams): Promise<GetMyOnSellNftListRes> => {
+  return apiHttp.post(`/aggregation/v2/app/sensible/getMyOnSellNftList`, params)
+}
+
+
+
+export const GetAllOnSellNftList = (params: {
+  PageSize: string,
+  Page: string
+}): Promise<GetMyOnSellNftListRes> => {
+  return apiHttp.post(`/aggregation/v2/app/sensible/getAllOnSellNftList`, params)
+}
+
+
 export const GetSeriesNftList = (params: {
   Page: string,
   PageSize: string,
