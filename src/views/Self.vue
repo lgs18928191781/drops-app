@@ -105,7 +105,7 @@ function getMyNfts (isCover: boolean = false) {
                     } | undefined = item.nftDataStr ? JSON.parse(item.nftDataStr) : undefined
                     seriesList.push({
                         cover: item.nftIcon,
-                        name: item.nftSeriesName && item.nftSeriesName !== '' ? item.nftSeriesName : item.nftName,
+                        name: item.nftSeriesName && item.nftSeriesName !== '' ? item.nftSeriesName : item.nftName ? item.nftName : '--',
                         nftDesc: '',
                         total: item.nftTotalSupply,
                         hasCount: item.nftMyCount,
@@ -193,7 +193,7 @@ function getMySelledNfts (isCover: boolean = false) {
                         tokenIndex: item.nftTokenIndex
                     })
                     selledNfts.push({
-                        name: item.nftName,
+                        name: item.nftName ? item.nftName : '--',
                         amount: item.nftPrice,
                         foundryName: item.nftIssuer,
                         classify: data && data.classify ? JSON.parse(data.classify) : [],

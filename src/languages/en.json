@@ -140,5 +140,6 @@
   "txIdNotOwner": "Can't cast other people's TxId content",
   "notRightTxId": "This TxId content cannot be cast into equity NFT, please re-enter",
   "myUnSellNft": "My unlisted NFT",
-  "myUnSellNftSeries": "NFT series that I have not listed"
+  "myUnSellNftSeries": "NFT series that I have not listed",
+  "noName": "No title"
 }

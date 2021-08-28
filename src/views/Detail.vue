@@ -344,7 +344,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import CertTemp from '@/components/Cert/Cert.vue'
 import { useI18n } from 'vue-i18n'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
@@ -691,9 +691,17 @@ function toSale () {
 function more() {
   ElMessage.info(i18n.t('stayTuned'))
 }
-if (route.params.genesisId && route.params.codehash && route.params.tokenIndex) {
-  getDetail()
-  getRecord()
-}
+
+onMounted(() => {
+  if (route.params.genesisId && route.params.codehash && route.params.tokenIndex) {
+    getDetail()
+    // getRecord()
+  }
+})
+
+// if (route.params.genesisId && route.params.codehash && route.params.tokenIndex) {
+//   getDetail()
+  // getRecord()
+// }
 </script>
 <style lang="scss" scoped src="./Detail.scss"></style>

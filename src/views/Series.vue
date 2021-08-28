@@ -40,7 +40,7 @@
 import { GetMySelledNfts, GetNftIssue, GetSeriesNftList, MyNfts, NftApiCode } from '@/api';
 import NftItem from '@/components/Nft-item/Nft-item.vue'
 import { useStore } from '@/store';
-import { reactive, ref } from 'vue';
+import { reactive, ref, onMounted } from 'vue';
 import LoadMore from '@/components/LoadMore/LoadMore.vue';
 import NftSkeleton from '@/components/NftSkeleton/NftSkeleton.vue'
 import { useRoute } from 'vue-router';
@@ -69,12 +69,14 @@ function getMyNfts (isCover: boolean = false) {
         })
         debugger
         if (res && res.code === 0) {
-            
+            if (isCover) {
+                nfts.length = 0
+            }
             if (res.data.results.items.length > 0) {
                 res.data.results.items.map(item => {
                     const data = item.nftDataStr ? JSON.parse(item.nftDataStr) : undefined
                     nfts.push({
-                        name: item.nftName,
+                        name: item.nftName ? item.nftName : '--',
                         amount: 0,
                         foundryName: store.state.userInfo!.name,
                         classify: data && data.classifyList  ? JSON.parse(data.classifyList): [],
@@ -134,7 +136,12 @@ function getMore() {
     })
 }
 
-getMyNfts()
+onMounted(() => {
+    pagination.page = 1
+    getMyNfts(true)
+})
+
+
 
 
 

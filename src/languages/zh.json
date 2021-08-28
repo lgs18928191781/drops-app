@@ -141,5 +141,6 @@
   "notRightTxId": "此TxId内容不能铸造成权益类NFT,请重新输入",
   "myUnSellNft": "我的未上架NFT",
   "mySellNft": "我已上架的NFT",
-  "myUnSellNftSeries": "我未上架的NFT系列"
+  "myUnSellNftSeries": "我未上架的NFT系列",
+  "noName": "暂无标题"
 }

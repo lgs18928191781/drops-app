@@ -90,7 +90,9 @@ import { reactive, ref } from 'vue'
 import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import IsNull from '../components/IsNull/IsNull.vue'
 import { classifyList } from '@/config'
+import { useI18n } from 'vue-i18n'
 
+const i18n = useI18n()
 const store = useStore()
 let recommendNfts = reactive<NftItem[]>([])
 let Nfts = reactive<NftItem[]>([])
@@ -115,7 +117,7 @@ async function getNftList(isCover: boolean = false) {
       res.data.results.items.map(item => {
         const data = item.nftDataStr ? JSON.parse(item.nftDataStr) : null
         Nfts.push({
-          name: item.nftName,
+          name: item.nftName ? item.nftName : '--',
           amount: item.nftPrice,
           foundryName: item.nftIssuer,
           classify: data ? data.classify : '',
@@ -176,7 +178,7 @@ function getRecommendNftList() {
         res.data.results.items.map(item => {
           const data = item.nftDataStr ? JSON.parse(item.nftDataStr) : null
           recommendNfts.push({
-            name: item.nftName,
+            name: item.nftName ? item.nftName : '--',
             amount: item.nftPrice,
             foundryName: item.nftIssuer,
             classify: data ? data.classify : '',

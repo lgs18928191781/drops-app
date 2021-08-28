@@ -5,7 +5,7 @@
     </div>
     <div class="cont">
       <div class="name">{{ item.name }}</div>
-      <div style="text-align: right;">{{props.item.hasCount}}/{{props.item.total}}</div>
+      <div class="operate" style="text-align: right;"><span class="timeleft">{{props.item.hasCount}}/{{props.item.total}}</span></div>
     </div>
   </a>
 </template>

@@ -1,7 +1,7 @@
 <template>
   <a @click="toDetail()" class="nft-item" :key="item?.tokenId">
     <div class="cover">
-      <img class="cover-image" :src="metafileUrl(item?.coverUrl)" :alt="item?.name" />
+      <img class="cover-image" :src="metafileUrl(item?.coverUrl)" :alt="item?.name" onerror="javascript:this.src='http://showpay.oss-cn-beijing.aliyuncs.com/showpay/2021-08-28/18b9a8e49bf4424eb802cee44f9251c7-WPS图片-修改尺寸.jpg'" />
     </div>
     <div class="cont">
       <div class="name">{{ isSelf ? item.productName : item?.name }}</div>
@@ -10,7 +10,7 @@
         <div class="aount">{{ new Decimal(item?.amount).div(10**8).toString() }} BSV</div>
       </div>
       <div class="author flex flex-align-center">
-        <img :src="$filters.avatar(item?.metaId)" :alt="item?.foundryName" />
+        <img :src="$filters.avatar(item?.metaId)" :alt="item?.foundryName" 	onerror="javascript:this.src='https://testshowman.showpay.top/metafile/avatar/a9…1f918ca4342d2b018c641bbb4c293e'" />
         <span class="username">{{ item?.foundryName }}</span>
       </div>
       <div class="operate flex flex-align-center" v-if="props.isSelf">

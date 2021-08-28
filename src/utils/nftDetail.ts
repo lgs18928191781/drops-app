@@ -22,7 +22,7 @@ export default function NFTDetail (genesis: string, codehash: string, tokenIndex
                 foundryHead: '',
                 amount: item.nftPrice,
                 remainingTime: deadlineTimeRes && deadlineTimeRes.data && deadlineTimeRes.data.deadlineTime ? deadlineTimeRes.data.deadlineTime : null,
-                nftName: item.nftName,
+                nftName: item.nftName ? item.nftName : '--',
                 classify: data && data.classifyList  ? JSON.parse(data.classifyList): [],
                 describe: item.nftDesc,
                 forgeTime: item.nftTimestamp,
