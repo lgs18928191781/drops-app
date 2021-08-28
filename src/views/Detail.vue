@@ -144,7 +144,7 @@
               </div>
             </div>
 
-            <template v-if="nft.val.putAway && nft.val.remainingTime > 0">
+            <template v-if="nft.val.putAway && nft.val.remainingTime">
               <div class="timeleft">
                 {{ $t('timeleft') }}：<span>{{ day }}</span
                 >{{ $t('day') }}<span>{{ hour }}</span
@@ -172,9 +172,9 @@
               >
                 <div class="flex flex-align-center  putAway-warp" v-if="nft.val.putAway" >
                   <div class="btn btn-block btn-plain flex1" @click="offSale">{{ $t('offsale') }}</div>
-                  <template v-if="now > nft.val.remainingTime">
+                  <!-- <template v-if="now > nft.val.remainingTime">
                     <div class="btn btn-block flex1" @click="toSale">{{$t('saleAgain')}}</div>
-                  </template>
+                  </template> -->
                 </div>
                 <div class="btn btn-block" v-else @click="onSale">{{ $t('sale') }}</div>
               </template>

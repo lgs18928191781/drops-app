@@ -186,16 +186,16 @@ async function confirmSale() {
           })
           if (res?.code === 200) {
             // 上报时间
-            // const response = await SetDeadlineTime({
-            //   genesis: nft.val.genesis,
-            //   codeHash: nft.val.codeHash,
-            //   tokenIndex: nft.val.tokenIndex,
-            //   deadlineTime: new Date(saleTime.value).getTime()
-            // })
-            // if (response.code === NftApiCode.success) {
+            const response = await SetDeadlineTime({
+              genesis: nft.val.genesis,
+              codeHash: nft.val.codeHash,
+              tokenIndex: nft.val.tokenIndex,
+              deadlineTime: new Date(saleTime.value).getTime()
+            })
+            if (response.code === NftApiCode.success) {
               ElMessage.success(i18n.t('saleSuccess'))
               router.back()
-            // }
+            }
 
             // sell协议上完 要上报服务器
             // const response = await SaleNft({

@@ -57,7 +57,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import { GetMyNftSummaryList, GetMyOnSellNftList, GetMySelledNfts, GetNftIssue, MyNfts, NftApiCode } from '@/api';
+import { GetDeadlineTime, GetMyNftSummaryList, GetMyOnSellNftList, GetMySelledNfts, GetNftIssue, MyNfts, NftApiCode } from '@/api';
 import NftItem from '@/components/Nft-item/Nft-item.vue'
 import { useStore } from '@/store';
 import { reactive, ref } from 'vue';
@@ -184,8 +184,14 @@ function getMySelledNfts (isCover: boolean = false) {
                 selledNfts.length = 0
             }
             if (res.data.results.items.length > 0) {
-                res.data.results.items.map(item => {
+                for (let i = 0; i < res.data.results.items.length; i++) {
+                    const item = res.data.results.items[i]
                     const data = item.nftDataStr ? JSON.parse(item.nftDataStr) : null
+                    const deadlineTimeRes = await GetDeadlineTime({
+                        codeHash: item.nftCodehash,
+                        genesis: item.nftGenesis,
+                        tokenIndex: item.nftTokenIndex
+                    })
                     selledNfts.push({
                         name: item.nftName,
                         amount: item.nftPrice,
@@ -197,12 +203,12 @@ function getMySelledNfts (isCover: boolean = false) {
                         putAway: item.nftIsReady,
                         metaId: item.nftIssuer,
                         productName: item.nftName,
-                        deadlineTime: item.nftTimestamp,
+                        deadlineTime: deadlineTimeRes && deadlineTimeRes.data && deadlineTimeRes.data.deadlineTime ? deadlineTimeRes.data.deadlineTime : null,
                         genesis: item.nftGenesis,
                         tokenIndex: item.nftTokenIndex,
                         codehash: item.nftCodehash
                     })
-                })
+                }
             } else {
                 selledPagination.nothing = true
             }

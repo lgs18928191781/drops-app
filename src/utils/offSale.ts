@@ -38,6 +38,8 @@ export default function NftOffSale(nft: NftItemDetail, loading?: any) {
               reject()
             })
             if (res?.code === 200) {
+              // ElMessage.success(i18n.global.t('offsale') + i18n.global.t('success'))
+
               // 上报服务器 移除时间
               const res = await RemoveDeadlineTime({
                 genesis: nft.genesis,

@@ -137,8 +137,8 @@ export const GetNFTOwnerAddress = (params: { tokenId: string }): Promise<apiResp
   return nftHttp.post(`/api/v2/productTransaction/ownerAddress`, params)
 }
 
-export const GetDeadlineTime = (params: { genesis: string, codeHash: string, tokenIndex: string, deadlineTime: number }): Promise<apiResponse> => {
-  return nftHttp.post(`/api/v2/productTransaction/setShelvesTime`, params)
+export const GetDeadlineTime = (params: { genesis: string, codeHash: string, tokenIndex: string}): Promise<apiResponse> => {
+  return nftHttp.post(`/api/v2/productTransaction/getShelvesTime`, params)
 }
 
 export const SetDeadlineTime = (params: { genesis: string, codeHash: string, tokenIndex: string, deadlineTime: number }): Promise<apiResponse> => {
