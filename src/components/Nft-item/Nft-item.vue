@@ -20,7 +20,7 @@
               {{$t('overTime')}}
             </template>
             <div v-else class="flex flex-align-center">
-              <img src="@/assets/images/icon_time.svg" /><span>21{{$t('day')}}4{{$t('hour')}}</span>
+              <img src="@/assets/images/icon_time.svg" /><span>{{day}}{{$t('day')}}{{hour}}{{$t('hour')}}</span>
             </div>
           </template>
         </div>
@@ -66,12 +66,13 @@ const now = new Date().getTime()
 const appVersion = store.state.version // not reactive!
 const day = computed(() => {
   if (now > props.item.deadlineTime!) return 0
-  return parseInt(dayjs(now).diff(dayjs(props.item.deadlineTime!), 'day'))
+  console.log(dayjs(now).diff(dayjs(props.item.deadlineTime!), 'day'))
+  return Math.abs(dayjs(now).diff(dayjs(props.item.deadlineTime!), 'day'))
 }) // 剩余天数
 const hour = computed(() => {
   if (now > props.item.deadlineTime!) return 0
   const day = dayjs(now).diff(dayjs(props.item.deadlineTime!), 'day')
-  return parseInt(dayjs(props.item.deadlineTime!).subtract(day, 'day').hour())
+  return   Math.abs(dayjs(now).diff(dayjs(props.item.deadlineTime!), 'hour') - (day * 24))
 }) // 剩余小时
 const overTime = computed(() => (props.item.deadlineTime!) <= now) // 是否超过时间
 const props = defineProps<{
