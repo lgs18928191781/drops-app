@@ -1,7 +1,7 @@
 <template>
   <a @click="toDetail()" class="nft-item" >
     <div class="cover">
-      <img class="cover-image" :src="props.item.cover" :alt="item?.name" />
+      <img class="cover-image" :src="metafileUrl(props.item.cover)" :alt="item?.name" />
     </div>
     <div class="cont">
       <div class="name">{{ item.name }}</div>
@@ -21,6 +21,7 @@ import { Decimal } from 'decimal.js-light'
 import NftOffSale from '@/utils/offSale'
 // @ts-ignore
 import dayjs from 'dayjs'
+import { metafileUrl } from '@/utils/util';
 
 
 const store = useStore()

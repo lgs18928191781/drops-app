@@ -90,7 +90,7 @@ function getDetail() {
 // }
 
 function toDetail() {
-  router.push({ name: 'detail', params: { 
+  router.replace({ name: 'detail', params: { 
     genesisId: nft.val.genesis,
     codehash: nft.val.codeHash,
     tokenIndex: nft.val.tokenIndex
@@ -98,7 +98,7 @@ function toDetail() {
 }
 
 function toSale() {
-  router.push({ name: 'sale', params: { 
+  router.replace({ name: 'sale', params: { 
     genesisId: nft.val.genesis,
     codehash: nft.val.codeHash,
     tokenIndex: nft.val.tokenIndex

@@ -18,7 +18,7 @@ export default function NFTDetail (genesis: string, codehash: string, tokenIndex
                 amount: item.nftPrice,
                 remainingTime: new Date().getTime(),
                 nftName: item.nftName,
-                classify: data ? data.classifyList : '',
+                classify: data && data.classifyList  ? JSON.parse(data.classifyList): [],
                 describe: item.nftDesc,
                 forgeTime: item.nftTimestamp,
                 contractAddress: '',
@@ -39,6 +39,7 @@ export default function NFTDetail (genesis: string, codehash: string, tokenIndex
                 sellTxId: item.nftSellTxId,
                 sensibleId: item.nftSensibleId
               }
+              debugger
               resolve(nft)
             } else {
                 reject()

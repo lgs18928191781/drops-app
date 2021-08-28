@@ -315,7 +315,7 @@ export default class Sdk {
             amount += issueRes.data.amount
           }
           if (params.checkOnly) {
-            resolve(Math.ceil(amount + 12000))
+            resolve(Math.ceil(amount))
           } else {
             resolve({
               ...issueRes.data,

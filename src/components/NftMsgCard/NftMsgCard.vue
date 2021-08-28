@@ -26,10 +26,10 @@
         <template #default>
             <div class="nft-msg-card flex">
                 <el-image class="cover"
-                    :src="props.coverUrl"
+                    :src="metafileUrl(props.coverUrl)"
                     :alt="props.name"
                     fit="cover"
-                    :preview-src-list="[props.coverUrl]">
+                    :preview-src-list="[metafileUrl(props.coverUrl)]">
                 </el-image>
                 <div class="cont flex1 flex flex-v">
                     <div class="flex1">
@@ -59,6 +59,7 @@
 import { ElSkeleton, ElSkeletonItem } from 'element-plus'
 import { computed, defineProps } from 'vue'
 import CertTemp from '@/components/Cert/Cert.vue'
+import { metafileUrl } from '@/utils/util'
 
 const props = defineProps<{
     coverUrl: string,

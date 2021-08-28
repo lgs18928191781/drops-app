@@ -56,6 +56,7 @@ import NftOffSale from '@/utils/offSale'
 import dayjs from 'dayjs'
 import _FormItem from 'element-plus/lib/el-form-item'
 import { metafileUrl } from '@/utils/util'
+import NFTDetail from '@/utils/nftDetail'
 
 
 const store = useStore()
@@ -103,14 +104,16 @@ function offSale () {
     closeOnClickModal: false
   })
   .then(async () => {
+
     // 先获取详情
-    const detailRes = await GetNftDetail({
-      tokenId: props.item.tokenId
-    }).catch(() => {
-        loading.close()
-    })
-    if (detailRes && detailRes.code === NftApiCode.success) {
-      NftOffSale(detailRes.data, loading)
+    // const detailRes = await GetNftDetail({
+    //   tokenId: props.item.tokenId
+    // }).catch(() => {
+    //     loading.close()
+    // })
+    const nft = await NFTDetail(props.item.genesis, props.item.codehash, props.item.tokenIndex).catch(() => loading.close())
+    if (nft) {
+      NftOffSale(nft, loading)
       .then(() => {
         props.item.putAway = false
         loading.close()

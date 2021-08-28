@@ -131,6 +131,7 @@ declare interface MyNftSummaryItem {
   nftIssueVersion: string
   nftDataStr: string
   nftSeriesName: string
+  genesisTxId: string
 }
 
 
@@ -210,6 +211,7 @@ declare interface GetNftIssueyTxIdResItem extends apiResponse{
   nftSatoshi: number
   nftIssueVersion: string
   nftDataStr: string
+  nftOwnerMetaId: string
 }
 declare interface GetNftIssueyTxIdRes extends apiResponse{
   data: {

@@ -117,8 +117,8 @@
             class="cover flex flex-align-center flex-pack-center"
             :lazy="true"
             :alt="nft.val.nftName"
-            :src="nft.val.coverUrl"
-            :preview-src-list="[nft.val.coverUrl]"
+            :src="metafileUrl(nft.val.coverUrl)"
+            :preview-src-list="[metafileUrl(nft.val.coverUrl)]"
           >
           </el-image>
           <!-- <img class="cover" :src="nft.val.coverUrl" /> -->
@@ -204,9 +204,7 @@
                   <div class="work-detail-item flex flex-align-center">
                     <div class="key">{{ $t('workclass') }}：</div>
                     <div class="value flex1">
-                      <!-- <span v-for="item in nft.val.classify.split(',')" :key="item">{{
-                        item
-                      }}</span> -->
+                      <span v-for="item in nft.val.classify" :key="item">{{$t(item)}}</span>
                     </div>
                   </div>
                   <div class="work-detail-item flex flex-align-baseline">
@@ -363,6 +361,7 @@ import Decimal from 'decimal.js-light'
 import { router } from '@/router'
 import NftOffSale from '@/utils/offSale'
 import NFTDetail from '@/utils/nftDetail'
+import { metafileUrl } from '@/utils/util'
 
 const i18n = useI18n()
 const route = useRoute()
@@ -536,7 +535,7 @@ async function buy() {
     
   // }
 
-  debugger
+
   const params = {
       codehash: nft.val.codeHash,
       genesis: nft.val.genesis,

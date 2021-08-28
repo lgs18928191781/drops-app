@@ -245,6 +245,7 @@ import {
   CreateNft,
   CreateSerice,
   GetClassies,
+  GetMyNftSummaryList,
   GetSeries,
   GetTxData,
   GetTxStatus,
@@ -360,6 +361,30 @@ const serie = reactive({
 const isShowCreateSeriesModal = ref(false)
 const isShowSeriesModal = ref(false)
 const series: any[] = reactive([])
+
+
+// async function getSeries() {
+//   const res = await GetMyNftSummaryList({ Page: '1', PageSize: '99', Address: store.state.userInfo!.address })
+//   if (res.code === 0) {
+//     if (res.data.results.items.length > 0) {
+//       res.data.results.items.map(item => {
+//         if (item.nftSeriesName && item.nftSeriesName !== '') {
+//           series.push({
+//             series: item.nftSeriesName && item.nftSeriesName !== '' ? item.nftSeriesName : item.nftName,
+//             maxNumber: item.nftTotalSupply,
+//             currentNumber: item.nftMyPendingCount,
+//             codeHash: item.nftCodehash,
+//             genesis:  item.nftGenesis,
+//             genesisTxId: item.genesisTxId,
+//             sensibleId:  item.nftSensibleId
+//           })
+//         }
+//       })
+//     }
+//     debugger
+//   }
+// }
+
 async function getSeries() {
   const res = await GetSeries({ page: 1, pageSize: 99 })
   if (res.code === NftApiCode.success) {
@@ -367,6 +392,7 @@ async function getSeries() {
     series.push(...res.data)
   }
 }
+
 //  创建系列
 async function createSerie() {
   if (serie.name === '') {
@@ -382,9 +408,13 @@ async function createSerie() {
     ElMessage.error(i18n.t('havedSameNameSeries'))
     return
   }
-  const params = {
-    
-  }
+  const loading = ElLoading.service({
+    lock: true,
+    text: 'Loading',
+    spinner: 'el-icon-loading',
+    background: 'rgba(0, 0, 0, 0.7)',
+    customClass: 'full-loading',
+  })
 
   const response = await store.state.sdk?.genesisNFT({
     seriesName: serie.name,
@@ -415,6 +445,7 @@ async function createSerie() {
       isShowCreateSeriesModal.value = false
     }
   }
+  loading.close()
 }
 getSeries()
 
@@ -585,6 +616,11 @@ async function createNft() {
     background: 'rgba(0, 0, 0, 0.7)',
     customClass: 'full-loading',
   })
+  
+  let seriesIndex = -1
+  if (selectedSeries[0]) {
+    seriesIndex = series.findIndex(item => item.series === selectedSeries[0])
+  }
 
   const params = {
     receiverAddress: store.state.userInfo!.address, //  创建者接收地址
@@ -606,8 +642,13 @@ async function createNft() {
         data: originalFile.hexData,
       },
       contentTxId: nft.tx
-    }
+    },
+    codeHash: seriesIndex !== -1 ? series[seriesIndex].codeHash : undefined,
+    genesis: seriesIndex !== -1 ? series[seriesIndex].genesis : undefined,
+    genesisTxId: seriesIndex !== -1 ? series[seriesIndex].genesisTxId : undefined,
+    sensibleId: seriesIndex !== -1 ? series[seriesIndex].sensibleId : undefined
   }
+  debugger
   const useAmount = await await store.state.sdk
     ?.createNFT({
       checkOnly: true,
@@ -686,5 +727,7 @@ async function createNft() {
     return
   }
 }
+
+
 </script>
 <style lang="scss" scoped src="./Create.scss"></style>

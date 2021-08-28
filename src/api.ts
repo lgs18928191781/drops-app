@@ -137,6 +137,19 @@ export const GetNFTOwnerAddress = (params: { tokenId: string }): Promise<apiResp
   return nftHttp.post(`/api/v2/productTransaction/ownerAddress`, params)
 }
 
+export const GetDeadlineTime = (params: { genesis: string, codeHash: string, tokenIndex: string, deadlineTime: number }): Promise<apiResponse> => {
+  return nftHttp.post(`/api/v2/productTransaction/setShelvesTime`, params)
+}
+
+export const SetDeadlineTime = (params: { genesis: string, codeHash: string, tokenIndex: string, deadlineTime: number }): Promise<apiResponse> => {
+  return nftHttp.post(`/api/v2/productTransaction/setShelvesTime`, params)
+}
+
+export const RemoveDeadlineTime = (params: { genesis: string, codeHash: string, tokenIndex: string, deadlineTime: number }): Promise<apiResponse> => {
+  return nftHttp.post(`/api/v2/productTransaction/removeShelvesTime`, params)
+}
+
+
 export const GetNftIssue = (params: {
   genesisId: string
   tokenId: string
@@ -188,4 +201,12 @@ export const NFTApiGetNFTDetail = (params: {
   genesis: string
 }): Promise<NFTApiGetNFTDetailRes> => {
   return apiHttp.post(`/aggregation/v2/app/sensible/getOneNftSummaryDetail`, params)
+}
+
+
+export const GetRecommendOnSellNftList = (params: {
+  PageSize: string,
+  Page: string
+}): Promise<GetMyOnSellNftListRes> => {
+  return apiHttp.post(`/aggregation/v2/app/sensible/getRecommendOnSellNftList`, params)
 }

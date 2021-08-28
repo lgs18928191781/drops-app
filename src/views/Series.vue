@@ -45,6 +45,7 @@ import LoadMore from '@/components/LoadMore/LoadMore.vue';
 import NftSkeleton from '@/components/NftSkeleton/NftSkeleton.vue'
 import { useRoute } from 'vue-router';
 
+
 const store = useStore()
 const route = useRoute()
 const pagination = reactive({
@@ -76,7 +77,7 @@ function getMyNfts (isCover: boolean = false) {
                         name: item.nftName,
                         amount: 0,
                         foundryName: store.state.userInfo!.name,
-                        classify: data ? data.classifyList : '',
+                        classify: data && data.classifyList  ? JSON.parse(data.classifyList): [],
                         tokenId: item.nftGenesis + item.nftTokenIndex,
                         coverUrl: item.nftIcon,
                         putAway: item.nftIsReady,

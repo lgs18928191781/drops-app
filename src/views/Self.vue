@@ -89,7 +89,6 @@ function getMyNfts (isCover: boolean = false) {
             Page: pagination.page.toString(),
             PageSize: pagination.pageSize.toString(),
         })
-        debugger
         if (res && res.code === 0) {
             if (res.data.results.items.length > 0) {
                 res.data.results.items.map(item => {
@@ -165,7 +164,7 @@ function getSelledMore() {
     selledPagination.loading = true
     selledPagination.page++
     getMySelledNfts().then(() => {
-        pagination.loading = false
+        selledPagination.loading = false
     })
 }
 
@@ -175,26 +174,23 @@ getMyNfts()
 
 function getMySelledNfts (isCover: boolean = false) {
     return new Promise<void>(async resolve => {
-        debugger
         const res = await GetMyOnSellNftList({
             Page: selledPagination.page.toString(),
             PageSize: selledPagination.pageSize.toString(),
             Address: store.state.userInfo!.address
         })
-        debugger
         if (res && res.code === 0) {
             if (isCover) {
                 selledNfts.length = 0
             }
             if (res.data.results.items.length > 0) {
                 res.data.results.items.map(item => {
-                    debugger
                     const data = item.nftDataStr ? JSON.parse(item.nftDataStr) : null
                     selledNfts.push({
                         name: item.nftName,
                         amount: item.nftPrice,
                         foundryName: item.nftIssuer,
-                        classify: data ? data.classify : '',
+                        classify: data && data.classify ? JSON.parse(data.classify) : [],
                         head: '',
                         tokenId: item.nftGenesis + item.nftTokenIndex,
                         coverUrl: item.nftIcon,

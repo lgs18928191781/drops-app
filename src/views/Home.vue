@@ -31,9 +31,8 @@
     <div class="section container">
       <div class="section-header flex flex-align-center">
         <div class="title flex1">{{ $t('allmenu') }}</div>
-        <!-- <img class="search-icon" src="@/assets/images/hom_icon_search.svg" /> -->
       </div>
-      <div class="section-screen flex flex-align-center">
+      <!-- <div class="section-screen flex flex-align-center">
         <div class="tags flex1 flex flex-align-center flex-wrap-wrap">
           <a :class="{ active: classify === 'all' }" @click="changeClassify('all')">{{
             $t('all')
@@ -58,7 +57,7 @@
           />
           <img src="@/assets/images/icon_search.svg" @click="search" />
         </div>
-      </div>
+      </div> -->
       <NftSkeleton
         :loading="isShowNftListSkeleton"
         :count="pagination.pageSize"
@@ -83,7 +82,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { GetAllOnSellNftList, GetClassies, GetProductClassifyList, GetProductList, NftApiCode, Search } from '@/api'
+import { GetAllOnSellNftList, GetClassies, GetProductClassifyList, GetProductList, GetRecommendOnSellNftList, NftApiCode, Search } from '@/api'
 import NftItem from '@/components/Nft-item/Nft-item.vue'
 import NftSkeleton from '@/components/NftSkeleton/NftSkeleton.vue'
 import { useStore } from '@/store'
@@ -124,7 +123,7 @@ async function getNftList(isCover: boolean = false) {
           tokenId: item.nftGenesis + item.nftTokenIndex,
           coverUrl: item.nftIcon,
           putAway: item.nftIsReady,
-          metaId: '',
+          metaId: item.nftOwnerMetaId,
           productName: item.nftName,
           deadlineTime: item.nftTimestamp,
           genesis: item.nftGenesis,
@@ -132,9 +131,7 @@ async function getNftList(isCover: boolean = false) {
           codehash: item.nftCodehash
         })
       })
-    }
-    const totalPages = Math.ceil(res.count / pagination.pageSize)
-    if (pagination.page >= totalPages) {
+    } else {
       pagination.nothing = true
     }
     isShowNftListSkeleton.value = false
@@ -170,15 +167,49 @@ async function getNftClassifyList(isCover: boolean = false) {
 
 function getRecommendNftList() {
   return new Promise<void>(async (resolve) => {
-    const res = await GetProductList({ page: 1, pageSize: 7 })
-    if (res.code === NftApiCode.success) {
-      recommendNfts.length = 0
-      recommendNfts.push(...res.data)
+    const res = await GetRecommendOnSellNftList({
+      Page: '1',
+      PageSize: '5'
+    })
+    if (res.code === 0) {
+      if (res.data.results.items.length > 0) {
+        res.data.results.items.map(item => {
+          const data = item.nftDataStr ? JSON.parse(item.nftDataStr) : null
+          recommendNfts.push({
+            name: item.nftName,
+            amount: item.nftPrice,
+            foundryName: item.nftIssuer,
+            classify: data ? data.classify : '',
+            head: '',
+            tokenId: item.nftGenesis + item.nftTokenIndex,
+            coverUrl: item.nftIcon,
+            putAway: item.nftIsReady,
+            metaId: item.nftOwnerMetaId,
+            productName: item.nftName,
+            deadlineTime: item.nftTimestamp,
+            genesis: item.nftGenesis,
+            tokenIndex: item.nftTokenIndex,
+            codehash: item.nftCodehash
+          })
+        })
+      }
       isShowRecommendSkeleton.value = false
     }
     resolve()
   })
 }
+
+// function getRecommendNftList() {
+//   return new Promise<void>(async (resolve) => {
+//     const res = await GetProductList({ page: 1, pageSize: 7 })
+//     if (res.code === NftApiCode.success) {
+//       recommendNfts.length = 0
+//       recommendNfts.push(...res.data)
+//       isShowRecommendSkeleton.value = false
+//     }
+//     resolve()
+//   })
+// }
 
 function getMore() {
   pagination.loading = true
@@ -231,7 +262,6 @@ function changeClassify(classifyName: string) {
   } else {
     getNftClassifyList(true)
   }
-
   keyword.value = ''
 }
 

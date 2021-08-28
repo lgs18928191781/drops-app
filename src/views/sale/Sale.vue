@@ -88,7 +88,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { GetNftDetail, NftApiCode, SaleNft } from '@/api'
+import { GetNftDetail, NftApiCode, SaleNft, SetDeadlineTime } from '@/api'
 import { reactive, ref } from '@vue/reactivity'
 import { useRoute, useRouter } from 'vue-router'
 import {
@@ -164,6 +164,7 @@ async function confirmSale() {
     satoshisPrice: stasPrice,
     opreturnData: nft.val!.tx,
     genesisTxid: nft.val!.genesisTxId,
+    sensibleId: nft.val.sensibleId
   }
   const useAmountRes = await store.state.sdk?.nftSell({ checkOnly: true, ...params }).catch(() => {
     loading.close()
@@ -184,17 +185,29 @@ async function confirmSale() {
             loading.close()
           })
           if (res?.code === 200) {
-            // sell协议上完 要上报服务器
-            const response = await SaleNft({
-              sellValidTime: new Date(saleTime.value).getTime(),
-              amount: stasPrice,
-              tokenId: nft.val!.tokenId,
-              sellTxId: res.data.sellTxId,
-            })
-            if (response.code === NftApiCode.success) {
+            // 上报时间
+            // const response = await SetDeadlineTime({
+            //   genesis: nft.val.genesis,
+            //   codeHash: nft.val.codeHash,
+            //   tokenIndex: nft.val.tokenIndex,
+            //   deadlineTime: new Date(saleTime.value).getTime()
+            // })
+            // if (response.code === NftApiCode.success) {
               ElMessage.success(i18n.t('saleSuccess'))
               router.back()
-            }
+            // }
+
+            // sell协议上完 要上报服务器
+            // const response = await SaleNft({
+            //   sellValidTime: new Date(saleTime.value).getTime(),
+            //   amount: stasPrice,
+            //   tokenId: nft.val!.tokenId,
+            //   sellTxId: res.data.sellTxId,
+            // })
+            // if (response.code === NftApiCode.success) {
+            //   ElMessage.success(i18n.t('saleSuccess'))
+            //   router.back()
+            // }
           }
           loading.close()
         })

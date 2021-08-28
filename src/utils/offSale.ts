@@ -1,7 +1,7 @@
 import Decimal from 'decimal.js-light'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { store } from '@/store'
-import { NftApiCode, OffSale } from '@/api'
+import { NftApiCode, OffSale, RemoveDeadlineTime } from '@/api'
 import i18n from './i18n'
 
 export default function NftOffSale(nft: NftItemDetail, loading?: any) {
@@ -14,6 +14,7 @@ export default function NftOffSale(nft: NftItemDetail, loading?: any) {
       genesisTxid: nft.genesisTxId,
       txId: nft.sellTxId,
       satoshis: new Decimal(nft.amount).toNumber(),
+      sensibleId: nft.sensibleId
     }
     const useAmountRes = await store.state.sdk?.nftCancel({
       checkOnly: true,
@@ -37,15 +38,30 @@ export default function NftOffSale(nft: NftItemDetail, loading?: any) {
               reject()
             })
             if (res?.code === 200) {
-              // 上链 cancel sell 协议 成功后 上报给服务器
-              const res = await OffSale({ tokenId: nft!.tokenId })
+              // 上报服务器 移除时间
+              const res = await RemoveDeadlineTime({
+                genesis: nft.genesis,
+                codeHash: nft.codeHash,
+                tokenIndex: nft.tokenIndex,
+                deadlineTime: nft.remainingTime
+              })
               if (res.code === NftApiCode.success) {
                 nft.putAway = false
                 ElMessage.success(i18n.global.t('offsale') + i18n.global.t('success'))
               } else {
-                ElMessage.success(i18n.global.t('offsale') + i18n.global.t('fail'))
+                ElMessage.error(i18n.global.t('offsale') + i18n.global.t('fail'))
               }
               resolve()
+
+              // 上链 cancel sell 协议 成功后 上报给服务器
+              // const res = await OffSale({ tokenId: nft!.tokenId })
+              // if (res.code === NftApiCode.success) {
+              //   nft.putAway = false
+              //   ElMessage.success(i18n.global.t('offsale') + i18n.global.t('success'))
+              // } else {
+              //   ElMessage.success(i18n.global.t('offsale') + i18n.global.t('fail'))
+              // }
+              // resolve()
             } else {
               reject()
             }

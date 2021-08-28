@@ -41,7 +41,7 @@ export const state: State = {
   // 分页参数
   pagination: {
     page: 1,
-    pageSize: 16,
+    pageSize: 12,
     loading: false,
     nothing: false
   }
