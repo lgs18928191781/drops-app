@@ -579,7 +579,13 @@ async function buy() {
           })
           debugger
           if (res?.code === 200) {
-            // 上链完 nft buy 协议 要 上报服务器
+            nft.val.ownerMetaId = store.state.userInfo!.metaId
+            nft.val.ownerName = store.state.userInfo!.name
+            nft.val.putAway = false
+            ElMessage.success(i18n.t('buySuccess'))
+            loading.close()
+
+            /* // 上链完 nft buy 协议 要 上报服务器
             const response = await BuyNft({
               tokenId: nft.val.tokenId,
               payMentAddress: store.state.userInfo!.address,
@@ -593,7 +599,7 @@ async function buy() {
                 nft.val.putAway = false
                 ElMessage.success(i18n.t('buySuccess'))
                 loading.close()
-              }
+              } */
             } else {
               loading.close()
             }
