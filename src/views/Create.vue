@@ -671,7 +671,17 @@ async function createNft() {
       })
       debugger
       if (res && typeof res !== 'number') {
-        // 上传源文件到阿里云
+        ElMessage.success(i18n.t('castingsuccess'))
+        router.replace({ name: 'createSuccess', 
+          params: { 
+            genesisId: res.genesisId,
+            tokenIndex: res.tokenIndex,
+            codehash: res.codehash,
+          }
+        })
+
+
+        /* // 上传源文件到阿里云
         const originalFileForm = new FormData()
         originalFileForm.append('file', originalFile.raw ? originalFile.raw : '')
         const fileUrl = await Upload(originalFileForm)
@@ -706,7 +716,7 @@ async function createNft() {
               codehash: res.codehash,
             }
           })
-        }
+        } */
       }
       if (loading) {
         loading.close()
