@@ -132,6 +132,41 @@ declare interface MyNftSummaryItem {
   nftDataStr: string
   nftSeriesName: string
   genesisTxId: string
+  nftOwnerName: string
+  nftTokenIndex: string
+  nftIsReady: boolean
+  nftOwnerMetaId: string
+  nftIssueMetaId: string
+  nftDetailItemList?: {
+    nftBalance: number
+    nftCodehash: string
+    nftDataStr: string
+    nftDesc: string
+    nftGenesis: string
+    nftGenesisTxId: string
+    nftIcon: string
+    nftIsReady: boolean
+    nftIssueAvatarTxId: string
+    nftIssueMetaId: string
+    nftIssueVersion: string
+    nftIssuer: string
+    nftName: string
+    nftOwnerAddress: string
+    nftOwnerAvatarTxId: string
+    nftOwnerMetaId: string
+    nftOwnerName: string
+    nftPrice: number
+    nftSatoshi: number
+    nftSellTxId: string
+    nftSensibleId: string
+    nftSeriesName: string
+    nftSymbol: string
+    nftTimestamp: number
+    nftTokenId: string
+    nftTokenIndex: string
+    nftTotalSupply: number
+    nftWebsite: string
+  } []
 }
 
 
@@ -212,6 +247,7 @@ declare interface GetNftIssueyTxIdResItem extends apiResponse{
   nftIssueVersion: string
   nftDataStr: string
   nftOwnerMetaId: string
+  nftOwnerName: string
 }
 declare interface GetNftIssueyTxIdRes extends apiResponse{
   data: {
@@ -273,4 +309,5 @@ declare interface NFTApiGetNFTDetailResDataItem {
   nftOwnerName: string
   nftSellTxId: string
   nftIsReady: boolean
+  nftSellContractTxId: string
 }

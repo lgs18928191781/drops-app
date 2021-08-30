@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, RouterView } from 'vue-router'
 import Home from '@/views/Home.vue'
 import Create from '@/views/Create.vue'
-import CreateSuccess from '@/views/CreateSuccess.vue'
+import NftSuccess from '@/views/NftSuccess.vue'
 import Detail from '@/views/Detail.vue'
 import Sale from '@/views/sale/Sale.vue'
 import SaleLegend from '@/views/sale/Legend.vue'
@@ -22,7 +22,7 @@ export const router = createRouter({
   routes: [
     { path: '/', component: Home },
     { path: '/create', name: 'create', component: Create, meta: { isAuth: true } },
-    { path: '/CreateSucsses/:genesisId/:codehash/:tokenIndex', name: 'createSuccess', component: CreateSuccess, meta: { isAuth: true } },
+    { path: '/nftSuccess/:genesisId/:codehash/:tokenIndex', name: 'nftSuccess', component: NftSuccess, meta: { isAuth: true } },
     { path: '/detail/:genesisId/:codehash/:tokenIndex', name: 'detail', component: Detail },
     { path: '/sale/:genesisId/:codehash/:tokenIndex', name: 'sale', component: Sale, meta: { isAuth: true } },
     { path: '/saleLegend', name: 'saleLegend', component: SaleLegend },

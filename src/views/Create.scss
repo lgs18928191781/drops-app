@@ -381,6 +381,20 @@
                         color: #BFC2CC;
                     }
                 }
+                textarea{
+                    border: none;
+                    outline: none;
+                    max-width: 100%;
+                    width: 100%;
+                    min-height: 144px;
+                    padding: 14px 0;
+                    box-sizing: border-box;
+                    font-size: 14px;
+                    line-height: 20px;
+                    &::placeholder{
+                        color: #BFC2CC;
+                    }
+                }
                 .type{
                     cursor: pointer;
                     margin-top: 0;

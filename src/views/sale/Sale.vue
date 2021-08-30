@@ -24,6 +24,11 @@
 
         <div class="form">
           <div class="form-item">
+            <div class="cont flex flex-align-center">
+              <textarea v-model="saleIntro" :placeholder="$t('offSaleIntro')"></textarea>
+            </div>
+          </div>
+          <div class="form-item">
             <!-- <div class="title">时间</div> -->
             <div class="cont flex flex-align-center">
               <!-- <input
@@ -82,7 +87,7 @@
             <a>{{ $t('seehistoryprice') }}</a>
           </div> -->
         </div>
-        <div class="btn btn-block" @click="confirmSale">{{ $t('confirmsale') }}</div>
+        <div class="btn btn-block" :class="{'btn-gray': saleIntro === '' || saleAmount === '' || saleTime === ''}" @click="confirmSale">{{ $t('confirmsale') }}</div>
       </div>
     </div>
   </div>
@@ -119,6 +124,7 @@ const nft: { val: NftItemDetail } = reactive({
 
 const saleTime = ref('')
 const saleAmount = ref('')
+const saleIntro = ref('')
 
 function getDetail() {
   return new Promise<void>(async (resolve) => {
@@ -146,6 +152,8 @@ function saleAmountChange() {
 }
 
 async function confirmSale() {
+  if (saleTime.value === '' || saleAmount.value === '' || saleIntro.value === '') return
+
   const loading = ElLoading.service({
     lock: true,
     text: 'Loading',
@@ -162,9 +170,9 @@ async function confirmSale() {
     genesis: nft.val!.genesis,
     tokenIndex: nft.val!.tokenIndex,
     satoshisPrice: stasPrice,
-    opreturnData: nft.val!.tx,
     genesisTxid: nft.val!.genesisTxId,
-    sensibleId: nft.val.sensibleId
+    sensibleId: nft.val.sensibleId,
+    sellDesc: saleIntro.value
   }
   const useAmountRes = await store.state.sdk?.nftSell({ checkOnly: true, ...params }).catch(() => {
     loading.close()

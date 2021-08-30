@@ -165,7 +165,7 @@ export const GetMySelledNfts = (params: Pagination): Promise<MyNftsResponstData>
 }
 
 export const GetMyNftSummaryList = (params: GetMyNftSummaryListParams): Promise<GetMyNftSummaryListRes> => {
-  return apiHttp.post(`/aggregation/v2/app/sensible/getMyNftSummaryList`, params)
+  return apiHttp.post(`/aggregation/v2/app/sensible/getMyNftSummaryListV2`, params)
 }
 
 
@@ -180,7 +180,25 @@ export const GetAllOnSellNftList = (params: {
   PageSize: string,
   Page: string
 }): Promise<GetMyOnSellNftListRes> => {
-  return apiHttp.post(`/aggregation/v2/app/sensible/getAllOnSellNftList`, params)
+  return apiHttp.post(`/aggregation/v2/app/nftOnShow/getAllNftOnShowList`, params)
+}
+
+export const GetNftOnShowListByClassify = (params: {
+  PageSize: string,
+  Page: string,
+  classify: string
+}): Promise<GetMyOnSellNftListRes> => {
+  return apiHttp.post(`/aggregation/v2/app/nftOnShow/getNftOnShowListByClassify`, params)
+}
+
+
+
+export const GetNftOnShowListBySearch = (params: {
+  PageSize: string,
+  Page: string,
+  SearchWord: string
+}): Promise<GetMyOnSellNftListRes> => {
+  return apiHttp.post(`/aggregation/v2/app/nftOnShow/getNftOnShowListBySearch`, params)
 }
 
 

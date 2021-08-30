@@ -160,10 +160,9 @@ export interface NftBuyParams {
     codehash: string
     genesis: string
     tokenIndex: string
-    txId: string
-    opreturnData: string
+    sellTxId: string
+    sellContractTxId: string
     genesisTxid: string,
-    amount: number
     sensibleId: string
     checkOnly?: boolean
 }
@@ -193,9 +192,9 @@ export interface NftSellParams {
     genesis: string
     tokenIndex: string,
     satoshisPrice: number
-    opreturnData: string
     genesisTxid: string
     sensibleId: string
+    sellDesc: string
     checkOnly?: boolean
 }
 
@@ -215,10 +214,9 @@ export interface NftCancelParams {
     genesis: string
     genesisTxid: string
     tokenIndex: string
-    txId: string
-    opreturnData: string
+    sellContractTxId: string
+    sellTxId: string
     satoshis: number
-    sensibleId: string
     checkOnly?: boolean
 }
 export interface CancelSellNFTParams extends NftCancelParams {

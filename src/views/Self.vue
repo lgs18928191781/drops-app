@@ -17,7 +17,15 @@
 
         <div class="section container">
             <div class="section-header flex flex-align-center">
-                <div class="title flex1">{{$t('myUnSellNftSeries')}}</div>
+                <div class="tab flex flex-align-center">
+                    <a
+                        :class="{ active: index === tabIndex }"
+                        v-for="(tab, index) in tabs"
+                        :key="index"
+                        @click="changeTabIndex(index)"
+                        >{{tab.name}}</a
+                    >
+                </div>
             </div>
             <NftSkeleton
                 :loading="isShowNftListSkeleton"
@@ -26,34 +34,14 @@
             >
                 <template #default>
                     <div class="section-cont nft-list">
-                        <template v-for="series in seriesList">
-                            <SeriesItem :item="series" />
-                        </template>
-                    </div>
-                </template>
-            </NftSkeleton>
-        </div>
-        <LoadMore :pagination="pagination" @getMore="getMore" />
-
-        <div class="section container">
-            <div class="section-header flex flex-align-center">
-                <div class="title flex1">{{$t('mySellNft')}}</div>
-            </div>
-            <NftSkeleton
-                :loading="isShowSelledNftListSkeleton"
-                :count="selledPagination.pageSize"
-                class="section-cont nft-list"
-            >
-                <template #default>
-                    <div class="section-cont nft-list">
-                        <template v-for="nft in selledNfts" :key="nft.tokenId">
+                        <template v-for="nft in nfts">
                             <NftItem :item="nft" :isSelf="true" />
                         </template>
                     </div>
                 </template>
             </NftSkeleton>
         </div>
-        <LoadMore :pagination="selledPagination" @getMore="getSelledMore" />
+        <LoadMore :pagination="pagination" @getMore="getMore" />
     </div>
 </template>
 <script setup lang="ts">
@@ -64,7 +52,9 @@ import { reactive, ref } from 'vue';
 import SeriesItem from '@/components/SeriesItem/SeriesItem.vue'
 import LoadMore from '@/components/LoadMore/LoadMore.vue';
 import NftSkeleton from '@/components/NftSkeleton/NftSkeleton.vue'
+import { useI18n } from 'vue-i18n';
 
+const i18n = useI18n()
 const store = useStore()
 const pagination = reactive({
     ...store.state.pagination,
@@ -74,6 +64,9 @@ const selledPagination = reactive({
     ...store.state.pagination,
     pageSize: 6   
 })
+
+const tabs = [{name: i18n.t('mynft')}, {name: i18n.t('mySellNft')}]
+const tabIndex = ref(0)
 const nfts: NftItem [] = reactive([])
 const selledNfts: NftItem [] = reactive([])
 const isShowNftListSkeleton = ref(true)
@@ -81,6 +74,18 @@ const isShowSelledNftListSkeleton = ref(true)
 const seriesList: NFTSeriesItem [] = reactive([])
 
 
+function changeTabIndex (index: number) {
+    isShowNftListSkeleton.value = true
+    tabIndex.value = index
+    pagination.loading = false
+    pagination.nothing = false
+    pagination.page = 1
+    if (tabIndex.value === 0) {
+        getMyNfts(true)
+    } else {
+        getMySelledNfts(true)
+    }
+}
 
 function getMyNfts (isCover: boolean = false) {
     return new Promise<void>(async resolve => {
@@ -90,8 +95,15 @@ function getMyNfts (isCover: boolean = false) {
             PageSize: pagination.pageSize.toString(),
         })
         if (res && res.code === 0) {
+            if (isCover) {
+                nfts.length = 0
+            }
             if (res.data.results.items.length > 0) {
                 res.data.results.items.map(item => {
+                    
+                    const nft = item.nftDetailItemList && item.nftDetailItemList[0] ? item.nftDetailItemList[0] : undefined
+                    const count = item.nftMyCount + item.nftMyPendingCount
+                    const name = count > 1 &&  item.nftSeriesName && item.nftSeriesName !== '' ? item.nftSeriesName : item.nftName ? item.nftName : '--'
                     const data: {
                         nftname: string
                         nftdesc: string
@@ -102,15 +114,24 @@ function getMyNfts (isCover: boolean = false) {
                         classifyList: string
                         originalFileTxid: string
                         contentTxId: string
-                    } | undefined = item.nftDataStr ? JSON.parse(item.nftDataStr) : undefined
-                    seriesList.push({
-                        cover: item.nftIcon,
-                        name: item.nftSeriesName && item.nftSeriesName !== '' ? item.nftSeriesName : item.nftName ? item.nftName : '--',
-                        nftDesc: '',
-                        total: item.nftTotalSupply,
-                        hasCount: item.nftMyCount,
+                    } | undefined = nft && nft.nftDataStr !== '' ? JSON.parse(nft.nftDataStr) : undefined
+                    nfts.push({
+                        name: name,
+                        amount: 0,
+                        foundryName: item.nftIssuer,
+                        classify: data && data.classifyList !== '' ? JSON.parse(data.classifyList) : [],
+                        head: '',
+                        tokenId: item.nftGenesis + item.nftCodehash + item.nftTokenIndex,
+                        coverUrl: item.nftIcon,
+                        putAway: item.nftIsReady,
+                        metaId: item.nftIssueMetaId,
+                        productName: name,
+                        deadlineTime: 0,
                         genesis: item.nftGenesis,
-                        codehash: item.nftCodehash
+                        tokenIndex: nft?.nftTokenIndex ? nft?.nftTokenIndex : '',
+                        codehash: item.nftCodehash,
+                        total: item.nftTotalSupply,
+                        hasCount: count
                     })
                 })
             } else {
@@ -160,15 +181,9 @@ function getMore() {
     })
 }
 
-function getSelledMore() {
-    selledPagination.loading = true
-    selledPagination.page++
-    getMySelledNfts().then(() => {
-        selledPagination.loading = false
-    })
-}
 
-getMyNfts()
+
+
 
 
 
@@ -181,7 +196,7 @@ function getMySelledNfts (isCover: boolean = false) {
         })
         if (res && res.code === 0) {
             if (isCover) {
-                selledNfts.length = 0
+                nfts.length = 0
             }
             if (res.data.results.items.length > 0) {
                 for (let i = 0; i < res.data.results.items.length; i++) {
@@ -192,7 +207,7 @@ function getMySelledNfts (isCover: boolean = false) {
                         genesis: item.nftGenesis,
                         tokenIndex: item.nftTokenIndex
                     })
-                    selledNfts.push({
+                    nfts.push({
                         name: item.nftName ? item.nftName : '--',
                         amount: item.nftPrice,
                         foundryName: item.nftIssuer,
@@ -210,17 +225,15 @@ function getMySelledNfts (isCover: boolean = false) {
                     })
                 }
             } else {
-                selledPagination.nothing = true
+                pagination.nothing = true
             }
-            
-            console.log(selledNfts)
         }
-        isShowSelledNftListSkeleton.value = false
+        isShowNftListSkeleton.value = false
         resolve()
     })
 }
 
-getMySelledNfts()
+getMyNfts()
 
 </script>
 <style lang="scss" scoped src="./Self.scss"></style>

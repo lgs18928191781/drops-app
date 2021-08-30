@@ -1,6 +1,6 @@
 <template>
     <div class="self">
-        <div class="banner container">
+        <!-- <div class="banner container">
             <a class="banner-item">
                 <img class="cover" src="@/assets/images/banner_bg.svg" />
                 <div class="cont">
@@ -13,11 +13,11 @@
                     </div>
                 </div>
             </a>
-        </div>
+        </div> -->
 
         <div class="section container">
             <div class="section-header flex flex-align-center">
-                <div class="title flex1">{{$t('myUnSellNft')}}</div>
+                <div class="title flex1">{{route.query.name}}</div>
             </div>
             <NftSkeleton
                 :loading="isShowNftListSkeleton"
@@ -90,10 +90,8 @@ function getMyNfts (isCover: boolean = false) {
                         tokenIndex: item.nftTokenIndex
                     })
                 })
-            }
-            const totalPage = Math.ceil(res.data.total / pagination.pageSize)
-            if (pagination.page >= totalPage){
-                pagination.nothing = false
+            } else {
+                pagination.nothing = true
             }
         }
         isShowNftListSkeleton.value = false

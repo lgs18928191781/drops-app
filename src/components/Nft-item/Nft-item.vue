@@ -2,6 +2,7 @@
   <a @click="toDetail()" class="nft-item" :key="item?.tokenId">
     <div class="cover">
       <img class="cover-image" :src="metafileUrl(item?.coverUrl)" :alt="item?.name" onerror="javascript:this.src='http://showpay.oss-cn-beijing.aliyuncs.com/showpay/2021-08-28/18b9a8e49bf4424eb802cee44f9251c7-WPS图片-修改尺寸.jpg'" />
+      <span v-if="item.classify && item.classify.length > 0">{{$t(item.classify[0])}}</span>
     </div>
     <div class="cont">
       <div class="name">{{ isSelf ? item.productName : item?.name }}</div>
@@ -14,8 +15,12 @@
         <span class="username">{{ item?.foundryName }}</span>
       </div>
       <div class="operate flex flex-align-center" v-if="props.isSelf">
-        <div class="timeleft flex1" >
-          <template v-if="item.putAway">
+        <div class="timeleft flex1">
+          <!-- 系列 且拥有数量 > 1 -->
+          <template v-if="item.hasCount && item.hasCount > 1">
+            {{$t('series')}} {{item.hasCount}}/{{item.total}}
+          </template>
+          <template v-else-if="item.putAway">
             <template v-if="overTime">
               {{$t('overTime')}}
             </template>
@@ -24,7 +29,9 @@
             </div>
           </template>
         </div>
-        <a class="btn btn-min btn-plain" v-if="item?.putAway" @click.stop="offSale">{{ $t('offsale') }}</a>
+        
+        <a class="btn btn-min btn-plain" v-if="item.hasCount && item.hasCount > 1">{{ $t('seeAll') }}</a>
+        <a class="btn btn-min btn-plain" v-else-if="item?.putAway" @click.stop="offSale">{{ $t('offsale') }}</a>
         <a class="btn btn-min" v-else @click.stop="toSale">{{ $t('sale') }}</a>
       </div>
     </div>
@@ -82,7 +89,11 @@ const props = defineProps<{
 }>()
 
 function toDetail() {
-  router.push({ name: 'detail', params: { tokenIndex: props.item.tokenIndex, genesisId: props.item.genesis, codehash: props.item.codehash }})
+  if (props.item.hasCount && props.item.hasCount > 1) {
+    router.push({ name: 'series', params: { genesisId: props.item.genesis, codehash: props.item.codehash}, query: {name: props.item.name}})
+  } else {
+    router.push({ name: 'detail', params: { tokenIndex: props.item.tokenIndex, genesisId: props.item.genesis, codehash: props.item.codehash }})
+  }
 }
 
 function toSale () {

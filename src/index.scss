@@ -58,6 +58,36 @@ body{
     }
 }
 
+.tab{
+    text-align: center;
+    a{
+        display: inline-block;
+        padding: 15px;
+        font-size: 20px;
+        font-weight: 400;
+        margin-right: 90px;
+        cursor: pointer;
+        &:last-child{
+            margin-right: 0;
+        }
+        &.active{
+            position: relative;
+            &::after{
+                content: '';
+                display: block;
+                width: 10Px;
+                height: 2Px;
+                background: $mainColor;
+                border-radius: 2Px;
+                position: absolute;
+                left: 50%;
+                margin-left: -5Px;
+                bottom: 0;
+            }
+        }
+    }
+}
+
 .btn{
     font-family: 'SF Pro';
     display: inline-block;
@@ -69,6 +99,10 @@ body{
     border: 1px solid $mainColor;
     cursor: pointer;
     overflow: hidden;
+    &.btn-gray{
+        background: #aaa;
+        border-color: #aaa;
+    }
     &.btn-block{
         display: block;
         width: auto;

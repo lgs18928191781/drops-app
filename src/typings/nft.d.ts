@@ -4,16 +4,18 @@ declare interface NftItem{
     amount: number,
     foundryName: string,
     classify: string [],
-    head?: string,
     tokenId: string,
     coverUrl: string,
-    putAway?: boolean,
     metaId: string
-    productName?: string
-    deadlineTime?: number
     genesis: string
     tokenIndex: string
     codehash: string
+    total?: number
+    hasCount?: number
+    putAway?: boolean
+    productName?: string
+    deadlineTime?: number
+    head?: string
 }
 declare interface NftItemDetail{
     foundryName: string,
@@ -42,4 +44,5 @@ declare interface NftItemDetail{
     sellTxId: string
     ownerAddress: string
     sensibleId: string
+    sellContractTxId: string
 }

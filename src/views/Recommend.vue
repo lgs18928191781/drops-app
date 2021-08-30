@@ -38,7 +38,7 @@ import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import IsNull from '../components/IsNull/IsNull.vue'
 import { reactive, ref } from 'vue'
 import { pagination as _pagination } from '@/config'
-import { GetProductList, NftApiCode } from '@/api'
+import { GetProductList, GetRecommendOnSellNftList, NftApiCode } from '@/api'
 import { useRouter } from 'vue-router'
 import _Backtop from 'element-plus/lib/el-backtop'
 
@@ -49,7 +49,41 @@ const pagination = reactive({
   ..._pagination,
 })
 
-function getRecommendNftList(isCover: boolean = false) {
+function getRecommendNftList() {
+  return new Promise<void>(async (resolve) => {
+    const res = await GetRecommendOnSellNftList({
+      Page: pagination.page.toString(),
+      PageSize: pagination.pageSize.toString()
+    })
+    if (res.code === 0) {
+      if (res.data.results.items.length > 0) {
+        res.data.results.items.map(item => {
+          const data = item.nftDataStr ? JSON.parse(item.nftDataStr) : null
+          nfts.push({
+            name: item.nftName ? item.nftName : '--',
+            amount: item.nftPrice,
+            foundryName: item.nftIssuer,
+            classify: data ? data.classify : '',
+            head: '',
+            tokenId: item.nftGenesis + item.nftTokenIndex,
+            coverUrl: item.nftIcon,
+            putAway: item.nftIsReady,
+            metaId: item.nftOwnerMetaId,
+            productName: item.nftName,
+            deadlineTime: item.nftTimestamp,
+            genesis: item.nftGenesis,
+            tokenIndex: item.nftTokenIndex,
+            codehash: item.nftCodehash
+          })
+        })
+      }
+      isShowSkeleton.value = false
+    }
+    resolve()
+  })
+}
+
+/* function getRecommendNftList(isCover: boolean = false) {
   return new Promise<void>(async (resolve) => {
     const res = await GetProductList(pagination)
     if (res.code === NftApiCode.success) {
@@ -63,7 +97,7 @@ function getRecommendNftList(isCover: boolean = false) {
     }
     resolve()
   })
-}
+} */
 getRecommendNftList()
 
 function getMore() {

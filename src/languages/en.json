@@ -139,7 +139,12 @@
   "tagCreateTx": "When TX casting NFT, the type is determined by the content of TX, not selectable",
   "txIdNotOwner": "Can't cast other people's TxId content",
   "notRightTxId": "This TxId content cannot be cast into equity NFT, please re-enter",
-  "myUnSellNft": "My unlisted NFT",
+  "myUnSellNft": "NFT not listed",
   "myUnSellNftSeries": "NFT series that I have not listed",
-  "noName": "No title"
+  "noName": "No title",
+  "mySellNft": "My NFT listed",
+  "seeAll": "View All",
+  "series": "series",
+  "buySuccessTitle": "Congratulations, the NFT purchase is successful!",
+  "offSaleIntro": "Please enter the introduction"
 }

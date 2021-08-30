@@ -34,7 +34,7 @@ const props = defineProps<{
 }>()
 
 function toDetail() {
-  router.push({ name: 'series', params: { genesisId: props.item.genesis, codehash: props.item.codehash}})
+  router.push({ name: 'series', params: { genesisId: props.item.genesis, codehash: props.item.codehash}, query: {name: props.item.name}})
 }
 
 

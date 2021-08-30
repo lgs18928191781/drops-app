@@ -26,8 +26,8 @@ export default function NFTDetail (genesis: string, codehash: string, tokenIndex
                 classify: data && data.classifyList  ? JSON.parse(data.classifyList): [],
                 describe: item.nftDesc,
                 forgeTime: item.nftTimestamp,
-                contractAddress: '',
-                tokenId: item.nftGenesis + item.nftTokenIndex,
+                contractAddress: item.nftSensibleId,
+                tokenId: item.nftGenesis + item.nftCodehash + item.nftTokenIndex,
                 ownerName: item.nftOwnerName,
                 ownerMetaId: item.nftOwnerMetaId,
                 ownerHead: '',
@@ -42,7 +42,8 @@ export default function NFTDetail (genesis: string, codehash: string, tokenIndex
                 tokenIndex: item.nftTokenIndex,
                 genesisTxId: item.nftGenesisTxId,
                 sellTxId: item.nftSellTxId,
-                sensibleId: item.nftSensibleId
+                sensibleId: item.nftSensibleId,
+                sellContractTxId: item.nftSellContractTxId
               }
               debugger
               resolve(nft)

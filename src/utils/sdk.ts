@@ -406,6 +406,7 @@ export default class Sdk {
             },
           ],
           checkOnly: params.checkOnly,
+          seriesName: params.seriesName
         },
         callback: (res: SdkGenesisNFTRes) => {
           debugger
@@ -467,11 +468,9 @@ export default class Sdk {
 
   // metaidjs nft 购买
   nftBuy(params: NftBuyParams) {
-    debugger
     return new Promise<NftBuyResData>((resolve, reject) => {
       const _params = {
         data: {
-          outputIndex: 0,
           ...params,
         },
         callback: (res: MetaIdJsRes) => {
@@ -504,6 +503,7 @@ export default class Sdk {
           ...params,
         },
         callback: (res: MetaIdJsRes) => {
+          debugger
           this.callback(res, resolve)
         },
       }
@@ -525,7 +525,6 @@ export default class Sdk {
     return new Promise<NFTCancelResData>((resolve, reject) => {
       const _params = {
         data: {
-          sellTxId: params.txId,
            outputIndex: 0,
           ...params,
         },

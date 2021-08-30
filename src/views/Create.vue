@@ -507,22 +507,24 @@ async function checkTxId () {
     status: TxIdStatus,
     data?: any
   }>(async resolve => {
-    const res = await GetTxStatus({
-    txId: nft.tx,
-  })
-  if (res.code === NftApiCode.success) {
     const response = await GetTxData(nft.tx)
-    if (response.code == 200 && response.result.data.length > 0) {
-      const data = response.result.data[0]
+      if (response.code == 200 && response.result.data.length > 0) {
+        const data = response.result.data[0]
 
-      // check user owner 
-      if (data.rootTxId === store.state.userInfo?.metaId) {
-        if (nft.type === '3' && createTypeIndex.value !== 1) {
-          if (data.parentNodeName !== 'MetaAccessContent') {
-            resolve({
-              status: TxIdStatus.NotRightTxId,
-              data
-            })
+        // check user owner 
+        if (data.rootTxId === store.state.userInfo?.metaId) {
+          if (nft.type === '3' && createTypeIndex.value !== 1) {
+            if (data.parentNodeName !== 'MetaAccessContent') {
+              resolve({
+                status: TxIdStatus.NotRightTxId,
+                data
+              })
+            } else {
+              resolve({
+                status: TxIdStatus.Success,
+                data
+              })
+            }
           } else {
             resolve({
               status: TxIdStatus.Success,
@@ -531,26 +533,25 @@ async function checkTxId () {
           }
         } else {
           resolve({
-            status: TxIdStatus.Success,
+            status: TxIdStatus.NotOwner,
             data
           })
         }
       } else {
         resolve({
-          status: TxIdStatus.NotOwner,
-          data
+          status: TxIdStatus.NotCreate
         })
       }
-    } else {
-      resolve({
-        status: TxIdStatus.NotCreate
+      /* const res = await GetTxStatus({
+        txId: nft.tx,
       })
-    }
-  } else {
-    resolve({
-      status: TxIdStatus.NotCreate
-    })
-  }
+      if (res.code === NftApiCode.success) {
+        
+      } else {
+        resolve({
+          status: TxIdStatus.NotCreate
+        })
+      } */
   })
 }
 
@@ -671,25 +672,25 @@ async function createNft() {
       })
       debugger
       if (res && typeof res !== 'number') {
-        ElMessage.success(i18n.t('castingsuccess'))
+        /* ElMessage.success(i18n.t('castingsuccess'))
         router.replace({ name: 'createSuccess', 
           params: { 
             genesisId: res.genesisId,
             tokenIndex: res.tokenIndex,
             codehash: res.codehash,
           }
-        })
+        }) */
 
 
-        /* // 上传源文件到阿里云
-        const originalFileForm = new FormData()
-        originalFileForm.append('file', originalFile.raw ? originalFile.raw : '')
-        const fileUrl = await Upload(originalFileForm)
+        // 上传源文件到阿里云
+        // const originalFileForm = new FormData()
+        // originalFileForm.append('file', originalFile.raw ? originalFile.raw : '')
+        // const fileUrl = await Upload(originalFileForm)
 
         // 上传封面图到阿里云
-        const coverForm = new FormData()
-        coverForm.append('file', coverFile.raw ? coverFile.raw : '')
-        const coverUrl = await Upload(coverForm)
+        // const coverForm = new FormData()
+        // coverForm.append('file', coverFile.raw ? coverFile.raw : '')
+        // const coverUrl = await Upload(coverForm)
         const params = {
           nftName: nft.nftName,
           intro: nft.intro,
@@ -697,8 +698,8 @@ async function createNft() {
           seriesName: selectedSeries[0],
           tx: res.txId,
           classify: nft.classify.join(','),
-          fileUrl,
-          coverUrl,
+          fileUrl: 'test',
+          coverUrl: 'test',
           tokenId: res.genesisId + res.tokenIndex,
           nftId: res.txId,
           codeHash: res.codehash,
@@ -709,14 +710,17 @@ async function createNft() {
         const response = await CreateNft(params)
         if (response.code === NftApiCode.success) {
           ElMessage.success(i18n.t('castingsuccess'))
-          router.replace({ name: 'createSuccess', 
+          router.replace({ name: 'nftSuccess', 
             params: { 
               genesisId: res.genesisId,
               tokenIndex: res.tokenIndex,
               codehash: res.codehash,
+            },
+            query: {
+              type: 'created'
             }
           })
-        } */
+        }
       }
       if (loading) {
         loading.close()

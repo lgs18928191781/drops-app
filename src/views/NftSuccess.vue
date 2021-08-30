@@ -5,7 +5,8 @@
         <ElSkeletonItem class="title" variant="h1" />
       </template>
       <template #default>
-        <div class="title">{{ $t('createdSuccessTitle') }}</div>
+        <div class="title" v-if="route.query.type === 'created'">{{ $t('createdSuccessTitle') }}</div>
+        <div class="title" v-else-if="route.query.type === 'buyed'">{{ $t('buySuccessTitle') }}</div>
       </template>
     </ElSkeleton>
     <!-- nft 信息 卡片 -->
@@ -28,10 +29,13 @@
       <template #default>
         <div class="operates flex flex-align-center">
           <a class="btn btn-plain btn-block flex1" @click="toDetail">{{ $t('lookNftDetail') }}</a>
-          <a class="btn flex1 btn-block" @click="offSale" v-if="nft.val.putAway">{{
-            $t('offsale')
-          }}</a>
-          <a class="btn flex1 btn-block" @click="toSale" v-else>{{ $t('salenft') }}</a>
+          <template v-if="route.query.type === 'created'">
+            <a class="btn flex1 btn-block" @click="offSale" v-if="nft.val.putAway">{{
+              $t('offsale')
+            }}</a>
+            <a class="btn flex1 btn-block" @click="toSale" v-else>{{ $t('salenft') }}</a>
+          </template>
+          
         </div>
       </template>
     </ElSkeleton>
@@ -139,4 +143,4 @@ if (route.params.genesisId && route.params.codehash && route.params.tokenIndex) 
   getDetail()
 }
 </script>
-<style lang="scss" scope src="./CreateSuccess.scss"></style>
+<style lang="scss" scope src="./NftSuccess.scss"></style>

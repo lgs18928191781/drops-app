@@ -462,20 +462,12 @@ const second = ref(0)
 
 function countDownTimeLeft() {
   interval = setInterval(() => {
-    if (nft.val.remainingTime) {
+    if (nft.val.remainingTime >= now) {
       nft.val.remainingTime = nft.val.remainingTime - 1000
-      const timeleft = dayjs(nft.val.remainingTime)
-      day.value = timeleft.day()
-      hour.value = timeleft.subtract(day.value, 'day').hour()
-      minute.value = timeleft.subtract(day.value, 'day').subtract(hour.value, 'hour').minute()
-      second.value = timeleft
-        .subtract(day.value, 'day')
-        .subtract(hour.value, 'hour')
-        .subtract(minute.value, 'minute')
-        .second()
-      if (day.value <= 0 && hour.value <= 0 && minute.value <= 0 && second.value <= 0) {
-        nft.val.remainingTime = 0
-      }
+      day.value = dayjs(now).diff(nft.val.remainingTime, 'day')
+      hour.value = Math.abs(dayjs(now).subtract(day.value, 'day').diff(nft.val.remainingTime, 'hour'))
+      minute.value = Math.abs(dayjs(now).diff(nft.val.remainingTime, 'minute')) - (day.value * 24 * 60) - (hour.value * 60)
+      second.value = Math.abs(dayjs(now).diff(nft.val.remainingTime, 's')) - (day.value * 24 * 60 * 60) - (hour.value * 60 * 60) - (minute.value * 60)
     } else {
       clearInterval(interval)
     }
@@ -540,18 +532,18 @@ async function buy() {
       codehash: nft.val.codeHash,
       genesis: nft.val.genesis,
       tokenIndex: nft.val.tokenIndex,
-      opreturnData: nft.val.sellTxId,
       genesisTxid: nft.val.genesisTxId,
-      txId: nft.val.sellTxId,
       // address: getAddressRes.data.address,
-      amount: new Decimal(nft.val.amount).toNumber(),
-      sensibleId: nft.val.sensibleId
+      sensibleId: nft.val.sensibleId,
+      sellTxId: nft.val.sellTxId,
+      sellContractTxId: '',
+      sellUtxo: '',
     }
     // 需要消费金额
     const useAmountRes = await store.state.sdk
       ?.nftBuy({
         checkOnly: true,
-        ...params,
+        ...params
       })
       .catch(() => {
         loading.close()
@@ -573,7 +565,6 @@ async function buy() {
           }
         ).then(async () => {
           // 确认支付
-          loading.close()
           const res = await store.state.sdk?.nftBuy(params).catch(() => {
             loading.close()
           })
@@ -584,6 +575,16 @@ async function buy() {
             nft.val.putAway = false
             ElMessage.success(i18n.t('buySuccess'))
             loading.close()
+            router.replace({ name: 'nftSuccess', 
+              params: { 
+                genesisId: nft.val.genesis,
+                tokenIndex: nft.val.tokenIndex,
+                codehash: nft.val.codeHash
+              },
+              query: {
+                type: 'buyed'
+              }
+            })
 
             /* // 上链完 nft buy 协议 要 上报服务器
             const response = await BuyNft({

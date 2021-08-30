@@ -32,7 +32,7 @@
       <div class="section-header flex flex-align-center">
         <div class="title flex1">{{ $t('allmenu') }}</div>
       </div>
-      <!-- <div class="section-screen flex flex-align-center">
+      <div class="section-screen flex flex-align-center">
         <div class="tags flex1 flex flex-align-center flex-wrap-wrap">
           <a :class="{ active: classify === 'all' }" @click="changeClassify('all')">{{
             $t('all')
@@ -57,7 +57,7 @@
           />
           <img src="@/assets/images/icon_search.svg" @click="search" />
         </div>
-      </div> -->
+      </div>
       <NftSkeleton
         :loading="isShowNftListSkeleton"
         :count="pagination.pageSize"
@@ -82,7 +82,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { GetAllOnSellNftList, GetClassies, GetProductClassifyList, GetProductList, GetRecommendOnSellNftList, NftApiCode, Search } from '@/api'
+import { GetAllOnSellNftList, GetClassies, GetNftOnShowListByClassify, GetNftOnShowListBySearch, GetProductClassifyList, GetProductList, GetRecommendOnSellNftList, NftApiCode, Search } from '@/api'
 import NftItem from '@/components/Nft-item/Nft-item.vue'
 import NftSkeleton from '@/components/NftSkeleton/NftSkeleton.vue'
 import { useStore } from '@/store'
@@ -106,10 +106,17 @@ const classify = ref('all')
 const isShowRecommendSkeleton = ref(true)
 const isShowNftListSkeleton = ref(true)
 
-async function getNftList(isCover: boolean = false) {
-  const res = await GetAllOnSellNftList({
+async function getNftList(type: string = 'GetAllOnSellNftList', isCover: boolean = false) {
+  const apiName = {
+    'GetAllOnSellNftList': GetAllOnSellNftList,
+    'GetNftOnShowListByClassify': GetNftOnShowListByClassify,
+    'GetNftOnShowListBySearch': GetNftOnShowListBySearch,
+  }
+  const res = await apiName[type]({
     PageSize: pagination.pageSize.toString(),
-    Page: pagination.page.toString()
+    Page: pagination.page.toString(),
+    classify: type === 'GetNftOnShowListByClassify' ? classify.value : undefined,
+    SearchWord: type === 'GetNftOnShowListBySearch' ? keyword.value : undefined,
   })
   if (res.code === NftApiCode.success) {
     if (isCover) Nfts.length = 0
@@ -119,7 +126,7 @@ async function getNftList(isCover: boolean = false) {
         Nfts.push({
           name: item.nftName ? item.nftName : '--',
           amount: item.nftPrice,
-          foundryName: item.nftIssuer,
+          foundryName: item.nftOwnerName,
           classify: data ? data.classify : '',
           head: '',
           tokenId: item.nftGenesis + item.nftTokenIndex,
@@ -152,10 +159,11 @@ async function getNftList(isCover: boolean = false) {
 //   }
 // }
 
-async function getNftClassifyList(isCover: boolean = false) {
-  const res = await GetProductClassifyList({
-    ...pagination,
-    classifyName: classify.value,
+async function getNftClassifyList(type: string,isCover: boolean = false) {
+  const res = await GetNftOnShowListByClassify({
+    Page: pagination.page.toString(),
+    PageSize: pagination.pageSize.toString(),
+    classify: classify.value,
   })
   if (res.code === NftApiCode.success) {
     if (isCover) Nfts.length = 0
@@ -228,19 +236,16 @@ function getMore() {
 }
 
 async function search() {
-  ;(pagination.loading = false), (pagination.nothing = false), (pagination.page = 1)
+  isShowNftListSkeleton.value = true
+  pagination.loading = false
+  pagination.nothing = false
+  pagination.page = 1
   if (keyword.value === '') {
     classify.value = 'all'
-    getNftList()
+    getNftList('GetAllOnSellNftList', true)
   } else {
     classify.value = ''
-    const res = await Search({
-      likeName: keyword.value,
-    })
-    if (res.code === NftApiCode.success) {
-      Nfts.length = 0
-      Nfts.push(...res.data)
-    }
+    getNftList('GetNftOnShowListBySearch', true)
   }
 }
 
@@ -255,14 +260,15 @@ async function search() {
 
 function changeClassify(classifyName: string) {
   if (classify.value === classifyName) return
+  isShowNftListSkeleton.value = true
   classify.value = classifyName
   pagination.page = 1
   pagination.loading = false
   pagination.nothing = false
   if (classifyName === 'all') {
-    getNftList(true)
+    getNftList('GetAllOnSellNftList', true)
   } else {
-    getNftClassifyList(true)
+    getNftList('GetNftOnShowListByClassify', true)
   }
   keyword.value = ''
 }
