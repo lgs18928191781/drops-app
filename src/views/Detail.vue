@@ -204,7 +204,12 @@
                   <div class="work-detail-item flex flex-align-center">
                     <div class="key">{{ $t('workclass') }}：</div>
                     <div class="value flex1">
-                      <span v-for="item in nft.val.classify" :key="item">{{$t(item)}}</span>
+                      <template v-if="nft.val.classify && nft.val.classify.length > 0">
+                        <span v-for="item in nft.val.classify" :key="item">{{$t(item)}}</span>
+                      </template>
+                      <template v-else>
+                        --
+                      </template>
                     </div>
                   </div>
                   <div class="work-detail-item flex flex-align-baseline">
@@ -269,26 +274,27 @@
                   </div>
                 </div>
                 <div class="work-deail-section" v-if="nft.val.type && nft.val.type !== ''">
-                  <!-- <div class="work-detail-item flex flex-align-center">
+                  <div class="work-detail-item flex flex-align-center">
                     <div class="key">{{ $t('worktype') }}：</div>
                     <div class="value flex1">
                       {{ nftTypes.find((item) => item.value === nft.val.type)?.name }} 
                       1920*1080PX
                       5.2M
                     </div>
-                  </div> -->
+                  </div>
                   <div class="work-detail-item flex flex-align-center" v-if="nft.val.type === '3'">
                     <div class="key">{{ $t('histroyrevenue') }}：</div>
                     <div class="value flex1">
                       {{ nft.val.revenue }} BSV <a @click="toLink">{{ $t('workdetaillink') }}</a>
                     </div>
                   </div>
-                  <div class="work-detail-item flex flex-align-center" v-else>
+                  <!-- 作品链接 -->
+                  <!-- <div class="work-detail-item flex flex-align-center" v-else>
                     <div class="key">{{ $t('worklink') }}：</div>
                     <div class="value flex1">
                       <a class="link" @click="toCert">{{ $t('workdetaillink') }}</a>
                     </div>
-                  </div>
+                  </div> -->
                 </div>
 
                 <div class="remark">
