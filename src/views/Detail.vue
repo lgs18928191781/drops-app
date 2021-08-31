@@ -470,7 +470,7 @@ function countDownTimeLeft() {
   interval = setInterval(() => {
     if (nft.val.remainingTime >= now) {
       nft.val.remainingTime = nft.val.remainingTime - 1000
-      day.value = dayjs(now).diff(nft.val.remainingTime, 'day')
+      day.value = Math.abs(dayjs(now).diff(nft.val.remainingTime, 'day'))
       hour.value = Math.abs(dayjs(now).subtract(day.value, 'day').diff(nft.val.remainingTime, 'hour'))
       minute.value = Math.abs(dayjs(now).diff(nft.val.remainingTime, 'minute')) - (day.value * 24 * 60) - (hour.value * 60)
       second.value = Math.abs(dayjs(now).diff(nft.val.remainingTime, 's')) - (day.value * 24 * 60 * 60) - (hour.value * 60 * 60) - (minute.value * 60)

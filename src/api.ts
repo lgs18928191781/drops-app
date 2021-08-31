@@ -226,5 +226,5 @@ export const GetRecommendOnSellNftList = (params: {
   PageSize: string,
   Page: string
 }): Promise<GetMyOnSellNftListRes> => {
-  return apiHttp.post(`/aggregation/v2/app/sensible/getRecommendOnSellNftList`, params)
+  return apiHttp.post(`/aggregation/v2/app/nftOnShow/getRecommendNftOnShowList`, params)
 }

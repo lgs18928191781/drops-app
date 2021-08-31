@@ -69,12 +69,14 @@ function getRecommendNftList() {
             putAway: item.nftIsReady,
             metaId: item.nftOwnerMetaId,
             productName: item.nftName,
-            deadlineTime: item.nftTimestamp,
+            deadlineTime: 0,
             genesis: item.nftGenesis,
             tokenIndex: item.nftTokenIndex,
             codehash: item.nftCodehash,
           })
         })
+      } else {
+        pagination.nothing = true
       }
       isShowSkeleton.value = false
     }

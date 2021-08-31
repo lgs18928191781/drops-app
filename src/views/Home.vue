@@ -101,40 +101,42 @@ const pagination = reactive({
 })
 const keyword = ref('')
 const classify = ref('all')
+let apiType = 'GetAllOnSellNftList'
 
 // 骨架屏
 const isShowRecommendSkeleton = ref(true)
 const isShowNftListSkeleton = ref(true)
 
-async function getNftList(type: string = 'GetAllOnSellNftList', isCover: boolean = false) {
+async function getNftList(isCover: boolean = false) {
   const apiName = {
     'GetAllOnSellNftList': GetAllOnSellNftList,
     'GetNftOnShowListByClassify': GetNftOnShowListByClassify,
     'GetNftOnShowListBySearch': GetNftOnShowListBySearch,
   }
-  const res = await apiName[type]({
+  // @ts-ignore
+  const res = await apiName[apiType]({
     PageSize: pagination.pageSize.toString(),
     Page: pagination.page.toString(),
-    classify: type === 'GetNftOnShowListByClassify' ? classify.value : undefined,
-    SearchWord: type === 'GetNftOnShowListBySearch' ? keyword.value : undefined,
+    classify: apiType === 'GetNftOnShowListByClassify' ? classify.value : undefined,
+    SearchWord: apiType === 'GetNftOnShowListBySearch' ? keyword.value : undefined,
   })
   if (res.code === NftApiCode.success) {
     if (isCover) Nfts.length = 0
     if (res.data.results.items.length > 0) {
-      res.data.results.items.map(item => {
+      res.data.results.items.map((item: GetNftIssueyTxIdResItem)=> {
         const data = item.nftDataStr ? JSON.parse(item.nftDataStr) : null
         Nfts.push({
           name: item.nftName ? item.nftName : '--',
           amount: item.nftPrice,
-          foundryName: item.nftOwnerName,
-          classify: data ? data.classify : '',
+          foundryName: item.nftIssuer,
+          classify: data && data.classify && data.classify !== '' ? JSON.parse(data.classify) : '',
           head: '',
           tokenId: item.nftGenesis + item.nftTokenIndex,
           coverUrl: item.nftIcon,
           putAway: item.nftIsReady,
-          metaId: item.nftOwnerMetaId,
+          metaId: item.nftIssueMetaId,
           productName: item.nftName,
-          deadlineTime: item.nftTimestamp,
+          deadlineTime: 0,
           genesis: item.nftGenesis,
           tokenIndex: item.nftTokenIndex,
           codehash: item.nftCodehash
@@ -146,35 +148,8 @@ async function getNftList(type: string = 'GetAllOnSellNftList', isCover: boolean
     isShowNftListSkeleton.value = false
   }
 }
-// async function getNftList(isCover: boolean = false) {
-//   const res = await GetProductList(pagination)
-//   if (res.code === NftApiCode.success) {
-//     if (isCover) Nfts.length = 0
-//     Nfts.push(...res.data)
-//     const totalPages = Math.ceil(res.count / pagination.pageSize)
-//     if (pagination.page >= totalPages) {
-//       pagination.nothing = true
-//     }
-//     isShowNftListSkeleton.value = false
-//   }
-// }
 
-async function getNftClassifyList(type: string,isCover: boolean = false) {
-  const res = await GetNftOnShowListByClassify({
-    Page: pagination.page.toString(),
-    PageSize: pagination.pageSize.toString(),
-    classify: classify.value,
-  })
-  if (res.code === NftApiCode.success) {
-    if (isCover) Nfts.length = 0
-    Nfts.push(...res.data)
-    const totalPages = Math.ceil(res.count / pagination.pageSize)
-    if (pagination.page >= totalPages) {
-      pagination.nothing = true
-    }
-  }
-}
-
+// 获取推荐列表
 function getRecommendNftList() {
   return new Promise<void>(async (resolve) => {
     const res = await GetRecommendOnSellNftList({
@@ -194,9 +169,9 @@ function getRecommendNftList() {
             tokenId: item.nftGenesis + item.nftTokenIndex,
             coverUrl: item.nftIcon,
             putAway: item.nftIsReady,
-            metaId: item.nftOwnerMetaId,
+            metaId: item.nftIssueMetaId,
             productName: item.nftName,
-            deadlineTime: item.nftTimestamp,
+            deadlineTime: 0,
             genesis: item.nftGenesis,
             tokenIndex: item.nftTokenIndex,
             codehash: item.nftCodehash
@@ -209,55 +184,14 @@ function getRecommendNftList() {
   })
 }
 
-// function getRecommendNftList() {
-//   return new Promise<void>(async (resolve) => {
-//     const res = await GetProductList({ page: 1, pageSize: 7 })
-//     if (res.code === NftApiCode.success) {
-//       recommendNfts.length = 0
-//       recommendNfts.push(...res.data)
-//       isShowRecommendSkeleton.value = false
-//     }
-//     resolve()
-//   })
-// }
-
+//  加载更多
 function getMore() {
   pagination.loading = true
   pagination.page++
-  if (classify.value === 'all') {
-    getNftList().then(() => {
-      pagination.loading = false
-    })
-  } else {
-    getNftClassifyList().then(() => {
-      pagination.loading = false
-    })
-  }
+  getNftList()
 }
 
-async function search() {
-  isShowNftListSkeleton.value = true
-  pagination.loading = false
-  pagination.nothing = false
-  pagination.page = 1
-  if (keyword.value === '') {
-    classify.value = 'all'
-    getNftList('GetAllOnSellNftList', true)
-  } else {
-    classify.value = ''
-    getNftList('GetNftOnShowListBySearch', true)
-  }
-}
-
-// const classies: Classify[] = reactive([])
-
-// async function getClassies() {
-//   const res = await GetClassies()
-//   if (res.code === NftApiCode.success) {
-//     classies.push(...res.data)
-//   }
-// }
-
+// 更改分类
 function changeClassify(classifyName: string) {
   if (classify.value === classifyName) return
   isShowNftListSkeleton.value = true
@@ -266,11 +200,28 @@ function changeClassify(classifyName: string) {
   pagination.loading = false
   pagination.nothing = false
   if (classifyName === 'all') {
-    getNftList('GetAllOnSellNftList', true)
+    apiType = 'GetAllOnSellNftList'
   } else {
-    getNftList('GetNftOnShowListByClassify', true)
+    apiType = 'GetNftOnShowListByClassify'
   }
+  getNftList(true)
   keyword.value = ''
+}
+
+// 搜索
+async function search() {
+  isShowNftListSkeleton.value = true
+  pagination.loading = false
+  pagination.nothing = false
+  pagination.page = 1
+  if (keyword.value === '') {
+    classify.value = 'all'
+    apiType = 'GetAllOnSellNftList'
+  } else {
+    classify.value = ''
+    apiType = 'GetNftOnShowListBySearch'
+  }
+  getNftList(true)
 }
 
 getRecommendNftList()

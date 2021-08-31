@@ -226,28 +226,34 @@ declare interface GetMyOnSellNftListRes extends apiResponse{
   }
 }
 
-declare interface GetNftIssueyTxIdResItem extends apiResponse{
-  nftCodehash: string
-  nftGenesis: string
-  nftGenesisTxid: string
-  nftSensibleId: string
-  nftSymbol: string
+declare interface GetNftIssueyTxIdResItem{
   nftBalance: number
-  nftName: string
-  nftDesc: string
-  nftIcon: string
-  nftWebsite: string
-  nftIssuer: string
-  nftTimestamp: number
-  nftTotalSupply:number
-  nftTokenIndex: string
-  nftIsReady: boolean
-  nftPrice: number
-  nftSatoshi: number
-  nftIssueVersion: string
+  nftCodehash: string
   nftDataStr: string
+  nftDesc: string
+  nftGenesis: string
+  nftGenesisTxId: string
+  nftIcon: string
+  nftIsReady: boolean
+  nftIssueAvatarTxId: string
+  nftIssueMetaId: string
+  nftIssueVersion: string
+  nftIssuer: string
+  nftName: string
+  nftOwnerAddress: string
+  nftOwnerAvatarTxId: string
   nftOwnerMetaId: string
   nftOwnerName: string
+  nftPrice: number
+  nftSatoshi: number
+  nftSellContractTxId: string
+  nftSellDesc: string
+  nftSellTxId: string
+  nftSensibleId: string
+  nftSymbol: string
+  nftTokenIndex: string
+  nftTotalSupply: number
+  nftWebsite: string
 }
 declare interface GetNftIssueyTxIdRes extends apiResponse{
   data: {
