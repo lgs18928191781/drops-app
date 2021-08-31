@@ -542,8 +542,7 @@ async function buy() {
       // address: getAddressRes.data.address,
       sensibleId: nft.val.sensibleId,
       sellTxId: nft.val.sellTxId,
-      sellContractTxId: '',
-      sellUtxo: '',
+      sellContractTxId: nft.val.sellContractTxId,
     }
     // 需要消费金额
     const useAmountRes = await store.state.sdk
