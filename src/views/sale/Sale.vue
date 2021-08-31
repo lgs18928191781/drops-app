@@ -4,9 +4,9 @@
       <img class="icon" src="@/assets/images/bannet_icon_ins.svg" @click="$router.back()" />
       <div class="title flex1 flex flex-align-center">
         <span class="flex1">{{ $t('salenft') }}</span>
-        <router-link :to="{ name: 'saleLegend' }"
+        <!-- <router-link :to="{ name: 'saleLegend' }"
           >{{ $t('saledrsc') }}<i class="el-icon-arrow-right"
-        /></router-link>
+        /></router-link> -->
       </div>
     </div>
 

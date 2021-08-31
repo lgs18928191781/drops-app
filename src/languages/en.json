@@ -146,5 +146,7 @@
   "seeAll": "View All",
   "series": "series",
   "buySuccessTitle": "Congratulations, the NFT purchase is successful!",
-  "offSaleIntro": "Please enter the introduction"
+  "offSaleIntro": "Please enter the introduction",
+  "seller": "Seller",
+  "theIntro": "Introduction:"
 }

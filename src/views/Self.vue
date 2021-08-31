@@ -53,6 +53,8 @@ import SeriesItem from '@/components/SeriesItem/SeriesItem.vue'
 import LoadMore from '@/components/LoadMore/LoadMore.vue';
 import NftSkeleton from '@/components/NftSkeleton/NftSkeleton.vue'
 import { useI18n } from 'vue-i18n';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { router } from '@/router';
 
 const i18n = useI18n()
 const store = useStore()
@@ -115,11 +117,12 @@ function getMyNfts (isCover: boolean = false) {
                         originalFileTxid: string
                         contentTxId: string
                     } | undefined = nft && nft.nftDataStr !== '' ? JSON.parse(nft.nftDataStr) : undefined
+                    const classifyList = data && data.classifyList && data.classifyList !== '' ? JSON.parse(data.classifyList) : []
                     nfts.push({
                         name: name,
                         amount: 0,
                         foundryName: item.nftIssuer,
-                        classify: data && data.classifyList !== '' ? JSON.parse(data.classifyList) : [],
+                        classify: classifyList,
                         head: '',
                         tokenId: item.nftGenesis + item.nftCodehash + item.nftTokenIndex,
                         coverUrl: item.nftIcon,
@@ -207,11 +210,12 @@ function getMySelledNfts (isCover: boolean = false) {
                         genesis: item.nftGenesis,
                         tokenIndex: item.nftTokenIndex
                     })
+                    const classifyList = data && data.classifyList && data.classifyList !== '' ? JSON.parse(data.classifyList) : []
                     nfts.push({
                         name: item.nftName ? item.nftName : '--',
                         amount: item.nftPrice,
                         foundryName: item.nftIssuer,
-                        classify: data && data.classify ? JSON.parse(data.classify) : [],
+                        classify: classifyList,
                         head: '',
                         tokenId: item.nftGenesis + item.nftTokenIndex,
                         coverUrl: item.nftIcon,
@@ -233,7 +237,19 @@ function getMySelledNfts (isCover: boolean = false) {
     })
 }
 
-getMyNfts()
+if(store.state.token) {
+    // 还没拿到用户信息的时候要等待拿用户信息完再调接口
+    if (store.state.userInfo) {
+        getMyNfts()
+    } else {
+        store.watch((state) => state.userInfo, () => {
+            getMyNfts()
+        })
+    }
+} else {
+    ElMessage.warning(i18n.t('toLoginTip'))
+    router.replace('/')
+}
 
 </script>
 <style lang="scss" scoped src="./Self.scss"></style>

@@ -20,7 +20,7 @@ export default function NFTDetail (genesis: string, codehash: string, tokenIndex
                 foundryName: item.nftIssuer,
                 foundryMetaId: item.nftIssueMetaId,
                 foundryHead: '',
-                amount: item.nftPrice,
+                amount: item.nftPrice ? item.nftPrice : 0,
                 remainingTime: deadlineTimeRes && deadlineTimeRes.data && deadlineTimeRes.data.deadlineTime ? deadlineTimeRes.data.deadlineTime : null,
                 nftName: item.nftName ? item.nftName : '--',
                 classify: data && data.classifyList  ? JSON.parse(data.classifyList): [],
@@ -43,9 +43,9 @@ export default function NFTDetail (genesis: string, codehash: string, tokenIndex
                 genesisTxId: item.nftGenesisTxId,
                 sellTxId: item.nftSellTxId,
                 sensibleId: item.nftSensibleId,
-                sellContractTxId: item.nftSellContractTxId
+                sellContractTxId: item.nftSellContractTxId,
+                sellDesc: item.nftSellDesc
               }
-              debugger
               resolve(nft)
             } else {
                 reject()

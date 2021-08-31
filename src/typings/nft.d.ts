@@ -45,4 +45,5 @@ declare interface NftItemDetail{
     ownerAddress: string
     sensibleId: string
     sellContractTxId: string
+    sellDesc: string
 }

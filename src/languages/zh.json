@@ -146,5 +146,7 @@
   "seeAll": "查看全部",
   "series": "系列",
   "buySuccessTitle": "恭喜您，NFT购买成功！",
-  "offSaleIntro": "请输入上架介绍"
+  "offSaleIntro": "请输入上架介绍",
+  "seller": "卖家",
+  "theIntro": "的介绍:"
 }

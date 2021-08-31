@@ -85,9 +85,8 @@ export function checkSdkStatus() {
 }
 
 export function metafileUrl (metafile: string) {
-  const defaultImg = 'http://showpay.oss-cn-beijing.aliyuncs.com/showpay/2021-08-28/18b9a8e49bf4424eb802cee44f9251c7-WPS图片-修改尺寸.jpg'
-  if (typeof metafile !== 'string') return defaultImg
+  if (typeof metafile !== 'string') return ''
   metafile = metafile.replace('metafile://', '')
-  if (metafile === '') return  defaultImg
+  if (metafile === '') return  ''
   return `${import.meta.env.VITE_ShowMan}/metafile/${metafile}`
 }

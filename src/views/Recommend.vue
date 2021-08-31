@@ -40,7 +40,6 @@ import { reactive, ref } from 'vue'
 import { pagination as _pagination } from '@/config'
 import { GetProductList, GetRecommendOnSellNftList, NftApiCode } from '@/api'
 import { useRouter } from 'vue-router'
-import _Backtop from 'element-plus/lib/el-backtop'
 
 const router = useRouter()
 const nfts = reactive<NftItem[]>([])
@@ -63,7 +62,7 @@ function getRecommendNftList() {
             name: item.nftName ? item.nftName : '--',
             amount: item.nftPrice,
             foundryName: item.nftIssuer,
-            classify: data ? data.classify : '',
+            classify: data && data.classify &&  data.classify !== '' ? JSON.parse(data.classify) : [],
             head: '',
             tokenId: item.nftGenesis + item.nftTokenIndex,
             coverUrl: item.nftIcon,
@@ -73,7 +72,7 @@ function getRecommendNftList() {
             deadlineTime: item.nftTimestamp,
             genesis: item.nftGenesis,
             tokenIndex: item.nftTokenIndex,
-            codehash: item.nftCodehash
+            codehash: item.nftCodehash,
           })
         })
       }

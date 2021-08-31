@@ -17,6 +17,7 @@ import i18n from '@/utils/i18n'
 
 const app = createApp(App)
 
+
 // 挂载全局过滤器
 app.config.globalProperties.$filters = {
     ...filters

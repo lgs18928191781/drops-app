@@ -132,15 +132,15 @@
                 <img class="avatar" :src="$filters.avatar(nft.val.foundryMetaId)" />
                 <div class="author-msg flex1">
                   <div class="creater">{{ $t('creater') }}: {{ nft.val.foundryName }}</div>
-                  <div class="metaid">MetaID:{{ nft.val.foundryMetaId.slice(0, 6) }}</div>
+                  <div class="metaid" v-if="nft.val.foundryMetaId">MetaID:{{ nft.val.foundryMetaId.slice(0, 6) }}</div>
                 </div>
               </div>
               <CertTemp @click="toCert" />
             </div>
             <div class="drsc flex1 flex flex-v">
-              <div class="title">{{ $t('drsc') }}：</div>
+              <div class="title flex flex-align-center">{{$t('seller')}}<img :src="$filters.avatar(nft.val.ownerMetaId)" /> <span>{{nft.val.ownerName}}</span> {{ $t('theIntro') }}：</div>
               <div class="cont flex1">
-                {{ nft.val.describe }}
+                {{ nft.val.sellDesc }}
               </div>
             </div>
 
@@ -163,7 +163,7 @@
                   (store.state.userInfo && store.state.userInfo.metaId !== nft.val.ownerMetaId)
                 "
               >
-                {{ i18n.locale.value === 'zh' ? `以 ${ new Decimal(nft.val.amount).div(10 ** 8).toString() } BSV 购买` : `Buy Now At ${new Decimal(nft.val.amount).div(10 ** 8).toString()} BSV` }}
+                <template v-if="nft.val.amount">{{ i18n.locale.value === 'zh' ? `以 ${ new Decimal(nft.val.amount).div(10 ** 8).toString() } BSV 购买` : `Buy Now At ${new Decimal(nft.val.amount).div(10 ** 8).toString()} BSV` }}</template>
               </div>
               <template
                 v-else-if="
@@ -246,7 +246,7 @@
                         />
                         <div class="author-msg flex1">
                           <div class="creater">{{ nft.val.foundryName }}</div>
-                          <div class="metaid">MetaID: {{ nft.val.foundryMetaId.slice(0, 6) }}</div>
+                          <div class="metaid" v-if="nft.val.foundryMetaId">MetaID: {{ nft.val.foundryMetaId.slice(0, 6) }}</div>
                         </div>
                       </div>
                     </div>
@@ -262,21 +262,21 @@
                         />
                         <div class="author-msg flex1">
                           <div class="creater">{{ nft.val.ownerName }}</div>
-                          <div class="metaid">MetaID:{{ nft.val.ownerMetaId.slice(0, 6) }}</div>
+                          <div class="metaid" v-if="nft.val.ownerMetaId">MetaID:{{ nft.val.ownerMetaId.slice(0, 6) }}</div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="work-deail-section">
-                  <div class="work-detail-item flex flex-align-center">
+                <div class="work-deail-section" v-if="nft.val.type && nft.val.type !== ''">
+                  <!-- <div class="work-detail-item flex flex-align-center">
                     <div class="key">{{ $t('worktype') }}：</div>
                     <div class="value flex1">
                       {{ nftTypes.find((item) => item.value === nft.val.type)?.name }} 
-                      <!-- 1920*1080PX
-                      5.2M -->
+                      1920*1080PX
+                      5.2M
                     </div>
-                  </div>
+                  </div> -->
                   <div class="work-detail-item flex flex-align-center" v-if="nft.val.type === '3'">
                     <div class="key">{{ $t('histroyrevenue') }}：</div>
                     <div class="value flex1">
@@ -568,7 +568,6 @@ async function buy() {
           const res = await store.state.sdk?.nftBuy(params).catch(() => {
             loading.close()
           })
-          debugger
           if (res?.code === 200) {
             nft.val.ownerMetaId = store.state.userInfo!.metaId
             nft.val.ownerName = store.state.userInfo!.name

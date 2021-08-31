@@ -1,7 +1,7 @@
 <template>
   <a @click="toDetail()" class="nft-item" :key="item?.tokenId">
     <div class="cover">
-      <img class="cover-image" :src="metafileUrl(item?.coverUrl)" :alt="item?.name" onerror="javascript:this.src='http://showpay.oss-cn-beijing.aliyuncs.com/showpay/2021-08-28/18b9a8e49bf4424eb802cee44f9251c7-WPS图片-修改尺寸.jpg'" />
+      <img class="cover-image" :src="metafileUrl(item?.coverUrl)" :alt="item?.name" :onerror="coverDefaultImg" />
       <span v-if="item.classify && item.classify.length > 0">{{$t(item.classify[0])}}</span>
     </div>
     <div class="cont">
@@ -66,6 +66,8 @@ import { metafileUrl } from '@/utils/util'
 import NFTDetail from '@/utils/nftDetail'
 
 
+const coverDefaultImg = 'this.src="/state/cover-default.jpg"' //默认图地址
+
 const store = useStore()
 const router = useRouter()
 const i18n = useI18n()
@@ -89,10 +91,12 @@ const props = defineProps<{
 }>()
 
 function toDetail() {
-  if (props.item.hasCount && props.item.hasCount > 1) {
-    router.push({ name: 'series', params: { genesisId: props.item.genesis, codehash: props.item.codehash}, query: {name: props.item.name}})
-  } else {
-    router.push({ name: 'detail', params: { tokenIndex: props.item.tokenIndex, genesisId: props.item.genesis, codehash: props.item.codehash }})
+  if(props.item.genesis) {
+    if (props.item.hasCount && props.item.hasCount > 1) {
+      router.push({ name: 'series', params: { genesisId: props.item.genesis, codehash: props.item.codehash}, query: {name: props.item.name}})
+    } else {
+      router.push({ name: 'detail', params: { tokenIndex: props.item.tokenIndex, genesisId: props.item.genesis, codehash: props.item.codehash }})
+    }
   }
 }
 
