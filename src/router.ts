@@ -9,6 +9,7 @@ import Login from '@/views/Login.vue'
 import Self from '@/views/Self.vue'
 import Series from '@/views/Series.vue'
 import Recommend from '@/views/Recommend.vue'
+import TariffDescription from '@/views/app/TariffDescription.vue'
 import { useStore, Action } from '@/store/index'
 import { ElMessage } from 'element-plus'
 import i18n from '@/utils/i18n'
@@ -30,6 +31,7 @@ export const router = createRouter({
     { path: '/series/:genesisId/:codehash', name: 'series', component: Series },
     { path: '/login', name: 'login', component: Login },
     { path: '/recommned', name: 'recommned', component: Recommend },
+    { path: '/tariffDescription', name: 'tariffDescription', component: TariffDescription },
   ],
   async scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
@@ -89,6 +91,17 @@ router.beforeEach(async (to, from, next) => {
       // 有token 没有初始化sdk 就去初始化sdk
       if (!store.state.sdk && !store.state.sdkInitIng){
         store.dispatch(Action.initSdk)
+      }
+
+      if (to.name === 'create' && store.state.userInfo) {
+        const mc = await store.state.sdk?.getMc(store.state.userInfo!.address)
+        const neeeMc = parseInt(import.meta.env.VITE_CreateNeedMc)
+        debugger
+        if (mc! < neeeMc) {
+          // 需要权限的提示先登陆且不给予跳转
+          ElMessage.error(i18n.global.t('needHold') + neeeMc + ' MC' + i18n.global.t('canCreateNft'))
+          return
+        }
       }
     }  else {
       // 没有token

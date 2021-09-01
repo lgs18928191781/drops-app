@@ -14,4 +14,6 @@ interface ImportMetaEnv {
     VITE_CodeHash: string
     VITE_SensibleId: string
     VITE_ShowMan: string
+    VITE_CreateNeedMc: string
+    VITE_AppAddress: string
 }

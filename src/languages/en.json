@@ -148,5 +148,9 @@
   "buySuccessTitle": "Congratulations, the NFT purchase is successful!",
   "offSaleIntro": "Please enter the introduction",
   "seller": "Seller",
-  "theIntro": "Introduction"
+  "theIntro": "Introduction",
+  "needHold": "Need to hold ",
+  "canCreateNft": "to cast NFT",
+  "tariffDescription ": "Tariff description",
+  "protocolUsed ": "Protocol used"
 }

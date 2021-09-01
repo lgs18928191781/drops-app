@@ -148,5 +148,9 @@
   "buySuccessTitle": "恭喜您，NFT购买成功！",
   "offSaleIntro": "请输入上架介绍",
   "seller": "卖家",
-  "theIntro": "的介绍"
+  "theIntro": "的介绍",
+  "needHold": "需要持有",
+  "canCreateNft": "才可以铸造NFT",
+  "tariffDescription ": "资费说明",
+  "protocolUsed ": "使用的协议"
 }

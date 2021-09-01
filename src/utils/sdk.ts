@@ -7,6 +7,7 @@ import {
   CreateNFTRes,
   CreateNftSellProtocolParams,
   GetBalanceRes,
+  GetMcRes,
   IssueNFTResData,
   MetaIdJsRes,
   NftBuyParams,
@@ -49,6 +50,7 @@ export default class Sdk {
   isApp: boolean = false
   appId: string = ''
   appScrect: string = ''
+  isProduction = import.meta.env.MODE === 'gray' || import.meta.env.MODE === 'prod' || import.meta.env.MODE === 'production'
   constructor(options?: ConstructorOptionsTypes) {
     this.appId = import.meta.env.VITE_AppId
     this.appScrect = import.meta.env.VITE_AppSecret
@@ -435,7 +437,8 @@ export default class Sdk {
       const _params = {
         data: {
           iconType: 'pic',
-          ...params,
+          payTo: [{ address: import.meta.env.VITE_AppAddress, amount: 10000 }],
+          ...params
         },
         callback: (res: MetaIdJsRes) => {
           debugger
@@ -469,12 +472,13 @@ export default class Sdk {
   // metaidjs nft 购买
   nftBuy(params: NftBuyParams) {
     return new Promise<NftBuyResData>((resolve, reject) => {
+      const { amount, ...data } = params
       const _params = {
         data: {
-          ...params,
+          ...data,
+          payTo: this.isProduction ? [{ address: import.meta.env.VITE_AppAddress, amount: Math.ceil(amount * 0.05)}] : [],
         },
         callback: (res: MetaIdJsRes) => {
-          debugger
           this.callback(res, resolve)
         },
         // onCancel: (msg: any) => {
@@ -501,6 +505,7 @@ export default class Sdk {
       const _params = {
         data: {
           ...params,
+          payTo: [{ address: import.meta.env.VITE_AppAddress, amount: 10000 }]
         },
         callback: (res: MetaIdJsRes) => {
           debugger
@@ -526,6 +531,7 @@ export default class Sdk {
       const _params = {
         data: {
            outputIndex: 0,
+           payTo: [{ address: import.meta.env.VITE_AppAddress, amount: 10000 }],
           ...params,
         },
         callback: (res: MetaIdJsRes) => {
@@ -569,6 +575,58 @@ export default class Sdk {
         // @ts-ignore
         this.metaidjs?.nftList(params)
       }
+    })
+  }
+
+  // 获取用户余额
+  getMc(address: string) {
+    return new Promise<number>((resolve, reject) => {
+      fetch(`https://api.sensiblequery.com/ft/summary/${address}` )
+        .then(function (response) {
+          return response.json()
+        })
+        .then((response: GetMcRes) => {
+          if (response.code === 0) {
+            if(response.data) {
+              const mc = response.data.find(item => {
+                return item.symbol === 'MC' && item.sensibleId === '3e04f81d7fa7d4d606c3c4c8e8d3a8dcf58b5808740d40a445f3884e126bc7fd00000000'
+              })
+              if (mc) {
+                resolve(new Decimal(mc.balance).div(Math.pow(10, mc.decimal)).toNumber())
+              } else {
+                resolve(0)
+              }
+            } else {
+              resolve(0)
+            }
+          } else {
+            reject('ftList error')
+          }
+        })
+        .catch(() => {
+          reject('ftList error')
+        })
+    })
+  }
+
+  // 获取用户余额
+  ftList(address: string) {
+    return new Promise<GetBalanceRes>((resolve, reject) => {
+      fetch(`https://api.sensiblequery.com/ft/summary/${address}` )
+        .then(function (response) {
+          return response.json()
+        })
+        .then((response) => {
+          debugger
+          if (response.code === 0) {
+            resolve(response)
+          } else {
+            reject('ftList error')
+          }
+        })
+        .catch(() => {
+          reject('ftList error')
+        })
     })
   }
 

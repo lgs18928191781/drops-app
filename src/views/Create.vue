@@ -342,7 +342,6 @@ async function coverFileInputChage(e: Event) {
   if (files) {
     const res = await tranfromImgFile(files[0])
     if (res) {
-      console.log(res.hexData)
       coverFile.name = res.name
       coverFile.raw = res.raw
       coverFile.base64Data = res.base64Data
@@ -565,6 +564,14 @@ async function checkTxId () {
 
 async function createNft() {
   await checkSdkStatus()
+
+  const mc = await store.state.sdk?.getMc(store.state.userInfo!.address)
+  const needMc = parseInt(import.meta.env.VITE_CreateNeedMc)
+  if (mc && mc < needMc) {
+    // 需要权限的提示先登陆且不给予跳转
+    ElMessage.error(i18n.t('needHold') + needMc +' MC' + i18n.t('canCreateNft'))
+    return
+  }
 
   // nft 类型
   if (nft.type === '') {

@@ -164,6 +164,7 @@ export interface NftBuyParams {
     sellContractTxId: string
     genesisTxid: string,
     sensibleId: string
+    amount: number
     checkOnly?: boolean
 }
 
@@ -224,6 +225,10 @@ export interface CancelSellNFTParams extends NftCancelParams {
     satoshisPrice: number
 }
 
+export interface PayToItem {
+    address: string;
+    amount: number;
+}
 export interface NFTIssueParams {
     receiverAddress: string //  创建者接收地址
     genesisId?: string //
@@ -299,4 +304,19 @@ export interface NFTListItem {
         contentTxId?: string
     }
     nftDataStr?: string
+}
+
+export interface GetMcRes extends apiResponse{
+    data: FTItem []
+}
+
+export interface FTItem {
+    balance: number
+    codehash: string
+    decimal: number
+    genesis: string
+    name: string
+    pendingBalance: number
+    sensibleId: string
+    symbol: string
 }

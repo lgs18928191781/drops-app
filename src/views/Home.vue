@@ -154,7 +154,7 @@ function getRecommendNftList() {
   return new Promise<void>(async (resolve) => {
     const res = await GetRecommendOnSellNftList({
       Page: '1',
-      PageSize: '5'
+      PageSize: '7'
     })
     if (res.code === 0) {
       if (res.data.results.items.length > 0) {
