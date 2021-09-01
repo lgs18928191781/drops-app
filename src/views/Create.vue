@@ -112,7 +112,10 @@
         <div class="select-warp flex flex-align-center">
           <div class="key flex1">{{ $t('choosetype') }}</div>
           <div class="value">
-            <span v-if="nft.classify.length > 0">{{ nft.classify.join(',') }}</span>
+            <span v-if="nft.classify.length > 0">
+            
+            {{ nft.classify.join(',') }}
+            </span>
             <span v-else class="placeholder">{{ $t('choose') }}</span>
             <i class="el-icon-arrow-right"></i>
           </div>
