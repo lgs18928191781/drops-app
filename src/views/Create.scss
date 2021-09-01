@@ -201,6 +201,12 @@
                         color: $mainColor;
                         margin-left: 4px;
                     }
+                    .classify{
+                        margin-right: 10px;
+                        &:last-child{
+                            margin-right: 0;
+                        }
+                    }
                 }
                 :deep(.el-select){
                     margin-left: -14px;

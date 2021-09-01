@@ -152,5 +152,7 @@
   "needHold": "需要持有",
   "canCreateNft": "才可以铸造NFT",
   "tariffDescription ": "资费说明",
-  "protocolUsed ": "使用的协议"
+  "protocolUsed ": "使用的协议",
+  "chargeDescription": "收费说明",
+  "incomeStatement": "收入说明"
 }

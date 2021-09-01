@@ -202,7 +202,7 @@ async function confirmSale() {
             })
             if (response.code === NftApiCode.success) {
               // 检查txId状态，确认上链后再跳转，防止上链延迟，跳转后拿不到数据
-              store.state.sdk?.checkTxIdStatus(res.data.txid).then(() => {
+              store.state.sdk?.checkTxIdStatus(res.data.sellTxId).then(() => {
                 ElMessage.success(i18n.t('saleSuccess'))
                 router.back()
               })

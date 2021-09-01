@@ -152,5 +152,7 @@
   "needHold": "Need to hold ",
   "canCreateNft": "to cast NFT",
   "tariffDescription ": "Tariff description",
-  "protocolUsed ": "Protocol used"
+  "protocolUsed ": "Protocol used",
+  "chargeDescription": "Charge description",
+  "incomeStatement ": "Income statement"
 }
