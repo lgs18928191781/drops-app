@@ -121,12 +121,12 @@
   "nftCopyrightDrsc2": "Currently, equity NFT only supports TX creation.",
   "nftTxidTips": "Turn the TX you created into an NFT. An invalid TX cannot be minted. ",
   "createNft": "Create an NFT",
-  "艺术": "Art",
-  "纪念卡": "Commemorative Card",
-  "别名": "Domain",
-  "头像": "Avatar",
-  "权益": "Right",
-  "游戏": "Game",
+  "art": "Art",
+  "card": "Commemorative Card",
+  "alias": "Domain",
+  "avatar": "Avatar",
+  "rights": "Right",
+  "game": "Game",
   "selfTitle": "Create your NFT on MetaNet!",
   "selfDrsc": "Start your NFT Journey now",
   "start": "Create",
@@ -148,5 +148,5 @@
   "buySuccessTitle": "Congratulations, the NFT purchase is successful!",
   "offSaleIntro": "Please enter the introduction",
   "seller": "Seller",
-  "theIntro": "Introduction:"
+  "theIntro": "Introduction"
 }

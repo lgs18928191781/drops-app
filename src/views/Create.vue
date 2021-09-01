@@ -717,7 +717,8 @@ async function createNft() {
               codehash: res.codehash,
             },
             query: {
-              type: 'created'
+              type: 'created',
+              txId: res.txId
             }
           })
         }

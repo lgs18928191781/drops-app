@@ -122,12 +122,12 @@
   "nftCopyrightDrsc2": "目前权益类NFT仅支持TX创建。",
   "nftTxidTips": "填写图片、权益性内容等TX铸造NFT，不符合规则的TX无法铸造NFT。",
   "createNft": "铸造NFT",
-  "艺术": "艺术",
-  "纪念卡": "纪念卡",
-  "别名": "别名",
-  "头像": "头像",
-  "权益": "权益",
-  "游戏": "游戏",
+  "art": "艺术",
+  "card": "纪念卡",
+  "alias": "别名",
+  "avatar": "头像",
+  "rights": "权益",
+  "game": "游戏",
   "selfTitle": "铸造属于您的NFT",
   "selfDrsc": "您的数字资产，从这里开始",
   "start": "开始",
@@ -148,5 +148,5 @@
   "buySuccessTitle": "恭喜您，NFT购买成功！",
   "offSaleIntro": "请输入上架介绍",
   "seller": "卖家",
-  "theIntro": "的介绍:"
+  "theIntro": "的介绍"
 }

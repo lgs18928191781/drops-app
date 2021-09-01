@@ -90,3 +90,7 @@ export function metafileUrl (metafile: string) {
   if (metafile === '') return  ''
   return `${import.meta.env.VITE_ShowMan}/metafile/${metafile}`
 }
+
+export function checkTxIdStatus (txId: string) {
+  return new Promise(resolve => {})
+}

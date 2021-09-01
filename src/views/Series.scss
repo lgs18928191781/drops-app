@@ -38,6 +38,16 @@
     }
     .section{
         margin-top: 40px;
+        .section-header{
+            .title{ 
+                img{
+                    width: 24px;
+                    height: 24px;
+                    margin-right: 10px;
+                    cursor: pointer;
+                }
+            }
+        }
     }
     
 }

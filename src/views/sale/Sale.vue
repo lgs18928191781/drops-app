@@ -201,8 +201,11 @@ async function confirmSale() {
               deadlineTime: new Date(saleTime.value).getTime()
             })
             if (response.code === NftApiCode.success) {
-              ElMessage.success(i18n.t('saleSuccess'))
-              router.back()
+              // 检查txId状态，确认上链后再跳转，防止上链延迟，跳转后拿不到数据
+              store.state.sdk?.checkTxIdStatus(res.data.txid).then(() => {
+                ElMessage.success(i18n.t('saleSuccess'))
+                router.back()
+              })
             }
 
             // sell协议上完 要上报服务器

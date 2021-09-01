@@ -2,7 +2,7 @@ import i18n from '@/utils/i18n'
 
 export const nftTypes = [
     { name: i18n.global.t('image'), value: '1', disabled: false, key: 'image' },
-    { name: i18n.global.t('copyright'), value: '3', disabled: false, key: 'copyright' },
+    { name: i18n.global.t('copyright'), value: '3', disabled: true, key: 'copyright' },
     { name: i18n.global.t('inkind'), value: '2', disabled: true, key: 'inkind' }
 ]
 export interface Unit {
@@ -21,12 +21,12 @@ export const units: Unit [] = [
 ]
 
 export const classifyList = [
-  { classify: '艺术' },
-  { classify: '纪念卡', disabled: true, },
-  { classify: '别名', disabled: true, },
-  { classify: '头像', disabled: true, },
-  { classify: '权益', disabled: true, },
-  { classify: '游戏' },
+  { classify: 'art' },
+  { classify: 'card', disabled: true, },
+  { classify: 'alias', disabled: true, },
+  { classify: 'avatar', disabled: true, },
+  { classify: 'rights', disabled: true, },
+  { classify: 'game' },
 ] 
 
 

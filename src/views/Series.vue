@@ -17,7 +17,7 @@
 
         <div class="section container">
             <div class="section-header flex flex-align-center">
-                <div class="title flex1">{{route.query.name}}</div>
+                <div class="title flex1"><img src="@/assets/images/bannet_icon_ins.svg" @click="router.back()" />{{route.query.name}}</div>
             </div>
             <NftSkeleton
                 :loading="isShowNftListSkeleton"
@@ -43,11 +43,15 @@ import { useStore } from '@/store';
 import { reactive, ref, onMounted } from 'vue';
 import LoadMore from '@/components/LoadMore/LoadMore.vue';
 import NftSkeleton from '@/components/NftSkeleton/NftSkeleton.vue'
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
+import { ElMessage } from 'element-plus';
+import { useI18n } from 'vue-i18n';
 
 
 const store = useStore()
 const route = useRoute()
+const router = useRouter()
+const i18n = useI18n()
 const pagination = reactive({
     ...store.state.pagination,
     pageSize: 6    
@@ -136,7 +140,19 @@ function getMore() {
 
 onMounted(() => {
     pagination.page = 1
-    getMyNfts(true)
+    if(store.state.token) {
+        // 还没拿到用户信息的时候要等待拿用户信息完再调接口
+        if (store.state.userInfo) {
+            getMyNfts(true)
+        } else {
+            store.watch((state) => state.userInfo, () => {
+                getMyNfts(true)
+            })
+        }
+    } else {
+        ElMessage.warning(i18n.t('toLoginTip'))
+        router.replace('/')
+    }
 })
 
 

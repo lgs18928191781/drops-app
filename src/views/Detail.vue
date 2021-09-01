@@ -115,6 +115,7 @@
           <!-- {{ nft.val.coverUrl }} -->
           <el-image
             class="cover flex flex-align-center flex-pack-center"
+            fit="contain"
             :lazy="true"
             :alt="nft.val.nftName"
             :src="metafileUrl(nft.val.coverUrl)"
@@ -135,12 +136,19 @@
                   <div class="metaid" v-if="nft.val.foundryMetaId">MetaID:{{ nft.val.foundryMetaId.slice(0, 6) }}</div>
                 </div>
               </div>
-              <CertTemp @click="toCert" />
+              <CertTemp @click="toCert" :isCert="nft.val.foundryMetaId === '3c03f6b8783fa672bb34953519110944dab1d8a23711c7df4f1dd9e16e5b823c' ? true : false" />
             </div>
             <div class="drsc flex1 flex flex-v">
-              <div class="title flex flex-align-center">{{$t('seller')}}<img :src="$filters.avatar(nft.val.ownerMetaId)" /> <span>{{nft.val.ownerName}}</span> {{ $t('theIntro') }}：</div>
+              <div class="title flex flex-align-center">
+                <template v-if="nft.val.putAway">
+                  {{$t('seller')}}<img :src="$filters.avatar(nft.val.ownerMetaId)" /> <span>{{nft.val.ownerName}}</span> {{ $t('theIntro') }}：
+                </template>
+                <template v-else>
+                  {{$t('drsc')}}:
+                </template>
+              </div>
               <div class="cont flex1">
-                {{ nft.val.sellDesc }}
+                {{ nft.val.putAway ? nft.val.sellDesc : nft.val.describe}}
               </div>
             </div>
 
@@ -278,8 +286,8 @@
                     <div class="key">{{ $t('worktype') }}：</div>
                     <div class="value flex1">
                       {{ nftTypes.find((item) => item.value === nft.val.type)?.name }} 
-                      1920*1080PX
-                      5.2M
+                      <!-- 1920*1080PX
+                      5.2M -->
                     </div>
                   </div>
                   <div class="work-detail-item flex flex-align-center" v-if="nft.val.type === '3'">
@@ -471,7 +479,7 @@ function countDownTimeLeft() {
     if (nft.val.remainingTime >= now) {
       nft.val.remainingTime = nft.val.remainingTime - 1000
       day.value = Math.abs(dayjs(now).diff(nft.val.remainingTime, 'day'))
-      hour.value = Math.abs(dayjs(now).subtract(day.value, 'day').diff(nft.val.remainingTime, 'hour'))
+      hour.value = Math.abs(dayjs(now).diff(nft.val.remainingTime, 'hour')) - (day.value * 24)
       minute.value = Math.abs(dayjs(now).diff(nft.val.remainingTime, 'minute')) - (day.value * 24 * 60) - (hour.value * 60)
       second.value = Math.abs(dayjs(now).diff(nft.val.remainingTime, 's')) - (day.value * 24 * 60 * 60) - (hour.value * 60 * 60) - (minute.value * 60)
     } else {
@@ -554,7 +562,7 @@ async function buy() {
         loading.close()
       })
     if (useAmountRes?.code === 200) {
-      const useAmount = useAmountRes.data.amount!
+      const useAmount = useAmountRes.data.amount! + nft.val.amount
       // 查询用户余额
     const userBalanceRes = await store.state.sdk?.getBalance()
     if (userBalanceRes && userBalanceRes.code === 200) {
