@@ -14,7 +14,7 @@ import { ElMessage } from 'element-plus'
 import i18n from '@/utils/i18n'
 const store = useStore()
 let removeRoute: (() => void) | undefined
-
+console.log('import.meta.env.PROD', import.meta.env.PROD)
 export const routerHistory = createWebHistory()
 export const router = createRouter({
   history: routerHistory,
