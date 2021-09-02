@@ -19,6 +19,7 @@
             // }
         }
         .cont{
+            min-width: 0;
             .name{
                 .text{
                     font-size: 34px;
@@ -81,7 +82,9 @@
                     }
                 }
             }
-            
+            pre{
+                white-space: break-spaces;
+            }
         }
     }
     .bottom{
