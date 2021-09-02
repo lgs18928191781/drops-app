@@ -188,7 +188,9 @@ function getRecommendNftList() {
 function getMore() {
   pagination.loading = true
   pagination.page++
-  getNftList()
+  getNftList().then(() => {
+    pagination.loading = false
+  })
 }
 
 // 更改分类

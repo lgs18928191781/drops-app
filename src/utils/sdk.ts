@@ -592,7 +592,7 @@ export default class Sdk {
                 return item.sensibleId === '3e04f81d7fa7d4d606c3c4c8e8d3a8dcf58b5808740d40a445f3884e126bc7fd00000000' && item.codehash === '777e4dd291059c9f7a0fd563f7204576dcceb791' && item.genesis=== '54256eb1b9c815a37c4af1b82791ec6bdf5b3fa3'
               })
               if (mc) {
-                resolve(new Decimal(mc.balance).div(Math.pow(10, mc.decimal)).toNumber())
+                resolve(new Decimal(mc.balance + mc.pendingBalance).div(Math.pow(10, mc.decimal)).toNumber())
               } else {
                 resolve(0)
               }
