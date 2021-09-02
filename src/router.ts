@@ -99,7 +99,7 @@ router.beforeEach(async (to, from, next) => {
         debugger
         if (mc! < neeeMc) {
           // 需要权限的提示先登陆且不给予跳转
-          ElMessage.error(i18n.global.t('needHold') + neeeMc + ' MC' + i18n.global.t('canCreateNft'))
+          ElMessage.error(i18n.global.t('needHold') + neeeMc + ' MetaCoins' + i18n.global.t('canCreateNft'))
           return
         }
       }

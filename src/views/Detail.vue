@@ -148,7 +148,7 @@
                 </template>
               </div>
               <div class="cont flex1">
-                {{ nft.val.putAway ? nft.val.sellDesc : nft.val.describe}}
+                <pre>{{ nft.val.putAway ? nft.val.sellDesc : nft.val.describe}}</pre>
               </div>
             </div>
 
@@ -315,8 +315,11 @@
                 </div>
               </div>
 
+              <div class="" v-else-if="tabIndex === 1">
+                {{ $t('stayTuned') }}
+              </div>
               <!-- 拥有记录 -->
-              <div class="haved-record" v-else-if="tabIndex === 1">
+              <!-- <div class="haved-record" v-else-if="tabIndex === 1">
                 <div class="tr th flex flex-align-center">
                   <span class="td flex1">{{ $t('owner') }}</span>
                   <span class="td flex1">{{ $t('role') }}</span>
@@ -349,7 +352,7 @@
                     }}BSV</span
                   >
                 </div>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -383,7 +386,7 @@ const store = useStore()
 const now = new Date().getTime()
 const tabs = [
   { name: i18n.t('workdetail'), key: 'workdetail' },
-  // { name: i18n.t('possessionrecord'), key: 'possessionrecord' },
+  { name: i18n.t('possessionrecord'), key: 'possessionrecord' },
 ]
 let tabIndex = ref(0)
 const isShowSkeleton = ref(true)

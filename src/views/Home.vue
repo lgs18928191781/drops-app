@@ -226,6 +226,6 @@ async function search() {
 
 getRecommendNftList()
 getNftList()
-// getClassies()
+
 </script>
 <style lang="scss" scoped src="./Home.scss"></style>

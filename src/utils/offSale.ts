@@ -87,6 +87,8 @@ export default function NftOffSale(nft: NftItemDetail, loading?: any) {
       } else {
         reject()
       }
+    } else {
+      reject()
     }
   })
 }
