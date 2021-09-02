@@ -476,15 +476,11 @@ export default class Sdk {
       const _params = {
         data: {
           ...data,
-          payTo: this.isProduction ? [{ address: import.meta.env.VITE_AppAddress, amount: Math.ceil(amount * 0.05)}] : [],
+          payTo: this.isProduction ? [{ address: import.meta.env.VITE_AppAddress, amount: Math.ceil(new Decimal(amount * 0.05).toNumber())}] : [],
         },
         callback: (res: MetaIdJsRes) => {
-          debugger
           this.callback(res, resolve)
-        },
-        // onCancel: (msg: any) => {
-        //   debugger
-        // }
+        }
       }
       if (this.isApp) {
         const functionName: string = `nftBuyCallBack`

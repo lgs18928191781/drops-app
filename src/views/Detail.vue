@@ -171,7 +171,7 @@
                   (store.state.userInfo && store.state.userInfo.metaId !== nft.val.ownerMetaId)
                 "
               >
-                <template v-if="nft.val.amount">{{ i18n.locale.value === 'zh' ? `以 ${ new Decimal(nft.val.amount).div(10 ** 8).toString() } BSV 购买` : `Buy Now At ${new Decimal(nft.val.amount).div(10 ** 8).toString()} BSV` }}</template>
+                <template v-if="nft.val.amount">{{ i18n.locale.value === 'zh' ? `以 ${ new Decimal(nft.val.amount).div(Math.pow(10, 8)).toString() } BSV 购买` : `Buy Now At ${new Decimal(nft.val.amount).div(10 ** 8).toString()} BSV` }}</template>
               </div>
               <template
                 v-else-if="
@@ -184,7 +184,7 @@
                     <div class="btn btn-block flex1" @click="toSale">{{$t('saleAgain')}}</div>
                   </template> -->
                 </div>
-                <div class="btn btn-block" v-else @click="onSale">{{ $t('sale') }}</div>
+                <div class="btn btn-block" v-else @click="toSale">{{ $t('sale') }}</div>
               </template>
             </div>
           </div>
@@ -368,7 +368,7 @@ import { toClipboard } from '@soerenmartius/vue3-clipboard'
 import { ElLoading, ElMessage, ElSkeleton, ElSkeletonItem, ElMessageBox } from 'element-plus'
 import { useRoute } from 'vue-router'
 // @ts-ignore
-import { BuyNft, GetMySelledNfts, GetNftDetail, GetNftIssue, GetNftIssueyTxId, GetNFTOwnerAddress, NftApiCode, NFTApiGetNFTDetail, TransactionRecord } from '@/api'
+import { BuyNft, GetMyNftEligibility, GetMySelledNfts, GetNftDetail, GetNftIssue, GetNftIssueyTxId, GetNFTOwnerAddress, Langs, NftApiCode, NFTApiGetNFTDetail, TransactionRecord } from '@/api'
 // @ts-ignore
 import dayjs from 'dayjs'
 import { useStore } from '@/store'
@@ -521,9 +521,6 @@ function offSale() {
   .catch(() => loading.close())
 }
 
-function onSale() {
-  router.push({ name: 'sale', params: { tokenId: nft.val.tokenId } })
-}
 
 async function buy() {
   await checkSdkStatus()
@@ -554,7 +551,7 @@ async function buy() {
       sensibleId: nft.val.sensibleId,
       sellTxId: nft.val.sellTxId,
       sellContractTxId: nft.val.sellContractTxId,
-      amount: nft.val.amount
+      amount: new Decimal(nft.val.amount).toNumber()
     }
     // 需要消费金额
     const useAmountRes = await store.state.sdk
@@ -714,7 +711,17 @@ function nftNotCanBuy (res: any) {
 }
 
 
-function toSale () {
+async function toSale () {
+  // 檢查是否有權限
+  const res = await GetMyNftEligibility({
+    MetaId: store.state.userInfo!.metaId,
+    IssueMetaId: nft.val.foundryMetaId,
+    lang: i18n.locale.value === 'en' ? Langs.EN : Langs.CN
+  })
+  if (res.code !== 0) {
+    ElMessage.error(res.data)
+    return
+  }
   router.push({
     name: 'sale',
     params: {

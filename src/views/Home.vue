@@ -142,7 +142,6 @@ async function getNftList(isCover: boolean = false) {
           codehash: item.nftCodehash
         })
       })
-      debugger
     } else {
       pagination.nothing = true
     }

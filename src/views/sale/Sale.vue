@@ -175,7 +175,7 @@ async function confirmSale() {
   })
   const stasPrice =
     units[unitIndex.value].unit === 'BSV'
-      ? new Decimal(saleAmount.value).mul(10 ** 8).toNumber()
+      ? new Decimal(saleAmount.value).mul(Math.pow(10,8)).toNumber()
       : new Decimal(saleAmount.value).toNumber()
   const params = {
     codehash: nft.val!.codeHash,

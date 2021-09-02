@@ -35,7 +35,6 @@
             }}</a>
             <a class="btn flex1 btn-block" @click="toSale" v-else>{{ $t('salenft') }}</a>
           </template>
-          
         </div>
       </template>
     </ElSkeleton>
@@ -70,7 +69,7 @@ function getDetail() {
   return new Promise<void>(async (resolve) => {
     // 防止铸造完立刻跳转拿不到数据回来，检查上完链再获取数据
     if (route.query.txId && typeof route.query.txId === 'string') {
-      await store.state.sdk?.checkTxIdStatus(route.query.txId)
+      await store.state.sdk?.checkNftTxIdStatus(route.query.txId)
     }
     const _nft = await NFTDetail(
       typeof route.params.genesisId === 'string' ? route.params.genesisId : '',
