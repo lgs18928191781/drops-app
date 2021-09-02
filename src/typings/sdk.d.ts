@@ -217,7 +217,6 @@ export interface NftCancelParams {
     tokenIndex: string
     sellContractTxId: string
     sellTxId: string
-    satoshis: number
     checkOnly?: boolean
 }
 export interface CancelSellNFTParams extends NftCancelParams {
