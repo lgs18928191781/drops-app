@@ -54,7 +54,7 @@
 import { computed, defineProps, ref } from 'vue'
 import { useStore, Mutation } from '@/store/index'
 import { useRouter } from 'vue-router'
-import { GetNftDetail, NftApiCode, OffSale } from '@/api'
+import { GetMyNftEligibility, GetNftDetail, Langs, NftApiCode, OffSale } from '@/api'
 import { ElDialog, ElLoading, ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { Decimal } from 'decimal.js-light'
@@ -100,9 +100,18 @@ function toDetail() {
   }
 }
 
-function toSale () {
-  if (props.item?.tokenId) {
-    router.push({ name: 'sale', params: { tokenIndex: props.item.tokenIndex, genesisId: props.item.genesis, codehash: props.item.codehash } })
+async function toSale () {
+  const res = await GetMyNftEligibility({
+    MetaId: store.state.userInfo!.metaId,
+    IssueMetaId: props.item.metaId,
+    lang: i18n.locale.value === 'en' ? Langs.EN : Langs.CN
+  })
+  if (res.code === 0) {
+    if (props.item?.tokenId) {
+      router.push({ name: 'sale', params: { tokenIndex: props.item.tokenIndex, genesisId: props.item.genesis, codehash: props.item.codehash } })
+    }
+  } else {
+    ElMessage.error(res.data)
   }
 }
 

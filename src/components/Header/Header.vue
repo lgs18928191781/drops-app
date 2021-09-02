@@ -26,8 +26,8 @@
             <el-dropdown-menu>
               <el-dropdown-item @click="toSelf">{{$t('mynft')}}</el-dropdown-item>
               <el-dropdown-item @click="toWallet">{{$t('mywallet')}}</el-dropdown-item>
-              <el-dropdown-item @click="logout">{{$t('logout')}}</el-dropdown-item>
               <el-dropdown-item @click="toTariffDescription">{{$t('tariffDescription ')}}</el-dropdown-item>
+              <el-dropdown-item @click="logout">{{$t('logout')}}</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </ElDropdown>

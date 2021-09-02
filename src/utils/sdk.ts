@@ -479,6 +479,7 @@ export default class Sdk {
           payTo: this.isProduction ? [{ address: import.meta.env.VITE_AppAddress, amount: Math.ceil(amount * 0.05)}] : [],
         },
         callback: (res: MetaIdJsRes) => {
+          debugger
           this.callback(res, resolve)
         },
         // onCancel: (msg: any) => {
@@ -651,7 +652,9 @@ export default class Sdk {
     resolve: { (value: MetaIdJsRes | PromiseLike<MetaIdJsRes>): void; (arg0: MetaIdJsRes): void }
   ) {
     if (res.code !== 200 && res.code !== 205) {
-      ElMessage.error(res.data.message)
+      if (res.data.message !== 'The NFT is not for sale because  the corresponding SellUtxo cannot be found.') {
+        ElMessage.error(res.data.message)
+      }
     }
     resolve(res)
   }

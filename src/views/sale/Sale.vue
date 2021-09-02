@@ -93,7 +93,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { GetNftDetail, NftApiCode, SaleNft, SetDeadlineTime } from '@/api'
+import { GetMyNftEligibility, GetNftDetail, Langs, NftApiCode, SaleNft, SetDeadlineTime } from '@/api'
 import { reactive, ref } from '@vue/reactivity'
 import { useRoute, useRouter } from 'vue-router'
 import {
@@ -152,7 +152,19 @@ function saleAmountChange() {
 }
 
 async function confirmSale() {
+  
   if (saleTime.value === '' || saleAmount.value === '' || saleIntro.value === '') return
+
+  // 檢查是否有權限
+  const res = await GetMyNftEligibility({
+    MetaId: store.state.userInfo!.metaId,
+    IssueMetaId: nft.val.foundryMetaId,
+    lang: i18n.locale.value === 'en' ? Langs.EN : Langs.CN
+  })
+  if (res.code !== 0) {
+    ElMessage.error(res.data)
+    return
+  }
 
   const loading = ElLoading.service({
     lock: true,
@@ -203,6 +215,7 @@ async function confirmSale() {
             if (response.code === NftApiCode.success) {
               // 检查txId状态，确认上链后再跳转，防止上链延迟，跳转后拿不到数据
               await store.state.sdk?.checkTxIdStatus(res.data.sellTxId)
+              await store.state.sdk?.checkTxIdStatus(res.data.txid)
               ElMessage.success(i18n.t('saleSuccess'))
               router.back()
             }

@@ -154,5 +154,6 @@
   "tariffDescription ": "Tariff description",
   "protocolUsed ": "Protocol used",
   "chargeDescription": "Charge description",
-  "incomeStatement ": "Income statement"
+  "incomeStatement ": "Income statement",
+  "nftNotCanBuy": "Transaction failed, NFT has been purchased or removed"
 }

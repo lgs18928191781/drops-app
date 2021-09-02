@@ -154,5 +154,6 @@
   "tariffDescription ": "资费说明",
   "protocolUsed ": "使用的协议",
   "chargeDescription": "收费说明",
-  "incomeStatement": "收入说明"
+  "incomeStatement": "收入说明",
+  "nftNotCanBuy": "交易失败，NFT已被购买或下架"
 }

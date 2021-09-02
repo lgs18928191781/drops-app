@@ -105,6 +105,14 @@ declare interface GetMyNftSummaryListParams{
   Page: string
   PageSize: string
 }
+
+declare interface GetMyOnSellNftListParams{
+  Address: string
+  Page: string
+  PageSize: string
+  metaId: string
+}
+
 declare interface GetMyNftSummaryListRes extends apiResponse{
   data:{
     total: number,

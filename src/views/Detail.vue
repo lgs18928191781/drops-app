@@ -619,6 +619,9 @@ async function buy() {
               } */
             } else {
               loading.close()
+              if (res) {
+                nftNotCanBuy(res)
+              }
             }
           })
           .catch(() => loading.close())
@@ -637,6 +640,11 @@ async function buy() {
           )
           return
         }
+      }
+    } else {
+      loading.close()
+      if (useAmountRes) {
+        nftNotCanBuy(useAmountRes)
       }
     }
 
@@ -698,6 +706,12 @@ function toCert() {
 
 // getNft()
 
+function nftNotCanBuy (res: any) {
+  if (res.code === 204 && res.data && res.data.message === 'The NFT is not for sale because  the corresponding SellUtxo cannot be found.') {
+    ElMessage.error(i18n.t('nftNotCanBuy'))
+    router.back()
+  }
+}
 
 
 function toSale () {

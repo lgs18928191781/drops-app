@@ -170,8 +170,8 @@ export const GetMyNftSummaryList = (params: GetMyNftSummaryListParams): Promise<
 
 
 
-export const GetMyOnSellNftList = (params: GetMyNftSummaryListParams): Promise<GetMyOnSellNftListRes> => {
-  return apiHttp.post(`/aggregation/v2/app/sensible/getMyOnSellNftList`, params)
+export const GetMyOnSellNftList = (params: GetMyOnSellNftListParams): Promise<GetMyOnSellNftListRes> => {
+  return apiHttp.post(`/aggregation/v2/app/nftOnShow/getMyNftOnShowList`, params)
 }
 
 
@@ -227,4 +227,16 @@ export const GetRecommendOnSellNftList = (params: {
   Page: string
 }): Promise<GetMyOnSellNftListRes> => {
   return apiHttp.post(`/aggregation/v2/app/nftOnShow/getRecommendNftOnShowList`, params)
+}
+
+export enum Langs  {
+  CN = 'cn',
+  EN = 'en'
+}
+export const GetMyNftEligibility = (params: {
+  MetaId: string
+  IssueMetaId: string
+  lang: Langs
+}): Promise<apiResponse> => {
+  return apiHttp.get(`/aggregation/v2/app/nftOnShow/getMyNftEligibility/${params.MetaId}//${params.IssueMetaId}/${params.lang}`)
 }

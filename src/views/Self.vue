@@ -195,7 +195,8 @@ function getMySelledNfts (isCover: boolean = false) {
         const res = await GetMyOnSellNftList({
             Page: selledPagination.page.toString(),
             PageSize: selledPagination.pageSize.toString(),
-            Address: store.state.userInfo!.address
+            Address: store.state.userInfo!.address,
+            metaId: store.state.userInfo!.metaId
         })
         if (res && res.code === 0) {
             if (isCover) {
