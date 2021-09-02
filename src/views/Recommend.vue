@@ -22,12 +22,14 @@
         </template>
       </NftSkeleton>
     </div>
-    <LoadMore
+    <template v-if="!isShowSkeleton">
+      <LoadMore
       :pagination="pagination"
       @getMore="getMore"
-      v-if="nfts.length > 0 && !isShowSkeleton"
+      v-if="nfts.length > 0"
     />
     <IsNull v-else />
+    </template>
   </div>
 </template>
 
@@ -62,7 +64,7 @@ function getRecommendNftList() {
             name: item.nftName ? item.nftName : '--',
             amount: item.nftPrice,
             foundryName: item.nftIssuer,
-            classify: data && data.classify &&  data.classify !== '' ? JSON.parse(data.classify) : [],
+            classify: data && data.classifyList &&  data.classifyList !== '' ? JSON.parse(data.classifyList) : [],
             head: '',
             tokenId: item.nftGenesis + item.nftTokenIndex,
             coverUrl: item.nftIcon,

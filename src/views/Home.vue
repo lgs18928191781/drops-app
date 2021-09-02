@@ -129,7 +129,7 @@ async function getNftList(isCover: boolean = false) {
           name: item.nftName ? item.nftName : '--',
           amount: item.nftPrice,
           foundryName: item.nftIssuer,
-          classify: data && data.classify && data.classify !== '' ? JSON.parse(data.classify) : '',
+          classify: data && data.classifyList && data.classifyList !== '' ? JSON.parse(data.classifyList) : [],
           head: '',
           tokenId: item.nftGenesis + item.nftTokenIndex,
           coverUrl: item.nftIcon,
@@ -142,6 +142,7 @@ async function getNftList(isCover: boolean = false) {
           codehash: item.nftCodehash
         })
       })
+      debugger
     } else {
       pagination.nothing = true
     }
@@ -164,7 +165,7 @@ function getRecommendNftList() {
             name: item.nftName ? item.nftName : '--',
             amount: item.nftPrice,
             foundryName: item.nftIssuer,
-            classify: data ? data.classify : '',
+            classify: data && data.classifyList && data.classifyList !== '' ? JSON.parse(data.classifyList) : [],
             head: '',
             tokenId: item.nftGenesis + item.nftTokenIndex,
             coverUrl: item.nftIcon,
