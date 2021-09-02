@@ -230,7 +230,7 @@ export default class Sdk {
     parentReject?: any
   ) {
     return new Promise<void>((resolve, reject) => {
-      fetch(`${import.meta.env.VITE_WalletApi}/showMANDB/api/v1/metanet/getTree/${txId}`)
+      fetch(`${import.meta.env.VITE_WalletApi}/showMANDB/api/v1/metanet/getNode/${txId}`)
         .then(function (response) {
           return response.json()
         })
