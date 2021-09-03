@@ -251,6 +251,7 @@ import {
   GetSeries,
   GetTxData,
   GetTxStatus,
+  Langs,
   NftApiCode,
   Upload,
 } from '@/api'
@@ -565,15 +566,23 @@ async function checkTxId () {
 //     })
 
 async function createNft() {
+  // 檢查sdk狀態
   await checkSdkStatus()
 
-  const mc = await store.state.sdk?.getMc(store.state.userInfo!.address)
-  const needMc = parseInt(import.meta.env.VITE_CreateNeedMc)
-  if (mc && mc < needMc) {
-    // 需要权限的提示先登陆且不给予跳转
-    ElMessage.error(i18n.t('needHold') + needMc +' MC' + i18n.t('canCreateNft'))
+  const result = await store.state.sdk?.checkUserCanIssueNft({
+    metaId: store.state.userInfo!.metaId,
+    address: store.state.userInfo!.address,
+    language: i18n.locale.value === 'en' ? Langs.EN : Langs.CN
+  })
+  if (!result) return
+
+  await store.state.sdk?.checkUserCanIssueNft({
+    metaId: store.state.userInfo!.metaId,
+    address: store.state.userInfo!.address,
+    language: i18n.locale.value === 'en' ? Langs.EN : Langs.CN
+  }).catch(() => {
     return
-  }
+  })
 
   // nft 类型
   if (nft.type === '') {

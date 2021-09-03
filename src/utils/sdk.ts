@@ -35,10 +35,17 @@ import { ElMessage } from 'element-plus'
 
 import { store } from '@/store'
 import { Decimal } from 'decimal.js-light'
+import { Langs } from '@/api'
 
 const metaIdTag = import.meta.env.VITE_MetaIdTag
 
 const doubleTimeOut = 4000 // 防止双花 定时器时间
+
+const enum Platform {
+  'Web' = 0,
+  'Android' = 1,
+  'Ios' = 2,
+}
 export default class Sdk {
   metaidjs: null | MetaIdJs = null
   appMetaidjs: null | {
@@ -426,6 +433,30 @@ export default class Sdk {
         // @ts-ignore
         this.metaidjs?.genesisNFT(_params)
       }
+    })
+  }
+
+  checkUserCanIssueNft (params: {
+    metaId: string
+    address: string
+    language: Langs
+  }) {
+    return new Promise<boolean>((resolve, reject) => {
+      fetch(`${import.meta.env.VITE_WalletApi}/aggregation/v2/app/nftOnShow/getMyNftIssueEligibility/${params.metaId}/${params.address}/0/${params.language}`)
+        .then(function (response) {
+          return response.json()
+        })
+        .then((response) => {
+          if (response.code === 0) {
+            resolve(true)
+          } else {
+            ElMessage.error(response.data)
+            resolve(false)
+          }
+        })
+        .catch(() => {
+          resolve(false)
+        })
     })
   }
 

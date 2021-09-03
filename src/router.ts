@@ -13,6 +13,7 @@ import TariffDescription from '@/views/app/TariffDescription.vue'
 import { useStore, Action } from '@/store/index'
 import { ElMessage } from 'element-plus'
 import i18n from '@/utils/i18n'
+import { Langs } from './api'
 const store = useStore()
 let removeRoute: (() => void) | undefined
 console.log('import.meta.env.PROD', import.meta.env.PROD)
@@ -94,14 +95,12 @@ router.beforeEach(async (to, from, next) => {
       }
 
       if (to.name === 'create' && store.state.userInfo) {
-        const mc = await store.state.sdk?.getMc(store.state.userInfo!.address)
-        const neeeMc = parseInt(import.meta.env.VITE_CreateNeedMc)
-        debugger
-        if (mc! < neeeMc) {
-          // 需要权限的提示先登陆且不给予跳转
-          ElMessage.error(i18n.global.t('needHold') + neeeMc + ' MetaCoins' + i18n.global.t('canCreateNft'))
-          return
-        }
+        const result = await store.state.sdk?.checkUserCanIssueNft({
+          metaId: store.state.userInfo!.metaId,
+          address: store.state.userInfo!.address,
+          language: i18n.global.locale.value === 'en' ? Langs.EN : Langs.CN
+        })
+        if (!result) return
       }
     }  else {
       // 没有token
