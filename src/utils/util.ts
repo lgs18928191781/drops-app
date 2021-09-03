@@ -94,3 +94,8 @@ export function metafileUrl (metafile: string) {
 export function checkTxIdStatus (txId: string) {
   return new Promise(resolve => {})
 }
+
+export function setDataStrclassify (data: any) {
+  const classify = data && data.classifyList instanceof Array? data.classifyList : data &&  typeof data.classifyList === 'string' && data.classifyList !== '' ? JSON.parse(data.classifyList) : []
+  return classify
+}

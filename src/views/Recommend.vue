@@ -42,6 +42,7 @@ import { reactive, ref } from 'vue'
 import { pagination as _pagination } from '@/config'
 import { GetProductList, GetRecommendOnSellNftList, NftApiCode } from '@/api'
 import { useRouter } from 'vue-router'
+import { setDataStrclassify } from '@/utils/util'
 
 const router = useRouter()
 const nfts = reactive<NftItem[]>([])
@@ -60,11 +61,12 @@ function getRecommendNftList() {
       if (res.data.results.items.length > 0) {
         res.data.results.items.map(item => {
           const data = item.nftDataStr ? JSON.parse(item.nftDataStr) : null
+          const classify = setDataStrclassify(data)
           nfts.push({
             name: item.nftName ? item.nftName : '--',
             amount: item.nftPrice,
             foundryName: item.nftIssuer,
-            classify: data && data.classifyList &&  data.classifyList !== '' ? JSON.parse(data.classifyList) : [],
+            classify: classify,
             head: '',
             tokenId: item.nftGenesis + item.nftTokenIndex,
             coverUrl: item.nftIcon,

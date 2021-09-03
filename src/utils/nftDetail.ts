@@ -1,4 +1,5 @@
 import { GetDeadlineTime, NFTApiGetNFTDetail } from "@/api"
+import { setDataStrclassify } from "./util"
 
 export default function NFTDetail (genesis: string, codehash: string, tokenIndex: string) {
     return new Promise<NftItemDetail>(async (resolve, reject) => {
@@ -16,6 +17,7 @@ export default function NFTDetail (genesis: string, codehash: string, tokenIndex
                 genesis: item.nftGenesis,
                 tokenIndex: item.nftTokenIndex
               })
+              const classify = setDataStrclassify(data)
               const nft: NftItemDetail = {
                 foundryName: item.nftIssuer,
                 foundryMetaId: item.nftIssueMetaId,
@@ -23,7 +25,7 @@ export default function NFTDetail (genesis: string, codehash: string, tokenIndex
                 amount: item.nftPrice ? item.nftPrice : 0,
                 remainingTime: deadlineTimeRes && deadlineTimeRes.data && deadlineTimeRes.data.deadlineTime ? deadlineTimeRes.data.deadlineTime : null,
                 nftName: item.nftName ? item.nftName : '--',
-                classify: data && data.classifyList  ? JSON.parse(data.classifyList): [],
+                classify: classify,
                 describe: item.nftDesc,
                 forgeTime: item.nftTimestamp,
                 contractAddress: item.nftSensibleId,

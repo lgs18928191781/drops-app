@@ -46,6 +46,7 @@ import NftSkeleton from '@/components/NftSkeleton/NftSkeleton.vue'
 import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { useI18n } from 'vue-i18n';
+import { setDataStrclassify } from '@/utils/util';
 
 
 const store = useStore()
@@ -79,11 +80,12 @@ function getMyNfts (isCover: boolean = false) {
             if (res.data.results.items.length > 0) {
                 res.data.results.items.map(item => {
                     const data = item.nftDataStr ? JSON.parse(item.nftDataStr) : undefined
+                    const classify = setDataStrclassify(data)
                     nfts.push({
                         name: item.nftName ? item.nftName : '--',
                         amount: 0,
                         foundryName: store.state.userInfo!.name,
-                        classify: data && data.classifyList  ? JSON.parse(data.classifyList): [],
+                        classify: classify,
                         tokenId: item.nftGenesis + item.nftTokenIndex,
                         coverUrl: item.nftIcon,
                         putAway: item.nftIsReady,
@@ -103,32 +105,7 @@ function getMyNfts (isCover: boolean = false) {
     })
 }
 
-// function getMyNfts (isCover: boolean = false) {
-//     return new Promise<void>(async resolve => {
-//         const res = await store.state.sdk?.nftList(store.state.userInfo!.address)
-//         if (res && res.code === 200) {
-//             if (res.data.length > 0) {
-//                 res.data.map(item => {
-//                     if (item.nftDataStr) item.data = JSON.parse(item.nftDataStr)
-//                     nfts.push({
-//                         name: item.data ? item.data.nftname : item.nftName,
-//                         amount: 0,
-//                         foundryName: 'string',
-//                         classify: item.data ? JSON.parse(item.data.classifyList) : [],
-//                         tokenId: item.nftGenesis + item.nftTokenIndex,
-//                         coverUrl: item.data ? item.data.nfticon : item.nftIcon,
-//                         putAway: false,
-//                         metaId: store.state.userInfo!.metaId,
-//                         productName: item.data ? item.data.nftname : item.nftName,
-//                         genesis: item.nftGenesis
-//                     })
-//                 })
-//             }
-//         }
-//         isShowNftListSkeleton.value = false
-//         resolve()
-//     })
-// }
+
 
 function getMore() {
     pagination.loading = true

@@ -91,6 +91,7 @@ import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import IsNull from '../components/IsNull/IsNull.vue'
 import { classifyList } from '@/config'
 import { useI18n } from 'vue-i18n'
+import { setDataStrclassify } from '@/utils/util'
 
 const i18n = useI18n()
 const store = useStore()
@@ -124,12 +125,13 @@ async function getNftList(isCover: boolean = false) {
     if (isCover) Nfts.length = 0
     if (res.data.results.items.length > 0) {
       res.data.results.items.map((item: GetNftIssueyTxIdResItem)=> {
-        const data = item.nftDataStr ? JSON.parse(item.nftDataStr) : null
+        const data = item.nftDataStr && item.nftDataStr !== '' ? JSON.parse(item.nftDataStr) : null
+        const classify = setDataStrclassify(data)
         Nfts.push({
           name: item.nftName ? item.nftName : '--',
           amount: item.nftPrice,
           foundryName: item.nftIssuer,
-          classify: data && data.classifyList && data.classifyList !== '' ? JSON.parse(data.classifyList) : [],
+          classify: classify,
           head: '',
           tokenId: item.nftGenesis + item.nftTokenIndex,
           coverUrl: item.nftIcon,
@@ -159,12 +161,13 @@ function getRecommendNftList() {
     if (res.code === 0) {
       if (res.data.results.items.length > 0) {
         res.data.results.items.map(item => {
-          const data = item.nftDataStr ? JSON.parse(item.nftDataStr) : null
+          const data = item.nftDataStr && item.nftDataStr !== '' ? JSON.parse(item.nftDataStr) : null
+          const classify = setDataStrclassify(data)
           recommendNfts.push({
             name: item.nftName ? item.nftName : '--',
             amount: item.nftPrice,
             foundryName: item.nftIssuer,
-            classify: data && data.classifyList && data.classifyList !== '' ? JSON.parse(data.classifyList) : [],
+            classify: classify,
             head: '',
             tokenId: item.nftGenesis + item.nftTokenIndex,
             coverUrl: item.nftIcon,
