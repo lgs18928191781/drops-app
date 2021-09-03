@@ -11,7 +11,7 @@
       <nav class="flex flex-align-center flex-pack-center">
         <router-link to="/">{{ $t('marketplace') }}</router-link>
         <router-link to="/create">{{ $t('createnft') }}</router-link>
-        <router-link to="/metaBot"> MetaBot <img src="@/assets/images/nav_icon_hot.svg" alt="MetaBot" /></router-link>
+        <router-link to="/metaBot" class="flex flex-align-center"> MetaBot <img src="@/assets/images/nav_icon_hot.svg" alt="MetaBot" /></router-link>
       </nav>
       <div class="operate flex flex-align-center">
         <!-- 登录按钮 -->
