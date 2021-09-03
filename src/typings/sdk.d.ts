@@ -47,7 +47,7 @@ export interface MetaIdJsRes extends NftFunParams{
     data: any
     status: string
     handlerId: string
-    appAccessToken?: Token 
+    appAccessToken?: string 
 }
 export interface SdkGenesisNFTRes extends MetaIdJsRes{
     data: {

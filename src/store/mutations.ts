@@ -1,5 +1,5 @@
 import { MutationTree } from 'vuex'
-import { State, Token, UserInfo } from './state'
+import { State} from './state'
 
 export enum Mutation {
   INCREMENT = 'INCREMENT',

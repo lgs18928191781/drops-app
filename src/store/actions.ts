@@ -60,7 +60,9 @@ export const actions: ActionTree<State, State> & Actions = {
     if (res && res.code === 200) {
       commit(Mutation.SETUSERINFO, res.data)
       if (state.isApp && res.appAccessToken) {
-        commit(Mutation.SETTOKEN, res.appAccessToken)
+        commit(Mutation.SETTOKEN, {
+          access_token: res.appAccessToken
+        })
       }
     } else {
       state.sdkInitIng = false
@@ -77,7 +79,7 @@ export const actions: ActionTree<State, State> & Actions = {
   [Action.refreshToken]({ state, commit, dispatch }) {
     return new Promise<void>(async (resolve, reject) => {
       if(state.token) {
-        const res = await refreshToken(state.token?.refresh_token).catch(() => {
+        const res = await refreshToken(state.token!.refresh_token!).catch(() => {
           reject('refresh_token fail')
         })
         if (res) {
@@ -97,9 +99,9 @@ export const actions: ActionTree<State, State> & Actions = {
     return new Promise<string | null>(async (resolve) => {
       if(state.token) {
         const now = new Date().getTime()
-        if (now < state.token.expires_time) {
-          const res = await refreshToken(state.token?.refresh_token).catch(() => {
-            commit(Mutation.SETTOKEN, null)
+        if (now < state.token.expires_time!) {
+          const res = await refreshToken(state.token?.refresh_token!).catch(() => {
+            commit(Mutation.SETTOKEN, undefined)
             resolve(null)
           })
           if (res) {
