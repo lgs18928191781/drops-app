@@ -325,4 +325,6 @@ declare interface NFTApiGetNFTDetailResDataItem {
   nftIsReady: boolean
   nftSellContractTxId: string
   nftSellDesc: string
+  nftTokenId: string
+  nftIssueMetaTxId: string
 }

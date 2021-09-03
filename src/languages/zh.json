@@ -155,5 +155,7 @@
   "protocolUsed ": "使用的协议",
   "chargeDescription": "收费说明",
   "incomeStatement": "收入说明",
-  "nftNotCanBuy": "交易失败，NFT已被购买或下架"
+  "nftNotCanBuy": "交易失败，NFT已被购买或下架",
+  "issueMetaTxId": "发行TXID",
+  "look": "查看"
 }

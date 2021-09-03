@@ -9,7 +9,7 @@
         <div class="tab-cont-item">
             <b>说明</b>：<br />
             <b>卖方收入：</b>卖方所设定的价格，比如设定销售价格是1bsv，那么卖方在NFT成交后收入就是1bsv<br />
-            <b>NOS方收入：</b>卖房设定价格的5%，比如NFT设定的销售价格是1bsv，那么NOS方收入就是0.05bsv<br />
+            <b>NOS方收入：</b>卖方设定价格的5%，比如NFT设定的销售价格是1bsv，那么NOS方收入就是0.05bsv<br />
             <b>买家支出：</b>NFT销售价格+NOS平台费用+矿工手续费。比如NFT定价是1BSV，手续费是 0.0002bsv，NOS手续费0.05，那么买家支出1.0502bsv<br /><br />
         </div>
 

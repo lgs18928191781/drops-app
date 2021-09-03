@@ -27,7 +27,7 @@ export default function NFTDetail (genesis: string, codehash: string, tokenIndex
                 describe: item.nftDesc,
                 forgeTime: item.nftTimestamp,
                 contractAddress: item.nftSensibleId,
-                tokenId: item.nftGenesis + item.nftCodehash + item.nftTokenIndex,
+                tokenId: item.nftTokenId,
                 ownerName: item.nftOwnerName,
                 ownerMetaId: item.nftOwnerMetaId,
                 ownerHead: '',
@@ -44,7 +44,8 @@ export default function NFTDetail (genesis: string, codehash: string, tokenIndex
                 sellTxId: item.nftSellTxId,
                 sensibleId: item.nftSensibleId,
                 sellContractTxId: item.nftSellContractTxId,
-                sellDesc: item.nftSellDesc
+                sellDesc: item.nftSellDesc,
+                issueMetaTxId: item.nftIssueMetaTxId
               }
               resolve(nft)
             } else {

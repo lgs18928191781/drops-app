@@ -235,8 +235,9 @@
                   <div class="work-detail-item flex flex flex-align-baseline">
                     <div class="key">{{ $t('contractaddr') }}：</div>
                     <div class="value flex1 nowrap">
-                      {{ nft.val.contractAddress }}
-                      <a class="copy" @click="copy(nft.val.contractAddress)">{{ $t('copy') }}</a>
+                      {{ nft.val.sellTxId }}
+                      <a class="copy" @click="copy(nft.val.sellTxId)">{{ $t('copy') }}</a>
+                      <a class="copy" @click="toWhatsonchain(nft.val.sellTxId)">{{ $t('look') }}</a>
                     </div>
                   </div>
                   <div class="work-detail-item flex flex-align-center">
@@ -244,6 +245,15 @@
                     <div class="value flex1 nowrap">
                       {{ nft.val.tokenId }}
                       <a class="copy" @click="copy(nft.val.tokenId)">{{ $t('copy') }}</a>
+                      <!-- <a class="copy" @click="toWhatsonchain(nft.val.tokenId)">{{ $t('look') }}</a> -->
+                    </div>
+                  </div>
+                  <div class="work-detail-item flex flex-align-center">
+                    <div class="key">{{$t('issueMetaTxId')}}：</div>
+                    <div class="value flex1 nowrap">
+                      {{ nft.val.issueMetaTxId }}
+                      <a class="copy" @click="copy(nft.val.issueMetaTxId)">{{ $t('copy') }}</a>
+                      <a class="copy" @click="toWhatsonchain(nft.val.issueMetaTxId)">{{ $t('look') }}</a>
                     </div>
                   </div>
                 </div>
@@ -674,6 +684,11 @@ async function buy() {
   // }
 
   // loading.close()
+}
+
+
+function toWhatsonchain (txId: string) {
+  window.open(`https://whatsonchain.com/tx/${txId}`)
 }
 
 // 分享

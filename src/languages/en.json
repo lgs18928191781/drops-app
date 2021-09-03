@@ -155,5 +155,7 @@
   "protocolUsed ": "Protocol used",
   "chargeDescription": "Charge description",
   "incomeStatement ": "Income statement",
-  "nftNotCanBuy": "Transaction failed, NFT has been purchased or removed"
+  "nftNotCanBuy": "Transaction failed, NFT has been purchased or removed",
+  "issueMetaTxId": "Issue TXID",
+  "look": "Check"
 }
