@@ -45,7 +45,8 @@ export default class Sdk {
     sendMetaDataTx: (accessToken: string, data: string, functionName: string) => Function
     decryptData: (accessToken: string, data: string, functionName: string) => Function
     getUserInfo: (appId: string, appScrect: string, functionName: string) => Function
-    genesisNFT: (nftTotal: string, functionName: string) => Function
+    genesisNFT: (accessToken: string, params: string, functionName: string) => Function
+    issueNFT: (accessToken: string, params: string, functionName: string) => Function
   } = null
   isApp: boolean = false
   appId: string = ''
@@ -419,7 +420,7 @@ export default class Sdk {
         const functionName: string = `genesisNFTCallBack`
         // @ts-ignore
         window[functionName] = _params.callback
-        this.appMetaidjs?.genesisNFT(params.nftTotal, functionName)
+        this.appMetaidjs?.genesisNFT(store.state.token!.access_token, JSON.stringify(_params.data), functionName)
       } else {
         debugger
         // @ts-ignore
@@ -458,8 +459,7 @@ export default class Sdk {
         const functionName: string = `issueNFTCallBack`
         // @ts-ignore
         window[functionName] = _params.callback
-        // @ts-ignore
-        this.appMetaidjs?.issueNFT(functionName)
+        this.appMetaidjs?.issueNFT(store.state.token!.access_token, JSON.stringify(_params.data), functionName)
       } else {
         // @ts-ignore
         debugger
@@ -487,7 +487,7 @@ export default class Sdk {
         // @ts-ignore
         window[functionName] = _params.callback
         // @ts-ignore
-        this.appMetaidjs?.nftBuy(functionName)
+        this.appMetaidjs?.nftBuy(store.state.token!.access_token, JSON.stringify(_params.data), functionName)
       } else {
         // @ts-ignore
         this.metaidjs?.nftBuy(_params)
@@ -514,7 +514,7 @@ export default class Sdk {
         // @ts-ignore
         window[functionName] = _params.callback
         // @ts-ignore
-        this.appMetaidjs?.nftSell(functionName)
+        this.appMetaidjs?.nftSell(store.state.token!.access_token, JSON.stringify(_params.data), functionName)
       } else {
         // @ts-ignore
         this.metaidjs?.nftSell(_params)
@@ -543,7 +543,7 @@ export default class Sdk {
         // @ts-ignore
         window[functionName] = _params.callback
         // @ts-ignore
-        this.appMetaidjs?.nftCancel(functionName)
+        this.appMetaidjs?.nftCancel(store.state.token!.access_token, JSON.stringify(_params.data), functionName)
       } else {
         debugger
         // @ts-ignore
