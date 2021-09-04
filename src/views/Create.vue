@@ -569,20 +569,20 @@ async function createNft() {
   // 檢查sdk狀態
   await checkSdkStatus()
 
-  const result = await store.state.sdk?.checkUserCanIssueNft({
-    metaId: store.state.userInfo!.metaId,
-    address: store.state.userInfo!.address,
-    language: i18n.locale.value === 'en' ? Langs.EN : Langs.CN
-  })
-  if (!result) return
-
-  await store.state.sdk?.checkUserCanIssueNft({
-    metaId: store.state.userInfo!.metaId,
-    address: store.state.userInfo!.address,
-    language: i18n.locale.value === 'en' ? Langs.EN : Langs.CN
-  }).catch(() => {
+  const mc = await store.state.sdk?.getMc(store.state.userInfo!.address)
+  const neeeMc = parseInt(import.meta.env.VITE_CreateNeedMc)
+  if (!mc || (mc && mc < neeeMc)) {
+    // 需要权限的提示先登陆且不给予跳转
+    ElMessage.error(i18n.t('needHold') + neeeMc + ' MetaCoins' + i18n.t('canCreateNft'))
     return
+  }
+
+  /* const result = await store.state.sdk?.checkUserCanIssueNft({
+    metaId: store.state.userInfo!.metaId,
+    address: store.state.userInfo!.address,
+    language: i18n.locale.value === 'en' ? Langs.EN : Langs.CN
   })
+  if (!result) return */
 
   // nft 类型
   if (nft.type === '') {

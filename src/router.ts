@@ -95,12 +95,19 @@ router.beforeEach(async (to, from, next) => {
       }
 
       if (to.name === 'create' && store.state.userInfo) {
-        const result = await store.state.sdk?.checkUserCanIssueNft({
+        const mc = await store.state.sdk?.getMc(store.state.userInfo!.address)
+        const neeeMc = parseInt(import.meta.env.VITE_CreateNeedMc)
+        if (mc && mc < neeeMc) {
+          // 需要权限的提示先登陆且不给予跳转
+          ElMessage.error(i18n.global.t('needHold') + neeeMc + ' MetaCoins' + i18n.global.t('canCreateNft'))
+          return
+        }
+        /* const result = await store.state.sdk?.checkUserCanIssueNft({
           metaId: store.state.userInfo!.metaId,
           address: store.state.userInfo!.address,
           language: i18n.global.locale.value === 'en' ? Langs.EN : Langs.CN
         })
-        if (!result) return
+        if (!result) return */
       }
     }  else {
       // 没有token
