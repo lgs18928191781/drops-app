@@ -37,6 +37,7 @@ import { store } from '@/store'
 import { Decimal } from 'decimal.js-light'
 import { Langs } from '@/api'
 import { fail } from 'assert'
+import axios from 'axios'
 
 const metaIdTag = import.meta.env.VITE_MetaIdTag
 
@@ -100,6 +101,8 @@ export default class Sdk {
         }
         alert('appMetaidjs?.getUserInfo userInfo'+ this.appMetaidjs?.getUserInfo)
         alert('appMetaidjs userInfo')
+        // @ts-ignore
+        alert('window  getUserInfoCallBack' + window[functionName])
         this.appMetaidjs?.getUserInfo(this.appId, this.appScrect, functionName)
       } else {
         this.metaidjs?.getUserInfo(params)
@@ -207,36 +210,37 @@ export default class Sdk {
     parentResolve?: (value: void | PromiseLike<void>) => void,
     parentReject?: any
   ) {
-    return new Promise<void>((resolve, reject) => {
-      fetch(`https://api.sensiblequery.com/tx/${txId}`)
-        .then(function (response) {
-          return response.json()
-        })
-        .then((response) => {
-          if (response.code === 0) {
-            if (parentResolve) parentResolve()
-            else resolve()
+    return new Promise<void>(async (resolve, reject) => {
+      axios.get(`https://api.sensiblequery.com/tx/${txId}`).then((res) => {
+        if (res.data.code === 0) {
+          if (parentResolve) parentResolve()
+          else resolve()
+        } else {
+          // 超过30次还不成功就 回调失败
+          if (timer && timer > 30) {
+            if (parentReject) parentReject()
+            else reject()
           } else {
-            // 超过30次还不成功就 回调失败
-            if (timer && timer > 30) {
-              if (parentReject) parentReject()
-              else reject()
-            } else {
-              setTimeout(() => {
-                this.checkNftTxIdStatus(
-                  txId,
-                  timer ? timer + 1 : 1,
-                  parentResolve ? parentResolve : resolve,
-                  parentReject ? parentReject : reject
-                )
-              }, 1000)
-            }
+            setTimeout(() => {
+              this.checkNftTxIdStatus(
+                txId,
+                timer ? timer + 1 : 1,
+                parentResolve ? parentResolve : resolve,
+                parentReject ? parentReject : reject
+              )
+            }, 1000)
           }
-        })
-        .catch(() => {
-          if (parentReject) parentReject()
-          else reject()
-        })
+        }
+      }).catch(() => {
+        setTimeout(() => {
+          this.checkNftTxIdStatus(
+            txId,
+            timer ? timer + 1 : 1,
+            parentResolve ? parentResolve : resolve,
+            parentReject ? parentReject : reject
+          )
+        }, 1000)
+      })
     })
   }
 
@@ -653,23 +657,7 @@ export default class Sdk {
 
   // 获取用户余额
   ftList(address: string) {
-    return new Promise<GetBalanceRes>((resolve, reject) => {
-      fetch(`https://api.sensiblequery.com/ft/summary/${address}` )
-        .then(function (response) {
-          return response.json()
-        })
-        .then((response) => {
-          debugger
-          if (response.code === 0) {
-            resolve(response)
-          } else {
-            reject('ftList error')
-          }
-        })
-        .catch(() => {
-          reject('ftList error')
-        })
-    })
+    return axios.get(`https://api.sensiblequery.com/ft/summary/${address}`)
   }
 
   // 获取用户余额
