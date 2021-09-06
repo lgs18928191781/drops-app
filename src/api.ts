@@ -23,11 +23,11 @@ export const GetToken = (params: object) => {
 }
 
 export const QueryFindMetaData = (params: string) => {
-  return apiHttp.get(`/showMANDB/api/v1/query/queryFindMetaData/${params}`)
+  return apiHttp.get(`/v2showMANDB/api/v1/query/queryFindMetaData/${params}`)
 }
 
 export const QueryFindMetaDataForPost = (params: any) => {
-  return apiHttp.post(`/showMANDB/api/v1/query/queryFindMetaDataForPost`, {
+  return apiHttp.post(`/v2showMANDB/api/v1/query/queryFindMetaDataForPost`, {
     data: {
       query: btoa(JSON.stringify(params)),
     },

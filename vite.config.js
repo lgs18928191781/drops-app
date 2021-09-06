@@ -64,6 +64,7 @@ export default (({mode}) => {
     build: {
       target: 'es2015',
       sourcemap: mode === 'prod' ? false : true
-    }
+    },
+    sourcemap: mode === 'prod' ? false : true
   })
 })
