@@ -101,15 +101,15 @@ export default class Sdk {
         }
         alert('appMetaidjs?.getUserInfo userInfo'+ this.appMetaidjs?.getUserInfo)
         alert('appMetaidjs userInfo')
-        // @ts-ignore
-        alert('window  getUserInfoCallBack' + window[functionName])
-        this.appMetaidjs?.getUserInfo(this.appId, this.appScrect, functionName)
+        this.getLoginUserInfo(functionName)
       } else {
         this.metaidjs?.getUserInfo(params)
       }
     })
   }
-
+  getLoginUserInfo(functionName:string){
+    window.appMetaIdJs?.getUserInfo(this.appId, this.appScrect, functionName)
+  }
   sendMetaDataTx(params: {
     data: string
     nodeName: string
