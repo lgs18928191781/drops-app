@@ -225,10 +225,14 @@ async function confirmSale() {
             })
             alert('sell h')
             if (response.code === NftApiCode.success) {
+              alert('sell h')
               // 检查txId状态，确认上链后再跳转，防止上链延迟，跳转后拿不到数据
-              await store.state.sdk?.checkTxIdStatus(res.data.sellTxId)
-              await store.state.sdk?.checkTxIdStatus(res.data.txid)
+              await store.state.sdk?.checkNftTxIdStatus(res.data.sellTxId)
+              alert('sell j')
+              await store.state.sdk?.checkNftTxIdStatus(res.data.txid)
+              alert('sell k')
               ElMessage.success(i18n.t('saleSuccess'))
+              alert('sell l')
               router.back()
             }
 

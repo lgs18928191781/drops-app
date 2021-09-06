@@ -716,7 +716,6 @@ export default class Sdk {
             message: res
           },
           status: 'fail',
-          accessToken: '',
           handlerId: ''
         }
       }

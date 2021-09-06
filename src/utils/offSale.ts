@@ -47,6 +47,7 @@ export default function NftOffSale(nft: NftItemDetail, loading?: any) {
                 tokenIndex: nft.tokenIndex,
                 deadlineTime: nft.remainingTime
               })
+              alert('RemoveDeadlineTimeres' + JSON.stringify(res))
               if (res.code === NftApiCode.success) {
                 nft.putAway = false
                 ElMessage.success(i18n.global.t('offsale') + i18n.global.t('success'))
