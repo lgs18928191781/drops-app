@@ -676,6 +676,13 @@ export default class Sdk {
   getBalance() {
     return new Promise<GetBalanceRes>((resolve) => {
       if (this.isApp) {
+        //@ts-ignore
+        window['getBalanceCallBack'] = (res) => {
+          alert('getBalanceCallBack' + JSON.stringify(res))
+          this.callback(res, resolve)
+        }
+        //@ts-ignore
+        this.appMetaidjs?.getBalance(store.state.token!.access_token, 'getBalanceCallBack')
       } else {
         //@ts-ignore
         this.metaidjs.getBalance({
