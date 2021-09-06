@@ -678,8 +678,15 @@ export default class Sdk {
       if (this.isApp) {
         //@ts-ignore
         window['getBalanceCallBack'] = (res) => {
-          alert('getBalanceCallBack' + JSON.stringify(res))
-          this.callback(res, resolve)
+          res = JSON.parse(res)
+          const bsv = res.data
+          this.callback({
+            code: res.code,
+            data: {
+              bsv: bsv,
+              satoshis: new Decimal(bsv).mul(Math.pow(10, 8))
+            }
+          }, resolve)
         }
         //@ts-ignore
         this.appMetaidjs?.getBalance(store.state.token!.access_token, 'getBalanceCallBack')
