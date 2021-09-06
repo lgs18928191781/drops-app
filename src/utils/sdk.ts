@@ -534,13 +534,14 @@ export default class Sdk {
   // nft 上架/销售
   nftSell(params: NftSellParams) {
     return new Promise<NftSellResData>((resolve, reject) => {
+      alert('sell 1')
       const _params = {
         data: {
           ...params,
           payTo: [{ address: import.meta.env.VITE_AppAddress, amount: 10000 }]
         },
         callback: (res: MetaIdJsRes) => {
-          debugger
+          alert('appMetaidjs callback nftSell' + res)
           this.callback(res, resolve)
         },
       }
@@ -548,6 +549,9 @@ export default class Sdk {
         const functionName: string = `nftSellCallBack`
         // @ts-ignore
         window[functionName] = _params.callback
+        alert('sell 1')
+        // @ts-ignore
+        alert('appMetaidjs' + this.appMetaidjs?.nftSell)
         // @ts-ignore
         this.appMetaidjs?.nftSell(store.state.token!.access_token, JSON.stringify(_params.data), functionName)
       } else {
