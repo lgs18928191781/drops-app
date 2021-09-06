@@ -222,9 +222,9 @@ async function confirmSale() {
               codeHash: nft.val.codeHash,
               tokenIndex: nft.val.tokenIndex,
               deadlineTime: new Date(saleTime.value).getTime()
-            }).catch((res) => alert('SetDeadlineTime response fail' + res))
+            }).catch((res) => alert('SetDeadlineTime response fail' + JSON.stringify(res)))
             alert('sell h')
-            alert('SetDeadlineTime response' + response)
+            alert('SetDeadlineTime response' + JSON.stringify(response))
             if (response && response.code === NftApiCode.success) {
               alert('sell h')
               // 检查txId状态，确认上链后再跳转，防止上链延迟，跳转后拿不到数据

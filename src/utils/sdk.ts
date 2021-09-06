@@ -66,7 +66,7 @@ export default class Sdk {
     this.appScrect = import.meta.env.VITE_AppSecret
     // @ts-ignore
     const appMetaIdJs = window?.appMetaIdJsV2
-      ? window?.appMetaIdJsV2
+      ? window?.appMetaIdJs
       : window?.appMetaIdJs
       ? window?.appMetaIdJs
       : null
