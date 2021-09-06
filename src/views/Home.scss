@@ -1,5 +1,10 @@
 @import '@/assets/styles/var.scss';
+.banner{
+    margin-top: -60px;
+}
+
 .home{
+    margin-top: 40px;
     .section{
         margin-bottom: 90px;
         &:last-child{

@@ -1,4 +1,9 @@
 <template>
+  <!-- banner -->
+  <div class="banner">
+    <a><img src="" alt="" /></a>
+  </div>
+
   <div class="home">
     <!-- 推荐作品 -->
     <div class="section container recommend-section ">

@@ -34,6 +34,9 @@ body{
     }
 }
 
+.page-footer{
+    margin-top: 60px;
+}
 
 .tags{
     a{
@@ -100,8 +103,8 @@ body{
     cursor: pointer;
     overflow: hidden;
     &.btn-gray{
-        background: #aaa;
-        border-color: #aaa;
+        background: #BFC2CC;
+        border-color: #BFC2CC;
     }
     &.btn-block{
         display: block;
@@ -143,6 +146,17 @@ body{
     }
     span{
         color: $mainColor;
+    }
+}
+
+.banner{
+    a{
+        display: block;
+        background: #303133;
+        img{
+            display: block;
+            height: 220px;
+        }
     }
 }
 
@@ -279,22 +293,6 @@ body{
     }
 }
 
-@media only screen and (max-width: 800px){
-    .nft-list {
-        .nft-item{
-            width: calc((100% - (20px * 2)) / 3);
-            &:nth-child(4n){
-                margin-right: 20px;
-            }
-            &:nth-child(2n){
-                margin-right: 20px;
-            }
-            &:nth-child(3n){
-                margin-right: 0px;
-            }
-        }
-    }
-}
 
 @media only screen and (max-width: 500px){
     .main{
