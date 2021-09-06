@@ -234,6 +234,51 @@ declare interface GetMyOnSellNftListRes extends apiResponse{
   }
 }
 
+declare interface GetMetaBotListRes extends apiResponse{
+  data: {
+    total: number
+    results: {
+      items: GetMetaBotListResItem []
+    }
+  }
+}
+
+
+declare interface GetMetaBotListResItem{
+  NftSellState: number
+  nftBalance: number
+  nftBuyTimestamp: number
+  nftBuyTxId: string
+  nftCancelTimestamp: number
+  nftCancelTxId: string
+  nftCodehash: string
+  nftDataStr: string
+  nftDesc: string
+  nftGenesis: string
+  nftGenesisTxId: string
+  nftIcon: string
+  nftIssueAvatarTxId: string
+  nftIssueMetaId: string
+  nftIssueTimestamp: number
+  nftIssueVersion: string
+  nftIssuer: string
+  nftName: string
+  nftOwnerAvatarTxId: string
+  nftOwnerMetaId: string
+  nftOwnerName: string
+  nftPrice: number
+  nftSellContractTxId: string
+  nftSellDesc: string
+  nftSellTimestamp: number
+  nftSellTxId: string
+  nftSensibleId: string
+  nftSeriesName: string
+  nftSymbol: string
+  nftTimestamp: number
+  nftTokenIndex: string
+  nftWebsite: string
+}
+
 declare interface GetNftIssueyTxIdResItem{
   nftBalance: number
   nftCodehash: string

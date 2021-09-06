@@ -46,23 +46,23 @@
         <div class="meta-bot-list container">
           <div class="meta-bot-item" v-for="metabot in metaBots">
             <div class="cover">
-              <img src="" alt="" />
+              <img :src="metafileUrl(metabot.nftIcon)" :alt="metabot.nftName" />
             </div>
             <div class="cont">
-              <div class="name">ShowBot #888</div>
+              <div class="name">{{metabot.nftName}}</div>
               <div class="user-list">
                 <div class="user-item flex flex-align-center">
-                  <img src="avatar" />
-                  <span class="name">Show</span>
-                  <span class="type">(铸造者)</span>
+                  <img class="avatar" :src="$filters.avatar(metabot.nftIssueMetaId)" />
+                  <span class="name">{{metabot.nftIssuer}}</span>
+                  <span class="type">({{ $t('creater') }})</span>
                 </div>
                 <div class="user-item flex flex-align-center">
-                  <img src="avatar" />
-                  <span class="name">Show</span>
-                  <span class="type">(铸造者)</span>
+                  <img class="avatar" :src="$filters.avatar(metabot.nftOwnerMetaId)" />
+                  <span class="name">{{metabot.nftOwnerName}}</span>
+                  <span class="type">({{ $t('owner') }})</span>
                 </div>
               </div>
-              <div class="btn btn-block btn-gray">12.54 BSV</div>
+              <div class="btn btn-block btn-gray" @click="buy(metabot)">12.54 BSV</div>
             </div>
           </div>
         </div>
@@ -81,18 +81,24 @@
 
 </template>
 <script lang="ts" setup>
-import { ref, reactive } from "@vue/reactivity";
+import { ref, reactive, onMounted } from "vue"
 import { useStore } from '@/store'
 import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import IsNull from '../components/IsNull/IsNull.vue'
-import { useRouter } from "vue-router";
+import { useRouter } from "vue-router"
+import { GetMetaBotList } from "@/api"
+import { ElLoading, ElMessage, ElMessageBox, ElSkeleton, ElSkeletonItem } from "element-plus"
+import { checkSdkStatus, metafileUrl } from "@/utils/util"
+import { useI18n } from "vue-i18n"
+import Decimal from "decimal.js-light"
 
 
 const store = useStore()
 const router = useRouter()
+const i18n = useI18n()
 const isShowSkeleton = ref(true)
 const keyword = ref('')
-const metaBots = reactive([])
+const metaBots: GetMetaBotListResItem [] = reactive([])
 const pagination = reactive({
   ...store.state.pagination,
 })
@@ -101,9 +107,175 @@ function search() {
 
 }
 
-function getMore () {
-
+function getDatas (isCover = false) {
+  return new Promise<void>(async resolve => {
+    const res = await GetMetaBotList({
+      Page: pagination.page.toString(),
+      PageSize: pagination.pageSize.toString()
+    })
+    if (res.code === 0) {
+      if (isCover) {
+        metaBots.length = 0
+      }
+      if (res.data.results.items.length > 0) {
+        metaBots.push(...res.data.results.items)
+      } else {
+        pagination.loading = true
+      }
+      isShowSkeleton.value = false
+    }
+    resolve()
+  })
 }
+
+function getMore () {
+  if(pagination.loading || pagination.nothing) return
+  pagination.page++
+  pagination.loading = true
+  getDatas().then(() => {
+    pagination.loading = false
+  })
+}
+
+async function buy(metabot: GetMetaBotListResItem) {
+  await checkSdkStatus()
+  const loading = ElLoading.service({
+    lock: true,
+    text: 'Loading',
+    spinner: 'el-icon-loading',
+    background: 'rgba(0, 0, 0, 0.7)',
+    customClass: 'full-loading',
+  })
+
+  
+
+  // const getAddressRes = await GetNFTOwnerAddress({ tokenId: nft.val.tokenId }).catch(() =>
+  //   loading.close()
+  // )
+  // if (getAddressRes && getAddressRes.code === NftApiCode.success) {
+    
+  // }
+
+
+  const params = {
+      codehash: metabot.nftCodehash,
+      genesis: metabot.nftGenesis,
+      tokenIndex: metabot.nftTokenIndex,
+      genesisTxid: metabot.nftGenesisTxId,
+      // address: getAddressRes.data.address,
+      sensibleId: metabot.nftSensibleId,
+      sellTxId: metabot.nftSellTxId,
+      sellContractTxId: metabot.nftSellContractTxId,
+      amount: new Decimal(metabot.nftPrice).toNumber()
+    }
+    // 需要消费金额
+    const useAmountRes = await store.state.sdk
+      ?.nftBuy({
+        checkOnly: true,
+        ...params
+      })
+      .catch(() => {
+        loading.close()
+      })
+    if (useAmountRes?.code === 200) {
+      const useAmount = useAmountRes.data.amount! /* + nft.val.amount */
+      // 查询用户余额
+    const userBalanceRes = await store.state.sdk?.getBalance()
+    if (userBalanceRes && userBalanceRes.code === 200) {
+      if (userBalanceRes.data.satoshis > useAmount) {
+        // 余额足够
+        ElMessageBox.confirm(
+          `${i18n.t('useAmountTips')}: ${useAmount} SATS`,
+          i18n.t('niceWarning'),
+          {
+            confirmButtonText: i18n.t('confirm'),
+            cancelButtonText: i18n.t('cancel'),
+            closeOnClickModal: false
+          }
+        ).then(async () => {
+          // 确认支付
+          const res = await store.state.sdk?.nftBuy(params).catch(() => {
+            loading.close()
+          })
+          if (res?.code === 200) {
+            // nft.val.ownerMetaId = store.state.userInfo!.metaId
+            // nft.val.ownerName = store.state.userInfo!.name
+            // nft.val.putAway = false
+            ElMessage.success(i18n.t('buySuccess'))
+            loading.close()
+            router.push({ name: 'nftSuccess', 
+              params: { 
+                genesisId: metabot.nftGenesis,
+                tokenIndex: metabot.nftTokenIndex,
+                codehash: metabot.nftCodehash
+              },
+              query: {
+                type: 'buyed'
+              }
+            })
+
+            /* // 上链完 nft buy 协议 要 上报服务器
+            const response = await BuyNft({
+              tokenId: nft.val.tokenId,
+              payMentAddress: store.state.userInfo!.address,
+              collectionAddress: nft.val.ownerAddress,
+              payTxId: res.data.txid,
+              amount: new Decimal(nft.val.amount).toNumber(),
+            }).catch(() => loading.close())
+              if (response && response.code === NftApiCode.success) {
+                nft.val.ownerMetaId = store.state.userInfo!.metaId
+                nft.val.ownerName = store.state.userInfo!.name
+                nft.val.putAway = false
+                ElMessage.success(i18n.t('buySuccess'))
+                loading.close()
+              } */
+            } else {
+              loading.close()
+              if (res) {
+                nftNotCanBuy(res)
+              }
+            }
+          })
+          .catch(() => loading.close())
+        } else {
+          // 余额不足
+          loading.close()
+          ElMessageBox.alert(
+            `
+          <p>${i18n.t('useAmountTips')}: ${useAmount} SATS</p>
+          <p>${i18n.t('insufficientBalance')}</p>
+        `,
+            {
+              confirmButtonText: i18n.t('confirm'),
+              dangerouslyUseHTMLString: true,
+            }
+          )
+          return
+        }
+      }
+    } else {
+      loading.close()
+      if (useAmountRes) {
+        nftNotCanBuy(useAmountRes)
+      }
+    }
+}
+
+function nftNotCanBuy (res: any) {
+  if (res.code === 204 && res.data && res.data.message === 'The NFT is not for sale because  the corresponding SellUtxo cannot be found.') {
+    ElMessage.error(i18n.t('nftNotCanBuy'))
+    router.back()
+  }
+}
+
+
+onMounted(() => {
+  pagination.page = 1
+  pagination.loading = false
+  pagination.nothing = false
+  getDatas(true)
+})
+
 
 // isShowSkeleton.value = false
 </script>

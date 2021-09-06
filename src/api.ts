@@ -240,3 +240,11 @@ export const GetMyNftEligibility = (params: {
 }): Promise<apiResponse> => {
   return apiHttp.get(`/aggregation/v2/app/nftOnShow/getMyNftEligibility/${params.MetaId}//${params.IssueMetaId}/${params.lang}`)
 }
+
+
+export const GetMetaBotList = (params: {
+  PageSize: string,
+  Page: string
+}): Promise<GetMetaBotListRes> => {
+  return apiHttp.post(`/aggregation/v2/app/metaBot/getMetaBotList`, params)
+}
