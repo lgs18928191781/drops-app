@@ -36,6 +36,7 @@ import { ElMessage } from 'element-plus'
 import { store } from '@/store'
 import { Decimal } from 'decimal.js-light'
 import { Langs } from '@/api'
+import { fail } from 'assert'
 
 const metaIdTag = import.meta.env.VITE_MetaIdTag
 
@@ -692,8 +693,21 @@ export default class Sdk {
     resolve: { (value: MetaIdJsRes | PromiseLike<MetaIdJsRes>): void; (arg0: MetaIdJsRes): void }
   ) {
     if (this.isApp && typeof res === 'string') {
-      res = JSON.parse(res)
+      try {
+        res = JSON.parse(res)
+      } catch (error) {
+        res = {
+          code: 400,
+          data: {
+            message: res
+          },
+          status: 'fail',
+          accessToken: '',
+          handlerId: ''
+        }
+      }
     }
+    alert('res' + res)
     if (res.code !== 200 && res.code !== 205) {
       if (res.data.message !== 'The NFT is not for sale because  the corresponding SellUtxo cannot be found.') {
         ElMessage.error(res.data.message)
