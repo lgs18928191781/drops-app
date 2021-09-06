@@ -189,6 +189,7 @@ async function confirmSale() {
   const useAmountRes = await store.state.sdk?.nftSell({ checkOnly: true, ...params }).catch(() => {
     loading.close()
   })
+  alert('sell result' + useAmountRes)
   if (useAmountRes && useAmountRes.code === 200) {
     const useAmount = useAmountRes.data.amount!
     const userBalanceRes = await store.state.sdk?.getBalance()

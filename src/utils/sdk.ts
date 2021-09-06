@@ -707,7 +707,7 @@ export default class Sdk {
         }
       }
     }
-    alert('res' + res)
+    alert('res' + JSON.stringify(res))
     if (res.code !== 200 && res.code !== 205) {
       if (res.data.message !== 'The NFT is not for sale because  the corresponding SellUtxo cannot be found.') {
         ElMessage.error(res.data.message)
