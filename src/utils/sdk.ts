@@ -66,7 +66,7 @@ export default class Sdk {
     this.appScrect = import.meta.env.VITE_AppSecret
     // @ts-ignore
     const appMetaIdJs = window?.appMetaIdJsV2
-      ? window?.appMetaIdJs
+      ? window?.appMetaIdJsV2
       : window?.appMetaIdJs
       ? window?.appMetaIdJs
       : null
@@ -92,23 +92,21 @@ export default class Sdk {
       }
       if (this.isApp) {
         const functionName: string = `getUserInfoCallBack`
-        
         const that = this
         // @ts-ignore
         window[functionName] = function (res) {
           alert('call getUserInfo')
           that.callback(res, resolve)
         }
-        alert('appMetaidjs?.getUserInfo userInfo'+ this.appMetaidjs?.getUserInfo)
-        alert('appMetaidjs userInfo')
-        this.getLoginUserInfo(functionName)
+        if (window.appMetaIdJsV2) {
+          window.appMetaIdJsV2?.getUserInfo(this.appId, this.appScrect, functionName)
+        } else {
+          window.appMetaIdJs?.getUserInfo(this.appId, this.appScrect, functionName)
+        }
       } else {
         this.metaidjs?.getUserInfo(params)
       }
     })
-  }
-  getLoginUserInfo(functionName:string){
-    window.appMetaIdJs?.getUserInfo(this.appId, this.appScrect, functionName)
   }
   sendMetaDataTx(params: {
     data: string
@@ -133,7 +131,11 @@ export default class Sdk {
         const functionName: string = `sendMetaDataTxCallBack`
         // @ts-ignore
         window[functionName] = params.callback
-        this.appMetaidjs?.sendMetaDataTx(accessToken, JSON.stringify(params), functionName)
+        if (window.appMetaIdJsV2) {
+          window.appMetaIdJsV2?.sendMetaDataTx(accessToken, JSON.stringify(params), functionName)
+        } else {
+          window.appMetaIdJs?.sendMetaDataTx(accessToken, JSON.stringify(params), functionName)
+        }
       } else {
         const _params = {
           callback: (res: MetaIdJsRes) => {
@@ -170,7 +172,11 @@ export default class Sdk {
       const functionName: string = `eciesDecryptDataCallBack`
       // @ts-ignore
       window[functionName] = params.callback
-      this.appMetaidjs?.decryptData(params.accessToken, params.data, functionName)
+      if (window.appMetaIdJsV2) {
+        window.appMetaIdJsV2?.decryptData(params.accessToken, params.data, functionName)
+      } else {
+        window.appMetaIdJs?.decryptData(params.accessToken, params.data, functionName)
+      }
     } else {
       this.metaidjs?.eciesDecryptData(params)
     }
@@ -433,7 +439,6 @@ export default class Sdk {
           seriesName: params.seriesName
         },
         callback: (res: SdkGenesisNFTRes) => {
-          debugger
           this.callback(res, resolve)
         },
       }
@@ -441,7 +446,11 @@ export default class Sdk {
         const functionName: string = `genesisNFTCallBack`
         // @ts-ignore
         window[functionName] = _params.callback
-        this.appMetaidjs?.genesisNFT(store.state.token!.access_token, JSON.stringify(_params.data), functionName)
+        if (window.appMetaIdJsV2) {
+          window.appMetaIdJsV2?.genesisNFT(store.state.token!.access_token, JSON.stringify(_params.data), functionName)
+        } else {
+          window.appMetaIdJs?.genesisNFT(store.state.token!.access_token, JSON.stringify(_params.data), functionName)
+        }
       } else {
         debugger
         // @ts-ignore
@@ -504,7 +513,11 @@ export default class Sdk {
         const functionName: string = `issueNFTCallBack`
         // @ts-ignore
         window[functionName] = _params.callback
-        this.appMetaidjs?.issueNFT(store.state.token!.access_token, JSON.stringify(_params.data), functionName)
+        if (window.appMetaIdJsV2) {
+          window.appMetaIdJsV2?.issueNFT(store.state.token!.access_token, JSON.stringify(_params.data), functionName)
+        } else {
+          window.appMetaIdJs?.issueNFT(store.state.token!.access_token, JSON.stringify(_params.data), functionName)
+        }
       } else {
         // @ts-ignore
         debugger
@@ -532,7 +545,11 @@ export default class Sdk {
         // @ts-ignore
         window[functionName] = _params.callback
         // @ts-ignore
-        this.appMetaidjs?.nftBuy(store.state.token!.access_token, JSON.stringify(_params.data), functionName)
+        if (window.appMetaIdJsV2) {
+          window.appMetaIdJsV2?.nftBuy(store.state.token!.access_token, JSON.stringify(_params.data), functionName)
+        } else {
+          window.appMetaIdJs?.nftBuy(store.state.token!.access_token, JSON.stringify(_params.data), functionName)
+        }
       } else {
         // @ts-ignore
         this.metaidjs?.nftBuy(_params)
@@ -562,8 +579,11 @@ export default class Sdk {
         alert('sell 1')
         // @ts-ignore
         alert('appMetaidjs' + this.appMetaidjs?.nftSell)
-        // @ts-ignore
-        this.appMetaidjs?.nftSell(store.state.token!.access_token, JSON.stringify(_params.data), functionName)
+        if (window.appMetaIdJsV2) {
+          window.appMetaIdJsV2?.nftSell(store.state.token!.access_token, JSON.stringify(_params.data), functionName)
+        } else {
+          window.appMetaIdJs?.nftSell(store.state.token!.access_token, JSON.stringify(_params.data), functionName)
+        }
       } else {
         // @ts-ignore
         this.metaidjs?.nftSell(_params)
@@ -592,7 +612,11 @@ export default class Sdk {
         // @ts-ignore
         window[functionName] = _params.callback
         // @ts-ignore
-        this.appMetaidjs?.nftCancel(store.state.token!.access_token, JSON.stringify(_params.data), functionName)
+        if (window.appMetaIdJsV2) {
+          window.appMetaIdJsV2?.nftCancel(store.state.token!.access_token, JSON.stringify(_params.data), functionName)
+        } else {
+          window.appMetaIdJs?.nftCancel(store.state.token!.access_token, JSON.stringify(_params.data), functionName)
+        }
       } else {
         debugger
         // @ts-ignore
@@ -612,6 +636,7 @@ export default class Sdk {
         address
       }
       if (this.isApp) {
+        alert('没兼容APP')
         const functionName: string = `nftList`
         // @ts-ignore
         window[functionName] = params.callback
@@ -676,8 +701,11 @@ export default class Sdk {
             }
           }, resolve)
         }
-        //@ts-ignore
-        this.appMetaidjs?.getBalance(store.state.token!.access_token, 'getBalanceCallBack')
+        if (window.appMetaIdJsV2) {
+          window.appMetaIdJsV2?.getBalance(store.state.token!.access_token, 'getBalanceCallBack')
+        } else {
+          window.appMetaIdJs?.getBalance(store.state.token!.access_token, 'getBalanceCallBack')
+        }
       } else {
         //@ts-ignore
         this.metaidjs.getBalance({
