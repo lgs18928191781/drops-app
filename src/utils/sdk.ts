@@ -80,9 +80,11 @@ export default class Sdk {
 
   getUserInfo() {
     return new Promise<MetaIdJsRes>((resolve) => {
+      alert('sdk userInfo')
       const params = {
         accessToken: store.state.token ? store.state.token?.access_token : '',
         callback: (res: MetaIdJsRes) => {
+          alert('callback userInfo'+ res)
           this.callback(res, resolve)
         },
       }
@@ -90,6 +92,8 @@ export default class Sdk {
         const functionName: string = `getUserInfoCallBack`
         // @ts-ignore
         window[functionName] = params.callback
+        alert('appMetaidjs?.getUserInfo userInfo'+ this.appMetaidjs?.getUserInfo)
+        alert('appMetaidjs userInfo')
         this.appMetaidjs?.getUserInfo(this.appId, this.appScrect, functionName)
       } else {
         this.metaidjs?.getUserInfo(params)

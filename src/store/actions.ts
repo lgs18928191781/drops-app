@@ -56,6 +56,7 @@ export const actions: ActionTree<State, State> & Actions = {
     })
   },
   async [Action.getUserInfo]({ state, commit, dispatch }) {
+    alert('store userInfo')
     const res = await state.sdk?.getUserInfo()
     if (res && res.code === 200) {
       commit(Mutation.SETUSERINFO, res.data)
