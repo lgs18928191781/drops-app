@@ -189,23 +189,33 @@ async function confirmSale() {
   const useAmountRes = await store.state.sdk?.nftSell({ checkOnly: true, ...params }).catch(() => {
     loading.close()
   })
-  alert('sell result' + useAmountRes)
+  alert('sell result' + JSON.stringify(useAmountRes))
   if (useAmountRes && useAmountRes.code === 200) {
+    alert('sell a')
     const useAmount = useAmountRes.data.amount!
+    alert('sell b')
     const userBalanceRes = await store.state.sdk?.getBalance()
+    alert('sell c')
+    alert('userBalanceRes c'+  userBalanceRes)
     if (userBalanceRes?.code === 200) {
+      alert('sell d')
+      alert('userBalanceRes.data.satoshis' + userBalanceRes.data.satoshis)
+      alert('useAmount' + useAmount)
       if (userBalanceRes.data.satoshis > useAmount) {
+        alert('sell e')
         // 余额足够
         ElMessageBox.confirm(`${i18n.t('useAmountTips')}: ${useAmount} SATS`, i18n.t('niceWarning'), {
           confirmButtonText: i18n.t('confirm'),
           cancelButtonText: i18n.t('cancel'),
           closeOnClickModal: false
         }).then(async () => {
+          alert('sell f')
           // 确认支付
           const res = await store.state.sdk?.nftSell(params).catch(() => {
             loading.close()
           })
           if (res?.code === 200) {
+            alert('sell g')
             // 上报时间
             const response = await SetDeadlineTime({
               genesis: nft.val.genesis,
@@ -213,6 +223,7 @@ async function confirmSale() {
               tokenIndex: nft.val.tokenIndex,
               deadlineTime: new Date(saleTime.value).getTime()
             })
+            alert('sell h')
             if (response.code === NftApiCode.success) {
               // 检查txId状态，确认上链后再跳转，防止上链延迟，跳转后拿不到数据
               await store.state.sdk?.checkTxIdStatus(res.data.sellTxId)
