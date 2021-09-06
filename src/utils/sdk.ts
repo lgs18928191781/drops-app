@@ -678,6 +678,9 @@ export default class Sdk {
     res: MetaIdJsRes,
     resolve: { (value: MetaIdJsRes | PromiseLike<MetaIdJsRes>): void; (arg0: MetaIdJsRes): void }
   ) {
+    if (this.isApp && typeof res === 'string') {
+      res = JSON.parse(res)
+    }
     if (res.code !== 200 && res.code !== 205) {
       if (res.data.message !== 'The NFT is not for sale because  the corresponding SellUtxo cannot be found.') {
         ElMessage.error(res.data.message)
