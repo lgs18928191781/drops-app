@@ -66,7 +66,7 @@ export default (({mode}) => {
       sourcemap: mode === 'prod' ? false : 'inline',
       rollupOptions: {
         output: {
-          sourcemap: 'inline'
+          sourcemap: mode === 'prod' ? false : 'inline'
         }
       }
     },
