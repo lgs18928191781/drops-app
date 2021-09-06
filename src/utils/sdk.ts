@@ -90,8 +90,13 @@ export default class Sdk {
       }
       if (this.isApp) {
         const functionName: string = `getUserInfoCallBack`
+        
+        const that = this
         // @ts-ignore
-        window[functionName] = params.callback
+        window[functionName] = function (res) {
+          alert('call getUserInfo')
+          that.callback(res, resolve)
+        }
         alert('appMetaidjs?.getUserInfo userInfo'+ this.appMetaidjs?.getUserInfo)
         alert('appMetaidjs userInfo')
         this.appMetaidjs?.getUserInfo(this.appId, this.appScrect, functionName)

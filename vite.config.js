@@ -63,6 +63,7 @@ export default (({mode}) => {
     },
     build: {
       target: 'es2015',
+      minify: mode === 'prod' ? true : false,
       sourcemap: mode === 'prod' ? false : 'inline',
       rollupOptions: {
         output: {
