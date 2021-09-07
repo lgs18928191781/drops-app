@@ -165,13 +165,15 @@
             <div class="operate-warp">
               <div
                 class="btn btn-block"
+                :class="{'btn-gray': !nft.val.putAway}"
                 @click="buy"
                 v-if="
                   !store.state.userInfo ||
                   (store.state.userInfo && store.state.userInfo.metaId !== nft.val.ownerMetaId)
                 "
               >
-                <template v-if="nft.val.amount">{{ i18n.locale.value === 'zh' ? `以 ${ new Decimal(nft.val.amount).div(Math.pow(10, 8)).toString() } BSV 购买` : `Buy Now At ${new Decimal(nft.val.amount).div(10 ** 8).toString()} BSV` }}</template>
+                <template v-if="nft.val.putAway">{{ i18n.locale.value === 'zh' ? `以 ${ new Decimal(nft.val.amount).div(Math.pow(10, 8)).toString() } BSV 购买` : `Buy Now At ${new Decimal(nft.val.amount).div(10 ** 8).toString()} BSV` }}</template>
+                <template v-else>{{$t('isBeBuyedOrCanceled')}}</template>
               </div>
               <template
                 v-else-if="
@@ -533,6 +535,8 @@ function offSale() {
 
 
 async function buy() {
+  if (!nft.val.putAway) return
+  
   await checkSdkStatus()
   const loading = ElLoading.service({
     lock: true,

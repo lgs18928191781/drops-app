@@ -243,8 +243,20 @@ export const GetMyNftEligibility = (params: {
 
 
 export const GetMetaBotList = (params: {
-  PageSize: string,
+  PageSize: string
   Page: string
+  Start: number
+  End: number
 }): Promise<GetMetaBotListRes> => {
-  return apiHttp.post(`/aggregation/v2/app/metaBot/getMetaBotList`, params)
+  return apiHttp.post(`/aggregation/v2/app/metaBot/getMetaBotListByBetweenNumber`, params)
+}
+
+
+export const GetMetaBotListByBetweenNumber = (params: {
+  PageSize: string
+  Page: string
+  Start: number
+  End: number
+}): Promise<GetMetaBotListRes> => {
+  return apiHttp.post(`/aggregation/v2/app/metaBot/getMetaBotListByBetweenNumber`, params)
 }

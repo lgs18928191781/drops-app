@@ -22,7 +22,7 @@
     </div>
 
     <div class="metabot-tags container">
-      <a class="metabot-tag">#021-#200</a>
+      <a class="metabot-tag" :class="{'active': sectionIndex === index }" v-for="(section, index) in sections" :key="index" @click="changeSectionIndex(index)">{{section.name}}</a>
     </div>
 
     <el-skeleton class="meta-bot-list container" :loading="isShowSkeleton" animated :count="pagination.pageSize">
@@ -48,7 +48,7 @@
       <template #default>
         <!-- MetaBot list -->
         <div class="meta-bot-list container">
-          <div class="meta-bot-item" v-for="metabot in metaBots">
+          <a @click="toDetail(metabot)" class="meta-bot-item" v-for="metabot in metaBots" :key="metabot.nftGenesis + metabot.nftCodehash + metabot.nftTokenIndex ">
             <div class="cover">
               <img :src="metafileUrl(metabot.nftIcon)" :alt="metabot.nftName" />
             </div>
@@ -66,9 +66,9 @@
                   <span class="type">({{ $t('owner') }})</span>
                 </div>
               </div>
-              <div class="btn btn-block" :class="{'btn-gray': metabot.NftSellState !== 0 }" @click="buy(metabot)">12.54 BSV</div>
+              <div class="btn btn-block" :class="{'btn-gray': metabot.NftSellState !== 0 }" @click.stop="buy(metabot)">{{new Decimal(metabot.nftPrice).div(Math.pow(10,8)).toString()}} BSV</div>
             </div>
-          </div>
+          </a>
         </div>
       </template>
     </el-skeleton>
@@ -107,15 +107,36 @@ const pagination = reactive({
   ...store.state.pagination,
 })
 
-function search() {
+const sections = [
+  {name: '#001-050', start: 1, end: 20},
+  {name: '#051-100', start: 51, end: 100},
+  {name: '#101-150', start: 101, end: 150},
+  {name: '#151-200', start: 151, end: 200},
+]
+const sectionIndex = ref(0) 
 
+function search() {
+  
+}
+
+function toDetail (metabot: GetMetaBotListResItem) {
+  router.push({
+    name: 'detail',
+    params: {
+      genesisId: metabot.nftGenesis,
+      codehash: metabot.nftCodehash,
+      tokenIndex: metabot.nftTokenIndex
+    }
+  })
 }
 
 function getDatas (isCover = false) {
   return new Promise<void>(async resolve => {
     const res = await GetMetaBotList({
       Page: pagination.page.toString(),
-      PageSize: pagination.pageSize.toString()
+      PageSize: pagination.pageSize.toString(),
+      Start: sections[sectionIndex.value].start,
+      End: sections[sectionIndex.value].end
     })
     if (res.code === 0) {
       if (isCover) {
@@ -124,7 +145,7 @@ function getDatas (isCover = false) {
       if (res.data.results.items.length > 0) {
         metaBots.push(...res.data.results.items)
       } else {
-        pagination.loading = true
+        pagination.nothing = true
       }
       isShowSkeleton.value = false
     }
@@ -139,6 +160,16 @@ function getMore () {
   getDatas().then(() => {
     pagination.loading = false
   })
+}
+
+function changeSectionIndex (index: number) {
+  if (sectionIndex.value === index) return
+  sectionIndex.value = index
+  isShowSkeleton.value = true
+  pagination.page = 1
+  pagination.loading = false
+  pagination.nothing = false
+  getDatas(true)
 }
 
 async function buy(metabot: GetMetaBotListResItem) {

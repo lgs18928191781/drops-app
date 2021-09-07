@@ -1,46 +1,51 @@
 <template>
-    <div class="tab">
-        <a v-for="(tab, index) in tabs" :key="index" :class="{ 'active': tabIndex === index }" @click="changeTab(index)">{{ $t(tab.key) }}</a>
+    <div class="tariff-description">
+        <div class="title">NFTonShow资费说明</div>
+
+        <div class="tariff-description-section">
+            <div class="tariff-description-title">业务收费销售</div>
+            <div class="type">平台费用：<span>销售价格的5%</span></div>
+            <div class="drsc">
+                <div class="drsc-title">说明:</div>
+                <div class="drsc-cont">
+                    卖方收入：卖方所设定的价格，比如设定销售价格是1bsv，那么卖方在NFT成交后收入就是1bsv； NOS方收入：卖方设定价格的5%，比如NFT设定的销售价格是1bsv，那么NOS方收入就是0.05bsv； 买家支出：NFT销售价格+NOS平台费用+矿工手续费。比如NFT定价是1BSV，手续费是 0.0002bsv，NOS手续费 0.05，那么买家支出1.0502bsv。
+                </div>
+            </div>
+        </div>
+
+        <div class="tariff-description-section">
+            <div class="tariff-description-title">上架</div>
+            <div class="type">平台费用：<span>10,000 sat</span></div>
+            <div class="drsc">
+                <div class="drsc-title">说明:</div>
+                <div class="drsc-cont">前提：NFT的上架 (nft sell) 手续费为10,000 sat左右。如果这个费用有比较大变化，则我们的上架费用也需要相应变化；
+                    用户上架总费用为：矿工费+10,000 sat。
+                </div>
+            </div>
+        </div>
+
+        <div class="tariff-description-section">
+            <div class="tariff-description-title">下架</div>
+            <div class="type">平台费用：<span>10,000 sat</span></div>
+            <div class="drsc">
+                <div class="drsc-title">说明:</div>
+                <div class="drsc-cont">
+                    一般下架的矿工费为2万聪左右，则用户总下架费用为矿工费+10,000 sat。
+                </div>
+            </div>
+        </div>
+
+        <div class="tariff-description-section">
+            <div class="tariff-description-title">铸造</div>
+            <div class="type">平台费用：<span>10,000 sat</span></div>
+            <div class="drsc">
+                <div class="drsc-title">说明:</div>
+                <div class="drsc-cont">
+                    铸造功能开放条件（暂时条件）：用户的MC持有量≥50,000；说明：一般NFT铸造费用为2～4万聪，则用户需支付铸造费用和平台费用共约3～5万聪给平台。
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="tab-cont">
-        <template v-if="tabIndex === 0">
-        <p class="title">关于NFTonShow的收费</p>
-
-        <div class="tab-cont-item">
-            <b>说明</b>：<br />
-            <b>卖方收入：</b>卖方所设定的价格，比如设定销售价格是1bsv，那么卖方在NFT成交后收入就是1bsv<br />
-            <b>NOS方收入：</b>卖方设定价格的5%，比如NFT设定的销售价格是1bsv，那么NOS方收入就是0.05bsv<br />
-            <b>买家支出：</b>NFT销售价格+NOS平台费用+矿工手续费。比如NFT定价是1BSV，手续费是 0.0002bsv，NOS手续费0.05，那么买家支出1.0502bsv<br /><br />
-        </div>
-
-        <div class="tab-cont-item">
-            <b>上架：平台费用：</b>1万聪<br />
-            <b>说明：</b><br />
-            <b>前提：</b>NFT的上架（nft sell）手续费为1万聪左右。如果这个费用有比较大变化，则我们的上架费用也需要相应变化<br />
-            用户上架总费用为矿工费+1万聪<br />
-        </div>
-
-        <div class="tab-cont-item">
-            <b>下架：平台费用：</b>1万聪<br />
-            <b>说明：</b><br />
-            一般下架的矿工费为2万聪左右，则用户总下架费用为矿工费+1万聪<br />
-        </div>
-
-        <div class="tab-cont-item">
-            <b>铸造：</b>平台费用：1万聪<br />
-            <b>条件：</b>用户持有1万MC方可铸造（暂时条件）<br />
-            <b>说明：</b><br />
-            一般NFT铸造费用为2-4万聪，则用户需支付约3-5万聪给平台<br />
-        </div>
-
-    </template>
-    </div>
-    <!-- <div class="list-wap">
-        <div class="title">{{ $t('protocolUsed ')}}</div>
-        <div class="list">
-
-        </div>
-    </div> -->
 </template>
 <script setup lang="ts">
 import { ref } from "vue";
