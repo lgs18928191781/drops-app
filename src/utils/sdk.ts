@@ -217,12 +217,14 @@ export default class Sdk {
     parentReject?: any
   ) {
     return new Promise<void>(async (resolve, reject) => {
+      alert('checkNftTxIdStatus txId' + txId)
       axios.get(`https://api.sensiblequery.com/tx/${txId}`).then((res) => {
         if (res.data.code === 0) {
           if (parentResolve) parentResolve()
           else resolve()
         } else {
           // 超过30次还不成功就 回调失败
+          alert('checkNftTxIdStatus response' + res)
           if (timer && timer > 30) {
             if (parentReject) parentReject()
             else reject()
@@ -237,7 +239,8 @@ export default class Sdk {
             }, 1000)
           }
         }
-      }).catch(() => {
+      }).catch((err) => {
+        alert('checkNftTxIdStatus err' + err)
         setTimeout(() => {
           this.checkNftTxIdStatus(
             txId,
@@ -321,18 +324,12 @@ export default class Sdk {
       let { nftTotal, codeHash, genesis, genesisTxId, sensibleId, ..._params } = params
       let amount = 0
       const issueOperate = async () => {
+        alert('params.checkOnly' + params.checkOnly)
         if (!params.checkOnly) {
+          alert('params.checkOnly into')
           await this.checkNftTxIdStatus(genesisTxId!).catch(() => reject('createNFT error'))
         }
-        // const issueParams = await this.setIssuePrams({
-        //   genesisId: genesis!,
-        //   genesisTxid: genesisTxId!,
-        //   codehash: codeHash!,
-        //   sensibleId: sensibleId,
-        //   ..._params,
-        // })
-
-        // 3.issueNFT
+        alert('params.checkOnly success')
         const issueRes = await this.issueNFT({
           genesisId: genesis!,
           genesisTxid: genesisTxId!,
@@ -379,15 +376,16 @@ export default class Sdk {
             sensibleId = res.data.sensibleId
           }
           debugger
-          issueOperate()
+          await issueOperate()
         } else {
           reject('createNFT error')
         }
       } else {
-        issueOperate()
+        await issueOperate()
       }
     })
   }
+
 
   // setIssuePrams (params: NFTIssueParams) {
   //   return new Promise((resolve) => {
