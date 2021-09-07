@@ -136,7 +136,7 @@
                   <div class="metaid" v-if="nft.val.foundryMetaId">MetaID:{{ nft.val.foundryMetaId.slice(0, 6) }}</div>
                 </div>
               </div>
-              <CertTemp @click="toCert" :isCert="nft.val.foundryMetaId === '3c03f6b8783fa672bb34953519110944dab1d8a23711c7df4f1dd9e16e5b823c' ? true : false" />
+              <CertTemp @click="toCert" :isCert="nft.val.foundryMetaId === '3c03f6b8783fa672bb34953519110944dab1d8a23711c7df4f1dd9e16e5b823c' || nft.val.foundryMetaId === '974e2977d5c9446f7f48fd82c9ea51f82749b9ef7c00d26b73bc450d167d5f31' ? true : false" />
             </div>
             <div class="drsc flex1 flex flex-v">
               <div class="title flex flex-align-center">

@@ -157,5 +157,7 @@
   "incomeStatement": "收入说明",
   "nftNotCanBuy": "交易失败，NFT已被购买或下架",
   "issueMetaTxId": "发行TXID",
-  "look": "查看"
+  "look": "查看",
+  "isBeCancelSelled": "已被下架，不可购买",
+  "isBeBuyed": "已被购买"
 }

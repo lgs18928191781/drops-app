@@ -152,10 +152,11 @@ body{
 .banner{
     a{
         display: block;
-        background: #303133;
+        cursor: pointer;
         img{
             display: block;
-            height: 220px;
+            width: 100%;
+            
         }
     }
 }

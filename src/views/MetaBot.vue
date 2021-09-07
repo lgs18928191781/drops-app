@@ -18,7 +18,11 @@
 
     <!-- banner -->
     <div class="banner container">
-      <a><img src="" alt="" /></a>
+      <a><img src="@/assets/images/banner.svg" alt="" /></a>
+    </div>
+
+    <div class="metabot-tags container">
+      <a class="metabot-tag">#021-#200</a>
     </div>
 
     <el-skeleton class="meta-bot-list container" :loading="isShowSkeleton" animated :count="pagination.pageSize">
@@ -62,7 +66,7 @@
                   <span class="type">({{ $t('owner') }})</span>
                 </div>
               </div>
-              <div class="btn btn-block btn-gray" @click="buy(metabot)">12.54 BSV</div>
+              <div class="btn btn-block" :class="{'btn-gray': metabot.NftSellState !== 0 }" @click="buy(metabot)">12.54 BSV</div>
             </div>
           </div>
         </div>
@@ -139,6 +143,15 @@ function getMore () {
 
 async function buy(metabot: GetMetaBotListResItem) {
   await checkSdkStatus()
+
+  if (metabot.NftSellState === 1) {
+    ElMessage.warning(i18n.t('isBeCancelSelled'))
+    return
+  } else if (metabot.NftSellState === 2) {
+    ElMessage.warning(i18n.t('isBeBuyed'))
+    return
+  }
+
   const loading = ElLoading.service({
     lock: true,
     text: 'Loading',

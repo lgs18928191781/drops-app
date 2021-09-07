@@ -157,5 +157,7 @@
   "incomeStatement ": "Income statement",
   "nftNotCanBuy": "Transaction failed, NFT has been purchased or removed",
   "issueMetaTxId": "Issue TXID",
-  "look": "Check"
+  "look": "Check",
+  "isBeCancelSelled": "Has been removed from the shelves and cannot be purchased",
+  "isBeBuyed": "Has been purchased"
 }
