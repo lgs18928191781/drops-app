@@ -646,7 +646,7 @@ async function createNft() {
     nftissuerName: store.state.userInfo!.name,
     content: {
       nftType: nft.type,
-      classifyList: JSON.stringify(nft.classify),
+      classifyList: nft.classify,
       originalFileTxid: {
         fileType: originalFile.data_type,
         fileName: originalFile.name,
