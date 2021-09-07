@@ -82,11 +82,9 @@ export default class Sdk {
 
   getUserInfo() {
     return new Promise<MetaIdJsRes>((resolve) => {
-      alert('sdk userInfo')
       const params = {
         accessToken: store.state.token ? store.state.token?.access_token : '',
         callback: (res: MetaIdJsRes) => {
-          alert('callback userInfo'+ res)
           this.callback(res, resolve)
         },
       }
@@ -95,7 +93,6 @@ export default class Sdk {
         const that = this
         // @ts-ignore
         window[functionName] = function (res) {
-          alert('call getUserInfo')
           that.callback(res, resolve)
         }
         if (window.appMetaIdJsV2) {
@@ -217,14 +214,11 @@ export default class Sdk {
     parentReject?: any
   ) {
     return new Promise<void>(async (resolve, reject) => {
-      alert('checkNftTxIdStatus txId' + txId)
       axios.get(`https://api.sensiblequery.com/tx/${txId}`).then((res) => {
         if (res.data.code === 0) {
           if (parentResolve) parentResolve()
           else resolve()
         } else {
-          // 超过30次还不成功就 回调失败
-          alert('checkNftTxIdStatus response' + res)
           if (timer && timer > 30) {
             if (parentReject) parentReject()
             else reject()
@@ -240,7 +234,6 @@ export default class Sdk {
           }
         }
       }).catch((err) => {
-        alert('checkNftTxIdStatus err' + err)
         setTimeout(() => {
           this.checkNftTxIdStatus(
             txId,
@@ -266,7 +259,6 @@ export default class Sdk {
           return response.json()
         })
         .then((response) => {
-          debugger
           if (response) {
             if (response.code === 200) {
               if (parentResolve) parentResolve()
@@ -324,12 +316,9 @@ export default class Sdk {
       let { nftTotal, codeHash, genesis, genesisTxId, sensibleId, ..._params } = params
       let amount = 0
       const issueOperate = async () => {
-        alert('params.checkOnly' + params.checkOnly)
         if (!params.checkOnly) {
-          alert('params.checkOnly into')
           await this.checkNftTxIdStatus(genesisTxId!).catch(() => reject('createNFT error'))
         }
-        alert('params.checkOnly success')
         const issueRes = await this.issueNFT({
           genesisId: genesis!,
           genesisTxid: genesisTxId!,
@@ -560,14 +549,12 @@ export default class Sdk {
   // nft 上架/销售
   nftSell(params: NftSellParams) {
     return new Promise<NftSellResData>((resolve, reject) => {
-      alert('sell 1')
       const _params = {
         data: {
           ...params,
           payTo: [{ address: import.meta.env.VITE_AppAddress, amount: 10000 }]
         },
         callback: (res: MetaIdJsRes) => {
-          alert('appMetaidjs callback nftSell' + res)
           this.callback(res, resolve)
         },
       }
@@ -575,9 +562,7 @@ export default class Sdk {
         const functionName: string = `nftSellCallBack`
         // @ts-ignore
         window[functionName] = _params.callback
-        alert('sell 1')
         // @ts-ignore
-        alert('appMetaidjs' + this.appMetaidjs?.nftSell)
         if (window.appMetaIdJsV2) {
           window.appMetaIdJsV2?.nftSell(store.state.token!.access_token, JSON.stringify(_params.data), functionName)
         } else {
@@ -735,7 +720,6 @@ export default class Sdk {
         }
       }
     }
-    alert('res' + JSON.stringify(res))
     if (res.code !== 200 && res.code !== 205) {
       if (res.data.message !== 'The NFT is not for sale because  the corresponding SellUtxo cannot be found.') {
         ElMessage.error(res.data.message)

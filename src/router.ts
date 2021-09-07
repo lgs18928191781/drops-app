@@ -75,13 +75,9 @@ export const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   // app
   const isApp = store.state.isApp
-  alert('appMetaIdJsV2' + window.appMetaIdJsV2, )
-  alert('appMetaIdJs' + window.appMetaIdJs, )
-  alert('isApp' + isApp, )
   if (isApp) {
     //  没有用户信息， 也没有正在加载用户信息, 则去获取用户信息
     if (!store.state.userInfo && !store.state.userInfoLoading) {
-      alert('into userInfo')
       store.dispatch(Action.getUserInfo)
     }
   } else {

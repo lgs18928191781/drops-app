@@ -152,7 +152,7 @@
               </div>
             </div>
 
-            <template v-if="nft.val.putAway && nft.val.remainingTime">
+            <!-- <template v-if="nft.val.putAway && nft.val.remainingTime">
               <div class="timeleft">
                 {{ $t('timeleft') }}：<span>{{ day }}</span
                 >{{ $t('day') }}<span>{{ hour }}</span
@@ -160,7 +160,7 @@
                 >{{ $t('minu') }}<span>{{ second }}</span
                 >{{ $t('second') }}
               </div>
-            </template>
+            </template> -->
             <!-- <div class="btn btn-block"  @click="buy">{{ $t('use') }} {{ nft.val.amount }} BSV {{ $t('buy') }}</div> -->
             <div class="operate-warp">
               <div
@@ -431,7 +431,7 @@ function getDetail() {
     ).catch(() => isShowSkeleton.value = false)
     if (_nft && typeof _nft !== 'boolean') {
       nft.val = _nft
-      countDownTimeLeft()
+      // countDownTimeLeft()
       isShowSkeleton.value = false
     }
     resolve()

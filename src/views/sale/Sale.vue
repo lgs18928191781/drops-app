@@ -189,53 +189,42 @@ async function confirmSale() {
   const useAmountRes = await store.state.sdk?.nftSell({ checkOnly: true, ...params }).catch(() => {
     loading.close()
   })
-  alert('sell result' + JSON.stringify(useAmountRes))
   if (useAmountRes && useAmountRes.code === 200) {
-    alert('sell a')
     const useAmount = useAmountRes.data.amount!
-    alert('sell b')
     const userBalanceRes = await store.state.sdk?.getBalance()
-    alert('sell c')
-    alert('userBalanceRes c'+  userBalanceRes)
     if (userBalanceRes?.code === 200) {
-      alert('sell d')
-      alert('userBalanceRes.data.satoshis' + userBalanceRes.data.satoshis)
-      alert('useAmount' + useAmount)
       if (userBalanceRes.data.satoshis > useAmount) {
-        alert('sell e')
         // 余额足够
         ElMessageBox.confirm(`${i18n.t('useAmountTips')}: ${useAmount} SATS`, i18n.t('niceWarning'), {
           confirmButtonText: i18n.t('confirm'),
           cancelButtonText: i18n.t('cancel'),
           closeOnClickModal: false
         }).then(async () => {
-          alert('sell f')
           // 确认支付
           const res = await store.state.sdk?.nftSell(params).catch(() => {
             loading.close()
           })
           if (res?.code === 200) {
-            alert('sell g')
+            // 检查txId状态，确认上链后再跳转，防止上链延迟，跳转后拿不到数据
+              await store.state.sdk?.checkNftTxIdStatus(res.data.sellTxId)
+              await store.state.sdk?.checkNftTxIdStatus(res.data.txid)
+              ElMessage.success(i18n.t('saleSuccess'))
+              router.back()
+              
             // 上报时间
-            const response = await SetDeadlineTime({
+            /* const response = await SetDeadlineTime({
               genesis: nft.val.genesis,
               codeHash: nft.val.codeHash,
               tokenIndex: nft.val.tokenIndex,
               deadlineTime: new Date(saleTime.value).getTime()
             }).catch((res) => alert('SetDeadlineTime response fail' + JSON.stringify(res)))
-            alert('sell h')
-            alert('SetDeadlineTime response' + JSON.stringify(response))
             if (response && response.code === NftApiCode.success) {
-              alert('sell h')
               // 检查txId状态，确认上链后再跳转，防止上链延迟，跳转后拿不到数据
               await store.state.sdk?.checkNftTxIdStatus(res.data.sellTxId)
-              alert('sell j')
               await store.state.sdk?.checkNftTxIdStatus(res.data.txid)
-              alert('sell k')
               ElMessage.success(i18n.t('saleSuccess'))
-              alert('sell l')
               router.back()
-            }
+            } */
 
             // sell协议上完 要上报服务器
             // const response = await SaleNft({
