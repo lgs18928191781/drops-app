@@ -513,8 +513,7 @@ export default class Sdk {
         const functionName: string = `issueNFTCallBack`
         // @ts-ignore
         window[functionName] = _params.callback
-        _params.data.nfticon.data = ""
-        _params.data.content.originalFileTxid.data = ""
+        _params.data.content.classifyList = JSON.parse(_params.data.content.classifyList)
         if (window.appMetaIdJsV2) {
           window.appMetaIdJsV2?.issueNFT(store.state.token!.access_token, JSON.stringify(_params.data), functionName)
         } else {
