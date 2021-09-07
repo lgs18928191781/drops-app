@@ -251,7 +251,7 @@ export interface NFTIssueParams {
 
 export interface NFTIssueData{
     nftType: string
-    classifyList: string []
+    classifyList: string
     originalFileTxid: {
         fileType: string,
         fileName: string,
