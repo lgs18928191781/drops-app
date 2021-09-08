@@ -90,7 +90,7 @@ import { useStore } from '@/store'
 import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import IsNull from '../components/IsNull/IsNull.vue'
 import { useRouter } from "vue-router"
-import { GetMetaBotList } from "@/api"
+import { GetMetaBotList, GetMetaBotListBySearch } from "@/api"
 import { ElLoading, ElMessage, ElMessageBox, ElSkeleton, ElSkeletonItem } from "element-plus"
 import { checkSdkStatus, metafileUrl } from "@/utils/util"
 import { useI18n } from "vue-i18n"
@@ -116,7 +116,17 @@ const sections = [
 const sectionIndex = ref(0) 
 
 function search() {
-  
+  isShowSkeleton.value = true
+  pagination.page = 1
+  pagination.loading = false
+  pagination.nothing = false
+  if (keyword.value === '') {
+    sectionIndex.value = 0
+    getDatas(true)
+  } else {
+    sectionIndex.value = -1
+    getSearchDatas(true)
+  }
 }
 
 function toDetail (metabot: GetMetaBotListResItem) {
@@ -153,13 +163,41 @@ function getDatas (isCover = false) {
   })
 }
 
+function getSearchDatas (isCover = false) {
+  return new Promise<void>(async resolve => {
+    const res = await GetMetaBotListBySearch({
+      Page: pagination.page.toString(),
+      PageSize: pagination.pageSize.toString(),
+      SearchWord: keyword.value
+    })
+    if (res.code === 0) {
+      if (isCover) {
+        metaBots.length = 0
+      }
+      if (res.data.results.items.length > 0) {
+        metaBots.push(...res.data.results.items)
+      } else {
+        pagination.nothing = true
+      }
+      isShowSkeleton.value = false
+    }
+    resolve()
+  })
+}
+
 function getMore () {
   if(pagination.loading || pagination.nothing) return
   pagination.page++
   pagination.loading = true
-  getDatas().then(() => {
-    pagination.loading = false
-  })
+  if (keyword.value === '') {
+    getDatas().then(() => {
+      pagination.loading = false
+    })
+  } else {
+    getSearchDatas().then(() => {
+      pagination.loading = false
+    })
+  }
 }
 
 function changeSectionIndex (index: number) {
@@ -169,6 +207,7 @@ function changeSectionIndex (index: number) {
   pagination.page = 1
   pagination.loading = false
   pagination.nothing = false
+  keyword.value = ''
   getDatas(true)
 }
 

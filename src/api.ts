@@ -260,3 +260,11 @@ export const GetMetaBotListByBetweenNumber = (params: {
 }): Promise<GetMetaBotListRes> => {
   return apiHttp.post(`/aggregation/v2/app/metaBot/getMetaBotListByBetweenNumber`, params)
 }
+
+export const GetMetaBotListBySearch = (params: {
+  PageSize: string
+  Page: string
+  SearchWord: string
+}): Promise<GetMetaBotListRes> => {
+  return apiHttp.post(`/aggregation/v2/app/metaBot/getMetaBotListBySearch`, params)
+}
