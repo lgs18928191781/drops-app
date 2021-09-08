@@ -1,126 +1,158 @@
 <template>
-    <div class="inner-page-header container flex flex-align-center">
-        <div class="inner-page-header-left flex1">
-            <div class="title flex flex-align-center"><img @click="router.back()" src="@/assets/images/bannet_icon_ins.svg" />MetaBot</div>
-            <div class="drsc">{{$t('metaBotDrsc')}}</div>
-        </div>
-        <div class="search-warp flex flex-align-center">
-          <input
-            class="flex1"
-            v-model="keyword"
-            :placeholder="$t('search')"
-            @keyup.enter="search"
-            type="text"
+  <div class="inner-page-header container flex flex-align-center">
+    <div class="inner-page-header-left flex1">
+      <div class="title flex flex-align-center">
+        <img @click="router.back()" src="@/assets/images/bannet_icon_ins.svg" />MetaBot
+      </div>
+      <div class="drsc">{{ $t('metaBotDrsc') }}</div>
+    </div>
+    <div class="search-warp flex flex-align-center">
+      <input
+        class="flex1"
+        v-model="keyword"
+        :placeholder="$t('search')"
+        @keyup.enter="search"
+        type="text"
+      />
+      <img src="@/assets/images/icon_search.svg" @click="search" />
+    </div>
+  </div>
+
+  <!-- banner -->
+  <div class="banner container">
+    <a><img src="@/assets/images/banner.png" alt="" /></a>
+  </div>
+
+  <div class="metabot-tags container">
+    <a
+      class="metabot-tag"
+      :class="{ active: sectionIndex === index }"
+      v-for="(section, index) in sections"
+      :key="index"
+      @click="changeSectionIndex(index)"
+      >{{ section.name }}</a
+    >
+  </div>
+
+  <el-skeleton
+    class="meta-bot-list container"
+    :loading="isShowSkeleton"
+    animated
+    :count="pagination.pageSize"
+  >
+    <template #template>
+      <div class="meta-bot-item">
+        <div class="cover">
+          <el-skeleton-item
+            variant="image"
+            style="
+              width: 100%;
+              height: 100%;
+              display: block;
+              position: absolute;
+              border-radius: 8px 8px 0 0;
+            "
           />
-          <img src="@/assets/images/icon_search.svg" @click="search" />
         </div>
-    </div>
-
-    <!-- banner -->
-    <div class="banner container">
-      <a><img src="@/assets/images/banner.png" alt="" /></a>
-    </div>
-
-    <div class="metabot-tags container">
-      <a class="metabot-tag" :class="{'active': sectionIndex === index }" v-for="(section, index) in sections" :key="index" @click="changeSectionIndex(index)">{{section.name}}</a>
-    </div>
-
-    <el-skeleton class="meta-bot-list container" :loading="isShowSkeleton" animated :count="pagination.pageSize">
-      <template #template>
-        <div class="meta-bot-item">
+        <div class="cont">
+          <div class="name"><el-skeleton-item variant="text" style="width: 30%" /></div>
+          <div class="user-list">
+            <div class="user-item flex flex-align-center">
+              <el-skeleton-item variant="text" style="width: 60%" />
+            </div>
+            <div class="user-item flex flex-align-center">
+              <el-skeleton-item variant="text" style="width: 60%" />
+            </div>
+          </div>
+          <el-skeleton-item
+            class="btn btn-block btn-gray"
+            variant="button "
+            style="width: 100%; box-sizing: border-box; border: none"
+          />
+        </div>
+      </div>
+    </template>
+    <template #default>
+      <!-- MetaBot list -->
+      <div class="meta-bot-list container">
+        <a
+          @click="toDetail(metabot)"
+          class="meta-bot-item"
+          v-for="metabot in metaBots"
+          :key="metabot.nftGenesis + metabot.nftCodehash + metabot.nftTokenIndex"
+        >
           <div class="cover">
-            <el-skeleton-item variant="image" style="width: 100%; height: 100%; display: block; position: absolute; border-radius: 8px 8px 0 0;" />
+            <img :src="metafileUrl(metabot.nftIcon)" :alt="metabot.nftName" />
           </div>
           <div class="cont">
-            <div class="name"><el-skeleton-item variant="text" style="width: 30%;" /></div>
+            <div class="name">{{ metabot.nftName }}</div>
             <div class="user-list">
               <div class="user-item flex flex-align-center">
-                <el-skeleton-item variant="text" style="width: 60%;" />
+                <img class="avatar" :src="$filters.avatar(metabot.nftIssueMetaId)" />
+                <span class="name">{{ metabot.nftIssuer }}</span>
+                <span class="type">({{ $t('creater') }})</span>
               </div>
               <div class="user-item flex flex-align-center">
-                <el-skeleton-item variant="text" style="width: 60%;" />
+                <img class="avatar" :src="$filters.avatar(metabot.nftOwnerMetaId)" />
+                <span class="name">{{ metabot.nftOwnerName }}</span>
+                <span class="type">({{ $t('owner') }})</span>
               </div>
             </div>
-            <el-skeleton-item class="btn btn-block btn-gray" variant="button " style="width: 100%; box-sizing: border-box; border: none;" />
+            <div
+              class="btn btn-block"
+              :class="{
+                'btn-gray':
+                  metabot.nftSellState !== 0 ||
+                  !metabot.nftIsReady ||
+                  (store.state.userInfo && store.state.userInfo.metaId === metabot.nftOwnerMetaId),
+              }"
+              @click.stop="buy(metabot)"
+            >
+              {{ new Decimal(metabot.nftPrice).div(Math.pow(10, 8)).toString() }} BSV
+            </div>
           </div>
-        </div>
-      </template>
-      <template #default>
-        <!-- MetaBot list -->
-        <div class="meta-bot-list container">
-          <a @click="toDetail(metabot)" class="meta-bot-item" v-for="metabot in metaBots" :key="metabot.nftGenesis + metabot.nftCodehash + metabot.nftTokenIndex ">
-            <div class="cover">
-              <img :src="metafileUrl(metabot.nftIcon)" :alt="metabot.nftName" />
-            </div>
-            <div class="cont">
-              <div class="name">{{metabot.nftName}}</div>
-              <div class="user-list">
-                <div class="user-item flex flex-align-center">
-                  <img class="avatar" :src="$filters.avatar(metabot.nftIssueMetaId)" />
-                  <span class="name">{{metabot.nftIssuer}}</span>
-                  <span class="type">({{ $t('creater') }})</span>
-                </div>
-                <div class="user-item flex flex-align-center">
-                  <img class="avatar" :src="$filters.avatar(metabot.nftOwnerMetaId)" />
-                  <span class="name">{{metabot.nftOwnerName}}</span>
-                  <span class="type">({{ $t('owner') }})</span>
-                </div>
-              </div>
-              <div class="btn btn-block" :class="{'btn-gray': metabot.nftSellState !== 0 || !metabot.nftIsReady  || (store.state.userInfo && store.state.userInfo.metaId === metabot.nftOwnerMetaId) }" @click.stop="buy(metabot)">{{new Decimal(metabot.nftPrice).div(Math.pow(10,8)).toString()}} BSV</div>
-            </div>
-          </a>
-        </div>
-      </template>
-    </el-skeleton>
-    
+        </a>
+      </div>
+    </template>
+  </el-skeleton>
 
-    <div class="page-footer">
-      <!-- <LoadMore
+  <div class="page-footer">
+    <!-- <LoadMore
         :pagination="pagination"
         @getMore="getMore"
         v-if="metaBots.length > 0 && !isShowSkeleton"
       /> -->
-      <IsNull v-if="metaBots.length <= 0" />
-    </div>
-
+    <IsNull v-if="metaBots.length <= 0" />
+  </div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, onMounted } from "vue"
+import { ref, reactive, onMounted } from 'vue'
 import { useStore } from '@/store'
 import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import IsNull from '../components/IsNull/IsNull.vue'
-import { useRouter } from "vue-router"
-import { GetMetaBotList, GetMetaBotListBySearch } from "@/api"
-import { ElLoading, ElMessage, ElMessageBox, ElSkeleton, ElSkeletonItem } from "element-plus"
-import { checkSdkStatus, metafileUrl } from "@/utils/util"
-import { useI18n } from "vue-i18n"
-import Decimal from "decimal.js-light"
-
+import { useRouter } from 'vue-router'
+import { GetMetaBotList, GetMetaBotListBySearch } from '@/api'
+import { ElLoading, ElMessage, ElMessageBox, ElSkeleton, ElSkeletonItem } from 'element-plus'
+import { checkSdkStatus, metafileUrl } from '@/utils/util'
+import { useI18n } from 'vue-i18n'
+import Decimal from 'decimal.js-light'
 
 const store = useStore()
 const router = useRouter()
 const i18n = useI18n()
 const isShowSkeleton = ref(true)
 const keyword = ref('')
-const metaBots: GetMetaBotListResItem [] = reactive([])
+const metaBots: GetMetaBotListResItem[] = reactive([])
 const pagination = reactive({
   ...store.state.pagination,
-  pageSize: 100
+  pageSize: 100,
 })
 
 const sections = [
-  {name: '#1000-901', start: 901, end: 1000},
-  {name: '#900-801', start: 801, end: 900},
-  {name: '#800-701', start: 701, end: 800},
-  {name: '#700-601', start: 601, end: 700},
-  {name: '#600-501', start: 501, end: 600},
-  {name: '#500-401', start: 401, end: 500},
-  {name: '#400-301', start: 301, end: 400},
-  {name: '#300-201', start: 201, end: 300},
-  {name: '#200-101', start: 101, end: 200},
-  {name: '#100-001', start: 1, end: 100},
+  { name: '#801-900', start: 801, end: 900 },
+  { name: '#901-1000', start: 901, end: 1000 },
 ]
-const sectionIndex = ref(0) 
+const sectionIndex = ref(0)
 
 function search() {
   isShowSkeleton.value = true
@@ -136,24 +168,24 @@ function search() {
   }
 }
 
-function toDetail (metabot: GetMetaBotListResItem) {
+function toDetail(metabot: GetMetaBotListResItem) {
   router.push({
     name: 'detail',
     params: {
       genesisId: metabot.nftGenesis,
       codehash: metabot.nftCodehash,
-      tokenIndex: metabot.nftTokenIndex
-    }
+      tokenIndex: metabot.nftTokenIndex,
+    },
   })
 }
 
-function getDatas (isCover = false) {
-  return new Promise<void>(async resolve => {
+function getDatas(isCover = false) {
+  return new Promise<void>(async (resolve) => {
     const res = await GetMetaBotList({
       Page: pagination.page.toString(),
       PageSize: pagination.pageSize.toString(),
       Start: sections[sectionIndex.value].start,
-      End: sections[sectionIndex.value].end
+      End: sections[sectionIndex.value].end,
     })
     if (res.code === 0) {
       if (isCover) {
@@ -170,12 +202,12 @@ function getDatas (isCover = false) {
   })
 }
 
-function getSearchDatas (isCover = false) {
-  return new Promise<void>(async resolve => {
+function getSearchDatas(isCover = false) {
+  return new Promise<void>(async (resolve) => {
     const res = await GetMetaBotListBySearch({
       Page: pagination.page.toString(),
       PageSize: pagination.pageSize.toString(),
-      SearchWord: keyword.value
+      SearchWord: keyword.value,
     })
     if (res.code === 0) {
       if (isCover) {
@@ -192,8 +224,8 @@ function getSearchDatas (isCover = false) {
   })
 }
 
-function getMore () {
-  if(pagination.loading || pagination.nothing) return
+function getMore() {
+  if (pagination.loading || pagination.nothing) return
   pagination.page++
   pagination.loading = true
   if (keyword.value === '') {
@@ -207,7 +239,7 @@ function getMore () {
   }
 }
 
-function changeSectionIndex (index: number) {
+function changeSectionIndex(index: number) {
   if (sectionIndex.value === index) return
   sectionIndex.value = index
   isShowSkeleton.value = true
@@ -245,39 +277,36 @@ async function buy(metabot: GetMetaBotListResItem) {
     customClass: 'full-loading',
   })
 
-  
-
   // const getAddressRes = await GetNFTOwnerAddress({ tokenId: nft.val.tokenId }).catch(() =>
   //   loading.close()
   // )
   // if (getAddressRes && getAddressRes.code === NftApiCode.success) {
-    
+
   // }
 
-
   const params = {
-      codehash: metabot.nftCodehash,
-      genesis: metabot.nftGenesis,
-      tokenIndex: metabot.nftTokenIndex,
-      genesisTxid: metabot.nftGenesisTxId,
-      // address: getAddressRes.data.address,
-      sensibleId: metabot.nftSensibleId,
-      sellTxId: metabot.nftSellTxId,
-      sellContractTxId: metabot.nftSellContractTxId,
-      amount: new Decimal(metabot.nftPrice).toNumber()
-    }
-    // 需要消费金额
-    const useAmountRes = await store.state.sdk
-      ?.nftBuy({
-        checkOnly: true,
-        ...params
-      })
-      .catch(() => {
-        loading.close()
-      })
-    if (useAmountRes?.code === 200) {
-      const useAmount = useAmountRes.data.amount! /* + nft.val.amount */
-      // 查询用户余额
+    codehash: metabot.nftCodehash,
+    genesis: metabot.nftGenesis,
+    tokenIndex: metabot.nftTokenIndex,
+    genesisTxid: metabot.nftGenesisTxId,
+    // address: getAddressRes.data.address,
+    sensibleId: metabot.nftSensibleId,
+    sellTxId: metabot.nftSellTxId,
+    sellContractTxId: metabot.nftSellContractTxId,
+    amount: new Decimal(metabot.nftPrice).toNumber(),
+  }
+  // 需要消费金额
+  const useAmountRes = await store.state.sdk
+    ?.nftBuy({
+      checkOnly: true,
+      ...params,
+    })
+    .catch(() => {
+      loading.close()
+    })
+  if (useAmountRes?.code === 200) {
+    const useAmount = useAmountRes.data.amount! /* + nft.val.amount */
+    // 查询用户余额
     const userBalanceRes = await store.state.sdk?.getBalance()
     if (userBalanceRes && userBalanceRes.code === 200) {
       if (userBalanceRes.data.satoshis > useAmount) {
@@ -288,31 +317,33 @@ async function buy(metabot: GetMetaBotListResItem) {
           {
             confirmButtonText: i18n.t('confirm'),
             cancelButtonText: i18n.t('cancel'),
-            closeOnClickModal: false
+            closeOnClickModal: false,
           }
-        ).then(async () => {
-          // 确认支付
-          const res = await store.state.sdk?.nftBuy(params).catch(() => {
-            loading.close()
-          })
-          if (res?.code === 200) {
-            // nft.val.ownerMetaId = store.state.userInfo!.metaId
-            // nft.val.ownerName = store.state.userInfo!.name
-            // nft.val.putAway = false
-            ElMessage.success(i18n.t('buySuccess'))
-            loading.close()
-            router.push({ name: 'nftSuccess', 
-              params: { 
-                genesisId: metabot.nftGenesis,
-                tokenIndex: metabot.nftTokenIndex,
-                codehash: metabot.nftCodehash
-              },
-              query: {
-                type: 'buyed'
-              }
+        )
+          .then(async () => {
+            // 确认支付
+            const res = await store.state.sdk?.nftBuy(params).catch(() => {
+              loading.close()
             })
+            if (res?.code === 200) {
+              // nft.val.ownerMetaId = store.state.userInfo!.metaId
+              // nft.val.ownerName = store.state.userInfo!.name
+              // nft.val.putAway = false
+              ElMessage.success(i18n.t('buySuccess'))
+              loading.close()
+              router.push({
+                name: 'nftSuccess',
+                params: {
+                  genesisId: metabot.nftGenesis,
+                  tokenIndex: metabot.nftTokenIndex,
+                  codehash: metabot.nftCodehash,
+                },
+                query: {
+                  type: 'buyed',
+                },
+              })
 
-            /* // 上链完 nft buy 协议 要 上报服务器
+              /* // 上链完 nft buy 协议 要 上报服务器
             const response = await BuyNft({
               tokenId: nft.val.tokenId,
               payMentAddress: store.state.userInfo!.address,
@@ -335,32 +366,37 @@ async function buy(metabot: GetMetaBotListResItem) {
             }
           })
           .catch(() => loading.close())
-        } else {
-          // 余额不足
-          loading.close()
-          ElMessageBox.alert(
-            `
+      } else {
+        // 余额不足
+        loading.close()
+        ElMessageBox.alert(
+          `
           <p>${i18n.t('useAmountTips')}: ${useAmount} SATS</p>
           <p>${i18n.t('insufficientBalance')}</p>
         `,
-            {
-              confirmButtonText: i18n.t('confirm'),
-              dangerouslyUseHTMLString: true,
-            }
-          )
-          return
-        }
-      }
-    } else {
-      loading.close()
-      if (useAmountRes) {
-        nftNotCanBuy(useAmountRes)
+          {
+            confirmButtonText: i18n.t('confirm'),
+            dangerouslyUseHTMLString: true,
+          }
+        )
+        return
       }
     }
+  } else {
+    loading.close()
+    if (useAmountRes) {
+      nftNotCanBuy(useAmountRes)
+    }
+  }
 }
 
-function nftNotCanBuy (res: any) {
-  if (res.code === 204 && res.data && res.data.message === 'The NFT is not for sale because  the corresponding SellUtxo cannot be found.') {
+function nftNotCanBuy(res: any) {
+  if (
+    res.code === 204 &&
+    res.data &&
+    res.data.message ===
+      'The NFT is not for sale because  the corresponding SellUtxo cannot be found.'
+  ) {
     ElMessage.error(i18n.t('nftNotCanBuy'))
     pagination.page = 1
     pagination.loading = false
@@ -370,14 +406,12 @@ function nftNotCanBuy (res: any) {
   }
 }
 
-
 onMounted(() => {
   pagination.page = 1
   pagination.loading = false
   pagination.nothing = false
   getDatas(true)
 })
-
 
 // isShowSkeleton.value = false
 </script>
