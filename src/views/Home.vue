@@ -1,8 +1,8 @@
 <template>
   <!-- banner -->
-  <div class="banner container">
+  <!-- <div class="banner container">
     <a><img src="@/assets/images/banner.png" alt="" /></a>
-  </div>
+  </div> -->
 
   <div class="home">
     <!-- 推荐作品 -->
