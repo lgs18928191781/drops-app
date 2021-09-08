@@ -240,3 +240,31 @@ export const GetMyNftEligibility = (params: {
 }): Promise<apiResponse> => {
   return apiHttp.get(`/aggregation/v2/app/nftOnShow/getMyNftEligibility/${params.MetaId}//${params.IssueMetaId}/${params.lang}`)
 }
+
+
+export const GetMetaBotList = (params: {
+  PageSize: string
+  Page: string
+  Start: number
+  End: number
+}): Promise<GetMetaBotListRes> => {
+  return apiHttp.post(`/aggregation/v2/app/metaBot/getMetaBotListByBetweenNumber`, params)
+}
+
+
+export const GetMetaBotListByBetweenNumber = (params: {
+  PageSize: string
+  Page: string
+  Start: number
+  End: number
+}): Promise<GetMetaBotListRes> => {
+  return apiHttp.post(`/aggregation/v2/app/metaBot/getMetaBotListByBetweenNumber`, params)
+}
+
+export const GetMetaBotListBySearch = (params: {
+  PageSize: string
+  Page: string
+  SearchWord: string
+}): Promise<GetMetaBotListRes> => {
+  return apiHttp.post(`/aggregation/v2/app/metaBot/getMetaBotListBySearch`, params)
+}

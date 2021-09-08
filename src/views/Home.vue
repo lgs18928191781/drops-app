@@ -1,22 +1,34 @@
 <template>
+  <!-- banner -->
+  <!-- <div class="banner container">
+    <a><img src="@/assets/images/banner.png" alt="" /></a>
+  </div> -->
+
   <div class="home">
     <!-- 推荐作品 -->
-    <div class="section container recommend-section ">
-      <NftSkeleton :loading="isShowRecommendSkeleton" :count="8" :isReCommend="true" class="section-cont nft-list">
+    <div class="section container recommend-section">
+      <NftSkeleton
+        :loading="isShowRecommendSkeleton"
+        :count="8"
+        :isReCommend="true"
+        class="section-cont nft-list"
+      >
         <template #default>
           <div class="section-cont nft-list">
             <!-- @ts-ignore -->
-            <NftItem :isRecommendCard="true" :item="{
+            <NftItem
+              :isRecommendCard="true"
+              :item="{
                 name: 'recommend',
                 amount: 0,
                 foundryName: '',
-                classify: '',
+                classify: [],
                 tokenId: '',
                 coverUrl: '',
                 metaId: '',
                 genesis: '',
                 tokenIndex: '',
-                codehash: ''
+                codehash: '',
               }"
             />
             <template v-for="item in recommendNfts">
@@ -42,10 +54,9 @@
             v-for="item in classifyList"
             :key="item.classify"
             @click="changeClassify(item.classify)"
-            >
-              {{ $t(item.classify) }}
-            </a
           >
+            {{ $t(item.classify) }}
+          </a>
         </div>
         <div class="search-warp flex flex-align-center">
           <input
@@ -82,7 +93,17 @@
   </div>
 </template>
 <script setup lang="ts">
-import { GetAllOnSellNftList, GetClassies, GetNftOnShowListByClassify, GetNftOnShowListBySearch, GetProductClassifyList, GetProductList, GetRecommendOnSellNftList, NftApiCode, Search } from '@/api'
+import {
+  GetAllOnSellNftList,
+  GetClassies,
+  GetNftOnShowListByClassify,
+  GetNftOnShowListBySearch,
+  GetProductClassifyList,
+  GetProductList,
+  GetRecommendOnSellNftList,
+  NftApiCode,
+  Search,
+} from '@/api'
 import NftItem from '@/components/Nft-item/Nft-item.vue'
 import NftSkeleton from '@/components/NftSkeleton/NftSkeleton.vue'
 import { useStore } from '@/store'
@@ -110,9 +131,9 @@ const isShowNftListSkeleton = ref(true)
 
 async function getNftList(isCover: boolean = false) {
   const apiName = {
-    'GetAllOnSellNftList': GetAllOnSellNftList,
-    'GetNftOnShowListByClassify': GetNftOnShowListByClassify,
-    'GetNftOnShowListBySearch': GetNftOnShowListBySearch,
+    GetAllOnSellNftList: GetAllOnSellNftList,
+    GetNftOnShowListByClassify: GetNftOnShowListByClassify,
+    GetNftOnShowListBySearch: GetNftOnShowListBySearch,
   }
   // @ts-ignore
   const res = await apiName[apiType]({
@@ -124,7 +145,7 @@ async function getNftList(isCover: boolean = false) {
   if (res.code === NftApiCode.success) {
     if (isCover) Nfts.length = 0
     if (res.data.results.items.length > 0) {
-      res.data.results.items.map((item: GetNftIssueyTxIdResItem)=> {
+      res.data.results.items.map((item: GetNftIssueyTxIdResItem) => {
         const data = item.nftDataStr && item.nftDataStr !== '' ? JSON.parse(item.nftDataStr) : null
         const classify = setDataStrclassify(data)
         Nfts.push({
@@ -141,7 +162,7 @@ async function getNftList(isCover: boolean = false) {
           deadlineTime: 0,
           genesis: item.nftGenesis,
           tokenIndex: item.nftTokenIndex,
-          codehash: item.nftCodehash
+          codehash: item.nftCodehash,
         })
       })
     } else {
@@ -156,12 +177,13 @@ function getRecommendNftList() {
   return new Promise<void>(async (resolve) => {
     const res = await GetRecommendOnSellNftList({
       Page: '1',
-      PageSize: '7'
+      PageSize: '7',
     })
     if (res.code === 0) {
       if (res.data.results.items.length > 0) {
-        res.data.results.items.map(item => {
-          const data = item.nftDataStr && item.nftDataStr !== '' ? JSON.parse(item.nftDataStr) : null
+        res.data.results.items.map((item) => {
+          const data =
+            item.nftDataStr && item.nftDataStr !== '' ? JSON.parse(item.nftDataStr) : null
           const classify = setDataStrclassify(data)
           recommendNfts.push({
             name: item.nftName ? item.nftName : '--',
@@ -177,7 +199,7 @@ function getRecommendNftList() {
             deadlineTime: 0,
             genesis: item.nftGenesis,
             tokenIndex: item.nftTokenIndex,
-            codehash: item.nftCodehash
+            codehash: item.nftCodehash,
           })
         })
       }
@@ -231,6 +253,5 @@ async function search() {
 
 getRecommendNftList()
 getNftList()
-
 </script>
 <style lang="scss" scoped src="./Home.scss"></style>

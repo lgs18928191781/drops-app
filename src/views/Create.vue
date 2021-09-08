@@ -652,7 +652,8 @@ async function createNft() {
         fileName: originalFile.name,
         data: originalFile.hexData,
       },
-      contentTxId: nft.tx
+      contentTxId: nft.tx,
+      num: parseInt(nft.intro)
     },
     codeHash: seriesIndex !== -1 ? series[seriesIndex].codeHash : undefined,
     genesis: seriesIndex !== -1 ? series[seriesIndex].genesis : undefined,
@@ -720,7 +721,7 @@ async function createNft() {
         const response = await CreateNft(params)
         if (response.code === NftApiCode.success) {
           ElMessage.success(i18n.t('castingsuccess'))
-          router.replace({ name: 'nftSuccess', 
+          /* router.replace({ name: 'nftSuccess', 
             params: { 
               genesisId: res.genesisId,
               tokenIndex: res.tokenIndex,
@@ -730,7 +731,7 @@ async function createNft() {
               type: 'created',
               txId: res.txId
             }
-          })
+          }) */
         }
       }
       if (loading) {

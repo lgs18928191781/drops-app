@@ -98,8 +98,10 @@ header{
     }
 }
 .mobile-nav-modal{
+    width: 100%;
     padding: 0 30px 30px 30px;
     display: block;
+    box-sizing: border-box;
     a{
         display: block;
         line-height: 60px;
@@ -110,10 +112,16 @@ header{
         &.router-link-active{
             background: $mainColor;
         }
+
+        img{
+            display: inline-block;
+            vertical-align: middle;
+        }
     }
 }
 .menu-drawer{
     min-height: 200px;
+    width: 100%;
 }
 @media only screen and (max-width: 600px){
     header {

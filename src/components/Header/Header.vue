@@ -1,72 +1,98 @@
 <template>
   <header class="flex flex-align-center">
-      <div class="header-left flex1 flex flex-align-center">
-        <a class="menu" @click="isShowDrawer = true"><img src="@/assets/images/menu.svg" alt="menu" /></a>
-        <!-- 分割线 -->
-        <span class="line"></span>
-        <router-link to="/" class="logo flex flex-align-center">
-          <img src="@/assets/images/logo_nos.svg" alt="NFTOnShow" />
-        </router-link>
-      </div>
-      <nav class="flex flex-align-center flex-pack-center">
-        <router-link to="/">{{ $t('marketplace') }}</router-link>
-        <router-link to="/create" v-if="!store.state.isApp">{{ $t('createnft') }}</router-link>
-      </nav>
-      <div class="operate flex flex-align-center">
-        <!-- 登录按钮 -->
-        <a v-if="!store.state.userInfo" class="btn" @click="auth" v-loading="store.state.userInfoLoading" element-loading-background="rgba(255, 255, 255, 0.7)">{{$t('signinandout')}}</a>
-        
-        <!-- 登录用户 -->
-        <ElDropdown trigger="click" v-else>
-          <div class="user-info flex flex-align-center">
-            <img :src="$filters.avatar(store.state.userInfo?.showId)" :alt="store.state.userInfo?.name" />
-            <div class="username">{{store.state.userInfo?.name}}</div> 
-          </div>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item @click="toSelf">{{$t('mynft')}}</el-dropdown-item>
-              <el-dropdown-item @click="toWallet">{{$t('mywallet')}}</el-dropdown-item>
-              <el-dropdown-item @click="toTariffDescription">{{$t('tariffDescription ')}}</el-dropdown-item>
-              <el-dropdown-item @click="logout">{{$t('logout')}}</el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </ElDropdown>
+    <div class="header-left flex1 flex flex-align-center">
+      <a class="menu" @click="isShowDrawer = true"
+        ><img src="@/assets/images/menu.svg" alt="menu"
+      /></a>
+      <!-- 分割线 -->
+      <span class="line"></span>
+      <router-link to="/" class="logo flex flex-align-center">
+        <img src="@/assets/images/logo_nos.svg" alt="NFTOnShow" />
+      </router-link>
+    </div>
+    <nav class="flex flex-align-center flex-pack-center">
+      <router-link to="/">{{ $t('marketplace') }}</router-link>
+      <router-link to="/create">{{ $t('createnft') }}</router-link>
+      <!-- <router-link to="/metaBot" class="flex flex-align-center">
+        MetaBot <img src="@/assets/images/nav_icon_hot.svg" alt="MetaBot"
+      /></router-link> -->
+    </nav>
+    <div class="operate flex flex-align-center">
+      <!-- 登录按钮 -->
+      <a
+        v-if="!store.state.userInfo"
+        class="btn"
+        @click="auth"
+        v-loading="store.state.userInfoLoading"
+        element-loading-background="rgba(255, 255, 255, 0.7)"
+        >{{ $t('signinandout') }}</a
+      >
 
-        <!-- 分割线 -->
-        <span class="line"></span>
+      <!-- 登录用户 -->
+      <ElDropdown trigger="click" v-else>
+        <div class="user-info flex flex-align-center">
+          <img
+            :src="$filters.avatar(store.state.userInfo?.showId)"
+            :alt="store.state.userInfo?.name"
+          />
+          <div class="username">{{ store.state.userInfo?.name }}</div>
+        </div>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item @click="toSelf">{{ $t('mynft') }}</el-dropdown-item>
+            <el-dropdown-item @click="toWallet">{{ $t('mywallet') }}</el-dropdown-item>
+            <el-dropdown-item @click="toTariffDescription">{{
+              $t('tariffDescription ')
+            }}</el-dropdown-item>
+            <el-dropdown-item @click="logout">{{ $t('logout') }}</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </ElDropdown>
 
-        <!-- 语言 -->
-        <a class="lang" @click="setLang">{{ $t(i18n.locale.value === 'en' ? 'zh' : 'en') }}</a>
-        <!-- <ElDropdown trigger="click">
+      <!-- 分割线 -->
+      <span class="line"></span>
+
+      <!-- 语言 -->
+      <a class="lang" @click="setLang">{{ $t(i18n.locale.value === 'en' ? 'zh' : 'en') }}</a>
+      <!-- <ElDropdown trigger="click">
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item v-for="lang in i18n.availableLocales" :key="lang" :disabled="lang === i18n.locale.value" >{{ $t(lang) }}</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </ElDropdown> -->
-      </div>
+    </div>
   </header>
 
   <!-- ElDrawer -->
-  <el-drawer
-  modal-class="menu-drawer"
-  v-model="isShowDrawer"
-  direction="ttb">
-  <nav class="mobile-nav-modal flex flex-align-center flex-pack-center">
-        <router-link  to="/" @click.stop="isShowDrawer = false">{{ $t('marketplace') }}</router-link>
-        <router-link  to="/create" @click.stop="isShowDrawer = false" v-if="!store.state.isApp">{{ $t('createnft') }}</router-link>
-  </nav>
-</el-drawer>
+  <el-drawer modal-class="menu-drawer" v-model="isShowDrawer" direction="ttb">
+    <nav class="mobile-nav-modal">
+      <router-link to="/" @click.stop="isShowDrawer = false">{{ $t('marketplace') }}</router-link>
+      <router-link to="/create" @click.stop="isShowDrawer = false">{{
+        $t('createnft')
+      }}</router-link>
+      <!-- <router-link to="/metaBot" @click.stop="isShowDrawer = false">
+        MetaBot <img src="@/assets/images/nav_icon_hot.svg" alt="MetaBot"
+      /></router-link> -->
+    </nav>
+  </el-drawer>
 </template>
 
 <script setup lang="ts">
-import { ElDropdown, ElDropdownItem, ElDropdownMenu, ElLoading, ElDrawer, locale } from 'element-plus'
+import {
+  ElDropdown,
+  ElDropdownItem,
+  ElDropdownMenu,
+  ElLoading,
+  ElDrawer,
+  locale,
+} from 'element-plus'
 import { ref } from 'vue'
 import { useStore, Mutation } from '@/store/index'
-import { useI18n } from "vue-i18n";
-import { useRoute, useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
 
-const i18n = useI18n();
+const i18n = useI18n()
 const env = import.meta.env
 const store = useStore()
 const route = useRoute()
@@ -92,7 +118,7 @@ function logout() {
 
 // 设置语言
 function setLang() {
-  const lang  = i18n.locale.value === 'en' ? 'zh' : 'en'
+  const lang = i18n.locale.value === 'en' ? 'zh' : 'en'
   i18n.locale.value = lang
   window.localStorage.setItem('lang', lang)
 }
