@@ -35,7 +35,7 @@ export const state: State = {
   userInfoLoading: false,
   sdkInitIng: false,
   // @ts-ignore
-  isApp: window?.appMetaIdJsV2 || window?.appMetaIdJs ? true : false,
+  isApp: window?.appMetaIdJsV2 || window?.appMetaIdJs ? false : true,
   // @ts-ignore
   sdk: window.appMetaIdJsV2 || window?.appMetaIdJs  ? new Sdk() : null,
   // 分页参数

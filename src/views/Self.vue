@@ -9,7 +9,7 @@
                             <div class="title">{{$t('selfTitle')}}</div>
                             <div class="drsc">{{$t('selfDrsc')}}</div>
                         </div>
-                        <router-link :to="{ name: 'create' }" class="btn">{{$t('start')}}<img class="icon-right" src="@/assets/images/btn_ins.svg" /></router-link>
+                        <router-link :to="{ name: 'create' }" class="btn" v-if="!store.state.isApp">{{$t('start')}}<img class="icon-right" src="@/assets/images/btn_ins.svg" /></router-link>
                     </div>
                 </div>
             </a>
