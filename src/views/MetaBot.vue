@@ -66,7 +66,7 @@
                   <span class="type">({{ $t('owner') }})</span>
                 </div>
               </div>
-              <div class="btn btn-block" :class="{'btn-gray': metabot.NftSellState !== 0 }" @click.stop="buy(metabot)">{{new Decimal(metabot.nftPrice).div(Math.pow(10,8)).toString()}} BSV</div>
+              <div class="btn btn-block" :class="{'btn-gray': metabot.NftSellState !== 0 || (store.state.userInfo && store.state.userInfo.metaId === metabot.nftOwnerMetaId) }" @click.stop="buy(metabot)">{{new Decimal(metabot.nftPrice).div(Math.pow(10,8)).toString()}} BSV</div>
             </div>
           </a>
         </div>
@@ -180,6 +180,12 @@ async function buy(metabot: GetMetaBotListResItem) {
     return
   } else if (metabot.NftSellState === 2) {
     ElMessage.warning(i18n.t('isBeBuyed'))
+    return
+  }
+
+  if (store.state.userInfo) {
+    if (store.state.userInfo.metaId === metabot.nftOwnerMetaId) return
+  } else {
     return
   }
 
@@ -308,7 +314,11 @@ async function buy(metabot: GetMetaBotListResItem) {
 function nftNotCanBuy (res: any) {
   if (res.code === 204 && res.data && res.data.message === 'The NFT is not for sale because  the corresponding SellUtxo cannot be found.') {
     ElMessage.error(i18n.t('nftNotCanBuy'))
-    router.back()
+    pagination.page = 1
+    pagination.loading = false
+    pagination.nothing = false
+    isShowSkeleton.value = true
+    getDatas(true)
   }
 }
 
