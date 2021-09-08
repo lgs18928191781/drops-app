@@ -66,7 +66,7 @@
                   <span class="type">({{ $t('owner') }})</span>
                 </div>
               </div>
-              <div class="btn btn-block" :class="{'btn-gray': metabot.NftSellState !== 0 || (store.state.userInfo && store.state.userInfo.metaId === metabot.nftOwnerMetaId) }" @click.stop="buy(metabot)">{{new Decimal(metabot.nftPrice).div(Math.pow(10,8)).toString()}} BSV</div>
+              <div class="btn btn-block" :class="{'btn-gray': metabot.nftSellState !== 0 || !metabot.nftIsReady  || (store.state.userInfo && store.state.userInfo.metaId === metabot.nftOwnerMetaId) }" @click.stop="buy(metabot)">{{new Decimal(metabot.nftPrice).div(Math.pow(10,8)).toString()}} BSV</div>
             </div>
           </a>
         </div>
@@ -214,12 +214,14 @@ function changeSectionIndex (index: number) {
 async function buy(metabot: GetMetaBotListResItem) {
   await checkSdkStatus()
 
-  if (metabot.NftSellState === 1) {
+  if (metabot.nftSellState === 1) {
     ElMessage.warning(i18n.t('isBeCancelSelled'))
     return
-  } else if (metabot.NftSellState === 2) {
+  } else if (metabot.nftSellState === 2) {
     ElMessage.warning(i18n.t('isBeBuyed'))
     return
+  } else {
+    if (!metabot.nftIsReady) return
   }
 
   if (store.state.userInfo) {

@@ -245,7 +245,7 @@ declare interface GetMetaBotListRes extends apiResponse{
 
 
 declare interface GetMetaBotListResItem{
-  NftSellState: number
+  nftSellState: number
   nftBalance: number
   nftBuyTimestamp: number
   nftBuyTxId: string
@@ -277,6 +277,7 @@ declare interface GetMetaBotListResItem{
   nftTimestamp: number
   nftTokenIndex: string
   nftWebsite: string
+  nftIsReady: boolean
 }
 
 declare interface GetNftIssueyTxIdResItem{
