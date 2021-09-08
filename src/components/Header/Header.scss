@@ -112,6 +112,11 @@ header{
         &.router-link-active{
             background: $mainColor;
         }
+
+        img{
+            display: inline-block;
+            vertical-align: middle;
+        }
     }
 }
 .menu-drawer{

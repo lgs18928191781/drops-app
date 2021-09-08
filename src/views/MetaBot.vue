@@ -2,7 +2,7 @@
     <div class="inner-page-header container flex flex-align-center">
         <div class="inner-page-header-left flex1">
             <div class="title flex flex-align-center"><img @click="router.back()" src="@/assets/images/bannet_icon_ins.svg" />MetaBot</div>
-            <div class="drsc">由各个方块组建的头像NFT…（一段稍微介绍头像的文案）</div>
+            <div class="drsc">{{$t('metaBotDrsc')}}</div>
         </div>
         <div class="search-warp flex flex-align-center">
           <input
