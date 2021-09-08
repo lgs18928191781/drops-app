@@ -18,7 +18,7 @@
 
     <!-- banner -->
     <div class="banner container">
-      <a><img src="@/assets/images/banner.svg" alt="" /></a>
+      <a><img src="@/assets/images/banner.png" alt="" /></a>
     </div>
 
     <div class="metabot-tags container">
@@ -75,12 +75,12 @@
     
 
     <div class="page-footer">
-      <LoadMore
+      <!-- <LoadMore
         :pagination="pagination"
         @getMore="getMore"
         v-if="metaBots.length > 0 && !isShowSkeleton"
-      />
-      <IsNull v-else />
+      /> -->
+      <IsNull v-if="metaBots.length <= 0" />
     </div>
 
 </template>
@@ -105,14 +105,20 @@ const keyword = ref('')
 const metaBots: GetMetaBotListResItem [] = reactive([])
 const pagination = reactive({
   ...store.state.pagination,
-  pageSize: 20
+  pageSize: 100
 })
 
 const sections = [
-  {name: '#001-050', start: 1, end: 20},
-  {name: '#051-100', start: 51, end: 100},
-  {name: '#101-150', start: 101, end: 150},
-  {name: '#151-200', start: 151, end: 200},
+  {name: '#1000-901', start: 901, end: 1000},
+  {name: '#900-801', start: 801, end: 900},
+  {name: '#800-701', start: 701, end: 800},
+  {name: '#700-601', start: 601, end: 700},
+  {name: '#600-501', start: 501, end: 600},
+  {name: '#500-401', start: 401, end: 500},
+  {name: '#400-301', start: 301, end: 400},
+  {name: '#300-201', start: 201, end: 300},
+  {name: '#200-101', start: 101, end: 200},
+  {name: '#100-001', start: 1, end: 100},
 ]
 const sectionIndex = ref(0) 
 
