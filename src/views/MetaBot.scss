@@ -107,11 +107,11 @@
             @extend %text-ellipsis;
             font-size: 13px;
             font-weight: 400;
-            white-space: nowrap;
           }
           .type {
             color: #909399;
             font-size: 13px;
+            white-space: nowrap;
           }
         }
       }

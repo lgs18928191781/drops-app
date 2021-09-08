@@ -150,7 +150,7 @@ const pagination = reactive({
 
 const sections = [
   { name: '#801-900', start: 801, end: 900 },
-  { name: '#901-1000', start: 901, end: 1000 },
+  { name: '#901-999', start: 901, end: 999 },
 ]
 const sectionIndex = ref(0)
 
