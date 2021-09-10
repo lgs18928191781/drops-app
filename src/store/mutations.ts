@@ -1,5 +1,7 @@
 import { MutationTree } from 'vuex'
-import { State} from './state'
+import { State } from './state'
+import { SDK } from 'sdk'
+import { SdkType } from 'sdk/src/emums'
 
 export enum Mutation {
   INCREMENT = 'INCREMENT',
@@ -7,6 +9,7 @@ export enum Mutation {
   SETUSERINFO = 'SETUSERINFO',
   SETUSERINFOLOADING = 'SETUSERINFOLOADING',
   LOGOUT = 'LOGOUT',
+  SETSDK = 'SETSDK',
 }
 
 export type Mutations<S = State> = {
@@ -37,5 +40,35 @@ export const mutations: MutationTree<State> & Mutations = {
     state.token = null
     state.userInfo = null
     state.sdk = null
+  },
+  [Mutation.SETSDK](state: State) {
+    state.sdk = new SDK({
+      type: SdkType.Metaidjs,
+      metaIdTag: import.meta.env.VITE_MetaIdTag,
+      showmoneyApi: import.meta.env.VITE_WalletApi,
+      getAccessToken: () => {
+        return state.token?.access_token
+      },
+      callBackFail: () => {
+        return new Promise((resolve) => {
+          resolve()
+        })
+      },
+      appOptions: {
+        clientId: import.meta.env.VITE_AppId,
+        clientSecret: import.meta.env.VITE_AppSecret,
+      },
+      metaidjsOptions: {
+        baseUri: import.meta.env.VITE_AuthUrl,
+        baseApiUrl: '',
+        redirectUrl: '',
+        oauthSettings: {
+          clientId: import.meta.env.VITE_AppId,
+          clientSecret: import.meta.env.VITE_AppSecret,
+          redirectUri: import.meta.env.VITE_Hosts + import.meta.env.VITE_RedirectPath,
+        },
+      },
+      dotwalletOptions: {},
+    })
   },
 }

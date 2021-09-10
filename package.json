@@ -24,6 +24,7 @@
     "metaidjs": "file:.yalc/metaidjs",
     "normalize.css": "^8.0.1",
     "qs": "^6.10.1",
+    "sdk": "file:.yalc/sdk",
     "uuid": "^8.3.2",
     "vue": "~3.1",
     "vue-i18n": "^9.1.6",

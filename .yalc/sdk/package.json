@@ -1,0 +1,27 @@
+{
+  "name": "sdk",
+  "version": "0.0.9",
+  "description": "metaidjs sdk",
+  "main": "dist/sdk.min.js",
+  "typings": "src/index.d.ts",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "build": "rollup -c ./rollup.config.js",
+    "dev": "rollup -c -m -w",
+    "test": "ts-node test/test.ts",
+    "pretest": "npm run build"
+  },
+  "author": "callmesoul",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "decimal.js-light": "^2.5.1",
+    "dotwallet-jssdk": "^1.2.7",
+    "metaidjs": "^1.7.0",
+    "qs": "^6.10.1",
+    "uuid": "^8.3.2"
+  },
+  "yalcSig": "4b86e1f0dbd3635f844ddd65f3f66080"
+}

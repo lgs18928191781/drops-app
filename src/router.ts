@@ -11,7 +11,7 @@ import Series from '@/views/Series.vue'
 import MetaBot from '@/views/MetaBot.vue'
 import Recommend from '@/views/Recommend.vue'
 import TariffDescription from '@/views/app/TariffDescription.vue'
-import { useStore, Action } from '@/store/index'
+import { useStore, Action, Mutation } from '@/store/index'
 import { ElMessage } from 'element-plus'
 import i18n from '@/utils/i18n'
 import { Langs } from './api'
@@ -25,9 +25,19 @@ export const router = createRouter({
   routes: [
     { path: '/', component: Home },
     { path: '/create', name: 'create', component: Create, meta: { isAuth: true } },
-    { path: '/nftSuccess/:genesisId/:codehash/:tokenIndex', name: 'nftSuccess', component: NftSuccess, meta: { isAuth: true } },
+    {
+      path: '/nftSuccess/:genesisId/:codehash/:tokenIndex',
+      name: 'nftSuccess',
+      component: NftSuccess,
+      meta: { isAuth: true },
+    },
     { path: '/detail/:genesisId/:codehash/:tokenIndex', name: 'detail', component: Detail },
-    { path: '/sale/:genesisId/:codehash/:tokenIndex', name: 'sale', component: Sale, meta: { isAuth: true } },
+    {
+      path: '/sale/:genesisId/:codehash/:tokenIndex',
+      name: 'sale',
+      component: Sale,
+      meta: { isAuth: true },
+    },
     { path: '/saleLegend', name: 'saleLegend', component: SaleLegend },
     { path: '/self', name: 'self', component: Self, meta: { isAuth: true } },
     { path: '/series/:genesisId/:codehash', name: 'series', component: Series },
@@ -41,8 +51,7 @@ export const router = createRouter({
       return savedPosition
     } else {
       // TODO: check if parent in common that works with alias
-      if (to.matched.every((record, i) => from.matched[i] !== record))
-        return { left: 0, top: 0 }
+      if (to.matched.every((record, i) => from.matched[i] !== record)) return { left: 0, top: 0 }
     }
     // leave scroll as it is by not returning anything
     // https://github.com/Microsoft/TypeScript/issues/18319
@@ -75,6 +84,10 @@ export const router = createRouter({
 // })
 
 router.beforeEach(async (to, from, next) => {
+  if (!store.state.sdk) {
+    store.commit(Mutation.SETSDK)
+  }
+
   // app
   const isApp = store.state.isApp
   if (isApp) {
@@ -87,12 +100,12 @@ router.beforeEach(async (to, from, next) => {
     const token = store.state.token
     if (token) {
       const now = new Date().getTime()
-        // token 过期先刷新token, 没过期直接用
-      if (now >= token.expires_time!) { 
+      // token 过期先刷新token, 没过期直接用
+      if (now >= token.expires_time!) {
         await store.dispatch(Action.refreshToken)
       }
       // 有token 没有初始化sdk 就去初始化sdk
-      if (!store.state.sdk && !store.state.sdkInitIng){
+      if (!store.state.sdk && !store.state.sdkInitIng) {
         store.dispatch(Action.initSdk)
       }
 
@@ -100,11 +113,11 @@ router.beforeEach(async (to, from, next) => {
         const result = await store.state.sdk?.checkUserCanIssueNft({
           metaId: store.state.userInfo!.metaId,
           address: store.state.userInfo!.address,
-          language: i18n.global.locale.value === 'en' ? Langs.EN : Langs.CN
+          language: i18n.global.locale.value === 'en' ? Langs.EN : Langs.CN,
         })
         if (!result) return
       }
-    }  else {
+    } else {
       // 没有token
       const isAuth = to.meta && to.meta.isAuth ? to.meta.isAuth : false
       if (isAuth) {
@@ -159,7 +172,7 @@ export function go(delta: number) {
       clearHooks()
       resolve(failure)
     })
-    const removeOnError = router.onError(err => {
+    const removeOnError = router.onError((err) => {
       clearHooks()
       reject(err)
     })
