@@ -2,8 +2,6 @@ import { SDK } from 'sdk'
 export interface State {
   debug: boolean
   version: string
-  isInitialized: boolean
-  count: number
   token: null | Token
   userInfo: null | UserInfo
   userInfoLoading: boolean
@@ -29,8 +27,6 @@ const token = tokenString ? JSON.parse(tokenString) : null
 export const state: State = {
   debug: import.meta.env.MODE === 'development',
   version: versionString,
-  isInitialized: false,
-  count: 0,
   token,
   userInfo: null,
   userInfoLoading: false,

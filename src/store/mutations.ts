@@ -18,6 +18,7 @@ export type Mutations<S = State> = {
   [Mutation.SETUSERINFO](state: S, payload: UserInfo): void
   [Mutation.SETUSERINFOLOADING](state: S, payload: boolean): void
   [Mutation.LOGOUT](state: S): void
+  [Mutation.SETSDK](state: S): void
 }
 
 export const mutations: MutationTree<State> & Mutations = {
@@ -60,7 +61,6 @@ export const mutations: MutationTree<State> & Mutations = {
       },
       metaidjsOptions: {
         baseUri: import.meta.env.VITE_AuthUrl,
-        baseApiUrl: '',
         redirectUrl: '',
         oauthSettings: {
           clientId: import.meta.env.VITE_AppId,

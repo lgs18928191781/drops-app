@@ -91,6 +91,7 @@ import { ref } from 'vue'
 import { useStore, Mutation } from '@/store/index'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
+import { SdkType } from 'sdk/src/emums'
 
 const i18n = useI18n()
 const env = import.meta.env
@@ -102,10 +103,9 @@ const isShowDrawer = ref(false)
 // 跳转授权
 function auth() {
   if (store.state.userInfoLoading) return
-  // 清楚缓存的信息，避免意外
-  store.commit(Mutation.LOGOUT, undefined)
-  const url = `${env.VITE_AuthUrl}/userLogin?response_type=code&client_id=${env.VITE_AppId}&redirect_uri=${env.VITE_Hosts}${env.VITE_RedirectPath}&scope=app&from=${env.VITE_Hosts}`
-  window.location.href = url
+  store.state.sdk?.changeSdkType(SdkType.Metaidjs)
+  console.log('sdk?.login', store.state.sdk!.login)
+  store.state.sdk?.login()
 }
 
 // 退出登录

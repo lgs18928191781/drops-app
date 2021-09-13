@@ -14,7 +14,7 @@ module.exports = {
     'postcss-nesting': {},
     // 自动把px 转化为 rem
     'postcss-pxtorem': {
-      rootValue: 85.375, // 设计稿宽度 / 10
+      rootValue: 85.375, // 设计稿宽度 / 16
       propList: ['*'],
       replace: false,
       mediaQuery: false,

@@ -1,16 +1,6 @@
 import { createRouter, createWebHistory, RouterView } from 'vue-router'
 import Home from '@/views/Home.vue'
-import Create from '@/views/Create.vue'
-import NftSuccess from '@/views/NftSuccess.vue'
-import Detail from '@/views/Detail.vue'
-import Sale from '@/views/sale/Sale.vue'
-import SaleLegend from '@/views/sale/Legend.vue'
 import Login from '@/views/Login.vue'
-import Self from '@/views/Self.vue'
-import Series from '@/views/Series.vue'
-import MetaBot from '@/views/MetaBot.vue'
-import Recommend from '@/views/Recommend.vue'
-import TariffDescription from '@/views/app/TariffDescription.vue'
 import { useStore, Action, Mutation } from '@/store/index'
 import { ElMessage } from 'element-plus'
 import i18n from '@/utils/i18n'
@@ -24,27 +14,7 @@ export const router = createRouter({
   strict: true,
   routes: [
     { path: '/', component: Home },
-    { path: '/create', name: 'create', component: Create, meta: { isAuth: true } },
-    {
-      path: '/nftSuccess/:genesisId/:codehash/:tokenIndex',
-      name: 'nftSuccess',
-      component: NftSuccess,
-      meta: { isAuth: true },
-    },
-    { path: '/detail/:genesisId/:codehash/:tokenIndex', name: 'detail', component: Detail },
-    {
-      path: '/sale/:genesisId/:codehash/:tokenIndex',
-      name: 'sale',
-      component: Sale,
-      meta: { isAuth: true },
-    },
-    { path: '/saleLegend', name: 'saleLegend', component: SaleLegend },
-    { path: '/self', name: 'self', component: Self, meta: { isAuth: true } },
-    { path: '/series/:genesisId/:codehash', name: 'series', component: Series },
     { path: '/login', name: 'login', component: Login },
-    { path: '/recommned', name: 'recommned', component: Recommend },
-    { path: '/tariffDescription', name: 'tariffDescription', component: TariffDescription },
-    { path: '/metaBot', name: 'metaBot', component: MetaBot },
   ],
   async scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
@@ -85,7 +55,7 @@ export const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   if (!store.state.sdk) {
-    store.commit(Mutation.SETSDK)
+    store.commit(Mutation.SETSDK, undefined)
   }
 
   // app
