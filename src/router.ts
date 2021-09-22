@@ -4,7 +4,7 @@ import Login from '@/views/Login.vue'
 import { useStore, Action, Mutation } from '@/store/index'
 import { ElMessage } from 'element-plus'
 import i18n from '@/utils/i18n'
-import { Langs } from './api'
+import { Lang } from 'sdk/src/emums'
 const store = useStore()
 let removeRoute: (() => void) | undefined
 console.log('import.meta.env.PROD', import.meta.env.PROD)
@@ -83,7 +83,7 @@ router.beforeEach(async (to, from, next) => {
         const result = await store.state.sdk?.checkUserCanIssueNft({
           metaId: store.state.userInfo!.metaId,
           address: store.state.userInfo!.address,
-          language: i18n.global.locale.value === 'en' ? Langs.EN : Langs.CN,
+          language: i18n.global.locale.value === 'en' ? Lang.EN : Lang.CN,
         })
         if (!result) return
       }

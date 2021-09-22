@@ -3,13 +3,19 @@
     home
     <LoadMore :pagination="pagination" @getMore="getMore" />
     <IsNull />
+
+    <div class="icon">
+      svg-icon
+      <FileUploadIcon />
+    </div>
   </div>
 </template>
 <script setup lang="ts">
-import {} from '@/api'
+import { } from '@/api'
 import { useStore } from '@/store'
 import { reactive, ref } from 'vue'
 import LoadMore from '@/components/LoadMore/LoadMore.vue'
+import FileUploadIcon from '@/assets/images/file_upload.svg'
 
 import IsNull from '../components/IsNull/IsNull.vue'
 import { useI18n } from 'vue-i18n'
@@ -26,4 +32,5 @@ function getMore() {
   pagination.page++
 }
 </script>
-<style lang="scss" scoped src="./Home.scss"></style>
+<style lang="scss" scoped src="./Home.scss">
+</style>
