@@ -5,8 +5,8 @@ import pkg from './package.json'
 import styleImport from 'vite-plugin-style-import'
 import vueI18n from '@intlify/vite-plugin-vue-i18n'
 import svgLoader from 'vite-svg-loader'
-export default ({ mode }) => {
 import VitePluginHtmlEnv from 'vite-plugin-html-env'
+
 export default ({ mode }) => {
   // 加载环境配置文件
   const env = loadEnv(mode, process.cwd())
@@ -20,11 +20,11 @@ export default ({ mode }) => {
             libraryName: 'element-plus',
             esModule: true,
             ensureStyleFile: true,
-            resolveStyle: (name) => {
+            resolveStyle: name => {
               name = name.slice(3)
               return `element-plus/packages/theme-chalk/src/${name}.scss`
             },
-            resolveComponent: (name) => {
+            resolveComponent: name => {
               return `element-plus/lib/${name}`
             },
           },
