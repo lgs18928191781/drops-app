@@ -5,7 +5,8 @@ import pkg from './package.json'
 import styleImport from 'vite-plugin-style-import'
 import vueI18n from '@intlify/vite-plugin-vue-i18n'
 import { svgBuilder } from './svgBuilder'
-export default (({mode}) => {
+import VitePluginHtmlEnv from 'vite-plugin-html-env'
+export default ({ mode }) => {
   console.log('mode')
   console.log(mode)
   // 加载环境配置文件
@@ -16,28 +17,31 @@ export default (({mode}) => {
       vue(),
       // element-plus 按需加载
       styleImport({
-        libs: [{
-          libraryName: 'element-plus',
-          esModule: true,
-          ensureStyleFile: true,
-          resolveStyle: (name) => {
-            name = name.slice(3)
-            return `element-plus/packages/theme-chalk/src/${name}.scss`;
+        libs: [
+          {
+            libraryName: 'element-plus',
+            esModule: true,
+            ensureStyleFile: true,
+            resolveStyle: (name) => {
+              name = name.slice(3)
+              return `element-plus/packages/theme-chalk/src/${name}.scss`
+            },
+            resolveComponent: (name) => {
+              return `element-plus/lib/${name}`
+            },
           },
-          resolveComponent: (name) => {
-            return `element-plus/lib/${name}`;
-          },
-        }]
+        ],
       }),
       // 多语言加载
       vueI18n({
         // if you want to use Vue I18n Legacy API, you need to set `compositionOnly: false`
         // compositionOnly: false,
-  
+
         // you need to set i18n resource including paths !
-        include: path.resolve(__dirname, './src/languages/**')
+        include: path.resolve(__dirname, './src/languages/**'),
       }),
-      svgBuilder('./src/assets/svg/')
+      svgBuilder('./src/assets/svg/'),
+      VitePluginHtmlEnv(),
     ],
     resolve: {
       alias: {
@@ -67,10 +71,10 @@ export default (({mode}) => {
       sourcemap: mode === 'prod' ? false : 'inline',
       rollupOptions: {
         output: {
-          sourcemap: mode === 'prod' ? false : 'inline'
-        }
-      }
+          sourcemap: mode === 'prod' ? false : 'inline',
+        },
+      },
     },
-    sourcemap: mode === 'prod' ? false : 'inline'
+    sourcemap: mode === 'prod' ? false : 'inline',
   })
-})
+}

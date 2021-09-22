@@ -22,10 +22,20 @@
       <a
         v-if="!store.state.userInfo"
         class="btn"
-        @click="auth"
+        @click="auth(SdkType.Metaidjs)"
         v-loading="store.state.userInfoLoading"
         element-loading-background="rgba(255, 255, 255, 0.7)"
         >{{ $t('signinandout') }}</a
+      >
+
+      <!-- 打点登陆按钮 -->
+      <a
+        v-if="!store.state.userInfo"
+        class="btn"
+        @click="auth(SdkType.Dotwallet)"
+        v-loading="store.state.userInfoLoading"
+        element-loading-background="rgba(255, 255, 255, 0.7)"
+        >DotWallet {{ $t('signinandout') }}</a
       >
 
       <!-- 登录用户 -->
@@ -39,10 +49,8 @@
         </div>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item @click="toSelf">{{ $t('mynft') }}</el-dropdown-item>
-            <el-dropdown-item @click="toWallet">{{ $t('mywallet') }}</el-dropdown-item>
-            <el-dropdown-item @click="toTariffDescription">{{
-              $t('tariffDescription ')
+            <el-dropdown-item @click="store.state.sdk?.toWallet()">{{
+              $t('mywallet')
             }}</el-dropdown-item>
             <el-dropdown-item @click="logout">{{ $t('logout') }}</el-dropdown-item>
           </el-dropdown-menu>
@@ -101,16 +109,19 @@ const router = useRouter()
 const isShowDrawer = ref(false)
 
 // 跳转授权
-function auth() {
+function auth(appType: SdkType) {
   if (store.state.userInfoLoading) return
-  store.state.sdk?.changeSdkType(SdkType.Metaidjs)
+  store.state.sdk?.changeSdkType(appType)
   console.log('sdk?.login', store.state.sdk!.login)
+  debugger
   store.state.sdk?.login()
 }
 
 // 退出登录
 function logout() {
   store.commit(Mutation.LOGOUT, undefined)
+  // 退出登录时sdk已清空为null， 需重新new sdk
+  store.commit(Mutation.SETSDK, undefined)
   if (route.meta && route.meta.isAuth) {
     router.replace('/')
   }
@@ -121,16 +132,6 @@ function setLang() {
   const lang = i18n.locale.value === 'en' ? 'zh' : 'en'
   i18n.locale.value = lang
   window.localStorage.setItem('lang', lang)
-}
-function toSelf() {
-  router.push('/self')
-}
-function toWallet() {
-  window.open(import.meta.env.VITE_AuthUrl)
-}
-
-function toTariffDescription() {
-  router.push('/tariffDescription')
 }
 </script>
 

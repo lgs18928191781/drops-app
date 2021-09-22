@@ -5,12 +5,23 @@ const route = useRoute()
 const router = useRouter()
 const store = useStore()
 const code = route.query.code
-const env = import.meta.env
-const host = env.VITE_Hosts || ''
-const redirectPath = env.VITE_RedirectPath || '/'
-import { GetToken } from '@/api'
-if (code) {
-  GetToken({
+const state = route.query.state
+import { SdkType } from 'sdk/src/emums'
+let appType = SdkType.Metaidjs
+if (state && state === 'jssdk') appType = SdkType.Dotwallet
+store.state.sdk?.changeSdkType(appType)
+if (code && typeof code === 'string') {
+  store.state.sdk?.getToken({ code })?.then((res: Token) => {
+    if (res && res.access_token) {
+      store.commit(Mutation.SETTOKEN, {
+        ...res,
+        expires_time: res.expires_in ? new Date().getTime() + res.expires_in - 60 * 1000 : -1,
+      })
+      store.dispatch(Action.initSdk)
+      router.replace('/')
+    }
+  })
+  /* GetToken({
     code,
     grant_type: 'authorization_code',
     redirect_uri: `${host}${redirectPath}`,
@@ -26,7 +37,7 @@ if (code) {
       store.dispatch(Action.initSdk)
       router.replace('/')
     }
-  })
+  }) */
 } else {
   router.replace('/')
 }
