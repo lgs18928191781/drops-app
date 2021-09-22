@@ -1,60 +1,18 @@
-# Vite Typescript + Tailwind Starter
+# 初始模板
 
-Simple, opinionated, and **production-ready** project template for Vite.
+- 集成 metaidJs 登录逻辑
+- 集成兼容 APP,打点登录
+- 集成自适应（使用设计稿 px,自动转换 rem）
+- 集成`i18n`国际化多语言配置
+- 集成`element-plus`Ui 组件
+- 集成代码格式规范和编辑器自动格式化
 
-See [changelog](./CHANGES.md) for latest changes.
+## 使用
 
-## Features
+1. 修改`.env`的`VITE_Design_Size`,`VITE_Min_FontSize`的自适应配置
 
-- Vue 3
-- Vuex 4 store (fully typed)
-- TypeScript
-- Tailwind CSS w/ JIT compiler + following plugins preinstalled
-  - `@tailwindcss/aspect-ratio`
-  - `@tailwindcss/line-clamp`
-  - `@tailwindcss/typography`
-  - `@tailwindcss/forms`
-- PostCSS 8 w/ `postcss-nesting` plugin
-- Eslint
-- Prettier
-- Alias `@` to `<project_root>/src`
-- Define `_APP_VERSION` from `package.json` version at build time
-- Using new `script setup` syntax (see [Vue rfc #227](https://github.com/vuejs/rfcs/pull/227))
-- Cypress.io e2e tests (configured similarly to `vue-cli`)
-- GitHub workflows
-  - Dependabot
-  - Automated e2e tests
-- GitLab CI
-## Project setup and usage
+## VSCode 设置
 
-Install dependencies:
-
-```
-yarn
-```
-
-Run development server:
-
-```
-yarn dev
-```
-
-Open Cypress test runner:
-
-```
-yarn test
-```
-
-Run Cypress tests in headless mode:
-
-```
-yarn test:ci
-```
-
-## Contributing
-
-Contributions are welcome! Please follow the [code of conduct](https://www.contributor-covenant.org/version/2/0/code_of_conduct/) when interacting with others.
-
----
-
-[Follow @uninen](https://twitter.com/uninen) on Twitter
+1. 安装推荐插件
+   `code --install-extension dbaeumer.vscode-eslint esbenp.prettier-vscode johnsoncodehk.volar lihuiwang.vue-alias-skip formulahendry.auto-close-tag formulahendry.auto-rename-tag ms-ceintl.vscode-language-pack-zh-hans irongeek.vscode-env lokalise.i18n-ally kisstkondoros.vscode-gutter-preview ionutvmi.path-autocomplete`
+2. 打开`settings.json` 确保开启保存自动格式化`"editor.formatOnSave": true,`

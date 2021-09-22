@@ -21,7 +21,7 @@
           docEl.dataset.width = width;
           docEl.dataset.percent = htmlFontSize * (width / designSize);
           var fontSize = htmlFontSize * (width / designSize)
-          if(fontSize < minFontSize) {
+          if(minFontSize > 0 && fontSize < minFontSize) {
             fontSize = minFontSize
           }
           docEl.style.fontSize = fontSize + 'px';
@@ -29,7 +29,7 @@
         recalc();
         if (!doc.addEventListener) return;
         win.addEventListener(resizeEvt, recalc, false);
-      })(document, window, 1366, 85.375, 70);
+      })(document, window, parseInt('<% VITE_Design_Size />'), parseFloat(parseInt('<% VITE_Design_Size />') / 16), parseInt('<% VITE_Min_FontSize />'));
     </script>
   </head>
   <body>

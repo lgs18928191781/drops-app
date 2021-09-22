@@ -17,4 +17,10 @@ interface ImportMetaEnv {
   VITE_ShowMan: string
   VITE_CreateNeedMc: string
   VITE_AppAddress: string
+  // 自适应
+  VITE_Design_Size: string
+  VITE_Min_FontSize: string
+  // 打点钱包
+  VITE_DotWallet_AppId: string
+  VITE_DotWallet_AppSecret: string
 }

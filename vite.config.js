@@ -6,6 +6,8 @@ import styleImport from 'vite-plugin-style-import'
 import vueI18n from '@intlify/vite-plugin-vue-i18n'
 import svgLoader from 'vite-svg-loader'
 export default ({ mode }) => {
+import VitePluginHtmlEnv from 'vite-plugin-html-env'
+export default ({ mode }) => {
   // 加载环境配置文件
   const env = loadEnv(mode, process.cwd())
   return defineConfig({
@@ -37,6 +39,7 @@ export default ({ mode }) => {
         include: path.resolve(__dirname, './src/languages/**'),
       }),
       svgLoader(),
+      VitePluginHtmlEnv(),
     ],
     resolve: {
       alias: {

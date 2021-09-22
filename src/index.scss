@@ -107,6 +107,9 @@ body {
     background: #bfc2cc;
     border-color: #bfc2cc;
   }
+  &.btn-default {
+    background: #fff;
+  }
   &.btn-block {
     display: block;
     width: auto;

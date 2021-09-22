@@ -9,6 +9,7 @@ export enum Action {
   getUserInfo = 'getUserInfo',
   refreshToken = 'refreshToken',
   checkToken = 'checkToken',
+  initSdk = 'initSdk',
 }
 
 type AugmentedActionContext = {
@@ -22,10 +23,12 @@ export interface Actions {
   [Action.getUserInfo]({ state, commit, dispatch }: AugmentedActionContext): void
   [Action.refreshToken]({ state, commit, dispatch }: AugmentedActionContext): void
   [Action.checkToken]({ state, commit, dispatch }: AugmentedActionContext): void
+  [Action.initSdk]({ state, commit, dispatch }: AugmentedActionContext): void
 }
 
 export const actions: ActionTree<State, State> & Actions = {
   async [Action.getUserInfo]({ state, commit, dispatch }) {
+    state.userInfoLoading = true
     const res = await state.sdk?.getUserInfo()
     if (res && res.code === 200) {
       commit(Mutation.SETUSERINFO, res.data)
@@ -87,6 +90,24 @@ export const actions: ActionTree<State, State> & Actions = {
       } else {
         resolve(null)
       }
+    })
+  },
+  [Action.initSdk]({ state, commit, dispatch }) {
+    return new Promise<void>(async (resolve) => {
+      state.sdkInitIng = true
+      state.userInfoLoading = true
+      state.sdk
+        ?.initSdk()
+        .then(() => {
+          state.sdkInitIng = false
+          dispatch(Action.getUserInfo)
+          resolve()
+        })
+        .catch(() => {
+          state.sdkInitIng = false
+          commit(Mutation.LOGOUT)
+          resolve()
+        })
     })
   },
 }

@@ -4,9 +4,8 @@ import Login from '@/views/Login.vue'
 import { useStore, Action, Mutation } from '@/store/index'
 import { ElMessage } from 'element-plus'
 import i18n from '@/utils/i18n'
-import { Lang } from 'sdk/src/emums'
+import { SdkType } from 'sdk/src/emums'
 const store = useStore()
-let removeRoute: (() => void) | undefined
 console.log('import.meta.env.PROD', import.meta.env.PROD)
 export const routerHistory = createWebHistory()
 export const router = createRouter({
@@ -61,6 +60,8 @@ router.beforeEach(async (to, from, next) => {
   // app
   const isApp = store.state.isApp
   if (isApp) {
+    // 设置app环境
+    if (store.state.sdk?.type !== SdkType.App) store.state.sdk?.changeSdkType(SdkType.App)
     //  没有用户信息， 也没有正在加载用户信息, 则去获取用户信息
     if (!store.state.userInfo && !store.state.userInfoLoading) {
       store.dispatch(Action.getUserInfo)
@@ -69,23 +70,20 @@ router.beforeEach(async (to, from, next) => {
     // web
     const token = store.state.token
     if (token) {
+      // 检查环境变量
+      if (store.state.sdk?.type === SdkType.Null) {
+        const appType = window.localStorage.getItem('appType')
+        if (appType && appType !== '') store.state.sdk?.changeSdkType(parseInt(appType))
+      }
+
       const now = new Date().getTime()
       // token 过期先刷新token, 没过期直接用
       if (now >= token.expires_time!) {
         await store.dispatch(Action.refreshToken)
       }
       // 有token 没有初始化sdk 就去初始化sdk
-      if (!store.state.sdk && !store.state.sdkInitIng) {
+      if (!store.state.sdk?.isSdkFinish() && !store.state.sdkInitIng) {
         store.dispatch(Action.initSdk)
-      }
-
-      if (to.name === 'create' && store.state.userInfo) {
-        const result = await store.state.sdk?.checkUserCanIssueNft({
-          metaId: store.state.userInfo!.metaId,
-          address: store.state.userInfo!.address,
-          language: i18n.global.locale.value === 'en' ? Lang.EN : Lang.CN,
-        })
-        if (!result) return
       }
     } else {
       // 没有token

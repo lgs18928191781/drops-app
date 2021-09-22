@@ -1,3 +1,4 @@
+const env = require('dotenv').config().parsed
 module.exports = {
   plugins: {
     // css前缀自动补全
@@ -14,7 +15,7 @@ module.exports = {
     'postcss-nesting': {},
     // 自动把px 转化为 rem
     'postcss-pxtorem': {
-      rootValue: 85.375, // 设计稿宽度 / 16
+      rootValue: parseInt(env.VITE_Design_Size) / 16, // 设计稿宽度 / 16
       propList: ['*'],
       replace: false,
       mediaQuery: false,
