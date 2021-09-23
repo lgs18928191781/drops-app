@@ -2,6 +2,7 @@ import { MutationTree } from 'vuex'
 import { State } from './state'
 import { SDK } from 'sdk'
 import { SdkType } from 'sdk/src/emums'
+import { env } from 'process'
 
 export enum Mutation {
   SETTOKEN = 'SETTOKEN',
@@ -47,7 +48,7 @@ export const mutations: MutationTree<State> & Mutations = {
         return state.token?.access_token
       },
       callBackFail: () => {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
           resolve()
         })
       },
@@ -67,6 +68,7 @@ export const mutations: MutationTree<State> & Mutations = {
         clientID: import.meta.env.VITE_DotWallet_AppId,
         clientSecret: import.meta.env.VITE_DotWallet_AppSecret,
         redirectUrl: import.meta.env.VITE_Hosts + import.meta.env.VITE_RedirectPath,
+        env: import.meta.env.VITE_DotWallet_ENV,
       },
     })
   },

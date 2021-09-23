@@ -617,6 +617,13 @@
   resolved "https://registry.nlark.com/@types/sizzle/download/@types/sizzle-2.3.3.tgz?cache=0&sync_timestamp=1629709217852&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40types%2Fsizzle%2Fdownload%2F%40types%2Fsizzle-2.3.3.tgz#ff5e2f1902969d305225a047c8a0fd5c915cebef"
   integrity sha1-/14vGQKWnTBSJaBHyKD9XJFc6+8=
 
+"@types/svgo@^2.3.1":
+  version "2.4.2"
+  resolved "https://registry.nlark.com/@types/svgo/download/@types/svgo-2.4.2.tgz#545f1e838a883d5e6006a458e07dddf47ca504ca"
+  integrity sha1-VF8eg4qIPV5gBqRY4H3d9HylBMo=
+  dependencies:
+    "@types/node" "*"
+
 "@types/unist@*", "@types/unist@^2.0.0", "@types/unist@^2.0.2":
   version "2.0.6"
   resolved "https://registry.nlark.com/@types/unist/download/@types/unist-2.0.6.tgz?cache=0&sync_timestamp=1629709633346&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40types%2Funist%2Fdownload%2F%40types%2Funist-2.0.6.tgz#250a7b16c3b91f672a24552ec64678eeb1d3a08d"
@@ -1876,6 +1883,14 @@ core-util-is@1.0.2:
   resolved "https://registry.nlark.com/core-util-is/download/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
   integrity sha1-tf1UIgqivFq1eqtxQMlAdUUDwac=
 
+cors@^2.8.5:
+  version "2.8.5"
+  resolved "https://registry.npm.taobao.org/cors/download/cors-2.8.5.tgz#eac11da51592dd86b9f06f6e7ac293b3df875d29"
+  integrity sha1-6sEdpRWS3Ya58G9uesKTs9+HXSk=
+  dependencies:
+    object-assign "^4"
+    vary "^1"
+
 cosmiconfig@^3.0.1, cosmiconfig@^3.1.0:
   version "3.1.0"
   resolved "https://registry.nlark.com/cosmiconfig/download/cosmiconfig-3.1.0.tgz?cache=0&sync_timestamp=1629585969900&other_urls=https%3A%2F%2Fregistry.nlark.com%2Fcosmiconfig%2Fdownload%2Fcosmiconfig-3.1.0.tgz#640a94bf9847f321800403cd273af60665c73397"
@@ -2246,11 +2261,6 @@ dotenv@^10.0.0:
   resolved "https://registry.nlark.com/dotenv/download/dotenv-10.0.0.tgz#3d4227b8fb95f81096cdd2b66653fb2c7085ba81"
   integrity sha1-PUInuPuV+BCWzdK2ZlP7LHCFuoE=
 
-dotwallet-jssdk@^1.2.7:
-  version "1.2.7"
-  resolved "https://registry.nlark.com/dotwallet-jssdk/download/dotwallet-jssdk-1.2.7.tgz#cffb2e29066ccd2aa33f8b1f511110cc5b3a835e"
-  integrity sha1-z/suKQZszSqjP4sfUREQzFs6g14=
-
 duplexer3@^0.1.4:
   version "0.1.4"
   resolved "https://registry.nlark.com/duplexer3/download/duplexer3-0.1.4.tgz#ee01dd1cac0ed3cbc7fdbea37dc0a8f1ce002ce2"
@@ -2532,6 +2542,11 @@ esutils@^2.0.2:
   version "2.0.3"
   resolved "https://registry.nlark.com/esutils/download/esutils-2.0.3.tgz#74d2eb4de0b8da1293711910d50775b9b710ef64"
   integrity sha1-dNLrTeC42hKTcRkQ1Qd1ubcQ72Q=
+
+etag@^1.8.1:
+  version "1.8.1"
+  resolved "https://registry.nlark.com/etag/download/etag-1.8.1.tgz#41ae2eeb65efa62268aebfea83ac7d79299b0887"
+  integrity sha1-Qa4u62XvpiJorr/qg6x9eSmbCIc=
 
 eventemitter2@^6.4.3:
   version "6.4.4"
@@ -2869,6 +2884,15 @@ fragment-cache@^0.2.1:
   integrity sha1-QpD60n8T6Jvn8zeZxrxaCr//DRk=
   dependencies:
     map-cache "^0.2.2"
+
+fs-extra@^10.0.0:
+  version "10.0.0"
+  resolved "https://registry.nlark.com/fs-extra/download/fs-extra-10.0.0.tgz#9ff61b655dde53fb34a82df84bb214ce802e17c1"
+  integrity sha1-n/YbZV3eU/s0qC34S7IUzoAuF8E=
+  dependencies:
+    graceful-fs "^4.2.0"
+    jsonfile "^6.0.1"
+    universalify "^2.0.0"
 
 fs-extra@^9.1.0:
   version "9.1.0"
@@ -4309,11 +4333,6 @@ merge2@^1.3.0:
   resolved "https://registry.npm.taobao.org/merge2/download/merge2-1.4.1.tgz#4368892f885e907455a6fd7dc55c0c9d404990ae"
   integrity sha1-Q2iJL4hekHRVpv19xVwMnUBJkK4=
 
-metaidjs@^1.7.0:
-  version "1.7.0"
-  resolved "https://registry.nlark.com/metaidjs/download/metaidjs-1.7.0.tgz#7bbedbf93ac0ddf3c8df9cc941e71430a47d8f8f"
-  integrity sha1-e77b+TrA3fPI35zJQecUMKR9j48=
-
 "metaidjs@file:.yalc/metaidjs":
   version "1.7.14"
 
@@ -4601,7 +4620,7 @@ num2fraction@^1.2.2:
   resolved "https://registry.nlark.com/num2fraction/download/num2fraction-1.2.2.tgz#6f682b6a027a4e9ddfa4564cd2589d1d4e669ede"
   integrity sha1-b2gragJ6Tp3fpFZM0lidHU5mnt4=
 
-object-assign@^4.0.1, object-assign@^4.1.0:
+object-assign@^4, object-assign@^4.0.1, object-assign@^4.1.0:
   version "4.1.1"
   resolved "https://registry.nlark.com/object-assign/download/object-assign-4.1.1.tgz?cache=0&sync_timestamp=1618847043548&other_urls=https%3A%2F%2Fregistry.nlark.com%2Fobject-assign%2Fdownload%2Fobject-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
   integrity sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM=
@@ -5738,16 +5757,6 @@ sass@^1.35.1:
   dependencies:
     chokidar ">=3.0.0 <4.0.0"
 
-"sdk@file:.yalc/sdk":
-  version "0.0.12"
-  dependencies:
-    axios "^0.21.1"
-    decimal.js-light "^2.5.1"
-    dotwallet-jssdk "^1.2.7"
-    metaidjs "^1.7.0"
-    qs "^6.10.1"
-    uuid "^8.3.2"
-
 select@^1.1.2:
   version "1.1.2"
   resolved "https://registry.nlark.com/select/download/select-1.1.2.tgz#0e7350acdec80b1108528786ec1d4418d11b396d"
@@ -6307,7 +6316,7 @@ svg-baker-runtime@^1.4.7:
     mitt "1.1.2"
     svg-baker "^1.7.0"
 
-svg-baker@^1.5.0, svg-baker@^1.7.0:
+svg-baker@1.7.0, svg-baker@^1.5.0, svg-baker@^1.7.0:
   version "1.7.0"
   resolved "https://registry.nlark.com/svg-baker/download/svg-baker-1.7.0.tgz#8367f78d875550c52fe4756f7303d5c5d7c2e9a7"
   integrity sha1-g2f3jYdVUMUv5HVvcwPVxdfC6ac=
@@ -6345,7 +6354,7 @@ svg-tags@^1.0.0:
   resolved "https://registry.nlark.com/svg-tags/download/svg-tags-1.0.0.tgz#58f71cee3bd519b59d4b2a843b6c7de64ac04764"
   integrity sha1-WPcc7jvVGbWdSyqEO2x95krAR2Q=
 
-svgo@^2.3.0:
+svgo@^2.3.0, svgo@^2.3.1:
   version "2.6.1"
   resolved "https://registry.nlark.com/svgo/download/svgo-2.6.1.tgz#60b613937e0081028cffc2369090e366b08f1f0e"
   integrity sha1-YLYTk34AgQKM/8I2kJDjZrCPHw4=
@@ -6890,6 +6899,11 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
 
+vary@^1:
+  version "1.1.2"
+  resolved "https://registry.nlark.com/vary/download/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
+  integrity sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
+
 verror@1.10.0:
   version "1.10.0"
   resolved "https://registry.npm.taobao.org/verror/download/verror-1.10.0.tgz#3a105ca17053af55d6e270c1f8288682e18da400"
@@ -6954,6 +6968,19 @@ vite-plugin-style-import@^1.0.1:
     debug "^4.3.2"
     es-module-lexer "^0.7.1"
     magic-string "^0.25.7"
+
+vite-plugin-svg-icons@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.nlark.com/vite-plugin-svg-icons/download/vite-plugin-svg-icons-1.0.4.tgz?cache=0&sync_timestamp=1627972873480&other_urls=https%3A%2F%2Fregistry.nlark.com%2Fvite-plugin-svg-icons%2Fdownload%2Fvite-plugin-svg-icons-1.0.4.tgz#9f20feff4b3bfbdcf5401d3efa75d4813f27dc22"
+  integrity sha1-nyD+/0s7+9z1QB0++nXUgT8n3CI=
+  dependencies:
+    "@types/svgo" "^2.3.1"
+    cors "^2.8.5"
+    debug "^4.3.2"
+    etag "^1.8.1"
+    fs-extra "^10.0.0"
+    svg-baker "1.7.0"
+    svgo "^2.3.1"
 
 vite-svg-loader@^2.2.0:
   version "2.2.0"

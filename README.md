@@ -6,6 +6,7 @@
 - 集成`i18n`国际化多语言配置
 - 集成`element-plus`Ui 组件
 - 集成代码格式规范和编辑器自动格式化
+- 使用 Vue3 最新 SFC setup 语法，推荐使用[https://vue3js.cn/docs/zh/guide/composition-api-setup.html#%E5%8F%82%E6%95%B0](https://vue3js.cn/docs/zh/guide/composition-api-setup.html#%E5%8F%82%E6%95%B0)
 
 ## 使用
 

@@ -10,13 +10,11 @@ import { SdkType } from 'sdk/src/emums'
 let appType = SdkType.Metaidjs
 if (state && state === 'jssdk') appType = SdkType.Dotwallet
 store.state.sdk?.changeSdkType(appType)
+debugger
 if (code && typeof code === 'string') {
   store.state.sdk?.getToken({ code })?.then((res: Token) => {
     if (res && res.access_token) {
-      store.commit(Mutation.SETTOKEN, {
-        ...res,
-        expires_time: res.expires_in ? new Date().getTime() + res.expires_in - 60 * 1000 : -1,
-      })
+      store.commit(Mutation.SETTOKEN, res)
       store.dispatch(Action.initSdk)
       router.replace('/')
     }

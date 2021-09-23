@@ -23,4 +23,5 @@ interface ImportMetaEnv {
   // 打点钱包
   VITE_DotWallet_AppId: string
   VITE_DotWallet_AppSecret: string
+  VITE_DotWallet_ENV: string
 }

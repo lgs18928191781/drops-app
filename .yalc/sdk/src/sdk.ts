@@ -94,6 +94,7 @@ export class SDK {
   getAccessToken: Function // 获取token的方法， 保持最新
   callBackFail?: (error: MetaIdJsRes) => Promise<void> | null = undefined // 统一回调错误处理
   axios: AxiosInstance | null = null
+  isSdkFinish: boolean = false // 是否已初始化完成
   nftAppAddress = '16tp7PhBjvYpHcv53AXkHYHTynmy6xQnxy' // Nft收手续费的地址
 
   constructor(options: {
@@ -142,6 +143,7 @@ export class SDK {
           ...this.metaidjsOptions,
           onLoaded: () => {
             this.initIng = false
+            this.isSdkFinish = true
             resolve()
           },
           onError: (error: MetaIdJsRes) => {
@@ -153,9 +155,11 @@ export class SDK {
         if (!this.dotwalletjs)
           this.dotwalletjs = new DotWallet(this.dotwalletOptions)
         this.initIng = false
+        this.isSdkFinish = true
         resolve()
       } else {
         this.initIng = false
+        this.isSdkFinish = true
         resolve()
       }
     })
@@ -189,16 +193,6 @@ export class SDK {
       this.appScrect = this.appOptions.clientSecret
     }
     window.localStorage.setItem('appType', type.toString())
-  }
-
-  isSdkFinish() {
-    if (this.type === SdkType.App) {
-      return this.appMetaidjs ? true : false
-    } else if (this.type === SdkType.Metaidjs) {
-      return this.metaidjs ? true : false
-    } else if (this.type === SdkType.Dotwallet) {
-      return this.dotwalletjs ? true : false
-    }
   }
 
   // 初始化Api配置
@@ -274,6 +268,9 @@ export class SDK {
           )
           .catch((error) => reject(error))
         if (res?.access_token) {
+          res.expires_time = res.expires_in
+            ? new Date().getTime() + res.expires_in - 2000
+            : -1
           resolve(res)
         } else {
           reject(res)
@@ -287,7 +284,10 @@ export class SDK {
             access_token: res.accessToken,
             refresh_token: res.refreshToken,
             expires_in: res.expiresIn,
-            token_type: res.tokenType
+            token_type: res.tokenType,
+            expires_time: res.expiresIn
+              ? new Date().getTime() + res.expiresIn - 2000
+              : -1
           })
         } else {
           reject(res)
@@ -298,37 +298,62 @@ export class SDK {
 
   //  refreshToken
   refreshToken(params: { refreshToken: string }) {
-    if (this.type === SdkType.App) {
-      new Error('App 环境 getToken 不可执行')
-      return
-    }
-    if (this.type === SdkType.Metaidjs) {
-      return this.axios?.post(
-        '/showmoney/oauth2/oauth/token',
-        {
-          grant_type: 'refresh_token',
-          client_id: this.appId,
-          client_secret: this.appScrect,
-          refresh_token: params.refreshToken
-        },
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+    return new Promise<Token>(async (resolve, reject) => {
+      if (this.type === SdkType.App) {
+        new Error('App 环境 getToken 不可执行')
+        return
+      }
+      if (this.type === SdkType.Metaidjs) {
+        const res: Token | undefined = await this.axios?.post(
+          '/showmoney/oauth2/oauth/token',
+          {
+            grant_type: 'refresh_token',
+            client_id: this.appId,
+            client_secret: this.appScrect,
+            refresh_token: params.refreshToken
           },
-          transformRequest: [
-            function (data: object) {
-              return qs.stringify(data)
-            }
-          ]
+          {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+            },
+            transformRequest: [
+              function (data: object) {
+                return qs.stringify(data)
+              }
+            ]
+          }
+        )
+        if (res?.access_token) {
+          res.expires_time = res.expires_in
+            ? new Date().getTime() + res.expires_in - 2000
+            : -1
+          resolve(res)
+        } else {
+          new Error('refreshToken fail')
+          reject('refreshToken fail')
         }
-      )
-    } else {
-      return this.dotwalletjs?.refreshToken(params)
-    }
+      } else {
+        const res = await this.dotwalletjs?.refreshToken(params)
+        if (res && res.accessToken) {
+          resolve({
+            access_token: res.accessToken,
+            refresh_token: res.refreshToken,
+            expires_in: res.expiresIn,
+            token_type: res.tokenType,
+            expires_time: res.expiresIn
+              ? new Date().getTime() + res.expiresIn - 2000
+              : -1
+          })
+        } else {
+          new Error('refreshToken fail')
+          reject(res)
+        }
+      }
+    })
   }
 
   getUserInfo() {
-    return new Promise<MetaIdJsRes>((resolve) => {
+    return new Promise<MetaIdJsRes>(async (resolve) => {
       const params = {
         accessToken: this.getAccessToken(),
         callback: (res: MetaIdJsRes) => {
@@ -352,11 +377,25 @@ export class SDK {
             functionName
           )
         }
-      } else if (SdkType.Metaidjs) {
+      } else if (this.type === SdkType.Metaidjs) {
         this.metaidjs?.getUserInfo(params)
       } else {
         // @ts-ignore
-        this.dotwalletjs.getMetaIDUserInfo(params)
+        const res = await this.dotwalletjs.getMetaIDUserInfo({
+          callback: params.callback
+        })
+        if (res) {
+          this.callback(
+            {
+              code: 200,
+              data: {
+                ...res,
+                metaId: res.showId
+              }
+            },
+            resolve
+          )
+        }
       }
     })
   }
@@ -372,13 +411,15 @@ export class SDK {
     needConfirm?: boolean
     encrypt?: string
     dataType?: string
+    encoding?: string
     checkOnly?: boolean
   }) {
-    return new Promise<SendMetaDataTxRes>((resolve, reject) => {
+    return new Promise<SendMetaDataTxRes>(async (resolve, reject) => {
       if (!params.payCurrency) params.payCurrency = 'BSV'
       if (typeof params.needConfirm === 'undefined') params.needConfirm = true
       if (!params.encrypt) params.encrypt = '0'
       if (!params.dataType) params.dataType = 'application/json'
+      if (!params.encoding) params.encoding = 'UTF-8'
       const accessToken = this.getAccessToken()
       const callback = (res: MetaIdJsRes) => {
         this.callback(res, resolve)
@@ -386,7 +427,7 @@ export class SDK {
       const onCancel = (res: MetaIdJsRes) => {
         reject(res)
       }
-      if (this.isApp) {
+      if (this.type === SdkType.App) {
         const functionName: string = `sendMetaDataTxCallBack`
         // @ts-ignore
         window[functionName] = callback
@@ -411,12 +452,30 @@ export class SDK {
           accessToken,
           ...params
         }
-
-        // 处理余额不足回调
-        ;(window as any).handleNotEnoughMoney = (res: MetaIdJsRes) => {
-          reject()
+        if (this.type === SdkType.Metaidjs) {
+          // 处理余额不足回调
+          ;(window as any).handleNotEnoughMoney = (res: MetaIdJsRes) => {
+            reject()
+          }
+          this.metaidjs?.sendMetaDataTx(_params)
+        } else {
+          const res = await this.dotwalletjs
+            // @ts-ignore
+            ?.sendMetaDataTx({
+              ..._params,
+              encrypt: parseInt(_params.encrypt!)
+            })
+            .catch((error) => {
+              debugger
+              resolve(error.data)
+            })
+          if (res && res.txId) {
+            resolve({
+              code: 200,
+              data: res
+            })
+          }
         }
-        this.metaidjs?.sendMetaDataTx(_params)
       }
     })
   }

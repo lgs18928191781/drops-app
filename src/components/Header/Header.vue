@@ -98,7 +98,7 @@ import {
   locale,
 } from 'element-plus'
 import { ref } from 'vue'
-import { useStore, Mutation } from '@/store/index'
+import { useStore, Mutation, Action } from '@/store/index'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { SdkType } from 'sdk/src/emums'
@@ -123,9 +123,8 @@ function auth(appType: SdkType) {
 
 // 退出登录
 function logout() {
-  store.commit(Mutation.LOGOUT, undefined)
+  store.dispatch(Action.LogOut)
   // 退出登录时sdk已清空为null， 需重新new sdk
-  store.commit(Mutation.SETSDK, undefined)
   if (route.meta && route.meta.isAuth) {
     router.replace('/')
   }

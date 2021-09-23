@@ -5,6 +5,7 @@ import { useStore, Action, Mutation } from '@/store/index'
 import { ElMessage } from 'element-plus'
 import i18n from '@/utils/i18n'
 import { SdkType } from 'sdk/src/emums'
+import { debug } from 'console'
 const store = useStore()
 console.log('import.meta.env.PROD', import.meta.env.PROD)
 export const routerHistory = createWebHistory()
@@ -76,13 +77,13 @@ router.beforeEach(async (to, from, next) => {
         if (appType && appType !== '') store.state.sdk?.changeSdkType(parseInt(appType))
       }
 
+      // 检查token 过期先刷新token, 没过期直接用
       const now = new Date().getTime()
-      // token 过期先刷新token, 没过期直接用
-      if (now >= token.expires_time!) {
+      if (token.expires_time && now >= token.expires_time) {
         await store.dispatch(Action.refreshToken)
       }
       // 有token 没有初始化sdk 就去初始化sdk
-      if (!store.state.sdk?.isSdkFinish() && !store.state.sdkInitIng) {
+      if (!store.state.sdk?.isSdkFinish && !store.state.sdkInitIng) {
         store.dispatch(Action.initSdk)
       }
     } else {
@@ -140,7 +141,7 @@ export function go(delta: number) {
       clearHooks()
       resolve(failure)
     })
-    const removeOnError = router.onError((err) => {
+    const removeOnError = router.onError(err => {
       clearHooks()
       reject(err)
     })

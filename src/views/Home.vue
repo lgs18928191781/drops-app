@@ -8,6 +8,11 @@
       svg-icon
       <FileUploadIcon />
     </div>
+
+    <div class="test sendMetaTxData flex" style="margin-top: 60px;">
+      <button @click="sendMetaTxData">sendMetaTxData</button>
+      <textarea readonly class="flex1" style="height: 300px;">{{ sendMetaTxDataRes.val }}</textarea>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -25,6 +30,20 @@ const store = useStore()
 const pagination = reactive({
   ...store.state.pagination,
 })
+let sendMetaTxDataRes: { val: any } = reactive({ val: {} })
+
+async function sendMetaTxData() {
+  debugger
+  sendMetaTxDataRes.val = await store.state.sdk?.sendMetaDataTx({
+    brfcId: 'test',
+    data: JSON.stringify({
+      content: 'test',
+    }),
+    nodeName: 'Test',
+    path: '/Protocols/Test'
+  })
+  debugger
+}
 
 //  加载更多
 function getMore() {

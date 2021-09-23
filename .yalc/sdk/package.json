@@ -8,7 +8,7 @@
     "example": "example"
   },
   "scripts": {
-    "build": "rollup -c ./rollup.config.js",
+    "build": "rollup -c -m ./rollup.config.js",
     "dev": "rollup -c -m -w",
     "test": "ts-node test/test.ts",
     "pretest": "npm run build"
@@ -23,5 +23,5 @@
     "qs": "^6.10.1",
     "uuid": "^8.3.2"
   },
-  "yalcSig": "704584fad0d2f8c57203dc2afd572f19"
+  "yalcSig": "2834bd72652d0a8db8e62f42aff2a090"
 }

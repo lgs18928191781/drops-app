@@ -10,6 +10,7 @@ export enum Action {
   refreshToken = 'refreshToken',
   checkToken = 'checkToken',
   initSdk = 'initSdk',
+  LogOut = 'LogOut',
 }
 
 type AugmentedActionContext = {
@@ -24,12 +25,15 @@ export interface Actions {
   [Action.refreshToken]({ state, commit, dispatch }: AugmentedActionContext): void
   [Action.checkToken]({ state, commit, dispatch }: AugmentedActionContext): void
   [Action.initSdk]({ state, commit, dispatch }: AugmentedActionContext): void
+  [Action.LogOut]({ state, commit, dispatch }: AugmentedActionContext): void
 }
 
 export const actions: ActionTree<State, State> & Actions = {
   async [Action.getUserInfo]({ state, commit, dispatch }) {
+    debugger
     state.userInfoLoading = true
     const res = await state.sdk?.getUserInfo()
+    debugger
     if (res && res.code === 200) {
       commit(Mutation.SETUSERINFO, res.data)
       if (state.isApp && res.appAccessToken) {
@@ -40,7 +44,7 @@ export const actions: ActionTree<State, State> & Actions = {
     } else {
       state.sdkInitIng = false
       state.userInfoLoading = false
-      commit(Mutation.LOGOUT)
+      dispatch(Action.LogOut)
     }
     // state.sdk?.getUserInfo({
     //   accessToken: state.token ? state.token?.access_token : '',
@@ -52,24 +56,28 @@ export const actions: ActionTree<State, State> & Actions = {
   [Action.refreshToken]({ state, commit, dispatch }) {
     return new Promise<void>(async (resolve, reject) => {
       if (state.token) {
-        const res = await refreshToken(state.token!.refresh_token!).catch(() => {
-          reject('refresh_token fail')
-        })
+        const res = await state.sdk
+          ?.refreshToken({ refreshToken: state.token!.refresh_token! })
+          .catch(() => {
+            dispatch(Action.LogOut)
+          })
         if (res) {
           commit(Mutation.SETTOKEN, res)
           resolve()
         } else {
+          dispatch(Action.LogOut)
           new Error('refresh_token fail')
           reject('refresh_token fail')
         }
       } else {
+        dispatch(Action.LogOut)
         new Error('refresh_token fail')
         reject('refresh_token fail')
       }
     })
   },
   [Action.checkToken]({ state, commit, dispatch }) {
-    return new Promise<string | null>(async (resolve) => {
+    return new Promise<string | null>(async resolve => {
       if (state.token) {
         const now = new Date().getTime()
         if (now < state.token.expires_time!) {
@@ -93,7 +101,7 @@ export const actions: ActionTree<State, State> & Actions = {
     })
   },
   [Action.initSdk]({ state, commit, dispatch }) {
-    return new Promise<void>(async (resolve) => {
+    return new Promise<void>(async resolve => {
       state.sdkInitIng = true
       state.userInfoLoading = true
       state.sdk
@@ -105,9 +113,16 @@ export const actions: ActionTree<State, State> & Actions = {
         })
         .catch(() => {
           state.sdkInitIng = false
-          commit(Mutation.LOGOUT)
+          dispatch(Action.LogOut)
           resolve()
         })
+    })
+  },
+  [Action.LogOut]({ state, commit, dispatch }) {
+    return new Promise<void>(async resolve => {
+      commit(Mutation.LOGOUT)
+      commit(Mutation.SETSDK)
+      resolve()
     })
   },
 }
@@ -120,7 +135,7 @@ function refreshToken(refresh_token: string) {
       client_secret: import.meta.env.VITE_AppSecret,
       refresh_token: refresh_token,
     }).catch(() => {
-      store.commit(Mutation.LOGOUT)
+      store.dispatch(Action.LogOut)
     })
     if (res) {
       resolve(res)
