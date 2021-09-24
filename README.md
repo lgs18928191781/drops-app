@@ -7,7 +7,7 @@
 - 集成`element-plus`Ui 组件
 - 集成代码格式规范和编辑器自动格式化
 - 使用 Vue3 最新 SFC setup 语法，推荐使用[https://vue3js.cn/docs/zh/guide/composition-api-setup.html#%E5%8F%82%E6%95%B0](https://vue3js.cn/docs/zh/guide/composition-api-setup.html#%E5%8F%82%E6%95%B0)
-- 集成常用工具类方法在`SDK`报,例如:`import { hexToase64 } from 'sdk'`
+- 集成常用工具类方法在`sdk`包,例如:`import { hexToase64 } from 'sdk'`
   - hexToase64 // hex 格式转为 Base64
   - toTxLink // 跳转 https://whatsonchain.com/tx/${txId}
 
