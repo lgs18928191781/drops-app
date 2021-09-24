@@ -2,11 +2,7 @@ import MetaIdJs from 'metaidjs'
 // @ts-ignore
 import { v4 as uuid } from 'uuid'
 import { Decimal } from 'decimal.js-light'
-import DotWallet, {
-  DotWalletConfig,
-  DotWalletToken,
-  ENV
-} from 'dotwallet-jssdk'
+import { DotWalletForMetaID, DotWalletToken, ENV } from 'dotwallet-jssdk'
 import qs from 'qs'
 import axios, { AxiosInstance } from 'axios'
 import {
@@ -32,7 +28,8 @@ import {
   SdkMetaidJsOptionsTypes,
   SellNFTParams,
   SendMetaDataTxRes,
-  Token
+  Token,
+  DotWalletConfig
 } from './types/sdk'
 import { Lang, SdkType } from './emums'
 
@@ -80,7 +77,7 @@ export class SDK {
       functionName: string
     ) => Function
   } = null
-  dotwalletjs: DotWallet | null = null
+  dotwalletjs: any | null = null
   isApp: boolean = false
   appId: string = ''
   appScrect: string = ''
@@ -98,7 +95,6 @@ export class SDK {
   nftAppAddress = '16tp7PhBjvYpHcv53AXkHYHTynmy6xQnxy' // Nft收手续费的地址
 
   constructor(options: {
-    type: SdkType
     metaIdTag: string
     showmoneyApi: string
     getAccessToken: Function
@@ -153,7 +149,7 @@ export class SDK {
         })
       } else if (this.type === SdkType.Dotwallet) {
         if (!this.dotwalletjs)
-          this.dotwalletjs = new DotWallet(this.dotwalletOptions)
+          this.dotwalletjs = new DotWalletForMetaID(this.dotwalletOptions)
         this.initIng = false
         this.isSdkFinish = true
         resolve()
@@ -168,6 +164,11 @@ export class SDK {
   toWallet() {
     let url = ''
     if (this.type === SdkType.Dotwallet) {
+      if (this.dotwalletOptions.env === 'production') {
+        url = 'https://www.ddpurse.com'
+      } else {
+        url = 'https://prerelease.ddpurse.com'
+      }
     } else {
       url = this.metaidjsOptions.baseUri
     }
@@ -180,17 +181,17 @@ export class SDK {
     if (type === SdkType.Dotwallet) {
       if (this.dotwalletOptions) {
         this.appId = this.dotwalletOptions.clientID
-        this.appScrect = this.dotwalletOptions.clientSecret
-        this.dotwalletjs = new DotWallet(this.dotwalletOptions)
+        this.appScrect = this.dotwalletOptions.clientSecret!
+        this.dotwalletjs = new DotWalletForMetaID(this.dotwalletOptions)
       } else {
         new Error('未设置dotwalletOptions')
       }
     } else if (type === SdkType.App) {
       this.appId = this.appOptions.clientId
       this.appScrect = this.appOptions.clientSecret
-    } else {
-      this.appId = this.appOptions.clientId
-      this.appScrect = this.appOptions.clientSecret
+    } else if (type === SdkType.Metaidjs) {
+      this.appId = this.metaidjsOptions.oauthSettings.clientId
+      this.appScrect = this.metaidjsOptions.oauthSettings.clientSecret!
     }
     window.localStorage.setItem('appType', type.toString())
   }
@@ -278,7 +279,7 @@ export class SDK {
       } else {
         const res = await this.dotwalletjs
           ?.getToken(params)
-          .catch((error) => reject(error))
+          .catch((error: any) => reject(error))
         if (res && res.accessToken) {
           resolve({
             access_token: res.accessToken,
@@ -381,21 +382,16 @@ export class SDK {
         this.metaidjs?.getUserInfo(params)
       } else {
         // @ts-ignore
-        const res = await this.dotwalletjs.getMetaIDUserInfo({
-          callback: params.callback
-        })
-        if (res) {
-          this.callback(
-            {
-              code: 200,
-              data: {
-                ...res,
-                metaId: res.showId
+        this.dotwalletjs.getMetaIDUserInfo({
+          callback: (res: any) => {
+            if (res) {
+              if (res.code === 200) {
+                res.data.metaId = res.data.showId
               }
-            },
-            resolve
-          )
-        }
+              this.callback(res, resolve)
+            }
+          }
+        })
       }
     })
   }
@@ -459,22 +455,10 @@ export class SDK {
           }
           this.metaidjs?.sendMetaDataTx(_params)
         } else {
-          const res = await this.dotwalletjs
-            // @ts-ignore
-            ?.sendMetaDataTx({
-              ..._params,
-              encrypt: parseInt(_params.encrypt!)
-            })
-            .catch((error) => {
-              debugger
-              resolve(error.data)
-            })
-          if (res && res.txId) {
-            resolve({
-              code: 200,
-              data: res
-            })
-          }
+          this.dotwalletjs?.sendMetaDataTx({
+            ..._params,
+            encrypt: parseInt(_params.encrypt!)
+          })
         }
       }
     })
@@ -1079,4 +1063,28 @@ export class SDK {
       }
     })
   }
+}
+
+//hex格式转为Base64
+export function hexToBase64(hex: string) {
+  var pos = 0
+  var len = hex.length
+  if (len % 2 != 0) {
+    return null
+  }
+  len /= 2
+  var hexA = new Array()
+  for (var i = 0; i < len; i++) {
+    var s = hex.substr(pos, 2)
+    var v = parseInt(s, 16)
+    hexA.push(v)
+    pos += 2
+  }
+  var binary = ''
+  var bytes = new Uint8Array(hexA)
+  var len = bytes.byteLength
+  for (var i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i])
+  }
+  return 'data:image/png;base64,' + window.btoa(binary)
 }
