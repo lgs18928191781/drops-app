@@ -25,7 +25,8 @@
         @click="auth(SdkType.Metaidjs)"
         v-loading="store.state.userInfoLoading"
         element-loading-background="rgba(255, 255, 255, 0.7)"
-      >{{ $t('signinandout') }}</a>
+        >{{ $t('signinandout') }}</a
+      >
 
       <!-- 打点登陆按钮 -->
       <a
@@ -34,7 +35,8 @@
         @click="auth(SdkType.Dotwallet)"
         v-loading="store.state.userInfoLoading"
         element-loading-background="rgba(255, 255, 255, 0.7)"
-      >DotWallet {{ $t('signinandout') }}</a>
+        >DotWallet {{ $t('signinandout') }}</a
+      >
 
       <!-- 登录用户 -->
       <ElDropdown trigger="click" v-else>
@@ -48,9 +50,7 @@
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item @click="store.state.sdk?.toWallet()">
-              {{
-                $t('mywallet')
-              }}
+              {{ $t('mywallet') }}
             </el-dropdown-item>
             <el-dropdown-item @click="logout">{{ $t('logout') }}</el-dropdown-item>
           </el-dropdown-menu>
@@ -77,9 +77,7 @@
     <nav class="mobile-nav-modal">
       <router-link to="/" @click.stop="isShowDrawer = false">{{ $t('marketplace') }}</router-link>
       <router-link to="/create" @click.stop="isShowDrawer = false">
-        {{
-          $t('createnft')
-        }}
+        {{ $t('createnft') }}
       </router-link>
       <!-- <router-link to="/metaBot" @click.stop="isShowDrawer = false">
         MetaBot <img src="@/assets/images/nav_icon_hot.svg" alt="MetaBot"
@@ -89,14 +87,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ElDropdown,
-  ElDropdownItem,
-  ElDropdownMenu,
-  ElLoading,
-  ElDrawer,
-  locale,
-} from 'element-plus'
+import { ElDropdown, ElDropdownItem, ElDropdownMenu, ElDrawer } from 'element-plus'
 import { ref } from 'vue'
 import { useStore, Mutation, Action } from '@/store/index'
 import { useI18n } from 'vue-i18n'
@@ -138,5 +129,4 @@ function setLang() {
 }
 </script>
 
-<style lang="scss" scoped src="./Header.scss">
-</style>
+<style lang="scss" scoped src="./Header.scss"></style>

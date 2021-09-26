@@ -10,8 +10,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue'
-
 const emit = defineEmits(['getMore']) // 定义事件
 const props = defineProps<{
   pagination: Pagination

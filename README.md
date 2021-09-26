@@ -46,7 +46,7 @@
 ## VSCode 设置
 
 1. 安装推荐插件
-   `code --install-extension dbaeumer.vscode-eslint esbenp.prettier-vscode johnsoncodehk.volar lihuiwang.vue-alias-skip formulahendry.auto-close-tag formulahendry.auto-rename-tag ms-ceintl.vscode-language-pack-zh-hans irongeek.vscode-env lokalise.i18n-ally kisstkondoros.vscode-gutter-preview ionutvmi.path-autocomplete`
+   `code --install-extension michelemelluso.code-beautifier dbaeumer.vscode-eslint esbenp.prettier-vscode johnsoncodehk.volar lihuiwang.vue-alias-skip formulahendry.auto-close-tag formulahendry.auto-rename-tag ms-ceintl.vscode-language-pack-zh-hans irongeek.vscode-env lokalise.i18n-ally kisstkondoros.vscode-gutter-preview ionutvmi.path-autocomplete`
 
 2. 删除或禁用`vetur`插件
 
@@ -58,7 +58,7 @@
        "editor.defaultFormatter": "esbenp.prettier-vscode"
      },
      "[scss]": {
-       "editor.defaultFormatter": "esbenp.prettier-vscode"
+       "editor.defaultFormatter": "michelemelluso.code-beautifier"
      },
      "[json]": {
        "editor.defaultFormatter": "esbenp.prettier-vscode"

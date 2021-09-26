@@ -6,6 +6,8 @@ import styleImport from 'vite-plugin-style-import'
 import vueI18n from '@intlify/vite-plugin-vue-i18n'
 import svgLoader from 'vite-svg-loader'
 import VitePluginHtmlEnv from 'vite-plugin-html-env'
+import Components from 'unplugin-vue-components/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
 export default ({ mode }) => {
   // 加载环境配置文件
@@ -14,21 +16,8 @@ export default ({ mode }) => {
     plugins: [
       vue(),
       // element-plus 按需加载
-      styleImport({
-        libs: [
-          {
-            libraryName: 'element-plus',
-            esModule: true,
-            ensureStyleFile: true,
-            resolveStyle: name => {
-              name = name.slice(3)
-              return `element-plus/packages/theme-chalk/src/${name}.scss`
-            },
-            resolveComponent: name => {
-              return `element-plus/lib/${name}`
-            },
-          },
-        ],
+      Components({
+        resolvers: [ElementPlusResolver()],
       }),
       // 多语言加载
       vueI18n({
