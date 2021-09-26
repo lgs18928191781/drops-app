@@ -7,9 +7,34 @@
 - 集成`element-plus`Ui 组件
 - 集成代码格式规范和编辑器自动格式化
 - 使用 Vue3 最新 SFC setup 语法，推荐使用[https://vue3js.cn/docs/zh/guide/composition-api-setup.html#%E5%8F%82%E6%95%B0](https://vue3js.cn/docs/zh/guide/composition-api-setup.html#%E5%8F%82%E6%95%B0)
+- `sdk类方法`
+  - changeSdkType // 更改 sdk 环境类型
+  - initSdk // 初始化 sdk
+  - toWallet // 跳转钱包
+  - login // 跳转登陆授权
+  - getToken // code 换 token
+  - refreshToken // 刷新 token
+  - getUserInfo // 获取用户信息
+  - sendMetaDataTx // 节点上链
+  - eciesDecryptData // 解密
+  - getBalance // 获取用户余额
+  - createMetaFileProtocol // 文件上链
+  - getSensibleTxData // 获取 SensibleTx 数据
+  - createNFT // 铸造 nft
+  - genesisNFT // 创建 nft 系列
+  - checkUserCanIssueNft // 检测用户是否可以铸造 nft
+  - issueNFT // 同 metaidjs issueNFT
+  - nftBuy // nft 购买
+  - nftSell // nft 上架/销售
+  - nftCancel // nft 下架/取消销售
+  - getMc // 获取用户 MC 余额
+  - queryFindMetaData // showman queryFindMetaData
+  - queryFindMetaDataForPost // showman queryFindMetaDataForPost
 - 集成常用工具类方法在`sdk`包,例如:`import { hexToase64 } from 'sdk'`
-  - hexToase64 // hex 格式转为 Base64
+  - hexToBase64 // hex 格式转为 Base64
   - toTxLink // 跳转 https://whatsonchain.com/tx/${txId}
+  - fileToMetaFile // 文件转为`MetaFile` 格式，便于后续处理附件, `MetaFile`格式`{base64Data, BufferData, hexData, name, data_type, raw(File)}`
+  - setAttachments // 处理附件, 第一个参数为`data`, `data`里面的文件必须为`MetaFile` 格式，第二个字段为要处理的字段和是否加密`{ name: string; encrypt: string }[]`，最终返回处理过的`data`和`attachments`供`sendMetaDataTx`使用
 
 ## 使用
 
