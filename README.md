@@ -39,6 +39,7 @@
 ## 使用
 
 1. 修改`.env`的`VITE_Design_Size`,`VITE_Min_FontSize`的自适应配置
+2. 修改对应环境配置的`VITE_AppId`,`VITE_AppSecret`,`VITE_Hosts`,网页回调地址为`VITE_Hosts` + `/login`
 
 ## VSCode 设置
 

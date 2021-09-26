@@ -16,7 +16,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { } from '@/api'
+import {} from '@/api'
 import { useStore } from '@/store'
 import { reactive, ref } from 'vue'
 import LoadMore from '@/components/LoadMore/LoadMore.vue'
@@ -24,6 +24,7 @@ import FileUploadIcon from '@/assets/images/file_upload.svg'
 
 import IsNull from '../components/IsNull/IsNull.vue'
 import { useI18n } from 'vue-i18n'
+import { checkSdkStatus } from '@/utils/util'
 
 const i18n = useI18n()
 const store = useStore()
@@ -33,6 +34,7 @@ const pagination = reactive({
 let sendMetaTxDataRes: { val: any } = reactive({ val: {} })
 
 async function sendMetaTxData() {
+  await checkSdkStatus()
   debugger
   sendMetaTxDataRes.val = await store.state.sdk?.sendMetaDataTx({
     brfcId: 'test',
@@ -40,7 +42,7 @@ async function sendMetaTxData() {
       content: 'test',
     }),
     nodeName: 'Test',
-    path: '/Protocols/Test'
+    path: '/Protocols/Test',
   })
   debugger
 }
@@ -51,5 +53,4 @@ function getMore() {
   pagination.page++
 }
 </script>
-<style lang="scss" scoped src="./Home.scss">
-</style>
+<style lang="scss" scoped src="./Home.scss"></style>

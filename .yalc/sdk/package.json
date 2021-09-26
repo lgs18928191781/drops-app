@@ -17,11 +17,12 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.1",
+    "buffer": "^6.0.3",
     "decimal.js-light": "^2.5.1",
     "dotwallet-jssdk": "^1.2.7",
     "metaidjs": "^1.7.0",
     "qs": "^6.10.1",
     "uuid": "^8.3.2"
   },
-  "yalcSig": "6efac418948cd133cb09e989cb5f3728"
+  "yalcSig": "32a65cf714907f5d9e217ab73a1e1b6e"
 }
