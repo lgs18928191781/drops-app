@@ -40,6 +40,8 @@
 
 1. 修改`.env`的`VITE_Design_Size`,`VITE_Min_FontSize`的自适应配置
 2. 修改对应环境配置的`VITE_AppId`,`VITE_AppSecret`,`VITE_Hosts`,网页回调地址为`VITE_Hosts` + `/login`
+3. 图标推荐使用 svg 格式, `import` 引入使用
+4. 布局推荐使用`flex`,`flex`全局快捷样式查看`/src/assets//styles/flex.scss`
 
 ## VSCode 设置
 
