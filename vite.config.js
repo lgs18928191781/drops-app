@@ -19,6 +19,22 @@ export default ({ mode }) => {
       Components({
         resolvers: [ElementPlusResolver()],
       }),
+      styleImport({
+        libs: [
+          {
+            libraryName: 'element-plus',
+            esModule: true,
+            ensureStyleFile: true,
+            resolveStyle: name => {
+              name = name.slice(3)
+              return `element-plus/packages/theme-chalk/src/${name}.scss`
+            },
+            resolveComponent: name => {
+              return `element-plus/lib/${name}`
+            },
+          },
+        ],
+      }),
       // 多语言加载
       vueI18n({
         // if you want to use Vue I18n Legacy API, you need to set `compositionOnly: false`
