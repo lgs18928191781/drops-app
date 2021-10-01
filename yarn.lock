@@ -4045,6 +4045,11 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
+lib-flexible@^0.3.2:
+  version "0.3.2"
+  resolved "https://registry.nlark.com/lib-flexible/download/lib-flexible-0.3.2.tgz#06f5a74832314a2d35c12039bc9c3ca2daeaa426"
+  integrity sha1-BvWnSDIxSi01wSA5vJw8otrqpCY=
+
 lines-and-columns@^1.1.6:
   version "1.1.6"
   resolved "https://registry.nlark.com/lines-and-columns/download/lines-and-columns-1.1.6.tgz#1c00c743b433cd0a4e80758f7b64a57440d9ff00"
@@ -5828,7 +5833,7 @@ sass@^1.35.1:
     buffer "^6.0.3"
     decimal.js-light "^2.5.1"
     dotwallet-jssdk "^1.2.7"
-    metaidjs "file:C:/Users/CallMeSoul/AppData/Local/Yarn/Cache/v6/npm-sdk-0.0.13-33136656-d1ff-4739-8d3f-c37b9f2df4b6-1632917538055/node_modules/sdk/.yalc/metaidjs"
+    metaidjs "file:C:/Users/CallMeSoul/AppData/Local/Yarn/Cache/v6/npm-sdk-0.0.13-ebdff82a-9489-49f6-a8ed-cbfdf62fa5fd-1633121655043/node_modules/sdk/.yalc/metaidjs"
     qs "^6.10.1"
     uuid "^8.3.2"
 

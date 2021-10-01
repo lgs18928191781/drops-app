@@ -46,6 +46,7 @@
     "cypress": "^7.0",
     "eslint": "~7",
     "eslint-plugin-vue": "~7",
+    "lib-flexible": "^0.3.2",
     "postcss": "~8.3",
     "postcss-nesting": "~8.0",
     "postcss-pxtorem": "^6.0.0",
