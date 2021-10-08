@@ -3,14 +3,20 @@ export interface Unit {
   unit: string
   sats: number
 }
+
+export enum UnitName {
+  BSV = 'BSV',
+  SATS = 'SATS',
+}
+
 export const units: Unit[] = [
   {
-    unit: 'BSV',
-    sats: Math.pow(10, 8),
+    unit: UnitName.BSV,
+    sats: 0.00000001,
   },
   {
-    unit: 'SATS',
-    sats: Math.pow(10, 0),
+    unit: UnitName.SATS,
+    sats: Math.pow(10, 8),
   },
 ]
 
