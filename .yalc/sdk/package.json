@@ -1,6 +1,6 @@
 {
   "name": "sdk",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "metaidjs sdk",
   "main": "dist/sdk.min.js",
   "typings": "src/index.d.ts",
@@ -20,9 +20,9 @@
     "buffer": "^6.0.3",
     "decimal.js-light": "^2.5.1",
     "dotwallet-jssdk": "^1.2.7",
-    "metaidjs": "file:.yalc/metaidjs",
+    "metaidjs": "1.8.1",
     "qs": "^6.10.1",
     "uuid": "^8.3.2"
   },
-  "yalcSig": "b2b2fc98803aced1462936cbcd02cc31"
+  "yalcSig": "2e98703b3cf4904f3a38d080192ad1f1"
 }

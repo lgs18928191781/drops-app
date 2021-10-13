@@ -24,12 +24,14 @@ import {
   SdkMetaidJsOptionsTypes,
   SendMetaDataTxRes,
   Token,
-  DotWalletConfig
+  DotWalletConfig,
+  GetMcRes
 } from './types/sdk'
 import { Encrypt, Lang, SdkType } from './emums'
 import { Buffer } from 'buffer'
 
 export class SDK {
+  // @ts-ignore
   metaidjs: null | MetaIdJs = null
   appMetaidjs: null | {
     sendMetaDataTx: (
@@ -153,6 +155,7 @@ export class SDK {
     return new Promise<void>((resolve, reject) => {
       this.initIng = true
       if (this.type === SdkType.Metaidjs) {
+        // @ts-ignore
         this.metaidjs = new MetaIdJs({
           ...this.metaidjsOptions,
           onLoaded: () => {
@@ -307,25 +310,28 @@ export class SDK {
         return
       }
       if (this.type === SdkType.Metaidjs) {
-        const res: Token | undefined = await this.axios?.post(
-          '/showmoney/oauth2/oauth/token',
-          {
-            grant_type: 'refresh_token',
-            client_id: this.appId,
-            client_secret: this.appScrect,
-            refresh_token: params.refreshToken
-          },
-          {
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        const res: Token | undefined = await this.axios
+          ?.post(
+            '/showmoney/oauth2/oauth/token',
+            {
+              grant_type: 'refresh_token',
+              client_id: this.appId,
+              client_secret: this.appScrect,
+              refresh_token: params.refreshToken
             },
-            transformRequest: [
-              function (data: object) {
-                return qs.stringify(data)
-              }
-            ]
-          }
-        )
+            {
+              headers: {
+                'Content-Type':
+                  'application/x-www-form-urlencoded;charset=UTF-8'
+              },
+              transformRequest: [
+                function (data: object) {
+                  return qs.stringify(data)
+                }
+              ]
+            }
+          )
+          .catch((error) => reject(error))
         if (res?.access_token) {
           res.expires_time = res.expires_in
             ? new Date().getTime() + res.expires_in - 2000
@@ -1086,9 +1092,9 @@ export function fileToMetaFile(file: File) {
         hex = buffer.toString('hex')
         fileBinary = buffer
       }
-      const fileData = 'data:' + fileType + ';base64,' + hexToBase64(hex)
+      const fileData = hexToBase64(hex, fileType)
       const imgData: MetaFile = {
-        base64Data: fileData,
+        base64Data: fileData!,
         BufferData: fileBinary,
         hexData: hex,
         name: file.name,

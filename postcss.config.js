@@ -19,7 +19,7 @@ module.exports = {
       propList: ['*'],
       replace: false,
       mediaQuery: false,
-      minPixelValue: 0,
+      minPixelValue: parseInt(env.VITE_Min_FontSize),
       unitPrecision: 5,
     },
   },

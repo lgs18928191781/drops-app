@@ -4404,11 +4404,13 @@ merge2@^1.3.0:
   resolved "https://registry.npm.taobao.org/merge2/download/merge2-1.4.1.tgz#4368892f885e907455a6fd7dc55c0c9d404990ae"
   integrity sha1-Q2iJL4hekHRVpv19xVwMnUBJkK4=
 
+metaidjs@1.8.1:
+  version "1.8.1"
+  resolved "https://registry.npmmirror.com/metaidjs/download/metaidjs-1.8.1.tgz#760c375b3b2220a0157935a95be9ae04ec6e2ba5"
+  integrity sha1-dgw3WzsiIKAVeTWpW+muBOxuK6U=
+
 "metaidjs@file:.yalc/metaidjs":
   version "1.7.14"
-
-"metaidjs@file:.yalc/sdk/.yalc/metaidjs":
-  version "1.8.1"
 
 micromark@~2.11.0:
   version "2.11.4"
@@ -5833,7 +5835,7 @@ sass@^1.35.1:
     buffer "^6.0.3"
     decimal.js-light "^2.5.1"
     dotwallet-jssdk "^1.2.7"
-    metaidjs "file:C:/Users/CallMeSoul/AppData/Local/Yarn/Cache/v6/npm-sdk-0.0.13-ebdff82a-9489-49f6-a8ed-cbfdf62fa5fd-1633121655043/node_modules/sdk/.yalc/metaidjs"
+    metaidjs "1.8.1"
     qs "^6.10.1"
     uuid "^8.3.2"
 
