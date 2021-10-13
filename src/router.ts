@@ -5,7 +5,6 @@ import { useStore, Action, Mutation } from '@/store/index'
 import { ElMessage } from 'element-plus'
 import i18n from '@/utils/i18n'
 import { SdkType } from 'sdk/src/emums'
-import { debug } from 'console'
 const store = useStore()
 console.log('import.meta.env.PROD', import.meta.env.PROD)
 export const routerHistory = createWebHistory()

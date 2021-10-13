@@ -1,14 +1,7 @@
 <template>
   <footer>
-    <a class="logo flex flex-align-center">
-      <img src="@/assets/images/logo_nos_w.svg" alt="NFTOnShow" />
-    </a>
-    <div class="cro">{{ $t('contactus') }}</div>
-    <div class="bottom flex">
-      <div class="email flex1">{{ $t('email') }}：showpay@showpay.io</div>
-      <div class="copyright">ShowNFT © 2021</div>
-    </div>
+ 
   </footer>
 </template>
 
-<style lang="scss" scoped src="./Footer.scss"></style>
+<style lang="scss" scoped ></style>
