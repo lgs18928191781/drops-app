@@ -1,0 +1,9 @@
+{
+  "version": "v1",
+  "packages": {
+    "sdk": {
+      "signature": "2e98703b3cf4904f3a38d080192ad1f1",
+      "file": true
+    }
+  }
+}

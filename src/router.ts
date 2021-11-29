@@ -91,7 +91,7 @@ router.beforeEach(async (to, from, next) => {
       if (isAuth) {
         // 需要权限的提示先登陆且不给予跳转
         ElMessage.error(i18n.global.t('toLoginTip'))
-        return
+        next('/')
       }
     }
   }

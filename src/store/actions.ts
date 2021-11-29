@@ -54,9 +54,11 @@ export const actions: ActionTree<State, State> & Actions = {
   [Action.refreshToken]({ state, commit, dispatch }) {
     return new Promise<void>(async (resolve, reject) => {
       if (state.token) {
+        debugger
         const res = await state.sdk
           ?.refreshToken({ refreshToken: state.token!.refresh_token! })
           .catch(() => {
+            debugger
             dispatch(Action.LogOut)
           })
         if (res) {

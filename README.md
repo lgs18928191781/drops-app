@@ -44,6 +44,7 @@
 4. 布局推荐使用`flex`,`flex`全局快捷样式查看`/src/assets//styles/flex.scss`
 5. 卸载旧的浏览器`Vue.js devtools`插件，安装最新版本[https://chrome.google.com/webstore/detail/vuejs-devtools/ljjemllljcmogpfapbkkighbhhppjdbg](https://chrome.google.com/webstore/detail/vuejs-devtools/ljjemllljcmogpfapbkkighbhhppjdbg)
 6. 页面标题统一在`router.ts`路由文件，根据`meta.title`字段配置，通过配置`meta.isAuth`字段是否需要登录才可访问
+7. 页面是否缓存,统一在`router.ts`路由文件，根据`meta.keepAlive`字段配置
 
 ## VSCode 设置
 
