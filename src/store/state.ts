@@ -6,8 +6,6 @@ export interface State {
   userInfo: null | UserInfo
   userInfoLoading: boolean
   sdk: null | SDK
-  sdkInitIng: boolean
-  isApp: boolean
   pagination: Pagination
 }
 
@@ -30,11 +28,7 @@ export const state: State = {
   token,
   userInfo: null,
   userInfoLoading: false,
-  sdkInitIng: false,
-  // @ts-ignore
-  isApp: window?.appMetaIdJsV2 || window?.appMetaIdJs ? true : false,
-  // @ts-ignore
-  sdk: window.appMetaIdJsV2 || window?.appMetaIdJs ? new Sdk() : null,
+  sdk: null,
   // 分页参数
   pagination: {
     page: 1,

@@ -59,7 +59,7 @@ router.beforeEach(async (to, from, next) => {
   }
 
   // app
-  const isApp = store.state.isApp
+  const isApp = store.state.sdk?.isApp
   if (isApp) {
     // 设置app环境
     if (store.state.sdk?.type !== SdkType.App) store.state.sdk?.changeSdkType(SdkType.App)
@@ -83,7 +83,7 @@ router.beforeEach(async (to, from, next) => {
         await store.dispatch(Action.refreshToken)
       }
       // 有token 没有初始化sdk 就去初始化sdk
-      if (!store.state.sdk?.isSdkFinish && !store.state.sdkInitIng) {
+      if (!store.state.sdk?.isSdkFinish && !store.state.sdk?.initIng) {
         store.dispatch(Action.initSdk)
       }
     } else {
