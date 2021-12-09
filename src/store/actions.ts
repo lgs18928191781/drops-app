@@ -30,11 +30,16 @@ export interface Actions {
 
 export const actions: ActionTree<State, State> & Actions = {
   async [Action.getUserInfo]({ state, commit, dispatch }) {
+    const getUserInfoTimeout = setTimeout(() => {
+      dispatch(Action.LogOut)
+    }, 60000)
     state.userInfoLoading = true
     const res = await state.sdk?.getUserInfo().catch(() => {
+      clearTimeout(getUserInfoTimeout)
       dispatch(Action.LogOut)
     })
     if (res && res.code === 200) {
+      clearTimeout(getUserInfoTimeout)
       commit(Mutation.SETUSERINFO, res.data)
       if (state.sdk?.isApp && res.appAccessToken) {
         commit(Mutation.SETTOKEN, {
@@ -42,6 +47,7 @@ export const actions: ActionTree<State, State> & Actions = {
         })
       }
     } else {
+      clearTimeout(getUserInfoTimeout)
       dispatch(Action.LogOut)
     }
     // state.sdk?.getUserInfo({

@@ -40,7 +40,7 @@
 
 1. 修改`.env`的`VITE_Design_Size`,`VITE_Min_FontSize`的自适应配置
 2. 修改对应环境配置的`VITE_AppId`,`VITE_AppSecret`,`VITE_Hosts`,网页回调地址为`VITE_Hosts` + `/login`
-3. 图标推荐使用 svg 格式, `import` 引入使用
+3. 图标推荐使用 svg 格式, `import` 引入使用, 使用方法[vite-svg-loader](https://github.com/jpkleemans/vite-svg-loader)
 4. 布局推荐使用`flex`,`flex`全局快捷样式查看`/src/assets//styles/flex.scss`
 5. 卸载旧的浏览器`Vue.js devtools`插件，安装最新版本[https://chrome.google.com/webstore/detail/vuejs-devtools/ljjemllljcmogpfapbkkighbhhppjdbg](https://chrome.google.com/webstore/detail/vuejs-devtools/ljjemllljcmogpfapbkkighbhhppjdbg)
 6. 页面标题统一在`router.ts`路由文件，根据`meta.title`字段配置，通过配置`meta.isAuth`字段是否需要登录才可访问
