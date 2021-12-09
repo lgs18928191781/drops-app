@@ -39,6 +39,8 @@ const pagination = reactive({
 let sendMetaTxDataRes: { val: any } = reactive({ val: {} })
 
 async function sendMetaTxData() {
+  console.log(store.state.sdk?.payToAddress)
+  debugger
   await checkSdkStatus()
   debugger
   sendMetaTxDataRes.val = await store.state.sdk?.sendMetaDataTx({
