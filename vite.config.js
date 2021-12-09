@@ -7,6 +7,9 @@ import vueI18n from '@intlify/vite-plugin-vue-i18n'
 import svgLoader from 'vite-svg-loader'
 import VitePluginHtmlEnv from 'vite-plugin-html-env'
 import ElementPlus from 'unplugin-element-plus/vite'
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
 export default ({ mode }) => {
   // 加载环境配置文件
@@ -15,7 +18,12 @@ export default ({ mode }) => {
     plugins: [
       vue(),
       // element-plus 按需加载
-      ElementPlus(),
+      AutoImport({
+        resolvers: [ElementPlusResolver()],
+      }),
+      Components({
+        resolvers: [ElementPlusResolver()],
+      }),
       // 多语言加载
       vueI18n({
         // if you want to use Vue I18n Legacy API, you need to set `compositionOnly: false`

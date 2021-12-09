@@ -2,13 +2,14 @@ import 'lib-flexible/flexible'
 import { createApp } from 'vue'
 import App from './App.vue'
 import 'normalize.css/normalize.css'
-import 'element-plus/packages/theme-chalk/src/base.scss'
+import { ElLoading } from 'element-plus'
 import './index.scss'
-import { router, routerHistory } from '@/router'
+import { router } from '@/router'
 // import { ElLoading, ElMessage, ElDatePicker } from 'element-plus'
 import ElementPlus from 'element-plus'
 import * as filters from '@/utils/filters'
 import i18n from '@/utils/i18n'
+import { use } from 'element-plus/es/locale'
 
 const app = createApp(App)
 
@@ -19,8 +20,9 @@ app.config.globalProperties.$filters = {
 
 app
   .use(router)
-  .use(ElementPlus, {
-    i18n: i18n.global.t,
-  })
+  .use(ElLoading)
+  // .use(ElementPlus, {
+  //   i18n: i18n.global.t,
+  // })
   .use(i18n)
   .mount('#app')

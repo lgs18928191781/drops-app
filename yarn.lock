@@ -2462,7 +2462,7 @@ esbuild-windows-arm64@0.13.15:
   resolved "https://registry.npmmirror.com/esbuild-windows-arm64/download/esbuild-windows-arm64-0.13.15.tgz#482173070810df22a752c686509c370c3be3b3c3"
   integrity sha512-zzvyCVVpbwQQATaf3IG8mu1IwGEiDxKkYUdA4FpoCHi1KtPa13jeScYDjlW0Qh+ebWzpKfR2ZwvqAQkSWNcKjA==
 
-esbuild@^0.13.12:
+esbuild@^0.13.2:
   version "0.13.15"
   resolved "https://registry.npmmirror.com/esbuild/download/esbuild-0.13.15.tgz#db56a88166ee373f87dbb2d8798ff449e0450cdf"
   integrity sha512-raCxt02HBKv8RJxE8vkTSCXGIyKHdEdGfUmiYb8wnabnaEmHzyW7DCHb5tEN0xU8ryqg5xw54mcwnYkC4x3AIw==
@@ -4164,10 +4164,10 @@ loader-utils@^1.1.0:
     emojis-list "^3.0.0"
     json5 "^1.0.1"
 
-local-pkg@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.npmmirror.com/local-pkg/download/local-pkg-0.1.0.tgz#7422b2ae8fc1e3b9ef2f132b0a0e92d879df52ef"
-  integrity sha1-dCKyro/B47nvLxMrCg6S2HnfUu8=
+local-pkg@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.npmmirror.com/local-pkg/download/local-pkg-0.4.0.tgz#e6221171813d5a0812dd84fa80ffb1c8fcc00531"
+  integrity sha1-5iIRcYE9WggS3YT6gP+xyPzABTE=
   dependencies:
     mlly "^0.2.2"
 
@@ -5001,6 +5001,11 @@ pascalcase@^0.1.1:
   resolved "https://registry.npmmirror.com/pascalcase/download/pascalcase-0.1.1.tgz#b363e55e8006ca6fe21784d2db22bd15d7917f14"
   integrity sha1-s2PlXoAGym/iF4TS2yK9FdeRfxQ=
 
+patch-vue-directive-ssr@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.npmmirror.com/patch-vue-directive-ssr/download/patch-vue-directive-ssr-0.0.1.tgz#2eac731f59cdb766d4d613bc24e522ded6ff1bb8"
+  integrity sha1-LqxzH1nNt2bU1hO8JOUi3tb/G7g=
+
 path-case@^3.0.4:
   version "3.0.4"
   resolved "https://registry.npmmirror.com/path-case/download/path-case-3.0.4.tgz#9168645334eb942658375c56f80b4c0cb5f82c6f"
@@ -5341,7 +5346,7 @@ postcss@^7.0.14, postcss@^7.0.2, postcss@^7.0.21, postcss@^7.0.26, postcss@^7.0.
     picocolors "^0.2.1"
     source-map "^0.6.1"
 
-postcss@^8.1.10, postcss@^8.3.11:
+postcss@^8.1.10, postcss@^8.3.8:
   version "8.4.4"
   resolved "https://registry.npmmirror.com/postcss/download/postcss-8.4.4.tgz#d53d4ec6a75fd62557a66bb41978bf47ff0c2869"
   integrity sha512-joU6fBsN6EIer28Lj6GDFoC/5yOZzLCfn0zHAn/MYXI7aPt4m4hK5KC5ovEZXy+lnCjmYIbQWngvju2ddyEr8Q==
@@ -5861,10 +5866,10 @@ rimraf@~2.6.2:
   dependencies:
     glob "^7.1.3"
 
-rollup@^2.59.0:
-  version "2.60.2"
-  resolved "https://registry.npmmirror.com/rollup/download/rollup-2.60.2.tgz#3f45ace36a9b10b4297181831ea0719922513463"
-  integrity sha512-1Bgjpq61sPjgoZzuiDSGvbI1tD91giZABgjCQBKM5aYLnzjq52GoDuWVwT/cm/MCxCMPU8gqQvkj8doQ5C8Oqw==
+rollup@^2.57.0:
+  version "2.61.0"
+  resolved "https://registry.npmmirror.com/rollup/download/rollup-2.61.0.tgz#ccd927bcd6cc0c78a4689c918627a717977208f4"
+  integrity sha512-teQ+T1mUYbyvGyUavCodiyA9hD4DxwYZJwr/qehZGhs1Z49vsmzelMVYMxGU4ZhGRKxYPupHuz5yzm/wj7VpWA==
   optionalDependencies:
     fsevents "~2.3.2"
 
@@ -6959,6 +6964,18 @@ universalify@^2.0.0:
   resolved "https://registry.npmmirror.com/universalify/download/universalify-2.0.0.tgz#75a4984efedc4b08975c5aeb73f530d02df25717"
   integrity sha1-daSYTv7cSwiXXFrrc/Uw0C3yVxc=
 
+unplugin-auto-import@^0.5.1:
+  version "0.5.1"
+  resolved "https://registry.npmmirror.com/unplugin-auto-import/download/unplugin-auto-import-0.5.1.tgz#e1d4447c0da73b092cf73d9afac9c6e681715510"
+  integrity sha512-Q3CvNbCB7nLbu+JdrF6jYs0Nx7kHmV2KzDcZHzTrdri3EhU1lUOgto+ce+Jw01Ds7RxBi9lwWwF3QoFwFPul1A==
+  dependencies:
+    "@antfu/utils" "^0.3.0"
+    "@rollup/pluginutils" "^4.1.1"
+    local-pkg "^0.4.0"
+    magic-string "^0.25.7"
+    resolve "^1.20.0"
+    unplugin "^0.2.21"
+
 unplugin-element-plus@^0.1.0:
   version "0.1.3"
   resolved "https://registry.npmmirror.com/unplugin-element-plus/download/unplugin-element-plus-0.1.3.tgz#3fefadef8a2a965ff3a2846beae6ae651f194fee"
@@ -6969,23 +6986,23 @@ unplugin-element-plus@^0.1.0:
     magic-string "^0.25.7"
     unplugin "^0.2.16"
 
-unplugin-vue-components@^0.15.4:
-  version "0.15.6"
-  resolved "https://registry.npmmirror.com/unplugin-vue-components/download/unplugin-vue-components-0.15.6.tgz#cd4e06e507c9dd7b6469e345b6812b3843e86d63"
-  integrity sha1-zU4G5QfJ3XtkaeNFtoErOEPobWM=
+unplugin-vue-components@^0.17.6:
+  version "0.17.6"
+  resolved "https://registry.npmmirror.com/unplugin-vue-components/download/unplugin-vue-components-0.17.6.tgz#895445a0e4d21e8298f36847009bae4f88429eaf"
+  integrity sha512-Z2XvwKeY7/++MucRKzJihDsbdL8rFb71VfmuhtMtLE8zurjFu57XKFx0RNFUD5zD4g0HEyR9GGTwXu2YI0rang==
   dependencies:
     "@antfu/utils" "^0.3.0"
     "@rollup/pluginutils" "^4.1.1"
     chokidar "^3.5.2"
     debug "^4.3.2"
     fast-glob "^3.2.7"
-    local-pkg "^0.1.0"
+    local-pkg "^0.4.0"
     magic-string "^0.25.7"
     minimatch "^3.0.4"
     resolve "^1.20.0"
-    unplugin "^0.2.13"
+    unplugin "^0.2.21"
 
-unplugin@^0.2.13, unplugin@^0.2.16:
+unplugin@^0.2.16, unplugin@^0.2.21:
   version "0.2.21"
   resolved "https://registry.npmmirror.com/unplugin/download/unplugin-0.2.21.tgz#7852cddd9f78f0b32881812fd2efd5a39dcc64e5"
   integrity sha512-IJ15/L5XbhnV7J09Zjk0FT5HEkBjkXucWAXQWRsmEtUxmmxwh23yavrmDbCF6ZPxWiVB28+wnKIHePTRRpQPbQ==
@@ -7181,15 +7198,15 @@ vite-svg-loader@^2.2.0:
     "@vue/compiler-sfc" "^3.0.11"
     svgo "^2.3.0"
 
-vite@2.7.1:
-  version "2.7.1"
-  resolved "https://registry.npmmirror.com/vite/download/vite-2.7.1.tgz#be50ad13214290ecbebbe5ad389ed423cb5f137e"
-  integrity sha512-TDXXhcu5lyQ6uosK4ZWaOyB4VzOiizk0biitRzDzaEtgSUi8rVYPc4k1xgOjLSf0OuceDJmojFKXHOX9DB1WuQ==
+vite@2.6:
+  version "2.6.14"
+  resolved "https://registry.npmmirror.com/vite/download/vite-2.6.14.tgz#35c09a15e4df823410819a2a239ab11efb186271"
+  integrity sha512-2HA9xGyi+EhY2MXo0+A2dRsqsAG3eFNEVIo12olkWhOmc8LfiM+eMdrXf+Ruje9gdXgvSqjLI9freec1RUM5EA==
   dependencies:
-    esbuild "^0.13.12"
-    postcss "^8.3.11"
+    esbuild "^0.13.2"
+    postcss "^8.3.8"
     resolve "^1.20.0"
-    rollup "^2.59.0"
+    rollup "^2.57.0"
   optionalDependencies:
     fsevents "~2.3.2"
 
