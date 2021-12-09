@@ -31,17 +31,17 @@ export interface Actions {
 export const actions: ActionTree<State, State> & Actions = {
   async [Action.getUserInfo]({ state, commit, dispatch }) {
     state.userInfoLoading = true
-    const res = await state.sdk?.getUserInfo()
+    const res = await state.sdk?.getUserInfo().catch(() => {
+      dispatch(Action.LogOut)
+    })
     if (res && res.code === 200) {
       commit(Mutation.SETUSERINFO, res.data)
-      if (state.isApp && res.appAccessToken) {
+      if (state.sdk?.isApp && res.appAccessToken) {
         commit(Mutation.SETTOKEN, {
           access_token: res.appAccessToken,
         })
       }
     } else {
-      state.sdkInitIng = false
-      state.userInfoLoading = false
       dispatch(Action.LogOut)
     }
     // state.sdk?.getUserInfo({
@@ -102,17 +102,14 @@ export const actions: ActionTree<State, State> & Actions = {
   },
   [Action.initSdk]({ state, commit, dispatch }) {
     return new Promise<void>(async resolve => {
-      state.sdkInitIng = true
       state.userInfoLoading = true
       state.sdk
         ?.initSdk()
         .then(() => {
-          state.sdkInitIng = false
           dispatch(Action.getUserInfo)
           resolve()
         })
         .catch(() => {
-          state.sdkInitIng = false
           dispatch(Action.LogOut)
           resolve()
         })
@@ -120,6 +117,7 @@ export const actions: ActionTree<State, State> & Actions = {
   },
   [Action.LogOut]({ state, commit, dispatch }) {
     return new Promise<void>(async resolve => {
+      state.userInfoLoading = false
       commit(Mutation.LOGOUT)
       commit(Mutation.SETSDK)
       resolve()
