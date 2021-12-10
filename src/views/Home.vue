@@ -26,7 +26,6 @@ import { useStore } from '@/store'
 import { reactive, ref } from 'vue'
 import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import FileUploadIcon from '@/assets/images/file_upload.svg'
-import { ElTooltip } from 'element-plus'
 import IsNull from '../components/IsNull/IsNull.vue'
 import { useI18n } from 'vue-i18n'
 import { checkSdkStatus } from '@/utils/util'
@@ -39,10 +38,7 @@ const pagination = reactive({
 let sendMetaTxDataRes: { val: any } = reactive({ val: {} })
 
 async function sendMetaTxData() {
-  console.log(store.state.sdk?.payToAddress)
-  debugger
   await checkSdkStatus()
-  debugger
   sendMetaTxDataRes.val = await store.state.sdk?.sendMetaDataTx({
     brfcId: 'test',
     data: JSON.stringify({
@@ -51,7 +47,6 @@ async function sendMetaTxData() {
     nodeName: 'Test',
     path: '/Protocols/Test',
   })
-  debugger
 }
 
 //  加载更多

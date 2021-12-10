@@ -9,6 +9,7 @@ import { router } from '@/router'
 import * as filters from '@/utils/filters'
 import i18n from '@/utils/i18n'
 import { use } from 'element-plus/es/locale'
+import { ElLoading } from 'element-plus'
 
 const app = createApp(App)
 

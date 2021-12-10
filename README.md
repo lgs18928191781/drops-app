@@ -4,7 +4,7 @@
 - 集成兼容 APP,打点登录
 - 集成自适应（使用设计稿 px,自动转换 rem）
 - 集成`i18n`国际化多语言配置
-- 集成`element-plus`Ui 组件
+- 集成`element-plus`Ui 组件,tempalte 里面直接使用，不用引入。script 使用需单独引入
 - 集成代码格式规范和编辑器自动格式化
 - 使用 Vue3 最新 SFC setup 语法，推荐使用[https://vue3js.cn/docs/zh/guide/composition-api-setup.html#%E5%8F%82%E6%95%B0](https://vue3js.cn/docs/zh/guide/composition-api-setup.html#%E5%8F%82%E6%95%B0)
 - `sdk类方法`
