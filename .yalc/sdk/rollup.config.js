@@ -1,7 +1,7 @@
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import json from '@rollup/plugin-json'
-import typescript from '@rollup/plugin-typescript'
+import typescript from 'rollup-plugin-typescript2'
 import builtins from 'rollup-plugin-node-builtins'
 import globals from 'rollup-plugin-node-globals'
 
@@ -15,8 +15,8 @@ export default {
   external: [],
   plugins: [
     json(),
-    typescript(),
     commonjs(),
+    typescript(),
     builtins(),
     resolve({
       jsnext: true,

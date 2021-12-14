@@ -1,6 +1,6 @@
 import { MutationTree } from 'vuex'
 import { State } from './state'
-import type { SDK } from 'sdk'
+import { SDK } from 'sdk'
 import { SdkType } from 'sdk/src/emums'
 import { env } from 'process'
 
