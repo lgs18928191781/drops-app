@@ -1,11 +1,11 @@
-import { Create as SdkCreate } from 'sdk'
+import { SDK } from 'sdk'
 export interface State {
   debug: boolean
   version: string
   token: null | Token
   userInfo: null | UserInfo
   userInfoLoading: boolean
-  sdk: null | SdkCreate
+  sdk: null | SDK
   pagination: Pagination
 }
 
