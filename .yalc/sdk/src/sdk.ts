@@ -35,7 +35,7 @@ import { Encrypt, Lang, PayToAddressCurrency, SdkType } from './emums'
 import { Buffer } from 'buffer'
 import pack from '../package.json'
 
-export class SDK {
+export class Create {
   // @ts-ignore
   metaidjs: null | MetaIdJs = null
   appMetaidjs: null | {
