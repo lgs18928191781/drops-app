@@ -16,7 +16,11 @@ export default {
   plugins: [
     json(),
     typescript(),
-    commonjs(),
+    commonjs({
+      namedExports: {
+        './src/sdk.ts': ['__moduleExports']
+      }
+    }),
     builtins(),
     resolve({
       jsnext: true,

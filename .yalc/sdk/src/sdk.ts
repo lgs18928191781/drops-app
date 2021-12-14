@@ -430,6 +430,7 @@ export class SDK {
       publickey: string // 加密用的 publickey
       type: string // data 里面要加密的字段
     }
+    nodeKey?: string // 编辑数据时需要指定当前节点的 publicKey
   }) {
     return new Promise<SendMetaDataTxRes>(async (resolve, reject) => {
       if (!params.payCurrency) params.payCurrency = 'BSV'
@@ -583,6 +584,21 @@ export class SDK {
   eciesDecryptData(data: string) {
     return new Promise<MetaIdJsRes>((resolve, reject) => {
       const callback = (res: MetaIdJsRes) => {
+        // 当app端返回的加密寄过格式与网页不一致， 处理成一致的结果
+        if (typeof res === 'string') {
+          let _res
+          try {
+            _res = JSON.parse(res)
+          } catch (error) {
+            _res = {
+              code: 200,
+              data: {
+                data: res
+              }
+            }
+          }
+          res = _res
+        }
         this.callback(res, resolve, reject)
       }
       const _params = {
