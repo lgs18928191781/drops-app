@@ -15,8 +15,8 @@ export default {
   external: [],
   plugins: [
     json(),
-    commonjs(),
     typescript(),
+    commonjs(),
     builtins(),
     resolve({
       jsnext: true,
