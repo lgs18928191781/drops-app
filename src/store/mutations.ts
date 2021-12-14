@@ -1,6 +1,6 @@
 import { MutationTree } from 'vuex'
 import { State } from './state'
-import SDK from 'sdk'
+import type { SDK } from 'sdk'
 import { SdkType } from 'sdk/src/emums'
 import { env } from 'process'
 
@@ -40,7 +40,7 @@ export const mutations: MutationTree<State> & Mutations = {
     state.sdk = null
   },
   [Mutation.SETSDK](state: State) {
-    state.sdk = new SDK.default({
+    state.sdk = new SDK({
       metaIdTag: import.meta.env.VITE_MetaIdTag,
       showmoneyApi: import.meta.env.VITE_WalletApi,
       getAccessToken: () => {
