@@ -7,6 +7,7 @@
 - 集成`element-plus`Ui 组件,tempalte 里面直接使用，不用引入。script 使用需单独引入
 - 集成代码格式规范和编辑器自动格式化
 - 使用 Vue3 最新 SFC setup 语法，推荐使用[https://vue3js.cn/docs/zh/guide/composition-api-setup.html#%E5%8F%82%E6%95%B0](https://vue3js.cn/docs/zh/guide/composition-api-setup.html#%E5%8F%82%E6%95%B0)
+- 添加 App 环境参数在`store.state`里面`isAndroid: boolean,isIOS: boolean` [2021-12-16]
 - `sdk类方法`
   - changeSdkType // 更改 sdk 环境类型
   - initSdk // 初始化 sdk
