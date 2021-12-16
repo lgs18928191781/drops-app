@@ -38,6 +38,7 @@ export const mutations: MutationTree<State> & Mutations = {
     state.token = null
     state.userInfo = null
     state.sdk = null
+    state.userInfoLoading = false
   },
   [Mutation.SETSDK](state: State) {
     state.sdk = new SDK({
