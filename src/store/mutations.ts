@@ -42,6 +42,11 @@ export const mutations: MutationTree<State> & Mutations = {
   },
   [Mutation.SETSDK](state: State) {
     state.sdk = new SDK({
+      appMsg: {
+        name: import.meta.env.VITE_AppName,
+        website: import.meta.env.VITE_Hosts,
+        isProduction: import.meta.env.MODE === 'prod',
+      },
       metaIdTag: import.meta.env.VITE_MetaIdTag,
       showmoneyApi: import.meta.env.VITE_WalletApi,
       getAccessToken: () => {

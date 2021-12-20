@@ -1,6 +1,6 @@
 import MetaIdJs from 'metaidjs'
 // @ts-ignore
-import { v4 as uuid } from 'uuid'
+import { v1 as uuid } from 'uuid'
 import { Decimal } from 'decimal.js-light'
 import { DotWalletForMetaID } from 'dotwallet-jssdk'
 import qs from 'qs'
@@ -29,7 +29,8 @@ import {
   CreateMetaAccessProrocolParams,
   CreateMetaAccessContentProrocolParams,
   ShowManRes,
-  PayToItem
+  PayToItem,
+  AppMsg
 } from './types/sdk'
 import { Encrypt, Lang, PayToAddressCurrency, SdkType } from './emums'
 import { Buffer } from 'buffer'
@@ -96,8 +97,10 @@ export class SDK {
   axios: AxiosInstance | null = null
   isSdkFinish: boolean = false // 是否已初始化完成
   nftAppAddress = '16tp7PhBjvYpHcv53AXkHYHTynmy6xQnxy' // Nft收手续费的地址
+  appMsg: AppMsg | null = null
 
   constructor(options: {
+    appMsg: AppMsg
     metaIdTag: string
     showmoneyApi: string
     getAccessToken: Function
@@ -109,6 +112,7 @@ export class SDK {
     metaidjsOptions: SdkMetaidJsOptionsTypes
     dotwalletOptions: DotWalletConfig
   }) {
+    this.appMsg = options.appMsg
     this.metaIdTag = options.metaIdTag
     this.getAccessToken = options.getAccessToken
     this.metaidjsOptions = options.metaidjsOptions
@@ -382,10 +386,7 @@ export class SDK {
         callback
       }
       if (this.type === SdkType.App) {
-        const functionName: string = `getUserInfoCallBack${uuid().replace(
-          /-/g,
-          ''
-        )}`
+        const functionName: string = `getUserInfoCallBack${randomString()}`
         // @ts-ignore
         window[functionName] = callback
         if ((window as any).appMetaIdJsV2) {
@@ -446,10 +447,7 @@ export class SDK {
         reject(res)
       }
       if (this.type === SdkType.App) {
-        const functionName: string = `sendMetaDataTxCallBack${uuid().replace(
-          /-/g,
-          ''
-        )}`
+        const functionName: string = `sendMetaDataTxCallBack${randomString()}`
         // @ts-ignore
         window[functionName] = callback
         if ((window as any).appMetaIdJsV2) {
@@ -478,7 +476,14 @@ export class SDK {
           ;(window as any).handleNotEnoughMoney = (res: MetaIdJsRes) => {
             reject()
           }
-          this.metaidjs?.sendMetaDataTx(_params)
+          this.metaidjs?.sendMetaDataTx({
+            ..._params,
+            appId: [
+              this.appMsg?.name,
+              this.appMsg?.isProduction ? this.appMsg?.website : 'XXXX',
+              'web'
+            ]
+          })
         } else {
           this.dotwalletjs?.sendMetaDataTx({
             ..._params,
@@ -506,10 +511,7 @@ export class SDK {
         data: JSON.stringify(data)
       }
       if (this.type === SdkType.App) {
-        const functionName: string = `ecdhDecryptDataCallBack${uuid().replace(
-          /-/g,
-          ''
-        )}`
+        const functionName: string = `ecdhDecryptDataCallBack${randomString()}`
         // @ts-ignore
         window[functionName] = callback
         if ((window as any).appMetaIdJsV2) {
@@ -551,10 +553,7 @@ export class SDK {
         data
       }
       if (this.type === SdkType.App) {
-        const functionName: string = `eciesDecryptDataCallBack${uuid().replace(
-          /-/g,
-          ''
-        )}`
+        const functionName: string = `eciesDecryptDataCallBack${randomString()}`
         // @ts-ignore
         window[functionName] = callback
         if ((window as any).appMetaIdJsV2) {
@@ -607,10 +606,7 @@ export class SDK {
         data
       }
       if (this.type === SdkType.App) {
-        const functionName: string = `eciesDecryptDataCallBack${uuid().replace(
-          /-/g,
-          ''
-        )}`
+        const functionName: string = `eciesDecryptDataCallBack${randomString()}`
         // @ts-ignore
         window[functionName] = callback
         if ((window as any).appMetaIdJsV2) {
@@ -641,7 +637,7 @@ export class SDK {
     return new Promise<GetBalanceRes>((resolve, reject) => {
       if (this.isApp) {
         const token = this.getAccessToken()
-        const functionName = `getBalanceCallBack${uuid().replace(/-/g, '')}`
+        const functionName = `getBalanceCallBack${randomString()}`
         ;(window as any)[functionName] = (_res: string) => {
           const res = JSON.parse(_res)
           const bsv = res.data
@@ -919,10 +915,7 @@ export class SDK {
         callback
       }
       if (this.isApp) {
-        const functionName: string = `genesisNFTCallBack${uuid().replace(
-          /-/g,
-          ''
-        )}`
+        const functionName: string = `genesisNFTCallBack${randomString()}`
         ;(window as any)[functionName] = callback
         const accessToken = this.getAccessToken()
         if ((window as any).appMetaIdJsV2) {
@@ -985,10 +978,7 @@ export class SDK {
         callback
       }
       if (this.isApp) {
-        const functionName: string = `issueNFTCallBack${uuid().replace(
-          /-/g,
-          ''
-        )}${uuid().replace(/-/g, '')}`
+        const functionName: string = `issueNFTCallBack${randomString()}`
         ;(window as any)[functionName] = callback
         const accessToken = this.getAccessToken()
         if ((window as any).appMetaIdJsV2) {
@@ -1032,7 +1022,7 @@ export class SDK {
       }
       if (this.isApp) {
         const accessToken = this.getAccessToken()
-        const functionName: string = `nftBuyCallBack${uuid().replace(/-/g, '')}`
+        const functionName: string = `nftBuyCallBack${randomString()}`
         // @ts-ignore
         window[functionName] = callback
         // @ts-ignore
@@ -1073,10 +1063,7 @@ export class SDK {
       }
       if (this.isApp) {
         const accessToken = this.getAccessToken()
-        const functionName: string = `nftSellCallBack${uuid().replace(
-          /-/g,
-          ''
-        )}`
+        const functionName: string = `nftSellCallBack${randomString()}`
         // @ts-ignore
         window[functionName] = callback
         // @ts-ignore
@@ -1121,10 +1108,7 @@ export class SDK {
       }
       if (this.isApp) {
         const accessToken = this.getAccessToken()
-        const functionName: string = `nftCancelCallBack${uuid().replace(
-          /-/g,
-          ''
-        )}${uuid().replace(/-/g, '')}`
+        const functionName: string = `nftCancelCallBack${randomString()}`
         // @ts-ignore
         window[functionName] = callback
         // @ts-ignore
@@ -1598,6 +1582,10 @@ export function setAttachments(
     })
     resolve({ data, attachments })
   })
+}
+
+export function randomString() {
+  return Math.random().toString().replace('.', '')
 }
 
 export const verion = pack.verion

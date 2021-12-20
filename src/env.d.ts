@@ -24,4 +24,5 @@ interface ImportMetaEnv {
   VITE_DotWallet_AppId: string
   VITE_DotWallet_AppSecret: string
   VITE_DotWallet_ENV: string
+  VITE_AppName: string
 }
