@@ -1,5 +1,5 @@
 {
-  "name": "show-nft",
+  "name": "start-template",
   "version": "0.0.1",
   "scripts": {
     "dev2": "vite --mode dev2",

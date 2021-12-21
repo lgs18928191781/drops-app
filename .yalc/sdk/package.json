@@ -1,6 +1,6 @@
 {
   "name": "sdk",
-  "version": "0.0.43",
+  "version": "0.0.45",
   "description": "metaidjs sdk",
   "main": "dist/sdk.min.js",
   "typings": "src/index.d.ts",
@@ -24,5 +24,5 @@
     "qs": "^6.10.1",
     "uuid": "^8.3.2"
   },
-  "yalcSig": "fb47b90dab3acb2852a0f0e349eb1bee"
+  "yalcSig": "f1e4ccac54c62488f25dddc5114434bf"
 }

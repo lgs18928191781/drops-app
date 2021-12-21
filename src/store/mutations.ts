@@ -45,7 +45,7 @@ export const mutations: MutationTree<State> & Mutations = {
       appMsg: {
         name: import.meta.env.VITE_AppName,
         website: import.meta.env.VITE_Hosts,
-        isProduction: import.meta.env.MODE === 'prod',
+        mode: import.meta.env.MODE,
       },
       metaIdTag: import.meta.env.VITE_MetaIdTag,
       showmoneyApi: import.meta.env.VITE_WalletApi,
