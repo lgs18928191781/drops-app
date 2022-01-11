@@ -1636,6 +1636,53 @@ export class SDK {
       }
     })
   }
+
+  /* 
+    @function 创建协议根节点 
+  */
+  async createBrfcProtocolNode(params: {
+    nodeName: string
+    brfcId: string
+    path: string
+    needConfirm?: boolean
+  }) {
+    return new Promise<NFTCancelResData>((resolve, reject) => {
+      const callback = (res: MetaIdJsRes) => {
+        this.callback(res, resolve, reject)
+      }
+      if (this.isApp) {
+        alert('App 暂未支持')
+        return
+        const accessToken = this.getAccessToken()
+        const functionName: string = `createBrfcProtocolNode${randomString()}`
+        // @ts-ignore
+        window[functionName] = callback
+        // @ts-ignore
+        if (window.appMetaIdJsV2) {
+          // @ts-ignore
+          window.appMetaIdJsV2.nftCancel(
+            accessToken,
+            JSON.stringify(params),
+            functionName
+          )
+        } else {
+          // @ts-ignore
+          window.appMetaIdJs.nftCancel(
+            accessToken,
+            JSON.stringify(params),
+            functionName
+          )
+        }
+      } else {
+        debugger
+        // @ts-ignore
+        this.metaidjs?.createBrfcProtocolNode({
+          data: params,
+          callback
+        })
+      }
+    })
+  }
 }
 
 //hex格式转为Base64

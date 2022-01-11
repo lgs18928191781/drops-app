@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, RouterView } from 'vue-router'
 import Home from '@/views/Home.vue'
 import Login from '@/views/Login.vue'
+const NotFoundPage = () => import('@/views/404.vue')
 import { useStore, Action, Mutation } from '@/store/index'
 import { ElMessage } from 'element-plus'
 import i18n from '@/utils/i18n'
@@ -15,6 +16,12 @@ export const router = createRouter({
   routes: [
     { path: '/', component: Home },
     { path: '/login', name: 'login', component: Login },
+    // 404
+    { path: '/404', name: '404', component: NotFoundPage },
+    {
+      path: '/:pathMatch(.*)',
+      redirect: '/404',
+    },
   ],
   async scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {

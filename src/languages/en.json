@@ -7,7 +7,7 @@
   "mywallet": "My Wallet",
   "logout": "Sign Out",
   "toLoginTip": "Please log in first",
-
   "niceWarning": "Confir Tips ",
-  "loginingTip": "Logging in, please operate later "
+  "loginingTip": "Logging in, please operate later ",
+  "backHome": "Back to Home"
 }

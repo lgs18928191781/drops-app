@@ -8,5 +8,6 @@
   "logout": "退出登录",
   "signinandout": "登录/注册",
   "toLoginTip": "请先登录再操作",
-  "loginingTip": "正在登录，请稍后操作"
+  "loginingTip": "正在登录，请稍后操作",
+  "backHome": "返回首页"
 }
