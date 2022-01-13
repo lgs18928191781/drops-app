@@ -6,6 +6,7 @@
 - 集成`i18n`国际化多语言配置
 - 集成`element-plus`Ui 组件,tempalte 里面直接使用，不用引入。script 使用需单独引入
 - 集成代码格式规范和编辑器自动格式化
+- 集成 PWA(2021-01-13)
 - 使用 Vue3 最新 SFC setup 语法，推荐使用[https://vue3js.cn/docs/zh/guide/composition-api-setup.html#%E5%8F%82%E6%95%B0](https://vue3js.cn/docs/zh/guide/composition-api-setup.html#%E5%8F%82%E6%95%B0)
 - 添加 App 环境参数在`store.state`里面`isAndroid: boolean,isIOS: boolean` [2021-12-16]
 - `sdk类方法`
@@ -39,13 +40,14 @@
 
 ## 使用
 
-1. 修改`.env`的`VITE_Design_Size`,`VITE_Min_FontSize`的自适应配置,`VITE_AppName`:应用名称
-2. 修改对应环境配置的`VITE_AppId`,`VITE_AppSecret`,`VITE_Hosts`,网页回调地址为`VITE_Hosts` + `/login`
-3. 图标推荐使用 svg 格式, `import` 引入使用, 使用方法[vite-svg-loader](https://github.com/jpkleemans/vite-svg-loader)
-4. 布局推荐使用`flex`,`flex`全局快捷样式查看`/src/assets//styles/flex.scss`
-5. 卸载旧的浏览器`Vue.js devtools`插件，安装最新版本[https://chrome.google.com/webstore/detail/vuejs-devtools/ljjemllljcmogpfapbkkighbhhppjdbg](https://chrome.google.com/webstore/detail/vuejs-devtools/ljjemllljcmogpfapbkkighbhhppjdbg)
-6. 页面标题统一在`router.ts`路由文件，根据`meta.title`字段配置，通过配置`meta.isAuth`字段是否需要登录才可访问
-7. 页面是否缓存,统一在`router.ts`路由文件，根据`meta.keepAlive`字段配置
+1. 修改`.env`的`VITE_Design_Size`,`VITE_Min_FontSize`的自适应配置,`VITE_AppName`:应用名称;`VITE_AppDescription`:应用描述
+2. 修改 publice 目录下对应图标
+3. 修改对应环境配置的`VITE_AppId`,`VITE_AppSecret`,`VITE_Hosts`,网页回调地址为`VITE_Hosts` + `/login`
+4. 图标推荐使用 svg 格式, `import` 引入使用, 使用方法[vite-svg-loader](https://github.com/jpkleemans/vite-svg-loader)
+5. 布局推荐使用`flex`,`flex`全局快捷样式查看`/src/assets//styles/flex.scss`
+6. 卸载旧的浏览器`Vue.js devtools`插件，安装最新版本[https://chrome.google.com/webstore/detail/vuejs-devtools/ljjemllljcmogpfapbkkighbhhppjdbg](https://chrome.google.com/webstore/detail/vuejs-devtools/ljjemllljcmogpfapbkkighbhhppjdbg)
+7. 页面标题统一在`router.ts`路由文件，根据`meta.title`字段配置，通过配置`meta.isAuth`字段是否需要登录才可访问
+8. 页面是否缓存,统一在`router.ts`路由文件，根据`meta.keepAlive`字段配置
 
 ## VSCode 设置
 

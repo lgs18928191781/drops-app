@@ -1,4 +1,5 @@
 /// <reference types="vite-svg-loader" />
+/// <reference types="vite-plugin-pwa/client" />
 interface ImportMetaEnv {
   VITE_Hosts: string
   VITE_RedirectPath: string

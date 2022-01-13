@@ -10,6 +10,12 @@ import * as filters from '@/utils/filters'
 import i18n from '@/utils/i18n'
 import { use } from 'element-plus/es/locale'
 import { ElLoading } from 'element-plus'
+import { registerSW } from 'virtual:pwa-register'
+
+// pwa auto update
+const updateSW = registerSW({
+  onOfflineReady() {},
+})
 
 const app = createApp(App)
 

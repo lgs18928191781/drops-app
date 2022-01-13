@@ -8,6 +8,7 @@ import VitePluginHtmlEnv from 'vite-plugin-html-env'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import { VitePWA } from 'vite-plugin-pwa'
 
 export default ({ mode }) => {
   // 加载环境配置文件
@@ -32,6 +33,42 @@ export default ({ mode }) => {
       }),
       svgLoader(),
       VitePluginHtmlEnv(),
+      VitePWA({
+        includeAssets: ['favicon.svg', 'favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
+        manifest: {
+          name: env.VITE_AppName,
+          short_name: env.VITE_AppName,
+          description: env.VITE_AppDescription,
+          theme_color: '#ffffff',
+          icons: [
+            {
+              src: 'pwa-192x192.png',
+              sizes: '192x192',
+              type: 'image/png',
+            },
+            {
+              src: 'pwa-512x512.png',
+              sizes: '512x512',
+              type: 'image/png',
+            },
+            {
+              src: 'pwa-512x512.png',
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'any maskable',
+            },
+          ],
+        },
+        registerType: 'autoUpdate',
+        workbox: {
+          cleanupOutdatedCaches: false,
+          sourcemap: true,
+        },
+        devOptions: {
+          enabled: true,
+          /* other options */
+        },
+      }),
     ],
     resolve: {
       alias: {
@@ -42,10 +79,10 @@ export default ({ mode }) => {
       _APP_VERSION: JSON.stringify(pkg.version),
     },
     server: {
-      host: env.VITE_Hosts.replace(/https:\/\//, '').replace(/http:\/\//, ''),
-      // host: '0.0.0.0',
-      port: 443,
-      https: true,
+      // host: env.VITE_Hosts.replace(/https:\/\//, '').replace(/http:\/\//, ''),
+      host: '0.0.0.0',
+      // port: 443,
+      // https: true,
       open: false,
       // proxy: {
       //   '/api/showMANDB': {
