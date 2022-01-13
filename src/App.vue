@@ -7,13 +7,13 @@
           <KeepAlive>
             <component
               :is="Component"
-              :key="route.meta.usePathKey ? route.path : undefined"
+              :key="route.fullPath"
               v-if="route.meta && route.meta.keepAlive"
             />
           </KeepAlive>
           <component
             :is="Component"
-            :key="route.meta.usePathKey ? route.path : undefined"
+            :key="route.fullPath"
             v-if="!route.meta || (route.meta && !route.meta.keepAlive)"
           />
         </div>
