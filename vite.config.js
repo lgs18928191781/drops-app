@@ -79,10 +79,10 @@ export default ({ mode }) => {
       _APP_VERSION: JSON.stringify(pkg.version),
     },
     server: {
-      // host: env.VITE_Hosts.replace(/https:\/\//, '').replace(/http:\/\//, ''),
+      host: env.VITE_Hosts.replace(/https:\/\//, '').replace(/http:\/\//, ''),
       host: '0.0.0.0',
-      // port: 443,
-      // https: true,
+      port: 443,
+      https: true,
       open: false,
       // proxy: {
       //   '/api/showMANDB': {
