@@ -10,5 +10,6 @@
   "niceWarning": "Confir Tips ",
   "loginingTip": "Logging in, please operate later ",
   "backHome": "Back to Home",
-  "signinandout": "Connect Wallet"
+  "signinandout": "Connect Wallet",
+  "login": "Register/Login"
 }

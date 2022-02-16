@@ -1,5 +1,5 @@
 <template>
-  <header class="flex flex-align-center">
+  <header>
     <div class="header-left flex1 flex flex-align-center">
       <a class="menu" @click="isShowDrawer = true">
         <MenuIcon />
@@ -7,36 +7,44 @@
       <!-- 分割线 -->
       <span class="line"></span>
       <router-link to="/" class="logo flex flex-align-center">
-        <LogoNosIcon />
+        <img :src="LogoNosIcon" alt="" />
+        <!-- <LogoNosIcon /> -->
       </router-link>
     </div>
-    <nav class="flex flex-align-center flex-pack-center">
+    <!-- <nav class="flex flex-align-center flex-pack-center">
       <router-link to="/">{{ $t('marketplace') }}</router-link>
       <router-link to="/create">{{ $t('createnft') }}</router-link>
-      <!-- <router-link to="/metaBot" class="flex flex-align-center">
-        MetaBot <img src="@/assets/images/nav_icon_hot.svg" alt="MetaBot"
-      /></router-link>-->
-    </nav>
+    
+    </nav> -->
     <div class="operate flex flex-align-center">
+      <div class="item">
+        <HotImg />
+        <span>参与预售</span>
+      </div>
+      <div class="item"><span>兑换码NFT</span></div>
+      <div class="item"><span>合成</span></div>
+      <!-- 语言 -->
+      <div class="item" @click="setLang">{{ $t(i18n.locale.value === 'en' ? 'zh' : 'en') }}</div>
+
       <!-- 登录按钮 -->
       <a
+        class="loginBtn"
         v-if="!store.state.userInfo"
-        class="btn"
         @click="auth(SdkType.Metaidjs)"
         v-loading="store.state.userInfoLoading"
         element-loading-background="rgba(255, 255, 255, 0.7)"
-        >{{ $t('signinandout') }}</a
+        >{{ $t('login') }}</a
       >
 
       <!-- 打点登陆按钮 -->
-      <a
+      <!-- <a
         v-if="!store.state.userInfo"
         class="btn"
         @click="auth(SdkType.Dotwallet)"
         v-loading="store.state.userInfoLoading"
         element-loading-background="rgba(255, 255, 255, 0.7)"
         >DotWallet {{ $t('signinandout') }}</a
-      >
+      > -->
 
       <!-- 登录用户 -->
       <ElDropdown trigger="click" v-else>
@@ -58,10 +66,7 @@
       </ElDropdown>
 
       <!-- 分割线 -->
-      <span class="line"></span>
 
-      <!-- 语言 -->
-      <a class="lang" @click="setLang">{{ $t(i18n.locale.value === 'en' ? 'zh' : 'en') }}</a>
       <!-- <ElDropdown trigger="click">
           <template #dropdown>
             <el-dropdown-menu>
@@ -94,8 +99,8 @@ import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { SdkType } from 'sdk/src/emums'
 import MenuIcon from '@/assets/images/menu.svg'
-import LogoNosIcon from '@/assets/images/logo_nos.svg'
-
+import LogoNosIcon from '@/assets/images/ntflogo.png'
+import HotImg from '@/assets/images/hot.svg'
 const i18n = useI18n()
 const env = import.meta.env
 const store = useStore()

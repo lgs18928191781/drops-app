@@ -1,72 +1,16 @@
 <template>
-  <div class="home container">
-    home
-    <LoadMore :pagination="pagination" @getMore="getMore" />
-    <IsNull />
-
-    <div class="icon">
-      svg-icon
-      <FileUploadIcon />
-    </div>
-
-    <div class="test sendMetaTxData flex" style="margin-top: 60px;">
-      <button @click="sendMetaTxData">sendMetaTxData</button>
-      <textarea readonly class="flex1" style="height: 300px;">{{ sendMetaTxDataRes.val }}</textarea>
-    </div>
-
-    <div>
-      <el-form ref="formRef" :model="form" label-width="140px">
-        <el-form-item label="idNumber">
-          <el-input v-model="form.idNumber"></el-input>
-        </el-form-item>
-        <el-form-item label="information">
-          <el-input v-model="form.information" type="textarea"></el-input>
-        </el-form-item>
-        <el-form-item label="informationEn">
-          <el-input v-model="form.informationEn" type="textarea"></el-input>
-        </el-form-item>
-        <el-form-item label="informationJp">
-          <el-input v-model="form.informationJp" type="textarea"></el-input>
-        </el-form-item>
-        <el-form-item label="metaId">
-          <el-input v-model="form.metaId"></el-input>
-        </el-form-item>
-        <el-form-item label="metaIdName">
-          <el-input v-model="form.metaIdName"></el-input>
-        </el-form-item>
-        <el-form-item label="organizationName">
-          <el-input v-model="form.organizationName"></el-input>
-        </el-form-item>
-        <el-form-item label="organizationNameEn">
-          <el-input v-model="form.organizationNameEn"></el-input>
-        </el-form-item>
-        <el-form-item label="organizationNameJp">
-          <el-input v-model="form.organizationNameJp"></el-input>
-        </el-form-item>
-        <el-form-item label="realName">
-          <el-input v-model="form.realName"></el-input>
-        </el-form-item>
-        <el-form-item label="userProfile">
-          <el-input v-model="form.userProfile" type="textarea"></el-input>
-        </el-form-item>
-        <el-form-item label="userProfileEn">
-          <el-input v-model="form.userProfileEn" type="textarea"></el-input>
-        </el-form-item>
-        <el-form-item label="userProfileJp">
-          <el-input v-model="form.userProfileJp" type="textarea"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onSubmit">Confirm</el-button>
-        </el-form-item>
-      </el-form>
+  <div class="home">
+    <div class="snowTitleWrap">
+      <img :src="Snow" alt="" />
     </div>
   </div>
 </template>
 <script setup lang="ts">
 import {} from '@/api'
+import Snow from '@/assets/images/snow.png'
 import { useStore } from '@/store'
 import { reactive, ref } from 'vue'
-import LoadMore from '@/components/LoadMore/LoadMore.vue'
+
 import FileUploadIcon from '@/assets/images/file_upload.svg'
 import IsNull from '../components/IsNull/IsNull.vue'
 import { useI18n } from 'vue-i18n'
@@ -233,4 +177,62 @@ function onSubmit() {
     })
 }
 </script>
-<style lang="scss" scoped src="./Home.scss"></style>
+<style lang="scss" scoped>
+@import '@/assets/styles/var.scss';
+.banner {
+  margin-top: -20px;
+}
+
+.home {
+  margin-top: 40px;
+  .section {
+    margin-bottom: 90px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+    .section-screen {
+    }
+    &.recommend-section {
+      position: relative;
+      .recommend-skeleton-list {
+        position: absolute;
+        width: 100%;
+        left: 0;
+        top: 0;
+      }
+      .section-cont {
+        margin-top: 0;
+      }
+    }
+  }
+  .snowTitleWrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: -200px;
+    img {
+      width: 65%;
+    }
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  .home {
+    .section {
+      margin-bottom: 60px;
+      .section-screen {
+        flex-direction: column-reverse;
+        .search-warp {
+          width: 100%;
+        }
+        .tags {
+          margin-top: 15px;
+          a {
+            margin-bottom: 15px;
+          }
+        }
+      }
+    }
+  }
+}
+</style>

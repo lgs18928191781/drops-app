@@ -1,19 +1,21 @@
 @import '@/assets/styles/var.scss';
 
 header {
-    padding: 0 30px;
+    position: fixed;
+    padding: 14px 50px;
     height: 70px;
     min-height: 46px;
     width: 100%;
     box-sizing: border-box;
-    border-bottom: 1px solid #EDEFF2;
-    position: sticky;
-    left: 0;
-    top: 0;
-    background: $bgColor;
     z-index: 4;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
 
     .header-left {
+        display: flex;
+
+
         .menu {
             display: none;
             width: 30px;
@@ -27,6 +29,13 @@ header {
 
         .line {
             display: none;
+        }
+
+        .logo {
+            img {
+                width: 420px;
+                height: 33px;
+            }
         }
     }
 
@@ -66,7 +75,16 @@ header {
     }
 
     .operate {
-        .btn {
+        color: #fff;
+        font-size: 14px;
+
+        .item {
+            display: flex;
+            align-items: center;
+            margin-right: 43px;
+        }
+
+        .loginBtn {
             padding: 4px 14px;
             position: relative;
             z-index: 2;

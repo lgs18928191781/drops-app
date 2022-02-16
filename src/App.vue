@@ -35,6 +35,8 @@ import Footer from './components/Footer/Footer.vue'
   flex: 1;
   height: 100%;
   min-height: 0;
+
+  background-image: url(@/assets/images/bg.jpg);
   .transition-warp {
     height: 100%;
   }
