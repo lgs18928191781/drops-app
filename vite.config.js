@@ -9,6 +9,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { VitePWA } from 'vite-plugin-pwa'
+import ElementPlus from 'unplugin-element-plus/vite'
 
 export default ({ mode }) => {
   // 加载环境配置文件
@@ -23,6 +24,7 @@ export default ({ mode }) => {
       Components({
         resolvers: [ElementPlusResolver()],
       }),
+      ElementPlus(),
       // 多语言加载
       vueI18n({
         // if you want to use Vue I18n Legacy API, you need to set `compositionOnly: false`
@@ -99,6 +101,12 @@ export default ({ mode }) => {
       rollupOptions: {
         output: {
           sourcemap: mode === 'prod' ? false : 'inline',
+        },
+      },
+      terserOptions: {
+        compress: {
+          drop_console: mode === 'prod',
+          drop_debugger: mode === 'prod',
         },
       },
     },

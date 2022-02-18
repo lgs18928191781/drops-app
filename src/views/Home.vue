@@ -98,9 +98,190 @@ const form = reactive({
 let sendMetaTxDataRes: { val: any } = reactive({ val: {} })
 
 async function sendMetaTxData() {
-  await checkSdkStatus()
-  sendMetaTxDataRes.val = await store.state.sdk?.sendMetaDataTx({
-    brfcId: 'test1',
+  // await checkSdkStatus()
+
+  const topics: any = []
+  const datas = [
+    {
+      tag: 'webotRight',
+      sort: 8,
+      coverPicUrlZh: 'http://filecdn.showpay.top/nos/topic/Webot 2022 Revenue NFT Sale.png',
+      coverPicUrlEn: 'http://filecdn.showpay.top/nos/topic/Webot 2022 Revenue NFT Sale-en.png',
+      coverPicUrlJp: 'http://filecdn.showpay.top/nos/topic/Webot 2022 Revenue NFT Sale-en.png',
+      name: 'Webot 2022 Revenue NFT Sale',
+      createMetaId: 'b89840e798b334e4f2d5279b6a325b411125e927f2dba16af4208d827ede8e11',
+      createName: 'aaron67',
+      CreateAvatarTxId: '',
+      CreateAvatarType: '',
+      key: 'WebotRightCard',
+      timestamp: 1638374400000,
+      url: '',
+    },
+    {
+      tag: 'metaelf',
+      sort: 7,
+      coverPicUrlZh: 'http://filecdn.showpay.top/nos/banner/banner.png',
+      coverPicUrlEn: 'http://filecdn.showpay.top/nos/banner/banner.png',
+      coverPicUrlJp: 'http://filecdn.showpay.top/nos/banner/banner.png',
+      name: 'MetaElf Land NFT Profit Rights',
+      createMetaId: '67740e86c2b0569787600fdd9123eec80756f17934b3de0cd74ccf359af59d80',
+      createName: 'MetaSoft',
+      CreateAvatarTxId: '',
+      CreateAvatarType: '',
+      key: 'MetaElfLandRightCard',
+      timestamp: 1637856000000,
+      url: '',
+    },
+    {
+      tag: 'bigbird',
+      sort: 6,
+      coverPicUrlZh: 'http://filecdn.showpay.top/nos/topic/banner_dato bird_CN.png',
+      coverPicUrlEn: 'http://filecdn.showpay.top/nos/topic/banner_dato bird_EN.png',
+      coverPicUrlJp: 'http://filecdn.showpay.top/nos/topic/banner_dato bird_EN.png',
+      name: '大头鸟',
+      createMetaId: '1734f4732ddd1ec2a94f55a85c1b7a3051c7000bbc2e4d4eaaca7ae698b25c28',
+      createName: 'icom耽耽',
+      CreateAvatarTxId: '',
+      CreateAvatarType: '',
+      key: 'DatoBird',
+      timestamp: 1637251200000,
+      url: '',
+    },
+    {
+      tag: 'metabot2',
+      sort: 5,
+      coverPicUrlZh: 'http://filecdn.showpay.top/nos/topic/2nd-metabot_banner.png',
+      coverPicUrlEn: 'http://filecdn.showpay.top/nos/topic/2nd-metabot_banner_en.png',
+      coverPicUrlJp: 'http://filecdn.showpay.top/nos/topic/2nd-metabot_banner_en.png',
+      name: '第2代MetaBot合成狂潮启动！',
+      createMetaId: '974e2977d5c9446f7f48fd82c9ea51f82749b9ef7c00d26b73bc450d167d5f31',
+      createName: 'ShowPayTeam',
+      CreateAvatarTxId: '',
+      CreateAvatarType: '',
+      key: 'MetaBotV2',
+      timestamp: 1634486400000,
+      url: '',
+    },
+    {
+      tag: 'yadiannaBanner2',
+      sort: 4,
+      coverPicUrlZh: 'http://filecdn.showpay.top/nos/topic/Athena_CN.png',
+      coverPicUrlEn: 'http://filecdn.showpay.top/nos/topic/Athena_EN.jpg',
+      coverPicUrlJp: 'http://filecdn.showpay.top/nos/topic/Athena_EN.jpg',
+      name: '雅典娜第二季特别版',
+      createMetaId: '69f5a1cfa00ae301cc911978861b0e8c0dadf42486f64aabe3ffef7c94cf9490',
+      createName: '₿itcoin ₿ Studio',
+      CreateAvatarTxId: '',
+      CreateAvatarType: '',
+      key: 'AthenaV2',
+      timestamp: 1633622400000,
+      url: '',
+    },
+    {
+      tag: 'yadiannaBanner',
+      sort: 3,
+      coverPicUrlZh: 'http://filecdn.showpay.top/nos/banner/banner_31.png',
+      coverPicUrlEn: 'http://filecdn.showpay.top/nos/banner/banner_31.png',
+      coverPicUrlJp: 'http://filecdn.showpay.top/nos/banner/banner_31.png',
+      name: '比特币雅典娜圣诞版',
+      createMetaId: 'fc0a92af9977f4b3bf82492508c18ab28f666922eb8ee52dcefd5b7f2a690f83',
+      createName: '₿itcoin A Studio',
+      CreateAvatarTxId: '',
+      CreateAvatarType: '',
+      key: 'Athena',
+      timestamp: 1634486400000,
+      url: '',
+    },
+    {
+      tag: 'metaIdCardBanner',
+      sort: 2,
+      coverPicUrlZh: 'http://showpay.oss-cn-beijing.aliyuncs.com/nos/topic/topic_6_zh.png',
+      coverPicUrlEn: 'http://showpay.oss-cn-beijing.aliyuncs.com/nos/topic/topic_6_zh.png',
+      coverPicUrlJp: 'http://showpay.oss-cn-beijing.aliyuncs.com/nos/topic/topic_6_zh.png',
+      name: 'MetaID创世纪念卡',
+      createMetaId: '3c03f6b8783fa672bb34953519110944dab1d8a23711c7df4f1dd9e16e5b823c',
+      createName: 'OpenMetaNetFoundation',
+      CreateAvatarTxId: '',
+      CreateAvatarType: '',
+      key: 'MetaIdCommemorativeCard',
+      timestamp: 1632758400000,
+      url: '',
+    },
+    {
+      tag: 'metabotBanner',
+      sort: 1,
+      coverPicUrlZh: 'http://filecdn.showpay.top/nos/topic/metabot_CN.png',
+      coverPicUrlEn: 'http://filecdn.showpay.top/nos/topic/metabot_EN.png',
+      coverPicUrlJp: 'http://filecdn.showpay.top/nos/topic/metabot_EN.png',
+      name: 'MetaID首个头像NFT-MetaBot',
+      createMetaId: '974e2977d5c9446f7f48fd82c9ea51f82749b9ef7c00d26b73bc450d167d5f31',
+      createName: 'ShowPayTeam',
+      CreateAvatarTxId: '',
+      CreateAvatarType: '',
+      key: 'MetaBot',
+      timestamp: 1631030400000,
+      url: '',
+    },
+  ]
+
+  datas.map(async item => {
+    const res = await axios.get(
+      `https://api.showmoney.app/broad/v1/nos/certification/getNosGenesisInfo/${item.key}?lang=zh`
+    )
+    const response = await axios.post(
+      `https://api.showmoney.app/aggregation/v2/app/nftOnShow/getTopicNftList`,
+      {
+        Page: '1',
+        PageSize: '1',
+        TopicType: 'WebotRightCard',
+        orderType: 1,
+        sortType: 2,
+      }
+    )
+    if (res && res.data.code === 0) {
+      const topic = res.data.data
+      const genesis = response.data.data.results.items[0].nftGenesis
+      const codehash = response.data.data.results.items[0].nftCodehash
+      topics.push({
+        zh: {
+          picUrl: item.coverPicUrlZh,
+          title: topic.seriesInfoZh,
+          tag: item.key,
+          codehashGenesis: `${codehash}/${genesis}`,
+          content: topic.seriesInfoZh,
+          sort: item.sort,
+          issuerMetaId: item.createMetaId,
+          website: topic.website,
+        },
+        en: {
+          picUrl: item.coverPicUrlEn,
+          title: topic.seriesInfoEn,
+          tag: item.key,
+          codehashGenesis: `${codehash}/${genesis}`,
+          content: topic.seriesInfoEn,
+          sort: item.sort,
+          issuerMetaId: item.createMetaId,
+          website: topic.website,
+        },
+        jp: {
+          picUrl: item.coverPicUrlJp,
+          title: topic.seriesInfoJp,
+          tag: item.key,
+          codehashGenesis: `${codehash}/${genesis}`,
+          content: topic.seriesInfoJp,
+          sort: item.sort,
+          issuerMetaId: item.createMetaId,
+          website: topic.website,
+        },
+      })
+    }
+  })
+
+  console.log('==============')
+  console.log(topics)
+
+  /* sendMetaTxDataRes.val = await store.state.sdk?.sendMetaDataTx({
+    brfcId: '80b63c042d03',
     // data: JSON.stringify({
     //   blockMetaIDs: [],
     //   blockTxs: [],
@@ -115,8 +296,8 @@ async function sendMetaTxData() {
       faviconIco: 'metafile://d2e845c78cdf60f57ba86a99e672e0fe1033d27015fd6b2afda1b7e3fe698b70',
       siteLogo: 'metafile://aae472c0108d4c48007a312fc7090da563b1a3c777b814f94279667d8b2a7866',
       siteLogo2: 'metafile://a921f7bfcab5ba9e2c0d447b3a6077333a75571bda313adb2b125266c90dd8d8',
-      siteURL: 'https://showbuzz.app',
-      siteOwner: 'xxx',
+      siteURL: 'https://nftonshow.com/',
+      siteOwner: '3a972bd069d98bd228ca408ef890899165e326b446c3d76054bea8b6324ee312',
       blockPolicy: 'on',
       blockPolicyTxids: ['0efe89076da19ee50b60ee257cabf272cc84ca538d252df9a55907b74b630bb4'],
       manifest: {
@@ -143,33 +324,79 @@ async function sendMetaTxData() {
       },
       banners: [
         {
-          name: 'metaElfLandRightCard',
-          sort: 4,
-          picUrlZh: 'http://filecdn.showpay.top/nos/banner/banner.png',
-          picUrlEn: 'http://filecdn.showpay.top/nos/banner/banner.png',
-          picUrlJp: 'http://filecdn.showpay.top/nos/banner/banner.png',
-          url:
-            '/collection/detail/MetaElfLandRightCard/67740e86c2b0569787600fdd9123eec80756f17934b3de0cd74ccf359af59d80',
+          zh: {
+            picUrl: 'http://filecdn.showpay.top/nos/banner/banner.png',
+            title: 'metaElfLandRightCard',
+            url:
+              '/collection/detail/MetaElfLandRightCard/67740e86c2b0569787600fdd9123eec80756f17934b3de0cd74ccf359af59d80',
+          },
+          en: {
+            picUrl: 'http://filecdn.showpay.top/nos/banner/banner.png',
+            title: 'metaElfLandRightCard',
+            url:
+              '/collection/detail/MetaElfLandRightCard/67740e86c2b0569787600fdd9123eec80756f17934b3de0cd74ccf359af59d80',
+          },
+          jp: {
+            picUrl: 'http://filecdn.showpay.top/nos/banner/banner.png',
+            title: 'metaElfLandRightCard',
+            url:
+              '/collection/detail/MetaElfLandRightCard/67740e86c2b0569787600fdd9123eec80756f17934b3de0cd74ccf359af59d80',
+          },
         },
-      ],
-      collections: [
         {
-          tag: 'string',
-          sort: 0,
-          coverPicUrlZh: 'http://filecdn.showpay.top/nos/topic/Webot 2022 Revenue NFT Sale.png',
-          coverPicUrlEn: 'http://filecdn.showpay.top/nos/topic/Webot 2022 Revenue NFT Sale.png',
-          coverPicUrlJp: 'http://filecdn.showpay.top/nos/topic/Webot 2022 Revenue NFT Sale.png',
-          name: 'aaa1',
-          createMetaId: '88f869fa97aad5dcc4cf1739b757f8e6d9d8f1fdbadd21b3d2bd63b91a32e5cf',
-          createName: 'aaa1',
-          CreateAvatarTxId: '',
-          CreateAvatarType: '',
-          key: 'aaa1',
-          timestamp: 1640773786037,
-          url: '',
+          zh: {
+            picUrl: 'http://filecdn.showpay.top/nos/banner/banner_31.png',
+            title: 'yadiannaBanner',
+            url:
+              '/collection/detail/Athena/fc0a92af9977f4b3bf82492508c18ab28f666922eb8ee52dcefd5b7f2a690f83',
+          },
+          en: {
+            picUrl: 'http://filecdn.showpay.top/nos/banner/banner_31.png',
+            title: 'yadiannaBanner',
+            url:
+              '/collection/detail/Athena/fc0a92af9977f4b3bf82492508c18ab28f666922eb8ee52dcefd5b7f2a690f83',
+          },
+          jp: {
+            picUrl: 'http://filecdn.showpay.top/nos/banner/banner_31.png',
+            title: 'yadiannaBanner',
+            url:
+              '/collection/detail/Athena/fc0a92af9977f4b3bf82492508c18ab28f666922eb8ee52dcefd5b7f2a690f83',
+          },
+        },
+        {
+          zh: {
+            picUrl: 'http://filecdn.showpay.top/nos/banner/Webot 2022 Revenue NFT Sale-en.png',
+            title: 'WebotRightCard',
+            url:
+              '/collection/detail/WebotRightCard/b89840e798b334e4f2d5279b6a325b411125e927f2dba16af4208d827ede8e11',
+          },
+          en: {
+            picUrl: 'http://filecdn.showpay.top/nos/banner/Webot 2022 Revenue NFT Sale-en.png',
+            title: 'WebotRightCard',
+            url:
+              '/collection/detail/WebotRightCard/b89840e798b334e4f2d5279b6a325b411125e927f2dba16af4208d827ede8e11',
+          },
+          jp: {
+            picUrl: 'http://filecdn.showpay.top/nos/banner/Webot 2022 Revenue NFT Sale-en.png',
+            title: 'WebotRightCard',
+            url:
+              '/collection/detail/WebotRightCard/b89840e798b334e4f2d5279b6a325b411125e927f2dba16af4208d827ede8e11',
+          },
         },
       ],
+      collections: topics,
       certificationMetaIds: [
+        '9bb6bf6aab238912d16018b4ba0cdea4b49ac50c0c319ca7b42dc2649bf76c4c',
+        '8892ef7686873e464e09a08dddb611cc6d82878d2e80aa6a92f806a33c871b4f',
+        'f071580414e3a6ce87952b7b7cc66c7c4f35709ff1edd66b88fa1a308c14d6d7',
+        'd892e75b88885d507078ed146434b050d58ae41ba9040b1e62e5a78ba6c17ead',
+        '1d235f57f2b6a6a10b514a015e1d02c694e527eeff7fa64706ad6a1bc99816fd',
+        'f666898cbbef5651064c5220575e7f24f3c974baaa4c90854f5e67ba99be717d',
+        '67740e86c2b0569787600fdd9123eec80756f17934b3de0cd74ccf359af59d80',
+        'c90c06b66c4c155b0ee0ba18c5d075df53d4fd5ad37c1cd2c05ef03f18c57af2',
+        'd87608e93f84982acacd186b9aee65c837baf9923186bf5f984a4ad776edcb81',
+        'f06cc73a350952b005f5861c77f6cf7bad0447eb823845dfed11cf26520b4730',
+        '30a19cd5e63542f32aa9c704945975b0a55a51f908cd303c2f49e202df873335',
         '3c03f6b8783fa672bb34953519110944dab1d8a23711c7df4f1dd9e16e5b823c',
         '974e2977d5c9446f7f48fd82c9ea51f82749b9ef7c00d26b73bc450d167d5f31',
         'aaf66589caf185d6840a51cd47a91cb2fbf831c0eb6a4c32ab31f3e3b3fa5bc2',
@@ -202,8 +429,8 @@ async function sendMetaTxData() {
     }),
     nodeName: 'SimpleSiteConfig',
     path: '/Protocols/SimpleSiteConfig',
-    nodeKey: '021a61cfe337c314ef591917b6089e8cd15f45c565e61d4d5e3ed371689cba7fc2',
-  })
+    // nodeKey: '021a61cfe337c314ef591917b6089e8cd15f45c565e61d4d5e3ed371689cba7fc2',
+  }) */
 }
 
 //  加载更多
