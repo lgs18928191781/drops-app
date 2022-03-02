@@ -15,11 +15,10 @@ module.exports = {
     'postcss-nesting': {},
     // 自动把px 转化为 rem
     'postcss-pxtorem': {
-      rootValue: parseInt(env.VITE_Design_Size) / 10, // 设计稿宽度 / 10
+      rootValue: 100, // 设计稿宽度 / 10
       propList: ['*'],
       replace: false,
       mediaQuery: false,
-      minPixelValue: parseInt(env.VITE_Min_FontSize),
       unitPrecision: 5,
     },
   },
