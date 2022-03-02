@@ -40,7 +40,7 @@
 
 ## 使用
 
-1. 修改`.env`的`VITE_Design_Size`,`VITE_Min_FontSize`的自适应配置,`VITE_AppName`:应用名称;`VITE_AppDescription`:应用描述
+1. 修改`.env`的`VITE_Design_Size`的自适应配置,`VITE_AppName`:应用名称;`VITE_AppDescription`:应用描述
 2. 修改 publice 目录下对应图标
 3. 修改对应环境配置的`VITE_AppId`,`VITE_AppSecret`,`VITE_Hosts`,网页回调地址为`VITE_Hosts` + `/login`
 4. 图标推荐使用 svg 格式, `import` 引入使用, 使用方法[vite-svg-loader](https://github.com/jpkleemans/vite-svg-loader)
