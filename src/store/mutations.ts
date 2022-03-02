@@ -38,9 +38,15 @@ export const mutations: MutationTree<State> & Mutations = {
     state.token = null
     state.userInfo = null
     state.sdk = null
+    state.userInfoLoading = false
   },
   [Mutation.SETSDK](state: State) {
     state.sdk = new SDK({
+      appMsg: {
+        name: import.meta.env.VITE_AppName,
+        website: import.meta.env.VITE_Hosts,
+        mode: import.meta.env.MODE,
+      },
       metaIdTag: import.meta.env.VITE_MetaIdTag,
       showmoneyApi: import.meta.env.VITE_WalletApi,
       getAccessToken: () => {

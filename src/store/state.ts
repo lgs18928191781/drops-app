@@ -1,4 +1,8 @@
 import { SDK } from 'sdk'
+
+const UA = window.navigator.userAgent.toLowerCase()
+const isAndroid = UA && UA.indexOf('android') > 0 ? true : false
+const isIOS = UA && /iphone|ipad|ipod|ios/.test(UA) ? true : false
 export interface State {
   debug: boolean
   version: string
@@ -7,6 +11,8 @@ export interface State {
   userInfoLoading: boolean
   sdk: null | SDK
   pagination: Pagination
+  isAndroid: boolean
+  isIOS: boolean
 }
 
 // @ts-ignore
@@ -36,4 +42,6 @@ export const state: State = {
     loading: false,
     nothing: false,
   },
+  isAndroid,
+  isIOS,
 }

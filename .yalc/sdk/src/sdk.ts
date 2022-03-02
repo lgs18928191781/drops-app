@@ -1,6 +1,6 @@
 import MetaIdJs from 'metaidjs'
 // @ts-ignore
-import { v4 as uuid } from 'uuid'
+import { v1 as uuid } from 'uuid'
 import { Decimal } from 'decimal.js-light'
 import { DotWalletForMetaID } from 'dotwallet-jssdk'
 import qs from 'qs'
@@ -28,11 +28,19 @@ import {
   GetMcRes,
   CreateMetaAccessProrocolParams,
   CreateMetaAccessContentProrocolParams,
-  ShowManRes
+  ShowManRes,
+  PayToItem,
+  AppMsg,
+  SendMetaDataTxParams,
+  CreateMetaFileProtocolOption,
+  SendMetaFileRes
 } from './types/sdk'
-import { Encrypt, Lang, SdkType } from './emums'
-import { Buffer } from 'buffer'
+import { AppMode, Encrypt, Lang, PayToAddressCurrency, SdkType } from './emums'
+import { Blob, Buffer } from 'buffer'
+import pkg from '../package.json'
+import { MD5, SHA256 } from 'crypto-js'
 
+const METAFILE_SLICE_SIZE = 1024 * 200
 export class SDK {
   // @ts-ignore
   metaidjs: null | MetaIdJs = null
@@ -93,9 +101,14 @@ export class SDK {
   callBackFail?: (error: MetaIdJsRes) => Promise<void> | null = undefined // 统一回调错误处理
   axios: AxiosInstance | null = null
   isSdkFinish: boolean = false // 是否已初始化完成
-  nftAppAddress = '16tp7PhBjvYpHcv53AXkHYHTynmy6xQnxy' // Nft收手续费的地址
+  appAddress = {
+    [AppMode.PROD]: '19NeJJM6eEa3bruYnqkTA4Cp6VvdFGSepd',
+    [AppMode.TEST]: '1BrfsynMJ56gc2HFicgpBhEKRtRQYTm82E'
+  } // Nft收手续费的地址
+  appMsg: AppMsg | null = null
 
   constructor(options: {
+    appMsg: AppMsg
     metaIdTag: string
     showmoneyApi: string
     getAccessToken: Function
@@ -107,6 +120,7 @@ export class SDK {
     metaidjsOptions: SdkMetaidJsOptionsTypes
     dotwalletOptions: DotWalletConfig
   }) {
+    this.appMsg = options.appMsg
     this.metaIdTag = options.metaIdTag
     this.getAccessToken = options.getAccessToken
     this.metaidjsOptions = options.metaidjsOptions
@@ -151,6 +165,17 @@ export class SDK {
       this.appScrect = this.metaidjsOptions.oauthSettings.clientSecret!
     }
     window.localStorage.setItem('appType', type.toString())
+  }
+
+  getAppAddress() {
+    const env =
+      this.appMsg?.isProduction ||
+      this.appMsg?.mode === AppMode.PROD ||
+      this.appMsg?.mode === AppMode.GRAY
+        ? AppMode.PROD
+        : AppMode.TEST
+
+    return this.appAddress[env]
   }
 
   // 初始化 sdk
@@ -231,7 +256,12 @@ export class SDK {
       new Error('App环境下没有login函数')
       return
     } else if (this.type === SdkType.Metaidjs) {
-      const url = `${this.metaidjsOptions.baseUri}/userLogin?response_type=code&client_id=${this.appId}&redirect_uri=${this.metaidjsOptions.oauthSettings.redirectUri}&scope=app&from=${this.metaidjsOptions.oauthSettings.redirectUri}`
+      let url = `${this.metaidjsOptions.baseUri}/userLogin?response_type=code&client_id=${this.appId}&redirect_uri=${this.metaidjsOptions.oauthSettings.redirectUri}&scope=app&from=${this.metaidjsOptions.oauthSettings.redirectUri}`
+      // 添加推荐码
+      const refCode = localStorage.getItem('refCode')
+      if (refCode) {
+        url = `${url}&refCode=${refCode}`
+      }
       window.location.href = url
     } else {
       if (this.dotwalletjs) {
@@ -380,10 +410,7 @@ export class SDK {
         callback
       }
       if (this.type === SdkType.App) {
-        const functionName: string = `getUserInfoCallBack${uuid().replace(
-          /-/g,
-          ''
-        )}`
+        const functionName: string = `getUserInfoCallBack${randomString()}`
         // @ts-ignore
         window[functionName] = callback
         if ((window as any).appMetaIdJsV2) {
@@ -410,25 +437,7 @@ export class SDK {
     })
   }
 
-  sendMetaDataTx(params: {
-    data: string
-    nodeName: string
-    brfcId: string
-    attachments?: string[]
-    path: string
-    payCurrency?: string
-    payTo?: { amount: number; address: string }[]
-    needConfirm?: boolean
-    encrypt?: Encrypt
-    dataType?: string
-    encoding?: string
-    checkOnly?: boolean
-    // 单独加密data里面字段内容
-    ecdh?: {
-      publickey: string // 加密用的 publickey
-      type: string // data 里面要加密的字段
-    }
-  }) {
+  sendMetaDataTx(params: SendMetaDataTxParams) {
     return new Promise<SendMetaDataTxRes>(async (resolve, reject) => {
       if (!params.payCurrency) params.payCurrency = 'BSV'
       if (typeof params.needConfirm === 'undefined') params.needConfirm = true
@@ -437,16 +446,16 @@ export class SDK {
       if (!params.encoding) params.encoding = 'UTF-8'
       const accessToken = this.getAccessToken()
       const callback = (res: MetaIdJsRes) => {
+        if (typeof res === 'string') res = JSON.parse(res)
+        if (res && res.data && res.data.usedAmount)
+          res.data.usedAmount = Math.ceil(res.data.usedAmount)
         this.callback(res, resolve, reject)
       }
       const onCancel = (res: MetaIdJsRes) => {
         reject(res)
       }
       if (this.type === SdkType.App) {
-        const functionName: string = `sendMetaDataTxCallBack${uuid().replace(
-          /-/g,
-          ''
-        )}`
+        const functionName: string = `sendMetaDataTxCallBack${randomString()}`
         // @ts-ignore
         window[functionName] = callback
         if ((window as any).appMetaIdJsV2) {
@@ -475,7 +484,16 @@ export class SDK {
           ;(window as any).handleNotEnoughMoney = (res: MetaIdJsRes) => {
             reject()
           }
-          this.metaidjs?.sendMetaDataTx(_params)
+          this.metaidjs?.sendMetaDataTx({
+            ..._params,
+            appId: [
+              this.appMsg?.name,
+              this.appMsg?.isProduction || this.appMsg?.mode === AppMode.PROD
+                ? this.appMsg?.website
+                : 'XXXX',
+              'web'
+            ]
+          })
         } else {
           this.dotwalletjs?.sendMetaDataTx({
             ..._params,
@@ -485,6 +503,8 @@ export class SDK {
       }
     })
   }
+
+  sendMetaDatas(params: SendMetaDataTxParams) {}
 
   ecdhDecryptData(data: {
     msg: string
@@ -503,10 +523,7 @@ export class SDK {
         data: JSON.stringify(data)
       }
       if (this.type === SdkType.App) {
-        const functionName: string = `ecdhDecryptDataCallBack${uuid().replace(
-          /-/g,
-          ''
-        )}`
+        const functionName: string = `ecdhDecryptDataCallBack${randomString()}`
         // @ts-ignore
         window[functionName] = callback
         if ((window as any).appMetaIdJsV2) {
@@ -548,10 +565,7 @@ export class SDK {
         data
       }
       if (this.type === SdkType.App) {
-        const functionName: string = `eciesDecryptDataCallBack${uuid().replace(
-          /-/g,
-          ''
-        )}`
+        const functionName: string = `eciesDecryptDataCallBack${randomString()}`
         // @ts-ignore
         window[functionName] = callback
         if ((window as any).appMetaIdJsV2) {
@@ -581,6 +595,21 @@ export class SDK {
   eciesDecryptData(data: string) {
     return new Promise<MetaIdJsRes>((resolve, reject) => {
       const callback = (res: MetaIdJsRes) => {
+        // 当app端返回的加密寄过格式与网页不一致， 处理成一致的结果
+        if (typeof res === 'string') {
+          let _res
+          try {
+            _res = JSON.parse(res)
+          } catch (error) {
+            _res = {
+              code: 200,
+              data: {
+                data: res
+              }
+            }
+          }
+          res = _res
+        }
         this.callback(res, resolve, reject)
       }
       const _params = {
@@ -589,10 +618,7 @@ export class SDK {
         data
       }
       if (this.type === SdkType.App) {
-        const functionName: string = `eciesDecryptDataCallBack${uuid().replace(
-          /-/g,
-          ''
-        )}`
+        const functionName: string = `eciesDecryptDataCallBack${randomString()}`
         // @ts-ignore
         window[functionName] = callback
         if ((window as any).appMetaIdJsV2) {
@@ -623,7 +649,7 @@ export class SDK {
     return new Promise<GetBalanceRes>((resolve, reject) => {
       if (this.isApp) {
         const token = this.getAccessToken()
-        const functionName = `getBalanceCallBack${uuid().replace(/-/g, '')}`
+        const functionName = `getBalanceCallBack${randomString()}`
         ;(window as any)[functionName] = (_res: string) => {
           const res = JSON.parse(_res)
           const bsv = res.data
@@ -692,34 +718,6 @@ export class SDK {
       resolve(res)
     }
     resolve(res)
-  }
-
-  // 文件上链
-  createMetaFileProtocol(params: CreateMetaFileFunParams) {
-    const { name, ...data } = params.data
-    const nameArry = name.split('.')
-    let node_name: string = ''
-    nameArry.map((item, index) => {
-      node_name += item
-      if (index === nameArry.length - 2) {
-        node_name += uuid()
-      }
-    })
-    return this.sendMetaDataTx({
-      nodeName: 'MetaFile',
-      brfcId: '6d3eaf759bbc',
-      path: '/Protocols/MetaFile',
-      payCurrency: 'bsv',
-      // payTo: [
-      //     { address: 'XXXXXXXXXX', amount: 1000 }
-      // ],
-      data: JSON.stringify({
-        ...data,
-        encoding: 'binary',
-        node_name
-      }),
-      needConfirm: false
-    })
   }
 
   // NFT
@@ -901,10 +899,7 @@ export class SDK {
         callback
       }
       if (this.isApp) {
-        const functionName: string = `genesisNFTCallBack${uuid().replace(
-          /-/g,
-          ''
-        )}`
+        const functionName: string = `genesisNFTCallBack${randomString()}`
         ;(window as any)[functionName] = callback
         const accessToken = this.getAccessToken()
         if ((window as any).appMetaIdJsV2) {
@@ -961,16 +956,13 @@ export class SDK {
       }
       const _params = {
         data: {
-          payTo: [{ address: this.nftAppAddress, amount: 10000 }],
+          payTo: [{ address: this.getAppAddress(), amount: 10000 }],
           ...params
         },
         callback
       }
       if (this.isApp) {
-        const functionName: string = `issueNFTCallBack${uuid().replace(
-          /-/g,
-          ''
-        )}${uuid().replace(/-/g, '')}`
+        const functionName: string = `issueNFTCallBack${randomString()}`
         ;(window as any)[functionName] = callback
         const accessToken = this.getAccessToken()
         if ((window as any).appMetaIdJsV2) {
@@ -1005,7 +997,7 @@ export class SDK {
           ...data,
           payTo: [
             {
-              address: this.nftAppAddress,
+              address: this.getAppAddress(),
               amount: Math.ceil(new Decimal(amount * 0.05).toNumber())
             }
           ]
@@ -1014,7 +1006,7 @@ export class SDK {
       }
       if (this.isApp) {
         const accessToken = this.getAccessToken()
-        const functionName: string = `nftBuyCallBack${uuid().replace(/-/g, '')}`
+        const functionName: string = `nftBuyCallBack${randomString()}`
         // @ts-ignore
         window[functionName] = callback
         // @ts-ignore
@@ -1049,16 +1041,13 @@ export class SDK {
       const _params = {
         data: {
           ...params,
-          payTo: [{ address: this.nftAppAddress, amount: 10000 }]
+          payTo: [{ address: this.getAppAddress(), amount: 10000 }]
         },
         callback
       }
       if (this.isApp) {
         const accessToken = this.getAccessToken()
-        const functionName: string = `nftSellCallBack${uuid().replace(
-          /-/g,
-          ''
-        )}`
+        const functionName: string = `nftSellCallBack${randomString()}`
         // @ts-ignore
         window[functionName] = callback
         // @ts-ignore
@@ -1093,7 +1082,7 @@ export class SDK {
       const _params = {
         data: {
           outputIndex: 0,
-          payTo: [{ address: this.nftAppAddress, amount: 10000 }],
+          payTo: [{ address: this.getAppAddress(), amount: 10000 }],
           ...params
         },
         callback
@@ -1103,10 +1092,7 @@ export class SDK {
       }
       if (this.isApp) {
         const accessToken = this.getAccessToken()
-        const functionName: string = `nftCancelCallBack${uuid().replace(
-          /-/g,
-          ''
-        )}${uuid().replace(/-/g, '')}`
+        const functionName: string = `nftCancelCallBack${randomString()}`
         // @ts-ignore
         window[functionName] = callback
         // @ts-ignore
@@ -1200,7 +1186,8 @@ export class SDK {
     txId: string,
     currentTimer: number = 0,
     maxTimer: number = 10,
-    parentResolve?: Function
+    parentResolve?: Function,
+    parentReject?: Function
   ) => {
     return new Promise<ShowManRes>(async (resolve, reject) => {
       const _currentTimer = currentTimer + 1
@@ -1214,7 +1201,8 @@ export class SDK {
           txId,
           _currentTimer,
           maxTimer,
-          parentResolve ? parentResolve : resolve
+          parentResolve ? parentResolve : resolve,
+          parentReject ? parentReject : reject
         )
       })
       if (
@@ -1226,14 +1214,16 @@ export class SDK {
         parentResolve ? parentResolve(res) : resolve(res)
       } else {
         if (_currentTimer >= maxTimer) {
-          reject()
+          const msg = 'get TxId fail'
+          parentReject ? parentReject(msg) : reject(msg)
         } else {
           setTimeout(() => {
             this.getTxData(
               txId,
               _currentTimer,
               maxTimer,
-              parentResolve ? parentResolve : resolve
+              parentResolve ? parentResolve : resolve,
+              parentReject ? parentReject : reject
             )
           }, 1000)
         }
@@ -1260,7 +1250,7 @@ export class SDK {
         // 获取createMetaAccessContent 链上上信息的metanetId
         // @ts-ignore
         const metaAccessContentrRes: any = await this.getTxData(
-          res.data.txId
+          res.data.txId!
         ).catch(() => reject())
         if (
           metaAccessContentrRes.code === 200 &&
@@ -1283,8 +1273,8 @@ export class SDK {
             debugger
             if (response && response.code === 200) {
               resolve({
-                metaAccessContenttxId: res.data.txId,
-                metaAccessTxId: response.data.txId
+                metaAccessContenttxId: res.data.txId!,
+                metaAccessTxId: response.data.txId!
               })
             }
           }, 10000)
@@ -1451,6 +1441,248 @@ export class SDK {
       }
     })
   }
+
+  checkSdkType() {
+    return new Promise<void>((resolve, reject) => {
+      if (this.type === SdkType.Null) {
+        reject('sdk not set')
+      } else {
+        resolve()
+      }
+    })
+  }
+
+  // 文件上链
+  async createMetaFileProtocol(
+    file: CreateMetaFileFunParams,
+    option?: CreateMetaFileProtocolOption
+  ) {
+    if (file && file.data instanceof ArrayBuffer) {
+      let buffer = Buffer.from(file.data)
+      file.data = buffer.toString('hex')
+    }
+    return this.sendMetaDataTx({
+      nodeName: file.name!,
+      brfcId: 'fcac10a5ed83',
+      version: '1.0.1',
+      path: '/Protocols/MetaFile',
+      data: file.data!,
+      dataType: file.data_type,
+      encrypt: file.encrypt,
+      ...option
+    })
+  }
+
+  /* 
+  
+  */
+  sendMetaFile(
+    file: File,
+    option?: {
+      encrypt: Encrypt
+      checkOnly: boolean
+      platformFee?: number
+    }
+  ) {
+    return new Promise<SendMetaFileRes>(async (reslove, reject) => {
+      option = {
+        encrypt: Encrypt.No,
+        checkOnly: false,
+        ...option
+      }
+      // @ts-ignore
+      const md5 = MD5(file)
+      // @ts-ignore
+      const sha256 = SHA256(file)
+      const uploadFileList: CreateMetaFileFunParams[] = [] // 需要上传的文件列表
+      // 判断文件大小
+      if (file.size > METAFILE_SLICE_SIZE) {
+        // 分片个数
+        const sliceNumber = Math.ceil(file.size / METAFILE_SLICE_SIZE)
+        for (let i = 0; i < sliceNumber; ++i) {
+          // 计算分片起始位置
+          const start = i * METAFILE_SLICE_SIZE
+          // 计算分片结束位置
+          const end = start + METAFILE_SLICE_SIZE
+          // 最后一片特殊处理
+          // if (end > fileSize) {
+          //   end = fileSize
+          // }
+          const sliceBolb = file.slice(start, end)
+          const sliceBolbReader = await blobToHex(sliceBolb)
+          if (sliceBolbReader.result) {
+            uploadFileList.push({
+              data_type: 'metafile/chunk',
+              data: sliceBolbReader.result,
+              name: `${sha256}_${i}`,
+              encrypt: option.encrypt
+            })
+          }
+        }
+      } else {
+        // 单个小于1m 文件上传
+        const fileReader = await blobToHex(file)
+        if (fileReader.result) {
+          uploadFileList.push({
+            data_type: file.type,
+            data: fileReader.result,
+            name: file.name,
+            encrypt: option.encrypt
+          })
+        }
+      }
+      const chunkList: { sha256: string; txid: string }[] = [] //分片列表
+      let usedAmount = 0 // 需要花费的价格
+      const totalUploadTask =
+        uploadFileList.length > 1
+          ? uploadFileList.length + 1
+          : uploadFileList.length
+      // 开始上传
+      const payTo: PayToItem[] = option.platformFee
+        ? [{ address: this.getAppAddress(), amount: option.platformFee }]
+        : []
+      let isAllSuccess = true
+      for (let i = 0; i < uploadFileList.length; i++) {
+        try {
+          const res = await this.createMetaFileProtocol(uploadFileList[i], {
+            checkOnly: option.checkOnly,
+            needConfirm: false,
+            payTo: uploadFileList.length === 1 ? payTo : []
+          })
+          if (res.code === 200 || res.code === 205) {
+            if (option.checkOnly) {
+              // @ts-ignore
+              const amount = parseInt(res.data.usedAmount!)
+              usedAmount += amount
+              // 组装假数据
+              if (i === 0) {
+                for (let o = 0; o < uploadFileList.length; o++) {
+                  chunkList.push({
+                    // @ts-ignore
+                    sha256: SHA256(uploadFileList[o].data),
+                    txid: `metafile://${res.data.txId}`
+                  })
+                }
+              }
+              // 片段的价格 = 第一个价格 * （片段片段数 - 1） + 最后一个片段价格
+              if (uploadFileList.length > 1 && i === 0) {
+                usedAmount = usedAmount * (uploadFileList.length - 1)
+                if (i === 0 && uploadFileList.length > 2) {
+                  //直接跳去计算最后一个
+                  i = uploadFileList.length - 2
+                }
+              }
+            } else {
+              chunkList.push({
+                // @ts-ignore
+                sha256: SHA256(uploadFileList[i].data),
+                txid: `metafile://${res.data.txId}`
+              })
+            }
+            if (!option.checkOnly) {
+              reslove({
+                progressRate: parseFloat(
+                  (((i + 1) / uploadFileList.length) * 100).toFixed(2)
+                ),
+                ...res.data
+              })
+            }
+          }
+        } catch (error) {
+          isAllSuccess = false
+          reject('upload fail')
+          break
+        }
+      }
+
+      if (isAllSuccess) {
+        // 上传 metafile/index
+        if (uploadFileList.length > 1) {
+          const res = await this.createMetaFileProtocol(
+            {
+              encrypt: option.encrypt,
+              data: JSON.stringify({
+                md5: md5,
+                sha256: sha256,
+                fileSize: file.size,
+                chunkNumber: uploadFileList.length,
+                chunkSize: METAFILE_SLICE_SIZE,
+                dataType: file.type,
+                name: file.name,
+                chunkList
+              })
+            },
+            {
+              checkOnly: option.checkOnly,
+              needConfirm: false,
+              payTo
+            }
+          )
+          if (res.code === 200 || res.code === 205) {
+            if (option.checkOnly) {
+              usedAmount += res.data.usedAmount!
+              reslove({
+                ...res.data,
+                usedAmount
+              })
+            } else {
+              reslove({
+                progressRate: 100,
+                ...res.data
+              })
+            }
+          }
+        }
+      }
+    })
+  }
+
+  /* 
+    @function 创建协议根节点 
+  */
+  async createBrfcProtocolNode(params: {
+    nodeName: string
+    brfcId: string
+    path: string
+    needConfirm?: boolean
+  }) {
+    return new Promise<NFTCancelResData>((resolve, reject) => {
+      const callback = (res: MetaIdJsRes) => {
+        this.callback(res, resolve, reject)
+      }
+      if (this.isApp) {
+        alert('App 暂未支持')
+        return
+        const accessToken = this.getAccessToken()
+        const functionName: string = `createBrfcProtocolNode${randomString()}`
+        // @ts-ignore
+        window[functionName] = callback
+        // @ts-ignore
+        if (window.appMetaIdJsV2) {
+          // @ts-ignore
+          window.appMetaIdJsV2.nftCancel(
+            accessToken,
+            JSON.stringify(params),
+            functionName
+          )
+        } else {
+          // @ts-ignore
+          window.appMetaIdJs.nftCancel(
+            accessToken,
+            JSON.stringify(params),
+            functionName
+          )
+        }
+      } else {
+        debugger
+        // @ts-ignore
+        this.metaidjs?.createBrfcProtocolNode({
+          data: params,
+          callback
+        })
+      }
+    })
+  }
 }
 
 //hex格式转为Base64
@@ -1475,6 +1707,19 @@ export function hexToBase64(hex: string, fileType = 'image/png') {
     binary += String.fromCharCode(bytes[i])
   }
   return `data:${fileType};base64,` + window.btoa(binary)
+}
+
+export function blobToHex(bolb: globalThis.Blob) {
+  return new Promise<FileReader>((resolve, rject) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      resolve(reader)
+    }
+    reader.onerror = (error) => {
+      rject(error)
+    }
+    reader.readAsArrayBuffer(bolb)
+  })
 }
 
 export function toTxLink(txId: string) {
@@ -1571,3 +1816,9 @@ export function setAttachments(
     resolve({ data, attachments })
   })
 }
+
+export function randomString() {
+  return Math.random().toString().replace('.', '')
+}
+
+export const version = pkg.version

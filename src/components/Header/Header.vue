@@ -1,44 +1,39 @@
 <template>
-     <div>
-      <!-- 登录按钮 -->
-      <a
-        v-if="!store.state.userInfo"
-        class="btn"
-        @click="auth(SdkType.Metaidjs)"
-        v-loading="store.state.userInfoLoading"
-        element-loading-background="rgba(255, 255, 255, 0.7)"
-        >{{ $t('signinandout') }}
-        </a
-      >
-      <!-- 登录用户 -->
-      <!-- 语言 -->
-    </div>
+  <div>
+    <!-- 登录按钮 -->
+    <a
+      class="loginBtn"
+      v-if="!store.state.userInfo"
+      @click="auth(SdkType.Metaidjs)"
+      v-loading="store.state.userInfoLoading"
+      element-loading-background="rgba(255, 255, 255, 0.7)"
+      >{{ $t('signinandout') }}
+    </a>
+    <!-- 登录用户 -->
+    <!-- 语言 -->
+  </div>
   <!-- ElDrawer -->
-  
 </template>
 
 <script setup lang="ts">
-import { ref,onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useStore, Mutation, Action } from '@/store/index'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { SdkType } from 'sdk/src/emums'
-
 const i18n = useI18n()
 const env = import.meta.env
 const store = useStore()
 const route = useRoute()
 const router = useRouter()
 const isShowDrawer = ref(false)
-onMounted(()=>{
- 
-})
+onMounted(() => {})
 // 跳转授权
 function auth(appType: SdkType) {
   if (store.state.userInfoLoading) return
   store.state.sdk?.changeSdkType(appType)
   console.log('sdk?.login', store.state.sdk!.login)
-   console.log("SdkType",store.state.sdk)
+  console.log('SdkType', store.state.sdk)
   store.state.sdk?.login()
 }
 

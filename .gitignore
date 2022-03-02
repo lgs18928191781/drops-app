@@ -1,8 +1,9 @@
 .DS_Store
 node_modules
 
-/dist
+
 dist-ssr
+
 
 /tests/e2e/videos/
 /tests/e2e/screenshots/
@@ -31,3 +32,5 @@ pnpm-debug.log*
 
 *.local
 LOCAL_NOTES.md
+
+dev-dist

@@ -7,13 +7,13 @@
           <KeepAlive>
             <component
               :is="Component"
-              :key="route.meta.usePathKey ? route.path : undefined"
+              :key="route.fullPath"
               v-if="route.meta && route.meta.keepAlive"
             />
           </KeepAlive>
           <component
             :is="Component"
-            :key="route.meta.usePathKey ? route.path : undefined"
+            :key="route.fullPath"
             v-if="!route.meta || (route.meta && !route.meta.keepAlive)"
           />
         </div>
@@ -28,21 +28,8 @@ import { KeepAlive, Transition } from 'vue'
 import Header from './components/Header/Header.vue'
 import Footer from './components/Footer/Footer.vue'
 </script>
-<<<<<<< HEAD
-<style>
-html body{
-  padding: 0;
-  margin: 0;
-}
-#app{
-
-}
-=======
-<style lang="scss" scoped>
->>>>>>> dev2
+<style lang="scss">
 .main {
-  /* padding-top: 60px;
-  padding-bottom: 100px; */
   flex: 1;
   height: 100%;
   min-height: 0;

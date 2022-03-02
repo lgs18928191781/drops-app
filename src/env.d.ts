@@ -1,4 +1,5 @@
 /// <reference types="vite-svg-loader" />
+/// <reference types="vite-plugin-pwa/client" />
 interface ImportMetaEnv {
   VITE_Hosts: string
   VITE_RedirectPath: string
@@ -24,4 +25,5 @@ interface ImportMetaEnv {
   VITE_DotWallet_AppId: string
   VITE_DotWallet_AppSecret: string
   VITE_DotWallet_ENV: string
+  VITE_AppName: string
 }

@@ -1,5 +1,6 @@
 @import '@/assets/styles/var.scss';
 @import '@/assets/styles/flex.scss';
+
 body {
   background: $bgColor;
   font-size: 16px;
@@ -7,15 +8,23 @@ body {
   font-family: 'SF Pro', 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
     'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
   min-height: 100vh;
+
   .container {
     max-width: 1000px;
     margin: 0 auto;
   }
+
   #app {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
   }
+}
+
+pre {
+  white-space: break-spaces;
+  font-family: 'SF Pro', 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
 }
 
 .nowrap {
@@ -29,6 +38,7 @@ body {
     margin-right: 20px;
     margin-bottom: 30px;
     background: #fff;
+
     &:nth-child(4n) {
       margin-right: 0;
     }
@@ -49,13 +59,16 @@ body {
     cursor: pointer;
     background: #ffffff;
     line-height: normal;
+
     &.active {
       background: $mainColor;
     }
+
     &.add {
       border-color: #fff;
       border-style: dashed;
     }
+
     &.disabled {
       background: #cbcccf;
     }
@@ -64,6 +77,7 @@ body {
 
 .tab {
   text-align: center;
+
   a {
     display: inline-block;
     padding: 15px;
@@ -71,11 +85,14 @@ body {
     font-weight: 400;
     margin-right: 90px;
     cursor: pointer;
+
     &:last-child {
       margin-right: 0;
     }
+
     &.active {
       position: relative;
+
       &::after {
         content: '';
         display: block;
@@ -103,13 +120,16 @@ body {
   border: 1px solid $mainColor;
   cursor: pointer;
   overflow: hidden;
+
   &.btn-gray {
     background: #bfc2cc;
     border-color: #bfc2cc;
   }
+
   &.btn-default {
     background: #fff;
   }
+
   &.btn-block {
     display: block;
     width: auto;
@@ -117,6 +137,7 @@ body {
     font-size: 16px;
     font-weight: 500;
   }
+
   .icon-right {
     margin-left: 10px;
     width: 10px;
@@ -144,10 +165,12 @@ body {
   z-index: 2;
   text-decoration: none;
   color: inherit;
+
   img {
     width: 156px;
     height: 22px;
   }
+
   span {
     color: $mainColor;
   }
@@ -157,6 +180,7 @@ body {
   a {
     display: block;
     cursor: pointer;
+
     img {
       display: block;
       width: 100%;
@@ -169,15 +193,18 @@ body {
   background: #fff;
   border-radius: 8px;
   overflow: hidden;
+
   input {
     padding: 8px 12px;
     font-size: 14px;
     border: none;
     outline: none;
+
     &::placeholder {
       color: #bfc2cc;
     }
   }
+
   img {
     width: 18px;
     height: 18px;
@@ -191,6 +218,7 @@ body {
       color: $mainColor;
       font-size: 60px;
     }
+
     .el-loading-text {
       color: $mainColor;
       font-size: 20px;
@@ -201,22 +229,25 @@ body {
 
 .section {
   margin-bottom: 60px;
+
   .section-header {
     .title {
       font-size: 30px;
     }
+
     .search-icon {
       width: 24px;
       height: 24px;
     }
   }
+
   .section-screen {
     margin-top: 30px;
     font-size: 16px;
 
-    .sort {
-    }
+    .sort {}
   }
+
   .section-cont {
     margin-top: 30px;
   }
@@ -226,15 +257,18 @@ body {
   border-radius: 12px !important;
   width: 90% !important;
   max-width: 560px !important;
+
   .el-dialog__close {
     // border: 1px dashed #909399 !important;
     font-weight: bold;
     font-size: 20px;
   }
 }
+
 .el-loading-spinner .path {
   stroke: $mainColor;
 }
+
 .el-dropdown-menu__item:not(.is-disabled):hover,
 .el-dropdown-menu__item:focus {
   background-color: #fff4e2;
@@ -246,12 +280,15 @@ body {
     height: auto !important;
   }
 }
+
 .el-skeleton__image {
   background: #edeff2;
 }
+
 .el-skeleton__text {
   background: #f2f4f7 !important;
 }
+
 .el-button--primary {
   color: #303133 !important;
   background-color: $mainColor !important;
@@ -287,6 +324,7 @@ body {
 .fade-leave-to {
   opacity: 0;
 }
+
 @media only screen and (max-width: 1040px) {
   .container {
     padding: 0 30px;
@@ -298,15 +336,19 @@ body {
     padding-top: 40px;
     padding-bottom: 60px;
   }
+
   .nft-list {
     .nft-item {
       width: calc((100% - (20px * 1)) / 2);
+
       &:nth-child(4n) {
         margin-right: 20px;
       }
+
       &:nth-child(3n) {
         margin-right: 20px;
       }
+
       &:nth-child(2n) {
         margin-right: 0px;
       }
