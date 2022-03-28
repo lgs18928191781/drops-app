@@ -1,0 +1,24 @@
+.avatar {
+  cursor: pointer;
+  position: relative;
+}
+
+.mask {
+  position: absolute;
+  vertical-align: middle;
+  z-index: 1;
+  height: 100%;
+}
+
+.avatar-img {
+  vertical-align: middle;
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+  background: #fff;
+
+  &.hasmask {
+   
+    border-radius: unset;
+  }
+}

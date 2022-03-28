@@ -9,6 +9,7 @@ import * as filters from '@/utils/filters'
 import i18n from '@/utils/i18n'
 import { ElLoading } from 'element-plus'
 import { registerSW } from 'virtual:pwa-register'
+import UserAvatar from '@/components/UserAvatar/UserAvatar.vue'
 
 // pwa auto update
 const updateSW = registerSW({
@@ -21,6 +22,9 @@ const app = createApp(App)
 app.config.globalProperties.$filters = {
   ...filters,
 }
+
+// 全局组件
+app.component('UserAvatar', UserAvatar)
 
 app
   .use(router)

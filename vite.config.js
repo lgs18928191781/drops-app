@@ -16,7 +16,13 @@ export default ({ mode }) => {
   const env = loadEnv(mode, process.cwd())
   return defineConfig({
     plugins: [
-      vue(),
+      vue({
+        template: {
+          compilerOptions: {
+            isCustomElement: tag => tag.includes('show-'),
+          },
+        },
+      }),
       // element-plus 按需加载
       AutoImport({
         resolvers: [ElementPlusResolver()],

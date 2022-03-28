@@ -33,7 +33,10 @@ import {
   AppMsg,
   SendMetaDataTxParams,
   CreateMetaFileProtocolOption,
-  SendMetaFileRes
+  SendMetaFileRes,
+  PaytoParams,
+  PaytoResData,
+  GetNFTCountRes
 } from './types/sdk'
 import { AppMode, Encrypt, Lang, PayToAddressCurrency, SdkType } from './emums'
 import { Blob, Buffer } from 'buffer'
@@ -452,7 +455,7 @@ export class SDK {
         this.callback(res, resolve, reject)
       }
       const onCancel = (res: MetaIdJsRes) => {
-        reject(res)
+        reject()
       }
       if (this.type === SdkType.App) {
         const functionName: string = `sendMetaDataTxCallBack${randomString()}`
@@ -730,7 +733,7 @@ export class SDK {
     parentReject?: any
   ) {
     return new Promise<void>((resolve, reject) => {
-      fetch(`https://api.sensible.satoplay.cn/tx/${txId}`)
+      fetch(`https://api.sensiblequery.showpay.top/tx/${txId}`)
         .then(function (response) {
           return response.json()
         })
@@ -1032,6 +1035,46 @@ export class SDK {
     })
   }
 
+  // 转账
+  paytoAddress(params: PaytoParams) {
+    return new Promise<PaytoResData>((resolve, reject) => {
+      const callback = (res: MetaIdJsRes) => {
+        this.callback(res, resolve, reject)
+      }
+      const accessToken = this.getAccessToken()
+      const _params = {
+        accessToken,
+        data: JSON.stringify({
+          ...params
+        }),
+        callback
+      }
+      if (this.isApp) {
+        const functionName: string = `paytoAddress${randomString()}`
+        // @ts-ignore
+        window[functionName] = callback
+        // @ts-ignore
+        if (window.appMetaIdJsV2) {
+          // @ts-ignore
+          window.appMetaIdJsV2.paytoAddress(
+            accessToken,
+            JSON.stringify(_params.data),
+            functionName
+          )
+        } else {
+          // @ts-ignore
+          window.appMetaIdJs.paytoAddress(
+            accessToken,
+            JSON.stringify(_params.data),
+            functionName
+          )
+        }
+      } else {
+        // @ts-ignore
+        this.metaidjs?.paytoAddress(_params)
+      }
+    })
+  }
   // nft 上架/销售
   nftSell(params: NftSellParams) {
     return new Promise<NftSellResData>((resolve, reject) => {
@@ -1156,6 +1199,69 @@ export class SDK {
         })
         .catch(() => {
           reject('getMc')
+        })
+    })
+  }
+
+  // 获取某个FT 余额
+  getFT(params: { address: string; codehash: string; genesis: string }) {
+    return new Promise<number>((resolve, reject) => {
+      fetch(`https://api.sensiblequery.com/ft/summary/${params.address}`)
+        .then(function (response) {
+          return response.json()
+        })
+        .then((response: GetMcRes) => {
+          if (response.code === 0) {
+            if (response.data) {
+              const ft = response.data.find((item) => {
+                return (
+                  item.codehash === params.codehash &&
+                  item.genesis === params.genesis
+                )
+              })
+              if (ft) {
+                resolve(
+                  new Decimal(ft.balance + ft.pendingBalance)
+                    .div(Math.pow(10, ft.decimal))
+                    .toNumber()
+                )
+              } else {
+                resolve(0)
+              }
+            } else {
+              resolve(0)
+            }
+          } else {
+            reject('getMc')
+          }
+        })
+        .catch(() => {
+          reject('getMc')
+        })
+    })
+  }
+
+  getNFTCount(params: { address: string; codehash: string; genesis: string }) {
+    return new Promise<number>((resolve, reject) => {
+      fetch(
+        `https://api.sensiblequery.com/nft/detail/${params.codehash}/${params.genesis}/${params.address}`
+      )
+        .then(function (response) {
+          return response.json()
+        })
+        .then((response: GetNFTCountRes) => {
+          if (response.code === 0) {
+            if (response.data) {
+              resolve(response.data.count + response.data.pendingCount)
+            } else {
+              resolve(0)
+            }
+          } else {
+            reject('getNFTCount error')
+          }
+        })
+        .catch(() => {
+          reject('getNFTCount error')
         })
     })
   }
@@ -1645,14 +1751,14 @@ export class SDK {
     brfcId: string
     path: string
     needConfirm?: boolean
+    version?: string
   }) {
     return new Promise<NFTCancelResData>((resolve, reject) => {
+      if (!params.version) params.version = '1.0.0'
       const callback = (res: MetaIdJsRes) => {
         this.callback(res, resolve, reject)
       }
       if (this.isApp) {
-        alert('App 暂未支持')
-        return
         const accessToken = this.getAccessToken()
         const functionName: string = `createBrfcProtocolNode${randomString()}`
         // @ts-ignore
@@ -1660,14 +1766,14 @@ export class SDK {
         // @ts-ignore
         if (window.appMetaIdJsV2) {
           // @ts-ignore
-          window.appMetaIdJsV2.nftCancel(
+          window.appMetaIdJsV2.createBrfcProtocolNode(
             accessToken,
             JSON.stringify(params),
             functionName
           )
         } else {
           // @ts-ignore
-          window.appMetaIdJs.nftCancel(
+          window.appMetaIdJs.createBrfcProtocolNode(
             accessToken,
             JSON.stringify(params),
             functionName
@@ -1681,6 +1787,27 @@ export class SDK {
           callback
         })
       }
+    })
+  }
+
+  async addPayLikeProtocol(params: {
+    receiveAddress: string
+    amount?: number
+    txId: string
+  }) {
+    if (!params.amount) params.amount = 1000
+    return this.sendMetaDataTx({
+      brfcId: 'b4a118f94cf2',
+      nodeName: 'PayLike',
+      path: '/Protocols/PayLike',
+      data: JSON.stringify({
+        createTime: new Date().getTime(),
+        isLike: 1,
+        likeTo: params.txId,
+        pay: params.amount,
+        payTo: params.receiveAddress
+      }),
+      payTo: [{ address: params.receiveAddress, amount: params.amount }]
     })
   }
 }
