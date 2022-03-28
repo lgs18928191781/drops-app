@@ -9,7 +9,7 @@
 - 集成 PWA(2021-01-13)
 - 使用 Vue3 最新 SFC setup 语法，推荐使用[https://vue3js.cn/docs/zh/guide/composition-api-setup.html#%E5%8F%82%E6%95%B0](https://vue3js.cn/docs/zh/guide/composition-api-setup.html#%E5%8F%82%E6%95%B0)
 - 添加 App 环境参数在`store.state`里面`isAndroid: boolean,isIOS: boolean` [2021-12-16]
-- 添加 NFT 全局组件，可以直接使用`<UserAvatar :meta-id="metaId" :type="type" />` [2020-03-28][使用webcomponent实现](http://gitlab2.showpay.top/front-end/show-web-components)
+- 添加 `NFT 头像` 全局组件，可以直接使用`<UserAvatar :meta-id="metaId" :type="type" />` [2020-03-28][使用webcomponent实现](http://gitlab2.showpay.top/front-end/show-web-components)
 - `sdk类方法`
   - changeSdkType // 更改 sdk 环境类型
   - initSdk // 初始化 sdk
