@@ -8,13 +8,7 @@ import { router } from '@/router'
 import * as filters from '@/utils/filters'
 import i18n from '@/utils/i18n'
 import { ElLoading } from 'element-plus'
-import { registerSW } from 'virtual:pwa-register'
 import UserAvatar from '@/components/UserAvatar/UserAvatar.vue'
-
-// pwa auto update
-const updateSW = registerSW({
-  onOfflineReady() {},
-})
 
 const app = createApp(App)
 
