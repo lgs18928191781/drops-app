@@ -3,12 +3,11 @@ import App from './App.vue'
 import 'normalize.css/normalize.css'
 import './index.scss'
 import { router } from '@/router'
-// import { ElLoading, ElMessage, ElDatePicker } from 'element-plus'
-// import ElementPlus from 'element-plus'
 import * as filters from '@/utils/filters'
 import i18n from '@/utils/i18n'
 import { ElLoading } from 'element-plus'
 import UserAvatar from '@/components/UserAvatar/UserAvatar.vue'
+import './utils/permission' // 路由控制
 
 const app = createApp(App)
 
@@ -23,8 +22,5 @@ app.component('UserAvatar', UserAvatar)
 app
   .use(router)
   .use(ElLoading)
-  // .use(ElementPlus, {
-  //   i18n: i18n.global.t,
-  // })
   .use(i18n)
   .mount('#app')
