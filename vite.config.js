@@ -8,7 +8,6 @@ import VitePluginHtmlEnv from 'vite-plugin-html-env'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
-import ElementPlus from 'unplugin-element-plus/vite'
 
 export default ({ mode }) => {
   // 加载环境配置文件
@@ -29,7 +28,6 @@ export default ({ mode }) => {
       Components({
         resolvers: [ElementPlusResolver()],
       }),
-      ElementPlus(),
       // 多语言加载
       vueI18n({
         // if you want to use Vue I18n Legacy API, you need to set `compositionOnly: false`
@@ -50,10 +48,10 @@ export default ({ mode }) => {
       _APP_VERSION: JSON.stringify(pkg.version),
     },
     server: {
-      host: env.VITE_Hosts.replace(/https:\/\//, '').replace(/http:\/\//, ''),
-      port: 443,
-      https: true,
-      open: false,
+      host: '0.0.0.0',
+      // port: 443,
+      // https: true,
+      // open: false,
     },
     build: {
       target: 'es2015',

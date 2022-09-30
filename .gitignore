@@ -1,6 +1,6 @@
 .DS_Store
 node_modules
-
+dist/*
 
 dist-ssr
 
@@ -34,3 +34,9 @@ pnpm-debug.log*
 LOCAL_NOTES.md
 
 dev-dist
+
+
+#
+auto-imports.d.ts
+components.d.ts
+
