@@ -12,6 +12,9 @@ import i18n from '@/utils/i18n'
 import { ElLoading } from 'element-plus'
 import UserAvatar from '@/components/UserAvatar/UserAvatar.vue'
 import './utils/permission' // 路由控制
+import 'virtual:svg-icons-register'
+import Image from '@/components/Image/Image.vue'
+import Icon from '@/components/Icon/Icon.vue'
 
 const app = createApp(App)
 
@@ -22,6 +25,8 @@ app.config.globalProperties.$filters = {
 
 // 全局组件
 app.component('UserAvatar', UserAvatar)
+app.component('Image', Image)
+app.component('Icon', Icon)
 
 app
   .use(router)
