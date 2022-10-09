@@ -2,19 +2,29 @@ import { createRouter, createWebHistory, RouterView } from 'vue-router'
 import Home from '@/views/Home.vue'
 import Login from '@/views/Login.vue'
 const NotFoundPage = () => import('@/views/404.vue')
-import { useStore, Action, Mutation } from '@/store/index'
 import { ElMessage } from 'element-plus'
 import i18n from '@/utils/i18n'
-import { SdkType } from 'sdk/src/emums'
-const store = useStore()
-console.log('import.meta.env.PROD', import.meta.env.PROD)
 export const routerHistory = createWebHistory()
 export const router = createRouter({
   history: routerHistory,
   strict: true,
   routes: [
     { path: '/', component: Home },
-    { path: '/login', name: 'login', component: Login },
+    {
+      path: '/pre-login',
+      name: 'preLogin',
+      component: () => import('@/views/PreLogin.vue'),
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('@/views/Login.vue'),
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: () => import('@/views/register.vue'),
+    },
     // 404
     { path: '/404', name: '404', component: NotFoundPage },
     {

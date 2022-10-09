@@ -1,0 +1,22 @@
+{
+  "name": "request-sdk",
+  "version": "0.0.2",
+  "description": "show axios request sdk",
+  "main": "dist/request-sdk.min.js",
+  "typings": "src/index.d.ts",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "build": "rollup -c -m ./rollup.config.js",
+    "dev": "rollup -c -m -w",
+    "test": "ts-node test/test.ts",
+    "pretest": "npm run build"
+  },
+  "author": "callmesoul",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.27.2"
+  },
+  "yalcSig": "7c57da1f9918637bb6f3f4b21da347f8"
+}

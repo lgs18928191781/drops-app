@@ -1,26 +1,29 @@
 $bgColor: #F5F7F9;
+$bgDarkColor: #000;
 $mainColor: #FEB338;
 
-%text-ellipsis{
+%text-ellipsis {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 @mixin author($avatorWidth, $mrginRight, $nameFontSize, $metaIdFontSize, $marginTop) {
-    .avatar{
+    .avatar {
         width: $avatorWidth;
         height: $avatorWidth;
         border-radius: 50%;
         margin-right: $mrginRight;
         background: #eee;
     }
-    .author-msg{
-        .creater{
+
+    .author-msg {
+        .creater {
             font-weight: 400;
             font-size: $nameFontSize;
         }
-        .metaid{
+
+        .metaid {
             font-size: $metaIdFontSize;
             font-weight: 400;
             color: #909399;

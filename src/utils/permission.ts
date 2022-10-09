@@ -1,51 +1,176 @@
 import { router } from '@/router'
-import { Action, Mutation, store } from '@/store'
-import { ElMessage } from 'element-plus'
-import { SdkType } from 'sdk/src/emums'
-import i18n from './i18n'
+import {
+  checkUserToken,
+  isAuthorized,
+  isGetedKycInfo,
+  isSetedisTestUser,
+  setIsTestUser,
+  setKycInfo,
+  user,
+  userLogout,
+} from '@/stores/user'
+import { ElMessageBox } from 'element-plus'
 
+import {
+  isApp,
+  isIosApp,
+  isSetedSystemConfig,
+  marketDefalutClassify,
+  setSystemConfig,
+  setWallet,
+  showWallet,
+} from '@/stores/root'
+import { openLoading } from './util'
+
+let loading: any
 router.beforeEach(async (to, from, next) => {
-  if (!store.state.sdk) {
-    store.commit(Mutation.SETSDK, undefined)
-  }
-
-  // app
-  const isApp = store.state.sdk?.isApp
-  if (isApp) {
-    // 设置app环境
-    if (store.state.sdk?.type !== SdkType.App) store.state.sdk?.changeSdkType(SdkType.App)
-    //  没有用户信息， 也没有正在加载用户信息, 则去获取用户信息
-    if (!store.state.userInfo && !store.state.userInfoLoading) {
-      store.dispatch(Action.getUserInfo)
-    }
+  loading = openLoading()
+  if (to.path === '/genesis' && !to.params.genesis) {
+    // 兼容旧路由，过渡一段时间后可删除
+    next({
+      name: 'genesis',
+      params: {
+        genesis: to.query.genesis,
+        codehash: to.query.codehash,
+      },
+    })
+  } else if (to.path === '/nft' && !to.params.genesis) {
+    // 兼容旧路由，过渡一段时间后可删除
+    next({
+      name: 'nft',
+      params: {
+        genesis: to.query.genesis,
+        codehash: to.query.codehash,
+        tokenIndex: to.query.tokenIndex,
+      },
+    })
+  } else if (to.name === 'market') {
+    // market 跳转到对应分类页
+    next({
+      name: 'marketClassify',
+      params: {
+        classify: marketDefalutClassify.value,
+      },
+    })
+  } else if (to.name === 'marketClassify' && to.params.classify === 'search' && !to.query.keyword) {
+    const searchs: string[] = JSON.parse(localStorage.getItem('marketSearch')!)
+    next({
+      name: 'marketClassify',
+      params: {
+        classify: marketDefalutClassify.value,
+      },
+      query: {
+        keyword: searchs[0],
+      },
+    })
   } else {
-    // web
-    const token = store.state.token
-    if (token) {
-      // 检查环境变量
-      if (store.state.sdk?.type === SdkType.Null) {
-        const appType = window.localStorage.getItem('appType')
-        if (appType && appType !== '') store.state.sdk?.changeSdkType(parseInt(appType))
+    // 设置页面标题
+    document.title = `${to.meta.title ? to.meta.title + ' - ' : ''}` + import.meta.env.VITE_AppName
+
+    // 获取系统配置信息
+    if (!isSetedSystemConfig.value) {
+      await setSystemConfig()
+    }
+
+    // if (isIosApp) {
+    //   if (from.name === 'sale' && to.name === 'genesis') {
+    //     to.meta.keepAlive = false
+    //   } else {
+    //     to.meta.keepAlive = true
+    //   }
+    // }
+
+    if (to.name === 'register' && isAuthorized.value) {
+      // 用户已登陆时，先退出登录
+      userLogout('/register')
+    }
+
+    if (!showWallet.value) {
+      setWallet()
+    }
+
+    if (showWallet.value) {
+      // App 未获取用户信息，先去获取用户信息
+      if (!isAuthorized.value && isApp) {
+        await showWallet.value.appSetUserInfo()
+      }
+    }
+
+    if (isAuthorized.value) {
+      // 用户已登录但未初始化sdk 里面钱包， 则去 初始化 sdk 里面的钱包
+      if (!showWallet.value!.isInitSdked) {
+        await showWallet.value!.initWallet()
       }
 
-      // 检查token 过期先刷新token, 没过期直接用
-      const now = new Date().getTime()
-      if (token.expires_time && now >= token.expires_time) {
-        await store.dispatch(Action.refreshToken)
+      // 没有拿用户实名信息时， 先要去拿用户实名信息
+      if (!isGetedKycInfo.value) {
+        await setKycInfo()
       }
-      // 有token 没有初始化sdk 就去初始化sdk
-      if (!store.state.sdk?.isSdkFinish && !store.state.sdk?.initIng) {
-        store.dispatch(Action.initSdk)
+
+      //  设置是否是否测试用户
+      if (!isSetedisTestUser.value) {
+        await setIsTestUser()
+      }
+
+      // 修复有问题的账号
+      // if (user.value!.metaId === 'null') {
+      //   // @ts-ignore
+      //   const wallet = toRaw(store.state.wallet)
+      //   // @ts-ignore
+      //   const result = await wallet!.initMetaIdNode({
+      //     ...user.value,
+      //     name: user.value?.phone
+      //       ? user.value.phone
+      //       : user.value?.email
+      //       ? user.value.email
+      //       : '新用户',
+      //     appToken: user.value!.token!,
+      //   })
+
+      //   ElMessageBox.alert('账号修复成功，请重新登陆', '温馨提示', { showClose: false }).then(() => {
+      //     userLogout()
+      //   })
+      // }
+
+      // 检查用户的token
+      if (!isApp) {
+        await checkUserToken(to.fullPath)
+      }
+    }
+
+    // 检查跳转 路由是否有权限
+    const isAuth = to.meta?.isAuth ? to.meta?.isAuth : false
+    if (isAuth) {
+      if (isIosApp && user.value?.flag) {
+        next()
+      } else {
+        if (isAuthorized.value) {
+          next()
+        } else {
+          if (loading) loading.close()
+          const result = await ElMessageBox.confirm('请先登录再操作', '温馨提示', {
+            confirmButtonText: '注册/登录',
+            cancelButtonText: '取消',
+            type: 'warning',
+          }).catch(() => {
+            if (loading) loading.close()
+          })
+          if (result === 'confirm') {
+            next({ name: 'preLogin' })
+          }
+        }
       }
     } else {
-      // 没有token
-      const isAuth = to.meta && to.meta.isAuth ? to.meta.isAuth : false
-      if (isAuth) {
-        // 需要权限的提示先登陆且不给予跳转
-        ElMessage.error(i18n.global.t('toLoginTip'))
-        next('/')
-      }
+      next()
     }
   }
-  next()
 })
+
+router.beforeResolve(() => {
+  if (loading) loading.close()
+})
+
+// router.afterEach((to, from, failure) => {
+//   console.log(window.history)
+//   debugger
+// })

@@ -5,7 +5,7 @@ interface ImportMetaEnv {
   VITE_RedirectPath: string
   VITE_AppId: string
   VITE_AppSecret: string
-  VITE_WalletApi: string
+  VITE_BASEAPI: string
   VITE_AppImgApi: string
   VITE_AuthUrl: string
   VITE_NftApi: string
@@ -26,4 +26,5 @@ interface ImportMetaEnv {
   VITE_DotWallet_AppSecret: string
   VITE_DotWallet_ENV: string
   VITE_AppName: string
+  VITE_WXCOREAPI: string
 }

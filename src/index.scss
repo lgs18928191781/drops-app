@@ -2,25 +2,35 @@
 @import '@/assets/styles/flex.scss';
 @import '@/assets/styles/element-plus.scss';
 
-body {
-  background: $bgColor;
-  font-size: 16px;
-  color: #303133;
-  font-family: 'SF Pro', 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
-    'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
-  min-height: 100vh;
+html {
 
-  .container {
-    max-width: 1000px;
-    margin: 0 auto;
+  body {
+    background: $bgColor;
+    font-size: 16px;
+    font-family: 'SF Pro', 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
+      'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+    min-height: 100vh;
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    #app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
   }
 
-  #app {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+  &.dark {
+    body {
+      background: $bgDarkColor;
+    }
   }
 }
+
+
 
 pre {
   white-space: break-spaces;

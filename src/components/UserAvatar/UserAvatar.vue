@@ -9,7 +9,6 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { useStore } from '@/store'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 const props = defineProps<{
@@ -25,20 +24,15 @@ const hasmask = computed(() => {
 })
 
 const isClickStop = 'stop'
-const store = useStore()
 const router = useRouter()
 function toUser() {
   if (props.disabled) return
-  if (store.state.userInfo && store.state.userInfo.metaId === props.metaId) {
-    router.push({ name: 'self' })
-  } else {
-    router.push({
-      name: 'user',
-      params: {
-        metaId: props.metaId,
-      },
-    })
-  }
+  router.push({
+    name: 'user',
+    params: {
+      metaId: props.metaId,
+    },
+  })
 }
 </script>
 <style lang="scss" scoped src="./UserAvatar.scss"></style>

@@ -36,3 +36,17 @@ export const pagination: Pagination = {
   nothing: false,
   totalPages: 0,
 }
+
+export const classifyName: { [key: string]: string } = {
+  fragment: '碎片',
+  art: '艺术',
+  card: '纪念卡',
+  alias: '别名',
+  rights: '权益',
+  game: '游戏',
+  avatar: '头像',
+  music: '音乐',
+  article: '文章',
+  emoji: '表情包',
+  background: '背景',
+}

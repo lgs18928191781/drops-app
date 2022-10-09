@@ -9,12 +9,23 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
+import inject from '@rollup/plugin-inject'
+import stdLibBrowser from 'node-stdlib-browser'
+import { viteExternalsPlugin } from 'vite-plugin-externals'
 
 export default ({ mode }) => {
   // 加载环境配置文件
   const env = loadEnv(mode, process.cwd())
   return defineConfig({
     plugins: [
+      {
+        ...inject({
+          global: [require.resolve('node-stdlib-browser/helpers/esbuild/shim'), 'global'],
+          process: [require.resolve('node-stdlib-browser/helpers/esbuild/shim'), 'process'],
+          Buffer: [require.resolve('node-stdlib-browser/helpers/esbuild/shim'), 'Buffer'],
+        }),
+        enforce: 'post',
+      },
       vue({
         template: {
           compilerOptions: {
@@ -57,11 +68,23 @@ export default ({ mode }) => {
         //  */
         customDomId: '__svg__icons__dom__',
       }),
+      viteExternalsPlugin({
+        bsv: 'bsv',
+        bip39: 'bip39',
+        '@sensible-contract/bsv': 'bsv',
+        'bsv/ecies': 'ECIES',
+        'bsv/mnemonic': 'Mnemonic',
+        'sensible-sdk': 'sensible',
+      }),
     ],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
+        ...stdLibBrowser,
       },
+    },
+    optimizeDeps: {
+      include: ['buffer', 'process'],
     },
     define: {
       _APP_VERSION: JSON.stringify(pkg.version),

@@ -1,8 +1,8 @@
 {
   "version": "v1",
   "packages": {
-    "sdk": {
-      "signature": "405925570be2360b5cffc0f4966a9c68",
+    "request-sdk": {
+      "signature": "7c57da1f9918637bb6f3f4b21da347f8",
       "file": true
     }
   }

@@ -1,43 +1,219 @@
+<template>
+  <div class="register-page user-form container">
+    <el-form
+      ref="ruleFormRef"
+      :model="ruleForm"
+      :rules="rules"
+      :label-width="0"
+      class="demo-ruleForm"
+      :size="formSize"
+    >
+      <el-form-item prop="phone" v-if="ruleForm.userType === 'phone'">
+        <el-input
+          v-model="ruleForm.phone"
+          :readonly="true"
+          type="number"
+          placeholder="手机号码"
+        ></el-input>
+      </el-form-item>
+      <el-form-item prop="email" v-if="ruleForm.userType === 'email'">
+        <el-input
+          v-model="ruleForm.email"
+          :readonly="true"
+          type="text"
+          placeholder="邮箱地址"
+        ></el-input>
+      </el-form-item>
+      <el-form-item prop="password">
+        <el-input v-model="ruleForm.password" type="password" placeholder="密码"></el-input>
+      </el-form-item>
+      <el-form-item prop="messageCode">
+        <div class="flex flex-align-center message-code-warp">
+          <el-input
+            v-model="ruleForm.messageCode"
+            type="number"
+            placeholder="验证码"
+            class="flex1"
+          ></el-input>
+          <el-button size="large" type="primary" @click="sendCode" :disabled="timer > 0">{{
+            timer > 0 ? `${timer}s` : '获取验证码'
+          }}</el-button>
+        </div>
+      </el-form-item>
+      <el-form-item class="flex">
+        <el-button
+          class="btn-submit"
+          size="large"
+          type="primary"
+          :loading="loading"
+          @click="submitForm(ruleFormRef)"
+          >登录钱包</el-button
+        >
+      </el-form-item>
+    </el-form>
+  </div>
+</template>
 
 <script setup lang="ts">
-import { useRouter, useRoute } from 'vue-router'
-import { useStore, Mutation, Action } from '@/store/index'
-const route = useRoute()
+import { computed, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElForm, ElMessageBox, ElMessage } from 'element-plus'
+
+import { loginGetCode, loginCheck } from '@/api/index'
+import {
+  BaseUserInfoTypes,
+  hdWalletFromAccount,
+  encryptPassword,
+  HdWallet,
+} from '@/utils/wallet/hd-wallet'
+import { sendCodeTimer, setSendCodeTimer, redirectUri, isApp } from '@/stores/root'
+import { user, updateUser } from '@/stores/user'
+import { useI18n } from 'vue-i18n'
+import { encode } from 'js-base64'
+
+type FormInstance = InstanceType<typeof ElForm>
+
 const router = useRouter()
-const store = useStore()
-const code = route.query.code
-const state = route.query.state
-import { SdkType } from 'sdk/src/emums'
-let appType = SdkType.Metaidjs
-if (state && state === 'jssdk') appType = SdkType.Dotwallet
-store.state.sdk?.changeSdkType(appType)
-debugger
-if (code && typeof code === 'string') {
-  store.state.sdk?.getToken({ code })?.then((res: Token) => {
-    if (res && res.access_token) {
-      store.commit(Mutation.SETTOKEN, res)
-      store.dispatch(Action.initSdk)
-      router.replace('/')
+const tempUserInfo = user.value
+const timer = computed(() => {
+  return sendCodeTimer.value
+})
+const formSize = ref('')
+const ruleFormRef = ref<FormInstance>()
+const ruleForm = reactive({
+  areaCode: '86',
+  phone: '',
+  email: '',
+  password: '',
+  messageCode: '',
+  ...tempUserInfo,
+})
+const i18n = useI18n()
+
+// const phoneNum = computed(() => {
+//   return ruleForm.areaCode + ruleForm.phone
+// })
+
+const rules = reactive({
+  phone: [
+    {
+      required: true,
+      message: i18n.t('pleaseInputphomeNumber'),
+      trigger: 'blur',
+    },
+    {
+      pattern: /^\d{5,12}$/,
+      trigger: 'change',
+      message: i18n.t('phoneError'),
+    },
+  ],
+  password: [
+    {
+      required: true,
+      message: i18n.t('plaseInputPwd'),
+      trigger: 'change',
+    },
+  ],
+})
+
+const loading = ref(false)
+
+const submitForm = (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  formEl.validate(async valid => {
+    if (valid) {
+      loading.value = true
+      const phoneNum =
+        ruleForm.areaCode !== '86' ? ruleForm.areaCode + ruleForm.phone : ruleForm.phone
+      const params = {
+        type: isApp ? 2 : 1,
+        userType: tempUserInfo?.userType || 'phone',
+        phone: phoneNum,
+        email: ruleForm.email,
+        code: ruleForm.messageCode,
+        password: encryptPassword(ruleForm.password),
+      }
+      const loginRes = await loginCheck(params)
+      if (loginRes.code === 0 || loginRes.code === 601) {
+        const loginInfo = loginRes.data as BaseUserInfoTypes
+        const account = {
+          ...loginInfo,
+          userType: params.userType,
+          phone: phoneNum,
+          email: params.email,
+          pk2: loginInfo.pk2,
+          name: loginInfo.name,
+          password: ruleForm.password,
+        }
+        debugger
+        const walletInfo = await createHDWallet(account)
+        const hdWallet = new HdWallet(walletInfo.mnemonic, walletInfo.wallet)
+        let metaIdInfo
+        try {
+          metaIdInfo = await hdWallet.getMetaIdInfo(walletInfo.rootAddress)
+          if (!metaIdInfo.metaId) {
+            return ElMessageBox.alert('抱歉，此账号有问题，请到www.showmoney.app上修复', '提示', {
+              showClose: false,
+              confirmButtonText: '去修复',
+            }).then(() => {
+              location.href = 'https://www.showmoney.app/'
+            })
+          }
+          updateUser({
+            ...account,
+            metaId: metaIdInfo.metaId,
+            infoTxId: metaIdInfo.infoTxId,
+            protocolTxId: metaIdInfo.protocolTxId,
+            userType: params.userType,
+            phone: phoneNum,
+            rootAddress: walletInfo.rootAddress,
+          })
+          window.localStorage.setItem('password', encode(ruleForm.password))
+          router.replace(redirectUri.value)
+        } catch (error) {
+          console.error(error)
+          loading.value = false
+          return ElMessage.error('初始化账号失败，请稍后再试...')
+        }
+      } else {
+        loading.value = false
+        ElMessage.error(loginRes.msg)
+      }
+      loading.value = false
+    } else {
+      return false
     }
   })
-  /* GetToken({
-    code,
-    grant_type: 'authorization_code',
-    redirect_uri: `${host}${redirectPath}`,
-    scope: 'app',
-    client_id: env.VITE_AppId,
-    client_secret: env.VITE_AppSecret,
-  }).then((res) => {
-    if (res && res.access_token) {
-      store.commit(Mutation.SETTOKEN, {
-        ...res,
-        expires_time: new Date().getTime() + res.expires_in - 60 * 1000,
-      })
-      store.dispatch(Action.initSdk)
-      router.replace('/')
+}
+
+const createHDWallet = async (account: BaseUserInfoTypes) => {
+  try {
+    const walletObj = await hdWalletFromAccount(account)
+    console.log(walletObj)
+    return walletObj
+  } catch (error) {
+    console.error(error)
+    throw new Error('生成钱包失败' + error.message)
+  }
+}
+
+const sendCode = () => {
+  if (sendCodeTimer.value > 0) return
+  const phoneNum = ruleForm.areaCode !== '86' ? ruleForm.areaCode + ruleForm.phone : ruleForm.phone
+  const params = {
+    userType: ruleForm.userType || 'phone',
+    phone: (ruleForm.areaCode !== '86' ? '+' : '') + phoneNum,
+    email: ruleForm.email,
+  }
+  loginGetCode(params).then(res => {
+    if (res.code === 0) {
+      setSendCodeTimer(60)
+      return ElMessage.success(i18n.t('checkCodeIsSend'))
+    } else {
+      return ElMessage.error(res.msg)
     }
-  }) */
-} else {
-  router.replace('/')
+  })
 }
 </script>
+
+<style lang="scss" scoped src="./login.scss"></style>
