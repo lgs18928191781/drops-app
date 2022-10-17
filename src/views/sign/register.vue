@@ -110,7 +110,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { inject, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import type { ElForm } from 'element-plus'
@@ -126,8 +126,6 @@ import {
   commitActivity,
 } from '@/api/index'
 import { BaseUserInfoTypes, hdWalletFromAccount, encryptMnemonic, encryptPassword, HdWallet } from '@/utils/wallet/hd-wallet'
-import { user, updateUser } from '@/stores/user'
-import { redirectUri } from '@/stores/root'
 import { useI18n } from 'vue-i18n'
 import { encode } from 'js-base64'
 import LogoIcon from '@/assets/images/logo.svg'
@@ -136,6 +134,8 @@ import UnViewIcon from '@/assets/images/unview.svg'
 import { CommitActivity } from '@/api/broad'
 import { InviteActivityTag } from '@/enum'
 import { alertCatchError } from '@/utils/util'
+import { useUserStore } from '@/stores/user'
+import { useRootStore } from '@/stores/root'
 
 type FormInstance = InstanceType<typeof ElForm>
 
@@ -143,7 +143,6 @@ const i18n = useI18n()
 const router = useRouter()
 const formSize = ref('')
 const ruleFormRef = ref<FormInstance>()
-const tempUserInfo = user.value
 const characteristic = ref('')
 const imageCodeData = ref('')
 const timer = ref(0)
@@ -153,17 +152,18 @@ const isStartCount = ref(false)
 const isSuccess = ref(false)
 const isShowPwd = ref(false)
 const isShowConfirmPwd = ref(false)
+const userStore = useUserStore()
+const rootStore = useRootStore()
+
+
 const ruleForm = reactive({
-  areaCode: '86',
-  phone: '',
-  email: '',
   password: '',
   confirmPassword: '',
   username: '',
   remark: '暂无设置密码提示',
   messageCode: '',
   imageCode: '',
-  ...tempUserInfo,
+  ...rootStore.signBaseInfo,
 })
 
 const rules = reactive({
@@ -332,7 +332,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
             phone: userInfo.phone,
             email: userInfo.email,
           })
-          await updateUser(userInfo)
+          await userStore.updateUserInfo(userInfo)
 
           window.localStorage.setItem('password', encode(ruleForm.password))
           // 处理活动邀请信息
@@ -363,7 +363,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
             })
           } else {
             isSuccess.value = true
-            router.replace(redirectUri.value)
+            router.replace(rootStore.redirectUri)
           }
         } else {
           throw new Error(registerRes.msg)

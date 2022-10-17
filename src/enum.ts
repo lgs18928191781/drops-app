@@ -252,3 +252,8 @@ export enum BatchType {
   Sale = 'batchSale',
   Transfer = 'batchTransfer',
 }
+
+export enum SignUserType {
+  Phone = 'phone',
+  Email = 'email',
+}

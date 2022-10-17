@@ -1,14 +1,12 @@
-import { isAuthorized, user } from '@/stores/user'
+import { useUserStore } from '@/stores/user'
 import HttpRequest from 'request-sdk'
+
+const userStore = useUserStore()
 // @ts-ignore
 const Tiger = new HttpRequest(import.meta.env.VITE_BASEAPI + '/tigertal', {
   header: {
-    accessKey: () => (isAuthorized.value ? user.value!.token! : undefined),
-    userName: () => {
-      if (isAuthorized) {
-        return user.value!.userType === 'email' ? user.value!.email! : user.value!.phone!
-      }
-    },
+    accessKey: () => userStore.token,
+    userName: () => userStore.userName,
     timestamp: () => new Date().getTime(),
   },
 }).request

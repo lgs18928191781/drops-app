@@ -1,18 +1,13 @@
 import { PayPlatform } from '@/enum'
-import { isAuthorized, user } from '@/stores/user'
 import HttpRequest from 'request-sdk'
 import { alertCatchError } from '@/utils/util'
 import { ElMessage } from 'element-plus'
-
+import { getToken, getUserName } from '@/stores/user'
 // @ts-ignore
 const Wxcore = new HttpRequest(`${import.meta.env.VITE_WXCOREAPI}/wxcore`, {
   header: {
-    accessKey: () => (isAuthorized.value ? user.value!.token! : undefined),
-    userName: () => {
-      if (isAuthorized) {
-        return user.value!.userType === 'email' ? user.value!.email! : user.value!.phone!
-      }
-    },
+    accessKey: () => getToken(),
+    userName: () => getUserName(),
     timestamp: () => new Date().getTime(),
   },
   errorHandel(error: any) {

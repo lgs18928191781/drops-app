@@ -16,6 +16,7 @@ import './utils/permission' // 路由控制
 import 'virtual:svg-icons-register'
 import Image from '@/components/Image/Image.vue'
 import Icon from '@/components/Icon/Icon.vue'
+import { createPinia } from 'pinia'
 
 const app = createApp(App)
 
@@ -23,6 +24,7 @@ const app = createApp(App)
 app.config.globalProperties.$filters = {
   ...filters,
 }
+const pinia = createPinia()
 
 // 全局组件
 app.component('UserAvatar', UserAvatar)
@@ -30,6 +32,7 @@ app.component('Image', Image)
 app.component('Icon', Icon)
 
 app
+  .use(pinia)
   .use(router)
   .use(ElLoading)
   .use(i18n)

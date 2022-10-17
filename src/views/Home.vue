@@ -1,16 +1,14 @@
 <template>
   <div>
     用户信息：
-    {{ user }}
+    {{ userStore.user }}
   </div>
 </template>
 
 <script setup lang="ts">
-import { user } from '@/stores/user'
+import { useUserStore } from '@/stores/user'
 
-// const isDark = useDark()
-// // const isDark = useDark()
-// const toggleDark = () => {}
+const userStore = useUserStore()
 </script>
 
 <style lang="scss" scoped></style>

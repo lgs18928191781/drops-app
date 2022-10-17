@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { computed, inject, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElForm, ElMessageBox, ElMessage } from 'element-plus'
 
@@ -66,27 +66,25 @@ import {
   encryptPassword,
   HdWallet,
 } from '@/utils/wallet/hd-wallet'
-import { sendCodeTimer, setSendCodeTimer, redirectUri, isApp } from '@/stores/root'
-import { user, updateUser } from '@/stores/user'
+import { isApp, useRootStore } from '@/stores/root'
 import { useI18n } from 'vue-i18n'
 import { encode } from 'js-base64'
+import { useUserStore } from '@/stores/user'
 
 type FormInstance = InstanceType<typeof ElForm>
 
+const userStore = useUserStore()
+const rootStore = useRootStore()
 const router = useRouter()
-const tempUserInfo = user.value
 const timer = computed(() => {
-  return sendCodeTimer.value
+  return rootStore.sendCodeTimer
 })
 const formSize = ref('')
 const ruleFormRef = ref<FormInstance>()
 const ruleForm = reactive({
-  areaCode: '86',
-  phone: '',
-  email: '',
   password: '',
   messageCode: '',
-  ...tempUserInfo,
+  ...rootStore.signBaseInfo,
 })
 const i18n = useI18n()
 
@@ -127,7 +125,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
         ruleForm.areaCode !== '86' ? ruleForm.areaCode + ruleForm.phone : ruleForm.phone
       const params = {
         type: isApp ? 2 : 1,
-        userType: tempUserInfo?.userType || 'phone',
+        userType: rootStore.signBaseInfo.userType || 'phone',
         phone: phoneNum,
         email: ruleForm.email,
         code: ruleForm.messageCode,
@@ -159,7 +157,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
               location.href = 'https://www.showmoney.app/'
             })
           }
-          updateUser({
+          userStore.updateUserInfo({
             ...account,
             metaId: metaIdInfo.metaId,
             infoTxId: metaIdInfo.infoTxId,
@@ -169,7 +167,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
             rootAddress: walletInfo.rootAddress,
           })
           window.localStorage.setItem('password', encode(ruleForm.password))
-          router.replace(redirectUri.value)
+          router.replace(rootStore.redirectUri)
         } catch (error) {
           console.error(error)
           loading.value = false
@@ -198,7 +196,7 @@ const createHDWallet = async (account: BaseUserInfoTypes) => {
 }
 
 const sendCode = () => {
-  if (sendCodeTimer.value > 0) return
+  if (rootStore.sendCodeTimer > 0) return
   const phoneNum = ruleForm.areaCode !== '86' ? ruleForm.areaCode + ruleForm.phone : ruleForm.phone
   const params = {
     userType: ruleForm.userType || 'phone',
@@ -207,7 +205,7 @@ const sendCode = () => {
   }
   loginGetCode(params).then(res => {
     if (res.code === 0) {
-      setSendCodeTimer(60)
+      rootStore.$patch({ sendCodeTimer: 60 })
       return ElMessage.success(i18n.t('checkCodeIsSend'))
     } else {
       return ElMessage.error(res.msg)

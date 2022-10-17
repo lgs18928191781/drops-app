@@ -1,17 +1,13 @@
 import { PayPlatform } from '@/enum'
-import { isAuthorized, user, UserType } from '@/stores/user'
+import { getToken, getUserName } from '@/stores/user'
 import HttpRequest from 'request-sdk'
 
 // const Legal = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/legal-currency`, {
 // @ts-ignore
 const Legal = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/newlegal`, {
   header: {
-    accessKey: () => (isAuthorized.value ? user.value!.token! : undefined),
-    userName: () => {
-      if (isAuthorized) {
-        return user.value!.userType === 'email' ? user.value!.email! : user.value!.phone!
-      }
-    },
+    accessKey: () => getToken,
+    userName: () => getUserName(),
     timestamp: () => new Date().getTime(),
   },
 }).request

@@ -1,4 +1,3 @@
-import { isAuthorized, isHideMeConfirm, needConfirmMeNum, updateUser, user } from '@/stores/user'
 import {
   AppMsg,
   MetaIdJsRes,
@@ -29,6 +28,7 @@ import * as bsv from '@sensible-contract/bsv'
 import { openLoading } from './util'
 import { Toast } from 'vant'
 import { Transaction } from 'dexie'
+import { useUserStore } from '@/stores/user'
 
 enum AppMode {
   PROD = 'prod',
@@ -97,6 +97,7 @@ export class SDK {
 
   appSetUserInfo() {
     return new Promise<void>(async (resolve, reject) => {
+      const userStore = useUserStore()
       await this.checkAppHasMethod('getUserInfo')
       const callback = async (res: MetaIdJsRes) => {
         try {
@@ -108,7 +109,7 @@ export class SDK {
             res.data.metaId = res.data.showId
             const userInfo = res.data
             if (userInfo) {
-              updateUser(userInfo)
+              userStore.updateUserInfo(userInfo)
               resolve()
             }
           } else {
@@ -183,13 +184,14 @@ export class SDK {
       txId: string
     }>(async (resolve, reject) => {
       try {
+        const userStore = useUserStore()
         await this.checkSdkStatus()
         if (this.appMetaIdJs) {
           await this.checkAppHasMethod('transferNFT')
           const callback = (res: MetaIdJsRes) => {
             this.callback(res, { reject, resolve })
           }
-          const accessToken = user.value?.token
+          const accessToken = userStore.user?.token
           const functionName = `nftSellCallBack${this.randomString()}`
           // @ts-ignore
           window[functionName] = callback
@@ -212,7 +214,8 @@ export class SDK {
       if (this.appMetaIdJs) {
         resolve()
       } else {
-        if (isAuthorized.value) {
+        const userStore = useUserStore()
+        if (userStore.isAuthorized) {
           if (this.wallet) {
             resolve()
           } else {
@@ -229,6 +232,7 @@ export class SDK {
   sigMessage(msg: string, path = '0/0') {
     return new Promise<string>(async (resolve, reject) => {
       await this.checkSdkStatus()
+      const userStore = useUserStore()
       if (this.appMetaIdJs) {
         await this.checkAppHasMethod('sigMessage')
         const callback = (res: MetaIdJsRes) => {
@@ -238,7 +242,7 @@ export class SDK {
         // @ts-ignore
         window[callbackName] = callback
         this.appMetaIdJs!.sigMessage(
-          user.value!.token!,
+          userStore.user?.token,
           JSON.stringify({
             msg,
             path,
@@ -281,6 +285,7 @@ export class SDK {
     payType?: CreateBrfcChildNodePayType
   }) {
     return new Promise<CreateNodeRes | null>(async (resolve, reject) => {
+      const userStore = useUserStore()
       if (!params.appId) {
         const platform = isIosApp
           ? 'iosApp'
@@ -328,7 +333,7 @@ export class SDK {
           // 使用MC 上链时，需要检查权限
           checkRes = await GetProtocolMeInfo({
             protocol: params.nodeName,
-            address: user.value!.address!,
+            address: userStore.user?.address!,
           })
         }
 
@@ -353,7 +358,7 @@ export class SDK {
                 }
               }
               this.appMetaIdJs.createBrfcChildNode(
-                user.value?.token,
+                userStore.user?.token,
                 JSON.stringify(params),
                 functionName
               )
@@ -403,7 +408,7 @@ export class SDK {
                 const createMetaFileBrfcRes = await this.wallet?.createBrfcNode({
                   nodeName: 'MetaFile',
                   metaIdTag: params.metaIdTag,
-                  parentTxId: user.value!.protocolTxId!,
+                  parentTxId: userStore.user?.protocolTxId!,
                   data: '6d3eaf759bbc',
                   parentAddress: protocolAddress,
                   utxos: params.utxos,
@@ -450,7 +455,7 @@ export class SDK {
               const createBrfcNodeRes = await this.wallet?.createBrfcNode({
                 nodeName: params.path.split('/')[params.path.split('/').length - 1],
                 metaIdTag: params.metaIdTag,
-                parentTxId: user.value!.protocolTxId!,
+                parentTxId: userStore.user?.protocolTxId!,
                 data: params.brfcId,
                 parentAddress: protocolAddress,
                 utxos: params.utxos,
@@ -521,12 +526,12 @@ export class SDK {
                     throw new Error('上链内容过大，暂不支持，抱歉')
                   }
                   if (useMe * 100 < checkRes.me_amount_min) useMe = checkRes.me_amount_min / 100
-                  const userMeRes = await GetMyMEBalance({ address: user.value!.address! })
+                  const userMeRes = await GetMyMEBalance({ address: userStore.user?.address! })
                   if (userMeRes.code === 0) {
                     if (userMeRes.data.count >= useMe * 100) {
                       let confirmResult = false
                       const isUnCheckConfirm =
-                        isHideMeConfirm.value && useMe <= needConfirmMeNum.value
+                        userStore.payConfirm && useMe <= userStore.payConfirm.me.value
                       if (isUnCheckConfirm) {
                         confirmResult = true
                       } else {
@@ -554,9 +559,9 @@ export class SDK {
                           } else receive_address = nodeBrfc!.address // 把钱打去 brfc 节点 地址
 
                           const getMeUtxo = await GetMeUtxos({
-                            address: user.value!.address!,
+                            address: userStore.user?.address!,
                             amount: totalAmount,
-                            meta_id: user.value!.metaId!,
+                            meta_id: userStore.user?.metaId!,
                             protocol: params.nodeName,
                             // 打钱地址： 如果需要创建brfc节点则打到 protocol 地址，否则打到 brfc 节点地址
                             receive_address,
@@ -849,8 +854,9 @@ export class SDK {
   downloadFile(url: string, name = 'file') {
     return new Promise<void>(async resolve => {
       if (this.appMetaIdJs) {
+        const userStore = useUserStore()
         await this.checkAppHasMethod('saveShareImage')
-        window.appMetaIdJsV2.saveShareImage(user.value?.token, url, name)
+        window.appMetaIdJsV2.saveShareImage(userStore.user?.token, url, name)
         resolve()
       } else {
         const a = document.createElement('a')
@@ -979,7 +985,12 @@ export class SDK {
         const callbackName = 'eciesDecryptDataCallback'
         // @ts-ignore
         window[callbackName] = callback
-        this.appMetaIdJs.eciesDecryptData(user.value!.token, JSON.stringify(params), callbackName)
+        const userStore = useUserStore()
+        this.appMetaIdJs.eciesDecryptData(
+          userStore.user?.token,
+          JSON.stringify(params),
+          callbackName
+        )
       } else {
         const result = this.wallet!.eciesDecryptData(
           params.data,

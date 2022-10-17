@@ -4,8 +4,8 @@
       <button @click="toggleDark()">Is Dark: {{ isDark }}</button>
     </UseDark>
 
-    <RouterLink to="/pre-login">登录</RouterLink>
-    <RouterLink to="/register">注册</RouterLink>
+    <RouterLink :to="{ name: 'preLogin' }">登录</RouterLink>
+    <RouterLink :to="{ name: 'register' }">注册</RouterLink>
   </div>
 </template>
 
