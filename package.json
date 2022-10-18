@@ -2,15 +2,15 @@
   "name": "start-template",
   "version": "0.0.1",
   "scripts": {
-    "dev2": "vite --mode dev2",
-    "test": "vite --mode test",
-    "gray": "vite --mode gray",
-    "prod": "vite --mode prod",
-    "build": "vite build --mode dev",
-    "build:dev2": "vite build --mode dev2",
-    "build:test": "vite build --mode test",
-    "build:gray": "vite build --mode gray",
-    "build:prod": "vite build --mode prod",
+    "dev2": "yarn vite --mode dev2",
+    "test": "yarn vite --mode test",
+    "gray": "yarn vite --mode gray",
+    "prod": "yarn vite --mode prod",
+    "build": "yarn vite build --mode dev",
+    "build:dev2": "yarn vite build --mode dev2",
+    "build:test": "yarn vite build --mode test",
+    "build:gray": "yarn vite build --mode gray",
+    "build:prod": "yarn vite build --mode prod",
     "start": "yarn dev & wait-on tcp:3000 -v",
     "test:ci": "cypress run --headless"
   },
@@ -43,7 +43,8 @@
     "vue": "3.2",
     "vue-i18n": "^9.1.6",
     "vue-router": "4",
-    "vuex": "~4.0"
+    "vuex": "~4.0",
+    "yarn": "^1.22.19"
   },
   "devDependencies": {
     "@intlify/vite-plugin-vue-i18n": "^2.3.0",
