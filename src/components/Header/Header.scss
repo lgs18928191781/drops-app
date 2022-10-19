@@ -1,1 +1,92 @@
 @import '@/assets/styles/var.scss';
+
+.header-wrapper {
+  justify-content: center;
+  background-color: $themeBgColor;
+  height: 70PX;
+  
+  .header-contanier {
+    width: 70%;
+    justify-content: space-between;
+
+    .header-left {
+        align-items: center;
+      cursor: pointer;
+      .logo {
+        flex-direction: column;
+        .logo_img {
+          width: 120PX;
+          height: 33PX;
+        }
+        span {
+          font-size: 9PX;
+        }
+        @media screen and (max-width: 600PX) {
+          span {
+            display: none;
+          }
+        }
+      }
+      .search{
+        width: 200PX;
+        background-color: #F0F1F4;
+        padding: 5PX 10PX;
+        border-radius: 18PX;
+      display: flex;
+      align-items: center;
+       margin-left: 20PX;
+      }
+      @media screen and (max-width:750PX) {
+        .search{
+        width:28px;
+        padding:5PX;
+        border-radius: 50%;
+     
+  
+      }
+      }
+     
+       
+    
+    }
+
+    .header-right {
+      justify-content: space-between;
+      .lang{
+        padding: 8PX;
+        cursor: pointer;
+        margin-right: 8PX;
+       span{
+        
+        font-size: 15PX;
+        
+       }
+        &:hover{
+            background-color: #F0F1F4;
+            border-radius: 15PX;
+            box-shadow: 0 0 5px rgba(0,0,0,.1);
+        }
+      }
+      .login-btn {
+        padding: 8PX;
+        border-radius: 15PX;
+        background-color: $themeBtnColor;
+        border-color: $themeBtnBorderColor;
+        color: $themeBtnTextColor;
+        height: 30PX;
+        font-size: 11PX;
+        &:hover {
+         box-shadow: 0 0 5px #FC6D5E;
+         opacity: .85;
+        }
+      }
+    }
+  }
+   @media screen and (max-width:980PX){
+    .header-contanier{
+        width: 95%;
+    }
+  }
+ 
+}
+

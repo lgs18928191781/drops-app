@@ -16,6 +16,7 @@ import './utils/permission' // 路由控制
 import 'virtual:svg-icons-register'
 import Image from '@/components/Image/Image.vue'
 import Icon from '@/components/Icon/Icon.vue'
+import GlobalDialog from '@/components/GlobalDialog/index.vue'
 import { createPinia } from 'pinia'
 
 const app = createApp(App)
@@ -30,6 +31,7 @@ const pinia = createPinia()
 app.component('UserAvatar', UserAvatar)
 app.component('Image', Image)
 app.component('Icon', Icon)
+app.component('Dialog', GlobalDialog)
 
 app
   .use(pinia)

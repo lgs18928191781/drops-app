@@ -1,0 +1,56 @@
+.collapse-contanier{
+    background-color: #fff;
+    border-radius: 8PX !important;
+    padding: 10PX 0;
+    
+}
+.applicateName{
+   margin: 0 0 20PX 20PX;
+    font-size: 20PX;
+    
+}
+.collapse-wrapper{
+   
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   
+   .el-collapse-item{
+    margin-bottom: 10PX;
+   
+   }
+   .item{
+    width: 100%;
+    display: flex;
+    align-items:center;
+    justify-content: center;
+    line-height: 0 !important;
+    img{
+        margin-right: 20PX;
+        width: 26PX;
+        height: 26PX;
+    }
+    span{
+        font-size: 16PX;
+    }
+   }
+   .child-item{
+   width: 70%;
+    cursor: pointer;
+    margin-left: 40PX;
+    margin-top: 20PX;
+    display: flex;
+    align-items:center;
+    justify-content: flex-start;
+    line-height: 0 !important;
+     img{
+        margin-right: 20PX;
+        width: 26PX;
+        height: 26PX;
+    }
+    span{
+        font-size: 16PX;
+        
+    }
+   }
+}
