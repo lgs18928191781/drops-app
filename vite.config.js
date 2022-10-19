@@ -5,14 +5,16 @@ import pkg from './package.json'
 import vueI18n from '@intlify/vite-plugin-vue-i18n'
 import svgLoader from 'vite-svg-loader'
 import VitePluginHtmlEnv from 'vite-plugin-html-env'
+import Icons from 'unplugin-icons/vite'
 import AutoImport from 'unplugin-auto-import/vite'
+import IconsResolver from 'unplugin-icons/resolver'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import inject from '@rollup/plugin-inject'
 import stdLibBrowser from 'node-stdlib-browser'
 import { viteExternalsPlugin } from 'vite-plugin-externals'
-
+const pathSrc = path.resolve(__dirname, 'src')
 export default ({ mode }) => {
   // 加载环境配置文件
   const env = loadEnv(mode, process.cwd())
@@ -35,10 +37,25 @@ export default ({ mode }) => {
       }),
       // element-plus 按需加载
       AutoImport({
-        resolvers: [ElementPlusResolver()],
+        resolvers: [
+          ElementPlusResolver(),
+          IconsResolver({
+            prefix: 'Icon',
+          }),
+        ],
+        dts: path.resolve(pathSrc, 'auto-imports.d.ts'),
       }),
       Components({
-        resolvers: [ElementPlusResolver()],
+        resolvers: [
+          ElementPlusResolver(),
+          IconsResolver({
+            enabledCollections: ['ep'],
+          }),
+        ],
+        dts: path.resolve(pathSrc, 'components.d.ts'),
+      }),
+      Icons({
+        autoInstall: true,
       }),
       // 多语言加载
       vueI18n({

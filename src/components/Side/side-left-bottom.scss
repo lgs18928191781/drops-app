@@ -1,0 +1,29 @@
+.side-left-bottom-wrap{
+    background-color: #fff;
+    border-radius: 8PX;
+    padding: 16PX 0;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+   justify-content: center;
+   color: #707070;
+   .title{
+    font-size: 12PX;
+    margin-bottom: 17PX;
+   }
+ 
+    .item{
+        cursor: pointer;
+        width: 100%;
+        line-height: 34PX;
+        margin-bottom: 10PX;
+        font-size: 16PX;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+       img{
+        margin-right: 10PX;
+       }
+    
+    }
+}

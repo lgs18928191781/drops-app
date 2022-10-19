@@ -16,7 +16,7 @@ import './utils/permission' // 路由控制
 import 'virtual:svg-icons-register'
 import Image from '@/components/Image/Image.vue'
 import Icon from '@/components/Icon/Icon.vue'
-
+import GlobalDialog from '@/components/GlobalDialog/index.vue'
 const app = createApp(App)
 
 // 挂载全局过滤器
@@ -28,6 +28,7 @@ app.config.globalProperties.$filters = {
 app.component('UserAvatar', UserAvatar)
 app.component('Image', Image)
 app.component('Icon', Icon)
+app.component('Dialog', GlobalDialog)
 
 app
   .use(router)
