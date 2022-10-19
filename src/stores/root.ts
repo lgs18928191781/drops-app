@@ -59,6 +59,13 @@ export const useRootStore = defineStore('root', {
         })
       }, 30 * 1000)
     },
+    startSendCodeCountdown() {
+      setInterval(() => {
+        if (this.sendCodeTimer > 0) {
+          this.sendCodeTimer--
+        }
+      }, 1000)
+    },
   },
 })
 

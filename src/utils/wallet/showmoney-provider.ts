@@ -61,18 +61,20 @@ interface GetBalanceData {
 
 export default class ShowmoneyProvider {
   public apiPrefix: string
-  public metaSvApi = 'https://apiv2.metasv.com'
+  public metaSvApi: string
   public metaSvMirror = 'https://api.showmoney.app/metasv'
-  public metaSvHttp: AxiosInstance
-  public metasvSignatureHttp: AxiosInstance
-  public serviceHttp: AxiosInstance
+  public metaSvHttp
+  public metasvSignatureHttp
+  public serviceHttp
   // private metaSvAuthorization: MetaSvAuthorizationOption
-  constructor(apiPrefix: string) {
+  constructor(apiPrefix: string, metaSvApi: string) {
     this.apiPrefix = apiPrefix || 'https://api.showmoney.app'
+    this.metaSvApi = metaSvApi
     this.metaSvHttp = new HttpRequest(this.metaSvApi).request
     this.serviceHttp = new HttpRequest(this.apiPrefix + '/serviceapi').request
     // 初始化 metasv签名接口 http
-    this.metasvSignatureHttp = new HttpRequest(this.apiPrefix + '/metasv-signature', {
+    // this.metasvSignatureHttp = new HttpRequest(this.apiPrefix + '/metasv-signature', {
+    this.metasvSignatureHttp = new HttpRequest('https://api.showmoney.app/metasv-signature', {
       responseHandel(response) {
         return new Promise((resolve, reject) => {
           if (response.data.code && response.data.code !== 0) {
@@ -130,9 +132,9 @@ export default class ShowmoneyProvider {
     let res
     try {
       if (method === 'get') {
-        res = await Http.getFetch(url, params, { headers: headers })
+        res = await Http.getFetch(url, params, { headers })
       } else {
-        res = await Http.postFetch(url, params, { headers: headers })
+        res = await Http.postFetch(url, params, { headers })
       }
     } catch (error) {
       const mirrorUrl = this.metaSvMirror + path
@@ -201,8 +203,7 @@ export default class ShowmoneyProvider {
     userName: string
   }): Promise<BaseUtxo> {
     const res = await this.callApi({
-      apiPrefix: 'https://api.showmoney.app',
-      url: '/showpaycore/api/v1/wallet/sendInitSatsForMetaSV',
+      url: '/nodemvc/api/v1/pri/wallet/sendInitSatsForMetaSV',
       params: {
         address: params.address,
         xpub: params.xpub,

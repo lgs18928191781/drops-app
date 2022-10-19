@@ -40,7 +40,9 @@ interface UserState {
 export const useUserStore = defineStore('user', {
   state: () =>
     <UserState>{
-      user: null,
+      user: window.localStorage.getItem('user')
+        ? JSON.parse(window.localStorage.getItem('user')!)
+        : null,
       password: window.localStorage.getItem('password')
         ? decode(window.localStorage.getItem('password')!)
         : '',

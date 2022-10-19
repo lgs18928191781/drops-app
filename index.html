@@ -46,17 +46,17 @@
     <div id="app"></div>
     <script>document.write("<script type='text/javascript' src='https://api.showmoney.app/webcomponents/show-avatar.js?v=" + Date.now() + "'><\/script>");</script>
     <script src="/sensible.browser.min.js"></script>
-    <script src="/bsv.min.js"></script>
-    <script src="/bsv-message.min.js"></script>
-    <script src="/bsv-ecies.min.js"></script>
-    <script src="/bsv-mnemonic.min.js"></script>
+    <script src="/mvc.min.js"></script>
+    <script src="/mvc-message.min.js"></script>
+    <script src="/mvc-ecies.min.js"></script>
+    <script src="/mvc-mnemonic.min.js"></script>
     <script>
-      bsv.Message = bsvMessage;
-      bsv.ECIES = bsvEcies;
-      bsv.Mnemonic = bsvMnemonic;
-      window.bsv = bsv;
-      window.ECIES = bsv.ECIES;
-      window.Mnemonic = bsv.Mnemonic;
+      mvc.Message = mvcMessage;
+      mvc.ECIES = mvcEcies;
+      mvc.Mnemonic = mvcMnemonic;
+      window.mvc = mvc;
+      window.ECIES = mvc.ECIES;
+      window.Mnemonic = mvc.Mnemonic;
     </script>
     
     <script src="/bip39.min.js"></script>

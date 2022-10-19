@@ -5,6 +5,7 @@ import { ElMessageBox } from 'element-plus'
 import { isApp, isIosApp, useRootStore } from '@/stores/root'
 import { openLoading } from './util'
 import { SDK } from './sdk'
+import { Network } from './wallet/hd-wallet'
 
 let loading: any
 router.beforeEach(async (to, from, next) => {
@@ -33,7 +34,7 @@ router.beforeEach(async (to, from, next) => {
   }
 
   if (!userStroe.showWallet) {
-    userStroe.$patch({ wallet: new SDK() })
+    userStroe.$patch({ wallet: new SDK(Network.testnet) })
   }
 
   if (userStroe.isAuthorized) {

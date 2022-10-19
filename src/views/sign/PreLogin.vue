@@ -12,12 +12,8 @@
                   {{ selectedCountry.dialCode }}
                 </div>
               </template>
-              <el-option
-                v-for="country in countriesData"
-                :key="country.iso2"
-                :label="'(' + country.dialCode + ')' + country.name"
-                :value="country.dialCode"
-              />
+              <el-option v-for="country in countriesData" :key="country.iso2"
+                :label="'(' + country.dialCode + ')' + country.name" :value="country.dialCode" />
             </el-select>
           </template>
         </el-input>
@@ -26,18 +22,10 @@
         <el-input v-model="signBaseInfo.email" type="text" placeholder="邮箱地址"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button
-          class="btn-submit"
-          size="large"
-          type="primary"
-          :loading="loading"
-          :disabled="
-            (signBaseInfo.userType === 'email' && signBaseInfo.email === '') ||
-              (signBaseInfo.userType === 'phone' && signBaseInfo.phone === '')
-          "
-          @click="checkUser"
-          >下一步</el-button
-        >
+        <el-button class="btn-submit" size="large" type="primary" :loading="loading" :disabled="
+          (signBaseInfo.userType === 'email' && signBaseInfo.email === '') ||
+            (signBaseInfo.userType === 'phone' && signBaseInfo.phone === '')
+        " @click="checkUser">下一步</el-button>
       </el-form-item>
       <div class="form-tip">未注册用户验证后将自动进入注册并登录</div>
       <div class="types">
@@ -121,14 +109,8 @@ const checkUser = async () => {
       loading.value = false
       return ElMessage.error('此活动只支持新用户参加，请更换账号再试')
     } else {
-      if (rootStore.sendCodeTimer > 0) {
-        setTimeout(() => {
-          loading.value = false
-        }, rootStore.sendCodeTimer * 1000)
-        return ElMessage.error(`请勿频繁操作，${rootStore.sendCodeTimer}s 后再试`)
-      }
       const getCode = await loginGetCode({
-        ...signBaseInfo,
+        ...signBaseInfo.value,
         platform: 1,
         phone:
           signBaseInfo.value.areaCode !== '86'
@@ -136,9 +118,7 @@ const checkUser = async () => {
             : signBaseInfo.value.phone,
       })
       if (getCode.code === 0) {
-        rootStore.$patch({
-          sendCodeTimer: 60,
-        })
+        rootStore.startSendCodeCountdown()
         ElMessage.success('验证码已发送，五分钟内有效。')
         router.replace({ name: 'login' })
       } else {
@@ -155,4 +135,6 @@ if (route.query.redirect) {
   })
 }
 </script>
-<style lang="scss" scoped src="./PreLogin.scss"></style>
+<style lang="scss" scoped src="./PreLogin.scss">
+
+</style>

@@ -1,4 +1,6 @@
 // @ts-ignore
+import mvc from 'mvc-lib'
+// @ts-ignore
 import { Utf8 } from 'crypto-es/lib/core.js'
 // @ts-ignore
 import { AES } from 'crypto-es/lib/aes.js'
@@ -10,21 +12,11 @@ import { MD5 } from 'crypto-es/lib/md5.js'
 import { SHA256 } from 'crypto-es/lib/sha256.js'
 // @ts-ignore
 import Ripemd128 from 'ripemd128-js/ripemd128.js'
-
-// import { signersMap, defaultSigners } from './signers'
-// import { getFtGenesisInfo } from '@/api/olympics'
-// const { bsv } = require('scryptlib')
-// const bsv = require('bsv')
-// @ts-ignore
-import * as bsv from '@sensible-contract/bsv'
-// const { SensibleFT, SensibleNFT } = require('sensible-sdk')
-// const ECIES = require('bsv/ecies')
-// import * as bsv from 'bsv'
 import * as bip39 from 'bip39'
 import { isBtcAddress, isNaturalNumber } from '@/utils/wallet/is'
 import ShowmoneyProvider from './showmoney-provider'
 // @ts-ignore
-import * as ECIES from 'bsv/ecies'
+import * as ECIES from 'mvc-lib/ecies'
 // import * as Mnemonic from 'bsv/mnemonic'
 import { englishWords } from './english'
 import { API_NET, API_TARGET, SensibleNFT, Wallet } from 'sensible-sdk'
@@ -34,10 +26,18 @@ import { IsEncrypt } from '@/enum'
 import { AttachmentItem, PayToItem } from '@/@types/hd-wallet'
 import { CreateNodeOptions, TransferTypes, UtxoItem } from '@/@types/sdk'
 
+const bsv = mvc
+
 export enum Network {
   mainnet = 'mainnet',
   testnet = 'testnet',
 }
+
+export enum MetaIdTag {
+  mainnet = 'metaid',
+  testnet = 'testmetaid',
+}
+
 export interface BaseUserInfoTypes {
   userType: 'phone' | 'email'
   name: string
@@ -119,7 +119,7 @@ interface MakeTxResultTypes {
 }
 interface MetaIdInfoTypes {
   metaId: string
-  metaIdTag: 'metaid' | 'testshowid'
+  metaIdTag: MetaIdTag
   infoTxId: string
   protocolTxId: string
   name?: string
@@ -186,7 +186,6 @@ export const DEFAULTS = {
   feeb: 0.05,
   minAmount: 546,
 }
-const metaIdTag = import.meta.env.VITE_METAIDTAG
 
 export const hdWalletFromMnemonic = async (
   mnemonic: string,
@@ -204,6 +203,7 @@ export const hdWalletFromAccount = async (
   account: BaseUserInfoTypes,
   network: Network = Network.mainnet
 ): Promise<any> => {
+  debugger
   // console.log(account)
   const loginName = account.userType === 'phone' ? account.phone : account.email
   const password = account.password
@@ -229,13 +229,14 @@ export const hdWalletFromAccount = async (
     mnemonic = bip39.entropyToMnemonic(hex, englishWords)
   }
   // const mnemonic = new Mnemonic(Buffer.from(hex)).toString()
-  const wallet = await hdWalletFromMnemonic(mnemonic, account.tag)
+  const wallet = await hdWalletFromMnemonic(mnemonic, account.tag, network)
   const root = wallet.deriveChild(0).deriveChild(0).privateKey
   return {
     mnemonic: mnemonic,
     wallet: wallet,
-    rootAddress: root.toAddress().toString(),
+    rootAddress: root.toAddress(network).toString(),
     rootWif: root.toString(),
+    network,
   }
 }
 
@@ -306,7 +307,6 @@ function reverceFtByteString(str) {
   return ret
 }
 
-const baseApi = import.meta.env.VITE_BASEAPI
 const metasvServiceSecret = 'KxSQqTxhonc5i8sVGGhP1cMBGh5cetVDMfZjQdFursveABTGVbZD'
 const defaultSigners = [
   {
@@ -336,7 +336,7 @@ const defaultSigners = [
   },
 ]
 export class HdWallet {
-  private bsvnet = 'mainnet'
+  private network = Network.mainnet
   public mnemonic: string
   public wallet: bsv.HDPrivateKey
   public provider: ShowmoneyProvider
@@ -380,16 +380,20 @@ export class HdWallet {
   public usedPublicekeyAddress: string[] = [] // 已使用的publickey 地址，避免重复使用
 
   get rootAddress(): string {
-    return this._root.toAddress(Network.mainnet).toString()
+    return this._root.toAddress(this.network).toString()
   }
 
   constructor(mnemonic: string, wallet: bsv.HDPrivateKey) {
+    this.network = wallet.network.name
     this.mnemonic = mnemonic
     this.wallet = wallet
     const root = wallet.deriveChild(0).deriveChild(0).privateKey
     this._root = root
     // this.rootAddress = root.toAddress(Network.mainnet).toString()
-    this.provider = new ShowmoneyProvider(baseApi)
+    this.provider = new ShowmoneyProvider(
+      import.meta.env.VITE_BASEAPI,
+      import.meta.env.VITE_META_SV_API
+    )
   }
 
   static async createFromAccount(
@@ -431,7 +435,7 @@ export class HdWallet {
     return new Promise<MetaIdInfoTypes>(async (resolve, reject) => {
       try {
         debugger
-        const metaIdInfo: MetaIdInfoTypes = await this.getMetaIdInfo(account.address)
+        const metaIdInfo: MetaIdInfoTypes = await this.getMetaIdInfo(this.rootAddress)
         metaIdInfo.pubKey = this._root.toPublicKey().toString()
         //  检查 metaidinfo 是否完整
         if (metaIdInfo.metaId && metaIdInfo.infoTxId && metaIdInfo.protocolTxId) {
@@ -452,6 +456,7 @@ export class HdWallet {
                 token: account.token || '',
                 userName: account.userType === 'phone' ? account.phone : account.email,
               })
+              debugger
               utxos = [initUtxo]
             }
 
@@ -466,7 +471,7 @@ export class HdWallet {
             }
             const rootTx = await this.createNode({
               nodeName: 'Root',
-              metaIdTag: metaIdTag,
+              metaIdTag: MetaIdTag[this.network],
               data: 'NULL',
               dataType: 'NULL',
               encoding: 'NULL',
@@ -489,7 +494,7 @@ export class HdWallet {
             const protocolTx = await this.createNode({
               nodeName: 'Protocols',
               parentTxId: metaIdInfo.metaId,
-              metaIdTag: metaIdTag,
+              metaIdTag: MetaIdTag[this.network],
               data: 'NULL',
               version: 'NULL',
               utxos: utxos,
@@ -508,11 +513,11 @@ export class HdWallet {
             const infoTx = await this.createNode({
               nodeName: 'Info',
               parentTxId: metaIdInfo.metaId,
-              metaIdTag: metaIdTag,
+              metaIdTag: MetaIdTag[this.network],
               data: 'NULL',
               version: 'NULL',
               utxos: utxos,
-              change: infoAddress.publicKey.toAddress().toString(),
+              change: infoAddress.publicKey.toAddress(this.network).toString(),
             })
             console.log('Info', infoTx)
             hexTxs.push(infoTx.hex)
@@ -529,10 +534,10 @@ export class HdWallet {
             const nameTx = await this.createNode({
               nodeName: 'name',
               parentTxId: metaIdInfo.infoTxId,
-              metaIdTag: metaIdTag,
+              metaIdTag: MetaIdTag[this.network],
               data: account.name,
               utxos: utxos,
-              change: infoAddress.publicKey.toAddress().toString(),
+              change: infoAddress.publicKey.toAddress(this.network).toString(),
             })
             console.log('Info', nameTx)
             hexTxs.push(nameTx.hex)
@@ -552,14 +557,15 @@ export class HdWallet {
             //     ? this.keyPathMap.phone.keyPath
             //     : this.keyPathMap.email.keyPath
             // const address = this.getPathPrivateKey(keyPath)
+
             const loginNameTx = await this.createNode({
               nodeName: account.userType,
               parentTxId: metaIdInfo.infoTxId,
-              metaIdTag: metaIdTag,
+              metaIdTag: MetaIdTag[this.network],
               data: loginName,
               encrypt: 1,
               utxos: utxos,
-              change: infoAddress.publicKey.toAddress().toString(),
+              change: infoAddress.publicKey.toAddress(this.network).toString(),
             })
             hexTxs.push(loginNameTx.hex)
             metaIdInfo[account.userType] = loginName
@@ -686,7 +692,7 @@ export class HdWallet {
     payTo = [],
     utxos = [],
     change,
-    metaIdTag = 'metaid',
+    metaIdTag = MetaIdTag[this.network],
     parentTxId = 'NULL',
     data = 'NULL',
     encrypt = IsEncrypt.No,
@@ -738,6 +744,7 @@ export class HdWallet {
         }
         // 数据加密
         if (+encrypt === 1) {
+          debugger
           data = this.eciesEncryptData(data, privateKey, privateKey.publicKey).toString('hex')
         } else {
           if (encoding.toLowerCase() === 'binary') {
@@ -795,7 +802,7 @@ export class HdWallet {
     publicKey: string
   } {
     const privateKey = this.getPathPrivateKey(keyPath)
-    const address = privateKey.toAddress(this.bsvnet).toString()
+    const address = privateKey.toAddress(this.network).toString()
     return {
       address: address,
       publicKey: privateKey.toPublicKey(),
@@ -983,7 +990,7 @@ export class HdWallet {
         const changeOutPut = tx.outputs[tx._changeIndex]
         if (!params) {
           const addressInfo = await this.provider.getPathWithNetWork({
-            address: changeOutPut.script.toAddress().toString(),
+            address: changeOutPut.script.toAddress(this.network).toString(),
             xpub: this.wallet.xpubkey.toString(),
           })
           if (addressInfo) {
@@ -995,7 +1002,7 @@ export class HdWallet {
         }
 
         resolve({
-          address: changeOutPut.script.toAddress().toString(),
+          address: changeOutPut.script.toAddress(this.network).toString(),
           satoshis: changeOutPut.satoshis,
           value: changeOutPut.satoshis,
           amount: changeOutPut.satoshis * 1e-8,
@@ -1590,7 +1597,7 @@ export class HdWallet {
   }> {
     return new Promise<CreateNodeRes>(async (resolve, reject) => {
       if (!params.autoRename) params.autoRename = true
-      if (!params.metaIdTag) params.metaIdTag = 'metaid'
+      if (!params.metaIdTag) params.metaIdTag = MetaIdTag[this.network]
       if (!params.version) params.version = '0.0.9'
       if (!params.data) params.data = 'NULL'
       if (!params.dataType) params.dataType = 'application/json'
@@ -1612,7 +1619,7 @@ export class HdWallet {
             address = this.rootAddress
           } else {
             address = bsv.PublicKey.fromHex(params.publickey)
-              .toAddress(this.bsvnet)
+              .toAddress(this.network)
               .toString()
           }
           const addressInfo = await this.provider.getPathWithNetWork({
@@ -1768,7 +1775,7 @@ export class HdWallet {
           nodeName: params.autoRename
             ? [params.nodeName, nodeAddress.publicKey.toString().slice(0, 11)].join('-')
             : params.nodeName,
-          metaIdTag: metaIdTag,
+          metaIdTag: MetaIdTag[this.network],
           parentTxId: params.brfc.txId,
           appId: params.appId,
           keyPath: keyPath.join('/'),

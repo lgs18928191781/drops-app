@@ -1,54 +1,26 @@
 <template>
   <div class="register-page user-form container">
-    <el-form
-      ref="ruleFormRef"
-      :model="ruleForm"
-      :rules="rules"
-      :label-width="0"
-      class="demo-ruleForm"
-      :size="formSize"
-    >
+    <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" :label-width="0" class="demo-ruleForm" :size="formSize">
       <el-form-item prop="phone" v-if="ruleForm.userType === 'phone'">
-        <el-input
-          v-model="ruleForm.phone"
-          :readonly="true"
-          type="number"
-          placeholder="手机号码"
-        ></el-input>
+        <el-input v-model="ruleForm.phone" :readonly="true" type="number" placeholder="手机号码"></el-input>
       </el-form-item>
       <el-form-item prop="email" v-if="ruleForm.userType === 'email'">
-        <el-input
-          v-model="ruleForm.email"
-          :readonly="true"
-          type="text"
-          placeholder="邮箱地址"
-        ></el-input>
+        <el-input v-model="ruleForm.email" :readonly="true" type="text" placeholder="邮箱地址"></el-input>
       </el-form-item>
       <el-form-item prop="password">
         <el-input v-model="ruleForm.password" type="password" placeholder="密码"></el-input>
       </el-form-item>
       <el-form-item prop="messageCode">
         <div class="flex flex-align-center message-code-warp">
-          <el-input
-            v-model="ruleForm.messageCode"
-            type="number"
-            placeholder="验证码"
-            class="flex1"
-          ></el-input>
+          <el-input v-model="ruleForm.messageCode" type="number" placeholder="验证码" class="flex1"></el-input>
           <el-button size="large" type="primary" @click="sendCode" :disabled="timer > 0">{{
-            timer > 0 ? `${timer}s` : '获取验证码'
+          timer > 0 ? `${timer}s` : '获取验证码'
           }}</el-button>
         </div>
       </el-form-item>
       <el-form-item class="flex">
-        <el-button
-          class="btn-submit"
-          size="large"
-          type="primary"
-          :loading="loading"
-          @click="submitForm(ruleFormRef)"
-          >登录钱包</el-button
-        >
+        <el-button class="btn-submit" size="large" type="primary" :loading="loading" @click="submitForm(ruleFormRef)">
+          登录钱包</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -65,6 +37,7 @@ import {
   hdWalletFromAccount,
   encryptPassword,
   HdWallet,
+  Network,
 } from '@/utils/wallet/hd-wallet'
 import { isApp, useRootStore } from '@/stores/root'
 import { useI18n } from 'vue-i18n'
@@ -144,7 +117,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
           password: ruleForm.password,
         }
         debugger
-        const walletInfo = await createHDWallet(account)
+        const walletInfo = await hdWalletFromAccount(account, import.meta.env.VITE_NET_WORK)
         const hdWallet = new HdWallet(walletInfo.mnemonic, walletInfo.wallet)
         let metaIdInfo
         try {
@@ -184,16 +157,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
   })
 }
 
-const createHDWallet = async (account: BaseUserInfoTypes) => {
-  try {
-    const walletObj = await hdWalletFromAccount(account)
-    console.log(walletObj)
-    return walletObj
-  } catch (error) {
-    console.error(error)
-    throw new Error('生成钱包失败' + error.message)
-  }
-}
 
 const sendCode = () => {
   if (rootStore.sendCodeTimer > 0) return
@@ -214,4 +177,6 @@ const sendCode = () => {
 }
 </script>
 
-<style lang="scss" scoped src="./login.scss"></style>
+<style lang="scss" scoped src="./login.scss">
+
+</style>

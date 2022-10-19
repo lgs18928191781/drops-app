@@ -5438,6 +5438,20 @@ ms@^2.1.1:
   resolved "https://registry.npmmirror.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
 
+mvc-lib@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.npmmirror.com/mvc-lib/-/mvc-lib-1.0.5.tgz#670166ef80d8867a1530ff12d163fb52c682deaf"
+  integrity sha512-Tnh1nJzJbeQJAsLjRgcKUSPJwOIAyIuIz0NkszSHJGGErr0EKrO7vPP33OyGpUmsb1q0f6nlo4gCT+ATVKfbUg==
+  dependencies:
+    aes-js "^3.1.2"
+    bn.js "=4.11.9"
+    bs58 "=4.0.1"
+    clone-deep "^4.0.1"
+    elliptic "6.5.4"
+    hash.js "^1.1.7"
+    inherits "2.0.3"
+    unorm "1.4.1"
+
 mz@^2.4.0:
   version "2.7.0"
   resolved "https://registry.npmmirror.com/mz/-/mz-2.7.0.tgz#95008057a56cafadc2bc63dde7f9ff6955948e32"
@@ -6759,7 +6773,7 @@ request-progress@^3.0.0:
     throttleit "^1.0.0"
 
 "request-sdk@file:.yalc/request-sdk":
-  version "0.0.2"
+  version "0.0.8"
   dependencies:
     axios "^0.27.2"
 

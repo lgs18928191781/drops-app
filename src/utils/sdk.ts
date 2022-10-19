@@ -12,6 +12,7 @@ import {
   DEFAULTS,
   HdWallet,
   hdWalletFromAccount,
+  Network,
   NftTransferResult,
   ProtocolOptions,
 } from '@/utils/wallet/hd-wallet'
@@ -47,8 +48,10 @@ export class SDK {
   appMetaIdJs = (window as any).appMetaIdJsV2
   wallet: HdWallet | null = null
   isInitSdked = false
+  network = Network.mainnet
 
-  constructor() {
+  constructor(network = Network.mainnet) {
+    this.network = network
     if (this.appMetaIdJs) this.isInitSdked = true
   }
 
@@ -68,10 +71,13 @@ export class SDK {
         try {
           const password = decode(localPassword)
           const userInfo = JSON.parse(localUserInfo)
-          const walletObj = await hdWalletFromAccount({
-            ...userInfo,
-            password: password,
-          })
+          const walletObj = await hdWalletFromAccount(
+            {
+              ...userInfo,
+              password: password,
+            },
+            this.network
+          )
           const wallet = new HdWallet(walletObj.mnemonic, walletObj.wallet)
           this.wallet = wallet
           this.isInitSdked = true

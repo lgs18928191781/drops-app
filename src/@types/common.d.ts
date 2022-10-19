@@ -18,24 +18,22 @@ declare interface Token {
 }
 
 declare interface UserInfo {
-  showId: string
+  name: string
+  pk2: string
+  tag: 'new' | 'old'
+  email: string
+  phone: string
+  token: string
+  appToken: string
   metaId: string
-  xpub: string
   address: string
-  pubKey: string
+  register: string
+  lastLoginTime: number | null
+  enCryptedMnemonic: string
+  userType: string
   infoTxId: string
   protocolTxId: string
-  name: string
-  nameEncrypt: string
-  phone: string
-  phoneEncrypt: string
-  email: string
-  emailEncrypt: string
-  headUrl: string
-  headUrlEncrypt: string
-  avatarTxId: string
-  timestamp: number
-  userType: UserType
+  rootAddress: string
   flag?: boolean
 }
 
