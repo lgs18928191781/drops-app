@@ -1,168 +1,87 @@
 import { router } from '@/router'
-import {
-  checkUserToken,
-  isAuthorized,
-  isGetedKycInfo,
-  isSetedisTestUser,
-  setIsTestUser,
-  setKycInfo,
-  user,
-  userLogout,
-} from '@/stores/user'
+import { useUserStore } from '@/stores/user'
 import { ElMessageBox } from 'element-plus'
 
-import {
-  isApp,
-  isIosApp,
-  isSetedSystemConfig,
-  marketDefalutClassify,
-  setSystemConfig,
-  setWallet,
-  showWallet,
-} from '@/stores/root'
+import { isApp, isIosApp, useRootStore } from '@/stores/root'
 import { openLoading } from './util'
+import { SDK } from './sdk'
 
 let loading: any
 router.beforeEach(async (to, from, next) => {
+  const userStroe = useUserStore()
+  const rootStore = useRootStore()
   loading = openLoading()
-  if (to.path === '/genesis' && !to.params.genesis) {
-    // 兼容旧路由，过渡一段时间后可删除
-    next({
-      name: 'genesis',
-      params: {
-        genesis: to.query.genesis,
-        codehash: to.query.codehash,
-      },
-    })
-  } else if (to.path === '/nft' && !to.params.genesis) {
-    // 兼容旧路由，过渡一段时间后可删除
-    next({
-      name: 'nft',
-      params: {
-        genesis: to.query.genesis,
-        codehash: to.query.codehash,
-        tokenIndex: to.query.tokenIndex,
-      },
-    })
-  } else if (to.name === 'market') {
-    // market 跳转到对应分类页
-    next({
-      name: 'marketClassify',
-      params: {
-        classify: marketDefalutClassify.value,
-      },
-    })
-  } else if (to.name === 'marketClassify' && to.params.classify === 'search' && !to.query.keyword) {
-    const searchs: string[] = JSON.parse(localStorage.getItem('marketSearch')!)
-    next({
-      name: 'marketClassify',
-      params: {
-        classify: marketDefalutClassify.value,
-      },
-      query: {
-        keyword: searchs[0],
-      },
-    })
-  } else {
-    // 设置页面标题
-    document.title = `${to.meta.title ? to.meta.title + ' - ' : ''}` + import.meta.env.VITE_AppName
+  // 设置页面标题
+  document.title = `${to.meta.title ? to.meta.title + ' - ' : ''}` + import.meta.env.VITE_AppName
 
-    // 获取系统配置信息
-    if (!isSetedSystemConfig.value) {
-      await setSystemConfig()
+  if (to.name === 'register' && userStroe.isAuthorized) {
+    // 用户已登陆时，先退出登录
+    await userStroe.logout()
+    next()
+  }
+
+  // 获取换算费率
+  if (!rootStore.isGetedExchangeRate) {
+    rootStore.getExchangeRate()
+  }
+
+  if (userStroe.showWallet) {
+    // App 未获取用户信息，先去获取用户信息
+    if (!userStroe.isAuthorized && isApp) {
+      await userStroe.showWallet.appSetUserInfo()
+    }
+  }
+
+  if (!userStroe.showWallet) {
+    userStroe.$patch({ wallet: new SDK() })
+  }
+
+  if (userStroe.isAuthorized) {
+    // 用户已登录但未初始化sdk 里面钱包， 则去 初始化 sdk 里面的钱包
+    if (!userStroe.showWallet.isInitSdked) {
+      await userStroe.showWallet.initWallet()
     }
 
-    // if (isIosApp) {
-    //   if (from.name === 'sale' && to.name === 'genesis') {
-    //     to.meta.keepAlive = false
-    //   } else {
-    //     to.meta.keepAlive = true
-    //   }
-    // }
-
-    if (to.name === 'register' && isAuthorized.value) {
-      // 用户已登陆时，先退出登录
-      userLogout('/register')
+    // 没有拿用户实名信息时， 先要去拿用户实名信息
+    if (!userStroe.isGetedKycInfo) {
+      await userStroe.setKycInfo()
     }
 
-    if (!showWallet.value) {
-      setWallet()
+    //  设置是否是否测试用户
+    if (!userStroe.isSetedisTestUser) {
+      await userStroe.setIsTestUser()
     }
 
-    if (showWallet.value) {
-      // App 未获取用户信息，先去获取用户信息
-      if (!isAuthorized.value && isApp) {
-        await showWallet.value.appSetUserInfo()
-      }
+    // 检查用户的token
+    if (!isApp) {
+      await userStroe.checkUserToken(to.fullPath)
     }
+  }
 
-    if (isAuthorized.value) {
-      // 用户已登录但未初始化sdk 里面钱包， 则去 初始化 sdk 里面的钱包
-      if (!showWallet.value!.isInitSdked) {
-        await showWallet.value!.initWallet()
-      }
-
-      // 没有拿用户实名信息时， 先要去拿用户实名信息
-      if (!isGetedKycInfo.value) {
-        await setKycInfo()
-      }
-
-      //  设置是否是否测试用户
-      if (!isSetedisTestUser.value) {
-        await setIsTestUser()
-      }
-
-      // 修复有问题的账号
-      // if (user.value!.metaId === 'null') {
-      //   // @ts-ignore
-      //   const wallet = toRaw(store.state.wallet)
-      //   // @ts-ignore
-      //   const result = await wallet!.initMetaIdNode({
-      //     ...user.value,
-      //     name: user.value?.phone
-      //       ? user.value.phone
-      //       : user.value?.email
-      //       ? user.value.email
-      //       : '新用户',
-      //     appToken: user.value!.token!,
-      //   })
-
-      //   ElMessageBox.alert('账号修复成功，请重新登陆', '温馨提示', { showClose: false }).then(() => {
-      //     userLogout()
-      //   })
-      // }
-
-      // 检查用户的token
-      if (!isApp) {
-        await checkUserToken(to.fullPath)
-      }
-    }
-
-    // 检查跳转 路由是否有权限
-    const isAuth = to.meta?.isAuth ? to.meta?.isAuth : false
-    if (isAuth) {
-      if (isIosApp && user.value?.flag) {
+  // 检查跳转 路由是否有权限
+  const isAuth = to.meta?.isAuth ? to.meta?.isAuth : false
+  if (isAuth) {
+    if (isIosApp && userStroe.user!.flag) {
+      next()
+    } else {
+      if (userStroe.isAuthorized) {
         next()
       } else {
-        if (isAuthorized.value) {
-          next()
-        } else {
+        if (loading) loading.close()
+        const result = await ElMessageBox.confirm('请先登录再操作', '温馨提示', {
+          confirmButtonText: '注册/登录',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }).catch(() => {
           if (loading) loading.close()
-          const result = await ElMessageBox.confirm('请先登录再操作', '温馨提示', {
-            confirmButtonText: '注册/登录',
-            cancelButtonText: '取消',
-            type: 'warning',
-          }).catch(() => {
-            if (loading) loading.close()
-          })
-          if (result === 'confirm') {
-            next({ name: 'preLogin' })
-          }
+        })
+        if (result === 'confirm') {
+          next({ name: 'preLogin' })
         }
       }
-    } else {
-      next()
     }
+  } else {
+    next()
   }
 })
 

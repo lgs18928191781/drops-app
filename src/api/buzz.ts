@@ -1,5 +1,4 @@
 import { InviteActivityTag } from '@/enum'
-import { isAuthorized, user } from '@/stores/user'
 import HttpRequest from 'request-sdk'
 
 const env = import.meta.env

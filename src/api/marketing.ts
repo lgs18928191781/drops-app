@@ -1,15 +1,18 @@
 import { PayPlatform } from '@/enum'
-import { isAuthorized, user } from '@/stores/user'
+import { useUserStore } from '@/stores/user'
 import HttpRequest from 'request-sdk'
 
+const userStore = useUserStore()
 // const Pay = new HttpRequest(`${import.meta.env.VITE_WXCOREAPI}/showpaycore`, {
 // @ts-ignore
 const Marketing = new HttpRequest(import.meta.env.VITE_Showmoney_Marketing_Api, {
   header: {
-    accessKey: () => (isAuthorized.value ? user.value!.token! : undefined),
+    accessKey: () => (userStore.isAuthorized ? userStore.user?.token! : undefined),
     userName: () => {
-      if (isAuthorized) {
-        return user.value!.userType === 'email' ? user.value!.email! : user.value!.phone!
+      if (userStore.isAuthorized) {
+        return userStore.user?.userType === 'email'
+          ? userStore.user?.email!
+          : userStore.user?.phone!
       }
     },
     timestamp: () => new Date().getTime(),

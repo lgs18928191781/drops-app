@@ -1,13 +1,17 @@
-import { isAuthorized, user, UserType } from '@/stores/user'
+import { useUserStore } from '@/stores/user'
 import HttpRequest from 'request-sdk'
+
+const userStore = useUserStore()
 
 // @ts-ignore
 const Core = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/showpaycore`, {
   header: {
-    accessKey: () => (isAuthorized.value ? user.value!.token! : undefined),
+    accessKey: () => (userStore.isAuthorized ? userStore.user!.token! : undefined),
     userName: () => {
-      if (isAuthorized) {
-        return user.value!.userType === 'email' ? user.value!.email! : user.value!.phone!
+      if (userStore.isAuthorized) {
+        return userStore.user!.userType === 'email'
+          ? userStore.user!.email!
+          : userStore.user!.phone!
       }
     },
     timestamp: () => new Date().getTime(),
@@ -16,9 +20,9 @@ const Core = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/showpaycore`, {
 
 export const UpdateUserInfo = (): Promise<apiResponse> => {
   const params = {
-    userType: user.value?.userType,
-    phone: user.value?.phone ? user.value?.phone : undefined,
-    email: user.value?.email ? user.value?.email : undefined,
+    userType: userStore.user!.userType,
+    phone: userStore.user!.phone ? userStore.user!.phone : undefined,
+    email: userStore.user!.email ? userStore.user!.email : undefined,
   }
   return Core.post('/api/v1/user/setuserinfo', params)
 }

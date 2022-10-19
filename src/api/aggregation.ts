@@ -1,5 +1,5 @@
 import HttpRequest from 'request-sdk'
-// @ts-ignore
+
 const aggregation = new HttpRequest(import.meta.env.VITE_AggregationBaseUrl, {
   header: {
     SiteConfigMetanetId: import.meta.env.VITE_SiteConfigMetanetId,

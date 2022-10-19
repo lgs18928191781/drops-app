@@ -1,11 +1,11 @@
 <template>
   <div class="user-form login-form container">
     <el-form>
-      <el-form-item v-if="tempUserInfo.userType === 'phone'" prop="phone">
-        <el-input v-model="tempUserInfo.phone" type="number" max-lenght="15" placeholder="手机号码">
+      <el-form-item v-if="signBaseInfo.userType === 'phone'" prop="phone">
+        <el-input v-model="signBaseInfo.phone" type="number" max-lenght="15" placeholder="手机号码">
           <!-- <template #prepend><vue-country-intl v-model="tempUserInfo.areaCode"></vue-country-intl></template> -->
           <template #prepend>
-            <el-select v-model="tempUserInfo.areaCode" filterable value-key="dialCode">
+            <el-select v-model="signBaseInfo.areaCode" filterable value-key="dialCode">
               <template #prefix>
                 <div v-if="selectedCountry" class="selected">
                   <!-- {{ selectedCountry.name}} -->
@@ -22,8 +22,8 @@
           </template>
         </el-input>
       </el-form-item>
-      <el-form-item v-if="tempUserInfo.userType === 'email'" prop="email">
-        <el-input v-model="tempUserInfo.email" type="text" placeholder="邮箱地址"></el-input>
+      <el-form-item v-if="signBaseInfo.userType === 'email'" prop="email">
+        <el-input v-model="signBaseInfo.email" type="text" placeholder="邮箱地址"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button
@@ -32,8 +32,8 @@
           type="primary"
           :loading="loading"
           :disabled="
-            (tempUserInfo.userType === 'email' && tempUserInfo.email === '') ||
-              (tempUserInfo.userType === 'phone' && tempUserInfo.phone === '')
+            (signBaseInfo.userType === 'email' && signBaseInfo.email === '') ||
+              (signBaseInfo.userType === 'phone' && signBaseInfo.phone === '')
           "
           @click="checkUser"
           >下一步</el-button
@@ -41,11 +41,11 @@
       </el-form-item>
       <div class="form-tip">未注册用户验证后将自动进入注册并登录</div>
       <div class="types">
-        <a v-if="tempUserInfo.userType !== 'phone'" @click="changeUserType('phone')">
+        <a v-if="signBaseInfo.userType !== 'phone'" @click="changeUserType(SignUserType.Phone)">
           手机登录
           <Icon icon="bi:chevron-right" width="16" />
         </a>
-        <a v-if="tempUserInfo.userType !== 'email'" @click="changeUserType('email')">
+        <a v-if="signBaseInfo.userType !== 'email'" @click="changeUserType(SignUserType.Email)">
           邮箱登录
           <Icon icon="bi:chevron-right" width="16" />
         </a>
@@ -55,42 +55,44 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Icon } from '@iconify/vue'
-import { setSendCodeTimer, sendCodeTimer, setRedirectUri } from '@/stores/root'
-import { emptyUserInfo, updateUser, UserType } from '@/stores/user'
 import { userCheck, loginGetCode } from '@/api/index'
 import { countriesData } from '@/utils/country-data'
+import { SignUserType } from '@/enum'
+import { useRootStore } from '@/stores/root'
+import { storeToRefs } from 'pinia'
 
+const rootStore = useRootStore()
+const { signBaseInfo } = storeToRefs(rootStore)
 const route = useRoute()
 const router = useRouter()
-const tempUserInfo = reactive(emptyUserInfo)
 const loading = ref(false)
 
-const changeUserType = (type: UserType) => {
-  tempUserInfo.userType = type
-  tempUserInfo.phone = ''
-  tempUserInfo.email = ''
+const changeUserType = (type: SignUserType) => {
+  signBaseInfo.value.userType = type
+  signBaseInfo.value.phone = ''
+  signBaseInfo.value.email = ''
 }
 
 const selectedCountry = computed(() => {
-  const country = countriesData.find(country => country.dialCode === tempUserInfo.areaCode)
+  const country = countriesData.find(country => country.dialCode === signBaseInfo.value.areaCode)
   return country
 })
 
 const checkUser = async () => {
-  if (tempUserInfo.userType === 'phone') {
+  if (signBaseInfo.value.userType === 'phone') {
     if (
-      !tempUserInfo.phone!.match(
+      !signBaseInfo.value.phone!.match(
         /^1(3[0-9]|4[01456879]|5[0-35-9]|6[2567]|7[0-8]|8[0-9]|9[0-35-9])\d{8}$/
       )
     ) {
       return ElMessage.error('手机号码格式不正确')
     }
   } else {
-    if (!tempUserInfo.email!.match(/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/)) {
+    if (!signBaseInfo.value.email!.match(/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/)) {
       return ElMessage.error('邮箱格式不正确')
     }
   }
@@ -98,15 +100,14 @@ const checkUser = async () => {
   loading.value = true
 
   const res = await userCheck({
-    ...tempUserInfo,
+    ...signBaseInfo.value,
     phone:
-      tempUserInfo.areaCode !== '86'
-        ? '' + tempUserInfo.areaCode + tempUserInfo.phone
-        : tempUserInfo.phone,
+      signBaseInfo.value.areaCode !== '86'
+        ? '' + signBaseInfo.value.areaCode + signBaseInfo.value.phone
+        : signBaseInfo.value.phone,
   })
-  updateUser(tempUserInfo)
   if (res.code === 0) {
-    if (tempUserInfo.userType === 'email' && import.meta.env.MODE === 'prod') {
+    if (signBaseInfo.value.userType === 'email' && import.meta.env.MODE === 'prod') {
       loading.value = false
       return ElMessage.error('暂不支持邮箱注册')
     } else {
@@ -120,22 +121,24 @@ const checkUser = async () => {
       loading.value = false
       return ElMessage.error('此活动只支持新用户参加，请更换账号再试')
     } else {
-      if (sendCodeTimer.value > 0) {
+      if (rootStore.sendCodeTimer > 0) {
         setTimeout(() => {
           loading.value = false
-        }, sendCodeTimer.value * 1000)
-        return ElMessage.error(`请勿频繁操作，${sendCodeTimer.value}s 后再试`)
+        }, rootStore.sendCodeTimer * 1000)
+        return ElMessage.error(`请勿频繁操作，${rootStore.sendCodeTimer}s 后再试`)
       }
       const getCode = await loginGetCode({
-        ...tempUserInfo,
+        ...signBaseInfo,
         platform: 1,
         phone:
-          tempUserInfo.areaCode !== '86'
-            ? '+' + tempUserInfo.areaCode + tempUserInfo.phone
-            : tempUserInfo.phone,
+          signBaseInfo.value.areaCode !== '86'
+            ? '+' + signBaseInfo.value.areaCode + signBaseInfo.value.phone
+            : signBaseInfo.value.phone,
       })
       if (getCode.code === 0) {
-        setSendCodeTimer(60)
+        rootStore.$patch({
+          sendCodeTimer: 60,
+        })
         ElMessage.success('验证码已发送，五分钟内有效。')
         router.replace({ name: 'login' })
       } else {
@@ -147,7 +150,9 @@ const checkUser = async () => {
 }
 
 if (route.query.redirect) {
-  setRedirectUri(route.query.redirect as string)
+  rootStore.$patch({
+    redirectUri: route.query.redirect as string,
+  })
 }
 </script>
 <style lang="scss" scoped src="./PreLogin.scss"></style>

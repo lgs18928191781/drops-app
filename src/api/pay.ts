@@ -1,16 +1,12 @@
-import { isAuthorized, user } from '@/stores/user'
+import { getToken, getUserName } from '@/stores/user'
 import HttpRequest from 'request-sdk'
 
 // const Pay = new HttpRequest(`${import.meta.env.VITE_WXCOREAPI}/showpaycore`, {
 // @ts-ignore
 const Pay = new HttpRequest(import.meta.env.VITE_Cloud_Pay_Api, {
   header: {
-    accessKey: () => (isAuthorized.value ? user.value!.token! : undefined),
-    userName: () => {
-      if (isAuthorized) {
-        return user.value!.userType === 'email' ? user.value!.email! : user.value!.phone!
-      }
-    },
+    accessKey: () => getToken(),
+    userName: () => getUserName(),
     timestamp: () => new Date().getTime(),
   },
   responseHandel: response => {

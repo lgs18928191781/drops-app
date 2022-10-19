@@ -17,12 +17,15 @@ import 'virtual:svg-icons-register'
 import Image from '@/components/Image/Image.vue'
 import Icon from '@/components/Icon/Icon.vue'
 import GlobalDialog from '@/components/GlobalDialog/index.vue'
+import { createPinia } from 'pinia'
+
 const app = createApp(App)
 
 // 挂载全局过滤器
 app.config.globalProperties.$filters = {
   ...filters,
 }
+const pinia = createPinia()
 
 // 全局组件
 app.component('UserAvatar', UserAvatar)
@@ -31,6 +34,7 @@ app.component('Icon', Icon)
 app.component('Dialog', GlobalDialog)
 
 app
+  .use(pinia)
   .use(router)
   .use(ElLoading)
   .use(i18n)

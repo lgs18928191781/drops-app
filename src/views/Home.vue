@@ -8,4 +8,6 @@ import { user } from '@/stores/user' // const isDark = useDark()
 // const toggleDark = () => {}
 </script>
 
-<style lang="scss" src="./Home.scss"></style>
+<style lang="scss" src="./Home.scss">
+
+</style>

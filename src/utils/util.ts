@@ -5,11 +5,10 @@ import {
   ElMessageBoxOptions,
   LoadingParentElement,
 } from 'element-plus'
-import { user, isAuthorized } from '@/stores/user'
 import { router } from '@/router'
 import Decimal from 'decimal.js-light'
 import axios from 'axios'
-import { exchangeRate, isAndroidApp, isApp, isIOS, showWallet } from '@/stores/root'
+import { isAndroidApp, isApp, isIOS, useRootStore } from '@/stores/root'
 import { GetBankCards, GetWalletBalance, Inactivation } from '@/api/pay'
 import { BlindboxUUIDStatus, CloudWalletStatus, IsEncrypt, PayPlatform, PayStatus } from '@/enum'
 import { CheckBlindboxOrderStatus } from '@/api/v3'
@@ -26,6 +25,7 @@ import { QueryFindMetaDataForPost } from '@/api/showman'
 import { GetFeeInfo } from '@/api/broad'
 import { GetMyLegalAmount, LegalOffsale } from '@/api/legal'
 import { AttachmentItem } from '@/@types/hd-wallet'
+import { useUserStore } from '@/stores/user'
 
 export function randomString() {
   return Math.random()
@@ -35,7 +35,8 @@ export function randomString() {
 
 export function checkSdkStatus(path: string, params?: ElMessageBoxOptions) {
   return new Promise<void>((resolve, reject) => {
-    if (!isAuthorized.value) {
+    const userStroe = useUserStore()
+    if (!userStroe.isAuthorized) {
       openLoginConfirm(path, params)
     } else {
       resolve()
@@ -45,7 +46,8 @@ export function checkSdkStatus(path: string, params?: ElMessageBoxOptions) {
 
 export function openLoginConfirm(path: string, params?: ElMessageBoxOptions) {
   return new Promise<void>((resolve, reject) => {
-    if (isAuthorized.value) {
+    const userStroe = useUserStore()
+    if (userStroe.isAuthorized) {
       resolve()
     } else {
       ElMessageBox.confirm('请先登录再操作', '温馨提示', {
@@ -56,7 +58,7 @@ export function openLoginConfirm(path: string, params?: ElMessageBoxOptions) {
       })
         .then(result => {
           if (result === 'confirm') {
-            showWallet.value?.toLogin(path)
+            userStroe.showWallet?.toLogin(path)
           }
         })
         .catch(() => {
@@ -134,6 +136,7 @@ export function getUserBuyExtraFee(params: {
     coin_service: number
   }>(async (resolve, reject) => {
     try {
+      const userStroe = useUserStore()
       let coin_service = 0
       let platformPercentage = params.isFirstSell ? firstPlatform : platform
       let royaltyPercentage = params.isFirstSell ? firstRoyalty : royalty
@@ -148,7 +151,7 @@ export function getUserBuyExtraFee(params: {
           const res = await GetFeeInfo({
             codehash: params.codehash,
             genesis: params.genesis,
-            address: user.value?.address,
+            address: userStroe.user?.address,
             ignoreIndex: params.ignoreIndex,
           })
           if (res.code === 0 && res.data) {
@@ -253,6 +256,7 @@ export function calcCnyPrice(params: {
   isLegal?: boolean
 }) {
   return new Promise<number>(async resolve => {
+    const rootStore = useRootStore()
     //  法币价格
     let cnyAmount = 0
     if (params.isLegal) {
@@ -269,13 +273,13 @@ export function calcCnyPrice(params: {
         // cny 平台手续费
         let cnyPlatformFee = new Decimal(res.platformFee)
           .div(Math.pow(10, 8))
-          .mul(exchangeRate.value.cnyRate)
+          .mul(rootStore.exchangeRate.cnyRate)
           .toNumber()
         if (cnyPlatformFee < 0.01) cnyPlatformFee = 0.01
         // cny 版税
         let cnyRoyaltyFee = new Decimal(res.royaltyFee)
           .div(Math.pow(10, 8))
-          .mul(exchangeRate.value.cnyRate)
+          .mul(rootStore.exchangeRate.cnyRate)
           .toNumber()
         if (cnyRoyaltyFee < 0.01) cnyRoyaltyFee = 0.01
         cnyPlatformFee = new Decimal(new Decimal(cnyPlatformFee).toFixed(2)).toNumber()
@@ -284,7 +288,7 @@ export function calcCnyPrice(params: {
         // cny nft pirce
         let cnyNFTPrice = new Decimal(params.amount)
           .div(Math.pow(10, 8))
-          .mul(exchangeRate.value.cnyRate)
+          .mul(rootStore.exchangeRate.cnyRate)
           .toNumber()
         if (cnyNFTPrice < 0.01) cnyNFTPrice = 0.01
         cnyNFTPrice = new Decimal(new Decimal(cnyNFTPrice).toFixed(2)).toNumber()
@@ -293,7 +297,7 @@ export function calcCnyPrice(params: {
         let cnyConversionServiceFee = new Decimal(params.amount)
           .div(Math.pow(10, 8))
           .mul(res.coin_service)
-          .mul(exchangeRate.value.cnyRate)
+          .mul(rootStore.exchangeRate.cnyRate)
           .toNumber()
         if (cnyConversionServiceFee < 0.01) cnyConversionServiceFee = 0.01
         cnyConversionServiceFee = new Decimal(
@@ -366,9 +370,10 @@ export function checkAppHasMethod(methodName: string) {
 
 export function offSaleNFT(params: { name: string; uuid: string }) {
   return new Promise<boolean>(async resolve => {
+    const userStroe = useUserStore()
     const loading = ElLoading.service()
     try {
-      const signRes: string = await showWallet.value!.sigMessage(user.value!.metaId!, '0/0')
+      const signRes: string = await userStroe.showWallet.sigMessage(userStroe.user?.metaId!, '0/0')
       if (signRes) {
         const res = await LegalOffsale({ uuid: params.uuid, sig: signRes })
         if (res.code === 0) {
@@ -436,9 +441,10 @@ export function toUrl(url: string | undefined) {
 }
 
 export async function downloadFile(url: string, name = 'file') {
+  const userStroe = useUserStore()
   if (isAndroidApp) {
     await checkAppHasMethod('saveShareImage')
-    window.appMetaIdJsV2.saveShareImage(user.value?.token, url, name)
+    window.appMetaIdJsV2.saveShareImage(userStroe.user?.token, url, name)
   } else {
     const a = document.createElement('a')
     a.href = url
@@ -499,10 +505,11 @@ export function urlToBase64(url: string): Promise<string> {
 
 export function getRuoxiWalletBalance() {
   return new Promise<number>(async resolve => {
+    const userStroe = useUserStore()
     let amount = 0
     const res = await GetMyLegalAmount({
       currency: 'CNY',
-      metaid: user.value!.metaId!,
+      metaid: userStroe.user!.metaId,
     }).catch(() => resolve(amount))
     if (res?.code === 0) {
       if (res.data.amount < 0) res.data.amount = 0
@@ -514,9 +521,10 @@ export function getRuoxiWalletBalance() {
 
 export function getCloudWalletBalance() {
   return new Promise<number>(async resolve => {
+    const userStroe = useUserStore()
     let amount = 0
     const res = await GetWalletBalance({
-      bizUserNo: user.value!.address!,
+      bizUserNo: userStroe.user!.address!,
       accountType: '01',
     }).catch(() => resolve(amount))
     if (res?.success) {
@@ -548,8 +556,9 @@ export function getWalletBalance() {
 }
 
 export async function toCreateWallet(status: CloudWalletStatus, fullPath: string) {
+  const userStroe = useUserStore()
   // 控制是否有权限使用余额支付
-  const result = await IsWtiteUser(user.value!.metaId!)
+  const result = await IsWtiteUser(userStroe.user!.metaId!)
   if (!result) {
     return ElMessage.error('抱歉，您暂无权限使用此功能')
   }
@@ -563,7 +572,7 @@ export async function toCreateWallet(status: CloudWalletStatus, fullPath: string
   } else {
     const loading = openLoading()
     const res = await Inactivation({
-      address: user.value!.address!,
+      address: userStroe.user!.address!,
       frontUrl: window.origin + '/wallet/check?form' + encodeURIComponent(fullPath),
     }).catch(error => {
       loading.close()
@@ -630,9 +639,10 @@ export function checkOrderStatus(params: {
 
 export function getUserBankCard() {
   return new Promise<BankCardItem[]>(async resolve => {
+    const userStroe = useUserStore()
     const cards: BankCardItem[] = []
     const res = await GetBankCards({
-      address: user.value!.address!,
+      address: userStroe.user!.address,
     }).catch(error => {
       alertCatchError(error)
       resolve(cards)

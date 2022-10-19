@@ -7,7 +7,9 @@
           <span>{{ $t('logo_title') }}</span>
         </div>
         <div class="search">
-          <el-icon :size="18"><Search /></el-icon>
+          <el-icon :size="18">
+            <Search />
+          </el-icon>
         </div>
       </div>
       <div class="header-right flex flex-align-center">
@@ -16,7 +18,9 @@
         </UseDark> -->
         <div class="lang" @click="setLang">
           <span>{{ currentLang }}</span>
-          <el-icon><CaretBottom /></el-icon>
+          <el-icon>
+            <CaretBottom />
+          </el-icon>
         </div>
 
         <el-button class="login-btn"> {{ $t('connectWallet') }}</el-button>
@@ -46,7 +50,9 @@ function setLang() {
   window.localStorage.setItem('lang', lang)
 }
 
-function toggleDark() {}
+function toggleDark() { }
 </script>
 
-<style lang="scss" src="./Header.scss"></style>
+<style lang="scss" src="./Header.scss">
+
+</style>
