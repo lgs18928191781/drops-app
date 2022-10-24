@@ -31,6 +31,14 @@ export const router = createRouter({
         },
       ],
     },
+
+    // Showtalk
+    {
+      path: '/talk',
+      name: 'talk',
+      component: () => import('@/views/talk/Index.vue'),
+    },
+
     // 404
     { path: '/404', name: '404', component: NotFoundPage },
     {
