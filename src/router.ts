@@ -8,7 +8,11 @@ export const router = createRouter({
   history: routerHistory,
   strict: true,
   routes: [
-    { path: '/', component: Home },
+    { path: '/', redirect: '/buzz' },
+    {
+      path: '/buzz',
+      component: Home,
+    },
     {
       path: '/sign',
       name: 'sign',
