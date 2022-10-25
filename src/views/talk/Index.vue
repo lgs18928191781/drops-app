@@ -1,9 +1,15 @@
 <template>
-  <RouterView />
-  <div class="font-bold text-green-400 text-3xl">Hello World</div>
+  <!-- <div class="relative h-screen w-screen"> -->
+  <TheHeader />
+  <ChannelInput />
+  <!-- </div> -->
+
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import TheHeader from './components/TheHeader.vue'
+import ChannelInput from './components/ChannelInput.vue'
+</script>
 
 <style lang="scss" scoped>
 

@@ -1,5 +1,5 @@
 <template>
-  <Header />
+  <!-- <Header /> -->
   <el-container>
     <el-aside width="200px">
       <CollapseItem></CollapseItem>
@@ -10,17 +10,10 @@
         <Transition name="fade">
           <div class="transition-warp">
             <KeepAlive>
-              <component
-                :is="Component"
-                :key="route.fullPath"
-                v-if="route.meta && route.meta.keepAlive"
-              />
+              <component :is="Component" :key="route.fullPath" v-if="route.meta && route.meta.keepAlive" />
             </KeepAlive>
-            <component
-              :is="Component"
-              :key="route.fullPath"
-              v-if="!route.meta || (route.meta && !route.meta.keepAlive)"
-            />
+            <component :is="Component" :key="route.fullPath"
+              v-if="!route.meta || (route.meta && !route.meta.keepAlive)" />
           </div>
         </Transition>
       </router-view>
@@ -44,6 +37,7 @@ import sideLeftBottom from '@/components/Side/side-left-bottom.vue'
   height: 100%;
   min-height: 0;
   margin: 0 10px;
+
   .transition-warp {
     height: 100%;
   }

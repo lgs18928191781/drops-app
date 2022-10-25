@@ -6,7 +6,7 @@
 html {
 
   body {
-    background: $bgColor;
+    // background: $bgColor;
     font-size: 16px;
     font-family: 'SF Pro', 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
       'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
@@ -24,7 +24,7 @@ html {
     }
   }
 
-  &.dark {      
+  &.dark {
     body {
       background: $bgDarkColor;
     }
