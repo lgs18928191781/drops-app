@@ -1,10 +1,10 @@
 <template>
   <div
-    class="fixed left-0 right-0 top-0 flex items-center px-4 divide-x h-12 border-b-2 border-solid border-gray-100 bg-white z-50">
+    class="fixed left-0 right-0 top-0 flex items-center px-4 divide-x h-12 border-b-2 border-solid border-gray-100 bg-white z-40">
     <div class="max-w-[60%] flex items-center">
-      <Icon name="bars" class="w-6 h-6 text-gray-800 mx-2" />
+      <Icon name="bars" class="w-6 h-6 text-gray-800 mx-2" @click="$emit('openServerSection')" />
 
-      <div class="text-base leading-tight no-wrap grow whitespace-nowrap pl-2 pr-3 py-1 truncate">{{ props.title }}
+      <div class="text-base leading-tight no-wrap grow whitespace-nowrap pl-2 pr-3 py-1 truncate">{{ props.name }}
       </div>
     </div>
     <div class="flex items-center justify-between grow">
@@ -14,7 +14,7 @@
         {{ props.description }}
       </div>
       <Teleport to="body">
-        <ScreenModal v-if="showDescModal" :title="props.title" :description="props.description"
+        <ScreenModal v-if="showDescModal" :name="props.name" :description="props.description"
           @close-modal="showDescModal = false" />
       </Teleport>
 
@@ -29,7 +29,7 @@
 import { ref } from 'vue'
 import ScreenModal from './ScreenModal.vue'
 
-const props = defineProps(['title', 'description', 'showMembers'])
+const props = defineProps(['name', 'description', 'showMembers'])
 const showDescModal = ref(false)
 </script>
 
