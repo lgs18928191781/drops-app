@@ -1,5 +1,6 @@
 import HttpRequest from 'request-sdk'
 import messages from './mockMessages.json'
+import members from './mockMembers.json'
 const env = import.meta.env
 
 const TalkApi = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation`, {
@@ -57,6 +58,14 @@ export const getChannelMessages = (channelId: string): Promise<any> => {
   return new Promise(resolve => {
     setTimeout(() => {
       resolve(messages)
-    }, 3000)
+    }, 1000)
+  })
+}
+
+export const getChannelMembers = (channelId: string): Promise<any> => {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve(members)
+    }, 1000)
   })
 }

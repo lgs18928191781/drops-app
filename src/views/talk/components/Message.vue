@@ -4,7 +4,7 @@
       class="w-10 h-10 shrink-0" />
     <div class="ml-4 grow pr-12">
       <div class="flex items-end space-x-2">
-        <div class="text-amber-500 font-medium text-sm">
+        <div class="font-medium text-sm" :class="randomNameColor">
           {{ message.nickName }}
         </div>
         <div class="text-gray-400 text-xs">{{ $filters.dateTimeFormat(message.timestamp, 'HH:mm') }}</div>
@@ -45,6 +45,15 @@ type Message = {
 }
 
 const props = defineProps(['message'])
+
+const randomNameColor = computed(() => {
+  const colors = ['text-blue-500', 'text-green-500', 'text-yellow-500', 'text-red-500', 'text-indigo-500', 'text-amber-500']
+  // 将用户名转换为数字
+  const name = props.message.nickName
+  const nameCode = name.split('').reduce((acc: number, cur: any) => acc + cur.charCodeAt(0), 0)
+
+  return colors[nameCode % colors.length]
+})
 
 const decryptedMessage = computed(() => {
   const { message } = props

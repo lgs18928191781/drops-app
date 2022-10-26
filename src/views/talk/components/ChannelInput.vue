@@ -20,7 +20,7 @@
       <!-- 右侧发送按钮 -->
       <div class="w-11 flex items-center">
         <div class="pl-3 border-l-2">
-          <div class="transition-all ease-in-out duration-300"
+          <div class="transition-all ease-in-out duration-500"
             :class="[hasInput ? 'text-indigo-500 scale-110 -rotate-6' : 'text-gray-400']">
             <Icon name="send" class="w-5 h-5" />
           </div>
