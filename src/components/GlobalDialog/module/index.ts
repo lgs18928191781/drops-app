@@ -14,4 +14,3 @@ Object.keys(moduleCompoment).forEach((file: string) => {
 for (let file in moduleName) {
   CompomentArray.push(file)
 }
-console.log('CompomentArray', CompomentArray)

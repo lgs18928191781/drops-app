@@ -40,7 +40,13 @@ export const router = createRouter({
     {
       path: '/talk',
       name: 'talk',
-      component: () => import('@/views/talk/Index.vue'),
+      redirect: '/talk/channels/1/1',
+      // component: () => import('@/views/talk/Index.vue'),
+    },
+    {
+      path: '/talk/channels/:serverId/:channelId',
+      name: 'talkChannel',
+      component: () => import('@/views/talk/Channel.vue'),
     },
 
     // 404

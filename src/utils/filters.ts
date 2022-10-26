@@ -23,5 +23,6 @@ export function metafile(metafile: string, width = 235) {
   if (width) {
     query += `/resize,m_lfit,w_${width}`
   }
+  console.log(`${fileUrl}?${query}`)
   return `${fileUrl}?${query}`
 }

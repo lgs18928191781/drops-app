@@ -49,7 +49,7 @@ module.exports = {
       xs: ['12PX', '16PX'],
       xsm: ['13PX', '19PX'],
       sm: ['14PX', '20PX'],
-      base: ['16PX', '24PX'],
+      base: ['16PX', '22PX'],
       lg: ['18PX', '26PX'],
       xl: ['20PX', '28PX'],
       '2xl': ['24PX', '32PX'],

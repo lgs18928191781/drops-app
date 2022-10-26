@@ -4,13 +4,13 @@
       <ElSkeletonItem variant="image" />
     </template>
     <template #default>
-      <img ref="imgRef" :src="url" class="image" @error="fail" />
+      <img ref="imgRef" :src="url" :class="imageClass" @error="fail" />
     </template>
   </ElSkeleton>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { DB } from '@/utils/db'
 import { metafile } from '@/utils/filters'
 
@@ -19,14 +19,18 @@ const Default =
 
 interface Props {
   src: string
-  customClass: string
-  width: number
+  customClass?: string
+  width?: number
 }
 const props = withDefaults(defineProps<Props>(), {
   width: 235,
 })
 
 const imgRef = ref()
+
+const imageClass = computed(() => {
+  return props.customClass ? props.customClass + ' image' : 'image'
+})
 
 const isSkeleton = ref(true)
 const url = ref('')
@@ -67,4 +71,6 @@ defineExpose({
 })
 </script>
 
-<style lang="scss" scoped src="./Image.scss"></style>
+<style lang="scss" scoped src="./Image.scss">
+
+</style>
