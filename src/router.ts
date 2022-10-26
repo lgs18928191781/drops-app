@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory, RouterView } from 'vue-router'
-import Home from '@/views/Home.vue'
 const NotFoundPage = () => import('@/views/404.vue')
 import { ElMessage } from 'element-plus'
 import i18n from '@/utils/i18n'
@@ -8,10 +7,10 @@ export const router = createRouter({
   history: routerHistory,
   strict: true,
   routes: [
-    { path: '/', redirect: '/buzz' },
+    { path: '/', component: () => import('@/views/Home.vue') },
     {
       path: '/buzz',
-      component: Home,
+      component: () => import('@/views/buzz/Layout.vue'),
     },
     {
       path: '/sign',

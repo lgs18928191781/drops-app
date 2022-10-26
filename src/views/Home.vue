@@ -1,46 +1,35 @@
 <template>
-  <el-container>
-    <el-aside width="200px">
-      <CollapseItem></CollapseItem>
-      <sideLeftBottom></sideLeftBottom>
-    </el-aside>
-    <div class="main">
-      <router-view v-slot="{ Component, route }">
-        <Transition name="fade">
-          <div class="transition-warp">
-            <KeepAlive>
-              <component :is="Component" :key="route.fullPath" v-if="route.meta && route.meta.keepAlive" />
-            </KeepAlive>
-            <component :is="Component" :key="route.fullPath"
-              v-if="!route.meta || (route.meta && !route.meta.keepAlive)" />
-          </div>
-        </Transition>
-      </router-view>
+    <RouterLink to="/sign/in">
+        <ElButton>登陆</ElButton>
+    </RouterLink>
+    <RouterLink to="/sign/up">
+        <ElButton>注册</ElButton>
+    </RouterLink>
+    <ElButton @click="userStore.logout()">退出登录</ElButton>
+    <br />
+    <br />
+    <br />
+    <div>
+        <RouterLink to="/buzz">
+            <ElButton>Buzz</ElButton>
+        </RouterLink>
+        <RouterLink to="/talk">
+            <ElButton>talk</ElButton>
+        </RouterLink>
     </div>
-    <el-aside width="200px">Aside</el-aside>
-  </el-container>
+    <br />
+    <br />
+    <br />
+    <div>用户：{{ userStore.user }}</div>
 </template>
 
 <script setup lang="ts">
-import { KeepAlive, Transition } from 'vue'
-import Header from './components/Header/Header.vue'
-import Footer from './components/Footer/Footer.vue'
-import CollapseItem from '@/components/Collapse/collapse-item.vue'
-import sideLeftBottom from '@/components/Side/side-left-bottom.vue'
-import { user } from '@/stores/user' // const isDark = useDark()
-// // const isDark = useDark()
-// const toggleDark = () => {}
+import { RouterLink } from 'vue-router';
+import { useUserStore } from '@/stores/user';
+
+const userStore = useUserStore()
 </script>
 
-<style lang="scss" src="./Home.scss">
-.main {
-  flex: 1;
-  height: 100%;
-  min-height: 0;
-  margin: 0 10px;
+<style lang="scss" scoped>
 
-  .transition-warp {
-    height: 100%;
-  }
-}
 </style>
