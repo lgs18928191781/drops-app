@@ -1,5 +1,6 @@
 <template>
-  <div class="fixed inset-0 bg-white h-screen w-screen z-50">
+  <div class="bg-white fixed inset-0 h-screen w-screen z-50 lg:static lg:w-78"
+    :class="[showServerSection ? '' : 'hidden lg:block']">
     <div class="h-full w-full flex">
       <div class="w-18 h-full bg-gray-100 p-3">
         <div class=" pb-3 mb-3 border-b-2 broder-solid border-gray-300">
@@ -12,7 +13,7 @@
         </div>
 
       </div>
-      <div class="h-full grow bg-white">
+      <div class="h-full grow bg-gray-50">
         <div class="w-full px-4 py-3 text-base font-semibold text-gray-800">{{ props.server.name }}</div>
 
         <div class="pt-8">
@@ -33,7 +34,7 @@
 import { useRouter } from 'vue-router';
 const router = useRouter()
 
-const props = defineProps(['server'])
+const props = defineProps(['server', 'showServerSection'])
 
 const emit = defineEmits(['closeServerSection'])
 

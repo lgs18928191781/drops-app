@@ -12,14 +12,14 @@
 
       <div class="w-full py-0.5 text-gray-400 text-xs" v-if="isGroupAction">加入了群聊</div>
 
-      <div class="w-full py-0.5" v-else-if="isNftEmoji">
-        <Image :src="decryptedMessage"  customClass="max-w-[60%]" />
+      <div class="w-full" v-else-if="isNftEmoji">
+        <Image :src="decryptedMessage"  customClass="max-w-[80%] md:max-w-[50%] lg:max-w-[400px] lg:max-w-[400px] py-0.5" />
         
         <NftLabel class="w-8 mt-1"/>
       </div>
 
       <div class="w-full py-0.5" v-else-if="isImage">
-        <Image :src="decryptedMessage" customClass="max-w-[80%] rounded" />
+        <Image :src="decryptedMessage" customClass="max-w-[80%] md:max-w-[50%] lg:max-w-[400px] rounded py-0.5" />
       </div>
 
       <div class="text-sm text-gray-600 font-normal py-0.5" v-else>{{ decryptedMessage }}</div>

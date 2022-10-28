@@ -1,8 +1,8 @@
 <template>
   <div
-    class="fixed left-0 right-0 top-0 flex items-center px-4 divide-x h-12 border-b-2 border-solid border-gray-100 bg-white z-40">
+    class="fixed left-0 right-0 top-0 flex items-center px-4 divide-x h-12 border-b-2 border-solid border-gray-100 bg-white z-40 lg:absolute">
     <div class="max-w-[60%] flex items-center">
-      <Icon name="bars" class="w-6 h-6 text-gray-800 mx-2" @click="$emit('openServerSection')" />
+      <Icon name="bars" class="w-6 h-6 text-gray-800 mx-2 lg:hidden" @click="$emit('openServerSection')" />
 
       <div class="text-base leading-tight no-wrap grow whitespace-nowrap pl-2 pr-3 py-1 truncate">{{ props.name }}
       </div>
@@ -18,8 +18,9 @@
           @close-modal="showDescModal = false" />
       </Teleport>
 
-      <Icon name="users" class="w-6 h-6 mx-1 ransition-all ease-in-out duration-300"
-        :class="[props.showMembers ? 'text-indigo-600' : 'text-gray-600']" @click="$emit('toggleMemberList')" />
+      <Icon name="users" class="w-6 h-6 mx-1 ransition-all ease-in-out duration-300 lg:hover:text-indigo-600"
+        :class="[props.showMembers ? 'text-indigo-600 lg:text-gray-600' : 'text-gray-600']"
+        @click="$emit('toggleMemberList')" />
 
     </div>
   </div>

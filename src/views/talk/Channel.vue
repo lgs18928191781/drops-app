@@ -1,18 +1,24 @@
 <template>
-  <div class="relative w-screen h-screen">
-    <ServerSection :server="server" @close-server-section="showServerSection = false" v-if="showServerSection" />
+  <div class="relative w-screen h-screen lg:flex">
+    <ServerSection :server="server" @close-server-section="showServerSection = false"
+      :showServerSection="showServerSection" />
 
-    <TheHeader :name="channel.name" :description="channel.description" :showMembers="showMembers"
-      @toggle-member-list="showMembers = !showMembers" @open-server-section="showServerSection = true" />
+    <div class="lg:grow lg:h-screen lg:relative lg:flex">
+      <TheHeader :name="channel.name" :description="channel.description" :showMembers="showMembers"
+        @toggle-member-list="showMembers = !showMembers" @open-server-section="showServerSection = true" />
 
-    <ChannelMemberList v-show="showMembers" :members="members" />
 
-    <div class="pt-12 pb-14 h-screen">
-      <div class="h-full overflow-y-scroll py-4 overflow-x-hidden space-y-4  px-4">
-        <Message v-for="message in messages" :message="message" />
+      <div class="pt-12 pb-14 h-screen lg:relative w-full">
+        <div class="h-full overflow-y-scroll py-4 overflow-x-hidden space-y-4  px-4">
+          <Message v-for="message in messages" :message="message" />
+        </div>
+
+        <ChannelInput />
       </div>
+
+      <ChannelMemberList v-show="showMembers" :members="members" />
     </div>
-    <ChannelInput />
+
   </div>
 </template>
 
