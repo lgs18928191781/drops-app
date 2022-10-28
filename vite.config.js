@@ -14,12 +14,18 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import inject from '@rollup/plugin-inject'
 import stdLibBrowser from 'node-stdlib-browser'
 import { viteExternalsPlugin } from 'vite-plugin-externals'
+import nodePolyfills from 'rollup-plugin-polyfill-node'
+
 const pathSrc = path.resolve(__dirname, 'src')
-export default ({ mode }) => {
+export default ({ mode, command }) => {
   // 加载环境配置文件
   const env = loadEnv(mode, process.cwd())
   return defineConfig({
     plugins: [
+      command === 'serve' &&
+        nodePolyfills({
+          include: ['node_modules/**/*.js', new RegExp('node_modules/.vite/.*js')],
+        }),
       {
         ...inject({
           global: [require.resolve('node-stdlib-browser/helpers/esbuild/shim'), 'global'],
@@ -116,6 +122,7 @@ export default ({ mode }) => {
       minify: mode === 'prod' ? true : false,
       sourcemap: mode === 'prod' ? false : 'inline',
       rollupOptions: {
+        plugins: [nodePolyfills()],
         output: {
           sourcemap: mode === 'prod' ? false : 'inline',
         },
@@ -125,6 +132,9 @@ export default ({ mode }) => {
           drop_console: mode === 'prod',
           drop_debugger: mode === 'prod',
         },
+      },
+      commonjsOptions: {
+        transformMixedEsModules: true,
       },
     },
     sourcemap: mode === 'prod' ? false : 'inline',

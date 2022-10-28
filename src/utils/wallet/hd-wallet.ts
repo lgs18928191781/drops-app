@@ -298,6 +298,12 @@ export const decryptMnemonic = (encryptedMnemonic: string, password: string): st
   return mnemonic.split(',').join(' ')
 }
 
+export const signature = (message: string, privateKey: string) => {
+  const hash = bsv.crypto.Hash.sha256(Buffer.from(message))
+  const sign = bsv.crypto.ECDSA.sign(hash, bsv.PrivateKey(privateKey))
+  return sign.toBuffer().toString('base64')
+}
+
 function reverceFtByteString(str) {
   str = str.substr(0, str.length - 8)
   let ret = ''
