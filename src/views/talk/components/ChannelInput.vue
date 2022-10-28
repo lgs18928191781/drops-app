@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed bottom-0 left-0 right-0 px-4 pb-4">
+  <div class="fixed bottom-0 left-0 right-0 px-4 pb-4 lg:absolute">
     <div class="bg-gray-100 rounded-lg h-11 flex">
       <!-- 左侧 + 按钮 -->
       <div class="w-14 flex items-center justify-center text-gray-600">
@@ -18,7 +18,7 @@
 
 
       <!-- 右侧发送按钮 -->
-      <div class="w-11 flex items-center">
+      <div class="w-11 flex items-center lg:hidden">
         <div class="pl-3 border-l-2">
           <div class="transition-all ease-in-out duration-500"
             :class="[hasInput ? 'text-indigo-500 scale-110 -rotate-6' : 'text-gray-400']">
