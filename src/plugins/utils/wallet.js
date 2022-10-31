@@ -55,8 +55,8 @@ function connect(flag) {
         web3Modal
           .connect()
           .then(async provider => {
+            debugger
             if (provider) {
-              debugger
               window.provider = provider
               window.web3 = provider.type == 'TRON' ? provider.web3 : new Web3(provider)
               if (window.web3.trx) {
@@ -88,7 +88,6 @@ function connect(flag) {
             reject(error)
           })
       } catch (error) {
-        debugger
         if (web3Modal) {
           web3Modal.clearCachedProvider()
         }
@@ -127,7 +126,8 @@ async function _addChain(provider, networkConfig) {
 }
 
 async function disconnect() {
-  if (window.provider == null) {
+  emitter.emit('disconnect')
+  if (window.provider === null) {
     return
   }
   if (typeof window.provider.disconnect == 'function') {
@@ -137,10 +137,6 @@ async function disconnect() {
   window.provider = null
   window.connectedAddress = null
   window.web3Modal = null
-
-  store.dispatch('setCurrentAccount', window.connectedAddress)
-  window.localStorage.removeItem('pw')
-  Vue.prototype.$metamaskeventBus.$metamaskeventBus.emit('WALLET_DISCONNECTED')
 }
 
 function subscribeProvider(provider) {
@@ -154,16 +150,15 @@ function subscribeProvider(provider) {
     console.log('chainChanged')
   })
   provider.on('networkChanged', () => {
-    console.log('networkChanged')
+    disconnect()
   })
-  provider.on('accountsChanged', () => {
-    console.log('accountsChanged')
-    Vue.prototype.$eventBus.$emit('web3AccountChange')
-    window.location.reload()
+  provider.on('accountsChanged', res => {
+    debugger
   })
 }
 
 export default {
   connect,
   disconnect,
+  emitter,
 }

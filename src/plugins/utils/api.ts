@@ -15,6 +15,7 @@ export interface MetaMaskLoginUserInfo {
   phone: string
   pk2: string
   register: string
+  registerType?: string
   tag: 'new' | 'old'
   token: string
 }

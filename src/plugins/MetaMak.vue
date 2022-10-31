@@ -1,90 +1,134 @@
 <template>
-    <ElDialog custom-class="dialogWrap" :title="dialogTitle" :model-value="modelValue" :close-on-click-modal="false"
-        center>
-        <div class="signWrap" v-if="signType == 1 || signType == 4">
-            <div class="logoWrap">
-                <img src="@/assets/images/MetaMask_Fox.svg.png" alt="" />
-            </div>
-            <div class="tips" v-if="signType == 1">
-                <span>{{ $t('useMetaMaskSign') }}</span>
-            </div>
-            <div class="tips" v-else-if="signType == 4">
-                <span>{{ $t('useMeraMaskSucc') }}</span>
-                <span>{{ $t('setMetaIDInfo') }}</span>
-            </div>
-        </div>
-        <div v-if="noWallet" class="noWalletTips">
-            <img src="@/assets/images/MetaMask_Fox.svg.png" alt="" />
-            <a href="https://metamask.io/download/" target="blank">{{
-                    $t('downloadMetaMask')
-            }}</a>
-        </div>
+  <ElDialog
+    custom-class="dialogWrap"
+    :title="dialogTitle"
+    :model-value="modelValue"
+    :close-on-click-modal="false"
+    center
+  >
+    <div class="signWrap" v-if="signType == 1 || signType == 4">
+      <div class="logoWrap">
+        <img src="@/assets/images/MetaMask_Fox.svg.png" alt="" />
+      </div>
+      <div class="tips" v-if="signType == 1">
+        <span>{{ $t('useMetaMaskSign') }}</span>
+      </div>
+      <div class="tips" v-else-if="signType == 4">
+        <span>{{ $t('useMeraMaskSucc') }}</span>
+        <span>{{ $t('setMetaIDInfo') }}</span>
+      </div>
+    </div>
+    <div v-if="noWallet" class="noWalletTips">
+      <img src="@/assets/images/MetaMask_Fox.svg.png" alt="" />
+      <a href="https://metamask.io/download/" target="blank">{{ $t('downloadMetaMask') }}</a>
+    </div>
 
-        <div v-if="signType == 3" class="metamaskDialogContentWrap">
-            <el-form :model="ruleForm" :rules="rules" ref="ruleFormRef" label-width="100px" class="dialog-ruleForm">
-                <el-form-item label="设置昵称" prop="name">
-                    <el-input placeholder="想让大家怎么称呼您呢..." v-model="ruleForm.name"></el-input>
-                </el-form-item>
-                <el-form-item label="设置密码" prop="pass">
-                    <el-input placeholder="请设置你的密码" type="password" v-model="ruleForm.pass" autocomplete="off">
-                    </el-input>
-                </el-form-item>
-                <el-form-item label="确认密码" prop="checkPass">
-                    <el-input placeholder="请确认密码" type="password" v-model="ruleForm.checkPass" autocomplete="off">
-                    </el-input>
-                </el-form-item>
-                <el-form-item class="btnItem">
-                    <el-button type="primary" @click="submitForm()">{{ $t('createMetaId') }}</el-button>
-                    <!-- <el-button @click="resetForm('ruleForm')"
+    <div v-if="signType == 3" class="metamaskDialogContentWrap">
+      <el-form
+        :model="ruleForm"
+        :rules="rules"
+        ref="ruleFormRef"
+        label-width="100px"
+        class="dialog-ruleForm"
+      >
+        <el-form-item label="设置昵称" prop="name">
+          <el-input placeholder="想让大家怎么称呼您呢..." v-model="ruleForm.name"></el-input>
+        </el-form-item>
+        <el-form-item label="设置密码" prop="pass">
+          <el-input
+            placeholder="请设置你的密码"
+            type="password"
+            v-model="ruleForm.pass"
+            autocomplete="off"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="checkPass">
+          <el-input
+            placeholder="请确认密码"
+            type="password"
+            v-model="ruleForm.checkPass"
+            autocomplete="off"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item class="btnItem">
+          <el-button type="primary" @click="submitForm()">{{ $t('createMetaId') }}</el-button>
+          <!-- <el-button @click="resetForm('ruleForm')"
                             >取消</el-button
                         > -->
-                </el-form-item>
-            </el-form>
-        </div>
+        </el-form-item>
+      </el-form>
+    </div>
 
-        <div v-else-if="signType == 2" class="metamaskDialogContentWrap">
-            <el-form :model="ruleForm" :rules="rules" ref="ruleFormRef" label-width="80px" class="dialog-ruleForm">
-                <el-form-item label="MetaID:" prop="MetaidOrAdress">
-                    <el-input placeholder="请输入MetaID或地址进行绑定" v-model="ruleForm.MetaidOrAdress"></el-input>
-                </el-form-item>
-                <el-form-item label="密码：" prop="pass">
-                    <el-input placeholder="请输入showmoney登录密码" type="password" v-model="ruleForm.pass" autocomplete="off">
-                    </el-input>
-                </el-form-item>
-                <el-form-item class="btnItem">
-                    <el-button type="primary" @click="submitForm()">绑定</el-button>
-                    <el-button @click="resetForm()">取消</el-button>
-                </el-form-item>
-            </el-form>
-        </div>
+    <div v-else-if="signType == 2" class="metamaskDialogContentWrap">
+      <el-form
+        :model="ruleForm"
+        :rules="rules"
+        ref="ruleFormRef"
+        label-width="80px"
+        class="dialog-ruleForm"
+      >
+        <el-form-item label="MetaID:" prop="MetaidOrAdress">
+          <el-input
+            placeholder="请输入MetaID或地址进行绑定"
+            v-model="ruleForm.MetaidOrAdress"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="密码：" prop="pass">
+          <el-input
+            placeholder="请输入showmoney登录密码"
+            type="password"
+            v-model="ruleForm.pass"
+            autocomplete="off"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item class="btnItem">
+          <el-button type="primary" @click="submitForm()">绑定</el-button>
+          <el-button @click="resetForm()">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
 
-        <div v-else-if="signType == 4" class="selectLoginWrap">
-            <div class="item">
-                <el-button type="primary" @click="selectLoginType(SignType.isBindMetaidOrAddressLogin)">{{
-                        $t('isMetaIdUser')
-                }}</el-button>
-                <span>{{ $t('hasMetaid') }}</span>
-            </div>
-            <div class="item">
-                <el-button type="primary" @click="selectLoginType(SignType.isRegister)">{{
-                        $t('iamnewuser')
-                }}</el-button>
-                <span>{{ $t('registerNewUser') }}</span>
-            </div>
-        </div>
-        <div v-else-if="signType == 5">
-            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="80px" class="dialog-ruleForm">
-                <el-form-item label="密码" prop="pass">
-                    <el-input placeholder="请输入showmoney登录密码" type="password" v-model="ruleForm.pass" autocomplete="off">
-                    </el-input>
-                </el-form-item>
-                <el-form-item class="btnItem">
-                    <el-button type="primary" @click="submitForm()">登录</el-button>
-                    <el-button @click="resetForm()">取消</el-button>
-                </el-form-item>
-            </el-form>
-        </div>
-        <!-- 
+    <div v-else-if="signType == 4" class="selectLoginWrap">
+      <div class="item">
+        <el-button type="primary" @click="selectLoginType(SignType.isBindMetaidOrAddressLogin)">{{
+          $t('isMetaIdUser')
+        }}</el-button>
+        <span>{{ $t('hasMetaid') }}</span>
+      </div>
+      <div class="item">
+        <el-button type="primary" @click="selectLoginType(SignType.isRegister)">{{
+          $t('iamnewuser')
+        }}</el-button>
+        <span>{{ $t('registerNewUser') }}</span>
+      </div>
+    </div>
+    <div v-else-if="signType == 5">
+      <el-form
+        :model="ruleForm"
+        :rules="rules"
+        ref="ruleForm"
+        label-width="80px"
+        class="dialog-ruleForm"
+      >
+        <el-form-item label="密码" prop="pass">
+          <el-input
+            placeholder="请输入showmoney登录密码"
+            type="password"
+            v-model="ruleForm.pass"
+            autocomplete="off"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item class="btnItem">
+          <el-button type="primary" @click="submitForm()">登录</el-button>
+          <el-button @click="resetForm()">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+    <!-- 
             <span
                 v-if="signType == 1 && !noWallet"
                 slot="footer"
@@ -95,7 +139,7 @@
                 >
                 <el-button type="primary" @click="sign">确 定</el-button>
             </span> -->
-    </ElDialog>
+  </ElDialog>
 </template>
 
 <script setup lang="ts">
@@ -108,7 +152,7 @@ import keccak256 from 'keccak256'
 import { getRandomWord, loginByHashData, loginByMetaidOrAddress, mnemoicLogin, setHashData, loginByNewUser } from './utils/api';
 import type { MetaMaskLoginUserInfo } from './utils/api';
 import { encode, decode } from 'js-base64'
-import { aesEncrypt, decryptMnemonic, encryptMnemonic, hdWalletFromMnemonic, Network, signature } from '@/utils/wallet/hd-wallet';
+import { aesEncrypt, createMnemonic, decryptMnemonic, encryptMnemonic, HdWallet, hdWalletFromMnemonic, Network, signature } from '@/utils/wallet/hd-wallet';
 import { bsv } from 'sensible-sdk';
 
 export interface MetaMaskLoginRes {
@@ -120,7 +164,6 @@ export interface MetaMaskLoginRes {
 interface Props {
     modelValue: boolean
     hdWalletFromMnemonic: (decodeMnemonic: string, tag: 'new' | 'old', network: Network) => Promise<bsv.HDPrivateKey>
-    registerMetaId: (params: { name: string, password: string }) => Promise<MetaMaskLoginRes>
     password?: string | null
 }
 
@@ -132,10 +175,14 @@ enum SignType {
     isInputPassword = 5,
 }
 
+
+
 const props = withDefaults(defineProps<Props>(), {})
-const emit = defineEmits(['update:modelValue', 'success'])
+const emit = defineEmits(['update:modelValue', 'success', 'logout'])
 
-
+Wallet.emitter.on('disconect', () => {
+    emit('logout')
+})
 const i18n = useI18n()
 const signType = ref(SignType.isLogined)
 const noWallet = ref(false)
@@ -208,10 +255,7 @@ watch(() => props.modelValue, async () => {
                 noWallet.value = true
             } else {
                 noWallet.value = false
-
-                setTimeout(() => {
-                    sign()
-                }, 0.5 * 1000)
+                sign()
             }
         }
 
@@ -262,38 +306,44 @@ function gethashData() {
     })
 }
 
-async function sign() {
-    const loading = ElLoading.service({ text: i18n.t('siging') })
-    if (!(window as any).web3?.eth) {
-        loading.close()
-        emit('update:modelValue', false)
-        return ElMessage.error(i18n.t('noLoginWeb3'))
-    }
-    if (!hashData.value) {
-        hashData.value = await gethashData()
-    }
-    //检查hash是否已绑定
-    const getMnemonicRes = await loginByHashData({
-        hashData: hashData.value,
-    })
-    if (getMnemonicRes.code === 0 && getMnemonicRes.data) {
-        // 有密码直接登录， 没有密码就要用户输入
-        if (props.password || ruleForm.pass) {
-            const res = await loginByMnemonic(getMnemonicRes.data)
-            emit('update:modelValue', false)
-            emit('success', {
-                ...res,
-                password: password.value
+function sign() {
+    return new Promise(async (resolve, reject) => {
+        const loading = ElLoading.service({ text: i18n.t('siging') })
+        try {
+            if (!(window as any).web3?.eth) {
+                throw new Error(i18n.t('noLoginWeb3'))
+            }
+            if (!hashData.value) {
+                hashData.value = await gethashData()
+            }
+            //检查hash是否已绑定
+            const getMnemonicRes = await loginByHashData({
+                hashData: hashData.value,
             })
+            if (getMnemonicRes.code === 0 && getMnemonicRes.data) {
+                // 有密码直接登录， 没有密码就要用户输入
+                if (props.password || ruleForm.pass) {
+                    const res = await loginByMnemonic(getMnemonicRes.data)
+                    emit('update:modelValue', false)
+                    emit('success', {
+                        ...res,
+                        password: password.value
+                    })
+                    loading.close()
+                } else {
+                    signType.value = SignType.isInputPassword
+                    loading.close()
+                }
+            } else {
+                signType.value = SignType.isPending
+                loading.close()
+            }
+        } catch (error) {
             loading.close()
-        } else {
-            signType.value = SignType.isInputPassword
-            loading.close()
+            emit('update:modelValue', false)
+            ElMessage.error((error as any).message)
         }
-    } else {
-        signType.value = SignType.isPending
-        loading.close()
-    }
+    })
 }
 
 function hashSignLogin(mnemonic: string) {
@@ -442,6 +492,7 @@ function submitForm() {
                     //    //新用户
                     const loading = ElLoading.service({ text: `${i18n.t('registerLoading')}` })
                     const res = await createMetaidAccount(hashData.value)
+                    debugger
                     emit('success', res)
                     loading.close()
                     emit('update:modelValue', false)
@@ -465,7 +516,7 @@ function bindingMetaidOrAddressLogin(str: string) {
             const mnemonic = await loginByMetaidOrAddress(params)
             if (mnemonic.code == 0) {
                 const res = await loginByMnemonic(mnemonic.data)
-                await sendHash(hashData.value)
+                await sendHash(hashData.value, res.userInfo)
                 resolve(res)
             }
         } catch (error) {
@@ -475,22 +526,19 @@ function bindingMetaidOrAddressLogin(str: string) {
 }
 
 
-function sendHash(hash: string, metaId = '') {
+function sendHash(hash: string, userInfo: MetaMaskLoginUserInfo) {
     return new Promise(async (resolve, reject) => {
-        if (!metaId) {
-            metaId = userInfo.val.metaId
-        }
         try {
             const res = await setHashData({
-                accessKey: userInfo.val.token,
+                accessKey: userInfo.token,
                 userName:
-                    userInfo.val.register == 'email' ||
-                        userInfo.val.registerType == 'email'
-                        ? userInfo.val.email
-                        : userInfo.val.phone,
+                    userInfo.register == 'email' ||
+                        userInfo.registerType == 'email'
+                        ? userInfo.email
+                        : userInfo.phone,
                 timestamp: +new Date(),
                 hashData: hash,
-                metaId: metaId,
+                metaId: userInfo.metaId,
             })
             if (res.code == 0) {
                 resolve(res.msg)
@@ -503,92 +551,101 @@ function sendHash(hash: string, metaId = '') {
 
 function createMetaidAccount(hash: string) {
     return new Promise<MetaMaskLoginRes>(async (resolve, reject) => {
-        const res = await props.registerMetaId({
-            name: ruleForm.name,
-            password: ruleForm.pass
-        })
-
-        const encryptmnemonic = encryptMnemonic(
-            res.userInfo.enCryptedMnemonic!,
-            res.password
-        )
-
-        const reportUserInfoRes = await loginByNewUser({
-            address: res.userInfo.address,
-            xPub: res.wallet.xpubkey.toString(),
-            pubKey: res.wallet.deriveChild(0).deriveChild(0).publicKey.toString(),
-            hashData: hash,
-            mnemonic: encryptmnemonic,
-            userName: res.userInfo.name,
-        })
-        if (reportUserInfoRes.code === 0) {
-            const reportMetaIdRes = await sendHash(hash, res.userInfo.metaId)
-            if (reportMetaIdRes.code === 0) {
-                resolve(res)
+        try {
+            const mnemonic = await createMnemonic(
+                (window as any).connectedAddress,
+                encode(ruleForm.pass)
+            )
+            const hdWallet = await hdWalletFromMnemonic(mnemonic, 'new', Network.testnet)
+            const HdWalletInstance = new HdWallet(mnemonic, hdWallet)
+            const account: any = {
+                name: ruleForm.name,
             }
+            const address = hdWallet
+                .deriveChild(0)
+                .deriveChild(0)
+                .privateKey.toAddress()
+                .toString()
+            //
+            const pubKey = hdWallet
+                .deriveChild(0)
+                .deriveChild(0)
+                .publicKey.toString()
+
+            const encryptmnemonic = encryptMnemonic(
+                mnemonic,
+                decode(getPw()!)
+            )
+
+            const userInfo = await loginByNewUser({
+                address: address,
+                xPub: hdWallet.xpubkey,
+                pubKey: pubKey,
+                hashData: hash,
+                mnemonic: encryptmnemonic,
+                userName: account.name,
+            })
+            if (userInfo.code == 0) {
+                ; (account.accessKey = userInfo.data.token),
+                    (account.userName =
+                        userInfo.data.registerType == 'email'
+                            ? userInfo.data.email
+                            : userInfo.data.phone)
+                debugger
+                const { metaId } = await HdWalletInstance.initMetaIdNode({
+                    ...account,
+                    userType: userInfo.data.registerType,
+                    email: userInfo.data.email,
+                    phone: userInfo.data.phone
+                })
+                const newUserInfo = Object.assign(userInfo.data, {
+                    metaId: metaId,
+                })
+                await sendHash(hash, newUserInfo)
+                resolve({
+                    userInfo: newUserInfo,
+                    wallet: hdWallet,
+                    password: ruleForm.pass
+                })
+            }
+        } catch (error) {
+            reject(error)
         }
 
-        // const mnemonic = await createMnemonic(
-        //     window.connectedAddress,
-        //     encode(ruleForm.pass)
-        // )
-        // const hdWallet = await hdWalletFromMnemonic(mnemonic)
-        // this.$store.dispatch('setHdWallet', hdWallet)
-        // const HdWalletInstance = new HdWallet(hdWallet)
-        // const account = {
+        // const res = await props.registerMetaId({
         //     name: ruleForm.name,
-        // }
-        // const address = hdWallet
-        //     .deriveChild(0)
-        //     .deriveChild(0)
-        //     .privateKey.toAddress()
-        //     .toString()
-        // //
-        // const pubKey = hdWallet
-        //     .deriveChild(0)
-        //     .deriveChild(0)
-        //     .publicKey.toString()
+        //     password: ruleForm.pass
+        // })
 
         // const encryptmnemonic = encryptMnemonic(
-        //     mnemonic,
-        //     decode(getPw()!)
+        //     res.userInfo.enCryptedMnemonic!,
+        //     res.password
         // )
 
-        // const userInfo = await loginByNewUser({
-        //     address: address,
-        //     xPub: hdWallet.xpubkey,
-        //     pubKey: pubKey,
-        //     // metaId: metaId,
+        // const reportUserInfoRes = await loginByNewUser({
+        //     address: res.userInfo.address,
+        //     xPub: res.wallet.xpubkey.toString(),
+        //     pubKey: res.wallet.deriveChild(0).deriveChild(0).publicKey.toString(),
         //     hashData: hash,
         //     mnemonic: encryptmnemonic,
-        //     userName: account.name,
+        //     userName: res.userInfo.name,
         // })
-        // if (userInfo.code == 0) {
-        //     ; (account.accessKey = userInfo.data.token),
-        //         (account.userName =
-        //             userInfo.data.registerType == 'email'
-        //                 ? userInfo.data.email
-        //                 : userInfo.data.phone)
-        //     const { metaId } = await HdWalletInstance.initMetaIdNode(
-        //         account
-        //     )
-        //     const newUserInfo = Object.assign(userInfo.data, {
-        //         metaId: metaId,
-        //     })
-        //     console.log('zxczxczxaxzx', newUserInfo)
-
-        //     userInfo.val = newUserInfo
-        //     await sendHash(hash, metaId)
+        // if (reportUserInfoRes.code === 0) {
+        //     const reportMetaIdRes = await sendHash(hash, res.userInfo)
+        //     if (reportMetaIdRes.code === 0) {
+        //         resolve(res)
+        //     }
         // }
+
+
+
     })
 }
 </script>
 
-<style lang="scss" scoped src="./MetaMak.scss">
-
-</style>
+<style lang="scss" scoped src="./MetaMak.scss"></style>
 <style>
 .dialogWrap {
-    width: 440px;
+  width: 440px;
 }
 </style>

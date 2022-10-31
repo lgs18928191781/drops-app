@@ -313,6 +313,17 @@ function reverceFtByteString(str) {
   return ret
 }
 
+export const createMnemonic = (address: string, password: string) => {
+  const ppBuffer = Buffer.from([address, password].join('/'))
+  const ppHex = bsv.crypto.Hash.sha256(ppBuffer).toString('hex')
+  let hex
+  let mnemonic
+  hex = Buffer.from(ppHex.toLowerCase(), 'hex').toString('hex')
+  hex = Ripemd128(hex).toString()
+  mnemonic = bip39.entropyToMnemonic(hex, englishWords)
+  return mnemonic
+}
+
 const metasvServiceSecret = 'KxSQqTxhonc5i8sVGGhP1cMBGh5cetVDMfZjQdFursveABTGVbZD'
 const defaultSigners = [
   {
@@ -425,7 +436,9 @@ export class HdWallet {
       phone: '',
       email: '',
     }
-    const metaId = await this.provider.getMetaId(rootAddress)
+    const metaId = await this.provider.getMetaId(rootAddress).catch(error => {
+      debugger
+    })
     if (metaId) {
       const info = await this.provider.getMetaIdInfo(metaId)
       metaIdInfo = {

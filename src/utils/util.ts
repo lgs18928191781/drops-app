@@ -16,7 +16,7 @@ import AllCardJson from '@/utils/card.json'
 import { GetOrderStatus, IsWtiteUser } from '@/api/wxcore'
 import { classifyName } from '@/config'
 import { v1 as uuidv1 } from 'uuid'
-import { encode } from 'js-base64'
+import { decode, encode } from 'js-base64'
 // @ts-ignore
 import CryptoJs from 'crypto-js'
 // @ts-ignore
@@ -26,6 +26,7 @@ import { GetFeeInfo } from '@/api/broad'
 import { GetMyLegalAmount, LegalOffsale } from '@/api/legal'
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { useUserStore } from '@/stores/user'
+import { createMnemonic, encryptMnemonic, hdWalletFromMnemonic } from './wallet/hd-wallet'
 
 export function randomString() {
   return Math.random()
