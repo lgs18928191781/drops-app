@@ -1,10 +1,9 @@
+import detectEthereumProvider from '@metamask/detect-provider'
+import mitt from 'mitt'
 import Web3 from 'web3'
 import Web3Modal from 'web3modal'
 import WalletConfig from './network'
-// import Vue from 'vue'
 import { getCurrentNetwork } from './commonFunction'
-
-import mitt from 'mitt'
 
 const bus = {}
 
@@ -16,7 +15,24 @@ bus.$emit = emitter.emit
 
 function connect(flag) {
   return new Promise(async (resolve, reject) => {
-    if (window.web3) {
+    if (typeof window.ethereum !== 'undefined') {
+      // const provider = await detectEthereumProvider()
+      // if (provider) {
+      //   ethereum
+      //     .request({ method: 'eth_requestAccounts' })
+      //     .then(res => {
+      //       resolve(res[0])
+      //     })
+      //     .catch(error => {
+      //       reject(error)
+      //     })
+      //   // From now on, this should always be true:
+      //   // provider === window.ethereum
+      //   // startApp(provider) // initialize your app
+      // } else {
+      //   console.log('Please install MetaMask!')
+      // }
+
       let web3Modal
       try {
         const networkConfig = await getCurrentNetwork()
@@ -55,7 +71,6 @@ function connect(flag) {
         web3Modal
           .connect()
           .then(async provider => {
-            debugger
             if (provider) {
               window.provider = provider
               window.web3 = provider.type == 'TRON' ? provider.web3 : new Web3(provider)
@@ -77,8 +92,8 @@ function connect(flag) {
               // console.log('vue', Vue.prototype.$metamaskeventBus)
               bus.$emit('WALLET_CONNECTED', window.connectedAddress)
 
-              subscribeProvider(window.provider)
-              resolve(true)
+              // subscribeProvider(window.provider)
+              resolve(provider.selectedAddress)
 
               // Init Contract暂不引入合约
               // window.connectedAddress && Contract.init();

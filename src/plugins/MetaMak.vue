@@ -230,7 +230,8 @@ const rules = {
 }
 const ruleFormRef = ref()
 
-const hashData = ref('')
+const ethAddress = ref('')
+const ethAddressHash = ref('')
 const userInfo: { val: any } = reactive({ val: null })
 
 
@@ -250,15 +251,14 @@ watch(() => props.modelValue, async () => {
             ElMessage.error(error.message)
             emit('update:modelValue', false)
         })
-        if (typeof res !== 'undefined') {
-            if (!res) {
-                noWallet.value = true
-            } else {
-                noWallet.value = false
-                sign()
-            }
+        if (res) {
+            debugger
+            ethAddress.value = res
+            console.log(keccak256(res).toString('hex'))
+            ethAddressHash.value = await ethPersonalSignSign(keccak256(res).toString('hex'))
+            noWallet.value = false
+            sign()
         }
-
     }
 })
 
@@ -281,28 +281,24 @@ const dialogTitle = computed(() => {
     }
 })
 
-function connectWallet() {
-    return new Promise((resolve, reject) => {
-        if ((window as any).web3) {
-            Wallet.connect()
-            resolve(true)
-        } else {
-            resolve(false)
-        }
-    })
-}
-
-function gethashData() {
+function ethPersonalSignSign(message: string) {
     return new Promise<string>(async (resolve, reject) => {
-        (window as any).web3.eth.personal
-            .sign(
-                keccak256((window as any).connectedAddress).toString('hex'),
-                (window as any).connectedAddress
-            )
-            .then(async (res: any) => {
-                resolve(res)
-            })
-            .catch((error: any) => reject(error))
+        (window as any).ethereum
+          .request({ method: 'personal_sign', params: [ethAddress.value, message] })
+          .then((res: string) => {
+            resolve(res)
+          }).catch((error: any) => {
+            reject(error)
+          })
+        // (window as any).web3.eth.personal
+        //     .sign(
+        //         message,
+        //         ...ethAddress.value
+        //     )
+        //     .then(async (res: any) => {
+        //         resolve(res)
+        //     })
+        //     .catch((error: any) => reject(error))
     })
 }
 
@@ -310,15 +306,9 @@ function sign() {
     return new Promise(async (resolve, reject) => {
         const loading = ElLoading.service({ text: i18n.t('siging') })
         try {
-            if (!(window as any).web3?.eth) {
-                throw new Error(i18n.t('noLoginWeb3'))
-            }
-            if (!hashData.value) {
-                hashData.value = await gethashData()
-            }
             //检查hash是否已绑定
             const getMnemonicRes = await loginByHashData({
-                hashData: hashData.value,
+                hashData: ethAddressHash.value,
             })
             if (getMnemonicRes.code === 0 && getMnemonicRes.data) {
                 // 有密码直接登录， 没有密码就要用户输入
@@ -473,15 +463,11 @@ function resetForm() {
 function submitForm() {
     ruleFormRef.value.validate(async (valid: boolean) => {
         if (valid) {
-            window.localStorage.setItem(
-                'pw',
-                encode(ruleForm.pass)
-            )
             try {
                 if (signType.value == SignType.isBindMetaidOrAddressLogin) {
                     //绑定metaid用户
                     const loading = ElLoading.service({ text: `${i18n.t('bindingMetaid')}` })
-                    const res = await bindingMetaidOrAddressLogin(hashData.value)
+                    const res = await bindingMetaidOrAddressLogin()
                     loginOperation()
                     emit('success', {
                         ...res,
@@ -491,7 +477,7 @@ function submitForm() {
                 } else if (signType.value == SignType.isRegister) {
                     //    //新用户
                     const loading = ElLoading.service({ text: `${i18n.t('registerLoading')}` })
-                    const res = await createMetaidAccount(hashData.value)
+                    const res = await createMetaidAccount()
                     debugger
                     emit('success', res)
                     loading.close()
@@ -506,7 +492,7 @@ function submitForm() {
     })
 }
 
-function bindingMetaidOrAddressLogin(str: string) {
+function bindingMetaidOrAddressLogin() {
     return new Promise<MetaMaskLoginRes>(async (resolve, reject) => {
         const params =
             ruleForm.MetaidOrAdress.length == 34
@@ -514,9 +500,10 @@ function bindingMetaidOrAddressLogin(str: string) {
                 : { metaId: ruleForm.MetaidOrAdress }
         try {
             const mnemonic = await loginByMetaidOrAddress(params)
+            // @ts-ignore
             if (mnemonic.code == 0) {
                 const res = await loginByMnemonic(mnemonic.data)
-                await sendHash(hashData.value, res.userInfo)
+                await sendHash(res.userInfo)
                 resolve(res)
             }
         } catch (error) {
@@ -526,7 +513,7 @@ function bindingMetaidOrAddressLogin(str: string) {
 }
 
 
-function sendHash(hash: string, userInfo: MetaMaskLoginUserInfo) {
+function sendHash(userInfo: MetaMaskLoginUserInfo) {
     return new Promise(async (resolve, reject) => {
         try {
             const res = await setHashData({
@@ -537,10 +524,12 @@ function sendHash(hash: string, userInfo: MetaMaskLoginUserInfo) {
                         ? userInfo.email
                         : userInfo.phone,
                 timestamp: +new Date(),
-                hashData: hash,
+                hashData: ethAddressHash.value,
                 metaId: userInfo.metaId,
             })
+            // @ts-ignore
             if (res.code == 0) {
+                // @ts-ignore
                 resolve(res.msg)
             }
         } catch (error) {
@@ -549,11 +538,11 @@ function sendHash(hash: string, userInfo: MetaMaskLoginUserInfo) {
     })
 }
 
-function createMetaidAccount(hash: string) {
+function createMetaidAccount() {
     return new Promise<MetaMaskLoginRes>(async (resolve, reject) => {
         try {
             const mnemonic = await createMnemonic(
-                (window as any).connectedAddress,
+                ethAddress.value,
                 encode(ruleForm.pass)
             )
             const hdWallet = await hdWalletFromMnemonic(mnemonic, 'new', Network.testnet)
@@ -581,10 +570,11 @@ function createMetaidAccount(hash: string) {
                 address: address,
                 xPub: hdWallet.xpubkey,
                 pubKey: pubKey,
-                hashData: hash,
+                hashData: ethAddress.value,
                 mnemonic: encryptmnemonic,
                 userName: account.name,
             })
+            // @ts-ignore
             if (userInfo.code == 0) {
                 ; (account.accessKey = userInfo.data.token),
                     (account.userName =
@@ -601,7 +591,7 @@ function createMetaidAccount(hash: string) {
                 const newUserInfo = Object.assign(userInfo.data, {
                     metaId: metaId,
                 })
-                await sendHash(hash, newUserInfo)
+                await sendHash(newUserInfo)
                 resolve({
                     userInfo: newUserInfo,
                     wallet: hdWallet,
