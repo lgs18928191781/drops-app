@@ -11,5 +11,6 @@
   "loginingTip": "Logging in, please operate later ",
   "backHome": "Back to Home",
   "signinandout": "Connect Wallet",
-  "login": "Register/Login"
+  "login": "Register/Login",
+  "connectWallet": "Connect Wallet"
 }
