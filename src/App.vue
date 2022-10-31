@@ -1,5 +1,5 @@
 <template>
-  <ElButton @click="isShowMetaMak = true">MetaMak 登录</ElButton>
+  <!-- <ElButton @click="isShowMetaMak = true">MetaMak 登录</ElButton> -->
   <MetaMask
     v-model="isShowMetaMak"
     :hd-wallet-from-mnemonic="hdWalletFromMnemonic"
