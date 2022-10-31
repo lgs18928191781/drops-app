@@ -2,12 +2,12 @@
   <div class="fixed bottom-0 left-0 right-0 px-4 pb-4 lg:absolute">
     <div class="bg-gray-100 rounded-lg h-11 flex">
       <!-- 左侧 + 按钮 -->
-      <div class="w-14 flex items-center justify-center text-gray-600">
+      <div class="w-14 flex items-center justify-center text-gray-600 lg:hidden">
         <Icon name="plus-fill" class="w-6 h-6" />
       </div>
 
 
-      <div class="flex-grow">
+      <div class="flex-grow lg:ml-6">
         <div class="h-11 py-2.5 pr-4">
           <input type="text"
             class="bg-inherit h-full w-full focus:outline-none placeholder:text-gray-400 text-gray-700 text-base caret-gray-600"

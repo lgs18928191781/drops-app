@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white fixed inset-0 h-screen w-screen z-50 lg:static lg:w-78"
+  <div class="bg-white fixed inset-0 h-screen w-screen z-50 lg:static lg:w-78 lg:shrink-0"
     :class="[showServerSection ? '' : 'hidden lg:block']">
     <div class="h-full w-full flex">
       <div class="w-18 h-full bg-gray-100 p-3">
@@ -44,7 +44,6 @@ const goChannel = (channelId: string) => {
   const currentChannelId = router.currentRoute.value.params.channelId
 
   if (currentServerId === server.id && currentChannelId === channelId) {
-    console.log(123)
     emit('closeServerSection')
   }
 

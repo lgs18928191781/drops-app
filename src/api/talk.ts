@@ -1,9 +1,11 @@
 import HttpRequest from 'request-sdk'
 import messages from './mockMessages.json'
 import members from './mockMembers.json'
+import { sleep } from '@/utils/util'
 const env = import.meta.env
 
-const TalkApi = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation`, {
+// const TalkApi = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/talkAggregation`, {
+const TalkApi = new HttpRequest(`${import.meta.env.VITE_BSV_API}/talkAggregation/v2/app/room`, {
   header: {
     'Content-Type': 'application/json',
     // accessKey: () => (isAuthorized.value ? user.value!.token! : undefined),
@@ -54,11 +56,12 @@ export const getChannels = (): Promise<any> => {
   })
 }
 
-export const getChannelMessages = (channelId: string): Promise<any> => {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve(messages)
-    }, 1000)
+export const getChannelMessages = async (channelId: string): Promise<any> => {
+  return TalkApi.get(`/getRoomChatList/${channelId}`, {
+    params: {
+      metaId: '261562cd13734c7e9f3809e32d3d7c56f0b27788f88d6738fc95f96ddb89eb01',
+      pageSize: 50,
+    },
   })
 }
 
