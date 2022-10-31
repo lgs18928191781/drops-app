@@ -146,7 +146,7 @@
 import { computed, reactive, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 // @ts-ignore
-import Wallet from './utils/wallet'
+import Wallet, { MetaMaskEthereumProvider } from './utils/wallet'
 import { ElLoading, ElMessage } from 'element-plus'
 import keccak256 from 'keccak256'
 import { getRandomWord, loginByHashData, loginByMetaidOrAddress, mnemoicLogin, setHashData, loginByNewUser } from './utils/api';
@@ -154,6 +154,7 @@ import type { MetaMaskLoginUserInfo } from './utils/api';
 import { encode, decode } from 'js-base64'
 import { aesEncrypt, createMnemonic, decryptMnemonic, encryptMnemonic, HdWallet, hdWalletFromMnemonic, Network, signature } from '@/utils/wallet/hd-wallet';
 import { bsv } from 'sensible-sdk';
+
 
 export interface MetaMaskLoginRes {
     userInfo: MetaMaskLoginUserInfo
@@ -167,6 +168,8 @@ interface Props {
     password?: string | null
 }
 
+
+
 enum SignType {
     isLogined = 1,
     isBindMetaidOrAddressLogin = 2,
@@ -179,11 +182,9 @@ enum SignType {
 
 const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits(['update:modelValue', 'success', 'logout'])
-
-Wallet.emitter.on('disconect', () => {
-    emit('logout')
-})
 const i18n = useI18n()
+
+
 const signType = ref(SignType.isLogined)
 const noWallet = ref(false)
 const ruleForm = reactive({
@@ -233,6 +234,7 @@ const ruleFormRef = ref()
 const ethAddress = ref('')
 const ethAddressHash = ref('')
 const userInfo: { val: any } = reactive({ val: null })
+let provider: null | MetaMaskEthereumProvider = null
 
 
 const password = computed(() => {
@@ -247,20 +249,11 @@ const password = computed(() => {
 
 watch(() => props.modelValue, async () => {
     if (props.modelValue) {
-        const res = await Wallet.connect().catch((error: any) => {
-            ElMessage.error(error.message)
-            emit('update:modelValue', false)
-        })
-        if (res) {
-            debugger
-            ethAddress.value = res
-            console.log(keccak256(res).toString('hex'))
-            ethAddressHash.value = await ethPersonalSignSign(keccak256(res).toString('hex'))
-            noWallet.value = false
-            sign()
-        }
+        startConnect()
     }
 })
+
+
 
 
 const dialogTitle = computed(() => {
@@ -281,6 +274,21 @@ const dialogTitle = computed(() => {
     }
 })
 
+async function startConnect() {
+    const res = await Wallet.connect().catch((error: any) => {
+            ElMessage.error(error.message)
+            emit('update:modelValue', false)
+        })
+        if (res) {
+            ethAddress.value = res.ethAddress
+            provider = res.provider
+            startProvider()
+            ethAddressHash.value = await ethPersonalSignSign(keccak256(res.ethAddress).toString('hex'))
+            noWallet.value = false
+            sign()
+        }
+}
+
 function ethPersonalSignSign(message: string) {
     return new Promise<string>(async (resolve, reject) => {
         (window as any).ethereum
@@ -290,15 +298,6 @@ function ethPersonalSignSign(message: string) {
           }).catch((error: any) => {
             reject(error)
           })
-        // (window as any).web3.eth.personal
-        //     .sign(
-        //         message,
-        //         ...ethAddress.value
-        //     )
-        //     .then(async (res: any) => {
-        //         resolve(res)
-        //     })
-        //     .catch((error: any) => reject(error))
     })
 }
 
@@ -309,8 +308,16 @@ function sign() {
             //检查hash是否已绑定
             const getMnemonicRes = await loginByHashData({
                 hashData: ethAddressHash.value,
+            }).catch((error) => {
+                debugger
+                if (error.code === -1) {
+                    signType.value = SignType.isPending
+                    loading.close()
+                } else {
+                    throw new Error(error.message)
+                }
             })
-            if (getMnemonicRes.code === 0 && getMnemonicRes.data) {
+            if (getMnemonicRes?.code === 0 && getMnemonicRes.data) {
                 // 有密码直接登录， 没有密码就要用户输入
                 if (props.password || ruleForm.pass) {
                     const res = await loginByMnemonic(getMnemonicRes.data)
@@ -324,9 +331,6 @@ function sign() {
                     signType.value = SignType.isInputPassword
                     loading.close()
                 }
-            } else {
-                signType.value = SignType.isPending
-                loading.close()
             }
         } catch (error) {
             loading.close()
@@ -400,12 +404,6 @@ function getPw() {
 function loginOperation(type = '') {
     return new Promise<void>((resolve, reject) => {
         emit('update:modelValue', false)
-        // localStorage.setItem(
-        //     'access_token',
-        //     JSON.stringify({
-        //         access_token: userInfo.val.token,
-        //     })
-        // )
         if (type == 'newUser') {
             sign()
         } else {
@@ -477,8 +475,10 @@ function submitForm() {
                 } else if (signType.value == SignType.isRegister) {
                     //    //新用户
                     const loading = ElLoading.service({ text: `${i18n.t('registerLoading')}` })
-                    const res = await createMetaidAccount()
-                    debugger
+                    const res = await createMetaidAccount().catch((error) => {
+                        loading.close()
+                        throw new Error(error.message)
+                    })
                     emit('success', res)
                     loading.close()
                     emit('update:modelValue', false)
@@ -630,6 +630,23 @@ function createMetaidAccount() {
 
 
     })
+}
+
+function startProvider() {
+    provider!.on('accountsChanged', (res: string[]) => {
+        logout()
+        if (res.length > 0) {
+            window.location.reload()
+        }
+    })
+}
+
+function logout() {
+    provider = null
+    ethAddress.value = ''
+    ethAddressHash.value = ''
+    signType.value = SignType.isLogined
+    emit('logout')
 }
 </script>
 
