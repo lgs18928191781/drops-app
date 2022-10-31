@@ -298,6 +298,12 @@ export const decryptMnemonic = (encryptedMnemonic: string, password: string): st
   return mnemonic.split(',').join(' ')
 }
 
+export const signature = (message: string, privateKey: string) => {
+  const hash = bsv.crypto.Hash.sha256(Buffer.from(message))
+  const sign = bsv.crypto.ECDSA.sign(hash, bsv.PrivateKey(privateKey))
+  return sign.toBuffer().toString('base64')
+}
+
 function reverceFtByteString(str) {
   str = str.substr(0, str.length - 8)
   let ret = ''
@@ -305,6 +311,17 @@ function reverceFtByteString(str) {
     ret = str[i] + str[i + 1] + ret
   }
   return ret
+}
+
+export const createMnemonic = (address: string, password: string) => {
+  const ppBuffer = Buffer.from([address, password].join('/'))
+  const ppHex = bsv.crypto.Hash.sha256(ppBuffer).toString('hex')
+  let hex
+  let mnemonic
+  hex = Buffer.from(ppHex.toLowerCase(), 'hex').toString('hex')
+  hex = Ripemd128(hex).toString()
+  mnemonic = bip39.entropyToMnemonic(hex, englishWords)
+  return mnemonic
 }
 
 const metasvServiceSecret = 'KxSQqTxhonc5i8sVGGhP1cMBGh5cetVDMfZjQdFursveABTGVbZD'
@@ -419,7 +436,9 @@ export class HdWallet {
       phone: '',
       email: '',
     }
-    const metaId = await this.provider.getMetaId(rootAddress)
+    const metaId = await this.provider.getMetaId(rootAddress).catch(error => {
+      debugger
+    })
     if (metaId) {
       const info = await this.provider.getMetaIdInfo(metaId)
       metaIdInfo = {
