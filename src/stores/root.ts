@@ -51,13 +51,13 @@ export const useRootStore = defineStore('root', {
           this.exchangeRate = res
         }
       })
-      setInterval(() => {
-        fetchExchangeRate().then((res: any) => {
-          if (res) {
-            this.exchangeRate = res
-          }
-        })
-      }, 30 * 1000)
+      // setInterval(() => {
+      //   fetchExchangeRate().then((res: any) => {
+      //     if (res) {
+      //       this.exchangeRate = res
+      //     }
+      //   })
+      // }, 30 * 1000)
     },
     startSendCodeCountdown() {
       setInterval(() => {

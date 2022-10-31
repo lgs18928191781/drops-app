@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center my-2.5">
+  <div class="flex items-center my-2.5 lg:my-4">
     <UserAvatar :type="props.member.avatarType" :metaId="props.member.avatarTxId || 'undefined'"
       class="w-8 h-8 shrink-0" />
     <div class="ml-2 text-sm font-medium" :class="randomNameColor">

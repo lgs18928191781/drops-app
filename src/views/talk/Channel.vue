@@ -9,16 +9,16 @@
 
 
       <div class="pt-12 pb-14 h-screen lg:relative w-full">
-        <div class="h-full overflow-y-scroll py-4 overflow-x-hidden space-y-4  px-4">
-          <Message v-for="message in messages" :message="message" />
-        </div>
+        <LoadingList v-if="loading" />
+        <MessageList :messages="messages" v-else />
 
         <ChannelInput />
       </div>
 
-      <ChannelMemberList v-show="showMembers" :members="members" />
+      <Transition name="slide">
+        <ChannelMemberList v-show="showMembers" :members="members" />
+      </Transition>
     </div>
-
   </div>
 </template>
 
@@ -27,9 +27,14 @@ import TheHeader from './components/TheHeader.vue'
 import ChannelInput from './components/ChannelInput.vue'
 import ServerSection from './components/ServerSection.vue'
 import ChannelMemberList from './components/ChannelMemberList.vue'
-import Message from './components/Message.vue'
-import { onMounted, Ref, ref } from 'vue';
+import LoadingList from './components/LoadingList.vue'
+import { defineAsyncComponent, onMounted, Ref, ref } from 'vue';
 import { getChannelMessages, getChannelMembers } from '@/api/talk'
+import { sleep } from '@/utils/util'
+
+const MessageList = defineAsyncComponent({
+  loader: () => import('./components/MessageList.vue'),
+})
 
 type Message = {
   protocol: string
@@ -58,6 +63,7 @@ type Channel = {
 
 const showMembers = ref(false)
 const showServerSection = ref(false)
+const loading = ref(false)
 
 // 获取频道信息
 const channel: Ref<Channel> = ref({
@@ -78,16 +84,38 @@ const server: Ref<any> = ref({
   ]
 })
 
+const scrollToMessagesBottom = () => {
+  const bottomAnchor = document.getElementById('bottomAnchor')
+  bottomAnchor?.scrollIntoView()
+}
+
 onMounted(async () => {
-  messages.value = await getChannelMessages("1")
+  loading.value = true
+  const channelId = 'b671caca627219c214f433497f9aba530a29a927bb5e32f242e36f8cbc26ba3b'
+  const { data: { results: { items } } } = await getChannelMessages(channelId)
+  messages.value = items.reverse()
+  await sleep(200)
+  loading.value = false
+
+
   members.value = await getChannelMembers("1")
   channel.value = {
     name: "ShowTalk活动群",
     description: "快来参与活动吧"
   }
+
+  scrollToMessagesBottom()
 })
 </script>
 
 <style lang="scss" scoped>
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.3s ease;
+}
 
+.slide-enter-from,
+.slide-leave-to {
+  transform: translateX(100%);
+}
 </style>
