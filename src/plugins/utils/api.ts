@@ -1,7 +1,24 @@
 import HttpRequest from 'request-sdk'
 
 const mvcBaseUrL = 'https://testmvc.showmoney.app/showpaycore'
-const mvcApi = new HttpRequest(mvcBaseUrL!).request
+const mvcApi = new HttpRequest(mvcBaseUrL!, {
+  responseHandel: response => {
+    return new Promise((resolve, reject) => {
+      if (response?.data && typeof response?.data?.code === 'number') {
+        if (response?.data?.code !== 0) {
+          reject({
+            message: response?.data.msg,
+            code: response?.data?.code,
+          })
+        } else {
+          resolve(response.data)
+        }
+      } else {
+        resolve(response.data)
+      }
+    })
+  },
+}).request
 
 export interface MetaMaskLoginUserInfo {
   address: string
