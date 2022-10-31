@@ -1,6 +1,6 @@
 <template>
-  <button @c>MetaMak 登录</button>
-  <MetaMask v-model="isShowMetaMak = true" :hd-wallet-from-mnemonic="hdWalletFromMnemonic" id="metamask"
+  <button @click="isShowMetaMak = true">MetaMak 登录</button>
+  <MetaMask v-model="isShowMetaMak" :hd-wallet-from-mnemonic="hdWalletFromMnemonic" id="metamask"
     @success="metaMaskLoginSuccess"></MetaMask>
   <div class="main">
     <router-view v-slot="{ Component, route }">
