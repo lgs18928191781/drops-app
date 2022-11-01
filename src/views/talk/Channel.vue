@@ -149,6 +149,7 @@ onMounted(async () => {
 })
 </script>
 
+<style lang="css" src="../../assets/styles/tailwind.css"></style>
 <style lang="scss" scoped>
 .slide-enter-active,
 .slide-leave-active {
