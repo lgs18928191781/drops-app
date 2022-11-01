@@ -11,7 +11,7 @@ export interface MetafileSchems {
 export class DBClass extends Dexie {
   metafiles!: Table<MetafileSchems>
   constructor() {
-    super('nos.art')
+    super('show3.0')
     this.version(2).stores({
       metafiles: 'txId, data, thumbnail, normal', // Primary key and indexed props
     })

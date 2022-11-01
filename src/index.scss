@@ -1,14 +1,14 @@
+@import '@/assets/styles/tailwind.css';
 @import '@/assets/styles/var.scss';
 @import '@/assets/styles/flex.scss';
 @import '@/assets/styles/element-plus.scss';
-@import '@/assets/styles/tailwind.css';
 
 html {
 
   body {
     // background: $bgColor;
     font-size: 16px;
-    font-family: 'SF Pro', 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
+    font-family: Whitney, 'SF Pro', 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
       'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
     min-height: 100vh;
 
@@ -64,4 +64,27 @@ pre {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+
+.main-border {
+  --border-color: #303133;
+
+  &.faded {
+    --border-color: #EBECF0;
+  }
+
+  border: 2PX solid var(--border-color);
+  border-bottom: 4PX solid var(--border-color);
+  border-radius: 8PX;
+  margin-bottom: 2PX;
+  transition-property: all;
+  transition-duration: 150ms;
+
+  &:hover {
+    border-right: 4PX solid var(--border-color);
+    border-bottom: 6PX solid var(--border-color);
+    transform: translateX(-2PX) translateY(-2PX);
+    margin-bottom: 0;
+  }
 }

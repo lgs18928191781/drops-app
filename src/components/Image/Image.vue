@@ -55,12 +55,15 @@ setTimeout(async () => {
     src = await metafile(props.src, -1)
   }
   DB.getMetaFile(src, props.width).then(res => {
+    if (res === '') {
+      console.log({ src })
+    }
     url.value = res
     isSkeleton.value = false
   })
 })
 
-function fail(event) {
+function fail(event: any) {
   const img = event.srcElement
   img.src = Default
   img.onerror = null // 防止闪图
@@ -71,6 +74,4 @@ defineExpose({
 })
 </script>
 
-<style lang="scss" scoped src="./Image.scss">
-
-</style>
+<style lang="scss" scoped src="./Image.scss"></style>

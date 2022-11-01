@@ -18,8 +18,8 @@ const TalkApi = new HttpRequest(`${import.meta.env.VITE_BSV_API}/talkAggregation
   },
 }).request
 
-export const getServers = (data: any): Promise<any> => {
-  const servers = [
+export const getCommunities = (data: any): Promise<any> => {
+  const communities = [
     {
       id: 1,
       updatedAt: 1666684283,
@@ -32,7 +32,7 @@ export const getServers = (data: any): Promise<any> => {
 
   return new Promise(resolve => {
     setTimeout(() => {
-      resolve(servers)
+      resolve(communities)
     }, 1000)
   })
 }
