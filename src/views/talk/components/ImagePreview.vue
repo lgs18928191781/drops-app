@@ -4,7 +4,7 @@
       <div class="text-white absolute right-[16PX] top-[16PX]" @click="$emit('close')">
         <Icon name="x_circle" class="w-10 h-10 text-dark-300" />
       </div>
-      <div class="!w-[90%] !max-h-[80%] overflow-y-scroll pr-3 -mr-3" @click.stop="">
+      <div class="!w-[90%] !max-h-[80%] overflow-y-scroll pr-3 -mr-3 lg:!w-[480PX]" @click.stop="">
         <Image :src="src" customClass="w-full rounded-md" />
       </div>
     </div>
