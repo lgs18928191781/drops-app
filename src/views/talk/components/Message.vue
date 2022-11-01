@@ -3,20 +3,20 @@
     <UserAvatar
       :type="message.avatarType"
       :metaId="message.avatarTxId || 'undefined'"
-      class="w-10 h-10 shrink-0"
+      class="w-13.5 h-13.5 shrink-0"
     />
     <div class="ml-4 grow pr-12">
       <div class="flex items-end space-x-2">
         <div class="font-medium text-sm" :class="randomNameColor">
           {{ message.nickName }}
         </div>
-        <div class="text-gray-400 text-xs">
+        <div class="text-dark-250 text-sm">
           {{ $filters.dateTimeFormat(message.timestamp, 'HH:mm') }}
         </div>
       </div>
 
-      <div class="w-full py-0.5 text-gray-400 text-xs" v-if="isGroupJoinAction">加入了群聊</div>
-      <div class="w-full py-0.5 text-gray-400 text-xs" v-else-if="isGroupLeaveAction">
+      <div class="w-full py-0.5 text-dark-400 text-xs" v-if="isGroupJoinAction">加入了群聊</div>
+      <div class="w-full py-0.5 text-dark-400 text-xs" v-else-if="isGroupLeaveAction">
         离开了群聊
       </div>
 
@@ -31,13 +31,13 @@
 
       <div class="w-full py-0.5" v-else-if="isImage">
         <div
-          class="max-w-[90%] md:max-w-[50%] lg:max-w-[400px] max-h-[600px] overflow-y-hidden rounded bg-white pr-2"
+          class="max-w-[90%] md:max-w-[50%] lg:max-w-[400px] max-h-[600px] overflow-y-hidden rounded bg-dark-100"
         >
           <Image :src="decryptedMessage" customClass="rounded py-0.5" />
         </div>
       </div>
 
-      <div class="text-xs text-gray-400 my-0.5" v-else-if="isReceiveRedEnvelope">
+      <div class="text-xs text-dark-400 my-0.5" v-else-if="isReceiveRedEnvelope">
         {{ redEnvelopeReceiveInfo }}
       </div>
 
@@ -52,12 +52,17 @@
               <div class="text-red-50 text-xs mt-0.5">{{ redEnvelopeMessage }}</div>
             </div>
           </div>
-          <div class=" py-2 px-6 text-gray-400 text-xs">Show红包</div>
+          <div class=" py-2 px-6 text-dark-400 text-xs">Show红包</div>
         </div>
       </div>
 
-      <div class="text-sm text-gray-600 font-normal py-0.5 max-w-full break-all" v-else>
-        {{ decryptedMessage }}
+      <div class="my-1.5 max-w-full flex" v-else>
+        <div
+          class="text-sm text-dark-800 font-normal break-all p-4 rounded-xl rounded-tl-md"
+          :class="isMyMessage ? 'bg-primary' : 'bg-white'"
+        >
+          {{ decryptedMessage }}
+        </div>
       </div>
     </div>
   </div>
@@ -126,6 +131,10 @@ const redEnvelopeReceiveInfo = computed(() => {
 
 const redEnvelopeMessage = computed(() => {
   return message.data?.content || '恭喜发财，大吉大利'
+})
+
+const isMyMessage = computed(() => {
+  return message.metaId === '261562cd13734c7e9f3809e32d3d7c56f0b27788f88d6738fc95f96ddb89eb01' // TODO:
 })
 
 const isGroupJoinAction = computed(() => message.protocol === 'SimpleGroupJoin')

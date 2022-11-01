@@ -1,11 +1,5 @@
 <template>
-  <MetaMask
-    v-model="isShowMetaMak"
-    :hd-wallet-from-mnemonic="hdWalletFromMnemonic"
-    id="metamask"
-    @success="metaMaskLoginSuccess"
-  ></MetaMask>
-  <ElButton @click="isShowMetaMak = true">MetaMak 登录</ElButton>
+  <!-- <ElButton @click="isShowMetaMak = true">MetaMak 登录</ElButton> -->
 
   <div class="main">
     <router-view v-slot="{ Component, route }">
@@ -16,15 +10,15 @@
   </div>
 
   <!-- MetaMask -->
-  <MetaMask
+  <!-- <MetaMask
     v-model="isShowMetaMak"
     :hd-wallet-from-mnemonic="hdWalletFromMnemonic"
     id="metamask"
     @success="metaMaskLoginSuccess"
-  ></MetaMask>
+  ></MetaMask> -->
 
   <!-- ConnectWalletModalVue -->
-  <ConnectWalletModalVue />
+  <!-- <ConnectWalletModalVue /> -->
 </template>
 
 <script setup lang="ts">

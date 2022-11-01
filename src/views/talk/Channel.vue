@@ -1,25 +1,24 @@
 <template>
   <div class="relative w-screen h-screen lg:flex">
-    <ServerSection
-      :server="server"
-      @close-server-section="showServerSection = false"
-      :showServerSection="showServerSection"
+    <CommunitySection
+      :community="community"
+      @close-community-section="showCommunitySection = false"
+      :showCommunitySection="showCommunitySection"
     />
 
     <div class="lg:grow lg:h-screen lg:relative lg:flex">
       <TheHeader
-        :name="channel.name"
-        :description="channel.description"
+        :channel="channel"
         :showMembers="showMembers"
         @toggle-member-list="handleToggleMemberList"
-        @open-server-section="showServerSection = true"
+        @open-community-section="showCommunitySection = true"
       />
 
-      <div class="pt-12 pb-14 h-screen lg:relative w-full">
+      <div class="pt-12 pb-14 h-screen lg:relative w-full bg-dark-100">
         <LoadingList v-if="loading" />
         <MessageList :messages="messages" v-else />
 
-        <ChannelInput />
+        <ChannelInput :currentChannel="currentChannel" />
       </div>
 
       <Transition name="slide">
@@ -32,10 +31,10 @@
 <script setup lang="ts">
 import TheHeader from './components/TheHeader.vue'
 import ChannelInput from './components/ChannelInput.vue'
-import ServerSection from './components/ServerSection.vue'
+import CommunitySection from './components/CommunitySection.vue'
 import ChannelMemberList from './components/ChannelMemberList.vue'
 import LoadingList from './components/LoadingList.vue'
-import { defineAsyncComponent, onMounted, Ref, ref } from 'vue'
+import { computed, defineAsyncComponent, onMounted, Ref, ref } from 'vue'
 import { getChannelMessages, getChannelMembers } from '@/api/talk'
 import { sleep } from '@/utils/util'
 
@@ -66,29 +65,48 @@ type Member = {
 type Channel = {
   name: string
   description: string
+  groupId: string
+  isPublic: boolean
 }
 
 const showMembers = ref(false)
-const showServerSection = ref(false)
+const showCommunitySection = ref(false)
 const loading = ref(false)
 
 // 获取频道信息
 const channel: Ref<Channel> = ref({
   name: '',
   description: '',
+  isPublic: true,
+  groupId: '',
 })
 
 const messages: Ref<Message[]> = ref([])
 const members: Ref<Member[]> = ref([])
-const server: Ref<any> = ref({
-  name: 'ShowTalk活动群',
+const community: Ref<any> = ref({
+  name: '一代MetaBot',
   id: '1',
+  description:
+    'MetaBot是元拓邦中重要的一员，也是元拓邦中第一个被创造出来的NFT种群，一代MetaBot总量为999个。',
   channels: [
     {
       id: '1',
-      name: 'ShowTalk活动群',
+      name: '聊天',
+      in: true,
+    },
+    {
+      id: '2',
+      name: 'DAO',
+    },
+    {
+      id: '3',
+      name: '公告',
     },
   ],
+})
+
+const currentChannel = computed(() => {
+  return community.value.channels.find((channel: any) => channel.in)
 })
 
 const scrollToMessagesBottom = () => {
@@ -121,8 +139,10 @@ onMounted(async () => {
 
   members.value = await getChannelMembers('1')
   channel.value = {
-    name: 'ShowTalk活动群',
-    description: '快来参与活动吧',
+    name: '一代MetaBot',
+    description: '',
+    isPublic: true,
+    groupId: 'b671caca627219c214f433497f9aba530a29a927bb5e32f242e36f8cbc26ba3b',
   }
 
   scrollToMessagesBottom()

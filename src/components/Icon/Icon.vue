@@ -1,5 +1,5 @@
 <template>
-  <svg aria-hidden="true" class="icon">
+  <svg aria-hidden="true" :class="iconClass">
     <use :xlink:href="symbolId" :fill="color" />
   </svg>
 </template>
@@ -22,10 +22,18 @@ export default defineComponent({
       type: String,
       default: '#fff',
     },
+    customClass: {
+      type: String,
+      default: '',
+    },
   },
   setup(props) {
+    const iconClass = computed(() => {
+      return props.customClass ? props.customClass + ' icon' : 'icon'
+    })
+
     const symbolId = computed(() => `#${props.prefix}-${props.name}`)
-    return { symbolId }
+    return { symbolId, iconClass }
   },
 })
 </script>

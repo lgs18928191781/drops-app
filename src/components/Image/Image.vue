@@ -63,7 +63,7 @@ setTimeout(async () => {
   })
 })
 
-function fail(event) {
+function fail(event: any) {
   const img = event.srcElement
   img.src = Default
   img.onerror = null // 防止闪图

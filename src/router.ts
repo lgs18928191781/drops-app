@@ -43,7 +43,7 @@ export const router = createRouter({
       // component: () => import('@/views/talk/Index.vue'),
     },
     {
-      path: '/talk/channels/:serverId/:channelId',
+      path: '/talk/channels/:communityId/:channelId',
       name: 'talkChannel',
       component: () => import('@/views/talk/Channel.vue'),
     },

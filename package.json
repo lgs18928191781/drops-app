@@ -22,7 +22,6 @@
     "@soerenmartius/vue3-clipboard": "^0.1.2",
     "@vueuse/components": "^9.3.0",
     "@vueuse/core": "^9.3.0",
-    "@walletconnect/web3-provider": "^1.8.0",
     "amfe-flexible": "^2.2.1",
     "axios": "^0.21.1",
     "bip39": "^3.0.4",
