@@ -36,6 +36,9 @@
     id="metamask"
     @success="metaMaskLoginSuccess"
   ></MetaMask>
+
+  <!-- 登录注册 -->
+  <LoginAndRegisterModalVue v-model="isShowLoginAndRegister" v-model:type="type" />
 </template>
 
 <script setup lang="ts">
@@ -47,14 +50,17 @@ import { useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
 import { SDK } from '@/utils/sdk'
 import { HdWallet, hdWalletFromMnemonic } from '@/utils/wallet/hd-wallet'
+import LoginAndRegisterModalVue from '@/components/LoginAndRegisterModal/LoginAndRegisterModal.vue'
 
-import { ref } from 'vue'
+import { Ref, ref } from 'vue'
 
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const emit = defineEmits(['metamask'])
 
 const isShowMetaMak = ref(false)
+const isShowLoginAndRegister = ref(false)
+const type: Ref<'login' | 'register'> = ref('login')
 
 const wallets = [
   {

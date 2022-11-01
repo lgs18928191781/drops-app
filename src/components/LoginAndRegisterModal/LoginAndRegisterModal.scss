@@ -1,3 +1,7 @@
+.login-and-register {
+    padding: 0;
+}
+
 .tabs {
     border-bottom: 1px solid #F0F3F6;
 
@@ -50,5 +54,28 @@
     .iti-flag {
         margin-right: 4px;
 
+    }
+}
+
+.operate {
+    margin-top: 38px;
+
+    .operate-top {
+        color: #909399;
+        font-size: 12px;
+
+        a {
+            cursor: pointer;
+            color: #5586BB;
+            text-decoration: underline;
+        }
+
+        .forget {
+            cursor: pointer;
+        }
+    }
+
+    .operate-btn {
+        margin-top: 10px;
     }
 }

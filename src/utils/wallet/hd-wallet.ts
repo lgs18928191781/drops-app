@@ -39,7 +39,7 @@ export enum MetaIdTag {
 }
 
 export interface BaseUserInfoTypes {
-  userType: 'phone' | 'email'
+  userType: string
   name: string
   phone: string
   email: string

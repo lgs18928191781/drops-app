@@ -14,6 +14,7 @@
     --el-button-hover-bg-color: #fff;
     --el-button-active-border-color: #303133;
     --el-button-hover-border-color: #303133;
+    --el-button-active-color: var(--el-color-primary);
 
     box-shadow: 0 2px 0 var(--el-border-color);
 
@@ -21,10 +22,36 @@
         box-shadow: 0 2px 0 var(--el-button-hover-border-color);
     }
 
+    &:active {
+        background-color: var(--el-color-primary);
+    }
+
+    .el-loading-mask {
+        .el-loading-spinner {
+            top: 0;
+            left: 0;
+            height: 100%;
+
+            .circular {
+                width: 30px;
+                height: 30px;
+            }
+        }
+    }
+
     &.el-button--sm {
         height: 26px;
         font-size: 12px;
         border-radius: 4px;
+
+        .el-loading-mask {
+            .el-loading-spinner {
+                .circular {
+                    width: 20px;
+                    height: 20px;
+                }
+            }
+        }
     }
 
     &.el-button--large {
@@ -35,17 +62,21 @@
     &.el-button--primary {
         --el-button-border-color: var(--main-font-color);
         --el-button-text-color: var(--main-font-color);
+        box-shadow: 0 2px 0 var(--main-font-color);
     }
 
     &.is-disabled {
         border-color: var(--el-border-color) !important;
         background: var(--el-border-color) !important;
         color: #fff !important;
+
     }
 
     &.none-box-shadow {
         box-shadow: none
     }
+
+
 }
 
 .el-input {
@@ -54,38 +85,7 @@
     --el-input-height: 40px;
     --el-input-border-radius: var(--el-border-radius-sm);
 
-    .el-input__wrapper {
-        position: relative;
-
-        &::after {
-            content: '';
-            width: 100% !important;
-            height: 4px !important;
-            box-sizing: border-box;
-            background: var(--el-border-color) !important;
-            border-radius: 0 0 var(--el-border-radius-sm) var(--el-border-radius-sm) !important;
-            position: absolute;
-            left: 0 !important;
-            bottom: 0 !important;
-            margin-left: 0 !important;
-            margin-bottom: -2px !important;
-            z-index: 0 !important;
-            border-width: 0 !important;
-        }
-
-        &:hover {
-            &::after {
-                background: var(--main-font-color) !important;
-            }
-        }
-
-        &.is-focus {
-            &::after {
-                background: var(--main-font-color) !important;
-            }
-        }
-
-    }
+    .el-input__wrapper {}
 
 
 
@@ -118,7 +118,7 @@
     border: var(--el-border);
     border-color: var(--el-button-hover-border-color);
 
-    ::after {
+    &::after {
         content: '';
         width: calc(100% + var(--el-border-width) + var(--el-border-width));
         height: 14px;
@@ -173,6 +173,7 @@
 
 
 }
+
 
 // .el-collapse-item__header.is-active{
 //     color: #FC6D5E;
