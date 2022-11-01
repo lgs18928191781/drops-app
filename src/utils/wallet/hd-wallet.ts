@@ -203,7 +203,6 @@ export const hdWalletFromAccount = async (
   account: BaseUserInfoTypes,
   network: Network = Network.mainnet
 ): Promise<any> => {
-  debugger
   // console.log(account)
   const loginName = account.userType === 'phone' ? account.phone : account.email
   const password = account.password
@@ -400,9 +399,8 @@ export class HdWallet {
     return this._root.toAddress(this.network).toString()
   }
 
-  constructor(mnemonic: string, wallet: bsv.HDPrivateKey) {
+  constructor(wallet: bsv.HDPrivateKey) {
     this.network = wallet.network.name
-    this.mnemonic = mnemonic
     this.wallet = wallet
     const root = wallet.deriveChild(0).deriveChild(0).privateKey
     this._root = root

@@ -1,6 +1,6 @@
 $bgColor: #F5F7F9;
 $bgDarkColor: #000;
-$mainColor: #FEB338;
+$mainColor: #FFDC51;
 
 %text-ellipsis {
     overflow: hidden;
@@ -12,14 +12,16 @@ $themeBgColor:var(--themeBgColor);
 $themeBtnColor:#FC6D5E;
 $themeBtnBorderColor:#FC6D5E;
 $themeBtnTextColor:#fff;
-:root{
-    --themeBgColor:#fff;
+
+:root {
+    --themeBgColor: #fff;
     font-family: 'SF-Pro-Regular Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB,Microsoft YaHei', '微软雅黑', Arial, sans-serif;
 
-    
+
 }
-html.dark{
-     --themeBgColor:#303133;
+
+html.dark {
+    --themeBgColor: #303133;
 }
 
 

@@ -25,7 +25,7 @@ export interface MetaMaskLoginUserInfo {
   appToken: string
   did: null
   email: string
-  enCryptedMnemonic: string | null
+  enCryptedMnemonic: string
   lastLoginTime: number
   metaId: string
   name: string

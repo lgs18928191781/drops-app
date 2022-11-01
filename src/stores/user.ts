@@ -37,15 +37,23 @@ interface UserState {
   }
 }
 
+const userkey = encode('user')
+let user: any = null
+if (window.localStorage.getItem(userkey)) {
+  user = decode(window.localStorage.getItem(userkey)!)
+  user = JSON.parse(user)
+}
+const passwordkey = encode('password')
+let password = ''
+if (window.localStorage.getItem(passwordkey)) {
+  password = decode(window.localStorage.getItem(passwordkey)!)
+}
+
 export const useUserStore = defineStore('user', {
   state: () =>
     <UserState>{
-      user: window.localStorage.getItem('user')
-        ? JSON.parse(window.localStorage.getItem('user')!)
-        : null,
-      password: window.localStorage.getItem('password')
-        ? decode(window.localStorage.getItem('password')!)
-        : '',
+      user: user,
+      password,
       wallet: null,
       kycInfo: null,
       isGetedKycInfo: false,
@@ -90,13 +98,14 @@ export const useUserStore = defineStore('user', {
         resolve()
       })
     },
-    updateUserInfo(userInfo: UserInfo) {
+    updateUserInfo(userInfo: SetUserInfo) {
       return new Promise<void>(resolve => {
         const { password, ...data } = userInfo
         if (data.rootAddress) {
           data.address = data.rootAddress
         }
-        localStorage.setItem('user', JSON.stringify(data))
+        localStorage.setItem(encode('user'), encode(JSON.stringify(data)))
+        window.localStorage.setItem(encode('password'), encode(password))
         this.user = data
         resolve()
       })

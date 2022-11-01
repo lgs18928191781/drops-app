@@ -31,21 +31,21 @@
         label-width="100px"
         class="dialog-ruleForm"
       >
-        <el-form-item label="设置昵称" prop="name">
-          <el-input placeholder="想让大家怎么称呼您呢..." v-model="ruleForm.name"></el-input>
+        <el-form-item :label="$t('SetNickName')" prop="name">
+          <el-input :placeholder="$t('nickeNamePlac')" v-model="ruleForm.name"></el-input>
         </el-form-item>
-        <el-form-item label="设置密码" prop="pass">
+        <el-form-item :label="$t('setPassword')" prop="pass">
           <el-input
-            placeholder="请设置你的密码"
+            :placeholder="$t('setPasswordPlac')"
             type="password"
             v-model="ruleForm.pass"
             autocomplete="off"
           >
           </el-input>
         </el-form-item>
-        <el-form-item label="确认密码" prop="checkPass">
+        <el-form-item :label="$t('ConfirmPassword')" prop="checkPass">
           <el-input
-            placeholder="请确认密码"
+            :placeholder="$t('ConfirmPassword')"
             type="password"
             v-model="ruleForm.checkPass"
             autocomplete="off"
@@ -71,13 +71,13 @@
       >
         <el-form-item label="MetaID:" prop="MetaidOrAdress">
           <el-input
-            placeholder="请输入MetaID或地址进行绑定"
+            :placeholder="$t('Enter MetaID For Bind')"
             v-model="ruleForm.MetaidOrAdress"
           ></el-input>
         </el-form-item>
-        <el-form-item label="密码：" prop="pass">
+        <el-form-item :label="$t('password') + ':'" prop="pass">
           <el-input
-            placeholder="请输入showmoney登录密码"
+            :placeholder="$t('Enter ShowMoney Password')"
             type="password"
             v-model="ruleForm.pass"
             autocomplete="off"
@@ -85,8 +85,8 @@
           </el-input>
         </el-form-item>
         <el-form-item class="btnItem">
-          <el-button type="primary" @click="submitForm()">绑定</el-button>
-          <el-button @click="resetForm()">取消</el-button>
+          <el-button type="primary" @click="submitForm()">{{ $t('Bind') }}</el-button>
+          <el-button @click="resetForm()">{{ $t('Cancel') }}</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -113,9 +113,9 @@
         label-width="80px"
         class="dialog-ruleForm"
       >
-        <el-form-item label="密码" prop="pass">
+        <el-form-item :label="$t('password')" prop="pass">
           <el-input
-            placeholder="请输入showmoney登录密码"
+            :placeholder="$t('Enter ShowMoney Password')"
             type="password"
             v-model="ruleForm.pass"
             autocomplete="off"
@@ -123,22 +123,11 @@
           </el-input>
         </el-form-item>
         <el-form-item class="btnItem">
-          <el-button type="primary" @click="submitForm()">登录</el-button>
-          <el-button @click="resetForm()">取消</el-button>
+          <el-button type="primary" @click="submitForm()">{{ $t('Login') }}</el-button>
+          <el-button @click="resetForm()">{{ $t('Cancel') }}</el-button>
         </el-form-item>
       </el-form>
     </div>
-    <!-- 
-            <span
-                v-if="signType == 1 && !noWallet"
-                slot="footer"
-                class="dialog-footer"
-            >
-                <el-button @click="centerDialogVisible = false"
-                    >取 消</el-button
-                >
-                <el-button type="primary" @click="sign">确 定</el-button>
-            </span> -->
   </ElDialog>
 </template>
 
@@ -259,9 +248,9 @@ watch(() => props.modelValue, async () => {
 const dialogTitle = computed(() => {
     if (signType.value === SignType.isLogined) {
         if (noWallet.value) {
-            return ``
-        } else {
             return i18n.t('checkEnvNoWallet')
+        } else {
+            return ``
         }
     } else if (signType.value === SignType.isBindMetaidOrAddressLogin) {
         return i18n.t('bindMetaidOrAddress')
@@ -275,17 +264,19 @@ const dialogTitle = computed(() => {
 })
 
 async function startConnect() {
-    const res = await Wallet.connect().catch((error: any) => {
+        try {
+            const res = await Wallet.connect()
+            if (res) {
+                ethAddress.value = res.ethAddress
+                provider = res.provider
+                startProvider()
+                ethAddressHash.value = await ethPersonalSignSign(keccak256(res.ethAddress).toString('hex'))
+                noWallet.value = false
+                sign()
+            }
+        } catch (error: any) {
             ElMessage.error(error.message)
             emit('update:modelValue', false)
-        })
-        if (res) {
-            ethAddress.value = res.ethAddress
-            provider = res.provider
-            startProvider()
-            ethAddressHash.value = await ethPersonalSignSign(keccak256(res.ethAddress).toString('hex'))
-            noWallet.value = false
-            sign()
         }
 }
 
@@ -296,7 +287,10 @@ function ethPersonalSignSign(message: string) {
           .then((res: string) => {
             resolve(res)
           }).catch((error: any) => {
-            reject(error)
+            reject({
+                code: error.code,
+                message: error.message
+            })
           })
     })
 }
@@ -309,7 +303,6 @@ function sign() {
             const getMnemonicRes = await loginByHashData({
                 hashData: ethAddressHash.value,
             }).catch((error) => {
-                debugger
                 if (error.code === -1) {
                     signType.value = SignType.isPending
                     loading.close()
@@ -392,6 +385,7 @@ function loginByMnemonic(mnemonic: string) {
                 }
             }
         } catch (error) {
+            debugger
             console.log('error', error)
         }
     })
