@@ -32,9 +32,17 @@
       <div class="w-full py-0.5" v-else-if="isImage">
         <div
           class="max-w-[90%] md:max-w-[50%] lg:max-w-[400px] max-h-[600px] overflow-y-hidden rounded bg-dark-100"
+          @click="previewImage"
         >
           <Image :src="decryptedMessage" customClass="rounded py-0.5" />
         </div>
+        <Teleport to="body" v-if="isImage && showImagePreview">
+          <ImagePreview
+            v-if="showImagePreview"
+            :src="decryptedMessage"
+            @close="showImagePreview = false"
+          />
+        </Teleport>
       </div>
 
       <div class="text-xs text-dark-400 my-0.5" v-else-if="isReceiveRedEnvelope">
@@ -72,9 +80,11 @@
 import { decrypt } from '@/utils/crypto'
 import NftLabel from './NftLabel.vue'
 import redEnvelopeImg from '@/assets/images/red-envelope.svg?url'
-import { computed } from 'vue'
+import ImagePreview from './ImagePreview.vue'
+import { computed, ref } from 'vue'
 
 const roomId = 'b671caca627219c214f433497f9aba530a29a927bb5e32f242e36f8cbc26ba3b'
+const showImagePreview = ref(false)
 
 type Message = {
   protocol: string
@@ -104,6 +114,11 @@ const randomNameColor = computed(() => {
 
   return colors[nameCode % colors.length]
 })
+
+const previewImage = () => {
+  console.log(decryptedMessage)
+  showImagePreview.value = true
+}
 
 const decryptedMessage = computed(() => {
   if (message.encryption === '0') {
