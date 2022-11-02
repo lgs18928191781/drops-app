@@ -12,5 +12,22 @@
   "backHome": "Back to Home",
   "signinandout": "Connect Wallet",
   "login": "Register/Login",
-  "connectWallet": "Connect Wallet"
+  "connectWallet": "Connect Wallet",
+  "Enter ShowMoney Password": "Enter ShowMoney Password",
+  "Enter MetaID For Bind": "Enter MetaID For Bind",
+  "Enter Phone Number": "Enter Phone Number",
+  "Enter Mobile Number": "Enter Mobile Number",
+  "Enter Email Address": "Enter Email Address",
+  "Email Address Error": "Wrong Email Address",
+  "Enter User Name": "Enter User Name",
+  "Enter Auth Code": "Enter Auth Code",
+  "Enter Pic Code": "Enter Pic Code",
+  "Enter Your Password": "Enter Your Password",
+  "Send Code": "Send Code",
+  "Not Account": "Not Account?",
+  "Register": "Sign Up",
+  "Forget Password": "Forget Password?",
+  "Confirm Password": "Confirm Password",
+  "Password Not Match": "Password Not Match",
+  "Auth Code Send Success": "Auth Code Send Success"
 }

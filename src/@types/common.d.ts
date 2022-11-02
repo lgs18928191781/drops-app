@@ -31,10 +31,14 @@ declare interface UserInfo {
   lastLoginTime: number | null
   enCryptedMnemonic: string
   userType: string
-  infoTxId: string
-  protocolTxId: string
-  rootAddress: string
+  infoTxId?: string
+  protocolTxId?: string
+  rootAddress?: string
   flag?: boolean
+}
+
+declare interface SetUserInfo extends UserInfo {
+  password: string
 }
 
 declare interface TabItem {

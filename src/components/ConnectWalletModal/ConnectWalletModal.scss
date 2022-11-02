@@ -1,0 +1,54 @@
+.login-warp {
+    .btn-list {
+        .el-button {
+            margin-bottom: 20px;
+
+            &+.el-button {
+                margin-left: 0;
+            }
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+
+        .btn-item {
+            img {
+                width: 40px;
+                height: 40px;
+                margin-right: 20px;
+            }
+
+            .name {
+                width: 115px;
+                text-align: left;
+            }
+        }
+
+
+    }
+
+    .no-wallet {
+        margin-top: 22px;
+        text-align: center;
+
+        a {
+            color: #5586BB;
+            cursor: pointer;
+            font-size: 18px;
+        }
+    }
+
+    .terms {
+        margin-top: 40px;
+        color: #9C9C9C;
+        text-align: center;
+
+        a {
+            color: #5586BB;
+            margin: 0 5px;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+    }
+}

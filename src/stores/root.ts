@@ -12,6 +12,7 @@ interface RootState {
   redirectUri: string
   exchangeRate: ExchangeRate
   isGetedExchangeRate: boolean
+  isShowLogin: boolean
 }
 
 const UA = window.navigator.userAgent.toLowerCase()
@@ -41,6 +42,7 @@ export const useRootStore = defineStore('root', {
         message: '',
       },
       isGetedExchangeRate: false,
+      isShowLogin: false,
     },
   getters: {},
   actions: {

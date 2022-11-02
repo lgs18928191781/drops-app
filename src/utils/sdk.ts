@@ -16,7 +16,7 @@ import {
   NftTransferResult,
   ProtocolOptions,
 } from '@/utils/wallet/hd-wallet'
-import { decode } from 'js-base64'
+import { decode, encode } from 'js-base64'
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { router } from '@/router'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
@@ -63,14 +63,14 @@ export class SDK {
 
   initWallet() {
     return new Promise<void>(async (resolve, reject) => {
-      const localPassword = window.localStorage.getItem('password')
-      const localUserInfo = window.localStorage.getItem('user')
+      const localPassword = window.localStorage.getItem(encode('password'))
+      const localUserInfo = window.localStorage.getItem(encode('user'))
       if (!localPassword || !localUserInfo) {
         reject(new Error('用户登录失败'))
       } else {
         try {
           const password = decode(localPassword)
-          const userInfo = JSON.parse(localUserInfo)
+          const userInfo = JSON.parse(decode(localUserInfo))
           const walletObj = await hdWalletFromAccount(
             {
               ...userInfo,
@@ -78,7 +78,7 @@ export class SDK {
             },
             this.network
           )
-          const wallet = new HdWallet(walletObj.mnemonic, walletObj.wallet)
+          const wallet = new HdWallet(walletObj.wallet)
           this.wallet = wallet
           this.isInitSdked = true
           resolve()
