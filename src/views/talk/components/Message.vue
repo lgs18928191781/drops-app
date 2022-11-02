@@ -84,6 +84,7 @@ import redEnvelopeImg from '@/assets/images/red-envelope.svg?url'
 import ImagePreview from './ImagePreview.vue'
 import { computed, onMounted, ref } from 'vue'
 import { dateTimeFormat } from '@/utils/filters'
+import dayjs from 'dayjs'
 
 const roomId = 'b671caca627219c214f433497f9aba530a29a927bb5e32f242e36f8cbc26ba3b'
 const showImagePreview = ref(false)
@@ -122,22 +123,24 @@ const previewImage = () => {
 }
 
 const formatTime = (timestamp: Date) => {
+  const day = dayjs(timestamp)
   // 如果是今天，则显示为“今天 hour:minute”
-  if (isToday(timestamp)) {
-    return `今天 ${dateTimeFormat(timestamp, 'HH:mm')}`
-  } else {
-    return '123'
+  if (day.isSame(dayjs(), 'day')) {
+    return `今天${day.format('HH:mm')}`
   }
-}
 
-const isToday = (timestamp: Date) => {
-  const today = new Date()
-  const date = new Date(timestamp)
-  return (
-    date.getFullYear() === today.getFullYear() &&
-    date.getMonth() === today.getMonth() &&
-    date.getDate() === today.getDate()
-  )
+  // 如果是昨天，则显示为“昨天 hour:minute”
+  if (day.isSame(dayjs().subtract(1, 'day'), 'day')) {
+    return `昨天${day.format('HH:mm')}`
+  }
+
+  // 如果是今年，则显示为“month day hour:minute”
+  if (day.isSame(dayjs(), 'year')) {
+    return day.format('MM/DD HH:mm')
+  }
+
+  // 如果不是今年，则显示为“year month day hour:minute”
+  return day.format('YYYY/MM/DD HH:mm')
 }
 
 const decryptedMessage = computed(() => {

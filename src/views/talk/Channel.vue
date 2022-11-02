@@ -19,7 +19,7 @@
           <MessageList />
         </div>
 
-        <ChannelInput :currentChannel="currentChannel" />
+        <TheInput :currentChannel="currentChannel" />
       </div>
 
       <Transition name="slide">
@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 import TheHeader from './components/TheHeader.vue'
-import ChannelInput from './components/ChannelInput.vue'
+import TheInput from './components/TheInput.vue'
 import CommunitySection from './components/CommunitySection.vue'
 import ChannelMemberList from './components/ChannelMemberList.vue'
 import { computed, defineAsyncComponent, onMounted, Ref, ref } from 'vue'

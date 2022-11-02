@@ -1,5 +1,5 @@
 <template>
-  <div class="overflow-x-hidden py-4 space-y-4 px-4">
+  <div class="overflow-x-hidden overflow-y-hidden py-4 space-y-4 px-4">
     <LoadingListItem v-for="i in [1, 2, 3, 4, 5, 6]" />
   </div>
 </template>

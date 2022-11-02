@@ -21,7 +21,7 @@
 
       <!-- 右侧发送按钮 -->
       <div class="flex h-full py-2 items-center shrink-0">
-        <div class="flex items-center px-1">
+        <div class="flex items-center px-1 lg:mr-2">
           <div class="p-2 w-9 h-9 transition-all hover:animate-wiggle">
             <Icon name="red_envelope" class="w-full h-full text-dark-800" />
           </div>

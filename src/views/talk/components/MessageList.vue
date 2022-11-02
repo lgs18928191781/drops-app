@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full" v-show="loading">
+  <div class="h-full overflow-y-hidden" v-show="loading">
     <LoadingList />
   </div>
   <div class="h-full overflow-y-scroll" ref="messagesScroll" v-show="!loading">
