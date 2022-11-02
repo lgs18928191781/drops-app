@@ -1,6 +1,12 @@
 <template>
-  <ElDialog :title="$t('Login')" :model-value="modelValue">
-    <div class="login-and-register">
+  <ElDialog
+    :title="type === 'login' ? $t('Login') : $t('Register')"
+    :model-value="modelValue"
+    :show-close="!loading"
+    :close-on-click-modal="false"
+    @closed="emit('update:modelValue', false)"
+  >
+    <div class="login-and-register" v-loading="loading">
       <div class="tabs">
         <a
           v-for="item in tabs"
@@ -13,7 +19,12 @@
       <ElForm :model="form" :rules="rules" ref="FormRef">
         <!--  手机 -->
         <ElFormItem prop="phone" v-if="form.userType === SignUserType.Phone">
-          <ElInput v-model="form.phone" type="number" :placeholder="$t('Enter Phone Number')">
+          <ElInput
+            v-model="form.phone"
+            type="number"
+            :placeholder="$t('Enter Phone Number')"
+            :disabled="loading"
+          >
             <template #prefix>
               <Vue3CountryIntl
                 v-model="form.area"
@@ -23,7 +34,10 @@
                 @onChange="res => (form.countryCode = res.iso2)"
                 style="width: 100%;"
               >
-                <div class="country-select flex flex-align-center" @click="isShowCountry = true">
+                <div
+                  class="country-select flex flex-align-center"
+                  @click="loading ? '' : (isShowCountry = true)"
+                >
                   <span :class="'iti-flag ' + form.countryCode"> </span>
                   <span>+{{ form.area }}</span>
                 </div>
@@ -34,7 +48,22 @@
 
         <!-- 邮箱 -->
         <ElFormItem prop="email" v-else>
-          <ElInput v-model="form.email" type="text" :placeholder="$t('Enter Email Address')" />
+          <ElInput
+            v-model="form.email"
+            type="text"
+            :placeholder="$t('Enter Email Address')"
+            :disabled="loading"
+          />
+        </ElFormItem>
+
+        <!-- 用户名 -->
+        <ElFormItem prop="password" v-if="type === 'register'">
+          <ElInput
+            v-model="form.name"
+            type="text"
+            :placeholder="$t('Enter Your NickName')"
+            :disabled="loading"
+          />
         </ElFormItem>
 
         <!-- 密码 -->
@@ -44,6 +73,7 @@
             type="password"
             show-password
             :placeholder="$t('Enter Your Password')"
+            :disabled="loading"
           />
         </ElFormItem>
 
@@ -54,6 +84,7 @@
             type="password"
             show-password
             :placeholder="$t('Confirm Password')"
+            :disabled="loading"
           />
         </ElFormItem>
 
@@ -64,6 +95,7 @@
             type="number"
             :placeholder="$t('Enter Auth Code')"
             @input="form.code = form.code.slice(0, 6)"
+            :disabled="loading"
           >
             <template #suffix>
               <ElButton
@@ -79,6 +111,16 @@
           </ElInput>
         </ElFormItem>
 
+        <!-- 密码提示 -->
+        <ElFormItem prop="remark" v-if="type === 'register'">
+          <ElInput
+            v-model="form.remark"
+            type="text"
+            :placeholder="$t('Enter Password Remark')"
+            :disabled="loading"
+          />
+        </ElFormItem>
+
         <!-- 图片验证码 -->
         <ElFormItem prop="imageCode" v-if="type === 'register'">
           <ElInput
@@ -86,12 +128,13 @@
             type="number"
             :placeholder="$t('Enter Pic Code')"
             @input="form.code = form.code.slice(0, 6)"
+            :disabled="loading"
           >
             <template #suffix>
               <div
                 class="image-code flex flex-align-center flex-pack-center"
                 slot="append"
-                @click="getImageCodeData"
+                @click="loading ? '' : getImageCodeData()"
                 v-loading="isGetImageCodeLoading"
               >
                 <img v-if="imageCodeData !== ''" :src="imageCodeData" />
@@ -151,6 +194,7 @@ import { encode } from 'js-base64'
 import { result } from 'lodash'
 import { CommitActivity } from '@/api/broad'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { RegisterGetCode } from '@/api/core'
 
 interface Props {
   modelValue: boolean
@@ -256,6 +300,13 @@ const rules = reactive({
       trigger: 'blur',
     },
   ],
+  remark: [
+    {
+      required: true,
+      message: () => i18n.t('Enter Password Remark'),
+      trigger: 'blur',
+    },
+  ],
   imageCode: [
     {
       required: true,
@@ -330,7 +381,7 @@ async function sendCode() {
     if (props.type === 'login') {
       res = await loginGetCode(params)
     } else {
-      res = await registerGetCode(params)
+      res = await RegisterGetCode(params)
     }
     if (res.code === 0) {
       sendCodeTimer.value = 60
@@ -354,35 +405,34 @@ function submitForm() {
   FormRef.value.validate(async (valid: boolean) => {
     if (valid) {
       loading.value = true
-      const phoneNum = form.area !== '86' ? form.area + form.phone : form.phone
-      if (props.type === 'login') {
-        //  登录
-        const params = {
-          type: isApp ? 2 : 1,
-          userType: form.userType || 'phone',
-          phone: phoneNum,
-          email: form.email,
-          code: form.code,
-          password: encryptPassword(form.password),
-        }
-        const loginRes = await loginCheck(params)
-        if (loginRes.code === 0 || loginRes.code === 601) {
-          const loginInfo = loginRes.data as BaseUserInfoTypes
-          const account = {
-            ...loginInfo,
-            userType: params.userType,
+      try {
+        const phoneNum = form.area !== '86' ? form.area + form.phone : form.phone
+        if (props.type === 'login') {
+          //  登录
+          const params = {
+            type: isApp ? 2 : 1,
+            userType: form.userType || 'phone',
             phone: phoneNum,
-            email: params.email,
-            pk2: loginInfo.pk2,
-            name: loginInfo.name,
-            password: form.password,
+            email: form.email,
+            code: form.code,
+            password: encryptPassword(form.password),
           }
-          // @ts-ignore
-          const walletInfo = await hdWalletFromAccount(account, import.meta.env.VITE_NET_WORK)
-          const hdWallet = new HdWallet(walletInfo.wallet)
-          let metaIdInfo
-          try {
-            metaIdInfo = await hdWallet.getMetaIdInfo(walletInfo.rootAddress)
+          const loginRes = await loginCheck(params)
+          if (loginRes.code === 0 || loginRes.code === 601) {
+            const loginInfo = loginRes.data as BaseUserInfoTypes
+            const account = {
+              ...loginInfo,
+              userType: params.userType,
+              phone: phoneNum,
+              email: params.email,
+              pk2: loginInfo.pk2,
+              name: loginInfo.name,
+              password: form.password,
+            }
+            // @ts-ignore
+            const walletInfo = await hdWalletFromAccount(account, import.meta.env.VITE_NET_WORK)
+            const hdWallet = new HdWallet(walletInfo.wallet)
+            const metaIdInfo = await hdWallet.getMetaIdInfo(walletInfo.rootAddress)
             if (!metaIdInfo.metaId) {
               return ElMessageBox.alert('抱歉，此账号有问题，请到www.showmoney.app上修复', '提示', {
                 showClose: false,
@@ -402,153 +452,153 @@ function submitForm() {
               rootAddress: walletInfo.rootAddress,
               password: form.password,
             })
-
+            loading.value = false
             emit('update:modelValue', false)
             emit('success')
-          } catch (error) {
-            console.error(error)
+          } else {
             loading.value = false
-            return ElMessage.error('初始化账号失败，请稍后再试...')
+            ElMessage.error(loginRes.msg)
           }
         } else {
-          loading.value = false
-          ElMessage.error(loginRes.msg)
-        }
-        loading.value = false
-      } else {
-        // 注册
-        const params = {
-          type: 2, // 注册时必须加上图片验证码验证， 1 是给App用的的，App没有图片验证码
-          userType: form.userType || 'phone',
-          phone: phoneNum,
-          email: form.email,
-          code: form.code,
-          name: form.name,
-          promotion: '',
-          imageCode: form.imageCode,
-          characteristic: characteristic.value,
-        }
-        const loginName = params.userType === 'phone' ? phoneNum : params.email
-        const registerRes = await registerCheck(params)
-        // console.log(registerRes)
-        if (registerRes.code === 0) {
-          let userInfo = registerRes.result as BaseUserInfoTypes
-          const walletInfo = await hdWalletFromAccount(
-            {
+          // 注册
+          const params = {
+            type: 2, // 注册时必须加上图片验证码验证， 1 是给App用的的，App没有图片验证码
+            userType: form.userType || 'phone',
+            phone: phoneNum,
+            email: form.email,
+            code: form.code,
+            name: form.name,
+            promotion: '',
+            imageCode: form.imageCode,
+            characteristic: characteristic.value,
+          }
+          const loginName = params.userType === 'phone' ? phoneNum : params.email
+          const registerRes = await registerCheck(params)
+          // console.log(registerRes)
+          if (registerRes.code === 0) {
+            let userInfo = registerRes.result as BaseUserInfoTypes
+            const walletInfo = await hdWalletFromAccount(
+              {
+                ...userInfo,
+                userType: params.userType,
+                phone: phoneNum,
+                email: params.email,
+                pk2: userInfo.pk2,
+                name: params.name,
+                password: form.password,
+              },
+              import.meta.env.VITE_NET_WORK
+            )
+
+            const userInfoParams = {
+              userType: params.userType,
+              phone: phoneNum,
+              email: params.email,
+              remark: form.remark,
+              address: walletInfo.rootAddress,
+            }
+            const setWalletRes = await setUserWalletInfo({
+              ...userInfoParams,
+              type: 2,
+              xpub: walletInfo.wallet.xpubkey,
+              pubkey: walletInfo.wallet.publicKey.toString(),
+              headers: {
+                accessKey: userInfo.token || '',
+                timestamp: Date.now(),
+                userName: loginName,
+              },
+            })
+            if (setWalletRes.code !== 0) {
+              throw new Error('保存钱包信息失败 -1')
+            }
+            const ePassword = encryptPassword(form.password)
+            const eMnemonic = encryptMnemonic(walletInfo.mnemonic, form.password)
+            const setPasswordRes = await setUserPassword(
+              {
+                ...userInfoParams,
+                password: ePassword,
+                affirmPassword: ePassword,
+                enCryptedMnemonic: eMnemonic,
+              },
+              userInfo.token || '',
+              loginName
+            )
+            if (setPasswordRes.code !== 0) {
+              throw new Error('保存钱包信息失败 -2')
+            }
+
+            const account = {
               ...userInfo,
               userType: params.userType,
               phone: phoneNum,
               email: params.email,
-              pk2: userInfo.pk2,
-              name: params.name,
               password: form.password,
-            },
-            import.meta.env.VITE_NET_WORK
-          )
+            }
+            const activityId = window.localStorage.getItem('activityId')
+            const referrerId = window.localStorage.getItem('referrerId')
+            if (activityId && referrerId) {
+              account.referrerId = referrerId
+            }
 
-          const userInfoParams = {
-            userType: params.userType,
-            phone: phoneNum,
-            email: params.email,
-            remark: form.remark,
-            address: walletInfo.rootAddress,
-          }
-          const setWalletRes = await setUserWalletInfo({
-            ...userInfoParams,
-            type: 2,
-            xpub: walletInfo.wallet.xpubkey,
-            pubkey: walletInfo.wallet.publicKey.toString(),
-            headers: {
-              accessKey: userInfo.token || '',
-              timestamp: Date.now(),
-              userName: loginName,
-            },
-          })
-          console.log(setWalletRes)
-          if (setWalletRes.code !== 0) {
-            throw new Error('保存钱包信息失败 -1')
-          }
-          const ePassword = encryptPassword(form.password)
-          const eMnemonic = encryptMnemonic(walletInfo.mnemonic, form.password)
-          const setPasswordRes = await setUserPassword(
-            {
-              ...userInfoParams,
-              password: ePassword,
-              affirmPassword: ePassword,
+            const hdWallet = new HdWallet(walletInfo.wallet)
+            const metaIdInfo = await hdWallet.initMetaIdNode(account)
+            if (!metaIdInfo) {
+              throw new Error('Create MetaID Error')
+            }
+            userInfo = {
+              ...userInfo,
+              ...metaIdInfo,
+              phone: phoneNum,
+              email: params.email,
+              userType: params.userType,
               enCryptedMnemonic: eMnemonic,
-            },
-            userInfo.token || '',
-            loginName
-          )
-          if (setPasswordRes.code !== 0) {
-            throw new Error('保存钱包信息失败 -2')
-          }
-
-          const account = {
-            ...userInfo,
-            userType: params.userType,
-            phone: phoneNum,
-            email: params.email,
-            password: form.password,
-          }
-          const activityId = window.localStorage.getItem('activityId')
-          const referrerId = window.localStorage.getItem('referrerId')
-          if (activityId && referrerId) {
-            account.referrerId = referrerId
-          }
-
-          const hdWallet = new HdWallet(walletInfo.wallet)
-          const metaIdInfo = await hdWallet.initMetaIdNode(account)
-          if (!metaIdInfo) {
-            throw new Error('Create MetaID Error')
-          }
-          userInfo = {
-            ...userInfo,
-            ...metaIdInfo,
-            phone: phoneNum,
-            email: params.email,
-            userType: params.userType,
-            enCryptedMnemonic: eMnemonic,
-            // @ts-ignore
-            rootAddress: walletInfo.rootAddress,
-            address: walletInfo.rootAddress,
-          }
-          await setUserInfo({
-            // @ts-ignore
-            userType: params.userType,
-            metaid: metaIdInfo.metaId,
-            // @ts-ignore
-            accessKey: userInfo.token,
-            phone: userInfo.phone,
-            email: userInfo.email,
-          })
-          // @ts-ignore
-          await userStore.updateUserInfo(userInfo)
-          // 处理活动邀请信息
-          if (activityId && referrerId) {
-            const result = await CommitActivity({
-              actionIndex: 5,
-              activityId: parseInt(activityId),
               // @ts-ignore
-              address: userInfo!.address!,
+              rootAddress: walletInfo.rootAddress,
+              address: walletInfo.rootAddress,
+            }
+            await setUserInfo({
               // @ts-ignore
-              metaId: userInfo!.metaId!,
+              userType: params.userType,
+              metaid: metaIdInfo.metaId,
               // @ts-ignore
-              publicKey: userInfo.pubKey,
-              refererMetaId: referrerId,
-              tag: InviteActivityTag.Rigisted,
+              accessKey: userInfo.token,
+              phone: userInfo.phone,
+              email: userInfo.email,
             })
             // @ts-ignore
-            if (result.code !== 0) {
-              Error(result.data)
+            await userStore.updateUserInfo({
+              ...userInfo,
+              password: form.password,
+            })
+            // 处理活动邀请信息
+            if (activityId && referrerId) {
+              const result = await CommitActivity({
+                actionIndex: 5,
+                activityId: parseInt(activityId),
+                // @ts-ignore
+                address: userInfo!.address!,
+                // @ts-ignore
+                metaId: userInfo!.metaId!,
+                // @ts-ignore
+                publicKey: userInfo.pubKey,
+                refererMetaId: referrerId,
+                tag: InviteActivityTag.Rigisted,
+              })
+              // @ts-ignore
+              if (result.code !== 0) {
+                Error(result.data)
+              }
+              localStorage.removeItem('activityId')
+              localStorage.removeItem('referrerId')
             }
-            localStorage.removeItem('activityId')
-            localStorage.removeItem('referrerId')
+            loading.value = false
+            emit('update:modelValue', false)
+            emit('success')
           }
-        } else {
-          throw new Error(registerRes.msg)
         }
+      } catch (error) {
         loading.value = false
+        ElMessage.error((error as any).message)
       }
     }
   })

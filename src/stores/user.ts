@@ -93,8 +93,8 @@ export const useUserStore = defineStore('user', {
       return new Promise<void>(resolve => {
         this.user = null
         this.password = null
-        localStorage.removeItem('user')
-        localStorage.removeItem('password')
+        localStorage.removeItem(encode('user'))
+        localStorage.removeItem(encode('password'))
         resolve()
       })
     },

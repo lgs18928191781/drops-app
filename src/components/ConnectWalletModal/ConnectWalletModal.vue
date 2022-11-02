@@ -17,7 +17,7 @@
         </ElButton>
       </div>
       <div class="no-wallet">
-        <a>{{ $t('nowWallet') }}</a>
+        <a @click="register">{{ $t('nowWallet') }}</a>
       </div>
       <div class="terms">
         <div>{{ $t('terms1') }}</div>
@@ -72,7 +72,15 @@ const wallets = [
     },
   },
   { name: 'Metalet', icon: IconMVC },
-  { name: 'ShowMoney', icon: IconShowmoney },
+  {
+    name: 'ShowMoney',
+    icon: IconShowmoney,
+    fun: () => {
+      type.value = 'login'
+      rootStore.$patch({ isShowLogin: false })
+      isShowLoginAndRegister.value = true
+    },
+  },
 ]
 
 async function metaMaskLoginSuccess(res: MetaMaskLoginRes) {
@@ -82,6 +90,12 @@ async function metaMaskLoginSuccess(res: MetaMaskLoginRes) {
     userType: 'email',
   })
   userStore.$patch({ wallet: new SDK() })
+}
+
+function register() {
+  rootStore.$patch({ isShowLogin: false })
+  type.value = 'register'
+  isShowLoginAndRegister.value = true
 }
 </script>
 

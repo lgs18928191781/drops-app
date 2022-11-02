@@ -29,5 +29,7 @@
   "Forget Password": "Forget Password?",
   "Confirm Password": "Confirm Password",
   "Password Not Match": "Password Not Match",
-  "Auth Code Send Success": "Auth Code Send Success"
+  "Auth Code Send Success": "Auth Code Send Success",
+  "Enter Your NickName": "Enter Your NickName",
+  "Enter Password Remark": "Enter Password Remark"
 }
