@@ -15,8 +15,9 @@
       />
 
       <div class="pt-12 pb-14 h-screen lg:relative w-full bg-dark-100">
-        <LoadingList v-if="loading" />
-        <MessageList :messages="messages" v-else />
+        <div class="h-full">
+          <MessageList />
+        </div>
 
         <ChannelInput :currentChannel="currentChannel" />
       </div>
@@ -33,24 +34,12 @@ import TheHeader from './components/TheHeader.vue'
 import ChannelInput from './components/ChannelInput.vue'
 import CommunitySection from './components/CommunitySection.vue'
 import ChannelMemberList from './components/ChannelMemberList.vue'
-import LoadingList from './components/LoadingList.vue'
 import { computed, defineAsyncComponent, onMounted, Ref, ref } from 'vue'
-import { getChannelMessages, getChannelMembers } from '@/api/talk'
-import { sleep } from '@/utils/util'
+import { getChannelMembers } from '@/api/talk'
 
 const MessageList = defineAsyncComponent({
   loader: () => import('./components/MessageList.vue'),
 })
-
-type Message = {
-  protocol: string
-  contentType: string
-  content: string
-  avatarType: string
-  avatarTxId: string
-  nickName: string
-  timestamp: number
-}
 
 type Member = {
   protocol: string
@@ -71,7 +60,6 @@ type Channel = {
 
 const showMembers = ref(false)
 const showCommunitySection = ref(false)
-const loading = ref(false)
 
 // 获取频道信息
 const channel: Ref<Channel> = ref({
@@ -81,7 +69,6 @@ const channel: Ref<Channel> = ref({
   groupId: '',
 })
 
-const messages: Ref<Message[]> = ref([])
 const members: Ref<Member[]> = ref([])
 const community: Ref<any> = ref({
   name: '一代MetaBot',
@@ -109,11 +96,6 @@ const currentChannel = computed(() => {
   return community.value.channels.find((channel: any) => channel.in)
 })
 
-const scrollToMessagesBottom = () => {
-  const bottomAnchor = document.getElementById('bottomAnchor')
-  bottomAnchor?.scrollIntoView()
-}
-
 const handleToggleMemberList = () => {
   showMembers.value = !showMembers.value
   localStorage.setItem('layout-show-right-drawer', showMembers.value ? '1' : '0')
@@ -126,17 +108,6 @@ onMounted(async () => {
     showMembers.value = true
   }
 
-  loading.value = true
-  const channelId = 'b671caca627219c214f433497f9aba530a29a927bb5e32f242e36f8cbc26ba3b'
-  const {
-    data: {
-      results: { items },
-    },
-  } = await getChannelMessages(channelId)
-  messages.value = items.reverse()
-  await sleep(200)
-  loading.value = false
-
   members.value = await getChannelMembers('1')
   channel.value = {
     name: '一代MetaBot',
@@ -144,8 +115,6 @@ onMounted(async () => {
     isPublic: true,
     groupId: 'b671caca627219c214f433497f9aba530a29a927bb5e32f242e36f8cbc26ba3b',
   }
-
-  scrollToMessagesBottom()
 })
 </script>
 
