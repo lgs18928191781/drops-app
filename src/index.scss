@@ -7,7 +7,7 @@ html {
   body {
     // background: $bgColor;
     font-size: 16px;
-    font-family: Whitney, 'SF Pro', 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
+    font-family: "ABC Ginto Normal", Whitney, 'SF Pro', 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
       'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
     min-height: 100vh;
 
@@ -74,7 +74,7 @@ pre {
   }
 
   border: 2PX solid var(--border-color);
-  border-bottom: 4PX solid var(--border-color);
+  border-bottom: 5PX solid var(--border-color);
   border-radius: 8PX;
   margin-bottom: 2PX;
   transition-property: all;
@@ -82,7 +82,7 @@ pre {
 
   &:hover {
     border-right: 4PX solid var(--border-color);
-    border-bottom: 6PX solid var(--border-color);
+    border-bottom: 7PX solid var(--border-color);
     transform: translateX(-2PX) translateY(-2PX);
     margin-bottom: 0;
   }

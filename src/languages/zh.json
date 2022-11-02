@@ -66,5 +66,33 @@
   "Password Not Match": "两次输入的密码不匹配",
   "Auth Code Send Success": "验证码发送成功",
   "Enter Your NickName": "请输入你的用户名",
-  "Enter Password Remark": "密码提示"
+  "Enter Password Remark": "密码提示",
+
+  "Talk": {
+    "Settings": {
+      "settings": "设置",
+      "language": "语言",
+      "en": "英语",
+      "zh": "简体中文",
+      "theme": "外观主题",
+      "dark": "深色",
+      "light": "明亮"
+    },
+    "Channel": {
+      "members": "成员",
+      "join_channel": "加入了频道",
+      "leave_channel": "离开了频道",
+      "come_get_red_envelope": "领取红包",
+      "receive_own_red_envelope": "领取了自己的红包",
+      "receive_red_envelope": "领取了{sender}的红包",
+      "default_red_envelope_message": "恭喜发财，大吉大利",
+      "private_channel": "私密频道",
+      "public_channel": "公开频道",
+      "message_to": "发消息到 {channel}…"
+    },
+    "Datetime": {
+      "today": "今天",
+      "yesterday": "昨天"
+    }
+  }
 }

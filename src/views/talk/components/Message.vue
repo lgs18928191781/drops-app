@@ -16,9 +16,11 @@
         </div>
       </div>
 
-      <div class="w-full py-0.5 text-dark-400 text-xs" v-if="isGroupJoinAction">加入了群聊</div>
-      <div class="w-full py-0.5 text-dark-400 text-xs" v-else-if="isGroupLeaveAction">
-        离开了群聊
+      <div class="w-full py-0.5 text-dark-400 text-xs capitalize" v-if="isGroupJoinAction">
+        {{ $t('Talk.Channel.join_channel') }}
+      </div>
+      <div class="w-full py-0.5 text-dark-400 text-xs capitalize" v-else-if="isGroupLeaveAction">
+        {{ $t('Talk.Channel.leave_channel') }}
       </div>
 
       <div class="w-full" v-else-if="isNftEmoji">
@@ -46,7 +48,7 @@
         </Teleport>
       </div>
 
-      <div class="text-xs text-dark-400 my-0.5" v-else-if="isReceiveRedEnvelope">
+      <div class="text-xs text-dark-400 my-0.5 capitalize" v-else-if="isReceiveRedEnvelope">
         {{ redEnvelopeReceiveInfo }}
       </div>
 
@@ -57,7 +59,9 @@
           <div class="rounded-xl bg-red-400 p-6 flex space-x-2">
             <img :src="redEnvelopeImg" class="h-12" />
             <div class="">
-              <div class="text-white text-lg font-medium">领取红包</div>
+              <div class="text-white text-lg font-medium capitalize">
+                {{ $t('Talk.Channel.come_get_red_envelope') }}
+              </div>
               <div class="text-red-50 text-xs mt-0.5">{{ redEnvelopeMessage }}</div>
             </div>
           </div>
@@ -85,6 +89,9 @@ import ImagePreview from './ImagePreview.vue'
 import { computed, onMounted, ref } from 'vue'
 import { dateTimeFormat } from '@/utils/filters'
 import dayjs from 'dayjs'
+import { useI18n } from 'vue-i18n'
+
+const i18n = useI18n()
 
 const roomId = 'b671caca627219c214f433497f9aba530a29a927bb5e32f242e36f8cbc26ba3b'
 const showImagePreview = ref(false)
@@ -126,12 +133,12 @@ const formatTime = (timestamp: Date) => {
   const day = dayjs(timestamp)
   // 如果是今天，则显示为“今天 hour:minute”
   if (day.isSame(dayjs(), 'day')) {
-    return `今天${day.format('HH:mm')}`
+    return `${i18n.t('Talk.Datetime.today')}${day.format('HH:mm')}`
   }
 
   // 如果是昨天，则显示为“昨天 hour:minute”
   if (day.isSame(dayjs().subtract(1, 'day'), 'day')) {
-    return `昨天${day.format('HH:mm')}`
+    return `${i18n.t('Talk.Datetime.yesterday')}${day.format('HH:mm')}`
   }
 
   // 如果是今年，则显示为“month day hour:minute”
@@ -162,16 +169,18 @@ const redEnvelopeReceiveInfo = computed(() => {
   const content: string = props.message.content
 
   if (props.message.metaId === props.message.data?.redEnvelopeMetaId) {
-    return `领取了自己的红包`
+    return i18n.t('Talk.Channel.receive_own_red_envelope')
   }
 
   const [_receiver, sender] = content.split('|-|')
 
-  return `领取了 ${sender} 的红包`
+  return i18n.t('Talk.Channel.receive_red_envelope', {
+    sender,
+  })
 })
 
 const redEnvelopeMessage = computed(() => {
-  return props.message.data?.content || '恭喜发财，大吉大利'
+  return props.message.data?.content || i18n.t('Talk.Channel.default_red_envelope_message')
 })
 
 const isMyMessage = computed(() => {
