@@ -56,13 +56,14 @@ export const getChannels = (): Promise<any> => {
   })
 }
 
-export const getChannelMessages = async (channelId: string): Promise<any> => {
-  return TalkApi.get(`/getRoomChatList/${channelId}`, {
-    params: {
-      metaId: '261562cd13734c7e9f3809e32d3d7c56f0b27788f88d6738fc95f96ddb89eb01',
-      pageSize: 50,
-    },
-  })
+export const getChannelMessages = async (channelId: string, params?: any): Promise<any> => {
+  params = params || {}
+  params.metaId = '261562cd13734c7e9f3809e32d3d7c56f0b27788f88d6738fc95f96ddb89eb01'
+  params.pageSize = '50'
+  params.page = '1'
+  params.groupId = channelId
+
+  return TalkApi.post(`/getRoomChatList`, params)
 }
 
 export const getChannelMembers = (channelId: string): Promise<any> => {

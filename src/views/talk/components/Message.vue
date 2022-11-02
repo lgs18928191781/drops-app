@@ -1,8 +1,8 @@
 <template lang="">
   <div class="flex">
     <UserAvatar
-      :type="message.avatarType"
-      :metaId="message.avatarTxId || 'undefined'"
+      :type="props.message.avatarType"
+      :metaId="props.message.avatarTxId || 'undefined'"
       class="w-13.5 h-13.5 shrink-0"
     />
     <div class="ml-4 grow pr-12">
@@ -11,7 +11,8 @@
           {{ message.nickName }}
         </div>
         <div class="text-dark-250 text-sm">
-          {{ $filters.dateTimeFormat(message.timestamp, 'HH:mm') }}
+          <!-- {{ $filters.dateTimeFormat(message.timestamp, 'HH:mm') }} -->
+          {{ formatTime(message.timestamp) }}
         </div>
       </div>
 
@@ -31,7 +32,7 @@
 
       <div class="w-full py-0.5" v-else-if="isImage">
         <div
-          class="max-w-[90%] md:max-w-[50%] lg:max-w-[400px] max-h-[600px] overflow-y-hidden rounded bg-dark-100"
+          class="max-w-[90%] md:max-w-[50%] lg:max-w-[400px] max-h-[600px] overflow-y-hidden rounded bg-dark-100 cursor-pointer"
           @click="previewImage"
         >
           <Image :src="decryptedMessage" customClass="rounded py-0.5" />
@@ -81,7 +82,9 @@ import { decrypt } from '@/utils/crypto'
 import NftLabel from './NftLabel.vue'
 import redEnvelopeImg from '@/assets/images/red-envelope.svg?url'
 import ImagePreview from './ImagePreview.vue'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import { dateTimeFormat } from '@/utils/filters'
+import dayjs from 'dayjs'
 
 const roomId = 'b671caca627219c214f433497f9aba530a29a927bb5e32f242e36f8cbc26ba3b'
 const showImagePreview = ref(false)
@@ -97,7 +100,6 @@ type Message = {
 }
 
 const props = defineProps(['message'])
-const message = props.message
 
 const randomNameColor = computed(() => {
   const colors = [
@@ -109,7 +111,7 @@ const randomNameColor = computed(() => {
     'text-amber-500',
   ]
   // 将用户名转换为数字
-  const name = message.nickName
+  const name = props.message.nickName
   const nameCode = name.split('').reduce((acc: number, cur: any) => acc + cur.charCodeAt(0), 0)
 
   return colors[nameCode % colors.length]
@@ -120,22 +122,46 @@ const previewImage = () => {
   showImagePreview.value = true
 }
 
+const formatTime = (timestamp: Date) => {
+  const day = dayjs(timestamp)
+  // 如果是今天，则显示为“今天 hour:minute”
+  if (day.isSame(dayjs(), 'day')) {
+    return `今天${day.format('HH:mm')}`
+  }
+
+  // 如果是昨天，则显示为“昨天 hour:minute”
+  if (day.isSame(dayjs().subtract(1, 'day'), 'day')) {
+    return `昨天${day.format('HH:mm')}`
+  }
+
+  // 如果是今年，则显示为“month day hour:minute”
+  if (day.isSame(dayjs(), 'year')) {
+    return day.format('MM/DD HH:mm')
+  }
+
+  // 如果不是今年，则显示为“year month day hour:minute”
+  return day.format('YYYY/MM/DD HH:mm')
+}
+
 const decryptedMessage = computed(() => {
-  if (message.encryption === '0') {
-    return message.content
+  if (props.message.encryption === '0') {
+    return props.message.content
   }
 
-  if (message.protocol !== 'simpleGroupChat' && message.protocol !== 'SimpleFileGroupChat') {
-    return message.content
+  if (
+    props.message.protocol !== 'simpleGroupChat' &&
+    props.message.protocol !== 'SimpleFileGroupChat'
+  ) {
+    return props.message.content
   }
 
-  return decrypt(message.content, roomId.substring(0, 16))
+  return decrypt(props.message.content, roomId.substring(0, 16))
 })
 
 const redEnvelopeReceiveInfo = computed(() => {
-  const content: string = message.content
+  const content: string = props.message.content
 
-  if (message.metaId === message.data?.redEnvelopeMetaId) {
+  if (props.message.metaId === props.message.data?.redEnvelopeMetaId) {
     return `领取了自己的红包`
   }
 
@@ -145,19 +171,19 @@ const redEnvelopeReceiveInfo = computed(() => {
 })
 
 const redEnvelopeMessage = computed(() => {
-  return message.data?.content || '恭喜发财，大吉大利'
+  return props.message.data?.content || '恭喜发财，大吉大利'
 })
 
 const isMyMessage = computed(() => {
-  return message.metaId === '261562cd13734c7e9f3809e32d3d7c56f0b27788f88d6738fc95f96ddb89eb01' // TODO:
+  return props.message.metaId === '261562cd13734c7e9f3809e32d3d7c56f0b27788f88d6738fc95f96ddb89eb01' // TODO:
 })
 
-const isGroupJoinAction = computed(() => message.protocol === 'SimpleGroupJoin')
-const isGroupLeaveAction = computed(() => message.protocol === 'SimpleGroupLeave')
-const isNftEmoji = computed(() => message.protocol === 'SimpleEmojiGroupChat')
-const isImage = computed(() => message.protocol === 'SimpleFileGroupChat')
-const isGiveawayRedEnvelope = computed(() => message.protocol === 'SimpleRedEnvelope')
-const isReceiveRedEnvelope = computed(() => message.protocol === 'OpenRedEnvelope')
+const isGroupJoinAction = computed(() => props.message.protocol === 'SimpleGroupJoin')
+const isGroupLeaveAction = computed(() => props.message.protocol === 'SimpleGroupLeave')
+const isNftEmoji = computed(() => props.message.protocol === 'SimpleEmojiGroupChat')
+const isImage = computed(() => props.message.protocol === 'SimpleFileGroupChat')
+const isGiveawayRedEnvelope = computed(() => props.message.protocol === 'SimpleRedEnvelope')
+const isReceiveRedEnvelope = computed(() => props.message.protocol === 'OpenRedEnvelope')
 </script>
 
 <style lang="scss" scoped></style>
