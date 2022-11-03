@@ -1,6 +1,6 @@
 import HttpRequest from 'request-sdk'
 
-const aggregation = new HttpRequest(import.meta.env.VITE_AggregationBaseUrl, {
+const aggregation = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation`, {
   header: {
     SiteConfigMetanetId: import.meta.env.VITE_SiteConfigMetanetId,
   },
@@ -87,4 +87,34 @@ export const GetNFTEmojis = (params: {
 }): Promise<GetTopicbuzzsRes> => {
   const { address, ..._params } = params
   return aggregation.get(`/v2/app/nftEmoji/getMyNftEmojiList/${address}`, { params: _params })
+}
+
+export const GetUserAllInfo = (
+  metaId: string
+): Promise<{
+  code: number
+  data: {
+    metaId: string
+    metaIdTag: string
+    address: string
+    pubKey: string
+    infoTxId: string
+    infoPublicKey: string
+    protocolTxId: string
+    protocolPublicKey: string
+    name: string
+    nameEncrypt: string
+    phone: string
+    phoneEncrypt: string
+    email: string
+    emailEncrypt: string
+    avatarTxId: string
+    avatarEncrypt: string
+    coverUrl: string
+    coverType: string
+    coverPublicKey: string
+    timestamp: number
+  }
+}> => {
+  return aggregation.get(`/v2/app/user/getUserAllInfo/${metaId}`)
 }

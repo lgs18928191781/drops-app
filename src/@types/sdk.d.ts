@@ -114,7 +114,7 @@ export interface TransferTypes {
   from?: BaseUtxo[]
   change?: string
   utxos?: MetasvUtxoTypes[]
-  opReturn?: string[]
+  opReturn?: (string | Buffer)[]
   needConfirm?: boolean
   useFeeb?: number
 }

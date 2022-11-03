@@ -149,6 +149,7 @@ export interface MetaMaskLoginRes {
     userInfo: MetaMaskLoginUserInfo
     wallet: bsv.HDPrivateKey
     password: string
+    type: 'register' | 'login'
 }
 
 interface Props {
@@ -168,7 +169,7 @@ enum SignType {
 }
 
 
-
+let type: 'register' | 'login' = 'login'
 const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits(['update:modelValue', 'success', 'logout'])
 const i18n = useI18n()
@@ -346,11 +347,7 @@ function hashSignLogin(mnemonic: string) {
 }
 
 function loginByMnemonic(mnemonic: string) {
-    return new Promise<{
-        userInfo: any,
-        wallet: bsv.HDPrivateKey
-        password: string
-    }>(async (resolve, reject) => {
+    return new Promise<MetaMaskLoginRes>(async (resolve, reject) => {
         try {
             const decodeMnemonic = decryptMnemonic(
                 mnemonic,
@@ -374,13 +371,13 @@ function loginByMnemonic(mnemonic: string) {
                     type: 1,
                 })
                 if (loginInfo.code == 0) {
-                    console.log('mnemonic', mnemonic)
                     resolve({
                         userInfo: Object.assign(loginInfo.data, {
                             enCryptedMnemonic: mnemonic,
                         }),
                         wallet: hdWallet,
-                        password: password.value
+                        password: password.value,
+                        type: type
                     })
                 }
             }
@@ -416,11 +413,13 @@ function setloaclAccessKey() {
 }
 
 
-function selectLoginType(type: number) {
-    if (type === SignType.isBindMetaidOrAddressLogin) {
+function selectLoginType(_type: number) {
+    if (_type === SignType.isBindMetaidOrAddressLogin) {
         signType.value = SignType.isBindMetaidOrAddressLogin
-    } else if (type == SignType.isRegister) {
+        type = 'login'
+    } else if (_type == SignType.isRegister) {
         signType.value = SignType.isRegister
+        type = 'register'
     } else {
         signType.value = SignType.isLogined
     }
@@ -463,8 +462,10 @@ function submitForm() {
                     loginOperation()
                     emit('success', {
                         ...res,
-                        password: password.value
+                        password: password.value,
+                        type
                     })
+                    ruleFormRef.value.resetFields()
                     loading.close()
                 } else if (signType.value == SignType.isRegister) {
                     //    //新用户
@@ -473,6 +474,7 @@ function submitForm() {
                         loading.close()
                         throw new Error(error.message)
                     })
+                    ruleFormRef.value.resetFields()
                     emit('success', res)
                     loading.close()
                     emit('update:modelValue', false)
@@ -540,7 +542,7 @@ function createMetaidAccount() {
                 encode(ruleForm.pass)
             )
             const hdWallet = await hdWalletFromMnemonic(mnemonic, 'new', Network.testnet)
-            const HdWalletInstance = new HdWallet(mnemonic, hdWallet)
+            const HdWalletInstance = new HdWallet(hdWallet)
             const account: any = {
                 name: ruleForm.name,
             }
@@ -557,7 +559,7 @@ function createMetaidAccount() {
 
             const encryptmnemonic = encryptMnemonic(
                 mnemonic,
-                decode(getPw()!)
+                ruleForm.pass
             )
 
             const userInfo = await loginByNewUser({
@@ -575,7 +577,6 @@ function createMetaidAccount() {
                         userInfo.data.registerType == 'email'
                             ? userInfo.data.email
                             : userInfo.data.phone)
-                debugger
                 const { metaId } = await HdWalletInstance.initMetaIdNode({
                     ...account,
                     userType: userInfo.data.registerType,
@@ -589,7 +590,8 @@ function createMetaidAccount() {
                 resolve({
                     userInfo: newUserInfo,
                     wallet: hdWallet,
-                    password: ruleForm.pass
+                    password: ruleForm.pass,
+                    type
                 })
             }
         } catch (error) {

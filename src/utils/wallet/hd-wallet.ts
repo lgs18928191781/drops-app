@@ -22,9 +22,11 @@ import { englishWords } from './english'
 import { API_NET, API_TARGET, SensibleNFT, Wallet } from 'sensible-sdk'
 import { SA_utxo } from 'sensible-sdk/dist/sensible-api'
 import { isEmail } from '../util'
-import { IsEncrypt } from '@/enum'
+import { IsEncrypt, NodeName } from '@/enum'
 import { AttachmentItem, PayToItem } from '@/@types/hd-wallet'
 import { CreateNodeOptions, TransferTypes, UtxoItem } from '@/@types/sdk'
+import { AllNodeName } from '../sdk'
+import { ElMessage } from 'element-plus'
 
 const bsv = mvc
 
@@ -183,7 +185,7 @@ export interface ProtocolOptions extends NodeOptions {
 }
 
 export const DEFAULTS = {
-  feeb: 0.05,
+  feeb: 0.5,
   minAmount: 546,
 }
 
@@ -435,7 +437,7 @@ export class HdWallet {
       email: '',
     }
     const metaId = await this.provider.getMetaId(rootAddress).catch(error => {
-      debugger
+      ElMessage.error(error.message)
     })
     if (metaId) {
       const info = await this.provider.getMetaIdInfo(metaId)
@@ -451,7 +453,6 @@ export class HdWallet {
   public initMetaIdNode(account: BaseUserInfoTypes) {
     return new Promise<MetaIdInfoTypes>(async (resolve, reject) => {
       try {
-        debugger
         const metaIdInfo: MetaIdInfoTypes = await this.getMetaIdInfo(this.rootAddress)
         metaIdInfo.pubKey = this._root.toPublicKey().toString()
         //  检查 metaidinfo 是否完整
@@ -473,7 +474,6 @@ export class HdWallet {
                 token: account.token || '',
                 userName: account.userType === 'phone' ? account.phone : account.email,
               })
-              debugger
               utxos = [initUtxo]
             }
 
@@ -497,9 +497,12 @@ export class HdWallet {
             })
             hexTxs.push(rootTx.hex)
             metaIdInfo.metaId = rootTx.txId
-            const newUtxo = await this.utxoFromTxChange(rootTx.raw, {
-              addressType: 0,
-              addressIndex: 0,
+            const newUtxo = await this.utxoFromTx({
+              tx: rootTx.raw,
+              addressInfo: {
+                addressType: 0,
+                addressIndex: 0,
+              },
             })
             if (newUtxo) {
               utxos = [newUtxo]
@@ -518,9 +521,12 @@ export class HdWallet {
             })
             hexTxs.push(protocolTx.hex)
             metaIdInfo.protocolTxId = protocolTx.txId
-            const newUtxo = await this.utxoFromTxChange(protocolTx.raw, {
-              addressType: 0,
-              addressIndex: 0,
+            const newUtxo = await this.utxoFromTx({
+              tx: protocolTx.raw,
+              addressInfo: {
+                addressType: 0,
+                addressIndex: 0,
+              },
             })
             if (newUtxo) utxos = [newUtxo]
           }
@@ -539,9 +545,12 @@ export class HdWallet {
             console.log('Info', infoTx)
             hexTxs.push(infoTx.hex)
             metaIdInfo.infoTxId = infoTx.txId
-            const newUtxo = await this.utxoFromTxChange(infoTx.raw, {
-              addressType: 0,
-              addressIndex: 1,
+            const newUtxo = await this.utxoFromTx({
+              tx: infoTx.raw,
+              addressInfo: {
+                addressType: 0,
+                addressIndex: 1,
+              },
             })
             if (newUtxo) utxos = [newUtxo]
           }
@@ -559,9 +568,12 @@ export class HdWallet {
             console.log('Info', nameTx)
             hexTxs.push(nameTx.hex)
             metaIdInfo.name = account.name
-            const newUtxo = await this.utxoFromTxChange(nameTx.raw, {
-              addressType: 0,
-              addressIndex: 1,
+            const newUtxo = await this.utxoFromTx({
+              tx: nameTx.raw,
+              addressInfo: {
+                addressType: 0,
+                addressIndex: 1,
+              },
             })
             if (newUtxo) utxos = [newUtxo]
           }
@@ -586,9 +598,12 @@ export class HdWallet {
             })
             hexTxs.push(loginNameTx.hex)
             metaIdInfo[account.userType] = loginName
-            const newUtxo = await this.utxoFromTxChange(loginNameTx.raw, {
-              addressType: 0,
-              addressIndex: 1,
+            const newUtxo = await this.utxoFromTx({
+              tx: loginNameTx.raw,
+              addressInfo: {
+                addressType: 0,
+                addressIndex: 1,
+              },
             })
             if (newUtxo) utxos = [newUtxo]
           }
@@ -761,7 +776,6 @@ export class HdWallet {
         }
         // 数据加密
         if (+encrypt === 1) {
-          debugger
           data = this.eciesEncryptData(data, privateKey, privateKey.publicKey).toString('hex')
         } else {
           if (encoding.toLowerCase() === 'binary') {
@@ -770,7 +784,7 @@ export class HdWallet {
         }
 
         const scriptPlayload = [
-          'meta',
+          'mvc',
           nodeAddress.publicKey.toString(),
           parentTxId,
           metaIdTag.toLowerCase(),
@@ -840,23 +854,21 @@ export class HdWallet {
         const { tx, amount } = await this.makeTxNotUtxos({
           payTo,
           outputs,
-          from,
           change,
           opReturn,
           useFeeb,
+          utxos,
         })
         tx.change(change)
-        // @ts-ignore
-        tx.useFeeb = useFeeb
         // @ts-ignore
         tx.getNeedFee = function() {
           // @ts-ignore
           const amount = Math.ceil(
             // @ts-ignore
-            (30 + this._estimateSize() + 182) * this.useFeeb
+            (30 + this._estimateSize() + 182) * useFeeb
           )
           // @ts-ignore
-          const offerFed = Math.ceil(amount * this.useFeeb)
+          const offerFed = Math.ceil(amount * useFeeb)
           // if (amount < minAmount) amount = minAmount
           const total =
             offerFed + amount < bsv.Transaction.DUST_AMOUNT
@@ -933,8 +945,7 @@ export class HdWallet {
   public async makeTxNotUtxos({
     payTo = [],
     outputs = [],
-    from = [],
-    change = this.rootAddress,
+    utxos = [],
     opReturn,
     useFeeb = DEFAULTS.feeb,
   }: TransferTypes) {
@@ -971,7 +982,10 @@ export class HdWallet {
       })
     }
 
-    tx.from(from)
+    if (utxos.length > 0) {
+      tx.from(utxos)
+    }
+
     return {
       tx,
       amount,
@@ -995,23 +1009,26 @@ export class HdWallet {
     })
   }
 
-  utxoFromTxChange(
-    tx: bsv.Transaction,
-    params?: {
+  utxoFromTx(params: {
+    tx: bsv.Transaction
+    addressInfo?: {
       addressType: number
       addressIndex: number
     }
-  ) {
+    outPutIndex?: number
+  }) {
     return new Promise<UtxoItem>(async (resolve, reject) => {
       try {
-        const changeOutPut = tx.outputs[tx._changeIndex]
-        if (!params) {
+        // 默认  outPutIndex = changeIndex
+        if (typeof params?.outPutIndex === 'undefined') params.outPutIndex = params.tx._changeIndex
+        const OutPut = params.tx.outputs[params.outPutIndex]
+        if (!params.addressInfo) {
           const addressInfo = await this.provider.getPathWithNetWork({
-            address: changeOutPut.script.toAddress(this.network).toString(),
+            address: OutPut.script.toAddress(this.network).toString(),
             xpub: this.wallet.xpubkey.toString(),
           })
           if (addressInfo) {
-            params = {
+            params.addressInfo = {
               addressType: addressInfo.addressType,
               addressIndex: addressInfo.addressIndex,
             }
@@ -1019,15 +1036,15 @@ export class HdWallet {
         }
 
         resolve({
-          address: changeOutPut.script.toAddress(this.network).toString(),
-          satoshis: changeOutPut.satoshis,
-          value: changeOutPut.satoshis,
-          amount: changeOutPut.satoshis * 1e-8,
-          script: changeOutPut.script.toHex(),
-          outputIndex: tx._changeIndex,
-          txId: tx.id,
-          addressType: params!.addressType,
-          addressIndex: params!.addressIndex,
+          address: OutPut.script.toAddress(this.network).toString(),
+          satoshis: OutPut.satoshis,
+          value: OutPut.satoshis,
+          amount: OutPut.satoshis * 1e-8,
+          script: OutPut.script.toHex(),
+          outputIndex: params.outPutIndex!,
+          txId: params.tx.id,
+          addressType: params!.addressInfo?.addressType!,
+          addressIndex: params!.addressInfo?.addressIndex!,
           xpub: this.wallet.xpubkey.toString(),
         })
       } catch (error) {
@@ -1479,19 +1496,20 @@ export class HdWallet {
   }
 
   // 创建协议节点
-  public createBrfcNode(params: {
-    nodeName: string
-    metaIdTag: string
-    parentTxId: string
-    data: string
-    keyPath?: string
-    parentAddress: string
-    payTo?: { amount: number; address: string }[]
-    utxos?: UtxoTypes[]
-    useFeeb?: number
-    needConfirm?: boolean
-    isBroadcast?: boolean
-  }) {
+  public createBrfcNode(
+    params: {
+      nodeName: NodeName
+      parentTxId: string
+      keyPath?: string
+      parentAddress: string
+      payTo?: { amount: number; address: string }[]
+      utxos?: UtxoTypes[]
+      useFeeb?: number
+    },
+    option?: {
+      isBroadcast: boolean
+    }
+  ) {
     return new Promise<{
       address: string
       txId: string
@@ -1500,12 +1518,32 @@ export class HdWallet {
       tx?: bsv.Transaction
     }>(async (resolve, reject) => {
       try {
+        const initParams = {
+          useFeeb: DEFAULTS.feeb,
+          payTo: [],
+          utxos: [],
+        }
+        const initOption = {
+          isBroadcast: true,
+        }
+        params = {
+          ...initParams,
+          ...params,
+        }
+        option = {
+          ...initOption,
+          ...option,
+        }
         if (!params.useFeeb) params.useFeeb = DEFAULTS.feeb
         if (!params.payTo) params.payTo = []
-        if (params.needConfirm === undefined) params.needConfirm = true
-        if (params.isBroadcast === undefined) params.isBroadcast = true
 
-        let protocol = await this.getProtocolInfo(params.nodeName, params.parentTxId, params.data)
+        const nodeName = AllNodeName[params.nodeName]
+
+        let protocol = await this.getProtocolInfo(
+          params.nodeName,
+          params.parentTxId,
+          nodeName.brfcId
+        )
         //  处理根节点
         if (protocol) {
           resolve({
@@ -1524,8 +1562,15 @@ export class HdWallet {
             }
           }
 
-          const protocolRoot = await this.createNode(params)
+          const protocolRoot = await this.createNode({
+            ...params,
+            metaIdTag: MetaIdTag[this.network],
+            data: nodeName.brfcId,
+          })
           if (protocolRoot) {
+            if (option.isBroadcast) {
+              await this.provider.broadcast(protocolRoot.raw.toString())
+            }
             // @ts-ignore
             protocol = {
               address: protocolRoot.nodeAddress,
@@ -1538,94 +1583,71 @@ export class HdWallet {
             resolve(protocol)
           }
         }
-
-        // if (params.utxos.length < 1) {
-        //   reject(Error('用户余额不足'))
-        // } else {
-        //   const protocol = await this.getProtocolInfo(
-        //     params.nodeName,
-        //     params.parentTxId,
-        //     params.data
-        //   )
-        //   if (protocol) {
-        //     resolve(protocol)
-        //   } else {
-        //     const res = await this.createNode(params)
-        //     if (res) {
-        //       if (params.isBroadcast) {
-        //         const response = await this.provider.broadcast(res.hex)
-        //         if (response?.txid) {
-        //           resolve(res)
-        //         }
-        //       } else {
-        //         resolve(res)
-        //       }
-
-        //       // this._protocolsTxId = res.data.txId
-        //       // 地址已使用，path + 1
-        //       // keyPath = [0, Number(keyPath[1]) + 1]
-        //       // protocolTypeAddress = res.data.nodeAddress
-        //       // protocolTypeTxId = res.data.txId
-        //       // usedAmount += Number(res.data.usedAmount) - 546
-        //       // // txArray.push(res.data.tran)
-        //       // txArray = txArray.concat(res.data.transactionHex)
-        //       // txDetail.push({ txId: res.data.txId, amount: res.data.usedAmount })
-        //       // utxos = res.data.utxos
-        //       // return res
-        //     }
-        //   }
-        // }
       } catch (error) {
         reject(error)
       }
     })
   }
 
-  public async createBrfcChildNode(params: {
-    nodeName: string
-    autoRename?: boolean
-    metaIdTag?: string
-    brfcId: string
-    appId?: string[]
-    encrypt?: IsEncrypt
-    version?: string
-    data: string
-    dataType: string
-    payCurrency?: string
-    payTo?: PayToItem[]
-    encoding?: string
-    path: string
-    needConfirm?: boolean // 是否需要确认
-    attachments?: AttachmentItem[] // 附件
-    utxos?: any[] // 传入的utxos
-    publickey?: string // 修改时 用的publicekey
-    ecdh?: { type: string; publickey: string } // ecdh
-    useFeeb?: number // 费率
-    isBroadcast?: boolean // 是否广播
-    meConvertSatoshi?: number
-    brfc: {
-      txId: string
-      address: string
+  public async createBrfcChildNode(
+    params: {
+      nodeName: string
+      autoRename?: Boolean
+      brfcId: string
+      appId?: string[]
+      encrypt?: IsEncrypt
+      version?: string
+      data: string
+      dataType?: string
+      payCurrency?: string
+      payTo?: PayToItem[]
+      encoding?: string
+      path: string
+      needConfirm?: boolean // 是否需要确认
+      attachments?: AttachmentItem[] // 附件
+      utxos?: any[] // 传入的utxos
+      publickey?: string // 修改时 用的publicekey
+      ecdh?: { type: string; publickey: string } // ecdh
+      useFeeb?: number // 费率
+
+      meConvertSatoshi?: number
+      brfc: {
+        txId: string
+        address: string
+      }
+    },
+    option?: {
+      isBroadcast: boolean // 是否广播
     }
-  }): Promise<{
+  ): Promise<{
     raw: bsv.Transaction
     hex: string
     txId: string
   }> {
     return new Promise<CreateNodeRes>(async (resolve, reject) => {
-      if (!params.autoRename) params.autoRename = true
-      if (!params.metaIdTag) params.metaIdTag = MetaIdTag[this.network]
-      if (!params.version) params.version = '0.0.9'
-      if (!params.data) params.data = 'NULL'
-      if (!params.dataType) params.dataType = 'application/json'
-      if (!params.encoding) params.encoding = 'UTF-8'
-      if (!params.payCurrency) params.payCurrency = 'BSV'
-      if (!params.payTo) params.payTo = []
-      if (!params.needConfirm) params.needConfirm = true
-      if (!params.attachments) params.attachments = []
-      if (!params.utxos) params.utxos = []
-      if (!params.useFeeb) params.useFeeb = DEFAULTS.feeb
-      if (typeof params.isBroadcast === 'undefined') params.isBroadcast = true
+      const initParams = {
+        autoRename: true,
+        version: '0.0.9',
+        data: 'NULL',
+        dataType: 'application/json',
+        encoding: 'UTF-8',
+        payCurrency: 'BSV',
+        payTo: [],
+        attachments: [],
+        utxos: [],
+        useFeeb: DEFAULTS.feeb,
+      }
+      const initOption = {
+        isBroadcast: true,
+      }
+      params = {
+        ...initParams,
+        ...params,
+      }
+      option = {
+        ...initOption,
+        ...option,
+      }
 
       let keyPath: number[] | string[]
       try {
@@ -1651,130 +1673,6 @@ export class HdWallet {
           keyPath = await this.getKeyPath({ parentTxid: params.brfc.txId })
         }
 
-        // const nodeAddress = this.createAddress(keyPath.join('/'))
-        // const protocolNodeOptions = {
-        //   nodeName: params.autoRename
-        //     ? [params.nodeName, nodeAddress.publicKey.toString().slice(0, 11)].join('-')
-        //     : params.nodeName,
-        //   metaIdTag: metaIdTag,
-        //   parentTxId: protocol!.txId,
-        //   appId: params.appId,
-        //   keyPath: keyPath.join('/'),
-        //   encrypt: params.encrypt,
-        //   parentAddress: protocol!.address,
-        //   data: params.data,
-        //   payCurrency: params.payCurrency,
-        //   payTo: params.payTo,
-        //   needConfirm: params.needConfirm,
-        //   dataType: params.dataType,
-        //   version: params.version,
-        //   encoding: params.encoding,
-        //   utxos: params.utxos,
-        //   useFeeb: params.useFeeb,
-        //   broadcast: false,
-        // }
-        // const res = await this.createNode(protocolNodeOptions)
-        // if (res) {
-        //   brfcChildTx = res.raw
-        //   const oneUtxoUseAmount = await this.getOneUtxoFee()
-        //   useAmount = brfcChildTx._estimateFee() + oneUtxoUseAmount
-        //   const useMe = Math.ceil(useAmount / params.meConvertSatoshi!) * 100
-        //   const getMeUtxos = await GetMeUtxos({
-        //     address: user.value!.address!,
-        //     amount: useMe,
-        //     meta_id: user.value!.metaId!,
-        //     protocol: params.nodeName,
-        //   })
-        // }
-
-        // 获取 Utxos
-        // if (params.utxos.length <= 0) {
-        //   params.utxos = await this.provider.getAddressUtxos({
-        //     address: protocol!.address,
-        //     xpub: this.wallet.xpubkey.toString(),
-        //     addressIndex: protocol!.addressIndex,
-        //     addressType: protocol!.addressType,
-        //   })
-        //   if (params.utxos.length <= 0) {
-        //     // 打钱给brfcId 节点
-        //     const res = await this.sendMoney({
-        //       to: protocol!.address,
-        //       amount: 2000,
-        //     })
-        //     if (res) {
-        //       // 再获取会 节点的utxo
-        //       params.utxos = await this.provider.getAddressUtxos({
-        //         address: protocol!.address,
-        //         xpub: this.wallet.xpubkey.toString(),
-        //         addressIndex: protocol!.addressIndex,
-        //         addressType: protocol!.addressType,
-        //       })
-        //     }
-        //   }
-        // }
-
-        // if (params.utxos.length <= 0) {
-        //   Error('余额不足')
-        // }
-
-        const usedAmount = 0
-        let protocolTypeTxId: string | undefined
-        let protocolTypeAddress: string | undefined
-        const txArray: string[] = []
-        let attachmentsRes: AttachmentResTypes | undefined
-        const txDetail: any = []
-
-        // 处理附件
-        // if (attachments.length) {
-        //   this.debugLog('开始上传附件')
-        //   try {
-        //     attachmentsRes = await this.createProtocolAttachments(attachments, utxos, useFeeb)
-        //     this.debugLog('attachmentsRes: ', attachmentsRes)
-        //     utxos = attachmentsRes.utxos
-        //     usedAmount += attachmentsRes.totalAmount
-        //     // 替换内容里的附件占位符为对应的 metafile 地址
-        //     if (typeof data === 'string') {
-        //       const replaceReg = /(?:!\[(metafile)\]\((.*?)\))/g
-        //       data = data.replace(replaceReg, function(item, tag, id) {
-        //         let tx
-        //         if (attachmentsRes) {
-        //           tx = attachmentsRes.txArray[attachmentsRes.hasProtocol ? +id + 1 : +id]
-        //         }
-        //         const isMedia = dataType === 'metafile/index'
-        //         return tx ? (isMedia ? tx.data.txId : 'metafile://' + tx.data.txId) : ''
-        //       })
-        //     }
-        //     // const attachmentsTx = this._pendingTrans[protocolTypeRes.data.transactionTask].transactions : []
-        //     attachmentsRes.txArray.forEach(res => {
-        //       txArray = txArray.concat(res.data.transactionHex)
-        //       txDetail.push({ txId: res.data.txId, amount: res.data.usedAmount })
-        //       // return res.data.transactionHex
-        //     })
-        //     let needRate = 0
-        //     if (serviceAddress) {
-        //       if (attachmentsServiceRate) {
-        //         if (isNaN(+attachmentsServiceRate)) {
-        //           throw generateResponse(204, 'attachmentsServiceRate must be number')
-        //         }
-        //         needRate = Math.ceil((usedAmount * +attachmentsServiceRate) / 100)
-        //         payTo.push({
-        //           amount: needRate,
-        //           address: serviceAddress,
-        //         })
-        //       }
-        //     }
-        //     usedAmount += needRate
-        //   } catch (error) {
-        //     console.error(error)
-        //     if (error.code) {
-        //       throw error
-        //     } else {
-        //       throw generateResponse(204, 'Add attachments error')
-        //     }
-        //   }
-        // }
-
-        let protocolRes: ResponseTypes
         if (params.ecdh) {
           if (params.data !== 'NULL' && typeof params.data === 'string') {
             let r: any
@@ -1810,7 +1708,7 @@ export class HdWallet {
         }
         const res = await this.createNode(protocolNodeOptions)
         if (res) {
-          if (params.isBroadcast) {
+          if (option.isBroadcast) {
             const response = await this.provider.broadcast(res.hex)
             if (response?.txid) {
               resolve(res)

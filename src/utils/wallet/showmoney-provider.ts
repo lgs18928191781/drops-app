@@ -315,10 +315,15 @@ export default class ShowmoneyProvider {
         // this.sendRawTx(txHex)
         reject(error)
       })
-
-      if (res) {
+      if (res?.txid) {
         await this.sendRawTx(txHex)
         resolve(res)
+      } else {
+        const response = JSON.parse(res.message)
+        reject({
+          code: response.code,
+          message: response.message,
+        })
       }
     })
   }
@@ -327,11 +332,9 @@ export default class ShowmoneyProvider {
   public async sendRawTx(txHex: string): Promise<any[]> {
     return new Promise(async (resolve, reject) => {
       const sendRawTx = () => {
-        return axios.post(this.apiPrefix + '/metanet/api/v1/service/sendRawTx', {
-          data: JSON.stringify({
-            rawTx: txHex,
-            p: 10,
-          }),
+        return axios.post(this.apiPrefix + '/metaid-base/v1/meta/upload/raw', {
+          raw: txHex,
+          type: 1,
         })
       }
       const sendRawTxUtxo = () => {

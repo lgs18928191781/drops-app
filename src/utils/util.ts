@@ -684,6 +684,16 @@ export function toWhatsonchain(txId: string) {
   window.open(`https://whatsonchain.com/tx/${txId}`, target)
 }
 
+export function toMvcScan(txId: string) {
+  let target
+  if (isIOS) {
+    target = '_selft'
+  } else {
+    target = '_blank'
+  }
+  window.open(`https://mvcscan.com/tx/${txId}`, target)
+}
+
 export function setPayQuitUrl(params: {
   fullPath: string
   payPlatform: PayPlatform

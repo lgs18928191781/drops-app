@@ -66,5 +66,14 @@
   "Password Not Match": "两次输入的密码不匹配",
   "Auth Code Send Success": "验证码发送成功",
   "Enter Your NickName": "请输入你的用户名",
-  "Enter Password Remark": "密码提示"
+  "Enter Password Remark": "密码提示",
+  "sendFirstBuzz1": "恭喜您成为“元宙人”",
+  "sendFirstBuzz2": "畅游Web3社交元宇宙，分享您的新鲜事",
+  "firstBuzzText": "Hello！Web3社交元宇宙，我来了！！！",
+  "sendFirstBuzz3": "*以上数据永久保存",
+  "Send": "发送",
+  "Insufficient balance": "余额不足",
+  "sendBuzzSuccessTitle": "已成功在链上打招呼",
+  "Time": "时间",
+  "To Showbuzz": "进入Showbuzz"
 }

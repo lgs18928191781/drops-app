@@ -49,3 +49,92 @@ export const UpdateUserInfo = (): Promise<apiResponse> => {
 export const RegisterGetCode = async (params: BaseUserInfoParams): Promise<ApiResultTypes> => {
   return Core.post('/api/v1/user/register/verification', params)
 }
+
+// 用户注册
+export const RegisterCheck = async (params: {
+  userType: string
+  phone?: string
+  email?: string
+  code: string
+  name: string
+  promotion?: string
+}): Promise<ApiResultTypes> => {
+  return Core.post('/api/v1/user/register/check', params)
+}
+
+// 获取图形验证码
+export const GetImageCode = async (params: { characteristic: string }): Promise<ApiResultTypes> => {
+  return Core.post('/api/v1/user/codeImage', params)
+}
+
+// 用户登录
+export const LoginCheck = async (params: ObjTypes<any>): Promise<ApiResultTypes> => {
+  return Core.post('/api/v1/user/new/login/check', params)
+}
+
+// 获取登录验证码
+export const LoginGetCode = async (params: ObjTypes<any>): Promise<ApiResultTypes> => {
+  return Core.post('/api/v1/user/login/verification', params)
+}
+
+export const SetUserInfo = (params: {
+  userType: 'phone' | 'email'
+  metaid: string
+  phone?: string
+  email?: string
+  accessKey: string
+  userName?: string
+}): Promise<ApiResultTypes> => {
+  return Core.post('/api/v1/user/setuserinfo', params, {
+    headers: {
+      'Content-Type': 'application/json',
+      accessKey: params.accessKey,
+      timestamp: Date.now(),
+      // @ts-ignore
+      userName: params.userType === 'phone' ? params.phone : params.email,
+    },
+  })
+}
+
+export interface BaseUserInfoParams {
+  userType: string
+  phone?: string
+  email?: string
+}
+
+interface SetUserPasswordParams extends BaseUserInfoParams {
+  address: string
+  password: string
+  affirmPassword: string
+  enCryptedMnemonic: string
+  remark: string
+  type?: number
+}
+
+export const SetUserPassword = (
+  params: SetUserPasswordParams,
+  token: string,
+  userName: string
+): Promise<ApiResultTypes> => {
+  return Core.post('/api/v1/user/setPassword', params, {
+    headers: {
+      'Content-Type': 'application/json',
+      accessKey: token,
+      timestamp: Date.now(),
+      userName: userName,
+    },
+  })
+}
+
+interface SetUserWalletInfoParams extends BaseUserInfoParams {
+  address: string
+  pubkey: string
+  xpub: string
+  remark: string
+  type?: number
+  headers?: ObjTypes<string | number>
+}
+// 提交用户钱包信息
+export const SetUserWalletInfo = (params: SetUserWalletInfoParams): Promise<ApiResultTypes> => {
+  return Core.post('/api/v1/wallet/setuserwalletinfo', params)
+}

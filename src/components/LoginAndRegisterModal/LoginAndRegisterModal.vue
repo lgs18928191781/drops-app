@@ -171,16 +171,6 @@ import 'vue3-country-intl/lib/vue3-country-intl.css'
 import 'vue3-country-intl/lib/vue3-country-flag.css'
 import 'vue3-country-intl/lib/flags-9980096a.png'
 import { InviteActivityTag, SignUserType } from '@/enum'
-import {
-  getImageCode,
-  loginCheck,
-  loginGetCode,
-  registerCheck,
-  registerGetCode,
-  setUserInfo,
-  setUserPassword,
-  setUserWalletInfo,
-} from '@/api'
 import { isApp } from '@/stores/root'
 import {
   BaseUserInfoTypes,
@@ -194,7 +184,17 @@ import { encode } from 'js-base64'
 import { result } from 'lodash'
 import { CommitActivity } from '@/api/broad'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { RegisterGetCode } from '@/api/core'
+import {
+  GetImageCode,
+  LoginCheck,
+  LoginGetCode,
+  RegisterCheck,
+  RegisterGetCode,
+  SetUserInfo,
+  SetUserPassword,
+  SetUserWalletInfo,
+} from '@/api/core'
+import { SDK } from '@/utils/sdk'
 
 interface Props {
   modelValue: boolean
@@ -349,7 +349,7 @@ watch(
 const getImageCodeData = () => {
   if (isGetImageCodeLoading.value) return
   isGetImageCodeLoading.value = true
-  getImageCode({ characteristic: characteristic.value })
+  GetImageCode({ characteristic: characteristic.value })
     .then((res: any) => {
       isGetImageCodeLoading.value = false
       characteristic.value = res.characteristic
@@ -379,7 +379,7 @@ async function sendCode() {
     }
     let res: any
     if (props.type === 'login') {
-      res = await loginGetCode(params)
+      res = await LoginGetCode(params)
     } else {
       res = await RegisterGetCode(params)
     }
@@ -417,7 +417,7 @@ function submitForm() {
             code: form.code,
             password: encryptPassword(form.password),
           }
-          const loginRes = await loginCheck(params)
+          const loginRes = await LoginCheck(params)
           if (loginRes.code === 0 || loginRes.code === 601) {
             const loginInfo = loginRes.data as BaseUserInfoTypes
             const account = {
@@ -452,9 +452,12 @@ function submitForm() {
               rootAddress: walletInfo.rootAddress,
               password: form.password,
             })
+            userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
+            userStore.showWallet.initWallet()
+            FormRef.value.resetFields()
             loading.value = false
             emit('update:modelValue', false)
-            emit('success')
+            emit('success', props.type)
           } else {
             loading.value = false
             ElMessage.error(loginRes.msg)
@@ -473,7 +476,7 @@ function submitForm() {
             characteristic: characteristic.value,
           }
           const loginName = params.userType === 'phone' ? phoneNum : params.email
-          const registerRes = await registerCheck(params)
+          const registerRes = await RegisterCheck(params)
           // console.log(registerRes)
           if (registerRes.code === 0) {
             let userInfo = registerRes.result as BaseUserInfoTypes
@@ -497,7 +500,7 @@ function submitForm() {
               remark: form.remark,
               address: walletInfo.rootAddress,
             }
-            const setWalletRes = await setUserWalletInfo({
+            const setWalletRes = await SetUserWalletInfo({
               ...userInfoParams,
               type: 2,
               xpub: walletInfo.wallet.xpubkey,
@@ -513,7 +516,7 @@ function submitForm() {
             }
             const ePassword = encryptPassword(form.password)
             const eMnemonic = encryptMnemonic(walletInfo.mnemonic, form.password)
-            const setPasswordRes = await setUserPassword(
+            const setPasswordRes = await SetUserPassword(
               {
                 ...userInfoParams,
                 password: ePassword,
@@ -556,7 +559,7 @@ function submitForm() {
               rootAddress: walletInfo.rootAddress,
               address: walletInfo.rootAddress,
             }
-            await setUserInfo({
+            await SetUserInfo({
               // @ts-ignore
               userType: params.userType,
               metaid: metaIdInfo.metaId,
@@ -570,6 +573,8 @@ function submitForm() {
               ...userInfo,
               password: form.password,
             })
+            userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
+            userStore.showWallet.initWallet()
             // 处理活动邀请信息
             if (activityId && referrerId) {
               const result = await CommitActivity({
@@ -591,9 +596,10 @@ function submitForm() {
               localStorage.removeItem('activityId')
               localStorage.removeItem('referrerId')
             }
+            FormRef.value.resetFields()
             loading.value = false
             emit('update:modelValue', false)
-            emit('success')
+            emit('success', props.type)
           }
         }
       } catch (error) {
