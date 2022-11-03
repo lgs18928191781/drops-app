@@ -97,6 +97,7 @@ const currentChannel = computed(() => {
 })
 
 const handleToggleMemberList = () => {
+  console.log(123)
   showMembers.value = !showMembers.value
   localStorage.setItem('layout-show-right-drawer', showMembers.value ? '1' : '0')
 }

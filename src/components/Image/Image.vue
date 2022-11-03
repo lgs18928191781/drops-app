@@ -4,13 +4,14 @@
       <ElSkeletonItem variant="image" />
     </template>
     <template #default>
-      <img ref="imgRef" :src="url" :class="imageClass" @error="fail" />
+      <img ref="imgRef" :data-src="url" :class="imageClass" @error="fail" loading="lazy" />
     </template>
   </ElSkeleton>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import 'lazysizes'
 import { DB } from '@/utils/db'
 import { metafile } from '@/utils/filters'
 
@@ -29,7 +30,7 @@ const props = withDefaults(defineProps<Props>(), {
 const imgRef = ref()
 
 const imageClass = computed(() => {
-  return props.customClass ? props.customClass + ' image' : 'image'
+  return props.customClass ? props.customClass + ' image lazyload' : 'image lazyload'
 })
 
 const isSkeleton = ref(true)

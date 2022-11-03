@@ -49,12 +49,22 @@
         />
       </Teleport> -->
 
-      <Icon
-        name="users"
-        class="w-6 h-6 mx-1 transition-all ease-in-out duration-300 lg:hover:text-primary cursor-pointer"
-        :class="[showMembers ? 'text-primary lg:text-dark-300' : 'text-dark-300']"
-        @click="$emit('toggleMemberList')"
-      />
+      <div class="flex gap-x-4">
+        <div class="" @click="doNothing()">
+          <Icon
+            name="share"
+            class="w-5 h-5 transition-all ease-in-out duration-300 lg:hover:text-primary cursor-pointer"
+          />
+        </div>
+
+        <div class="w-5 h-5" @click="$emit('toggleMemberList')">
+          <Icon
+            name="users"
+            class="w-5 h-5 transition-all ease-in-out duration-300 lg:hover:text-primary cursor-pointer"
+            :class="[showMembers ? 'text-primary lg:text-dark-800' : 'text-dark-800']"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -69,6 +79,8 @@ const showDescModal = ref(false)
 const shortenMetaId = (id: string) => {
   return id.substring(0, 6) + '...' + id.substring(id.length - 6)
 }
+
+const doNothing = () => {}
 </script>
 
 <style lang=""></style>

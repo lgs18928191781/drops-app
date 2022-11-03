@@ -1,17 +1,16 @@
 <template lang="">
   <div class="flex">
     <UserAvatar
-      :type="props.message.avatarType"
+      :type="props.message.avatarType || 'undefined'"
       :metaId="props.message.avatarTxId || 'undefined'"
       class="w-13.5 h-13.5 shrink-0"
     />
     <div class="ml-4 grow pr-12">
-      <div class="flex items-end space-x-2">
+      <div class="flex items-baseline space-x-2">
         <div class="font-medium text-sm" :class="randomNameColor">
           {{ message.nickName }}
         </div>
-        <div class="text-dark-250 text-sm">
-          <!-- {{ $filters.dateTimeFormat(message.timestamp, 'HH:mm') }} -->
+        <div class="text-dark-250 text-xs">
           {{ formatTime(message.timestamp) }}
         </div>
       </div>
@@ -57,7 +56,7 @@
           class="max-w-full md:max-w-[50%] lg:max-w-[400px] shadow-lg rounded-xl cursor-pointer origin-top-left hover:shadow-xl hover:scale-105  transition-all duration-300"
         >
           <div class="rounded-xl bg-red-400 p-6 flex space-x-2">
-            <img :src="redEnvelopeImg" class="h-12" />
+            <img :src="redEnvelopeImg" class="h-12" loading="lazy" />
             <div class="">
               <div class="text-white text-lg font-medium capitalize">
                 {{ $t('Talk.Channel.come_get_red_envelope') }}
@@ -71,11 +70,10 @@
 
       <div class="my-1.5 max-w-full flex" v-else>
         <div
-          class="text-sm text-dark-800 font-normal break-all p-4 rounded-xl rounded-tl-md"
+          class="text-sm text-dark-800 font-normal break-all p-3 rounded-xl rounded-tl-md"
           :class="isMyMessage ? 'bg-primary' : 'bg-white'"
-        >
-          {{ decryptedMessage }}
-        </div>
+          v-html="parseTextMessage(decryptedMessage)"
+        ></div>
       </div>
     </div>
   </div>
@@ -93,7 +91,7 @@ import { useI18n } from 'vue-i18n'
 
 const i18n = useI18n()
 
-const roomId = 'b671caca627219c214f433497f9aba530a29a927bb5e32f242e36f8cbc26ba3b'
+const channelId = 'b73a456789053bd483194e19d56efd469a60eaad100bebaf4fd18a31c0d8d9df'
 const showImagePreview = ref(false)
 
 type Message = {
@@ -162,8 +160,34 @@ const decryptedMessage = computed(() => {
     return props.message.content
   }
 
-  return decrypt(props.message.content, roomId.substring(0, 16))
+  return decrypt(props.message.content, channelId.substring(0, 16))
 })
+
+const parseTextMessage = (text: string) => {
+  if (typeof text == 'undefined') {
+    return ''
+  }
+
+  const HTML = /<\/?.+?>/gi
+  const COOKIE = /document\.cookie/gi
+  const HTTP = /(http|https):\/\//gi
+  const re = /(f|ht){1}(tp|tps):\/\/([\w-]+\S)+[\w-]+([\w-?%#&=]*)?(\/[\w- ./?%#&=]*)?/g
+
+  if (HTML.test(text)) {
+    return '无效输入,别耍花样!'
+  }
+  if (COOKIE.test(text)) {
+    return '无效输入,你想干嘛!'
+  }
+  text = text.replace(re, function(url) {
+    if (HTTP.test(text)) {
+      return `<a href=${url} target="_blank" style="text-decoration: underline;cursor: pointer;" class="url"> ${url} </a>`
+    }
+    return `<a onClick="window.open('http://${text}','_blank')" style="text-decoration: underline;cursor: pointer;" target="_blank">${text}</a>`
+  })
+  text = text.replace(/\\n/g, '\n')
+  return text.replace(/\n/g, '<br />')
+}
 
 const redEnvelopeReceiveInfo = computed(() => {
   const content: string = props.message.content
