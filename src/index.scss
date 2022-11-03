@@ -11,6 +11,8 @@ html {
       'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
     min-height: 100vh;
 
+    color: var(--main-font-color);
+
     .container {
       max-width: 1000px;
       margin: 0 auto;

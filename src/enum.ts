@@ -219,7 +219,7 @@ export enum PayMeParamsType {
 }
 export enum CreateBrfcChildNodePayType {
   MC = 'MC',
-  BSV = 'BSV',
+  SPACE = 'SPACE',
 }
 
 export enum BuzzTabType {
@@ -256,4 +256,9 @@ export enum BatchType {
 export enum SignUserType {
   Phone = 'phone',
   Email = 'email',
+}
+
+export enum NodeName {
+  SimpleMicroblog = 'SimpleMicroblog',
+  MetaFile = 'MetaFile',
 }

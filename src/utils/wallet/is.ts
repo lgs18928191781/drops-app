@@ -1,4 +1,4 @@
-import { argv0 } from "process"
+import { argv0 } from 'process'
 
 export const isNaturalNumber = (n: number | string): boolean => {
   n = n.toString()
@@ -8,11 +8,14 @@ export const isNaturalNumber = (n: number | string): boolean => {
 }
 
 export const isEmailAddress = (value: string): boolean => {
-  return /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(value)
+  return /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+    value
+  )
 }
 
 export const isBtcAddress = (value: string): boolean => {
-  return /^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$/.test(value)
+  return true
+  // return /^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$/.test(value)
 }
 
 export const isWeChat = (): boolean => {

@@ -15,7 +15,7 @@
     --el-button-active-border-color: #303133;
     --el-button-hover-border-color: #303133;
     --el-button-active-color: var(--el-color-primary);
-
+    padding: 12px 20px;
     box-shadow: 0 2px 0 var(--el-border-color);
 
     &:hover {
@@ -120,6 +120,7 @@
     border-width: var(--el-border-width);
     border: var(--el-border);
     border-color: var(--el-button-hover-border-color);
+    box-shadow: 0px 10px 20px 0px rgba(232, 232, 232, 0.5);
 
     &::after {
         content: '';
@@ -137,6 +138,14 @@
         border: var(--el-border);
         border-color: var(--el-button-hover-border-color);
         z-index: -1;
+    }
+
+    &.reactive{
+        position: relative;
+    }
+
+    .el-dialog__body {
+        color: var(--main-font-color);
     }
 }
 

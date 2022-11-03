@@ -10,6 +10,7 @@ export const router = createRouter({
     { path: '/', component: () => import('@/views/Home.vue') },
     {
       path: '/buzz',
+      name: 'buzz',
       component: () => import('@/views/buzz/Layout.vue'),
     },
     {

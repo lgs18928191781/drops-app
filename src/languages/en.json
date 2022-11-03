@@ -33,7 +33,9 @@
   "Auth Code Send Success": "Auth Code Send Success",
   "Enter Your NickName": "Enter Your NickName",
   "Enter Password Remark": "Enter Password Remark",
-
+  "Insufficient balance": "Insufficient balance",
+  "Time": "Time",
+  "To Showbuzz": "To Showbuzz",
   "Talk": {
     "Settings": {
       "settings": "settings",
