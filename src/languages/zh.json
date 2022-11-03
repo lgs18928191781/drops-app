@@ -75,5 +75,32 @@
   "Insufficient balance": "余额不足",
   "sendBuzzSuccessTitle": "已成功在链上打招呼",
   "Time": "时间",
-  "To Showbuzz": "进入Showbuzz"
+  "To Showbuzz": "进入Showbuzz",
+  "Talk": {
+    "Settings": {
+      "settings": "设置",
+      "language": "语言",
+      "en": "英语",
+      "zh": "简体中文",
+      "theme": "外观主题",
+      "dark": "深色",
+      "light": "明亮"
+    },
+    "Channel": {
+      "members": "成员",
+      "join_channel": "加入了频道",
+      "leave_channel": "离开了频道",
+      "come_get_red_envelope": "领取红包",
+      "receive_own_red_envelope": "领取了自己的红包",
+      "receive_red_envelope": "领取了{sender}的红包",
+      "default_red_envelope_message": "恭喜发财，大吉大利",
+      "private_channel": "私密频道",
+      "public_channel": "公开频道",
+      "message_to": "发消息到 {channel}…"
+    },
+    "Datetime": {
+      "today": "今天",
+      "yesterday": "昨天"
+    }
+  }
 }

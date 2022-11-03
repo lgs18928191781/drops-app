@@ -5,6 +5,7 @@
   "createnft": "Create",
   "mynft": "My NFT",
   "mywallet": "My Wallet",
+  "Login": "Login",
   "logout": "Sign Out",
   "toLoginTip": "Please log in first",
   "niceWarning": "Confir Tips ",
@@ -34,5 +35,32 @@
   "Enter Password Remark": "Enter Password Remark",
   "Insufficient balance": "Insufficient balance",
   "Time": "Time",
-  "To Showbuzz": "To Showbuzz"
+  "To Showbuzz": "To Showbuzz",
+  "Talk": {
+    "Settings": {
+      "settings": "settings",
+      "language": "language",
+      "en": "english",
+      "zh": "chinese",
+      "theme": "theme",
+      "dark": "dark",
+      "light": "light"
+    },
+    "Channel": {
+      "members": "members",
+      "join_channel": "joined the channel.",
+      "leave_channel": "left the channel.",
+      "come_get_red_envelope": "red envelope",
+      "receive_own_red_envelope": "received a red envelope of your own.",
+      "receive_red_envelope": "received a red envelope from {sender}.",
+      "default_red_envelope_message": "Wishing you all the best!",
+      "private_channel": "private channel",
+      "public_channel": "public channel",
+      "message_to": "Message {channel}"
+    },
+    "Datetime": {
+      "today": "Today at ",
+      "yesterday": "Yesterday at "
+    }
+  }
 }

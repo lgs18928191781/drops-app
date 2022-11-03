@@ -18,9 +18,13 @@
 
         <div class="border-r border-solid border-dark-300 hidden lg:block"></div>
         <div
-          class="text-base leading-tight no-wrap grow whitespace-nowrap text-dark-300 px-2 hidden lg:block"
+          class="text-base leading-tight no-wrap grow whitespace-nowrap text-dark-300 px-2 hidden lg:block capitalize"
         >
-          {{ channel.isPublic ? '公开频道' : '私密频道' }}
+          {{
+            channel.isPublic
+              ? $t('Talk.Channel.public_channel')
+              : $t('Talk.Channel.private_channel')
+          }}
         </div>
       </div>
     </div>
@@ -47,7 +51,7 @@
 
       <Icon
         name="users"
-        class="w-6 h-6 mx-1 transition-all ease-in-out duration-300 lg:hover:text-primary"
+        class="w-6 h-6 mx-1 transition-all ease-in-out duration-300 lg:hover:text-primary cursor-pointer"
         :class="[showMembers ? 'text-primary lg:text-dark-300' : 'text-dark-300']"
         @click="$emit('toggleMemberList')"
       />

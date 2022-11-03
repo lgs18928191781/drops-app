@@ -3,7 +3,9 @@
     <div class="bg-white rounded-lg h-11 flex lg:h-13.5 items-center">
       <!-- 左侧 + 按钮 -->
       <div class="w-14 flex items-center justify-center text-dark-800">
-        <div class="bg-primary w-7.5 h-7.5 flex items-center justify-center rounded-full">
+        <div
+          class="bg-primary w-7.5 h-7.5 flex items-center justify-center rounded-full cursor-pointer"
+        >
           <Icon name="plus_2" class="w-3 h-3 text-dark-800" />
         </div>
       </div>
@@ -13,7 +15,7 @@
           <input
             type="text"
             class="bg-inherit h-full w-full focus:outline-none placeholder:text-dark-250 placeholder:text-sm text-dark-800 text-base caret-gray-600"
-            :placeholder="'发消息到 #' + currentChannel.name + '…'"
+            :placeholder="$t('Talk.Channel.message_to', { channel: '#' + currentChannel.name })"
             v-model="chatInput"
           />
         </div>
@@ -22,11 +24,11 @@
       <!-- 右侧发送按钮 -->
       <div class="flex h-full py-2 items-center shrink-0">
         <div class="flex items-center px-1 lg:mr-2">
-          <div class="p-2 w-9 h-9 transition-all hover:animate-wiggle">
+          <div class="p-2 w-9 h-9 transition-all hover:animate-wiggle cursor-pointer">
             <Icon name="red_envelope" class="w-full h-full text-dark-800" />
           </div>
 
-          <div class="p-2 w-9 h-9 transition-all hover:animate-wiggle">
+          <div class="p-2 w-9 h-9 transition-all hover:animate-wiggle cursor-pointer">
             <Icon name="emoji" class="w-full h-full text-dark-800" />
           </div>
         </div>
