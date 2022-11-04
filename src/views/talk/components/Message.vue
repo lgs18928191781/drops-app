@@ -3,7 +3,8 @@
     <UserAvatar
       :type="props.message.avatarType || 'undefined'"
       :metaId="props.message.avatarTxId || 'undefined'"
-      class="w-13.5 h-13.5 shrink-0"
+      class="w-13.5 h-13.5 shrink-0 select-none"
+      :disabled="true"
     />
     <div class="ml-4 grow pr-12">
       <div class="flex items-baseline space-x-2">

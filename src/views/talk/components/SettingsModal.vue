@@ -1,5 +1,7 @@
 <template>
-  <div class="fixed inset-0 h-screen w-screen z-50 bg-dark-100 flex justify-center items-center">
+  <div
+    class="fixed inset-0 h-screen w-screen z-50 bg-dark-100 flex justify-center items-center select-none"
+  >
     <div
       class="h-full w-full relative bg-dark-100 px-5 py-2.5 lg:w-96 lg:bg-white lg:h-4/5 lg:rounded-lg lg:shadow-lg"
     >
@@ -21,9 +23,9 @@
             {{ $t('Talk.Settings.language') }}
           </div>
 
-          <div class="mt-1 flex flex-col gap-y-2">
+          <div class="mt-1 flex flex-col gap-y-3">
             <div
-              class="main-border p-2.5 rounded text-dark-800 flex items-center justify-between cursor-pointer transition-all duration-150"
+              class="main-border p-2.5  text-dark-800 flex items-center justify-between cursor-pointer transition-all duration-150"
               :class="[
                 currentLanguage === language.code
                   ? 'bg-primary text-dark-800'
@@ -52,9 +54,9 @@
           <div class="text-dark-800 text-base font-medium mb-3 capitalize">
             {{ $t('Talk.Settings.theme') }}
           </div>
-          <div class="mt-1 flex flex-col gap-y-2">
+          <div class="mt-1 flex flex-col gap-y-3">
             <div
-              class="bg-primary main-border p-2.5 rounded text-dark-800 flex items-center justify-between cursor-pointer transition-all duration-150"
+              class="bg-primary main-border p-2.5 text-dark-800 flex items-center justify-between cursor-pointer transition-all duration-150"
             >
               <div class="">
                 <Icon name="radio_circle_fill" class="w-6 h-6 text-dark-800" />
@@ -65,7 +67,7 @@
             </div>
 
             <div
-              class="bg-white main-border faded p-2.5 rounded text-dark-400 flex items-center justify-between cursor-pointer"
+              class="bg-white main-border faded p-2.5 text-dark-400 flex items-center justify-between cursor-pointer"
             >
               <div class="">
                 <Icon name="radio_circle" class="w-6 h-6 text-dark-400" />

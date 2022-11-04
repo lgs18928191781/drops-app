@@ -70,23 +70,39 @@ pre {
 
 .main-border {
   --border-color: #303133;
+  --standard-offset: 3px;
+  --right-offset: 3px;
+  --move-range: 2px;
+  --rounded: 12px;
 
+  // 褪色边框
   &.faded {
     --border-color: #EBECF0;
   }
 
+  // 只有下阴影的情况
+  &.only-bottom {
+    --right-offset: 0PX;
+  }
+
   border: 2PX solid var(--border-color);
-  border-bottom: 5PX solid var(--border-color);
-  border-radius: 8PX;
-  margin-bottom: 2PX;
+  box-shadow: var(--right-offset) var(--standard-offset) 0 var(--border-color);
+  border-radius: var(--rounded);
   transition-property: all;
   transition-duration: 150ms;
 
-  &:hover {
-    border-right: 4PX solid var(--border-color);
-    border-bottom: 7PX solid var(--border-color);
-    transform: translateX(-2PX) translateY(-2PX);
-    margin-bottom: 0;
+  // hover时浮起
+  @media (min-width: 1024PX) {
+    &:hover:not(:active) {
+      box-shadow: calc(var(--right-offset) + var(--move-range)) calc(var(--standard-offset) + var(--move-range)) 0 var(--border-color);
+      transform: translateX(calc(0PX - var(--move-range))) translateY(calc(0PX - var(--move-range)));
+    }
+  }
+
+  // active时下沉
+  &:active {
+    box-shadow: calc(var(--right-offset) - var(--move-range)) calc(var(--standard-offset) - var(--move-range)) 0 var(--border-color);
+    transform: translateX(var(--move-range)) translateY(var(--move-range));
   }
 }
 

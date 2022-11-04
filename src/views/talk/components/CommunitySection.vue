@@ -22,7 +22,7 @@
       </div>
 
       <!-- 社区详情栏 -->
-      <div class="h-screen bg-white grow lg:w-60 flex flex-col justify-between items-stretch">
+      <div class="h-full bg-white grow lg:w-60 flex flex-col justify-between items-stretch">
         <div class="flex flex-col overflow-y-hidden">
           <!-- 社区封面 -->
           <div class="w-full">
@@ -34,7 +34,7 @@
           </div>
 
           <!-- 社区信息 -->
-          <div class="px-4.5 overflow-y-scroll">
+          <div class="px-4.5 overflow-y-auto">
             <div class="w-full mt-4.5 text-lg text-dark-800">
               {{ community.name }}
             </div>
@@ -46,7 +46,7 @@
             <div class="pt-8 pb-4 flex flex-col gap-y-2">
               <div
                 v-for="channel in community.channels"
-                class="p-3 main-border cursor-pointer"
+                class="p-3 main-border only-bottom cursor-pointer"
                 :class="channel.in || 'faded'"
               >
                 <div
