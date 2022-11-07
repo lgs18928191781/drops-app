@@ -39,7 +39,7 @@
         </div>
 
         <div class="flex items-center lg:hidden">
-          <div class="py-2 px-3" @click="sendMessage">
+          <div class="py-2 px-3" @click="trySendMessage">
             <div
               class="transition-all ease-in-out duration-500"
               :class="[hasInput ? 'text-primary scale-110 -rotate-6' : 'text-dark-250']"
@@ -55,21 +55,17 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { sendMessage, validateMessage } from '@/utils/talk'
 
 const props = defineProps(['currentChannel'])
 const chatInput = ref('')
 const hasInput = computed(() => chatInput.value.length > 0)
 
-const validateMessage = () => {
-  const message = chatInput.value.trim()
+const trySendMessage = () => {
+  if (!validateMessage(chatInput.value)) return
 
-  return message.length > 0 && message.length <= 5000
-}
+  sendMessage(chatInput.value)
 
-const sendMessage = () => {
-  if (!validateMessage()) return
-
-  console.log(chatInput.value)
   chatInput.value = ''
 }
 </script>
