@@ -1,13 +1,13 @@
 <template>
   <div class="relative w-screen h-screen lg:flex">
-    <CommunitySection
+    <community-section
       :community="community"
       @close-community-section="showCommunitySection = false"
       :showCommunitySection="showCommunitySection"
     />
 
     <div class="lg:grow lg:h-screen lg:relative lg:flex">
-      <TheHeader
+      <the-header
         :channel="channel"
         :showMembers="showMembers"
         @toggle-member-list="handleToggleMemberList"
@@ -16,14 +16,14 @@
 
       <div class="pt-12 pb-14 h-screen lg:relative w-full bg-dark-100">
         <div class="h-full">
-          <MessageList />
+          <message-list />
         </div>
 
-        <TheInput :currentChannel="currentChannel" />
+        <the-input :currentChannel="currentChannel" />
       </div>
 
       <Transition name="slide">
-        <ChannelMemberList v-show="showMembers" :members="members" />
+        <channel-member-list v-show="showMembers" :members="members" />
       </Transition>
     </div>
   </div>
@@ -111,8 +111,9 @@ onMounted(async () => {
 
   members.value = await getChannelMembers('1')
   channel.value = {
-    name: '一代MetaBot',
-    description: '',
+    name: '70亿人之家one 7 billion one family',
+    description:
+      '只要是地球人，都可以加入，无上限，目标是70亿地球人。 As long as the earth people,can join,no cap limit,the goal is 7 billion.',
     isPublic: true,
     groupId: 'b671caca627219c214f433497f9aba530a29a927bb5e32f242e36f8cbc26ba3b',
   }

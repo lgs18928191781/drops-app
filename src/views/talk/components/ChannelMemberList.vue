@@ -7,7 +7,7 @@
         <div class="text-base text-dark-800 capitalize">{{ $t('Talk.Channel.members') }}</div>
         <div class="text-sm text-dark-300">{{ members.length }}</div>
       </div>
-      <ChannelMemberItem v-for="member in props.members" :member="member" />
+      <channel-member-item v-for="member in props.members" :member="member" />
     </div>
   </div>
 </template>

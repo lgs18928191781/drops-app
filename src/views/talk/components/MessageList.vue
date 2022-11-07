@@ -1,18 +1,22 @@
 <template>
   <div class="h-full overflow-y-hidden" v-show="loading">
-    <LoadingList />
+    <loading-list />
   </div>
   <div class="h-full overflow-y-scroll" ref="messagesScroll" v-show="!loading">
     <div class="overflow-x-hidden py-4 px-4">
       <div class="flex flex-col-reverse space-y-4 space-y-reverse">
-        <Message v-for="message in messages" :message="message" :id="message.timestamp" />
+        <message-item v-for="message in messages" :message="message" :id="message.timestamp" />
 
-        <LoadingListItem v-show="loadingMore" />
+        <loading-list-item v-show="loadingMore" />
         <div class="w-full h-px bg-inherit" id="topAnchor"></div>
       </div>
 
       <div class="flex flex-col space-y-4 mt-4">
-        <Message v-for="message in upcomingMessages" :message="message" :id="message.timestamp" />
+        <message-item
+          v-for="message in upcomingMessages"
+          :message="message"
+          :id="message.timestamp"
+        />
       </div>
     </div>
   </div>
@@ -25,7 +29,7 @@ import { sleep } from '@/utils/util'
 import { onBeforeUnmount, onMounted, Ref, ref } from 'vue'
 import LoadingListItem from './LoadingListItem.vue'
 import LoadingList from './LoadingList.vue'
-import Message from './Message.vue'
+import MessageItem from './MessageItem.vue'
 
 type Message = {
   protocol: string

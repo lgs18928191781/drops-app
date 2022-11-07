@@ -43,7 +43,7 @@
               {{ community.description }}
             </div>
 
-            <div class="pt-8 pb-4 flex flex-col gap-y-2">
+            <div class="pt-8 pb-4 flex flex-col gap-y-3">
               <div
                 v-for="channel in community.channels"
                 class="p-3 main-border only-bottom cursor-pointer"
@@ -64,7 +64,7 @@
         </div>
 
         <!-- 用户信息设置 -->
-        <UserProfile class="shrink-0" />
+        <user-profile class="shrink-0" />
       </div>
     </div>
   </div>

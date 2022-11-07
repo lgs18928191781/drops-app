@@ -17,6 +17,7 @@
             class="bg-inherit h-full w-full focus:outline-none placeholder:text-dark-250 placeholder:text-sm text-dark-800 text-base caret-gray-600"
             :placeholder="$t('Talk.Channel.message_to', { channel: '#' + currentChannel.name })"
             v-model="chatInput"
+            @keyup.enter="sendMessage"
           />
         </div>
       </div>
@@ -24,11 +25,11 @@
       <!-- 右侧发送按钮 -->
       <div class="flex h-full py-2 items-center shrink-0">
         <div class="flex items-center px-1 lg:mr-2">
-          <div class="p-2 w-9 h-9 transition-all hover:animate-wiggle cursor-pointer">
+          <div class="p-2 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer">
             <Icon name="red_envelope" class="w-full h-full text-dark-800" />
           </div>
 
-          <div class="p-2 w-9 h-9 transition-all hover:animate-wiggle cursor-pointer">
+          <div class="p-2 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer">
             <Icon name="emoji" class="w-full h-full text-dark-800" />
           </div>
         </div>
@@ -38,7 +39,7 @@
         </div>
 
         <div class="flex items-center lg:hidden">
-          <div class="py-2 px-3">
+          <div class="py-2 px-3" @click="sendMessage">
             <div
               class="transition-all ease-in-out duration-500"
               :class="[hasInput ? 'text-primary scale-110 -rotate-6' : 'text-dark-250']"
@@ -58,6 +59,19 @@ import { computed, ref } from 'vue'
 const props = defineProps(['currentChannel'])
 const chatInput = ref('')
 const hasInput = computed(() => chatInput.value.length > 0)
+
+const validateMessage = () => {
+  const message = chatInput.value.trim()
+
+  return message.length > 0 && message.length <= 5000
+}
+
+const sendMessage = () => {
+  if (!validateMessage()) return
+
+  console.log(chatInput.value)
+  chatInput.value = ''
+}
 </script>
 
 <style lang=""></style>

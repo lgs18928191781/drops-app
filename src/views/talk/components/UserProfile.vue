@@ -29,7 +29,7 @@
 
       <!-- 设置弹窗 -->
       <Teleport to="body">
-        <SettingsModal v-if="showSetting" @close-modal="showSetting = false" />
+        <setting-modal v-if="showSetting" @close-modal="showSetting = false" />
       </Teleport>
     </div>
   </div>
