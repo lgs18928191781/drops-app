@@ -1,165 +1,141 @@
 <template>
-  <ElDialog
-    :title="type === 'login' ? $t('Login') : $t('Register')"
-    :model-value="modelValue"
-    :show-close="!loading"
-    :close-on-click-modal="false"
-    @closed="emit('update:modelValue', false)"
-  >
-    <div class="login-and-register" v-loading="loading">
-      <div class="tabs">
-        <a
-          v-for="item in tabs"
-          :key="item.key"
-          :class="{ active: item.key === form.userType }"
-          @click="form.userType = item.key"
-          >{{ item.name() }}</a
-        >
-      </div>
-      <ElForm :model="form" :rules="rules" ref="FormRef">
-        <!--  手机 -->
-        <ElFormItem prop="phone" v-if="form.userType === SignUserType.Phone">
-          <ElInput
-            v-model="form.phone"
-            type="number"
-            :placeholder="$t('Enter Phone Number')"
-            :disabled="loading"
-          >
-            <template #prefix>
-              <Vue3CountryIntl
-                v-model="form.area"
-                schema="popover"
-                v-model:visible="isShowCountry"
-                :listZIndex="99"
-                @onChange="res => (form.countryCode = res.iso2)"
-                style="width: 100%;"
-              >
-                <div
-                  class="country-select flex flex-align-center"
-                  @click="loading ? '' : (isShowCountry = true)"
-                >
-                  <span :class="'iti-flag ' + form.countryCode"> </span>
-                  <span>+{{ form.area }}</span>
-                </div>
-              </Vue3CountryIntl>
-            </template>
-          </ElInput>
-        </ElFormItem>
-
-        <!-- 邮箱 -->
-        <ElFormItem prop="email" v-else>
-          <ElInput
-            v-model="form.email"
-            type="text"
-            :placeholder="$t('Enter Email Address')"
-            :disabled="loading"
-          />
-        </ElFormItem>
-
-        <!-- 用户名 -->
-        <ElFormItem prop="password" v-if="type === 'register'">
-          <ElInput
-            v-model="form.name"
-            type="text"
-            :placeholder="$t('Enter Your NickName')"
-            :disabled="loading"
-          />
-        </ElFormItem>
-
-        <!-- 密码 -->
-        <ElFormItem prop="password">
-          <ElInput
-            v-model="form.password"
-            type="password"
-            show-password
-            :placeholder="$t('Enter Your Password')"
-            :disabled="loading"
-          />
-        </ElFormItem>
-
-        <!-- 密码 -->
-        <ElFormItem prop="confirmPassword" v-if="type === 'register'">
-          <ElInput
-            v-model="form.confirmPassword"
-            type="password"
-            show-password
-            :placeholder="$t('Confirm Password')"
-            :disabled="loading"
-          />
-        </ElFormItem>
-
-        <!-- 验证码 -->
-        <ElFormItem prop="code">
-          <ElInput
-            v-model="form.code"
-            type="number"
-            :placeholder="$t('Enter Auth Code')"
-            @input="form.code = form.code.slice(0, 6)"
-            :disabled="loading"
-          >
-            <template #suffix>
-              <ElButton
-                size="sm"
-                :disabled="sendCodeBtnDisabled"
-                class="none-box-shadow"
-                @click="sendCode"
-                v-loading="isSendCodeLoading"
-              >
-                {{ sendCodeTimer === 0 ? $t('Send Code') : sendCodeTimer + 's' }}</ElButton
-              >
-            </template>
-          </ElInput>
-        </ElFormItem>
-
-        <!-- 密码提示 -->
-        <ElFormItem prop="remark" v-if="type === 'register'">
-          <ElInput
-            v-model="form.remark"
-            type="text"
-            :placeholder="$t('Enter Password Remark')"
-            :disabled="loading"
-          />
-        </ElFormItem>
-
-        <!-- 图片验证码 -->
-        <ElFormItem prop="imageCode" v-if="type === 'register'">
-          <ElInput
-            v-model="form.imageCode"
-            type="number"
-            :placeholder="$t('Enter Pic Code')"
-            @input="form.code = form.code.slice(0, 6)"
-            :disabled="loading"
-          >
-            <template #suffix>
-              <div
-                class="image-code flex flex-align-center flex-pack-center"
-                slot="append"
-                @click="loading ? '' : getImageCodeData()"
-                v-loading="isGetImageCodeLoading"
-              >
-                <img v-if="imageCodeData !== ''" :src="imageCodeData" />
-              </div>
-            </template>
-          </ElInput>
-        </ElFormItem>
-      </ElForm>
-
-      <div class="operate">
-        <div class="operate-top flex flex-align-center">
-          <div class="flex1">
-            {{ $t('Not Account') }}
-            <a @click="changeType">{{ type === 'login' ? $t('Register') : $t('Login') }}</a>
-          </div>
-          <span class="forget">{{ $t('Forget Password') }}</span>
-        </div>
-        <div class="operate-btn flex flex-v">
-          <ElButton type="primary" size="large" @click="submitForm" v-loading="loading">{{
-            type === 'login' ? $t('Login') : $t('Register')
-          }}</ElButton>
-        </div>
-      </div>
+  <div class="metaid-wallet">
+    <div class="back" @click="emit('back')">
+      <a> <Icon name="down" />{{ $t('back') }}</a>
     </div>
-  </ElDialog>
+    <div class="title">{{ $t('Login.connectMetaIdWallet') }}</div>
+    <div class="change">
+      <a><Icon name="exchange" />{{ $t('Login.changePhoneNumber') }}</a>
+    </div>
+
+    <ElForm :model="form" :rules="rules" ref="FormRef">
+      <!--  手机 -->
+      <ElFormItem prop="phone" v-if="form.userType === SignUserType.Phone">
+        <ElInput
+          v-model="form.phone"
+          type="number"
+          :placeholder="$t('Enter Phone Number')"
+          :disabled="loading"
+        >
+          <template #prefix>
+            <Vue3CountryIntl
+              v-model="form.area"
+              schema="popover"
+              v-model:visible="isShowCountry"
+              :listZIndex="99"
+              @onChange="res => (form.countryCode = res.iso2)"
+              style="width: 100%;"
+            >
+              <div
+                class="country-select flex flex-align-center"
+                @click="loading ? '' : (isShowCountry = true)"
+              >
+                <span :class="'iti-flag ' + form.countryCode"> </span>
+                <span>+{{ form.area }}</span>
+              </div>
+            </Vue3CountryIntl>
+          </template>
+        </ElInput>
+      </ElFormItem>
+
+      <!-- 邮箱 -->
+      <ElFormItem prop="email" v-else>
+        <ElInput
+          v-model="form.email"
+          type="text"
+          :placeholder="$t('Enter Email Address')"
+          :disabled="loading"
+        />
+      </ElFormItem>
+
+      <!-- 用户名 -->
+      <ElFormItem prop="password" v-if="type === 'register'">
+        <ElInput
+          v-model="form.name"
+          type="text"
+          :placeholder="$t('Enter Your NickName')"
+          :disabled="loading"
+        />
+      </ElFormItem>
+
+      <!-- 密码 -->
+      <ElFormItem prop="password">
+        <ElInput
+          v-model="form.password"
+          type="password"
+          show-password
+          :placeholder="$t('Enter Your Password')"
+          :disabled="loading"
+        />
+      </ElFormItem>
+
+      <!-- 密码 -->
+      <ElFormItem prop="confirmPassword" v-if="type === 'register'">
+        <ElInput
+          v-model="form.confirmPassword"
+          type="password"
+          show-password
+          :placeholder="$t('Confirm Password')"
+          :disabled="loading"
+        />
+      </ElFormItem>
+
+      <!-- 验证码 -->
+      <ElFormItem prop="code">
+        <ElInput
+          v-model="form.code"
+          type="number"
+          :placeholder="$t('Enter Auth Code')"
+          @input="form.code = form.code.slice(0, 6)"
+          :disabled="loading"
+        >
+          <template #suffix>
+            <ElButton
+              size="sm"
+              :disabled="sendCodeBtnDisabled"
+              class="none-box-shadow"
+              @click="sendCode"
+              v-loading="isSendCodeLoading"
+            >
+              {{ sendCodeTimer === 0 ? $t('Send Code') : sendCodeTimer + 's' }}</ElButton
+            >
+          </template>
+        </ElInput>
+      </ElFormItem>
+
+      <!-- 密码提示 -->
+      <ElFormItem prop="remark" v-if="type === 'register'">
+        <ElInput
+          v-model="form.remark"
+          type="text"
+          :placeholder="$t('Enter Password Remark')"
+          :disabled="loading"
+        />
+      </ElFormItem>
+
+      <!-- 图片验证码 -->
+      <ElFormItem prop="imageCode" v-if="type === 'register'">
+        <ElInput
+          v-model="form.imageCode"
+          type="number"
+          :placeholder="$t('Enter Pic Code')"
+          @input="form.code = form.code.slice(0, 6)"
+          :disabled="loading"
+        >
+          <template #suffix>
+            <div
+              class="image-code flex flex-align-center flex-pack-center"
+              slot="append"
+              @click="loading ? '' : getImageCodeData()"
+              v-loading="isGetImageCodeLoading"
+            >
+              <img v-if="imageCodeData !== ''" :src="imageCodeData" />
+            </div>
+          </template>
+        </ElInput>
+      </ElFormItem>
+    </ElForm>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -202,7 +178,7 @@ interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {})
 
-const emit = defineEmits(['update:modelValue', 'update:type', 'success'])
+const emit = defineEmits(['update:modelValue', 'update:type', 'success', 'back'])
 const i18n = useI18n()
 const userStore = useUserStore()
 

@@ -1,54 +1,47 @@
 .login-warp {
-    .btn-list {
-        .el-button {
-            margin-bottom: 20px;
+    .login-cover {
+        margin-right: 48px;
 
-            &+.el-button {
-                margin-left: 0;
-            }
+        img {
+            width: 100%;
+
+        }
+    }
+
+    .connect-wallet {
+        height: 100%;
+
+        .connect-wallet-section {
+            margin-bottom: 24px;
 
             &:last-child {
                 margin-bottom: 0;
             }
-        }
 
-        .btn-item {
-            img {
-                width: 40px;
-                height: 40px;
-                margin-right: 20px;
+            .title {
+                font-size: 18px;
             }
 
-            .name {
-                width: 115px;
-                text-align: left;
+            .btn-list {
+                margin-top: 12px;
+
+                .main-border {
+                    padding: 12px;
+                    font-size: 16px;
+                    margin-bottom: 12px;
+                    cursor: pointer;
+
+                    &:last-child {
+                        margin-bottom: 0;
+                    }
+
+                    .icon {
+                        width: 48px;
+                        height: 48px;
+                        margin-right: 12px;
+                    }
+                }
             }
-        }
-
-
-    }
-
-    .no-wallet {
-        margin-top: 22px;
-        text-align: center;
-
-        a {
-            color: #5586BB;
-            cursor: pointer;
-            font-size: 18px;
-        }
-    }
-
-    .terms {
-        margin-top: 40px;
-        color: #9C9C9C;
-        text-align: center;
-
-        a {
-            color: #5586BB;
-            margin: 0 5px;
-            cursor: pointer;
-            text-decoration: underline;
         }
     }
 }

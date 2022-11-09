@@ -20,7 +20,7 @@ export default defineComponent({
     },
     color: {
       type: String,
-      default: '#fff',
+      default: '#303133',
     },
     customClass: {
       type: String,

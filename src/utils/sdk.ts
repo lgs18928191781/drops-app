@@ -54,6 +54,10 @@ export const AllNodeName: {
     brfcId: 'MetaFile',
     path: '/Protocols/MetaFile',
   },
+  [NodeName.ETHBinding]: {
+    brfcId: 'ETHBinding-version_1',
+    path: '/Protocols/ETHBinding',
+  },
 }
 
 export class SDK {

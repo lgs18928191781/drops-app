@@ -6,6 +6,7 @@
     --el-border-width: 2px;
     --el-color-primary: #FFDC51;
     --el-border-radius-sm: 2px;
+    --el-border-radius-big: 12px;
 
 }
 
@@ -85,10 +86,23 @@
 .el-input {
     --el-input-hover-border: var(--main-font-color);
     --el-input-focus-border-color: var(--main-font-color);
-    --el-input-height: 40px;
-    --el-input-border-radius: var(--el-border-radius-sm);
+    --el-input-height: 56px;
+    --el-input-border-radius: var(--el-border-radius-big);
 
-    .el-input__wrapper {}
+
+
+
+    .el-input__wrapper {
+        transition: all 0.5;
+        border: var(--el-border-width) solid var(--el-border-color);
+        box-shadow: 3px 3px 0 var(--el-border-color);
+        padding: 0 12px;
+
+        &.is-focus {
+            border-color: var(--main-font-color) !important;
+            box-shadow: 3px 3px 0 var(--main-font-color) !important;
+        }
+    }
 
 
 
@@ -97,12 +111,20 @@
 }
 
 .el-form-item {
+    &.is-success {
+        .el-input {
+            .el-input__wrapper {
+                border-color: var(--main-font-color);
+                box-shadow: 3px 3px 0 var(--main-font-color);
+            }
+        }
+    }
+
     &.is-error {
         .el-input {
             .el-input__wrapper {
-                &::after {
-                    background: var(--el-color-danger) !important;
-                }
+                border-color: var(--el-color-danger);
+                box-shadow: 3px 3px 0 var(--el-color-danger);
             }
         }
     }
@@ -113,39 +135,56 @@
 }
 
 .el-dialog {
-    --el-dialog-width: 460px;
-    --el-dialog-border-radius: var(--el-border-radius-base);
+    --el-dialog-width: 912px;
+    --el-dialog-border-radius: 24px;
     position: relative;
     box-sizing: border-box;
-    border-width: var(--el-border-width);
-    border: var(--el-border);
+    // border-width: var(--el-border-width);
+    // border: var(--el-border);
     border-color: var(--el-button-hover-border-color);
-    box-shadow: 0px 10px 20px 0px rgba(232, 232, 232, 0.5);
 
-    &::after {
-        content: '';
-        width: calc(100% + var(--el-border-width) + var(--el-border-width));
-        height: 14px;
-        box-sizing: border-box;
-        background: var(--el-color-primary);
-        border-radius: 0 0 var(--el-border-radius-base) var(--el-border-radius-base);
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        margin-left: -2px;
-        margin-bottom: -12px;
-        border-width: var(--el-border-width);
-        border: var(--el-border);
-        border-color: var(--el-button-hover-border-color);
-        z-index: -1;
+    &.sm {
+        --el-dialog-width: 456px;
     }
 
-    &.reactive{
+    &.none-bg-color {
+        --el-dialog-bg-color: transparent;
+        box-shadow: none;
+    }
+
+    &.none-header {
+        .el-dialog__header {
+            display: none;
+        }
+    }
+
+    // box-shadow: 0px 10px 20px 0px rgba(232, 232, 232, 0.5);
+
+    // &::after {
+    //     content: '';
+    //     width: calc(100% + var(--el-border-width) + var(--el-border-width));
+    //     height: 14px;
+    //     box-sizing: border-box;
+    //     background: var(--el-color-primary);
+    //     border-radius: 0 0 var(--el-border-radius-base) var(--el-border-radius-base);
+    //     position: absolute;
+    //     left: 0;
+    //     bottom: 0;
+    //     margin-left: -2px;
+    //     margin-bottom: -12px;
+    //     border-width: var(--el-border-width);
+    //     border: var(--el-border);
+    //     border-color: var(--el-button-hover-border-color);
+    //     z-index: -1;
+    // }
+
+    &.reactive {
         position: relative;
     }
 
     .el-dialog__body {
         color: var(--main-font-color);
+        padding: 20px 48px;
     }
 }
 

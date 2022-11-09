@@ -299,6 +299,34 @@ export const decryptMnemonic = (encryptedMnemonic: string, password: string): st
   return mnemonic.split(',').join(' ')
 }
 
+export function eciesDecryptData(
+  data: Buffer | string,
+  privateKey: bsv.PrivateKey | string,
+  publicKey?: string
+): string {
+  publicKey = publicKey || data.toString().substring(8, 74)
+  let ecies = ECIES()
+    .privateKey(privateKey)
+    .publicKey(publicKey)
+  if (!Buffer.isBuffer(data)) {
+    data = Buffer.from(data, 'hex')
+  }
+  let res = ''
+  try {
+    res = ecies.decrypt(data).toString()
+  } catch (error) {
+    try {
+      ecies = ECIES({ noKey: true })
+        .privateKey(privateKey)
+        .publicKey(publicKey)
+      res = ecies.decrypt(data).toString()
+    } catch (error) {
+      throw new Error('error')
+    }
+  }
+  return res
+}
+
 export const signature = (message: string, privateKey: string) => {
   const hash = bsv.crypto.Hash.sha256(Buffer.from(message))
   const sign = bsv.crypto.ECDSA.sign(hash, bsv.PrivateKey(privateKey))

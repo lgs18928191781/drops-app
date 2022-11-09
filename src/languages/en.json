@@ -5,14 +5,12 @@
   "createnft": "Create",
   "mynft": "My NFT",
   "mywallet": "My Wallet",
-  "Login": "Login",
   "logout": "Sign Out",
   "toLoginTip": "Please log in first",
   "niceWarning": "Confir Tips ",
   "loginingTip": "Logging in, please operate later ",
   "backHome": "Back to Home",
   "signinandout": "Connect Wallet",
-  "login": "Register/Login",
   "connectWallet": "Connect Wallet",
   "Enter ShowMoney Password": "Enter ShowMoney Password",
   "Enter MetaID For Bind": "Enter MetaID For Bind",
@@ -62,5 +60,8 @@
       "today": "Today at ",
       "yesterday": "Yesterday at "
     }
-  }
+  },
+  "Not install MetaLet Wallet": "Not Install MetaLet Wallet",
+  "Comming Soon": "Comming Soon",
+  "Use MetaId Wallet": "Use MetaId Wallet"
 }

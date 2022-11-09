@@ -2,7 +2,10 @@
 @import '@/assets/styles/flex.scss';
 @import '@/assets/styles/element-plus.scss';
 
+
+
 html {
+
 
   body {
     // background: $bgColor;
@@ -12,6 +15,9 @@ html {
     min-height: 100vh;
 
     color: var(--main-font-color);
+
+    user-select: none;
+    -webkit-user-drag: none;
 
     .container {
       max-width: 1000px;
@@ -75,9 +81,14 @@ pre {
   --move-range: 2px;
   --rounded: 12px;
 
+  &.primary {
+    background: var(--el-color-primary);
+  }
+
   // 褪色边框
   &.faded {
-    --border-color: #EBECF0;
+    --border-color: var(--el-border-color);
+    background: #EDEFF2;
   }
 
   // 只有下阴影的情况
@@ -104,8 +115,45 @@ pre {
     box-shadow: calc(var(--right-offset) - var(--move-range)) calc(var(--standard-offset) - var(--move-range)) 0 var(--border-color);
     transform: translateX(var(--move-range)) translateY(var(--move-range));
   }
+
+  &.disabled {
+    cursor: not-allowed;
+
+    @media (min-width: 1024PX) {
+      &:hover:not(:active) {
+        box-shadow: var(--right-offset) var(--standard-offset) 0 var(--border-color);
+        transform: none;
+      }
+
+      &:active {
+        box-shadow: var(--right-offset) var(--standard-offset) 0 var(--border-color);
+        transform: none;
+      }
+    }
+  }
 }
 
+.card {
+  border: 2px solid var(--main-font-color);
+  border-radius: 12px;
+  background: #fff;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    z-index: -1;
+    background: #37FDAB;
+    margin-top: 10px;
+    border-radius: 12px;
+    border: 2px solid var(--main-font-color);
+    box-sizing: border-box;
+  }
+}
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {

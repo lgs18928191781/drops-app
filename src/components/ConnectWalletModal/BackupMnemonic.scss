@@ -1,0 +1,118 @@
+.backup-mnemonic {
+    .backup-mnemonic-item {
+        background: #fff;
+        border-radius: 24px;
+        padding: 48px;
+
+        &:first-child {
+            margin-right: 12px;
+        }
+    }
+
+    .left {
+        .title {
+            font-size: 24px;
+        }
+
+        .drsc {
+            font-size: 16px;
+            line-height: 30px;
+            margin-top: 30px;
+        }
+
+        .check {
+            margin-top: 48px;
+            padding: 12px 18px;
+
+
+            .check-warp {
+                width: 20px;
+                height: 20px;
+                border-radius: 6px;
+
+                /* c5 */
+                background: #EDEFF2;
+                margin-right: 12px;
+
+                &.active {
+                    background: var(--el-color-primary);
+                }
+
+                .icon {
+                    width: 14px;
+                    height: 14px;
+                    transform: none;
+                }
+            }
+
+            .icon {
+                width: 18px;
+                height: 18px;
+                transform: rotate(-90deg);
+
+            }
+        }
+
+        .operate {
+            span {
+                cursor: pointer;
+                color: #909399;
+
+                :deep(a) {
+                    color: #5586BB;
+                }
+            }
+
+            .main-border {
+                padding: 16px;
+                cursor: pointer;
+
+                .icon {
+                    width: 24px;
+                    height: 24px;
+                }
+
+                &.faded {
+                    background: #EDEFF2;
+
+                    .icon {
+                        :deep(use) {
+                            fill: var(--el-border-color);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .right {
+        .title {
+            font-size: 24px;
+            border-bottom: 1px dashed #EDEFF2;
+            padding-bottom: 30px;
+        }
+
+        .msg {
+            margin-top: 30px;
+
+            .path {
+                font-size: 18px;
+                line-height: 36px;
+                margin-bottom: 40px;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+            }
+        }
+
+        .operate {
+            margin-top: 70px;
+            height: 72px;
+            line-height: 72px;
+            text-align: center;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    }
+}

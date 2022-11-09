@@ -21,6 +21,8 @@ declare interface UserInfo {
   name: string
   pk2: string
   tag: 'new' | 'old'
+  avatarType: string
+  avatarTxId: string
   email: string
   phone: string
   token: string
@@ -31,9 +33,8 @@ declare interface UserInfo {
   lastLoginTime: number | null
   enCryptedMnemonic: string
   userType: string
-  infoTxId?: string
-  protocolTxId?: string
-  rootAddress?: string
+  infoTxId: string
+  protocolTxId: string
   flag?: boolean
 }
 
@@ -202,4 +203,28 @@ declare interface BatchSaleItem extends BatchSaleSessionItem {
   priceType: NFTSaleAmountType
   amount: string
   address: string
+}
+
+export interface BindUserInfo {
+  address: string
+  appToken: string
+  did: null
+  email: string
+  enCryptedMnemonic: string
+  lastLoginTime: number
+  metaId: string
+  name: string
+  phone: string
+  pk2: string
+  register: string
+  registerType?: string
+  tag: 'new' | 'old'
+  token: string
+}
+
+export interface BindMetaIdRes {
+  userInfo: MetaMaskLoginUserInfo
+  wallet: bsv.HDPrivateKey
+  password: string
+  // type: 'register' | 'login'
 }

@@ -1,6 +1,7 @@
 .avatar {
   cursor: pointer;
   position: relative;
+  // border: 1px solid var(--main-font-color);
 }
 
 .mask {
@@ -18,7 +19,7 @@
   background: #fff;
 
   &.hasmask {
-   
+
     border-radius: unset;
   }
 }

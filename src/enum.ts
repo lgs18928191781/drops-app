@@ -261,4 +261,13 @@ export enum SignUserType {
 export enum NodeName {
   SimpleMicroblog = 'SimpleMicroblog',
   MetaFile = 'MetaFile',
+  ETHBinding = 'ETHBinding',
+}
+
+export const enum BindStatus {
+  ChooseType,
+  BindHavedMetaId,
+  BindRegisterMetaId,
+  BindSuccess,
+  InputPassword,
 }

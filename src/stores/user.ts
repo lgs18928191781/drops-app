@@ -6,6 +6,7 @@ import { GetUserKycInfo } from '@/api/wxcore'
 import { GetProdTestMetaIds } from '@/api/strapi'
 import axios from 'axios'
 import { ElMessageBox } from 'element-plus'
+import { UserInfo } from '@/@types/common'
 
 export interface KycInfoTypes {
   name: string

@@ -10,7 +10,6 @@
   "toLoginTip": "请先登录再操作",
   "loginingTip": "正在登录，请稍后操作",
   "backHome": "返回首页",
-  "login": "注册/登录",
   "connectWallet": "连接钱包",
   "logo_title": "在元网分享你的新鲜事",
   "applicateName": "应用",
@@ -39,7 +38,6 @@
   "hasMetaid": "绑定已有的MetaID信息到您的MetaMask",
   "iamnewuser": "创建新的MetaID",
   "registerNewUser": "创建全新的MetaID信息，并与MetaMask绑定",
-  "Login": "登录",
   "checkEnvNoWallet": "检测到您的浏览器环境缺少钱包插件",
   "bindMetaidOrAddress": "绑定MetaID或地址登录",
   "registerLogin": "设置MetaID信息",
@@ -102,5 +100,59 @@
       "today": "今天",
       "yesterday": "昨天"
     }
-  }
+  },
+  "Not install MetaLet Wallet": "你还没安装MetaLet插件钱包",
+  "Comming Soon": "敬请期待",
+  "Use MetaId Wallet": "使用MetaID钱包",
+  "Create Wallet": "创建钱包",
+  "Not Any Wallet": "(我没任何钱包)",
+  "Login": {
+    "connectWallet": "连接钱包",
+    "useMetaIdWallet": "使用MetaID钱包",
+    "createWallet": "创建钱包",
+    "notAnyWallet": "(我没任何钱包)",
+    "havedAnyWallet": "(我已有MetaID钱包)",
+    "connectMetaIdWallet": "连接MetaID钱包",
+    "changePhoneNumber": "切换手机号",
+    "policy": "我已阅读并同意",
+    "policy1": "《用户协议》",
+    "policy2": "和",
+    "policy3": "《隐私政策》",
+    "changeEmailAddress": "切换邮箱地址",
+    "pleaseAggrePolicy": "请先勾选",
+    "registerMetaIdWallet": "注册MetaID钱包",
+    "registerSetPassword": "设置账户密码",
+    "account": "账号",
+    "setBaseInfo": {
+      "title": "🎉 欢迎来到SHOW！稍微完善下您的信息可以让更多的人关注到您。",
+      "setNFTAvatar": "设置NFT头像",
+      "setUserName": "设置昵称",
+      "setUserNamePlac": "请输入你的昵称",
+      "chooseNFTTitle": "选择NFT头像"
+    },
+    "recomment": {
+      "title": "👋 这里有一些<a>「Doodles」</a>相关的社群，您可以关注并跟大家打声招呼！",
+      "followAll": "关注全部"
+    },
+    "BackupMnemonic": {
+      "title": "最后一步",
+      "intro": "🔐 为了您钱包的资产安全，建议您使用笔将您钱包的助记词抄在纸上进行备份。",
+      "name": "备份助记词",
+      "copyMnemonic": "✒️ 请抄下您的助记词",
+      "path": "路径",
+      "mnemonic": "助记词",
+      "copyedMnemonic": "我已抄好",
+      "jumpOver": "暂时<a>跳过</a>备份助记词"
+    },
+    "bindMetaId": {
+      "title1": "🌍 钱包连接成功！接下我们准备一下MetaID账户吧～",
+      "title2": "绑定MetaID信息",
+      "createMetaId": "创建新的MetaID",
+      "bindHavedMetaId": "绑定已有的MetaID",
+      "bindHavedMetaIdIntro": "🔗️ 将您的钱包与已有的MetaID进行绑定，以便您管理您的资产和数据。",
+      "bindSuccessTitle": "🎉 恭喜您已成功将您的钱包与您的MetaID绑定，以下是您的社交信息",
+      "inputPasswordTitle": "请输入钱包密码"
+    }
+  },
+  "back": "返回"
 }

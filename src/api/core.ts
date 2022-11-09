@@ -1,3 +1,4 @@
+import { BindUserInfo } from '@/@types/common'
 import { useUserStore } from '@/stores/user'
 import HttpRequest from 'request-sdk'
 import { ApiResultTypes, BaseUserInfoParams } from '.'
@@ -52,6 +53,7 @@ export const RegisterGetCode = async (params: BaseUserInfoParams): Promise<ApiRe
 
 // 用户注册
 export const RegisterCheck = async (params: {
+  type: number
   userType: string
   phone?: string
   email?: string
@@ -137,4 +139,75 @@ interface SetUserWalletInfoParams extends BaseUserInfoParams {
 // 提交用户钱包信息
 export const SetUserWalletInfo = (params: SetUserWalletInfoParams): Promise<ApiResultTypes> => {
   return Core.post('/api/v1/wallet/setuserwalletinfo', params)
+}
+
+//绑定metaid或地址登录
+export const loginByMetaidOrAddress = (params: { address?: string; metaId?: string }) => {
+  return Core.post(`/api/v1/thirdparty/checkMetaidOrAddress`, params)
+}
+
+//上报hashData
+
+export const setHashData = (params: {
+  accessKey: string
+  userName: string
+  timestamp: number
+  hashData: string
+  metaId: string
+}) => {
+  return Core.post(
+    `/api/v1/thirdparty/setUserWalletHashData`,
+    {
+      hashData: params.hashData,
+      metaId: params.metaId,
+    },
+    {
+      headers: {
+        accessKey: params.accessKey,
+        userName: params.userName,
+        timestamp: params.timestamp,
+      },
+    }
+  )
+}
+
+//获取随机word
+
+export const GetRandomWord = (): Promise<{ code: number; data: { word: string } }> => {
+  return Core.get(`/api/v1/mnemonic/getWord`)
+}
+
+//助记词登录
+
+export const MnemoicLogin = (params: {
+  xpub: string
+  sign: string //publickey+word签名
+  word: string
+  type: number // 1.web 2.app
+}): Promise<{
+  code: number
+  data: BindUserInfo
+}> => {
+  return Core.post(`/api/v1/mnemonic/verification`, params)
+}
+
+//新用户登录
+
+export const LoginByNewUser = (params: {
+  address: string
+  xPub: string
+  pubKey: string
+  // metaId: '',
+  hashData: string
+  mnemonic: string
+  userName: string
+}) => {
+  return Core.post(`/api/v1/thirdparty/setUserWalletInfo`, params)
+}
+
+//已绑定签名
+export const LoginByHashData = (params: {
+  hashData: string
+}): Promise<{ code: number; data: string }> => {
+  return Core.post(`/api/v1/thirdparty/checkHashData`, params)
 }

@@ -22,112 +22,6 @@
       <img src="@/assets/images/MetaMask_Fox.svg.png" alt="" />
       <a href="https://metamask.io/download/" target="blank">{{ $t('downloadMetaMask') }}</a>
     </div>
-
-    <div v-if="signType == 3" class="metamaskDialogContentWrap">
-      <el-form
-        :model="ruleForm"
-        :rules="rules"
-        ref="ruleFormRef"
-        label-width="100px"
-        class="dialog-ruleForm"
-      >
-        <el-form-item :label="$t('SetNickName')" prop="name">
-          <el-input :placeholder="$t('nickeNamePlac')" v-model="ruleForm.name"></el-input>
-        </el-form-item>
-        <el-form-item :label="$t('setPassword')" prop="pass">
-          <el-input
-            :placeholder="$t('setPasswordPlac')"
-            type="password"
-            v-model="ruleForm.pass"
-            autocomplete="off"
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item :label="$t('ConfirmPassword')" prop="checkPass">
-          <el-input
-            :placeholder="$t('ConfirmPassword')"
-            type="password"
-            v-model="ruleForm.checkPass"
-            autocomplete="off"
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item class="btnItem">
-          <el-button type="primary" @click="submitForm()">{{ $t('createMetaId') }}</el-button>
-          <!-- <el-button @click="resetForm('ruleForm')"
-                            >取消</el-button
-                        > -->
-        </el-form-item>
-      </el-form>
-    </div>
-
-    <div v-else-if="signType == 2" class="metamaskDialogContentWrap">
-      <el-form
-        :model="ruleForm"
-        :rules="rules"
-        ref="ruleFormRef"
-        label-width="80px"
-        class="dialog-ruleForm"
-      >
-        <el-form-item label="MetaID:" prop="MetaidOrAdress">
-          <el-input
-            :placeholder="$t('Enter MetaID For Bind')"
-            v-model="ruleForm.MetaidOrAdress"
-          ></el-input>
-        </el-form-item>
-        <el-form-item :label="$t('password') + ':'" prop="pass">
-          <el-input
-            :placeholder="$t('Enter ShowMoney Password')"
-            type="password"
-            v-model="ruleForm.pass"
-            autocomplete="off"
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item class="btnItem">
-          <el-button type="primary" @click="submitForm()">{{ $t('Bind') }}</el-button>
-          <el-button @click="resetForm()">{{ $t('Cancel') }}</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-
-    <div v-else-if="signType == 4" class="selectLoginWrap">
-      <div class="item">
-        <el-button type="primary" @click="selectLoginType(SignType.isBindMetaidOrAddressLogin)">{{
-          $t('isMetaIdUser')
-        }}</el-button>
-        <span>{{ $t('hasMetaid') }}</span>
-      </div>
-      <div class="item">
-        <el-button type="primary" @click="selectLoginType(SignType.isRegister)">{{
-          $t('iamnewuser')
-        }}</el-button>
-        <span>{{ $t('registerNewUser') }}</span>
-      </div>
-    </div>
-    <div v-else-if="signType == 5">
-      <el-form
-        :model="ruleForm"
-        :rules="rules"
-        ref="ruleForm"
-        label-width="80px"
-        class="dialog-ruleForm"
-      >
-        <el-form-item :label="$t('password')" prop="pass">
-          <el-input
-            :placeholder="$t('Enter ShowMoney Password')"
-            type="password"
-            v-model="ruleForm.pass"
-            autocomplete="off"
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item class="btnItem">
-          <el-button type="primary" @click="submitForm()">{{ $t('Login') }}</el-button>
-          <el-button @click="resetForm()">{{ $t('Cancel') }}</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
   </ElDialog>
 </template>
 
@@ -143,6 +37,7 @@ import type { MetaMaskLoginUserInfo } from './utils/api';
 import { encode, decode } from 'js-base64'
 import { aesEncrypt, createMnemonic, decryptMnemonic, encryptMnemonic, HdWallet, hdWalletFromMnemonic, Network, signature } from '@/utils/wallet/hd-wallet';
 import { bsv } from 'sensible-sdk';
+import { BindMetaIdRes } from '@/@types/common';
 
 
 export interface MetaMaskLoginRes {
@@ -152,11 +47,6 @@ export interface MetaMaskLoginRes {
     type: 'register' | 'login'
 }
 
-interface Props {
-    modelValue: boolean
-    hdWalletFromMnemonic: (decodeMnemonic: string, tag: 'new' | 'old', network: Network) => Promise<bsv.HDPrivateKey>
-    password?: string | null
-}
 
 
 
@@ -170,6 +60,9 @@ enum SignType {
 
 
 let type: 'register' | 'login' = 'login'
+interface Props {
+    modelValue: boolean
+}
 const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits(['update:modelValue', 'success', 'logout'])
 const i18n = useI18n()
@@ -265,26 +158,25 @@ const dialogTitle = computed(() => {
 })
 
 async function startConnect() {
-        try {
-            const res = await Wallet.connect()
-            if (res) {
-                ethAddress.value = res.ethAddress
-                provider = res.provider
-                startProvider()
-                ethAddressHash.value = await ethPersonalSignSign(keccak256(res.ethAddress).toString('hex'))
-                noWallet.value = false
-                sign()
-            }
-        } catch (error: any) {
-            ElMessage.error(error.message)
-            emit('update:modelValue', false)
+    const res = await Wallet.connect()
+    if (res) {
+        const result = await ethPersonalSignSign({
+            address: res.ethAddress,
+            message: keccak256(res.ethAddress).toString('hex')
+        })
+        if (result) {
+             emit('success',{ signAddressHash:  result});
         }
+    }
 }
 
-function ethPersonalSignSign(message: string) {
+function ethPersonalSignSign(params: {
+    message: string,
+    address: string
+}) {
     return new Promise<string>(async (resolve, reject) => {
         (window as any).ethereum
-          .request({ method: 'personal_sign', params: [ethAddress.value, message] })
+          .request({ method: 'personal_sign', params: [params.address, params.message] })
           .then((res: string) => {
             resolve(res)
           }).catch((error: any) => {
@@ -459,6 +351,9 @@ function submitForm() {
                     //绑定metaid用户
                     const loading = ElLoading.service({ text: `${i18n.t('bindingMetaid')}` })
                     const res = await bindingMetaidOrAddressLogin()
+                    if (res) {
+                        loginSuccess(res)
+                    }
                     loginOperation()
                     emit('success', {
                         ...res,
@@ -486,6 +381,11 @@ function submitForm() {
             }
         }
     })
+}
+
+function loginSuccess(params: BindMetaIdRes) {
+    ruleFormRef.value.resetFields()
+
 }
 
 function bindingMetaidOrAddressLogin() {
