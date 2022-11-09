@@ -5,24 +5,27 @@
   >
     <div class="h-full flex">
       <!-- 社区列表 -->
-      <div class="w-27 h-full bg-dark-800 p-6 flex flex-col items-center">
-        <div class="">
-          <div class="rounded-3xl bg-primary w-15 h-15 flex items-center justify-center">
-            <Icon name="talk_icon" class="w-7 h-6" />
+      <div class="w-22.5 h-full bg-white p-4.5 flex flex-col items-center space-y-9">
+        <div class="space-y-4.5">
+          <div class="rounded-3xl bg-primary w-13.5 h-13.5 flex items-center justify-center">
+            <Icon name="feed" class="w-[22PX] h-[19PX]" />
+          </div>
+          <div class="rounded-3xl bg-primary w-13.5 h-13.5 flex items-center justify-center">
+            <Icon name="talk" class="w-[22PX] h-[19PX]" />
           </div>
         </div>
 
-        <div class="w-7.5 border-b-2 border-solid border-dark-400 pb-6 mb-6"></div>
+        <!-- <div class="w-7.5 border-b-2 border-solid border-dark-400 pb-6 mb-6"></div> -->
 
-        <div class=" space-y-6">
-          <div class="rounded-3xl bg-sky-200 w-15 h-15"></div>
-          <div class="rounded-3xl bg-red-200 w-15 h-15"></div>
-          <div class="rounded-3xl bg-indigo-200 w-15 h-15"></div>
+        <div class="space-y-4.5">
+          <div class="rounded-3xl bg-sky-200 w-13.5 h-13.5"></div>
+          <div class="rounded-3xl bg-red-200 w-13.5 h-13.5"></div>
+          <div class="rounded-3xl bg-indigo-200 w-13.5 h-13.5"></div>
         </div>
       </div>
 
       <!-- 社区详情栏 -->
-      <div class="h-full bg-white grow lg:w-60 flex flex-col justify-between items-stretch">
+      <div class="h-full bg-dark-100 grow lg:w-60 flex flex-col justify-between items-stretch">
         <div class="flex flex-col overflow-y-hidden">
           <!-- 社区封面 -->
           <div class="w-full">

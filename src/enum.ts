@@ -261,4 +261,5 @@ export enum SignUserType {
 export enum NodeName {
   SimpleMicroblog = 'SimpleMicroblog',
   MetaFile = 'MetaFile',
+  SimpleGroupChat = 'SimpleGroupChat',
 }

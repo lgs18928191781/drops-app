@@ -26,7 +26,7 @@
 // import { io } from 'socket.io-client'
 import { getChannelMessages } from '@/api/talk'
 import { sleep } from '@/utils/util'
-import { onBeforeUnmount, onMounted, Ref, ref } from 'vue'
+import { onBeforeUnmount, onMounted, Ref, ref, toRaw, watch } from 'vue'
 import LoadingListItem from './LoadingListItem.vue'
 import LoadingList from './LoadingList.vue'
 import MessageItem from './MessageItem.vue'
@@ -39,7 +39,10 @@ type Message = {
   avatarTxId: string
   nickName: string
   timestamp: number
+  txId: string
 }
+
+const { sendingMessage } = defineProps(['sendingMessage'])
 
 const loading = ref(false)
 const loadingMore = ref(false)
@@ -47,8 +50,17 @@ const messages: Ref<Message[]> = ref([])
 const upcomingMessages: Ref<Message[]> = ref([])
 
 const messagesScroll = ref<HTMLElement>()
+let ws: WebSocket | null
 
-const channelId = 'b73a456789053bd483194e19d56efd469a60eaad100bebaf4fd18a31c0d8d9df'
+const channelId = '88a92826842757cade6e84378df9db88526578c3bce7b8cb6348b7f1f9598d0a'
+
+// watch(sendingMessage, newMessage => {
+//   if (newMessage) {
+//     newMessage.sending = true
+//     upcomingMessages.value.push(newMessage)
+//   }
+//   console.log(newMessage)
+// })
 
 const handleScroll = async () => {
   const topAnchor = document.getElementById('topAnchor')
@@ -112,9 +124,25 @@ const scrollToMessagesBottom = async (retryCount = 0) => {
 
 // 订阅消息
 const subscribeChannel = async () => {
-  const metaId = '261562cd13734c7e9f3809e32d3d7c56f0b27788f88d6738fc95f96ddb89eb01'
-  const wsUri = `wss://api.showmoney.app/ws-service?metaId=${metaId}`
-  const ws = new WebSocket(wsUri)
+  const metaId = '74cc371c55d9fa38fc98467396c22fe6b20bfc3459a11530362fcdb1b6c07c5c'
+  const wsUri = `wss://testmvc.showmoney.app/ws-service?metaId=${metaId}`
+  ws = new WebSocket(wsUri)
+
+  setInterval(() => {
+    if (ws?.readyState === WebSocket.CONNECTING) {
+      return
+    }
+
+    if (ws?.readyState === WebSocket.CLOSING || ws?.readyState === WebSocket.CLOSED) {
+      ws = new WebSocket(wsUri)
+    }
+
+    const heartBeat = {
+      M: 'HEART_BEAT',
+      C: 0,
+    }
+    ws!.send(JSON.stringify(heartBeat))
+  }, 10000)
 
   const isGroupMessage = (messageWrapper: any) => messageWrapper.M === 'WS_SERVER_NOTIFY_ROOM'
   const isFromThisGroup = (message: any) => message.groupId === channelId
@@ -123,12 +151,16 @@ const subscribeChannel = async () => {
     const messageWrapper = JSON.parse(event.data)
     if (isGroupMessage(messageWrapper)) {
       const message = messageWrapper.D
+
       if (!isFromThisGroup(message)) return
 
-      // 将message添加到messages首
-      upcomingMessages.value.push(message)
+      // 去重
+      const isDuplicate = upcomingMessages.value.some(item => item.txId === message.txId)
 
-      console.log(message)
+      // 将message添加到messages首
+      if (!isDuplicate) {
+        upcomingMessages.value.push(message)
+      }
 
       scrollToMessagesBottom()
     }
@@ -156,6 +188,7 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   messagesScroll.value?.removeEventListener('scroll', handleScroll)
+  ws?.close()
 })
 </script>
 

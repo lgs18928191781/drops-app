@@ -5,7 +5,7 @@ import { sleep } from '@/utils/util'
 const env = import.meta.env
 
 // const TalkApi = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/talkAggregation`, {
-const TalkApi = new HttpRequest(`${import.meta.env.VITE_BSV_API}/talkAggregation/v2/app/room`, {
+const TalkApi = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/talkAggregation/v2/app/room`, {
   header: {
     'Content-Type': 'application/json',
     // accessKey: () => (isAuthorized.value ? user.value!.token! : undefined),

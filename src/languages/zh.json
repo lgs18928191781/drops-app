@@ -96,7 +96,9 @@
       "default_red_envelope_message": "恭喜发财，大吉大利",
       "private_channel": "私密频道",
       "public_channel": "公开频道",
-      "message_to": "发消息到 {channel}…"
+      "message_to": "发消息到 {channel}…",
+      "upload_image": "上传图片",
+      "use_onchain_image": "链上图片"
     },
     "Datetime": {
       "today": "今天",

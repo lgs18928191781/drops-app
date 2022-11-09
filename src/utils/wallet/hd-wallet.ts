@@ -899,10 +899,10 @@ export class HdWallet {
           balance = from.reduce((a, c) => a + c.satoshis, 0)
         }
 
-        console.log('===费用')
-        // @ts-ignore
-        console.log('fee2', tx._estimateSize() * useFeeb)
-        console.log(tx)
+        // console.log('===费用')
+        // // @ts-ignore
+        // console.log('fee2', tx._estimateSize() * useFeeb)
+        // console.log(tx)
 
         // 如果指定的 utxos 金额不足，则选取其它 utxos 来补充
         if (balance < fee + amount) {
@@ -928,9 +928,9 @@ export class HdWallet {
         //     })
         //   )
         // }
-        console.log(tx)
+        // console.log(tx)
         // @ts-ignore
-        console.log('fee2', tx._estimateSize() * useFeeb)
+        // console.log('fee2', tx._estimateSize() * useFeeb)
         // @ts-ignore
         tx.fee(Math.ceil(tx._estimateSize() * useFeeb))
         const privateKeys = this.getUtxosPrivateKeys(from)
@@ -1076,7 +1076,7 @@ export class HdWallet {
   ): PickUtxosResultTypes {
     let balance = 0
     let unUsedInputs: MetasvUtxoTypes[] = []
-    console.log('amount', amount)
+    // console.log('amount', amount)
 
     for (const utxo of utxos) {
       let isPicked = false

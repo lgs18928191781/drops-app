@@ -1,90 +1,76 @@
-export const sendMessage = (message: string) => {
-  console.log(message)
+import dayjs from 'dayjs'
+import advancedFormat from 'dayjs/plugin/advancedFormat'
+dayjs.extend(advancedFormat)
+import { encrypt } from './crypto'
+import { useEnvStore } from '@/stores/env'
+import { IsEncrypt, NodeName } from '@/enum'
+import { SDK } from './sdk'
+import { Network } from './wallet/hd-wallet'
+import { useUserStore } from '@/stores/user'
 
-  // const timestamp = parseInt(new Date().getTime())
-  // const groupID = this.activeGroup
-  // const params = {
-  //   content: data.message,
-  //   groupID,
-  //   timestamp,
-  //   usertimestamp: timestamp,
-  //   contentType: 'text/plain',
-  //   userID: this.userInfo.showId,
-  //   type: 1,
-  //   protocol: 'ShowMsg',
-  //   owner: 'self',
-  //   txId: '',
-  // }
-  // let functionName = ''
-  // let message = ''
-  // let lastMessage = ''
-  // if (data.type == 'friend') {
+export enum MessageType {
+  Text = 'text',
+  Image = 'image',
+  NftEmoji = 'nftEmoji',
+  OnChainImage = 'onChainImage',
+}
 
-  // } else {
-  //   if (data.messageType === 'text') {
-  //     functionName = 'groupChat'
-  //     message = data.message
-  //     lastMessage = data.message
-  //   }
-  //   if (data.messageType === 'nftemoji') {
-  //     functionName = 'groupNftEmojiChat'
-  //     params.content = data.message.iconUrl
-  //     params.protocol = 'SimpleEmojiGroupChat'
-  //     params.contentType = 'image/url'
-  //     message = data.message
-  //     lastMessage = '[Emoji]'
-  //   }
-  //   if (data.messageType === 'image') {
-  //     const fileName = data.message.name
-  //     const result = await this.handleImgMessage(data.message)
-  //     functionName = 'groupLocalImgChat'
-  //     params.content = result.base64Data
-  //     params.protocol = 'SimpleFileGroupChat'
-  //     params.contentType = 'image/url'
-  //     message = {
-  //       data: result.hexData,
-  //       fileName,
-  //       fileType: 'image/jpeg',
-  //     }
-  //     lastMessage = '[Picture]'
-  //   }
-  //   if (data.messageType === 'chainimg') {
-  //     const fileName = data.message.md5 + data.message.dataType.split('/')[1]
-  //     functionName = 'groupChainImgChat'
-  //     params.content = `metafile://${data.message.txId}`
-  //     params.protocol = 'SimpleFileGroupChat'
-  //     params.contentType = data.message.dataType
-  //     message = {
-  //       data: `metafile://${data.message.txId}`,
-  //       fileName,
-  //       fileType: data.message.dataType,
-  //     }
-  //     lastMessage = '[Picture]'
-  //   }
-  // }
-  // this.groupGather[this.activeGroup].message.push(params)
-  // setTimeout(() => {
-  //   if (this.groupGather[this.activeGroup].messagestate[timestamp] !== 'finish') {
-  //     this.$set(this.groupGather[this.activeGroup].messagestate, timestamp, 'error')
-  //   }
-  // }, 10000)
-  // this.groupGather[this.activeGroup].lastMessageTime = timestamp
-  // this.groupGather[this.activeGroup].messagestate[timestamp] = 'pending'
-  // setTimeout(() => {
-  //   this.$nextTick(() => {
-  //     if (data.type == 'friend') {
-  //       this.$refs.usermessage.scrollToBottom()
-  //     } else {
-  //       this.$refs.groupmessage.scrollToBottom()
-  //     }
-  //   })
-  // }, 1000)
-  // this.$store.commit('sortRoom')
-  // this[functionName](message, timestamp, this.sendMessageCallback(groupID, timestamp, lastMessage))
+type MessageDto = {
+  type: MessageType
+  content: string
+  channelId: string
+  userName: string
+}
+
+export const sendMessage = async (messageDto: MessageDto) => {
+  if (messageDto.type === MessageType.Text) {
+    return await _sendTextMessage(messageDto)
+  }
 }
 
 export const validateMessage = (message: string) => {
   message = message.trim()
 
   return message.length > 0 && message.length <= 5000
+}
+
+const _sendTextMessage = async (messageDto: MessageDto) => {
+  const userStore = useUserStore()
+
+  const { content, channelId: groupID, userName: nickName } = messageDto
+
+  // 1. 构建协议数据
+  // 1.1 groupID: done
+  // 1.2 timestamp
+  const timestamp = parseInt(dayjs().format('X'))
+  // 1.3 nickName: done
+  // 1.4 content: done
+  // 1.5 contentType
+  const contentType = 'text/plain'
+  // 1.6 encryption
+  const encryption = 'aes'
+  const dataCarrier = {
+    groupID,
+    timestamp,
+    nickName,
+    content,
+    contentType,
+    encryption,
+  }
+
+  // 2. 构建节点参数
+  const node = {
+    nodeName: NodeName.SimpleGroupChat,
+    encrypt: IsEncrypt.No,
+    payCurrency: 'usd',
+    dataType: 'application/json',
+    data: JSON.stringify(dataCarrier),
+    needConfirm: false,
+  }
+
+  // 3. 发送节点
+  const sdk = userStore.showWallet
+  await sdk.createBrfcChildNode(node)
+
+  return '1'
 }

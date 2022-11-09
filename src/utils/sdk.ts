@@ -54,6 +54,10 @@ export const AllNodeName: {
     brfcId: 'MetaFile',
     path: '/Protocols/MetaFile',
   },
+  [NodeName.SimpleGroupChat]: {
+    brfcId: '96e2649ce8b6',
+    path: '/Protocols/SimpleGroupChat',
+  },
 }
 
 export class SDK {
@@ -316,7 +320,7 @@ export class SDK {
         payType: CreateBrfcChildNodePayType.SPACE,
       }
       const initParams = {
-        appId: ['ShowV3', this.getOnLinkAppUrl(), this.getpPlatform()],
+        appId: ['ShowV3', this.getOnLinkAppUrl(), this.getPlatform()],
         autoRename: true,
         version: '0.0.9',
         data: 'NULL',
@@ -777,7 +781,7 @@ export class SDK {
     })
   }
 
-  getpPlatform() {
+  getPlatform() {
     return isIosApp
       ? 'iosApp'
       : isIOS

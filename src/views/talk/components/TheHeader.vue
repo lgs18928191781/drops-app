@@ -80,6 +80,10 @@ const shortenMetaId = (id: string) => {
   return id.substring(0, 6) + '...' + id.substring(id.length - 6)
 }
 
+const createCommunity = () => {
+  console.log('createCommunity')
+}
+
 const doNothing = () => {}
 </script>
 
