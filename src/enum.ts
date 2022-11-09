@@ -262,6 +262,8 @@ export enum NodeName {
   SimpleMicroblog = 'SimpleMicroblog',
   MetaFile = 'MetaFile',
   ETHBinding = 'ETHBinding',
+  SimpleGroupChat = 'SimpleGroupChat',
+  SimpleFileGroupChat = 'SimpleFileGroupChat',
 }
 
 export const enum BindStatus {

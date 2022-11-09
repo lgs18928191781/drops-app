@@ -54,7 +54,9 @@
       "default_red_envelope_message": "Wishing you all the best!",
       "private_channel": "private channel",
       "public_channel": "public channel",
-      "message_to": "Message {channel}"
+      "message_to": "Message {channel}",
+      "upload_image": "Upload a Image",
+      "use_onchain_image": "Use an Onchain Image"
     },
     "Datetime": {
       "today": "Today at ",

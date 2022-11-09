@@ -14,12 +14,12 @@
         @open-community-section="showCommunitySection = true"
       />
 
-      <div class="pt-12 pb-14 h-screen lg:relative w-full bg-dark-100">
+      <div class="pt-12 pb-14 h-screen lg:relative w-full bg-dark-200">
         <div class="h-full">
-          <MessageList />
+          <MessageList :sendingMessage="sendingMessage" />
         </div>
 
-        <TheInput :currentChannel="currentChannel" />
+        <TheInput :currentChannel="currentChannel" @send-message="handleSendMessage" />
       </div>
 
       <Transition name="slide">
@@ -34,7 +34,7 @@ import TheHeader from './components/TheHeader.vue'
 import TheInput from './components/TheInput.vue'
 import CommunitySection from './components/CommunitySection.vue'
 import ChannelMemberList from './components/ChannelMemberList.vue'
-import { computed, defineAsyncComponent, onMounted, Ref, ref } from 'vue'
+import { computed, defineAsyncComponent, onMounted, reactive, Ref, ref } from 'vue'
 import { getChannelMembers } from '@/api/talk'
 
 const MessageList = defineAsyncComponent({
@@ -60,6 +60,10 @@ type Channel = {
 
 const showMembers = ref(false)
 const showCommunitySection = ref(false)
+const sendingMessage: any = reactive({
+  metaId: '',
+  content: '',
+})
 
 // 获取频道信息
 const channel: Ref<Channel> = ref({
@@ -77,7 +81,7 @@ const community: Ref<any> = ref({
     'MetaBot是元拓邦中重要的一员，也是元拓邦中第一个被创造出来的NFT种群，一代MetaBot总量为999个。',
   channels: [
     {
-      id: '1',
+      id: '88a92826842757cade6e84378df9db88526578c3bce7b8cb6348b7f1f9598d0a',
       name: '聊天',
       in: true,
     },
@@ -97,9 +101,14 @@ const currentChannel = computed(() => {
 })
 
 const handleToggleMemberList = () => {
-  console.log(123)
   showMembers.value = !showMembers.value
   localStorage.setItem('layout-show-right-drawer', showMembers.value ? '1' : '0')
+}
+
+const handleSendMessage = (message: any) => {
+  console.log({ sending: message })
+  sendingMessage.content = message.content
+  sendingMessage.metaId = message.metaId
 }
 
 onMounted(async () => {
@@ -111,10 +120,11 @@ onMounted(async () => {
 
   members.value = await getChannelMembers('1')
   channel.value = {
-    name: '一代MetaBot',
-    description: '',
+    name: '70亿人之家one 7 billion one family',
+    description:
+      '只要是地球人，都可以加入，无上限，目标是70亿地球人。 As long as the earth people,can join,no cap limit,the goal is 7 billion.',
     isPublic: true,
-    groupId: 'b671caca627219c214f433497f9aba530a29a927bb5e32f242e36f8cbc26ba3b',
+    groupId: '88a92826842757cade6e84378df9db88526578c3bce7b8cb6348b7f1f9598d0a',
   }
 })
 </script>

@@ -102,16 +102,16 @@ pre {
   transition-property: all;
   transition-duration: 150ms;
 
-  // hover时浮起
+  // hover时浮起（只在桌面端）
   @media (min-width: 1024PX) {
-    &:hover:not(:active) {
+    &:not(.still):hover:not(:active) {
       box-shadow: calc(var(--right-offset) + var(--move-range)) calc(var(--standard-offset) + var(--move-range)) 0 var(--border-color);
       transform: translateX(calc(0PX - var(--move-range))) translateY(calc(0PX - var(--move-range)));
     }
   }
 
   // active时下沉
-  &:active {
+  &:not(.still):active {
     box-shadow: calc(var(--right-offset) - var(--move-range)) calc(var(--standard-offset) - var(--move-range)) 0 var(--border-color);
     transform: translateX(var(--move-range)) translateY(var(--move-range));
   }

@@ -2,7 +2,7 @@
   <div class="flex">
     <UserAvatar
       :type="props.message.avatarType || 'undefined'"
-      :metaId="props.message.avatarTxId || 'undefined'"
+      :metaId="props.message.metaId || 'undefined'"
       class="w-13.5 h-13.5 shrink-0 select-none"
       :disabled="true"
     />
@@ -85,14 +85,13 @@ import { decrypt } from '@/utils/crypto'
 import NftLabel from './NftLabel.vue'
 import redEnvelopeImg from '@/assets/images/red-envelope.svg?url'
 import ImagePreview from './ImagePreview.vue'
-import { computed, onMounted, ref } from 'vue'
-import { dateTimeFormat } from '@/utils/filters'
+import { computed, ref } from 'vue'
 import dayjs from 'dayjs'
 import { useI18n } from 'vue-i18n'
 
 const i18n = useI18n()
 
-const channelId = 'b73a456789053bd483194e19d56efd469a60eaad100bebaf4fd18a31c0d8d9df'
+const channelId = '88a92826842757cade6e84378df9db88526578c3bce7b8cb6348b7f1f9598d0a'
 const showImagePreview = ref(false)
 
 type Message = {
@@ -124,7 +123,6 @@ const randomNameColor = computed(() => {
 })
 
 const previewImage = () => {
-  console.log(decryptedMessage)
   showImagePreview.value = true
 }
 
@@ -132,7 +130,7 @@ const formatTime = (timestamp: Date) => {
   const day = dayjs(timestamp)
   // 如果是今天，则显示为“今天 hour:minute”
   if (day.isSame(dayjs(), 'day')) {
-    return `${i18n.t('Talk.Datetime.today')}${day.format('HH:mm')}`
+    return `${day.format('HH:mm')}`
   }
 
   // 如果是昨天，则显示为“昨天 hour:minute”
@@ -209,7 +207,7 @@ const redEnvelopeMessage = computed(() => {
 })
 
 const isMyMessage = computed(() => {
-  return props.message.metaId === '261562cd13734c7e9f3809e32d3d7c56f0b27788f88d6738fc95f96ddb89eb01' // TODO:
+  return props.message.metaId === '74cc371c55d9fa38fc98467396c22fe6b20bfc3459a11530362fcdb1b6c07c5c' // TODO:
 })
 
 const isGroupJoinAction = computed(() => props.message.protocol === 'SimpleGroupJoin')
