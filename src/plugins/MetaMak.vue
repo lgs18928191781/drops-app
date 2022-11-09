@@ -165,7 +165,7 @@ async function startConnect() {
             message: keccak256(res.ethAddress).toString('hex')
         })
         if (result) {
-             emit('success',{ signAddressHash:  result});
+             emit('success',{ signAddressHash:  result, address: res.ethAddress});
         }
     }
 }

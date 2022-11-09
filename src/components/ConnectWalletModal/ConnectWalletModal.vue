@@ -166,7 +166,10 @@ const enum ConnectWalletStatus {
 const status: Ref<ConnectWalletStatus> = ref(ConnectWalletStatus.Watting)
 
 const BindMetaIdRef = ref()
-const thirdPartyWalletSignAddress = ref('')
+const thirdPartyWallet = reactive({
+  signAddressHash: '',
+  address: '',
+})
 const isShowBindModal = ref(false)
 const metaIdWalletRegisterBaseInfo: { val: null | MetaIdWalletRegisterBaseInfo } = reactive({
   val: null,
@@ -316,14 +319,15 @@ async function connectMetaLet() {
   // )
 }
 
-async function onThreePartLinkSuccess(params: { signAddressHash: string }) {
+async function onThreePartLinkSuccess(params: { signAddressHash: string; address: string }) {
   //检查hash是否已绑定
   const getMnemonicRes = await LoginByHashData({
     hashData: params.signAddressHash,
   }).catch(error => {
     if (error.code === -1) {
       // 还没绑定
-      thirdPartyWalletSignAddress.value = params.signAddressHash
+      thirdPartyWallet.signAddressHash = params.signAddressHash
+      thirdPartyWallet.address = params.address
       BindMetaIdRef.value.status = BindStatus.ChooseType
       isShowMetaMak.value = false
       isShowBindModal.value = true
@@ -340,8 +344,8 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string }) {
         await BindMetaIdRef.value.loginSuccess(res)
       }
     } else {
-      thirdPartyWalletSignAddress.value = params.signAddressHash
-      debugger
+      thirdPartyWallet.signAddressHash = params.signAddressHash
+      thirdPartyWallet.address = params.address
       BindMetaIdRef.value.status = BindStatus.InputPassword
       isShowMetaMak.value = false
       isShowBindModal.value = true

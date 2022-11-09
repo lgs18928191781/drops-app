@@ -145,7 +145,10 @@ import { useI18n } from 'vue-i18n'
 
 interface Props {
   modelValue: boolean
-  thirdPartyWalletSignAddress: string
+  thirdPartyWallet: {
+    signAddressHash: string
+    address: string
+  }
 }
 const props = withDefaults(defineProps<Props>(), {})
 const i18n = useI18n()
@@ -267,7 +270,7 @@ function submitForm() {
         } else {
           // 使用密码 和 助记词登陆
           const getMnemonicRes = await LoginByHashData({
-            hashData: props.thirdPartyWalletSignAddress,
+            hashData: props.thirdPartyWallet.signAddressHash,
           })
           if (getMnemonicRes?.code === 0 && getMnemonicRes.data) {
             res = await loginByMnemonic(getMnemonicRes.data, form.pass)
@@ -310,7 +313,10 @@ function loginSuccess(params: BindMetaIdRes) {
 function createMetaidAccount() {
   return new Promise<BindMetaIdRes>(async (resolve, reject) => {
     try {
-      const mnemonic = await createMnemonic(props.thirdPartyWalletSignAddress, encode(form.pass))
+      const mnemonic = await createMnemonic(
+        props.thirdPartyWallet.signAddressHash,
+        encode(form.pass)
+      )
       const hdWallet = await hdWalletFromMnemonic(mnemonic, 'new', Network.testnet)
       const HdWalletInstance = new HdWallet(hdWallet)
 
@@ -334,7 +340,7 @@ function createMetaidAccount() {
         address: address,
         xPub: hdWallet.xpubkey,
         pubKey: pubKey,
-        hashData: props.thirdPartyWalletSignAddress,
+        hashData: props.thirdPartyWallet.signAddressHash,
         mnemonic: encryptmnemonic,
         userName: account.name,
       })
@@ -465,8 +471,9 @@ function sendHash(userInfo: BindUserInfo) {
             ? userInfo.email
             : userInfo.phone,
         timestamp: +new Date(),
-        hashData: props.thirdPartyWalletSignAddress,
+        hashData: props.thirdPartyWallet.signAddressHash,
         metaId: userInfo.metaId,
+        address: props.thirdPartyWallet.address,
       })
       // @ts-ignore
       if (res.code == 0) {

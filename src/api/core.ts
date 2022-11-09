@@ -154,6 +154,7 @@ export const setHashData = (params: {
   timestamp: number
   hashData: string
   metaId: string
+  address: string
 }) => {
   return Core.post(
     `/api/v1/thirdparty/setUserWalletHashData`,
