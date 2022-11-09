@@ -1,18 +1,18 @@
 <template>
   <div class="h-full overflow-y-hidden" v-show="loading">
-    <loading-list />
+    <LoadingList />
   </div>
   <div class="h-full overflow-y-scroll" ref="messagesScroll" v-show="!loading">
     <div class="overflow-x-hidden py-4 px-4">
       <div class="flex flex-col-reverse space-y-4 space-y-reverse">
-        <message-item v-for="message in messages" :message="message" :id="message.timestamp" />
+        <MessageItem v-for="message in messages" :message="message" :id="message.timestamp" />
 
-        <loading-list-item v-show="loadingMore" />
+        <LoadingItem v-show="loadingMore" />
         <div class="w-full h-px bg-inherit" id="topAnchor"></div>
       </div>
 
       <div class="flex flex-col space-y-4 mt-4">
-        <message-item
+        <MessageItem
           v-for="message in upcomingMessages"
           :message="message"
           :id="message.timestamp"
@@ -23,11 +23,10 @@
 </template>
 
 <script setup lang="ts">
-// import { io } from 'socket.io-client'
 import { getChannelMessages } from '@/api/talk'
 import { sleep } from '@/utils/util'
-import { onBeforeUnmount, onMounted, Ref, ref, toRaw, watch } from 'vue'
-import LoadingListItem from './LoadingListItem.vue'
+import { onBeforeUnmount, onMounted, Ref, ref, watch } from 'vue'
+import LoadingItem from './LoadingItem.vue'
 import LoadingList from './LoadingList.vue'
 import MessageItem from './MessageItem.vue'
 

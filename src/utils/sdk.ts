@@ -44,19 +44,29 @@ export const AllNodeName: {
   [key in NodeName]: {
     brfcId: string
     path: string
+    version: string
   }
 } = {
   [NodeName.SimpleMicroblog]: {
     brfcId: 'b17e9e277bd7',
     path: '/Protocols/SimpleMicroblog',
+    version: '1.0.0',
   },
   [NodeName.MetaFile]: {
-    brfcId: 'MetaFile',
+    // brfcId: 'fcac10a5ed83',
+    brfcId: '6d3eaf759bbc',
     path: '/Protocols/MetaFile',
+    version: '1.0.0',
   },
   [NodeName.SimpleGroupChat]: {
     brfcId: '96e2649ce8b6',
     path: '/Protocols/SimpleGroupChat',
+    version: '1.0.2',
+  },
+  [NodeName.SimpleFileGroupChat]: {
+    brfcId: '47cf94e87a8a',
+    path: '/Protocols/SimpleFileGroupChat',
+    version: '1.0.0',
   },
 }
 

@@ -29,7 +29,7 @@
           customClass="max-w-[80%] md:max-w-[50%] lg:max-w-[320px] py-0.5"
         />
 
-        <nft-label class="w-8 mt-1" />
+        <NftLabel class="w-8 mt-1" />
       </div>
 
       <div class="w-full py-0.5" v-else-if="isImage">
@@ -40,7 +40,7 @@
           <Image :src="decryptedMessage" customClass="rounded py-0.5" />
         </div>
         <Teleport to="body" v-if="isImage && showImagePreview">
-          <image-preview
+          <ImagePreview
             v-if="showImagePreview"
             :src="decryptedMessage"
             @close="showImagePreview = false"

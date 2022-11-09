@@ -67,7 +67,7 @@
         </div>
 
         <!-- 用户信息设置 -->
-        <user-profile class="shrink-0" />
+        <UserProfile class="shrink-0" />
       </div>
     </div>
   </div>

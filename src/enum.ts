@@ -262,4 +262,5 @@ export enum NodeName {
   SimpleMicroblog = 'SimpleMicroblog',
   MetaFile = 'MetaFile',
   SimpleGroupChat = 'SimpleGroupChat',
+  SimpleFileGroupChat = 'SimpleFileGroupChat',
 }

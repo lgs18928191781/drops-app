@@ -1,13 +1,13 @@
 <template>
   <div class="relative w-screen h-screen lg:flex">
-    <community-section
+    <CommunitySection
       :community="community"
       @close-community-section="showCommunitySection = false"
       :showCommunitySection="showCommunitySection"
     />
 
     <div class="lg:grow lg:h-screen lg:relative lg:flex">
-      <the-header
+      <TheHeader
         :channel="channel"
         :showMembers="showMembers"
         @toggle-member-list="handleToggleMemberList"
@@ -16,14 +16,14 @@
 
       <div class="pt-12 pb-14 h-screen lg:relative w-full bg-dark-200">
         <div class="h-full">
-          <message-list :sendingMessage="sendingMessage" />
+          <MessageList :sendingMessage="sendingMessage" />
         </div>
 
-        <the-input :currentChannel="currentChannel" @send-message="handleSendMessage" />
+        <TheInput :currentChannel="currentChannel" @send-message="handleSendMessage" />
       </div>
 
       <Transition name="slide">
-        <channel-member-list v-show="showMembers" :members="members" />
+        <ChannelMemberList v-show="showMembers" :members="members" />
       </Transition>
     </div>
   </div>
