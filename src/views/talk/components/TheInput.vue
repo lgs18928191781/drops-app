@@ -3,7 +3,7 @@
     <div class="bg-white rounded-lg">
       <!-- 上传图预览 -->
       <div v-if="hasImage" class="border-b-2 border-solid border-dark-200 pb-2 px-3 pt-3">
-        <div class="bg-dark-100 p-2 w-50 h-50 main-border still relative">
+        <div class="bg-dark-220 p-2 w-50 h-50 main-border still relative">
           <div class="absolute right-0 top-0 z-10 -my-2 -mx-3 flex space-x-2 items-center">
             <!-- 删除按钮 -->
             <div class="main-border bg-white p-1 cursor-pointer" @click="deleteImage">
@@ -216,19 +216,27 @@ const trySendImage = async () => {
 
   // metafile上链
   // const buffered = Buffer.from(base64, 'base64').toString('hex')
-  const metafileTxId = await chainalize(base64)
-  console.log({ metafileTxId })
-  return
-  if (!metafileTxId) return
+  // const metafileTxId = await chainalize(base64)
+  // console.log({ metafileTxId })
+  // return
+  // if (!metafileTxId) return
 
-  const metafileTxUri = `metafile://${metafileTxId}`
-  const content = encrypt(metafileTxUri, props.currentChannel.id.substring(0, 16))
+  // const metafileTxUri = `metafile://${metafileTxId}`
+  // const content = encrypt(metafileTxUri, props.currentChannel.id.substring(0, 16))
+  const attachments = [
+    {
+      fileName: '1',
+      fileType: 'image/jpeg',
+      data: base64,
+      encrypt: 0,
+    },
+  ]
 
   const messageDto = {
-    content,
     type: MessageType.Image,
     channelId: props.currentChannel.id,
     userName: userStore.user?.name || 'Riverrun46',
+    attachments,
   }
   await sendMessage(messageDto)
 
