@@ -1,5 +1,5 @@
 <template>
-  <div class="metaid-wallet flex flex-v">
+  <div class="metaid-wallet flex flex-v" v-loading="loading">
     <div class="back">
       <a class="flex flex-align-center" @click="emit('back')">
         <Icon name="down" />{{ $t('back') }}</a
@@ -245,10 +245,18 @@ import { SDK } from '@/utils/sdk'
 
 interface Props {
   type: 'register' | 'login'
+  loading: boolean
 }
 const props = withDefaults(defineProps<Props>(), {})
 
-const emit = defineEmits(['update:modelValue', 'update:type', 'success', 'back', 'register'])
+const emit = defineEmits([
+  'update:modelValue',
+  'update:type',
+  'success',
+  'back',
+  'register',
+  'update:loading',
+])
 const i18n = useI18n()
 const userStore = useUserStore()
 
@@ -363,7 +371,6 @@ const rules = reactive({
   ],
 })
 
-const loading = ref(false)
 const isShowCountry = ref(false)
 const characteristic = ref('')
 const imageCodeData = ref('')
@@ -444,12 +451,12 @@ const getImageCodeData = () => {
 }
 
 function changeType() {
-  if (loading.value) return
+  if (props.loading) return
   emit('update:type', props.type === 'login' ? 'register' : 'login')
 }
 
 function changeUserType() {
-  if (loading.value) return
+  if (props.loading) return
   form.userType = form.userType === 'phone' ? 'email' : 'phone'
 }
 
@@ -492,11 +499,11 @@ function submitForm() {
   FormRef.value.validate(async (valid: boolean) => {
     if (valid) {
       if (form.isAgreePolicy) {
+        emit('update:loading', true)
         try {
           const phoneNum = form.area !== '86' ? form.area + form.phone : form.phone
           // 登陆
           if (props.type === 'login') {
-            loading.value = true
             //  登录
             const params = {
               type: isApp ? 2 : 1,
@@ -536,18 +543,18 @@ function submitForm() {
               }
               // @ts-ignore
               userStore.updateUserInfo({
-                ...account,
                 ...metaIdInfo,
+                ...account,
                 password: form.password,
               })
               userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
               userStore.showWallet.initWallet()
               FormRef.value.resetFields()
-              loading.value = false
+              emit('update:loading', false)
               emit('update:modelValue', false)
               emit('success', props.type)
             } else {
-              loading.value = false
+              emit('update:loading', false)
               ElMessage.error(loginRes.msg)
             }
           } else {
@@ -724,7 +731,7 @@ function submitForm() {
             }
           }
         } catch (error) {
-          loading.value = false
+          emit('update:loading', false)
           ElMessage.error((error as any).message)
         }
       } else {

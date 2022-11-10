@@ -1,6 +1,11 @@
 <template>
   <!-- 连接钱包 -->
-  <ElDialog :model-value="rootStore.isShowLogin" :title="$t('Login.connectWallet')">
+  <ElDialog
+    :model-value="rootStore.isShowLogin"
+    :title="$t('Login.connectWallet')"
+    :close-on-click-modal="!loading"
+    @close="rootStore.$patch({ isShowLogin: false })"
+  >
     <div class="login-warp flex">
       <div class="flex1 login-cover">
         <img src="@/assets/images/login_img.png" />
@@ -26,8 +31,10 @@
         <!-- 使用MetaId钱包 -->
         <MetaIdWalletVue
           v-model:type="type"
+          v-model:loading="loading"
           v-else-if="status === ConnectWalletStatus.UseMetaId"
           @back="status = ConnectWalletStatus.Watting"
+          @success="rootStore.$patch({ isShowLogin: false })"
           @register="OnMetaIdRegister"
         />
       </div>
@@ -102,7 +109,7 @@
 
   <!-- 绑定metaId -->
   <BindMetaIdVue
-    :thirdPartyWalletSignAddress="thirdPartyWalletSignAddress"
+    :thirdPartyWallet="thirdPartyWallet"
     ref="BindMetaIdRef"
     v-model="isShowBindModal"
     @register="isShowSetBaseInfo = true"
@@ -145,6 +152,7 @@ const userStore = useUserStore()
 const i18n = useI18n()
 const emit = defineEmits(['metamask'])
 
+const loading = ref(false)
 const isShowMetaMak = ref(false)
 const isShowLoginAndRegister = ref(false)
 const type: Ref<'login' | 'register'> = ref('login')
@@ -240,7 +248,7 @@ const wallets = [
 ]
 
 // setbaseinfo
-const isShowSetBaseInfo = ref(true)
+const isShowSetBaseInfo = ref(false)
 
 async function metaMaskLoginSuccess(res: MetaMaskLoginRes) {
   const response = await GetUserAllInfo(res.userInfo.metaId).catch(error => {
