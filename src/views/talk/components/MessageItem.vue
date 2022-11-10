@@ -26,7 +26,7 @@
       <div class="w-full" v-else-if="isNftEmoji">
         <Image
           :src="decryptedMessage"
-          customClass="max-w-[80%] md:max-w-[50%] lg:max-w-[320px] py-0.5"
+          customClass="max-w-[80%] md:max-w-[50%] lg:max-w-[320px] py-0.5 object-scale-down"
         />
 
         <NftLabel class="w-8 mt-1" />
@@ -34,10 +34,10 @@
 
       <div class="w-full py-0.5" v-else-if="isImage">
         <div
-          class="max-w-[90%] md:max-w-[50%] lg:max-w-[400px] max-h-[600px] overflow-y-hidden rounded bg-dark-100 cursor-pointer"
+          class="w-fit max-w-[90%] md:max-w-[50%] lg:max-w-[400px] max-h-[600px] overflow-y-hidden rounded bg-dark-100 cursor-pointer"
           @click="previewImage"
         >
-          <Image :src="decryptedMessage" customClass="rounded py-0.5" />
+          <Image :src="decryptedMessage" customClass="rounded py-0.5 object-scale-down" />
         </div>
         <Teleport to="body" v-if="isImage && showImagePreview">
           <ImagePreview

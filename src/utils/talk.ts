@@ -87,10 +87,11 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
   const timestamp = parseInt(dayjs().format('X'))
   // 1.3 nickName: done
   // 1.4 fileType
-  const fileType = 'jpeg' // TODO:
+  const file = attachments![0]
+  const fileType = file.fileType.split('/')[1]
   // 1.5 encrypt
-  const encrypt = '1'
-  const attachment = 'metafile://0.jpeg'
+  const encrypt = '0'
+  const attachment = 'metafile://$[0]'
   const dataCarrier = {
     groupId,
     timestamp,

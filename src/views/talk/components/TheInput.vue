@@ -39,6 +39,7 @@
           <ImagePreview
             v-if="showImagePreview"
             :src="imagePreviewUrl"
+            :original-size="true"
             @close="showImagePreview = false"
           />
         </Teleport>
@@ -69,42 +70,48 @@
           </div>
         </div>
 
-        <!-- <Teleport to="body"> -->
-        <div
-          v-show="showMoreCommandsBox"
-          class="fixed z-50 inset-0 h-screen w-screen bg-transparent"
-          @click="showMoreCommandsBox = false"
-        >
-          <div class="relative h-full w-full">
-            <input type="file" id="imageUploader" ref="imageUploader" @change="handleImageChange" />
-            <div
-              class="absolute bottom-[68PX] left-[16PX] lg:bottom-[78PX] lg:left-[346PX] bg-white py-1.5 px-2 rounded text-xs flex flex-col text-dark-400 font-medium space-y-0.5 shadow-lg"
-            >
+        <Teleport to="body">
+          <div
+            v-show="showMoreCommandsBox"
+            class="fixed z-50 inset-0 h-screen w-screen bg-transparent"
+            @click="showMoreCommandsBox = false"
+          >
+            <div class="relative h-full w-full">
+              <input
+                type="file"
+                id="imageUploader"
+                ref="imageUploader"
+                accept="image/*"
+                @change="handleImageChange"
+              />
               <div
-                class="p-2 flex items-center space-x-2 text-dark-800 rounded-sm lg:cursor-pointer lg:hover:text-white lg:hover:bg-primary"
-                @click="openImageUploader"
+                class="absolute bottom-[68PX] left-[16PX] lg:bottom-[78PX] lg:left-[346PX] bg-white py-1.5 px-2 rounded text-xs flex flex-col text-dark-400 font-medium space-y-0.5 shadow-lg"
               >
-                <div class="">
-                  <Icon name="photo" class="w-5 h-5" />
+                <div
+                  class="p-2 flex items-center space-x-2 text-dark-800 rounded-sm lg:cursor-pointer lg:hover:text-white lg:hover:bg-primary"
+                  @click="openImageUploader"
+                >
+                  <div class="">
+                    <Icon name="photo" class="w-5 h-5" />
+                  </div>
+                  <div class="">
+                    {{ $t('Talk.Channel.upload_image') }}
+                  </div>
                 </div>
-                <div class="">
-                  {{ $t('Talk.Channel.upload_image') }}
-                </div>
-              </div>
-              <div
-                class="p-2 flex items-center space-x-2 text-dark-800 rounded-sm lg:cursor-pointer lg:hover:text-white lg:hover:bg-primary"
-              >
-                <div class="">
-                  <Icon name="link" class="w-5 h-5" />
-                </div>
-                <div class="">
-                  {{ $t('Talk.Channel.use_onchain_image') }}
+                <div
+                  class="p-2 flex items-center space-x-2 text-dark-800 rounded-sm lg:cursor-pointer lg:hover:text-white lg:hover:bg-primary"
+                >
+                  <div class="">
+                    <Icon name="link" class="w-5 h-5" />
+                  </div>
+                  <div class="">
+                    {{ $t('Talk.Channel.use_onchain_image') }}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <!-- </Teleport> -->
+        </Teleport>
 
         <!-- 右侧发送按钮 -->
         <div class="flex h-full py-2 items-center shrink-0">
@@ -148,6 +155,8 @@ import { useUserStore } from '@/stores/user'
 import { encrypt } from '@/utils/crypto'
 import ImagePreview from './ImagePreview.vue'
 import { Buffer } from 'buffer'
+import { FileToAttachmentItem } from '@/utils/util'
+import { is } from '@babel/types'
 
 const props = defineProps(['currentChannel'])
 const showMoreCommandsBox = ref(false)
@@ -159,6 +168,8 @@ const imageUploader = ref<HTMLInputElement | null>(null)
 const imageFile = ref<File | null>(null)
 const showImagePreview = ref(false)
 
+const hasImage = computed(() => imageFile.value !== null)
+
 const openImageUploader = () => {
   imageUploader.value?.click()
 }
@@ -166,18 +177,39 @@ const openImageUploader = () => {
 const handleImageChange = (e: Event) => {
   const target = e.target as HTMLInputElement
   const file = target.files?.[0]
+
   if (file) {
+    if (!isImage(file)) {
+      console.log('not image')
+      return
+    }
+
+    if (isTooLarge(file)) {
+      console.log('too large')
+      return
+    }
+
     imageFile.value = file
-    console.log(file)
   }
+}
+
+const isImage = (file: File) => {
+  const type = file.type
+
+  return (
+    type === 'image/jpeg' || type === 'image/png' || type === 'image/gif' || type === 'image/jpg'
+  )
+}
+
+const isTooLarge = (file: File) => {
+  const size = file.size
+  return size > 2 * 1024 * 1024 // 2MB
 }
 
 const deleteImage = () => {
   imageFile.value = null
   imageUploader.value!.value = ''
 }
-
-const hasImage = computed(() => imageFile.value !== null)
 
 const imagePreviewUrl = computed(() => {
   if (imageFile.value) {
@@ -188,49 +220,10 @@ const imagePreviewUrl = computed(() => {
 })
 
 const trySendImage = async () => {
-  // 将image转为base64
-  const base64 = await new Promise<string>((resolve, reject) => {
-    const reader = new FileReader()
-    reader.readAsArrayBuffer(imageFile.value!)
-    reader.onload = () => {
-      const arrayBuffer = reader.result as ArrayBuffer
+  const hexedFiles = await FileToAttachmentItem(imageFile.value!)
+  const attachments = [hexedFiles]
 
-      const buffer = Buffer.from(arrayBuffer)
-      const hex = buffer.toString('hex')
-      const fileData = 'data:' + 'image/jpeg' + ';base64,' + hexToBase64(hex)
-      resolve(fileData as string)
-    }
-    // reader.readAsDataURL(imageFile.value!)
-    // reader.onload = () => {
-    //   const dataUrl = reader.result
-    //   if (dataUrl) {
-    //     resolve(dataUrl as string)
-    //   }
-    // }
-    reader.onerror = error => {
-      reject(error)
-    }
-  })
-  if (!base64) return
-  console.log({ base64 })
-
-  // metafile上链
-  // const buffered = Buffer.from(base64, 'base64').toString('hex')
-  // const metafileTxId = await chainalize(base64)
-  // console.log({ metafileTxId })
-  // return
-  // if (!metafileTxId) return
-
-  // const metafileTxUri = `metafile://${metafileTxId}`
-  // const content = encrypt(metafileTxUri, props.currentChannel.id.substring(0, 16))
-  const attachments = [
-    {
-      fileName: '1',
-      fileType: 'image/jpeg',
-      data: base64,
-      encrypt: 0,
-    },
-  ]
+  deleteImage()
 
   const messageDto = {
     type: MessageType.Image,
@@ -241,10 +234,7 @@ const trySendImage = async () => {
   await sendMessage(messageDto)
 
   return
-
-  // deleteImage()
 }
-
 /** ------ */
 
 /** 发送消息 */

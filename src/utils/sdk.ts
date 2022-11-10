@@ -706,6 +706,7 @@ export class SDK {
                       `$[${index}]`,
                       transaction.metafile[index].id
                     )
+                    console.log({ replace: JSON.parse(childNodePrams.data) })
                   }
 
                   // 因为 childNodePrams.data 改变了，是所以需要重新构建 child node transtation

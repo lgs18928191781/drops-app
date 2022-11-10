@@ -796,13 +796,13 @@ export function debounce(fn: any, delay = 1000) {
 
 // 节流
 export function throttle(fn: any, delay = 500) {
-  let isThtottle = true
+  let isThrottle = true
   return () => {
-    if (!isThtottle) return
-    isThtottle = false
+    if (!isThrottle) return
+    isThrottle = false
     setTimeout(() => {
       fn()
-      isThtottle = true
+      isThrottle = true
     }, delay)
   }
 }
