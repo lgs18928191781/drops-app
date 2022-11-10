@@ -53,10 +53,10 @@ export const AllNodeName: {
     version: '1.0.0',
   },
   [NodeName.MetaFile]: {
-    // brfcId: 'fcac10a5ed83',
-    brfcId: '6d3eaf759bbc',
+    brfcId: 'fcac10a5ed83',
+    // brfcId: '6d3eaf759bbc',
     path: '/Protocols/MetaFile',
-    version: '1.0.0',
+    version: '1.0.1',
   },
   [NodeName.SimpleGroupChat]: {
     brfcId: '96e2649ce8b6',
@@ -71,6 +71,7 @@ export const AllNodeName: {
   [NodeName.ETHBinding]: {
     brfcId: 'ETHBinding-version_1',
     path: '/Protocols/ETHBinding',
+    version: '1.0.0',
   },
 }
 

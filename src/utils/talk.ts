@@ -17,9 +17,10 @@ export enum MessageType {
 
 type MessageDto = {
   type: MessageType
-  content: string
+  content?: string
   channelId: string
   userName: string
+  attachments?: any[]
 }
 
 const userStore = useUserStore()
@@ -78,7 +79,7 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
 }
 
 const _sendImageMessage = async (messageDto: MessageDto) => {
-  const { content: attachment, channelId: groupId, userName: nickName } = messageDto
+  const { channelId: groupId, userName: nickName, attachments } = messageDto
 
   // 1. 构建协议数据
   // 1.1 groupId: done
@@ -89,6 +90,7 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
   const fileType = 'jpeg' // TODO:
   // 1.5 encrypt
   const encrypt = '1'
+  const attachment = 'metafile://0.jpeg'
   const dataCarrier = {
     groupId,
     timestamp,
@@ -103,6 +105,7 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
     nodeName: NodeName.SimpleFileGroupChat,
     dataType: 'application/json',
     data: JSON.stringify(dataCarrier),
+    attachments,
   }
 
   // 3. 发送节点
