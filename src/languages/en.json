@@ -59,6 +59,11 @@
       "use_onchain_image": "Use an Onchain Image",
       "view_original": "Open original"
     },
+    "Input": {
+      "nft_stickers": "NFT Stickers",
+      "emoji": "Emoji",
+      "no_nft_stickers": "No NFT Stickers Available."
+    },
     "Datetime": {
       "today": "Today at ",
       "yesterday": "Yesterday at "

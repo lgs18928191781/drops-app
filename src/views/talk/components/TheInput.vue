@@ -83,6 +83,7 @@
                 ref="imageUploader"
                 accept="image/*"
                 @change="handleImageChange"
+                class="hidden"
               />
               <div
                 class="absolute bottom-[68PX] left-[16PX] lg:bottom-[78PX] lg:left-[346PX] bg-white py-1.5 px-2 rounded text-xs flex flex-col text-dark-400 font-medium space-y-0.5 shadow-lg"
@@ -113,18 +114,33 @@
           </div>
         </Teleport>
 
+        <Teleport to="body" v-if="showStickersBox">
+          <TheInputStickersBox
+            :show-stickers-box="showStickersBox"
+            @hideStickersBox="showStickersBox = false"
+            @inputEmoji="handleInputEmoji"
+          />
+        </Teleport>
+
         <!-- 右侧发送按钮 -->
         <div class="flex h-full py-2 items-center shrink-0">
           <div class="flex items-center px-1 lg:mr-2">
-            <div class="p-2 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer">
+            <div
+              class="p-2 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer"
+              @click="doNothing"
+            >
               <Icon name="red_envelope" class="w-full h-full text-dark-800" />
             </div>
 
             <div
-              class="p-2 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer"
-              @click="test = !test"
+              class="p-1 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer"
+              @click="showStickersBox = true"
             >
-              <Icon name="emoji" class="w-full h-full text-dark-800" />
+              <Icon
+                name="face_smile"
+                class="w-full h-full text-dark-800 transition-all ease-in-out duration-300"
+                :class="{ 'text-primary -rotate-6 scale-110': showStickersBox }"
+              />
             </div>
           </div>
 
@@ -154,14 +170,16 @@ import { sendMessage, validateMessage, MessageType, chainalize, hexToBase64 } fr
 import { useUserStore } from '@/stores/user'
 import { encrypt } from '@/utils/crypto'
 import ImagePreview from './ImagePreview.vue'
-import { Buffer } from 'buffer'
+import TheInputStickersBox from './TheInputStickersBox.vue'
 import { FileToAttachmentItem } from '@/utils/util'
-import { is } from '@babel/types'
+
+const doNothing = () => {}
 
 const props = defineProps(['currentChannel'])
 const showMoreCommandsBox = ref(false)
+const showStickersBox = ref(false)
+
 const hasInput = computed(() => chatInput.value.length > 0)
-const test = ref(false)
 
 /** 上传图片 */
 const imageUploader = ref<HTMLInputElement | null>(null)
@@ -242,6 +260,10 @@ const chatInput = ref('')
 const emit = defineEmits(['sendMessage'])
 const userStore = useUserStore()
 
+const handleInputEmoji = (emoji: string) => {
+  chatInput.value += emoji
+}
+
 const trySendMessage = async () => {
   if (!validateMessage(chatInput.value)) return
 
@@ -265,4 +287,8 @@ const trySendMessage = async () => {
 /** ------ */
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.light-shadow {
+  box-shadow: 0 1px 0 rgba(6, 6, 7, 0.1), 0 3px 0 rgba(4, 4, 5, 0.025), 0 4px 0 rgba(6, 6, 7, 0.025);
+}
+</style>
