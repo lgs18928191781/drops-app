@@ -1,5 +1,9 @@
 <template>
-  <div v-show="true" class="fixed z-40 inset-0 h-screen w-screen" @click="$emit('hideStickersBox')">
+  <div
+    v-show="true"
+    class="fixed z-40 inset-0 h-screen w-screen"
+    @click="$emit('hideStickersBox')"
+  >
     <div class="relative h-full w-full">
       <div
         class="absolute bottom-[68PX] right-[16PX] lg:bottom-[78PX] lg:right-[256PX] bg-white pb-1.5 pt-4 rounded-lg text-xs flex flex-col text-dark-400 font-medium space-y-0.5 shadow-lg w-3/4 lg:w-96 z-50"
