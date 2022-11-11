@@ -39,6 +39,7 @@
           <ImagePreview
             v-if="showImagePreview"
             :src="imagePreviewUrl"
+            :original-size="true"
             @close="showImagePreview = false"
           />
         </Teleport>
@@ -69,55 +70,77 @@
           </div>
         </div>
 
-        <!-- <Teleport to="body"> -->
-        <div
-          v-show="showMoreCommandsBox"
-          class="fixed z-50 inset-0 h-screen w-screen bg-transparent"
-          @click="showMoreCommandsBox = false"
-        >
-          <div class="relative h-full w-full">
-            <input type="file" id="imageUploader" ref="imageUploader" @change="handleImageChange" />
-            <div
-              class="absolute bottom-[68PX] left-[16PX] lg:bottom-[78PX] lg:left-[346PX] bg-white py-1.5 px-2 rounded text-xs flex flex-col text-dark-400 font-medium space-y-0.5 shadow-lg"
-            >
+        <Teleport to="body">
+          <div
+            v-show="showMoreCommandsBox"
+            class="fixed z-50 inset-0 h-screen w-screen bg-transparent"
+            @click="showMoreCommandsBox = false"
+          >
+            <div class="relative h-full w-full">
+              <input
+                type="file"
+                id="imageUploader"
+                ref="imageUploader"
+                accept="image/*"
+                @change="handleImageChange"
+                class="hidden"
+              />
               <div
-                class="p-2 flex items-center space-x-2 text-dark-800 rounded-sm lg:cursor-pointer lg:hover:text-white lg:hover:bg-primary"
-                @click="openImageUploader"
+                class="absolute bottom-[68PX] left-[16PX] lg:bottom-[78PX] lg:left-[346PX] bg-white py-1.5 px-2 rounded text-xs flex flex-col text-dark-400 font-medium space-y-0.5 shadow-lg"
               >
-                <div class="">
-                  <Icon name="photo" class="w-5 h-5" />
+                <div
+                  class="p-2 flex items-center space-x-2 text-dark-800 rounded-sm lg:cursor-pointer lg:hover:text-white lg:hover:bg-primary"
+                  @click="openImageUploader"
+                >
+                  <div class="">
+                    <Icon name="photo" class="w-5 h-5" />
+                  </div>
+                  <div class="">
+                    {{ $t('Talk.Channel.upload_image') }}
+                  </div>
                 </div>
-                <div class="">
-                  {{ $t('Talk.Channel.upload_image') }}
-                </div>
-              </div>
-              <div
-                class="p-2 flex items-center space-x-2 text-dark-800 rounded-sm lg:cursor-pointer lg:hover:text-white lg:hover:bg-primary"
-              >
-                <div class="">
-                  <Icon name="link" class="w-5 h-5" />
-                </div>
-                <div class="">
-                  {{ $t('Talk.Channel.use_onchain_image') }}
+                <div
+                  class="p-2 flex items-center space-x-2 text-dark-800 rounded-sm lg:cursor-pointer lg:hover:text-white lg:hover:bg-primary"
+                >
+                  <div class="">
+                    <Icon name="link" class="w-5 h-5" />
+                  </div>
+                  <div class="">
+                    {{ $t('Talk.Channel.use_onchain_image') }}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <!-- </Teleport> -->
+        </Teleport>
+
+        <Teleport to="body" v-if="showStickersBox">
+          <TheInputStickersBox
+            :show-stickers-box="showStickersBox"
+            @hideStickersBox="showStickersBox = false"
+            @inputEmoji="handleInputEmoji"
+          />
+        </Teleport>
 
         <!-- 右侧发送按钮 -->
         <div class="flex h-full py-2 items-center shrink-0">
           <div class="flex items-center px-1 lg:mr-2">
-            <div class="p-2 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer">
+            <div
+              class="p-2 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer"
+              @click="doNothing"
+            >
               <Icon name="red_envelope" class="w-full h-full text-dark-800" />
             </div>
 
             <div
-              class="p-2 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer"
-              @click="test = !test"
+              class="p-1 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer"
+              @click="showStickersBox = true"
             >
-              <Icon name="emoji" class="w-full h-full text-dark-800" />
+              <Icon
+                name="face_smile"
+                class="w-full h-full text-dark-800 transition-all ease-in-out duration-300"
+                :class="{ 'text-primary -rotate-6 scale-110': showStickersBox }"
+              />
             </div>
           </div>
 
@@ -145,19 +168,27 @@
 import { computed, ref } from 'vue'
 import { sendMessage, validateMessage, MessageType, chainalize, hexToBase64 } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
-import { encrypt } from '@/utils/crypto'
+import { useTalkStore } from '@/stores/talk'
 import ImagePreview from './ImagePreview.vue'
-import { Buffer } from 'buffer'
+import TheInputStickersBox from './TheInputStickersBox.vue'
+import { FileToAttachmentItem } from '@/utils/util'
+import { truncate } from 'fs/promises'
+import { encrypt } from '@/utils/crypto'
+
+const doNothing = () => {}
 
 const props = defineProps(['currentChannel'])
 const showMoreCommandsBox = ref(false)
+const showStickersBox = ref(false)
+
 const hasInput = computed(() => chatInput.value.length > 0)
-const test = ref(false)
 
 /** 上传图片 */
 const imageUploader = ref<HTMLInputElement | null>(null)
 const imageFile = ref<File | null>(null)
 const showImagePreview = ref(false)
+
+const hasImage = computed(() => imageFile.value !== null)
 
 const openImageUploader = () => {
   imageUploader.value?.click()
@@ -166,18 +197,39 @@ const openImageUploader = () => {
 const handleImageChange = (e: Event) => {
   const target = e.target as HTMLInputElement
   const file = target.files?.[0]
+
   if (file) {
+    if (!isImage(file)) {
+      console.log('not image')
+      return
+    }
+
+    if (isTooLarge(file)) {
+      console.log('too large')
+      return
+    }
+
     imageFile.value = file
-    console.log(file)
   }
+}
+
+const isImage = (file: File) => {
+  const type = file.type
+
+  return (
+    type === 'image/jpeg' || type === 'image/png' || type === 'image/gif' || type === 'image/jpg'
+  )
+}
+
+const isTooLarge = (file: File) => {
+  const size = file.size
+  return size > 2 * 1024 * 1024 // 2MB
 }
 
 const deleteImage = () => {
   imageFile.value = null
   imageUploader.value!.value = ''
 }
-
-const hasImage = computed(() => imageFile.value !== null)
 
 const imagePreviewUrl = computed(() => {
   if (imageFile.value) {
@@ -188,79 +240,40 @@ const imagePreviewUrl = computed(() => {
 })
 
 const trySendImage = async () => {
-  // 将image转为base64
-  const base64 = await new Promise<string>((resolve, reject) => {
-    const reader = new FileReader()
-    reader.readAsArrayBuffer(imageFile.value!)
-    reader.onload = () => {
-      const arrayBuffer = reader.result as ArrayBuffer
+  const hexedFiles = await FileToAttachmentItem(imageFile.value!)
+  const attachments = [hexedFiles]
 
-      const buffer = Buffer.from(arrayBuffer)
-      const hex = buffer.toString('hex')
-      const fileData = 'data:' + 'image/jpeg' + ';base64,' + hexToBase64(hex)
-      resolve(fileData as string)
-    }
-    // reader.readAsDataURL(imageFile.value!)
-    // reader.onload = () => {
-    //   const dataUrl = reader.result
-    //   if (dataUrl) {
-    //     resolve(dataUrl as string)
-    //   }
-    // }
-    reader.onerror = error => {
-      reject(error)
-    }
-  })
-  if (!base64) return
-  console.log({ base64 })
-
-  // metafile上链
-  // const buffered = Buffer.from(base64, 'base64').toString('hex')
-  // const metafileTxId = await chainalize(base64)
-  // console.log({ metafileTxId })
-  // return
-  // if (!metafileTxId) return
-
-  // const metafileTxUri = `metafile://${metafileTxId}`
-  // const content = encrypt(metafileTxUri, props.currentChannel.id.substring(0, 16))
-  const attachments = [
-    {
-      fileName: '1',
-      fileType: 'image/jpeg',
-      data: base64,
-      encrypt: 0,
-    },
-  ]
+  // clone
+  const originalFileUrl = imagePreviewUrl.value
+  deleteImage()
 
   const messageDto = {
     type: MessageType.Image,
     channelId: props.currentChannel.id,
     userName: userStore.user?.name || 'Riverrun46',
     attachments,
+    content: '',
+    originalFileUrl,
   }
   await sendMessage(messageDto)
 
   return
-
-  // deleteImage()
 }
-
 /** ------ */
 
 /** 发送消息 */
 const chatInput = ref('')
-const emit = defineEmits(['sendMessage'])
 const userStore = useUserStore()
+const talkStore = useTalkStore()
+
+const handleInputEmoji = (emoji: string) => {
+  chatInput.value += emoji
+}
 
 const trySendMessage = async () => {
   if (!validateMessage(chatInput.value)) return
 
   const content = encrypt(chatInput.value, props.currentChannel.id.substring(0, 16))
-  const sending = {
-    content,
-    metaId: '74cc371c55d9fa38fc98467396c22fe6b20bfc3459a11530362fcdb1b6c07c5c',
-  }
-  emit('sendMessage', sending)
 
   chatInput.value = ''
 
@@ -275,4 +288,8 @@ const trySendMessage = async () => {
 /** ------ */
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.light-shadow {
+  box-shadow: 0 1px 0 rgba(6, 6, 7, 0.1), 0 3px 0 rgba(4, 4, 5, 0.025), 0 4px 0 rgba(6, 6, 7, 0.025);
+}
+</style>

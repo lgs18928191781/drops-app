@@ -96,7 +96,13 @@
       "public_channel": "公开频道",
       "message_to": "发消息到 {channel}…",
       "upload_image": "上传图片",
-      "use_onchain_image": "链上图片"
+      "use_onchain_image": "链上图片",
+      "view_original": "查看原图"
+    },
+    "Input": {
+      "nft_stickers": "NFT表情",
+      "emoji": "Emoji",
+      "no_nft_stickers": "木有贴纸，木有鱼蛋。"
     },
     "Datetime": {
       "today": "今天",

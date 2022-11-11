@@ -1,6 +1,6 @@
 <template>
   <div
-    class="fixed inset-0 pt-12 w-full bg-dark-200 h-screen z-10 px-4 pb-4 overflow-y-scroll lg:static lg:w-60 lg:shrink-0 lg:bg-dark-200"
+    class="fixed inset-0 pt-12 w-full bg-dark-100 h-screen z-10 px-4 pb-4 overflow-y-scroll lg:static lg:w-60 lg:shrink-0"
   >
     <div class="pt-6">
       <div class="flex items-center justify-between">

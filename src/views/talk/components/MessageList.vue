@@ -5,15 +5,19 @@
   <div class="h-full overflow-y-scroll" ref="messagesScroll" v-show="!loading">
     <div class="overflow-x-hidden py-4 px-4">
       <div class="flex flex-col-reverse space-y-4 space-y-reverse">
-        <MessageItem v-for="message in messages" :message="message" :id="message.timestamp" />
+        <MessageItem
+          v-for="message in talkStore.pastMessages"
+          :message="message"
+          :id="message.timestamp"
+        />
 
-        <LoadingItem v-show="loadingMore" />
+        <LoadingItem v-show="loadingMore && !isAtTop" />
         <div class="w-full h-px bg-inherit" id="topAnchor"></div>
       </div>
 
       <div class="flex flex-col space-y-4 mt-4">
         <MessageItem
-          v-for="message in upcomingMessages"
+          v-for="message in talkStore.newMessages"
           :message="message"
           :id="message.timestamp"
         />
@@ -24,42 +28,27 @@
 
 <script setup lang="ts">
 import { getChannelMessages } from '@/api/talk'
+import { useTalkStore } from '@/stores/talk'
 import { sleep } from '@/utils/util'
-import { onBeforeUnmount, onMounted, Ref, ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import LoadingItem from './LoadingItem.vue'
 import LoadingList from './LoadingList.vue'
 import MessageItem from './MessageItem.vue'
 
-type Message = {
-  protocol: string
-  contentType: string
-  content: string
-  avatarType: string
-  avatarTxId: string
-  nickName: string
-  timestamp: number
-  txId: string
-}
+const talkStore = useTalkStore()
 
-const { sendingMessage } = defineProps(['sendingMessage'])
+watch(talkStore.newMessages, async () => {
+  await scrollToMessagesBottom()
+})
 
 const loading = ref(false)
 const loadingMore = ref(false)
-const messages: Ref<Message[]> = ref([])
-const upcomingMessages: Ref<Message[]> = ref([])
+const isAtTop = ref(false)
 
 const messagesScroll = ref<HTMLElement>()
 let ws: WebSocket | null
 
 const channelId = '88a92826842757cade6e84378df9db88526578c3bce7b8cb6348b7f1f9598d0a'
-
-// watch(sendingMessage, newMessage => {
-//   if (newMessage) {
-//     newMessage.sending = true
-//     upcomingMessages.value.push(newMessage)
-//   }
-//   console.log(newMessage)
-// })
 
 const handleScroll = async () => {
   const topAnchor = document.getElementById('topAnchor')
@@ -74,7 +63,7 @@ const handleScroll = async () => {
 }
 
 const loadMore = async () => {
-  const earliestMessage = messages.value[messages.value.length - 1]
+  const earliestMessage = talkStore.pastMessages[talkStore.pastMessages.length - 1]
   const earliestMessageTimestamp = earliestMessage?.timestamp
   const earliestMessageElement = document.getElementById(earliestMessageTimestamp?.toString() || '')
   const earliestMessagePosition = earliestMessageElement?.getBoundingClientRect().bottom
@@ -92,9 +81,18 @@ const loadMore = async () => {
       results: { items },
     },
   } = await getChannelMessages(channelId, params)
-  for (const item of items) {
-    messages.value.push(item)
+
+  // 如果没有更多消息了，就不再加载
+  if (items.length === 0) {
+    isAtTop.value = true
+    return
   }
+
+  talkStore.$patch(state => {
+    for (const item of items) {
+      state.pastMessages.push(item)
+    }
+  })
 
   // 滚动到原来的位置
   if (earliestMessagePosition) {
@@ -154,14 +152,48 @@ const subscribeChannel = async () => {
       if (!isFromThisGroup(message)) return
 
       // 去重
-      const isDuplicate = upcomingMessages.value.some(item => item.txId === message.txId)
+      const isDuplicate =
+        talkStore.newMessages.some(item => item.txId === message.txId) ||
+        talkStore.pastMessages.some(item => item.txId === message.txId)
 
-      // 将message添加到messages首
-      if (!isDuplicate) {
-        upcomingMessages.value.push(message)
+      if (isDuplicate) return
+
+      // 优先查找替代mock数据
+      let mockMessage: any
+      if (message.protocol === 'simpleGroupChat') {
+        mockMessage = talkStore.newMessages.find(
+          item =>
+            item.txId === '' &&
+            item.isMock === true &&
+            item.content === message.content &&
+            item.metaId === message.metaId &&
+            item.protocol === message.protocol
+        )
+      } else if (message.protocol === 'SimpleFileGroupChat') {
+        mockMessage = talkStore.newMessages.find(
+          item =>
+            item.txId === '' &&
+            item.isMock === true &&
+            item.metaId === message.metaId &&
+            item.protocol === message.protocol
+        )
       }
 
-      scrollToMessagesBottom()
+      if (mockMessage) {
+        talkStore.$patch(state => {
+          mockMessage.txId = message.txId
+          mockMessage.timestamp = message.timestamp
+          mockMessage.content = message.content
+          delete mockMessage.isMock
+        })
+
+        return
+      }
+
+      // 如果没有替代mock数据，就直接添加到新消息队列首
+      talkStore.$patch(state => {
+        state.newMessages.push(message)
+      })
     }
   }
 
@@ -175,7 +207,7 @@ onMounted(async () => {
       results: { items },
     },
   } = await getChannelMessages(channelId)
-  messages.value = items
+  talkStore.$patch({ pastMessages: items })
   loading.value = false
 
   messagesScroll.value?.addEventListener('scroll', handleScroll)

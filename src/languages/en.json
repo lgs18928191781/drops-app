@@ -56,7 +56,13 @@
       "public_channel": "public channel",
       "message_to": "Message {channel}",
       "upload_image": "Upload a Image",
-      "use_onchain_image": "Use an Onchain Image"
+      "use_onchain_image": "Use an Onchain Image",
+      "view_original": "Open original"
+    },
+    "Input": {
+      "nft_stickers": "NFT Stickers",
+      "emoji": "Emoji",
+      "no_nft_stickers": "No NFT Stickers Available."
     },
     "Datetime": {
       "today": "Today at ",

@@ -78,9 +78,6 @@ async function getImageUrl() {
     src = await metafile(props.src, -1)
   }
   DB.getMetaFile(src, props.width).then(res => {
-    if (res === '') {
-      console.log({ src })
-    }
     url.value = res
     isSkeleton.value = false
   })
