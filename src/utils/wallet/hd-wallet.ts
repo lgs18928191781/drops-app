@@ -185,7 +185,7 @@ export interface ProtocolOptions extends NodeOptions {
 }
 
 export const DEFAULTS = {
-  feeb: 0.5,
+  feeb: 1,
   minAmount: 546,
 }
 

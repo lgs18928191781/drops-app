@@ -1,12 +1,9 @@
 import dayjs from 'dayjs'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 dayjs.extend(advancedFormat)
-import { encrypt } from './crypto'
-import { useEnvStore } from '@/stores/env'
 import { IsEncrypt, NodeName } from '@/enum'
-import { SDK } from './sdk'
-import { Network } from './wallet/hd-wallet'
 import { useUserStore } from '@/stores/user'
+import { useTalkStore } from '@/stores/talk'
 
 export enum MessageType {
   Text = 'text',
@@ -17,13 +14,15 @@ export enum MessageType {
 
 type MessageDto = {
   type: MessageType
-  content?: string
+  content: string
   channelId: string
   userName: string
   attachments?: any[]
+  originalFileUrl?: any
 }
 
 const userStore = useUserStore()
+const talkStore = useTalkStore()
 
 export const sendMessage = async (messageDto: MessageDto) => {
   switch (messageDto.type) {
@@ -71,6 +70,24 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
     data: JSON.stringify(dataCarrier),
   }
 
+  // 2.5. mock发送
+  const mockMessage = {
+    protocol: 'simpleGroupChat',
+    contentType: 'text/plain',
+    content,
+    avatarType: userStore.user?.avatarType || 'undefined',
+    avatarTxId: userStore.user?.avatarTxId || 'undefined',
+    metaId: userStore.user?.metaId || 'undefined',
+    nickName: userStore.user?.name || '',
+    timestamp: timestamp * 1000, // 服务端返回的是毫秒，所以模拟需要乘以1000
+    txId: '',
+    encryption,
+    isMock: true,
+  }
+  talkStore.$patch(state => {
+    state.newMessages.push(mockMessage)
+  })
+
   // 3. 发送节点
   const sdk = userStore.showWallet
   await sdk.createBrfcChildNode(node)
@@ -79,7 +96,7 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
 }
 
 const _sendImageMessage = async (messageDto: MessageDto) => {
-  const { channelId: groupId, userName: nickName, attachments } = messageDto
+  const { channelId: groupId, userName: nickName, attachments, originalFileUrl } = messageDto
 
   // 1. 构建协议数据
   // 1.1 groupId: done
@@ -109,44 +126,27 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
     attachments,
   }
 
+  // 2.5. mock发送
+  const mockMessage: Message = {
+    protocol: 'SimpleFileGroupChat',
+    contentType: fileType,
+    content: originalFileUrl,
+    avatarType: userStore.user?.avatarType || 'undefined',
+    avatarTxId: userStore.user?.avatarTxId || 'undefined',
+    metaId: userStore.user?.metaId || 'undefined',
+    nickName: userStore.user?.name || '',
+    timestamp: timestamp * 1000, // 服务端返回的是毫秒，所以模拟需要乘以1000
+    txId: '',
+    encryption: encrypt,
+    isMock: true,
+  }
+  talkStore.$patch(state => {
+    state.newMessages.push(mockMessage)
+  })
+
   // 3. 发送节点
   const sdk = userStore.showWallet
   await sdk.createBrfcChildNode(node)
 
   return
-}
-
-export const chainalize = async (base64Str: string) => {
-  const node = {
-    nodeName: NodeName.MetaFile,
-    encrypt: IsEncrypt.No,
-    dataType: 'image/jpeg', // TODO
-    encoding: 'binary',
-    data: base64Str,
-  }
-
-  const sdk = userStore.showWallet
-  const res = await sdk.createBrfcChildNode(node)
-  if (res) {
-    return res.txId
-  }
-
-  return ''
-}
-
-export function hexToBase64(str: string) {
-  if (!str) {
-    return ''
-  }
-  var a = []
-  for (let i = 0, len = str.length; i < len; i += 2) {
-    a.push(parseInt(str.substr(i, 2), 16))
-  }
-  var binary = ''
-  var bytes = new Uint8Array(a)
-  var len = bytes.byteLength
-  for (var i = 0; i < len; i++) {
-    binary += String.fromCharCode(bytes[i])
-  }
-  return btoa(binary)
 }

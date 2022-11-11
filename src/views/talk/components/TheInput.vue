@@ -168,10 +168,12 @@
 import { computed, ref } from 'vue'
 import { sendMessage, validateMessage, MessageType, chainalize, hexToBase64 } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
-import { encrypt } from '@/utils/crypto'
+import { useTalkStore } from '@/stores/talk'
 import ImagePreview from './ImagePreview.vue'
 import TheInputStickersBox from './TheInputStickersBox.vue'
 import { FileToAttachmentItem } from '@/utils/util'
+import { truncate } from 'fs/promises'
+import { encrypt } from '@/utils/crypto'
 
 const doNothing = () => {}
 
@@ -241,6 +243,8 @@ const trySendImage = async () => {
   const hexedFiles = await FileToAttachmentItem(imageFile.value!)
   const attachments = [hexedFiles]
 
+  // clone
+  const originalFileUrl = imagePreviewUrl.value
   deleteImage()
 
   const messageDto = {
@@ -248,6 +252,8 @@ const trySendImage = async () => {
     channelId: props.currentChannel.id,
     userName: userStore.user?.name || 'Riverrun46',
     attachments,
+    content: '',
+    originalFileUrl,
   }
   await sendMessage(messageDto)
 
@@ -257,8 +263,8 @@ const trySendImage = async () => {
 
 /** 发送消息 */
 const chatInput = ref('')
-const emit = defineEmits(['sendMessage'])
 const userStore = useUserStore()
+const talkStore = useTalkStore()
 
 const handleInputEmoji = (emoji: string) => {
   chatInput.value += emoji
@@ -268,11 +274,6 @@ const trySendMessage = async () => {
   if (!validateMessage(chatInput.value)) return
 
   const content = encrypt(chatInput.value, props.currentChannel.id.substring(0, 16))
-  const sending = {
-    content,
-    metaId: '74cc371c55d9fa38fc98467396c22fe6b20bfc3459a11530362fcdb1b6c07c5c',
-  }
-  emit('sendMessage', sending)
 
   chatInput.value = ''
 

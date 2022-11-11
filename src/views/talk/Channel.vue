@@ -131,6 +131,25 @@ onMounted(async () => {
 
 <style lang="css" src="../../assets/styles/tailwind.css"></style>
 <style lang="scss" scoped>
+@font-face {
+  font-family: Whitney;
+  font-style: normal;
+  src: local('Whitney'), url('@/assets/fonts/whitneybook.otf') format('opentype');
+  font-weight: 400;
+}
+@font-face {
+  font-family: Whitney;
+  font-style: normal;
+  src: local('Whitney Medium'), url('@/assets/fonts/whitneymedium.otf') format('opentype');
+  font-weight: 500;
+}
+@font-face {
+  font-family: Whitney;
+  font-style: normal;
+  src: local('Whitney Bold'), url('@/assets/fonts/whitneybold.otf') format('opentype');
+  font-weight: 700;
+}
+
 .slide-enter-active,
 .slide-leave-active {
   transition: all 0.3s ease;

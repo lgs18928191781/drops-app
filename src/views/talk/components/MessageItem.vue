@@ -11,7 +11,7 @@
         <div class="font-medium text-sm" :class="randomNameColor">
           {{ message.nickName }}
         </div>
-        <div class="text-dark-250 text-xs">
+        <div class="text-dark-300 text-xs">
           {{ formatTime(message.timestamp) }}
         </div>
       </div>
@@ -94,16 +94,6 @@ const i18n = useI18n()
 const channelId = '88a92826842757cade6e84378df9db88526578c3bce7b8cb6348b7f1f9598d0a'
 const showImagePreview = ref(false)
 
-type Message = {
-  protocol: string
-  contentType: string
-  content: string
-  avatarType: string
-  avatarTxId: string
-  nickName: string
-  timestamp: number
-}
-
 const props = defineProps(['message'])
 
 const randomNameColor = computed(() => {
@@ -156,6 +146,12 @@ const decryptedMessage = computed(() => {
     props.message.protocol !== 'simpleGroupChat' &&
     props.message.protocol !== 'SimpleFileGroupChat'
   ) {
+    return props.message.content
+  }
+
+  // 处理mock的图片消息
+  if (props.message.isMock && props.message.protocol === 'SimpleFileGroupChat') {
+    console.log(props.message.content)
     return props.message.content
   }
 

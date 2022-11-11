@@ -30,13 +30,16 @@
 import { getChannelMessages } from '@/api/talk'
 import { useTalkStore } from '@/stores/talk'
 import { sleep } from '@/utils/util'
-import { onBeforeUnmount, onMounted, Ref, ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import LoadingItem from './LoadingItem.vue'
 import LoadingList from './LoadingList.vue'
 import MessageItem from './MessageItem.vue'
 
 const talkStore = useTalkStore()
-const { sendingMessage } = defineProps(['sendingMessage'])
+
+watch(talkStore.newMessages, async () => {
+  await scrollToMessagesBottom()
+})
 
 const loading = ref(false)
 const loadingMore = ref(false)
@@ -46,14 +49,6 @@ const messagesScroll = ref<HTMLElement>()
 let ws: WebSocket | null
 
 const channelId = '88a92826842757cade6e84378df9db88526578c3bce7b8cb6348b7f1f9598d0a'
-
-// watch(sendingMessage, newMessage => {
-//   if (newMessage) {
-//     newMessage.sending = true
-//     upcomingMessages.value.push(newMessage)
-//   }
-//   console.log(newMessage)
-// })
 
 const handleScroll = async () => {
   const topAnchor = document.getElementById('topAnchor')
@@ -161,14 +156,44 @@ const subscribeChannel = async () => {
         talkStore.newMessages.some(item => item.txId === message.txId) ||
         talkStore.pastMessages.some(item => item.txId === message.txId)
 
-      // 将message添加到messages首
-      if (!isDuplicate) {
-        talkStore.$patch(state => {
-          state.newMessages.push(message)
-        })
+      if (isDuplicate) return
+
+      // 优先查找替代mock数据
+      let mockMessage: any
+      if (message.protocol === 'simpleGroupChat') {
+        mockMessage = talkStore.newMessages.find(
+          item =>
+            item.txId === '' &&
+            item.isMock === true &&
+            item.content === message.content &&
+            item.metaId === message.metaId &&
+            item.protocol === message.protocol
+        )
+      } else if (message.protocol === 'SimpleFileGroupChat') {
+        mockMessage = talkStore.newMessages.find(
+          item =>
+            item.txId === '' &&
+            item.isMock === true &&
+            item.metaId === message.metaId &&
+            item.protocol === message.protocol
+        )
       }
 
-      scrollToMessagesBottom()
+      if (mockMessage) {
+        talkStore.$patch(state => {
+          mockMessage.txId = message.txId
+          mockMessage.timestamp = message.timestamp
+          mockMessage.content = message.content
+          delete mockMessage.isMock
+        })
+
+        return
+      }
+
+      // 如果没有替代mock数据，就直接添加到新消息队列首
+      talkStore.$patch(state => {
+        state.newMessages.push(message)
+      })
     }
   }
 
