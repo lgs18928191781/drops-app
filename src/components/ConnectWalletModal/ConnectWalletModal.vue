@@ -269,10 +269,10 @@ const wallets = [
 // setbaseinfo
 const isShowSetBaseInfo = ref(false)
 
-setTimeout(() => {
-  isShowSetBaseInfo.value = true
-  console.log(userStore.user)
-}, 5000)
+// setTimeout(() => {
+//   isShowSetBaseInfo.value = true
+//   console.log(userStore.user)
+// }, 5000)
 
 const isShowRecommentFollow = ref(false)
 
