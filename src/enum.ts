@@ -264,6 +264,7 @@ export enum NodeName {
   ETHBinding = 'ETHBinding',
   SimpleGroupChat = 'SimpleGroupChat',
   SimpleFileGroupChat = 'SimpleFileGroupChat',
+  NFTAvatar = 'NFTAvatar',
 }
 
 export const enum BindStatus {

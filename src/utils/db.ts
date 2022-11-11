@@ -1,7 +1,7 @@
 import axios from 'axios'
 import Dexie, { Table } from 'dexie'
 import { reject } from 'lodash'
-import { metafile as tranformMetafile } from './filters'
+import { metafile, metafile as tranformMetafile } from './filters'
 export interface MetafileSchems {
   txId?: string
   data?: Blob
@@ -78,8 +78,13 @@ export class DBClass extends Dexie {
         metafileTxId.indexOf('https://') !== -1 ||
         metafileTxId.indexOf('http://') !== -1
       ) {
+        // http 地址直接返回
         resolve(metafileTxId)
+      } else if (metafileTxId.length === 64) {
+        // metaId 不存本地数据库
+        resolve(metafile(metafileTxId))
       } else {
+        // 普通txId
         const txId = this.getMetaFileTxId(metafileTxId)
         const file = await this.metafiles.get(txId)
         if (file) {

@@ -36,6 +36,7 @@ declare interface UserInfo {
   infoTxId: string
   protocolTxId: string
   flag?: boolean
+  ethAddress?: string
 }
 
 declare interface SetUserInfo extends UserInfo {

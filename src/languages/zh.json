@@ -28,7 +28,7 @@
   "Cancel": "取消",
   "password": "密码",
   "Enter ShowMoney Password": "请输入showmoney登录密码",
-  "Enter MetaID For Bind": "请输入MetaID或地址进行绑定",
+  "Enter MetaID For Bind": "请输入登录账号(非中国大陆地区手机号码要加区号)",
   "ConfirmPassword": "确认密码",
   "SetNickName": "设置昵称",
   "nickeNamePlac": "想让大家怎么称呼您呢...",
@@ -153,7 +153,11 @@
       "bindHavedMetaId": "绑定已有的MetaID",
       "bindHavedMetaIdIntro": "🔗️ 将您的钱包与已有的MetaID进行绑定，以便您管理您的资产和数据。",
       "bindSuccessTitle": "🎉 恭喜您已成功将您的钱包与您的MetaID绑定，以下是您的社交信息",
-      "inputPasswordTitle": "请输入钱包密码"
+      "inputPasswordTitle": "请输入钱包密码",
+      "bindRegisterMetaId": "绑定新注册的MetaId"
+    },
+    "ETH": {
+      "changeGoerliNetword": "网络不匹配，请切换到Goerli Test Network"
     }
   },
   "back": "返回"

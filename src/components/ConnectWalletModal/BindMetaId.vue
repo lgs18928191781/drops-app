@@ -1,5 +1,5 @@
 <template>
-  <ElDialog :model-value="modelValue" class="none-header sm">
+  <ElDialog :model-value="modelValue" class="none-header sm" :close-on-click-modal="false">
     <div class="bind-metaid" v-loading="loading">
       <!-- 选择绑定类型 -->
       <div class="choose" v-if="status === BindStatus.ChooseType">
@@ -67,7 +67,13 @@
 
       <!-- 绑定 MetaID信息 -->
       <div class="bind-haved-metaid" v-else>
-        <div class="title">{{ $t('Login.bindMetaId.bindHavedMetaId') }}</div>
+        <div class="title">
+          {{
+            status === BindStatus.BindHavedMetaId
+              ? $t('Login.bindMetaId.bindHavedMetaId')
+              : $t('Login.bindMetaId.bindRegisterMetaId')
+          }}
+        </div>
         <div class="intro">{{ $t('Login.bindMetaId.bindHavedMetaIdIntro') }}</div>
         <el-form :model="form" :rules="rules" ref="formRef" label-width="0" class="dialog-form">
           <!-- 用户名 -->
@@ -120,6 +126,7 @@
 import { BindMetaIdRes, BindUserInfo } from '@/@types/common'
 import { GetUserInfo } from '@/api/aggregation'
 import {
+  GetMetaIdByLoginName,
   GetRandomWord,
   LoginByHashData,
   loginByMetaidOrAddress,
@@ -127,7 +134,7 @@ import {
   MnemoicLogin,
   setHashData,
 } from '@/api/core'
-import { BindStatus } from '@/enum'
+import { BindStatus, NodeName } from '@/enum'
 import { useUserStore } from '@/stores/user'
 import { AllNodeName, SDK } from '@/utils/sdk'
 import {
@@ -136,10 +143,12 @@ import {
   encryptMnemonic,
   HdWallet,
   hdWalletFromMnemonic,
+  MetaIdTag,
   Network,
   signature,
 } from '@/utils/wallet/hd-wallet'
 import { encode } from 'js-base64'
+import { bsv } from 'sensible-sdk'
 import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -267,7 +276,7 @@ function submitForm() {
         } else if (status.value === BindStatus.BindRegisterMetaId) {
           //新用户
           res = await createMetaidAccount()
-        } else {
+        } else if (status.value === BindStatus.InputPassword) {
           // 使用密码 和 助记词登陆
           const getMnemonicRes = await LoginByHashData({
             hashData: props.thirdPartyWallet.signAddressHash,
@@ -275,6 +284,8 @@ function submitForm() {
           if (getMnemonicRes?.code === 0 && getMnemonicRes.data) {
             res = await loginByMnemonic(getMnemonicRes.data, form.pass)
           }
+        } else if (status.value === BindStatus.BindSuccess) {
+          emit('update:modelValue', false)
         }
         if (res!) {
           await loginSuccess(res)
@@ -292,7 +303,7 @@ function loginSuccess(params: BindMetaIdRes) {
     const metaIdInfo = await GetUserInfo(params.userInfo.metaId)
     await userStore.updateUserInfo({
       ...params.userInfo,
-      ...metaIdInfo,
+      ...metaIdInfo.data,
       password: params.password,
     })
     userStore.$patch({ wallet: new SDK() })
@@ -356,9 +367,11 @@ function createMetaidAccount() {
           userType: getUserInfoRes.data.registerType,
           email: getUserInfoRes.data.email,
           phone: getUserInfoRes.data.phone,
+          ethAddress: props.thirdPartyWallet.address,
         })
         const newUserInfo = Object.assign(getUserInfoRes.data, {
           metaId: metaId,
+          ethAddress: props.thirdPartyWallet.address,
         })
         await sendHash(newUserInfo)
         resolve({
@@ -398,11 +411,58 @@ function createMetaidAccount() {
   })
 }
 
-function createETHBindingNode(wallet: HdWallet) {
-  return new Promise(async (resolve, reject) => {
-    const res = await wallet.createBrfcNode({
-      nodeName: AllNodeName.ETHBinding,
-    })
+//创建 eht 绑定的brfc 节点
+function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
+  return new Promise<void>(async (resolve, reject) => {
+    try {
+      const hdWallet = new HdWallet(wallet)
+      // 1. 先获取utxo
+      let utxos = await hdWallet.provider.getUtxos(hdWallet.wallet.xpubkey.toString())
+      // 2. 把钱打到protocols节点
+      // 先把钱打回到 protocolAddress
+      const transfer = await hdWallet.makeTx({
+        utxos: utxos,
+        opReturn: [],
+        change: hdWallet.rootAddress,
+        payTo: [{ amount: 1000, address: hdWallet.protocolAddress }],
+      })
+      if (transfer) {
+        const utxo = await hdWallet.utxoFromTx({
+          tx: transfer,
+          addressInfo: {
+            addressType: 0,
+            addressIndex: 2,
+          },
+          outPutIndex: 0,
+        })
+        if (utxo) {
+          utxos = [utxo]
+        }
+        // 创建 eht 绑定的brfc 节点
+        const res = await GetUserInfo(metaId)
+        if (res.code === 0) {
+          const newBfrcNodekeyPath = await hdWallet.getKeyPath({
+            parentTxid: res.data.protocolTxId,
+          })
+          const ethBindBrfc = await hdWallet.createNode({
+            nodeName: NodeName.ETHBinding,
+            parentTxId: res.data.protocolTxId,
+            keyPath: newBfrcNodekeyPath.join('/'),
+            parentAddress: hdWallet.protocolAddress,
+            data: props.thirdPartyWallet.address,
+            utxos: utxos,
+            change: hdWallet.rootAddress,
+          })
+          if (ethBindBrfc) {
+            await hdWallet.provider.broadcast(transfer.toString())
+            await hdWallet.provider.broadcast(ethBindBrfc.hex)
+            resolve()
+          }
+        }
+      }
+    } catch (error) {
+      reject(error)
+    }
   })
 }
 
@@ -430,6 +490,7 @@ function loginByMnemonic(mnemonic: string, password: string) {
           resolve({
             userInfo: Object.assign(loginInfo.data, {
               enCryptedMnemonic: mnemonic,
+              userType: loginInfo.data.register || loginInfo.data.registerType,
             }),
             wallet: hdWallet,
             password: password,
@@ -446,14 +507,24 @@ function bindingMetaidOrAddressLogin() {
   return new Promise<BindMetaIdRes>(async (resolve, reject) => {
     try {
       // get metaId
-      const mnemonic = await loginByMetaidOrAddress({
-        metaId: '',
-      })
-      // @ts-ignore
-      if (mnemonic.code == 0) {
-        const res = await loginByMnemonic(mnemonic.data)
-        await sendHash(res.userInfo)
-        resolve(res)
+      const numberReg = /^\d+(\.\d+)?$/
+      const params: any = {
+        userType: numberReg.test(form.account) ? 'phone' : 'email',
+        phone: numberReg.test(form.account) ? form.account : undefined,
+        email: numberReg.test(form.account) ? undefined : form.account,
+      }
+      const res = await GetMetaIdByLoginName(params)
+      if (res.code === 0) {
+        const mnemonic = await loginByMetaidOrAddress({
+          metaId: res.result.metaId,
+        })
+        // @ts-ignore
+        if (mnemonic.code == 0) {
+          const res = await loginByMnemonic(mnemonic.data, form.pass)
+          await createETHBindingBrfcNode(res.wallet, res.userInfo.metaId)
+          await sendHash(res.userInfo)
+          resolve(res)
+        }
       }
     } catch (error) {
       reject(error)

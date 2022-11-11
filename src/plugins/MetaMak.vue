@@ -164,6 +164,7 @@ async function startConnect() {
             address: res.ethAddress,
             message: keccak256(res.ethAddress).toString('hex')
         })
+        debugger
         if (result) {
              emit('success',{ signAddressHash:  result, address: res.ethAddress});
         }

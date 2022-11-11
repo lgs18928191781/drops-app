@@ -430,6 +430,14 @@ const isPolicyBtnFaded = computed(() => {
       ) {
         result = false
       }
+    } else if (registerType.value === RegisterType.SetPassword) {
+      if (
+        form.password !== '' &&
+        form.confirmPassword !== '' &&
+        form.password === form.confirmPassword
+      ) {
+        result = false
+      }
     }
   }
   return result
@@ -559,7 +567,6 @@ function submitForm() {
             }
           } else {
             // 注册
-
             if (registerType.value === RegisterType.Check) {
               // 检查账号是否已注册
               // const registerRes = await RegisterCheck({
@@ -578,6 +585,7 @@ function submitForm() {
               //   registerType.value = RegisterType.SetPassword
               // }
               registerType.value = RegisterType.SetPassword
+              emit('update:loading', false)
             } else if (registerType.value === RegisterType.SetPassword) {
               emit('register', {
                 userType: form.userType || 'phone',
@@ -588,7 +596,7 @@ function submitForm() {
                 password: form.password,
               } as MetaIdWalletRegisterBaseInfo)
               FormRef.value.resetFields()
-              emit('update:modelValue', false)
+              emit('update:loading', false)
               return
               // 注册
               const params = {

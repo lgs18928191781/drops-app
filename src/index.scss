@@ -75,11 +75,6 @@ pre {
 
 
 .main-border {
-  --border-color: #303133;
-  --standard-offset: 3px;
-  --right-offset: 3px;
-  --move-range: 2px;
-  --rounded: 12px;
 
   &.primary {
     background: var(--el-color-primary);

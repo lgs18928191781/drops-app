@@ -1,6 +1,11 @@
 <template>
-  <ElDialog :model-value="modelValue" :show-close="false" class="none-bg-color none-header">
-    <div class="set-base-user-info flex">
+  <ElDialog
+    :model-value="modelValue"
+    :show-close="false"
+    class="none-bg-color none-header"
+    :close-on-click-modal="false"
+  >
+    <div class="set-base-user-info flex" v-loading="loading">
       <div class="flex1 set-base-user-info-item set-warp">
         <div class="title">{{ $t('Login.setBaseInfo.title') }}</div>
         <div class="info">
@@ -9,7 +14,7 @@
             <div class="cont flex1 flex flex-align-center flex-pack-end">
               <div class="flex flex-align-center">
                 <UserAvatar
-                  :metaId="userStore.user ? userStore.user?.metaId : ''"
+                  :metaId="currentUserAvatarKey"
                   :type="userStore.user ? userStore.user?.avatarType : ''"
                   :disabled="true"
                 />
@@ -21,16 +26,20 @@
           <div class="info-item flex flex-align-center">
             <div class="key">{{ $t('Login.setBaseInfo.setUserName') }}</div>
             <div class="cont flex1 flex flex-align-center flex-pack-end">
-              <ElInput
-                v-model="username"
-                type="text"
-                :placeholder="$t('Login.setBaseInfo.setUserNamePlac')"
-              />
+              <ElForm :model="form" :rules="rules" ref="FormRef">
+                <ElFormItem prop="name">
+                  <ElInput
+                    v-model="form.name"
+                    type="text"
+                    :placeholder="$t('Login.setBaseInfo.setUserNamePlac')"
+                  />
+                </ElFormItem>
+              </ElForm>
             </div>
           </div>
         </div>
         <div class="operate">
-          <a class="main-border" :class="{ faded: username === '' }">
+          <a class="main-border" :class="{ faded: form.name === '' }" @click="submitForm">
             <Icon name="right" />
           </a>
         </div>
@@ -46,8 +55,19 @@
           >
             <template v-if="!isNFTLoading">
               <template v-if="list.length > 0">
-                <div class="nft-item" v-for="item in Array.from({ length: 9 })">
-                  <Image src="8f17045a176c91c2cd386b465527c0fa3f042f66db22ccadb8a9652390a01bc9" />
+                <div class="nft-item" v-for="item in list" @click="chooseItem(item)">
+                  <Image :src="item.image" />
+                  <div
+                    class="checked"
+                    v-if="
+                      currentNFT.token_address === item.token_address &&
+                        currentNFT.token_id === item.token_id
+                    "
+                  >
+                    <div class="checked-icon-warp flex flex-align-center flex-pack-center">
+                      <Icon name="check" />
+                    </div>
+                  </div>
                 </div>
               </template>
               <template v-else>
@@ -63,27 +83,149 @@
 
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
-import { ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import IsNullVue from '@/components/IsNull/IsNull.vue'
 import { GetNFTs } from '@/api/metaid-base'
+import { MetaIdWalletRegisterBaseInfo } from './MetaIdWallet.vue'
+import { RegisterCheck, SetUserInfo, SetUserPassword, SetUserWalletInfo } from '@/api/core'
+import {
+  BaseUserInfoTypes,
+  encryptMnemonic,
+  encryptPassword,
+  HdWallet,
+  hdWalletFromAccount,
+} from '@/utils/wallet/hd-wallet'
+import { SDK } from '@/utils/sdk'
+import { CommitActivity } from '@/api/broad'
+import { InviteActivityTag } from '@/enum'
 
 interface Props {
   modelValue: boolean
+  loading: boolean
 }
+const pagintion = reactive({
+  limit: 12,
+  cursor: '',
+  chain: 'goerli',
+})
 const props = withDefaults(defineProps<Props>(), {})
-
-const isNFTLoading = ref(true)
-
+const emit = defineEmits(['success'])
 const userStore = useUserStore()
-const username = ref('')
-const list = []
+const isNFTLoading = ref(true)
+const FormRef = ref()
+const form = reactive({
+  name: '',
+  avatarTx: '',
+})
+const rules = {
+  name: [
+    {
+      required: true,
+      message: '',
+      trigger: 'blur',
+    },
+  ],
+}
 
-function getMore() {}
+const list: {
+  image: string
+  description: string
+  attributes: string
+  token_id: string
+  token_address: string
+}[] = reactive([])
 
-if (userStore.isAuthorized) {
-  GetNFTs({ address: userStore.user!.address })
-} else {
-  isNFTLoading.value = false
+const currentNFT = reactive({
+  token_address: '',
+  token_id: '',
+})
+
+const currentUserAvatarKey = computed(() => {
+  if (currentNFT.token_address) {
+    return list.find(
+      item =>
+        item.token_address === currentNFT.token_address && item.token_id === currentNFT.token_id
+    )!.image
+  } else {
+    if (userStore.isAuthorized) {
+      return userStore.user!.metaId
+    } else {
+      return ''
+    }
+  }
+})
+
+watch(
+  () => props.modelValue,
+  () => {
+    if (props.modelValue) {
+      if (list.length === 0 && userStore.isAuthorized) {
+        pagintion.cursor = ''
+        getNfts(true).then(() => {
+          isNFTLoading.value = false
+        })
+      } else {
+        isNFTLoading.value = false
+      }
+    }
+  }
+)
+
+function getMore() {
+  if (!pagintion.cursor) return
+  isNFTLoading.value = true
+  getNfts().then(() => {
+    isNFTLoading.value = false
+  })
+}
+
+function getNfts(isCover = false) {
+  return new Promise<void>(async (resolve, reject) => {
+    const res = await GetNFTs({
+      address: userStore.user!.ethAddress!,
+      chain: pagintion.chain,
+      limit: pagintion.limit,
+      cursor: pagintion.cursor,
+    })
+    if (res) {
+      if (isCover) list.length = 0
+      pagintion.cursor = res.cursor
+      res.result.forEach(item => {
+        const metadata = JSON.parse(item.metadata)
+        list.push({
+          ...metadata,
+          token_address: item.token_address,
+          token_id: item.token_id,
+        })
+      })
+      resolve()
+    }
+  })
+}
+
+function submitForm() {
+  FormRef.value.validate(async (valid: boolean) => {
+    if (valid) {
+      emit('success', { ...form })
+      FormRef.value.resetFields()
+    }
+  })
+}
+
+function chooseItem(item: {
+  image: string
+  description: string
+  attributes: string
+  token_id: string
+  token_address: string
+}) {
+  if (item.token_address === currentNFT.token_address && item.token_id === currentNFT.token_id) {
+    currentNFT.token_address = ''
+    currentNFT.token_id = ''
+  } else {
+    currentNFT.token_address = item.token_address
+    currentNFT.token_id = item.token_id
+  }
 }
 </script>
 

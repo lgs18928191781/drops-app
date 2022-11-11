@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import 'lazysizes'
 import { DB } from '@/utils/db'
 import { metafile } from '@/utils/filters'
@@ -50,7 +50,29 @@ const filterTxids = [
   'metafile://6d83a80c470c85cdf56c6f402bd810404c931b0408a986b73c1ee30c97ac0e49.gif',
 ]
 
-setTimeout(async () => {
+// setTimeout(async () => {
+//   let src = props.src
+//   if (filterTxids.includes(props.src)) {
+//     src = await metafile(props.src, -1)
+//   }
+//   DB.getMetaFile(src, props.width).then(res => {
+//     if (res === '') {
+//       console.log({ src })
+//     }
+//     url.value = res
+//     isSkeleton.value = false
+//   })
+// })
+getImageUrl()
+watch(
+  () => props.src,
+  () => {
+    getImageUrl()
+  }
+)
+
+async function getImageUrl() {
+  isSkeleton.value = true
   let src = props.src
   if (filterTxids.includes(props.src)) {
     src = await metafile(props.src, -1)
@@ -62,7 +84,7 @@ setTimeout(async () => {
     url.value = res
     isSkeleton.value = false
   })
-})
+}
 
 function fail(event: any) {
   const img = event.srcElement

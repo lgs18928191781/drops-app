@@ -161,6 +161,7 @@ export const setHashData = (params: {
     {
       hashData: params.hashData,
       metaId: params.metaId,
+      ethAddress: params.address,
     },
     {
       headers: {
@@ -211,4 +212,12 @@ export const LoginByHashData = (params: {
   hashData: string
 }): Promise<{ code: number; data: string }> => {
   return Core.post(`/api/v1/thirdparty/checkHashData`, params)
+}
+
+export const GetMetaIdByLoginName = (params: {
+  userType: 'phone' | 'emial'
+  phone?: string
+  email?: string
+}): Promise<{ code: number; result: { metaId: string } }> => {
+  return Core.post(`/api/v1/thirdparty/getUserMetaId`, params)
 }

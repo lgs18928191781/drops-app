@@ -15,6 +15,7 @@ import inject from '@rollup/plugin-inject'
 import stdLibBrowser from 'node-stdlib-browser'
 import { viteExternalsPlugin } from 'vite-plugin-externals'
 import nodePolyfills from 'rollup-plugin-polyfill-node'
+import basicSsl from '@vitejs/plugin-basic-ssl'
 
 const pathSrc = path.resolve(__dirname, 'src')
 export default ({ mode, command }) => {
@@ -98,6 +99,7 @@ export default ({ mode, command }) => {
         bip39: 'bip39',
         'sensible-sdk': 'sensible',
       }),
+      basicSsl(),
     ],
     resolve: {
       alias: {
@@ -112,9 +114,9 @@ export default ({ mode, command }) => {
       _APP_VERSION: JSON.stringify(pkg.version),
     },
     server: {
-      host: '0.0.0.0',
-      // port: 443,
-      // https: true,
+      host: 'show-app.com',
+      port: 443,
+      https: true,
       // open: false,
     },
     build: {

@@ -52,7 +52,7 @@
   /> -->
 
   <!-- setBaseInfo -->
-  <SetBaseInfoVue v-model="isShowSetBaseInfo" />
+  <SetBaseInfoVue v-model="isShowSetBaseInfo" :loading="loading" @success="onSetBaseInfoSuccess" />
 
   <!-- send buzz -->
   <ElDialog v-model="isShowSendBuzz" :show-close="false" :close-on-click-modal="false">
@@ -102,7 +102,7 @@
   </ElDialog>
 
   <!-- 推荐关注 -->
-  <RecommentFollowVue />
+  <RecommentFollowVue v-model="isShowRecommentFollow" />
 
   <!-- 助记词备份 -->
   <BackupMnemonicVue />
@@ -126,8 +126,16 @@ import IconShowmoney from '@/assets/images/iocn_showmoney.png'
 import MetaMask, { MetaMaskLoginRes } from '@/plugins/MetaMak.vue'
 import { useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
-import { SDK } from '@/utils/sdk'
-import { HdWallet, hdWalletFromMnemonic, eciesDecryptData } from '@/utils/wallet/hd-wallet'
+import { AllNodeName, SDK } from '@/utils/sdk'
+import {
+  HdWallet,
+  hdWalletFromMnemonic,
+  eciesDecryptData,
+  BaseUserInfoTypes,
+  hdWalletFromAccount,
+  encryptPassword,
+  encryptMnemonic,
+} from '@/utils/wallet/hd-wallet'
 import LoginAndRegisterModalVue from '@/components/LoginAndRegisterModal/LoginAndRegisterModal.vue'
 import FirstBuzzImg from '@/assets/images/first_buzz.svg?url'
 import { toMvcScan } from '@/utils/util'
@@ -137,15 +145,26 @@ import RecommentFollowVue from './RecommentFollow.vue'
 import BackupMnemonicVue from './BackupMnemonic.vue'
 import BindMetaIdVue from './BindMetaId.vue'
 
-import { reactive, Ref, ref } from 'vue'
+import { onMounted, reactive, Ref, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { BindStatus, NodeName } from '@/enum'
+import { BindStatus, InviteActivityTag, NodeName } from '@/enum'
 import { ElMessage } from 'element-plus'
 import { router } from '@/router'
 import { GetUserAllInfo } from '@/api/aggregation'
 import { debug } from 'console'
-import { LoginByHashData } from '@/api/core'
+import {
+  LoginByHashData,
+  RegisterCheck,
+  SetUserInfo,
+  SetUserPassword,
+  SetUserWalletInfo,
+} from '@/api/core'
 import { decode, encode } from 'js-base64'
+import { CommitActivity } from '@/api/broad'
+import WalletConnect from '@walletconnect/client'
+import AuthClient, { generateNonce } from '@walletconnect/auth-client'
+import QRCodeModal from '@walletconnect/qrcode-modal'
+import keccak256 from 'keccak256'
 
 const rootStore = useRootStore()
 const userStore = useUserStore()
@@ -179,8 +198,8 @@ const thirdPartyWallet = reactive({
   address: '',
 })
 const isShowBindModal = ref(false)
-const metaIdWalletRegisterBaseInfo: { val: null | MetaIdWalletRegisterBaseInfo } = reactive({
-  val: null,
+const metaIdWalletRegisterBaseInfo: { val: undefined | MetaIdWalletRegisterBaseInfo } = reactive({
+  val: undefined,
 })
 
 const wallets = [
@@ -204,7 +223,7 @@ const wallets = [
           return 'WallteConnect'
         },
         icon: IconWallteConnect,
-        fun: connectMetaLet,
+        fun: connectWalletConnect,
       },
     ],
   },
@@ -249,6 +268,13 @@ const wallets = [
 
 // setbaseinfo
 const isShowSetBaseInfo = ref(false)
+
+setTimeout(() => {
+  isShowSetBaseInfo.value = true
+  console.log(userStore.user)
+}, 5000)
+
+const isShowRecommentFollow = ref(false)
 
 async function metaMaskLoginSuccess(res: MetaMaskLoginRes) {
   const response = await GetUserAllInfo(res.userInfo.metaId).catch(error => {
@@ -363,7 +389,361 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
 
 function OnMetaIdRegister(params: MetaIdWalletRegisterBaseInfo) {
   metaIdWalletRegisterBaseInfo.val = params
+  rootStore.$patch({ isShowLogin: false })
+  isShowSetBaseInfo.value = true
 }
+
+async function onSetBaseInfoSuccess(params: {
+  name: string
+  nft?: {
+    image: string
+    description: string
+    attributes: string
+    token_address: string
+    token_id: string
+  }
+}) {
+  loading.value = true
+  try {
+    const wallet = userStore.showWallet!.wallet
+    if (userStore.isAuthorized) {
+      let utxos = await wallet?.provider.getUtxos(wallet.wallet.xpubkey.toString())
+      const broadcasts: string[] = []
+      const infoAddress = wallet
+        ?.getPathPrivateKey(wallet.keyPathMap.Info.keyPath)
+        .publicKey.toAddress(wallet.network)
+        .toString()
+      // 把钱打到 info, protocol 节点
+      const payTo = [
+        {
+          amount: 1000,
+          address: infoAddress,
+        },
+      ]
+      if (params.nft) {
+        payTo.push({
+          amount: 2000,
+          address: wallet!.protocolAddress,
+        })
+      }
+      const transfer = await wallet?.makeTx({
+        utxos: utxos,
+        opReturn: [],
+        change: wallet.rootAddress,
+        payTo,
+      })
+      broadcasts.push(transfer.toString())
+      let utxo = await wallet?.utxoFromTx({
+        tx: transfer,
+        addressInfo: {
+          addressType: parseInt(wallet.keyPathMap.Info.keyPath.split('/')[0]),
+          addressIndex: parseInt(wallet.keyPathMap.Info.keyPath.split('/')[1]),
+        },
+        outPutIndex: 0,
+      })
+      if (utxo) {
+        utxos = [utxo]
+        const createNameNode = await userStore.showWallet!.wallet!.createNode({
+          nodeName: 'name',
+          parentTxId: userStore.user!.infoTxId,
+          data: params.name,
+          utxos: utxos,
+          change: params.nft ? infoAddress : wallet!.rootAddress,
+        })
+        broadcasts.push(createNameNode.hex)
+      }
+
+      if (params.nft) {
+        // 把钱打到protocol 地址
+        utxo = await wallet?.utxoFromTx({
+          tx: transfer,
+          addressInfo: {
+            addressType: parseInt(wallet.keyPathMap.protocol.keyPath.split('/')[0]),
+            addressIndex: parseInt(wallet.keyPathMap.protocol.keyPath.split('/')[1]),
+          },
+          outPutIndex: 1,
+        })
+        if (utxo) utxos = [utxo]
+        const createNFTAvatarBrfcNode = await wallet!.createNode({
+          nodeName: NodeName.NFTAvatar,
+          parentTxId: userStore.user!.infoTxId,
+          data: AllNodeName[NodeName.NFTAvatar].brfcId,
+          utxos: utxos,
+          isChangeCurrentAddress: true,
+        })
+        broadcasts.push(createNFTAvatarBrfcNode.hex)
+
+        utxo = await wallet?.utxoFromTx({
+          tx: createNFTAvatarBrfcNode,
+          addressInfo: {
+            addressType: 0,
+            addressIndex: 0,
+          },
+        })
+        if (utxo) utxos = [utxo]
+        const createNFTAvatarBrfcChildNode = await wallet!.createNode({
+          nodeName: [
+            NodeName.NFTAvatar,
+            wallet!
+              .createAddress('0/0')
+              .publicKey.toString()
+              .slice(0, 11),
+          ].join('-'),
+          parentTxId: createNFTAvatarBrfcNode.txId,
+          parentAddress: createNFTAvatarBrfcNode.raw.address,
+          data: JSON.stringify({
+            type: 'nft-eth',
+            tx: params.nft.token_address,
+            codehash: '',
+            genesis: '',
+            tokenIndex: params.nft.token_id,
+            updateTime: new Date().getTime(),
+            memo: params.nft.description,
+            image: params.nft.image,
+          }),
+          utxos: utxos,
+          isChangeCurrentAddress: true,
+        })
+        broadcasts.push(createNFTAvatarBrfcChildNode.hex)
+      }
+      //  广播
+      let errorMsg: any
+      for (let i = 0; i < broadcasts.length; i++) {
+        try {
+          await wallet?.provider.broadcast(broadcasts[i])
+        } catch (error) {
+          errorMsg = error
+          break
+        }
+      }
+      if (errorMsg) throw new Error(errorMsg.message)
+      // 更新本地用户信息
+      userStore.updateUserInfo({
+        ...userStore.user!,
+        name: params.name,
+      })
+    } else {
+      // 注册 metaId 钱包
+      const baseInfo = metaIdWalletRegisterBaseInfo.val!
+      const _params = {
+        type: 1, // 注册时必须加上图片验证码验证， 1 是给App用的的，App没有图片验证码
+        ...baseInfo,
+        name: params.name,
+      }
+      const loginName = baseInfo!.userType === 'phone' ? baseInfo!.phone : baseInfo!.email
+      const registerRes = await RegisterCheck(_params)
+      // console.log(registerRes)
+      if (registerRes.code === 0) {
+        let userInfo = registerRes.result as BaseUserInfoTypes
+        const walletInfo = await hdWalletFromAccount(
+          {
+            ...userInfo,
+            userType: baseInfo.userType,
+            phone: baseInfo!.phone,
+            email: baseInfo!.email,
+            pk2: userInfo.pk2,
+            name: params.name,
+            password: baseInfo!.password,
+          },
+          import.meta.env.VITE_NET_WORK
+        )
+
+        const userInfoParams = {
+          userType: baseInfo.userType,
+          phone: baseInfo!.phone,
+          email: baseInfo!.email,
+          remark: loginName,
+          address: walletInfo.rootAddress,
+        }
+        const setWalletRes = await SetUserWalletInfo({
+          ...userInfoParams,
+          type: 2,
+          xpub: walletInfo.wallet.xpubkey,
+          pubkey: walletInfo.wallet.publicKey.toString(),
+          headers: {
+            accessKey: userInfo.token || '',
+            timestamp: Date.now(),
+            userName: loginName,
+          },
+        })
+        if (setWalletRes.code !== 0) {
+          throw new Error('保存钱包信息失败 -1')
+        }
+        const ePassword = encryptPassword(baseInfo!.password)
+        const eMnemonic = encryptMnemonic(walletInfo.mnemonic, baseInfo!.password)
+        const setPasswordRes = await SetUserPassword(
+          {
+            ...userInfoParams,
+            password: ePassword,
+            affirmPassword: ePassword,
+            enCryptedMnemonic: eMnemonic,
+          },
+          userInfo.token || '',
+          loginName
+        )
+        if (setPasswordRes.code !== 0) {
+          throw new Error('保存钱包信息失败 -2')
+        }
+
+        const account = {
+          ...userInfo,
+          userType: baseInfo.userType,
+          phone: baseInfo!.phone,
+          email: baseInfo.email,
+          password: baseInfo!.password,
+        }
+        const activityId = window.localStorage.getItem('activityId')
+        const referrerId = window.localStorage.getItem('referrerId')
+        if (activityId && referrerId) {
+          account.referrerId = referrerId
+        }
+
+        const hdWallet = new HdWallet(walletInfo.wallet)
+        const metaIdInfo = await hdWallet.initMetaIdNode(account)
+        if (!metaIdInfo) {
+          throw new Error('Create MetaID Error')
+        }
+        userInfo = {
+          ...userInfo,
+          ...metaIdInfo,
+          phone: baseInfo!.phone,
+          email: baseInfo.email,
+          userType: baseInfo.userType,
+          enCryptedMnemonic: eMnemonic,
+          // @ts-ignore
+          rootAddress: walletInfo.rootAddress,
+          address: walletInfo.rootAddress,
+        }
+        await SetUserInfo({
+          userType: baseInfo.userType,
+          metaid: metaIdInfo.metaId,
+          // @ts-ignore
+          accessKey: userInfo.token,
+          phone: userInfo.phone,
+          email: userInfo.email,
+        })
+        // @ts-ignore
+        await userStore.updateUserInfo({
+          ...userInfo,
+          password: baseInfo!.password,
+        })
+        userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
+        userStore.showWallet.initWallet()
+        // 处理活动邀请信息
+        if (activityId && referrerId) {
+          const result = await CommitActivity({
+            actionIndex: 5,
+            activityId: parseInt(activityId),
+            // @ts-ignore
+            address: userInfo!.address!,
+            // @ts-ignore
+            metaId: userInfo!.metaId!,
+            // @ts-ignore
+            publicKey: userInfo.pubKey,
+            refererMetaId: referrerId,
+            tag: InviteActivityTag.Rigisted,
+          })
+          // @ts-ignore
+          if (result.code !== 0) {
+            Error(result.data)
+          }
+          localStorage.removeItem('activityId')
+          localStorage.removeItem('referrerId')
+        }
+        loading.value = false
+      }
+    }
+
+    isShowSetBaseInfo.value = false
+    isShowRecommentFollow.value = true
+  } catch (error) {
+    loading.value = false
+    ElMessage.error((error as any).message)
+  }
+}
+
+async function connectWalletConnect() {
+  const connector = new WalletConnect({
+    bridge: 'https://bridge.walletconnect.org', // Required
+    qrcodeModal: QRCodeModal,
+    clientMeta: {
+      description: 'My website description ',
+      url: 'https://mywebsite.url',
+      icons: ['../assets/svg/icon.svg'],
+      name: 'My website name',
+    },
+  })
+
+  connector.on('session_update', (error, payload) => {
+    if (error) {
+      throw error
+    }
+
+    // Get updated accounts and chainId
+    const { accounts, chainId } = payload.params[0]
+  })
+
+  connector.on('disconnect', (error, payload) => {
+    if (error) {
+      throw error
+    }
+
+    // Delete connector
+  })
+
+  const { accounts, chainId } = await connector.connect()
+  if (chainId !== 5) {
+    throw new Error(i18n.t('Login.ETH.changeGoerliNetword'))
+  }
+  const res = await connector.signPersonalMessage([
+    accounts[0],
+    keccak256(accounts[0]).toString('hex'),
+  ])
+  if (res) {
+    rootStore.$patch({ isShowLogin: false })
+    await onThreePartLinkSuccess({
+      signAddressHash: res,
+      address: accounts[0],
+    })
+  }
+  connector.killSession()
+}
+
+// onMounted(async () => {
+//   const authClient = await AuthClient.init({
+//     projectId: '39eec2aad9a4402a5c02f37b1f942f24',
+//     iss: `did:pkh:eip155:1`,
+//     metadata: {
+//       name: 'ShowApp3',
+//       description: 'A dapp using WalletConnect AuthClient',
+//       url: 'www.baidu.com',
+//       icons: ['https://my-auth-dapp.com/icons/logo.png'],
+//     },
+//   })
+//   console.log(authClient)
+//   authClient.on('auth_response', res => {
+//     console.log(res)
+//     if (Boolean(params.result?.s)) {
+//       // Response contained a valid signature -> user is authenticated.
+//     } else {
+//       // Handle error or invalid signature case
+//       console.error(params.message)
+//     }
+//   })
+//   const { uri } = await authClient.request({
+//     aud: 'https://www.baidu.com/',
+//     domain: 'www.baidu.com',
+//     chainId: 'eip155:1',
+//     nonce: generateNonce(),
+//   })
+//   debugger
+//   if (uri) {
+//     await authClient.core.pairing.pair({ uri })
+//     QRCodeModal.open(uri, res => {
+//       console.log('EVENT', 'QR Code Modal closed')
+//     })
+//   }
+// })
 </script>
 
 <style lang="scss" scoped src="./ConnectWalletModal.scss"></style>

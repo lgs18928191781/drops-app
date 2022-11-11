@@ -52,6 +52,7 @@ export interface BaseUserInfoTypes {
   tag?: 'new' | 'old'
   referrerId?: string
   appToken: string
+  ethAddress?: string
 }
 interface TransferNftParams {
   network?: string
@@ -382,7 +383,7 @@ const defaultSigners = [
   },
 ]
 export class HdWallet {
-  private network = Network.mainnet
+  public network = Network.mainnet
   public mnemonic: string
   public wallet: bsv.HDPrivateKey
   public provider: ShowmoneyProvider
@@ -427,6 +428,10 @@ export class HdWallet {
 
   get rootAddress(): string {
     return this._root.toAddress(this.network).toString()
+  }
+
+  get protocolAddress(): string {
+    return this.createAddress(this.keyPathMap.Protocols.keyPath).address
   }
 
   constructor(wallet: bsv.HDPrivateKey) {
@@ -481,7 +486,7 @@ export class HdWallet {
   public initMetaIdNode(account: BaseUserInfoTypes) {
     return new Promise<MetaIdInfoTypes>(async (resolve, reject) => {
       try {
-        const metaIdInfo: MetaIdInfoTypes = await this.getMetaIdInfo(this.rootAddress)
+        const metaIdInfo: any = await this.getMetaIdInfo(this.rootAddress)
         metaIdInfo.pubKey = this._root.toPublicKey().toString()
         //  检查 metaidinfo 是否完整
         if (metaIdInfo.metaId && metaIdInfo.infoTxId && metaIdInfo.protocolTxId) {
@@ -636,7 +641,46 @@ export class HdWallet {
             if (newUtxo) utxos = [newUtxo]
           }
 
-          let errorMsg: Error
+          // eth 绑定新 metaId 账号
+          if (account.ethAddress) {
+            // 先把钱打回到 protocolAddress
+            const transfer = await this.makeTx({
+              utxos: utxos,
+              opReturn: [],
+              change: this.rootAddress,
+              payTo: [{ amount: 1000, address: this.protocolAddress }],
+            })
+            if (transfer) {
+              debugger
+              hexTxs.push(transfer.toString())
+              const newUtxo = await this.utxoFromTx({
+                tx: transfer,
+                addressInfo: {
+                  addressType: 0,
+                  addressIndex: 2,
+                },
+                outPutIndex: 0,
+              })
+              if (newUtxo) utxos = [newUtxo]
+
+              // 创建 eth brfc节点 brfcId = ehtAddress
+              const ethBindBrfc = await this.createNode({
+                nodeName: NodeName.ETHBinding,
+                parentTxId: metaIdInfo.protocolTxId,
+                metaIdTag: MetaIdTag[this.network],
+                keyPath: '0/6',
+                parentAddress: this.protocolAddress,
+                data: account.ethAddress,
+                utxos: utxos,
+                change: this.rootAddress,
+              })
+              if (ethBindBrfc) {
+                hexTxs.push(ethBindBrfc.hex)
+              }
+            }
+          }
+
+          let errorMsg: any
           // 广播
           for (let i = 0; i < hexTxs.length; i++) {
             try {
@@ -760,6 +804,7 @@ export class HdWallet {
     dataType = 'text/plain',
     encoding = 'UTF-8',
     outputs = [],
+    isChangeCurrentAddress,
   }: CreateNodeOptions) {
     return new Promise<CreateNodeRes>(async (resolve, reject) => {
       try {
@@ -831,6 +876,7 @@ export class HdWallet {
           change: change,
           outputs,
           payTo,
+          isChangeCurrentAddress,
         }
 
         // TODO: 父节点 utxo 管理
@@ -876,17 +922,18 @@ export class HdWallet {
     opReturn,
     utxos,
     useFeeb = DEFAULTS.feeb,
+    isChangeCurrentAddress,
   }: TransferTypes): Promise<bsv.Transaction> {
     return new Promise(async (resolve, reject) => {
       try {
         const { tx, amount } = await this.makeTxNotUtxos({
           payTo,
           outputs,
-          change,
           opReturn,
           useFeeb,
           utxos,
         })
+        if (isChangeCurrentAddress) change = tx.address
         tx.change(change)
         // @ts-ignore
         tx.getNeedFee = function() {
@@ -1621,7 +1668,6 @@ export class HdWallet {
     params: {
       nodeName: string
       autoRename?: Boolean
-      brfcId: string
       appId?: string[]
       encrypt?: IsEncrypt
       version?: string

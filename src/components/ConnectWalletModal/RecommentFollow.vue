@@ -1,5 +1,5 @@
 <template>
-  <ElDialog :model-value="false" class="none-header ">
+  <ElDialog :model-value="modelValue" class="none-header" :close-on-click-modal="false">
     <div class="recomment-follow">
       <div class="top flex flex-align-center">
         <div class="title" v-html="$t('Login.recomment.title')"></div>
@@ -46,6 +46,11 @@ import 'swiper/css/pagination'
 import { Pagination, Grid } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { reactive } from 'vue'
+
+interface Props {
+  modelValue: boolean
+}
+const props = withDefaults(defineProps<Props>(), {})
 </script>
 
 <style lang="scss" scoped src="./RecommentFollow.scss"></style>

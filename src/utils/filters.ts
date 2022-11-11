@@ -1,12 +1,6 @@
 // @ts-ignore
 import dayjs from 'dayjs'
 
-export function avatar(showId: string) {
-  if (!showId)
-    return 'https://testmvc.showmoney.app/metafile/avatar/d96bdf3a76d3db284106aa32137ea1dd145b4202681128ff31f2c4fbe1389498?x-oss-process=image/auto-orient,1/resize,m_fill,w_128,h_128/quality,q_90&time=1667987226654'
-  return `${import.meta.env.VITE_AppImgApi}/metafile/avatar/${showId}?time=${new Date().getTime()}`
-}
-
 export function dateTimeFormat(timestamp: Date, format: string = 'YYYY-MM-DD HH:mm:ss') {
   return dayjs(timestamp).format(format)
 }
@@ -17,7 +11,18 @@ export function metafile(metafile: string, width = 235) {
   metafile = metafile.replace('metafile://', '')
   metafile = metafile.replace('sensible://', 'sensible/')
   if (metafile === '') return ''
-  const fileUrl = `${import.meta.env.VITE_SHOWMANURL}/metafile/${metafile}`
+  let path = ''
+  if (metafile.indexOf('ipfs://') !== -1) {
+    // ETH 图片地址
+    path = '/metafile/eth/ipfs/'
+  } else if (metafile.length === 64) {
+    // metaId
+    path = '/metafile/avatar/'
+  } else {
+    //  普通txId
+    path = '/metafile/'
+  }
+  const fileUrl = `${import.meta.env.VITE_AppImgApi}${path}${metafile.replace('ipfs://', '')}`
   if (width === -1) {
     return fileUrl
   }
@@ -25,6 +30,5 @@ export function metafile(metafile: string, width = 235) {
   if (width) {
     query += `/resize,m_lfit,w_${width}`
   }
-  console.log(`${fileUrl}?${query}`)
   return `${fileUrl}?${query}`
 }
