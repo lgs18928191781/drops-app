@@ -5,6 +5,8 @@ export const useTalkStore = defineStore('talk', {
     return {
       pastMessages: [] as Message[],
       newMessages: [] as Message[],
+
+      error: {} as TalkError,
     }
   },
 })
