@@ -1,17 +1,12 @@
 <template>
   <div class="relative  h-screen lg:flex">
-    <CommunitySection
-      :community="community"
-      @close-community-section="showCommunitySection = false"
-      :showCommunitySection="showCommunitySection"
-    />
+    <CommunitySection :community="community" />
 
     <div class="lg:grow lg:h-screen lg:relative lg:flex">
       <TheHeader
         :channel="channel"
         :showMembers="showMembers"
         @toggle-member-list="handleToggleMemberList"
-        @open-community-section="showCommunitySection = true"
       />
 
       <div class="pt-12 pb-14 h-screen lg:relative w-full bg-dark-200">
