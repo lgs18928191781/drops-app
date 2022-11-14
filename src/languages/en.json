@@ -67,11 +67,14 @@
     "Datetime": {
       "today": "Today at ",
       "yesterday": "Yesterday at "
+    },
+    "Errors": {
+      "default": "An error occurred.",
+      "image_only": "You should upload an image.",
+      "image_too_large": "Image size should be less than 2MB."
     }
   },
   "Not install MetaLet Wallet": "Not Install MetaLet Wallet",
-  "Comming Soon": "Comming Soon",
-  "Use MetaId Wallet": "Use MetaId Wallet",
   "Login": {
     "connectWallet": "Connect Wallet"
   },
@@ -81,5 +84,7 @@
     "aboutShow": "About Show",
     "help": "Help",
     "logout": "Logout"
-  }
+  },
+  "Comming Soon": "Coming Soon",
+  "Use MetaId Wallet": "Use MetaId Wallet"
 }

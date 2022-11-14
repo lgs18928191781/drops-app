@@ -19,7 +19,10 @@
           <MessageList :sendingMessage="sendingMessage" />
         </div>
 
-        <TheInput :currentChannel="currentChannel" @send-message="handleSendMessage" />
+        <div class="fixed bottom-0 left-0 right-0 px-4 lg:absolute">
+          <TheInput :currentChannel="currentChannel" @send-message="handleSendMessage" />
+          <TheErrorBox />
+        </div>
       </div>
 
       <Transition name="slide">
@@ -32,6 +35,7 @@
 <script setup lang="ts">
 import TheHeader from './components/TheHeader.vue'
 import TheInput from './components/TheInput.vue'
+import TheErrorBox from './components/TheErrorBox.vue'
 import CommunitySection from './components/CommunitySection.vue'
 import ChannelMemberList from './components/ChannelMemberList.vue'
 import { computed, defineAsyncComponent, onMounted, reactive, Ref, ref } from 'vue'

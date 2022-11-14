@@ -11,3 +11,10 @@ declare interface Message {
   isMock?: boolean
   encryption?: string
 }
+
+declare interface TalkError {
+  message: string
+  type?: string
+  code?: number
+  timestamp?: number
+}
