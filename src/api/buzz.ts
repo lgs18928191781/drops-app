@@ -1,3 +1,4 @@
+import { BuzzItem } from '@/@types/common'
 import { InviteActivityTag } from '@/enum'
 import HttpRequest from 'request-sdk'
 
@@ -35,7 +36,7 @@ export const getBuzzHotList = (data: any): Promise<any> => {
   })
 }
 
-export const getBuzzHomeList = (data: any): Promise<any> => {
+export const getBuzzHomeList = (data: any): Promise<BuzzItem[]> => {
   const url = '/v2/app/buzz/getBuzzHomeList'
   return BuzzRequest({
     url,

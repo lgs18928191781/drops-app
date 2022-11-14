@@ -29,7 +29,7 @@ export const classifyList = [
   { classify: 'game' },
 ]
 
-export const pagination: Pagination = {
+export const initPagination: Pagination = {
   page: 1,
   pageSize: 16,
   loading: false,

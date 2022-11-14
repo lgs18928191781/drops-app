@@ -181,5 +181,13 @@
     "aboutShow": "关于Show",
     "help": "帮助",
     "logout": "退出"
-  }
+  },
+  "Buzz": {
+    "Timeline": "时间轴",
+    "Recommend": "推荐",
+    "publish": {
+      "placeholder": "分享您的buzz ~"
+    }
+  },
+  "Follow": "关注"
 }

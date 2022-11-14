@@ -9,3 +9,45 @@ header {
         cursor: pointer;
     }
 }
+
+.container {
+    margin-top: 12px !important;
+}
+
+.buzz-menu {
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 12px;
+    margin-right: 12px;
+
+    .buzz-menu-item {
+        border-radius: 6px;
+        padding: 12px;
+        margin-bottom: 10px;
+        // background: var(--el-border-color);
+
+        &.router-link-active {
+            background: var(--el-color-primary);
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        .icon-warp {
+            border: 2px solid var(--main-font-color);
+            border-radius: calc(100% / 2.5);
+            width: 24px;
+            height: 24px;
+            box-shadow: 3px 3px var(--main-font-color);
+            margin-right: 15px;
+
+            .icon {
+                width: 16px;
+                height: 16px;
+            }
+        }
+
+
+    }
+}
