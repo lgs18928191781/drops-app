@@ -1,6 +1,6 @@
 <template>
   <div class="avatar" @click="toUser" :class="{ disabled }">
-    <Image :src="metaId" />
+    <Image :src="metaId" type="metaId" />
   </div>
 </template>
 <script lang="ts" setup>

@@ -5,7 +5,7 @@ export function dateTimeFormat(timestamp: Date, format: string = 'YYYY-MM-DD HH:
   return dayjs(timestamp).format(format)
 }
 
-export function metafile(metafile: string, width = 235) {
+export function metafile(metafile: string, width = 235, type: 'metafile' | 'metaId' = 'metafile') {
   if (typeof metafile !== 'string') return ''
   if (metafile.indexOf('http://') !== -1 || metafile.indexOf('https://') !== -1) return metafile
   metafile = metafile.replace('metafile://', '')
@@ -15,7 +15,7 @@ export function metafile(metafile: string, width = 235) {
   if (metafile.indexOf('ipfs://') !== -1) {
     // ETH 图片地址
     path = '/metafile/eth/ipfs/'
-  } else if (metafile.length === 64) {
+  } else if (type === 'metaId') {
     // metaId
     path = '/metafile/avatar/'
   } else {

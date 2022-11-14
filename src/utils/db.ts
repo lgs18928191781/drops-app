@@ -70,7 +70,7 @@ export class DBClass extends Dexie {
     })
   }
 
-  getMetaFile(metafileTxId: string, width = 235) {
+  getMetaFile(metafileTxId: string, width = 235, type: 'metafile' | 'metaId' = 'metafile') {
     return new Promise<string>(async resolve => {
       if (!metafileTxId) {
         resolve('')
@@ -80,7 +80,7 @@ export class DBClass extends Dexie {
       ) {
         // http 地址直接返回
         resolve(metafileTxId)
-      } else if (metafileTxId.length === 64) {
+      } else if (type === 'metaId') {
         // metaId 不存本地数据库
         resolve(metafile(metafileTxId))
       } else {
