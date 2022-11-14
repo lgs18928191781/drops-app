@@ -1,5 +1,5 @@
 <template>
-  <div class="relative w-screen h-screen lg:flex">
+  <div class="relative  h-screen lg:flex">
     <CommunitySection
       :community="community"
       @close-community-section="showCommunitySection = false"
@@ -133,7 +133,6 @@ onMounted(async () => {
 })
 </script>
 
-<style lang="css" src="../../assets/styles/tailwind.css"></style>
 <style lang="scss" scoped>
 @font-face {
   font-family: Whitney;
