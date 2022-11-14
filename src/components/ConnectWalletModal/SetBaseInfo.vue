@@ -17,6 +17,7 @@
                   :metaId="currentUserAvatarKey"
                   :type="userStore.user ? userStore.user?.avatarType : ''"
                   :disabled="true"
+                  class="main-border"
                 />
                 <Icon name="down" />
               </div>

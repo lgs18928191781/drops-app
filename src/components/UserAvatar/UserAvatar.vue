@@ -1,5 +1,5 @@
 <template>
-  <div class="avatar main-border" @click="toUser" :class="{ disabled }">
+  <div class="avatar" @click="toUser" :class="{ disabled }">
     <Image :src="metaId" />
   </div>
 </template>
