@@ -233,6 +233,7 @@ import { CommitActivity } from '@/api/broad'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   GetImageCode,
+  GetMetaIdByLoginName,
   LoginCheck,
   LoginGetCode,
   RegisterCheck,
@@ -569,6 +570,21 @@ function submitForm() {
             // 注册
             if (registerType.value === RegisterType.Check) {
               // 检查账号是否已注册
+              const res = await GetMetaIdByLoginName({
+                // @ts-ignore
+                userType: form.userType,
+                phone: form.userType === 'phone' ? phoneNum : undefined,
+                email: form.userType === 'email' ? form.email : undefined,
+              }).catch(error => {
+                if (error.code === 500) {
+                  registerType.value = RegisterType.SetPassword
+                } else {
+                  throw new Error(error.message)
+                }
+              })
+              if (res?.code === 0) {
+                throw new Error(i18n.t('Login.MetaIdWallet.accountAlreadyRegistered'))
+              }
               // const registerRes = await RegisterCheck({
               //   type: 1, // 注册时必须加上图片验证码验证， 1 是给App用的的，App没有图片验证码
               //   userType: form.userType || 'phone',
@@ -584,7 +600,7 @@ function submitForm() {
               //   registerInfo.val = registerRes.result as BaseUserInfoTypes
               //   registerType.value = RegisterType.SetPassword
               // }
-              registerType.value = RegisterType.SetPassword
+
               emit('update:loading', false)
             } else if (registerType.value === RegisterType.SetPassword) {
               emit('register', {

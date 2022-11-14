@@ -103,7 +103,6 @@ export interface CreateNodeOptions {
   version?: string
   dataType?: string
   encoding?: string
-  isChangeCurrentAddress?: boolean // 是否把钱 找零到 当前要生成的节点 的地址，覆盖 change 不传，默认打到0/0地址的值
 }
 
 export interface TransferTypes {
@@ -118,7 +117,6 @@ export interface TransferTypes {
   opReturn?: (string | Buffer)[]
   needConfirm?: boolean
   useFeeb?: number
-  isChangeCurrentAddress?: boolean // 是否把钱 找零到 当前要生成的节点 的地址，覆盖 change 不传，默认打到0/0地址的值
 }
 
 export interface ConstructorOptionsTypes {

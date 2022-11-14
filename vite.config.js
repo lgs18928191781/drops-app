@@ -99,7 +99,7 @@ export default ({ mode, command }) => {
         bip39: 'bip39',
         'sensible-sdk': 'sensible',
       }),
-      basicSsl(),
+      // basicSsl(),
     ],
     resolve: {
       alias: {
@@ -114,9 +114,9 @@ export default ({ mode, command }) => {
       _APP_VERSION: JSON.stringify(pkg.version),
     },
     server: {
-      host: 'show-app.com',
-      port: 443,
-      https: true,
+      // host: 'show-app.com',
+      // port: 443,
+      https: false,
       // open: false,
     },
     build: {

@@ -52,7 +52,12 @@
   /> -->
 
   <!-- setBaseInfo -->
-  <SetBaseInfoVue v-model="isShowSetBaseInfo" :loading="loading" @success="onSetBaseInfoSuccess" />
+  <SetBaseInfoVue
+    v-model="isShowSetBaseInfo"
+    :loading="loading"
+    @success="onSetBaseInfoSuccess"
+    ref="setBaseInfoRef"
+  />
 
   <!-- send buzz -->
   <ElDialog v-model="isShowSendBuzz" :show-close="false" :close-on-click-modal="false">
@@ -183,6 +188,7 @@ const buzzResult = reactive({
   time: '',
   txId: '',
 })
+const setBaseInfoRef = ref()
 
 const enum ConnectWalletStatus {
   Watting,
@@ -268,11 +274,6 @@ const wallets = [
 
 // setbaseinfo
 const isShowSetBaseInfo = ref(false)
-
-// setTimeout(() => {
-//   isShowSetBaseInfo.value = true
-//   console.log(userStore.user)
-// }, 5000)
 
 const isShowRecommentFollow = ref(false)
 
@@ -453,13 +454,14 @@ async function onSetBaseInfoSuccess(params: {
         broadcasts.push(createNameNode.hex)
       }
 
+      debugger
       if (params.nft) {
-        // 把钱打到protocol 地址
+        // 创建 NFTAvatar brfc 节点
         utxo = await wallet?.utxoFromTx({
           tx: transfer,
           addressInfo: {
-            addressType: parseInt(wallet.keyPathMap.protocol.keyPath.split('/')[0]),
-            addressIndex: parseInt(wallet.keyPathMap.protocol.keyPath.split('/')[1]),
+            addressType: parseInt(wallet.keyPathMap.Protocols.keyPath.split('/')[0]),
+            addressIndex: parseInt(wallet.keyPathMap.Protocols.keyPath.split('/')[1]),
           },
           outPutIndex: 1,
         })
@@ -467,14 +469,17 @@ async function onSetBaseInfoSuccess(params: {
         const createNFTAvatarBrfcNode = await wallet!.createNode({
           nodeName: NodeName.NFTAvatar,
           parentTxId: userStore.user!.infoTxId,
+          parentAddress: wallet?.protocolAddress,
+          keyPath: '0/0',
           data: AllNodeName[NodeName.NFTAvatar].brfcId,
           utxos: utxos,
-          isChangeCurrentAddress: true,
+          change: wallet!.createAddress('0/0').address,
         })
         broadcasts.push(createNFTAvatarBrfcNode.hex)
 
+        // 创建 NFTAvatar 子节点
         utxo = await wallet?.utxoFromTx({
-          tx: createNFTAvatarBrfcNode,
+          tx: createNFTAvatarBrfcNode.raw,
           addressInfo: {
             addressType: 0,
             addressIndex: 0,
@@ -490,7 +495,8 @@ async function onSetBaseInfoSuccess(params: {
               .slice(0, 11),
           ].join('-'),
           parentTxId: createNFTAvatarBrfcNode.txId,
-          parentAddress: createNFTAvatarBrfcNode.raw.address,
+          parentAddress: wallet!.createAddress('0/0').address,
+          keyPath: '0/0',
           data: JSON.stringify({
             type: 'nft-eth',
             tx: params.nft.token_address,
@@ -500,9 +506,9 @@ async function onSetBaseInfoSuccess(params: {
             updateTime: new Date().getTime(),
             memo: params.nft.description,
             image: params.nft.image,
+            chain: 'goerli',
           }),
           utxos: utxos,
-          isChangeCurrentAddress: true,
         })
         broadcasts.push(createNFTAvatarBrfcChildNode.hex)
       }
@@ -650,10 +656,10 @@ async function onSetBaseInfoSuccess(params: {
           localStorage.removeItem('activityId')
           localStorage.removeItem('referrerId')
         }
-        loading.value = false
       }
     }
-
+    setBaseInfoRef.value.FormRef.resetFields()
+    loading.value = false
     isShowSetBaseInfo.value = false
     isShowRecommentFollow.value = true
   } catch (error) {

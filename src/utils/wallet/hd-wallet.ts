@@ -651,7 +651,6 @@ export class HdWallet {
               payTo: [{ amount: 1000, address: this.protocolAddress }],
             })
             if (transfer) {
-              debugger
               hexTxs.push(transfer.toString())
               const newUtxo = await this.utxoFromTx({
                 tx: transfer,
@@ -804,7 +803,6 @@ export class HdWallet {
     dataType = 'text/plain',
     encoding = 'UTF-8',
     outputs = [],
-    isChangeCurrentAddress,
   }: CreateNodeOptions) {
     return new Promise<CreateNodeRes>(async (resolve, reject) => {
       try {
@@ -876,7 +874,6 @@ export class HdWallet {
           change: change,
           outputs,
           payTo,
-          isChangeCurrentAddress,
         }
 
         // TODO: 父节点 utxo 管理
@@ -922,7 +919,6 @@ export class HdWallet {
     opReturn,
     utxos,
     useFeeb = DEFAULTS.feeb,
-    isChangeCurrentAddress,
   }: TransferTypes): Promise<bsv.Transaction> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -933,7 +929,6 @@ export class HdWallet {
           useFeeb,
           utxos,
         })
-        if (isChangeCurrentAddress) change = tx.address
         tx.change(change)
         // @ts-ignore
         tx.getNeedFee = function() {

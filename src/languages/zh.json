@@ -164,6 +164,9 @@
     },
     "ETH": {
       "changeGoerliNetword": "网络不匹配，请切换到Goerli Test Network"
+    },
+    "MetaIdWallet": {
+      "accountAlreadyRegistered": "该账号已被注册"
     }
   },
   "back": "返回"

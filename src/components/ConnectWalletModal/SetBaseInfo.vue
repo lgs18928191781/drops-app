@@ -206,8 +206,13 @@ function getNfts(isCover = false) {
 function submitForm() {
   FormRef.value.validate(async (valid: boolean) => {
     if (valid) {
-      emit('success', { ...form })
-      FormRef.value.resetFields()
+      emit('success', {
+        name: form.name,
+        nft: list.find(
+          item =>
+            item.token_address === currentNFT.token_address && item.token_id === currentNFT.token_id
+        ),
+      })
     }
   })
 }
@@ -227,6 +232,10 @@ function chooseItem(item: {
     currentNFT.token_id = item.token_id
   }
 }
+
+defineExpose({
+  FormRef,
+})
 </script>
 
 <style lang="scss" scoped src="./SetBaseInfo.scss"></style>
