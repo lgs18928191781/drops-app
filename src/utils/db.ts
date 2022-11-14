@@ -82,7 +82,7 @@ export class DBClass extends Dexie {
         resolve(metafileTxId)
       } else if (type === 'metaId') {
         // metaId 不存本地数据库
-        resolve(metafile(metafileTxId))
+        resolve(metafile(metafileTxId, width, type))
       } else {
         // 普通txId
         const txId = this.getMetaFileTxId(metafileTxId)
