@@ -1,6 +1,9 @@
 <template>
   <!-- 社区列表 -->
-  <div class="w-22.5 bg-white space-y-9 left-navigation">
+  <div
+    class="w-22.5 bg-white space-y-9 left-navigation z-50"
+    :class="[layoutStore.showLeftNav ? '' : 'hidden lg:block']"
+  >
     <div class="space-y-4.5">
       <router-link
         :to="item.path"
@@ -37,6 +40,8 @@
 </template>
 
 <script setup lang="ts">
+import { useLayoutStore } from '@/stores/layout'
+const layoutStore = useLayoutStore()
 const apps = [
   {
     icon: 'feed',
