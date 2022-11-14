@@ -14,6 +14,11 @@
 import { ref } from 'vue'
 import ConnectWalletModalVue from './components/ConnectWalletModal/ConnectWalletModal.vue'
 import LeftNavigationVue from './components/LeftNavigation/LeftNavigation.vue'
+import { useRootStore } from '@/stores/root'
+import { useUserStore } from '@/stores/user'
+
+const rootStore = useRootStore()
+const userStore = useUserStore()
 </script>
 <style lang="css" src="@/assets/styles/tailwind.css"></style>
 <style lang="scss" scoped>

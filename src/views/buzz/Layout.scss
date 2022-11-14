@@ -1,6 +1,11 @@
-.HomeWrap{
-    width: 600PX;
-    background-color: #fff;
-    margin: 0 auto;
-    
+header {
+    height: 60px;
+    background: #fff;
+    padding: 0 18px;
+
+    .connect-wallet {
+        border-radius: 8px;
+        padding: 8px 15px;
+        cursor: pointer;
+    }
 }

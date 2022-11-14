@@ -142,6 +142,7 @@
     // border-width: var(--el-border-width);
     // border: var(--el-border);
     border-color: var(--el-button-hover-border-color);
+    overflow: hidden;
 
     &.sm {
         --el-dialog-width: 456px;
@@ -207,6 +208,13 @@
             display: none;
         }
     }
+}
+
+.el-dropdown-menu {
+    padding: 10px 0;
+    background: #fff;
+    border-radius: 12px;
+    box-sizing: border-box;
 }
 
 @media screen and (max-width:980PX) {

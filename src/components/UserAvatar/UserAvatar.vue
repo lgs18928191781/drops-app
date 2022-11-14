@@ -6,7 +6,6 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
 const props = defineProps<{
-  type: string
   metaId: string
   disabled?: boolean
 }>()

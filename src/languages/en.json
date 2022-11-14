@@ -71,5 +71,15 @@
   },
   "Not install MetaLet Wallet": "Not Install MetaLet Wallet",
   "Comming Soon": "Comming Soon",
-  "Use MetaId Wallet": "Use MetaId Wallet"
+  "Use MetaId Wallet": "Use MetaId Wallet",
+  "Login": {
+    "connectWallet": "Connect Wallet"
+  },
+  "UserOperate": {
+    "createGropp": "Create Group",
+    "settings": "Settings",
+    "aboutShow": "About Show",
+    "help": "Help",
+    "logout": "Logout"
+  }
 }

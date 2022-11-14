@@ -169,5 +169,12 @@
       "accountAlreadyRegistered": "该账号已被注册"
     }
   },
-  "back": "返回"
+  "back": "返回",
+  "UserOperate": {
+    "createGropp": "创建群组",
+    "settings": "设置",
+    "aboutShow": "关于Show",
+    "help": "帮助",
+    "logout": "退出"
+  }
 }

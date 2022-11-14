@@ -1,4 +1,7 @@
 <template>
+  <header class="flex flex-align-center flex-pack-end">
+    <LoginedUserOperateVue />
+  </header>
   <el-container>
     <el-aside width="200px">
       <CollapseItem></CollapseItem>
@@ -17,20 +20,16 @@ import Header from './components/Header/Header.vue'
 import Footer from './components/Footer/Footer.vue'
 import CollapseItem from '@/components/Collapse/collapse-item.vue'
 import sideLeftBottom from '@/components/Side/side-left-bottom.vue'
-import { user } from '@/stores/user' // const isDark = useDark()
+// const isDark = useDark()
+import { useRootStore } from '@/stores/root'
+import { useUserStore } from '@/stores/user'
+import LoginedUserOperateVue from '@/components/LoginedUserOperate/LoginedUserOperate.vue'
+
+const rootStore = useRootStore()
+const userStore = useUserStore()
+
 // // const isDark = useDark()
 // const toggleDark = () => {}
 </script>
 
-<style lang="scss" src="./Layout.scss">
-.main {
-  flex: 1;
-  height: 100%;
-  min-height: 0;
-  margin: 0 10px;
-
-  .transition-warp {
-    height: 100%;
-  }
-}
-</style>
+<style lang="scss" src="./Layout.scss"></style>

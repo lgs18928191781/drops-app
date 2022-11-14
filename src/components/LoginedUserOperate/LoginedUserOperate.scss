@@ -1,0 +1,45 @@
+.user-warp {
+    .avatar {
+        margin-right: 18px;
+    }
+
+    .avatar,
+    .more {
+        width: 40px;
+        height: 40px;
+    }
+
+    .more {
+        border-radius: calc(100% / 2.5);
+        border: 1px solid #EDEFF2;
+
+        &:hover,
+        &.active {
+            border-color: var(--main-font-color);
+        }
+
+        .icon {
+            width: 22px;
+            height: 22px;
+        }
+    }
+
+
+}
+
+.user-operate-item {
+    padding: 17px 48px;
+    cursor: pointer;
+
+
+    &:hover {
+        background: var(--el-color-primary);
+    }
+
+
+    .icon {
+        width: 24px;
+        height: 24px;
+        margin-right: 14px;
+    }
+}
