@@ -5,14 +5,14 @@
       <template v-if="itemData.displayType === 'quickRePost'">
         <div class="forward-head" @click.stop="$filters.toUserHome(itemData.metaId)">
           <i></i>
-          <UserAvatar class="head" :meta-id="itemData.metaId" :type="itemData.avatarType" />
+          <UserAvatar class="head" :meta-id="itemData.metaId" />
           <div class="name">{{ itemData.userName }}转发了</div>
         </div>
       </template>
       <div class="header">
         <div class="user-info" @click.stop="$filters.toUserHome(displayItemData!.metaId)">
           <div class="head">
-            <UserAvatar :meta-id="displayItemData.metaId" :type="displayItemData.avatarType" />
+            <UserAvatar :meta-id="displayItemData.metaId" />
           </div>
           <div class="info">
             <div class="name">{{ displayItemData.userName }}</div>

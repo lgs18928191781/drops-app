@@ -221,6 +221,7 @@
 
     &.buzz {
         width: 800px;
+        max-width: 100%;
         left: 50%;
         margin-left: -(calc((800px - 90px) / 2));
         height: auto !important;
@@ -228,6 +229,12 @@
         padding-left: calc(180px + 12px);
         background: transparent;
         box-shadow: none;
+
+        @media only screen and (max-width: 1024PX) {
+            padding-left: 0;
+            left: 0;
+            margin-left: 0;
+        }
 
 
 
@@ -237,6 +244,10 @@
             box-shadow: var(--el-box-shadow-dark);
             padding: 15px;
             box-sizing: border-box;
+
+            @media only screen and (max-width: 1024PX) {
+                padding: 30px;
+            }
         }
 
         // width: 608px;

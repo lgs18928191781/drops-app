@@ -13,10 +13,44 @@ header {
         cursor: pointer;
     }
 
+    .dived {
+        height: 20px;
+        width: 1px;
+        background: #eee;
+        margin: 0 15px;
+    }
+
     .connect-wallet {
         border-radius: 8px;
         padding: 8px 15px;
         cursor: pointer;
+    }
+
+    .buzz-menu {
+        .buzz-menu-item {
+            padding: 10px;
+            position: relative;
+            white-space: nowrap;
+            border-radius: 12px;
+
+            .icon-warp {
+                border: 2px solid var(--main-font-color);
+                border-radius: calc(100% / 2.5);
+                width: 24px;
+                height: 24px;
+                box-shadow: 3px 3px var(--main-font-color);
+                margin-right: 10px;
+
+                .icon {
+                    width: 16px;
+                    height: 16px;
+                }
+            }
+
+            &.router-link-active {
+                background: var(--el-color-primary);
+            }
+        }
     }
 }
 
@@ -27,50 +61,54 @@ header {
     .container {
         position: relative;
     }
+
+    .buzz-menu {
+        width: 180px;
+        box-sizing: border-box;
+        background: #FFFFFF;
+        border-radius: 12px;
+        padding: 12px;
+        margin-right: 12px;
+        position: sticky;
+        left: 0;
+        top: calc(60px + 12px);
+        z-index: 3;
+
+        .buzz-menu-item {
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            // background: var(--el-border-color);
+
+            &.router-link-active {
+                background: var(--el-color-primary);
+            }
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+
+            .icon-warp {
+                border: 2px solid var(--main-font-color);
+                border-radius: calc(100% / 2.5);
+                width: 24px;
+                height: 24px;
+                box-shadow: 3px 3px var(--main-font-color);
+                margin-right: 15px;
+
+                .icon {
+                    width: 16px;
+                    height: 16px;
+                }
+            }
+
+
+        }
+    }
 }
 
-
-
-.buzz-menu {
-    width: 180px;
-    box-sizing: border-box;
-    background: #FFFFFF;
-    border-radius: 12px;
-    padding: 12px;
-    margin-right: 12px;
-    position: sticky;
-    left: 0;
-    top: calc(60px + 12px);
-    z-index: 3;
-
-    .buzz-menu-item {
-        border-radius: 6px;
-        padding: 12px;
-        margin-bottom: 10px;
-        // background: var(--el-border-color);
-
-        &.router-link-active {
-            background: var(--el-color-primary);
-        }
-
-        &:last-child {
-            margin-bottom: 0;
-        }
-
-        .icon-warp {
-            border: 2px solid var(--main-font-color);
-            border-radius: calc(100% / 2.5);
-            width: 24px;
-            height: 24px;
-            box-shadow: 3px 3px var(--main-font-color);
-            margin-right: 15px;
-
-            .icon {
-                width: 16px;
-                height: 16px;
-            }
-        }
-
-
+@media only screen and (max-width: 1024PX) {
+    .buzz-menu-warp {
+        display: none;
     }
 }

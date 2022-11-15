@@ -1,7 +1,29 @@
 <template>
   <header class="flex flex-align-center">
     <div class="flex1">
-      <Icon name="bars" class="phone-menu" />
+      <div class="phone-content flex flex-align-center">
+        <Icon
+          :name="layoutStore.showLeftNav ? 'x_mark' : 'bars'"
+          class="phone-menu"
+          @click="layoutStore.$patch({ showLeftNav: !layoutStore.showLeftNav })"
+        />
+
+        <div class="dived"></div>
+
+        <div class="buzz-menu flex flex-align-center">
+          <router-link
+            :to="item.path"
+            class="buzz-menu-item flex flex-align-center"
+            v-for="(item, index) in menus"
+            :key="index"
+          >
+            <span class="icon-warp flex flex-align-center flex-pack-center">
+              <Icon :name="item.icon" />
+            </span>
+            <span class="name">{{ item.name }}</span>
+          </router-link>
+        </div>
+      </div>
     </div>
     <LoginedUserOperateVue />
   </header>
@@ -51,9 +73,11 @@ import { useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
 import LoginedUserOperateVue from '@/components/LoginedUserOperate/LoginedUserOperate.vue'
 import { useI18n } from 'vue-i18n'
+import { useLayoutStore } from '@/stores/layout'
 
 const rootStore = useRootStore()
 const userStore = useUserStore()
+const layoutStore = useLayoutStore()
 const i18n = useI18n()
 
 const menus = [
