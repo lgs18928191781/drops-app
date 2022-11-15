@@ -57,7 +57,8 @@
       "message_to": "Message {channel}",
       "upload_image": "Upload a Image",
       "use_onchain_image": "Use an Onchain Image",
-      "view_original": "Open original"
+      "view_original": "Open original",
+      "search": "Search"
     },
     "Input": {
       "nft_stickers": "NFT Stickers",

@@ -28,4 +28,23 @@ const userStore = useUserStore()
     overflow: auto;
   }
 }
+
+@font-face {
+  font-family: Whitney;
+  font-style: normal;
+  src: local('Whitney'), url('@/assets/fonts/whitneybook.otf') format('opentype');
+  font-weight: 400;
+}
+@font-face {
+  font-family: Whitney;
+  font-style: normal;
+  src: local('Whitney Medium'), url('@/assets/fonts/whitneymedium.otf') format('opentype');
+  font-weight: 500;
+}
+@font-face {
+  font-family: Whitney;
+  font-style: normal;
+  src: local('Whitney Bold'), url('@/assets/fonts/whitneybold.otf') format('opentype');
+  font-weight: 700;
+}
 </style>

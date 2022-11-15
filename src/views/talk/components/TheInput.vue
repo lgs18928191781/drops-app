@@ -147,7 +147,7 @@
           <div class="h-full border-l-2 border-solid border-dark-250"></div>
         </div>
 
-        <div class="flex items-center lg:hidden">
+        <div class="lg:hidden">
           <div class="py-2 px-3" @click="trySendMessage">
             <div
               class="transition-all ease-in-out duration-500"

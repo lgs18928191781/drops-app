@@ -1,6 +1,6 @@
 <template>
   <div
-    class="fixed left-0 right-0 top-0 flex items-center px-4 h-12 border-b-2 border-solid border-gray-100 bg-white z-30 lg:absolute"
+    class="fixed left-0 right-0 top-0 flex items-center px-4 h-15 border-b-2 border-solid border-gray-100 bg-white z-30 lg:absolute"
   >
     <div class="max-w-[60%] flex items-center">
       <Icon
@@ -49,7 +49,7 @@
         />
       </Teleport> -->
 
-      <div class="flex gap-x-4">
+      <!-- <div class="flex gap-x-4">
         <div class="" @click="doNothing()">
           <Icon
             name="share"
@@ -64,7 +64,9 @@
             :class="[showMembers ? 'text-primary lg:text-dark-800' : 'text-dark-800']"
           />
         </div>
-      </div>
+      </div> -->
+
+      <LoginedUserOperate />
     </div>
   </div>
 </template>
@@ -73,10 +75,11 @@
 import { ref } from 'vue'
 import ScreenModal from './ScreenModal.vue'
 import { useLayoutStore } from '@/stores/layout'
+import LoginedUserOperate from '@/components/LoginedUserOperate/LoginedUserOperate.vue'
 
 const layoutStore = useLayoutStore()
 
-const props = defineProps(['channel', 'showMembers'])
+const props = defineProps(['channel'])
 const showDescModal = ref(false)
 
 const shortenMetaId = (id: string) => {

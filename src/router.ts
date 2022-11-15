@@ -41,12 +41,17 @@ export const router = createRouter({
       ],
     },
 
-    // Showtalk
+    // ShowTalk
     {
       path: '/talk',
       name: 'talk',
       redirect: '/talk/channels/1/1',
       // component: () => import('@/views/talk/Index.vue'),
+    },
+    {
+      path: '/talk/channels/@me/:channelId?',
+      name: 'talkAtMe',
+      component: () => import('@/views/talk/AtMe.vue'),
     },
     {
       path: '/talk/channels/:communityId/:channelId',

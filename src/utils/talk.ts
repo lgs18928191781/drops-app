@@ -150,3 +150,32 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
 
   return
 }
+
+export const formatTimestamp = (timestamp: Date, i18n: any, showMinutesWhenOld = true) => {
+  const day = dayjs(timestamp)
+  // 如果是今天，则显示为“今天 hour:minute”
+  if (day.isSame(dayjs(), 'day')) {
+    return `${day.format('HH:mm')}`
+  }
+
+  // 如果是昨天，则显示为“昨天 hour:minute”
+  if (day.isSame(dayjs().subtract(1, 'day'), 'day')) {
+    return `${i18n.t('Talk.Datetime.yesterday')}${day.format('HH:mm')}`
+  }
+
+  // 如果是今年，则显示为“month day hour:minute”
+  if (showMinutesWhenOld) {
+    if (day.isSame(dayjs(), 'year')) {
+      return day.format('MM/DD HH:mm')
+    }
+
+    // 如果不是今年，则显示为“year month day hour:minute”
+    return day.format('YYYY/MM/DD HH:mm')
+  } else {
+    if (day.isSame(dayjs(), 'year')) {
+      return day.format('MM/DD')
+    }
+
+    return day.format('YYYY/MM/DD')
+  }
+}

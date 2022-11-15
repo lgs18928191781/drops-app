@@ -49,7 +49,7 @@ const apps = [
   },
   {
     icon: 'talk',
-    path: '/talk',
+    path: '/talk/channels/@me',
   },
 ]
 </script>

@@ -3,7 +3,7 @@
     <LoadingList />
   </div>
   <div class="h-full overflow-y-auto" ref="messagesScroll" v-show="!loading">
-    <div class="overflow-x-hidden py-4 px-4">
+    <div class="overflow-x-hidden pt-4 px-4">
       <div class="flex flex-col-reverse space-y-4 space-y-reverse">
         <MessageItem
           v-for="message in talkStore.pastMessages"

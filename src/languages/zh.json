@@ -97,7 +97,8 @@
       "message_to": "发消息到 {channel}…",
       "upload_image": "上传图片",
       "use_onchain_image": "链上图片",
-      "view_original": "查看原图"
+      "view_original": "查看原图",
+      "search": "搜索"
     },
     "Input": {
       "nft_stickers": "NFT表情",

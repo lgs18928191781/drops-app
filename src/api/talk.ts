@@ -18,6 +18,22 @@ const TalkApi = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/talkAggregation
   },
 }).request
 
+const serviceApi = new HttpRequest(
+  `${import.meta.env.VITE_BASEAPI}/serviceapi/api/v1/showService`,
+  {
+    header: {
+      'Content-Type': 'application/json',
+      // accessKey: () => (isAuthorized.value ? user.value!.token! : undefined),
+      // userName: () => {
+      //   if (isAuthorized) {
+      //     return user.value!.userType === 'email' ? user.value!.email! : user.value!.phone!
+      //   }
+      // },
+      // timestamp: () => new Date().getTime(),
+    },
+  }
+).request
+
 export const getCommunities = (data: any): Promise<any> => {
   const communities = [
     {
@@ -35,6 +51,19 @@ export const getCommunities = (data: any): Promise<any> => {
       resolve(communities)
     }, 1000)
   })
+}
+
+// 获取会话列表
+export const getSessions = async (params?: any): Promise<any> => {
+  params = params || {}
+  params.showId = '74cc371c55d9fa38fc98467396c22fe6b20bfc3459a11530362fcdb1b6c07c5c'
+  params.address = 'myPqtRpy1Ay65U5RmwX5q2sjXqcjDRCyVx'
+  params.xpub =
+    'tpubDC5etPJ6j9TguBb1x8VhuKyEn9HZTY2sqA4rBbKkukvpnz8KDLg6119R6yZao32QmBBj3dqWT9NdU7L5f52ouXbtEEEUj3MEnonnzTrxuh6'
+  params.pageSize = 50
+  params.page = 1
+
+  return serviceApi.post(`/getHomeHistoryFast`, { data: JSON.stringify(params) })
 }
 
 export const getChannels = (): Promise<any> => {
@@ -58,7 +87,7 @@ export const getChannels = (): Promise<any> => {
 
 export const getChannelMessages = async (channelId: string, params?: any): Promise<any> => {
   params = params || {}
-  params.metaId = '261562cd13734c7e9f3809e32d3d7c56f0b27788f88d6738fc95f96ddb89eb01'
+  params.metaId = '74cc371c55d9fa38fc98467396c22fe6b20bfc3459a11530362fcdb1b6c07c5c'
   params.pageSize = '50'
   params.page = '1'
   params.groupId = channelId
