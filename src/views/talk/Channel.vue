@@ -1,21 +1,21 @@
 <template>
-  <div class="relative  h-screen lg:flex">
-    <CommunitySection :community="community" />
+  <div class="relative h-screen lg:flex">
+    <ChannelList :community="community" />
 
     <div class="lg:grow lg:h-screen lg:relative lg:flex">
-      <TheHeader
+      <ChannelHeader
         :channel="channel"
         :showMembers="showMembers"
         @toggle-member-list="handleToggleMemberList"
       />
 
-      <div class="pt-12 pb-14 h-screen lg:relative w-full bg-dark-200">
+      <div class="pt-12 pb-20 h-screen lg:relative w-full bg-dark-200">
         <div class="h-full">
-          <MessageList :sendingMessage="sendingMessage" />
+          <MessageList />
         </div>
 
         <div class="fixed bottom-0 left-0 right-0 px-4 lg:absolute">
-          <TheInput :currentChannel="currentChannel" @send-message="handleSendMessage" />
+          <TheInput :currentChannel="currentChannel" />
           <TheErrorBox />
         </div>
       </div>
@@ -28,10 +28,10 @@
 </template>
 
 <script setup lang="ts">
-import TheHeader from './components/TheHeader.vue'
+import ChannelHeader from './components/ChannelHeader.vue'
 import TheInput from './components/TheInput.vue'
 import TheErrorBox from './components/TheErrorBox.vue'
-import CommunitySection from './components/CommunitySection.vue'
+import ChannelList from './components/ChannelList.vue'
 import ChannelMemberList from './components/ChannelMemberList.vue'
 import { computed, defineAsyncComponent, onMounted, reactive, Ref, ref } from 'vue'
 import { getChannelMembers } from '@/api/talk'
@@ -58,11 +58,6 @@ type Channel = {
 }
 
 const showMembers = ref(false)
-const showCommunitySection = ref(false)
-const sendingMessage: any = reactive({
-  metaId: '',
-  content: '',
-})
 
 // 获取频道信息
 const channel: Ref<Channel> = ref({
@@ -104,12 +99,6 @@ const handleToggleMemberList = () => {
   localStorage.setItem('layout-show-right-drawer', showMembers.value ? '1' : '0')
 }
 
-const handleSendMessage = (message: any) => {
-  console.log({ sending: message })
-  sendingMessage.content = message.content
-  sendingMessage.metaId = message.metaId
-}
-
 onMounted(async () => {
   // 拉取布局状态
   const layoutState = localStorage.getItem('layout-show-right-drawer')
@@ -129,25 +118,6 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-@font-face {
-  font-family: Whitney;
-  font-style: normal;
-  src: local('Whitney'), url('@/assets/fonts/whitneybook.otf') format('opentype');
-  font-weight: 400;
-}
-@font-face {
-  font-family: Whitney;
-  font-style: normal;
-  src: local('Whitney Medium'), url('@/assets/fonts/whitneymedium.otf') format('opentype');
-  font-weight: 500;
-}
-@font-face {
-  font-family: Whitney;
-  font-style: normal;
-  src: local('Whitney Bold'), url('@/assets/fonts/whitneybold.otf') format('opentype');
-  font-weight: 700;
-}
-
 .slide-enter-active,
 .slide-leave-active {
   transition: all 0.3s ease;

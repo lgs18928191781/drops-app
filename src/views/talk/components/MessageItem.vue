@@ -12,7 +12,7 @@
           {{ message.nickName }}
         </div>
         <div class="text-dark-300 text-xs">
-          {{ formatTime(message.timestamp) }}
+          {{ formatTimestamp(message.timestamp, i18n) }}
         </div>
       </div>
 
@@ -86,8 +86,8 @@ import NftLabel from './NftLabel.vue'
 import redEnvelopeImg from '@/assets/images/red-envelope.svg?url'
 import ImagePreview from './ImagePreview.vue'
 import { computed, ref } from 'vue'
-import dayjs from 'dayjs'
 import { useI18n } from 'vue-i18n'
+import { formatTimestamp } from '@/utils/talk'
 
 const i18n = useI18n()
 
@@ -114,27 +114,6 @@ const randomNameColor = computed(() => {
 
 const previewImage = () => {
   showImagePreview.value = true
-}
-
-const formatTime = (timestamp: Date) => {
-  const day = dayjs(timestamp)
-  // 如果是今天，则显示为“今天 hour:minute”
-  if (day.isSame(dayjs(), 'day')) {
-    return `${day.format('HH:mm')}`
-  }
-
-  // 如果是昨天，则显示为“昨天 hour:minute”
-  if (day.isSame(dayjs().subtract(1, 'day'), 'day')) {
-    return `${i18n.t('Talk.Datetime.yesterday')}${day.format('HH:mm')}`
-  }
-
-  // 如果是今年，则显示为“month day hour:minute”
-  if (day.isSame(dayjs(), 'year')) {
-    return day.format('MM/DD HH:mm')
-  }
-
-  // 如果不是今年，则显示为“year month day hour:minute”
-  return day.format('YYYY/MM/DD HH:mm')
 }
 
 const decryptedMessage = computed(() => {
