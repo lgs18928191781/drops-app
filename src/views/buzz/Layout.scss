@@ -6,6 +6,11 @@ header {
     background: #fff;
     padding: 0 18px;
     z-index: 2;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+    .phone-content {
+        display: none;
+    }
 
     .phone-menu {
         width: 30px;
@@ -111,4 +116,11 @@ header {
     .buzz-menu-warp {
         display: none;
     }
+
+    header {
+        .phone-content {
+            display: flex;
+        }
+    }
+
 }
