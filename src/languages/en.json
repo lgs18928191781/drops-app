@@ -93,6 +93,9 @@
     "Recommend": "Recommend",
     "publish": {
       "placeholder": "Share your buzz ~"
+    },
+    "comment": {
+      "publishPlaceholder": "Your reply～"
     }
   },
   "Follow": "Follow"

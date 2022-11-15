@@ -222,9 +222,9 @@ function handleFollow() {
     const buzz = await getOneBuzzDetail(res.txId)
 
     Mitt.emit('addBuzz', buzz)
-    if (route.name === 'appBuzzDetail') {
+    if (route.name === 'buzzDetail') {
       router.replace({
-        name: 'appBuzzDetail',
+        name: 'buzzDetail',
         params: {
           txId: res.txId,
         },

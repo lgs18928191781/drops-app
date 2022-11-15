@@ -149,7 +149,7 @@ function handleGoDetail(txId: string) {
     return
   }
   router.push({
-    name: 'appBuzzDetail',
+    name: 'buzzDetail',
     params: {
       txId: displayItemData.value?.txId,
     },
@@ -160,7 +160,7 @@ function handleShare() {
   copy(
     location.origin +
       router.resolve({
-        name: 'appBuzzDetail',
+        name: 'buzzDetail',
         params: {
           txId: displayItemData.value!.txId,
         },

@@ -1,1 +1,25 @@
-v
+.comment {
+    .dived {
+        background: #F4F7F9;
+        height: 1px;
+        margin: 18px 0;
+    }
+}
+
+.publish-comment {
+    .avatar {
+        width: 48px;
+        height: 48px;
+        margin-right: 12px;
+    }
+
+    .cont {
+        input {
+            width: 100%;
+            height: 49px;
+            padding: 0 18px;
+            border-radius: 8px;
+            border: 2px solid var(--main-font-color);
+        }
+    }
+}

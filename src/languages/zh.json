@@ -194,6 +194,9 @@
       "comment": "带评论转发",
       "share": "分享",
       "lookTx": "查看Tx"
+    },
+    "comment": {
+      "publishPlaceholder": "发表评论"
     }
   },
   "Follow": "关注"

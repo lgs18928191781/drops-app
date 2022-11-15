@@ -16,6 +16,11 @@ export const router = createRouter({
       redirect: '/buzz/index',
       children: [
         { path: 'index', name: 'buzzIndex', component: () => import('@/views/buzz/Index.vue') },
+        {
+          path: 'tx/:txId',
+          name: 'buzzDetail',
+          component: () => import('@/views/buzz/Detail.vue'),
+        },
       ],
     },
     {

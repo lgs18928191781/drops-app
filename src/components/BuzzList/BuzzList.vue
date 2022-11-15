@@ -1,7 +1,11 @@
 <template>
   <div class="buzz-list">
     <template v-for="item in list" :key="item.txId">
-      <BuzzItemVue :data="item" @repost="onRepost" @more="onMore" />
+      <BuzzItemVue :data="item" @repost="onRepost" @more="onMore">
+        <template #comment>
+          <slot name="comment"></slot>
+        </template>
+      </BuzzItemVue>
     </template>
   </div>
 
