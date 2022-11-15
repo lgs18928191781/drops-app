@@ -87,5 +87,13 @@
     "logout": "Logout"
   },
   "Comming Soon": "Coming Soon",
-  "Use MetaId Wallet": "Use MetaId Wallet"
+  "Use MetaId Wallet": "Use MetaId Wallet",
+  "Buzz": {
+    "Timeline": "Timeline",
+    "Recommend": "Recommend",
+    "publish": {
+      "placeholder": "Share your buzz ~"
+    }
+  },
+  "Follow": "Follow"
 }
