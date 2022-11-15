@@ -187,6 +187,12 @@
     "Recommend": "推荐",
     "publish": {
       "placeholder": "分享您的buzz ~"
+    },
+    "repost": {
+      "quick": "快速转发",
+      "comment": "带评论转发",
+      "share": "分享",
+      "lookTx": "查看Tx"
     }
   },
   "Follow": "关注"

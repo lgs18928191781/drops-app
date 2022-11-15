@@ -1,6 +1,25 @@
 <template>
-  <div class="control">
-    <div :class="['item', isIForward ? 'active' : '']" @click.stop="handleAction()">
+  <div class="control flex flex-align-center">
+    <div class="flex1">
+      <a class="more flex flex-align-center flex-pack-center">
+        <Icon name="more" @click="emit('more', buzz.txId)" />
+      </a>
+    </div>
+
+    <div class="operates flex flex-align-center">
+      <div
+        class="operate-item flex flex-align-center"
+        :class="{ active: item.active() }"
+        v-for="(item, index) in operates"
+        :key="index"
+        @click.stop="item.fun()"
+      >
+        <component :is="item.icon" />
+        <span class="value">{{ item.value().value }}</span>
+      </div>
+    </div>
+
+    <!-- <div :class="['item', isIForward ? 'active' : '']" @click.stop="handleAction()">
       <i class="forward"></i><span>{{ forwardText }}</span>
     </div>
     <div class="item" @click="emit('reply', { txId: '', username: '' })">
@@ -8,15 +27,15 @@
     </div>
     <div :class="['item', isILike ? 'active' : '']" @click.stop="handleLike">
       <i class="like"></i><span>{{ likeText }}</span>
-    </div>
+    </div> -->
   </div>
 
-  <van-popup v-model:show="showPopup" position="bottom" round close-on-popstate>
+  <!-- <van-popup v-model:show="showPopup" position="bottom" round close-on-popstate>
     <div class="popup-list">
       <div class="item" @click.stop="handleFollow"><span>快速转发</span></div>
       <div class="item" @click.stop="handleForward"><span>带评论转发</span></div>
     </div>
-  </van-popup>
+  </van-popup> -->
 
   <!-- 确认发表 -->
   <MePayConfirmModalVue v-model="isShowConfirm" :params="payMe" />
@@ -37,6 +56,9 @@ import { router } from '@/router'
 import { getOneBuzz } from '@/api/buzz'
 import { BuzzItem } from '@/@types/common'
 import { useUserStore } from '@/stores/user'
+import ShareIcon from '@/assets/svg/share.svg'
+import CommentIcon from '@/assets/svg/comment.svg'
+import LikeIcon from '@/assets/svg/like.svg'
 
 interface Props {
   buzz: BuzzItem
@@ -46,8 +68,46 @@ const props = withDefaults(defineProps<Props>(), {})
 const userStore = useUserStore()
 
 const route = useRoute()
-const emit = defineEmits(['update', 'reply'])
+const emit = defineEmits(['update', 'repost', 'buzz', 'more'])
 
+const operates = [
+  {
+    icon: ShareIcon,
+    value: () => {
+      return forwardText
+    },
+    active: () => {
+      return isIForward.value
+    },
+    fun: () => {
+      emit('repost', props.buzz.txId)
+    },
+  },
+  {
+    icon: CommentIcon,
+    value: () => {
+      return commentText
+    },
+    active: () => {
+      return false
+    },
+    fun: () => {
+      emit('repost', props.buzz.txId)
+    },
+  },
+  {
+    icon: LikeIcon,
+    value: () => {
+      return likeText
+    },
+    active: () => {
+      return isILike.value
+    },
+    fun: () => {
+      emit('repost', props.buzz.txId)
+    },
+  },
+]
 const showPopup = ref(false)
 const payMe: PayMeParams = reactive({
   amount: 0,

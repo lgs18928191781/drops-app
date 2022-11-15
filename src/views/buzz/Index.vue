@@ -13,11 +13,7 @@
     </div>
   </div>
 
-  <div class="buzz-list">
-    <template v-for="item in list" :key="item.txId">
-      <BuzzItemVue :data="item" />
-    </template>
-  </div>
+  <BuzzListVue :list="list" />
 </template>
 
 <script setup lang="ts">
@@ -27,7 +23,7 @@ import { getBuzzHomeList } from '@/api/buzz'
 import { initPagination } from '@/config'
 import { useUserStore } from '@/stores/user'
 import { reactive } from 'vue'
-import BuzzItemVue from '@/components/BuzzItem/BuzzItem.vue'
+import BuzzListVue from '@/components/BuzzList/BuzzList.vue'
 
 const pagintion = reactive({ ...initPagination, timestamp: 0 })
 const userStore = useUserStore()
@@ -49,19 +45,19 @@ function getDatas(isCover = false) {
 
 const publishOperates = [
   {
-    icon: 'emoji',
+    icon: 'buzzn_emoji',
     fun: () => {},
   },
   {
-    icon: 'image',
+    icon: 'buzz_img',
     fun: () => {},
   },
   {
-    icon: 'NFT',
+    icon: 'buzz_nft',
     fun: () => {},
   },
   {
-    icon: 'topic',
+    icon: 'buzz_hashtag',
     fun: () => {},
   },
 ]

@@ -29,8 +29,8 @@
         </div>
       </div>
       <div class="content">
-        <pre
-          class="text"
+        <div
+          class="text content-item"
           v-html="
             displayItemData.content
               .replace(/\\n/g, '\n')
@@ -42,30 +42,48 @@
                     .replace(/(^\s*)|(\s*$)/g, '')}' style='color:#fc6d5e' >${val}</a>&nbsp;`
               )
           "
-        ></pre>
-        <Attachment :attachments="displayItemData.attachments" />
+        ></div>
+        <Attachment
+          class="content-item"
+          :attachments="displayItemData.attachments"
+          v-if="displayItemData.attachments && displayItemData.attachments.length > 0"
+        />
         <!-- 引用buzz -->
-        <QuoteVue :buzz="itemData.quoteItem" v-if="itemData.displayType === 'rePost'" />
+        <QuoteVue
+          class="content-item"
+          :buzz="itemData.quoteItem"
+          v-if="itemData.displayType === 'rePost'"
+        />
+
+        <!-- 标签 -->
+        <div class="tags flex flex-align-center">
+          <a class="flex flex-align-center">
+            <Icon name="flag" />
+            Buzz
+          </a>
+        </div>
+
+        <BuzzItemControlVue
+          :buzz="displayItemData"
+          @repost="params => emit('repost', params)"
+          @update="params => emit('update', params)"
+          @more="params => emit('more', params)"
+          v-if="!isHideControl"
+        />
 
         <slot name="comment"></slot>
       </div>
-      <BuzzItemControlVue
-        :buzz="displayItemData"
-        @reply="params => emit('reply', params)"
-        @update="params => emit('update', params)"
-        v-if="!isHideControl"
-      />
     </div>
   </div>
-  <van-popup v-model:show="showPopup" position="bottom" round close-on-popstate>
+  <!-- <van-popup v-model:show="showPopup" position="bottom" round close-on-popstate>
     <div class="popup-list">
-      <!--        <div class="item" @click.stop="handleFollow"><span>关注</span></div>-->
-      <!--        <div class="item" @click.stop="handleForward"><span>转发</span></div>-->
-      <!--        <div class="item" @click.stop="handleShield"><span>拉⿊</span></div>-->
+             <div class="item" @click.stop="handleFollow"><span>关注</span></div>
+             <div class="item" @click.stop="handleForward"><span>转发</span></div>
+             <div class="item" @click.stop="handleShield"><span>拉⿊</span></div>
       <div class="item" @click.stop="handleShare"><span>分享</span></div>
       <div class="item" @click.stop="handleGoToWoc"><span>查看TX</span></div>
     </div>
-  </van-popup>
+  </van-popup> -->
 
   <!-- 确认发表 -->
   <MePayConfirmModalVue v-model="isShowConfirm" :params="payMe" />
@@ -91,7 +109,7 @@ interface Props {
 }
 const router = useRouter()
 const route = useRoute()
-const emit = defineEmits(['update', 'reply'])
+const emit = defineEmits(['update', 'repost', 'more'])
 const props = withDefaults(defineProps<Props>(), {
   isInDetailPage: false,
 })

@@ -1,7 +1,7 @@
 <template>
   <div class="main flex">
     <LeftNavigationVue />
-    <div class="flex1">
+    <div class="flex1 main-right">
       <RouterView />
     </div>
   </div>
@@ -24,5 +24,8 @@ const userStore = useUserStore()
 <style lang="scss" scoped>
 .main {
   height: 100%;
+  .main-right {
+    overflow: auto;
+  }
 }
 </style>

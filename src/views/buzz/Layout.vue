@@ -1,25 +1,30 @@
 <template>
-  <header class="flex flex-align-center flex-pack-end">
+  <header class="flex flex-align-center">
+    <div class="flex1">
+      <Icon name="bars" class="phone-menu" />
+    </div>
     <LoginedUserOperateVue />
   </header>
-  <div class="container flex">
-    <div class="buzz-menu-warp">
-      <div class="buzz-menu">
-        <router-link
-          :to="item.path"
-          class="buzz-menu-item flex flex-align-center"
-          v-for="(item, index) in menus"
-          :key="index"
-        >
-          <span class="icon-warp flex flex-align-center flex-pack-center">
-            <Icon :name="item.icon" />
-          </span>
-          <span class="name">{{ item.name }}</span>
-        </router-link>
+  <div class="buzz-warp">
+    <div class="container flex flex1">
+      <div class="buzz-menu-warp">
+        <div class="buzz-menu">
+          <router-link
+            :to="item.path"
+            class="buzz-menu-item flex flex-align-center"
+            v-for="(item, index) in menus"
+            :key="index"
+          >
+            <span class="icon-warp flex flex-align-center flex-pack-center">
+              <Icon :name="item.icon" />
+            </span>
+            <span class="name">{{ item.name }}</span>
+          </router-link>
+        </div>
       </div>
-    </div>
-    <div class="buzz-container flex1">
-      <router-view></router-view>
+      <div class="buzz-container flex1">
+        <router-view></router-view>
+      </div>
     </div>
   </div>
 
