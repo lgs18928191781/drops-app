@@ -1,4 +1,3 @@
-import { BuzzItem } from '@/@types/common'
 import HttpRequest from 'request-sdk'
 
 const aggregation = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation`, {
@@ -151,10 +150,30 @@ export const GetUserInfo = (
 }
 
 export const GetHomeBuzzs = (params: {
-  metaId: string
-  page: string
-  pageSize: string
+  metaId?: string
+  page: string | number
+  pageSize: string | number
   timestamp: number
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    results: {
+      items: BuzzItem[]
+    }
+  }
+}> => {
+  const { metaId, ..._params } = params
+  return aggregation.get(`/v2/app/buzz/getBuzzHomeList/${metaId}`, { params: _params })
+}
+
+export const GetBuzzs = (params: {
+  tag: 'timeline' | 'recommendline'
+  metaId?: string
+  page: string | number
+  pageSize: string | number
+  timestamp: number
+  timeType?: 'today' | 'week' | 'month'
 }): Promise<{
   code: number
   data: {

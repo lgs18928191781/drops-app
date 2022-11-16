@@ -92,11 +92,21 @@
     "Timeline": "Timeline",
     "Recommend": "Recommend",
     "publish": {
-      "placeholder": "Share your buzz ~"
+      "placeholder": "Share your buzz ~",
+      "addAttachment": "Add Image",
+      "addImage": "Add Image",
+      "post": "Post",
+      "success": "Post Success!"
     },
     "comment": {
-      "publishPlaceholder": "Your reply～"
+      "publishPlaceholder": "Your reply～",
+      "success": "Replay Success!"
     }
   },
-  "Follow": "Follow"
+  "Follow": "Follow",
+  "Pagination": {
+    "loading": "Loading",
+    "nothing": "Nothing ~"
+  },
+  "noDatas": "No Datas"
 }

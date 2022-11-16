@@ -9523,6 +9523,11 @@ vfile@^4.0.0:
     unist-util-stringify-position "^2.0.0"
     vfile-message "^2.0.0"
 
+viewerjs@^1.11.1:
+  version "1.11.1"
+  resolved "https://registry.npmmirror.com/viewerjs/-/viewerjs-1.11.1.tgz#9aed519f489eb50730faf258ca8c88e39934cccb"
+  integrity sha512-/VQ2zalHLZJOGIwlxOBtxagLZwNvU3Bf+nm692XlhNFxjBXRxpCVn+GeqmRFg9jK1Y2+Wf8PPGxZgTDN4pHXww==
+
 vite-plugin-externals@^0.5.1:
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/vite-plugin-externals/-/vite-plugin-externals-0.5.1.tgz#4d225a156808a48dd7e4651ee2425a13e3d6319e"

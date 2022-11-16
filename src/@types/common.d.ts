@@ -206,7 +206,7 @@ declare interface BatchSaleItem extends BatchSaleSessionItem {
   address: string
 }
 
-export interface BindUserInfo {
+declare interface BindUserInfo {
   address: string
   appToken: string
   did: null
@@ -223,7 +223,7 @@ export interface BindUserInfo {
   token: string
 }
 
-export interface BindMetaIdRes {
+declare interface BindMetaIdRes {
   userInfo: MetaMaskLoginUserInfo
   wallet: bsv.HDPrivateKey
   password: string

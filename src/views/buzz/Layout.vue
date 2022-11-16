@@ -45,10 +45,36 @@
         </div>
       </div>
       <div class="buzz-container flex1">
-        <router-view></router-view>
+        <RouterView v-slot="{ Component, route }">
+          <KeepAlive>
+            <component
+              :is="Component"
+              :key="route.fullPath"
+              v-if="route.meta && route.meta.keepAlive"
+            />
+          </KeepAlive>
+          <component
+            :is="Component"
+            :key="route.fullPath"
+            v-if="!route.meta || (route.meta && !route.meta.keepAlive)"
+          />
+        </RouterView>
+      </div>
+
+      <!--   -->
+      <div class="fast-btn">
+        <a class="main-border primary" @click="layoutStore.$patch({ isShowPublishBuzz: true })">
+          <Icon name="airdrop" />
+        </a>
+        <a class="main-border">
+          <Icon name="top" />
+        </a>
       </div>
     </div>
   </div>
+
+  <!-- publish -->
+  <PublishVue />
 
   <!-- <el-container>
     <el-aside width="200px">
@@ -74,6 +100,7 @@ import { useUserStore } from '@/stores/user'
 import LoginedUserOperateVue from '@/components/LoginedUserOperate/LoginedUserOperate.vue'
 import { useI18n } from 'vue-i18n'
 import { useLayoutStore } from '@/stores/layout'
+import PublishVue from './components/Publish.vue'
 
 const rootStore = useRootStore()
 const userStore = useUserStore()
@@ -89,7 +116,7 @@ const menus = [
   {
     name: i18n.t('Buzz.Recommend'),
     icon: 'star',
-    path: '/buzz/recomment',
+    path: '/buzz/recommend',
   },
 ]
 
@@ -97,4 +124,4 @@ const menus = [
 // const toggleDark = () => {}
 </script>
 
-<style lang="scss" src="./Layout.scss"></style>
+<style lang="scss" scoped src="./Layout.scss"></style>

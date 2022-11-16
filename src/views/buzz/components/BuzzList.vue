@@ -1,12 +1,18 @@
 <template>
-  <div class="buzz-list">
-    <template v-for="item in list" :key="item.txId">
-      <BuzzItemVue :data="item" @repost="onRepost" @more="onMore">
+  <!-- <div class="buzz-list" v-infinite-scroll="getMore" :infinite-scroll-immediate="false"> -->
+  <div class="buzz-list" v-infinite-scroll="getMore" :infinite-scroll-immediate="false">
+    <div class="buzz-item-warp" v-for="item in list" :key="item.txId">
+      <BuzzItemVue :data="item" @repost="onRepost" @more="onMore" :loading="loading">
         <template #comment>
           <slot name="comment"></slot>
         </template>
       </BuzzItemVue>
-    </template>
+    </div>
+    <!-- pagination -->
+    <LoadMoreVue :pagination="pagination" v-if="!loading && list.length > 0" />
+
+    <!-- null -->
+    <IsNullVue v-if="!loading && list.length <= 0" />
   </div>
 
   <ElDrawer
@@ -34,16 +40,20 @@
 </template>
 
 <script setup lang="ts">
-import { BuzzItem } from '@/@types/common'
-import BuzzItemVue from '@/components/BuzzItem/BuzzItem.vue'
+import BuzzItemVue from './BuzzItem.vue'
 import { ElDrawer } from 'element-plus'
 import { computed, reactive, Ref, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import IsNullVue from '@/components/IsNull/IsNull.vue'
+import LoadMoreVue from '@/components/LoadMore/LoadMore.vue'
 
 interface Props {
   list: BuzzItem[]
+  loading?: boolean
+  pagination: Pagination
 }
 const props = withDefaults(defineProps<Props>(), {})
+const emit = defineEmits(['getMore'])
 
 const i18n = useI18n()
 
@@ -95,6 +105,10 @@ function onMore(txId: string) {
   operateType.value = 'more'
   currentTxId.value = txId
   isShowOperateModal.value = true
+}
+
+function getMore() {
+  emit('getMore')
 }
 </script>
 

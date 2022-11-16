@@ -35,6 +35,8 @@
         </div>
       </div>
     </template>
+
+    <IsNullVue v-if="commentList.length <= 0" />
   </div>
 </template>
 
@@ -43,6 +45,7 @@ import { isApp } from '@/stores/root'
 import { txId } from '@/utils/filters'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import IsNullVue from '@/components/IsNull/IsNull.vue'
 interface Props {
   commentList: any
 }
@@ -63,7 +66,7 @@ function sliceStr(str?: string, len = 8) {
   .comment-item {
     padding: 20px 0;
     box-sizing: border-box;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid #f4f7f9;
 
     .header {
       display: flex;

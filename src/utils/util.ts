@@ -807,6 +807,7 @@ export function throttle(fn: any, delay = 500) {
   }
 }
 
+// 降文件转为 AttachmentItem， 便于操作/上链
 export function FileToAttachmentItem(file: File, encrypt: IsEncrypt = IsEncrypt.No) {
   return new Promise<AttachmentItem>(async (resolve, reject) => {
     function readResult(blob: Blob) {
@@ -835,8 +836,7 @@ export function FileToAttachmentItem(file: File, encrypt: IsEncrypt = IsEncrypt.
       await readResult(file.slice(index, index + chunkSize))
     }
     resolve({
-      // @ts-ignore
-      hex: hex,
+      data: hex,
       fileName: file.name,
       fileType: file.type,
       sha256: encHex.stringify(sha256Algo.finalize()),
@@ -844,4 +844,17 @@ export function FileToAttachmentItem(file: File, encrypt: IsEncrypt = IsEncrypt.
       encrypt,
     })
   })
+}
+
+// 降 AttachmentItem， 转为具有占位符 的 数组
+export function getAttachmentsMark(attachments: (AttachmentItem | string)[]) {
+  let result = []
+  for (let i = 0; i < attachments.length; i++) {
+    if (typeof attachments[i] === 'string') {
+      result.push(attachments[i])
+    } else {
+      result.push(`metafile://$[${i}]`)
+    }
+  }
+  return result
 }

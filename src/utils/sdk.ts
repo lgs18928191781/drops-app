@@ -478,7 +478,7 @@ export class SDK {
                     nodeName: item.fileName,
                     metaIdTag: MetaIdTag[this.network],
                     encrypt: item.encrypt,
-                    data: item.hex,
+                    data: item.data,
                     dataType: item.fileType,
                     encoding: 'binary',
                     parentTxId: metafileBrfc!.txId,

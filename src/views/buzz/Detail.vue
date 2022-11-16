@@ -5,40 +5,37 @@
         <div class="dived"></div>
         <div class="publish-comment flex flex-align-center">
           <UserAvatar :meta-id="userStore.user?.metaId || ''" />
-          <div class="cont flex1">
+          <div class="cont flex1" v-loading="loading">
             <input
               v-model="addComment.content"
               :placeholder="$t('Buzz.comment.publishPlaceholder')"
-              @keyup.enter="reply({ txId: detailData.data?.txId, username: '' })"
+              @keyup.enter="reply({ txId: '', username: '' })"
             />
           </div>
         </div>
 
-        <BuzzCommentListVue
-          :commentList="commentListData"
-          v-if="commentListData && commentListData.length"
-          @reply="reply"
-        ></BuzzCommentListVue>
+        <BuzzCommentListVue :commentList="commentListData" @reply="reply"></BuzzCommentListVue>
       </div>
     </template>
   </BuzzListVue>
 </template>
 
 <script setup lang="ts">
-import { BuzzItem } from '@/@types/common'
 import { getBuzzInteractiveList, getOneBuzz } from '@/api/buzz'
-import BuzzListVue from '@/components/BuzzList/BuzzList.vue'
+import BuzzListVue from './components/BuzzList.vue'
 import { initPagination } from '@/config'
 import { CreateBrfcChildNodePayType, IsEncrypt, NodeName } from '@/enum'
 import { useUserStore } from '@/stores/user'
-import { computed, reactive } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import BuzzCommentListVue from '@/components/BuzzCommentList.vue'
+import BuzzCommentListVue from './components/BuzzCommentList.vue'
 import { checkSdkStatus } from '@/utils/util'
-import { data } from 'dom7'
+import { useI18n } from 'vue-i18n'
 
 const route = useRoute()
 const userStore = useUserStore()
+const loading = ref(false)
+const i18n = useI18n()
 
 const detailData: {
   data: null | BuzzItem
@@ -160,15 +157,17 @@ async function fetchChildCommentList(buzzTxIds: string[]) {
 }
 
 async function reply(params: { txId: string; username: string }) {
+  if (loading.value) return
   addComment.commentToCommentTxId = params.txId
   addComment.commentToUserName = params.username
-  if (params.txId === detailData.data?.txId) {
+  if (!params.txId) {
     await confirmComment()
   }
   // isShowAddCommentWarp.value = true
 }
 
 async function confirmComment() {
+  loading.value = true
   await checkSdkStatus(route.fullPath)
   try {
     const dataParams = {
@@ -209,6 +208,7 @@ async function confirmComment() {
         userName: userStore.user!.name!,
         zeroAddress: userStore.user!.address!,
       }
+      debugger
       if (addComment.commentToCommentTxId === '') {
         commentListData.unshift(item)
       } else {
@@ -226,9 +226,13 @@ async function confirmComment() {
         userName: userStore.user!.name!,
         value: 0,
       })
+      addComment.content = ''
+      ElMessage.success(i18n.t('Buzz.comment.success'))
+      loading.value = false
       // isShowAddCommentWarp.value = false
     }
   } catch (error) {
+    loading.value = false
     ElMessage.error((error as any).message)
   }
 }

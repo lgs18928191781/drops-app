@@ -1,5 +1,5 @@
 .buzz-list {
-    :deep(.buzz-item) {
+    .buzz-item-warp {
         margin-bottom: 12px;
 
         &:last-child {
@@ -9,8 +9,6 @@
 }
 
 .repost-list {
-
-
     .repost-list-warp {
         box-sizing: border-box;
 

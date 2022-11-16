@@ -153,6 +153,8 @@
         box-shadow: none;
     }
 
+
+
     &.none-header {
         .el-dialog__header {
             display: none;
@@ -186,6 +188,13 @@
     .el-dialog__body {
         color: var(--main-font-color);
         padding: 20px 48px;
+    }
+
+    &.none-padding {
+        .el-dialog__body {
+            padding: 0;
+        }
+
     }
 }
 
@@ -258,6 +267,26 @@
         // height: auto !important;
         // padding: 15px;
         // box-sizing: border-box;
+    }
+}
+
+.el-skeleton__item {
+    border-radius: 4px;
+
+    &.el-skeleton__circle {
+        border-radius: 50%;
+    }
+}
+
+.el-loading-mask {
+    .el-loading-spinner {
+        top: 0;
+        height: 100%;
+        width: 100%;
+        left: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 }
 
