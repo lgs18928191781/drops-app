@@ -22,7 +22,7 @@
       </div>
 
       <div class="text">
-        <textarea v-model="content" />
+        <textarea v-model="content" autofocus />
       </div>
 
       <div class="attachment-warp" v-if="attachments.length > 0">
@@ -32,16 +32,30 @@
 
       <div class="footer flex flex-align-center">
         <div class="operate flex flex-align-center flex1">
-          <a v-for="(item, index) in publishOperates" :key="index" @click="item.fun()">
-            <Icon :name="item.icon" />
-            <input
-              v-if="item.icon === 'buzz_img'"
-              type="file"
-              accept="images/*"
-              multiple
-              @change="onChooseImage"
-            />
-          </a>
+          <template v-for="(item, index) in publishOperates" :key="index">
+            <template v-if="item.icon === 'buzzn_emoji'">
+              <ElPopover placement="bottom-start" width="300px" trigger="click">
+                <StickerVue @input="params => (content = content + params.value)" />
+                <template #reference>
+                  <a @click="item.fun()">
+                    <Icon :name="item.icon" />
+                  </a>
+                </template>
+              </ElPopover>
+            </template>
+            <template v-else>
+              <a @click="item.fun()">
+                <Icon :name="item.icon" />
+                <input
+                  v-if="item.icon === 'buzz_img'"
+                  type="file"
+                  accept="images/*"
+                  multiple
+                  @change="onChooseImage"
+                />
+              </a>
+            </template>
+          </template>
         </div>
         <a
           class="main-border primary submit-btn"
@@ -63,6 +77,7 @@ import { FileToAttachmentItem, getAttachmentsMark } from '@/utils/util'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AttachmentVue from './Attachment.vue'
+import StickerVue from '@/components/Sticker/Sticker.vue'
 
 const attachments: AttachmentItem[] = reactive([])
 

@@ -1,5 +1,9 @@
 <template>
-  <div class="publish flex " v-if="userStore.isAuthorized">
+  <div
+    class="publish flex "
+    v-if="userStore.isAuthorized"
+    @click="layoutStore.$patch({ isShowPublishBuzz: true })"
+  >
     <UserAvatar :meta-id="userStore.user!.metaId" />
     <div class="cont flex1">
       <div class="input">
@@ -19,6 +23,7 @@
 <script setup lang="ts">
 import { GetBuzzs } from '@/api/aggregation'
 import { initPagination } from '@/config'
+import { useLayoutStore } from '@/stores/layout'
 import { useUserStore } from '@/stores/user'
 import { reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
@@ -29,6 +34,7 @@ import BuzzListVue from './BuzzList.vue'
 
 const pagination = reactive({ ...initPagination, timestamp: 0 })
 const userStore = useUserStore()
+const layoutStore = useLayoutStore()
 const route = useRoute()
 
 const list: BuzzItem[] = reactive([])
