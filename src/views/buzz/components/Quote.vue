@@ -1,12 +1,12 @@
 <template>
   <div
     class="forward buzz-item"
-    @click.stop="$router.push({ name: '', params: { txId: buzz.txId } })"
+    @click.stop="$router.push({ name: 'buzzDetail', params: { txId: buzz.txId } })"
   >
     <div class="header">
       <div class="user-info" @click.stop="$filters.toUserHome(buzz.metaId)">
         <div class="head">
-          <UserAvatar :meta-id="buzz.metaId" :type="buzz.avatarType" />
+          <UserAvatar :meta-id="buzz.metaId" />
         </div>
         <div class="info">
           <div class="name">{{ buzz.userName }}</div>
@@ -22,7 +22,10 @@
         class="text"
         v-html="buzz.content.length > 80 ? buzz.content.slice(0, 80) + '...' : buzz.content"
       ></pre>
-      <Attachment :attachments="buzz.attachments" />
+      <Attachment
+        :attachments="buzz.attachments"
+        v-if="buzz.attachments && buzz.attachments.length > 0"
+      />
     </div>
   </div>
 </template>

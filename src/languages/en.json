@@ -96,11 +96,21 @@
       "addAttachment": "Add Image",
       "addImage": "Add Image",
       "post": "Post",
-      "success": "Post Success!"
+      "success": "Post Success!",
+      "respost": "Repost"
     },
     "comment": {
       "publishPlaceholder": "Your reply～",
       "success": "Replay Success!"
+    },
+    "repost": {
+      "lookTx": "TX"
+    },
+    "topic": {
+      "topics": "Topics",
+      "inputTitle": "What topic you want to use",
+      "hotTopics": "Hot Topics",
+      "inputPlaceholder": "Enter topic"
     }
   },
   "Follow": "Follow",
@@ -108,5 +118,8 @@
     "loading": "Loading",
     "nothing": "Nothing ~"
   },
-  "noDatas": "No Datas"
+  "noDatas": "No Datas",
+  "copysuccess": "Copy successfully",
+  "copyerror": "Copy successfully",
+  "Confirm": "Confirm"
 }

@@ -2,7 +2,7 @@
   <div class="control flex flex-align-center">
     <div class="flex1">
       <a class="more flex flex-align-center flex-pack-center">
-        <Icon name="more" @click="emit('more', buzz.txId)" />
+        <Icon name="more" @click.stop="emit('more', buzz.txId)" />
       </a>
     </div>
 
@@ -54,7 +54,6 @@ import { ElMessage } from 'element-plus'
 import { router } from '@/router'
 // import MePayConfirmModalVue from '@/components/MePayConfirmModal/MePayConfirmModal.vue'
 import { getOneBuzz } from '@/api/buzz'
-import { BuzzItem } from '@/@types/common'
 import { useUserStore } from '@/stores/user'
 import ShareIcon from '@/assets/svg/share.svg'
 import CommentIcon from '@/assets/svg/comment.svg'
@@ -68,7 +67,7 @@ const props = withDefaults(defineProps<Props>(), {})
 const userStore = useUserStore()
 
 const route = useRoute()
-const emit = defineEmits(['update', 'repost', 'buzz', 'more'])
+const emit = defineEmits(['update', 'repost', 'buzz', 'more', 'like'])
 
 const operates = [
   {
@@ -92,7 +91,12 @@ const operates = [
       return false
     },
     fun: () => {
-      emit('repost', props.buzz.txId)
+      router.push({
+        name: 'buzzDetail',
+        params: {
+          txId: props.buzz.txId,
+        },
+      })
     },
   },
   {
@@ -104,7 +108,8 @@ const operates = [
       return isILike.value
     },
     fun: () => {
-      emit('repost', props.buzz.txId)
+      if (isILike.value) return
+      emit('like', props.buzz.txId)
     },
   },
 ]

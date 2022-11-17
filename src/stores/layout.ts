@@ -5,6 +5,13 @@ export const useLayoutStore = defineStore('layout', {
     return {
       showLeftNav: false,
       isShowPublishBuzz: false,
+      repostTxId: '',
     }
+  },
+  actions: {
+    publish(params?: { repostTxId?: string }) {
+      this.repostTxId = params?.repostTxId || ''
+      this.isShowPublishBuzz = true
+    },
   },
 })

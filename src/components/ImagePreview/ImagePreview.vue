@@ -1,6 +1,8 @@
 <template>
-  <div class="image-preview" v-if="modelValue">
-    <Icon name="x_mark" class="close-btn" @click="close" />
+  <div class="image-preview" v-if="modelValue" @click.stop="() => {}">
+    <a class="close-btn flex flex-align-center flex-pack-center" @click="close"
+      ><Icon name="x_mark"
+    /></a>
     <div id="images" style="display: none;">
       <img :src="$filters.metafile(item, -1)" v-for="item in images" />
     </div>

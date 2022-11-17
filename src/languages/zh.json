@@ -191,17 +191,25 @@
       "addImage": "添加图片",
       "post": "发布",
       "empty": "内容或附件不能为空",
-      "success": "发布成功"
+      "success": "发布成功",
+      "respost": "转发"
     },
     "repost": {
       "quick": "快速转发",
       "comment": "带评论转发",
       "share": "分享",
-      "lookTx": "查看Tx"
+      "lookTx": "查看TX",
+      "success": "转发成功"
     },
     "comment": {
       "publishPlaceholder": "发表评论",
       "success": "评论成功"
+    },
+    "topic": {
+      "topics": "话题",
+      "inputTitle": "你想使用什么话题",
+      "hotTopics": "热门话题",
+      "inputPlaceholder": "请输入话题"
     }
   },
   "Follow": "关注",
@@ -209,5 +217,8 @@
     "loading": "正在加载中",
     "nothing": "没有更多了"
   },
-  "noDatas": "暂无数据"
+  "noDatas": "暂无数据",
+  "copysuccess": "复制成功",
+  "copyerror": "复制成功",
+  "Confirm": "确认"
 }

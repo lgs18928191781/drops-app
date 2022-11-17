@@ -18,7 +18,7 @@
           <!-- remove -->
           <a
             class="remove flex flex-align-center flex-pack-center"
-            @click="emit('remove', index)"
+            @click.stop="emit('remove', index)"
             v-if="isEdit"
           >
             <Icon name="x_mark" />
@@ -216,6 +216,7 @@ function preview(index: number) {
     border-radius: 8px;
     overflow: hidden;
     position: relative;
+    cursor: pointer;
 
     &.image {
       width: calc((100% - 24px) / 3);
@@ -224,6 +225,7 @@ function preview(index: number) {
       height: 0;
       padding-bottom: calc((100% - 24px) / 3);
       margin-right: 12px;
+      margin-bottom: 12px;
       position: relative;
 
       &:nth-child(3n) {
@@ -241,17 +243,16 @@ function preview(index: number) {
     &.single-image {
       display: inline-block;
       width: auto;
-      max-width: 100%;
-      max-height: 300px;
       margin-right: 0;
       height: auto;
       padding-bottom: 0;
+      margin-bottom: 0;
 
       :deep(.image) {
         position: static;
         border-radius: 8px;
-        height: auto;
-        object-fit: none;
+        max-width: 100%;
+        max-height: 300px;
         .el-skeleton {
           width: 300px;
           height: 150px;
@@ -275,10 +276,14 @@ function preview(index: number) {
       margin-right: 6px;
       cursor: pointer;
 
-      .icon {
+      &:hover {
+        background: rgb(48, 49, 51, 1);
+      }
+
+      :deep(.icon) {
         width: 16px;
         height: 16px;
-        :deep(use) {
+        use {
           fill: #fff;
         }
       }

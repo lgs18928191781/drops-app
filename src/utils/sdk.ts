@@ -83,6 +83,16 @@ export const AllNodeName: {
     path: '/Protocols/PayComment',
     version: '1.0.0',
   },
+  [NodeName.SimpleRePost]: {
+    brfcId: '157cd804478e',
+    path: '/Protocols/SimpleRePost',
+    version: '1.0.0',
+  },
+  [NodeName.PayLike]: {
+    brfcId: '2ae43eeb26d9',
+    path: '/Protocols/PayLike',
+    version: '1.0.0',
+  },
 }
 
 export class SDK {

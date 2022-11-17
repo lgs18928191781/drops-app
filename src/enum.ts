@@ -259,13 +259,15 @@ export enum SignUserType {
 }
 
 export enum NodeName {
-  SimpleMicroblog = 'SimpleMicroblog',
-  MetaFile = 'MetaFile',
   ETHBinding = 'ETHBinding',
+  SimpleMicroblog = 'SimpleMicroblog',
+  SimpleRePost = 'SimpleRePost',
   SimpleGroupChat = 'SimpleGroupChat',
   SimpleFileGroupChat = 'SimpleFileGroupChat',
+  MetaFile = 'MetaFile',
   NFTAvatar = 'NFTAvatar',
   PayComment = 'PayComment',
+  PayLike = 'PayLike',
 }
 
 export const enum BindStatus {

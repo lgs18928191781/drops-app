@@ -183,6 +183,6 @@ export const GetBuzzs = (params: {
     }
   }
 }> => {
-  const { metaId, ..._params } = params
-  return aggregation.get(`/v2/app/buzz/getBuzzHomeList/${metaId}`, { params: _params })
+  const { tag, ..._params } = params
+  return aggregation.get(`/v2/app/show/posts/line/${tag}`, { params: _params })
 }

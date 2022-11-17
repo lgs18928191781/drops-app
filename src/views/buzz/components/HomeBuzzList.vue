@@ -17,7 +17,12 @@
     </div>
   </div>
 
-  <BuzzListVue :list="list" :loading="isSkeleton" @get-more="getMore" :pagination="pagination" />
+  <BuzzListVue
+    v-model:list="list"
+    :loading="isSkeleton"
+    @get-more="getMore"
+    :pagination="pagination"
+  />
 </template>
 
 <script setup lang="ts">
@@ -28,6 +33,8 @@ import { useUserStore } from '@/stores/user'
 import { reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import BuzzListVue from './BuzzList.vue'
+import { Mitt, MittEvent } from '@/utils/mitt'
+import { getOneBuzz } from '@/api/buzz'
 
 // interface Props {}
 // const props = withDefaults(defineProps<Props>(), {})
@@ -57,6 +64,15 @@ function getDatas(isCover = false) {
     resolve()
   })
 }
+
+Mitt.on(MittEvent.AddBuzz, async (params: { txId: string }) => {
+  const res = await getOneBuzz({
+    txId: params.txId,
+  })
+  if (res && res.code === 0) {
+    list.unshift(res.data.results.items[0])
+  }
+})
 
 watch(
   () => route.path,
