@@ -34,11 +34,16 @@ import TheErrorBox from './components/TheErrorBox.vue'
 import ChannelList from './components/ChannelList.vue'
 import ChannelMemberList from './components/ChannelMemberList.vue'
 import { computed, defineAsyncComponent, onMounted, reactive, Ref, ref } from 'vue'
-import { getChannelMembers } from '@/api/talk'
+import { getChannelMembers, getCommunities } from '@/api/talk'
+import { useUserStore } from '@/stores/user'
+import { useTalkStore } from '@/stores/talk'
 
 const MessageList = defineAsyncComponent({
   loader: () => import('./components/MessageList.vue'),
 })
+
+const userStore = useUserStore()
+const talkStore = useTalkStore()
 
 type Member = {
   protocol: string
@@ -99,12 +104,25 @@ const handleToggleMemberList = () => {
   localStorage.setItem('layout-show-right-drawer', showMembers.value ? '1' : '0')
 }
 
+const fetchCommunities = async (selfMetaId: string) => {
+  const {
+    data: {
+      results: { items },
+    },
+  } = await getCommunities({ metaId: selfMetaId })
+  talkStore.$patch({ communities: items })
+}
+
 onMounted(async () => {
+  const selfMetaId = userStore.user!.metaId
   // 拉取布局状态
   const layoutState = localStorage.getItem('layout-show-right-drawer')
   if (layoutState === '1') {
     showMembers.value = true
   }
+
+  await fetchCommunities(selfMetaId)
+  // await fetchChannels()
 
   members.value = await getChannelMembers('1')
   channel.value = {

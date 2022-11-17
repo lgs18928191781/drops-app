@@ -14,7 +14,6 @@ import { computed, ref, watch } from 'vue'
 import 'lazysizes'
 import { DB } from '@/utils/db'
 import { metafile } from '@/utils/filters'
-import { type } from 'os'
 
 const Default = {
   metafile:

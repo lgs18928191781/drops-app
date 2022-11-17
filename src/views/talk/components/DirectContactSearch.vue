@@ -12,9 +12,9 @@
         />
       </div>
 
-      <!-- <div class="">
+      <div class="">
         <Icon name="user_bars" class="w-6 h-6 p-0.5 cursor-pointer" />
-      </div> -->
+      </div>
     </div>
   </div>
 </template>

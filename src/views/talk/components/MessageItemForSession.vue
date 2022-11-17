@@ -1,28 +1,21 @@
 <template lang="">
   <div class="flex">
     <UserAvatar
-      :metaId="props.message.metaId || 'undefined'"
+      :metaId="props.message.from || 'undefined'"
       class="w-13.5 h-13.5 shrink-0 select-none"
       :disabled="true"
     />
     <div class="ml-4 grow pr-12">
       <div class="flex items-baseline space-x-2">
-        <div class="font-medium text-sm" :class="randomNameColor">
-          {{ message.nickName }}
+        <div class="font-medium text-sm text-dark-800">
+          {{ senderName }}
         </div>
         <div class="text-dark-300 text-xs">
           {{ formatTimestamp(message.timestamp, i18n) }}
         </div>
       </div>
 
-      <div class="w-full py-0.5 text-dark-400 text-xs capitalize" v-if="isGroupJoinAction">
-        {{ $t('Talk.Channel.join_channel') }}
-      </div>
-      <div class="w-full py-0.5 text-dark-400 text-xs capitalize" v-else-if="isGroupLeaveAction">
-        {{ $t('Talk.Channel.leave_channel') }}
-      </div>
-
-      <div class="w-full" v-else-if="isNftEmoji">
+      <div class="w-full" v-if="isNftEmoji">
         <Image
           :src="decryptedMessage"
           customClass="max-w-[80%] md:max-w-[50%] lg:max-w-[320px] py-0.5 object-scale-down"
@@ -80,37 +73,32 @@
 </template>
 
 <script setup lang="ts">
-import { decrypt } from '@/utils/crypto'
+import { ecdhDecrypt } from '@/utils/crypto'
 import NftLabel from './NftLabel.vue'
 import redEnvelopeImg from '@/assets/images/red-envelope.svg?url'
 import ImagePreview from './ImagePreview.vue'
-import { computed, ref } from 'vue'
+import { computed, ref, toRaw } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { formatTimestamp } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
+import { useTalkStore } from '@/stores/talk'
+import { PrivateKey } from 'sensible-sdk/dist/bsv'
 
 const i18n = useI18n()
 
-const channelId = '88a92826842757cade6e84378df9db88526578c3bce7b8cb6348b7f1f9598d0a'
+const channelId = '034d4effee511b5e6f21e8fb1c1b9188ed2fd1cd3dbcc726c122e916597117ba29'
 const showImagePreview = ref(false)
-const userStore = useUserStore()
-
 const props = defineProps(['message'])
+const userStore = useUserStore()
+const talkStore = useTalkStore()
+const activeChannel = computed(() => talkStore.activeChannel)
 
-const randomNameColor = computed(() => {
-  const colors = [
-    'text-blue-500',
-    'text-green-500',
-    'text-yellow-500',
-    'text-red-500',
-    'text-indigo-500',
-    'text-amber-500',
-  ]
-  // 将用户名转换为数字
-  const name = props.message.nickName
-  const nameCode = name.split('').reduce((acc: number, cur: any) => acc + cur.charCodeAt(0), 0)
+const senderName = computed(() => {
+  if (props.message.from === userStore.user?.metaId) {
+    return userStore.user?.name
+  }
 
-  return colors[nameCode % colors.length]
+  return activeChannel.value?.name
 })
 
 const previewImage = () => {
@@ -118,24 +106,29 @@ const previewImage = () => {
 }
 
 const decryptedMessage = computed(() => {
-  if (props.message.encryption === '0') {
-    return props.message.content
+  if (props.message.data.encrypt !== '1') {
+    return props.message.data.content
   }
 
-  if (
-    props.message.protocol !== 'simpleGroupChat' &&
-    props.message.protocol !== 'SimpleFileGroupChat'
-  ) {
-    return props.message.content
-  }
+  // if (
+  //   props.message.protocol !== 'simpleGroupChat' &&
+  //   props.message.protocol !== 'SimpleFileGroupChat'
+  // ) {
+  //   return props.message.data.content
+  // }
 
   // 处理mock的图片消息
   if (props.message.isMock && props.message.protocol === 'SimpleFileGroupChat') {
-    console.log(props.message.content)
-    return props.message.content
+    return props.message.data.content
   }
 
-  return decrypt(props.message.content, channelId.substring(0, 16))
+  if (!talkStore.activeChannel) return ''
+
+  const privateKey = toRaw(userStore?.wallet)!.getPathPrivateKey('0/0')
+  const privateKeyStr = privateKey.toHex()
+  const otherPublicKeyStr = talkStore.activeChannel.publicKeyStr
+
+  return ecdhDecrypt(props.message.data.content, privateKeyStr, otherPublicKeyStr)
 })
 
 const parseTextMessage = (text: string) => {
@@ -183,7 +176,7 @@ const redEnvelopeMessage = computed(() => {
 })
 
 const isMyMessage = computed(() => {
-  return userStore.user?.metaId && userStore.user.metaId === props.message.metaId
+  return userStore.user?.metaId && userStore.user.metaId === props.message.from
 })
 
 const isGroupJoinAction = computed(() => props.message.protocol === 'SimpleGroupJoin')

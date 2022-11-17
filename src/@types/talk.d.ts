@@ -1,7 +1,10 @@
 declare interface Message {
-  protocol: string
-  contentType: string
-  content: string
+  protocol?: string
+  nodeName?: string
+  data?: any
+  dataType?: string
+  contentType?: string
+  content?: string
   avatarType: string
   avatarTxId: string
   metaId?: string
@@ -10,6 +13,7 @@ declare interface Message {
   txId: string
   isMock?: boolean
   encryption?: string
+  to?: string
 }
 
 declare interface TalkError {
@@ -17,4 +21,13 @@ declare interface TalkError {
   type?: string
   code?: number
   timestamp?: number
+}
+
+declare interface Contact {
+  metaId: string
+  name: string
+  avatarType?: string
+  avatarTxId?: string
+  lastMessage: string
+  lastMessageTimestamp: number
 }

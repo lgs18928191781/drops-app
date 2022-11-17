@@ -15,8 +15,8 @@
           <!-- 联系人列表 -->
           <div class="overflow-y-auto">
             <DirectContactItem
-              v-for="session in directContacts"
-              :key="session.id"
+              v-for="session in talkStore.sessions"
+              :key="session.timestamp"
               :session="session"
             />
           </div>
@@ -30,10 +30,10 @@
 import { useLayoutStore } from '@/stores/layout'
 import DirectContactSearch from './DirectContactSearch.vue'
 import DirectContactItem from './DirectContactItem.vue'
+import { useTalkStore } from '@/stores/talk'
 
 const layoutStore = useLayoutStore()
-
-const props = defineProps(['directContacts'])
+const talkStore = useTalkStore()
 </script>
 
 <style lang="scss" scoped></style>

@@ -3,11 +3,7 @@
     <div class="h-full w-full flex items-center justify-between px-3">
       <div class="flex items-center space-x-3">
         <!-- 头像 -->
-        <UserAvatar
-          :type="user.avatarType"
-          :metaId="user.avatarTxId || 'undefined'"
-          class="w-12 h-12 shrink-0"
-        />
+        <UserAvatar :metaId="userStore.user!.metaId" class="w-12 h-12 shrink-0" />
 
         <div class="">
           <!-- 用户名 -->
@@ -36,8 +32,10 @@
 </template>
 
 <script lang="ts" setup>
+import { useUserStore } from '@/stores/user'
 import { ref } from 'vue'
 import SettingsModal from './SettingsModal.vue'
+const userStore = useUserStore()
 
 const showSetting = ref(false)
 const user = ref({
