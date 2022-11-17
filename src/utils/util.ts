@@ -27,6 +27,8 @@ import { GetMyLegalAmount, LegalOffsale } from '@/api/legal'
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { useUserStore } from '@/stores/user'
 import { createMnemonic, encryptMnemonic, hdWalletFromMnemonic } from './wallet/hd-wallet'
+import { toClipboard } from '@soerenmartius/vue3-clipboard'
+import i18n from './i18n'
 
 export function randomString() {
   return Math.random()
@@ -857,4 +859,30 @@ export function getAttachmentsMark(attachments: (AttachmentItem | string)[]) {
     }
   }
   return result
+}
+
+export function copy(
+  value: string | undefined,
+  option?: {
+    successText?: string
+    errorText?: string
+  }
+) {
+  return new Promise<void>((resolve, reject) => {
+    if (value) {
+      toClipboard(value)
+        .then(() => {
+          ElMessage.success(option?.successText || i18n.global.t('copysuccess'))
+          resolve()
+        })
+        .catch(() => {
+          ElMessage.success(option?.errorText || i18n.global.t('copyerror'))
+        })
+    }
+  })
+}
+
+export function tx(txId: string | undefined) {
+  if (!txId) return
+  window.open(`https://mvcscan.com/tx/${txId}`, '_blank')
 }

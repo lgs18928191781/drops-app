@@ -63,7 +63,7 @@
 
       <!--   -->
       <div class="fast-btn">
-        <a class="main-border primary" @click="layoutStore.$patch({ isShowPublishBuzz: true })">
+        <a class="main-border primary" @click="layoutStore.publish()">
           <Icon name="airdrop" />
         </a>
         <a class="main-border">

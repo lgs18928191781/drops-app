@@ -1,13 +1,11 @@
 <template>
-  <div
-    class="pb-1.5 rounded-lg text-xs flex flex-col text-dark-400 font-medium  sticker"
-    @click.stop="doNothing"
-  >
+  <div class="pb-1.5 rounded-lg text-xs flex flex-col text-dark-400 font-medium  sticker">
     <div class="flex shadow-md px-2 text-sm font-medium pb-2 pt-2 space-x-1">
       <div
         class="py-0.5 px-2 rounded cursor-pointer"
         :class="{ 'bg-dark-300 text-white': activeTab === 'nft' }"
         @click="changeTab('nft')"
+        v-if="!isHideNFT"
       >
         {{ $t('Talk.Input.nft_stickers') }}
       </div>
@@ -107,11 +105,29 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import Cat from '@/assets/images/cat.svg?url'
+
+interface Props {
+  isHideNFT?: boolean
+}
+const props = withDefaults(defineProps<Props>(), {
+  isHideNFT: false,
+})
 
 const emit = defineEmits(['input'])
 const key = 'defaultStickerTab'
+
+watch(
+  () => props.isHideNFT,
+  () => {
+    if (props.isHideNFT) {
+      activeTab.value = 'emoji'
+    } else {
+      activeTab.value = localStorage.getItem(key) || 'nft'
+    }
+  }
+)
 
 const activeTab = ref(localStorage.getItem(key) || 'nft')
 const addEmoji = (emoji: string) => {

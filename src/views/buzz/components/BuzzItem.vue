@@ -9,7 +9,7 @@
           <!-- 快速转发 -->
           <template v-if="itemData.displayType === 'quickRePost'">
             <div class="forward-head" @click.stop="$filters.toUserHome(itemData.metaId)">
-              <i></i>
+              <ShareIcon />
               <UserAvatar class="head" :meta-id="itemData.metaId" />
               <div class="name">{{ itemData.userName }}转发了</div>
             </div>
@@ -23,7 +23,9 @@
                 <div class="name">{{ displayItemData.userName }}</div>
                 <div class="desc">
                   <span>MetaID: {{ sliceStr(displayItemData.metaId) }}</span>
-                  <span class="time">{{ $filters.dateTimeFormat(displayItemData.timestamp) }}</span>
+                  <span class="time">{{
+                    $filters.dateTimeFormat(displayItemData.timestamp, 'YY-MM-DD HH:mm:ss')
+                  }}</span>
                 </div>
               </div>
             </div>
@@ -43,7 +45,7 @@
                   .replace(
                     /#.*?[\s\n\r#]{1}|#.*?$/g,
                     val =>
-                      `<a href='/app/buzz/topic/${val
+                      `<a href='/buzz/topic/${val
                         .replace('#', '')
                         .replace(/(^\s*)|(\s*$)/g, '')}' style='color:#fc6d5e' >${val}</a>&nbsp;`
                   )
@@ -51,18 +53,17 @@
             ></div>
 
             <!-- Attachment -->
-            <Attachment
+            <div
               class="content-item"
-              :attachments="displayItemData.attachments"
               v-if="displayItemData.attachments && displayItemData.attachments.length > 0"
-            />
+            >
+              <Attachment :attachments="displayItemData.attachments" />
+            </div>
 
             <!-- 引用buzz -->
-            <QuoteVue
-              class="content-item"
-              :buzz="itemData.quoteItem"
-              v-if="itemData.displayType === 'rePost'"
-            />
+            <div class="content-item" v-if="itemData.quoteItem">
+              <QuoteVue :buzz="itemData.quoteItem" />
+            </div>
 
             <!-- 标签 -->
             <div class="tags flex flex-align-center">
@@ -77,6 +78,7 @@
               @repost="params => emit('repost', params)"
               @update="params => emit('update', params)"
               @more="params => emit('more', params)"
+              @like="params => emit('like', params)"
               v-if="!isHideControl"
             />
 
@@ -112,6 +114,7 @@ import { checkSdkStatus } from '@/utils/util'
 import QuoteVue from './Quote.vue'
 import BuzzItemControlVue from './BuzzItemControl.vue'
 import BuzzItemSkeletonVue from './BuzzItemSkeleton.vue'
+import ShareIcon from '@/assets/svg/share.svg'
 
 interface Props {
   data?: BuzzItem
@@ -121,7 +124,7 @@ interface Props {
 }
 const router = useRouter()
 const route = useRoute()
-const emit = defineEmits(['update', 'repost', 'more'])
+const emit = defineEmits(['update', 'repost', 'more', 'like'])
 const props = withDefaults(defineProps<Props>(), {
   isInDetailPage: false,
 })
