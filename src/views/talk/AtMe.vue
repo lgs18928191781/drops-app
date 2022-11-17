@@ -122,7 +122,7 @@ onMounted(async () => {
     }
 
     layoutStore.$patch({
-      showLeftNav: false,
+      isShowLeftNav: false,
     })
 
     router.push(`/talk/channels/@me/${activeChannelId}`)

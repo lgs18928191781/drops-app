@@ -266,6 +266,7 @@ export enum NodeName {
   SimpleFileGroupChat = 'SimpleFileGroupChat',
   NFTAvatar = 'NFTAvatar',
   ShowMsg = 'ShowMsg',
+  PayComment = 'PayComment',
 }
 
 export const enum BindStatus {

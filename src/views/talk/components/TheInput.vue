@@ -117,14 +117,6 @@
         </div>
       </Teleport>
 
-      <Teleport to="body" v-if="showStickersBox">
-        <TheInputStickersBox
-          :show-stickers-box="showStickersBox"
-          @hideStickersBox="showStickersBox = false"
-          @inputEmoji="handleInputEmoji"
-        />
-      </Teleport>
-
       <!-- 右侧发送按钮 -->
       <div class="flex h-full py-2 items-center shrink-0">
         <div class="flex items-center px-1 lg:mr-2">
@@ -135,16 +127,18 @@
             <Icon name="red_envelope" class="w-full h-full text-dark-800" />
           </div>
 
-          <div
-            class="p-1 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer"
-            @click="showStickersBox = true"
-          >
-            <Icon
-              name="face_smile"
-              class="w-full h-full text-dark-800 transition-all ease-in-out duration-300"
-              :class="{ 'text-primary -rotate-6 scale-110': showStickersBox }"
-            />
-          </div>
+          <ElPopover placement="bottom-start" width="300px" trigger="click">
+            <StickerVue @input="params => (chatInput = chatInput + params.value)" />
+            <template #reference>
+              <div class="p-1 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer">
+                <Icon
+                  name="face_smile"
+                  class="w-full h-full text-dark-800 transition-all ease-in-out duration-300"
+                  :class="{ 'text-primary -rotate-6 scale-110': showStickersBox }"
+                />
+              </div>
+            </template>
+          </ElPopover>
         </div>
 
         <div class="py-0.5 h-full lg:hidden">
@@ -175,6 +169,7 @@ import TheInputStickersBox from './TheInputStickersBox.vue'
 import { FileToAttachmentItem } from '@/utils/util'
 import { encrypt, ecdhEncrypt } from '@/utils/crypto'
 import { useTalkStore } from '@/stores/talk'
+import StickerVue from '@/components/Sticker/Sticker.vue'
 
 const doNothing = () => {}
 
@@ -277,10 +272,6 @@ const trySendImage = async () => {
 /** 发送消息 */
 const chatInput = ref('')
 const userStore = useUserStore()
-
-const handleInputEmoji = (emoji: string) => {
-  chatInput.value += emoji
-}
 
 const trySendMessage = async () => {
   if (!validateMessage(chatInput.value)) return

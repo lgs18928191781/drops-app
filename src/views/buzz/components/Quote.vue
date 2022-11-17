@@ -1,7 +1,7 @@
 <template>
   <div
     class="forward buzz-item"
-    @click.stop="$router.push({ name: 'appBuzzDetail', params: { txId: buzz.txId } })"
+    @click.stop="$router.push({ name: '', params: { txId: buzz.txId } })"
   >
     <div class="header">
       <div class="user-info" @click.stop="$filters.toUserHome(buzz.metaId)">

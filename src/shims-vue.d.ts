@@ -1,3 +1,4 @@
+/// <reference types="vite-svg-loader" />
 declare module '*.vue' {
   import { Component } from 'vue'
   const _default: Component
@@ -5,4 +6,3 @@ declare module '*.vue' {
 }
 
 declare const _APP_VERSION: string
-

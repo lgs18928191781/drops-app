@@ -78,6 +78,11 @@ export const AllNodeName: {
     path: '/Protocols/NFTAvatar',
     version: '1.0.0',
   },
+  [NodeName.PayComment]: {
+    brfcId: '9396c994040a',
+    path: '/Protocols/PayComment',
+    version: '1.0.0',
+  },
 }
 
 export class SDK {
@@ -473,7 +478,7 @@ export class SDK {
                     nodeName: item.fileName,
                     metaIdTag: MetaIdTag[this.network],
                     encrypt: item.encrypt,
-                    data: item.hex,
+                    data: item.data,
                     dataType: item.fileType,
                     encoding: 'binary',
                     parentTxId: metafileBrfc!.txId,

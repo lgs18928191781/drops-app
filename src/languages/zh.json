@@ -187,8 +187,27 @@
     "Timeline": "时间轴",
     "Recommend": "推荐",
     "publish": {
-      "placeholder": "分享您的buzz ~"
+      "placeholder": "分享您的buzz ~",
+      "addImage": "添加图片",
+      "post": "发布",
+      "empty": "内容或附件不能为空",
+      "success": "发布成功"
+    },
+    "repost": {
+      "quick": "快速转发",
+      "comment": "带评论转发",
+      "share": "分享",
+      "lookTx": "查看Tx"
+    },
+    "comment": {
+      "publishPlaceholder": "发表评论",
+      "success": "评论成功"
     }
   },
-  "Follow": "关注"
+  "Follow": "关注",
+  "Pagination": {
+    "loading": "正在加载中",
+    "nothing": "没有更多了"
+  },
+  "noDatas": "暂无数据"
 }

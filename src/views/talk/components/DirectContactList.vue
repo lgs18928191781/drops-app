@@ -1,7 +1,7 @@
 <template>
   <div
     class="bg-white fixed inset-0 h-screen w-screen z-40 lg:static lg:shrink-0 lg:w-auto"
-    :class="[layoutStore.showLeftNav ? '' : 'hidden lg:block']"
+    :class="[layoutStore.isShowLeftNav ? '' : 'hidden lg:block']"
   >
     <div class="w-full h-full flex">
       <!-- 占位 -->

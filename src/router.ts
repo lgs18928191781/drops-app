@@ -13,12 +13,25 @@ export const router = createRouter({
       path: '/buzz',
       name: 'buzz',
       component: () => import('@/views/buzz/Layout.vue'),
+      // meta: { keepAlive: true },
       redirect: '/buzz/index',
       children: [
         {
           path: 'index',
           name: 'buzzIndex',
           component: () => import('@/views/buzz/Index.vue'),
+          // meta: { keepAlive: true },
+        },
+        {
+          path: 'recommend',
+          name: 'buzzRecommend',
+          component: () => import('@/views/buzz/Index.vue'),
+          // meta: { keepAlive: true },
+        },
+        {
+          path: 'tx/:txId',
+          name: 'buzzDetail',
+          component: () => import('@/views/buzz/Detail.vue'),
         },
       ],
     },

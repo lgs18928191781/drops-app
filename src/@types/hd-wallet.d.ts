@@ -8,4 +8,6 @@ export interface AttachmentItem {
   fileType: string
   data: string
   encrypt: IsEncrypt
+  sha256: string
+  url: string
 }

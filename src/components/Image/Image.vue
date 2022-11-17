@@ -1,12 +1,14 @@
 <template>
-  <ElSkeleton :loading="isSkeleton" animated>
-    <template #template>
-      <ElSkeletonItem variant="image" />
-    </template>
-    <template #default>
-      <img ref="imgRef" :data-src="url" :class="imageClass" @error="fail" loading="lazy" />
-    </template>
-  </ElSkeleton>
+  <div class="image">
+    <ElSkeleton :loading="isSkeleton" animated>
+      <template #template>
+        <ElSkeletonItem variant="image" />
+      </template>
+      <template #default>
+        <img ref="imgRef" :data-src="url" :class="imageClass" @error="fail" loading="lazy" />
+      </template>
+    </ElSkeleton>
+  </div>
 </template>
 
 <script setup lang="ts">

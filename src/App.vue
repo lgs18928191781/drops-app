@@ -1,8 +1,21 @@
 <template>
   <div class="main flex">
     <LeftNavigationVue />
-    <div class="flex1">
-      <RouterView />
+    <div class="flex1 main-right">
+      <RouterView v-slot="{ Component, route }">
+        <KeepAlive>
+          <component
+            :is="Component"
+            :key="route.fullPath"
+            v-if="route.meta && route.meta.keepAlive"
+          />
+        </KeepAlive>
+        <component
+          :is="Component"
+          :key="route.fullPath"
+          v-if="!route.meta || (route.meta && !route.meta.keepAlive)"
+        />
+      </RouterView>
     </div>
   </div>
 
@@ -24,6 +37,9 @@ const userStore = useUserStore()
 <style lang="scss" scoped>
 .main {
   height: 100%;
+  .main-right {
+    overflow: auto;
+  }
 }
 
 @font-face {

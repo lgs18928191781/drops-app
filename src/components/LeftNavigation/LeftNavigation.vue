@@ -2,7 +2,7 @@
   <!-- 社区列表 -->
   <div
     class="w-22.5 bg-white space-y-4.5 left-navigation z-50"
-    :class="[layoutStore.showLeftNav ? '' : 'hidden lg:block']"
+    :class="[layoutStore.isShowLeftNav ? '' : 'hidden lg:block']"
   >
     <div class="space-y-4.5">
       <router-link
@@ -38,7 +38,7 @@
 
       <div
         class="border-dashed border-2 border-gray-200 w-13.5 h-13.5 flex items-center justify-center rounded-3xl text-dark-400 cursor-pointer hover:text-primary hover:border-solid  transition-all duration-300"
-        @click="layoutStore.showCreateCommunityModal = true"
+        @click="layoutStore.isShowCreateCommunityModal = true"
       >
         <Icon name="plus" class="w-[24PX] h-[24PX]" />
       </div>

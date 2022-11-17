@@ -74,7 +74,7 @@ const isActive = computed<boolean>(() => {
 
 const switchChannel = () => {
   layoutStore.$patch({
-    showLeftNav: false,
+    isShowLeftNav: false,
   })
 
   if (isActive.value) return

@@ -1,0 +1,42 @@
+.close-btn {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    top: 5%;
+    right: 10%;
+    z-index: 2;
+}
+
+.image-preview {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    background: rgba(0, 0, 0, 0.8);
+
+    :deep(.viewer-toolbar) {
+        user-select: none;
+
+        .viewer-download {
+            position: relative;
+        }
+
+        .viewer-download::before {
+            content: "";
+            display: block;
+            background: url('@/assets/images/activities/bottom_icon_share.svg');
+            left: 50%;
+            top: 50%;
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            margin-top: -8px;
+            margin-left: -8px;
+            background-size: 16px;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+    }
+}
