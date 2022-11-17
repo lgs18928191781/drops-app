@@ -48,3 +48,36 @@ export const useTalkStore = defineStore('talk', {
     },
   },
 })
+
+export const useCommunityFormStore = defineStore('communityForm', {
+  state: () => {
+    return {
+      icon: null as File | null,
+      name: '123',
+      description: '',
+      cover: null as File | null,
+    }
+  },
+
+  getters: {
+    isStep1Finished(state) {
+      return !!state.icon && !!state.name
+    },
+
+    isStep2Finished(state) {
+      return !!state.description || !!state.cover
+    },
+
+    isFinished(state) {
+      return !!state.icon && !!state.name
+    },
+
+    iconPreviewUrl(state) {
+      return state.icon ? URL.createObjectURL(state.icon) : ''
+    },
+
+    coverPreviewUrl(state) {
+      return state.cover ? URL.createObjectURL(state.cover) : ''
+    },
+  },
+})

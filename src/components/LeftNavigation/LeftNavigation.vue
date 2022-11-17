@@ -43,12 +43,18 @@
         <Icon name="plus" class="w-[24PX] h-[24PX]" />
       </div>
     </div>
+
+    <!-- modals -->
+    <Teleport to="body" v-if="layoutStore.isShowCreateCommunityModal">
+      <CreateCommunityModal />
+    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useLayoutStore } from '@/stores/layout'
 import { useTalkStore } from '@/stores/talk'
+import CreateCommunityModal from '@/views/talk/components/communities/CreateCommunityModal.vue'
 const layoutStore = useLayoutStore()
 const talkStore = useTalkStore()
 

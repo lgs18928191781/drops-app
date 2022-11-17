@@ -248,3 +248,15 @@ export const formatTimestamp = (timestamp: number, i18n: any, showMinutesWhenOld
     return day.format('YYYY/MM/DD')
   }
 }
+
+export const isFileTooLarge = (file: File) => {
+  return file.size > 2 * 1024 * 1024 // 2MB
+}
+
+export const isImage = (file: File) => {
+  const type = file.type
+
+  return (
+    type === 'image/jpeg' || type === 'image/png' || type === 'image/gif' || type === 'image/jpg'
+  )
+}

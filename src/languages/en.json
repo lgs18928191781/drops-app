@@ -35,6 +35,7 @@
   "Time": "Time",
   "To Showbuzz": "To Showbuzz",
   "Talk": {
+    "period": ".",
     "Settings": {
       "settings": "settings",
       "language": "language",
@@ -59,6 +60,18 @@
       "use_onchain_image": "Use an Onchain Image",
       "view_original": "Open original",
       "search": "Search"
+    },
+    "Community": {
+      "create": "Create a community",
+      "create_fist_step_tip": "Give your community some personality with a name and an icon. You can always change them later.",
+      "community_name": "community name",
+      "agree_tip": "By creating a community, you agree to Show's",
+      "agree_guidelines": "Community Guidelines",
+      "customize_information": "Customize your community",
+      "choose_nft_cover": "Choose an NFT cover",
+      "introduction": "Community introduction",
+      "introduction_placeholder": "Tell people what your community is about. All they need is love!",
+      "skip": "Skip for now"
     },
     "Input": {
       "nft_stickers": "NFT Stickers",

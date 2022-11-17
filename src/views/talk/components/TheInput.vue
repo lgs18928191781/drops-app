@@ -162,7 +162,14 @@
 
 <script setup lang="ts">
 import { computed, ref, toRaw } from 'vue'
-import { sendMessage, validateMessage, MessageType, ChannelType } from '@/utils/talk'
+import {
+  sendMessage,
+  validateMessage,
+  MessageType,
+  ChannelType,
+  isImage,
+  isFileTooLarge,
+} from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
 import ImagePreview from './ImagePreview.vue'
 import TheInputStickersBox from './TheInputStickersBox.vue'
@@ -206,7 +213,7 @@ const handleImageChange = (e: Event) => {
       return
     }
 
-    if (isTooLarge(file)) {
+    if (isFileTooLarge(file)) {
       talkStore.$patch({
         error: {
           type: 'image_too_large',
@@ -219,19 +226,6 @@ const handleImageChange = (e: Event) => {
 
     imageFile.value = file
   }
-}
-
-const isImage = (file: File) => {
-  const type = file.type
-
-  return (
-    type === 'image/jpeg' || type === 'image/png' || type === 'image/gif' || type === 'image/jpg'
-  )
-}
-
-const isTooLarge = (file: File) => {
-  const size = file.size
-  return size > 2 * 1024 * 1024 // 2MB
 }
 
 const deleteImage = () => {

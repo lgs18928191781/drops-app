@@ -75,6 +75,7 @@
   "Time": "时间",
   "To Showbuzz": "进入Showbuzz",
   "Talk": {
+    "period": "。",
     "Settings": {
       "settings": "设置",
       "language": "语言",
@@ -99,6 +100,13 @@
       "use_onchain_image": "链上图片",
       "view_original": "查看原图",
       "search": "搜索"
+    },
+    "Community": {
+      "create": "创建社群",
+      "create_fist_step_tip": "填写社群名称、上传社群图标。你可以在之后修改这些信息。",
+      "community_name": "社群名",
+      "agree_tip": "By creating a community, you agree to Show's",
+      "agree_guidelines": "Community Guidelines"
     },
     "Input": {
       "nft_stickers": "NFT表情",

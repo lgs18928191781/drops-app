@@ -90,6 +90,16 @@ pre {
     background: #EDEFF2;
   }
 
+  &.faded-switch:not(:active, :hover):placeholder-shown {
+    --border-color: var(--el-border-color);
+
+    // &:hover,
+    // &:active {
+    //   --border-color: var(--normal-border-color) !important;
+    // }
+  }
+
+
   // 只有下阴影的情况
   &.only-bottom {
     --right-offset: 0PX;
