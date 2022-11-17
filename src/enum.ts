@@ -266,6 +266,7 @@ export enum NodeName {
   SimpleFileGroupChat = 'SimpleFileGroupChat',
   MetaFile = 'MetaFile',
   NFTAvatar = 'NFTAvatar',
+  ShowMsg = 'ShowMsg',
   PayComment = 'PayComment',
   PayLike = 'PayLike',
 }

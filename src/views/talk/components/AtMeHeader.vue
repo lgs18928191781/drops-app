@@ -1,36 +1,25 @@
 <template>
   <div
-    class="fixed left-0 right-0 top-0 flex items-center px-4 h-15 border-b-2 border-solid border-gray-100 bg-white z-30 lg:absolute"
+    class="fixed left-0 right-0 top-0 flex items-center px-4 h-12 border-b-2 border-solid border-gray-100 bg-white z-30 lg:h-15 lg:absolute"
   >
     <div class="max-w-[60%] flex items-center">
       <Icon
         name="bars"
         class="w-6 h-6 text-dark-800 mx-2 shrink-0 lg:hidden"
-        @click="layoutStore.showLeftNav = true"
+        @click="layoutStore.isShowLeftNav = true"
       />
 
       <div class="flex shrink-0">
         <div
           class="text-base leading-tight no-wrap grow whitespace-nowrap truncate text-dark-800 pr-2 max-w-[35vw] lg:max-w-[600PX]"
         >
-          {{ channel.name }}
-        </div>
-
-        <div class="border-r border-solid border-dark-300 hidden lg:block"></div>
-        <div
-          class="text-base leading-tight no-wrap grow whitespace-nowrap text-dark-300 px-2 hidden lg:block capitalize"
-        >
-          {{
-            channel.isPublic
-              ? $t('Talk.Channel.public_channel')
-              : $t('Talk.Channel.private_channel')
-          }}
+          {{ activeChannel?.name }}
         </div>
       </div>
     </div>
     <div class="flex items-center justify-between grow">
-      <div class="text-xs text-dark-300 bg-dark-100 px-3 py-1 ml-1 rounded" v-if="channel?.groupId">
-        {{ shortenMetaId(channel.groupId) }}
+      <div class="text-xs text-dark-300 bg-dark-100 px-3 py-1 rounded" v-if="activeChannel?.metaId">
+        {{ shortenMetaId(activeChannel?.metaId) }}
       </div>
       <!-- 占位 -->
       <div v-else class="w-1"></div>
@@ -72,22 +61,21 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
 import ScreenModal from './ScreenModal.vue'
 import { useLayoutStore } from '@/stores/layout'
 import LoginedUserOperate from '@/components/LoginedUserOperate/LoginedUserOperate.vue'
+import { useTalkStore } from '@/stores/talk'
+import { computed } from 'vue'
+import { useUserStore } from '@/stores/user'
 
+const talkStore = useTalkStore()
+const userStore = useUserStore()
 const layoutStore = useLayoutStore()
-
-const props = defineProps(['channel'])
-const showDescModal = ref(false)
+const selfMetaId = userStore.user!.metaId
+const activeChannel = computed(() => talkStore.activeChannel)
 
 const shortenMetaId = (id: string) => {
   return id.substring(0, 6) + '...' + id.substring(id.length - 6)
-}
-
-const createCommunity = () => {
-  console.log('createCommunity')
 }
 
 const doNothing = () => {}

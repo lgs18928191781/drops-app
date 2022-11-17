@@ -1,12 +1,12 @@
 <template>
   <div
-    class="fixed left-0 right-0 top-0 flex items-center px-4 h-15 border-b-2 border-solid border-gray-100 bg-white z-30 lg:absolute"
+    class="fixed left-0 right-0 top-0 flex items-center px-4 h-12 border-b-2 border-solid border-gray-100 bg-white z-30 lg:h-15 lg:absolute"
   >
     <div class="max-w-[60%] flex items-center">
       <Icon
         name="bars"
         class="w-6 h-6 text-dark-800 mx-2 shrink-0 lg:hidden"
-        @click="layoutStore.showLeftNav = true"
+        @click="layoutStore.isShowLeftNav = true"
       />
 
       <div class="flex shrink-0">

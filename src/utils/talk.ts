@@ -12,6 +12,11 @@ export enum MessageType {
   OnChainImage = 'onChainImage',
 }
 
+export enum ChannelType {
+  Group = 'group',
+  Session = 'session',
+}
+
 type MessageDto = {
   type: MessageType
   content: string
@@ -19,16 +24,20 @@ type MessageDto = {
   userName: string
   attachments?: any[]
   originalFileUrl?: any
+  channelType?: ChannelType
 }
-
-const userStore = useUserStore()
-const talkStore = useTalkStore()
 
 export const sendMessage = async (messageDto: MessageDto) => {
   switch (messageDto.type) {
     case MessageType.Text:
+      if (messageDto.channelType === ChannelType.Session) {
+        return _sendTextMessageForSession(messageDto)
+      }
       return _sendTextMessage(messageDto)
     case MessageType.Image:
+      if (messageDto.channelType === ChannelType.Session) {
+        // return _sendImageMessageForSession(messageDto)
+      }
       return _sendImageMessage(messageDto)
   }
 }
@@ -40,6 +49,8 @@ export const validateMessage = (message: string) => {
 }
 
 const _sendTextMessage = async (messageDto: MessageDto) => {
+  const userStore = useUserStore()
+  const talkStore = useTalkStore()
   const { content, channelId: groupID, userName: nickName } = messageDto
 
   // 1. 构建协议数据
@@ -95,7 +106,65 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
   return '1'
 }
 
+const _sendTextMessageForSession = async (messageDto: MessageDto) => {
+  const userStore = useUserStore()
+  const talkStore = useTalkStore()
+  const { content, channelId: to } = messageDto
+
+  // 1. 构建协议数据
+  // 1.1 to: done
+  // 1.2 timestamp
+  const timestamp = parseInt(dayjs().format('X'))
+  // 1.3 content: done
+  // 1.4 contentType
+  const contentType = 'text/plain'
+  // 1.5 encrypt
+  const encrypt = '1'
+  const dataCarrier = {
+    to,
+    timestamp,
+    content,
+    contentType,
+    encrypt,
+  }
+
+  // 2. 构建节点参数
+  const node = {
+    nodeName: NodeName.ShowMsg,
+    encrypt: IsEncrypt.No,
+    dataType: 'application/json',
+    data: JSON.stringify(dataCarrier),
+  }
+
+  // 2.5. mock发送
+  const mockMessage = {
+    nodeName: NodeName.ShowMsg,
+    dataType: 'application/json',
+    data: dataCarrier,
+    avatarType: userStore.user?.avatarType || 'undefined',
+    avatarTxId: userStore.user?.avatarTxId || 'undefined',
+    metaId: userStore.user?.metaId || 'undefined',
+    nickName: userStore.user?.name || '',
+    timestamp: timestamp * 1000, // 服务端返回的是毫秒，所以模拟需要乘以1000
+    txId: '',
+    encryption: encrypt,
+    isMock: true,
+    to,
+  }
+
+  // 查找store中的位置
+  talkStore.addMessage(mockMessage)
+
+  // 3. 发送节点
+  const sdk = userStore.showWallet
+  await sdk.createBrfcChildNode(node)
+
+  return '1'
+}
+
 const _sendImageMessage = async (messageDto: MessageDto) => {
+  const userStore = useUserStore()
+  const talkStore = useTalkStore()
   const { channelId: groupId, userName: nickName, attachments, originalFileUrl } = messageDto
 
   // 1. 构建协议数据
@@ -151,7 +220,7 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
   return
 }
 
-export const formatTimestamp = (timestamp: Date, i18n: any, showMinutesWhenOld = true) => {
+export const formatTimestamp = (timestamp: number, i18n: any, showMinutesWhenOld = true) => {
   const day = dayjs(timestamp)
   // 如果是今天，则显示为“今天 hour:minute”
   if (day.isSame(dayjs(), 'day')) {

@@ -5,22 +5,41 @@
   <div class="h-full overflow-y-auto" ref="messagesScroll" v-show="!loading">
     <div class="overflow-x-hidden pt-4 px-4">
       <div class="flex flex-col-reverse space-y-4 space-y-reverse">
-        <MessageItem
-          v-for="message in talkStore.pastMessages"
-          :message="message"
-          :id="message.timestamp"
-        />
+        <template v-if="talkStore.activeChannelType === 'group'">
+          <MessageItem
+            v-for="message in talkStore.activeChannel?.pastMessages"
+            :message="message"
+            :id="message.timestamp"
+          />
+        </template>
+
+        <template v-else>
+          <MessageItemForSession
+            v-for="message in talkStore.activeChannel?.pastMessages"
+            :message="message"
+            :id="message.timestamp"
+          />
+        </template>
 
         <LoadingItem v-show="loadingMore && !isAtTop" />
         <div class="w-full h-px bg-inherit" id="topAnchor"></div>
       </div>
 
       <div class="flex flex-col space-y-4 mt-4">
-        <MessageItem
-          v-for="message in talkStore.newMessages"
-          :message="message"
-          :id="message.timestamp"
-        />
+        <template v-if="talkStore.activeChannelType === 'group'">
+          <MessageItem
+            v-for="message in talkStore.newMessages"
+            :message="message"
+            :id="message.timestamp"
+          />
+        </template>
+        <template v-else>
+          <MessageItemForSession
+            v-for="message in talkStore.newMessages"
+            :message="message"
+            :id="message.timestamp"
+          />
+        </template>
       </div>
     </div>
   </div>
@@ -29,13 +48,17 @@
 <script setup lang="ts">
 import { getChannelMessages } from '@/api/talk'
 import { useTalkStore } from '@/stores/talk'
+import { ChannelType } from '@/utils/talk'
 import { sleep } from '@/utils/util'
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import LoadingItem from './LoadingItem.vue'
 import LoadingList from './LoadingList.vue'
 import MessageItem from './MessageItem.vue'
+import MessageItemForSession from './MessageItemForSession.vue'
 
 const talkStore = useTalkStore()
+const route = useRoute()
 
 watch(talkStore.newMessages, async () => {
   await scrollToMessagesBottom()
@@ -47,8 +70,6 @@ const isAtTop = ref(false)
 
 const messagesScroll = ref<HTMLElement>()
 let ws: WebSocket | null
-
-const channelId = '88a92826842757cade6e84378df9db88526578c3bce7b8cb6348b7f1f9598d0a'
 
 const handleScroll = async () => {
   const topAnchor = document.getElementById('topAnchor')
@@ -63,7 +84,8 @@ const handleScroll = async () => {
 }
 
 const loadMore = async () => {
-  const earliestMessage = talkStore.pastMessages[talkStore.pastMessages.length - 1]
+  const earliestMessage =
+    talkStore.activeChannel?.pastMessages[talkStore.activeChannel?.pastMessages.length - 1]
   const earliestMessageTimestamp = earliestMessage?.timestamp
   const earliestMessageElement = document.getElementById(earliestMessageTimestamp?.toString() || '')
   const earliestMessagePosition = earliestMessageElement?.getBoundingClientRect().bottom
@@ -76,11 +98,11 @@ const loadMore = async () => {
     }
   }
 
-  let {
-    data: {
-      results: { items },
-    },
-  } = await getChannelMessages(channelId, params)
+  let items = await getChannelMessages(
+    talkStore.activeChannelId,
+    params,
+    talkStore.activeChannelType
+  )
 
   // 如果没有更多消息了，就不再加载
   if (items.length === 0) {
@@ -142,7 +164,7 @@ const subscribeChannel = async () => {
   }, 10000)
 
   const isGroupMessage = (messageWrapper: any) => messageWrapper.M === 'WS_SERVER_NOTIFY_ROOM'
-  const isFromThisGroup = (message: any) => message.groupId === channelId
+  const isFromThisGroup = (message: any) => message.groupId === talkStore.activeChannelId
 
   const onReceiveMessage = (event: MessageEvent) => {
     const messageWrapper = JSON.parse(event.data)
@@ -200,14 +222,49 @@ const subscribeChannel = async () => {
   ws.addEventListener('message', onReceiveMessage)
 }
 
+watch(
+  () => route.params.channelId,
+  async () => {
+    await fetchMessages()
+  }
+)
+watch(
+  () => talkStore.activeChannelId,
+  async () => {
+    await fetchMessages()
+  }
+)
+
+const fetchMessages = async () => {
+  if (!talkStore.activeChannel) {
+    return
+  }
+
+  const messages = await getChannelMessages(
+    route.params.channelId as string,
+    {},
+    talkStore.activeChannelType
+  )
+
+  talkStore.initChannelMessages(messages)
+
+  // talkStore.$patch(state => {
+  //   const activeCommunity = state.communities.find(
+  //     community => community.id === talkStore.activeCommunityId
+  //   )
+  //   const activeChannel = activeCommunity.channels.find(
+  //     (channel: any) => channel.id === talkStore.activeChannelId
+  //   )
+
+  //   activeChannel.newMessages = []
+  //   activeChannel.pastMessages = messages
+  // })
+}
+defineExpose({ fetchMessages })
+
 onMounted(async () => {
   loading.value = true
-  const {
-    data: {
-      results: { items },
-    },
-  } = await getChannelMessages(channelId)
-  talkStore.$patch({ pastMessages: items })
+  // await fetchMessages()
   loading.value = false
 
   messagesScroll.value?.addEventListener('scroll', handleScroll)

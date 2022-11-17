@@ -62,7 +62,11 @@
           <input
             type="text"
             class="bg-inherit h-full w-full focus:outline-none placeholder:text-dark-250 placeholder:text-sm text-dark-800 text-base caret-gray-600"
-            :placeholder="$t('Talk.Channel.message_to', { channel: '#' + currentChannel.name })"
+            :placeholder="
+              $t('Talk.Channel.message_to', {
+                channel: talkStore.activeChannelSymbol + talkStore.activeChannel?.name,
+              })
+            "
             v-model="chatInput"
             @keyup.enter="trySendMessage"
           />
@@ -157,19 +161,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { sendMessage, validateMessage, MessageType } from '@/utils/talk'
+import { computed, ref, toRaw } from 'vue'
+import { sendMessage, validateMessage, MessageType, ChannelType } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
 import ImagePreview from './ImagePreview.vue'
 import TheInputStickersBox from './TheInputStickersBox.vue'
 import { FileToAttachmentItem } from '@/utils/util'
-import { encrypt } from '@/utils/crypto'
+import { encrypt, ecdhEncrypt } from '@/utils/crypto'
 import { useTalkStore } from '@/stores/talk'
 import StickerVue from '@/components/Sticker/Sticker.vue'
 
 const doNothing = () => {}
 
-const props = defineProps(['currentChannel'])
 const showMoreCommandsBox = ref(false)
 const showStickersBox = ref(false)
 
@@ -254,7 +257,7 @@ const trySendImage = async () => {
 
   const messageDto = {
     type: MessageType.Image,
-    channelId: props.currentChannel.id,
+    channelId: talkStore.activeChannel.id,
     userName: userStore.user?.name || 'Riverrun46',
     attachments,
     content: '',
@@ -273,15 +276,26 @@ const userStore = useUserStore()
 const trySendMessage = async () => {
   if (!validateMessage(chatInput.value)) return
 
-  const content = encrypt(chatInput.value, props.currentChannel.id.substring(0, 16))
+  // 私聊会话和频道群聊的加密方式不同
+  let content = ''
+  if (talkStore.activeChannelType === 'group') {
+    content = encrypt(chatInput.value, talkStore.activeChannel.id.substring(0, 16))
+  } else {
+    const privateKey = toRaw(userStore?.wallet)!.getPathPrivateKey('0/0')
+    const privateKeyStr = privateKey.toHex()
+    const otherPublicKeyStr = talkStore.activeChannel.publicKeyStr
+
+    content = ecdhEncrypt(chatInput.value, privateKeyStr, otherPublicKeyStr)
+  }
 
   chatInput.value = ''
 
   const messageDto = {
     content,
     type: MessageType.Text,
-    channelId: props.currentChannel.id,
+    channelId: talkStore.activeChannel.id,
     userName: userStore.user?.name || 'Riverrun46',
+    channelType: talkStore.activeChannelType as ChannelType,
   }
   await sendMessage(messageDto)
 }

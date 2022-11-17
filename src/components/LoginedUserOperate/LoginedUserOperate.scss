@@ -1,21 +1,33 @@
 .user-warp {
     .avatar {
-        margin-right: 18px;
+        margin-right: 15px;
     }
 
     .avatar,
     .more {
-        width: 40PX;
-        height: 40PX;
+        width: 36PX;
+        height: 36PX;
+    }
+
+    @media (min-width: 1024PX) {
+        .avatar {
+            margin-right: 18px;
+        }
+
+        .avatar,
+        .more {
+            width: 40PX;
+            height: 40PX;
+        }
     }
 
     .more {
         border-radius: calc(100% / 2.5);
-        border: 1px solid #EDEFF2;
+        border: 1.5PX solid #EDEFF2;
 
         &:hover,
         &.active {
-            border-color: var(--main-font-color);
+            border-color: #BFC2CC;
         }
 
         .icon {

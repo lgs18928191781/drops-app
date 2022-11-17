@@ -3,9 +3,10 @@ import { defineStore } from 'pinia'
 export const useLayoutStore = defineStore('layout', {
   state: () => {
     return {
-      showLeftNav: false,
+      isShowLeftNav: false,
       isShowPublishBuzz: false,
       repostTxId: '',
+      isShowCreateCommunityModal: false,
     }
   },
   actions: {

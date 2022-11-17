@@ -62,7 +62,7 @@ export const router = createRouter({
     {
       path: '/talk',
       name: 'talk',
-      redirect: '/talk/channels/1/1',
+      redirect: '/talk/channels/1/88a92826842757cade6e84378df9db88526578c3bce7b8cb6348b7f1f9598d0a',
       // component: () => import('@/views/talk/Index.vue'),
     },
     {

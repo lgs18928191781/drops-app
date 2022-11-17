@@ -3,9 +3,9 @@
     <div class="flex1">
       <div class="phone-content flex flex-align-center">
         <Icon
-          :name="layoutStore.showLeftNav ? 'x_mark' : 'bars'"
+          :name="layoutStore.isShowLeftNav ? 'x_mark' : 'bars'"
           class="phone-menu"
-          @click="layoutStore.$patch({ showLeftNav: !layoutStore.showLeftNav })"
+          @click="layoutStore.$patch({ isShowLeftNav: !layoutStore.isShowLeftNav })"
         />
 
         <div class="dived"></div>
