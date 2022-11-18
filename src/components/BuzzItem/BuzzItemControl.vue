@@ -79,7 +79,7 @@ const commentText = computed(() => {
 
 const isILike = computed(() => {
   if (props.buzz.like && props.buzz.like.length) {
-    return props.buzz.like.some(v => v.metaId === userStore.user!.metaId)
+    return props.buzz.like.some(v => v?.metaId === userStore.user!.metaId)
   }
   return false
 })
@@ -123,7 +123,6 @@ async function handleLike() {
 
 function onPayMeConfirmCallback(params: { useMe: number }) {
   return new Promise<boolean>(async resolve => {
-    debugger
     payMe.amount = params.useMe
     payMe.resolve = resolve
     isShowConfirm.value = true

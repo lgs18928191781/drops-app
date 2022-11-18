@@ -42,7 +42,12 @@
   </ElDialog>
 
   <!-- MetaMask -->
-  <MetaMask v-model="isShowMetaMak" id="metamask" @success="onThreePartLinkSuccess" />
+  <MetaMask
+    v-model="isShowMetaMak"
+    ref="MetaMaskRef"
+    id="metamask"
+    @success="onThreePartLinkSuccess"
+  />
 
   <!-- 登录注册 -->
   <!-- <LoginAndRegisterModalVue
@@ -175,7 +180,7 @@ const rootStore = useRootStore()
 const userStore = useUserStore()
 const i18n = useI18n()
 const emit = defineEmits(['metamask'])
-
+const MetaMaskRef = ref()
 const loading = ref(false)
 const isShowMetaMak = ref(false)
 const isShowLoginAndRegister = ref(false)
@@ -356,6 +361,7 @@ async function connectMetaLet() {
 
 async function onThreePartLinkSuccess(params: { signAddressHash: string; address: string }) {
   //检查hash是否已绑定
+
   const getMnemonicRes = await LoginByHashData({
     hashData: params.signAddressHash,
   }).catch(error => {
@@ -370,11 +376,37 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
       throw new Error(error.message)
     }
   })
-  if (getMnemonicRes?.code === 0 && getMnemonicRes.data) {
+  let res
+  if (getMnemonicRes?.data?.metaId && getMnemonicRes?.data?.registerType === 'email') {
+    //这里需要再判断一下用户注册来源，如果是metamask注册的用户要拿metaid来解
+
+    try {
+      const signHashForMnemonic = await MetaMaskRef.value.ethPersonalSignSign({
+        address: params.address,
+        message: getMnemonicRes?.data?.metaId.slice(0, 6),
+      })
+
+      res = await BindMetaIdRef.value.loginByMnemonic(
+        getMnemonicRes.data.menmonic,
+        signHashForMnemonic
+      )
+      if (res) {
+        await BindMetaIdRef.value.loginSuccess(res)
+      }
+    } catch (error) {
+      isShowMetaMak.value = false
+      return ElMessage.error(`${i18n.t('walletError')}`)
+    }
+
+    // return  emit('update:modelValue', false)
+  } else if (getMnemonicRes?.code === 0 && getMnemonicRes.data.menmonic) {
     // 有密码直接登录， 没有密码就要用户输入
     const password = localStorage.getItem(encode('password'))
     if (password) {
-      const res = await BindMetaIdRef.value.loginByMnemonic(getMnemonicRes.data, decode(password))
+      res = await BindMetaIdRef.value.loginByMnemonic(
+        getMnemonicRes.data.menmonic,
+        decode(password)
+      )
       if (res) {
         await BindMetaIdRef.value.loginSuccess(res)
       }
@@ -454,7 +486,6 @@ async function onSetBaseInfoSuccess(params: {
         broadcasts.push(createNameNode.hex)
       }
 
-      debugger
       if (params.nft) {
         // 创建 NFTAvatar brfc 节点
         utxo = await wallet?.utxoFromTx({

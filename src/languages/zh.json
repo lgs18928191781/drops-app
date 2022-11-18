@@ -189,5 +189,6 @@
       "placeholder": "分享您的buzz ~"
     }
   },
-  "Follow": "关注"
+  "Follow": "关注",
+  "walletError": "签名失败,无法登录钱包"
 }

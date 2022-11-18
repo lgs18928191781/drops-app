@@ -94,5 +94,6 @@
       "placeholder": "Share your buzz ~"
     }
   },
-  "Follow": "Follow"
+  "Follow": "Follow",
+  "walletError": "Signing failed, unable to log in to wallet"
 }

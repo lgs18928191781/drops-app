@@ -3,6 +3,7 @@
     <div class="user-warp flex flex-align-center">
       <UserAvatar :meta-id="userStore.user!.metaId" />
       <ElDropdown trigger="click" @visible-change="isShowUserMenu = !isShowUserMenu">
+        <!---->
         <a class="more flex flex-align-center flex-pack-center" :class="{ active: isShowUserMenu }">
           <Icon :name="isShowUserMenu ? 'x_mark' : 'more'" />
         </a>
@@ -32,7 +33,7 @@
 import { useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
 import { ElDropdown } from 'element-plus'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const i18n = useI18n()
@@ -40,6 +41,7 @@ const rootStore = useRootStore()
 const userStore = useUserStore()
 
 const isShowUserMenu = ref(false)
+
 const userOperates = [
   {
     name: i18n.t('UserOperate.createGropp'),

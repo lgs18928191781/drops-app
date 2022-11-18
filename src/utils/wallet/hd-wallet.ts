@@ -482,6 +482,59 @@ export class HdWallet {
     return metaIdInfo
   }
 
+  //单独创建metaid
+
+  public onlyCreateMetaidNode() {
+    return new Promise<string>(async (resolve, reject) => {
+      try {
+        const metaIdInfo: any = await this.getMetaIdInfo(this.rootAddress)
+        metaIdInfo.pubKey = this._root.toPublicKey().toString()
+        //  检查 metaidinfo 是否完整
+        if (metaIdInfo.metaId && metaIdInfo.infoTxId && metaIdInfo.protocolTxId) {
+          console.log('metaidinfo 完整')
+          resolve(metaIdInfo)
+        } else {
+          let utxos: UtxoItem[] = []
+          utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
+          if (!metaIdInfo.metaId) {
+            // TODO: 尝试获始资金
+            if (!utxos.length) {
+              const initUtxo = await this.provider.getInitAmount({
+                address: this.rootAddress,
+                xpub: this.wallet.xpubkey.toString(),
+              })
+              utxos = [initUtxo]
+            }
+
+            let outputs: any[] = []
+            const rootTx = await this.createNode({
+              nodeName: 'Root',
+              metaIdTag: MetaIdTag[this.network],
+              data: 'NULL',
+              dataType: 'NULL',
+              encoding: 'NULL',
+              utxos: utxos,
+              outputs: outputs,
+            })
+            metaIdInfo.metaId = rootTx.txId
+            let errorMsg: any
+            // 广播
+            try {
+              await this.provider.broadcast(rootTx.hex)
+            } catch (error) {
+              errorMsg = error
+            }
+            if (errorMsg) {
+              throw new Error(errorMsg.message)
+            } else {
+              resolve(metaIdInfo.metaId)
+            }
+          }
+        }
+      } catch (error) {}
+    })
+  }
+
   // 初始化 metaId
   public initMetaIdNode(account: BaseUserInfoTypes) {
     return new Promise<MetaIdInfoTypes>(async (resolve, reject) => {

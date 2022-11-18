@@ -65,6 +65,9 @@ interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits(['update:modelValue', 'success', 'logout'])
+defineExpose({
+    ethPersonalSignSign
+})
 const i18n = useI18n()
 
 
@@ -74,7 +77,7 @@ const ruleForm = reactive({
     name: '',
     pass: '123456',
     checkPass: '',
-    MetaidOrAdress: '49856d813daa21dcffc6aafa94bc4630c93de9ebd209e723e64266ce55fba64b',
+    ShowAccount: '49856d813daa21dcffc6aafa94bc4630c93de9ebd209e723e64266ce55fba64b',
 })
 const rules = {
     name: [
@@ -90,10 +93,10 @@ const rules = {
             trigger: 'blur',
         },
     ],
-    MetaidOrAdress: [
+    ShowAccount: [
         {
             required: true,
-            message: '请输入已有MetaId或地址进行绑定',
+            message: '请输入Show账户名',
             trigger: 'blur',
         },
     ],
@@ -131,6 +134,7 @@ const password = computed(() => {
 })
 
 watch(() => props.modelValue, async () => {
+
     if (props.modelValue) {
         startConnect()
     }
@@ -158,13 +162,13 @@ const dialogTitle = computed(() => {
 })
 
 async function startConnect() {
+
     const res = await Wallet.connect()
     if (res) {
         const result = await ethPersonalSignSign({
             address: res.ethAddress,
             message: keccak256(res.ethAddress).toString('hex')
         })
-        debugger
         if (result) {
              emit('success',{ signAddressHash:  result, address: res.ethAddress});
         }
@@ -275,7 +279,7 @@ function loginByMnemonic(mnemonic: string) {
                 }
             }
         } catch (error) {
-            debugger
+
             console.log('error', error)
         }
     })
@@ -392,9 +396,9 @@ function loginSuccess(params: BindMetaIdRes) {
 function bindingMetaidOrAddressLogin() {
     return new Promise<MetaMaskLoginRes>(async (resolve, reject) => {
         const params =
-            ruleForm.MetaidOrAdress.length == 34
-                ? { address: ruleForm.MetaidOrAdress }
-                : { metaId: ruleForm.MetaidOrAdress }
+            ruleForm.ShowAccount.length == 34
+                ? { address: ruleForm.ShowAccount }
+                : { metaId: ruleForm.ShowAccount }
         try {
             const mnemonic = await loginByMetaidOrAddress(params)
             // @ts-ignore

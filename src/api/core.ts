@@ -43,6 +43,7 @@ export const UpdateUserInfo = (): Promise<apiResponse> => {
     phone: userStore.user!.phone ? userStore.user!.phone : undefined,
     email: userStore.user!.email ? userStore.user!.email : undefined,
   }
+
   return Core.post('/api/v1/user/setuserinfo', params)
 }
 
@@ -210,7 +211,14 @@ export const LoginByNewUser = (params: {
 //已绑定签名
 export const LoginByHashData = (params: {
   hashData: string
-}): Promise<{ code: number; data: string }> => {
+}): Promise<{
+  code: number
+  data: {
+    menmonic: string
+    metaId: string
+    registerType: string
+  }
+}> => {
   return Core.post(`/api/v1/thirdparty/checkHashData`, params)
 }
 
