@@ -107,9 +107,6 @@
       <div class="item" @click.stop="handleGoToWoc"><span>查看TX</span></div>
     </div>
   </van-popup> -->
-
-  <!-- 确认发表 -->
-  <MePayConfirmModalVue v-model="isShowConfirm" :params="payMe" />
 </template>
 <script setup lang="ts">
 import { isApp } from '@/stores/root'
@@ -119,7 +116,6 @@ import Attachment from './Attachment.vue'
 // import { copy } from '@/utils/filters'
 import { PayMeParams } from '@/@types/sdk'
 import { PayMeParamsType } from '@/enum'
-// import MePayConfirmModalVue from '@/components/MePayConfirmModal/MePayConfirmModal.vue'
 import { checkSdkStatus } from '@/utils/util'
 import QuoteVue from './Quote.vue'
 import BuzzItemControlVue from './BuzzItemControl.vue'

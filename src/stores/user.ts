@@ -54,6 +54,20 @@ const sdkPayConfirmMaxKey = {
   [SdkPayType.ME]: 'MAX-ME',
   [SdkPayType.SPACE]: 'MAX-SPACE',
 }
+const sdkPayConfirm = {
+  [SdkPayType.ME]: {
+    value: localStorage.getItem(sdkPayConfirmMaxKey[SdkPayType.ME])
+      ? parseInt(localStorage.getItem(sdkPayConfirmMaxKey[SdkPayType.ME])!)
+      : 1,
+    visible: localStorage.getItem(sdkPayConfirmHideKey[SdkPayType.ME]) ? false : true,
+  },
+  [SdkPayType.SPACE]: {
+    value: localStorage.getItem(sdkPayConfirmMaxKey[SdkPayType.SPACE])
+      ? parseInt(localStorage.getItem(sdkPayConfirmMaxKey[SdkPayType.SPACE])!)
+      : 1,
+    visible: localStorage.getItem(sdkPayConfirmHideKey[SdkPayType.SPACE]) ? false : true,
+  },
+}
 
 export const useUserStore = defineStore('user', {
   state: () =>
@@ -65,20 +79,7 @@ export const useUserStore = defineStore('user', {
       isGetedKycInfo: false,
       isSetedisTestUser: false,
       isTestUser: false,
-      sdkPayConfirm: {
-        [SdkPayType.ME]: {
-          value: localStorage.getItem(sdkPayConfirmMaxKey[SdkPayType.ME])
-            ? parseInt(localStorage.getItem(sdkPayConfirmMaxKey[SdkPayType.ME])!)
-            : 1,
-          visible: localStorage.getItem(sdkPayConfirmHideKey[SdkPayType.ME]) ? false : true,
-        },
-        [SdkPayType.SPACE]: {
-          value: localStorage.getItem(sdkPayConfirmMaxKey[SdkPayType.SPACE])
-            ? parseInt(localStorage.getItem(sdkPayConfirmMaxKey[SdkPayType.SPACE])!)
-            : 1,
-          visible: localStorage.getItem(sdkPayConfirmHideKey[SdkPayType.SPACE]) ? false : true,
-        },
-      },
+      sdkPayConfirm: sdkPayConfirm,
     },
   getters: {
     isAuthorized: state => <boolean>!!(state.user && state.user.token),

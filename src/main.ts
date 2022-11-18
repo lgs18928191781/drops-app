@@ -20,7 +20,7 @@ import Icon from '@/components/Icon/Icon.vue'
 import GlobalDialog from '@/components/GlobalDialog/index.vue'
 import { createPinia } from 'pinia'
 
-export const app = createApp(App)
+const app = createApp(App)
 
 // 挂载全局过滤器
 app.config.globalProperties.$filters = {
