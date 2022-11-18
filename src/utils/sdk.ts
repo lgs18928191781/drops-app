@@ -23,7 +23,7 @@ import { router } from '@/router'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
 import { isAndroid, isAndroidApp, isIOS, isIosApp } from '@/stores/root'
 import { PayToItem } from '@/@types/hd-wallet'
-import { CreateBrfcChildNodePayType, IsEncrypt, NodeName } from '@/enum'
+import { SdkPayType, IsEncrypt, NodeName } from '@/enum'
 import { GetMeUtxos, GetMyMEBalance, GetProtocolMeInfo } from '@/api/v3'
 import * as bsv from '@sensible-contract/bsv'
 // import bsv from 'bsv'
@@ -32,6 +32,9 @@ import { Toast } from 'vant'
 import { Transaction } from 'dexie'
 import { useUserStore } from '@/stores/user'
 import i18n from './i18n'
+import SdkPayConfirmModalVue from '@/components/SdkPayConfirmModal/SdkPayConfirmModal.vue'
+import { h, ref, render } from 'vue'
+import { app } from '@/main'
 
 enum AppMode {
   PROD = 'prod',
@@ -91,6 +94,11 @@ export const AllNodeName: {
   [NodeName.PayLike]: {
     brfcId: '2ae43eeb26d9',
     path: '/Protocols/PayLike',
+    version: '1.0.0',
+  },
+  [NodeName.PayFollow]: {
+    brfcId: '203ee2c8b732',
+    path: '/Protocols/PayFollow',
     version: '1.0.0',
   },
 }
@@ -339,20 +347,19 @@ export class SDK {
       publickey?: string // 修改时 用的publicekey
       ecdh?: { type: string; publickey: string } // ecdh
       useFeeb?: number // 费率
-      confirmHandel?: (params: { useMe: number }) => Promise<boolean>
       meConvertSatoshi?: number // 1Me 等于多少聪
       loading?: { close: () => void }
-      payType?: CreateBrfcChildNodePayType
+      payType?: SdkPayType
     },
     option?: {
       isBroadcast: boolean
-      payType: CreateBrfcChildNodePayType
+      payType: SdkPayType
     }
   ) {
     return new Promise<CreateNodeRes | null>(async (resolve, reject) => {
       const initOption = {
         isBroadcast: true,
-        payType: CreateBrfcChildNodePayType.SPACE,
+        payType: SdkPayType.ME,
       }
       const initParams = {
         appId: ['ShowV3', this.getOnLinkAppUrl(), this.getPlatform()],
@@ -379,7 +386,7 @@ export class SDK {
       try {
         //  检查ME 协议 权限
         let checkRes: any
-        if (option.payType === CreateBrfcChildNodePayType.SPACE) {
+        if (option.payType === SdkPayType.SPACE) {
           // 使用bsv 上链时，不需要检查权限
           checkRes = {
             is_support: true,
@@ -441,7 +448,7 @@ export class SDK {
               let nodeBrfc: BrfcMsg | null = null
               const createAttachmentParams: any[] = []
 
-              // 用 MC 上链
+              // 用 ME 上链
               // 先判断处理父节点
               const protocolAddress = this.wallet!.createAddress(
                 this.wallet!.keyPathMap.Protocols.keyPath
@@ -570,7 +577,7 @@ export class SDK {
 
                 let currentUtxo: any // 上链使用的utxo
 
-                if (option.payType === CreateBrfcChildNodePayType.SPACE) {
+                if (option.payType === SdkPayType.SPACE) {
                   const useUtxos = []
                   const allUtxos = await this.wallet?.provider.getUtxos(
                     this.wallet.wallet.xpubkey.toString()
@@ -616,62 +623,62 @@ export class SDK {
                   }
                   if (useMe * 100 < checkRes.me_amount_min) useMe = checkRes.me_amount_min / 100
                   const userMeRes = await GetMyMEBalance({ address: userStore.user?.address! })
-
                   if (userMeRes.code === 0) {
                     if (userMeRes.data.count >= useMe * 100) {
-                      let confirmResult = false
-                      const isUnCheckConfirm =
-                        userStore.payConfirm && useMe <= userStore.payConfirm.me.value
-                      if (isUnCheckConfirm) {
-                        confirmResult = true
-                      } else {
-                        if (params.loading) params.loading.close()
-                        try {
-                          Toast.clear()
-                        } catch (error) {}
-                        const result = await params.confirmHandel!({ useMe })
-                        confirmResult = result
-                      }
-                      if (confirmResult) {
-                        const loading = openLoading()
+                      totalAmount = useMe
+                      // let confirmResult = false
+                      // const isUnCheckConfirm =
+                      //   userStore.payConfirm && useMe <= userStore.payConfirm.me.value
+                      // if (isUnCheckConfirm) {
+                      //   confirmResult = true
+                      // } else {
+                      //   if (params.loading) params.loading.close()
+                      //   try {
+                      //     Toast.clear()
+                      //   } catch (error) {}
+                      //   const result = await params.confirmHandel!({ useMe })
+                      //   confirmResult = result
+                      // }
+                      // if (confirmResult) {
+                      //   const loading = openLoading()
 
-                        try {
-                          const getMeUtxo = await GetMeUtxos({
-                            address: userStore.user?.address!,
-                            amount: totalAmount,
-                            meta_id: userStore.user?.metaId!,
-                            protocol: params.nodeName,
-                            // 打钱地址： 如果需要创建brfc节点则打到 protocol 地址，否则打到 brfc 节点地址
-                            receive_address,
-                          })
-                          if (getMeUtxo.code === 0) {
-                            const addressInfo = await this.wallet!.provider.getPathWithNetWork({
-                              xpub: this.wallet!.wallet.xpubkey.toString(),
-                              address: receive_address,
-                            })
+                      //   try {
+                      //     const getMeUtxo = await GetMeUtxos({
+                      //       address: userStore.user?.address!,
+                      //       amount: totalAmount,
+                      //       meta_id: userStore.user?.metaId!,
+                      //       protocol: params.nodeName,
+                      //       // 打钱地址： 如果需要创建brfc节点则打到 protocol 地址，否则打到 brfc 节点地址
+                      //       receive_address,
+                      //     })
+                      //     if (getMeUtxo.code === 0) {
+                      //       const addressInfo = await this.wallet!.provider.getPathWithNetWork({
+                      //         xpub: this.wallet!.wallet.xpubkey.toString(),
+                      //         address: receive_address,
+                      //       })
 
-                            const meUtxo = {
-                              address: getMeUtxo.data.address,
-                              // utxo 所在的路径
-                              addressIndex: addressInfo!.addressIndex,
-                              addressType: addressInfo!.addressType,
-                              // txIndex: 0,
-                              outputIndex: 0,
-                              txId: getMeUtxo.data.tx,
-                              // value: getMeUtxo.data.amount,
-                              xpub: this.wallet!.wallet.xpubkey.toString(),
-                              script: getMeUtxo.data.script,
-                              amount: getMeUtxo.data.amount / 1e8,
-                            }
-                            currentUtxo = meUtxo
-                          }
-                        } catch (error) {
-                          loading.close()
-                          reject(error)
-                        }
-                      } else {
-                        reject(new Error(''))
-                      }
+                      //       const meUtxo = {
+                      //         address: getMeUtxo.data.address,
+                      //         // utxo 所在的路径
+                      //         addressIndex: addressInfo!.addressIndex,
+                      //         addressType: addressInfo!.addressType,
+                      //         // txIndex: 0,
+                      //         outputIndex: 0,
+                      //         txId: getMeUtxo.data.tx,
+                      //         // value: getMeUtxo.data.amount,
+                      //         xpub: this.wallet!.wallet.xpubkey.toString(),
+                      //         script: getMeUtxo.data.script,
+                      //         amount: getMeUtxo.data.amount / 1e8,
+                      //       }
+                      //       currentUtxo = meUtxo
+                      //     }
+                      //   } catch (error) {
+                      //     loading.close()
+                      //     reject(error)
+                      //   }
+                      // } else {
+                      //   reject(new Error(''))
+                      // }
                     } else {
                       throw new Error(
                         `此次需要消耗${useMe.toFixed(2)}个能量点,你的能量点余额不足，请充值`
@@ -679,6 +686,9 @@ export class SDK {
                     }
                   }
                 }
+
+                const result = this.awitSdkPayconfirm(params.payType!, totalAmount)
+                if (!result) return
 
                 // 开始给每个 transaction 组装 utxo
 
@@ -812,6 +822,52 @@ export class SDK {
         }
       } catch (error) {
         reject(error)
+      }
+    })
+  }
+
+  awitSdkPayconfirm(payType: SdkPayType, useAmount: number, isEnough: boolean) {
+    return new Promise<boolean>((resolve, reject) => {
+      const userStore = useUserStore()
+      if (
+        userStore.sdkPayConfirm[payType].visible ||
+        (!userStore.sdkPayConfirm[payType].visible &&
+          userStore.sdkPayConfirm[payType].value < useAmount)
+      ) {
+        // 需要弹出确认框操作
+        const divId = 'sdk-pay-conirm'
+        const div = document.createElement('div')
+        div.id = divId
+        document.body.append(div)
+        render(
+          h(SdkPayConfirmModalVue, {
+            i18n: i18n.global,
+            isShowConfirm: userStore.sdkPayConfirm[payType].visible,
+            useAmount,
+            maxCount: userStore.sdkPayConfirm[payType].value,
+            isEnough,
+            router,
+            onChangeConfirmVisible: (res: boolean) => {
+              userStore.changeSdkPayConfirm('visible', res, payType)
+            },
+            onConfirm: () => {
+              setTimeout(() => {
+                document.getElementById(divId)!.remove()
+              }, 2000)
+              resolve(true)
+            },
+            onCancel: () => {
+              setTimeout(() => {
+                document.getElementById(divId)!.remove()
+              }, 2000)
+              resolve(false)
+            },
+          }),
+          document.getElementById(divId)!
+        )
+      } else {
+        // 不需要弹出 确认框操作
+        resolve(true)
       }
     })
   }

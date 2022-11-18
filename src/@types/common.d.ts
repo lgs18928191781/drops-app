@@ -137,6 +137,7 @@ declare interface BuzzItem {
   isFull: boolean
   isNew: boolean
   isSelling: boolean
+  isMyFollow: boolean
   isValid: boolean
   like: {
     metaId: string

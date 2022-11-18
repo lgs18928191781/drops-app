@@ -30,8 +30,18 @@
               </div>
             </div>
             <div class="operate">
-              <div class="follow main-border primary" @click.stop="handleAction('more')">
-                {{ $t('Follow') }}
+              <div
+                class="follow main-border primary"
+                :class="{ disabled: following }"
+                @click.stop="follow"
+                v-if="!displayItemData.isMyFollow && (!userStore.isAuthorized || (userStore.isAuthorized && displayItemData.metaId !== userStore.user!.metaId))"
+              >
+                <template v-if="following">
+                  <el-icon class="is-loading">
+                    <Loading />
+                  </el-icon>
+                </template>
+                <template v-else>{{ $t('Follow') }}</template>
               </div>
             </div>
           </div>
@@ -115,6 +125,9 @@ import QuoteVue from './Quote.vue'
 import BuzzItemControlVue from './BuzzItemControl.vue'
 import BuzzItemSkeletonVue from './BuzzItemSkeleton.vue'
 import ShareIcon from '@/assets/svg/share.svg'
+import { useUserStore } from '@/stores/user'
+import { Loading } from '@element-plus/icons-vue'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   data?: BuzzItem
@@ -124,7 +137,16 @@ interface Props {
 }
 const router = useRouter()
 const route = useRoute()
-const emit = defineEmits(['update', 'repost', 'more', 'like'])
+const userStore = useUserStore()
+const i18n = useI18n()
+// const emit = defineEmits(['update', 'repost', 'more', 'like', 'follow'])
+const emit = defineEmits<{
+  (e: 'update', txId: string): void
+  (e: 'repost', txId: string): void
+  (e: 'more', txId: string): void
+  (e: 'like', txId: string): void
+  (e: 'follow', txId: string): Promise<void>
+}>()
 const props = withDefaults(defineProps<Props>(), {
   isInDetailPage: false,
 })
@@ -137,6 +159,7 @@ const payMe: PayMeParams = reactive({
   type: PayMeParamsType.BuzzComment,
 })
 const isSkeleton = ref(true)
+const following = ref(false)
 
 const itemData = computed(() => {
   return props.data
@@ -201,6 +224,20 @@ function handleGoToWoc() {
 }
 function sliceStr(str?: string, len = 8) {
   return str ? str.slice(0, len) : ''
+}
+
+async function follow() {
+  if (following.value) return
+  following.value = true
+  emit('follow', displayItemData!.value!.txId)
+    .then(() => {
+      following.value = false
+      ElMessage.success(i18n.t('Buzz.follow.success'))
+    })
+    .catch(error => {
+      following.value = false
+      ElMessage.error(error.message)
+    })
 }
 </script>
 <style scoped lang="scss" src="./BuzzItem.scss"></style>

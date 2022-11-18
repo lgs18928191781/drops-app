@@ -2,7 +2,14 @@
   <!-- <div class="buzz-list" v-infinite-scroll="getMore" :infinite-scroll-immediate="false"> -->
   <div class="buzz-list" v-infinite-scroll="getMore" :infinite-scroll-immediate="false">
     <div class="buzz-item-warp" v-for="item in list" :key="item.txId">
-      <BuzzItemVue :data="item" @repost="onRepost" @more="onMore" :loading="loading" @like="onLike">
+      <BuzzItemVue
+        :data="item"
+        @repost="onRepost"
+        @more="onMore"
+        :loading="loading"
+        @like="onLike"
+        @follow="onFollow"
+      >
         <template #comment>
           <slot name="comment"></slot>
         </template>
@@ -193,6 +200,28 @@ async function onLike(txId: string) {
     })
     emit('update:list', props.list)
   }
+}
+
+function onFollow(txId: string) {
+  return new Promise<void>(async (resolve, reject) => {
+    const index = props.list.findIndex(item => item.txId === txId)
+    const res = await userStore.showWallet
+      .createBrfcChildNode({
+        nodeName: NodeName.PayFollow,
+        data: JSON.stringify({
+          createTime: new Date().getTime(),
+          MetaID: props.list[index].metaId,
+          pay: 0,
+          payTo: '',
+        }),
+      })
+      .catch(error => reject(error))
+    if (res) {
+      props.list[index].isMyFollow = true
+      emit('update:list', props.list)
+      resolve()
+    }
+  })
 }
 
 function getMore() {

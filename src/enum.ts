@@ -217,8 +217,8 @@ export enum PayMeParamsType {
   BuzzComment = 'PayComment',
   BuzzReopost = 'SimpleRePost',
 }
-export enum CreateBrfcChildNodePayType {
-  MC = 'MC',
+export enum SdkPayType {
+  ME = 'ME',
   SPACE = 'SPACE',
 }
 
@@ -269,6 +269,7 @@ export enum NodeName {
   ShowMsg = 'ShowMsg',
   PayComment = 'PayComment',
   PayLike = 'PayLike',
+  PayFollow = 'PayFollow',
 }
 
 export const enum BindStatus {

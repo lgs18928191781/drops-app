@@ -124,6 +124,9 @@
       "inputTitle": "What topic you want to use",
       "hotTopics": "Hot Topics",
       "inputPlaceholder": "Enter topic"
+    },
+    "follow": {
+      "success": "Follow Success"
     }
   },
   "Follow": "Follow",
@@ -134,5 +137,13 @@
   "noDatas": "No Datas",
   "copysuccess": "Copy successfully",
   "copyerror": "Copy successfully",
-  "Confirm": "Confirm"
+  "Confirm": "Confirm",
+  "SDK": {
+    "payconfirm": {
+      "Payment": "Payment",
+      "tips": "No more payment confirmation prompts for operations below",
+      "tips2": " ",
+      "ME": "energy point"
+    }
+  }
 }

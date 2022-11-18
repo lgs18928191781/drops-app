@@ -1,0 +1,107 @@
+.sdk-pay-confirm {
+    padding: 30px;
+
+    .header {
+        text-align: center;
+        font-size: 24px;
+        font-weight: 500;
+        position: relative;
+
+        .close {
+            position: absolute;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #EDEFF2;
+            right: 0;
+            top: 50%;
+            margin-top: -17px;
+            z-index: 2;
+            cursor: pointer;
+
+            .icon {
+                width: 12px;
+                height: 12px;
+            }
+
+            &:hover {
+                background: var(--el-color-primary);
+            }
+        }
+    }
+
+    .pay-count {
+        margin-top: 26px;
+        padding: 30px 0;
+        border-bottom: 1px solid #F4F7F9;
+
+        .count {
+            font-size: 36px;
+            line-height: 36px;
+        }
+
+        .lable {
+            font-size: 18px;
+            margin-left: 6px;
+        }
+    }
+
+    .check {
+        margin-top: 18px;
+        cursor: pointer;
+        color: #909399;
+
+        .check-warp {
+            width: 20px;
+            height: 20px;
+            background: #EDEFF2;
+            border-radius: 6px;
+            margin-right: 12px;
+            box-sizing: border-box;
+
+
+
+            .icon {
+                width: 16px;
+                height: 16px;
+            }
+
+
+        }
+
+        &:hover {
+            .check-warp {
+                border: 1px solid var(--main-font-color);
+            }
+        }
+
+        &.active {
+            color: var(--main-font-color);
+
+            .check-warp {
+                background: var(--el-color-primary);
+            }
+
+        }
+    }
+
+    .operate {
+        margin-top: 30px;
+
+
+        .main-border {
+            text-align: center;
+            padding: 16px 0;
+            cursor: pointer;
+            margin-right: 14px;
+
+            &:first-child {
+                background: #EDEFF2;
+            }
+
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+    }
+}
