@@ -36,7 +36,7 @@
         </button>
       </div>
 
-      <div class="mt-8 w-full">
+      <div class="mt-8 w-full  sm:w-3/4 lg:w-full">
         <h4 class="text-lg text-dark-800 capitalize">
           {{ $t('Talk.Community.introduction') }}
         </h4>
@@ -53,12 +53,14 @@
     </div>
 
     <div class="flex items-center justify-between">
-      <button class="text-sm text-sky-600">{{ $t('Talk.Community.skip') }}</button>
+      <button class="text-sm text-sky-600" @click="$emit('tryCreateCommunity')">
+        {{ $t('Talk.Community.skip') }}
+      </button>
       <button
         class="w-14 h-14 main-border primary flex items-center justify-center"
         :class="{ faded: !form.isStep2Finished }"
         :disabled="!form.isStep2Finished"
-        @click="$emit('forward')"
+        @click="$emit('tryCreateCommunity')"
       >
         <Icon name="arrow_right" class="w-5 h-5" />
       </button>

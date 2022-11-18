@@ -34,9 +34,11 @@ import TheErrorBox from './components/TheErrorBox.vue'
 import ChannelList from './components/ChannelList.vue'
 import ChannelMemberList from './components/ChannelMemberList.vue'
 import { computed, defineAsyncComponent, onMounted, reactive, Ref, ref } from 'vue'
-import { getChannelMembers, getCommunities } from '@/api/talk'
+import { getChannelMembers, getChannels, getCommunities } from '@/api/talk'
 import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
+import { useRoute, useRouter } from 'vue-router'
+import { useLayoutStore } from '@/stores/layout'
 
 const MessageList = defineAsyncComponent({
   loader: () => import('./components/MessageList.vue'),
@@ -44,6 +46,8 @@ const MessageList = defineAsyncComponent({
 
 const userStore = useUserStore()
 const talkStore = useTalkStore()
+const layoutStore = useLayoutStore()
+const router = useRouter()
 
 type Member = {
   protocol: string
@@ -104,14 +108,32 @@ const handleToggleMemberList = () => {
   localStorage.setItem('layout-show-right-drawer', showMembers.value ? '1' : '0')
 }
 
-const fetchCommunities = async (selfMetaId: string) => {
-  const {
-    data: {
-      results: { items },
-    },
-  } = await getCommunities({ metaId: selfMetaId })
-  talkStore.$patch({ communities: items })
+/** 获取频道数据处理 */
+const route = useRoute()
+const { communityId, channelId } = route.params
+
+if (!channelId) {
+  let activeChannelId = talkStore.activeChannelId
+  if (!activeChannelId) {
+    activeChannelId = 'ada39724595ffed214990695c5bae373f58ca82a69238a83dd606c56e84b222b'
+    talkStore.$patch({
+      activeChannelId,
+    })
+  }
+
+  layoutStore.$patch({
+    isShowLeftNav: false,
+  })
+
+  router.push(`/talk/channels/${communityId}/${activeChannelId}`)
 }
+
+const fetchChannels = async () => {
+  const channels = await getChannels()
+  // community.value = data[0]
+  // channel.value = community.value.channels.find((channel: any) => channel.id === channelId)
+}
+/** ------ */
 
 onMounted(async () => {
   const selfMetaId = userStore.user!.metaId
@@ -121,7 +143,6 @@ onMounted(async () => {
     showMembers.value = true
   }
 
-  await fetchCommunities(selfMetaId)
   // await fetchChannels()
 
   members.value = await getChannelMembers('1')

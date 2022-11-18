@@ -6,15 +6,27 @@
       class="w-full h-full bg-white lg:w-114 lg:h-auto lg:h-[600PX] lg:rounded-3xl relative lg:shadow-lg p-8"
     >
       <CreateCommunityModalContentP1 v-if="step === 1" @forward="step = 2" />
-      <CreateCommunityModalContentP2 v-else-if="step === 2" @back="step = 1" />
+      <CreateCommunityModalContentP2
+        v-else-if="step === 2"
+        @back="step = 1"
+        @try-create-community="tryCreateCommunity"
+      />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { useCommunityFormStore } from '@/stores/talk'
 import { computed, reactive, ref } from 'vue'
 import CreateCommunityModalContentP1 from './CreateCommunityModalContentP1.vue'
 import CreateCommunityModalContentP2 from './CreateCommunityModalContentP2.vue'
 
 const step = ref(2)
+const form = useCommunityFormStore()
+
+const tryCreateCommunity = () => {
+  if (!form.isFinished) return
+
+  console.log('tryCreateCommunity')
+}
 </script>

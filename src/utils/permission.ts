@@ -45,7 +45,8 @@ router.beforeEach(async (to, from, next) => {
 
     // 没有拿用户实名信息时， 先要去拿用户实名信息
     if (!userStroe.isGetedKycInfo) {
-      await userStroe.setKycInfo()
+      // 暂时注释掉
+      // await userStroe.setKycInfo()
     }
 
     //  设置是否是否测试用户

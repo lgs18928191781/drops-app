@@ -26,18 +26,18 @@
 
     <div class="space-y-4.5 flex flex-col items-center justify-center">
       <router-link
-        :to="item.path"
+        :to="'/talk/channels/' + community.id"
         class="flex items-center justify-center left-navigation-item"
-        v-for="(item, index) in talkStore.groupCommunities"
+        v-for="(community, index) in talkStore.realCommunities"
         :key="index"
       >
         <span class="bg-sky-200 w-13.5 h-13.5 flex items-center justify-center rounded-3xl">
-          <Icon :name="item.icon" class="w-[22PX] h-[19PX] rounded-3xl" />
+          <Icon :name="community.icon" class="w-[22PX] h-[19PX] rounded-3xl" />
         </span>
       </router-link>
 
       <div
-        class="border-dashed border-2 border-gray-200 w-13.5 h-13.5 flex items-center justify-center rounded-3xl text-dark-400 cursor-pointer hover:text-primary hover:border-solid  transition-all duration-300"
+        class="border-dashed border-2 border-gray-200 w-13.5 h-13.5 flex items-center justify-center rounded-3xl text-dark-400 cursor-pointer hover:text-primary hover:border-solid hover:border-dark-300  transition-all duration-300"
         @click="layoutStore.isShowCreateCommunityModal = true"
       >
         <Icon name="plus" class="w-[24PX] h-[24PX]" />
@@ -52,11 +52,23 @@
 </template>
 
 <script setup lang="ts">
+import { getCommunities } from '@/api/talk'
 import { useLayoutStore } from '@/stores/layout'
 import { useTalkStore } from '@/stores/talk'
+import { useUserStore } from '@/stores/user'
 import CreateCommunityModal from '@/views/talk/components/communities/CreateCommunityModal.vue'
 const layoutStore = useLayoutStore()
 const talkStore = useTalkStore()
+const userStore = useUserStore()
+
+const fetchCommunities = async () => {
+  const selfMetaId = userStore.user!.metaId
+  const communities = await getCommunities({ metaId: selfMetaId })
+  talkStore.$patch(state => {
+    state.communities = [...communities, talkStore.atMeCommunity]
+  })
+}
+fetchCommunities()
 
 const apps = [
   {

@@ -71,7 +71,7 @@ export const router = createRouter({
       component: () => import('@/views/talk/AtMe.vue'),
     },
     {
-      path: '/talk/channels/:communityId/:channelId',
+      path: '/talk/channels/:communityId/:channelId?',
       name: 'talkChannel',
       component: () => import('@/views/talk/Channel.vue'),
     },

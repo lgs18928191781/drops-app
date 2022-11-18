@@ -14,8 +14,12 @@ export const useTalkStore = defineStore('talk', {
   },
 
   getters: {
-    groupCommunities(state) {
+    realCommunities(state) {
       return state.communities.filter(community => community.id !== '@me')
+    },
+
+    atMeCommunity(state) {
+      return state.communities.find(community => community.id === '@me')
     },
 
     activeCommunity(state) {
@@ -52,7 +56,7 @@ export const useTalkStore = defineStore('talk', {
 export const useCommunityFormStore = defineStore('communityForm', {
   state: () => {
     return {
-      icon: null as File | null,
+      icon: '123' as any,
       name: '123',
       description: '',
       cover: null as File | null,
@@ -65,7 +69,7 @@ export const useCommunityFormStore = defineStore('communityForm', {
     },
 
     isStep2Finished(state) {
-      return !!state.description || !!state.cover
+      return !!state.description && !!state.cover
     },
 
     isFinished(state) {
@@ -73,6 +77,7 @@ export const useCommunityFormStore = defineStore('communityForm', {
     },
 
     iconPreviewUrl(state) {
+      if (state.icon === '123') return ''
       return state.icon ? URL.createObjectURL(state.icon) : ''
     },
 

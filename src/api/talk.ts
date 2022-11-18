@@ -1,24 +1,41 @@
 import HttpRequest from 'request-sdk'
-import messages from './mockMessages.json'
 import members from './mockMembers.json'
 import { sleep } from '@/utils/util'
-const env = import.meta.env
 
-// const TalkApi = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/talkAggregation`, {
 const TalkApi = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/talkAggregation/v3/app`, {
   header: {
     'Content-Type': 'application/json',
-    // accessKey: () => (isAuthorized.value ? user.value!.token! : undefined),
-    // userName: () => {
-    //   if (isAuthorized) {
-    //     return user.value!.userType === 'email' ? user.value!.email! : user.value!.phone!
-    //   }
-    // },
-    // timestamp: () => new Date().getTime(),
   },
 }).request
 
-export const getCommunities = async (params?: any): Promise<any> => {
+export const getCommunities = async (params?: any): Promise<Community[]> => {
+  const communities = [
+    {
+      id: '123',
+      address: '123',
+      admins: ['123'],
+      cover: '123',
+      description: '123',
+      metaId: '123',
+      metaName: '123',
+      metaNameNft: '123',
+      metanetId: '123',
+      name: '123',
+      publicKey: '123',
+      reserved: '123',
+      timestamp: 123,
+      txId: '123',
+      zeroAddress: '123',
+      icon: '123',
+    },
+  ]
+
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve(communities)
+    }, 1000)
+  })
+
   params = params || {}
 
   return TalkApi.get(`/community/list`, { data: JSON.stringify(params) })

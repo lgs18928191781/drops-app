@@ -31,3 +31,23 @@ declare interface Contact {
   lastMessage: string
   lastMessageTimestamp: number
 }
+
+declare interface Community {
+  id: string
+  communityId?: string
+  address: string
+  admins: string[]
+  cover: string
+  description: string
+  metaId: string
+  metaName: string
+  metaNameNft: string
+  metanetId: string
+  name: string
+  publicKey: string
+  reserved: string
+  timestamp: number
+  txId: string
+  zeroAddress: string
+  icon: string
+}
