@@ -95,9 +95,7 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
     encryption,
     isMock: true,
   }
-  talkStore.$patch(state => {
-    state.newMessages.push(mockMessage)
-  })
+  talkStore.addMessage(mockMessage)
 
   // 3. 发送节点
   const sdk = userStore.showWallet
@@ -209,9 +207,7 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
     encryption: encrypt,
     isMock: true,
   }
-  talkStore.$patch(state => {
-    state.newMessages.push(mockMessage)
-  })
+  talkStore.addMessage(mockMessage)
 
   // 3. 发送节点
   const sdk = userStore.showWallet

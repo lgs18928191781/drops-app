@@ -38,7 +38,6 @@
         <ImagePreview
           v-if="showImagePreview"
           :src="imagePreviewUrl"
-          :original-size="true"
           @close="showImagePreview = false"
         />
       </Teleport>
@@ -64,7 +63,7 @@
             class="bg-inherit h-full w-full focus:outline-none placeholder:text-dark-250 placeholder:text-sm text-dark-800 text-base caret-gray-600"
             :placeholder="
               $t('Talk.Channel.message_to', {
-                channel: talkStore.activeChannelSymbol + talkStore.activeChannel?.name,
+                channel: talkStore?.activeChannelSymbol + (talkStore.activeChannel?.name || ''),
               })
             "
             v-model="chatInput"

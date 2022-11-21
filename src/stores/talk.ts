@@ -1,5 +1,6 @@
 import { ChannelType } from '@/utils/talk'
 import { defineStore } from 'pinia'
+import { reactive, ref } from 'vue'
 
 export const useTalkStore = defineStore('talk', {
   state: () => {
@@ -34,8 +35,15 @@ export const useTalkStore = defineStore('talk', {
       })
     },
 
+    newMessages(): any {
+      if (!this.activeChannel) return []
+
+      return this.activeChannel.newMessages
+    },
+
     activeChannelType: state =>
       state.activeCommunityId === '@me' ? ChannelType.Session : ChannelType.Group,
+
     activeChannelSymbol: state => (state.activeCommunityId === '@me' ? '@' : '#'),
   },
 
@@ -49,6 +57,14 @@ export const useTalkStore = defineStore('talk', {
     addMessage(message: any) {
       if (!this.activeChannel) return
       this.activeChannel.newMessages.push(message)
+    },
+
+    // 有社区但没有频道的情况
+    setDefaultChannel() {
+      if (this.activeChannelId || !this.activeCommunityId || !this.activeCommunity.channels?.length)
+        return
+
+      this.activeChannelId = this.activeCommunity.channels[0].id
     },
   },
 })

@@ -3,11 +3,7 @@
     <ChannelList :community="community" />
 
     <div class="lg:grow lg:h-screen lg:relative lg:flex">
-      <ChannelHeader
-        :channel="channel"
-        :showMembers="showMembers"
-        @toggle-member-list="handleToggleMemberList"
-      />
+      <ChannelHeader :showMembers="showMembers" @toggle-member-list="handleToggleMemberList" />
 
       <div class="pt-12 pb-20 h-screen lg:relative w-full bg-dark-200">
         <div class="h-full">
@@ -15,7 +11,7 @@
         </div>
 
         <div class="fixed bottom-0 left-0 right-0 px-4 lg:absolute">
-          <TheInput :currentChannel="currentChannel" />
+          <TheInput />
           <TheErrorBox />
         </div>
       </div>
@@ -67,6 +63,7 @@ type Channel = {
 }
 
 const showMembers = ref(false)
+const hasChannels = computed(() => talkStore.activeChannelId !== '')
 
 // 获取频道信息
 const channel: Ref<Channel> = ref({
@@ -79,7 +76,7 @@ const channel: Ref<Channel> = ref({
 const members: Ref<Member[]> = ref([])
 const community: Ref<any> = ref({
   name: '一代MetaBot',
-  id: '1',
+  id: '123',
   description:
     'MetaBot是元拓邦中重要的一员，也是元拓邦中第一个被创造出来的NFT种群，一代MetaBot总量为999个。',
   channels: [
@@ -99,10 +96,6 @@ const community: Ref<any> = ref({
   ],
 })
 
-const currentChannel = computed(() => {
-  return community.value.channels.find((channel: any) => channel.in)
-})
-
 const handleToggleMemberList = () => {
   showMembers.value = !showMembers.value
   localStorage.setItem('layout-show-right-drawer', showMembers.value ? '1' : '0')
@@ -111,15 +104,26 @@ const handleToggleMemberList = () => {
 /** 获取频道数据处理 */
 const route = useRoute()
 const { communityId, channelId } = route.params
+const fetchChannels = async () => {
+  const channels = await getChannels({ communityId })
 
+  talkStore.$patch(state => {
+    state.activeCommunityId = communityId as string
+    if (channelId) {
+      state.activeChannelId = channelId as string
+    }
+    state.communities.find(
+      community => community.id === state.activeCommunityId
+    )!.channels = channels
+  })
+}
+fetchChannels()
+
+// 处理没有channelId的跳转情况
 if (!channelId) {
+  talkStore.setDefaultChannel()
+
   let activeChannelId = talkStore.activeChannelId
-  if (!activeChannelId) {
-    activeChannelId = 'ada39724595ffed214990695c5bae373f58ca82a69238a83dd606c56e84b222b'
-    talkStore.$patch({
-      activeChannelId,
-    })
-  }
 
   layoutStore.$patch({
     isShowLeftNav: false,
@@ -128,11 +132,6 @@ if (!channelId) {
   router.push(`/talk/channels/${communityId}/${activeChannelId}`)
 }
 
-const fetchChannels = async () => {
-  const channels = await getChannels()
-  // community.value = data[0]
-  // channel.value = community.value.channels.find((channel: any) => channel.id === channelId)
-}
 /** ------ */
 
 onMounted(async () => {
@@ -146,13 +145,6 @@ onMounted(async () => {
   // await fetchChannels()
 
   members.value = await getChannelMembers('1')
-  channel.value = {
-    name: '70亿人之家one 7 billion one family',
-    description:
-      '只要是地球人，都可以加入，无上限，目标是70亿地球人。 As long as the earth people,can join,no cap limit,the goal is 7 billion.',
-    isPublic: true,
-    groupId: '88a92826842757cade6e84378df9db88526578c3bce7b8cb6348b7f1f9598d0a',
-  }
 })
 </script>
 

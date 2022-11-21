@@ -11,9 +11,9 @@
 
       <div class="flex shrink-0">
         <div
-          class="text-base leading-tight no-wrap grow whitespace-nowrap truncate text-dark-800 pr-2 max-w-[35vw] lg:max-w-[600PX]"
+          class="text-base leading-tight no-wrap grow whitespace-nowrap truncate text-dark-800 pr-2 max-w-[35vw] lg:max-w-[600PX] capitalize"
         >
-          {{ channel.name }}
+          {{ talkStore.activeChannel?.name }}
         </div>
 
         <div class="border-r border-solid border-dark-300 hidden lg:block"></div>
@@ -21,7 +21,7 @@
           class="text-base leading-tight no-wrap grow whitespace-nowrap text-dark-300 px-2 hidden lg:block capitalize"
         >
           {{
-            channel.isPublic
+            talkStore.activeChannel?.isPublic
               ? $t('Talk.Channel.public_channel')
               : $t('Talk.Channel.private_channel')
           }}
@@ -29,8 +29,11 @@
       </div>
     </div>
     <div class="flex items-center justify-between grow">
-      <div class="text-xs text-dark-300 bg-dark-100 px-3 py-1 ml-1 rounded" v-if="channel?.groupId">
-        {{ shortenMetaId(channel.groupId) }}
+      <div
+        class="text-xs text-dark-300 bg-dark-100 px-3 py-1 ml-1 rounded"
+        v-if="talkStore.activeChannel?.id"
+      >
+        {{ shortenMetaId(talkStore.activeChannel.id) }}
       </div>
       <!-- 占位 -->
       <div v-else class="w-1"></div>
@@ -76,10 +79,12 @@ import { ref } from 'vue'
 import ScreenModal from './ScreenModal.vue'
 import { useLayoutStore } from '@/stores/layout'
 import LoginedUserOperate from '@/components/LoginedUserOperate/LoginedUserOperate.vue'
+import { useTalkStore } from '@/stores/talk'
 
+const talkStore = useTalkStore()
 const layoutStore = useLayoutStore()
+const channel = talkStore.activeChannel
 
-const props = defineProps(['channel'])
 const showDescModal = ref(false)
 
 const shortenMetaId = (id: string) => {

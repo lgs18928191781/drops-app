@@ -28,14 +28,14 @@
       <div class="flex flex-col space-y-4 mt-4">
         <template v-if="talkStore.activeChannelType === 'group'">
           <MessageItem
-            v-for="message in talkStore.newMessages"
+            v-for="message in talkStore.activeChannel?.newMessages"
             :message="message"
             :id="message.timestamp"
           />
         </template>
         <template v-else>
           <MessageItemForSession
-            v-for="message in talkStore.newMessages"
+            v-for="message in talkStore.activeChannel?.newMessages"
             :message="message"
             :id="message.timestamp"
           />
@@ -48,9 +48,10 @@
 <script setup lang="ts">
 import { getChannelMessages } from '@/api/talk'
 import { useTalkStore } from '@/stores/talk'
+import { useUserStore } from '@/stores/user'
 import { ChannelType } from '@/utils/talk'
 import { sleep } from '@/utils/util'
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import LoadingItem from './LoadingItem.vue'
 import LoadingList from './LoadingList.vue'
@@ -59,10 +60,16 @@ import MessageItemForSession from './MessageItemForSession.vue'
 
 const talkStore = useTalkStore()
 const route = useRoute()
+const userStore = useUserStore()
 
-watch(talkStore.newMessages, async () => {
-  await scrollToMessagesBottom()
-})
+watch(
+  () => talkStore.newMessages,
+  async () => {
+    console.log('hello')
+    await scrollToMessagesBottom()
+  },
+  { deep: true }
+)
 
 const loading = ref(false)
 const loadingMore = ref(false)
@@ -110,11 +117,9 @@ const loadMore = async () => {
     return
   }
 
-  talkStore.$patch(state => {
-    for (const item of items) {
-      state.pastMessages.push(item)
-    }
-  })
+  for (const item of items) {
+    talkStore.activeChannel.postMessages.push(item)
+  }
 
   // 滚动到原来的位置
   if (earliestMessagePosition) {
@@ -175,16 +180,16 @@ const subscribeChannel = async () => {
 
       // 去重
       const isDuplicate =
-        talkStore.newMessages.some(item => item.txId === message.txId) ||
-        talkStore.pastMessages.some(item => item.txId === message.txId)
+        talkStore.activeChannel.newMessages.some(item => item.txId === message.txId) ||
+        talkStore.activeChannel.pastMessages.some(item => item.txId === message.txId)
 
       if (isDuplicate) return
 
       // 优先查找替代mock数据
       let mockMessage: any
       if (message.protocol === 'simpleGroupChat') {
-        mockMessage = talkStore.newMessages.find(
-          item =>
+        mockMessage = talkStore.activeChannel.newMessages.find(
+          (item: any) =>
             item.txId === '' &&
             item.isMock === true &&
             item.content === message.content &&
@@ -192,8 +197,8 @@ const subscribeChannel = async () => {
             item.protocol === message.protocol
         )
       } else if (message.protocol === 'SimpleFileGroupChat') {
-        mockMessage = talkStore.newMessages.find(
-          item =>
+        mockMessage = talkStore.activeChannel.newMessages.find(
+          (item: any) =>
             item.txId === '' &&
             item.isMock === true &&
             item.metaId === message.metaId &&
@@ -213,26 +218,23 @@ const subscribeChannel = async () => {
       }
 
       // 如果没有替代mock数据，就直接添加到新消息队列首
-      talkStore.$patch(state => {
-        state.newMessages.push(message)
-      })
+      talkStore.activeChannel.newMessages.push(message)
     }
   }
 
   ws.addEventListener('message', onReceiveMessage)
 }
 
-watch(
-  () => route.params.channelId,
-  async () => {
-    await fetchMessages()
-  }
-)
+messagesScroll.value?.addEventListener('scroll', handleScroll)
 watch(
   () => talkStore.activeChannelId,
   async () => {
+    loading.value = true
     await fetchMessages()
-  }
+    loading.value = false
+    scrollToMessagesBottom()
+  },
+  { deep: true }
 )
 
 const fetchMessages = async () => {
@@ -242,35 +244,15 @@ const fetchMessages = async () => {
 
   const messages = await getChannelMessages(
     route.params.channelId as string,
-    {},
+    { metaId: userStore.user!.metaId },
     talkStore.activeChannelType
   )
 
   talkStore.initChannelMessages(messages)
-
-  // talkStore.$patch(state => {
-  //   const activeCommunity = state.communities.find(
-  //     community => community.id === talkStore.activeCommunityId
-  //   )
-  //   const activeChannel = activeCommunity.channels.find(
-  //     (channel: any) => channel.id === talkStore.activeChannelId
-  //   )
-
-  //   activeChannel.newMessages = []
-  //   activeChannel.pastMessages = messages
-  // })
 }
 defineExpose({ fetchMessages })
 
 onMounted(async () => {
-  loading.value = true
-  // await fetchMessages()
-  loading.value = false
-
-  messagesScroll.value?.addEventListener('scroll', handleScroll)
-
-  scrollToMessagesBottom()
-
   await subscribeChannel()
 })
 

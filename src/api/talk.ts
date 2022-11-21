@@ -49,15 +49,19 @@ export const getAtMeChannels = async (params?: any): Promise<any> => {
   return TalkApi.get(`/chat/homes/${metaId}`, { data: JSON.stringify(params) })
 }
 
-export const getChannels = (): Promise<any> => {
+export const getChannels = async (params: any): Promise<any> => {
   const channels = [
     {
-      id: 1,
+      id: '88a92826842757cade6e84378df9db88526578c3bce7b8cb6348b7f1f9598d0a',
+      name: 'general',
       updatedAt: 1666684283,
+      isPublic: true,
     },
     {
-      id: 2,
+      id: '88a92826842757cade6e84378df9db88526578c3bce7b8cb6348b7f1f9598d0a',
+      name: 'random',
       updatedAt: 1666683283,
+      isPublic: true,
     },
   ]
 
@@ -74,10 +78,8 @@ export const getChannelMessages = async (
   type?: string
 ): Promise<any> => {
   params = params || {}
-  params.metaId = '74cc371c55d9fa38fc98467396c22fe6b20bfc3459a11530362fcdb1b6c07c5c'
   params.pageSize = '50'
   params.page = '1'
-  params.groupId = channelId
 
   if (type === 'session') {
     const selfMetaId = params.metaId
@@ -93,7 +95,7 @@ export const getChannelMessages = async (
     data: {
       results: { items: messages },
     },
-  } = await TalkApi.post(`/room/getRoomChatList`, params)
+  } = await TalkApi.get(`/room/${channelId}/chats`, params)
 
   return messages
 }
