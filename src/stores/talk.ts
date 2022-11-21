@@ -1,4 +1,5 @@
-import { ChannelType } from '@/utils/talk'
+import { ChannelPublicityType } from '@/enum'
+import { ChannelType, GroupChannelType } from '@/utils/talk'
 import { defineStore } from 'pinia'
 import { reactive, ref } from 'vue'
 
@@ -6,6 +7,7 @@ export const useTalkStore = defineStore('talk', {
   state: () => {
     return {
       communities: [{ id: '@me' }] as any[],
+      members: [] as any,
 
       activeCommunityId: '' as string,
       activeChannelId: '' as string,
@@ -35,6 +37,21 @@ export const useTalkStore = defineStore('talk', {
       })
     },
 
+    isAdmin(): any {
+      return (selfMetaId: string) => {
+        if (!this.activeCommunity) return false
+        if (!this.activeCommunity.admins) return false
+
+        return this.activeCommunity.admins.includes(selfMetaId)
+      }
+    },
+
+    isActiveChannelPublic(): boolean {
+      if (!this.activeChannel) return true
+
+      return this.activeChannel.roomType === ChannelPublicityType.Public
+    },
+
     newMessages(): any {
       if (!this.activeChannel) return []
 
@@ -50,19 +67,26 @@ export const useTalkStore = defineStore('talk', {
   actions: {
     initChannelMessages(messages: any[]) {
       if (!this.activeChannel) return
+
       this.activeChannel.pastMessages = messages
       this.activeChannel.newMessages = []
     },
 
     addMessage(message: any) {
       if (!this.activeChannel) return
+      if (!this.activeChannel.newMessages) {
+        this.activeChannel.newMessages = []
+      }
+
       this.activeChannel.newMessages.push(message)
     },
 
     // 有社区但没有频道的情况
     setDefaultChannel() {
-      if (this.activeChannelId || !this.activeCommunityId || !this.activeCommunity.channels?.length)
+      if (!this.activeCommunityId || !this.activeCommunity.channels?.length) {
+        this.activeChannelId = ''
         return
+      }
 
       this.activeChannelId = this.activeCommunity.channels[0].id
     },
@@ -72,9 +96,9 @@ export const useTalkStore = defineStore('talk', {
 export const useCommunityFormStore = defineStore('communityForm', {
   state: () => {
     return {
-      icon: '123' as any,
-      name: '123',
-      description: '',
+      icon: null as File | null,
+      name: 'test-1',
+      description: 'test-1',
       cover: null as File | null,
     }
   },
@@ -93,12 +117,26 @@ export const useCommunityFormStore = defineStore('communityForm', {
     },
 
     iconPreviewUrl(state) {
-      if (state.icon === '123') return ''
       return state.icon ? URL.createObjectURL(state.icon) : ''
     },
 
     coverPreviewUrl(state) {
       return state.cover ? URL.createObjectURL(state.cover) : ''
+    },
+  },
+})
+
+export const userChannelFormStore = defineStore('channelForm', {
+  state: () => {
+    return {
+      type: GroupChannelType.PublicText,
+      name: 'text channel',
+    }
+  },
+
+  getters: {
+    isFinished(state) {
+      return !!state.name
     },
   },
 })

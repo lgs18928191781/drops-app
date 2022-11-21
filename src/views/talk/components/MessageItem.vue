@@ -88,12 +88,13 @@ import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { formatTimestamp } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
+import { useTalkStore } from '@/stores/talk'
 
 const i18n = useI18n()
 
-const channelId = '88a92826842757cade6e84378df9db88526578c3bce7b8cb6348b7f1f9598d0a'
 const showImagePreview = ref(false)
 const userStore = useUserStore()
+const talkStore = useTalkStore()
 
 const props = defineProps(['message'])
 
@@ -131,11 +132,10 @@ const decryptedMessage = computed(() => {
 
   // 处理mock的图片消息
   if (props.message.isMock && props.message.protocol === 'SimpleFileGroupChat') {
-    console.log(props.message.content)
     return props.message.content
   }
 
-  return decrypt(props.message.content, channelId.substring(0, 16))
+  return decrypt(props.message.content, talkStore.activeChannelId.substring(0, 16))
 })
 
 const parseTextMessage = (text: string) => {

@@ -269,6 +269,9 @@ export enum NodeName {
   ShowMsg = 'ShowMsg',
   PayComment = 'PayComment',
   PayLike = 'PayLike',
+  SimpleCommunity = 'SimpleCommunity',
+  SimpleCommunityJoin = 'SimpleCommunityJoin',
+  SimpleGroupCreate = 'SimpleGroupCreate',
 }
 
 export const enum BindStatus {
@@ -277,4 +280,14 @@ export const enum BindStatus {
   BindRegisterMetaId,
   BindSuccess,
   InputPassword,
+}
+
+export const enum CommunityJoinAction {
+  Join = 1,
+  Leave = -1,
+}
+
+export const enum ChannelPublicityType {
+  Public = '1',
+  Private = '2',
 }

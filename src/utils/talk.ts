@@ -1,9 +1,13 @@
 import dayjs from 'dayjs'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 dayjs.extend(advancedFormat)
-import { IsEncrypt, NodeName } from '@/enum'
+import { CommunityJoinAction, IsEncrypt, NodeName } from '@/enum'
 import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
+import { Store } from 'pinia'
+import { getCommunityAuth } from '@/api/talk'
+import { SDK } from './sdk'
+import { FileToAttachmentItem } from './util'
 
 export enum MessageType {
   Text = 'text',
@@ -17,6 +21,10 @@ export enum ChannelType {
   Session = 'session',
 }
 
+export enum GroupChannelType {
+  PublicText = 'publicText',
+}
+
 type MessageDto = {
   type: MessageType
   content: string
@@ -25,6 +33,93 @@ type MessageDto = {
   attachments?: any[]
   originalFileUrl?: any
   channelType?: ChannelType
+}
+
+export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
+  // communityId, name, description, cover, metaName, mateNameNft, admins, reserved, icon
+  const communityId = '8036a899bad8cd74b58f327bff34c392126886802040470fae61c2cc3571dd7d'
+  const { metaName, signature: reserved } = await getCommunityAuth(communityId)
+  const { icon, name, description, cover } = form
+
+  // 1. 上传icon、cover
+  const { metafileUri: iconUri } = await _uploadImage(icon, sdk)
+
+  let coverUri = null
+  if (cover) {
+    coverUri = (await _uploadImage(cover, sdk)).metafileUri
+  }
+
+  const admins = [userStore.user?.metaId]
+  const dataCarrier = {
+    communityId,
+    metaName,
+    reserved,
+    icon: iconUri,
+    admins,
+    name,
+    description,
+    cover: coverUri || '',
+  }
+
+  // 2. 构建节点参数
+  const node = {
+    nodeName: NodeName.SimpleCommunity,
+    encrypt: IsEncrypt.No,
+    dataType: 'application/json',
+    data: JSON.stringify(dataCarrier),
+  }
+
+  // 3. 发送节点
+  await sdk.createBrfcChildNode(node)
+
+  return { communityId }
+}
+
+export const createChannel = async (form: any, communityId: string, sdk: SDK) => {
+  // communityId, groupName, groupNote, timestamp, groupType, status, type, codehash, genesis, limitAmount
+  const { name: groupName } = form
+
+  const dataCarrier = {
+    communityId,
+    groupName,
+    groupNote: '',
+    groupType: '1',
+    status: '1',
+    timestamp: parseInt(dayjs().format('X')),
+  }
+
+  // 2. 构建节点参数
+  const node = {
+    nodeName: NodeName.SimpleGroupCreate,
+    encrypt: IsEncrypt.No,
+    dataType: 'application/json',
+    data: JSON.stringify(dataCarrier),
+  }
+
+  // 3. 发送节点
+  const channelId = await sdk.createBrfcChildNode(node)
+
+  return { channelId }
+}
+
+export const joinCommunity = async (communityId: string, sdk: SDK) => {
+  const dataCarrier = {
+    communityId,
+    state: CommunityJoinAction.Join,
+  }
+
+  // 2. 构建节点参数
+  const node = {
+    nodeName: NodeName.SimpleCommunityJoin,
+    encrypt: IsEncrypt.No,
+    dataType: 'application/json',
+    data: JSON.stringify(dataCarrier),
+  }
+
+  // 3. 发送节点
+  await sdk.createBrfcChildNode(node)
+
+  return { communityId }
 }
 
 export const sendMessage = async (messageDto: MessageDto) => {
@@ -158,6 +253,32 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
   await sdk.createBrfcChildNode(node)
 
   return '1'
+}
+
+const _uploadImage = async (file: File, sdk: SDK) => {
+  const fileType = file.type.split('/')[1]
+  const hexedFiles = await FileToAttachmentItem(file)
+  const dataCarrier = {
+    nodeName: 'icon',
+    data: hexedFiles,
+    dataType: fileType,
+    encrypt: IsEncrypt.No,
+    encoding: 'binary',
+  }
+
+  const node = {
+    nodeName: NodeName.MetaFile,
+    dataType: 'application/json',
+    data: JSON.stringify(dataCarrier),
+  }
+
+  const newNode = await sdk.createBrfcChildNode(node)
+  if (!newNode) return { metafileUri: null }
+
+  const txId = newNode.txId
+  const metafileUri = 'metafile://' + txId + '.' + fileType
+
+  return { metafileUri }
 }
 
 const _sendImageMessage = async (messageDto: MessageDto) => {

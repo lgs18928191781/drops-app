@@ -62,7 +62,7 @@
       "search": "Search"
     },
     "Community": {
-      "create": "Create a community",
+      "create": "Create community",
       "create_fist_step_tip": "Give your community some personality with a name and an icon. You can always change them later.",
       "community_name": "community name",
       "agree_tip": "By creating a community, you agree to Show's",
@@ -71,7 +71,13 @@
       "choose_nft_cover": "Choose an NFT cover",
       "introduction": "Community introduction",
       "introduction_placeholder": "Tell people what your community is about. All they need is love!",
-      "skip": "Skip for now"
+      "skip": "Skip for now",
+      "no_introduction": "No introduction",
+      "members": "member | members",
+      "public_channels": "Public channels",
+      "create_public_channel": "create public channel",
+      "channel_name": "channel name",
+      "create_public_channel_tip": "Everyone can join a public channel. No permission required."
     },
     "Input": {
       "nft_stickers": "NFT Stickers",

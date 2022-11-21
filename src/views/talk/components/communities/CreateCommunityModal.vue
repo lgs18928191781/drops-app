@@ -17,16 +17,21 @@
 
 <script lang="ts" setup>
 import { useCommunityFormStore } from '@/stores/talk'
-import { computed, reactive, ref } from 'vue'
+import { useUserStore } from '@/stores/user'
+import { createCommunity, joinCommunity } from '@/utils/talk'
+import { ref } from 'vue'
 import CreateCommunityModalContentP1 from './CreateCommunityModalContentP1.vue'
 import CreateCommunityModalContentP2 from './CreateCommunityModalContentP2.vue'
 
-const step = ref(2)
+const step = ref(1)
 const form = useCommunityFormStore()
 
-const tryCreateCommunity = () => {
+const userStore = useUserStore()
+
+const tryCreateCommunity = async () => {
   if (!form.isFinished) return
 
-  console.log('tryCreateCommunity')
+  const { communityId } = await createCommunity(form, userStore, userStore.showWallet)
+  await joinCommunity(communityId, userStore.showWallet)
 }
 </script>

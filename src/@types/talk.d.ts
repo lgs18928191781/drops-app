@@ -52,6 +52,13 @@ declare interface Community {
   icon: string
 }
 
+declare interface CommunityAuth {
+  communityId: string
+  ownerMetaId: string
+  metaName: string
+  signature: string
+}
+
 declare interface Channel {
   id: string
   communityId?: string

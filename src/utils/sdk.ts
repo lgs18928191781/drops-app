@@ -54,7 +54,6 @@ export const AllNodeName: {
   },
   [NodeName.MetaFile]: {
     brfcId: 'fcac10a5ed83',
-    // brfcId: '6d3eaf759bbc',
     path: '/Protocols/MetaFile',
     version: '1.0.1',
   },
@@ -91,6 +90,26 @@ export const AllNodeName: {
   [NodeName.PayLike]: {
     brfcId: '2ae43eeb26d9',
     path: '/Protocols/PayLike',
+    version: '1.0.0',
+  },
+  [NodeName.SimpleCommunity]: {
+    brfcId: 'c53a596f2df7',
+    path: '/Protocols/SimpleCommunity',
+    version: '1.0.0',
+  },
+  [NodeName.SimpleCommunityJoin]: {
+    brfcId: 'b736fc6b98fd',
+    path: '/Protocols/SimpleCommunityJoin',
+    version: '1.0.0',
+  },
+  [NodeName.ShowMsg]: {
+    brfcId: '1bf2c5a70377',
+    path: '/Protocols/ShowMsg',
+    version: '1.0.1',
+  },
+  [NodeName.SimpleGroupCreate]: {
+    brfcId: '9d27e36e35a3',
+    path: '/Protocols/SimpleGroupCreate',
     version: '1.0.0',
   },
 }

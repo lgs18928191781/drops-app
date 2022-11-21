@@ -21,23 +21,27 @@
     </div>
 
     <div class="divide flex items-center justify-center">
-      <div class="w-7.5 border-b-2 border-solid border-dark-100 "></div>
+      <div class="w-7.5 border-b-2 border-solid border-dark-100"></div>
     </div>
 
     <div class="space-y-4.5 flex flex-col items-center justify-center">
       <router-link
         :to="'/talk/channels/' + community.id"
-        class="flex items-center justify-center left-navigation-item"
+        class="flex items-center justify-center left-navigation-item relative"
         v-for="(community, index) in talkStore.realCommunities"
         :key="index"
       >
+        <span
+          class="absolute left-0 bg-dark-800 w-1.5 h-6 rounded-r-md"
+          v-if="talkStore.activeCommunityId === community.id"
+        ></span>
         <span class="bg-sky-200 w-13.5 h-13.5 flex items-center justify-center rounded-3xl">
           <Icon :name="community.icon" class="w-[22PX] h-[19PX] rounded-3xl" />
         </span>
       </router-link>
 
       <div
-        class="border-dashed border-2 border-gray-200 w-13.5 h-13.5 flex items-center justify-center rounded-3xl text-dark-400 cursor-pointer hover:text-primary hover:border-solid hover:border-dark-300  transition-all duration-300"
+        class="border-dashed border-2 border-gray-200 w-13.5 h-13.5 flex items-center justify-center rounded-3xl text-dark-400 cursor-pointer hover:text-dark-800 hover:border-solid hover:border-dark-300 hover:bg-primary transition-all duration-300"
         @click="layoutStore.isShowCreateCommunityModal = true"
       >
         <Icon name="plus" class="w-[24PX] h-[24PX]" />

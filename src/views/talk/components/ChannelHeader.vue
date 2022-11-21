@@ -21,7 +21,7 @@
           class="text-base leading-tight no-wrap grow whitespace-nowrap text-dark-300 px-2 hidden lg:block capitalize"
         >
           {{
-            talkStore.activeChannel?.isPublic
+            talkStore.isActiveChannelPublic
               ? $t('Talk.Channel.public_channel')
               : $t('Talk.Channel.private_channel')
           }}

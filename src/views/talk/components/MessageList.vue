@@ -65,7 +65,6 @@ const userStore = useUserStore()
 watch(
   () => talkStore.newMessages,
   async () => {
-    console.log('hello')
     await scrollToMessagesBottom()
   },
   { deep: true }
@@ -226,16 +225,6 @@ const subscribeChannel = async () => {
 }
 
 messagesScroll.value?.addEventListener('scroll', handleScroll)
-watch(
-  () => talkStore.activeChannelId,
-  async () => {
-    loading.value = true
-    await fetchMessages()
-    loading.value = false
-    scrollToMessagesBottom()
-  },
-  { deep: true }
-)
 
 const fetchMessages = async () => {
   if (!talkStore.activeChannel) {
@@ -250,7 +239,21 @@ const fetchMessages = async () => {
 
   talkStore.initChannelMessages(messages)
 }
-defineExpose({ fetchMessages })
+loading.value = true
+fetchMessages().then(() => {
+  loading.value = false
+  scrollToMessagesBottom()
+})
+
+watch(
+  () => talkStore.activeChannelId,
+  async () => {
+    loading.value = true
+    await fetchMessages()
+    loading.value = false
+    scrollToMessagesBottom()
+  }
+)
 
 onMounted(async () => {
   await subscribeChannel()

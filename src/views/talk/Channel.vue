@@ -1,6 +1,6 @@
 <template>
-  <div class="relative h-screen lg:flex">
-    <ChannelList :community="community" />
+  <div class="relative h-screen lg:flex text-base">
+    <CommunityInfo />
 
     <div class="lg:grow lg:h-screen lg:relative lg:flex">
       <ChannelHeader :showMembers="showMembers" @toggle-member-list="handleToggleMemberList" />
@@ -27,10 +27,10 @@
 import ChannelHeader from './components/ChannelHeader.vue'
 import TheInput from './components/TheInput.vue'
 import TheErrorBox from './components/TheErrorBox.vue'
-import ChannelList from './components/ChannelList.vue'
+import CommunityInfo from './components/CommunityInfo.vue'
 import ChannelMemberList from './components/ChannelMemberList.vue'
 import { computed, defineAsyncComponent, onMounted, reactive, Ref, ref } from 'vue'
-import { getChannelMembers, getChannels, getCommunities } from '@/api/talk'
+import { getCommunityMembers, getChannels, getCommunities } from '@/api/talk'
 import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
 import { useRoute, useRouter } from 'vue-router'
@@ -74,27 +74,6 @@ const channel: Ref<Channel> = ref({
 })
 
 const members: Ref<Member[]> = ref([])
-const community: Ref<any> = ref({
-  name: '一代MetaBot',
-  id: '123',
-  description:
-    'MetaBot是元拓邦中重要的一员，也是元拓邦中第一个被创造出来的NFT种群，一代MetaBot总量为999个。',
-  channels: [
-    {
-      id: '88a92826842757cade6e84378df9db88526578c3bce7b8cb6348b7f1f9598d0a',
-      name: '聊天',
-      in: true,
-    },
-    {
-      id: '2',
-      name: 'DAO',
-    },
-    {
-      id: '3',
-      name: '公告',
-    },
-  ],
-})
 
 const handleToggleMemberList = () => {
   showMembers.value = !showMembers.value
@@ -116,21 +95,33 @@ const fetchChannels = async () => {
       community => community.id === state.activeCommunityId
     )!.channels = channels
   })
+
+  // 处理没有channelId的跳转情况
+  if (!channelId) {
+    talkStore.setDefaultChannel()
+
+    let activeChannelId = talkStore.activeChannelId || 'the-void'
+    console.log('activeChannelId', activeChannelId)
+
+    layoutStore.$patch({
+      isShowLeftNav: false,
+    })
+
+    router.push(`/talk/channels/${communityId}/${activeChannelId}`)
+  }
 }
 fetchChannels()
 
-// 处理没有channelId的跳转情况
-if (!channelId) {
-  talkStore.setDefaultChannel()
-
-  let activeChannelId = talkStore.activeChannelId
-
-  layoutStore.$patch({
-    isShowLeftNav: false,
-  })
-
-  router.push(`/talk/channels/${communityId}/${activeChannelId}`)
+const fetchMembers = async () => {
+  const members = await getCommunityMembers(communityId as string)
+  // talkStore.$patch(state => {
+  //   state.communities
+  //     .find(community => community.id === state.activeCommunityId)!
+  //     .channels.find(channel => channel.id === state.activeChannelId)!.membersCount = membersCount
+  // })
+  talkStore.members = members
 }
+fetchMembers()
 
 /** ------ */
 
@@ -144,7 +135,7 @@ onMounted(async () => {
 
   // await fetchChannels()
 
-  members.value = await getChannelMembers('1')
+  members.value = await getCommunityMembers('1')
 })
 </script>
 

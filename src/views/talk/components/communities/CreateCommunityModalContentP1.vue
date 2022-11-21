@@ -9,7 +9,7 @@
 
   <div class="h-full w-full flex flex-col justify-between pt-8 lg:pt-0">
     <div class="flex flex-col w-full h-full items-center justify-start">
-      <h3 class="text-2xl text-center font-bold">{{ $t('Talk.Community.create') }}</h3>
+      <h3 class="text-2xl text-center font-bold capitalize">{{ $t('Talk.Community.create') }}</h3>
 
       <p class="mt-4.5 text-base text-dark-400 leading-relaxed text-center">
         {{ $t('Talk.Community.create_fist_step_tip') }}

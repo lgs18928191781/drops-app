@@ -272,6 +272,7 @@ const trySendMessage = async () => {
   // 私聊会话和频道群聊的加密方式不同
   let content = ''
   if (talkStore.activeChannelType === 'group') {
+    console.log('here', talkStore.activeChannel.id)
     content = encrypt(chatInput.value, talkStore.activeChannel.id.substring(0, 16))
   } else {
     const privateKey = toRaw(userStore?.wallet)!.getPathPrivateKey('0/0')
