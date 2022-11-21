@@ -56,7 +56,7 @@
       "private_channel": "private channel",
       "public_channel": "public channel",
       "message_to": "Message {channel}",
-      "upload_image": "Upload a Image",
+      "upload_image": "Upload an Image",
       "use_onchain_image": "Use an Onchain Image",
       "view_original": "Open original",
       "search": "Search"

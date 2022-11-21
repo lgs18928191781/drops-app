@@ -126,6 +126,49 @@
             <Icon name="red_envelope" class="w-full h-full text-dark-800" />
           </div>
 
+          <Popover class="relative flex items-center">
+            <PopoverButton as="div">
+              <div class="p-2 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer">
+                <Icon name="photo_3" class="w-full h-full text-dark-800" />
+              </div>
+            </PopoverButton>
+
+            <transition
+              enter-active-class="transition duration-200 ease-out"
+              enter-from-class="opacity-0"
+              enter-to-class="opacity-100"
+              leave-active-class="transition duration-150 ease-in"
+              leave-from-class="opacity-100"
+              leave-to-class="opacity-0"
+            >
+              <PopoverPanel class="absolute z-10 transform top-[-16PX] right-0 -translate-y-full">
+                <div class="bg-white p-2 rounded-xl shadow-lg w-60 divide-y divide-dark-200">
+                  <div
+                    class="mx-2 py-4 flex items-center space-x-2 text-dark-800 rounded-sm lg:cursor-pointer lg:hover:underline"
+                    @click="openImageUploader"
+                  >
+                    <div class="">
+                      <Icon name="photo" class="w-5 h-5 rounded-full bg-primary p-2 box-content" />
+                    </div>
+                    <div class="">
+                      {{ $t('Talk.Channel.upload_image') }}
+                    </div>
+                  </div>
+                  <div
+                    class="mx-2 py-4 flex items-center space-x-2 text-dark-800 rounded-sm lg:cursor-pointer lg:hover:underline"
+                  >
+                    <div class="">
+                      <Icon name="link" class="w-5 h-5 rounded-full bg-primary p-2 box-content" />
+                    </div>
+                    <div class="">
+                      {{ $t('Talk.Channel.use_onchain_image') }}
+                    </div>
+                  </div>
+                </div>
+              </PopoverPanel>
+            </transition>
+          </Popover>
+
           <ElPopover placement="bottom-start" width="300px" trigger="click">
             <StickerVue @input="params => (chatInput = chatInput + params.value)" />
             <template #reference>
@@ -176,6 +219,7 @@ import { FileToAttachmentItem } from '@/utils/util'
 import { encrypt, ecdhEncrypt } from '@/utils/crypto'
 import { useTalkStore } from '@/stores/talk'
 import StickerVue from '@/components/Sticker/Sticker.vue'
+import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
 
 const doNothing = () => {}
 

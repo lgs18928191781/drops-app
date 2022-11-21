@@ -29,21 +29,16 @@ import TheInput from './components/TheInput.vue'
 import TheErrorBox from './components/TheErrorBox.vue'
 import CommunityInfo from './components/CommunityInfo.vue'
 import ChannelMemberList from './components/ChannelMemberList.vue'
-import { computed, defineAsyncComponent, onMounted, reactive, Ref, ref } from 'vue'
-import { getCommunityMembers, getChannels, getCommunities } from '@/api/talk'
-import { useUserStore } from '@/stores/user'
+import { defineAsyncComponent, onMounted, Ref, ref } from 'vue'
+import { getCommunityMembers } from '@/api/talk'
 import { useTalkStore } from '@/stores/talk'
-import { useRoute, useRouter } from 'vue-router'
-import { useLayoutStore } from '@/stores/layout'
+import { useRoute } from 'vue-router'
 
 const MessageList = defineAsyncComponent({
   loader: () => import('./components/MessageList.vue'),
 })
 
-const userStore = useUserStore()
 const talkStore = useTalkStore()
-const layoutStore = useLayoutStore()
-const router = useRouter()
 
 type Member = {
   protocol: string
@@ -55,23 +50,7 @@ type Member = {
   timestamp: number
 }
 
-type Channel = {
-  name: string
-  description: string
-  groupId: string
-  isPublic: boolean
-}
-
 const showMembers = ref(false)
-const hasChannels = computed(() => talkStore.activeChannelId !== '')
-
-// 获取频道信息
-const channel: Ref<Channel> = ref({
-  name: '',
-  description: '',
-  isPublic: true,
-  groupId: '',
-})
 
 const members: Ref<Member[]> = ref([])
 
@@ -80,53 +59,11 @@ const handleToggleMemberList = () => {
   localStorage.setItem('layout-show-right-drawer', showMembers.value ? '1' : '0')
 }
 
-/** 获取频道数据处理 */
 const route = useRoute()
 const { communityId, channelId } = route.params
-const fetchChannels = async () => {
-  const channels = await getChannels({ communityId })
-
-  talkStore.$patch(state => {
-    state.activeCommunityId = communityId as string
-    if (channelId) {
-      state.activeChannelId = channelId as string
-    }
-    state.communities.find(
-      community => community.id === state.activeCommunityId
-    )!.channels = channels
-  })
-
-  // 处理没有channelId的跳转情况
-  if (!channelId) {
-    talkStore.setDefaultChannel()
-
-    let activeChannelId = talkStore.activeChannelId || 'the-void'
-    console.log('activeChannelId', activeChannelId)
-
-    layoutStore.$patch({
-      isShowLeftNav: false,
-    })
-
-    router.push(`/talk/channels/${communityId}/${activeChannelId}`)
-  }
-}
-fetchChannels()
-
-const fetchMembers = async () => {
-  const members = await getCommunityMembers(communityId as string)
-  // talkStore.$patch(state => {
-  //   state.communities
-  //     .find(community => community.id === state.activeCommunityId)!
-  //     .channels.find(channel => channel.id === state.activeChannelId)!.membersCount = membersCount
-  // })
-  talkStore.members = members
-}
-fetchMembers()
-
-/** ------ */
+talkStore.initChannel(communityId as string, channelId as string)
 
 onMounted(async () => {
-  const selfMetaId = userStore.user!.metaId
   // 拉取布局状态
   const layoutState = localStorage.getItem('layout-show-right-drawer')
   if (layoutState === '1') {

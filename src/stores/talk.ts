@@ -1,7 +1,10 @@
+import { getChannels, getCommunityMembers } from '@/api/talk'
 import { ChannelPublicityType } from '@/enum'
 import { ChannelType, GroupChannelType } from '@/utils/talk'
 import { defineStore } from 'pinia'
 import { reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useLayoutStore } from './layout'
 
 export const useTalkStore = defineStore('talk', {
   state: () => {
@@ -65,6 +68,39 @@ export const useTalkStore = defineStore('talk', {
   },
 
   actions: {
+    async initChannel(routeCommunityId: string, routeChannelId: string) {
+      const fetchChannels = async () => {
+        const channels = await getChannels({ communityId: routeCommunityId })
+
+        this.activeCommunityId = routeCommunityId
+        if (routeChannelId) {
+          this.activeChannelId = routeChannelId
+        }
+        this.activeCommunity.channels = channels
+
+        // 处理没有channelId的跳转情况
+        if (!routeChannelId) {
+          this.setDefaultChannel()
+
+          const activeChannelId = this.activeChannelId || 'the-void'
+
+          const layoutStore = useLayoutStore()
+          layoutStore.$patch({
+            isShowLeftNav: false,
+          })
+
+          const router = useRouter()
+          router.push(`/talk/channels/${routeCommunityId}/${activeChannelId}`)
+        }
+      }
+      await fetchChannels()
+
+      const fetchMembers = async () => {
+        this.members = await getCommunityMembers(routeCommunityId)
+      }
+      await fetchMembers()
+    },
+
     initChannelMessages(messages: any[]) {
       if (!this.activeChannel) return
 

@@ -36,7 +36,7 @@
           class="w-fit max-w-[90%] md:max-w-[50%] lg:max-w-[400px] max-h-[600px] overflow-y-hidden rounded bg-dark-100 cursor-pointer"
           @click="previewImage"
         >
-          <Image :src="decryptedMessage" customClass="rounded py-0.5 object-scale-down" />
+          <Image :src="decryptedMessage" customClass="rounded-xl py-0.5 object-scale-down" />
         </div>
         <Teleport to="body" v-if="isImage && showImagePreview">
           <ImagePreview
