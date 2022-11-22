@@ -364,7 +364,7 @@ export class SDK {
     } | null>(async (resolve, reject) => {
       const initOption = {
         isBroadcast: true,
-        payType: SdkPayType.SPACE,
+        payType: SdkPayType.ME,
       }
       const initParams = {
         appId: ['ShowV3', this.getOnLinkAppUrl(), this.getPlatform()],
