@@ -811,7 +811,7 @@ export class SDK {
                 : transactions.currentNodeBrfc?.transaction
                 ? this.wallet!.protocolAddress
                 : transactions.currentNode?.transaction
-                ? transactions.metaFileBrfc!.address
+                ? transactions.currentNodeBrfc!.address
                 : this.wallet!.rootAddress
             )
             // 更新txId
