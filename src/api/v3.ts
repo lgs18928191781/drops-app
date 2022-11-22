@@ -2,14 +2,20 @@ import { PayPlatform, PayType } from '@/enum'
 import HttpRequest from 'request-sdk'
 import { alertCatchError } from '@/utils/util'
 import { ElMessage } from 'element-plus'
-import { getToken, getUserName } from '@/stores/user'
+import { getToken, getUserName, useUserStore } from '@/stores/user'
 
 // @ts-ignore
 const V3 = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/v3`, {
-  header: {
-    token: () => getToken(),
-    accessKey: () => getUserName(),
-    timestamp: () => new Date().getTime(),
+  header: () => {
+    const userStore = useUserStore()
+    if (userStore.isAuthorized) {
+      return {
+        token: userStore.user!.token,
+        meta_id: userStore.user!.metaId,
+      }
+    } else {
+      return {}
+    }
   },
   errorHandel(error: any) {
     if (error?.response?.status === 401) {

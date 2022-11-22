@@ -112,12 +112,12 @@ const operates: {
             props.list[index].rePost.push({
               metaId: userStore.user!.metaId!,
               timestamp: time,
-              txId: res.txId,
+              txId: res.currentNode!.txId,
               userName: userStore.user!.name!,
               value: 0,
             })
             emit('update:list', props.list)
-            Mitt.emit(MittEvent.AddBuzz, { txId: res.txId })
+            Mitt.emit(MittEvent.AddBuzz, { txId: res.currentNode!.txId })
             ElMessage.success(i18n.t('Buzz.repost.success'))
             operateLoading.value = false
             isShowOperateModal.value = false
@@ -194,7 +194,7 @@ async function onLike(txId: string) {
     props.list[index].like.push({
       metaId: userStore.user!.metaId!,
       timestamp: time,
-      txId: res.txId,
+      txId: res.currentNode!.txId,
       userName: userStore.user!.name,
       value: 0,
     })

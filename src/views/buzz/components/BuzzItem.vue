@@ -77,7 +77,10 @@
 
             <!-- 标签 -->
             <div class="tags flex flex-align-center">
-              <a class="flex flex-align-center">
+              <a
+                class="flex flex-align-center"
+                @click.stop="$router.push({ name: 'buzzTag', params: { tagId: 1 } })"
+              >
                 <Icon name="flag" />
                 Buzz
               </a>
@@ -116,7 +119,7 @@ import Attachment from './Attachment.vue'
 // import { copy } from '@/utils/filters'
 import { PayMeParams } from '@/@types/sdk'
 import { PayMeParamsType } from '@/enum'
-import { checkSdkStatus } from '@/utils/util'
+import { checkSdkStatus, checkUserLogin } from '@/utils/util'
 import QuoteVue from './Quote.vue'
 import BuzzItemControlVue from './BuzzItemControl.vue'
 import BuzzItemSkeletonVue from './BuzzItemSkeleton.vue'
@@ -223,6 +226,7 @@ function sliceStr(str?: string, len = 8) {
 }
 
 async function follow() {
+  await checkUserLogin()
   if (following.value) return
   following.value = true
   emit('follow', displayItemData!.value!.txId)

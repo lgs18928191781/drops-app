@@ -115,7 +115,7 @@ export default ({ mode, command }) => {
     },
     server: {
       // host: 'show-app.com',
-      // port: 443,
+      // port: 5174,
       https: false,
       // open: false,
     },

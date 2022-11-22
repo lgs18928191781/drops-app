@@ -70,16 +70,9 @@ router.beforeEach(async (to, from, next) => {
         next()
       } else {
         if (loading) loading.close()
-        const result = await ElMessageBox.confirm('请先登录再操作', '温馨提示', {
-          confirmButtonText: '注册/登录',
-          cancelButtonText: '取消',
-          type: 'warning',
-        }).catch(() => {
-          if (loading) loading.close()
+        rootStore.$patch({
+          isShowLogin: true,
         })
-        if (result === 'confirm') {
-          next({ name: 'preLogin' })
-        }
       }
     }
   } else {
