@@ -9,12 +9,16 @@ export const useLayoutStore = defineStore('layout', {
       isShowCreateChannelModal: false,
       isShowRedPacketModal: false,
       isShowMessagesLoading: false,
-      repostTxId: '',
+      publishBuzzOption: {
+        repostTxId: '', // 转发的TxId
+        topic: '', // 发表话题
+      },
     }
   },
   actions: {
-    publish(params?: { repostTxId?: string }) {
-      this.repostTxId = params?.repostTxId || ''
+    publish(params?: { repostTxId?: string; topic?: string }) {
+      this.publishBuzzOption.repostTxId = params?.repostTxId || ''
+      this.publishBuzzOption.topic = params?.topic || ''
       this.isShowPublishBuzz = true
     },
   },

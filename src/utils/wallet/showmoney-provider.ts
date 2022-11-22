@@ -255,6 +255,17 @@ export default class ShowmoneyProvider {
     return utxos
   }
 
+  public getXpubBalance(xpub: string): Promise<number> {
+    return new Promise(async (resolve, reject) => {
+      const res = await this.callMetasvApi(`/xpubLite/${xpub}/balance`).catch(error => {
+        reject(error)
+      })
+      if (res) {
+        resolve(res.balance)
+      }
+    })
+  }
+
   public async getAddressUtxos(params: {
     address: string
     flag?: string

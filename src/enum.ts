@@ -217,8 +217,8 @@ export enum PayMeParamsType {
   BuzzComment = 'PayComment',
   BuzzReopost = 'SimpleRePost',
 }
-export enum CreateBrfcChildNodePayType {
-  MC = 'MC',
+export enum SdkPayType {
+  ME = 'ME',
   SPACE = 'SPACE',
 }
 
@@ -260,18 +260,19 @@ export enum SignUserType {
 
 export enum NodeName {
   ETHBinding = 'ETHBinding',
+  MetaFile = 'MetaFile',
+  NFTAvatar = 'NFTAvatar',
+  PayComment = 'PayComment',
+  PayLike = 'PayLike',
+  PayFollow = 'PayFollow',
   SimpleMicroblog = 'SimpleMicroblog',
   SimpleRePost = 'SimpleRePost',
   SimpleGroupChat = 'SimpleGroupChat',
   SimpleFileGroupChat = 'SimpleFileGroupChat',
-  MetaFile = 'MetaFile',
-  NFTAvatar = 'NFTAvatar',
-  ShowMsg = 'ShowMsg',
-  PayComment = 'PayComment',
-  PayLike = 'PayLike',
   SimpleCommunity = 'SimpleCommunity',
   SimpleCommunityJoin = 'SimpleCommunityJoin',
   SimpleGroupCreate = 'SimpleGroupCreate',
+  ShowMsg = 'ShowMsg',
 }
 
 export const enum BindStatus {

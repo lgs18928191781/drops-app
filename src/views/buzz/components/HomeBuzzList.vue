@@ -23,6 +23,8 @@
     @get-more="getMore"
     :pagination="pagination"
   />
+
+  <RecommendContentVue />
 </template>
 
 <script setup lang="ts">
@@ -35,6 +37,7 @@ import { useRoute } from 'vue-router'
 import BuzzListVue from './BuzzList.vue'
 import { Mitt, MittEvent } from '@/utils/mitt'
 import { getOneBuzz } from '@/api/buzz'
+import RecommendContentVue from './RecommendContent.vue'
 
 // interface Props {}
 // const props = withDefaults(defineProps<Props>(), {})

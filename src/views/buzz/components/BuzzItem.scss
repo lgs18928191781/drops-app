@@ -97,6 +97,12 @@
                 padding: 6px 12px;
                 border-radius: 20px;
             }
+
+            .follow {
+                &.disabled {
+                    cursor: not-allowed;
+                }
+            }
         }
     }
 

@@ -24,7 +24,7 @@ import { SA_utxo } from 'sensible-sdk/dist/sensible-api'
 import { isEmail } from '../util'
 import { IsEncrypt, NodeName } from '@/enum'
 import { AttachmentItem, PayToItem } from '@/@types/hd-wallet'
-import { CreateNodeOptions, TransferTypes, UtxoItem } from '@/@types/sdk'
+import { CreateNodeOptions, CreateNodeRes, TransferTypes, UtxoItem } from '@/@types/sdk'
 import { AllNodeName } from '../sdk'
 import { ElMessage } from 'element-plus'
 
@@ -135,11 +135,12 @@ declare interface UtxoWithWif extends SA_utxo {
   wif: string
 }
 
-export interface CreateNodeRes {
-  raw: bsv.Transaction
-  hex: string
-  txId: string
-  nodeAddress: string
+export interface CreateBrfcChildNodeRes {
+  payTo: CreateNodeRes | null
+  metaFileBrfc: CreateNodeRes | null
+  metaFiles: CreateNodeRes[] | []
+  currentNodeBrfc: CreateNodeRes | null
+  currentNode: CreateNodeRes | null
 }
 
 export interface NodeOptions {
@@ -816,8 +817,8 @@ export class HdWallet {
         if (this.keyPathMap[nodeName]) {
           const nodeInfo = this.keyPathMap[nodeName]
           parentKeyPath = nodeInfo.parentKeyPath
-          const nodeKeyPath = nodeInfo.keyPath
-          parentAddress = this.createAddress(parentKeyPath)
+          nodeKeyPath = nodeInfo.keyPath
+          parentAddress = this.createAddress(parentKeyPath).address
           nodeAddress = this.createAddress(nodeKeyPath)
           privateKey = this.getPathPrivateKey(nodeKeyPath)
         } else if (keyPath && parentAddress) {
@@ -885,10 +886,11 @@ export class HdWallet {
         const nodeTx = await this.makeTx(makeTxOptions)
         if (nodeTx) {
           resolve({
-            raw: nodeTx,
-            hex: nodeTx.toString(),
+            transaction: nodeTx,
             txId: nodeTx.id,
-            nodeAddress: nodeAddress?.address,
+            address: nodeAddress!.address,
+            addressType: parseInt(nodeKeyPath.split('/')[0]),
+            addressIndex: parseInt(nodeKeyPath.split('/')[1]),
           })
         }
       } catch (error) {
@@ -1580,13 +1582,7 @@ export class HdWallet {
       isBroadcast: boolean
     }
   ) {
-    return new Promise<{
-      address: string
-      txId: string
-      addressType: number
-      addressIndex: number
-      tx?: bsv.Transaction
-    }>(async (resolve, reject) => {
+    return new Promise<CreateNodeRes>(async (resolve, reject) => {
       try {
         const initParams = {
           useFeeb: DEFAULTS.feeb,
@@ -1639,18 +1635,16 @@ export class HdWallet {
           })
           if (protocolRoot) {
             if (option.isBroadcast) {
-              await this.provider.broadcast(protocolRoot.raw.toString())
+              await this.provider.broadcast(protocolRoot.transaction.toString())
             }
-            // @ts-ignore
-            protocol = {
-              address: protocolRoot.nodeAddress,
+
+            resolve({
+              address: protocolRoot.address,
               txId: protocolRoot.txId,
               addressType: parseInt(params.keyPath!.split('/')[0]),
               addressIndex: parseInt(params.keyPath!.split('/')[1]),
-              // @ts-ignore
-              tx: protocolRoot.raw,
-            }
-            resolve(protocol)
+              transaction: protocolRoot.transaction,
+            })
           }
         }
       } catch (error) {
@@ -1688,12 +1682,8 @@ export class HdWallet {
     option?: {
       isBroadcast: boolean // 是否广播
     }
-  ): Promise<{
-    raw: bsv.Transaction
-    hex: string
-    txId: string
-  }> {
-    return new Promise<CreateNodeRes>(async (resolve, reject) => {
+  ): Promise<CreateNodeRes> {
+    return new Promise<any>(async (resolve, reject) => {
       const initParams = {
         autoRename: true,
         version: '0.0.9',
@@ -1778,7 +1768,7 @@ export class HdWallet {
         const res = await this.createNode(protocolNodeOptions)
         if (res) {
           if (option.isBroadcast) {
-            const response = await this.provider.broadcast(res.hex)
+            const response = await this.provider.broadcast(res.transaction!.toString())
             if (response?.txid) {
               resolve(res)
             }

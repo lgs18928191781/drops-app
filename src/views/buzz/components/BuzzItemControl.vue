@@ -1,9 +1,13 @@
 <template>
   <div class="control flex flex-align-center">
-    <div class="flex1">
+    <div class="flex1 flex flex-align-center">
       <a class="more flex flex-align-center flex-pack-center">
         <Icon name="more" @click.stop="emit('more', buzz.txId)" />
       </a>
+
+      <a class="tx" @click.stop="tx(buzz.txId)"
+        >{{ buzz.txId.slice(0, 6) }}...{{ buzz.txId.slice(-3) }}</a
+      >
     </div>
 
     <div class="operates flex flex-align-center">
@@ -36,15 +40,12 @@
       <div class="item" @click.stop="handleForward"><span>带评论转发</span></div>
     </div>
   </van-popup> -->
-
-  <!-- 确认发表 -->
-  <MePayConfirmModalVue v-model="isShowConfirm" :params="payMe" />
 </template>
 
 <script setup lang="ts">
 import { PayMeParams } from '@/@types/sdk'
 import { PayMeParamsType } from '@/enum'
-import { checkSdkStatus } from '@/utils/util'
+import { checkSdkStatus, checkUserLogin, tx } from '@/utils/util'
 import { Notify } from 'vant'
 import { computed, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -78,7 +79,8 @@ const operates = [
     active: () => {
       return isIForward.value
     },
-    fun: () => {
+    fun: async () => {
+      await checkUserLogin()
       emit('repost', props.buzz.txId)
     },
   },
@@ -90,7 +92,8 @@ const operates = [
     active: () => {
       return false
     },
-    fun: () => {
+    fun: async () => {
+      await checkUserLogin()
       router.push({
         name: 'buzzDetail',
         params: {
@@ -107,7 +110,8 @@ const operates = [
     active: () => {
       return isILike.value
     },
-    fun: () => {
+    fun: async () => {
+      await checkUserLogin()
       if (isILike.value) return
       emit('like', props.buzz.txId)
     },
@@ -144,7 +148,7 @@ const commentText = computed(() => {
 
 const isILike = computed(() => {
   if (props.buzz.like && props.buzz.like.length) {
-    return props.buzz.like.some(v => v.metaId === userStore.user!.metaId)
+    return props.buzz.like.some(v => v.metaId === userStore.user?.metaId)
   }
   return false
 })

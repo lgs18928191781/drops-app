@@ -217,8 +217,14 @@
       "topics": "话题",
       "inputTitle": "你想使用什么话题",
       "hotTopics": "热门话题",
-      "inputPlaceholder": "请输入话题"
-    }
+      "inputPlaceholder": "请输入话题",
+      "Create Community": "创建话题"
+    },
+    "follow": {
+      "success": "关注成功"
+    },
+    "Referral Community": "推荐社区",
+    "Web3 Gathering Place": "Web3聚会场所"
   },
   "Follow": "关注",
   "Pagination": {
@@ -228,5 +234,17 @@
   "noDatas": "暂无数据",
   "copysuccess": "复制成功",
   "copyerror": "复制成功",
-  "Confirm": "确认"
+  "Confirm": "确认",
+  "SDK": {
+    "payconfirm": {
+      "Payment": "支付",
+      "ME": "能量点",
+      "tips": "对于低于",
+      "tips2": "的操作，不再有付款确认提示",
+      "Payment required": "大约需要支付",
+      "My": "我的",
+      "Recharge": "充值"
+    }
+  },
+  "Please Login First": "请先登录"
 }

@@ -179,16 +179,25 @@ const topics: GetHotTopicsResItem[] = reactive([])
 const topic = ref('')
 
 watch(
-  () => layoutStore.repostTxId,
+  () => layoutStore.publishBuzzOption.repostTxId,
   () => {
-    if (layoutStore.repostTxId) {
-      getOneBuzz({ txId: layoutStore.repostTxId }).then(res => {
+    if (layoutStore.publishBuzzOption.repostTxId) {
+      getOneBuzz({ txId: layoutStore.publishBuzzOption.repostTxId }).then(res => {
         if (res.code === 0) {
           respostBuzz.val = res.data.results.items[0]
         }
       })
     } else {
       respostBuzz.val = null
+    }
+  }
+)
+
+watch(
+  () => layoutStore.publishBuzzOption.topic,
+  () => {
+    if (layoutStore.publishBuzzOption.topic) {
+      content.value += `  #${layoutStore.publishBuzzOption.topic}  `
     }
   }
 )
@@ -265,7 +274,7 @@ async function submit() {
     })
 
   if (res) {
-    Mitt.emit(MittEvent.AddBuzz, { txId: res.txId })
+    Mitt.emit(MittEvent.AddBuzz, { txId: res.currentNode!.txId })
     content.value = ''
     attachments.length = 0
     loading.value = false
@@ -274,7 +283,7 @@ async function submit() {
     router.replace({
       name: 'buzzDetail',
       params: {
-        txId: res.txId,
+        txId: res.currentNode!.txId,
       },
     })
   }
