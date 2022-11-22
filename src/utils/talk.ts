@@ -1,39 +1,13 @@
 import dayjs from 'dayjs'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 dayjs.extend(advancedFormat)
-import { CommunityJoinAction, IsEncrypt, NodeName } from '@/enum'
+import { ChannelType, CommunityJoinAction, IsEncrypt, MessageType, NodeName } from '@/enum'
 import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
-import { Store } from 'pinia'
 import { getCommunityAuth } from '@/api/talk'
 import { SDK } from './sdk'
 import { FileToAttachmentItem } from './util'
-
-export enum MessageType {
-  Text = 'text',
-  Image = 'image',
-  NftEmoji = 'nftEmoji',
-  OnChainImage = 'onChainImage',
-}
-
-export enum ChannelType {
-  Group = 'group',
-  Session = 'session',
-}
-
-export enum GroupChannelType {
-  PublicText = 'publicText',
-}
-
-type MessageDto = {
-  type: MessageType
-  content: string
-  channelId: string
-  userName: string
-  attachments?: any[]
-  originalFileUrl?: any
-  channelType?: ChannelType
-}
+import { Message, MessageDto } from '@/@types/talk'
 
 export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   // communityId, name, description, cover, metaName, mateNameNft, admins, reserved, icon
@@ -137,7 +111,7 @@ export const sendMessage = async (messageDto: MessageDto) => {
   }
 }
 
-export const validateMessage = (message: string) => {
+export const validateTextMessage = (message: string) => {
   message = message.trim()
 
   return message.length > 0 && message.length <= 5000

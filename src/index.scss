@@ -94,13 +94,18 @@ pre {
     --border-color: var(--el-border-color);
   }
 
+  &.small {
+    --standard-offset: 2PX;
+    --standard-border-width: 1PX;
+  }
+
 
   // 只有下阴影的情况
   &.only-bottom {
     --right-offset: 0PX;
   }
 
-  border: 2PX solid var(--border-color);
+  border: var(--standard-border-width) solid var(--border-color);
   box-shadow: var(--right-offset) var(--standard-offset) 0 var(--border-color);
   border-radius: var(--rounded);
   transition-property: all;

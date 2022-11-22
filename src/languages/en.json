@@ -82,7 +82,17 @@
     "Input": {
       "nft_stickers": "NFT Stickers",
       "emoji": "Emoji",
-      "no_nft_stickers": "No NFT Stickers Available."
+      "no_nft_stickers": "No NFT Stickers Available.",
+      "giveaway": "giveaway",
+      "for_everyone": "red packet",
+      "nft_limited": "for NFTer",
+      "quantity": "quantity",
+      "enter_quantity": "Enter quantity",
+      "total": "total",
+      "blessings": "blessings",
+      "best_wishes": "Best wishes",
+      "send": "send",
+      "red_packet_refund_tip": "Red Packets not opened within 24hrs will be refunded."
     },
     "Datetime": {
       "today": "Today at ",

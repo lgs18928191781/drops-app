@@ -291,3 +291,19 @@ export const enum ChannelPublicityType {
   Public = '1',
   Private = '2',
 }
+
+export enum MessageType {
+  Text = 'text',
+  Image = 'image',
+  NftEmoji = 'nftEmoji',
+  OnChainImage = 'onChainImage',
+}
+
+export enum ChannelType {
+  Group = 'group',
+  Session = 'session',
+}
+
+export enum GroupChannelType {
+  PublicText = 'publicText',
+}

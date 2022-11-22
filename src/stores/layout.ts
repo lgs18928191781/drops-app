@@ -7,6 +7,7 @@ export const useLayoutStore = defineStore('layout', {
       isShowPublishBuzz: false,
       isShowCreateCommunityModal: false,
       isShowCreateChannelModal: false,
+      isShowRedPacketModal: true,
       repostTxId: '',
     }
   },

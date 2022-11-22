@@ -67,7 +67,7 @@
               })
             "
             v-model="chatInput"
-            @keyup.enter="trySendMessage"
+            @keyup.enter="trySendText"
           />
         </div>
       </div>
@@ -121,10 +121,11 @@
         <div class="flex items-center px-1 lg:mr-2">
           <div
             class="p-2 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer"
-            @click="doNothing"
+            @click="layoutStore.isShowRedPacketModal = true"
           >
             <Icon name="red_envelope" class="w-full h-full text-dark-800" />
           </div>
+          <RedPacketModal />
 
           <Popover class="relative flex items-center">
             <PopoverButton as="div">
@@ -188,7 +189,7 @@
         </div>
 
         <div class="lg:hidden">
-          <div class="py-2 px-3" @click="trySendMessage">
+          <div class="py-2 px-3" @click="trySendText">
             <div
               class="transition-all ease-in-out duration-500"
               :class="[hasInput ? 'text-primary scale-110 -rotate-6' : 'text-dark-250']"
@@ -204,27 +205,24 @@
 
 <script setup lang="ts">
 import { computed, ref, toRaw } from 'vue'
-import {
-  sendMessage,
-  validateMessage,
-  MessageType,
-  ChannelType,
-  isImage,
-  isFileTooLarge,
-} from '@/utils/talk'
+import { sendMessage, validateTextMessage, isImage, isFileTooLarge } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
 import ImagePreview from './ImagePreview.vue'
-import TheInputStickersBox from './TheInputStickersBox.vue'
 import { FileToAttachmentItem } from '@/utils/util'
 import { encrypt, ecdhEncrypt } from '@/utils/crypto'
 import { useTalkStore } from '@/stores/talk'
 import StickerVue from '@/components/Sticker/Sticker.vue'
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
+import { ChannelType, MessageType } from '@/enum'
+import { useLayoutStore } from '@/stores/layout'
+import RedPacketModal from './modals/RedPacketModal.vue'
 
 const doNothing = () => {}
 
 const showMoreCommandsBox = ref(false)
 const showStickersBox = ref(false)
+
+const layoutStore = useLayoutStore()
 
 const hasInput = computed(() => chatInput.value.length > 0)
 
@@ -310,8 +308,8 @@ const trySendImage = async () => {
 const chatInput = ref('')
 const userStore = useUserStore()
 
-const trySendMessage = async () => {
-  if (!validateMessage(chatInput.value)) return
+const trySendText = async () => {
+  if (!validateTextMessage(chatInput.value)) return
 
   // 私聊会话和频道群聊的加密方式不同
   let content = ''

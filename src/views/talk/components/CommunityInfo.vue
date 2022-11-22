@@ -67,9 +67,10 @@
                   <div
                     class="text-dark-800 text-base font-medium flex items-center"
                     @click="goChannel(channel.id)"
+                    :title="channel.name"
                   >
                     <Icon name="hashtag" class="w-4 h-4 text-dark-400" />
-                    <div class="ml-2">
+                    <div class="ml-2 truncate">
                       {{ channel.name }}
                     </div>
                   </div>
@@ -89,7 +90,7 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
 import MetabotBanner from '@/assets/images/metabot_banner.png?url'
-import CreateChannelModal from './channels/CreateChannelModal.vue'
+import CreateChannelModal from './modals/CreateChannelModal.vue'
 import UserProfile from './UserProfile.vue'
 import { useLayoutStore } from '@/stores/layout'
 import { useTalkStore } from '@/stores/talk'

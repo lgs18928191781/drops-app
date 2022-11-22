@@ -1,10 +1,9 @@
 import { getChannels, getCommunityMembers } from '@/api/talk'
-import { ChannelPublicityType } from '@/enum'
-import { ChannelType, GroupChannelType } from '@/utils/talk'
+import { ChannelPublicityType, ChannelType, GroupChannelType } from '@/enum'
 import { defineStore } from 'pinia'
-import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { router } from '@/router'
 import { useLayoutStore } from './layout'
+import { TalkError } from '@/@types/talk'
 
 export const useTalkStore = defineStore('talk', {
   state: () => {
@@ -89,7 +88,6 @@ export const useTalkStore = defineStore('talk', {
             isShowLeftNav: false,
           })
 
-          const router = useRouter()
           router.push(`/talk/channels/${routeCommunityId}/${activeChannelId}`)
         }
       }

@@ -61,7 +61,7 @@
 </template>
 
 <script lang="ts" setup>
-import ScreenModal from './ScreenModal.vue'
+import ScreenModal from './modals/ScreenModal.vue'
 import { useLayoutStore } from '@/stores/layout'
 import LoginedUserOperate from '@/components/LoginedUserOperate/LoginedUserOperate.vue'
 import { useTalkStore } from '@/stores/talk'

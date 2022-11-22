@@ -60,7 +60,7 @@ import { getCommunities } from '@/api/talk'
 import { useLayoutStore } from '@/stores/layout'
 import { useTalkStore } from '@/stores/talk'
 import { useUserStore } from '@/stores/user'
-import CreateCommunityModal from '@/views/talk/components/communities/CreateCommunityModal.vue'
+import CreateCommunityModal from '@/views/talk/components/modals/CreateCommunityModal.vue'
 const layoutStore = useLayoutStore()
 const talkStore = useTalkStore()
 const userStore = useUserStore()

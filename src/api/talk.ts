@@ -1,5 +1,6 @@
 import HttpRequest from 'request-sdk'
 import { sleep } from '@/utils/util'
+import { Channel, Community, CommunityAuth } from '@/@types/talk'
 
 const TalkApi = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/talkAggregation/v3/app`, {
   header: {
@@ -12,7 +13,7 @@ export const getCommunities = async (params?: any): Promise<Community[]> => {
 
   return TalkApi.get(`/community/list`, { data: JSON.stringify(params) }).then(res => {
     const _communities = res.data.results.items.map((community: Community) => {
-      community.id = community.metanetId
+      community.id = community.communityId
       return community
     })
 
@@ -24,7 +25,6 @@ export const getCommunityAuth = async (communityId: string): Promise<CommunityAu
   return TalkApi.get(`/community/${communityId}/auth/info`).then(res => res.data)
 }
 
-// 获取会话列表
 export const getAtMeChannels = async (params?: any): Promise<any> => {
   params = params || {}
   const metaId = params.metaId

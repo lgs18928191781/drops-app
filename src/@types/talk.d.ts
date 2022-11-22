@@ -1,3 +1,5 @@
+import { ChannelType, MessageType } from '@/enum'
+
 declare interface Message {
   protocol?: string
   nodeName?: string
@@ -34,7 +36,7 @@ declare interface Contact {
 
 declare interface Community {
   id: string
-  communityId?: string
+  communityId: string
   address: string
   admins: string[]
   cover: string
@@ -77,4 +79,14 @@ declare interface Channel {
   txId: string
   zeroAddress: string
   icon: string
+}
+
+declare interface MessageDto {
+  type: MessageType
+  content: string
+  channelId: string
+  userName: string
+  attachments?: any[]
+  originalFileUrl?: any
+  channelType?: ChannelType
 }
