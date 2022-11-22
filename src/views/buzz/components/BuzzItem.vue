@@ -30,8 +30,18 @@
               </div>
             </div>
             <div class="operate">
-              <div class="follow main-border primary" @click.stop="handleAction('more')">
-                {{ $t('Follow') }}
+              <div
+                class="follow main-border primary"
+                :class="{ disabled: following }"
+                @click.stop="follow"
+                v-if="!displayItemData.isMyFollow && (!userStore.isAuthorized || (userStore.isAuthorized && displayItemData.metaId !== userStore.user!.metaId))"
+              >
+                <template v-if="following">
+                  <el-icon class="is-loading">
+                    <Loading />
+                  </el-icon>
+                </template>
+                <template v-else>{{ $t('Follow') }}</template>
               </div>
             </div>
           </div>
@@ -67,7 +77,10 @@
 
             <!-- 标签 -->
             <div class="tags flex flex-align-center">
-              <a class="flex flex-align-center">
+              <a
+                class="flex flex-align-center"
+                @click.stop="$router.push({ name: 'buzzTag', params: { tagId: 1 } })"
+              >
                 <Icon name="flag" />
                 Buzz
               </a>
@@ -97,9 +110,6 @@
       <div class="item" @click.stop="handleGoToWoc"><span>查看TX</span></div>
     </div>
   </van-popup> -->
-
-  <!-- 确认发表 -->
-  <MePayConfirmModalVue v-model="isShowConfirm" :params="payMe" />
 </template>
 <script setup lang="ts">
 import { isApp } from '@/stores/root'
@@ -109,12 +119,14 @@ import Attachment from './Attachment.vue'
 // import { copy } from '@/utils/filters'
 import { PayMeParams } from '@/@types/sdk'
 import { PayMeParamsType } from '@/enum'
-// import MePayConfirmModalVue from '@/components/MePayConfirmModal/MePayConfirmModal.vue'
-import { checkSdkStatus } from '@/utils/util'
+import { checkSdkStatus, checkUserLogin } from '@/utils/util'
 import QuoteVue from './Quote.vue'
 import BuzzItemControlVue from './BuzzItemControl.vue'
 import BuzzItemSkeletonVue from './BuzzItemSkeleton.vue'
 import ShareIcon from '@/assets/svg/share.svg'
+import { useUserStore } from '@/stores/user'
+import { Loading } from '@element-plus/icons-vue'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   data?: BuzzItem
@@ -124,7 +136,16 @@ interface Props {
 }
 const router = useRouter()
 const route = useRoute()
-const emit = defineEmits(['update', 'repost', 'more', 'like'])
+const userStore = useUserStore()
+const i18n = useI18n()
+// const emit = defineEmits(['update', 'repost', 'more', 'like', 'follow'])
+const emit = defineEmits<{
+  (e: 'update', txId: string): void
+  (e: 'repost', txId: string): void
+  (e: 'more', txId: string): void
+  (e: 'like', txId: string): void
+  (e: 'follow', txId: string): Promise<void>
+}>()
 const props = withDefaults(defineProps<Props>(), {
   isInDetailPage: false,
 })
@@ -137,6 +158,7 @@ const payMe: PayMeParams = reactive({
   type: PayMeParamsType.BuzzComment,
 })
 const isSkeleton = ref(true)
+const following = ref(false)
 
 const itemData = computed(() => {
   return props.data
@@ -201,6 +223,21 @@ function handleGoToWoc() {
 }
 function sliceStr(str?: string, len = 8) {
   return str ? str.slice(0, len) : ''
+}
+
+async function follow() {
+  await checkUserLogin()
+  if (following.value) return
+  following.value = true
+  emit('follow', displayItemData!.value!.txId)
+    .then(() => {
+      following.value = false
+      ElMessage.success(i18n.t('Buzz.follow.success'))
+    })
+    .catch(error => {
+      following.value = false
+      ElMessage.error(error.message)
+    })
 }
 </script>
 <style scoped lang="scss" src="./BuzzItem.scss"></style>

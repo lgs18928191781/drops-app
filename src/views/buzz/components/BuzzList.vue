@@ -2,7 +2,14 @@
   <!-- <div class="buzz-list" v-infinite-scroll="getMore" :infinite-scroll-immediate="false"> -->
   <div class="buzz-list" v-infinite-scroll="getMore" :infinite-scroll-immediate="false">
     <div class="buzz-item-warp" v-for="item in list" :key="item.txId">
-      <BuzzItemVue :data="item" @repost="onRepost" @more="onMore" :loading="loading" @like="onLike">
+      <BuzzItemVue
+        :data="item"
+        @repost="onRepost"
+        @more="onMore"
+        :loading="loading"
+        @like="onLike"
+        @follow="onFollow"
+      >
         <template #comment>
           <slot name="comment"></slot>
         </template>
@@ -105,12 +112,12 @@ const operates: {
             props.list[index].rePost.push({
               metaId: userStore.user!.metaId!,
               timestamp: time,
-              txId: res.txId,
+              txId: res.currentNode!.txId,
               userName: userStore.user!.name!,
               value: 0,
             })
             emit('update:list', props.list)
-            Mitt.emit(MittEvent.AddBuzz, { txId: res.txId })
+            Mitt.emit(MittEvent.AddBuzz, { txId: res.currentNode!.txId })
             ElMessage.success(i18n.t('Buzz.repost.success'))
             operateLoading.value = false
             isShowOperateModal.value = false
@@ -187,12 +194,34 @@ async function onLike(txId: string) {
     props.list[index].like.push({
       metaId: userStore.user!.metaId!,
       timestamp: time,
-      txId: res.txId,
+      txId: res.currentNode!.txId,
       userName: userStore.user!.name,
       value: 0,
     })
     emit('update:list', props.list)
   }
+}
+
+function onFollow(txId: string) {
+  return new Promise<void>(async (resolve, reject) => {
+    const index = props.list.findIndex(item => item.txId === txId)
+    const res = await userStore.showWallet
+      .createBrfcChildNode({
+        nodeName: NodeName.PayFollow,
+        data: JSON.stringify({
+          createTime: new Date().getTime(),
+          MetaID: props.list[index].metaId,
+          pay: 0,
+          payTo: '',
+        }),
+      })
+      .catch(error => reject(error))
+    if (res) {
+      props.list[index].isMyFollow = true
+      emit('update:list', props.list)
+      resolve()
+    }
+  })
 }
 
 function getMore() {

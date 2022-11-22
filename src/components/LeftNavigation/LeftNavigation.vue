@@ -73,7 +73,6 @@ const fetchCommunities = async () => {
     state.communities = [...communities, talkStore.atMeCommunity]
   })
 }
-fetchCommunities()
 
 const apps = [
   {
@@ -85,6 +84,10 @@ const apps = [
     path: '/talk/channels/@me',
   },
 ]
+
+if (userStore.isAuthorized) {
+  fetchCommunities()
+}
 </script>
 
 <style lang="scss" scoped src="./LeftNavigation.scss"></style>

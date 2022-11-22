@@ -6,6 +6,7 @@ import { GetUserKycInfo } from '@/api/wxcore'
 import { GetProdTestMetaIds } from '@/api/strapi'
 import axios from 'axios'
 import { ElMessageBox } from 'element-plus'
+import { SdkPayType } from '@/enum'
 
 export interface KycInfoTypes {
   name: string
@@ -25,12 +26,8 @@ interface UserState {
   isGetedKycInfo: boolean
   isSetedisTestUser: boolean
   isTestUser: boolean
-  payConfirm: {
-    me: {
-      value: number
-      visible: boolean
-    }
-    bsv: {
+  sdkPayConfirm: {
+    [key in SdkPayType]: {
       value: number
       visible: boolean
     }
@@ -49,6 +46,29 @@ if (window.localStorage.getItem(passwordkey)) {
   password = decode(window.localStorage.getItem(passwordkey)!)
 }
 
+const sdkPayConfirmHideKey = {
+  [SdkPayType.ME]: 'HIDE-ME-CONFIRM',
+  [SdkPayType.SPACE]: 'HIDE-SPACE-CONFIRM',
+}
+const sdkPayConfirmMaxKey = {
+  [SdkPayType.ME]: 'MAX-ME',
+  [SdkPayType.SPACE]: 'MAX-SPACE',
+}
+const sdkPayConfirm = {
+  [SdkPayType.ME]: {
+    value: localStorage.getItem(sdkPayConfirmMaxKey[SdkPayType.ME])
+      ? parseInt(localStorage.getItem(sdkPayConfirmMaxKey[SdkPayType.ME])!)
+      : 1,
+    visible: localStorage.getItem(sdkPayConfirmHideKey[SdkPayType.ME]) ? false : true,
+  },
+  [SdkPayType.SPACE]: {
+    value: localStorage.getItem(sdkPayConfirmMaxKey[SdkPayType.SPACE])
+      ? parseInt(localStorage.getItem(sdkPayConfirmMaxKey[SdkPayType.SPACE])!)
+      : 1,
+    visible: localStorage.getItem(sdkPayConfirmHideKey[SdkPayType.SPACE]) ? false : true,
+  },
+}
+
 export const useUserStore = defineStore('user', {
   state: () =>
     <UserState>{
@@ -59,16 +79,7 @@ export const useUserStore = defineStore('user', {
       isGetedKycInfo: false,
       isSetedisTestUser: false,
       isTestUser: false,
-      payConfirm: {
-        me: {
-          value: 1,
-          visible: true,
-        },
-        bsv: {
-          value: 1,
-          visible: true,
-        },
-      },
+      sdkPayConfirm: sdkPayConfirm,
     },
   getters: {
     isAuthorized: state => <boolean>!!(state.user && state.user.token),
@@ -167,6 +178,20 @@ export const useUserStore = defineStore('user', {
           reject(new Error('登录信息过期'))
         }
       })
+    },
+
+    changeSdkPayConfirm(type: 'visible' | 'value', value: number | boolean, payType: SdkPayType) {
+      if (type === 'visible') {
+        if (value) {
+          localStorage.removeItem(sdkPayConfirmHideKey[payType])
+        } else {
+          localStorage.setItem(sdkPayConfirmHideKey[payType], true.toString())
+        }
+        this.sdkPayConfirm[payType].visible = value as boolean
+      } else {
+        localStorage.setItem(sdkPayConfirmMaxKey[payType], value.toString())
+        this.sdkPayConfirm[payType].value = value as number
+      }
     },
   },
 })

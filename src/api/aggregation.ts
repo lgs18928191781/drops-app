@@ -186,3 +186,42 @@ export const GetBuzzs = (params: {
   const { tag, ..._params } = params
   return aggregation.get(`/v2/app/show/posts/line/${tag}`, { params: _params })
 }
+
+export const GetBuzz = (params: {
+  txId: string
+  metaId?: string
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    results: {
+      items: BuzzItem[]
+    }
+  }
+}> => {
+  return aggregation.get(`/v2/app/buzz/getOneBuzz/${params.txId}`, {
+    params: { metaId: params.metaId },
+  })
+}
+
+export const GetTagBuzzs = (params: {
+  tag: string
+  page: string | number
+  pageSize: string | number
+  metaId?: string
+  buzzType?: string
+  timeType?: string
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    results: {
+      items: BuzzItem[]
+    }
+  }
+}> => {
+  const { tag, ..._params } = params
+  return aggregation.get(`/v2/app/buzz/getOneBuzz/${tag}`, {
+    params: _params,
+  })
+}

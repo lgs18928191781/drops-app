@@ -47,6 +47,19 @@ export function checkSdkStatus(path: string, params?: ElMessageBoxOptions) {
   })
 }
 
+export function checkUserLogin() {
+  return new Promise<void>((resolve, reject) => {
+    const userStroe = useUserStore()
+    const rootStore = useRootStore()
+    if (!userStroe.isAuthorized) {
+      rootStore.$patch({ isShowLogin: true })
+      reject(new Error(i18n.global.t('Please Login First')))
+    } else {
+      resolve()
+    }
+  })
+}
+
 export function openLoginConfirm(path: string, params?: ElMessageBoxOptions) {
   return new Promise<void>((resolve, reject) => {
     const userStroe = useUserStore()

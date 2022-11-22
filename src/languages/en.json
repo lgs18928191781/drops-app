@@ -139,8 +139,14 @@
       "topics": "Topics",
       "inputTitle": "What topic you want to use",
       "hotTopics": "Hot Topics",
-      "inputPlaceholder": "Enter topic"
-    }
+      "inputPlaceholder": "Enter topic",
+      "Create Community": "Create Community"
+    },
+    "follow": {
+      "success": "Follow Success"
+    },
+    "Referral Community": "Referral Community",
+    "Web3 Gathering Place": "Web3 Gathering Place"
   },
   "Follow": "Follow",
   "Pagination": {
@@ -150,5 +156,17 @@
   "noDatas": "No Datas",
   "copysuccess": "Copy successfully",
   "copyerror": "Copy successfully",
-  "Confirm": "Confirm"
+  "Confirm": "Confirm",
+  "SDK": {
+    "payconfirm": {
+      "Payment": "Payment",
+      "tips": "No more payment confirmation prompts for operations below",
+      "tips2": " ",
+      "ME": "ME",
+      "Payment required": "Payment required",
+      "My": "My ",
+      "Recharge": "Recharge"
+    }
+  },
+  "Please Login First": "Please Login First"
 }
