@@ -224,7 +224,15 @@
       "success": "关注成功"
     },
     "Referral Community": "推荐社区",
-    "Web3 Gathering Place": "Web3聚会场所"
+    "Web3 Gathering Place": "Web3聚会场所",
+    "RecommendContent": {
+      "Change batch": "换一批",
+      "Recommend To Follow": "推荐关注",
+      "View More": "查看更多",
+      "Introduction to Guiding": "使用教程",
+      "Learn the show function": "学习 Show 功能",
+      "Download showApp": "下载showApp"
+    }
   },
   "Follow": "关注",
   "Pagination": {
@@ -246,5 +254,6 @@
       "Recharge": "充值"
     }
   },
-  "Please Login First": "请先登录"
+  "Please Login First": "请先登录",
+  "Join": "加入"
 }
