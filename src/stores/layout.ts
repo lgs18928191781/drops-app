@@ -7,7 +7,8 @@ export const useLayoutStore = defineStore('layout', {
       isShowPublishBuzz: false,
       isShowCreateCommunityModal: false,
       isShowCreateChannelModal: false,
-      isShowRedPacketModal: true,
+      isShowRedPacketModal: false,
+      isShowMessagesLoading: false,
       publishBuzzOption: {
         repostTxId: '', // 转发的TxId
         topic: '', // 发表话题

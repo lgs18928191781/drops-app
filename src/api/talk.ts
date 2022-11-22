@@ -55,7 +55,6 @@ export const getChannelMessages = async (
   params = params || {}
   params.pageSize = '50'
   params.page = '1'
-
   if (type === 'session') {
     const selfMetaId = params.metaId
     console.log({ channelId })

@@ -29,10 +29,10 @@ import TheInput from './components/TheInput.vue'
 import TheErrorBox from './components/TheErrorBox.vue'
 import CommunityInfo from './components/CommunityInfo.vue'
 import ChannelMemberList from './components/ChannelMemberList.vue'
-import { defineAsyncComponent, onMounted, Ref, ref } from 'vue'
-import { getCommunityMembers } from '@/api/talk'
+import { defineAsyncComponent, onBeforeUnmount, onMounted, Ref, ref } from 'vue'
 import { useTalkStore } from '@/stores/talk'
 import { useRoute } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
 const MessageList = defineAsyncComponent({
   loader: () => import('./components/MessageList.vue'),
@@ -60,8 +60,13 @@ const handleToggleMemberList = () => {
 }
 
 const route = useRoute()
+const userStore = useUserStore()
 const { communityId, channelId } = route.params
-talkStore.initChannel(communityId as string, channelId as string)
+const selfMetaId = userStore.user!.metaId
+talkStore.initChannel(communityId as string, channelId as string).then(async () => {
+  await talkStore.initChannelMessages(selfMetaId)
+  await talkStore.initWebSocket(selfMetaId)
+})
 
 onMounted(async () => {
   // 拉取布局状态
@@ -69,10 +74,12 @@ onMounted(async () => {
   if (layoutState === '1') {
     showMembers.value = true
   }
+})
 
-  // await fetchChannels()
-
-  members.value = await getCommunityMembers('1')
+onBeforeUnmount(() => {
+  talkStore.saveReadPointers()
+  talkStore.closeWebSocket()
+  talkStore.closeReadPointerTimer()
 })
 </script>
 

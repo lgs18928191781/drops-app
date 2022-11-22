@@ -63,10 +63,10 @@
                   v-for="channel in talkStore.activeCommunity?.channels"
                   class="p-3 main-border only-bottom cursor-pointer bg-white"
                   :class="channel.id === talkStore.activeChannelId || 'faded'"
+                  @click="goChannel(channel.id)"
                 >
                   <div
                     class="text-dark-800 text-base font-medium flex items-center"
-                    @click="goChannel(channel.id)"
                     :title="channel.name"
                   >
                     <Icon name="hashtag" class="w-4 h-4 text-dark-400" />

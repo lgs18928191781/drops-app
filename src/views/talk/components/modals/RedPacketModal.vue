@@ -247,7 +247,6 @@ import { computed, ref } from 'vue'
 const layoutStore = useLayoutStore()
 
 const amount = ref(10)
-const isShowSelectTokenModal = ref(true)
 
 const amountInTwoDecimals = computed(() => {
   return amount.value.toFixed(2)
