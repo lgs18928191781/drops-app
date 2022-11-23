@@ -6,6 +6,7 @@ import { isApp, isIosApp, useRootStore } from '@/stores/root'
 import { openLoading } from './util'
 import { SDK } from './sdk'
 import { Network } from './wallet/hd-wallet'
+import { usePostTagStore } from '@/stores/buzz/tag'
 
 let loading: any
 router.beforeEach(async (to, from, next) => {
@@ -57,6 +58,14 @@ router.beforeEach(async (to, from, next) => {
     // 检查用户的token
     if (!isApp) {
       await userStroe.checkUserToken(to.fullPath)
+    }
+  }
+
+  //  buzz 页面先获取一次 postTag 信息
+  if (to.path.indexOf('/buzz') !== -1) {
+    const postTagStroe = usePostTagStore()
+    if (postTagStroe.list.length <= 0) {
+      await postTagStroe.getPostTags()
     }
   }
 

@@ -899,3 +899,10 @@ export function tx(txId: string | undefined) {
   if (!txId) return
   window.open(`https://mvcscan.com/tx/${txId}`, '_blank')
 }
+
+// 随机数
+export function randomRange(min: number, max: number) {
+  // min最小值，max最大值
+
+  return Math.floor(Math.random() * (max - min)) + min
+}

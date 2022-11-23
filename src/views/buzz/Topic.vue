@@ -7,7 +7,7 @@
       <span class="tag flex flex-align-center flex-pack-center">
         <Icon name="buzz_hashtag" />
       </span>
-      <span class="namt">To Life</span>
+      <span class="namt">{{ $route.params.topic }}</span>
     </div>
     <a class="flex flex-align-center operate" @click="publishTopic">
       <Icon name="plus" />
@@ -26,9 +26,12 @@ import { useLayoutStore } from '@/stores/layout'
 import { reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import BuzzListVue from './components/BuzzList.vue'
+import { GetTopicBuzzs } from '@/api/aggregation'
+import { useUserStore } from '@/stores/user'
 
 const layoutStore = useLayoutStore()
 const route = useRoute()
+const userStore = useUserStore()
 
 const pagination = reactive({ ...initPagination })
 const list: BuzzItem[] = reactive([])
@@ -40,11 +43,26 @@ function publishTopic() {
 
 function getDatas(isCover = false) {
   return new Promise<void>(async resolve => {
-    const res = {}
+    const res = await GetTopicBuzzs({
+      tag: route.params.topic as string,
+      metaId: userStore.user?.metaId,
+      ...pagination,
+    }).catch(error => {
+      ElMessage.error(error.message)
+      resolve()
+    })
+    if (res?.code === 0) {
+      if (isCover) list.length = 0
+      if (res.data.results.items.length <= 0) pagination.nothing = true
+      list.push(...res.data.results.items)
+      resolve()
+    }
   })
 }
 
-getDatas()
+getDatas(true).then(() => {
+  isSkeleton.value = false
+})
 </script>
 
 <style lang="scss" scoped src="./Topic.scss"></style>

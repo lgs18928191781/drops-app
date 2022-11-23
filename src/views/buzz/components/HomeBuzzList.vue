@@ -118,6 +118,9 @@ function getMore() {
   })
 }
 
+if (userStore.isAuthorized) {
+}
+
 getDatas(true).then(() => {
   isSkeleton.value = false
 })
