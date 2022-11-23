@@ -15,10 +15,6 @@
           <TheErrorBox />
         </div>
       </div>
-
-      <!-- <Transition name="slide"> -->
-      <!-- <ChannelMemberList v-show="showMembers" :members="members" /> -->
-      <!-- </Transition> -->
     </div>
   </div>
 </template>

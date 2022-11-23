@@ -11,7 +11,7 @@
 
       <div class="flex shrink-0">
         <div
-          class="text-base leading-tight no-wrap grow whitespace-nowrap truncate text-dark-800 pr-2 max-w-[35vw] lg:max-w-[600PX] capitalize"
+          class="text-base leading-tight no-wrap grow whitespace-nowrap truncate text-dark-800 pr-2 max-w-[50vw] lg:max-w-[600PX] capitalize"
         >
           {{ talkStore.activeChannel?.name }}
         </div>
@@ -28,9 +28,11 @@
         </div>
       </div>
     </div>
-    <div class="flex items-center justify-between grow">
+    <div class="flex flex-row-reverse items-center justify-between grow">
+      <LoginedUserOperate class="shrink-0" />
+
       <div
-        class="text-xs text-dark-300 bg-dark-100 px-3 py-1 ml-1 rounded"
+        class="text-xs text-dark-300 bg-dark-100 px-3 py-1 ml-1 rounded  hidden lg:block"
         v-if="talkStore.activeChannel?.id"
       >
         {{ shortenMetaId(talkStore.activeChannel.id) }}
@@ -68,8 +70,6 @@
           />
         </div>
       </div> -->
-
-      <LoginedUserOperate />
     </div>
   </div>
 </template>

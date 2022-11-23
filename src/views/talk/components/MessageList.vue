@@ -7,7 +7,7 @@
     ref="messagesScroll"
     v-show="!layoutStore.isShowMessagesLoading"
   >
-    <div class="overflow-x-hidden pt-4 px-4">
+    <div class="overflow-x-hidden px-4">
       <div class="flex flex-col-reverse space-y-4 space-y-reverse">
         <template v-if="talkStore.activeChannelType === 'group'">
           <MessageItem
@@ -151,4 +151,17 @@ onBeforeUnmount(() => {
 })
 </script>
 
-<style lang=""></style>
+<style lang="scss" scoped>
+*::-webkit-scrollbar {
+  width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #edeff2;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #bfc2cc;
+  border-radius: 20px;
+}
+</style>

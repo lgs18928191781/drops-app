@@ -351,8 +351,8 @@ export class SDK {
   createBrfcChildNode(
     params: createBrfcChildNodeParams,
     option?: {
-      isBroadcast: boolean
-      payType: SdkPayType
+      isBroadcast?: boolean
+      payType?: SdkPayType
     }
   ) {
     return new Promise<{
@@ -706,6 +706,7 @@ export class SDK {
                 keyPath = newKeyPath.join('/')
               }
             }
+            console.log({ item })
             createAttachmentParams.push({
               nodeName: item.fileName,
               metaIdTag: MetaIdTag[this.network],

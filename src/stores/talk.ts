@@ -45,12 +45,38 @@ export const useTalkStore = defineStore('talk', {
       })
     },
 
-    isAdmin(): any {
+    isAdmin(): (selfMetaId: string) => boolean {
       return (selfMetaId: string) => {
         if (!this.activeCommunity) return false
         if (!this.activeCommunity.admins) return false
 
         return this.activeCommunity.admins.includes(selfMetaId)
+      }
+    },
+
+    hasUnreadMessagesOfChannel(): (channelId: string) => boolean {
+      return (channelId: string) => {
+        if (channelId === this.activeChannelId) return false
+
+        // 如果频道已读指针不存在，则说明没有未读消息
+        if (!this.channelsReadPointers[channelId]) return false
+
+        // 如果频道已读指针存在，则判断lastRead和latest
+        const pointer = this.channelsReadPointers[channelId]
+        return pointer.lastRead < pointer.latest
+      }
+    },
+
+    hasUnreadMessagesOfCommunity(): (communityId: string) => boolean {
+      return (communityId: string) => {
+        if (communityId === this.activeChannelId) return false
+
+        // 如果频道已读指针不存在，则说明没有未读消息
+        if (!this.channelsReadPointers[communityId]) return false
+
+        // 如果频道已读指针存在，则判断lastRead和latest
+        const pointer = this.channelsReadPointers[communityId]
+        return pointer.lastRead < pointer.latest
       }
     },
 
@@ -74,6 +100,16 @@ export const useTalkStore = defineStore('talk', {
 
   actions: {
     async initChannel(routeCommunityId: string, routeChannelId: string) {
+      // 如果没有指定频道，则先从存储中尝试读取该社区的最后阅读频道
+      const latestChannelsRecords = localStorage.getItem('latestChannels') || JSON.stringify({})
+      const latestChannels = JSON.parse(latestChannelsRecords)
+      if (!routeChannelId) {
+        const channelId = latestChannels[routeCommunityId] || 'the-void'
+
+        router.push(`/talk/channels/${routeCommunityId}/${channelId}`)
+        return
+      }
+
       const fetchChannels = async () => {
         const channels = await getChannels({ communityId: routeCommunityId })
 
@@ -82,24 +118,14 @@ export const useTalkStore = defineStore('talk', {
           this.activeChannelId = routeChannelId
         }
         this.activeCommunity.channels = channels
-
-        // 处理没有channelId的跳转情况
-        if (!routeChannelId) {
-          this.setDefaultChannel()
-
-          const activeChannelId = this.activeChannelId || 'the-void'
-
-          const layoutStore = useLayoutStore()
-          layoutStore.$patch({
-            isShowLeftNav: false,
-          })
-
-          router.push(`/talk/channels/${routeCommunityId}/${activeChannelId}`)
-        }
       }
       await fetchChannels()
 
-      await this.initReadPointers()
+      // 将最后阅读频道存储到本地
+      latestChannels[routeCommunityId] = routeChannelId
+      localStorage.setItem('latestChannels', JSON.stringify(latestChannels))
+
+      this.initReadPointers()
 
       const fetchMembers = async () => {
         this.members = await getCommunityMembers(routeCommunityId)
@@ -199,7 +225,7 @@ export const useTalkStore = defineStore('talk', {
           M: 'HEART_BEAT',
           C: 0,
         }
-        this.ws!.send(JSON.stringify(heartBeat))
+        this.ws?.send(JSON.stringify(heartBeat))
       }, 10000)
 
       const isGroupMessage = (messageWrapper: any) => messageWrapper.M === 'WS_SERVER_NOTIFY_ROOM'
@@ -301,16 +327,6 @@ export const useTalkStore = defineStore('talk', {
       }
 
       this.activeChannel.newMessages.push(message)
-    },
-
-    // 有社区但没有频道的情况
-    setDefaultChannel() {
-      if (!this.activeCommunityId || !this.activeCommunity.channels?.length) {
-        this.activeChannelId = ''
-        return
-      }
-
-      this.activeChannelId = this.activeCommunity.channels[0].id
     },
   },
 })

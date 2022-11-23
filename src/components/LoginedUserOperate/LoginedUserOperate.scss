@@ -23,7 +23,7 @@
 
     .more {
         border-radius: calc(100% / 2.5);
-        border: 1.5PX solid #EDEFF2;
+        border: 2PX solid #EDEFF2;
 
         &:hover,
         &.active {
@@ -60,7 +60,7 @@
 
     .user-warp .avatar,
     .user-warp .more {
-        width: 38px;
-        height: 38px;
+        width: 36PX;
+        height: 36PX;
     }
 }
