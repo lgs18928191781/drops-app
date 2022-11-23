@@ -5,19 +5,30 @@
     :class="[layoutStore.isShowLeftNav ? '' : 'hidden lg:block']"
   >
     <div class="space-y-4.5">
-      <router-link
-        :to="item.path"
-        class="flex items-center justify-center left-navigation-item"
+      <el-tooltip
+        effect="light"
+        popper-class="text-dark-800 text-base font-medium py-2 px-4 shadow-md rounded-lg"
+        :content="item.title"
+        offset="5"
+        placement="right"
         v-for="(item, index) in apps"
-        :key="index"
       >
-        <span class="bg-primary w-13.5 h-13.5 flex items-center justify-center rounded-3xl">
-          <Icon :name="item.icon" class="w-[22PX] h-[19PX] rounded-3xl" />
-        </span>
-      </router-link>
-      <!-- <div class="rounded-3xl bg-primary w-13.5 h-13.5 flex items-center justify-center">
-        <Icon name="talk" class="w-[22PX] h-[19PX]" />
-      </div> -->
+        <router-link
+          :to="item.path"
+          class="flex items-center justify-center group"
+          :class="item.extraClass"
+          :key="index"
+        >
+          <span
+            class="bg-primary w-13.5 h-13.5 flex items-center justify-center rounded-3xl group-hover:scale-110 transition-all duration-200"
+          >
+            <Icon
+              :name="item.icon"
+              class="w-[22PX] h-[19PX] rounded-3xl group-hover:scale-110 transition-all duration-200"
+            />
+          </span>
+        </router-link>
+      </el-tooltip>
     </div>
 
     <div class="divide flex items-center justify-center">
@@ -25,29 +36,45 @@
     </div>
 
     <div class="space-y-4.5 flex flex-col items-center justify-center">
-      <router-link
-        :to="'/talk/channels/' + community.id"
-        class="flex items-center justify-center left-navigation-item relative"
-        :title="community.name"
+      <el-tooltip
+        effect="light"
+        popper-class="text-dark-800 text-base font-medium py-2 px-4 shadow-md rounded-lg"
+        :content="community.name"
+        offset="5"
+        placement="right"
         v-for="(community, index) in talkStore.realCommunities"
-        :key="index"
       >
-        <div
-          class="absolute left-0 h-full flex items-center top-0"
-          v-if="talkStore.hasUnreadMessagesOfCommunity(community.id)"
+        <router-link
+          :to="
+            '/talk/channels/' +
+              community.id +
+              '/' +
+              talkStore.communityLastReadChannelId(community.id)
+          "
+          class="flex items-center justify-center relative w-full group"
+          :key="index"
         >
-          <span class="w-1.5 h-3 bg-dark-800 rounded-r-md"></span>
-        </div>
-        <span
-          class="absolute left-0 bg-dark-800 w-1.5 h-8 rounded-r-md"
-          v-if="talkStore.activeCommunityId === community.id"
-        ></span>
+          <div
+            class="absolute left-0 h-full flex items-center top-0"
+            v-if="talkStore.hasUnreadMessagesOfCommunity(community.id)"
+          >
+            <span
+              class="w-1.5 h-3 bg-dark-800 rounded-r-md group-hover:h-6 transition-all duration-150"
+            ></span>
+          </div>
+          <span
+            class="absolute left-0 bg-dark-800 w-1.5 h-8 rounded-r-md"
+            v-if="talkStore.activeCommunityId === community.id"
+          ></span>
 
-        <Image
-          :src="community.icon"
-          :customClass="'!w-13.5 !h-13.5 rounded-3xl object-cover object-center'"
-        />
-      </router-link>
+          <Image
+            :src="community.icon"
+            :customClass="
+              '!w-13.5 !h-13.5 rounded-3xl object-cover object-center group-hover:scale-110 transition-all duration-200'
+            "
+          />
+        </router-link>
+      </el-tooltip>
 
       <div
         class="border-dashed border-2 border-gray-200 w-13.5 h-13.5 flex items-center justify-center rounded-3xl text-dark-400 cursor-pointer hover:text-dark-800 hover:border-solid hover:border-dark-300 hover:bg-primary transition-all duration-300"
@@ -87,10 +114,13 @@ const apps = [
   {
     icon: 'feed',
     path: '/buzz',
+    extraClass: 'left-navigation-item',
+    title: 'Feed',
   },
   {
     icon: 'talk',
     path: '/talk/channels/@me',
+    title: '@Me',
   },
 ]
 

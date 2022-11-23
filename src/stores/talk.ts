@@ -98,6 +98,15 @@ export const useTalkStore = defineStore('talk', {
       state.activeCommunityId === '@me' ? ChannelType.Session : ChannelType.Group,
 
     activeChannelSymbol: state => (state.activeCommunityId === '@me' ? '@' : '#'),
+
+    communityLastReadChannelId(): (communityId: string) => string {
+      return (communityId: string) => {
+        const latestChannelsRecords = localStorage.getItem('latestChannels') || JSON.stringify({})
+        const latestChannels = JSON.parse(latestChannelsRecords)
+
+        return latestChannels[communityId] || 'the-void'
+      }
+    },
   },
 
   actions: {
@@ -109,7 +118,7 @@ export const useTalkStore = defineStore('talk', {
         const channelId = latestChannels[routeCommunityId] || 'the-void'
 
         router.push(`/talk/channels/${routeCommunityId}/${channelId}`)
-        return
+        return 'redirect'
       }
 
       const fetchChannels = async () => {
@@ -253,10 +262,8 @@ export const useTalkStore = defineStore('talk', {
               this.channelsReadPointers[message.groupId] &&
               message.timestamp > this.channelsReadPointers[message.groupId].latest
             ) {
-              console.log('here')
               this.channelsReadPointers[message.groupId].latest = message.timestamp
             } else {
-              console.log('there')
               this.channelsReadPointers[message.groupId] = {
                 latest: message.timestamp,
                 lastRead: 0,

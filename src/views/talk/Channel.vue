@@ -45,7 +45,9 @@ const route = useRoute()
 const userStore = useUserStore()
 const { communityId, channelId } = route.params
 const selfMetaId = userStore.user!.metaId
-talkStore.initChannel(communityId as string, channelId as string).then(async () => {
+talkStore.initChannel(communityId as string, channelId as string).then(async initRes => {
+  if (initRes === 'redirect') return
+
   await talkStore.initChannelMessages(selfMetaId)
   await talkStore.initWebSocket(selfMetaId)
 })

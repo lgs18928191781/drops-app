@@ -10,15 +10,20 @@ import { usePostTagStore } from '@/stores/buzz/tag'
 
 let loading: any
 router.beforeEach(async (to, from, next) => {
-  const userStroe = useUserStore()
+  const userStore = useUserStore()
   const rootStore = useRootStore()
+
+  // talk之间的页面跳转不处理
+  const isTalkRoutes = (route: any) => route.name === 'talkChannel' || route.name === 'talkAtMe'
+  if (isTalkRoutes(to) && isTalkRoutes(from)) return next()
+
   loading = openLoading()
   // 设置页面标题
   document.title = `${to.meta.title ? to.meta.title + ' - ' : ''}` + import.meta.env.VITE_AppName
 
-  if (to.name === 'register' && userStroe.isAuthorized) {
+  if (to.name === 'register' && userStore.isAuthorized) {
     // 用户已登陆时，先退出登录
-    await userStroe.logout()
+    await userStore.logout()
     next()
   }
 
@@ -27,37 +32,37 @@ router.beforeEach(async (to, from, next) => {
     rootStore.getExchangeRate()
   }
 
-  if (userStroe.showWallet) {
+  if (userStore.showWallet) {
     // App 未获取用户信息，先去获取用户信息
-    if (!userStroe.isAuthorized && isApp) {
-      await userStroe.showWallet.appSetUserInfo()
+    if (!userStore.isAuthorized && isApp) {
+      await userStore.showWallet.appSetUserInfo()
     }
   }
 
-  if (!userStroe.showWallet) {
-    userStroe.$patch({ wallet: new SDK(Network.testnet) })
+  if (!userStore.showWallet) {
+    userStore.$patch({ wallet: new SDK(Network.testnet) })
   }
 
-  if (userStroe.isAuthorized) {
+  if (userStore.isAuthorized) {
     // 用户已登录但未初始化sdk 里面钱包， 则去 初始化 sdk 里面的钱包
-    if (!userStroe.showWallet.isInitSdked) {
-      await userStroe.showWallet.initWallet()
+    if (!userStore.showWallet.isInitSdked) {
+      await userStore.showWallet.initWallet()
     }
 
     // 没有拿用户实名信息时， 先要去拿用户实名信息
-    if (!userStroe.isGetedKycInfo) {
+    if (!userStore.isGetedKycInfo) {
       // 暂时注释掉
-      // await userStroe.setKycInfo()
+      // await userStore.setKycInfo()
     }
 
     //  设置是否是否测试用户
-    if (!userStroe.isSetedisTestUser) {
-      await userStroe.setIsTestUser()
+    if (!userStore.isSetedisTestUser) {
+      await userStore.setIsTestUser()
     }
 
     // 检查用户的token
     if (!isApp) {
-      await userStroe.checkUserToken(to.fullPath)
+      await userStore.checkUserToken(to.fullPath)
     }
   }
 
@@ -72,10 +77,10 @@ router.beforeEach(async (to, from, next) => {
   // 检查跳转 路由是否有权限
   const isAuth = to.meta?.isAuth ? to.meta?.isAuth : false
   if (isAuth) {
-    if (isIosApp && userStroe.user!.flag) {
+    if (isIosApp && userStore.user!.flag) {
       next()
     } else {
-      if (userStroe.isAuthorized) {
+      if (userStore.isAuthorized) {
         next()
       } else {
         if (loading) loading.close()
