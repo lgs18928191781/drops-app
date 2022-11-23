@@ -4,6 +4,7 @@ import { defineStore } from 'pinia'
 import { router } from '@/router'
 import { useLayoutStore } from './layout'
 import { Message, TalkError } from '@/@types/talk'
+import { sleep } from '@/utils/util'
 
 export const useTalkStore = defineStore('talk', {
   state: () => {
@@ -21,6 +22,8 @@ export const useTalkStore = defineStore('talk', {
 
       channelsReadPointers: {} as any, // 频道已读指针
       saveReadPointerTimer: null as NodeJS.Timeout | null,
+
+      communityChannelIds: {} as any, // 社区频道列表
     }
   },
 
@@ -69,14 +72,14 @@ export const useTalkStore = defineStore('talk', {
 
     hasUnreadMessagesOfCommunity(): (communityId: string) => boolean {
       return (communityId: string) => {
-        if (communityId === this.activeChannelId) return false
+        // 从本地存储中获取社区频道列表和已读指针
+        const channels = this.communityChannelIds[communityId] || []
 
-        // 如果频道已读指针不存在，则说明没有未读消息
-        if (!this.channelsReadPointers[communityId]) return false
+        if (channels.length === 0) return false
 
-        // 如果频道已读指针存在，则判断lastRead和latest
-        const pointer = this.channelsReadPointers[communityId]
-        return pointer.lastRead < pointer.latest
+        return channels.some((channelId: string) => {
+          return this.hasUnreadMessagesOfChannel(channelId)
+        })
       }
     },
 
@@ -96,6 +99,15 @@ export const useTalkStore = defineStore('talk', {
       state.activeCommunityId === '@me' ? ChannelType.Session : ChannelType.Group,
 
     activeChannelSymbol: state => (state.activeCommunityId === '@me' ? '@' : '#'),
+
+    communityLastReadChannelId(): (communityId: string) => string {
+      return (communityId: string) => {
+        const latestChannelsRecords = localStorage.getItem('latestChannels') || JSON.stringify({})
+        const latestChannels = JSON.parse(latestChannelsRecords)
+
+        return latestChannels[communityId] || 'the-void'
+      }
+    },
   },
 
   actions: {
@@ -107,7 +119,7 @@ export const useTalkStore = defineStore('talk', {
         const channelId = latestChannels[routeCommunityId] || 'the-void'
 
         router.push(`/talk/channels/${routeCommunityId}/${channelId}`)
-        return
+        return 'redirect'
       }
 
       const fetchChannels = async () => {
@@ -118,6 +130,15 @@ export const useTalkStore = defineStore('talk', {
           this.activeChannelId = routeChannelId
         }
         this.activeCommunity.channels = channels
+
+        // 写入存储
+        const communityChannels = localStorage.getItem('communityChannels') || JSON.stringify({})
+        const parsedCommunityChannels = JSON.parse(communityChannels)
+        // 只保存频道id
+        const channelIds = channels.map((channel: any) => channel.id)
+        parsedCommunityChannels[routeCommunityId] = channelIds
+        this.communityChannelIds = parsedCommunityChannels
+        localStorage.setItem('communityChannels', JSON.stringify(parsedCommunityChannels))
       }
       await fetchChannels()
 
@@ -179,6 +200,9 @@ export const useTalkStore = defineStore('talk', {
       const layoutStore = useLayoutStore()
       layoutStore.isShowMessagesLoading = true
 
+      // 最少1秒，防止闪烁
+      const currentTimestamp = new Date().getTime()
+
       const messages = await getChannelMessages(
         this.activeChannelId,
         { metaId: selfMetaId },
@@ -205,7 +229,18 @@ export const useTalkStore = defineStore('talk', {
         }
       }
 
+      // 保证至少1秒
+      const delay = Math.max(1000 - (new Date().getTime() - currentTimestamp), 0)
+      if (delay) await sleep(delay)
+
       layoutStore.isShowMessagesLoading = false
+
+      // 滚动到底部
+      await sleep(1)
+      const messagesContainer = document.getElementById('messagesScroll')
+      if (messagesContainer) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight
+      }
     },
 
     async initWebSocket(selfMetaId: string) {

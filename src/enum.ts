@@ -308,3 +308,10 @@ export enum ChannelType {
 export enum GroupChannelType {
   PublicText = 'publicText',
 }
+
+export enum ShowControl {
+  isShowCreateCommunityModal = 'isShowCreateCommunityModal',
+  isShowCreatePublicChannelModal = 'isShowCreatePublicChannelModal',
+  isShowCreateConsensualChannelModal = 'isShowCreateConsensualChannelModal',
+  isShowRedPacketModal = 'isShowRedPacketModal',
+}

@@ -10,8 +10,9 @@ const TalkApi = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/talkAggregation
 
 export const getCommunities = async (params?: any): Promise<Community[]> => {
   params = params || {}
+  const query = new URLSearchParams(params).toString()
 
-  return TalkApi.get(`/community/list`, { data: JSON.stringify(params) }).then(res => {
+  return TalkApi.get(`/community/list?${query}`).then(res => {
     const _communities = res.data.results.items.map((community: Community) => {
       community.id = community.communityId
       return community

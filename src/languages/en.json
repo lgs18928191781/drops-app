@@ -76,6 +76,7 @@
       "members": "member | members",
       "public_channels": "Public channels",
       "create_public_channel": "create public channel",
+      "create_consensual_channel": "create consensual channel",
       "channel_name": "channel name",
       "create_public_channel_tip": "Everyone can join a public channel. No permission required.",
       "consensual_channels": "Consensual channels"
