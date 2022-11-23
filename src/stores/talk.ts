@@ -21,6 +21,8 @@ export const useTalkStore = defineStore('talk', {
 
       channelsReadPointers: {} as any, // 频道已读指针
       saveReadPointerTimer: null as NodeJS.Timeout | null,
+
+      communityChannelIds: {} as any, // 社区频道列表
     }
   },
 
@@ -69,14 +71,14 @@ export const useTalkStore = defineStore('talk', {
 
     hasUnreadMessagesOfCommunity(): (communityId: string) => boolean {
       return (communityId: string) => {
-        if (communityId === this.activeChannelId) return false
+        // 从本地存储中获取社区频道列表和已读指针
+        const channels = this.communityChannelIds[communityId] || []
 
-        // 如果频道已读指针不存在，则说明没有未读消息
-        if (!this.channelsReadPointers[communityId]) return false
+        if (channels.length === 0) return false
 
-        // 如果频道已读指针存在，则判断lastRead和latest
-        const pointer = this.channelsReadPointers[communityId]
-        return pointer.lastRead < pointer.latest
+        return channels.some((channelId: string) => {
+          return this.hasUnreadMessagesOfChannel(channelId)
+        })
       }
     },
 
@@ -118,6 +120,15 @@ export const useTalkStore = defineStore('talk', {
           this.activeChannelId = routeChannelId
         }
         this.activeCommunity.channels = channels
+
+        // 写入存储
+        const communityChannels = localStorage.getItem('communityChannels') || JSON.stringify({})
+        const parsedCommunityChannels = JSON.parse(communityChannels)
+        // 只保存频道id
+        const channelIds = channels.map((channel: any) => channel.id)
+        parsedCommunityChannels[routeCommunityId] = channelIds
+        this.communityChannelIds = parsedCommunityChannels
+        localStorage.setItem('communityChannels', JSON.stringify(parsedCommunityChannels))
       }
       await fetchChannels()
 
@@ -242,8 +253,10 @@ export const useTalkStore = defineStore('talk', {
               this.channelsReadPointers[message.groupId] &&
               message.timestamp > this.channelsReadPointers[message.groupId].latest
             ) {
+              console.log('here')
               this.channelsReadPointers[message.groupId].latest = message.timestamp
             } else {
+              console.log('there')
               this.channelsReadPointers[message.groupId] = {
                 latest: message.timestamp,
                 lastRead: 0,

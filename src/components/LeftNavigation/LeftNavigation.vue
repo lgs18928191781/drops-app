@@ -28,11 +28,18 @@
       <router-link
         :to="'/talk/channels/' + community.id"
         class="flex items-center justify-center left-navigation-item relative"
+        :title="community.name"
         v-for="(community, index) in talkStore.realCommunities"
         :key="index"
       >
+        <div
+          class="absolute left-0 h-full flex items-center top-0"
+          v-if="talkStore.hasUnreadMessagesOfCommunity(community.id)"
+        >
+          <span class="w-1.5 h-3 bg-dark-800 rounded-r-md"></span>
+        </div>
         <span
-          class="absolute left-0 bg-dark-800 w-1.5 h-6 rounded-r-md"
+          class="absolute left-0 bg-dark-800 w-1.5 h-8 rounded-r-md"
           v-if="talkStore.activeCommunityId === community.id"
         ></span>
 
