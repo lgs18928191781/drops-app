@@ -50,3 +50,10 @@ export const classifyName: { [key: string]: string } = {
   emoji: '表情包',
   background: '背景',
 }
+
+export const pagination: Pagination = {
+  page: 1,
+  pageSize: 16,
+  loading: false,
+  nothing: false,
+}

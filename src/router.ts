@@ -71,6 +71,11 @@ export const router = createRouter({
       component: () => import('@/views/talk/AtMe.vue'),
     },
     {
+      path: '/nftDetail/:genesisId/:codehash/:tokenIndex',
+      name: 'nftDetail',
+      component: () => import('@/views/nft/NftDetail.vue'),
+    },
+    {
       path: '/talk/channels/:communityId/:channelId?',
       name: 'talkChannel',
       component: () => import('@/views/talk/Channel.vue'),

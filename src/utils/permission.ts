@@ -26,6 +26,9 @@ router.beforeEach(async (to, from, next) => {
     rootStore.getExchangeRate()
   }
 
+  if (!rootStore.isCertedMetaIds.length) {
+    rootStore.setSystemConfig()
+  }
   if (userStroe.showWallet) {
     // App 未获取用户信息，先去获取用户信息
     if (!userStroe.isAuthorized && isApp) {

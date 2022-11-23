@@ -1701,3 +1701,91 @@ declare interface GetUserKycInfoByAllRes extends apiResponse {
     timestamp: number
   }
 }
+
+declare interface NFTApiGetNFTDetailResDataItem {
+  [x: string]: any
+  nftPrice: number
+  nftCodehash: string
+  nftGenesis: string
+  nftGenesisTxId: string
+  nftSensibleId: string
+  nftSymbol: symbol
+  nftBalance: number
+  nftName: string
+  nftDesc: string
+  nftIcon: string
+  nftWebsite: string
+  nftIssuer: string
+  nftTimestamp: number
+  nftTotalSupply: number
+  nftTokenIndex: string
+  nftIssueVersion: string
+  nftIssueMetaId: string
+  nftDataStr: string
+  nftOwnerAddress: string
+  nftOwnerAvatarTxId: string
+  nftOwnerMetaId: string
+  nftOwnerName: string
+  nftSellTxId: string
+  nftIsReady: boolean
+  nftSellContractTxId: string
+  nftSellDesc: string
+  nftTokenId: string
+  nftIssueMetaTxId: string
+  nftSellState: number
+  nftOwnerAvatarType: string
+  nftIssueAvatarType: string
+  nftGenesisCertificationType: number
+  nftCertificationType: number
+  nftGenesisCertificationName: string
+  nftCurrentAuctionCreateTxId: string
+  nftIssueAddress: string
+  nftBackIcon: string
+  nftHasCompound: boolean
+  nftIsFirstSell: boolean
+  nftMinBidIncreaseInt: number
+}
+
+declare interface GetSeriesNftListResItem {
+  nftCodehash: string
+  nftIssueMetaId?: string
+  nftIssueAvatarType?: string
+  nftGenesis: string
+  nftGenesisTxId: string
+  nftSymbol: string
+  nftBalance: string
+  nftName: string
+  nftDesc: string
+  nftIcon: string
+  nftWebsite: string
+  nftIssuer: string
+  nftTimestamp: number
+  nftTotalSupply: string
+  nftTokenIndex: string
+  nftIssueVersion: string
+  nftDataStr: string
+  nftIsReady: boolean
+  nftOwnerMetaId: string
+  nftSensibleId: string
+  nftHasCompound: boolean
+}
+
+declare interface GetLegalNftDetail extends apiResponse {
+  code: number
+  data: any
+}
+
+declare interface GetCertUserInfoRes extends apiResponse {
+  data: CertUserInfo
+}
+
+declare interface CertUserInfo {
+  idNumber: string
+  information: string
+  metaId: string
+  metaIdName: string
+  organizationName: string
+  realName: string
+  userCertificationType: number
+  userProfile: string
+}
