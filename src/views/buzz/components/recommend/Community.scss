@@ -1,0 +1,92 @@
+@import '../RecommendContent.scss';
+
+.communitys {
+    .follow-list {}
+
+    .follow-item {
+        width: calc((100% - 12px) / 2);
+        display: inline-block;
+        margin-right: 12px;
+        margin-bottom: 24px;
+
+        &::after {
+            z-index: 1;
+        }
+
+        &:nth-child(2n) {
+            margin-right: 0;
+        }
+
+        .follow-item-warp {
+            padding: 12px;
+        }
+
+        :deep(.image) {
+            width: 88px;
+            height: 88px;
+            margin-right: 16px;
+            cursor: pointer;
+        }
+
+        .name {
+            font-size: 18px;
+            cursor: pointer;
+
+            .icon {
+                width: 8px;
+                height: 8px;
+                margin-left: 8px;
+                transform: rotate(-90deg);
+            }
+        }
+
+        .people {
+            color: #909399;
+            margin-top: 10px;
+
+            .icon {
+                width: 16px;
+                height: 16px;
+                margin-right: 6px;
+
+                :deep(use) {
+                    fill: #909399;
+                }
+            }
+        }
+
+        .collect {
+            width: 37px;
+            height: 37px;
+            cursor: pointer;
+        }
+
+        .operate {
+            margin-top: 10px;
+
+            a {
+                font-size: 12px;
+                padding: 8px 18px;
+                border-radius: 14px;
+                cursor: pointer;
+            }
+        }
+    }
+
+    .refresh {
+        a {
+            color: #5586BB;
+            cursor: pointer;
+
+            .icon {
+                width: 16px;
+                height: 16px;
+                margin-right: 5px;
+
+                :deep(use) {
+                    fill: #5586BB;
+                }
+            }
+        }
+    }
+}

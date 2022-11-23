@@ -1,3 +1,4 @@
+import { PostTag } from '@/stores/buzz/tag'
 import HttpRequest from 'request-sdk'
 
 const aggregation = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation`, {
@@ -221,7 +222,29 @@ export const GetTagBuzzs = (params: {
   }
 }> => {
   const { tag, ..._params } = params
-  return aggregation.get(`/v2/app/buzz/getOneBuzz/${tag}`, {
+  return aggregation.get(`/v2/app/show/posts/${tag}`, {
+    params: _params,
+  })
+}
+
+export const GetTopicBuzzs = (params: {
+  tag: string
+  page: string | number
+  pageSize: string | number
+  metaId?: string
+  buzzType?: string
+  timeType?: string
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    results: {
+      items: BuzzItem[]
+    }
+  }
+}> => {
+  const { tag, ..._params } = params
+  return aggregation.get(`/v2/app/show/posts/topic/${tag}`, {
     params: _params,
   })
 }
@@ -260,4 +283,29 @@ export const GetRecommendUsers = (params: {
   return aggregation.get(`/v2/app/show/recommend/metaId`, {
     params,
   })
+}
+
+export const GetPostTags = (): Promise<{
+  code: number
+  data: {
+    total: number
+    results: PostTag[]
+  }
+}> => {
+  return aggregation.get(`/v2/app/show/posts/line/tag/info`)
+}
+
+export const GetUserFollow = (
+  metaId: string
+): Promise<{
+  code: number
+  data: {
+    metaId: string
+    followingList: []
+    followedList: []
+    blackList: []
+    friendList: []
+  }
+}> => {
+  return aggregation.get(`/v2/app/show/follow/${metaId}`)
 }

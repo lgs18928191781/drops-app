@@ -1,20 +1,45 @@
 <template>
   <!-- <div class="buzz-list" v-infinite-scroll="getMore" :infinite-scroll-immediate="false"> -->
   <div class="buzz-list" v-infinite-scroll="getMore" :infinite-scroll-immediate="false">
-    <div class="buzz-item-warp" v-for="item in list" :key="item.txId">
-      <BuzzItemVue
-        :data="item"
-        @repost="onRepost"
-        @more="onMore"
-        :loading="loading"
-        @like="onLike"
-        @follow="onFollow"
-      >
-        <template #comment>
-          <slot name="comment"></slot>
+    <template v-if="loading">
+      <ElSkeleton :loading="true" animated>
+        <template #template>
+          <div
+            class="buzz-item-warp"
+            v-for="(item, index) in Array.from({ length: pagination!.pageSize })"
+          >
+            <BuzzItemSkeletonVue />
+          </div>
         </template>
-      </BuzzItemVue>
-    </div>
+      </ElSkeleton>
+    </template>
+    <template v-else>
+      <template v-for="(item, index) in list" :key="item.txId">
+        <template v-if="index === recommendCommunityIndex && pagination">
+          <slot name="recommendCommunity"></slot>
+        </template>
+        <template v-if="index === recommendFollowIndex && pagination">
+          <slot name="recommendFollow"></slot>
+        </template>
+        <template v-if="index === recommendGuideIndex && pagination">
+          <slot name="recommendGuide"></slot>
+        </template>
+        <div class="buzz-item-warp">
+          <BuzzItemVue
+            :data="item"
+            @repost="onRepost"
+            @more="onMore"
+            :loading="loading"
+            @like="onLike"
+            @follow="onFollow"
+          >
+            <template #comment>
+              <slot name="comment"></slot>
+            </template>
+          </BuzzItemVue>
+        </div>
+      </template>
+    </template>
     <!-- pagination -->
     <LoadMoreVue :pagination="pagination" v-if="pagination && !loading && list.length > 0" />
 
@@ -54,12 +79,13 @@ import { computed, reactive, Ref, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import IsNullVue from '@/components/IsNull/IsNull.vue'
 import LoadMoreVue from '@/components/LoadMore/LoadMore.vue'
-import { copy, tx } from '@/utils/util'
+import { copy, randomRange, tx } from '@/utils/util'
 import { router } from '@/router'
 import { useUserStore } from '@/stores/user'
 import { NodeName } from '@/enum'
 import { Mitt, MittEvent } from '@/utils/mitt'
 import { useLayoutStore } from '@/stores/layout'
+import BuzzItemSkeletonVue from './BuzzItemSkeleton.vue'
 
 interface Props {
   list: BuzzItem[]
@@ -75,6 +101,9 @@ const layoutStore = useLayoutStore()
 
 const operateLoading = ref(false)
 
+const recommendCommunityIndex = ref(randomRange(0, 11))
+const recommendFollowIndex = ref(randomRange(0, 11))
+const recommendGuideIndex = ref(randomRange(0, 11))
 const isShowOperateModal = ref(false)
 const operateType: Ref<'repost' | 'more'> = ref('repost')
 const currentTxId = ref('')

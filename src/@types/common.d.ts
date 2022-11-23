@@ -189,6 +189,8 @@ declare interface BuzzItem {
   txId: string
   userName: string
   zeroAddress: string
+  postTag: string
+  postTagId: number
 }
 
 declare interface BatchSaleSessionItem {

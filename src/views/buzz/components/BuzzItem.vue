@@ -1,106 +1,102 @@
 <template>
-  <ElSkeleton :loading="loading" animated>
-    <template #template>
-      <BuzzItemSkeletonVue />
-    </template>
-    <template #default>
-      <div class="buzz-item" v-if="itemData && displayItemData">
-        <div @click.stop="handleGoDetail(displayItemData!.txId)" class="buzz-item-warp">
-          <!-- 快速转发 -->
-          <template v-if="itemData.displayType === 'quickRePost'">
-            <div class="forward-head" @click.stop="$filters.toUserHome(itemData.metaId)">
-              <ShareIcon />
-              <UserAvatar class="head" :meta-id="itemData.metaId" />
-              <div class="name">{{ itemData.userName }}转发了</div>
-            </div>
-          </template>
-          <div class="header">
-            <div class="user-info" @click.stop="$filters.toUserHome(displayItemData!.metaId)">
-              <div class="head">
-                <UserAvatar :meta-id="displayItemData.metaId" />
-              </div>
-              <div class="info">
-                <div class="name">{{ displayItemData.userName }}</div>
-                <div class="desc">
-                  <span>MetaID: {{ sliceStr(displayItemData.metaId) }}</span>
-                  <span class="time">{{
-                    $filters.dateTimeFormat(displayItemData.timestamp, 'YY-MM-DD HH:mm:ss')
-                  }}</span>
-                </div>
-              </div>
-            </div>
-            <div class="operate">
-              <div
-                class="follow main-border primary"
-                :class="{ disabled: following }"
-                @click.stop="follow"
-                v-if="!displayItemData.isMyFollow && (!userStore.isAuthorized || (userStore.isAuthorized && displayItemData.metaId !== userStore.user!.metaId))"
-              >
-                <template v-if="following">
-                  <el-icon class="is-loading">
-                    <Loading />
-                  </el-icon>
-                </template>
-                <template v-else>{{ $t('Follow') }}</template>
-              </div>
+  <div class="buzz-item" v-if="itemData && displayItemData">
+    <div @click.stop="handleGoDetail(displayItemData!.txId)" class="buzz-item-warp">
+      <!-- 快速转发 -->
+      <template v-if="itemData.displayType === 'quickRePost'">
+        <div class="forward-head" @click.stop="$filters.toUserHome(itemData.metaId)">
+          <ShareIcon />
+          <UserAvatar class="head" :meta-id="itemData.metaId" />
+          <div class="name">{{ itemData.userName }}转发了</div>
+        </div>
+      </template>
+      <div class="header">
+        <div class="user-info" @click.stop="$filters.toUserHome(displayItemData!.metaId)">
+          <div class="head">
+            <UserAvatar :meta-id="displayItemData.metaId" />
+          </div>
+          <div class="info">
+            <div class="name">{{ displayItemData.userName }}</div>
+            <div class="desc">
+              <span>MetaID: {{ sliceStr(displayItemData.metaId) }}</span>
+              <span class="time">{{
+                $filters.dateTimeFormat(displayItemData.timestamp, 'YY-MM-DD HH:mm:ss')
+              }}</span>
             </div>
           </div>
-          <div class="content">
-            <!-- text -->
-            <div
-              class="text content-item"
-              v-html="
-                displayItemData.content
-                  .replace(/\\n/g, '\n')
-                  .replace(
-                    /#.*?[\s\n\r#]{1}|#.*?$/g,
-                    val =>
-                      `<a href='/buzz/topic/${val
-                        .replace('#', '')
-                        .replace(/(^\s*)|(\s*$)/g, '')}' style='color:#fc6d5e' >${val}</a>&nbsp;`
-                  )
-              "
-            ></div>
-
-            <!-- Attachment -->
-            <div
-              class="content-item"
-              v-if="displayItemData.attachments && displayItemData.attachments.length > 0"
-            >
-              <Attachment :attachments="displayItemData.attachments" />
-            </div>
-
-            <!-- 引用buzz -->
-            <div class="content-item" v-if="itemData.quoteItem">
-              <QuoteVue :buzz="itemData.quoteItem" />
-            </div>
-
-            <!-- 标签 -->
-            <div class="tags flex flex-align-center">
-              <a
-                class="flex flex-align-center"
-                @click.stop="$router.push({ name: 'buzzTag', params: { tagId: 1 } })"
-              >
-                <Icon name="flag" />
-                Buzz
-              </a>
-            </div>
-
-            <BuzzItemControlVue
-              :buzz="displayItemData"
-              @repost="params => emit('repost', params)"
-              @update="params => emit('update', params)"
-              @more="params => emit('more', params)"
-              @like="params => emit('like', params)"
-              v-if="!isHideControl"
-            />
-
-            <slot name="comment"></slot>
+        </div>
+        <div class="operate">
+          <div
+            class="follow main-border primary"
+            :class="{ disabled: following }"
+            @click.stop="follow"
+            v-if="!displayItemData.isMyFollow && (!userStore.isAuthorized || (userStore.isAuthorized && displayItemData.metaId !== userStore.user!.metaId))"
+          >
+            <template v-if="following">
+              <el-icon class="is-loading">
+                <Loading />
+              </el-icon>
+            </template>
+            <template v-else>{{ $t('Follow') }}</template>
           </div>
         </div>
       </div>
-    </template>
-  </ElSkeleton>
+      <div class="content">
+        <!-- text -->
+        <div
+          class="text content-item"
+          v-html="
+            displayItemData.content
+              .replace(/\\n/g, '\n')
+              .replace(
+                /#.*?[\s\n\r#]{1}|#.*?$/g,
+                val =>
+                  `<a href='/buzz/topic/${val
+                    .replace('#', '')
+                    .replace(/(^\s*)|(\s*$)/g, '')}' style='color:#fc6d5e' >${val}</a>&nbsp;`
+              )
+          "
+        ></div>
+
+        <!-- Attachment -->
+        <div
+          class="content-item"
+          v-if="displayItemData.attachments && displayItemData.attachments.length > 0"
+        >
+          <Attachment :attachments="displayItemData.attachments" />
+        </div>
+
+        <!-- 引用buzz -->
+        <div class="content-item" v-if="itemData.quoteItem">
+          <QuoteVue :buzz="itemData.quoteItem" />
+        </div>
+
+        <!-- 标签 -->
+        <div class="tags flex flex-align-center">
+          <a
+            class="flex flex-align-center"
+            @click.stop="
+              $router.push({ name: 'buzzTag', params: { tagId: displayItemData?.postTagId } })
+            "
+          >
+            <Icon name="flag" />
+            {{ displayItemData.postTag }}
+          </a>
+        </div>
+
+        <BuzzItemControlVue
+          :buzz="displayItemData"
+          @repost="params => emit('repost', params)"
+          @update="params => emit('update', params)"
+          @more="params => emit('more', params)"
+          @like="params => emit('like', params)"
+          v-if="!isHideControl"
+        />
+
+        <slot name="comment"></slot>
+      </div>
+    </div>
+  </div>
+
   <!-- <van-popup v-model:show="showPopup" position="bottom" round close-on-popstate>
     <div class="popup-list">
              <div class="item" @click.stop="handleFollow"><span>关注</span></div>
