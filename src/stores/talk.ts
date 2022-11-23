@@ -4,6 +4,7 @@ import { defineStore } from 'pinia'
 import { router } from '@/router'
 import { useLayoutStore } from './layout'
 import { Message, TalkError } from '@/@types/talk'
+import { sleep } from '@/utils/util'
 
 export const useTalkStore = defineStore('talk', {
   state: () => {
@@ -199,6 +200,9 @@ export const useTalkStore = defineStore('talk', {
       const layoutStore = useLayoutStore()
       layoutStore.isShowMessagesLoading = true
 
+      // 最少1秒，防止闪烁
+      const currentTimestamp = new Date().getTime()
+
       const messages = await getChannelMessages(
         this.activeChannelId,
         { metaId: selfMetaId },
@@ -225,7 +229,18 @@ export const useTalkStore = defineStore('talk', {
         }
       }
 
+      // 保证至少1秒
+      const delay = Math.max(1000 - (new Date().getTime() - currentTimestamp), 0)
+      if (delay) await sleep(delay)
+
       layoutStore.isShowMessagesLoading = false
+
+      // 滚动到底部
+      await sleep(1)
+      const messagesContainer = document.getElementById('messagesScroll')
+      if (messagesContainer) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight
+      }
     },
 
     async initWebSocket(selfMetaId: string) {

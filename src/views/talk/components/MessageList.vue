@@ -5,6 +5,7 @@
   <div
     class="h-full overflow-y-auto"
     ref="messagesScroll"
+    id="messagesScroll"
     v-show="!layoutStore.isShowMessagesLoading"
   >
     <div class="overflow-x-hidden px-4">

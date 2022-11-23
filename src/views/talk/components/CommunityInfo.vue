@@ -17,7 +17,7 @@
             <div class="w-full">
               <Image
                 :src="talkStore.activeCommunity?.cover"
-                :customClass="'aspect-[4/3] w-full object-scale-down object-center'"
+                :customClass="'aspect-[4/3] w-full object-contain object-center'"
                 v-if="talkStore.activeCommunity?.cover"
               />
             </div>
@@ -96,6 +96,8 @@
                     @click="layoutStore.isShowCreateConsensualChannelModal = true"
                   />
                 </div>
+
+                <CreateConsensualChannelModal />
               </div>
             </div>
           </div>
@@ -111,6 +113,7 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
 import CreatePublicChannelModal from './modals/CreatePublicChannelModal.vue'
+import CreateConsensualChannelModal from './modals/CreateConsensualChannelModal.vue'
 import { useLayoutStore } from '@/stores/layout'
 import { useTalkStore } from '@/stores/talk'
 import { useUserStore } from '@/stores/user'

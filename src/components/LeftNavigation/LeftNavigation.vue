@@ -11,6 +11,7 @@
         :content="item.title"
         offset="5"
         placement="right"
+        :disabled="isMobile"
         v-for="(item, index) in apps"
       >
         <router-link
@@ -24,7 +25,7 @@
           >
             <Icon
               :name="item.icon"
-              class="w-[22PX] h-[19PX] rounded-3xl group-hover:scale-110 transition-all duration-200"
+              class="w-[22PX] h-[19PX] rounded-3xl lg:group-hover:scale-110 transition-all duration-200"
             />
           </span>
         </router-link>
@@ -42,6 +43,7 @@
         :content="community.name"
         offset="5"
         placement="right"
+        :disabled="isMobile"
         v-for="(community, index) in talkStore.realCommunities"
       >
         <router-link
@@ -59,7 +61,7 @@
             v-if="talkStore.hasUnreadMessagesOfCommunity(community.id)"
           >
             <span
-              class="w-1.5 h-3 bg-dark-800 rounded-r-md group-hover:h-6 transition-all duration-150"
+              class="w-1.5 h-3 bg-dark-800 rounded-r-md lg:group-hover:h-6 transition-all duration-150"
             ></span>
           </div>
           <span
@@ -70,7 +72,7 @@
           <Image
             :src="community.icon"
             :customClass="
-              '!w-13.5 !h-13.5 rounded-3xl object-cover object-center group-hover:scale-110 transition-all duration-200'
+              '!w-13.5 !h-13.5 rounded-3xl object-cover object-center lg:group-hover:scale-110 transition-all duration-200'
             "
           />
         </router-link>
@@ -96,6 +98,7 @@ import { getCommunities } from '@/api/talk'
 import { useLayoutStore } from '@/stores/layout'
 import { useTalkStore } from '@/stores/talk'
 import { useUserStore } from '@/stores/user'
+import { isMobile } from '@/stores/root'
 import CreateCommunityModal from '@/views/talk/components/modals/CreateCommunityModal.vue'
 const layoutStore = useLayoutStore()
 const talkStore = useTalkStore()

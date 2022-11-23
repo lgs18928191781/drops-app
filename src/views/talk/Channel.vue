@@ -29,11 +29,10 @@ import TheInput from './components/TheInput.vue'
 import TheErrorBox from './components/TheErrorBox.vue'
 import CommunityInfo from './components/CommunityInfo.vue'
 import ChannelMemberList from './components/ChannelMemberList.vue'
-import { defineAsyncComponent, onBeforeUnmount, onMounted, Ref, ref } from 'vue'
+import { defineAsyncComponent, onBeforeUnmount } from 'vue'
 import { useTalkStore } from '@/stores/talk'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import { useLayoutStore } from '@/stores/layout'
 
 const MessageList = defineAsyncComponent({
   loader: () => import('./components/MessageList.vue'),
