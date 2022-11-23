@@ -1,6 +1,6 @@
 <template>
-  <Teleport to="body" v-if="layoutStore.isShowCreateChannelModal">
-    <CreateChannelModal />
+  <Teleport to="body" v-if="layoutStore.isShowCreatePublicChannelModal">
+    <CreatePublicChannelModal />
   </Teleport>
 
   <div
@@ -17,14 +17,17 @@
             <div class="w-full">
               <Image
                 :src="talkStore.activeCommunity?.cover"
-                class="aspect-[4/3] w-full object-cover object-center"
+                :customClass="'aspect-[4/3] w-full object-scale-down object-center'"
                 v-if="talkStore.activeCommunity?.cover"
               />
             </div>
 
             <!-- 社区信息 -->
             <div class="px-4.5 overflow-y-auto">
-              <div class="w-full mt-4.5 text-lg text-dark-800">
+              <div
+                class="w-full mt-4.5 text-lg text-dark-800 truncate"
+                :title="talkStore.activeCommunity?.name"
+              >
                 {{ talkStore.activeCommunity?.name }}
               </div>
 
@@ -48,7 +51,7 @@
               <div
                 class="pt-8 pb-4 flex flex-col gap-y-3  border-t border-solid border-dark-200 pt-4.5 mt-4.5"
               >
-                <div class="flex items-center justify-between">
+                <div class="flex justify-between">
                   <div class="uppercase text-dark-400 text-xs">
                     {{ $t('Talk.Community.public_channels') }}
                   </div>
@@ -56,15 +59,21 @@
                     name="plus"
                     class="w-4 h-4 text-black cursor-pointer"
                     v-if="talkStore.isAdmin(userStore.user!.metaId)"
-                    @click="layoutStore.isShowCreateChannelModal = true"
+                    @click="layoutStore.isShowCreatePublicChannelModal = true"
                   />
                 </div>
                 <div
                   v-for="channel in talkStore.activeCommunity?.channels"
-                  class="p-3 main-border only-bottom cursor-pointer bg-white"
+                  class="p-3 main-border only-bottom cursor-pointer !bg-white relative"
                   :class="channel.id === talkStore.activeChannelId || 'faded'"
                   @click="goChannel(channel.id)"
                 >
+                  <div
+                    class="absolute left-0 h-full flex items-center top-0"
+                    v-if="talkStore.hasUnreadMessagesOfChannel(channel.id)"
+                  >
+                    <span class="w-1.5 h-3 bg-dark-250 rounded-r-md"></span>
+                  </div>
                   <div
                     class="text-dark-800 text-base font-medium flex items-center"
                     :title="channel.name"
@@ -74,6 +83,18 @@
                       {{ channel.name }}
                     </div>
                   </div>
+                </div>
+
+                <div class="flex justify-between mt-4">
+                  <div class="uppercase text-dark-400 text-xs">
+                    {{ $t('Talk.Community.consensual_channels') }}
+                  </div>
+                  <Icon
+                    name="plus"
+                    class="w-4 h-4 text-black cursor-pointer"
+                    v-if="talkStore.isAdmin(userStore.user!.metaId)"
+                    @click="layoutStore.isShowCreateConsensualChannelModal = true"
+                  />
                 </div>
               </div>
             </div>
@@ -89,9 +110,7 @@
 
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
-import MetabotBanner from '@/assets/images/metabot_banner.png?url'
-import CreateChannelModal from './modals/CreateChannelModal.vue'
-import UserProfile from './UserProfile.vue'
+import CreatePublicChannelModal from './modals/CreatePublicChannelModal.vue'
 import { useLayoutStore } from '@/stores/layout'
 import { useTalkStore } from '@/stores/talk'
 import { useUserStore } from '@/stores/user'
@@ -115,4 +134,17 @@ const goChannel = (channelId: string) => {
   router.push(`/talk/channels/${currentCommunityId}/${channelId}`)
 }
 </script>
-<style lang=""></style>
+<style lang="scss" scoped>
+*::-webkit-scrollbar {
+  width: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #edeff2;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #bfc2cc;
+  border-radius: 20px;
+}
+</style>

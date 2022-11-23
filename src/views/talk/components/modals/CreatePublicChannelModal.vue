@@ -9,7 +9,7 @@
         <Icon
           name="x_circle"
           class="w-6 h-6 text-dark-400 cursor-pointer"
-          @click="layoutStore.isShowCreateChannelModal = false"
+          @click="layoutStore.isShowCreatePublicChannelModal = false"
         />
       </button>
 

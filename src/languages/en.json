@@ -77,7 +77,8 @@
       "public_channels": "Public channels",
       "create_public_channel": "create public channel",
       "channel_name": "channel name",
-      "create_public_channel_tip": "Everyone can join a public channel. No permission required."
+      "create_public_channel_tip": "Everyone can join a public channel. No permission required.",
+      "consensual_channels": "Consensual channels"
     },
     "Input": {
       "nft_stickers": "NFT Stickers",

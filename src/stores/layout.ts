@@ -6,9 +6,11 @@ export const useLayoutStore = defineStore('layout', {
       isShowLeftNav: false,
       isShowPublishBuzz: false,
       isShowCreateCommunityModal: false,
-      isShowCreateChannelModal: false,
+      isShowCreatePublicChannelModal: false,
+      isShowCreateConsensualChannelModal: false,
       isShowRedPacketModal: false,
       isShowMessagesLoading: false,
+      isShowMemberList: false,
       publishBuzzOption: {
         repostTxId: '', // 转发的TxId
         topic: '', // 发表话题

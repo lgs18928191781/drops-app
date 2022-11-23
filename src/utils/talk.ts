@@ -1,7 +1,14 @@
 import dayjs from 'dayjs'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 dayjs.extend(advancedFormat)
-import { ChannelType, CommunityJoinAction, IsEncrypt, MessageType, NodeName } from '@/enum'
+import {
+  ChannelType,
+  CommunityJoinAction,
+  IsEncrypt,
+  MessageType,
+  NodeName,
+  SdkPayType,
+} from '@/enum'
 import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
 import { getCommunityAuth } from '@/api/talk'
@@ -11,16 +18,20 @@ import { Message, MessageDto } from '@/@types/talk'
 
 export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   // communityId, name, description, cover, metaName, mateNameNft, admins, reserved, icon
-  const communityId = '8036a899bad8cd74b58f327bff34c392126886802040470fae61c2cc3571dd7d'
+  // const communityId = '274628147706127fc9cc8da5285081f52e6dd4436fd97bc7321daca2064db385'
+  const communityId = '70637fba2fcadfe5ea89cc845ecb9eef86195672de4ce56a703e1ff08e6f1228'
   const { metaName, signature: reserved } = await getCommunityAuth(communityId)
   const { icon, name, description, cover } = form
 
-  // 1. 上传icon、cover
-  const { metafileUri: iconUri } = await _uploadImage(icon, sdk)
+  const attachments = []
+  attachments.push(await FileToAttachmentItem(icon))
+  const iconPlaceholder = 'metafile://$[0]'
 
-  let coverUri = null
+  let coverPlaceholder = null
+
   if (cover) {
-    coverUri = (await _uploadImage(cover, sdk)).metafileUri
+    coverPlaceholder = 'metafile://$[1]'
+    attachments.push(await FileToAttachmentItem(cover))
   }
 
   const admins = [userStore.user?.metaId]
@@ -28,11 +39,11 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
     communityId,
     metaName,
     reserved,
-    icon: iconUri,
+    icon: iconPlaceholder,
     admins,
     name,
     description,
-    cover: coverUri || '',
+    cover: coverPlaceholder || '',
   }
 
   // 2. 构建节点参数
@@ -41,6 +52,7 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
     encrypt: IsEncrypt.No,
     dataType: 'application/json',
     data: JSON.stringify(dataCarrier),
+    attachments,
   }
 
   // 3. 发送节点
@@ -243,7 +255,7 @@ const _uploadImage = async (file: File, sdk: SDK) => {
   const node = {
     nodeName: NodeName.MetaFile,
     dataType: 'application/json',
-    data: JSON.stringify(dataCarrier),
+    attachments: [hexedFiles],
   }
 
   const newNode = await sdk.createBrfcChildNode(node)

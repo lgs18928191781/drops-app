@@ -35,9 +35,11 @@
           class="absolute left-0 bg-dark-800 w-1.5 h-6 rounded-r-md"
           v-if="talkStore.activeCommunityId === community.id"
         ></span>
-        <span class="bg-sky-200 w-13.5 h-13.5 flex items-center justify-center rounded-3xl">
-          <Icon :name="community.icon" class="w-[22PX] h-[19PX] rounded-3xl" />
-        </span>
+
+        <Image
+          :src="community.icon"
+          :customClass="'!w-13.5 !h-13.5 rounded-3xl object-cover object-center'"
+        />
       </router-link>
 
       <div

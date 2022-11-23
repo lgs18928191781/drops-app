@@ -114,7 +114,6 @@ const callMetasvApi = async (
         return res
       })
       .catch(error => {
-        debugger
         throw new Error('Request Error metasv -- ' + error.message)
       })
   } else {
@@ -528,7 +527,6 @@ export const getUnspents = async (address: string, wif: string, flag?: string) =
       }))
     })
     .catch(error => {
-      debugger
       throw new Error('Request Error metasv -- ' + error.message)
     })
 }
