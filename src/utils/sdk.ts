@@ -842,7 +842,13 @@ export class SDK {
           if (transactions.metaFiles && transactions.metaFiles.length) {
             // metafile txId变了，所以要改变currentNode 节点的data 对应数据
             for (let i = 0; i < transactions.metaFiles.length; i++) {
-              params.data = params.data.replace(`$[${i}]`, transactions.metaFiles[i].transaction.id)
+              const fileSuffix = params.attachments![i].fileName.split('.')[
+                params.attachments![i].fileName.split('.').length - 1
+              ]
+              params.data = params.data.replace(
+                `$[${i}]`,
+                transactions.metaFiles[i].transaction.id + `.${fileSuffix}`
+              )
             }
 
             // 因为 currentNode Params.data 改变了，是所以需要重新构建 current node transtation

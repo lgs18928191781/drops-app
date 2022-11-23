@@ -258,7 +258,14 @@ export const GetRecommendCommunitys = (params: {
   data: {
     total: number
     results: {
-      items: BuzzItem[]
+      items: {
+        communityId: string
+        cover: string
+        description: string
+        icon: string
+        memberTotal: number
+        name: string
+      }[]
     }
   }
 }> => {
@@ -308,4 +315,18 @@ export const GetUserFollow = (
   }
 }> => {
   return aggregation.get(`/v2/app/show/follow/${metaId}`)
+}
+
+export const GetMetaFile = (
+  params: string[]
+): Promise<{
+  code: number
+  data: {
+    total: number
+    results: {
+      items: MetaFileInfo[]
+    }
+  }
+}> => {
+  return aggregation.get(`/v2/app/metaFile/getMetaFile?txIds=${params.join(',')}`)
 }

@@ -27,11 +27,13 @@
         <div class="buzz-item-warp">
           <BuzzItemVue
             :data="item"
+            :loading="loading"
+            :play-file="playFile"
             @repost="onRepost"
             @more="onMore"
-            :loading="loading"
             @like="onLike"
             @follow="onFollow"
+            @play="onPlay"
           >
             <template #comment>
               <slot name="comment"></slot>
@@ -86,6 +88,7 @@ import { NodeName } from '@/enum'
 import { Mitt, MittEvent } from '@/utils/mitt'
 import { useLayoutStore } from '@/stores/layout'
 import BuzzItemSkeletonVue from './BuzzItemSkeleton.vue'
+import { metafile } from '@/utils/filters'
 
 interface Props {
   list: BuzzItem[]
@@ -107,6 +110,8 @@ const recommendGuideIndex = ref(randomRange(0, 11))
 const isShowOperateModal = ref(false)
 const operateType: Ref<'repost' | 'more'> = ref('repost')
 const currentTxId = ref('')
+const playFile = ref('')
+let audio: HTMLAudioElement | null
 
 const repost = reactive({
   rePostTx: '',
@@ -251,6 +256,27 @@ function onFollow(txId: string) {
       resolve()
     }
   })
+}
+
+function onPlay(params: { file: string; type: 'audio' | 'video' }) {
+  if (playFile.value === params.file) playFile.value = ''
+  else playFile.value = params.file
+  if (params.type === 'audio' && playFile.value) {
+    if (!audio) {
+      audio = new Audio()
+    }
+    audio.src = metafile(params.file)
+    audio.play()
+    audio.addEventListener('ended', () => {
+      audio!.src = ''
+      playFile.value = ''
+    })
+  } else {
+    if (audio) {
+      audio.pause()
+      audio.src = ''
+    }
+  }
 }
 
 function getMore() {

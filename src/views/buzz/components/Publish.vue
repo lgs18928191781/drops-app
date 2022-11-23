@@ -20,7 +20,6 @@
           <Icon name="x_mark" />
         </a>
       </div>
-
       <div class="text">
         <textarea v-model="content" autofocus />
 
@@ -53,9 +52,11 @@
               <a @click="item.fun()" :class="{ disabled: item.disabled() }">
                 <Icon :name="item.icon" />
                 <input
-                  v-if="item.icon === 'buzz_img' && attachments.length < 9"
+                  v-if="
+                    (item.icon === 'buzz_img' || item.icon === 'music') && attachments.length < 9
+                  "
                   type="file"
-                  accept="images/*"
+                  :accept="item.icon === 'buzz_img' ? 'images/*' : 'audio/*'"
                   multiple
                   @change="onChooseImage"
                   ref="inputFileRef"
@@ -151,6 +152,13 @@ const publishOperates = [
   },
   {
     icon: 'buzz_img',
+    fun: () => {},
+    disabled: () => {
+      return attachments.length >= 9
+    },
+  },
+  {
+    icon: 'music',
     fun: () => {},
     disabled: () => {
       return attachments.length >= 9

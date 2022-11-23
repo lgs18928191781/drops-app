@@ -464,6 +464,7 @@ export async function downloadFile(url: string, name = 'file') {
   } else {
     const a = document.createElement('a')
     a.href = url
+    a.target = '_blank'
     a.download = name
     document.body.appendChild(a)
     a.click()
@@ -857,6 +858,7 @@ export function FileToAttachmentItem(file: File, encrypt: IsEncrypt = IsEncrypt.
       sha256: encHex.stringify(sha256Algo.finalize()),
       url: URL.createObjectURL(file),
       encrypt,
+      size: file.size,
     })
   })
 }

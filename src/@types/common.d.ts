@@ -232,3 +232,37 @@ declare interface BindMetaIdRes {
   password: string
   // type: 'register' | 'login'
 }
+
+declare interface MetaFileInfo {
+  txId: string
+  metaId: string
+  userName: string
+  avatarTxId: string
+  avatarType: string
+  zeroAddress: string
+  metanetId: string
+  address: string
+  publicKey: string
+  hash: string
+  md5: string
+  resUrl: string
+  fileType: number
+  width: number
+  height: number
+  imgCompressUrl: string
+  duration: number
+  fileDataType: string
+  fileSize: number
+  fileSizeStr: string
+  fileName: string
+  encrypt: string
+  version: string
+  dataType: string
+  encoding: string
+  buzzTxId: string
+  isValid: boolean
+  isNew: boolean
+  blockHeight: number
+  confirmState: number
+  timestamp: number
+}

@@ -62,7 +62,11 @@
           class="content-item"
           v-if="displayItemData.attachments && displayItemData.attachments.length > 0"
         >
-          <Attachment :attachments="displayItemData.attachments" />
+          <Attachment
+            :attachments="displayItemData.attachments"
+            :playFile="playFile"
+            @play="params => emit('play', params)"
+          />
         </div>
 
         <!-- 引用buzz -->
@@ -109,7 +113,7 @@
 </template>
 <script setup lang="ts">
 import { isApp } from '@/stores/root'
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Attachment from './Attachment.vue'
 // import { copy } from '@/utils/filters'
@@ -129,7 +133,9 @@ interface Props {
   isInDetailPage?: boolean
   isHideControl?: boolean
   loading?: boolean
+  playFile?: string
 }
+
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
@@ -141,6 +147,7 @@ const emit = defineEmits<{
   (e: 'more', txId: string): void
   (e: 'like', txId: string): void
   (e: 'follow', txId: string): Promise<void>
+  (e: 'play', txId: any): void
 }>()
 const props = withDefaults(defineProps<Props>(), {
   isInDetailPage: false,

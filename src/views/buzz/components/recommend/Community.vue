@@ -8,20 +8,38 @@
     <div class="cont">
       <div class="communitys">
         <div class="follow-list">
-          <CardVue class="follow-item" v-for="item in Array.from({ length: 4 })">
+          <CardVue class="follow-item" v-for="(item, index) in communitys" :key="item.communityId">
             <div class="follow-item-warp card flex">
-              <Image src="" />
+              <div class="community-cover">
+                <span class="radius"></span>
+                <Image :src="item.cover" />
+                <Icon name="emb" />
+              </div>
               <div class="flex1">
                 <div class="name flex flex-align-center">
-                  Doodles
+                  <span
+                    >{{ item.name.slice(0, 8) }}
+                    <template v-if="item.name.length > 8">.</template></span
+                  >
                   <Icon name="down" />
                 </div>
 
-                <div class="people flex flex-align-center"><Icon name="people" /> 628</div>
+                <div class="people flex flex-align-center">
+                  <Icon name="people" /> {{ item.memberTotal }}
+                </div>
 
                 <div class="operate flex flex-align-center flex-pack-end">
-                  <a class="main-border primary">
-                    {{ $t('Join') }}
+                  <a
+                    class="main-border primary"
+                    :class="{ disabled: loading.includes(true) }"
+                    @click="join(item, index)"
+                  >
+                    <template v-if="loading[index]">
+                      <ElIcon class="is-loading">
+                        <Loading />
+                      </ElIcon>
+                    </template>
+                    <template v-else>{{ $t('Join') }}</template>
                   </a>
                 </div>
               </div>
@@ -43,12 +61,26 @@
 import { GetRecommendCommunitys } from '@/api/aggregation'
 import { initPagination } from '@/config'
 import { useUserStore } from '@/stores/user'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import CardVue from '@/components/Card/Card.vue'
+import { Loading } from '@element-plus/icons-vue'
+import { NodeName } from '@/enum'
+import { useI18n } from 'vue-i18n'
 
-const pagination = reactive({ ...initPagination })
+const pagination = reactive({ ...initPagination, pageSize: 4 })
 const userStore = useUserStore()
-const communitys: any[] = reactive([])
+const i18n = useI18n()
+
+const communitys: {
+  communityId: string
+  cover: string
+  description: string
+  icon: string
+  memberTotal: number
+  name: string
+}[] = reactive([])
+
+const loading: boolean[] = reactive([])
 
 function getRecommendCommunitys() {
   return new Promise<void>(async (resolve, reject) => {
@@ -62,6 +94,39 @@ function getRecommendCommunitys() {
       resolve()
     }
   })
+}
+
+async function join(
+  item: {
+    communityId: string
+    cover: string
+    description: string
+    icon: string
+    memberTotal: number
+    name: string
+  },
+  index: number
+) {
+  if (loading.includes(true)) return
+  loading[index] = true
+  const res = await userStore.showWallet
+    .createBrfcChildNode({
+      nodeName: NodeName.SimpleCommunityJoin,
+      data: JSON.stringify({
+        communityId: item.communityId, //string
+        state: 1, //加入状态, number: 1 or -1. 1:in; -1:out
+      }),
+    })
+    .catch(error => {
+      ElMessage.error(error.message)
+      loading[index] = false
+    })
+  if (res) {
+    ElMessage.success(i18n.t('Join Success'))
+    loading[index] = false
+  } else {
+    loading[index] = false
+  }
 }
 
 getRecommendCommunitys()
