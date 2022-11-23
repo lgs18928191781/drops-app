@@ -258,14 +258,7 @@ export const GetRecommendCommunitys = (params: {
   data: {
     total: number
     results: {
-      items: {
-        communityId: string
-        cover: string
-        description: string
-        icon: string
-        memberTotal: number
-        name: string
-      }[]
+      items: recommnedCommunity[]
     }
   }
 }> => {

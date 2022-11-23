@@ -266,3 +266,13 @@ declare interface MetaFileInfo {
   confirmState: number
   timestamp: number
 }
+
+declare interface recommnedCommunity {
+  communityId: string
+  cover: string
+  description: string
+  icon: string
+  memberTotal: number
+  name: string
+  isMyJoin: boolean
+}

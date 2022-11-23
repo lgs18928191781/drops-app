@@ -31,7 +31,7 @@
                 <div class="operate flex flex-align-center flex-pack-end">
                   <a
                     class="main-border primary"
-                    :class="{ disabled: loading.includes(true) }"
+                    :class="{ disabled: loading.includes(true), faded: item.isMyJoin }"
                     @click="join(item, index)"
                   >
                     <template v-if="loading[index]">
@@ -71,14 +71,7 @@ const pagination = reactive({ ...initPagination, pageSize: 4 })
 const userStore = useUserStore()
 const i18n = useI18n()
 
-const communitys: {
-  communityId: string
-  cover: string
-  description: string
-  icon: string
-  memberTotal: number
-  name: string
-}[] = reactive([])
+const communitys: recommnedCommunity[] = reactive([])
 
 const loading: boolean[] = reactive([])
 
@@ -96,18 +89,8 @@ function getRecommendCommunitys() {
   })
 }
 
-async function join(
-  item: {
-    communityId: string
-    cover: string
-    description: string
-    icon: string
-    memberTotal: number
-    name: string
-  },
-  index: number
-) {
-  if (loading.includes(true)) return
+async function join(item: recommnedCommunity, index: number) {
+  if (loading.includes(true) || item.isMyJoin) return
   loading[index] = true
   const res = await userStore.showWallet
     .createBrfcChildNode({
@@ -122,6 +105,7 @@ async function join(
       loading[index] = false
     })
   if (res) {
+    item.isMyJoin = true
     ElMessage.success(i18n.t('Join Success'))
     loading[index] = false
   } else {
