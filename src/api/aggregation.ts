@@ -225,3 +225,39 @@ export const GetTagBuzzs = (params: {
     params: _params,
   })
 }
+
+export const GetRecommendCommunitys = (params: {
+  page: number | string
+  pageSize: number | string
+  metaId?: string
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    results: {
+      items: BuzzItem[]
+    }
+  }
+}> => {
+  return aggregation.get(`/v2/app/show/recommend/community`, {
+    params,
+  })
+}
+
+export const GetRecommendUsers = (params: {
+  page: number | string
+  pageSize: number | string
+  metaId?: string
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    results: {
+      items: BuzzItem[]
+    }
+  }
+}> => {
+  return aggregation.get(`/v2/app/show/recommend/metaId`, {
+    params,
+  })
+}

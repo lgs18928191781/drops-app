@@ -147,7 +147,15 @@
       "success": "Follow Success"
     },
     "Referral Community": "Referral Community",
-    "Web3 Gathering Place": "Web3 Gathering Place"
+    "Web3 Gathering Place": "Web3 Gathering Place",
+    "RecommendContent": {
+      "Change batch": ".Change batch",
+      "Recommend To Follow": "Recommend To Follow",
+      "View More": "View More",
+      "Introduction to Guiding": "Introduction to Guiding",
+      "Learn the show function": "Learn the show function",
+      "Download showApp": "Download showApp"
+    }
   },
   "Follow": "Follow",
   "Pagination": {
@@ -169,5 +177,6 @@
       "Recharge": "Recharge"
     }
   },
-  "Please Login First": "Please Login First"
+  "Please Login First": "Please Login First",
+  "Join": "Join"
 }
