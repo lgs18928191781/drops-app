@@ -15,6 +15,7 @@ interface RootState {
   isGetedExchangeRate: boolean
   isShowLogin: boolean
   isCertedMetaIds: string[]
+  currentPrice: string
 }
 
 const UA = window.navigator.userAgent.toLowerCase()
@@ -46,6 +47,7 @@ export const useRootStore = defineStore('root', {
       },
       isGetedExchangeRate: false,
       isShowLogin: false,
+      currentPrice: window.localStorage.getItem('currentPrice') || 'BSV',
     },
   getters: {},
   actions: {
@@ -64,6 +66,15 @@ export const useRootStore = defineStore('root', {
       //   })
       // }, 30 * 1000)
     },
+    changePrices(payload: string) {
+      if (payload == this.currentPrice) {
+        return
+      } else {
+        this.currentPrice = payload
+        window.localStorage.setItem('currentPrice', payload)
+      }
+    },
+
     startSendCodeCountdown() {
       setInterval(() => {
         if (this.sendCodeTimer > 0) {

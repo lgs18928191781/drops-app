@@ -7,6 +7,14 @@ export interface Unit {
 export enum UnitName {
   BSV = 'BSV',
   SATS = 'SATS',
+  RMB = 'CNY',
+}
+
+export enum Platform {
+  native = 1,
+  app = 2,
+  h5 = 3,
+  jsapi = 4,
 }
 
 export const units: Unit[] = [

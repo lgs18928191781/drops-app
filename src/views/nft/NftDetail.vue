@@ -1,4 +1,19 @@
 <template>
+  <div class="menu-wrap">
+    <ElDropdown trigger="click" @command="handleCommand">
+      <a class="tools flex flex-align-center"
+        >{{ $t('prices') }}{{ currentPrice }}
+        <el-icon class="el-icon--right"><arrow-down /></el-icon>
+      </a>
+      <template #dropdown>
+        <el-dropdown-menu>
+          <el-dropdown-item :command="item.name" v-for="item in prices">{{
+            item.name
+          }}</el-dropdown-item>
+        </el-dropdown-menu>
+      </template>
+    </ElDropdown>
+  </div>
   <div class="nft-detail-wrap">
     <ElSkeleton :loading="isShowSkeleton" animated>
       <!-- 骨架屏 -->
@@ -69,7 +84,7 @@
               <div class="title flex flex-align-center">
                 <template v-if="NFT.val!.putAway">
                   {{ $t('seller') }}
-                  <UserAvatar class="avatar" :meta-id="NFT.val!.ownerMetaId" />
+
                   <span>{{ NFT.val!.ownerName }}</span>
                   {{ $t('theIntro') }}：
                 </template>
@@ -99,7 +114,8 @@
                 <div
                   class="btn btn-block flex1 flex flex-align-center flex-pack-center"
                   :class="[
-                    !NFT.val!?.putAway ? 'btn-gray' : NFT.val!?.remain > 0 ? '' : 'btn-noColor',
+                    !NFT.val!?.putAway && !blindBoxPage ? 'btn-gray' : blindBoxPage ? 
+                    NFT.val!?.remain > 0 ? '' : 'btn-noColor' : ''
                   ]"
                   @click="startBuy"
                 >
@@ -300,16 +316,14 @@
                   <span class="td time flex1">{{
                     $filters.dateTimeFormat(record.timestamp, 'YYYY-MM-DD HH:mm')
                   }}</span>
-                  <!-- <span class="td price flex1"
+                  <span class="td price flex1"
                     >{{
                       record.satoshisPrice
                         ? $filters.bsv(record.satoshisPrice) + 'BSV'
                         : $t('noPaid')
                     }}
-                  </span> -->
-                  <!-- <a class="link" @click="store.state.sdk?.toTxLink(record.txId)"
-                    ><img :src="LinkIcon"
-                  /></a> -->
+                  </span>
+                  <a class="link" @click="toWhatsonchain(record.txId)"><img :src="LinkIcon"/></a>
                 </div>
 
                 <LoadMore
@@ -325,10 +339,24 @@
       </template>
     </ElSkeleton>
   </div>
+
+  <!-- pay confirm -->
+  <PayConfirmVue
+    :visible="isShowConfirm"
+    :genesis="NFT.val?.genesis"
+    :codehash="NFT.val?.codeHash"
+    :token-index="NFT.val?.tokenIndex"
+    :isLegal="isLegal"
+    :uuid="NFT.val?.uuid"
+    @close="isShowConfirm = false"
+    @success="buySuccess"
+    :price="price"
+    :blindBoxPage="blindBoxPage"
+  ></PayConfirmVue>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted, computed, watch } from 'vue'
 import DetailSkeletonVue from './DetailSkeleton.vue'
 import NFTCover from '@/components/NFT/Cover.vue'
 import CertTemp from '@/components/Cert/Cert.vue'
@@ -342,15 +370,30 @@ import ListIcon from '@/assets/images/list_icon_ins.svg?url'
 import CastingIcon from '@/assets/images/icon_casting.svg?url'
 import { GetNftHolderList } from '@/api/aggregation'
 import { pagination } from '@/config'
+import { Decimal } from 'decimal.js'
+import LinkIcon from '@/assets/images/list_icon_link.svg?url'
+import { ArrowDown } from '@element-plus/icons-vue'
+import { useRootStore } from '@/stores/root'
+import PayConfirmVue from '@/components/PayConfirm/PayConfirm.vue'
+import { UnitName } from '@/config'
+
 const isShowSkeleton = ref(true)
 const isShowDrscDetail = ref(false)
 const userStore = useUserStore()
 const route = useRoute()
 const i18n = useI18n()
 const tabIndex = ref(0)
-setTimeout(() => {
-  isShowSkeleton.value = false
-}, 3000)
+const rootStore = useRootStore()
+// setTimeout(() => {
+//   isShowSkeleton.value = false
+// }, 3000)
+const currentPrice = computed(() => {
+  return rootStore.currentPrice
+})
+
+const blindBoxPage = computed(() => {
+  return route.name === 'blindBoxDetail'
+})
 const price = ref('0')
 const NFT: { val: NftItemDetail | null } = reactive({
   val: null,
@@ -373,6 +416,27 @@ const issueRecord: { val: GetNftHolderListResItem | null } = reactive({
   val: null,
 })
 
+const isLegal = computed(() => {
+  return route.name === 'legaldetail'
+})
+
+const isShowConfirm = ref(false)
+
+const cnyMode = computed(() => {
+  return rootStore.currentPrice == UnitName.RMB
+})
+
+const prices = reactive([
+  {
+    name: 'BSV',
+    key: 'bsv',
+  },
+  {
+    name: 'CNY',
+    key: 'cny',
+  },
+])
+
 const NFTMainMsgDesc = computed(() => {
   // 1. 是否拍卖 显示拍卖描述 2. 是否上架 显示上架描述 3.下架状态 显示 NFT 的描述
   return NFT.val!.isAuction
@@ -381,6 +445,28 @@ const NFTMainMsgDesc = computed(() => {
     ? NFT.val!.sellDesc
     : NFT.val!.describe
 })
+
+watch(
+  () => NFT.val,
+  newVal => {
+    if (newVal) {
+      price.value = converterPrice(newVal.amount)
+    }
+  }
+)
+
+function handleCommand(command: string) {
+  rootStore.changePrices(command)
+  console.log('command', command)
+}
+
+function converterPrice(amount: number) {
+  if (amount) {
+    return new Decimal(amount).div(10 ** 8).toString() + ' ' + 'BSV'
+  } else {
+    return '--'
+  }
+}
 
 function changeTabIndex(index: number) {
   if (tabIndex.value === index) {
@@ -405,7 +491,13 @@ function toWhatsonchain(txId: string) {
 
 function ToUser(metaId: string) {}
 
-function startBuy() {}
+function startBuy() {
+  if (NFT.val!.sellState !== 0) return
+  if (isLegal.value && !cnyMode.value) {
+    return ElMessage.error(`${i18n.t('notSupportBsvBuyLegal')}`)
+  }
+  isShowConfirm.value = true
+}
 
 function getDetail() {
   return new Promise<void>(async resolve => {

@@ -278,3 +278,9 @@ export const enum BindStatus {
   BindSuccess,
   InputPassword,
 }
+
+export enum PaySource {
+  WEB = 'web',
+  IOS = 'ios',
+  ANDROID = 'android',
+}

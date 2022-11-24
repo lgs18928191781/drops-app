@@ -220,12 +220,28 @@
 }
 
 .el-dropdown-menu {
-    padding: 10px 0;
+    padding: 10px ;
     background: #fff;
     border-radius: 12px;
     box-sizing: border-box;
     box-shadow: var(--el-box-shadow-dark);
+   
+     
 }
+  .el-dropdown-menu__item {
+   
+       font-size: 20px !important;
+      padding:8px 25px !important;
+    }
+
+    
+.el-dropdown-menu__item:not(.is-disabled):hover,
+.el-dropdown-menu__item:focus {
+  background-color: #fff4e2 !important;
+  color: $mainColor !important;
+}
+
+
 
 .el-drawer {
 

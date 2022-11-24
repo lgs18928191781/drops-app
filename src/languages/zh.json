@@ -258,5 +258,10 @@
   "role": "角色",
   "time": "时间",
   "price": "价格",
-  "clickmore": "点击加载更多"
+  "clickmore": "点击加载更多",
+  "seller": "卖家",
+  "prices": "标价：",
+  "notSupportBsvBuyLegal": "暂不支持BSV购买法币的上架NFT",
+  "selectPay": "选择支付方式",
+  "confirm": "确认"
 }

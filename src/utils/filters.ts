@@ -1,8 +1,18 @@
 // @ts-ignore
 import dayjs from 'dayjs'
+import { Decimal } from 'decimal.js'
 
 export function dateTimeFormat(timestamp: Date, format: string = 'YYYY-MM-DD HH:mm:ss') {
+  if (!timestamp) {
+    return null
+  }
   return dayjs(timestamp).format(format)
+}
+
+export function bsv(stas: number | string) {
+  if (typeof stas === 'undefined') return 0
+
+  return new Decimal(stas).div(Math.pow(10, 8)).toNumber()
 }
 
 export function metafile(metafile: string, width = 235, type: 'metafile' | 'metaId' = 'metafile') {
