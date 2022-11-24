@@ -16,7 +16,7 @@
   </div>
 
   <div class="buzz-list-warp">
-    <BuzzListVue :list="list" :pagination="pagination" :loading="isSkeleton" />
+    <BuzzListVue :list="list" :pagination="pagination" :loading="isSkeleton" @get-more="getMore" />
   </div>
 </template>
 
@@ -57,6 +57,15 @@ function getDatas(isCover = false) {
       list.push(...res.data.results.items)
       resolve()
     }
+  })
+}
+
+function getMore() {
+  if (isSkeleton.value || pagination.loading || pagination.nothing) return
+  pagination.loading = true
+  pagination.page++
+  getDatas().then(() => {
+    pagination.loading = false
   })
 }
 
