@@ -175,6 +175,7 @@ import WalletConnect from '@walletconnect/client'
 import AuthClient, { generateNonce } from '@walletconnect/auth-client'
 import QRCodeModal from '@walletconnect/qrcode-modal'
 import keccak256 from 'keccak256'
+import { RegisterSource } from '@/enum'
 
 const rootStore = useRootStore()
 const userStore = useUserStore()
@@ -377,7 +378,11 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
     }
   })
   let res
-  if (getMnemonicRes?.data?.metaId && getMnemonicRes?.data?.registerType === 'email') {
+  debugger
+  if (
+    getMnemonicRes?.data?.metaId &&
+    getMnemonicRes?.data?.registerSource === RegisterSource.metamask
+  ) {
     //这里需要再判断一下用户注册来源，如果是metamask注册的用户要拿metaid来解
 
     try {
@@ -399,7 +404,11 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
     }
 
     // return  emit('update:modelValue', false)
-  } else if (getMnemonicRes?.code === 0 && getMnemonicRes.data.menmonic) {
+  } else if (
+    getMnemonicRes?.code === 0 &&
+    getMnemonicRes.data.menmonic &&
+    getMnemonicRes?.data?.registerSource === RegisterSource.showmoney
+  ) {
     // 有密码直接登录， 没有密码就要用户输入
     const password = localStorage.getItem(encode('password'))
     if (password) {
@@ -439,6 +448,7 @@ async function onSetBaseInfoSuccess(params: {
   loading.value = true
   try {
     const wallet = userStore.showWallet!.wallet
+    console.log('wallet', wallet)
     if (userStore.isAuthorized) {
       let utxos = await wallet?.provider.getUtxos(wallet.wallet.xpubkey.toString())
       const broadcasts: string[] = []

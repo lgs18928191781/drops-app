@@ -308,7 +308,6 @@ function ethPersonalSignSign(params: { message: string; address: string }) {
 }
 
 function submitForm() {
-  debugger
   formRef.value.validate(async (valid: boolean) => {
     if (valid) {
       loading.value = true
@@ -351,7 +350,7 @@ function loginSuccess(params: BindMetaIdRes) {
       const metaIdInfo = await GetUserInfo(params.userInfo.metaId)
       console.log('metaIdInfo', metaIdInfo)
       console.log('userStore', userStore)
-      debugger
+
       userStore.updateUserInfo({
         ...params.userInfo,
         ...metaIdInfo.data,
@@ -366,7 +365,6 @@ function loginSuccess(params: BindMetaIdRes) {
       if (status.value === BindStatus.BindHavedMetaId) {
         status.value = BindStatus.BindSuccess
       } else {
-        debugger
         emit('update:modelValue', false)
         if (status.value === BindStatus.BindRegisterMetaId) {
           emit('register')
@@ -419,7 +417,7 @@ function createMetaidAccount() {
       const HdWalletInstance = new HdWallet(hdWallet)
 
       const account: any = {
-        name: form.name,
+        name: `${import.meta.env.VITE_DefaultName}`,
       }
       const address = hdWallet
         .deriveChild(0)

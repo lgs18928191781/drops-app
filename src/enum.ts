@@ -274,3 +274,8 @@ export const enum BindStatus {
   BindSuccess,
   InputPassword,
 }
+
+export const enum RegisterSource {
+  showmoney = 'normal',
+  metamask = 'metamask',
+}

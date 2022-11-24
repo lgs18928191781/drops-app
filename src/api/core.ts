@@ -216,7 +216,7 @@ export const LoginByHashData = (params: {
   data: {
     menmonic: string
     metaId: string
-    registerType: string
+    registerSource: string
   }
 }> => {
   return Core.post(`/api/v1/thirdparty/checkHashData`, params)
