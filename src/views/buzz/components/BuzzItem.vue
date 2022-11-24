@@ -70,7 +70,10 @@
         </div>
 
         <!-- 引用buzz -->
-        <div class="content-item" v-if="itemData.quoteItem">
+        <div
+          class="content-item"
+          v-if="itemData.quoteItem && itemData.displayType !== 'quickRePost'"
+        >
           <QuoteVue :buzz="itemData.quoteItem" />
         </div>
 

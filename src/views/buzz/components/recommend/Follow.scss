@@ -32,7 +32,13 @@
                     padding: 8px 12px;
                     border-radius: 14px;
                     font-size: 12px;
+
+                    &.disabled,
+                    &.faded {
+                        cursor: not-allowed;
+                    }
                 }
+
             }
 
         }
@@ -42,5 +48,15 @@
         margin-top: 16px;
         color: #5586BB;
         cursor: pointer;
+
+        .icon {
+            width: 16px;
+            height: 16px;
+            margin-right: 5px;
+
+            :deep(use) {
+                fill: #5586BB;
+            }
+        }
     }
 }

@@ -143,7 +143,7 @@ function getUserFollow() {
       resolve()
     })
     if (res?.code === 0) {
-      myFollowNum.value = res.data.followingList.length
+      myFollowNum.value = res.data.followingList?.length || 0
       resolve()
     }
   })

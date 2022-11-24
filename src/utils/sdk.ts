@@ -839,16 +839,22 @@ export class SDK {
         }
 
         if (transactions.currentNode?.transaction) {
-          if (transactions.metaFiles && transactions.metaFiles.length) {
+          // 有附件 或则 需要创建brfc节点时， 都需要重新构建currentNode节点
+          if (
+            (transactions.metaFiles && transactions.metaFiles.length) ||
+            transactions.currentNodeBrfc?.transaction
+          ) {
             // metafile txId变了，所以要改变currentNode 节点的data 对应数据
-            for (let i = 0; i < transactions.metaFiles.length; i++) {
-              const fileSuffix = params.attachments![i].fileName.split('.')[
-                params.attachments![i].fileName.split('.').length - 1
-              ]
-              params.data = params.data.replace(
-                `$[${i}]`,
-                transactions.metaFiles[i].transaction.id + `.${fileSuffix}`
-              )
+            if (transactions.metaFiles && transactions.metaFiles.length) {
+              for (let i = 0; i < transactions.metaFiles.length; i++) {
+                const fileSuffix = params.attachments![i].fileName.split('.')[
+                  params.attachments![i].fileName.split('.').length - 1
+                ]
+                params.data = params.data.replace(
+                  `$[${i}]`,
+                  transactions.metaFiles[i].transaction.id + `.${fileSuffix}`
+                )
+              }
             }
 
             // 因为 currentNode Params.data 改变了，是所以需要重新构建 current node transtation

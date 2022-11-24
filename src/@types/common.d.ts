@@ -276,3 +276,12 @@ declare interface recommnedCommunity {
   name: string
   isMyJoin: boolean
 }
+declare interface RecommnedUser {
+  address: string
+  avatarTxId: string
+  avatarType: string
+  isMyFollow: boolean
+  metaId: string
+  name: string
+  total: number
+}

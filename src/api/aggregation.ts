@@ -276,7 +276,7 @@ export const GetRecommendUsers = (params: {
   data: {
     total: number
     results: {
-      items: BuzzItem[]
+      items: RecommnedUser[]
     }
   }
 }> => {
