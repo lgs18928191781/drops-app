@@ -278,6 +278,7 @@ async function selectLoginType(item: number) {
         text: '注册中',
       })
       const res = await createMetaidAccount()
+
       await loginSuccess(res)
       loading.close()
     } catch (error) {
@@ -357,7 +358,9 @@ function loginSuccess(params: BindMetaIdRes) {
         password: params.password,
       })
 
-      userStore.$patch({ wallet: new SDK() })
+      userStore.$patch({
+        wallet: new SDK(import.meta.env.VITE_NET_WORK),
+      })
 
       userStore.showWallet.initWallet()
 
@@ -414,6 +417,7 @@ function createMetaidAccount() {
         encode(props.thirdPartyWallet.address)
       )
       const hdWallet = await hdWalletFromMnemonic(mnemonic, 'new', Network.testnet)
+      console.log('hdWallet', hdWallet)
       const HdWalletInstance = new HdWallet(hdWallet)
 
       const account: any = {
@@ -462,6 +466,7 @@ function createMetaidAccount() {
           const newUserInfo = Object.assign(getUserInfoRes.data, {
             metaId: metaId,
             ethAddress: props.thirdPartyWallet.address,
+            enCryptedMnemonic: encryptmnemonic,
           })
           await sendHash(newUserInfo)
           resolve({

@@ -202,6 +202,8 @@ export default class ShowmoneyProvider {
     token?: string
     userName?: string
   }): Promise<BaseUtxo> {
+    console.log('paramsparamsparams', params)
+
     const res = await this.callApi({
       url: '/nodemvc/api/v1/pri/wallet/sendInitSatsForMetaSV',
       params: {

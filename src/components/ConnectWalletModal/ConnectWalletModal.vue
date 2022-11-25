@@ -294,7 +294,7 @@ async function metaMaskLoginSuccess(res: MetaMaskLoginRes) {
       password: res.password,
       userType: 'email',
     })
-    userStore.$patch({ wallet: new SDK() })
+    userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
     userStore.showWallet.initWallet()
     if (res.type === 'register') {
       isShowSendBuzz.value = true
@@ -378,7 +378,7 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
     }
   })
   let res
-  debugger
+
   if (
     getMnemonicRes?.data?.metaId &&
     getMnemonicRes?.data?.registerSource === RegisterSource.metamask
@@ -646,6 +646,7 @@ async function onSetBaseInfoSuccess(params: {
         }
 
         const hdWallet = new HdWallet(walletInfo.wallet)
+        console.log('hdWallethdWallet', hdWallet)
         const metaIdInfo = await hdWallet.initMetaIdNode(account)
         if (!metaIdInfo) {
           throw new Error('Create MetaID Error')

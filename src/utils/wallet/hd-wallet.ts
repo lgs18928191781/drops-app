@@ -490,7 +490,6 @@ export class HdWallet {
   public onlyCreateMetaidNode() {
     return new Promise<string>(async (resolve, reject) => {
       try {
-        debugger
         const metaIdInfo: any = await this.getMetaIdInfo(this.rootAddress)
         metaIdInfo.pubKey = this._root.toPublicKey().toString()
         //  检查 metaidinfo 是否完整
@@ -525,8 +524,8 @@ export class HdWallet {
             // 广播
             try {
               console.log('rootTx', rootTx)
-              debugger
-              await this.provider.broadcast(rootTx.txId)
+
+              await this.provider.broadcast(rootTx.hex)
             } catch (error) {
               errorMsg = error
             }
@@ -940,10 +939,11 @@ export class HdWallet {
         //   throw new Error("Cant't get parent address")
         // }
         const nodeTx = await this.makeTx(makeTxOptions)
-        console.log('nodeTx', nodeTx)
-        debugger
+        console.log('nodeTx', nodeTx.toString())
+
         if (nodeTx) {
           resolve({
+            hex: nodeTx.toString(),
             transaction: nodeTx,
             txId: nodeTx.id,
             address: nodeAddress!.address,
@@ -2015,6 +2015,5 @@ export class HdWallet {
       metaTxId: '51bd603e83fa0210d8e0704d57419dd0af0b0e264ae2246e8dc499ef76d30ce9',
       sensibleId: 'e90cd376ef99c48d6e24e24a260e0bafd09d41574d70e0d81002fa833e60bd5100000000',
     })
-    debugger
   }
 }
