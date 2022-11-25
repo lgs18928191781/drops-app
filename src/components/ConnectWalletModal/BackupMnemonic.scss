@@ -74,6 +74,7 @@
 
                 &.faded {
                     background: #EDEFF2;
+                    cursor: not-allowed;
 
                     .icon {
                         :deep(use) {

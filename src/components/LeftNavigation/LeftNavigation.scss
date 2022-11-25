@@ -1,4 +1,8 @@
 .left-navigation {
+    height: 100vh;
+    position: sticky;
+    left: 0;
+    top: 0;
     padding: 18px 0;
 
     .left-navigation-item {

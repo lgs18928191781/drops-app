@@ -1,3 +1,4 @@
+import { checkUserLogin } from '@/utils/util'
 import { defineStore } from 'pinia'
 
 export const useLayoutStore = defineStore('layout', {
@@ -18,7 +19,8 @@ export const useLayoutStore = defineStore('layout', {
     }
   },
   actions: {
-    publish(params?: { repostTxId?: string; topic?: string }) {
+    async publish(params?: { repostTxId?: string; topic?: string }) {
+      await checkUserLogin()
       this.publishBuzzOption.repostTxId = params?.repostTxId || ''
       this.publishBuzzOption.topic = params?.topic || ''
       this.isShowPublishBuzz = true

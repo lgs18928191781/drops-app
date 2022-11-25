@@ -89,6 +89,14 @@ function getDatas(isCover = false) {
   })
 }
 
+// 监听登录状态，变化后重新拉取数据
+watch(
+  () => userStore.isAuthorized,
+  () => {
+    refreshDatas()
+  }
+)
+
 Mitt.on(MittEvent.AddBuzz, async (params: { txId: string }) => {
   const res = await getOneBuzz({
     txId: params.txId,
@@ -97,19 +105,6 @@ Mitt.on(MittEvent.AddBuzz, async (params: { txId: string }) => {
     list.unshift(res.data.results.items[0])
   }
 })
-
-watch(
-  () => route.path,
-  () => {
-    isSkeleton.value = true
-    pagination.page = 1
-    pagination.loading = false
-    pagination.nothing = false
-    getDatas(true).then(() => {
-      isSkeleton.value = false
-    })
-  }
-)
 
 const publishOperates = [
   {
@@ -150,6 +145,16 @@ function getUserFollow() {
       resolve()
     }
   })
+}
+
+async function refreshDatas() {
+  isSkeleton.value = true
+  pagination.page = 1
+  pagination.loading = false
+  pagination.nothing = false
+  await getUserFollow()
+  await getDatas(true)
+  isSkeleton.value = false
 }
 
 getUserFollow().then(() => {
