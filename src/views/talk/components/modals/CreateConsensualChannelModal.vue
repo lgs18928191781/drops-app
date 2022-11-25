@@ -1,7 +1,7 @@
 <template>
   <BaseModal
-    :show-control="ShowControl.isShowCreateConsensualChannelModal"
-    :show-second-control="ShowControl.isShowChooseTokenModal"
+    v-model="layout[ShowControl.isShowCreateConsensualChannelModal]"
+    v-model:show-second-control="layout[ShowControl.isShowChooseTokenModal]"
   >
     <template v-slot:title>
       {{ $t('Talk.Community.create_consensual_channel') }}

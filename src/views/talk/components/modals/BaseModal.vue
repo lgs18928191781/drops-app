@@ -1,5 +1,5 @@
 <template>
-  <TransitionRoot :show="layout[showControl]">
+  <TransitionRoot :show="modelValue">
     <Dialog @close="tryClose" class="relative z-50">
       <TransitionChild
         as="template"
@@ -105,14 +105,13 @@
 <script lang="ts" setup>
 import { useLayoutStore } from '@/stores/layout'
 import { Dialog, DialogPanel, TransitionRoot, TransitionChild } from '@headlessui/vue'
-import { ShowControl } from '@/enum'
 import { computed } from 'vue'
 
 const layout = useLayoutStore()
 
 const props = defineProps<{
-  showControl: ShowControl
-  showSecondControl?: ShowControl
+  modelValue: boolean
+  showSecondControl?: boolean
   strictClose?: boolean
   extraCloseEvent?: any
   mobileSize?: number
@@ -126,6 +125,8 @@ const tryClose = () => {
   closeModal()
 }
 
+const emit = defineEmits(['update:modelValue', 'update:showSecondControl'])
+
 const mobileSize = computed(() => {
   if (props.mobileSize) {
     return {
@@ -137,9 +138,9 @@ const mobileSize = computed(() => {
 })
 
 const closeModal = () => {
-  layout[props.showControl] = false
+  emit('update:modelValue', false)
   if (props.showSecondControl) {
-    layout[props.showSecondControl] = false
+    emit('update:showSecondControl', false)
   }
 
   if (props.extraCloseEvent) {
@@ -149,7 +150,7 @@ const closeModal = () => {
 
 const closeSecondModal = () => {
   if (props.showSecondControl) {
-    layout[props.showSecondControl] = false
+    emit('update:showSecondControl', false)
   }
 }
 </script>
