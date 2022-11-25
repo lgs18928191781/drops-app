@@ -32,7 +32,7 @@
   </div>
 
   <div class="buzz-list-warp">
-    <BuzzListVue :list="list" :pagination="pagination" :loading="isSkeleton" />
+    <BuzzListVue :list="list" :pagination="pagination" :loading="isSkeleton" @get-more="getMore" />
   </div>
 </template>
 
@@ -88,6 +88,15 @@ async function changeSubTag(tag: string) {
   pagination.loading = false
   await getDatas(true)
   isSkeleton.value = false
+}
+
+function getMore() {
+  if (isSkeleton.value || pagination.loading || pagination.nothing) return
+  pagination.loading = true
+  pagination.page++
+  getDatas().then(() => {
+    pagination.loading = false
+  })
 }
 
 getDatas(true).then(() => {

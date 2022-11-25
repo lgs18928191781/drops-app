@@ -256,5 +256,9 @@
   },
   "Please Login First": "请先登录",
   "Join": "加入",
-  "Join Success": "加入成功"
+  "Join Success": "加入成功",
+  "Joined": "已加入",
+  "None More": "没有更多了",
+  "Followed": "已关注",
+  "Number": "数量"
 }

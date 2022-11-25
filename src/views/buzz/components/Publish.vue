@@ -120,7 +120,7 @@ import { NodeName } from '@/enum'
 import { useLayoutStore } from '@/stores/layout'
 import { useUserStore } from '@/stores/user'
 import { FileToAttachmentItem, getAttachmentsMark } from '@/utils/util'
-import { reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AttachmentVue from './Attachment.vue'
 import StickerVue from '@/components/Sticker/Sticker.vue'
@@ -182,6 +182,21 @@ const publishOperates = [
   },
 ]
 
+const attachmentType = computed(() => {
+  if (attachments && attachments.length) {
+    if (attachments[0].fileType.indexOf('image/')) {
+      return 'image'
+    } else if (attachments[0].fileType.indexOf('auios/')) {
+      return 'auido'
+    } else if (attachments[0].fileType.indexOf('video/')) {
+      return 'video'
+    } else {
+      return 'other'
+    }
+  } else {
+    return ''
+  }
+})
 const isShowTopic = ref(false)
 const topics: GetHotTopicsResItem[] = reactive([])
 const topic = ref('')

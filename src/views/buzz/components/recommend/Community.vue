@@ -39,7 +39,7 @@
                         <Loading />
                       </ElIcon>
                     </template>
-                    <template v-else>{{ $t('Join') }}</template>
+                    <template v-else>{{ item.isMyJoin ? $t('Joined') : $t('Join') }}</template>
                   </a>
                 </div>
               </div>
@@ -47,7 +47,7 @@
           </CardVue>
         </div>
         <div class="refresh flex flex-pack-center">
-          <a class="flex flex-align-center">
+          <a class="flex flex-align-center" @click="exchange">
             <Icon name="exchange" />
             {{ $t('Buzz.RecommendContent.Change batch') }}
           </a>
@@ -67,7 +67,7 @@ import { Loading } from '@element-plus/icons-vue'
 import { NodeName } from '@/enum'
 import { useI18n } from 'vue-i18n'
 
-const pagination = reactive({ ...initPagination, pageSize: 4 })
+const pagination = reactive({ ...initPagination, pageSize: 4, totalPages: 1 })
 const userStore = useUserStore()
 const i18n = useI18n()
 
@@ -82,6 +82,7 @@ function getRecommendCommunitys() {
       ...pagination,
     })
     if (res.code === 0) {
+      pagination.totalPages = Math.ceil(res.data.total / pagination.pageSize)
       communitys.length = 0
       communitys.push(...res.data.results.items)
       resolve()
@@ -106,11 +107,19 @@ async function join(item: recommnedCommunity, index: number) {
     })
   if (res) {
     item.isMyJoin = true
+    item.memberTotal = item.memberTotal + 1
     ElMessage.success(i18n.t('Join Success'))
     loading[index] = false
   } else {
     loading[index] = false
   }
+}
+
+function exchange() {
+  if (pagination.totalPages === 1) return ElMessage.error(i18n.t('None More'))
+  if (pagination.page < pagination.totalPages) pagination.page++
+  else pagination.page = 1
+  getRecommendCommunitys()
 }
 
 getRecommendCommunitys()
