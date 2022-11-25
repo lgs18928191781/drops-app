@@ -149,7 +149,7 @@ const emit = defineEmits<{
   (e: 'repost', txId: string): void
   (e: 'more', txId: string): void
   (e: 'like', txId: string): void
-  (e: 'follow', txId: string): Promise<void>
+  (e: 'follow', txId: string, params: { resolve: (txId?: string) => any; reject: () => any }): void
   (e: 'play', txId: any): void
 }>()
 const props = withDefaults(defineProps<Props>(), {
@@ -235,10 +235,17 @@ async function follow() {
   await checkUserLogin()
   if (following.value) return
   following.value = true
-  emit('follow', displayItemData!.value!.txId)
-    .then(() => {
+  const followCallback = () => {
+    return new Promise<any>((resolve, reject) => {
+      emit('follow', displayItemData!.value!.txId, { resolve, reject })
+    })
+  }
+  followCallback()
+    .then(res => {
       following.value = false
-      ElMessage.success(i18n.t('Buzz.follow.success'))
+      if (res) {
+        ElMessage.success(i18n.t('Buzz.follow.success'))
+      }
     })
     .catch(error => {
       following.value = false

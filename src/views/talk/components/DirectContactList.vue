@@ -1,7 +1,7 @@
 <template>
   <div
     class="bg-white fixed inset-0 h-screen w-screen z-40 lg:static lg:shrink-0 lg:w-auto"
-    :class="[layoutStore.isShowLeftNav ? '' : 'hidden lg:block']"
+    :class="[layout.isShowLeftNav ? '' : 'hidden lg:block']"
   >
     <div class="w-full h-full flex">
       <!-- 占位 -->
@@ -32,7 +32,7 @@ import DirectContactSearch from './DirectContactSearch.vue'
 import DirectContactItem from './DirectContactItem.vue'
 import { useTalkStore } from '@/stores/talk'
 
-const layoutStore = useLayoutStore()
+const layout = useLayoutStore()
 const talkStore = useTalkStore()
 </script>
 

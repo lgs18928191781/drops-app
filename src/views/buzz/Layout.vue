@@ -3,9 +3,9 @@
     <div class="flex1">
       <div class="phone-content flex flex-align-center">
         <Icon
-          :name="layoutStore.isShowLeftNav ? 'x_mark' : 'bars'"
+          :name="layout.isShowLeftNav ? 'x_mark' : 'bars'"
           class="phone-menu"
-          @click="layoutStore.$patch({ isShowLeftNav: !layoutStore.isShowLeftNav })"
+          @click="layout.$patch({ isShowLeftNav: !layout.isShowLeftNav })"
         />
 
         <div class="dived"></div>
@@ -63,13 +63,14 @@
 
     <!--   -->
     <div class="fast-btn" ref="FastBtnRef">
-      <a class="main-border primary" @click="layoutStore.publish()">
+      <a class="main-border primary" @click="layout.publish()">
         <Icon name="airdrop" />
       </a>
-      <a class="main-border">
+      <a class="main-border" @click="scrollTop">
         <Icon name="top" />
       </a>
     </div>
+    <!--   -->
   </div>
 
   <!-- publish -->
@@ -103,7 +104,7 @@ import PublishVue from './components/Publish.vue'
 
 const rootStore = useRootStore()
 const userStore = useUserStore()
-const layoutStore = useLayoutStore()
+const layout = useLayoutStore()
 const i18n = useI18n()
 
 const menus = [
@@ -133,13 +134,22 @@ function setPostion() {
     BuzzContanerRef.value.offsetLeft - MenuRef.value.clientWidth - 12 + 'px'
   MenuRef.value.style.marginLeft = 0
 
-  FastBtnRef.value.style.left =
-    BuzzContanerRef.value.offsetLeft + BuzzContanerRef.value.clientWidth + 12 + 'px'
-  FastBtnRef.value.style.marginLeft = 0
+  if (window.innerWidth > 750) {
+    FastBtnRef.value.style.left =
+      BuzzContanerRef.value.offsetLeft + BuzzContanerRef.value.clientWidth + 12 + 'px'
+    FastBtnRef.value.style.marginRight = 0
+  } else {
+    FastBtnRef.value.style.right = '5%'
+    FastBtnRef.value.style.marginRight = 0
+  }
 }
-
+// console.log(window.innerWidth)
 // // const isDark = useDark()
 // const toggleDark = () => {}
+
+function scrollTop() {
+  window.document.documentElement.scrollTop = 0
+}
 </script>
 
 <style lang="scss" scoped src="./Layout.scss"></style>

@@ -40,7 +40,7 @@ const MessageList = defineAsyncComponent({
 const router = useRouter()
 const route = useRoute()
 const talkStore = useTalkStore()
-const layoutStore = useLayoutStore()
+const layout = useLayoutStore()
 const userStore = useUserStore()
 
 const channel = ref({
@@ -117,7 +117,7 @@ onMounted(async () => {
       })
     }
 
-    layoutStore.$patch({
+    layout.$patch({
       isShowLeftNav: false,
     })
 

@@ -45,6 +45,14 @@
       "dark": "dark",
       "light": "light"
     },
+
+    "Modals": {
+      "enter_password": "Enter Password",
+      "enter_password_placeholder": "Speak friend and enter ^-^",
+      "enter_password_confirm": "GO",
+      "wrong_password_tip": "Whoops, wrong password..."
+    },
+
     "Channel": {
       "members": "members",
       "join_channel": "joined the channel.",
@@ -77,9 +85,22 @@
       "public_channels": "Public channels",
       "create_public_channel": "create public channel",
       "create_consensual_channel": "create consensual channel",
-      "channel_name": "channel name",
+      "channel_name": "Channel Name",
       "create_public_channel_tip": "Everyone can join a public channel. No permission required.",
-      "consensual_channels": "Consensual channels"
+      "consensual_channels": "Consensual channels",
+      "create_consensual_channel_tip": "Members with specific FT, NFT, or password can join a consensual channel.",
+      "consent": "Consent",
+      "consent_type": "Consent Type",
+      "password": "Password",
+      "choose_nft": "Choose NFT",
+      "choose_ft": "Choose FT",
+      "set_password": "Set Password",
+      "choose_nft_tip": "Only members with NFTs of selected series can join this channel.",
+      "choose_ft_tip": "Only members with selected token can join this channel.",
+      "choose_nft_as_consent": "Choose one NFT Series as Consent...",
+      "choose_ft_as_consent": "Choose a token as Consent...",
+      "no_nft_available": "No NFTs available.",
+      "no_ft_available": "No tokens available."
     },
     "Input": {
       "nft_stickers": "NFT Stickers",

@@ -20,6 +20,9 @@
         <ChannelMemberList />
       </Transition>
     </div>
+
+    <!-- modals -->
+    <PasswordModal />
   </div>
 </template>
 
@@ -29,32 +32,77 @@ import TheInput from './components/TheInput.vue'
 import TheErrorBox from './components/TheErrorBox.vue'
 import CommunityInfo from './components/CommunityInfo.vue'
 import ChannelMemberList from './components/ChannelMemberList.vue'
-import { defineAsyncComponent, onBeforeUnmount } from 'vue'
+import { defineAsyncComponent, onBeforeUnmount, watch } from 'vue'
 import { useTalkStore } from '@/stores/talk'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { GroupChannelType } from '@/enum'
+import { useLayoutStore } from '@/stores/layout'
+import PasswordModal from './components/modals/PasswordModal.vue'
+import { verifyPassword } from '@/utils/talk'
 
 const MessageList = defineAsyncComponent({
   loader: () => import('./components/MessageList.vue'),
 })
 
-const talkStore = useTalkStore()
+const talk = useTalkStore()
 
 const route = useRoute()
 const userStore = useUserStore()
+const layout = useLayoutStore()
+
 const { communityId, channelId } = route.params
 const selfMetaId = userStore.user!.metaId
-talkStore.initChannel(communityId as string, channelId as string).then(async initRes => {
+talk.initChannel(communityId as string, channelId as string).then(async initRes => {
   if (initRes === 'redirect') return
 
-  await talkStore.initChannelMessages(selfMetaId)
-  await talkStore.initWebSocket(selfMetaId)
+  // 重置频道凭证
+  talk.hasActiveChannelConsent = false
+  if (!talk.canAccessActiveChannel) {
+    switch (talk.activeGroupChannelType) {
+      case GroupChannelType.Password:
+        // 先检查是否本地有存储该频道密码
+        const _passwordLookup = localStorage.getItem(`channelPasswords-${selfMetaId}`)
+        const passwordLookup = _passwordLookup ? JSON.parse(_passwordLookup) : {}
+        const hashedPassword = passwordLookup[talk.activeChannelId]
+
+        // 如果没有，则弹出密码输入框
+        if (!hashedPassword) {
+          layout.isShowPasswordModal = true
+          return
+        }
+
+        // 检查密码是否正确
+        const channelKey = talk.activeChannel.roomStatus
+        const creatorMetaId = talk.activeChannel.createUserMetaId
+        if (verifyPassword(channelKey, hashedPassword, creatorMetaId)) {
+          talk.hasActiveChannelConsent = true
+        } else {
+          layout.isShowPasswordModal = true
+        }
+
+        return
+    }
+  }
+
+  await talk.initChannelMessages(selfMetaId)
+  await talk.initWebSocket(selfMetaId)
 })
 
+watch(
+  () => talk.canAccessActiveChannel,
+  async canAccess => {
+    if (canAccess) {
+      await talk.initChannelMessages(selfMetaId)
+      await talk.initWebSocket(selfMetaId)
+    }
+  }
+)
+
 onBeforeUnmount(() => {
-  talkStore.saveReadPointers()
-  talkStore.closeWebSocket()
-  talkStore.closeReadPointerTimer()
+  talk.saveReadPointers()
+  talk.closeWebSocket()
+  talk.closeReadPointerTimer()
 })
 </script>
 

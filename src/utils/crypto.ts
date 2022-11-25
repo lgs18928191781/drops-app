@@ -1,4 +1,4 @@
-import { enc, AES, mode, pad } from 'crypto-js'
+import { enc, AES, mode, pad, MD5 } from 'crypto-js'
 import CryptoJS from 'crypto-js'
 import crypto from 'crypto'
 
@@ -49,6 +49,10 @@ export function ecdhEncrypt(message: string, privateKeyStr: string, publicKeyStr
   const secretKey = _createEcdhSecret(privateKeyStr, publicKeyStr)
 
   return AES.encrypt(message, secretKey).toString()
+}
+
+export function MD5Hash(message: string): string {
+  return MD5(Utf8.parse(message)).toString()
 }
 
 function _createEcdhSecret(privateKeyStr: string, publicKeyStr: string): string {

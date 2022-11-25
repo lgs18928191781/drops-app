@@ -6,7 +6,7 @@
       <Icon
         name="bars"
         class="w-6 h-6 text-dark-800 mx-2 shrink-0 lg:hidden"
-        @click="layoutStore.isShowLeftNav = true"
+        @click="layout.isShowLeftNav = true"
       />
 
       <div class="flex shrink-0">
@@ -82,7 +82,7 @@ import LoginedUserOperate from '@/components/LoginedUserOperate/LoginedUserOpera
 import { useTalkStore } from '@/stores/talk'
 
 const talkStore = useTalkStore()
-const layoutStore = useLayoutStore()
+const layout = useLayoutStore()
 const channel = talkStore.activeChannel
 
 const showDescModal = ref(false)

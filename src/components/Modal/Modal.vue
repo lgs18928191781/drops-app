@@ -36,6 +36,7 @@
               >
                 <button
                   class="absolute top-[24PX] right-[24PX] h-6 w-6 flex items-center justify-center outline-0"
+                  v-if="!isHideClose"
                 >
                   <Icon
                     name="x_circle"
@@ -56,7 +57,7 @@
                 </div>
               </div>
 
-              <TransitionRoot :show="showSecondControl && layout[showSecondControl]" as="template">
+              <TransitionRoot :show="showSecondControl" as="template">
                 <TransitionChild
                   as="template"
                   enter="duration-300 ease-out"
@@ -115,6 +116,8 @@ const props = defineProps<{
   strictClose?: boolean
   extraCloseEvent?: any
   mobileSize?: number
+  isHideClose?: boolean // 是否关闭按钮
+  width?: string
 }>()
 
 const tryClose = () => {
@@ -128,11 +131,20 @@ const tryClose = () => {
 const emit = defineEmits(['update:modelValue', 'update:showSecondControl'])
 
 const mobileSize = computed(() => {
-  if (props.mobileSize) {
-    return {
-      height: `${props.mobileSize}vh`,
-      width: `${props.mobileSize}vw`,
-      'border-radius': '4PX',
+  const windowWidth = window.innerWidth
+  if (windowWidth <= 1024) {
+    if (props.mobileSize) {
+      return {
+        height: `${props.mobileSize}vh`,
+        width: `${props.mobileSize}vw`,
+        'border-radius': '4PX',
+      }
+    }
+  } else {
+    if (props.width) {
+      return {
+        width: props.width,
+      }
     }
   }
 })

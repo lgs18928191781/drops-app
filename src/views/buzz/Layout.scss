@@ -65,7 +65,7 @@ header {
 
     .buzz-container {
         position: relative;
-        width: 100%;
+        width: 95%;
         max-width: 600px;
         margin: 0 auto;
     }
@@ -87,6 +87,7 @@ header {
         bottom: 10%;
         right: 50%;
         margin-right: -396px;
+        z-index: 5;
 
 
 

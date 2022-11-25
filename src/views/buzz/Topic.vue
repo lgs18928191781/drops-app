@@ -29,7 +29,7 @@ import BuzzListVue from './components/BuzzList.vue'
 import { GetTopicBuzzs } from '@/api/aggregation'
 import { useUserStore } from '@/stores/user'
 
-const layoutStore = useLayoutStore()
+const layout = useLayoutStore()
 const route = useRoute()
 const userStore = useUserStore()
 
@@ -38,7 +38,7 @@ const list: BuzzItem[] = reactive([])
 const isSkeleton = ref(true)
 
 function publishTopic() {
-  layoutStore.publish({ topic: route.params.topic as string })
+  layout.publish({ topic: route.params.topic as string })
 }
 
 function getDatas(isCover = false) {

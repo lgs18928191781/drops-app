@@ -3,7 +3,8 @@
   <ElDialog
     :model-value="rootStore.isShowLogin"
     :title="$t('Login.connectWallet')"
-    :close-on-click-modal="!loading"
+    :close-on-click-modal="false"
+    :show-close="!loading"
     @close="rootStore.$patch({ isShowLogin: false })"
   >
     <div class="login-warp flex">
@@ -111,11 +112,8 @@
     </div>
   </ElDialog>
 
-  <!-- 推荐关注 -->
-  <RecommentFollowVue v-model="isShowRecommentFollow" />
-
   <!-- 助记词备份 -->
-  <BackupMnemonicVue />
+  <BackupMnemonicVue v-model="isSHowBackupMnemonic" />
 
   <!-- 绑定metaId -->
   <BindMetaIdVue
@@ -151,7 +149,6 @@ import FirstBuzzImg from '@/assets/images/first_buzz.svg?url'
 import { toMvcScan } from '@/utils/util'
 import MetaIdWalletVue, { MetaIdWalletRegisterBaseInfo } from './MetaIdWallet.vue'
 import SetBaseInfoVue from './SetBaseInfo.vue'
-import RecommentFollowVue from './RecommentFollow.vue'
 import BackupMnemonicVue from './BackupMnemonic.vue'
 import BindMetaIdVue from './BindMetaId.vue'
 
@@ -213,6 +210,7 @@ const isShowBindModal = ref(false)
 const metaIdWalletRegisterBaseInfo: { val: undefined | MetaIdWalletRegisterBaseInfo } = reactive({
   val: undefined,
 })
+const isSHowBackupMnemonic = ref(false)
 
 const wallets = [
   {
@@ -281,13 +279,12 @@ const wallets = [
 // setbaseinfo
 const isShowSetBaseInfo = ref(false)
 
-const isShowRecommentFollow = ref(false)
-
 async function metaMaskLoginSuccess(res: MetaMaskLoginRes) {
   const response = await GetUserAllInfo(res.userInfo.metaId).catch(error => {
     ElMessage.error(error.message)
   })
   if (response?.code === 0) {
+    // @ts-ignore
     await userStore.updateUserInfo({
       ...response.data,
       ...res.userInfo,
@@ -703,7 +700,7 @@ async function onSetBaseInfoSuccess(params: {
     setBaseInfoRef.value.FormRef.resetFields()
     loading.value = false
     isShowSetBaseInfo.value = false
-    isShowRecommentFollow.value = true
+    isSHowBackupMnemonic.value = true
   } catch (error) {
     loading.value = false
     ElMessage.error((error as any).message)
