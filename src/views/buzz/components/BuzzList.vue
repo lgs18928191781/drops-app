@@ -236,26 +236,29 @@ async function onLike(txId: string) {
   }
 }
 
-function onFollow(txId: string) {
-  return new Promise<void>(async (resolve, reject) => {
-    const index = props.list.findIndex(item => item.txId === txId)
-    const res = await userStore.showWallet
-      .createBrfcChildNode({
-        nodeName: NodeName.PayFollow,
-        data: JSON.stringify({
-          createTime: new Date().getTime(),
-          MetaID: props.list[index].metaId,
-          pay: 0,
-          payTo: '',
-        }),
-      })
-      .catch(error => reject(error))
-    if (res) {
-      props.list[index].isMyFollow = true
-      emit('update:list', props.list)
-      resolve()
-    }
-  })
+async function onFollow(
+  txId: string,
+  params: { resolve: (txId?: string) => void; reject: (resan: any) => any }
+) {
+  const index = props.list.findIndex(item => item.txId === txId)
+  const res = await userStore.showWallet
+    .createBrfcChildNode({
+      nodeName: NodeName.PayFollow,
+      data: JSON.stringify({
+        createTime: new Date().getTime(),
+        MetaID: props.list[index].metaId,
+        pay: 0,
+        payTo: '',
+      }),
+    })
+    .catch(error => params.reject(error))
+  if (res) {
+    props.list[index].isMyFollow = true
+    emit('update:list', props.list)
+    params.resolve(res.currentNode.txId)
+  } else {
+    params.resolve()
+  }
 }
 
 function onPlay(params: { file: string; type: 'audio' | 'video' }) {

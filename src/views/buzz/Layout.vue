@@ -66,7 +66,7 @@
       <a class="main-border primary" @click="layout.publish()">
         <Icon name="airdrop" />
       </a>
-      <a class="main-border">
+      <a class="main-border" @click="scrollTop">
         <Icon name="top" />
       </a>
     </div>
@@ -146,6 +146,10 @@ function setPostion() {
 // console.log(window.innerWidth)
 // // const isDark = useDark()
 // const toggleDark = () => {}
+
+function scrollTop() {
+  window.document.documentElement.scrollTop = 0
+}
 </script>
 
 <style lang="scss" scoped src="./Layout.scss"></style>

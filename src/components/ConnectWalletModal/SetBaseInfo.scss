@@ -1,6 +1,7 @@
 .set-base-user-info {
+    margin-top: -30PX;
+
     .set-base-user-info-item {
-        padding: 48px;
         background: #FFFFFF;
         border-radius: 24px;
 
@@ -38,6 +39,10 @@
                     margin-right: 24px;
                 }
 
+                .avatar-warp {
+                    cursor: pointer;
+                }
+
                 .cont {
                     .avatar {
                         width: 110px;
@@ -71,7 +76,7 @@
 
                 &.faded {
                     background: #EDEFF2;
-                    cursor: not-allowed;
+
 
                     :deep(.icon) {
                         use {

@@ -278,6 +278,7 @@ async function metaMaskLoginSuccess(res: MetaMaskLoginRes) {
     ElMessage.error(error.message)
   })
   if (response?.code === 0) {
+    // @ts-ignore
     await userStore.updateUserInfo({
       ...response.data,
       ...res.userInfo,
