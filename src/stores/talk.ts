@@ -5,6 +5,7 @@ import { router } from '@/router'
 import { useLayoutStore } from './layout'
 import { Message, TalkError } from '@/@types/talk'
 import { sleep } from '@/utils/util'
+import { useUserStore } from './user'
 
 export const useTalkStore = defineStore('talk', {
   state: () => {
@@ -24,10 +25,17 @@ export const useTalkStore = defineStore('talk', {
       saveReadPointerTimer: null as NodeJS.Timeout | null,
 
       communityChannelIds: {} as any, // 社区频道列表
+
+      hasActiveChannelConsent: false, // 是否持有当前频道的共识
     }
   },
 
   getters: {
+    selfMetaId(): string {
+      const userStore = useUserStore()
+      return userStore.user?.metaId || ''
+    },
+
     realCommunities(state) {
       return state.communities.filter(community => community.id !== '@me')
     },
@@ -46,6 +54,43 @@ export const useTalkStore = defineStore('talk', {
       return this.activeCommunity.channels?.find((channel: any) => {
         return channel.id === state.activeChannelId
       })
+    },
+
+    channelType(channel) {
+      return (channel: any) => {
+        if (channel.roomType === ChannelPublicityType.Public) return GroupChannelType.PublicText
+
+        if (channel.roomJoinType === '1') return GroupChannelType.Password
+        if (channel.roomJoinType === '2') return GroupChannelType.NFT
+      }
+    },
+
+    canAccessActiveChannel(): boolean {
+      if (!this.activeChannel) return true
+
+      return this.isActiveChannelPublic || this.hasActiveChannelConsent
+    },
+
+    activeGroupChannelType(): GroupChannelType | undefined {
+      return this.channelType(this.activeChannel)
+    },
+
+    activeCommunityChannels(): any[] {
+      if (!this.activeCommunity) return []
+
+      return this.activeCommunity.channels || []
+    },
+
+    activeCommunityPublicChannels(): any[] {
+      return this.activeCommunityChannels.filter(
+        (channel: any) => channel.roomType === ChannelPublicityType.Public
+      )
+    },
+
+    activeCommunityConsensualChannels(): any[] {
+      return this.activeCommunityChannels.filter(
+        (channel: any) => channel.roomType === ChannelPublicityType.Private
+      )
     },
 
     isAdmin(): (selfMetaId: string) => boolean {
@@ -101,8 +146,10 @@ export const useTalkStore = defineStore('talk', {
     activeChannelSymbol: state => (state.activeCommunityId === '@me' ? '@' : '#'),
 
     communityLastReadChannelId(): (communityId: string) => string {
+      const selfMetaId = this.selfMetaId
       return (communityId: string) => {
-        const latestChannelsRecords = localStorage.getItem('latestChannels') || JSON.stringify({})
+        const latestChannelsRecords =
+          localStorage.getItem('latestChannels-' + selfMetaId) || JSON.stringify({})
         const latestChannels = JSON.parse(latestChannelsRecords)
 
         return latestChannels[communityId] || 'the-void'
@@ -112,8 +159,10 @@ export const useTalkStore = defineStore('talk', {
 
   actions: {
     async initChannel(routeCommunityId: string, routeChannelId: string) {
+      const selfMetaId = this.selfMetaId
       // 如果没有指定频道，则先从存储中尝试读取该社区的最后阅读频道
-      const latestChannelsRecords = localStorage.getItem('latestChannels') || JSON.stringify({})
+      const latestChannelsRecords =
+        localStorage.getItem('latestChannels-' + selfMetaId) || JSON.stringify({})
       const latestChannels = JSON.parse(latestChannelsRecords)
       if (!routeChannelId) {
         const channelId = latestChannels[routeCommunityId] || 'the-void'
@@ -132,19 +181,23 @@ export const useTalkStore = defineStore('talk', {
         this.activeCommunity.channels = channels
 
         // 写入存储
-        const communityChannels = localStorage.getItem('communityChannels') || JSON.stringify({})
+        const communityChannels =
+          localStorage.getItem('communityChannels-' + selfMetaId) || JSON.stringify({})
         const parsedCommunityChannels = JSON.parse(communityChannels)
         // 只保存频道id
         const channelIds = channels.map((channel: any) => channel.id)
         parsedCommunityChannels[routeCommunityId] = channelIds
         this.communityChannelIds = parsedCommunityChannels
-        localStorage.setItem('communityChannels', JSON.stringify(parsedCommunityChannels))
+        localStorage.setItem(
+          'communityChannels-' + selfMetaId,
+          JSON.stringify(parsedCommunityChannels)
+        )
       }
       await fetchChannels()
 
       // 将最后阅读频道存储到本地
       latestChannels[routeCommunityId] = routeChannelId
-      localStorage.setItem('latestChannels', JSON.stringify(latestChannels))
+      localStorage.setItem('latestChannels-' + selfMetaId, JSON.stringify(latestChannels))
 
       this.initReadPointers()
 
@@ -155,8 +208,9 @@ export const useTalkStore = defineStore('talk', {
     },
 
     initReadPointers() {
+      const selfMetaId = this.selfMetaId
       // 先从本地读取
-      const readPointers = localStorage.getItem('readPointers')
+      const readPointers = localStorage.getItem('readPointers-' + selfMetaId)
       if (readPointers) {
         this.channelsReadPointers = JSON.parse(readPointers)
         // 比照确认有无新频道，有的话添加
@@ -191,7 +245,8 @@ export const useTalkStore = defineStore('talk', {
     },
 
     saveReadPointers() {
-      localStorage.setItem('readPointers', JSON.stringify(this.channelsReadPointers))
+      const selfMetaId = this.selfMetaId
+      localStorage.setItem('readPointers-' + selfMetaId, JSON.stringify(this.channelsReadPointers))
     },
 
     async initChannelMessages(selfMetaId: string) {
@@ -362,54 +417,6 @@ export const useTalkStore = defineStore('talk', {
       }
 
       this.activeChannel.newMessages.push(message)
-    },
-  },
-})
-
-export const useCommunityFormStore = defineStore('communityForm', {
-  state: () => {
-    return {
-      icon: null as File | null,
-      name: 'test-1',
-      description: 'test-1',
-      cover: null as File | null,
-    }
-  },
-
-  getters: {
-    isStep1Finished(state) {
-      return !!state.icon && !!state.name
-    },
-
-    isStep2Finished(state) {
-      return !!state.description && !!state.cover
-    },
-
-    isFinished(state) {
-      return !!state.icon && !!state.name
-    },
-
-    iconPreviewUrl(state) {
-      return state.icon ? URL.createObjectURL(state.icon) : ''
-    },
-
-    coverPreviewUrl(state) {
-      return state.cover ? URL.createObjectURL(state.cover) : ''
-    },
-  },
-})
-
-export const userChannelFormStore = defineStore('channelForm', {
-  state: () => {
-    return {
-      type: GroupChannelType.PublicText,
-      name: 'text channel',
-    }
-  },
-
-  getters: {
-    isFinished(state) {
-      return !!state.name
     },
   },
 })

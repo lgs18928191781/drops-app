@@ -307,11 +307,17 @@ export enum ChannelType {
 
 export enum GroupChannelType {
   PublicText = 'publicText',
+  Password = 'password',
+  NFT = 'NFT',
+  FT = 'FT',
 }
 
 export enum ShowControl {
   isShowCreateCommunityModal = 'isShowCreateCommunityModal',
   isShowCreatePublicChannelModal = 'isShowCreatePublicChannelModal',
   isShowCreateConsensualChannelModal = 'isShowCreateConsensualChannelModal',
+  isShowChooseTokenModal = 'isShowChooseTokenModal',
   isShowRedPacketModal = 'isShowRedPacketModal',
+  isShowPasswordModal = 'isShowPasswordModal',
+  never = 'never',
 }

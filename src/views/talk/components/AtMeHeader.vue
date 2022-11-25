@@ -6,7 +6,7 @@
       <Icon
         name="bars"
         class="w-6 h-6 text-dark-800 mx-2 shrink-0 lg:hidden"
-        @click="layoutStore.isShowLeftNav = true"
+        @click="layout.isShowLeftNav = true"
       />
 
       <div class="flex shrink-0">
@@ -70,7 +70,7 @@ import { useUserStore } from '@/stores/user'
 
 const talkStore = useTalkStore()
 const userStore = useUserStore()
-const layoutStore = useLayoutStore()
+const layout = useLayoutStore()
 const selfMetaId = userStore.user!.metaId
 const activeChannel = computed(() => talkStore.activeChannel)
 

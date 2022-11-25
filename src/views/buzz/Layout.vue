@@ -3,9 +3,9 @@
     <div class="flex1">
       <div class="phone-content flex flex-align-center">
         <Icon
-          :name="layoutStore.isShowLeftNav ? 'x_mark' : 'bars'"
+          :name="layout.isShowLeftNav ? 'x_mark' : 'bars'"
           class="phone-menu"
-          @click="layoutStore.$patch({ isShowLeftNav: !layoutStore.isShowLeftNav })"
+          @click="layout.$patch({ isShowLeftNav: !layout.isShowLeftNav })"
         />
 
         <div class="dived"></div>
@@ -63,7 +63,7 @@
 
       <!--   -->
       <div class="fast-btn">
-        <a class="main-border primary" @click="layoutStore.publish()">
+        <a class="main-border primary" @click="layout.publish()">
           <Icon name="airdrop" />
         </a>
         <a class="main-border">
@@ -104,7 +104,7 @@ import PublishVue from './components/Publish.vue'
 
 const rootStore = useRootStore()
 const userStore = useUserStore()
-const layoutStore = useLayoutStore()
+const layout = useLayoutStore()
 const i18n = useI18n()
 
 const menus = [

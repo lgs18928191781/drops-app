@@ -1,5 +1,8 @@
 <template>
-  <BaseModal :show-control="ShowControl.isShowRedPacketModal">
+  <BaseModal
+    :show-control="ShowControl.isShowRedPacketModal"
+    :show-second-control="ShowControl.never"
+  >
     <template v-slot:title>
       {{ $t('Talk.Input.giveaway') }}
     </template>

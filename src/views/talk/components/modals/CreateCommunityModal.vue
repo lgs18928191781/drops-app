@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useCommunityFormStore } from '@/stores/talk'
+import { useCommunityFormStore } from '@/stores/forms'
 import { useUserStore } from '@/stores/user'
 import { createCommunity, joinCommunity } from '@/utils/talk'
 import { ref } from 'vue'

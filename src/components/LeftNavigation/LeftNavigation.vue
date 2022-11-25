@@ -2,7 +2,7 @@
   <!-- 社区列表 -->
   <div
     class="w-22.5 bg-white space-y-4.5 left-navigation z-50"
-    :class="[layoutStore.isShowLeftNav ? '' : 'hidden lg:block']"
+    :class="[layout.isShowLeftNav ? '' : 'hidden lg:block']"
   >
     <div class="space-y-4.5">
       <el-tooltip
@@ -80,14 +80,14 @@
 
       <div
         class="border-dashed border-2 border-gray-200 w-13.5 h-13.5 flex items-center justify-center rounded-3xl text-dark-400 cursor-pointer hover:text-dark-800 hover:border-solid hover:border-dark-300 hover:bg-primary transition-all duration-300"
-        @click="layoutStore.isShowCreateCommunityModal = true"
+        @click="layout.isShowCreateCommunityModal = true"
       >
         <Icon name="plus" class="w-[24PX] h-[24PX]" />
       </div>
     </div>
 
     <!-- modals -->
-    <Teleport to="body" v-if="layoutStore.isShowCreateCommunityModal">
+    <Teleport to="body" v-if="layout.isShowCreateCommunityModal">
       <CreateCommunityModal />
     </Teleport>
   </div>
@@ -100,7 +100,7 @@ import { useTalkStore } from '@/stores/talk'
 import { useUserStore } from '@/stores/user'
 import { isMobile } from '@/stores/root'
 import CreateCommunityModal from '@/views/talk/components/modals/CreateCommunityModal.vue'
-const layoutStore = useLayoutStore()
+const layout = useLayoutStore()
 const talkStore = useTalkStore()
 const userStore = useUserStore()
 

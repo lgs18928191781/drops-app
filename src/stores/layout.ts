@@ -8,9 +8,12 @@ export const useLayoutStore = defineStore('layout', {
       isShowCreateCommunityModal: false,
       isShowCreatePublicChannelModal: false,
       isShowCreateConsensualChannelModal: false,
+      isShowChooseTokenModal: false,
       isShowRedPacketModal: false,
       isShowMessagesLoading: false,
       isShowMemberList: false,
+      isShowPasswordModal: false,
+      never: false,
       publishBuzzOption: {
         repostTxId: '', // 转发的TxId
         topic: '', // 发表话题

@@ -109,9 +109,9 @@ const layout = useLayoutStore()
 
 const props = defineProps<{
   showControl: ShowControl
-  showSecondControl?: ShowControl
-  strictClose?: boolean
-  extraCloseEvent?: any
+  showSecondControl?: ShowControl // 显示第二模态框
+  strictClose?: boolean // 设置为 true 时，点击遮罩层不会关闭弹窗
+  extraCloseEvent?: any // 额外的关闭事件（如后退）
 }>()
 
 const tryClose = () => {
