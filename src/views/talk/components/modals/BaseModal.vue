@@ -10,7 +10,7 @@
         leave-from="opacity-100"
         leave-to="opacity-0"
       >
-        <div class="fixed inset-0 bg-transparent lg:bg-black/30"></div>
+        <div class="fixed inset-0 bg-black/30"></div>
       </TransitionChild>
 
       <div class="fixed inset-0 overflow-y-auto">
@@ -27,10 +27,12 @@
             leave-to="opacity-0 scale-75"
           >
             <DialogPanel
-              class="flex w-full h-full max-w-screen-sm lg:items-stretch justify-center lg:w-auto relative lg:static"
+              class="flex w-full h-full max-w-screen-sm lg:items-stretch justify-center lg:w-auto relative lg:static lg:h-auto"
+              :style="mobileSize"
             >
               <div
-                class="w-full max-w-screen-sm h-full rounded bg-white lg:min-w-[456PX] lg:w-auto lg:h-auto lg:rounded-3xl relative lg:shadow-lg p-8 flex flex-col"
+                class="w-full max-w-screen-sm h-full bg-white lg:min-w-[456PX] lg:w-auto lg:h-auto lg:rounded-3xl relative lg:shadow-lg p-8 flex flex-col"
+                :class="[mobileSize ? 'rounded' : '']"
               >
                 <button
                   class="absolute top-[24PX] right-[24PX] h-6 w-6 flex items-center justify-center outline-0"
@@ -65,7 +67,7 @@
                   leave-to="opacity-0 scale-75"
                 >
                   <div
-                    class="w-full max-w-screen-sm  bg-white lg:min-w-[456PX] lg:w-auto  lg:rounded-3xl lg:shadow-lg lg:ml-4 absolute inset-0 z-[65] lg:static lg:self-stretch"
+                    class="w-full max-w-screen-sm  bg-white lg:min-w-[456PX] lg:w-auto rounded lg:rounded-3xl lg:shadow-lg lg:ml-4 absolute inset-0 z-[65] lg:static lg:self-stretch"
                   >
                     <div class="w-full h-full relative p-8 flex flex-col">
                       <button
@@ -104,6 +106,7 @@
 import { useLayoutStore } from '@/stores/layout'
 import { Dialog, DialogPanel, TransitionRoot, TransitionChild } from '@headlessui/vue'
 import { ShowControl } from '@/enum'
+import { computed } from 'vue'
 
 const layout = useLayoutStore()
 
@@ -112,6 +115,7 @@ const props = defineProps<{
   showSecondControl?: ShowControl
   strictClose?: boolean
   extraCloseEvent?: any
+  mobileSize?: number
 }>()
 
 const tryClose = () => {
@@ -121,6 +125,16 @@ const tryClose = () => {
 
   closeModal()
 }
+
+const mobileSize = computed(() => {
+  if (props.mobileSize) {
+    return {
+      height: `${props.mobileSize}vh`,
+      width: `${props.mobileSize}vw`,
+      'border-radius': '4PX',
+    }
+  }
+})
 
 const closeModal = () => {
   layout[props.showControl] = false
