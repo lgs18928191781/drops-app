@@ -1,6 +1,6 @@
 <template>
   <ElDialog
-    :model-value="layoutStore.isShowPublishBuzz"
+    :model-value="layout.isShowPublishBuzz"
     class="sm none-header none-padding"
     :close-on-click-modal="false"
   >
@@ -15,7 +15,7 @@
         </div>
         <a
           class="close-btn flex flex-align-center flex-pack-center"
-          @click="layoutStore.$patch({ isShowPublishBuzz: false })"
+          @click="layout.$patch({ isShowPublishBuzz: false })"
         >
           <Icon name="x_mark" />
         </a>
@@ -135,7 +135,7 @@ const attachments: AttachmentItem[] = reactive([])
 const respostBuzz: { val: null | BuzzItem } = reactive({ val: null })
 const content = ref('')
 
-const layoutStore = useLayoutStore()
+const layout = useLayoutStore()
 const userStore = useUserStore()
 const i18n = useI18n()
 const router = useRouter()
@@ -202,10 +202,10 @@ const topics: GetHotTopicsResItem[] = reactive([])
 const topic = ref('')
 
 watch(
-  () => layoutStore.publishBuzzOption.repostTxId,
+  () => layout.publishBuzzOption.repostTxId,
   () => {
-    if (layoutStore.publishBuzzOption.repostTxId) {
-      getOneBuzz({ txId: layoutStore.publishBuzzOption.repostTxId }).then(res => {
+    if (layout.publishBuzzOption.repostTxId) {
+      getOneBuzz({ txId: layout.publishBuzzOption.repostTxId }).then(res => {
         if (res.code === 0) {
           respostBuzz.val = res.data.results.items[0]
         }
@@ -217,10 +217,10 @@ watch(
 )
 
 watch(
-  () => layoutStore.publishBuzzOption.topic,
+  () => layout.publishBuzzOption.topic,
   () => {
-    if (layoutStore.publishBuzzOption.topic) {
-      content.value += `  #${layoutStore.publishBuzzOption.topic}  `
+    if (layout.publishBuzzOption.topic) {
+      content.value += `  #${layout.publishBuzzOption.topic}  `
     }
   }
 )
@@ -264,7 +264,7 @@ function getHotTopics() {
 
 function back() {
   isShowTopic.value = false
-  // layoutStore.$patch({ isShowPublishBuzz: true })
+  // layout.$patch({ isShowPublishBuzz: true })
 }
 
 function confirmTopic() {
@@ -301,7 +301,7 @@ async function submit() {
     content.value = ''
     attachments.length = 0
     loading.value = false
-    layoutStore.$patch({ isShowPublishBuzz: false })
+    layout.$patch({ isShowPublishBuzz: false })
     ElMessage.success(i18n.t('Buzz.publish.success'))
     router.replace({
       name: 'buzzDetail',

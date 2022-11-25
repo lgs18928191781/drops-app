@@ -111,9 +111,9 @@ export const AllNodeName: {
     version: '1.0.1',
   },
   [NodeName.SimpleGroupCreate]: {
-    brfcId: '9d27e36e35a3',
+    brfcId: '1b40a08e3209',
     path: '/Protocols/SimpleGroupCreate',
-    version: '1.0.0',
+    version: '1.0.1',
   },
   [NodeName.PayFollow]: {
     brfcId: '203ee2c8b732',

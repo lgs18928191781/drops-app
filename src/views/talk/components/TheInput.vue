@@ -56,7 +56,7 @@
         </div>
       </div>
 
-      <div class="flex-grow lg:ml-4">
+      <div class="flex-grow lg:ml-2">
         <div class="h-11 py-2 pr-4 lg:h-13.5">
           <input
             type="text"
@@ -121,7 +121,7 @@
         <div class="flex items-center px-1 lg:mr-2">
           <div
             class="p-2 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer"
-            @click="layoutStore.isShowRedPacketModal = true"
+            @click="layout.isShowRedPacketModal = true"
           >
             <Icon name="red_envelope" class="w-full h-full text-dark-800" />
           </div>
@@ -222,7 +222,7 @@ const doNothing = () => {}
 const showMoreCommandsBox = ref(false)
 const showStickersBox = ref(false)
 
-const layoutStore = useLayoutStore()
+const layout = useLayoutStore()
 
 const hasInput = computed(() => chatInput.value.length > 0)
 

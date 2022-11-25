@@ -1,11 +1,11 @@
 <template>
-  <Teleport to="body" v-if="layoutStore.isShowCreatePublicChannelModal">
+  <Teleport to="body" v-if="layout.isShowCreatePublicChannelModal">
     <CreatePublicChannelModal />
   </Teleport>
 
   <div
     class="bg-white fixed inset-0 h-screen w-screen z-40 lg:static lg:shrink-0 lg:w-auto"
-    :class="[layoutStore.isShowLeftNav ? '' : 'hidden lg:block']"
+    :class="[layout.isShowLeftNav ? '' : 'hidden lg:block']"
   >
     <div class="w-full h-full flex">
       <div class="shrink-0 bg-white w-22.5 lg:hidden"></div>
@@ -59,11 +59,11 @@
                     name="plus"
                     class="w-4 h-4 text-black cursor-pointer"
                     v-if="talkStore.isAdmin(userStore.user!.metaId)"
-                    @click="layoutStore.isShowCreatePublicChannelModal = true"
+                    @click="layout.isShowCreatePublicChannelModal = true"
                   />
                 </div>
                 <div
-                  v-for="channel in talkStore.activeCommunity?.channels"
+                  v-for="channel in talkStore.activeCommunityPublicChannels"
                   class="p-3 main-border only-bottom cursor-pointer !bg-white relative"
                   :class="channel.id === talkStore.activeChannelId || 'faded'"
                   @click="goChannel(channel.id)"
@@ -93,8 +93,35 @@
                     name="plus"
                     class="w-4 h-4 text-black cursor-pointer"
                     v-if="talkStore.isAdmin(userStore.user!.metaId)"
-                    @click="layoutStore.isShowCreateConsensualChannelModal = true"
+                    @click="layout.isShowCreateConsensualChannelModal = true"
                   />
+                </div>
+
+                <div
+                  v-for="channel in talkStore.activeCommunityConsensualChannels"
+                  class="p-3 main-border only-bottom cursor-pointer !bg-white relative"
+                  :class="channel.id === talkStore.activeChannelId || 'faded'"
+                  @click="goChannel(channel.id)"
+                >
+                  <div
+                    class="absolute left-0 h-full flex items-center top-0"
+                    v-if="talkStore.hasUnreadMessagesOfChannel(channel.id)"
+                  >
+                    <span class="w-1.5 h-3 bg-dark-250 rounded-r-md"></span>
+                  </div>
+                  <div
+                    class="text-dark-800 text-base font-medium flex items-center"
+                    :title="channel.name"
+                  >
+                    <Icon
+                      name="lock"
+                      class="w-4 h-4 text-dark-400"
+                      v-if="talkStore.channelType(channel) === GroupChannelType.Password"
+                    />
+                    <div class="ml-2 truncate">
+                      {{ channel.name }}
+                    </div>
+                  </div>
                 </div>
 
                 <CreateConsensualChannelModal />
@@ -117,10 +144,11 @@ import CreateConsensualChannelModal from './modals/CreateConsensualChannelModal.
 import { useLayoutStore } from '@/stores/layout'
 import { useTalkStore } from '@/stores/talk'
 import { useUserStore } from '@/stores/user'
+import { GroupChannelType } from '@/enum'
 
 const router = useRouter()
 
-const layoutStore = useLayoutStore()
+const layout = useLayoutStore()
 const talkStore = useTalkStore()
 const userStore = useUserStore()
 
@@ -128,7 +156,7 @@ const goChannel = (channelId: string) => {
   const currentCommunityId = router.currentRoute.value.params.communityId
   const currentChannelId = router.currentRoute.value.params.channelId
 
-  layoutStore.isShowLeftNav = false
+  layout.isShowLeftNav = false
 
   if (currentChannelId === channelId) {
     return

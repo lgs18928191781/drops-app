@@ -2,7 +2,7 @@
   <div
     class="publish flex "
     v-if="userStore.isAuthorized"
-    @click="layoutStore.$patch({ isShowPublishBuzz: true })"
+    @click="layout.$patch({ isShowPublishBuzz: true })"
   >
     <UserAvatar :meta-id="userStore.user!.metaId" />
     <div class="cont flex1">
@@ -63,7 +63,7 @@ import NFTModalVue from '@/components/NFTModal/NFTModal.vue'
 
 const pagination = reactive({ ...initPagination, timestamp: 0 })
 const userStore = useUserStore()
-const layoutStore = useLayoutStore()
+const layout = useLayoutStore()
 const route = useRoute()
 
 const myFollowNum = ref(0)

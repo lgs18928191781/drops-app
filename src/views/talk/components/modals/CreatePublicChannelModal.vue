@@ -9,7 +9,7 @@
         <Icon
           name="x_circle"
           class="w-6 h-6 text-dark-400 cursor-pointer"
-          @click="layoutStore.isShowCreatePublicChannelModal = false"
+          @click="layout.isShowCreatePublicChannelModal = false"
         />
       </button>
 
@@ -42,12 +42,12 @@
         <div class="flex items-center justify-between">
           <div class="w-1"></div>
           <button
-            class="w-14 h-14 main-border primary flex items-center justify-center"
-            :class="{ faded: !form.isFinished }"
+            class="w-14 h-14 main-border primary flex items-center justify-center text-dark-800"
+            :class="{ 'faded still text-dark-300': !form.isFinished }"
             :disabled="!form.isFinished"
             @click="tryCreateChannel"
           >
-            <Icon name="arrow_right" class="w-5 h-5" />
+            <Icon name="arrow_right" class="w-6 h-6" />
           </button>
         </div>
       </div>
@@ -56,15 +56,19 @@
 </template>
 
 <script lang="ts" setup>
+import { GroupChannelType } from '@/enum'
+import { useChannelFormStore } from '@/stores/forms'
 import { useLayoutStore } from '@/stores/layout'
-import { userChannelFormStore, useTalkStore } from '@/stores/talk'
+import { useTalkStore } from '@/stores/talk'
+
 import { useUserStore } from '@/stores/user'
 import { createChannel } from '@/utils/talk'
 
-const form = userChannelFormStore()
+const form = useChannelFormStore()
+form.type = GroupChannelType.PublicText
 
 const userStore = useUserStore()
-const layoutStore = useLayoutStore()
+const layout = useLayoutStore()
 const talkStore = useTalkStore()
 
 const tryCreateChannel = async () => {

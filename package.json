@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@harlem/core": "^2.3.9",
+    "@headlessui/tailwindcss": "^0.1.1",
     "@headlessui/vue": "^1.7.4",
     "@iconify/vue": "^4.0.0",
     "@metamask/detect-provider": "^2.0.0",

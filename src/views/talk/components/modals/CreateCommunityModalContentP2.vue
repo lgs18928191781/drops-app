@@ -7,7 +7,7 @@
     <Icon
       name="x_circle"
       class="w-6 h-6 text-dark-400 cursor-pointer"
-      @click="layoutStore.isShowCreateCommunityModal = false"
+      @click="layout.isShowCreateCommunityModal = false"
     />
   </button>
 
@@ -62,7 +62,7 @@
         :disabled="!form.isStep2Finished"
         @click="$emit('tryCreateCommunity')"
       >
-        <Icon name="arrow_right" class="w-5 h-5" />
+        <Icon name="arrow_right" class="w-6 h-6" />
       </button>
     </div>
   </div>
@@ -77,14 +77,15 @@
 </template>
 
 <script lang="ts" setup>
+import { useCommunityFormStore } from '@/stores/forms'
 import { useLayoutStore } from '@/stores/layout'
-import { useCommunityFormStore, useTalkStore } from '@/stores/talk'
+import { useTalkStore } from '@/stores/talk'
 import { isFileTooLarge, isImage } from '@/utils/talk'
 import { ref } from 'vue'
 
 const coverUploader = ref<HTMLInputElement | null>(null)
 
-const layoutStore = useLayoutStore()
+const layout = useLayoutStore()
 const talkStore = useTalkStore()
 const form = useCommunityFormStore()
 

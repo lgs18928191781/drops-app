@@ -100,7 +100,7 @@ const emit = defineEmits(['getMore', 'update:list'])
 
 const i18n = useI18n()
 const userStore = useUserStore()
-const layoutStore = useLayoutStore()
+const layout = useLayoutStore()
 
 const operateLoading = ref(false)
 
@@ -167,7 +167,7 @@ const operates: {
       fun: () => {
         operateLoading.value = false
         isShowOperateModal.value = false
-        layoutStore.publish({ repostTxId: currentTxId.value })
+        layout.publish({ repostTxId: currentTxId.value })
       },
     },
   ],

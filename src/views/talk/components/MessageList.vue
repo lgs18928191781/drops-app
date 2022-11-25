@@ -1,12 +1,12 @@
 <template>
-  <div class="h-full overflow-y-hidden" v-show="layoutStore.isShowMessagesLoading">
+  <div class="h-full overflow-y-hidden" v-show="layout.isShowMessagesLoading">
     <LoadingList />
   </div>
   <div
     class="h-full overflow-y-auto"
     ref="messagesScroll"
     id="messagesScroll"
-    v-show="!layoutStore.isShowMessagesLoading"
+    v-show="!layout.isShowMessagesLoading"
   >
     <div class="overflow-x-hidden px-4">
       <div class="flex flex-col-reverse space-y-4 space-y-reverse">
@@ -62,7 +62,7 @@ import MessageItem from './MessageItem.vue'
 import MessageItemForSession from './MessageItemForSession.vue'
 
 const talkStore = useTalkStore()
-const layoutStore = useLayoutStore()
+const layout = useLayoutStore()
 
 watch(
   () => talkStore.newMessages,
@@ -81,7 +81,7 @@ const handleScroll = async () => {
   const topAnchor = document.getElementById('topAnchor')
   if (topAnchor) {
     const topAnchorRect = topAnchor.getBoundingClientRect()
-    if (topAnchorRect.bottom > -100 && !loadingMore.value && !layoutStore.isShowMessagesLoading) {
+    if (topAnchorRect.bottom > -100 && !loadingMore.value && !layout.isShowMessagesLoading) {
       loadingMore.value = true
       await loadMore()
       loadingMore.value = false

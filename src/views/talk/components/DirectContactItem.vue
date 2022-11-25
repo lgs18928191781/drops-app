@@ -43,7 +43,7 @@ import { useLayoutStore } from '@/stores/layout'
 
 const i18n = useI18n()
 const userStore = useUserStore()
-const layoutStore = useLayoutStore()
+const layout = useLayoutStore()
 const router = useRouter()
 
 const props = defineProps(['session'])
@@ -73,7 +73,7 @@ const isActive = computed<boolean>(() => {
 })
 
 const switchChannel = () => {
-  layoutStore.$patch({
+  layout.$patch({
     isShowLeftNav: false,
   })
 

@@ -4,10 +4,10 @@ dayjs.extend(advancedFormat)
 import {
   ChannelType,
   CommunityJoinAction,
+  GroupChannelType,
   IsEncrypt,
   MessageType,
   NodeName,
-  SdkPayType,
 } from '@/enum'
 import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
@@ -15,6 +15,7 @@ import { getCommunityAuth } from '@/api/talk'
 import { SDK } from './sdk'
 import { FileToAttachmentItem } from './util'
 import { Message, MessageDto } from '@/@types/talk'
+import { decrypt, encrypt, MD5Hash } from './crypto'
 
 export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   // communityId, name, description, cover, metaName, mateNameNft, admins, reserved, icon
@@ -61,16 +62,30 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   return { communityId }
 }
 
-export const createChannel = async (form: any, communityId: string, sdk: SDK) => {
+export const createChannel = async (
+  form: any,
+  communityId: string,
+  sdk: SDK,
+  selfMetaId?: string
+) => {
   // communityId, groupName, groupNote, timestamp, groupType, status, type, codehash, genesis, limitAmount
   const { name: groupName } = form
+
+  const { groupType, status, type, codehash, genesis, limitAmount } = _getChannelTypeInfo(
+    form,
+    selfMetaId!
+  )
 
   const dataCarrier = {
     communityId,
     groupName,
     groupNote: '',
-    groupType: '1',
-    status: '1',
+    groupType,
+    status,
+    type,
+    codehash,
+    genesis,
+    limitAmount,
     timestamp: parseInt(dayjs().format('X')),
   }
 
@@ -86,6 +101,43 @@ export const createChannel = async (form: any, communityId: string, sdk: SDK) =>
   const channelId = await sdk.createBrfcChildNode(node)
 
   return { channelId }
+}
+
+export const verifyPassword = (key: string, hashedPassword: string, creatorMetaId: string) => {
+  const decrypted = decrypt(key, hashedPassword)
+
+  return decrypted === creatorMetaId.substring(0, 16)
+
+  // if (decrypted && decrypted === creatorMetaId.substring(0, 16)) {
+  //   talk.hasActiveChannelConsent = true
+  //   layout.isShowPasswordModal = false
+  // }
+}
+
+const _getChannelTypeInfo = (form: any, selfMetaId: string) => {
+  let groupType = null
+  let status = null
+  let type = null
+  let codehash = null
+  let genesis = null
+  let limitAmount = null
+
+  switch (form.type) {
+    case GroupChannelType.PublicText:
+      groupType = '1'
+      status = '1'
+      break
+
+    case GroupChannelType.Password:
+      groupType = '2'
+      status = encrypt(selfMetaId.substring(0, 16), MD5Hash(form.password).substring(0, 16))
+      type = '1'
+
+    default:
+      break
+  }
+
+  return { groupType, status, type, codehash, genesis, limitAmount }
 }
 
 export const joinCommunity = async (communityId: string, sdk: SDK) => {
