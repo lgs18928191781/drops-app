@@ -231,6 +231,12 @@
 
 
 
+
+
+
+
+
+
                 }}%)
               </div>
               <div class="amount">
@@ -241,6 +247,12 @@
               <div class="name flex1">
                 {{ $t('buyFeeTips2') }}({{
                   new Decimal(fee.val!.royaltyPercentage).mul(100).toNumber()
+
+
+
+
+
+
 
 
 
@@ -315,6 +327,7 @@
 </template>
 <script setup lang="ts">
 import { computed, reactive, ref, watch, nextTick, onUnmounted } from 'vue'
+import { router } from '@/router'
 import Cover from '../NFT/Cover.vue'
 import spinner from '@/components/spinner/spinner.vue'
 import PayConfirmSkeletonVue from './PayConfirmSkeleton.vue'
@@ -333,6 +346,19 @@ import { ElMessage, ElLoading, ElMessageBox } from 'element-plus'
 import { checkSdkStatus } from '@/utils/util'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
+import WechatPayIcon from '@/assets/svg/icon_wechat_pay.svg?url'
+import AliPayIcon from '@/assets/svg/icon_zfb_pay.svg?url'
+import SandPayIcon from '@/assets/svg/sandPay_icon.svg?url'
+import {
+  converterBSV,
+  converterCNY,
+  legalNftConverterCNY,
+  legalNftConverterBSV,
+  bsv,
+} from '@/utils/filters'
+import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
+dayjs.extend(duration)
 interface PayPlatformItem {
   icon: string
   name: string
@@ -363,6 +389,7 @@ const rootStore = useRootStore()
 const userStore = useUserStore()
 const i18n = useI18n()
 const route = useRoute()
+const emit = defineEmits(['close', 'success', 'fail'])
 const qrcodeUrl = ref('')
 const payWechatSuccess = ref(false)
 const isSkeleton = ref(true)
