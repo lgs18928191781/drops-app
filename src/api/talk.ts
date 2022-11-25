@@ -1,75 +1,80 @@
 import HttpRequest from 'request-sdk'
-import messages from './mockMessages.json'
-import members from './mockMembers.json'
 import { sleep } from '@/utils/util'
-const env = import.meta.env
+import { Channel, Community, CommunityAuth } from '@/@types/talk'
 
-// const TalkApi = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/talkAggregation`, {
-const TalkApi = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/talkAggregation/v2/app/room`, {
+const TalkApi = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/talkAggregation/v3/app`, {
   header: {
     'Content-Type': 'application/json',
-    // accessKey: () => (isAuthorized.value ? user.value!.token! : undefined),
-    // userName: () => {
-    //   if (isAuthorized) {
-    //     return user.value!.userType === 'email' ? user.value!.email! : user.value!.phone!
-    //   }
-    // },
-    // timestamp: () => new Date().getTime(),
   },
 }).request
 
-export const getCommunities = (data: any): Promise<any> => {
-  const communities = [
-    {
-      id: 1,
-      updatedAt: 1666684283,
-    },
-    {
-      id: 2,
-      updatedAt: 1666683283,
-    },
-  ]
-
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve(communities)
-    }, 1000)
-  })
-}
-
-export const getChannels = (): Promise<any> => {
-  const channels = [
-    {
-      id: 1,
-      updatedAt: 1666684283,
-    },
-    {
-      id: 2,
-      updatedAt: 1666683283,
-    },
-  ]
-
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve(channels)
-    }, 1000)
-  })
-}
-
-export const getChannelMessages = async (channelId: string, params?: any): Promise<any> => {
+export const getCommunities = async (params?: any): Promise<Community[]> => {
   params = params || {}
-  params.metaId = '261562cd13734c7e9f3809e32d3d7c56f0b27788f88d6738fc95f96ddb89eb01'
+  const query = new URLSearchParams(params).toString()
+
+  return TalkApi.get(`/community/list?${query}`).then(res => {
+    const _communities = res.data.results.items.map((community: Community) => {
+      community.id = community.communityId
+      return community
+    })
+
+    return _communities
+  })
+}
+
+export const getCommunityAuth = async (communityId: string): Promise<CommunityAuth> => {
+  return TalkApi.get(`/community/${communityId}/auth/info`).then(res => res.data)
+}
+
+export const getAtMeChannels = async (params?: any): Promise<any> => {
+  params = params || {}
+  const metaId = params.metaId
+
+  return TalkApi.get(`/chat/homes/${metaId}`, { data: JSON.stringify(params) })
+}
+
+export const getChannels = async (params: any): Promise<Channel[]> => {
+  params = params || {}
+  const communityId = params.communityId
+
+  return TalkApi.get(`/community/${communityId}/rooms`, { data: JSON.stringify(params) }).then(
+    res => {
+      return res.data.results.items.map((channel: any) => {
+        channel.id = channel.groupId
+        channel.name = channel.roomName
+        return channel
+      })
+    }
+  )
+}
+
+export const getChannelMessages = async (
+  channelId: string,
+  params?: any,
+  type?: string
+): Promise<any> => {
+  params = params || {}
   params.pageSize = '50'
   params.page = '1'
-  params.groupId = channelId
+  if (type === 'session') {
+    const selfMetaId = params.metaId
+    console.log({ channelId })
+    const {
+      data: { data: messages },
+    } = await TalkApi.get(`/chat/${selfMetaId}/${channelId}`, { data: JSON.stringify(params) })
 
-  return TalkApi.post(`/getRoomChatList`, params)
+    return messages
+  }
+
+  const {
+    data: {
+      results: { items: messages },
+    },
+  } = await TalkApi.get(`/room/${channelId}/chats`, params)
+
+  return messages
 }
 
-export const getChannelMembers = (channelId: string): Promise<any> => {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve(members)
-    }, 1000)
-  })
+export const getCommunityMembers = (communityId: string): Promise<any> => {
+  return TalkApi.get(`/community/${communityId}/persons`).then(res => res.data.results.items)
 }

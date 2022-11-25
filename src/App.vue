@@ -1,8 +1,21 @@
 <template>
   <div class="main flex">
     <LeftNavigationVue />
-    <div class="flex1">
-      <RouterView />
+    <div class="flex1 main-right">
+      <RouterView v-slot="{ Component, route }">
+        <KeepAlive>
+          <component
+            :is="Component"
+            :key="route.fullPath"
+            v-if="route.meta && route.meta.keepAlive"
+          />
+        </KeepAlive>
+        <component
+          :is="Component"
+          :key="route.fullPath"
+          v-if="!route.meta || (route.meta && !route.meta.keepAlive)"
+        />
+      </RouterView>
     </div>
   </div>
 
@@ -24,5 +37,27 @@ const userStore = useUserStore()
 <style lang="scss" scoped>
 .main {
   height: 100%;
+  .main-right {
+    overflow: auto;
+  }
+}
+
+@font-face {
+  font-family: Whitney;
+  font-style: normal;
+  src: local('Whitney'), url('@/assets/fonts/whitneybook.otf') format('opentype');
+  font-weight: 400;
+}
+@font-face {
+  font-family: Whitney;
+  font-style: normal;
+  src: local('Whitney Medium'), url('@/assets/fonts/whitneymedium.otf') format('opentype');
+  font-weight: 500;
+}
+@font-face {
+  font-family: Whitney;
+  font-style: normal;
+  src: local('Whitney Bold'), url('@/assets/fonts/whitneybold.otf') format('opentype');
+  font-weight: 700;
 }
 </style>

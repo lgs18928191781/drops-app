@@ -2,7 +2,9 @@
     background: #fff;
     border-radius: 12px;
     padding: 18px;
-    margin-bottom: 12px;
+    margin-bottom: 6px;
+    position: sticky;
+
 
     .avatar {
         width: 36px;
@@ -29,8 +31,8 @@
             }
 
             .icon {
-                max-width: 25px;
-                max-height: 25px;
+                width: 30px;
+                height: 30px;
 
                 :deep(use) {
                     fill: #909399;

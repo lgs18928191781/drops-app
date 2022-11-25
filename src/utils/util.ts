@@ -27,6 +27,8 @@ import { GetMyLegalAmount, LegalOffsale } from '@/api/legal'
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { useUserStore } from '@/stores/user'
 import { createMnemonic, encryptMnemonic, hdWalletFromMnemonic } from './wallet/hd-wallet'
+import { toClipboard } from '@soerenmartius/vue3-clipboard'
+import i18n from './i18n'
 
 export function randomString() {
   return Math.random()
@@ -39,6 +41,19 @@ export function checkSdkStatus(path: string, params?: ElMessageBoxOptions) {
     const userStroe = useUserStore()
     if (!userStroe.isAuthorized) {
       openLoginConfirm(path, params)
+    } else {
+      resolve()
+    }
+  })
+}
+
+export function checkUserLogin() {
+  return new Promise<void>((resolve, reject) => {
+    const userStroe = useUserStore()
+    const rootStore = useRootStore()
+    if (!userStroe.isAuthorized) {
+      rootStore.$patch({ isShowLogin: true })
+      reject(new Error(i18n.global.t('Please Login First')))
     } else {
       resolve()
     }
@@ -449,6 +464,7 @@ export async function downloadFile(url: string, name = 'file') {
   } else {
     const a = document.createElement('a')
     a.href = url
+    a.target = '_blank'
     a.download = name
     document.body.appendChild(a)
     a.click()
@@ -807,6 +823,7 @@ export function throttle(fn: any, delay = 500) {
   }
 }
 
+// 降文件转为 AttachmentItem， 便于操作/上链
 export function FileToAttachmentItem(file: File, encrypt: IsEncrypt = IsEncrypt.No) {
   return new Promise<AttachmentItem>(async (resolve, reject) => {
     function readResult(blob: Blob) {
@@ -835,13 +852,59 @@ export function FileToAttachmentItem(file: File, encrypt: IsEncrypt = IsEncrypt.
       await readResult(file.slice(index, index + chunkSize))
     }
     resolve({
-      // @ts-ignore
-      hex: hex,
+      data: hex,
       fileName: file.name,
       fileType: file.type,
       sha256: encHex.stringify(sha256Algo.finalize()),
       url: URL.createObjectURL(file),
       encrypt,
+      size: file.size,
     })
   })
+}
+
+// 降 AttachmentItem， 转为具有占位符 的 数组
+export function getAttachmentsMark(attachments: (AttachmentItem | string)[]) {
+  let result = []
+  for (let i = 0; i < attachments.length; i++) {
+    if (typeof attachments[i] === 'string') {
+      result.push(attachments[i])
+    } else {
+      result.push(`metafile://$[${i}]`)
+    }
+  }
+  return result
+}
+
+export function copy(
+  value: string | undefined,
+  option?: {
+    successText?: string
+    errorText?: string
+  }
+) {
+  return new Promise<void>((resolve, reject) => {
+    if (value) {
+      toClipboard(value)
+        .then(() => {
+          ElMessage.success(option?.successText || i18n.global.t('copysuccess'))
+          resolve()
+        })
+        .catch(() => {
+          ElMessage.success(option?.errorText || i18n.global.t('copyerror'))
+        })
+    }
+  })
+}
+
+export function tx(txId: string | undefined) {
+  if (!txId) return
+  window.open(`https://mvcscan.com/tx/${txId}`, '_blank')
+}
+
+// 随机数
+export function randomRange(min: number, max: number) {
+  // min最小值，max最大值
+
+  return Math.floor(Math.random() * (max - min)) + min
 }

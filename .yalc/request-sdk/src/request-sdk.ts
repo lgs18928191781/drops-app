@@ -17,14 +17,18 @@ export default class HttpRequest {
     this.request.interceptors.request.use(
       async (config) => {
         if (params?.header) {
-          for (const i in params?.header) {
+          let header
+          if (typeof params.header === 'function') header = params.header()
+          else header = params.header
+
+          for (const i in header) {
             if (!config.headers) {
               config.headers = {}
             }
-            if (typeof params?.header[i] === 'function') {
-              config.headers[i] = params?.header[i]()
+            if (typeof header[i] === 'function') {
+              config.headers[i] = header[i]()
             } else {
-              config.headers[i] = params?.header[i]
+              config.headers[i] = header[i]
             }
           }
         }

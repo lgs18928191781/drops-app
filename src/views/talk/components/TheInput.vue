@@ -38,7 +38,6 @@
         <ImagePreview
           v-if="showImagePreview"
           :src="imagePreviewUrl"
-          :original-size="true"
           @close="showImagePreview = false"
         />
       </Teleport>
@@ -62,9 +61,13 @@
           <input
             type="text"
             class="bg-inherit h-full w-full focus:outline-none placeholder:text-dark-250 placeholder:text-sm text-dark-800 text-base caret-gray-600"
-            :placeholder="$t('Talk.Channel.message_to', { channel: '#' + currentChannel.name })"
+            :placeholder="
+              $t('Talk.Channel.message_to', {
+                channel: talkStore?.activeChannelSymbol + (talkStore.activeChannel?.name || ''),
+              })
+            "
             v-model="chatInput"
-            @keyup.enter="trySendMessage"
+            @keyup.enter="trySendText"
           />
         </div>
       </div>
@@ -113,42 +116,80 @@
         </div>
       </Teleport>
 
-      <Teleport to="body" v-if="showStickersBox">
-        <TheInputStickersBox
-          :show-stickers-box="showStickersBox"
-          @hideStickersBox="showStickersBox = false"
-          @inputEmoji="handleInputEmoji"
-        />
-      </Teleport>
-
       <!-- 右侧发送按钮 -->
       <div class="flex h-full py-2 items-center shrink-0">
         <div class="flex items-center px-1 lg:mr-2">
           <div
             class="p-2 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer"
-            @click="doNothing"
+            @click="layoutStore.isShowRedPacketModal = true"
           >
             <Icon name="red_envelope" class="w-full h-full text-dark-800" />
           </div>
+          <RedPacketModal />
 
-          <div
-            class="p-1 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer"
-            @click="showStickersBox = true"
-          >
-            <Icon
-              name="face_smile"
-              class="w-full h-full text-dark-800 transition-all ease-in-out duration-300"
-              :class="{ 'text-primary -rotate-6 scale-110': showStickersBox }"
-            />
-          </div>
+          <Popover class="relative flex items-center">
+            <PopoverButton as="div">
+              <div class="p-2 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer">
+                <Icon name="photo_3" class="w-full h-full text-dark-800" />
+              </div>
+            </PopoverButton>
+
+            <transition
+              enter-active-class="transition duration-200 ease-out"
+              enter-from-class="opacity-0"
+              enter-to-class="opacity-100"
+              leave-active-class="transition duration-150 ease-in"
+              leave-from-class="opacity-100"
+              leave-to-class="opacity-0"
+            >
+              <PopoverPanel class="absolute z-10 transform top-[-16PX] right-0 -translate-y-full">
+                <div class="bg-white p-2 rounded-xl shadow-lg w-60 divide-y divide-dark-200">
+                  <div
+                    class="mx-2 py-4 flex items-center space-x-2 text-dark-800 rounded-sm lg:cursor-pointer lg:hover:underline"
+                    @click="openImageUploader"
+                  >
+                    <div class="">
+                      <Icon name="photo" class="w-5 h-5 rounded-full bg-primary p-2 box-content" />
+                    </div>
+                    <div class="">
+                      {{ $t('Talk.Channel.upload_image') }}
+                    </div>
+                  </div>
+                  <div
+                    class="mx-2 py-4 flex items-center space-x-2 text-dark-800 rounded-sm lg:cursor-pointer lg:hover:underline"
+                  >
+                    <div class="">
+                      <Icon name="link" class="w-5 h-5 rounded-full bg-primary p-2 box-content" />
+                    </div>
+                    <div class="">
+                      {{ $t('Talk.Channel.use_onchain_image') }}
+                    </div>
+                  </div>
+                </div>
+              </PopoverPanel>
+            </transition>
+          </Popover>
+
+          <ElPopover placement="bottom-start" width="300px" trigger="click">
+            <StickerVue @input="params => (chatInput = chatInput + params.value)" />
+            <template #reference>
+              <div class="p-1 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer">
+                <Icon
+                  name="face_smile"
+                  class="w-full h-full text-dark-800 transition-all ease-in-out duration-300"
+                  :class="{ 'text-primary -rotate-6 scale-110': showStickersBox }"
+                />
+              </div>
+            </template>
+          </ElPopover>
         </div>
 
         <div class="py-0.5 h-full lg:hidden">
           <div class="h-full border-l-2 border-solid border-dark-250"></div>
         </div>
 
-        <div class="flex items-center lg:hidden">
-          <div class="py-2 px-3" @click="trySendMessage">
+        <div class="lg:hidden">
+          <div class="py-2 px-3" @click="trySendText">
             <div
               class="transition-all ease-in-out duration-500"
               :class="[hasInput ? 'text-primary scale-110 -rotate-6' : 'text-dark-250']"
@@ -163,20 +204,25 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { sendMessage, validateMessage, MessageType } from '@/utils/talk'
+import { computed, ref, toRaw } from 'vue'
+import { sendMessage, validateTextMessage, isImage, isFileTooLarge } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
 import ImagePreview from './ImagePreview.vue'
-import TheInputStickersBox from './TheInputStickersBox.vue'
 import { FileToAttachmentItem } from '@/utils/util'
-import { encrypt } from '@/utils/crypto'
+import { encrypt, ecdhEncrypt } from '@/utils/crypto'
 import { useTalkStore } from '@/stores/talk'
+import StickerVue from '@/components/Sticker/Sticker.vue'
+import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
+import { ChannelType, MessageType } from '@/enum'
+import { useLayoutStore } from '@/stores/layout'
+import RedPacketModal from './modals/RedPacketModal.vue'
 
 const doNothing = () => {}
 
-const props = defineProps(['currentChannel'])
 const showMoreCommandsBox = ref(false)
 const showStickersBox = ref(false)
+
+const layoutStore = useLayoutStore()
 
 const hasInput = computed(() => chatInput.value.length > 0)
 
@@ -208,7 +254,7 @@ const handleImageChange = (e: Event) => {
       return
     }
 
-    if (isTooLarge(file)) {
+    if (isFileTooLarge(file)) {
       talkStore.$patch({
         error: {
           type: 'image_too_large',
@@ -221,19 +267,6 @@ const handleImageChange = (e: Event) => {
 
     imageFile.value = file
   }
-}
-
-const isImage = (file: File) => {
-  const type = file.type
-
-  return (
-    type === 'image/jpeg' || type === 'image/png' || type === 'image/gif' || type === 'image/jpg'
-  )
-}
-
-const isTooLarge = (file: File) => {
-  const size = file.size
-  return size > 2 * 1024 * 1024 // 2MB
 }
 
 const deleteImage = () => {
@@ -259,7 +292,7 @@ const trySendImage = async () => {
 
   const messageDto = {
     type: MessageType.Image,
-    channelId: props.currentChannel.id,
+    channelId: talkStore.activeChannel.id,
     userName: userStore.user?.name || 'Riverrun46',
     attachments,
     content: '',
@@ -275,22 +308,29 @@ const trySendImage = async () => {
 const chatInput = ref('')
 const userStore = useUserStore()
 
-const handleInputEmoji = (emoji: string) => {
-  chatInput.value += emoji
-}
+const trySendText = async () => {
+  if (!validateTextMessage(chatInput.value)) return
 
-const trySendMessage = async () => {
-  if (!validateMessage(chatInput.value)) return
+  // 私聊会话和频道群聊的加密方式不同
+  let content = ''
+  if (talkStore.activeChannelType === 'group') {
+    content = encrypt(chatInput.value, talkStore.activeChannel.id.substring(0, 16))
+  } else {
+    const privateKey = toRaw(userStore?.wallet)!.getPathPrivateKey('0/0')
+    const privateKeyStr = privateKey.toHex()
+    const otherPublicKeyStr = talkStore.activeChannel.publicKeyStr
 
-  const content = encrypt(chatInput.value, props.currentChannel.id.substring(0, 16))
+    content = ecdhEncrypt(chatInput.value, privateKeyStr, otherPublicKeyStr)
+  }
 
   chatInput.value = ''
 
   const messageDto = {
     content,
     type: MessageType.Text,
-    channelId: props.currentChannel.id,
+    channelId: talkStore.activeChannel.id,
     userName: userStore.user?.name || 'Riverrun46',
+    channelType: talkStore.activeChannelType as ChannelType,
   }
   await sendMessage(messageDto)
 }

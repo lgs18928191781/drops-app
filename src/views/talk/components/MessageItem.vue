@@ -1,7 +1,6 @@
 <template lang="">
   <div class="flex">
     <UserAvatar
-      :type="props.message.avatarType || 'undefined'"
       :metaId="props.message.metaId || 'undefined'"
       class="w-13.5 h-13.5 shrink-0 select-none"
       :disabled="true"
@@ -12,7 +11,7 @@
           {{ message.nickName }}
         </div>
         <div class="text-dark-300 text-xs">
-          {{ formatTime(message.timestamp) }}
+          {{ formatTimestamp(message.timestamp, i18n) }}
         </div>
       </div>
 
@@ -37,7 +36,7 @@
           class="w-fit max-w-[90%] md:max-w-[50%] lg:max-w-[400px] max-h-[600px] overflow-y-hidden rounded bg-dark-100 cursor-pointer"
           @click="previewImage"
         >
-          <Image :src="decryptedMessage" customClass="rounded py-0.5 object-scale-down" />
+          <Image :src="decryptedMessage" customClass="rounded-xl py-0.5 object-scale-down" />
         </div>
         <Teleport to="body" v-if="isImage && showImagePreview">
           <ImagePreview
@@ -86,13 +85,16 @@ import NftLabel from './NftLabel.vue'
 import redEnvelopeImg from '@/assets/images/red-envelope.svg?url'
 import ImagePreview from './ImagePreview.vue'
 import { computed, ref } from 'vue'
-import dayjs from 'dayjs'
 import { useI18n } from 'vue-i18n'
+import { formatTimestamp } from '@/utils/talk'
+import { useUserStore } from '@/stores/user'
+import { useTalkStore } from '@/stores/talk'
 
 const i18n = useI18n()
 
-const channelId = '88a92826842757cade6e84378df9db88526578c3bce7b8cb6348b7f1f9598d0a'
 const showImagePreview = ref(false)
+const userStore = useUserStore()
+const talkStore = useTalkStore()
 
 const props = defineProps(['message'])
 
@@ -116,27 +118,6 @@ const previewImage = () => {
   showImagePreview.value = true
 }
 
-const formatTime = (timestamp: Date) => {
-  const day = dayjs(timestamp)
-  // 如果是今天，则显示为“今天 hour:minute”
-  if (day.isSame(dayjs(), 'day')) {
-    return `${day.format('HH:mm')}`
-  }
-
-  // 如果是昨天，则显示为“昨天 hour:minute”
-  if (day.isSame(dayjs().subtract(1, 'day'), 'day')) {
-    return `${i18n.t('Talk.Datetime.yesterday')}${day.format('HH:mm')}`
-  }
-
-  // 如果是今年，则显示为“month day hour:minute”
-  if (day.isSame(dayjs(), 'year')) {
-    return day.format('MM/DD HH:mm')
-  }
-
-  // 如果不是今年，则显示为“year month day hour:minute”
-  return day.format('YYYY/MM/DD HH:mm')
-}
-
 const decryptedMessage = computed(() => {
   if (props.message.encryption === '0') {
     return props.message.content
@@ -151,11 +132,10 @@ const decryptedMessage = computed(() => {
 
   // 处理mock的图片消息
   if (props.message.isMock && props.message.protocol === 'SimpleFileGroupChat') {
-    console.log(props.message.content)
     return props.message.content
   }
 
-  return decrypt(props.message.content, channelId.substring(0, 16))
+  return decrypt(props.message.content, talkStore.activeChannelId.substring(0, 16))
 })
 
 const parseTextMessage = (text: string) => {
@@ -203,7 +183,7 @@ const redEnvelopeMessage = computed(() => {
 })
 
 const isMyMessage = computed(() => {
-  return props.message.metaId === '74cc371c55d9fa38fc98467396c22fe6b20bfc3459a11530362fcdb1b6c07c5c' // TODO:
+  return userStore.user?.metaId && userStore.user.metaId === props.message.metaId
 })
 
 const isGroupJoinAction = computed(() => props.message.protocol === 'SimpleGroupJoin')

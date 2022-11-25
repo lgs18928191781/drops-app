@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts" setup>
-import { MessageType, sendMessage } from '@/utils/talk'
+import { isFileTooLarge, isImage, MessageType, sendMessage } from '@/utils/talk'
 import { FileToAttachmentItem } from '@/utils/util'
 import { computed, ref } from 'vue'
 import { useUserStore } from '@/stores/user'
@@ -75,26 +75,13 @@ const handleImageChange = (e: Event) => {
       return
     }
 
-    if (isTooLarge(file)) {
+    if (isFileTooLarge(file)) {
       console.log('too large')
       return
     }
 
     imageFile.value = file
   }
-}
-
-const isImage = (file: File) => {
-  const type = file.type
-
-  return (
-    type === 'image/jpeg' || type === 'image/png' || type === 'image/gif' || type === 'image/jpg'
-  )
-}
-
-const isTooLarge = (file: File) => {
-  const size = file.size
-  return size > 2 * 1024 * 1024 // 2MB
 }
 
 const deleteImage = () => {

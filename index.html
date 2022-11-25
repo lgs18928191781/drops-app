@@ -34,7 +34,6 @@
           if (width / dpr > designSize) {
             width = designSize * dpr
           }
-          console.log('htmlFontSize', htmlFontSize)
           docEl.dataset.width = width
           docEl.dataset.percent = htmlFontSize * (width / designSize)
           var fontSize = htmlFontSize * (width / designSize)

@@ -1,4 +1,3 @@
-import { BindUserInfo } from '@/@types/common'
 import { useUserStore } from '@/stores/user'
 import HttpRequest from 'request-sdk'
 import { ApiResultTypes, BaseUserInfoParams } from '.'

@@ -1,4 +1,3 @@
-import { BuzzItem } from '@/@types/common'
 import { InviteActivityTag } from '@/enum'
 import HttpRequest from 'request-sdk'
 

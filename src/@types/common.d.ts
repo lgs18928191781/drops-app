@@ -137,6 +137,7 @@ declare interface BuzzItem {
   isFull: boolean
   isNew: boolean
   isSelling: boolean
+  isMyFollow: boolean
   isValid: boolean
   like: {
     metaId: string
@@ -188,6 +189,8 @@ declare interface BuzzItem {
   txId: string
   userName: string
   zeroAddress: string
+  postTag: string
+  postTagId: number
 }
 
 declare interface BatchSaleSessionItem {
@@ -206,7 +209,7 @@ declare interface BatchSaleItem extends BatchSaleSessionItem {
   address: string
 }
 
-export interface BindUserInfo {
+declare interface BindUserInfo {
   address: string
   appToken: string
   did: null
@@ -223,9 +226,62 @@ export interface BindUserInfo {
   token: string
 }
 
-export interface BindMetaIdRes {
+declare interface BindMetaIdRes {
   userInfo: MetaMaskLoginUserInfo
   wallet: bsv.HDPrivateKey
   password: string
   // type: 'register' | 'login'
+}
+
+declare interface MetaFileInfo {
+  txId: string
+  metaId: string
+  userName: string
+  avatarTxId: string
+  avatarType: string
+  zeroAddress: string
+  metanetId: string
+  address: string
+  publicKey: string
+  hash: string
+  md5: string
+  resUrl: string
+  fileType: number
+  width: number
+  height: number
+  imgCompressUrl: string
+  duration: number
+  fileDataType: string
+  fileSize: number
+  fileSizeStr: string
+  fileName: string
+  encrypt: string
+  version: string
+  dataType: string
+  encoding: string
+  buzzTxId: string
+  isValid: boolean
+  isNew: boolean
+  blockHeight: number
+  confirmState: number
+  timestamp: number
+}
+
+declare interface recommnedCommunity {
+  communityId: string
+  cover: string
+  description: string
+  icon: string
+  memberTotal: number
+  name: string
+  isMyJoin: boolean
+}
+declare interface RecommnedUser {
+  address: string
+  avatarTxId: string
+  avatarType: string
+  isMyFollow: boolean
+  metaId: string
+  name: string
+  total: number
 }

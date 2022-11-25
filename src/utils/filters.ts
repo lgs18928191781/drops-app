@@ -23,7 +23,13 @@ export function metafile(metafile: string, width = 235, type: 'metafile' | 'meta
     path = '/metafile/'
   }
   const fileUrl = `${import.meta.env.VITE_AppImgApi}${path}${metafile.replace('ipfs://', '')}`
-  if (width === -1) {
+  // 文件后缀
+  const fileSuffix = metafile.split('.')[metafile.split('.').length - 1]
+  // 原图 或者 非jpg/ jpeg格式直接返回
+  if (
+    width === -1 ||
+    (fileSuffix !== 'jpg' && fileSuffix !== 'jpeg' && metafile.indexOf('.') !== -1)
+  ) {
     return fileUrl
   }
   let query = 'x-oss-process=image/auto-orient,1/quality,q_80'

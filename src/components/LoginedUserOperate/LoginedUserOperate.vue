@@ -9,7 +9,7 @@
         </a>
         <template #dropdown>
           <ElDropdownMenu>
-            <ElDropdownItem v-for="(item, index) in userOperates" :key="index" @click="item.fun()">
+            <ElDropdownItem v-for="(item, index) in userOperates" :key="index" @click="item.func()">
               <div class="flex flex-align-center user-operate-item">
                 <Icon :name="item.icon" />
                 <span class="name">{{ item.name }}</span>
@@ -46,27 +46,27 @@ const userOperates = [
   {
     name: i18n.t('UserOperate.createGropp'),
     icon: 'plus_circle',
-    fun: () => {},
+    func: () => {},
   },
   {
     name: i18n.t('UserOperate.settings'),
     icon: 'setting',
-    fun: () => {},
+    func: () => {},
   },
   {
     name: i18n.t('UserOperate.aboutShow'),
     icon: 'plus_circle',
-    fun: () => {},
+    func: () => {},
   },
   {
     name: i18n.t('UserOperate.help'),
     icon: 'question_circle',
-    fun: () => {},
+    func: () => {},
   },
   {
     name: i18n.t('UserOperate.logout'),
     icon: 'logout',
-    fun: () => {
+    func: () => {
       userStore.logout()
     },
   },

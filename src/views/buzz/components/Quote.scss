@@ -1,0 +1,10 @@
+@import './BuzzItem.scss';
+
+.buzz-item {
+    &.forward {
+        background: #F5F7FA;
+        padding: 18px;
+        border-radius: 8px;
+        box-sizing: border-box;
+    }
+}

@@ -555,6 +555,7 @@ function submitForm() {
                 ...metaIdInfo,
                 ...account,
                 password: form.password,
+                address: hdWallet.rootAddress,
               })
               userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
               userStore.showWallet.initWallet()

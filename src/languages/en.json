@@ -35,6 +35,7 @@
   "Time": "Time",
   "To Showbuzz": "To Showbuzz",
   "Talk": {
+    "period": ".",
     "Settings": {
       "settings": "settings",
       "language": "language",
@@ -55,14 +56,45 @@
       "private_channel": "private channel",
       "public_channel": "public channel",
       "message_to": "Message {channel}",
-      "upload_image": "Upload a Image",
+      "upload_image": "Upload an Image",
       "use_onchain_image": "Use an Onchain Image",
-      "view_original": "Open original"
+      "view_original": "Open original",
+      "search": "Search"
+    },
+    "Community": {
+      "create": "Create community",
+      "create_fist_step_tip": "Give your community some personality with a name and an icon. You can always change them later.",
+      "community_name": "community name",
+      "agree_tip": "By creating a community, you agree to Show's",
+      "agree_guidelines": "Community Guidelines",
+      "customize_information": "Customize your community",
+      "choose_nft_cover": "Choose an NFT cover",
+      "introduction": "Community introduction",
+      "introduction_placeholder": "Tell people what your community is about. All they need is love!",
+      "skip": "Skip for now",
+      "no_introduction": "No introduction",
+      "members": "member | members",
+      "public_channels": "Public channels",
+      "create_public_channel": "create public channel",
+      "create_consensual_channel": "create consensual channel",
+      "channel_name": "channel name",
+      "create_public_channel_tip": "Everyone can join a public channel. No permission required.",
+      "consensual_channels": "Consensual channels"
     },
     "Input": {
       "nft_stickers": "NFT Stickers",
       "emoji": "Emoji",
-      "no_nft_stickers": "No NFT Stickers Available."
+      "no_nft_stickers": "No NFT Stickers Available.",
+      "giveaway": "giveaway",
+      "for_everyone": "red packet",
+      "nft_limited": "for NFTer",
+      "quantity": "quantity",
+      "enter_quantity": "Enter quantity",
+      "total": "total",
+      "blessings": "blessings",
+      "best_wishes": "Best wishes",
+      "send": "send",
+      "red_packet_refund_tip": "Red Packets not opened within 24hrs will be refunded."
     },
     "Datetime": {
       "today": "Today at ",
@@ -91,9 +123,66 @@
     "Timeline": "Timeline",
     "Recommend": "Recommend",
     "publish": {
-      "placeholder": "Share your buzz ~"
+      "placeholder": "Share your buzz ~",
+      "addAttachment": "Add Image",
+      "addImage": "Add Image",
+      "post": "Post",
+      "success": "Post Success!",
+      "respost": "Repost"
+    },
+    "comment": {
+      "publishPlaceholder": "Your reply～",
+      "success": "Replay Success!"
+    },
+    "repost": {
+      "lookTx": "TX"
+    },
+    "topic": {
+      "topics": "Topics",
+      "inputTitle": "What topic you want to use",
+      "hotTopics": "Hot Topics",
+      "inputPlaceholder": "Enter topic",
+      "Create Community": "Create Community"
+    },
+    "follow": {
+      "success": "Follow Success"
+    },
+    "Referral Community": "Referral Community",
+    "Web3 Gathering Place": "Web3 Gathering Place",
+    "RecommendContent": {
+      "Change batch": ".Change batch",
+      "Recommend To Follow": "Recommend To Follow",
+      "View More": "View More",
+      "Introduction to Guiding": "Introduction to Guiding",
+      "Learn the show function": "Learn the show function",
+      "Download showApp": "Download showApp"
     }
   },
   "Follow": "Follow",
-  "walletError": "Signing failed, unable to log in to wallet"
+  "walletError": "Signing failed, unable to log in to wallet",
+  "Pagination": {
+    "loading": "Loading",
+    "nothing": "Nothing ~"
+  },
+  "noDatas": "No Datas",
+  "copysuccess": "Copy successfully",
+  "copyerror": "Copy successfully",
+  "Confirm": "Confirm",
+  "SDK": {
+    "payconfirm": {
+      "Payment": "Payment",
+      "tips": "No more payment confirmation prompts for operations below",
+      "tips2": " ",
+      "ME": "ME",
+      "Payment required": "Payment required",
+      "My": "My ",
+      "Recharge": "Recharge"
+    }
+  },
+  "Please Login First": "Please Login First",
+  "Join": "Join",
+  "Join Success": "Join Success",
+  "Joined": "Joined",
+  "None More": "None More",
+  "Followed": "Followed"
 }

@@ -217,8 +217,8 @@ export enum PayMeParamsType {
   BuzzComment = 'PayComment',
   BuzzReopost = 'SimpleRePost',
 }
-export enum CreateBrfcChildNodePayType {
-  MC = 'MC',
+export enum SdkPayType {
+  ME = 'ME',
   SPACE = 'SPACE',
 }
 
@@ -259,12 +259,20 @@ export enum SignUserType {
 }
 
 export enum NodeName {
-  SimpleMicroblog = 'SimpleMicroblog',
-  MetaFile = 'MetaFile',
   ETHBinding = 'ETHBinding',
+  MetaFile = 'MetaFile',
+  NFTAvatar = 'NFTAvatar',
+  PayComment = 'PayComment',
+  PayLike = 'PayLike',
+  PayFollow = 'PayFollow',
+  SimpleMicroblog = 'SimpleMicroblog',
+  SimpleRePost = 'SimpleRePost',
   SimpleGroupChat = 'SimpleGroupChat',
   SimpleFileGroupChat = 'SimpleFileGroupChat',
-  NFTAvatar = 'NFTAvatar',
+  SimpleCommunity = 'SimpleCommunity',
+  SimpleCommunityJoin = 'SimpleCommunityJoin',
+  SimpleGroupCreate = 'SimpleGroupCreate',
+  ShowMsg = 'ShowMsg',
 }
 
 export const enum BindStatus {
@@ -278,4 +286,36 @@ export const enum BindStatus {
 export const enum RegisterSource {
   showmoney = 'normal',
   metamask = 'metamask',
+}
+export const enum CommunityJoinAction {
+  Join = 1,
+  Leave = -1,
+}
+
+export const enum ChannelPublicityType {
+  Public = '1',
+  Private = '2',
+}
+
+export enum MessageType {
+  Text = 'text',
+  Image = 'image',
+  NftEmoji = 'nftEmoji',
+  OnChainImage = 'onChainImage',
+}
+
+export enum ChannelType {
+  Group = 'group',
+  Session = 'session',
+}
+
+export enum GroupChannelType {
+  PublicText = 'publicText',
+}
+
+export enum ShowControl {
+  isShowCreateCommunityModal = 'isShowCreateCommunityModal',
+  isShowCreatePublicChannelModal = 'isShowCreatePublicChannelModal',
+  isShowCreateConsensualChannelModal = 'isShowCreateConsensualChannelModal',
+  isShowRedPacketModal = 'isShowRedPacketModal',
 }

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouterView } from 'vue-router'
 const NotFoundPage = () => import('@/views/404.vue')
 import { ElMessage } from 'element-plus'
 import i18n from '@/utils/i18n'
+import { useUserStore } from './stores/user'
 export const routerHistory = createWebHistory()
 export const router = createRouter({
   history: routerHistory,
@@ -13,43 +14,83 @@ export const router = createRouter({
       path: '/buzz',
       name: 'buzz',
       component: () => import('@/views/buzz/Layout.vue'),
-      redirect: '/buzz/index',
+      // meta: { keepAlive: true },
+      redirect: () => {
+        const userStroe = useUserStore()
+        if (userStroe.isAuthorized) {
+          return { name: 'buzzIndex' }
+        } else {
+          return { name: 'buzzRecommend' }
+        }
+      },
       children: [
-        { path: 'index', name: 'buzzIndex', component: () => import('@/views/buzz/Index.vue') },
+        {
+          path: 'index',
+          name: 'buzzIndex',
+          component: () => import('@/views/buzz/Index.vue'),
+          meta: { isAuth: true },
+        },
+        {
+          path: 'recommend',
+          name: 'buzzRecommend',
+          component: () => import('@/views/buzz/Recomment.vue'),
+          // meta: { keepAlive: true },
+        },
+        {
+          path: 'tx/:txId',
+          name: 'buzzDetail',
+          component: () => import('@/views/buzz/Detail.vue'),
+        },
+        {
+          path: 'tag/:tagId',
+          name: 'buzzTag',
+          component: () => import('@/views/buzz/Tag.vue'),
+        },
+        {
+          path: 'topic/:topic',
+          name: 'buzzTopic',
+          component: () => import('@/views/buzz/Topic.vue'),
+        },
       ],
     },
-    {
-      path: '/sign',
-      name: 'sign',
-      component: () => import('@/views/sign/Index.vue'),
-      children: [
-        {
-          path: 'pre',
-          name: 'preLogin',
-          component: () => import('@/views/sign/PreLogin.vue'),
-        },
-        {
-          path: 'in',
-          name: 'login',
-          component: () => import('@/views/sign/Login.vue'),
-        },
-        {
-          path: 'up',
-          name: 'register',
-          component: () => import('@/views/sign/register.vue'),
-        },
-      ],
-    },
+    // {
+    //   path: '/sign',
+    //   name: 'sign',
+    //   component: () => import('@/views/sign/Index.vue'),
+    //   children: [
+    //     {
+    //       path: 'pre',
+    //       name: 'preLogin',
+    //       component: () => import('@/views/sign/PreLogin.vue'),
+    //     },
+    //     {
+    //       path: 'in',
+    //       name: 'login',
+    //       component: () => import('@/views/sign/Login.vue'),
+    //     },
+    //     {
+    //       path: 'up',
+    //       name: 'register',
+    //       component: () => import('@/views/sign/register.vue'),
+    //     },
+    //   ],
+    // },
 
-    // Showtalk
+    // ShowTalk
     {
       path: '/talk',
       name: 'talk',
-      redirect: '/talk/channels/1/1',
+      redirect:
+        '/talk/channels/123/88a92826842757cade6e84378df9db88526578c3bce7b8cb6348b7f1f9598d0a',
       // component: () => import('@/views/talk/Index.vue'),
     },
     {
-      path: '/talk/channels/:communityId/:channelId',
+      path: '/talk/channels/@me/:channelId?',
+      name: 'talkAtMe',
+      component: () => import('@/views/talk/AtMe.vue'),
+    },
+    {
+      path: '/talk/channels/:communityId/:channelId?',
       name: 'talkChannel',
       component: () => import('@/views/talk/Channel.vue'),
     },
