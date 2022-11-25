@@ -56,7 +56,7 @@
                 </div>
               </div>
 
-              <TransitionRoot :show="showSecondControl && layout[showSecondControl]" as="template">
+              <TransitionRoot :show="showSecondControl" as="template">
                 <TransitionChild
                   as="template"
                   enter="duration-300 ease-out"
@@ -82,7 +82,7 @@
 
                       <DialogTitle
                         as="h3"
-                        class="text-2xl text-center font-bold capitalize w-full mt-8 lg:mt-0"
+                        class="text-2xl text-left font-bold capitalize w-full mt-8 lg:mt-0"
                       >
                         <slot name="secondTitle"></slot>
                       </DialogTitle>

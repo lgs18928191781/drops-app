@@ -10,6 +10,8 @@ export const useLayoutStore = defineStore('layout', {
       isShowCreateConsensualChannelModal: false,
       isShowChooseTokenModal: false,
       isShowRedPacketModal: false,
+      isShowInviteModal: false,
+      isShowAcceptInviteModal: false,
       isShowMessagesLoading: false,
       isShowMemberList: false,
       isShowPasswordModal: false,

@@ -120,11 +120,11 @@ const apps = [
     extraClass: 'left-navigation-item',
     title: 'Feed',
   },
-  {
-    icon: 'talk',
-    path: '/talk/channels/@me',
-    title: '@Me',
-  },
+  // {
+  //   icon: 'talk',
+  //   path: '/talk/channels/@me',
+  //   title: '@Me',
+  // },
 ]
 
 if (userStore.isAuthorized) {

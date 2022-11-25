@@ -1,7 +1,6 @@
 <template>
   <BaseModal
-    :show-control="ShowControl.isShowPasswordModal"
-    :show-second-control="ShowControl.never"
+    v-model="layout[ShowControl.isShowPasswordModal]"
     :strict-close="true"
     :extra-close-event="goBack"
   >
@@ -74,7 +73,9 @@ const isPasswordWrong = ref(false)
 const router = useRouter()
 
 const goBack = () => {
-  router.back()
+  // 去 the-void
+  const theVoid = `/talk/channels/${talk.activeCommunityId}/the-void`
+  router.push(theVoid)
 }
 
 const tryVerifyPassword = () => {

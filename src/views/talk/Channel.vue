@@ -23,6 +23,8 @@
 
     <!-- modals -->
     <PasswordModal />
+    <InviteModal />
+    <AcceptInviteModal />
   </div>
 </template>
 
@@ -32,13 +34,15 @@ import TheInput from './components/TheInput.vue'
 import TheErrorBox from './components/TheErrorBox.vue'
 import CommunityInfo from './components/CommunityInfo.vue'
 import ChannelMemberList from './components/ChannelMemberList.vue'
-import { defineAsyncComponent, onBeforeUnmount, watch } from 'vue'
+import { defineAsyncComponent, nextTick, onBeforeUnmount, watch } from 'vue'
 import { useTalkStore } from '@/stores/talk'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { GroupChannelType } from '@/enum'
 import { useLayoutStore } from '@/stores/layout'
 import PasswordModal from './components/modals/PasswordModal.vue'
+import InviteModal from './components/modals/InviteModal.vue'
+import AcceptInviteModal from './components/modals/AcceptInviteModal.vue'
 import { verifyPassword } from '@/utils/talk'
 
 const MessageList = defineAsyncComponent({
@@ -54,10 +58,11 @@ const layout = useLayoutStore()
 const { communityId, channelId } = route.params
 const selfMetaId = userStore.user!.metaId
 talk.initChannel(communityId as string, channelId as string).then(async initRes => {
-  if (initRes === 'redirect') return
+  if (['redirect', 'pending'].includes(initRes)) return
 
   // 重置频道凭证
   talk.hasActiveChannelConsent = false
+  await nextTick()
   if (!talk.canAccessActiveChannel) {
     switch (talk.activeGroupChannelType) {
       case GroupChannelType.Password:
