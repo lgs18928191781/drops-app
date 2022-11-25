@@ -49,7 +49,13 @@
       "enter_password": "Enter Password",
       "enter_password_placeholder": "Speak friend and enter ^-^",
       "enter_password_confirm": "GO",
-      "wrong_password_tip": "Whoops, wrong password..."
+      "wrong_password_tip": "Whoops, wrong password...",
+      "invite_title": "Invite Friends",
+      "copy": "Copy",
+      "copied": "Copied",
+      "accept_invite": "Accept Invite",
+      "accept_invite_placeholder": "Enter your invite code",
+      "you_have_been_invited": "You have been invited to join"
     },
     "Channel": {
       "members": "members",
@@ -81,8 +87,8 @@
       "no_introduction": "No introduction",
       "members": "member | members",
       "public_channels": "Public channels",
-      "create_public_channel": "create public channel",
-      "create_consensual_channel": "create consensual channel",
+      "create_public_channel": "Create Public Channel",
+      "create_consensual_channel": "Create Consensual Channel",
       "channel_name": "Channel Name",
       "create_public_channel_tip": "Everyone can join a public channel. No permission required.",
       "consensual_channels": "Consensual channels",

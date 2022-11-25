@@ -27,15 +27,16 @@
             leave-to="opacity-0 scale-75"
           >
             <DialogPanel
-              class="flex w-full h-full max-w-screen-sm lg:items-stretch justify-center lg:w-auto relative lg:static lg:h-auto"
+              class="flex w-full h-full lg:max-w-screen-sm lg:items-stretch justify-center lg:w-auto relative lg:static lg:h-auto"
               :style="mobileSize"
             >
               <div
-                class="w-full max-w-screen-sm h-full bg-white lg:min-w-[456PX] lg:w-auto lg:h-auto lg:rounded-3xl relative lg:shadow-lg p-8 flex flex-col"
+                class="w-full lg:max-w-screen-sm h-full bg-white lg:min-w-[456PX] lg:w-auto lg:h-auto lg:rounded-3xl relative lg:shadow-lg p-8 flex flex-col"
                 :class="[mobileSize ? 'rounded' : '']"
               >
                 <button
                   class="absolute top-[24PX] right-[24PX] h-6 w-6 flex items-center justify-center outline-0"
+                  v-if="!noClose"
                 >
                   <Icon
                     name="x_circle"
@@ -44,10 +45,7 @@
                   />
                 </button>
 
-                <DialogTitle
-                  as="h3"
-                  class="text-2xl text-center font-bold capitalize w-full mt-8 lg:mt-0"
-                >
+                <DialogTitle as="h3" class="text-2xl text-center font-bold w-full mt-8 lg:mt-0">
                   <slot name="title"></slot>
                 </DialogTitle>
 
@@ -56,7 +54,7 @@
                 </div>
               </div>
 
-              <TransitionRoot :show="showSecondControl && layout[showSecondControl]" as="template">
+              <TransitionRoot :show="showSecondControl" as="template">
                 <TransitionChild
                   as="template"
                   enter="duration-300 ease-out"
@@ -67,7 +65,7 @@
                   leave-to="opacity-0 scale-75"
                 >
                   <div
-                    class="w-full max-w-screen-sm  bg-white lg:min-w-[456PX] lg:w-auto rounded lg:rounded-3xl lg:shadow-lg lg:ml-4 absolute inset-0 z-[65] lg:static lg:self-stretch"
+                    class="w-full lg:max-w-screen-sm  bg-white lg:min-w-[456PX] lg:w-auto rounded lg:rounded-3xl lg:shadow-lg lg:ml-4 absolute inset-0 z-[65] lg:static lg:self-stretch"
                   >
                     <div class="w-full h-full relative p-8 flex flex-col">
                       <button
@@ -82,7 +80,7 @@
 
                       <DialogTitle
                         as="h3"
-                        class="text-2xl text-center font-bold capitalize w-full mt-8 lg:mt-0"
+                        class="text-2xl text-left font-bold capitalize w-full mt-8 lg:mt-0"
                       >
                         <slot name="secondTitle"></slot>
                       </DialogTitle>
@@ -115,10 +113,11 @@ const props = defineProps<{
   strictClose?: boolean
   extraCloseEvent?: any
   mobileSize?: number
+  noClose?: boolean
 }>()
 
 const tryClose = () => {
-  if (props.strictClose) {
+  if (props.strictClose || props.noClose) {
     return
   }
 

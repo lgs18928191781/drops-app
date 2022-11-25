@@ -16,9 +16,9 @@
             <!-- 社区封面 -->
             <div class="w-full">
               <Image
-                :src="talkStore.activeCommunity?.cover"
+                :src="talk.activeCommunity?.cover"
                 :customClass="'aspect-[4/3] w-full object-contain object-center'"
-                v-if="talkStore.activeCommunity?.cover"
+                v-if="talk.activeCommunity?.cover"
               />
             </div>
 
@@ -26,22 +26,22 @@
             <div class="px-4.5 overflow-y-auto">
               <div
                 class="w-full mt-4.5 text-lg text-dark-800 truncate"
-                :title="talkStore.activeCommunity?.name"
+                :title="talk.activeCommunity?.name"
               >
-                {{ talkStore.activeCommunity?.name }}
+                {{ talk.activeCommunity?.name }}
               </div>
 
               <div class="mt-1.5 text-xs text-dark-400 leading-kinda-loose break-all font-normal">
-                {{ talkStore.activeCommunity?.description || $t('Talk.Community.no_introduction') }}
+                {{ talk.activeCommunity?.description || $t('Talk.Community.no_introduction') }}
               </div>
 
               <div class="mt-3 flex w-full items-center justify-between cursor-pointer">
                 <div class="flex items-center justify-between text-xs space-x-2 text-dark-300">
                   <div class="w-1.5 h-1.5 bg-lime-500 rounded-full"></div>
                   <div class="flex space-x-0.5">
-                    <div class="">{{ talkStore.members?.length }}</div>
+                    <div class="">{{ talk.activeCommunity?.memberTotal }}</div>
                     <div class="capitalize">
-                      {{ $t('Talk.Community.members', talkStore.members?.length) }}
+                      {{ $t('Talk.Community.members', talk.activeCommunity?.memberTotal) }}
                     </div>
                   </div>
                 </div>
@@ -58,19 +58,19 @@
                   <Icon
                     name="plus"
                     class="w-4 h-4 text-black cursor-pointer"
-                    v-if="talkStore.isAdmin(userStore.user!.metaId)"
+                    v-if="talk.isAdmin(userStore.user!.metaId)"
                     @click="layout.isShowCreatePublicChannelModal = true"
                   />
                 </div>
                 <div
-                  v-for="channel in talkStore.activeCommunityPublicChannels"
-                  class="p-3 main-border only-bottom cursor-pointer !bg-white relative"
-                  :class="channel.id === talkStore.activeChannelId || 'faded'"
+                  v-for="channel in talk.activeCommunityPublicChannels"
+                  class="py-3 px-2 main-border only-bottom cursor-pointer !bg-white relative group"
+                  :class="channel.id === talk.activeChannelId || 'faded'"
                   @click="goChannel(channel.id)"
                 >
                   <div
                     class="absolute left-0 h-full flex items-center top-0"
-                    v-if="talkStore.hasUnreadMessagesOfChannel(channel.id)"
+                    v-if="talk.hasUnreadMessagesOfChannel(channel.id)"
                   >
                     <span class="w-1.5 h-3 bg-dark-250 rounded-r-md"></span>
                   </div>
@@ -79,9 +79,19 @@
                     :title="channel.name"
                   >
                     <Icon name="hashtag" class="w-4 h-4 text-dark-400" />
-                    <div class="ml-2 truncate">
+                    <div class="ml-1 truncate grow">
                       {{ channel.name }}
                     </div>
+
+                    <button
+                      class="hover:text-primary text-dark-400 cursor-copy"
+                      :class="[
+                        channel.id === talk.activeChannelId ? '' : 'hidden group-hover:!block',
+                      ]"
+                      @click.stop="popInvite(channel.id)"
+                    >
+                      <Icon name="user_plus" class="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
 
@@ -92,20 +102,20 @@
                   <Icon
                     name="plus"
                     class="w-4 h-4 text-black cursor-pointer"
-                    v-if="talkStore.isAdmin(userStore.user!.metaId)"
+                    v-if="talk.isAdmin(userStore.user!.metaId)"
                     @click="layout.isShowCreateConsensualChannelModal = true"
                   />
                 </div>
 
                 <div
-                  v-for="channel in talkStore.activeCommunityConsensualChannels"
-                  class="p-3 main-border only-bottom cursor-pointer !bg-white relative"
-                  :class="channel.id === talkStore.activeChannelId || 'faded'"
+                  v-for="channel in talk.activeCommunityConsensualChannels"
+                  class="py-3 px-2 main-border only-bottom cursor-pointer !bg-white relative group"
+                  :class="channel.id === talk.activeChannelId || 'faded'"
                   @click="goChannel(channel.id)"
                 >
                   <div
                     class="absolute left-0 h-full flex items-center top-0"
-                    v-if="talkStore.hasUnreadMessagesOfChannel(channel.id)"
+                    v-if="talk.hasUnreadMessagesOfChannel(channel.id)"
                   >
                     <span class="w-1.5 h-3 bg-dark-250 rounded-r-md"></span>
                   </div>
@@ -116,11 +126,20 @@
                     <Icon
                       name="lock"
                       class="w-4 h-4 text-dark-400"
-                      v-if="talkStore.channelType(channel) === GroupChannelType.Password"
+                      v-if="talk.channelType(channel) === GroupChannelType.Password"
                     />
-                    <div class="ml-2 truncate">
+                    <div class="ml-1 truncate grow">
                       {{ channel.name }}
                     </div>
+                    <button
+                      class="hover:text-primary text-dark-400 cursor-copy"
+                      :class="[
+                        channel.id === talk.activeChannelId ? '' : 'hidden group-hover:!block',
+                      ]"
+                      @click.stop="popInvite(channel.id)"
+                    >
+                      <Icon name="user_plus" class="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
 
@@ -149,8 +168,13 @@ import { GroupChannelType } from '@/enum'
 const router = useRouter()
 
 const layout = useLayoutStore()
-const talkStore = useTalkStore()
+const talk = useTalkStore()
 const userStore = useUserStore()
+
+const popInvite = (channelId: string) => {
+  talk.inviteLink = `${location.origin}/talk/channels/${talk.activeCommunityId}/${channelId}`
+  layout.isShowInviteModal = true
+}
 
 const goChannel = (channelId: string) => {
   const currentCommunityId = router.currentRoute.value.params.communityId

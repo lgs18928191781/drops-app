@@ -54,8 +54,7 @@
 import { getChannelMessages } from '@/api/talk'
 import { useTalkStore } from '@/stores/talk'
 import { useLayoutStore } from '@/stores/layout'
-import { sleep } from '@/utils/util'
-import { onBeforeUnmount, ref, watch } from 'vue'
+import { nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import LoadingItem from './LoadingItem.vue'
 import LoadingList from './LoadingList.vue'
 import MessageItem from './MessageItem.vue'
@@ -133,13 +132,13 @@ const loadMore = async () => {
 }
 
 const scrollToMessagesBottom = async (retryCount = 0) => {
-  await sleep(1)
+  await nextTick()
   const mse: HTMLElement = messagesScroll.value as HTMLElement
   if (mse) {
     mse.scrollTop = mse.scrollHeight
   } else {
     if (retryCount < 5) {
-      await sleep(1)
+      await nextTick()
       await scrollToMessagesBottom(retryCount + 1)
     }
   }
