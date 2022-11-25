@@ -1,0 +1,119 @@
+.nft-modal {
+    padding: 30px;
+}
+
+header {
+    .title {
+        text-align: center;
+        font-size: 24px;
+        font-weight: 500;
+    }
+
+    .back {
+        .icon {
+            transform: rotate(90deg);
+        }
+    }
+
+    a {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: #EDEFF2;
+        cursor: pointer;
+
+        .icon {
+            width: 10px;
+            height: 10px;
+
+            :deep(use) {
+                fill: #606266;
+            }
+        }
+
+        &:hover {
+            background: var(--main-font-color);
+
+            .icon {
+
+                :deep(use) {
+                    fill: #fff;
+                }
+            }
+        }
+    }
+}
+
+.content {
+    margin-top: 30px;
+    height: 65vh;
+    overflow-y: auto;
+}
+
+.genesis-list {
+    .genesis-item {
+        border: 2px solid var(--main-font-color);
+        border-radius: 12px;
+        padding: 18px;
+        margin-bottom: 12px;
+
+        .top {
+            .name {
+                font-size: 18px;
+                line-height: 26px;
+            }
+
+            a {
+                padding: 8px 16px;
+                cursor: pointer;
+
+                .icon {
+                    width: 24px;
+                    height: 24px;
+                }
+            }
+        }
+
+        .author {
+            margin-top: 26px;
+
+            .msg {
+                color: #606266;
+                line-height: 26px;
+
+                .avatar {
+                    width: 36px;
+                    height: 36px;
+                    margin-right: 12px;
+                }
+            }
+
+            .count {
+                color: #606266;
+            }
+        }
+
+        .nft-list {
+            margin-top: 18px;
+
+            .nft-item {
+                display: inline-block;
+                width: calc((100% - 24px) / 3);
+                padding-bottom: calc((100% - 24px) / 3);
+                height: 0;
+                margin-right: 12px;
+                position: relative;
+
+                &:nth-child(3n) {
+                    margin-right: 0;
+                }
+
+                .image {
+                    border: 2px solid var(--main-font-color);
+                    border-radius: 8px;
+
+                }
+            }
+        }
+    }
+}

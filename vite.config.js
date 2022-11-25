@@ -97,7 +97,7 @@ export default ({ mode, command }) => {
         'mvc-lib/ecies': 'ECIES',
         'mvc-lib/mnemonic': 'Mnemonic',
         bip39: 'bip39',
-        'sensible-sdk': 'sensible',
+        'meta-contract': 'metaContract',
       }),
       // basicSsl(),
     ],

@@ -120,6 +120,11 @@ export const AllNodeName: {
     path: '/Protocols/PayFollow',
     version: '1.0.0',
   },
+  [NodeName.NftIssue]: {
+    brfcId: '5a6fa04c6612',
+    path: '/Protocols/NftIssue',
+    version: '1.0.0',
+  },
 }
 
 export class SDK {
@@ -936,6 +941,16 @@ export class SDK {
         resolve(true)
       }
     })
+  }
+
+  async genesisNFT(
+    params: { totalSupply: number; seriesName: string },
+    option?: {
+      useFeeb?: number
+      isBroadcast?: boolean
+    }
+  ) {
+    return this.wallet?.genesisNFT(params, option)
   }
 
   getPlatform() {

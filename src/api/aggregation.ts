@@ -323,3 +323,20 @@ export const GetMetaFile = (
 }> => {
   return aggregation.get(`/v2/app/metaFile/getMetaFile?txIds=${params.join(',')}`)
 }
+
+export const GetNFTs = (params: {
+  address: string
+  page: number | string
+  pageSize: number | string
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    results: {
+      items: UserNFTItem[]
+    }
+  }
+}> => {
+  const { address, ..._params } = params
+  return aggregation.get(`/v2/app/sensible/getMyNftSummaryListV2/${address}`, { params: _params })
+}

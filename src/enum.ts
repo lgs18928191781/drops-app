@@ -273,6 +273,7 @@ export enum NodeName {
   SimpleCommunityJoin = 'SimpleCommunityJoin',
   SimpleGroupCreate = 'SimpleGroupCreate',
   ShowMsg = 'ShowMsg',
+  NftIssue = 'NftIssue',
 }
 
 export const enum BindStatus {
