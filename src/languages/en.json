@@ -45,14 +45,12 @@
       "dark": "dark",
       "light": "light"
     },
-
     "Modals": {
       "enter_password": "Enter Password",
       "enter_password_placeholder": "Speak friend and enter ^-^",
       "enter_password_confirm": "GO",
       "wrong_password_tip": "Whoops, wrong password..."
     },
-
     "Channel": {
       "members": "members",
       "join_channel": "joined the channel.",
@@ -205,5 +203,12 @@
   "Joined": "Joined",
   "None More": "None More",
   "Followed": "Followed",
-  "Number": "Number"
+  "Number": "Number",
+  "Wallet": {
+    "Balance": "Balance",
+    "Total balance": "Total balance",
+    "Action Points": "Action Points",
+    "Add Funds": "Add Funds",
+    "Balance Details": "Balance Details"
+  }
 }

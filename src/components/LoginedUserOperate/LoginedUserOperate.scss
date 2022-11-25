@@ -1,33 +1,15 @@
 .user-warp {
-    .avatar {
+    .user-warp-item {
         margin-right: 15px;
-    }
-
-    .avatar,
-    .more {
-        width: 36PX;
-        height: 36PX;
-    }
-
-    @media (min-width: 1024PX) {
-        .avatar {
-            margin-right: 18px;
-        }
-
-        .avatar,
-        .more {
-            width: 40PX;
-            height: 40PX;
-        }
-    }
-
-    .more {
+        width: 36px;
+        height: 36px;
         border-radius: calc(100% / 2.5);
         border: 2PX solid #EDEFF2;
+        box-sizing: border-box;
 
         &:hover,
         &.active {
-            border-color: #BFC2CC;
+            border-color: var(--main-font-color);
         }
 
         .icon {
@@ -56,11 +38,19 @@
     }
 }
 
+.user-wallet {
+    margin: calc(0PX - var(--el-drawer-padding-primary));
+}
+
+
 @media only screen and (max-width: 1024PX) {
 
-    .user-warp .avatar,
-    .user-warp .more {
-        width: 36PX;
-        height: 36PX;
+    .user-warp {
+
+        .user-warp-item {
+            width: 30PX;
+            height: 30PX;
+        }
     }
+
 }

@@ -2,7 +2,7 @@ header {
     position: sticky;
     left: 0;
     top: 0;
-    height: 60px;
+    height: var(--header-height);
     background: #fff;
     padding: 0 18px;
     z-index: 10;

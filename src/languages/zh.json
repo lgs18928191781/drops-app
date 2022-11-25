@@ -260,5 +260,12 @@
   "Joined": "已加入",
   "None More": "没有更多了",
   "Followed": "已关注",
-  "Number": "数量"
+  "Number": "数量",
+  "Wallet": {
+    "Balance": "余额",
+    "Total balance": "总余额",
+    "Action Points": "能量点",
+    "Add Funds": "充值能量点",
+    "Balance Details": "余额详情"
+  }
 }
