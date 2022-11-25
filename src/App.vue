@@ -36,10 +36,6 @@ const userStore = useUserStore()
 <style lang="css" src="@/assets/styles/tailwind.css"></style>
 <style lang="scss" scoped>
 .main {
-  height: 100%;
-  .main-right {
-    overflow: auto;
-  }
 }
 
 @font-face {

@@ -111,7 +111,9 @@ export const router = createRouter({
     }
     // leave scroll as it is by not returning anything
     // https://github.com/Microsoft/TypeScript/issues/18319
-    return false
+    return {
+      top: 0,
+    }
   },
 })
 

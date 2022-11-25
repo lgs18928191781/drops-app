@@ -66,7 +66,7 @@
       <a class="main-border primary" @click="layout.publish()">
         <Icon name="airdrop" />
       </a>
-      <a class="main-border">
+      <a class="main-border" @click="scrollTop">
         <Icon name="top" />
       </a>
     </div>
@@ -134,13 +134,22 @@ function setPostion() {
     BuzzContanerRef.value.offsetLeft - MenuRef.value.clientWidth - 12 + 'px'
   MenuRef.value.style.marginLeft = 0
 
-  FastBtnRef.value.style.left =
-    BuzzContanerRef.value.offsetLeft + BuzzContanerRef.value.clientWidth + 12 + 'px'
-  FastBtnRef.value.style.marginLeft = 0
+  if (window.innerWidth > 750) {
+    FastBtnRef.value.style.left =
+      BuzzContanerRef.value.offsetLeft + BuzzContanerRef.value.clientWidth + 12 + 'px'
+    FastBtnRef.value.style.marginRight = 0
+  } else {
+    FastBtnRef.value.style.right = '5%'
+    FastBtnRef.value.style.marginRight = 0
+  }
 }
-
+// console.log(window.innerWidth)
 // // const isDark = useDark()
 // const toggleDark = () => {}
+
+function scrollTop() {
+  window.document.documentElement.scrollTop = 0
+}
 </script>
 
 <style lang="scss" scoped src="./Layout.scss"></style>

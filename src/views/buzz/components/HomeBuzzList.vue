@@ -77,19 +77,6 @@ Mitt.on(MittEvent.AddBuzz, async (params: { txId: string }) => {
   }
 })
 
-watch(
-  () => route.path,
-  () => {
-    isSkeleton.value = true
-    pagination.page = 1
-    pagination.loading = false
-    pagination.nothing = false
-    getDatas(true).then(() => {
-      isSkeleton.value = false
-    })
-  }
-)
-
 const publishOperates = [
   {
     icon: 'buzzn_emoji',
@@ -109,6 +96,14 @@ const publishOperates = [
   },
 ]
 
+// 监听登录状态，变化后重新拉取数据
+watch(
+  () => userStore.isAuthorized,
+  () => {
+    refreshDatas()
+  }
+)
+
 function getMore() {
   if (isSkeleton.value || pagination.loading || pagination.nothing) return
   pagination.loading = true
@@ -118,7 +113,13 @@ function getMore() {
   })
 }
 
-if (userStore.isAuthorized) {
+async function refreshDatas() {
+  isSkeleton.value = true
+  pagination.page = 1
+  pagination.loading = false
+  pagination.nothing = false
+  await getDatas(true)
+  isSkeleton.value = false
 }
 
 getDatas(true).then(() => {
