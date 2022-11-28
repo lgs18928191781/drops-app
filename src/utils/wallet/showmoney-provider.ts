@@ -1,4 +1,5 @@
-import * as bsv from '@sensible-contract/bsv'
+// @ts-ignore
+import mvc from 'mvc-lib'
 import { HttpRequests, ApiRequestTypes } from '@/utils/wallet/request2'
 import HttpRequest from 'request-sdk'
 import { BaseUtxo, MetasvUtxoTypes, Network } from './hd-wallet'
@@ -199,39 +200,42 @@ export default class ShowmoneyProvider {
   public async getInitAmount(params: {
     address: string
     xpub: string
-    token: string
-    userName: string
+    token?: string
+    userName?: string
   }): Promise<BaseUtxo> {
+    console.log('paramsparamsparams', params)
+    let options = {
+      headers: {
+        'Content-Type': 'application/json',
+        accessKey: params?.token,
+        timestamp: new Date().getTime() + '',
+        userName: params?.userName,
+      },
+    }
+
     const res = await this.callApi({
       url: '/nodemvc/api/v1/pri/wallet/sendInitSatsForMetaSV',
       params: {
         address: params.address,
         xpub: params.xpub,
       },
-      options: {
-        headers: {
-          'Content-Type': 'application/json',
-          accessKey: params.token,
-          timestamp: new Date().getTime() + '',
-          userName: params.userName,
-        },
-      },
+      options: params?.token ? options : {},
     })
     if (res.code === 0) {
       const initUtxo = res.result || {}
-      return {
+      let result = {
         ...initUtxo,
         outputIndex: +initUtxo.index,
         satoshis: +initUtxo.amount,
         value: +initUtxo.amount,
         amount: +initUtxo.amount * 1e-8,
-        address: bsv.Script.fromHex(initUtxo.scriptPubkey)
-          .toAddress(Network.mainnet)
-          .toString(),
+        address: initUtxo.toAddress,
         script: initUtxo.scriptPubkey,
         addressType: 0,
         addressIndex: 0,
       }
+      console.log('resultresult', result)
+      return result
     } else {
       throw new Error(res.msg)
     }
@@ -242,7 +246,7 @@ export default class ShowmoneyProvider {
     const utxos: UtxoItem[] = []
     if (Array.isArray(res)) {
       res.forEach(item => {
-        item.script = bsv.Script.fromAddress(item.address).toHex()
+        item.script = mvc.Script.fromAddress(item.address).toHex()
         item.amount = +item.value / 1e8
         item.vout = item.txIndex
         // sensible need satoshis,outputIndex,txId
@@ -277,7 +281,7 @@ export default class ShowmoneyProvider {
     const utxos: BaseUtxo[] = []
     if (Array.isArray(res)) {
       res.forEach(item => {
-        item.script = bsv.Script.fromAddress(item.address).toHex()
+        item.script = mvc.Script.fromAddress(item.address).toHex()
         item.amount = +item.value / 1e8
         item.vout = item.outIndex
         item.txIndex = item.outIndex

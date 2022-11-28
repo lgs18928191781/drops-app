@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+import { defineStore, storeToRefs } from 'pinia'
 import { encode, decode } from 'js-base64'
 import { SDK } from '@/utils/sdk'
 import { toRaw } from 'vue'
@@ -102,10 +102,11 @@ export const useUserStore = defineStore('user', {
   actions: {
     logout() {
       return new Promise<void>(resolve => {
-        this.user = null
-        this.password = null
         localStorage.removeItem(encode('user'))
         localStorage.removeItem(encode('password'))
+        this.user = null
+        this.password = null
+
         resolve()
       })
     },
@@ -115,6 +116,8 @@ export const useUserStore = defineStore('user', {
         if (data.rootAddress) {
           data.address = data.rootAddress
         }
+        // localStorage.setItem('user', JSON.stringify(data))
+        // window.localStorage.setItem('password', password)
         localStorage.setItem(encode('user'), encode(JSON.stringify(data)))
         window.localStorage.setItem(encode('password'), encode(password))
         this.user = data

@@ -192,7 +192,6 @@ async function handleLike() {
 
 function onPayMeConfirmCallback(params: { useMe: number }) {
   return new Promise<boolean>(async resolve => {
-    debugger
     payMe.amount = params.useMe
     payMe.resolve = resolve
     isShowConfirm.value = true

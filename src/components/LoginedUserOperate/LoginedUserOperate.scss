@@ -6,6 +6,7 @@
         border-radius: calc(100% / 2.5);
         border: 2PX solid #EDEFF2;
         box-sizing: border-box;
+        cursor: pointer;
 
         &:hover,
         &.active {
@@ -20,6 +21,12 @@
 
 
 }
+
+.connect-wallet {
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
 
 .user-operate-item {
     padding: 17px 48px;
@@ -38,8 +45,387 @@
     }
 }
 
+.user-wallet-operate-item {
+    padding: 15px;
+    cursor: pointer;
+
+    .icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 12px;
+    }
+
+    .icon-img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .name {
+        width: 100px;
+        font-size: 14px;
+    }
+
+    .check-warp {
+        background: var(--el-color-primary);
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+
+        .icon {
+            width: 10px;
+            height: 10px;
+            margin-right: 0;
+        }
+    }
+
+    &:hover {
+        background: var(--el-color-primary-light-5);
+    }
+}
+
 .user-wallet {
     margin: calc(0PX - var(--el-drawer-padding-primary));
+
+    .user {
+        padding: 0 18px;
+        height: var(--header-height);
+        width: 100%;
+        box-sizing: border-box;
+        border-bottom: 1px solid #F4F7F9;
+
+        .user-info {
+            .avatar {
+                width: 40px;
+                height: 40px;
+                margin-right: 12px;
+            }
+
+            .name {
+                font-size: 16px;
+            }
+
+            .icon {
+                width: 12px;
+                height: 12px;
+                margin-left: 8px;
+                transition: all 0.5s;
+            }
+
+            &.active {
+                .icon {
+                    transform: rotate(180deg);
+                }
+            }
+        }
+
+    }
+
+    .metaId {
+        background: #F4F7F9;
+        border-radius: 6px;
+        font-size: 12px;
+        padding: 4px 12px;
+        cursor: pointer;
+
+        &:hover {
+            background: #d1dde5;
+        }
+    }
+
+    .close {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #F4F7F9;
+        margin-left: 15px;
+        cursor: pointer;
+
+        .icon {
+            width: 14px;
+            height: 14px;
+        }
+
+        &:hover {
+            background: var(--main-font-color);
+
+            .icon {
+                :deep(use) {
+                    fill: #fff;
+                }
+            }
+        }
+    }
+
+
+    .cont-warp {
+        padding: 18px;
+    }
+
+    .tab {
+        background: #F5F7FA;
+        border-radius: 12px;
+
+        a {
+            text-align: center;
+            height: 48px;
+            line-height: 48px;
+            box-sizing: border-box;
+            cursor: pointer;
+            border-radius: 12px;
+            border: 2px solid #F5F7FA;
+
+            &:hover {
+                background: var(--el-color-primary-light-5)
+            }
+
+            &.active {
+                background: var(--el-color-primary);
+                border-color: var(--main-font-color);
+            }
+        }
+    }
+
+    .total-balance-warp {
+        margin-top: 18px;
+        padding-bottom: 18px;
+    }
+
+    .total-balance {
+        height: 110px;
+
+        .label {
+            text-align: center;
+            color: #909399;
+        }
+
+        .value {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 6px;
+        }
+    }
+
+    .wallets {
+        margin-top: 18px;
+        border-top: 1px solid #F4F7F9;
+
+        .wallet-section {
+            padding: 18px 0;
+            border-bottom: 1px solid #F4F7F9;
+
+            .top {
+                .title {
+                    color: #606266;
+                }
+
+                .add {
+                    color: #5586BB;
+                    padding: 6px 12px;
+                    border: 1px solid #EDEFF2;
+                    border-radius: 6px;
+                    cursor: pointer;
+
+
+
+                    .icon {
+                        width: 12px;
+                        height: 12px;
+                        transform: rotate(-90deg);
+                        margin-left: 6px;
+
+                        :deep(use) {
+                            fill: #5586BB;
+                        }
+                    }
+
+                    &:hover {
+                        background: #5586BB;
+                        border-color: #5586BB;
+                        color: #fff;
+
+                        .icon {
+                            :deep(use) {
+                                fill: #fff;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .wallet-list {
+                margin-top: 12px;
+            }
+
+            .wallet-item {
+                margin-bottom: 12px;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+
+                .icon {
+                    border-radius: 50%;
+                    background: #EDEFF2;
+                    width: 40px;
+                    height: 40px;
+                    margin-right: 6px;
+
+                    img {
+                        max-width: 26px;
+                        max-height: 26px;
+                    }
+                }
+
+                .value {
+                    text-align: right;
+
+                    .statosis {}
+
+                    .usd {
+                        color: #909399;
+                        font-size: 12px;
+                    }
+                }
+            }
+        }
+    }
+
+    .chain {
+        margin-top: 18px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid #F4F7F9;
+
+
+
+        .label {
+            color: #606266;
+        }
+
+        .current-chain {
+            border: 2px solid #EDEFF2;
+            padding: 6px 18px;
+            border-radius: 12px;
+            font-size: 16px;
+
+
+
+            .icon-warp {
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                background: #F4F7F9;
+                margin-right: 6px;
+
+                img {
+                    max-width: 20px;
+                    max-height: 20px;
+                }
+            }
+
+            .icon {
+                width: 12px;
+                height: 12px;
+                margin-left: 6px;
+                transition: all 0.5s;
+            }
+
+            &:hover {
+                border-color: var(--main-font-color);
+            }
+
+            &.active {
+                border-color: var(--main-font-color);
+
+                .icon {
+                    transform: rotate(180deg);
+                }
+            }
+        }
+    }
+
+    .content {
+        margin-top: 18px;
+    }
+
+}
+
+.nft-genesis-list {
+    .nft-genesis-item {
+        margin-bottom: 18px;
+
+        .top {
+            cursor: pointer;
+
+            .name {}
+
+            .num {
+                .icon {
+                    width: 12px;
+                    height: 12px;
+                    transform: rotate(-90deg);
+                    margin-left: 6px;
+                }
+            }
+        }
+
+        .list {
+            margin-top: 12px;
+
+            .item {
+                width: calc((100% - 24px) / 3);
+                margin-right: 12px;
+                display: inline-block;
+
+                &:nth-child(3n) {
+                    margin-right: 0;
+                }
+            }
+        }
+    }
+}
+
+.chain-item {
+    padding: 20px;
+    cursor: pointer;
+
+    &:hover {
+        background: var(--el-color-primary-light-5);
+    }
+
+    .icon-warp {
+        background: #EDEFF2;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        margin-right: 6px;
+
+        img {
+            max-width: 20px;
+            max-height: 20px;
+        }
+    }
+
+    .name {
+        font-size: 16px;
+        width: 100px;
+    }
+
+    .check-warp {
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+
+        .icon {
+            width: 10px;
+            height: 10px;
+        }
+    }
+
+    &.active {
+        .check-warp {
+            background: var(--el-color-primary);
+        }
+    }
 }
 
 

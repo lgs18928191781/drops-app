@@ -274,6 +274,7 @@ export enum NodeName {
   SimpleGroupCreate = 'SimpleGroupCreate',
   ShowMsg = 'ShowMsg',
   NftIssue = 'NftIssue',
+  NftGenesis = 'NftGenesis',
 }
 
 export const enum BindStatus {
@@ -284,6 +285,10 @@ export const enum BindStatus {
   InputPassword,
 }
 
+export const enum RegisterSource {
+  showmoney = 'normal',
+  metamask = 'metamask',
+}
 export const enum CommunityJoinAction {
   Join = 1,
   Leave = -1,

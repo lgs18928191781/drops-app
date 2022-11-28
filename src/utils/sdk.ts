@@ -35,6 +35,7 @@ import { useUserStore } from '@/stores/user'
 import i18n from './i18n'
 import SdkPayConfirmModalVue from '@/components/SdkPayConfirmModal/SdkPayConfirmModal.vue'
 import { h, render } from 'vue'
+import { NftManager, FtManager, API_NET, API_TARGET } from 'meta-contract'
 
 enum AppMode {
   PROD = 'prod',
@@ -125,6 +126,11 @@ export const AllNodeName: {
     path: '/Protocols/NftIssue',
     version: '1.0.0',
   },
+  [NodeName.NftGenesis]: {
+    brfcId: '599aa8e586e8',
+    path: '/Protocols/NftGenesis',
+    version: '1.0.0',
+  },
 }
 
 export class SDK {
@@ -139,7 +145,7 @@ export class SDK {
   isInitSdked = false
   network = Network.mainnet
 
-  constructor(network = Network.mainnet) {
+  constructor(network: any) {
     this.network = network
     if (this.appMetaIdJs) this.isInitSdked = true
   }
@@ -752,7 +758,7 @@ export class SDK {
             : undefined
 
           // 处理brfc 子节点
-          const res = await this.wallet?.createBrfcChildNode(
+          let res = await this.wallet?.createBrfcChildNode(
             {
               ...params,
               publickey,
@@ -763,6 +769,31 @@ export class SDK {
               isBroadcast: false,
             }
           )
+          if (params.nodeName === NodeName.NftGenesis) {
+            const nftManager = new NftManager({
+              apiTarget: API_TARGET.MVC,
+              // @ts-ignore
+              network: this.network,
+              purse: this.wallet?.wallet
+                .deriveChild(0)
+                .deriveChild(0)
+                .privateKey.toString(),
+            })
+            const _res = await nftManager.genesis({
+              totalSupply: {
+                ...JSON.parse(params.data),
+                opreturnData: res?.scriptPlayload,
+              },
+            })
+            res = {
+              txId: '',
+              address: '',
+              addressIndex: 0,
+              addressType: 0,
+              transaction: 0,
+              scriptPlayload: [],
+            }
+          }
 
           if (res) {
             transactions.currentNode = res
@@ -839,7 +870,9 @@ export class SDK {
 
           if (transactions.currentNode?.transaction) {
             // 组装新 utxo
-            utxo = await this.wallet!.utxoFromTx({ tx: transactions.currentNodeBrfc.transaction })
+            utxo = await this.wallet!.utxoFromTx({
+              tx: transactions.currentNodeBrfc.transaction,
+            })
           }
         }
 
