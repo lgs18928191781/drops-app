@@ -347,10 +347,7 @@ export const GetBalance = (params: {
 }): Promise<{
   code: number
   data: {
-    total: number
-    results: {
-      items: UserNFTItem[]
-    }
+    balance: number
   }
 }> => {
   return aggregation.get(`/v2/app/show/balance`, { params: params })

@@ -515,13 +515,14 @@ function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
       const hdWallet = new HdWallet(wallet)
       // 1. 先获取utxo
       let utxos = await hdWallet.provider.getUtxos(hdWallet.wallet.xpubkey.toString())
+      debugger
       // 2. 把钱打到protocols节点
       // 先把钱打回到 protocolAddress
       const transfer = await hdWallet.makeTx({
         utxos: utxos,
         opReturn: [],
         change: hdWallet.rootAddress,
-        payTo: [{ amount: 1000, address: hdWallet.protocolAddress }],
+        payTo: [{ amount: 2000, address: hdWallet.protocolAddress }],
       })
       if (transfer) {
         const utxo = await hdWallet.utxoFromTx({

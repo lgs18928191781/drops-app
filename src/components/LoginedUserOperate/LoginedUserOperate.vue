@@ -48,7 +48,13 @@
   </template>
 
   <!-- wallet -->
-  <ElDrawer v-model="isShowWallet" :show-close="false" :with-header="false" :size="'360px'">
+  <ElDrawer
+    v-model="isShowWallet"
+    :show-close="false"
+    :with-header="false"
+    :size="'360px'"
+    :append-to-body="true"
+  >
     <div class="user-wallet">
       <div class="user flex flex-align-center">
         <div class="flex1">
@@ -407,7 +413,9 @@ function getSpaceBalance() {
         resolve()
       })
     if (typeof res === 'number') {
-      wallets[1].list[1].statosis = res
+      wallets[1].list[1].statosis = new Decimal(
+        new Decimal(res).div(Math.pow(10, 8)).toFixed(2)
+      ).toNumber()
       wallets[1].list[1].loading = false
       resolve()
     }
@@ -419,14 +427,16 @@ function getETHBalance() {
     // 获取余额
     if (userStore.user!.ethAddress) {
       const res = await GetBalance({
-        chain: 'ETH',
+        chain: 'goerli',
         address: userStore.user!.ethAddress!,
       }).catch(error => {
         ElMessage.error(error.message)
         resolve()
       })
-      if (typeof res === 'number') {
-        wallets[1].list[0].statosis = res
+      if (res?.code === 0) {
+        wallets[1].list[0].statosis = new Decimal(
+          new Decimal(res.data.balance).div(Math.pow(10, 18)).toFixed(4)
+        ).toNumber()
         wallets[1].list[0].loading = false
         resolve()
       }
