@@ -42,7 +42,7 @@
 
             <div class="operate flex flex-pack-end">
               <a class="main-border primary">
-                <Icon name="right" @click="emit('update:modelValue', false)" />
+                <Icon name="right" @click="skip" />
               </a>
             </div>
           </div>
@@ -267,6 +267,11 @@ const rules = {
 const formRef = ref()
 
 function signMnemonicSeed() {}
+
+function skip() {
+  emit('update:modelValue', false)
+  window.location.reload()
+}
 
 async function selectLoginType(item: number) {
   status.value = item

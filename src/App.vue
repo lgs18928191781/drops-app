@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import ConnectWalletModalVue from './components/ConnectWalletModal/ConnectWalletModal.vue'
 import LeftNavigationVue from './components/LeftNavigation/LeftNavigation.vue'
 import { useRootStore } from '@/stores/root'

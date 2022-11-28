@@ -28,10 +28,7 @@
           </div>
           <div class="operate flex flex-align-center">
             <div class="flex1">
-              <span
-                v-html="$t('Login.BackupMnemonic.jumpOver')"
-                @click="emit('update:modelValue', false)"
-              ></span>
+              <span v-html="$t('Login.BackupMnemonic.jumpOver')" @click="confirm"></span>
             </div>
             <a class="main-border primary" :class="{ faded: !isBackUp }" @click="confirm">
               <Icon name="right" />
