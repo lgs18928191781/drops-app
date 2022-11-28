@@ -1,4 +1,5 @@
-import * as bsv from '@sensible-contract/bsv'
+// @ts-ignore
+import mvc from 'mvc-lib'
 import { HttpRequests, ApiRequestTypes } from '@/utils/wallet/request2'
 import HttpRequest from 'request-sdk'
 import { BaseUtxo, MetasvUtxoTypes, Network } from './hd-wallet'
@@ -245,7 +246,7 @@ export default class ShowmoneyProvider {
     const utxos: UtxoItem[] = []
     if (Array.isArray(res)) {
       res.forEach(item => {
-        item.script = bsv.Script.fromAddress(item.address).toHex()
+        item.script = mvc.Script.fromAddress(item.address).toHex()
         item.amount = +item.value / 1e8
         item.vout = item.txIndex
         // sensible need satoshis,outputIndex,txId
@@ -280,7 +281,7 @@ export default class ShowmoneyProvider {
     const utxos: BaseUtxo[] = []
     if (Array.isArray(res)) {
       res.forEach(item => {
-        item.script = bsv.Script.fromAddress(item.address).toHex()
+        item.script = mvc.Script.fromAddress(item.address).toHex()
         item.amount = +item.value / 1e8
         item.vout = item.outIndex
         item.txIndex = item.outIndex
