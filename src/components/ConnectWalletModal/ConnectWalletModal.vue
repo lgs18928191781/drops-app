@@ -173,7 +173,7 @@ import AuthClient, { generateNonce } from '@walletconnect/auth-client'
 import QRCodeModal from '@walletconnect/qrcode-modal'
 import keccak256 from 'keccak256'
 import { RegisterSource } from '@/enum'
-
+import { openLoading } from '@/utils/util'
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const i18n = useI18n()
@@ -394,6 +394,7 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
       )
       if (res) {
         await BindMetaIdRef.value.loginSuccess(res)
+        isShowMetaMak.value = false
       }
     } catch (error) {
       isShowMetaMak.value = false
@@ -426,10 +427,23 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
   }
 }
 
-function OnMetaIdRegister(params: MetaIdWalletRegisterBaseInfo) {
+async function OnMetaIdRegister(params: MetaIdWalletRegisterBaseInfo) {
+  let loading = openLoading({
+    text: '注册中',
+  })
   metaIdWalletRegisterBaseInfo.val = params
   rootStore.$patch({ isShowLogin: false })
-  isShowSetBaseInfo.value = true
+  //
+  try {
+    await onSetBaseInfoSuccess({
+      name: '',
+    })
+    loading.close()
+    isShowSetBaseInfo.value = true
+  } catch (error) {
+    loading.close()
+    return ElMessage.error(`${(error as any).toString()}`)
+  }
 }
 
 async function onSetBaseInfoSuccess(params: {
@@ -486,7 +500,7 @@ async function onSetBaseInfoSuccess(params: {
         const createNameNode = await userStore.showWallet!.wallet!.createNode({
           nodeName: 'name',
           parentTxId: userStore.user!.infoTxId,
-          data: params.name,
+          data: params.name ? params.name : `${import.meta.env.VITE_DefaultName}`,
           utxos: utxos,
           change: params.nft ? infoAddress : wallet!.rootAddress,
         })
@@ -564,15 +578,16 @@ async function onSetBaseInfoSuccess(params: {
       // 更新本地用户信息
       userStore.updateUserInfo({
         ...userStore.user!,
-        name: params.name,
+        name: params.name ? params.name : `${import.meta.env.VITE_DefaultName}`,
       })
     } else {
+      debugger
       // 注册 metaId 钱包
       const baseInfo = metaIdWalletRegisterBaseInfo.val!
       const _params = {
         type: 1, // 注册时必须加上图片验证码验证， 1 是给App用的的，App没有图片验证码
         ...baseInfo,
-        name: params.name,
+        name: params.name ? params.name : `${import.meta.env.VITE_DefaultName}`,
       }
       const loginName = baseInfo!.userType === 'phone' ? baseInfo!.phone : baseInfo!.email
       const registerRes = await RegisterCheck(_params)
@@ -697,7 +712,9 @@ async function onSetBaseInfoSuccess(params: {
         }
       }
     }
-    setBaseInfoRef.value.FormRef.resetFields()
+    if (params.name) {
+      setBaseInfoRef.value.FormRef.resetFields()
+    }
     loading.value = false
     isShowSetBaseInfo.value = false
     isSHowBackupMnemonic.value = true

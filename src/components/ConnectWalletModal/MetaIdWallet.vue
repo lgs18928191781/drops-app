@@ -547,7 +547,7 @@ function submitForm() {
                     confirmButtonText: '去修复',
                   }
                 ).then(() => {
-                  location.href = 'https://www.showmoney.app/'
+                  location.href = `${import.meta.env.VITE_FIXACCOUTURL}`
                 })
               }
               // @ts-ignore
