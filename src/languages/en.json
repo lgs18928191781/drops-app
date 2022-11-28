@@ -185,6 +185,7 @@
     }
   },
   "Follow": "Follow",
+  "walletError": "Signing failed, unable to log in to wallet",
   "Pagination": {
     "loading": "Loading",
     "nothing": "Nothing ~"

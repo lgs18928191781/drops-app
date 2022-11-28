@@ -210,7 +210,7 @@ async function confirmComment() {
         userName: userStore.user!.name!,
         zeroAddress: userStore.user!.address!,
       }
-      debugger
+
       if (addComment.commentToCommentTxId === '') {
         commentListData.unshift(item)
       } else {

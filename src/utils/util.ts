@@ -358,7 +358,6 @@ export function camelToKebab(str: string): string {
 
 export function alertCatchError(error: any) {
   return new Promise<void>(resolve => {
-    debugger
     if (error) {
       if (typeof error === 'string') {
         ElMessage.error(error)

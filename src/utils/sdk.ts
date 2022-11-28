@@ -145,7 +145,7 @@ export class SDK {
   isInitSdked = false
   network = Network.mainnet
 
-  constructor(network = Network.mainnet) {
+  constructor(network: any) {
     this.network = network
     if (this.appMetaIdJs) this.isInitSdked = true
   }
@@ -870,7 +870,9 @@ export class SDK {
 
           if (transactions.currentNode?.transaction) {
             // 组装新 utxo
-            utxo = await this.wallet!.utxoFromTx({ tx: transactions.currentNodeBrfc.transaction })
+            utxo = await this.wallet!.utxoFromTx({
+              tx: transactions.currentNodeBrfc.transaction,
+            })
           }
         }
 

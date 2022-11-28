@@ -462,4 +462,5 @@ export interface CreateNodeRes {
   addressIndex: number
   transaction?: bsv.Transaction
   scriptPlayload: (string | Buffer)[]
+  hex?: string
 }

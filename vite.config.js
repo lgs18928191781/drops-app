@@ -104,6 +104,7 @@ export default ({ mode, command }) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
+        ['bn.js']: path.resolve(process.cwd(), 'node_modules', 'bn.js'),
         ...stdLibBrowser,
       },
     },

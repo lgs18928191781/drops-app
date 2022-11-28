@@ -43,7 +43,12 @@
   </ElDialog>
 
   <!-- MetaMask -->
-  <MetaMask v-model="isShowMetaMak" id="metamask" @success="onThreePartLinkSuccess" />
+  <MetaMask
+    v-model="isShowMetaMak"
+    ref="MetaMaskRef"
+    id="metamask"
+    @success="onThreePartLinkSuccess"
+  />
 
   <!-- 登录注册 -->
   <!-- <LoginAndRegisterModalVue
@@ -167,12 +172,13 @@ import WalletConnect from '@walletconnect/client'
 import AuthClient, { generateNonce } from '@walletconnect/auth-client'
 import QRCodeModal from '@walletconnect/qrcode-modal'
 import keccak256 from 'keccak256'
-
+import { RegisterSource } from '@/enum'
+import { openLoading } from '@/utils/util'
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const i18n = useI18n()
 const emit = defineEmits(['metamask'])
-
+const MetaMaskRef = ref()
 const loading = ref(false)
 const isShowMetaMak = ref(false)
 const isShowLoginAndRegister = ref(false)
@@ -285,7 +291,7 @@ async function metaMaskLoginSuccess(res: MetaMaskLoginRes) {
       password: res.password,
       userType: 'email',
     })
-    userStore.$patch({ wallet: new SDK() })
+    userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
     userStore.showWallet.initWallet()
     if (res.type === 'register') {
       isShowSendBuzz.value = true
@@ -353,6 +359,7 @@ async function connectMetaLet() {
 
 async function onThreePartLinkSuccess(params: { signAddressHash: string; address: string }) {
   //检查hash是否已绑定
+
   const getMnemonicRes = await LoginByHashData({
     hashData: params.signAddressHash,
   }).catch(error => {
@@ -367,11 +374,46 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
       throw new Error(error.message)
     }
   })
-  if (getMnemonicRes?.code === 0 && getMnemonicRes.data) {
+  let res
+
+  if (
+    getMnemonicRes?.data?.metaId &&
+    getMnemonicRes?.data?.registerSource === RegisterSource.metamask
+  ) {
+    //这里需要再判断一下用户注册来源，如果是metamask注册的用户要拿metaid来解
+
+    try {
+      const signHashForMnemonic = await MetaMaskRef.value.ethPersonalSignSign({
+        address: params.address,
+        message: getMnemonicRes?.data?.metaId.slice(0, 6),
+      })
+
+      res = await BindMetaIdRef.value.loginByMnemonic(
+        getMnemonicRes.data.menmonic,
+        signHashForMnemonic
+      )
+      if (res) {
+        await BindMetaIdRef.value.loginSuccess(res)
+        isShowMetaMak.value = false
+      }
+    } catch (error) {
+      isShowMetaMak.value = false
+      return ElMessage.error(`${i18n.t('walletError')}`)
+    }
+
+    // return  emit('update:modelValue', false)
+  } else if (
+    getMnemonicRes?.code === 0 &&
+    getMnemonicRes.data.menmonic &&
+    getMnemonicRes?.data?.registerSource === RegisterSource.showmoney
+  ) {
     // 有密码直接登录， 没有密码就要用户输入
     const password = localStorage.getItem(encode('password'))
     if (password) {
-      const res = await BindMetaIdRef.value.loginByMnemonic(getMnemonicRes.data, decode(password))
+      res = await BindMetaIdRef.value.loginByMnemonic(
+        getMnemonicRes.data.menmonic,
+        decode(password)
+      )
       if (res) {
         await BindMetaIdRef.value.loginSuccess(res)
       }
@@ -385,10 +427,23 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
   }
 }
 
-function OnMetaIdRegister(params: MetaIdWalletRegisterBaseInfo) {
+async function OnMetaIdRegister(params: MetaIdWalletRegisterBaseInfo) {
+  let loading = openLoading({
+    text: '注册中',
+  })
   metaIdWalletRegisterBaseInfo.val = params
   rootStore.$patch({ isShowLogin: false })
-  isShowSetBaseInfo.value = true
+  //
+  try {
+    await onSetBaseInfoSuccess({
+      name: '',
+    })
+    loading.close()
+    isShowSetBaseInfo.value = true
+  } catch (error) {
+    loading.close()
+    return ElMessage.error(`${(error as any).toString()}`)
+  }
 }
 
 async function onSetBaseInfoSuccess(params: {
@@ -404,6 +459,7 @@ async function onSetBaseInfoSuccess(params: {
   loading.value = true
   try {
     const wallet = userStore.showWallet!.wallet
+    console.log('wallet', wallet)
     if (userStore.isAuthorized) {
       let utxos = await wallet?.provider.getUtxos(wallet.wallet.xpubkey.toString())
       const broadcasts: string[] = []
@@ -444,14 +500,13 @@ async function onSetBaseInfoSuccess(params: {
         const createNameNode = await userStore.showWallet!.wallet!.createNode({
           nodeName: 'name',
           parentTxId: userStore.user!.infoTxId,
-          data: params.name,
+          data: params.name ? params.name : `${import.meta.env.VITE_DefaultName}`,
           utxos: utxos,
           change: params.nft ? infoAddress : wallet!.rootAddress,
         })
         broadcasts.push(createNameNode.hex)
       }
 
-      debugger
       if (params.nft) {
         // 创建 NFTAvatar brfc 节点
         utxo = await wallet?.utxoFromTx({
@@ -523,15 +578,16 @@ async function onSetBaseInfoSuccess(params: {
       // 更新本地用户信息
       userStore.updateUserInfo({
         ...userStore.user!,
-        name: params.name,
+        name: params.name ? params.name : `${import.meta.env.VITE_DefaultName}`,
       })
     } else {
+      debugger
       // 注册 metaId 钱包
       const baseInfo = metaIdWalletRegisterBaseInfo.val!
       const _params = {
         type: 1, // 注册时必须加上图片验证码验证， 1 是给App用的的，App没有图片验证码
         ...baseInfo,
-        name: params.name,
+        name: params.name ? params.name : `${import.meta.env.VITE_DefaultName}`,
       }
       const loginName = baseInfo!.userType === 'phone' ? baseInfo!.phone : baseInfo!.email
       const registerRes = await RegisterCheck(_params)
@@ -602,6 +658,7 @@ async function onSetBaseInfoSuccess(params: {
         }
 
         const hdWallet = new HdWallet(walletInfo.wallet)
+        console.log('hdWallethdWallet', hdWallet)
         const metaIdInfo = await hdWallet.initMetaIdNode(account)
         if (!metaIdInfo) {
           throw new Error('Create MetaID Error')
@@ -655,7 +712,9 @@ async function onSetBaseInfoSuccess(params: {
         }
       }
     }
-    setBaseInfoRef.value.FormRef.resetFields()
+    if (params.name) {
+      setBaseInfoRef.value.FormRef.resetFields()
+    }
     loading.value = false
     isShowSetBaseInfo.value = false
     isSHowBackupMnemonic.value = true

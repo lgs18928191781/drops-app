@@ -88,6 +88,7 @@ watch(
 function confirm() {
   if (!isBackUp.value) return
   emit('update:modelValue', false)
+  window.location.reload()
 }
 
 function finish() {

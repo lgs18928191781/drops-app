@@ -285,6 +285,10 @@ export const enum BindStatus {
   InputPassword,
 }
 
+export const enum RegisterSource {
+  showmoney = 'normal',
+  metamask = 'metamask',
+}
 export const enum CommunityJoinAction {
   Join = 1,
   Leave = -1,
