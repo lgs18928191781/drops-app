@@ -266,6 +266,8 @@
     "Total balance": "总余额",
     "Action Points": "能量点",
     "Add Funds": "充值能量点",
-    "Balance Details": "余额详情"
+    "Balance Details": "余额详情",
+    "Blockchain": "区块链",
+    "Refresh funds": "刷新"
   }
 }

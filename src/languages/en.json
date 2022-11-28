@@ -5,7 +5,7 @@
   "createnft": "Create",
   "mynft": "My NFT",
   "mywallet": "My Wallet",
-  "logout": "Sign Out",
+  "logout": "Log out",
   "toLoginTip": "Please log in first",
   "niceWarning": "Confir Tips ",
   "loginingTip": "Logging in, please operate later ",
@@ -215,6 +215,8 @@
     "Total balance": "Total balance",
     "Action Points": "Action Points",
     "Add Funds": "Add Funds",
-    "Balance Details": "Balance Details"
+    "Balance Details": "Balance Details",
+    "Blockchain": "Blockchain",
+    "Refresh funds": "Refresh funds"
   }
 }

@@ -1,0 +1,108 @@
+.cover {
+    width: 100%;
+    height: 0;
+    padding-bottom: 100%;
+    position: relative;
+    border-radius: 12px 12px 0 0;
+    overflow: hidden;
+
+    .el-skeleton {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+
+        :deep(.el-skeleton__image) {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    .remint {
+        position: absolute;
+        left: 0;
+        top: 0;
+        margin-left: 12px;
+        margin-top: 12px;
+        z-index: 2;
+        background: #3081DC;
+        display: inline-block;
+        padding: 5px 10px;
+        color: #fff;
+        border-radius: 5px;
+    }
+
+    .attachment-icon {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        height: auto;
+        width: 20%;
+        max-width: 50px;
+        z-index: 2;
+    }
+
+    :deep(.el-image),
+    .cube,
+    .el-skeleton__item {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 12px;
+        text-align: center;
+    }
+
+    .cube {
+        cursor: pointer;
+    }
+
+    img {
+
+        height: 100%;
+        max-height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    :deep(.image) {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    :deep(.swiper) {
+
+
+        .swiper-slide {
+            background-position: center;
+            background-size: cover;
+            background: #fff;
+        }
+
+        .swiper-slide img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+    }
+
+    &.none-radius {
+        border-radius: 0;
+
+        :deep(.el-image),
+        .cube,
+        .el-skeleton__item {
+            border-radius: 0;
+        }
+    }
+}
