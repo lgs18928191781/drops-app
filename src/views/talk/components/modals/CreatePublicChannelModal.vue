@@ -1,46 +1,31 @@
 <template>
-  <div
-    class="fixed inset-0 z-[60] bg-transparent w-screen h-screen flex items-center justify-center lg:bg-black/50"
-  >
-    <div
-      class="w-full h-full bg-white lg:w-114 lg:h-auto lg:h-[600PX] lg:rounded-3xl relative lg:shadow-lg p-8"
-    >
-      <button class="absolute top-[32PX] right-[32PX] h-6 w-6 flex items-center justify-center">
-        <Icon
-          name="x_circle"
-          class="w-6 h-6 text-dark-400 cursor-pointer"
-          @click="layout.isShowCreatePublicChannelModal = false"
-        />
-      </button>
+  <BaseModal v-model="layout[ShowControl.isShowCreatePublicChannelModal]">
+    <template v-slot:title>
+      {{ $t('Talk.Community.create_public_channel') }}
+    </template>
 
-      <div class="h-full w-full flex flex-col justify-between pt-8 lg:pt-0">
-        <div class="flex flex-col w-full h-full items-center justify-start">
-          <h3 class="text-2xl text-center font-bold capitalize">
-            {{ $t('Talk.Community.create_public_channel') }}
-          </h3>
+    <template v-slot:body>
+      <div class="flex flex-col h-full">
+        <p class="mt-4.5 text-base text-dark-400 leading-relaxed text-center">
+          {{ $t('Talk.Community.create_public_channel_tip') }}
+        </p>
 
-          <p class="mt-4.5 text-base text-dark-400 leading-relaxed text-center">
-            {{ $t('Talk.Community.create_public_channel_tip') }}
-          </p>
+        <div class="mt-7.5 w-full">
+          <h4 class="text-lg text-dark-800 capitalize">
+            {{ $t('Talk.Community.channel_name') }}
+          </h4>
 
-          <div class="mt-12 w-full">
-            <h4 class="text-lg text-dark-800 capitalize">
-              {{ $t('Talk.Community.channel_name') }}
-            </h4>
-
-            <div class="mt-3">
-              <input
-                type="text"
-                class="outline-0 main-border faded-switch !bg-white still w-full p-4.5 text-base"
-                :placeholder="$t('Talk.Community.channel_name')"
-                v-model="form.name"
-              />
-            </div>
+          <div class="mt-3">
+            <input
+              type="text"
+              class="outline-0 main-border faded-switch !bg-white still w-full p-4.5 text-base"
+              :placeholder="$t('Talk.Community.channel_name')"
+              v-model="form.name"
+            />
           </div>
         </div>
 
-        <div class="flex items-center justify-between">
-          <div class="w-1"></div>
+        <div class="flex items-end justify-end grow lg:mt-8">
           <button
             class="w-14 h-14 main-border primary flex items-center justify-center text-dark-800"
             :class="{ 'faded still text-dark-300': !form.isFinished }"
@@ -51,8 +36,8 @@
           </button>
         </div>
       </div>
-    </div>
-  </div>
+    </template>
+  </BaseModal>
 </template>
 
 <script lang="ts" setup>
@@ -63,6 +48,8 @@ import { useTalkStore } from '@/stores/talk'
 
 import { useUserStore } from '@/stores/user'
 import { createChannel } from '@/utils/talk'
+import { ShowControl } from '@/enum'
+import BaseModal from './BaseModal.vue'
 
 const form = useChannelFormStore()
 form.type = GroupChannelType.PublicText

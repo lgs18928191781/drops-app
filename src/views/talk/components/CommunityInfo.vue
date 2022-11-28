@@ -84,7 +84,7 @@
                     </div>
 
                     <button
-                      class="hover:text-primary text-dark-400 cursor-copy"
+                      class="hover:text-dark-800 text-dark-300 cursor-copy"
                       :class="[
                         channel.id === talk.activeChannelId ? '' : 'hidden group-hover:!block',
                       ]"
@@ -132,7 +132,7 @@
                       {{ channel.name }}
                     </div>
                     <button
-                      class="hover:text-primary text-dark-400 cursor-copy"
+                      class="hover:text-dark-800 text-dark-300 cursor-copy"
                       :class="[
                         channel.id === talk.activeChannelId ? '' : 'hidden group-hover:!block',
                       ]"

@@ -27,6 +27,13 @@
           </ElDropdownMenu>
         </template>
       </ElDropdown>
+
+      <Teleport to="body">
+        <SettingsModalVue
+          v-if="layout.isShowSettingsModal"
+          @close-modal="layout.isShowSettingsModal = false"
+        />
+      </Teleport>
     </div>
   </template>
   <template v-else>
@@ -112,10 +119,13 @@ import { ElDropdown } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CardVue from '../Card/Card.vue'
+import SettingsModalVue from '@/components/Settings/SettingsModal.vue'
+import { useLayoutStore } from '@/stores/layout'
 
 const i18n = useI18n()
 const rootStore = useRootStore()
 const userStore = useUserStore()
+const layout = useLayoutStore()
 
 const tabs = [
   { name: i18n.t('Wallet.Balance'), value: 0 },
@@ -132,7 +142,9 @@ const userOperates = [
   {
     name: i18n.t('UserOperate.settings'),
     icon: 'setting',
-    func: () => {},
+    func: () => {
+      layout.isShowSettingsModal = true
+    },
   },
   {
     name: i18n.t('UserOperate.aboutShow'),
