@@ -64,6 +64,9 @@ export const useTalkStore = defineStore('talk', {
 
         if (channel.roomJoinType === '1') return GroupChannelType.Password
         if (channel.roomJoinType === '2') return GroupChannelType.NFT
+        if (channel.roomJoinType === '3') return GroupChannelType.FT
+
+        return null
       }
     },
 
@@ -73,8 +76,8 @@ export const useTalkStore = defineStore('talk', {
       return this.isActiveChannelPublic || this.hasActiveChannelConsent
     },
 
-    activeGroupChannelType(): GroupChannelType | undefined {
-      if (!this.activeChannel) return undefined
+    activeGroupChannelType(): GroupChannelType | null {
+      if (!this.activeChannel) return null
 
       return this.channelType(this.activeChannel)
     },

@@ -87,6 +87,13 @@ talk.initChannel(communityId as string, channelId as string).then(async initRes 
         }
 
         return
+
+      /**
+       * todo 检查NFT
+       */
+      case GroupChannelType.NFT:
+        talk.hasActiveChannelConsent = true
+        return
     }
   }
 

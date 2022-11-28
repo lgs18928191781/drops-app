@@ -67,16 +67,26 @@
                   class="outline-0 main-border w-full px-4 py-3 text-base flex justify-between items-center"
                   @click="layout.isShowChooseTokenModal = !layout.isShowChooseTokenModal"
                 >
-                  <div class="flex items-center gap-x-1">
-                    <Icon
-                      name="nft_symbol"
-                      class="w-8 h-8 text-dark-300  box-content group-hover:text-dark-800"
-                      :class="{ '!text-dark-800': form.password.length > 0 }"
-                    />
+                  <div class="flex items-center gap-x-3">
+                    <template v-if="form.nft">
+                      <div class="w-8 h-8 rounded-full">
+                        <Image :src="form.nft.icon" customClass="w-8 h-8 box-content rounded" />
+                      </div>
 
-                    <span class="text-sm text-dark-400">
-                      {{ consentTabs[selectedTab].buttonText }}
-                    </span>
+                      <span class="text-sm text-dark-800">
+                        {{ form.nft.name }}
+                      </span>
+                    </template>
+                    <template v-else>
+                      <Icon
+                        name="nft_symbol"
+                        class="w-8 h-8 text-dark-300 box-content group-hover:text-dark-800"
+                      />
+
+                      <span class="text-sm text-dark-400">
+                        {{ consentTabs[selectedTab].buttonText }}
+                      </span>
+                    </template>
                   </div>
 
                   <Icon
@@ -92,16 +102,26 @@
                   class="outline-0 main-border w-full px-4 py-3 text-base flex justify-between items-center"
                   @click="layout.isShowChooseTokenModal = !layout.isShowChooseTokenModal"
                 >
-                  <div class="flex items-center gap-x-1">
-                    <Icon
-                      name="nft_symbol"
-                      class="w-8 h-8 text-dark-300  box-content group-hover:text-dark-800"
-                      :class="{ '!text-dark-800': form.password.length > 0 }"
-                    />
+                  <div class="flex items-center gap-x-3">
+                    <template v-if="form.ft">
+                      <div class="w-8 h-8 rounded-full">
+                        <Image :src="form.ft.icon" customClass="w-8 h-8 box-content rounded" />
+                      </div>
 
-                    <span class="text-sm text-dark-400">
-                      {{ consentTabs[selectedTab].buttonText }}
-                    </span>
+                      <span class="text-sm text-dark-800">
+                        {{ form.ft.name }}
+                      </span>
+                    </template>
+                    <template v-else>
+                      <Icon
+                        name="ft_symbol"
+                        class="w-8 h-8 text-dark-300 box-content group-hover:text-dark-800"
+                      />
+
+                      <span class="text-sm text-dark-400">
+                        {{ consentTabs[selectedTab].buttonText }}
+                      </span>
+                    </template>
                   </div>
 
                   <Icon
@@ -109,8 +129,20 @@
                     class="w-6 h-6 text-dark-800 lg:text-dark-300 lg:group-hover:text-dark-800 -mr-2 transition-all duration-200"
                   />
                 </button>
+
+                <div class="ml-4" v-if="form.ft">
+                  <input
+                    type="number"
+                    class="outline-0 main-border faded-switch !bg-white still w-full p-4 text-base leading-[24PX] text-dark-800 caret-dark-800 font-bold placeholder:font-normal"
+                    min="1"
+                    :placeholder="$t('Talk.Modals.amount_needed')"
+                    v-model="form.amount"
+                    autocomplete="nope"
+                  />
+                </div>
               </template>
 
+              <!-- Password -->
               <template v-if="selectedTab === 2">
                 <Icon
                   name="lock"
@@ -164,8 +196,23 @@
         {{ consentTabs[selectedTab].secondTip }}
       </p>
 
+      <!-- NFT -->
       <div class="h-full" v-if="selectedTab === 0">
-        <div class="" v-if="nfts.length > 0"></div>
+        <div class="flex flex-col mt-6" v-if="nftSeries.length > 0">
+          <div
+            v-for="nft in nftSeries"
+            class="flex space-x-3 items-center cursor-pointer hover:bg-dark-100 rounded p-2 -mx-2"
+            @click="selectNft(nft)"
+          >
+            <Image
+              :src="nft.icon"
+              customClass="rounded-xl h-13.5 w-13.5 object-contain object-center"
+            />
+            <div class="text-base text-dark-800">
+              {{ nft.name }}
+            </div>
+          </div>
+        </div>
         <div class="w-full h-full flex items-center justify-center flex-col gap-y-8" v-else>
           <img :src="Cat" class="w-36 h-36" alt="" />
           <div class="text-dark-400 text-base font-medium">
@@ -174,8 +221,29 @@
         </div>
       </div>
 
+      <!-- FT -->
       <div class="h-full" v-if="selectedTab === 1">
-        <div class="" v-if="fts.length > 0"></div>
+        <div class="flex flex-col mt-6" v-if="ftSeries.length > 0">
+          <div
+            v-for="ft in ftSeries"
+            class="flex items-center justify-between cursor-pointer hover:bg-dark-100 rounded p-2 -mx-2"
+            @click="selectFt(ft)"
+          >
+            <div class="flex items-center justify-start space-x-3">
+              <Image
+                :src="ft.icon"
+                customClass="rounded-xl h-13.5 w-13.5 object-contain object-center"
+              />
+              <div class="text-base text-dark-800">
+                {{ ft.name }}
+              </div>
+            </div>
+
+            <div class="text-sm text-dark-400 font-medium">
+              {{ ft.amount }}
+            </div>
+          </div>
+        </div>
         <div class="w-full h-full flex items-center justify-center flex-col gap-y-8" v-else>
           <img :src="Cat" class="w-36 h-36" alt="" />
           <div class="text-dark-400 text-base font-medium">
@@ -192,12 +260,13 @@ import { GroupChannelType, ShowControl } from '@/enum'
 import BaseModal from './BaseModal.vue'
 import { TabList, Tab, TabGroup, TabPanel, TabPanels } from '@headlessui/vue'
 import { useChannelFormStore } from '@/stores/forms'
-import { ref } from 'vue'
+import { onMounted, Ref, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { createChannel } from '@/utils/talk'
 import { useTalkStore } from '@/stores/talk'
 import { useUserStore } from '@/stores/user'
 import { useLayoutStore } from '@/stores/layout'
+import { getNftSeries, getFtSeries } from '@/api/talk'
 import Cat from '@/assets/images/cat.svg?url'
 
 const isShowingPassword = ref(false)
@@ -245,8 +314,8 @@ const consentTabs = ref([
   },
 ])
 
-const nfts = ref([])
-const fts = ref([])
+const nftSeries: Ref<any[]> = ref([])
+const ftSeries: Ref<any[]> = ref([])
 
 const form = useChannelFormStore()
 changeTab(selectedTab.value)
@@ -263,4 +332,28 @@ const tryCreateChannel = async () => {
     userStore.user!.metaId
   )
 }
+
+const selectNft = (nft: any) => {
+  form.nft = nft
+  layout.isShowChooseTokenModal = false
+}
+
+const selectFt = (ft: any) => {
+  form.ft = ft
+  layout.isShowChooseTokenModal = false
+}
+
+const fetchNftSeries = async () => {
+  const _nfts = await getNftSeries(talkStore.selfMetaId)
+  nftSeries.value = _nfts
+}
+const fetchFts = async () => {
+  const _fts = await getFtSeries(talkStore.selfMetaId)
+  ftSeries.value = _fts
+}
+
+onMounted(async () => {
+  await fetchNftSeries()
+  await fetchFts()
+})
 </script>
