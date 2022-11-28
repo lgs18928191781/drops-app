@@ -429,7 +429,7 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
 
 async function OnMetaIdRegister(params: MetaIdWalletRegisterBaseInfo) {
   let loading = openLoading({
-    text: '注册中',
+    text: i18n.t('registing'),
   })
   metaIdWalletRegisterBaseInfo.val = params
   rootStore.$patch({ isShowLogin: false })
