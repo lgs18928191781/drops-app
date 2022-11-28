@@ -222,19 +222,19 @@ export default class ShowmoneyProvider {
     })
     if (res.code === 0) {
       const initUtxo = res.result || {}
-      return {
+      let result = {
         ...initUtxo,
         outputIndex: +initUtxo.index,
         satoshis: +initUtxo.amount,
         value: +initUtxo.amount,
         amount: +initUtxo.amount * 1e-8,
-        address: bsv.Script.fromHex(initUtxo.scriptPubkey)
-          .toAddress(Network.testnet)
-          .toString(),
+        address: initUtxo.toAddress,
         script: initUtxo.scriptPubkey,
         addressType: 0,
         addressIndex: 0,
       }
+      console.log('resultresult', result)
+      return result
     } else {
       throw new Error(res.msg)
     }
