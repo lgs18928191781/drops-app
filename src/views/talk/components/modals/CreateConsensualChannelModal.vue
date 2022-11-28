@@ -268,6 +268,7 @@ import { useUserStore } from '@/stores/user'
 import { useLayoutStore } from '@/stores/layout'
 import { getNftSeries, getFtSeries } from '@/api/talk'
 import Cat from '@/assets/images/cat.svg?url'
+import { useRouter } from 'vue-router'
 
 const isShowingPassword = ref(false)
 const layout = useLayoutStore()
@@ -321,16 +322,26 @@ const form = useChannelFormStore()
 changeTab(selectedTab.value)
 const talkStore = useTalkStore()
 const userStore = useUserStore()
+const router = useRouter()
 
 const tryCreateChannel = async () => {
   if (!form.isFinished) return
 
-  const { channelId } = await createChannel(
+  layout.isShowCreateConsensualChannelModal = false
+  layout.isShowLoading = true
+  await createChannel(
     form,
     talkStore.activeCommunityId,
     userStore.showWallet,
     userStore.user!.metaId
   )
+  layout.isShowLoading = false
+  form.reset()
+
+  router.push({
+    path: router.currentRoute.value.fullPath,
+    force: true,
+  })
 }
 
 const selectNft = (nft: any) => {

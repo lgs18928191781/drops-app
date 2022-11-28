@@ -21,10 +21,13 @@
       </Transition>
     </div>
 
+    <DragonBall />
+
     <!-- modals -->
     <PasswordModal />
     <InviteModal />
     <AcceptInviteModal />
+    <LoadingCover />
   </div>
 </template>
 
@@ -34,6 +37,7 @@ import TheInput from './components/TheInput.vue'
 import TheErrorBox from './components/TheErrorBox.vue'
 import CommunityInfo from './components/CommunityInfo.vue'
 import ChannelMemberList from './components/ChannelMemberList.vue'
+import DragonBall from './components/DragonBall.vue'
 import { defineAsyncComponent, nextTick, onBeforeUnmount, watch } from 'vue'
 import { useTalkStore } from '@/stores/talk'
 import { useRoute } from 'vue-router'
@@ -43,6 +47,7 @@ import { useLayoutStore } from '@/stores/layout'
 import PasswordModal from './components/modals/PasswordModal.vue'
 import InviteModal from './components/modals/InviteModal.vue'
 import AcceptInviteModal from './components/modals/AcceptInviteModal.vue'
+import LoadingCover from './components/modals/LoadingCover.vue'
 import { verifyPassword } from '@/utils/talk'
 
 const MessageList = defineAsyncComponent({

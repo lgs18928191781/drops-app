@@ -58,8 +58,9 @@ const talk = useTalkStore()
 const user = useUserStore()
 
 const tryJoinCommunity = async () => {
-  await joinCommunity(talk.activeCommunityId, user.showWallet)
-
   layout[ShowControl.isShowAcceptInviteModal] = false
+  layout.isShowLoading = true
+  await joinCommunity(talk.activeCommunityId, user.showWallet)
+  layout.isShowLoading = false
 }
 </script>

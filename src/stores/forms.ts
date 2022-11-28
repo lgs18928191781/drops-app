@@ -5,8 +5,8 @@ export const useCommunityFormStore = defineStore('communityForm', {
   state: () => {
     return {
       icon: null as File | null,
-      name: 'test-1',
-      description: 'test-1',
+      name: '',
+      description: '',
       cover: null as File | null,
     }
   },
@@ -61,6 +61,17 @@ export const useChannelFormStore = defineStore('channelForm', {
         default:
           return true
       }
+    },
+  },
+
+  actions: {
+    reset() {
+      this.type = GroupChannelType.PublicText
+      this.name = ''
+      this.password = ''
+      this.nft = null
+      this.ft = null
+      this.amount = 1
     },
   },
 })

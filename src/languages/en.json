@@ -105,7 +105,8 @@
       "choose_nft_as_consent": "Choose one NFT Series as Consent...",
       "choose_ft_as_consent": "Choose a token as Consent...",
       "no_nft_available": "No NFTs available.",
-      "no_ft_available": "No tokens available."
+      "no_ft_available": "No tokens available.",
+      "processing": "Processing..."
     },
     "Input": {
       "nft_stickers": "NFT Stickers",
