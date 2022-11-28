@@ -581,7 +581,7 @@ async function onSetBaseInfoSuccess(params: {
         name: params.name ? params.name : `${import.meta.env.VITE_DefaultName}`,
       })
     } else {
-      debugger
+      // debugger
       // 注册 metaId 钱包
       const baseInfo = metaIdWalletRegisterBaseInfo.val!
       const _params = {
