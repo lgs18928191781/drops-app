@@ -41,7 +41,7 @@
     "js-base64": "^3.7.2",
     "keccak256": "^1.0.6",
     "lazysizes": "^5.3.2",
-    "meta-contract": "^0.1.14",
+    "meta-contract": "0.1.15",
     "mvc-lib": "^1.0.5",
     "normalize.css": "^8.0.1",
     "pinia": "^2.0.23",

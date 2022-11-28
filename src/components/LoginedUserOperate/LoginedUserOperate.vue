@@ -246,6 +246,7 @@ import { GetMyMEBalance } from '@/api/v3'
 import { Loading } from '@element-plus/icons-vue'
 import Decimal from 'decimal.js-light'
 import NFTCoverVue from '@/components/NFTCover/NFTCover.vue'
+import { GetBalance } from '@/api/aggregation'
 
 const i18n = useI18n()
 const rootStore = useRootStore()
@@ -415,16 +416,21 @@ function getSpaceBalance() {
 function getETHBalance() {
   return new Promise<void>(async resolve => {
     // 获取余额
-    const res = await userStore
-      .showWallet!.wallet!.provider.getXpubBalance(
-        userStore.showWallet!.wallet!.wallet.xpubkey.toString()
-      )
-      .catch(error => {
+    if (userStore.user!.ethAddress) {
+      const res = await GetBalance({
+        chain: 'ETH',
+        address: userStore.user!.ethAddress!,
+      }).catch(error => {
         ElMessage.error(error.message)
         resolve()
       })
-    if (typeof res === 'number') {
-      wallets[1].list[0].statosis = res
+      if (typeof res === 'number') {
+        wallets[1].list[0].statosis = res
+        wallets[1].list[0].loading = false
+        resolve()
+      }
+    } else {
+      wallets[1].list[0].statosis = 0
       wallets[1].list[0].loading = false
       resolve()
     }

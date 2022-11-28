@@ -340,3 +340,18 @@ export const GetNFTs = (params: {
   const { address, ..._params } = params
   return aggregation.get(`/v2/app/sensible/getMyNftSummaryListV2/${address}`, { params: _params })
 }
+
+export const GetBalance = (params: {
+  chain: string
+  address: string
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    results: {
+      items: UserNFTItem[]
+    }
+  }
+}> => {
+  return aggregation.get(`/v2/app/show/balance`, { params: params })
+}

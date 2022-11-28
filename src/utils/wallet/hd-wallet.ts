@@ -891,6 +891,7 @@ export class HdWallet {
             address: nodeAddress!.address,
             addressType: parseInt(nodeKeyPath.split('/')[0]),
             addressIndex: parseInt(nodeKeyPath.split('/')[1]),
+            scriptPlayload: scriptPlayload,
           })
         }
       } catch (error) {
@@ -1683,7 +1684,7 @@ export class HdWallet {
       isBroadcast: boolean // 是否广播
     }
   ): Promise<CreateNodeRes> {
-    return new Promise<any>(async (resolve, reject) => {
+    return new Promise<CreateNodeRes>(async (resolve, reject) => {
       const initParams = {
         autoRename: true,
         version: '0.0.9',
@@ -1878,6 +1879,27 @@ export class HdWallet {
     })
   }
 
+  nft = {
+    genesis(
+      params: { totalSupply: number; seriesName: string },
+      option?: {
+        useFeeb?: number
+        isBroadcast?: boolean
+      }
+    ) {
+      const initOption = {
+        useFeeb: DEFAULTS.feeb,
+        isBroadcast: true,
+      }
+      option = {
+        ...initOption,
+        ...option,
+      }
+
+      const userStore = useUserStore()
+    },
+  }
+
   async genesisNFT(
     params: { totalSupply: number; seriesName: string },
     option?: {
@@ -1885,17 +1907,6 @@ export class HdWallet {
       isBroadcast?: boolean
     }
   ) {
-    const initOption = {
-      useFeeb: DEFAULTS.feeb,
-      isBroadcast: true,
-    }
-    option = {
-      ...initOption,
-      ...option,
-    }
-
-    const userStore = useUserStore()
-
     // const ParentInfo = await this.createBrfcProtocolNode({
     //   nodeName: 'NftGenesis',
     //   brfcId: '599aa8e586e8',
