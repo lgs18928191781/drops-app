@@ -270,7 +270,9 @@ function signMnemonicSeed() {}
 
 function skip() {
   emit('update:modelValue', false)
-  window.location.reload()
+  if (userStore.user!.name == `${import.meta.env.VITE_DefaultName}`) {
+    window.location.reload()
+  }
 }
 
 async function selectLoginType(item: number) {
