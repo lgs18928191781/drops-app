@@ -27,6 +27,8 @@ export const useTalkStore = defineStore('talk', {
       communityChannelIds: {} as any, // 社区频道列表
 
       hasActiveChannelConsent: false, // 是否持有当前频道的共识
+
+      inviteLink: '', // 邀请链接
     }
   },
 
@@ -72,6 +74,8 @@ export const useTalkStore = defineStore('talk', {
     },
 
     activeGroupChannelType(): GroupChannelType | undefined {
+      if (!this.activeChannel) return undefined
+
       return this.channelType(this.activeChannel)
     },
 
@@ -205,6 +209,18 @@ export const useTalkStore = defineStore('talk', {
         this.members = await getCommunityMembers(routeCommunityId)
       }
       await fetchMembers()
+
+      // 判断是否已是社区成员，如果不是，则尝试加入
+      const isMember = this.members.some((member: any) => member.metaId === selfMetaId)
+      if (!isMember) {
+        // TODO:
+        const layout = useLayoutStore()
+        layout.isShowAcceptInviteModal = true
+
+        return 'pending'
+      }
+
+      return 'success'
     },
 
     initReadPointers() {

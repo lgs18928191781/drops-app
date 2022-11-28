@@ -1,8 +1,5 @@
 <template>
-  <BaseModal
-    :show-control="ShowControl.isShowRedPacketModal"
-    :show-second-control="ShowControl.never"
-  >
+  <BaseModal v-model="layout[ShowControl.isShowRedPacketModal]">
     <template v-slot:title>
       {{ $t('Talk.Input.giveaway') }}
     </template>
@@ -188,6 +185,9 @@ import {
 import { computed, ref } from 'vue'
 import { ShowControl } from '@/enum'
 import BaseModal from './BaseModal.vue'
+import { useLayoutStore } from '@/stores/layout'
+
+const layout = useLayoutStore()
 
 const amount = ref(10)
 
