@@ -229,7 +229,7 @@ export default class ShowmoneyProvider {
         value: +initUtxo.amount,
         amount: +initUtxo.amount * 1e-8,
         address: bsv.Script.fromHex(initUtxo.scriptPubkey)
-          .toAddress(Network.mainnet)
+          .toAddress(Network.testnet)
           .toString(),
         script: initUtxo.scriptPubkey,
         addressType: 0,
