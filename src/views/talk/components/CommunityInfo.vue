@@ -14,7 +14,7 @@
         <div class="h-full bg-dark-100 grow lg:w-60 flex flex-col justify-between items-stretch">
           <div class="flex flex-col overflow-y-hidden">
             <!-- 社区封面 -->
-            <div class="w-full">
+            <div class="w-full aspect-[4/3]">
               <Image
                 :src="talk.activeCommunity?.cover"
                 :customClass="'aspect-[4/3] w-full object-contain object-center'"
@@ -68,17 +68,25 @@
                   :class="channel.id === talk.activeChannelId || 'faded'"
                   @click="goChannel(channel.id)"
                 >
-                  <div
+                  <!-- <div
                     class="absolute left-0 h-full flex items-center top-0"
                     v-if="talk.hasUnreadMessagesOfChannel(channel.id)"
                   >
                     <span class="w-1.5 h-3 bg-dark-250 rounded-r-md"></span>
-                  </div>
+                  </div> -->
+
+                  <span
+                    class="absolute right-0 top-0 h-full flex items-start top-0 bg-red-500 w-2.5 h-2.5 rounded-full -translate-y-1/3 translate-x-1/3"
+                    v-if="talk.hasUnreadMessagesOfChannel(channel.id)"
+                  >
+                  </span>
+
                   <div
                     class="text-dark-800 text-base font-medium flex items-center"
                     :title="channel.name"
                   >
-                    <Icon name="hashtag" class="w-4 h-4 text-dark-400" />
+                    <Icon :name="channelSymbol(channel)" class="w-5 h-4 text-dark-400" />
+
                     <div class="ml-1 truncate grow">
                       {{ channel.name }}
                     </div>
@@ -113,21 +121,39 @@
                   :class="channel.id === talk.activeChannelId || 'faded'"
                   @click="goChannel(channel.id)"
                 >
-                  <div
+                  <!-- <div
                     class="absolute left-0 h-full flex items-center top-0"
                     v-if="talk.hasUnreadMessagesOfChannel(channel.id)"
                   >
                     <span class="w-1.5 h-3 bg-dark-250 rounded-r-md"></span>
-                  </div>
+                  </div> -->
+
+                  <span
+                    class="absolute right-0 top-0 h-full flex items-start top-0 bg-red-500 w-2.5 h-2.5 rounded-full -translate-y-1/3 translate-x-1/3"
+                    v-if="talk.hasUnreadMessagesOfChannel(channel.id)"
+                  >
+                  </span>
                   <div
                     class="text-dark-800 text-base font-medium flex items-center"
                     :title="channel.name"
                   >
                     <Icon
-                      name="lock"
-                      class="w-4 h-4 text-dark-400"
+                      :name="channelSymbol(channel)"
+                      class="w-5 h-4 text-dark-400"
                       v-if="talk.channelType(channel) === GroupChannelType.Password"
                     />
+                    <div
+                      class="text-xxs tracking-tighter italic font-bold min-w-[20PX] text-dark-400 text-center"
+                      v-if="talk.channelType(channel) == GroupChannelType.NFT"
+                    >
+                      NFT
+                    </div>
+                    <div
+                      class="text-xxs tracking-tighter italic font-bold min-w-[20PX] text-dark-400 text-center"
+                      v-if="talk.channelType(channel) == GroupChannelType.FT"
+                    >
+                      FT
+                    </div>
                     <div class="ml-1 truncate grow">
                       {{ channel.name }}
                     </div>
@@ -174,6 +200,19 @@ const userStore = useUserStore()
 const popInvite = (channelId: string) => {
   talk.inviteLink = `${location.origin}/talk/channels/${talk.activeCommunityId}/${channelId}`
   layout.isShowInviteModal = true
+}
+
+const channelSymbol = (channel: any) => {
+  switch (talk.channelType(channel)) {
+    case GroupChannelType.PublicText:
+      return 'hashtag'
+    case GroupChannelType.Password:
+      return 'lock'
+    case GroupChannelType.NFT:
+      return ''
+    default:
+      return ''
+  }
 }
 
 const goChannel = (channelId: string) => {

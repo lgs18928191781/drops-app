@@ -40,6 +40,9 @@ export const useChannelFormStore = defineStore('channelForm', {
       type: GroupChannelType.PublicText,
       name: '',
       password: '',
+      nft: null as any,
+      ft: null as any,
+      amount: 1,
     }
   },
 
@@ -51,9 +54,9 @@ export const useChannelFormStore = defineStore('channelForm', {
         case GroupChannelType.Password:
           return !!state.name && !!state.password
         case GroupChannelType.NFT:
-          return false
+          return !!state.name && !!state.nft
         case GroupChannelType.FT:
-          return false
+          return !!state.name && !!state.ft
 
         default:
           return true
