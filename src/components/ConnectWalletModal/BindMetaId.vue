@@ -280,7 +280,7 @@ async function selectLoginType(item: number) {
     try {
       emit('update:modelValue', false)
       loading = openLoading({
-        text: '注册中',
+        text: i18n.t('registing'),
       })
       const res = await createMetaidAccount()
 
