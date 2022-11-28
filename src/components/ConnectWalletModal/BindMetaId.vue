@@ -42,7 +42,7 @@
 
             <div class="operate flex flex-pack-end">
               <a class="main-border primary">
-                <Icon name="right" />
+                <Icon name="right" @click="emit('update:modelValue', false)" />
               </a>
             </div>
           </div>
