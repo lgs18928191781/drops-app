@@ -203,6 +203,14 @@ export default class ShowmoneyProvider {
     userName?: string
   }): Promise<BaseUtxo> {
     console.log('paramsparamsparams', params)
+    let options = {
+      headers: {
+        'Content-Type': 'application/json',
+        accessKey: params?.token,
+        timestamp: new Date().getTime() + '',
+        userName: params?.userName,
+      },
+    }
 
     const res = await this.callApi({
       url: '/nodemvc/api/v1/pri/wallet/sendInitSatsForMetaSV',
@@ -210,14 +218,7 @@ export default class ShowmoneyProvider {
         address: params.address,
         xpub: params.xpub,
       },
-      // options: {
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     accessKey: params.token,
-      //     timestamp: new Date().getTime() + '',
-      //     userName: params.userName,
-      //   },
-      // },
+      options: params?.token ? options : {},
     })
     if (res.code === 0) {
       const initUtxo = res.result || {}
