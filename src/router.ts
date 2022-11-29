@@ -53,6 +53,18 @@ export const router = createRouter({
         },
       ],
     },
+    {
+      path: '/nft',
+      name: 'nft',
+      component: () => RouterView,
+      children: [
+        {
+          path: 'genesis',
+          name: 'nftGenesis',
+          component: () => import('@/views/nft/Genesis.vue'),
+        },
+      ],
+    },
     // {
     //   path: '/sign',
     //   name: 'sign',

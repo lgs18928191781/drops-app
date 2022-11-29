@@ -35,7 +35,7 @@ import { useUserStore } from '@/stores/user'
 import i18n from './i18n'
 import SdkPayConfirmModalVue from '@/components/SdkPayConfirmModal/SdkPayConfirmModal.vue'
 import { h, render } from 'vue'
-import { NftManager, FtManager, API_NET, API_TARGET } from 'meta-contract'
+import { NftManager, FtManager, API_NET, API_TARGET, TxComposer } from 'meta-contract'
 
 enum AppMode {
   PROD = 'prod',
@@ -129,6 +129,16 @@ export const AllNodeName: {
   [NodeName.NftGenesis]: {
     brfcId: '599aa8e586e8',
     path: '/Protocols/NftGenesis',
+    version: '1.0.0',
+  },
+  [NodeName.FtIssue]: {
+    brfcId: '97b23b9f3a09',
+    path: '/Protocols/FtIssue',
+    version: '1.0.0',
+  },
+  [NodeName.FtGenesis]: {
+    brfcId: 'c75e9217b9bd',
+    path: '/Protocols/FtGenesis',
     version: '1.0.0',
   },
 }
@@ -461,6 +471,11 @@ export class SDK {
               if (transactions.currentNode?.transaction)
                 totalAmount += transactions.currentNode.transaction.getNeedFee()
 
+              // nft issue 价格
+              if (transactions.issueNFT)
+                // @ts-ignore
+                totalAmount += transactions.issueNFT.transaction.getNeedFee()
+
               const useSatoshis = totalAmount
               // 当时用Me支付时，总价 space 要转换为 ME 值
               if (option.payType === SdkPayType.ME) {
@@ -568,6 +583,7 @@ export class SDK {
                           address: receive.address,
                           addressType: receive.addressType,
                           addressIndex: receive.addressIndex,
+                          scriptPlayload: [],
                         }
                         currentUtxo = await this.wallet!.utxoFromTx({
                           tx: payToRes.transaction,
@@ -651,6 +667,13 @@ export class SDK {
                       transactions.currentNode.transaction.toString()
                     )
                   }
+
+                  // 广播 nft issue
+                  if (transactions.issueNFT?.transaction) {
+                    await this.wallet?.provider.broadcast(
+                      transactions.issueNFT?.transaction.toString()
+                    )
+                  }
                 }
 
                 resolve({
@@ -678,6 +701,10 @@ export class SDK {
       metaFiles?: CreateNodeRes[]
       currentNodeBrfc?: CreateNodeRes
       currentNode?: CreateNodeRes
+      issueNFT?: {
+        transaction: bsv.Transaction
+        txId?: string
+      }
     }>(async (resolve, reject) => {
       try {
         const userStore = useUserStore()
@@ -686,6 +713,10 @@ export class SDK {
           metaFiles?: CreateNodeRes[]
           currentNodeBrfc?: CreateNodeRes
           currentNode?: CreateNodeRes
+          issueNFT?: {
+            transaction: bsv.Transaction
+            txId?: string
+          }
         } = {}
 
         // 如果有附件
@@ -769,8 +800,10 @@ export class SDK {
               isBroadcast: false,
             }
           )
-          if (params.nodeName === NodeName.NftGenesis) {
-            const nftManager = new NftManager({
+          // NFT
+          let nftManager: NftManager
+          if (this.isNFTProtocol(params.nodeName)) {
+            nftManager = new NftManager({
               apiTarget: API_TARGET.MVC,
               // @ts-ignore
               network: this.network,
@@ -778,25 +811,56 @@ export class SDK {
                 .deriveChild(0)
                 .deriveChild(0)
                 .privateKey.toString(),
+              feeb: params.useFeeb,
             })
-            const _res = await nftManager.genesis({
-              totalSupply: {
-                ...JSON.parse(params.data),
-                opreturnData: res?.scriptPlayload,
-              },
-            })
-            res = {
-              txId: '',
-              address: '',
-              addressIndex: 0,
-              addressType: 0,
-              transaction: 0,
-              scriptPlayload: [],
-            }
-          }
 
+            // NodeName.NftGenesis
+            if (params.nodeName === NodeName.NftGenesis) {
+              const _res = await nftManager.genesis({
+                ...JSON.parse(params.data),
+                opreturnData: res!.scriptPlayload!,
+                noBroadcast: true,
+                calcFee: true,
+              })
+              res = {
+                txId: '',
+                address: '',
+                addressIndex: 0,
+                addressType: 0,
+                transaction: {
+                  getNeedFee: () => {
+                    return _res.fee
+                  },
+                },
+                scriptPlayload: [],
+              }
+            }
+          } else if (this.isFTProtocol(params.nodeName)) {
+            // FT
+          }
           if (res) {
             transactions.currentNode = res
+          }
+
+          if (params.nodeName === NodeName.NftIssue) {
+            const data = JSON.parse(params.data)
+            const response = await nftManager!.mint({
+              sensibleId: data.sensibleId,
+              metaTxId: transactions.currentNode!.txId,
+              noBroadcast: true,
+              metaOutputIndex: 0,
+              calcFee: true,
+            })
+            if (response) {
+              transactions.issueNFT = {
+                transaction: {
+                  // @ts-ignore
+                  getNeedFee: () => {
+                    return response.fee
+                  },
+                },
+              }
+            }
           }
         }
         resolve(transactions)
@@ -812,6 +876,10 @@ export class SDK {
       metaFiles?: CreateNodeRes[]
       currentNodeBrfc?: CreateNodeRes
       currentNode?: CreateNodeRes
+      issueNFT?: {
+        transaction: bsv.Transaction
+        txId?: string
+      }
     },
     utxo: UtxoItem,
     params: createBrfcChildNodeParams
@@ -821,6 +889,10 @@ export class SDK {
       metaFiles?: CreateNodeRes[]
       currentNodeBrfc?: CreateNodeRes
       currentNode?: CreateNodeRes
+      issueNFT?: {
+        transaction: bsv.Transaction
+        txId?: string
+      }
     }>(async (resolve, reject) => {
       try {
         if (transactions.metaFileBrfc?.transaction) {
@@ -912,13 +984,79 @@ export class SDK {
             if (res) transactions.currentNode = res
           }
 
-          this.setTransferUtxoAndOutputAndSign(
-            transactions.currentNode.transaction,
-            [utxo],
-            this.wallet!.rootAddress
-          )
-          // 更新txId
-          transactions.currentNode.txId = transactions.currentNode.transaction.id
+          let nftManager: NftManager
+          // NFT
+          if (this.isNFTProtocol(params.nodeName)) {
+            nftManager = new NftManager({
+              apiTarget: API_TARGET.MVC,
+              // @ts-ignore
+              network: this.network,
+              purse: this.wallet?.wallet
+                .deriveChild(0)
+                .deriveChild(0)
+                .privateKey.toString(),
+              feeb: params.useFeeb,
+            })
+          }
+
+          // NftGenesis
+          if (params.nodeName === NodeName.NftGenesis) {
+            utxo.wif = this.getPathPrivateKey(`${utxo.addressType}/${utxo.addressIndex}`).toString()
+            const res = await nftManager!.genesis({
+              ...JSON.parse(params.data),
+              opreturnData: transactions.currentNode.scriptPlayload!,
+              noBroadcast: true,
+              utxos: [utxo],
+            })
+            if (res && typeof res !== 'number') {
+              transactions.currentNode = {
+                txId: res.txid!,
+                address: '',
+                addressIndex: 0,
+                addressType: 0,
+                transaction: res.tx!,
+                scriptPlayload: [],
+                codehash: res.codehash!,
+                genesis: res.genesis!,
+                sensibleId: res.sensibleId!,
+              }
+            }
+          } else {
+            this.setTransferUtxoAndOutputAndSign(
+              transactions.currentNode.transaction,
+              [utxo],
+              this.wallet!.rootAddress
+            )
+            // 更新txId
+            transactions.currentNode.txId = transactions.currentNode.transaction.id
+
+            if (params.nodeName === NodeName.NftIssue) {
+              // 组装新 utxo
+              utxo = await this.wallet!.utxoFromTx({
+                tx: transactions.currentNode!.transaction,
+              })
+              utxo.wif = this.getPathPrivateKey(
+                `${utxo.addressType}/${utxo.addressIndex}`
+              ).toString()
+              const data = JSON.parse(params.data)
+              const res = await nftManager!.mint({
+                sensibleId: data.sensibleId,
+                metaTxId: transactions.currentNode.txId,
+                noBroadcast: true,
+                metaOutputIndex: 0,
+                utxos: [utxo],
+              })
+              if (res) {
+                debugger
+                transactions.issueNFT = {
+                  // @ts-ignore
+                  transaction: res.tx,
+                  // @ts-ignore
+                  txId: res.txid,
+                }
+              }
+            }
+          }
         }
 
         resolve(transactions)
@@ -974,16 +1112,6 @@ export class SDK {
         resolve(true)
       }
     })
-  }
-
-  async genesisNFT(
-    params: { totalSupply: number; seriesName: string },
-    option?: {
-      useFeeb?: number
-      isBroadcast?: boolean
-    }
-  ) {
-    return this.wallet?.genesisNFT(params, option)
   }
 
   getPlatform() {
@@ -1170,5 +1298,25 @@ export class SDK {
 
   getPathPrivateKey(path: string) {
     return this.wallet?.getPathPrivateKey(path)
+  }
+
+  isNFTProtocol(nodeName: NodeName) {
+    if (nodeName === NodeName.NftGenesis || nodeName === NodeName.NftIssue) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  isFTProtocol(nodeName: NodeName) {
+    if (nodeName === NodeName.FtGenesis || nodeName === NodeName.FtIssue) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  ftGenesis() {
+    return this.wallet?.ftGenesis()
   }
 }

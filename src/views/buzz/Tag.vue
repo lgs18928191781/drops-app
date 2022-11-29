@@ -64,7 +64,7 @@ function getDatas(isCover = false) {
     const res = await GetTagBuzzs({
       tag: tag.value!.tag,
       metaId: userStore.user?.metaId,
-      buzzType: tabActive.value ? tabActive.value : '',
+      subTag: tabActive.value ? tabActive.value : '',
       ...pagination,
     }).catch(error => {
       ElMessage.error(error.message)

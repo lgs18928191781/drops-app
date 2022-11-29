@@ -55,7 +55,7 @@
     :size="'360px'"
     :append-to-body="true"
   >
-    <div class="user-wallet">
+    <div class="user-wallet flex flex-v">
       <div class="user flex flex-align-center">
         <div class="flex1">
           <ElDropdown trigger="click" @visible-change="value => (isShowUserWalletOperates = value)">
@@ -100,7 +100,7 @@
         </a>
       </div>
 
-      <div class="cont-warp">
+      <div class="cont-warp flex1 flex flex-v">
         <!-- tab -->
         <div class="tab flex flex-align-center">
           <a
@@ -210,20 +210,26 @@
               </template>
             </ElDropdown>
           </div>
-          <div class="content">
+          <div class="content flex1" v-infinite-scroll="load" :infinite-scroll-immediate="false">
             <ElSkeleton :loading="isSkeleton" animated>
               <div class="nft-genesis-list">
-                <div class="nft-genesis-item" v-for="item in Array.from({ length: 6 })">
+                <div class="nft-genesis-item" v-for="item in nfts" :key="item.nftTimestamp">
                   <div class="top flex flex-align-center">
-                    <div class="name flex1">Moonbirds</div>
+                    <div class="name flex1">
+                      {{ item.nftSeriesName ? item.nftSeriesName : item.nftIssuer }}
+                    </div>
                     <div class="num flex flex-align-center">
-                      <span class="count">2</span>
+                      <span class="count">{{ item.nftMyCount }}</span>
                       <Icon name="down" />
                     </div>
                   </div>
                   <div class="list">
-                    <div class="item" v-for="nft in Array.from({ length: 3 })">
-                      <NFTCoverVue :cover="[]" />
+                    <div
+                      class="item"
+                      v-for="nft in item.nftDetailItemList"
+                      :key="nft.nftIssueMetaTxId"
+                    >
+                      <NFTCoverVue :cover="[nft.nftIcon]" />
                     </div>
                   </div>
                 </div>
@@ -252,7 +258,8 @@ import { GetMyMEBalance } from '@/api/v3'
 import { Loading } from '@element-plus/icons-vue'
 import Decimal from 'decimal.js-light'
 import NFTCoverVue from '@/components/NFTCover/NFTCover.vue'
-import { GetBalance } from '@/api/aggregation'
+import { GetBalance, GetNFTs } from '@/api/aggregation'
+import { initPagination } from '@/config'
 
 const i18n = useI18n()
 const rootStore = useRootStore()
@@ -267,6 +274,7 @@ const tabs = [
 const tabActive = ref(0)
 
 const isShowUserMenu = ref(false)
+const pagination = reactive({ ...initPagination })
 
 const userOperates = [
   {
@@ -308,7 +316,9 @@ const chains = reactive([
 ])
 const currentChain = ref('mvc')
 
-const isSkeleton = ref(false)
+const isSkeleton = ref(true)
+
+const nfts: UserNFTItem[] = reactive([])
 
 const wallets = reactive([
   {
@@ -336,6 +346,14 @@ const userWalletOperates = [
           }
         }
         getAllBalace()
+      } else {
+        isSkeleton.value = true
+        pagination.page = 1
+        pagination.loading = false
+        pagination.nothing = false
+        getNFTs(true).then(() => {
+          isSkeleton.value = false
+        })
       }
     },
   },
@@ -380,6 +398,11 @@ const totalBalanceLoading = computed(() => {
 function changeTab(value: number) {
   if (tabActive.value === value) return
   tabActive.value = value
+  if (tabActive.value === 1 && isSkeleton.value) {
+    getNFTs(true).then(() => {
+      isSkeleton.value = false
+    })
+  }
 }
 
 function changeChain(item: { name: string; value: string }) {
@@ -450,6 +473,20 @@ function getETHBalance() {
 
 function getAllBalace() {
   return Promise.all([getMEBalance(), getSpaceBalance(), getETHBalance()])
+}
+
+function getNFTs(isCover = false) {
+  return new Promise<void>(async resolve => {
+    const res = await GetNFTs({
+      address: userStore.user!.address!,
+      ...pagination,
+    })
+    if (res.code === 0) {
+      if (isCover) nfts.length = 0
+      nfts.push(...res.data.results.items)
+      resolve()
+    }
+  })
 }
 
 watch(

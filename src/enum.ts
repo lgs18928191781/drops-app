@@ -275,6 +275,8 @@ export enum NodeName {
   ShowMsg = 'ShowMsg',
   NftIssue = 'NftIssue',
   NftGenesis = 'NftGenesis',
+  FtGenesis = 'FtGenesis',
+  FtIssue = 'FtIssue',
 }
 
 export const enum BindStatus {
