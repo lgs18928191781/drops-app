@@ -103,7 +103,6 @@ talk.initChannel(communityId as string, channelId as string).then(async initRes 
   }
 
   await talk.initChannelMessages(selfMetaId)
-  await talk.initWebSocket(selfMetaId)
 })
 
 watch(
@@ -111,14 +110,12 @@ watch(
   async canAccess => {
     if (canAccess) {
       await talk.initChannelMessages(selfMetaId)
-      await talk.initWebSocket(selfMetaId)
     }
   }
 )
 
 onBeforeUnmount(() => {
   talk.saveReadPointers()
-  talk.closeWebSocket()
   talk.closeReadPointerTimer()
 })
 </script>

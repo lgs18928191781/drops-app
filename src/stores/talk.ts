@@ -317,7 +317,9 @@ export const useTalkStore = defineStore('talk', {
       }
     },
 
-    async initWebSocket(selfMetaId: string) {
+    async initWebSocket() {
+      const selfMetaId = this.selfMetaId
+      if (!selfMetaId) return
       const wsUri = `wss://testmvc.showmoney.app/ws-service?metaId=${selfMetaId}`
       this.ws = new WebSocket(wsUri)
 

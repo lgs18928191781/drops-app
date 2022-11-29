@@ -100,6 +100,7 @@ import { useTalkStore } from '@/stores/talk'
 import { useUserStore } from '@/stores/user'
 import { isMobile } from '@/stores/root'
 import CreateCommunityModal from '@/views/talk/components/modals/CreateCommunityModal.vue'
+import { onBeforeUnmount } from 'vue'
 const layout = useLayoutStore()
 const talkStore = useTalkStore()
 const userStore = useUserStore()
@@ -129,7 +130,12 @@ const apps = [
 
 if (userStore.isAuthorized) {
   fetchCommunities()
+  talkStore.initWebSocket()
 }
+
+onBeforeUnmount(() => {
+  talkStore.closeWebSocket()
+})
 </script>
 
 <style lang="scss" scoped src="./LeftNavigation.scss"></style>

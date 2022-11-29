@@ -62,5 +62,8 @@ const tryJoinCommunity = async () => {
   layout.isShowLoading = true
   await joinCommunity(talk.activeCommunityId, user.showWallet)
   layout.isShowLoading = false
+
+  await talk.initChannelMessages(talk.selfMetaId)
+  await talk.initWebSocket(talk.selfMetaId)
 }
 </script>
