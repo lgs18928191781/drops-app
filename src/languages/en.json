@@ -72,7 +72,13 @@
       "upload_image": "Upload an Image",
       "use_onchain_image": "Use an Onchain Image",
       "view_original": "Open original",
-      "search": "Search"
+      "search": "Search",
+      "welcome": "Welcome to",
+      "utilities": {
+        "invite": "Invite Friends",
+        "learn": "Learn More About Show3.0",
+        "download": "Download Show3.0 App"
+      }
     },
     "Community": {
       "create": "Create community",

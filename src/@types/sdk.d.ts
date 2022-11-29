@@ -439,7 +439,7 @@ export interface createBrfcChildNodeParams {
   appId?: string[]
   encrypt?: IsEncrypt
   version?: string
-  data: string
+  data?: string
   dataType?: string
   payCurrency?: string
   payTo?: PayToItem[]

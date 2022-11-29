@@ -141,6 +141,10 @@ export const useTalkStore = defineStore('talk', {
       return this.activeChannel.roomType === ChannelPublicityType.Public
     },
 
+    isActiveChannelTheVoid(): boolean {
+      return this.activeChannelId === 'the-void'
+    },
+
     newMessages(): any {
       if (!this.activeChannel) return []
 

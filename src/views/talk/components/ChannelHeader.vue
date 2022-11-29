@@ -9,23 +9,35 @@
         @click="layout.isShowLeftNav = true"
       />
 
-      <div class="flex shrink-0">
+      <div class="flex shrink-0 items-center">
+        <div class=" hidden lg:block" v-if="talkStore.isActiveChannelTheVoid">
+          <Image
+            :src="talkStore.activeCommunity?.icon"
+            :customClass="'!w-8 !h-8 rounded-2xl object-cover object-center mr-2'"
+          />
+        </div>
         <div
           class="text-base leading-tight no-wrap grow whitespace-nowrap truncate text-dark-800 pr-2 max-w-[50vw] lg:max-w-[600PX] capitalize"
         >
-          {{ talkStore.activeChannel?.name }}
-        </div>
-
-        <div class="border-r border-solid border-dark-300 hidden lg:block"></div>
-        <div
-          class="text-base leading-tight no-wrap grow whitespace-nowrap text-dark-300 px-2 hidden lg:block capitalize"
-        >
           {{
-            talkStore.isActiveChannelPublic
-              ? $t('Talk.Channel.public_channel')
-              : $t('Talk.Channel.private_channel')
+            talkStore.isActiveChannelTheVoid
+              ? talkStore.activeCommunity?.name
+              : talkStore.activeChannel?.name
           }}
         </div>
+
+        <template v-if="!talkStore.isActiveChannelTheVoid">
+          <div class="border-r border-solid border-dark-300 hidden lg:block"></div>
+          <div
+            class="text-base leading-tight no-wrap grow whitespace-nowrap text-dark-300 px-2 hidden lg:block capitalize"
+          >
+            {{
+              talkStore.isActiveChannelPublic
+                ? $t('Talk.Channel.public_channel')
+                : $t('Talk.Channel.private_channel')
+            }}
+          </div>
+        </template>
       </div>
     </div>
     <div class="flex flex-row-reverse items-center justify-between grow">
@@ -36,6 +48,13 @@
         v-if="talkStore.activeChannel?.id"
       >
         {{ shortenMetaId(talkStore.activeChannel.id) }}
+      </div>
+
+      <div
+        class="text-xs text-dark-300 bg-dark-100 px-3 py-1 ml-1 rounded  hidden lg:block"
+        v-else-if="talkStore.isActiveChannelTheVoid && talkStore.activeCommunityId"
+      >
+        {{ shortenMetaId(talkStore.activeCommunityId) }}
       </div>
       <!-- 占位 -->
       <div v-else class="w-1"></div>

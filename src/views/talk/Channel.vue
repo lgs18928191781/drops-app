@@ -6,14 +6,8 @@
       <ChannelHeader />
 
       <div class="pt-12 pb-17.5 h-screen lg:relative w-full bg-dark-200 lg:pt-15 lg:pb-20">
-        <div class="h-full">
-          <MessageList />
-        </div>
-
-        <div class="fixed bottom-0 left-0 right-0 px-4 lg:absolute">
-          <TheInput />
-          <TheErrorBox />
-        </div>
+        <ChannelWelcome v-if="talk.isActiveChannelTheVoid" />
+        <ChannelContent v-else />
       </div>
 
       <Transition name="slide">
@@ -33,12 +27,12 @@
 
 <script setup lang="ts">
 import ChannelHeader from './components/ChannelHeader.vue'
-import TheInput from './components/TheInput.vue'
-import TheErrorBox from './components/TheErrorBox.vue'
 import CommunityInfo from './components/CommunityInfo.vue'
 import ChannelMemberList from './components/ChannelMemberList.vue'
+import ChannelContent from './components/ChannelContent.vue'
+import ChannelWelcome from './components/ChannelWelcome.vue'
 import DragonBall from './components/DragonBall.vue'
-import { defineAsyncComponent, nextTick, onBeforeUnmount, watch } from 'vue'
+import { nextTick, onBeforeUnmount, watch } from 'vue'
 import { useTalkStore } from '@/stores/talk'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
@@ -49,10 +43,6 @@ import InviteModal from './components/modals/InviteModal.vue'
 import AcceptInviteModal from './components/modals/AcceptInviteModal.vue'
 import LoadingCover from './components/modals/LoadingCover.vue'
 import { verifyPassword } from '@/utils/talk'
-
-const MessageList = defineAsyncComponent({
-  loader: () => import('./components/MessageList.vue'),
-})
 
 const talk = useTalkStore()
 const route = useRoute()
