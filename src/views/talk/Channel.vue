@@ -55,7 +55,6 @@ const MessageList = defineAsyncComponent({
 })
 
 const talk = useTalkStore()
-
 const route = useRoute()
 const userStore = useUserStore()
 const layout = useLayoutStore()

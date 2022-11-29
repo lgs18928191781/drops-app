@@ -329,7 +329,7 @@ const trySendText = async () => {
     content,
     type: MessageType.Text,
     channelId: talkStore.activeChannel.id,
-    userName: userStore.user?.name || 'Riverrun46',
+    userName: userStore.user?.name || '',
     channelType: talkStore.activeChannelType as ChannelType,
   }
   await sendMessage(messageDto)

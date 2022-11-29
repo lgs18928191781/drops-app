@@ -294,6 +294,7 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
     avatarType: userStore.user?.avatarType || 'undefined',
     avatarTxId: userStore.user?.avatarTxId || 'undefined',
     metaId: userStore.user?.metaId || 'undefined',
+    from: userStore.user?.metaId,
     nickName: userStore.user?.name || '',
     timestamp: timestamp * 1000, // 服务端返回的是毫秒，所以模拟需要乘以1000
     txId: '',
@@ -301,6 +302,7 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
     isMock: true,
     to,
   }
+  console.log('mockMessage', mockMessage)
 
   // 查找store中的位置
   talkStore.addMessage(mockMessage)

@@ -4,12 +4,16 @@
     :class="{ 'bg-gray-200': isActive }"
     @click="switchChannel"
   >
-    <div class="rounded-3xl w-12 h-12 bg-indigo-200 shrink-0">
+    <div class="rounded-3xl w-12 h-12 bg-indigo-200 shrink-0 relative">
       <UserAvatar
         :metaId="contact.metaId || 'undefined'"
         class="w-12 h-12 shrink-0 select-none"
         :disabled="true"
       />
+      <div
+        class="absolute top-0 right-0 rounded-full w-2.5 h-2.5 bg-red-500"
+        v-if="talk.hasUnreadMessagesOfChannel(session.metaId)"
+      ></div>
     </div>
 
     <div class="flex flex-col items-stretch grow space-y-1 overflow-x-hidden">
@@ -40,15 +44,17 @@ import { useI18n } from 'vue-i18n'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLayoutStore } from '@/stores/layout'
+import { useTalkStore } from '@/stores/talk'
 
 const i18n = useI18n()
 const userStore = useUserStore()
 const layout = useLayoutStore()
 const router = useRouter()
+const talk = useTalkStore()
 
 const props = defineProps(['session'])
 
-const contact = computed<Contact>(() => {
+const contact = computed<any>(() => {
   let contactSide = 'from'
 
   if (userStore.user) {
