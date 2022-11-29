@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-inherit p-3 pr-3.5">
+  <div class="bg-inherit p-2.5 pr-3.5">
     <div class="flex items-center space-x-3 max-w-full">
       <div class="bg-white grow p-2 rounded-full relative">
         <span class="absolute inset-y-0 left-0 flex items-center pl-3">

@@ -1,4 +1,4 @@
-import { getChannelMessages, getChannels, getCommunityMembers } from '@/api/talk'
+import { getAtMeChannels, getChannelMessages, getChannels, getCommunityMembers } from '@/api/talk'
 import { ChannelPublicityType, ChannelType, GroupChannelType } from '@/enum'
 import { defineStore } from 'pinia'
 import { router } from '@/router'
@@ -141,6 +141,10 @@ export const useTalkStore = defineStore('talk', {
       return this.activeChannel.roomType === ChannelPublicityType.Public
     },
 
+    isActiveChannelTheVoid(): boolean {
+      return this.activeChannelId === 'the-void'
+    },
+
     newMessages(): any {
       if (!this.activeChannel) return []
 
@@ -167,6 +171,8 @@ export const useTalkStore = defineStore('talk', {
   actions: {
     async initChannel(routeCommunityId: string, routeChannelId: string) {
       const selfMetaId = this.selfMetaId
+      const isAtMe = routeCommunityId === '@me'
+
       // 如果没有指定频道，则先从存储中尝试读取该社区的最后阅读频道
       const latestChannelsRecords =
         localStorage.getItem('latestChannels-' + selfMetaId) || JSON.stringify({})
@@ -179,7 +185,9 @@ export const useTalkStore = defineStore('talk', {
       }
 
       const fetchChannels = async () => {
-        const channels = await getChannels({ communityId: routeCommunityId })
+        const channels = isAtMe
+          ? await getAtMeChannels({ metaId: selfMetaId })
+          : await getChannels({ communityId: routeCommunityId })
 
         this.activeCommunityId = routeCommunityId
         if (routeChannelId) {
@@ -208,19 +216,21 @@ export const useTalkStore = defineStore('talk', {
 
       this.initReadPointers()
 
-      const fetchMembers = async () => {
-        this.members = await getCommunityMembers(routeCommunityId)
-      }
-      await fetchMembers()
+      if (!isAtMe) {
+        const fetchMembers = async () => {
+          this.members = await getCommunityMembers(routeCommunityId)
+        }
+        await fetchMembers()
 
-      // 判断是否已是社区成员，如果不是，则尝试加入
-      const isMember = this.members.some((member: any) => member.metaId === selfMetaId)
-      if (!isMember) {
-        // TODO:
-        const layout = useLayoutStore()
-        layout.isShowAcceptInviteModal = true
+        // 判断是否已是社区成员，如果不是，则尝试加入
+        const isMember = this.members.some((member: any) => member.metaId === selfMetaId)
+        if (!isMember) {
+          // TODO:
+          const layout = useLayoutStore()
+          layout.isShowAcceptInviteModal = true
 
-        return 'pending'
+          return 'pending'
+        }
       }
 
       return 'success'
@@ -317,7 +327,9 @@ export const useTalkStore = defineStore('talk', {
       }
     },
 
-    async initWebSocket(selfMetaId: string) {
+    async initWebSocket() {
+      const selfMetaId = this.selfMetaId
+      if (!selfMetaId) return
       const wsUri = `wss://testmvc.showmoney.app/ws-service?metaId=${selfMetaId}`
       this.ws = new WebSocket(wsUri)
 
@@ -338,7 +350,16 @@ export const useTalkStore = defineStore('talk', {
       }, 10000)
 
       const isGroupMessage = (messageWrapper: any) => messageWrapper.M === 'WS_SERVER_NOTIFY_ROOM'
-      const isFromActiveChannel = (message: any) => message.groupId === this.activeChannelId
+      const isSessionMessage = (messageWrapper: any) => messageWrapper.M === 'WS_SERVER_NOTIFY_CHAT'
+      const messageMetaId = (messageWrapper: any) => {
+        if (isGroupMessage(messageWrapper)) return messageWrapper.D.groupId
+        if (isSessionMessage(messageWrapper)) {
+          const { from, to } = messageWrapper.D
+          return from === selfMetaId ? to : from
+        }
+      }
+      const isFromActiveChannel = (messageWrapper: any) =>
+        messageMetaId(messageWrapper) === this.activeChannelId
 
       const onReceiveMessage = (event: MessageEvent) => {
         const messageWrapper = JSON.parse(event.data)
@@ -406,6 +427,88 @@ export const useTalkStore = defineStore('talk', {
               mockMessage.txId = message.txId
               mockMessage.timestamp = message.timestamp
               mockMessage.content = message.content
+              delete mockMessage.isMock
+            })
+
+            return
+          }
+
+          // 如果没有替代mock数据，就直接添加到新消息队列首
+          this.activeChannel.newMessages.push(message)
+        }
+
+        if (isSessionMessage(messageWrapper)) {
+          console.log('here')
+          const message = messageWrapper.D
+
+          // 如果不是当前频道的消息，则更新未读指针
+          if (!isFromActiveChannel(messageWrapper)) {
+            if (
+              this.channelsReadPointers[messageMetaId(messageWrapper)] &&
+              message.timestamp > this.channelsReadPointers[message.groupId].latest
+            ) {
+              this.channelsReadPointers[messageMetaId(messageWrapper)].latest = message.timestamp
+            } else {
+              this.channelsReadPointers[messageMetaId(messageWrapper)] = {
+                latest: message.timestamp,
+                lastRead: 0,
+              }
+            }
+
+            return
+          }
+
+          // 去重
+          const isDuplicate =
+            this.activeChannel.newMessages.some((item: Message) => item.txId === message.txId) ||
+            this.activeChannel.pastMessages.some((item: Message) => item.txId === message.txId)
+
+          if (isDuplicate) return
+
+          // 更新当前频道的已读指针
+          if (this.channelsReadPointers[this.activeChannelId]) {
+            this.channelsReadPointers[this.activeChannelId].latest = message.timestamp
+            this.channelsReadPointers[this.activeChannelId].lastRead = message.timestamp
+          } else {
+            this.channelsReadPointers[this.activeChannelId] = {
+              lastRead: message.timestamp,
+              latest: message.timestamp,
+            }
+          }
+
+          // 优先查找替代mock数据
+          let mockMessage: any
+          if (message.protocol === 'simpleGroupChat') {
+            mockMessage = this.activeChannel.newMessages.find(
+              (item: Message) =>
+                item.txId === '' &&
+                item.isMock === true &&
+                item.content === message.content &&
+                item.metaId === message.metaId &&
+                item.protocol === message.protocol
+            )
+          } else if (message.protocol === 'SimpleFileGroupChat') {
+            mockMessage = this.activeChannel.newMessages.find(
+              (item: Message) =>
+                item.txId === '' &&
+                item.isMock === true &&
+                item.metaId === message.metaId &&
+                item.protocol === message.protocol
+            )
+          } else if (message.nodeName === 'ShowMsg') {
+            console.log('trying to find')
+            mockMessage = this.activeChannel.newMessages.find(
+              (item: Message) =>
+                item.txId === '' && item.isMock === true && item.nodeName === message.nodeName
+            )
+          }
+
+          if (mockMessage) {
+            console.log('found')
+            this.$patch(state => {
+              mockMessage.txId = message.txId
+              mockMessage.timestamp = message.timestamp
+              mockMessage.data.content = message.data.content
               delete mockMessage.isMock
             })
 

@@ -15,7 +15,7 @@
           <!-- 联系人列表 -->
           <div class="overflow-y-auto">
             <DirectContactItem
-              v-for="session in talkStore.sessions"
+              v-for="session in talkStore.activeCommunityChannels"
               :key="session.timestamp"
               :session="session"
             />

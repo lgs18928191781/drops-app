@@ -30,7 +30,21 @@ export const getAtMeChannels = async (params?: any): Promise<any> => {
   params = params || {}
   const metaId = params.metaId
 
-  return TalkApi.get(`/chat/homes/${metaId}`, { data: JSON.stringify(params) })
+  return TalkApi.get(`/chat/homes/${metaId}`, { data: JSON.stringify(params) }).then(res => {
+    return res.data.data.map((channel: any) => {
+      const channelSide = channel.from === metaId ? 'to' : 'from'
+
+      channel.name = channel[`${channelSide}Name`]
+      channel.id = channel[`${channelSide}`]
+      channel.publicKeyStr = channel[`${channelSide}PublicKey`]
+      channel.lastMessageTimestamp = channel.timestamp
+      channel.lastMessage = '你收到了一条信息'
+      channel.pastMessages = []
+      channel.newMessages = []
+
+      return channel
+    })
+  })
 }
 
 export const getChannels = async (params: any): Promise<Channel[]> => {
@@ -58,7 +72,6 @@ export const getChannelMessages = async (
   params.page = '1'
   if (type === 'session') {
     const selfMetaId = params.metaId
-    console.log({ channelId })
     const {
       data: { data: messages },
     } = await TalkApi.get(`/chat/${selfMetaId}/${channelId}`, { data: JSON.stringify(params) })
