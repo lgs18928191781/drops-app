@@ -383,10 +383,20 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
     //这里需要再判断一下用户注册来源，如果是metamask注册的用户要拿metaid来解
 
     try {
-      const signHashForMnemonic = await MetaMaskRef.value.ethPersonalSignSign({
-        address: params.address,
-        message: getMnemonicRes?.data?.metaId.slice(0, 6),
-      })
+      let signHashForMnemonic
+
+      console.log('params.address', params.address, getMnemonicRes?.data)
+      if ((window as any).WallectConnect) {
+        signHashForMnemonic = await (window as any).WallectConnect.signPersonalMessage([
+          params.address,
+          getMnemonicRes?.data?.metaId.slice(0, 6),
+        ])
+      } else {
+        signHashForMnemonic = await MetaMaskRef.value.ethPersonalSignSign({
+          address: params.address,
+          message: getMnemonicRes?.data?.metaId.slice(0, 6),
+        })
+      }
 
       res = await BindMetaIdRef.value.loginByMnemonic(
         getMnemonicRes.data.menmonic,
@@ -753,10 +763,13 @@ async function connectWalletConnect() {
     // Delete connector
   })
 
+  window.WallectConnect = connector
   const { accounts, chainId } = await connector.connect()
+
   if (chainId !== 5) {
     throw new Error(i18n.t('Login.ETH.changeGoerliNetword'))
   }
+
   const res = await connector.signPersonalMessage([
     accounts[0],
     keccak256(accounts[0]).toString('hex'),
@@ -768,7 +781,7 @@ async function connectWalletConnect() {
       address: accounts[0],
     })
   }
-  connector.killSession()
+  // connector.killSession()
 }
 
 // onMounted(async () => {

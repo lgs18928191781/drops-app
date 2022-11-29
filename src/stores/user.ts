@@ -106,7 +106,9 @@ export const useUserStore = defineStore('user', {
         localStorage.removeItem(encode('password'))
         this.user = null
         this.password = null
-
+        if ((window as any).WallectConnect) {
+          ;(window as any).WallectConnect.killSession()
+        }
         resolve()
       })
     },

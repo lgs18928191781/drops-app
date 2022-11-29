@@ -442,48 +442,94 @@ function createMetaidAccount() {
         .publicKey.toString()
 
       const metaId = await HdWalletInstance.onlyCreateMetaidNode()
-
-      ethPersonalSignSign({
-        address: props.thirdPartyWallet.address,
-        message: metaId?.slice(0, 6),
-      }).then(async signHash => {
-        const encryptmnemonic = encryptMnemonic(mnemonic, signHash)
-        const getUserInfoRes = await LoginByNewUser({
-          address: address,
-          xPub: hdWallet.xpubkey,
-          pubKey: pubKey,
-          hashData: props.thirdPartyWallet.signAddressHash,
-          mnemonic: encryptmnemonic,
-          userName: account.name,
+      console.log('props.thirdPartyWallet', props.thirdPartyWallet)
+      if ((window as any).WallectConnect) {
+        // await window.WallectConnect.connect()
+        ;(window as any).WallectConnect.signPersonalMessage([
+          props.thirdPartyWallet.address,
+          metaId?.slice(0, 6),
+        ]).then(async (signHash: string) => {
+          console.log('signHash', signHash)
+          const encryptmnemonic = encryptMnemonic(mnemonic, signHash)
+          const getUserInfoRes = await LoginByNewUser({
+            address: address,
+            xPub: hdWallet.xpubkey,
+            pubKey: pubKey,
+            hashData: props.thirdPartyWallet.signAddressHash,
+            mnemonic: encryptmnemonic,
+            userName: account.name,
+          })
+          // @ts-ignore
+          if (getUserInfoRes.code == 0) {
+            ;(account.accessKey = getUserInfoRes.data.token),
+              (account.userName =
+                getUserInfoRes.data.registerType === 'email'
+                  ? getUserInfoRes.data.email
+                  : getUserInfoRes.data.phone)
+            const { metaId } = await HdWalletInstance.initMetaIdNode({
+              ...account,
+              userType: getUserInfoRes.data.registerType,
+              email: getUserInfoRes.data.email,
+              phone: getUserInfoRes.data.phone,
+              ethAddress: props.thirdPartyWallet.address,
+            })
+            const newUserInfo = Object.assign(getUserInfoRes.data, {
+              metaId: metaId,
+              ethAddress: props.thirdPartyWallet.address,
+              enCryptedMnemonic: encryptmnemonic,
+            })
+            await sendHash(newUserInfo)
+            resolve({
+              userInfo: newUserInfo,
+              wallet: hdWallet,
+              password: signHash,
+              // password: form.pass,
+            })
+          }
         })
-        // @ts-ignore
-        if (getUserInfoRes.code == 0) {
-          ;(account.accessKey = getUserInfoRes.data.token),
-            (account.userName =
-              getUserInfoRes.data.registerType === 'email'
-                ? getUserInfoRes.data.email
-                : getUserInfoRes.data.phone)
-          const { metaId } = await HdWalletInstance.initMetaIdNode({
-            ...account,
-            userType: getUserInfoRes.data.registerType,
-            email: getUserInfoRes.data.email,
-            phone: getUserInfoRes.data.phone,
-            ethAddress: props.thirdPartyWallet.address,
+      } else {
+        ethPersonalSignSign({
+          address: props.thirdPartyWallet.address,
+          message: metaId?.slice(0, 6),
+        }).then(async signHash => {
+          const encryptmnemonic = encryptMnemonic(mnemonic, signHash)
+          const getUserInfoRes = await LoginByNewUser({
+            address: address,
+            xPub: hdWallet.xpubkey,
+            pubKey: pubKey,
+            hashData: props.thirdPartyWallet.signAddressHash,
+            mnemonic: encryptmnemonic,
+            userName: account.name,
           })
-          const newUserInfo = Object.assign(getUserInfoRes.data, {
-            metaId: metaId,
-            ethAddress: props.thirdPartyWallet.address,
-            enCryptedMnemonic: encryptmnemonic,
-          })
-          await sendHash(newUserInfo)
-          resolve({
-            userInfo: newUserInfo,
-            wallet: hdWallet,
-            password: signHash,
-            // password: form.pass,
-          })
-        }
-      })
+          // @ts-ignore
+          if (getUserInfoRes.code == 0) {
+            ;(account.accessKey = getUserInfoRes.data.token),
+              (account.userName =
+                getUserInfoRes.data.registerType === 'email'
+                  ? getUserInfoRes.data.email
+                  : getUserInfoRes.data.phone)
+            const { metaId } = await HdWalletInstance.initMetaIdNode({
+              ...account,
+              userType: getUserInfoRes.data.registerType,
+              email: getUserInfoRes.data.email,
+              phone: getUserInfoRes.data.phone,
+              ethAddress: props.thirdPartyWallet.address,
+            })
+            const newUserInfo = Object.assign(getUserInfoRes.data, {
+              metaId: metaId,
+              ethAddress: props.thirdPartyWallet.address,
+              enCryptedMnemonic: encryptmnemonic,
+            })
+            await sendHash(newUserInfo)
+            resolve({
+              userInfo: newUserInfo,
+              wallet: hdWallet,
+              password: signHash,
+              // password: form.pass,
+            })
+          }
+        })
+      }
     } catch (error) {
       reject(error)
     }
