@@ -31,6 +31,7 @@
 
         <!-- 使用MetaId钱包 -->
         <MetaIdWalletVue
+          ref="MetaidWalletRef"
           v-model:type="type"
           v-model:loading="loading"
           v-else-if="status === ConnectWalletStatus.UseMetaId"
@@ -192,7 +193,7 @@ const buzzResult = reactive({
   txId: '',
 })
 const setBaseInfoRef = ref()
-
+const MetaidWalletRef = ref()
 const enum ConnectWalletStatus {
   Watting,
   WallteConnect,
@@ -215,7 +216,8 @@ const isSHowBackupMnemonic = ref(false)
 const wallets = [
   {
     title: () => {
-      return i18n.t('Login.connectWallet')
+      return ``
+      // return i18n.t('Login.connectWallet')
     },
     list: [
       {
@@ -441,8 +443,10 @@ async function OnMetaIdRegister(params: MetaIdWalletRegisterBaseInfo) {
   let loading = openLoading({
     text: i18n.t('registing'),
   })
+
   metaIdWalletRegisterBaseInfo.val = params
   rootStore.$patch({ isShowLogin: false })
+
   //
   try {
     await onSetBaseInfoSuccess({
@@ -452,7 +456,12 @@ async function OnMetaIdRegister(params: MetaIdWalletRegisterBaseInfo) {
     isShowSetBaseInfo.value = true
   } catch (error) {
     loading.close()
-    return ElMessage.error(`${(error as any).toString()}`)
+    rootStore.$patch({ isShowLogin: true })
+    isShowSetBaseInfo.value = false
+    type.value = 'register'
+    status.value = ConnectWalletStatus.UseMetaId
+    MetaidWalletRef.value.registerType = 0
+    ElMessage.error(`${i18n.t('sendVerifiyCodeError')}`)
   }
 }
 
@@ -586,6 +595,15 @@ async function onSetBaseInfoSuccess(params: {
       }
       if (errorMsg) throw new Error(errorMsg.message)
       // 更新本地用户信息
+
+      await SetUserInfo({
+        userType: userStore.user?.registerType == 'email' ? 'email' : 'phone',
+        metaid: userStore.user!.metaId,
+        // @ts-ignore
+        accessKey: userStore.user?.token,
+        email: userStore.user?.email,
+        phone: userStore.user?.phone,
+      })
       userStore.updateUserInfo({
         ...userStore.user!,
         name: params.name ? params.name : `${import.meta.env.VITE_DefaultName}`,
@@ -600,7 +618,9 @@ async function onSetBaseInfoSuccess(params: {
         name: params.name ? params.name : `${import.meta.env.VITE_DefaultName}`,
       }
       const loginName = baseInfo!.userType === 'phone' ? baseInfo!.phone : baseInfo!.email
+
       const registerRes = await RegisterCheck(_params)
+
       // console.log(registerRes)
       if (registerRes.code === 0) {
         let userInfo = registerRes.result as BaseUserInfoTypes
@@ -722,6 +742,7 @@ async function onSetBaseInfoSuccess(params: {
         }
       }
     }
+
     if (params.name) {
       setBaseInfoRef.value.FormRef.resetFields()
     }
@@ -730,7 +751,8 @@ async function onSetBaseInfoSuccess(params: {
     isSHowBackupMnemonic.value = true
   } catch (error) {
     loading.value = false
-    ElMessage.error((error as any).message)
+    // ElMessage.error((error as any).message)
+    throw new Error(error as any)
   }
 }
 

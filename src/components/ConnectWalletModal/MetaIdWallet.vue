@@ -399,7 +399,9 @@ const enum RegisterType {
 }
 
 const registerType = ref(RegisterType.Check)
-
+defineExpose({
+  registerType,
+})
 watch(
   () => props.type,
   () => {
@@ -612,6 +614,7 @@ function submitForm() {
                 promotion: '',
                 password: form.password,
               } as MetaIdWalletRegisterBaseInfo)
+
               FormRef.value.resetFields()
               emit('update:loading', false)
               return
@@ -757,7 +760,7 @@ function submitForm() {
           }
         } catch (error) {
           emit('update:loading', false)
-          ElMessage.error((error as any).message)
+          return ElMessage.error((error as any).message)
         }
       } else {
         return ElMessage.error(

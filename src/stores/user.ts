@@ -104,11 +104,9 @@ export const useUserStore = defineStore('user', {
       return new Promise<void>(resolve => {
         localStorage.removeItem(encode('user'))
         localStorage.removeItem(encode('password'))
+        localStorage.removeItem('walletconnect')
         this.user = null
         this.password = null
-        if ((window as any).WallectConnect) {
-          ;(window as any).WallectConnect.killSession()
-        }
         resolve()
       })
     },

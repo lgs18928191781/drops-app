@@ -10,7 +10,9 @@ const Core = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/showpaycore`, {
       return {
         accessKey: userStore.user!.token,
         userName:
-          userStore.user!.userType === 'email' ? userStore.user!.email! : userStore.user!.phone!,
+          userStore.user!.userType === 'email' || userStore.user?.registerType == 'email'
+            ? userStore.user!.email!
+            : userStore.user!.phone!,
         timestamp: () => new Date().getTime(),
       }
     } else {
@@ -80,7 +82,7 @@ export const LoginGetCode = async (params: ObjTypes<any>): Promise<ApiResultType
 }
 
 export const SetUserInfo = (params: {
-  userType: 'phone' | 'email'
+  userType: string
   metaid: string
   phone?: string
   email?: string
@@ -92,8 +94,7 @@ export const SetUserInfo = (params: {
       'Content-Type': 'application/json',
       accessKey: params.accessKey,
       timestamp: Date.now(),
-      // @ts-ignore
-      userName: params.userType === 'phone' ? params.phone : params.email,
+      userName: params.userType == 'email' ? params!.email : params!.phone,
     },
   })
 }
