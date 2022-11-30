@@ -558,8 +558,8 @@ function submitForm() {
               // @ts-ignore
               //这里的参数account跟metaidInfo位置不能改变，否则新数据会被覆盖
               userStore.updateUserInfo({
-                ...account,
                 ...metaIdInfo,
+                ...account,
                 password: form.password,
                 address: hdWallet.rootAddress,
               })
