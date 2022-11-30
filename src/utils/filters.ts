@@ -2,7 +2,7 @@
 import dayjs from 'dayjs'
 import { Decimal } from 'decimal.js'
 import { useRootStore } from '@/stores/root'
-const RootStore = useRootStore()
+
 export function dateTimeFormat(timestamp: Date, format: string = 'YYYY-MM-DD HH:mm:ss') {
   if (!timestamp) {
     return null
@@ -31,6 +31,7 @@ export function converterBSV(amount: number | string) {
 }
 
 export function converterCNY(amount: number | string) {
+  const RootStore = useRootStore()
   if (amount) {
     let cnyPrice = (
       new Decimal(amount).div(10 ** 8).toNumber() * RootStore.exchangeRate.cnyRate
@@ -42,6 +43,7 @@ export function converterCNY(amount: number | string) {
 }
 
 export function legalNftConverterBSV(amount: number | string) {
+  const RootStore = useRootStore()
   if (amount) {
     return parseFloat(
       new Decimal(amount)
