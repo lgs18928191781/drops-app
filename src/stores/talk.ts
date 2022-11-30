@@ -100,8 +100,10 @@ export const useTalkStore = defineStore('talk', {
       )
     },
 
-    isAdmin(): (selfMetaId: string) => boolean {
-      return (selfMetaId: string) => {
+    isAdmin(): () => boolean {
+      const selfMetaId = this.selfMetaId
+
+      return () => {
         if (!this.activeCommunity) return false
         if (!this.activeCommunity.admins) return false
 
@@ -143,6 +145,14 @@ export const useTalkStore = defineStore('talk', {
 
     isActiveChannelTheVoid(): boolean {
       return this.activeChannelId === 'the-void'
+    },
+
+    isActiveChannelSettings(): boolean {
+      return this.activeChannelId === 'settings'
+    },
+
+    isActiveChannelReserved(): boolean {
+      return this.isActiveChannelTheVoid || this.isActiveChannelSettings
     },
 
     newMessages(): any {

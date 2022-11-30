@@ -12,7 +12,6 @@
       <div
         class="p-3 w-[80vw] lg:w-90 bg-white rounded-xl flex items-center justify-between cursor-pointer group"
         v-for="utility in utilities"
-        v-if=""
         :key="utility.name"
         @click="utility.action"
       >
@@ -35,11 +34,9 @@
 import { useLayoutStore } from '@/stores/layout'
 import { useTalkStore } from '@/stores/talk'
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 
 const talk = useTalkStore()
 const layout = useLayoutStore()
-const router = useRouter()
 
 const utilities = ref([
   {
@@ -49,14 +46,6 @@ const utilities = ref([
     action: () => {
       talk.inviteLink = `${location.origin}/talk/channels/${talk.activeCommunityId}/the-void`
       layout.isShowInviteModal = true
-    },
-  },
-  {
-    name: 'Talk.Channel.utilities.settings',
-    icon: 'sparkles',
-    bgColor: 'bg-orange-400',
-    action: () => {
-      router.push('/talk/channels/' + talk.activeCommunityId + '/settings')
     },
   },
   {

@@ -77,7 +77,8 @@
       "utilities": {
         "invite": "Invite Friends",
         "learn": "Learn More About Show3.0",
-        "download": "Download Show3.0 App"
+        "download": "Download Show3.0 App",
+        "settings": "Customize your Community"
       }
     },
     "Community": {
@@ -112,7 +113,9 @@
       "choose_ft_as_consent": "Choose a token as Consent...",
       "no_nft_available": "No NFTs available.",
       "no_ft_available": "No tokens available.",
-      "processing": "Processing..."
+      "processing": "Processing...",
+      "settings": "community settings",
+      "settings_short": "settings"
     },
     "Input": {
       "nft_stickers": "NFT Stickers",

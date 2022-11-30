@@ -7,11 +7,12 @@
 
       <div class="pt-12 pb-17.5 h-screen lg:relative w-full bg-dark-200 lg:pt-15 lg:pb-20">
         <ChannelWelcome v-if="talk.isActiveChannelTheVoid" />
+        <ChannelSettings v-else-if="talk.isActiveChannelTheVoid" />
         <ChannelContent v-else />
       </div>
 
       <Transition name="slide">
-        <ChannelMemberList />
+        <ChannelMemberList v-show="layout.isShowMemberList" />
       </Transition>
     </div>
 
@@ -30,6 +31,7 @@ import ChannelHeader from './components/ChannelHeader.vue'
 import CommunityInfo from './components/CommunityInfo.vue'
 import ChannelMemberList from './components/ChannelMemberList.vue'
 import ChannelContent from './components/ChannelContent.vue'
+import ChannelSettings from './components/ChannelSettings.vue'
 import ChannelWelcome from './components/ChannelWelcome.vue'
 import DragonBall from './components/DragonBall.vue'
 import { nextTick, onBeforeUnmount, watch } from 'vue'
@@ -117,6 +119,7 @@ onBeforeUnmount(() => {
 
 .slide-enter-from,
 .slide-leave-to {
-  transform: translateX(100%);
+  opacity: 0;
+  // transform: translateX(100%);
 }
 </style>
