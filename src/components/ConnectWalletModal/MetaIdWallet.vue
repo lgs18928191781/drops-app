@@ -540,6 +540,7 @@ function submitForm() {
               const walletInfo = await hdWalletFromAccount(account, import.meta.env.VITE_NET_WORK)
               const hdWallet = new HdWallet(walletInfo.wallet)
               const metaIdInfo = await hdWallet.getMetaIdInfo(walletInfo.rootAddress)
+
               if (!metaIdInfo.metaId) {
                 return ElMessageBox.alert(
                   '抱歉，此账号有问题，请到www.showmoney.app上修复',
@@ -553,9 +554,10 @@ function submitForm() {
                 })
               }
               // @ts-ignore
+              //这里的参数account跟metaidInfo位置不能改变，否则新数据会被覆盖
               userStore.updateUserInfo({
-                ...metaIdInfo,
                 ...account,
+                ...metaIdInfo,
                 password: form.password,
                 address: hdWallet.rootAddress,
               })
