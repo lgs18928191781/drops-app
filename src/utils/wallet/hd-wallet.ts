@@ -21,7 +21,7 @@ import * as ECIES from 'mvc-lib/ecies'
 import { englishWords } from './english'
 import { API_NET, API_TARGET, SensibleNFT, Wallet } from 'sensible-sdk'
 import { SA_utxo } from 'sensible-sdk/dist/sensible-api'
-import { isEmail } from '../util'
+import { isEmail, sleep } from '../util'
 import { IsEncrypt, NodeName } from '@/enum'
 import { AttachmentItem, PayToItem } from '@/@types/hd-wallet'
 import { CreateNodeOptions, CreateNodeRes, TransferTypes, UtxoItem } from '@/@types/sdk'
@@ -1999,10 +1999,9 @@ export class HdWallet {
         // noBroadcast: true,
         utxos,
         changeAddress: userStore.user!.address,
-        genesisWif: this.getPathPrivateKey(
-          `${bFrcRes.addressType}/${bFrcRes.addressIndex}`
-        ).toString(),
+        genesisWif: this.getPathPrivateKey(`0/0`).toString(),
       })
+      console.log('genesisWif', this.getPathPrivateKey(`0/0`).toString())
       // await this.provider.broadcast(genesis.txHex)
 
       let IssueFrfcRes = await this.createBrfcNode(
@@ -2022,6 +2021,7 @@ export class HdWallet {
           payTo: [{ amount: 20000, address: this.protocolAddress }],
           utxos: allUtxos,
         })
+        await sleep(2000)
         const utxo = await this.utxoFromTx({
           tx,
           addressInfo: {
@@ -2041,11 +2041,14 @@ export class HdWallet {
         })
       }
 
+      await sleep(2000)
+
       const allUtxos2 = await this.provider.getUtxos(this.wallet.xpubkey.toString())
       const tx2 = await this.sendMoney({
         payTo: [{ amount: 20000, address: bFrcRes.address }],
         utxos: allUtxos2,
       })
+      await sleep(2000)
       const utxo2 = await this.utxoFromTx({
         tx: tx2,
         addressInfo: {
@@ -2077,13 +2080,12 @@ export class HdWallet {
           isBroadcast: false,
         }
       )
+      console.log('genesisWif', this.getPathPrivateKey(`0/0`).toString())
       const result = await ft.issue({
         genesis: genesis.genesis,
         codehash: genesis.codehash,
         sensibleId: genesis.sensibleId,
-        genesisWif: this.getPathPrivateKey(
-          `${bFrcRes.addressType}/${bFrcRes.addressIndex}`
-        ).toString(),
+        genesisWif: this.getPathPrivateKey(`0/0`).toString(),
         receiverAddress: userStore.user!.address,
         tokenAmount: '30000000000000',
         allowIncreaseMints: true, //if true then you can issue again
@@ -2092,6 +2094,7 @@ export class HdWallet {
         // noBroadcast: true,
         changeAddress: userStore.user!.address,
       })
+
       // await this.provider.broadcast(result.txHex)
       debugger
     })
