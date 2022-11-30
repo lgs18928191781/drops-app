@@ -10,7 +10,7 @@
       />
 
       <div class="flex shrink-0 items-center">
-        <div class=" hidden lg:block" v-if="talkStore.isActiveChannelTheVoid">
+        <div class=" hidden lg:block" v-if="talkStore.isActiveChannelReserved">
           <Image
             :src="talkStore.activeCommunity?.icon"
             :customClass="'!w-8 !h-8 rounded-2xl object-cover object-center mr-2'"
@@ -20,13 +20,13 @@
           class="text-base leading-tight no-wrap grow whitespace-nowrap truncate text-dark-800 pr-2 max-w-[50vw] lg:max-w-[600PX] capitalize"
         >
           {{
-            talkStore.isActiveChannelTheVoid
+            talkStore.isActiveChannelReserved
               ? talkStore.activeCommunity?.name
               : talkStore.activeChannel?.name
           }}
         </div>
 
-        <template v-if="!talkStore.isActiveChannelTheVoid">
+        <template v-if="!talkStore.isActiveChannelReserved">
           <div class="border-r border-solid border-dark-300 hidden lg:block"></div>
           <div
             class="text-base leading-tight no-wrap grow whitespace-nowrap text-dark-300 px-2 hidden lg:block capitalize"
@@ -52,7 +52,7 @@
 
       <div
         class="text-xs text-dark-300 bg-dark-100 px-3 py-1 ml-1 rounded  hidden lg:block"
-        v-else-if="talkStore.isActiveChannelTheVoid && talkStore.activeCommunityId"
+        v-else-if="talkStore.isActiveChannelReserved && talkStore.activeCommunityId"
       >
         {{ shortenMetaId(talkStore.activeCommunityId) }}
       </div>

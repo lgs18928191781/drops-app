@@ -35,7 +35,10 @@
                 {{ talk.activeCommunity?.description || $t('Talk.Community.no_introduction') }}
               </div>
 
-              <div class="mt-3 flex w-full items-center justify-between cursor-pointer">
+              <div
+                class="mt-3 flex w-full items-center justify-between cursor-pointer"
+                @click="layout.isShowMemberList = !layout.isShowMemberList"
+              >
                 <div class="flex items-center justify-between text-xs space-x-2 text-dark-300">
                   <div class="w-1.5 h-1.5 bg-lime-500 rounded-full"></div>
                   <div class="flex space-x-0.5">
@@ -51,6 +54,32 @@
               <div
                 class="pt-8 pb-4 flex flex-col gap-y-3  border-t border-solid border-dark-200 pt-4.5 mt-4.5"
               >
+                <!-- 管理频道 -->
+                <!-- <template v-if="talk.isAdmin()"> -->
+                <template v-if="false">
+                  <div class="uppercase text-dark-400 text-xs">
+                    {{ $t('Talk.Community.settings') }}
+                  </div>
+
+                  <div
+                    class="py-3 px-2 main-border only-bottom cursor-pointer !bg-white relative group mb-4"
+                    :class="'settings' === talk.activeChannelId || 'faded'"
+                    @click="goChannel('settings')"
+                  >
+                    <div
+                      class="text-dark-800 text-base font-medium flex items-center"
+                      :title="$t('Talk.Community.settings')"
+                    >
+                      <Icon name="hashtag" class="w-5 h-4 text-dark-400" />
+                      <div class="ml-1 truncate grow capitalize">
+                        {{ $t('Talk.Community.settings_short') }}
+                      </div>
+                      <Icon name="settings" class="w-4 h-4 text-dark-800 box-content ml-auto" />
+                    </div>
+                  </div>
+                </template>
+
+                <!-- 公共频道 -->
                 <div class="flex justify-between">
                   <div class="uppercase text-dark-400 text-xs">
                     {{ $t('Talk.Community.public_channels') }}
@@ -58,10 +87,11 @@
                   <Icon
                     name="plus"
                     class="w-4 h-4 text-black cursor-pointer"
-                    v-if="talk.isAdmin(userStore.user!.metaId)"
+                    v-if="talk.isAdmin()"
                     @click="layout.isShowCreatePublicChannelModal = true"
                   />
                 </div>
+
                 <div
                   v-for="channel in talk.activeCommunityPublicChannels"
                   class="py-3 px-2 main-border only-bottom cursor-pointer !bg-white relative group"
@@ -103,6 +133,7 @@
                   </div>
                 </div>
 
+                <!-- 凭证频道 -->
                 <div class="flex justify-between mt-4">
                   <div class="uppercase text-dark-400 text-xs">
                     {{ $t('Talk.Community.consensual_channels') }}
@@ -110,7 +141,7 @@
                   <Icon
                     name="plus"
                     class="w-4 h-4 text-black cursor-pointer"
-                    v-if="talk.isAdmin(userStore.user!.metaId)"
+                    v-if="talk.isAdmin()"
                     @click="layout.isShowCreateConsensualChannelModal = true"
                   />
                 </div>
@@ -210,8 +241,10 @@ const channelSymbol = (channel: any) => {
       return 'lock'
     case GroupChannelType.NFT:
       return ''
-    default:
+    case GroupChannelType.FT:
       return ''
+    default:
+      return 'hashtag'
   }
 }
 
