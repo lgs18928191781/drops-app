@@ -1,8 +1,66 @@
 // @ts-ignore
 import dayjs from 'dayjs'
+import { Decimal } from 'decimal.js'
+import { useRootStore } from '@/stores/root'
 
 export function dateTimeFormat(timestamp: Date, format: string = 'YYYY-MM-DD HH:mm:ss') {
+  if (!timestamp) {
+    return null
+  }
   return dayjs(timestamp).format(format)
+}
+
+export function legalNftConverterCNY(amount: number | string) {
+  if (amount) {
+    let cnyPrice = new Decimal(amount)
+      .div(100)
+      .toNumber()
+      .toFixed(2)
+    return +cnyPrice < 0.01 ? 0.01 : cnyPrice
+  } else {
+    return '--'
+  }
+}
+
+export function converterBSV(amount: number | string) {
+  if (amount) {
+    return new Decimal(amount).div(10 ** 8).toNumber()
+  } else {
+    return '--'
+  }
+}
+
+export function converterCNY(amount: number | string) {
+  const RootStore = useRootStore()
+  if (amount) {
+    let cnyPrice = (
+      new Decimal(amount).div(10 ** 8).toNumber() * RootStore.exchangeRate.cnyRate
+    ).toFixed(2)
+    return +cnyPrice < 0.01 ? 0.01 : cnyPrice
+  } else {
+    return '--'
+  }
+}
+
+export function legalNftConverterBSV(amount: number | string) {
+  const RootStore = useRootStore()
+  if (amount) {
+    return parseFloat(
+      new Decimal(amount)
+        .div(100)
+        .div(RootStore.exchangeRate.cnyRate)
+        .toNumber()
+        .toFixed(8)
+    )
+  } else {
+    return '--'
+  }
+}
+
+export function bsv(stas: number | string) {
+  if (typeof stas === 'undefined') return 0
+
+  return new Decimal(stas).div(Math.pow(10, 8)).toNumber()
 }
 
 export function metafile(metafile: string, width = 235, type: 'metafile' | 'metaId' = 'metafile') {

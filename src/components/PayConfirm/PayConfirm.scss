@@ -1,0 +1,644 @@
+@import '@/assets/styles/var.scss';
+
+.el-dialog__header {
+    .dialogTitleWrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        span {
+            font-size: 16PX;
+        }
+
+        img {
+            margin-right: 10PX;
+            width: 25PX;
+            height: 25PX;
+        }
+    }
+
+}
+
+
+
+.wechat-pay-success {
+    display: flex;
+    flex-direction: column;
+
+
+    .paySuccessWrap {
+        margin-top: 36px;
+        min-height: 40vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+
+        .top {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            img {
+                width: 60px;
+                height: 60px;
+            }
+
+            span {
+                margin-top: 10px;
+                color: #303133;
+                font-size: 20PX;
+
+            }
+
+            .wechat {
+
+                color: #4DAC2D;
+
+
+            }
+
+            .alipay {
+
+                color: #369DEF;
+
+
+            }
+
+            .sandpay {
+
+                color: #FCA63D;
+
+
+            }
+        }
+
+        .center {
+            margin-top: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            span:nth-child(1) {
+                font-size: 16px;
+            }
+
+            span:nth-child(2) {
+                margin-top: 10px;
+                font-size: 48px;
+                font-weight: bold;
+            }
+        }
+
+        .foot {
+            margin-top: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            .span:nth-child(1) {
+                padding: 15px 50px;
+                border-radius: 8px;
+                font-size: 16px;
+                text-align: center;
+                cursor: pointer;
+            }
+
+            .wechat {
+
+                color: #4DAC2D;
+                border: 1px solid #4DAC2D;
+
+            }
+
+            .alipay {
+
+                color: #369DEF;
+                border: 1px solid #369DEF;
+
+            }
+
+            .sandpay {
+
+                color: #FCA63D;
+                border: 1px solid #FCA63D;
+
+            }
+
+            span:nth-child(2) {
+                margin-top: 30px;
+                font-size: 16px;
+                color: #606266;
+            }
+
+
+        }
+    }
+}
+
+.appPaySuccessCallBackWrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .item {
+        font-size: 20px;
+
+        .toIndex {
+            color: #456fc4;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    }
+}
+
+.wechat-pay-confirm {
+
+    display: flex;
+    flex-direction: column;
+
+    .nftName {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #EDEFF2;
+
+        span:nth-child(1) {
+            margin-right: 5px;
+        }
+    }
+
+    .buyInfoWrap {
+        margin-top: 20px;
+
+        .orderAmount {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            .top {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-start;
+
+                .left {
+                    display: flex;
+                    flex-direction: column;
+                    font-size: 16px;
+
+                    span:nth-child(2) {
+                        margin-top: 5px;
+                        color: #909399;
+                    }
+
+                    span:nth-child(3) {
+                        margin-top: 5px;
+                        color: #EC6457;
+                    }
+                }
+
+                .right {
+                    color: #EC6457;
+                    font-size: 24px;
+                }
+            }
+
+        }
+
+        .qrcodeWrap {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            #qrcodeContainer {
+                width: 250px !important;
+                height: 250px !important;
+            }
+
+
+
+
+
+            .restTime {
+                margin-top: 10px;
+                font-size: 16px;
+                color: #606266;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .invaliableTime {
+                margin-top: 10px;
+                font-size: 16px;
+                color: #606266;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        .foot {
+            font-size: 16px;
+            line-height: 1.5em;
+            margin-top: 30px;
+
+            .legalWaitingConfirmWrap {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                .item {
+                    font-size: 16px;
+
+                    .toIndex {
+                        color: #456fc4;
+                        text-decoration: underline;
+                        cursor: pointer;
+                    }
+                }
+
+                .item:nth-child(2) {
+                    margin-top: 10px;
+                }
+            }
+
+            .waitingConfirmWrap {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                .item {
+                    font-size: 18px;
+
+
+                    .BlindBox-item {
+                        padding: 20px;
+                        border-radius: 8px;
+                        border-color: #FCA63D;
+                        background-color: #fff;
+                        text-align: center;
+                    }
+
+                    .toIndex {
+                        color: #456fc4;
+                        text-decoration: underline;
+                        cursor: pointer;
+                    }
+                }
+
+                .item:nth-child(1) {
+                    text-align: center;
+                }
+            }
+        }
+    }
+}
+
+.pay-confirm {
+    .nft {
+        padding-bottom: 20px;
+        border-bottom: 1px solid #EDEFF2;
+        display: flex;
+        flex-direction: column;
+
+        .top {
+            display: flex;
+            flex-direction: row;
+
+            .cover {
+                width: 120px;
+                margin-right: 20px;
+            }
+
+            .name {
+                font-size: 18px;
+                font-weight: 500;
+
+                .el-skeleton__item {
+                    height: 18px;
+                    width: 50%;
+                }
+            }
+
+            .user-list {
+                margin-top: 10px;
+
+                .user-item {
+                    margin-bottom: 10px;
+
+                    &:last-child {
+                        margin-bottom: 0;
+                    }
+
+                    .el-skeleton__item {
+                        width: 30%;
+                    }
+
+                    .avatar,
+                    .el-skeleton__circle {
+                        width: 18px;
+                        height: 18px;
+                        min-width: 18px;
+                        min-height: 18px;
+                        margin-right: 6px;
+                    }
+
+
+                    .label {
+                        white-space: nowrap;
+                        font-size: 12px;
+                        color: #606266;
+                    }
+
+                    .username {
+                        @extend %text-ellipsis;
+                        font-size: 12px;
+                        color: #606266;
+                    }
+                }
+
+            }
+        }
+
+        .composeFlagWrap {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+
+            .left {
+                display: flex;
+                flex-direction: column;
+
+                span:nth-child(1) {
+                    color: #303133;
+                    font-size: 18px;
+                }
+
+                span:nth-child(2) {
+                    color: #909399;
+                    font-size: 14px;
+                    margin-top: 3px;
+                }
+            }
+
+            .right {
+                padding: 8px 10px;
+                background-color: #FC3232;
+                color: #fff;
+                font-size: 16px;
+                border-radius: 8px;
+                text-align: center;
+            }
+        }
+
+    }
+
+    .price-list {
+        margin-top: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #EDEFF2;
+
+        .price-item {
+            margin-bottom: 8px;
+
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+
+            .buyCalc {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+
+                &:deep(.el-input__inner) {
+                    margin: 0 20px;
+                    font-size: 18px;
+                    width: 20px;
+                    color: #606266;
+                    padding: 0 !important;
+                    text-align: center;
+                    border: none;
+                }
+
+                i {
+                    cursor: pointer;
+                    padding: 4px;
+                    border: 1px solid #BFC2CC;
+                    font-weight: bold;
+                    font-size: 11px;
+                    color: #303133;
+                    border-radius: 4px;
+
+                    &:active {
+                        border: 1px solid #FCA63D;
+                    }
+                }
+            }
+
+            .nam,
+            .amount {
+                color: #606266;
+                font-size: 18px;
+            }
+
+            .el-skeleton__item {
+                height: 18px;
+            }
+
+            .name {
+                .el-skeleton__item {
+                    width: 80%;
+                }
+            }
+
+            .amount {
+                .el-skeleton__item {
+                    width: 100px;
+                }
+            }
+        }
+    }
+
+    .total-price {
+        margin-top: 20px;
+        font-size: 18px;
+
+        .el-skeleton__item {
+            height: 18px;
+        }
+
+        .name {
+            .el-skeleton__item {
+                width: 80%;
+            }
+        }
+
+        .amount {
+            img {
+                width: 22px;
+                height: 22px;
+                margin-right: 5px;
+            }
+
+            .el-skeleton__item {
+                width: 100px;
+            }
+        }
+    }
+
+    .operate {
+        margin-top: 30px;
+
+        .bsvPayWrap {
+            width: 100%;
+        }
+
+        .pay-platform-list {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+
+
+            .pay-platform-item {
+
+                cursor: pointer;
+                color: #fff;
+                height: 60px;
+                border-radius: 6px;
+                margin: 0;
+                margin-bottom: 18px;
+                font-size: 18px;
+                width: 100%;
+
+
+
+                &:hover {
+                    border: none;
+                }
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+
+                div {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+
+                    .icon {
+                        width: 30px;
+                        height: auto;
+                        margin-right: 10px;
+                    }
+
+                    .title {
+                        display: flex;
+                        flex-direction: column;
+
+                        span:nth-child(2) {
+                            color: #fff;
+                            opacity: .9;
+                            margin-top: 3px;
+                            font-size: 16px;
+                        }
+                    }
+
+                }
+
+
+            }
+        }
+
+
+
+        .wechatBtnWrap {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+
+            .wechatpayBtn {
+                width: 100%;
+                background-color: #5FB337;
+                color: #fff;
+                border: none;
+                padding: 15px 0;
+
+                div {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+
+                    img {
+                        margin-right: 10px;
+                        width: 30px;
+                        height: 30px;
+                    }
+                }
+
+
+
+
+
+            }
+        }
+
+
+
+
+        a {
+            text-decoration: underline;
+        }
+
+        .el-button--info {
+
+            color: #303133;
+        }
+
+        .el-skeleton__item {
+            height: 56px;
+        }
+    }
+
+    .selectPayMode {
+        cursor: pointer;
+        margin-top: 18px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+
+        img {
+            width: 20px;
+            height: 20px;
+            margin-right: 6px;
+            padding-bottom: 3px;
+        }
+
+        span {
+            font-size: 16px;
+        }
+
+        i {
+            font-size: 12px;
+        }
+    }
+}

@@ -538,3 +538,9 @@ export const getDividendUserInfo = (activityTag: string, address: string): Promi
     address,
   })
 }
+
+export const GetCertUserInfo = (metaId?: string): Promise<GetCertUserInfoRes> => {
+  const Http = new HttpRequests()
+  const url = `https://api.showmoney.app/broad/v1/nos/certification/getNosCertificationUserInfo/${metaId}`
+  return Http.getFetch(url)
+}

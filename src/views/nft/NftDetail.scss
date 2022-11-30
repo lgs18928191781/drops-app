@@ -1,0 +1,645 @@
+@import '@/assets/styles/var.scss';
+.menu-wrap{
+  padding: 20px 50px;
+  display: flex;
+  flex-direction: row-reverse;
+  background-color: #fff;
+  a{
+    border: 1px solid #FFDC51;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+      font-size: 20px;
+      margin-right: 30px;
+      color: inherit;
+      text-decoration: none;
+      font-weight: bold;
+      &.tools{
+
+      }
+  }
+}
+.nft-detail-wrap {
+  margin-top: 50px;
+
+  .top {
+    .cover {
+      width: 470px;
+      background: transparent;
+      opacity: 1;
+      margin-right: 60px;
+      position: relative;
+
+      &.el-skeleton__image {
+        background: #edeff2;
+      }
+
+      // display: flex !important;
+      // :deep(.el-image__inner) {
+      //     max-width: 100%;
+      //     max-height: 100%;
+      //     position: absolute;
+      //     width: auto;
+      //     height: auto;
+      //     border-radius: 8px;
+      // }
+    }
+
+    .cont {
+      min-width: 0;
+
+      .name {
+
+        .like {
+          position: relative;
+          font-size: 20px;
+          border-radius: 6px;
+
+          padding: 3px;
+
+          span {
+            // position: absolute;
+            right: 0;
+            bottom: 0;
+            color: #999;
+          }
+
+          img {
+            width: 42px;
+            height: 42px;
+          }
+        }
+
+        .text {
+          font-size: 40px;
+          font-weight: 500;
+          @include text-many-ellipsis(2);
+
+          &.el-skeleton__text {
+            height: 32px;
+            background: #eee;
+          }
+        }
+
+        img {
+          width: 44px;
+          height: 44px;
+          margin-left: 26px;
+          cursor: pointer;
+        }
+      }
+
+
+      .series-cert {
+        margin-top: 10px;
+        color: #909399;
+        font-size: 14px;
+
+        img {
+          margin-right: 5px;
+        }
+      }
+
+      .creater-msg {
+        border-radius: 8px;
+        background: #ffffff;
+        padding: 20px;
+        margin-top: 20px;
+
+        .author {
+          @include author(48px, 12px, 24px, 18px, 2px);
+        }
+
+        .cert {
+          margin-top: 20px;
+          text-align: right;
+
+          .el-skeleton__text {
+            height: 14px;
+            display: inline-block;
+          }
+        }
+      }
+
+      .drsc {
+        margin-top: 20px;
+
+        .title {
+          position: relative;
+          font-size: 20px;
+
+          :deep(img) {
+            width: 22px;
+            height: 22px;
+            margin: 0 6px;
+          }
+
+          span {
+            color: #456fc4;
+            margin-right: 6px;
+          }
+        }
+
+        .cont {
+          font-size: 18px;
+          color: #606266;
+          margin-top: 10px;
+          line-height: 28px;
+          position: relative;
+          @include text-many-ellipsis(2);
+
+          .el-skeleton__text {
+            height: 30px;
+            background: #eee !important;
+          }
+
+          a {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            background: #f5f7f9;
+
+            span {
+              margin-left: 10px;
+              color: #456fc4;
+              cursor: pointer;
+            }
+          }
+        }
+      }
+
+      .blindBoxRestWrap {
+        display: flex;
+        flex-direction: column;
+
+        span:nth-child(1) {
+          color: #606266;
+          font-size: 14px;
+          line-height: 20px;
+        }
+
+        span:nth-child(2) {
+          color: #303133;
+          line-height: 33px;
+          font-size: 24px;
+          margin-top: 5px;
+        }
+      }
+
+      @media screen and (max-width:500px) {
+        .blindBoxRestWrap {
+          margin-top: 20px;
+        }
+      }
+
+      .timeleft {
+        font-size: 14px;
+        margin-top: 20px;
+
+        span {
+          margin: 0 5px;
+        }
+      }
+
+      .auction-msg {
+        margin-top: 20px;
+
+        .count-down-warp {
+          display: block;
+        }
+
+        .auction-msg-item {
+          .title {
+            font-size: 14px;
+            font-weight: 400;
+            color: #606266;
+          }
+
+          .cont,
+          .count-down {
+            word-break: keep-all;
+            margin-top: 5px;
+            font-size: 24px;
+            font-weight: 500;
+
+            span {
+              font-size: 14px;
+              margin: 0 5px;
+            }
+          }
+        }
+      }
+
+      .operate-warp {
+        margin-top: 20px;
+
+        .btn {
+          margin-right: 20px;
+          height: 80px;
+          box-sizing: border-box;
+          padding: 0;
+          display: flex;
+          font-size: 23px;
+
+          &.el-skeleton__button {
+            height: 50px;
+            background: #eee;
+            border-color: #eee;
+          }
+
+          &:last-child {
+            margin-right: 0;
+          }
+
+          &.btn-black {
+            .title {
+              font-size: 12px;
+              font-weight: 500;
+              color: #909399;
+            }
+
+            .cont {
+              margin-top: 2px;
+              font-size: 18px;
+              font-weight: 500;
+            }
+          }
+        }
+      }
+
+
+
+      pre {
+        white-space: break-spaces;
+      }
+    }
+  }
+
+  .partDetailContainer {
+    margin-top: 60px;
+    background-color: #fff;
+  }
+
+  .bottom {
+    margin-top: 60px;
+    padding-top: 60px;
+    padding-bottom: 60px;
+    background: #ffffff;
+
+    .el-skeleton__text {
+      height: 30px;
+    }
+
+    .bottom-warp {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .tab {
+      a {
+        margin-right: 0px !important;
+      }
+    }
+
+    .tab-cont {
+      margin-top: 23px;
+
+      .work-deail {
+        .work-deail-section {
+          margin-bottom: 60px;
+
+          .work-detail-item {
+            margin-bottom: 10px;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+
+            .key {
+              font-size: 18px;
+              color: #909399;
+              width: 110px;
+              flex-flow: row nowrap;
+              display: flex;
+              justify-content: space-between;
+              margin-right: 15px;
+            }
+
+            .value {
+              min-width: 0;
+              font-size: 20px;
+              line-height: 30px;
+              word-break: break-all;
+
+              .author {
+                @include author(38px, 12px, 20px, 18px, 2px);
+                line-height: normal;
+              }
+
+              span {
+                margin-right: 10px;
+
+                &:last-child {
+                  margin-right: 0;
+                }
+              }
+
+              pre {
+                white-space: pre-wrap;
+              }
+            }
+          }
+        }
+
+        a {
+          color: #456fc4;
+          text-decoration: none;
+          margin-left: 10px;
+          cursor: pointer;
+
+          &.link {
+            margin-left: 0;
+          }
+        }
+
+        .remark {
+          .remark-item {
+            margin-bottom: 10px;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+        }
+      }
+
+      .haved-record {
+        height: 40vh;
+        .th {
+          text-align: center;
+          color: #909399;
+          font-size: 16px;
+          border-bottom: 1px solid #edeff2;
+        }
+
+        .tr {
+          padding: 20px 0;
+          text-align: left;
+          position: relative;
+
+          .tobe {
+            position: absolute;
+            width: 12px;
+            height: 16px;
+            left: 0;
+            top: 0;
+            margin-left: 7px;
+            margin-top: -5px;
+          }
+        }
+
+        .td {
+          font-size: 18px;
+
+        }
+
+        .user {
+          cursor: pointer;
+
+          img {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            margin-right: 6px;
+          }
+
+          .name {
+            @extend %text-ellipsis;
+          }
+        }
+
+        .role {
+          img {
+            width: 18px;
+            height: 18px;
+            margin-right: 5px;
+          }
+        }
+
+        .time {}
+
+        .price {
+          text-align: right !important;
+        }
+
+        .link {
+          margin-left: 10px;
+
+          img {
+            width: 22px;
+            height: 22px;
+          }
+        }
+      }
+
+      .historical-bid {
+        .historical-bid-item {
+          padding: 20px 0;
+          border-bottom: 1px solid #f2f4f7;
+
+          .author {
+            @include author(38px, 10px, 16px, 14px, 2px);
+          }
+
+          .auction-price {
+            text-align: right;
+
+            .price {
+              .btn {
+                margin-right: 10px;
+              }
+
+              .title {
+                font-size: 16px;
+                margin-right: 10px;
+              }
+
+              .amount {
+                font-size: 16px;
+                font-weight: 500;
+                color: #456fc4;
+              }
+            }
+
+            .time {
+              margin-top: 4px;
+              font-size: 14px;
+              font-weight: 400;
+              color: #909399;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.buy-fee-tips {
+  text-align: center;
+  color: #909399;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.auctionFailTips {
+  margin-top: 10px;
+  font-size: 12px;
+}
+
+.modal-drsc {
+  font-size: 14px;
+  color: #606266;
+  line-height: 24px;
+
+  pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+}
+
+.auction-modal {
+  padding: 15px;
+
+  .title {
+    font-size: 20px;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .msg-list {
+    margin-top: 20px;
+
+    .msg-item {
+      margin-bottom: 13px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .key {
+        font-size: 18px;
+        font-weight: 400;
+        color: #909399;
+      }
+
+      .value {
+        font-size: 18px;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .cont {
+    margin-top: 38px;
+
+    input {
+      margin: 0 45px;
+      line-height: 60px;
+      background: #f5f7fa;
+      text-align: center;
+      border: none;
+      outline: none;
+      font-size: 24px;
+      font-weight: 500;
+      border-radius: 6px;
+    }
+
+    span {
+      font-size: 18px;
+      font-weight: 500;
+    }
+  }
+
+  .equal {
+    text-align: center;
+    font-size: 14px;
+    color: #909399;
+    margin-top: 10px;
+  }
+
+  .haved-bsv {
+    margin-top: 40px;
+  }
+
+  .btn {
+    margin-top: 13px;
+  }
+}
+
+@media only screen and (max-width: 836px) {
+  .nft-detail-wrap {
+    .work-detail-item {
+      .key {
+        width: 120px !important;
+      }
+
+      .value {
+        white-space: pre-wrap;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 720px) {
+  .nft-detail-wrap {
+    .bottom {
+      .bottom-warp {
+        padding: 0 30px;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  .nft-detail-wrap {
+    .top {
+      flex-direction: column;
+
+      .cover {
+        margin-right: 0;
+        width: 100%;
+      }
+
+      .cont {
+        margin-top: 30px;
+      }
+    }
+
+    .remark {
+      .remark-item {
+        line-height: 30px;
+      }
+    }
+
+    .auction-msg {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .auction-msg-item {
+        margin-bottom: 20px;
+      }
+    }
+
+    .historical-bid {
+      .historical-bid-item {
+        flex-direction: column;
+        align-items: flex-start;
+
+        .auction-price {
+          align-self: flex-end;
+          margin-top: 10px;
+        }
+      }
+    }
+  }
+}
