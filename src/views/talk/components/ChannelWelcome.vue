@@ -11,8 +11,7 @@
     <div class="flex flex-col items-center mt-8 space-y-2">
       <div
         class="p-3 w-[80vw] lg:w-90 bg-white rounded-xl flex items-center justify-between cursor-pointer group"
-        v-for="utility in utilities"
-        v-if=""
+        v-for="utility in visibleUtilities"
         :key="utility.name"
         @click="utility.action"
       >
@@ -34,7 +33,7 @@
 <script setup lang="ts">
 import { useLayoutStore } from '@/stores/layout'
 import { useTalkStore } from '@/stores/talk'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const talk = useTalkStore()
@@ -54,6 +53,7 @@ const utilities = ref([
   {
     name: 'Talk.Channel.utilities.settings',
     icon: 'sparkles',
+    needsAdmin: true,
     bgColor: 'bg-orange-400',
     action: () => {
       router.push('/talk/channels/' + talk.activeCommunityId + '/settings')
@@ -76,4 +76,13 @@ const utilities = ref([
     },
   },
 ])
+
+const visibleUtilities = computed(() => {
+  return utilities.value.filter(utility => {
+    if (utility.needsAdmin) {
+      return talk.isAdmin()
+    }
+    return true
+  })
+})
 </script>

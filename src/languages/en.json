@@ -79,7 +79,9 @@
         "learn": "Learn More About Show3.0",
         "download": "Download Show3.0 App",
         "settings": "Customize your Community"
-      }
+      },
+      "welcome_message": "Welcome to #{channel}!",
+      "welcome_start": "This is the start of the #{channel} channel."
     },
     "Community": {
       "create": "Create community",
