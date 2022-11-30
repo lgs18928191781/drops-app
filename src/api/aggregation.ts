@@ -210,7 +210,7 @@ export const GetTagBuzzs = (params: {
   page: string | number
   pageSize: string | number
   metaId?: string
-  buzzType?: string
+  subTag?: string
   timeType?: string
 }): Promise<{
   code: number
@@ -326,6 +326,7 @@ export const GetMetaFile = (
 
 export const GetNFTs = (params: {
   address: string
+  chain?: string
   page: number | string
   pageSize: number | string
 }): Promise<{
@@ -338,7 +339,7 @@ export const GetNFTs = (params: {
   }
 }> => {
   const { address, ..._params } = params
-  return aggregation.get(`/v2/app/sensible/getMyNftSummaryListV2/${address}`, { params: _params })
+  return aggregation.get(`/v2/app/show/nft/${address}/summary`, { params: _params })
 }
 
 export const GetBalance = (params: {

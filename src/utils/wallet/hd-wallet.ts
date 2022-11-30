@@ -861,6 +861,7 @@ export class HdWallet {
     outputs = [],
   }: CreateNodeOptions) {
     return new Promise<CreateNodeRes>(async (resolve, reject) => {
+      debugger
       try {
         if (!nodeName) {
           throw new Error('Parameter Error: NodeName can not empty')
@@ -975,7 +976,6 @@ export class HdWallet {
   public async makeTx({
     payTo = [],
     outputs = [],
-    from = [],
     change = this.rootAddress,
     opReturn,
     utxos,
@@ -1020,51 +1020,13 @@ export class HdWallet {
           // @ts-ignore
           return (this._getUnspentValue() - this.getNeedFee()) as number
         }
-        // @ts-ignore
-        const fee = Math.ceil(tx._estimateSize() * useFeeb)
-        let balance = 0
-        // let pickedUtxos: MetasvUtxoTypes[] = []
 
-        // 如果指定了输入 utxos，则计算输入金额
-        if (from.length) {
-          balance = from.reduce((a, c) => a + c.satoshis, 0)
+        if (utxos) {
+          tx.from(utxos)
         }
 
-        // console.log('===费用')
-        // // @ts-ignore
-        // console.log('fee2', tx._estimateSize() * useFeeb)
-        // console.log(tx)
-
-        // 如果指定的 utxos 金额不足，则选取其它 utxos 来补充
-        if (balance < fee + amount) {
-          // @ts-ignore
-          const pickUtxosRes = this.pickUtxosByAmount(from, utxos, fee + amount)
-          // if (!pickUtxosRes.isEnoughBalance) {
-          //   throw new Error('余额不足')
-          // }
-          for (const utxo of pickUtxosRes.newPickedUtxos) {
-            tx.from(utxo)
-          }
-          from.push(...pickUtxosRes.newPickedUtxos)
-        } else {
-          tx.from(from)
-        }
-
-        // 手续费指定
-        // if (tx._getUnspentValue() - (34 + tx._estimateSize()) * useFeeb >= 546 * useFeeb) {
-        //   tx.addOutput(
-        //     new bsv.Transaction.Output({
-        //       satoshis: Math.floor(tx._getUnspentValue() - (34 + tx._estimateSize()) * fee),
-        //       script: bsv.Script.fromAddress(changeAddress),
-        //     })
-        //   )
-        // }
-        // console.log(tx)
-        // @ts-ignore
-        // console.log('fee2', tx._estimateSize() * useFeeb)
-        // @ts-ignore
         tx.fee(Math.ceil(tx._estimateSize() * useFeeb))
-        const privateKeys = this.getUtxosPrivateKeys(from)
+        const privateKeys = this.getUtxosPrivateKeys(utxos)
         tx.sign(privateKeys)
         resolve(tx)
       } catch (error) {
@@ -1691,6 +1653,7 @@ export class HdWallet {
             ...params,
             metaIdTag: MetaIdTag[this.network],
             data: nodeName.brfcId,
+            utxos: params.utxos,
           })
           if (protocolRoot) {
             if (option.isBroadcast) {
@@ -1937,94 +1900,103 @@ export class HdWallet {
     })
   }
 
-  nft = {
-    genesis(
-      params: { totalSupply: number; seriesName: string },
-      option?: {
-        useFeeb?: number
-        isBroadcast?: boolean
-      }
-    ) {
-      const initOption = {
-        useFeeb: DEFAULTS.feeb,
-        isBroadcast: true,
-      }
-      option = {
-        ...initOption,
-        ...option,
-      }
-
+  ftGenesis() {
+    return new Promise(async resolve => {
       const userStore = useUserStore()
-    },
-  }
+      const tokenName = 'SPACE-MIT'
+      const tokenSymbol = 'SMIT'
+      const decimalNum = 8
 
-  async genesisNFT(
-    params: { totalSupply: number; seriesName: string },
-    option?: {
-      useFeeb?: number
-      isBroadcast?: boolean
-    }
-  ) {
-    // const ParentInfo = await this.createBrfcProtocolNode({
-    //   nodeName: 'NftGenesis',
-    //   brfcId: '599aa8e586e8',
-    //   path: '/Protocols/NftGenesis',
-    //   needConfirm: checkOnly,
-    //   useFeeb,
-    // })
+      let utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
+      const res = await this.createBrfcNode({
+        nodeName: NodeName.FtGenesis,
+        parentAddress: this.protocolAddress,
+        parentTxId: userStore.user!.protocolTxId,
+        utxos,
+        useFeeb: 1,
+      })
 
-    // const result = await this.getPulicKeyForNewNode(
-    //   this.fundingKey.xpubkey,
-    //   ParentInfo.data.txId,
-    //   1
-    // )
-    // const pNode = result[0].publicKey
+      utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
+      const response = await this.createBrfcChildNode(
+        {
+          nodeName: NodeName.FtGenesis,
+          data: JSON.stringify({
+            type: 'metacontract',
+            tokenName,
+            tokenSymbol,
+            decimalNum,
+            desc:
+              'SPACE-MIT(SMIT) is a reward token launched for the MVC Incentivized Testnet (MIT). You can swap the reward to the Mainnet coin in a specific ratio after the launch of MVC Mainnet.',
+            icon: 'metafile://37657797410a92f7ed37440ea54d2b7940c1e0acc150a86f4e677565fc8c3e05.png',
+            website: 'https://mvc.space/',
+            issuerName: 'MVC Foundation',
+            utxos,
+            useFeeb: 1,
+          }),
+          ...AllNodeName[NodeName.FtGenesis],
+          brfc: res,
+        },
+        {
+          isBroadcast: false,
+        }
+      )
 
-    // const parentAddress = bsv.PublicKey.fromHex(ParentInfo.data.PublicKey)
-    //   .toAddress(this.network)
-    //   .toString()
-    // const addressPathObj = await this.provider.getPathWithNetWork(parentAddress)
-    // if (!addressPathObj.address) {
-    //   throw generateResponse(204, `无法获取 UTXO 地址 ${parentAddress} 的 Path`)
-    // }
-    // const parentPath = addressPathObj.Path
+      const ft = new FtManager({
+        network: this.network,
+        feeb: 1,
+        purse: this.getPathPrivateKey(`0/0`).toString(),
+      })
 
-    // const data = JSON.stringify({
-    //   type: 'sensible',
-    //   signers: signersRaw,
-    //   ...params,
-    // })
-    // const scriptPlayload = [
-    //   'mvc',
-    //   pNode,
-    //   ParentInfo.data.txId,
-    //   metaidTag.toLowerCase(),
-    //   'nftGenesis-' + pNode.substr(0, 12),
-    //   data,
-    //   '0',
-    //   '1.0.0',
-    //   'text/plain',
-    //   'UTF-8',
-    // ]
+      const genesis = await ft.genesis({
+        tokenName,
+        tokenSymbol,
+        decimalNum,
+        opreturnData: response.scriptPlayload,
+      })
 
-    const nft = new NftManager({
-      // @ts-ignore
-      network: this.network,
-      feeb: option.useFeeb,
-      purse: this.wallet
-        .deriveChild(0)
-        .deriveChild(0)
-        .privateKey.toString(),
-    })
+      utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
+      const res1 = await this.createBrfcNode({
+        nodeName: NodeName.FtIssue,
+        parentAddress: this.protocolAddress,
+        parentTxId: userStore.user!.protocolTxId,
+        utxos,
+        useFeeb: 1,
+      })
 
-    // const genesis = await nft.genesis({
-    //   totalSupply: params.totalSupply.toString(),
-    // })
+      utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
+      const response2 = await this.createBrfcChildNode(
+        {
+          nodeName: NodeName.FtIssue,
+          data: JSON.stringify({
+            type: 'metacontract',
+            genesisId: genesis.genesis,
+            sensibleId: genesis.sensibleId,
+            tokenAmount: '30000000000000',
+            genesisAddress: userStore.user!.address,
+            address: userStore.user!.address,
+            allowIncreaseIssues: true,
+          }),
+          ...AllNodeName[NodeName.FtIssue],
+          brfc: res1,
+          utxos,
+          useFeeb: 1,
+        },
+        {
+          isBroadcast: false,
+        }
+      )
 
-    const mintResult = await nft.mint({
-      metaOutputIndex: 0,
-      metaTxId: '51bd603e83fa0210d8e0704d57419dd0af0b0e264ae2246e8dc499ef76d30ce9',
-      sensibleId: 'e90cd376ef99c48d6e24e24a260e0bafd09d41574d70e0d81002fa833e60bd5100000000',
+      const result = await ft.issue({
+        genesis: genesis.genesis,
+        codehash: genesis.codehash,
+        sensibleId: genesis.sensibleId,
+        genesisWif: this.getPathPrivateKey(`0/0`).toString(),
+        receiverAddress: userStore.user!.address,
+        tokenAmount: '30000000000000',
+        allowIncreaseMints: true, //if true then you can issue again
+        opreturnData: response2.scriptPlayload,
+      })
+      debugger
     })
   }
 }
