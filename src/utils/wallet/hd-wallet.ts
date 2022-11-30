@@ -1858,8 +1858,8 @@ export class HdWallet {
    * sendMoney
    */
   public async sendMoney(params: {
-    isBroadcast?: boolean
     payTo: PayToItem[]
+    isBroadcast?: boolean
     opReturn?: string[]
     utxos?: UtxoItem[]
   }) {
@@ -1907,16 +1907,59 @@ export class HdWallet {
       const tokenSymbol = 'SMIT'
       const decimalNum = 8
 
-      let utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
-      const res = await this.createBrfcNode({
-        nodeName: NodeName.FtGenesis,
-        parentAddress: this.protocolAddress,
-        parentTxId: userStore.user!.protocolTxId,
-        utxos,
-        useFeeb: 1,
-      })
+      let utxos
+      let bFrcRes = await this.createBrfcNode(
+        {
+          nodeName: NodeName.FtGenesis,
+          parentAddress: this.protocolAddress,
+          parentTxId: userStore.user!.protocolTxId,
+          useFeeb: 1,
+        },
+        {
+          isBroadcast: false,
+        }
+      )
+      if (bFrcRes.transaction) {
+        const allUtxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
+        const tx = await this.sendMoney({
+          payTo: [{ amount: 1000, address: this.protocolAddress }],
+          utxos: allUtxos,
+        })
+        const utxo = await this.utxoFromTx({
+          tx,
+          addressInfo: {
+            addressType: parseInt(this.keyPathMap['Protocols'].keyPath.split('/')[0]),
+            addressIndex: parseInt(this.keyPathMap['Protocols'].keyPath.split('/')[1]),
+          },
+          outPutIndex: 0,
+        })
+        utxo.wif = this.getPathPrivateKey(`${utxo.addressType}/${utxo.addressIndex}`).toString()
+        utxos = [utxo]
+        bFrcRes = await this.createBrfcNode({
+          nodeName: NodeName.FtGenesis,
+          parentAddress: this.protocolAddress,
+          parentTxId: userStore.user!.protocolTxId,
+          useFeeb: 1,
+          utxos,
+        })
+      }
 
-      utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
+      const allUtxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
+      const tx = await this.sendMoney({
+        payTo: [{ amount: 20000, address: bFrcRes.address }],
+        utxos: allUtxos,
+      })
+      const utxo = await this.utxoFromTx({
+        tx,
+        addressInfo: {
+          addressType: bFrcRes.addressType,
+          addressIndex: bFrcRes.addressIndex,
+        },
+        outPutIndex: 0,
+      })
+      utxo.wif = this.getPathPrivateKey(`${utxo.addressType}/${utxo.addressIndex}`).toString()
+      debugger
+      utxos = [utxo]
       const response = await this.createBrfcChildNode(
         {
           nodeName: NodeName.FtGenesis,
@@ -1934,7 +1977,7 @@ export class HdWallet {
             useFeeb: 1,
           }),
           ...AllNodeName[NodeName.FtGenesis],
-          brfc: res,
+          brfc: bFrcRes,
         },
         {
           isBroadcast: false,
@@ -1946,24 +1989,73 @@ export class HdWallet {
         feeb: 1,
         purse: this.getPathPrivateKey(`0/0`).toString(),
       })
+      debugger
 
       const genesis = await ft.genesis({
         tokenName,
         tokenSymbol,
         decimalNum,
         opreturnData: response.scriptPlayload,
-      })
-
-      utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
-      const res1 = await this.createBrfcNode({
-        nodeName: NodeName.FtIssue,
-        parentAddress: this.protocolAddress,
-        parentTxId: userStore.user!.protocolTxId,
+        // noBroadcast: true,
         utxos,
-        useFeeb: 1,
+        changeAddress: userStore.user!.address,
+        genesisWif: this.getPathPrivateKey(
+          `${bFrcRes.addressType}/${bFrcRes.addressIndex}`
+        ).toString(),
       })
+      // await this.provider.broadcast(genesis.txHex)
 
-      utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
+      let IssueFrfcRes = await this.createBrfcNode(
+        {
+          nodeName: NodeName.FtIssue,
+          parentAddress: this.protocolAddress,
+          parentTxId: userStore.user!.protocolTxId,
+          useFeeb: 1,
+        },
+        {
+          isBroadcast: false,
+        }
+      )
+      if (IssueFrfcRes.transaction) {
+        const allUtxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
+        const tx = await this.sendMoney({
+          payTo: [{ amount: 20000, address: this.protocolAddress }],
+          utxos: allUtxos,
+        })
+        const utxo = await this.utxoFromTx({
+          tx,
+          addressInfo: {
+            addressType: parseInt(this.keyPathMap['Protocols'].keyPath.split('/')[0]),
+            addressIndex: parseInt(this.keyPathMap['Protocols'].keyPath.split('/')[1]),
+          },
+          outPutIndex: 0,
+        })
+        utxo.wif = this.getPathPrivateKey(`${utxo.addressType}/${utxo.addressIndex}`).toString()
+        utxos = [utxo]
+        IssueFrfcRes = await this.createBrfcNode({
+          nodeName: NodeName.FtIssue,
+          parentAddress: this.protocolAddress,
+          parentTxId: userStore.user!.protocolTxId,
+          useFeeb: 1,
+          utxos,
+        })
+      }
+
+      const allUtxos2 = await this.provider.getUtxos(this.wallet.xpubkey.toString())
+      const tx2 = await this.sendMoney({
+        payTo: [{ amount: 20000, address: bFrcRes.address }],
+        utxos: allUtxos2,
+      })
+      const utxo2 = await this.utxoFromTx({
+        tx: tx2,
+        addressInfo: {
+          addressType: IssueFrfcRes.addressType,
+          addressIndex: IssueFrfcRes.addressIndex,
+        },
+        outPutIndex: 0,
+      })
+      utxo2.wif = this.getPathPrivateKey(`${utxo2.addressType}/${utxo2.addressIndex}`).toString()
+      utxos = [utxo2]
       const response2 = await this.createBrfcChildNode(
         {
           nodeName: NodeName.FtIssue,
@@ -1977,7 +2069,7 @@ export class HdWallet {
             allowIncreaseIssues: true,
           }),
           ...AllNodeName[NodeName.FtIssue],
-          brfc: res1,
+          brfc: IssueFrfcRes,
           utxos,
           useFeeb: 1,
         },
@@ -1985,17 +2077,22 @@ export class HdWallet {
           isBroadcast: false,
         }
       )
-
       const result = await ft.issue({
         genesis: genesis.genesis,
         codehash: genesis.codehash,
         sensibleId: genesis.sensibleId,
-        genesisWif: this.getPathPrivateKey(`0/0`).toString(),
+        genesisWif: this.getPathPrivateKey(
+          `${bFrcRes.addressType}/${bFrcRes.addressIndex}`
+        ).toString(),
         receiverAddress: userStore.user!.address,
         tokenAmount: '30000000000000',
         allowIncreaseMints: true, //if true then you can issue again
         opreturnData: response2.scriptPlayload,
+        utxos,
+        // noBroadcast: true,
+        changeAddress: userStore.user!.address,
       })
+      // await this.provider.broadcast(result.txHex)
       debugger
     })
   }

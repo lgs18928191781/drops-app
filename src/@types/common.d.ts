@@ -128,7 +128,7 @@ declare interface BuzzItem {
   data: string
   displayType: string
   donate: string[]
-  encrypt: '0' | '1'
+  encrypt: 'number' | '1'
   history: {
     timestamp: number
     txId: string
@@ -380,6 +380,79 @@ declare interface UserNFTItem {
   nftSeriesName: string
   nftSymbol: string
   nftTimestamp: number
+  nftTotalSupply: number
+  nftWebsite: string
+}
+
+declare interface GenesisNFTItem {
+  flag: string
+  nftAttachment: string
+  nftAttachmentType: string
+  nftBackIcon: string
+  nftBalance: number
+  nftCanSellTimestamp: number
+  nftCertificationType: number
+  nftChargeUnit: string
+  nftClassifyList: string[]
+  nftCodehash: string
+  nftCurrentAuctionBidTxId: string
+  nftCurrentAuctionCreateTxId: string
+  nftCurrentAuctionState: number
+  nftCurrentBidPrice: string
+  nftCurrentBidPriceInt: number
+  nftDataStr: string
+  nftDesc: string
+  nftDonateCount: number
+  nftDonateValue: number
+  nftEndTimeStamp: string
+  nftGenesis: string
+  nftGenesisCertificationName: string
+  nftGenesisCertificationType: number
+  nftGenesisTxId: string
+  nftHasCompound: true
+  nftHasDonate: true
+  nftHasLike: true
+  nftIcon: string
+  nftIsFirstSell: true
+  nftIsLegal: true
+  nftIsOrderLock: true
+  nftIsReady: true
+  nftIssueAddress: string
+  nftIssueAvatarTxId: string
+  nftIssueAvatarType: string
+  nftIssueMetaId: string
+  nftIssueMetaTxId: string
+  nftIssueVersion: string
+  nftIssuer: string
+  nftLegalPrice: number
+  nftLegalSymbol: string
+  nftLegalUuid: string
+  nftLikeCount: number
+  nftMinBidIncrease: string
+  nftMinBidIncreaseInt: number
+  nftName: string
+  nftOwnerAddress: string
+  nftOwnerAvatarTxId: string
+  nftOwnerAvatarType: string
+  nftOwnerMetaId: string
+  nftOwnerName: string
+  nftPart: string
+  nftPartBase: string
+  nftPrice: number
+  nftSatoshi: number
+  nftSellContractTxId: string
+  nftSellDesc: string
+  nftSellState: number
+  nftSellTxId: string
+  nftSensibleId: string
+  nftSeriesName: string
+  nftSpecialLegalCnyPrice: number
+  nftStartingPrice: string
+  nftStartingPriceInt: number
+  nftSymbol: string
+  nftTimestamp: number
+  nftTokenId: string
+  nftTokenIndex: string
   nftTotalSupply: number
   nftWebsite: string
 }

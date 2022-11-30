@@ -18,7 +18,7 @@ import { reactive } from 'vue'
 const userStore = useUserStore()
 
 const form = reactive({
-  type: 'sensible',
+  type: 'metacontract',
   totalSupply: '',
   seriesName: '',
 })
@@ -30,12 +30,13 @@ async function genesis() {
       ...form,
     }),
   })
+  debugger
   if (res) {
     for (let i = 0; i < 10; i++) {
       const response = await userStore.showWallet.createBrfcChildNode({
         nodeName: NodeName.NftIssue,
         data: JSON.stringify({
-          type: 'sensible',
+          type: 'metacontract',
           genesisId: res.currentNode?.genesis,
           genesisTxid: res.currentNode?.txId,
           receiverAddress: userStore.user?.address,
