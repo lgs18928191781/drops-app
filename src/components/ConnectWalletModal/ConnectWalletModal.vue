@@ -24,6 +24,7 @@
               <div class="main-border flex flex-align-center" @click="wallet.fun()">
                 <img class="icon" :src="wallet.icon" />
                 {{ wallet.name() }}
+                <span class="desc">{{ wallet.desc() }}</span>
               </div>
             </div>
           </div>
@@ -224,6 +225,9 @@ const wallets = [
         name: () => {
           return 'MetaMask'
         },
+        desc: () => {
+          return ``
+        },
         icon: IconMetaMask,
         fun: () => {
           rootStore.$patch({ isShowLogin: false })
@@ -233,6 +237,9 @@ const wallets = [
       {
         name: () => {
           return 'WallteConnect'
+        },
+        desc: () => {
+          return ``
         },
         icon: IconWallteConnect,
         fun: connectWalletConnect,

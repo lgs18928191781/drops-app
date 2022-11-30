@@ -34,7 +34,7 @@
         <div class="title">{{ $t('Login.bindMetaId.bindSuccessTitle') }}</div>
         <div class="cont">
           <div class="userInfo">
-            <UserAvatar :metaId="userStore.user!.metaId" :type="userStore.user!.avatarType" />
+            <UserAvatar :metaid-id="userStore.user!.metaId" :type="userStore.user!.avatarType" />
             <div class="username">{{ userStore.user?.name }}</div>
             <div class="metaid">
               MetaID：{{userStore.user!.metaId.slice(0, 7)}}...{{userStore.user!.metaId.slice(-7)}}
