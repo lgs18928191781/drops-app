@@ -238,6 +238,7 @@
 
 
 
+
                 }}%)
               </div>
               <div class="amount">
@@ -248,6 +249,7 @@
               <div class="name flex1">
                 {{ $t('buyFeeTips2') }}({{
                   new Decimal(fee.val!.royaltyPercentage).mul(100).toNumber()
+
 
 
 
@@ -341,7 +343,7 @@ import sandPayTitleIcon from '@/assets/images/sandPay_title.svg?url'
 import { UnitName, Platform } from '@/config'
 import { useRootStore, isIosApp } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
-import { Decimal } from 'decimal.js'
+import { Decimal } from 'decimal.js-light'
 import PayIcon from '@/assets/images/pay_icon_wallet.svg?url'
 import BsvIcon from '@/assets/images/logo_bsv.svg?url'
 import { ElMessage, ElLoading, ElMessageBox } from 'element-plus'
