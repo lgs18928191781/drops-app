@@ -553,6 +553,8 @@ function submitForm() {
                   location.href = `${import.meta.env.VITE_FIXACCOUTURL}`
                 })
               }
+              //把新改的名字给account
+              account.name = metaIdInfo.name
               // @ts-ignore
               //这里的参数account跟metaidInfo位置不能改变，否则新数据会被覆盖
               userStore.updateUserInfo({
