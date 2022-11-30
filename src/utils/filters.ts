@@ -1,6 +1,6 @@
 // @ts-ignore
 import dayjs from 'dayjs'
-import { Decimal } from 'decimal.js'
+import Decimal from 'decimal.js-light'
 import { useRootStore } from '@/stores/root'
 
 export function dateTimeFormat(timestamp: Date, format: string = 'YYYY-MM-DD HH:mm:ss') {

@@ -34,7 +34,6 @@
     "crypto-es": "^1.2.7",
     "crypto-js": "^4.1.1",
     "dayjs": "^1.11.6",
-    "decimal.js": "^10.4.2",
     "decimal.js-light": "^2.5.1",
     "dexie": "^3.2.2",
     "dotenv": "^10.0.0",
