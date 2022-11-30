@@ -137,6 +137,7 @@ declare interface BuzzItem {
   isFull: boolean
   isNew: boolean
   isSelling: boolean
+  isMyFollow: boolean
   isValid: boolean
   like: {
     metaId: string
@@ -188,6 +189,8 @@ declare interface BuzzItem {
   txId: string
   userName: string
   zeroAddress: string
+  postTag: string
+  postTagId: number
 }
 
 declare interface BatchSaleSessionItem {
@@ -228,4 +231,155 @@ declare interface BindMetaIdRes {
   wallet: bsv.HDPrivateKey
   password: string
   // type: 'register' | 'login'
+}
+
+declare interface MetaFileInfo {
+  txId: string
+  metaId: string
+  userName: string
+  avatarTxId: string
+  avatarType: string
+  zeroAddress: string
+  metanetId: string
+  address: string
+  publicKey: string
+  hash: string
+  md5: string
+  resUrl: string
+  fileType: number
+  width: number
+  height: number
+  imgCompressUrl: string
+  duration: number
+  fileDataType: string
+  fileSize: number
+  fileSizeStr: string
+  fileName: string
+  encrypt: string
+  version: string
+  dataType: string
+  encoding: string
+  buzzTxId: string
+  isValid: boolean
+  isNew: boolean
+  blockHeight: number
+  confirmState: number
+  timestamp: number
+}
+
+declare interface recommnedCommunity {
+  communityId: string
+  cover: string
+  description: string
+  icon: string
+  memberTotal: number
+  name: string
+  isMyJoin: boolean
+}
+declare interface RecommnedUser {
+  address: string
+  avatarTxId: string
+  avatarType: string
+  isMyFollow: boolean
+  metaId: string
+  name: string
+  total: number
+}
+
+declare interface UserNFTItem {
+  nftCodehash: string
+  nftDataStr: string
+  nftDesc: string
+  nftDetailItemList: {
+    flag: string
+    nftAttachment: string
+    nftAttachmentType: string
+    nftBackIcon: string
+    nftBalance: number
+    nftCanSellTimestamp: number
+    nftCertificationType: number
+    nftChargeUnit: string
+    nftClassifyList: string
+    nftCodehash: string
+    nftCurrentAuctionBidTxId: string
+    nftCurrentAuctionCreateTxId: string
+    nftCurrentAuctionState: number
+    nftCurrentBidPrice: string
+    nftCurrentBidPriceInt: number
+    nftDataStr: string
+    nftDesc: string
+    nftDonateCount: number
+    nftDonateValue: number
+    nftEndTimeStamp: string
+    nftGenesis: string
+    nftGenesisCertificationName: string
+    nftGenesisCertificationType: number
+    nftGenesisTxId: string
+    nftHasCompound: boolean
+    nftHasDonate: boolean
+    nftHasLike: boolean
+    nftIcon: string
+    nftIsFirstSell: boolean
+    nftIsLegal: boolean
+    nftIsOrderLock: boolean
+    nftIsReady: boolean
+    nftIssueAddress: string
+    nftIssueAvatarTxId: string
+    nftIssueAvatarType: string
+    nftIssueMetaId: string
+    nftIssueMetaTxId: string
+    nftIssueVersion: string
+    nftIssuer: string
+    nftLegalPrice: number
+    nftLegalSymbol: string
+    nftLegalUuid: string
+    nftLikeCount: number
+    nftMinBidIncrease: string
+    nftMinBidIncreaseInt: number
+    nftName: string
+    nftOwnerAddress: string
+    nftOwnerAvatarTxId: string
+    nftOwnerAvatarType: string
+    nftOwnerMetaId: string
+    nftOwnerName: string
+    nftPart: string
+    nftPartBase: string
+    nftPrice: number
+    nftSatoshi: number
+    nftSellContractTxId: string
+    nftSellDesc: string
+    nftSellState: number
+    nftSellTxId: string
+    nftSensibleId: string
+    nftSeriesName: string
+    nftSpecialLegalCnyPrice: number
+    nftStartingPrice: string
+    nftStartingPriceInt: number
+    nftSymbol: string
+    nftTimestamp: number
+    nftTokenId: string
+    nftTokenIndex: string
+    nftTotalSupply: number
+    nftWebsite: string
+  }[]
+  nftGenesis: string
+  nftGenesisTxId: string
+  nftGenesisType: string
+  nftHasCompound: boolean
+  nftIcon: string
+  nftIsReady: boolean
+  nftIssueAvatarTxId: string
+  nftIssueAvatarType: string
+  nftIssueMetaId: string
+  nftIssueVersion: string
+  nftIssuer: string
+  nftMyCount: number
+  nftMyPendingCount: number
+  nftName: string
+  nftSensibleId: string
+  nftSeriesName: string
+  nftSymbol: string
+  nftTimestamp: number
+  nftTotalSupply: number
+  nftWebsite: string
 }

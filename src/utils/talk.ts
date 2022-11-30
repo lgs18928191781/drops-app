@@ -1,30 +1,163 @@
 import dayjs from 'dayjs'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 dayjs.extend(advancedFormat)
-import { IsEncrypt, NodeName } from '@/enum'
+import {
+  ChannelType,
+  CommunityJoinAction,
+  GroupChannelType,
+  IsEncrypt,
+  MessageType,
+  NodeName,
+} from '@/enum'
 import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
+import { getCommunityAuth } from '@/api/talk'
+import { SDK } from './sdk'
+import { FileToAttachmentItem } from './util'
+import { Message, MessageDto } from '@/@types/talk'
+import { decrypt, encrypt, MD5Hash } from './crypto'
 
-export enum MessageType {
-  Text = 'text',
-  Image = 'image',
-  NftEmoji = 'nftEmoji',
-  OnChainImage = 'onChainImage',
+export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
+  // communityId, name, description, cover, metaName, mateNameNft, admins, reserved, icon
+  // const communityId = '274628147706127fc9cc8da5285081f52e6dd4436fd97bc7321daca2064db385'
+  const communityId = '70637fba2fcadfe5ea89cc845ecb9eef86195672de4ce56a703e1ff08e6f1228'
+  const { metaName, signature: reserved } = await getCommunityAuth(communityId)
+  const { icon, name, description, cover } = form
+
+  const attachments = []
+  attachments.push(await FileToAttachmentItem(icon))
+  const iconPlaceholder = 'metafile://$[0]'
+
+  let coverPlaceholder = null
+
+  if (cover) {
+    coverPlaceholder = 'metafile://$[1]'
+    attachments.push(await FileToAttachmentItem(cover))
+  }
+
+  const admins = [userStore.user?.metaId]
+  const dataCarrier = {
+    communityId,
+    metaName,
+    reserved,
+    icon: iconPlaceholder,
+    admins,
+    name,
+    description,
+    cover: coverPlaceholder || '',
+  }
+
+  // 2. 构建节点参数
+  const node = {
+    nodeName: NodeName.SimpleCommunity,
+    encrypt: IsEncrypt.No,
+    dataType: 'application/json',
+    data: JSON.stringify(dataCarrier),
+    attachments,
+  }
+
+  // 3. 发送节点
+  await sdk.createBrfcChildNode(node)
+
+  return { communityId }
 }
 
-export enum ChannelType {
-  Group = 'group',
-  Session = 'session',
+export const createChannel = async (
+  form: any,
+  communityId: string,
+  sdk: SDK,
+  selfMetaId?: string
+) => {
+  // communityId, groupName, groupNote, timestamp, groupType, status, type, codehash, genesis, limitAmount
+  const { name: groupName } = form
+
+  const { groupType, status, type, codehash, genesis, limitAmount } = _getChannelTypeInfo(
+    form,
+    selfMetaId!
+  )
+
+  const dataCarrier = {
+    communityId,
+    groupName,
+    groupNote: '',
+    groupType,
+    status,
+    type,
+    codehash,
+    genesis,
+    limitAmount,
+    timestamp: parseInt(dayjs().format('X')),
+  }
+
+  // 2. 构建节点参数
+  const node = {
+    nodeName: NodeName.SimpleGroupCreate,
+    encrypt: IsEncrypt.No,
+    dataType: 'application/json',
+    data: JSON.stringify(dataCarrier),
+  }
+
+  // 3. 发送节点
+  const channelId = await sdk.createBrfcChildNode(node)
+
+  return { channelId }
 }
 
-type MessageDto = {
-  type: MessageType
-  content: string
-  channelId: string
-  userName: string
-  attachments?: any[]
-  originalFileUrl?: any
-  channelType?: ChannelType
+export const verifyPassword = (key: string, hashedPassword: string, creatorMetaId: string) => {
+  const decrypted = decrypt(key, hashedPassword)
+
+  return decrypted === creatorMetaId.substring(0, 16)
+
+  // if (decrypted && decrypted === creatorMetaId.substring(0, 16)) {
+  //   talk.hasActiveChannelConsent = true
+  //   layout.isShowPasswordModal = false
+  // }
+}
+
+const _getChannelTypeInfo = (form: any, selfMetaId: string) => {
+  let groupType = null
+  let status = null
+  let type = null
+  let codehash = null
+  let genesis = null
+  let limitAmount = null
+
+  switch (form.type) {
+    case GroupChannelType.PublicText:
+      groupType = '1'
+      status = '1'
+      break
+
+    case GroupChannelType.Password:
+      groupType = '2'
+      status = encrypt(selfMetaId.substring(0, 16), MD5Hash(form.password).substring(0, 16))
+      type = '1'
+
+    default:
+      break
+  }
+
+  return { groupType, status, type, codehash, genesis, limitAmount }
+}
+
+export const joinCommunity = async (communityId: string, sdk: SDK) => {
+  const dataCarrier = {
+    communityId,
+    state: CommunityJoinAction.Join,
+  }
+
+  // 2. 构建节点参数
+  const node = {
+    nodeName: NodeName.SimpleCommunityJoin,
+    encrypt: IsEncrypt.No,
+    dataType: 'application/json',
+    data: JSON.stringify(dataCarrier),
+  }
+
+  // 3. 发送节点
+  await sdk.createBrfcChildNode(node)
+
+  return { communityId }
 }
 
 export const sendMessage = async (messageDto: MessageDto) => {
@@ -42,7 +175,7 @@ export const sendMessage = async (messageDto: MessageDto) => {
   }
 }
 
-export const validateMessage = (message: string) => {
+export const validateTextMessage = (message: string) => {
   message = message.trim()
 
   return message.length > 0 && message.length <= 5000
@@ -95,9 +228,7 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
     encryption,
     isMock: true,
   }
-  talkStore.$patch(state => {
-    state.newMessages.push(mockMessage)
-  })
+  talkStore.addMessage(mockMessage)
 
   // 3. 发送节点
   const sdk = userStore.showWallet
@@ -162,6 +293,32 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
   return '1'
 }
 
+const _uploadImage = async (file: File, sdk: SDK) => {
+  const fileType = file.type.split('/')[1]
+  const hexedFiles = await FileToAttachmentItem(file)
+  const dataCarrier = {
+    nodeName: 'icon',
+    data: hexedFiles,
+    dataType: fileType,
+    encrypt: IsEncrypt.No,
+    encoding: 'binary',
+  }
+
+  const node = {
+    nodeName: NodeName.MetaFile,
+    dataType: 'application/json',
+    attachments: [hexedFiles],
+  }
+
+  const newNode = await sdk.createBrfcChildNode(node)
+  if (!newNode) return { metafileUri: null }
+
+  const txId = newNode.txId
+  const metafileUri = 'metafile://' + txId + '.' + fileType
+
+  return { metafileUri }
+}
+
 const _sendImageMessage = async (messageDto: MessageDto) => {
   const userStore = useUserStore()
   const talkStore = useTalkStore()
@@ -209,9 +366,7 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
     encryption: encrypt,
     isMock: true,
   }
-  talkStore.$patch(state => {
-    state.newMessages.push(mockMessage)
-  })
+  talkStore.addMessage(mockMessage)
 
   // 3. 发送节点
   const sdk = userStore.showWallet

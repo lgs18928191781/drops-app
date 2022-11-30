@@ -1,85 +1,101 @@
 <template>
-  <ElDialog
+  <ModalVue
+    :model-value="modelValue"
+    v-model:showSecondControl="isShowAvatasList"
+    :is-hide-close="true"
+    :mobileSize="95"
+    :width="'456px'"
+  >
+    <template #body>
+      <div class="set-base-user-info flex" v-loading="loading">
+        <div class="flex1 set-base-user-info-item set-warp">
+          <div class="title">{{ $t('Login.setBaseInfo.title') }}</div>
+          <div class="info">
+            <div class="info-item flex flex-align-center">
+              <div class="key">{{ $t('Login.setBaseInfo.setNFTAvatar') }}</div>
+              <div class="cont flex1 flex flex-align-center flex-pack-end">
+                <div class="flex flex-align-center avatar-warp" @click="openAvatarList">
+                  <UserAvatar
+                    :metaId="currentUserAvatarKey"
+                    :type="userStore.user ? userStore.user?.avatarType : ''"
+                    class="main-border"
+                  />
+                  <Icon name="down" />
+                </div>
+              </div>
+            </div>
+
+            <div class="info-item flex flex-align-center">
+              <div class="key">{{ $t('Login.setBaseInfo.setUserName') }}</div>
+              <div class="cont flex1 flex flex-align-center flex-pack-end">
+                <ElForm :model="form" :rules="rules" ref="FormRef">
+                  <ElFormItem prop="name">
+                    <ElInput
+                      v-model="form.name"
+                      type="text"
+                      :placeholder="$t('Login.setBaseInfo.setUserNamePlac')"
+                    />
+                  </ElFormItem>
+                </ElForm>
+              </div>
+            </div>
+          </div>
+          <div class="operate">
+            <a class="main-border" :class="{ faded: form.name === '' }" @click="submitForm">
+              <Icon name="right" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <template #secondBody>
+      <div class="set-base-user-info flex" v-loading="loading">
+        <div class="flex1 set-base-user-info-item">
+          <div class="choose-nft flex flex-v">
+            <div class="title">{{ $t('Login.setBaseInfo.chooseNFTTitle') }}</div>
+            <div
+              class="nft-list flex1"
+              v-infinite-scroll="getMore"
+              :infinite-scroll-immediate="false"
+              v-loading="isNFTLoading"
+            >
+              <template v-if="!isNFTLoading">
+                <template v-if="list.length > 0">
+                  <div class="nft-item" v-for="item in list" @click="chooseItem(item)">
+                    <Image :src="item.image" />
+                    <div
+                      class="checked"
+                      v-if="
+                        currentNFT.token_address === item.token_address &&
+                          currentNFT.token_id === item.token_id
+                      "
+                    >
+                      <div class="checked-icon-warp flex flex-align-center flex-pack-center">
+                        <Icon name="check" />
+                      </div>
+                    </div>
+                  </div>
+                </template>
+                <template v-else>
+                  <IsNullVue />
+                </template>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+  </ModalVue>
+
+  <!-- <ElDialog
     :model-value="modelValue"
     :show-close="false"
     class="none-bg-color none-header"
     :close-on-click-modal="false"
   >
-    <div class="set-base-user-info flex" v-loading="loading">
-      <div class="flex1 set-base-user-info-item set-warp">
-        <div class="title">{{ $t('Login.setBaseInfo.title') }}</div>
-        <div class="info">
-          <div class="info-item flex flex-align-center">
-            <div class="key">{{ $t('Login.setBaseInfo.setNFTAvatar') }}</div>
-            <div class="cont flex1 flex flex-align-center flex-pack-end">
-              <div class="flex flex-align-center">
-                <UserAvatar
-                  :metaId="currentUserAvatarKey"
-                  :type="userStore.user ? userStore.user?.avatarType : ''"
-                  :disabled="true"
-                  class="main-border"
-                />
-                <Icon name="down" />
-              </div>
-            </div>
-          </div>
-
-          <div class="info-item flex flex-align-center">
-            <div class="key">{{ $t('Login.setBaseInfo.setUserName') }}</div>
-            <div class="cont flex1 flex flex-align-center flex-pack-end">
-              <ElForm :model="form" :rules="rules" ref="FormRef">
-                <ElFormItem prop="name">
-                  <ElInput
-                    v-model="form.name"
-                    type="text"
-                    :placeholder="$t('Login.setBaseInfo.setUserNamePlac')"
-                  />
-                </ElFormItem>
-              </ElForm>
-            </div>
-          </div>
-        </div>
-        <div class="operate">
-          <a class="main-border" :class="{ faded: form.name === '' }" @click="submitForm">
-            <Icon name="right" />
-          </a>
-        </div>
-      </div>
-      <div class="flex1 set-base-user-info-item">
-        <div class="choose-nft flex flex-v">
-          <div class="title">{{ $t('Login.setBaseInfo.chooseNFTTitle') }}</div>
-          <div
-            class="nft-list flex1"
-            v-infinite-scroll="getMore"
-            :infinite-scroll-immediate="false"
-            v-loading="isNFTLoading"
-          >
-            <template v-if="!isNFTLoading">
-              <template v-if="list.length > 0">
-                <div class="nft-item" v-for="item in list" @click="chooseItem(item)">
-                  <Image :src="item.image" />
-                  <div
-                    class="checked"
-                    v-if="
-                      currentNFT.token_address === item.token_address &&
-                        currentNFT.token_id === item.token_id
-                    "
-                  >
-                    <div class="checked-icon-warp flex flex-align-center flex-pack-center">
-                      <Icon name="check" />
-                    </div>
-                  </div>
-                </div>
-              </template>
-              <template v-else>
-                <IsNullVue />
-              </template>
-            </template>
-          </div>
-        </div>
-      </div>
-    </div>
-  </ElDialog>
+    
+  </ElDialog> -->
 </template>
 
 <script setup lang="ts">
@@ -87,6 +103,8 @@ import { useUserStore } from '@/stores/user'
 import { computed, reactive, ref, watch } from 'vue'
 import IsNullVue from '@/components/IsNull/IsNull.vue'
 import { GetNFTs } from '@/api/metaid-base'
+import ModalVue from '../Modal/Modal.vue'
+import { ShowControl } from '@/enum'
 import { MetaIdWalletRegisterBaseInfo } from './MetaIdWallet.vue'
 import { RegisterCheck, SetUserInfo, SetUserPassword, SetUserWalletInfo } from '@/api/core'
 import {
@@ -127,6 +145,7 @@ const rules = {
     },
   ],
 }
+const isShowAvatasList = ref(false)
 
 const list: {
   image: string
@@ -155,22 +174,6 @@ const currentUserAvatarKey = computed(() => {
     }
   }
 })
-
-watch(
-  () => props.modelValue,
-  () => {
-    if (props.modelValue) {
-      if (list.length === 0 && userStore.isAuthorized) {
-        pagintion.cursor = ''
-        getNfts(true).then(() => {
-          isNFTLoading.value = false
-        })
-      } else {
-        isNFTLoading.value = false
-      }
-    }
-  }
-)
 
 function getMore() {
   if (!pagintion.cursor) return
@@ -231,6 +234,18 @@ function chooseItem(item: {
   } else {
     currentNFT.token_address = item.token_address
     currentNFT.token_id = item.token_id
+  }
+}
+
+function openAvatarList() {
+  isShowAvatasList.value = !isShowAvatasList.value
+  if (isShowAvatasList.value && list.length === 0 && userStore.isAuthorized) {
+    isNFTLoading.value = true
+    getNfts(true).then(() => {
+      isNFTLoading.value = false
+    })
+  } else {
+    isNFTLoading.value = false
   }
 }
 

@@ -47,6 +47,19 @@ export function checkSdkStatus(path: string, params?: ElMessageBoxOptions) {
   })
 }
 
+export function checkUserLogin() {
+  return new Promise<void>((resolve, reject) => {
+    const userStroe = useUserStore()
+    const rootStore = useRootStore()
+    if (!userStroe.isAuthorized) {
+      rootStore.$patch({ isShowLogin: true })
+      reject(new Error(i18n.global.t('Please Login First')))
+    } else {
+      resolve()
+    }
+  })
+}
+
 export function openLoginConfirm(path: string, params?: ElMessageBoxOptions) {
   return new Promise<void>((resolve, reject) => {
     const userStroe = useUserStore()
@@ -345,7 +358,6 @@ export function camelToKebab(str: string): string {
 
 export function alertCatchError(error: any) {
   return new Promise<void>(resolve => {
-    debugger
     if (error) {
       if (typeof error === 'string') {
         ElMessage.error(error)
@@ -451,6 +463,7 @@ export async function downloadFile(url: string, name = 'file') {
   } else {
     const a = document.createElement('a')
     a.href = url
+    a.target = '_blank'
     a.download = name
     document.body.appendChild(a)
     a.click()
@@ -844,6 +857,7 @@ export function FileToAttachmentItem(file: File, encrypt: IsEncrypt = IsEncrypt.
       sha256: encHex.stringify(sha256Algo.finalize()),
       url: URL.createObjectURL(file),
       encrypt,
+      size: file.size,
     })
   })
 }
@@ -885,4 +899,11 @@ export function copy(
 export function tx(txId: string | undefined) {
   if (!txId) return
   window.open(`https://mvcscan.com/tx/${txId}`, '_blank')
+}
+
+// 随机数
+export function randomRange(min: number, max: number) {
+  // min最小值，max最大值
+
+  return Math.floor(Math.random() * (max - min)) + min
 }

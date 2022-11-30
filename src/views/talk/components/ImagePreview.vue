@@ -22,7 +22,12 @@
 <script lang="ts" setup>
 import { metafile } from '@/utils/filters'
 
-const props = defineProps(['src'])
+const props = defineProps({
+  src: {
+    type: String,
+    required: true,
+  },
+})
 
 const openOriginal = () => {
   const src = metafile(props.src, -1)

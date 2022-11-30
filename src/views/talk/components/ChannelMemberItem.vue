@@ -1,10 +1,6 @@
 <template>
   <div class="flex items-center my-2.5 lg:my-4">
-    <!-- <UserAvatar
-      :type="member.avatarType"
-      :metaId="member.avatarTxId || 'undefined'"
-      class="w-9 h-9 shrink-0"
-    /> -->
+    <UserAvatar :type="member.avatarType" :metaId="member.avatarTxId" class="w-9 h-9 shrink-0" />
     <div class="ml-2 flex flex-col">
       <div class="text-sm text-dark-800 truncate w-36">
         {{ member.name }}

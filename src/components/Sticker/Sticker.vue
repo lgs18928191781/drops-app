@@ -1,9 +1,15 @@
 <template>
-  <div class="pb-1.5 rounded-lg text-xs flex flex-col text-dark-400 font-medium  sticker">
-    <div class="flex shadow-md px-2 text-sm font-medium pb-2 pt-2 space-x-1">
+  <div class="pb-1.5 rounded-lg text-xs flex flex-col text-dark-400 font-medium sticker">
+    <div
+      class="flex border-b border-dark-200 mx-2 text-sm font-medium pb-2 pt-2 space-x-1 h-11 items-center"
+    >
       <div
         class="py-0.5 px-2 rounded cursor-pointer"
-        :class="{ 'bg-dark-300 text-white': activeTab === 'nft' }"
+        :class="[
+          activeTab === 'nft'
+            ? 'text-dark-800 main-border bg-primary small'
+            : 'border border-transparent',
+        ]"
         @click="changeTab('nft')"
         v-if="!isHideNFT"
       >
@@ -11,7 +17,11 @@
       </div>
       <div
         class="py-0.5 px-2 rounded cursor-pointer"
-        :class="{ 'bg-dark-300 text-white': activeTab === 'emoji' }"
+        :class="[
+          activeTab === 'emoji'
+            ? 'text-dark-800 main-border bg-primary small'
+            : 'border border-transparent',
+        ]"
         @click="changeTab('emoji')"
       >
         {{ $t('Talk.Input.emoji') }}

@@ -1,3 +1,5 @@
+import { ChannelType, MessageType } from '@/enum'
+
 declare interface Message {
   protocol?: string
   nodeName?: string
@@ -34,6 +36,33 @@ declare interface Contact {
 
 declare interface Community {
   id: string
+  communityId: string
+  address: string
+  admins: string[]
+  cover: string
+  description: string
+  metaId: string
+  metaName: string
+  metaNameNft: string
+  metanetId: string
+  name: string
+  publicKey: string
+  reserved: string
+  timestamp: number
+  txId: string
+  zeroAddress: string
+  icon: string
+}
+
+declare interface CommunityAuth {
+  communityId: string
+  ownerMetaId: string
+  metaName: string
+  signature: string
+}
+
+declare interface Channel {
+  id: string
   communityId?: string
   address: string
   admins: string[]
@@ -50,4 +79,14 @@ declare interface Community {
   txId: string
   zeroAddress: string
   icon: string
+}
+
+declare interface MessageDto {
+  type: MessageType
+  content: string
+  channelId: string
+  userName: string
+  attachments?: any[]
+  originalFileUrl?: any
+  channelType?: ChannelType
 }

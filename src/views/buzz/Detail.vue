@@ -21,16 +21,17 @@
 </template>
 
 <script setup lang="ts">
-import { getBuzzInteractiveList, getOneBuzz } from '@/api/buzz'
+import { getBuzzInteractiveList } from '@/api/buzz'
 import BuzzListVue from './components/BuzzList.vue'
 import { initPagination } from '@/config'
-import { CreateBrfcChildNodePayType, IsEncrypt, NodeName } from '@/enum'
+import { SdkPayType, IsEncrypt, NodeName } from '@/enum'
 import { useUserStore } from '@/stores/user'
 import { computed, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import BuzzCommentListVue from './components/BuzzCommentList.vue'
 import { checkSdkStatus } from '@/utils/util'
 import { useI18n } from 'vue-i18n'
+import { GetBuzz } from '@/api/aggregation'
 
 const route = useRoute()
 const userStore = useUserStore()
@@ -74,8 +75,9 @@ const list = computed(() => {
 })
 
 async function fetchData() {
-  const res = await getOneBuzz({
-    txId: route.params.txId,
+  const res = await GetBuzz({
+    txId: route.params.txId as string,
+    metaId: userStore.user?.metaId,
   })
   if (res && res.code === 0) {
     let detailRes: BuzzItem = res.data.results.items[0] || null
@@ -187,7 +189,7 @@ async function confirmComment() {
       data: JSON.stringify(dataParams),
       encrypt: IsEncrypt.No,
       // confirmHandel: onPayMeConfirmCallback,
-      // payType: CreateBrfcChildNodePayType.MC,
+      // payType: SdkPayType.MC,
     })
     if (res) {
       const item = {
@@ -208,7 +210,7 @@ async function confirmComment() {
         userName: userStore.user!.name!,
         zeroAddress: userStore.user!.address!,
       }
-      debugger
+
       if (addComment.commentToCommentTxId === '') {
         commentListData.unshift(item)
       } else {

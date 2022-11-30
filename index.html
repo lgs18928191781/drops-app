@@ -34,7 +34,6 @@
           if (width / dpr > designSize) {
             width = designSize * dpr
           }
-          console.log('htmlFontSize', htmlFontSize)
           docEl.dataset.width = width
           docEl.dataset.percent = htmlFontSize * (width / designSize)
           var fontSize = htmlFontSize * (width / designSize)
@@ -51,11 +50,12 @@
   </head>
   <body>
     <div id="app"></div>
-    <script src="/sensible.browser.min.js"></script>
+    <!-- <script src="/sensible.browser.min.js"></script> -->
     <script src="/mvc.min.js"></script>
     <script src="/mvc-message.min.js"></script>
     <script src="/mvc-ecies.min.js"></script>
     <script src="/mvc-mnemonic.min.js"></script>
+    <script src="/metaContract.browser.min.js"></script>
     <script>
       mvc.Message = mvcMessage
       mvc.ECIES = mvcEcies
@@ -63,6 +63,7 @@
       window.mvc = mvc
       window.ECIES = mvc.ECIES
       window.Mnemonic = mvc.Mnemonic
+      window.metaContract = window.sensible
     </script>
 
     <script src="/bip39.min.js"></script>

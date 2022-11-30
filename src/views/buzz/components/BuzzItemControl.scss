@@ -14,6 +14,16 @@
         }
     }
 
+    .tx {
+        color: #BFC2CC;
+        font-size: 12px;
+        margin-left: 18px;
+
+        &:hover {
+            color: rgb(85, 134, 187);
+        }
+    }
+
     .operates {
         .operate-item {
             font-size: 12px;

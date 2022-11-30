@@ -13,6 +13,7 @@
         ]"
         @click.stop="preview(index)"
       >
+        <!-- 图片 -->
         <template v-if="getAttachmentType(item) === 'image'">
           <Image :src="typeof item === 'string' ? item : item.url" />
           <!-- remove -->
@@ -23,6 +24,61 @@
           >
             <Icon name="x_mark" />
           </a>
+        </template>
+
+        <!-- 音频 -->
+        <template v-if="getAttachmentType(item) === 'audio'">
+          <!-- <video :src="typeof item === 'string' ? item : item.url" controls preload="auto"></video> -->
+          <div class="audio-warp flex flex-align-center" v-loading="loading">
+            <div class="audio-icon flex flex-align-center flex-pack-center">
+              <img :src="MusicIcon" />
+            </div>
+            <div class="cont flex1 flex flex-v">
+              <div class="flex1">
+                <div
+                  class="name"
+                  :title="typeof item === 'string' ? metafileInfo.val?.fileName : item.fileName"
+                >
+                  {{ typeof item === 'string' ? metafileInfo.val?.fileName : item.fileName }}
+                </div>
+              </div>
+              <div class="size">
+                {{
+                  typeof item === 'string'
+                    ? ((metafileInfo.val?.fileSize || 0) / 1048576).toFixed(2)
+                    : (item.size / 1048576).toFixed(2)
+                }}
+                M
+              </div>
+            </div>
+            <div class="control flex flex-align-center">
+              <a
+                class="icon-warp play flex flex-align-center flex-pack-center"
+                :class="{
+                  active: typeof item === 'string' ? playFile === item : playFile === item.url,
+                }"
+                @click.stop="
+                  emit('play', {
+                    file: typeof item === 'string' ? item : item.url,
+                    type: 'audio',
+                  })
+                "
+              >
+                <Icon
+                  name="stop"
+                  v-if="typeof item === 'string' ? playFile === item : playFile === item.url"
+                />
+                <Icon name="play" v-else />
+              </a>
+              <Icon
+                name="download"
+                class="icon-warp"
+                @click.stop="
+                  downloadFile($filters.metafile(typeof item === 'string' ? item : item.url))
+                "
+              ></Icon>
+            </div>
+          </div>
         </template>
       </div>
     </div>
@@ -65,22 +121,29 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { metafile } from '@/utils/filters'
 import { ImagePreview } from 'vant'
 import { router } from '@/router'
 import { AttachmentItem } from '@/@types/hd-wallet'
 import ImagePreviewVue from '@/components/ImagePreview/ImagePreview.vue'
+import MusicIcon from '@/assets/icons/music.svg?url'
+import { downloadFile } from '@/utils/util'
+import { GetMetaFile } from '@/api/aggregation'
 
 interface Props {
   attachments: string[] | AttachmentItem[]
+  playFile?: string
   isEdit?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {})
 const isShowPreview = ref(false)
 const previewIndex = ref(0)
+const loading = ref(false)
 
-const emit = defineEmits(['remove'])
+const emit = defineEmits(['remove', 'play'])
+
+const metafileInfo: { val: null | MetaFileInfo } = reactive({ val: null })
 
 const previewImages = computed(() => {
   let result: string[] = []
@@ -93,6 +156,23 @@ const previewImages = computed(() => {
   }
   return result
 })
+
+watch(
+  () => props.attachments,
+  () => {
+    if (
+      props.attachments &&
+      props.attachments.length &&
+      typeof props.attachments[0] === 'string' &&
+      getAttachmentType(props.attachments[0]) !== 'image'
+    ) {
+      loading.value = true
+      getMetaFileInfo().then(() => {
+        loading.value = false
+      })
+    }
+  }
+)
 
 // const images = computed(() => {
 //   if (!props.attachments || !props.attachments.length) {
@@ -191,9 +271,25 @@ function toNFT() {
 
 function getAttachmentType(attachment: string | AttachmentItem) {
   if (typeof attachment === 'string') {
-    return 'image'
+    const fileSuffix = attachment.split('.')[attachment.split('.').length - 1]
+    if (
+      fileSuffix === 'png' ||
+      fileSuffix === 'jpg' ||
+      fileSuffix === 'jpeg' ||
+      fileSuffix === 'svg'
+    ) {
+      return 'image'
+    } else if (fileSuffix === 'mp3') {
+      return 'audio'
+    } else {
+      return 'image'
+    }
   } else {
-    return 'image'
+    if (attachment.fileType.indexOf('audio/') !== -1) {
+      return 'audio'
+    } else {
+      return 'image'
+    }
   }
   // let isImage = false
   // for (let i = 0; i < imageType.length; i++) {
@@ -205,167 +301,38 @@ function getAttachmentType(attachment: string | AttachmentItem) {
   // if (isImage) return 'image'
 }
 
+function getMetaFileInfo() {
+  return new Promise<void>(async (resolve, reject) => {
+    const res = await GetMetaFile([
+      typeof props.attachments[0] === 'string'
+        ? props.attachments[0].replace('metafile://', '').split('.')[0]
+        : '',
+    ]).catch(eror => {
+      ElMessage.error(eror.message)
+    })
+    if (res?.code === 0) {
+      metafileInfo.val = res.data.results.items[0]
+      resolve()
+    }
+  })
+}
+
 function preview(index: number) {
+  if (getAttachmentType(props.attachments[index]) !== 'image') return
   previewIndex.value = index
   isShowPreview.value = true
 }
+
+if (
+  props.attachments &&
+  props.attachments.length &&
+  typeof props.attachments[0] === 'string' &&
+  getAttachmentType(props.attachments[0]) !== 'image'
+) {
+  loading.value = true
+  getMetaFileInfo().then(() => {
+    loading.value = false
+  })
+}
 </script>
-<style scoped lang="scss">
-.attachement-list {
-  .attachment-item {
-    border-radius: 8px;
-    overflow: hidden;
-    position: relative;
-    cursor: pointer;
-
-    &.image {
-      width: calc((100% - 24px) / 3);
-      display: inline-block;
-      vertical-align: middle;
-      height: 0;
-      padding-bottom: calc((100% - 24px) / 3);
-      margin-right: 12px;
-      margin-bottom: 12px;
-      position: relative;
-
-      &:nth-child(3n) {
-        margin-right: 0;
-      }
-
-      :deep(.image) {
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        object-fit: cover;
-      }
-    }
-
-    &.single-image {
-      display: inline-block;
-      width: auto;
-      margin-right: 0;
-      height: auto;
-      padding-bottom: 0;
-      margin-bottom: 0;
-
-      :deep(.image) {
-        position: static;
-        border-radius: 8px;
-        max-width: 100%;
-        max-height: 300px;
-        .el-skeleton {
-          width: 300px;
-          height: 150px;
-          position: relative;
-          .el-skeleton__image {
-          }
-        }
-      }
-    }
-
-    .remove {
-      position: absolute;
-      right: 0;
-      top: 0;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: rgb(48, 49, 51, 0.3);
-      z-index: 2;
-      margin-top: 6px;
-      margin-right: 6px;
-      cursor: pointer;
-
-      &:hover {
-        background: rgb(48, 49, 51, 1);
-      }
-
-      :deep(.icon) {
-        width: 16px;
-        height: 16px;
-        use {
-          fill: #fff;
-        }
-      }
-    }
-  }
-}
-
-.image-list {
-  display: flex;
-  flex-wrap: wrap;
-  .item {
-    width: calc(33.33% - 7px);
-    margin: 0 9px 9px 0;
-    position: relative;
-    height: 0;
-    padding-bottom: calc(33.33% - 7px);
-    flex-grow: 0;
-    flex-shrink: 0;
-
-    &.nft {
-      width: 50%;
-      padding-bottom: 50%;
-    }
-
-    img {
-      position: absolute;
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 8px;
-      top: 0;
-      left: 0;
-    }
-
-    i {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: linear-gradient(270deg, #2af598, #009efd);
-      z-index: 2;
-      padding: 4px 6px;
-      border-radius: 12px;
-      font-size: 10px;
-      line-height: 1;
-      font-weight: 500;
-      letter-spacing: 1px;
-    }
-
-    &:last-child,
-    &:nth-child(3n) {
-      margin-right: 0;
-    }
-  }
-
-  .single {
-    width: 100%;
-    height: 257px;
-    margin: 0;
-    padding: 0;
-  }
-}
-.video-list {
-  video {
-    display: block;
-    width: 100%;
-    height: 257px;
-    margin: 0;
-    padding: 0;
-    object-fit: contain;
-    background: #000;
-    border-radius: 8px;
-  }
-}
-
-.audio-list {
-  audio {
-    display: block;
-    width: 100%;
-    height: 100px;
-    margin: 0;
-    padding: 0;
-  }
-}
-</style>
+<style scoped lang="scss" src="./Attachment.scss"></style>

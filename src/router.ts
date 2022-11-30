@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouterView } from 'vue-router'
 const NotFoundPage = () => import('@/views/404.vue')
 import { ElMessage } from 'element-plus'
 import i18n from '@/utils/i18n'
+import { useUserStore } from './stores/user'
 export const routerHistory = createWebHistory()
 export const router = createRouter({
   history: routerHistory,
@@ -14,18 +15,25 @@ export const router = createRouter({
       name: 'buzz',
       component: () => import('@/views/buzz/Layout.vue'),
       // meta: { keepAlive: true },
-      redirect: '/buzz/index',
+      redirect: () => {
+        const userStroe = useUserStore()
+        if (userStroe.isAuthorized) {
+          return { name: 'buzzIndex' }
+        } else {
+          return { name: 'buzzRecommend' }
+        }
+      },
       children: [
         {
           path: 'index',
           name: 'buzzIndex',
           component: () => import('@/views/buzz/Index.vue'),
-          // meta: { keepAlive: true },
+          meta: { isAuth: true },
         },
         {
           path: 'recommend',
           name: 'buzzRecommend',
-          component: () => import('@/views/buzz/Index.vue'),
+          component: () => import('@/views/buzz/Recomment.vue'),
           // meta: { keepAlive: true },
         },
         {
@@ -33,36 +41,47 @@ export const router = createRouter({
           name: 'buzzDetail',
           component: () => import('@/views/buzz/Detail.vue'),
         },
-      ],
-    },
-    {
-      path: '/sign',
-      name: 'sign',
-      component: () => import('@/views/sign/Index.vue'),
-      children: [
         {
-          path: 'pre',
-          name: 'preLogin',
-          component: () => import('@/views/sign/PreLogin.vue'),
+          path: 'tag/:tagId',
+          name: 'buzzTag',
+          component: () => import('@/views/buzz/Tag.vue'),
         },
         {
-          path: 'in',
-          name: 'login',
-          component: () => import('@/views/sign/Login.vue'),
-        },
-        {
-          path: 'up',
-          name: 'register',
-          component: () => import('@/views/sign/register.vue'),
+          path: 'topic/:topic',
+          name: 'buzzTopic',
+          component: () => import('@/views/buzz/Topic.vue'),
         },
       ],
     },
+    // {
+    //   path: '/sign',
+    //   name: 'sign',
+    //   component: () => import('@/views/sign/Index.vue'),
+    //   children: [
+    //     {
+    //       path: 'pre',
+    //       name: 'preLogin',
+    //       component: () => import('@/views/sign/PreLogin.vue'),
+    //     },
+    //     {
+    //       path: 'in',
+    //       name: 'login',
+    //       component: () => import('@/views/sign/Login.vue'),
+    //     },
+    //     {
+    //       path: 'up',
+    //       name: 'register',
+    //       component: () => import('@/views/sign/register.vue'),
+    //     },
+    //   ],
+    // },
 
     // ShowTalk
     {
       path: '/talk',
       name: 'talk',
-      redirect: '/talk/channels/1/88a92826842757cade6e84378df9db88526578c3bce7b8cb6348b7f1f9598d0a',
+      redirect:
+        '/talk/channels/123/88a92826842757cade6e84378df9db88526578c3bce7b8cb6348b7f1f9598d0a',
       // component: () => import('@/views/talk/Index.vue'),
     },
     {
@@ -98,7 +117,9 @@ export const router = createRouter({
     }
     // leave scroll as it is by not returning anything
     // https://github.com/Microsoft/TypeScript/issues/18319
-    return false
+    return {
+      top: 0,
+    }
   },
 })
 

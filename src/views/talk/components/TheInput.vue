@@ -38,7 +38,6 @@
         <ImagePreview
           v-if="showImagePreview"
           :src="imagePreviewUrl"
-          :original-size="true"
           @close="showImagePreview = false"
         />
       </Teleport>
@@ -57,18 +56,18 @@
         </div>
       </div>
 
-      <div class="flex-grow lg:ml-4">
+      <div class="flex-grow lg:ml-2">
         <div class="h-11 py-2 pr-4 lg:h-13.5">
           <input
             type="text"
             class="bg-inherit h-full w-full focus:outline-none placeholder:text-dark-250 placeholder:text-sm text-dark-800 text-base caret-gray-600"
             :placeholder="
               $t('Talk.Channel.message_to', {
-                channel: talkStore.activeChannelSymbol + talkStore.activeChannel?.name,
+                channel: talkStore?.activeChannelSymbol + (talkStore.activeChannel?.name || ''),
               })
             "
             v-model="chatInput"
-            @keyup.enter="trySendMessage"
+            @keyup.enter="trySendText"
           />
         </div>
       </div>
@@ -122,10 +121,54 @@
         <div class="flex items-center px-1 lg:mr-2">
           <div
             class="p-2 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer"
-            @click="doNothing"
+            @click="layout.isShowRedPacketModal = true"
           >
             <Icon name="red_envelope" class="w-full h-full text-dark-800" />
           </div>
+          <RedPacketModal />
+
+          <Popover class="relative flex items-center">
+            <PopoverButton as="div">
+              <div class="p-2 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer">
+                <Icon name="photo_3" class="w-full h-full text-dark-800" />
+              </div>
+            </PopoverButton>
+
+            <transition
+              enter-active-class="transition duration-200 ease-out"
+              enter-from-class="opacity-0"
+              enter-to-class="opacity-100"
+              leave-active-class="transition duration-150 ease-in"
+              leave-from-class="opacity-100"
+              leave-to-class="opacity-0"
+            >
+              <PopoverPanel class="absolute z-10 transform top-[-16PX] right-0 -translate-y-full">
+                <div class="bg-white p-2 rounded-xl shadow-lg w-60 divide-y divide-dark-200">
+                  <div
+                    class="mx-2 py-4 flex items-center space-x-2 text-dark-800 rounded-sm lg:cursor-pointer lg:hover:underline"
+                    @click="openImageUploader"
+                  >
+                    <div class="">
+                      <Icon name="photo" class="w-5 h-5 rounded-full bg-primary p-2 box-content" />
+                    </div>
+                    <div class="">
+                      {{ $t('Talk.Channel.upload_image') }}
+                    </div>
+                  </div>
+                  <div
+                    class="mx-2 py-4 flex items-center space-x-2 text-dark-800 rounded-sm lg:cursor-pointer lg:hover:underline"
+                  >
+                    <div class="">
+                      <Icon name="link" class="w-5 h-5 rounded-full bg-primary p-2 box-content" />
+                    </div>
+                    <div class="">
+                      {{ $t('Talk.Channel.use_onchain_image') }}
+                    </div>
+                  </div>
+                </div>
+              </PopoverPanel>
+            </transition>
+          </Popover>
 
           <ElPopover placement="bottom-start" width="300px" trigger="click">
             <StickerVue @input="params => (chatInput = chatInput + params.value)" />
@@ -146,7 +189,7 @@
         </div>
 
         <div class="lg:hidden">
-          <div class="py-2 px-3" @click="trySendMessage">
+          <div class="py-2 px-3" @click="trySendText">
             <div
               class="transition-all ease-in-out duration-500"
               :class="[hasInput ? 'text-primary scale-110 -rotate-6' : 'text-dark-250']"
@@ -162,26 +205,24 @@
 
 <script setup lang="ts">
 import { computed, ref, toRaw } from 'vue'
-import {
-  sendMessage,
-  validateMessage,
-  MessageType,
-  ChannelType,
-  isImage,
-  isFileTooLarge,
-} from '@/utils/talk'
+import { sendMessage, validateTextMessage, isImage, isFileTooLarge } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
 import ImagePreview from './ImagePreview.vue'
-import TheInputStickersBox from './TheInputStickersBox.vue'
 import { FileToAttachmentItem } from '@/utils/util'
 import { encrypt, ecdhEncrypt } from '@/utils/crypto'
 import { useTalkStore } from '@/stores/talk'
 import StickerVue from '@/components/Sticker/Sticker.vue'
+import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
+import { ChannelType, MessageType } from '@/enum'
+import { useLayoutStore } from '@/stores/layout'
+import RedPacketModal from './modals/RedPacketModal.vue'
 
 const doNothing = () => {}
 
 const showMoreCommandsBox = ref(false)
 const showStickersBox = ref(false)
+
+const layout = useLayoutStore()
 
 const hasInput = computed(() => chatInput.value.length > 0)
 
@@ -267,8 +308,8 @@ const trySendImage = async () => {
 const chatInput = ref('')
 const userStore = useUserStore()
 
-const trySendMessage = async () => {
-  if (!validateMessage(chatInput.value)) return
+const trySendText = async () => {
+  if (!validateTextMessage(chatInput.value)) return
 
   // 私聊会话和频道群聊的加密方式不同
   let content = ''

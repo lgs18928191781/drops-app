@@ -1,6 +1,6 @@
 <template>
   <ElDialog
-    :model-value="layoutStore.isShowPublishBuzz"
+    :model-value="layout.isShowPublishBuzz"
     class="sm none-header none-padding"
     :close-on-click-modal="false"
   >
@@ -15,12 +15,11 @@
         </div>
         <a
           class="close-btn flex flex-align-center flex-pack-center"
-          @click="layoutStore.$patch({ isShowPublishBuzz: false })"
+          @click="layout.$patch({ isShowPublishBuzz: false })"
         >
           <Icon name="x_mark" />
         </a>
       </div>
-
       <div class="text">
         <textarea v-model="content" autofocus />
 
@@ -53,9 +52,11 @@
               <a @click="item.fun()" :class="{ disabled: item.disabled() }">
                 <Icon :name="item.icon" />
                 <input
-                  v-if="item.icon === 'buzz_img' && attachments.length < 9"
+                  v-if="
+                    (item.icon === 'buzz_img' || item.icon === 'music') && attachments.length < 9
+                  "
                   type="file"
-                  accept="images/*"
+                  :accept="item.icon === 'buzz_img' ? 'images/*' : 'audio/*'"
                   multiple
                   @change="onChooseImage"
                   ref="inputFileRef"
@@ -119,7 +120,7 @@ import { NodeName } from '@/enum'
 import { useLayoutStore } from '@/stores/layout'
 import { useUserStore } from '@/stores/user'
 import { FileToAttachmentItem, getAttachmentsMark } from '@/utils/util'
-import { reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AttachmentVue from './Attachment.vue'
 import StickerVue from '@/components/Sticker/Sticker.vue'
@@ -134,7 +135,7 @@ const attachments: AttachmentItem[] = reactive([])
 const respostBuzz: { val: null | BuzzItem } = reactive({ val: null })
 const content = ref('')
 
-const layoutStore = useLayoutStore()
+const layout = useLayoutStore()
 const userStore = useUserStore()
 const i18n = useI18n()
 const router = useRouter()
@@ -151,6 +152,13 @@ const publishOperates = [
   },
   {
     icon: 'buzz_img',
+    fun: () => {},
+    disabled: () => {
+      return attachments.length >= 9
+    },
+  },
+  {
+    icon: 'music',
     fun: () => {},
     disabled: () => {
       return attachments.length >= 9
@@ -174,21 +182,45 @@ const publishOperates = [
   },
 ]
 
+const attachmentType = computed(() => {
+  if (attachments && attachments.length) {
+    if (attachments[0].fileType.indexOf('image/')) {
+      return 'image'
+    } else if (attachments[0].fileType.indexOf('auios/')) {
+      return 'auido'
+    } else if (attachments[0].fileType.indexOf('video/')) {
+      return 'video'
+    } else {
+      return 'other'
+    }
+  } else {
+    return ''
+  }
+})
 const isShowTopic = ref(false)
 const topics: GetHotTopicsResItem[] = reactive([])
 const topic = ref('')
 
 watch(
-  () => layoutStore.repostTxId,
+  () => layout.publishBuzzOption.repostTxId,
   () => {
-    if (layoutStore.repostTxId) {
-      getOneBuzz({ txId: layoutStore.repostTxId }).then(res => {
+    if (layout.publishBuzzOption.repostTxId) {
+      getOneBuzz({ txId: layout.publishBuzzOption.repostTxId }).then(res => {
         if (res.code === 0) {
           respostBuzz.val = res.data.results.items[0]
         }
       })
     } else {
       respostBuzz.val = null
+    }
+  }
+)
+
+watch(
+  () => layout.publishBuzzOption.topic,
+  () => {
+    if (layout.publishBuzzOption.topic) {
+      content.value += `  #${layout.publishBuzzOption.topic}  `
     }
   }
 )
@@ -232,7 +264,7 @@ function getHotTopics() {
 
 function back() {
   isShowTopic.value = false
-  // layoutStore.$patch({ isShowPublishBuzz: true })
+  // layout.$patch({ isShowPublishBuzz: true })
 }
 
 function confirmTopic() {
@@ -265,16 +297,16 @@ async function submit() {
     })
 
   if (res) {
-    Mitt.emit(MittEvent.AddBuzz, { txId: res.txId })
+    Mitt.emit(MittEvent.AddBuzz, { txId: res.currentNode!.txId })
     content.value = ''
     attachments.length = 0
     loading.value = false
-    layoutStore.$patch({ isShowPublishBuzz: false })
+    layout.$patch({ isShowPublishBuzz: false })
     ElMessage.success(i18n.t('Buzz.publish.success'))
     router.replace({
       name: 'buzzDetail',
       params: {
-        txId: res.txId,
+        txId: res.currentNode!.txId,
       },
     })
   }

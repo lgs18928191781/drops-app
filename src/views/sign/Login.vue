@@ -145,7 +145,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
           name: loginInfo.name,
           password: ruleForm.password,
         }
-        debugger
+
         const walletInfo = await hdWalletFromAccount(account, import.meta.env.VITE_NET_WORK)
         const hdWallet = new HdWallet(walletInfo.mnemonic, walletInfo.wallet)
         let metaIdInfo

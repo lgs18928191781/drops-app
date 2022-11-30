@@ -24,9 +24,11 @@ import { SA_utxo } from 'sensible-sdk/dist/sensible-api'
 import { isEmail } from '../util'
 import { IsEncrypt, NodeName } from '@/enum'
 import { AttachmentItem, PayToItem } from '@/@types/hd-wallet'
-import { CreateNodeOptions, TransferTypes, UtxoItem } from '@/@types/sdk'
+import { CreateNodeOptions, CreateNodeRes, TransferTypes, UtxoItem } from '@/@types/sdk'
 import { AllNodeName } from '../sdk'
 import { ElMessage } from 'element-plus'
+import { NftManager, FtManager } from 'meta-contract'
+import { useUserStore } from '@/stores/user'
 
 const bsv = mvc
 
@@ -135,11 +137,12 @@ declare interface UtxoWithWif extends SA_utxo {
   wif: string
 }
 
-export interface CreateNodeRes {
-  raw: bsv.Transaction
-  hex: string
-  txId: string
-  nodeAddress: string
+export interface CreateBrfcChildNodeRes {
+  payTo: CreateNodeRes | null
+  metaFileBrfc: CreateNodeRes | null
+  metaFiles: CreateNodeRes[] | []
+  currentNodeBrfc: CreateNodeRes | null
+  currentNode: CreateNodeRes | null
 }
 
 export interface NodeOptions {
@@ -482,6 +485,61 @@ export class HdWallet {
     return metaIdInfo
   }
 
+  //单独创建metaid
+
+  public onlyCreateMetaidNode() {
+    return new Promise<string>(async (resolve, reject) => {
+      try {
+        const metaIdInfo: any = await this.getMetaIdInfo(this.rootAddress)
+        metaIdInfo.pubKey = this._root.toPublicKey().toString()
+        //  检查 metaidinfo 是否完整
+        if (metaIdInfo.metaId && metaIdInfo.infoTxId && metaIdInfo.protocolTxId) {
+          console.log('metaidinfo 完整')
+          resolve(metaIdInfo)
+        } else {
+          let utxos: UtxoItem[] = []
+          utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
+          if (!metaIdInfo.metaId) {
+            // TODO: 尝试获始资金
+            if (!utxos.length) {
+              const initUtxo = await this.provider.getInitAmount({
+                address: this.rootAddress,
+                xpub: this.wallet.xpubkey.toString(),
+              })
+              utxos = [initUtxo]
+            }
+
+            let outputs: any[] = []
+            const rootTx = await this.createNode({
+              nodeName: 'Root',
+              metaIdTag: MetaIdTag[this.network],
+              data: 'NULL',
+              dataType: 'NULL',
+              encoding: 'NULL',
+              utxos: utxos,
+              outputs: outputs,
+            })
+            metaIdInfo.metaId = rootTx.txId
+            let errorMsg: any
+            // 广播
+            try {
+              console.log('rootTx', rootTx)
+
+              await this.provider.broadcast(rootTx.hex)
+            } catch (error) {
+              errorMsg = error
+            }
+            if (errorMsg) {
+              throw new Error(errorMsg.message)
+            } else {
+              resolve(metaIdInfo.metaId)
+            }
+          }
+        }
+      } catch (error) {}
+    })
+  }
+
   // 初始化 metaId
   public initMetaIdNode(account: BaseUserInfoTypes) {
     return new Promise<MetaIdInfoTypes>(async (resolve, reject) => {
@@ -519,7 +577,7 @@ export class HdWallet {
                 },
               ]
             }
-            const rootTx = await this.createNode({
+            const root = await this.createNode({
               nodeName: 'Root',
               metaIdTag: MetaIdTag[this.network],
               data: 'NULL',
@@ -528,10 +586,10 @@ export class HdWallet {
               utxos: utxos,
               outputs: outputs,
             })
-            hexTxs.push(rootTx.hex)
-            metaIdInfo.metaId = rootTx.txId
+            hexTxs.push(root.transaction.toString())
+            metaIdInfo.metaId = root.txId
             const newUtxo = await this.utxoFromTx({
-              tx: rootTx.raw,
+              tx: root.transaction,
               addressInfo: {
                 addressType: 0,
                 addressIndex: 0,
@@ -544,7 +602,7 @@ export class HdWallet {
 
           // 初始化 metaId
           if (!metaIdInfo.protocolTxId) {
-            const protocolTx = await this.createNode({
+            const protocol = await this.createNode({
               nodeName: 'Protocols',
               parentTxId: metaIdInfo.metaId,
               metaIdTag: MetaIdTag[this.network],
@@ -552,10 +610,10 @@ export class HdWallet {
               version: 'NULL',
               utxos: utxos,
             })
-            hexTxs.push(protocolTx.hex)
-            metaIdInfo.protocolTxId = protocolTx.txId
+            hexTxs.push(protocol.transaction.toString())
+            metaIdInfo.protocolTxId = protocol.txId
             const newUtxo = await this.utxoFromTx({
-              tx: protocolTx.raw,
+              tx: protocol.transaction,
               addressInfo: {
                 addressType: 0,
                 addressIndex: 0,
@@ -566,7 +624,7 @@ export class HdWallet {
 
           // 初始化 infoTxId
           if (!metaIdInfo.infoTxId) {
-            const infoTx = await this.createNode({
+            const info = await this.createNode({
               nodeName: 'Info',
               parentTxId: metaIdInfo.metaId,
               metaIdTag: MetaIdTag[this.network],
@@ -575,11 +633,10 @@ export class HdWallet {
               utxos: utxos,
               change: infoAddress.publicKey.toAddress(this.network).toString(),
             })
-            console.log('Info', infoTx)
-            hexTxs.push(infoTx.hex)
-            metaIdInfo.infoTxId = infoTx.txId
+            hexTxs.push(info.transaction.toString())
+            metaIdInfo.infoTxId = info.txId
             const newUtxo = await this.utxoFromTx({
-              tx: infoTx.raw,
+              tx: info.transaction,
               addressInfo: {
                 addressType: 0,
                 addressIndex: 1,
@@ -590,7 +647,7 @@ export class HdWallet {
 
           // 初始化 name
           if (!metaIdInfo.name) {
-            const nameTx = await this.createNode({
+            const name = await this.createNode({
               nodeName: 'name',
               parentTxId: metaIdInfo.infoTxId,
               metaIdTag: MetaIdTag[this.network],
@@ -598,11 +655,10 @@ export class HdWallet {
               utxos: utxos,
               change: infoAddress.publicKey.toAddress(this.network).toString(),
             })
-            console.log('Info', nameTx)
-            hexTxs.push(nameTx.hex)
+            hexTxs.push(name.transaction.toString())
             metaIdInfo.name = account.name
             const newUtxo = await this.utxoFromTx({
-              tx: nameTx.raw,
+              tx: name.transaction,
               addressInfo: {
                 addressType: 0,
                 addressIndex: 1,
@@ -629,10 +685,10 @@ export class HdWallet {
               utxos: utxos,
               change: infoAddress.publicKey.toAddress(this.network).toString(),
             })
-            hexTxs.push(loginNameTx.hex)
+            hexTxs.push(loginNameTx.transaction.toString())
             metaIdInfo[account.userType] = loginName
             const newUtxo = await this.utxoFromTx({
-              tx: loginNameTx.raw,
+              tx: loginNameTx.transaction,
               addressInfo: {
                 addressType: 0,
                 addressIndex: 1,
@@ -674,7 +730,7 @@ export class HdWallet {
                 change: this.rootAddress,
               })
               if (ethBindBrfc) {
-                hexTxs.push(ethBindBrfc.hex)
+                hexTxs.push(ethBindBrfc.transaction.toString())
               }
             }
           }
@@ -816,8 +872,8 @@ export class HdWallet {
         if (this.keyPathMap[nodeName]) {
           const nodeInfo = this.keyPathMap[nodeName]
           parentKeyPath = nodeInfo.parentKeyPath
-          const nodeKeyPath = nodeInfo.keyPath
-          parentAddress = this.createAddress(parentKeyPath)
+          nodeKeyPath = nodeInfo.keyPath
+          parentAddress = this.createAddress(parentKeyPath).address
           nodeAddress = this.createAddress(nodeKeyPath)
           privateKey = this.getPathPrivateKey(nodeKeyPath)
         } else if (keyPath && parentAddress) {
@@ -883,12 +939,16 @@ export class HdWallet {
         //   throw new Error("Cant't get parent address")
         // }
         const nodeTx = await this.makeTx(makeTxOptions)
+        console.log('nodeTx', nodeTx.toString())
+
         if (nodeTx) {
           resolve({
-            raw: nodeTx,
             hex: nodeTx.toString(),
+            transaction: nodeTx,
             txId: nodeTx.id,
-            nodeAddress: nodeAddress?.address,
+            address: nodeAddress!.address,
+            addressType: parseInt(nodeKeyPath.split('/')[0]),
+            addressIndex: parseInt(nodeKeyPath.split('/')[1]),
           })
         }
       } catch (error) {
@@ -1580,13 +1640,7 @@ export class HdWallet {
       isBroadcast: boolean
     }
   ) {
-    return new Promise<{
-      address: string
-      txId: string
-      addressType: number
-      addressIndex: number
-      tx?: bsv.Transaction
-    }>(async (resolve, reject) => {
+    return new Promise<CreateNodeRes>(async (resolve, reject) => {
       try {
         const initParams = {
           useFeeb: DEFAULTS.feeb,
@@ -1639,18 +1693,16 @@ export class HdWallet {
           })
           if (protocolRoot) {
             if (option.isBroadcast) {
-              await this.provider.broadcast(protocolRoot.raw.toString())
+              await this.provider.broadcast(protocolRoot.transaction.toString())
             }
-            // @ts-ignore
-            protocol = {
-              address: protocolRoot.nodeAddress,
+
+            resolve({
+              address: protocolRoot.address,
               txId: protocolRoot.txId,
               addressType: parseInt(params.keyPath!.split('/')[0]),
               addressIndex: parseInt(params.keyPath!.split('/')[1]),
-              // @ts-ignore
-              tx: protocolRoot.raw,
-            }
-            resolve(protocol)
+              transaction: protocolRoot.transaction,
+            })
           }
         }
       } catch (error) {
@@ -1688,12 +1740,8 @@ export class HdWallet {
     option?: {
       isBroadcast: boolean // 是否广播
     }
-  ): Promise<{
-    raw: bsv.Transaction
-    hex: string
-    txId: string
-  }> {
-    return new Promise<CreateNodeRes>(async (resolve, reject) => {
+  ): Promise<CreateNodeRes> {
+    return new Promise<any>(async (resolve, reject) => {
       const initParams = {
         autoRename: true,
         version: '0.0.9',
@@ -1778,7 +1826,7 @@ export class HdWallet {
         const res = await this.createNode(protocolNodeOptions)
         if (res) {
           if (option.isBroadcast) {
-            const response = await this.provider.broadcast(res.hex)
+            const response = await this.provider.broadcast(res.transaction!.toString())
             if (response?.txid) {
               resolve(res)
             }
@@ -1885,6 +1933,87 @@ export class HdWallet {
       } catch (error) {
         reject(error)
       }
+    })
+  }
+
+  async genesisNFT(
+    params: { totalSupply: number; seriesName: string },
+    option?: {
+      useFeeb?: number
+      isBroadcast?: boolean
+    }
+  ) {
+    const initOption = {
+      useFeeb: DEFAULTS.feeb,
+      isBroadcast: true,
+    }
+    option = {
+      ...initOption,
+      ...option,
+    }
+
+    const userStore = useUserStore()
+
+    // const ParentInfo = await this.createBrfcProtocolNode({
+    //   nodeName: 'NftGenesis',
+    //   brfcId: '599aa8e586e8',
+    //   path: '/Protocols/NftGenesis',
+    //   needConfirm: checkOnly,
+    //   useFeeb,
+    // })
+
+    // const result = await this.getPulicKeyForNewNode(
+    //   this.fundingKey.xpubkey,
+    //   ParentInfo.data.txId,
+    //   1
+    // )
+    // const pNode = result[0].publicKey
+
+    // const parentAddress = bsv.PublicKey.fromHex(ParentInfo.data.PublicKey)
+    //   .toAddress(this.network)
+    //   .toString()
+    // const addressPathObj = await this.provider.getPathWithNetWork(parentAddress)
+    // if (!addressPathObj.address) {
+    //   throw generateResponse(204, `无法获取 UTXO 地址 ${parentAddress} 的 Path`)
+    // }
+    // const parentPath = addressPathObj.Path
+
+    // const data = JSON.stringify({
+    //   type: 'sensible',
+    //   signers: signersRaw,
+    //   ...params,
+    // })
+    // const scriptPlayload = [
+    //   'mvc',
+    //   pNode,
+    //   ParentInfo.data.txId,
+    //   metaidTag.toLowerCase(),
+    //   'nftGenesis-' + pNode.substr(0, 12),
+    //   data,
+    //   '0',
+    //   '1.0.0',
+    //   'text/plain',
+    //   'UTF-8',
+    // ]
+
+    const nft = new NftManager({
+      // @ts-ignore
+      network: this.network,
+      feeb: option.useFeeb,
+      purse: this.wallet
+        .deriveChild(0)
+        .deriveChild(0)
+        .privateKey.toString(),
+    })
+
+    // const genesis = await nft.genesis({
+    //   totalSupply: params.totalSupply.toString(),
+    // })
+
+    const mintResult = await nft.mint({
+      metaOutputIndex: 0,
+      metaTxId: '51bd603e83fa0210d8e0704d57419dd0af0b0e264ae2246e8dc499ef76d30ce9',
+      sensibleId: 'e90cd376ef99c48d6e24e24a260e0bafd09d41574d70e0d81002fa833e60bd5100000000',
     })
   }
 }

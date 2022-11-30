@@ -399,7 +399,9 @@ const enum RegisterType {
 }
 
 const registerType = ref(RegisterType.Check)
-
+defineExpose({
+  registerType,
+})
 watch(
   () => props.type,
   () => {
@@ -538,6 +540,7 @@ function submitForm() {
               const walletInfo = await hdWalletFromAccount(account, import.meta.env.VITE_NET_WORK)
               const hdWallet = new HdWallet(walletInfo.wallet)
               const metaIdInfo = await hdWallet.getMetaIdInfo(walletInfo.rootAddress)
+
               if (!metaIdInfo.metaId) {
                 return ElMessageBox.alert(
                   '抱歉，此账号有问题，请到www.showmoney.app上修复',
@@ -547,13 +550,14 @@ function submitForm() {
                     confirmButtonText: '去修复',
                   }
                 ).then(() => {
-                  location.href = 'https://www.showmoney.app/'
+                  location.href = `${import.meta.env.VITE_FIXACCOUTURL}`
                 })
               }
               // @ts-ignore
+              //这里的参数account跟metaidInfo位置不能改变，否则新数据会被覆盖
               userStore.updateUserInfo({
-                ...metaIdInfo,
                 ...account,
+                ...metaIdInfo,
                 password: form.password,
                 address: hdWallet.rootAddress,
               })
@@ -612,6 +616,7 @@ function submitForm() {
                 promotion: '',
                 password: form.password,
               } as MetaIdWalletRegisterBaseInfo)
+
               FormRef.value.resetFields()
               emit('update:loading', false)
               return
@@ -757,7 +762,7 @@ function submitForm() {
           }
         } catch (error) {
           emit('update:loading', false)
-          ElMessage.error((error as any).message)
+          return ElMessage.error((error as any).message)
         }
       } else {
         return ElMessage.error(

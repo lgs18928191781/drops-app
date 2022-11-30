@@ -6,7 +6,7 @@
       <Icon
         name="bars"
         class="w-6 h-6 text-dark-800 mx-2 shrink-0 lg:hidden"
-        @click="layoutStore.isShowLeftNav = true"
+        @click="layout.isShowLeftNav = true"
       />
 
       <div class="flex shrink-0">
@@ -61,7 +61,7 @@
 </template>
 
 <script lang="ts" setup>
-import ScreenModal from './ScreenModal.vue'
+import ScreenModal from './modals/ScreenModal.vue'
 import { useLayoutStore } from '@/stores/layout'
 import LoginedUserOperate from '@/components/LoginedUserOperate/LoginedUserOperate.vue'
 import { useTalkStore } from '@/stores/talk'
@@ -70,7 +70,7 @@ import { useUserStore } from '@/stores/user'
 
 const talkStore = useTalkStore()
 const userStore = useUserStore()
-const layoutStore = useLayoutStore()
+const layout = useLayoutStore()
 const selfMetaId = userStore.user!.metaId
 const activeChannel = computed(() => talkStore.activeChannel)
 

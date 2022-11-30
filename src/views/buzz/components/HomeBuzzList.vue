@@ -2,7 +2,7 @@
   <div
     class="publish flex "
     v-if="userStore.isAuthorized"
-    @click="layoutStore.$patch({ isShowPublishBuzz: true })"
+    @click="layout.$patch({ isShowPublishBuzz: true })"
   >
     <UserAvatar :meta-id="userStore.user!.metaId" />
     <div class="cont flex1">
@@ -23,6 +23,8 @@
     @get-more="getMore"
     :pagination="pagination"
   />
+
+  <RecommendContentVue />
 </template>
 
 <script setup lang="ts">
@@ -35,13 +37,14 @@ import { useRoute } from 'vue-router'
 import BuzzListVue from './BuzzList.vue'
 import { Mitt, MittEvent } from '@/utils/mitt'
 import { getOneBuzz } from '@/api/buzz'
+import RecommendContentVue from './RecommendContent.vue'
 
 // interface Props {}
 // const props = withDefaults(defineProps<Props>(), {})
 
 const pagination = reactive({ ...initPagination, timestamp: 0 })
 const userStore = useUserStore()
-const layoutStore = useLayoutStore()
+const layout = useLayoutStore()
 const route = useRoute()
 
 const list: BuzzItem[] = reactive([])
@@ -74,19 +77,6 @@ Mitt.on(MittEvent.AddBuzz, async (params: { txId: string }) => {
   }
 })
 
-watch(
-  () => route.path,
-  () => {
-    isSkeleton.value = true
-    pagination.page = 1
-    pagination.loading = false
-    pagination.nothing = false
-    getDatas(true).then(() => {
-      isSkeleton.value = false
-    })
-  }
-)
-
 const publishOperates = [
   {
     icon: 'buzzn_emoji',
@@ -106,6 +96,14 @@ const publishOperates = [
   },
 ]
 
+// 监听登录状态，变化后重新拉取数据
+watch(
+  () => userStore.isAuthorized,
+  () => {
+    refreshDatas()
+  }
+)
+
 function getMore() {
   if (isSkeleton.value || pagination.loading || pagination.nothing) return
   pagination.loading = true
@@ -113,6 +111,15 @@ function getMore() {
   getDatas().then(() => {
     pagination.loading = false
   })
+}
+
+async function refreshDatas() {
+  isSkeleton.value = true
+  pagination.page = 1
+  pagination.loading = false
+  pagination.nothing = false
+  await getDatas(true)
+  isSkeleton.value = false
 }
 
 getDatas(true).then(() => {

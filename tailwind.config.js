@@ -34,6 +34,7 @@ module.exports = {
       14: '56PX',
       15: '60PX',
       16: '64PX',
+      17.5: '70PX',
       18: '72PX',
       20: '80PX',
       22: '88PX',
@@ -112,8 +113,8 @@ module.exports = {
 
       keyframes: {
         wiggle: {
-          '0%, 100%': { transform: 'rotate(-10deg)' },
-          '50%': { transform: 'rotate(10deg)' },
+          '0%, 100%': { transform: 'rotate(-6deg)' },
+          '50%': { transform: 'rotate(6deg)' },
         },
       },
 
@@ -122,5 +123,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require('@headlessui/tailwindcss')({ prefix: 'ui' })],
 }

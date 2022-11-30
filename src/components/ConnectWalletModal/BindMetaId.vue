@@ -7,11 +7,18 @@
         <div class="cont">
           <div class="sub-title">{{ $t('Login.bindMetaId.title2') }}</div>
           <div class="list">
+            <!--
+              @click="
+                item.value == BindStatus.BindRegisterMetaId
+                  ? signMnemonicSeed
+                  : (status = item.value)
+              "
+            -->
             <div
               class="main-border flex flex-align-center"
               v-for="(item, index) in operates"
               :key="index"
-              @click="status = item.value"
+              @click="selectLoginType(item.value)"
             >
               <div class="icon-warp flex flex-align-center flex-pack-center">
                 <icon :name="item.icon" />
@@ -27,7 +34,7 @@
         <div class="title">{{ $t('Login.bindMetaId.bindSuccessTitle') }}</div>
         <div class="cont">
           <div class="userInfo">
-            <UserAvatar :metaId="userStore.user!.metaId" :type="userStore.user!.avatarType" />
+            <UserAvatar :metaid-id="userStore.user!.metaId" :type="userStore.user!.avatarType" />
             <div class="username">{{ userStore.user?.name }}</div>
             <div class="metaid">
               MetaID：{{userStore.user!.metaId.slice(0, 7)}}...{{userStore.user!.metaId.slice(-7)}}
@@ -35,7 +42,7 @@
 
             <div class="operate flex flex-pack-end">
               <a class="main-border primary">
-                <Icon name="right" />
+                <Icon name="right" @click="skip" />
               </a>
             </div>
           </div>
@@ -66,7 +73,7 @@
       </div>
 
       <!-- 绑定 MetaID信息 -->
-      <div class="bind-haved-metaid" v-else>
+      <div class="bind-haved-metaid" v-else-if="status !== BindStatus.BindRegisterMetaId">
         <div class="title">
           {{
             status === BindStatus.BindHavedMetaId
@@ -98,7 +105,7 @@
           </el-form-item>
 
           <!--确认密码 -->
-          <el-form-item prop="checkPass" v-if="status === BindStatus.BindRegisterMetaId">
+          <!-- <el-form-item prop="checkPass" v-if="status === BindStatus.BindRegisterMetaId">
             <el-input
               :placeholder="$t('ConfirmPassword')"
               type="password"
@@ -106,7 +113,7 @@
               autocomplete="off"
             >
             </el-input>
-          </el-form-item>
+          </el-form-item> -->
         </el-form>
 
         <div class="operate flex flex-align-center">
@@ -151,7 +158,7 @@ import { encode } from 'js-base64'
 import { bsv } from 'sensible-sdk'
 import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-
+import { openLoading } from '@/utils/util'
 interface Props {
   modelValue: boolean
   thirdPartyWallet: {
@@ -199,10 +206,10 @@ const isBtnDisabled = computed(() => {
 
 const form = reactive({
   name: '',
-  pass: '123456',
+  pass: '',
   checkPass: '',
   account: '',
-  MetaidOrAdress: '49856d813daa21dcffc6aafa94bc4630c93de9ebd209e723e64266ce55fba64b',
+  MetaidOrAdress: '',
 })
 const rules = {
   name: [
@@ -259,9 +266,53 @@ const rules = {
 }
 const formRef = ref()
 
+function signMnemonicSeed() {}
+
+function skip() {
+  emit('update:modelValue', false)
+  if (userStore.user!.name == `${import.meta.env.VITE_DefaultName}`) {
+    window.location.reload()
+  }
+}
+
+async function selectLoginType(item: number) {
+  status.value = item
+  let loading
+  if (item == BindStatus.BindRegisterMetaId) {
+    try {
+      emit('update:modelValue', false)
+      loading = openLoading({
+        text: i18n.t('registing'),
+      })
+      const res = await createMetaidAccount()
+
+      await loginSuccess(res)
+      loading.close()
+    } catch (error) {
+      ;(loading as any).close()
+    }
+  }
+}
+
 function back() {
   formRef.value.resetFields()
   status.value = BindStatus.ChooseType
+}
+
+function ethPersonalSignSign(params: { message: string; address: string }) {
+  return new Promise<string>(async (resolve, reject) => {
+    ;(window as any).ethereum
+      .request({ method: 'personal_sign', params: [params.address, params.message] })
+      .then((res: string) => {
+        resolve(res)
+      })
+      .catch((error: any) => {
+        reject({
+          code: error.code,
+          message: error.message,
+        })
+      })
+  })
 }
 
 function submitForm() {
@@ -273,16 +324,18 @@ function submitForm() {
         if (status.value == BindStatus.BindHavedMetaId) {
           //绑定metaid用户
           res = await bindingMetaidOrAddressLogin()
-        } else if (status.value === BindStatus.BindRegisterMetaId) {
-          //新用户
-          res = await createMetaidAccount()
-        } else if (status.value === BindStatus.InputPassword) {
+        }
+        // else if (status.value === BindStatus.BindRegisterMetaId) {
+        //   //新用户
+        //   res = await createMetaidAccount()
+        // }
+        else if (status.value === BindStatus.InputPassword) {
           // 使用密码 和 助记词登陆
           const getMnemonicRes = await LoginByHashData({
             hashData: props.thirdPartyWallet.signAddressHash,
           })
           if (getMnemonicRes?.code === 0 && getMnemonicRes.data) {
-            res = await loginByMnemonic(getMnemonicRes.data, form.pass)
+            res = await loginByMnemonic(getMnemonicRes.data.menmonic, form.pass)
           }
         } else if (status.value === BindStatus.BindSuccess) {
           emit('update:modelValue', false)
@@ -299,40 +352,83 @@ function submitForm() {
 }
 
 function loginSuccess(params: BindMetaIdRes) {
+  console.log('params', params)
   return new Promise<void>(async (resolve, reject) => {
-    const metaIdInfo = await GetUserInfo(params.userInfo.metaId)
-    await userStore.updateUserInfo({
-      ...params.userInfo,
-      ...metaIdInfo.data,
-      password: params.password,
-    })
-    userStore.$patch({ wallet: new SDK() })
-    userStore.showWallet.initWallet()
-    formRef.value.resetFields()
-    if (status.value === BindStatus.BindHavedMetaId) {
-      status.value = BindStatus.BindSuccess
-    } else {
-      emit('update:modelValue', false)
-      if (status.value === BindStatus.BindRegisterMetaId) {
-        emit('register')
+    try {
+      const metaIdInfo = await GetUserInfo(params.userInfo.metaId)
+      console.log('metaIdInfo', metaIdInfo)
+      console.log('userStore', userStore)
+
+      userStore.updateUserInfo({
+        ...params.userInfo,
+        ...metaIdInfo.data,
+        password: params.password,
+      })
+
+      userStore.$patch({
+        wallet: new SDK(import.meta.env.VITE_NET_WORK),
+      })
+
+      userStore.showWallet.initWallet()
+
+      formRef?.value?.resetFields()
+      if (status.value === BindStatus.BindHavedMetaId) {
+        status.value = BindStatus.BindSuccess
+      } else {
+        emit('update:modelValue', false)
+        if (status.value === BindStatus.BindRegisterMetaId) {
+          emit('register')
+        }
       }
+      loading.value = false
+      resolve()
+    } catch (error) {
+      emit('update:modelValue', false)
+      reject(error)
     }
-    loading.value = false
   })
 }
+
+// function createMnemonicSeed() {
+//   return new Promise<BindMetaIdRes>(async (resolve, reject) => {
+//     try {
+//       debugger
+//       const mnemonic = await createMnemonic(
+//         props.thirdPartyWallet.signAddressHash,
+//         encode(form.pass)
+//       )
+//        const hdWallet = await hdWalletFromMnemonic(mnemonic, 'new', Network.testnet)
+//       const HdWalletInstance = new HdWallet(hdWallet)
+//       const address = hdWallet
+//         .deriveChild(0)
+//         .deriveChild(0)
+//         .privateKey.toAddress()
+//         .toString()
+//       //
+//       const pubKey = hdWallet
+//         .deriveChild(0)
+//         .deriveChild(0)
+//         .publicKey.toString()
+//     } catch (error) {
+
+//     }
+//   })
+
+// }
 
 function createMetaidAccount() {
   return new Promise<BindMetaIdRes>(async (resolve, reject) => {
     try {
       const mnemonic = await createMnemonic(
         props.thirdPartyWallet.signAddressHash,
-        encode(form.pass)
+        encode(props.thirdPartyWallet.address)
       )
       const hdWallet = await hdWalletFromMnemonic(mnemonic, 'new', Network.testnet)
+      console.log('hdWallet', hdWallet)
       const HdWalletInstance = new HdWallet(hdWallet)
 
       const account: any = {
-        name: form.name,
+        name: `${import.meta.env.VITE_DefaultName}`,
       }
       const address = hdWallet
         .deriveChild(0)
@@ -345,39 +441,93 @@ function createMetaidAccount() {
         .deriveChild(0)
         .publicKey.toString()
 
-      const encryptmnemonic = encryptMnemonic(mnemonic, form.pass)
-
-      const getUserInfoRes = await LoginByNewUser({
-        address: address,
-        xPub: hdWallet.xpubkey,
-        pubKey: pubKey,
-        hashData: props.thirdPartyWallet.signAddressHash,
-        mnemonic: encryptmnemonic,
-        userName: account.name,
-      })
-      // @ts-ignore
-      if (getUserInfoRes.code == 0) {
-        ;(account.accessKey = getUserInfoRes.data.token),
-          (account.userName =
-            getUserInfoRes.data.registerType === 'email'
-              ? getUserInfoRes.data.email
-              : getUserInfoRes.data.phone)
-        const { metaId } = await HdWalletInstance.initMetaIdNode({
-          ...account,
-          userType: getUserInfoRes.data.registerType,
-          email: getUserInfoRes.data.email,
-          phone: getUserInfoRes.data.phone,
-          ethAddress: props.thirdPartyWallet.address,
+      const metaId = await HdWalletInstance.onlyCreateMetaidNode()
+      console.log('props.thirdPartyWallet', props.thirdPartyWallet)
+      if ((window as any).WallectConnect) {
+        // await window.WallectConnect.connect()
+        ;(window as any).WallectConnect.signPersonalMessage([
+          props.thirdPartyWallet.address,
+          metaId?.slice(0, 6),
+        ]).then(async (signHash: string) => {
+          console.log('signHash', signHash)
+          const encryptmnemonic = encryptMnemonic(mnemonic, signHash)
+          const getUserInfoRes = await LoginByNewUser({
+            address: address,
+            xPub: hdWallet.xpubkey,
+            pubKey: pubKey,
+            hashData: props.thirdPartyWallet.signAddressHash,
+            mnemonic: encryptmnemonic,
+            userName: account.name,
+          })
+          // @ts-ignore
+          if (getUserInfoRes.code == 0) {
+            ;(account.accessKey = getUserInfoRes.data.token),
+              (account.userName =
+                getUserInfoRes.data.registerType === 'email'
+                  ? getUserInfoRes.data.email
+                  : getUserInfoRes.data.phone)
+            const { metaId } = await HdWalletInstance.initMetaIdNode({
+              ...account,
+              userType: getUserInfoRes.data.registerType,
+              email: getUserInfoRes.data.email,
+              phone: getUserInfoRes.data.phone,
+              ethAddress: props.thirdPartyWallet.address,
+            })
+            const newUserInfo = Object.assign(getUserInfoRes.data, {
+              metaId: metaId,
+              ethAddress: props.thirdPartyWallet.address,
+              enCryptedMnemonic: encryptmnemonic,
+            })
+            await sendHash(newUserInfo)
+            resolve({
+              userInfo: newUserInfo,
+              wallet: hdWallet,
+              password: signHash,
+              // password: form.pass,
+            })
+          }
         })
-        const newUserInfo = Object.assign(getUserInfoRes.data, {
-          metaId: metaId,
-          ethAddress: props.thirdPartyWallet.address,
-        })
-        await sendHash(newUserInfo)
-        resolve({
-          userInfo: newUserInfo,
-          wallet: hdWallet,
-          password: form.pass,
+      } else {
+        ethPersonalSignSign({
+          address: props.thirdPartyWallet.address,
+          message: metaId?.slice(0, 6),
+        }).then(async signHash => {
+          const encryptmnemonic = encryptMnemonic(mnemonic, signHash)
+          const getUserInfoRes = await LoginByNewUser({
+            address: address,
+            xPub: hdWallet.xpubkey,
+            pubKey: pubKey,
+            hashData: props.thirdPartyWallet.signAddressHash,
+            mnemonic: encryptmnemonic,
+            userName: account.name,
+          })
+          // @ts-ignore
+          if (getUserInfoRes.code == 0) {
+            ;(account.accessKey = getUserInfoRes.data.token),
+              (account.userName =
+                getUserInfoRes.data.registerType === 'email'
+                  ? getUserInfoRes.data.email
+                  : getUserInfoRes.data.phone)
+            const { metaId } = await HdWalletInstance.initMetaIdNode({
+              ...account,
+              userType: getUserInfoRes.data.registerType,
+              email: getUserInfoRes.data.email,
+              phone: getUserInfoRes.data.phone,
+              ethAddress: props.thirdPartyWallet.address,
+            })
+            const newUserInfo = Object.assign(getUserInfoRes.data, {
+              metaId: metaId,
+              ethAddress: props.thirdPartyWallet.address,
+              enCryptedMnemonic: encryptmnemonic,
+            })
+            await sendHash(newUserInfo)
+            resolve({
+              userInfo: newUserInfo,
+              wallet: hdWallet,
+              password: signHash,
+              // password: form.pass,
+            })
+          }
         })
       }
     } catch (error) {

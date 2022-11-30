@@ -217,8 +217,8 @@ export enum PayMeParamsType {
   BuzzComment = 'PayComment',
   BuzzReopost = 'SimpleRePost',
 }
-export enum CreateBrfcChildNodePayType {
-  MC = 'MC',
+export enum SdkPayType {
+  ME = 'ME',
   SPACE = 'SPACE',
 }
 
@@ -260,15 +260,20 @@ export enum SignUserType {
 
 export enum NodeName {
   ETHBinding = 'ETHBinding',
+  MetaFile = 'MetaFile',
+  NFTAvatar = 'NFTAvatar',
+  PayComment = 'PayComment',
+  PayLike = 'PayLike',
+  PayFollow = 'PayFollow',
   SimpleMicroblog = 'SimpleMicroblog',
   SimpleRePost = 'SimpleRePost',
   SimpleGroupChat = 'SimpleGroupChat',
   SimpleFileGroupChat = 'SimpleFileGroupChat',
-  MetaFile = 'MetaFile',
-  NFTAvatar = 'NFTAvatar',
+  SimpleCommunity = 'SimpleCommunity',
+  SimpleCommunityJoin = 'SimpleCommunityJoin',
+  SimpleGroupCreate = 'SimpleGroupCreate',
   ShowMsg = 'ShowMsg',
-  PayComment = 'PayComment',
-  PayLike = 'PayLike',
+  NftIssue = 'NftIssue',
 }
 
 export const enum BindStatus {
@@ -283,4 +288,48 @@ export enum PaySource {
   WEB = 'web',
   IOS = 'ios',
   ANDROID = 'android',
+}
+export const enum RegisterSource {
+  showmoney = 'normal',
+  metamask = 'metamask',
+}
+export const enum CommunityJoinAction {
+  Join = 1,
+  Leave = -1,
+}
+
+export const enum ChannelPublicityType {
+  Public = '1',
+  Private = '2',
+}
+
+export enum MessageType {
+  Text = 'text',
+  Image = 'image',
+  NftEmoji = 'nftEmoji',
+  OnChainImage = 'onChainImage',
+}
+
+export enum ChannelType {
+  Group = 'group',
+  Session = 'session',
+}
+
+export enum GroupChannelType {
+  PublicText = 'publicText',
+  Password = 'password',
+  NFT = 'NFT',
+  FT = 'FT',
+}
+
+export enum ShowControl {
+  isShowCreateCommunityModal = 'isShowCreateCommunityModal',
+  isShowCreatePublicChannelModal = 'isShowCreatePublicChannelModal',
+  isShowCreateConsensualChannelModal = 'isShowCreateConsensualChannelModal',
+  isShowChooseTokenModal = 'isShowChooseTokenModal',
+  isShowRedPacketModal = 'isShowRedPacketModal',
+  isShowPasswordModal = 'isShowPasswordModal',
+  isShowInviteModal = 'isShowInviteModal',
+  isShowAcceptInviteModal = 'isShowAcceptInviteModal',
+  never = 'never',
 }

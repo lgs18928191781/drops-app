@@ -9,5 +9,6 @@ export interface AttachmentItem {
   data: string
   encrypt: IsEncrypt
   sha256: string
+  size: number
   url: string
 }

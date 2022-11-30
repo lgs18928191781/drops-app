@@ -40,6 +40,9 @@
                         height: 48px;
                         margin-right: 12px;
                     }
+                    .desc{
+                        color: #909399;
+                    }
                 }
             }
         }
@@ -177,5 +180,14 @@
 
     .operate {
         margin-top: 70px;
+    }
+}
+
+
+@media only screen and (max-width: 750PX) {
+    .login-warp {
+        .login-cover {
+            display: none;
+        }
     }
 }

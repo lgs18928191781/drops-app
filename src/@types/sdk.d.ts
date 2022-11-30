@@ -79,6 +79,7 @@ export interface UtxoItem {
   xpub: string
   script: string
   amount: number
+  satoshis: number
 }
 
 export interface PayMeParams {
@@ -430,4 +431,35 @@ export interface FTItem {
   pendingBalance: number
   sensibleId: string
   symbol: string
+}
+
+export interface createBrfcChildNodeParams {
+  nodeName: NodeName
+  autoRename?: boolean
+  appId?: string[]
+  encrypt?: IsEncrypt
+  version?: string
+  data: string
+  dataType?: string
+  payCurrency?: string
+  payTo?: PayToItem[]
+  encoding?: string
+  needConfirm?: boolean // 是否需要确认
+  attachments?: AttachmentItem[] // 附件
+  utxos?: any[] // 传入的utxos
+  publickey?: string // 修改时 用的publicekey
+  ecdh?: { type: string; publickey: string } // ecdh
+  useFeeb?: number // 费率
+  meConvertSatoshi?: number // 1Me 等于多少聪
+  loading?: { close: () => void }
+  payType?: SdkPayType
+}
+
+export interface CreateNodeRes {
+  address: string
+  txId: string
+  addressType: number
+  addressIndex: number
+  transaction?: bsv.Transaction
+  hex?: string
 }

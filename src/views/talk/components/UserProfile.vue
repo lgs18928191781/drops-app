@@ -34,7 +34,7 @@
 <script lang="ts" setup>
 import { useUserStore } from '@/stores/user'
 import { ref } from 'vue'
-import SettingsModal from './SettingsModal.vue'
+import SettingsModal from './modals/SettingsModal.vue'
 const userStore = useUserStore()
 
 const showSetting = ref(false)

@@ -2,10 +2,10 @@ header {
     position: sticky;
     left: 0;
     top: 0;
-    height: 60px;
+    height: var(--header-height);
     background: #fff;
     padding: 0 18px;
-    z-index: 2;
+    z-index: 10;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 
     .phone-content {
@@ -63,6 +63,21 @@ header {
     padding-top: 12px;
     box-sizing: border-box;
 
+    .buzz-container {
+        position: relative;
+        width: 95%;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .buzz-menu-warp {
+        position: fixed;
+        left: 50%;
+        margin-left: -445px;
+        z-index: 2;
+        top: calc(60px + 12px);
+    }
+
     .container {
         position: relative;
     }
@@ -70,10 +85,15 @@ header {
     .fast-btn {
         position: fixed;
         bottom: 10%;
-        right: 22%;
+        right: 50%;
+        margin-right: -396px;
+        z-index: 5;
+
+
 
 
         a {
+            width: 52px;
             display: block;
             padding: 14px;
             margin-bottom: 20px;
@@ -97,11 +117,6 @@ header {
         background: #FFFFFF;
         border-radius: 12px;
         padding: 12px;
-        margin-right: 12px;
-        position: sticky;
-        left: 0;
-        top: calc(60px + 12px);
-        z-index: 3;
 
         .buzz-menu-item {
             border-radius: 6px;
