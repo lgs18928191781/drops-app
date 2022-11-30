@@ -12,7 +12,9 @@
           <img :src="$filters.metafile(emptyCover[0])" ref="imgRef" @click.stop="change" />
         </div>
 
-        <ElImage
+        <Image :src="emptyCover[0]" v-else />
+
+        <!-- <ElImage
           v-else
           fit="contain"
           :lazy="true"
@@ -26,7 +28,7 @@
                 ]
               : []
           "
-        />
+        /> -->
       </div>
     </template>
   </ElSkeleton>
@@ -44,8 +46,7 @@ interface Props {
   isShowPrew?: boolean
   isRemint?: boolean
   isSkeleton?: boolean
-  isBlindBox?: boolean
-  blindBoxRest: number
+  isBlindBox?: ConstrainBoolean
   isShowSaleOut?: boolean
   needGizp?: boolean
 }
@@ -54,7 +55,6 @@ const props = withDefaults(defineProps<Props>(), {
   isShowPrew: false,
   isSkeleton: false,
   isBlindBox: false,
-  blindBoxRest: 0,
   isShowSaleOut: true,
   needGizp: false,
 })

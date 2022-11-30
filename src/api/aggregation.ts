@@ -1,13 +1,7 @@
 import { PostTag } from '@/stores/buzz/tag'
 import HttpRequest from 'request-sdk'
 
-// const aggregation = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation`, {
-//   header: {
-//     SiteConfigMetanetId: import.meta.env.VITE_SiteConfigMetanetId,
-//   },
-// }).request
-
-const aggregation = new HttpRequest(`https://api.showmoney.app/aggregation`, {
+const aggregation = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation`, {
   header: {
     SiteConfigMetanetId: import.meta.env.VITE_SiteConfigMetanetId,
   },
@@ -405,4 +399,22 @@ export const GetGenesisNFTs = (params: {
 }> => {
   const { address, ..._params } = params
   return aggregation.get(`/v2/app/show/nft/${address}/details`, { params: _params })
+}
+
+export const GetNFT = (params: {
+  chain: string
+  metaId?: string
+  codehash?: string
+  genesis: string
+  tokenIndex: number | string
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    results: {
+      items: GenesisNFTItem[]
+    }
+  }
+}> => {
+  return aggregation.get(`/v2/app/show/nft/info`, { params: params })
 }
