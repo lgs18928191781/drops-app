@@ -1,7 +1,13 @@
 import { PostTag } from '@/stores/buzz/tag'
 import HttpRequest from 'request-sdk'
 
-const aggregation = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation`, {
+// const aggregation = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation`, {
+//   header: {
+//     SiteConfigMetanetId: import.meta.env.VITE_SiteConfigMetanetId,
+//   },
+// }).request
+
+const aggregation = new HttpRequest(`https://api.showmoney.app/aggregation`, {
   header: {
     SiteConfigMetanetId: import.meta.env.VITE_SiteConfigMetanetId,
   },
@@ -188,6 +194,33 @@ export const GetBuzzs = (params: {
   return aggregation.get(`/v2/app/show/posts/line/${tag}`, { params: _params })
 }
 
+export const NFTApiGetNFTDetail = (params: {
+  tokenIndex: string
+  codehash: string
+  genesis: string
+}): Promise<NFTApiGetNFTDetailRes> => {
+  return aggregation.post('/v2/app/sensible/getOneNftSummaryDetail', params)
+}
+
+export const GetCertMetaIdList = (): Promise<GetCertMetaIdListRes> => {
+  return aggregation.get('/v2/app/nftOnShow/getNosCertificationMetaIdList')
+}
+
+export const GetNftHolderList = (params: {
+  codehash: string
+  genesis: string
+  tokenIndex: string
+  page: string
+  pageSize: string
+}): Promise<GetNftHolderListRes> => {
+  const { codehash, genesis, tokenIndex, ..._params } = params
+  return aggregation.get(
+    `/v2/app/nftOnShow/getNftHolderList/${codehash}/${genesis}/${tokenIndex}`,
+    {
+      params: _params,
+    }
+  )
+}
 export const GetBuzz = (params: {
   txId: string
   metaId?: string

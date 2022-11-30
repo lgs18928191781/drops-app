@@ -24,6 +24,7 @@
               <div class="main-border flex flex-align-center" @click="wallet.fun()">
                 <img class="icon" :src="wallet.icon" />
                 {{ wallet.name() }}
+                <span class="desc">{{ wallet.desc() }}</span>
               </div>
             </div>
           </div>
@@ -31,6 +32,7 @@
 
         <!-- 使用MetaId钱包 -->
         <MetaIdWalletVue
+          ref="MetaidWalletRef"
           v-model:type="type"
           v-model:loading="loading"
           v-else-if="status === ConnectWalletStatus.UseMetaId"
@@ -192,7 +194,7 @@ const buzzResult = reactive({
   txId: '',
 })
 const setBaseInfoRef = ref()
-
+const MetaidWalletRef = ref()
 const enum ConnectWalletStatus {
   Watting,
   WallteConnect,
@@ -215,12 +217,16 @@ const isSHowBackupMnemonic = ref(false)
 const wallets = [
   {
     title: () => {
-      return i18n.t('Login.connectWallet')
+      return ``
+      // return i18n.t('Login.connectWallet')
     },
     list: [
       {
         name: () => {
           return 'MetaMask'
+        },
+        desc: () => {
+          return ``
         },
         icon: IconMetaMask,
         fun: () => {
@@ -231,6 +237,9 @@ const wallets = [
       {
         name: () => {
           return 'WallteConnect'
+        },
+        desc: () => {
+          return ``
         },
         icon: IconWallteConnect,
         fun: connectWalletConnect,
@@ -383,10 +392,20 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
     //这里需要再判断一下用户注册来源，如果是metamask注册的用户要拿metaid来解
 
     try {
-      const signHashForMnemonic = await MetaMaskRef.value.ethPersonalSignSign({
-        address: params.address,
-        message: getMnemonicRes?.data?.metaId.slice(0, 6),
-      })
+      let signHashForMnemonic
+
+      console.log('params.address', params.address, getMnemonicRes?.data)
+      if ((window as any).WallectConnect) {
+        signHashForMnemonic = await (window as any).WallectConnect.signPersonalMessage([
+          params.address,
+          getMnemonicRes?.data?.metaId.slice(0, 6),
+        ])
+      } else {
+        signHashForMnemonic = await MetaMaskRef.value.ethPersonalSignSign({
+          address: params.address,
+          message: getMnemonicRes?.data?.metaId.slice(0, 6),
+        })
+      }
 
       res = await BindMetaIdRef.value.loginByMnemonic(
         getMnemonicRes.data.menmonic,
@@ -429,10 +448,12 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
 
 async function OnMetaIdRegister(params: MetaIdWalletRegisterBaseInfo) {
   let loading = openLoading({
-    text: '注册中',
+    text: i18n.t('registing'),
   })
+
   metaIdWalletRegisterBaseInfo.val = params
   rootStore.$patch({ isShowLogin: false })
+
   //
   try {
     await onSetBaseInfoSuccess({
@@ -442,7 +463,12 @@ async function OnMetaIdRegister(params: MetaIdWalletRegisterBaseInfo) {
     isShowSetBaseInfo.value = true
   } catch (error) {
     loading.close()
-    return ElMessage.error(`${(error as any).toString()}`)
+    rootStore.$patch({ isShowLogin: true })
+    isShowSetBaseInfo.value = false
+    type.value = 'register'
+    status.value = ConnectWalletStatus.UseMetaId
+    MetaidWalletRef.value.registerType = 0
+    ElMessage.error(`${i18n.t('sendVerifiyCodeError')}`)
   }
 }
 
@@ -576,12 +602,21 @@ async function onSetBaseInfoSuccess(params: {
       }
       if (errorMsg) throw new Error(errorMsg.message)
       // 更新本地用户信息
+
+      await SetUserInfo({
+        userType: userStore.user?.registerType == 'email' ? 'email' : 'phone',
+        metaid: userStore.user!.metaId,
+        // @ts-ignore
+        accessKey: userStore.user?.token,
+        email: userStore.user?.email,
+        phone: userStore.user?.phone,
+      })
       userStore.updateUserInfo({
         ...userStore.user!,
         name: params.name ? params.name : `${import.meta.env.VITE_DefaultName}`,
       })
     } else {
-      debugger
+      // debugger
       // 注册 metaId 钱包
       const baseInfo = metaIdWalletRegisterBaseInfo.val!
       const _params = {
@@ -590,7 +625,9 @@ async function onSetBaseInfoSuccess(params: {
         name: params.name ? params.name : `${import.meta.env.VITE_DefaultName}`,
       }
       const loginName = baseInfo!.userType === 'phone' ? baseInfo!.phone : baseInfo!.email
+
       const registerRes = await RegisterCheck(_params)
+
       // console.log(registerRes)
       if (registerRes.code === 0) {
         let userInfo = registerRes.result as BaseUserInfoTypes
@@ -712,6 +749,7 @@ async function onSetBaseInfoSuccess(params: {
         }
       }
     }
+
     if (params.name) {
       setBaseInfoRef.value.FormRef.resetFields()
     }
@@ -720,7 +758,8 @@ async function onSetBaseInfoSuccess(params: {
     isSHowBackupMnemonic.value = true
   } catch (error) {
     loading.value = false
-    ElMessage.error((error as any).message)
+    // ElMessage.error((error as any).message)
+    throw new Error(error as any)
   }
 }
 
@@ -753,10 +792,13 @@ async function connectWalletConnect() {
     // Delete connector
   })
 
+  window.WallectConnect = connector
   const { accounts, chainId } = await connector.connect()
+
   if (chainId !== 5) {
     throw new Error(i18n.t('Login.ETH.changeGoerliNetword'))
   }
+
   const res = await connector.signPersonalMessage([
     accounts[0],
     keccak256(accounts[0]).toString('hex'),
@@ -768,7 +810,7 @@ async function connectWalletConnect() {
       address: accounts[0],
     })
   }
-  connector.killSession()
+  // connector.killSession()
 }
 
 // onMounted(async () => {
