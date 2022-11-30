@@ -341,7 +341,7 @@
   </div>
 
   <!-- pay confirm -->
-  <PayConfirmVue
+  <!-- <PayConfirmVue
     :visible="isShowConfirm"
     :genesis="NFT.val?.genesis"
     :codehash="NFT.val?.codeHash"
@@ -352,7 +352,7 @@
     @success="buySuccess"
     :price="price"
     :blindBoxPage="blindBoxPage"
-  ></PayConfirmVue>
+  ></PayConfirmVue> -->
 </template>
 
 <script setup lang="ts">

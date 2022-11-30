@@ -1,7 +1,7 @@
 <template>
   <ElDialog
     custom-class="payModeDialog"
-    v-model="visible"
+    v-model="props.visible"
     @close="closeDialog"
     center
     :close-on-click-modal="false"
