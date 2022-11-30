@@ -263,7 +263,7 @@ const goChannel = (channelId: string) => {
 </script>
 <style lang="scss" scoped>
 *::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 
 *::-webkit-scrollbar-track {

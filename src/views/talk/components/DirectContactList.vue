@@ -10,7 +10,7 @@
       <div class="h-full bg-dark-100 grow lg:w-60 flex flex-col justify-between items-stretch">
         <div class="flex flex-col overflow-y-hidden">
           <!-- 搜索栏 -->
-          <DirectContactSearch />
+          <!-- <DirectContactSearch /> -->
 
           <!-- 联系人列表 -->
           <div class="overflow-y-auto">

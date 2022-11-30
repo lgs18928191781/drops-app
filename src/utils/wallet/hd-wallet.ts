@@ -861,7 +861,6 @@ export class HdWallet {
     outputs = [],
   }: CreateNodeOptions) {
     return new Promise<CreateNodeRes>(async (resolve, reject) => {
-      debugger
       try {
         if (!nodeName) {
           throw new Error('Parameter Error: NodeName can not empty')
