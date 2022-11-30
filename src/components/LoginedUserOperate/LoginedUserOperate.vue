@@ -54,6 +54,7 @@
     :with-header="false"
     :size="'360px'"
     :append-to-body="true"
+    custom-class="none-padding"
   >
     <div class="user-wallet flex flex-v">
       <div class="user flex flex-align-center">
@@ -115,57 +116,59 @@
 
         <!-- 余额 -->
         <template v-if="tabActive === 0">
-          <!-- total balance -->
-          <div class="total-balance-warp">
-            <CardVue color="#FC6D5E">
-              <div class="total-balance flex flex-align-center flex-pack-center">
-                <div>
-                  <div class="label">{{ $t('Wallet.Total balance') }}</div>
-                  <div class="value">
-                    <template v-if="totalBalanceLoading">
-                      <ElIcon class="is-loading">
-                        <Loading />
-                      </ElIcon>
-                    </template>
-                    <template v-else> ${{ totalBalance }} USD </template>
+          <div class="balance">
+            <!-- total balance -->
+            <div class="total-balance-warp">
+              <CardVue color="#FC6D5E">
+                <div class="total-balance flex flex-align-center flex-pack-center">
+                  <div>
+                    <div class="label">{{ $t('Wallet.Total balance') }}</div>
+                    <div class="value">
+                      <template v-if="totalBalanceLoading">
+                        <ElIcon class="is-loading">
+                          <Loading />
+                        </ElIcon>
+                      </template>
+                      <template v-else> ${{ totalBalance }} USD </template>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </CardVue>
-          </div>
+              </CardVue>
+            </div>
 
-          <!-- wallets -->
-          <div class="wallets">
-            <div class="wallet-section" v-for="(item, index) in wallets" :key="index">
-              <div class="top flex flex-align-center">
-                <div class="title flex1">{{ item.title }}</div>
-                <a class="add flex flex-align-center" v-if="index === 0">
-                  {{ $t('Wallet.Add Funds') }}
-                  <Icon name="down" />
-                </a>
-              </div>
-              <div class="wallet-list">
-                <div
-                  class="wallet-item flex flex-align-center"
-                  v-for="wallet in item.list"
-                  :key="wallet.name"
-                >
-                  <div class="flex1 flex flex-align-center flex-pack-start">
-                    <div class="icon flex flex-align-center flex-pack-center">
-                      <img :src="wallet.icon" />
+            <!-- wallets -->
+            <div class="wallets">
+              <div class="wallet-section" v-for="(item, index) in wallets" :key="index">
+                <div class="top flex flex-align-center">
+                  <div class="title flex1">{{ item.title }}</div>
+                  <a class="add flex flex-align-center" v-if="index === 0">
+                    {{ $t('Wallet.Add Funds') }}
+                    <Icon name="down" />
+                  </a>
+                </div>
+                <div class="wallet-list">
+                  <div
+                    class="wallet-item flex flex-align-center"
+                    v-for="wallet in item.list"
+                    :key="wallet.name"
+                  >
+                    <div class="flex1 flex flex-align-center flex-pack-start">
+                      <div class="icon flex flex-align-center flex-pack-center">
+                        <img :src="wallet.icon" />
+                      </div>
+                      <div class="name">{{ wallet.name }}</div>
                     </div>
-                    <div class="name">{{ wallet.name }}</div>
-                  </div>
-                  <div class="value">
-                    <template v-if="wallet.loading">
-                      <ElIcon class="is-loading">
-                        <Loading />
-                      </ElIcon>
-                    </template>
-                    <template v-else>
-                      <div class="statosis">{{ wallet.statosis }}</div>
-                      <div class="usd">$30.63</div>
-                    </template>
+                    <div class="value">
+                      <template v-if="wallet.loading">
+                        <ElIcon class="is-loading">
+                          <Loading />
+                        </ElIcon>
+                      </template>
+                      <template v-else>
+                        <div class="statosis">{{ wallet.statosis }}</div>
+                        <div class="usd">$30.63</div>
+                      </template>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -213,8 +216,8 @@
           <div class="content flex1" v-infinite-scroll="load" :infinite-scroll-immediate="false">
             <ElSkeleton :loading="isSkeleton" animated>
               <div class="nft-genesis-list">
-                <div class="nft-genesis-item" v-for="item in nfts" :key="item.nftTimestamp">
-                  <div class="top flex flex-align-center">
+                <div class="nft-genesis-item" v-for="item in genesisList" :key="item.nftTimestamp">
+                  <div class="top flex flex-align-center" @click="chooseSeries(item)">
                     <div class="name flex1">
                       {{ item.nftSeriesName ? item.nftSeriesName : item.nftIssuer }}
                     </div>
@@ -240,6 +243,14 @@
       </div>
     </div>
   </ElDrawer>
+
+  <NFTLlistVue
+    v-model="seriesNFTList.visible"
+    :chain="chains.find(item => item.value === currentChain)?.value"
+    :codehash="seriesNFTList.codehash"
+    :genesis="seriesNFTList.genesis"
+    :seriesName="seriesNFTList.seriesName"
+  />
 </template>
 
 <script setup lang="ts">
@@ -260,6 +271,7 @@ import Decimal from 'decimal.js-light'
 import NFTCoverVue from '@/components/NFTCover/NFTCover.vue'
 import { GetBalance, GetNFTs } from '@/api/aggregation'
 import { initPagination } from '@/config'
+import NFTLlistVue from './NFTLlist.vue'
 
 const i18n = useI18n()
 const rootStore = useRootStore()
@@ -312,13 +324,20 @@ const isShowWallet = ref(false)
 const isShowChains = ref(false)
 const chains = reactive([
   { name: 'MVC', icon: MVC, value: 'mvc' },
-  { name: 'ETH', icon: ETH, value: 'eth' },
+  { name: 'ETH', icon: ETH, value: import.meta.env.VITE_ETH_CHAIN },
 ])
 const currentChain = ref('mvc')
 
 const isSkeleton = ref(true)
 
-const nfts: UserNFTItem[] = reactive([])
+const genesisList: UserNFTItem[] = reactive([])
+
+const seriesNFTList = reactive({
+  visible: false,
+  codehash: '',
+  genesis: '',
+  seriesName: '',
+})
 
 const wallets = reactive([
   {
@@ -408,6 +427,14 @@ function changeTab(value: number) {
 function changeChain(item: { name: string; value: string }) {
   if (currentChain.value === item.value) return
   currentChain.value = item.value
+
+  isSkeleton.value = true
+  pagination.page = 1
+  pagination.loading = false
+  pagination.nothing = false
+  getNFTs(true).then(() => {
+    isSkeleton.value = false
+  })
 }
 
 function getMEBalance() {
@@ -450,7 +477,7 @@ function getETHBalance() {
     // 获取余额
     if (userStore.user!.ethAddress) {
       const res = await GetBalance({
-        chain: 'goerli',
+        chain: import.meta.env.VITE_ETH_CHAIN,
         address: userStore.user!.ethAddress!,
       }).catch(error => {
         ElMessage.error(error.message)
@@ -478,15 +505,31 @@ function getAllBalace() {
 function getNFTs(isCover = false) {
   return new Promise<void>(async resolve => {
     const res = await GetNFTs({
-      address: userStore.user!.address!,
+      address:
+        chains.find(item => item.value === currentChain.value)!.value === 'mvc'
+          ? userStore.user!.address!
+          : userStore.user!.ethAddress!,
+      chain:
+        chains.find(item => item.value === currentChain.value)!.value !== 'mvc'
+          ? chains.find(item => item.value === currentChain.value)!.value
+          : '',
       ...pagination,
     })
     if (res.code === 0) {
-      if (isCover) nfts.length = 0
-      nfts.push(...res.data.results.items)
+      if (isCover) genesisList.length = 0
+      genesisList.push(...res.data.results.items)
       resolve()
     }
   })
+}
+
+function load() {}
+
+function chooseSeries(item: UserNFTItem) {
+  seriesNFTList.codehash = item.nftCodehash
+  seriesNFTList.genesis = item.nftGenesis
+  seriesNFTList.seriesName = item.nftSeriesName
+  seriesNFTList.visible = true
 }
 
 watch(

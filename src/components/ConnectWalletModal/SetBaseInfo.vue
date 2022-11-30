@@ -125,7 +125,7 @@ interface Props {
 const pagintion = reactive({
   limit: 12,
   cursor: '',
-  chain: 'goerli',
+  chain: import.meta.env.VITE_ETH_CHAIN,
 })
 const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits(['success'])

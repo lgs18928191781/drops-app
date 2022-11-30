@@ -281,6 +281,12 @@
         // padding: 15px;
         // box-sizing: border-box;
     }
+
+    &.none-padding {
+        .el-drawer__body {
+            padding: 0;
+        }
+    }
 }
 
 .el-skeleton__item {

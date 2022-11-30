@@ -817,7 +817,7 @@ export class SDK {
             // NodeName.NftGenesis
             if (params.nodeName === NodeName.NftGenesis) {
               const _res = await nftManager.genesis({
-                ...JSON.parse(params.data),
+                ...JSON.parse(params.data!),
                 opreturnData: res!.scriptPlayload!,
                 noBroadcast: true,
                 calcFee: true,
@@ -843,7 +843,7 @@ export class SDK {
           }
 
           if (params.nodeName === NodeName.NftIssue) {
-            const data = JSON.parse(params.data)
+            const data = JSON.parse(params.data!)
             const response = await nftManager!.mint({
               sensibleId: data.sensibleId,
               metaTxId: transactions.currentNode!.txId,
@@ -952,7 +952,8 @@ export class SDK {
           // 有附件 或则 需要创建brfc节点时， 都需要重新构建currentNode节点
           if (
             (transactions.metaFiles && transactions.metaFiles.length) ||
-            transactions.currentNodeBrfc?.transaction
+            transactions.currentNodeBrfc?.transaction ||
+            params.nodeName === NodeName.NftGenesis
           ) {
             // metafile txId变了，所以要改变currentNode 节点的data 对应数据
             if (transactions.metaFiles && transactions.metaFiles.length) {
@@ -960,7 +961,7 @@ export class SDK {
                 const fileSuffix = params.attachments![i].fileName.split('.')[
                   params.attachments![i].fileName.split('.').length - 1
                 ]
-                params.data = params.data.replace(
+                params.data = params.data!.replace(
                   `$[${i}]`,
                   transactions.metaFiles[i].transaction.id + `.${fileSuffix}`
                 )
@@ -969,11 +970,12 @@ export class SDK {
 
             // 因为 currentNode Params.data 改变了，是所以需要重新构建 current node transtation
             const res = await this.wallet?.createBrfcChildNode(
+              // @ts-ignore
               {
                 ...params,
                 brfc: {
-                  address: transactions.currentNodeBrfc!.address,
-                  txId: transactions.currentNodeBrfc!.txId,
+                  address: transactions.currentNodeBrfc!.address!,
+                  txId: transactions.currentNodeBrfc!.txId!,
                 },
                 ...AllNodeName[params.nodeName as NodeName]!,
               },
@@ -1002,8 +1004,9 @@ export class SDK {
           // NftGenesis
           if (params.nodeName === NodeName.NftGenesis) {
             utxo.wif = this.getPathPrivateKey(`${utxo.addressType}/${utxo.addressIndex}`).toString()
+            debugger
             const res = await nftManager!.genesis({
-              ...JSON.parse(params.data),
+              ...JSON.parse(params.data!),
               opreturnData: transactions.currentNode.scriptPlayload!,
               noBroadcast: true,
               utxos: [utxo],

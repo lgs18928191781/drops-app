@@ -558,7 +558,7 @@ async function onSetBaseInfoSuccess(params: {
             updateTime: new Date().getTime(),
             memo: params.nft.description,
             image: params.nft.image,
-            chain: 'goerli',
+            chain: import.meta.env.VITE_ETH_CHAIN,
           }),
           utxos: utxos,
         })
