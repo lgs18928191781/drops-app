@@ -145,7 +145,12 @@
                   <a
                     class="add flex flex-align-center"
                     v-if="index === 0"
-                    @click="isShowMERecharge = true"
+                    @click="
+                      () => {
+                        isShowMERecharge = true
+                        isShowWallet = false
+                      }
+                    "
                   >
                     {{ $t('Wallet.Add Funds') }}
                     <Icon name="down" />
@@ -266,10 +271,10 @@
     :codehash="seriesNFTList.codehash"
     :genesis="seriesNFTList.genesis"
     :seriesName="seriesNFTList.seriesName"
-    @close="lockScoller"
+    @close="isShowWallet = true"
   />
 
-  <RechargeMeVue v-model="isShowMERecharge" @close="lockScoller" />
+  <RechargeMeVue v-model="isShowMERecharge" @close="isShowWallet = true" />
 </template>
 
 <script setup lang="ts">
@@ -568,6 +573,7 @@ function chooseSeries(item: UserNFTItem) {
   seriesNFTList.genesis = item.nftGenesis
   seriesNFTList.seriesName = item.nftSeriesName
   seriesNFTList.visible = true
+  isShowWallet.value = false
 }
 
 watch(

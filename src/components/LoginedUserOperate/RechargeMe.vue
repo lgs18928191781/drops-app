@@ -6,7 +6,7 @@
     :size="'360px'"
     :append-to-body="true"
     custom-class="none-padding"
-    @closed="emit('close')"
+    @close="emit('close')"
   >
     <header class="flex flex-align-center">
       <Icon name="down" @click="emit('update:modelValue', false)" />
