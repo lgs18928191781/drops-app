@@ -88,6 +88,9 @@ router.beforeEach(async (to, from, next) => {
         next()
       } else {
         if (loading) loading.close()
+        if (from.meta.isAuth || from.fullPath === '/') {
+          next('/')
+        }
         rootStore.$patch({
           isShowLogin: true,
         })

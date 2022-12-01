@@ -143,7 +143,6 @@
     // border-width: var(--el-border-width);
     // border: var(--el-border);
     border-color: var(--el-button-hover-border-color);
-    overflow: hidden;
 
     &.sm {
         --el-dialog-width: 456px;
@@ -243,6 +242,7 @@
 
     .el-dropdown-menu__item {
         display: block;
+
         &:first-child {
             border-radius: 12px 12px 0 0;
             overflow: hidden;
