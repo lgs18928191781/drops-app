@@ -283,11 +283,13 @@ import NFTCoverVue from '@/components/NFTCover/NFTCover.vue'
 import { GetBalance, GetNFTs } from '@/api/aggregation'
 import { initPagination } from '@/config'
 import NFTLlistVue from './NFTLlist.vue'
+import { useRoute } from 'vue-router'
 
 const i18n = useI18n()
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const layout = useLayoutStore()
+const route = useRoute()
 
 const tabs = [
   { name: i18n.t('Wallet.Balance'), value: 0 },
@@ -326,7 +328,8 @@ const userOperates = [
     name: i18n.t('UserOperate.logout'),
     icon: 'logout',
     func: () => {
-      userStore.logout()
+      userStore.logout(route)
+      isShowUserMenu.value = false
     },
   },
 ]
@@ -391,7 +394,7 @@ const userWalletOperates = [
     name: i18n.t('logout'),
     icon: 'logout',
     fun: () => {
-      userStore.logout().then(() => {
+      userStore.logout(route).then(() => {
         isShowWallet.value = false
       })
     },

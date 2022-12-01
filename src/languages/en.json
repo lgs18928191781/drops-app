@@ -146,7 +146,11 @@
   },
   "Not install MetaLet Wallet": "Not Install MetaLet Wallet",
   "Login": {
-    "connectWallet": "Connect Wallet"
+    "connectWallet": "Connect Wallet",
+    "bindMetaId": {
+      "title1": "🌍 Wallet connected successfully! Next, let's prepare the MetaID account~",
+      "title2": "Bind MetaID information"
+    }
   },
   "UserOperate": {
     "createGropp": "Create Group",

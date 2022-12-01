@@ -40,7 +40,7 @@ declare interface UserInfo {
 }
 
 declare interface SetUserInfo extends UserInfo {
-  password: string
+  password?: string
 }
 
 declare interface TabItem {

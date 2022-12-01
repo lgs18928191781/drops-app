@@ -948,7 +948,7 @@ export class SDK {
           if (transactions.currentNode?.transaction) {
             // 组装新 utxo
             utxo = await this.wallet!.utxoFromTx({
-              tx: transactions.currentNodeBrfc.transaction,
+              tx: transactions.currentNodeBrfc!.transaction,
             })
           }
         }
