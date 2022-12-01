@@ -41,3 +41,7 @@ export const LegalOffsale = (params: {
 }): Promise<LegalGetUserOnSaleRes> => {
   return Legal.post('/api/v1/nos/legal/off', params)
 }
+
+export const GetLegalNftDetail = (params: { uuid: string }): Promise<GetLegalNftDetail> => {
+  return Legal.post('/api/v1/nos/legal/detail', params)
+}

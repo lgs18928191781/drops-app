@@ -1,5 +1,6 @@
 import { SignUserType } from '@/enum'
 import { defineStore } from 'pinia'
+import { GetCertMetaIdList } from '@/api/aggregation'
 export interface SignBaseInfo {
   userType: SignUserType
   areaCode: string
@@ -13,6 +14,8 @@ interface RootState {
   exchangeRate: ExchangeRate
   isGetedExchangeRate: boolean
   isShowLogin: boolean
+  isCertedMetaIds: string[]
+  currentPrice: string
 }
 
 const UA = window.navigator.userAgent.toLowerCase()
@@ -34,6 +37,7 @@ export const emptySignBaseInfo = {
 export const useRootStore = defineStore('root', {
   state: () =>
     <RootState>{
+      isCertedMetaIds: [],
       signBaseInfo: emptySignBaseInfo,
       sendCodeTimer: 60,
       redirectUri: '/',
@@ -45,6 +49,7 @@ export const useRootStore = defineStore('root', {
       },
       isGetedExchangeRate: false,
       isShowLogin: false,
+      currentPrice: window.localStorage.getItem('currentPrice') || 'BSV',
     },
   getters: {},
   actions: {
@@ -63,12 +68,28 @@ export const useRootStore = defineStore('root', {
       //   })
       // }, 30 * 1000)
     },
+    changePrices(payload: string) {
+      if (payload == this.currentPrice) {
+        return
+      } else {
+        this.currentPrice = payload
+        window.localStorage.setItem('currentPrice', payload)
+      }
+    },
+
     startSendCodeCountdown() {
       setInterval(() => {
         if (this.sendCodeTimer > 0) {
           this.sendCodeTimer--
         }
       }, 1000)
+    },
+    setSystemConfig() {
+      GetCertMetaIdList().then(res => {
+        if (res.code == 0) {
+          this.isCertedMetaIds = res.data
+        }
+      })
     },
   },
 })

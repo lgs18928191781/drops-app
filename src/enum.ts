@@ -288,6 +288,11 @@ export const enum BindStatus {
   InputPassword,
 }
 
+export enum PaySource {
+  WEB = 'web',
+  IOS = 'ios',
+  ANDROID = 'android',
+}
 export const enum RegisterSource {
   showmoney = 'normal',
   metamask = 'metamask',

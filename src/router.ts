@@ -63,6 +63,11 @@ export const router = createRouter({
           name: 'nftGenesis',
           component: () => import('@/views/nft/Genesis.vue'),
         },
+        {
+          path: 'detail/:chain/:genesis/:codehash/:tokenIndex',
+          name: 'nftDetail',
+          component: () => import('@/views/nft/NftDetail.vue'),
+        },
       ],
     },
     // {
@@ -101,11 +106,17 @@ export const router = createRouter({
       name: 'talkAtMe',
       component: () => import('@/views/talk/AtMe.vue'),
     },
+
     {
       path: '/talk/channels/:communityId/:channelId?',
       name: 'talkChannel',
       component: () => import('@/views/talk/Channel.vue'),
     },
+    // {
+    //   path: '/nftDetail/:genesisId/:codehash/:tokenIndex',
+    //   name: 'nftDetail',
+    //   component: () => import('@/views/nft/NftDetail.vue'),
+    // },
 
     // 404
     { path: '/404', name: '404', component: NotFoundPage },

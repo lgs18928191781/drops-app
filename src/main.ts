@@ -8,6 +8,7 @@ import 'element-plus/theme-chalk/el-overlay.css'
 import 'element-plus/theme-chalk/el-drawer.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import './index.scss'
+
 import { router } from '@/router'
 import * as filters from '@/utils/filters'
 import i18n from '@/utils/i18n'

@@ -54,6 +54,7 @@
     :with-header="false"
     :size="'360px'"
     :append-to-body="true"
+    :lock-scroll="true"
     custom-class="none-padding"
   >
     <div class="user-wallet flex flex-v">
@@ -227,13 +228,22 @@
                     </div>
                   </div>
                   <div class="list">
-                    <div
+                    <RouterLink
+                      :to="{
+                        name: 'nftDetail',
+                        params: {
+                          chain: currentChain,
+                          genesis: nft.nftGenesis,
+                          codehash: nft.nftCodehash ? nft.nftCodehash : 'goerli',
+                          tokenIndex: nft.nftTokenIndex,
+                        },
+                      }"
                       class="item"
                       v-for="nft in item.nftDetailItemList"
                       :key="nft.nftIssueMetaTxId"
                     >
                       <NFTCoverVue :cover="[nft.nftIcon]" />
-                    </div>
+                    </RouterLink>
                   </div>
                 </div>
               </div>
@@ -250,6 +260,7 @@
     :codehash="seriesNFTList.codehash"
     :genesis="seriesNFTList.genesis"
     :seriesName="seriesNFTList.seriesName"
+    @close="lockScoller"
   />
 </template>
 
@@ -523,7 +534,14 @@ function getNFTs(isCover = false) {
   })
 }
 
-function load() {}
+function load() {
+  if (isSkeleton.value || tabActive.value !== 1 || pagination.loading || pagination.nothing) return
+  pagination.loading = true
+  pagination.page++
+  getNFTs().then(() => {
+    pagination.loading = false
+  })
+}
 
 function chooseSeries(item: UserNFTItem) {
   seriesNFTList.codehash = item.nftCodehash
@@ -540,6 +558,10 @@ watch(
     }
   }
 )
+
+function lockScoller() {
+  document.body.classList.add('el-popup-parent--hidden')
+}
 </script>
 
 <style lang="scss" scoped src="./LoginedUserOperate.scss"></style>

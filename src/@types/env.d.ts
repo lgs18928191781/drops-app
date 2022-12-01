@@ -5,7 +5,6 @@ interface ImportMetaEnv {
   readonly VITE_BASEAPI: string
   readonly VITE_BASEPATH: string
   readonly VITE_METASVAPI: string
-  readonly VITE_SHOWMANURL: string
   readonly VITE_PlatformPercentage: string
   readonly VITE_AdminBaseApi: string
 }

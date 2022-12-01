@@ -19,7 +19,13 @@ html {
 
     user-select: none;
     -webkit-user-drag: none;
-
+    .nftDetailContainer{
+      max-width: 1200px;
+      margin: 0 auto;
+      @media only screen and (max-width: 1024PX) {
+        padding: 0 28px;
+      }
+    }
     .container {
       max-width: 800px;
       margin: 0 auto;
@@ -29,6 +35,136 @@ html {
       }
     }
 
+    .btn {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 14px;
+  background: $mainColor;
+  border: 1px solid $mainColor;
+  cursor: pointer;
+  overflow: hidden;
+
+  &.btn-wechat {
+    background: #5FB337;
+    border-color: #5FB337;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 18px;
+    text-align: center;
+  }
+
+  &.btn-gray {
+    background: #bfc2cc;
+    border-color: #bfc2cc;
+  }
+
+  &.btn-noColor {
+    background-color: #fff;
+    border-color: #FFA450;
+    color: #FFA450;
+  }
+
+  &.btn-black {
+    background: #303133;
+    border-color: #303133;
+    color: #fff;
+  }
+
+  &.btn-default {
+    background: #fff;
+    border-color: #fff;
+  }
+
+  &.btn-change {
+    background: #ffd712;
+    border-color: #ffd712;
+    color: #303133;
+  }
+
+  &.btn-error {
+    background: #fc3e05;
+    border-color: #fc3e05;
+    color: #fff;
+  }
+
+
+
+  &.btn-block {
+    display: block;
+    width: auto;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .icon-right {
+    margin-left: 10px;
+    width: 10px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  &.btn-min {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  &.btn-plain {
+    background: #fff;
+    color: $mainColor;
+  }
+}
+
+.btn-group {
+  .btn {
+    margin-right: 30px;
+
+    &:last-child {
+      margin-right: 0;
+
+    }
+  }
+}
+
+// .tab {
+  //   text-align: center;
+
+  //   a {
+  //     display: inline-block;
+  //     padding: 15px;
+  //     font-size: 24px;
+  //     font-weight: 400;
+  //     margin-right: 90px;
+  //     cursor: pointer;
+
+  //     &:last-child {
+  //       margin-right: 0;
+  //     }
+
+  //     &.active {
+  //       position: relative;
+
+  //       &::after {
+  //         content: '';
+  //         display: block;
+  //         width: 16px;
+  //         height: 4px;
+  //         background: $mainColor;
+  //         border-radius: 2px;
+  //         position: absolute;
+  //         left: 50%;
+  //         margin-left: -5px;
+  //         bottom: 0;
+  //       }
+  //     }
+  //   }
+  // }
+
+    #app {
+      height: 100%;
+    }
     #app {}
   }
 
@@ -149,3 +285,4 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+

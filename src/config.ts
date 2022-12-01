@@ -7,6 +7,14 @@ export interface Unit {
 export enum UnitName {
   BSV = 'BSV',
   SATS = 'SATS',
+  RMB = 'CNY',
+}
+
+export enum Platform {
+  native = 1,
+  app = 2,
+  h5 = 3,
+  jsapi = 4,
 }
 
 export const units: Unit[] = [
@@ -49,4 +57,11 @@ export const classifyName: { [key: string]: string } = {
   article: '文章',
   emoji: '表情包',
   background: '背景',
+}
+
+export const pagination: Pagination = {
+  page: 1,
+  pageSize: 16,
+  loading: false,
+  nothing: false,
 }

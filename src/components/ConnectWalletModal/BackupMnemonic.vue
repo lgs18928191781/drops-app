@@ -28,10 +28,7 @@
           </div>
           <div class="operate flex flex-align-center">
             <div class="flex1">
-              <span
-                v-html="$t('Login.BackupMnemonic.jumpOver')"
-                @click="emit('update:modelValue', false)"
-              ></span>
+              <span v-html="$t('Login.BackupMnemonic.jumpOver')" @click="skip"></span>
             </div>
             <a class="main-border primary" :class="{ faded: !isBackUp }" @click="confirm">
               <Icon name="right" />
@@ -71,6 +68,7 @@ const props = withDefaults(defineProps<Props>(), {})
 
 const emit = defineEmits(['update:modelValue'])
 const userStore = useUserStore()
+
 const mnemonic = ref('')
 const isBackUp = ref(false)
 const isShowMnemonic = ref(false)
@@ -85,10 +83,19 @@ watch(
   }
 )
 
+function skip() {
+  emit('update:modelValue', false)
+  if (userStore.user!.name == `${import.meta.env.VITE_DefaultName}`) {
+    window.location.reload()
+  }
+}
+
 function confirm() {
   if (!isBackUp.value) return
   emit('update:modelValue', false)
-  window.location.reload()
+  if (userStore.user!.name == `${import.meta.env.VITE_DefaultName}`) {
+    window.location.reload()
+  }
 }
 
 function finish() {

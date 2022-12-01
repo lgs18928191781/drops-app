@@ -32,6 +32,10 @@ router.beforeEach(async (to, from, next) => {
     rootStore.getExchangeRate()
   }
 
+  if (!rootStore.isCertedMetaIds.length) {
+    rootStore.setSystemConfig()
+  }
+
   if (userStore.showWallet) {
     // App 未获取用户信息，先去获取用户信息
     if (!userStore.isAuthorized && isApp) {
@@ -84,6 +88,9 @@ router.beforeEach(async (to, from, next) => {
         next()
       } else {
         if (loading) loading.close()
+        if (from.meta.isAuth || from.fullPath === '/') {
+          next('/')
+        }
         rootStore.$patch({
           isShowLogin: true,
         })

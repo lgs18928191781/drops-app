@@ -7,7 +7,7 @@
     :size="'360px'"
     :append-to-body="true"
     custom-class="none-padding"
-    @close="isSkeleton = true"
+    @close="emit('close')"
   >
     <div class="nft-list-warp flex flex-v">
       <header class="flex flex-align-center">
@@ -17,9 +17,22 @@
 
       <div class="nft-list flex1" v-infinite-scroll="load" :infinite-scroll-immediate="false">
         <ElSkeleton :loading="isSkeleton" animated>
-          <div class="nft-item" v-for="nft in nfts" :key="nft.nftIssueMetaTxId">
+          <RouterLink
+            :to="{
+              name: 'nftDetail',
+              params: {
+                chain: chain,
+                genesis: nft.nftGenesis,
+                codehash: codehash,
+                tokenIndex: nft.nftTokenIndex,
+              },
+            }"
+            class="nft-item"
+            v-for="nft in nfts"
+            :key="nft.nftIssueMetaTxId"
+          >
             <NFTCover :cover="[nft.nftIcon]" />
-          </div>
+          </RouterLink>
         </ElSkeleton>
       </div>
     </div>
@@ -47,7 +60,7 @@ const userStore = useUserStore()
 const nfts: GenesisNFTItem[] = reactive([])
 const isSkeleton = ref(true)
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'close'])
 
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {

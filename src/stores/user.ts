@@ -104,15 +104,16 @@ export const useUserStore = defineStore('user', {
       return new Promise<void>(resolve => {
         localStorage.removeItem(encode('user'))
         localStorage.removeItem(encode('password'))
+        localStorage.removeItem('walletconnect')
         this.user = null
         this.password = null
-
         resolve()
       })
     },
     updateUserInfo(userInfo: SetUserInfo) {
       return new Promise<void>(resolve => {
         const { password, ...data } = userInfo
+
         if (data.rootAddress) {
           data.address = data.rootAddress
         }
@@ -120,6 +121,7 @@ export const useUserStore = defineStore('user', {
         // window.localStorage.setItem('password', password)
         localStorage.setItem(encode('user'), encode(JSON.stringify(data)))
         window.localStorage.setItem(encode('password'), encode(password))
+
         this.user = data
         resolve()
       })
