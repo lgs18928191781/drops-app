@@ -13,11 +13,12 @@ import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
 import { getCommunityAuth } from '@/api/talk'
 import { SDK } from './sdk'
-import { FileToAttachmentItem } from './util'
+import { FileToAttachmentItem, sleep } from './util'
 import { Message, MessageDto } from '@/@types/talk'
 import { decrypt, encrypt, MD5Hash } from './crypto'
 
 export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
+  console.log('start')
   // communityId, name, description, cover, metaName, mateNameNft, admins, reserved, icon
   // const communityId = '274628147706127fc9cc8da5285081f52e6dd4436fd97bc7321daca2064db385'
   const communityId = '70637fba2fcadfe5ea89cc845ecb9eef86195672de4ce56a703e1ff08e6f1228'
@@ -98,9 +99,9 @@ export const createChannel = async (
   }
 
   // 3. 发送节点
-  const channelId = await sdk.createBrfcChildNode(node)
+  await sdk.createBrfcChildNode(node)
 
-  return { channelId }
+  return 'success'
 }
 
 export const verifyPassword = (key: string, hashedPassword: string, creatorMetaId: string) => {
@@ -132,6 +133,24 @@ const _getChannelTypeInfo = (form: any, selfMetaId: string) => {
       groupType = '2'
       status = encrypt(selfMetaId.substring(0, 16), MD5Hash(form.password).substring(0, 16))
       type = '1'
+      break
+
+    case GroupChannelType.NFT:
+      groupType = '2'
+      status = encrypt(selfMetaId.substring(0, 16), MD5Hash(form.nft.genesis).substring(0, 16))
+      codehash = form.nft.codehash
+      genesis = form.nft.genesis
+      type = '2'
+      break
+
+    case GroupChannelType.FT:
+      groupType = '2'
+      status = encrypt(selfMetaId.substring(0, 16), MD5Hash(form.ft.genesis).substring(0, 16))
+      codehash = form.ft.codehash
+      genesis = form.ft.genesis
+      type = '3'
+      limitAmount = form.amount.toString()
+      break
 
     default:
       break
@@ -275,6 +294,7 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
     avatarType: userStore.user?.avatarType || 'undefined',
     avatarTxId: userStore.user?.avatarTxId || 'undefined',
     metaId: userStore.user?.metaId || 'undefined',
+    from: userStore.user?.metaId,
     nickName: userStore.user?.name || '',
     timestamp: timestamp * 1000, // 服务端返回的是毫秒，所以模拟需要乘以1000
     txId: '',
@@ -282,6 +302,7 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
     isMock: true,
     to,
   }
+  console.log('mockMessage', mockMessage)
 
   // 查找store中的位置
   talkStore.addMessage(mockMessage)

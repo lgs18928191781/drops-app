@@ -2,12 +2,19 @@
   <!-- 连接钱包 -->
   <ElDialog
     :model-value="rootStore.isShowLogin"
-    :title="$t('Login.connectWallet')"
     :close-on-click-modal="false"
     :show-close="!loading"
+    class="none-header"
     @close="rootStore.$patch({ isShowLogin: false })"
   >
     <div class="login-warp flex">
+      <a
+        class="close flex flex-align-center flex-pack-center"
+        @click="rootStore.$patch({ isShowLogin: false })"
+      >
+        <Icon name="x_mark" />
+      </a>
+
       <div class="flex1 login-cover">
         <img src="@/assets/images/login_img.png" />
       </div>
@@ -217,8 +224,7 @@ const isSHowBackupMnemonic = ref(false)
 const wallets = [
   {
     title: () => {
-      return ``
-      // return i18n.t('Login.connectWallet')
+      return i18n.t('Login.connectWallet')
     },
     list: [
       {
@@ -584,7 +590,7 @@ async function onSetBaseInfoSuccess(params: {
             updateTime: new Date().getTime(),
             memo: params.nft.description,
             image: params.nft.image,
-            chain: 'goerli',
+            chain: import.meta.env.VITE_ETH_CHAIN,
           }),
           utxos: utxos,
         })

@@ -5,7 +5,7 @@
   "createnft": "Create",
   "mynft": "My NFT",
   "mywallet": "My Wallet",
-  "logout": "Sign Out",
+  "logout": "Log out",
   "toLoginTip": "Please log in first",
   "niceWarning": "Confir Tips ",
   "loginingTip": "Logging in, please operate later ",
@@ -55,7 +55,8 @@
       "copied": "Copied",
       "accept_invite": "Accept Invite",
       "accept_invite_placeholder": "Enter your invite code",
-      "you_have_been_invited": "You have been invited to join"
+      "you_have_been_invited": "You have been invited to join",
+      "amount_needed": "Amount"
     },
     "Channel": {
       "members": "members",
@@ -71,7 +72,16 @@
       "upload_image": "Upload an Image",
       "use_onchain_image": "Use an Onchain Image",
       "view_original": "Open original",
-      "search": "Search"
+      "search": "Search",
+      "welcome": "Welcome to",
+      "utilities": {
+        "invite": "Invite Friends",
+        "learn": "Learn More About Show3.0",
+        "download": "Download Show3.0 App",
+        "settings": "Customize your Community"
+      },
+      "welcome_message": "Welcome to #{channel}!",
+      "welcome_start": "This is the start of the #{channel} channel."
     },
     "Community": {
       "create": "Create community",
@@ -104,7 +114,10 @@
       "choose_nft_as_consent": "Choose one NFT Series as Consent...",
       "choose_ft_as_consent": "Choose a token as Consent...",
       "no_nft_available": "No NFTs available.",
-      "no_ft_available": "No tokens available."
+      "no_ft_available": "No tokens available.",
+      "processing": "Processing...",
+      "settings": "community settings",
+      "settings_short": "settings"
     },
     "Input": {
       "nft_stickers": "NFT Stickers",
@@ -216,6 +229,8 @@
     "Total balance": "Total balance",
     "Action Points": "Action Points",
     "Add Funds": "Add Funds",
-    "Balance Details": "Balance Details"
+    "Balance Details": "Balance Details",
+    "Blockchain": "Blockchain",
+    "Refresh funds": "Refresh funds"
   }
 }

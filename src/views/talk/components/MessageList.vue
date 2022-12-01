@@ -8,14 +8,25 @@
     id="messagesScroll"
     v-show="!layout.isShowMessagesLoading"
   >
-    <div class="overflow-x-hidden px-4">
-      <div class="flex flex-col-reverse space-y-4 space-y-reverse">
+    <div class="overflow-x-hidden">
+      <div class="flex flex-col-reverse space-y-2 space-y-reverse">
         <template v-if="talkStore.activeChannelType === 'group'">
           <MessageItem
             v-for="message in talkStore.activeChannel?.pastMessages"
             :message="message"
             :id="message.timestamp"
           />
+          <div
+            class="border-b border-solid border-dark-250 mb-6 pb-6 pt-2 "
+            v-if="hasTooFewMessages"
+          >
+            <h3 class="text-2xl font-medium text-dark-400">
+              {{ $t('Talk.Channel.welcome_message', { channel: talkStore.activeChannel?.name }) }}
+            </h3>
+            <p class="text-sm font-thin text-dark-400 mt-1 italic">
+              {{ $t('Talk.Channel.welcome_start', { channel: talkStore.activeChannel?.name }) }}
+            </p>
+          </div>
         </template>
 
         <template v-else>
@@ -54,7 +65,7 @@
 import { getChannelMessages } from '@/api/talk'
 import { useTalkStore } from '@/stores/talk'
 import { useLayoutStore } from '@/stores/layout'
-import { nextTick, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import LoadingItem from './LoadingItem.vue'
 import LoadingList from './LoadingList.vue'
 import MessageItem from './MessageItem.vue'
@@ -130,6 +141,18 @@ const loadMore = async () => {
     }
   }
 }
+
+const hasTooFewMessages = computed(() => {
+  if (!talkStore.activeChannel) {
+    return false
+  }
+
+  if (!talkStore.activeChannel.pastMessages) {
+    return false
+  }
+
+  return talkStore.activeChannel?.pastMessages.length < 10
+})
 
 const scrollToMessagesBottom = async (retryCount = 0) => {
   await nextTick()

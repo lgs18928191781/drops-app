@@ -5,8 +5,8 @@ export const useCommunityFormStore = defineStore('communityForm', {
   state: () => {
     return {
       icon: null as File | null,
-      name: 'test-1',
-      description: 'test-1',
+      name: '',
+      description: '',
       cover: null as File | null,
     }
   },
@@ -40,6 +40,9 @@ export const useChannelFormStore = defineStore('channelForm', {
       type: GroupChannelType.PublicText,
       name: '',
       password: '',
+      nft: null as any,
+      ft: null as any,
+      amount: 1,
     }
   },
 
@@ -51,13 +54,24 @@ export const useChannelFormStore = defineStore('channelForm', {
         case GroupChannelType.Password:
           return !!state.name && !!state.password
         case GroupChannelType.NFT:
-          return false
+          return !!state.name && !!state.nft
         case GroupChannelType.FT:
-          return false
+          return !!state.name && !!state.ft
 
         default:
           return true
       }
+    },
+  },
+
+  actions: {
+    reset() {
+      this.type = GroupChannelType.PublicText
+      this.name = ''
+      this.password = ''
+      this.nft = null
+      this.ft = null
+      this.amount = 1
     },
   },
 })

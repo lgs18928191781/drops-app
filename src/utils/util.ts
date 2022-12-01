@@ -88,7 +88,7 @@ export function getMetaFileUrl(metafile: string) {
   if (typeof metafile !== 'string') return ''
   metafile = metafile.replace('metafile://', '')
   if (metafile === '') return ''
-  return `${import.meta.env.VITE_ShowMan}/metafile/${metafile}`
+  return `${import.meta.env.VITE_AppImgApi}/metafile/${metafile}`
 }
 
 export function setDataStrclassify(data: any) {

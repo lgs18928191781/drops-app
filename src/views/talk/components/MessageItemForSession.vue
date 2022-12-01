@@ -1,5 +1,13 @@
 <template lang="">
-  <div class="flex">
+  <div class="flex hover:bg-gray-200 px-4 py-1 relative group transition-all duration-150">
+    <!-- 消息菜单 -->
+    <MessageMenu
+      :message="props.message"
+      :parsed="parseTextMessage(decryptedMessage)"
+      v-if="isText"
+    />
+    <MessageMenu :message="props.message" v-else />
+
     <UserAvatar
       :metaId="props.message.from || 'undefined'"
       class="w-13.5 h-13.5 shrink-0 select-none"
@@ -75,6 +83,7 @@
 <script setup lang="ts">
 import { ecdhDecrypt } from '@/utils/crypto'
 import NftLabel from './NftLabel.vue'
+import MessageMenu from './MessageMenu.vue'
 import redEnvelopeImg from '@/assets/images/red-envelope.svg?url'
 import ImagePreview from './ImagePreview.vue'
 import { computed, ref, toRaw } from 'vue'
@@ -185,6 +194,7 @@ const isNftEmoji = computed(() => props.message.protocol === 'SimpleEmojiGroupCh
 const isImage = computed(() => props.message.protocol === 'SimpleFileGroupChat')
 const isGiveawayRedEnvelope = computed(() => props.message.protocol === 'SimpleRedEnvelope')
 const isReceiveRedEnvelope = computed(() => props.message.protocol === 'OpenRedEnvelope')
+const isText = computed(() => props.message.protocol === 'ShowMsg')
 </script>
 
 <style lang="scss" scoped></style>

@@ -80,6 +80,7 @@ export interface UtxoItem {
   script: string
   amount: number
   satoshis: number
+  wif?: string // nft需要
 }
 
 export interface PayMeParams {
@@ -439,7 +440,7 @@ export interface createBrfcChildNodeParams {
   appId?: string[]
   encrypt?: IsEncrypt
   version?: string
-  data: string
+  data?: string
   dataType?: string
   payCurrency?: string
   payTo?: PayToItem[]
@@ -461,5 +462,11 @@ export interface CreateNodeRes {
   addressType: number
   addressIndex: number
   transaction?: bsv.Transaction
+  scriptPlayload?: (string | Buffer)[]
   hex?: string
+
+  // nft genesis
+  genesis?: string
+  codehash?: string
+  sensibleId?: string
 }

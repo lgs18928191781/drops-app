@@ -57,6 +57,7 @@ module.exports = {
       72: '288PX',
       78: '312PX',
       80: '320PX',
+      90: '360PX',
       96: '384PX',
       114: '456PX',
       148: '592PX',
@@ -116,10 +117,21 @@ module.exports = {
           '0%, 100%': { transform: 'rotate(-6deg)' },
           '50%': { transform: 'rotate(6deg)' },
         },
+        'bounce-subtle': {
+          '0%, 100%': {
+            transform: 'translateY(-10%)',
+            animationTimingFunction: 'cubic-bezier(0.8,0,1,1)',
+          },
+          '50%': {
+            transform: 'translateY(0)',
+            animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)',
+          },
+        },
       },
 
       animation: {
         wiggle: 'wiggle 1s ease-in-out infinite',
+        'bounce-subtle': 'bounce-subtle 1s infinite',
       },
     },
   },

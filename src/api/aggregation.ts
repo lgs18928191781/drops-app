@@ -1,13 +1,7 @@
 import { PostTag } from '@/stores/buzz/tag'
 import HttpRequest from 'request-sdk'
 
-// const aggregation = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation`, {
-//   header: {
-//     SiteConfigMetanetId: import.meta.env.VITE_SiteConfigMetanetId,
-//   },
-// }).request
-
-const aggregation = new HttpRequest(`https://api.showmoney.app/aggregation`, {
+const aggregation = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation`, {
   header: {
     SiteConfigMetanetId: import.meta.env.VITE_SiteConfigMetanetId,
   },
@@ -243,7 +237,7 @@ export const GetTagBuzzs = (params: {
   page: string | number
   pageSize: string | number
   metaId?: string
-  buzzType?: string
+  subTag?: string
   timeType?: string
 }): Promise<{
   code: number
@@ -359,6 +353,7 @@ export const GetMetaFile = (
 
 export const GetNFTs = (params: {
   address: string
+  chain?: string
   page: number | string
   pageSize: number | string
 }): Promise<{
@@ -371,5 +366,55 @@ export const GetNFTs = (params: {
   }
 }> => {
   const { address, ..._params } = params
-  return aggregation.get(`/v2/app/sensible/getMyNftSummaryListV2/${address}`, { params: _params })
+  return aggregation.get(`/v2/app/show/nft/${address}/summary`, { params: _params })
+}
+
+export const GetBalance = (params: {
+  chain: string
+  address: string
+}): Promise<{
+  code: number
+  data: {
+    balance: number
+  }
+}> => {
+  return aggregation.get(`/v2/app/show/balance`, { params: params })
+}
+
+export const GetGenesisNFTs = (params: {
+  address: string
+  codehash: string
+  genesis?: string
+  chain?: string
+  page: number | string
+  pageSize: number | string
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    results: {
+      items: GenesisNFTItem[]
+    }
+  }
+}> => {
+  const { address, ..._params } = params
+  return aggregation.get(`/v2/app/show/nft/${address}/details`, { params: _params })
+}
+
+export const GetNFT = (params: {
+  chain: string
+  metaId?: string
+  codehash?: string
+  genesis: string
+  tokenIndex: number | string
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    results: {
+      items: GenesisNFTItem[]
+    }
+  }
+}> => {
+  return aggregation.get(`/v2/app/show/nft/info`, { params: params })
 }

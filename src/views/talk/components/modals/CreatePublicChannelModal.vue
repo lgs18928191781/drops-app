@@ -50,17 +50,28 @@ import { useUserStore } from '@/stores/user'
 import { createChannel } from '@/utils/talk'
 import { ShowControl } from '@/enum'
 import BaseModal from './BaseModal.vue'
+import { useRouter } from 'vue-router'
 
 const form = useChannelFormStore()
 form.type = GroupChannelType.PublicText
 
 const userStore = useUserStore()
 const layout = useLayoutStore()
-const talkStore = useTalkStore()
+const talk = useTalkStore()
+const router = useRouter()
 
 const tryCreateChannel = async () => {
   if (!form.isFinished) return
 
-  const { channelId } = await createChannel(form, talkStore.activeCommunityId, userStore.showWallet)
+  layout.isShowCreatePublicChannelModal = false
+  layout.isShowLoading = true
+  await createChannel(form, talk.activeCommunityId, userStore.showWallet)
+  layout.isShowLoading = false
+  form.reset()
+
+  router.push({
+    path: router.currentRoute.value.fullPath,
+    force: true,
+  })
 }
 </script>

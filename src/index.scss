@@ -128,39 +128,39 @@ html {
   }
 }
 
-.tab {
-  text-align: center;
+// .tab {
+  //   text-align: center;
 
-  a {
-    display: inline-block;
-    padding: 15px;
-    font-size: 24px;
-    font-weight: 400;
-    margin-right: 90px;
-    cursor: pointer;
+  //   a {
+  //     display: inline-block;
+  //     padding: 15px;
+  //     font-size: 24px;
+  //     font-weight: 400;
+  //     margin-right: 90px;
+  //     cursor: pointer;
 
-    &:last-child {
-      margin-right: 0;
-    }
+  //     &:last-child {
+  //       margin-right: 0;
+  //     }
 
-    &.active {
-      position: relative;
+  //     &.active {
+  //       position: relative;
 
-      &::after {
-        content: '';
-        display: block;
-        width: 16px;
-        height: 4px;
-        background: $mainColor;
-        border-radius: 2px;
-        position: absolute;
-        left: 50%;
-        margin-left: -5px;
-        bottom: 0;
-      }
-    }
-  }
-}
+  //       &::after {
+  //         content: '';
+  //         display: block;
+  //         width: 16px;
+  //         height: 4px;
+  //         background: $mainColor;
+  //         border-radius: 2px;
+  //         position: absolute;
+  //         left: 50%;
+  //         margin-left: -5px;
+  //         bottom: 0;
+  //       }
+  //     }
+  //   }
+  // }
 
     #app {
       height: 100%;
