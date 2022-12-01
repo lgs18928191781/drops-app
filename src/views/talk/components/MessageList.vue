@@ -17,7 +17,7 @@
             :id="message.timestamp"
           />
           <div
-            class="border-b border-solid border-dark-250 mb-6 pb-6 pt-2 "
+            class="border-b border-solid border-dark-250 mb-6 pb-6 pt-2 mx-4"
             v-if="hasTooFewMessages"
           >
             <h3 class="text-2xl font-medium text-dark-400">

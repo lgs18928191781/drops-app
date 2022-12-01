@@ -141,6 +141,11 @@ export const AllNodeName: {
     path: '/Protocols/FtGenesis',
     version: '1.0.0',
   },
+  [NodeName.SimpleRedEnvelope]: {
+    brfcId: '695e19ddf852',
+    path: '/Protocols/SimpleRedEnvelope',
+    version: '1.0.2',
+  },
 }
 
 export class SDK {

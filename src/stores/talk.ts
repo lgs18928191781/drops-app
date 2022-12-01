@@ -374,7 +374,6 @@ export const useTalkStore = defineStore('talk', {
       const onReceiveMessage = (event: MessageEvent) => {
         const messageWrapper = JSON.parse(event.data)
         if (isGroupMessage(messageWrapper)) {
-          console.log('wait what')
           const message = messageWrapper.D
 
           // 如果不是当前频道的消息，则更新未读指针
@@ -393,7 +392,6 @@ export const useTalkStore = defineStore('talk', {
 
             return
           }
-          console.log('duping')
           // 去重
           const isDuplicate =
             this.activeChannel.newMessages.some((item: Message) => item.txId === message.txId) ||
@@ -415,7 +413,6 @@ export const useTalkStore = defineStore('talk', {
           // 优先查找替代mock数据
           let mockMessage: any
           if (message.protocol === 'simpleGroupChat') {
-            console.log('here')
             mockMessage = this.activeChannel.newMessages.find(
               (item: Message) =>
                 item.txId === '' &&
@@ -424,7 +421,6 @@ export const useTalkStore = defineStore('talk', {
                 item.metaId === message.metaId &&
                 item.protocol === message.protocol
             )
-            console.log({ message, new: this.activeChannel.newMessages })
           } else if (message.protocol === 'SimpleFileGroupChat') {
             mockMessage = this.activeChannel.newMessages.find(
               (item: Message) =>
@@ -452,7 +448,6 @@ export const useTalkStore = defineStore('talk', {
         }
 
         if (isSessionMessage(messageWrapper)) {
-          console.log('here')
           const message = messageWrapper.D
 
           // 如果不是当前频道的消息，则更新未读指针
@@ -510,7 +505,6 @@ export const useTalkStore = defineStore('talk', {
                 item.protocol === message.protocol
             )
           } else if (message.nodeName === 'ShowMsg') {
-            console.log('trying to find')
             mockMessage = this.activeChannel.newMessages.find(
               (item: Message) =>
                 item.txId === '' && item.isMock === true && item.nodeName === message.nodeName
@@ -518,7 +512,6 @@ export const useTalkStore = defineStore('talk', {
           }
 
           if (mockMessage) {
-            console.log('found')
             this.$patch(state => {
               mockMessage.txId = message.txId
               mockMessage.timestamp = message.timestamp
@@ -534,7 +527,6 @@ export const useTalkStore = defineStore('talk', {
         }
       }
 
-      console.log('initing')
       this.ws.addEventListener('message', onReceiveMessage)
     },
 
