@@ -117,6 +117,10 @@ module.exports = {
           '0%, 100%': { transform: 'rotate(-6deg)' },
           '50%': { transform: 'rotate(6deg)' },
         },
+        'wiggle-subtle': {
+          '0%, 100%': { transform: 'rotate(-1.5deg)' },
+          '50%': { transform: 'rotate(1.5deg)' },
+        },
         'bounce-subtle': {
           '0%, 100%': {
             transform: 'translateY(-10%)',
@@ -131,6 +135,7 @@ module.exports = {
 
       animation: {
         wiggle: 'wiggle 1s ease-in-out infinite',
+        'wiggle-subtle': 'wiggle-subtle 1s ease-in-out infinite',
         'bounce-subtle': 'bounce-subtle 1s infinite',
       },
     },
