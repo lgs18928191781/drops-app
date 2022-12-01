@@ -22,6 +22,15 @@ export const getCommunities = async (params?: any): Promise<Community[]> => {
   })
 }
 
+export const getOneCommunity = async (communityId: string): Promise<Community[]> => {
+  return TalkApi.get(`/community/${communityId}`).then(res => {
+    const community = res.data
+    community.id = community.communityId
+
+    return community
+  })
+}
+
 export const getCommunityAuth = async (communityId: string): Promise<CommunityAuth> => {
   return TalkApi.get(`/community/${communityId}/auth/info`).then(res => res.data)
 }

@@ -125,7 +125,7 @@
           >
             <Icon name="red_envelope" class="w-full h-full text-dark-800" />
           </div>
-          <RedPacketModal />
+          <RedPacketCreateModal />
 
           <Popover class="relative flex items-center">
             <PopoverButton as="div">
@@ -215,7 +215,7 @@ import StickerVue from '@/components/Sticker/Sticker.vue'
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
 import { ChannelType, MessageType } from '@/enum'
 import { useLayoutStore } from '@/stores/layout'
-import RedPacketModal from './modals/RedPacketModal.vue'
+import RedPacketCreateModal from './modals/red-packet/Create.vue'
 
 const doNothing = () => {}
 

@@ -157,7 +157,7 @@
             </div>
 
             <div class="my-7.5 flex justify-center items-baseline text-dark-800 space-x-1">
-              <div class="text-4xl font-bold">{{ amountInTwoDecimals }}</div>
+              <div class="text-4xl font-bold">{{ form.nicerAmount }}</div>
               <div class="text-base">Space</div>
             </div>
 
@@ -193,7 +193,7 @@ import {
 } from '@headlessui/vue'
 import { computed, ref, watch } from 'vue'
 import { ShowControl } from '@/enum'
-import BaseModal from './BaseModal.vue'
+import BaseModal from '../BaseModal.vue'
 
 import { useLayoutStore } from '@/stores/layout'
 import { useRedPacketFormStore } from '@/stores/forms'

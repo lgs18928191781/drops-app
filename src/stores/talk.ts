@@ -1,4 +1,10 @@
-import { getAtMeChannels, getChannelMessages, getChannels, getCommunityMembers } from '@/api/talk'
+import {
+  getAtMeChannels,
+  getChannelMessages,
+  getChannels,
+  getCommunityMembers,
+  getOneCommunity,
+} from '@/api/talk'
 import { ChannelPublicityType, ChannelType, GroupChannelType } from '@/enum'
 import { defineStore } from 'pinia'
 import { router } from '@/router'
@@ -27,6 +33,7 @@ export const useTalkStore = defineStore('talk', {
       communityChannelIds: {} as any, // 社区频道列表
 
       hasActiveChannelConsent: false, // 是否持有当前频道的共识
+      invitingCommunity: {} as any, // 邀请的社区
 
       inviteLink: '', // 邀请链接
     }
@@ -183,6 +190,21 @@ export const useTalkStore = defineStore('talk', {
       const selfMetaId = this.selfMetaId
       const isAtMe = routeCommunityId === '@me'
 
+      if (!isAtMe) {
+        const fetchMembers = async () => {
+          this.members = await getCommunityMembers(routeCommunityId)
+        }
+        await fetchMembers()
+
+        // 判断是否已是社区成员，如果不是，则尝试加入
+        const isMember = this.members.some((member: any) => member.metaId === selfMetaId)
+        if (!isMember) {
+          // 拉取单个社区信息
+          const invitingCommunity = await getOneCommunity(routeCommunityId)
+          this.communities.push(invitingCommunity)
+        }
+      }
+
       // 如果没有指定频道，则先从存储中尝试读取该社区的最后阅读频道
       const latestChannelsRecords =
         localStorage.getItem('latestChannels-' + selfMetaId) || JSON.stringify({})
@@ -227,14 +249,10 @@ export const useTalkStore = defineStore('talk', {
       this.initReadPointers()
 
       if (!isAtMe) {
-        const fetchMembers = async () => {
-          this.members = await getCommunityMembers(routeCommunityId)
-        }
-        await fetchMembers()
-
         // 判断是否已是社区成员，如果不是，则尝试加入
         const isMember = this.members.some((member: any) => member.metaId === selfMetaId)
         if (!isMember) {
+          // 拉取单个社区信息
           // TODO:
           const layout = useLayoutStore()
           layout.isShowAcceptInviteModal = true
@@ -242,7 +260,6 @@ export const useTalkStore = defineStore('talk', {
           return 'pending'
         }
       }
-
       return 'success'
     },
 
