@@ -61,18 +61,24 @@
 
       <div class="w-full py-0.5" v-else-if="isGiveawayRedEnvelope">
         <div
-          class="max-w-full md:max-w-[50%] lg:max-w-[400px] shadow-lg rounded-xl cursor-pointer origin-top-left hover:shadow-xl hover:scale-105  transition-all duration-300"
+          class="max-w-full md:max-w-[50%] lg:max-w-[300PX] shadow rounded-xl cursor-pointer origin-center hover:shadow-md transition-all duration-200 bg-white hover:animate-wiggle-subtle group"
         >
-          <div class="rounded-xl bg-red-400 p-6 flex space-x-2">
-            <img :src="redEnvelopeImg" class="h-12" loading="lazy" />
+          <div
+            class="rounded-xl p-4 flex space-x-2 bg-gradient-to-br from-[#FFE8D2] via-[#FFF1B9] to-[#FEFFE3] items-center"
+          >
+            <img :src="giftImage" class="h-12 w-12" loading="lazy" />
             <div class="">
-              <div class="text-white text-lg font-medium capitalize">
+              <div class="text-dark-800 text-base font-medium capitalize">
                 {{ $t('Talk.Channel.come_get_red_envelope') }}
               </div>
-              <div class="text-red-50 text-xs mt-0.5">{{ redEnvelopeMessage }}</div>
+              <div class="text-dark-300 text-sm mt-1">{{ redEnvelopeMessage }}</div>
             </div>
           </div>
-          <div class=" py-2 px-6 text-dark-400 text-xs">Show红包</div>
+
+          <div class="flex py-2.5 items-center space-x-1.5 px-4">
+            <Icon name="gift" class="w-4 h-4 text-dark-300" />
+            <div class="text-dark-300 text-xs">{{ $t('Talk.Input.giveaway') }}</div>
+          </div>
         </div>
       </div>
 
@@ -91,13 +97,13 @@
 import { decrypt } from '@/utils/crypto'
 import NftLabel from './NftLabel.vue'
 import MessageMenu from './MessageMenu.vue'
-import redEnvelopeImg from '@/assets/images/red-envelope.svg?url'
 import ImagePreview from './ImagePreview.vue'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { formatTimestamp } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
+import giftImage from '@/assets/images/gift.svg?url'
 
 const i18n = useI18n()
 

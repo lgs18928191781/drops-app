@@ -1,5 +1,9 @@
 import { GroupChannelType } from '@/enum'
+import { giveRedPacket } from '@/utils/talk'
 import { defineStore } from 'pinia'
+import { useLayoutStore } from './layout'
+import { useTalkStore } from './talk'
+import { useUserStore } from './user'
 
 export const useCommunityFormStore = defineStore('communityForm', {
   state: () => {
@@ -86,6 +90,67 @@ export const usePasswordFormStore = defineStore('passwordForm', {
   getters: {
     isFinished(state) {
       return !!state.password
+    },
+  },
+})
+
+export const useRedPacketFormStore = defineStore('redPacketForm', {
+  state: () => {
+    return {
+      amount: 0 as number | '',
+      quantity: 1,
+      message: '',
+    }
+  },
+
+  getters: {
+    nicerAmount(state): string {
+      if (state.amount === '') return '0'
+      // 小于 0.01 的红包金额，会使用sat为单位
+      return state.amount < 0.01 ? (state.amount * 100000000).toFixed(0) : state.amount.toFixed(2)
+    },
+
+    amountUnit(state) {
+      if (state.amount === 0 || state.amount === '') return 'Space'
+      return state.amount < 0.01 ? 'sats' : 'Space'
+    },
+
+    nicerAmountWithUnits(state): string {
+      return this.nicerAmount + ' ' + this.amountUnit
+    },
+
+    isFinished(state) {
+      return !!state.amount || !!state.quantity
+    },
+  },
+
+  actions: {
+    reset() {
+      this.amount = 0
+      this.quantity = 1
+      this.message = ''
+    },
+
+    async submit() {
+      const talk = useTalkStore()
+      const user = useUserStore()
+      const layout = useLayoutStore()
+      if (!this.isFinished) return
+
+      layout.isShowRedPacketModal = false
+      layout.isShowLoading = true
+      await giveRedPacket(
+        {
+          amount: this.amount,
+          message: this.message,
+          quantity: this.quantity,
+        },
+        talk.activeChannelId,
+        talk.selfMetaId,
+        user.showWallet
+      )
+      layout.isShowLoading = false
+      this.reset()
     },
   },
 })

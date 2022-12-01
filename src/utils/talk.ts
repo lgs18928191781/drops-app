@@ -13,7 +13,7 @@ import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
 import { getCommunityAuth } from '@/api/talk'
 import { SDK } from './sdk'
-import { FileToAttachmentItem, sleep } from './util'
+import { FileToAttachmentItem, randomString, realRandomString, sleep } from './util'
 import { Message, MessageDto } from '@/@types/talk'
 import { decrypt, encrypt, MD5Hash } from './crypto'
 
@@ -61,6 +61,31 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   await sdk.createBrfcChildNode(node)
 
   return { communityId }
+}
+
+export const giveRedPacket = async (form: any, channelId: string, selfMetaId: string, sdk: SDK) => {
+  const dataCarrier = {
+    createTime: new Date().getTime(),
+    subId: channelId.substring(0, 12),
+    content: form.message,
+    code: realRandomString(6),
+    amount: form.amount,
+    count: form.quantity,
+    metaid: selfMetaId,
+  }
+
+  // 2. 构建节点参数
+  const node = {
+    nodeName: NodeName.SimpleRedEnvelope,
+    encrypt: IsEncrypt.No,
+    dataType: 'application/json',
+    data: JSON.stringify(dataCarrier),
+  }
+
+  // 3. 发送节点
+  await sdk.createBrfcChildNode(node)
+
+  return
 }
 
 export const createChannel = async (

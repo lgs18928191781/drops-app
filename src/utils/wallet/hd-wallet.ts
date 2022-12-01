@@ -2044,7 +2044,7 @@ export class HdWallet {
 
       const allUtxos2 = await this.provider.getUtxos(this.wallet.xpubkey.toString())
       const tx2 = await this.sendMoney({
-        payTo: [{ amount: 20000, address: bFrcRes.address }],
+        payTo: [{ amount: 20000, address: IssueFrfcRes.address }],
         utxos: allUtxos2,
       })
       await sleep(2000)
@@ -2080,6 +2080,14 @@ export class HdWallet {
         }
       )
       console.log('genesisWif', this.getPathPrivateKey(`0/0`).toString())
+      console.log({
+        brfcAddress: bFrcRes.address,
+        address1: utxos[0].address,
+        address2: mvc.PrivateKey.fromWIF(utxos[0].wif)
+          .toAddress('testnet')
+          .toString(),
+        path: `${utxos[0].addressType}/${utxos[0].addressIndex}`,
+      })
       const result = await ft.issue({
         genesis: genesis.genesis,
         codehash: genesis.codehash,
