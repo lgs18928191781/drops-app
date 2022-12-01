@@ -304,8 +304,15 @@
     "Add Funds": "充值能量点",
     "Balance Details": "余额详情",
     "Blockchain": "区块链",
-    "Refresh funds": "刷新"
+    "Refresh funds": "刷新",
+    "Payment": "支付方式",
+    "Add Quantity": "充值数量",
+    "Add Amount": "充值金额",
+    "Add": "充值"
   },
   "registing": "注册中",
-  "sendVerifiyCodeError": "验证码填写不正确,请重新填写"
+  "sendVerifiyCodeError": "验证码填写不正确,请重新填写",
+  "wechatpay": "微信支付",
+  "aliPay": "支付宝支付",
+  "quickPay": "银行卡支付"
 }

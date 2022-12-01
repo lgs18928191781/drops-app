@@ -1,0 +1,142 @@
+header {
+    position: relative;
+    height: var(--header-height);
+    border-bottom: 1px solid #F4F7F9;
+    padding: 0 18px;
+
+    .icon {
+        width: 12px;
+        height: 12px;
+        cursor: pointer;
+        position: relative;
+        z-index: 2;
+        transform: rotate(90deg);
+    }
+
+    .title {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: var(--header-height);
+        line-height: var(--header-height);
+        text-align: center;
+        font-size: 16px;
+    }
+}
+
+.content {
+    padding: 18px;
+}
+
+.form {
+
+
+    .form-section {
+        margin-bottom: 18px;
+        border-bottom: 1px solid #F4F7F9;
+        padding-bottom: 18px;
+
+        &:last-child {
+            border-bottom: 0;
+        }
+
+        .form_item {
+            margin-bottom: 18px;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+
+            .label {}
+
+            .value {
+                border: 2px solid #EDEFF2;
+                border-radius: 12px;
+
+                &.input {
+                    padding: 12px 14px;
+                    cursor: text;
+                }
+
+                input {
+                    border: none;
+                    outline: none;
+                    text-align: right;
+                }
+
+                .sufix {
+                    width: 30px;
+                    text-align: center;
+                }
+
+                &:hover,
+                &.active {
+                    border-color: var(--main-font-color);
+                }
+            }
+
+
+        }
+    }
+}
+
+.pay-item {
+    padding: 9px 14px;
+
+
+    .icon-warp {
+        margin-right: 6px;
+
+        img {
+            width: 24px;
+            height: 24px;
+        }
+    }
+
+    .down {
+        width: 12px;
+        height: 12px;
+        margin-left: 8px;
+        transition: all 0.5s;
+    }
+
+    .check-warp {
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+        margin-left: 40px;
+
+        .icon {
+            width: 10px;
+            height: 10px;
+        }
+    }
+
+    &.active {
+        .check-warp {
+            background: var(--el-color-primary);
+        }
+
+        .down {
+            transform: rotate(180deg);
+        }
+    }
+}
+
+.operate {
+    padding: 17px 0;
+    text-align: center;
+    cursor: pointer;
+    font-size: 16px;
+
+    &.faded {
+        cursor: not-allowed;
+    }
+}
+
+.rate {
+    color: #606266;
+    margin-top: 15px;
+    text-align: center;
+}

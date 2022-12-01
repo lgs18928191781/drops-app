@@ -34,7 +34,7 @@
 
 
     &:hover {
-        background: var(--el-color-primary);
+        // background: var(--el-color-primary);
     }
 
 
@@ -42,6 +42,10 @@
         width: 24px;
         height: 24px;
         margin-right: 14px;
+    }
+
+    .name {
+        color: var(--main-font-color);
     }
 }
 

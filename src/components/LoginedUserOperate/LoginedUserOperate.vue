@@ -142,7 +142,11 @@
               <div class="wallet-section" v-for="(item, index) in wallets" :key="index">
                 <div class="top flex flex-align-center">
                   <div class="title flex1">{{ item.title }}</div>
-                  <a class="add flex flex-align-center" v-if="index === 0">
+                  <a
+                    class="add flex flex-align-center"
+                    v-if="index === 0"
+                    @click="isShowMERecharge = true"
+                  >
                     {{ $t('Wallet.Add Funds') }}
                     <Icon name="down" />
                   </a>
@@ -246,7 +250,9 @@
                     </RouterLink>
                   </div>
                 </div>
+                <IsNullVue v-if="genesisList.length <= 0" />
               </div>
+              <LoadMoreVue :pagination="pagination" />
             </ElSkeleton>
           </div>
         </template>
@@ -262,6 +268,8 @@
     :seriesName="seriesNFTList.seriesName"
     @close="lockScoller"
   />
+
+  <RechargeMeVue v-model="isShowMERecharge" @close="lockScoller" />
 </template>
 
 <script setup lang="ts">
@@ -284,6 +292,9 @@ import { GetBalance, GetNFTs } from '@/api/aggregation'
 import { initPagination } from '@/config'
 import NFTLlistVue from './NFTLlist.vue'
 import { useRoute } from 'vue-router'
+import LoadMoreVue from '../LoadMore/LoadMore.vue'
+import IsNullVue from '../IsNull/IsNull.vue'
+import RechargeMeVue from './RechargeMe.vue'
 
 const i18n = useI18n()
 const rootStore = useRootStore()
@@ -400,6 +411,7 @@ const userWalletOperates = [
     },
   },
 ]
+const isShowMERecharge = ref(false)
 
 const totalBalance = computed(() => {
   let value = 0
@@ -518,21 +530,26 @@ function getAllBalace() {
 
 function getNFTs(isCover = false) {
   return new Promise<void>(async resolve => {
-    const res = await GetNFTs({
-      address:
-        chains.find(item => item.value === currentChain.value)!.value === 'mvc'
-          ? userStore.user!.address!
-          : userStore.user!.ethAddress!,
-      chain:
-        chains.find(item => item.value === currentChain.value)!.value !== 'mvc'
-          ? chains.find(item => item.value === currentChain.value)!.value
-          : '',
-      ...pagination,
-    })
-    if (res.code === 0) {
-      if (isCover) genesisList.length = 0
-      genesisList.push(...res.data.results.items)
+    if (currentChain.value !== 'mvc' && !userStore.user!.ethAddress) {
+      genesisList.length = 0
       resolve()
+    } else {
+      const res = await GetNFTs({
+        address:
+          chains.find(item => item.value === currentChain.value)!.value === 'mvc'
+            ? userStore.user!.address!
+            : userStore.user!.ethAddress!,
+        chain:
+          chains.find(item => item.value === currentChain.value)!.value !== 'mvc'
+            ? chains.find(item => item.value === currentChain.value)!.value
+            : '',
+        ...pagination,
+      })
+      if (res.code === 0) {
+        if (isCover) genesisList.length = 0
+        genesisList.push(...res.data.results.items)
+        resolve()
+      }
     }
   })
 }

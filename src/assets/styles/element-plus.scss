@@ -6,6 +6,10 @@
     --el-border-width: 2px;
     --el-color-primary: #FFDC51;
     --el-color-primary-light-5: rgba(255, 220, 81, 0.5);
+    --el-color-primary-light-4: rgba(255, 220, 81, 0.4);
+    --el-color-primary-light-3: rgba(255, 220, 81, 0.3);
+    --el-color-primary-light-2: rgba(255, 220, 81, 0.2);
+    --el-color-primary-light-1: rgba(255, 220, 81, 0.1);
     --el-border-radius-sm: 2px;
     --el-border-radius-big: 12px;
 
@@ -239,6 +243,7 @@
     box-sizing: border-box;
     box-shadow: var(--el-box-shadow-dark);
     border: none;
+    padding: 0 !important;
 
     .el-dropdown-menu__item {
         display: block;
@@ -266,8 +271,8 @@
 
 .el-dropdown-menu__item:not(.is-disabled):hover,
 .el-dropdown-menu__item:focus {
-    background-color: none;
-    color: var(--main-font-color);
+    background-color: var(--el-color-primary-light-3) !important;
+    color: var(--main-font-color) !important;
 }
 
 

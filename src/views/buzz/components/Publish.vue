@@ -129,7 +129,6 @@ import { useRouter } from 'vue-router'
 import { Mitt, MittEvent } from '@/utils/mitt'
 import { getOneBuzz } from '@/api/buzz'
 import QuoteVue from './Quote.vue'
-import { CreateNodeRes } from '@/utils/wallet/hd-wallet'
 import { GetHotTopics } from '@/api/aggregation'
 
 const attachments: AttachmentItem[] = reactive([])

@@ -1,6 +1,10 @@
 .publish {
     padding: 30px;
 
+    :deep(.el-loading-mask) {
+        border-radius: var(--el-dialog-border-radius);
+    }
+
     .top {
         .user {
             .avatar {
@@ -33,7 +37,13 @@
             }
 
             &:hover {
-                background: var(--el-color-primary);
+                background: var(--main-font-color);
+
+                .icon {
+                    :deep(use) {
+                        fill: #fff
+                    }
+                }
             }
         }
     }
