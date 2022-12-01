@@ -6,7 +6,7 @@
         <template #template>
           <div
             class="buzz-item-warp"
-            v-for="(item, index) in Array.from({ length: pagination!.pageSize })"
+            v-for="(item, index) in Array.from({ length: pagination?.pageSize || 1 })"
           >
             <BuzzItemSkeletonVue />
           </div>
