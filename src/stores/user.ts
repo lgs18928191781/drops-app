@@ -7,6 +7,8 @@ import { GetProdTestMetaIds } from '@/api/strapi'
 import axios from 'axios'
 import { ElMessageBox } from 'element-plus'
 import { SdkPayType } from '@/enum'
+import { RouteLocationNormalizedLoaded, useRoute, useRouter } from 'vue-router'
+import { router } from '@/router'
 
 export interface KycInfoTypes {
   name: string
@@ -100,13 +102,14 @@ export const useUserStore = defineStore('user', {
     showWallet: state => <SDK>(state.wallet ? toRaw(state.wallet) : state.wallet),
   },
   actions: {
-    logout() {
+    logout(route: RouteLocationNormalizedLoaded) {
       return new Promise<void>(resolve => {
         localStorage.removeItem(encode('user'))
         localStorage.removeItem(encode('password'))
         localStorage.removeItem('walletconnect')
         this.user = null
         this.password = null
+        if (route.meta.isAuth) router.push('/')
         resolve()
       })
     },
@@ -120,7 +123,9 @@ export const useUserStore = defineStore('user', {
         // localStorage.setItem('user', JSON.stringify(data))
         // window.localStorage.setItem('password', password)
         localStorage.setItem(encode('user'), encode(JSON.stringify(data)))
-        window.localStorage.setItem(encode('password'), encode(password))
+        if (password) {
+          window.localStorage.setItem(encode('password'), encode(password))
+        }
 
         this.user = data
         resolve()

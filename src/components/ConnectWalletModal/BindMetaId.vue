@@ -34,15 +34,15 @@
         <div class="title">{{ $t('Login.bindMetaId.bindSuccessTitle') }}</div>
         <div class="cont">
           <div class="userInfo">
-            <UserAvatar :metaid-id="userStore.user!.metaId" :type="userStore.user!.avatarType" />
+            <UserAvatar :meta-id="userStore.user!.metaId" />
             <div class="username">{{ userStore.user?.name }}</div>
             <div class="metaid">
               MetaID：{{userStore.user!.metaId.slice(0, 7)}}...{{userStore.user!.metaId.slice(-7)}}
             </div>
 
             <div class="operate flex flex-pack-end">
-              <a class="main-border primary">
-                <Icon name="right" @click="skip" />
+              <a class="main-border primary" @click="skip">
+                <Icon name="right" />
               </a>
             </div>
           </div>
@@ -270,9 +270,6 @@ function signMnemonicSeed() {}
 
 function skip() {
   emit('update:modelValue', false)
-  if (userStore.user!.name == `${import.meta.env.VITE_DefaultName}`) {
-    window.location.reload()
-  }
 }
 
 async function selectLoginType(item: number) {

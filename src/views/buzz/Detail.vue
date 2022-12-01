@@ -4,7 +4,7 @@
       <div class="comment">
         <div class="dived"></div>
         <div class="publish-comment flex flex-align-center">
-          <UserAvatar :meta-id="userStore.user?.metaId || ''" />
+          <UserAvatar :meta-id="userStore.user?.metaId || ''" :disabled="true" />
           <div class="cont flex1" v-loading="loading">
             <input
               v-model="addComment.content"
@@ -36,6 +36,8 @@ const route = useRoute()
 const userStore = useUserStore()
 const loading = ref(false)
 const i18n = useI18n()
+
+console.log(userStore.user)
 
 const list: BuzzItem[] = reactive([])
 const isSkeleton = ref(true)

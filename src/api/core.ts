@@ -62,7 +62,18 @@ export const RegisterCheck = async (params: {
   code: string
   name: string
   promotion?: string
-}): Promise<ApiResultTypes> => {
+}): Promise<{
+  code: number
+  result: {
+    appToken: string
+    name: string
+    pk2: string
+    registerType: string
+    role: string
+    tag: string
+    token: string
+  }
+}> => {
   return Core.post('/api/v1/user/register/check', params)
 }
 

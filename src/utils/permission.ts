@@ -23,7 +23,7 @@ router.beforeEach(async (to, from, next) => {
 
   if (to.name === 'register' && userStore.isAuthorized) {
     // 用户已登陆时，先退出登录
-    await userStore.logout()
+    await userStore.logout(to)
     next()
   }
 

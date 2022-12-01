@@ -93,7 +93,9 @@ function getDatas(isCover = false) {
 watch(
   () => userStore.isAuthorized,
   () => {
-    refreshDatas()
+    if (userStore.isAuthorized) {
+      refreshDatas()
+    }
   }
 )
 
