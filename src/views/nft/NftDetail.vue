@@ -56,7 +56,7 @@
               class="series-cert flex flex-align-center"
               v-if="nft.val!.nftGenesisCertificationType"
             >
-              <img src="@/assets/images/icon_cer_nft.png" />
+              <!-- <img src="@/assets/images/icon_cer_nft.png" /> -->
               {{ $t('beCertedSeries') }}：{{ $t(nft.val!.nftGenesisCertificationName) }}
             </div>
             <div class="creater-msg">
