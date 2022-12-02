@@ -167,7 +167,7 @@ async function startConnect() {
     if (res) {
         const result = await ethPersonalSignSign({
             address: res.ethAddress,
-            message: ethers.utils.keccak256(res.ethAddress)
+            message: ethers.utils.keccak256(ethers.utils.toUtf8Bytes(res.ethAddress))
         })
         if (result) {
              emit('success',{ signAddressHash:  result, address: res.ethAddress});

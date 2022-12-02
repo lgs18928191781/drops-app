@@ -658,7 +658,7 @@ async function connectWalletConnect() {
 
   const res = await connector.signPersonalMessage([
     accounts[0],
-    ethers.utils.keccak256(accounts[0]),
+    ethers.utils.keccak256(ethers.utils.toUtf8Bytes(accounts[0])),
   ])
   if (res) {
     rootStore.$patch({ isShowLogin: false })
