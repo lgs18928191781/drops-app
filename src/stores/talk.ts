@@ -123,7 +123,7 @@ export const useTalkStore = defineStore('talk', {
         if (channelId === this.activeChannelId) return false
 
         // 如果频道已读指针不存在，则说明没有未读消息
-        if (!this.channelsReadPointers[channelId]) return false
+        if (!this.channelsReadPointers || !this.channelsReadPointers[channelId]) return false
 
         // 如果频道已读指针存在，则判断lastRead和latest
         const pointer = this.channelsReadPointers[channelId]
@@ -134,10 +134,9 @@ export const useTalkStore = defineStore('talk', {
     hasUnreadMessagesOfCommunity(): (communityId: string) => boolean {
       return (communityId: string) => {
         // 从本地存储中获取社区频道列表和已读指针
+        if (!this.communityChannelIds) return false
+
         const channels = this.communityChannelIds[communityId] || []
-        if (communityId === '@me') {
-          console.log({ channels })
-        }
 
         if (channels.length === 0) return false
 
@@ -417,12 +416,10 @@ export const useTalkStore = defineStore('talk', {
       const onReceiveMessage = async (event: MessageEvent) => {
         const messageWrapper = JSON.parse(event.data)
         if (isGroupMessage(messageWrapper)) {
-          console.log('new ws message')
           const message = messageWrapper.D
 
           // 如果不是当前频道的消息，则更新未读指针
           if (!isFromActiveChannel(messageWrapper)) {
-            console.log('not active channel')
             if (!this.channelsReadPointers[messageMetaId(messageWrapper)]) {
               this.channelsReadPointers[messageMetaId(messageWrapper)] = {
                 lastRead: 0,
@@ -433,7 +430,6 @@ export const useTalkStore = defineStore('talk', {
             if (
               message.timestamp > this.channelsReadPointers[messageMetaId(messageWrapper)].latest
             ) {
-              console.log('updating pointer')
               this.channelsReadPointers[messageMetaId(messageWrapper)].latest = message.timestamp
             }
 
@@ -512,7 +508,6 @@ export const useTalkStore = defineStore('talk', {
             if (
               message.timestamp > this.channelsReadPointers[messageMetaId(messageWrapper)].latest
             ) {
-              console.log('updating pointer')
               this.channelsReadPointers[messageMetaId(messageWrapper)].latest = message.timestamp
             }
 
