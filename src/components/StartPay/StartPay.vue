@@ -166,6 +166,7 @@ import {
 import { ElMessage, LoadingParentElement } from 'element-plus'
 import { GetOrderStatus, PayETHByME } from '@/api/wxcore'
 import { useUserStore } from '@/stores/user'
+import { ethers } from 'ethers'
 
 interface Props {
   modelValue: boolean
@@ -260,7 +261,9 @@ function drawePayCode() {
           method: 'eth_sendTransaction',
           params: [
             {
-              value: new Decimal(getOrderAmount.amount).mul(Math.pow(10, 8)).toString(),
+              value: ethers.utils.hexValue(
+                new Decimal(getOrderAmount.amount).mul(Math.pow(10, 8)).toString()
+              ),
               to: import.meta.env.VITE_ETH_Address,
               from: '0xAB080995048289E755Ac42011660ce6DE548Cca1',
             },
