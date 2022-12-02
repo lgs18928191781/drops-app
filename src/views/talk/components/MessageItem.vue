@@ -55,13 +55,15 @@
         </Teleport>
       </div>
 
-      <div class="text-xs text-dark-400 my-0.5 capitalize" v-else-if="isReceiveRedEnvelope">
-        {{ redEnvelopeReceiveInfo }}
+      <div class="text-xs text-dark-400 my-0.5 capitalize" v-else-if="isReceiveRedPacket">
+        {{ redPacketReceiveInfo }}
       </div>
 
-      <div class="w-full py-0.5" v-else-if="isGiveawayRedEnvelope">
+      <div class="w-full py-0.5" v-else-if="isGiveawayRedPacket">
+        <RedPacketOpenModal :message="props.message" />
         <div
           class="max-w-full md:max-w-[50%] lg:max-w-[300PX] shadow rounded-xl cursor-pointer origin-center hover:shadow-md transition-all duration-200 bg-white hover:animate-wiggle-subtle group"
+          @click="layout.isShowRedPacketOpenModal = true"
         >
           <div
             class="rounded-xl p-4 flex space-x-2 bg-gradient-to-br from-[#FFE8D2] via-[#FFF1B9] to-[#FEFFE3] items-center"
@@ -71,7 +73,7 @@
               <div class="text-dark-800 text-base font-medium capitalize">
                 {{ $t('Talk.Channel.come_get_red_envelope') }}
               </div>
-              <div class="text-dark-300 text-sm mt-1">{{ redEnvelopeMessage }}</div>
+              <div class="text-dark-300 text-sm mt-1">{{ redPacketMessage }}</div>
             </div>
           </div>
 
@@ -104,12 +106,15 @@ import { formatTimestamp } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
 import giftImage from '@/assets/images/gift.svg?url'
+import { useLayoutStore } from '@/stores/layout'
+import RedPacketOpenModal from './modals/red-packet/Open.vue'
 
 const i18n = useI18n()
 
 const showImagePreview = ref(false)
 const userStore = useUserStore()
 const talkStore = useTalkStore()
+const layout = useLayoutStore()
 
 const props = defineProps(['message'])
 
@@ -179,7 +184,7 @@ const parseTextMessage = (text: string) => {
   return text.replace(/\n/g, '<br />')
 }
 
-const redEnvelopeReceiveInfo = computed(() => {
+const redPacketReceiveInfo = computed(() => {
   const content: string = props.message.content
 
   if (props.message.metaId === props.message.data?.redEnvelopeMetaId) {
@@ -193,7 +198,7 @@ const redEnvelopeReceiveInfo = computed(() => {
   })
 })
 
-const redEnvelopeMessage = computed(() => {
+const redPacketMessage = computed(() => {
   return props.message.data?.content || i18n.t('Talk.Channel.default_red_envelope_message')
 })
 
@@ -205,8 +210,8 @@ const isGroupJoinAction = computed(() => props.message.protocol === 'SimpleGroup
 const isGroupLeaveAction = computed(() => props.message.protocol === 'SimpleGroupLeave')
 const isNftEmoji = computed(() => props.message.protocol === 'SimpleEmojiGroupChat')
 const isImage = computed(() => props.message.protocol === 'SimpleFileGroupChat')
-const isGiveawayRedEnvelope = computed(() => props.message.protocol === 'SimpleRedEnvelope')
-const isReceiveRedEnvelope = computed(() => props.message.protocol === 'OpenRedEnvelope')
+const isGiveawayRedPacket = computed(() => props.message.protocol === 'SimpleRedEnvelope')
+const isReceiveRedPacket = computed(() => props.message.protocol === 'OpenRedEnvelope')
 const isText = computed(() => props.message.protocol === 'simpleGroupChat')
 </script>
 
