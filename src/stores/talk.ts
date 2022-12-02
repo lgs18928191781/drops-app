@@ -12,6 +12,7 @@ import { useLayoutStore } from './layout'
 import { Message, TalkError } from '@/@types/talk'
 import { sleep } from '@/utils/util'
 import { useUserStore } from './user'
+import { useRoute } from 'vue-router'
 
 export const useTalkStore = defineStore('talk', {
   state: () => {
@@ -27,13 +28,12 @@ export const useTalkStore = defineStore('talk', {
       ws: null as WebSocket | null,
       wsHeartBeatTimer: null as NodeJS.Timeout | null,
 
-      channelsReadPointers: {} as any, // 频道已读指针
+      channelsReadPointers: null as any, // 频道已读指针
       saveReadPointerTimer: null as NodeJS.Timeout | null,
 
-      communityChannelIds: {} as any, // 社区频道列表
+      communityChannelIds: null as any, // 社区频道列表
 
       hasActiveChannelConsent: false, // 是否持有当前频道的共识
-      invitingCommunity: {} as any, // 邀请的社区
 
       inviteLink: '', // 邀请链接
     }
@@ -135,6 +135,9 @@ export const useTalkStore = defineStore('talk', {
       return (communityId: string) => {
         // 从本地存储中获取社区频道列表和已读指针
         const channels = this.communityChannelIds[communityId] || []
+        if (communityId === '@me') {
+          console.log({ channels })
+        }
 
         if (channels.length === 0) return false
 
@@ -187,6 +190,9 @@ export const useTalkStore = defineStore('talk', {
 
   actions: {
     async initChannel(routeCommunityId: string, routeChannelId: string) {
+      // 重置
+      this.members = []
+
       const selfMetaId = this.selfMetaId
       const isAtMe = routeCommunityId === '@me'
 
@@ -217,9 +223,20 @@ export const useTalkStore = defineStore('talk', {
       }
 
       const fetchChannels = async () => {
+        const route = useRoute()
+
         const channels = isAtMe
           ? await getAtMeChannels({ metaId: selfMetaId })
           : await getChannels({ communityId: routeCommunityId })
+        // 如果是私聊，而且路由中的频道 ID 不存在，则新建会话
+        if (isAtMe && !channels.some((channel: any) => channel.id === routeChannelId)) {
+          const name = route.query.name || '新用户'
+          const newSession = {
+            id: routeChannelId,
+            name,
+          }
+          channels.push(newSession)
+        }
 
         this.activeCommunityId = routeCommunityId
         if (routeChannelId) {
@@ -228,16 +245,13 @@ export const useTalkStore = defineStore('talk', {
         this.activeCommunity.channels = channels
 
         // 写入存储
-        const communityChannels =
-          localStorage.getItem('communityChannels-' + selfMetaId) || JSON.stringify({})
-        const parsedCommunityChannels = JSON.parse(communityChannels)
+        this.initCommunityChannelIds()
         // 只保存频道id
         const channelIds = channels.map((channel: any) => channel.id)
-        parsedCommunityChannels[routeCommunityId] = channelIds
-        this.communityChannelIds = parsedCommunityChannels
+        this.communityChannelIds[routeCommunityId] = channelIds
         localStorage.setItem(
           'communityChannels-' + selfMetaId,
-          JSON.stringify(parsedCommunityChannels)
+          JSON.stringify(this.communityChannelIds)
         )
       }
       await fetchChannels()
@@ -246,7 +260,7 @@ export const useTalkStore = defineStore('talk', {
       latestChannels[routeCommunityId] = routeChannelId
       localStorage.setItem('latestChannels-' + selfMetaId, JSON.stringify(latestChannels))
 
-      this.initReadPointers()
+      this.updateReadPointers()
 
       if (!isAtMe) {
         // 判断是否已是社区成员，如果不是，则尝试加入
@@ -263,34 +277,46 @@ export const useTalkStore = defineStore('talk', {
       return 'success'
     },
 
-    initReadPointers() {
+    initCommunityChannelIds() {
       const selfMetaId = this.selfMetaId
-      // 先从本地读取
-      const readPointers = localStorage.getItem('readPointers-' + selfMetaId)
+      if (this.communityChannelIds || !selfMetaId) return
+
+      // 从本地存储中读取社区频道id
+      const communityChannels =
+        localStorage.getItem('communityChannels-' + selfMetaId) || JSON.stringify({})
+      const parsedCommunityChannels = JSON.parse(communityChannels)
+      this.communityChannelIds = parsedCommunityChannels
+    },
+
+    initReadPointers() {
+      if (this.channelsReadPointers || !this.selfMetaId) return
+      console.log('initting pointers')
+
+      const readPointers = localStorage.getItem('readPointers-' + this.selfMetaId)
       if (readPointers) {
         this.channelsReadPointers = JSON.parse(readPointers)
-        // 比照确认有无新频道，有的话添加
-        this.activeCommunity.channels.forEach((channel: any) => {
-          if (!this.channelsReadPointers[channel.id]) {
-            this.channelsReadPointers[channel.id] = {
-              lastRead: 0,
-              latest: 0,
-            }
-          }
-        })
       } else {
-        this.activeCommunity.channels.forEach((channel: any) => {
-          this.channelsReadPointers[channel.id] = {
-            lastRead: 0,
-            latest: 0,
-          }
-        })
+        this.channelsReadPointers = {}
       }
 
       // 设置定时器，每隔一段时间保存一次
       this.saveReadPointerTimer = setInterval(() => {
         this.saveReadPointers()
-      }, 1000 * 60)
+      }, 1000 * 30)
+    },
+
+    updateReadPointers() {
+      if (!this.activeCommunity?.channels || !this.selfMetaId) return
+      this.initReadPointers()
+
+      this.activeCommunity.channels.forEach((channel: any) => {
+        if (!this.channelsReadPointers[channel.id]) {
+          this.channelsReadPointers[channel.id] = {
+            lastRead: 0,
+            latest: 0,
+          }
+        }
+      })
     },
 
     closeReadPointerTimer() {
@@ -388,23 +414,27 @@ export const useTalkStore = defineStore('talk', {
       const isFromActiveChannel = (messageWrapper: any) =>
         messageMetaId(messageWrapper) === this.activeChannelId
 
-      const onReceiveMessage = (event: MessageEvent) => {
+      const onReceiveMessage = async (event: MessageEvent) => {
         const messageWrapper = JSON.parse(event.data)
         if (isGroupMessage(messageWrapper)) {
+          console.log('new ws message')
           const message = messageWrapper.D
 
           // 如果不是当前频道的消息，则更新未读指针
           if (!isFromActiveChannel(messageWrapper)) {
-            if (
-              this.channelsReadPointers[message.groupId] &&
-              message.timestamp > this.channelsReadPointers[message.groupId].latest
-            ) {
-              this.channelsReadPointers[message.groupId].latest = message.timestamp
-            } else {
-              this.channelsReadPointers[message.groupId] = {
-                latest: message.timestamp,
+            console.log('not active channel')
+            if (!this.channelsReadPointers[messageMetaId(messageWrapper)]) {
+              this.channelsReadPointers[messageMetaId(messageWrapper)] = {
                 lastRead: 0,
+                latest: 0,
               }
+            }
+
+            if (
+              message.timestamp > this.channelsReadPointers[messageMetaId(messageWrapper)].latest
+            ) {
+              console.log('updating pointer')
+              this.channelsReadPointers[messageMetaId(messageWrapper)].latest = message.timestamp
             }
 
             return
@@ -450,6 +480,9 @@ export const useTalkStore = defineStore('talk', {
 
           if (mockMessage) {
             console.log('替换中')
+            if (message.protocol === 'SimpleFileGroupChat') {
+              await sleep(2000)
+            }
             this.$patch(state => {
               mockMessage.txId = message.txId
               mockMessage.timestamp = message.timestamp
@@ -469,16 +502,18 @@ export const useTalkStore = defineStore('talk', {
 
           // 如果不是当前频道的消息，则更新未读指针
           if (!isFromActiveChannel(messageWrapper)) {
-            if (
-              this.channelsReadPointers[messageMetaId(messageWrapper)] &&
-              message.timestamp > this.channelsReadPointers[message.groupId].latest
-            ) {
-              this.channelsReadPointers[messageMetaId(messageWrapper)].latest = message.timestamp
-            } else {
+            if (!this.channelsReadPointers[messageMetaId(messageWrapper)]) {
               this.channelsReadPointers[messageMetaId(messageWrapper)] = {
-                latest: message.timestamp,
                 lastRead: 0,
+                latest: 0,
               }
+            }
+
+            if (
+              message.timestamp > this.channelsReadPointers[messageMetaId(messageWrapper)].latest
+            ) {
+              console.log('updating pointer')
+              this.channelsReadPointers[messageMetaId(messageWrapper)].latest = message.timestamp
             }
 
             return
@@ -563,6 +598,27 @@ export const useTalkStore = defineStore('talk', {
       }
 
       this.activeChannel.newMessages.push(message)
+    },
+
+    reset() {
+      console.log('resetting')
+      this.closeWebSocket()
+      this.closeReadPointerTimer()
+      this.communities = []
+      this.members = []
+      this.activeCommunityId = ''
+      this.activeChannelId = ''
+      this.error = {} as TalkError
+
+      this.channelsReadPointers = null
+      this.communityChannelIds = null
+      this.hasActiveChannelConsent = false
+      this.inviteLink = ''
+    },
+
+    resetCurrentChannel() {
+      this.activeChannelId = ''
+      this.activeCommunityId = ''
     },
   },
 })

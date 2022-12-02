@@ -142,13 +142,16 @@
               leave-from-class="opacity-100"
               leave-to-class="opacity-0"
             >
-              <PopoverPanel class="absolute z-10 transform top-[-16PX] right-0 -translate-y-full">
+              <PopoverPanel
+                class="absolute z-10 transform top-[-16PX] right-0 -translate-y-full"
+                v-slot="{ close }"
+              >
                 <div class="bg-white p-2 rounded-xl shadow-lg w-60 divide-y divide-dark-200">
                   <div
-                    class="mx-2 py-4 flex items-center space-x-2 text-dark-800 rounded-sm lg:cursor-pointer lg:hover:underline"
-                    @click="openImageUploader"
+                    class="mx-2 py-4 flex items-center space-x-2 text-dark-800 rounded-sm lg:cursor-pointer lg:hover:underline cursor-pointer"
+                    @click="openImageUploader(close)"
                   >
-                    <div class="">
+                    <div class="cursor-pointer">
                       <Icon name="photo" class="w-5 h-5 rounded-full bg-primary p-2 box-content" />
                     </div>
                     <div class="">
@@ -156,9 +159,9 @@
                     </div>
                   </div>
                   <div
-                    class="mx-2 py-4 flex items-center space-x-2 text-dark-800 rounded-sm lg:cursor-pointer lg:hover:underline"
+                    class="mx-2 py-4 flex items-center space-x-2 text-dark-800 rounded-sm lg:cursor-pointer lg:hover:underline cursor-pointer"
                   >
-                    <div class="">
+                    <div class=" ">
                       <Icon name="link" class="w-5 h-5 rounded-full bg-primary p-2 box-content" />
                     </div>
                     <div class="">
@@ -234,8 +237,9 @@ const showImagePreview = ref(false)
 
 const hasImage = computed(() => imageFile.value !== null)
 
-const openImageUploader = () => {
+const openImageUploader = (close: Function) => {
   imageUploader.value?.click()
+  close()
 }
 
 const handleImageChange = (e: Event) => {
@@ -319,6 +323,7 @@ const trySendText = async () => {
     const privateKey = toRaw(userStore?.wallet)!.getPathPrivateKey('0/0')
     const privateKeyStr = privateKey.toHex()
     const otherPublicKeyStr = talkStore.activeChannel.publicKeyStr
+    console.log(chatInput.value, privateKeyStr, otherPublicKeyStr)
 
     content = ecdhEncrypt(chatInput.value, privateKeyStr, otherPublicKeyStr)
   }

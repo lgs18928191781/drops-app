@@ -60,6 +60,7 @@
       </div>
 
       <div class="w-full py-0.5" v-else-if="isGiveawayRedPacket">
+        <RedPacketOpenModal :message="props.message" />
         <div
           class="max-w-full md:max-w-[50%] lg:max-w-[300PX] shadow rounded-xl cursor-pointer origin-center hover:shadow-md transition-all duration-200 bg-white hover:animate-wiggle-subtle group"
           @click="layout.isShowRedPacketOpenModal = true"
@@ -106,6 +107,7 @@ import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
 import giftImage from '@/assets/images/gift.svg?url'
 import { useLayoutStore } from '@/stores/layout'
+import RedPacketOpenModal from './modals/red-packet/Open.vue'
 
 const i18n = useI18n()
 

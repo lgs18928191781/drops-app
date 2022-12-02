@@ -33,19 +33,26 @@
                 <div class="w-108 h-15">
                   <img :src="GiftRibbonImg" al="" />
                 </div>
-                <div class="bg-white rounded-3xl lg:w-114 lg:h-105 flex flex-col">
+                <div
+                  class="bg-white rounded-3xl w-[80vw] lg:w-114 h-105 flex flex-col cursor-pointer"
+                  @click="tryOpenRedPacket"
+                >
                   <div
-                    class="lg:w-114 lg:h-60 bg-gradient-to-tr from-[#CBFDE4] to-[#FCEDCE] rounded-t-3xl shadow-md flex flex-col items-center justify-start"
+                    class="lg:w-114 h-60 bg-gradient-to-tr from-[#CBFDE4] to-[#FCEDCE] rounded-t-3xl shadow-md flex flex-col items-center justify-start"
                   >
-                    <div class="w-15 h-15 rounded-2xl bg-amber-200 mt-7.5"></div>
+                    <UserAvatar
+                      :metaId="message.metaId"
+                      class="w-15 h-15 rounded-2xl bg-amber-200 mt-7.5"
+                      :disabled="true"
+                    />
                     <div class="mt-3 text-sm text-dark-300 capitalize">
                       {{ $t('Talk.Modals.red_packet') }}
                     </div>
-                    <div class="text-2xl mt-3">恭喜发财</div>
+                    <div class="text-2xl mt-3">{{ note }}</div>
                   </div>
                   <div class="w-full flex items-stretch justify-center grow relative">
                     <div
-                      class="absolute top-0 w-28 h-28 rounded-full gift-button-gradient flex items-center justify-center text-dark-800 text-xl capitalize -translate-y-1/2 border-2 border-b-4 border-solid border-dark-300 shadow-lg box-content"
+                      class="absolute top-0 w-28 h-28 rounded-full gift-button-gradient flex items-center justify-center text-dark-800 text-xl capitalize -translate-y-1/2 border-2 border-b-5 border-solid border-dark-300 shadow-xl box-content font-medium"
                     >
                       {{ $t('Talk.Modals.receive') }}
                     </div>
@@ -65,9 +72,18 @@
 import { useLayoutStore } from '@/stores/layout'
 import { Dialog, DialogPanel, TransitionRoot, TransitionChild } from '@headlessui/vue'
 import GiftRibbonImg from '@/assets/images/gift_ribbon.svg?url'
-import GiftCoverImg from '@/assets/images/gift_cover.svg?url'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const layout = useLayoutStore()
+const props = defineProps(['message'])
+const i18n = useI18n()
+
+const note = computed(() => {
+  return props.message.data?.content || i18n.t('Talk.Channel.default_red_envelope_message')
+})
+
+const tryOpenRedPacket = () => {}
 </script>
 
 <style lang="scss" scoped>
