@@ -1957,7 +1957,7 @@ export class HdWallet {
         outPutIndex: 0,
       })
       utxo.wif = this.getPathPrivateKey(`${utxo.addressType}/${utxo.addressIndex}`).toString()
-      debugger
+      // debugger
       utxos = [utxo]
       const response = await this.createBrfcChildNode(
         {
@@ -1988,7 +1988,7 @@ export class HdWallet {
         feeb: 1,
         purse: this.getPathPrivateKey(`0/0`).toString(),
       })
-      debugger
+      // debugger
 
       const genesis = await ft.genesis({
         tokenName,
@@ -2103,7 +2103,7 @@ export class HdWallet {
       })
 
       // await this.provider.broadcast(result.txHex)
-      debugger
+      // debugger
     })
   }
 }
