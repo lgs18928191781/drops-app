@@ -78,6 +78,7 @@
     "cypress": "^7.0",
     "eslint": "~7",
     "eslint-plugin-vue": "~7",
+    "ethereum-types": "^3.7.1",
     "node-stdlib-browser": "^1.2.0",
     "patch-vue-directive-ssr": "^0.0.1",
     "postcss": "~8.3",

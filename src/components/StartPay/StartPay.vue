@@ -164,7 +164,7 @@ import {
   openLoading,
 } from '@/utils/util'
 import { ElMessage, LoadingParentElement } from 'element-plus'
-import { GetOrderStatus } from '@/api/wxcore'
+import { GetOrderStatus, PayETHByME } from '@/api/wxcore'
 import { useUserStore } from '@/stores/user'
 
 interface Props {
@@ -174,6 +174,7 @@ interface Props {
   orderId: string
   isBilinbox: boolean
 }
+const props = withDefaults(defineProps<Props>(), {})
 
 const emit = defineEmits(['success', 'fail', 'update:modelValue'])
 const nft: { val: null | NFTApiGetNFTDetailResDataItem } = inject('nft')!
@@ -234,8 +235,6 @@ const balancePay = reactive({
   },
 })
 
-const props = withDefaults(defineProps<Props>(), {})
-
 let checkOrderStateInterval: any // 轮询检查订单状态
 let checkOrderTimeOut: any // 检查订单超时
 let loading: { close: () => void }
@@ -251,8 +250,34 @@ const isQrcodeInTime = ref(true) // 付款码是否在有效时间
 function drawePayCode() {
   return new Promise<void>(async (resolve, reject) => {
     if (props.url) {
+      if (props.payPlatform === PayPlatform.ETH) {
+        const getOrderAmount = await CheckOrderStatus({
+          orderId: props.orderId,
+          payPlatform: props.payPlatform,
+          isBilinbox: props.isBilinbox,
+        })
+        const tx = await window.ethereum!.request!({
+          method: 'eth_sendTransaction',
+          params: [
+            {
+              value: new Decimal(getOrderAmount.amount).mul(Math.pow(10, 8)).toString(),
+              to: import.meta.env.VITE_ETH_Address,
+              from: '0xAB080995048289E755Ac42011660ce6DE548Cca1',
+            },
+          ],
+        })
+        const res = await PayETHByME({
+          order_id: props.orderId,
+          tx_hash: tx,
+          from_coin_address: useStore.user!.ethAddress!,
+        })
+        if (res.code === 0) {
+          payResult.status = PayStatus.Success
+          isShowPayStatusModal.value = true
+        }
+      }
       // 余额支付
-      if (props.payPlatform === PayPlatform.BalancePay) {
+      else if (props.payPlatform === PayPlatform.BalancePay) {
         const getOrdetAmount = await GetOrderAmout({
           address: useStore.user!.address!,
           oriCustomerOrderNo: props.url,

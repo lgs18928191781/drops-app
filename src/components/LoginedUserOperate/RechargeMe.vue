@@ -301,6 +301,7 @@ async function recharge() {
     pay_type: currentPayPlatform.value,
     quit_url: quitUrl,
     types: type,
+    from_coin_address: userStore.user?.ethAddress,
   }).catch(error => {
     ElMessage.error(error.message)
     loading.value = false

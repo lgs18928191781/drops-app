@@ -86,6 +86,7 @@ export const useUserStore = defineStore('user', {
   getters: {
     isAuthorized: state => <boolean>!!(state.user && state.user.token),
     userName: state => {
+      debugger
       if (state.user && state.user.token) {
         return state.user!.userType === 'email' ? state.user!.email! : state.user!.phone!
       } else {

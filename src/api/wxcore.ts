@@ -7,6 +7,7 @@ import { getToken, getUserName, useUserStore } from '@/stores/user'
 const Wxcore = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/wxcore`, {
   header: () => {
     const userStore = useUserStore()
+    debugger
     if (userStore.isAuthorized) {
       return {
         accessKey: userStore.user!.token,
@@ -136,4 +137,12 @@ export const GetOrderStatus = (params: {
   payType: number
 }): Promise<GetOrderStatusRes> => {
   return Wxcore.get(`/common/order/${params.orderId}/${params.payType}`)
+}
+
+export const PayETHByME = (params: {
+  order_id: string
+  tx_hash: number
+  from_coin_address: string
+}): Promise<GetOrderStatusRes> => {
+  return Wxcore.post(`/me/coin/pay`)
 }

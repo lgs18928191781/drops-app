@@ -128,7 +128,6 @@ export const payPlatformList: PayPlatformItem[] = [
     background: '#108EE9',
     disabled: () => {
       let result = true
-      debugger
       const userStore = useUserStore()
       if (userStore.isAuthorized && userStore.user?.ethAddress) {
         result = false

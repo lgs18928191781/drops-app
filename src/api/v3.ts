@@ -131,6 +131,7 @@ export const CreateMeOrder = (params: {
   pay_type: number
   quit_url: string
   types: number
+  from_coin_address?: string
 }): Promise<CreateMeOrderRes> => {
   return V3.post('/api/me/user/createOrderId', params)
 }
