@@ -20,6 +20,18 @@
           :class="item.extraClass"
           :key="index"
         >
+          <div
+            class="absolute left-0 h-full flex items-center top-0"
+            v-if="item.icon === 'talk' && talkStore.hasUnreadMessagesOfCommunity('@me')"
+          >
+            <span
+              class="w-1.5 h-3 bg-dark-800 rounded-r-md lg:group-hover:h-6 transition-all duration-150"
+            ></span>
+          </div>
+          <span
+            class="absolute left-0 bg-dark-800 w-1.5 h-7 rounded-r-md"
+            v-if="route.path.includes(item.symbol)"
+          ></span>
           <span
             class="bg-primary w-13.5 h-13.5 flex items-center justify-center rounded-3xl group-hover:scale-110 transition-all duration-200"
           >
@@ -100,9 +112,12 @@ import { useTalkStore } from '@/stores/talk'
 import { useUserStore } from '@/stores/user'
 import { isMobile } from '@/stores/root'
 import CreateCommunityModal from '@/views/talk/components/modals/CreateCommunityModal.vue'
+import { onBeforeUnmount } from 'vue'
+import { useRoute } from 'vue-router'
 const layout = useLayoutStore()
 const talkStore = useTalkStore()
 const userStore = useUserStore()
+const route = useRoute()
 
 const fetchCommunities = async () => {
   const selfMetaId = userStore.user?.metaId
@@ -119,17 +134,24 @@ const apps = [
     path: '/buzz',
     extraClass: 'left-navigation-item',
     title: 'Feed',
+    symbol: 'buzz',
   },
-  // {
-  //   icon: 'talk',
-  //   path: '/talk/channels/@me',
-  //   title: '@Me',
-  // },
+  {
+    icon: 'talk',
+    path: '/talk/channels/@me',
+    title: '@Me',
+    symbol: '@me',
+  },
 ]
 
 if (userStore.isAuthorized) {
   fetchCommunities()
+  talkStore.initWebSocket()
 }
+
+onBeforeUnmount(() => {
+  talkStore.closeWebSocket()
+})
 </script>
 
 <style lang="scss" scoped src="./LeftNavigation.scss"></style>

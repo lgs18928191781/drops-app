@@ -6,35 +6,35 @@
       <ChannelHeader />
 
       <div class="pt-12 pb-17.5 h-screen lg:relative w-full bg-dark-200 lg:pt-15 lg:pb-20">
-        <div class="h-full">
-          <MessageList />
-        </div>
-
-        <div class="fixed bottom-0 left-0 right-0 px-4 lg:absolute">
-          <TheInput />
-          <TheErrorBox />
-        </div>
+        <ChannelWelcome v-if="talk.isActiveChannelTheVoid" />
+        <ChannelSettings v-else-if="talk.isActiveChannelTheVoid" />
+        <ChannelContent v-else />
       </div>
 
       <Transition name="slide">
-        <ChannelMemberList />
+        <ChannelMemberList v-show="layout.isShowMemberList" />
       </Transition>
     </div>
+
+    <DragonBall />
 
     <!-- modals -->
     <PasswordModal />
     <InviteModal />
     <AcceptInviteModal />
+    <LoadingCover />
   </div>
 </template>
 
 <script setup lang="ts">
 import ChannelHeader from './components/ChannelHeader.vue'
-import TheInput from './components/TheInput.vue'
-import TheErrorBox from './components/TheErrorBox.vue'
 import CommunityInfo from './components/CommunityInfo.vue'
 import ChannelMemberList from './components/ChannelMemberList.vue'
-import { defineAsyncComponent, nextTick, onBeforeUnmount, watch } from 'vue'
+import ChannelContent from './components/ChannelContent.vue'
+import ChannelSettings from './components/ChannelSettings.vue'
+import ChannelWelcome from './components/ChannelWelcome.vue'
+import DragonBall from './components/DragonBall.vue'
+import { nextTick, onBeforeUnmount, watch } from 'vue'
 import { useTalkStore } from '@/stores/talk'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
@@ -43,14 +43,10 @@ import { useLayoutStore } from '@/stores/layout'
 import PasswordModal from './components/modals/PasswordModal.vue'
 import InviteModal from './components/modals/InviteModal.vue'
 import AcceptInviteModal from './components/modals/AcceptInviteModal.vue'
+import LoadingCover from './components/modals/LoadingCover.vue'
 import { verifyPassword } from '@/utils/talk'
 
-const MessageList = defineAsyncComponent({
-  loader: () => import('./components/MessageList.vue'),
-})
-
 const talk = useTalkStore()
-
 const route = useRoute()
 const userStore = useUserStore()
 const layout = useLayoutStore()
@@ -87,11 +83,17 @@ talk.initChannel(communityId as string, channelId as string).then(async initRes 
         }
 
         return
+
+      /**
+       * todo 检查NFT
+       */
+      case GroupChannelType.NFT:
+        talk.hasActiveChannelConsent = true
+        return
     }
   }
 
   await talk.initChannelMessages(selfMetaId)
-  await talk.initWebSocket(selfMetaId)
 })
 
 watch(
@@ -99,14 +101,12 @@ watch(
   async canAccess => {
     if (canAccess) {
       await talk.initChannelMessages(selfMetaId)
-      await talk.initWebSocket(selfMetaId)
     }
   }
 )
 
 onBeforeUnmount(() => {
   talk.saveReadPointers()
-  talk.closeWebSocket()
   talk.closeReadPointerTimer()
 })
 </script>
@@ -119,6 +119,7 @@ onBeforeUnmount(() => {
 
 .slide-enter-from,
 .slide-leave-to {
-  transform: translateX(100%);
+  opacity: 0;
+  // transform: translateX(100%);
 }
 </style>

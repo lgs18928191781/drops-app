@@ -14,7 +14,7 @@
         <div class="h-full bg-dark-100 grow lg:w-60 flex flex-col justify-between items-stretch">
           <div class="flex flex-col overflow-y-hidden">
             <!-- 社区封面 -->
-            <div class="w-full">
+            <div class="w-full aspect-[4/3]">
               <Image
                 :src="talk.activeCommunity?.cover"
                 :customClass="'aspect-[4/3] w-full object-contain object-center'"
@@ -35,7 +35,10 @@
                 {{ talk.activeCommunity?.description || $t('Talk.Community.no_introduction') }}
               </div>
 
-              <div class="mt-3 flex w-full items-center justify-between cursor-pointer">
+              <div
+                class="mt-3 flex w-full items-center justify-between cursor-pointer"
+                @click="layout.isShowMemberList = !layout.isShowMemberList"
+              >
                 <div class="flex items-center justify-between text-xs space-x-2 text-dark-300">
                   <div class="w-1.5 h-1.5 bg-lime-500 rounded-full"></div>
                   <div class="flex space-x-0.5">
@@ -51,6 +54,32 @@
               <div
                 class="pt-8 pb-4 flex flex-col gap-y-3  border-t border-solid border-dark-200 pt-4.5 mt-4.5"
               >
+                <!-- 管理频道 -->
+                <!-- <template v-if="talk.isAdmin()"> -->
+                <template v-if="false">
+                  <div class="uppercase text-dark-400 text-xs">
+                    {{ $t('Talk.Community.settings') }}
+                  </div>
+
+                  <div
+                    class="py-3 px-2 main-border only-bottom cursor-pointer !bg-white relative group mb-4"
+                    :class="'settings' === talk.activeChannelId || 'faded'"
+                    @click="goChannel('settings')"
+                  >
+                    <div
+                      class="text-dark-800 text-base font-medium flex items-center"
+                      :title="$t('Talk.Community.settings')"
+                    >
+                      <Icon name="hashtag" class="w-5 h-4 text-dark-400" />
+                      <div class="ml-1 truncate grow capitalize">
+                        {{ $t('Talk.Community.settings_short') }}
+                      </div>
+                      <Icon name="settings" class="w-4 h-4 text-dark-800 box-content ml-auto" />
+                    </div>
+                  </div>
+                </template>
+
+                <!-- 公共频道 -->
                 <div class="flex justify-between">
                   <div class="uppercase text-dark-400 text-xs">
                     {{ $t('Talk.Community.public_channels') }}
@@ -58,27 +87,36 @@
                   <Icon
                     name="plus"
                     class="w-4 h-4 text-black cursor-pointer"
-                    v-if="talk.isAdmin(userStore.user!.metaId)"
+                    v-if="talk.isAdmin()"
                     @click="layout.isShowCreatePublicChannelModal = true"
                   />
                 </div>
+
                 <div
                   v-for="channel in talk.activeCommunityPublicChannels"
                   class="py-3 px-2 main-border only-bottom cursor-pointer !bg-white relative group"
                   :class="channel.id === talk.activeChannelId || 'faded'"
                   @click="goChannel(channel.id)"
                 >
-                  <div
+                  <!-- <div
                     class="absolute left-0 h-full flex items-center top-0"
                     v-if="talk.hasUnreadMessagesOfChannel(channel.id)"
                   >
                     <span class="w-1.5 h-3 bg-dark-250 rounded-r-md"></span>
-                  </div>
+                  </div> -->
+
+                  <span
+                    class="absolute right-0 top-0 h-full flex items-start top-0 bg-red-500 w-2.5 h-2.5 rounded-full -translate-y-1/3 translate-x-1/3"
+                    v-if="talk.hasUnreadMessagesOfChannel(channel.id)"
+                  >
+                  </span>
+
                   <div
                     class="text-dark-800 text-base font-medium flex items-center"
                     :title="channel.name"
                   >
-                    <Icon name="hashtag" class="w-4 h-4 text-dark-400" />
+                    <Icon :name="channelSymbol(channel)" class="w-5 h-4 text-dark-400" />
+
                     <div class="ml-1 truncate grow">
                       {{ channel.name }}
                     </div>
@@ -95,6 +133,7 @@
                   </div>
                 </div>
 
+                <!-- 凭证频道 -->
                 <div class="flex justify-between mt-4">
                   <div class="uppercase text-dark-400 text-xs">
                     {{ $t('Talk.Community.consensual_channels') }}
@@ -102,7 +141,7 @@
                   <Icon
                     name="plus"
                     class="w-4 h-4 text-black cursor-pointer"
-                    v-if="talk.isAdmin(userStore.user!.metaId)"
+                    v-if="talk.isAdmin()"
                     @click="layout.isShowCreateConsensualChannelModal = true"
                   />
                 </div>
@@ -113,21 +152,39 @@
                   :class="channel.id === talk.activeChannelId || 'faded'"
                   @click="goChannel(channel.id)"
                 >
-                  <div
+                  <!-- <div
                     class="absolute left-0 h-full flex items-center top-0"
                     v-if="talk.hasUnreadMessagesOfChannel(channel.id)"
                   >
                     <span class="w-1.5 h-3 bg-dark-250 rounded-r-md"></span>
-                  </div>
+                  </div> -->
+
+                  <span
+                    class="absolute right-0 top-0 h-full flex items-start top-0 bg-red-500 w-2.5 h-2.5 rounded-full -translate-y-1/3 translate-x-1/3"
+                    v-if="talk.hasUnreadMessagesOfChannel(channel.id)"
+                  >
+                  </span>
                   <div
                     class="text-dark-800 text-base font-medium flex items-center"
                     :title="channel.name"
                   >
                     <Icon
-                      name="lock"
-                      class="w-4 h-4 text-dark-400"
+                      :name="channelSymbol(channel)"
+                      class="w-5 h-4 text-dark-400"
                       v-if="talk.channelType(channel) === GroupChannelType.Password"
                     />
+                    <div
+                      class="text-xxs tracking-tighter italic font-bold min-w-[20PX] text-dark-400 text-center"
+                      v-if="talk.channelType(channel) == GroupChannelType.NFT"
+                    >
+                      NFT
+                    </div>
+                    <div
+                      class="text-xxs tracking-tighter italic font-bold min-w-[20PX] text-dark-400 text-center"
+                      v-if="talk.channelType(channel) == GroupChannelType.FT"
+                    >
+                      FT
+                    </div>
                     <div class="ml-1 truncate grow">
                       {{ channel.name }}
                     </div>
@@ -176,6 +233,21 @@ const popInvite = (channelId: string) => {
   layout.isShowInviteModal = true
 }
 
+const channelSymbol = (channel: any) => {
+  switch (talk.channelType(channel)) {
+    case GroupChannelType.PublicText:
+      return 'hashtag'
+    case GroupChannelType.Password:
+      return 'lock'
+    case GroupChannelType.NFT:
+      return ''
+    case GroupChannelType.FT:
+      return ''
+    default:
+      return 'hashtag'
+  }
+}
+
 const goChannel = (channelId: string) => {
   const currentCommunityId = router.currentRoute.value.params.communityId
   const currentChannelId = router.currentRoute.value.params.channelId
@@ -191,7 +263,7 @@ const goChannel = (channelId: string) => {
 </script>
 <style lang="scss" scoped>
 *::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 
 *::-webkit-scrollbar-track {

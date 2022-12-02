@@ -1,10 +1,10 @@
 <template>
-  <BuzzListVue :list="list">
+  <BuzzListVue :list="list" :loading="isSkeleton">
     <template #comment>
       <div class="comment">
         <div class="dived"></div>
         <div class="publish-comment flex flex-align-center">
-          <UserAvatar :meta-id="userStore.user?.metaId || ''" />
+          <UserAvatar :meta-id="userStore.user?.metaId || ''" :disabled="true" />
           <div class="cont flex1" v-loading="loading">
             <input
               v-model="addComment.content"
@@ -13,7 +13,6 @@
             />
           </div>
         </div>
-
         <BuzzCommentListVue :commentList="commentListData" @reply="reply"></BuzzCommentListVue>
       </div>
     </template>
@@ -38,21 +37,10 @@ const userStore = useUserStore()
 const loading = ref(false)
 const i18n = useI18n()
 
-const detailData: {
-  data: null | BuzzItem
-  params: {
-    page: string
-    pageSize: string
-    protocols: string[]
-  }
-} = reactive({
-  data: null,
-  params: {
-    page: '1',
-    pageSize: '15',
-    protocols: ['PayComment'],
-  },
-})
+console.log(userStore.user)
+
+const list: BuzzItem[] = reactive([])
+const isSkeleton = ref(true)
 
 const commentPagination = reactive({
   ...initPagination,
@@ -66,35 +54,32 @@ const addComment = reactive({
   commentToUserName: '',
 })
 
-const list = computed(() => {
-  if (detailData.data) {
-    return [detailData.data]
-  } else {
-    return []
-  }
-})
-
-async function fetchData() {
-  const res = await GetBuzz({
-    txId: route.params.txId as string,
-    metaId: userStore.user?.metaId,
-  })
-  if (res && res.code === 0) {
-    let detailRes: BuzzItem = res.data.results.items[0] || null
-    if (detailRes.encrypt === IsEncrypt.Yes.toString()) {
-      const result = await userStore.showWallet?.eciesDecryptData({
-        data: detailRes.data,
-      })
-      if (result) {
-        detailRes = {
-          ...detailRes,
-          ...JSON.parse(result),
+function fetchData() {
+  return new Promise<void>(async resolve => {
+    const res = await GetBuzz({
+      txId: route.params.txId as string,
+      metaId: userStore.user?.metaId,
+    }).catch(error => {
+      ElMessage.error(error.message)
+    })
+    if (res?.code === 0) {
+      let detailRes: BuzzItem = res.data.results.items[0] || null
+      if (detailRes.encrypt === IsEncrypt.Yes.toString()) {
+        const result = await userStore.showWallet?.eciesDecryptData({
+          data: detailRes.data,
+        })
+        if (result) {
+          detailRes = {
+            ...detailRes,
+            ...JSON.parse(result),
+          }
         }
       }
+      list[0] = detailRes
+      await fetchCommentList(detailRes.txId, true)
+      resolve()
     }
-    detailData.data = detailRes
-    await fetchCommentList(detailRes.txId, true)
-  }
+  })
 }
 
 async function fetchCommentList(buzzTxId: string, isCover = false) {
@@ -177,9 +162,7 @@ async function confirmComment() {
       content: addComment.content,
       contentType: 'text/plain',
       commentTo:
-        addComment.commentToCommentTxId === ''
-          ? detailData.data!.txId
-          : addComment.commentToCommentTxId,
+        addComment.commentToCommentTxId === '' ? list[0]!.txId : addComment.commentToCommentTxId,
       pay: 0,
       payTo: '',
     }
@@ -196,7 +179,7 @@ async function confirmComment() {
         amount: 0,
         avatarTxId: userStore.user!.avatarTxId!,
         avatarType: userStore.user!.avatarType!,
-        buzzTxId: detailData.data!.txId,
+        buzzTxId: list[0]!.txId,
         confirmState: 0,
         content: dataParams.content,
         hasComment: false,
@@ -206,7 +189,7 @@ async function confirmComment() {
         metaId: userStore.user!.metaId,
         protocol: 'PayComment',
         timestamp: dataParams.createTime,
-        txId: res.txId,
+        txId: res.currentNode?.txId,
         userName: userStore.user!.name!,
         zeroAddress: userStore.user!.address!,
       }
@@ -221,10 +204,10 @@ async function confirmComment() {
           commentListData[index].push(item)
         }
       }
-      detailData.data?.comment.unshift({
+      list[0]!.comment.unshift({
         metaId: userStore.user!.metaId!,
         timestamp: dataParams.createTime,
-        txId: res.txId,
+        txId: res.currentNode!.txId,
         userName: userStore.user!.name!,
         value: 0,
       })
@@ -239,7 +222,9 @@ async function confirmComment() {
   }
 }
 
-fetchData()
+fetchData().then(() => {
+  isSkeleton.value = false
+})
 </script>
 
 <style lang="scss" scoped src="./Detail.scss"></style>

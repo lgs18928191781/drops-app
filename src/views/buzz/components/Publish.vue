@@ -3,6 +3,7 @@
     :model-value="layout.isShowPublishBuzz"
     class="sm none-header none-padding"
     :close-on-click-modal="false"
+    :destroy-on-close="true"
   >
     <div class="publish" v-loading="loading">
       <div class="top flex flex-align-center">

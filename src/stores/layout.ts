@@ -15,8 +15,9 @@ export const useLayoutStore = defineStore('layout', {
       isShowInviteModal: false,
       isShowAcceptInviteModal: false,
       isShowMessagesLoading: false,
-      isShowMemberList: false,
+      isShowMemberList: true,
       isShowPasswordModal: false,
+      isShowLoading: false,
       never: false,
       publishBuzzOption: {
         repostTxId: '', // 转发的TxId

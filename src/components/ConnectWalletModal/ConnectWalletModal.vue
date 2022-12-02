@@ -2,12 +2,19 @@
   <!-- 连接钱包 -->
   <ElDialog
     :model-value="rootStore.isShowLogin"
-    :title="$t('Login.connectWallet')"
     :close-on-click-modal="false"
     :show-close="!loading"
+    class="none-header"
     @close="rootStore.$patch({ isShowLogin: false })"
   >
     <div class="login-warp flex">
+      <a
+        class="close flex flex-align-center flex-pack-center"
+        @click="rootStore.$patch({ isShowLogin: false })"
+      >
+        <Icon name="x_mark" />
+      </a>
+
       <div class="flex1 login-cover">
         <img src="@/assets/images/login_img.png" />
       </div>
@@ -37,8 +44,7 @@
           v-model:loading="loading"
           v-else-if="status === ConnectWalletStatus.UseMetaId"
           @back="status = ConnectWalletStatus.Watting"
-          @success="rootStore.$patch({ isShowLogin: false })"
-          @register="OnMetaIdRegister"
+          @success="OnMetaIdSuccess"
         />
       </div>
     </div>
@@ -217,8 +223,7 @@ const isSHowBackupMnemonic = ref(false)
 const wallets = [
   {
     title: () => {
-      return ``
-      // return i18n.t('Login.connectWallet')
+      return i18n.t('Login.connectWallet')
     },
     list: [
       {
@@ -446,29 +451,11 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
   }
 }
 
-async function OnMetaIdRegister(params: MetaIdWalletRegisterBaseInfo) {
-  let loading = openLoading({
-    text: i18n.t('registing'),
-  })
-
-  metaIdWalletRegisterBaseInfo.val = params
+async function OnMetaIdSuccess(type: 'register' | 'login') {
+  status.value = ConnectWalletStatus.Watting
   rootStore.$patch({ isShowLogin: false })
-
-  //
-  try {
-    await onSetBaseInfoSuccess({
-      name: '',
-    })
-    loading.close()
+  if (type === 'register') {
     isShowSetBaseInfo.value = true
-  } catch (error) {
-    loading.close()
-    rootStore.$patch({ isShowLogin: true })
-    isShowSetBaseInfo.value = false
-    type.value = 'register'
-    status.value = ConnectWalletStatus.UseMetaId
-    MetaidWalletRef.value.registerType = 0
-    ElMessage.error(`${i18n.t('sendVerifiyCodeError')}`)
   }
 }
 
@@ -584,7 +571,7 @@ async function onSetBaseInfoSuccess(params: {
             updateTime: new Date().getTime(),
             memo: params.nft.description,
             image: params.nft.image,
-            chain: 'goerli',
+            chain: import.meta.env.VITE_ETH_CHAIN,
           }),
           utxos: utxos,
         })
@@ -601,153 +588,23 @@ async function onSetBaseInfoSuccess(params: {
         }
       }
       if (errorMsg) throw new Error(errorMsg.message)
-      // 更新本地用户信息
 
+      const userInfo = {
+        ...userStore.user!,
+        name: params.name ? params.name : userStore.user!.name,
+      }
+      // 上报修改的用户信息
       await SetUserInfo({
-        userType: userStore.user?.registerType == 'email' ? 'email' : 'phone',
         metaid: userStore.user!.metaId,
-        // @ts-ignore
-        accessKey: userStore.user?.token,
-        email: userStore.user?.email,
-        phone: userStore.user?.phone,
+        accessKey: userStore.user!.token,
+        ...userInfo,
+        userName: params.name ? params.name : userStore.user!.name,
       })
+      // 更新本地用户信息
       userStore.updateUserInfo({
         ...userStore.user!,
-        name: params.name ? params.name : `${import.meta.env.VITE_DefaultName}`,
+        name: params.name ? params.name : userStore.user!.name,
       })
-    } else {
-      // debugger
-      // 注册 metaId 钱包
-      const baseInfo = metaIdWalletRegisterBaseInfo.val!
-      const _params = {
-        type: 1, // 注册时必须加上图片验证码验证， 1 是给App用的的，App没有图片验证码
-        ...baseInfo,
-        name: params.name ? params.name : `${import.meta.env.VITE_DefaultName}`,
-      }
-      const loginName = baseInfo!.userType === 'phone' ? baseInfo!.phone : baseInfo!.email
-
-      const registerRes = await RegisterCheck(_params)
-
-      // console.log(registerRes)
-      if (registerRes.code === 0) {
-        let userInfo = registerRes.result as BaseUserInfoTypes
-        const walletInfo = await hdWalletFromAccount(
-          {
-            ...userInfo,
-            userType: baseInfo.userType,
-            phone: baseInfo!.phone,
-            email: baseInfo!.email,
-            pk2: userInfo.pk2,
-            name: params.name,
-            password: baseInfo!.password,
-          },
-          import.meta.env.VITE_NET_WORK
-        )
-
-        const userInfoParams = {
-          userType: baseInfo.userType,
-          phone: baseInfo!.phone,
-          email: baseInfo!.email,
-          remark: loginName,
-          address: walletInfo.rootAddress,
-        }
-        const setWalletRes = await SetUserWalletInfo({
-          ...userInfoParams,
-          type: 2,
-          xpub: walletInfo.wallet.xpubkey,
-          pubkey: walletInfo.wallet.publicKey.toString(),
-          headers: {
-            accessKey: userInfo.token || '',
-            timestamp: Date.now(),
-            userName: loginName,
-          },
-        })
-        if (setWalletRes.code !== 0) {
-          throw new Error('保存钱包信息失败 -1')
-        }
-        const ePassword = encryptPassword(baseInfo!.password)
-        const eMnemonic = encryptMnemonic(walletInfo.mnemonic, baseInfo!.password)
-        const setPasswordRes = await SetUserPassword(
-          {
-            ...userInfoParams,
-            password: ePassword,
-            affirmPassword: ePassword,
-            enCryptedMnemonic: eMnemonic,
-          },
-          userInfo.token || '',
-          loginName
-        )
-        if (setPasswordRes.code !== 0) {
-          throw new Error('保存钱包信息失败 -2')
-        }
-
-        const account = {
-          ...userInfo,
-          userType: baseInfo.userType,
-          phone: baseInfo!.phone,
-          email: baseInfo.email,
-          password: baseInfo!.password,
-        }
-        const activityId = window.localStorage.getItem('activityId')
-        const referrerId = window.localStorage.getItem('referrerId')
-        if (activityId && referrerId) {
-          account.referrerId = referrerId
-        }
-
-        const hdWallet = new HdWallet(walletInfo.wallet)
-        console.log('hdWallethdWallet', hdWallet)
-        const metaIdInfo = await hdWallet.initMetaIdNode(account)
-        if (!metaIdInfo) {
-          throw new Error('Create MetaID Error')
-        }
-        userInfo = {
-          ...userInfo,
-          ...metaIdInfo,
-          phone: baseInfo!.phone,
-          email: baseInfo.email,
-          userType: baseInfo.userType,
-          enCryptedMnemonic: eMnemonic,
-          // @ts-ignore
-          rootAddress: walletInfo.rootAddress,
-          address: walletInfo.rootAddress,
-        }
-        await SetUserInfo({
-          userType: baseInfo.userType,
-          metaid: metaIdInfo.metaId,
-          // @ts-ignore
-          accessKey: userInfo.token,
-          phone: userInfo.phone,
-          email: userInfo.email,
-        })
-        // @ts-ignore
-        await userStore.updateUserInfo({
-          ...userInfo,
-          password: baseInfo!.password,
-        })
-        userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
-        userStore.showWallet.initWallet()
-        // 处理活动邀请信息
-        if (activityId && referrerId) {
-          const result = await CommitActivity({
-            actionIndex: 5,
-            activityId: parseInt(activityId),
-            // @ts-ignore
-            address: userInfo!.address!,
-            // @ts-ignore
-            metaId: userInfo!.metaId!,
-            // @ts-ignore
-            publicKey: userInfo.pubKey,
-            refererMetaId: referrerId,
-            tag: InviteActivityTag.Rigisted,
-          })
-          // @ts-ignore
-          if (result.code !== 0) {
-            Error(result.data)
-          }
-          localStorage.removeItem('activityId')
-          localStorage.removeItem('referrerId')
-        }
-      }
     }
 
     if (params.name) {

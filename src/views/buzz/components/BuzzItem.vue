@@ -252,5 +252,7 @@ async function follow() {
       ElMessage.error(error.message)
     })
 }
+
+console.log(displayItemData.value!.content)
 </script>
 <style scoped lang="scss" src="./BuzzItem.scss"></style>

@@ -274,6 +274,10 @@ export enum NodeName {
   SimpleGroupCreate = 'SimpleGroupCreate',
   ShowMsg = 'ShowMsg',
   NftIssue = 'NftIssue',
+  NftGenesis = 'NftGenesis',
+  FtGenesis = 'FtGenesis',
+  FtIssue = 'FtIssue',
+  SimpleRedEnvelope = 'SimpleRedEnvelope',
 }
 
 export const enum BindStatus {

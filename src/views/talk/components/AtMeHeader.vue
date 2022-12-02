@@ -9,7 +9,12 @@
         @click="layout.isShowLeftNav = true"
       />
 
-      <div class="flex shrink-0">
+      <div class="flex shrink-0 items-center">
+        <UserAvatar
+          :metaId="activeChannel?.id"
+          class="w-8 h-8 shrink-0 select-none hidden lg:block mr-2"
+          :disabled="true"
+        />
         <div
           class="text-base leading-tight no-wrap grow whitespace-nowrap truncate text-dark-800 pr-2 max-w-[35vw] lg:max-w-[600PX]"
         >
@@ -23,37 +28,6 @@
       </div>
       <!-- 占位 -->
       <div v-else class="w-1"></div>
-      <!-- <div
-        class="grow-0 pl-3 pr-2 truncate text-xs leading-tight overflow-x-hidden py-1 text-dark-800"
-        @click="showDescModal = true"
-      >
-        {{ channel.description }}
-      </div>
-      <Teleport to="body">
-        <ScreenModal
-          v-if="showDescModal"
-          :name="name"
-          :description="description"
-          @close-modal="showDescModal = false"
-        />
-      </Teleport> -->
-
-      <!-- <div class="flex gap-x-4">
-        <div class="" @click="doNothing()">
-          <Icon
-            name="share"
-            class="w-5 h-5 transition-all ease-in-out duration-300 lg:hover:text-primary cursor-pointer"
-          />
-        </div>
-
-        <div class="w-5 h-5" @click="$emit('toggleMemberList')">
-          <Icon
-            name="users"
-            class="w-5 h-5 transition-all ease-in-out duration-300 lg:hover:text-primary cursor-pointer"
-            :class="[showMembers ? 'text-primary lg:text-dark-800' : 'text-dark-800']"
-          />
-        </div>
-      </div> -->
 
       <LoginedUserOperate />
     </div>
@@ -61,17 +35,13 @@
 </template>
 
 <script lang="ts" setup>
-import ScreenModal from './modals/ScreenModal.vue'
 import { useLayoutStore } from '@/stores/layout'
 import LoginedUserOperate from '@/components/LoginedUserOperate/LoginedUserOperate.vue'
 import { useTalkStore } from '@/stores/talk'
 import { computed } from 'vue'
-import { useUserStore } from '@/stores/user'
 
 const talkStore = useTalkStore()
-const userStore = useUserStore()
 const layout = useLayoutStore()
-const selfMetaId = userStore.user!.metaId
 const activeChannel = computed(() => talkStore.activeChannel)
 
 const shortenMetaId = (id: string) => {

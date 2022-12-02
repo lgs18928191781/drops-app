@@ -250,14 +250,7 @@ interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {})
 
-const emit = defineEmits([
-  'update:modelValue',
-  'update:type',
-  'success',
-  'back',
-  'register',
-  'update:loading',
-])
+const emit = defineEmits(['update:modelValue', 'update:type', 'success', 'back', 'update:loading'])
 const i18n = useI18n()
 const userStore = useUserStore()
 
@@ -379,7 +372,20 @@ const isGetImageCodeLoading = ref(false)
 const isSendCodeLoading = ref(false)
 const emailReg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
 const sendCodeTimer = ref(0)
-const registerInfo: { val: any } = reactive({ val: null })
+const registerInfo: {
+  val: null | {
+    appToken: string
+    name: string
+    pk2: string
+    registerType: string
+    userType: string
+    role: string
+    tag: string
+    token: string
+    phone: string
+    email: string
+  }
+} = reactive({ val: null })
 
 const sendCodeBtnDisabled = computed(() => {
   let result = true
@@ -554,8 +560,6 @@ function submitForm() {
                 })
               }
 
-              //这里要把新改的名字给account
-              account.name = metaIdInfo.name
               // @ts-ignore
               //这里的参数account跟metaidInfo位置不能改变，否则新数据会被覆盖
               userStore.updateUserInfo({
@@ -577,190 +581,139 @@ function submitForm() {
           } else {
             // 注册
             if (registerType.value === RegisterType.Check) {
-              // 检查账号是否已注册
-              const res = await GetMetaIdByLoginName({
-                // @ts-ignore
-                userType: form.userType,
-                phone: form.userType === 'phone' ? phoneNum : undefined,
-                email: form.userType === 'email' ? form.email : undefined,
-              }).catch(error => {
-                if (error.code === 500) {
-                  registerType.value = RegisterType.SetPassword
-                } else {
-                  throw new Error(error.message)
-                }
-              })
-              if (res?.code === 0) {
-                throw new Error(i18n.t('Login.MetaIdWallet.accountAlreadyRegistered'))
-              }
-              // const registerRes = await RegisterCheck({
-              //   type: 1, // 注册时必须加上图片验证码验证， 1 是给App用的的，App没有图片验证码
-              //   userType: form.userType || 'phone',
-              //   phone: phoneNum,
-              //   email: form.email,
-              //   code: form.code,
-              //   name: form.name,
-              //   promotion: '',
-              //   imageCode: '',
-              //   characteristic: '',
-              // })
-              // if (registerRes.code === 0) {
-              //   registerInfo.val = registerRes.result as BaseUserInfoTypes
-              //   registerType.value = RegisterType.SetPassword
-              // }
-
-              emit('update:loading', false)
-            } else if (registerType.value === RegisterType.SetPassword) {
-              emit('register', {
-                userType: form.userType || 'phone',
-                phone: phoneNum,
-                email: form.email,
-                code: form.code,
-                promotion: '',
-                password: form.password,
-              } as MetaIdWalletRegisterBaseInfo)
-
-              FormRef.value.resetFields()
-              emit('update:loading', false)
-              return
-              // 注册
               const params = {
                 type: 1, // 注册时必须加上图片验证码验证， 1 是给App用的的，App没有图片验证码
                 userType: form.userType || 'phone',
                 phone: phoneNum,
                 email: form.email,
                 code: form.code,
-                name: form.name,
+                name: `User_${new Date().getTime()}`,
                 promotion: '',
                 imageCode: form.imageCode,
                 characteristic: characteristic.value,
               }
-              const loginName = params.userType === 'phone' ? phoneNum : params.email
               const registerRes = await RegisterCheck(params)
-              // console.log(registerRes)
               if (registerRes.code === 0) {
-                let userInfo = registerRes.result as BaseUserInfoTypes
-                const walletInfo = await hdWalletFromAccount(
-                  {
-                    ...userInfo,
-                    userType: params.userType,
-                    phone: phoneNum,
-                    email: params.email,
-                    pk2: userInfo.pk2,
-                    name: params.name,
-                    password: form.password,
-                  },
-                  import.meta.env.VITE_NET_WORK
-                )
-
-                const userInfoParams = {
-                  userType: params.userType,
+                registerInfo.val = {
+                  ...registerRes.result,
                   phone: phoneNum,
-                  email: params.email,
-                  remark: form.remark,
-                  address: walletInfo.rootAddress,
-                }
-                const setWalletRes = await SetUserWalletInfo({
-                  ...userInfoParams,
-                  type: 2,
-                  xpub: walletInfo.wallet.xpubkey,
-                  pubkey: walletInfo.wallet.publicKey.toString(),
-                  headers: {
-                    accessKey: userInfo.token || '',
-                    timestamp: Date.now(),
-                    userName: loginName,
-                  },
-                })
-                if (setWalletRes.code !== 0) {
-                  throw new Error('保存钱包信息失败 -1')
-                }
-                const ePassword = encryptPassword(form.password)
-                const eMnemonic = encryptMnemonic(walletInfo.mnemonic, form.password)
-                const setPasswordRes = await SetUserPassword(
-                  {
-                    ...userInfoParams,
-                    password: ePassword,
-                    affirmPassword: ePassword,
-                    enCryptedMnemonic: eMnemonic,
-                  },
-                  userInfo.token || '',
-                  loginName
-                )
-                if (setPasswordRes.code !== 0) {
-                  throw new Error('保存钱包信息失败 -2')
-                }
-
-                const account = {
-                  ...userInfo,
-                  userType: params.userType,
-                  phone: phoneNum,
-                  email: params.email,
-                  password: form.password,
-                }
-                const activityId = window.localStorage.getItem('activityId')
-                const referrerId = window.localStorage.getItem('referrerId')
-                if (activityId && referrerId) {
-                  account.referrerId = referrerId
-                }
-
-                const hdWallet = new HdWallet(walletInfo.wallet)
-                const metaIdInfo = await hdWallet.initMetaIdNode(account)
-                if (!metaIdInfo) {
-                  throw new Error('Create MetaID Error')
-                }
-                userInfo = {
-                  ...userInfo,
-                  ...metaIdInfo,
-                  phone: phoneNum,
-                  email: params.email,
-                  userType: params.userType,
-                  enCryptedMnemonic: eMnemonic,
-                  // @ts-ignore
-                  rootAddress: walletInfo.rootAddress,
-                  address: walletInfo.rootAddress,
-                }
-                await SetUserInfo({
-                  // @ts-ignore
-                  userType: params.userType,
-                  metaid: metaIdInfo.metaId,
-                  // @ts-ignore
-                  accessKey: userInfo.token,
-                  phone: userInfo.phone,
-                  email: userInfo.email,
-                })
-                // @ts-ignore
-                await userStore.updateUserInfo({
-                  ...userInfo,
-                  password: form.password,
-                })
-                userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
-                userStore.showWallet.initWallet()
-                // 处理活动邀请信息
-                if (activityId && referrerId) {
-                  const result = await CommitActivity({
-                    actionIndex: 5,
-                    activityId: parseInt(activityId),
-                    // @ts-ignore
-                    address: userInfo!.address!,
-                    // @ts-ignore
-                    metaId: userInfo!.metaId!,
-                    // @ts-ignore
-                    publicKey: userInfo.pubKey,
-                    refererMetaId: referrerId,
-                    tag: InviteActivityTag.Rigisted,
-                  })
-                  // @ts-ignore
-                  if (result.code !== 0) {
-                    Error(result.data)
-                  }
-                  localStorage.removeItem('activityId')
-                  localStorage.removeItem('referrerId')
+                  email: form.email,
+                  userType: registerRes.result.registerType,
                 }
                 FormRef.value.resetFields()
-                loading.value = false
-                emit('update:modelValue', false)
-                emit('success', props.type)
+                registerType.value = RegisterType.SetPassword
               }
+              emit('update:loading', false)
+            } else if (registerType.value === RegisterType.SetPassword) {
+              // 设置密码
+              const loginName =
+                registerInfo.val!.registerType === 'phone'
+                  ? registerInfo.val!.phone
+                  : registerInfo.val!.email
+              let userInfo = {
+                ...registerInfo.val!,
+                userType: registerInfo.val!.registerType,
+                password: form.password,
+              }
+              const walletInfo = await hdWalletFromAccount(
+                // @ts-ignore
+                userInfo,
+                import.meta.env.VITE_NET_WORK
+              )
+              const userInfoParams = {
+                ...userInfo,
+                remark: loginName,
+                address: walletInfo.rootAddress,
+              }
+              const setWalletRes = await SetUserWalletInfo({
+                ...userInfoParams,
+                type: 2,
+                xpub: walletInfo.wallet.xpubkey,
+                pubkey: walletInfo.wallet.publicKey.toString(),
+                headers: {
+                  accessKey: userInfo.token,
+                  timestamp: Date.now(),
+                  userName: loginName,
+                },
+              })
+              if (setWalletRes.code !== 0) {
+                throw new Error('保存钱包信息失败 -1')
+              }
+              const ePassword = encryptPassword(form.password)
+              const eMnemonic = encryptMnemonic(walletInfo.mnemonic, form.password)
+              const setPasswordRes = await SetUserPassword(
+                {
+                  ...userInfoParams,
+                  password: ePassword,
+                  affirmPassword: ePassword,
+                  enCryptedMnemonic: eMnemonic,
+                },
+                userInfo.token,
+                loginName
+              )
+              if (setPasswordRes.code !== 0) {
+                throw new Error('保存钱包信息失败 -2')
+              }
+
+              const activityId = window.localStorage.getItem('activityId')
+              const referrerId = window.localStorage.getItem('referrerId')
+              if (activityId && referrerId) {
+                // @ts-ignore
+                userInfo.referrerId = referrerId
+              }
+
+              const hdWallet = new HdWallet(walletInfo.wallet)
+              // @ts-ignore
+              const metaIdInfo = await hdWallet.initMetaIdNode(userInfo)
+              if (!metaIdInfo) {
+                throw new Error('Create MetaID Error')
+              }
+              userInfo = {
+                ...userInfo,
+                ...metaIdInfo,
+                // @ts-ignore
+                enCryptedMnemonic: eMnemonic,
+                // @ts-ignore
+                rootAddress: walletInfo.rootAddress,
+                address: walletInfo.rootAddress,
+              }
+              await SetUserInfo({
+                ...userInfo,
+                // @ts-ignore
+                metaid: metaIdInfo.metaId,
+                // @ts-ignore
+                accessKey: userInfo.token,
+              })
+              // @ts-ignore
+              await userStore.updateUserInfo(userInfo)
+              userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
+              userStore.showWallet.initWallet()
+              // 处理活动邀请信息
+              if (activityId && referrerId) {
+                const result = await CommitActivity({
+                  actionIndex: 5,
+                  activityId: parseInt(activityId),
+                  // @ts-ignore
+                  address: userInfo!.address!,
+                  // @ts-ignore
+                  metaId: userInfo!.metaId!,
+                  // @ts-ignore
+                  publicKey: userInfo.pubKey,
+                  refererMetaId: referrerId,
+                  tag: InviteActivityTag.Rigisted,
+                })
+                // @ts-ignore
+                if (result.code !== 0) {
+                  Error(result.data)
+                }
+                localStorage.removeItem('activityId')
+                localStorage.removeItem('referrerId')
+              }
+              FormRef.value.resetFields()
+              registerInfo.val = null
+              emit('update:loading', false)
+              emit('update:modelValue', false)
+              emit('success', props.type)
             }
           }
         } catch (error) {

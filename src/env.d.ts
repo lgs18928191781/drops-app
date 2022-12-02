@@ -15,7 +15,6 @@ interface ImportMetaEnv {
   VITE_GenesisTxId: string
   VITE_CodeHash: string
   VITE_SensibleId: string
-  VITE_ShowMan: string
   VITE_CreateNeedMc: string
   VITE_AppAddress: string
   // 自适应

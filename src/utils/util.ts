@@ -36,6 +36,16 @@ export function randomString() {
     .replace('.', '')
 }
 
+export function realRandomString(length: number): string {
+  let result = ''
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  const charactersLength = characters.length
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength))
+  }
+  return result
+}
+
 export function checkSdkStatus(path: string, params?: ElMessageBoxOptions) {
   return new Promise<void>((resolve, reject) => {
     const userStroe = useUserStore()
@@ -88,7 +98,7 @@ export function getMetaFileUrl(metafile: string) {
   if (typeof metafile !== 'string') return ''
   metafile = metafile.replace('metafile://', '')
   if (metafile === '') return ''
-  return `${import.meta.env.VITE_ShowMan}/metafile/${metafile}`
+  return `${import.meta.env.VITE_AppImgApi}/metafile/${metafile}`
 }
 
 export function setDataStrclassify(data: any) {

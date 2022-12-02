@@ -104,19 +104,6 @@ import { computed, reactive, ref, watch } from 'vue'
 import IsNullVue from '@/components/IsNull/IsNull.vue'
 import { GetNFTs } from '@/api/metaid-base'
 import ModalVue from '../Modal/Modal.vue'
-import { ShowControl } from '@/enum'
-import { MetaIdWalletRegisterBaseInfo } from './MetaIdWallet.vue'
-import { RegisterCheck, SetUserInfo, SetUserPassword, SetUserWalletInfo } from '@/api/core'
-import {
-  BaseUserInfoTypes,
-  encryptMnemonic,
-  encryptPassword,
-  HdWallet,
-  hdWalletFromAccount,
-} from '@/utils/wallet/hd-wallet'
-import { SDK } from '@/utils/sdk'
-import { CommitActivity } from '@/api/broad'
-import { InviteActivityTag } from '@/enum'
 
 interface Props {
   modelValue: boolean
@@ -125,7 +112,7 @@ interface Props {
 const pagintion = reactive({
   limit: 12,
   cursor: '',
-  chain: 'goerli',
+  chain: import.meta.env.VITE_ETH_CHAIN,
 })
 const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits(['success'])

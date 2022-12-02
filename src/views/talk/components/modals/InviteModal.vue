@@ -1,5 +1,5 @@
 <template>
-  <BaseModal v-model="layout[ShowControl.isShowInviteModal]">
+  <BaseModal v-model="layout[ShowControl.isShowInviteModal]" :extra-close-event="reset">
     <template v-slot:title>
       {{ $t('Talk.Modals.invite_title') }}
     </template>
@@ -16,6 +16,7 @@
 
         <button
           class="main-border py-3 text-base text-dark-800 bg-primary font-bold col-span-1 text-center"
+          :class="{ 'cursor-default still saturate-50': isCopied }"
           @click="copyInviteLink"
         >
           {{ isCopied ? $t('Talk.Modals.copied') : $t('Talk.Modals.copy') }}
@@ -35,6 +36,10 @@ import { useTalkStore } from '@/stores/talk'
 const layout = useLayoutStore()
 const talk = useTalkStore()
 const isCopied = ref(false)
+
+const reset = () => {
+  isCopied.value = false
+}
 
 const selectLink = () => {
   const range = document.createRange()
