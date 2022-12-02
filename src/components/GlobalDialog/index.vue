@@ -32,7 +32,7 @@ const props = defineProps<{
 }>()
 
 CompomentArray.forEach(item => {
-  if (props.dialogName.outsideName == item) {
+  if (props.dialogName?.outsideName == item) {
     outsideComponentName.value = moduleName[item]
   }
 })

@@ -56,7 +56,9 @@
       "accept_invite": "Accept Invite",
       "accept_invite_placeholder": "Enter your invite code",
       "you_have_been_invited": "You have been invited to join",
-      "amount_needed": "Amount"
+      "amount_needed": "Amount",
+      "red_packet": "Red Packet",
+      "receive": "Receive"
     },
     "Channel": {
       "members": "members",

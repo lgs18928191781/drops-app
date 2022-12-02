@@ -1,5 +1,9 @@
 <template>
-  <BaseModal v-model="layout[ShowControl.isShowAcceptInviteModal]" :no-close="true">
+  <BaseModal
+    v-model="layout[ShowControl.isShowAcceptInviteModal]"
+    :no-close="true"
+    :full-screen="true"
+  >
     <template v-slot:title>
       {{ $t('Talk.Modals.accept_invite') }}
     </template>
@@ -34,7 +38,7 @@
 
         <div class="mt-11 w-full">
           <Button
-            class="w-full main-border bg-primary font-medium text-base py-3"
+            class="w-full main-border bg-primary font-medium text-base py-3 outline-0"
             @click="tryJoinCommunity"
           >
             {{ $t('Talk.Modals.accept_invite') }}
@@ -64,6 +68,6 @@ const tryJoinCommunity = async () => {
   layout.isShowLoading = false
 
   await talk.initChannelMessages(talk.selfMetaId)
-  await talk.initWebSocket(talk.selfMetaId)
+  await talk.initWebSocket()
 }
 </script>

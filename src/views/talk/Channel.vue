@@ -22,6 +22,7 @@
     <PasswordModal />
     <InviteModal />
     <AcceptInviteModal />
+    <!-- <RedPacketResultModal /> -->
     <LoadingCover />
   </div>
 </template>
@@ -43,6 +44,7 @@ import { useLayoutStore } from '@/stores/layout'
 import PasswordModal from './components/modals/PasswordModal.vue'
 import InviteModal from './components/modals/InviteModal.vue'
 import AcceptInviteModal from './components/modals/AcceptInviteModal.vue'
+
 import LoadingCover from './components/modals/LoadingCover.vue'
 import { verifyPassword } from '@/utils/talk'
 
@@ -106,8 +108,9 @@ watch(
 )
 
 onBeforeUnmount(() => {
-  talk.saveReadPointers()
-  talk.closeReadPointerTimer()
+  talk.resetCurrentChannel()
+  // talk.saveReadPointers()
+  // talk.closeReadPointerTimer()
 })
 </script>
 

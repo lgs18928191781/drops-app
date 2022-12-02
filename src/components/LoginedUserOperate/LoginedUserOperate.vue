@@ -283,14 +283,16 @@ import NFTCoverVue from '@/components/NFTCover/NFTCover.vue'
 import { GetBalance, GetNFTs } from '@/api/aggregation'
 import { initPagination } from '@/config'
 import NFTLlistVue from './NFTLlist.vue'
-import { useRoute } from 'vue-router'
+import { useTalkStore } from '@/stores/talk'
+import { useRoute, useRouter } from 'vue-router'
 
 const i18n = useI18n()
 const rootStore = useRootStore()
 const userStore = useUserStore()
+const talkStore = useTalkStore()
 const layout = useLayoutStore()
+const router = useRouter()
 const route = useRoute()
-
 const tabs = [
   { name: i18n.t('Wallet.Balance'), value: 0 },
   { name: 'NFT', value: 1 },
@@ -328,7 +330,13 @@ const userOperates = [
     name: i18n.t('UserOperate.logout'),
     icon: 'logout',
     func: () => {
-      userStore.logout(route)
+      userStore.logout(route).then(() => {
+        // 如果在聊天页面，退出登录后，跳转到buzz首页
+        talkStore.reset()
+        if (route.path.includes('/talk')) {
+          router.push({ name: 'buzz' })
+        }
+      })
       isShowUserMenu.value = false
     },
   },
