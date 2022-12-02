@@ -235,7 +235,7 @@ export const setUserPassword = (
 }
 
 export const setUserInfo = (params: {
-  userType: 'phone' | 'email'
+  userType: string
   metaid: string
   phone?: string
   email?: string

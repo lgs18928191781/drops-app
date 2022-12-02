@@ -30,7 +30,7 @@ async function genesis() {
       ...form,
     }),
   })
-  debugger
+  // debugger
   if (res) {
     for (let i = 0; i < 10; i++) {
       const response = await userStore.showWallet.createBrfcChildNode({
