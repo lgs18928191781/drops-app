@@ -33,9 +33,7 @@ import { useUserStore } from '@/stores/user'
 const rootStore = useRootStore()
 const userStore = useUserStore()
 
-if (+Date.now() > 1669971600000) {
-  document.getElementsByTagName('html')[0].style.filter = 'none'
-} else {
+if (+Date.now() < 1669971600000) {
   document.getElementsByTagName('html')[0].style.filter = 'grayscale(100%)'
 }
 </script>
