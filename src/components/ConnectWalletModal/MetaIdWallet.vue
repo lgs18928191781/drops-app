@@ -677,6 +677,7 @@ function submitForm() {
                 rootAddress: walletInfo.rootAddress,
                 address: walletInfo.rootAddress,
               }
+              userInfo.userType = userInfo.userType ? userInfo.userType : userInfo?.registerType
               await SetUserInfo({
                 ...userInfo,
                 // @ts-ignore

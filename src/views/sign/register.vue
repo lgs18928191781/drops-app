@@ -1,9 +1,14 @@
 <template>
   <div class="register-page user-form container">
-    <div class="title flex flex-align-center">
-      <LogoIcon /> 欢迎注册若喜
-    </div>
-    <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" :label-width="0" class="demo-ruleForm" :size="formSize">
+    <div class="title flex flex-align-center"><LogoIcon /> 欢迎注册若喜</div>
+    <el-form
+      ref="ruleFormRef"
+      :model="ruleForm"
+      :rules="rules"
+      :label-width="0"
+      class="demo-ruleForm"
+      :size="formSize"
+    >
       <el-form-item prop="phone" v-if="ruleForm.userType === 'phone'">
         <el-input v-model="ruleForm.phone" type="number" placeholder="手机号码">
           <!-- <template #prepend>{{ ruleForm.areaCode }}</template> -->
@@ -14,7 +19,12 @@
       </el-form-item>
       <el-form-item prop="password">
         <div class="flex1 flex flex-align-center">
-          <el-input class="flex1" v-model="ruleForm.password" :type="isShowPwd ? 'text' : 'password'" placeholder="密码">
+          <el-input
+            class="flex1"
+            v-model="ruleForm.password"
+            :type="isShowPwd ? 'text' : 'password'"
+            placeholder="密码"
+          >
           </el-input>
           <ViewIcon class="view-icon" v-if="isShowPwd" @click="isShowPwd = !isShowPwd" />
           <UnViewIcon class="view-icon" v-else @click="isShowPwd = !isShowPwd" />
@@ -22,9 +32,17 @@
       </el-form-item>
       <el-form-item prop="confirmPassword">
         <div class="flex1 flex flex-align-center">
-          <el-input v-model="ruleForm.confirmPassword" :type="isShowConfirmPwd ? 'text' : 'password'" placeholder="确认密码"
-            class="flex1"></el-input>
-          <ViewIcon class="view-icon" v-if="isShowConfirmPwd" @click="isShowConfirmPwd = !isShowConfirmPwd" />
+          <el-input
+            v-model="ruleForm.confirmPassword"
+            :type="isShowConfirmPwd ? 'text' : 'password'"
+            placeholder="确认密码"
+            class="flex1"
+          ></el-input>
+          <ViewIcon
+            class="view-icon"
+            v-if="isShowConfirmPwd"
+            @click="isShowConfirmPwd = !isShowConfirmPwd"
+          />
           <UnViewIcon class="view-icon" v-else @click="isShowConfirmPwd = !isShowConfirmPwd" />
         </div>
       </el-form-item>
@@ -33,22 +51,43 @@
       </el-form-item>
       <el-form-item prop="messageCode">
         <div class="flex flex-align-center message-code-warp flex1">
-          <el-input v-model="ruleForm.messageCode" type="text" maxlength="6" placeholder="验证码" class="flex1"></el-input>
+          <el-input
+            v-model="ruleForm.messageCode"
+            type="text"
+            maxlength="6"
+            placeholder="验证码"
+            class="flex1"
+          ></el-input>
           <el-button type="text" size="large" @click="sendCode" :disabled="timer > 0" link>{{
-          timer > 0 ? `${timer}s` : '获取验证码'
+            timer > 0 ? `${timer}s` : '获取验证码'
           }}</el-button>
         </div>
       </el-form-item>
       <el-form-item prop="imageCode">
         <div class="flex flex-align-center message-code-warp flex1">
-          <el-input v-model="ruleForm.imageCode" type="number" placeholder="请输入图片中的数字" class="flex1"></el-input>
-          <div class="image-code flex flex-align-center flex-pack-center" slot="append" @click="getImageCodeData">
+          <el-input
+            v-model="ruleForm.imageCode"
+            type="number"
+            placeholder="请输入图片中的数字"
+            class="flex1"
+          ></el-input>
+          <div
+            class="image-code flex flex-align-center flex-pack-center"
+            slot="append"
+            @click="getImageCodeData"
+          >
             <img v-if="imageCodeData !== ''" :src="imageCodeData" />
           </div>
         </div>
       </el-form-item>
       <el-form-item class="flex">
-        <el-button class="btn-submit" size="large" type="primary" :loading="loading" @click="submitForm(ruleFormRef)">注册
+        <el-button
+          class="btn-submit"
+          size="large"
+          type="primary"
+          :loading="loading"
+          @click="submitForm(ruleFormRef)"
+          >注册
         </el-button>
       </el-form-item>
       <!-- <div class="intro">
@@ -286,6 +325,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
             rootAddress: walletInfo.rootAddress,
             address: walletInfo.rootAddress
           }
+           userInfo.userType = userInfo.userType ? userInfo.userType : userInfo?.registerType
           await setUserInfo({
             userType: params.userType,
             metaid: metaIdInfo.metaId,
@@ -406,6 +446,4 @@ onMounted(async () => {
 })
 </script>
 
-<style lang="scss" src="./register.scss">
-
-</style>
+<style lang="scss" src="./register.scss"></style>

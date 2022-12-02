@@ -593,6 +593,7 @@ async function onSetBaseInfoSuccess(params: {
         ...userStore.user!,
         name: params.name ? params.name : userStore.user!.name,
       }
+      userInfo.userType = userInfo.userType ? userInfo.userType : userInfo?.registerType
       // 上报修改的用户信息
       await SetUserInfo({
         metaid: userStore.user!.metaId,
