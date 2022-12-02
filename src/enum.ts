@@ -83,6 +83,7 @@ export enum PayPlatform {
   UnionPay = 300,
   QuickPay = 301,
   BalancePay = 350,
+  ETH = 1001,
 }
 
 export enum NFTSellState {

@@ -1,0 +1,41 @@
+.content-modal {
+    :deep(.el-overlay-dialog) {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    :deep(.el-dialog) {
+        width: 90%;
+        max-height: 90%;
+        overflow: hidden;
+        margin-top: 0;
+        margin-bottom: 0;
+        display: flex;
+        flex-direction: column;
+
+        .el-dialog__body {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+
+            .content {
+                font-size: 16px;
+                line-height: 26px;
+            }
+        }
+
+        .el-dialog__header {
+            color: #fff;
+            font-size: 18px;
+        }
+    }
+}
+
+.content {
+    color: #fff;
+}
+
+.confirm-btn {
+    color: #02A7FF;
+}

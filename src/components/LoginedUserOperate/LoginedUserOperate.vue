@@ -1,7 +1,7 @@
 <template>
   <template v-if="userStore.isAuthorized">
     <div class="user-warp flex flex-align-center">
-      <UserAvatar :meta-id="userStore.user!.metaId" class="user-warp-item" />
+      <UserAvatar :meta-id="userStore.user!.metaId" class="user-warp-item" :disabled="true" />
 
       <!-- 钱包 -->
       <a

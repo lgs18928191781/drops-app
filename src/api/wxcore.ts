@@ -2,13 +2,20 @@ import { PayPlatform } from '@/enum'
 import HttpRequest from 'request-sdk'
 import { alertCatchError } from '@/utils/util'
 import { ElMessage } from 'element-plus'
-import { getToken, getUserName } from '@/stores/user'
+import { getToken, getUserName, useUserStore } from '@/stores/user'
 // @ts-ignore
-const Wxcore = new HttpRequest(`${import.meta.env.VITE_WXCOREAPI}/wxcore`, {
-  header: {
-    accessKey: () => getToken(),
-    userName: () => getUserName(),
-    timestamp: () => new Date().getTime(),
+const Wxcore = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/wxcore`, {
+  header: () => {
+    const userStore = useUserStore()
+    if (userStore.isAuthorized) {
+      return {
+        accessKey: userStore.user!.token,
+        userName: userStore.userName!,
+        timestamp: new Date().getTime(),
+      }
+    } else {
+      return {}
+    }
   },
   errorHandel(error: any) {
     if (error.status === 401) {
@@ -19,7 +26,10 @@ const Wxcore = new HttpRequest(`${import.meta.env.VITE_WXCOREAPI}/wxcore`, {
       }
       return Promise.reject(error.response.data.data)
     } else if (error.response && error.response.data && error.response.data.data !== '') {
-      return Promise.reject(error.response.data.data)
+      return Promise.reject({
+        message: error.response.data.data,
+        code: error.response.data.code,
+      })
     } else {
       // 对响应错误做点什么
       return Promise.reject(error)

@@ -3,6 +3,8 @@ import { PayPlatform } from './enum'
 import WechatPayIcon from '@/assets/images/wechatTitle.svg?url'
 import AliPayIcon from '@/assets/images/alipay-circle.svg?url'
 import SandPayIcon from '@/assets/images/sandPay_title.svg?url'
+import ETHIcon from '@/assets/images/eth.png'
+import { useUserStore } from './stores/user'
 export interface Unit {
   unit: string
   sats: number
@@ -75,7 +77,7 @@ export interface PayPlatformItem {
   name: () => string
   platform: PayPlatform
   background: string
-  disabled: boolean
+  disabled: () => boolean
   suffix: boolean
 }
 
@@ -88,7 +90,9 @@ export const payPlatformList: PayPlatformItem[] = [
     },
     platform: PayPlatform.UnionPay,
     background: '#FCA63D',
-    disabled: false,
+    disabled: () => {
+      return false
+    },
     suffix: true,
   },
   {
@@ -98,7 +102,9 @@ export const payPlatformList: PayPlatformItem[] = [
     },
     platform: PayPlatform.WechatPay,
     background: '#909399',
-    disabled: true,
+    disabled: () => {
+      return true
+    },
     suffix: false,
   },
   {
@@ -108,7 +114,27 @@ export const payPlatformList: PayPlatformItem[] = [
     },
     platform: PayPlatform.AliPay,
     background: '#108EE9',
-    disabled: false,
+    disabled: () => {
+      return true
+    },
+    suffix: false,
+  },
+  {
+    icon: ETHIcon,
+    name: () => {
+      return 'ETH'
+    },
+    platform: PayPlatform.ETH,
+    background: '#108EE9',
+    disabled: () => {
+      let result = true
+      debugger
+      const userStore = useUserStore()
+      if (userStore.isAuthorized && userStore.user?.ethAddress) {
+        result = false
+      }
+      return result
+    },
     suffix: false,
   },
 ]

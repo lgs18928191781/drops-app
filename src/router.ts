@@ -118,6 +118,21 @@ export const router = createRouter({
     //   component: () => import('@/views/nft/NftDetail.vue'),
     // },
 
+    // pay
+    {
+      path: '/pay',
+      name: 'pay',
+      component: () => RouterView,
+      meta: { isHideHeader: true },
+      children: [
+        {
+          path: 'result',
+          name: 'payResult',
+          component: () => import('@/views/pay/Result.vue'),
+        },
+      ],
+    },
+
     // 404
     { path: '/404', name: '404', component: NotFoundPage },
     {
