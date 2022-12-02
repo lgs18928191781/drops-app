@@ -173,7 +173,7 @@ import { CommitActivity } from '@/api/broad'
 import WalletConnect from '@walletconnect/client'
 import AuthClient, { generateNonce } from '@walletconnect/auth-client'
 import QRCodeModal from '@walletconnect/qrcode-modal'
-import keccak256 from 'keccak256'
+import { ethers } from 'ethers'
 import { RegisterSource } from '@/enum'
 import { openLoading } from '@/utils/util'
 const rootStore = useRootStore()
@@ -801,7 +801,7 @@ async function connectWalletConnect() {
 
   const res = await connector.signPersonalMessage([
     accounts[0],
-    keccak256(accounts[0]).toString('hex'),
+    ethers.utils.keccak256(accounts[0]),
   ])
   if (res) {
     rootStore.$patch({ isShowLogin: false })

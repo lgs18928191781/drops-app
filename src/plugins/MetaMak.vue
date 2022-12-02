@@ -31,7 +31,7 @@ import { useI18n } from 'vue-i18n';
 // @ts-ignore
 import Wallet, { MetaMaskEthereumProvider } from './utils/wallet'
 import { ElLoading, ElMessage } from 'element-plus'
-import keccak256 from 'keccak256'
+import {ethers} from 'ethers'
 import { getRandomWord, loginByHashData, loginByMetaidOrAddress, mnemoicLogin, setHashData, loginByNewUser } from './utils/api';
 import type { MetaMaskLoginUserInfo } from './utils/api';
 import { encode, decode } from 'js-base64'
@@ -167,7 +167,7 @@ async function startConnect() {
     if (res) {
         const result = await ethPersonalSignSign({
             address: res.ethAddress,
-            message: keccak256(res.ethAddress).toString('hex')
+            message: ethers.utils.keccak256(res.ethAddress)
         })
         if (result) {
              emit('success',{ signAddressHash:  result, address: res.ethAddress});
