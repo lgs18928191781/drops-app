@@ -16,21 +16,21 @@
 
         <div class="flex items-center gap-x-3 mt-6">
           <Image
-            :src="talk.activeCommunity.icon"
+            :src="talk.activeCommunity?.icon"
             :customClass="
               '!w-13.5 !h-13.5 rounded-3xl object-cover object-center lg:group-hover:scale-110 transition-all duration-200'
             "
           />
           <div class="flex flex-col">
             <h4 class="text-2xl font-bold text-dark-800 tracking-wider">
-              {{ talk.activeCommunity.name }}
+              {{ talk.activeCommunity?.name }}
             </h4>
 
             <div class="flex space-x-2 items-center">
               <div class="w-2.5 h-2.5 bg-lime-500 rounded-full"></div>
               <div class="text-dark-400 text-sm">
-                {{ talk.activeCommunity.memberTotal }}
-                {{ $t('Talk.Community.members', talk.activeCommunity.memberTotal) }}
+                {{ talk.activeCommunity?.memberTotal }}
+                {{ $t('Talk.Community.members', talk.activeCommunity?.memberTotal) }}
               </div>
             </div>
           </div>

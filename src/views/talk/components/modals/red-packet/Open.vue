@@ -1,6 +1,6 @@
 <template>
-  <TransitionRoot :show="layout.isShowRedPacketOpenModal">
-    <Dialog @close="layout.isShowRedPacketOpenModal = false" class="relative z-50">
+  <TransitionRoot :show="layout.isShowRedPacketOpenModal" :unmount="true">
+    <Dialog @close="closeModal" class="relative z-50">
       <TransitionChild
         as="template"
         enter="duration-300 ease-out"
@@ -29,16 +29,13 @@
             <DialogPanel
               class="flex w-full h-full lg:max-w-screen-sm lg:items-stretch justify-center lg:w-auto relative lg:static lg:h-auto"
             >
-              <div class="flex flex-col items-center justify-center">
+              <div class="flex flex-col items-center justify-center group">
                 <div class="w-108 h-15">
                   <img :src="GiftRibbonImg" al="" />
                 </div>
-                <div
-                  class="bg-white rounded-3xl w-[80vw] lg:w-114 h-105 flex flex-col cursor-pointer"
-                  @click="tryOpenRedPacket"
-                >
+                <div class="bg-white rounded-3xl w-[80vw] lg:w-114 h-105 flex flex-col">
                   <div
-                    class="lg:w-114 h-60 bg-gradient-to-tr from-[#CBFDE4] to-[#FCEDCE] rounded-t-3xl shadow-md flex flex-col items-center justify-start"
+                    class="lg:w-114 h-60 bg-gradient-to-tr from-[#CBFDE4] to-[#FCEDCE] rounded-t-3xl shadow-md flex flex-col items-center justify-start overflow-x-hidden group-hover:-skew-x-3 group-hover:shadow-xl duration-300 origin-top"
                   >
                     <UserAvatar
                       :metaId="message.metaId"
@@ -48,11 +45,14 @@
                     <div class="mt-3 text-sm text-dark-300 capitalize">
                       {{ $t('Talk.Modals.red_packet') }}
                     </div>
-                    <div class="text-2xl mt-3">{{ note }}</div>
+                    <div class="text-2xl mt-3 truncate w-full px-6 lg:px-12 text-center">
+                      {{ note }}
+                    </div>
                   </div>
                   <div class="w-full flex items-stretch justify-center grow relative">
                     <div
-                      class="absolute top-0 w-28 h-28 rounded-full gift-button-gradient flex items-center justify-center text-dark-800 text-xl capitalize -translate-y-1/2 border-2 border-b-5 border-solid border-dark-300 shadow-xl box-content font-medium"
+                      class="absolute top-0 w-28 h-28 rounded-full gift-button-gradient flex items-center justify-center text-dark-800 text-xl capitalize -translate-y-1/2 border-2 border-b-5 border-solid border-dark-300 shadow-xl box-content font-medium group-hover:-translate-y-[53%] group-hover:skew-x-1 origin-bottom duration-300 cursor-pointer hover:text-amber-500 hover:shadow-amber-300/40 hover:border-amber-300"
+                      @click="tryOpenRedPacket"
                     >
                       {{ $t('Talk.Modals.receive') }}
                     </div>
@@ -72,18 +72,57 @@
 import { useLayoutStore } from '@/stores/layout'
 import { Dialog, DialogPanel, TransitionRoot, TransitionChild } from '@headlessui/vue'
 import GiftRibbonImg from '@/assets/images/gift_ribbon.svg?url'
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { openRedPacket } from '@/utils/talk'
+import { useUserStore } from '@/stores/user'
+import { getRedPacketRemains } from '@/api/talk'
+import { useTalkStore } from '@/stores/talk'
+import { useModalsStore } from '@/stores/modals'
 
 const layout = useLayoutStore()
-const props = defineProps(['message'])
+const modals = useModalsStore()
+
+const message = modals.openRedPacket?.message
 const i18n = useI18n()
+const talk = useTalkStore()
+const remains = ref([])
+const canOpen = computed(() => remains.value.length > 0)
 
 const note = computed(() => {
-  return props.message.data?.content || i18n.t('Talk.Channel.default_red_envelope_message')
+  return message?.data?.content || i18n.t('Talk.Channel.default_red_envelope_message')
 })
 
-const tryOpenRedPacket = () => {}
+const tryOpenRedPacket = async () => {
+  const userStore = useUserStore()
+  const redPacket = {
+    subId: message?.data.subId,
+    code: message?.data.code,
+    type: 'mvc',
+    used: [
+      {
+        index: '',
+        amount: '',
+        address: '',
+      },
+    ],
+  }
+  await openRedPacket(redPacket, userStore.showWallet)
+}
+
+const closeModal = () => {
+  modals.openRedPacket = null
+  layout.isShowRedPacketOpenModal = false
+}
+
+onMounted(async () => {
+  const channelId = talk.activeChannelId
+  const redPacketId = message?.txId
+  getRedPacketRemains({ channelId, redPacketId }).then(res => {
+    remains.value = res
+    console.log('remains', remains.value)
+  })
+})
 </script>
 
 <style lang="scss" scoped>

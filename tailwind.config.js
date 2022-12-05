@@ -139,6 +139,7 @@ module.exports = {
       animation: {
         wiggle: 'wiggle 1s ease-in-out infinite',
         'wiggle-subtle': 'wiggle-subtle 1s ease-in-out infinite',
+        'wiggle-subtle-once': 'wiggle-subtle 1s ease-in-out',
         'bounce-subtle': 'bounce-subtle 1s infinite',
       },
     },

@@ -146,6 +146,12 @@ export const AllNodeName: {
     path: '/Protocols/SimpleRedEnvelope',
     version: '1.0.2',
   },
+
+  [NodeName.OpenRedenvelope]: {
+    brfcId: 'bf90aa3b2d1c',
+    path: '/Protocols/OpenRedenvelope',
+    version: '1.0.1',
+  },
 }
 
 export class SDK {

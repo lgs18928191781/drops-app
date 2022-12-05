@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import { useTalkStore } from '@/stores/talk'
-import { defineAsyncComponent } from 'vue'
+import { defineAsyncComponent, onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'
 import DirectContactList from './components/DirectContactList.vue'
 import AtMeHeader from './components/AtMeHeader.vue'
@@ -38,6 +38,12 @@ const talk = useTalkStore()
 const { channelId } = route.params
 talk.initChannel('@me', channelId as string).then(async initRes => {
   await talk.initChannelMessages(talk.selfMetaId)
+})
+
+onBeforeUnmount(() => {
+  talk.resetCurrentChannel()
+  // talk.saveReadPointers()
+  // talk.closeReadPointerTimer()
 })
 </script>
 

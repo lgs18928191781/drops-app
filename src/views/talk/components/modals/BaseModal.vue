@@ -1,5 +1,5 @@
 <template>
-  <TransitionRoot :show="modelValue">
+  <TransitionRoot :show="modelValue" :unmount="true">
     <Dialog @close="tryClose" class="relative z-50">
       <TransitionChild
         as="template"

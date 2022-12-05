@@ -34,7 +34,7 @@
 
       <div class="w-full py-0.5" v-else-if="isImage">
         <div
-          class="w-fit max-w-[90%] md:max-w-[50%] lg:max-w-[400px] max-h-[600px] overflow-y-hidden rounded bg-dark-100 cursor-pointer"
+          class="w-fit max-w-[90%] md:max-w-[50%] lg:max-w-[400px] max-h-[600px] overflow-y-hidden rounded bg-transparent cursor-pointer"
           @click="previewImage"
         >
           <Image :src="decryptedMessage" customClass="rounded py-0.5 object-scale-down" />
@@ -168,6 +168,7 @@ const parseTextMessage = (text: string) => {
 
 const redEnvelopeReceiveInfo = computed(() => {
   const content: string = props.message.content
+  if (!content) return ''
 
   if (props.message.metaId === props.message.data?.redEnvelopeMetaId) {
     return i18n.t('Talk.Channel.receive_own_red_envelope')

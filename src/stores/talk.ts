@@ -13,6 +13,7 @@ import { Message, TalkError } from '@/@types/talk'
 import { sleep } from '@/utils/util'
 import { useUserStore } from './user'
 import { useRoute } from 'vue-router'
+import { GetUserInfo } from '@/api/aggregation'
 
 export const useTalkStore = defineStore('talk', {
   state: () => {
@@ -229,12 +230,18 @@ export const useTalkStore = defineStore('talk', {
           : await getChannels({ communityId: routeCommunityId })
         // 如果是私聊，而且路由中的频道 ID 不存在，则新建会话
         if (isAtMe && !channels.some((channel: any) => channel.id === routeChannelId)) {
+          const { data } = await GetUserInfo(routeChannelId)
           const name = route.query.name || '新用户'
           const newSession = {
             id: routeChannelId,
-            name,
+            name: data.name,
+            publicKeyStr: data.pubKey,
+            lastMessage: '',
+            lastMessageTimestamp: null,
+            pastMessages: [],
+            newMessages: [],
           }
-          channels.push(newSession)
+          channels.unshift(newSession)
         }
 
         this.activeCommunityId = routeCommunityId
@@ -292,7 +299,8 @@ export const useTalkStore = defineStore('talk', {
       console.log('initting pointers')
 
       const readPointers = localStorage.getItem('readPointers-' + this.selfMetaId)
-      if (readPointers) {
+      if (readPointers && JSON.parse(readPointers)) {
+        console.log('here')
         this.channelsReadPointers = JSON.parse(readPointers)
       } else {
         this.channelsReadPointers = {}

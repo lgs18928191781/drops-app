@@ -36,7 +36,7 @@ const messageThisGuy = () => {
   if (isYou.value) return
 
   const memberMetaId = props.member.metaId
-  router.push('/talk/channels/@me/' + memberMetaId + '?name=' + props.member.name)
+  router.push('/talk/channels/@me/' + memberMetaId)
 }
 </script>
 <style lang=""></style>

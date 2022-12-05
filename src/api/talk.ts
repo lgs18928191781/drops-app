@@ -167,3 +167,13 @@ export const getFtSeries = async (metaId: string): Promise<any> => {
     },
   ]
 }
+
+export const getRedPacketRemains = async (params: any): Promise<any> => {
+  params = params || {}
+  const channelId = params.channelId
+  const redPacketId = params.redPacketId
+
+  return TalkApi.get(`/room/${channelId}/redenvelope/${redPacketId}/unused`).then(res => {
+    return res.data.unused
+  })
+}
