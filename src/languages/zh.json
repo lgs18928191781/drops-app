@@ -314,5 +314,6 @@
   "sendVerifiyCodeError": "验证码填写不正确,请重新填写",
   "wechatpay": "微信支付",
   "aliPay": "支付宝支付",
-  "quickPay": "银行卡支付"
+  "quickPay": "银行卡支付",
+  "Pay": "支付"
 }

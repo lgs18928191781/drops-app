@@ -53,6 +53,11 @@
             }
         }
 
+        &.nft {
+            overflow: visible;
+            padding-bottom: 10px;
+        }
+
         .remove {
             position: absolute;
             right: 0;
@@ -82,62 +87,7 @@
     }
 }
 
-.image-list {
-    display: flex;
-    flex-wrap: wrap;
 
-    .item {
-        width: calc(33.33% - 7px);
-        margin: 0 9px 9px 0;
-        position: relative;
-        height: 0;
-        padding-bottom: calc(33.33% - 7px);
-        flex-grow: 0;
-        flex-shrink: 0;
-
-        &.nft {
-            width: 50%;
-            padding-bottom: 50%;
-        }
-
-        img {
-            position: absolute;
-            display: block;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 8px;
-            top: 0;
-            left: 0;
-        }
-
-        i {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: linear-gradient(270deg, #2af598, #009efd);
-            z-index: 2;
-            padding: 4px 6px;
-            border-radius: 12px;
-            font-size: 10px;
-            line-height: 1;
-            font-weight: 500;
-            letter-spacing: 1px;
-        }
-
-        &:last-child,
-        &:nth-child(3n) {
-            margin-right: 0;
-        }
-    }
-
-    .single {
-        width: 100%;
-        height: 257px;
-        margin: 0;
-        padding: 0;
-    }
-}
 
 .video-list {
     video {
@@ -243,4 +193,62 @@
 
     }
 
+}
+
+.nft-card {
+    width: 277px;
+}
+
+.nft-warp {
+    padding: 12px;
+
+    box-sizing: border-box;
+
+    .msg {
+        width: 100%;
+    }
+
+    .cover-warp {
+        width: 78px;
+        height: 78px;
+        margin-right: 12px;
+        border: 2px solid var(--main-font-color);
+        border-radius: 8px;
+        position: relative;
+
+        :deep(.cover) {
+            border-radius: 8px;
+        }
+
+        .el-skeleton__item {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+        }
+    }
+
+    .name {
+        font-size: 16px;
+        line-height: 24px;
+        @include text-many-ellipsis(2);
+
+        .el-skeleton__item {
+            &:first-child {
+                width: 100%;
+            }
+        }
+    }
+
+    .token-index {
+        font-size: 12px;
+        color: #82858C;
+        margin-top: 4px;
+
+        .el-skeleton__item {
+            height: 12px;
+            width: 50px;
+        }
+    }
 }

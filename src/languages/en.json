@@ -245,5 +245,6 @@
   },
   "quickPay": "Credit Card",
   "aliPay": "Alipay",
-  "wechatpay": "Alipay"
+  "wechatpay": "Alipay",
+  "Pay": "Pay"
 }

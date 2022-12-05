@@ -32,7 +32,7 @@ async function genesis() {
   })
   // debugger
   if (res) {
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 20; i++) {
       const response = await userStore.showWallet.createBrfcChildNode({
         nodeName: NodeName.NftIssue,
         data: JSON.stringify({
@@ -43,13 +43,13 @@ async function genesis() {
           sensibleId: res.currentNode!.sensibleId,
           name: 'test1',
           desc: 'test1',
-          icon: 'metafile://8808b9c695c76abfbe10f27535903f3c7d882e319805ce6177a77cb250ce74f8',
+          icon: 'metafile://02e04caec57b94d8158f3693a19794aef835094657b5d7be038d9a6ecba8dbd9.jpeg',
           backIcon: '',
           website: '',
           issuerName: '',
           data: {
             originalFileTxid:
-              'metafile://8808b9c695c76abfbe10f27535903f3c7d882e319805ce6177a77cb250ce74f8',
+              'metafile://02e04caec57b94d8158f3693a19794aef835094657b5d7be038d9a6ecba8dbd9.jpeg',
           },
         }),
       })

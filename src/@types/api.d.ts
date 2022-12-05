@@ -932,10 +932,18 @@ declare interface OrderMsg {
 }
 declare interface GetOrderStatusRes extends apiResponse {
   data: {
-    order_id: string
+    address: string
+    amount: string
+    count: number
+    create_time: number
+    error_status: string
+    goods_name: string
+    metaid: string
+    outside_order_id: string
+    price: number
     status: number
-    transaction_id: string
-    pay_amount: number
+    url: string
+    uuid: string
   }
 }
 

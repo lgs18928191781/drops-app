@@ -94,7 +94,11 @@
                 @click="getFoucus(AmountRef)"
                 :class="{ active: activeElement === AmountRef }"
               >
-                <span class="sufix">$</span>
+                <span class="sufix">{{
+                  currentPayPlatform === PayPlatform.ETH
+                    ? ETHName
+                    : priceSymbol[rootStore.currentPrice]
+                }}</span>
                 <input
                   type="number"
                   v-model="amount"
@@ -111,7 +115,10 @@
         <div class="operate main-border primary" :class="{ faded: isDisabled }" @click="recharge">
           {{ $t('Wallet.Add') }}
         </div>
-        <div class="rate">1ME = {{ rate }} USD</div>
+        <div class="rate">
+          1ME = {{ rate }}
+          {{ currentPayPlatform === PayPlatform.ETH ? ETHName : rootStore.currentPrice }}
+        </div>
 
         <div class="discount flex flex-align-center" v-if="coupon.val">
           <Icon name="discount" />
@@ -123,6 +130,25 @@
         </div>
       </div>
     </div>
+
+    <ContentModalVue v-model="isShowCouponMsg" :title="coupon.val?.name" confirmBtnText="我知道了">
+      <template #content>
+        <div class="coupon-msg">
+          <div class="item">
+            <div class="lable">活动时间</div>
+            <div class="value">
+              {{ $filters.dateTimeFormat(coupon.val!.active_start_time) }}
+              &nbsp;--&nbsp;
+              {{ $filters.dateTimeFormat(coupon.val!.active_end_time) }}
+            </div>
+          </div>
+          <div class="item">
+            <div class="lable">活动内容</div>
+            <div class="value">{{ coupon.val!.description }}</div>
+          </div>
+        </div>
+      </template>
+    </ContentModalVue>
   </ElDrawer>
 
   <!-- 开始支付 -->
@@ -134,25 +160,6 @@
     :isBilinbox="false"
     @success="onPaySuceess"
   />
-
-  <ContentModalVue v-model="isShowCouponMsg" :title="coupon.val?.name" confirmBtnText="我知道了">
-    <template #content>
-      <div class="coupon-msg">
-        <div class="item">
-          <div class="lable">活动时间</div>
-          <div class="value">
-            {{ $filters.dateTimeFormat(coupon.val!.active_start_time) }}
-            &nbsp;--&nbsp;
-            {{ $filters.dateTimeFormat(coupon.val!.active_end_time) }}
-          </div>
-        </div>
-        <div class="item">
-          <div class="lable">活动内容</div>
-          <div class="value">{{ coupon.val!.description }}</div>
-        </div>
-      </div>
-    </template>
-  </ContentModalVue>
 </template>
 
 <script setup lang="ts">
@@ -162,9 +169,9 @@ import { PayPlatform, PayType } from '@/enum'
 import Decimal from 'decimal.js-light'
 import { CreateMeOrder, GetMeRate } from '@/api/v3'
 import { useUserStore } from '@/stores/user'
-import { GetCouponInfo } from '@/api/wxcore'
+import { CreatOrder, GetCouponInfo } from '@/api/wxcore'
 import StartPayVue from '../StartPay/StartPay.vue'
-import { isAndroid, isApp, isIOS, isIosApp } from '@/stores/root'
+import { isAndroid, isApp, isIOS, isIosApp, useRootStore } from '@/stores/root'
 import { setPayQuitUrl } from '@/utils/util'
 import { useRoute } from 'vue-router'
 import ContentModalVue from '@/components/ContentModal/ContentModal.vue'
@@ -174,6 +181,7 @@ const props = defineProps<{
 }>()
 
 const route = useRoute()
+const rootStore = useRootStore()
 
 const AmountRef = ref()
 const CountRef = ref()
@@ -193,6 +201,11 @@ const isStartPay = ref(false)
 const payUrl = ref('')
 const orderId = ref('')
 const loading = ref(false)
+const ETHName = import.meta.env.VITE_ETH_CHAIN
+const priceSymbol = {
+  CNY: '￥',
+  USD: '$',
+}
 
 const isDisabled = computed(() => {
   let result = true
@@ -216,6 +229,10 @@ function getRate() {
   return new Promise<void>(async resolve => {
     const res = await GetMeRate({
       meta_id: userStore.user!.metaId,
+      coin:
+        currentPayPlatform.value === PayPlatform.ETH
+          ? ETHName
+          : rootStore.currentPrice.toLocaleLowerCase(),
     }).catch(error => {
       ElMessage.error(error.message)
     })
@@ -232,7 +249,7 @@ function onMeInput() {
     amount.value = new Decimal(count.value ? count.value : 0)
       .mul(rate.value)
       .mul(coupon.val ? coupon.val.coupon_value : 1)
-      .toFixed(2)
+      .toFixed(currentPayPlatform.value === PayPlatform.ETH ? 10 : 2)
   } else {
     amount.value = ''
   }
@@ -289,9 +306,8 @@ async function recharge() {
     ? PayType.App
     : isAndroid && isIOS
     ? PayType.H5
-    : PayType.Jsapi
-  const res = await CreateMeOrder({
-    Token: userStore.user!.token,
+    : PayType.H5
+  const res = await CreatOrder({
     address: userStore.user!.address!,
     count: new Decimal(count.value).mul(100).toNumber(),
     description: '充值能量点',
@@ -302,6 +318,7 @@ async function recharge() {
     quit_url: quitUrl,
     types: type,
     from_coin_address: userStore.user?.ethAddress,
+    product_type: 100,
   }).catch(error => {
     ElMessage.error(error.message)
     loading.value = false
@@ -326,6 +343,9 @@ function lockScroller() {
 function choosePayPlatform(item: PayPlatformItem) {
   if (item.disabled()) return
   currentPayPlatform.value = item.platform
+  getRate().then(() => {
+    onMeInput()
+  })
 }
 
 watch(

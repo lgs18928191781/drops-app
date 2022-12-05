@@ -11,11 +11,11 @@ interface RootState {
   signBaseInfo: SignBaseInfo
   sendCodeTimer: number
   redirectUri: string
-  exchangeRate: ExchangeRate
+  exchangeRate: ExchangeRate[]
   isGetedExchangeRate: boolean
   isShowLogin: boolean
   isCertedMetaIds: string[]
-  currentPrice: string
+  currentPrice: 'CNY' | 'USD'
 }
 
 const UA = window.navigator.userAgent.toLowerCase()
@@ -41,15 +41,10 @@ export const useRootStore = defineStore('root', {
       signBaseInfo: emptySignBaseInfo,
       sendCodeTimer: 60,
       redirectUri: '/',
-      exchangeRate: {
-        cnyRate: 0,
-        usdtRate: 0,
-        feeRate: 0,
-        message: '',
-      },
+      exchangeRate: [],
       isGetedExchangeRate: false,
       isShowLogin: false,
-      currentPrice: window.localStorage.getItem('currentPrice') || 'BSV',
+      currentPrice: window.localStorage.getItem('currentPrice') || 'USD',
     },
   getters: {},
   actions: {
@@ -96,13 +91,13 @@ export const useRootStore = defineStore('root', {
 
 function fetchExchangeRate() {
   return new Promise(resolve => {
-    fetch('https://www.showpay.top/wxcore/legalbsv/getExchangeRate')
+    fetch(`${import.meta.env.VITE_BASEAPI}/metaid-base/v1/exchange/rates`)
       .then(response => {
         return response.json()
       })
       .then(res => {
-        if (res?.code === 0) {
-          resolve(res.data)
+        if (res?.result) {
+          resolve(res.result.rates)
         }
       })
       .catch(() => resolve(null))

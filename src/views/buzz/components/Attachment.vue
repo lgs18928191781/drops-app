@@ -80,6 +80,45 @@
             </div>
           </div>
         </template>
+
+        <!-- NFT -->
+        <template v-if="getAttachmentType(item) === 'nft'">
+          <CardVue class="nft-card" @click="toNFT" color="#5BA1FF">
+            <div class="nft-warp">
+              <ElSkeleton :loading="loading" animated>
+                <template #template>
+                  <div class="msg flex">
+                    <div class="cover-warp">
+                      <ElSkeletonItem variant="rect" />
+                    </div>
+                    <div class="cont flex1">
+                      <div class="name">
+                        <ElSkeletonItem variant="p" />
+                        <ElSkeletonItem variant="p" />
+                      </div>
+                      <div class="token-index">
+                        <ElSkeletonItem variant="p" />
+                      </div>
+                    </div>
+                  </div>
+                </template>
+                <template #default>
+                  <div class="msg flex">
+                    <div class="cover-warp">
+                      <NFTCoverVue :cover="[item as string]" />
+                    </div>
+                    <div class="cont flex1">
+                      <div class="name">
+                        {{nft.val!.nftName}}
+                      </div>
+                      <div class="token-index">#{{nft.val!.nftTokenIndex}}</div>
+                    </div>
+                  </div>
+                </template>
+              </ElSkeleton>
+            </div>
+          </CardVue>
+        </template>
       </div>
     </div>
     <!-- 图片 -->
@@ -129,21 +168,25 @@ import { AttachmentItem } from '@/@types/hd-wallet'
 import ImagePreviewVue from '@/components/ImagePreview/ImagePreview.vue'
 import MusicIcon from '@/assets/icons/music.svg?url'
 import { downloadFile } from '@/utils/util'
-import { GetMetaFile } from '@/api/aggregation'
+import { GetMetaFile, GetNFT } from '@/api/aggregation'
+import CardVue from '@/components/Card/Card.vue'
+import NFTCoverVue from '@/components/NFTCover/NFTCover.vue'
+import { chain } from 'lodash'
 
 interface Props {
-  attachments: string[] | AttachmentItem[]
+  attachments: (AttachmentItem | string)[]
   playFile?: string
   isEdit?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {})
 const isShowPreview = ref(false)
 const previewIndex = ref(0)
-const loading = ref(false)
+const loading = ref(true)
 
 const emit = defineEmits(['remove', 'play'])
 
 const metafileInfo: { val: null | MetaFileInfo } = reactive({ val: null })
+const nft: { val: null | GenesisNFTItem } = reactive({ val: null })
 
 const previewImages = computed(() => {
   let result: string[] = []
@@ -160,17 +203,7 @@ const previewImages = computed(() => {
 watch(
   () => props.attachments,
   () => {
-    if (
-      props.attachments &&
-      props.attachments.length &&
-      typeof props.attachments[0] === 'string' &&
-      getAttachmentType(props.attachments[0]) !== 'image'
-    ) {
-      loading.value = true
-      getMetaFileInfo().then(() => {
-        loading.value = false
-      })
-    }
+    getAttachmentInfo()
   }
 )
 
@@ -257,14 +290,13 @@ function handlePreviewImage(index: number, images: string[]) {
 }
 
 function toNFT() {
-  const string = props.attachments![0].replace('sensible://', '')
-  const stringArray = string.split('/')
   router.push({
-    name: 'nft',
+    name: 'nftDetail',
     params: {
-      genesis: stringArray[1],
-      codehash: stringArray[0],
-      tokenIndex: stringArray[2],
+      genesis: nft.val!.nftGenesis,
+      codehash: nft.val!.nftCodehash,
+      tokenIndex: nft.val!.nftTokenIndex,
+      chain: nft.val!.nftChain,
     },
   })
 }
@@ -272,7 +304,9 @@ function toNFT() {
 function getAttachmentType(attachment: string | AttachmentItem) {
   if (typeof attachment === 'string') {
     const fileSuffix = attachment.split('.')[attachment.split('.').length - 1]
-    if (
+    if (attachment.indexOf('metacontract://') !== -1) {
+      return 'nft'
+    } else if (
       fileSuffix === 'png' ||
       fileSuffix === 'jpg' ||
       fileSuffix === 'jpeg' ||
@@ -323,16 +357,35 @@ function preview(index: number) {
   isShowPreview.value = true
 }
 
-if (
-  props.attachments &&
-  props.attachments.length &&
-  typeof props.attachments[0] === 'string' &&
-  getAttachmentType(props.attachments[0]) !== 'image'
-) {
-  loading.value = true
-  getMetaFileInfo().then(() => {
-    loading.value = false
-  })
+function getAttachmentInfo() {
+  if (props.attachments && props.attachments.length) {
+    if (getAttachmentType(props.attachments[0]) === 'audio') {
+      loading.value = true
+      getMetaFileInfo().then(() => {
+        loading.value = false
+      })
+    } else if (getAttachmentType(props.attachments[0]) === 'nft') {
+      loading.value = true
+      const array = (props.attachments[0] as string).split('://')
+      GetNFT({
+        chain: array[0] === 'metacontract' ? 'mvc' : array[0],
+        genesis: array[1].split('/')[1],
+        codehash: array[1].split('/')[0],
+        tokenIndex: array[1].split('/')[2],
+      })
+        .then(res => {
+          if (res.code === 0) {
+            nft.val = res.data.results.items[0]
+            loading.value = false
+          }
+        })
+        .catch(error => {
+          ElMessage.error(error.message)
+        })
+    }
+  }
 }
+
+getAttachmentInfo()
 </script>
 <style scoped lang="scss" src="./Attachment.scss"></style>

@@ -1009,7 +1009,6 @@ export class SDK {
           // NftGenesis
           if (params.nodeName === NodeName.NftGenesis) {
             utxo.wif = this.getPathPrivateKey(`${utxo.addressType}/${utxo.addressIndex}`).toString()
-            debugger
             const res = await nftManager!.genesis({
               ...JSON.parse(params.data!),
               opreturnData: transactions.currentNode.scriptPlayload!,
@@ -1055,7 +1054,6 @@ export class SDK {
                 utxos: [utxo],
               })
               if (res) {
-                debugger
                 transactions.issueNFT = {
                   // @ts-ignore
                   transaction: res.tx,
