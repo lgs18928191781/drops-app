@@ -982,7 +982,7 @@ export class HdWallet {
   }: TransferTypes): Promise<bsv.Transaction> {
     return new Promise(async (resolve, reject) => {
       try {
-        const { tx, amount } = await this.makeTxNotUtxos({
+        const { tx } = await this.makeTxNotUtxos({
           payTo,
           outputs,
           opReturn,
@@ -1045,15 +1045,12 @@ export class HdWallet {
       throw new Error('Wallet uninitialized! (core-makeTx)')
     }
     const tx = new bsv.Transaction()
-    tx.feePerKb(useFeeb * 1000)
-    let amount = 0
     // 添加 payto
     if (Array.isArray(payTo) && payTo.length) {
       payTo.forEach(item => {
         if (!this.isValidOutput(item)) {
           throw new Error('Output format error.')
         }
-        amount += Math.ceil(item.amount)
         tx.to(item.address, item.amount)
       })
     }
@@ -1080,7 +1077,6 @@ export class HdWallet {
 
     return {
       tx,
-      amount,
     }
   }
 

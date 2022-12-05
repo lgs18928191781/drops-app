@@ -262,10 +262,10 @@ function drawePayCode() {
           params: [
             {
               value: ethers.utils.hexValue(
-                new Decimal(getOrderAmount.amount).mul(Math.pow(10, 8)).toString()
+                new Decimal(getOrderAmount.amount).mul(Math.pow(10, 18)).toString()
               ),
-              to: import.meta.env.VITE_ETH_Address,
-              from: '0xAB080995048289E755Ac42011660ce6DE548Cca1',
+              to: props.url,
+              from: useStore.user?.ethAddress,
             },
           ],
         })

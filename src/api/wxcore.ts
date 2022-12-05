@@ -7,12 +7,12 @@ import { getToken, getUserName, useUserStore } from '@/stores/user'
 const Wxcore = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/wxcore`, {
   header: () => {
     const userStore = useUserStore()
-    debugger
     if (userStore.isAuthorized) {
       return {
         accessKey: userStore.user!.token,
         userName: userStore.userName!,
         timestamp: new Date().getTime(),
+        metaId: userStore.user!.metaId,
       }
     } else {
       return {}
@@ -145,4 +145,23 @@ export const PayETHByME = (params: {
   from_coin_address: string
 }): Promise<GetOrderStatusRes> => {
   return Wxcore.post(`/me/coin/pay`)
+}
+
+export const CreatOrder = (params: {
+  address: string
+  count: number
+  from: string
+  goods_name: string
+  metaid: string
+  pay_type: number
+  product_type: 100 | 200 // 商品订单类型：100-ME, 200-Legal_NFT
+  quit_url: string
+  types: number
+  uuid?: string
+  open_id?: string
+  from_coin_address?: string
+  coupon_id?: string
+  description?: string
+}): Promise<GetOrderStatusRes> => {
+  return Wxcore.post(`/product/order`, params)
 }

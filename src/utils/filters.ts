@@ -67,7 +67,7 @@ export function metafile(metafile: string, width = 235, type: 'metafile' | 'meta
   if (typeof metafile !== 'string') return ''
   if (metafile.indexOf('http://') !== -1 || metafile.indexOf('https://') !== -1) return metafile
   metafile = metafile.replace('metafile://', '')
-  metafile = metafile.replace('sensible://', 'sensible/')
+  metafile = metafile.replace('metacontract://', 'metacontract/')
   if (metafile === '') return ''
   let path = ''
   if (metafile.indexOf('ipfs://') !== -1) {

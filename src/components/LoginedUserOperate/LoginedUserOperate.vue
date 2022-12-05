@@ -263,18 +263,19 @@
         </template>
       </div>
     </div>
+    <!-- ME充值 -->
+    <RechargeMeVue v-model="isShowMERecharge" @close="isShowWallet = true" />
+
+    <!-- NFTlist -->
+    <NFTLlistVue
+      v-model="seriesNFTList.visible"
+      :chain="chains.find(item => item.value === currentChain)?.value"
+      :codehash="seriesNFTList.codehash"
+      :genesis="seriesNFTList.genesis"
+      :seriesName="seriesNFTList.seriesName"
+      @close="isShowWallet = true"
+    />
   </ElDrawer>
-
-  <NFTLlistVue
-    v-model="seriesNFTList.visible"
-    :chain="chains.find(item => item.value === currentChain)?.value"
-    :codehash="seriesNFTList.codehash"
-    :genesis="seriesNFTList.genesis"
-    :seriesName="seriesNFTList.seriesName"
-    @close="isShowWallet = true"
-  />
-
-  <RechargeMeVue v-model="isShowMERecharge" @close="isShowWallet = true" />
 </template>
 
 <script setup lang="ts">

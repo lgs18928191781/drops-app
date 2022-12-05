@@ -48,8 +48,15 @@ declare interface TabItem {
   value: any
 }
 
+declare interface BaseNFT {
+  cover: string
+  genesis: string
+  codehash: string
+  tokenIndex: string
+  chain: string
+}
+
 declare interface NFT {
-  uuid?: string
   cover: string
   backCover?: string
   classify: string
@@ -87,10 +94,13 @@ declare interface NFT {
 }
 
 declare interface ExchangeRate {
-  cnyRate: number
-  usdtRate: number
-  feeRate: number
-  message: string
+  symbol: string
+  price: {
+    CNY: string
+    USD: string
+  }
+  remark: string
+  updateTime: number
 }
 
 declare interface Page {
@@ -290,78 +300,7 @@ declare interface UserNFTItem {
   nftCodehash: string
   nftDataStr: string
   nftDesc: string
-  nftDetailItemList: {
-    flag: string
-    nftAttachment: string
-    nftAttachmentType: string
-    nftBackIcon: string
-    nftBalance: number
-    nftCanSellTimestamp: number
-    nftCertificationType: number
-    nftChargeUnit: string
-    nftClassifyList: string
-    nftCodehash: string
-    nftCurrentAuctionBidTxId: string
-    nftCurrentAuctionCreateTxId: string
-    nftCurrentAuctionState: number
-    nftCurrentBidPrice: string
-    nftCurrentBidPriceInt: number
-    nftDataStr: string
-    nftDesc: string
-    nftDonateCount: number
-    nftDonateValue: number
-    nftEndTimeStamp: string
-    nftGenesis: string
-    nftGenesisCertificationName: string
-    nftGenesisCertificationType: number
-    nftGenesisTxId: string
-    nftHasCompound: boolean
-    nftHasDonate: boolean
-    nftHasLike: boolean
-    nftIcon: string
-    nftIsFirstSell: boolean
-    nftIsLegal: boolean
-    nftIsOrderLock: boolean
-    nftIsReady: boolean
-    nftIssueAddress: string
-    nftIssueAvatarTxId: string
-    nftIssueAvatarType: string
-    nftIssueMetaId: string
-    nftIssueMetaTxId: string
-    nftIssueVersion: string
-    nftIssuer: string
-    nftLegalPrice: number
-    nftLegalSymbol: string
-    nftLegalUuid: string
-    nftLikeCount: number
-    nftMinBidIncrease: string
-    nftMinBidIncreaseInt: number
-    nftName: string
-    nftOwnerAddress: string
-    nftOwnerAvatarTxId: string
-    nftOwnerAvatarType: string
-    nftOwnerMetaId: string
-    nftOwnerName: string
-    nftPart: string
-    nftPartBase: string
-    nftPrice: number
-    nftSatoshi: number
-    nftSellContractTxId: string
-    nftSellDesc: string
-    nftSellState: number
-    nftSellTxId: string
-    nftSensibleId: string
-    nftSeriesName: string
-    nftSpecialLegalCnyPrice: number
-    nftStartingPrice: string
-    nftStartingPriceInt: number
-    nftSymbol: string
-    nftTimestamp: number
-    nftTokenId: string
-    nftTokenIndex: string
-    nftTotalSupply: number
-    nftWebsite: string
-  }[]
+  nftDetailItemList: GenesisNFTItem[]
   nftGenesis: string
   nftGenesisTxId: string
   nftGenesisType: string
@@ -455,4 +394,5 @@ declare interface GenesisNFTItem {
   nftTokenIndex: string
   nftTotalSupply: number
   nftWebsite: string
+  nftChain: string
 }

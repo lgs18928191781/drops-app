@@ -106,7 +106,7 @@ export const GetMyMEBalance = (params: { address: string }): Promise<GetMyMEBala
   return V3.post('/api/me/user/myMe', params)
 }
 
-export const GetMeRate = (params: { meta_id: string }): Promise<GetMeRateRes> => {
+export const GetMeRate = (params: { meta_id: string; coin: string }): Promise<GetMeRateRes> => {
   return V3.get('/api/me/user/getRare', { params })
 }
 

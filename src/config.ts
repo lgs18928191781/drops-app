@@ -122,7 +122,7 @@ export const payPlatformList: PayPlatformItem[] = [
   {
     icon: ETHIcon,
     name: () => {
-      return 'ETH'
+      return import.meta.env.VITE_ETH_CHAIN + i18n.global.t('Pay')
     },
     platform: PayPlatform.ETH,
     background: '#108EE9',
