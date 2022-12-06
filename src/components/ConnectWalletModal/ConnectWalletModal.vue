@@ -658,7 +658,7 @@ async function connectWalletConnect() {
   }
 
   const res = await connector.signPersonalMessage([
-    ethers.utils.keccak256(ethers.utils.toUtf8Bytes(accounts[0])).slice(2, -1)
+    ethers.utils.keccak256(ethers.utils.toUtf8Bytes(accounts[0])).slice(2, -1),
     accounts[0],
   ])
   if (res) {
