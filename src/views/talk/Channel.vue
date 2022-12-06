@@ -6,9 +6,7 @@
       <ChannelHeader />
 
       <div class="pt-12 pb-17.5 h-screen lg:relative w-full bg-dark-200 lg:pt-15 lg:pb-20">
-        <ChannelWelcome v-if="talk.isActiveChannelTheVoid" />
-        <ChannelSettings v-else-if="talk.isActiveChannelTheVoid" />
-        <ChannelContent v-else />
+        <router-view></router-view>
       </div>
 
       <Transition name="slide">
@@ -32,15 +30,10 @@
 import ChannelHeader from './components/ChannelHeader.vue'
 import CommunityInfo from './components/CommunityInfo.vue'
 import ChannelMemberList from './components/ChannelMemberList.vue'
-import ChannelContent from './components/ChannelContent.vue'
-import ChannelSettings from './components/ChannelSettings.vue'
-import ChannelWelcome from './components/ChannelWelcome.vue'
 import DragonBall from './components/DragonBall.vue'
-import { nextTick, onBeforeUnmount, watch } from 'vue'
+import { onBeforeUnmount, watch } from 'vue'
 import { useTalkStore } from '@/stores/talk'
 import { useRoute } from 'vue-router'
-import { useUserStore } from '@/stores/user'
-import { GroupChannelType } from '@/enum'
 import { useLayoutStore } from '@/stores/layout'
 import PasswordModal from './components/modals/PasswordModal.vue'
 import InviteModal from './components/modals/InviteModal.vue'
@@ -48,71 +41,18 @@ import AcceptInviteModal from './components/modals/AcceptInviteModal.vue'
 import RedPacketOpenModal from './components/modals/red-packet/Open.vue'
 
 import LoadingCover from './components/modals/LoadingCover.vue'
-import { verifyPassword } from '@/utils/talk'
 
 const talk = useTalkStore()
 const route = useRoute()
-const userStore = useUserStore()
 const layout = useLayoutStore()
 
-const { communityId, channelId } = route.params
-const selfMetaId = userStore.user!.metaId
-talk.initChannel(communityId as string, channelId as string).then(async initRes => {
-  if (['redirect', 'pending'].includes(initRes)) return
+const { communityId } = route.params
 
-  // 重置频道凭证
-  talk.hasActiveChannelConsent = false
-  await nextTick()
-  if (!talk.canAccessActiveChannel) {
-    switch (talk.activeGroupChannelType) {
-      case GroupChannelType.Password:
-        // 先检查是否本地有存储该频道密码
-        const _passwordLookup = localStorage.getItem(`channelPasswords-${selfMetaId}`)
-        const passwordLookup = _passwordLookup ? JSON.parse(_passwordLookup) : {}
-        const hashedPassword = passwordLookup[talk.activeChannelId]
-
-        // 如果没有，则弹出密码输入框
-        if (!hashedPassword) {
-          layout.isShowPasswordModal = true
-          return
-        }
-
-        // 检查密码是否正确
-        const channelKey = talk.activeChannel.roomStatus
-        const creatorMetaId = talk.activeChannel.createUserMetaId
-        if (verifyPassword(channelKey, hashedPassword, creatorMetaId)) {
-          talk.hasActiveChannelConsent = true
-        } else {
-          layout.isShowPasswordModal = true
-        }
-
-        return
-
-      /**
-       * todo 检查NFT
-       */
-      case GroupChannelType.NFT:
-        talk.hasActiveChannelConsent = true
-        return
-    }
-  }
-
-  await talk.initChannelMessages(selfMetaId)
-})
-
-watch(
-  () => talk.canAccessActiveChannel,
-  async canAccess => {
-    if (canAccess) {
-      await talk.initChannelMessages(selfMetaId)
-    }
-  }
-)
+talk.initCommunity(communityId as string)
 
 onBeforeUnmount(() => {
-  talk.resetCurrentChannel()
-  // talk.saveReadPointers()
-  // talk.closeReadPointerTimer()
+  talk.saveReadPointers()
+  talk.closeReadPointerTimer()
 })
 </script>
 

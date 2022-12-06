@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import 'lazysizes'
+// import 'lazysizes'
 import { DB } from '@/utils/db'
 import { metafile } from '@/utils/filters'
 

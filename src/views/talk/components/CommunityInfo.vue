@@ -14,10 +14,10 @@
         <div class="h-full bg-dark-100 grow lg:w-60 flex flex-col justify-between items-stretch">
           <div class="flex flex-col overflow-y-hidden">
             <!-- 社区封面 -->
-            <div class="w-full aspect-[4/3]">
+            <div class="w-full aspect-[4/3] mb-1">
               <Image
                 :src="talk.activeCommunity?.cover"
-                :customClass="'aspect-[4/3] w-full object-contain object-center'"
+                :customClass="'object-contain object-center'"
                 v-if="talk.activeCommunity?.cover"
               />
             </div>
@@ -25,7 +25,7 @@
             <!-- 社区信息 -->
             <div class="px-4.5 overflow-y-auto">
               <div
-                class="w-full mt-4.5 text-lg text-dark-800 truncate"
+                class="w-full mt-4 text-lg text-dark-800 truncate"
                 :title="talk.activeCommunity?.name"
               >
                 {{ talk.activeCommunity?.name }}
@@ -52,7 +52,7 @@
               </div>
 
               <div
-                class="pt-8 pb-4 flex flex-col gap-y-3  border-t border-solid border-dark-200 pt-4.5 mt-4.5"
+                class="py-8 flex flex-col gap-y-3  border-t border-solid border-dark-200 pt-4.5 mt-4.5"
               >
                 <!-- 管理频道 -->
                 <!-- <template v-if="talk.isAdmin()"> -->
@@ -219,14 +219,12 @@ import CreatePublicChannelModal from './modals/CreatePublicChannelModal.vue'
 import CreateConsensualChannelModal from './modals/CreateConsensualChannelModal.vue'
 import { useLayoutStore } from '@/stores/layout'
 import { useTalkStore } from '@/stores/talk'
-import { useUserStore } from '@/stores/user'
 import { GroupChannelType } from '@/enum'
 
 const router = useRouter()
 
 const layout = useLayoutStore()
 const talk = useTalkStore()
-const userStore = useUserStore()
 
 const popInvite = (channelId: string) => {
   talk.inviteLink = `${location.origin}/talk/channels/${talk.activeCommunityId}/${channelId}`

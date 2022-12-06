@@ -36,6 +36,8 @@ export const useTalkStore = defineStore('talk', {
 
       hasActiveChannelConsent: false, // 是否持有当前频道的共识
 
+      communityStatus: 'loading',
+
       inviteLink: '', // 邀请链接
     }
   },
@@ -189,98 +191,106 @@ export const useTalkStore = defineStore('talk', {
   },
 
   actions: {
-    async initChannel(routeCommunityId: string, routeChannelId: string) {
-      // 重置
-      this.members = []
-
-      const selfMetaId = this.selfMetaId
+    async initCommunity(routeCommunityId: string) {
+      this.communityStatus = 'loading'
       const isAtMe = routeCommunityId === '@me'
 
-      if (!isAtMe) {
-        const fetchMembers = async () => {
+      if (routeCommunityId && routeCommunityId !== this.activeCommunityId) {
+        this.members = []
+        if (!isAtMe) {
           this.members = await getCommunityMembers(routeCommunityId)
         }
-        await fetchMembers()
 
-        // 判断是否已是社区成员，如果不是，则尝试加入
-        const isMember = this.members.some((member: any) => member.metaId === selfMetaId)
+        this.activeCommunityId = routeCommunityId
+
+        const fetchChannels = async () => {
+          const channels = isAtMe
+            ? await getAtMeChannels({
+                metaId: this.selfMetaId,
+              })
+            : await getChannels({
+                communityId: routeCommunityId,
+              })
+
+          this.activeCommunity.channels = channels
+
+          // 写入存储
+          this.initCommunityChannelIds()
+          // 只保存频道id
+          const channelIds = channels.map((channel: any) => channel.id)
+          this.communityChannelIds[routeCommunityId] = channelIds
+          localStorage.setItem(
+            'communityChannels-' + this.selfMetaId,
+            JSON.stringify(this.communityChannelIds)
+          )
+        }
+        await fetchChannels()
+      }
+
+      this.updateReadPointers()
+
+      // 判断是否已是社区成员，如果不是，则尝试加入
+      if (!isAtMe) {
+        const isMember = this.members.some((member: any) => member.metaId === this.selfMetaId)
         if (!isMember) {
           // 拉取单个社区信息
           const invitingCommunity = await getOneCommunity(routeCommunityId)
           this.communities.push(invitingCommunity)
+
+          const layout = useLayoutStore()
+          layout.isShowAcceptInviteModal = true
+
+          this.communityStatus = 'pending'
+          return
         }
+      }
+
+      this.communityStatus = 'ready'
+      return
+    },
+
+    async initChannel(routeCommunityId: string, routeChannelId: string) {
+      // 如果是私聊，而且路由中的频道 ID 不存在，则新建会话
+      if (
+        routeCommunityId === '@me' &&
+        routeChannelId &&
+        !this.activeCommunityChannels.some((channel: any) => channel.id === routeChannelId)
+      ) {
+        const { data } = await GetUserInfo(routeChannelId)
+        const newSession = {
+          id: routeChannelId,
+          name: data.name,
+          publicKeyStr: data.pubKey,
+          lastMessage: '',
+          lastMessageTimestamp: null,
+          pastMessages: [],
+          newMessages: [],
+        }
+        this.activeCommunityChannels.unshift(newSession)
       }
 
       // 如果没有指定频道，则先从存储中尝试读取该社区的最后阅读频道
       const latestChannelsRecords =
-        localStorage.getItem('latestChannels-' + selfMetaId) || JSON.stringify({})
+        localStorage.getItem('latestChannels-' + this.selfMetaId) || JSON.stringify({})
       const latestChannels = JSON.parse(latestChannelsRecords)
       if (!routeChannelId) {
-        const channelId = latestChannels[routeCommunityId] || 'the-void'
+        let channelId
+        if (routeCommunityId === '@me') {
+          channelId = this.activeCommunityChannels[0].id
+        } else {
+          channelId = latestChannels[routeCommunityId] || 'the-void'
+        }
 
         router.push(`/talk/channels/${routeCommunityId}/${channelId}`)
         return 'redirect'
       }
 
-      const fetchChannels = async () => {
-        const route = useRoute()
-
-        const channels = isAtMe
-          ? await getAtMeChannels({ metaId: selfMetaId })
-          : await getChannels({ communityId: routeCommunityId })
-        // 如果是私聊，而且路由中的频道 ID 不存在，则新建会话
-        if (isAtMe && !channels.some((channel: any) => channel.id === routeChannelId)) {
-          const { data } = await GetUserInfo(routeChannelId)
-          const name = route.query.name || '新用户'
-          const newSession = {
-            id: routeChannelId,
-            name: data.name,
-            publicKeyStr: data.pubKey,
-            lastMessage: '',
-            lastMessageTimestamp: null,
-            pastMessages: [],
-            newMessages: [],
-          }
-          channels.unshift(newSession)
-        }
-
-        this.activeCommunityId = routeCommunityId
-        if (routeChannelId) {
-          this.activeChannelId = routeChannelId
-        }
-        this.activeCommunity.channels = channels
-
-        // 写入存储
-        this.initCommunityChannelIds()
-        // 只保存频道id
-        const channelIds = channels.map((channel: any) => channel.id)
-        this.communityChannelIds[routeCommunityId] = channelIds
-        localStorage.setItem(
-          'communityChannels-' + selfMetaId,
-          JSON.stringify(this.communityChannelIds)
-        )
-      }
-      await fetchChannels()
-
       // 将最后阅读频道存储到本地
       latestChannels[routeCommunityId] = routeChannelId
-      localStorage.setItem('latestChannels-' + selfMetaId, JSON.stringify(latestChannels))
+      localStorage.setItem('latestChannels-' + this.selfMetaId, JSON.stringify(latestChannels))
 
-      this.updateReadPointers()
-
-      if (!isAtMe) {
-        // 判断是否已是社区成员，如果不是，则尝试加入
-        const isMember = this.members.some((member: any) => member.metaId === selfMetaId)
-        if (!isMember) {
-          // 拉取单个社区信息
-          // TODO:
-          const layout = useLayoutStore()
-          layout.isShowAcceptInviteModal = true
-
-          return 'pending'
-        }
-      }
-      return 'success'
+      this.activeChannelId = routeChannelId
+      return 'ready'
     },
 
     initCommunityChannelIds() {
@@ -296,7 +306,6 @@ export const useTalkStore = defineStore('talk', {
 
     initReadPointers() {
       if (this.channelsReadPointers || !this.selfMetaId) return
-      console.log('initting pointers')
 
       const readPointers = localStorage.getItem('readPointers-' + this.selfMetaId)
       if (readPointers && JSON.parse(readPointers)) {
@@ -338,7 +347,9 @@ export const useTalkStore = defineStore('talk', {
       localStorage.setItem('readPointers-' + selfMetaId, JSON.stringify(this.channelsReadPointers))
     },
 
-    async initChannelMessages(selfMetaId: string) {
+    async initChannelMessages(selfMetaId?: string) {
+      if (!selfMetaId) selfMetaId = this.selfMetaId
+
       if (!this.activeChannel) return
 
       const layoutStore = useLayoutStore()
@@ -621,7 +632,6 @@ export const useTalkStore = defineStore('talk', {
 
     resetCurrentChannel() {
       this.activeChannelId = ''
-      this.activeCommunityId = ''
     },
   },
 })

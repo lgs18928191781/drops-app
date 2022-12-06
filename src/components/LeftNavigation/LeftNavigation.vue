@@ -166,6 +166,7 @@ watch(
 )
 
 onBeforeUnmount(() => {
+  console.log('left?')
   talk.closeWebSocket()
   talk.saveReadPointers()
   talk.closeReadPointerTimer()

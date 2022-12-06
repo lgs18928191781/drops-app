@@ -22,11 +22,11 @@
           {{
             talkStore.isActiveChannelReserved
               ? talkStore.activeCommunity?.name
-              : talkStore.activeChannel?.name
+              : talkStore.activeChannel?.name || talkStore.activeCommunity?.name
           }}
         </div>
 
-        <template v-if="!talkStore.isActiveChannelReserved">
+        <template v-if="talkStore.activeChannel?.name && !talkStore.isActiveChannelReserved">
           <div class="border-r border-solid border-dark-300 hidden lg:block"></div>
           <div
             class="text-base leading-tight no-wrap grow whitespace-nowrap text-dark-300 px-2 hidden lg:block capitalize"

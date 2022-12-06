@@ -110,10 +110,16 @@ export const router = createRouter({
     },
 
     {
-      path: '/talk/channels/:communityId/:channelId?',
-      name: 'talkChannel',
+      path: '/talk/channels/:communityId',
       component: () => import('@/views/talk/Channel.vue'),
       meta: { isAuth: true },
+      children: [
+        {
+          path: ':channelId',
+          name: 'talkChannel',
+          component: () => import('@/views/talk/components/ChannelBody.vue'),
+        },
+      ],
     },
     // {
     //   path: '/nftDetail/:genesisId/:codehash/:tokenIndex',
