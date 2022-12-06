@@ -246,5 +246,26 @@
   "quickPay": "Credit Card",
   "aliPay": "Alipay",
   "wechatpay": "Alipay",
-  "Pay": "Pay"
+  "Pay": "Pay",
+  "Setting": {
+    "title": "Settings",
+    "Uplink settings": "Uplink settings",
+    "Language": "Language",
+    "Theme": "Theme",
+    "Edit Profile": "Edit Profile"
+  },
+  "EditProfile": {
+    "intro": "Choose NFT as your avatar or username to show your personality",
+    "User Name": "User Name",
+    "MetaName": {
+      "drsc": "MetaName will take precedence as the username."
+    }
+  },
+  "UplinkSetting": {
+    "Uplink Payment Confirmation": "Uplink Payment Confirmation",
+    "ConfirmationIntro": "Once turned on, all winding operations require your confirmation.",
+    "Alert value setting": "Alert value setting",
+    "AlertValueIntro": "For the safety of your ME assets, uplink operations that exceed the alert value still require your confirmation."
+  },
+  "Invalid Value": "Invalid Value"
 }

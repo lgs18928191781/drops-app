@@ -1,0 +1,98 @@
+.intro {
+    color: #606266;
+    font-size: 16px;
+    text-align: center;
+}
+
+.avatar {
+    margin-top: 30px;
+    text-align: center;
+
+    .avatar-warp {
+        display: inline-block;
+        position: relative;
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border: 2px solid var(--main-font-color);
+            box-shadow: 3px 3px 0 var(--main-font-color);
+        }
+
+        .edit {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--main-font-color);
+            background: var(--el-color-primary);
+            border-radius: 50%;
+            cursor: pointer;
+
+            .icon {
+                width: 16px;
+                height: 16px;
+            }
+        }
+    }
+}
+
+.el-form {
+    margin-top: 30px;
+}
+
+.form-item {
+    width: 100%;
+
+    .label {
+        font-size: 18px;
+
+        &.active {
+            background: linear-gradient(255deg, #FFC051 0%, #F700FB 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+
+        svg {
+            width: 14px;
+            height: 14px;
+            margin-left: 6px;
+        }
+    }
+
+    .el-input {}
+
+    .drsc {
+        color: #909399;
+        font-size: 12px;
+        margin-left: 11px;
+    }
+
+
+}
+
+.operate {
+    width: 100%;
+    margin-top: 20px;
+
+    a {
+        padding: 20px;
+        cursor: pointer;
+        background: var(--el-color-primary);
+
+        .icon {
+            width: 24px;
+            height: 24px;
+            font-weight: bold;
+
+
+            :deep(use) {
+                stroke: #000;
+                stroke-width: 2px;
+            }
+        }
+    }
+}

@@ -1,6 +1,6 @@
 <template>
   <TransitionRoot :show="modelValue">
-    <Dialog @close="tryClose" class="relative z-50">
+    <Dialog @close="tryClose" class="relative z-[9999]">
       <TransitionChild
         as="template"
         enter="duration-300 ease-out"

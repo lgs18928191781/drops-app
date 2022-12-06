@@ -1,5 +1,44 @@
 <template>
-  <div
+  <ElDrawer
+    :model-value="true"
+    :show-close="false"
+    :with-header="false"
+    :size="'360px'"
+    :append-to-body="true"
+    :lock-scroll="true"
+    custom-class="none-padding"
+  >
+    <header class="flex flex-align-center">
+      <div class="title flex1">
+        {{ $t('Setting.title') }}
+      </div>
+      <a class="close flex flex-align-center flex-pack-center">
+        <Icon name="x_mark" />
+      </a>
+    </header>
+
+    <div class="list">
+      <div class="item flex flex-align-center">
+        <span class="icon-warp flex flex-align-center flex-pack-center">
+          <UserAvatar :meta-id="userStore.user!.metaId" />
+        </span>
+        <span class="flex1 name">{{ $t('Setting.Edit Profile') }}</span>
+        <Icon class="right" name="down" />
+      </div>
+      <div class="item flex flex-align-center" v-for="item in list" :key="item.icon">
+        <span class="icon-warp flex flex-align-center flex-pack-center">
+          <Icon :name="item.icon" />
+        </span>
+        <span class="flex1 name">{{ item.name }}</span>
+        <span class="value">{{ item.value() }}</span>
+        <Icon class="right" name="down" />
+      </div>
+    </div>
+
+    <!-- <EditProfileVue /> -->
+    <UplinkSettingVue />
+  </ElDrawer>
+  <!-- <div
     class="fixed inset-0 h-screen w-screen z-[60] bg-dark-100 flex justify-center items-center select-none"
   >
     <div
@@ -80,14 +119,19 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </template>
 <script lang="ts" setup>
 import FlagEn from '@/assets/images/flag_en.png?url'
 import FlagCn from '@/assets/images/flag_cn.png?url'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
+import { useUserStore } from '@/stores/user'
+import EditProfileVue from './EditProfile.vue'
+import UplinkSettingVue from './UplinkSetting.vue'
+
 const i18n = useI18n()
+const userStore = useUserStore()
 
 const switchLanguage = (lang: string) => {
   i18n.locale.value = lang
@@ -117,6 +161,30 @@ const themes = ref([
   },
 ])
 
+const list = [
+  {
+    name: i18n.t('Setting.Uplink settings'),
+    icon: 'link',
+    value: () => {
+      return ''
+    },
+  },
+  {
+    name: i18n.t('Setting.Language'),
+    icon: 'i18n',
+    value: () => {
+      return i18n.locale.value.toUpperCase()
+    },
+  },
+  {
+    name: i18n.t('Setting.Theme'),
+    icon: 'theme',
+    value: () => {
+      return 'White'
+    },
+  },
+]
+
 const currentLanguage = ref(i18n.locale.value)
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped src="./SettingsModal.scss"></style>
