@@ -34,7 +34,7 @@
 
 
     &:hover {
-        background: var(--el-color-primary);
+        // background: var(--el-color-primary);
     }
 
 
@@ -42,6 +42,10 @@
         width: 24px;
         height: 24px;
         margin-right: 14px;
+    }
+
+    .name {
+        color: var(--main-font-color);
     }
 }
 
@@ -387,8 +391,22 @@
                 margin-right: 12px;
                 display: inline-block;
 
+                :deep(.cover) {
+                    img {
+                        transition: 0.5 all;
+                    }
+                }
+
                 &:nth-child(3n) {
                     margin-right: 0;
+                }
+
+                &:hover {
+                    :deep(.cover) {
+                        img {
+                            transform: scale(1.05);
+                        }
+                    }
                 }
             }
         }

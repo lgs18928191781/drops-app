@@ -1,9 +1,12 @@
 <template>
-  <div class="flex items-center my-2.5 lg:my-4">
+  <div
+    class="flex items-center py-1 lg:py-2 group cursor-pointer hover:bg-dark-200 px-4 -mx-4"
+    @click="messageThisGuy"
+  >
     <UserAvatar :type="member.avatarType" :metaId="member.avatarTxId" class="w-9 h-9 shrink-0" />
     <div class="ml-2 flex flex-col">
-      <div class="text-sm text-dark-800 truncate w-36">
-        {{ member.name }}
+      <div class="text-sm text-dark-800 truncate w-36 group-hover:underline flex space-x-2">
+        <div class="">{{ member.name }}</div>
       </div>
       <div class="text-xxs text-dark-300" v-if="member.metaId">
         MetaID: {{ member.metaId.substring(0, 6) }}
@@ -12,24 +15,28 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { useTalkStore } from '@/stores/talk'
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 
 const props = defineProps(['member'])
+const talk = useTalkStore()
+const router = useRouter()
 
-const randomNameColor = computed(() => {
-  const colors = [
-    'text-blue-500',
-    'text-green-500',
-    'text-yellow-500',
-    'text-red-500',
-    'text-indigo-500',
-    'text-amber-500',
-  ]
-  // 将用户名转换为数字
-  const name = props.member.name
-  const nameCode = name.split('').reduce((acc: number, cur: any) => acc + cur.charCodeAt(0), 0)
-
-  return colors[nameCode % colors.length]
+const isYou = computed(() => {
+  return props.member.metaId === talk.selfMetaId
 })
+
+const popMemberMenu = () => {
+  if (isYou.value) return
+}
+
+const messageThisGuy = () => {
+  // 如果是自己，就不要发消息了
+  if (isYou.value) return
+
+  const memberMetaId = props.member.metaId
+  router.push('/talk/channels/@me/' + memberMetaId)
+}
 </script>
 <style lang=""></style>

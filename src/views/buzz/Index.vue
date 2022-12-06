@@ -39,8 +39,6 @@
       <GuideVue v-if="myFollowNum > 0 && myFollowNum < 10" />
     </template>
   </BuzzListVue>
-
-  <!-- <NFTModalVue /> -->
 </template>
 
 <script setup lang="ts">
@@ -56,7 +54,6 @@ import { getOneBuzz } from '@/api/buzz'
 import CommunityVue from './components/recommend/Community.vue'
 import FollowVue from './components/recommend/Follow.vue'
 import GuideVue from './components/recommend/Guide.vue'
-import NFTModalVue from '@/components/NFTModal/NFTModal.vue'
 
 // interface Props {}
 // const props = withDefaults(defineProps<Props>(), {})

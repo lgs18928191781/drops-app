@@ -16,13 +16,13 @@
       >
         <router-link
           :to="item.path"
-          class="flex items-center justify-center group"
+          class="flex items-center justify-center group relative"
           :class="item.extraClass"
           :key="index"
         >
           <div
             class="absolute left-0 h-full flex items-center top-0"
-            v-if="item.icon === 'talk' && talkStore.hasUnreadMessagesOfCommunity('@me')"
+            v-if="item.icon === 'talk' && talk.hasUnreadMessagesOfCommunity('@me')"
           >
             <span
               class="w-1.5 h-3 bg-dark-800 rounded-r-md lg:group-hover:h-6 transition-all duration-150"
@@ -56,21 +56,18 @@
         offset="5"
         placement="right"
         :disabled="isMobile"
-        v-for="(community, index) in talkStore.realCommunities"
+        v-for="(community, index) in talk.realCommunities"
       >
         <router-link
           :to="
-            '/talk/channels/' +
-              community.id +
-              '/' +
-              talkStore.communityLastReadChannelId(community.id)
+            '/talk/channels/' + community.id + '/' + talk.communityLastReadChannelId(community.id)
           "
           class="flex items-center justify-center relative w-full group"
           :key="index"
         >
           <div
             class="absolute left-0 h-full flex items-center top-0"
-            v-if="talkStore.hasUnreadMessagesOfCommunity(community.id)"
+            v-if="talk.hasUnreadMessagesOfCommunity(community.id)"
           >
             <span
               class="w-1.5 h-3 bg-dark-800 rounded-r-md lg:group-hover:h-6 transition-all duration-150"
@@ -78,7 +75,7 @@
           </div>
           <span
             class="absolute left-0 bg-dark-800 w-1.5 h-8 rounded-r-md"
-            v-if="talkStore.activeCommunityId === community.id"
+            v-if="talk.activeCommunityId === community.id"
           ></span>
 
           <Image
@@ -112,10 +109,10 @@ import { useTalkStore } from '@/stores/talk'
 import { useUserStore } from '@/stores/user'
 import { isMobile } from '@/stores/root'
 import CreateCommunityModal from '@/views/talk/components/modals/CreateCommunityModal.vue'
-import { onBeforeUnmount } from 'vue'
+import { onBeforeUnmount, watch } from 'vue'
 import { useRoute } from 'vue-router'
 const layout = useLayoutStore()
-const talkStore = useTalkStore()
+const talk = useTalkStore()
 const userStore = useUserStore()
 const route = useRoute()
 
@@ -123,8 +120,8 @@ const fetchCommunities = async () => {
   const selfMetaId = userStore.user?.metaId
   if (!selfMetaId) return
   const communities = await getCommunities({ metaId: selfMetaId })
-  talkStore.$patch(state => {
-    state.communities = [...communities, talkStore.atMeCommunity]
+  talk.$patch(state => {
+    state.communities = [...communities, talk.atMeCommunity]
   })
 }
 
@@ -146,11 +143,32 @@ const apps = [
 
 if (userStore.isAuthorized) {
   fetchCommunities()
-  talkStore.initWebSocket()
+  talk.initCommunityChannelIds()
+  talk.initReadPointers()
+  talk.initWebSocket()
 }
 
+watch(
+  () => userStore.isAuthorized,
+  isAuthorized => {
+    if (isAuthorized) {
+      fetchCommunities()
+      talk.initCommunityChannelIds()
+      talk.initReadPointers()
+      talk.initWebSocket()
+    } else {
+      talk.reset()
+      talk.closeWebSocket()
+      talk.saveReadPointers()
+      talk.closeReadPointerTimer()
+    }
+  }
+)
+
 onBeforeUnmount(() => {
-  talkStore.closeWebSocket()
+  talk.closeWebSocket()
+  talk.saveReadPointers()
+  talk.closeReadPointerTimer()
 })
 </script>
 

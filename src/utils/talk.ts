@@ -461,3 +461,25 @@ export const isImage = (file: File) => {
     type === 'image/jpeg' || type === 'image/png' || type === 'image/gif' || type === 'image/jpg'
   )
 }
+
+export const openRedPacket = async (redPacket: any, sdk: SDK) => {
+  const talkStore = useTalkStore()
+  const dataCarrier = {
+    createTime: new Date().getTime(),
+    subId: redPacket.subId,
+    code: redPacket.code,
+    type: redPacket.type,
+    used: redPacket.used,
+  }
+
+  // 2. 构建节点参数
+  const node = {
+    nodeName: NodeName.SimpleGroupChat,
+    encrypt: IsEncrypt.No,
+    payCurrency: 'usd',
+    dataType: 'application/json',
+    data: JSON.stringify(dataCarrier),
+  }
+
+  await sdk.createBrfcChildNode(node)
+}

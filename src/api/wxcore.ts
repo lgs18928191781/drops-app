@@ -2,13 +2,21 @@ import { PayPlatform } from '@/enum'
 import HttpRequest from 'request-sdk'
 import { alertCatchError } from '@/utils/util'
 import { ElMessage } from 'element-plus'
-import { getToken, getUserName } from '@/stores/user'
+import { getToken, getUserName, useUserStore } from '@/stores/user'
 // @ts-ignore
-const Wxcore = new HttpRequest(`${import.meta.env.VITE_WXCOREAPI}/wxcore`, {
-  header: {
-    accessKey: () => getToken(),
-    userName: () => getUserName(),
-    timestamp: () => new Date().getTime(),
+const Wxcore = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/wxcore`, {
+  header: () => {
+    const userStore = useUserStore()
+    if (userStore.isAuthorized) {
+      return {
+        accessKey: userStore.user!.token,
+        userName: userStore.userName!,
+        timestamp: new Date().getTime(),
+        metaId: userStore.user!.metaId,
+      }
+    } else {
+      return {}
+    }
   },
   errorHandel(error: any) {
     if (error.status === 401) {
@@ -19,7 +27,10 @@ const Wxcore = new HttpRequest(`${import.meta.env.VITE_WXCOREAPI}/wxcore`, {
       }
       return Promise.reject(error.response.data.data)
     } else if (error.response && error.response.data && error.response.data.data !== '') {
-      return Promise.reject(error.response.data.data)
+      return Promise.reject({
+        message: error.response.data.data,
+        code: error.response.data.code,
+      })
     } else {
       // 对响应错误做点什么
       return Promise.reject(error)
@@ -126,4 +137,31 @@ export const GetOrderStatus = (params: {
   payType: number
 }): Promise<GetOrderStatusRes> => {
   return Wxcore.get(`/common/order/${params.orderId}/${params.payType}`)
+}
+
+export const PayETHByME = (params: {
+  order_id: string
+  tx_hash: number
+  from_coin_address: string
+}): Promise<GetOrderStatusRes> => {
+  return Wxcore.post(`/me/coin/pay`)
+}
+
+export const CreatOrder = (params: {
+  address: string
+  count: number
+  from: string
+  goods_name: string
+  metaid: string
+  pay_type: number
+  product_type: 100 | 200 // 商品订单类型：100-ME, 200-Legal_NFT
+  quit_url: string
+  types: number
+  uuid?: string
+  open_id?: string
+  from_coin_address?: string
+  coupon_id?: string
+  description?: string
+}): Promise<GetOrderStatusRes> => {
+  return Wxcore.post(`/product/order`, params)
 }

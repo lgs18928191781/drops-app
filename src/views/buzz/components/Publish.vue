@@ -29,7 +29,9 @@
         </div>
       </div>
       <div class="attachment-warp" v-if="attachments.length > 0">
-        <div class="title">{{ $t('Buzz.publish.addImage') }}({{ attachments.length }}/9)</div>
+        <div class="title" v-if="typeof attachments[0] !== 'string'">
+          {{ $t('Buzz.publish.addImage') }}({{ attachments.length }}/9)
+        </div>
         <AttachmentVue :attachments="attachments" :is-edit="true" @remove="onRemoveAttachment" />
       </div>
 
@@ -40,7 +42,7 @@
               <ElPopover placement="bottom-start" width="300px" trigger="click">
                 <StickerVue
                   @input="params => (content = content + params.value)"
-                  :isHideNFT="respostBuzz.val ? true : false"
+                  :isHideNFT="attachments.length > 0"
                 />
                 <template #reference>
                   <a @click="item.fun()">
@@ -113,6 +115,9 @@
       </div>
     </div>
   </ElDialog>
+
+  <!-- nft -->
+  <NFTModalVue v-model="isShowNFTList" @change="chooseNFT" />
 </template>
 
 <script setup lang="ts">
@@ -129,10 +134,10 @@ import { useRouter } from 'vue-router'
 import { Mitt, MittEvent } from '@/utils/mitt'
 import { getOneBuzz } from '@/api/buzz'
 import QuoteVue from './Quote.vue'
-import { CreateNodeRes } from '@/utils/wallet/hd-wallet'
 import { GetHotTopics } from '@/api/aggregation'
+import NFTModalVue from '@/components/NFTModal/NFTModal.vue'
 
-const attachments: AttachmentItem[] = reactive([])
+const attachments: (AttachmentItem | string)[] = reactive([])
 const respostBuzz: { val: null | BuzzItem } = reactive({ val: null })
 const content = ref('')
 
@@ -155,21 +160,25 @@ const publishOperates = [
     icon: 'buzz_img',
     fun: () => {},
     disabled: () => {
-      return attachments.length >= 9
+      return (
+        attachments.length >= 9 || (attachments.length > 0 && typeof attachments[0] === 'string')
+      )
     },
   },
   {
     icon: 'music',
     fun: () => {},
     disabled: () => {
-      return attachments.length >= 9
+      return attachments.length > 0
     },
   },
   {
     icon: 'buzz_nft',
-    fun: () => {},
+    fun: () => {
+      isShowNFTList.value = true
+    },
     disabled: () => {
-      return false
+      return attachments.length > 0
     },
   },
   {
@@ -185,14 +194,17 @@ const publishOperates = [
 
 const attachmentType = computed(() => {
   if (attachments && attachments.length) {
-    if (attachments[0].fileType.indexOf('image/')) {
-      return 'image'
-    } else if (attachments[0].fileType.indexOf('auios/')) {
-      return 'auido'
-    } else if (attachments[0].fileType.indexOf('video/')) {
-      return 'video'
+    if (typeof attachments[0] === 'string') {
     } else {
-      return 'other'
+      if (attachments[0].fileType.indexOf('image/')) {
+        return 'image'
+      } else if (attachments[0].fileType.indexOf('auios/')) {
+        return 'auido'
+      } else if (attachments[0].fileType.indexOf('video/')) {
+        return 'video'
+      } else {
+        return 'other'
+      }
     }
   } else {
     return ''
@@ -201,6 +213,7 @@ const attachmentType = computed(() => {
 const isShowTopic = ref(false)
 const topics: GetHotTopicsResItem[] = reactive([])
 const topic = ref('')
+const isShowNFTList = ref(false)
 
 watch(
   () => layout.publishBuzzOption.repostTxId,
@@ -275,6 +288,14 @@ function confirmTopic() {
   isShowTopic.value = false
 }
 
+function chooseNFT(nft: BaseNFT) {
+  const sufix = <{ [key: string]: string }>{
+    mvc: 'metacontract',
+    goerli: 'goerli',
+  }
+  attachments.push(`${sufix[nft.chain]}://${nft.codehash}/${nft.genesis}/${nft.tokenIndex}`)
+}
+
 async function submit() {
   if (content.value === '' && attachments.length <= 0) {
     return ElMessage.error(i18n.t('Buzz.publish.empty'))
@@ -290,7 +311,7 @@ async function submit() {
         attachments: getAttachmentsMark(attachments),
         mention: [],
       }),
-      attachments,
+      attachments: attachments.length && typeof attachments[0] === 'string' ? [] : attachments,
     })
     .catch(error => {
       ElMessage.error(error.message)

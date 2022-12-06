@@ -97,6 +97,7 @@ export const router = createRouter({
     {
       path: '/talk',
       name: 'talk',
+      meta: { isAuth: true },
       redirect:
         '/talk/channels/123/88a92826842757cade6e84378df9db88526578c3bce7b8cb6348b7f1f9598d0a',
       // component: () => import('@/views/talk/Index.vue'),
@@ -105,18 +106,35 @@ export const router = createRouter({
       path: '/talk/channels/@me/:channelId?',
       name: 'talkAtMe',
       component: () => import('@/views/talk/AtMe.vue'),
+      meta: { isAuth: true },
     },
 
     {
       path: '/talk/channels/:communityId/:channelId?',
       name: 'talkChannel',
       component: () => import('@/views/talk/Channel.vue'),
+      meta: { isAuth: true },
     },
     // {
     //   path: '/nftDetail/:genesisId/:codehash/:tokenIndex',
     //   name: 'nftDetail',
     //   component: () => import('@/views/nft/NftDetail.vue'),
     // },
+
+    // pay
+    {
+      path: '/pay',
+      name: 'pay',
+      component: () => RouterView,
+      meta: { isHideHeader: true },
+      children: [
+        {
+          path: 'result',
+          name: 'payResult',
+          component: () => import('@/views/pay/Result.vue'),
+        },
+      ],
+    },
 
     // 404
     { path: '/404', name: '404', component: NotFoundPage },

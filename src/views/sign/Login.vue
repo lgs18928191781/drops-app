@@ -168,6 +168,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
             phone: phoneNum,
             rootAddress: walletInfo.rootAddress,
           })
+
           window.localStorage.setItem('password', encode(ruleForm.password))
           router.replace(rootStore.redirectUri)
         } catch (error) {

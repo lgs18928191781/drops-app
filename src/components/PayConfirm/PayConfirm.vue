@@ -33,16 +33,7 @@
         <div class="wechat-pay-success" v-if="payWechatSuccess">
           <div class="paySuccessWrap">
             <div class="top">
-              <img
-                :src="
-                  payPlatformList[payPlatformIndex].platform === PayPlatform.WechatPay
-                    ? wechatTitleIcon
-                    : payPlatformList[payPlatformIndex].platform === PayPlatform.AliPay
-                    ? alipayTitleIcon
-                    : sandPayTitleIcon
-                "
-                alt=""
-              />
+              <img :src="payPlatformList[payPlatformIndex].icon" alt="" />
               <span
                 :class="[
                   payPlatformList[payPlatformIndex].platform === PayPlatform.WechatPay
@@ -233,6 +224,8 @@
 
 
 
+
+
                 }}%)
               </div>
               <div class="amount">
@@ -243,6 +236,8 @@
               <div class="name flex1">
                 {{ $t('buyFeeTips2') }}({{
                   new Decimal(fee.val!.royaltyPercentage).mul(100).toNumber()
+
+
 
 
 
@@ -336,9 +331,8 @@ import { ElMessage, ElLoading, ElMessageBox } from 'element-plus'
 import { checkSdkStatus } from '@/utils/util'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
-import WechatPayIcon from '@/assets/svg/icon_wechat_pay.svg?url'
-import AliPayIcon from '@/assets/svg/icon_zfb_pay.svg?url'
-import SandPayIcon from '@/assets/svg/sandPay_icon.svg?url'
+import { payPlatformList } from '@/config'
+
 import {
   converterBSV,
   converterCNY,
@@ -349,14 +343,6 @@ import {
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 dayjs.extend(duration)
-interface PayPlatformItem {
-  icon: string
-  name: string
-  platform: PayPlatform
-  background: string
-  disabled: boolean
-  suffix: boolean
-}
 
 interface Props {
   visible: boolean
@@ -395,32 +381,6 @@ const balance = ref(0)
 const envLimited = ref(`${import.meta.env.VITE_envCondition}`)
 const isOpenPayMode = ref(false)
 const wechatpayOverTime = ref(null)
-const payPlatformList: PayPlatformItem[] = [
-  {
-    icon: WechatPayIcon,
-    name: i18n.t('wechatpay'),
-    platform: PayPlatform.WechatPay,
-    background: '#909399',
-    disabled: true,
-    suffix: false,
-  },
-  {
-    icon: AliPayIcon,
-    name: i18n.t('aliPay'),
-    platform: PayPlatform.AliPay,
-    background: '#108EE9',
-    disabled: false,
-    suffix: false,
-  },
-  {
-    icon: SandPayIcon,
-    name: i18n.t('quickPay'),
-    platform: PayPlatform.UnionPay,
-    background: '#FCA63D',
-    disabled: false,
-    suffix: true,
-  },
-]
 
 const nft: { val: Partial<NFTApiGetNFTDetailResDataItem> | null } = reactive({
   val: null,

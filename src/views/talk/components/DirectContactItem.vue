@@ -12,7 +12,7 @@
       />
       <div
         class="absolute top-0 right-0 rounded-full w-2.5 h-2.5 bg-red-500"
-        v-if="talk.hasUnreadMessagesOfChannel(session.metaId)"
+        v-if="talk.hasUnreadMessagesOfChannel(session.id)"
       ></div>
     </div>
 
@@ -65,10 +65,10 @@ const contact = computed<any>(() => {
   }
 
   return {
-    name: props.session[`${contactSide}Name`],
-    metaId: props.session[`${contactSide}`],
-    lastMessage: '你收到了一条信息', // TODO
-    lastMessageTimestamp: props.session.timestamp,
+    name: props.session.name || props.session[`${contactSide}Name`],
+    metaId: props.session.id,
+    lastMessage: props.session.lastMessage,
+    lastMessageTimestamp: props.session.lastMessageTimestamp,
   }
 })
 

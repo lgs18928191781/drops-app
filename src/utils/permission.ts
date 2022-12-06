@@ -55,13 +55,14 @@ router.beforeEach(async (to, from, next) => {
 
     // 没有拿用户实名信息时， 先要去拿用户实名信息
     if (!userStore.isGetedKycInfo) {
-      // 暂时注释掉
+      // todo: 暂时注释掉
       // await userStore.setKycInfo()
     }
 
     //  设置是否是否测试用户
     if (!userStore.isSetedisTestUser) {
-      await userStore.setIsTestUser()
+      // todo:暂时注释掉
+      // await userStore.setIsTestUser()
     }
 
     // 检查用户的token

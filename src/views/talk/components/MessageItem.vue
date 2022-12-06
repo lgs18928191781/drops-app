@@ -41,7 +41,7 @@
 
       <div class="w-full py-0.5" v-else-if="isImage">
         <div
-          class="w-fit max-w-[90%] md:max-w-[50%] lg:max-w-[400px] max-h-[600px] overflow-y-hidden rounded bg-dark-100 cursor-pointer"
+          class="w-fit max-w-[90%] md:max-w-[50%] lg:max-w-[400px] max-h-[600px] overflow-y-hidden rounded bg-transparent cursor-pointer"
           @click="previewImage"
         >
           <Image :src="decryptedMessage" customClass="rounded-xl py-0.5 object-scale-down" />
@@ -55,13 +55,14 @@
         </Teleport>
       </div>
 
-      <div class="text-xs text-dark-400 my-0.5 capitalize" v-else-if="isReceiveRedEnvelope">
-        {{ redEnvelopeReceiveInfo }}
+      <div class="text-xs text-dark-400 my-0.5 capitalize" v-else-if="isReceiveRedPacket">
+        {{ redPacketReceiveInfo }}
       </div>
 
-      <div class="w-full py-0.5" v-else-if="isGiveawayRedEnvelope">
+      <div class="w-full py-0.5" v-else-if="isGiveawayRedPacket">
         <div
           class="max-w-full md:max-w-[50%] lg:max-w-[300PX] shadow rounded-xl cursor-pointer origin-center hover:shadow-md transition-all duration-200 bg-white hover:animate-wiggle-subtle group"
+          @click="handleOpenRedPacket"
         >
           <div
             class="rounded-xl p-4 flex space-x-2 bg-gradient-to-br from-[#FFE8D2] via-[#FFF1B9] to-[#FEFFE3] items-center"
@@ -71,7 +72,9 @@
               <div class="text-dark-800 text-base font-medium capitalize">
                 {{ $t('Talk.Channel.come_get_red_envelope') }}
               </div>
-              <div class="text-dark-300 text-sm mt-1">{{ redEnvelopeMessage }}</div>
+              <div class="text-dark-300 text-sm mt-1 truncate max-w-[150PX] lg:max-w-[180PX]">
+                {{ redPacketMessage }}
+              </div>
             </div>
           </div>
 
@@ -104,12 +107,16 @@ import { formatTimestamp } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
 import giftImage from '@/assets/images/gift.svg?url'
+import { useLayoutStore } from '@/stores/layout'
+import { useModalsStore } from '@/stores/modals'
 
 const i18n = useI18n()
 
 const showImagePreview = ref(false)
+const modals = useModalsStore()
 const userStore = useUserStore()
 const talkStore = useTalkStore()
+const layout = useLayoutStore()
 
 const props = defineProps(['message'])
 
@@ -179,7 +186,7 @@ const parseTextMessage = (text: string) => {
   return text.replace(/\n/g, '<br />')
 }
 
-const redEnvelopeReceiveInfo = computed(() => {
+const redPacketReceiveInfo = computed(() => {
   const content: string = props.message.content
 
   if (props.message.metaId === props.message.data?.redEnvelopeMetaId) {
@@ -193,7 +200,7 @@ const redEnvelopeReceiveInfo = computed(() => {
   })
 })
 
-const redEnvelopeMessage = computed(() => {
+const redPacketMessage = computed(() => {
   return props.message.data?.content || i18n.t('Talk.Channel.default_red_envelope_message')
 })
 
@@ -201,12 +208,20 @@ const isMyMessage = computed(() => {
   return userStore.user?.metaId && userStore.user.metaId === props.message.metaId
 })
 
+const handleOpenRedPacket = () => {
+  console.log(123)
+  modals.openRedPacket = {
+    message: props.message,
+  }
+  layout.isShowRedPacketOpenModal = true
+}
+
 const isGroupJoinAction = computed(() => props.message.protocol === 'SimpleGroupJoin')
 const isGroupLeaveAction = computed(() => props.message.protocol === 'SimpleGroupLeave')
 const isNftEmoji = computed(() => props.message.protocol === 'SimpleEmojiGroupChat')
 const isImage = computed(() => props.message.protocol === 'SimpleFileGroupChat')
-const isGiveawayRedEnvelope = computed(() => props.message.protocol === 'SimpleRedEnvelope')
-const isReceiveRedEnvelope = computed(() => props.message.protocol === 'OpenRedEnvelope')
+const isGiveawayRedPacket = computed(() => props.message.protocol === 'SimpleRedEnvelope')
+const isReceiveRedPacket = computed(() => props.message.protocol === 'OpenRedEnvelope')
 const isText = computed(() => props.message.protocol === 'simpleGroupChat')
 </script>
 

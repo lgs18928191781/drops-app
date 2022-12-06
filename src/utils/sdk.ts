@@ -146,6 +146,12 @@ export const AllNodeName: {
     path: '/Protocols/SimpleRedEnvelope',
     version: '1.0.2',
   },
+
+  [NodeName.OpenRedenvelope]: {
+    brfcId: 'bf90aa3b2d1c',
+    path: '/Protocols/OpenRedenvelope',
+    version: '1.0.1',
+  },
 }
 
 export class SDK {
@@ -1009,7 +1015,6 @@ export class SDK {
           // NftGenesis
           if (params.nodeName === NodeName.NftGenesis) {
             utxo.wif = this.getPathPrivateKey(`${utxo.addressType}/${utxo.addressIndex}`).toString()
-            debugger
             const res = await nftManager!.genesis({
               ...JSON.parse(params.data!),
               opreturnData: transactions.currentNode.scriptPlayload!,
@@ -1055,7 +1060,6 @@ export class SDK {
                 utxos: [utxo],
               })
               if (res) {
-                debugger
                 transactions.issueNFT = {
                   // @ts-ignore
                   transaction: res.tx,

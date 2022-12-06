@@ -25,6 +25,5 @@ interface ImportMetaEnv {
   VITE_DotWallet_AppSecret: string
   VITE_DotWallet_ENV: string
   VITE_AppName: string
-  VITE_WXCOREAPI: string
   VITE_NET_WORK: Network
 }

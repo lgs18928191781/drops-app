@@ -1,0 +1,35 @@
+#pay-iframe {
+    width: 100%;
+    height: 70vh;
+    border: none;
+
+    :deep(html) {
+        body {
+            overflow-y: auto;
+        }
+    }
+}
+
+.balance-pay-confirm {
+
+    .pay-amount {
+        text-align: center;
+        margin-bottom: 15px;
+
+        .amount {
+            color: #fff;
+            font-size: 18px;
+            margin-top: 5px;
+        }
+    }
+
+    .el-input {
+        :deep(.el-input__inner) {
+            background-color: #000 !important;
+        }
+    }
+
+    .operate {
+        margin-top: 20px;
+    }
+}

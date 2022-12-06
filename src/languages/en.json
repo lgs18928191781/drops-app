@@ -56,7 +56,9 @@
       "accept_invite": "Accept Invite",
       "accept_invite_placeholder": "Enter your invite code",
       "you_have_been_invited": "You have been invited to join",
-      "amount_needed": "Amount"
+      "amount_needed": "Amount",
+      "red_packet": "Red Packet",
+      "receive": "Receive"
     },
     "Channel": {
       "members": "members",
@@ -235,6 +237,14 @@
     "Add Funds": "Add Funds",
     "Balance Details": "Balance Details",
     "Blockchain": "Blockchain",
-    "Refresh funds": "Refresh funds"
-  }
+    "Refresh funds": "Refresh funds",
+    "Payment": "Payment",
+    "Add Quantity": "Add Quantity",
+    "Add Amount": "Add Amount",
+    "Add": "Add"
+  },
+  "quickPay": "Credit Card",
+  "aliPay": "Alipay",
+  "wechatpay": "Alipay",
+  "Pay": "Pay"
 }

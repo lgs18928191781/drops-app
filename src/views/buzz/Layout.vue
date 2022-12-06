@@ -44,7 +44,7 @@
       </div>
     </div>
 
-    <div class="buzz-container flex1" ref="BuzzContanerRef">
+    <div class="buzz-container flex1" ref="BuzzContainerRef">
       <RouterView v-slot="{ Component, route }">
         <KeepAlive>
           <component
@@ -89,7 +89,7 @@
 </template>
 
 <script setup lang="ts">
-import { KeepAlive, onMounted, ref, Transition } from 'vue'
+import { KeepAlive, onBeforeUnmount, onMounted, ref, Transition } from 'vue'
 import Header from './components/Header/Header.vue'
 import Footer from './components/Footer/Footer.vue'
 import CollapseItem from '@/components/Collapse/collapse-item.vue'
@@ -120,32 +120,33 @@ const menus = [
   },
 ]
 
-const BuzzContanerRef = ref()
+const BuzzContainerRef = ref()
 const MenuRef = ref()
 const FastBtnRef = ref()
 
 onMounted(() => {
-  setPostion()
-  window.onresize = setPostion
+  setPosition()
+  window.onresize = setPosition
 })
 
-function setPostion() {
+onBeforeUnmount(() => {
+  window.onresize = null
+})
+
+function setPosition() {
   MenuRef.value.style.left =
-    BuzzContanerRef.value.offsetLeft - MenuRef.value.clientWidth - 12 + 'px'
+    BuzzContainerRef.value.offsetLeft - MenuRef.value.clientWidth - 12 + 'px'
   MenuRef.value.style.marginLeft = 0
 
   if (window.innerWidth > 750) {
     FastBtnRef.value.style.left =
-      BuzzContanerRef.value.offsetLeft + BuzzContanerRef.value.clientWidth + 12 + 'px'
+      BuzzContainerRef.value.offsetLeft + BuzzContainerRef.value.clientWidth + 12 + 'px'
     FastBtnRef.value.style.marginRight = 0
   } else {
     FastBtnRef.value.style.right = '5%'
     FastBtnRef.value.style.marginRight = 0
   }
 }
-// console.log(window.innerWidth)
-// // const isDark = useDark()
-// const toggleDark = () => {}
 
 function scrollTop() {
   window.document.documentElement.scrollTop = 0

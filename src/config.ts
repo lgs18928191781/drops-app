@@ -1,4 +1,10 @@
 import i18n from '@/utils/i18n'
+import { PayPlatform } from './enum'
+import WechatPayIcon from '@/assets/images/wechatTitle.svg?url'
+import AliPayIcon from '@/assets/images/alipay-circle.svg?url'
+import SandPayIcon from '@/assets/images/sandPay_title.svg?url'
+import ETHIcon from '@/assets/images/eth.png'
+import { useUserStore } from './stores/user'
 export interface Unit {
   unit: string
   sats: number
@@ -65,3 +71,69 @@ export const pagination: Pagination = {
   loading: false,
   nothing: false,
 }
+
+export interface PayPlatformItem {
+  icon: string
+  name: () => string
+  platform: PayPlatform
+  background: string
+  disabled: () => boolean
+  suffix: boolean
+}
+
+export const payPlatformList: PayPlatformItem[] = [
+  {
+    icon: SandPayIcon,
+    name: () => {
+      // @ts-ignore
+      return i18n.global.t('quickPay')
+    },
+    platform: PayPlatform.UnionPay,
+    background: '#FCA63D',
+    disabled: () => {
+      return false
+    },
+    suffix: true,
+  },
+  {
+    icon: WechatPayIcon,
+    name: () => {
+      return i18n.global.t('wechatpay') as string
+    },
+    platform: PayPlatform.WechatPay,
+    background: '#909399',
+    disabled: () => {
+      return true
+    },
+    suffix: false,
+  },
+  {
+    icon: AliPayIcon,
+    name: () => {
+      return i18n.global.t('aliPay')
+    },
+    platform: PayPlatform.AliPay,
+    background: '#108EE9',
+    disabled: () => {
+      return true
+    },
+    suffix: false,
+  },
+  {
+    icon: ETHIcon,
+    name: () => {
+      return import.meta.env.VITE_ETH_CHAIN + i18n.global.t('Pay')
+    },
+    platform: PayPlatform.ETH,
+    background: '#108EE9',
+    disabled: () => {
+      let result = true
+      const userStore = useUserStore()
+      if (userStore.isAuthorized && userStore.user?.ethAddress) {
+        result = false
+      }
+      return result
+    },
+    suffix: false,
+  },
+]
