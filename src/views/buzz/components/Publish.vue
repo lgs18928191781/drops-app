@@ -29,7 +29,12 @@
         </div>
       </div>
       <div class="attachment-warp" v-if="attachments.length > 0">
-        <div class="title" v-if="typeof attachments[0] !== 'string'">
+        <div
+          class="title"
+          v-if="
+            typeof attachments[0] !== 'string' && attachments[0].fileType.indexOf('image') !== -1
+          "
+        >
           {{ $t('Buzz.publish.addImage') }}({{ attachments.length }}/9)
         </div>
         <AttachmentVue :attachments="attachments" :is-edit="true" @remove="onRemoveAttachment" />
@@ -55,9 +60,7 @@
               <a @click="item.fun()" :class="{ disabled: item.disabled() }">
                 <Icon :name="item.icon" />
                 <input
-                  v-if="
-                    (item.icon === 'buzz_img' || item.icon === 'music') && attachments.length < 9
-                  "
+                  v-if="!item.disabled() && (item.icon === 'buzz_img' || item.icon === 'music')"
                   type="file"
                   :accept="item.icon === 'buzz_img' ? 'images/*' : 'audio/*'"
                   multiple
@@ -161,7 +164,11 @@ const publishOperates = [
     fun: () => {},
     disabled: () => {
       return (
-        attachments.length >= 9 || (attachments.length > 0 && typeof attachments[0] === 'string')
+        attachments.length >= 9 ||
+        (attachments.length > 0 && typeof attachments[0] === 'string') ||
+        (attachments.length > 0 &&
+          typeof attachments[0] !== 'string' &&
+          attachments[0].fileType.indexOf('image') === -1)
       )
     },
   },
@@ -175,7 +182,9 @@ const publishOperates = [
   {
     icon: 'buzz_nft',
     fun: () => {
-      isShowNFTList.value = true
+      if (attachments.length <= 0) {
+        isShowNFTList.value = true
+      }
     },
     disabled: () => {
       return attachments.length > 0
@@ -293,7 +302,11 @@ function chooseNFT(nft: BaseNFT) {
     mvc: 'metacontract',
     goerli: 'goerli',
   }
-  attachments.push(`${sufix[nft.chain]}://${nft.codehash}/${nft.genesis}/${nft.tokenIndex}`)
+  attachments.push(
+    `${nft.chain === 'mvc' ? 'metacontract' : nft.chain}://${nft.codehash}${
+      nft.codehash ? '/' : ''
+    }${nft.genesis}/${nft.tokenIndex}`
+  )
 }
 
 async function submit() {

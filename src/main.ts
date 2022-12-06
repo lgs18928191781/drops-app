@@ -6,6 +6,7 @@ import 'element-plus/theme-chalk/el-message.css'
 import 'element-plus/theme-chalk/el-message-box.css'
 import 'element-plus/theme-chalk/el-overlay.css'
 import 'element-plus/theme-chalk/el-drawer.css'
+import 'element-plus/theme-chalk/el-switch.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import './index.scss'
 

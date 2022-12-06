@@ -77,6 +77,13 @@
                   downloadFile($filters.metafile(typeof item === 'string' ? item : item.url))
                 "
               ></Icon>
+
+              <Icon
+                class="icon-warp"
+                name="remove"
+                @click.stop="emit('remove', index)"
+                v-if="isEdit"
+              />
             </div>
           </div>
         </template>
@@ -114,6 +121,13 @@
                       <div class="token-index">#{{nft.val!.nftTokenIndex}}</div>
                     </div>
                   </div>
+                  <a
+                    class="remove flex flex-align-center flex-pack-center"
+                    @click.stop="emit('remove', index)"
+                    v-if="isEdit"
+                  >
+                    <Icon name="remove" />
+                  </a>
                 </template>
               </ElSkeleton>
             </div>
@@ -290,6 +304,7 @@ function handlePreviewImage(index: number, images: string[]) {
 }
 
 function toNFT() {
+  if (props.isEdit) return
   router.push({
     name: 'nftDetail',
     params: {

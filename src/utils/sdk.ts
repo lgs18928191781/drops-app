@@ -917,6 +917,28 @@ export class SDK {
 
           // 组装新 utxo
           utxo = await this.wallet!.utxoFromTx({ tx: transactions.metaFileBrfc.transaction })
+
+          // 当有 metafile Brfc 改变时 metafile 节点也需要重新构建，因为父节点Brfc的txid 已改变
+          transactions.metaFiles!.length = 0
+          for (const item of params.attachments!) {
+            const index = params.attachments!.findIndex(_item => _item.sha256 === item.sha256)
+            let keyPath = `0/${index.toString()}`
+            const res = await this.wallet?.createNode({
+              nodeName: item.fileName,
+              metaIdTag: MetaIdTag[this.network],
+              encrypt: item.encrypt,
+              data: item.data,
+              dataType: item.fileType,
+              encoding: 'binary',
+              parentTxId: transactions.metaFileBrfc!.txId,
+              parentAddress: transactions.metaFileBrfc!.address,
+              keyPath,
+            })
+            if (res) {
+              if (!transactions.metaFiles) transactions.metaFiles = []
+              transactions.metaFiles.push(res)
+            }
+          }
         }
 
         if (transactions.metaFiles && transactions.metaFiles.length) {
