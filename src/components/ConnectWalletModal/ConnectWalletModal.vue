@@ -168,7 +168,7 @@ import { router } from '@/router'
 import { GetUserAllInfo } from '@/api/aggregation'
 import { debug } from 'console'
 import {
-  LoginByHashData,
+  LoginByEthAddress,
   RegisterCheck,
   SetUserInfo,
   SetUserPassword,
@@ -182,6 +182,7 @@ import QRCodeModal from '@walletconnect/qrcode-modal'
 import { ethers } from 'ethers'
 import { RegisterSource } from '@/enum'
 import { openLoading } from '@/utils/util'
+import { MD5 } from 'crypto-js'
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const i18n = useI18n()
@@ -374,8 +375,9 @@ async function connectMetaLet() {
 async function onThreePartLinkSuccess(params: { signAddressHash: string; address: string }) {
   //检查hash是否已绑定
 
-  const getMnemonicRes = await LoginByHashData({
-    hashData: params.signAddressHash,
+  const getMnemonicRes = await LoginByEthAddress({
+    evmAddress: params.address,
+    chainId: window.ethereum.chainId,
   }).catch(error => {
     if (error.code === -1) {
       // 还没绑定
@@ -400,21 +402,22 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
       let signHashForMnemonic
 
       console.log('params.address', params.address, getMnemonicRes?.data)
-      if ((window as any).WallectConnect) {
-        signHashForMnemonic = await (window as any).WallectConnect.signPersonalMessage([
-          params.address,
-          getMnemonicRes?.data?.metaId.slice(0, 6),
-        ])
-      } else {
-        signHashForMnemonic = await MetaMaskRef.value.ethPersonalSignSign({
-          address: params.address,
-          message: getMnemonicRes?.data?.metaId.slice(0, 6),
-        })
-      }
 
+      // if ((window as any).WallectConnect) {
+      //   signHashForMnemonic = await (window as any).WallectConnect.signPersonalMessage([
+      //     MD5(params.signAddressHash),
+      //     params.address,
+      //   ])
+      // } else {
+      //   signHashForMnemonic = await MetaMaskRef.value.ethPersonalSignSign({
+      //     address: params.address,
+      //     message: MD5(params.signAddressHash),
+      //   })
+      // }
+      console.log('zxzxc', MD5(params.signAddressHash).toString())
       res = await BindMetaIdRef.value.loginByMnemonic(
-        getMnemonicRes.data.menmonic,
-        signHashForMnemonic
+        getMnemonicRes.data.evmEnMnemonic,
+        MD5(params.signAddressHash).toString()
       )
       if (res) {
         await BindMetaIdRef.value.loginSuccess(res)
@@ -428,7 +431,7 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
     // return  emit('update:modelValue', false)
   } else if (
     getMnemonicRes?.code === 0 &&
-    getMnemonicRes.data.menmonic &&
+    getMnemonicRes.data.evmEnMnemonic &&
     getMnemonicRes?.data?.registerSource === RegisterSource.showmoney
   ) {
     // 有密码直接登录， 没有密码就要用户输入
@@ -658,7 +661,7 @@ async function connectWalletConnect() {
   }
 
   const res = await connector.signPersonalMessage([
-    ethers.utils.keccak256(ethers.utils.toUtf8Bytes(accounts[0])).slice(2, -1),
+    ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0])).slice(2, -1),
     accounts[0],
   ])
   if (res) {

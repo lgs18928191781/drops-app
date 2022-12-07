@@ -315,5 +315,26 @@
   "wechatpay": "微信支付",
   "aliPay": "支付宝支付",
   "quickPay": "银行卡支付",
-  "Pay": "支付"
+  "Pay": "支付",
+  "Setting": {
+    "title": "设置",
+    "Uplink settings": "上链设置",
+    "Language": "语言",
+    "Theme": "主题",
+    "Edit Profile": "编辑个人信息"
+  },
+  "EditProfile": {
+    "intro": "择 NFT 作为您的头像或用户名，展现您的个性",
+    "User Name": "用户名",
+    "MetaName": {
+      "drsc": "MetaName 将优先作为用户名。"
+    }
+  },
+  "UplinkSetting": {
+    "Uplink Payment Confirmation": "上链支付确认",
+    "ConfirmationIntro": "一旦开启，所有上链操作都需要您的确认。",
+    "Alert value setting": "警报值设定",
+    "AlertValueIntro": "为了您ME资产的安全，超过警戒值的上行操作仍需要您的确认。"
+  },
+  "Invalid Value": "输入值有误"
 }

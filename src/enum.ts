@@ -297,7 +297,7 @@ export enum PaySource {
 }
 export const enum RegisterSource {
   showmoney = 'normal',
-  metamask = 'metamask',
+  metamask = 'evm',
 }
 export const enum CommunityJoinAction {
   Join = 1,

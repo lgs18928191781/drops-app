@@ -173,7 +173,8 @@ interface Props {
   url: string
   payPlatform: PayPlatform
   orderId: string
-  isBilinbox: boolean
+  product_type: number
+  amount: string
 }
 const props = withDefaults(defineProps<Props>(), {})
 

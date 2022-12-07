@@ -41,15 +41,15 @@ async function genesis() {
           genesisTxid: res.currentNode?.txId,
           receiverAddress: userStore.user?.address,
           sensibleId: res.currentNode!.sensibleId,
-          name: 'test1',
-          desc: 'test1',
-          icon: 'metafile://02e04caec57b94d8158f3693a19794aef835094657b5d7be038d9a6ecba8dbd9.jpeg',
+          name: '大卫',
+          desc: '大卫',
+          icon: 'metafile://0be78bcaf6c3537d016902902d0856a6022fe446bc01921be1bfaab4fe526d12.jpeg',
           backIcon: '',
           website: '',
           issuerName: '',
           data: {
             originalFileTxid:
-              'metafile://02e04caec57b94d8158f3693a19794aef835094657b5d7be038d9a6ecba8dbd9.jpeg',
+              'metafile://0be78bcaf6c3537d016902902d0856a6022fe446bc01921be1bfaab4fe526d12.jpeg',
           },
         }),
       })

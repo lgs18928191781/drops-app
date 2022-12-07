@@ -165,3 +165,12 @@ export const CreatOrder = (params: {
 }): Promise<GetOrderStatusRes> => {
   return Wxcore.post(`/product/order`, params)
 }
+
+export const GetOrder = (params: {
+  order_id: string
+  pay_type: number
+  product_type: number
+}): Promise<GetOrderStatusRes> => {
+  const { order_id, ..._params } = params
+  return Wxcore.post(`/product/order/${order_id}/info`, { params: _params })
+}
