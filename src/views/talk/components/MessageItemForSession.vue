@@ -114,13 +114,17 @@
         </div>
       </div>
 
-      <div class="w-full py-0.5" v-else-if="isImage">
+      <div class="w-full py-0.5 flex items-center" v-else-if="isImage">
         <div
-          class="w-fit max-w-[90%] md:max-w-[50%] lg:max-w-[400px] max-h-[600px] overflow-y-hidden rounded bg-transparent cursor-pointer"
+          class="w-fit max-w-[90%] md:max-w-[50%] lg:max-w-[400px] max-h-[600px] overflow-y-hidden rounded bg-transparent cursor-pointer transition-all duration-200"
+          :class="[message.error && 'opacity-50']"
           @click="previewImage"
         >
           <Image :src="decryptedMessage" customClass="rounded py-0.5 object-scale-down" />
         </div>
+        <button v-if="message.error" class="ml-3" :title="resendTitle" @click="tryResend">
+          <Icon name="arrow_path" class="w-4 h-4 text-dark-400 hover:animate-spin-once" />
+        </button>
         <Teleport to="body" v-if="isImage && showImagePreview">
           <ImagePreview
             v-if="showImagePreview"
@@ -153,10 +157,16 @@
 
       <div class="my-1.5 max-w-full flex" v-else>
         <div
-          class="text-sm text-dark-800 font-normal break-all p-3 rounded-xl rounded-tl"
-          :class="isMyMessage ? 'bg-primary' : 'bg-white'"
+          class="text-sm text-dark-800 font-normal break-all p-3 rounded-xl rounded-tl transition-all duration-200"
+          :class="[
+            isMyMessage ? 'bg-primary' : 'bg-white',
+            message.error && 'bg-red-200 opacity-50',
+          ]"
           v-html="parseTextMessage(decryptedMessage)"
         ></div>
+        <button v-if="message.error" class="ml-3" :title="resendTitle" @click="tryResend">
+          <Icon name="arrow_path" class="w-4 h-4 text-dark-400 hover:animate-spin-once" />
+        </button>
       </div>
     </div>
   </div>
@@ -173,15 +183,16 @@ import { useI18n } from 'vue-i18n'
 import { formatTimestamp } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
+import { useJobsStore } from '@/stores/jobs'
 
 const i18n = useI18n()
 
-const channelId = '034d4effee511b5e6f21e8fb1c1b9188ed2fd1cd3dbcc726c122e916597117ba29'
 const showImagePreview = ref(false)
 const props = defineProps(['message'])
 const userStore = useUserStore()
 const talkStore = useTalkStore()
 const activeChannel = computed(() => talkStore.activeChannel)
+const jobs = useJobsStore()
 
 const senderName = computed(() => {
   if (props.message.from === userStore.user?.metaId) {
@@ -193,6 +204,15 @@ const senderName = computed(() => {
 
 const previewImage = () => {
   showImagePreview.value = true
+}
+
+const resendTitle = computed(() => {
+  return i18n.t('Talk.Messages.resend')
+})
+
+const tryResend = async () => {
+  props.message.error = false
+  await jobs.resend(props.message.timestamp)
 }
 
 const decryptedMessage = computed(() => {

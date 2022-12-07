@@ -1,4 +1,6 @@
 import { defineStore } from 'pinia'
+import { useUserStore } from './user'
+import { tryCreateNode } from '@/utils/talk'
 
 export const useJobsStore = defineStore('jobs', {
   state: () => {
@@ -7,6 +9,7 @@ export const useJobsStore = defineStore('jobs', {
       done: [] as Generator<any>[],
       failed: [] as Generator<any>[],
       processing: null as Generator<any> | null,
+      nodes: [] as any,
     }
   },
 
@@ -19,6 +22,19 @@ export const useJobsStore = defineStore('jobs', {
   actions: {
     push(job: Generator<any>) {
       this.jobsQueue.push(job)
+    },
+
+    async resend(timestamp: any) {
+      const userStore = useUserStore()
+      const resendingNode = this.nodes.find((node: any) => node.timestamp === timestamp)
+      if (resendingNode) {
+        const sdk = userStore.showWallet
+
+        tryCreateNode(resendingNode.node, sdk)
+
+        // 移除重发节点
+        this.nodes = this.nodes.filter((node: any) => node.timestamp !== timestamp)
+      }
     },
 
     async runOnce() {
