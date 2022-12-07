@@ -22,7 +22,7 @@
     </header>
 
     <div class="list">
-      <div class="item flex flex-align-center">
+      <div class="item flex flex-align-center" @click="isShowEditProfile = true">
         <span class="icon-warp flex flex-align-center flex-pack-center">
           <UserAvatar :meta-id="userStore.user!.metaId" />
         </span>
@@ -45,7 +45,7 @@
     </div>
 
     <!-- EditProfile -->
-    <!-- <EditProfileVue /> -->
+    <EditProfileVue v-model="isShowEditProfile" />
     <!-- UplinkSettingVue -->
     <UplinkSettingVue v-model="list[0].visible" />
     <!-- Language -->
@@ -155,6 +155,7 @@ const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits(['update:modelValue'])
 const i18n = useI18n()
 const userStore = useUserStore()
+const isShowEditProfile = ref(false)
 
 const switchLanguage = (lang: string) => {
   i18n.locale.value = lang
