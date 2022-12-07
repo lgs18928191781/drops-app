@@ -402,6 +402,7 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
       let signHashForMnemonic
 
       console.log('params.address', params.address, getMnemonicRes?.data)
+
       // if ((window as any).WallectConnect) {
       //   signHashForMnemonic = await (window as any).WallectConnect.signPersonalMessage([
       //     MD5(params.signAddressHash),
@@ -413,7 +414,7 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
       //     message: MD5(params.signAddressHash),
       //   })
       // }
-
+      console.log('zxzxc', MD5(params.signAddressHash).toString())
       res = await BindMetaIdRef.value.loginByMnemonic(
         getMnemonicRes.data.evmEnMnemonic,
         MD5(params.signAddressHash).toString()
