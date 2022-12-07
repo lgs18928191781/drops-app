@@ -408,5 +408,10 @@
     "Alert value setting": "警报值设定",
     "AlertValueIntro": "为了您ME资产的安全，超过警戒值的上行操作仍需要您的确认。"
   },
-  "Invalid Value": "输入值有误"
+  "Invalid Value": "输入值有误",
+  "Theme": {
+    "Light color": "浅色",
+    "Dark color": "深色",
+    "Follow system": "跟随系统"
+  }
 }
