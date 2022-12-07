@@ -157,7 +157,8 @@
     :url="payUrl"
     :payPlatform="payPlatformList.find(item => item.platform === currentPayPlatform)!.platform"
     :orderId="orderId"
-    :isBilinbox="false"
+    :product_type="product_type"
+    :amount="orderAmount"
     @success="onPaySuceess"
   />
 </template>
@@ -200,6 +201,8 @@ const isShowCouponMsg = ref(false)
 const isStartPay = ref(false)
 const payUrl = ref('')
 const orderId = ref('')
+const orderAmount = ref('')
+const product_type = 100
 const loading = ref(false)
 const ETHName = import.meta.env.VITE_ETH_CHAIN
 const priceSymbol = {
@@ -318,7 +321,7 @@ async function recharge() {
     quit_url: quitUrl,
     types: type,
     from_coin_address: userStore.user?.ethAddress,
-    product_type: 100,
+    product_type,
   }).catch(error => {
     ElMessage.error(error.message)
     loading.value = false
@@ -326,6 +329,7 @@ async function recharge() {
   if (res?.code === 0) {
     payUrl.value = res.data.url
     orderId.value = res.data.outside_order_id
+    orderAmount.value = res.data.amount
     loading.value = false
     isStartPay.value = true
   }
