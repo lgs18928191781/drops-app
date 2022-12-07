@@ -1,6 +1,7 @@
 <template>
   <div
     class="absolute bg-white right-0 -top-[5PX] -translate-x-4 px-1.5 py-0.5 rounded-xl shadow hidden group-hover:flex hover:shadow-md transition-all duration-200"
+    v-if="actions.length > 0"
   >
     <button v-for="action in actions" class="p-1.5" @click="action.action">
       <Icon

@@ -52,7 +52,8 @@
       "comment": "I commented on your buzz!",
       "like": "I liked your buzz!",
       "follow": "I followed you! Let's be friends!",
-      "token_transfer": "Token Transfer"
+      "token_transfer": "Token Transfer",
+      "resend": "Resend"
     },
     "Modals": {
       "enter_password": "Enter Password",

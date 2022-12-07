@@ -39,13 +39,17 @@
         <NftLabel class="w-8 mt-1" />
       </div>
 
-      <div class="w-full py-0.5" v-else-if="isImage">
+      <div class="w-full py-0.5 flex items-center" v-else-if="isImage">
         <div
-          class="w-fit max-w-[90%] md:max-w-[50%] lg:max-w-[400px] max-h-[600px] overflow-y-hidden rounded bg-transparent cursor-pointer"
+          class="w-fit max-w-[90%] md:max-w-[50%] lg:max-w-[400px] max-h-[600px] overflow-y-hidden rounded bg-transparent cursor-pointer transition-all duration-200"
+          :class="[message.error && 'opacity-50']"
           @click="previewImage"
         >
           <Image :src="decryptedMessage" customClass="rounded-xl py-0.5 object-scale-down" />
         </div>
+        <button v-if="message.error" class="ml-3" :title="resendTitle" @click="tryResend">
+          <Icon name="arrow_path" class="w-4 h-4 text-dark-400 hover:animate-spin-once" />
+        </button>
         <Teleport to="body" v-if="isImage && showImagePreview">
           <ImagePreview
             v-if="showImagePreview"
@@ -88,10 +92,16 @@
 
       <div class="my-1.5 max-w-full flex" v-else>
         <div
-          class="text-sm text-dark-800 font-normal break-all p-3 rounded-xl rounded-tl"
-          :class="isMyMessage ? 'bg-primary' : 'bg-white'"
+          class="text-sm text-dark-800 font-normal break-all p-3 rounded-xl rounded-tl transition-all duration-200"
+          :class="[
+            isMyMessage ? 'bg-primary' : 'bg-white',
+            message.error && 'bg-red-200 opacity-50',
+          ]"
           v-html="parseTextMessage(decryptedMessage)"
         ></div>
+        <button v-if="message.error" class="ml-3" :title="resendTitle" @click="tryResend">
+          <Icon name="arrow_path" class="w-4 h-4 text-dark-400 hover:animate-spin-once" />
+        </button>
       </div>
     </div>
   </div>
@@ -110,6 +120,7 @@ import { useTalkStore } from '@/stores/talk'
 import giftImage from '@/assets/images/gift.svg?url'
 import { useLayoutStore } from '@/stores/layout'
 import { useModalsStore } from '@/stores/modals'
+import { useJobsStore } from '@/stores/jobs'
 
 const i18n = useI18n()
 
@@ -118,6 +129,7 @@ const modals = useModalsStore()
 const userStore = useUserStore()
 const talkStore = useTalkStore()
 const layout = useLayoutStore()
+const jobs = useJobsStore()
 
 const props = defineProps(['message'])
 
@@ -140,6 +152,10 @@ const randomNameColor = computed(() => {
 const previewImage = () => {
   showImagePreview.value = true
 }
+
+const resendTitle = computed(() => {
+  return i18n.t('Talk.Messages.resend')
+})
 
 const decryptedMessage = computed(() => {
   if (props.message.encryption === '0') {
@@ -210,11 +226,15 @@ const isMyMessage = computed(() => {
 })
 
 const handleOpenRedPacket = () => {
-  console.log(123)
   modals.openRedPacket = {
     message: props.message,
   }
   layout.isShowRedPacketOpenModal = true
+}
+
+const tryResend = async () => {
+  props.message.error = false
+  await jobs.resend(props.message.timestamp)
 }
 
 const isGroupJoinAction = computed(() => props.message.protocol === 'SimpleGroupJoin')
