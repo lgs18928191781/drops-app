@@ -639,7 +639,6 @@ async function connectWalletConnect() {
   })
 
   connector.on('session_update', async (error, payload) => {
-    connector.killSession()
     if (error) {
       throw error
     }
