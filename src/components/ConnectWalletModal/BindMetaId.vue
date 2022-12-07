@@ -329,12 +329,14 @@ function submitForm() {
         // }
         else if (status.value === BindStatus.InputPassword) {
           // 使用密码 和 助记词登陆
+
           const getMnemonicRes = await LoginByEthAddress({
             evmAddress: props.thirdPartyWallet.address,
             chainId: window.ethereum.chainId,
           })
+
           if (getMnemonicRes?.code === 0 && getMnemonicRes.data) {
-            res = await loginByMnemonic(getMnemonicRes.data.menmonic, form.pass)
+            res = await loginByMnemonic(getMnemonicRes.data.evmEnMnemonic, form.pass)
           }
         } else if (status.value === BindStatus.BindSuccess) {
           emit('update:modelValue', false)

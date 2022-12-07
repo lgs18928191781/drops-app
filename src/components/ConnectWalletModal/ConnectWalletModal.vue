@@ -415,7 +415,7 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
       // }
 
       res = await BindMetaIdRef.value.loginByMnemonic(
-        getMnemonicRes.data.menmonic,
+        getMnemonicRes.data.evmEnMnemonic,
         MD5(params.signAddressHash).toString()
       )
       if (res) {
@@ -430,7 +430,7 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
     // return  emit('update:modelValue', false)
   } else if (
     getMnemonicRes?.code === 0 &&
-    getMnemonicRes.data.menmonic &&
+    getMnemonicRes.data.evmEnMnemonic &&
     getMnemonicRes?.data?.registerSource === RegisterSource.showmoney
   ) {
     // 有密码直接登录， 没有密码就要用户输入

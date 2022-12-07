@@ -301,6 +301,7 @@ export const encryptMnemonic = (mnemonic: string, password: string): string => {
 // 解密助记词
 export const decryptMnemonic = (encryptedMnemonic: string, password: string): string => {
   const mnemonic = aesDecrypt(encryptedMnemonic, password)
+  debugger
   return mnemonic.split(',').join(' ')
 }
 
