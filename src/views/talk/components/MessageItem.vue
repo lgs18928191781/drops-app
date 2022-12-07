@@ -62,7 +62,7 @@
       <div class="w-full py-0.5" v-else-if="isGiveawayRedPacket">
         <div
           class="max-w-full md:max-w-[50%] lg:max-w-[300PX] shadow rounded-xl cursor-pointer origin-center hover:shadow-md transition-all duration-200 bg-white hover:animate-wiggle-subtle group"
-          @click="handleOpenRedPacket"
+          @click=""
         >
           <div
             class="rounded-xl p-4 flex space-x-2 bg-gradient-to-br from-[#FFE8D2] via-[#FFF1B9] to-[#FEFFE3] items-center"
@@ -80,7 +80,8 @@
 
           <div class="flex py-2.5 items-center space-x-1.5 px-4">
             <Icon name="gift" class="w-4 h-4 text-dark-300" />
-            <div class="text-dark-300 text-xs">{{ $t('Talk.Input.giveaway') }}</div>
+            <!-- <div class="text-dark-300 text-xs">{{ $t('Talk.Input.giveaway') }}</div> -->
+            <div class="text-dark-300 text-xs">红包领取功能即将推出</div>
           </div>
         </div>
       </div>

@@ -23,8 +23,8 @@
       </div>
     </div>
     <div class="flex items-center justify-between grow">
-      <div class="text-xs text-dark-300 bg-dark-100 px-3 py-1 rounded" v-if="activeChannel?.metaId">
-        {{ shortenMetaId(activeChannel?.metaId) }}
+      <div class="text-xs text-dark-300 bg-dark-100 px-3 py-1 rounded" v-if="activeChannel?.id">
+        {{ shortenMetaId(activeChannel?.id) }}
       </div>
       <!-- 占位 -->
       <div v-else class="w-1"></div>
