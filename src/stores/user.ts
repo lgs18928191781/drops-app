@@ -87,7 +87,10 @@ export const useUserStore = defineStore('user', {
     isAuthorized: state => <boolean>!!(state.user && state.user.token),
     userName: state => {
       if (state.user && state.user.token) {
-        return state.user!.userType === 'email' ? state.user!.email! : state.user!.phone!
+        // @ts-ignore
+        return state.user!.userType === 'email' || state.user!.registerType === 'email'
+          ? state.user!.email!
+          : state.user!.phone!
       } else {
         return undefined
       }
@@ -116,9 +119,16 @@ export const useUserStore = defineStore('user', {
     updateUserInfo(userInfo: SetUserInfo) {
       return new Promise<void>(resolve => {
         const { password, ...data } = userInfo
-
-        if (data.rootAddress) {
+        // 兼容处理
+        // @ts-ignore
+        if (!data.address && data.rootAddress) {
+          // @ts-ignore
           data.address = data.rootAddress
+        }
+        // @ts-ignore
+        if (!data.userType && data.registerType) {
+          // @ts-ignore
+          data.userType = data.registerType
         }
         // localStorage.setItem('user', JSON.stringify(data))
         // window.localStorage.setItem('password', password)
