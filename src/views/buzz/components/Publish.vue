@@ -303,7 +303,7 @@ function chooseNFT(nft: BaseNFT) {
     goerli: 'goerli',
   }
   attachments.push(
-    `${nft.chain === 'mvc' ? 'metacontract' : nft.chain}://${nft.codehash}${
+    `${nft.chain === 'mvc' ? 'metacontract:/' : 'evm/' + nft.chain}/${nft.codehash}${
       nft.codehash ? '/' : ''
     }${nft.genesis}/${nft.tokenIndex}`
   )

@@ -29,7 +29,7 @@
       <ElResult
         :icon="payStatusType[payResult.status]"
         :title="payStatusTitle[payResult.status]"
-        :sub-title="payResult.intro"
+        :sub-title="payResultMessage"
         v-loading="payResult.status === PayStatus.Ing"
         element-loading-background="#fff"
       >
@@ -142,11 +142,12 @@
 <script setup lang="ts">
 import { GetOrderAmout, PayOrderConfirm } from '@/api/pay'
 import { PayPlatform, PayStatus } from '@/enum'
-import { isApp, isIOS, isIosApp, isWechat } from '@/stores/root'
+import { isApp, isIOS, isIosApp, isWechat, useRootStore } from '@/stores/root'
 import Decimal from 'decimal.js-light'
 import {
   ComponentOptionsBase,
   ComponentPublicInstance,
+  computed,
   inject,
   nextTick,
   onBeforeUnmount,
@@ -164,7 +165,7 @@ import {
   openLoading,
 } from '@/utils/util'
 import { ElMessage, LoadingParentElement } from 'element-plus'
-import { GetOrderStatus, PayETHByME } from '@/api/wxcore'
+import { GetOrder, GetOrderStatus, PayETHByME } from '@/api/wxcore'
 import { useUserStore } from '@/stores/user'
 import { ethers } from 'ethers'
 
@@ -177,6 +178,7 @@ interface Props {
   amount: string
 }
 const props = withDefaults(defineProps<Props>(), {})
+const rootStore = useRootStore()
 
 const emit = defineEmits(['success', 'fail', 'update:modelValue'])
 const nft: { val: null | NFTApiGetNFTDetailResDataItem } = inject('nft')!
@@ -249,22 +251,33 @@ const iosPayHtml = ref('')
 const PayIframeRef = ref()
 const isQrcodeInTime = ref(true) // 付款码是否在有效时间
 
+const payResultMessage = computed(() => {
+  let msg = ''
+  if (payResult.status === PayStatus.Success) {
+    const symbol =
+      props.payPlatform === PayPlatform.ETH
+        ? import.meta.env.VITE_ETH_CHAIN
+        : rootStore.currentPriceSymbol
+    const amount =
+      props.payPlatform === PayPlatform.ETH
+        ? new Decimal(props.amount).div(Math.pow(10, 18)).toFixed(10)
+        : new Decimal(props.amount).div(100).toFixed(2)
+    msg = `ShowPayLimited: ${symbol} ${amount}`
+  } else if (payResult.status === PayStatus.Fail) {
+    msg = payResult.intro
+  }
+  return msg
+})
+
 function drawePayCode() {
   return new Promise<void>(async (resolve, reject) => {
     if (props.url) {
       if (props.payPlatform === PayPlatform.ETH) {
-        const getOrderAmount = await CheckOrderStatus({
-          orderId: props.orderId,
-          payPlatform: props.payPlatform,
-          isBilinbox: props.isBilinbox,
-        })
         const tx = await window.ethereum!.request!({
           method: 'eth_sendTransaction',
           params: [
             {
-              value: ethers.utils.hexValue(
-                new Decimal(getOrderAmount.amount).mul(Math.pow(10, 18)).toString()
-              ),
+              value: ethers.utils.hexValue(new Decimal(props.amount).toNumber()),
               to: props.url,
               from: useStore.user?.ethAddress,
             },
@@ -389,19 +402,17 @@ async function onPayIframeClose() {
 
 function checkOrderStatus() {
   setTimeout(async () => {
-    const res = await CheckOrderStatus({
-      orderId: props.orderId,
-      payPlatform: props.payPlatform,
-      isBilinbox: props.isBilinbox,
+    const res = await GetOrder({
+      order_id: props.orderId,
+      pay_type: props.payPlatform,
+      product_type: props.product_type,
     }).catch(error => {
       payResult.status = PayStatus.Fail
       alertCatchError(error)
     })
     if (res) {
-      if (res.amount) {
-        payResult.intro = `ShowPayLimited: ¥ ${new Decimal(res.amount).div(100).toFixed(2)}`
-      }
-      payResult.status = res.status
+      payResult.status =
+        res.data.status === 2 || res.data.status === 3 ? PayStatus.Success : PayStatus.Fail
     }
   }, 3000)
 }
@@ -447,9 +458,10 @@ function intervalChceckOrderStatus() {
   return new Promise<void>(async (resolve, reject) => {
     // 轮询检查订单状态
     checkOrderStateInterval = setInterval(async () => {
-      const res = await GetOrderStatus({
-        orderId: props.orderId,
-        payType: props.payPlatform,
+      const res = await GetOrder({
+        order_id: props.orderId,
+        pay_type: props.payPlatform,
+        product_type: props.product_type,
       })
       if (
         res.code === 0 &&

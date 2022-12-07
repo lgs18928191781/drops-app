@@ -277,5 +277,10 @@
     "Alert value setting": "Alert value setting",
     "AlertValueIntro": "For the safety of your ME assets, uplink operations that exceed the alert value still require your confirmation."
   },
-  "Invalid Value": "Invalid Value"
+  "Invalid Value": "Invalid Value",
+  "Theme": {
+    "Light color": "Light color",
+    "Dark color": "Dark color",
+    "Follow system": "Follow system"
+  }
 }

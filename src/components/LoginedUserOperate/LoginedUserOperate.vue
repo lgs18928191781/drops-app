@@ -76,13 +76,13 @@
                       <Icon name="check" />
                     </span>
                   </div>
-
-                  <div
-                    class="flex flex-align-center user-wallet-operate-item"
-                    @click="item.fun()"
-                    v-for="(item, index) in userWalletOperates"
-                    :key="index"
-                  >
+                </ElDropdownItem>
+                <ElDropdownItem
+                  v-for="(item, index) in userWalletOperates"
+                  :key="index"
+                  @click="item.fun()"
+                >
+                  <div class="flex flex-align-center user-wallet-operate-item">
                     <Icon :name="item.icon" />
                     <span class="name">{{ item.name }}</span>
                   </div>
@@ -127,7 +127,10 @@
                           <Loading />
                         </ElIcon>
                       </template>
-                      <template v-else> ${{ totalBalance }} USD </template>
+                      <template v-else>
+                        {{ rootStore.currentPriceSymbol }}{{ totalBalance }}
+                        {{ rootStore.currentPrice }}
+                      </template>
                     </div>
                   </div>
                 </div>
@@ -172,8 +175,10 @@
                         </ElIcon>
                       </template>
                       <template v-else>
-                        <div class="statosis">{{ wallet.statosis }}</div>
-                        <div class="usd">$30.63</div>
+                        <div class="value">{{ wallet.value }}</div>
+                        <div class="usd">
+                          {{ rootStore.currentPriceSymbol }} {{ wallet.price() }}
+                        </div>
                       </template>
                     </div>
                   </div>
@@ -378,13 +383,49 @@ const seriesNFTList = reactive({
 const wallets = reactive([
   {
     title: i18n.t('Wallet.Action Points'),
-    list: [{ icon: '', name: 'ME', statosis: 0, rate: 0, loading: true }],
+    list: [
+      {
+        icon: '',
+        name: 'ME',
+        value: 0,
+        price: () => {
+          return '--'
+        },
+        loading: true,
+      },
+    ],
   },
   {
     title: i18n.t('Wallet.Balance Details'),
     list: [
-      { icon: ETH, name: 'ETH', statosis: 0, rate: 0, loading: true },
-      { icon: MVC, name: 'SPACE', statosis: 0, rate: 0, loading: true },
+      {
+        icon: ETH,
+        name: import.meta.env.VITE_ETH_CHAIN,
+        value: 0,
+        price: function() {
+          const rate = rootStore.exchangeRate.find(
+            item => item.symbol === import.meta.env.VITE_ETH_CHAIN
+          )
+          if (rate) {
+            return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed()
+          }
+          return '--'
+        },
+        loading: true,
+      },
+      {
+        icon: MVC,
+        name: 'SPACE',
+        value: 0,
+        price: function() {
+          const rate = rootStore.exchangeRate.find(item => item.symbol === 'mvc')
+          if (rate) {
+            return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
+          }
+          return '--'
+        },
+        loading: true,
+      },
     ],
   },
 ])
@@ -428,12 +469,13 @@ const totalBalance = computed(() => {
   let value = 0
   for (let list of wallets) {
     for (let item of list.list) {
-      value += item.rate
-        ? new Decimal(new Decimal(item.statosis).div(item.rate).toFixed(2)).toNumber()
-        : 0
+      const result = item.price()
+      if (result !== '--') {
+        value += new Decimal(result).toNumber()
+      }
     }
   }
-  return value
+  return value.toFixed(2)
 })
 const totalBalanceLoading = computed(() => {
   let value = false
@@ -481,7 +523,7 @@ function getMEBalance() {
       resolve()
     })
     if (userMeRes?.code === 0) {
-      wallets[0].list[0].statosis = userMeRes.data.count / 100
+      wallets[0].list[0].value = userMeRes.data.count / 100
       wallets[0].list[0].loading = false
       resolve()
     }
@@ -500,8 +542,8 @@ function getSpaceBalance() {
         resolve()
       })
     if (typeof res === 'number') {
-      wallets[1].list[1].statosis = new Decimal(
-        new Decimal(res).div(Math.pow(10, 8)).toFixed(2)
+      wallets[1].list[1].value = new Decimal(
+        new Decimal(res).div(Math.pow(10, 8)).toFixed(8)
       ).toNumber()
       wallets[1].list[1].loading = false
       resolve()
@@ -521,14 +563,14 @@ function getETHBalance() {
         resolve()
       })
       if (res?.code === 0) {
-        wallets[1].list[0].statosis = new Decimal(
+        wallets[1].list[0].value = new Decimal(
           new Decimal(res.data.balance).div(Math.pow(10, 18)).toFixed(4)
         ).toNumber()
         wallets[1].list[0].loading = false
         resolve()
       }
     } else {
-      wallets[1].list[0].statosis = 0
+      wallets[1].list[0].value = 0
       wallets[1].list[0].loading = false
       resolve()
     }

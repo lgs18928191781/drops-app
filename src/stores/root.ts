@@ -44,9 +44,19 @@ export const useRootStore = defineStore('root', {
       exchangeRate: [],
       isGetedExchangeRate: false,
       isShowLogin: false,
-      currentPrice: window.localStorage.getItem('currentPrice') || 'USD',
+      currentPrice: window.localStorage.getItem('currentPrice') || 'CNY',
     },
-  getters: {},
+  getters: {
+    currentPriceSymbol: state => {
+      const Symbols = {
+        USD: '$',
+        CNY: '￥',
+      }
+      return Symbols[state.currentPrice]
+    },
+    currentExchangeRate: state =>
+      state.exchangeRate.find(item => item.symbol === state.currentPrice),
+  },
   actions: {
     getExchangeRate() {
       this.isGetedExchangeRate = true
