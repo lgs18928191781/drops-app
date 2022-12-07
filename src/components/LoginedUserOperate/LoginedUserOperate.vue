@@ -76,13 +76,13 @@
                       <Icon name="check" />
                     </span>
                   </div>
-
-                  <div
-                    class="flex flex-align-center user-wallet-operate-item"
-                    @click="item.fun()"
-                    v-for="(item, index) in userWalletOperates"
-                    :key="index"
-                  >
+                </ElDropdownItem>
+                <ElDropdownItem
+                  v-for="(item, index) in userWalletOperates"
+                  :key="index"
+                  @click="item.fun()"
+                >
+                  <div class="flex flex-align-center user-wallet-operate-item">
                     <Icon :name="item.icon" />
                     <span class="name">{{ item.name }}</span>
                   </div>
