@@ -164,16 +164,19 @@ export const setHashData = (params: {
   accessKey: string
   userName: string
   timestamp: number
-  hashData: string
+  evmAddress: string
+  evmEnMnemonic: string
+  chainId: string
   metaId: string
   address: string
 }) => {
   return Core.post(
-    `/api/v1/thirdparty/setUserWalletHashData`,
+    `/api/v1/evm/wallet/mnemonic/info/bind`,
     {
-      hashData: params.hashData,
+      evmAddress: params.evmAddress,
+      evmEnMnemonic: params.evmEnMnemonic,
       metaId: params.metaId,
-      ethAddress: params.address,
+      chainId: params.chainId,
     },
     {
       headers: {
@@ -209,28 +212,37 @@ export const MnemoicLogin = (params: {
 
 export const LoginByNewUser = (params: {
   address: string
-  xPub: string
+  xpub: string
   pubKey: string
-  // metaId: '',
-  hashData: string
-  mnemonic: string
+  evmEnMnemonic: string
+  evmAddress: string
+  chainId: string
   userName: string
 }) => {
-  return Core.post(`/api/v1/thirdparty/setUserWalletInfo`, params)
+  return Core.post(`/api/v1/evm/wallet/mnemonic/info/add`, params)
 }
 
 //已绑定签名
-export const LoginByHashData = (params: {
-  hashData: string
-}): Promise<{
-  code: number
-  data: {
-    menmonic: string
-    metaId: string
-    registerSource: string
-  }
-}> => {
-  return Core.post(`/api/v1/thirdparty/checkHashData`, params)
+// export const LoginByHashData = (params: {
+//   hashData: string
+// }): Promise<{
+//   code: number
+//   data: {
+//     menmonic: string
+//     metaId: string
+//     registerSource: string
+//   }
+// }> => {
+//   return Core.post(`/api/v1/thirdparty/checkHashData`, params)
+// }
+
+//通过ETH地址查询是否已绑定metaid
+
+export const LoginByEthAddress = (params: {
+  evmAddress: string
+  chainId: string
+}): Promise<any> => {
+  return Core.post(`/api/v1/evm/wallet/mnemonic/check`, params)
 }
 
 export const GetMetaIdByLoginName = (params: {
@@ -238,5 +250,5 @@ export const GetMetaIdByLoginName = (params: {
   phone?: string
   email?: string
 }): Promise<{ code: number; result: { metaId: string } }> => {
-  return Core.post(`/api/v1/thirdparty/getUserMetaId`, params)
+  return Core.post(`/api/v1/evm/wallet/user/info`, params)
 }

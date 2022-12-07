@@ -135,7 +135,7 @@ import { GetUserInfo } from '@/api/aggregation'
 import {
   GetMetaIdByLoginName,
   GetRandomWord,
-  LoginByHashData,
+  LoginByEthAddress,
   loginByMetaidOrAddress,
   LoginByNewUser,
   MnemoicLogin,
@@ -159,6 +159,7 @@ import { bsv } from 'sensible-sdk'
 import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { openLoading } from '@/utils/util'
+import { MD5 } from 'crypto-js'
 interface Props {
   modelValue: boolean
   thirdPartyWallet: {
@@ -328,8 +329,9 @@ function submitForm() {
         // }
         else if (status.value === BindStatus.InputPassword) {
           // 使用密码 和 助记词登陆
-          const getMnemonicRes = await LoginByHashData({
-            hashData: props.thirdPartyWallet.signAddressHash,
+          const getMnemonicRes = await LoginByEthAddress({
+            evmAddress: props.thirdPartyWallet.address,
+            chainId: window.ethereum.chainId,
           })
           if (getMnemonicRes?.code === 0 && getMnemonicRes.data) {
             res = await loginByMnemonic(getMnemonicRes.data.menmonic, form.pass)
@@ -416,10 +418,8 @@ function loginSuccess(params: BindMetaIdRes) {
 function createMetaidAccount() {
   return new Promise<BindMetaIdRes>(async (resolve, reject) => {
     try {
-      const mnemonic = await createMnemonic(
-        props.thirdPartyWallet.signAddressHash,
-        encode(props.thirdPartyWallet.address)
-      )
+      const mnemonic = await createMnemonic(props.thirdPartyWallet.signAddressHash)
+
       const hdWallet = await hdWalletFromMnemonic(mnemonic, 'new', Network.testnet)
       console.log('hdWallet', hdWallet)
       const HdWalletInstance = new HdWallet(hdWallet)
@@ -438,94 +438,106 @@ function createMetaidAccount() {
         .deriveChild(0)
         .publicKey.toString()
 
-      const metaId = await HdWalletInstance.onlyCreateMetaidNode()
+      // const metaId = await HdWalletInstance.onlyCreateMetaidNode()
       console.log('props.thirdPartyWallet', props.thirdPartyWallet)
       if ((window as any).WallectConnect) {
         // await window.WallectConnect.connect()
-        ;(window as any).WallectConnect.signPersonalMessage([
-          props.thirdPartyWallet.address,
-          metaId?.slice(0, 6),
-        ]).then(async (signHash: string) => {
-          console.log('signHash', signHash)
-          const encryptmnemonic = encryptMnemonic(mnemonic, signHash)
-          const getUserInfoRes = await LoginByNewUser({
-            address: address,
-            xPub: hdWallet.xpubkey,
-            pubKey: pubKey,
-            hashData: props.thirdPartyWallet.signAddressHash,
-            mnemonic: encryptmnemonic,
-            userName: account.name,
-          })
-          // @ts-ignore
-          if (getUserInfoRes.code == 0) {
-            ;(account.accessKey = getUserInfoRes.data.token),
-              (account.userName =
-                getUserInfoRes.data.registerType === 'email'
-                  ? getUserInfoRes.data.email
-                  : getUserInfoRes.data.phone)
-            const { metaId } = await HdWalletInstance.initMetaIdNode({
-              ...account,
-              userType: getUserInfoRes.data.registerType,
-              email: getUserInfoRes.data.email,
-              phone: getUserInfoRes.data.phone,
-              ethAddress: props.thirdPartyWallet.address,
-            })
-            const newUserInfo = Object.assign(getUserInfoRes.data, {
-              metaId: metaId,
-              ethAddress: props.thirdPartyWallet.address,
-              enCryptedMnemonic: encryptmnemonic,
-            })
-            await sendHash(newUserInfo)
-            resolve({
-              userInfo: newUserInfo,
-              wallet: hdWallet,
-              password: signHash,
-              // password: form.pass,
-            })
-          }
+        const encryptmnemonic = encryptMnemonic(
+          mnemonic,
+          MD5(props.thirdPartyWallet.signAddressHash).toString()
+        )
+        const getUserInfoRes = await LoginByNewUser({
+          address: address,
+          xpub: hdWallet.xpubkey,
+          pubKey: pubKey,
+          evmEnMnemonic: encryptmnemonic,
+          evmAddress: props.thirdPartyWallet.address,
+          chainId: window.ethereum.chainId,
+          userName: account.name,
         })
+        // @ts-ignore
+        if (getUserInfoRes.code == 0) {
+          ;(account.accessKey = getUserInfoRes.data.token),
+            (account.userName =
+              getUserInfoRes.data.registerType === 'email'
+                ? getUserInfoRes.data.email
+                : getUserInfoRes.data.phone)
+          const { metaId } = await HdWalletInstance.initMetaIdNode({
+            ...account,
+            userType: getUserInfoRes.data.registerType,
+            email: getUserInfoRes.data.email,
+            phone: getUserInfoRes.data.phone,
+            ethAddress: props.thirdPartyWallet.address
+              ? props.thirdPartyWallet.address
+              : window.ethereum.selectedAddress,
+          })
+          const newUserInfo = Object.assign(getUserInfoRes.data, {
+            metaId: metaId,
+            evmAddress: props.thirdPartyWallet.address
+              ? props.thirdPartyWallet.address
+              : window.ethereum.selectedAddress,
+            enCryptedMnemonic: encryptmnemonic,
+            chainId: window.ethereum.chainId,
+          })
+          await sendHash(newUserInfo)
+
+          resolve({
+            userInfo: newUserInfo,
+            wallet: hdWallet,
+            password: form.pass
+              ? form.pass
+              : MD5(props.thirdPartyWallet.signAddressHash).toString(),
+            // password: form.pass,
+          })
+        }
       } else {
-        ethPersonalSignSign({
-          address: props.thirdPartyWallet.address,
-          message: metaId?.slice(0, 6),
-        }).then(async signHash => {
-          const encryptmnemonic = encryptMnemonic(mnemonic, signHash)
-          const getUserInfoRes = await LoginByNewUser({
-            address: address,
-            xPub: hdWallet.xpubkey,
-            pubKey: pubKey,
-            hashData: props.thirdPartyWallet.signAddressHash,
-            mnemonic: encryptmnemonic,
-            userName: account.name,
-          })
-          // @ts-ignore
-          if (getUserInfoRes.code == 0) {
-            ;(account.accessKey = getUserInfoRes.data.token),
-              (account.userName =
-                getUserInfoRes.data.registerType === 'email'
-                  ? getUserInfoRes.data.email
-                  : getUserInfoRes.data.phone)
-            const { metaId } = await HdWalletInstance.initMetaIdNode({
-              ...account,
-              userType: getUserInfoRes.data.registerType,
-              email: getUserInfoRes.data.email,
-              phone: getUserInfoRes.data.phone,
-              ethAddress: props.thirdPartyWallet.address,
-            })
-            const newUserInfo = Object.assign(getUserInfoRes.data, {
-              metaId: metaId,
-              ethAddress: props.thirdPartyWallet.address,
-              enCryptedMnemonic: encryptmnemonic,
-            })
-            await sendHash(newUserInfo)
-            resolve({
-              userInfo: newUserInfo,
-              wallet: hdWallet,
-              password: signHash,
-              // password: form.pass,
-            })
-          }
+        const encryptmnemonic = encryptMnemonic(
+          mnemonic,
+          MD5(props.thirdPartyWallet.signAddressHash).toString()
+        )
+        const getUserInfoRes = await LoginByNewUser({
+          address: address,
+          xpub: hdWallet.xpubkey,
+          pubKey: pubKey,
+          evmEnMnemonic: encryptmnemonic,
+          evmAddress: props.thirdPartyWallet.address,
+          chainId: window.ethereum.chainId,
+          userName: account.name,
         })
+        // @ts-ignore
+        if (getUserInfoRes.code == 0) {
+          ;(account.accessKey = getUserInfoRes.data.token),
+            (account.userName =
+              getUserInfoRes.data.registerType === 'email'
+                ? getUserInfoRes.data.email
+                : getUserInfoRes.data.phone)
+          const { metaId } = await HdWalletInstance.initMetaIdNode({
+            ...account,
+            userType: getUserInfoRes.data.registerType,
+            email: getUserInfoRes.data.email,
+            phone: getUserInfoRes.data.phone,
+            ethAddress: props.thirdPartyWallet.address
+              ? props.thirdPartyWallet.address
+              : window.ethereum.selectedAddress,
+          })
+          const newUserInfo = Object.assign(getUserInfoRes.data, {
+            metaId: metaId,
+            ethAddress: props.thirdPartyWallet.address
+              ? props.thirdPartyWallet.address
+              : window.ethereum.selectedAddress,
+            enCryptedMnemonic: encryptmnemonic,
+            chainId: window.ethereum.chainId,
+          })
+          await sendHash(newUserInfo)
+          resolve({
+            userInfo: newUserInfo,
+            wallet: hdWallet,
+            password: form.pass
+              ? form.pass
+              : MD5(props.thirdPartyWallet.signAddressHash).toString(),
+            // password: form.pass,
+          })
+        }
       }
     } catch (error) {
       reject(error)
@@ -565,7 +577,7 @@ function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
       const hdWallet = new HdWallet(wallet)
       // 1. 先获取utxo
       let utxos = await hdWallet.provider.getUtxos(hdWallet.wallet.xpubkey.toString())
-      debugger
+
       // 2. 把钱打到protocols节点
       // 先把钱打回到 protocolAddress
       const transfer = await hdWallet.makeTx({
@@ -661,15 +673,22 @@ function bindingMetaidOrAddressLogin() {
         phone: numberReg.test(form.account) ? form.account : undefined,
         email: numberReg.test(form.account) ? undefined : form.account,
       }
-      const res = await GetMetaIdByLoginName(params)
-      if (res.code === 0) {
-        const mnemonic = await loginByMetaidOrAddress({
-          metaId: res.result.metaId,
-        })
+      const resp = await GetMetaIdByLoginName(params)
+      if (resp.code === 0) {
+        console.log('resp', resp)
+
+        // const mnemonic = await loginByMetaidOrAddress({
+        //   metaId: resp.result.metaId,
+        // })
         // @ts-ignore
-        if (mnemonic.code == 0) {
-          const res = await loginByMnemonic(mnemonic.data, form.pass)
+        if (resp.code == 0) {
+          const res = await loginByMnemonic(resp.result.enMnemonic, form.pass)
+          console.log('res', res)
           await createETHBindingBrfcNode(res.wallet, res.userInfo.metaId)
+          res.userInfo.evmAddress = window.ethereum.selectedAddress
+          res.userInfo.ethAddress = window.ethereum.selectedAddress
+          res.userInfo.chainId = window.ethereum.chainId
+
           await sendHash(res.userInfo)
           resolve(res)
         }
@@ -690,11 +709,13 @@ function sendHash(userInfo: BindUserInfo) {
             ? userInfo.email
             : userInfo.phone,
         timestamp: +new Date(),
-        hashData: props.thirdPartyWallet.signAddressHash,
         metaId: userInfo.metaId,
-        address: props.thirdPartyWallet.address,
+        evmAddress: userInfo.ethAddress || userInfo.evmAddress,
+        evmEnMnemonic: userInfo.enCryptedMnemonic,
+        chainId: userInfo.chainId,
       })
       // @ts-ignore
+
       if (res.code == 0) {
         // @ts-ignore
         resolve(res.msg)

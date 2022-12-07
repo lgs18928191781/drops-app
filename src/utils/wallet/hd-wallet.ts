@@ -294,6 +294,7 @@ export const aesDecrypt = (encryptedStr: string, key: string): string => {
 
 // 加密助记词
 export const encryptMnemonic = (mnemonic: string, password: string): string => {
+  debugger
   const mnemonicStr = mnemonic.split(' ').join(',')
   return aesEncrypt(mnemonicStr, password)
 }
@@ -346,8 +347,8 @@ function reverceFtByteString(str) {
   return ret
 }
 
-export const createMnemonic = (address: string, password: string) => {
-  const ppBuffer = Buffer.from([address, password].join('/'))
+export const createMnemonic = (address: string) => {
+  const ppBuffer = Buffer.from(address)
   const ppHex = bsv.crypto.Hash.sha256(ppBuffer).toString('hex')
   let hex
   let mnemonic

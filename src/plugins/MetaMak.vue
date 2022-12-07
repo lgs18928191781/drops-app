@@ -167,10 +167,11 @@ async function startConnect() {
     if (res) {
         const result = await ethPersonalSignSign({
             address: res.ethAddress,
-            message: ethers.utils.keccak256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1),
+            message: ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1),
         })
         if (result) {
-             emit('success',{ signAddressHash:  result, address: res.ethAddress});
+
+             emit('success',{ signAddressHash:result, address: res.ethAddress});
         }
     }
 }
@@ -181,7 +182,7 @@ function ethPersonalSignSign(params: {
 }) {
     return new Promise<string>(async (resolve, reject) => {
         (window as any).ethereum
-          .request({ method: 'personal_sign', params: [params.address, params.message] })
+          .request({ method: 'personal_sign', params: [params.message,params.address] })
           .then((res: string) => {
             resolve(res)
           }).catch((error: any) => {
