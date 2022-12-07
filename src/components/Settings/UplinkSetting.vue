@@ -1,14 +1,18 @@
 <template>
   <ElDrawer
-    :model-value="true"
+    :model-value="modelValue"
     :show-close="false"
     :with-header="false"
     :size="'360px'"
     :append-to-body="true"
     :lock-scroll="true"
+    :close-on-click-modal="false"
     custom-class="none-padding"
   >
-    <DrawerRightHeaderVue :title="$t('Setting.Uplink settings')" />
+    <DrawerRightHeaderVue
+      :title="$t('Setting.Uplink settings')"
+      @back="emit('update:modelValue', false)"
+    />
 
     <div class="content">
       <img class="cover" src="@/assets/images/uplink_img.png" />
@@ -27,7 +31,7 @@
           </div>
         </div>
 
-        <div class="item">
+        <div class="item" :class="{disabled: userStore.sdkPayConfirm[SdkPayType.ME]!.visible}">
           <div class="cont flex flex-align-center" @click="setMeValue">
             <div class="lable flex1">{{ $t('UplinkSetting.Alert value setting') }}</div>
             <span class="value">{{ userStore.sdkPayConfirm[SdkPayType.ME]!.value }} ME</span>
@@ -52,6 +56,12 @@ import { SdkPayType } from '@/enum'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 
+interface Props {
+  modelValue: boolean
+}
+const props = withDefaults(defineProps<Props>(), {})
+
+const emit = defineEmits(['update:modelValue'])
 const userStore = useUserStore()
 const rootStore = useRootStore()
 const i18n = useI18n()
@@ -61,6 +71,7 @@ function onConfirmChange(value: boolean) {
 }
 
 function setMeValue() {
+  if (userStore.sdkPayConfirm[SdkPayType.ME]!.visible) return
   ElMessageBox.prompt('', i18n.t('UplinkSetting.Alert value setting'), {
     confirmButtonText: i18n.t('Confirm'),
     cancelButtonText: i18n.t('Cancel'),

@@ -1,18 +1,22 @@
 <template>
   <ElDrawer
-    :model-value="true"
+    :model-value="modelValue"
     :show-close="false"
     :with-header="false"
     :size="'360px'"
     :append-to-body="true"
     :lock-scroll="true"
+    :close-on-click-modal="false"
     custom-class="none-padding"
   >
     <header class="flex flex-align-center">
       <div class="title flex1">
         {{ $t('Setting.title') }}
       </div>
-      <a class="close flex flex-align-center flex-pack-center">
+      <a
+        class="close flex flex-align-center flex-pack-center"
+        @click="emit('update:modelValue', false)"
+      >
         <Icon name="x_mark" />
       </a>
     </header>
@@ -25,7 +29,12 @@
         <span class="flex1 name">{{ $t('Setting.Edit Profile') }}</span>
         <Icon class="right" name="down" />
       </div>
-      <div class="item flex flex-align-center" v-for="item in list" :key="item.icon">
+      <div
+        class="item flex flex-align-center"
+        v-for="item in list"
+        :key="item.icon"
+        @click="item.fun()"
+      >
         <span class="icon-warp flex flex-align-center flex-pack-center">
           <Icon :name="item.icon" />
         </span>
@@ -36,7 +45,7 @@
     </div>
 
     <!-- <EditProfileVue /> -->
-    <UplinkSettingVue />
+    <UplinkSettingVue v-model="list[0].visible" />
   </ElDrawer>
   <!-- <div
     class="fixed inset-0 h-screen w-screen z-[60] bg-dark-100 flex justify-center items-center select-none"
@@ -125,11 +134,17 @@
 import FlagEn from '@/assets/images/flag_en.png?url'
 import FlagCn from '@/assets/images/flag_cn.png?url'
 import { useI18n } from 'vue-i18n'
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { useUserStore } from '@/stores/user'
 import EditProfileVue from './EditProfile.vue'
 import UplinkSettingVue from './UplinkSetting.vue'
 
+interface Props {
+  modelValue: boolean
+}
+const props = withDefaults(defineProps<Props>(), {})
+
+const emit = defineEmits(['update:modelValue'])
 const i18n = useI18n()
 const userStore = useUserStore()
 
@@ -161,12 +176,16 @@ const themes = ref([
   },
 ])
 
-const list = [
+const list = reactive([
   {
     name: i18n.t('Setting.Uplink settings'),
     icon: 'link',
     value: () => {
       return ''
+    },
+    visible: false,
+    fun: function() {
+      this.visible = true
     },
   },
   {
@@ -175,6 +194,8 @@ const list = [
     value: () => {
       return i18n.locale.value.toUpperCase()
     },
+    visible: false,
+    fun: function() {},
   },
   {
     name: i18n.t('Setting.Theme'),
@@ -182,8 +203,10 @@ const list = [
     value: () => {
       return 'White'
     },
+    visible: false,
+    fun: function() {},
   },
-]
+])
 
 const currentLanguage = ref(i18n.locale.value)
 </script>

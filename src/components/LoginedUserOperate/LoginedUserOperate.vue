@@ -32,10 +32,7 @@
       </ElDropdown>
 
       <Teleport to="body">
-        <SettingsModalVue
-          v-if="layout.isShowSettingsModal"
-          @close-modal="layout.isShowSettingsModal = false"
-        />
+        <SettingsModalVue v-model="layout.isShowSettingsModal" />
       </Teleport>
     </div>
   </template>
