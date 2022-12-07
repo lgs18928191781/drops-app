@@ -271,123 +271,127 @@ const payResultMessage = computed(() => {
 
 function drawePayCode() {
   return new Promise<void>(async (resolve, reject) => {
-    if (props.url) {
-      if (props.payPlatform === PayPlatform.ETH) {
-        const tx = await window.ethereum!.request!({
-          method: 'eth_sendTransaction',
-          params: [
-            {
-              value: ethers.utils.hexValue(new Decimal(props.amount).toNumber()),
-              to: props.url,
-              from: useStore.user?.ethAddress,
-            },
-          ],
-        })
-        const res = await PayETHByME({
-          order_id: props.orderId,
-          tx_hash: tx,
-          from_coin_address: useStore.user!.ethAddress!,
-        })
-        if (res.code === 0) {
-          payResult.status = PayStatus.Success
-          isShowPayStatusModal.value = true
-        }
-      }
-      // 余额支付
-      else if (props.payPlatform === PayPlatform.BalancePay) {
-        const getOrdetAmount = await GetOrderAmout({
-          address: useStore.user!.address!,
-          oriCustomerOrderNo: props.url,
-        }).catch(() => reject(Error('获取订单金额失败')))
-        if (getOrdetAmount?.success) {
-          balancePay.params.oriCustomerOrderNo = props.url
-          balancePay.params.oriTotalAmount = getOrdetAmount.data.total_amount
-          payResult.intro = `ShowPayLimited: ¥ ${new Decimal(getOrdetAmount.data.total_amount)
-            .div(100)
-            .toFixed(2)}`
-          balancePay.visible = true
-        }
-      } else if (isWechat) {
-        // 微信浏览器环境 生成二维码，然后让后用户保存图片，扫码支付
-        if (
-          props.payPlatform === PayPlatform.UnionPay ||
-          props.payPlatform === PayPlatform.QuickPay
-        ) {
-          openPayIframe(props.url)
-          isShowPayStatusModal.value = true
-        } else {
-          const canvas: any = document.querySelector('#qrcodeContainer')
-          QRCode.toCanvas(canvas, props.url, (err: any) => {
-            if (!err) {
-              qrcodeData.value = canvas.toDataURL('image/png')
-              isShowQrcode.value = true
-            }
+    try {
+      if (props.url) {
+        if (props.payPlatform === PayPlatform.ETH) {
+          const tx = await window.ethereum!.request!({
+            method: 'eth_sendTransaction',
+            params: [
+              {
+                value: ethers.utils.hexValue(new Decimal(props.amount).toNumber()),
+                to: props.url,
+                from: useStore.user?.evmAddress,
+              },
+            ],
           })
-          // 轮询检查订单状态
-          await intervalChceckOrderStatus()
-          resolve()
-        }
-      } else {
-        // 非微信浏览器环境
-        if (isApp) {
-          if (isIosApp) {
-            window.addEventListener('message', res => {
-              console.log(res.data)
-              if (res.data.status) {
-                isShowPayIframe.value = false
-                onPayIframeClose()
-                window.removeEventListener('message', () => {
-                  //
-                })
-              }
-            })
-            openPayIframe(props.url)
-            resolve()
-          } else {
-            await checkAppHasMethod('payForApp')
-            // @ts-ignore
-            window.onAppPayCallBack = onAppPayCallBack
-            const params = {
-              payType:
-                props.payPlatform === PayPlatform.WechatPay
-                  ? 0
-                  : props.payPlatform === PayPlatform.AliPay
-                  ? 1
-                  : props.payPlatform === PayPlatform.UnionPay
-                  ? 2
-                  : -1,
-              orderInfo: props.url,
-            }
-            window.appMetaIdJsV2.payForApp(
-              useStore.user!.token,
-              JSON.stringify(params),
-              'onAppPayCallBack'
-            )
-            resolve()
+          const res = await PayETHByME({
+            order_id: props.orderId,
+            tx_hash: tx,
+            from_coin_address: useStore.user!.evmAddress!,
+          })
+          if (res.code === 0) {
+            payResult.status = PayStatus.Success
+            isShowPayStatusModal.value = true
           }
-        } else {
+        }
+        // 余额支付
+        else if (props.payPlatform === PayPlatform.BalancePay) {
+          const getOrdetAmount = await GetOrderAmout({
+            address: useStore.user!.address!,
+            oriCustomerOrderNo: props.url,
+          }).catch(() => reject(Error('获取订单金额失败')))
+          if (getOrdetAmount?.success) {
+            balancePay.params.oriCustomerOrderNo = props.url
+            balancePay.params.oriTotalAmount = getOrdetAmount.data.total_amount
+            payResult.intro = `ShowPayLimited: ¥ ${new Decimal(getOrdetAmount.data.total_amount)
+              .div(100)
+              .toFixed(2)}`
+            balancePay.visible = true
+          }
+        } else if (isWechat) {
+          // 微信浏览器环境 生成二维码，然后让后用户保存图片，扫码支付
           if (
             props.payPlatform === PayPlatform.UnionPay ||
             props.payPlatform === PayPlatform.QuickPay
           ) {
-            window.addEventListener('message', res => {
-              console.log(res.data)
-              if (res.data.status) {
-                isShowPayIframe.value = false
-                onPayIframeClose()
-                window.removeEventListener('message', () => {
-                  //
-                })
+            openPayIframe(props.url)
+            isShowPayStatusModal.value = true
+          } else {
+            const canvas: any = document.querySelector('#qrcodeContainer')
+            QRCode.toCanvas(canvas, props.url, (err: any) => {
+              if (!err) {
+                qrcodeData.value = canvas.toDataURL('image/png')
+                isShowQrcode.value = true
               }
             })
+            // 轮询检查订单状态
+            await intervalChceckOrderStatus()
+            resolve()
           }
-          openPayIframe(props.url)
-          resolve()
+        } else {
+          // 非微信浏览器环境
+          if (isApp) {
+            if (isIosApp) {
+              window.addEventListener('message', res => {
+                console.log(res.data)
+                if (res.data.status) {
+                  isShowPayIframe.value = false
+                  onPayIframeClose()
+                  window.removeEventListener('message', () => {
+                    //
+                  })
+                }
+              })
+              openPayIframe(props.url)
+              resolve()
+            } else {
+              await checkAppHasMethod('payForApp')
+              // @ts-ignore
+              window.onAppPayCallBack = onAppPayCallBack
+              const params = {
+                payType:
+                  props.payPlatform === PayPlatform.WechatPay
+                    ? 0
+                    : props.payPlatform === PayPlatform.AliPay
+                    ? 1
+                    : props.payPlatform === PayPlatform.UnionPay
+                    ? 2
+                    : -1,
+                orderInfo: props.url,
+              }
+              window.appMetaIdJsV2.payForApp(
+                useStore.user!.token,
+                JSON.stringify(params),
+                'onAppPayCallBack'
+              )
+              resolve()
+            }
+          } else {
+            if (
+              props.payPlatform === PayPlatform.UnionPay ||
+              props.payPlatform === PayPlatform.QuickPay
+            ) {
+              window.addEventListener('message', res => {
+                console.log(res.data)
+                if (res.data.status) {
+                  isShowPayIframe.value = false
+                  onPayIframeClose()
+                  window.removeEventListener('message', () => {
+                    //
+                  })
+                }
+              })
+            }
+            openPayIframe(props.url)
+            resolve()
+          }
         }
+        resolve()
+      } else {
+        throw new Error('平台异常,请稍后重试(6001)')
       }
-      resolve()
-    } else {
-      reject(Error('平台异常,请稍后重试(6001)'))
+    } catch (error) {
+      reject(error)
     }
   })
 }
@@ -401,20 +405,23 @@ async function onPayIframeClose() {
 }
 
 function checkOrderStatus() {
-  setTimeout(async () => {
-    const res = await GetOrder({
-      order_id: props.orderId,
-      pay_type: props.payPlatform,
-      product_type: props.product_type,
-    }).catch(error => {
-      payResult.status = PayStatus.Fail
-      alertCatchError(error)
-    })
-    if (res) {
-      payResult.status =
-        res.data.status === 2 || res.data.status === 3 ? PayStatus.Success : PayStatus.Fail
-    }
-  }, 3000)
+  setTimeout(
+    async () => {
+      const res = await GetOrder({
+        order_id: props.orderId,
+        pay_type: props.payPlatform,
+        product_type: props.product_type,
+      }).catch(error => {
+        payResult.status = PayStatus.Fail
+        alertCatchError(error)
+      })
+      if (res) {
+        payResult.status =
+          res.data.status === 2 || res.data.status === 3 ? PayStatus.Success : PayStatus.Fail
+      }
+    },
+    props.payPlatform === PayPlatform.UnionPay ? 10000 : 3000
+  )
 }
 
 function openPayIframe(url: string) {
@@ -575,6 +582,7 @@ watch(
       loading = openLoading()
       drawePayCode()
         .catch(error => {
+          debugger
           setPayFail(error.message)
         })
         .finally(() => {

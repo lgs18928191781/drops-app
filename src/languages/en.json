@@ -45,7 +45,6 @@
       "dark": "dark",
       "light": "light"
     },
-
     "Messages": {
       "repost": "I reposted your buzz!",
       "repost_with_comment": "I reposted your buzz with my comment!",
@@ -282,5 +281,6 @@
     "Light color": "Light color",
     "Dark color": "Dark color",
     "Follow system": "Follow system"
-  }
+  },
+  "copy": "Copy"
 }

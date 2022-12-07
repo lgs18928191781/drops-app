@@ -364,6 +364,7 @@ function loginSuccess(params: BindMetaIdRes) {
         ...params.userInfo,
         ...metaIdInfo.data,
         password: params.password,
+        loginType: 'MetaMask',
       })
 
       userStore.$patch({
@@ -688,7 +689,6 @@ function bindingMetaidOrAddressLogin() {
           console.log('res', res)
           await createETHBindingBrfcNode(res.wallet, res.userInfo.metaId)
           res.userInfo.evmAddress = window.ethereum.selectedAddress
-          res.userInfo.ethAddress = window.ethereum.selectedAddress
           res.userInfo.chainId = window.ethereum.chainId
           await sendHash(res.userInfo)
           resolve(res)
@@ -704,6 +704,7 @@ function sendHash(userInfo: BindUserInfo) {
   return new Promise(async (resolve, reject) => {
     try {
       const res = await setHashData({
+        address: userInfo.address,
         accessKey: userInfo.token,
         userName:
           userInfo.register == 'email' || userInfo.registerType == 'email'
@@ -711,7 +712,7 @@ function sendHash(userInfo: BindUserInfo) {
             : userInfo.phone,
         timestamp: +new Date(),
         metaId: userInfo.metaId,
-        evmAddress: userInfo.ethAddress || userInfo.evmAddress,
+        evmAddress: userInfo.evmAddress,
         evmEnMnemonic: userInfo.enCryptedMnemonic,
         chainId: userInfo.chainId,
       })
