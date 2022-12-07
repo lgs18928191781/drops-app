@@ -97,8 +97,8 @@ export const usePasswordFormStore = defineStore('passwordForm', {
 export const useRedPacketFormStore = defineStore('redPacketForm', {
   state: () => {
     return {
-      amount: 0 as number | '',
-      quantity: 1,
+      amount: 0.0003 as number | '',
+      quantity: 5,
       message: '',
     }
   },

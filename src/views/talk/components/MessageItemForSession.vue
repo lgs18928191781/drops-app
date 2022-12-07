@@ -1,5 +1,5 @@
-<template lang="">
-  <div class="flex hover:bg-gray-200 px-4 py-1 relative group transition-all duration-150">
+<template>
+  <div class="flex hover:bg-gray-200 px-4 py-1.5 relative group transition-all duration-150">
     <!-- 消息菜单 -->
     <MessageMenu
       :message="props.message"
@@ -30,6 +30,88 @@
         />
 
         <NftLabel class="w-8 mt-1" />
+      </div>
+
+      <div class="my-1.5 flex" v-else-if="isFollow">
+        <div
+          class="text-sm text-dark-800 font-normal break-all p-3 rounded-xl rounded-tl flex items-center"
+          :class="isMyMessage ? 'bg-primary' : 'bg-white'"
+        >
+          <Icon name="message_follow" class="w-4 h-4 mr-1.5" />
+          <span>
+            {{ $t('Talk.Messages.follow') }}
+          </span>
+        </div>
+      </div>
+
+      <div class="my-1.5 flex" v-else-if="isFtTransfer">
+        <div class="max-w-full min-w-[240PX] md:w-[300PX] shadow rounded-xl rounded-tl bg-blue-400">
+          <div class="rounded-xl p-4 flex space-x-4.5 bg-white items-center rounded-tl">
+            <Image :src="message.icon" customClass="h-15 w-15 rounded-full" loading="lazy" />
+            <div class="flex flex-col space-y-1.5">
+              <div class="text-dark-800 text-base font-medium capitalize">
+                {{ message.memo }}
+              </div>
+              <div class="text-dark-400 text-xs">
+                {{ message.amountStr.split('.')[0] + ' ' + message.symbol }}
+              </div>
+            </div>
+          </div>
+
+          <div class="flex py-2.5 items-center space-x-1.5 px-4">
+            <Icon name="message_token" class="w-4 h-4 text-white" />
+            <div class="text-white text-xs">{{ $t('Talk.Messages.token_transfer') }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="my-1.5 flex flex-col items-start" v-else-if="isRepost">
+        <div
+          class="text-sm text-dark-800 font-normal break-all p-3 rounded-xl rounded-tl flex items-center"
+          :class="isMyMessage ? 'bg-primary' : 'bg-white'"
+        >
+          <Icon name="message_repost" class="w-4 h-4 mr-1.5" />
+          <span>
+            {{
+              message.data.rePostComment
+                ? $t('Talk.Messages.repost_with_comment')
+                : $t('Talk.Messages.repost')
+            }}
+          </span>
+        </div>
+        <div
+          class="mt-1.5 bg-dark-800/5 text-sm text-dark-400 rounded-xl px-3 py-2"
+          v-if="message.data.rePostComment"
+        >
+          {{ message.data.rePostComment }}
+        </div>
+      </div>
+
+      <div class="my-1.5 flex flex-col items-start" v-else-if="isLike">
+        <div
+          class="text-sm text-dark-800 font-normal break-all p-3 rounded-xl rounded-tl flex items-center"
+          :class="isMyMessage ? 'bg-primary' : 'bg-white'"
+        >
+          <Icon name="message_like" class="w-4 h-4 mr-1.5" />
+          <span>
+            {{ $t('Talk.Messages.like') }}
+          </span>
+        </div>
+      </div>
+
+      <div class="my-1.5 flex flex-col items-start" v-else-if="isComment">
+        <div
+          class="text-sm text-dark-800 font-normal break-all p-3 rounded-xl rounded-tl flex items-center"
+          :class="isMyMessage ? 'bg-primary' : 'bg-white'"
+        >
+          <Icon name="message_comment" class="w-4 h-4 mr-1.5" />
+          <span>
+            {{ $t('Talk.Messages.comment') }}
+          </span>
+        </div>
+        <div class="mt-1.5 bg-dark-800/5 text-sm text-dark-400 rounded-xl px-3 py-2">
+          {{ message.data.content }}
+        </div>
       </div>
 
       <div class="w-full py-0.5" v-else-if="isImage">
@@ -71,7 +153,7 @@
 
       <div class="my-1.5 max-w-full flex" v-else>
         <div
-          class="text-sm text-dark-800 font-normal break-all p-3 rounded-xl rounded-tl-md"
+          class="text-sm text-dark-800 font-normal break-all p-3 rounded-xl rounded-tl"
           :class="isMyMessage ? 'bg-primary' : 'bg-white'"
           v-html="parseTextMessage(decryptedMessage)"
         ></div>
@@ -91,7 +173,6 @@ import { useI18n } from 'vue-i18n'
 import { formatTimestamp } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
-import { PrivateKey } from 'sensible-sdk/dist/bsv'
 
 const i18n = useI18n()
 
@@ -189,13 +270,16 @@ const isMyMessage = computed(() => {
   return userStore.user?.metaId && userStore.user.metaId === props.message.from
 })
 
-const isGroupJoinAction = computed(() => props.message.protocol === 'SimpleGroupJoin')
-const isGroupLeaveAction = computed(() => props.message.protocol === 'SimpleGroupLeave')
 const isNftEmoji = computed(() => props.message.protocol === 'SimpleEmojiGroupChat')
 const isImage = computed(() => props.message.protocol === 'SimpleFileGroupChat')
 const isGiveawayRedEnvelope = computed(() => props.message.protocol === 'SimpleRedEnvelope')
 const isReceiveRedEnvelope = computed(() => props.message.protocol === 'OpenRedEnvelope')
 const isText = computed(() => props.message.protocol === 'ShowMsg')
+const isLike = computed(() => props.message.protocol === 'PayLike')
+const isFollow = computed(() => props.message.protocol === 'PayFollow')
+const isRepost = computed(() => props.message.protocol === 'SimpleRePost')
+const isComment = computed(() => props.message.protocol === 'PayComment')
+const isFtTransfer = computed(() => props.message.protocol === 'FtTransfer')
 </script>
 
 <style lang="scss" scoped></style>

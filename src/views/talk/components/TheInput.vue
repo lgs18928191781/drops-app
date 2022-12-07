@@ -101,7 +101,7 @@
                   {{ $t('Talk.Channel.upload_image') }}
                 </div>
               </div>
-              <div
+              <!-- <div
                 class="p-2 flex items-center space-x-2 text-dark-800 rounded-sm lg:cursor-pointer lg:hover:text-white lg:hover:bg-primary"
               >
                 <div class="">
@@ -110,7 +110,7 @@
                 <div class="">
                   {{ $t('Talk.Channel.use_onchain_image') }}
                 </div>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -119,13 +119,12 @@
       <!-- 右侧发送按钮 -->
       <div class="flex h-full py-2 items-center shrink-0">
         <div class="flex items-center px-1 lg:mr-2">
-          <div
+          <!-- <div
             class="p-2 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer"
             @click="layout.isShowRedPacketModal = true"
           >
             <Icon name="red_envelope" class="w-full h-full text-dark-800" />
-          </div>
-          <RedPacketCreateModal />
+          </div> -->
 
           <Popover class="relative flex items-center">
             <PopoverButton as="div">
@@ -158,7 +157,7 @@
                       {{ $t('Talk.Channel.upload_image') }}
                     </div>
                   </div>
-                  <div
+                  <!-- <div
                     class="mx-2 py-4 flex items-center space-x-2 text-dark-800 rounded-sm lg:cursor-pointer lg:hover:underline cursor-pointer"
                   >
                     <div class=" ">
@@ -167,7 +166,7 @@
                     <div class="">
                       {{ $t('Talk.Channel.use_onchain_image') }}
                     </div>
-                  </div>
+                  </div> -->
                 </div>
               </PopoverPanel>
             </transition>
@@ -218,7 +217,6 @@ import StickerVue from '@/components/Sticker/Sticker.vue'
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
 import { ChannelType, MessageType } from '@/enum'
 import { useLayoutStore } from '@/stores/layout'
-import RedPacketCreateModal from './modals/red-packet/Create.vue'
 
 const doNothing = () => {}
 

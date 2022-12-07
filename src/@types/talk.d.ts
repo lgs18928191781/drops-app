@@ -1,4 +1,5 @@
 import { ChannelType, MessageType } from '@/enum'
+import { Address, HDPrivateKey, PrivateKey, PublicKey, Script } from 'meta-contract/dist/mvc'
 
 declare interface Message {
   protocol?: string
@@ -89,4 +90,16 @@ declare interface MessageDto {
   attachments?: any[]
   originalFileUrl?: any
   channelType?: ChannelType
+}
+
+declare interface CryptoInfo {
+  hdPrivateKey: HDPrivateKey
+  privateKey: PrivateKey
+  publicKey: PublicKey
+  address: Address
+  addressStr: string
+  wif: string
+  script: Script
+  scriptStr: string
+  xpub: string
 }

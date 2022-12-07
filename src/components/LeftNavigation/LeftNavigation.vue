@@ -75,7 +75,7 @@
           </div>
           <span
             class="absolute left-0 bg-dark-800 w-1.5 h-8 rounded-r-md"
-            v-if="talk.activeCommunityId === community.id"
+            v-if="talk.activeCommunityId === community.id && route.path.includes('talk')"
           ></span>
 
           <Image
@@ -166,7 +166,6 @@ watch(
 )
 
 onBeforeUnmount(() => {
-  console.log('left?')
   talk.closeWebSocket()
   talk.saveReadPointers()
   talk.closeReadPointerTimer()

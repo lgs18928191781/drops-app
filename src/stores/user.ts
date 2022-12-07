@@ -60,7 +60,7 @@ const sdkPayConfirm = {
   [SdkPayType.ME]: {
     value: localStorage.getItem(sdkPayConfirmMaxKey[SdkPayType.ME])
       ? parseInt(localStorage.getItem(sdkPayConfirmMaxKey[SdkPayType.ME])!)
-      : 1,
+      : 5,
     visible: localStorage.getItem(sdkPayConfirmHideKey[SdkPayType.ME]) ? false : true,
   },
   [SdkPayType.SPACE]: {

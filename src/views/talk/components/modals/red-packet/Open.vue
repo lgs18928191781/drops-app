@@ -95,17 +95,14 @@ const note = computed(() => {
 
 const tryOpenRedPacket = async () => {
   const userStore = useUserStore()
+  const iTake = remains.value[0]
   const redPacket = {
     subId: message?.data.subId,
     code: message?.data.code,
     type: 'mvc',
-    used: [
-      {
-        index: '',
-        amount: '',
-        address: '',
-      },
-    ],
+    createTime: message?.data.createTime,
+    iTake,
+    id: message?.txId,
   }
   await openRedPacket(redPacket, userStore.showWallet)
 }

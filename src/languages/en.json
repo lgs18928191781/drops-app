@@ -45,6 +45,15 @@
       "dark": "dark",
       "light": "light"
     },
+
+    "Messages": {
+      "repost": "I reposted your buzz!",
+      "repost_with_comment": "I reposted your buzz with my comment!",
+      "comment": "I commented on your buzz!",
+      "like": "I liked your buzz!",
+      "follow": "I followed you! Let's be friends!",
+      "token_transfer": "Token Transfer"
+    },
     "Modals": {
       "enter_password": "Enter Password",
       "enter_password_placeholder": "Speak friend and enter ^-^",
@@ -89,7 +98,7 @@
       "create": "Create community",
       "create_fist_step_tip": "Give your community some personality with a name and an icon. You can always change them later.",
       "community_name": "community name",
-      "agree_tip": "By creating a community, you agree to Show's",
+      "agree_tip": "By creating a community, you agree to Show3.0's",
       "agree_guidelines": "Community Guidelines",
       "customize_information": "Customize your community",
       "choose_nft_cover": "Choose an NFT cover",
@@ -104,12 +113,12 @@
       "channel_name": "Channel Name",
       "create_public_channel_tip": "Everyone can join a public channel. No permission required.",
       "consensual_channels": "Consensual channels",
-      "create_consensual_channel_tip": "Members with specific FT, NFT, or password can join a consensual channel.",
+      "create_consensual_channel_tip": "Members with specific Token, NFT, or password can join a consensual channel.",
       "consent": "Consent",
       "consent_type": "Consent Type",
       "password": "Password",
       "choose_nft": "Choose NFT",
-      "choose_ft": "Choose FT",
+      "choose_ft": "Choose Token",
       "set_password": "Set Password",
       "choose_nft_tip": "Only members with NFTs of selected series can join this channel.",
       "choose_ft_tip": "Only members with selected token can join this channel.",
@@ -267,5 +276,10 @@
     "Alert value setting": "Alert value setting",
     "AlertValueIntro": "For the safety of your ME assets, uplink operations that exceed the alert value still require your confirmation."
   },
-  "Invalid Value": "Invalid Value"
+  "Invalid Value": "Invalid Value",
+  "Theme": {
+    "Light color": "Light color",
+    "Dark color": "Dark color",
+    "Follow system": "Follow system"
+  }
 }

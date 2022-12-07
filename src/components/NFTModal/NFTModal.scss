@@ -73,6 +73,11 @@ header {
             background: var(--el-color-primary);
             color: var(--main-font-color);
         }
+
+        &.disabled {
+            background: #EDEFF2;
+            cursor: not-allowed;
+        }
     }
 }
 
