@@ -22,6 +22,7 @@ import Decimal from 'decimal.js-light'
 import { TxComposer } from 'meta-contract/dist/tx-composer'
 import { Address, Script, Transaction } from 'meta-contract/dist/mvc'
 import { DEFAULTS } from './wallet/hd-wallet'
+import { useJobsStore } from '@/stores/jobs'
 
 export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   console.log('start')
@@ -161,7 +162,7 @@ export const createChannel = async (
     codehash,
     genesis,
     limitAmount,
-    timestamp: parseInt(dayjs().format('X')),
+    timestamp: new Date().getSeconds(),
   }
 
   // 2. 构建节点参数
@@ -254,17 +255,21 @@ export const joinCommunity = async (communityId: string, sdk: SDK) => {
 }
 
 export const sendMessage = async (messageDto: MessageDto) => {
-  switch (messageDto.type) {
-    case MessageType.Text:
-      if (messageDto.channelType === ChannelType.Session) {
-        return _sendTextMessageForSession(messageDto)
-      }
-      return _sendTextMessage(messageDto)
-    case MessageType.Image:
-      if (messageDto.channelType === ChannelType.Session) {
-        // return _sendImageMessageForSession(messageDto)
-      }
-      return _sendImageMessage(messageDto)
+  try {
+    switch (messageDto.type) {
+      case MessageType.Text:
+        if (messageDto.channelType === ChannelType.Session) {
+          return _sendTextMessageForSession(messageDto)
+        }
+        return _sendTextMessage(messageDto)
+      case MessageType.Image:
+        if (messageDto.channelType === ChannelType.Session) {
+          // return _sendImageMessageForSession(messageDto)
+        }
+        return _sendImageMessage(messageDto)
+    }
+  } catch (error) {
+    console.error(error)
   }
 }
 
@@ -282,7 +287,7 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
   // 1. 构建协议数据
   // 1.1 groupID: done
   // 1.2 timestamp
-  const timestamp = parseInt(dayjs().format('X'))
+  const timestamp = new Date().getSeconds()
   // 1.3 nickName: done
   // 1.4 content: done
   // 1.5 contentType
@@ -302,6 +307,7 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
   const node = {
     nodeName: NodeName.SimpleGroupChat,
     data: JSON.stringify(dataCarrier),
+    timestamp: new Date().getTime(), // 服务端返回的是毫秒，所以模拟需要乘以1000
   }
 
   // 2.5. mock发送
@@ -313,7 +319,7 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
     avatarTxId: userStore.user?.avatarTxId || 'undefined',
     metaId: userStore.user?.metaId || 'undefined',
     nickName: userStore.user?.name || '',
-    timestamp: timestamp * 1000, // 服务端返回的是毫秒，所以模拟需要乘以1000
+    timestamp: new Date().getTime(), // 服务端返回的是毫秒，所以模拟需要乘以1000
     txId: '',
     encryption,
     isMock: true,
@@ -322,9 +328,25 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
 
   // 3. 发送节点
   const sdk = userStore.showWallet
-  await sdk.createBrfcChildNode(node)
+  await tryCreateNode(node, sdk)
 
   return '1'
+}
+
+export const tryCreateNode = async (node: any, sdk: SDK) => {
+  const jobs = useJobsStore()
+  const talk = useTalkStore()
+  try {
+    await sdk.createBrfcChildNode(node)
+  } catch (error) {
+    const timestamp = node.timestamp
+    jobs.nodes.push({ node, timestamp })
+    const newMessages = talk.activeChannel.newMessages
+    const message = newMessages.find((item: any) => item.timestamp === timestamp && item.isMock)
+    if (message) {
+      message.error = true
+    }
+  }
 }
 
 const _sendTextMessageForSession = async (messageDto: MessageDto) => {
@@ -335,7 +357,7 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
   // 1. 构建协议数据
   // 1.1 to: done
   // 1.2 timestamp
-  const timestamp = parseInt(dayjs().format('X'))
+  const timestamp = new Date().getSeconds()
   // 1.3 content: done
   // 1.4 contentType
   const contentType = 'text/plain'
@@ -352,9 +374,8 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
   // 2. 构建节点参数
   const node = {
     nodeName: NodeName.ShowMsg,
-    encrypt: IsEncrypt.No,
-    dataType: 'application/json',
     data: JSON.stringify(dataCarrier),
+    timestamp: new Date().getTime(), // 服务端返回的是毫秒，所以模拟需要乘以1000
   }
 
   // 2.5. mock发送
@@ -367,7 +388,7 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
     metaId: userStore.user?.metaId || 'undefined',
     from: userStore.user?.metaId,
     nickName: userStore.user?.name || '',
-    timestamp: timestamp * 1000, // 服务端返回的是毫秒，所以模拟需要乘以1000
+    timestamp: new Date().getTime(), // 服务端返回的是毫秒，所以模拟需要乘以1000
     txId: '',
     encryption: encrypt,
     isMock: true,
@@ -380,7 +401,7 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
 
   // 3. 发送节点
   const sdk = userStore.showWallet
-  await sdk.createBrfcChildNode(node)
+  await tryCreateNode(node, sdk)
 
   return '1'
 }
@@ -419,7 +440,7 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
   // 1. 构建协议数据
   // 1.1 groupId: done
   // 1.2 timestamp
-  const timestamp = parseInt(dayjs().format('X'))
+  const timestamp = new Date().getSeconds()
   // 1.3 nickName: done
   // 1.4 fileType
   const file = attachments![0]
@@ -442,6 +463,7 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
     dataType: 'application/json',
     data: JSON.stringify(dataCarrier),
     attachments,
+    timestamp: timestamp * 1000, // 服务端返回的是毫秒，所以模拟需要乘以1000
   }
 
   // 2.5. mock发送
@@ -462,7 +484,7 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
 
   // 3. 发送节点
   const sdk = userStore.showWallet
-  await sdk.createBrfcChildNode(node)
+  await tryCreateNode(node, sdk)
 
   return
 }

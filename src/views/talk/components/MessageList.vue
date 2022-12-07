@@ -41,7 +41,7 @@
         <div class="w-full h-px bg-inherit" id="topAnchor"></div>
       </div>
 
-      <div class="flex flex-col space-y-4 mt-4">
+      <div class="flex flex-col space-y-4 mt-2">
         <template v-if="talkStore.activeChannelType === 'group'">
           <MessageItem
             v-for="message in talkStore.activeChannel?.newMessages"

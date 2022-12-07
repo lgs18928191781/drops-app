@@ -17,7 +17,7 @@
             <div class="w-full aspect-[4/3] mb-1">
               <Image
                 :src="talk.activeCommunity?.cover"
-                :customClass="'object-contain object-center'"
+                :customClass="'object-cover object-center w-full aspect-[4/3]'"
                 v-if="talk.activeCommunity?.cover"
               />
             </div>

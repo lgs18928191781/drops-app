@@ -165,6 +165,7 @@ import { useI18n } from 'vue-i18n'
 import { BindStatus, InviteActivityTag, NodeName } from '@/enum'
 import { ElMessage } from 'element-plus'
 import { router } from '@/router'
+import { useRoute } from 'vue-router'
 import { GetUserAllInfo } from '@/api/aggregation'
 import { debug } from 'console'
 import {
@@ -185,6 +186,7 @@ import { openLoading } from '@/utils/util'
 import { MD5 } from 'crypto-js'
 const rootStore = useRootStore()
 const userStore = useUserStore()
+const route = useRoute()
 const i18n = useI18n()
 const emit = defineEmits(['metamask'])
 const MetaMaskRef = ref()
@@ -636,7 +638,8 @@ async function connectWalletConnect() {
     },
   })
 
-  connector.on('session_update', (error, payload) => {
+  connector.on('session_update', async (error, payload) => {
+    connector.killSession()
     if (error) {
       throw error
     }
@@ -664,6 +667,8 @@ async function connectWalletConnect() {
     ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0])).slice(2, -1),
     accounts[0],
   ])
+  console.log('connector', connector)
+
   if (res) {
     rootStore.$patch({ isShowLogin: false })
     await onThreePartLinkSuccess({
@@ -671,7 +676,6 @@ async function connectWalletConnect() {
       address: accounts[0],
     })
   }
-  // connector.killSession()
 }
 
 // onMounted(async () => {
