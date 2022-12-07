@@ -49,14 +49,17 @@ export const useTalkStore = defineStore('talk', {
     },
 
     realCommunities(state) {
+      if (!state.communities) return []
       return state.communities.filter(community => community.id !== '@me')
     },
 
     atMeCommunity(state) {
+      if (!state.communities) return []
       return state.communities.find(community => community.id === '@me')
     },
 
     activeCommunity(state) {
+      if (!state.communities) return null
       return state.communities.find(community => community.id === state.activeCommunityId)
     },
 
@@ -617,7 +620,7 @@ export const useTalkStore = defineStore('talk', {
       console.log('resetting')
       this.closeWebSocket()
       this.closeReadPointerTimer()
-      this.communities = []
+      this.communities = [{ id: '@me' }]
       this.members = []
       this.activeCommunityId = ''
       this.activeChannelId = ''
