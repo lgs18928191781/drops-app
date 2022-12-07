@@ -6,7 +6,7 @@
       <ChannelHeader />
 
       <div class="pt-12 pb-17.5 h-screen lg:relative w-full bg-dark-200 lg:pt-15 lg:pb-20">
-        <router-view></router-view>
+        <router-view :key="($route.params.channelId as string)"></router-view>
       </div>
 
       <Transition name="slide">

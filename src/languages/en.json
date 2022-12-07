@@ -128,7 +128,9 @@
       "no_ft_available": "No tokens available.",
       "processing": "Processing...",
       "settings": "community settings",
-      "settings_short": "settings"
+      "settings_short": "settings",
+      "atme": "Contacts",
+      "feed": "Buzz"
     },
     "Input": {
       "nft_stickers": "NFT Stickers",

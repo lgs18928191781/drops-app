@@ -12,7 +12,7 @@
         </KeepAlive>
         <component
           :is="Component"
-          :key="route.fullPath"
+          :key="routeKey(route)"
           v-if="!route.meta || (route.meta && !route.meta.keepAlive)"
         />
       </RouterView>
@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import ConnectWalletModalVue from './components/ConnectWalletModal/ConnectWalletModal.vue'
 import LeftNavigationVue from './components/LeftNavigation/LeftNavigation.vue'
 import { useRootStore } from '@/stores/root'
@@ -32,6 +32,12 @@ import { useUserStore } from '@/stores/user'
 
 const rootStore = useRootStore()
 const userStore = useUserStore()
+
+const routeKey = (route: any) => {
+  if (route.params.communityId) return route.params.communityId
+
+  return route.fullPath
+}
 
 if (+Date.now() < 1669971600000) {
   document.getElementsByTagName('html')[0].style.filter = 'grayscale(100%)'

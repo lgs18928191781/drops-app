@@ -169,7 +169,9 @@
       "no_ft_available": "暂无 Token 可选择",
       "processing": "处理中...",
       "settings": "社区设置",
-      "settings_short": "设置"
+      "settings_short": "设置",
+      "atme": "私聊",
+      "feed": "Buzz"
     },
     "Input": {
       "nft_stickers": "NFT表情",
