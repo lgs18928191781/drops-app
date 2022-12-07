@@ -690,7 +690,6 @@ function bindingMetaidOrAddressLogin() {
           res.userInfo.evmAddress = window.ethereum.selectedAddress
           res.userInfo.ethAddress = window.ethereum.selectedAddress
           res.userInfo.chainId = window.ethereum.chainId
-
           await sendHash(res.userInfo)
           resolve(res)
         }

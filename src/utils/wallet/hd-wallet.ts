@@ -294,14 +294,13 @@ export const aesDecrypt = (encryptedStr: string, key: string): string => {
 
 // 加密助记词
 export const encryptMnemonic = (mnemonic: string, password: string): string => {
-  debugger
   const mnemonicStr = mnemonic.split(' ').join(',')
   return aesEncrypt(mnemonicStr, password)
 }
 // 解密助记词
 export const decryptMnemonic = (encryptedMnemonic: string, password: string): string => {
   const mnemonic = aesDecrypt(encryptedMnemonic, password)
-  debugger
+
   return mnemonic.split(',').join(' ')
 }
 
