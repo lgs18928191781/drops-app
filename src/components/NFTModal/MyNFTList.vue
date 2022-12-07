@@ -129,7 +129,7 @@ const title = computed(() => {
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetNFTs({
-      address: tabActive.value === 'mvc' ? userStore.user!.address : userStore.user!.ethAddress!,
+      address: tabActive.value === 'mvc' ? userStore.user!.address : userStore.user!.evmAddress!,
       chain: tabActive.value,
       ...pagination,
     })
@@ -145,7 +145,7 @@ function getDatas(isCover = false) {
 function getGenesisNTFs(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetGenesisNFTs({
-      address: tabActive.value === 'mvc' ? userStore.user!.address : userStore.user!.ethAddress!,
+      address: tabActive.value === 'mvc' ? userStore.user!.address : userStore.user!.evmAddress!,
       chain: tabActive.value,
       codehash: currentGenesis.val!.nftCodehash,
       genesis: currentGenesis.val!.nftGenesis,

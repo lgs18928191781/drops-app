@@ -567,6 +567,7 @@ function submitForm() {
                 ...account,
                 password: form.password,
                 address: hdWallet.rootAddress,
+                loginType: 'MetaId',
               })
               userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
               userStore.showWallet.initWallet()
@@ -686,7 +687,10 @@ function submitForm() {
                 accessKey: userInfo.token,
               })
               // @ts-ignore
-              await userStore.updateUserInfo(userInfo)
+              await userStore.updateUserInfo({
+                ...userInfo,
+                loginType: 'MetaId',
+              })
               userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
               userStore.showWallet.initWallet()
               // 处理活动邀请信息

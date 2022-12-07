@@ -149,18 +149,18 @@
         </div>
       </template>
     </ContentModalVue>
-  </ElDrawer>
 
-  <!-- 开始支付 -->
-  <StartPayVue
-    v-model="isStartPay"
-    :url="payUrl"
-    :payPlatform="payPlatformList.find(item => item.platform === currentPayPlatform)!.platform"
-    :orderId="orderId"
-    :product_type="product_type"
-    :amount="orderAmount"
-    @success="onPaySuceess"
-  />
+    <!-- 开始支付 -->
+    <StartPayVue
+      v-model="isStartPay"
+      :url="payUrl"
+      :payPlatform="payPlatformList.find(item => item.platform === currentPayPlatform)!.platform"
+      :orderId="orderId"
+      :product_type="product_type"
+      :amount="orderAmount"
+      @success="onPaySuceess"
+    />
+  </ElDrawer>
 </template>
 
 <script setup lang="ts">
@@ -320,7 +320,7 @@ async function recharge() {
     pay_type: currentPayPlatform.value,
     quit_url: quitUrl,
     types: type,
-    from_coin_address: userStore.user?.ethAddress,
+    from_coin_address: userStore.user?.evmAddress,
     product_type,
   }).catch(error => {
     ElMessage.error(error.message)
@@ -336,8 +336,8 @@ async function recharge() {
 }
 
 function onPaySuceess() {
-  count.value = ''
-  amount.value = ''
+  count.value = '0'
+  amount.value = '0'
 }
 
 function lockScroller() {

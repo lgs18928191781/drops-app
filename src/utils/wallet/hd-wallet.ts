@@ -54,7 +54,7 @@ export interface BaseUserInfoTypes {
   tag?: 'new' | 'old'
   referrerId?: string
   appToken: string
-  ethAddress?: string
+  evmAddress?: string
 }
 interface TransferNftParams {
   network?: string
@@ -699,7 +699,7 @@ export class HdWallet {
           }
 
           // eth 绑定新 metaId 账号
-          if (account.ethAddress) {
+          if (account.evmAddress) {
             // 先把钱打回到 protocolAddress
             const transfer = await this.makeTx({
               utxos: utxos,
@@ -726,7 +726,7 @@ export class HdWallet {
                 metaIdTag: MetaIdTag[this.network],
                 keyPath: '0/6',
                 parentAddress: this.protocolAddress,
-                data: account.ethAddress,
+                data: account.evmAddress!,
                 utxos: utxos,
                 change: this.rootAddress,
               })

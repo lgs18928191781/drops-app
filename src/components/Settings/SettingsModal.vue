@@ -44,7 +44,9 @@
       </div>
     </div>
 
+    <!-- EditProfile -->
     <!-- <EditProfileVue /> -->
+    <!-- UplinkSettingVue -->
     <UplinkSettingVue v-model="list[0].visible" />
     <!-- Language -->
     <LanguageVue v-model="list[1].visible" />

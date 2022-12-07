@@ -53,6 +53,7 @@
     :append-to-body="true"
     :lock-scroll="true"
     custom-class="none-padding"
+    :destroy-on-close="isDestroyShowWallet"
   >
     <div class="user-wallet flex flex-v">
       <div class="user flex flex-align-center">
@@ -70,8 +71,8 @@
               <ElDropdownMenu>
                 <ElDropdownItem>
                   <div class="flex flex-align-center user-wallet-operate-item">
-                    <img class="icon icon-img" src="@/assets/images/login_logo_matamask.png" />
-                    <span class="name">MetaMask</span>
+                    <img class="icon icon-img" :src="loginTypeLogo[userStore!.user!.loginType]" />
+                    <span class="name">{{userStore!.user!.loginType}}</span>
                     <span class="check-warp flex flex-align-center flex-pack-center">
                       <Icon name="check" />
                     </span>
@@ -91,9 +92,12 @@
             </template>
           </ElDropdown>
         </div>
-        <a class="metaId" @click="copy(userStore.user!.metaId)"
-          >{{userStore.user!.metaId.slice(0, 6)}}...{{userStore.user!.metaId.slice(-6)}}</a
-        >
+        <el-tooltip class="box-item" effect="dark" :content="i18n.t('copy')" placement="bottom">
+          <a class="metaId" @click="copy(userStore.user!.metaId)"
+            >{{userStore.user!.metaId.slice(0, 6)}}...{{userStore.user!.metaId.slice(-6)}}</a
+          >
+        </el-tooltip>
+
         <a class="close flex flex-align-center flex-pack-center" @click="isShowWallet = false">
           <Icon name="x_mark" />
         </a>
@@ -284,7 +288,7 @@
 import { useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
 import { ElDropdown } from 'element-plus'
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CardVue from '../Card/Card.vue'
 import SettingsModalVue from '@/components/Settings/SettingsModal.vue'
@@ -304,6 +308,8 @@ import IsNullVue from '../IsNull/IsNull.vue'
 import RechargeMeVue from './RechargeMe.vue'
 import { useTalkStore } from '@/stores/talk'
 import { useRoute, useRouter } from 'vue-router'
+import MetaMaskLogo from '@/assets/images/login_logo_matamask.png'
+import MetaIdLogo from '@/assets/images/iocn_showmoney.png'
 
 const i18n = useI18n()
 const rootStore = useRootStore()
@@ -317,10 +323,16 @@ const tabs = [
   { name: 'NFT', value: 1 },
 ]
 
+const loginTypeLogo = {
+  MetaMask: MetaMaskLogo,
+  MetaId: MetaIdLogo,
+}
+
 const tabActive = ref(0)
 
 const isShowUserMenu = ref(false)
 const pagination = reactive({ ...initPagination })
+const isDestroyShowWallet = ref(false)
 
 const userOperates = [
   {
@@ -350,13 +362,8 @@ const userOperates = [
     icon: 'logout',
     func: () => {
       userStore.logout(route).then(() => {
-        // 如果在聊天页面，退出登录后，跳转到buzz首页
-        talkStore.reset()
-        if (route.path.includes('/talk')) {
-          router.push({ name: 'buzz' })
-        }
+        isShowUserMenu.value = false
       })
-      isShowUserMenu.value = false
     },
   },
 ]
@@ -388,7 +395,11 @@ const wallets = reactive([
         icon: '',
         name: 'ME',
         value: 0,
-        price: () => {
+        price: function() {
+          const rate = rootStore.exchangeRate.find(item => item.symbol === 'ME')
+          if (rate) {
+            return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
+          }
           return '--'
         },
         loading: true,
@@ -407,7 +418,7 @@ const wallets = reactive([
             item => item.symbol === import.meta.env.VITE_ETH_CHAIN
           )
           if (rate) {
-            return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed()
+            return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
           }
           return '--'
         },
@@ -457,9 +468,12 @@ const userWalletOperates = [
     name: i18n.t('logout'),
     icon: 'logout',
     fun: () => {
-      userStore.logout(route).then(() => {
-        isShowWallet.value = false
-      })
+      isDestroyShowWallet.value = true
+      isShowWallet.value = false
+      // 确保销毁了 wallet 页面才推出， 不然会报错
+      setTimeout(() => {
+        userStore.logout(route)
+      }, 500)
     },
   },
 ]
@@ -554,10 +568,10 @@ function getSpaceBalance() {
 function getETHBalance() {
   return new Promise<void>(async resolve => {
     // 获取余额
-    if (userStore.user!.ethAddress) {
+    if (userStore.user!.evmAddress) {
       const res = await GetBalance({
         chain: import.meta.env.VITE_ETH_CHAIN,
-        address: userStore.user!.ethAddress!,
+        address: userStore.user!.evmAddress!,
       }).catch(error => {
         ElMessage.error(error.message)
         resolve()
@@ -583,7 +597,7 @@ function getAllBalace() {
 
 function getNFTs(isCover = false) {
   return new Promise<void>(async resolve => {
-    if (currentChain.value !== 'mvc' && !userStore.user!.ethAddress) {
+    if (currentChain.value !== 'mvc' && !userStore.user!.evmAddress) {
       genesisList.length = 0
       resolve()
     } else {
@@ -591,7 +605,7 @@ function getNFTs(isCover = false) {
         address:
           chains.find(item => item.value === currentChain.value)!.value === 'mvc'
             ? userStore.user!.address!
-            : userStore.user!.ethAddress!,
+            : userStore.user!.evmAddress!,
         chain:
           chains.find(item => item.value === currentChain.value)!.value !== 'mvc'
             ? chains.find(item => item.value === currentChain.value)!.value
