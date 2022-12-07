@@ -8,6 +8,7 @@ import {
   IsEncrypt,
   MessageType,
   NodeName,
+  SdkPayType,
 } from '@/enum'
 import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
@@ -15,7 +16,12 @@ import { getCommunityAuth } from '@/api/talk'
 import { SDK } from './sdk'
 import { FileToAttachmentItem, randomString, realRandomString, sleep } from './util'
 import { Message, MessageDto } from '@/@types/talk'
-import { decrypt, encrypt, MD5Hash } from './crypto'
+import { buildCryptoInfo, decrypt, encrypt, MD5Hash } from './crypto'
+import { UtxoItem } from '@/@types/sdk'
+import Decimal from 'decimal.js-light'
+import { TxComposer } from 'meta-contract/dist/tx-composer'
+import { Address, Script, Transaction } from 'meta-contract/dist/mvc'
+import { DEFAULTS } from './wallet/hd-wallet'
 
 export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   console.log('start')
@@ -63,23 +69,66 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   return { communityId }
 }
 
+const _putIntoRedPackets = (amount: number, quantity: number, address: string): any[] => {
+  // 构建🧧数量：随机将红包金额分成指定数量个小红包；指定最小系数为平均值的0.2倍，最大系数为平均值的1.8倍
+  const minFactor = 0.2
+  const maxFactor = 1.8
+  const redPackets = []
+  let remainsAmount = amount
+  let remainsCount = quantity
+  for (let i = 0; i < quantity - 1; i++) {
+    let avgAmount = Math.round(remainsAmount / remainsCount)
+    const randomFactor = Math.random() * (maxFactor - minFactor) + minFactor
+    const randomAmount = Math.round(avgAmount * randomFactor)
+    redPackets.push({
+      amount: randomAmount,
+      address,
+      index: i,
+    })
+    remainsAmount -= randomAmount
+    remainsCount -= 1
+  }
+  redPackets.push({
+    amount: Math.floor(remainsAmount),
+    address,
+    index: quantity - 1,
+  }) // 最后一个红包，使用剩余金额
+
+  return redPackets
+}
+
 export const giveRedPacket = async (form: any, channelId: string, selfMetaId: string, sdk: SDK) => {
+  // 1.1 构建红包地址
+  const code = realRandomString(6)
+  const subId = channelId.substring(0, 12)
+  const createTime = new Date().getTime()
+  const key = `${subId.toLocaleLowerCase()}${code.toLocaleLowerCase()}${createTime}`
+  const net = import.meta.env.VITE_NET_WORK || 'mainnet'
+  const { addressStr: address } = buildCryptoInfo(key, net)
+
+  // 1.2 构建红包数据
+  const { amount, quantity } = form
+  const amountInSat = amount * 100000000
+  const redPackets = _putIntoRedPackets(amountInSat, quantity, address)
+  console.table(redPackets)
+
+  // 2. 构建数据载体
   const dataCarrier = {
-    createTime: new Date().getTime(),
-    subId: channelId.substring(0, 12),
+    createTime,
+    subId,
     content: form.message,
-    code: realRandomString(6),
+    code,
     amount: form.amount,
     count: form.quantity,
     metaid: selfMetaId,
+    payList: redPackets,
   }
 
   // 2. 构建节点参数
   const node = {
     nodeName: NodeName.SimpleRedEnvelope,
-    encrypt: IsEncrypt.No,
-    dataType: 'application/json',
     data: JSON.stringify(dataCarrier),
+    payTo: redPackets,
   }
 
   // 3. 发送节点
@@ -252,9 +301,6 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
   // 2. 构建节点参数
   const node = {
     nodeName: NodeName.SimpleGroupChat,
-    encrypt: IsEncrypt.No,
-    payCurrency: 'usd',
-    dataType: 'application/json',
     data: JSON.stringify(dataCarrier),
   }
 
@@ -464,22 +510,76 @@ export const isImage = (file: File) => {
 
 export const openRedPacket = async (redPacket: any, sdk: SDK) => {
   const talkStore = useTalkStore()
+  const userStore = useUserStore()
+  const userAddress = userStore.user!.address as any
+  const { subId, code, createTime } = redPacket
   const dataCarrier = {
-    createTime: new Date().getTime(),
-    subId: redPacket.subId,
-    code: redPacket.code,
+    createTime,
+    subId,
+    code,
     type: redPacket.type,
-    used: redPacket.used,
+    used: redPacket.iTake,
   }
 
-  // 2. 构建节点参数
-  const node = {
-    nodeName: NodeName.SimpleGroupChat,
-    encrypt: IsEncrypt.No,
-    payCurrency: 'usd',
-    dataType: 'application/json',
-    data: JSON.stringify(dataCarrier),
-  }
+  // 使用红包的钱构建交易本身
+  const key = `${subId.toLocaleLowerCase()}${code.toLocaleLowerCase()}${createTime}`
+  const net = import.meta.env.VITE_NET_WORK || 'mainnet'
+  const redPacketCrypto = buildCryptoInfo(key, net)
 
-  await sdk.createBrfcChildNode(node)
+  // const
+  const satoshis = new Decimal(redPacket.iTake.amount)
+  const amount = satoshis.dividedBy(100000000).toNumber()
+  console.log({
+    script1: redPacket.iTake.scriptPubKey,
+    script2: redPacketCrypto.scriptStr,
+  })
+
+  const iTakeUtxo = {
+    address: redPacketCrypto.addressStr as any,
+    satoshis: satoshis.toNumber(),
+    txId: redPacket.id,
+    outputIndex: redPacket.iTake.index,
+  }
+  console.log('iTakeUtxo', iTakeUtxo)
+  const txComposer = new TxComposer()
+  // const script = Script.buildPublicKeyHashOut(redPacketCrypto.addressStr)
+  // const output = new Transaction.Output({
+  //   script: Script.buildPublicKeyHashOut(iTakeUtxo.address),
+  //   satoshis: iTakeUtxo.satoshis,
+  // })
+
+  // console.log({ output })
+  txComposer.appendP2PKHInput(iTakeUtxo)
+  const opReturn = _buildOpReturn()
+  txComposer.appendOpReturnOutput(opReturn)
+  // txComposer.appendChangeOutput(userAddress, DEFAULTS.feeb)
+  // txComposer.unlockP2PKHInput(redPacketCrypto.privateKey, 0)
+
+  // const txHex = txComposer.getRawHex()
+  // await sdk.wallet?.provider.broadcast(txHex)
+}
+
+const _buildOpReturn = () => {
+  //   'mvc',
+  // nodeAddress.publicKey.toString(),
+  // parentTxId,
+  // metaIdTag.toLowerCase(),
+  // nodeName,
+  // data,
+  // encrypt.toString(),
+  // version,
+  // dataType,
+  // encoding,
+  return [
+    'mvc',
+    '',
+    '',
+    'testmetaid',
+    'OpenRedenvelope',
+    {},
+    '0',
+    '1.0.1',
+    'application/json',
+    'UTF-8',
+  ]
 }

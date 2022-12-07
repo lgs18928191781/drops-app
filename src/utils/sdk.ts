@@ -464,236 +464,253 @@ export class SDK {
               // 构建没有utxo 的所有 transaction
               let transactions = await this.createBrfcChildNodeTransactions(params)
 
-              // 计算总价
-              let totalAmount = 0
-              // metafile brfc 节点价格
-              if (transactions.metaFileBrfc?.transaction)
-                totalAmount += transactions.metaFileBrfc.transaction.getNeedFee()
-              // metafile 节点价格
-              if (transactions.metaFiles && transactions.metaFiles.length > 0) {
-                for (const item of transactions.metaFiles) {
-                  totalAmount += item.transaction.getNeedFee()
-                }
-              }
-              // brfc 节点价格
-              if (transactions.currentNodeBrfc?.transaction)
-                totalAmount += transactions.currentNodeBrfc.transaction.getNeedFee()
-              // 节点价格
-              if (transactions.currentNode?.transaction)
-                totalAmount += transactions.currentNode.transaction.getNeedFee()
-
-              // nft issue 价格
-              if (transactions.issueNFT)
-                // @ts-ignore
-                totalAmount += transactions.issueNFT.transaction.getNeedFee()
-
-              const useSatoshis = totalAmount
-              // 当时用Me支付时，总价 space 要转换为 ME 值
-              if (option.payType === SdkPayType.ME) {
-                let useMe = Math.ceil(totalAmount / checkRes.me_rate_amount)
-                if (useMe * 100 < checkRes.me_amount_min) useMe = checkRes.me_amount_min / 100
-                totalAmount = useMe
-              }
-
-              //  获取余额
-              let balance: number // 余额
-              if (option.payType === SdkPayType.SPACE) {
-                // 获取余额
-                const res = await this.wallet?.provider.getXpubBalance(
-                  this.wallet.wallet.xpubkey.toString()
-                )
-                if (typeof res === 'number') balance = res
-              } else {
-                const userMeRes = await GetMyMEBalance({ address: userStore.user?.address! })
-                if (userMeRes.code === 0) {
-                  balance = userMeRes.data.count / 100
-                }
-              }
-
-              // 等待 确认支付
-              const result = await this.awitSdkPayconfirm(option.payType!, totalAmount, balance!)
-              if (result) {
-                // 确认支付
-
-                let payToRes: CreateNodeRes | undefined = undefined
-                // 打钱地址
-                let receive: {
-                  address: string
-                  addressIndex: number
-                  addressType: number
-                }
-                // 需要创建 metafile brfc 节点 ，把钱打去 protocol 地址
+              let payToRes: CreateNodeRes | undefined = undefined
+              if (!params.utxos!.length) {
+                // 计算总价
+                let totalAmount = 0
+                // metafile brfc 节点价格
                 if (transactions.metaFileBrfc?.transaction)
-                  receive = {
-                    address: this.wallet!.protocolAddress,
-                    addressType: parseInt(
-                      this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[0]
-                    ),
-                    addressIndex: parseInt(
-                      this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[1]
-                    ),
+                  totalAmount += transactions.metaFileBrfc.transaction.getNeedFee()
+                // metafile 节点价格
+                if (transactions.metaFiles && transactions.metaFiles.length > 0) {
+                  for (const item of transactions.metaFiles) {
+                    totalAmount += item.transaction.getNeedFee()
                   }
-                else if (transactions.metaFiles && transactions.metaFiles.length) {
-                  // 需要创建 metafile 节点 ，把钱打去 metafile brfc 地址
-                  receive = {
-                    address: transactions.metaFileBrfc!.address,
-                    addressType: transactions.metaFileBrfc!.addressType,
-                    addressIndex: transactions.metaFileBrfc!.addressIndex,
-                  }
-                } else if (transactions.currentNodeBrfc?.transaction) {
-                  // 需要创建 brfc 节点 ，把钱打去 protocol 地址
-                  receive = {
-                    address: this.wallet!.protocolAddress,
-                    addressType: parseInt(
-                      this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[0]
-                    ),
-                    addressIndex: parseInt(
-                      this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[1]
-                    ),
-                  }
-                } else {
-                  receive = {
-                    address: transactions.currentNodeBrfc!.address,
-                    addressType: transactions.currentNodeBrfc!.addressType,
-                    addressIndex: transactions.currentNodeBrfc!.addressIndex,
+                }
+                // brfc 节点价格
+                if (transactions.currentNodeBrfc?.transaction)
+                  totalAmount += transactions.currentNodeBrfc.transaction.getNeedFee()
+                // 节点价格
+                if (transactions.currentNode?.transaction)
+                  totalAmount += transactions.currentNode.transaction.getNeedFee()
+
+                // nft issue 价格
+                if (transactions.issueNFT)
+                  // @ts-ignore
+                  totalAmount += transactions.issueNFT.transaction.getNeedFee()
+
+                // payTo 价格
+                if (params.payTo && params.payTo.length > 0) {
+                  for (const item of params.payTo) {
+                    totalAmount += item.amount
                   }
                 }
 
-                // 获取上链时的utxo
-                let currentUtxo: UtxoItem
+                const useSatoshis = totalAmount
+                // 当时用Me支付时，总价 space 要转换为 ME 值
+                if (option.payType === SdkPayType.ME) {
+                  let useMe = Math.ceil(totalAmount / checkRes.me_rate_amount)
+                  if (useMe * 100 < checkRes.me_amount_min) useMe = checkRes.me_amount_min / 100
+                  totalAmount = useMe
+                }
+
+                //  获取余额
+                let balance: number // 余额
                 if (option.payType === SdkPayType.SPACE) {
-                  const allUtxos = await this.wallet?.provider.getUtxos(
+                  // 获取余额
+                  const res = await this.wallet?.provider.getXpubBalance(
                     this.wallet.wallet.xpubkey.toString()
                   )
-                  const useUtxos = []
-                  if (allUtxos && allUtxos?.length > 0) {
-                    // 总价加个 最小金额  给转账费用
-                    let leftAmount = totalAmount + bsv.Transaction.DUST_AMOUNT
-                    for (let i = 0; i < allUtxos.length; i++) {
-                      if (leftAmount > 0) {
-                        useUtxos.push(allUtxos[i])
-                        leftAmount -= allUtxos[i].satoshis
-                      } else {
-                        break
-                      }
-                    }
-                    if (leftAmount > 0) {
-                      // @ts-ignore
-                      throw new Error(i18n.global.t('Insufficient balance'))
-                    } else {
-                      const res = await this.wallet?.makeTx({
-                        utxos: useUtxos,
-                        opReturn: [],
-                        change: this.wallet.wallet.rootAddress,
-                        payTo: [{ amount: totalAmount, address: receive.address }],
-                      })
-                      if (res) {
-                        payToRes = {
-                          transaction: res,
-                          txId: res.id,
-                          address: receive.address,
-                          addressType: receive.addressType,
-                          addressIndex: receive.addressIndex,
-                          scriptPlayload: [],
-                        }
-                        currentUtxo = await this.wallet!.utxoFromTx({
-                          tx: payToRes.transaction,
-                          outPutIndex: 0,
-                        })
-                      }
-                    }
-                  }
+                  if (typeof res === 'number') balance = res
                 } else {
-                  const getMeUtxo = await GetMeUtxos({
-                    address: userStore.user!.address,
-                    amount: useSatoshis,
-                    meta_id: userStore.user!.metaId,
-                    protocol: params.nodeName,
-                    // 打钱地址： 如果需要创建brfc节点则打到 protocol 地址，否则打到 brfc 节点地址
-                    receive_address: receive.address,
+                  const userMeRes = await GetMyMEBalance({
+                    address: userStore.user?.address!,
                   })
-                  if (getMeUtxo.code === 0) {
-                    currentUtxo = {
-                      address: getMeUtxo.data.address,
-                      // utxo 所在的路径
-                      addressIndex: receive.addressIndex,
-                      addressType: receive!.addressType,
-                      // txIndex: 0,
-                      outputIndex: 0,
-                      txId: getMeUtxo.data.tx,
-                      // value: getMeUtxo.data.amount,
-                      xpub: this.wallet!.wallet.xpubkey.toString(),
-                      script: getMeUtxo.data.script,
-                      satoshis: getMeUtxo.data.amount,
-                      amount: getMeUtxo.data.amount / 1e8,
-                    }
+                  if (userMeRes.code === 0) {
+                    balance = userMeRes.data.count / 100
                   }
                 }
 
-                // 使用utxo 组装 新的transactions
-                transactions = await this.setUtxoForCreateChileNodeTransactions(
-                  transactions,
-                  currentUtxo!,
-                  params
-                )
+                // 等待 确认支付
+                const result = await this.awitSdkPayconfirm(option.payType!, totalAmount, balance!)
+                if (result) {
+                  // 确认支付
 
-                // 广播
-                if (option.isBroadcast) {
-                  // 广播 打钱操作
-                  if (payToRes && payToRes.transaction) {
-                    await this.wallet?.provider.broadcast(payToRes.transaction.toString())
+                  // 打钱地址
+                  let receive: {
+                    address: string
+                    addressIndex: number
+                    addressType: number
                   }
-                  // 广播 Metefile Brfc
-                  if (transactions.metaFileBrfc?.transaction) {
-                    await this.wallet?.provider.broadcast(
-                      transactions.metaFileBrfc.transaction.toString()
+                  // 需要创建 metafile brfc 节点 ，把钱打去 protocol 地址
+                  if (transactions.metaFileBrfc?.transaction)
+                    receive = {
+                      address: this.wallet!.protocolAddress,
+                      addressType: parseInt(
+                        this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[0]
+                      ),
+                      addressIndex: parseInt(
+                        this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[1]
+                      ),
+                    }
+                  else if (transactions.metaFiles && transactions.metaFiles.length) {
+                    // 需要创建 metafile 节点 ，把钱打去 metafile brfc 地址
+                    receive = {
+                      address: transactions.metaFileBrfc!.address,
+                      addressType: transactions.metaFileBrfc!.addressType,
+                      addressIndex: transactions.metaFileBrfc!.addressIndex,
+                    }
+                  } else if (transactions.currentNodeBrfc?.transaction) {
+                    // 需要创建 brfc 节点 ，把钱打去 protocol 地址
+                    receive = {
+                      address: this.wallet!.protocolAddress,
+                      addressType: parseInt(
+                        this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[0]
+                      ),
+                      addressIndex: parseInt(
+                        this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[1]
+                      ),
+                    }
+                  } else {
+                    receive = {
+                      address: transactions.currentNodeBrfc!.address,
+                      addressType: transactions.currentNodeBrfc!.addressType,
+                      addressIndex: transactions.currentNodeBrfc!.addressIndex,
+                    }
+                  }
+
+                  // 获取上链时的utxo
+                  let currentUtxo: UtxoItem
+                  if (option.payType === SdkPayType.SPACE) {
+                    const allUtxos = await this.wallet?.provider.getUtxos(
+                      this.wallet.wallet.xpubkey.toString()
                     )
-                  }
-                  // 广播 Metefile
-                  if (transactions.metaFiles && transactions.metaFiles.length) {
-                    let catchError
-                    for (let i = 0; i < transactions.metaFiles.length; i++) {
-                      try {
-                        await this.wallet?.provider.broadcast(
-                          transactions.metaFiles[i].transaction.toString()
-                        )
-                      } catch (error) {
-                        catchError = (error as any).message
-                        break
+                    const useUtxos = []
+                    if (allUtxos && allUtxos?.length > 0) {
+                      // 总价加个 最小金额  给转账费用
+                      let leftAmount = totalAmount + bsv.Transaction.DUST_AMOUNT
+                      for (let i = 0; i < allUtxos.length; i++) {
+                        if (leftAmount > 0) {
+                          useUtxos.push(allUtxos[i])
+                          leftAmount -= allUtxos[i].satoshis
+                        } else {
+                          break
+                        }
+                      }
+                      if (leftAmount > 0) {
+                        // @ts-ignore
+                        throw new Error(i18n.global.t('Insufficient balance'))
+                      } else {
+                        const res = await this.wallet?.makeTx({
+                          utxos: useUtxos,
+                          opReturn: [],
+                          change: this.wallet.wallet.rootAddress,
+                          payTo: [
+                            {
+                              amount: totalAmount,
+                              address: receive.address,
+                            },
+                          ],
+                        })
+                        if (res) {
+                          payToRes = {
+                            transaction: res,
+                            txId: res.id,
+                            address: receive.address,
+                            addressType: receive.addressType,
+                            addressIndex: receive.addressIndex,
+                            scriptPlayload: [],
+                          }
+                          currentUtxo = await this.wallet!.utxoFromTx({
+                            tx: payToRes.transaction,
+                            outPutIndex: 0,
+                          })
+                        }
                       }
                     }
-                    if (catchError) {
-                      throw new Error(catchError)
+                  } else {
+                    const getMeUtxo = await GetMeUtxos({
+                      address: userStore.user!.address,
+                      amount: useSatoshis,
+                      meta_id: userStore.user!.metaId,
+                      protocol: params.nodeName,
+                      // 打钱地址： 如果需要创建brfc节点则打到 protocol 地址，否则打到 brfc 节点地址
+                      receive_address: receive.address,
+                    })
+                    if (getMeUtxo.code === 0) {
+                      currentUtxo = {
+                        address: getMeUtxo.data.address,
+                        // utxo 所在的路径
+                        addressIndex: receive.addressIndex,
+                        addressType: receive!.addressType,
+                        // txIndex: 0,
+                        outputIndex: 0,
+                        txId: getMeUtxo.data.tx,
+                        // value: getMeUtxo.data.amount,
+                        xpub: this.wallet!.wallet.xpubkey.toString(),
+                        script: getMeUtxo.data.script,
+                        satoshis: getMeUtxo.data.amount,
+                        amount: getMeUtxo.data.amount / 1e8,
+                      }
                     }
                   }
-                  // 广播当前节点的Brfc节点
-                  if (transactions.currentNodeBrfc?.transaction) {
-                    await this.wallet?.provider.broadcast(
-                      transactions.currentNodeBrfc.transaction.toString()
-                    )
-                  }
-                  // 广播当前节点
-                  if (transactions.currentNode?.transaction) {
-                    await this.wallet?.provider.broadcast(
-                      transactions.currentNode.transaction.toString()
-                    )
-                  }
 
-                  // 广播 nft issue
-                  if (transactions.issueNFT?.transaction) {
-                    await this.wallet?.provider.broadcast(
-                      transactions.issueNFT?.transaction.toString()
-                    )
+                  // 使用utxo 组装 新的transactions
+                  transactions = await this.setUtxoForCreateChileNodeTransactions(
+                    transactions,
+                    currentUtxo!,
+                    params
+                  )
+                } else {
+                  resolve(null)
+                }
+              }
+
+              // 广播
+              if (option.isBroadcast) {
+                console.log({ t: transactions!.currentNode?.transaction })
+                // 广播 打钱操作
+                if (payToRes && payToRes.transaction) {
+                  await this.wallet?.provider.broadcast(payToRes.transaction.toString())
+                }
+                // 广播 Metefile Brfc
+                if (transactions.metaFileBrfc?.transaction) {
+                  await this.wallet?.provider.broadcast(
+                    transactions.metaFileBrfc.transaction.toString()
+                  )
+                }
+                // 广播 Metefile
+                if (transactions.metaFiles && transactions.metaFiles.length) {
+                  let catchError
+                  for (let i = 0; i < transactions.metaFiles.length; i++) {
+                    try {
+                      await this.wallet?.provider.broadcast(
+                        transactions.metaFiles[i].transaction.toString()
+                      )
+                    } catch (error) {
+                      catchError = (error as any).message
+                      break
+                    }
+                  }
+                  if (catchError) {
+                    throw new Error(catchError)
                   }
                 }
+                // 广播当前节点的Brfc节点
+                if (transactions.currentNodeBrfc?.transaction) {
+                  await this.wallet?.provider.broadcast(
+                    transactions.currentNodeBrfc.transaction.toString()
+                  )
+                }
+                // 广播当前节点
+                if (transactions.currentNode?.transaction) {
+                  await this.wallet?.provider.broadcast(
+                    transactions.currentNode.transaction.toString()
+                  )
+                }
 
-                resolve({
-                  payToAddress: payToRes,
-                  ...transactions,
-                })
-              } else {
-                resolve(null)
+                // 广播 nft issue
+                if (transactions.issueNFT?.transaction) {
+                  await this.wallet?.provider.broadcast(
+                    transactions.issueNFT?.transaction.toString()
+                  )
+                }
               }
+
+              resolve({
+                payToAddress: payToRes,
+                ...transactions,
+              })
             }
           } else {
             // me 不支持该协议

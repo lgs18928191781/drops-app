@@ -309,7 +309,6 @@ export const useTalkStore = defineStore('talk', {
 
       const readPointers = localStorage.getItem('readPointers-' + this.selfMetaId)
       if (readPointers && JSON.parse(readPointers)) {
-        console.log('here')
         this.channelsReadPointers = JSON.parse(readPointers)
       } else {
         this.channelsReadPointers = {}

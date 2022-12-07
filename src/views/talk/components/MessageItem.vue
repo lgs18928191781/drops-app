@@ -87,7 +87,7 @@
 
       <div class="my-1.5 max-w-full flex" v-else>
         <div
-          class="text-sm text-dark-800 font-normal break-all p-3 rounded-xl rounded-tl-md"
+          class="text-sm text-dark-800 font-normal break-all p-3 rounded-xl rounded-tl"
           :class="isMyMessage ? 'bg-primary' : 'bg-white'"
           v-html="parseTextMessage(decryptedMessage)"
         ></div>

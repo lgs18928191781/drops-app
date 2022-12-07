@@ -76,7 +76,7 @@ export interface UtxoItem {
   outputIndex: number
   txId: string
   // value: number
-  xpub: string
+  xpub?: string
   script: string
   amount: number
   satoshis: number
