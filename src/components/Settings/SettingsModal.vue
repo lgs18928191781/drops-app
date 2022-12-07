@@ -48,6 +48,8 @@
     <UplinkSettingVue v-model="list[0].visible" />
     <!-- Language -->
     <LanguageVue v-model="list[1].visible" />
+    <!-- Theme -->
+    <ThemeVue v-model="list[2].visible" />
   </ElDrawer>
   <!-- <div
     class="fixed inset-0 h-screen w-screen z-[60] bg-dark-100 flex justify-center items-center select-none"
@@ -141,6 +143,7 @@ import { useUserStore } from '@/stores/user'
 import EditProfileVue from './EditProfile.vue'
 import UplinkSettingVue from './UplinkSetting.vue'
 import LanguageVue from './Language.vue'
+import ThemeVue from './Theme.vue'
 
 interface Props {
   modelValue: boolean
@@ -209,7 +212,9 @@ const list = reactive([
       return 'White'
     },
     visible: false,
-    fun: function() {},
+    fun: function() {
+      this.visible = true
+    },
   },
 ])
 

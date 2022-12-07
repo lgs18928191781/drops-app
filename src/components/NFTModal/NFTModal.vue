@@ -21,8 +21,8 @@
         <a
           v-for="item in tabs"
           :key="item.value"
-          :class="{ active: item.value === tabActive }"
-          @click="changeTab(item.value)"
+          :class="{ active: item.value === tabActive, disabled: item.disabled() }"
+          @click="changeTab(item)"
           >{{ item.name }}</a
         >
       </div>
@@ -122,8 +122,12 @@ const currentGenesis: { val: null | UserNFTItem } = reactive({ val: null })
 const genesisList: UserNFTItem[] = reactive([])
 const nfts: GenesisNFTItem[] = reactive([])
 const tabs = reactive([
-  { name: 'MVC NFT', value: 'mvc' },
-  { name: 'ETH NFT', value: import.meta.env.VITE_ETH_CHAIN },
+  { name: 'MVC NFT', value: 'mvc', disabled: () => false },
+  {
+    name: 'ETH NFT',
+    value: import.meta.env.VITE_ETH_CHAIN,
+    disabled: () => !userStore.user!.ethAddress,
+  },
   // { name: 'NFT On Sale', value: '2' },
 ])
 const tabActive = ref('mvc')
@@ -169,9 +173,9 @@ function getGenesisNTFs(isCover = false) {
   })
 }
 
-function changeTab(value: string) {
-  if (tabActive.value === value) return
-  tabActive.value = value
+function changeTab(item: { name: string; value: string; disabled: () => boolean }) {
+  if (tabActive.value === item.value || item.disabled()) return
+  tabActive.value = item.value
   isSkeleton.value = true
   pagination.page = 1
   pagination.loading = false

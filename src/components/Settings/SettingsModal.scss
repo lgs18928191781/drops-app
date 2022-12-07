@@ -32,6 +32,10 @@ header {
         padding: 18px;
         cursor: pointer;
 
+        &:hover {
+            background: var(--el-color-primary-light-1);
+        }
+
         .icon-warp {
             width: 36px;
             height: 36px;
