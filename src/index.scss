@@ -219,12 +219,12 @@ pre {
 
   // 褪色边框
   &.faded {
-    --border-color: var(--el-border-color);
+    --border-color: var(--faded-border-color);
     background: #EDEFF2;
   }
 
   &.faded-switch:not(:active, :hover):placeholder-shown {
-    --border-color: var(--el-border-color);
+    --border-color: var(--faded-border-color);
   }
 
   &.small {

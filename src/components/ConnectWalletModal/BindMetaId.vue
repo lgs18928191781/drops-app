@@ -138,6 +138,7 @@ import {
   LoginByEthAddress,
   loginByMetaidOrAddress,
   LoginByNewUser,
+  GetWordBeforeReg,
   MnemoicLogin,
   setHashData,
 } from '@/api/core'
@@ -380,6 +381,7 @@ function loginSuccess(params: BindMetaIdRes) {
         emit('update:modelValue', false)
         if (status.value === BindStatus.BindRegisterMetaId) {
           emit('register')
+          status.value = 0
         }
       }
       loading.value = false
@@ -424,7 +426,7 @@ function createMetaidAccount() {
       const mnemonic = await createMnemonic(props.thirdPartyWallet.signAddressHash)
 
       const hdWallet = await hdWalletFromMnemonic(mnemonic, 'new', Network.testnet)
-      console.log('hdWallet', hdWallet)
+
       const HdWalletInstance = new HdWallet(hdWallet)
 
       const account: any = {
@@ -443,13 +445,25 @@ function createMetaidAccount() {
 
       // const metaId = await HdWalletInstance.onlyCreateMetaidNode()
       console.log('props.thirdPartyWallet', props.thirdPartyWallet)
+      console.log('hdWallet', HdWalletInstance)
+
       if ((window as any).WallectConnect) {
         // await window.WallectConnect.connect()
         const encryptmnemonic = encryptMnemonic(
           mnemonic,
           MD5(props.thirdPartyWallet.signAddressHash).toString()
         )
+        const {
+          data: { word },
+        } = await GetWordBeforeReg({
+          evmAddress: props.thirdPartyWallet.address,
+          chainId: (window as any).ethereum.chainId,
+        }).catch(e => {
+          throw new Error(e.toString())
+        })
+
         const getUserInfoRes = await LoginByNewUser({
+          word: word,
           address: address,
           xpub: hdWallet.xpubkey,
           pubKey: pubKey,
@@ -474,6 +488,7 @@ function createMetaidAccount() {
               ? props.thirdPartyWallet.address
               : window.ethereum.selectedAddress,
           })
+
           const newUserInfo = Object.assign(getUserInfoRes.data, {
             metaId: metaId,
             evmAddress: props.thirdPartyWallet.address
@@ -498,7 +513,18 @@ function createMetaidAccount() {
           mnemonic,
           MD5(props.thirdPartyWallet.signAddressHash).toString()
         )
+
+        const {
+          data: { word },
+        } = await GetWordBeforeReg({
+          evmAddress: props.thirdPartyWallet.address,
+          chainId: (window as any).ethereum.chainId,
+        }).catch(e => {
+          throw new Error(e.toString())
+        })
+
         const getUserInfoRes = await LoginByNewUser({
+          word: word,
           address: address,
           xpub: hdWallet.xpubkey,
           pubKey: pubKey,
@@ -687,8 +713,12 @@ function bindingMetaidOrAddressLogin() {
         if (resp.code == 0) {
           const res = await loginByMnemonic(resp.result.enMnemonic, form.pass)
           console.log('res', res)
+          console.log('userStore', userStore)
+
           await createETHBindingBrfcNode(res.wallet, res.userInfo.metaId)
-          res.userInfo.evmAddress = window.ethereum.selectedAddress
+          res.userInfo.evmAddress = window.WallectConnect?.accounts[0]
+            ? window.WallectConnect?.accounts[0]
+            : window.ethereum.selectedAddress
           res.userInfo.chainId = window.ethereum.chainId
           await sendHash(res.userInfo)
           resolve(res)
@@ -701,10 +731,12 @@ function bindingMetaidOrAddressLogin() {
 }
 
 function sendHash(userInfo: BindUserInfo) {
+  console.log('xzxczxc', userInfo)
+
   return new Promise(async (resolve, reject) => {
     try {
       const res = await setHashData({
-        address: userInfo.address,
+        address: userInfo.ethAddress || userInfo.evmAddress,
         accessKey: userInfo.token,
         userName:
           userInfo.register == 'email' || userInfo.registerType == 'email'
@@ -712,7 +744,6 @@ function sendHash(userInfo: BindUserInfo) {
             : userInfo.phone,
         timestamp: +new Date(),
         metaId: userInfo.metaId,
-        evmAddress: userInfo.evmAddress,
         evmEnMnemonic: userInfo.enCryptedMnemonic,
         chainId: userInfo.chainId,
       })

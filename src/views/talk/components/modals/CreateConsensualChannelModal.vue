@@ -70,11 +70,11 @@
                   <div class="flex items-center gap-x-3">
                     <template v-if="form.nft">
                       <div class="w-8 h-8 rounded-full">
-                        <Image :src="form.nft.icon" customClass="w-8 h-8 box-content rounded" />
+                        <Image :src="form.nft.nftIcon" customClass="w-8 h-8 box-content rounded" />
                       </div>
 
                       <span class="text-sm text-dark-800">
-                        {{ form.nft.name }}
+                        {{ form.nft.nftSeriesName }}
                       </span>
                     </template>
                     <template v-else>
@@ -205,11 +205,11 @@
             @click="selectNft(nft)"
           >
             <Image
-              :src="nft.icon"
+              :src="nft.nftIcon"
               customClass="rounded-xl h-13.5 w-13.5 object-contain object-center"
             />
             <div class="text-base text-dark-800">
-              {{ nft.name }}
+              {{ nft.nftSeriesName }}
             </div>
           </div>
         </div>
@@ -266,9 +266,9 @@ import { createChannel } from '@/utils/talk'
 import { useTalkStore } from '@/stores/talk'
 import { useUserStore } from '@/stores/user'
 import { useLayoutStore } from '@/stores/layout'
-import { getNftSeries, getFtSeries } from '@/api/talk'
 import Cat from '@/assets/images/cat.svg?url'
 import { useRouter } from 'vue-router'
+import { GetNFTs, GetFTs } from '@/api/aggregation'
 
 const isShowingPassword = ref(false)
 const layout = useLayoutStore()
@@ -355,16 +355,26 @@ const selectFt = (ft: any) => {
 }
 
 const fetchNftSeries = async () => {
-  const _nfts = await getNftSeries(talkStore.selfMetaId)
+  const selfAddress = userStore.user!.address
+  const {
+    data: {
+      results: { items: _nfts },
+    },
+  } = await GetNFTs({ address: selfAddress, page: 1, pageSize: 100 })
   nftSeries.value = _nfts
 }
-const fetchFts = async () => {
-  const _fts = await getFtSeries(talkStore.selfMetaId)
+const fetchFtSeries = async () => {
+  const selfAddress = userStore.user!.address
+  const {
+    data: {
+      results: { items: _fts },
+    },
+  } = await GetFTs({ address: selfAddress, page: 1, pageSize: 100 })
   ftSeries.value = _fts
 }
 
 onMounted(async () => {
   await fetchNftSeries()
-  await fetchFts()
+  await fetchFtSeries()
 })
 </script>

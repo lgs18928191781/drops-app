@@ -67,7 +67,10 @@
       "you_have_been_invited": "You have been invited to join",
       "amount_needed": "Amount",
       "red_packet": "Red Packet",
-      "receive": "Receive"
+      "receive": "Receive",
+      "consensus_required": "Consensus Required",
+      "you_dont_have_nft": "You don't have the required NFT to join this channel.",
+      "confirm": "OK"
     },
     "Channel": {
       "members": "members",
@@ -92,7 +95,8 @@
         "settings": "Customize your Community"
       },
       "welcome_message": "Welcome to #{channel}!",
-      "welcome_start": "This is the start of the #{channel} channel."
+      "welcome_start": "This is the start of the #{channel} channel.",
+      "welcome_invite": "Invite your friends to join the channel."
     },
     "Community": {
       "create": "Create community",
@@ -280,9 +284,9 @@
   },
   "Invalid Value": "Invalid Value",
   "Theme": {
-    "Light color": "Light color",
-    "Dark color": "Dark color",
-    "Follow system": "Follow system"
+    "Light color": "Light",
+    "Dark color": "Dark",
+    "Follow system": "Sync with device"
   },
   "copy": "Copy"
 }

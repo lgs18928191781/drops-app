@@ -39,6 +39,8 @@ export const useTalkStore = defineStore('talk', {
       communityStatus: 'loading',
 
       inviteLink: '', // 邀请链接
+      consensualNft: null as any,
+      consensualFt: null as any,
     }
   },
 
@@ -355,6 +357,7 @@ export const useTalkStore = defineStore('talk', {
       if (!this.activeChannel) return
 
       const layoutStore = useLayoutStore()
+
       layoutStore.isShowMessagesLoading = true
 
       // 最少1秒，防止闪烁
@@ -387,8 +390,8 @@ export const useTalkStore = defineStore('talk', {
       }
 
       // 保证至少1秒
-      const delay = Math.max(1000 - (new Date().getTime() - currentTimestamp), 0)
-      if (delay) await sleep(delay)
+      // const delay = Math.max(1000 - (new Date().getTime() - currentTimestamp), 0)
+      // if (delay) await sleep(delay)
 
       layoutStore.isShowMessagesLoading = false
 

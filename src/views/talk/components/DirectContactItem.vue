@@ -1,10 +1,10 @@
 <template>
   <div
-    class="p-3 flex w-full items-center space-x-3 overflow-x-hidden lg:hover:bg-gray-200 cursor-pointer"
-    :class="{ 'bg-gray-200': isActive }"
+    class="p-3 flex w-full items-center space-x-3 overflow-x-hidden lg:hover:bg-gray-200 lg:hover:dark:bg-gray-900 cursor-pointer"
+    :class="{ 'bg-gray-200 dark:bg-gray-900': isActive }"
     @click="switchChannel"
   >
-    <div class="rounded-3xl w-12 h-12 bg-indigo-200 shrink-0 relative">
+    <div class="rounded-3xl w-12 h-12 shrink-0 relative">
       <UserAvatar
         :metaId="contact.metaId || 'undefined'"
         class="w-12 h-12 shrink-0 select-none"
@@ -18,11 +18,11 @@
 
     <div class="flex flex-col items-stretch grow space-y-1 overflow-x-hidden">
       <div class="flex items-baseline justify-between self-stretch">
-        <div class="text-base text-dark-800 truncate max-w-[96PX]">
+        <div class="text-base text-dark-800 dark:text-gray-100 truncate max-w-[96PX]">
           {{ contact.name }}
         </div>
 
-        <div class="shrink-0 text-dark-250 text-xs">
+        <div class="shrink-0 text-dark-250 dark:text-gray-400 text-xs">
           {{
             contact.lastMessageTimestamp
               ? formatTimestamp(contact.lastMessageTimestamp, i18n, false)
@@ -30,7 +30,7 @@
           }}
         </div>
       </div>
-      <div class="text-xs text-dark-300 truncate">
+      <div class="text-xs text-dark-300 dark:text-gray-400 truncate">
         {{ contact.lastMessage }}
       </div>
     </div>

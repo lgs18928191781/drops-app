@@ -1,13 +1,15 @@
 <template>
   <div
-    class="bg-white fixed inset-0 h-screen w-screen z-40 lg:static lg:shrink-0 lg:w-auto"
+    class="bg-white dark:bg-gray-700 fixed inset-0 h-screen w-screen z-40 lg:static lg:shrink-0 lg:w-auto"
     :class="[layout.isShowLeftNav ? '' : 'hidden lg:block']"
   >
     <div class="w-full h-full flex">
       <!-- 占位 -->
-      <div class="shrink-0 bg-white w-22.5 lg:hidden"></div>
+      <div class="shrink-0 bg-white dark:bg-gray-700 w-22.5 lg:hidden"></div>
 
-      <div class="h-full bg-dark-100 grow lg:w-60 flex flex-col justify-between items-stretch">
+      <div
+        class="h-full bg-dark-100 dark:bg-gray-800 grow lg:w-60 flex flex-col justify-between items-stretch"
+      >
         <div class="flex flex-col overflow-y-hidden">
           <!-- 搜索栏 -->
           <!-- <DirectContactSearch /> -->

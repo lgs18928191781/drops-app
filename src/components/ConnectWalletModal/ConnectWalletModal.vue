@@ -387,6 +387,7 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
       thirdPartyWallet.address = params.address
       BindMetaIdRef.value.status = BindStatus.ChooseType
       isShowMetaMak.value = false
+
       isShowBindModal.value = true
     } else {
       throw new Error(error.message)
@@ -639,7 +640,6 @@ async function connectWalletConnect() {
   })
 
   connector.on('session_update', async (error, payload) => {
-    connector.killSession()
     if (error) {
       throw error
     }
@@ -676,6 +676,7 @@ async function connectWalletConnect() {
       address: accounts[0],
     })
   }
+  // connector.killSession()
 }
 
 // onMounted(async () => {

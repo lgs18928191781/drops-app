@@ -1,5 +1,7 @@
 <template>
-  <div class="flex hover:bg-gray-200 px-4 py-1.5 relative group transition-all duration-150">
+  <div
+    class="flex hover:bg-gray-200 hover:bg-gray-800 px-4 py-1.5 relative group transition-all duration-150"
+  >
     <!-- 消息菜单 -->
     <MessageMenu
       :message="props.message"
@@ -15,10 +17,10 @@
     />
     <div class="ml-4 grow pr-12">
       <div class="flex items-baseline space-x-2">
-        <div class="font-medium text-sm text-dark-800">
+        <div class="font-medium text-sm text-dark-800 dark:text-gray-100">
           {{ senderName }}
         </div>
-        <div class="text-dark-300 text-xs">
+        <div class="text-dark-300 dark:text-gray-400 text-xs">
           {{ formatTimestamp(message.timestamp, i18n) }}
         </div>
       </div>
@@ -34,8 +36,8 @@
 
       <div class="my-1.5 flex" v-else-if="isFollow">
         <div
-          class="text-sm text-dark-800 font-normal break-all p-3 rounded-xl rounded-tl flex items-center"
-          :class="isMyMessage ? 'bg-primary' : 'bg-white'"
+          class="text-sm text-dark-800 dark:text-gray-100 font-normal break-all p-3 rounded-xl rounded-tl flex items-center"
+          :class="isMyMessage ? 'bg-primary dark:text-gray-800' : 'bg-white dark:bg-gray-700'"
         >
           <Icon name="message_follow" class="w-4 h-4 mr-1.5" />
           <span>
@@ -46,13 +48,15 @@
 
       <div class="my-1.5 flex" v-else-if="isFtTransfer">
         <div class="max-w-full min-w-[240PX] md:w-[300PX] shadow rounded-xl rounded-tl bg-blue-400">
-          <div class="rounded-xl p-4 flex space-x-4.5 bg-white items-center rounded-tl">
+          <div
+            class="rounded-xl p-4 flex space-x-4.5 bg-white dark:bg-gray-700 items-center rounded-tl"
+          >
             <Image :src="message.icon" customClass="h-15 w-15 rounded-full" loading="lazy" />
             <div class="flex flex-col space-y-1.5">
-              <div class="text-dark-800 text-base font-medium capitalize">
+              <div class="text-dark-800 dark:text-gray-100 text-base font-medium capitalize">
                 {{ message.memo }}
               </div>
-              <div class="text-dark-400 text-xs">
+              <div class="text-dark-400 dark:text-gray-200 text-xs">
                 {{ message.amountStr.split('.')[0] + ' ' + message.symbol }}
               </div>
             </div>
@@ -67,8 +71,8 @@
 
       <div class="my-1.5 flex flex-col items-start" v-else-if="isRepost">
         <div
-          class="text-sm text-dark-800 font-normal break-all p-3 rounded-xl rounded-tl flex items-center"
-          :class="isMyMessage ? 'bg-primary' : 'bg-white'"
+          class="text-sm text-dark-800 dark:text-gray-100 font-normal break-all p-3 rounded-xl rounded-tl flex items-center"
+          :class="isMyMessage ? 'bg-primary dark:text-gray-800' : 'bg-white dark:bg-gray-700'"
         >
           <Icon name="message_repost" class="w-4 h-4 mr-1.5" />
           <span>
@@ -80,7 +84,7 @@
           </span>
         </div>
         <div
-          class="mt-1.5 bg-dark-800/5 text-sm text-dark-400 rounded-xl px-3 py-2"
+          class="mt-1.5 bg-dark-800/5 dark:bg-gray-800  text-sm text-dark-400 dark:text-gray-200 rounded-xl px-3 py-2"
           v-if="message.data.rePostComment"
         >
           {{ message.data.rePostComment }}
@@ -89,8 +93,8 @@
 
       <div class="my-1.5 flex flex-col items-start" v-else-if="isLike">
         <div
-          class="text-sm text-dark-800 font-normal break-all p-3 rounded-xl rounded-tl flex items-center"
-          :class="isMyMessage ? 'bg-primary' : 'bg-white'"
+          class="text-sm text-dark-800 dark:text-gray-100 font-normal break-all p-3 rounded-xl rounded-tl flex items-center"
+          :class="isMyMessage ? 'bg-primary dark:text-gray-800' : 'bg-white dark:bg-gray-700'"
         >
           <Icon name="message_like" class="w-4 h-4 mr-1.5" />
           <span>
@@ -101,15 +105,17 @@
 
       <div class="my-1.5 flex flex-col items-start" v-else-if="isComment">
         <div
-          class="text-sm text-dark-800 font-normal break-all p-3 rounded-xl rounded-tl flex items-center"
-          :class="isMyMessage ? 'bg-primary' : 'bg-white'"
+          class="text-sm text-dark-800 dark:text-gray-100 font-normal break-all p-3 rounded-xl rounded-tl flex items-center"
+          :class="isMyMessage ? 'bg-primary dark:text-gray-800' : 'bg-white dark:bg-gray-700'"
         >
           <Icon name="message_comment" class="w-4 h-4 mr-1.5" />
           <span>
             {{ $t('Talk.Messages.comment') }}
           </span>
         </div>
-        <div class="mt-1.5 bg-dark-800/5 text-sm text-dark-400 rounded-xl px-3 py-2">
+        <div
+          class="mt-1.5 bg-dark-800/5 dark:bg-gray-800 text-sm text-dark-400 dark:text-gray-200 rounded-xl px-3 py-2"
+        >
           {{ message.data.content }}
         </div>
       </div>
@@ -123,7 +129,10 @@
           <Image :src="decryptedMessage" customClass="rounded py-0.5 object-scale-down" />
         </div>
         <button v-if="message.error" class="ml-3" :title="resendTitle" @click="tryResend">
-          <Icon name="arrow_path" class="w-4 h-4 text-dark-400 hover:animate-spin-once" />
+          <Icon
+            name="arrow_path"
+            class="w-4 h-4 text-dark-400 dark:text-gray-200 hover:animate-spin-once"
+          />
         </button>
         <Teleport to="body" v-if="isImage && showImagePreview">
           <ImagePreview
@@ -134,7 +143,10 @@
         </Teleport>
       </div>
 
-      <div class="text-xs text-dark-400 my-0.5 capitalize" v-else-if="isReceiveRedEnvelope">
+      <div
+        class="text-xs text-dark-400 dark:text-gray-200 my-0.5 capitalize"
+        v-else-if="isReceiveRedEnvelope"
+      >
         {{ redEnvelopeReceiveInfo }}
       </div>
 
@@ -151,21 +163,24 @@
               <div class="text-red-50 text-xs mt-0.5">{{ redEnvelopeMessage }}</div>
             </div>
           </div>
-          <div class=" py-2 px-6 text-dark-400 text-xs">Show红包</div>
+          <div class=" py-2 px-6 text-dark-400 dark:text-gray-200 text-xs">Show红包</div>
         </div>
       </div>
 
       <div class="my-1.5 max-w-full flex" v-else>
         <div
-          class="text-sm text-dark-800 font-normal break-all p-3 rounded-xl rounded-tl transition-all duration-200"
+          class="text-sm text-dark-800 dark:text-gray-100 font-normal break-all p-3 rounded-xl rounded-tl transition-all duration-200"
           :class="[
-            isMyMessage ? 'bg-primary' : 'bg-white',
+            isMyMessage ? 'bg-primary dark:text-gray-800' : 'bg-white dark:bg-gray-700',
             message.error && 'bg-red-200 opacity-50',
           ]"
           v-html="parseTextMessage(decryptedMessage)"
         ></div>
         <button v-if="message.error" class="ml-3" :title="resendTitle" @click="tryResend">
-          <Icon name="arrow_path" class="w-4 h-4 text-dark-400 hover:animate-spin-once" />
+          <Icon
+            name="arrow_path"
+            class="w-4 h-4 text-dark-400 dark:text-gray-200 hover:animate-spin-once"
+          />
         </button>
       </div>
     </div>

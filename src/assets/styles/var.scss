@@ -18,6 +18,7 @@ $themeBtnTextColor:#fff;
     --themeBgColor: #fff;
     font-family: 'SF-Pro-Regular Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB,Microsoft YaHei', '微软雅黑', Arial, sans-serif;
     --border-color: #303133;
+    --faded-border-color: #BFC2CC;
     --normal-border-color: #303133;
     --standard-offset: 3px;
     --standard-border-width: 2PX;
@@ -29,6 +30,8 @@ $themeBtnTextColor:#fff;
 
 html.dark {
     --themeBgColor: #303133;
+    --border-color: #d1d5db;
+    --faded-border-color: #6b7280;
 }
 
 
@@ -59,8 +62,8 @@ html.dark {
 }
 
 @mixin text-many-ellipsis($lineNum) {
-  display: -webkit-box;
-  overflow: hidden;
-  -webkit-line-clamp: $lineNum;
-  -webkit-box-orient: vertical;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: $lineNum;
+    -webkit-box-orient: vertical;
 }

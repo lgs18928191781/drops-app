@@ -717,7 +717,6 @@ export class SDK {
                 keyPath = newKeyPath.join('/')
               }
             }
-            console.log({ item })
             createAttachmentParams.push({
               nodeName: item.fileName,
               metaIdTag: MetaIdTag[this.network],
