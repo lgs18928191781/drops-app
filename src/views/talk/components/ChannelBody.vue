@@ -78,7 +78,7 @@ const tryInitChannel = async (status: string) => {
           pageSize: 3,
         })
 
-        if (userNfts.length === 0) {
+        if (userNfts.length > 0) {
           talk.hasActiveChannelConsent = true
         } else {
           const {
