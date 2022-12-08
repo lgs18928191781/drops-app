@@ -387,6 +387,7 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
       thirdPartyWallet.address = params.address
       BindMetaIdRef.value.status = BindStatus.ChooseType
       isShowMetaMak.value = false
+
       isShowBindModal.value = true
     } else {
       throw new Error(error.message)
