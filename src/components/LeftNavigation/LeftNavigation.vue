@@ -1,13 +1,13 @@
 <template>
   <!-- 社区列表 -->
   <div
-    class="w-22.5 bg-white space-y-4.5 left-navigation z-50"
+    class="w-22.5 bg-white dark:bg-gray-700 space-y-4.5 left-navigation z-50"
     :class="[layout.isShowLeftNav ? '' : 'hidden lg:block']"
   >
     <div class="space-y-4.5">
       <el-tooltip
         effect="light"
-        popper-class="text-dark-800 text-base font-medium py-2 px-4 shadow-md rounded-lg"
+        popper-class="text-dark-800 dark:text-dark-200 text-base font-medium py-2 px-4 shadow-md rounded-lg"
         :content="item.title"
         offset="5"
         placement="right"
@@ -25,11 +25,11 @@
             v-if="item.icon === 'talk' && talk.hasUnreadMessagesOfCommunity('@me')"
           >
             <span
-              class="w-1.5 h-3 bg-dark-800 rounded-r-md lg:group-hover:h-6 transition-all duration-150"
+              class="w-1.5 h-3 bg-gray-200 rounded-r-md lg:group-hover:h-6 transition-all duration-150"
             ></span>
           </div>
           <span
-            class="absolute left-0 bg-dark-800 w-1.5 h-7 rounded-r-md"
+            class="absolute left-0 bg-gray-200 w-1.5 h-7 rounded-r-md"
             v-if="route.path.includes(item.symbol)"
           ></span>
           <span
@@ -45,13 +45,13 @@
     </div>
 
     <div class="divide flex items-center justify-center">
-      <div class="w-7.5 border-b-2 border-solid border-dark-100"></div>
+      <div class="w-7.5 border-b-2 border-solid border-dark-100 dark:border-gray-600"></div>
     </div>
 
     <div class="space-y-4.5 flex flex-col items-center justify-center">
       <el-tooltip
         effect="light"
-        popper-class="text-dark-800 text-base font-medium py-2 px-4 shadow-md rounded-lg"
+        popper-class="text-dark-800 dark:text-dark-200 text-base font-medium py-2 px-4 shadow-md rounded-lg"
         :content="community.name"
         offset="5"
         placement="right"
@@ -70,11 +70,11 @@
             v-if="talk.hasUnreadMessagesOfCommunity(community.id)"
           >
             <span
-              class="w-1.5 h-3 bg-dark-800 rounded-r-md lg:group-hover:h-6 transition-all duration-150"
+              class="w-1.5 h-3 bg-gray-200 rounded-r-md lg:group-hover:h-6 transition-all duration-150"
             ></span>
           </div>
           <span
-            class="absolute left-0 bg-dark-800 w-1.5 h-8 rounded-r-md"
+            class="absolute left-0 bg-gray-200 w-1.5 h-8 rounded-r-md"
             v-if="talk.activeCommunityId === community.id && route.path.includes('talk')"
           ></span>
 
@@ -88,7 +88,7 @@
       </el-tooltip>
 
       <div
-        class="border-dashed border-2 border-gray-200 w-13.5 h-13.5 flex items-center justify-center rounded-3xl text-dark-400 cursor-pointer hover:text-dark-800 hover:border-solid hover:border-dark-300 hover:bg-primary transition-all duration-300"
+        class="border-dashed border-2 border-gray-200 dark:border-gray-600 w-13.5 h-13.5 flex items-center justify-center rounded-3xl text-dark-400 cursor-pointer hover:text-dark-800 hover:border-solid hover:border-dark-300 hover:bg-primary transition-all duration-300"
         @click="layout.isShowCreateCommunityModal = true"
       >
         <Icon name="plus" class="w-[24PX] h-[24PX]" />

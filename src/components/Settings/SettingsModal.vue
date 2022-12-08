@@ -163,28 +163,6 @@ const switchLanguage = (lang: string) => {
   localStorage.setItem('lang', lang)
 }
 
-const languages = ref([
-  {
-    name: 'English',
-    code: 'en',
-    flag: FlagEn,
-  },
-  {
-    name: '简体中文',
-    code: 'zh',
-    flag: FlagCn,
-  },
-])
-
-const themes = ref([
-  {
-    name: 'light',
-  },
-  {
-    name: 'dark',
-  },
-])
-
 const list = reactive([
   {
     name: i18n.t('Setting.Uplink settings'),
@@ -212,7 +190,7 @@ const list = reactive([
     name: i18n.t('Setting.Theme'),
     icon: 'theme',
     value: () => {
-      return 'White'
+      return localStorage.theme === 'dark' ? 'Dark' : 'Light'
     },
     visible: false,
     fun: function() {

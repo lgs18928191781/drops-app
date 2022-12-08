@@ -107,7 +107,10 @@
       "you_have_been_invited": "您已被邀请",
       "amount_needed": "所需数额",
       "red_packet": "红包",
-      "receive": "接收"
+      "receive": "接收",
+      "consensus_required": "凭证权限",
+      "you_dont_have_nft": "你没有相关系列的NFT，不能进入本频道",
+      "confirm": "好的"
     },
 
     "Channel": {

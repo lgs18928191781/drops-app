@@ -10,28 +10,44 @@
   >
     <div class="overflow-x-hidden">
       <div class="flex flex-col-reverse space-y-2 space-y-reverse">
-        <template v-if="talkStore.activeChannelType === 'group'">
+        <template v-if="talk.activeChannelType === 'group'">
           <MessageItem
-            v-for="message in talkStore.activeChannel?.pastMessages"
+            v-for="message in talk.activeChannel?.pastMessages"
             :message="message"
             :id="message.timestamp"
           />
           <div
-            class="border-b border-solid border-dark-250 mb-6 pb-6 pt-2 mx-4"
+            class="border-b border-solid border-gray-300 dark:border-gray-600 mb-6 pb-6 pt-2 mx-4"
             v-if="hasTooFewMessages"
           >
-            <h3 class="text-2xl font-medium text-dark-400">
-              {{ $t('Talk.Channel.welcome_message', { channel: talkStore.activeChannel?.name }) }}
+            <h3 class="text-2xl font-medium text-dark-400 dark:text-gray-200">
+              {{
+                '😊 ' + $t('Talk.Channel.welcome_message', { channel: talk.activeChannel?.name })
+              }}
             </h3>
-            <p class="text-sm font-thin text-dark-400 mt-1 italic">
-              {{ $t('Talk.Channel.welcome_start', { channel: talkStore.activeChannel?.name }) }}
-            </p>
+            <div class="flex space-x-2 items-center mt-4">
+              <p class="text-sm font-thin text-dark-400 dark:text-gray-200 italic">
+                {{ $t('Talk.Channel.welcome_start', { channel: talk.activeChannel?.name }) }}
+              </p>
+              <p>🎉</p>
+            </div>
+
+            <div class="flex mt-1 items-center space-x-2">
+              <p class="text-sm font-thin text-dark-400 dark:text-gray-200 mt-1 italic">
+                {{ $t('Talk.Channel.welcome_invite') }}
+              </p>
+              <Icon
+                name="user_plus"
+                class="box-content w-4 h-4 p-1.5 text-dark-400 dark:text-gray-200 mt-1 ml-1 border-2 border-dashed border-dark-250 dark:border-dark-400 rounded-lg cursor-pointer hover:border-solid hover:text-dark-800 hover:dark:text-gray-100 transition-all duration-300"
+                @click="popInvite"
+              />
+            </div>
           </div>
         </template>
 
         <template v-else>
           <MessageItemForSession
-            v-for="message in talkStore.activeChannel?.pastMessages"
+            v-for="message in talk.activeChannel?.pastMessages"
             :message="message"
             :id="message.timestamp"
           />
@@ -42,16 +58,16 @@
       </div>
 
       <div class="flex flex-col space-y-4 mt-2">
-        <template v-if="talkStore.activeChannelType === 'group'">
+        <template v-if="talk.activeChannelType === 'group'">
           <MessageItem
-            v-for="message in talkStore.activeChannel?.newMessages"
+            v-for="message in talk.activeChannel?.newMessages"
             :message="message"
             :id="message.timestamp"
           />
         </template>
         <template v-else>
           <MessageItemForSession
-            v-for="message in talkStore.activeChannel?.newMessages"
+            v-for="message in talk.activeChannel?.newMessages"
             :message="message"
             :id="message.timestamp"
           />
@@ -71,11 +87,11 @@ import LoadingList from './LoadingList.vue'
 import MessageItem from './MessageItem.vue'
 import MessageItemForSession from './MessageItemForSession.vue'
 
-const talkStore = useTalkStore()
+const talk = useTalkStore()
 const layout = useLayoutStore()
 
 watch(
-  () => talkStore.newMessages,
+  () => talk.newMessages,
   async () => {
     await scrollToMessagesBottom()
   },
@@ -99,9 +115,14 @@ const handleScroll = async () => {
   }
 }
 
+const popInvite = () => {
+  talk.inviteLink = `${location.origin}/talk/channels/${talk.activeCommunityId}/${talk.activeChannelId}`
+  layout.isShowInviteModal = true
+}
+
 const loadMore = async () => {
   const earliestMessage =
-    talkStore.activeChannel?.pastMessages[talkStore.activeChannel?.pastMessages.length - 1]
+    talk.activeChannel?.pastMessages[talk.activeChannel?.pastMessages.length - 1]
   const earliestMessageTimestamp = earliestMessage?.timestamp
   const earliestMessageElement = document.getElementById(earliestMessageTimestamp?.toString() || '')
   const earliestMessagePosition = earliestMessageElement?.getBoundingClientRect().bottom
@@ -114,11 +135,7 @@ const loadMore = async () => {
     }
   }
 
-  let items = await getChannelMessages(
-    talkStore.activeChannelId,
-    params,
-    talkStore.activeChannelType
-  )
+  let items = await getChannelMessages(talk.activeChannelId, params, talk.activeChannelType)
 
   // 如果没有更多消息了，就不再加载
   if (items.length === 0) {
@@ -127,7 +144,7 @@ const loadMore = async () => {
   }
 
   for (const item of items) {
-    talkStore.activeChannel.postMessages.push(item)
+    talk.activeChannel.postMessages.push(item)
   }
 
   // 滚动到原来的位置
@@ -143,15 +160,15 @@ const loadMore = async () => {
 }
 
 const hasTooFewMessages = computed(() => {
-  if (!talkStore.activeChannel) {
+  if (!talk.activeChannel) {
     return false
   }
 
-  if (!talkStore.activeChannel.pastMessages) {
+  if (!talk.activeChannel.pastMessages) {
     return false
   }
 
-  return talkStore.activeChannel?.pastMessages.length < 10
+  return talk.activeChannel?.pastMessages.length < 10
 })
 
 const scrollToMessagesBottom = async (retryCount = 0) => {
@@ -183,8 +200,16 @@ onBeforeUnmount(() => {
   background: #edeff2;
 }
 
+.dark *::-webkit-scrollbar-track {
+  background: #111827;
+}
+
 *::-webkit-scrollbar-thumb {
   background-color: #bfc2cc;
   border-radius: 20px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #374151;
 }
 </style>
