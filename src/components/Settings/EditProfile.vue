@@ -49,7 +49,10 @@
 
     <!-- secondBody -->
     <template #secondBody>
-      <NFTAvatarListVue />
+      <NFTAvatarListVue
+        :active-tx="currentAvatar.val.txId"
+        @change="item => (currentAvatar.val = item)"
+      />
     </template>
   </ModalVue>
 </template>
@@ -61,6 +64,7 @@ import ModalVue from '@/components/Modal/Modal.vue'
 import MetaName from '@/assets/svg/tag_nft.svg'
 import NFTAvatarListVue from '@/components/NFTAvatarList/NFTAvatarList.vue'
 import { NodeName } from '@/enum'
+import { createBrfcChildNodeParams } from '@/@types/sdk'
 
 interface Props {
   modelValue: boolean
@@ -70,9 +74,13 @@ const emit = defineEmits(['update:modelValue'])
 
 const userStore = useUserStore()
 const isShowSecondModal = ref(true)
-const isShowNFTList = ref(false)
-const currentAvatarTx = ref(userStore.user!.avatarTxId)
-const nfts = []
+
+// @ts-ignore
+const currentAvatar: { val: NFTAvatarItem } = reactive({
+  val: {
+    txId: userStore.user!.avatarTxId,
+  },
+})
 
 const form = reactive({
   name: userStore.user!.name,
@@ -83,31 +91,45 @@ const rule = {
   name: [{ require: true }],
 }
 
-function confirm() {
+async function confirm() {
   if (
     form.name === '' ||
-    (form.name === userStore.user!.name && currentAvatarTx.value === userStore.user?.avatarTxId)
+    (form.name === userStore.user!.name && currentAvatar.val.txId === userStore.user?.avatarTxId)
   )
     return
 
-  const tasks = []
-  if (currentAvatarTx.value !== userStore.user?.avatarTxId) {
-    tasks.push(
-      userStore.showWallet.createBrfcChildNode({
-        nodeName: NodeName.NFTAvatar,
-        data: JSON.stringify({
-          type: `nft-{chain}`,
-          tx: currentAvatarTx,
-          codehash: '',
-          genesis: '',
-          tokenIndex: '',
-          updateTime: new Date().getTime(),
-          memo: '',
-          image: '',
-          chain: 'chain',
-        }),
-      })
-    )
+  const paramsList: createBrfcChildNodeParams[] = []
+  if (currentAvatar.val!.avatarTxId !== userStore.user?.avatarTxId) {
+    paramsList.push({
+      nodeName: NodeName.NFTAvatar,
+      data: JSON.stringify({
+        type: `nft`,
+        codehash: currentAvatar.val!.codehash,
+        genesis: currentAvatar.val!.genesis,
+        tokenIndex: currentAvatar.val!.tokenIndex,
+        updateTime: new Date().getTime(),
+        memo: '',
+        image: '',
+        chain: '',
+      }),
+    })
+  }
+
+  if (form.name !== userStore.user!.name) {
+    paramsList.push({
+      nodeName: NodeName.Name,
+      data: form.name,
+    })
+  }
+
+  const res = await userStore.showWallet.batchCreateBrfcChildNode(paramsList)
+  if (res) {
+    // @ts-ignore
+    userStore.updateUserInfo({
+      ...userStore.user,
+      name: form.name,
+      avatarTxId: currentAvatar.val.txId,
+    })
   }
 }
 </script>

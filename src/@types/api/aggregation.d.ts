@@ -56,3 +56,25 @@ declare interface GetTopicbuzzsRes extends apiResponse {
     total: number
   }
 }
+
+declare interface NFTAvatarItem {
+  avatarTxId: string
+  avatarType: string
+  codehash: string
+  desc: string
+  genesis: string
+  genesisId: string
+  genesisTxId: string
+  icon: string
+  issueMetaTxId: string
+  issuerName: string
+  metaId: string
+  metaIdName: string
+  metanetId: string
+  name: string
+  timestamp: number
+  tokenId: string
+  tokenIndex: string
+  txId: string
+  website: string
+}
