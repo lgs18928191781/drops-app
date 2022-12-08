@@ -487,6 +487,7 @@ function createMetaidAccount() {
               ? props.thirdPartyWallet.address
               : window.ethereum.selectedAddress,
           })
+
           const newUserInfo = Object.assign(getUserInfoRes.data, {
             metaId: metaId,
             evmAddress: props.thirdPartyWallet.address
@@ -710,8 +711,12 @@ function bindingMetaidOrAddressLogin() {
         if (resp.code == 0) {
           const res = await loginByMnemonic(resp.result.enMnemonic, form.pass)
           console.log('res', res)
+          console.log('userStore', userStore)
+
           await createETHBindingBrfcNode(res.wallet, res.userInfo.metaId)
-          res.userInfo.evmAddress = window.ethereum.selectedAddress
+          res.userInfo.evmAddress = window.WallectConnect.accounts[0]
+            ? window.WallectConnect.accounts[0]
+            : window.ethereum.selectedAddress
           res.userInfo.chainId = window.ethereum.chainId
           await sendHash(res.userInfo)
           resolve(res)

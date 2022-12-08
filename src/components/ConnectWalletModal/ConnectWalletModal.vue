@@ -676,7 +676,7 @@ async function connectWalletConnect() {
       address: accounts[0],
     })
   }
-  connector.killSession()
+  // connector.killSession()
 }
 
 // onMounted(async () => {
