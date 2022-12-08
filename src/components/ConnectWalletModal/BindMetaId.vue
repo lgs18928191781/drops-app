@@ -457,6 +457,7 @@ function createMetaidAccount() {
           data: { word },
         } = await GetWordBeforeReg({
           evmAddress: props.thirdPartyWallet.address,
+          chainId: (window as any).ethereum.chainId,
         }).catch(e => {
           throw new Error(e.toString())
         })
@@ -517,6 +518,7 @@ function createMetaidAccount() {
           data: { word },
         } = await GetWordBeforeReg({
           evmAddress: props.thirdPartyWallet.address,
+          chainId: (window as any).ethereum.chainId,
         }).catch(e => {
           throw new Error(e.toString())
         })

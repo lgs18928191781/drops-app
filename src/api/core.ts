@@ -209,7 +209,7 @@ export const MnemoicLogin = (params: {
 
 //注册前获取Word
 
-export const GetWordBeforeReg = (params: { evmAddress: string }) => {
+export const GetWordBeforeReg = (params: { evmAddress: string; chainId: string }) => {
   return Core.post(`/api/v1/evm/wallet/word/verify`, params)
 }
 
