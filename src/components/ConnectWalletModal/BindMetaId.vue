@@ -711,7 +711,7 @@ function sendHash(userInfo: BindUserInfo) {
             : userInfo.phone,
         timestamp: +new Date(),
         metaId: userInfo.metaId,
-        evmAddress: userInfo.ethAddress || userInfo.evmAddress,
+        address: userInfo.ethAddress || userInfo.evmAddress,
         evmEnMnemonic: userInfo.enCryptedMnemonic,
         chainId: userInfo.chainId,
       })

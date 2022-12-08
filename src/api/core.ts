@@ -164,7 +164,6 @@ export const setHashData = (params: {
   accessKey: string
   userName: string
   timestamp: number
-  evmAddress: string
   evmEnMnemonic: string
   chainId: string
   metaId: string
@@ -173,7 +172,7 @@ export const setHashData = (params: {
   return Core.post(
     `/api/v1/evm/wallet/mnemonic/info/bind`,
     {
-      evmAddress: params.evmAddress,
+      evmAddress: params.address,
       evmEnMnemonic: params.evmEnMnemonic,
       metaId: params.metaId,
       chainId: params.chainId,
