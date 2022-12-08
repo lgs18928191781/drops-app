@@ -380,6 +380,7 @@ function loginSuccess(params: BindMetaIdRes) {
         emit('update:modelValue', false)
         if (status.value === BindStatus.BindRegisterMetaId) {
           emit('register')
+          status.value = 0
         }
       }
       loading.value = false
@@ -701,10 +702,12 @@ function bindingMetaidOrAddressLogin() {
 }
 
 function sendHash(userInfo: BindUserInfo) {
+  console.log('xzxczxc', userInfo)
+
   return new Promise(async (resolve, reject) => {
     try {
       const res = await setHashData({
-        address: userInfo.address,
+        address: userInfo.ethAddress || userInfo.evmAddress,
         accessKey: userInfo.token,
         userName:
           userInfo.register == 'email' || userInfo.registerType == 'email'
@@ -712,7 +715,6 @@ function sendHash(userInfo: BindUserInfo) {
             : userInfo.phone,
         timestamp: +new Date(),
         metaId: userInfo.metaId,
-        evmAddress: userInfo.evmAddress,
         evmEnMnemonic: userInfo.enCryptedMnemonic,
         chainId: userInfo.chainId,
       })

@@ -314,6 +314,7 @@ async function submit() {
     return ElMessage.error(i18n.t('Buzz.publish.empty'))
   }
   loading.value = true
+  const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
   const res = await userStore.showWallet
     .createBrfcChildNode({
       nodeName: NodeName.SimpleMicroblog,
@@ -325,6 +326,7 @@ async function submit() {
         mention: [],
       }),
       attachments: attachments.length && typeof attachments[0] === 'string' ? [] : attachments,
+      payTo: respostBuzz.val ? [{ amount: payAmount, address: respostBuzz.val?.zeroAddress }] : [],
     })
     .catch(error => {
       ElMessage.error(error.message)

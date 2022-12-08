@@ -131,6 +131,7 @@ const operates: {
       fun: async () => {
         operateLoading.value = true
         try {
+          const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
           const index = props.list.findIndex(item => item.txId === currentTxId.value)
           const time = new Date().getTime()
           const res = await userStore.showWallet.createBrfcChildNode({
@@ -141,6 +142,7 @@ const operates: {
               rePostProtocol: props.list[index].protocol,
               rePostComment: '',
             }),
+            payTo: [{ amount: payAmount, address: props.list[index].zeroAddress }],
           })
           if (res) {
             props.list[index].rePost.push({
@@ -148,7 +150,7 @@ const operates: {
               timestamp: time,
               txId: res.currentNode!.txId,
               userName: userStore.user!.name!,
-              value: 0,
+              value: payAmount,
             })
             emit('update:list', props.list)
             Mitt.emit(MittEvent.AddBuzz, { txId: res.currentNode!.txId })
@@ -212,25 +214,27 @@ function onMore(txId: string) {
 }
 
 async function onLike(txId: string) {
+  const index = props.list.findIndex(item => item.txId === txId)
   const time = new Date().getTime()
+  const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
   const res = await userStore.showWallet.createBrfcChildNode({
     nodeName: NodeName.PayLike,
     data: JSON.stringify({
       createTime: time,
       isLike: '1',
       likeTo: txId,
-      // pay,
-      // payTo: userContentAddress || address || zeroAddress,
+      pay: payAmount,
+      payTo: props.list[index].zeroAddress,
     }),
+    payTo: [{ amount: payAmount, address: props.list[index].zeroAddress }],
   })
   if (res) {
-    const index = props.list.findIndex(item => item.txId === txId)
     props.list[index].like.push({
       metaId: userStore.user!.metaId!,
       timestamp: time,
       txId: res.currentNode!.txId,
       userName: userStore.user!.name,
-      value: 0,
+      value: payAmount,
     })
     emit('update:list', props.list)
   }
@@ -241,15 +245,17 @@ async function onFollow(
   params: { resolve: (txId?: string) => void; reject: (resan: any) => any }
 ) {
   const index = props.list.findIndex(item => item.txId === txId)
+  const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
   const res = await userStore.showWallet
     .createBrfcChildNode({
       nodeName: NodeName.PayFollow,
       data: JSON.stringify({
         createTime: new Date().getTime(),
         MetaID: props.list[index].metaId,
-        pay: 0,
-        payTo: '',
+        pay: payAmount,
+        payTo: props.list[index].zeroAddress,
       }),
+      payTo: [{ amoint: payAmount, address: props.list[index].zeroAddress }],
     })
     .catch(error => params.reject(error))
   if (res) {
