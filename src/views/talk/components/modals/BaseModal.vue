@@ -31,7 +31,7 @@
               :style="mobileSize"
             >
               <div
-                class="w-full lg:max-w-screen-sm h-full bg-white lg:min-w-[456PX] lg:w-auto lg:h-auto lg:rounded-3xl relative lg:shadow-lg p-8 flex flex-col"
+                class="w-full lg:w-114 h-full bg-white lg:w-auto lg:h-auto lg:rounded-3xl relative lg:shadow-lg p-8 flex flex-col shrink-0"
                 :class="[mobileSize ? 'rounded' : '']"
               >
                 <button

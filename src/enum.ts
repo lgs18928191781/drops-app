@@ -335,6 +335,7 @@ export enum ShowControl {
   isShowChooseTokenModal = 'isShowChooseTokenModal',
   isShowRedPacketModal = 'isShowRedPacketModal',
   isShowPasswordModal = 'isShowPasswordModal',
+  isShowRequireNftModal = 'isShowRequireNftModal',
   isShowInviteModal = 'isShowInviteModal',
   isShowAcceptInviteModal = 'isShowAcceptInviteModal',
   never = 'never',

@@ -39,6 +39,8 @@ export const useTalkStore = defineStore('talk', {
       communityStatus: 'loading',
 
       inviteLink: '', // 邀请链接
+      consensualNft: null as any,
+      consensualFt: null as any,
     }
   },
 

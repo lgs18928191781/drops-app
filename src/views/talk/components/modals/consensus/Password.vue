@@ -3,12 +3,16 @@
     v-model="layout[ShowControl.isShowPasswordModal]"
     :strict-close="true"
     :extra-close-event="goBack"
+    :full-screen="true"
   >
     <template v-slot:title>
       {{ $t('Talk.Modals.enter_password') }}
     </template>
 
     <template v-slot:body>
+      <div class="mb-10 text-center text-base italic text-link -mt-7" v-if="talk.activeChannel">
+        {{ '# ' + talk.activeChannel.name }}
+      </div>
       <div class="flex space-x-4 items-center">
         <form autocomplete="off" class="w-full">
           <div class="flex relative items-center grow">
@@ -35,7 +39,7 @@
         </form>
 
         <button
-          class="main-border px-6 py-3 text-base text-dark-800 bg-primary font-bold"
+          class="main-border px-6 py-3 text-base text-dark-800 bg-primary font-bold shrink-0"
           :class="{ 'faded still text-dark-300': !passwordForm.isFinished }"
           :disabled="!passwordForm.isFinished"
           @click="tryVerifyPassword"
@@ -56,7 +60,7 @@
 
 <script lang="ts" setup>
 import { ShowControl } from '@/enum'
-import BaseModal from './BaseModal.vue'
+import BaseModal from '../BaseModal.vue'
 import { usePasswordFormStore } from '@/stores/forms'
 import { useTalkStore } from '@/stores/talk'
 import { MD5Hash } from '@/utils/crypto'

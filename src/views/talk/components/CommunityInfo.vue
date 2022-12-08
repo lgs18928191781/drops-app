@@ -1,7 +1,6 @@
 <template>
-  <Teleport to="body" v-if="layout.isShowCreatePublicChannelModal">
-    <CreatePublicChannelModal />
-  </Teleport>
+  <CreatePublicChannelModal v-if="layout.isShowCreatePublicChannelModal" />
+  <CreateConsensualChannelModal v-if="layout.isShowCreateConsensualChannelModal" />
 
   <div
     class="bg-white fixed inset-0 h-screen w-screen z-40 lg:static lg:shrink-0 lg:w-auto"
@@ -199,8 +198,6 @@
                     </button>
                   </div>
                 </div>
-
-                <CreateConsensualChannelModal />
               </div>
             </div>
           </div>

@@ -212,17 +212,15 @@ const _getChannelTypeInfo = (form: any, selfMetaId: string) => {
 
     case GroupChannelType.NFT:
       groupType = '2'
-      status = encrypt(selfMetaId.substring(0, 16), MD5Hash(form.nft.genesis).substring(0, 16))
-      codehash = form.nft.codehash
-      genesis = form.nft.genesis
-      type = '2'
-      break
+      status = encrypt(selfMetaId.substring(0, 16), MD5Hash(form.nft.nftGenesis).substring(0, 16))
+      codehash = form.nft.nftCodehash
+      genesis = form.nft.nftGenesis
 
     case GroupChannelType.FT:
       groupType = '2'
-      status = encrypt(selfMetaId.substring(0, 16), MD5Hash(form.ft.genesis).substring(0, 16))
-      codehash = form.ft.codehash
-      genesis = form.ft.genesis
+      status = encrypt(selfMetaId.substring(0, 16), MD5Hash(form.ft.ftGenesis).substring(0, 16))
+      codehash = form.ft.ftCodehash
+      genesis = form.ft.ftGenesis
       type = '3'
       limitAmount = form.amount.toString()
       break
