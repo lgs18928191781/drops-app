@@ -1,13 +1,13 @@
 <template>
   <div
-    class="hidden fixed inset-0 pt-12 w-full bg-dark-100 h-screen z-10 px-4 pb-4 overflow-y-auto lg:static lg:w-60 lg:shrink-0 lg:block"
+    class="hidden fixed inset-0 pt-12 w-full bg-dark-100 dark:bg-gray-800 h-screen z-10 px-4 pb-4 overflow-y-auto lg:static lg:w-60 lg:shrink-0 lg:block"
   >
     <div class="pt-6">
       <div class="flex items-baseline justify-between mb-2">
-        <div class="text-sm text-dark-800 uppercase font-medium">
+        <div class="text-sm text-dark-800 dark:text-gray-100 uppercase font-medium">
           {{ $t('Talk.Channel.members') }}
         </div>
-        <div class="text-sm text-dark-300">{{ talkStore.members.length }}</div>
+        <div class="text-sm text-dark-300 dark:text-gray-400">{{ talkStore.members.length }}</div>
       </div>
       <ChannelMemberItem v-for="member in talkStore.members" :member="member" />
     </div>
@@ -21,7 +21,7 @@ const talkStore = useTalkStore()
 </script>
 <style lang="scss" scoped>
 *::-webkit-scrollbar {
-  width: 8px;
+  width: 0px;
 }
 
 *::-webkit-scrollbar-track {

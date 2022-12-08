@@ -47,6 +47,16 @@
         win.addEventListener(resizeEvt, recalc, false)
       })(document, window, parseFloat('<% VITE_Design_Size />'), 100)
     </script>
+    <script>
+      if (
+        localStorage.theme === 'dark' ||
+        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+      ) {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
+    </script>
   </head>
   <body>
     <div id="app"></div>

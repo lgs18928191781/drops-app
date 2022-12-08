@@ -4,13 +4,13 @@
         width: 36px;
         height: 36px;
         border-radius: calc(100% / 2.5);
-        border: 2PX solid #EDEFF2;
+        border: 2PX solid var(--faded-border-color);
         box-sizing: border-box;
         cursor: pointer;
 
         &:hover,
         &.active {
-            border-color: var(--main-font-color);
+            border-color: var(--border-color);
         }
 
         .icon {

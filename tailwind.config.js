@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/**/*.{html,vue,jsx}'],
+  darkMode: 'class',
   theme: {
     spacing: {
       px: '1PX',
