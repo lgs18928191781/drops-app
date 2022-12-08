@@ -126,7 +126,7 @@ const tabs = reactive([
   {
     name: 'ETH NFT',
     value: import.meta.env.VITE_ETH_CHAIN,
-    disabled: () => !userStore.user!.ethAddress,
+    disabled: () => !userStore.user!.evmAddress,
   },
   // { name: 'NFT On Sale', value: '2' },
 ])
@@ -142,7 +142,7 @@ const title = computed(() => {
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetNFTs({
-      address: tabActive.value === 'mvc' ? userStore.user!.address : userStore.user!.ethAddress!,
+      address: tabActive.value === 'mvc' ? userStore.user!.address : userStore.user!.evmAddress!,
       chain: tabActive.value,
       ...pagination,
     })
@@ -158,7 +158,7 @@ function getDatas(isCover = false) {
 function getGenesisNTFs(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetGenesisNFTs({
-      address: tabActive.value === 'mvc' ? userStore.user!.address : userStore.user!.ethAddress!,
+      address: tabActive.value === 'mvc' ? userStore.user!.address : userStore.user!.evmAddress!,
       chain: tabActive.value,
       codehash: currentGenesis.val!.nftCodehash,
       genesis: currentGenesis.val!.nftGenesis,

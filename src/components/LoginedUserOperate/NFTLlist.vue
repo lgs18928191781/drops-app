@@ -67,7 +67,7 @@ function getDatas(isCover = false) {
     const res = await GetGenesisNFTs({
       ...pagination,
       chain: props.chain,
-      address: props.chain === 'mvc' ? userStore.user!.address : userStore.user!.ethAddress!,
+      address: props.chain === 'mvc' ? userStore.user!.address : userStore.user!.evmAddress!,
       codehash: props.codehash,
       genesis: props.genesis,
     }).catch(error => {

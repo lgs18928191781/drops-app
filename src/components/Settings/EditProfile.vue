@@ -1,5 +1,9 @@
 <template>
-  <ModalVue :model-value="true" :show-second-control="isShowSecondModal">
+  <ModalVue
+    :model-value="modelValue"
+    :show-second-control="isShowSecondModal"
+    @update:model-value="val => emit('update:modelValue', val)"
+  >
     <template #title>
       {{ $t('Setting.Edit Profile') }}
     </template>
@@ -9,7 +13,7 @@
       </div>
       <div class="avatar">
         <div class="avatar-warp" @click="toChoose">
-          <UserAvatar :meta-id="userStore.user!.metaId" :disabled="true" />
+          <UserAvatar :meta-id="currentAvatarTx" :type="'metafile'" :disabled="true" />
           <a class="edit flex flex-align-center flex-pack-center">
             <Icon name="edit" />
           </a>
@@ -17,7 +21,7 @@
       </div>
 
       <ElForm :model="form" :rules="rule" label-width="0">
-        <ElFormItem prop="metaName" label="">
+        <!-- <ElFormItem prop="metaName" label="">
           <div class="form-item">
             <div class="label flex flex-align-center active">MetaName <MetaName /></div>
             <ElInput type="text" v-model="form.metaName" />
@@ -25,7 +29,7 @@
               {{ $t('EditProfile.MetaName.drsc') }}
             </div>
           </div>
-        </ElFormItem>
+        </ElFormItem> -->
         <ElFormItem prop="name">
           <div class="form-item">
             <div class="label">{{ $t('EditProfile.User Name') }}</div>
@@ -35,7 +39,7 @@
 
         <ElFormItem prop="name">
           <div class="operate flex flex-pack-end">
-            <a class="main-border">
+            <a class="main-border" @click="confirm">
               <Icon name="check" />
             </a>
           </div>
@@ -56,10 +60,19 @@ import { reactive, ref } from 'vue'
 import ModalVue from '@/components/Modal/Modal.vue'
 import MetaName from '@/assets/svg/tag_nft.svg'
 import NFTAvatarListVue from '@/components/NFTAvatarList/NFTAvatarList.vue'
+import { NodeName } from '@/enum'
+
+interface Props {
+  modelValue: boolean
+}
+const props = withDefaults(defineProps<Props>(), {})
+const emit = defineEmits(['update:modelValue'])
 
 const userStore = useUserStore()
 const isShowSecondModal = ref(true)
 const isShowNFTList = ref(false)
+const currentAvatarTx = ref(userStore.user!.avatarTxId)
+const nfts = []
 
 const form = reactive({
   name: userStore.user!.name,
@@ -68,6 +81,34 @@ const form = reactive({
 
 const rule = {
   name: [{ require: true }],
+}
+
+function confirm() {
+  if (
+    form.name === '' ||
+    (form.name === userStore.user!.name && currentAvatarTx.value === userStore.user?.avatarTxId)
+  )
+    return
+
+  const tasks = []
+  if (currentAvatarTx.value !== userStore.user?.avatarTxId) {
+    tasks.push(
+      userStore.showWallet.createBrfcChildNode({
+        nodeName: NodeName.NFTAvatar,
+        data: JSON.stringify({
+          type: `nft-{chain}`,
+          tx: currentAvatarTx,
+          codehash: '',
+          genesis: '',
+          tokenIndex: '',
+          updateTime: new Date().getTime(),
+          memo: '',
+          image: '',
+          chain: 'chain',
+        }),
+      })
+    )
+  }
 }
 </script>
 

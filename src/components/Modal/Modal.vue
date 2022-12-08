@@ -37,12 +37,9 @@
                 <button
                   class="absolute top-[24PX] right-[24PX] h-6 w-6 flex items-center justify-center outline-0"
                   v-if="!isHideClose"
+                  @click="closeModal"
                 >
-                  <Icon
-                    name="x_circle"
-                    class="w-6 h-6 text-dark-400 cursor-pointer"
-                    @click="closeModal"
-                  />
+                  <Icon name="x_circle" class="w-6 h-6 text-dark-400 cursor-pointer" />
                 </button>
 
                 <DialogTitle
@@ -121,6 +118,7 @@ const props = defineProps<{
 }>()
 
 const tryClose = () => {
+  debugger
   if (props.strictClose) {
     return
   }
@@ -150,6 +148,7 @@ const mobileSize = computed(() => {
 })
 
 const closeModal = () => {
+  debugger
   emit('update:modelValue', false)
   if (props.showSecondControl) {
     emit('update:showSecondControl', false)

@@ -65,7 +65,7 @@ const currentNFT = reactive({
 function getNfts(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetNFTs({
-      address: userStore.user!.ethAddress!,
+      address: userStore.user!.evmAddress!,
       chain: pagintion.chain,
       limit: pagintion.limit,
       cursor: pagintion.cursor,

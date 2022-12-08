@@ -111,10 +111,12 @@ import { isMobile } from '@/stores/root'
 import CreateCommunityModal from '@/views/talk/components/modals/CreateCommunityModal.vue'
 import { onBeforeUnmount, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 const layout = useLayoutStore()
 const talk = useTalkStore()
 const userStore = useUserStore()
 const route = useRoute()
+const i18n = useI18n()
 
 const fetchCommunities = async () => {
   const selfMetaId = userStore.user?.metaId
@@ -130,13 +132,13 @@ const apps = [
     icon: 'feed',
     path: '/buzz',
     extraClass: 'left-navigation-item',
-    title: 'Feed',
+    title: i18n.t('Talk.Community.feed'),
     symbol: 'buzz',
   },
   {
     icon: 'talk',
     path: '/talk/channels/@me',
-    title: '@Me',
+    title: i18n.t('Talk.Community.atme'),
     symbol: '@me',
   },
 ]

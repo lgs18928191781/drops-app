@@ -9,6 +9,7 @@ import { ElMessageBox } from 'element-plus'
 import { SdkPayType } from '@/enum'
 import { RouteLocationNormalizedLoaded, useRoute, useRouter } from 'vue-router'
 import { router } from '@/router'
+import { useTalkStore } from './talk'
 
 export interface KycInfoTypes {
   name: string
@@ -37,6 +38,7 @@ interface UserState {
 }
 
 const userkey = encode('user')
+
 let user: any = null
 if (window.localStorage.getItem(userkey)) {
   user = decode(window.localStorage.getItem(userkey)!)
@@ -107,11 +109,14 @@ export const useUserStore = defineStore('user', {
   actions: {
     logout(route: RouteLocationNormalizedLoaded) {
       return new Promise<void>(resolve => {
-        localStorage.removeItem(encode('user'))
-        localStorage.removeItem(encode('password'))
-        localStorage.removeItem('walletconnect')
+        const talkStore = useTalkStore()
+        localStorage.clear()
+        // localStorage.removeItem(encode('user'))
+        // localStorage.removeItem(encode('password'))
+        // localStorage.removeItem('walletconnect')
         this.user = null
         this.password = null
+        talkStore.reset()
         if (route.meta.isAuth) router.push('/')
         resolve()
       })

@@ -9,7 +9,7 @@
             <input
               v-model="addComment.content"
               :placeholder="$t('Buzz.comment.publishPlaceholder')"
-              @keyup.enter="reply({ txId: '', username: '' })"
+              @keyup.enter="reply({ txId: '', username: '', userAddress: userStore.user!.address! })"
             />
           </div>
         </div>
@@ -52,6 +52,7 @@ const addComment = reactive({
   content: '',
   commentToCommentTxId: '',
   commentToUserName: '',
+  userAddress: '',
 })
 
 function fetchData() {
@@ -143,10 +144,11 @@ async function fetchChildCommentList(buzzTxIds: string[]) {
   })
 }
 
-async function reply(params: { txId: string; username: string }) {
+async function reply(params: { txId: string; username: string; userAddress: string }) {
   if (loading.value) return
   addComment.commentToCommentTxId = params.txId
   addComment.commentToUserName = params.username
+  addComment.userAddress = params.userAddress
   if (!params.txId) {
     await confirmComment()
   }
@@ -157,22 +159,22 @@ async function confirmComment() {
   loading.value = true
   await checkSdkStatus(route.fullPath)
   try {
+    const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
     const dataParams = {
       createTime: new Date().getTime(),
       content: addComment.content,
       contentType: 'text/plain',
       commentTo:
         addComment.commentToCommentTxId === '' ? list[0]!.txId : addComment.commentToCommentTxId,
-      pay: 0,
-      payTo: '',
+      pay: payAmount,
+      payTo: addComment.userAddress,
     }
     const res = await userStore.showWallet?.createBrfcChildNode({
       nodeName: NodeName.PayComment,
       dataType: 'application/json',
       data: JSON.stringify(dataParams),
       encrypt: IsEncrypt.No,
-      // confirmHandel: onPayMeConfirmCallback,
-      // payType: SdkPayType.MC,
+      payTo: [{ address: addComment.userAddress, amount: payAmount }],
     })
     if (res) {
       const item = {
@@ -209,7 +211,7 @@ async function confirmComment() {
         timestamp: dataParams.createTime,
         txId: res.currentNode!.txId,
         userName: userStore.user!.name!,
-        value: 0,
+        value: payAmount,
       })
       addComment.content = ''
       ElMessage.success(i18n.t('Buzz.comment.success'))

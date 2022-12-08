@@ -36,7 +36,8 @@ declare interface UserInfo {
   infoTxId: string
   protocolTxId: string
   flag?: boolean
-  ethAddress?: string
+  evmAddress?: string
+  loginType: 'MetaId' | 'MetaMask'
 }
 
 declare interface SetUserInfo extends UserInfo {

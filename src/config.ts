@@ -129,7 +129,7 @@ export const payPlatformList: PayPlatformItem[] = [
     disabled: () => {
       let result = true
       const userStore = useUserStore()
-      if (userStore.isAuthorized && userStore.user?.ethAddress) {
+      if (userStore.isAuthorized && userStore.user?.evmAddress) {
         result = false
       }
       return result

@@ -3,7 +3,9 @@
     <template v-for="(item, index) in commentList" :key="index">
       <div
         class="comment-item"
-        @click.stop="emit('reply', { txId: item.txId, username: item.userName })"
+        @click.stop="
+          emit('reply', { txId: item.txId, username: item.userName, userAddress: item.zeroAddress })
+        "
       >
         <div class="header">
           <div class="user-info">
@@ -25,7 +27,13 @@
             <template v-for="(child, childIndex) in item.children" :key="childIndex">
               <div
                 class="child-comment-item"
-                @click.stop="emit('reply', { txId: child.txId, username: child.userName })"
+                @click.stop="
+                  emit('reply', {
+                    txId: child.txId,
+                    username: child.userName,
+                    userAddress: child.zeroAddress,
+                  })
+                "
               >
                 <div class="name">{{ child.userName }}:</div>
                 <pre class="flex1" v-html="child.content"></pre>
