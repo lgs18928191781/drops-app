@@ -658,7 +658,6 @@ export class SDK {
 
               // 广播
               if (option.isBroadcast) {
-                console.log({ t: transactions!.currentNode?.transaction })
                 // 广播 打钱操作
                 if (payToRes && payToRes.transaction) {
                   await this.wallet?.provider.broadcast(payToRes.transaction.toString())
@@ -776,7 +775,6 @@ export class SDK {
                 keyPath = newKeyPath.join('/')
               }
             }
-            console.log({ item })
             createAttachmentParams.push({
               nodeName: item.fileName,
               metaIdTag: MetaIdTag[this.network],

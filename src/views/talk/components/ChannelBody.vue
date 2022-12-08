@@ -14,9 +14,12 @@ import { nextTick, onBeforeUnmount, watch } from 'vue'
 import { GroupChannelType } from '@/enum'
 import { verifyPassword } from '@/utils/talk'
 import { useLayoutStore } from '@/stores/layout'
+import { GetGenesisNFTs, GetNFT } from '@/api/aggregation'
+import { useUserStore } from '@/stores/user'
 
 const talk = useTalkStore()
 const layout = useLayoutStore()
+const user = useUserStore()
 const route = useRoute()
 const { communityId, channelId } = route.params
 
@@ -59,7 +62,44 @@ const tryInitChannel = async (status: string) => {
        * todo 检查NFT
        */
       case GroupChannelType.NFT:
-        talk.hasActiveChannelConsent = true
+        const consensualGenesis = talk.activeChannel.roomGenesis
+        const consensualCodehash = talk.activeChannel.roomCodeHash
+        const selfAddress = user.user!.address
+
+        const {
+          data: {
+            results: { items: userNfts },
+          },
+        } = await GetGenesisNFTs({
+          address: selfAddress,
+          codehash: consensualCodehash,
+          genesis: consensualGenesis,
+          page: 1,
+          pageSize: 3,
+        })
+
+        if (userNfts.length === 0) {
+          talk.hasActiveChannelConsent = true
+        } else {
+          const {
+            data: {
+              results: { items },
+            },
+          } = await GetNFT({
+            codehash: consensualCodehash,
+            genesis: consensualGenesis,
+            tokenIndex: 0,
+          })
+          const nftInfo = {
+            codehash: consensualCodehash,
+            genesis: consensualGenesis,
+            icon: items[0].nftIcon,
+            name: items[0].nftName,
+            seriesName: items[0].nftSeriesName,
+          }
+          talk.consensualNft = nftInfo
+          layout.isShowRequireNftModal = true
+        }
         return
     }
   }

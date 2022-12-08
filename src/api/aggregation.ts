@@ -369,6 +369,24 @@ export const GetNFTs = (params: {
   return aggregation.get(`/v2/app/show/nft/${address}/summary`, { params: _params })
 }
 
+export const GetFTs = (params: {
+  address: string
+  chain?: string
+  page: number | string
+  pageSize: number | string
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    results: {
+      items: UserNFTItem[]
+    }
+  }
+}> => {
+  const { address, ..._params } = params
+  return aggregation.get(`/v2/app/show/ft/${address}/summary`, { params: _params })
+}
+
 export const GetBalance = (params: {
   chain: string
   address: string
@@ -402,7 +420,7 @@ export const GetGenesisNFTs = (params: {
 }
 
 export const GetNFT = (params: {
-  chain: string
+  chain?: string
   metaId?: string
   codehash?: string
   genesis: string

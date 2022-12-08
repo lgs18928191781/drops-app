@@ -17,10 +17,11 @@
     <DragonBall />
 
     <!-- modals -->
-    <PasswordModal />
-    <InviteModal />
-    <AcceptInviteModal />
-    <LoadingCover />
+    <PasswordModal v-if="layout.isShowPasswordModal" />
+    <RequireNftModal v-if="layout.isShowRequireNftModal" />
+    <InviteModal v-if="layout.isShowInviteModal" />
+    <AcceptInviteModal v-if="layout.isShowAcceptInviteModal" />
+    <LoadingCover v-if="layout.isShowLoading" />
     <RedPacketOpenModal v-if="layout.isShowRedPacketOpenModal" />
     <RedPacketCreateModal v-if="layout.isShowRedPacketModal" />
   </div>
@@ -31,11 +32,12 @@ import ChannelHeader from './components/ChannelHeader.vue'
 import CommunityInfo from './components/CommunityInfo.vue'
 import ChannelMemberList from './components/ChannelMemberList.vue'
 import DragonBall from './components/DragonBall.vue'
-import { onBeforeUnmount, watch } from 'vue'
+import { onBeforeUnmount } from 'vue'
 import { useTalkStore } from '@/stores/talk'
 import { useRoute } from 'vue-router'
 import { useLayoutStore } from '@/stores/layout'
-import PasswordModal from './components/modals/PasswordModal.vue'
+import PasswordModal from './components/modals/consensus/Password.vue'
+import RequireNftModal from './components/modals/consensus/RequireNft.vue'
 import InviteModal from './components/modals/InviteModal.vue'
 import AcceptInviteModal from './components/modals/AcceptInviteModal.vue'
 import RedPacketOpenModal from './components/modals/red-packet/Open.vue'
@@ -66,6 +68,5 @@ onBeforeUnmount(() => {
 .slide-enter-from,
 .slide-leave-to {
   opacity: 0;
-  // transform: translateX(100%);
 }
 </style>

@@ -67,7 +67,10 @@
       "you_have_been_invited": "You have been invited to join",
       "amount_needed": "Amount",
       "red_packet": "Red Packet",
-      "receive": "Receive"
+      "receive": "Receive",
+      "consensus_required": "Consensus Required",
+      "you_dont_have_nft": "You don't have the required NFT to join this channel.",
+      "confirm": "OK"
     },
     "Channel": {
       "members": "members",
