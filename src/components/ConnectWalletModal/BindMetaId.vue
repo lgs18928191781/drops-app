@@ -138,6 +138,7 @@ import {
   LoginByEthAddress,
   loginByMetaidOrAddress,
   LoginByNewUser,
+  GetWordBeforeReg,
   MnemoicLogin,
   setHashData,
 } from '@/api/core'
@@ -425,7 +426,7 @@ function createMetaidAccount() {
       const mnemonic = await createMnemonic(props.thirdPartyWallet.signAddressHash)
 
       const hdWallet = await hdWalletFromMnemonic(mnemonic, 'new', Network.testnet)
-      console.log('hdWallet', hdWallet)
+
       const HdWalletInstance = new HdWallet(hdWallet)
 
       const account: any = {
@@ -444,13 +445,24 @@ function createMetaidAccount() {
 
       // const metaId = await HdWalletInstance.onlyCreateMetaidNode()
       console.log('props.thirdPartyWallet', props.thirdPartyWallet)
+      console.log('hdWallet', HdWalletInstance)
+
       if ((window as any).WallectConnect) {
         // await window.WallectConnect.connect()
         const encryptmnemonic = encryptMnemonic(
           mnemonic,
           MD5(props.thirdPartyWallet.signAddressHash).toString()
         )
+        const {
+          data: { word },
+        } = await GetWordBeforeReg({
+          evmAddress: props.thirdPartyWallet.address,
+        }).catch(e => {
+          throw new Error(e.toString())
+        })
+
         const getUserInfoRes = await LoginByNewUser({
+          word: word,
           address: address,
           xpub: hdWallet.xpubkey,
           pubKey: pubKey,
@@ -499,7 +511,17 @@ function createMetaidAccount() {
           mnemonic,
           MD5(props.thirdPartyWallet.signAddressHash).toString()
         )
+
+        const {
+          data: { word },
+        } = await GetWordBeforeReg({
+          evmAddress: props.thirdPartyWallet.address,
+        }).catch(e => {
+          throw new Error(e.toString())
+        })
+
         const getUserInfoRes = await LoginByNewUser({
+          word: word,
           address: address,
           xpub: hdWallet.xpubkey,
           pubKey: pubKey,

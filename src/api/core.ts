@@ -207,9 +207,16 @@ export const MnemoicLogin = (params: {
   return Core.post(`/api/v1/mnemonic/verification`, params)
 }
 
+//注册前获取Word
+
+export const GetWordBeforeReg = (params: { evmAddress: string }) => {
+  return Core.post(`/api/v1/evm/wallet/word/verify`, params)
+}
+
 //新用户登录
 
 export const LoginByNewUser = (params: {
+  word: string
   address: string
   xpub: string
   pubKey: string

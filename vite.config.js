@@ -121,11 +121,11 @@ export default ({ mode, command }) => {
     build: {
       target: 'es2015',
       minify: mode === 'prod' ? true : false,
-      sourcemap: mode === 'prod' ? false : false,
+      sourcemap: mode === 'prod' || mode === 'gray' ? false : 'inline',
       rollupOptions: {
         plugins: [nodePolyfills()],
         output: {
-          sourcemap: mode === 'prod' ? false : false,
+          sourcemap: mode === 'prod' || mode === 'gray' ? false : 'inline',
         },
       },
       terserOptions: {
@@ -138,6 +138,6 @@ export default ({ mode, command }) => {
         transformMixedEsModules: true,
       },
     },
-    sourcemap: mode === 'prod' ? false : false,
+    sourcemap: mode === 'prod' || mode === 'gray' ? false : 'inline',
   })
 }
