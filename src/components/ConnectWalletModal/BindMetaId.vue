@@ -703,7 +703,7 @@ function bindingMetaidOrAddressLogin() {
 
 function sendHash(userInfo: BindUserInfo) {
   console.log('xzxczxc', userInfo)
-  debugger
+
   return new Promise(async (resolve, reject) => {
     try {
       const res = await setHashData({
