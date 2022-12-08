@@ -716,8 +716,8 @@ function bindingMetaidOrAddressLogin() {
           console.log('userStore', userStore)
 
           await createETHBindingBrfcNode(res.wallet, res.userInfo.metaId)
-          res.userInfo.evmAddress = window.WallectConnect.accounts[0]
-            ? window.WallectConnect.accounts[0]
+          res.userInfo.evmAddress = window.WallectConnect?.accounts[0]
+            ? window.WallectConnect?.accounts[0]
             : window.ethereum.selectedAddress
           res.userInfo.chainId = window.ethereum.chainId
           await sendHash(res.userInfo)
