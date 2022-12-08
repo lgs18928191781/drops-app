@@ -85,15 +85,17 @@ function getRecommendUsers() {
 async function follow(item: RecommnedUser, index: number) {
   if (loading.includes(true) || item.isMyFollow) return
   loading[index] = true
+  const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
   const res = await userStore.showWallet
     .createBrfcChildNode({
       nodeName: NodeName.PayFollow,
       data: JSON.stringify({
         createTime: new Date().getTime(),
         MetaID: item.metaId,
-        pay: 0,
-        payTo: '',
+        pay: payAmount,
+        payTo: item.address,
       }),
+      payTo: [{ amount: payAmount, address: item.address }],
     })
     .catch(error => {
       ElMessage.error(error.message)
