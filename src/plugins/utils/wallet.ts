@@ -1,4 +1,5 @@
 import detectEthereumProvider from '@metamask/detect-provider'
+import { ethers } from 'ethers'
 
 export interface MetaMaskEthereumProvider {
   isMetaMask?: boolean
@@ -14,6 +15,7 @@ function connect() {
   return new Promise<{
     ethAddress: string
     provider: MetaMaskEthereumProvider
+    chain: string
   }>(async (resolve, reject) => {
     if (typeof (window as any).ethereum !== 'undefined') {
       const provider = await detectEthereumProvider()
@@ -21,9 +23,13 @@ function connect() {
         ;(window as any).ethereum
           .request({ method: 'eth_requestAccounts' })
           .then((res: string[]) => {
+            debugger
+            const chain = (window as any).ethereum.chainId
+            const chainId = parseInt(chain).toString()
             resolve({
               ethAddress: res[0],
               provider,
+              chain: chainId,
             })
           })
           .catch((error: any) => {

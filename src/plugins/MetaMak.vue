@@ -30,7 +30,7 @@ import { computed, reactive, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 // @ts-ignore
 import Wallet, { MetaMaskEthereumProvider } from './utils/wallet'
-import { ElLoading, ElMessage } from 'element-plus'
+import { ElLoading, ElMessage, ElMessageBox } from 'element-plus'
 import {ethers} from 'ethers'
 import { getRandomWord, loginByHashData, loginByMetaidOrAddress, mnemoicLogin, setHashData, loginByNewUser } from './utils/api';
 import type { MetaMaskLoginUserInfo } from './utils/api';
@@ -38,6 +38,9 @@ import { encode, decode } from 'js-base64'
 import { aesEncrypt, createMnemonic, decryptMnemonic, encryptMnemonic, HdWallet, hdWalletFromMnemonic, Network, signature } from '@/utils/wallet/hd-wallet';
 import { bsv } from 'sensible-sdk';
 import { BindMetaIdRes } from '@/@types/common';
+import { useUserStore } from '@/stores/user';
+import { useRoute } from 'vue-router';
+import { useRootStore } from '@/stores/root';
 
 
 export interface MetaMaskLoginRes {
@@ -47,9 +50,6 @@ export interface MetaMaskLoginRes {
     type: 'register' | 'login'
 }
 
-
-
-
 enum SignType {
     isLogined = 1,
     isBindMetaidOrAddressLogin = 2,
@@ -58,8 +58,6 @@ enum SignType {
     isInputPassword = 5,
 }
 
-
-let type: 'register' | 'login' = 'login'
 interface Props {
     modelValue: boolean
 }
@@ -68,8 +66,12 @@ const emit = defineEmits(['update:modelValue', 'success', 'logout'])
 defineExpose({
     ethPersonalSignSign
 })
-const i18n = useI18n()
 
+const userStore = useUserStore()
+const route = useRoute()
+let type: 'register' | 'login' = 'login'
+
+const i18n = useI18n()
 
 const signType = ref(SignType.isLogined)
 const noWallet = ref(false)
@@ -121,6 +123,7 @@ const ethAddress = ref('')
 const ethAddressHash = ref('')
 const userInfo: { val: any } = reactive({ val: null })
 let provider: null | MetaMaskEthereumProvider = null
+const root = useRootStore()
 
 
 const password = computed(() => {
@@ -162,17 +165,44 @@ const dialogTitle = computed(() => {
 })
 
 async function startConnect() {
-
-    const res = await Wallet.connect()
-    if (res) {
-        const result = await ethPersonalSignSign({
-            address: res.ethAddress,
-            message: ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1),
-        })
-        if (result) {
-
-             emit('success',{ signAddressHash:result, address: res.ethAddress});
+    try {
+        const res = await Wallet.connect()
+        if (res) {
+            debugger
+            if (res.chain === import.meta.env.VITE_ETH_CHAINID) {
+                startProvider(res.provider)
+                const result = await ethPersonalSignSign({
+                    address: res.ethAddress,
+                    message: ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1),
+                })
+                if (result) {
+                    emit('success',{ signAddressHash:result, address: res.ethAddress});
+                }
+            } else {
+                ElMessageBox.confirm(i18n.t('MetaMak.Chain Network Error Tips') + import.meta.env.VITE_ETH_CHAIN, i18n.t('MetaMak.Chain Network Error'), {
+                    customClass: 'primary',
+                    confirmButtonText: i18n.t('MetaMak.Change') + import.meta.env.VITE_ETH_CHAIN,
+                    cancelButtonText: i18n.t('Cancel')
+                }).then(() => {
+                    ;(window as any).ethereum
+                    .request({ method: 'wallet_switchEthereumChain', params: [{
+                        chainId: ethers.utils.hexValue(parseInt(import.meta.env.VITE_ETH_CHAINID))
+                    }]})
+                    .then((res: string[]) => {
+                        startConnect()
+                    })
+                    .catch((error: any) => {
+                        ElMessage.error(error.message)
+                        emit('update:modelValue', false)
+                    })
+                })
+                .catch(() => {
+                    emit('update:modelValue', false)
+                })
+            }
         }
+    } catch (error) {
+        emit('update:modelValue', false)
     }
 }
 
@@ -534,11 +564,12 @@ function createMetaidAccount() {
     })
 }
 
-function startProvider() {
-    provider!.on('accountsChanged', (res: string[]) => {
-        logout()
+function startProvider(provider: MetaMaskEthereumProvider) {
+    window.provider = provider
+    window.provider!.on('accountsChanged', (res: string[]) => {
+        userStore.logout(route)
         if (res.length > 0) {
-            window.location.reload()
+            startConnect()
         }
     })
 }

@@ -10,6 +10,8 @@ import { SdkPayType } from '@/enum'
 import { RouteLocationNormalizedLoaded, useRoute, useRouter } from 'vue-router'
 import { router } from '@/router'
 import { useTalkStore } from './talk'
+import { useRootStore } from './root'
+import detectEthereumProvider from '@metamask/detect-provider'
 
 export interface KycInfoTypes {
   name: string
@@ -110,7 +112,10 @@ export const useUserStore = defineStore('user', {
     logout(route: RouteLocationNormalizedLoaded) {
       return new Promise<void>(resolve => {
         const talkStore = useTalkStore()
+        const rootStore = useRootStore()
         localStorage.clear()
+        if (rootStore.isShowLogin) rootStore.$patch({ isShowLogin: false })
+        if (window.provider) window.provider = undefined
         // localStorage.removeItem(encode('user'))
         // localStorage.removeItem(encode('password'))
         // localStorage.removeItem('walletconnect')
@@ -122,8 +127,10 @@ export const useUserStore = defineStore('user', {
       })
     },
     updateUserInfo(userInfo: SetUserInfo) {
-      return new Promise<void>(resolve => {
+      return new Promise<void>(async resolve => {
         const { password, ...data } = userInfo
+
+        debugger
         // 兼容处理
         // @ts-ignore
         if (!data.address && data.rootAddress) {
@@ -138,6 +145,7 @@ export const useUserStore = defineStore('user', {
         // localStorage.setItem('user', JSON.stringify(data))
         // window.localStorage.setItem('password', password)
         localStorage.setItem(encode('user'), encode(JSON.stringify(data)))
+
         if (password) {
           window.localStorage.setItem(encode('password'), encode(password))
         }

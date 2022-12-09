@@ -37,6 +37,7 @@ import SdkPayConfirmModalVue from '@/components/SdkPayConfirmModal/SdkPayConfirm
 import { h, render } from 'vue'
 import { NftManager, FtManager, API_NET, API_TARGET, TxComposer } from 'meta-contract'
 import { resolve } from 'path'
+import detectEthereumProvider from '@metamask/detect-provider'
 
 enum AppMode {
   PROD = 'prod',
@@ -187,7 +188,7 @@ export class SDK {
       } else {
         try {
           const password = decode(localPassword)
-          const userInfo = JSON.parse(decode(localUserInfo))
+          const userInfo: UserInfo = JSON.parse(decode(localUserInfo))
           const walletObj = await hdWalletFromAccount(
             {
               ...userInfo,

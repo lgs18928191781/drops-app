@@ -52,18 +52,11 @@
 
   <!-- MetaMask -->
   <MetaMask
-    v-model="isShowMetaMak"
+    v-model="rootStore.isShowMetaMak"
     ref="MetaMaskRef"
     id="metamask"
     @success="onThreePartLinkSuccess"
   />
-
-  <!-- 登录注册 -->
-  <!-- <LoginAndRegisterModalVue
-    v-model="isShowLoginAndRegister"
-    v-model:type="type"
-    @success="onLoginAndRegisterSuccess"
-  /> -->
 
   <!-- setBaseInfo -->
   <SetBaseInfoVue
@@ -191,7 +184,6 @@ const i18n = useI18n()
 const emit = defineEmits(['metamask'])
 const MetaMaskRef = ref()
 const loading = ref(false)
-const isShowMetaMak = ref(false)
 const isShowLoginAndRegister = ref(false)
 const type: Ref<'login' | 'register'> = ref('login')
 const isShowSendBuzz = ref(false)
@@ -238,8 +230,7 @@ const wallets = [
         },
         icon: IconMetaMask,
         fun: () => {
-          rootStore.$patch({ isShowLogin: false })
-          isShowMetaMak.value = true
+          rootStore.$patch({ isShowLogin: false, isShowMetaMak: true })
         },
       },
       {
@@ -269,8 +260,6 @@ const wallets = [
         icon: IconAdd,
         fun: () => {
           type.value = 'register'
-          // rootStore.$patch({ isShowLogin: false })
-          // isShowMetaMak.value = true
           status.value = ConnectWalletStatus.UseMetaId
         },
       },
@@ -386,7 +375,7 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
       thirdPartyWallet.signAddressHash = params.signAddressHash
       thirdPartyWallet.address = params.address
       BindMetaIdRef.value.status = BindStatus.ChooseType
-      isShowMetaMak.value = false
+      rootStore.$patch({ isShowMetaMak: false })
 
       isShowBindModal.value = true
     } else {
@@ -424,10 +413,10 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
       )
       if (res) {
         await BindMetaIdRef.value.loginSuccess(res)
-        isShowMetaMak.value = false
+        rootStore.$patch({ isShowMetaMak: false })
       }
     } catch (error) {
-      isShowMetaMak.value = false
+      rootStore.$patch({ isShowMetaMak: false })
       return ElMessage.error(`${i18n.t('walletError')}`)
     }
 
@@ -451,7 +440,7 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
       thirdPartyWallet.signAddressHash = params.signAddressHash
       thirdPartyWallet.address = params.address
       BindMetaIdRef.value.status = BindStatus.InputPassword
-      isShowMetaMak.value = false
+      rootStore.$patch({ isShowMetaMak: false })
       isShowBindModal.value = true
     }
   }
