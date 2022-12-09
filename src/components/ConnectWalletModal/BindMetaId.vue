@@ -604,6 +604,7 @@ function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
   return new Promise<void>(async (resolve, reject) => {
     try {
       const hdWallet = new HdWallet(wallet)
+
       // 1. 先获取utxo
       let utxos = await hdWallet.provider.getUtxos(hdWallet.wallet.xpubkey.toString())
 
@@ -613,14 +614,22 @@ function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
         utxos: utxos,
         opReturn: [],
         change: hdWallet.rootAddress,
-        payTo: [{ amount: 2000, address: hdWallet.protocolAddress }],
+        payTo: [
+          {
+            amount: 2000,
+            address: hdWallet
+              ?.getPathPrivateKey(hdWallet.keyPathMap.Info.keyPath)
+              .publicKey.toAddress(hdWallet.network)
+              .toString(),
+          },
+        ],
       })
       if (transfer) {
         const utxo = await hdWallet.utxoFromTx({
           tx: transfer,
           addressInfo: {
             addressType: 0,
-            addressIndex: 2,
+            addressIndex: 1,
           },
           outPutIndex: 0,
         })
@@ -631,13 +640,16 @@ function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
         const res = await GetUserInfo(metaId)
         if (res.code === 0) {
           const newBfrcNodekeyPath = await hdWallet.getKeyPath({
-            parentTxid: res.data.protocolTxId,
+            parentTxid: res.data.infoTxId,
           })
           const ethBindBrfc = await hdWallet.createNode({
             nodeName: NodeName.ETHBinding,
-            parentTxId: res.data.protocolTxId,
+            parentTxId: res.data.infoTxId,
             keyPath: newBfrcNodekeyPath.join('/'),
-            parentAddress: hdWallet.protocolAddress,
+            parentAddress: hdWallet
+              ?.getPathPrivateKey(hdWallet.keyPathMap.Info.keyPath)
+              .publicKey.toAddress(hdWallet.network)
+              .toString(),
             data: props.thirdPartyWallet.address,
             utxos: utxos,
             change: hdWallet.rootAddress,
@@ -645,6 +657,7 @@ function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
           if (ethBindBrfc) {
             await hdWallet.provider.broadcast(transfer.toString())
             await hdWallet.provider.broadcast(ethBindBrfc.hex)
+            debugger
             resolve()
           }
         }
