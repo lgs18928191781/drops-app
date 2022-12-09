@@ -74,7 +74,7 @@ export const AllNodeName: {
   },
   [NodeName.ETHBinding]: {
     brfcId: '对应ETH钱包地址',
-    path: '/Info/ETHBinding',
+    path: '/Info/EVMBinding',
     version: '1.0.0',
   },
   [NodeName.NFTAvatar]: {

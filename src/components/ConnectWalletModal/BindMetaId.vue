@@ -650,7 +650,7 @@ function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
               ?.getPathPrivateKey(hdWallet.keyPathMap.Info.keyPath)
               .publicKey.toAddress(hdWallet.network)
               .toString(),
-            data: props.thirdPartyWallet.address,
+            data: JSON.stringify({ evmAddress: props.thirdPartyWallet.address }),
             utxos: utxos,
             change: hdWallet.rootAddress,
           })

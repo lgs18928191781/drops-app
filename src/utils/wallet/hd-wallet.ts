@@ -731,7 +731,7 @@ export class HdWallet {
                 metaIdTag: MetaIdTag[this.network],
                 keyPath: '0/6',
                 parentAddress: infoAddress.publicKey.toAddress(this.network).toString(),
-                data: account.ethAddress!,
+                data: JSON.stringify({ evmAddress: account.ethAddress! }),
                 utxos: utxos,
                 change: this.rootAddress,
               })
