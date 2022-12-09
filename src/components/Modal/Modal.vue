@@ -33,6 +33,7 @@
               <div
                 class="w-full max-w-screen-sm h-full bg-white lg:min-w-[456PX] lg:w-auto lg:h-auto lg:rounded-3xl relative lg:shadow-lg p-8 flex flex-col"
                 :class="[mobileSize ? 'rounded' : '']"
+                v-loading="loading"
               >
                 <button
                   class="absolute top-[24PX] right-[24PX] h-6 w-6 flex items-center justify-center outline-0"
@@ -66,6 +67,7 @@
                 >
                   <div
                     class="w-full max-w-screen-sm  bg-white lg:min-w-[456PX] lg:w-auto rounded lg:rounded-3xl lg:shadow-lg lg:ml-4 absolute inset-0 z-[65] lg:static lg:self-stretch"
+                    v-loading="loading"
                   >
                     <div class="w-full h-full relative p-8 flex flex-col">
                       <button
@@ -115,6 +117,7 @@ const props = defineProps<{
   mobileSize?: number
   isHideClose?: boolean // 是否关闭按钮
   width?: string
+  loading?: boolean
 }>()
 
 const tryClose = () => {
@@ -163,3 +166,9 @@ const closeSecondModal = () => {
   }
 }
 </script>
+
+<style scoped>
+:deep(.el-loading-mask) {
+  border-radius: 24px;
+}
+</style>

@@ -255,7 +255,7 @@ async function onFollow(
         pay: payAmount,
         payTo: props.list[index].zeroAddress,
       }),
-      payTo: [{ amoint: payAmount, address: props.list[index].zeroAddress }],
+      payTo: [{ amount: payAmount, address: props.list[index].zeroAddress }],
     })
     .catch(error => params.reject(error))
   if (res) {

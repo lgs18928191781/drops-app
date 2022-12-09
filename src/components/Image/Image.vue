@@ -86,7 +86,7 @@ async function getImageUrl() {
   if (filterTxids.includes(props.src)) {
     src = await metafile(props.src, -1)
   }
-  DB.getMetaFile(src, props.width, props.type).then(res => {
+  DB.getMetaFile(src, props.width, 'metafile').then(res => {
     url.value = res
     isSkeleton.value = false
   })

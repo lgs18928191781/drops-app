@@ -14,6 +14,7 @@ interface RootState {
   exchangeRate: ExchangeRate[]
   isGetedExchangeRate: boolean
   isShowLogin: boolean
+  isShowMetaMak: boolean
   isCertedMetaIds: string[]
   currentPrice: 'CNY' | 'USD'
 }
@@ -44,6 +45,7 @@ export const useRootStore = defineStore('root', {
       exchangeRate: [],
       isGetedExchangeRate: false,
       isShowLogin: false,
+      isShowMetaMak: false,
       currentPrice: window.localStorage.getItem('currentPrice') || 'CNY',
     },
   getters: {

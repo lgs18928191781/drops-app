@@ -3,6 +3,8 @@
     :model-value="modelValue"
     :show-second-control="isShowSecondModal"
     @update:model-value="val => emit('update:modelValue', val)"
+    @update:show-second-control="val => (isShowSecondModal = val)"
+    :loading="loading"
   >
     <template #title>
       {{ $t('Setting.Edit Profile') }}
@@ -12,8 +14,13 @@
         {{ $t('EditProfile.intro') }}
       </div>
       <div class="avatar">
-        <div class="avatar-warp" @click="toChoose">
-          <UserAvatar :meta-id="currentAvatarTx" :type="'metafile'" :disabled="true" />
+        <div class="avatar-warp" @click="isShowSecondModal = true">
+          <UserAvatar
+            :meta-id="userStore.user!.metaId"
+            :image="currentAvatar.val.avatarImage"
+            :type="'metafile'"
+            :disabled="true"
+          />
           <a class="edit flex flex-align-center flex-pack-center">
             <Icon name="edit" />
           </a>
@@ -50,7 +57,7 @@
     <!-- secondBody -->
     <template #secondBody>
       <NFTAvatarListVue
-        :active-tx="currentAvatar.val.txId"
+        :active-tx="currentAvatar.val.avatarImage"
         @change="item => (currentAvatar.val = item)"
       />
     </template>
@@ -65,20 +72,23 @@ import MetaName from '@/assets/svg/tag_nft.svg'
 import NFTAvatarListVue from '@/components/NFTAvatarList/NFTAvatarList.vue'
 import { NodeName } from '@/enum'
 import { createBrfcChildNodeParams } from '@/@types/sdk'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   modelValue: boolean
 }
 const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits(['update:modelValue'])
+const i18n = useI18n()
 
 const userStore = useUserStore()
-const isShowSecondModal = ref(true)
+const isShowSecondModal = ref(false)
+const loading = ref(false)
 
 // @ts-ignore
 const currentAvatar: { val: NFTAvatarItem } = reactive({
   val: {
-    txId: userStore.user!.avatarTxId,
+    avatarImage: userStore.user!.avatarImage,
   },
 })
 
@@ -94,42 +104,52 @@ const rule = {
 async function confirm() {
   if (
     form.name === '' ||
-    (form.name === userStore.user!.name && currentAvatar.val.txId === userStore.user?.avatarTxId)
+    (form.name === userStore.user!.name &&
+      currentAvatar.val.avatarImage === userStore.user?.avatarImage)
   )
     return
+  loading.value = true
+  try {
+    const paramsList: createBrfcChildNodeParams[] = []
+    if (currentAvatar.val!.avatarImage !== userStore.user?.avatarImage) {
+      paramsList.push({
+        nodeName: NodeName.NFTAvatar,
+        data: JSON.stringify({
+          type: `nft`,
+          codehash: currentAvatar.val!.codehash,
+          genesis: currentAvatar.val!.genesis,
+          tokenIndex: currentAvatar.val!.tokenIndex,
+          updateTime: new Date().getTime(),
+          memo: currentAvatar.val.desc,
+          image: currentAvatar.val.avatarImage,
+          chain: currentAvatar.val.avatarImage.split('://')[0],
+        }),
+      })
+    }
 
-  const paramsList: createBrfcChildNodeParams[] = []
-  if (currentAvatar.val!.avatarTxId !== userStore.user?.avatarTxId) {
-    paramsList.push({
-      nodeName: NodeName.NFTAvatar,
-      data: JSON.stringify({
-        type: `nft`,
-        codehash: currentAvatar.val!.codehash,
-        genesis: currentAvatar.val!.genesis,
-        tokenIndex: currentAvatar.val!.tokenIndex,
-        updateTime: new Date().getTime(),
-        memo: '',
-        image: '',
-        chain: '',
-      }),
-    })
-  }
+    if (form.name !== userStore.user!.name) {
+      paramsList.push({
+        nodeName: NodeName.Name,
+        data: form.name,
+      })
+    }
 
-  if (form.name !== userStore.user!.name) {
-    paramsList.push({
-      nodeName: NodeName.Name,
-      data: form.name,
-    })
-  }
+    const res = await userStore.showWallet.batchCreateBrfcChildNode(paramsList)
+    if (res) {
+      emit('update:modelValue', false)
 
-  const res = await userStore.showWallet.batchCreateBrfcChildNode(paramsList)
-  if (res) {
-    // @ts-ignore
-    userStore.updateUserInfo({
-      ...userStore.user,
-      name: form.name,
-      avatarTxId: currentAvatar.val.txId,
-    })
+      // @ts-ignore
+      userStore.updateUserInfo({
+        ...userStore.user,
+        name: form.name,
+        avatarImage: currentAvatar.val.avatarImage,
+      })
+      ElMessage.success(i18n.t('Setting.Edit Profile') + ' ' + i18n.t('Success'))
+      loading.value = false
+    }
+  } catch (error) {
+    ElMessage.error((error as any).message)
+    loading.value = false
   }
 }
 </script>

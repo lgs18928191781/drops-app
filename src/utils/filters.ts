@@ -76,6 +76,12 @@ export function metafile(metafile: string, width = 235, type: 'metafile' | 'meta
   } else if (type === 'metaId') {
     // metaId
     path = '/metafile/avatar/'
+  } else if (metafile.indexOf('eth://') !== -1) {
+    metafile = metafile.replace('eth://', 'evm/eth/')
+    path = '/metafile/'
+  } else if (metafile.indexOf('goerli://') !== -1) {
+    metafile = metafile.replace('goerli://', 'evm/goerli/')
+    path = '/metafile/'
   } else {
     //  普通txId
     path = '/metafile/'

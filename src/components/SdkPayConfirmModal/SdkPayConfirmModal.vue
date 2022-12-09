@@ -1,5 +1,5 @@
 <template>
-  <ElDialog :model-value="isShow" class="none-header none-padding sm">
+  <ElDialog :model-value="isShow" class="none-header none-padding sm" :z-index="9999">
     <div class="sdk-pay-confirm">
       <div class="header">
         <span class="title">

@@ -13,7 +13,7 @@
             v-for="(item, index) in users"
             :key="item.metaId"
           >
-            <UserAvatar :meta-id="item.metaId" />
+            <UserAvatar :meta-id="item.metaId" :image="item.avatarImage" />
             <div class="flex1">
               <div class="name flex flex-align-center">
                 {{ item.name }}

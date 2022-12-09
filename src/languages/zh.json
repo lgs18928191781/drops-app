@@ -112,7 +112,6 @@
       "you_dont_have_nft": "你没有相关系列的NFT，不能进入本频道",
       "confirm": "好的"
     },
-
     "Channel": {
       "members": "成员",
       "join_channel": "加入了频道",
@@ -419,5 +418,11 @@
     "Light color": "浅色",
     "Dark color": "深色",
     "Follow system": "跟随系统"
-  }
+  },
+  "MetaMak": {
+    "Chain Network Error": "链所在网络错误",
+    "Chain Network Error Tips": "你需要把网络切换到:",
+    "Change": "切换到"
+  },
+  "Success": "成功"
 }

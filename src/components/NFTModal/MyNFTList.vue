@@ -60,7 +60,11 @@
               </div>
               <div class="author flex flex-align-center">
                 <div class="msg flex1 flex flex-align-center">
-                  <UserAvatar :meta-id="item.nftIssueMetaId" :disabled="true" />
+                  <UserAvatar
+                    :meta-id="item.nftIssueMetaId"
+                    :image="item.nftIssueAvatarImage"
+                    :disabled="true"
+                  />
                   {{ item.nftIssuer }}
                 </div>
                 <div class=" ">{{ $t('Number') }}: {{ item.nftMyCount }}</div>

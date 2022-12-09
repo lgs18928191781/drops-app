@@ -52,18 +52,11 @@
 
   <!-- MetaMask -->
   <MetaMask
-    v-model="isShowMetaMak"
+    v-model="rootStore.isShowMetaMak"
     ref="MetaMaskRef"
     id="metamask"
     @success="onThreePartLinkSuccess"
   />
-
-  <!-- 登录注册 -->
-  <!-- <LoginAndRegisterModalVue
-    v-model="isShowLoginAndRegister"
-    v-model:type="type"
-    @success="onLoginAndRegisterSuccess"
-  /> -->
 
   <!-- setBaseInfo -->
   <SetBaseInfoVue
@@ -191,7 +184,6 @@ const i18n = useI18n()
 const emit = defineEmits(['metamask'])
 const MetaMaskRef = ref()
 const loading = ref(false)
-const isShowMetaMak = ref(false)
 const isShowLoginAndRegister = ref(false)
 const type: Ref<'login' | 'register'> = ref('login')
 const isShowSendBuzz = ref(false)
@@ -238,8 +230,7 @@ const wallets = [
         },
         icon: IconMetaMask,
         fun: () => {
-          rootStore.$patch({ isShowLogin: false })
-          isShowMetaMak.value = true
+          rootStore.$patch({ isShowLogin: false, isShowMetaMak: true })
         },
       },
       {
@@ -269,8 +260,6 @@ const wallets = [
         icon: IconAdd,
         fun: () => {
           type.value = 'register'
-          // rootStore.$patch({ isShowLogin: false })
-          // isShowMetaMak.value = true
           status.value = ConnectWalletStatus.UseMetaId
         },
       },
@@ -386,7 +375,7 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
       thirdPartyWallet.signAddressHash = params.signAddressHash
       thirdPartyWallet.address = params.address
       BindMetaIdRef.value.status = BindStatus.ChooseType
-      isShowMetaMak.value = false
+      rootStore.$patch({ isShowMetaMak: false })
 
       isShowBindModal.value = true
     } else {
@@ -394,7 +383,6 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
     }
   })
   let res
-
   if (
     getMnemonicRes?.data?.metaId &&
     getMnemonicRes?.data?.registerSource === RegisterSource.metamask
@@ -424,10 +412,10 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
       )
       if (res) {
         await BindMetaIdRef.value.loginSuccess(res)
-        isShowMetaMak.value = false
+        rootStore.$patch({ isShowMetaMak: false })
       }
     } catch (error) {
-      isShowMetaMak.value = false
+      rootStore.$patch({ isShowMetaMak: false })
       return ElMessage.error(`${i18n.t('walletError')}`)
     }
 
@@ -448,11 +436,22 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
         await BindMetaIdRef.value.loginSuccess(res)
       }
     } else {
-      thirdPartyWallet.signAddressHash = params.signAddressHash
-      thirdPartyWallet.address = params.address
-      BindMetaIdRef.value.status = BindStatus.InputPassword
-      isShowMetaMak.value = false
-      isShowBindModal.value = true
+      try {
+        res = await BindMetaIdRef.value.loginByMnemonic(
+          getMnemonicRes.data.evmEnMnemonic,
+          MD5(params.signAddressHash).toString()
+        )
+        if (res) {
+          await BindMetaIdRef.value.loginSuccess(res)
+          isShowMetaMak.value = false
+        }
+      } catch (error) {
+        thirdPartyWallet.signAddressHash = params.signAddressHash
+        thirdPartyWallet.address = params.address
+        BindMetaIdRef.value.status = BindStatus.InputPassword
+        isShowMetaMak.value = false
+        isShowBindModal.value = true
+      }
     }
   }
 }
@@ -465,16 +464,7 @@ async function OnMetaIdSuccess(type: 'register' | 'login') {
   }
 }
 
-async function onSetBaseInfoSuccess(params: {
-  name: string
-  nft?: {
-    image: string
-    description: string
-    attributes: string
-    token_address: string
-    token_id: string
-  }
-}) {
+async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }) {
   loading.value = true
   try {
     const wallet = userStore.showWallet!.wallet
@@ -493,7 +483,7 @@ async function onSetBaseInfoSuccess(params: {
           address: infoAddress,
         },
       ]
-      if (params.nft) {
+      if (params.nft.avatarImage !== userStore.user!.avatarImage) {
         payTo.push({
           amount: 2000,
           address: wallet!.protocolAddress,
@@ -521,12 +511,15 @@ async function onSetBaseInfoSuccess(params: {
           parentTxId: userStore.user!.infoTxId,
           data: params.name ? params.name : `${import.meta.env.VITE_DefaultName}`,
           utxos: utxos,
-          change: params.nft ? infoAddress : wallet!.rootAddress,
+          change:
+            params.nft.avatarImage !== userStore.user!.avatarImage
+              ? infoAddress
+              : wallet!.rootAddress,
         })
-        broadcasts.push(createNameNode.hex)
+        broadcasts.push(createNameNode!.transaction.toString())
       }
 
-      if (params.nft) {
+      if (params.nft.avatarImage !== userStore.user!.avatarImage) {
         // 创建 NFTAvatar brfc 节点
         utxo = await wallet?.utxoFromTx({
           tx: transfer,
@@ -546,11 +539,11 @@ async function onSetBaseInfoSuccess(params: {
           utxos: utxos,
           change: wallet!.createAddress('0/0').address,
         })
-        broadcasts.push(createNFTAvatarBrfcNode.hex)
+        broadcasts.push(createNFTAvatarBrfcNode!.hex!)
 
         // 创建 NFTAvatar 子节点
         utxo = await wallet?.utxoFromTx({
-          tx: createNFTAvatarBrfcNode.raw,
+          tx: createNFTAvatarBrfcNode!.transaction!,
           addressInfo: {
             addressType: 0,
             addressIndex: 0,
@@ -569,19 +562,19 @@ async function onSetBaseInfoSuccess(params: {
           parentAddress: wallet!.createAddress('0/0').address,
           keyPath: '0/0',
           data: JSON.stringify({
-            type: 'nft-eth',
-            tx: params.nft.token_address,
-            codehash: '',
-            genesis: '',
-            tokenIndex: params.nft.token_id,
+            type: 'nft',
+            tx: params.nft.txId,
+            codehash: params.nft.codehash,
+            genesis: params.nft.genesis,
+            tokenIndex: params.nft.tokenIndex,
             updateTime: new Date().getTime(),
-            memo: params.nft.description,
-            image: params.nft.image,
-            chain: import.meta.env.VITE_ETH_CHAIN,
+            memo: params.nft.desc,
+            image: params.nft.avatarImage,
+            chain: params.nft.avatarImage.split('://')[0],
           }),
           utxos: utxos,
         })
-        broadcasts.push(createNFTAvatarBrfcChildNode.hex)
+        broadcasts.push(createNFTAvatarBrfcChildNode!.transaction.toString())
       }
       //  广播
       let errorMsg: any
@@ -599,6 +592,7 @@ async function onSetBaseInfoSuccess(params: {
         ...userStore.user!,
         name: params.name ? params.name : userStore.user!.name,
       }
+      // @ts-ignore
       userInfo.userType = userInfo.userType ? userInfo.userType : userInfo?.registerType
       // 上报修改的用户信息
       await SetUserInfo({

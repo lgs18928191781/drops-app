@@ -34,7 +34,7 @@
         <div class="title">{{ $t('Login.bindMetaId.bindSuccessTitle') }}</div>
         <div class="cont">
           <div class="userInfo">
-            <UserAvatar :meta-id="userStore.user!.metaId" />
+            <UserAvatar :meta-id="userStore.user!.metaId" :image="userStore.user!.avatarImage" />
             <div class="username">{{ userStore.user?.name }}</div>
             <div class="metaid">
               MetaID：{{userStore.user!.metaId.slice(0, 7)}}...{{userStore.user!.metaId.slice(-7)}}
@@ -657,7 +657,7 @@ function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
           if (ethBindBrfc) {
             await hdWallet.provider.broadcast(transfer.toString())
             await hdWallet.provider.broadcast(ethBindBrfc.hex)
-            debugger
+
             resolve()
           }
         }
@@ -689,9 +689,18 @@ function loginByMnemonic(mnemonic: string, password: string) {
           type: 1,
         })
         if (loginInfo.code == 0) {
+          console.log(
+            'decodeMnemonic',
+            decodeMnemonic,
+            MD5(props.thirdPartyWallet.signAddressHash).toString()
+          )
+
           resolve({
             userInfo: Object.assign(loginInfo.data, {
-              enCryptedMnemonic: mnemonic,
+              enCryptedMnemonic: encryptMnemonic(
+                decodeMnemonic,
+                MD5(props.thirdPartyWallet.signAddressHash).toString()
+              ),
               userType: loginInfo.data.register || loginInfo.data.registerType,
             }),
             wallet: hdWallet,
@@ -733,6 +742,7 @@ function bindingMetaidOrAddressLogin() {
             ? window.WallectConnect?.accounts[0]
             : window.ethereum.selectedAddress
           res.userInfo.chainId = window.ethereum.chainId
+
           await sendHash(res.userInfo)
           resolve(res)
         }

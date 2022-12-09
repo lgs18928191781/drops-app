@@ -291,5 +291,13 @@
     "Dark color": "Dark",
     "Follow system": "Sync with device"
   },
-  "copy": "Copy"
+  "copy": "Copy",
+  "MetaMak": {
+    "Chain Eroor": "Chain Eroor",
+    "Chain Error": "Chain Error",
+    "Chain Network Error": "Chain Network Error",
+    "Chain Network Error Tips": "You need to switch the network to:",
+    "Change": "Change To "
+  },
+  "Success": "Success"
 }

@@ -19,7 +19,7 @@
         <template #default>
           <div class="nft-item" v-for="item in list" @click="chooseItem(item)">
             <Image :src="item.icon" />
-            <div class="checked" v-if="activeTx === item.txId">
+            <div class="checked" v-if="activeTx === item.avatarImage">
               <div class="checked-icon-warp flex flex-align-center flex-pack-center">
                 <Icon name="check" />
               </div>
@@ -98,7 +98,7 @@ function getDatas(isCover = false) {
 }
 
 function chooseItem(item: NFTAvatarItem) {
-  if (props.activeTx === item.txId) return
+  if (props.activeTx === item.avatarImage) return
   emit('change', item)
 }
 

@@ -6,7 +6,7 @@
     <div class="header">
       <div class="user-info" @click.stop="$filters.toUserHome(buzz.metaId)">
         <div class="head">
-          <UserAvatar :meta-id="buzz.metaId" />
+          <UserAvatar :meta-id="buzz.metaId" :image="buzz.avatarImage" />
         </div>
         <div class="info">
           <div class="name">{{ buzz.userName }}</div>
