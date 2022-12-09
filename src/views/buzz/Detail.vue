@@ -4,7 +4,11 @@
       <div class="comment">
         <div class="dived"></div>
         <div class="publish-comment flex flex-align-center">
-          <UserAvatar :meta-id="userStore.user?.metaId || ''" :disabled="true" />
+          <UserAvatar
+            :meta-id="userStore.user?.metaId || ''"
+            :image="userStore.user?.avatarImage || ''"
+            :disabled="true"
+          />
           <div class="cont flex1" v-loading="loading">
             <input
               v-model="addComment.content"

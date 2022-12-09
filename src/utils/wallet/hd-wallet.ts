@@ -438,6 +438,10 @@ export class HdWallet {
     return this.createAddress(this.keyPathMap.Protocols.keyPath).address
   }
 
+  get infoAddress(): string {
+    return this.createAddress(this.keyPathMap.Info.keyPath).address
+  }
+
   constructor(wallet: bsv.HDPrivateKey) {
     this.network = wallet.network.name
     this.wallet = wallet

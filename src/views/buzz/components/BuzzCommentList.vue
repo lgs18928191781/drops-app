@@ -10,7 +10,7 @@
         <div class="header">
           <div class="user-info">
             <div class="head">
-              <UserAvatar :meta-id="item.metaId" />
+              <UserAvatar :meta-id="item.metaId" :image="item.avatarImage" />
             </div>
             <div class="info">
               <div class="name">{{ item.userName }}</div>

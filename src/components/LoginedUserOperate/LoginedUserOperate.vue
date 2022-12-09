@@ -1,7 +1,12 @@
 <template>
   <template v-if="userStore.isAuthorized">
     <div class="user-warp flex flex-align-center">
-      <UserAvatar :meta-id="userStore.user!.metaId" class="user-warp-item" :disabled="true" />
+      <UserAvatar
+        :image="userStore.user!.avatarImage"
+        :meta-id="userStore.user!.metaId"
+        class="user-warp-item"
+        :disabled="true"
+      />
 
       <!-- 钱包 -->
       <a
@@ -63,7 +68,11 @@
               class="flex flex-align-center user-info"
               :class="{ active: isShowUserWalletOperates }"
             >
-              <UserAvatar :meta-id="userStore.user!.metaId" :disabled="true" />
+              <UserAvatar
+                :meta-id="userStore.user!.metaId"
+                :image="userStore.user!.avatarImage"
+                :disabled="true"
+              />
               <div class="name">My Wallet</div>
               <Icon name="down" />
             </a>

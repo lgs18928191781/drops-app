@@ -1,6 +1,6 @@
 <template>
   <div class="avatar" @click="toUser" :class="{ disabled }">
-    <Image :src="metaId" :type="type" />
+    <Image :src="image" :type="type" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -8,8 +8,9 @@ import { useRouter } from 'vue-router'
 
 interface Props {
   metaId: string
-  disabled?: boolean
+  image: string
   type?: 'metaId' | 'metafile'
+  disabled?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,

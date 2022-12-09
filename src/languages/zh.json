@@ -423,5 +423,6 @@
     "Chain Network Error": "链所在网络错误",
     "Chain Network Error Tips": "你需要把网络切换到:",
     "Change": "切换到"
-  }
+  },
+  "Success": "成功"
 }

@@ -62,7 +62,11 @@
             <div class="creater-msg">
               <!-- 铸造者 -->
               <div class="author flex flex-align-center">
-                <UserAvatar class="avatar" :meta-id="nft.val!.nftIssueMetaId" />
+                <UserAvatar
+                  class="avatar"
+                  :meta-id="nft.val!.nftIssueMetaId"
+                  :image="nft.val!.nftIssueAvatarImage"
+                />
                 <div class="author-msg flex1">
                   <div class="creater">{{ $t('creater') }}: {{ nft.val!.nftIssuer }}</div>
                   <div class="metaid" v-if="nft.val!.nftIssueMetaId">
@@ -251,7 +255,11 @@
                     <div class="key">{{ $t('creater') }}：</div>
                     <div class="value flex1">
                       <div class="author flex flex-align-center">
-                        <UserAvatar class="avatar" :meta-id="nft.val!.nftIssueMetaId" />
+                        <UserAvatar
+                          class="avatar"
+                          :meta-id="nft.val!.nftIssueMetaId"
+                          :image="nft.val!.nftIssueAvatarImage"
+                        />
                         <div class="author-msg flex1">
                           <div class="creater">
                             {{ nft.val!.nftIssuer ? nft.val!.nftIssuer : nft.val!.nftIssueAddress }}
@@ -267,7 +275,11 @@
                     <div class="key">{{ $t('haveder') }}：</div>
                     <div class="value flex1">
                       <div class="author flex flex-align-center">
-                        <UserAvatar class="avatar" :meta-id="nft.val!.nftOwnerMetaId" />
+                        <UserAvatar
+                          class="avatar"
+                          :meta-id="nft.val!.nftOwnerMetaId"
+                          :image="nft.val!.nftOwnerAvatarImage"
+                        />
                         <div class="author-msg flex1">
                           <div class="creater">
                             {{ nft.val!.nftOwnerName ? nft.val!.nftOwnerName : nft.val!.nftOwnerAddress }}
@@ -307,7 +319,11 @@
                 >
                   <img class="tobe" :src="ListIcon" v-if="index !== 0" />
                   <span class="td flex1 user flex flex-align-center" @click="ToUser(record.metaId)">
-                    <UserAvatar class="avatar" :meta-id="record.metaId" />
+                    <UserAvatar
+                      class="avatar"
+                      :meta-id="record.metaId"
+                      :image="record.avatarImage"
+                    />
                     <span class="name">{{ record.name }}</span>
                   </span>
                   <span class="td role flex1 flex flex-align-center">

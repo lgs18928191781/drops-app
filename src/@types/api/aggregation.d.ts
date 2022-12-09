@@ -77,4 +77,5 @@ declare interface NFTAvatarItem {
   tokenIndex: string
   txId: string
   website: string
+  avatarImage: string
 }

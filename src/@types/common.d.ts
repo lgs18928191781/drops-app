@@ -23,6 +23,7 @@ declare interface UserInfo {
   tag: 'new' | 'old'
   avatarType: string
   avatarTxId: string
+  avatarImage: string
   email: string
   phone: string
   token: string
@@ -124,6 +125,7 @@ declare interface BuzzItem {
   attachments: string[]
   avatarTxId: string
   avatarType: string
+  avatarImage: string
   blockHeight: number
   comment: {
     metaId: string
@@ -291,6 +293,7 @@ declare interface RecommnedUser {
   address: string
   avatarTxId: string
   avatarType: string
+  avatarImage: string
   isMyFollow: boolean
   metaId: string
   name: string
