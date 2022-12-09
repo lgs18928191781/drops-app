@@ -1,10 +1,10 @@
 <template>
   <BaseModal v-model="layout[ShowControl.isShowRedPacketModal]">
-    <template v-slot:title>
+    <template #title>
       {{ $t('Talk.Input.giveaway') }}
     </template>
 
-    <template v-slot:body>
+    <template #body>
       <TabGroup>
         <TabList class="w-full bg-dark-100 rounded-xl text-base flex text-dark-800 font-medium">
           <Tab

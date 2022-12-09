@@ -209,7 +209,7 @@ onBeforeUnmount(() => {
   border-radius: 20px;
 }
 
-*::-webkit-scrollbar-thumb {
+.dark *::-webkit-scrollbar-thumb {
   background-color: #374151;
 }
 </style>

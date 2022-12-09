@@ -22,6 +22,17 @@ export const getCommunities = async (params?: any): Promise<Community[]> => {
   })
 }
 
+export const getMetaNames = async (params?: any): Promise<any[]> => {
+  const metaId = params.metaId
+  delete params.metaId
+
+  const query = new URLSearchParams(params).toString()
+
+  return TalkApi.get(`/community/auths/${metaId}?${query}`).then(res => {
+    return res.data.results.items
+  })
+}
+
 export const getOneCommunity = async (communityId: string): Promise<Community[]> => {
   return TalkApi.get(`/community/${communityId}`).then(res => {
     const community = res.data

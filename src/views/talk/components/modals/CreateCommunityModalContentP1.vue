@@ -1,17 +1,7 @@
 <template>
-  <button class="absolute top-[32PX] right-[32PX] h-6 w-6 flex items-center justify-center">
-    <Icon
-      name="x_circle"
-      class="w-6 h-6 text-dark-400 cursor-pointer"
-      @click="layout.isShowCreateCommunityModal = false"
-    />
-  </button>
-
-  <div class="h-full w-full flex flex-col justify-between pt-8 lg:pt-0">
-    <div class="flex flex-col w-full h-full items-center justify-start">
-      <h3 class="text-2xl text-center font-bold capitalize">{{ $t('Talk.Community.create') }}</h3>
-
-      <p class="mt-4.5 text-base text-dark-400 leading-relaxed text-center">
+  <div class="flex flex-col w-full h-full">
+    <div class="flex flex-col items-center">
+      <p class="mt-4.5 text-base text-dark-400 dark:text-gray-200 leading-relaxed text-center">
         {{ $t('Talk.Community.create_fist_step_tip') }}
       </p>
 
@@ -40,23 +30,46 @@
       </div>
 
       <div class="mt-12 w-full">
-        <h4 class="text-lg text-dark-800 capitalize">
+        <h4 class="text-lg capitalize">
           {{ $t('Talk.Community.community_name') }}
         </h4>
 
         <div class="mt-3">
-          <input
-            type="text"
-            class="outline-0 main-border faded-switch !bg-white still w-full p-4.5 text-base"
-            :placeholder="$t('Talk.Community.community_name')"
-            v-model="form.name"
-          />
+          <button
+            class="outline-0 main-border w-full px-4 py-3 text-base flex justify-between items-center dark:!bg-gray-600 group"
+            @click="layout.isShowChooseMetaNameModal = !layout.isShowChooseMetaNameModal"
+          >
+            <div class="flex items-center gap-x-2">
+              <template v-if="form.metaName">
+                <span
+                  class="text-sm bg-clip-text text-transparent bg-gradient-to-tr from-[#F700FB] to-[#FFC051] font-bold tracking-wider"
+                >
+                  {{ form.metaName.metaName }}
+                </span>
+                <div
+                  class="p-1.5 bg-gradient-to-tr from-[#F700FB] to-[#FFC051] rounded-sm leading-none text-center flex items-center justify-center"
+                >
+                  <Icon name="N" class="w-2 h-2" />
+                </div>
+              </template>
+              <template v-else>
+                <span class="text-dark-250 select-none font-sm dark:text-gray-400">{{
+                  $t('Talk.Community.community_name')
+                }}</span>
+              </template>
+            </div>
 
-          <p class="mt-1.5 text-xs text-dark-300">
+            <Icon
+              name="chevron_right"
+              class="w-6 h-6  lg:text-dark-300 lg:dark:text-gray-400 lg:group-hover:text-dark-800 dark:lg:group-hover:!text-gray-100 -mr-2 transition-all duration-200"
+            />
+          </button>
+
+          <p class="mt-1.5 text-xs text-dark-300 dark:text-gray-400">
             <span class="">
               {{ $t('Talk.Community.agree_tip') }}
             </span>
-            <a href="#" class="text-sky-600 ml-1 font-medium" target="_blank">
+            <a href="#" class="text-link dark:text-blue-400 ml-1 font-medium" target="_blank">
               {{ $t('Talk.Community.agree_guidelines') }}
             </a>
             <span>
@@ -67,11 +80,12 @@
       </div>
     </div>
 
-    <div class="flex items-center justify-between">
-      <div class="w-1"></div>
+    <div class="grow flex items-end justify-end lg:mt-8">
       <button
-        class="w-14 h-14 main-border primary flex items-center justify-center"
-        :class="{ faded: !form.isStep1Finished }"
+        class="w-14 h-14 main-border primary flex items-center justify-center dark:!bg-gray-600"
+        :class="{
+          'faded still text-dark-300 dark:text-gray-400 dark:!bg-gray-700': !form.isStep1Finished,
+        }"
         :disabled="!form.isStep1Finished"
         @click="$emit('forward')"
       >

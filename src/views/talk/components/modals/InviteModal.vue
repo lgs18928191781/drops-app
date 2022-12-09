@@ -1,10 +1,10 @@
 <template>
   <BaseModal v-model="layout[ShowControl.isShowInviteModal]" :extra-close-event="reset">
-    <template v-slot:title>
+    <template #title>
       {{ $t('Talk.Modals.invite_title') }}
     </template>
 
-    <template v-slot:body>
+    <template #body>
       <div class="grid space-x-4 items-center grid-cols-4">
         <div
           class="main-border p-3 text-base text-dark-800 dark:text-gray-100 still cursor-text col-span-3 select-text truncate"

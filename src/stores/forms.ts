@@ -9,15 +9,15 @@ export const useCommunityFormStore = defineStore('communityForm', {
   state: () => {
     return {
       icon: null as File | null,
-      name: '',
       description: '',
       cover: null as File | null,
+      metaName: null as any,
     }
   },
 
   getters: {
     isStep1Finished(state) {
-      return !!state.icon && !!state.name
+      return !!state.icon && !!state.metaName
     },
 
     isStep2Finished(state) {
@@ -25,7 +25,7 @@ export const useCommunityFormStore = defineStore('communityForm', {
     },
 
     isFinished(state) {
-      return !!state.icon && !!state.name
+      return !!state.icon && !!state.metaName
     },
 
     iconPreviewUrl(state) {

@@ -1,5 +1,5 @@
 <template>
-  <TransitionRoot :show="modelValue" :unmount="true">
+  <TransitionRoot :show="modelValue">
     <Dialog @close="tryClose" class="relative z-50 text-dark-800 dark:text-gray-100">
       <TransitionChild
         as="template"
@@ -25,12 +25,12 @@
             enter="duration-300 ease-out"
             enter-from="opacity-0 scale-75"
             enter-to="opacity-100 scale-100"
-            leave="duration-200 ease-in"
+            leave="duration-300 ease-in"
             leave-from="opacity-100 scale-100"
             leave-to="opacity-0 scale-75"
           >
             <DialogPanel
-              class="flex w-full h-full lg:max-w-screen-sm lg:items-stretch justify-center lg:w-auto relative lg:static lg:h-auto"
+              class="flex w-full h-full lg:max-w-screen-sm lg:items-stretch justify-center lg:w-auto relative lg:static lg:h-auto lg:max-h-[75vh]"
               :style="mobileSize"
             >
               <div
@@ -88,7 +88,7 @@
                         <slot name="secondTitle"></slot>
                       </DialogTitle>
 
-                      <div class="mt-7.5 h-full">
+                      <div class="mt-7.5 h-full overflow-y-hidden">
                         <slot name="secondBody"></slot>
                       </div>
                     </div>

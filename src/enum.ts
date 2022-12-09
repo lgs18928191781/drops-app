@@ -340,5 +340,6 @@ export enum ShowControl {
   isShowRequireNftModal = 'isShowRequireNftModal',
   isShowInviteModal = 'isShowInviteModal',
   isShowAcceptInviteModal = 'isShowAcceptInviteModal',
+  isShowChooseMetaNameModal = 'isShowChooseMetaNameModal',
   never = 'never',
 }

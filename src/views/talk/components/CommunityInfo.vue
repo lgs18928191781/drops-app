@@ -268,17 +268,9 @@ const goChannel = (channelId: string) => {
   router.push(`/talk/channels/${currentCommunityId}/${channelId}`)
 }
 </script>
+
 <style lang="scss" scoped>
 *::-webkit-scrollbar {
-  width: 0px;
-}
-
-*::-webkit-scrollbar-track {
-  background: #f5f7fa;
-}
-
-*::-webkit-scrollbar-thumb {
-  background-color: #f5f7fa;
-  border-radius: 20px;
+  width: 0px !important;
 }
 </style>

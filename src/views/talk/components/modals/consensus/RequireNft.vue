@@ -5,11 +5,11 @@
     :extra-close-event="goBack"
     :full-screen="true"
   >
-    <template v-slot:title>
+    <template #title>
       {{ $t('Talk.Modals.consensus_required') }}
     </template>
 
-    <template v-slot:body>
+    <template #body>
       <div class="h-full flex flex-col">
         <div
           class="mb-10 text-center text-base italic text-link dark:text-blue-400 -mt-7"

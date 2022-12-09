@@ -29,11 +29,24 @@ import { useUserStore } from '@/stores/user'
 import { createMnemonic, encryptMnemonic, hdWalletFromMnemonic } from './wallet/hd-wallet'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
 import i18n from './i18n'
+import { Ref } from 'vue'
 
 export function randomString() {
   return Math.random()
     .toString()
     .replace('.', '')
+}
+
+export const showLoading = async (fetch: Function, loading: Ref<boolean>) => {
+  loading.value = true
+  // 最少1秒，防止闪烁
+  const currentTimestamp = new Date().getTime()
+  await fetch()
+
+  // 保证至少1秒
+  const delay = Math.max(500 - (new Date().getTime() - currentTimestamp), 0)
+  if (delay) await sleep(delay)
+  loading.value = false
 }
 
 export function realRandomString(length: number): string {

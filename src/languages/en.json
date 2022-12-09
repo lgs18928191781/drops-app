@@ -71,7 +71,9 @@
       "consensus_required": "Consensus Required",
       "you_dont_have_nft": "You don't have the required NFT to join this channel.",
       "confirm": "OK",
-      "loading": "Loading..."
+      "loading": "Loading...",
+      "choose_meta_name": "Choose MetaName",
+      "no_meta_name_available": "No MetaName available"
     },
     "Channel": {
       "members": "members",

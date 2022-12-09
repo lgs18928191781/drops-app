@@ -3,11 +3,11 @@
     v-model="layout[ShowControl.isShowCreateConsensualChannelModal]"
     v-model:show-second-control="layout[ShowControl.isShowChooseTokenModal]"
   >
-    <template v-slot:title>
+    <template #title>
       {{ $t('Talk.Community.create_consensual_channel') }}
     </template>
 
-    <template v-slot:body>
+    <template #body>
       <div class="flex flex-col h-full">
         <p class="text-base text-dark-400 dark:text-gray-200 leading-relaxed text-center">
           {{ $t('Talk.Community.create_consensual_channel_tip') }}
@@ -190,7 +190,7 @@
       </div>
     </template>
 
-    <template v-slot:secondTitle>
+    <template #secondTitle>
       <div class="flex items-center space-x-3">
         <Listbox v-model="selectedChain">
           <div class="relative mt-1">
@@ -260,7 +260,7 @@
       </div>
     </template>
 
-    <template v-slot:secondBody>
+    <template #secondBody>
       <p
         class="text-sm text-dark-400 dark:text-gray-200 pb-4.5 border-b border-solid border-dark-200 dark:border-gray-600"
       >
@@ -366,7 +366,7 @@ import { useRouter } from 'vue-router'
 import { GetNFTs, GetFTs } from '@/api/aggregation'
 import ETH from '@/assets/images/eth.png'
 import MVC from '@/assets/images/iocn_mvc.png'
-import { sleep } from '@/utils/util'
+import { showLoading, sleep } from '@/utils/util'
 
 const isShowingPassword = ref(false)
 const layout = useLayoutStore()
@@ -501,12 +501,6 @@ const fetchFtSeries = async () => {
     },
   } = await GetFTs({ address: selfAddress, page: 1, pageSize: 100 })
   ftSeries.value = _fts
-}
-
-const showLoading = async (fetch: Function, loading: Ref<boolean>) => {
-  loading.value = true
-  await fetch()
-  loading.value = false
 }
 
 watchEffect(async () => {

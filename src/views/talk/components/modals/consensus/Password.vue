@@ -5,11 +5,11 @@
     :extra-close-event="goBack"
     :full-screen="true"
   >
-    <template v-slot:title>
+    <template #title>
       {{ $t('Talk.Modals.enter_password') }}
     </template>
 
-    <template v-slot:body>
+    <template #body>
       <div
         class="mb-10 text-center text-base italic text-link dark:text-blue-400 -mt-7"
         v-if="talk.activeChannel"

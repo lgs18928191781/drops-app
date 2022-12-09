@@ -1,10 +1,10 @@
 <template>
   <BaseModal v-model="layout[ShowControl.isShowCreatePublicChannelModal]">
-    <template v-slot:title>
+    <template #title>
       {{ $t('Talk.Community.create_public_channel') }}
     </template>
 
-    <template v-slot:body>
+    <template #body>
       <div class="flex flex-col h-full">
         <p class="mt-4.5 text-base text-dark-400 leading-relaxed text-center">
           {{ $t('Talk.Community.create_public_channel_tip') }}

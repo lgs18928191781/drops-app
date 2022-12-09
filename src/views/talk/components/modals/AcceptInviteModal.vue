@@ -4,11 +4,11 @@
     :no-close="true"
     :full-screen="true"
   >
-    <template v-slot:title>
+    <template #title>
       {{ $t('Talk.Modals.accept_invite') }}
     </template>
 
-    <template v-slot:body>
+    <template #body>
       <div class="flex flex-col items-center justify-center">
         <p class="text-base text-dark-400 font-medium">
           {{ $t('Talk.Modals.you_have_been_invited') }}

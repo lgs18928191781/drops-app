@@ -1,5 +1,5 @@
 <template>
-  <div
+  <!-- <div
     class="fixed inset-0 z-[60] bg-transparent w-screen h-screen flex items-center justify-center lg:bg-black/50"
   >
     <div
@@ -12,11 +12,39 @@
         @try-create-community="tryCreateCommunity"
       />
     </div>
-  </div>
+  </div> -->
+  <BaseModal
+    v-model="layout[ShowControl.isShowCreateCommunityModal]"
+    v-model:show-second-control="layout[ShowControl.isShowChooseMetaNameModal]"
+  >
+    <template #title>
+      {{ $t('Talk.Community.create') }}
+    </template>
+
+    <template #body>
+      <CreateCommunityModalContentP1 v-if="step === 1" @forward="step = 2" />
+      <CreateCommunityModalContentP2
+        v-else-if="step === 2"
+        @back="step = 1"
+        @try-create-community="tryCreateCommunity"
+      />
+    </template>
+
+    <template #secondTitle>
+      <div class="flex items-center space-x-3">
+        <div class="text-left">{{ $t('Talk.Modals.choose_meta_name') }}</div>
+      </div>
+    </template>
+
+    <template #secondBody>
+      <CreateCommunityModalContentP3 />
+    </template>
+  </BaseModal>
 </template>
 
 <script lang="ts" setup>
 import { getCommunities } from '@/api/talk'
+import { ShowControl } from '@/enum'
 import { useCommunityFormStore } from '@/stores/forms'
 import { useJobsStore } from '@/stores/jobs'
 import { useLayoutStore } from '@/stores/layout'
@@ -26,8 +54,10 @@ import { createCommunity, joinCommunity } from '@/utils/talk'
 import { sleep } from '@/utils/util'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import BaseModal from './BaseModal.vue'
 import CreateCommunityModalContentP1 from './CreateCommunityModalContentP1.vue'
 import CreateCommunityModalContentP2 from './CreateCommunityModalContentP2.vue'
+import CreateCommunityModalContentP3 from './CreateCommunityModalContentP3.vue'
 
 const step = ref(1)
 const form = useCommunityFormStore()
@@ -68,6 +98,5 @@ const tryCreateCommunity = async () => {
   router.push(`/talk/channels/${communityId}/the-void`)
 
   return
-  // await joinCommunity(communityId, userStore.showWallet)
 }
 </script>

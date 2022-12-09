@@ -27,10 +27,8 @@ import { useJobsStore } from '@/stores/jobs'
 export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   console.log('start')
   // communityId, name, description, cover, metaName, mateNameNft, admins, reserved, icon
-  // const communityId = '274628147706127fc9cc8da5285081f52e6dd4436fd97bc7321daca2064db385'
-  const communityId = '70637fba2fcadfe5ea89cc845ecb9eef86195672de4ce56a703e1ff08e6f1228'
-  const { metaName, signature: reserved } = await getCommunityAuth(communityId)
-  const { icon, name, description, cover } = form
+  const { icon, metaName, description, cover } = form
+  const communityId = metaName.communityId
 
   const attachments = []
   attachments.push(await FileToAttachmentItem(icon))
@@ -46,11 +44,11 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   const admins = [userStore.user?.metaId]
   const dataCarrier = {
     communityId,
-    metaName,
-    reserved,
+    name: metaName.metaName,
+    metaName: metaName.metaName,
+    // metaNameNft: ''
     icon: iconPlaceholder,
     admins,
-    name,
     description,
     cover: coverPlaceholder || '',
   }

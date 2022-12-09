@@ -96,9 +96,7 @@
     </div>
 
     <!-- modals -->
-    <Teleport to="body" v-if="layout.isShowCreateCommunityModal">
-      <CreateCommunityModal />
-    </Teleport>
+    <CreateCommunityModal v-if="layout.isShowCreateCommunityModal" />
   </div>
 </template>
 
