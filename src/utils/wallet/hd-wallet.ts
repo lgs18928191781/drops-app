@@ -54,6 +54,7 @@ export interface BaseUserInfoTypes {
   tag?: 'new' | 'old'
   referrerId?: string
   appToken: string
+  ethAddress?: string
   evmAddress?: string
 }
 interface TransferNftParams {
@@ -703,21 +704,25 @@ export class HdWallet {
           }
 
           // eth 绑定新 metaId 账号
-          if (account.evmAddress) {
-            // 先把钱打回到 protocolAddress
+
+          if (account.ethAddress) {
+            // 先把钱打回到 infoAddress
             const transfer = await this.makeTx({
               utxos: utxos,
               opReturn: [],
               change: this.rootAddress,
-              payTo: [{ amount: 1000, address: this.protocolAddress }],
+              payTo: [
+                { amount: 1000, address: infoAddress.publicKey.toAddress(this.network).toString() },
+              ],
             })
+
             if (transfer) {
               hexTxs.push(transfer.toString())
               const newUtxo = await this.utxoFromTx({
                 tx: transfer,
                 addressInfo: {
                   addressType: 0,
-                  addressIndex: 2,
+                  addressIndex: 1,
                 },
                 outPutIndex: 0,
               })
@@ -726,11 +731,11 @@ export class HdWallet {
               // 创建 eth brfc节点 brfcId = ehtAddress
               const ethBindBrfc = await this.createNode({
                 nodeName: NodeName.ETHBinding,
-                parentTxId: metaIdInfo.protocolTxId,
+                parentTxId: metaIdInfo.infoTxId,
                 metaIdTag: MetaIdTag[this.network],
                 keyPath: '0/6',
-                parentAddress: this.protocolAddress,
-                data: account.evmAddress!,
+                parentAddress: infoAddress.publicKey.toAddress(this.network).toString(),
+                data: JSON.stringify({ evmAddress: account.ethAddress! }),
                 utxos: utxos,
                 change: this.rootAddress,
               })
@@ -745,6 +750,7 @@ export class HdWallet {
           for (let i = 0; i < hexTxs.length; i++) {
             try {
               const tx = hexTxs[i]
+
               await this.provider.broadcast(tx)
             } catch (error) {
               errorMsg = error

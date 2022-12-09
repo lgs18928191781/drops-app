@@ -1,6 +1,6 @@
 <template>
   <TransitionRoot :show="modelValue" :unmount="true">
-    <Dialog @close="tryClose" class="relative z-50">
+    <Dialog @close="tryClose" class="relative z-50 text-dark-800 dark:text-gray-100">
       <TransitionChild
         as="template"
         enter="duration-300 ease-out"
@@ -10,7 +10,10 @@
         leave-from="opacity-100"
         leave-to="opacity-0"
       >
-        <div class="fixed inset-0" :class="[fullScreen ? 'bg-gray-100' : 'bg-black/30']"></div>
+        <div
+          class="fixed inset-0"
+          :class="[fullScreen ? 'bg-gray-100 dark:bg-gray-900' : 'bg-black/30']"
+        ></div>
       </TransitionChild>
 
       <div class="fixed inset-0 overflow-y-auto">
@@ -31,16 +34,16 @@
               :style="mobileSize"
             >
               <div
-                class="w-full lg:w-114 h-full bg-white lg:w-auto lg:h-auto lg:rounded-3xl relative lg:shadow-lg p-8 flex flex-col shrink-0"
+                class="w-full lg:w-114 h-full bg-white dark:bg-gray-700 lg:w-auto lg:h-auto lg:rounded-3xl relative lg:shadow-lg lg:dark:shadow-blue-100/30 p-8 flex flex-col shrink-0"
                 :class="[mobileSize ? 'rounded' : '']"
               >
                 <button
-                  class="absolute top-[24PX] right-[24PX] h-6 w-6 flex items-center justify-center outline-0"
+                  class="absolute top-[24PX] right-[24PX]  flex items-center justify-center outline-0"
                   v-if="!noClose"
                 >
                   <Icon
-                    name="x_circle"
-                    class="w-6 h-6 text-dark-400 cursor-pointer"
+                    name="x_mark"
+                    class="w-4 h-4 text-dark-400 dark:text-gray-200 cursor-pointer rounded-full bg-gray-200 dark:bg-gray-900 p-2 box-content"
                     @click="closeModal"
                   />
                 </button>
@@ -65,7 +68,7 @@
                   leave-to="opacity-0 scale-75"
                 >
                   <div
-                    class="w-full lg:max-w-screen-sm  bg-white lg:min-w-[456PX] lg:w-auto rounded lg:rounded-3xl lg:shadow-lg lg:ml-4 absolute inset-0 z-[65] lg:static lg:self-stretch"
+                    class="w-full lg:max-w-screen-sm  bg-white dark:bg-gray-700 lg:min-w-[456PX] lg:w-auto rounded lg:rounded-3xl lg:shadow-lg lg:dark:shadow-blue-100/30 lg:ml-4 absolute inset-0 z-[65] lg:static lg:self-stretch"
                   >
                     <div class="w-full h-full relative p-8 flex flex-col">
                       <button
@@ -73,7 +76,7 @@
                       >
                         <Icon
                           name="chevron_left"
-                          class="w-6 h-6 text-dark-400 cursor-pointer rounded-full bg-gray-200 p-1 box-content"
+                          class="w-6 h-6 text-dark-400 dark:text-gray-200 cursor-pointer rounded-full bg-gray-200 dark:bg-gray-900 p-1 box-content"
                           @click="closeSecondModal"
                         />
                       </button>

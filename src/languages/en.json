@@ -70,7 +70,8 @@
       "receive": "Receive",
       "consensus_required": "Consensus Required",
       "you_dont_have_nft": "You don't have the required NFT to join this channel.",
-      "confirm": "OK"
+      "confirm": "OK",
+      "loading": "Loading..."
     },
     "Channel": {
       "members": "members",

@@ -34,6 +34,7 @@ const tryInitChannel = async (status: string) => {
   talk.hasActiveChannelConsent = false
   await nextTick()
   if (!talk.canAccessActiveChannel) {
+    let chain: string
     switch (talk.activeGroupChannelType) {
       case GroupChannelType.Password:
         // 先检查是否本地有存储该频道密码
@@ -62,9 +63,28 @@ const tryInitChannel = async (status: string) => {
        * todo 检查NFT
        */
       case GroupChannelType.NFT:
+      case GroupChannelType.ETH_NFT:
+        const chain =
+          talk.activeGroupChannelType === GroupChannelType.NFT
+            ? 'mvc'
+            : import.meta.env.VITE_ETH_CHAIN
+        let selfAddress: string
+        switch (chain) {
+          case 'mvc':
+            selfAddress = user.user!.address
+            break
+          case 'eth':
+            selfAddress = user.user?.evmAddress as string
+            break
+          case 'goerli':
+            selfAddress = user.user?.evmAddress as string
+            break
+          default:
+            selfAddress = user.user!.address
+            break
+        }
         const consensualGenesis = talk.activeChannel.roomGenesis
         const consensualCodehash = talk.activeChannel.roomCodeHash
-        const selfAddress = user.user!.address
 
         const {
           data: {
@@ -74,6 +94,7 @@ const tryInitChannel = async (status: string) => {
           address: selfAddress,
           codehash: consensualCodehash,
           genesis: consensualGenesis,
+          chain,
           page: 1,
           pageSize: 3,
         })
@@ -88,6 +109,7 @@ const tryInitChannel = async (status: string) => {
           } = await GetNFT({
             codehash: consensualCodehash,
             genesis: consensualGenesis,
+            chain,
             tokenIndex: 0,
           })
           const nftInfo = {
@@ -95,7 +117,7 @@ const tryInitChannel = async (status: string) => {
             genesis: consensualGenesis,
             icon: items[0].nftIcon,
             name: items[0].nftName,
-            seriesName: items[0].nftSeriesName,
+            seriesName: items[0].nftSeriesName || items[0].nftName,
           }
           talk.consensualNft = nftInfo
           layout.isShowRequireNftModal = true

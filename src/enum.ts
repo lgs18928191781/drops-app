@@ -260,7 +260,7 @@ export enum SignUserType {
 }
 
 export enum NodeName {
-  ETHBinding = 'ETHBinding',
+  ETHBinding = 'EVMBinding',
   MetaFile = 'MetaFile',
   NFTAvatar = 'NFTAvatar',
   PayComment = 'PayComment',
@@ -327,6 +327,7 @@ export enum GroupChannelType {
   Password = 'password',
   NFT = 'NFT',
   FT = 'FT',
+  ETH_NFT = 'ETH_NFT',
 }
 
 export enum ShowControl {

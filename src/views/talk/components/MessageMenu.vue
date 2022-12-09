@@ -6,7 +6,7 @@
     <button v-for="action in actions" class="p-1.5" @click="action.action">
       <Icon
         :name="action.icon"
-        class="w-5 h-5 text-dark-800 dark:text-gray-100 hover:text-primary transition-all duration-200"
+        class="w-5 h-5 text-dark-800 dark:text-gray-100 hover:text-primary dark:hover:text-primary transition-all duration-200"
       />
     </button>
   </div>

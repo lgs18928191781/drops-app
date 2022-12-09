@@ -604,6 +604,7 @@ function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
   return new Promise<void>(async (resolve, reject) => {
     try {
       const hdWallet = new HdWallet(wallet)
+
       // 1. 先获取utxo
       let utxos = await hdWallet.provider.getUtxos(hdWallet.wallet.xpubkey.toString())
 
@@ -613,14 +614,22 @@ function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
         utxos: utxos,
         opReturn: [],
         change: hdWallet.rootAddress,
-        payTo: [{ amount: 2000, address: hdWallet.protocolAddress }],
+        payTo: [
+          {
+            amount: 2000,
+            address: hdWallet
+              ?.getPathPrivateKey(hdWallet.keyPathMap.Info.keyPath)
+              .publicKey.toAddress(hdWallet.network)
+              .toString(),
+          },
+        ],
       })
       if (transfer) {
         const utxo = await hdWallet.utxoFromTx({
           tx: transfer,
           addressInfo: {
             addressType: 0,
-            addressIndex: 2,
+            addressIndex: 1,
           },
           outPutIndex: 0,
         })
@@ -631,20 +640,24 @@ function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
         const res = await GetUserInfo(metaId)
         if (res.code === 0) {
           const newBfrcNodekeyPath = await hdWallet.getKeyPath({
-            parentTxid: res.data.protocolTxId,
+            parentTxid: res.data.infoTxId,
           })
           const ethBindBrfc = await hdWallet.createNode({
             nodeName: NodeName.ETHBinding,
-            parentTxId: res.data.protocolTxId,
+            parentTxId: res.data.infoTxId,
             keyPath: newBfrcNodekeyPath.join('/'),
-            parentAddress: hdWallet.protocolAddress,
-            data: props.thirdPartyWallet.address,
+            parentAddress: hdWallet
+              ?.getPathPrivateKey(hdWallet.keyPathMap.Info.keyPath)
+              .publicKey.toAddress(hdWallet.network)
+              .toString(),
+            data: JSON.stringify({ evmAddress: props.thirdPartyWallet.address }),
             utxos: utxos,
             change: hdWallet.rootAddress,
           })
           if (ethBindBrfc) {
             await hdWallet.provider.broadcast(transfer.toString())
             await hdWallet.provider.broadcast(ethBindBrfc.hex)
+
             resolve()
           }
         }
@@ -676,9 +689,18 @@ function loginByMnemonic(mnemonic: string, password: string) {
           type: 1,
         })
         if (loginInfo.code == 0) {
+          console.log(
+            'decodeMnemonic',
+            decodeMnemonic,
+            MD5(props.thirdPartyWallet.signAddressHash).toString()
+          )
+
           resolve({
             userInfo: Object.assign(loginInfo.data, {
-              enCryptedMnemonic: mnemonic,
+              enCryptedMnemonic: encryptMnemonic(
+                decodeMnemonic,
+                MD5(props.thirdPartyWallet.signAddressHash).toString()
+              ),
               userType: loginInfo.data.register || loginInfo.data.registerType,
             }),
             wallet: hdWallet,
@@ -720,6 +742,7 @@ function bindingMetaidOrAddressLogin() {
             ? window.WallectConnect?.accounts[0]
             : window.ethereum.selectedAddress
           res.userInfo.chainId = window.ethereum.chainId
+
           await sendHash(res.userInfo)
           resolve(res)
         }

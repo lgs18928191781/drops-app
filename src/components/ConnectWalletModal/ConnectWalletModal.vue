@@ -383,7 +383,6 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
     }
   })
   let res
-
   if (
     getMnemonicRes?.data?.metaId &&
     getMnemonicRes?.data?.registerSource === RegisterSource.metamask
@@ -437,11 +436,22 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
         await BindMetaIdRef.value.loginSuccess(res)
       }
     } else {
-      thirdPartyWallet.signAddressHash = params.signAddressHash
-      thirdPartyWallet.address = params.address
-      BindMetaIdRef.value.status = BindStatus.InputPassword
-      rootStore.$patch({ isShowMetaMak: false })
-      isShowBindModal.value = true
+      try {
+        res = await BindMetaIdRef.value.loginByMnemonic(
+          getMnemonicRes.data.evmEnMnemonic,
+          MD5(params.signAddressHash).toString()
+        )
+        if (res) {
+          await BindMetaIdRef.value.loginSuccess(res)
+          isShowMetaMak.value = false
+        }
+      } catch (error) {
+        thirdPartyWallet.signAddressHash = params.signAddressHash
+        thirdPartyWallet.address = params.address
+        BindMetaIdRef.value.status = BindStatus.InputPassword
+        isShowMetaMak.value = false
+        isShowBindModal.value = true
+      }
     }
   }
 }
