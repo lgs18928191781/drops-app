@@ -288,7 +288,6 @@
       :codehash="seriesNFTList.codehash"
       :genesis="seriesNFTList.genesis"
       :seriesName="seriesNFTList.seriesName"
-      @close="isShowWallet = true"
     />
   </ElDrawer>
 </template>
@@ -644,7 +643,6 @@ function chooseSeries(item: UserNFTItem) {
   seriesNFTList.genesis = item.nftGenesis
   seriesNFTList.seriesName = item.nftSeriesName
   seriesNFTList.visible = true
-  isShowWallet.value = false
 }
 
 watch(

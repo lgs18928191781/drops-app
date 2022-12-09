@@ -23,7 +23,7 @@
               params: {
                 chain: chain,
                 genesis: nft.nftGenesis,
-                codehash: codehash,
+                codehash: codehash || chain,
                 tokenIndex: nft.nftTokenIndex,
               },
             }"
