@@ -260,7 +260,7 @@ export enum SignUserType {
 }
 
 export enum NodeName {
-  ETHBinding = 'ETHBinding',
+  ETHBinding = 'EVMBinding',
   MetaFile = 'MetaFile',
   NFTAvatar = 'NFTAvatar',
   PayComment = 'PayComment',
