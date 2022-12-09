@@ -10,7 +10,10 @@
     </template>
 
     <template v-slot:body>
-      <div class="mb-10 text-center text-base italic text-link -mt-7" v-if="talk.activeChannel">
+      <div
+        class="mb-10 text-center text-base italic text-link dark:text-blue-400 -mt-7"
+        v-if="talk.activeChannel"
+      >
         {{ '# ' + talk.activeChannel.name }}
       </div>
       <div class="flex space-x-4 items-center">
@@ -19,7 +22,7 @@
             <input
               :type="isShowingPassword ? 'text' : 'password'"
               autocomplete="off"
-              class="outline-0 main-border faded-switch !bg-white still w-full pl-4 pr-12 py-3 text-base"
+              class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-600 still w-full pl-4 pr-12 py-3 text-base"
               :placeholder="$t('Talk.Modals.enter_password_placeholder')"
               v-model="passwordForm.password"
             />
@@ -27,12 +30,13 @@
             <button
               class="absolute right-4"
               v-show="passwordForm.password.length > 0"
-              @click="isShowingPassword = !isShowingPassword"
+              type="button"
+              @click.stop="isShowingPassword = !isShowingPassword"
             >
               <Icon
                 :name="isShowingPassword ? 'eye_slash' : 'eye'"
-                class="w-5 h-5 text-dark-800 lg:text-dark-300 box-content lg:group-hover:text-dark-800 transition-all duration-200"
-                :class="{ '!text-dark-800': passwordForm.password.length > 0 }"
+                class="w-5 h-5 text-dark-800 dark:text-gray-100 lg:text-dark-300 dark:lg:text-gray-400 box-content lg:group-hover:text-dark-800 dark:lg:group-hover:text-gray-100 transition-all duration-200"
+                :class="{ '!text-dark-800 dark:!text-gray-100': passwordForm.password.length > 0 }"
               />
             </button>
           </div>

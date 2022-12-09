@@ -327,6 +327,7 @@ export enum GroupChannelType {
   Password = 'password',
   NFT = 'NFT',
   FT = 'FT',
+  ETH_NFT = 'ETH_NFT',
 }
 
 export enum ShowControl {

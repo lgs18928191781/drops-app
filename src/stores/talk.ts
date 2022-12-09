@@ -80,6 +80,7 @@ export const useTalkStore = defineStore('talk', {
         if (channel.roomJoinType === '1') return GroupChannelType.Password
         if (channel.roomJoinType === '2') return GroupChannelType.NFT
         if (channel.roomJoinType === '3') return GroupChannelType.FT
+        if (channel.roomJoinType === '2001') return GroupChannelType.ETH_NFT
 
         return null
       }
@@ -233,6 +234,7 @@ export const useTalkStore = defineStore('talk', {
       }
 
       this.updateReadPointers()
+      const layout = useLayoutStore()
 
       // 判断是否已是社区成员，如果不是，则尝试加入
       if (!isAtMe) {
@@ -242,7 +244,6 @@ export const useTalkStore = defineStore('talk', {
           const invitingCommunity = await getOneCommunity(routeCommunityId)
           this.communities.push(invitingCommunity)
 
-          const layout = useLayoutStore()
           layout.isShowAcceptInviteModal = true
 
           this.communityStatus = 'pending'
@@ -251,6 +252,7 @@ export const useTalkStore = defineStore('talk', {
       }
 
       this.communityStatus = 'ready'
+      // layout.isShowAcceptInviteModal = true
       return
     },
 
@@ -461,8 +463,8 @@ export const useTalkStore = defineStore('talk', {
           }
           // 去重
           const isDuplicate =
-            this.activeChannel.newMessages.some((item: Message) => item.txId === message.txId) ||
-            this.activeChannel.pastMessages.some((item: Message) => item.txId === message.txId)
+            this.activeChannel.newMessages?.some((item: Message) => item.txId === message.txId) ||
+            this.activeChannel.pastMessages?.some((item: Message) => item.txId === message.txId)
 
           if (isDuplicate) return
 

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex hover:bg-gray-200 hover:bg-gray-800 px-4 py-1 relative group transition-all duration-150"
+    class="flex hover:bg-gray-200 dark:hover:bg-gray-800 px-4 py-1 relative group transition-all duration-150"
   >
     <!-- 消息菜单 -->
     <MessageMenu

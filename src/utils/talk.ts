@@ -215,6 +215,12 @@ const _getChannelTypeInfo = (form: any, selfMetaId: string) => {
       status = encrypt(selfMetaId.substring(0, 16), MD5Hash(form.nft.nftGenesis).substring(0, 16))
       codehash = form.nft.nftCodehash
       genesis = form.nft.nftGenesis
+      if (form.chain === 'eth' || form.chain === 'goerli') {
+        type = '2001'
+      } else {
+        type = '2'
+      }
+      break
 
     case GroupChannelType.FT:
       groupType = '2'
