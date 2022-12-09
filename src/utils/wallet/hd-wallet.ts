@@ -993,6 +993,7 @@ export class HdWallet {
   }: TransferTypes): Promise<bsv.Transaction> {
     return new Promise(async (resolve, reject) => {
       try {
+        debugger
         const { tx } = await this.makeTxNotUtxos({
           payTo,
           outputs,

@@ -450,7 +450,7 @@ export class SDK {
           let payToRes: CreateNodeRes | undefined = undefined
           if (!params.utxos!.length) {
             // 计算总价
-            let totalAmount = this.getNodeTransactionsAmount(transactions)
+            let totalAmount = this.getNodeTransactionsAmount(transactions, params.payTo)
 
             const useSatoshis = totalAmount
             // 当时用Me支付时，总价 space 要转换为 ME 值
@@ -693,7 +693,6 @@ export class SDK {
             txId?: string
           }
         } = {}
-
         if (params.nodeName === NodeName.Name) {
           const res = await this.wallet?.createNode({
             ...params,
@@ -863,13 +862,13 @@ export class SDK {
       addressType: number
     }
     // 需要创建 metafile brfc 节点 ，把钱打去 protocol 地址
-    if (transactions.metaFileBrfc?.transaction)
+    if (transactions.metaFileBrfc?.transaction) {
       receive = {
         address: this.wallet!.protocolAddress,
         addressType: parseInt(this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[0]),
         addressIndex: parseInt(this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[1]),
       }
-    else if (transactions.metaFiles && transactions.metaFiles.length) {
+    } else if (transactions.metaFiles && transactions.metaFiles.length) {
       // 需要创建 metafile 节点 ，把钱打去 metafile brfc 地址
       receive = {
         address: transactions.metaFileBrfc!.address,
