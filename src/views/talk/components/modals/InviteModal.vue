@@ -7,7 +7,7 @@
     <template v-slot:body>
       <div class="grid space-x-4 items-center grid-cols-4">
         <div
-          class="main-border p-3 text-base text-dark-800 still cursor-text col-span-3 select-text truncate"
+          class="main-border p-3 text-base text-dark-800 dark:text-gray-100 still cursor-text col-span-3 select-text truncate"
           id="inviteLink"
           @click="selectLink"
         >

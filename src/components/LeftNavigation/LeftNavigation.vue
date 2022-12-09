@@ -25,11 +25,11 @@
             v-if="item.icon === 'talk' && talk.hasUnreadMessagesOfCommunity('@me')"
           >
             <span
-              class="w-1.5 h-3 bg-gray-200 rounded-r-md lg:group-hover:h-6 transition-all duration-150"
+              class="w-1.5 h-3 bg-dark-800 dark:bg-gray-200 rounded-r-md lg:group-hover:h-6 transition-all duration-150"
             ></span>
           </div>
           <span
-            class="absolute left-0 bg-gray-200 w-1.5 h-7 rounded-r-md"
+            class="absolute left-0 bg-dark-800 dark:bg-gray-200 w-1.5 h-7 rounded-r-md"
             v-if="route.path.includes(item.symbol)"
           ></span>
           <span
@@ -70,11 +70,11 @@
             v-if="talk.hasUnreadMessagesOfCommunity(community.id)"
           >
             <span
-              class="w-1.5 h-3 bg-gray-200 rounded-r-md lg:group-hover:h-6 transition-all duration-150"
+              class="w-1.5 h-3 bg-dark-800 dark:bg-gray-200 rounded-r-md lg:group-hover:h-6 transition-all duration-150"
             ></span>
           </div>
           <span
-            class="absolute left-0 bg-gray-200 w-1.5 h-8 rounded-r-md"
+            class="absolute left-0 bg-dark-800 dark:bg-gray-200 w-1.5 h-8 rounded-r-md"
             v-if="talk.activeCommunityId === community.id && route.path.includes('talk')"
           ></span>
 
