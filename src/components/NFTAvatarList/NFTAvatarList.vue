@@ -1,106 +1,122 @@
 <template>
-  <div
-    class="nft-list flex1"
-    v-infinite-scroll="getMore"
-    :infinite-scroll-immediate="false"
-    v-loading="isNFTLoading"
-  >
-    <template v-if="!isNFTLoading">
-      <template v-if="list.length > 0">
-        <div class="nft-item" v-for="item in list" @click="chooseItem(item)">
-          <Image :src="item.image" />
-          <div
-            class="checked"
-            v-if="
-              currentNFT.token_address === item.token_address &&
-                currentNFT.token_id === item.token_id
-            "
-          >
-            <div class="checked-icon-warp flex flex-align-center flex-pack-center">
-              <Icon name="check" />
+  <div class="nft-avatar-list-warp flex flex-v">
+    <div class="tab">
+      <a
+        v-for="item in tabs"
+        :key="item.value"
+        :class="{ active: item.value === pagintion.chain, disabled: item.disabled() }"
+        @click="changeTab(item)"
+        >{{ item.name }}</a
+      >
+    </div>
+    <div
+      class="nft-list flex1"
+      v-infinite-scroll="getMore"
+      :infinite-scroll-immediate="false"
+      v-loading="isSkeleton"
+    >
+      <ElSkeleton :loading="isSkeleton" animated>
+        <template #default>
+          <div class="nft-item" v-for="item in list" @click="chooseItem(item)">
+            <Image :src="item.icon" />
+            <div class="checked" v-if="activeTx === item.txId">
+              <div class="checked-icon-warp flex flex-align-center flex-pack-center">
+                <Icon name="check" />
+              </div>
             </div>
           </div>
-        </div>
-      </template>
-      <template v-else>
-        <IsNullVue />
-      </template>
-    </template>
+          <LoadMoreVue :pagination="pagintion" v-if="list.length > 0" />
+          <IsNullVue v-else />
+        </template>
+      </ElSkeleton>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { GetNFTAvatars } from '@/api/aggregation'
 import { GetNFTs } from '@/api/metaid-base'
+import { initPagination } from '@/config'
 import { useUserStore } from '@/stores/user'
 import { reactive, ref } from 'vue'
+import IsNullVue from '@/components/IsNull/IsNull.vue'
+import LoadMoreVue from '@/components/LoadMore/LoadMore.vue'
 
+interface Props {
+  activeTx: string
+}
+const props = withDefaults(defineProps<Props>(), {})
+
+const emit = defineEmits(['change'])
 const userStore = useUserStore()
-const isNFTLoading = ref(true)
+const isSkeleton = ref(true)
+
 const pagintion = reactive({
-  limit: 12,
-  cursor: '',
-  chain: import.meta.env.VITE_ETH_CHAIN,
+  ...initPagination,
+  chain: 'mvc',
 })
-const list: {
-  image: string
-  description: string
-  attributes: string
-  token_id: string
-  token_address: string
-}[] = reactive([])
+
+const list: NFTAvatarItem[] = reactive([])
+
+const tabs = reactive([
+  { name: 'MVC NFT Avatar', value: 'mvc', disabled: () => false },
+  {
+    name: 'ETH NFT Avatar',
+    value: import.meta.env.VITE_ETH_CHAIN,
+    disabled: () => !userStore.user!.evmAddress,
+  },
+])
 
 function getMore() {
-  if (!pagintion.cursor) return
-  isNFTLoading.value = true
-  getNfts().then(() => {
-    isNFTLoading.value = false
+  if (isSkeleton.value || pagintion.nothing || pagintion.loading) return
+  pagintion.loading = true
+  pagintion.page++
+  getDatas().then(() => {
+    isSkeleton.value = false
   })
 }
 
-const currentNFT = reactive({
-  token_address: '',
-  token_id: '',
-})
-
-function getNfts(isCover = false) {
+function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
-    const res = await GetNFTs({
-      address: userStore.user!.evmAddress!,
-      chain: pagintion.chain,
-      limit: pagintion.limit,
-      cursor: pagintion.cursor,
+    const res = await GetNFTAvatars({
+      address: pagintion.chain === 'mvc' ? userStore.user!.address : userStore.user!.evmAddress!,
+      ...pagintion,
+    }).catch(error => {
+      ElMessage.error(error.message)
     })
-    if (res) {
+    if (res?.code === 0) {
       if (isCover) list.length = 0
-      pagintion.cursor = res.cursor
-      res.result.forEach(item => {
-        const metadata = JSON.parse(item.metadata)
-        list.push({
-          ...metadata,
-          token_address: item.token_address,
-          token_id: item.token_id,
-        })
-      })
+      if (res.data.results.items.length > 0) {
+        // pagintion.flag = res.data.results.items[res.data.results.items.length - 1].txId
+      } else {
+        pagintion.nothing = false
+      }
+      list.push(...res.data.results.items)
       resolve()
     }
   })
 }
 
-function chooseItem(item: {
-  image: string
-  description: string
-  attributes: string
-  token_id: string
-  token_address: string
-}) {
-  if (item.token_address === currentNFT.token_address && item.token_id === currentNFT.token_id) {
-    currentNFT.token_address = ''
-    currentNFT.token_id = ''
-  } else {
-    currentNFT.token_address = item.token_address
-    currentNFT.token_id = item.token_id
-  }
+function chooseItem(item: NFTAvatarItem) {
+  if (props.activeTx === item.txId) return
+  emit('change', item)
 }
+
+function changeTab(item: { name: string; value: string; disabled: () => boolean }) {
+  if (pagintion.chain === item.value || item.disabled()) return
+  pagintion.chain = item.value
+  isSkeleton.value = true
+  pagintion.page = 1
+  pagintion.loading = false
+  pagintion.nothing = false
+  getDatas(true).then(() => {
+    isSkeleton.value = false
+  })
+}
+
+getDatas(true).then(() => {
+  isSkeleton.value = false
+})
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped src="./NFTAvatarList.scss"></style>

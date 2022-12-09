@@ -436,3 +436,22 @@ export const GetNFT = (params: {
 }> => {
   return aggregation.get(`/v2/app/show/nft/info`, { params: params })
 }
+
+export const GetNFTAvatars = (params: {
+  chain: string
+  page: number
+  pageSize: number
+  flag?: string
+  address: string
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    results: {
+      items: NFTAvatarItem[]
+    }
+  }
+}> => {
+  const { address, ..._params } = params
+  return aggregation.get(`/v2/app/show/pfp/${address}/details`, { params: _params })
+}

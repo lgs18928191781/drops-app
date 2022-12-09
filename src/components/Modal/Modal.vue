@@ -118,7 +118,6 @@ const props = defineProps<{
 }>()
 
 const tryClose = () => {
-  debugger
   if (props.strictClose) {
     return
   }
@@ -148,7 +147,6 @@ const mobileSize = computed(() => {
 })
 
 const closeModal = () => {
-  debugger
   emit('update:modelValue', false)
   if (props.showSecondControl) {
     emit('update:showSecondControl', false)

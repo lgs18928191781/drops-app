@@ -84,7 +84,7 @@
           </span>
         </div>
         <div
-          class="mt-1.5 bg-dark-800/5 text-sm text-dark-400 rounded-xl px-3 py-2"
+          class="mt-1.5 bg-dark-800/5 dark:bg-gray-800  text-sm text-dark-400 dark:text-gray-200 rounded-xl px-3 py-2"
           v-if="message.data.rePostComment"
         >
           {{ message.data.rePostComment }}
@@ -113,7 +113,9 @@
             {{ $t('Talk.Messages.comment') }}
           </span>
         </div>
-        <div class="mt-1.5 bg-dark-800/5 text-sm text-dark-400 rounded-xl px-3 py-2">
+        <div
+          class="mt-1.5 bg-dark-800/5 dark:bg-gray-800 text-sm text-dark-400 dark:text-gray-200 rounded-xl px-3 py-2"
+        >
           {{ message.data.content }}
         </div>
       </div>
@@ -127,7 +129,10 @@
           <Image :src="decryptedMessage" customClass="rounded py-0.5 object-scale-down" />
         </div>
         <button v-if="message.error" class="ml-3" :title="resendTitle" @click="tryResend">
-          <Icon name="arrow_path" class="w-4 h-4 text-dark-400 hover:animate-spin-once" />
+          <Icon
+            name="arrow_path"
+            class="w-4 h-4 text-dark-400 dark:text-gray-200 hover:animate-spin-once"
+          />
         </button>
         <Teleport to="body" v-if="isImage && showImagePreview">
           <ImagePreview
@@ -138,7 +143,10 @@
         </Teleport>
       </div>
 
-      <div class="text-xs text-dark-400 my-0.5 capitalize" v-else-if="isReceiveRedEnvelope">
+      <div
+        class="text-xs text-dark-400 dark:text-gray-200 my-0.5 capitalize"
+        v-else-if="isReceiveRedEnvelope"
+      >
         {{ redEnvelopeReceiveInfo }}
       </div>
 
@@ -155,7 +163,7 @@
               <div class="text-red-50 text-xs mt-0.5">{{ redEnvelopeMessage }}</div>
             </div>
           </div>
-          <div class=" py-2 px-6 text-dark-400 text-xs">Show红包</div>
+          <div class=" py-2 px-6 text-dark-400 dark:text-gray-200 text-xs">Show红包</div>
         </div>
       </div>
 
@@ -169,7 +177,10 @@
           v-html="parseTextMessage(decryptedMessage)"
         ></div>
         <button v-if="message.error" class="ml-3" :title="resendTitle" @click="tryResend">
-          <Icon name="arrow_path" class="w-4 h-4 text-dark-400 hover:animate-spin-once" />
+          <Icon
+            name="arrow_path"
+            class="w-4 h-4 text-dark-400 dark:text-gray-200 hover:animate-spin-once"
+          />
         </button>
       </div>
     </div>

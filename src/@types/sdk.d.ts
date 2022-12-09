@@ -92,7 +92,7 @@ export interface PayMeParams {
 export interface CreateNodeOptions {
   nodeName: string
   metaIdTag?: string
-  data: string | Buffer
+  data?: string | Buffer
   keyPath?: string
   parentTxId?: string
   parentAddress?: string

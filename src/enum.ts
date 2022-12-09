@@ -280,6 +280,7 @@ export enum NodeName {
   FtIssue = 'FtIssue',
   SimpleRedEnvelope = 'SimpleRedEnvelope',
   OpenRedenvelope = 'OpenRedenvelope',
+  Name = 'name',
 }
 
 export const enum BindStatus {

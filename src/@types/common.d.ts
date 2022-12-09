@@ -397,3 +397,14 @@ declare interface GenesisNFTItem {
   nftWebsite: string
   nftChain: string
 }
+
+declare interface NodeTransactions {
+  metaFileBrfc?: CreateNodeRes
+  metaFiles?: CreateNodeRes[]
+  currentNodeBrfc?: CreateNodeRes
+  currentNode?: CreateNodeRes
+  issueNFT?: {
+    transaction: bsv.Transaction
+    txId?: string
+  }
+}
