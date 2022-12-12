@@ -17,7 +17,10 @@
           />
         </div>
         <div
-          class="text-base leading-tight no-wrap grow whitespace-nowrap truncate text-dark-800 dark:text-white pr-2 max-w-[50vw] lg:max-w-[600PX] capitalize"
+          :class="[
+            talkStore.isActiveChannelReserved ? 'meta-name' : 'text-dark-800 dark:text-white',
+            'text-base leading-tight no-wrap grow whitespace-nowrap truncate mr-2 max-w-[50vw] lg:max-w-[600PX] capitalize',
+          ]"
         >
           {{
             talkStore.isActiveChannelReserved

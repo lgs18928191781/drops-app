@@ -89,10 +89,17 @@ const goBack = () => {
 const tryVerifyPassword = () => {
   const channelKey = talk.activeChannel.roomStatus
   const creatorMetaId = talk.activeChannel.createUserMetaId
-  if (!channelKey || !creatorMetaId) return true
+
+  if (!channelKey || !creatorMetaId) {
+    passwordForm.password = ''
+
+    talk.hasActiveChannelConsent = true
+    layout.isShowPasswordModal = false
+
+    return true
+  }
 
   const md5Password = MD5Hash(passwordForm.password).substring(0, 16)
-
   if (verifyPassword(channelKey, md5Password, creatorMetaId)) {
     // 将本频道密码存入本地
     const _passwordLookup = localStorage.getItem(`channelPasswords-${talk.selfMetaId}`)

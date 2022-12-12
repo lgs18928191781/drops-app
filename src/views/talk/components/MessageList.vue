@@ -2,6 +2,7 @@
   <div class="h-full overflow-y-hidden" v-show="layout.isShowMessagesLoading">
     <LoadingList />
   </div>
+
   <div
     class="h-full overflow-y-auto"
     ref="messagesScroll"
@@ -86,17 +87,10 @@ import LoadingItem from './LoadingItem.vue'
 import LoadingList from './LoadingList.vue'
 import MessageItem from './MessageItem.vue'
 import MessageItemForSession from './MessageItemForSession.vue'
+import { sleep } from '@/utils/util'
 
 const talk = useTalkStore()
 const layout = useLayoutStore()
-
-watch(
-  () => talk.newMessages,
-  async () => {
-    await scrollToMessagesBottom()
-  },
-  { deep: true }
-)
 
 const loadingMore = ref(false)
 const isAtTop = ref(false)
@@ -115,6 +109,17 @@ const handleScroll = async () => {
   }
 }
 
+watch(
+  messagesScroll,
+  async () => {
+    if (messagesScroll.value) {
+      await nextTick()
+      messagesScroll.value?.addEventListener('scroll', handleScroll)
+    }
+  },
+  { immediate: true }
+)
+
 const popInvite = () => {
   talk.inviteLink = `${location.origin}/talk/channels/${talk.activeCommunityId}/${talk.activeChannelId}`
   layout.isShowInviteModal = true
@@ -132,6 +137,7 @@ const loadMore = async () => {
     params = {
       timestamp: earliestMessageTimestamp,
       timestampType: 0,
+      metaId: talk.selfMetaId,
     }
   }
 
@@ -144,7 +150,7 @@ const loadMore = async () => {
   }
 
   for (const item of items) {
-    talk.activeChannel.postMessages.push(item)
+    talk.activeChannel.pastMessages.push(item)
   }
 
   // 滚动到原来的位置
@@ -176,15 +182,24 @@ const scrollToMessagesBottom = async (retryCount = 0) => {
   const mse: HTMLElement = messagesScroll.value as HTMLElement
   if (mse) {
     mse.scrollTop = mse.scrollHeight
+    await sleep(2000)
+    mse.scrollTop = mse.scrollHeight
   } else {
     if (retryCount < 5) {
+      console.log({ retryCount })
       await nextTick()
       await scrollToMessagesBottom(retryCount + 1)
     }
   }
 }
 
-messagesScroll.value?.addEventListener('scroll', handleScroll)
+watch(
+  () => talk.newMessages,
+  async () => {
+    await scrollToMessagesBottom()
+  },
+  { deep: true, immediate: true }
+)
 
 onBeforeUnmount(() => {
   messagesScroll.value?.removeEventListener('scroll', handleScroll)
