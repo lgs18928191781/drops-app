@@ -43,8 +43,66 @@
 
     <div :class="[rows > 1 ? 'items-start' : 'items-center', 'flex h-fit']">
       <!-- 左侧 + 按钮 -->
-      <div
+      <Popover class="relative flex items-center" v-slot="{ open }">
+        <PopoverButton
+          as="button"
+          class="w-14 flex items-center py-2 justify-center text-dark-800 dark:text-gray-100 outline-0"
+        >
+          <div
+            class="bg-primary w-8 h-8 flex items-center justify-center rounded-full cursor-pointer"
+          >
+            <Icon
+              name="plus_2"
+              :class="[
+                open && 'rotate-45',
+                'w-3 h-3 text-dark-800 dark:text-gray-100 transition duration-200',
+              ]"
+            />
+          </div>
+        </PopoverButton>
+
+        <transition
+          enter-active-class="transition duration-200 ease-out"
+          enter-from-class="opacity-0"
+          enter-to-class="opacity-100"
+          leave-active-class="transition duration-150 ease-in"
+          leave-from-class="opacity-100"
+          leave-to-class="opacity-0"
+        >
+          <PopoverPanel
+            class="absolute z-10 transform top-[-16PX] left-0 -translate-y-full"
+            v-slot="{ close }"
+          >
+            <div
+              class="bg-white dark:bg-gray-700 dark:text-gray-100 py-2 px-4 rounded-xl flex flex-col w-max justify-stretch divide-dark-100 dark:divide-gray-800 divide-y divide-solid"
+            >
+              <button
+                class="flex py-4 outline-none hover:bg-gray-100 dark:hover:bg-gray-800 px-4 -mx-4 space-x-3 items-center"
+                type="button"
+                v-for="command in moreCommands()"
+                :key="command.titleKey"
+                @click="command.action(close)"
+              >
+                <Icon
+                  :name="command.icon"
+                  class="w-6 h-6 text-dark-800 rounded-full bg-primary box-content p-1.5 shrink-0"
+                />
+
+                <div class="flex flex-col justify-start items-start">
+                  <h4 class="shrink-0 text-sm">{{ $t(command.titleKey) }}</h4>
+                  <p class="text-xs text-dark-300 dark:text-gray-400">
+                    {{ $t(command.descriptionKey) }}
+                  </p>
+                </div>
+              </button>
+            </div>
+          </PopoverPanel>
+        </transition>
+      </Popover>
+
+      <!-- <button
         class="w-14 flex items-center py-2 justify-center text-dark-800 dark:text-gray-100"
+        type="button"
         @click="showMoreCommandsBox = true"
       >
         <div
@@ -52,17 +110,17 @@
         >
           <Icon name="plus_2" class="w-3 h-3 text-dark-800 dark:text-gray-100" />
         </div>
-      </div>
+      </button> -->
 
       <div class="self-stretch lg:ml-2 py-2 flex items-center grow">
         <textarea
-          class=" w-full !outline-none placeholder:text-dark-250 placeholder:dark:text-gray-400 placeholder:text-base text-dark-800 dark:text-gray-100 text-base caret-gray-600 dark:caret-gray-400 resize-none !h-fit text-base rounded-md transition-all duration-150 delay-100"
+          class=" w-full !outline-none placeholder:text-dark-250 placeholder:dark:text-gray-400 placeholder:text-sm placeholder:truncate text-dark-800 dark:text-gray-100 text-base caret-gray-600 dark:caret-gray-400 resize-none !h-fit text-base rounded-md transition-all duration-150 delay-100"
           :class="rows > 1 ? 'bg-gray-100 dark:bg-gray-800 p-1 -m-1' : 'bg-inherit'"
           :rows="rows"
           ref="theTextBox"
           :placeholder="
             $t('Talk.Channel.message_to', {
-              channel: talkStore?.activeChannelSymbol + (talkStore.activeChannel?.name || ''),
+              channel: talk?.activeChannelSymbol + (talk.activeChannel?.name || ''),
             })
           "
           v-model="chatInput"
@@ -71,58 +129,26 @@
       </div>
 
       <Teleport to="body">
-        <div
-          v-show="showMoreCommandsBox"
-          class="fixed z-50 inset-0 h-screen w-screen bg-transparent"
-          @click="showMoreCommandsBox = false"
-        >
-          <div class="relative h-full w-full">
-            <input
-              type="file"
-              id="imageUploader"
-              ref="imageUploader"
-              accept="image/*"
-              @change="handleImageChange"
-              class="hidden"
-            />
-            <div
-              class="absolute bottom-[76PX] left-[16PX] lg:bottom-[86PX] lg:left-[346PX] bg-white dark:bg-gray-700 py-1.5 px-2 rounded text-xs flex flex-col text-dark-400 dark:text-gray-200 font-medium space-y-0.5 shadow-lg"
-            >
-              <div
-                class="p-2 flex items-center space-x-2 text-dark-800 dark:text-gray-100 rounded-sm lg:cursor-pointer lg:hover:text-white lg:hover:text-gray-900 lg:hover:bg-primary"
-                @click="openImageUploader"
-              >
-                <div class="">
-                  <Icon name="photo" class="w-5 h-5" />
-                </div>
-                <div class="">
-                  {{ $t('Talk.Channel.upload_image') }}
-                </div>
-              </div>
-              <!-- <div
-                class="p-2 flex items-center space-x-2 text-dark-800 dark:text-gray-100 rounded-sm lg:cursor-pointer lg:hover:text-white lg:hover:bg-primary"
-              >
-                <div class="">
-                  <Icon name="link" class="w-5 h-5" />
-                </div>
-                <div class="">
-                  {{ $t('Talk.Channel.use_onchain_image') }}
-                </div>
-              </div> -->
-            </div>
-          </div>
-        </div>
+        <input
+          type="file"
+          id="imageUploader"
+          ref="imageUploader"
+          accept="image/*"
+          @change="handleImageChange"
+          class="hidden"
+        />
       </Teleport>
 
-      <!-- 右侧发送按钮 -->
+      <!-- 右侧按钮群 -->
       <div class="flex h-full py-1 items-center shrink-0">
-        <div class="flex items-center px-1 lg:mr-2">
-          <!-- <div
+        <div :class="[hasInput ? 'hidden lg:flex' : 'flex', 'items-center px-1 mr-2']">
+          <div
             class="p-2 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer"
+            v-if="talk.activeChannelType === ChannelType.Group"
             @click="layout.isShowRedPacketModal = true"
           >
             <Icon name="red_envelope" class="w-full h-full text-dark-800 dark:text-gray-100" />
-          </div> -->
+          </div>
 
           <Popover class="relative flex items-center">
             <PopoverButton as="div">
@@ -186,22 +212,28 @@
           </ElPopover>
         </div>
 
-        <div class="py-0.5 h-full lg:hidden">
-          <div class="h-full border-l-2 border-solid border-dark-250 dark:border-gray-400"></div>
-        </div>
-
-        <div class="lg:hidden">
-          <div class="py-2 px-3" @click="trySendText">
-            <div
+        <!-- 发送按钮 -->
+        <transition
+          enter-active-class="transition duration-150 ease-out"
+          enter-from-class="opacity-0"
+          enter-to-class="opacity-100"
+        >
+          <div v-if="hasInput" :class="['lg:hidden transition-all ease-in-out duration-500']">
+            <div class="py-2 px-3" @click="trySendText">
+              <!-- <div
               class="transition-all ease-in-out duration-500"
               :class="[
                 hasInput ? 'text-primary scale-110 -rotate-6' : 'text-dark-250 dark:text-gray-400',
               ]"
             >
               <Icon name="send" class="w-5 h-5" />
+            </div> -->
+              <div class="text-primary scale-110 -rotate-6">
+                <Icon name="send" class="w-5 h-5" />
+              </div>
             </div>
           </div>
-        </div>
+        </transition>
       </div>
     </div>
   </div>
@@ -216,7 +248,7 @@ import { FileToAttachmentItem } from '@/utils/util'
 import { encrypt, ecdhEncrypt } from '@/utils/crypto'
 import { useTalkStore } from '@/stores/talk'
 import StickerVue from '@/components/Sticker/Sticker.vue'
-import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
+import { Popover, PopoverButton, PopoverPanel, TransitionRoot } from '@headlessui/vue'
 import { ChannelType, MessageType } from '@/enum'
 import { useLayoutStore } from '@/stores/layout'
 
@@ -229,8 +261,58 @@ const layout = useLayoutStore()
 
 const hasInput = computed(() => chatInput.value.length > 0)
 
+/** 输入框样式 */
+const isShowingButtonGroup = computed(() => {
+  const isMobile = window.innerWidth <= 1024
+  return !isMobile || !hasInput.value
+})
+const moreCommands = () => {
+  let commands = [
+    {
+      titleKey: 'Talk.Input.share_nft',
+      descriptionKey: 'Talk.Input.share_nft_tip',
+      icon: 'lit_ward',
+      action: doNothing as any,
+    },
+    {
+      titleKey: 'Talk.Input.sell_nft',
+      descriptionKey: 'Talk.Input.sell_nft_tip',
+      icon: 'sell_tag',
+      action: doNothing,
+    },
+  ]
+
+  if (!isShowingButtonGroup.value) {
+    const newCommands = [
+      {
+        titleKey: 'Talk.Input.giveaway',
+        descriptionKey: 'Talk.Input.giveaway',
+        icon: 'red_envelope',
+        action: () => (layout.isShowRedPacketModal = true),
+      },
+      {
+        titleKey: 'Talk.Channel.upload_image',
+        descriptionKey: 'Talk.Channel.upload_image',
+        icon: 'photo_3',
+        action: (close: any) => openImageUploader(close),
+      },
+      {
+        titleKey: 'Talk.Input.emoji',
+        descriptionKey: 'Talk.Input.emoji',
+        icon: 'face_smile',
+        action: doNothing,
+      },
+    ]
+
+    commands = commands.concat(newCommands)
+  }
+
+  return commands
+}
+/** ------ */
+
 /** 上传图片 */
-const talkStore = useTalkStore()
+const talk = useTalkStore()
 const imageUploader = ref<HTMLInputElement | null>(null)
 const imageFile = ref<File | null>(null)
 const showImagePreview = ref(false)
@@ -248,7 +330,7 @@ const handleImageChange = (e: Event) => {
 
   if (file) {
     if (!isImage(file)) {
-      talkStore.$patch({
+      talk.$patch({
         error: {
           type: 'image_only',
           message: 'image_only',
@@ -259,7 +341,7 @@ const handleImageChange = (e: Event) => {
     }
 
     if (isFileTooLarge(file)) {
-      talkStore.$patch({
+      talk.$patch({
         error: {
           type: 'image_too_large',
           message: 'image_too_large',
@@ -296,7 +378,7 @@ const trySendImage = async () => {
 
   const messageDto = {
     type: MessageType.Image,
-    channelId: talkStore.activeChannel.id,
+    channelId: talk.activeChannel.id,
     userName: userStore.user?.name || 'Riverrun46',
     attachments,
     content: '',
@@ -344,12 +426,12 @@ const trySendText = async () => {
 
   // 私聊会话和频道群聊的加密方式不同
   let content = ''
-  if (talkStore.activeChannelType === 'group') {
-    content = encrypt(chatInput.value, talkStore.activeChannel.id.substring(0, 16))
+  if (talk.activeChannelType === 'group') {
+    content = encrypt(chatInput.value, talk.activeChannel.id.substring(0, 16))
   } else {
     const privateKey = toRaw(userStore?.wallet)!.getPathPrivateKey('0/0')
     const privateKeyStr = privateKey.toHex()
-    const otherPublicKeyStr = talkStore.activeChannel.publicKeyStr
+    const otherPublicKeyStr = talk.activeChannel.publicKeyStr
     console.log(chatInput.value, privateKeyStr, otherPublicKeyStr)
 
     content = ecdhEncrypt(chatInput.value, privateKeyStr, otherPublicKeyStr)
@@ -360,9 +442,9 @@ const trySendText = async () => {
   const messageDto = {
     content,
     type: MessageType.Text,
-    channelId: talkStore.activeChannel.id,
+    channelId: talk.activeChannel.id,
     userName: userStore.user?.name || '',
-    channelType: talkStore.activeChannelType as ChannelType,
+    channelType: talk.activeChannelType as ChannelType,
   }
   await sendMessage(messageDto)
 

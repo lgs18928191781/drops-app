@@ -105,7 +105,7 @@ export const getChannelMessages = async (
   type?: string
 ): Promise<any> => {
   params = params || {}
-  params.pageSize = '10'
+  params.pageSize = '100'
   params.page = '1'
   const selfMetaId = params.metaId
   delete params.metaId
@@ -129,7 +129,14 @@ export const getChannelMessages = async (
 }
 
 export const getCommunityMembers = (communityId: string): Promise<any> => {
-  return TalkApi.get(`/community/${communityId}/persons`).then(res => res.data.results.items)
+  const params = {
+    pageSize: '100',
+    page: '1',
+  }
+  const query = new URLSearchParams(params).toString()
+  return TalkApi.get(`/community/${communityId}/persons?${query}`).then(
+    res => res.data.results.items
+  )
 }
 
 export const getRedPacketRemains = async (params: any): Promise<any> => {
