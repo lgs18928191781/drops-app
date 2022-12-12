@@ -38,7 +38,7 @@
                 :class="[mobileSize ? 'rounded' : '']"
               >
                 <button
-                  class="absolute top-[24PX] right-[24PX]  flex items-center justify-center outline-0"
+                  class="absolute top-[24PX] right-[24PX] flex items-center justify-center outline-0"
                   v-if="!noClose"
                 >
                   <Icon

@@ -303,6 +303,15 @@ pre {
   }
 }
 
+// MetaName字体样式
+.meta-name {
+  background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(to top right, #F700FB, #FFC051);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
 
 
 

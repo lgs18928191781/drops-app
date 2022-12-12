@@ -105,13 +105,16 @@ export const getChannelMessages = async (
   type?: string
 ): Promise<any> => {
   params = params || {}
-  params.pageSize = '50'
+  params.pageSize = '10'
   params.page = '1'
+  const selfMetaId = params.metaId
+  delete params.metaId
+  const query = new URLSearchParams(params).toString()
+
   if (type === 'session') {
-    const selfMetaId = params.metaId
     const {
       data: { data: messages },
-    } = await TalkApi.get(`/chat/${selfMetaId}/${channelId}`, { data: JSON.stringify(params) })
+    } = await TalkApi.get(`/chat/${selfMetaId}/${channelId}?${query}`)
 
     return messages
   }
@@ -120,7 +123,7 @@ export const getChannelMessages = async (
     data: {
       results: { items: messages },
     },
-  } = await TalkApi.get(`/room/${channelId}/chats`, params)
+  } = await TalkApi.get(`/room/${channelId}/chats?${query}`)
 
   return messages
 }

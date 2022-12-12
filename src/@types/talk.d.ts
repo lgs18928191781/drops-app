@@ -10,6 +10,7 @@ declare interface Message {
   content?: string
   avatarType: string
   avatarTxId: string
+  avatarImage?: string
   metaId?: string
   nickName: string
   timestamp: number

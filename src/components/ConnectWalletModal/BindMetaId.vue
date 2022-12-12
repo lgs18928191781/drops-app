@@ -323,6 +323,7 @@ function submitForm() {
         if (status.value == BindStatus.BindHavedMetaId) {
           //绑定metaid用户
           res = await bindingMetaidOrAddressLogin()
+          res.password = MD5(props.thirdPartyWallet.signAddressHash).toString()
         }
         // else if (status.value === BindStatus.BindRegisterMetaId) {
         //   //新用户
@@ -689,12 +690,6 @@ function loginByMnemonic(mnemonic: string, password: string) {
           type: 1,
         })
         if (loginInfo.code == 0) {
-          console.log(
-            'decodeMnemonic',
-            decodeMnemonic,
-            MD5(props.thirdPartyWallet.signAddressHash).toString()
-          )
-
           resolve({
             userInfo: Object.assign(loginInfo.data, {
               enCryptedMnemonic: encryptMnemonic(
@@ -734,6 +729,7 @@ function bindingMetaidOrAddressLogin() {
         // @ts-ignore
         if (resp.code == 0) {
           const res = await loginByMnemonic(resp.result.enMnemonic, form.pass)
+
           console.log('res', res)
           console.log('userStore', userStore)
 

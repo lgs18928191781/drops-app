@@ -13,12 +13,12 @@
     <UserAvatar
       :image="props.message.avatarImage"
       :meta-id="props.message.metaId"
-      class="w-13.5 h-13.5 shrink-0 select-none"
+      class="w-10 h-10 lg:w-13.5 lg:h-13.5 shrink-0 select-none"
       :disabled="true"
     />
-    <div class="ml-4 grow pr-12">
+    <div class="ml-2 lg:ml-4 grow pr-12">
       <div class="flex items-baseline space-x-2">
-        <div class="font-medium text-sm" :class="randomNameColor">
+        <div class="font-medium text-sm dark:text-gray-100">
           {{ message.nickName }}
         </div>
         <div class="text-dark-300 dark:text-gray-400 text-xs">
