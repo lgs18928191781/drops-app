@@ -66,9 +66,9 @@
                 >
                   <div class="w-1.5 h-1.5 bg-lime-500 rounded-full"></div>
                   <div class="flex space-x-0.5">
-                    <div class="">{{ talk.members?.length || 0 }}</div>
+                    <div class="">{{ talk.activeCommunity?.memberTotal || 0 }}</div>
                     <div class="capitalize">
-                      {{ $t('Talk.Community.members', talk.members?.length || 0) }}
+                      {{ $t('Talk.Community.members', talk.activeCommunity?.memberTotal || 0) }}
                     </div>
                   </div>
                 </div>

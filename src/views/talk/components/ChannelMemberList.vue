@@ -7,7 +7,9 @@
         <div class="text-sm text-dark-800 dark:text-gray-100 uppercase font-medium">
           {{ $t('Talk.Channel.members') }}
         </div>
-        <div class="text-sm text-dark-300 dark:text-gray-400">{{ talkStore.members.length }}</div>
+        <div class="text-sm text-dark-300 dark:text-gray-400">
+          {{ talkStore.activeCommunity?.memberTotal || 0 }}
+        </div>
       </div>
       <ChannelMemberItem v-for="member in talkStore.members" :member="member" />
     </div>

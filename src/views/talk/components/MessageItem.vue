@@ -245,7 +245,7 @@ const isMyMessage = computed(() => {
 
 const handleOpenRedPacket = () => {
   modals.openRedPacket = {
-    message: props.message,
+    message: props.message || '',
   }
   layout.isShowRedPacketOpenModal = true
 }
