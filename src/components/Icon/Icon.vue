@@ -5,6 +5,7 @@
 </template>
 
 <script lang="ts">
+import { useRootStore } from '@/stores/root'
 import { defineComponent, computed } from 'vue'
 
 export default defineComponent({
@@ -20,7 +21,10 @@ export default defineComponent({
     },
     color: {
       type: String,
-      default: '#303133',
+      default: () => {
+        const rootStore = useRootStore()
+        return rootStore.theme === 'light' ? '#303133' : '#fff'
+      },
     },
     customClass: {
       type: String,

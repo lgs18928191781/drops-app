@@ -24,7 +24,7 @@
                 height: 10px;
 
                 :deep(use) {
-                    stroke: var(--main-font-color);
+                    stroke: var(--themeBtnTextColor);
                     stroke-width: 2px;
                 }
             }

@@ -1,5 +1,11 @@
 <template>
-  <BuzzListVue :list="list" :loading="isSkeleton">
+  <BuzzListVue
+    :list="list"
+    :loading="isSkeleton"
+    ref="BuzzListRef"
+    @comment="onReplayCommentSucccess"
+    @like="onLikeCommentSuccess"
+  >
     <template #comment>
       <div class="comment">
         <div class="dived"></div>
@@ -17,7 +23,11 @@
             />
           </div>
         </div>
-        <BuzzCommentListVue :commentList="commentListData" @reply="reply"></BuzzCommentListVue>
+        <BuzzCommentListVue
+          :commentList="commentListData"
+          @replay="replyComment"
+          @like="likeComment"
+        ></BuzzCommentListVue>
       </div>
     </template>
   </BuzzListVue>
@@ -34,14 +44,13 @@ import { useRoute } from 'vue-router'
 import BuzzCommentListVue from './components/BuzzCommentList.vue'
 import { checkSdkStatus } from '@/utils/util'
 import { useI18n } from 'vue-i18n'
-import { GetBuzz } from '@/api/aggregation'
+import { GetBuzz, GetBuzzInteractive } from '@/api/aggregation'
 
 const route = useRoute()
 const userStore = useUserStore()
 const loading = ref(false)
 const i18n = useI18n()
-
-console.log(userStore.user)
+const BuzzListRef = ref()
 
 const list: BuzzItem[] = reactive([])
 const isSkeleton = ref(true)
@@ -50,7 +59,7 @@ const commentPagination = reactive({
   ...initPagination,
   protocols: ['PayComment'],
 })
-const commentListData: any = reactive([])
+const commentListData: BuzzInteractiveItem[] = reactive([])
 
 const addComment = reactive({
   content: '',
@@ -88,67 +97,24 @@ function fetchData() {
 }
 
 async function fetchCommentList(buzzTxId: string, isCover = false) {
-  const params = {
-    page: commentPagination.page.toString(),
-    pageSize: commentPagination.pageSize.toString(),
+  const res = await GetBuzzInteractive({
+    page: commentPagination.page,
+    pageSize: commentPagination.pageSize,
     protocols: commentPagination.protocols,
+    metaId: userStore.user?.metaId,
     buzzTxId,
-  }
-  const res = await getBuzzInteractiveList(params)
+  })
   if (res && res.code === 0) {
     if (isCover) commentListData.length = 0
     const commentListRes: any = res.data.results.items || []
-    const childBuzzTxIds: string[] = []
-    for (const i of commentListRes) {
-      if (i.hasComment) {
-        childBuzzTxIds.push(i.txId)
-        i.children = []
-      }
-    }
-    if (childBuzzTxIds.length) {
-      const childCommentListRes = await fetchChildCommentList(childBuzzTxIds)
-      for (const childRes of childCommentListRes) {
-        const target = commentListRes.find((v: any) => {
-          return v.txId === childRes.txId
-        })
-        if (target) {
-          target.children = childRes.result || []
-        }
-      }
-    }
     commentListData.push(...commentListRes)
     const totalPages = Math.ceil(res.data.total / commentPagination.pageSize)
     if (commentPagination.page >= totalPages) commentPagination.nothing = true
   }
 }
 
-async function fetchChildCommentList(buzzTxIds: string[]) {
-  const fetchChildComment = (txId: string) =>
-    getBuzzInteractiveList({
-      page: '1',
-      pageSize: '99',
-      protocols: ['PayComment'],
-      buzzTxId: txId,
-    })
-  const requestArr: Promise<any>[] = []
-  for (const txId of buzzTxIds) {
-    requestArr.push(fetchChildComment(txId))
-  }
-  return Promise.all(requestArr).then(resList => {
-    return resList.map((res, index) => {
-      let result = []
-      if (res && res.code === 0) {
-        result = res.data.results.items || []
-      }
-      return {
-        txId: buzzTxIds[index],
-        result,
-      }
-    })
-  })
-}
-
 async function reply(params: { txId: string; username: string; userAddress: string }) {
+  debugger
   if (loading.value) return
   addComment.commentToCommentTxId = params.txId
   addComment.commentToUserName = params.username
@@ -227,6 +193,35 @@ async function confirmComment() {
   } catch (error) {
     loading.value = false
     ElMessage.error((error as any).message)
+  }
+}
+
+function replyComment(params: { txId: string; username: string; userAddress: string }) {
+  BuzzListRef.value.onReplay(params)
+}
+
+function onReplayCommentSucccess(item: BuzzInteractiveItem) {
+  const index = commentListData.findIndex(_item => _item.txId === item.commentTo)
+  debugger
+  if (index !== -1) {
+    commentListData[index].commentCount++
+    commentListData[index].hasComment = true
+    if (!commentListData[index].subInteractiveItem) {
+      commentListData[index].subInteractiveItem = []
+    }
+    commentListData[index].subInteractiveItem.unshift(item)
+  }
+}
+
+function likeComment(params: any) {
+  BuzzListRef.value.onLike(params)
+}
+
+function onLikeCommentSuccess(txId: string) {
+  const index = commentListData.findIndex(item => item.txId === txId)
+  if (index !== -1) {
+    commentListData[index].likeCount++
+    commentListData[index].hasMyLike = true
   }
 }
 

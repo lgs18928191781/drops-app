@@ -17,6 +17,7 @@ interface RootState {
   isShowMetaMak: boolean
   isCertedMetaIds: string[]
   currentPrice: 'CNY' | 'USD'
+  theme: 'light' | 'dark'
 }
 
 const UA = window.navigator.userAgent.toLowerCase()
@@ -35,6 +36,12 @@ export const emptySignBaseInfo = {
   email: '',
 }
 
+const theme = localStorage.theme
+  ? localStorage.theme
+  : window.matchMedia('(prefers-color-scheme: dark)').matches
+  ? 'dark'
+  : 'light'
+
 export const useRootStore = defineStore('root', {
   state: () =>
     <RootState>{
@@ -47,6 +54,7 @@ export const useRootStore = defineStore('root', {
       isShowLogin: false,
       isShowMetaMak: false,
       currentPrice: window.localStorage.getItem('currentPrice') || 'CNY',
+      theme,
     },
   getters: {
     currentPriceSymbol: state => {

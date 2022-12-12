@@ -7,7 +7,7 @@ header {
         width: 26px;
         height: 26px;
         border-radius: 50%;
-        border: 1px solid var(--main-font-color);
+        border: 1px solid var(--themeBtnTextColor);
         cursor: pointer;
 
         .icon {
@@ -16,7 +16,7 @@ header {
         }
 
         &:hover {
-            background: var(--main-font-color);
+            background: var(--themeBtnTextColor);
 
             .icon {
                 &:deep(use) {
@@ -64,7 +64,7 @@ header {
 
         &:hover {
             .icon-warp {
-                background: var(--main-font-color);
+                background: var(--themeBtnTextColor);
 
                 .icon {
                     :deep(use) {

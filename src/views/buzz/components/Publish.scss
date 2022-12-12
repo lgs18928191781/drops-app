@@ -95,7 +95,7 @@
             }
 
             &:hover {
-                background: var(--main-font-color);
+                background: var(--themeBtnTextColor);
 
                 .icon {
                     :deep(use) {

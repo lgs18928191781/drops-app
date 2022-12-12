@@ -79,12 +79,12 @@
 
         &:hover {
             .check-warp {
-                border: 1px solid var(--main-font-color);
+                border: 1px solid var(--themeBtnTextColor);
             }
         }
 
         &.active {
-            color: var(--main-font-color);
+            color: var(--themeBtnTextColor);
 
             .check-warp {
                 background: var(--el-color-primary);
