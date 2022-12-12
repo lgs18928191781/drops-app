@@ -84,7 +84,14 @@ const operates = [
     },
     fun: async () => {
       await checkUserLogin()
-      emit('replay', props.buzz.txId)
+      emit('replay', {
+        txId: props.buzz.txId,
+        username: props.buzz.userName,
+        userAddress: props.buzz.zeroAddress,
+        commentTo: '',
+        replyTo: '',
+        buzzTxId: props.buzz.txId,
+      })
     },
   },
   {
@@ -98,7 +105,7 @@ const operates = [
     fun: async () => {
       await checkUserLogin()
       if (isILike.value) return
-      emit('like', props.buzz.txId)
+      emit('like', { txId: props.buzz.txId, address: props.buzz.zeroAddress })
     },
   },
 ]

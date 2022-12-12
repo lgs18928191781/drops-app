@@ -455,3 +455,27 @@ export const GetNFTAvatars = (params: {
   const { address, ..._params } = params
   return aggregation.get(`/v2/app/show/pfp/${address}/details`, { params: _params })
 }
+
+export const GetBuzzInteractive = (params: {
+  buzzTxId: string
+  page: number
+  pageSize: number
+  protocols: string[]
+  metaId?: string
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    results: {
+      items: BuzzInteractiveItem[]
+    }
+  }
+}> => {
+  const { buzzTxId, protocols, ..._params } = params
+  return aggregation.get(`/v2/app/show/posts/buzz/${buzzTxId}/interactive?`, {
+    params: {
+      ..._params,
+      protocols: protocols.join(','),
+    },
+  })
+}

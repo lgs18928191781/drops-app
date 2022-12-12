@@ -79,3 +79,34 @@ declare interface NFTAvatarItem {
   website: string
   avatarImage: string
 }
+
+declare interface BuzzInteractiveItem {
+  amount: number
+  avatarImage: string
+  avatarTxId: string
+  avatarType: string
+  blockHeight: number
+  buzzTxId: string
+  commentCount: number
+  confirmState: number
+  content: string
+  hasComment: boolean
+  hasMyLike: boolean
+  isValid: boolean
+  likeCount: number
+  metaId: string
+  metanetId: string
+  protocol: string
+  publicKey: string
+  replyTo: string
+  replyToAvatarImage: string
+  replyToAvatarTxId: string
+  replyToAvatarType: string
+  replyToUserName: string
+  timestamp: number
+  txId: string
+  userName: string
+  zeroAddress: string
+  subInteractiveItem: BuzzInteractiveItem[]
+  commentTo?: string
+}

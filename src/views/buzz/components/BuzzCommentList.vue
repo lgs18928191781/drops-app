@@ -1,12 +1,7 @@
 <template>
   <div class="buzz-comment-list">
     <template v-for="(item, index) in commentList" :key="index">
-      <div
-        class="comment-item"
-        @click.stop="
-          emit('reply', { txId: item.txId, username: item.userName, userAddress: item.zeroAddress })
-        "
-      >
+      <div class="comment-item">
         <div class="header flex flex-align-center">
           <div class="user-info flex1">
             <div class="head">
@@ -21,28 +16,52 @@
             </div>
           </div>
           <div class="operate flex flex-align-center">
-            <a class="flex flex-align-center"> <CommentIcon /> {{ item.likeCount }} </a>
-            <a class="flex flex-align-center" :class="{active: item.}">
+            <a
+              class="flex flex-align-center"
+              :class="{ active: item.hasComment }"
+              @click.stop="
+                emit('replay', {
+                  txId: item.buzzTxId,
+                  username: item.userName,
+                  userAddress: item.zeroAddress,
+                  commentTo: item.txId,
+                  replyTo: item.metaId,
+                })
+              "
+            >
+              <CommentIcon /> {{ item.commentCount }}
+            </a>
+            <a
+              class="flex flex-align-center"
+              :class="{ active: item.hasMyLike }"
+              @click.stop="emit('like', { txId: item.txId, address: item.zeroAddress })"
+            >
               <LikeIcon /> {{ item.likeCount }}
             </a>
           </div>
         </div>
         <div class="content">
           <div class="text" v-html="item.content"></div>
-          <div class="children-comment" v-if="item.children && item.children.length">
-            <template v-for="(child, childIndex) in item.children" :key="childIndex">
+          <div
+            class="children-comment"
+            v-if="item.subInteractiveItem && item.subInteractiveItem.length"
+          >
+            <template v-for="(child, childIndex) in item.subInteractiveItem" :key="childIndex">
               <div
-                class="child-comment-item"
+                class="child-comment-item flex flex-align-center"
                 @click.stop="
-                  emit('reply', {
-                    txId: child.txId,
+                  emit('replay', {
+                    txId: item.buzzTxId,
                     username: child.userName,
                     userAddress: child.zeroAddress,
+                    commentTo: item.txId,
+                    replyTo: child.metaId,
                   })
                 "
               >
+                <UserAvatar :meta-id="child.metaId" :image="child.avatarImage"></UserAvatar>
                 <div class="name">{{ child.userName }}:</div>
-                <pre class="flex1" v-html="child.content"></pre>
+                <div class="flex1 content-child" v-html="child.content"></div>
               </div>
             </template>
           </div>
@@ -56,21 +75,18 @@
 
 <script setup lang="ts">
 import { isApp } from '@/stores/root'
-import { txId } from '@/utils/filters'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import IsNullVue from '@/components/IsNull/IsNull.vue'
 import CommentIcon from '@/assets/svg/comment.svg'
 import LikeIcon from '@/assets/svg/like.svg'
 interface Props {
-  commentList: any
+  commentList: BuzzInteractiveItem[]
 }
 
 const router = useRouter()
-const emit = defineEmits(['reply'])
-const props = withDefaults(defineProps<Props>(), {
-  commentList: [],
-})
+const emit = defineEmits(['replay', 'like'])
+const props = withDefaults(defineProps<Props>(), {})
 
 function sliceStr(str?: string, len = 8) {
   return str ? str.slice(0, len) : ''
@@ -153,6 +169,16 @@ function sliceStr(str?: string, len = 8) {
             }
           }
 
+          &:hover {
+            svg {
+              :deep(path) {
+                &:nth-child(3) {
+                  fill: var(--themeTextColor);
+                }
+              }
+            }
+          }
+
           &.active {
             color: #fc6d5e;
             svg {
@@ -182,13 +208,14 @@ function sliceStr(str?: string, len = 8) {
       .children-comment {
         padding: 8px 12px;
         border-radius: 8px;
-        background: #26262e;
+        background: #f5f7fa;
+        margin-top: 18px;
 
         .child-comment-item {
           display: flex;
           padding-bottom: 8px;
           margin-bottom: 8px;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          border-bottom: 1px solid #ebecf0;
 
           &:last-child {
             margin-bottom: 0;
@@ -196,16 +223,25 @@ function sliceStr(str?: string, len = 8) {
             padding-bottom: 0;
           }
 
+          .avatar {
+            width: 24px;
+            height: 24px;
+            margin-right: 6px;
+          }
+
           .name {
             flex-shrink: 0;
             line-height: 1.7;
             font-size: 12px;
+            color: #909399;
+            margin-right: 6px;
           }
-          pre {
+          .content-child {
             flex-grow: 1;
             margin: 0 0 0 6px;
             line-height: 1.7;
-            font-size: 12px;
+            font-size: 16px;
+            line-height: 26px;
           }
         }
       }

@@ -77,7 +77,7 @@
   <PublishBaseTemplateVue
     v-model="isShowCommentModal"
     v-model:text="comment"
-    :replay-user="list.find(item => item.txId === currentTxId)?.userName"
+    :replay-user="replayMsg.val.username"
     :loading="operateLoading"
   >
     <template #other>
@@ -106,6 +106,7 @@ import { useLayoutStore } from '@/stores/layout'
 import BuzzItemSkeletonVue from './BuzzItemSkeleton.vue'
 import { metafile } from '@/utils/filters'
 import PublishBaseTemplateVue from '@/components/PublishBaseTemplate/PublishBaseTemplate.vue'
+import { useRoute } from 'vue-router'
 
 interface Props {
   list: BuzzItem[]
@@ -113,11 +114,16 @@ interface Props {
   pagination?: Pagination
 }
 const props = withDefaults(defineProps<Props>(), {})
-const emit = defineEmits(['getMore', 'update:list'])
+const emit = defineEmits(['getMore', 'update:list', 'comment', 'like'])
+defineExpose({
+  onReplay,
+  onLike,
+})
 
 const i18n = useI18n()
 const userStore = useUserStore()
 const layout = useLayoutStore()
+const route = useRoute()
 
 const operateLoading = ref(false)
 
@@ -130,13 +136,15 @@ const currentTxId = ref('')
 const playFile = ref('')
 const isShowCommentModal = ref(false)
 const comment = ref('')
-let audio: HTMLAudioElement | null
-
-const repost = reactive({
-  rePostTx: '',
-  rePostProtocol: '', // 转帖的所属协议
-  rePostComment: '', // 转帖附带的评论
+const replayMsg = reactive({
+  val: {
+    username: '',
+    userAddress: '',
+    commentTo: '',
+    replyTo: '',
+  },
 })
+let audio: HTMLAudioElement | null
 
 const operates: {
   [key: string]: {
@@ -234,13 +242,20 @@ function onMore(txId: string) {
   isShowOperateModal.value = true
 }
 
-function onReplay(txId: string) {
-  currentTxId.value = txId
+function onReplay(params: {
+  txId: string
+  username: string
+  userAddress: string
+  commentTo: string
+  replyTo: string
+}) {
+  currentTxId.value = params.txId
+  replayMsg.val = params
   isShowCommentModal.value = true
 }
 
-async function onLike(txId: string) {
-  const index = props.list.findIndex(item => item.txId === txId)
+async function onLike(params: { txId: string; address: string }) {
+  const index = props.list.findIndex(item => item.txId === params.txId)
   const time = new Date().getTime()
   const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
   const res = await userStore.showWallet.createBrfcChildNode({
@@ -248,21 +263,25 @@ async function onLike(txId: string) {
     data: JSON.stringify({
       createTime: time,
       isLike: '1',
-      likeTo: txId,
+      likeTo: params.txId,
       pay: payAmount,
-      payTo: props.list[index].zeroAddress,
+      payTo: params.address,
     }),
-    payTo: [{ amount: payAmount, address: props.list[index].zeroAddress }],
+    payTo: [{ amount: payAmount, address: params.address }],
   })
   if (res) {
-    props.list[index].like.push({
-      metaId: userStore.user!.metaId!,
-      timestamp: time,
-      txId: res.currentNode!.txId,
-      userName: userStore.user!.name,
-      value: payAmount,
-    })
-    emit('update:list', props.list)
+    if (index !== -1) {
+      props.list[index].like.push({
+        metaId: userStore.user!.metaId!,
+        timestamp: time,
+        txId: res.currentNode!.txId,
+        userName: userStore.user!.name,
+        value: payAmount,
+      })
+      emit('update:list', props.list)
+    }
+    ElMessage.success(i18n.t('PayLike') + ' ' + i18n.t('Success'))
+    emit('like', params.txId)
   }
 }
 
@@ -323,35 +342,71 @@ async function replay() {
     createTime: new Date().getTime(),
     content: comment.value,
     contentType: 'text/plain',
-    commentTo: currentTxId.value,
+    commentTo: replayMsg.val.commentTo,
+    replyTo: replayMsg.val.replyTo,
     pay: payAmount,
-    payTo: props.list[index].zeroAddress,
+    payTo: replayMsg.val.userAddress,
   }
   const res = await userStore.showWallet?.createBrfcChildNode({
     nodeName: NodeName.PayComment,
     dataType: 'application/json',
     data: JSON.stringify(dataParams),
-    payTo: [{ address: props.list[index].zeroAddress, amount: payAmount }],
+    payTo: [{ address: replayMsg.val.userAddress, amount: payAmount }],
   })
   if (res) {
-    props.list[index]!.comment.unshift({
-      metaId: userStore.user!.metaId!,
+    if (replayMsg.val.commentTo === currentTxId.value) {
+      props.list[index]!.comment.unshift({
+        metaId: userStore.user!.metaId!,
+        timestamp: dataParams.createTime,
+        txId: res.currentNode!.txId,
+        userName: userStore.user!.name!,
+        value: payAmount,
+      })
+    }
+    emit('update:list', props.list)
+    if (route.name !== 'buzzDetail') {
+      router.push({
+        name: 'buzzDetail',
+        params: {
+          txId: currentTxId.value,
+        },
+      })
+    }
+    emit('comment', {
+      amount: 'payAmount',
+      avatarImage: userStore.user!.avatarImage,
+      avatarTxId: userStore.user!.avatarTxId,
+      avatarType: userStore.user!.avatarType,
+      blockHeight: 0,
+      buzzTxId: currentTxId.value,
+      commentCount: 0,
+      confirmState: 0,
+      content: comment.value,
+      hasComment: false,
+      hasMyLike: false,
+      isValid: true,
+      likeCount: 0,
+      metaId: userStore.user!.metaId,
+      metanetId: '',
+      protocol: 'PayComment',
+      publicKey: '',
+      replyTo: replayMsg.val!.replyTo,
+      replyToAvatarImage: '',
+      replyToAvatarTxId: '',
+      replyToAvatarType: '',
+      replyToUserName: replayMsg.val!.username,
       timestamp: dataParams.createTime,
       txId: res.currentNode!.txId,
-      userName: userStore.user!.name!,
-      value: payAmount,
+      userName: userStore.user!.name,
+      zeroAddress: userStore.user!.address,
+      subInteractiveItem: [],
+      commentTo: replayMsg.val.commentTo,
     })
-    emit('update:list', props.list)
-    router.push({
-      name: 'buzzDetail',
-      params: {
-        txId: currentTxId.value,
-      },
-    })
-    comment.value = ''
     isShowCommentModal.value = false
     ElMessage.success(i18n.t('Buzz.comment.success'))
     operateLoading.value = false
+
+    comment.value = ''
   } else {
     operateLoading.value = false
   }
