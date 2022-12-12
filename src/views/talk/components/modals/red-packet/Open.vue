@@ -38,7 +38,8 @@
                     class="lg:w-114 h-60 bg-gradient-to-tr from-[#CBFDE4] to-[#FCEDCE] rounded-t-3xl shadow-md flex flex-col items-center justify-start overflow-x-hidden group-hover:-skew-x-3 group-hover:shadow-xl duration-300 origin-top"
                   >
                     <UserAvatar
-                      :metaId="message.metaId"
+                      :meta-id="message.metaId"
+                      :image="message.avatarImage"
                       class="w-15 h-15 rounded-2xl bg-amber-200 mt-7.5"
                       :disabled="true"
                     />

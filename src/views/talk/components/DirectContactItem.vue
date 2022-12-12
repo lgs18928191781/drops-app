@@ -6,32 +6,33 @@
   >
     <div class="rounded-3xl w-12 h-12 shrink-0 relative">
       <UserAvatar
-        :metaId="contact.metaId || 'undefined'"
+        :image="session?.avatarImage"
+        :meta-id="session?.metaId"
         class="w-12 h-12 shrink-0 select-none"
         :disabled="true"
       />
       <div
         class="absolute top-0 right-0 rounded-full w-2.5 h-2.5 bg-red-500"
-        v-if="talk.hasUnreadMessagesOfChannel(session.id)"
+        v-if="talk.hasUnreadMessagesOfChannel(session.metaId)"
       ></div>
     </div>
 
     <div class="flex flex-col items-stretch grow space-y-1 overflow-x-hidden">
       <div class="flex items-baseline justify-between self-stretch">
         <div class="text-base text-dark-800 dark:text-gray-100 truncate max-w-[96PX]">
-          {{ contact.name }}
+          {{ session.name }}
         </div>
 
         <div class="shrink-0 text-dark-250 dark:text-gray-400 text-xs">
           {{
-            contact.lastMessageTimestamp
-              ? formatTimestamp(contact.lastMessageTimestamp, i18n, false)
+            session.lastMessageTimestamp
+              ? formatTimestamp(session.lastMessageTimestamp, i18n, false)
               : ''
           }}
         </div>
       </div>
       <div class="text-xs text-dark-300 dark:text-gray-400 truncate">
-        {{ contact.lastMessage }}
+        {{ session.lastMessage }}
       </div>
     </div>
   </div>

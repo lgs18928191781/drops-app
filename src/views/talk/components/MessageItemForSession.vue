@@ -11,7 +11,8 @@
     <MessageMenu :message="props.message" v-else />
 
     <UserAvatar
-      :metaId="props.message.from || 'undefined'"
+      :image="props.message.avatarImage"
+      :meta-id="props.message.metaId"
       class="w-13.5 h-13.5 shrink-0 select-none"
       :disabled="true"
     />
@@ -303,6 +304,14 @@ const redEnvelopeMessage = computed(() => {
 
 const isMyMessage = computed(() => {
   return userStore.user?.metaId && userStore.user.metaId === props.message.from
+})
+
+const messageAvatarImage = computed(() => {
+  if (isMyMessage.value) {
+    return userStore.user?.avatarImage
+  }
+
+  return activeChannel.value?.avatarImage
 })
 
 const isNftEmoji = computed(() => props.message.protocol === 'SimpleEmojiGroupChat')

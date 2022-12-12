@@ -11,7 +11,8 @@
     <MessageMenu :message="props.message" v-else />
 
     <UserAvatar
-      :metaId="props.message.metaId || 'undefined'"
+      :image="props.message.avatarImage"
+      :meta-id="props.message.metaId"
       class="w-13.5 h-13.5 shrink-0 select-none"
       :disabled="true"
     />

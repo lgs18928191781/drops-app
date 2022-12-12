@@ -71,7 +71,8 @@ export const getAtMeChannels = async (params?: any): Promise<any> => {
       const channelSide = channel.from === metaId ? 'to' : 'from'
 
       channel.name = channel[`${channelSide}Name`]
-      channel.id = channel[`${channelSide}`]
+      channel.id = channel.metaId = channel[`${channelSide}`]
+      channel.avatarImage = channel[`${channelSide}AvatarImage`]
       channel.publicKeyStr = channel[`${channelSide}PublicKey`]
       channel.lastMessageTimestamp = channel.timestamp
       channel.lastMessage = '你收到了一条信息'
