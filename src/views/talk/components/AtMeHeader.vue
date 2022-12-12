@@ -11,7 +11,8 @@
 
       <div class="flex shrink-0 items-center">
         <UserAvatar
-          :metaId="activeChannel?.id"
+          :image="activeChannel?.avatarImage"
+          :meta-id="activeChannel?.id"
           class="w-8 h-8 shrink-0 select-none hidden lg:block mr-2"
           :disabled="true"
         />
