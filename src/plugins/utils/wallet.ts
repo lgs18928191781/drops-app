@@ -23,7 +23,6 @@ function connect() {
         ;(window as any).ethereum
           .request({ method: 'eth_requestAccounts' })
           .then((res: string[]) => {
-            debugger
             const chain = (window as any).ethereum.chainId
             const chainId = parseInt(chain).toString()
             resolve({
