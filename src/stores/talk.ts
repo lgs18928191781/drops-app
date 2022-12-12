@@ -504,13 +504,20 @@ export const useTalkStore = defineStore('talk', {
             console.log('替换中')
             if (message.protocol === 'SimpleFileGroupChat') {
               await sleep(2000)
+              this.$patch(state => {
+                mockMessage.txId = message.txId
+                mockMessage.timestamp = message.timestamp
+                // mockMessage.content = message.content // 图片不替换内容，以防止图片闪烁
+                delete mockMessage.isMock
+              })
+            } else {
+              this.$patch(state => {
+                mockMessage.txId = message.txId
+                mockMessage.timestamp = message.timestamp
+                mockMessage.content = message.content
+                delete mockMessage.isMock
+              })
             }
-            this.$patch(state => {
-              mockMessage.txId = message.txId
-              mockMessage.timestamp = message.timestamp
-              mockMessage.content = message.content
-              delete mockMessage.isMock
-            })
 
             return
           }
