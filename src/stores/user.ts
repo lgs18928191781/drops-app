@@ -130,7 +130,6 @@ export const useUserStore = defineStore('user', {
       return new Promise<void>(async resolve => {
         const { password, ...data } = userInfo
 
-        debugger
         // 兼容处理
         // @ts-ignore
         if (!data.address && data.rootAddress) {
