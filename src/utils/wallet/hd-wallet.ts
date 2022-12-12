@@ -290,6 +290,7 @@ export const aesDecrypt = (encryptedStr: string, key: string): string => {
     mode: CBC,
     padding: Pkcs7,
   })
+
   return bytes.toString(Utf8)
 }
 

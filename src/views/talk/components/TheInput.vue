@@ -17,21 +17,11 @@
 
           <!-- 发送按钮 -->
           <div
-            class="main-border bg-primary dark:bg-gray-700 flex items-center justify-center px-2 py-1 divide-x divide-solid divide-dark-800 dark:divide-gray-100 cursor-pointer"
+            class="main-border bg-primary dark:bg-gray-700 flex items-center justify-center p-1 divide-x divide-solid divide-dark-800 dark:divide-gray-100 cursor-pointer"
             @click="trySendImage"
           >
-            <div
-              class="text-dark-400 dark:text-gray-200 font-medium pr-1.5 flex items-center space-x-0.5"
-            >
-              <div class="">
-                <Icon name="dollar" class="w-4 h-4 text-dark-800 dark:!text-gray-100" />
-              </div>
-              <div class="">
-                10 sats
-              </div>
-            </div>
-            <div class="pl-1.5 ">
-              <Icon name="send" class="w-3 h-3 text-dark-800 dark:text-gray-100 -rotate-6" />
+            <div class="">
+              <Icon name="send" class="w-4 h-4 text-dark-800 dark:text-gray-100 -rotate-6" />
             </div>
           </div>
         </div>
@@ -51,33 +41,34 @@
       </Teleport>
     </div>
 
-    <div class="h-11 flex lg:h-13.5 items-center">
+    <div :class="[rows > 1 ? 'items-start' : 'items-center', 'flex h-fit']">
       <!-- 左侧 + 按钮 -->
       <div
-        class="w-14 flex items-center justify-center text-dark-800 dark:text-gray-100 self-stretch"
+        class="w-14 flex items-center py-2 justify-center text-dark-800 dark:text-gray-100"
         @click="showMoreCommandsBox = true"
       >
         <div
-          class="bg-primary w-7.5 h-7.5 flex items-center justify-center rounded-full cursor-pointer"
+          class="bg-primary w-8 h-8 flex items-center justify-center rounded-full cursor-pointer"
         >
           <Icon name="plus_2" class="w-3 h-3 text-dark-800 dark:text-gray-100" />
         </div>
       </div>
 
-      <div class="flex-grow lg:ml-2">
-        <div class="h-11 py-2 pr-4 lg:h-13.5">
-          <input
-            type="text"
-            class="bg-inherit h-full w-full focus:outline-none placeholder:text-dark-250 placeholder:dark:text-gray-400 placeholder:text-sm text-dark-800 dark:text-gray-100 text-base caret-gray-600 dark:caret-gray-400"
-            :placeholder="
-              $t('Talk.Channel.message_to', {
-                channel: talkStore?.activeChannelSymbol + (talkStore.activeChannel?.name || ''),
-              })
-            "
-            v-model="chatInput"
-            @keyup.enter="trySendText"
-          />
-        </div>
+      <div class="self-stretch lg:ml-2 py-2 flex items-center grow">
+        <textarea
+          class=" w-full focus:outline-none placeholder:text-dark-250 placeholder:dark:text-gray-400 placeholder:text-base text-dark-800 dark:text-gray-100 text-base caret-gray-600 dark:caret-gray-400 resize-none !h-fit text-base rounded-md transition-all duration-150"
+          :class="rows > 1 ? 'bg-gray-100 dark:bg-gray-800 p-1 -m-1' : 'bg-inherit'"
+          :rows="rows"
+          ref="theTextBox"
+          :placeholder="
+            $t('Talk.Channel.message_to', {
+              channel: talkStore?.activeChannelSymbol + (talkStore.activeChannel?.name || ''),
+            })
+          "
+          v-model="chatInput"
+          @keyup.enter.exact="trySendText"
+          @keyup.shift.enter.exact="breakLine"
+        />
       </div>
 
       <Teleport to="body">
@@ -125,7 +116,7 @@
       </Teleport>
 
       <!-- 右侧发送按钮 -->
-      <div class="flex h-full py-2 items-center shrink-0">
+      <div class="flex h-full py-1 items-center shrink-0">
         <div class="flex items-center px-1 lg:mr-2">
           <!-- <div
             class="p-2 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer"
@@ -218,7 +209,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRaw } from 'vue'
+import { computed, ref, toRaw, Ref } from 'vue'
 import { sendMessage, validateTextMessage, isImage, isFileTooLarge } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
 import ImagePreview from './ImagePreview.vue'
@@ -321,6 +312,25 @@ const trySendImage = async () => {
 /** 发送消息 */
 const chatInput = ref('')
 const userStore = useUserStore()
+const theTextBox: Ref<HTMLTextAreaElement | null> = ref(null)
+
+const rows = computed(() => {
+  // 行数=换行符+过长的行数+1
+  const lines = chatInput.value.split('\n')
+  // 计算列数：当前textarea宽度/字体宽度 TODO
+
+  // const cols = Math.floor(
+  //   (theTextBox.value?.clientWidth || 0) / (theTextBox.value?.offsetWidth || 0)
+  // )
+
+  const rowsCount = lines.reduce((acc, line) => {
+    // const lineRows = Math.max(1, Math.ceil(line.length / cols))
+    const lineRows = 1
+    return acc + lineRows
+  }, 0)
+
+  return Math.min(Math.max(rowsCount, 1), 10)
+})
 
 const trySendText = async () => {
   if (!validateTextMessage(chatInput.value)) return

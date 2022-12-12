@@ -11,7 +11,7 @@
     <MessageMenu :message="props.message" v-else />
 
     <UserAvatar
-      :image="props.message.avatarImage"
+      :image="messageAvatarImage"
       :meta-id="props.message.metaId"
       class="w-13.5 h-13.5 shrink-0 select-none"
       :disabled="true"
@@ -307,7 +307,7 @@ const isMyMessage = computed(() => {
 })
 
 const messageAvatarImage = computed(() => {
-  if (isMyMessage.value) {
+  if (props.message.from === userStore.user?.metaId) {
     return userStore.user?.avatarImage
   }
 
