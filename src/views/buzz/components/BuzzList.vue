@@ -34,6 +34,7 @@
             @like="onLike"
             @follow="onFollow"
             @play="onPlay"
+            @replay="onReplay"
           >
             <template #comment>
               <slot name="comment"></slot>
@@ -56,7 +57,7 @@
     :close-on-click-modal="false"
     custom-class="buzz"
   >
-    <div class="repost-list" v-loading="">
+    <div class="repost-list" v-loading="operateLoading">
       <div class="repost-list-warp">
         <div
           class="respost-item main-border primary"
@@ -72,6 +73,21 @@
       </div>
     </div>
   </ElDrawer>
+
+  <PublishBaseTemplateVue
+    v-model="isShowCommentModal"
+    v-model:text="comment"
+    :replay-user="list.find(item => item.txId === currentTxId)?.userName"
+    :loading="operateLoading"
+  >
+    <template #other>
+      <div class="operate flex flex-pack-end">
+        <a class="main-border primary" :class="{ faded: comment === '' }" @click="replay">
+          {{ $t('Reply') }}
+        </a>
+      </div>
+    </template>
+  </PublishBaseTemplateVue>
 </template>
 
 <script setup lang="ts">
@@ -89,6 +105,7 @@ import { Mitt, MittEvent } from '@/utils/mitt'
 import { useLayoutStore } from '@/stores/layout'
 import BuzzItemSkeletonVue from './BuzzItemSkeleton.vue'
 import { metafile } from '@/utils/filters'
+import PublishBaseTemplateVue from '@/components/PublishBaseTemplate/PublishBaseTemplate.vue'
 
 interface Props {
   list: BuzzItem[]
@@ -111,6 +128,8 @@ const isShowOperateModal = ref(false)
 const operateType: Ref<'repost' | 'more'> = ref('repost')
 const currentTxId = ref('')
 const playFile = ref('')
+const isShowCommentModal = ref(false)
+const comment = ref('')
 let audio: HTMLAudioElement | null
 
 const repost = reactive({
@@ -157,6 +176,8 @@ const operates: {
             ElMessage.success(i18n.t('Buzz.repost.success'))
             operateLoading.value = false
             isShowOperateModal.value = false
+          } else {
+            operateLoading.value = false
           }
         } catch (error) {
           operateLoading.value = false
@@ -211,6 +232,11 @@ function onMore(txId: string) {
   operateType.value = 'more'
   currentTxId.value = txId
   isShowOperateModal.value = true
+}
+
+function onReplay(txId: string) {
+  currentTxId.value = txId
+  isShowCommentModal.value = true
 }
 
 async function onLike(txId: string) {
@@ -285,6 +311,49 @@ function onPlay(params: { file: string; type: 'audio' | 'video' }) {
       audio.pause()
       audio.src = ''
     }
+  }
+}
+
+async function replay() {
+  if (comment.value === '') return
+  operateLoading.value = true
+  const index = props.list.findIndex(item => item.txId === currentTxId.value)
+  const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
+  const dataParams = {
+    createTime: new Date().getTime(),
+    content: comment.value,
+    contentType: 'text/plain',
+    commentTo: currentTxId.value,
+    pay: payAmount,
+    payTo: props.list[index].zeroAddress,
+  }
+  const res = await userStore.showWallet?.createBrfcChildNode({
+    nodeName: NodeName.PayComment,
+    dataType: 'application/json',
+    data: JSON.stringify(dataParams),
+    payTo: [{ address: props.list[index].zeroAddress, amount: payAmount }],
+  })
+  if (res) {
+    props.list[index]!.comment.unshift({
+      metaId: userStore.user!.metaId!,
+      timestamp: dataParams.createTime,
+      txId: res.currentNode!.txId,
+      userName: userStore.user!.name!,
+      value: payAmount,
+    })
+    emit('update:list', props.list)
+    router.push({
+      name: 'buzzDetail',
+      params: {
+        txId: currentTxId.value,
+      },
+    })
+    comment.value = ''
+    isShowCommentModal.value = false
+    ElMessage.success(i18n.t('Buzz.comment.success'))
+    operateLoading.value = false
+  } else {
+    operateLoading.value = false
   }
 }
 
