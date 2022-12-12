@@ -27,7 +27,7 @@
     </div>
     <LoginedUserOperateVue />
   </header>
-  <div class="buzz-warp">
+  <div class="buzz-warp" ref="BuuzWarpRef">
     <div class="buzz-menu-warp" ref="MenuRef">
       <div class="buzz-menu">
         <router-link
@@ -89,7 +89,7 @@
 </template>
 
 <script setup lang="ts">
-import { KeepAlive, onBeforeUnmount, onMounted, ref, Transition } from 'vue'
+import { KeepAlive, onBeforeUnmount, onMounted, ref, Transition, watch } from 'vue'
 import Header from './components/Header/Header.vue'
 import Footer from './components/Footer/Footer.vue'
 import CollapseItem from '@/components/Collapse/collapse-item.vue'
@@ -123,29 +123,34 @@ const menus = [
 const BuzzContainerRef = ref()
 const MenuRef = ref()
 const FastBtnRef = ref()
+const BuuzWarpRef = ref()
 
 onMounted(() => {
   setPosition()
-  window.onresize = setPosition
 })
 
-onBeforeUnmount(() => {
-  window.onresize = null
-})
+watch(
+  () => BuuzWarpRef.value?.clientWidth,
+  () => {
+    setPosition()
+  }
+)
 
 function setPosition() {
-  MenuRef.value.style.left =
-    BuzzContainerRef.value.offsetLeft - MenuRef.value.clientWidth - 12 + 'px'
-  MenuRef.value.style.marginLeft = 0
+  setTimeout(() => {
+    MenuRef.value.style.left =
+      BuzzContainerRef.value.offsetLeft - MenuRef.value.clientWidth - 12 + 'px'
+    MenuRef.value.style.marginLeft = 0
 
-  if (window.innerWidth > 750) {
-    FastBtnRef.value.style.left =
-      BuzzContainerRef.value.offsetLeft + BuzzContainerRef.value.clientWidth + 12 + 'px'
-    FastBtnRef.value.style.marginRight = 0
-  } else {
-    FastBtnRef.value.style.right = '5%'
-    FastBtnRef.value.style.marginRight = 0
-  }
+    if (window.innerWidth > 750) {
+      FastBtnRef.value.style.left =
+        BuzzContainerRef.value.offsetLeft + BuzzContainerRef.value.clientWidth + 12 + 'px'
+      FastBtnRef.value.style.marginRight = 0
+    } else {
+      FastBtnRef.value.style.right = '5%'
+      FastBtnRef.value.style.marginRight = 0
+    }
+  }, 500)
 }
 
 function scrollTop() {

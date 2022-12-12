@@ -9,6 +9,10 @@
 }
 
 .repost-list {
+    :deep(.el-loading-mask) {
+        box-shadow: 3px 3px 0px var(--el-mask-color);
+    }
+
     .repost-list-warp {
         box-sizing: border-box;
 
@@ -21,6 +25,21 @@
             &:last-child {
                 margin-bottom: 0;
             }
+        }
+    }
+}
+
+.operate {
+    margin-top: 18px;
+
+    a {
+        font-size: 18px;
+        font-weight: 500;
+        padding: 12px 32px;
+        cursor: pointer;
+
+        &.faded {
+            cursor: not-allowed;
         }
     }
 }

@@ -77,7 +77,7 @@
 
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
 
 import ModalVue from '../Modal/Modal.vue'
 import NFTAvatarListVue from '@/components/NFTAvatarList/NFTAvatarList.vue'
@@ -94,9 +94,18 @@ const userStore = useUserStore()
 // @ts-ignore
 const currentAvatar: { val: NFTAvatarItem } = reactive({
   val: {
-    avatarImage: userStore.user!.avatarImage,
+    avatarImage: userStore.user?.avatarImage,
   },
 })
+
+watch(
+  () => userStore.isAuthorized,
+  () => {
+    if (userStore.isAuthorized) {
+      currentAvatar.val.avatarImage = userStore.user!.avatarImage
+    }
+  }
+)
 
 const FormRef = ref()
 const form = reactive({

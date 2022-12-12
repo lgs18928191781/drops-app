@@ -96,6 +96,7 @@
           @update="params => emit('update', params)"
           @more="params => emit('more', params)"
           @like="params => emit('like', params)"
+          @replay="params => emit('replay', params)"
           v-if="!isHideControl"
         />
 
@@ -151,6 +152,7 @@ const emit = defineEmits<{
   (e: 'like', txId: string): void
   (e: 'follow', txId: string, params: { resolve: (txId?: string) => any; reject: () => any }): void
   (e: 'play', txId: any): void
+  (e: 'replay', txId: any): void
 }>()
 const props = withDefaults(defineProps<Props>(), {
   isInDetailPage: false,

@@ -168,7 +168,7 @@ async function startConnect() {
     try {
         const res = await Wallet.connect()
         if (res) {
-            debugger
+
             if (res.chain === import.meta.env.VITE_ETH_CHAINID) {
                 startProvider(res.provider)
                 const result = await ethPersonalSignSign({

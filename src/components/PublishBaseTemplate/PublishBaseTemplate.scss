@@ -1,0 +1,80 @@
+.publish {
+    padding: 30px;
+
+    :deep(.el-loading-mask) {
+        border-radius: var(--el-dialog-border-radius);
+    }
+
+    .top {
+        .user {
+            .avatar {
+                width: 48px;
+                height: 48px;
+                margin-right: 18px;
+            }
+
+            .name {
+                font-size: 16px;
+            }
+
+            .metaid {
+                font-size: 12px;
+                color: #909399;
+                margin-top: 2px;
+
+                .user {
+                    color: #5586BB;
+                }
+            }
+        }
+
+        .close-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #EDEFF2;
+            cursor: pointer;
+
+            .icon {
+                width: 12px;
+                height: 12px;
+            }
+
+            &:hover {
+                background: var(--main-font-color);
+
+                .icon {
+                    :deep(use) {
+                        fill: #fff
+                    }
+                }
+            }
+        }
+    }
+
+    .text {
+        margin-top: 18px;
+        border: 2px solid #BFC2CC;
+        border-radius: 12px;
+        overflow: hidden;
+
+        textarea {
+            width: 100%;
+            max-width: 100%;
+            min-width: 100%;
+            display: block;
+            border: none;
+            outline: none;
+            box-shadow: none;
+
+            padding: 18px;
+            min-height: 180px;
+            font-size: 16px;
+            line-height: 30px;
+        }
+
+
+    }
+
+
+}

@@ -43,18 +43,9 @@
 </template>
 
 <script setup lang="ts">
-import { PayMeParams } from '@/@types/sdk'
-import { PayMeParamsType } from '@/enum'
-import { checkSdkStatus, checkUserLogin, tx } from '@/utils/util'
-import { Notify } from 'vant'
-import { computed, reactive, ref } from 'vue'
-import { useRoute } from 'vue-router'
-// import payAction from './PayAction'
-// import Mitt from '@/utils/mitt'
-import { ElMessage } from 'element-plus'
+import { checkUserLogin, tx } from '@/utils/util'
+import { computed } from 'vue'
 import { router } from '@/router'
-// import MePayConfirmModalVue from '@/components/MePayConfirmModal/MePayConfirmModal.vue'
-import { getOneBuzz } from '@/api/buzz'
 import { useUserStore } from '@/stores/user'
 import ShareIcon from '@/assets/svg/share.svg'
 import CommentIcon from '@/assets/svg/comment.svg'
@@ -67,8 +58,7 @@ const props = withDefaults(defineProps<Props>(), {})
 
 const userStore = useUserStore()
 
-const route = useRoute()
-const emit = defineEmits(['update', 'repost', 'buzz', 'more', 'like'])
+const emit = defineEmits(['update', 'repost', 'buzz', 'more', 'like', 'replay'])
 
 const operates = [
   {
@@ -94,12 +84,7 @@ const operates = [
     },
     fun: async () => {
       await checkUserLogin()
-      router.push({
-        name: 'buzzDetail',
-        params: {
-          txId: props.buzz.txId,
-        },
-      })
+      emit('replay', props.buzz.txId)
     },
   },
   {
@@ -117,13 +102,6 @@ const operates = [
     },
   },
 ]
-const showPopup = ref(false)
-const payMe: PayMeParams = reactive({
-  amount: 0,
-  resolve: null,
-  type: PayMeParamsType.BuzzComment,
-})
-const isShowConfirm = ref(false)
 
 const isIForward = computed(() => {
   if (props.buzz.rePost && props.buzz.rePost.length) {
@@ -159,99 +137,6 @@ const likeText = computed(() => {
   }
   return '点赞'
 })
-
-async function handleAction() {
-  await checkSdkStatus(route.fullPath)
-  showPopup.value = true
-}
-
-async function handleLike() {
-  await checkSdkStatus(route.fullPath)
-  if (isILike.value) {
-    return Notify({
-      type: 'warning',
-      message: '暂不支持取消点赞',
-    })
-  }
-  payAction('like', props.buzz!, onPayMeConfirmCallback).then((res: any) => {
-    emit('update', {
-      ...props.buzz,
-      like: [
-        ...props.buzz.like,
-        {
-          metaId: userStore.user!.metaId!,
-          timestamp: new Date().getTime(),
-          txId: res.txId,
-          userName: userStore.user!.name!,
-          value: 2000,
-        },
-      ],
-    })
-  })
-}
-
-function onPayMeConfirmCallback(params: { useMe: number }) {
-  return new Promise<boolean>(async resolve => {
-    payMe.amount = params.useMe
-    payMe.resolve = resolve
-    isShowConfirm.value = true
-  })
-}
-
-function getOneBuzzDetail(txId: string) {
-  return new Promise<BuzzItem>(async (resolve, reject) => {
-    const res = await getOneBuzz({
-      txId: txId,
-    })
-    if (res && res.code === 0) {
-      const detailRes = res.data.results.items[0] || null
-      resolve(detailRes)
-    }
-  })
-}
-
-function handleFollow() {
-  showPopup.value = false
-  payMe.type = PayMeParamsType.BuzzReopost
-  payAction('SimpleRePost', props.buzz!, onPayMeConfirmCallback).then(async (res: any) => {
-    emit('update', {
-      ...props.buzz,
-      rePost: [
-        ...props.buzz.rePost,
-        {
-          metaId: userStore.user!.metaId!,
-          timestamp: new Date().getTime(),
-          txId: res.txId,
-          userName: userStore.user!.name!,
-          value: 2000,
-        },
-      ],
-    })
-    const buzz = await getOneBuzzDetail(res.txId)
-
-    Mitt.emit('addBuzz', buzz)
-    if (route.name === 'buzzDetail') {
-      router.replace({
-        name: 'buzzDetail',
-        params: {
-          txId: res.txId,
-        },
-      })
-    }
-    ElMessage.success('转发成功')
-  })
-}
-
-function handleForward() {
-  router.push({
-    name: 'appBuzzEdit',
-    query: {
-      txId: props.buzz.txId,
-      type: 'SimpleRePost',
-    },
-  })
-  showPopup.value = false
-}
 </script>
 
 <style lang="scss" scoped src="./BuzzItemControl.scss"></style>

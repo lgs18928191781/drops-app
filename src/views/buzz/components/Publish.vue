@@ -1,33 +1,16 @@
 <template>
-  <ElDialog
-    :model-value="layout.isShowPublishBuzz"
-    class="sm none-header none-padding"
-    :close-on-click-modal="false"
-    :destroy-on-close="true"
+  <PublishBaseTemplateVue
+    v-model="layout.isShowPublishBuzz"
+    v-model:text="content"
+    :loading="loading"
   >
-    <div class="publish" v-loading="loading">
-      <div class="top flex flex-align-center">
-        <div class="user flex flex-align-center flex1">
-          <UserAvatar :meta-id="userStore.user!.metaId" :image="userStore.user!.avatarImage" />
-          <div class="cont flex1">
-            <div class="name">{{userStore.user!.name}}</div>
-            <div class="metaid">MetaID: {{userStore.user!.metaId!.slice(0, 6)}}</div>
-          </div>
-        </div>
-        <a
-          class="close-btn flex flex-align-center flex-pack-center"
-          @click="layout.$patch({ isShowPublishBuzz: false })"
-        >
-          <Icon name="x_mark" />
-        </a>
+    <template #repostBuzz>
+      <div class="respost-buzz" v-if="respostBuzz.val">
+        <QuoteVue :buzz="respostBuzz.val" />
       </div>
-      <div class="text">
-        <textarea v-model="content" autofocus />
+    </template>
 
-        <div class="respost-buzz" v-if="respostBuzz.val">
-          <QuoteVue :buzz="respostBuzz.val" />
-        </div>
-      </div>
+    <template #other>
       <div class="attachment-warp" v-if="attachments.length > 0">
         <div
           class="title"
@@ -78,8 +61,35 @@
           >{{ respostBuzz.val ? $t('Buzz.publish.respost') : $t('Buzz.publish.post') }}</a
         >
       </div>
+    </template>
+  </PublishBaseTemplateVue>
+  <!-- <ElDialog
+    :model-value="layout.isShowPublishBuzz"
+    class="sm none-header none-padding"
+    :close-on-click-modal="false"
+    :destroy-on-close="true"
+  >
+    <div class="publish" v-loading="loading">
+      <div class="top flex flex-align-center">
+        <div class="user flex flex-align-center flex1">
+          <UserAvatar :meta-id="userStore.user!.metaId" :image="userStore.user!.avatarImage" />
+          <div class="cont flex1">
+            <div class="name">{{userStore.user!.name}}</div>
+            <div class="metaid">MetaID: {{userStore.user!.metaId!.slice(0, 6)}}</div>
+          </div>
+        </div>
+        <a
+          class="close-btn flex flex-align-center flex-pack-center"
+          @click="layout.$patch({ isShowPublishBuzz: false })"
+        >
+          <Icon name="x_mark" />
+        </a>
+      </div>
+      <div class="text">
+        <textarea v-model="content" autofocus />
+      </div>
     </div>
-  </ElDialog>
+  </ElDialog> -->
 
   <!-- Topic -->
   <ElDialog v-model="isShowTopic" class="sm none-header none-padding" @open="getHotTopics">
@@ -139,6 +149,7 @@ import { getOneBuzz } from '@/api/buzz'
 import QuoteVue from './Quote.vue'
 import { GetHotTopics } from '@/api/aggregation'
 import NFTModalVue from '@/components/NFTModal/NFTModal.vue'
+import PublishBaseTemplateVue from '@/components/PublishBaseTemplate/PublishBaseTemplate.vue'
 
 const attachments: (AttachmentItem | string)[] = reactive([])
 const respostBuzz: { val: null | BuzzItem } = reactive({ val: null })
@@ -224,30 +235,6 @@ const topics: GetHotTopicsResItem[] = reactive([])
 const topic = ref('')
 const isShowNFTList = ref(false)
 
-watch(
-  () => layout.publishBuzzOption.repostTxId,
-  () => {
-    if (layout.publishBuzzOption.repostTxId) {
-      getOneBuzz({ txId: layout.publishBuzzOption.repostTxId }).then(res => {
-        if (res.code === 0) {
-          respostBuzz.val = res.data.results.items[0]
-        }
-      })
-    } else {
-      respostBuzz.val = null
-    }
-  }
-)
-
-watch(
-  () => layout.publishBuzzOption.topic,
-  () => {
-    if (layout.publishBuzzOption.topic) {
-      content.value += `  #${layout.publishBuzzOption.topic}  `
-    }
-  }
-)
-
 async function onChooseImage(e: any) {
   loading.value = true
   const files: File[] = [...e.target.files]
@@ -310,6 +297,7 @@ function chooseNFT(nft: BaseNFT) {
 }
 
 async function submit() {
+  debugger
   if (content.value === '' && attachments.length <= 0) {
     return ElMessage.error(i18n.t('Buzz.publish.empty'))
   }
@@ -346,8 +334,35 @@ async function submit() {
         txId: res.currentNode!.txId,
       },
     })
+  } else {
+    // 取消
+    loading.value = false
   }
 }
+
+watch(
+  () => layout.publishBuzzOption.repostTxId,
+  () => {
+    if (layout.publishBuzzOption.repostTxId) {
+      getOneBuzz({ txId: layout.publishBuzzOption.repostTxId }).then(res => {
+        if (res.code === 0) {
+          respostBuzz.val = res.data.results.items[0]
+        }
+      })
+    } else {
+      respostBuzz.val = null
+    }
+  }
+)
+
+watch(
+  () => layout.publishBuzzOption.topic,
+  () => {
+    if (layout.publishBuzzOption.topic) {
+      content.value += `  #${layout.publishBuzzOption.topic}  `
+    }
+  }
+)
 </script>
 
 <style lang="scss" scoped src="./Publish.scss"></style>

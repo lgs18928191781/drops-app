@@ -221,6 +221,8 @@ async function confirmComment() {
       ElMessage.success(i18n.t('Buzz.comment.success'))
       loading.value = false
       // isShowAddCommentWarp.value = false
+    } else {
+      loading.value = false
     }
   } catch (error) {
     loading.value = false

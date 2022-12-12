@@ -38,10 +38,6 @@ const routeKey = (route: any) => {
 
   return route.fullPath
 }
-
-if (+Date.now() < 1669971600000) {
-  document.getElementsByTagName('html')[0].style.filter = 'grayscale(100%)'
-}
 </script>
 <style lang="css" src="@/assets/styles/tailwind.css"></style>
 <style lang="scss" scoped>

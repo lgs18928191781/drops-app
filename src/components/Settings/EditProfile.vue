@@ -66,7 +66,7 @@
 
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import ModalVue from '@/components/Modal/Modal.vue'
 import MetaName from '@/assets/svg/tag_nft.svg'
 import NFTAvatarListVue from '@/components/NFTAvatarList/NFTAvatarList.vue'
@@ -88,9 +88,18 @@ const loading = ref(false)
 // @ts-ignore
 const currentAvatar: { val: NFTAvatarItem } = reactive({
   val: {
-    avatarImage: userStore.user!.avatarImage,
+    avatarImage: userStore.user?.avatarImage,
   },
 })
+
+watch(
+  () => userStore.isAuthorized,
+  () => {
+    if (userStore.isAuthorized) {
+      currentAvatar.val.avatarImage = userStore.user!.avatarImage
+    }
+  }
+)
 
 const form = reactive({
   name: userStore.user!.name,
