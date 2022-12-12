@@ -45,7 +45,7 @@
     }
 
     .name {
-        color: var(--main-font-color);
+        color: var(--themeBtnTextColor);
     }
 }
 
@@ -156,7 +156,7 @@
         }
 
         &:hover {
-            background: var(--main-font-color);
+            background: var(--themeBtnTextColor);
 
             .icon {
                 :deep(use) {
@@ -191,7 +191,7 @@
 
             &.active {
                 background: var(--el-color-primary);
-                border-color: var(--main-font-color);
+                border-color: var(--themeBtnTextColor);
             }
         }
     }
@@ -343,11 +343,11 @@
             }
 
             &:hover {
-                border-color: var(--main-font-color);
+                border-color: var(--themeBtnTextColor);
             }
 
             &.active {
-                border-color: var(--main-font-color);
+                border-color: var(--themeBtnTextColor);
 
                 .icon {
                     transform: rotate(180deg);

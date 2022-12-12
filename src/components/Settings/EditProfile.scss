@@ -15,8 +15,8 @@
         .avatar {
             width: 120px;
             height: 120px;
-            border: 2px solid var(--main-font-color);
-            box-shadow: 3px 3px 0 var(--main-font-color);
+            border: 2px solid var(--themeBtnTextColor);
+            box-shadow: 3px 3px 0 var(--themeBtnTextColor);
         }
 
         .edit {
@@ -25,7 +25,7 @@
             bottom: 0;
             width: 40px;
             height: 40px;
-            border: 2px solid var(--main-font-color);
+            border: 2px solid var(--themeBtnTextColor);
             background: var(--el-color-primary);
             border-radius: 50%;
             cursor: pointer;

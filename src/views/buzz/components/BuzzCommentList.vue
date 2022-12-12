@@ -7,8 +7,8 @@
           emit('reply', { txId: item.txId, username: item.userName, userAddress: item.zeroAddress })
         "
       >
-        <div class="header">
-          <div class="user-info">
+        <div class="header flex flex-align-center">
+          <div class="user-info flex1">
             <div class="head">
               <UserAvatar :meta-id="item.metaId" :image="item.avatarImage" />
             </div>
@@ -19,6 +19,12 @@
                 <span class="time">{{ $filters.dateTimeFormat(item.timestamp) }}</span>
               </div>
             </div>
+          </div>
+          <div class="operate flex flex-align-center">
+            <a class="flex flex-align-center"> <CommentIcon /> {{ item.likeCount }} </a>
+            <a class="flex flex-align-center" :class="{active: item.}">
+              <LikeIcon /> {{ item.likeCount }}
+            </a>
           </div>
         </div>
         <div class="content">
@@ -54,6 +60,8 @@ import { txId } from '@/utils/filters'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import IsNullVue from '@/components/IsNull/IsNull.vue'
+import CommentIcon from '@/assets/svg/comment.svg'
+import LikeIcon from '@/assets/svg/like.svg'
 interface Props {
   commentList: any
 }
@@ -110,6 +118,52 @@ function sliceStr(str?: string, len = 8) {
 
             .time {
               padding-left: 8px;
+            }
+          }
+        }
+      }
+
+      .operate {
+        a {
+          margin-right: 16px;
+          font-size: 12px;
+          color: #bfc2cc;
+          &:last-child {
+            margin-right: 0;
+          }
+          svg {
+            width: 24px;
+            height: 24px;
+            margin-right: 6px;
+            :deep(path) {
+              &:nth-child(1) {
+                display: none;
+              }
+              &:nth-child(2) {
+                fill: #bfc2cc;
+              }
+              &:nth-child(3) {
+                fill: #bfc2cc;
+              }
+            }
+          }
+
+          &:first-child {
+            svg {
+            }
+          }
+
+          &.active {
+            color: #fc6d5e;
+            svg {
+              :deep(path) {
+                &:nth-child(2) {
+                  fill: #fc6d5e;
+                }
+                &:nth-child(3) {
+                  fill: #fc6d5e;
+                }
+              }
             }
           }
         }

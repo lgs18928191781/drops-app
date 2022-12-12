@@ -52,7 +52,7 @@
 }
 
 .country-select {
-    color: var(--main-font-color);
+    color: var(--themeBtnTextColor);
     font-size: 12px;
 
     .iti-flag {
@@ -128,7 +128,7 @@
 
         a {
             cursor: pointer;
-            color: var(--main-font-color);
+            color: var(--themeBtnTextColor);
         }
     }
 

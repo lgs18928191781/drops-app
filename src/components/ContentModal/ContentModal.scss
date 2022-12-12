@@ -26,14 +26,14 @@
         }
 
         .el-dialog__header {
-            color: #fff;
+            color: var(--themeBtnTextColor);
             font-size: 18px;
         }
     }
 }
 
 .content {
-    color: #fff;
+    color: var(--themeBtnTextColor);
 }
 
 .confirm-btn {

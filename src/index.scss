@@ -14,11 +14,12 @@ html {
       'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
 
 
-    color: var(--main-font-color);
-    background: #F5F7FA;
+    color: var(--themeBtnTextColor);
+    background: var(--themeBgColor);
 
     user-select: none;
     -webkit-user-drag: none;
+
 
     .nftDetailContainer {
       max-width: 1200px;
@@ -199,11 +200,7 @@ html {
     #app {}
   }
 
-  &.dark {
-    body {
-      background: $bgDarkColor;
-    }
-  }
+
 }
 
 

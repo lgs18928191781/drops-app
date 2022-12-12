@@ -34,7 +34,7 @@ header {
         }
 
         &:hover {
-            background: var(--main-font-color);
+            background: var(--themeBtnTextColor);
 
             .icon {
 
@@ -65,13 +65,13 @@ header {
 
         &:hover,
         &.active {
-            border-color: var(--main-font-color);
-            box-shadow: 3px 3px 0 var(--main-font-color);
+            border-color: var(--themeBtnTextColor);
+            box-shadow: 3px 3px 0 var(--themeBtnTextColor);
         }
 
         &.active {
             background: var(--el-color-primary);
-            color: var(--main-font-color);
+            color: var(--themeBtnTextColor);
         }
 
         &.disabled {
@@ -89,7 +89,7 @@ header {
 
 .genesis-list {
     .genesis-item {
-        border: 2px solid var(--main-font-color);
+        border: 2px solid var(--themeBtnTextColor);
         border-radius: 12px;
         padding: 18px;
         margin-bottom: 12px;
@@ -150,7 +150,7 @@ header {
                 }
 
                 .image {
-                    border: 2px solid var(--main-font-color);
+                    border: 2px solid var(--themeBtnTextColor);
                     border-radius: 8px;
 
 

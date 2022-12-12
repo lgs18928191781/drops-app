@@ -20,13 +20,13 @@
 
         &:hover,
         &.active {
-            border-color: var(--main-font-color);
-            box-shadow: 3px 3px 0 var(--main-font-color);
+            border-color: var(--themeBtnTextColor);
+            box-shadow: 3px 3px 0 var(--themeBtnTextColor);
         }
 
         &.active {
             background: var(--el-color-primary);
-            color: var(--main-font-color);
+            color: var(--themeBtnTextColor);
         }
 
         &.disabled {

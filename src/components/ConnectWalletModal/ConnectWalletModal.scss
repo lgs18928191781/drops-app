@@ -20,11 +20,11 @@
         }
 
         &:hover {
-            background: var(--main-font-color);
+            background: var(--themeBtnTextColor);
 
             .icon {
                 :deep(use) {
-                    fill: #fff;
+                    fill: var(--themeBgColor);
                 }
             }
         }
@@ -124,7 +124,7 @@
             font-size: 16px;
             width: 100%;
             height: 60px;
-            border: 2px solid var(--main-font-color);
+            border: 2px solid var(--themeBtnTextColor);
             padding: 10px 20px;
             box-sizing: border-box;
             border-radius: 12px;
@@ -200,7 +200,7 @@
                     letter-spacing: 0px;
 
                     /* c1 */
-                    color: var(--main-font-color);
+                    color: var(--themeBtnTextColor);
 
                     a {
                         color: #5586BB;

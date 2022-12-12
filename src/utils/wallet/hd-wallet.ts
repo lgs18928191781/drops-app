@@ -301,7 +301,6 @@ export const encryptMnemonic = (mnemonic: string, password: string): string => {
 // 解密助记词
 export const decryptMnemonic = (encryptedMnemonic: string, password: string): string => {
   const mnemonic = aesDecrypt(encryptedMnemonic, password)
-
   return mnemonic.split(',').join(' ')
 }
 
@@ -1964,7 +1963,6 @@ export class HdWallet {
         outPutIndex: 0,
       })
       utxo.wif = this.getPathPrivateKey(`${utxo.addressType}/${utxo.addressIndex}`).toString()
-      // debugger
       utxos = [utxo]
       const response = await this.createBrfcChildNode(
         {
@@ -1995,7 +1993,6 @@ export class HdWallet {
         feeb: 1,
         purse: this.getPathPrivateKey(`0/0`).toString(),
       })
-      // debugger
 
       const genesis = await ft.genesis({
         tokenName,
@@ -2110,7 +2107,6 @@ export class HdWallet {
       })
 
       // await this.provider.broadcast(result.txHex)
-      // debugger
     })
   }
 }

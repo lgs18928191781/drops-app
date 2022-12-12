@@ -46,7 +46,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits(['update:modelValue'])
 const i18n = useI18n()
-const theme = ref(localStorage.theme || 'light')
+const theme = ref(localStorage.theme || 'system')
 
 const themes = [
   {
