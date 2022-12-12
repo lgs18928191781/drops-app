@@ -16,9 +16,7 @@
         class="flex space-x-3 items-center cursor-pointer hover:bg-dark-100 dark:hover:bg-gray-900 rounded py-3 px-4"
         @click="selectMetaName(metaName)"
       >
-        <div
-          class="text-lg bg-clip-text text-transparent bg-gradient-to-tr from-[#F700FB] to-[#FFC051] font-bold tracking-wider"
-        >
+        <div class="text-lg meta-name">
           {{ metaName.metaName }}
         </div>
         <div

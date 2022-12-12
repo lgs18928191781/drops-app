@@ -41,9 +41,7 @@
           >
             <div class="flex items-center gap-x-2">
               <template v-if="form.metaName">
-                <span
-                  class="text-sm bg-clip-text text-transparent bg-gradient-to-tr from-[#F700FB] to-[#FFC051] font-bold tracking-wider"
-                >
+                <span class="text-sm meta-name">
                   {{ form.metaName.metaName }}
                 </span>
                 <div

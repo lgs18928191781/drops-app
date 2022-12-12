@@ -200,6 +200,7 @@ export const useTalkStore = defineStore('talk', {
     async initCommunity(routeCommunityId: string) {
       this.communityStatus = 'loading'
       const isAtMe = routeCommunityId === '@me'
+      const layout = useLayoutStore()
 
       if (routeCommunityId && routeCommunityId !== this.activeCommunityId) {
         this.members = []
@@ -208,6 +209,26 @@ export const useTalkStore = defineStore('talk', {
         }
 
         this.activeCommunityId = routeCommunityId
+
+        // 判断是否已是社区成员，如果不是，则尝试加入
+        if (!isAtMe) {
+          const isMember = this.members.some((member: any) => member.metaId === this.selfMetaId)
+          if (!isMember) {
+            // 拉取单个社区信息
+            const find = this.communities.find(
+              (community: any) => community.id === routeCommunityId
+            )
+            if (!find) {
+              const invitingCommunity = await getOneCommunity(routeCommunityId)
+              this.communities.push(invitingCommunity)
+            }
+
+            layout.isShowAcceptInviteModal = true
+
+            this.communityStatus = 'pending'
+            return
+          }
+        }
 
         const fetchChannels = async () => {
           const channels = isAtMe
@@ -234,7 +255,6 @@ export const useTalkStore = defineStore('talk', {
       }
 
       this.updateReadPointers()
-      const layout = useLayoutStore()
 
       // 判断是否已是社区成员，如果不是，则尝试加入
       if (!isAtMe) {

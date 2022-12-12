@@ -29,6 +29,7 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   // communityId, name, description, cover, metaName, mateNameNft, admins, reserved, icon
   const { icon, metaName, description, cover } = form
   const communityId = metaName.communityId
+  const reserved = metaName.signature
 
   const attachments = []
   attachments.push(await FileToAttachmentItem(icon))
@@ -51,7 +52,9 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
     admins,
     description,
     cover: coverPlaceholder || '',
+    reserved,
   }
+  console.log({ dataCarrier })
 
   // 2. 构建节点参数
   const node = {
@@ -319,6 +322,7 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
     content,
     avatarType: userStore.user?.avatarType || 'undefined',
     avatarTxId: userStore.user?.avatarTxId || 'undefined',
+    avatarImage: userStore.user?.avatarImage || '',
     metaId: userStore.user?.metaId || 'undefined',
     nickName: userStore.user?.name || '',
     timestamp: new Date().getTime(), // 服务端返回的是毫秒，所以模拟需要乘以1000
@@ -387,6 +391,8 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
     data: dataCarrier,
     avatarType: userStore.user?.avatarType || 'undefined',
     avatarTxId: userStore.user?.avatarTxId || 'undefined',
+    avatarImage: userStore.user?.avatarImage || '',
+    fromAvatarImage: userStore.user?.avatarImage || '',
     metaId: userStore.user?.metaId || 'undefined',
     from: userStore.user?.metaId,
     nickName: userStore.user?.name || '',
@@ -475,6 +481,7 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
     content: originalFileUrl,
     avatarType: userStore.user?.avatarType || 'undefined',
     avatarTxId: userStore.user?.avatarTxId || 'undefined',
+    avatarImage: userStore.user?.avatarImage || '',
     metaId: userStore.user?.metaId || 'undefined',
     nickName: userStore.user?.name || '',
     timestamp: timestamp * 1000, // 服务端返回的是毫秒，所以模拟需要乘以1000

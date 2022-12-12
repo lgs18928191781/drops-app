@@ -56,7 +56,7 @@
 
       <div class="self-stretch lg:ml-2 py-2 flex items-center grow">
         <textarea
-          class=" w-full focus:outline-none placeholder:text-dark-250 placeholder:dark:text-gray-400 placeholder:text-base text-dark-800 dark:text-gray-100 text-base caret-gray-600 dark:caret-gray-400 resize-none !h-fit text-base rounded-md transition-all duration-150"
+          class=" w-full !outline-none placeholder:text-dark-250 placeholder:dark:text-gray-400 placeholder:text-base text-dark-800 dark:text-gray-100 text-base caret-gray-600 dark:caret-gray-400 resize-none !h-fit text-base rounded-md transition-all duration-150 delay-100"
           :class="rows > 1 ? 'bg-gray-100 dark:bg-gray-800 p-1 -m-1' : 'bg-inherit'"
           :rows="rows"
           ref="theTextBox"
@@ -66,8 +66,7 @@
             })
           "
           v-model="chatInput"
-          @keyup.enter.exact="trySendText"
-          @keyup.shift.enter.exact="breakLine"
+          @keyup.enter.exact.prevent="trySendText"
         />
       </div>
 
@@ -312,9 +311,14 @@ const trySendImage = async () => {
 /** 发送消息 */
 const chatInput = ref('')
 const userStore = useUserStore()
+const isSending = ref(false)
 const theTextBox: Ref<HTMLTextAreaElement | null> = ref(null)
 
 const rows = computed(() => {
+  if (isSending.value) {
+    return 1
+  }
+
   // 行数=换行符+过长的行数+1
   const lines = chatInput.value.split('\n')
   // 计算列数：当前textarea宽度/字体宽度 TODO
@@ -333,6 +337,9 @@ const rows = computed(() => {
 })
 
 const trySendText = async () => {
+  isSending.value = true
+  // 去除首尾空格
+  chatInput.value = chatInput.value.trim()
   if (!validateTextMessage(chatInput.value)) return
 
   // 私聊会话和频道群聊的加密方式不同
@@ -358,6 +365,8 @@ const trySendText = async () => {
     channelType: talkStore.activeChannelType as ChannelType,
   }
   await sendMessage(messageDto)
+
+  isSending.value = false
 }
 /** ------ */
 </script>

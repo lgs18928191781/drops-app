@@ -5,7 +5,7 @@
     <div class="max-w-[60%] flex items-center">
       <Icon
         name="bars"
-        class="w-6 h-6 text-dark-800 dark:text-gray-100 shrink-0 lg:hidden"
+        class="w-6 h-6 text-dark-800 dark:text-gray-100 shrink-0 lg:hidden mr-1"
         @click="layout.isShowLeftNav = true"
       />
 

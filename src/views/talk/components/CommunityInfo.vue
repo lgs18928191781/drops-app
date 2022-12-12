@@ -11,8 +11,18 @@
       <div class="flex grow">
         <!-- 社区详情栏 -->
         <div
-          class="h-full bg-dark-100 dark:bg-gray-800 grow lg:w-60 flex flex-col justify-between items-stretch"
+          class="h-full bg-dark-100 dark:bg-gray-800 grow lg:w-60 flex flex-col justify-between items-stretch relative"
         >
+          <button
+            class="absolute top-[16PX] right-[16PX] flex items-center justify-center outline-0 z-[90] lg:!hidden"
+            @click="layout.isShowLeftNav = false"
+          >
+            <Icon
+              name="x_mark"
+              class="w-4 h-4 text-dark-400 dark:text-gray-200 cursor-pointer rounded-full bg-gray-200/40 dark:bg-gray-900/40 p-2 box-content"
+            />
+          </button>
+
           <div class="flex flex-col overflow-y-hidden">
             <!-- 社区封面 -->
             <div class="w-full aspect-[4/3] mb-1">
@@ -25,11 +35,19 @@
 
             <!-- 社区信息 -->
             <div class="px-4.5 overflow-y-auto">
+              <!-- 社区名 -->
               <div
-                class="w-full mt-4 text-lg text-dark-800 dark:text-white truncate"
+                class="w-full mt-4 flex items-center space-x-2"
                 :title="talk.activeCommunity?.name"
               >
-                {{ talk.activeCommunity?.name }}
+                <span class="text-lg meta-name tracking-wider truncate">{{
+                  talk.activeCommunity?.name
+                }}</span>
+                <div
+                  class="p-1 bg-gradient-to-tr from-[#F700FB] to-[#FFC051] rounded-sm leading-none text-center flex items-center justify-center shrink-0"
+                >
+                  <Icon name="N" class="w-2 h-2" />
+                </div>
               </div>
 
               <div
@@ -38,6 +56,7 @@
                 {{ talk.activeCommunity?.description || $t('Talk.Community.no_introduction') }}
               </div>
 
+              <!-- 社区介绍 -->
               <div
                 class="mt-3 flex w-full items-center justify-between cursor-pointer"
                 @click="layout.isShowMemberList = !layout.isShowMemberList"
@@ -47,9 +66,9 @@
                 >
                   <div class="w-1.5 h-1.5 bg-lime-500 rounded-full"></div>
                   <div class="flex space-x-0.5">
-                    <div class="">{{ talk.activeCommunity?.memberTotal }}</div>
+                    <div class="">{{ talk.members?.length || 0 }}</div>
                     <div class="capitalize">
-                      {{ $t('Talk.Community.members', talk.activeCommunity?.memberTotal) }}
+                      {{ $t('Talk.Community.members', talk.members?.length || 0) }}
                     </div>
                   </div>
                 </div>
