@@ -405,7 +405,7 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
       //     message: MD5(params.signAddressHash),
       //   })
       // }
-      console.log('zxzxc', MD5(params.signAddressHash).toString())
+
       res = await BindMetaIdRef.value.loginByMnemonic(
         getMnemonicRes.data.evmEnMnemonic,
         MD5(params.signAddressHash).toString()
@@ -441,15 +441,16 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
           getMnemonicRes.data.evmEnMnemonic,
           MD5(params.signAddressHash).toString()
         )
+
         if (res) {
           await BindMetaIdRef.value.loginSuccess(res)
-          isShowMetaMak.value = false
+          rootStore.$patch({ isShowMetaMak: false })
         }
       } catch (error) {
         thirdPartyWallet.signAddressHash = params.signAddressHash
         thirdPartyWallet.address = params.address
         BindMetaIdRef.value.status = BindStatus.InputPassword
-        isShowMetaMak.value = false
+        rootStore.$patch({ isShowMetaMak: false })
         isShowBindModal.value = true
       }
     }
