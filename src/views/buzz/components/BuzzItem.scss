@@ -6,6 +6,34 @@
     border-radius: 12px;
     cursor: pointer;
 
+    .back {
+        margin-bottom: 30px;
+
+        span {
+            display: inline-block;
+        }
+
+        a {
+
+            .icon {
+                width: 14px;
+                height: 14px;
+                margin-right: 10px;
+                transform: rotate(90deg);
+            }
+
+            &:hover {
+                color: rgb(85, 134, 187);
+
+                .icon {
+                    :deep(use) {
+                        fill: rgb(85, 134, 187);
+                    }
+                }
+            }
+        }
+    }
+
     .forward-head {
         display: flex;
         align-items: center;

@@ -201,7 +201,7 @@ export const useUserStore = defineStore('user', {
           resolve()
         } else {
           this.logout()
-          ElMessageBox.alert('登录信息过期，请重新登陆', '温馨提示', {
+          ElMessageBox.alert('登录信息过期，请重新登录', '温馨提示', {
             confirmButtonText: '去登录',
           }).then(() => {
             this.showWallet?.toLogin(fullPath)

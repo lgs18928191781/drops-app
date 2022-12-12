@@ -488,7 +488,7 @@ export const commitActivity = (params: {
   address?: string
   new_metaid?: string
   public_key?: string
-  token?: string // 用户登陆使用的token 或者 apptoken
+  token?: string // 用户登录使用的token 或者 apptoken
   tag: string // 1:分享微信 2:分享朋友圈 3：复制URL 4：分享图片 5：注册完成 6 kyc完成
 }) => {
   const res = callApi({

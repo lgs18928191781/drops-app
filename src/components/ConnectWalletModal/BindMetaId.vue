@@ -330,7 +330,7 @@ function submitForm() {
         //   res = await createMetaidAccount()
         // }
         else if (status.value === BindStatus.InputPassword) {
-          // 使用密码 和 助记词登陆
+          // 使用密码 和 助记词登录
 
           const getMnemonicRes = await LoginByEthAddress({
             evmAddress: props.thirdPartyWallet.address,

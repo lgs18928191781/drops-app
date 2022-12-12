@@ -59,7 +59,7 @@
                 &:hover {
                     .icon {
                         :deep(use) {
-                            fill: var(--themeBtnTextColor);
+                            fill: var(--themeTextColor);
                         }
                     }
                 }
@@ -84,7 +84,7 @@
                 height: 100%;
                 left: 0;
                 top: 0;
-                border: 2px solid var(--themeBtnTextColor);
+                border: 2px solid var(--themeTextColor);
                 border-radius: 12px;
                 box-sizing: border-box;
                 margin-left: 6px;
@@ -99,7 +99,7 @@
                 left: 0;
                 top: 0;
                 background: #FFFFFF;
-                border: 2px solid var(--themeBtnTextColor);
+                border: 2px solid var(--themeTextColor);
                 z-index: 2;
                 border-radius: 12px;
 
@@ -141,15 +141,15 @@
             }
 
             &:hover {
-                border-color: var(--themeBtnTextColor);
-                box-shadow: 3px 3px 0 var(--themeBtnTextColor);
+                border-color: var(--themeTextColor);
+                box-shadow: 3px 3px 0 var(--themeTextColor);
             }
 
             &.active {
-                border-color: var(--themeBtnTextColor);
-                box-shadow: 3px 3px 0 var(--themeBtnTextColor);
+                border-color: var(--themeTextColor);
+                box-shadow: 3px 3px 0 var(--themeTextColor);
                 background: var(--el-color-primary);
-                color: var(--themeBtnTextColor);
+                color: var(--themeTextColor);
             }
         }
     }

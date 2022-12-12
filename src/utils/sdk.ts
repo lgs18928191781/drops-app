@@ -343,10 +343,10 @@ export class SDK {
           if (this.wallet) {
             resolve()
           } else {
-            reject(new Error('生成钱包失败,请尝试重新登陆'))
+            reject(new Error('生成钱包失败,请尝试重新登录'))
           }
         } else {
-          reject(new Error('请先登陆，再操作'))
+          reject(new Error('请先登录，再操作'))
         }
       }
     })
@@ -1444,7 +1444,7 @@ export class SDK {
     })
   }
 
-  // 去登陆， 兼容 iosApp 和其他情况
+  // 去登录， 兼容 iosApp 和其他情况
   toLogin(fullpath: string) {
     if (this.appMetaIdJs) {
       this.appMetaIdJs.needLogin('', '', '')

@@ -24,7 +24,7 @@
         &:hover {
             .icon {
                 :deep(use) {
-                    fill: var(--themeBtnTextColor);
+                    fill: var(--themeTextColor);
                 }
             }
         }

@@ -519,7 +519,7 @@ function submitForm() {
         emit('update:loading', true)
         try {
           const phoneNum = form.area !== '86' ? form.area + form.phone : form.phone
-          // 登陆
+          // 登录
           if (props.type === 'login') {
             //  登录
             const params = {

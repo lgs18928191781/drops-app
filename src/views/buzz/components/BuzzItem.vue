@@ -1,6 +1,15 @@
 <template>
   <div class="buzz-item" v-if="itemData && displayItemData">
     <div @click.stop="handleGoDetail(displayItemData!.txId)" class="buzz-item-warp">
+      <!-- back -->
+      <div class="back" v-if="$route.name === 'buzzDetail'">
+        <span>
+          <a class="flex flex-align-center" @click.stop="$router.back()">
+            <Icon name="down" />
+            {{ $t('back') }}
+          </a>
+        </span>
+      </div>
       <!-- 快速转发 -->
       <template v-if="itemData.displayType === 'quickRePost'">
         <div class="forward-head" @click.stop="$filters.toUserHome(itemData.metaId)">

@@ -22,7 +22,7 @@ router.beforeEach(async (to, from, next) => {
   document.title = `${to.meta.title ? to.meta.title + ' - ' : ''}` + import.meta.env.VITE_AppName
 
   if (to.name === 'register' && userStore.isAuthorized) {
-    // 用户已登陆时，先退出登录
+    // 用户已登录时，先退出登录
     await userStore.logout(to)
     next()
   }
@@ -66,9 +66,9 @@ router.beforeEach(async (to, from, next) => {
     }
 
     // 检查用户的token
-    if (!isApp) {
-      await userStore.checkUserToken(to.fullPath)
-    }
+    // if (!isApp) {
+    //   await userStore.checkUserToken(to.fullPath)
+    // }
   }
 
   //  buzz 页面先获取一次 postTag 信息

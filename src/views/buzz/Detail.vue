@@ -20,6 +20,7 @@
               v-model="addComment.content"
               :placeholder="$t('Buzz.comment.publishPlaceholder')"
               @keyup.enter="reply({ txId: '', username: '', userAddress: userStore.user!.address! })"
+              @click.stop="() => {}"
             />
           </div>
         </div>
