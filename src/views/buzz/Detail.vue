@@ -1,6 +1,6 @@
 <template>
   <BuzzListVue
-    :list="list"
+    v-model:list="list.val"
     :loading="isSkeleton"
     ref="BuzzListRef"
     @comment="onReplayCommentSucccess"
@@ -16,12 +16,7 @@
             :disabled="true"
           />
           <div class="cont flex1" v-loading="loading">
-            <input
-              v-model="comment"
-              :placeholder="$t('Buzz.comment.publishPlaceholder')"
-              @keyup.enter="reply({ txId: '', username: '', userAddress: userStore.user!.address! })"
-              @click.stop="() => {}"
-            />
+            <input @focus="reply" />
           </div>
         </div>
         <BuzzCommentListVue
@@ -53,7 +48,7 @@ const loading = ref(false)
 const i18n = useI18n()
 const BuzzListRef = ref()
 
-const list: BuzzItem[] = reactive([])
+const list: { val: BuzzItem[] } = reactive({ val: [] })
 const isSkeleton = ref(true)
 
 const commentPagination = reactive({
@@ -85,7 +80,7 @@ function fetchData() {
           }
         }
       }
-      list[0] = detailRes
+      list.val[0] = detailRes
       await fetchCommentList(detailRes.txId, true)
       resolve()
     }
@@ -109,22 +104,14 @@ async function fetchCommentList(buzzTxId: string, isCover = false) {
   }
 }
 
-async function reply(params: { txId: string; username: string; userAddress: string }) {
-  if (comment.value === '') return
-  loading.value = true
-  BuzzListRef.value.currentTxId = list[0].txId
-  BuzzListRef.value.comment = comment.value
-  BuzzListRef.value.replayMsg.val = {
-    username: list[0].userName,
-    userAddress: list[0].zeroAddress,
-    commentTo: list[0].txId,
+async function reply() {
+  BuzzListRef.value.onReplay({
+    txId: list.val[0].txId,
+    username: list.val[0].userName,
+    userAddress: list.val[0].zeroAddress,
+    commentTo: list.val[0].txId,
     replyTo: '',
-  }
-  await BuzzListRef.value.replay().catch(() => {
-    loading.value = false
   })
-  comment.value = ''
-  loading.value = false
 }
 
 function replyComment(params: { txId: string; username: string; userAddress: string }) {
@@ -133,7 +120,6 @@ function replyComment(params: { txId: string; username: string; userAddress: str
 
 function onReplayCommentSucccess(item: BuzzInteractiveItem) {
   const index = commentListData.findIndex(_item => _item.txId === item.commentTo)
-  debugger
   if (index !== -1) {
     commentListData[index].commentCount++
     commentListData[index].hasComment = true
@@ -141,6 +127,8 @@ function onReplayCommentSucccess(item: BuzzInteractiveItem) {
       commentListData[index].subInteractiveItem = []
     }
     commentListData[index].subInteractiveItem.unshift(item)
+  } else {
+    commentListData.unshift(item)
   }
 }
 

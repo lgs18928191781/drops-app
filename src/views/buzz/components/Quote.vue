@@ -1,37 +1,15 @@
 <template>
   <div
-    class="forward buzz-item"
+    class="forward"
     @click.stop="$router.push({ name: 'buzzDetail', params: { txId: buzz.txId } })"
   >
-    <div class="header">
-      <div class="user-info" @click.stop="$filters.toUserHome(buzz.metaId)">
-        <div class="head">
-          <UserAvatar :meta-id="buzz.metaId" :image="buzz.avatarImage" />
-        </div>
-        <div class="info">
-          <div class="name">{{ buzz.userName }}</div>
-          <div class="desc">
-            <span>MetaID: {{ buzz.metaId.slice(0, 6) }}</span>
-            <span class="time">{{ $filters.dateTimeFormat(buzz.timestamp) }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="content">
-      <pre
-        class="text"
-        v-html="buzz.content.length > 80 ? buzz.content.slice(0, 80) + '...' : buzz.content"
-      ></pre>
-      <Attachment
-        :attachments="buzz.attachments"
-        v-if="buzz.attachments && buzz.attachments.length > 0"
-      />
-    </div>
+    <BuzzItemVue :data="buzz" :isQuote="true" />
   </div>
 </template>
 
 <script setup lang="ts">
 import Attachment from './Attachment.vue'
+import BuzzItemVue from './BuzzItem.vue'
 
 interface Props {
   buzz: BuzzItem

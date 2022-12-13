@@ -404,7 +404,6 @@ export class SDK {
         isBroadcast: true,
         payType: SdkPayType.ME,
       }
-      debugger
       const initParams = {
         appId: ['ShowV3', this.getOnLinkAppUrl(), this.getPlatform()],
         autoRename: true,

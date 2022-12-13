@@ -118,7 +118,7 @@
                       <div class="name">
                         {{nft.val!.nftName}}
                       </div>
-                      <div class="token-index">#{{nft.val!.nftTokenIndex}}</div>
+                      <div class="token-index">#{{parseInt(nft.val!.nftTokenIndex) + 1}}</div>
                     </div>
                   </div>
                   <a
