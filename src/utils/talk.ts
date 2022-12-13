@@ -572,7 +572,8 @@ export const isImage = (file: File) => {
 export const openRedPacket = async (redPacket: any, sdk: SDK) => {
   const talkStore = useTalkStore()
   const userStore = useUserStore()
-  const userAddress = userStore.user!.address as any
+  const userAddressStr = userStore.user!.address as any
+  const userAddress = new Address(userAddressStr, import.meta.env.VITE_NET_WORK || 'mainnet')
   const { subId, code, createTime } = redPacket
   const dataCarrier = {
     createTime,
@@ -590,10 +591,6 @@ export const openRedPacket = async (redPacket: any, sdk: SDK) => {
   // const
   const satoshis = new Decimal(redPacket.iTake.amount)
   const amount = satoshis.dividedBy(100000000).toNumber()
-  console.log({
-    script1: redPacket.iTake.scriptPubKey,
-    script2: redPacketCrypto.scriptStr,
-  })
 
   const iTakeUtxo = {
     address: redPacketCrypto.addressStr as any,
@@ -603,18 +600,14 @@ export const openRedPacket = async (redPacket: any, sdk: SDK) => {
   }
   console.log('iTakeUtxo', iTakeUtxo)
   const txComposer = new TxComposer()
-  // const script = Script.buildPublicKeyHashOut(redPacketCrypto.addressStr)
-  // const output = new Transaction.Output({
-  //   script: Script.buildPublicKeyHashOut(iTakeUtxo.address),
-  //   satoshis: iTakeUtxo.satoshis,
-  // })
 
-  // console.log({ output })
   txComposer.appendP2PKHInput(iTakeUtxo)
-  const opReturn = _buildOpReturn()
-  txComposer.appendOpReturnOutput(opReturn)
-  // txComposer.appendChangeOutput(userAddress, DEFAULTS.feeb)
-  // txComposer.unlockP2PKHInput(redPacketCrypto.privateKey, 0)
+  // const opReturn = _buildOpReturn()
+  // txComposer.appendOpReturnOutput(opReturn)
+  txComposer.appendChangeOutput(userAddress, DEFAULTS.feeb)
+  txComposer.unlockP2PKHInput(redPacketCrypto.privateKey, 0)
+  const verify = txComposer.tx.verify()
+  console.log('verify', verify)
 
   // const txHex = txComposer.getRawHex()
   // await sdk.wallet?.provider.broadcast(txHex)
@@ -637,7 +630,7 @@ const _buildOpReturn = () => {
     '',
     'testmetaid',
     'OpenRedenvelope',
-    {},
+    JSON.stringify({}),
     '0',
     '1.0.1',
     'application/json',

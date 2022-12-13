@@ -210,6 +210,41 @@ export const useTalkStore = defineStore('talk', {
       this.communities = [...communities, this.atMeCommunity]
     },
 
+    async fetchChannels(communityId?: string) {
+      if (!communityId) communityId = this.activeCommunityId
+      const isAtMe = communityId === '@me'
+
+      const channels = isAtMe
+        ? await getAtMeChannels({
+            metaId: this.selfMetaId,
+          })
+        : await getChannels({
+            communityId,
+          })
+
+      this.activeCommunity.channels = channels
+
+      // 写入存储
+      this.initCommunityChannelIds()
+      // 只保存频道id
+      const channelIds = channels.map((channel: any) => channel.id)
+      this.communityChannelIds[communityId] = channelIds
+      localStorage.setItem(
+        'communityChannels-' + this.selfMetaId,
+        JSON.stringify(this.communityChannelIds)
+      )
+    },
+
+    async refetchChannels() {
+      const channels = await getChannels({ communityId: this.activeCommunityId })
+      channels.forEach((channel: any) => {
+        // 如果是新频道，则添加到频道列表
+        if (!this.activeCommunityChannels.find((c: any) => c.id === channel.id)) {
+          this.activeCommunityChannels.push(channel)
+        }
+      })
+    },
+
     async checkMembership(routeCommunityId: string) {
       const selfMetaId = this.selfMetaId
 
@@ -231,28 +266,7 @@ export const useTalkStore = defineStore('talk', {
       this.activeCommunityId = routeCommunityId
       this.members = isAtMe ? [] : await getCommunityMembers(routeCommunityId)
 
-      const fetchChannels = async () => {
-        const channels = isAtMe
-          ? await getAtMeChannels({
-              metaId: this.selfMetaId,
-            })
-          : await getChannels({
-              communityId: routeCommunityId,
-            })
-
-        this.activeCommunity.channels = channels
-
-        // 写入存储
-        this.initCommunityChannelIds()
-        // 只保存频道id
-        const channelIds = channels.map((channel: any) => channel.id)
-        this.communityChannelIds[routeCommunityId] = channelIds
-        localStorage.setItem(
-          'communityChannels-' + this.selfMetaId,
-          JSON.stringify(this.communityChannelIds)
-        )
-      }
-      await fetchChannels()
+      await this.fetchChannels(routeCommunityId)
 
       this.updateReadPointers()
 

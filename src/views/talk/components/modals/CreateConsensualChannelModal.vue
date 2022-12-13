@@ -427,27 +427,20 @@ const ftSeries: Ref<any[]> = ref([])
 
 const form = useChannelFormStore()
 changeTab(selectedTab.value)
-const talkStore = useTalkStore()
+const talk = useTalkStore()
 const userStore = useUserStore()
-const router = useRouter()
 
 const tryCreateChannel = async () => {
   if (!form.isFinished) return
 
   layout.isShowCreateConsensualChannelModal = false
   layout.isShowLoading = true
-  await createChannel(
-    form,
-    talkStore.activeCommunityId,
-    userStore.showWallet,
-    userStore.user!.metaId
-  )
+  await createChannel(form, talk.activeCommunityId, userStore.showWallet, userStore.user!.metaId)
   layout.isShowLoading = false
   form.reset()
 
-  router.push({
-    path: router.currentRoute.value.fullPath,
-    force: true,
+  sleep(2000).then(() => {
+    talk.refetchChannels()
   })
 }
 

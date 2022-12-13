@@ -110,7 +110,17 @@
       "receive": "接收",
       "consensus_required": "凭证权限",
       "you_dont_have_nft": "你没有相关系列的NFT，不能进入本频道",
-      "confirm": "好的"
+      "confirm": "好的",
+      "loading": "操作中……",
+      "choose_meta_name": "选择 MetaName",
+      "no_meta_name_available": "您没有可用的 MetaName",
+      "share_invite_link_tip": "向好友发送邀请链接",
+      "share_to_buzz_tip": "或者分享到 Buzz",
+      "share_to_buzz_button": "分享到 Buzz",
+      "share_to_buzz_title": "分享到 Buzz",
+      "share_successfully": "成功分享",
+      "share_successfully_tip": "您的分享 Buzz 已成功发布",
+      "go_check_out": "前往 Buzz 查看"
     },
     "Channel": {
       "members": "成员",
@@ -135,7 +145,8 @@
         "settings": "社区设置"
       },
       "welcome_message": "欢迎来到 #{channel}!",
-      "welcome_start": "这是 #{channel} 频道的起点。畅所欲言吧！"
+      "welcome_start": "这是 #{channel} 频道的起点。畅所欲言吧！",
+      "welcome_invite": "邀请好友进入频道"
     },
     "Community": {
       "create": "创建社群",
@@ -188,7 +199,11 @@
       "blessings": "祝福语",
       "best_wishes": "恭喜发财，大吉大利",
       "send": "发送",
-      "red_packet_refund_tip": "未领取的红包可发起退回到您的钱包"
+      "red_packet_refund_tip": "未领取的红包可发起退回到您的钱包",
+      "share_nft": "分享 NFT",
+      "share_nft_tip": "炫一下我的 NFT",
+      "sell_nft": "出售 NFT",
+      "sell_nft_tip": "出售 NFT"
     },
     "Datetime": {
       "today": "今天",
