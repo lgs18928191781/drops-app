@@ -12,20 +12,20 @@
     padding: 18px;
 
     .image {
-        flex: 3;
-        min-width: 0;
-        height: 100px;
+        width: 80px;
+        height: 80px;
         margin-right: 10px;
+        border-radius: 6px;
+        overflow: hidden;
 
         :deep(img) {
             height: 100%;
             object-fit: cover;
-            border-radius: 12px;
         }
     }
 
     .cont {
-        flex: 5;
+        flex: 1;
         min-width: 0;
 
         .title {
@@ -36,7 +36,18 @@
         .content {
             font-size: 12px;
             margin-top: 10px;
-            @include text-many-ellipsis(5);
+            @include text-many-ellipsis(3);
+            color: var(--faded-border-color);
         }
+
+
+    }
+
+    .right {
+        transform: rotate(-90deg);
+        width: 12px;
+        height: 12px;
+        align-self: center;
+        margin-left: 12px;
     }
 }

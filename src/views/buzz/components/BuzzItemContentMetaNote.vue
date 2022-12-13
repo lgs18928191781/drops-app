@@ -8,8 +8,9 @@
             <Image :src="metanote.val!.headImg" v-if="metanote.val!.headImg" />
             <div class="cont">
               <div class="title">{{ metanote.val?.title }}</div>
-              <div class="content">{{ metanote.val?.content }}</div>
+              <div class="content">{{ metanote.val?.content.replace(/(^\s*)|(\s*$)/g, '') }}</div>
             </div>
+            <Icon name="down" class="right" />
           </div>
         </template>
       </ElSkeleton>
