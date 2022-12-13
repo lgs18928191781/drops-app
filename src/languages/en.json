@@ -204,7 +204,7 @@
       "accountAlreadyRegistered": "The account has been registered"
     },
     "createWallet": "create wallet",
-    "havedAnyWallet": "(I already have a MetaID wallet)",
+    "havedAnyWallet": "(I haveed a MetaID wallet)",
     "notAnyWallet": "(I don't have any wallet)",
     "pleaseAggrePolicy": "Please check first",
     "policy": "I have read and agree",

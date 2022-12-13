@@ -17,7 +17,7 @@
           />
           <div class="cont flex1" v-loading="loading">
             <input
-              v-model="addComment.content"
+              v-model="comment"
               :placeholder="$t('Buzz.comment.publishPlaceholder')"
               @keyup.enter="reply({ txId: '', username: '', userAddress: userStore.user!.address! })"
               @click.stop="() => {}"
@@ -62,12 +62,7 @@ const commentPagination = reactive({
 })
 const commentListData: BuzzInteractiveItem[] = reactive([])
 
-const addComment = reactive({
-  content: '',
-  commentToCommentTxId: '',
-  commentToUserName: '',
-  userAddress: '',
-})
+const comment = ref('')
 
 function fetchData() {
   return new Promise<void>(async resolve => {
@@ -115,86 +110,21 @@ async function fetchCommentList(buzzTxId: string, isCover = false) {
 }
 
 async function reply(params: { txId: string; username: string; userAddress: string }) {
-  debugger
-  if (loading.value) return
-  addComment.commentToCommentTxId = params.txId
-  addComment.commentToUserName = params.username
-  addComment.userAddress = params.userAddress
-  if (!params.txId) {
-    await confirmComment()
-  }
-  // isShowAddCommentWarp.value = true
-}
-
-async function confirmComment() {
+  if (comment.value === '') return
   loading.value = true
-  await checkSdkStatus(route.fullPath)
-  try {
-    const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
-    const dataParams = {
-      createTime: new Date().getTime(),
-      content: addComment.content,
-      contentType: 'text/plain',
-      commentTo:
-        addComment.commentToCommentTxId === '' ? list[0]!.txId : addComment.commentToCommentTxId,
-      pay: payAmount,
-      payTo: addComment.userAddress,
-    }
-    const res = await userStore.showWallet?.createBrfcChildNode({
-      nodeName: NodeName.PayComment,
-      dataType: 'application/json',
-      data: JSON.stringify(dataParams),
-      encrypt: IsEncrypt.No,
-      payTo: [{ address: addComment.userAddress, amount: payAmount }],
-    })
-    if (res) {
-      const item = {
-        amount: 0,
-        avatarTxId: userStore.user!.avatarTxId!,
-        avatarType: userStore.user!.avatarType!,
-        buzzTxId: list[0]!.txId,
-        confirmState: 0,
-        content: dataParams.content,
-        hasComment: false,
-        hasMyLike: false,
-        isValid: true,
-        likeCount: 0,
-        metaId: userStore.user!.metaId,
-        protocol: 'PayComment',
-        timestamp: dataParams.createTime,
-        txId: res.currentNode?.txId,
-        userName: userStore.user!.name!,
-        zeroAddress: userStore.user!.address!,
-      }
-
-      if (addComment.commentToCommentTxId === '') {
-        commentListData.unshift(item)
-      } else {
-        const index = commentListData.findIndex(
-          (_item: any) => _item.txId === addComment.commentToCommentTxId
-        )
-        if (index !== -1) {
-          commentListData[index].push(item)
-        }
-      }
-      list[0]!.comment.unshift({
-        metaId: userStore.user!.metaId!,
-        timestamp: dataParams.createTime,
-        txId: res.currentNode!.txId,
-        userName: userStore.user!.name!,
-        value: payAmount,
-      })
-      addComment.content = ''
-      ElMessage.success(i18n.t('Buzz.comment.success'))
-      loading.value = false
-      // isShowAddCommentWarp.value = false
-    } else {
-      loading.value = false
-    }
-  } catch (error) {
-    loading.value = false
-    ElMessage.error((error as any).message)
+  BuzzListRef.value.currentTxId = list[0].txId
+  BuzzListRef.value.comment = comment.value
+  BuzzListRef.value.replayMsg.val = {
+    username: list[0].userName,
+    userAddress: list[0].zeroAddress,
+    commentTo: list[0].txId,
+    replyTo: '',
   }
+  await BuzzListRef.value.replay().catch(() => {
+    loading.value = false
+  })
+  comment.value = ''
+  loading.value = false
 }
 
 function replyComment(params: { txId: string; username: string; userAddress: string }) {

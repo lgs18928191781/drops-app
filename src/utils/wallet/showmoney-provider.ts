@@ -392,8 +392,13 @@ export default class ShowmoneyProvider {
           data: JSON.stringify({ xpub, parentTxId, count }),
         })
         .catch(error => reject(error))
-      if (res.code === 200) {
+      if (res?.code === 200) {
         resolve(res.result.data)
+      } else {
+        reject({
+          code: res.code,
+          message: res.error,
+        })
       }
     })
   }
