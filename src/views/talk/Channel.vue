@@ -26,6 +26,8 @@
     <LoadingCover v-if="layout.isShowLoading" />
     <RedPacketOpenModal v-if="layout.isShowRedPacketOpenModal" />
     <RedPacketCreateModal v-if="layout.isShowRedPacketModal" />
+    <ShareToBuzzModal v-if="layout.isShowShareToBuzzModal" />
+    <ShareSuccessModal v-if="layout.isShowShareSuccessModal" />
   </div>
 </template>
 
@@ -34,16 +36,18 @@ import ChannelHeader from './components/ChannelHeader.vue'
 import CommunityInfo from './components/CommunityInfo.vue'
 import ChannelMemberList from './components/ChannelMemberList.vue'
 import DragonBall from './components/DragonBall.vue'
-import { onBeforeUnmount } from 'vue'
+import { onBeforeUnmount, watch } from 'vue'
 import { useTalkStore } from '@/stores/talk'
 import { useRoute } from 'vue-router'
 import { useLayoutStore } from '@/stores/layout'
 import PasswordModal from './components/modals/consensus/Password.vue'
 import RequireNftModal from './components/modals/consensus/RequireNft.vue'
-import InviteModal from './components/modals/InviteModal.vue'
-import AcceptInviteModal from './components/modals/AcceptInviteModal.vue'
 import RedPacketOpenModal from './components/modals/red-packet/Open.vue'
 import RedPacketCreateModal from './components/modals/red-packet/Create.vue'
+import AcceptInviteModal from './components/modals/invite/Accept.vue'
+import InviteModal from './components/modals/invite/Invite.vue'
+import ShareToBuzzModal from './components/modals/invite/ShareToBuzz.vue'
+import ShareSuccessModal from './components/modals/invite/ShareSuccess.vue'
 
 import LoadingCover from './components/modals/LoadingCover.vue'
 
@@ -53,7 +57,24 @@ const layout = useLayoutStore()
 
 const { communityId } = route.params
 
-talk.initCommunity(communityId as string)
+talk.checkMembership(communityId as string).then(async (isMember: boolean) => {
+  if (!isMember) {
+    await talk.invite(communityId as string)
+    return
+  }
+
+  talk.initCommunity(communityId as string)
+})
+
+watch(
+  () => talk.communityStatus,
+  async (status: string) => {
+    if (status === 'invited') {
+      await talk.initCommunity(communityId as string)
+    }
+  },
+  { immediate: true }
+)
 
 onBeforeUnmount(() => {
   talk.saveReadPointers()

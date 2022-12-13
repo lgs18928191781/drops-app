@@ -27,7 +27,7 @@ const tryInitChannel = async (status: string) => {
   if (status !== 'ready') return
 
   const initChannelStatus = await talk.initChannel(communityId as string, channelId as string)
-  if (['redirect', 'pending'].includes(initChannelStatus)) return
+  if (['redirect'].includes(initChannelStatus)) return
 
   const selfMetaId = talk.selfMetaId
   // 重置频道凭证

@@ -46,7 +46,9 @@
       </div>
     </div>
     <div class="flex flex-row-reverse items-center justify-between grow">
-      <LoginedUserOperate class="shrink-0" />
+      <div class="shrink-0 flex">
+        <LoginedUserOperate />
+      </div>
 
       <div
         class="text-xs text-dark-300 dark:text-gray-400 bg-dark-100 dark:bg-gray-800 px-3 py-1 ml-1 rounded  hidden lg:block"

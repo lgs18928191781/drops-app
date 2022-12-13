@@ -33,7 +33,9 @@
       <!-- 占位 -->
       <div v-else class="w-1"></div>
 
-      <LoginedUserOperate />
+      <div class="shrink-0 flex">
+        <LoginedUserOperate />
+      </div>
     </div>
   </div>
 </template>

@@ -46,6 +46,13 @@ export const getCommunityAuth = async (communityId: string): Promise<CommunityAu
   return TalkApi.get(`/community/${communityId}/auth/info`).then(res => res.data)
 }
 
+export const getCommunityMembership = async (communityId: string, metaId: string): Promise<any> => {
+  const query = new URLSearchParams({ metaId }).toString()
+  return TalkApi.get(`/community/${communityId}/person/info?${query}`).then(res => {
+    return Boolean(res.data.communityState)
+  })
+}
+
 export const getAtMeChannels = async (params?: any): Promise<any> => {
   params = params || {}
   const metaId = params.metaId

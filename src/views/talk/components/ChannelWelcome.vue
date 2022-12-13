@@ -3,9 +3,7 @@
     <h3 class="text-xl lg:text-2xl text-dark-800 dark:text-gray-100 capitalize font-thin">
       {{ $t('Talk.Channel.welcome') }}
     </h3>
-    <h3
-      class="text-2xl lg:text-3xl text-dark-800 dark:text-gray-100 capitalize mt-1 font-medium text-center"
-    >
+    <h3 class="text-2xl lg:text-3xl capitalize mt-1 meta-name text-center">
       {{ talk.activeCommunity?.name }}
     </h3>
 
