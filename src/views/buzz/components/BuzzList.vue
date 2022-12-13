@@ -289,22 +289,33 @@ async function onFollow(
   txId: string,
   params: { resolve: (txId?: string) => void; reject: (resan: any) => any }
 ) {
-  const index = props.list.findIndex(item => item.txId === txId)
+  let isQuoteItem = false
+  let index = props.list.findIndex(item => item.txId === txId)
+  if (index === -1) {
+    index = props.list.findIndex(item => item.quoteItem && item.quoteItem.txId === txId)
+    if (index !== -1) {
+      isQuoteItem = true
+    } else {
+      return new Error('txId not found')
+    }
+  }
+  const target = isQuoteItem ? props.list[index].quoteItem : props.list[index]
+
   const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
   const res = await userStore.showWallet
     .createBrfcChildNode({
       nodeName: NodeName.PayFollow,
       data: JSON.stringify({
         createTime: new Date().getTime(),
-        MetaID: props.list[index].metaId,
+        MetaID: target.metaId,
         pay: payAmount,
-        payTo: props.list[index].zeroAddress,
+        payTo: target.zeroAddress,
       }),
-      payTo: [{ amount: payAmount, address: props.list[index].zeroAddress }],
+      payTo: [{ amount: payAmount, address: target.zeroAddress }],
     })
     .catch(error => params.reject(error))
   if (res) {
-    props.list[index].isMyFollow = true
+    target.isMyFollow = true
     emit('update:list', props.list)
     params.resolve(res.currentNode.txId)
   } else {

@@ -50,41 +50,16 @@
         </div>
       </div>
       <div class="content">
-        <!-- text -->
-        <div
-          class="text content-item"
-          v-html="
-            displayItemData.content
-              .replace(/\\n/g, '\n')
-              .replace(
-                /#.*?[\s\n\r#]{1}|#.*?$/g,
-                val =>
-                  `<a href='/buzz/topic/${val
-                    .replace('#', '')
-                    .replace(/(^\s*)|(\s*$)/g, '')}' style='color:#fc6d5e' >${val}</a>&nbsp;`
-              )
-          "
-        ></div>
-
-        <!-- Attachment -->
-        <div
-          class="content-item"
-          v-if="displayItemData.attachments && displayItemData.attachments.length > 0"
-        >
-          <Attachment
-            :attachments="displayItemData.attachments"
-            :playFile="playFile"
-            @play="params => emit('play', params)"
+        <template v-if="displayItemData.protocol === 'metanote'">
+          <BuzzItemContentMetaNoteVue :buzz="displayItemData" />
+        </template>
+        <template v-else>
+          <BuzzItemContentNormalVue
+            :buzz="data!"
+            :play-file="playFile"
+            @play="val => emit('play', val)"
           />
-        </div>
-
-        <!-- 引用buzz -->
-        <div
-          class="content-item"
-          v-if="itemData.quoteItem && itemData.displayType !== 'quickRePost'"
-        >
-          <QuoteVue :buzz="itemData.quoteItem" />
-        </div>
+        </template>
 
         <!-- 标签 -->
         <div class="tags flex flex-align-center">
@@ -140,6 +115,8 @@ import ShareIcon from '@/assets/svg/share.svg'
 import { useUserStore } from '@/stores/user'
 import { Loading } from '@element-plus/icons-vue'
 import { useI18n } from 'vue-i18n'
+import BuzzItemContentNormalVue from './BuzzItemContentNormal.vue'
+import BuzzItemContentMetaNoteVue from './BuzzItemContentMetaNote.vue'
 
 interface Props {
   data?: BuzzItem

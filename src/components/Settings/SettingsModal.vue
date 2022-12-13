@@ -22,7 +22,11 @@
     </header>
 
     <div class="list">
-      <div class="item flex flex-align-center" @click="isShowEditProfile = true">
+      <div
+        class="item flex flex-align-center"
+        @click="isShowEditProfile = true"
+        v-if="userStore.isAuthorized"
+      >
         <span class="icon-warp flex flex-align-center flex-pack-center">
           <UserAvatar :meta-id="userStore.user!.metaId" :image="userStore.user!.avatarImage" />
         </span>
@@ -45,13 +49,13 @@
     </div>
 
     <!-- EditProfile -->
-    <EditProfileVue v-model="isShowEditProfile" />
+    <EditProfileVue v-model="isShowEditProfile" v-if="userStore.isAuthorized" />
     <!-- UplinkSettingVue -->
-    <UplinkSettingVue v-model="list[0].visible" />
+    <UplinkSettingVue v-model="isShowUploadLinkSet" />
     <!-- Language -->
-    <LanguageVue v-model="list[1].visible" />
+    <LanguageVue v-model="isShowLangSet" />
     <!-- Theme -->
-    <ThemeVue v-model="list[2].visible" />
+    <ThemeVue v-model="isShowThemeSet" />
   </ElDrawer>
   <!-- <div
     class="fixed inset-0 h-screen w-screen z-[60] bg-dark-100 flex justify-center items-center select-none"
@@ -140,7 +144,7 @@
 import FlagEn from '@/assets/images/flag_en.png?url'
 import FlagCn from '@/assets/images/flag_cn.png?url'
 import { useI18n } from 'vue-i18n'
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useUserStore } from '@/stores/user'
 import EditProfileVue from './EditProfile.vue'
 import UplinkSettingVue from './UplinkSetting.vue'
@@ -156,6 +160,9 @@ const emit = defineEmits(['update:modelValue'])
 const i18n = useI18n()
 const userStore = useUserStore()
 const isShowEditProfile = ref(false)
+const isShowLangSet = ref(false)
+const isShowThemeSet = ref(false)
+const isShowUploadLinkSet = ref(false)
 
 const switchLanguage = (lang: string) => {
   i18n.locale.value = lang
@@ -163,41 +170,44 @@ const switchLanguage = (lang: string) => {
   localStorage.setItem('lang', lang)
 }
 
-const list = reactive([
-  {
-    name: i18n.t('Setting.Uplink settings'),
-    icon: 'link',
-    value: () => {
-      return ''
+const list = computed(() => {
+  const result = [
+    {
+      name: i18n.t('Setting.Language'),
+      icon: 'i18n',
+      value: () => {
+        return i18n.locale.value.toUpperCase()
+      },
+      fun: function() {
+        isShowLangSet.value = true
+      },
     },
-    visible: false,
-    fun: function() {
-      this.visible = true
+    {
+      name: i18n.t('Setting.Theme'),
+      icon: 'theme',
+      value: () => {
+        return localStorage.theme === 'dark' ? 'Dark' : 'Light'
+      },
+      fun: function() {
+        isShowThemeSet.value = true
+      },
     },
-  },
-  {
-    name: i18n.t('Setting.Language'),
-    icon: 'i18n',
-    value: () => {
-      return i18n.locale.value.toUpperCase()
-    },
-    visible: false,
-    fun: function() {
-      this.visible = true
-    },
-  },
-  {
-    name: i18n.t('Setting.Theme'),
-    icon: 'theme',
-    value: () => {
-      return localStorage.theme === 'dark' ? 'Dark' : 'Light'
-    },
-    visible: false,
-    fun: function() {
-      this.visible = true
-    },
-  },
-])
+  ]
+  if (userStore.isAuthorized) {
+    result.unshift({
+      name: i18n.t('Setting.Uplink settings'),
+      icon: 'link',
+      value: () => {
+        return ''
+      },
+      fun: function() {
+        isShowUploadLinkSet.value = true
+      },
+    })
+  }
+
+  return result
+})
 
 const currentLanguage = ref(i18n.locale.value)
 </script>

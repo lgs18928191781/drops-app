@@ -110,3 +110,38 @@ declare interface BuzzInteractiveItem {
   subInteractiveItem: BuzzInteractiveItem[]
   commentTo?: string
 }
+
+declare interface MetaNoteItem {
+  txId: string
+  metaId: string
+  metanetId: string
+  zeroAddress: string
+  address: string
+  publicKey: string
+  name: string
+  avatarTxId: string
+  avatarImage: string
+  avatarType: string
+  isPrivate: string
+  title: string
+  content: string
+  contentType: string
+  metaNoteCreateTime: string
+  isTop: string
+  folderId: string
+  folderName: string
+  tags: string[]
+  attachments: string[]
+  headImg: string
+  encrypt: string
+  version: string
+  dataType: string
+  encoding: string
+  isValid: boolean
+  isNew: boolean
+  blockHeight: number
+  confirmState: number
+  timestamp: number
+  likeCount: number
+  hasLike: boolean
+}

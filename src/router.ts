@@ -14,7 +14,7 @@ export const router = createRouter({
       path: '/buzz',
       name: 'buzz',
       component: () => import('@/views/buzz/Layout.vue'),
-      meta: { keepAlive: true },
+      // meta: { keepAlive: true },
       redirect: () => {
         const userStroe = useUserStore()
         if (userStroe.isAuthorized) {

@@ -15,30 +15,6 @@
       >
         <Icon name="wallet_fill" />
       </a>
-
-      <!-- 更多操作 -->
-      <ElDropdown trigger="click" @visible-change="isShowUserMenu = !isShowUserMenu">
-        <a
-          class="more flex flex-align-center flex-pack-center user-warp-item"
-          :class="{ active: isShowUserMenu }"
-        >
-          <Icon :name="isShowUserMenu ? 'x_mark' : 'more'" />
-        </a>
-        <template #dropdown>
-          <ElDropdownMenu>
-            <ElDropdownItem v-for="(item, index) in userOperates" :key="index" @click="item.func()">
-              <div class="flex flex-align-center user-operate-item">
-                <Icon :name="item.icon" />
-                <span class="name">{{ item.name }}</span>
-              </div>
-            </ElDropdownItem>
-          </ElDropdownMenu>
-        </template>
-      </ElDropdown>
-
-      <Teleport to="body">
-        <SettingsModalVue v-model="layout.isShowSettingsModal" />
-      </Teleport>
     </div>
   </template>
   <template v-else>
@@ -48,6 +24,30 @@
       >{{ $t('Login.connectWallet') }}</a
     >
   </template>
+
+  <!-- 更多操作 -->
+  <ElDropdown trigger="click" @visible-change="val => (isShowUserMenu = val)">
+    <a
+      class="more flex flex-align-center flex-pack-center user-warp-item"
+      :class="{ active: isShowUserMenu }"
+    >
+      <Icon :name="isShowUserMenu ? 'x_mark' : 'more'" />
+    </a>
+    <template #dropdown>
+      <ElDropdownMenu>
+        <ElDropdownItem v-for="(item, index) in userOperates" :key="index" @click="item.func()">
+          <div class="flex flex-align-center user-operate-item">
+            <Icon :name="item.icon" />
+            <span class="name">{{ item.name }}</span>
+          </div>
+        </ElDropdownItem>
+      </ElDropdownMenu>
+    </template>
+  </ElDropdown>
+
+  <Teleport to="body">
+    <SettingsModalVue v-model="layout.isShowSettingsModal" />
+  </Teleport>
 
   <!-- wallet -->
   <ElDrawer
@@ -342,39 +342,43 @@ const isShowUserMenu = ref(false)
 const pagination = reactive({ ...initPagination })
 const isDestroyShowWallet = ref(false)
 
-const userOperates = [
-  {
-    name: i18n.t('UserOperate.createGropp'),
-    icon: 'plus_circle',
-    func: () => {},
-  },
-  {
-    name: i18n.t('UserOperate.settings'),
-    icon: 'setting',
-    func: () => {
-      layout.isShowSettingsModal = true
+const userOperates = computed(() => {
+  const result = [
+    {
+      name: i18n.t('UserOperate.settings'),
+      icon: 'setting',
+      func: () => {
+        layout.isShowSettingsModal = true
+      },
     },
-  },
-  {
-    name: i18n.t('UserOperate.aboutShow'),
-    icon: 'plus_circle',
-    func: () => {},
-  },
-  {
-    name: i18n.t('UserOperate.help'),
-    icon: 'question_circle',
-    func: () => {},
-  },
-  {
-    name: i18n.t('UserOperate.logout'),
-    icon: 'logout',
-    func: () => {
-      userStore.logout(route).then(() => {
-        isShowUserMenu.value = false
-      })
+    {
+      name: i18n.t('UserOperate.aboutShow'),
+      icon: 'plus_circle',
+      func: () => {},
     },
-  },
-]
+    {
+      name: i18n.t('UserOperate.help'),
+      icon: 'question_circle',
+      func: () => {},
+    },
+  ]
+  if (userStore.isAuthorized) {
+    result.unshift({
+      name: i18n.t('UserOperate.createGropp'),
+      icon: 'plus_circle',
+      func: () => {},
+    })
+    result.push({
+      name: i18n.t('UserOperate.logout'),
+      icon: 'logout',
+      func: () => {
+        userStore.logout(route)
+      },
+    })
+  }
+
+  return result
+})
 const isShowWallet = ref(false)
 
 const isShowChains = ref(false)

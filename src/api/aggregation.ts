@@ -479,3 +479,16 @@ export const GetBuzzInteractive = (params: {
     },
   })
 }
+
+export const GetMetaNote = (params: {
+  txId: string
+  metaId?: string
+}): Promise<{
+  code: number
+  data: MetaNoteItem
+}> => {
+  const { txId, ..._params } = params
+  return aggregation.get(`/v2/app/metaNote/getOneMetaNote/${txId}`, {
+    params: _params,
+  })
+}
