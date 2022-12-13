@@ -7,7 +7,7 @@ header {
         width: 26px;
         height: 26px;
         border-radius: 50%;
-        border: 1px solid var(--themeBtnTextColor);
+        border: 1px solid var(--normal-border-color);
         cursor: pointer;
 
         .icon {
@@ -16,11 +16,11 @@ header {
         }
 
         &:hover {
-            background: var(--themeBtnTextColor);
+            background: var(--normal-border-color);
 
             .icon {
                 &:deep(use) {
-                    fill: #fff;
+                    fill: var(--themeBgColor);
                 }
             }
         }
@@ -64,11 +64,11 @@ header {
 
         &:hover {
             .icon-warp {
-                background: var(--themeBtnTextColor);
+                background: var(--themeTextColor);
 
                 .icon {
                     :deep(use) {
-                        fill: #fff;
+                        fill: var(--themeBgColor);
                     }
                 }
             }
