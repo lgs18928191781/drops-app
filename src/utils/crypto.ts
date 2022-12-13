@@ -63,7 +63,7 @@ export function generateSeed(key: string): string {
 
 export function buildCryptoInfo(key: string, net: string): CryptoInfo {
   const seed = generateSeed(key)
-  const hdPrivateKey = mvc.HDPrivateKey.fromSeed(seed, net as string)
+  const hdPrivateKey = HDPrivateKey.fromSeed(seed, net as string)
   const privateKey = hdPrivateKey.deriveChild('m/0/0').privateKey
   const publicKey = hdPrivateKey.publicKey
   const address = publicKey.toAddress(net)

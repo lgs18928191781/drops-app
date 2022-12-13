@@ -122,6 +122,10 @@ watch(
 
 const popInvite = () => {
   talk.inviteLink = `${location.origin}/talk/channels/${talk.activeCommunityId}/${talk.activeChannelId}`
+  talk.invitingChannel = {
+    community: talk.activeCommunity,
+    channel: talk.activeChannel,
+  }
   layout.isShowInviteModal = true
 }
 

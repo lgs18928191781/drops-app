@@ -51,6 +51,7 @@ import { createChannel } from '@/utils/talk'
 import { ShowControl } from '@/enum'
 import BaseModal from './BaseModal.vue'
 import { useRouter } from 'vue-router'
+import { sleep } from '@/utils/util'
 
 const form = useChannelFormStore()
 form.type = GroupChannelType.PublicText
@@ -58,7 +59,6 @@ form.type = GroupChannelType.PublicText
 const userStore = useUserStore()
 const layout = useLayoutStore()
 const talk = useTalkStore()
-const router = useRouter()
 
 const tryCreateChannel = async () => {
   if (!form.isFinished) return
@@ -69,9 +69,8 @@ const tryCreateChannel = async () => {
   layout.isShowLoading = false
   form.reset()
 
-  router.push({
-    path: router.currentRoute.value.fullPath,
-    force: true,
+  sleep(2000).then(() => {
+    talk.refetchChannels()
   })
 }
 </script>

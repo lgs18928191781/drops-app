@@ -30,10 +30,12 @@
               class="flex w-full h-full lg:max-w-screen-sm lg:items-stretch justify-center lg:w-auto relative lg:static lg:h-auto"
             >
               <div class="flex flex-col items-center justify-center group">
-                <div class="w-108 h-15">
+                <div class="w-[95vw] lg:w-108 h-15 flex items-end">
                   <img :src="GiftRibbonImg" al="" />
                 </div>
-                <div class="bg-white rounded-3xl w-[80vw] lg:w-114 h-105 flex flex-col">
+                <div
+                  class="bg-white rounded-3xl w-[80vw] lg:w-114 h-105 flex flex-col dark:shadow-lg dark:shadow-blue-100/30"
+                >
                   <div
                     class="lg:w-114 h-60 bg-gradient-to-tr from-[#CBFDE4] to-[#FCEDCE] rounded-t-3xl shadow-md flex flex-col items-center justify-start overflow-x-hidden group-hover:-skew-x-3 group-hover:shadow-xl duration-300 origin-top"
                   >
@@ -46,7 +48,9 @@
                     <div class="mt-3 text-sm text-dark-300 capitalize">
                       {{ $t('Talk.Modals.red_packet') }}
                     </div>
-                    <div class="text-2xl mt-3 truncate w-full px-6 lg:px-12 text-center">
+                    <div
+                      class="text-2xl mt-3 truncate w-full px-6 lg:px-12 text-center dark:text-dark-800"
+                    >
                       {{ note }}
                     </div>
                   </div>

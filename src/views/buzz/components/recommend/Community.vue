@@ -66,9 +66,12 @@ import CardVue from '@/components/Card/Card.vue'
 import { Loading } from '@element-plus/icons-vue'
 import { NodeName } from '@/enum'
 import { useI18n } from 'vue-i18n'
+import { useTalkStore } from '@/stores/talk'
+import { sleep } from '@/utils/util'
 
 const pagination = reactive({ ...initPagination, pageSize: 4, totalPages: 1 })
 const userStore = useUserStore()
+const talkStore = useTalkStore()
 const i18n = useI18n()
 
 const communitys: recommnedCommunity[] = reactive([])
@@ -106,6 +109,9 @@ async function join(item: recommnedCommunity, index: number) {
       loading[index] = false
     })
   if (res) {
+    sleep(2000).then(() => {
+      talkStore.fetchCommunities()
+    })
     item.isMyJoin = true
     item.memberTotal = item.memberTotal + 1
     ElMessage.success(i18n.t('Join Success'))
