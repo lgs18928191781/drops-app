@@ -40,6 +40,7 @@ import DarkIcon from '@/assets/svg/dark.svg?component'
 import SystemIcon from '@/assets/svg/follow_system.svg?component'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
+import { useRootStore } from '@/stores/root'
 interface Props {
   modelValue: boolean
 }
@@ -47,6 +48,7 @@ const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits(['update:modelValue'])
 const i18n = useI18n()
 const theme = ref(localStorage.theme || 'system')
+const roootStroe = useRootStore()
 
 const themes = [
   {
@@ -66,7 +68,7 @@ const themes = [
   },
 ]
 
-function setTheme(value: string) {
+function setTheme(value: 'light' | 'dark' | 'system') {
   theme.value = value
   switch (value) {
     case 'light':
@@ -86,8 +88,14 @@ function setTheme(value: string) {
 
   if (value === 'system') {
     localStorage.removeItem('theme')
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      roootStroe.$patch({ theme: 'dark' })
+    } else {
+      roootStroe.$patch({ theme: 'light' })
+    }
   } else {
     localStorage.theme = value
+    roootStroe.$patch({ theme: value })
   }
 }
 </script>

@@ -1,0 +1,42 @@
+@import '@/assets/styles/var.scss';
+
+.meta-node-card {}
+
+.el-skeleton {
+    width: 100%;
+    padding: 18px;
+    box-sizing: border-box;
+}
+
+.meta-node {
+    padding: 18px;
+
+    .image {
+        flex: 3;
+        min-width: 0;
+        height: 100px;
+        margin-right: 10px;
+
+        :deep(img) {
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+    }
+
+    .cont {
+        flex: 5;
+        min-width: 0;
+
+        .title {
+            font-size: 18px;
+            @extend %text-ellipsis;
+        }
+
+        .content {
+            font-size: 12px;
+            margin-top: 10px;
+            @include text-many-ellipsis(5);
+        }
+    }
+}

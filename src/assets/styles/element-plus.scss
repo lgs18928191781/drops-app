@@ -95,8 +95,8 @@ html.dark {
 }
 
 .el-input {
-    --el-input-hover-border: var(--themeBtnTextColor);
-    --el-input-focus-border-color: var(--themeBtnTextColor);
+    --el-input-hover-border: var(--themeTextColor);
+    --el-input-focus-border-color: var(--themeTextColor);
     --el-input-height: 56px;
     --el-input-border-radius: var(--el-border-radius-big);
 
@@ -110,8 +110,8 @@ html.dark {
         padding: 0 12px;
 
         &.is-focus {
-            border-color: var(--themeBtnTextColor) !important;
-            box-shadow: 3px 3px 0 var(--themeBtnTextColor) !important;
+            border-color: var(--themeTextColor) !important;
+            box-shadow: 3px 3px 0 var(--themeTextColor) !important;
         }
     }
 
@@ -125,8 +125,8 @@ html.dark {
     &.is-success {
         .el-input {
             .el-input__wrapper {
-                border-color: var(--themeBtnTextColor);
-                box-shadow: 3px 3px 0 var(--themeBtnTextColor);
+                border-color: var(--themeTextColor);
+                box-shadow: 3px 3px 0 var(--themeTextColor);
             }
         }
     }
