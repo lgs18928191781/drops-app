@@ -71,6 +71,36 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   return { communityId }
 }
 
+export const sendInviteBuzz = async (form: any, sdk: SDK) => {
+  // shareProtocol, shareId, shareIdType, shareFromMetaID, shareContent, shareContentType, mention
+  const shareProtocol = NodeName.SimpleGroupCreate
+  const shareId = `${form.community.communityId}/${form.channel.groupId}`
+  const shareIdType = 'communityId/channelId'
+  const shareFromMetaID = form.community.metaId
+  const shareContent = form.text
+  const shareContentType = 'text/plain'
+  const dataCarrier = {
+    shareProtocol,
+    shareId,
+    shareIdType,
+    shareFromMetaID,
+    shareContent,
+    shareContentType,
+  }
+
+  console.log({ form, dataCarrier })
+  // 2. 构建节点参数
+  const node = {
+    nodeName: NodeName.SimplePublicShare,
+    data: JSON.stringify(dataCarrier),
+  }
+
+  // 3. 发送节点
+  const res = await sdk.createBrfcChildNode(node)
+  const txId = res?.currentNode?.txId
+  return { txId }
+}
+
 const _putIntoRedPackets = (amount: number, quantity: number, address: string): any[] => {
   // 构建🧧数量：随机将红包金额分成指定数量个小红包；指定最小系数为平均值的0.2倍，最大系数为平均值的1.8倍
   const minFactor = 0.2

@@ -73,7 +73,14 @@
       "confirm": "OK",
       "loading": "Loading...",
       "choose_meta_name": "Choose MetaName",
-      "no_meta_name_available": "No MetaName available"
+      "no_meta_name_available": "No MetaName available",
+      "share_invite_link_tip": "Send a community invite link to a friend",
+      "share_to_buzz_tip": "Or, share it via a buzz!",
+      "share_to_buzz_button": "Share to Buzz",
+      "share_to_buzz_title": "Share to Buzz",
+      "share_successfully": "Buzzed!",
+      "share_successfully_tip": "Your buzz has been shared successfully.",
+      "go_check_out": "Check it out!"
     },
     "Channel": {
       "members": "members",

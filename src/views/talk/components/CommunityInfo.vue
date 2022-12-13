@@ -40,9 +40,7 @@
                 class="w-full mt-4 flex items-center space-x-2"
                 :title="talk.activeCommunity?.name"
               >
-                <span class="text-lg meta-name tracking-wider truncate">{{
-                  talk.activeCommunity?.name
-                }}</span>
+                <span class="text-lg meta-name truncate">{{ talk.activeCommunity?.name }}</span>
                 <div
                   class="p-1 bg-gradient-to-tr from-[#F700FB] to-[#FFC051] rounded-sm leading-none text-center flex items-center justify-center shrink-0"
                 >
@@ -152,7 +150,7 @@
                     </div>
 
                     <button
-                      class="hover:text-dark-800 dark:text-gray-100 text-dark-300 dark:text-gray-400 cursor-copy"
+                      class="hover:text-dark-800 dark:hover:text-gray-100 text-dark-300 dark:text-gray-400"
                       :class="[
                         channel.id === talk.activeChannelId ? '' : 'hidden group-hover:!block',
                       ]"
@@ -219,7 +217,7 @@
                       {{ channel.name }}
                     </div>
                     <button
-                      class="hover:text-dark-800 dark:text-gray-100 text-dark-300 dark:text-gray-400 cursor-copy"
+                      class="hover:text-dark-800 dark:hover:text-gray-100 text-dark-300 dark:text-gray-400"
                       :class="[
                         channel.id === talk.activeChannelId ? '' : 'hidden group-hover:!block',
                       ]"
@@ -256,6 +254,10 @@ const talk = useTalkStore()
 
 const popInvite = (channelId: string) => {
   talk.inviteLink = `${location.origin}/talk/channels/${talk.activeCommunityId}/${channelId}`
+  talk.invitingChannel = {
+    community: talk.activeCommunity,
+    channel: talk.activeCommunityChannels.find(c => c.id === channelId),
+  }
   layout.isShowInviteModal = true
 }
 

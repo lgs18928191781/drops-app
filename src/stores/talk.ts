@@ -2,7 +2,9 @@ import {
   getAtMeChannels,
   getChannelMessages,
   getChannels,
+  getCommunities,
   getCommunityMembers,
+  getCommunityMembership,
   getOneCommunity,
 } from '@/api/talk'
 import { ChannelPublicityType, ChannelType, GroupChannelType } from '@/enum'
@@ -36,9 +38,13 @@ export const useTalkStore = defineStore('talk', {
 
       hasActiveChannelConsent: false, // 是否持有当前频道的共识
 
-      communityStatus: 'loading',
+      communityStatus: 'loading', // loading, inviting, invited, ready
 
       inviteLink: '', // 邀请链接
+      invitingChannel: null as any, // 邀请的频道
+      invitedCommunity: null as any, // 受邀请的社区
+      shareToBuzzTxId: '', // 分享到Buzz的TxId
+
       consensualNft: null as any,
       consensualFt: null as any,
     }
@@ -197,82 +203,60 @@ export const useTalkStore = defineStore('talk', {
   },
 
   actions: {
+    async fetchCommunities() {
+      if (!this.selfMetaId) return
+
+      const communities = await getCommunities({ metaId: this.selfMetaId })
+      this.communities = [...communities, this.atMeCommunity]
+    },
+
+    async checkMembership(routeCommunityId: string) {
+      const selfMetaId = this.selfMetaId
+
+      return await getCommunityMembership(routeCommunityId, selfMetaId)
+    },
+
+    async invite(routeCommunityId: string) {
+      const layout = useLayoutStore()
+      this.invitedCommunity = await getOneCommunity(routeCommunityId)
+      layout.isShowAcceptInviteModal = true
+      this.communityStatus = 'inviting'
+
+      return
+    },
+
     async initCommunity(routeCommunityId: string) {
       this.communityStatus = 'loading'
       const isAtMe = routeCommunityId === '@me'
-      const layout = useLayoutStore()
+      this.activeCommunityId = routeCommunityId
+      this.members = isAtMe ? [] : await getCommunityMembers(routeCommunityId)
 
-      if (routeCommunityId && routeCommunityId !== this.activeCommunityId) {
-        this.members = []
-        if (!isAtMe) {
-          this.members = await getCommunityMembers(routeCommunityId)
-        }
+      const fetchChannels = async () => {
+        const channels = isAtMe
+          ? await getAtMeChannels({
+              metaId: this.selfMetaId,
+            })
+          : await getChannels({
+              communityId: routeCommunityId,
+            })
 
-        this.activeCommunityId = routeCommunityId
+        this.activeCommunity.channels = channels
 
-        // 判断是否已是社区成员，如果不是，则尝试加入
-        if (!isAtMe) {
-          const isMember = this.members.some((member: any) => member.metaId === this.selfMetaId)
-          if (!isMember) {
-            // 拉取单个社区信息
-            const find = this.communities.find(
-              (community: any) => community.id === routeCommunityId
-            )
-            if (!find) {
-              const invitingCommunity = await getOneCommunity(routeCommunityId)
-              this.communities.push(invitingCommunity)
-            }
-
-            layout.isShowAcceptInviteModal = true
-
-            this.communityStatus = 'pending'
-            return
-          }
-        }
-
-        const fetchChannels = async () => {
-          const channels = isAtMe
-            ? await getAtMeChannels({
-                metaId: this.selfMetaId,
-              })
-            : await getChannels({
-                communityId: routeCommunityId,
-              })
-
-          this.activeCommunity.channels = channels
-
-          // 写入存储
-          this.initCommunityChannelIds()
-          // 只保存频道id
-          const channelIds = channels.map((channel: any) => channel.id)
-          this.communityChannelIds[routeCommunityId] = channelIds
-          localStorage.setItem(
-            'communityChannels-' + this.selfMetaId,
-            JSON.stringify(this.communityChannelIds)
-          )
-        }
-        await fetchChannels()
+        // 写入存储
+        this.initCommunityChannelIds()
+        // 只保存频道id
+        const channelIds = channels.map((channel: any) => channel.id)
+        this.communityChannelIds[routeCommunityId] = channelIds
+        localStorage.setItem(
+          'communityChannels-' + this.selfMetaId,
+          JSON.stringify(this.communityChannelIds)
+        )
       }
+      await fetchChannels()
 
       this.updateReadPointers()
 
-      // 判断是否已是社区成员，如果不是，则尝试加入
-      if (!isAtMe) {
-        const isMember = this.members.some((member: any) => member.metaId === this.selfMetaId)
-        if (!isMember) {
-          // 拉取单个社区信息
-          const invitingCommunity = await getOneCommunity(routeCommunityId)
-          this.communities.push(invitingCommunity)
-
-          layout.isShowAcceptInviteModal = true
-
-          this.communityStatus = 'pending'
-          return
-        }
-      }
-
       this.communityStatus = 'ready'
-      // layout.isShowAcceptInviteModal = true
       return
     },
 
@@ -662,6 +646,7 @@ export const useTalkStore = defineStore('talk', {
       this.communityChannelIds = null
       this.hasActiveChannelConsent = false
       this.inviteLink = ''
+      this.invitingChannel = null
     },
 
     resetCurrentChannel() {

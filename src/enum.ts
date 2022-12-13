@@ -280,6 +280,7 @@ export enum NodeName {
   FtIssue = 'FtIssue',
   SimpleRedEnvelope = 'SimpleRedEnvelope',
   OpenRedenvelope = 'OpenRedenvelope',
+  SimplePublicShare = 'SimplePublicShare',
   Name = 'name',
 }
 
@@ -341,5 +342,7 @@ export enum ShowControl {
   isShowInviteModal = 'isShowInviteModal',
   isShowAcceptInviteModal = 'isShowAcceptInviteModal',
   isShowChooseMetaNameModal = 'isShowChooseMetaNameModal',
+  isShowShareToBuzzModal = 'isShowShareToBuzzModal',
+  isShowShareSuccessModal = 'isShowShareSuccessModal',
   never = 'never',
 }

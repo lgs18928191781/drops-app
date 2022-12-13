@@ -148,7 +148,11 @@ export const AllNodeName: {
     path: '/Protocols/SimpleRedEnvelope',
     version: '1.0.2',
   },
-
+  [NodeName.SimplePublicShare]: {
+    brfcId: 'ba9478837e9a',
+    path: '/Protocols/SimplePublicShare',
+    version: '1.0.0',
+  },
   [NodeName.OpenRedenvelope]: {
     brfcId: 'bf90aa3b2d1c',
     path: '/Protocols/OpenRedenvelope',

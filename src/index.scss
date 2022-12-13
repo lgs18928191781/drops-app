@@ -245,6 +245,11 @@ pre {
     background: var(--el-color-primary);
   }
 
+  .dark &.primary {
+    --border-color: var(--primary-border-color);
+    color: var(--normal-border-color);
+  }
+
   // 褪色边框
   &.faded {
     --border-color: var(--faded-border-color);
