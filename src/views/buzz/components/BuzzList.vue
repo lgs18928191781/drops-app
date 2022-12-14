@@ -154,7 +154,6 @@ const operates: {
       fun: async () => {
         operateLoading.value = true
         try {
-          debugger
           let isQuoteItem = false
           const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
           let index = props.list.findIndex(item => item.txId === currentTxId.value)
