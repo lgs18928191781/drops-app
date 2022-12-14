@@ -36,8 +36,8 @@
         .content {
             font-size: 12px;
             margin-top: 10px;
-            @include text-many-ellipsis(3);
-            line-height: 16px;
+            @include text-many-ellipsis(2);
+            line-height: 20px;
             color: var(--faded-border-color);
         }
 
