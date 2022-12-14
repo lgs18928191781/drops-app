@@ -76,8 +76,8 @@ function getDatas(isCover = false) {
       metaId: userStore.user?.metaId,
     })
     if (res.code === 0) {
-      if (isCover) list.length = 0
-      list.push(...res.data.results.items)
+      if (isCover) list.val.length = 0
+      list.val.push(...res.data.results.items)
 
       if (res.data.results.items.length === 0) pagination.nothing = true
       else pagination.nothing = false
