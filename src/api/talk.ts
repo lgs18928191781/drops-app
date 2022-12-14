@@ -49,7 +49,7 @@ export const getCommunityAuth = async (communityId: string): Promise<CommunityAu
 export const getCommunityMembership = async (communityId: string, metaId: string): Promise<any> => {
   const query = new URLSearchParams({ metaId }).toString()
   return TalkApi.get(`/community/${communityId}/person/info?${query}`).then(res => {
-    return Boolean(res.data.communityState)
+    return res.data.communityState !== -1
   })
 }
 

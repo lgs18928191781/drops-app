@@ -248,7 +248,9 @@ export const useTalkStore = defineStore('talk', {
     async checkMembership(routeCommunityId: string) {
       const selfMetaId = this.selfMetaId
 
-      return await getCommunityMembership(routeCommunityId, selfMetaId)
+      const isMember = await getCommunityMembership(routeCommunityId, selfMetaId)
+
+      return isMember
     },
 
     async invite(routeCommunityId: string) {
