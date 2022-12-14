@@ -383,6 +383,7 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
     }
   })
   let res
+
   if (
     getMnemonicRes?.data?.metaId &&
     getMnemonicRes?.data?.registerSource === RegisterSource.metamask
@@ -432,6 +433,7 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
         getMnemonicRes.data.menmonic,
         decode(password)
       )
+
       if (res) {
         await BindMetaIdRef.value.loginSuccess(res)
       }

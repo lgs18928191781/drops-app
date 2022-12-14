@@ -134,6 +134,7 @@ export const useUserStore = defineStore('user', {
     updateUserInfo(userInfo: SetUserInfo) {
       return new Promise<void>(async resolve => {
         const { password, ...data } = userInfo
+
         // 兼容处理
         // @ts-ignore
         if (!data.address && data.rootAddress) {
@@ -147,6 +148,7 @@ export const useUserStore = defineStore('user', {
         }
         // localStorage.setItem('user', JSON.stringify(data))
         // window.localStorage.setItem('password', password)
+
         localStorage.setItem(encode('user'), encode(JSON.stringify(data)))
 
         if (password) {

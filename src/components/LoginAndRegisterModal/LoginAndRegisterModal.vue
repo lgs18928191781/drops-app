@@ -417,6 +417,7 @@ function submitForm() {
                 location.href = 'https://www.showmoney.app/'
               })
             }
+
             // @ts-ignore
             userStore.updateUserInfo({
               ...account,

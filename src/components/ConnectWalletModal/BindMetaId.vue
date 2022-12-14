@@ -322,6 +322,7 @@ function submitForm() {
       try {
         if (status.value == BindStatus.BindHavedMetaId) {
           //绑定metaid用户
+
           res = await bindingMetaidOrAddressLogin()
           res.password = MD5(props.thirdPartyWallet.signAddressHash).toString()
         }
@@ -669,13 +670,14 @@ function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
   })
 }
 
-function loginByMnemonic(mnemonic: string, password: string) {
+function loginByMnemonic(mnemonic: string, password: string, isInitMnemonic = false) {
   return new Promise<BindMetaIdRes>(async (resolve, reject) => {
     try {
       const decodeMnemonic = decryptMnemonic(mnemonic, password)
       const word = await GetRandomWord()
       if (word.code == 0) {
         const hdWallet = await hdWalletFromMnemonic(decodeMnemonic, 'new', Network.testnet)
+
         const sign = signature(
           word.data.word,
           hdWallet
@@ -692,10 +694,12 @@ function loginByMnemonic(mnemonic: string, password: string) {
         if (loginInfo.code == 0) {
           resolve({
             userInfo: Object.assign(loginInfo.data, {
-              enCryptedMnemonic: encryptMnemonic(
-                decodeMnemonic,
-                MD5(props.thirdPartyWallet.signAddressHash).toString()
-              ),
+              enCryptedMnemonic: isInitMnemonic
+                ? encryptMnemonic(
+                    decodeMnemonic,
+                    MD5(props.thirdPartyWallet.signAddressHash).toString()
+                  )
+                : mnemonic,
               userType: loginInfo.data.register || loginInfo.data.registerType,
             }),
             wallet: hdWallet,
@@ -719,6 +723,7 @@ function bindingMetaidOrAddressLogin() {
         phone: numberReg.test(form.account) ? form.account : undefined,
         email: numberReg.test(form.account) ? undefined : form.account,
       }
+
       const resp = await GetMetaIdByLoginName(params)
       if (resp.code === 0) {
         console.log('resp', resp)
@@ -728,7 +733,7 @@ function bindingMetaidOrAddressLogin() {
         // })
         // @ts-ignore
         if (resp.code == 0) {
-          const res = await loginByMnemonic(resp.result.enMnemonic, form.pass)
+          const res = await loginByMnemonic(resp.result.enMnemonic, form.pass, true)
 
           console.log('res', res)
           console.log('userStore', userStore)
