@@ -443,5 +443,9 @@
   "Success": "成功",
   "Replying to": "回复",
   "Reply": "回复",
-  "PayLike": "点赞"
+  "PayLike": "点赞",
+  "Message": "消息",
+  "Following": "正在关注",
+  "Followers": "关注者",
+  "Already on NFT": "NFT"
 }

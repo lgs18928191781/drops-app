@@ -2,6 +2,7 @@
   <!-- text -->
   <div
     class="text content-item"
+    :class="{ quote: isQuote }"
     v-html="
       displayItemData
         ? displayItemData.content
@@ -43,6 +44,7 @@ import QuoteVue from './Quote.vue'
 interface Props {
   buzz: BuzzItem
   playFile?: string
+  isQuote?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits<{

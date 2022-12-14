@@ -1,0 +1,123 @@
+header {
+    position: sticky;
+    left: 0;
+    top: 0;
+    height: var(--header-height);
+    background: var(--themeBgSecondColor);
+    padding: 0 18px;
+    z-index: 10;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    --tw-bg-opacity: 1;
+
+    .phone-content {
+        display: none;
+    }
+
+    .phone-menu {
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+    }
+
+    .dived {
+        height: 20px;
+        width: 1px;
+        background: #eee;
+        margin: 0 15px;
+    }
+
+    .connect-wallet {
+        border-radius: 8px;
+        padding: 8px 15px;
+        cursor: pointer;
+    }
+
+    .buzz-menu {
+        .buzz-menu-item {
+            padding: 10px;
+            position: relative;
+            white-space: nowrap;
+            border-radius: 12px;
+
+            .icon-warp {
+                border: 2px solid var(--themeBtnTextColor);
+                border-radius: calc(100% / 2.5);
+                width: 24px;
+                height: 24px;
+                box-shadow: 3px 3px var(--themeBtnTextColor);
+                margin-right: 10px;
+
+                .icon {
+                    width: 16px;
+                    height: 16px;
+                }
+            }
+
+            &.router-link-active {
+                background: var(--el-color-primary);
+            }
+        }
+    }
+}
+
+.buzz-warp {
+    padding-top: 12px;
+    box-sizing: border-box;
+
+    .buzz-container {
+        position: relative;
+        width: 95%;
+        max-width: 600px;
+        margin: 0 auto;
+
+    }
+
+    .container {
+        position: relative;
+    }
+
+    .fast-btn {
+        position: fixed;
+        bottom: 10%;
+        right: 50%;
+        margin-right: -396px;
+        z-index: 5;
+
+
+
+
+        a {
+            width: 52px;
+            display: block;
+            padding: 14px;
+            margin-bottom: 20px;
+            cursor: pointer;
+
+            &:last-child {
+                margin-bottom: 0;
+                background: #F5F7FA;
+            }
+
+            .icon {
+                width: 20px;
+                height: 20px;
+            }
+        }
+    }
+
+
+}
+
+@media only screen and (max-width: 1024PX) {
+    .buzz-warp .fast-btn {
+        right: 5%;
+        bottom: 5%;
+    }
+
+    header {
+        .phone-content {
+            display: flex;
+        }
+    }
+
+}

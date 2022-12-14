@@ -205,11 +205,13 @@ export const useUserStore = defineStore('user', {
         if (res.data && res.data.code === 0) {
           resolve()
         } else {
+          debugger
           this.logout(route)
           const rootStore = useRootStore()
           ElMessageBox.alert('登录信息过期，请重新登录', '温馨提示', {
             confirmButtonText: '去登录',
           }).then(() => {
+            debugger
             rootStore.$patch({ isShowLogin: true })
           })
           reject(new Error('登录信息过期'))

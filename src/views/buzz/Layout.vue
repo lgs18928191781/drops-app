@@ -1,33 +1,6 @@
 <template>
-  <header class="flex flex-align-center">
-    <div class="flex1">
-      <div class="phone-content flex flex-align-center">
-        <Icon
-          :name="layout.isShowLeftNav ? 'x_mark' : 'bars'"
-          class="phone-menu"
-          @click="layout.$patch({ isShowLeftNav: !layout.isShowLeftNav })"
-        />
-
-        <div class="dived"></div>
-
-        <div class="buzz-menu flex flex-align-center">
-          <router-link
-            :to="item.path"
-            class="buzz-menu-item flex flex-align-center"
-            v-for="(item, index) in menus"
-            :key="index"
-          >
-            <span class="icon-warp flex flex-align-center flex-pack-center">
-              <Icon :name="item.icon" />
-            </span>
-            <span class="name">{{ item.name }}</span>
-          </router-link>
-        </div>
-      </div>
-    </div>
-    <LoginedUserOperateVue />
-  </header>
-  <div class="buzz-warp" ref="BuuzWarpRef">
+  <BuzzWarpVue>
+    <!-- menu -->
     <div class="buzz-menu-warp" ref="MenuRef">
       <div class="buzz-menu">
         <router-link
@@ -44,67 +17,30 @@
       </div>
     </div>
 
-    <div class="buzz-container flex1" ref="BuzzContainerRef">
-      <RouterView v-slot="{ Component, route }">
-        <KeepAlive>
-          <component
-            :is="Component"
-            :key="route.fullPath"
-            v-if="route.meta && route.meta.keepAlive"
-          />
-        </KeepAlive>
+    <!-- router view -->
+    <RouterView v-slot="{ Component, route }">
+      <KeepAlive>
         <component
           :is="Component"
           :key="route.fullPath"
-          v-if="!route.meta || (route.meta && !route.meta.keepAlive)"
+          v-if="route.meta && route.meta.keepAlive"
         />
-      </RouterView>
-    </div>
-
-    <!--   -->
-    <div class="fast-btn" ref="FastBtnRef">
-      <a class="main-border primary" @click="layout.publish()">
-        <Icon name="airdrop" />
-      </a>
-      <a class="main-border" @click="scrollTop">
-        <Icon name="top" />
-      </a>
-    </div>
-    <!--   -->
-  </div>
-
-  <!-- publish -->
-  <PublishVue />
-
-  <!-- <el-container>
-    <el-aside width="200px">
-      <CollapseItem></CollapseItem>
-      <sideLeftBottom></sideLeftBottom>
-    </el-aside>
-    <div class="main">
-      <router-view></router-view>
-    </div>
-    <el-aside width="200px">Aside</el-aside>
-  </el-container> -->
+      </KeepAlive>
+      <component
+        :is="Component"
+        :key="route.fullPath"
+        v-if="!route.meta || (route.meta && !route.meta.keepAlive)"
+      />
+    </RouterView>
+  </BuzzWarpVue>
 </template>
 
 <script setup lang="ts">
-import { KeepAlive, onBeforeUnmount, onMounted, ref, Transition, watch } from 'vue'
-import Header from './components/Header/Header.vue'
-import Footer from './components/Footer/Footer.vue'
-import CollapseItem from '@/components/Collapse/collapse-item.vue'
-import sideLeftBottom from '@/components/Side/side-left-bottom.vue'
-// const isDark = useDark()
-import { useRootStore } from '@/stores/root'
-import { useUserStore } from '@/stores/user'
-import LoginedUserOperateVue from '@/components/LoginedUserOperate/LoginedUserOperate.vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useLayoutStore } from '@/stores/layout'
-import PublishVue from './components/Publish.vue'
+import BuzzWarpVue from './components/BuzzWarp.vue'
 
-const rootStore = useRootStore()
-const userStore = useUserStore()
-const layout = useLayoutStore()
+const MenuRef = ref()
 const i18n = useI18n()
 
 const menus = [
@@ -119,43 +55,6 @@ const menus = [
     path: '/buzz/recommend',
   },
 ]
-
-const BuzzContainerRef = ref()
-const MenuRef = ref()
-const FastBtnRef = ref()
-const BuuzWarpRef = ref()
-
-onMounted(() => {
-  setPosition()
-})
-
-watch(
-  () => BuuzWarpRef.value?.clientWidth,
-  () => {
-    setPosition()
-  }
-)
-
-function setPosition() {
-  setTimeout(() => {
-    MenuRef.value.style.left =
-      BuzzContainerRef.value.offsetLeft - MenuRef.value.clientWidth - 12 + 'px'
-    MenuRef.value.style.marginLeft = 0
-
-    if (window.innerWidth > 750) {
-      FastBtnRef.value.style.left =
-        BuzzContainerRef.value.offsetLeft + BuzzContainerRef.value.clientWidth + 12 + 'px'
-      FastBtnRef.value.style.marginRight = 0
-    } else {
-      FastBtnRef.value.style.right = '5%'
-      FastBtnRef.value.style.marginRight = 0
-    }
-  }, 500)
-}
-
-function scrollTop() {
-  window.document.documentElement.scrollTop = 0
-}
 </script>
 
 <style lang="scss" scoped src="./Layout.scss"></style>

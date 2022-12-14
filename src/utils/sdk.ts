@@ -158,6 +158,11 @@ export const AllNodeName: {
     path: '/Protocols/OpenRedenvelope',
     version: '1.0.1',
   },
+  [NodeName.MetaNote]: {
+    brfcId: '4934f562fc29',
+    path: '/Protocols/metanote',
+    version: '1.0.1',
+  },
 }
 
 export class SDK {
