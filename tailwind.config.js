@@ -65,6 +65,7 @@ module.exports = {
       108: '432PX',
       114: '456PX',
       148: '592PX',
+      210: '840PX',
     },
     fontSize: {
       xxs: ['10PX', '14PX'],

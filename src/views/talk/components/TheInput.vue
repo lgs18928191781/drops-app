@@ -55,7 +55,7 @@
               name="plus_2"
               :class="[
                 open && 'rotate-45',
-                'w-3 h-3 text-dark-800 dark:text-gray-100 transition duration-200',
+                'w-3 h-3 text-dark-800 text-dark-800 transition duration-200',
               ]"
             />
           </div>
@@ -418,7 +418,7 @@ const rows = computed(() => {
   return Math.min(Math.max(rowsCount, 1), 10)
 })
 
-const trySendText = async () => {
+const trySendText = async (e: any) => {
   isSending.value = true
   // 去除首尾空格
   chatInput.value = chatInput.value.trim()

@@ -53,7 +53,7 @@
         effect="light"
         popper-class="text-dark-800 dark:text-dark-200 text-base font-medium py-2 px-4 shadow-md rounded-lg"
         :content="community.name"
-        offset="5"
+        :offset="5"
         placement="right"
         :disabled="isMobile"
         v-for="(community, index) in talk.realCommunities"
@@ -106,7 +106,7 @@ import { useLayoutStore } from '@/stores/layout'
 import { useTalkStore } from '@/stores/talk'
 import { useUserStore } from '@/stores/user'
 import { isMobile } from '@/stores/root'
-import CreateCommunityModal from '@/views/talk/components/modals/CreateCommunityModal.vue'
+import CreateCommunityModal from '@/views/talk/components/modals/community/Create.vue'
 import { onBeforeUnmount, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'

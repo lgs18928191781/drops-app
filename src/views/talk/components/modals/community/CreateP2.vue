@@ -49,7 +49,7 @@
         <button
           class="w-14 h-14 main-border primary flex items-center justify-center  dark:!bg-gray-600"
           :class="{
-            'faded still text-dark-300 dark:text-gray-400 dark:!bg-gray-700': !form.isStep2Finished,
+            'faded still text-dark-300 dark:!text-gray-400 dark:!bg-gray-700': !form.isStep2Finished,
           }"
           :disabled="!form.isStep2Finished"
           @click="$emit('tryCreateCommunity')"

@@ -80,7 +80,16 @@
       "share_to_buzz_title": "Share to Buzz",
       "share_successfully": "Buzzed!",
       "share_successfully_tip": "Your buzz has been shared successfully.",
-      "go_check_out": "Check it out!"
+      "go_check_out": "Check it out!",
+      "community_settings": "Community Settings",
+      "community_settings_overview": "Overview",
+      "reset": "Reset",
+      "save": "Save",
+      "icon": "Icon",
+      "cover": "Cover",
+      "choose_cover_tip": "You can choose one of your NFT covers as your community cover.",
+      "choose_cover": "Choose Cover",
+      "introduction": "Community Introduction"
     },
     "Channel": {
       "members": "members",
