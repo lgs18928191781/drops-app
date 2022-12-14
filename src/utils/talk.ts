@@ -71,6 +71,53 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   return { communityId }
 }
 
+export const updateCommunity = async (form: any, sdk: SDK) => {
+  // communityId, name, description, cover, metaName, mateNameNft, admins, reserved, icon
+  let { icon, description, cover, original } = form
+  const communityId = original.metaName.communityId
+  const reserved = original.metaName.signature
+
+  const attachments = []
+  let iconPlaceholder = original.icon
+  if (icon) {
+    iconPlaceholder = 'metafile://$[0]'
+    attachments.push(await FileToAttachmentItem(icon))
+  }
+
+  let coverPlaceholder = original.cover
+  if (cover) {
+    coverPlaceholder = 'metafile://$[1]'
+    attachments.push(await FileToAttachmentItem(cover))
+  }
+
+  const admins = original.admins
+
+  const dataCarrier = {
+    communityId,
+    name: original.metaName.metaName,
+    metaName: original.metaName.metaName,
+    // metaNameNft: ''
+    icon: iconPlaceholder,
+    admins,
+    description,
+    cover: coverPlaceholder || '',
+    reserved,
+  }
+  console.log({ dataCarrier, form })
+
+  // 2. 构建节点参数
+  const node = {
+    nodeName: NodeName.SimpleCommunity,
+    data: JSON.stringify(dataCarrier),
+    attachments,
+  }
+
+  // 3. 发送节点
+  // await sdk.createBrfcChildNode(node)
+
+  return { communityId }
+}
+
 export const sendInviteBuzz = async (form: any, sdk: SDK) => {
   // shareProtocol, shareId, shareIdType, shareFromMetaID, shareContent, shareContentType, mention
   const shareProtocol = NodeName.SimpleGroupCreate

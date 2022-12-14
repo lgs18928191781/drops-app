@@ -25,11 +25,10 @@
 
           <div class="flex flex-col overflow-x-hidden">
             <!-- 社区封面 -->
-            <div class="w-full aspect-[4/3] mb-1">
+            <div class="w-full aspect-[4/3] mb-1" v-if="talk.activeCommunity?.cover">
               <Image
                 :src="talk.activeCommunity?.cover"
                 :customClass="'object-cover object-center w-full aspect-[4/3]'"
-                v-if="talk.activeCommunity?.cover"
               />
             </div>
 
@@ -77,16 +76,15 @@
                 class="py-8 flex flex-col gap-y-3  border-t border-solid border-dark-200 dark:border-gray-600 pt-4.5 mt-4.5"
               >
                 <!-- 管理频道 -->
-                <!-- <template v-if="talk.isAdmin()"> -->
-                <template v-if="false">
+                <template v-if="talk.isAdmin()">
                   <div class="uppercase text-dark-400 dark:text-gray-200 text-xs">
                     {{ $t('Talk.Community.settings') }}
                   </div>
 
                   <div
-                    class="py-3 px-2 main-border only-bottom cursor-pointer !bg-white relative group mb-4"
+                    class="py-3 px-2 main-border only-bottom cursor-pointer  !bg-white dark:!bg-gray-700 relative group mb-4"
                     :class="'settings' === talk.activeChannelId || 'faded'"
-                    @click="goChannel('settings')"
+                    @click="popSettingsModal()"
                   >
                     <div
                       class="text-dark-800 dark:text-gray-100 text-base font-medium flex items-center"
@@ -124,13 +122,6 @@
                   :class="channel.id === talk.activeChannelId || 'faded'"
                   @click="goChannel(channel.id)"
                 >
-                  <!-- <div
-                    class="absolute left-0 h-full flex items-center top-0"
-                    v-if="talk.hasUnreadMessagesOfChannel(channel.id)"
-                  >
-                    <span class="w-1.5 h-3 bg-dark-250 rounded-r-md"></span>
-                  </div> -->
-
                   <span
                     class="absolute right-0 top-0 h-full flex items-start top-0 bg-red-500 w-2.5 h-2.5 rounded-full -translate-y-1/3 translate-x-1/3"
                     v-if="talk.hasUnreadMessagesOfChannel(channel.id)"
@@ -205,7 +196,10 @@
                     />
                     <div
                       class="text-xxs tracking-tighter italic font-bold min-w-[20PX] text-dark-400 dark:text-gray-200 text-center"
-                      v-if="talk.channelType(channel) == GroupChannelType.NFT"
+                      v-if="
+                        talk.channelType(channel) == GroupChannelType.NFT ||
+                          talk.channelType(channel) == GroupChannelType.ETH_NFT
+                      "
                     >
                       NFT
                     </div>
@@ -248,6 +242,7 @@ import CreateConsensualChannelModal from './modals/CreateConsensualChannelModal.
 import { useLayoutStore } from '@/stores/layout'
 import { useTalkStore } from '@/stores/talk'
 import { GroupChannelType } from '@/enum'
+import { useCommunityUpdateFormStore } from '@/stores/forms'
 
 const router = useRouter()
 
@@ -261,6 +256,13 @@ const popInvite = (channelId: string) => {
     channel: talk.activeCommunityChannels.find(c => c.id === channelId),
   }
   layout.isShowInviteModal = true
+}
+
+const popSettingsModal = () => {
+  const form = useCommunityUpdateFormStore()
+  form.original = talk.activeCommunity
+  form.description = talk.activeCommunity.description
+  layout.isShowCommunitySettingsModal = true
 }
 
 const channelSymbol = (channel: any) => {

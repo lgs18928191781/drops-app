@@ -197,6 +197,7 @@ export class SDK {
       } else {
         try {
           const password = decode(localPassword)
+
           const userInfo: UserInfo = JSON.parse(decode(localUserInfo))
           const walletObj = await hdWalletFromAccount(
             {
@@ -205,7 +206,9 @@ export class SDK {
             },
             this.network
           )
+
           const wallet = new HdWallet(walletObj.wallet)
+
           this.wallet = wallet
           this.isInitSdked = true
           resolve()

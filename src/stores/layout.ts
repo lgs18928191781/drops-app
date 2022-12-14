@@ -18,6 +18,7 @@ export const useLayoutStore = defineStore('layout', {
       isShowShareSuccessModal: false,
       isShowAcceptInviteModal: false,
       isShowMessagesLoading: false,
+      isShowCommunitySettingsModal: false,
       isShowMemberList: true,
       isShowPasswordModal: false,
       isShowRequireNftModal: false,

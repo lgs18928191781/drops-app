@@ -345,5 +345,6 @@ export enum ShowControl {
   isShowChooseMetaNameModal = 'isShowChooseMetaNameModal',
   isShowShareToBuzzModal = 'isShowShareToBuzzModal',
   isShowShareSuccessModal = 'isShowShareSuccessModal',
+  isShowCommunitySettingsModal = 'isShowCommunitySettingsModal',
   never = 'never',
 }

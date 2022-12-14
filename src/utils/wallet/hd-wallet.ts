@@ -290,7 +290,6 @@ export const aesDecrypt = (encryptedStr: string, key: string): string => {
     mode: CBC,
     padding: Pkcs7,
   })
-
   return bytes.toString(Utf8)
 }
 
@@ -1536,8 +1535,9 @@ export class HdWallet {
           protocolsTxId: protocolsTxId,
           protocolType: protocolType,
         })
+
         const protocol = protocols.filter((item: any) => {
-          return item.nodeName === protocolType && item.data === brfcId
+          return item?.nodeName === protocolType && item?.data === brfcId
         })[0]
         if (protocol) {
           const protocolInfo = await this.provider.getXpubLiteAddressInfo(
@@ -1637,6 +1637,7 @@ export class HdWallet {
           params.parentTxId,
           nodeName.brfcId
         )
+
         //  处理根节点
         if (protocol) {
           resolve({

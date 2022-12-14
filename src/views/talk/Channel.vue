@@ -28,6 +28,7 @@
     <RedPacketCreateModal v-if="layout.isShowRedPacketModal" />
     <ShareToBuzzModal v-if="layout.isShowShareToBuzzModal" />
     <ShareSuccessModal v-if="layout.isShowShareSuccessModal" />
+    <CommunitySettingsModal v-if="layout.isShowCommunitySettingsModal" />
   </div>
 </template>
 
@@ -41,6 +42,7 @@ import { useTalkStore } from '@/stores/talk'
 import { useRoute } from 'vue-router'
 import { useLayoutStore } from '@/stores/layout'
 import PasswordModal from './components/modals/consensus/Password.vue'
+import CommunitySettingsModal from './components/modals/community/Settings.vue'
 import RequireNftModal from './components/modals/consensus/RequireNft.vue'
 import RedPacketOpenModal from './components/modals/red-packet/Open.vue'
 import RedPacketCreateModal from './components/modals/red-packet/Create.vue'

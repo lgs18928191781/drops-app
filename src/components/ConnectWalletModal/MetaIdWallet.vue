@@ -664,6 +664,7 @@ function submitForm() {
               }
 
               const hdWallet = new HdWallet(walletInfo.wallet)
+
               // @ts-ignore
               const metaIdInfo = await hdWallet.initMetaIdNode(userInfo)
               if (!metaIdInfo) {

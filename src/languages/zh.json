@@ -120,7 +120,16 @@
       "share_to_buzz_title": "分享到 Buzz",
       "share_successfully": "成功分享",
       "share_successfully_tip": "您的分享 Buzz 已成功发布",
-      "go_check_out": "前往 Buzz 查看"
+      "go_check_out": "前往 Buzz 查看",
+      "community_settings": "社区设置",
+      "community_settings_overview": "概览",
+      "reset": "重置",
+      "save": "保存",
+      "icon": "图标",
+      "cover": "封面",
+      "choose_cover_tip": "从你的封面 NFT 中选择一个作为社区封面",
+      "choose_cover": "选择封面",
+      "introduction": "社区介绍"
     },
     "Channel": {
       "members": "成员",
