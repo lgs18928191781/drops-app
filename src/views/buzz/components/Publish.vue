@@ -297,7 +297,6 @@ function chooseNFT(nft: BaseNFT) {
 }
 
 async function submit() {
-  debugger
   if (content.value === '' && attachments.length <= 0) {
     return ElMessage.error(i18n.t('Buzz.publish.empty'))
   }
