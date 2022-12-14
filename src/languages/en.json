@@ -106,7 +106,8 @@
       },
       "welcome_message": "Welcome to #{channel}!",
       "welcome_start": "This is the start of the #{channel} channel.",
-      "welcome_invite": "Invite your friends to join the channel."
+      "welcome_invite": "Invite your friends to join the channel.",
+      "you_received_a_new_message": "You received a new message"
     },
     "Community": {
       "create": "Create community",

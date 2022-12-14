@@ -11,7 +11,7 @@
       <div class="flex grow">
         <!-- 社区详情栏 -->
         <div
-          class="h-full bg-dark-100 dark:bg-gray-800 grow lg:w-60 flex flex-col justify-between items-stretch relative"
+          class="h-full bg-dark-100 dark:bg-gray-800 grow w-60 flex flex-col justify-between items-stretch relative"
         >
           <button
             class="absolute top-[16PX] right-[16PX] flex items-center justify-center outline-0 z-[90] lg:!hidden"
@@ -23,7 +23,7 @@
             />
           </button>
 
-          <div class="flex flex-col overflow-y-hidden">
+          <div class="flex flex-col overflow-x-hidden">
             <!-- 社区封面 -->
             <div class="w-full aspect-[4/3] mb-1">
               <Image
@@ -119,6 +119,7 @@
 
                 <div
                   v-for="channel in talk.activeCommunityPublicChannels"
+                  :key="channel.id"
                   class="py-3 px-2 main-border only-bottom cursor-pointer !bg-white dark:!bg-gray-700 relative group"
                   :class="channel.id === talk.activeChannelId || 'faded'"
                   @click="goChannel(channel.id)"
@@ -176,6 +177,7 @@
 
                 <div
                   v-for="channel in talk.activeCommunityConsensualChannels"
+                  :key="channel.id"
                   class="py-3 px-2 main-border only-bottom cursor-pointer !bg-white dark:!bg-gray-700 relative group"
                   :class="channel.id === talk.activeChannelId || 'faded'"
                   @click="goChannel(channel.id)"

@@ -36,6 +36,15 @@ export const useCommunityFormStore = defineStore('communityForm', {
       return state.cover ? URL.createObjectURL(state.cover) : ''
     },
   },
+
+  actions: {
+    reset() {
+      this.icon = null
+      this.description = ''
+      this.cover = null
+      this.metaName = null
+    },
+  },
 })
 
 export const useChannelFormStore = defineStore('channelForm', {

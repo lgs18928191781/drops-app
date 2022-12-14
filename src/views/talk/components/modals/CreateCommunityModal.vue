@@ -88,12 +88,14 @@ const tryCreateCommunity = async () => {
 
   // const job = createCommunityJob()
   // jobs.push(job)
+
   layout.isShowCreateCommunityModal = false
   layout.isShowLoading = true
   const { communityId } = await createCommunity(form, userStore, userStore.showWallet)
   await sleep(2000)
   await fetchCommunities()
   layout.isShowLoading = false
+  form.reset()
 
   router.push(`/talk/channels/${communityId}/the-void`)
 

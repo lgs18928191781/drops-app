@@ -36,7 +36,7 @@
 
           <TabGroup as="div" class="mt-2" :selectedIndex="selectedTab" @change="changeTab">
             <TabList class="w-full text-sm flex  font-medium gap-x-3 lg:text-base">
-              <Tab v-for="tab in consentTabs" as="template" v-slot="{ selected }">
+              <Tab v-for="tab in consentTabs" :key="tab.id" as="template" v-slot="{ selected }">
                 <button
                   class="w-full main-border py-3 outline-0 flex items-center justify-center lg:py-4 dark:!bg-gray-600"
                   :class="{ 'faded !bg-white dark:!bg-gray-600': !selected }"
@@ -55,8 +55,8 @@
             </TabList>
 
             <TabPanels class="mt-6 w-full">
-              <TabPanel v-for="tab in consentTabs">
-                <h4 class="text-lg  capitalize font-medium">{{ tab.panelTitle }}</h4>
+              <TabPanel v-for="tab in consentTabs" :key="tab.id">
+                <h4 class="text-lg  capitalize font-medium">{{ tab.name }}</h4>
               </TabPanel>
             </TabPanels>
 
@@ -284,6 +284,7 @@
         <div class="flex flex-col mt-6" v-else-if="nftSeries.length > 0">
           <div
             v-for="nft in nftSeries"
+            :key="nft.nftSeriesName"
             class="flex space-x-3 items-center cursor-pointer hover:bg-dark-100 dark:hover:bg-gray-900 rounded p-2 -mx-2"
             @click="selectNft(nft)"
           >
@@ -309,6 +310,7 @@
         <div class="flex flex-col mt-6" v-if="ftSeries.length > 0">
           <div
             v-for="ft in ftSeries"
+            :key="ft.name"
             class="flex items-center justify-between cursor-pointer hover:bg-dark-100 dark:hover:bg-gray-900 rounded p-2 -mx-2"
             @click="selectFt(ft)"
           >
@@ -403,6 +405,7 @@ const chains = ref([
 const selectedChain = ref(chains.value[0])
 const consentTabs = ref([
   {
+    id: 1,
     name: 'NFT',
     panelTitle: i18n.t('Talk.Community.choose_nft'),
     secondTitle: i18n.t('Talk.Community.choose_nft'),
@@ -410,6 +413,7 @@ const consentTabs = ref([
     buttonText: i18n.t('Talk.Community.choose_nft_as_consent'),
   },
   {
+    id: 2,
     name: 'FT',
     panelTitle: i18n.t('Talk.Community.choose_ft'),
     secondTitle: i18n.t('Talk.Community.choose_ft'),
@@ -417,6 +421,7 @@ const consentTabs = ref([
     buttonText: i18n.t('Talk.Community.choose_ft_as_consent'),
   },
   {
+    id: 3,
     name: i18n.t('Talk.Community.password'),
     panelTitle: i18n.t('Talk.Community.set_password'),
   },

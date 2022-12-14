@@ -13,6 +13,7 @@
     <div class="flex flex-col overflow-y-auto slim-scrollbar" v-else-if="metaNames.length > 0">
       <div
         v-for="metaName in metaNames"
+        :key="metaName.metaName"
         class="flex space-x-3 items-center cursor-pointer hover:bg-dark-100 dark:hover:bg-gray-900 rounded py-3 px-4"
         @click="selectMetaName(metaName)"
       >

@@ -33,7 +33,7 @@
       <!-- 占位 -->
       <div v-else class="w-1"></div>
 
-      <div class="shrink-0 flex">
+      <div class="shrink-0 flex items-center">
         <LoginedUserOperate />
       </div>
     </div>

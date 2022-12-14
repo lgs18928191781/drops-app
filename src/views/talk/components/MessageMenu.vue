@@ -1,9 +1,9 @@
 <template>
   <div
-    class="absolute bg-white dark:bg-gray-700 right-0 -top-[5PX] -translate-x-4 px-1.5 py-0.5 rounded-xl shadow hidden group-hover:flex hover:shadow-md transition-all duration-200"
+    class="absolute bg-white dark:bg-gray-700 right-0 -top-[5PX] -translate-x-4 px-1.5 py-0.5 rounded-xl shadow hidden lg:group-hover:flex hover:shadow-md transition-all duration-200"
     v-if="actions.length > 0"
   >
-    <button v-for="action in actions" class="p-1.5" @click="action.action">
+    <button v-for="action in actions" :key="action.name" class="p-1.5" @click="action.action">
       <Icon
         :name="action.icon"
         class="w-5 h-5 text-dark-800 dark:text-gray-100 hover:text-primary dark:hover:text-primary transition-all duration-200"

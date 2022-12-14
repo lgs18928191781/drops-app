@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex hover:bg-gray-200 dark:hover:bg-gray-800 px-4 py-1 relative group transition-all duration-150"
+    class="flex lg:hover:bg-gray-200 dark:lg:hover:bg-gray-800 px-4 py-1 relative group transition-all duration-150"
   >
     <!-- 消息菜单 -->
     <MessageMenu
@@ -63,7 +63,7 @@
           />
         </button>
         <Teleport to="body" v-if="isImage && showImagePreview">
-          <ImagePreview
+          <TalkImagePreview
             v-if="showImagePreview"
             :src="decryptedMessage"
             @close="showImagePreview = false"
@@ -129,7 +129,7 @@
 import { decrypt } from '@/utils/crypto'
 import NftLabel from './NftLabel.vue'
 import MessageMenu from './MessageMenu.vue'
-import ImagePreview from './ImagePreview.vue'
+import TalkImagePreview from './ImagePreview.vue'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { formatTimestamp } from '@/utils/talk'

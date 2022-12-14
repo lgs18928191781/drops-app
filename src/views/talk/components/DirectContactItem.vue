@@ -31,8 +31,8 @@
           }}
         </div>
       </div>
-      <div class="text-xs text-dark-300 dark:text-gray-400 truncate">
-        {{ session.lastMessage }}
+      <div class="text-xs text-dark-300 dark:text-gray-400 truncate max-w-[160PX]">
+        {{ lastMessage }}
       </div>
     </div>
   </div>
@@ -42,10 +42,11 @@
 import { formatTimestamp } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
 import { useI18n } from 'vue-i18n'
-import { computed } from 'vue'
+import { computed, toRaw } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLayoutStore } from '@/stores/layout'
 import { useTalkStore } from '@/stores/talk'
+import { ecdhDecrypt } from '@/utils/crypto'
 
 const i18n = useI18n()
 const userStore = useUserStore()
@@ -72,6 +73,57 @@ const contact = computed<any>(() => {
     lastMessageTimestamp: props.session.lastMessageTimestamp,
   }
 })
+
+const lastMessage = computed<string>(() => {
+  if (props.session.protocol === 'ShowMsg') {
+    return parseTextMessage(decryptedMessage.value)
+  }
+
+  return i18n.t(`Talk.Channel.you_received_a_new_message`)
+})
+
+const decryptedMessage = computed(() => {
+  if (props.session.data.encrypt !== '1') {
+    return props.session.data.content
+  }
+
+  // 处理mock的图片消息
+  if (props.session.isMock && props.session.protocol === 'SimpleFileGroupChat') {
+    return props.session.data.content
+  }
+
+  const privateKey = toRaw(userStore?.wallet)!.getPathPrivateKey('0/0')
+  const privateKeyStr = privateKey.toHex()
+  const otherPublicKeyStr = props.session.publicKeyStr
+
+  return ecdhDecrypt(props.session.data.content, privateKeyStr, otherPublicKeyStr)
+})
+
+const parseTextMessage = (text: string) => {
+  if (typeof text == 'undefined') {
+    return ''
+  }
+
+  const HTML = /<\/?.+?>/gi
+  const COOKIE = /document\.cookie/gi
+  const HTTP = /(http|https):\/\//gi
+  const re = /(f|ht){1}(tp|tps):\/\/([\w-]+\S)+[\w-]+([\w-?%#&=]*)?(\/[\w- ./?%#&=]*)?/g
+
+  if (HTML.test(text)) {
+    return '无效输入,别耍花样!'
+  }
+  if (COOKIE.test(text)) {
+    return '无效输入,你想干嘛!'
+  }
+  text = text.replace(re, function(url) {
+    if (HTTP.test(text)) {
+      return `<a href=${url} target="_blank" style="text-decoration: underline;cursor: pointer;" class="url"> ${url} </a>`
+    }
+    return `<a onClick="window.open('http://${text}','_blank')" style="text-decoration: underline;cursor: pointer;" target="_blank">${text}</a>`
+  })
+  text = text.replace(/\\n/g, '\n')
+  return text.replace(/\n/g, '<br />')
+}
 
 const isActive = computed<boolean>(() => {
   const currentChannelId = router.currentRoute.value.params.channelId
