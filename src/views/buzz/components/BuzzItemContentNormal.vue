@@ -2,17 +2,18 @@
   <!-- text -->
   <div
     class="text content-item"
-    v-if="displayItemData"
     v-html="
-      displayItemData.content
-        .replace(/\\n/g, '\n')
-        .replace(
-          /#.*?[\s\n\r#]{1}|#.*?$/g,
-          val =>
-            `<a href='/buzz/topic/${val
-              .replace('#', '')
-              .replace(/(^\s*)|(\s*$)/g, '')}' style='color:#fc6d5e' >${val}</a>&nbsp;`
-        )
+      displayItemData
+        ? displayItemData.content
+            .replace(/\\n/g, '\n')
+            .replace(
+              /#.*?[\s\n\r#]{1}|#.*?$/g,
+              val =>
+                `<a href='/buzz/topic/${val
+                  .replace('#', '')
+                  .replace(/(^\s*)|(\s*$)/g, '')}' style='color:#fc6d5e' >${val}</a>&nbsp;`
+            )
+        : ''
     "
   ></div>
 
@@ -37,6 +38,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import Attachment from './Attachment.vue'
+import QuoteVue from './Quote.vue'
 
 interface Props {
   buzz: BuzzItem

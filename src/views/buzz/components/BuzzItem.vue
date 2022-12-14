@@ -2,7 +2,7 @@
   <div class="buzz-item" v-if="itemData && displayItemData">
     <div @click.stop="handleGoDetail(displayItemData!.txId)" class="buzz-item-warp">
       <!-- back -->
-      <div class="back" v-if="$route.name === 'buzzDetail'">
+      <div class="back" v-if="$route.name === 'buzzDetail' && !isQuote">
         <span>
           <a class="flex flex-align-center" @click.stop="$router.back()">
             <Icon name="down" />
@@ -33,7 +33,7 @@
             </div>
           </div>
         </div>
-        <div class="operate">
+        <div class="operate" v-if="!isQuote">
           <div
             class="follow main-border primary"
             :class="{ disabled: following }"
@@ -62,7 +62,7 @@
         </template>
 
         <!-- 标签 -->
-        <div class="tags flex flex-align-center">
+        <div class="tags flex flex-align-center" v-if="!isQuote">
           <a
             class="flex flex-align-center"
             @click.stop="
@@ -81,7 +81,7 @@
           @more="params => emit('more', params)"
           @like="params => emit('like', params)"
           @replay="params => emit('replay', params)"
-          v-if="!isHideControl"
+          v-if="!isHideControl && !isQuote"
         />
 
         <slot name="comment"></slot>
@@ -108,7 +108,7 @@ import Attachment from './Attachment.vue'
 import { PayMeParams } from '@/@types/sdk'
 import { PayMeParamsType } from '@/enum'
 import { checkSdkStatus, checkUserLogin } from '@/utils/util'
-import QuoteVue from './Quote.vue'
+
 import BuzzItemControlVue from './BuzzItemControl.vue'
 import BuzzItemSkeletonVue from './BuzzItemSkeleton.vue'
 import ShareIcon from '@/assets/svg/share.svg'
@@ -124,6 +124,7 @@ interface Props {
   isHideControl?: boolean
   loading?: boolean
   playFile?: string
+  isQuote?: boolean
 }
 
 const router = useRouter()

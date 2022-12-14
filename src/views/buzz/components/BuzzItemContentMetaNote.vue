@@ -4,7 +4,7 @@
     <CardVue class="meta-node-card" color="#5BA1FF">
       <ElSkeleton :loading="isSkeleton" animated>
         <template #default>
-          <div class="meta-node flex">
+          <div class="meta-node flex flex-align-center">
             <Image :src="metanote.val!.headImg" v-if="metanote.val!.headImg" />
             <div class="cont">
               <div class="title">{{ metanote.val?.title }}</div>

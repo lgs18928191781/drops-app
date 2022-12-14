@@ -18,7 +18,7 @@
   </div>
 
   <BuzzListVue
-    v-model:list="list"
+    v-model:list="list.val"
     :loading="isSkeleton"
     @get-more="getMore"
     :pagination="pagination"
@@ -47,7 +47,7 @@ const userStore = useUserStore()
 const layout = useLayoutStore()
 const route = useRoute()
 
-const list: BuzzItem[] = reactive([])
+const list: { val: BuzzItem[] } = reactive({ val: [] })
 const isSkeleton = ref(true)
 
 function getDatas(isCover = false) {
@@ -59,7 +59,7 @@ function getDatas(isCover = false) {
     })
     if (res.code === 0) {
       if (isCover) list.length = 0
-      list.push(...res.data.results.items)
+      list.val.push(...res.data.results.items)
 
       if (res.data.results.items.length === 0) pagination.nothing = true
       else pagination.nothing = false
@@ -73,7 +73,7 @@ Mitt.on(MittEvent.AddBuzz, async (params: { txId: string }) => {
     txId: params.txId,
   })
   if (res && res.code === 0) {
-    list.unshift(res.data.results.items[0])
+    list.val.unshift(res.data.results.items[0])
   }
 })
 

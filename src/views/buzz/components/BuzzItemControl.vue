@@ -88,7 +88,7 @@ const operates = [
         txId: props.buzz.txId,
         username: props.buzz.userName,
         userAddress: props.buzz.zeroAddress,
-        commentTo: '',
+        commentTo: props.buzz.txId,
         replyTo: '',
         buzzTxId: props.buzz.txId,
       })

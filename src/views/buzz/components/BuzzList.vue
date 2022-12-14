@@ -154,21 +154,33 @@ const operates: {
       fun: async () => {
         operateLoading.value = true
         try {
+          let isQuoteItem = false
           const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
-          const index = props.list.findIndex(item => item.txId === currentTxId.value)
+          let index = props.list.findIndex(item => item.txId === currentTxId.value)
+          if (index === -1) {
+            index = props.list.findIndex(
+              item => item.quoteItem && item.quoteItem.txId === currentTxId.value
+            )
+            if (index === -1) {
+              throw new Error('TxId Not Found')
+            } else {
+              isQuoteItem = true
+            }
+          }
+          const targetBuzz = isQuoteItem ? props.list[index].quoteItem : props.list[index]
           const time = new Date().getTime()
           const res = await userStore.showWallet.createBrfcChildNode({
             nodeName: NodeName.SimpleRePost,
             data: JSON.stringify({
               createTime: time,
               rePostTx: currentTxId.value,
-              rePostProtocol: props.list[index].protocol,
+              rePostProtocol: targetBuzz.protocol,
               rePostComment: '',
             }),
-            payTo: [{ amount: payAmount, address: props.list[index].zeroAddress }],
+            payTo: [{ amount: payAmount, address: targetBuzz.zeroAddress }],
           })
           if (res) {
-            props.list[index].rePost.push({
+            targetBuzz.rePost.push({
               metaId: userStore.user!.metaId!,
               timestamp: time,
               txId: res.currentNode!.txId,
@@ -345,7 +357,7 @@ function replay() {
     debugger
     if (comment.value === '') return
     operateLoading.value = true
-    const index = props.list.findIndex(item => item.txId === currentTxId.value)
+
     const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
     const dataParams = {
       createTime: new Date().getTime(),
@@ -363,16 +375,23 @@ function replay() {
       payTo: [{ address: replayMsg.val.userAddress, amount: payAmount }],
     })
     if (res) {
-      if (replayMsg.val.commentTo === currentTxId.value) {
-        props.list[index]!.comment.unshift({
-          metaId: userStore.user!.metaId!,
-          timestamp: dataParams.createTime,
-          txId: res.currentNode!.txId,
-          userName: userStore.user!.name!,
-          value: payAmount,
-        })
+      const index = props.list.findIndex(item => item.txId === currentTxId.value)
+
+      if (index !== -1) {
+        debugger
+        if (replayMsg.val.commentTo === currentTxId.value) {
+          const list = [...props.list]
+          list[index]!.comment.unshift({
+            metaId: userStore.user!.metaId!,
+            timestamp: dataParams.createTime,
+            txId: res.currentNode!.txId,
+            userName: userStore.user!.name!,
+            value: payAmount,
+          })
+          emit('update:list', list)
+        }
       }
-      emit('update:list', props.list)
+
       if (route.name !== 'buzzDetail') {
         router.push({
           name: 'buzzDetail',

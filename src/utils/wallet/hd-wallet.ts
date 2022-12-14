@@ -1610,8 +1610,6 @@ export class HdWallet {
     }
   ) {
     return new Promise<CreateNodeRes>(async (resolve, reject) => {
-      debugger
-
       try {
         const initParams = {
           useFeeb: DEFAULTS.feeb,
