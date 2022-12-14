@@ -46,7 +46,7 @@
       </div>
     </div>
     <div class="flex flex-row-reverse items-center justify-between grow">
-      <div class="shrink-0 flex">
+      <div class="shrink-0 flex items-center">
         <LoginedUserOperate />
       </div>
 

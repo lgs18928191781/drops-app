@@ -146,7 +146,8 @@
       },
       "welcome_message": "欢迎来到 #{channel}!",
       "welcome_start": "这是 #{channel} 频道的起点。畅所欲言吧！",
-      "welcome_invite": "邀请好友进入频道"
+      "welcome_invite": "邀请好友进入频道",
+      "you_received_a_new_message": "您收到了一条新消息"
     },
     "Community": {
       "create": "创建社群",

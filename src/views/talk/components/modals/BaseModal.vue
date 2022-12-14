@@ -34,7 +34,7 @@
               :style="mobileSize"
             >
               <div
-                class="w-full lg:w-114 h-full bg-white dark:bg-gray-700 lg:w-auto lg:h-auto lg:rounded-3xl relative lg:shadow-lg lg:dark:shadow-blue-100/30 p-8 flex flex-col shrink-0"
+                class="w-full lg:w-114 h-full bg-white dark:bg-gray-800 lg:w-auto lg:h-auto lg:rounded-3xl relative lg:shadow-lg lg:dark:shadow-blue-100/30 p-8 flex flex-col shrink-0"
                 :class="[mobileSize ? 'rounded' : '']"
               >
                 <button
@@ -68,7 +68,7 @@
                   leave-to="opacity-0 scale-75"
                 >
                   <div
-                    class="w-full lg:max-w-screen-sm  bg-white dark:bg-gray-700 lg:min-w-[456PX] lg:w-auto rounded lg:rounded-3xl lg:shadow-lg lg:dark:shadow-blue-100/30 lg:ml-4 absolute inset-0 z-[65] lg:static lg:self-stretch"
+                    class="w-full lg:max-w-screen-sm  bg-white dark:bg-gray-800 lg:min-w-[456PX] lg:w-auto rounded lg:rounded-3xl lg:shadow-lg lg:dark:shadow-blue-100/30 lg:ml-4 absolute inset-0 z-[65] lg:static lg:self-stretch"
                   >
                     <div class="w-full h-full relative p-8 flex flex-col">
                       <button

@@ -11,7 +11,11 @@
           {{ talkStore.activeCommunity?.memberTotal || 0 }}
         </div>
       </div>
-      <ChannelMemberItem v-for="member in talkStore.members" :member="member" />
+      <ChannelMemberItem
+        v-for="member in talkStore.members"
+        :key="member.metaId"
+        :member="member"
+      />
     </div>
   </div>
 </template>

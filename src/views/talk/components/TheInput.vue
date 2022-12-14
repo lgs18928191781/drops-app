@@ -33,7 +33,7 @@
       </div>
 
       <Teleport to="body" v-if="showImagePreview">
-        <ImagePreview
+        <TalkImagePreview
           v-if="showImagePreview"
           :src="imagePreviewUrl"
           @close="showImagePreview = false"
@@ -142,13 +142,13 @@
       <!-- 右侧按钮群 -->
       <div class="flex h-full py-1 items-center shrink-0">
         <div :class="[hasInput ? 'hidden lg:flex' : 'flex', 'items-center px-1 mr-2']">
-          <div
+          <!-- <div
             class="p-2 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer"
             v-if="talk.activeChannelType === ChannelType.Group"
             @click="layout.isShowRedPacketModal = true"
           >
             <Icon name="red_envelope" class="w-full h-full text-dark-800 dark:text-gray-100" />
-          </div>
+          </div> -->
 
           <Popover class="relative flex items-center">
             <PopoverButton as="div">
@@ -243,7 +243,7 @@
 import { computed, ref, toRaw, Ref } from 'vue'
 import { sendMessage, validateTextMessage, isImage, isFileTooLarge } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
-import ImagePreview from './ImagePreview.vue'
+import TalkImagePreview from './ImagePreview.vue'
 import { FileToAttachmentItem } from '@/utils/util'
 import { encrypt, ecdhEncrypt } from '@/utils/crypto'
 import { useTalkStore } from '@/stores/talk'
