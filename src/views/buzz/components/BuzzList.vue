@@ -114,7 +114,7 @@ interface Props {
   pagination?: Pagination
 }
 const props = withDefaults(defineProps<Props>(), {})
-const emit = defineEmits(['getMore', 'update:list', 'comment', 'like'])
+const emit = defineEmits(['getMore', 'comment', 'like', 'updateItem'])
 
 const i18n = useI18n()
 const userStore = useUserStore()
@@ -167,7 +167,9 @@ const operates: {
               isQuoteItem = true
             }
           }
-          const targetBuzz = isQuoteItem ? props.list[index].quoteItem : props.list[index]
+          const targetBuzz = isQuoteItem
+            ? { ...props.list[index].quoteItem }
+            : { ...props.list[index] }
           const time = new Date().getTime()
           const res = await userStore.showWallet.createBrfcChildNode({
             nodeName: NodeName.SimpleRePost,
@@ -187,7 +189,15 @@ const operates: {
               userName: userStore.user!.name!,
               value: payAmount,
             })
-            emit('update:list', props.list)
+            emit('updateItem', {
+              txId: props.list[index].txId,
+              buzz: isQuoteItem
+                ? {
+                    ...props.list[index],
+                    quoteItem: targetBuzz,
+                  }
+                : targetBuzz,
+            })
             Mitt.emit(MittEvent.AddBuzz, { txId: res.currentNode!.txId })
             ElMessage.success(i18n.t('Buzz.repost.success'))
             operateLoading.value = false
@@ -279,14 +289,18 @@ async function onLike(params: { txId: string; address: string }) {
   })
   if (res) {
     if (index !== -1) {
-      props.list[index].like.push({
+      const buzz = { ...props.list[index] }
+      buzz.like.push({
         metaId: userStore.user!.metaId!,
         timestamp: time,
         txId: res.currentNode!.txId,
         userName: userStore.user!.name,
         value: payAmount,
       })
-      emit('update:list', props.list)
+      emit('updateItem', {
+        txId: buzz.txId,
+        buzz,
+      })
     }
     ElMessage.success(i18n.t('PayLike') + ' ' + i18n.t('Success'))
     emit('like', params.txId)
@@ -307,7 +321,7 @@ async function onFollow(
       return new Error('txId not found')
     }
   }
-  const target = isQuoteItem ? props.list[index].quoteItem : props.list[index]
+  const target = isQuoteItem ? { ...props.list[index].quoteItem } : { ...props.list[index] }
 
   const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
   const res = await userStore.showWallet
@@ -324,7 +338,15 @@ async function onFollow(
     .catch(error => params.reject(error))
   if (res) {
     target.isMyFollow = true
-    emit('update:list', props.list)
+    emit('updateItem', {
+      txId: props.list[index].txId,
+      buzz: isQuoteItem
+        ? {
+            ...props.list[index],
+            quoteItem: target,
+          }
+        : target,
+    })
     params.resolve(res.currentNode.txId)
   } else {
     params.resolve()
@@ -354,7 +376,6 @@ function onPlay(params: { file: string; type: 'audio' | 'video' }) {
 
 function replay() {
   return new Promise<void>(async resolve => {
-    debugger
     if (comment.value === '') return
     operateLoading.value = true
 
@@ -378,17 +399,19 @@ function replay() {
       const index = props.list.findIndex(item => item.txId === currentTxId.value)
 
       if (index !== -1) {
-        debugger
         if (replayMsg.val.commentTo === currentTxId.value) {
-          const list = [...props.list]
-          list[index]!.comment.unshift({
+          const buzz = { ...props.list[index] }
+          buzz.comment.unshift({
             metaId: userStore.user!.metaId!,
             timestamp: dataParams.createTime,
             txId: res.currentNode!.txId,
             userName: userStore.user!.name!,
             value: payAmount,
           })
-          emit('update:list', list)
+          emit('updateItem', {
+            txId: buzz.txId,
+            buzz,
+          })
         }
       }
 

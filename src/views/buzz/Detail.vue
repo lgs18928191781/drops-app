@@ -1,10 +1,11 @@
 <template>
   <BuzzListVue
-    v-model:list="list.val"
+    :list="list"
     :loading="isSkeleton"
     ref="BuzzListRef"
     @comment="onReplayCommentSucccess"
     @like="onLikeCommentSuccess"
+    @update-item="updateItem"
   >
     <template #comment>
       <div class="comment">
@@ -48,7 +49,7 @@ const loading = ref(false)
 const i18n = useI18n()
 const BuzzListRef = ref()
 
-const list: { val: BuzzItem[] } = reactive({ val: [] })
+const list: BuzzItem[] = reactive([])
 const isSkeleton = ref(true)
 
 const commentPagination = reactive({
@@ -80,7 +81,7 @@ function fetchData() {
           }
         }
       }
-      list.val[0] = detailRes
+      list[0] = detailRes
       await fetchCommentList(detailRes.txId, true)
       resolve()
     }
@@ -106,10 +107,10 @@ async function fetchCommentList(buzzTxId: string, isCover = false) {
 
 async function reply() {
   BuzzListRef.value.onReplay({
-    txId: list.val[0].txId,
-    username: list.val[0].userName,
-    userAddress: list.val[0].zeroAddress,
-    commentTo: list.val[0].txId,
+    txId: list[0].txId,
+    username: list[0].userName,
+    userAddress: list[0].zeroAddress,
+    commentTo: list[0].txId,
     replyTo: '',
   })
 }
@@ -141,6 +142,13 @@ function onLikeCommentSuccess(txId: string) {
   if (index !== -1) {
     commentListData[index].likeCount++
     commentListData[index].hasMyLike = true
+  }
+}
+
+function updateItem(params: { txId: string; buzz: BuzzItem }) {
+  const index = list.findIndex(item => item.txId === params.txId)
+  if (index !== -1) {
+    list[index] = params.buzz
   }
 }
 
