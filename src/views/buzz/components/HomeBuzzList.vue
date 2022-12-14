@@ -18,10 +18,11 @@
   </div>
 
   <BuzzListVue
-    v-model:list="list.val"
+    :list="list"
     :loading="isSkeleton"
     @get-more="getMore"
     :pagination="pagination"
+    @update-item="updateItem"
   />
 
   <RecommendContentVue />
@@ -47,7 +48,7 @@ const userStore = useUserStore()
 const layout = useLayoutStore()
 const route = useRoute()
 
-const list: { val: BuzzItem[] } = reactive({ val: [] })
+const list: BuzzItem[] = reactive([])
 const isSkeleton = ref(true)
 
 function getDatas(isCover = false) {
@@ -59,7 +60,7 @@ function getDatas(isCover = false) {
     })
     if (res.code === 0) {
       if (isCover) list.length = 0
-      list.val.push(...res.data.results.items)
+      list.push(...res.data.results.items)
 
       if (res.data.results.items.length === 0) pagination.nothing = true
       else pagination.nothing = false
@@ -73,7 +74,7 @@ Mitt.on(MittEvent.AddBuzz, async (params: { txId: string }) => {
     txId: params.txId,
   })
   if (res && res.code === 0) {
-    list.val.unshift(res.data.results.items[0])
+    list.unshift(res.data.results.items[0])
   }
 })
 
@@ -120,6 +121,13 @@ async function refreshDatas() {
   pagination.nothing = false
   await getDatas(true)
   isSkeleton.value = false
+}
+
+function updateItem(params: { txId: string; buzz: BuzzItem }) {
+  const index = list.findIndex(item => item.txId === params.txId)
+  if (index !== -1) {
+    list[index] = params.buzz
+  }
 }
 
 getDatas(true).then(() => {

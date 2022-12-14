@@ -66,9 +66,7 @@ router.beforeEach(async (to, from, next) => {
     }
 
     // 检查用户的token
-    // if (!isApp) {
-    //   await userStore.checkUserToken(to.fullPath)
-    // }
+    await userStore.checkUserToken(to)
   }
 
   //  buzz 页面先获取一次 postTag 信息

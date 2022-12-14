@@ -7,7 +7,12 @@ import { GetProdTestMetaIds } from '@/api/strapi'
 import axios from 'axios'
 import { ElMessageBox } from 'element-plus'
 import { SdkPayType } from '@/enum'
-import { RouteLocationNormalizedLoaded, useRoute, useRouter } from 'vue-router'
+import {
+  RouteLocationNormalized,
+  RouteLocationNormalizedLoaded,
+  useRoute,
+  useRouter,
+} from 'vue-router'
 import { router } from '@/router'
 import { useTalkStore } from './talk'
 import { useRootStore } from './root'
@@ -188,7 +193,7 @@ export const useUserStore = defineStore('user', {
         resolve()
       })
     },
-    checkUserToken(fullPath: string) {
+    checkUserToken(route: RouteLocationNormalized) {
       return new Promise<void>(async (resolve, reject) => {
         const res = await axios
           .get(
@@ -200,11 +205,12 @@ export const useUserStore = defineStore('user', {
         if (res.data && res.data.code === 0) {
           resolve()
         } else {
-          this.logout()
+          this.logout(route)
+          const rootStore = useRootStore()
           ElMessageBox.alert('登录信息过期，请重新登录', '温馨提示', {
             confirmButtonText: '去登录',
           }).then(() => {
-            this.showWallet?.toLogin(fullPath)
+            rootStore.$patch({ isShowLogin: true })
           })
           reject(new Error('登录信息过期'))
         }
