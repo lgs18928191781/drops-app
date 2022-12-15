@@ -159,10 +159,10 @@
       "you_received_a_new_message": "您收到了一条新消息"
     },
     "Community": {
-      "create": "创建社群",
-      "create_fist_step_tip": "填写社群名称、上传社群图标。你可以在之后修改这些信息。",
-      "community_name": "社群名",
-      "agree_tip": "您创建社区，即代表您同意了 Show3.0 的",
+      "create": "创建社区",
+      "create_fist_step_tip": "填写社区名称、上传社区图标。你可以在之后修改这些信息。",
+      "community_name": "社区名",
+      "agree_tip": "创建社区，即代表您同意了 Show3.0 的",
       "agree_guidelines": "社区守则",
       "customize_information": "定制化您的社区",
       "choose_nft_cover": "选择一个 NFT 封面",
@@ -255,7 +255,7 @@
       "chooseNFTTitle": "选择NFT头像"
     },
     "recomment": {
-      "title": "👋 这里有一些<a>「Doodles」</a>相关的社群，您可以关注并跟大家打声招呼！",
+      "title": "👋 这里有一些<a>「Doodles」</a>相关的社区，您可以关注并跟大家打声招呼！",
       "followAll": "关注全部"
     },
     "BackupMnemonic": {

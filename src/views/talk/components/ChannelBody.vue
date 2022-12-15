@@ -86,6 +86,31 @@ const tryInitChannel = async (status: string) => {
         const consensualGenesis = talk.activeChannel.roomGenesis
         const consensualCodehash = talk.activeChannel.roomCodeHash
 
+        // 如果不存在该链地址，则直接拒绝进入
+        if (!selfAddress) {
+          const {
+            data: {
+              results: { items },
+            },
+          } = await GetNFT({
+            codehash: consensualCodehash,
+            genesis: consensualGenesis,
+            chain,
+            tokenIndex: 0,
+          })
+          const nftInfo = {
+            codehash: consensualCodehash,
+            genesis: consensualGenesis,
+            icon: items[0].nftIcon,
+            name: items[0].nftName,
+            seriesName: items[0].nftSeriesName || items[0].nftName,
+            chain,
+          }
+          talk.consensualNft = nftInfo
+          layout.isShowRequireNftModal = true
+          return
+        }
+
         const {
           data: {
             results: { items: userNfts },
@@ -118,6 +143,7 @@ const tryInitChannel = async (status: string) => {
             icon: items[0].nftIcon,
             name: items[0].nftName,
             seriesName: items[0].nftSeriesName || items[0].nftName,
+            chain,
           }
           talk.consensualNft = nftInfo
           layout.isShowRequireNftModal = true
