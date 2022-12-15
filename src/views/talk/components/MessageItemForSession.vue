@@ -123,7 +123,7 @@
 
       <div class="w-full py-0.5 flex items-center" v-else-if="isImage">
         <div
-          class="w-fit max-w-[90%] md:max-w-[50%] lg:max-w-[400px] max-h-[600px] overflow-y-hidden rounded bg-transparent cursor-pointer transition-all duration-200"
+          class="w-fit max-w-[90%] md:max-w-[50%] lg:max-w-[235PX] max-h-[600PX] overflow-y-hidden rounded bg-transparent cursor-pointer transition-all duration-200"
           :class="[message.error && 'opacity-50']"
           @click="previewImage"
         >
