@@ -33,8 +33,8 @@
             </a>
             <a
               class="flex flex-align-center"
-              :class="{ active: item.hasMyLike }"
-              @click.stop="emit('like', { txId: item.txId, address: item.zeroAddress })"
+              :class="{ active: item.hasMyLike, ing: isLikeIng[index] }"
+              @click.stop="like(item, index)"
             >
               <LikeIcon /> {{ item.likeCount }}
             </a>
@@ -75,7 +75,7 @@
 
 <script setup lang="ts">
 import { isApp } from '@/stores/root'
-import { computed, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import IsNullVue from '@/components/IsNull/IsNull.vue'
 import CommentIcon from '@/assets/svg/comment.svg'
@@ -87,12 +87,36 @@ interface Props {
 const router = useRouter()
 const emit = defineEmits(['replay', 'like'])
 const props = withDefaults(defineProps<Props>(), {})
+const isLikeIng: boolean[] = reactive([])
 
 function sliceStr(str?: string, len = 8) {
   return str ? str.slice(0, len) : ''
 }
+
+function like(item: BuzzInteractiveItem, index: number) {
+  if (item.hasMyLike || isLikeIng[index]) return
+  isLikeIng[index] = true
+  const done = () => {
+    isLikeIng[index] = false
+  }
+  emit('like', { txId: item.txId, address: item.zeroAddress, done })
+}
 </script>
 <style scoped lang="scss">
+@keyframes sclae {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+    /*扩大到4倍*/
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
 .buzz-comment-list {
   margin-top: 7px;
   .comment-item {
@@ -190,6 +214,12 @@ function sliceStr(str?: string, len = 8) {
                   fill: #fc6d5e;
                 }
               }
+            }
+          }
+
+          &.ing {
+            svg {
+              animation: sclae 1s infinite;
             }
           }
         }

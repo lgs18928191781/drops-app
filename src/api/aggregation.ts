@@ -488,3 +488,12 @@ export const GetUserBuzzs = (params: {
 }> => {
   return aggregation.post(`/v2/app/buzz/getBuzzMySelfList`, params)
 }
+
+export const GetPublishShare = (
+  txId: string
+): Promise<{
+  code: number
+  data: PublishShareItem
+}> => {
+  return aggregation.get(`/v2/app/show/posts/share/${txId}/info`)
+}

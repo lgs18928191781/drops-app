@@ -121,6 +121,7 @@ import { Loading } from '@element-plus/icons-vue'
 import { useI18n } from 'vue-i18n'
 import BuzzItemContentNormalVue from './BuzzItemContentNormal.vue'
 import BuzzItemContentMetaNoteVue from './BuzzItemContentMetaNote.vue'
+import BuzzItemContentSimplePublicShareVue from './BuzzItemContentSimplePublicShare.vue'
 
 interface Props {
   data?: BuzzItem

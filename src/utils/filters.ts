@@ -110,3 +110,15 @@ export function toUserHome(metaId: string) {
     },
   })
 }
+
+export function buzzTextContent(content: string) {
+  return content
+    .replace(/\\n/g, '\n')
+    .replace(
+      /#.*?[\s\n\r#]{1}|#.*?$/g,
+      val =>
+        `<a href='/buzz/topic/${val
+          .replace('#', '')
+          .replace(/(^\s*)|(\s*$)/g, '')}' style='color:#fc6d5e' >${val}</a>&nbsp;`
+    )
+}
