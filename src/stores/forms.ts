@@ -3,6 +3,7 @@ import { giveRedPacket, updateCommunity } from '@/utils/talk'
 import { sleep } from '@/utils/util'
 import { defineStore } from 'pinia'
 import { useLayoutStore } from './layout'
+import { getCommunityAuth } from '@/api/talk'
 import { useTalkStore } from './talk'
 import { useUserStore } from './user'
 
@@ -97,6 +98,8 @@ export const useCommunityUpdateFormStore = defineStore('communityUpdateForm', {
     async submit() {
       if (!this.isFinished) return
 
+      const metaName = await getCommunityAuth(this.original.communityId)
+
       const layout = useLayoutStore()
       const user = useUserStore()
       layout.isShowCreateCommunityModal = false
@@ -106,12 +109,17 @@ export const useCommunityUpdateFormStore = defineStore('communityUpdateForm', {
         description: this.description,
         cover: this.cover,
         original: this.original,
+        metaName,
       }
-      const { communityId } = await updateCommunity(form, user.showWallet)
-      layout.isShowLoading = false
-      this.reset()
+      await updateCommunity(form, user.showWallet)
 
-      return
+      this.reset()
+      await sleep(1000)
+      layout.isShowCommunitySettingsModal = false
+      layout.isShowLoading = false
+
+      // 跳转刷新
+      window.location.reload()
     },
   },
 })
