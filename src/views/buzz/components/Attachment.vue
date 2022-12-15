@@ -11,7 +11,7 @@
             ? 'single-image'
             : '',
         ]"
-        @click.stop="preview(index)"
+        @click="preview($event, index)"
       >
         <!-- 图片 -->
         <template v-if="getAttachmentType(item) === 'image'">
@@ -90,8 +90,8 @@
 
         <!-- NFT -->
         <template v-if="getAttachmentType(item) === 'nft'">
-          <CardVue class="nft-card" @click="toNFT" color="#5BA1FF">
-            <div class="nft-warp">
+          <CardVue class="nft-card" color="#5BA1FF">
+            <div class="nft-warp" @click.stop="toNFT">
               <ElSkeleton :loading="loading" animated>
                 <template #template>
                   <div class="msg flex">
@@ -366,10 +366,11 @@ function getMetaFileInfo() {
   })
 }
 
-function preview(index: number) {
+function preview(e: Event, index: number) {
   if (getAttachmentType(props.attachments[index]) !== 'image') return
   previewIndex.value = index
   isShowPreview.value = true
+  e.stopPropagation()
 }
 
 function getAttachmentInfo() {
