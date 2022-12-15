@@ -48,7 +48,7 @@
           >
             <template v-for="(child, childIndex) in item.subInteractiveItem" :key="childIndex">
               <div
-                class="child-comment-item flex flex-align-center"
+                class="child-comment-item flex flex-align-start"
                 @click.stop="
                   emit('replay', {
                     txId: item.buzzTxId,
@@ -234,6 +234,7 @@ function like(item: BuzzInteractiveItem, index: number) {
         line-height: 1.7;
         padding: 0;
         font-size: 16px;
+        white-space: pre-line;
       }
       .children-comment {
         padding: 8px 12px;
@@ -256,6 +257,7 @@ function like(item: BuzzInteractiveItem, index: number) {
           .avatar {
             width: 24px;
             height: 24px;
+            line-height: 26px;
             margin-right: 6px;
           }
 
@@ -263,6 +265,7 @@ function like(item: BuzzInteractiveItem, index: number) {
             flex-shrink: 0;
             line-height: 1.7;
             font-size: 12px;
+            line-height: 26px;
             color: #909399;
             margin-right: 6px;
           }
@@ -272,6 +275,7 @@ function like(item: BuzzInteractiveItem, index: number) {
             line-height: 1.7;
             font-size: 16px;
             line-height: 26px;
+            white-space: pre-line;
           }
         }
       }
