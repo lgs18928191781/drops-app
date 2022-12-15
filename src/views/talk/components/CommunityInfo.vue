@@ -82,12 +82,12 @@
                   </div>
 
                   <div
-                    class="py-3 px-2 main-border only-bottom cursor-pointer  !bg-white dark:!bg-gray-700 relative group mb-4"
+                    class="py-3 px-2 main-border only-bottom cursor-pointer !bg-white dark:!bg-gray-700 relative group mb-4"
                     :class="'settings' === talk.activeChannelId || 'faded'"
                     @click="popSettingsModal()"
                   >
                     <div
-                      class="text-dark-800 dark:text-gray-100 text-base font-medium flex items-center"
+                      class="text-dark-800 dark:text-gray-100 text-sm font-medium flex items-center"
                       :title="$t('Talk.Community.settings')"
                     >
                       <Icon name="hashtag" class="w-5 h-4 text-dark-400 dark:text-gray-200" />
@@ -129,7 +129,7 @@
                   </span>
 
                   <div
-                    class="text-dark-800 dark:text-gray-100 text-base font-medium flex items-center"
+                    class="text-dark-800 dark:text-gray-100 text-sm font-medium flex items-center"
                     :title="channel.name"
                   >
                     <Icon
@@ -186,7 +186,7 @@
                   >
                   </span>
                   <div
-                    class="text-dark-800 dark:text-gray-100 text-base font-medium flex items-center"
+                    class="text-dark-800 dark:text-gray-100 text-sm font-medium flex items-center"
                     :title="channel.name"
                   >
                     <Icon

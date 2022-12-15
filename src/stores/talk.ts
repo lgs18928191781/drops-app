@@ -648,6 +648,15 @@ export const useTalkStore = defineStore('talk', {
       this.activeChannel.newMessages.push(message)
     },
 
+    removeMessage(mockId: string) {
+      console.log('removing message', mockId)
+      if (!mockId || !this.activeChannel || !this.activeChannel.newMessages) return
+
+      this.activeChannel.newMessages = this.activeChannel.newMessages.filter(
+        (message: any) => message.mockId !== mockId
+      )
+    },
+
     reset() {
       console.log('resetting')
       this.closeWebSocket()

@@ -16,6 +16,7 @@ declare interface Message {
   timestamp: number
   txId: string
   isMock?: boolean
+  mockId?: string
   encryption?: string
   to?: string
 }
