@@ -188,8 +188,14 @@
             ><Icon name="check" v-if="form.isAgreePolicy"
           /></span>
           <span class="text flex1 flex flex-align-center">
-            {{ $t('Login.policy') }}<a>{{ $t('Login.policy1') }}</a
-            >{{ $t('Login.policy2') }}<a>{{ $t('Login.policy3') }}</a>
+            {{ $t('Login.policy')
+            }}<a :href="userProtocolAdnPrivitePolicy(1)" target="_blank">{{
+              $t('Login.policy1')
+            }}</a
+            >{{ $t('Login.policy2')
+            }}<a :href="userProtocolAdnPrivitePolicy(2)" target="_blank">{{
+              $t('Login.policy3')
+            }}</a>
           </span>
         </template>
       </div>
@@ -217,7 +223,7 @@ import Vue3CountryIntl from 'vue3-country-intl'
 import 'vue3-country-intl/lib/vue3-country-intl.css'
 import 'vue3-country-intl/lib/vue3-country-flag.css'
 import 'vue3-country-intl/lib/flags-9980096a.png'
-import { InviteActivityTag, SignUserType } from '@/enum'
+import { InviteActivityTag, SignUserType, loginOrRegisterProtocolType } from '@/enum'
 import { isApp } from '@/stores/root'
 import {
   BaseUserInfoTypes,
@@ -451,6 +457,19 @@ const isPolicyBtnFaded = computed(() => {
   }
   return result
 })
+
+const userProtocolAdnPrivitePolicy = (type: loginOrRegisterProtocolType) => {
+  switch (type) {
+    case loginOrRegisterProtocolType.userProtocol:
+      return i18n.locale.value == 'zh'
+        ? `https://invitation.showmoney.app/useragreement/cn`
+        : `https://invitation.showmoney.app/useragreement/en`
+    case loginOrRegisterProtocolType.privitePolicy:
+      return i18n.locale.value == 'zh'
+        ? `https://invitation.showmoney.app/userprivacy/cn`
+        : `https://invitation.showmoney.app/userprivacy/en`
+  }
+}
 
 const getImageCodeData = () => {
   if (isGetImageCodeLoading.value) return

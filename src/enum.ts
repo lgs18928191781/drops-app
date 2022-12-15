@@ -346,3 +346,8 @@ export enum ShowControl {
   isShowShareSuccessModal = 'isShowShareSuccessModal',
   never = 'never',
 }
+
+export enum loginOrRegisterProtocolType {
+  userProtocol = 1,
+  privitePolicy = 2,
+}
