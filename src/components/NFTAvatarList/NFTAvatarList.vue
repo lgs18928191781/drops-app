@@ -13,6 +13,7 @@
       class="nft-list flex1"
       v-infinite-scroll="getMore"
       :infinite-scroll-immediate="false"
+      :infinite-scroll-distance="100"
       v-loading="isSkeleton"
     >
       <ElSkeleton :loading="isSkeleton" animated>

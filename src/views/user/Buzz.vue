@@ -1,6 +1,12 @@
 <template>
   <div class="buzz-list-warp">
-    <BuzzListVue :list="list" :pagination="pagination" :loading="isSkeleton" @get-more="getMore" />
+    <BuzzListVue
+      :list="list"
+      :pagination="pagination"
+      :loading="isSkeleton"
+      @get-more="getMore"
+      @update-item="updateItem"
+    />
   </div>
 </template>
 
@@ -50,6 +56,13 @@ function getMore() {
   getDatas().then(() => {
     pagination.loading = false
   })
+}
+
+function updateItem(params: { txId: string; buzz: BuzzItem }) {
+  const index = list.findIndex(item => item.txId === params.txId)
+  if (index !== -1) {
+    list[index] = params.buzz
+  }
 }
 
 getDatas(true).then(() => {

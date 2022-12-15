@@ -21,7 +21,12 @@
   </div>
 
   <div class="content">
-    <div class="genesis-list" v-infinite-scroll="load" :infinite-scroll-immediate="false">
+    <div
+      class="genesis-list"
+      v-infinite-scroll="load"
+      :infinite-scroll-immediate="false"
+      :infinite-scroll-distance="100"
+    >
       <!-- NFT 列表 -->
       <template v-if="isShowNFTList">
         <ElSkeleton :loading="isNFTSkeleton" animated>

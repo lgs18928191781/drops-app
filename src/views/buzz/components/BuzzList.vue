@@ -1,6 +1,10 @@
 <template>
-  <!-- <div class="buzz-list" v-infinite-scroll="getMore" :infinite-scroll-immediate="false"> -->
-  <div class="buzz-list" v-infinite-scroll="getMore" :infinite-scroll-immediate="false">
+  <div
+    class="buzz-list"
+    v-infinite-scroll="getMore"
+    :infinite-scroll-immediate="false"
+    :infinite-scroll-distance="100"
+  >
     <template v-if="loading">
       <ElSkeleton :loading="true" animated>
         <template #template>
