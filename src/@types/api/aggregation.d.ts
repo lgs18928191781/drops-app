@@ -169,3 +169,17 @@ declare interface UserAllInfo {
   coverPublicKey: string
   timestamp: number
 }
+
+declare interface PublishShareItem {
+  icon: string
+  cover: string
+  title: string
+  detail: string
+  shareProtocol: string
+  shareId: string
+  shareIdType: string
+  shareFromMetaID: string
+  shareContent: string
+  shareContentType: string
+  mention: string
+}

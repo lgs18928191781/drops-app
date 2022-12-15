@@ -1361,7 +1361,7 @@ export class SDK {
           userStore.sdkPayConfirm[payType].value < useAmount)
       ) {
         // 需要弹出确认框操作
-        const divId = 'sdk-pay-conirm'
+        const divId = `sdk-pay-conirm-${new Date().getTime()}`
         const div = document.createElement('div')
         div.id = divId
         document.body.append(div)
