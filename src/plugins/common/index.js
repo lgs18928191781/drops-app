@@ -641,7 +641,7 @@ export class HdWallet {
           return response.json()
         })
         .then(json => {
-          debugger
+          // debugger
           if (json && json.code === 200 && json.result.data) {
             resolve(json.result.data)
           } else {

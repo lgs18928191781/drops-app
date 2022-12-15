@@ -37,6 +37,10 @@ export function randomString() {
     .replace('.', '')
 }
 
+export function getTimestampInSeconds() {
+  return Math.floor(Date.now() / 1000)
+}
+
 export const showLoading = async (fetch: Function, loading: Ref<boolean>) => {
   loading.value = true
   // 最少1秒，防止闪烁

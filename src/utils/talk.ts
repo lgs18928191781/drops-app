@@ -14,7 +14,13 @@ import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
 import { getCommunityAuth } from '@/api/talk'
 import { SDK } from './sdk'
-import { FileToAttachmentItem, randomString, realRandomString, sleep } from './util'
+import {
+  FileToAttachmentItem,
+  getTimestampInSeconds,
+  randomString,
+  realRandomString,
+  sleep,
+} from './util'
 import { Message, MessageDto } from '@/@types/talk'
 import { buildCryptoInfo, decrypt, encrypt, MD5Hash } from './crypto'
 import { UtxoItem } from '@/@types/sdk'
@@ -178,7 +184,7 @@ export const giveRedPacket = async (form: any, channelId: string, selfMetaId: st
   // 1.1 构建红包地址
   const code = realRandomString(6)
   const subId = channelId.substring(0, 12)
-  const createTime = new Date().getTime()
+  const createTime = Date.now()
   const key = `${subId.toLocaleLowerCase()}${code.toLocaleLowerCase()}${createTime}`
   const net = import.meta.env.VITE_NET_WORK || 'mainnet'
   const { addressStr: address } = buildCryptoInfo(key, net)
@@ -238,7 +244,7 @@ export const createChannel = async (
     codehash,
     genesis,
     limitAmount,
-    timestamp: new Date().getSeconds(),
+    timestamp: getTimestampInSeconds(),
   }
 
   // 2. 构建节点参数
@@ -365,14 +371,8 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
   const { content, channelId: groupID, userName: nickName } = messageDto
 
   // 1. 构建协议数据
-  // 1.1 groupID: done
-  // 1.2 timestamp
-  const timestamp = new Date().getSeconds()
-  // 1.3 nickName: done
-  // 1.4 content: done
-  // 1.5 contentType
+  const timestamp = getTimestampInSeconds()
   const contentType = 'text/plain'
-  // 1.6 encryption
   const encryption = 'aes'
   const dataCarrier = {
     groupID,
@@ -387,11 +387,13 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
   const node = {
     nodeName: NodeName.SimpleGroupChat,
     data: JSON.stringify(dataCarrier),
-    timestamp: new Date().getTime(), // 服务端返回的是毫秒，所以模拟需要乘以1000
+    timestamp: Date.now(), // 服务端返回的是毫秒，所以模拟需要乘以1000
   }
 
   // 2.5. mock发送
+  const mockId = realRandomString(12)
   const mockMessage = {
+    mockId,
     protocol: 'simpleGroupChat',
     contentType: 'text/plain',
     content,
@@ -400,7 +402,7 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
     avatarImage: userStore.user?.avatarImage || '',
     metaId: userStore.user?.metaId || 'undefined',
     nickName: userStore.user?.name || '',
-    timestamp: new Date().getTime(), // 服务端返回的是毫秒，所以模拟需要乘以1000
+    timestamp: Date.now(), // 服务端返回的是毫秒，所以模拟需要乘以1000
     txId: '',
     encryption,
     isMock: true,
@@ -409,16 +411,20 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
 
   // 3. 发送节点
   const sdk = userStore.showWallet
-  await tryCreateNode(node, sdk)
+  await tryCreateNode(node, sdk, mockId)
 
   return '1'
 }
 
-export const tryCreateNode = async (node: any, sdk: SDK) => {
+export const tryCreateNode = async (node: any, sdk: SDK, mockId: string) => {
   const jobs = useJobsStore()
   const talk = useTalkStore()
   try {
-    await sdk.createBrfcChildNode(node)
+    const nodeRes = await sdk.createBrfcChildNode(node)
+    // 取消支付的情况下，删除mock消息
+    if (nodeRes === null) {
+      talk.removeMessage(mockId)
+    }
   } catch (error) {
     const timestamp = node.timestamp
     jobs.nodes.push({ node, timestamp })
@@ -438,7 +444,7 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
   // 1. 构建协议数据
   // 1.1 to: done
   // 1.2 timestamp
-  const timestamp = new Date().getSeconds()
+  const timestamp = Date.now()
   // 1.3 content: done
   // 1.4 contentType
   const contentType = 'text/plain'
@@ -456,11 +462,13 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
   const node = {
     nodeName: NodeName.ShowMsg,
     data: JSON.stringify(dataCarrier),
-    timestamp: new Date().getTime(), // 服务端返回的是毫秒，所以模拟需要乘以1000
+    timestamp, // 服务端返回的是毫秒，所以模拟需要乘以1000
   }
 
   // 2.5. mock发送
+  const mockId = realRandomString(12)
   const mockMessage = {
+    mockId,
     nodeName: NodeName.ShowMsg,
     dataType: 'application/json',
     data: dataCarrier,
@@ -471,20 +479,19 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
     metaId: userStore.user?.metaId || 'undefined',
     from: userStore.user?.metaId,
     nickName: userStore.user?.name || '',
-    timestamp: new Date().getTime(), // 服务端返回的是毫秒，所以模拟需要乘以1000
+    timestamp, // 服务端返回的是毫秒，所以模拟需要乘以1000
     txId: '',
     encryption: encrypt,
     isMock: true,
     to,
   }
-  console.log('mockMessage', mockMessage)
 
   // 查找store中的位置
   talkStore.addMessage(mockMessage)
 
   // 3. 发送节点
   const sdk = userStore.showWallet
-  await tryCreateNode(node, sdk)
+  await tryCreateNode(node, sdk, mockId)
 
   return '1'
 }
@@ -523,7 +530,7 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
   // 1. 构建协议数据
   // 1.1 groupId: done
   // 1.2 timestamp
-  const timestamp = new Date().getSeconds()
+  const timestamp = getTimestampInSeconds()
   // 1.3 nickName: done
   // 1.4 fileType
   const file = attachments![0]
@@ -548,9 +555,12 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
     attachments,
     timestamp: timestamp * 1000, // 服务端返回的是毫秒，所以模拟需要乘以1000
   }
+  console.log({ timestamp })
 
   // 2.5. mock发送
+  const mockId = realRandomString(12)
   const mockMessage: Message = {
+    mockId,
     protocol: 'SimpleFileGroupChat',
     contentType: fileType,
     content: originalFileUrl,
@@ -568,7 +578,7 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
 
   // 3. 发送节点
   const sdk = userStore.showWallet
-  await tryCreateNode(node, sdk)
+  await tryCreateNode(node, sdk, mockId)
 
   return
 }

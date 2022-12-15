@@ -348,3 +348,8 @@ export enum ShowControl {
   isShowCommunitySettingsModal = 'isShowCommunitySettingsModal',
   never = 'never',
 }
+
+export enum loginOrRegisterProtocolType {
+  userProtocol = 1,
+  privitePolicy = 2,
+}
