@@ -457,5 +457,8 @@
   "Following": "正在关注",
   "Followers": "关注者",
   "Already on NFT": "NFT",
-  "Replay": "回复"
+  "Replay": "回复",
+  "Cancel Follow": "取消关注",
+  "cancelFollowTips": "你去确定要取消关注用户",
+  "Warning": "温馨提示"
 }

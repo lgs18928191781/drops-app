@@ -461,5 +461,8 @@
   "Following": "Following",
   "Followers": "Followers",
   "Already on NFT": "Already on NFT",
-  "Replay": "Replay"
+  "Replay": "Replay",
+  "Cancel Follow": "Cancel Follow",
+  "cancelFollowTips": "Can you confirm cancel follow user",
+  "Warning": "Warning"
 }

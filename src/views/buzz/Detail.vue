@@ -146,10 +146,10 @@ function onLikeCommentSuccess(txId: string) {
   }
 }
 
-function updateItem(params: { txId: string; buzz: BuzzItem }) {
-  const index = list.findIndex(item => item.txId === params.txId)
+function updateItem(buzz: BuzzItem) {
+  const index = list.findIndex(item => item.txId === buzz.txId)
   if (index !== -1) {
-    list[index] = params.buzz
+    list[index] = buzz
   }
 }
 

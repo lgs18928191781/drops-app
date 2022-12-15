@@ -112,6 +112,7 @@ import BuzzItemSkeletonVue from './BuzzItemSkeleton.vue'
 import { metafile } from '@/utils/filters'
 import PublishBaseTemplateVue from '@/components/PublishBaseTemplate/PublishBaseTemplate.vue'
 import { useRoute } from 'vue-router'
+import { listenerCount } from 'process'
 
 interface Props {
   list: BuzzItem[]
@@ -195,15 +196,15 @@ const operates: {
               userName: userStore.user!.name!,
               value: payAmount,
             })
-            emit('updateItem', {
-              txId: props.list[index].txId,
-              buzz: isQuoteItem
+            emit(
+              'updateItem',
+              isQuoteItem
                 ? {
                     ...props.list[index],
                     quoteItem: targetBuzz,
                   }
-                : targetBuzz,
-            })
+                : targetBuzz
+            )
             Mitt.emit(MittEvent.AddBuzz, { txId: res.currentNode!.txId })
             ElMessage.success(i18n.t('Buzz.repost.success'))
             operateLoading.value = false
@@ -318,10 +319,7 @@ async function onLike(params: { txId: string; address: string; done: () => void 
       }
       if (isQuote) buzz.quoteItem.like.push(params)
       else buzz.like.push(params)
-      emit('updateItem', {
-        txId: buzz.txId,
-        buzz,
-      })
+      emit('updateItem', buzz)
     }
     ElMessage.success(i18n.t('PayLike') + ' ' + i18n.t('Success'))
     emit('like', params.txId)
@@ -362,15 +360,16 @@ async function onFollow(
     .catch(error => params.reject(error))
   if (res) {
     target.isMyFollow = true
-    emit('updateItem', {
-      txId: props.list[index].txId,
-      buzz: isQuoteItem
+    emit(
+      'updateItem',
+      isQuoteItem
         ? {
             ...props.list[index],
             quoteItem: target,
           }
-        : target,
-    })
+        : target
+    )
+    Mitt.emit(MittEvent.FollowUser, { metaId: target.metaId, result: true })
     params.resolve(res.currentNode.txId)
   } else {
     params.resolve()
@@ -437,10 +436,7 @@ function replay() {
             userName: userStore.user!.name!,
             value: payAmount,
           })
-          emit('updateItem', {
-            txId: buzz.txId,
-            buzz,
-          })
+          emit('updateItem', buzz)
         }
       }
 
@@ -498,6 +494,20 @@ function replay() {
 function getMore() {
   emit('getMore')
 }
+
+Mitt.on(MittEvent.FollowUser, async (params: { metaId: string; result: boolean }) => {
+  for (let item of props.list) {
+    if (
+      item.metaId === params.metaId ||
+      (item.quoteItem && item.quoteItem.metaId === params.metaId)
+    ) {
+      const _item = { ...item }
+      if (_item.metaId === params.metaId) _item.isMyFollow = params.result
+      else _item.quoteItem!.isMyFollow = params.result
+      emit('updateItem', _item)
+    }
+  }
+})
 
 defineExpose({
   onReplay,

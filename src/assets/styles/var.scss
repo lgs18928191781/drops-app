@@ -78,3 +78,11 @@ html.dark {
     -webkit-line-clamp: $lineNum;
     -webkit-box-orient: vertical;
 }
+
+@media only screen and (max-width: 1024PX) {
+
+    :root {
+        --header-height: 70px
+    }
+
+}
