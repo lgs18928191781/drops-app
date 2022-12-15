@@ -73,9 +73,7 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
 
 export const updateCommunity = async (form: any, sdk: SDK) => {
   // communityId, name, description, cover, metaName, mateNameNft, admins, reserved, icon
-  let { icon, description, cover, original } = form
-  const communityId = original.metaName.communityId
-  const reserved = original.metaName.signature
+  let { icon, description, cover, original, metaName } = form
 
   const attachments = []
   let iconPlaceholder = original.icon
@@ -93,17 +91,17 @@ export const updateCommunity = async (form: any, sdk: SDK) => {
   const admins = original.admins
 
   const dataCarrier = {
-    communityId,
-    name: original.metaName.metaName,
-    metaName: original.metaName.metaName,
+    communityId: metaName.communityId,
+    name: metaName.metaName,
+    metaName: metaName.metaName,
     // metaNameNft: ''
     icon: iconPlaceholder,
     admins,
     description,
     cover: coverPlaceholder || '',
-    reserved,
+    reserved: metaName.signature,
   }
-  console.log({ dataCarrier, form })
+  console.log({ dataCarrier, form, original })
 
   // 2. 构建节点参数
   const node = {
@@ -113,9 +111,9 @@ export const updateCommunity = async (form: any, sdk: SDK) => {
   }
 
   // 3. 发送节点
-  // await sdk.createBrfcChildNode(node)
+  await sdk.createBrfcChildNode(node)
 
-  return { communityId }
+  // return { communityId }
 }
 
 export const sendInviteBuzz = async (form: any, sdk: SDK) => {
