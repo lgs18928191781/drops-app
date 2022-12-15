@@ -276,21 +276,25 @@ function onReplay(params: {
   isShowCommentModal.value = true
 }
 
-async function onLike(params: { txId: string; address: string }) {
+async function onLike(params: { txId: string; address: string; done: () => void }) {
   const index = props.list.findIndex(item => item.txId === params.txId)
   const time = new Date().getTime()
   const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
-  const res = await userStore.showWallet.createBrfcChildNode({
-    nodeName: NodeName.PayLike,
-    data: JSON.stringify({
-      createTime: time,
-      isLike: '1',
-      likeTo: params.txId,
-      pay: payAmount,
-      payTo: params.address,
-    }),
-    payTo: [{ amount: payAmount, address: params.address }],
-  })
+  const res = await userStore.showWallet
+    .createBrfcChildNode({
+      nodeName: NodeName.PayLike,
+      data: JSON.stringify({
+        createTime: time,
+        isLike: '1',
+        likeTo: params.txId,
+        pay: payAmount,
+        payTo: params.address,
+      }),
+      payTo: [{ amount: payAmount, address: params.address }],
+    })
+    .catch(error => {
+      ElMessage.error(error.message)
+    })
   if (res) {
     if (index !== -1) {
       const buzz = { ...props.list[index] }
@@ -308,6 +312,9 @@ async function onLike(params: { txId: string; address: string }) {
     }
     ElMessage.success(i18n.t('PayLike') + ' ' + i18n.t('Success'))
     emit('like', params.txId)
+    params.done()
+  } else {
+    params.done()
   }
 }
 
@@ -393,12 +400,17 @@ function replay() {
       pay: payAmount,
       payTo: replayMsg.val.userAddress,
     }
-    const res = await userStore.showWallet?.createBrfcChildNode({
-      nodeName: NodeName.PayComment,
-      dataType: 'application/json',
-      data: JSON.stringify(dataParams),
-      payTo: [{ address: replayMsg.val.userAddress, amount: payAmount }],
-    })
+    const res = await userStore.showWallet
+      ?.createBrfcChildNode({
+        nodeName: NodeName.PayComment,
+        dataType: 'application/json',
+        data: JSON.stringify(dataParams),
+        payTo: [{ address: replayMsg.val.userAddress, amount: payAmount }],
+      })
+      .catch(error => {
+        ElMessage.error(error.message)
+        operateLoading.value = false
+      })
     if (res) {
       const index = props.list.findIndex(item => item.txId === currentTxId.value)
 

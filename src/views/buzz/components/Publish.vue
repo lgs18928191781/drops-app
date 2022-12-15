@@ -145,9 +145,8 @@ import AttachmentVue from './Attachment.vue'
 import StickerVue from '@/components/Sticker/Sticker.vue'
 import { useRouter } from 'vue-router'
 import { Mitt, MittEvent } from '@/utils/mitt'
-import { getOneBuzz } from '@/api/buzz'
 import QuoteVue from './Quote.vue'
-import { GetHotTopics } from '@/api/aggregation'
+import { GetBuzz, GetHotTopics } from '@/api/aggregation'
 import NFTModalVue from '@/components/NFTModal/NFTModal.vue'
 import PublishBaseTemplateVue from '@/components/PublishBaseTemplate/PublishBaseTemplate.vue'
 
@@ -343,11 +342,13 @@ watch(
   () => layout.publishBuzzOption.repostTxId,
   () => {
     if (layout.publishBuzzOption.repostTxId) {
-      getOneBuzz({ txId: layout.publishBuzzOption.repostTxId }).then(res => {
-        if (res.code === 0) {
-          respostBuzz.val = res.data.results.items[0]
+      GetBuzz({ txId: layout.publishBuzzOption.repostTxId, metaId: userStore.user?.metaId }).then(
+        res => {
+          if (res.code === 0) {
+            respostBuzz.val = res.data.results.items[0]
+          }
         }
-      })
+      )
     } else {
       respostBuzz.val = null
     }
