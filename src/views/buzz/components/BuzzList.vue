@@ -33,6 +33,7 @@
             :data="item"
             :loading="loading"
             :play-file="playFile"
+            :isInDetailPage="isInDetailPage"
             @repost="onRepost"
             @more="onMore"
             @like="onLike"
@@ -116,6 +117,7 @@ interface Props {
   list: BuzzItem[]
   loading?: boolean
   pagination?: Pagination
+  isInDetailPage?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits(['getMore', 'comment', 'like', 'updateItem'])
@@ -277,7 +279,16 @@ function onReplay(params: {
 }
 
 async function onLike(params: { txId: string; address: string; done: () => void }) {
-  const index = props.list.findIndex(item => item.txId === params.txId)
+  let isQuote = false
+  let index = props.list.findIndex(item => item.txId === params.txId)
+  if (index === -1) {
+    index = props.list.findIndex(item => item.quoteItem && item.quoteItem.txId === params.txId)
+    if (index === -1) {
+      throw new Error('txId Not Found')
+    } else {
+      isQuote = true
+    }
+  }
   const time = new Date().getTime()
   const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
   const res = await userStore.showWallet
@@ -298,13 +309,15 @@ async function onLike(params: { txId: string; address: string; done: () => void 
   if (res) {
     if (index !== -1) {
       const buzz = { ...props.list[index] }
-      buzz.like.push({
+      const params = {
         metaId: userStore.user!.metaId!,
         timestamp: time,
         txId: res.currentNode!.txId,
         userName: userStore.user!.name,
         value: payAmount,
-      })
+      }
+      if (isQuote) buzz.quoteItem.like.push(params)
+      else buzz.like.push(params)
       emit('updateItem', {
         txId: buzz.txId,
         buzz,

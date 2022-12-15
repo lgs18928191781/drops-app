@@ -6,6 +6,7 @@
     @comment="onReplayCommentSucccess"
     @like="onLikeCommentSuccess"
     @update-item="updateItem"
+    :isInDetailPage="true"
   >
     <template #comment>
       <div class="comment">
