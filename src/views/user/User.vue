@@ -70,15 +70,15 @@
               <span class="id" @click="copy(userInfo.val!.metaId)"
                 >MetaID: {{userInfo.val!.metaId.slice(0, 6)}}</span
               >
-              <span class="tag">TX</span>
+              <span class="tag" @click="tx(userInfo.val!.metaId)">TX</span>
             </div>
             <div class="follow-list flex flex-align-center">
               <span class="follow-item">
-                <span class="count">15</span>
+                <span class="count">{{ userFollow.following.length }}</span>
                 {{ $t('Following') }}
               </span>
               <span class="follow-item">
-                <span class="count">15</span>
+                <span class="count">{{ userFollow.follers.length }}</span>
                 {{ $t('Followers') }}
               </span>
             </div>
@@ -104,7 +104,7 @@ import { computed, reactive, ref } from 'vue'
 import { GetUserAllInfo, GetUserFollow } from '@/api/aggregation'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import { copy } from '@/utils/util'
+import { copy, tx } from '@/utils/util'
 
 const i18n = useI18n()
 const route = useRoute()

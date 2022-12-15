@@ -22,7 +22,7 @@ function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, rject) => {
     const res = await GetUserBuzzs({
       metaId: route.params.metaId as string,
-      isNoEncrypt: false,
+      isNoEncrypt: userStore.user?.metaId === route.params.metaId ? false : true,
       page: pagination.page.toString(),
       pageSize: pagination.pageSize.toString(),
       timestamp: 0,

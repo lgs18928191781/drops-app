@@ -132,6 +132,12 @@
                 border-radius: 4px;
                 margin-left: 12px;
                 cursor: pointer;
+                transition: all 0.5s;
+
+                &:hover {
+                    background: var(--themeTextColor);
+                    color: var(--themeBgColor);
+                }
             }
         }
 
