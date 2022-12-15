@@ -24,7 +24,10 @@
         @click.stop="toItem"
       >
         <div class="simple-publish-share flex">
-          <Image :src="shareInfo.val!.cover" />
+          <Image :src="shareInfo.val!.cover" v-if="shareInfo.val!.cover" />
+          <div class="image flex flex-align-center flex-pack-center" v-else>
+            <Icon name="link" />
+          </div>
           <div class="cont flex1">
             <div class="name">{{ shareInfo.val!.title }}</div>
             <div class="drsc">{{ shareInfo.val!.detail }}</div>
