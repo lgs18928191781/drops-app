@@ -238,7 +238,12 @@
               </template>
             </ElDropdown>
           </div>
-          <div class="content flex1" v-infinite-scroll="load" :infinite-scroll-immediate="false">
+          <div
+            class="content flex1"
+            v-infinite-scroll="load"
+            :infinite-scroll-immediate="false"
+            :infinite-scroll-distance="100"
+          >
             <ElSkeleton :loading="isSkeleton" animated>
               <div class="nft-genesis-list">
                 <div class="nft-genesis-item" v-for="item in genesisList" :key="item.nftTimestamp">

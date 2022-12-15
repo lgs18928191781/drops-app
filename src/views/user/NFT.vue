@@ -6,4 +6,4 @@
 
 <script setup lang="ts"></script>
 
-<style lang="scss" scoped src="./User.scss"></style>
+<style lang="scss" scoped></style>

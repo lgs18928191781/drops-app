@@ -50,13 +50,17 @@
         </div>
       </div>
       <div class="content">
-        <template v-if="displayItemData.protocol === 'metanote'">
+        <template v-if="displayItemData.protocol === NodeName.MetaNote">
           <BuzzItemContentMetaNoteVue :buzz="displayItemData" />
+        </template>
+        <template v-else-if="displayItemData.protocol === NodeName.SimplePublicShare">
+          <BuzzItemContentSimplePublicShareVue :buzz="displayItemData" />
         </template>
         <template v-else>
           <BuzzItemContentNormalVue
             :buzz="data!"
             :play-file="playFile"
+            :isQuote="isQuote"
             @play="val => emit('play', val)"
           />
         </template>
@@ -106,7 +110,7 @@ import { useRoute, useRouter } from 'vue-router'
 import Attachment from './Attachment.vue'
 // import { copy } from '@/utils/filters'
 import { PayMeParams } from '@/@types/sdk'
-import { PayMeParamsType } from '@/enum'
+import { PayMeParamsType, NodeName } from '@/enum'
 import { checkSdkStatus, checkUserLogin } from '@/utils/util'
 
 import BuzzItemControlVue from './BuzzItemControl.vue'
@@ -117,6 +121,7 @@ import { Loading } from '@element-plus/icons-vue'
 import { useI18n } from 'vue-i18n'
 import BuzzItemContentNormalVue from './BuzzItemContentNormal.vue'
 import BuzzItemContentMetaNoteVue from './BuzzItemContentMetaNote.vue'
+import BuzzItemContentSimplePublicShareVue from './BuzzItemContentSimplePublicShare.vue'
 
 interface Props {
   data?: BuzzItem

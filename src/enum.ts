@@ -282,6 +282,7 @@ export enum NodeName {
   OpenRedenvelope = 'OpenRedenvelope',
   SimplePublicShare = 'SimplePublicShare',
   Name = 'name',
+  MetaNote = 'metanote',
 }
 
 export const enum BindStatus {
@@ -344,6 +345,7 @@ export enum ShowControl {
   isShowChooseMetaNameModal = 'isShowChooseMetaNameModal',
   isShowShareToBuzzModal = 'isShowShareToBuzzModal',
   isShowShareSuccessModal = 'isShowShareSuccessModal',
+  isShowCommunitySettingsModal = 'isShowCommunitySettingsModal',
   never = 'never',
 }
 

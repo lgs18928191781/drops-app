@@ -1,5 +1,10 @@
 <template>
-  <ElDialog :model-value="isShow" class="none-header none-padding sm" :z-index="9999">
+  <ElDialog
+    :model-value="isShow"
+    class="none-header none-padding sm"
+    :close-on-click-modal="false"
+    :z-index="9999"
+  >
     <div class="sdk-pay-confirm">
       <div class="header">
         <span class="title">

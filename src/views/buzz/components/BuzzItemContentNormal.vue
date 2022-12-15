@@ -2,19 +2,8 @@
   <!-- text -->
   <div
     class="text content-item"
-    v-html="
-      displayItemData
-        ? displayItemData.content
-            .replace(/\\n/g, '\n')
-            .replace(
-              /#.*?[\s\n\r#]{1}|#.*?$/g,
-              val =>
-                `<a href='/buzz/topic/${val
-                  .replace('#', '')
-                  .replace(/(^\s*)|(\s*$)/g, '')}' style='color:#fc6d5e' >${val}</a>&nbsp;`
-            )
-        : ''
-    "
+    :class="{ quote: isQuote }"
+    v-html="displayItemData ? $filters.buzzTextContent(displayItemData.content) : ''"
   ></div>
 
   <!-- Attachment -->
@@ -43,6 +32,7 @@ import QuoteVue from './Quote.vue'
 interface Props {
   buzz: BuzzItem
   playFile?: string
+  isQuote?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits<{

@@ -18,7 +18,7 @@
         :key="index"
         @click.stop="item.fun()"
       >
-        <component :is="item.icon" />
+        <component :is="item.icon" :class="[item.class()]" />
         <span class="value">{{ item.value().value }}</span>
       </div>
     </div>
@@ -44,7 +44,7 @@
 
 <script setup lang="ts">
 import { checkUserLogin, tx } from '@/utils/util'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { router } from '@/router'
 import { useUserStore } from '@/stores/user'
 import ShareIcon from '@/assets/svg/share.svg'
@@ -59,12 +59,16 @@ const props = withDefaults(defineProps<Props>(), {})
 const userStore = useUserStore()
 
 const emit = defineEmits(['update', 'repost', 'buzz', 'more', 'like', 'replay'])
+const isLikeIng = ref(false)
 
 const operates = [
   {
     icon: ShareIcon,
     value: () => {
       return forwardText
+    },
+    class: () => {
+      return ''
     },
     active: () => {
       return isIForward.value
@@ -78,6 +82,9 @@ const operates = [
     icon: CommentIcon,
     value: () => {
       return commentText
+    },
+    class: () => {
+      return ''
     },
     active: () => {
       return false
@@ -99,13 +106,20 @@ const operates = [
     value: () => {
       return likeText
     },
+    class: () => {
+      return isLikeIng.value ? 'ing' : ''
+    },
     active: () => {
       return isILike.value
     },
     fun: async () => {
       await checkUserLogin()
       if (isILike.value) return
-      emit('like', { txId: props.buzz.txId, address: props.buzz.zeroAddress })
+      isLikeIng.value = true
+      const done = () => {
+        isLikeIng.value = false
+      }
+      emit('like', { txId: props.buzz.txId, address: props.buzz.zeroAddress, done })
     },
   },
 ]

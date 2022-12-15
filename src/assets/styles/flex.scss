@@ -1,4 +1,3 @@
-
 .flex {
   display: -webkit-box;
   display: -webkit-flex;
@@ -70,19 +69,22 @@
   -ms-flex-align: start;
   align-items: flex-start;
 }
+
 .flex-align-baseline {
   -webkit-box-align: baseline;
   -webkit-align-items: baseline;
   -ms-flex-align: baseline;
   align-items: baseline;
 }
+
 .flex-align-center {
   -webkit-box-align: center;
   -webkit-align-items: center;
   -ms-flex-align: center;
   align-items: center;
 }
-.flex-align-end{
+
+.flex-align-end {
   -webkit-box-align: end;
   -webkit-align-items: flex-end;
   -ms-flex-align: end;
@@ -122,8 +124,9 @@
   align-self: flex-end;
 }
 
+
 .flex-self-center {
-  -webkit-flex-item-align:  center;
+  -webkit-flex-item-align: center;
   align-self: center;
 }
 
@@ -143,5 +146,3 @@
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
 }
-
-

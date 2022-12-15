@@ -158,6 +158,11 @@ export const AllNodeName: {
     path: '/Protocols/OpenRedenvelope',
     version: '1.0.1',
   },
+  [NodeName.MetaNote]: {
+    brfcId: '4934f562fc29',
+    path: '/Protocols/metanote',
+    version: '1.0.1',
+  },
 }
 
 export class SDK {
@@ -1356,7 +1361,7 @@ export class SDK {
           userStore.sdkPayConfirm[payType].value < useAmount)
       ) {
         // 需要弹出确认框操作
-        const divId = 'sdk-pay-conirm'
+        const divId = `sdk-pay-conirm-${new Date().getTime()}`
         const div = document.createElement('div')
         div.id = divId
         document.body.append(div)

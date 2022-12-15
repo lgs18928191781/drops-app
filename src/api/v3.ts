@@ -26,7 +26,10 @@ const V3 = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/v3`, {
       }
       return Promise.reject(error.response.data.data)
     } else if (error?.response && error?.response?.data && error?.response?.data?.data !== '') {
-      return Promise.reject(error.response.data.data)
+      return Promise.reject({
+        code: error.response?.data?.code,
+        message: error.response.data.data,
+      })
     } else {
       // 对响应错误做点什么
       return Promise.reject(error)

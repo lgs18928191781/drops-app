@@ -2,6 +2,7 @@
 import dayjs from 'dayjs'
 import Decimal from 'decimal.js-light'
 import { useRootStore } from '@/stores/root'
+import { router } from '@/router'
 
 export function dateTimeFormat(timestamp: Date, format: string = 'YYYY-MM-DD HH:mm:ss') {
   if (!timestamp) {
@@ -99,4 +100,25 @@ export function metafile(metafile: string, width = 235, type: 'metafile' | 'meta
     query += `/resize,m_lfit,w_${width}`
   }
   return `${fileUrl}?${query}`
+}
+
+export function toUserHome(metaId: string) {
+  router.push({
+    name: 'user',
+    params: {
+      metaId,
+    },
+  })
+}
+
+export function buzzTextContent(content: string) {
+  return content
+    .replace(/\\n/g, '\n')
+    .replace(
+      /#.*?[\s\n\r#]{1}|#.*?$/g,
+      val =>
+        `<a href='/buzz/topic/${val
+          .replace('#', '')
+          .replace(/(^\s*)|(\s*$)/g, '')}' style='color:#fc6d5e' >${val}</a>&nbsp;`
+    )
 }

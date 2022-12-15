@@ -71,6 +71,51 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   return { communityId }
 }
 
+export const updateCommunity = async (form: any, sdk: SDK) => {
+  // communityId, name, description, cover, metaName, mateNameNft, admins, reserved, icon
+  let { icon, description, cover, original, metaName } = form
+
+  const attachments = []
+  let iconPlaceholder = original.icon
+  if (icon) {
+    iconPlaceholder = 'metafile://$[0]'
+    attachments.push(await FileToAttachmentItem(icon))
+  }
+
+  let coverPlaceholder = original.cover
+  if (cover) {
+    coverPlaceholder = 'metafile://$[1]'
+    attachments.push(await FileToAttachmentItem(cover))
+  }
+
+  const admins = original.admins
+
+  const dataCarrier = {
+    communityId: metaName.communityId,
+    name: metaName.metaName,
+    metaName: metaName.metaName,
+    // metaNameNft: ''
+    icon: iconPlaceholder,
+    admins,
+    description,
+    cover: coverPlaceholder || '',
+    reserved: metaName.signature,
+  }
+  console.log({ dataCarrier, form, original })
+
+  // 2. 构建节点参数
+  const node = {
+    nodeName: NodeName.SimpleCommunity,
+    data: JSON.stringify(dataCarrier),
+    attachments,
+  }
+
+  // 3. 发送节点
+  await sdk.createBrfcChildNode(node)
+
+  // return { communityId }
+}
+
 export const sendInviteBuzz = async (form: any, sdk: SDK) => {
   // shareProtocol, shareId, shareIdType, shareFromMetaID, shareContent, shareContentType, mention
   const shareProtocol = NodeName.SimpleGroupCreate

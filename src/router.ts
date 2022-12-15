@@ -141,6 +141,27 @@ export const router = createRouter({
         },
       ],
     },
+    // user
+    {
+      path: '/user/:metaId',
+      name: 'user',
+      component: () => import('@/views/user/User.vue'),
+      redirect: {
+        name: 'userBuzz',
+      },
+      children: [
+        {
+          path: 'buzz',
+          name: 'userBuzz',
+          component: () => import('@/views/user/Buzz.vue'),
+        },
+        {
+          path: 'nft',
+          name: 'userNFT',
+          component: () => import('@/views/user/NFT.vue'),
+        },
+      ],
+    },
 
     // 404
     { path: '/404', name: '404', component: NotFoundPage },

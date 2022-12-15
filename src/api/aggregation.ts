@@ -94,28 +94,7 @@ export const GetUserAllInfo = (
   metaId: string
 ): Promise<{
   code: number
-  data: {
-    metaId: string
-    metaIdTag: string
-    address: string
-    pubKey: string
-    infoTxId: string
-    infoPublicKey: string
-    protocolTxId: string
-    protocolPublicKey: string
-    name: string
-    nameEncrypt: string
-    phone: string
-    phoneEncrypt: string
-    email: string
-    emailEncrypt: string
-    avatarTxId: string
-    avatarEncrypt: string
-    coverUrl: string
-    coverType: string
-    coverPublicKey: string
-    timestamp: number
-  }
+  data: UserAllInfo
 }> => {
   return aggregation.get(`/v2/app/user/getUserAllInfo/${metaId}`)
 }
@@ -491,4 +470,30 @@ export const GetMetaNote = (params: {
   return aggregation.get(`/v2/app/metaNote/getOneMetaNote/${txId}`, {
     params: _params,
   })
+}
+
+export const GetUserBuzzs = (params: {
+  isNoEncrypt: boolean
+  metaId?: string
+  page: number
+  pageSize: number
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    results: {
+      items: BuzzItem[]
+    }
+  }
+}> => {
+  return aggregation.post(`/v2/app/buzz/getBuzzMySelfList`, params)
+}
+
+export const GetPublishShare = (
+  txId: string
+): Promise<{
+  code: number
+  data: PublishShareItem
+}> => {
+  return aggregation.get(`/v2/app/show/posts/share/${txId}/info`)
 }

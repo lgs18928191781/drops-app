@@ -33,8 +33,8 @@
             </a>
             <a
               class="flex flex-align-center"
-              :class="{ active: item.hasMyLike }"
-              @click.stop="emit('like', { txId: item.txId, address: item.zeroAddress })"
+              :class="{ active: item.hasMyLike, ing: isLikeIng[index] }"
+              @click.stop="like(item, index)"
             >
               <LikeIcon /> {{ item.likeCount }}
             </a>
@@ -48,7 +48,7 @@
           >
             <template v-for="(child, childIndex) in item.subInteractiveItem" :key="childIndex">
               <div
-                class="child-comment-item flex flex-align-center"
+                class="child-comment-item flex flex-align-start"
                 @click.stop="
                   emit('replay', {
                     txId: item.buzzTxId,
@@ -75,7 +75,7 @@
 
 <script setup lang="ts">
 import { isApp } from '@/stores/root'
-import { computed, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import IsNullVue from '@/components/IsNull/IsNull.vue'
 import CommentIcon from '@/assets/svg/comment.svg'
@@ -87,12 +87,36 @@ interface Props {
 const router = useRouter()
 const emit = defineEmits(['replay', 'like'])
 const props = withDefaults(defineProps<Props>(), {})
+const isLikeIng: boolean[] = reactive([])
 
 function sliceStr(str?: string, len = 8) {
   return str ? str.slice(0, len) : ''
 }
+
+function like(item: BuzzInteractiveItem, index: number) {
+  if (item.hasMyLike || isLikeIng[index]) return
+  isLikeIng[index] = true
+  const done = () => {
+    isLikeIng[index] = false
+  }
+  emit('like', { txId: item.txId, address: item.zeroAddress, done })
+}
 </script>
 <style scoped lang="scss">
+@keyframes sclae {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+    /*扩大到4倍*/
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
 .buzz-comment-list {
   margin-top: 7px;
   .comment-item {
@@ -192,6 +216,12 @@ function sliceStr(str?: string, len = 8) {
               }
             }
           }
+
+          &.ing {
+            svg {
+              animation: sclae 1s infinite;
+            }
+          }
         }
       }
     }
@@ -204,6 +234,7 @@ function sliceStr(str?: string, len = 8) {
         line-height: 1.7;
         padding: 0;
         font-size: 16px;
+        white-space: pre-line;
       }
       .children-comment {
         padding: 8px 12px;
@@ -226,6 +257,7 @@ function sliceStr(str?: string, len = 8) {
           .avatar {
             width: 24px;
             height: 24px;
+            line-height: 26px;
             margin-right: 6px;
           }
 
@@ -233,6 +265,7 @@ function sliceStr(str?: string, len = 8) {
             flex-shrink: 0;
             line-height: 1.7;
             font-size: 12px;
+            line-height: 26px;
             color: #909399;
             margin-right: 6px;
           }
@@ -242,6 +275,7 @@ function sliceStr(str?: string, len = 8) {
             line-height: 1.7;
             font-size: 16px;
             line-height: 26px;
+            white-space: pre-line;
           }
         }
       }

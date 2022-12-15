@@ -1,7 +1,9 @@
 import { GroupChannelType } from '@/enum'
-import { giveRedPacket } from '@/utils/talk'
+import { giveRedPacket, updateCommunity } from '@/utils/talk'
+import { sleep } from '@/utils/util'
 import { defineStore } from 'pinia'
 import { useLayoutStore } from './layout'
+import { getCommunityAuth } from '@/api/talk'
 import { useTalkStore } from './talk'
 import { useUserStore } from './user'
 
@@ -28,6 +30,10 @@ export const useCommunityFormStore = defineStore('communityForm', {
       return !!state.icon && !!state.metaName
     },
 
+    isAllFinished(state) {
+      return !!state.icon && !!state.metaName && !!state.description && !!state.cover
+    },
+
     iconPreviewUrl(state) {
       return state.icon ? URL.createObjectURL(state.icon) : ''
     },
@@ -43,6 +49,77 @@ export const useCommunityFormStore = defineStore('communityForm', {
       this.description = ''
       this.cover = null
       this.metaName = null
+    },
+  },
+})
+
+export const useCommunityUpdateFormStore = defineStore('communityUpdateForm', {
+  state: () => {
+    return {
+      icon: null as File | null,
+      description: '',
+      cover: null as File | null,
+      original: null as any,
+    }
+  },
+
+  getters: {
+    isChanged(state) {
+      const descriptionChanged = state.description !== state.original.description
+      return state.icon || state.cover || descriptionChanged
+    },
+
+    isFinished(state): boolean {
+      return this.isChanged && this.description !== ''
+    },
+
+    iconPreviewUrl(state) {
+      return state.icon ? URL.createObjectURL(state.icon) : ''
+    },
+
+    coverPreviewUrl(state) {
+      return state.cover ? URL.createObjectURL(state.cover) : ''
+    },
+  },
+
+  actions: {
+    reset() {
+      this.icon = null
+      this.description = ''
+      this.cover = null
+    },
+
+    resetInForm() {
+      this.icon = null
+      this.cover = null
+      this.description = this.original.description
+    },
+
+    async submit() {
+      if (!this.isFinished) return
+
+      const metaName = await getCommunityAuth(this.original.communityId)
+
+      const layout = useLayoutStore()
+      const user = useUserStore()
+      layout.isShowCreateCommunityModal = false
+      layout.isShowLoading = true
+      const form = {
+        icon: this.icon,
+        description: this.description,
+        cover: this.cover,
+        original: this.original,
+        metaName,
+      }
+      await updateCommunity(form, user.showWallet)
+
+      this.reset()
+      await sleep(1000)
+      layout.isShowCommunitySettingsModal = false
+      layout.isShowLoading = false
+
+      // 跳转刷新
+      window.location.reload()
     },
   },
 })

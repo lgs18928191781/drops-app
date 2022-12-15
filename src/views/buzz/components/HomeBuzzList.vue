@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { GetBuzzs } from '@/api/aggregation'
+import { GetBuzz, GetBuzzs } from '@/api/aggregation'
 import { initPagination } from '@/config'
 import { useLayoutStore } from '@/stores/layout'
 import { useUserStore } from '@/stores/user'
@@ -37,7 +37,6 @@ import { reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import BuzzListVue from './BuzzList.vue'
 import { Mitt, MittEvent } from '@/utils/mitt'
-import { getOneBuzz } from '@/api/buzz'
 import RecommendContentVue from './RecommendContent.vue'
 
 // interface Props {}
@@ -70,8 +69,9 @@ function getDatas(isCover = false) {
 }
 
 Mitt.on(MittEvent.AddBuzz, async (params: { txId: string }) => {
-  const res = await getOneBuzz({
+  const res = await GetBuzz({
     txId: params.txId,
+    metaId: userStore.user?.metaId,
   })
   if (res && res.code === 0) {
     list.unshift(res.data.results.items[0])

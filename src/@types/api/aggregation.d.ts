@@ -145,3 +145,41 @@ declare interface MetaNoteItem {
   likeCount: number
   hasLike: boolean
 }
+
+declare interface UserAllInfo {
+  metaId: string
+  metaIdTag: string
+  address: string
+  pubKey: string
+  infoTxId: string
+  infoPublicKey: string
+  protocolTxId: string
+  protocolPublicKey: string
+  name: string
+  nameEncrypt: string
+  phone: string
+  phoneEncrypt: string
+  email: string
+  emailEncrypt: string
+  avatarTxId: string
+  avatarImage: string
+  avatarEncrypt: string
+  coverUrl: string
+  coverType: string
+  coverPublicKey: string
+  timestamp: number
+}
+
+declare interface PublishShareItem {
+  icon: string
+  cover: string
+  title: string
+  detail: string
+  shareProtocol: string
+  shareId: string
+  shareIdType: string
+  shareFromMetaID: string
+  shareContent: string
+  shareContentType: string
+  mention: string
+}
