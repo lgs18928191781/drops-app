@@ -66,7 +66,6 @@
                   class="main-border primary"
                   :class="[isMyFollowed ? 'faded' : 'primary']"
                   @click="follow"
-                  v-loading="loading"
                   v-if="!isSelf"
                 >
                   <template v-if="loading">
@@ -123,6 +122,7 @@ import { copy, tx } from '@/utils/util'
 import { Loading } from '@element-plus/icons-vue'
 import { ElMessageBox } from 'element-plus'
 import { NodeName } from '@/enum'
+import { Mitt, MittEvent } from '@/utils/mitt'
 
 const i18n = useI18n()
 const route = useRoute()
@@ -226,6 +226,7 @@ async function confirmFollow() {
         MetaID: userInfo.val!.metaId,
         pay: payAmount,
         payTo: userInfo.val!.address,
+        status: isMyFollowed.value ? -1 : 1,
       }),
       payTo: [{ amount: payAmount, address: userInfo.val!.address }],
     })
@@ -234,10 +235,26 @@ async function confirmFollow() {
       loading.value = false
     })
   if (res) {
+    isMyFollowed.value = !isMyFollowed.value
+    Mitt.emit(MittEvent.FollowUser, { metaId: userInfo.val!.metaId, result: isMyFollowed.value })
+    if (isMyFollowed.value) {
+      userFollow.following.push(userStore.user!.metaId)
+    } else {
+      userFollow.following.splice(
+        userFollow.following.findIndex(item => item === userStore.user!.metaId),
+        1
+      )
+    }
+    const message = `${isMyFollowed.value ? i18n.t('Cancel Follow') : i18n.t('Follow')} ${i18n.t(
+      'Success'
+    )}`
+    ElMessage.success(message)
+    loading.value = false
   }
 }
 
 function follow() {
+  if (loading.value) return
   if (isMyFollowed) {
     ElMessageBox.confirm(
       `${i18n.t('cancelFollowTips')}: ${userInfo.val!.name}`,
@@ -245,6 +262,8 @@ function follow() {
       {
         confirmButtonText: i18n.t('Confirm'),
         cancelButtonText: i18n.t('Cancel'),
+        confirmButtonClass: 'main-border primary',
+        cancelButtonClass: 'main-border',
       }
     ).then(() => {
       confirmFollow()

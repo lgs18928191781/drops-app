@@ -22,21 +22,19 @@ html.dark {
 }
 
 .el-button {
-    --el-button-hover-text-color: #303133;
-    --el-button-hover-bg-color: #fff;
-    --el-button-active-border-color: #303133;
-    --el-button-hover-border-color: #303133;
+    --el-button-text-color: var(--themeTextColor);
+    --el-button-hover-text-color: var(--themeTextColor);
+    --el-button-hover-bg-color: var(--themeBgColor);
+    --el-button-active-border-color: var(--normal-border-color);
+    --el-button-hover-border-color: var(--normal-border-color);
     --el-button-active-color: var(--el-color-primary);
+
+    border: var(--standard-border-width) solid var(--border-color);
     padding: 12px 20px;
-    box-shadow: 0 2px 0 var(--el-border-color);
 
-    &:hover {
-        box-shadow: 0 2px 0 var(--el-button-hover-border-color);
-    }
 
-    &:active {
-        background-color: var(--el-color-primary);
-    }
+
+
 
     .el-loading-mask {
         .el-loading-spinner {
@@ -75,9 +73,8 @@ html.dark {
     }
 
     &.el-button--primary {
-        --el-button-border-color: var(--themeBtnTextColor);
-        --el-button-text-color: var(--themeBtnTextColor);
-        box-shadow: 0 2px 0 var(--themeBtnTextColor);
+        // --el-button-border-color: var(--themeBtnTextColor);
+        // --el-button-text-color: var(--themeBtnTextColor);
     }
 
     &.is-disabled {

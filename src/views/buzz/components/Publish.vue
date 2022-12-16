@@ -326,7 +326,7 @@ async function submit() {
     loading.value = false
     layout.$patch({ isShowPublishBuzz: false })
     ElMessage.success(i18n.t('Buzz.publish.success'))
-    router.replace({
+    router.push({
       name: 'buzzDetail',
       params: {
         txId: res.currentNode!.txId,
