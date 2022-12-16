@@ -34,11 +34,43 @@
                   <img :src="GiftRibbonImg" al="" />
                 </div>
                 <div
-                  class="bg-white rounded-3xl w-[80vw] lg:w-114 h-105 flex flex-col dark:shadow-lg dark:shadow-blue-100/30"
+                  class="bg-white rounded-3xl w-[80vw] lg:w-114 h-105 flex flex-col dark:shadow-lg dark:shadow-blue-100/30 items-center"
                 >
-                  <div
-                    class="lg:w-114 h-60 bg-gradient-to-tr from-[#CBFDE4] to-[#FCEDCE] rounded-t-3xl shadow-md flex flex-col items-center justify-start overflow-x-hidden group-hover:-skew-x-3 group-hover:shadow-xl duration-300 origin-top"
-                  >
+                  <template v-if="canOpen">
+                    <div
+                      class="lg:w-114 h-60 bg-gradient-to-tr from-[#CBFDE4] to-[#FCEDCE] rounded-t-3xl shadow-md flex flex-col items-center justify-start overflow-x-hidden group-hover:-skew-x-3 group-hover:shadow-xl duration-300 origin-top"
+                    >
+                      <UserAvatar
+                        :meta-id="message.metaId"
+                        :image="message.avatarImage"
+                        class="w-15 h-15 rounded-2xl bg-amber-200 mt-7.5"
+                        :disabled="true"
+                      />
+                      <div class="mt-3 text-sm text-dark-300 capitalize">
+                        {{ $t('Talk.Modals.red_packet') }}
+                      </div>
+                      <div
+                        class="text-2xl mt-3 truncate w-full px-6 lg:px-12 text-center dark:text-dark-800"
+                      >
+                        {{ note }}
+                      </div>
+                    </div>
+                    <div class="w-full flex items-stretch justify-center grow relative">
+                      <div
+                        class="absolute top-0 w-28 h-28 rounded-full gift-button-gradient flex items-center justify-center text-dark-800 text-xl capitalize -translate-y-1/2 border-2 border-b-5 border-solid border-dark-300 shadow-xl box-content font-medium group-hover:-translate-y-[53%] group-hover:skew-x-1 origin-bottom duration-300 cursor-pointer hover:text-amber-500 hover:shadow-amber-300/40 hover:border-amber-300"
+                        @click="tryOpenRedPacket"
+                      >
+                        {{ $t('Talk.Modals.receive') }}
+                      </div>
+                      <div class="w-15 bg-gradient-to-br from-[#F5FFE4] to-[#FCEDCE]"></div>
+                    </div>
+                  </template>
+
+                  <template v-else>
+                    <div
+                      class="self-stretch h-15 bg-gradient-to-tr from-[#CBFDE4] to-[#FCEDCE]rounded-t-3xl"
+                    ></div>
+
                     <UserAvatar
                       :meta-id="message.metaId"
                       :image="message.avatarImage"
@@ -53,16 +85,21 @@
                     >
                       {{ note }}
                     </div>
-                  </div>
-                  <div class="w-full flex items-stretch justify-center grow relative">
-                    <div
-                      class="absolute top-0 w-28 h-28 rounded-full gift-button-gradient flex items-center justify-center text-dark-800 text-xl capitalize -translate-y-1/2 border-2 border-b-5 border-solid border-dark-300 shadow-xl box-content font-medium group-hover:-translate-y-[53%] group-hover:skew-x-1 origin-bottom duration-300 cursor-pointer hover:text-amber-500 hover:shadow-amber-300/40 hover:border-amber-300"
-                      @click="tryOpenRedPacket"
-                    >
-                      {{ $t('Talk.Modals.receive') }}
+
+                    <div class="mt-10 text-sm text-dark-300">
+                      {{ $t('Talk.Modals.red_packet_all_claimed') }}
                     </div>
-                    <div class="w-15 bg-gradient-to-br from-[#F5FFE4] to-[#FCEDCE]"></div>
-                  </div>
+
+                    <div
+                      class="mt-4 text-sm text-link flex space-x-px items-center cursor-pointer hover:underline"
+                      @click="viewDetails"
+                    >
+                      <span>
+                        {{ $t('Talk.Modals.view_details') }}
+                      </span>
+                      <Icon name="chevron_right" class="w-4 h-4" />
+                    </div>
+                  </template>
                 </div>
               </div>
             </DialogPanel>
@@ -79,8 +116,6 @@ import { Dialog, DialogPanel, TransitionRoot, TransitionChild } from '@headlessu
 import GiftRibbonImg from '@/assets/images/gift_ribbon.svg?url'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { openRedPacket } from '@/utils/talk'
-import { useUserStore } from '@/stores/user'
 import { getOneRedPacket, getRedPacketRemains, grabRedPacket } from '@/api/talk'
 import { useTalkStore } from '@/stores/talk'
 import { useModalsStore } from '@/stores/modals'
@@ -109,6 +144,12 @@ const tryOpenRedPacket = async () => {
   await grabRedPacket(params)
 
   await sleep(1000)
+  await viewDetails()
+}
+
+const viewDetails = async () => {
+  talk.addReceivedRedPacketId(message?.txId)
+
   const redPacketInfo = await getOneRedPacket({
     channelId: talk.activeChannelId,
     redPacketId: message?.txId,

@@ -378,7 +378,7 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
   const dataCarrier = {
     groupID,
     timestamp,
-    nickName,
+    // nickName,
     content,
     contentType,
     encryption,
@@ -542,7 +542,7 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
   const dataCarrier = {
     groupId,
     timestamp,
-    nickName,
+    // nickName,
     encrypt,
     fileType,
     attachment,

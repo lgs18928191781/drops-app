@@ -80,11 +80,13 @@
 
       <div class="w-full py-0.5" v-else-if="isGiveawayRedPacket">
         <div
-          class="max-w-full md:max-w-[50%] lg:max-w-[300PX] shadow rounded-xl cursor-pointer origin-center hover:shadow-md transition-all duration-200 bg-white dark:bg-gray-700 hover:animate-wiggle-subtle group"
+          class="max-w-full md:max-w-[50%] lg:max-w-[300PX] shadow rounded-xl cursor-pointer origin-center hover:shadow-md transition-all duration-200 bg-white dark:bg-gray-700 group"
+          :class="[hasRedPacketReceived ? 'opacity-50' : 'hover:animate-wiggle-subtle']"
           @click="handleOpenRedPacket"
         >
           <div
             class="rounded-xl p-4 flex space-x-2 bg-gradient-to-br from-[#FFE8D2] via-[#FFF1B9] to-[#FEFFE3] items-center"
+            :class="[hasRedPacketReceived && 'origin-top -skew-x-12 shadow-md']"
           >
             <img :src="giftImage" class="h-12 w-12" loading="lazy" />
             <div class="">
@@ -257,6 +259,10 @@ const handleOpenRedPacket = async () => {
   if (hasReceived) {
     modals.redPacketResult = redPacketInfo
     layout.isShowRedPacketResultModal = true
+
+    // 保存已领取红包的id
+    talk.addReceivedRedPacketId(props.message?.txId)
+
     return
   }
 
@@ -266,6 +272,10 @@ const handleOpenRedPacket = async () => {
   }
   layout.isShowRedPacketOpenModal = true
 }
+
+const hasRedPacketReceived = computed(() => {
+  return talk.receivedRedPacketIds.includes(props.message?.txId)
+})
 
 const tryResend = async () => {
   props.message.error = false

@@ -71,14 +71,16 @@
                   </div> -->
 
                   <div
-                    class="mt-7.5 mb-4.5 flex items-center justify-between self-stretch text-sm text-dark-300"
+                    class="mt-7.5 mb-1.5 flex items-center justify-between self-stretch text-sm text-dark-300"
                   >
                     <div class="">Draws</div>
                     <div class="">{{ `Opened ${draws.length} / ${redPacketResult.count}` }}</div>
                   </div>
 
-                  <div class="h-[194PX] self-stretch flex flex-col items-stretch">
-                    <div class="flex items-center justify-between" v-for="draw in draws">
+                  <div
+                    class="h-[218PX] self-stretch flex flex-col items-stretch overflow-y-auto divide-y divide-solid divide-gray-100"
+                  >
+                    <div class="flex items-center justify-between py-3" v-for="draw in sortedDraws">
                       <div class="flex space-x-3 items-center">
                         <UserAvatar
                           :meta-id="draw.metaId"
@@ -141,6 +143,9 @@ const note = computed(() => {
 })
 const draws = computed(() => {
   return (redPacketResult?.payList || []).filter((item: any) => item.used === 'true')
+})
+const sortedDraws = computed(() => {
+  return draws.value.sort((a: any, b: any) => b.timestamp - a.timestamp)
 })
 const nicerAmountWithUnit = (amount: string) => {
   if (!amount) {

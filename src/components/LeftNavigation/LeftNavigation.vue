@@ -135,6 +135,7 @@ const apps = [
 if (userStore.isAuthorized) {
   talk.fetchCommunities()
   talk.initCommunityChannelIds()
+  talk.initReceivedRedPacketIds()
   talk.initReadPointers()
   talk.initWebSocket()
 }
@@ -145,6 +146,7 @@ watch(
     if (isAuthorized) {
       talk.fetchCommunities()
       talk.initCommunityChannelIds()
+      talk.initReceivedRedPacketIds()
       talk.initReadPointers()
       talk.initWebSocket()
     } else {
