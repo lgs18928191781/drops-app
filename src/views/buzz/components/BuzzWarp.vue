@@ -38,7 +38,7 @@
         <Icon name="buzz_icon_top" />
       </a>
       <a class="main-border primary" @click="layout.publish()">
-        <Icon name="airdrop" />
+        <Icon name="buzz_icon_post" />
       </a>
     </div>
     <!--   -->

@@ -4,7 +4,7 @@
     --el-dialog-bg-color: var(--themeBgSecondColor);
     --el-border-radius-base: 8px;
     --el-font-size-large: 20px;
-    --el-border-color: #BFC2CC;
+    --el-border-color: var(--faded-border-color);
     --el-border-width: 2px;
     --el-color-primary: #FFDC51;
     --el-color-primary-light-5: rgba(255, 220, 81, 0.5);
@@ -19,17 +19,22 @@
 
 html.dark {
     --el-bg-color: var(--themeBgSecondColor);
-    --el-text-color-regular: #fff
+    --el-text-color-regular: #fff;
+    --el-border-color: var(--faded-border-color) --el-color-primary: #FFDC51;
+    --el-color-primary-light-5: rgba(255, 220, 81, 0.5);
+    --el-color-primary-light-4: rgba(255, 220, 81, 0.4);
+    --el-color-primary-light-3: rgba(255, 220, 81, 0.3);
+    --el-color-primary-light-2: rgba(255, 220, 81, 0.2);
+    --el-color-primary-light-1: rgba(255, 220, 81, 0.1);
 }
 
 .el-button {
     --el-button-text-color: var(--themeTextColor);
     --el-button-hover-text-color: var(--themeTextColor);
-    --el-button-hover-bg-color: var(--themeBgColor);
-    --el-button-active-border-color: var(--normal-border-color);
-    --el-button-hover-border-color: var(--normal-border-color);
+    --el-button-hover-bg-color: transparent;
+    --el-button-active-border-color: var(--border-color);
+    --el-button-hover-border-color: var(--border-color);
     --el-button-active-color: var(--el-color-primary);
-
     border: var(--standard-border-width) solid var(--border-color);
     padding: 12px 20px;
 
@@ -74,8 +79,8 @@ html.dark {
     }
 
     &.el-button--primary {
-        // --el-button-border-color: var(--themeBtnTextColor);
-        // --el-button-text-color: var(--themeBtnTextColor);
+        --el-button-active-border-color: var(--primary-border-color);
+        --el-button-hover-border-color: var(--primary-border-color);
     }
 
     &.is-disabled {
@@ -208,6 +213,10 @@ html.dark {
     }
 }
 
+.el-message-box__errormsg {
+    margin-top: 10px;
+}
+
 @media only screen and (max-width: 750PX) {
     .el-dialog {
         --el-dialog-border-radius: 12px;
@@ -276,7 +285,7 @@ html.dark {
 .el-dropdown-menu__item:not(.is-disabled):hover,
 .el-dropdown-menu__item:focus {
     background-color: var(--el-color-primary-light-3) !important;
-    color: var(--themeBtnTextColor) !important;
+    color: var(--themeTextColor) !important;
 }
 
 

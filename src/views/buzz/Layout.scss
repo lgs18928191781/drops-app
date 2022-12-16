@@ -6,32 +6,6 @@
     top: calc(60px + 12px);
 }
 
-.buzz-menu {
-    .buzz-menu-item {
-        padding: 10px;
-        position: relative;
-        white-space: nowrap;
-        border-radius: 12px;
-
-        .icon-warp {
-            border: 2px solid var(--themeBtnTextColor);
-            border-radius: calc(100% / 2.5);
-            width: 24px;
-            height: 24px;
-            box-shadow: 3px 3px var(--themeBtnTextColor);
-            margin-right: 10px;
-
-            .icon {
-                width: 16px;
-                height: 16px;
-            }
-        }
-
-        &.router-link-active {
-            background: var(--el-color-primary);
-        }
-    }
-}
 
 .buzz-warp {
     padding-top: 12px;
@@ -90,27 +64,48 @@
             border-radius: 6px;
             padding: 12px;
             margin-bottom: 10px;
-            // background: var(--el-border-color);
+            color: var(--themeTextColor);
 
-            &.router-link-active {
-                background: var(--el-color-primary);
-            }
+
 
             &:last-child {
                 margin-bottom: 0;
             }
 
             .icon-warp {
-                border: 2px solid var(--themeBtnTextColor);
+                border: 2px solid var(--themeTextColor);
                 border-radius: calc(100% / 2.5);
                 width: 24px;
                 height: 24px;
-                box-shadow: 3px 3px var(--themeBtnTextColor);
+                box-shadow: 3px 3px var(--themeTextColor);
                 margin-right: 15px;
 
                 .icon {
                     width: 16px;
                     height: 16px;
+
+                    :deep(use) {
+                        fill: var(--themeTextColor);
+                    }
+                }
+            }
+
+            &.router-link-active {
+                background: var(--el-color-primary);
+                color: var(--themeBtnTextColor);
+
+
+                .icon-warp {
+                    box-shadow: 3px 3px var(--themeBtnTextColor);
+                    border-color: var(--themeBtnTextColor);
+                }
+
+                .icon {
+
+
+                    :deep(use) {
+                        fill: var(--themeBtnTextColor);
+                    }
                 }
             }
 

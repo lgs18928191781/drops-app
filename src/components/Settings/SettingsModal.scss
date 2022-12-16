@@ -7,22 +7,21 @@ header {
         width: 26px;
         height: 26px;
         border-radius: 50%;
-        border: 1px solid var(--normal-border-color);
         cursor: pointer;
+        background: var(--themeTextColor);
+        transition: all 0.5s;
 
         .icon {
             width: 14px;
             height: 14px;
+
+            &:deep(use) {
+                fill: var(--themeBgColor);
+            }
         }
 
         &:hover {
-            background: var(--normal-border-color);
-
-            .icon {
-                &:deep(use) {
-                    fill: var(--themeBgColor);
-                }
-            }
+            transform: rotate(180deg);
         }
     }
 }

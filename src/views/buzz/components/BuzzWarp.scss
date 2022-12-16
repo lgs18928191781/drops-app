@@ -97,6 +97,10 @@ header {
             .icon {
                 width: 20px;
                 height: 20px;
+
+                :deep(use) {
+                    fill: var(--themeBtnTextColor);
+                }
             }
 
             &.top {
@@ -107,6 +111,10 @@ header {
                     width: 28px;
                     height: 28px;
                     margin: 0 auto;
+
+                    :deep(use) {
+                        fill: var(--themeTextColor);
+                    }
                 }
             }
         }
