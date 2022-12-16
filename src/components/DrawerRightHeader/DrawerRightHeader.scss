@@ -2,7 +2,7 @@ header {
     height: var(--header-height);
     padding: 0 18px;
     position: relative;
-    border-bottom: 1px solid #F4F7F9;
+    border-bottom: 1px solid var(--divid-color);
     box-sizing: border-box;
     width: 100%;
     overflow: hidden;
@@ -12,7 +12,8 @@ header {
         height: 24px;
         text-align: center;
         line-height: 24px;
-        position: relative;z-index: 2;
+        position: relative;
+        z-index: 2;
         cursor: pointer;
 
         .icon {
@@ -41,5 +42,6 @@ header {
         font-size: 16px;
         padding: 0 18px;
         box-sizing: border-box;
+        color: var(--themeTextColor);
     }
 }

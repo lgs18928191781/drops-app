@@ -1,7 +1,7 @@
 header {
     height: var(--header-height);
     padding: 0 18px;
-    border-bottom: 1px solid #F4F7F9;
+    border-bottom: 1px solid var(--divid-color);
 
     .close {
         width: 26px;
@@ -40,7 +40,7 @@ header {
             width: 36px;
             height: 36px;
             border-radius: calc(36px / 2.5);
-            background: #EDEFF2;
+            background: var(--themeBgThreeColor);
             margin-right: 12px;
 
             .icon {

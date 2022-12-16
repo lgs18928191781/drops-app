@@ -1,6 +1,6 @@
 $bgColor: #F5F7F9;
 $bgDarkColor: #000;
-$mainColor: #FFDC51;
+$mainColor: #ffdc51;
 
 %text-ellipsis {
     overflow: hidden;
@@ -12,9 +12,7 @@ $themeBgColor:var(--themeBgColor);
 $themeBgSecondColor: var(--themeBgSecondColor);
 $themeBgThreeColor: var(--themeBgThreeColor);
 $themeTextColor: var(--themeTextColor);
-$themeBtnColor:#FC6D5E;
-$themeBtnBorderColor:#FC6D5E;
-$themeBtnTextColor:#fff;
+
 
 :root {
     --color-hover: #5586BB;
@@ -22,6 +20,7 @@ $themeBtnTextColor:#fff;
     --themeBgSecondColor: #fff;
     --themeBgThreeColor: #F5F7F9;
     --themeTextColor: #303133;
+    --themeBtnTextColor: #303133;
     font-family: 'SF-Pro-Regular Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB,Microsoft YaHei', '微软雅黑', Arial, sans-serif;
     --border-color: #303133;
     --faded-border-color: #BFC2CC;
@@ -31,7 +30,9 @@ $themeBtnTextColor:#fff;
     --right-offset: 3px;
     --move-range: 2px;
     --rounded: 12px;
-    --header-height: 60px
+    --header-height: 60px;
+    --divid-color: #F4F7F9;
+
 }
 
 html.dark {
@@ -43,6 +44,7 @@ html.dark {
     --el-color-primary: #FFDC51;
     --themeTextColor: #fff;
     --primary-border-color: #6b7280;
+    --divid-color: #4a576c;
 }
 
 

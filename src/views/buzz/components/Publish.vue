@@ -61,6 +61,51 @@
           >{{ respostBuzz.val ? $t('Buzz.publish.respost') : $t('Buzz.publish.post') }}</a
         >
       </div>
+
+      <!-- Topic -->
+      <ElDialog v-model="isShowTopic" class="sm none-header none-padding" @open="getHotTopics">
+        <div class="topic">
+          <div class="header flex flex-align-center">
+            <div class="flex1">
+              <a class="back flex flex-align-center flex-pack-center" @click="back"
+                ><Icon name="down"
+              /></a>
+            </div>
+            <div>
+              <a
+                class="confirm main-border primary"
+                :class="{ faded: topic === '' }"
+                @click="confirmTopic"
+                >{{ $t('Confirm') }}</a
+              >
+            </div>
+            <div class="title">{{ $t('Buzz.topic.topics') }}</div>
+          </div>
+
+          <div class="input">
+            <div class="title">{{ $t('Buzz.topic.inputTitle') }}</div>
+            <div class="cont">
+              <input type="text" v-model="topic" :placeholder="$t('Buzz.topic.inputPlaceholder')" />
+            </div>
+          </div>
+
+          <div class="hot-topic">
+            <div class="title">{{ $t('Buzz.topic.hotTopics') }}</div>
+            <div class="topic-list">
+              <a
+                class="topic-item"
+                v-for="item in topics"
+                :key="item.tag"
+                @click="topic = item.tag"
+                >{{ item.tag }}</a
+              >
+            </div>
+          </div>
+        </div>
+      </ElDialog>
+
+      <!-- nft -->
+      <NFTModalVue v-model="isShowNFTList" @change="chooseNFT" />
     </template>
   </PublishBaseTemplateVue>
   <!-- <ElDialog
@@ -90,47 +135,6 @@
       </div>
     </div>
   </ElDialog> -->
-
-  <!-- Topic -->
-  <ElDialog v-model="isShowTopic" class="sm none-header none-padding" @open="getHotTopics">
-    <div class="topic">
-      <div class="header flex flex-align-center">
-        <div class="flex1">
-          <a class="back flex flex-align-center flex-pack-center" @click="back"
-            ><Icon name="down"
-          /></a>
-        </div>
-        <div>
-          <a
-            class="confirm main-border primary"
-            :class="{ faded: topic === '' }"
-            @click="confirmTopic"
-            >{{ $t('Confirm') }}</a
-          >
-        </div>
-        <div class="title">{{ $t('Buzz.topic.topics') }}</div>
-      </div>
-
-      <div class="input">
-        <div class="title">{{ $t('Buzz.topic.inputTitle') }}</div>
-        <div class="cont">
-          <input type="text" v-model="topic" :placeholder="$t('Buzz.topic.inputPlaceholder')" />
-        </div>
-      </div>
-
-      <div class="hot-topic">
-        <div class="title">{{ $t('Buzz.topic.hotTopics') }}</div>
-        <div class="topic-list">
-          <a class="topic-item" v-for="item in topics" :key="item.tag" @click="topic = item.tag">{{
-            item.tag
-          }}</a>
-        </div>
-      </div>
-    </div>
-  </ElDialog>
-
-  <!-- nft -->
-  <NFTModalVue v-model="isShowNFTList" @change="chooseNFT" />
 </template>
 
 <script setup lang="ts">

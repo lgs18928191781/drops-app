@@ -93,14 +93,21 @@ header {
             margin-bottom: 20px;
             cursor: pointer;
 
-            &:last-child {
-                margin-bottom: 0;
-                background: #F5F7FA;
-            }
 
             .icon {
                 width: 20px;
                 height: 20px;
+            }
+
+            &.top {
+                text-align: center;
+                padding: 0;
+
+                .icon {
+                    width: 28px;
+                    height: 28px;
+                    margin: 0 auto;
+                }
             }
         }
     }

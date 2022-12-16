@@ -79,8 +79,12 @@ function getDatas(isCover = false) {
       if (isCover) list.length = 0
       list.push(...res.data.results.items)
 
-      if (res.data.results.items.length === 0) pagination.nothing = true
-      else pagination.nothing = false
+      if (res.data.results.items.length === 0) {
+        pagination.nothing = true
+      } else {
+        pagination.nothing = false
+        pagination.timestamp = res.data.results.items[res.data.results.items.length - 1].timestamp
+      }
     }
     resolve()
   })

@@ -34,11 +34,11 @@
 
     <!--   -->
     <div class="fast-btn" ref="FastBtnRef">
+      <a class="top" @click="scrollTop">
+        <Icon name="buzz_icon_top" />
+      </a>
       <a class="main-border primary" @click="layout.publish()">
         <Icon name="airdrop" />
-      </a>
-      <a class="main-border" @click="scrollTop">
-        <Icon name="top" />
       </a>
     </div>
     <!--   -->
