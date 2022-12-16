@@ -177,6 +177,7 @@ import { ethers } from 'ethers'
 import { RegisterSource } from '@/enum'
 import { openLoading } from '@/utils/util'
 import { MD5 } from 'crypto-js'
+import { currentSupportChain } from '@/config'
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const route = useRoute()
