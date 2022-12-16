@@ -29,9 +29,9 @@ function getDatas(isCover = false) {
     const res = await GetUserBuzzs({
       metaId: route.params.metaId as string,
       isNoEncrypt: userStore.user?.metaId === route.params.metaId ? false : true,
-      page: pagination.page.toString(),
-      pageSize: pagination.pageSize.toString(),
-      timestamp: 0,
+      page: pagination.page,
+      pageSize: pagination.pageSize,
+      myMetaId: userStore.user?.metaId,
     }).catch(error => {
       ElMessage.error(error.message)
       resolve()
@@ -58,10 +58,10 @@ function getMore() {
   })
 }
 
-function updateItem(params: { txId: string; buzz: BuzzItem }) {
-  const index = list.findIndex(item => item.txId === params.txId)
+function updateItem(buzz: BuzzItem) {
+  const index = list.findIndex(item => item.txId === buzz.txId)
   if (index !== -1) {
-    list[index] = params.buzz
+    list[index] = buzz
   }
 }
 

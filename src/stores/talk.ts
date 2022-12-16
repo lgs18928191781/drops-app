@@ -35,6 +35,7 @@ export const useTalkStore = defineStore('talk', {
       saveReadPointerTimer: null as NodeJS.Timeout | null,
 
       communityChannelIds: null as any, // 社区频道列表
+      receivedRedPacketIds: null as any, // 已领取红包列表
 
       hasActiveChannelConsent: false, // 是否持有当前频道的共识
 
@@ -54,6 +55,11 @@ export const useTalkStore = defineStore('talk', {
     selfMetaId(): string {
       const userStore = useUserStore()
       return userStore.user?.metaId || ''
+    },
+
+    selfAddress(): string {
+      const userStore = useUserStore()
+      return userStore.user?.address || ''
     },
 
     realCommunities(state) {
@@ -329,6 +335,32 @@ export const useTalkStore = defineStore('talk', {
         localStorage.getItem('communityChannels-' + selfMetaId) || JSON.stringify({})
       const parsedCommunityChannels = JSON.parse(communityChannels)
       this.communityChannelIds = parsedCommunityChannels
+    },
+
+    initReceivedRedPacketIds() {
+      if (this.receivedRedPacketIds || !this.selfMetaId) return
+
+      const receivedRedPacketIds = localStorage.getItem('receivedRedPacketIds-' + this.selfMetaId)
+      if (receivedRedPacketIds && JSON.parse(receivedRedPacketIds)) {
+        this.receivedRedPacketIds = JSON.parse(receivedRedPacketIds)
+      } else {
+        this.receivedRedPacketIds = []
+      }
+    },
+
+    addReceivedRedPacketId(id: string) {
+      if (!id) return
+
+      this.initReceivedRedPacketIds()
+
+      // 如果已经存在，则不再添加
+      if (this.receivedRedPacketIds.includes(id)) return
+
+      this.receivedRedPacketIds.push(id)
+      localStorage.setItem(
+        'receivedRedPacketIds-' + this.selfMetaId,
+        JSON.stringify(this.receivedRedPacketIds)
+      )
     },
 
     initReadPointers() {
@@ -648,6 +680,15 @@ export const useTalkStore = defineStore('talk', {
       this.activeChannel.newMessages.push(message)
     },
 
+    removeMessage(mockId: string) {
+      console.log('removing message', mockId)
+      if (!mockId || !this.activeChannel || !this.activeChannel.newMessages) return
+
+      this.activeChannel.newMessages = this.activeChannel.newMessages.filter(
+        (message: any) => message.mockId !== mockId
+      )
+    },
+
     reset() {
       console.log('resetting')
       this.closeWebSocket()
@@ -660,6 +701,7 @@ export const useTalkStore = defineStore('talk', {
 
       this.channelsReadPointers = null
       this.communityChannelIds = null
+      this.receivedRedPacketIds = null
       this.hasActiveChannelConsent = false
       this.inviteLink = ''
       this.invitingChannel = null

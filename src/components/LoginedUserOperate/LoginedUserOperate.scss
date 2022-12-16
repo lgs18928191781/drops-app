@@ -155,7 +155,7 @@
         }
 
         &:hover {
-            background: var(--themeBtnTextColor);
+            background: var(--themeTextColor);
 
             .icon {
                 :deep(use) {
@@ -363,6 +363,10 @@
 
 }
 
+.more {
+    margin-right: 0;
+}
+
 .nft-genesis-list {
     .nft-genesis-item {
         margin-bottom: 18px;
@@ -461,12 +465,9 @@
 
 @media only screen and (max-width: 1024PX) {
 
-    .user-warp {
-
-        .user-warp-item {
-            width: 30PX;
-            height: 30PX;
-        }
+    .user-warp-item {
+        width: 30PX;
+        height: 30PX;
     }
 
 }

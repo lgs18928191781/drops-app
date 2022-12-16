@@ -145,6 +145,18 @@ export const getCommunityMembers = (communityId: string): Promise<any> => {
   )
 }
 
+// 红包相关
+
+export const getOneRedPacket = async (params: any): Promise<any> => {
+  params = params || {}
+  const channelId = params.channelId
+  const redPacketId = params.redPacketId
+
+  return TalkApi.get(`/room/${channelId}/redenvelope/${redPacketId}`).then(res => {
+    return res.data
+  })
+}
+
 export const getRedPacketRemains = async (params: any): Promise<any> => {
   params = params || {}
   const channelId = params.channelId
@@ -152,5 +164,18 @@ export const getRedPacketRemains = async (params: any): Promise<any> => {
 
   return TalkApi.get(`/room/${channelId}/redenvelope/${redPacketId}/unused`).then(res => {
     return res.data.unused
+  })
+}
+
+export const grabRedPacket = async (params: any): Promise<any> => {
+  params = params || {}
+  const channelId = params.channelId
+  const redPacketId = params.redPacketId
+  const metaId = params.selfMetaId
+  const address = params.selfAddress
+  const query = new URLSearchParams({ metaId, address }).toString()
+
+  return TalkApi.get(`/room/${channelId}/gift/${redPacketId}?${query}`).then(res => {
+    console.log(res)
   })
 }

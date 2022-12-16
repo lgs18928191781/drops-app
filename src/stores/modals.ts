@@ -4,6 +4,7 @@ export const useModalsStore = defineStore('modals', {
   state: () => {
     return {
       openRedPacket: null as any,
+      redPacketResult: null as any,
     }
   },
 })

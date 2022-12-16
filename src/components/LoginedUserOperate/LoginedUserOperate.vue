@@ -309,6 +309,7 @@ import { useLayoutStore } from '@/stores/layout'
 import { copy } from '@/utils/util'
 import ETH from '@/assets/images/eth.png'
 import MVC from '@/assets/images/iocn_mvc.png'
+import ME from '@/assets/images/me_logo.png'
 import { GetMyMEBalance } from '@/api/v3'
 import { Loading } from '@element-plus/icons-vue'
 import Decimal from 'decimal.js-light'
@@ -409,7 +410,7 @@ const wallets = reactive([
     title: i18n.t('Wallet.Action Points'),
     list: [
       {
-        icon: '',
+        icon: ME,
         name: 'ME',
         value: 0,
         price: function() {

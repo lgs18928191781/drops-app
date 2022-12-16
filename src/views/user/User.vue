@@ -62,7 +62,21 @@
               </div>
               <div class="opreate flex-self-end">
                 <a class="main-border faded" v-if="isSelf">{{ $t('Message') }}</a>
-                <a class="main-border primary">{{ $t('Follow') }}</a>
+                <a
+                  class="main-border primary"
+                  :class="[isMyFollowed ? 'faded' : 'primary']"
+                  @click="follow"
+                  v-if="!isSelf"
+                >
+                  <template v-if="loading">
+                    <ElIcon class="is-loading">
+                      <Loading />
+                    </ElIcon>
+                  </template>
+                  <template v-else>
+                    {{ isMyFollowed ? $t('Cancel Follow') : $t('Follow') }}
+                  </template>
+                </a>
               </div>
             </div>
             <div class="name">{{userInfo.val!.name}}</div>
@@ -105,12 +119,18 @@ import { GetUserAllInfo, GetUserFollow } from '@/api/aggregation'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { copy, tx } from '@/utils/util'
+import { Loading } from '@element-plus/icons-vue'
+import { ElMessageBox } from 'element-plus'
+import { NodeName } from '@/enum'
+import { Mitt, MittEvent } from '@/utils/mitt'
 
 const i18n = useI18n()
 const route = useRoute()
 const userInfo: { val: null | UserAllInfo } = reactive({ val: null })
 const isSkeleton = ref(true)
 const userStore = useUserStore()
+const isMyFollowed = ref(false)
+const loading = ref(false)
 const userFollow: {
   following: string[]
   follers: string[]
@@ -174,7 +194,86 @@ function getUserFoller() {
   })
 }
 
-Promise.all([getUserInfo(), getUserFoller()]).then(() => {
+function checkUserIsFollowed() {
+  return new Promise<void>(async resolve => {
+    if (userStore.isAuthorized) {
+      const res = await GetUserFollow(userStore.user!.metaId).catch(error => {
+        ElMessage.error(error.message)
+      })
+      if (res?.code === 0) {
+        if (
+          res.data.followingList &&
+          res.data.followingList.includes(route.params.metaId as string)
+        ) {
+          isMyFollowed.value = true
+        }
+      }
+    } else {
+      isMyFollowed.value = false
+    }
+    resolve()
+  })
+}
+
+async function confirmFollow() {
+  loading.value = true
+  const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
+  const res = await userStore.showWallet
+    .createBrfcChildNode({
+      nodeName: NodeName.PayFollow,
+      data: JSON.stringify({
+        createTime: new Date().getTime(),
+        MetaID: userInfo.val!.metaId,
+        pay: payAmount,
+        payTo: userInfo.val!.address,
+        status: isMyFollowed.value ? -1 : 1,
+      }),
+      payTo: [{ amount: payAmount, address: userInfo.val!.address }],
+    })
+    .catch(error => {
+      ElMessage.error(error.message)
+      loading.value = false
+    })
+  if (res) {
+    isMyFollowed.value = !isMyFollowed.value
+    Mitt.emit(MittEvent.FollowUser, { metaId: userInfo.val!.metaId, result: isMyFollowed.value })
+    if (isMyFollowed.value) {
+      userFollow.following.push(userStore.user!.metaId)
+    } else {
+      userFollow.following.splice(
+        userFollow.following.findIndex(item => item === userStore.user!.metaId),
+        1
+      )
+    }
+    const message = `${isMyFollowed.value ? i18n.t('Cancel Follow') : i18n.t('Follow')} ${i18n.t(
+      'Success'
+    )}`
+    ElMessage.success(message)
+    loading.value = false
+  }
+}
+
+function follow() {
+  if (loading.value) return
+  if (isMyFollowed) {
+    ElMessageBox.confirm(
+      `${i18n.t('cancelFollowTips')}: ${userInfo.val!.name}`,
+      i18n.t('Warning'),
+      {
+        confirmButtonText: i18n.t('Confirm'),
+        cancelButtonText: i18n.t('Cancel'),
+        confirmButtonClass: 'main-border primary',
+        cancelButtonClass: 'main-border',
+      }
+    ).then(() => {
+      confirmFollow()
+    })
+  } else {
+    confirmFollow()
+  }
+}
+
+Promise.all([getUserInfo(), getUserFoller(), checkUserIsFollowed()]).then(() => {
   isSkeleton.value = false
 })
 </script>

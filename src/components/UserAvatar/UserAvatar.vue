@@ -1,5 +1,5 @@
 <template>
-  <div class="avatar" @click="toUser" :class="{ disabled }">
+  <div class="avatar" @click="toUser($event)" :class="{ disabled }">
     <Image :src="image" :type="type" />
   </div>
 </template>
@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const router = useRouter()
-function toUser() {
+function toUser(e: Event) {
   if (props.disabled) return
   router.push({
     name: 'user',
@@ -26,6 +26,7 @@ function toUser() {
       metaId: props.metaId,
     },
   })
+  e.stopPropagation()
 }
 </script>
 <style lang="scss" scoped src="./UserAvatar.scss"></style>

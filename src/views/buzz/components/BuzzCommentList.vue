@@ -25,7 +25,7 @@
                   username: item.userName,
                   userAddress: item.zeroAddress,
                   commentTo: item.txId,
-                  replyTo: item.metaId,
+                  replyTo: '',
                 })
               "
             >
@@ -60,7 +60,13 @@
                 "
               >
                 <UserAvatar :meta-id="child.metaId" :image="child.avatarImage"></UserAvatar>
-                <div class="name">{{ child.userName }}:</div>
+                <div class="name flex flex-align-center">
+                  <a>{{ child.userName }}</a>
+                  <template v-if="child.replyToUserName"
+                    ><span>{{ $t('Replay') }}</span
+                    ><a>{{ child.replyToUserName }}</a></template
+                  >：
+                </div>
                 <div class="flex1 content-child" v-html="child.content"></div>
               </div>
             </template>
@@ -103,6 +109,7 @@ function like(item: BuzzInteractiveItem, index: number) {
 }
 </script>
 <style scoped lang="scss">
+@import '@/assets/styles/var.scss';
 @keyframes sclae {
   0% {
     transform: scale(1);
@@ -268,6 +275,14 @@ function like(item: BuzzInteractiveItem, index: number) {
             line-height: 26px;
             color: #909399;
             margin-right: 6px;
+            a {
+              color: var(--color-hover);
+              max-width: 60px;
+              @extend %text-ellipsis;
+            }
+            span {
+              margin: 0 3px;
+            }
           }
           .content-child {
             flex-grow: 1;

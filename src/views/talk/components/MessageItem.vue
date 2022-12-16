@@ -50,7 +50,7 @@
 
       <div class="w-full py-0.5 flex items-center" v-else-if="isImage">
         <div
-          class="w-fit max-w-[90%] md:max-w-[50%] lg:max-w-[400px] max-h-[600px] overflow-y-hidden rounded bg-transparent cursor-pointer transition-all duration-200"
+          class="w-fit max-w-[90%] md:max-w-[50%] lg:max-w-[235PX] max-h-[600PX] overflow-y-hidden rounded bg-transparent cursor-pointer transition-all duration-200"
           :class="[message.error && 'opacity-50']"
           @click="previewImage"
         >
@@ -80,11 +80,13 @@
 
       <div class="w-full py-0.5" v-else-if="isGiveawayRedPacket">
         <div
-          class="max-w-full md:max-w-[50%] lg:max-w-[300PX] shadow rounded-xl cursor-pointer origin-center hover:shadow-md transition-all duration-200 bg-white dark:bg-gray-700 hover:animate-wiggle-subtle group"
-          @click=""
+          class="max-w-full md:max-w-[50%] lg:max-w-[300PX] shadow rounded-xl cursor-pointer origin-center hover:shadow-md transition-all duration-200 bg-white dark:bg-gray-700 group"
+          :class="[hasRedPacketReceived ? 'opacity-50' : 'hover:animate-wiggle-subtle']"
+          @click="handleOpenRedPacket"
         >
           <div
             class="rounded-xl p-4 flex space-x-2 bg-gradient-to-br from-[#FFE8D2] via-[#FFF1B9] to-[#FEFFE3] items-center"
+            :class="[hasRedPacketReceived && 'origin-top -skew-x-12 dark:-skew-x-6 shadow-md']"
           >
             <img :src="giftImage" class="h-12 w-12" loading="lazy" />
             <div class="">
@@ -99,8 +101,10 @@
 
           <div class="flex py-2.5 items-center space-x-1.5 px-4">
             <Icon name="gift" class="w-4 h-4 text-dark-300 dark:text-gray-400" />
-            <!-- <div class="text-dark-300 text-xs">{{ $t('Talk.Input.giveaway') }}</div> -->
-            <div class="text-dark-300 dark:text-gray-400 text-xs">红包领取功能即将推出</div>
+            <div class="text-dark-300 dark:text-gray-400 text-xs">
+              {{ $t('Talk.Input.giveaway') }}
+            </div>
+            <!-- <div class="text-dark-300 dark:text-gray-400 text-xs">红包领取功能即将推出</div> -->
           </div>
         </div>
       </div>
@@ -139,13 +143,14 @@ import giftImage from '@/assets/images/gift.svg?url'
 import { useLayoutStore } from '@/stores/layout'
 import { useModalsStore } from '@/stores/modals'
 import { useJobsStore } from '@/stores/jobs'
+import { getOneRedPacket } from '@/api/talk'
 
 const i18n = useI18n()
 
 const showImagePreview = ref(false)
 const modals = useModalsStore()
 const userStore = useUserStore()
-const talkStore = useTalkStore()
+const talk = useTalkStore()
 const layout = useLayoutStore()
 const jobs = useJobsStore()
 
@@ -192,7 +197,7 @@ const decryptedMessage = computed(() => {
     return props.message.content
   }
 
-  return decrypt(props.message.content, talkStore.activeChannelId.substring(0, 16))
+  return decrypt(props.message.content, talk.activeChannelId.substring(0, 16))
 })
 
 const parseTextMessage = (text: string) => {
@@ -243,12 +248,34 @@ const isMyMessage = computed(() => {
   return userStore.user?.metaId && userStore.user.metaId === props.message.metaId
 })
 
-const handleOpenRedPacket = () => {
+const handleOpenRedPacket = async () => {
+  // 如果用户已经领取过红包，则显示红包领取信息
+  const redPacketInfo = await getOneRedPacket({
+    channelId: talk.activeChannelId,
+    redPacketId: props.message?.txId,
+  })
+  const hasReceived = redPacketInfo.payList.some((item: any) => item.metaid === talk.selfMetaId)
+
+  if (hasReceived) {
+    modals.redPacketResult = redPacketInfo
+    layout.isShowRedPacketResultModal = true
+
+    // 保存已领取红包的id
+    talk.addReceivedRedPacketId(props.message?.txId)
+
+    return
+  }
+
+  // 如果用户未领取过红包，则显示红包领取弹窗
   modals.openRedPacket = {
     message: props.message || '',
   }
   layout.isShowRedPacketOpenModal = true
 }
+
+const hasRedPacketReceived = computed(() => {
+  return talk.receivedRedPacketIds.includes(props.message?.txId)
+})
 
 const tryResend = async () => {
   props.message.error = false

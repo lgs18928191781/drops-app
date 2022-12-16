@@ -307,10 +307,10 @@ export const GetUserFollow = (
   code: number
   data: {
     metaId: string
-    followingList: []
-    followedList: []
-    blackList: []
-    friendList: []
+    followingList: string[]
+    followedList: string[]
+    blackList: string[]
+    friendList: string[]
   }
 }> => {
   return aggregation.get(`/v2/app/show/follow/${metaId}`)
@@ -477,6 +477,7 @@ export const GetUserBuzzs = (params: {
   metaId?: string
   page: number
   pageSize: number
+  myMetaId?: string
 }): Promise<{
   code: number
   data: {
@@ -486,7 +487,8 @@ export const GetUserBuzzs = (params: {
     }
   }
 }> => {
-  return aggregation.post(`/v2/app/buzz/getBuzzMySelfList`, params)
+  const { metaId, ..._params } = params
+  return aggregation.get(`/v2/app/buzz/getBuzzMySelfList/${metaId}`, { params: _params })
 }
 
 export const GetPublishShare = (

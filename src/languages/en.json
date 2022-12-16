@@ -89,7 +89,9 @@
       "cover": "Cover",
       "choose_cover_tip": "You can choose one of your NFT covers as your community cover.",
       "choose_cover": "Choose Cover",
-      "introduction": "Community Introduction"
+      "introduction": "Community Introduction",
+      "red_packet_all_claimed": "All gift packs have been claimed.",
+      "view_details": "View details"
     },
     "Channel": {
       "members": "members",
@@ -460,5 +462,9 @@
   "Message": "Message",
   "Following": "Following",
   "Followers": "Followers",
-  "Already on NFT": "Already on NFT"
+  "Already on NFT": "Already on NFT",
+  "Replay": "Replay",
+  "Cancel Follow": "Cancel Follow",
+  "cancelFollowTips": "Can you confirm cancel follow user",
+  "Warning": "Warning"
 }
