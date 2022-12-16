@@ -68,7 +68,7 @@
 
                   <template v-else>
                     <div
-                      class="self-stretch h-15 bg-gradient-to-tr from-[#CBFDE4] to-[#FCEDCE]rounded-t-3xl"
+                      class="self-stretch h-15 bg-gradient-to-tr from-[#CBFDE4] to-[#FCEDCE] rounded-t-3xl"
                     ></div>
 
                     <UserAvatar

@@ -41,7 +41,7 @@ import { BindMetaIdRes } from '@/@types/common';
 import { useUserStore } from '@/stores/user';
 import { useRoute } from 'vue-router';
 import { useRootStore } from '@/stores/root';
-
+import { currentSupportChain } from '@/config'
 
 export interface MetaMaskLoginRes {
     userInfo: MetaMaskLoginUserInfo
@@ -168,27 +168,34 @@ async function startConnect() {
     try {
         const res = await Wallet.connect()
         if (res) {
+            console.log("currentSupportChain", import.meta.env.VITE_DEFAULT_NETWORK)
+            const chainWhiteList = currentSupportChain.filter((item) => {
+              return item.chainId == res.provider.chainId
+            })
 
-            if (res.chain === import.meta.env.VITE_ETH_CHAINID) {
+            if (chainWhiteList.length) {
                 startProvider(res.provider)
                 const result = await ethPersonalSignSign({
                     address: res.ethAddress,
                     message: ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1),
                 })
+
                 if (result) {
                     emit('success',{ signAddressHash:result, address: res.ethAddress});
                 }
             } else {
-                ElMessageBox.confirm(i18n.t('MetaMak.Chain Network Error Tips') + import.meta.env.VITE_ETH_CHAIN, i18n.t('MetaMak.Chain Network Error'), {
+                ElMessageBox.confirm(i18n.t('MetaMak.Chain Network Error Tips') + `${import.meta.env.VITE_DEFAULT_NETWORK}`, i18n.t('MetaMak.Chain Network Error'), {
                     customClass: 'primary',
-                    confirmButtonText: i18n.t('MetaMak.Change') + import.meta.env.VITE_ETH_CHAIN,
+                    confirmButtonText: i18n.t('MetaMak.Change') + `${import.meta.env.VITE_DEFAULT_NETWORK}`,
                     cancelButtonText: i18n.t('Cancel')
                 }).then(() => {
+
                     ;(window as any).ethereum
                     .request({ method: 'wallet_switchEthereumChain', params: [{
-                        chainId: ethers.utils.hexValue(parseInt(import.meta.env.VITE_ETH_CHAINID))
+                        // chainId: ethers.utils.hexValue(parseInt(import.meta.env.VITE_ETH_CHAINID))
+                        chainId: import.meta.env.VITE_DEFAULT_NETWORK == 'eth' ? currentSupportChain[0].chainId : currentSupportChain[1].chainId
                     }]})
-                    .then((res: string[]) => {
+                        .then((res: string[]) => {
                         startConnect()
                     })
                     .catch((error: any) => {

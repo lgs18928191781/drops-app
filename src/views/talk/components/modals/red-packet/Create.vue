@@ -16,12 +16,12 @@
           >
             {{ $t('Talk.Input.for_everyone') }}
           </Tab>
-          <Tab
+          <!-- <Tab
             class="w-full py-3 capitalize border-2 outline-0 rounded-xl transition-[background-color] duration-150"
             :class="[activeTab === 'nft' ? 'border-dark-800 bg-primary' : 'border-transparent']"
             @click="activeTab = 'nft'"
             >{{ $t('Talk.Input.nft_limited') }}</Tab
-          >
+          > -->
         </TabList>
 
         <TabPanels>
@@ -54,7 +54,7 @@
                     <Menu as="div" class="relative inline-block">
                       <div class="">
                         <MenuButton
-                          class="text-base text-dark-800 flex items-center font-medium px-3 py-1 outline-0"
+                          class="text-base flex items-center font-medium px-3 py-1 outline-0"
                           @click="isShowSelectTokenModal = !isShowSelectTokenModal"
                         >
                           <span>Space</span>
@@ -101,14 +101,14 @@
               </div>
             </div>
 
-            <div class="my-7.5 flex justify-center items-baseline text-dark-800 space-x-1">
+            <div class="my-7.5 flex justify-center items-baseline space-x-1">
               <div class="text-4xl font-bold">{{ form.nicerAmount }}</div>
               <div class="text-base">{{ form.amountUnit }}</div>
             </div>
 
             <div class="w-full">
               <button
-                class="main-border uppercase font-medium text-base w-full py-3 bg-primary"
+                class="main-border uppercase font-medium text-base w-full py-3 primary"
                 @click="form.submit"
               >
                 {{ $t('Talk.Input.send') }}
@@ -156,14 +156,14 @@
               </div>
             </div>
 
-            <div class="my-7.5 flex justify-center items-baseline text-dark-800 space-x-1">
+            <div class="my-7.5 flex justify-center items-baseline space-x-1">
               <div class="text-4xl font-bold">{{ form.nicerAmount }}</div>
               <div class="text-base">Space</div>
             </div>
 
             <div class="w-full">
               <button
-                class="main-border uppercase font-medium tracking-wider text-base w-full py-4 bg-primary"
+                class="main-border uppercase font-medium tracking-wider text-base w-full py-4 primary"
               >
                 {{ $t('Talk.Input.send') }}
               </button>
