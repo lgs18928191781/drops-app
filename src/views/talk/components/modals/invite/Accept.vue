@@ -56,16 +56,27 @@ import { useLayoutStore } from '@/stores/layout'
 import { useTalkStore } from '@/stores/talk'
 import { joinCommunity } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
 
 const layout = useLayoutStore()
 const talk = useTalkStore()
 const user = useUserStore()
+const router = useRouter()
 
 const tryJoinCommunity = async () => {
   layout[ShowControl.isShowAcceptInviteModal] = false
   layout.isShowLoading = true
-  await joinCommunity(talk.invitedCommunity.communityId, user.showWallet)
+  const joinRes = await joinCommunity(talk.invitedCommunity.communityId, user.showWallet)
+
   layout.isShowLoading = false
+
+  // 如果没有成功加入，则跳转回buzz页面
+  if (joinRes.status === 'failed') {
+    talk.invitedCommunity = null
+    router.push('/buzz/index')
+    return
+  }
+
   const find = talk.communities.find(
     community => community.communityId === talk.invitedCommunity.communityId
   )

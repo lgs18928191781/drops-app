@@ -336,7 +336,13 @@ export const joinCommunity = async (communityId: string, sdk: SDK) => {
   }
 
   // 3. 发送节点
-  await sdk.createBrfcChildNode(node)
+  const nodeRes = await sdk.createBrfcChildNode(node)
+
+  if (nodeRes === null) {
+    return {
+      status: 'failed',
+    }
+  }
 
   return { communityId }
 }
