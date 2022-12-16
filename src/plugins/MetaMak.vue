@@ -168,11 +168,9 @@ async function startConnect() {
     try {
         const res = await Wallet.connect()
         if (res) {
-            console.log("currentSupportChain", import.meta.env.VITE_DEFAULT_NETWORK)
             const chainWhiteList = currentSupportChain.filter((item) => {
               return item.chainId == res.provider.chainId
             })
-
             if (chainWhiteList.length) {
                 startProvider(res.provider)
                 const result = await ethPersonalSignSign({
