@@ -1,6 +1,6 @@
 <template>
   <TransitionRoot :show="modelValue">
-    <Dialog @close="tryClose" class="relative z-[9999]">
+    <Dialog @close="tryClose" class="relative z-[9999] text-dark-800 dark:text-gray-100">
       <TransitionChild
         as="template"
         enter="duration-300 ease-out"
@@ -31,7 +31,7 @@
               :style="mobileSize"
             >
               <div
-                class="w-full max-w-screen-sm h-full bg-white lg:min-w-[456PX] lg:w-auto lg:h-auto lg:rounded-3xl relative lg:shadow-lg p-8 flex flex-col"
+                class="w-full max-w-screen-sm h-full bg-white dark:bg-gray-800 lg:min-w-[456PX] lg:w-auto lg:h-auto lg:rounded-3xl relative lg:shadow-lg lg:dark:shadow-blue-100/30 p-8 flex flex-col"
                 :class="[mobileSize ? 'rounded' : '']"
                 v-loading="loading"
               >
@@ -40,7 +40,10 @@
                   v-if="!isHideClose"
                   @click="closeModal"
                 >
-                  <Icon name="x_circle" class="w-6 h-6 text-dark-400 cursor-pointer" />
+                  <Icon
+                    name="x_mark"
+                    class="w-4 h-4 text-dark-400 dark:text-gray-200 cursor-pointer rounded-full bg-gray-200 dark:bg-gray-900 p-2 box-content"
+                  />
                 </button>
 
                 <DialogTitle
@@ -66,7 +69,7 @@
                   leave-to="opacity-0 scale-75"
                 >
                   <div
-                    class="w-full max-w-screen-sm  bg-white lg:min-w-[456PX] lg:w-auto rounded lg:rounded-3xl lg:shadow-lg lg:ml-4 absolute inset-0 z-[65] lg:static lg:self-stretch"
+                    class="w-full max-w-screen-sm  bg-white  dark:bg-gray-800 lg:min-w-[456PX] lg:w-auto rounded lg:rounded-3xl lg:shadow-lg lg:dark:shadow-blue-100/30 lg:ml-4 absolute inset-0 z-[65] lg:static lg:self-stretch"
                     v-loading="loading"
                   >
                     <div class="w-full h-full relative p-8 flex flex-col">
@@ -75,7 +78,7 @@
                       >
                         <Icon
                           name="chevron_left"
-                          class="w-6 h-6 text-dark-400 cursor-pointer rounded-full bg-gray-200 p-1 box-content"
+                          class="w-6 h-6 text-dark-400 dark:text-gray-200 cursor-pointer rounded-full bg-gray-200 dark:bg-gray-900 p-1 box-content"
                           @click="closeSecondModal"
                         />
                       </button>
@@ -87,7 +90,7 @@
                         <slot name="secondTitle"></slot>
                       </DialogTitle>
 
-                      <div class="mt-7.5 h-full">
+                      <div class="mt-7.5 h-full overflow-y-hidden">
                         <slot name="secondBody"></slot>
                       </div>
                     </div>

@@ -40,11 +40,11 @@
                 <button
                   class="absolute top-[24PX] right-[24PX] flex items-center justify-center outline-0"
                   v-if="!noClose"
+                  @click="closeModal"
                 >
                   <Icon
                     name="x_mark"
                     class="w-4 h-4 text-dark-400 dark:text-gray-200 cursor-pointer rounded-full bg-gray-200 dark:bg-gray-900 p-2 box-content"
-                    @click="closeModal"
                   />
                 </button>
 
