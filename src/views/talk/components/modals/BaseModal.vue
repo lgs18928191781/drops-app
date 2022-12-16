@@ -44,7 +44,7 @@
                 >
                   <Icon
                     name="x_mark"
-                    class="w-4 h-4 text-dark-400 dark:text-gray-200 cursor-pointer rounded-full bg-gray-200 dark:bg-gray-900 p-2 box-content"
+                    class="w-4 h-4 text-dark-400 dark:text-gray-200 rounded-full bg-gray-200 dark:bg-gray-900 p-2 box-content"
                   />
                 </button>
 

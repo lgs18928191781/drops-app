@@ -86,7 +86,7 @@
         >
           <div
             class="rounded-xl p-4 flex space-x-2 bg-gradient-to-br from-[#FFE8D2] via-[#FFF1B9] to-[#FEFFE3] items-center"
-            :class="[hasRedPacketReceived && 'origin-top -skew-x-12 shadow-md']"
+            :class="[hasRedPacketReceived && 'origin-top -skew-x-12 dark:-skew-x-6 shadow-md']"
           >
             <img :src="giftImage" class="h-12 w-12" loading="lazy" />
             <div class="">
