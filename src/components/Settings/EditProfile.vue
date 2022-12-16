@@ -46,7 +46,7 @@
 
         <ElFormItem prop="name">
           <div class="operate flex flex-pack-end">
-            <a class="main-border" @click="confirm">
+            <a class="main-border primary" @click="confirm">
               <Icon name="check" />
             </a>
           </div>

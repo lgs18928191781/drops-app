@@ -60,10 +60,10 @@
 
                   <div class="mt-7.5 flex items-end space-x-1">
                     <div class="text-4xl font-bold tracking-tight">
-                      {{ nicerAmountWithUnit(redPacketResult.amount).amount }}
+                      {{ nicerAmountWithUnit(myDraw?.amount).amount }}
                     </div>
                     <div class="text-base">
-                      {{ nicerAmountWithUnit(redPacketResult.amount).unit }}
+                      {{ nicerAmountWithUnit(myDraw?.amount).unit }}
                     </div>
                   </div>
                   <!-- <div class="mt-2 text-sm text-dark-300 font-bold font-sans">
@@ -143,6 +143,9 @@ const note = computed(() => {
 })
 const draws = computed(() => {
   return (redPacketResult?.payList || []).filter((item: any) => item.used === 'true')
+})
+const myDraw = computed(() => {
+  return draws.value.find((item: any) => item.metaId === redPacketResult?.metaId)
 })
 const sortedDraws = computed(() => {
   return draws.value.sort((a: any, b: any) => b.timestamp - a.timestamp)
