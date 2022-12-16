@@ -81,9 +81,10 @@ import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { openRedPacket } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
-import { getRedPacketRemains } from '@/api/talk'
+import { getOneRedPacket, getRedPacketRemains, grabRedPacket } from '@/api/talk'
 import { useTalkStore } from '@/stores/talk'
 import { useModalsStore } from '@/stores/modals'
+import { sleep } from '@/utils/util'
 
 const layout = useLayoutStore()
 const modals = useModalsStore()
@@ -99,17 +100,23 @@ const note = computed(() => {
 })
 
 const tryOpenRedPacket = async () => {
-  const userStore = useUserStore()
-  const iTake = remains.value[0]
-  const redPacket = {
-    subId: message?.data.subId,
-    code: message?.data.code,
-    type: 'mvc',
-    createTime: message?.data.createTime,
-    iTake,
-    id: message?.txId,
+  const params = {
+    channelId: talk.activeChannelId,
+    redPacketId: message?.txId,
+    selfMetaId: talk.selfMetaId,
+    selfAddress: talk.selfAddress,
   }
-  await openRedPacket(redPacket, userStore.showWallet)
+  await grabRedPacket(params)
+
+  await sleep(1000)
+  const redPacketInfo = await getOneRedPacket({
+    channelId: talk.activeChannelId,
+    redPacketId: message?.txId,
+  })
+  modals.redPacketResult = redPacketInfo
+  modals.openRedPacket = null
+  layout.isShowRedPacketOpenModal = false
+  layout.isShowRedPacketResultModal = true
 }
 
 const closeModal = () => {

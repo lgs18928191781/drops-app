@@ -26,6 +26,7 @@
     <LoadingCover v-if="layout.isShowLoading" />
     <RedPacketOpenModal v-if="layout.isShowRedPacketOpenModal" />
     <RedPacketCreateModal v-if="layout.isShowRedPacketModal" />
+    <RedPacketResultModal v-if="layout.isShowRedPacketResultModal" />
     <ShareToBuzzModal v-if="layout.isShowShareToBuzzModal" />
     <ShareSuccessModal v-if="layout.isShowShareSuccessModal" />
     <CommunitySettingsModal v-if="layout.isShowCommunitySettingsModal" />
@@ -45,6 +46,7 @@ import PasswordModal from './components/modals/consensus/Password.vue'
 import CommunitySettingsModal from './components/modals/community/Settings.vue'
 import RequireNftModal from './components/modals/consensus/RequireNft.vue'
 import RedPacketOpenModal from './components/modals/red-packet/Open.vue'
+import RedPacketResultModal from './components/modals/red-packet/Result.vue'
 import RedPacketCreateModal from './components/modals/red-packet/Create.vue'
 import AcceptInviteModal from './components/modals/invite/Accept.vue'
 import InviteModal from './components/modals/invite/Invite.vue'

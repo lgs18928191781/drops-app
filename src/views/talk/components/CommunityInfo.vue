@@ -142,7 +142,7 @@
                     </div>
 
                     <button
-                      class="hover:text-dark-800 dark:hover:text-gray-100 text-dark-300 dark:text-gray-400"
+                      class="hover:text-dark-800 dark:hover:text-white text-dark-300 dark:text-gray-400"
                       :class="[
                         channel.id === talk.activeChannelId ? '' : 'hidden group-hover:!block',
                       ]"
@@ -213,7 +213,7 @@
                       {{ channel.name }}
                     </div>
                     <button
-                      class="hover:text-dark-800 dark:hover:text-gray-100 text-dark-300 dark:text-gray-400"
+                      class="hover:text-dark-800 dark:hover:text-white text-dark-300 dark:text-gray-400"
                       :class="[
                         channel.id === talk.activeChannelId ? '' : 'hidden group-hover:!block',
                       ]"

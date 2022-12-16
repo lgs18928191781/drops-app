@@ -100,6 +100,7 @@ module.exports = {
       xl: '12PX',
       '2xl': '16PX',
       '3xl': '24PX',
+      '4xl': '36PX',
       full: '9999PX',
     },
     extend: {

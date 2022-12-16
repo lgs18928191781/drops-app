@@ -203,8 +203,11 @@ export const useRedPacketFormStore = defineStore('redPacketForm', {
       return state.amount < 0.01 ? 'sats' : 'Space'
     },
 
-    nicerAmountWithUnits(state): string {
-      return this.nicerAmount + ' ' + this.amountUnit
+    nicerAmountWithUnit(state): any {
+      return {
+        amount: this.nicerAmount,
+        unit: this.amountUnit,
+      }
     },
 
     isFinished(state) {

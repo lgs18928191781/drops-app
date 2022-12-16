@@ -13,6 +13,8 @@ export const useLayoutStore = defineStore('layout', {
       isShowChooseTokenModal: false,
       isShowChooseMetaNameModal: false,
       isShowRedPacketModal: false,
+      isShowRedPacketOpenModal: false,
+      isShowRedPacketResultModal: false,
       isShowInviteModal: false,
       isShowShareToBuzzModal: false,
       isShowShareSuccessModal: false,
@@ -23,7 +25,6 @@ export const useLayoutStore = defineStore('layout', {
       isShowPasswordModal: false,
       isShowRequireNftModal: false,
       isShowLoading: false,
-      isShowRedPacketOpenModal: false,
       never: false,
       publishBuzzOption: {
         repostTxId: '', // 转发的TxId

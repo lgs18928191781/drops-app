@@ -191,9 +191,10 @@ export const giveRedPacket = async (form: any, channelId: string, selfMetaId: st
 
   // 1.2 构建红包数据
   const { amount, quantity } = form
-  const amountInSat = amount * 100000000
+  const amountInSat = amount * 100_000_000
   const redPackets = _putIntoRedPackets(amountInSat, quantity, address)
   console.table(redPackets)
+  console.log({ form })
 
   // 2. 构建数据载体
   const dataCarrier = {
@@ -201,7 +202,7 @@ export const giveRedPacket = async (form: any, channelId: string, selfMetaId: st
     subId,
     content: form.message,
     code,
-    amount: form.amount,
+    amount: amountInSat,
     count: form.quantity,
     metaid: selfMetaId,
     payList: redPackets,

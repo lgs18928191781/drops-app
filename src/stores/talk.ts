@@ -56,6 +56,11 @@ export const useTalkStore = defineStore('talk', {
       return userStore.user?.metaId || ''
     },
 
+    selfAddress(): string {
+      const userStore = useUserStore()
+      return userStore.user?.address || ''
+    },
+
     realCommunities(state) {
       if (!state.communities) return []
       return state.communities.filter(community => community.id !== '@me')
