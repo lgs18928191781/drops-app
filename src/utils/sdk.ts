@@ -163,6 +163,11 @@ export const AllNodeName: {
     path: '/Protocols/metanote',
     version: '1.0.1',
   },
+  [NodeName.NftSell]: {
+    brfcId: '13104a689fd3',
+    path: '/Protocols/NftSell',
+    version: '1.0.1',
+  },
 }
 
 export class SDK {
@@ -826,6 +831,8 @@ export class SDK {
                   },
                   scriptPlayload: [],
                 }
+              } else if (params.nodeName === NodeName.NftSell) {
+                // nftSell
               }
             } else if (this.isFTProtocol(params.nodeName)) {
               // FT
@@ -1609,7 +1616,8 @@ export class SDK {
   }
 
   isFTProtocol(nodeName: NodeName) {
-    if (nodeName === NodeName.FtGenesis || nodeName === NodeName.FtIssue) {
+    const nfts = [NodeName.FtGenesis, NodeName.FtIssue, NodeName.NftSell]
+    if (nfts.includes(nodeName)) {
       return true
     } else {
       return false

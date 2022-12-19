@@ -116,7 +116,7 @@ const operates = [
     },
     fun: async () => {
       await checkUserLogin()
-      if (isILike.value) return
+      if (isILike.value || isLikeIng.value) return
       isLikeIng.value = true
       const done = () => {
         isLikeIng.value = false
