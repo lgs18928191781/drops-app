@@ -30,7 +30,7 @@
             leave-to="opacity-0 scale-75"
           >
             <DialogPanel
-              class="flex w-full h-full lg:max-w-screen-sm lg:items-stretch justify-center lg:w-auto relative lg:static lg:h-auto lg:max-h-[75vh]"
+              class="flex w-full h-full lg:max-w-screen-sm lg:items-stretch justify-center lg:w-auto relative lg:static lg:h-auto"
               :style="mobileSize"
             >
               <div

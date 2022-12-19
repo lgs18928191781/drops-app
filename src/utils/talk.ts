@@ -156,13 +156,14 @@ const _putIntoRedPackets = (amount: number, quantity: number, address: string): 
   // 构建🧧数量：随机将红包金额分成指定数量个小红包；指定最小系数为平均值的0.2倍，最大系数为平均值的1.8倍
   const minFactor = 0.2
   const maxFactor = 1.8
+  const minSats = 1000 // 最小红包金额为1000sats
   const redPackets = []
   let remainsAmount = amount
   let remainsCount = quantity
   for (let i = 0; i < quantity - 1; i++) {
     let avgAmount = Math.round(remainsAmount / remainsCount)
     const randomFactor = Math.random() * (maxFactor - minFactor) + minFactor
-    const randomAmount = Math.round(avgAmount * randomFactor)
+    const randomAmount = Math.max(Math.round(avgAmount * randomFactor), minSats)
     redPackets.push({
       amount: randomAmount,
       address,
@@ -172,7 +173,7 @@ const _putIntoRedPackets = (amount: number, quantity: number, address: string): 
     remainsCount -= 1
   }
   redPackets.push({
-    amount: Math.floor(remainsAmount),
+    amount: Math.max(Math.floor(remainsAmount), minSats),
     address,
     index: quantity - 1,
   }) // 最后一个红包，使用剩余金额
@@ -197,7 +198,7 @@ export const giveRedPacket = async (form: any, channelId: string, selfMetaId: st
   console.log({ form })
 
   // 2. 构建数据载体
-  const dataCarrier = {
+  const dataCarrier: any = {
     createTime,
     subId,
     content: form.message,
@@ -208,7 +209,18 @@ export const giveRedPacket = async (form: any, channelId: string, selfMetaId: st
     payList: redPackets,
   }
 
-  // 2. 构建节点参数
+  // 2.1 nft红包处理
+  if (form.nft && form.chain) {
+    if (form.chain === 'eth' || form.chain === 'goerli') {
+      dataCarrier.requireType = '2001'
+    } else {
+      dataCarrier.requireType = '2'
+    }
+    dataCarrier.requireCodehash = form.nft.nftCodehash
+    dataCarrier.requireGenesis = form.nft.nftGenesis
+  }
+
+  // 3. 构建节点参数
   const node = {
     nodeName: NodeName.SimpleRedEnvelope,
     data: JSON.stringify(dataCarrier),

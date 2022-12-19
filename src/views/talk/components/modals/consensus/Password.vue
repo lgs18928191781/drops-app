@@ -17,7 +17,7 @@
         {{ '# ' + talk.activeChannel.name }}
       </div>
       <div class="flex space-x-4 items-center">
-        <form autocomplete="off" class="w-full">
+        <form autocomplete="off" class="w-full" @submit.prevent="tryVerifyPassword">
           <div class="flex relative items-center grow">
             <input
               :type="isShowingPassword ? 'text' : 'password'"
@@ -44,6 +44,7 @@
 
         <button
           class="main-border px-6 py-3 text-base text-dark-800 bg-primary font-bold shrink-0"
+          type="button"
           :class="{ 'faded still text-dark-300': !passwordForm.isFinished }"
           :disabled="!passwordForm.isFinished"
           @click="tryVerifyPassword"

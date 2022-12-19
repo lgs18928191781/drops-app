@@ -161,8 +161,9 @@ export const getRedPacketRemains = async (params: any): Promise<any> => {
   params = params || {}
   const channelId = params.channelId
   const redPacketId = params.redPacketId
+  const query = params.address ? new URLSearchParams({ address: params.address }).toString() : ''
 
-  return TalkApi.get(`/room/${channelId}/redenvelope/${redPacketId}/unused`).then(res => {
+  return TalkApi.get(`/room/${channelId}/redenvelope/${redPacketId}/unused?${query}`).then(res => {
     return res.data.unused
   })
 }
