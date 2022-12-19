@@ -38,7 +38,7 @@ const props = withDefaults(defineProps<Props>(), {
 const imgRef = ref()
 
 const imageClass = computed(() => {
-  return props.customClass ? props.customClass + 'lazyload' : 'lazyload'
+  return props.customClass ? props.customClass + ' lazyload' : 'lazyload'
 })
 
 const isSkeleton = ref(true)

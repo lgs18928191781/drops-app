@@ -188,6 +188,8 @@ export const useRedPacketFormStore = defineStore('redPacketForm', {
       amount: 0.0003 as number | '',
       quantity: 5,
       message: '',
+      nft: null as any,
+      chain: null as any,
     }
   },
 
@@ -216,10 +218,28 @@ export const useRedPacketFormStore = defineStore('redPacketForm', {
   },
 
   actions: {
+    validateQuantity() {
+      if (this.quantity < 1) {
+        this.quantity = 1
+      }
+      if (this.quantity > 100) {
+        this.quantity = 100
+      }
+    },
+    validateAmount() {
+      // 每个人最少 1000 sat（0.00001 Space）
+      const minAmount = 0.00001 * this.quantity
+      if (this.amount < minAmount) {
+        this.amount = minAmount
+      }
+    },
+
     reset() {
       this.amount = 0
       this.quantity = 1
       this.message = ''
+      this.nft = null
+      this.chain = null
     },
 
     async submit() {
@@ -235,6 +255,8 @@ export const useRedPacketFormStore = defineStore('redPacketForm', {
           amount: this.amount,
           message: this.message,
           quantity: this.quantity,
+          chain: this.chain,
+          nft: this.nft,
         },
         talk.activeChannelId,
         talk.selfMetaId,

@@ -175,7 +175,9 @@
       "share_nft": "Share NFT",
       "share_nft_tip": "Show off Your NFTs",
       "sell_nft": "Sell NFT",
-      "sell_nft_tip": "Sell Your NFTs"
+      "sell_nft_tip": "Sell Your NFTs",
+      "required_nft": "Required NFT",
+      "choose_nft_red_packet_tip": "Only specific NFT series holders can open this gift."
     },
     "Datetime": {
       "today": "Today at ",

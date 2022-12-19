@@ -86,7 +86,9 @@
         >
           <div
             class="rounded-xl p-4 flex space-x-2 bg-gradient-to-br from-[#FFE8D2] via-[#FFF1B9] to-[#FEFFE3] items-center"
-            :class="[hasRedPacketReceived && 'origin-top -skew-x-12 dark:-skew-x-6 shadow-md']"
+            :class="[
+              hasRedPacketReceived ? 'origin-top -skew-x-12 dark:-skew-x-6 shadow-md' : 'shadow',
+            ]"
           >
             <img :src="giftImage" class="h-12 w-12" loading="lazy" />
             <div class="">
@@ -241,7 +243,11 @@ const redPacketReceiveInfo = computed(() => {
 })
 
 const redPacketMessage = computed(() => {
-  return props.message.data?.content || i18n.t('Talk.Channel.default_red_envelope_message')
+  return (
+    props.message.data?.content ||
+    props.message.content.split(':')[1] ||
+    i18n.t('Talk.Channel.default_red_envelope_message')
+  )
 })
 
 const isMyMessage = computed(() => {
@@ -269,6 +275,7 @@ const handleOpenRedPacket = async () => {
   // 如果用户未领取过红包，则显示红包领取弹窗
   modals.openRedPacket = {
     message: props.message || '',
+    redPacketInfo,
   }
   layout.isShowRedPacketOpenModal = true
 }

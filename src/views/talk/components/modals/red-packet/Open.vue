@@ -38,7 +38,7 @@
                 >
                   <template v-if="canOpen">
                     <div
-                      class="lg:w-114 h-60 bg-gradient-to-tr from-[#CBFDE4] to-[#FCEDCE] rounded-t-3xl shadow-md flex flex-col items-center justify-start overflow-x-hidden group-hover:-skew-x-3 group-hover:shadow-xl duration-300 origin-top"
+                      class="w-full lg:w-114 h-60 bg-gradient-to-tr from-[#CBFDE4] to-[#FCEDCE] rounded-t-3xl shadow-md flex flex-col items-center justify-start overflow-x-hidden group-hover:-skew-x-3 group-hover:shadow-xl duration-300 origin-top"
                     >
                       <UserAvatar
                         :meta-id="message.metaId"
@@ -120,6 +120,7 @@ import { getOneRedPacket, getRedPacketRemains, grabRedPacket } from '@/api/talk'
 import { useTalkStore } from '@/stores/talk'
 import { useModalsStore } from '@/stores/modals'
 import { sleep } from '@/utils/util'
+import { useUserStore } from '@/stores/user'
 
 const layout = useLayoutStore()
 const modals = useModalsStore()
@@ -127,6 +128,7 @@ const modals = useModalsStore()
 const message = modals.openRedPacket?.message
 const i18n = useI18n()
 const talk = useTalkStore()
+const user = useUserStore()
 const remains = ref([])
 const canOpen = computed(() => remains.value.length > 0)
 
@@ -168,7 +170,17 @@ const closeModal = () => {
 onMounted(async () => {
   const channelId = talk.activeChannelId
   const redPacketId = message?.txId
-  getRedPacketRemains({ channelId, redPacketId }).then(res => {
+  const params: any = {
+    channelId,
+    redPacketId,
+  }
+  const redPacketType = modals.openRedPacket.redPacketInfo?.requireType
+  if (redPacketType === '2') {
+    params.address = talk.selfAddress
+  } else if (redPacketType === '2001') {
+    params.address = user.user?.evmAddress
+  }
+  getRedPacketRemains(params).then(res => {
     remains.value = res
     console.log('remains', remains.value)
   })

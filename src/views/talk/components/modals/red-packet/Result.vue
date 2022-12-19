@@ -137,7 +137,6 @@ const closeModal = () => {
 }
 
 const redPacketResult = modals.redPacketResult
-console.log('redPacketResult', redPacketResult)
 const note = computed(() => {
   return redPacketResult?.content || i18n.t('Talk.Channel.default_red_envelope_message')
 })
@@ -145,7 +144,8 @@ const draws = computed(() => {
   return (redPacketResult?.payList || []).filter((item: any) => item.used === 'true')
 })
 const myDraw = computed(() => {
-  return draws.value.find((item: any) => item.metaId === redPacketResult?.metaId)
+  console.log(draws.value)
+  return draws.value.find((item: any) => item.metaid === redPacketResult?.metaId)
 })
 const sortedDraws = computed(() => {
   return draws.value.sort((a: any, b: any) => b.timestamp - a.timestamp)
