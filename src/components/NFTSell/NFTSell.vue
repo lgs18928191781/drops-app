@@ -4,24 +4,11 @@
     class="sm"
     :close-on-click-modal="false"
     :title="$t('NFT.Sell')"
-    center
     @close="emit('update:modelValue', false)"
+    :show-close="!loading"
   >
     <div class="sell-nft" v-loading="loading">
-      <div class="nft-msg flex">
-        <div class="cover-warp">
-          <NFTCoverVue :cover="[nft.nftIcon]" />
-        </div>
-        <div class="flex1">
-          <div class="name">{{ nft.nftName }}</div>
-          <div class="author flex flex-align-center">
-            <UserAvatar :meta-id="nft.nftIssueMetaId" :image="nft.nftIssueAvatarImage" />
-            <div class="username">{{ nft.nftIssuer }}</div>
-            <span class="role">({{ $t('NFT.Creater') }})</span>
-          </div>
-          <div class="classify">{{ nft.nftClassifyList.join(' ') }}</div>
-        </div>
-      </div>
+      <NFTMsgVue :nft="nft" />
 
       <ElForm :model="form" :rules="rule">
         <ElFormItem prop="sellPrice">
@@ -89,6 +76,7 @@ import Decimal from 'decimal.js-light'
 import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NFTCoverVue from '../NFTCover/NFTCover.vue'
+import NFTMsgVue from '../NFTMsg/NFTMsg.vue'
 
 const props = defineProps<{
   modelValue: boolean
@@ -210,15 +198,13 @@ async function submitForm() {
         receiverAddress: getAddressRes.data.address,
         tokenIndex: props.nft.nftTokenIndex,
         codehash: props.nft.nftCodehash,
-        genesisId: props.nft.nftGenesis,
-        sensibleId: props.nft.nftSensibleId,
-        genesisTxid: props.nft.nftGenesisTxId,
+        genesis: props.nft.nftGenesis,
       })
-      if (transferNFTRes && transferNFTRes.txId) {
+      if (transferNFTRes && transferNFTRes.txid) {
         const result = await LegalSaleNft({
           price: new Decimal(form.actualincomePrice).mul(100).toString(),
           sellDesc: 'ShowV3',
-          txid: transferNFTRes.txId,
+          txid: transferNFTRes.txid,
         })
         if (result.code === 0) {
           emit('success')

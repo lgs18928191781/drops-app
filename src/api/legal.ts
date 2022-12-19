@@ -4,7 +4,8 @@ import HttpRequest from 'request-sdk'
 
 // const Legal = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/legal-currency`, {
 // @ts-ignore
-const Legal = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/newlegal`, {
+// const Legal = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/newlegal`, {
+const Legal = new HttpRequest(`http://192.168.168.140:8126`, {
   header: () => {
     const userStore = useUserStore()
     if (userStore.isAuthorized) {
@@ -16,6 +17,19 @@ const Legal = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/newlegal`, {
     } else {
       return {}
     }
+  },
+  responseHandel: response => {
+    return new Promise((resolve, reject) => {
+      if (response.data.code !== 0) {
+        // eslint-disable-next-line prefer-promise-reject-errors
+        reject({
+          message: response.data.error,
+          code: response.data.code,
+        })
+      } else {
+        resolve(response.data)
+      }
+    })
   },
 }).request
 

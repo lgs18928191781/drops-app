@@ -477,6 +477,19 @@
     "Set actual income": "Set actual income",
     "Platform fee": "Platform fee",
     "Royalty fee": "Royalty fee",
-    "Sell": "Sell"
+    "Sell": "Sell",
+    "Order Information": "Order Information",
+    "Create Time": "Create Time",
+    "NFT Details": "NFT Details",
+    "Payment Method": "Payment Method",
+    "Buy Now": "Buy Now",
+    "NFT Market": "NFT Market",
+    "SearchPlace": "Search for NFT work titles, authors or albums",
+    "Explore": "Explore",
+    "Collection": "Collection",
+    "Mystery Box": "Mystery Box",
+    "Market": "Market",
+    "NFT Tools": "NFT Tools",
+    "Help": "Help"
   }
 }

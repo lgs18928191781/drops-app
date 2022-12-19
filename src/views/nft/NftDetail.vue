@@ -360,6 +360,7 @@
         </div>
 
         <NFTSellVue :nft="nft.val!" v-model="isShowSell" />
+        <!-- <NFTBuyVue :nft="nft.val!" v-model="isShowSell" /> -->
       </template>
     </ElSkeleton>
   </div>
@@ -401,6 +402,7 @@ import { useRootStore } from '@/stores/root'
 import PayConfirmVue from '@/components/PayConfirm/PayConfirm.vue'
 import { UnitName } from '@/config'
 import NFTSellVue from '@/components/NFTSell/NFTSell.vue'
+import NFTBuyVue from '@/components/NFTBuy/NFTBuy.vue'
 
 const isShowSkeleton = ref(true)
 const isShowDrscDetail = ref(false)

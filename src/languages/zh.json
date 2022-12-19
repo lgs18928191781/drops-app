@@ -471,6 +471,19 @@
     "Set actual income": "设置实际收入",
     "Platform fee": "平台手续费",
     "Royalty fee": "版税费",
-    "Sell": "上架"
+    "Sell": "上架",
+    "Order Information": "订单信息",
+    "Create Time": "创作时间",
+    "NFT Details": "NFT详情",
+    "Payment Method": "支付方式",
+    "Buy Now": "立即购买",
+    "NFT Market": "NFT 市场",
+    "SearchPlace": "搜索 NFT 作品名称、作者或专辑",
+    "Explore": "探索",
+    "Collection": "专辑",
+    "Mystery Box": "盲盒",
+    "Market": "市集",
+    "NFT Tools": "NFT 工具集",
+    "Help": "帮助"
   }
 }

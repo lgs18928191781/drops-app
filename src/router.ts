@@ -56,8 +56,16 @@ export const router = createRouter({
     {
       path: '/nft',
       name: 'nft',
-      component: () => RouterView,
+      component: () => import('@/views/nft/Layout.vue'),
+      redirect: {
+        name: 'nftIndex',
+      },
       children: [
+        {
+          path: 'index',
+          name: 'nftIndex',
+          component: () => import('@/views/nft/Index.vue'),
+        },
         {
           path: 'genesis',
           name: 'nftGenesis',
