@@ -50,11 +50,13 @@ import { useUserStore } from '@/stores/user'
 import ShareIcon from '@/assets/svg/share.svg'
 import CommentIcon from '@/assets/svg/comment.svg'
 import LikeIcon from '@/assets/svg/like.svg'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   buzz: BuzzItem
 }
 const props = withDefaults(defineProps<Props>(), {})
+const i18n = useI18n()
 
 const userStore = useUserStore()
 
@@ -135,14 +137,14 @@ const forwardText = computed(() => {
   if (props.buzz.rePost && props.buzz.rePost.length) {
     return props.buzz.rePost.length
   }
-  return '转发'
+  return i18n.t('Forward')
 })
 
 const commentText = computed(() => {
   if (props.buzz.comment && props.buzz.comment.length) {
     return props.buzz.comment.length
   }
-  return '评论'
+  return i18n.t('Comment')
 })
 
 const isILike = computed(() => {
@@ -156,7 +158,7 @@ const likeText = computed(() => {
   if (props.buzz.like && props.buzz.like.length) {
     return props.buzz.like.length
   }
-  return '点赞'
+  return i18n.t('Like')
 })
 </script>
 
