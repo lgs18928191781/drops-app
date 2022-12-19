@@ -276,6 +276,7 @@ export enum NodeName {
   ShowMsg = 'ShowMsg',
   NftIssue = 'NftIssue',
   NftGenesis = 'NftGenesis',
+  NftSell = 'NftSell',
   FtGenesis = 'FtGenesis',
   FtIssue = 'FtIssue',
   SimpleRedEnvelope = 'SimpleRedEnvelope',

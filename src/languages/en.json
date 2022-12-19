@@ -468,5 +468,9 @@
   "Replay": "Replay",
   "Cancel Follow": "Cancel Follow",
   "cancelFollowTips": "Can you confirm cancel follow user",
-  "Warning": "Warning"
+  "Warning": "Warning",
+  "Forward": "Forward",
+  "Comment": "Comment",
+  "Like": "Like",
+  "Forwarded": "Forwarded"
 }

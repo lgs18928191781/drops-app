@@ -11,11 +11,11 @@
         </span>
       </div>
       <!-- 快速转发 -->
-      <template v-if="itemData.displayType === 'quickRePost'">
+      <template v-if="itemData.protocol === 'SimpleRePost'">
         <div class="forward-head" @click.stop="$filters.toUserHome(itemData.metaId)">
           <ShareIcon />
           <UserAvatar class="head" :meta-id="itemData.metaId" :image="itemData.avatarImage" />
-          <div class="name">{{ itemData.userName }}转发了</div>
+          <div class="name">{{ itemData.userName }}&nbsp;{{ $t('Forwarded') }}</div>
         </div>
       </template>
       <div class="header">
@@ -167,8 +167,8 @@ const displayItemData = computed(() => {
   if (!itemData.value) {
     return null
   }
-  switch (itemData.value.displayType) {
-    case 'quickRePost': {
+  switch (itemData.value.protocol) {
+    case 'SimpleRePost': {
       return itemData.value.quoteItem || null
     }
     default: {

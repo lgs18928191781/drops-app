@@ -23,9 +23,15 @@
 
             :deep(.image) {
                 position: absolute;
-                height: 100%;
                 width: 100%;
-                object-fit: cover;
+                height: 100%;
+                left: 0;
+                top: 0;
+
+                img {
+                    object-fit: cover;
+                }
+
             }
         }
 
