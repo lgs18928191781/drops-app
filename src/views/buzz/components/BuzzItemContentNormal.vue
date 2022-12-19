@@ -17,9 +17,8 @@
       @play="params => emit('play', params)"
     />
   </div>
-
   <!-- 引用buzz -->
-  <div class="content-item" v-if="buzz.quoteItem && buzz.displayType !== 'quickRePost'">
+  <div class="content-item" v-if="buzz.quoteItem && buzz.protocol !== 'SimpleRePost' && !isQuote">
     <QuoteVue :buzz="buzz.quoteItem" />
   </div>
 </template>
@@ -43,8 +42,8 @@ const displayItemData = computed(() => {
   if (!props.buzz) {
     return null
   }
-  switch (props.buzz.displayType) {
-    case 'quickRePost': {
+  switch (props.buzz.protocol) {
+    case 'SimpleRePost': {
       return props.buzz.quoteItem || null
     }
     default: {

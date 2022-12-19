@@ -184,7 +184,7 @@ declare interface BuzzItem {
   metaAccessTxId: string
   metaId: string
   metanetId: string
-  enprotocol: string
+  protocol: string
   publicKey: string
   quoteItem: BuzzItem
   rePost: {

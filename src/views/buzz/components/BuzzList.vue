@@ -285,7 +285,7 @@ async function onLike(params: { txId: string; address: string; done: () => void 
   if (index === -1) {
     index = props.list.findIndex(item => item.quoteItem && item.quoteItem.txId === params.txId)
     if (index === -1) {
-      throw new Error('txId Not Found')
+      // throw new Error('txId Not Found')
     } else {
       isQuote = true
     }
