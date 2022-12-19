@@ -1,0 +1,54 @@
+.sell-nft {
+    .nft-msg {
+        .cover-warp {
+            width: 80px;
+            height: 80px;
+            margin-right: 15px;
+        }
+
+        .author {
+            margin-top: 10px;
+
+            .avatar {
+                width: 20px;
+                height: 20px;
+                margin-right: 5px;
+            }
+        }
+    }
+
+    .el-form {
+        margin-top: 18px;
+    }
+
+    .price-info-list {
+        margin-top: 18px;
+
+        .price-info-item {
+            padding: 10px 0;
+
+            .value {
+                white-space: nowrap;
+
+                .el-input {
+                    margin-right: 5px;
+
+                    :deep(.el-input__inner) {
+                        text-align: right;
+                    }
+                }
+            }
+        }
+    }
+
+    .operate {
+        margin-top: 18px;
+
+        a {
+            display: block;
+            padding: 15px 0;
+            text-align: center;
+            cursor: pointer;
+        }
+    }
+}

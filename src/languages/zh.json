@@ -464,5 +464,13 @@
   "Forward": "转发",
   "Comment": "评论",
   "Like": "点赞",
-  "Forwarded": "转发了"
+  "Forwarded": "转发了",
+  "NFT": {
+    "Creater": "创作者",
+    "Set selling price": "设置售价标价",
+    "Set actual income": "设置实际收入",
+    "Platform fee": "平台手续费",
+    "Royalty fee": "版税费",
+    "Sell": "上架"
+  }
 }

@@ -470,5 +470,13 @@
   "Forward": "Forward",
   "Comment": "Comment",
   "Like": "Like",
-  "Forwarded": "Forwarded"
+  "Forwarded": "Forwarded",
+  "NFT": {
+    "Creater": "Creater",
+    "Set selling price": "Set selling price",
+    "Set actual income": "Set actual income",
+    "Platform fee": "Platform fee",
+    "Royalty fee": "Royalty fee",
+    "Sell": "Sell"
+  }
 }

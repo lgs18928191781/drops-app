@@ -358,6 +358,8 @@
             </div>
           </div>
         </div>
+
+        <NFTSellVue :nft="nft.val!" v-model="isShowSell" />
       </template>
     </ElSkeleton>
   </div>
@@ -398,6 +400,7 @@ import { ArrowDown } from '@element-plus/icons-vue'
 import { useRootStore } from '@/stores/root'
 import PayConfirmVue from '@/components/PayConfirm/PayConfirm.vue'
 import { UnitName } from '@/config'
+import NFTSellVue from '@/components/NFTSell/NFTSell.vue'
 
 const isShowSkeleton = ref(true)
 const isShowDrscDetail = ref(false)
@@ -458,6 +461,8 @@ const prices = reactive([
     key: 'cny',
   },
 ])
+
+const isShowSell = ref(false)
 
 const NFTMainMsgDesc = computed(() => {
   // 1. 是否拍卖 显示拍卖描述 2. 是否上架 显示上架描述 3.下架状态 显示 NFT 的描述
@@ -585,7 +590,9 @@ function offSale() {
   //     .catch(() => loading.close())
 }
 
-function toSale() {}
+function toSale() {
+  isShowSell.value = true
+}
 
 // 分享
 function share() {

@@ -1,14 +1,21 @@
 import { PayPlatform } from '@/enum'
-import { getToken, getUserName } from '@/stores/user'
+import { getToken, getUserName, useUserStore } from '@/stores/user'
 import HttpRequest from 'request-sdk'
 
 // const Legal = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/legal-currency`, {
 // @ts-ignore
 const Legal = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/newlegal`, {
-  header: {
-    accessKey: () => getToken,
-    userName: () => getUserName(),
-    timestamp: () => new Date().getTime(),
+  header: () => {
+    const userStore = useUserStore()
+    if (userStore.isAuthorized) {
+      return {
+        accessKey: userStore.user?.token,
+        userName: userStore.userName,
+        timestamp: new Date().getTime(),
+      }
+    } else {
+      return {}
+    }
   },
 }).request
 
@@ -44,4 +51,16 @@ export const LegalOffsale = (params: {
 
 export const GetLegalNftDetail = (params: { uuid: string }): Promise<GetLegalNftDetail> => {
   return Legal.post('/api/v1/nos/legal/detail', params)
+}
+
+export const GetLegalRecevierAddress = (): Promise<GetLegalAddress> => {
+  return Legal.get('/api/v1/nos/legal/address')
+}
+
+export const LegalSaleNft = (params: {
+  price: string
+  sellDesc: string
+  txid: string
+}): Promise<GetSaleLegalNftsRes> => {
+  return Legal.post('/api/v1/nos/legal/sell', params)
 }
