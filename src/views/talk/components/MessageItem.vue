@@ -279,7 +279,6 @@ const handleOpenRedPacket = async () => {
 
     return
   }
-
   // 如果用户未领取过红包，则显示红包领取弹窗
   modals.openRedPacket = {
     message: props.message || '',

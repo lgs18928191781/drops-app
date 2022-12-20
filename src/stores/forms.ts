@@ -185,8 +185,9 @@ export const usePasswordFormStore = defineStore('passwordForm', {
 export const useRedPacketFormStore = defineStore('redPacketForm', {
   state: () => {
     return {
-      amount: 30000 as number | '',
-      quantity: 5,
+      amount: 1000 as number | '',
+      each: 1000 as number,
+      quantity: 1,
       message: '',
       type: RedPacketDistributeType.Random,
       nft: null as any,
@@ -218,7 +219,7 @@ export const useRedPacketFormStore = defineStore('redPacketForm', {
 
     isFinished(state) {
       if (state.type === RedPacketDistributeType.Nft) {
-        return !!state.amount && !!state.quantity && !!state.nft && !!state.chain
+        return !!state.each && !!state.quantity && !!state.nft && !!state.chain
       }
 
       return !!state.amount && !!state.quantity
@@ -235,10 +236,13 @@ export const useRedPacketFormStore = defineStore('redPacketForm', {
       }
 
       // 金额校验
-      this.validateAmount()
+      if (this.type === RedPacketDistributeType.Random) {
+        this.validateAmount()
+      }
     },
     validateAmount() {
       // 每个人最少 1000 sat（0.00001 Space）
+      console.log('hi')
       const minAmount = 1000 * this.quantity
       const maxAmount = 1_000_000
       if (this.amount < minAmount) {
@@ -248,9 +252,19 @@ export const useRedPacketFormStore = defineStore('redPacketForm', {
         this.amount = maxAmount
       }
     },
+    validateEach() {
+      console.log('what?')
+      if (this.each < 1000) {
+        this.each = 1000
+      }
+      if (this.each > 1_000_000) {
+        this.each = 1_000_000
+      }
+    },
 
     reset() {
-      this.amount = 0
+      this.amount = 1000
+      this.each = 1000
       this.quantity = 1
       this.message = ''
       this.nft = null
@@ -269,9 +283,11 @@ export const useRedPacketFormStore = defineStore('redPacketForm', {
         {
           amount: this.amount,
           message: this.message,
+          each: this.each,
           quantity: this.quantity,
           chain: this.chain,
           nft: this.nft,
+          type: this.type,
         },
         talk.activeChannelId,
         talk.selfMetaId,

@@ -160,7 +160,7 @@ const redPacket = computed(() => {
 })
 
 const distributeType = computed(() => {
-  return redPacket.value?.distributeType
+  return redPacket.value?.requireType
 })
 
 const canOpen = computed(() => {

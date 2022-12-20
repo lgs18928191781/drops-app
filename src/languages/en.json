@@ -181,7 +181,10 @@
       "sell_nft_tip": "Sell Your NFTs",
       "required_nft": "Required NFT",
       "choose_nft_red_packet_tip": "Only specific NFT series holders can open this gift.",
-      "total_explain": "The total amount of the gift should be more than 1000 Sats per person, but less than your total wallet balance and less than 1 million Sats."
+      "total_explain": "The total amount of the gift should be more than 1000 Sats per person, but less than your total wallet balance and less than 1 million Sats.",
+      "amount_each": "Amount Each",
+      "amount_each_explain": "The amount of each gift should be more than 1000 Sats.",
+      "choose_nft": "Choose NFT..."
     },
     "Datetime": {
       "today": "Today at ",

@@ -9,11 +9,13 @@
 
     <template #body>
       <TabGroup>
-        <TabList class="w-full bg-dark-100 rounded-xl text-base flex text-dark-800 font-medium">
+        <TabList class="w-full bg-dark-100 dark:bg-gray-900 rounded-xl text-base flex font-medium">
           <Tab
             class="w-full py-3 capitalize border-2 outline-0 rounded-xl transition-[background-color] duration-150"
             :class="[
-              activeTab === 'redPacket' ? 'border-dark-800 bg-primary' : 'border-transparent',
+              activeTab === 'redPacket'
+                ? 'border-dark-800 dark:border-gray-500 bg-primary text-dark-800'
+                : 'border-transparent',
             ]"
             @click="changeTab('redPacket')"
           >
@@ -21,7 +23,11 @@
           </Tab>
           <Tab
             class="w-full py-3 capitalize border-2 outline-0 rounded-xl transition-[background-color] duration-150"
-            :class="[activeTab === 'nft' ? 'border-dark-800 bg-primary' : 'border-transparent']"
+            :class="[
+              activeTab === 'nft'
+                ? 'border-dark-800 dark:border-gray-500 bg-primary text-dark-800'
+                : 'border-transparent',
+            ]"
             @click="changeTab('nft')"
           >
             {{ $t('Talk.Input.nft_limited') }}
@@ -43,7 +49,7 @@
                       name="quantity"
                       min="1"
                       step="1"
-                      class="main-border w-full p-4 outline-0 faded-switch still"
+                      class="main-border w-full p-4 outline-0 faded-switch still dark:bg-gray-700"
                       v-model="form.quantity"
                       @blur="form.validateQuantity"
                     />
@@ -72,7 +78,7 @@
                     <input
                       type="number"
                       placeholder="0"
-                      class="main-border w-full p-4 outline-0 faded-switch still"
+                      class="main-border w-full p-4 outline-0 faded-switch still dark:bg-gray-700"
                       v-model="form.amount"
                       @blur="form.validateAmount"
                     />
@@ -97,7 +103,7 @@
                           leave-to-class="transform scale-95 opacity-50 translate-y-[-10%]"
                         >
                           <MenuItems
-                            class="absolute p-2 bg-white right-0 translate-y-[20PX] rounded-xl shadow-lg z-50 main-border still w-36"
+                            class="absolute p-2 bg-white right-0 translate-y-[20PX] rounded-xl shadow-lg z-50 main-border still w-36  dark:!bg-gray-700"
                           >
                             <MenuItem v-slot="{ active }">
                               <button class="p-2">Space Sats</button>
@@ -120,7 +126,7 @@
                     <input
                       type="text"
                       :placeholder="$t('Talk.Input.best_wishes')"
-                      class="main-border w-full p-4 outline-0 faded-switch still"
+                      class="main-border w-full p-4 outline-0 faded-switch still dark:bg-gray-700"
                       v-model="form.message"
                     />
                   </div>
@@ -158,7 +164,7 @@
                     type="number"
                     min="1"
                     step="1"
-                    class="main-border w-full p-4 outline-0 faded-switch still"
+                    class="main-border w-full p-4 outline-0 faded-switch still dark:bg-gray-700"
                     v-model="form.quantity"
                     @blur="form.validateQuantity"
                   />
@@ -166,7 +172,7 @@
               </div>
               <div class="grid grid-cols-4 gap-2 items-center">
                 <div class="capitalize font-medium flex items-center space-x-0.5">
-                  <span>{{ $t('Talk.Input.total') }}</span>
+                  <span>{{ $t('Talk.Input.amount_each') }}</span>
 
                   <Popover class="relative h-4">
                     <PopoverButton>
@@ -179,7 +185,7 @@
                     <PopoverPanel
                       class="absolute z-50 bg-white dark:bg-gray-700 rounded-lg shadow-md text-sm p-2 w-60"
                     >
-                      {{ $t('Talk.Input.total_explain') }}
+                      {{ $t('Talk.Input.amount_each_explain') }}
                     </PopoverPanel>
                   </Popover>
                 </div>
@@ -187,9 +193,9 @@
                   <input
                     type="number"
                     placeholder="0"
-                    class="main-border w-full p-4 outline-0 faded-switch still"
-                    v-model="form.amount"
-                    @blur="form.validateAmount"
+                    class="main-border w-full p-4 outline-0 faded-switch still dark:bg-gray-700"
+                    v-model="form.each"
+                    @blur="form.validateEach"
                   />
                   <div class="absolute right-0 z-10">
                     <Menu as="div" class="relative inline-block">
@@ -212,7 +218,7 @@
                         leave-to-class="transform scale-95 opacity-50 translate-y-[-10%]"
                       >
                         <MenuItems
-                          class="absolute p-2 bg-white right-0 translate-y-[20PX] rounded-xl shadow-lg z-50 main-border still w-36"
+                          class="absolute p-2 bg-white right-0 translate-y-[20PX] rounded-xl shadow-lg z-50 main-border still w-36 dark:!bg-gray-700"
                         >
                           <MenuItem v-slot="{ active }">
                             <button class="p-2">Space Sats</button>
@@ -235,7 +241,7 @@
                   <input
                     type="text"
                     :placeholder="$t('Talk.Input.best_wishes')"
-                    class="main-border w-full p-4 outline-0 faded-switch still"
+                    class="main-border w-full p-4 outline-0 faded-switch still dark:bg-gray-700"
                     v-model="form.message"
                   />
                 </div>
@@ -247,8 +253,8 @@
                 </div>
                 <div class="col-span-3">
                   <button
-                    class="outline-0 main-border w-full px-4 py-3 text-base flex justify-between items-center dark:!bg-gray-600"
-                    :class="[!form.nft && 'faded !bg-white dark:!bg-gray-600']"
+                    class="outline-0 main-border w-full px-4 py-3 text-base flex justify-between items-center dark:!bg-gray-700"
+                    :class="[!form.nft && 'faded !bg-white dark:!bg-gray-700']"
                     @click="layout.isShowChooseTokenModal = !layout.isShowChooseTokenModal"
                   >
                     <div class="flex items-center gap-x-3">
@@ -270,7 +276,9 @@
                           class="w-6 h-6 text-dark-300 dark:text-gray-400 box-content group-hover:text-dark-800"
                         />
 
-                        <span class="text-sm text-dark-400 dark:text-gray-200"> </span>
+                        <span class="text-sm text-dark-400 dark:text-gray-200">{{
+                          $t('Talk.Input.choose_nft')
+                        }}</span>
                       </template>
                     </div>
 
@@ -284,7 +292,7 @@
             </div>
 
             <div class="my-7.5 flex justify-center items-baseline space-x-1">
-              <div class="text-4xl font-bold">{{ form.nicerAmount }}</div>
+              <div class="text-4xl font-bold">{{ form.each * form.quantity }}</div>
               <div class="text-base">{{ form.amountUnit }}</div>
             </div>
 
@@ -292,7 +300,7 @@
               <button
                 class="main-border uppercase font-medium text-base w-full py-3 primary"
                 :class="{
-                  'faded still text-dark-300 dark:text-gray-400 dark:!bg-gray-700': !form.isFinished,
+                  'faded still text-dark-300 dark:!text-gray-400 dark:!bg-gray-700': !form.isFinished,
                 }"
                 @click="form.submit"
                 :disabled="!form.isFinished"

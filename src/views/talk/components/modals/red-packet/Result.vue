@@ -180,7 +180,6 @@ const sortedDraws = computed(() => {
 })
 const luckiestAmount = computed(() => {
   const amount = Math.max(...draws.value.map((item: any) => Number(item.amount)))
-  console.log('luckiestAmount', amount)
   return amount
 })
 const nicerAmountWithUnit = (amount: string) => {
@@ -240,16 +239,8 @@ onMounted(async () => {
   background: #edeff2;
 }
 
-.dark *::-webkit-scrollbar-track {
-  background: #111827;
-}
-
 *::-webkit-scrollbar-thumb {
   background-color: #bfc2cc;
   border-radius: 20px;
-}
-
-.dark *::-webkit-scrollbar-thumb {
-  background-color: #374151;
 }
 </style>
