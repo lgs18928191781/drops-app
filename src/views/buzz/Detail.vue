@@ -18,7 +18,7 @@
             :disabled="true"
           />
           <div class="cont flex1" v-loading="loading">
-            <input @focus="reply" />
+            <input @focus="reply" :placeholder="$t('Buzz.Your reply')" />
           </div>
         </div>
         <BuzzCommentListVue

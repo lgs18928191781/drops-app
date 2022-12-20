@@ -749,7 +749,7 @@ export class HdWallet {
             try {
               const tx = hexTxs[i]
 
-              await this.provider.broadcast(tx)
+              await this.provider.broadcast(tx, true)
             } catch (error) {
               errorMsg = error
             }

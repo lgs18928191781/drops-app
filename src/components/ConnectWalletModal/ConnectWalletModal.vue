@@ -584,7 +584,7 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
       let errorMsg: any
       for (let i = 0; i < broadcasts.length; i++) {
         try {
-          await wallet?.provider.broadcast(broadcasts[i])
+          await wallet?.provider.broadcast(broadcasts[i], true)
         } catch (error) {
           errorMsg = error
           break
