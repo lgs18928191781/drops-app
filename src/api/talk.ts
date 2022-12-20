@@ -151,8 +151,9 @@ export const getOneRedPacket = async (params: any): Promise<any> => {
   params = params || {}
   const channelId = params.channelId
   const redPacketId = params.redPacketId
+  const query = params.address ? new URLSearchParams({ address: params.address }).toString() : ''
 
-  return TalkApi.get(`/room/${channelId}/redenvelope/${redPacketId}`).then(res => {
+  return TalkApi.get(`/room/${channelId}/redenvelope/${redPacketId}?${query}`).then(res => {
     return res.data
   })
 }
@@ -164,7 +165,7 @@ export const getRedPacketRemains = async (params: any): Promise<any> => {
   const query = params.address ? new URLSearchParams({ address: params.address }).toString() : ''
 
   return TalkApi.get(`/room/${channelId}/redenvelope/${redPacketId}/unused?${query}`).then(res => {
-    return res.data.unused
+    return res.data
   })
 }
 
@@ -173,7 +174,7 @@ export const grabRedPacket = async (params: any): Promise<any> => {
   const channelId = params.channelId
   const redPacketId = params.redPacketId
   const metaId = params.selfMetaId
-  const address = params.selfAddress
+  const address = params.address
   const query = new URLSearchParams({ metaId, address }).toString()
 
   return TalkApi.get(`/room/${channelId}/gift/${redPacketId}?${query}`).then(res => {

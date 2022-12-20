@@ -256,10 +256,18 @@ const isMyMessage = computed(() => {
 
 const handleOpenRedPacket = async () => {
   // 如果用户已经领取过红包，则显示红包领取信息
-  const redPacketInfo = await getOneRedPacket({
+  const params: any = {
     channelId: talk.activeChannelId,
     redPacketId: props.message?.txId,
-  })
+  }
+  const redPacketType = props.message?.data?.requireType
+  console.log({ redPacketType })
+  if (redPacketType === '2') {
+    params.address = talk.selfAddress
+  } else if (redPacketType === '2001') {
+    params.address = userStore.user?.evmAddress
+  }
+  const redPacketInfo = await getOneRedPacket(params)
   const hasReceived = redPacketInfo.payList.some((item: any) => item.metaid === talk.selfMetaId)
 
   if (hasReceived) {

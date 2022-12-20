@@ -355,3 +355,8 @@ export enum loginOrRegisterProtocolType {
   userProtocol = 1,
   privitePolicy = 2,
 }
+
+export enum RedPacketDistributeType {
+  Random = '0',
+  Nft = '2',
+}
