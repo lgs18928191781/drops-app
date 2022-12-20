@@ -80,6 +80,12 @@
             width: 10px;
             height: 10px;
             margin-right: 0;
+            color: var(--themeBtnTextColor);
+
+            :deep(use) {
+                stroke: var(--themeBtnTextColor);
+                stroke-width: 2px;
+            }
         }
     }
 
@@ -98,7 +104,7 @@
         height: var(--header-height);
         width: 100%;
         box-sizing: border-box;
-        border-bottom: 1px solid #F4F7F9;
+        border-bottom: 1px solid var(--divid-color);
 
         .user-info {
             .avatar {
@@ -128,14 +134,14 @@
     }
 
     .metaId {
-        background: #F4F7F9;
+        background: var(--faded-border-color);
         border-radius: 6px;
         font-size: 12px;
         padding: 4px 12px;
         cursor: pointer;
 
         &:hover {
-            background: #d1dde5;
+            background: rgba(var(--faded-border-color), 0.3);
         }
     }
 
@@ -143,7 +149,7 @@
         width: 20px;
         height: 20px;
         border-radius: 50%;
-        background: #F4F7F9;
+        background: var(--themeBgThreeColor);
         margin-left: 15px;
         cursor: pointer;
 
@@ -157,7 +163,7 @@
 
             .icon {
                 :deep(use) {
-                    fill: #fff;
+                    fill: var(--themeBgThreeColor);
                 }
             }
         }
@@ -167,7 +173,7 @@
     .cont-warp {}
 
     .tab {
-        background: #F5F7FA;
+        background: var(--themeBgSecondColor);
         border-radius: 12px;
         margin-top: 18px;
         margin-left: 18px;
@@ -180,7 +186,8 @@
             box-sizing: border-box;
             cursor: pointer;
             border-radius: 12px;
-            border: 2px solid #F5F7FA;
+            border: 2px solid var(--faded-border-color);
+            color: var(--themeTextColor);
 
             &:hover {
                 background: var(--el-color-primary-light-5)
@@ -189,6 +196,7 @@
             &.active {
                 background: var(--el-color-primary);
                 border-color: var(--themeBtnTextColor);
+                color: var(--themeBtnTextColor);
             }
         }
     }
@@ -203,7 +211,8 @@
 
         .label {
             text-align: center;
-            color: #909399;
+            color: var(--themeTextColor);
+            opacity: 0.7;
         }
 
         .value {
@@ -215,23 +224,25 @@
 
     .wallets {
         margin-top: 18px;
-        border-top: 1px solid #F4F7F9;
+        border-top: 1px solid var(--divid-color);
 
         .wallet-section {
             padding: 18px 0;
-            border-bottom: 1px solid #F4F7F9;
+            border-bottom: 1px solid var(--divid-color);
 
             .top {
                 .title {
-                    color: #606266;
+                    color: var(--themeTextColor);
+                    opacity: 0.7;
                 }
 
                 .add {
                     color: #5586BB;
                     padding: 6px 12px;
-                    border: 1px solid #EDEFF2;
+                    border: 1px solid var(--faded-border-color);
                     border-radius: 6px;
                     cursor: pointer;
+                    background: var(--themeBgColor);
 
 
 
@@ -290,7 +301,8 @@
                     .statosis {}
 
                     .usd {
-                        color: #909399;
+                        color: var(--themeTextColor);
+                        opacity: 0.7;
                         font-size: 12px;
                     }
                 }
@@ -303,16 +315,17 @@
         padding-bottom: 18px;
         padding-left: 18px;
         padding-right: 18px;
-        border-bottom: 1px solid #F4F7F9;
+        border-bottom: 1px solid var(--divid-color);
 
 
 
         .label {
-            color: #606266;
+            color: var(--themeTextColor);
+            opacity: 0.7;
         }
 
         .current-chain {
-            border: 2px solid #EDEFF2;
+            border: 2px solid var(--faded-border-color);
             padding: 6px 18px;
             border-radius: 12px;
             font-size: 16px;
@@ -340,11 +353,11 @@
             }
 
             &:hover {
-                border-color: var(--themeBtnTextColor);
+                border-color: var(--themeTextColor);
             }
 
             &.active {
-                border-color: var(--themeBtnTextColor);
+                border-color: var(--themeTextColor);
 
                 .icon {
                     transform: rotate(180deg);
@@ -450,6 +463,12 @@
         .icon {
             width: 10px;
             height: 10px;
+            color: var(--themeBtnTextColor);
+
+            :deep(use) {
+                stroke: var(--themeBtnTextColor);
+                stroke-width: 2px;
+            }
         }
     }
 

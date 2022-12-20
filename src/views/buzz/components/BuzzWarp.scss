@@ -9,22 +9,6 @@ header {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     --tw-bg-opacity: 1;
 
-    .phone-content {
-        display: none;
-    }
-
-    .phone-menu {
-        width: 30px;
-        height: 30px;
-        cursor: pointer;
-    }
-
-    .dived {
-        height: 20px;
-        width: 1px;
-        background: #eee;
-        margin: 0 15px;
-    }
 
     .connect-wallet {
         border-radius: 8px;
@@ -128,11 +112,4 @@ header {
         right: 5%;
         bottom: 5%;
     }
-
-    header {
-        .phone-content {
-            display: flex;
-        }
-    }
-
 }

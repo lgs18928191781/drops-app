@@ -14,6 +14,7 @@
     --el-color-primary-light-1: rgba(255, 220, 81, 0.1);
     --el-border-radius-sm: 2px;
     --el-border-radius-big: 12px;
+    --el-fill-color-blank: var(--themeBgColor);
 
 }
 
@@ -26,6 +27,7 @@ html.dark {
     --el-color-primary-light-3: rgba(255, 220, 81, 0.3);
     --el-color-primary-light-2: rgba(255, 220, 81, 0.2);
     --el-color-primary-light-1: rgba(255, 220, 81, 0.1);
+    --el-fill-color-blank: var(--themeBgColor);
 }
 
 .el-button {
@@ -108,8 +110,8 @@ html.dark {
 
     .el-input__wrapper {
         transition: all 0.5;
-        border: var(--el-border-width) solid var(--el-border-color);
-        box-shadow: 3px 3px 0 var(--el-border-color);
+        border: var(--el-border-width) solid var(--faded-border-color);
+        box-shadow: 3px 3px 0 var(--faded-border-color);
         padding: 0 12px;
 
         &.is-focus {

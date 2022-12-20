@@ -1,7 +1,7 @@
 header {
     padding: 0 18px;
     height: var(--header-height);
-    background: var(--themeBgColor);
+    background: var(--themeBgSecondColor);
     position: sticky;
     left: 0;
     top: 0;
@@ -13,13 +13,25 @@ header {
 }
 
 .nft-warp {
-    padding: 18px;
+    padding: 0 18px 18px 18px;
+}
+
+
+.top-bar-warp {
+    padding-top: 18px;
+    padding-bottom: 18px;
+    position: sticky;
+    left: 0;
+    top: calc(var(--header-height));
+    z-index: 3;
+    background: var(--themeBgThreeColor);
 }
 
 .top-bar {
-    background: var(--themeBgColor);
+    background: var(--themeBgSecondColor);
     border-radius: var(--rounded);
     padding: 18px;
+
 
     .search {
         background: var(--themeBgThreeColor);
@@ -58,6 +70,26 @@ header {
 }
 
 
-.nft-router-view-warp {
-    margin-top: 18px;
+@media only screen and (max-width: 750PX) {
+
+    .top-bar-warp {
+        .top-bar {
+            flex-direction: column;
+
+            .flex1 {
+                width: 100%;
+
+                .search {
+                    width: 100%;
+                }
+            }
+
+            nav {
+                margin-top: 18px;
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+    }
 }

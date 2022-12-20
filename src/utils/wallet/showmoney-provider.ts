@@ -317,29 +317,21 @@ export default class ShowmoneyProvider {
     })
   }
 
-  public async broadcast(txHex: string): Promise<BaseApiResultTypes<any>> {
-    return new Promise(async (resolve, reject) => {
-      const res = await this.callMetasvApi(
+  public async broadcast(txHex: string) {
+    return new Promise<{
+      txid: string
+    }>(async (resolve, reject) => {
+      await this.sendRawTx(txHex)
+      resolve({
+        txid: new mvc.Transaction(txHex).id,
+      })
+      this.callMetasvApi(
         '/tx/broadcast',
         {
           hex: txHex,
         },
         'post'
-      ).catch(error => {
-        // 广播容错，忽略返回
-        // this.sendRawTx(txHex)
-        reject(error)
-      })
-      if (res?.txid) {
-        await this.sendRawTx(txHex)
-        resolve(res)
-      } else {
-        const response = JSON.parse(res.message)
-        reject({
-          code: response.code,
-          message: response.message,
-        })
-      }
+      )
     })
   }
 
@@ -352,13 +344,13 @@ export default class ShowmoneyProvider {
           type: 1,
         })
       }
-      const sendRawTxUtxo = () => {
-        return axios.post(this.apiPrefix + '/utxo/sendRawTx', {
-          raw: txHex,
-          unCheck: false.toString(),
-        })
-      }
-      const res = await Promise.all([sendRawTxUtxo(), sendRawTx()])
+      // const sendRawTxUtxo = () => {
+      //   return axios.post(this.apiPrefix + '/utxo/sendRawTx', {
+      //     raw: txHex,
+      //     unCheck: false.toString(),
+      //   })
+      // }
+      const res = await Promise.all([sendRawTx()])
       resolve(res)
     })
   }

@@ -1,6 +1,12 @@
+@import '@/assets/styles/var.scss';
+
 .banner {
     border-radius: var(--rounded);
     overflow: hidden;
+
+    .el-skeleton__item {
+        height: 325px;
+    }
 
     :deep(.swiper-slide) {}
 
@@ -41,6 +47,11 @@
     .title {
         text-align: center;
         font-size: 24px;
+
+        .el-skeleton__item {
+            height: 24px;
+            width: 100px;
+        }
     }
 
     .cont {
@@ -51,6 +62,15 @@
 .hot-collection {
     padding-bottom: 30px;
 
+    .el-skeleton__item {
+        height: 327px;
+        margin-right: 10px;
+        border-radius: var(--rounded);
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
 
 
     .hot-collection-item {
@@ -105,9 +125,18 @@
 .latest-collection {
     padding-bottom: 30px;
 
+    .el-skeleton__item {
+        height: 500px;
+        margin-right: 15px;
+        border-radius: var(--rounded);
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
 
     .latest-collection-item {
-        background: var(--themeBgColor);
+        background: var(--themeBgSecondColor);
         border-radius: var(--rounded);
         overflow: hidden;
         cursor: pointer;
@@ -134,13 +163,26 @@
             }
 
             .name {
-                font-size: 16px;
+                .text {
+                    font-size: 16px;
+                    @extend %text-ellipsis;
+                }
+
+                svg {
+                    width: 24px;
+                    height: 24px;
+                    min-width: 24px;
+                    min-height: 24px;
+                    margin-left: 5px;
+                }
             }
 
             .metaid {
                 color: var(--faded-border-color);
                 font-size: 12px;
                 margin-top: 2px;
+
+
             }
         }
 
@@ -158,7 +200,12 @@
 
 .leader-board {
     border-radius: var(--rounded);
-    background: var(--themeBgColor);
+    background: var(--themeBgSecondColor);
+
+    .el-skeleton__item {
+        height: 580px;
+        border-radius: var(--rounded);
+    }
 
     .top {
         padding: 30px;
@@ -235,16 +282,22 @@
                     .image {
                         width: 60px;
                         height: 60px;
+                        min-width: 60px;
                         border-radius: 8px;
                         margin-left: 10px;
                     }
 
                     .name {
                         margin-left: 18px;
+                        @extend %text-ellipsis;
                     }
 
                     svg {
                         margin-left: 10px;
+                        width: 24px;
+                        height: 24px;
+                        min-width: 24px;
+                        min-height: 24px;
                     }
                 }
 
@@ -255,6 +308,89 @@
                 }
 
 
+            }
+        }
+    }
+}
+
+
+@media only screen and (max-width: 750PX) {
+
+    .top-bar-warp {
+        .top-bar {
+            flex-direction: column;
+
+            .flex1 {
+                width: 100%;
+
+                .search {
+                    width: 100%;
+                }
+            }
+
+            nav {
+                margin-top: 18px;
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+    }
+
+    .banner .banner-item .cover {
+        border-radius: var(--rounded);
+        overflow: hidden;
+
+        img {
+            height: 300px;
+            object-fit: cover;
+
+        }
+    }
+
+    .leader-board {
+        .top {
+            flex-direction: column;
+
+            .screen {
+                display: block;
+                margin-top: 18px;
+
+                .screen-item {
+                    display: inline-block;
+                    vertical-align: middle;
+
+                    &:first-child {
+                        display: block;
+                        margin-bottom: 18px;
+                    }
+
+                    .divid {
+                        display: inline-block;
+                    }
+                }
+            }
+        }
+
+        .content {
+            flex-direction: column;
+
+            .rank-section {
+                margin-right: 0;
+
+                &:last-child {
+                    .th {
+                        display: none;
+                    }
+                }
+
+                .rank-item {
+
+                    .floor-price,
+                    .trading-volume {
+                        width: 100px;
+                    }
+                }
             }
         }
     }

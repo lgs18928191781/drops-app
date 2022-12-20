@@ -1,15 +1,7 @@
 <template>
   <header class="flex flex-align-center">
     <div class="flex1">
-      <div class="phone-content flex flex-align-center">
-        <Icon
-          :name="layout.isShowLeftNav ? 'x_mark' : 'bars'"
-          class="phone-menu"
-          @click="layout.$patch({ isShowLeftNav: !layout.isShowLeftNav })"
-        />
-
-        <div class="dived"></div>
-
+      <PhoneMenuBtnVue>
         <div class="buzz-menu flex flex-align-center">
           <router-link
             :to="item.path"
@@ -23,7 +15,7 @@
             <span class="name">{{ item.name }}</span>
           </router-link>
         </div>
-      </div>
+      </PhoneMenuBtnVue>
     </div>
     <LoginedUserOperateVue />
   </header>
@@ -61,6 +53,7 @@ import LoginedUserOperateVue from '@/components/LoginedUserOperate/LoginedUserOp
 import { useI18n } from 'vue-i18n'
 import { useLayoutStore } from '@/stores/layout'
 import PublishVue from '@/views/buzz/components/Publish.vue'
+import PhoneMenuBtnVue from '@/components/PhoneMenuBtn/PhoneMenuBtn.vue'
 
 const rootStore = useRootStore()
 const userStore = useUserStore()

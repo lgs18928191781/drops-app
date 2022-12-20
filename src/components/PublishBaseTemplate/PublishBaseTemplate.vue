@@ -8,7 +8,11 @@
     <div class="publish" v-loading="loading">
       <div class="top flex flex-align-center">
         <div class="user flex flex-align-center flex1">
-          <UserAvatar :meta-id="userStore.user!.metaId" :image="userStore.user!.avatarImage" />
+          <UserAvatar
+            :meta-id="userStore.user!.metaId"
+            :image="userStore.user!.avatarImage"
+            :disabled="true"
+          />
           <div class="cont flex1">
             <div class="name">{{userStore.user!.name}}</div>
             <div class="metaid">

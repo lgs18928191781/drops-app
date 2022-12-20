@@ -1,0 +1,23 @@
+#phone-content {
+    display: none;
+}
+
+#phone-menu-btn {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.dived {
+    height: 20px;
+    width: 1px;
+    background: var(--divid-color);
+    margin: 0 15px;
+}
+
+@media only screen and (max-width: 1024PX) {
+    #phone-content {
+        display: flex;
+    }
+
+}
