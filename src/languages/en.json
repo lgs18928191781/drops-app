@@ -91,7 +91,10 @@
       "choose_cover": "Choose Cover",
       "introduction": "Community Introduction",
       "red_packet_all_claimed": "All gift packs have been claimed.",
-      "view_details": "View details"
+      "view_details": "View details",
+      "lucky": "LUCKY",
+      "red_packet_no_token": "You don't have required NFT to claim this gift pack.",
+      "red_packet_require_nft": "Required NFT"
     },
     "Channel": {
       "members": "members",
@@ -177,7 +180,8 @@
       "sell_nft": "Sell NFT",
       "sell_nft_tip": "Sell Your NFTs",
       "required_nft": "Required NFT",
-      "choose_nft_red_packet_tip": "Only specific NFT series holders can open this gift."
+      "choose_nft_red_packet_tip": "Only specific NFT series holders can open this gift.",
+      "total_explain": "The total amount of the gift should be more than 1000 Sats per person, but less than your total wallet balance and less than 1 million Sats."
     },
     "Datetime": {
       "today": "Today at ",

@@ -192,7 +192,8 @@ export const giveRedPacket = async (form: any, channelId: string, selfMetaId: st
 
   // 1.2 构建红包数据
   const { amount, quantity } = form
-  const amountInSat = amount * 100_000_000
+  // const amountInSat = amount * 100_000_000
+  const amountInSat = amount // 现在直接使用sat为单位
   const redPackets = _putIntoRedPackets(amountInSat, quantity, address)
   console.table(redPackets)
   console.log({ form })

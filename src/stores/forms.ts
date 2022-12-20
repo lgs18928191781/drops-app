@@ -1,4 +1,4 @@
-import { GroupChannelType } from '@/enum'
+import { GroupChannelType, RedPacketDistributeType } from '@/enum'
 import { giveRedPacket, updateCommunity } from '@/utils/talk'
 import { sleep } from '@/utils/util'
 import { defineStore } from 'pinia'
@@ -185,9 +185,10 @@ export const usePasswordFormStore = defineStore('passwordForm', {
 export const useRedPacketFormStore = defineStore('redPacketForm', {
   state: () => {
     return {
-      amount: 0.0003 as number | '',
+      amount: 30000 as number | '',
       quantity: 5,
       message: '',
+      type: RedPacketDistributeType.Random,
       nft: null as any,
       chain: null as any,
     }
@@ -197,12 +198,15 @@ export const useRedPacketFormStore = defineStore('redPacketForm', {
     nicerAmount(state): string {
       if (state.amount === '') return '0'
       // 小于 0.01 的红包金额，会使用sat为单位
-      return state.amount < 0.01 ? (state.amount * 100000000).toFixed(0) : state.amount.toFixed(2)
+
+      return state.amount.toFixed(0)
+      // return state.amount < 0.01 ? (state.amount * 100000000).toFixed(0) : state.amount.toFixed(2)
     },
 
     amountUnit(state) {
-      if (state.amount === 0 || state.amount === '') return 'Space'
-      return state.amount < 0.01 ? 'sats' : 'Space'
+      return 'sats'
+      // if (state.amount === 0 || state.amount === '') return 'Space'
+      // return state.amount < 0.01 ? 'sats' : 'Space'
     },
 
     nicerAmountWithUnit(state): any {
@@ -213,7 +217,11 @@ export const useRedPacketFormStore = defineStore('redPacketForm', {
     },
 
     isFinished(state) {
-      return !!state.amount || !!state.quantity
+      if (state.type === RedPacketDistributeType.Nft) {
+        return !!state.amount && !!state.quantity && !!state.nft && !!state.chain
+      }
+
+      return !!state.amount && !!state.quantity
     },
   },
 
@@ -225,12 +233,19 @@ export const useRedPacketFormStore = defineStore('redPacketForm', {
       if (this.quantity > 100) {
         this.quantity = 100
       }
+
+      // 金额校验
+      this.validateAmount()
     },
     validateAmount() {
       // 每个人最少 1000 sat（0.00001 Space）
-      const minAmount = 0.00001 * this.quantity
+      const minAmount = 1000 * this.quantity
+      const maxAmount = 1_000_000
       if (this.amount < minAmount) {
         this.amount = minAmount
+      }
+      if (this.amount > maxAmount) {
+        this.amount = maxAmount
       }
     },
 

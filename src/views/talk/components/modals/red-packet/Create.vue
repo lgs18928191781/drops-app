@@ -15,14 +15,14 @@
             :class="[
               activeTab === 'redPacket' ? 'border-dark-800 bg-primary' : 'border-transparent',
             ]"
-            @click="activeTab = 'redPacket'"
+            @click="changeTab('redPacket')"
           >
             {{ $t('Talk.Input.for_everyone') }}
           </Tab>
           <Tab
             class="w-full py-3 capitalize border-2 outline-0 rounded-xl transition-[background-color] duration-150"
             :class="[activeTab === 'nft' ? 'border-dark-800 bg-primary' : 'border-transparent']"
-            @click="activeTab = 'nft'"
+            @click="changeTab('nft')"
           >
             {{ $t('Talk.Input.nft_limited') }}
           </Tab>
@@ -50,7 +50,24 @@
                   </div>
                 </div>
                 <div class="grid grid-cols-4 gap-2 items-center">
-                  <div class="capitalize font-medium">{{ $t('Talk.Input.total') }}</div>
+                  <div class="capitalize font-medium flex items-center space-x-0.5">
+                    <span>{{ $t('Talk.Input.total') }}</span>
+
+                    <Popover class="relative h-4">
+                      <PopoverButton>
+                        <Icon
+                          name="question_mark_circle"
+                          class="w-4 h-4 text-gray-700 dark:text-gray-300"
+                        />
+                      </PopoverButton>
+
+                      <PopoverPanel
+                        class="absolute z-50 bg-white dark:bg-gray-700 rounded-lg shadow-md text-sm p-2 w-60"
+                      >
+                        {{ $t('Talk.Input.total_explain') }}
+                      </PopoverPanel>
+                    </Popover>
+                  </div>
                   <div class="col-span-3 relative flex items-center">
                     <input
                       type="number"
@@ -66,7 +83,7 @@
                             class="text-base flex items-center font-medium px-3 py-1 outline-0"
                             @click="isShowSelectTokenModal = !isShowSelectTokenModal"
                           >
-                            <span>Space</span>
+                            <span>Sats</span>
                             <Icon name="chevron_right" class="w-5 h-5 text-dark-480" />
                           </MenuButton>
                         </div>
@@ -80,10 +97,10 @@
                           leave-to-class="transform scale-95 opacity-50 translate-y-[-10%]"
                         >
                           <MenuItems
-                            class="absolute p-2 bg-white right-0 translate-y-[20PX] rounded-xl shadow-lg z-50 main-border still"
+                            class="absolute p-2 bg-white right-0 translate-y-[20PX] rounded-xl shadow-lg z-50 main-border still w-36"
                           >
                             <MenuItem v-slot="{ active }">
-                              <button class="p-2">Space</button>
+                              <button class="p-2">Space Sats</button>
                             </MenuItem>
                             <!-- <MenuItem v-slot="{ active }">
                             <button class="p-2">MC</button>
@@ -143,17 +160,36 @@
                     step="1"
                     class="main-border w-full p-4 outline-0 faded-switch still"
                     v-model="form.quantity"
+                    @blur="form.validateQuantity"
                   />
                 </div>
               </div>
               <div class="grid grid-cols-4 gap-2 items-center">
-                <div class="capitalize font-medium">{{ $t('Talk.Input.total') }}</div>
+                <div class="capitalize font-medium flex items-center space-x-0.5">
+                  <span>{{ $t('Talk.Input.total') }}</span>
+
+                  <Popover class="relative h-4">
+                    <PopoverButton>
+                      <Icon
+                        name="question_mark_circle"
+                        class="w-4 h-4 text-gray-700 dark:text-gray-300"
+                      />
+                    </PopoverButton>
+
+                    <PopoverPanel
+                      class="absolute z-50 bg-white dark:bg-gray-700 rounded-lg shadow-md text-sm p-2 w-60"
+                    >
+                      {{ $t('Talk.Input.total_explain') }}
+                    </PopoverPanel>
+                  </Popover>
+                </div>
                 <div class="col-span-3 relative flex items-center">
                   <input
                     type="number"
                     placeholder="0"
                     class="main-border w-full p-4 outline-0 faded-switch still"
                     v-model="form.amount"
+                    @blur="form.validateAmount"
                   />
                   <div class="absolute right-0 z-10">
                     <Menu as="div" class="relative inline-block">
@@ -162,7 +198,7 @@
                           class="text-base flex items-center font-medium px-3 py-1 outline-0"
                           @click="isShowSelectTokenModal = !isShowSelectTokenModal"
                         >
-                          <span>Space</span>
+                          <span>Sats</span>
                           <Icon name="chevron_right" class="w-5 h-5 text-dark-480" />
                         </MenuButton>
                       </div>
@@ -176,10 +212,10 @@
                         leave-to-class="transform scale-95 opacity-50 translate-y-[-10%]"
                       >
                         <MenuItems
-                          class="absolute p-2 bg-white right-0 translate-y-[20PX] rounded-xl shadow-lg z-50 main-border still"
+                          class="absolute p-2 bg-white right-0 translate-y-[20PX] rounded-xl shadow-lg z-50 main-border still w-36"
                         >
                           <MenuItem v-slot="{ active }">
-                            <button class="p-2">Space</button>
+                            <button class="p-2">Space Sats</button>
                           </MenuItem>
                           <!-- <MenuItem v-slot="{ active }">
                             <button class="p-2">MC</button>
@@ -255,7 +291,11 @@
             <div class="w-full">
               <button
                 class="main-border uppercase font-medium text-base w-full py-3 primary"
+                :class="{
+                  'faded still text-dark-300 dark:text-gray-400 dark:!bg-gray-700': !form.isFinished,
+                }"
                 @click="form.submit"
+                :disabled="!form.isFinished"
               >
                 {{ $t('Talk.Input.send') }}
               </button>
@@ -402,11 +442,14 @@ import {
   ListboxButton,
   ListboxOptions,
   ListboxOption,
+  Popover,
+  PopoverButton,
+  PopoverPanel,
 } from '@headlessui/vue'
 import { ref, watch, Ref, watchEffect, onMounted } from 'vue'
 import { object, number } from 'yup'
 import { useForm } from 'vee-validate'
-import { ShowControl } from '@/enum'
+import { RedPacketDistributeType, ShowControl } from '@/enum'
 import BaseModal from '../BaseModal.vue'
 import Cat from '@/assets/images/cat.svg?url'
 import DogWalking from '@/assets/images/dog_walking.svg?url'
@@ -421,6 +464,16 @@ import { showLoading } from '@/utils/util'
 
 const layout = useLayoutStore()
 const userStore = useUserStore()
+
+const activeTab = ref('redPacket')
+const changeTab = (tab: string) => {
+  activeTab.value = tab
+  if (tab === 'redPacket') {
+    form.type = RedPacketDistributeType.Random
+  } else {
+    form.type = RedPacketDistributeType.Nft
+  }
+}
 
 const form = useRedPacketFormStore()
 /** 验证 */
@@ -514,6 +567,4 @@ onMounted(() => {
     })
   }
 })
-
-const activeTab = ref('redPacket')
 </script>
