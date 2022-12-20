@@ -21,7 +21,7 @@
           <div class="mt-2">
             <input
               type="text"
-              class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-600 still w-full p-4 text-base leading-[24PX] caret-dark-800 dark:caret-gray-100 font-bold placeholder:font-normal"
+              class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-700 still w-full p-4 text-base leading-[24PX] caret-dark-800 dark:caret-gray-100 font-bold placeholder:font-normal"
               :placeholder="$t('Talk.Community.channel_name') + '...'"
               v-model="form.name"
               autocomplete="nope"
@@ -38,8 +38,8 @@
             <TabList class="w-full text-sm flex  font-medium gap-x-3 lg:text-base">
               <Tab v-for="tab in consentTabs" :key="tab.id" as="template" v-slot="{ selected }">
                 <button
-                  class="w-full main-border py-3 outline-0 flex items-center justify-center lg:py-4 dark:!bg-gray-600"
-                  :class="{ 'faded !bg-white dark:!bg-gray-600': !selected }"
+                  class="w-full main-border py-3 outline-0 flex items-center justify-center lg:py-4 dark:!bg-gray-700"
+                  :class="{ 'faded !bg-white dark:!bg-gray-700': !selected }"
                 >
                   <span v-if="selected" class="mr-1 flex items-center">
                     <Icon
@@ -64,8 +64,8 @@
               <!-- NFT -->
               <template v-if="selectedTab === 0">
                 <button
-                  class="outline-0 main-border w-full px-4 py-3 text-base flex justify-between items-center dark:!bg-gray-600"
-                  :class="[!form.nft && 'faded !bg-white dark:!bg-gray-600']"
+                  class="outline-0 main-border w-full px-4 py-3 text-base flex justify-between items-center dark:!bg-gray-700"
+                  :class="[!form.nft && 'faded !bg-white dark:!bg-gray-700']"
                   @click="layout.isShowChooseTokenModal = !layout.isShowChooseTokenModal"
                 >
                   <div class="flex items-center gap-x-3">
@@ -100,7 +100,7 @@
               <!-- FT -->
               <template v-if="selectedTab === 1">
                 <button
-                  class="outline-0 main-border w-full px-4 py-3 text-base flex justify-between items-center dark:!bg-gray-600"
+                  class="outline-0 main-border w-full px-4 py-3 text-base flex justify-between items-center dark:!bg-gray-700"
                   @click="layout.isShowChooseTokenModal = !layout.isShowChooseTokenModal"
                 >
                   <div class="flex items-center gap-x-3">
@@ -134,7 +134,7 @@
                 <div class="ml-4" v-if="form.ft">
                   <input
                     type="number"
-                    class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-600 still w-full p-4 text-base leading-[24PX]  caret-dark-800 font-bold placeholder:font-normal"
+                    class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-700 still w-full p-4 text-base leading-[24PX]  caret-dark-800 font-bold placeholder:font-normal"
                     min="1"
                     :placeholder="$t('Talk.Modals.amount_needed')"
                     v-model="form.amount"
@@ -154,7 +154,7 @@
                   :type="isShowingPassword ? 'text' : 'password'"
                   autocomplete="new-password"
                   minlength="6"
-                  class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-600 still w-full p-4 text-base px-12 leading-[24PX]"
+                  class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-700 still w-full p-4 text-base px-12 leading-[24PX]"
                   :placeholder="$t('Talk.Community.password') + '...'"
                   v-model="form.password"
                 />
@@ -177,7 +177,7 @@
 
         <div class="grow flex items-end justify-end lg:mt-8">
           <button
-            class="w-14 h-14 main-border primary flex items-center justify-center dark:!bg-gray-600"
+            class="w-14 h-14 main-border primary flex items-center justify-center dark:!bg-gray-700"
             :class="{
               'faded still text-dark-300 dark:text-gray-400 dark:!bg-gray-700': !form.isFinished,
             }"
@@ -220,7 +220,7 @@
               leave-to-class="transform scale-95 opacity-0"
             >
               <ListboxOptions
-                class="absolute mt-2 max-h-60 overflow-auto rounded-xl bg-white dark:bg-gray-600 py-2 text-base shadow-md focus:outline-none z-50 border border-solid border-dark-100 dark:border-gray-600 dark:shadow-blue-100/20"
+                class="absolute mt-2 max-h-60 overflow-auto rounded-xl bg-white dark:bg-gray-700 py-2 text-base shadow-md focus:outline-none z-50 border border-solid border-dark-100 dark:border-gray-600 dark:shadow-blue-100/20"
               >
                 <ListboxOption
                   v-slot="{ active, selected }"

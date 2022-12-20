@@ -8,6 +8,7 @@ import {
   IsEncrypt,
   MessageType,
   NodeName,
+  RedPacketDistributeType,
   SdkPayType,
 } from '@/enum'
 import { useUserStore } from '@/stores/user'
@@ -152,7 +153,21 @@ export const sendInviteBuzz = async (form: any, sdk: SDK) => {
   return { txId }
 }
 
-const _putIntoRedPackets = (amount: number, quantity: number, address: string): any[] => {
+const _putIntoRedPackets = (form: any, address: string): any[] => {
+  const { amount, quantity, each, type } = form
+  // NFT🧧：将NFT分成指定数量个红包，平均分配
+  if (type === RedPacketDistributeType.Nft) {
+    const redPackets = []
+    for (let i = 0; i < quantity; i++) {
+      redPackets.push({
+        address,
+        amount: each,
+        index: i,
+      })
+    }
+    return redPackets
+  }
+
   // 构建🧧数量：随机将红包金额分成指定数量个小红包；指定最小系数为平均值的0.2倍，最大系数为平均值的1.8倍
   const minFactor = 0.2
   const maxFactor = 1.8
@@ -191,10 +206,9 @@ export const giveRedPacket = async (form: any, channelId: string, selfMetaId: st
   const { addressStr: address } = buildCryptoInfo(key, net)
 
   // 1.2 构建红包数据
-  const { amount, quantity } = form
   // const amountInSat = amount * 100_000_000
-  const amountInSat = amount // 现在直接使用sat为单位
-  const redPackets = _putIntoRedPackets(amountInSat, quantity, address)
+  const amountInSat = form.amount // 现在直接使用sat为单位
+  const redPackets = _putIntoRedPackets(form, address)
   console.table(redPackets)
   console.log({ form })
 
