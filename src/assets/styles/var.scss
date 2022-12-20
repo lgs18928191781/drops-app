@@ -15,6 +15,7 @@ $themeTextColor: var(--themeTextColor);
 
 
 :root {
+    --color-primary: #ffdc51;
     --color-hover: #5586BB;
     --themeBgColor: #fff;
     --themeBgSecondColor: #fff;
@@ -32,7 +33,7 @@ $themeTextColor: var(--themeTextColor);
     --rounded: 12px;
     --header-height: 60px;
     --divid-color: #F4F7F9;
-
+    --input-height: 56px;
 }
 
 html.dark {

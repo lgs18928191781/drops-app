@@ -100,7 +100,7 @@ html.dark {
 .el-input {
     --el-input-hover-border: var(--normal-border-color);
     --el-input-focus-border-color: var(--normal-border-color);
-    --el-input-height: 56px;
+    --el-input-height: var(--input-height);
     --el-input-border-radius: var(--el-border-radius-big);
 
 
