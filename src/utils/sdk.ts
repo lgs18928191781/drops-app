@@ -35,7 +35,7 @@ import { useUserStore } from '@/stores/user'
 import i18n from './i18n'
 import SdkPayConfirmModalVue from '@/components/SdkPayConfirmModal/SdkPayConfirmModal.vue'
 import { h, render } from 'vue'
-import { NftManager, FtManager, API_NET, API_TARGET, TxComposer } from 'meta-contract'
+import { NftManager, FtManager, API_NET, API_TARGET, TxComposer, mvc } from 'meta-contract'
 import { resolve } from 'path'
 import detectEthereumProvider from '@metamask/detect-provider'
 
@@ -309,20 +309,21 @@ export class SDK {
   }
 
   // nft 转账
-  transferNFT(params: {
-    receiverAddress: string
-    tokenIndex: string
-    codehash: string
-    genesisId: string
-    genesisTxid: string | undefined
-    sensibleId: string
-    checkOnly?: boolean
-  }) {
+  transferNFT(
+    params: {
+      receiverAddress: string
+      tokenIndex: string
+      codehash: string
+      genesis: string
+    },
+    option?: {
+      isBroadcast: boolean
+    }
+  ) {
     return new Promise<{
-      tx: Transaction
-      txid: string
       txHex: string
-      txId: string
+      txid: string
+      tx: mvc.Transaction
     }>(async (resolve, reject) => {
       try {
         const userStore = useUserStore()
@@ -338,10 +339,7 @@ export class SDK {
           window[functionName] = callback
           this.appMetaIdJs.transferNFT(accessToken, JSON.stringify(params), functionName)
         } else {
-          const res = await this.wallet?.transferNft(
-            { ...params, genesis: params.genesisId },
-            !params.checkOnly
-          )
+          const res = await this.wallet?.transferNft(params, option)
           if (res) resolve(res)
         }
       } catch (error) {

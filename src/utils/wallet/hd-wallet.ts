@@ -19,7 +19,6 @@ import ShowmoneyProvider from './showmoney-provider'
 import * as ECIES from 'mvc-lib/ecies'
 // import * as Mnemonic from 'bsv/mnemonic'
 import { englishWords } from './english'
-import { API_NET, API_TARGET, SensibleNFT, Wallet } from 'sensible-sdk'
 import { SA_utxo } from 'sensible-sdk/dist/sensible-api'
 import { isEmail, sleep } from '../util'
 import { IsEncrypt, NodeName } from '@/enum'
@@ -27,7 +26,7 @@ import { AttachmentItem, PayToItem } from '@/@types/hd-wallet'
 import { CreateNodeOptions, CreateNodeRes, TransferTypes, UtxoItem } from '@/@types/sdk'
 import { AllNodeName } from '../sdk'
 import { ElMessage } from 'element-plus'
-import { NftManager, FtManager } from 'meta-contract'
+import { NftManager, FtManager, API_TARGET } from 'meta-contract'
 import { useUserStore } from '@/stores/user'
 
 const bsv = mvc
@@ -202,7 +201,7 @@ export const hdWalletFromMnemonic = async (
   // const hdPrivateKey = Mnemonic.fromString(mnemonic).toHDPrivateKey()
   const seed = bip39.mnemonicToSeedSync(mnemonic)
   const hdPrivateKey = bsv.HDPrivateKey.fromSeed(seed, network)
-  const hdWallet = hdPrivateKey.deriveChild(tag === 'new' ? "m/44'/236'/0'" : "m/44'/145'/0'")
+  const hdWallet = hdPrivateKey.deriveChild("m/44'/236'/0'")
   return hdWallet
 }
 
@@ -780,64 +779,91 @@ export class HdWallet {
     return ret
   }
 
-  public async transferNft(
-    payload: {
+  public transferNft(
+    params: {
       receiverAddress: string
       codehash: string
       genesis: string
       tokenIndex: string
-      sensibleId: string
     },
-    isBroadcast = true
+    option?: {
+      isBroadcast: boolean
+    }
   ) {
-    const genesisTxid = this.reverceFtByteString(payload.sensibleId)
-    const signersRes = await this.provider.getNftGenesisInfo(genesisTxid)
-    const signersRaw = signersRes.signers
-    const { signers, signerSelecteds } = await SensibleNFT.selectSigners(signersRaw)
-    const nft = new SensibleNFT({
-      network: API_NET.MAIN,
-      apiTarget: API_TARGET.METASV,
-      feeb: 0.1,
-      signers,
-      signerSelecteds,
-    })
-    nft.sensibleApi.authorize({
-      privateKey: metasvServiceSecret,
-    })
-    const utxoRes = await this.provider.getUtxos(this.wallet.xpubkey.toString())
-    const utxos = utxoRes.map(item => {
-      item.wif = this.getPathPrivateKey(`${item.addressType}/${item.addressIndex}`).toString()
-      return item
-    })
-    console.log('params: ', {
-      senderWif: this._root.toString(),
-      receiverAddress: payload.receiverAddress,
-      codehash: payload.codehash,
-      genesis: payload.genesis,
-      tokenIndex: payload.tokenIndex,
-      utxos: utxos,
-    })
-    const res = await nft.transfer({
-      senderWif: this._root.toString(),
-      receiverAddress: payload.receiverAddress,
-      codehash: payload.codehash,
-      genesis: payload.genesis,
-      tokenIndex: payload.tokenIndex,
-      utxos: utxos,
-      opreturnData: '',
-      noBroadcast: true,
+    return new Promise<{
+      txHex: string
+      txid: string
+      tx: mvc.Transaction
+    }>(async (resolve, reject) => {
+      const initOption = {
+        isBroadcast: true,
+      }
+      option = {
+        ...initOption,
+        ...option,
+      }
+      const nftManager = await this.getNftManager()
+      const result = await nftManager.transfer({
+        codehash: params.codehash,
+        genesis: params.genesis,
+        receiverAddress: params.receiverAddress,
+        senderWif: this.wallet!.deriveChild(0)
+          .deriveChild(0)
+          .privateKey.toString(),
+        tokenIndex: params.tokenIndex,
+        noBroadcast: !option!.isBroadcast,
+      })
+      resolve(result)
     })
 
-    let result
-    if (isBroadcast) {
-      result = await this.provider.broadcast(res.txHex)
-    }
-    if ((isBroadcast && result) || !isBroadcast) {
-      return {
-        txId: res.txid,
-        ...res,
-      }
-    }
+    // const genesisTxid = this.reverceFtByteString(payload.sensibleId)
+    // const signersRes = await this.provider.getNftGenesisInfo(genesisTxid)
+    // const signersRaw = signersRes.signers
+    // const { signers, signerSelecteds } = await SensibleNFT.selectSigners(signersRaw)
+    // const nft = new SensibleNFT({
+    //   network: API_NET.MAIN,
+    //   apiTarget: API_TARGET.METASV,
+    //   feeb: 0.1,
+    //   signers,
+    //   signerSelecteds,
+    // })
+    // nft.sensibleApi.authorize({
+    //   privateKey: metasvServiceSecret,
+    // })
+    // const utxoRes = await this.provider.getUtxos(this.wallet.xpubkey.toString())
+    // const utxos = utxoRes.map(item => {
+    //   item.wif = this.getPathPrivateKey(`${item.addressType}/${item.addressIndex}`).toString()
+    //   return item
+    // })
+    // console.log('params: ', {
+    //   senderWif: this._root.toString(),
+    //   receiverAddress: payload.receiverAddress,
+    //   codehash: payload.codehash,
+    //   genesis: payload.genesis,
+    //   tokenIndex: payload.tokenIndex,
+    //   utxos: utxos,
+    // })
+    // const res = await nft.transfer({
+    //   senderWif: this._root.toString(),
+    //   receiverAddress: payload.receiverAddress,
+    //   codehash: payload.codehash,
+    //   genesis: payload.genesis,
+    //   tokenIndex: payload.tokenIndex,
+    //   utxos: utxos,
+    //   opreturnData: '',
+    //   noBroadcast: true,
+    // })
+
+    // let result
+    // if (isBroadcast) {
+    //   result = await this.provider.broadcast(res.txHex)
+    // }
+    // if ((isBroadcast && result) || !isBroadcast) {
+    //   return {
+    //     txId: res.txid,
+    //     ...res,
+    //   }
+    // }
   }
 
   public sigMessage(msg: string, path = '0/0') {
@@ -1343,7 +1369,7 @@ export class HdWallet {
     receiverAddress: string,
     noBroadcast = false
   ): Promise<NftTransferResult> {
-    const nftManager = await this.getSensibleNftManager(nft.sensibleId)
+    const nftManager = await this.getSensibleNftManager()
 
     return await nftManager.transfer({
       senderWif: this._root.toString(),
@@ -1423,22 +1449,15 @@ export class HdWallet {
     return wallet
   }
 
-  private getSensibleNftManager = async (sensibleId: string): Promise<SensibleNFT> => {
-    const genesisTxid = this.reverceFtByteString(sensibleId)
-    const signersRes = await this.provider.getNftGenesisInfo(genesisTxid)
-    const signersRaw = signersRes.signers
-    const { signers } = await SensibleNFT.selectSigners(signersRaw)
-    const signerSelecteds = [0, 1, 3]
-
-    const nftManager = new SensibleNFT({
-      network: API_NET.MAIN,
-      apiTarget: API_TARGET.METASV,
-      feeb: 0.05,
-      signers,
-      signerSelecteds,
-    })
-    nftManager.sensibleApi.authorize({
-      privateKey: metasvServiceSecret,
+  private getNftManager = async (): Promise<NftManager> => {
+    const nftManager = new NftManager({
+      apiTarget: API_TARGET.MVC,
+      // @ts-ignore
+      network: this.network,
+      purse: this.wallet!.deriveChild(0)
+        .deriveChild(0)
+        .privateKey.toString(),
+      feeb: DEFAULTS.feeb,
     })
 
     return nftManager

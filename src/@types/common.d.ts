@@ -363,6 +363,7 @@ declare interface GenesisNFTItem {
   nftIssueAddress: string
   nftIssueAvatarTxId: string
   nftIssueAvatarType: string
+  nftIssueAvatarImage: string
   nftIssueMetaId: string
   nftIssueMetaTxId: string
   nftIssueVersion: string
@@ -377,6 +378,7 @@ declare interface GenesisNFTItem {
   nftOwnerAddress: string
   nftOwnerAvatarTxId: string
   nftOwnerAvatarType: string
+  nftOwnerAvatarImage: string
   nftOwnerMetaId: string
   nftOwnerName: string
   nftPart: string

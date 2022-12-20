@@ -1,0 +1,34 @@
+@import '@/assets/styles/var.scss';
+
+.nft-msg {
+    .cover-warp {
+        width: 96px;
+        height: 96px;
+        margin-right: 12px;
+
+        :deep(.cover) {
+            border-radius: 8px;
+        }
+    }
+
+    .name {
+        line-height: 27px;
+        font-size: 18px;
+        @include text-many-ellipsis(2);
+    }
+
+    .cont {
+        margin-top: 4px;
+    }
+
+    .token-index {
+        color: #606266;
+    }
+
+    .price {
+        text-align: right;
+        color: #FC6D5E;
+        font-size: 24px;
+        font-weight: bold;
+    }
+}

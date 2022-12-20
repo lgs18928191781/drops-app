@@ -151,6 +151,7 @@ html.dark {
 .el-dialog {
     --el-dialog-width: 912px;
     --el-dialog-border-radius: 24px;
+    --el-dialog-padding-primary: 30px;
     position: relative;
     box-sizing: border-box;
     // border-width: var(--el-border-width);
@@ -200,9 +201,42 @@ html.dark {
         position: relative;
     }
 
+    .el-dialog__header {
+        height: 84px;
+        display: flex;
+        align-items: center;
+        padding: 0 var(--el-dialog-padding-primary);
+        position: relative;
+        margin-right: 0;
+    }
+
     .el-dialog__body {
         color: var(--themeBtnTextColor);
-        padding: 20px 48px;
+        padding: 10px 30px 30px 30px;
+    }
+
+    .el-dialog__headerbtn {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--faded-border-color);
+        top: 50%;
+        margin-top: -17px;
+        right: 0;
+        margin-right: 30px;
+
+        .el-dialog__close {
+            color: var(--themeTextColor);
+        }
+
+        &:hover {
+            background: var(--themeTextColor);
+
+            .el-dialog__close {
+                color: var(--themeBgColor);
+            }
+        }
+
     }
 
     &.none-padding {
@@ -210,6 +244,10 @@ html.dark {
             padding: 0;
         }
 
+    }
+
+    .el-loading-mask {
+        box-shadow: 3px 3px 0 var(--el-mask-color);
     }
 }
 
