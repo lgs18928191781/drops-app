@@ -13,6 +13,7 @@ interface Props {
   prefix?: string
   color?: string
   customClass?: string
+  useColorClass?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   prefix: 'icon',
@@ -24,6 +25,8 @@ const iconClass = computed(() => {
 const symbolId = computed(() => `#${props.prefix}-${props.name}`)
 const fillColor = computed(() => {
   if (props.color) return props.color
-  else return rootStore.theme === 'dark' ? '#fff' : '#303133'
+  if (props.useColorClass) return 'currentColor'
+
+  return rootStore.theme === 'dark' ? '#fff' : '#303133'
 })
 </script>

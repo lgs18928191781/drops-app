@@ -14,8 +14,8 @@ import { useLayoutStore } from './layout'
 import { Message, TalkError } from '@/@types/talk'
 import { sleep } from '@/utils/util'
 import { useUserStore } from './user'
-import { useRoute } from 'vue-router'
 import { GetUserInfo } from '@/api/aggregation'
+import { useWsStore } from './ws'
 
 export const useTalkStore = defineStore('talk', {
   state: () => {
@@ -27,9 +27,6 @@ export const useTalkStore = defineStore('talk', {
       activeChannelId: '' as string,
 
       error: {} as TalkError,
-
-      ws: null as WebSocket | null,
-      wsHeartBeatTimer: null as NodeJS.Timeout | null,
 
       channelsReadPointers: null as any, // 频道已读指针
       saveReadPointerTimer: null as NodeJS.Timeout | null,
@@ -326,6 +323,139 @@ export const useTalkStore = defineStore('talk', {
       return 'ready'
     },
 
+    _updateReadPointers(messageTimestamp: number, messageMetaId: string) {
+      if (!this.channelsReadPointers[messageMetaId]) {
+        this.channelsReadPointers[messageMetaId] = {
+          lastRead: 0,
+          latest: 0,
+        }
+      }
+
+      if (messageTimestamp > this.channelsReadPointers[messageMetaId].latest) {
+        this.channelsReadPointers[messageMetaId].latest = messageTimestamp
+      }
+    },
+    _updateCurrentChannelReadPointers(messageTimestamp: number) {
+      if (this.channelsReadPointers[this.activeChannelId]) {
+        this.channelsReadPointers[this.activeChannelId].latest = messageTimestamp
+        this.channelsReadPointers[this.activeChannelId].lastRead = messageTimestamp
+      } else {
+        this.channelsReadPointers[this.activeChannelId] = {
+          lastRead: messageTimestamp,
+          latest: messageTimestamp,
+        }
+      }
+    },
+
+    async handleNewGroupMessage(message: any) {
+      const messageMetaId = message.groupId
+      const isFromActiveChannel = messageMetaId === this.activeChannelId
+
+      // 如果不是当前频道的消息，则更新未读指针
+      if (!isFromActiveChannel) {
+        this._updateReadPointers(message.timestamp, messageMetaId)
+        return
+      }
+
+      // 当前频道，插入新消息
+      // 先去重
+      const isDuplicate =
+        this.activeChannel.newMessages?.some((item: Message) => item.txId === message.txId) ||
+        this.activeChannel.pastMessages?.some((item: Message) => item.txId === message.txId)
+
+      if (isDuplicate) return
+
+      // 更新当前频道的已读指针
+      this._updateCurrentChannelReadPointers(message.timestamp)
+
+      // 优先查找替代mock数据
+      let mockMessage: any
+      if (message.protocol === 'simpleGroupChat') {
+        mockMessage = this.activeChannel.newMessages.find(
+          (item: Message) =>
+            item.txId === '' &&
+            item.isMock === true &&
+            item.content === message.content &&
+            item.metaId === message.metaId &&
+            item.protocol === message.protocol
+        )
+      } else if (message.protocol === 'SimpleFileGroupChat') {
+        mockMessage = this.activeChannel.newMessages.find(
+          (item: Message) =>
+            item.txId === '' &&
+            item.isMock === true &&
+            item.metaId === message.metaId &&
+            item.protocol === message.protocol
+        )
+      }
+
+      if (mockMessage) {
+        console.log('替换中')
+        if (message.protocol === 'SimpleFileGroupChat') {
+          await sleep(2000) // 等待图片上传完成
+          this.$patch(state => {
+            mockMessage.txId = message.txId
+            mockMessage.timestamp = message.timestamp
+            // mockMessage.content = message.content // 图片不替换内容，以防止图片闪烁
+            delete mockMessage.isMock
+          })
+        } else {
+          this.$patch(state => {
+            mockMessage.txId = message.txId
+            mockMessage.timestamp = message.timestamp
+            mockMessage.content = message.content
+            delete mockMessage.isMock
+          })
+        }
+
+        return
+      }
+
+      // 如果没有替代mock数据，就直接添加到新消息队列首
+      this.activeChannel.newMessages.push(message)
+    },
+
+    async handleNewSessionMessage(message: any) {
+      const messageMetaId = message.from === this.selfMetaId ? message.to : message.from
+      const isFromActiveChannel = messageMetaId === this.activeChannelId
+
+      // 如果不是当前频道的消息，则更新未读指针
+      if (!isFromActiveChannel) {
+        this._updateReadPointers(message.timestamp, messageMetaId)
+        return
+      }
+
+      // 去重
+      const isDuplicate =
+        this.activeChannel.newMessages.some((item: Message) => item.txId === message.txId) ||
+        this.activeChannel.pastMessages.some((item: Message) => item.txId === message.txId)
+
+      if (isDuplicate) return
+
+      // 更新当前频道的已读指针
+      this._updateCurrentChannelReadPointers(message.timestamp)
+
+      // 优先查找替代mock数据
+      const mockMessage = this.activeChannel.newMessages.find(
+        (item: Message) =>
+          item.txId === '' && item.isMock === true && item.nodeName === message.nodeName
+      )
+
+      if (mockMessage) {
+        this.$patch(state => {
+          mockMessage.txId = message.txId
+          mockMessage.timestamp = message.timestamp
+          mockMessage.data.content = message.data.content
+          delete mockMessage.isMock
+        })
+
+        return
+      }
+
+      // 如果没有替代mock数据，就直接添加到新消息队列首
+      this.activeChannel.newMessages.push(message)
+    },
+
     initCommunityChannelIds() {
       const selfMetaId = this.selfMetaId
       if (this.communityChannelIds || !selfMetaId) return
@@ -457,220 +587,6 @@ export const useTalkStore = defineStore('talk', {
       }
     },
 
-    async initWebSocket() {
-      const selfMetaId = this.selfMetaId
-      if (!selfMetaId) return
-      const wsUri = `wss://testmvc.showmoney.app/ws-service?metaId=${selfMetaId}`
-      this.ws = new WebSocket(wsUri)
-
-      this.wsHeartBeatTimer = setInterval(() => {
-        if (this.ws?.readyState === WebSocket.CONNECTING) {
-          return
-        }
-
-        if (this.ws?.readyState === WebSocket.CLOSING || this.ws?.readyState === WebSocket.CLOSED) {
-          this.ws = new WebSocket(wsUri)
-        }
-
-        const heartBeat = {
-          M: 'HEART_BEAT',
-          C: 0,
-        }
-        this.ws?.send(JSON.stringify(heartBeat))
-      }, 10000)
-
-      const isGroupMessage = (messageWrapper: any) => messageWrapper.M === 'WS_SERVER_NOTIFY_ROOM'
-      const isSessionMessage = (messageWrapper: any) => messageWrapper.M === 'WS_SERVER_NOTIFY_CHAT'
-      const messageMetaId = (messageWrapper: any) => {
-        if (isGroupMessage(messageWrapper)) return messageWrapper.D.groupId
-        if (isSessionMessage(messageWrapper)) {
-          const { from, to } = messageWrapper.D
-          return from === selfMetaId ? to : from
-        }
-      }
-      const isFromActiveChannel = (messageWrapper: any) =>
-        messageMetaId(messageWrapper) === this.activeChannelId
-
-      const onReceiveMessage = async (event: MessageEvent) => {
-        const messageWrapper = JSON.parse(event.data)
-        if (isGroupMessage(messageWrapper)) {
-          const message = messageWrapper.D
-
-          // 如果不是当前频道的消息，则更新未读指针
-          if (!isFromActiveChannel(messageWrapper)) {
-            if (!this.channelsReadPointers[messageMetaId(messageWrapper)]) {
-              this.channelsReadPointers[messageMetaId(messageWrapper)] = {
-                lastRead: 0,
-                latest: 0,
-              }
-            }
-
-            if (
-              message.timestamp > this.channelsReadPointers[messageMetaId(messageWrapper)].latest
-            ) {
-              this.channelsReadPointers[messageMetaId(messageWrapper)].latest = message.timestamp
-            }
-
-            return
-          }
-          // 去重
-          const isDuplicate =
-            this.activeChannel.newMessages?.some((item: Message) => item.txId === message.txId) ||
-            this.activeChannel.pastMessages?.some((item: Message) => item.txId === message.txId)
-
-          if (isDuplicate) return
-
-          // 更新当前频道的已读指针
-          if (this.channelsReadPointers[this.activeChannelId]) {
-            this.channelsReadPointers[this.activeChannelId].latest = message.timestamp
-            this.channelsReadPointers[this.activeChannelId].lastRead = message.timestamp
-          } else {
-            this.channelsReadPointers[this.activeChannelId] = {
-              lastRead: message.timestamp,
-              latest: message.timestamp,
-            }
-          }
-
-          // 优先查找替代mock数据
-          let mockMessage: any
-          if (message.protocol === 'simpleGroupChat') {
-            mockMessage = this.activeChannel.newMessages.find(
-              (item: Message) =>
-                item.txId === '' &&
-                item.isMock === true &&
-                item.content === message.content &&
-                item.metaId === message.metaId &&
-                item.protocol === message.protocol
-            )
-          } else if (message.protocol === 'SimpleFileGroupChat') {
-            mockMessage = this.activeChannel.newMessages.find(
-              (item: Message) =>
-                item.txId === '' &&
-                item.isMock === true &&
-                item.metaId === message.metaId &&
-                item.protocol === message.protocol
-            )
-          }
-
-          if (mockMessage) {
-            console.log('替换中')
-            if (message.protocol === 'SimpleFileGroupChat') {
-              await sleep(2000)
-              this.$patch(state => {
-                mockMessage.txId = message.txId
-                mockMessage.timestamp = message.timestamp
-                // mockMessage.content = message.content // 图片不替换内容，以防止图片闪烁
-                delete mockMessage.isMock
-              })
-            } else {
-              this.$patch(state => {
-                mockMessage.txId = message.txId
-                mockMessage.timestamp = message.timestamp
-                mockMessage.content = message.content
-                delete mockMessage.isMock
-              })
-            }
-
-            return
-          }
-
-          // 如果没有替代mock数据，就直接添加到新消息队列首
-          this.activeChannel.newMessages.push(message)
-        }
-
-        if (isSessionMessage(messageWrapper)) {
-          const message = messageWrapper.D
-
-          // 如果不是当前频道的消息，则更新未读指针
-          if (!isFromActiveChannel(messageWrapper)) {
-            if (!this.channelsReadPointers[messageMetaId(messageWrapper)]) {
-              this.channelsReadPointers[messageMetaId(messageWrapper)] = {
-                lastRead: 0,
-                latest: 0,
-              }
-            }
-
-            if (
-              message.timestamp > this.channelsReadPointers[messageMetaId(messageWrapper)].latest
-            ) {
-              this.channelsReadPointers[messageMetaId(messageWrapper)].latest = message.timestamp
-            }
-
-            return
-          }
-
-          // 去重
-          const isDuplicate =
-            this.activeChannel.newMessages.some((item: Message) => item.txId === message.txId) ||
-            this.activeChannel.pastMessages.some((item: Message) => item.txId === message.txId)
-
-          if (isDuplicate) return
-
-          // 更新当前频道的已读指针
-          if (this.channelsReadPointers[this.activeChannelId]) {
-            this.channelsReadPointers[this.activeChannelId].latest = message.timestamp
-            this.channelsReadPointers[this.activeChannelId].lastRead = message.timestamp
-          } else {
-            this.channelsReadPointers[this.activeChannelId] = {
-              lastRead: message.timestamp,
-              latest: message.timestamp,
-            }
-          }
-
-          // 优先查找替代mock数据
-          let mockMessage: any
-          if (message.protocol === 'simpleGroupChat') {
-            mockMessage = this.activeChannel.newMessages.find(
-              (item: Message) =>
-                item.txId === '' &&
-                item.isMock === true &&
-                item.content === message.content &&
-                item.metaId === message.metaId &&
-                item.protocol === message.protocol
-            )
-          } else if (message.protocol === 'SimpleFileGroupChat') {
-            mockMessage = this.activeChannel.newMessages.find(
-              (item: Message) =>
-                item.txId === '' &&
-                item.isMock === true &&
-                item.metaId === message.metaId &&
-                item.protocol === message.protocol
-            )
-          } else if (message.nodeName === 'ShowMsg') {
-            mockMessage = this.activeChannel.newMessages.find(
-              (item: Message) =>
-                item.txId === '' && item.isMock === true && item.nodeName === message.nodeName
-            )
-          }
-
-          if (mockMessage) {
-            this.$patch(state => {
-              mockMessage.txId = message.txId
-              mockMessage.timestamp = message.timestamp
-              mockMessage.data.content = message.data.content
-              delete mockMessage.isMock
-            })
-
-            return
-          }
-
-          // 如果没有替代mock数据，就直接添加到新消息队列首
-          this.activeChannel.newMessages.push(message)
-        }
-      }
-
-      this.ws.addEventListener('message', onReceiveMessage)
-    },
-
-    closeWebSocket() {
-      if (this.wsHeartBeatTimer) {
-        clearInterval(this.wsHeartBeatTimer)
-        this.wsHeartBeatTimer = null
-      }
-      this.ws?.close()
-      this.ws = null
-    },
-
     addMessage(message: any) {
       if (!this.activeChannel) return
       if (!this.activeChannel.newMessages) {
@@ -691,7 +607,8 @@ export const useTalkStore = defineStore('talk', {
 
     reset() {
       console.log('resetting')
-      this.closeWebSocket()
+      const ws = useWsStore()
+      ws.close()
       this.closeReadPointerTimer()
       this.communities = [{ id: '@me' }]
       this.members = []

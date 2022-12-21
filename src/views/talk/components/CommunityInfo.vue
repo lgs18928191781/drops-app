@@ -115,43 +115,13 @@
                   />
                 </div>
 
-                <div
-                  v-for="channel in talk.activeCommunityPublicChannels"
-                  :key="channel.id"
-                  class="py-3 px-2 main-border only-bottom cursor-pointer !bg-white dark:!bg-gray-700 relative group"
-                  :class="channel.id === talk.activeChannelId || 'faded'"
-                  @click="goChannel(channel.id)"
-                >
-                  <span
-                    class="absolute right-0 top-0 h-full flex items-start top-0 bg-red-500 w-2.5 h-2.5 rounded-full -translate-y-1/3 translate-x-1/3"
-                    v-if="talk.hasUnreadMessagesOfChannel(channel.id)"
-                  >
-                  </span>
-
-                  <div
-                    class="text-dark-800 dark:text-gray-100 text-sm font-medium flex items-center"
-                    :title="channel.name"
-                  >
-                    <Icon
-                      :name="channelSymbol(channel)"
-                      class="w-5 h-4 text-dark-400 dark:text-gray-200"
-                    />
-
-                    <div class="ml-1 truncate grow">
-                      {{ channel.name }}
-                    </div>
-
-                    <button
-                      class="hover:text-dark-800 dark:hover:text-white text-dark-300 dark:text-gray-400"
-                      :class="[
-                        channel.id === talk.activeChannelId ? '' : 'hidden group-hover:!block',
-                      ]"
-                      @click.stop="popInvite(channel.id)"
-                    >
-                      <Icon name="user_plus" class="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
+                <TransitionGroup name="list" tag="div" class="flex flex-col gap-y-3 relative">
+                  <CommunityChannelItem
+                    v-for="channel in talk.activeCommunityPublicChannels"
+                    :key="channel.id"
+                    :channel="channel"
+                  />
+                </TransitionGroup>
 
                 <!-- 凭证频道 -->
                 <div class="flex justify-between mt-4">
@@ -166,63 +136,13 @@
                   />
                 </div>
 
-                <div
-                  v-for="channel in talk.activeCommunityConsensualChannels"
-                  :key="channel.id"
-                  class="py-3 px-2 main-border only-bottom cursor-pointer !bg-white dark:!bg-gray-700 relative group"
-                  :class="channel.id === talk.activeChannelId || 'faded'"
-                  @click="goChannel(channel.id)"
-                >
-                  <!-- <div
-                    class="absolute left-0 h-full flex items-center top-0"
-                    v-if="talk.hasUnreadMessagesOfChannel(channel.id)"
-                  >
-                    <span class="w-1.5 h-3 bg-dark-250 rounded-r-md"></span>
-                  </div> -->
-
-                  <span
-                    class="absolute right-0 top-0 h-full flex items-start top-0 bg-red-500 w-2.5 h-2.5 rounded-full -translate-y-1/3 translate-x-1/3"
-                    v-if="talk.hasUnreadMessagesOfChannel(channel.id)"
-                  >
-                  </span>
-                  <div
-                    class="text-dark-800 dark:text-gray-100 text-sm font-medium flex items-center"
-                    :title="channel.name"
-                  >
-                    <Icon
-                      :name="channelSymbol(channel)"
-                      class="w-5 h-4 text-dark-400 dark:text-gray-200"
-                      v-if="talk.channelType(channel) === GroupChannelType.Password"
-                    />
-                    <div
-                      class="text-xxs tracking-tighter italic font-bold min-w-[20PX] text-dark-400 dark:text-gray-200 text-center"
-                      v-if="
-                        talk.channelType(channel) == GroupChannelType.NFT ||
-                          talk.channelType(channel) == GroupChannelType.ETH_NFT
-                      "
-                    >
-                      NFT
-                    </div>
-                    <div
-                      class="text-xxs tracking-tighter italic font-bold min-w-[20PX] text-dark-400 dark:text-gray-200 text-center"
-                      v-if="talk.channelType(channel) == GroupChannelType.FT"
-                    >
-                      FT
-                    </div>
-                    <div class="ml-1 truncate grow">
-                      {{ channel.name }}
-                    </div>
-                    <button
-                      class="hover:text-dark-800 dark:hover:text-white text-dark-300 dark:text-gray-400"
-                      :class="[
-                        channel.id === talk.activeChannelId ? '' : 'hidden group-hover:!block',
-                      ]"
-                      @click.stop="popInvite(channel.id)"
-                    >
-                      <Icon name="user_plus" class="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
+                <TransitionGroup name="list">
+                  <CommunityChannelItem
+                    v-for="channel in talk.activeCommunityConsensualChannels"
+                    :key="channel.id"
+                    :channel="channel"
+                  />
+                </TransitionGroup>
               </div>
             </div>
           </div>
@@ -236,27 +156,15 @@
 </template>
 
 <script lang="ts" setup>
-import { useRouter } from 'vue-router'
 import CreatePublicChannelModal from './modals/CreatePublicChannelModal.vue'
 import CreateConsensualChannelModal from './modals/CreateConsensualChannelModal.vue'
 import { useLayoutStore } from '@/stores/layout'
+import CommunityChannelItem from './CommunityChannelItem.vue'
 import { useTalkStore } from '@/stores/talk'
-import { GroupChannelType } from '@/enum'
 import { useCommunityUpdateFormStore } from '@/stores/forms'
-
-const router = useRouter()
 
 const layout = useLayoutStore()
 const talk = useTalkStore()
-
-const popInvite = (channelId: string) => {
-  talk.inviteLink = `${location.origin}/talk/channels/${talk.activeCommunityId}/${channelId}`
-  talk.invitingChannel = {
-    community: talk.activeCommunity,
-    channel: talk.activeCommunityChannels.find(c => c.id === channelId),
-  }
-  layout.isShowInviteModal = true
-}
 
 const popSettingsModal = () => {
   const form = useCommunityUpdateFormStore()
@@ -264,38 +172,29 @@ const popSettingsModal = () => {
   form.description = talk.activeCommunity.description
   layout.isShowCommunitySettingsModal = true
 }
-
-const channelSymbol = (channel: any) => {
-  switch (talk.channelType(channel)) {
-    case GroupChannelType.PublicText:
-      return 'hashtag'
-    case GroupChannelType.Password:
-      return 'lock'
-    case GroupChannelType.NFT:
-      return ''
-    case GroupChannelType.FT:
-      return ''
-    default:
-      return 'hashtag'
-  }
-}
-
-const goChannel = (channelId: string) => {
-  const currentCommunityId = router.currentRoute.value.params.communityId
-  const currentChannelId = router.currentRoute.value.params.channelId
-
-  layout.isShowLeftNav = false
-
-  if (currentChannelId === channelId) {
-    return
-  }
-
-  router.push(`/talk/channels/${currentCommunityId}/${channelId}`)
-}
 </script>
 
 <style lang="scss" scoped>
 *::-webkit-scrollbar {
   width: 0px !important;
+}
+
+.list-move, /* apply transition to moving elements */
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease !important;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+/* ensure leaving items are taken out of layout flow so that moving
+   animations can be calculated correctly. */
+.list-leave-active {
+  position: absolute;
+  width: 100%;
 }
 </style>

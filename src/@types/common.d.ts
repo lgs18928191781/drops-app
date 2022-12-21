@@ -1,3 +1,5 @@
+import { JobStatus, JobStepStatus } from '@/enum'
+
 declare interface Pagination {
   page: number
   pageSize: number
@@ -412,4 +414,19 @@ declare interface NodeTransactions {
     transaction: bsv.Transaction
     txId?: string
   }
+}
+
+declare interface JobStep {
+  txId?: string
+  txHex: string
+  status: JobStepStatus
+  resultTxId?: string
+  resultTxMessage?: string
+}
+
+declare interface Job {
+  id: string
+  name: string
+  steps: JobStep[]
+  status: JobStatus
 }

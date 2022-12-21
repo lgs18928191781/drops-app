@@ -33,27 +33,32 @@
               class="flex w-full h-full lg:max-w-screen-sm lg:items-stretch justify-center lg:w-auto relative lg:static lg:h-auto"
               :style="mobileSize"
             >
-              <div
-                class="w-full lg:w-114 h-full bg-white dark:bg-gray-800 lg:w-auto lg:h-auto lg:rounded-3xl relative lg:shadow-lg lg:dark:shadow-blue-100/30 p-8 flex flex-col shrink-0"
-                :class="[mobileSize ? 'rounded' : '']"
-              >
-                <button
-                  class="absolute top-[24PX] right-[24PX] flex items-center justify-center outline-0"
-                  v-if="!noClose"
-                  @click="closeModal"
+              <div class="relative lg:w-fit lg:h-fit group">
+                <div
+                  class="hidden lg:dark:block absolute inset-0 bg-gradient-to-tr from-indigo-500 to-sky-500 rounded-3xl blur-xl opacity-25 translate-x-1 translate-y-1 lg:dark:group-hover:opacity-50 transition-all duration-1000 lg:dark:group-hover:duration-300"
+                ></div>
+                <div
+                  class="w-full lg:w-114 h-full bg-white dark:bg-gray-800 lg:w-auto lg:h-auto lg:rounded-3xl relative lg:shadow-lg lg:dark:shadow-none p-8 flex flex-col shrink-0"
+                  :class="[mobileSize ? 'rounded' : '']"
                 >
-                  <Icon
-                    name="x_mark"
-                    class="w-4 h-4 text-dark-400 dark:text-gray-200 rounded-full bg-gray-200 dark:bg-gray-900 p-2 box-content"
-                  />
-                </button>
+                  <button
+                    class="absolute top-[24PX] right-[24PX] flex items-center justify-center outline-0"
+                    v-if="!noClose"
+                    @click="closeModal"
+                  >
+                    <Icon
+                      name="x_mark"
+                      class="w-4 h-4 text-dark-400 dark:text-gray-200 rounded-full bg-gray-200 dark:bg-gray-900 p-2 box-content"
+                    />
+                  </button>
 
-                <DialogTitle as="h3" class="text-2xl text-center font-bold w-full mt-8 lg:mt-0">
-                  <slot name="title"></slot>
-                </DialogTitle>
+                  <DialogTitle as="h3" class="text-2xl text-center font-bold w-full mt-8 lg:mt-0">
+                    <slot name="title"></slot>
+                  </DialogTitle>
 
-                <div class="mt-7.5 h-full">
-                  <slot name="body"></slot>
+                  <div class="mt-7.5 h-full">
+                    <slot name="body"></slot>
+                  </div>
                 </div>
               </div>
 

@@ -177,7 +177,7 @@
 
         <div class="grow flex items-end justify-end lg:mt-8">
           <button
-            class="w-14 h-14 main-border primary flex items-center justify-center dark:!bg-gray-700"
+            class="w-14 h-14 main-border primary flex items-center justify-center dark"
             :class="{
               'faded still text-dark-300 dark:text-gray-400 dark:!bg-gray-700': !form.isFinished,
             }"
@@ -341,7 +341,7 @@
 </template>
 
 <script lang="ts" setup>
-import { GroupChannelType, ShowControl } from '@/enum'
+import { ChannelPublicityType, GroupChannelType, ShowControl } from '@/enum'
 import BaseModal from './BaseModal.vue'
 import {
   TabList,
@@ -368,7 +368,7 @@ import { useRouter } from 'vue-router'
 import { GetNFTs, GetFTs } from '@/api/aggregation'
 import ETH from '@/assets/images/eth.png'
 import MVC from '@/assets/images/iocn_mvc.png'
-import { showLoading, sleep } from '@/utils/util'
+import { realRandomString, showLoading, sleep } from '@/utils/util'
 
 const isShowingPassword = ref(false)
 const layout = useLayoutStore()
@@ -440,13 +440,30 @@ const tryCreateChannel = async () => {
 
   layout.isShowCreateConsensualChannelModal = false
   layout.isShowLoading = true
-  await createChannel(form, talk.activeCommunityId, userStore.showWallet, userStore.user!.metaId)
+
+  const res = await createChannel(
+    form,
+    talk.activeCommunityId,
+    userStore.showWallet,
+    userStore.user!.metaId
+  )
+
+  // 添加占位频道
+  if (res.status === 'success') {
+    const newChannel: any = {
+      id: 'placeholder_' + realRandomString(8),
+      name: form.name,
+      isPlaceHolder: true,
+      roomType: ChannelPublicityType.Private,
+      roomJoinType: form.type,
+      subscribeId: res.subscribeId,
+    }
+    // 将占位频道添加到频道列表最前面
+    talk.activeCommunityChannels.unshift(newChannel)
+  }
+
   layout.isShowLoading = false
   form.reset()
-
-  sleep(2000).then(() => {
-    talk.refetchChannels()
-  })
 }
 
 const selectNft = (nft: any) => {

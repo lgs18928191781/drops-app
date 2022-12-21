@@ -317,11 +317,13 @@ export default class ShowmoneyProvider {
     })
   }
 
-  public async broadcast(txHex: string, Synchronize = false) {
+  // public
+
+  public async broadcast(txHex: string, sync = false) {
     return new Promise<{
       txid: string
     }>(async (resolve, reject) => {
-      if (Synchronize) {
+      if (sync) {
         const res = await this.callMetasvApi(
           '/tx/broadcast',
           {

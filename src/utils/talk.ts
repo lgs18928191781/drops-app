@@ -278,15 +278,18 @@ export const createChannel = async (
   // 2. 构建节点参数
   const node = {
     nodeName: NodeName.SimpleGroupCreate,
-    encrypt: IsEncrypt.No,
-    dataType: 'application/json',
     data: JSON.stringify(dataCarrier),
   }
 
   // 3. 发送节点
-  await sdk.createBrfcChildNode(node)
+  const subscribeId = realRandomString(32)
+  const res = await sdk.createBrfcChildNode(node, { useQueue: true, subscribeId })
 
-  return 'success'
+  if (res === null) {
+    return { status: 'canceled' }
+  }
+
+  return { status: 'success', subscribeId }
 }
 
 export const verifyPassword = (key: string, hashedPassword: string, creatorMetaId: string) => {
@@ -454,8 +457,9 @@ export const tryCreateNode = async (node: any, sdk: SDK, mockId: string) => {
   const jobs = useJobsStore()
   const talk = useTalkStore()
   try {
-    const nodeRes = await sdk.createBrfcChildNode(node)
+    const nodeRes = await sdk.createBrfcChildNode(node, { useQueue: true })
     // 取消支付的情况下，删除mock消息
+    console.log({ nodeRes })
     if (nodeRes === null) {
       talk.removeMessage(mockId)
     }

@@ -9,7 +9,7 @@
         effect="light"
         popper-class="text-dark-800 dark:text-dark-200 text-base font-medium py-2 px-4 shadow-md rounded-lg"
         :content="item.title"
-        offset="5"
+        :offset="5"
         placement="right"
         :disabled="isMobile"
         v-for="(item, index) in apps"
@@ -37,7 +37,8 @@
           >
             <Icon
               :name="item.icon"
-              class="w-[22PX] h-[19PX] rounded-3xl lg:group-hover:scale-110 transition-all duration-200"
+              customClass="w-[22PX] h-[19PX] rounded-3xl lg:group-hover:scale-110 transition-all duration-200"
+              color="#303133"
             />
           </span>
         </router-link>
@@ -110,8 +111,10 @@ import CreateCommunityModal from '@/views/talk/components/modals/community/Creat
 import { onBeforeUnmount, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useWsStore } from '@/stores/ws'
 const layout = useLayoutStore()
 const talk = useTalkStore()
+const ws = useWsStore()
 const userStore = useUserStore()
 const route = useRoute()
 const i18n = useI18n()
@@ -137,7 +140,7 @@ if (userStore.isAuthorized) {
   talk.initCommunityChannelIds()
   talk.initReceivedRedPacketIds()
   talk.initReadPointers()
-  talk.initWebSocket()
+  ws.init()
 }
 
 watch(
@@ -148,10 +151,10 @@ watch(
       talk.initCommunityChannelIds()
       talk.initReceivedRedPacketIds()
       talk.initReadPointers()
-      talk.initWebSocket()
+      ws.init()
     } else {
       talk.reset()
-      talk.closeWebSocket()
+      ws.close()
       talk.saveReadPointers()
       talk.closeReadPointerTimer()
     }
@@ -159,7 +162,7 @@ watch(
 )
 
 onBeforeUnmount(() => {
-  talk.closeWebSocket()
+  ws.close()
   talk.saveReadPointers()
   talk.closeReadPointerTimer()
 })

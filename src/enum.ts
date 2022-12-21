@@ -360,3 +360,15 @@ export enum RedPacketDistributeType {
   Random = '0',
   Nft = '2',
 }
+
+export enum JobStepStatus {
+  Waiting = 'waiting',
+  Success = 'success',
+  Failed = 'failed',
+}
+
+export enum JobStatus {
+  Waiting = 'waiting',
+  Success = 'success',
+  Failed = 'failed',
+}

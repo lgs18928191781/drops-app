@@ -80,7 +80,7 @@
 
       <div class="w-full py-0.5" v-else-if="isGiveawayRedPacket">
         <div
-          class="max-w-full md:max-w-[50%] lg:max-w-[300PX] shadow rounded-xl cursor-pointer origin-center hover:shadow-md transition-all duration-200 bg-white dark:bg-gray-700 group"
+          class="max-w-full sm:max-w-[300PX] shadow rounded-xl cursor-pointer origin-center hover:shadow-md transition-all duration-200 bg-white dark:bg-gray-700 group"
           :class="[hasRedPacketReceived ? 'opacity-50' : 'hover:animate-wiggle-subtle']"
           @click="handleOpenRedPacket"
         >
