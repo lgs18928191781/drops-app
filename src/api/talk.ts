@@ -73,8 +73,6 @@ export const getAtMeChannels = async (params?: any): Promise<any> => {
   //   })
   // })
 
-  return []
-
   return TalkApi.get(`/chat/homes/${metaId}`, { data: JSON.stringify(params) }).then(res => {
     return res.data.data.map((channel: any) => {
       const channelSide = channel.from === metaId ? 'to' : 'from'

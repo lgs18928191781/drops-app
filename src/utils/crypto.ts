@@ -66,7 +66,7 @@ export function buildCryptoInfo(key: string, net: string): CryptoInfo {
 
   const hdPrivateKey = HDPrivateKey.fromSeed(seed, net as string)
   const privateKey = hdPrivateKey.deriveChild('m/0/0').privateKey
-  const publicKey = hdPrivateKey.publicKey
+  const publicKey = hdPrivateKey.deriveChild('m/0/0').publicKey
   const address = publicKey.toAddress(net)
   const wif = hdPrivateKey.deriveChild('m/0/0').privateKey.toWIF()
   const addressStr = address.toString()
