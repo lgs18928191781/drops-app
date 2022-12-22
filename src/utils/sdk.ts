@@ -442,7 +442,7 @@ export class SDK {
       option = {
         ...initOption,
         ...option,
-        subscribeId: option!.useQueue && !option!.subscribeId ? UUID() : '',
+        subscribeId: option && option!.useQueue && !option!.subscribeId ? UUID() : '',
       }
       const userStore = useUserStore()
       try {
