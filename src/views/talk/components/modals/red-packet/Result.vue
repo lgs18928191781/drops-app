@@ -78,7 +78,7 @@
                   </div>
 
                   <div
-                    class="h-[218PX] self-stretch flex flex-col items-stretch overflow-y-auto divide-y divide-solid divide-gray-100 px-2 -mx-2"
+                    class="h-[218PX] self-stretch flex flex-col items-stretch overflow-y-auto divide-y divide-solid divide-gray-100 px-2 -mx-2 no-dark"
                   >
                     <div class="flex items-center justify-between py-3" v-for="draw in sortedDraws">
                       <div class="flex space-x-3 items-center">

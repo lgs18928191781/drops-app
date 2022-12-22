@@ -63,4 +63,25 @@ const routeKey = (route: any) => {
   src: local('Whitney Bold'), url('@/assets/fonts/whitneybold.otf') format('opentype');
   font-weight: 700;
 }
+
+// *::-webkit-scrollbar {
+//   width: 8px;
+// }
+
+// *::-webkit-scrollbar-track {
+//   background: #edeff2;
+// }
+
+// .dark *::-webkit-scrollbar-track {
+//   background: #111827;
+// }
+
+// *::-webkit-scrollbar-thumb {
+//   background-color: #bfc2cc;
+//   border-radius: 20px;
+// }
+
+// .dark *::-webkit-scrollbar-thumb {
+//   background-color: #374151;
+// }
 </style>

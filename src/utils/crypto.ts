@@ -63,13 +63,13 @@ export function generateSeed(key: string): string {
 
 export function buildCryptoInfo(key: string, net: string): CryptoInfo {
   const seed = generateSeed(key)
+
   const hdPrivateKey = HDPrivateKey.fromSeed(seed, net as string)
   const privateKey = hdPrivateKey.deriveChild('m/0/0').privateKey
   const publicKey = hdPrivateKey.publicKey
   const address = publicKey.toAddress(net)
   const wif = hdPrivateKey.deriveChild('m/0/0').privateKey.toWIF()
   const addressStr = address.toString()
-  console.log('addressStr', addressStr)
   const script = Script.fromAddress(address)
   const scriptStr = script.toHex()
   const xpub = hdPrivateKey.xpubkey.toString()
