@@ -40,6 +40,7 @@ import { NftManager, FtManager, API_NET, API_TARGET, TxComposer, mvc } from 'met
 import { resolve } from 'path'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { NodeTransactions, Job, JobStep } from '@/@types/common'
+import { v1 as UUID } from 'uuid'
 
 enum AppMode {
   PROD = 'prod',
@@ -414,6 +415,7 @@ export class SDK {
       metaFiles?: CreateNodeRes[]
       currentNodeBrfc?: CreateNodeRes
       currentNode?: CreateNodeRes
+      subscribeId?: string
     } | null>(async (resolve, reject) => {
       const initOption = {
         isBroadcast: true,
@@ -440,6 +442,7 @@ export class SDK {
       option = {
         ...initOption,
         ...option,
+        subscribeId: option!.useQueue && !option!.subscribeId ? UUID() : '',
       }
       const userStore = useUserStore()
       try {
@@ -515,16 +518,8 @@ export class SDK {
                 params
               )
 
-              // 如果使用队列，则不进行广播，而是收集当次Job的所有交易作为step，推进队列
-              if (option.useQueue) {
-                console.log('here')
-                this.convertTransactionsIntoJob(transactions, payToRes, option.subscribeId)
-                resolve('success')
-                return
-              }
-
               // 广播
-              if (option.isBroadcast) {
+              if (option.isBroadcast && !option.useQueue) {
                 // 广播 打钱操作
                 if (payToRes && payToRes.transaction) {
                   await this.wallet?.provider.broadcast(payToRes.transaction.toString())
@@ -536,7 +531,13 @@ export class SDK {
               resolve({
                 payToAddress: payToRes,
                 ...transactions,
+                subscribeId: option!.subscribeId,
               })
+
+              // 如果使用队列，则不进行广播，而是收集当次Job的所有交易作为step，推进队列
+              if (option.useQueue) {
+                this.convertTransactionsIntoJob(transactions, payToRes, option!.subscribeId!)
+              }
             } else {
               resolve(null)
             }

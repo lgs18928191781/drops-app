@@ -23,6 +23,13 @@
     @get-more="getMore"
     :pagination="pagination"
     @update-item="updateItem"
+    @remove-item="
+      txId =>
+        list.splice(
+          list.findIndex(item => item.txId === txId),
+          1
+        )
+    "
   />
 
   <RecommendContentVue />
@@ -38,6 +45,7 @@ import { useRoute } from 'vue-router'
 import BuzzListVue from './BuzzList.vue'
 import { Mitt, MittEvent } from '@/utils/mitt'
 import RecommendContentVue from './RecommendContent.vue'
+import { BuzzItem } from '@/@types/common'
 
 // interface Props {}
 // const props = withDefaults(defineProps<Props>(), {})
