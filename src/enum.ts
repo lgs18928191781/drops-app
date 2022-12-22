@@ -282,6 +282,7 @@ export enum NodeName {
   SimpleRedEnvelope = 'SimpleRedEnvelope',
   OpenRedenvelope = 'OpenRedenvelope',
   SimplePublicShare = 'SimplePublicShare',
+  SellNft = 'sell_nft',
   Name = 'name',
   MetaNote = 'metanote',
 }

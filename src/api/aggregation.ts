@@ -499,3 +499,12 @@ export const GetPublishShare = (
 }> => {
   return aggregation.get(`/v2/app/show/posts/share/${txId}/info`)
 }
+
+export const GetSellNft = (
+  txId: string
+): Promise<{
+  code: number
+  data: SellNftItem
+}> => {
+  return aggregation.get(`/v2/app/show/posts/nftmarket/${txId}/info`)
+}

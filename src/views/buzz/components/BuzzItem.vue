@@ -56,6 +56,9 @@
         <template v-else-if="displayItemData.protocol === NodeName.SimplePublicShare">
           <BuzzItemContentSimplePublicShareVue :buzz="displayItemData" />
         </template>
+        <template v-else-if="displayItemData.protocol === NodeName.SellNft">
+          <BuzzItemContentSellNftVue :buzz="displayItemData" />
+        </template>
         <template v-else>
           <BuzzItemContentNormalVue
             :buzz="data!"
@@ -122,6 +125,7 @@ import { useI18n } from 'vue-i18n'
 import BuzzItemContentNormalVue from './BuzzItemContentNormal.vue'
 import BuzzItemContentMetaNoteVue from './BuzzItemContentMetaNote.vue'
 import BuzzItemContentSimplePublicShareVue from './BuzzItemContentSimplePublicShare.vue'
+import BuzzItemContentSellNftVue from './BuzzItemContentSellNft.vue'
 
 interface Props {
   data?: BuzzItem
