@@ -19,7 +19,7 @@
     </div>
   </div>
 
-  <!-- ConnectWalletModalVue -->
+  <DragonBall />
   <ConnectWalletModalVue />
 </template>
 
@@ -27,6 +27,7 @@
 import { ref, onMounted, computed } from 'vue'
 import ConnectWalletModalVue from './components/ConnectWalletModal/ConnectWalletModal.vue'
 import LeftNavigationVue from './components/LeftNavigation/LeftNavigation.vue'
+import DragonBall from './views/talk/components/DragonBall.vue'
 import { useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
 

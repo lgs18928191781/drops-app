@@ -16,8 +16,6 @@
       </Transition>
     </div>
 
-    <DragonBall />
-
     <!-- modals -->
     <PasswordModal v-if="layout.isShowPasswordModal" />
     <RequireNftModal v-if="layout.isShowRequireNftModal" />
@@ -37,7 +35,6 @@
 import ChannelHeader from './components/ChannelHeader.vue'
 import CommunityInfo from './components/CommunityInfo.vue'
 import ChannelMemberList from './components/ChannelMemberList.vue'
-import DragonBall from './components/DragonBall.vue'
 import { onBeforeUnmount, watch } from 'vue'
 import { useTalkStore } from '@/stores/talk'
 import { useRoute } from 'vue-router'

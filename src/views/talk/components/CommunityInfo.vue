@@ -179,22 +179,22 @@ const popSettingsModal = () => {
   width: 0px !important;
 }
 
+// .list-leave-active,
 .list-move, /* apply transition to moving elements */
-.list-enter-active,
-.list-leave-active {
+.list-enter-active {
   transition: all 0.5s ease !important;
 }
 
-.list-enter-from,
-.list-leave-to {
+// .list-leave-to,
+.list-enter-from {
   opacity: 0;
   transform: translateX(30px);
 }
 
-/* ensure leaving items are taken out of layout flow so that moving
-   animations can be calculated correctly. */
-.list-leave-active {
-  position: absolute;
-  width: 100%;
-}
+// /* ensure leaving items are taken out of layout flow so that moving
+//    animations can be calculated correctly. */
+// .list-leave-active {
+//   position: absolute;
+//   width: 100%;
+// }
 </style>

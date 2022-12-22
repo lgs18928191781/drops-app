@@ -457,7 +457,7 @@ export const tryCreateNode = async (node: any, sdk: SDK, mockId: string) => {
   const jobs = useJobsStore()
   const talk = useTalkStore()
   try {
-    const nodeRes = await sdk.createBrfcChildNode(node, { useQueue: true })
+    const nodeRes = await sdk.createBrfcChildNode(node)
     // 取消支付的情况下，删除mock消息
     console.log({ nodeRes })
     if (nodeRes === null) {

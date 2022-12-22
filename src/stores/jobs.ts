@@ -10,7 +10,7 @@ export const useJobsStore = defineStore('jobs', {
       jobsQueue: [] as Job[], // 任务队列
       waitingNotify: [] as Job[], // 已上报，等待结果的任务
 
-      // done: [] as Generator<any>[], // 已完成的任务
+      done: [] as Job[], // 已完成的任务
       failed: [] as Job[], // 失败的任务
       // processing: null as Generator<any> | null,
       // nodes: [] as any,
@@ -24,6 +24,10 @@ export const useJobsStore = defineStore('jobs', {
       return state.jobsQueue.length
     },
 
+    justGotSuccess(state) {
+      return state.waitingNotify.filter(job => job.status === JobStatus.Success).length
+    },
+
     hasWaiting(state) {
       return state.waitingNotify.filter(job => job.status === JobStatus.Waiting).length
     },
@@ -33,7 +37,7 @@ export const useJobsStore = defineStore('jobs', {
     },
 
     hasUnresolved() {
-      return this.hasJobs || this.hasWaiting || this.hasFailed
+      return this.hasJobs || this.hasWaiting || this.hasFailed || this.justGotSuccess
     },
   },
 
@@ -101,8 +105,14 @@ export const useJobsStore = defineStore('jobs', {
 
         // 如果任务失败，等待一段时间后，将任务移出 waitingNotify，并添加至 failed 队列
         if (job.status === JobStatus.Failed) {
-          sleep(5000).then(() => {
+          sleep(3000).then(() => {
             this.failed.push(job)
+            this.waitingNotify.splice(this.waitingNotify.indexOf(job), 1)
+          })
+        } else if (job.status === JobStatus.Success) {
+          // 如果任务成功，将任务移出 waitingNotify
+          sleep(3000).then(() => {
+            this.done.push(job)
             this.waitingNotify.splice(this.waitingNotify.indexOf(job), 1)
           })
         }
