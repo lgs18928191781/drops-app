@@ -5,7 +5,8 @@ import HttpRequest from 'request-sdk'
 // const Legal = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/legal-currency`, {
 // @ts-ignore
 // const Legal = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/newlegal`, {
-const Legal = new HttpRequest(`http://192.168.168.140:8126`, {
+// const Legal = new HttpRequest(`http://192.168.168.140:8126`, {
+const Legal = new HttpRequest(`http://47.243.174.112:8126`, {
   header: () => {
     const userStore = useUserStore()
     if (userStore.isAuthorized) {

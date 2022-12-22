@@ -1,0 +1,93 @@
+<template>
+  <CardVue class="nft-card" color="#5BA1FF">
+    <div class="nft-warp" @click.stop="toItem">
+      <ElSkeleton :loading="isSkeleton" animated>
+        <template #template>
+          <div class="msg flex">
+            <div class="cover-warp">
+              <ElSkeletonItem variant="rect" />
+            </div>
+            <div class="cont flex1">
+              <div class="name">
+                <ElSkeletonItem variant="p" />
+                <ElSkeletonItem variant="p" />
+              </div>
+              <div class="token-index">
+                <ElSkeletonItem variant="p" />
+              </div>
+            </div>
+          </div>
+        </template>
+        <template #default>
+          <div class="msg flex">
+            <div class="cover-warp">
+              <NFTCoverVue :cover="[nftSellItem.val!.cover as string]" />
+            </div>
+            <div class="cont flex1">
+              <div class="name">
+                {{nftSellItem.val!.name}}
+              </div>
+              <div class="token-index">#{{parseInt(nftSellItem.val!.tokenIndex) + 1}}</div>
+            </div>
+          </div>
+          <a
+            class="remove flex flex-align-center flex-pack-center"
+            @click.stop="emit('remove', index)"
+            v-if="isEdit"
+          >
+            <Icon name="remove" />
+          </a>
+        </template>
+      </ElSkeleton>
+    </div>
+  </CardVue>
+</template>
+
+<script setup lang="ts">
+import { useUserStore } from '@/stores/user'
+import CardVue from '@/components/Card/Card.vue'
+import { reactive, ref } from 'vue'
+import { GetSellNft } from '@/api/aggregation'
+import { usePostTagStore } from '@/stores/buzz/tag'
+import { useRouter } from 'vue-router'
+
+interface Props {
+  buzz: BuzzItem
+}
+const nftSellItem: { val: SellNftItem | null } = reactive({ val: null })
+const props = withDefaults(defineProps<Props>(), {})
+const userStore = useUserStore()
+const isSkeleton = ref(true)
+const postTagStore = usePostTagStore()
+const router = useRouter()
+
+function getSellNftInfo() {
+  return new Promise<void>(async resolve => {
+    const res = await GetSellNft(props.buzz.txId).catch(error => {
+      ElMessage.error(error.message)
+    })
+    if (res?.code === 0) {
+      nftSellItem.val = res.data
+      resolve()
+    }
+  })
+}
+
+function toItem() {
+  // if (nftSellItem.val!.shareIdType === 'communityId/channelId') {
+  //   router.push({
+  //     name: 'talkChannel',
+  //     params: {
+  //       communityId: nftSellItem.val!.shareId.split('/')[0],
+  //       channelId: nftSellItem.val!.shareId.split('/')[1],
+  //     },
+  //   })
+  // }
+}
+
+getSellNftInfo().then(() => {
+  isSkeleton.value = false
+})
+</script>
+
+<style lang="scss" scoped src="./BuzzItemContentSimplePublicShare.scss"></style>
