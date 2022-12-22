@@ -111,6 +111,12 @@ export const router = createRouter({
       // component: () => import('@/views/talk/Index.vue'),
     },
     {
+      path: '/talk/channels/@me/the-void',
+      name: 'talkAtMeDefault',
+      component: () => import('@/views/talk/AtMeDefault.vue'),
+      meta: { isAuth: true },
+    },
+    {
       path: '/talk/channels/@me/:channelId?',
       name: 'talkAtMe',
       component: () => import('@/views/talk/AtMe.vue'),

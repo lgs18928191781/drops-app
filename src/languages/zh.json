@@ -129,7 +129,12 @@
       "cover": "封面",
       "choose_cover_tip": "从你的封面 NFT 中选择一个作为社区封面",
       "choose_cover": "选择封面",
-      "introduction": "社区介绍"
+      "introduction": "社区介绍",
+      "red_packet_all_claimed": "所有红包都已被领取",
+      "view_details": "查看领取详情",
+      "lucky": "手气最佳",
+      "red_packet_no_token": "你没有相关系列的NFT来领取这个红包",
+      "red_packet_require_nft": "所需 NFT"
     },
     "Channel": {
       "members": "成员",
@@ -156,7 +161,9 @@
       "welcome_message": "欢迎来到 #{channel}!",
       "welcome_start": "这是 #{channel} 频道的起点。畅所欲言吧！",
       "welcome_invite": "邀请好友进入频道",
-      "you_received_a_new_message": "您收到了一条新消息"
+      "you_received_a_new_message": "您收到了一条新消息",
+      "no_contacts_yet": "还没有添加任何联系人",
+      "back_to_buzz": "返回 Buzz"
     },
     "Community": {
       "create": "创建社区",
@@ -213,7 +220,13 @@
       "share_nft": "分享 NFT",
       "share_nft_tip": "炫一下我的 NFT",
       "sell_nft": "出售 NFT",
-      "sell_nft_tip": "出售 NFT"
+      "sell_nft_tip": "出售 NFT",
+      "required_nft": "所需 NFT",
+      "choose_nft_red_packet_tip": "只有持有特定系列 NFT 的成员才能领取此红包",
+      "total_explain": "红包总金额应当满足超过每份1000聪，且总金额不超过1000万聪，也不超过您的钱包余额。",
+      "amount_each": "每份金额",
+      "amount_each_explain": "每份红包的金额应当超过1000聪。",
+      "choose_nft": "选择 NFT……"
     },
     "Datetime": {
       "today": "今天",
