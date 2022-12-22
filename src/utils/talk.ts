@@ -13,21 +13,17 @@ import {
 } from '@/enum'
 import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
-import { getCommunityAuth } from '@/api/talk'
 import { SDK } from './sdk'
 import {
   FileToAttachmentItem,
   getTimestampInSeconds,
-  randomString,
   realRandomString,
-  sleep,
 } from './util'
 import { Message, MessageDto } from '@/@types/talk'
 import { buildCryptoInfo, decrypt, encrypt, MD5Hash } from './crypto'
-import { UtxoItem } from '@/@types/sdk'
 import Decimal from 'decimal.js-light'
 import { TxComposer } from 'meta-contract/dist/tx-composer'
-import { Address, Script, Transaction } from 'meta-contract/dist/mvc'
+import { Address } from 'meta-contract/dist/mvc'
 import { DEFAULTS } from './wallet/hd-wallet'
 import { useJobsStore } from '@/stores/jobs'
 
