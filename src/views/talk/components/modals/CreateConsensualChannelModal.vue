@@ -307,7 +307,19 @@
 
       <!-- FT -->
       <div class="h-full" v-if="selectedTab === 1">
-        <div class="flex flex-col mt-6" v-if="ftSeries.length > 0">
+        <div
+          v-if="fetching"
+          class="w-full h-full flex items-center justify-center flex-col gap-y-4"
+        >
+          <img :src="DogWalking" class="w-48 h-48" alt="" />
+          <div class="flex items-center space-x-2">
+            <Icon name="loading" class="w-4 h-4 animate-spin text-dark-400 dark:!text-gray-200" />
+            <div class="text-dark-400 dark:text-gray-200 text-base font-medium">
+              {{ $t('Talk.Modals.loading') }}
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col mt-6" v-else-if="ftSeries.length > 0">
           <div
             v-for="ft in ftSeries"
             :key="ft.name"
@@ -325,7 +337,7 @@
             </div>
 
             <div class="text-sm text-dark-400 dark:text-gray-200 font-medium">
-              {{ ft.amount }}
+              {{ ft.balance.split('.')[0] }}
             </div>
           </div>
         </div>
@@ -356,7 +368,7 @@ import {
 } from '@headlessui/vue'
 
 import { useChannelFormStore } from '@/stores/forms'
-import { onMounted, Ref, ref, toRaw, watchEffect } from 'vue'
+import { onMounted, Ref, ref, toRaw, watchEffect, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { createChannel } from '@/utils/talk'
 import { useTalkStore } from '@/stores/talk'
@@ -428,7 +440,7 @@ const consentTabs = ref([
 ])
 
 const nftSeries: Ref<any[]> = ref([])
-const ftSeries: Ref<any[]> = ref([])
+const ftSeries: Ref<FungibleToken[]> = ref([])
 
 const form = useChannelFormStore()
 changeTab(selectedTab.value)
@@ -478,30 +490,27 @@ const selectFt = (ft: any) => {
   layout.isShowChooseTokenModal = false
 }
 
-const fetching = ref(false)
-const fetchNftSeries = async () => {
-  let selfAddress: string
+const selfAddress = computed(() => {
   switch (selectedChain.value.value) {
     case 'mvc':
-      selfAddress = userStore.user!.address
-      break
+      return userStore.user!.address
     case 'eth':
-      selfAddress = userStore.user?.evmAddress as string
-      break
+      return userStore.user?.evmAddress as string
     case 'goerli':
-      selfAddress = userStore.user?.evmAddress as string
-      break
+      return userStore.user?.evmAddress as string
     default:
-      selfAddress = userStore.user!.address
-      break
+      return userStore.user!.address
   }
+})
 
+const fetching = ref(false)
+const fetchNftSeries = async () => {
   const {
     data: {
       results: { items: _nfts },
     },
   } = await GetNFTs({
-    address: selfAddress,
+    address: selfAddress.value,
     chain: selectedChain.value.value,
     page: 1,
     pageSize: 100,
@@ -509,17 +518,22 @@ const fetchNftSeries = async () => {
   nftSeries.value = _nfts
 }
 const fetchFtSeries = async () => {
-  const selfAddress = userStore.user!.address
   const {
     data: {
       results: { items: _fts },
     },
-  } = await GetFTs({ address: selfAddress, page: 1, pageSize: 100 })
+  } = await GetFTs({
+    address: selfAddress.value,
+    chain: selectedChain.value.value,
+    page: 1,
+    pageSize: 100,
+  })
   ftSeries.value = _fts
 }
 
 watchEffect(async () => {
   await showLoading(fetchNftSeries, fetching)
+  await showLoading(fetchFtSeries, fetching)
 })
 
 onMounted(() => {

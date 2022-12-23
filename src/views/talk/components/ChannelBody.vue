@@ -14,7 +14,7 @@ import { nextTick, onBeforeUnmount, watch } from 'vue'
 import { GroupChannelType } from '@/enum'
 import { verifyPassword } from '@/utils/talk'
 import { useLayoutStore } from '@/stores/layout'
-import { GetGenesisNFTs, GetNFT } from '@/api/aggregation'
+import { GetGenesisNFTs, GetNFT, GetFT, GetFTs } from '@/api/aggregation'
 import { useUserStore } from '@/stores/user'
 
 const talk = useTalkStore()
@@ -59,11 +59,8 @@ const tryInitChannel = async (status: string) => {
 
         return
 
-      /**
-       * todo 检查NFT
-       */
       case GroupChannelType.NFT:
-      case GroupChannelType.ETH_NFT:
+      case GroupChannelType.ETH_NFT: {
         const chain =
           talk.activeGroupChannelType === GroupChannelType.NFT
             ? 'mvc'
@@ -149,6 +146,88 @@ const tryInitChannel = async (status: string) => {
           layout.isShowRequireNftModal = true
         }
         return
+      }
+
+      case GroupChannelType.FT: {
+        const chain: string = 'mvc'
+        let selfAddress: string
+        switch (chain) {
+          case 'mvc':
+            selfAddress = user.user!.address
+            break
+          case 'eth':
+            selfAddress = user.user?.evmAddress as string
+            break
+          case 'goerli':
+            selfAddress = user.user?.evmAddress as string
+            break
+          default:
+            selfAddress = user.user!.address
+            break
+        }
+        const consensualGenesis = talk.activeChannel.roomGenesis
+        const consensualCodehash = talk.activeChannel.roomCodeHash
+
+        // 如果不存在该链地址，则直接拒绝进入
+        if (!selfAddress) {
+          const {
+            data: {
+              results: { items },
+            },
+          } = await GetFT({
+            codehash: consensualCodehash,
+            genesis: consensualGenesis,
+            chain,
+          })
+          const ftInfo = {
+            codehash: consensualCodehash,
+            genesis: consensualGenesis,
+            icon: items[0].icon,
+            name: items[0].name,
+            chain,
+          }
+          talk.consensualFt = ftInfo
+          layout.isShowRequireFtModal = true
+          return
+        }
+
+        const {
+          data: {
+            results: { items: userNfts },
+          },
+        } = await GetFTs({
+          address: selfAddress,
+          codehash: consensualCodehash,
+          genesis: consensualGenesis,
+          chain,
+          page: 1,
+          pageSize: 3,
+        })
+
+        if (userNfts.length > 0) {
+          talk.hasActiveChannelConsent = true
+        } else {
+          const {
+            data: {
+              results: { items },
+            },
+          } = await GetFT({
+            codehash: consensualCodehash,
+            genesis: consensualGenesis,
+            chain,
+          })
+          const ftInfo = {
+            codehash: consensualCodehash,
+            genesis: consensualGenesis,
+            icon: items[0].icon,
+            name: items[0].name,
+            chain,
+          }
+          talk.consensualFt = ftInfo
+          layout.isShowRequireFtModal = true
+        }
+        return
+      }
     }
   }
 

@@ -1,6 +1,6 @@
 <template>
   <CardVue class="nft-card" color="#5BA1FF">
-    <div class="nft-warp" @click.stop="toItem">
+    <div class="nft-warp" @click.stop="toNFT">
       <ElSkeleton :loading="isSkeleton" animated>
         <template #template>
           <div class="msg flex">
@@ -30,13 +30,6 @@
               <div class="token-index">#{{parseInt(nftSellItem.val!.tokenIndex) + 1}}</div>
             </div>
           </div>
-          <a
-            class="remove flex flex-align-center flex-pack-center"
-            @click.stop="emit('remove', index)"
-            v-if="isEdit"
-          >
-            <Icon name="remove" />
-          </a>
         </template>
       </ElSkeleton>
     </div>
@@ -49,6 +42,7 @@ import CardVue from '@/components/Card/Card.vue'
 import { reactive, ref } from 'vue'
 import { GetSellNft } from '@/api/aggregation'
 import { usePostTagStore } from '@/stores/buzz/tag'
+import NFTCoverVue from '@/components/NFTCover/NFTCover.vue'
 import { useRouter } from 'vue-router'
 
 interface Props {
@@ -73,16 +67,16 @@ function getSellNftInfo() {
   })
 }
 
-function toItem() {
-  // if (nftSellItem.val!.shareIdType === 'communityId/channelId') {
-  //   router.push({
-  //     name: 'talkChannel',
-  //     params: {
-  //       communityId: nftSellItem.val!.shareId.split('/')[0],
-  //       channelId: nftSellItem.val!.shareId.split('/')[1],
-  //     },
-  //   })
-  // }
+function toNFT() {
+  router.push({
+    name: 'nftDetail',
+    params: {
+      genesis: nftSellItem.val!.genesis,
+      codehash: nftSellItem.val!.codehash ? nftSellItem.val!.codehash : nftSellItem.val?.chain,
+      tokenIndex: nftSellItem.val!.tokenIndex,
+      chain: nftSellItem.val!.chain,
+    },
+  })
 }
 
 getSellNftInfo().then(() => {
@@ -90,4 +84,4 @@ getSellNftInfo().then(() => {
 })
 </script>
 
-<style lang="scss" scoped src="./BuzzItemContentSimplePublicShare.scss"></style>
+<style lang="scss" scoped src="./BuzzItemContentSellNft.scss"></style>

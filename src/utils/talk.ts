@@ -14,11 +14,7 @@ import {
 import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
 import { SDK } from './sdk'
-import {
-  FileToAttachmentItem,
-  getTimestampInSeconds,
-  realRandomString,
-} from './util'
+import { FileToAttachmentItem, getTimestampInSeconds, realRandomString } from './util'
 import { Message, MessageDto } from '@/@types/talk'
 import { buildCryptoInfo, decrypt, encrypt, MD5Hash } from './crypto'
 import Decimal from 'decimal.js-light'
@@ -280,6 +276,7 @@ export const createChannel = async (
   // 3. 发送节点
   const subscribeId = realRandomString(32)
   const res = await sdk.createBrfcChildNode(node, { useQueue: true, subscribeId })
+  console.log({ res })
 
   if (res === null) {
     return { status: 'canceled' }
@@ -333,9 +330,9 @@ const _getChannelTypeInfo = (form: any, selfMetaId: string) => {
 
     case GroupChannelType.FT:
       groupType = '2'
-      status = encrypt(selfMetaId.substring(0, 16), MD5Hash(form.ft.ftGenesis).substring(0, 16))
-      codehash = form.ft.ftCodehash
-      genesis = form.ft.ftGenesis
+      status = encrypt(selfMetaId.substring(0, 16), MD5Hash(form.ft.genesis).substring(0, 16))
+      codehash = form.ft.codehash
+      genesis = form.ft.genesis
       type = '3'
       limitAmount = form.amount.toString()
       break

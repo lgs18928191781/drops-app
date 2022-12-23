@@ -327,6 +327,27 @@ declare interface UserNFTItem {
   nftWebsite: string
 }
 
+declare interface FungibleToken {
+  balance: string
+  codehash: string
+  decimalNum: number
+  desc: string
+  genesis: string
+  genesisTxId: string
+  icon: string
+  iconUrl: string
+  issueList: any[]
+  issueVersion: string
+  issuer: string
+  name: string
+  sensibleId: string
+  symbol: string
+  timestamp: number
+  totalSupply: number
+  totalSupplyStr: string
+  website: string
+}
+
 declare interface GenesisNFTItem {
   flag: string
   nftAttachment: string

@@ -70,6 +70,7 @@
       "receive": "Receive",
       "consensus_required": "Consensus Required",
       "you_dont_have_nft": "You don't have the required NFT to join this channel.",
+      "you_dont_have_ft": "You don't have the required Token to join this channel.",
       "confirm": "OK",
       "loading": "Loading...",
       "choose_meta_name": "Choose MetaName",
@@ -299,7 +300,7 @@
     "Referral Community": "Referral Community",
     "Web3 Gathering Place": "Web3 Gathering Place",
     "RecommendContent": {
-      "Change batch": ".Change batch",
+      "Change batch": "Change batch",
       "Recommend To Follow": "Recommend To Follow",
       "View More": "View More",
       "Introduction to Guiding": "Introduction to Guiding",

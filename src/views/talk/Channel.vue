@@ -19,6 +19,7 @@
     <!-- modals -->
     <PasswordModal v-if="layout.isShowPasswordModal" />
     <RequireNftModal v-if="layout.isShowRequireNftModal" />
+    <RequireFtModal v-if="layout.isShowRequireFtModal" />
     <InviteModal v-if="layout.isShowInviteModal" />
     <AcceptInviteModal v-if="layout.isShowAcceptInviteModal" />
     <LoadingCover v-if="layout.isShowLoading" />
@@ -42,6 +43,7 @@ import { useLayoutStore } from '@/stores/layout'
 import PasswordModal from './components/modals/consensus/Password.vue'
 import CommunitySettingsModal from './components/modals/community/Settings.vue'
 import RequireNftModal from './components/modals/consensus/RequireNft.vue'
+import RequireFtModal from './components/modals/consensus/RequireFt.vue'
 import RedPacketOpenModal from './components/modals/red-packet/Open.vue'
 import RedPacketResultModal from './components/modals/red-packet/Result.vue'
 import RedPacketCreateModal from './components/modals/red-packet/Create.vue'
