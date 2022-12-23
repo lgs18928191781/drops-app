@@ -22,7 +22,7 @@
             <p class="text-sm lg:text-base text-dark-400 dark:text-gray-200">
               {{ $t('Talk.Modals.you_dont_have_ft') }}
             </p>
-            <div class="mt-4.5 flex space-x-4 items-center">
+            <!-- <div class="mt-4.5 flex space-x-4 items-center">
               <Image :src="talk.consensualFt?.icon" customClass="!w-14 !h-14 rounded" />
               <div class="flex flex-col items-start">
                 <h4 class="text-2xl text-dark-800 dark:text-white font-bold">
@@ -32,7 +32,7 @@
                   {{ talk.consensualFt.chain }}
                 </p>
               </div>
-            </div>
+            </div> -->
           </div>
           <div class="lg:mt-12">
             <button

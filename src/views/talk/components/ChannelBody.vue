@@ -207,20 +207,20 @@ const tryInitChannel = async (status: string) => {
         if (userNfts.length > 0) {
           talk.hasActiveChannelConsent = true
         } else {
-          const {
-            data: {
-              results: { items },
-            },
-          } = await GetFT({
-            codehash: consensualCodehash,
-            genesis: consensualGenesis,
-            chain,
-          })
+          // const {
+          //   data: {
+          //     results: { items },
+          //   },
+          // } = await GetFT({
+          //   codehash: consensualCodehash,
+          //   genesis: consensualGenesis,
+          //   chain,
+          // })
           const ftInfo = {
-            codehash: consensualCodehash,
-            genesis: consensualGenesis,
-            icon: items[0].icon,
-            name: items[0].name,
+            codehash: '',
+            genesis: '',
+            icon: '',
+            name: '',
             chain,
           }
           talk.consensualFt = ftInfo
