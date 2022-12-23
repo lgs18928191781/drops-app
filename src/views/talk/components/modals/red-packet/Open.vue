@@ -140,7 +140,7 @@ import { useI18n } from 'vue-i18n'
 import { getOneRedPacket, getRedPacketRemains, grabRedPacket } from '@/api/talk'
 import { useTalkStore } from '@/stores/talk'
 import { useModalsStore } from '@/stores/modals'
-import { sleep } from '@/utils/util'
+import { debounce, sleep } from '@/utils/util'
 import { useUserStore } from '@/stores/user'
 import { RedPacketDistributeType } from '@/enum'
 import { GetNFT } from '@/api/aggregation'
@@ -193,6 +193,7 @@ const note = computed(() => {
 })
 
 const tryOpenRedPacket = async () => {
+  layout.isShowLoading = true
   const params: any = {
     channelId: talk.activeChannelId,
     redPacketId: message?.txId,
@@ -206,8 +207,8 @@ const tryOpenRedPacket = async () => {
   }
 
   await grabRedPacket(params)
-
   await sleep(1000)
+  layout.isShowLoading = false
   await viewDetails()
 }
 

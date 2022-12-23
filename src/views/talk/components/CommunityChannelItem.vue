@@ -17,7 +17,11 @@
       class="text-dark-800 dark:text-gray-100 text-sm font-medium flex items-center"
       :title="channel.name"
     >
-      <Icon :name="channelSymbol(channel)" class="w-5 h-4 text-dark-400 dark:text-gray-200" />
+      <Icon
+        :name="channelSymbol(channel)"
+        class="w-5 h-4 text-dark-400 dark:text-gray-200"
+        :class="talk.channelType(channel) === 'FT' ? 'py-0.75' : ''"
+      />
 
       <div class="ml-1 truncate grow">
         {{ channel.name }}
@@ -95,9 +99,9 @@ const channelSymbol = (channel: any) => {
       return 'lock'
     case GroupChannelType.NFT:
     case GroupChannelType.ETH_NFT:
-      return 'hashtag'
+      return 'NFT'
     case GroupChannelType.FT:
-      return 'hashtag'
+      return 'FT'
     default:
       return 'hashtag'
   }
