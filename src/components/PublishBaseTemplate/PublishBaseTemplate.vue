@@ -31,7 +31,12 @@
         </a>
       </div>
       <div class="text">
-        <textarea v-model="content" @input="val => emit('update:text', content)" autofocus />
+        <textarea
+          v-model="content"
+          @input="val => emit('update:text', content)"
+          autofocus
+          :placeholder="placeholder"
+        />
         <slot name="repostBuzz"></slot>
       </div>
 
@@ -49,6 +54,7 @@ const props = defineProps<{
   text: string
   loading?: boolean
   replayUser?: string
+  placeholder?: string
 }>()
 
 const emit = defineEmits(['update:modelValue', 'update:text'])

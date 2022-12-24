@@ -3,6 +3,7 @@
     v-model="layout.isShowPublishBuzz"
     v-model:text="content"
     :loading="loading"
+    :placeholder="$t('Buzz.publish.placeholder')"
   >
     <template #repostBuzz>
       <div class="respost-buzz" v-if="respostBuzz.val">
@@ -76,7 +77,7 @@
                 class="confirm main-border primary"
                 :class="{ faded: topic === '' }"
                 @click="confirmTopic"
-                >{{ $t('Confirm') }}</a
+                >{{ $t('Done') }}</a
               >
             </div>
             <div class="title">{{ $t('Buzz.topic.topics') }}</div>

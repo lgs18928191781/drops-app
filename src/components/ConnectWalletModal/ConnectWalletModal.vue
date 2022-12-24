@@ -256,7 +256,7 @@ const wallets = [
           return i18n.t('Login.createWallet')
         },
         desc: () => {
-          return i18n.t('Login.notAnyWallet')
+          return ''
         },
         icon: IconAdd,
         fun: () => {
@@ -269,7 +269,7 @@ const wallets = [
           return i18n.t('Login.connectWallet')
         },
         desc: () => {
-          return i18n.t('Login.havedAnyWallet')
+          return ''
         },
         icon: IconLine,
         fun: () => {

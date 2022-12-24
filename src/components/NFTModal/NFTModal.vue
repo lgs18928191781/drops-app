@@ -114,6 +114,7 @@ import { computed, reactive, ref, watch } from 'vue'
 import NFTCoverVue from '../NFTCover/NFTCover.vue'
 import IsNullVue from '../IsNull/IsNull.vue'
 import LoadMoreVue from '../LoadMore/LoadMore.vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   modelValue: boolean
@@ -125,6 +126,7 @@ const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void
 }>()
 const userStore = useUserStore()
+const i18n = useI18n()
 const pagination = reactive({ ...initPagination })
 const nftPagination = reactive({ ...initPagination })
 const currentGenesis: { val: null | UserNFTItem } = reactive({ val: null })
@@ -145,7 +147,7 @@ const isNFTSkeleton = ref(true)
 const isShowNFTList = ref(false)
 
 const title = computed(() => {
-  return isShowNFTList.value ? currentGenesis.val!.nftSeriesName : 'Show My NFT'
+  return isShowNFTList.value ? currentGenesis.val!.nftSeriesName : i18n.t('My NFT')
 })
 
 function getDatas(isCover = false) {

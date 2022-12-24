@@ -12,8 +12,8 @@
   "backHome": "Back to Home",
   "signinandout": "Connect Wallet",
   "connectWallet": "Connect Wallet",
-  "Enter ShowMoney Password": "Enter ShowMoney Password",
-  "Enter MetaID For Bind": "",
+  "Enter ShowMoney Password": "Enter Password",
+  "Enter MetaID For Bind": "Enter the MetaID Account (Email/Phone Number)",
   "Enter Phone Number": "Enter Phone Number",
   "Enter Mobile Number": "Enter Mobile Number",
   "Enter Email Address": "Enter Email Address",
@@ -203,14 +203,15 @@
   "Login": {
     "connectWallet": "Connect Wallet",
     "bindMetaId": {
-      "title1": "🌍 Wallet connected successfully! Next, let's prepare the MetaID account~",
-      "title2": "Bind MetaID information",
-      "bindHavedMetaId": "Bind to an existing MetaID",
-      "bindHavedMetaIdIntro": "🔗️ Bind your wallet with the existing MetaID so that you can manage your assets and data.",
+      "title1": "🌍 Wallet Connected! Link to a MetaID Now.",
+      "title2": "Link MetaID",
+      "bindHavedMetaId": "I Already Have a MetaID",
+      "bindHavedMetaIdIntro": "🔗️ Manage your assets and data easily by linking your wallet to a MetaID.",
       "bindRegisterMetaId": "Bind the newly registered MetaId",
-      "bindSuccessTitle": "🎉 Congratulations, you have successfully bound your wallet with your MetaID, the following is your social information",
+      "bindSuccessTitle": "🎉 Your Wallet is Linked to a MetaID. Let's Get Your Web3 Social Life Started!",
       "createMetaId": "Create a new MetaID",
-      "inputPasswordTitle": "Please enter wallet password"
+      "inputPasswordTitle": "Please enter wallet password",
+      "Link to My MetaID": "Link to My MetaID"
     },
     "connectMetaIdWallet": "Connect MetaId Wallet",
     "registerMetaIdWallet": "Register MetaId Wallet",
@@ -219,14 +220,14 @@
     "changeEmailAddress": "Change Email Address",
     "account": "Account",
     "BackupMnemonic": {
-      "copyMnemonic": "✒️ Please write down your seed phrase",
-      "copyedMnemonic": "I have copied",
-      "intro": "🔐 For the safety of your wallet assets, it is recommended that you use a pen to copy your wallet's mnemonic phrase on paper for backup.",
-      "jumpOver": "Temporarily <a>skip</a> backup mnemonic",
-      "mnemonic": "mnemonic",
-      "name": "backup mnemonic",
-      "path": "path",
-      "title": "last step"
+      "copyMnemonic": "✒️ Please Write Down",
+      "copyedMnemonic": "Done",
+      "intro": "🔐 For your asset safety, please write down the seed phrase on a piece of paper and store it properly.",
+      "jumpOver": "<a>Skip</a>",
+      "mnemonic": "Seed Phrase",
+      "name": "Seed Phrase Backup",
+      "path": "Path",
+      "title": "Last Step!"
     },
     "ETH": {
       "changeGoerliNetword": "Network mismatch, please switch to Goerli Test Network"
@@ -234,7 +235,7 @@
     "MetaIdWallet": {
       "accountAlreadyRegistered": "The account has been registered"
     },
-    "createWallet": "create wallet",
+    "createWallet": "Create New Wallet",
     "havedAnyWallet": "(I haveed a MetaID wallet)",
     "notAnyWallet": "(I don't have any wallet)",
     "pleaseAggrePolicy": "Please check first",
@@ -248,12 +249,13 @@
     },
     "setBaseInfo": {
       "chooseNFTTitle": "Select NFT avatar",
-      "setNFTAvatar": "Set NFT avatar",
-      "setUserName": "set nickname",
-      "setUserNamePlac": "Please enter your nickname",
-      "title": "🎉 Welcome to SHOW! \nImprove your information a little bit so that more people can pay attention to you."
+      "setNFTAvatar": "NFT Profile Picture",
+      "setUserName": "User Name",
+      "setUserNamePlac": "What's Your Web3 User Name?",
+      "title": "🎉 Welcome to Show3! \n Get Your Account Ready for More Followers!",
+      "Choose NFT Profile Picture": "Choose NFT Profile Picture"
     },
-    "useMetaIdWallet": "Use MetaID wallet"
+    "useMetaIdWallet": "Connect MetaID Wallet"
   },
   "UserOperate": {
     "createGropp": "Create Group",
@@ -265,13 +267,13 @@
   "Comming Soon": "Coming Soon",
   "Use MetaId Wallet": "Use MetaId Wallet",
   "Buzz": {
-    "Timeline": "Timeline",
-    "Recommend": "Recommend",
+    "Timeline": "Buzz Timeline",
+    "Recommend": "Trending🔥",
     "publish": {
-      "placeholder": "Share your buzz ~",
+      "placeholder": "Anything Buzzworthy to share?",
       "addAttachment": "Add Image",
       "addImage": "Add Image",
-      "post": "Post",
+      "post": "Buzz",
       "success": "Post Success!",
       "respost": "Repost",
       "empty": "Content or attachment cannot be empty"
@@ -289,25 +291,25 @@
     },
     "topic": {
       "topics": "Topics",
-      "inputTitle": "What topic you want to use",
-      "hotTopics": "Hot Topics",
+      "inputTitle": "Write the topic",
+      "hotTopics": "Trends",
       "inputPlaceholder": "Enter topic",
       "Create Community": "Create Community"
     },
     "follow": {
       "success": "Follow Success"
     },
-    "Referral Community": "Referral Community",
+    "Referral Community": "Popular Clubs",
     "Web3 Gathering Place": "Web3 Gathering Place",
     "RecommendContent": {
-      "Change batch": "Change batch",
-      "Recommend To Follow": "Recommend To Follow",
+      "Change batch": "Show more",
+      "Recommend To Follow": "Who to follow",
       "View More": "View More",
-      "Introduction to Guiding": "Introduction to Guiding",
-      "Learn the show function": "Learn the show function",
-      "Download showApp": "Download showApp"
+      "Introduction to Guiding": "Show3 101",
+      "Learn the show function": "Explore show3 Features",
+      "Download showApp": "Download show3"
     },
-    "Your reply": "Your reply～"
+    "Your reply": "Write a comment..."
   },
   "Follow": "Follow",
   "walletError": "Signing failed, unable to log in to wallet",
@@ -321,13 +323,14 @@
   "Confirm": "Confirm",
   "SDK": {
     "payconfirm": {
-      "Payment": "Payment",
-      "tips": "No more payment confirmation prompts for operations below",
+      "Payment": "On-chain Fees",
+      "tips": "Do not remind me again when fees are below",
       "tips2": " ",
       "ME": "ME",
       "Payment required": "Payment required",
       "My": "My ",
-      "Recharge": "Recharge"
+      "Recharge": "Recharge",
+      "Confirm": "Pay Now"
     }
   },
   "Please Login First": "Please Login First",
@@ -389,8 +392,8 @@
     "Change": "Change To "
   },
   "Success": "Success",
-  "Replying to": "Replying to",
-  "Reply": "Reply",
+  "Replying to": "Comment to",
+  "Reply": "Comment",
   "PayLike": "PayLike",
   "back": "Back",
   "sendFirstBuzz1": "Congratulations on becoming a \"Yuanzhou People\"",
@@ -514,5 +517,7 @@
     "Max": "Max",
     "View all": "View all",
     "Trading volume": "Trading volume"
-  }
+  },
+  "My NFT": "My NFT",
+  "Done": "Done"
 }

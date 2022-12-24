@@ -12,7 +12,7 @@
           <span class="icon-warp flex flex-align-center flex-pack-center">
             <Icon :name="item.icon" />
           </span>
-          <span class="name">{{ item.name }}</span>
+          <span class="name">{{ item.name() }}</span>
         </router-link>
       </div>
     </div>
@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import BuzzWarpVue from './components/BuzzWarp.vue'
 
@@ -45,12 +45,12 @@ const i18n = useI18n()
 
 const menus = [
   {
-    name: i18n.t('Buzz.Timeline'),
+    name: () => i18n.t('Buzz.Timeline'),
     icon: 'feed',
     path: '/buzz/index',
   },
   {
-    name: i18n.t('Buzz.Recommend'),
+    name: () => i18n.t('Buzz.Recommend'),
     icon: 'star',
     path: '/buzz/recommend',
   },

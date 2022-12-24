@@ -77,7 +77,7 @@
         <div class="title">
           {{
             status === BindStatus.BindHavedMetaId
-              ? $t('Login.bindMetaId.bindHavedMetaId')
+              ? $t('Login.bindMetaId.Link to My MetaID')
               : $t('Login.bindMetaId.bindRegisterMetaId')
           }}
         </div>
