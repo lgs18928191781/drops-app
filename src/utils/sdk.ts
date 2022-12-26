@@ -817,7 +817,7 @@ export class SDK {
               }
               createAttachmentParams.push({
                 nodeName: item.fileName,
-                metaIdTag: MetaIdTag[this.network],
+                metaIdTag: import.meta.env.VITE_METAID_TAG,
                 encrypt: item.encrypt,
                 data: item.data,
                 dataType: item.fileType,
@@ -1044,7 +1044,7 @@ export class SDK {
               let keyPath = `0/${index.toString()}`
               const res = await this.wallet?.createNode({
                 nodeName: item.fileName,
-                metaIdTag: MetaIdTag[this.network],
+                metaIdTag: import.meta.env.VITE_METAID_TAG,
                 encrypt: item.encrypt,
                 data: item.data,
                 dataType: item.fileType,

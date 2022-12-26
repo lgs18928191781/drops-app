@@ -124,7 +124,7 @@ interface MakeTxResultTypes {
 }
 interface MetaIdInfoTypes {
   metaId: string
-  metaIdTag: MetaIdTag
+  metaIdTag: string
   infoTxId: string
   protocolTxId: string
   name?: string
@@ -516,7 +516,7 @@ export class HdWallet {
             let outputs: any[] = []
             const rootTx = await this.createNode({
               nodeName: 'Root',
-              metaIdTag: MetaIdTag[this.network],
+              metaIdTag: import.meta.env.VITE_METAID_TAG,
               data: 'NULL',
               dataType: 'NULL',
               encoding: 'NULL',
@@ -583,7 +583,7 @@ export class HdWallet {
             }
             const root = await this.createNode({
               nodeName: 'Root',
-              metaIdTag: MetaIdTag[this.network],
+              metaIdTag: import.meta.env.VITE_METAID_TAG,
               data: 'NULL',
               dataType: 'NULL',
               encoding: 'NULL',
@@ -609,7 +609,7 @@ export class HdWallet {
             const protocol = await this.createNode({
               nodeName: 'Protocols',
               parentTxId: metaIdInfo.metaId,
-              metaIdTag: MetaIdTag[this.network],
+              metaIdTag: import.meta.env.VITE_METAID_TAG,
               data: 'NULL',
               version: 'NULL',
               utxos: utxos,
@@ -631,7 +631,7 @@ export class HdWallet {
             const info = await this.createNode({
               nodeName: 'Info',
               parentTxId: metaIdInfo.metaId,
-              metaIdTag: MetaIdTag[this.network],
+              metaIdTag: import.meta.env.VITE_METAID_TAG,
               data: 'NULL',
               version: 'NULL',
               utxos: utxos,
@@ -654,7 +654,7 @@ export class HdWallet {
             const name = await this.createNode({
               nodeName: 'name',
               parentTxId: metaIdInfo.infoTxId,
-              metaIdTag: MetaIdTag[this.network],
+              metaIdTag: import.meta.env.VITE_METAID_TAG,
               data: account.name,
               utxos: utxos,
               change: infoAddress.publicKey.toAddress(this.network).toString(),
@@ -683,7 +683,7 @@ export class HdWallet {
             const loginNameTx = await this.createNode({
               nodeName: account.userType,
               parentTxId: metaIdInfo.infoTxId,
-              metaIdTag: MetaIdTag[this.network],
+              metaIdTag: import.meta.env.VITE_METAID_TAG,
               data: loginName,
               encrypt: 1,
               utxos: utxos,
@@ -730,7 +730,7 @@ export class HdWallet {
               const ethBindBrfc = await this.createNode({
                 nodeName: NodeName.ETHBinding,
                 parentTxId: metaIdInfo.infoTxId,
-                metaIdTag: MetaIdTag[this.network],
+                metaIdTag: import.meta.env.VITE_METAID_TAG,
                 keyPath: '0/6',
                 parentAddress: infoAddress.publicKey.toAddress(this.network).toString(),
                 data: JSON.stringify({ evmAddress: account.ethAddress! }),
@@ -887,7 +887,7 @@ export class HdWallet {
     payTo = [],
     utxos = [],
     change,
-    metaIdTag = MetaIdTag[this.network],
+    metaIdTag = import.meta.env.VITE_METAID_TAG,
     parentTxId = 'NULL',
     data = 'NULL',
     encrypt = IsEncrypt.No,
@@ -1677,7 +1677,7 @@ export class HdWallet {
 
           const protocolRoot = await this.createNode({
             ...params,
-            metaIdTag: MetaIdTag[this.network],
+            metaIdTag: import.meta.env.VITE_METAID_TAG,
             data: nodeName.brfcId,
             utxos: params.utxos,
           })
@@ -1797,7 +1797,7 @@ export class HdWallet {
           nodeName: params.autoRename
             ? [params.nodeName, nodeAddress.publicKey.toString().slice(0, 11)].join('-')
             : params.nodeName,
-          metaIdTag: MetaIdTag[this.network],
+          metaIdTag: import.meta.env.VITE_METAID_TAG,
           parentTxId: params.brfc.txId,
           appId: params.appId,
           keyPath: keyPath.join('/'),

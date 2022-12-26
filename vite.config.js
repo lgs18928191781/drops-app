@@ -18,9 +18,11 @@ import nodePolyfills from 'rollup-plugin-polyfill-node'
 import basicSsl from '@vitejs/plugin-basic-ssl'
 
 const pathSrc = path.resolve(__dirname, 'src')
+const productionEnvs = ['prod', 'preview']
 export default ({ mode, command }) => {
   // 加载环境配置文件
   const env = loadEnv(mode, process.cwd())
+  const isProduction = productionEnvs.includes(mode) && command === 'build' ? true : false
   return defineConfig({
     plugins: [
       command === 'serve' &&
@@ -120,24 +122,24 @@ export default ({ mode, command }) => {
     },
     build: {
       target: 'es2015',
-      minify: mode === 'prod' ? true : false,
-      sourcemap: mode === 'prod' || mode === 'gray' ? false : 'inline',
+      minify: isProduction,
+      sourcemap: isProduction ? false : 'inline',
       rollupOptions: {
         plugins: [nodePolyfills()],
         output: {
-          sourcemap: mode === 'prod' || mode === 'gray' ? false : 'inline',
+          sourcemap: isProduction ? false : 'inline',
         },
       },
       terserOptions: {
         compress: {
-          drop_console: mode === 'prod',
-          drop_debugger: mode === 'prod',
+          drop_console: isProduction,
+          drop_debugger: isProduction,
         },
       },
       commonjsOptions: {
         transformMixedEsModules: true,
       },
     },
-    sourcemap: mode === 'prod' || mode === 'gray' ? false : 'inline',
+    sourcemap: isProduction ? false : 'inline',
   })
 }
