@@ -61,6 +61,9 @@
         </a>
       </div>
     </div>
+
+    <!-- ME充值 -->
+    <RechargeMeVue v-model="isShowMERecharge" />
   </ElDialog>
 </template>
 
@@ -68,6 +71,7 @@
 import { SdkPayType } from '@/enum'
 import { ref } from 'vue'
 import { Router } from 'vue-router'
+import RechargeMeVue from '../LoginedUserOperate/RechargeMe.vue'
 
 interface Props {
   confirmVisible: boolean
@@ -83,7 +87,8 @@ const props = withDefaults(defineProps<Props>(), {
 })
 const isShow = ref(true)
 const isShowConformCheck = ref(props.confirmVisible)
-const emit = defineEmits(['changeConfirmVisible', 'confirm', 'cancel'])
+const emit = defineEmits(['changeConfirmVisible', 'confirm', 'cancel', 'recharge'])
+const isShowMERecharge = ref(false)
 
 function changeConfirmVisible() {
   isShowConformCheck.value = !isShowConformCheck.value
@@ -99,7 +104,9 @@ function cancel() {
   emit('cancel')
   isShow.value = false
 }
-function toRecharge() {}
+function toRecharge() {
+  emit('recharge')
+}
 </script>
 
 <style lang="scss" scoped src="./SdkPayConfirmModal.scss"></style>

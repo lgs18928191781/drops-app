@@ -31,6 +31,7 @@ export const useLayoutStore = defineStore('layout', {
         repostTxId: '', // 转发的TxId
         topic: '', // 发表话题
       },
+      isShowWallet: false,
     }
   },
   actions: {

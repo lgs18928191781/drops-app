@@ -41,6 +41,7 @@ import { resolve } from 'path'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { NodeTransactions, Job, JobStep } from '@/@types/common'
 import { v1 as UUID } from 'uuid'
+import { useLayoutStore } from '@/stores/layout'
 
 enum AppMode {
   PROD = 'prod',
@@ -1467,6 +1468,14 @@ export class SDK {
                 document.getElementById(divId)?.remove()
               }, 500)
               resolve(false)
+            },
+            onRecharge: () => {
+              setTimeout(() => {
+                document.getElementById(divId)?.remove()
+              }, 500)
+              resolve(false)
+              const layout = useLayoutStore()
+              layout.$patch({ isShowWallet: true })
             },
           }),
           document.getElementById(divId)!

@@ -11,7 +11,7 @@
       <!-- 钱包 -->
       <a
         class="flex flex-align-center flex-pack-center user-warp-item"
-        @click="isShowWallet = !isShowWallet"
+        @click="layout.$patch({ isShowWallet: true })"
       >
         <Icon name="wallet_fill" />
       </a>
@@ -50,7 +50,7 @@
   </Teleport>
 
   <!-- wallet -->
-  <MyWalletVue v-model="isShowWallet" />
+  <MyWalletVue v-model="layout.isShowWallet" />
 </template>
 
 <script setup lang="ts">
@@ -108,7 +108,6 @@ const userOperates = computed(() => {
 
   return result
 })
-const isShowWallet = ref(false)
 </script>
 
 <style lang="scss" scoped src="./LoginedUserOperate.scss"></style>

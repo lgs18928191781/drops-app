@@ -409,6 +409,12 @@ html.dark {
         align-items: center;
         justify-content: center;
     }
+
+    &.is-fullscreen {
+        .el-loading-spinner {
+            flex-direction: column;
+        }
+    }
 }
 
 @media screen and (max-width:980PX) {
