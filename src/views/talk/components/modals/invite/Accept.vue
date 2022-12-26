@@ -41,7 +41,7 @@
             class="w-full main-border bg-primary dark:text-dark-800 font-medium text-base py-3 outline-0"
             @click="tryJoinCommunity"
           >
-            {{ $t('Talk.Modals.accept_invite') }}
+            {{ $t('Talk.Modals.join') }}
           </Button>
         </div>
       </div>

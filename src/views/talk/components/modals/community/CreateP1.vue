@@ -31,7 +31,7 @@
 
       <div class="mt-12 w-full">
         <h4 class="text-lg capitalize">
-          {{ $t('Talk.Community.community_name') }}
+          {{ $t('Talk.Community.community_name_tip') }}
         </h4>
 
         <div class="mt-3">
@@ -52,7 +52,7 @@
               </template>
               <template v-else>
                 <span class="text-dark-250 select-none font-sm dark:text-gray-400">{{
-                  $t('Talk.Community.community_name')
+                  $t('Talk.Community.community_name_placeholder')
                 }}</span>
               </template>
             </div>

@@ -110,6 +110,7 @@
       "receive": "接收",
       "consensus_required": "凭证权限",
       "you_dont_have_nft": "你没有相关系列的NFT，不能进入本频道",
+      "you_dont_have_ft": "你没有进入本频道所需的Token",
       "confirm": "好的",
       "loading": "操作中……",
       "choose_meta_name": "选择 MetaName",
@@ -134,10 +135,16 @@
       "view_details": "查看领取详情",
       "lucky": "手气最佳",
       "red_packet_no_token": "你没有相关系列的NFT来领取这个红包",
-      "red_packet_require_nft": "所需 NFT"
+      "red_packet_require_nft": "所需 NFT",
+      "join_pass_channel": "进入凭证频道",
+      "validate_pass": "验证凭证",
+      "join": "加入",
+      "create_candy_bags": "创建红包",
+      "lucky_candy_bag": "手气红包",
+      "nft_candy_bag": "NFT 红包"
     },
     "Channel": {
-      "members": "成员",
+      "core_members": "核心成员",
       "join_channel": "加入了频道",
       "leave_channel": "离开了频道",
       "come_get_red_envelope": "领取红包",
@@ -169,6 +176,8 @@
       "create": "创建社区",
       "create_fist_step_tip": "填写社区名称、上传社区图标。你可以在之后修改这些信息。",
       "community_name": "社区名",
+      "community_name_placeholder": "选择社区名",
+      "community_name_tip": "你需要选择一个MetaName NFT 作为社区名",
       "agree_tip": "创建社区，即代表您同意了 Show3.0 的",
       "agree_guidelines": "社区守则",
       "customize_information": "定制化您的社区",
@@ -201,12 +210,14 @@
       "settings": "社区设置",
       "settings_short": "设置",
       "atme": "私聊",
-      "feed": "Buzz"
+      "feed": "Buzz",
+      "choose_nft_series": "选择 NFT 系列"
     },
     "Input": {
       "nft_stickers": "NFT表情",
       "emoji": "Emoji",
       "no_nft_stickers": "木有贴纸，木有鱼蛋。",
+      "giveaway_short": "红包",
       "giveaway": "红包",
       "for_everyone": "红包",
       "nft_limited": "NFT红包",
