@@ -90,7 +90,11 @@
 
       <div
         class="border-dashed border-2 border-gray-200 dark:border-gray-600 w-13.5 h-13.5 flex items-center justify-center rounded-3xl text-dark-400 cursor-pointer hover:text-dark-800 hover:border-solid hover:border-dark-300 hover:bg-primary transition-all duration-300"
-        @click="layout.isShowCreateCommunityModal = true"
+        @click="
+          userStore.isAuthorized
+            ? (layout.isShowCreateCommunityModal = true)
+            : (rootStore.isShowLogin = true)
+        "
       >
         <Icon name="plus" class="w-[24PX] h-[24PX]" />
       </div>
@@ -106,7 +110,7 @@ import { getCommunities } from '@/api/talk'
 import { useLayoutStore } from '@/stores/layout'
 import { useTalkStore } from '@/stores/talk'
 import { useUserStore } from '@/stores/user'
-import { isMobile } from '@/stores/root'
+import { isMobile, useRootStore } from '@/stores/root'
 import CreateCommunityModal from '@/views/talk/components/modals/community/Create.vue'
 import { onBeforeUnmount, watch } from 'vue'
 import { useRoute } from 'vue-router'
@@ -117,6 +121,7 @@ const talk = useTalkStore()
 const ws = useWsStore()
 const userStore = useUserStore()
 const route = useRoute()
+const rootStore = useRootStore()
 const i18n = useI18n()
 
 const apps = [

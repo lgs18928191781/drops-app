@@ -15,7 +15,7 @@
         <div class="forward-head" @click.stop="$filters.toUserHome(itemData.metaId)">
           <ShareIcon />
           <UserAvatar class="head" :meta-id="itemData.metaId" :image="itemData.avatarImage" />
-          <div class="name">{{ itemData.userName }}&nbsp;{{ $t('Forwarded') }}</div>
+          <div class="name">{{ itemData.userName }}&nbsp;|&nbsp;{{ $t('Forwarded') }}</div>
         </div>
       </template>
       <div class="header">

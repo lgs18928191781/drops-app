@@ -12,7 +12,7 @@
     <div v-loading="loading">
       <header class="flex flex-align-center">
         <Icon name="down" @click="emit('update:modelValue', false)" />
-        <div class="title">{{ $t('Wallet.Add Funds') }}</div>
+        <div class="title">{{ $t('Wallet.Recharge MetaEnergy') }}</div>
       </header>
 
       <div class="content">

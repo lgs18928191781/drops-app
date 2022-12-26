@@ -16,7 +16,7 @@ interface Props {
 const i18n = useI18n()
 
 const props = withDefaults(defineProps<Props>(), {
-  color: '#37FDAB',
+  color: '',
 })
 </script>
 

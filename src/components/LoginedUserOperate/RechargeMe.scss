@@ -1,7 +1,7 @@
 header {
     position: relative;
     height: var(--header-height);
-    border-bottom: 1px solid #F4F7F9;
+    border-bottom: 1px solid var(--divid-color);
     padding: 0 18px;
 
     .icon {
@@ -90,7 +90,7 @@ header {
 
     .form-section {
         margin-bottom: 18px;
-        border-bottom: 1px solid #F4F7F9;
+        border-bottom: 1px solid var(--divid-color);
         padding-bottom: 18px;
 
         &:last-child {
@@ -119,6 +119,7 @@ header {
                     border: none;
                     outline: none;
                     text-align: right;
+                    background: var(--themeBgSecondColor);
                 }
 
                 .sufix {
@@ -128,7 +129,7 @@ header {
 
                 &:hover,
                 &.active {
-                    border-color: var(--themeBtnTextColor);
+                    border-color: var(--themeTextColor);
                 }
             }
 
@@ -192,7 +193,8 @@ header {
 }
 
 .rate {
-    color: #606266;
+
     margin-top: 15px;
     text-align: center;
+    opacity: 0.5;
 }

@@ -92,7 +92,7 @@
           >
             <img :src="giftImage" class="h-12 w-12" loading="lazy" />
             <div class="">
-              <div class="text-dark-800 text-base font-medium capitalize">
+              <div class="text-dark-800 text-base font-medium">
                 {{ $t('Talk.Channel.come_get_red_envelope') }}
               </div>
               <div class="text-dark-300 text-sm mt-1 truncate max-w-[150PX] lg:max-w-[180PX]">
@@ -106,7 +106,6 @@
             <div class="text-dark-300 dark:text-gray-400 text-xs">
               {{ $t('Talk.Input.giveaway') }}
             </div>
-            <!-- <div class="text-dark-300 dark:text-gray-400 text-xs">红包领取功能即将推出</div> -->
           </div>
         </div>
       </div>

@@ -6,7 +6,7 @@
     :full-screen="true"
   >
     <template #title>
-      {{ $t('Talk.Modals.consensus_required') }}
+      {{ $t('Talk.Modals.join_pass_channel') }}
     </template>
 
     <template #body>

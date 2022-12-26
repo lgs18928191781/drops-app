@@ -115,9 +115,9 @@
               >
                 <!-- 购买 -->
                 <div
-                  class="btn btn-block flex1 flex flex-align-center flex-pack-center"
+                  class="main-border flex1 flex flex-align-center flex-pack-center"
                   :class="[
-                    nft.val!?.nftSellState !== 0 && !blindBoxPage ? 'btn-gray' : blindBoxPage ? 
+                    nft.val!?.nftSellState !== 0 && !blindBoxPage ? 'faded' : blindBoxPage ? 
                     nft.val!?.remain > 0 ? '' : 'btn-noColor' : ''
                   ]"
                   @click="startBuy"
@@ -135,7 +135,7 @@
                 "
               >
                 <div
-                  class="flex flex-align-center putAway-warp flex1"
+                  class="main-border primary flex flex-align-center flex1"
                   v-if="(nft.val!.nftSellState === 0  && nft.val!.nftIsReady)"
                 >
                   <div
@@ -146,7 +146,7 @@
                   </div>
                 </div>
                 <div
-                  class="btn btn-block flex1 flex flex-align-center flex-pack-center"
+                  class="main-border primary flex1 flex flex-align-center flex-pack-center"
                   v-else
                   @click="toSale"
                 >
@@ -359,7 +359,7 @@
           </div>
         </div>
 
-        <NFTSellVue :nft="nft.val!" v-model="isShowSell" />
+        <NFTSellVue :nft="nft.val!" v-model="isShowSell" @success="getDetail" />
         <!-- <NFTBuyVue :nft="nft.val!" v-model="isShowSell" /> -->
       </template>
     </ElSkeleton>

@@ -4,7 +4,7 @@
     v-model:show-second-control="layout[ShowControl.isShowChooseTokenModal]"
   >
     <template #title>
-      {{ $t('Talk.Input.giveaway') }}
+      {{ $t('Talk.Modals.create_candy_bags') }}
     </template>
 
     <template #body>
@@ -19,7 +19,7 @@
             ]"
             @click="changeTab('redPacket')"
           >
-            {{ $t('Talk.Input.for_everyone') }}
+            {{ $t('Talk.Modals.lucky_candy_bag') }}
           </Tab>
           <Tab
             class="w-full py-3 capitalize border-2 outline-0 rounded-xl transition-[background-color] duration-150"
@@ -30,7 +30,7 @@
             ]"
             @click="changeTab('nft')"
           >
-            {{ $t('Talk.Input.nft_limited') }}
+            {{ $t('Talk.Modals.nft_candy_bag') }}
           </Tab>
         </TabList>
 

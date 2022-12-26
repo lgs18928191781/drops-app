@@ -285,7 +285,7 @@ const moreCommands = () => {
   if (!isShowingButtonGroup.value) {
     const newCommands = [
       {
-        titleKey: 'Talk.Input.giveaway',
+        titleKey: 'Talk.Input.giveaway_short',
         descriptionKey: 'Talk.Input.giveaway',
         icon: 'red_envelope',
         action: () => (layout.isShowRedPacketModal = true),
