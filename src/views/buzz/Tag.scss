@@ -2,7 +2,7 @@
     overflow: hidden;
     border-radius: 12px;
     position: relative;
-    background: #FFFFFF;
+    background: var(--themeBgSecondColor);
     z-index: 2;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 
@@ -23,8 +23,8 @@
         height: 100%;
         left: 0;
         top: 0;
-        background: linear-gradient(360deg, #FFFFFF 0%, rgba(255, 255, 255, 0.00) 97%);
-        filter: blur(4px);
+        background: linear-gradient(360deg, var(--themeBgSecondColor) 0%, rgba(255, 255, 255, 0.00) 97%);
+        // filter: blur(4px);
         z-index: 2;
     }
 
@@ -118,7 +118,8 @@
         .intro {
             margin-top: 5px;
             font-size: 14px;
-            color: #606266;
+            color: var(--themeTextColor);
+            opacity: 0.5;
         }
     }
 
@@ -134,10 +135,10 @@
             cursor: pointer;
             padding: 6px 24px;
             margin-right: 24px;
-            color: #606266;
             border-radius: 40px;
             border: 1px solid transparent;
             white-space: nowrap;
+            opacity: 0.5;
 
             &:last-child {
                 margin-right: 0;
@@ -146,13 +147,15 @@
             &:hover {
                 border-color: var(--themeTextColor);
                 box-shadow: 3px 3px 0 var(--themeTextColor);
+                opacity: 1;
             }
 
             &.active {
                 border-color: var(--themeTextColor);
                 box-shadow: 3px 3px 0 var(--themeTextColor);
                 background: var(--el-color-primary);
-                color: var(--themeTextColor);
+                color: var(--themeBtnTextColor);
+                opacity: 1;
             }
         }
     }

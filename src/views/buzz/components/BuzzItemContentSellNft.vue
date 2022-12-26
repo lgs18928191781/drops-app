@@ -31,7 +31,7 @@
             </div>
           </div>
           <div class="price flex flex-align-center flex-pack-center">
-            <AmountVue :price="nftSellItem.val!.price" :currency="'CNY'" />
+            <AmountVue :price="nftSellItem.val!.receivePrice" :currency="'CNY'" />
           </div>
         </template>
       </ElSkeleton>
@@ -61,7 +61,9 @@ const postTagStore = usePostTagStore()
 const router = useRouter()
 const rootStore = useRootStore()
 
-const color = postTagStore.list.find(item => item.id === props.buzz.postTagId)?.color
+const color = computed(() => {
+  return postTagStore.list.find(item => item.id === props.buzz.postTagId)?.color
+})
 
 function getSellNftInfo() {
   return new Promise<void>(async resolve => {

@@ -116,9 +116,19 @@
         margin-right: 6px;
         cursor: pointer;
 
+        &.active {
+            background: var(--color-primary);
+        }
+
         .icon {
             width: 16px;
             height: 16px;
+            color: var(--themeBtnTextColor);
+
+            :deep(use) {
+                stroke: var(--themeBtnTextColor);
+                stroke-width: 2px;
+            }
         }
     }
 
@@ -128,7 +138,11 @@
 
         a {
             cursor: pointer;
-            color: var(--themeBtnTextColor);
+            color: var(--themeTextColor);
+
+            &:hover {
+                color: var(--color-hover);
+            }
         }
     }
 

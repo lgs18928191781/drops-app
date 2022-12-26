@@ -4,7 +4,7 @@
   padding: 20px 50px;
   display: flex;
   flex-direction: row-reverse;
-  background-color: #fff;
+  background-color: var(--themeBgSecondColor);
 
   a {
     border: 1px solid #FFDC51;
@@ -104,7 +104,7 @@
 
       .creater-msg {
         border-radius: 8px;
-        background: #ffffff;
+        background: var(--themeBgSecondColor);
         padding: 20px;
         margin-top: 20px;
 
@@ -259,7 +259,7 @@
     margin-top: 60px;
     padding-top: 60px;
     padding-bottom: 60px;
-    background: #ffffff;
+    background: var(--themeBgSecondColor);
 
     .el-skeleton__text {
       height: 30px;

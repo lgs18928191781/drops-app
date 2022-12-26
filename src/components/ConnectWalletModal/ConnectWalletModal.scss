@@ -9,7 +9,7 @@
         width: 34px;
         height: 34px;
         border-radius: 50%;
-        background: #EDEFF2;
+        background: var(--themeBgSecondColor);
         cursor: pointer;
         margin-left: -17px;
         margin-bottom: -70px;
@@ -17,15 +17,12 @@
         .icon {
             width: 12px;
             height: 12px;
+            transition: all 0.5s;
         }
 
         &:hover {
-            background: var(--themeBtnTextColor);
-
             .icon {
-                :deep(use) {
-                    fill: var(--themeBgColor);
-                }
+                transform: rotate(180deg);
             }
         }
     }
