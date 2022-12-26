@@ -2,6 +2,7 @@
     .item {
         padding: 18px;
         cursor: pointer;
+        color: var(--themeTextColor);
 
         &:hover {
             background: var(--el-color-primary-light-1);
@@ -24,6 +25,7 @@
                 height: 10px;
 
                 :deep(use) {
+                    fill: var(--themeBtnTextColor);
                     stroke: var(--themeBtnTextColor);
                     stroke-width: 2px;
                 }

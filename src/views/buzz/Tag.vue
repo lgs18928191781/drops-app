@@ -38,6 +38,13 @@
       :loading="isSkeleton"
       @get-more="getMore"
       @update-item="updateItem"
+      @remove-item="
+        txId =>
+          list.splice(
+            list.findIndex(item => item.txId === txId),
+            1
+          )
+      "
     />
   </div>
 </template>

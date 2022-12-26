@@ -1,0 +1,59 @@
+@import '@/assets/styles/var.scss';
+
+.nft-card {
+  width: 277px;
+}
+
+.nft-warp {
+  padding: 12px;
+
+  box-sizing: border-box;
+
+  .msg {
+    width: 100%;
+  }
+
+  .cover-warp {
+    width: 78px;
+    height: 78px;
+    margin-right: 12px;
+    border: 2px solid var(--themeBtnTextColor);
+    border-radius: 8px;
+    position: relative;
+
+    :deep(.cover) {
+      border-radius: 8px;
+    }
+
+    .el-skeleton__item {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+    }
+  }
+
+  .name {
+    font-size: 16px;
+    line-height: 24px;
+    @include text-many-ellipsis(2);
+
+    .el-skeleton__item {
+      &:first-child {
+        width: 100%;
+      }
+    }
+  }
+
+  .token-index {
+    font-size: 12px;
+    color: #82858C;
+    margin-top: 4px;
+
+    .el-skeleton__item {
+      height: 12px;
+      width: 50px;
+    }
+  }
+}

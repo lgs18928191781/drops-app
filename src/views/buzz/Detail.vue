@@ -18,7 +18,7 @@
             :disabled="true"
           />
           <div class="cont flex1" v-loading="loading">
-            <input @focus="reply" />
+            <input @focus="reply" :placeholder="$t('Buzz.Your reply')" />
           </div>
         </div>
         <BuzzCommentListVue
@@ -61,7 +61,7 @@ const commentListData: BuzzInteractiveItem[] = reactive([])
 
 const comment = ref('')
 
-function fetchData() {
+function fetchData(count = 1, parentResolve?: () => void) {
   return new Promise<void>(async resolve => {
     const res = await GetBuzz({
       txId: route.params.txId as string,
@@ -70,21 +70,32 @@ function fetchData() {
       ElMessage.error(error.message)
     })
     if (res?.code === 0) {
-      let detailRes: BuzzItem = res.data.results.items[0] || null
-      if (detailRes.encrypt === IsEncrypt.Yes.toString()) {
-        const result = await userStore.showWallet?.eciesDecryptData({
-          data: detailRes.data,
-        })
-        if (result) {
-          detailRes = {
-            ...detailRes,
-            ...JSON.parse(result),
+      if (res.data.results.items.length > 0) {
+        let detailRes: BuzzItem = res.data.results.items[0] || null
+        if (detailRes.encrypt === IsEncrypt.Yes.toString()) {
+          const result = await userStore.showWallet?.eciesDecryptData({
+            data: detailRes.data,
+          })
+          if (result) {
+            detailRes = {
+              ...detailRes,
+              ...JSON.parse(result),
+            }
           }
         }
+        list[0] = detailRes
+        await fetchCommentList(detailRes.txId, true)
+        if (parentResolve) parentResolve()
+        else resolve()
+      } else {
+        if (count < 6) {
+          setTimeout(() => {
+            fetchData(count + 1, parentResolve ? parentResolve : resolve)
+          }, 2000)
+        } else {
+          ElMessage.error('TxId Not Found')
+        }
       }
-      list[0] = detailRes
-      await fetchCommentList(detailRes.txId, true)
-      resolve()
     }
   })
 }

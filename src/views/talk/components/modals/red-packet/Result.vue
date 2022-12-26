@@ -58,7 +58,7 @@
                     {{ note }}
                   </div>
 
-                  <div class="mt-7.5 flex items-end space-x-1">
+                  <div class="mt-5 flex items-end space-x-1" v-if="myDraw">
                     <div class="text-4xl font-bold tracking-tight">
                       {{ nicerAmountWithUnit(myDraw?.amount).amount }}
                     </div>
@@ -78,7 +78,7 @@
                   </div>
 
                   <div
-                    class="h-[218PX] self-stretch flex flex-col items-stretch overflow-y-auto divide-y divide-solid divide-gray-100"
+                    class="h-[218PX] self-stretch flex flex-col items-stretch overflow-y-auto divide-y divide-solid divide-gray-100 px-2 -mx-2 no-dark"
                   >
                     <div class="flex items-center justify-between py-3" v-for="draw in sortedDraws">
                       <div class="flex space-x-3 items-center">
@@ -88,7 +88,9 @@
                           class="w-12 h-12"
                         />
                         <div class="flex flex-col space-y-0.5 items-start">
-                          <span class="text-sm text-dark-800 font-medium">{{ draw.name }}</span>
+                          <span :class="['text-sm text-dark-800 font-medium']">{{
+                            draw.name
+                          }}</span>
                           <span class="text-xs text-dark-250">
                             {{ formatTimestamp(draw.timestamp, i18n) }}
                           </span>
@@ -96,14 +98,37 @@
                       </div>
 
                       <div class="flex flex-col space-y-1 items-end">
-                        <div class="text-sm text-dark-800 font-medium">
-                          {{
-                            nicerAmountWithUnit(draw.amount).amount +
-                              ' ' +
-                              nicerAmountWithUnit(draw.amount).unit
-                          }}
+                        <div class="text-sm text-dark-800 font-medium flex items-center space-x-2">
+                          <span>
+                            {{
+                              nicerAmountWithUnit(draw.amount).amount +
+                                ' ' +
+                                nicerAmountWithUnit(draw.amount).unit
+                            }}
+                          </span>
+                          <span
+                            v-if="draw.amount >= luckiestAmount"
+                            class="text-xxs bg-amber-400 text-white rounded-md px-1 py-0.5"
+                          >
+                            {{ $t('Talk.Modals.lucky') }}
+                          </span>
                         </div>
                         <!-- <div class="text-xs text-dark-250 font-sans">≈ 723.00 CNY</div> -->
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center min-h-10 mt-4" v-if="requireNft">
+                    <span class="text-xs text-dark-300 dark:text-gray-400">{{
+                      $t('Talk.Modals.red_packet_require_nft')
+                    }}</span>
+                    <div class="flex items-center text-sm ml-2">
+                      <Image :src="requireNft.icon" customClass="w-10 h-10 rounded-md" />
+                      <div class="ml-2 flex flex-col items-start">
+                        <div class="font-medium text-sm">{{ requireNft.name }}</div>
+                        <div class="text-xs  font-bold text-amber-400">
+                          {{ requireNft.chain }}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -119,17 +144,21 @@
 
 <script lang="ts" setup>
 import { Dialog, DialogPanel, TransitionRoot, TransitionChild } from '@headlessui/vue'
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useLayoutStore } from '@/stores/layout'
 import { useModalsStore } from '@/stores/modals'
 import GiftRibbonImg from '@/assets/images/gift_ribbon.svg?url'
 import { formatTimestamp } from '@/utils/talk'
+import { useTalkStore } from '@/stores/talk'
+import { GetNFT } from '@/api/aggregation'
 
 const layout = useLayoutStore()
 const modals = useModalsStore()
+const talk = useTalkStore()
 const i18n = useI18n()
+const requireNft = ref()
 
 const closeModal = () => {
   modals.redPacketResult = null
@@ -137,7 +166,6 @@ const closeModal = () => {
 }
 
 const redPacketResult = modals.redPacketResult
-console.log('redPacketResult', redPacketResult)
 const note = computed(() => {
   return redPacketResult?.content || i18n.t('Talk.Channel.default_red_envelope_message')
 })
@@ -145,10 +173,14 @@ const draws = computed(() => {
   return (redPacketResult?.payList || []).filter((item: any) => item.used === 'true')
 })
 const myDraw = computed(() => {
-  return draws.value.find((item: any) => item.metaId === redPacketResult?.metaId)
+  return draws.value.find((item: any) => item.metaid === talk.selfMetaId)
 })
 const sortedDraws = computed(() => {
   return draws.value.sort((a: any, b: any) => b.timestamp - a.timestamp)
+})
+const luckiestAmount = computed(() => {
+  const amount = Math.max(...draws.value.map((item: any) => Number(item.amount)))
+  return amount
 })
 const nicerAmountWithUnit = (amount: string) => {
   if (!amount) {
@@ -171,4 +203,44 @@ const nicerAmountWithUnit = (amount: string) => {
     unit: 'Sats',
   }
 }
+
+onMounted(async () => {
+  const requireType = redPacketResult?.requireType
+  const needsNft = requireType === '2' || requireType === '2001'
+
+  if (needsNft) {
+    const chain = requireType === '2001' ? import.meta.env.VITE_ETH_CHAIN : 'mvc'
+    const {
+      data: {
+        results: { items },
+      },
+    } = await GetNFT({
+      codehash: redPacketResult?.requireCodehash,
+      genesis: redPacketResult?.requireGenesis,
+      chain,
+      tokenIndex: 0,
+    })
+    requireNft.value = {
+      icon: items[0].nftIcon,
+      name: items[0].nftName,
+      seriesName: items[0].nftSeriesName || items[0].nftName,
+      chain,
+    }
+  }
+})
 </script>
+
+<style lang="scss" scoped>
+*::-webkit-scrollbar {
+  width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #edeff2;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #bfc2cc;
+  border-radius: 20px;
+}
+</style>

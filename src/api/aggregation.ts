@@ -353,17 +353,19 @@ export const GetFTs = (params: {
   chain?: string
   page: number | string
   pageSize: number | string
+  codehash?: string
+  genesis?: string
 }): Promise<{
   code: number
   data: {
     total: number
     results: {
-      items: UserNFTItem[]
+      items: FungibleToken[]
     }
   }
 }> => {
   const { address, ..._params } = params
-  return aggregation.get(`/v2/app/show/ft/${address}/summary`, { params: _params })
+  return aggregation.get(`/v2/app/show/ft/${address}/summaries`, { params: _params })
 }
 
 export const GetBalance = (params: {
@@ -414,6 +416,42 @@ export const GetNFT = (params: {
   }
 }> => {
   return aggregation.get(`/v2/app/show/nft/info`, { params: params })
+}
+
+export const GetFT = (params: {
+  chain?: string
+  codehash?: string
+  genesis: string
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    results: {
+      items: FungibleToken[]
+    }
+  }
+}> => {
+  return aggregation.get(`/v2/app/show/ft/info`, { params: params })
+}
+
+export const GetOneFTFromAddress = (params: {
+  address: string
+  codehash: string
+  genesis?: string
+  chain?: string
+  page: number | string
+  pageSize: number | string
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    results: {
+      items: FungibleToken[]
+    }
+  }
+}> => {
+  const { address, ..._params } = params
+  return aggregation.get(`/v2/app/show/ft/${address}/details`, { params: _params })
 }
 
 export const GetNFTAvatars = (params: {
@@ -498,4 +536,13 @@ export const GetPublishShare = (
   data: PublishShareItem
 }> => {
   return aggregation.get(`/v2/app/show/posts/share/${txId}/info`)
+}
+
+export const GetSellNft = (
+  txId: string
+): Promise<{
+  code: number
+  data: SellNftItem
+}> => {
+  return aggregation.get(`/v2/app/show/posts/nftmarket/${txId}/info`)
 }

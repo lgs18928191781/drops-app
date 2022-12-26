@@ -9,7 +9,9 @@
     <template #body>
       <div class="set-base-user-info flex" v-loading="loading">
         <div class="flex1 set-base-user-info-item set-warp">
-          <div class="title">{{ $t('Login.setBaseInfo.title') }}</div>
+          <div class="title">
+            {{ $t('Login.setBaseInfo.title') }}
+          </div>
           <div class="info">
             <div class="info-item flex flex-align-center">
               <div class="key">{{ $t('Login.setBaseInfo.setNFTAvatar') }}</div>
@@ -62,6 +64,9 @@
           </div>
         </div>
       </div>
+    </template>
+    <template #secondTitle>
+      {{ $t('Login.setBaseInfo.Choose NFT Profile Picture') }}
     </template>
   </ModalVue>
 

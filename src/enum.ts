@@ -276,11 +276,13 @@ export enum NodeName {
   ShowMsg = 'ShowMsg',
   NftIssue = 'NftIssue',
   NftGenesis = 'NftGenesis',
+  NftSell = 'NftSell',
   FtGenesis = 'FtGenesis',
   FtIssue = 'FtIssue',
   SimpleRedEnvelope = 'SimpleRedEnvelope',
   OpenRedenvelope = 'OpenRedenvelope',
   SimplePublicShare = 'SimplePublicShare',
+  SellNft = 'sell_nft',
   Name = 'name',
   MetaNote = 'metanote',
 }
@@ -347,10 +349,28 @@ export enum ShowControl {
   isShowShareToBuzzModal = 'isShowShareToBuzzModal',
   isShowShareSuccessModal = 'isShowShareSuccessModal',
   isShowCommunitySettingsModal = 'isShowCommunitySettingsModal',
+  isShowRequireFtModal = 'isShowRequireFtModal',
   never = 'never',
 }
 
 export enum loginOrRegisterProtocolType {
   userProtocol = 1,
   privitePolicy = 2,
+}
+
+export enum RedPacketDistributeType {
+  Random = '0',
+  Nft = '2',
+}
+
+export enum JobStepStatus {
+  Waiting = 'waiting',
+  Success = 'success',
+  Failed = 'failed',
+}
+
+export enum JobStatus {
+  Waiting = 'waiting',
+  Success = 'success',
+  Failed = 'failed',
 }

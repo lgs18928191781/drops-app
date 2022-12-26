@@ -257,7 +257,7 @@ const wallets = [
           return i18n.t('Login.createWallet')
         },
         desc: () => {
-          return i18n.t('Login.notAnyWallet')
+          return ''
         },
         icon: IconAdd,
         fun: () => {
@@ -270,7 +270,7 @@ const wallets = [
           return i18n.t('Login.connectWallet')
         },
         desc: () => {
-          return i18n.t('Login.havedAnyWallet')
+          return ''
         },
         icon: IconLine,
         fun: () => {
@@ -585,7 +585,7 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
       let errorMsg: any
       for (let i = 0; i < broadcasts.length; i++) {
         try {
-          await wallet?.provider.broadcast(broadcasts[i])
+          await wallet?.provider.broadcast(broadcasts[i], true)
         } catch (error) {
           errorMsg = error
           break

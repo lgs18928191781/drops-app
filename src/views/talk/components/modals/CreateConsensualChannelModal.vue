@@ -21,7 +21,7 @@
           <div class="mt-2">
             <input
               type="text"
-              class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-600 still w-full p-4 text-base leading-[24PX] caret-dark-800 dark:caret-gray-100 font-bold placeholder:font-normal"
+              class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-700 still w-full p-4 text-base leading-[24PX] caret-dark-800 dark:caret-gray-100 font-bold placeholder:font-normal"
               :placeholder="$t('Talk.Community.channel_name') + '...'"
               v-model="form.name"
               autocomplete="nope"
@@ -38,8 +38,8 @@
             <TabList class="w-full text-sm flex  font-medium gap-x-3 lg:text-base">
               <Tab v-for="tab in consentTabs" :key="tab.id" as="template" v-slot="{ selected }">
                 <button
-                  class="w-full main-border py-3 outline-0 flex items-center justify-center lg:py-4 dark:!bg-gray-600"
-                  :class="{ 'faded !bg-white dark:!bg-gray-600': !selected }"
+                  class="w-full main-border py-3 outline-0 flex items-center justify-center lg:py-4 dark:!bg-gray-700"
+                  :class="{ 'faded !bg-white dark:!bg-gray-700': !selected }"
                 >
                   <span v-if="selected" class="mr-1 flex items-center">
                     <Icon
@@ -64,8 +64,8 @@
               <!-- NFT -->
               <template v-if="selectedTab === 0">
                 <button
-                  class="outline-0 main-border w-full px-4 py-3 text-base flex justify-between items-center dark:!bg-gray-600"
-                  :class="[!form.nft && 'faded !bg-white dark:!bg-gray-600']"
+                  class="outline-0 main-border w-full px-4 py-3 text-base flex justify-between items-center dark:!bg-gray-700"
+                  :class="[!form.nft && 'faded !bg-white dark:!bg-gray-700']"
                   @click="layout.isShowChooseTokenModal = !layout.isShowChooseTokenModal"
                 >
                   <div class="flex items-center gap-x-3">
@@ -100,7 +100,7 @@
               <!-- FT -->
               <template v-if="selectedTab === 1">
                 <button
-                  class="outline-0 main-border w-full px-4 py-3 text-base flex justify-between items-center dark:!bg-gray-600"
+                  class="outline-0 main-border w-full px-4 py-3 text-base flex justify-between items-center dark:!bg-gray-700"
                   @click="layout.isShowChooseTokenModal = !layout.isShowChooseTokenModal"
                 >
                   <div class="flex items-center gap-x-3">
@@ -134,7 +134,7 @@
                 <div class="ml-4" v-if="form.ft">
                   <input
                     type="number"
-                    class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-600 still w-full p-4 text-base leading-[24PX]  caret-dark-800 font-bold placeholder:font-normal"
+                    class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-700 still w-full p-4 text-base leading-[24PX]  caret-dark-800 font-bold placeholder:font-normal"
                     min="1"
                     :placeholder="$t('Talk.Modals.amount_needed')"
                     v-model="form.amount"
@@ -154,7 +154,7 @@
                   :type="isShowingPassword ? 'text' : 'password'"
                   autocomplete="new-password"
                   minlength="6"
-                  class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-600 still w-full p-4 text-base px-12 leading-[24PX]"
+                  class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-700 still w-full p-4 text-base px-12 leading-[24PX]"
                   :placeholder="$t('Talk.Community.password') + '...'"
                   v-model="form.password"
                 />
@@ -177,7 +177,7 @@
 
         <div class="grow flex items-end justify-end lg:mt-8">
           <button
-            class="w-14 h-14 main-border primary flex items-center justify-center dark:!bg-gray-600"
+            class="w-14 h-14 main-border primary flex items-center justify-center dark"
             :class="{
               'faded still text-dark-300 dark:text-gray-400 dark:!bg-gray-700': !form.isFinished,
             }"
@@ -220,7 +220,7 @@
               leave-to-class="transform scale-95 opacity-0"
             >
               <ListboxOptions
-                class="absolute mt-2 max-h-60 overflow-auto rounded-xl bg-white dark:bg-gray-600 py-2 text-base shadow-md focus:outline-none z-50 border border-solid border-dark-100 dark:border-gray-600 dark:shadow-blue-100/20"
+                class="absolute mt-2 max-h-60 overflow-auto rounded-xl bg-white dark:bg-gray-700 py-2 text-base shadow-md focus:outline-none z-50 border border-solid border-dark-100 dark:border-gray-600 dark:shadow-blue-100/20"
               >
                 <ListboxOption
                   v-slot="{ active, selected }"
@@ -307,7 +307,19 @@
 
       <!-- FT -->
       <div class="h-full" v-if="selectedTab === 1">
-        <div class="flex flex-col mt-6" v-if="ftSeries.length > 0">
+        <div
+          v-if="fetching"
+          class="w-full h-full flex items-center justify-center flex-col gap-y-4"
+        >
+          <img :src="DogWalking" class="w-48 h-48" alt="" />
+          <div class="flex items-center space-x-2">
+            <Icon name="loading" class="w-4 h-4 animate-spin text-dark-400 dark:!text-gray-200" />
+            <div class="text-dark-400 dark:text-gray-200 text-base font-medium">
+              {{ $t('Talk.Modals.loading') }}
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col mt-6" v-else-if="ftSeries.length > 0">
           <div
             v-for="ft in ftSeries"
             :key="ft.name"
@@ -325,7 +337,7 @@
             </div>
 
             <div class="text-sm text-dark-400 dark:text-gray-200 font-medium">
-              {{ ft.amount }}
+              {{ ft.balance.split('.')[0] }}
             </div>
           </div>
         </div>
@@ -341,7 +353,7 @@
 </template>
 
 <script lang="ts" setup>
-import { GroupChannelType, ShowControl } from '@/enum'
+import { ChannelPublicityType, GroupChannelType, ShowControl } from '@/enum'
 import BaseModal from './BaseModal.vue'
 import {
   TabList,
@@ -356,7 +368,7 @@ import {
 } from '@headlessui/vue'
 
 import { useChannelFormStore } from '@/stores/forms'
-import { onMounted, Ref, ref, toRaw, watchEffect } from 'vue'
+import { onMounted, Ref, ref, toRaw, watchEffect, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { createChannel } from '@/utils/talk'
 import { useTalkStore } from '@/stores/talk'
@@ -368,7 +380,7 @@ import { useRouter } from 'vue-router'
 import { GetNFTs, GetFTs } from '@/api/aggregation'
 import ETH from '@/assets/images/eth.png'
 import MVC from '@/assets/images/iocn_mvc.png'
-import { showLoading, sleep } from '@/utils/util'
+import { realRandomString, showLoading, sleep } from '@/utils/util'
 
 const isShowingPassword = ref(false)
 const layout = useLayoutStore()
@@ -428,7 +440,7 @@ const consentTabs = ref([
 ])
 
 const nftSeries: Ref<any[]> = ref([])
-const ftSeries: Ref<any[]> = ref([])
+const ftSeries: Ref<FungibleToken[]> = ref([])
 
 const form = useChannelFormStore()
 changeTab(selectedTab.value)
@@ -440,13 +452,30 @@ const tryCreateChannel = async () => {
 
   layout.isShowCreateConsensualChannelModal = false
   layout.isShowLoading = true
-  await createChannel(form, talk.activeCommunityId, userStore.showWallet, userStore.user!.metaId)
+
+  const res = await createChannel(
+    form,
+    talk.activeCommunityId,
+    userStore.showWallet,
+    userStore.user!.metaId
+  )
+
+  // 添加占位频道
+  if (res.status === 'success') {
+    const newChannel: any = {
+      id: 'placeholder_' + realRandomString(8),
+      name: form.name,
+      isPlaceHolder: true,
+      roomType: ChannelPublicityType.Private,
+      roomJoinType: form.type,
+      subscribeId: res.subscribeId,
+    }
+    // 将占位频道添加到频道列表最前面
+    talk.activeCommunityChannels.unshift(newChannel)
+  }
+
   layout.isShowLoading = false
   form.reset()
-
-  sleep(2000).then(() => {
-    talk.refetchChannels()
-  })
 }
 
 const selectNft = (nft: any) => {
@@ -461,30 +490,27 @@ const selectFt = (ft: any) => {
   layout.isShowChooseTokenModal = false
 }
 
-const fetching = ref(false)
-const fetchNftSeries = async () => {
-  let selfAddress: string
+const selfAddress = computed(() => {
   switch (selectedChain.value.value) {
     case 'mvc':
-      selfAddress = userStore.user!.address
-      break
+      return userStore.user!.address
     case 'eth':
-      selfAddress = userStore.user?.evmAddress as string
-      break
+      return userStore.user?.evmAddress as string
     case 'goerli':
-      selfAddress = userStore.user?.evmAddress as string
-      break
+      return userStore.user?.evmAddress as string
     default:
-      selfAddress = userStore.user!.address
-      break
+      return userStore.user!.address
   }
+})
 
+const fetching = ref(false)
+const fetchNftSeries = async () => {
   const {
     data: {
       results: { items: _nfts },
     },
   } = await GetNFTs({
-    address: selfAddress,
+    address: selfAddress.value,
     chain: selectedChain.value.value,
     page: 1,
     pageSize: 100,
@@ -492,17 +518,22 @@ const fetchNftSeries = async () => {
   nftSeries.value = _nfts
 }
 const fetchFtSeries = async () => {
-  const selfAddress = userStore.user!.address
   const {
     data: {
       results: { items: _fts },
     },
-  } = await GetFTs({ address: selfAddress, page: 1, pageSize: 100 })
+  } = await GetFTs({
+    address: selfAddress.value,
+    chain: selectedChain.value.value,
+    page: 1,
+    pageSize: 100,
+  })
   ftSeries.value = _fts
 }
 
 watchEffect(async () => {
   await showLoading(fetchNftSeries, fetching)
+  await showLoading(fetchFtSeries, fetching)
 })
 
 onMounted(() => {

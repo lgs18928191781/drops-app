@@ -3,6 +3,6 @@
 .forward {
 
     :deep(.buzz-item) {
-        background: #F5F7FA;
+        background: var(--divid-color);
     }
 }

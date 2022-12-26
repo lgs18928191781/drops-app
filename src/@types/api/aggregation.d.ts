@@ -183,3 +183,23 @@ declare interface PublishShareItem {
   shareContentType: string
   mention: string
 }
+
+declare interface SellNftItem {
+  chain: string
+  codehash: string
+  cover: string
+  currency: string
+  decimalNum: number
+  detail: string
+  genesis: string
+  genesisTag: string
+  icon: string
+  name: string
+  orderId: string
+  price: number
+  sensibleId: string
+  status: number
+  title: string
+  tokenIndex: string
+  tokenIndexInt: number
+}

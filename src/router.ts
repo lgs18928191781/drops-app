@@ -14,6 +14,7 @@ export const router = createRouter({
       path: '/buzz',
       name: 'buzz',
       component: () => import('@/views/buzz/Layout.vue'),
+      // meta: { keepAlive: true },
       redirect: () => {
         const userStroe = useUserStore()
         if (userStroe.isAuthorized) {
@@ -55,8 +56,16 @@ export const router = createRouter({
     {
       path: '/nft',
       name: 'nft',
-      component: () => RouterView,
+      component: () => import('@/views/nft/Layout.vue'),
+      redirect: {
+        name: 'nftIndex',
+      },
       children: [
+        {
+          path: 'index',
+          name: 'nftIndex',
+          component: () => import('@/views/nft/Index.vue'),
+        },
         {
           path: 'genesis',
           name: 'nftGenesis',
@@ -100,6 +109,12 @@ export const router = createRouter({
       redirect:
         '/talk/channels/123/88a92826842757cade6e84378df9db88526578c3bce7b8cb6348b7f1f9598d0a',
       // component: () => import('@/views/talk/Index.vue'),
+    },
+    {
+      path: '/talk/channels/@me/the-void',
+      name: 'talkAtMeDefault',
+      component: () => import('@/views/talk/AtMeDefault.vue'),
+      meta: { isAuth: true },
     },
     {
       path: '/talk/channels/@me/:channelId?',

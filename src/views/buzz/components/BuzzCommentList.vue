@@ -129,7 +129,7 @@ function like(item: BuzzInteractiveItem, index: number) {
   .comment-item {
     padding: 20px 0;
     box-sizing: border-box;
-    border-bottom: 1px solid #f4f7f9;
+    border-bottom: 1px solid var(--divid-color);
 
     .header {
       display: flex;

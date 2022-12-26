@@ -5,7 +5,7 @@
         <ElSkeletonItem variant="text" />
       </div>
 
-      <CardVue :color="postTagStroe.list.find(item => item.tag === buzz.postTag)?.color">
+      <CardVue :color="postTagStore.list.find(item => item.tag === buzz.postTag)?.color">
         <div class="simple-publish-share flex">
           <ElSkeletonItem variant="image" class="image" />
           <div class="cont flex1">
@@ -20,7 +20,7 @@
       <div class="text" v-html="$filters.buzzTextContent(shareInfo.val!.shareContent)"></div>
 
       <CardVue
-        :color="postTagStroe.list.find(item => item.tag === buzz.postTag)?.color"
+        :color="postTagStore.list.find(item => item.tag === buzz.postTag)?.color"
         @click.stop="toItem"
       >
         <div class="simple-publish-share flex">
@@ -54,7 +54,7 @@ const shareInfo: { val: PublishShareItem | null } = reactive({ val: null })
 const props = withDefaults(defineProps<Props>(), {})
 const userStore = useUserStore()
 const isSkeleton = ref(true)
-const postTagStroe = usePostTagStore()
+const postTagStore = usePostTagStore()
 const router = useRouter()
 
 function getShareInfo() {

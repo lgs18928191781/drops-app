@@ -184,7 +184,7 @@ declare interface BuzzItem {
   metaAccessTxId: string
   metaId: string
   metanetId: string
-  enprotocol: string
+  protocol: string
   publicKey: string
   quoteItem: BuzzItem
   rePost: {
@@ -327,6 +327,27 @@ declare interface UserNFTItem {
   nftWebsite: string
 }
 
+declare interface FungibleToken {
+  balance: string
+  codehash: string
+  decimalNum: number
+  desc: string
+  genesis: string
+  genesisTxId: string
+  icon: string
+  iconUrl: string
+  issueList: any[]
+  issueVersion: string
+  issuer: string
+  name: string
+  sensibleId: string
+  symbol: string
+  timestamp: number
+  totalSupply: number
+  totalSupplyStr: string
+  website: string
+}
+
 declare interface GenesisNFTItem {
   flag: string
   nftAttachment: string
@@ -363,6 +384,7 @@ declare interface GenesisNFTItem {
   nftIssueAddress: string
   nftIssueAvatarTxId: string
   nftIssueAvatarType: string
+  nftIssueAvatarImage: string
   nftIssueMetaId: string
   nftIssueMetaTxId: string
   nftIssueVersion: string
@@ -377,6 +399,7 @@ declare interface GenesisNFTItem {
   nftOwnerAddress: string
   nftOwnerAvatarTxId: string
   nftOwnerAvatarType: string
+  nftOwnerAvatarImage: string
   nftOwnerMetaId: string
   nftOwnerName: string
   nftPart: string
@@ -410,4 +433,19 @@ declare interface NodeTransactions {
     transaction: bsv.Transaction
     txId?: string
   }
+}
+
+declare interface JobStep {
+  txId?: string
+  txHex: string
+  status: import('@/enum').JobStepStatus
+  resultTxId?: string
+  resultTxMessage?: string
+}
+
+declare interface Job {
+  id: string
+  name: string
+  steps: JobStep[]
+  status: import('@/enum').JobStatus
 }

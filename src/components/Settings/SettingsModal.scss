@@ -1,28 +1,27 @@
 header {
     height: var(--header-height);
     padding: 0 18px;
-    border-bottom: 1px solid #F4F7F9;
+    border-bottom: 1px solid var(--divid-color);
 
     .close {
         width: 26px;
         height: 26px;
         border-radius: 50%;
-        border: 1px solid var(--normal-border-color);
         cursor: pointer;
+        background: var(--themeTextColor);
+        transition: all 0.5s;
 
         .icon {
             width: 14px;
             height: 14px;
+
+            &:deep(use) {
+                fill: var(--themeBgColor);
+            }
         }
 
         &:hover {
-            background: var(--normal-border-color);
-
-            .icon {
-                &:deep(use) {
-                    fill: var(--themeBgColor);
-                }
-            }
+            transform: rotate(180deg);
         }
     }
 }
@@ -40,7 +39,7 @@ header {
             width: 36px;
             height: 36px;
             border-radius: calc(36px / 2.5);
-            background: #EDEFF2;
+            background: var(--themeBgThreeColor);
             margin-right: 12px;
 
             .icon {

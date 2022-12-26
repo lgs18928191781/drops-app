@@ -8,7 +8,11 @@
     <div class="publish" v-loading="loading">
       <div class="top flex flex-align-center">
         <div class="user flex flex-align-center flex1">
-          <UserAvatar :meta-id="userStore.user!.metaId" :image="userStore.user!.avatarImage" />
+          <UserAvatar
+            :meta-id="userStore.user!.metaId"
+            :image="userStore.user!.avatarImage"
+            :disabled="true"
+          />
           <div class="cont flex1">
             <div class="name">{{userStore.user!.name}}</div>
             <div class="metaid">
@@ -27,7 +31,12 @@
         </a>
       </div>
       <div class="text">
-        <textarea v-model="content" @input="val => emit('update:text', content)" autofocus />
+        <textarea
+          v-model="content"
+          @input="val => emit('update:text', content)"
+          autofocus
+          :placeholder="placeholder"
+        />
         <slot name="repostBuzz"></slot>
       </div>
 
@@ -45,6 +54,7 @@ const props = defineProps<{
   text: string
   loading?: boolean
   replayUser?: string
+  placeholder?: string
 }>()
 
 const emit = defineEmits(['update:modelValue', 'update:text'])

@@ -129,7 +129,12 @@
       "cover": "封面",
       "choose_cover_tip": "从你的封面 NFT 中选择一个作为社区封面",
       "choose_cover": "选择封面",
-      "introduction": "社区介绍"
+      "introduction": "社区介绍",
+      "red_packet_all_claimed": "所有红包都已被领取",
+      "view_details": "查看领取详情",
+      "lucky": "手气最佳",
+      "red_packet_no_token": "你没有相关系列的NFT来领取这个红包",
+      "red_packet_require_nft": "所需 NFT"
     },
     "Channel": {
       "members": "成员",
@@ -156,7 +161,9 @@
       "welcome_message": "欢迎来到 #{channel}!",
       "welcome_start": "这是 #{channel} 频道的起点。畅所欲言吧！",
       "welcome_invite": "邀请好友进入频道",
-      "you_received_a_new_message": "您收到了一条新消息"
+      "you_received_a_new_message": "您收到了一条新消息",
+      "no_contacts_yet": "还没有添加任何联系人",
+      "back_to_buzz": "返回 Buzz"
     },
     "Community": {
       "create": "创建社区",
@@ -213,7 +220,13 @@
       "share_nft": "分享 NFT",
       "share_nft_tip": "炫一下我的 NFT",
       "sell_nft": "出售 NFT",
-      "sell_nft_tip": "出售 NFT"
+      "sell_nft_tip": "出售 NFT",
+      "required_nft": "所需 NFT",
+      "choose_nft_red_packet_tip": "只有持有特定系列 NFT 的成员才能领取此红包",
+      "total_explain": "红包总金额应当满足超过每份1000聪，且总金额不超过1000万聪，也不超过您的钱包余额。",
+      "amount_each": "每份金额",
+      "amount_each_explain": "每份红包的金额应当超过1000聪。",
+      "choose_nft": "选择 NFT……"
     },
     "Datetime": {
       "today": "今天",
@@ -252,7 +265,8 @@
       "setNFTAvatar": "设置NFT头像",
       "setUserName": "设置昵称",
       "setUserNamePlac": "请输入你的昵称",
-      "chooseNFTTitle": "选择NFT头像"
+      "chooseNFTTitle": "选择NFT头像",
+      "Choose NFT Profile Picture": "选择NFT头像"
     },
     "recomment": {
       "title": "👋 这里有一些<a>「Doodles」</a>相关的社区，您可以关注并跟大家打声招呼！",
@@ -276,7 +290,8 @@
       "bindHavedMetaIdIntro": "🔗️ 将您的钱包与已有的MetaID进行绑定，以便您管理您的资产和数据。",
       "bindSuccessTitle": "🎉 恭喜您已成功将您的钱包与您的MetaID绑定，以下是您的社交信息",
       "inputPasswordTitle": "请输入钱包密码",
-      "bindRegisterMetaId": "绑定新注册的MetaId"
+      "bindRegisterMetaId": "绑定新注册的MetaId",
+      "Link to My MetaID": "绑定我的MetaId"
     },
     "ETH": {
       "changeGoerliNetword": "网络不匹配，请切换到Goerli Test Network"
@@ -334,7 +349,8 @@
       "Introduction to Guiding": "使用教程",
       "Learn the show function": "学习 Show 功能",
       "Download showApp": "下载showApp"
-    }
+    },
+    "Your reply": "你的评论~"
   },
   "Follow": "关注",
   "walletError": "签名失败,无法登录钱包",
@@ -389,7 +405,8 @@
       "tips2": "的操作，不再有付款确认提示",
       "Payment required": "大约需要支付",
       "My": "我的",
-      "Recharge": "充值"
+      "Recharge": "充值",
+      "Confirm": "支付"
     }
   },
   "Please Login First": "请先登录",
@@ -460,5 +477,42 @@
   "Replay": "回复",
   "Cancel Follow": "取消关注",
   "cancelFollowTips": "你去确定要取消关注用户",
-  "Warning": "温馨提示"
+  "Warning": "温馨提示",
+  "Forward": "转发",
+  "Comment": "评论",
+  "Like": "点赞",
+  "Forwarded": "转发了",
+  "NFT": {
+    "Creater": "创作者",
+    "Set selling price": "设置售价标价",
+    "Set actual income": "设置实际收入",
+    "Platform fee": "平台手续费",
+    "Royalty fee": "版税费",
+    "Sell": "上架",
+    "Order Information": "订单信息",
+    "Create Time": "创作时间",
+    "NFT Details": "NFT详情",
+    "Payment Method": "支付方式",
+    "Buy Now": "立即购买",
+    "NFT Market": "NFT 市场",
+    "SearchPlace": "搜索 NFT 作品名称、作者或专辑",
+    "Explore": "探索",
+    "Collection": "专辑",
+    "Mystery Box": "盲盒",
+    "Market": "市集",
+    "NFT Tools": "NFT 工具集",
+    "Help": "帮助",
+    "Hot Series": "热门专辑",
+    "Hot Collection": "热门专辑",
+    "Latest Collection": "最新专辑",
+    "NFT Leaderboard": "NFT排行榜",
+    "Top Collections": "专辑排行榜",
+    "Floor price": "最低价",
+    "Min": "最小",
+    "Max": "最大",
+    "View all": "查看全部",
+    "Trading volume": "交易量"
+  },
+  "My NFT": "我的NFT",
+  "Done": "完成"
 }

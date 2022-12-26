@@ -29,6 +29,13 @@
     @get-more="getMore"
     :pagination="pagination"
     @update-item="updateItem"
+    @remove-item="
+      txId =>
+        list.splice(
+          list.findIndex(item => item.txId === txId),
+          1
+        )
+    "
   >
     <template #recommendCommunity>
       <CommunityVue v-if="myFollowNum > 0 && myFollowNum < 10" />
@@ -54,6 +61,7 @@ import { Mitt, MittEvent } from '@/utils/mitt'
 import CommunityVue from './components/recommend/Community.vue'
 import FollowVue from './components/recommend/Follow.vue'
 import GuideVue from './components/recommend/Guide.vue'
+import { BuzzItem } from '@/@types/common'
 
 // interface Props {}
 // const props = withDefaults(defineProps<Props>(), {})
@@ -79,8 +87,12 @@ function getDatas(isCover = false) {
       if (isCover) list.length = 0
       list.push(...res.data.results.items)
 
-      if (res.data.results.items.length === 0) pagination.nothing = true
-      else pagination.nothing = false
+      if (res.data.results.items.length === 0) {
+        pagination.nothing = true
+      } else {
+        pagination.nothing = false
+        pagination.timestamp = res.data.results.items[res.data.results.items.length - 1].timestamp
+      }
     }
     resolve()
   })
@@ -96,14 +108,8 @@ watch(
   }
 )
 
-Mitt.on(MittEvent.AddBuzz, async (params: { txId: string }) => {
-  const res = await GetBuzz({
-    txId: params.txId,
-    metaId: userStore.user?.metaId,
-  })
-  if (res && res.code === 0) {
-    list.unshift(res.data.results.items[0])
-  }
+Mitt.on(MittEvent.AddBuzz, async (buzz: BuzzItem) => {
+  list.unshift(buzz)
 })
 
 const publishOperates = [

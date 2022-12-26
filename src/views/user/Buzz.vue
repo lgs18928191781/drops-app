@@ -6,11 +6,19 @@
       :loading="isSkeleton"
       @get-more="getMore"
       @update-item="updateItem"
+      @remove-item="
+        txId =>
+          list.splice(
+            list.findIndex(item => item.txId === txId),
+            1
+          )
+      "
     />
   </div>
 </template>
 
 <script setup lang="ts">
+import { BuzzItem } from '@/@types/common'
 import { GetUserBuzzs } from '@/api/aggregation'
 import { initPagination } from '@/config'
 import { useUserStore } from '@/stores/user'

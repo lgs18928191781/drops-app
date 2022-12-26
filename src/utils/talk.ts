@@ -8,25 +8,18 @@ import {
   IsEncrypt,
   MessageType,
   NodeName,
+  RedPacketDistributeType,
   SdkPayType,
 } from '@/enum'
 import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
-import { getCommunityAuth } from '@/api/talk'
 import { SDK } from './sdk'
-import {
-  FileToAttachmentItem,
-  getTimestampInSeconds,
-  randomString,
-  realRandomString,
-  sleep,
-} from './util'
+import { FileToAttachmentItem, getTimestampInSeconds, realRandomString } from './util'
 import { Message, MessageDto } from '@/@types/talk'
 import { buildCryptoInfo, decrypt, encrypt, MD5Hash } from './crypto'
-import { UtxoItem } from '@/@types/sdk'
 import Decimal from 'decimal.js-light'
 import { TxComposer } from 'meta-contract/dist/tx-composer'
-import { Address, Script, Transaction } from 'meta-contract/dist/mvc'
+import { Address } from 'meta-contract/dist/mvc'
 import { DEFAULTS } from './wallet/hd-wallet'
 import { useJobsStore } from '@/stores/jobs'
 
@@ -152,17 +145,32 @@ export const sendInviteBuzz = async (form: any, sdk: SDK) => {
   return { txId }
 }
 
-const _putIntoRedPackets = (amount: number, quantity: number, address: string): any[] => {
+const _putIntoRedPackets = (form: any, address: string): any[] => {
+  const { amount, quantity, each, type } = form
+  // NFT🧧：将NFT分成指定数量个红包，平均分配
+  if (type === RedPacketDistributeType.Nft) {
+    const redPackets = []
+    for (let i = 0; i < quantity; i++) {
+      redPackets.push({
+        address,
+        amount: each,
+        index: i,
+      })
+    }
+    return redPackets
+  }
+
   // 构建🧧数量：随机将红包金额分成指定数量个小红包；指定最小系数为平均值的0.2倍，最大系数为平均值的1.8倍
   const minFactor = 0.2
   const maxFactor = 1.8
+  const minSats = 1000 // 最小红包金额为1000sats
   const redPackets = []
   let remainsAmount = amount
   let remainsCount = quantity
   for (let i = 0; i < quantity - 1; i++) {
     let avgAmount = Math.round(remainsAmount / remainsCount)
     const randomFactor = Math.random() * (maxFactor - minFactor) + minFactor
-    const randomAmount = Math.round(avgAmount * randomFactor)
+    const randomAmount = Math.max(Math.round(avgAmount * randomFactor), minSats)
     redPackets.push({
       amount: randomAmount,
       address,
@@ -172,7 +180,7 @@ const _putIntoRedPackets = (amount: number, quantity: number, address: string): 
     remainsCount -= 1
   }
   redPackets.push({
-    amount: Math.floor(remainsAmount),
+    amount: Math.max(Math.floor(remainsAmount), minSats),
     address,
     index: quantity - 1,
   }) // 最后一个红包，使用剩余金额
@@ -190,14 +198,14 @@ export const giveRedPacket = async (form: any, channelId: string, selfMetaId: st
   const { addressStr: address } = buildCryptoInfo(key, net)
 
   // 1.2 构建红包数据
-  const { amount, quantity } = form
-  const amountInSat = amount * 100_000_000
-  const redPackets = _putIntoRedPackets(amountInSat, quantity, address)
+  // const amountInSat = amount * 100_000_000
+  const amountInSat = form.amount // 现在直接使用sat为单位
+  const redPackets = _putIntoRedPackets(form, address)
   console.table(redPackets)
   console.log({ form })
 
   // 2. 构建数据载体
-  const dataCarrier = {
+  const dataCarrier: any = {
     createTime,
     subId,
     content: form.message,
@@ -208,7 +216,18 @@ export const giveRedPacket = async (form: any, channelId: string, selfMetaId: st
     payList: redPackets,
   }
 
-  // 2. 构建节点参数
+  // 2.1 nft红包处理
+  if (form.nft && form.chain) {
+    if (form.chain === 'eth' || form.chain === 'goerli') {
+      dataCarrier.requireType = '2001'
+    } else {
+      dataCarrier.requireType = '2'
+    }
+    dataCarrier.requireCodehash = form.nft.nftCodehash
+    dataCarrier.requireGenesis = form.nft.nftGenesis
+  }
+
+  // 3. 构建节点参数
   const node = {
     nodeName: NodeName.SimpleRedEnvelope,
     data: JSON.stringify(dataCarrier),
@@ -251,15 +270,19 @@ export const createChannel = async (
   // 2. 构建节点参数
   const node = {
     nodeName: NodeName.SimpleGroupCreate,
-    encrypt: IsEncrypt.No,
-    dataType: 'application/json',
     data: JSON.stringify(dataCarrier),
   }
 
   // 3. 发送节点
-  await sdk.createBrfcChildNode(node)
+  const subscribeId = realRandomString(32)
+  const res = await sdk.createBrfcChildNode(node, { useQueue: true, subscribeId })
+  console.log({ res })
 
-  return 'success'
+  if (res === null) {
+    return { status: 'canceled' }
+  }
+
+  return { status: 'success', subscribeId }
 }
 
 export const verifyPassword = (key: string, hashedPassword: string, creatorMetaId: string) => {
@@ -307,9 +330,9 @@ const _getChannelTypeInfo = (form: any, selfMetaId: string) => {
 
     case GroupChannelType.FT:
       groupType = '2'
-      status = encrypt(selfMetaId.substring(0, 16), MD5Hash(form.ft.ftGenesis).substring(0, 16))
-      codehash = form.ft.ftCodehash
-      genesis = form.ft.ftGenesis
+      status = encrypt(selfMetaId.substring(0, 16), MD5Hash(form.ft.genesis).substring(0, 16))
+      codehash = form.ft.codehash
+      genesis = form.ft.genesis
       type = '3'
       limitAmount = form.amount.toString()
       break
@@ -429,6 +452,7 @@ export const tryCreateNode = async (node: any, sdk: SDK, mockId: string) => {
   try {
     const nodeRes = await sdk.createBrfcChildNode(node)
     // 取消支付的情况下，删除mock消息
+    console.log({ nodeRes })
     if (nodeRes === null) {
       talk.removeMessage(mockId)
     }

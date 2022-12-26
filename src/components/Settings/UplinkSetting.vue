@@ -77,6 +77,8 @@ function setMeValue() {
     cancelButtonText: i18n.t('Cancel'),
     inputPattern: /^[1-9][0-9]*$/,
     inputErrorMessage: i18n.t('Invalid Value'),
+    confirmButtonClass: 'main-border primary',
+    cancelButtonClass: 'main-border',
   }).then(({ value }) => {
     const _value = parseInt(value)
     if (_value) {

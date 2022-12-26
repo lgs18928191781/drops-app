@@ -84,6 +84,7 @@
     v-model:text="comment"
     :replay-user="replayMsg.val.username"
     :loading="operateLoading"
+    :placeholder="$t('Buzz.Your reply')"
   >
     <template #other>
       <div class="operate flex flex-pack-end">
@@ -98,14 +99,14 @@
 <script setup lang="ts">
 import BuzzItemVue from './BuzzItem.vue'
 import { ElDrawer } from 'element-plus'
-import { computed, reactive, Ref, ref } from 'vue'
+import { computed, reactive, Ref, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import IsNullVue from '@/components/IsNull/IsNull.vue'
 import LoadMoreVue from '@/components/LoadMore/LoadMore.vue'
 import { copy, randomRange, tx } from '@/utils/util'
 import { router } from '@/router'
 import { useUserStore } from '@/stores/user'
-import { NodeName } from '@/enum'
+import { JobStatus, NodeName } from '@/enum'
 import { Mitt, MittEvent } from '@/utils/mitt'
 import { useLayoutStore } from '@/stores/layout'
 import BuzzItemSkeletonVue from './BuzzItemSkeleton.vue'
@@ -113,6 +114,9 @@ import { metafile } from '@/utils/filters'
 import PublishBaseTemplateVue from '@/components/PublishBaseTemplate/PublishBaseTemplate.vue'
 import { useRoute } from 'vue-router'
 import { listenerCount } from 'process'
+import { BuzzItem } from '@/@types/common'
+import { useJobsStore } from '@/stores/jobs'
+import { GetBuzz } from '@/api/aggregation'
 
 interface Props {
   list: BuzzItem[]
@@ -121,12 +125,13 @@ interface Props {
   isInDetailPage?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {})
-const emit = defineEmits(['getMore', 'comment', 'like', 'updateItem'])
+const emit = defineEmits(['getMore', 'comment', 'like', 'updateItem', 'removeItem'])
 
 const i18n = useI18n()
 const userStore = useUserStore()
 const layout = useLayoutStore()
 const route = useRoute()
+const jobsStore = useJobsStore()
 
 const operateLoading = ref(false)
 
@@ -178,17 +183,41 @@ const operates: {
             ? { ...props.list[index].quoteItem }
             : { ...props.list[index] }
           const time = new Date().getTime()
-          const res = await userStore.showWallet.createBrfcChildNode({
-            nodeName: NodeName.SimpleRePost,
-            data: JSON.stringify({
-              createTime: time,
-              rePostTx: currentTxId.value,
-              rePostProtocol: targetBuzz.protocol,
-              rePostComment: '',
-            }),
-            payTo: [{ amount: payAmount, address: targetBuzz.zeroAddress }],
-          })
+          const res = await userStore.showWallet.createBrfcChildNode(
+            {
+              nodeName: NodeName.SimpleRePost,
+              data: JSON.stringify({
+                createTime: time,
+                rePostTx: currentTxId.value,
+                rePostProtocol: targetBuzz.protocol,
+                rePostComment: '',
+              }),
+              payTo: [{ amount: payAmount, address: targetBuzz.zeroAddress }],
+            },
+            {
+              useQueue: true,
+            }
+          )
           if (res) {
+            const watchJobStatus = watch(
+              () => jobsStore.waitingNotify.find(job => job.id === res.subscribeId)?.status,
+              status => {
+                if (status === JobStatus.Success) {
+                  watchJobStatus()
+                  GetBuzz({
+                    txId: res.currentNode!.txId,
+                    metaId: userStore.user!.metaId,
+                  }).then(respones => {
+                    if (respones.data.results.items.length) {
+                      emit('updateItem', respones.data.results.items[0])
+                    }
+                  })
+                } else if (status === JobStatus.Failed) {
+                  watchJobStatus()
+                  emit('removeItem', { txId: res.currentNode!.txId })
+                }
+              }
+            )
             targetBuzz.rePost.push({
               metaId: userStore.user!.metaId!,
               timestamp: time,
@@ -205,7 +234,72 @@ const operates: {
                   }
                 : targetBuzz
             )
-            Mitt.emit(MittEvent.AddBuzz, { txId: res.currentNode!.txId })
+            Mitt.emit(MittEvent.AddBuzz, {
+              applauseCount: 0,
+              attachments: [],
+              avatarImage: userStore.user!.avatarImage,
+              avatarTxId: userStore.user!.avatarTxId,
+              avatarType: userStore.user!.avatarType,
+              blockHeight: -1,
+              buzzCard: null,
+              comment: [],
+              commentCount: 0,
+              confirmState: 0,
+              content: '',
+              contentType: 'text/plain',
+              data: '',
+              displayType: 'quickRePost',
+              donate: [],
+              encrypt: '0',
+              history: [],
+              isEdit: false,
+              isFull: true,
+              isMyFollow: true,
+              isNew: true,
+              isSelling: false,
+              isValid: true,
+              like: [],
+              likeCount: 0,
+              metaAccessCodeHash: '',
+              metaAccessContentAmount: '',
+              metaAccessContentEncryptContent: '',
+              metaAccessContentOwnerAvatarTxId: '',
+              metaAccessContentOwnerAvatarType: '',
+              metaAccessContentOwnerMetaId: '',
+              metaAccessContentOwnerName: '',
+              metaAccessContentRevenueAmount: 0,
+              metaAccessGenesisId: '',
+              metaAccessHasPay: false,
+              metaAccessMetanetId: '',
+              metaAccessPayTx: '',
+              metaAccessPutAway: false,
+              metaAccessSellTx: '',
+              metaAccessServiceConfigMetanetId: '',
+              metaAccessServiceConfigTxId: '',
+              metaAccessServiceFee: '',
+              metaAccessServiceMetaId: '',
+              metaAccessServiceName: '',
+              metaAccessServiceUrl: '',
+              metaAccessTokenIndex: '',
+              metaAccessTxId: '',
+              metaId: userStore.user!.metaId,
+              metanetId: '',
+              postTag: 'buzz',
+              postTagId: 1,
+              protocol: 'SimpleRePost',
+              publicKey: '',
+              quoteItem: targetBuzz,
+              rePost: [],
+              rePostCount: 0,
+              serverCode: '',
+              serverPublicKey: '',
+              shareProtocol: '',
+              timestamp: 1671866186541,
+              totalValue: 0,
+              txId: res.currentNode!.txId,
+              userName: userStore.user!.name,
+              zeroAddress: userStore.user!.address,
+            })
             ElMessage.success(i18n.t('Buzz.repost.success'))
             operateLoading.value = false
             isShowOperateModal.value = false
@@ -285,7 +379,7 @@ async function onLike(params: { txId: string; address: string; done: () => void 
   if (index === -1) {
     index = props.list.findIndex(item => item.quoteItem && item.quoteItem.txId === params.txId)
     if (index === -1) {
-      throw new Error('txId Not Found')
+      // throw new Error('txId Not Found')
     } else {
       isQuote = true
     }
@@ -293,23 +387,50 @@ async function onLike(params: { txId: string; address: string; done: () => void 
   const time = new Date().getTime()
   const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
   const res = await userStore.showWallet
-    .createBrfcChildNode({
-      nodeName: NodeName.PayLike,
-      data: JSON.stringify({
-        createTime: time,
-        isLike: '1',
-        likeTo: params.txId,
-        pay: payAmount,
-        payTo: params.address,
-      }),
-      payTo: [{ amount: payAmount, address: params.address }],
-    })
+    .createBrfcChildNode(
+      {
+        nodeName: NodeName.PayLike,
+        data: JSON.stringify({
+          createTime: time,
+          isLike: '1',
+          likeTo: params.txId,
+          pay: payAmount,
+          payTo: params.address,
+        }),
+        payTo: [{ amount: payAmount, address: params.address }],
+      },
+      {
+        useQueue: true,
+      }
+    )
     .catch(error => {
       ElMessage.error(error.message)
     })
   if (res) {
     if (index !== -1) {
       const buzz = { ...props.list[index] }
+      const watchJobStatus = watch(
+        () => jobsStore.waitingNotify.find(job => job.id === res.subscribeId)?.status,
+        status => {
+          if (status === JobStatus.Success) {
+            watchJobStatus()
+          } else if (status === JobStatus.Failed) {
+            watchJobStatus()
+            if (isQuote) {
+              buzz.quoteItem.like.splice(
+                buzz.quoteItem.like.findIndex(item => item.txId === res.currentNode!.txId),
+                1
+              )
+            } else {
+              buzz.like.splice(
+                buzz.like.findIndex(item => item.txId === res.currentNode!.txId),
+                1
+              )
+            }
+            emit('updateItem', buzz)
+          }
+        }
+      )
       const params = {
         metaId: userStore.user!.metaId!,
         timestamp: time,
@@ -347,18 +468,45 @@ async function onFollow(
 
   const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
   const res = await userStore.showWallet
-    .createBrfcChildNode({
-      nodeName: NodeName.PayFollow,
-      data: JSON.stringify({
-        createTime: new Date().getTime(),
-        MetaID: target.metaId,
-        pay: payAmount,
-        payTo: target.zeroAddress,
-      }),
-      payTo: [{ amount: payAmount, address: target.zeroAddress }],
-    })
+    .createBrfcChildNode(
+      {
+        nodeName: NodeName.PayFollow,
+        data: JSON.stringify({
+          createTime: new Date().getTime(),
+          MetaID: target.metaId,
+          pay: payAmount,
+          payTo: target.zeroAddress,
+        }),
+        payTo: [{ amount: payAmount, address: target.zeroAddress }],
+      },
+      {
+        useQueue: true,
+      }
+    )
     .catch(error => params.reject(error))
   if (res) {
+    const watchJobStatus = watch(
+      () => jobsStore.waitingNotify.find(job => job.id === res.subscribeId)?.status,
+      status => {
+        if (status === JobStatus.Success) {
+          watchJobStatus()
+        } else if (status === JobStatus.Failed) {
+          watchJobStatus()
+          target.isMyFollow = false
+          Mitt.emit(MittEvent.RemoveBuzz, { txId: res.currentNode!.txId })
+          emit(
+            'updateItem',
+            isQuoteItem
+              ? {
+                  ...props.list[index],
+                  quoteItem: target,
+                }
+              : target
+          )
+          Mitt.emit(MittEvent.FollowUser, { metaId: target.metaId, result: false })
+        }
+      }
+    )
     target.isMyFollow = true
     emit(
       'updateItem',
@@ -413,12 +561,17 @@ function replay() {
       payTo: replayMsg.val.userAddress,
     }
     const res = await userStore.showWallet
-      ?.createBrfcChildNode({
-        nodeName: NodeName.PayComment,
-        dataType: 'application/json',
-        data: JSON.stringify(dataParams),
-        payTo: [{ address: replayMsg.val.userAddress, amount: payAmount }],
-      })
+      ?.createBrfcChildNode(
+        {
+          nodeName: NodeName.PayComment,
+          dataType: 'application/json',
+          data: JSON.stringify(dataParams),
+          payTo: [{ address: replayMsg.val.userAddress, amount: payAmount }],
+        },
+        {
+          useQueue: true,
+        }
+      )
       .catch(error => {
         ElMessage.error(error.message)
         operateLoading.value = false
@@ -429,6 +582,20 @@ function replay() {
       if (index !== -1) {
         if (replayMsg.val.commentTo === currentTxId.value) {
           const buzz = { ...props.list[index] }
+          const watchJobStatus = watch(
+            () => jobsStore.waitingNotify.find(job => job.id === res.subscribeId)?.status,
+            status => {
+              if (status === JobStatus.Success) {
+                watchJobStatus()
+              } else if (status === JobStatus.Failed) {
+                watchJobStatus()
+                buzz.comment.splice(
+                  buzz.comment.findIndex(item => item.txId === res.currentNode!.txId)
+                )
+                emit('updateItem', buzz)
+              }
+            }
+          )
           buzz.comment.unshift({
             metaId: userStore.user!.metaId!,
             timestamp: dataParams.createTime,
@@ -507,6 +674,17 @@ Mitt.on(MittEvent.FollowUser, async (params: { metaId: string; result: boolean }
       emit('updateItem', _item)
     }
   }
+})
+
+Mitt.on(MittEvent.UpdateBuzz, (buzz: BuzzItem) => {
+  const index = props.list.findIndex(item => item.txId === buzz.txId)
+  if (index !== -1) {
+    emit('updateItem', buzz)
+  }
+})
+
+Mitt.on(MittEvent.RemoveBuzz, (txId: string) => {
+  emit('removeItem', txId)
 })
 
 defineExpose({

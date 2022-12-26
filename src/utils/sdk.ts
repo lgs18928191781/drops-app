@@ -24,20 +24,23 @@ import { router } from '@/router'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
 import { isAndroid, isAndroidApp, isIOS, isIosApp } from '@/stores/root'
 import { PayToItem } from '@/@types/hd-wallet'
-import { SdkPayType, IsEncrypt, NodeName } from '@/enum'
+import { SdkPayType, IsEncrypt, NodeName, JobStepStatus, JobStatus } from '@/enum'
 import { GetMeUtxos, GetMyMEBalance, GetProtocolMeInfo } from '@/api/v3'
 import * as bsv from '@sensible-contract/bsv'
 // import bsv from 'bsv'
-import { openLoading } from './util'
+import { openLoading, realRandomString } from './util'
 import { Toast } from 'vant'
 import { Transaction } from 'dexie'
 import { useUserStore } from '@/stores/user'
+import { useJobsStore } from '@/stores/jobs'
 import i18n from './i18n'
 import SdkPayConfirmModalVue from '@/components/SdkPayConfirmModal/SdkPayConfirmModal.vue'
 import { h, render } from 'vue'
-import { NftManager, FtManager, API_NET, API_TARGET, TxComposer } from 'meta-contract'
+import { NftManager, FtManager, API_NET, API_TARGET, TxComposer, mvc } from 'meta-contract'
 import { resolve } from 'path'
 import detectEthereumProvider from '@metamask/detect-provider'
+import { NodeTransactions, Job, JobStep } from '@/@types/common'
+import { v1 as UUID } from 'uuid'
 
 enum AppMode {
   PROD = 'prod',
@@ -161,6 +164,11 @@ export const AllNodeName: {
   [NodeName.MetaNote]: {
     brfcId: '4934f562fc29',
     path: '/Protocols/metanote',
+    version: '1.0.1',
+  },
+  [NodeName.NftSell]: {
+    brfcId: '13104a689fd3',
+    path: '/Protocols/NftSell',
     version: '1.0.1',
   },
 }
@@ -304,20 +312,21 @@ export class SDK {
   }
 
   // nft 转账
-  transferNFT(params: {
-    receiverAddress: string
-    tokenIndex: string
-    codehash: string
-    genesisId: string
-    genesisTxid: string | undefined
-    sensibleId: string
-    checkOnly?: boolean
-  }) {
+  transferNFT(
+    params: {
+      receiverAddress: string
+      tokenIndex: string
+      codehash: string
+      genesis: string
+    },
+    option?: {
+      isBroadcast: boolean
+    }
+  ) {
     return new Promise<{
-      tx: Transaction
-      txid: string
       txHex: string
-      txId: string
+      txid: string
+      tx: mvc.Transaction
     }>(async (resolve, reject) => {
       try {
         const userStore = useUserStore()
@@ -333,10 +342,7 @@ export class SDK {
           window[functionName] = callback
           this.appMetaIdJs.transferNFT(accessToken, JSON.stringify(params), functionName)
         } else {
-          const res = await this.wallet?.transferNft(
-            { ...params, genesis: params.genesisId },
-            !params.checkOnly
-          )
+          const res = await this.wallet?.transferNft(params, option)
           if (res) resolve(res)
         }
       } catch (error) {
@@ -399,6 +405,8 @@ export class SDK {
     option?: {
       isBroadcast?: boolean
       payType?: SdkPayType
+      useQueue?: boolean
+      subscribeId?: string
     }
   ) {
     return new Promise<{
@@ -407,10 +415,13 @@ export class SDK {
       metaFiles?: CreateNodeRes[]
       currentNodeBrfc?: CreateNodeRes
       currentNode?: CreateNodeRes
+      subscribeId?: string
     } | null>(async (resolve, reject) => {
       const initOption = {
         isBroadcast: true,
         payType: SdkPayType.ME,
+        useQueue: false,
+        subscribeId: '',
       }
       const initParams = {
         appId: ['ShowV3', this.getOnLinkAppUrl(), this.getPlatform()],
@@ -428,9 +439,11 @@ export class SDK {
         ...initParams,
         ...params,
       }
+      const subscribeId = option?.subscribeId || (option?.useQueue ? UUID() : '')
       option = {
         ...initOption,
         ...option,
+        subscribeId,
       }
       const userStore = useUserStore()
       try {
@@ -507,7 +520,7 @@ export class SDK {
               )
 
               // 广播
-              if (option.isBroadcast) {
+              if (option.isBroadcast && !option.useQueue) {
                 // 广播 打钱操作
                 if (payToRes && payToRes.transaction) {
                   await this.wallet?.provider.broadcast(payToRes.transaction.toString())
@@ -519,7 +532,13 @@ export class SDK {
               resolve({
                 payToAddress: payToRes,
                 ...transactions,
+                subscribeId: option!.subscribeId,
               })
+
+              // 如果使用队列，则不进行广播，而是收集当次Job的所有交易作为step，推进队列
+              if (option.useQueue) {
+                this.convertTransactionsIntoJob(transactions, payToRes, option!.subscribeId!)
+              }
             } else {
               resolve(null)
             }
@@ -546,6 +565,61 @@ export class SDK {
         reject(error)
       }
     })
+  }
+
+  private convertTransactionsIntoJob(
+    transactions: NodeTransactions,
+    payToRes: CreateNodeRes | undefined,
+    subscribeId: string
+  ) {
+    const jobsStore = useJobsStore()
+    const job: Job = {
+      id: subscribeId,
+      name: 'AReallyNormalJob',
+      steps: [],
+      status: JobStatus.Waiting,
+    }
+    const converting: Transaction[] = []
+
+    // A. 收集交易
+    // 1. 打钱交易
+    if (payToRes && payToRes.transaction) {
+      converting.push(payToRes.transaction)
+    }
+    // 2. Metafile Brfc交易
+    if (transactions.metaFileBrfc?.transaction) {
+      converting.push(transactions.metaFileBrfc.transaction)
+    }
+    // 3. Metafile 交易
+    if (transactions.metaFiles && transactions.metaFiles.length) {
+      for (let i = 0; i < transactions.metaFiles.length; i++) {
+        converting.push(transactions.metaFiles[i].transaction)
+      }
+    }
+    // 4. 当前节点 Brfc 交易
+    if (transactions.currentNodeBrfc?.transaction) {
+      converting.push(transactions.currentNodeBrfc.transaction)
+    }
+    // 5. 当前节点交易
+    if (transactions.currentNode?.transaction) {
+      converting.push(transactions.currentNode.transaction)
+    }
+    // 6. NFT issue 交易
+    if (transactions.issueNFT?.transaction) {
+      converting.push(transactions.issueNFT.transaction)
+    }
+
+    // B. 将交易转换为step
+    converting.forEach((tx: any) => {
+      job.steps.push({
+        txId: tx.id,
+        txHex: tx.toString(),
+        status: JobStepStatus.Waiting,
+      })
+    })
+
+    // C. 将job推进队列
+    jobsStore.push(job)
   }
 
   batchCreateBrfcChildNode(
@@ -826,6 +900,8 @@ export class SDK {
                   },
                   scriptPlayload: [],
                 }
+              } else if (params.nodeName === NodeName.NftSell) {
+                // nftSell
               }
             } else if (this.isFTProtocol(params.nodeName)) {
               // FT
@@ -957,7 +1033,9 @@ export class SDK {
             transactions.metaFileBrfc.txId = transactions.metaFileBrfc.transaction.id
 
             // 组装新 utxo
-            utxo = await this.wallet!.utxoFromTx({ tx: transactions.metaFileBrfc.transaction })
+            utxo = await this.wallet!.utxoFromTx({
+              tx: transactions.metaFileBrfc.transaction,
+            })
 
             // 当有 metafile Brfc 改变时 metafile 节点也需要重新构建，因为父节点Brfc的txid 已改变
             transactions.metaFiles!.length = 0
@@ -1150,11 +1228,11 @@ export class SDK {
   private broadcastNodeTransactions(transactions: NodeTransactions) {
     return new Promise<void>(async (resolve, reject) => {
       try {
-        // 广播 Metefile Brfc
+        // 广播 Metafile Brfc
         if (transactions.metaFileBrfc?.transaction) {
           await this.wallet?.provider.broadcast(transactions.metaFileBrfc.transaction.toString())
         }
-        // 广播 Metefile
+        // 广播 Metafile
         if (transactions.metaFiles && transactions.metaFiles.length) {
           let catchError
           for (let i = 0; i < transactions.metaFiles.length; i++) {
@@ -1609,7 +1687,8 @@ export class SDK {
   }
 
   isFTProtocol(nodeName: NodeName) {
-    if (nodeName === NodeName.FtGenesis || nodeName === NodeName.FtIssue) {
+    const nfts = [NodeName.FtGenesis, NodeName.FtIssue, NodeName.NftSell]
+    if (nfts.includes(nodeName)) {
       return true
     } else {
       return false

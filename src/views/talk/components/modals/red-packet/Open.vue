@@ -38,7 +38,7 @@
                 >
                   <template v-if="canOpen">
                     <div
-                      class="lg:w-114 h-60 bg-gradient-to-tr from-[#CBFDE4] to-[#FCEDCE] rounded-t-3xl shadow-md flex flex-col items-center justify-start overflow-x-hidden group-hover:-skew-x-3 group-hover:shadow-xl duration-300 origin-top"
+                      class="w-full lg:w-114 h-60 bg-gradient-to-tr from-[#CBFDE4] to-[#FCEDCE] rounded-t-3xl shadow-md flex flex-col items-center justify-start overflow-x-hidden group-hover:-skew-x-3 group-hover:shadow-xl duration-300 origin-top"
                     >
                       <UserAvatar
                         :meta-id="message.metaId"
@@ -86,9 +86,30 @@
                       {{ note }}
                     </div>
 
-                    <div class="mt-10 text-sm text-dark-300">
+                    <div
+                      class="mt-10 text-sm text-dark-300"
+                      v-if="rejectReason.reason === 'all claimed'"
+                    >
                       {{ $t('Talk.Modals.red_packet_all_claimed') }}
                     </div>
+                    <template v-else>
+                      <div class="mt-10 text-sm text-dark-300">
+                        {{ $t('Talk.Modals.red_packet_no_token') }}
+                      </div>
+                      <div class="flex items-center text-sm mt-2">
+                        <Image
+                          v-if="requireNft?.icon"
+                          :src="requireNft?.icon"
+                          customClass="w-10 h-10 rounded-md"
+                        />
+                        <div class="ml-2 flex flex-col items-start">
+                          <div class="font-medium text-sm">{{ requireNft?.name }}</div>
+                          <div class="text-xs  font-bold text-amber-400">
+                            {{ requireNft?.chain }}
+                          </div>
+                        </div>
+                      </div>
+                    </template>
 
                     <div
                       class="mt-4 text-sm text-link flex space-x-px items-center cursor-pointer hover:underline"
@@ -119,7 +140,10 @@ import { useI18n } from 'vue-i18n'
 import { getOneRedPacket, getRedPacketRemains, grabRedPacket } from '@/api/talk'
 import { useTalkStore } from '@/stores/talk'
 import { useModalsStore } from '@/stores/modals'
-import { sleep } from '@/utils/util'
+import { debounce, sleep } from '@/utils/util'
+import { useUserStore } from '@/stores/user'
+import { RedPacketDistributeType } from '@/enum'
+import { GetNFT } from '@/api/aggregation'
 
 const layout = useLayoutStore()
 const modals = useModalsStore()
@@ -127,23 +151,64 @@ const modals = useModalsStore()
 const message = modals.openRedPacket?.message
 const i18n = useI18n()
 const talk = useTalkStore()
+const user = useUserStore()
 const remains = ref([])
-const canOpen = computed(() => remains.value.length > 0)
+const requireNft = ref()
+
+const redPacket = computed(() => {
+  return modals.openRedPacket.redPacketInfo
+})
+
+const distributeType = computed(() => {
+  return redPacket.value?.requireType
+})
+
+const canOpen = computed(() => {
+  if (distributeType.value === RedPacketDistributeType.Random) {
+    return remains.value.length > 0
+  }
+
+  return redPacket.value?.tokenCount > 0
+})
+
+const rejectReason = computed(() => {
+  if (remains.value.length === 0) {
+    return { reason: 'all claimed' }
+  }
+
+  if (redPacket.value?.tokenCount === 0) {
+    //
+    return {
+      reason: 'no token',
+    }
+  }
+
+  return {
+    reason: '',
+  }
+})
 
 const note = computed(() => {
   return message?.data?.content || i18n.t('Talk.Channel.default_red_envelope_message')
 })
 
 const tryOpenRedPacket = async () => {
-  const params = {
+  layout.isShowLoading = true
+  const params: any = {
     channelId: talk.activeChannelId,
     redPacketId: message?.txId,
     selfMetaId: talk.selfMetaId,
-    selfAddress: talk.selfAddress,
   }
-  await grabRedPacket(params)
+  const redPacketType = redPacket.value?.requireType
+  if (redPacketType === '2') {
+    params.address = talk.selfAddress
+  } else if (redPacketType === '2001') {
+    params.address = user.user?.evmAddress
+  }
 
+  await grabRedPacket(params)
   await sleep(1000)
+  layout.isShowLoading = false
   await viewDetails()
 }
 
@@ -168,10 +233,42 @@ const closeModal = () => {
 onMounted(async () => {
   const channelId = talk.activeChannelId
   const redPacketId = message?.txId
-  getRedPacketRemains({ channelId, redPacketId }).then(res => {
-    remains.value = res
+  const params: any = {
+    channelId,
+    redPacketId,
+  }
+  const redPacketType = redPacket.value?.requireType
+  if (redPacketType === '2') {
+    params.address = talk.selfAddress
+  } else if (redPacketType === '2001') {
+    params.address = user.user?.evmAddress
+  }
+  getRedPacketRemains(params).then(res => {
+    remains.value = res.unused
     console.log('remains', remains.value)
   })
+
+  // 如果是nft红包，获取nft信息
+  if (redPacketType === '2001' || redPacketType === '2') {
+    const chain = redPacketType === '2001' ? import.meta.env.VITE_ETH_CHAIN : 'mvc'
+    const {
+      data: {
+        results: { items },
+      },
+    } = await GetNFT({
+      codehash: redPacket.value?.requireCodehash,
+      genesis: redPacket.value?.requireGenesis,
+      chain,
+      tokenIndex: 0,
+    })
+    requireNft.value = {
+      icon: items[0].nftIcon,
+      name: items[0].nftName,
+      seriesName: items[0].nftSeriesName || items[0].nftName,
+      chain,
+    }
+    console.log('nftInfo', requireNft.value)
+  }
 })
 </script>
 

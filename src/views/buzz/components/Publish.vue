@@ -3,6 +3,7 @@
     v-model="layout.isShowPublishBuzz"
     v-model:text="content"
     :loading="loading"
+    :placeholder="$t('Buzz.publish.placeholder')"
   >
     <template #repostBuzz>
       <div class="respost-buzz" v-if="respostBuzz.val">
@@ -61,6 +62,51 @@
           >{{ respostBuzz.val ? $t('Buzz.publish.respost') : $t('Buzz.publish.post') }}</a
         >
       </div>
+
+      <!-- Topic -->
+      <ElDialog v-model="isShowTopic" class="sm none-header none-padding" @open="getHotTopics">
+        <div class="topic">
+          <div class="header flex flex-align-center">
+            <div class="flex1">
+              <a class="back flex flex-align-center flex-pack-center" @click="back"
+                ><Icon name="down"
+              /></a>
+            </div>
+            <div>
+              <a
+                class="confirm main-border primary"
+                :class="{ faded: topic === '' }"
+                @click="confirmTopic"
+                >{{ $t('Done') }}</a
+              >
+            </div>
+            <div class="title">{{ $t('Buzz.topic.topics') }}</div>
+          </div>
+
+          <div class="input">
+            <div class="title">{{ $t('Buzz.topic.inputTitle') }}</div>
+            <div class="cont">
+              <input type="text" v-model="topic" :placeholder="$t('Buzz.topic.inputPlaceholder')" />
+            </div>
+          </div>
+
+          <div class="hot-topic">
+            <div class="title">{{ $t('Buzz.topic.hotTopics') }}</div>
+            <div class="topic-list">
+              <a
+                class="topic-item"
+                v-for="item in topics"
+                :key="item.tag"
+                @click="topic = item.tag"
+                >{{ item.tag }}</a
+              >
+            </div>
+          </div>
+        </div>
+      </ElDialog>
+
+      <!-- nft -->
+      <NFTModalVue v-model="isShowNFTList" @change="chooseNFT" />
     </template>
   </PublishBaseTemplateVue>
   <!-- <ElDialog
@@ -90,52 +136,11 @@
       </div>
     </div>
   </ElDialog> -->
-
-  <!-- Topic -->
-  <ElDialog v-model="isShowTopic" class="sm none-header none-padding" @open="getHotTopics">
-    <div class="topic">
-      <div class="header flex flex-align-center">
-        <div class="flex1">
-          <a class="back flex flex-align-center flex-pack-center" @click="back"
-            ><Icon name="down"
-          /></a>
-        </div>
-        <div>
-          <a
-            class="confirm main-border primary"
-            :class="{ faded: topic === '' }"
-            @click="confirmTopic"
-            >{{ $t('Confirm') }}</a
-          >
-        </div>
-        <div class="title">{{ $t('Buzz.topic.topics') }}</div>
-      </div>
-
-      <div class="input">
-        <div class="title">{{ $t('Buzz.topic.inputTitle') }}</div>
-        <div class="cont">
-          <input type="text" v-model="topic" :placeholder="$t('Buzz.topic.inputPlaceholder')" />
-        </div>
-      </div>
-
-      <div class="hot-topic">
-        <div class="title">{{ $t('Buzz.topic.hotTopics') }}</div>
-        <div class="topic-list">
-          <a class="topic-item" v-for="item in topics" :key="item.tag" @click="topic = item.tag">{{
-            item.tag
-          }}</a>
-        </div>
-      </div>
-    </div>
-  </ElDialog>
-
-  <!-- nft -->
-  <NFTModalVue v-model="isShowNFTList" @change="chooseNFT" />
 </template>
 
 <script setup lang="ts">
 import { AttachmentItem } from '@/@types/hd-wallet'
-import { NodeName } from '@/enum'
+import { IsEncrypt, JobStatus, NodeName } from '@/enum'
 import { useLayoutStore } from '@/stores/layout'
 import { useUserStore } from '@/stores/user'
 import { FileToAttachmentItem, getAttachmentsMark } from '@/utils/util'
@@ -149,6 +154,11 @@ import QuoteVue from './Quote.vue'
 import { GetBuzz, GetHotTopics } from '@/api/aggregation'
 import NFTModalVue from '@/components/NFTModal/NFTModal.vue'
 import PublishBaseTemplateVue from '@/components/PublishBaseTemplate/PublishBaseTemplate.vue'
+import { BuzzItem } from '@/@types/common'
+import { buildLibraryClass } from 'mvc-scrypt/dist/contract'
+import { useJobsStore } from '@/stores/jobs'
+import { getOneBuzz } from '@/api/buzz'
+import { string } from 'yup'
 
 const attachments: (AttachmentItem | string)[] = reactive([])
 const respostBuzz: { val: null | BuzzItem } = reactive({ val: null })
@@ -156,6 +166,7 @@ const content = ref('')
 
 const layout = useLayoutStore()
 const userStore = useUserStore()
+const jobsStore = useJobsStore()
 const i18n = useI18n()
 const router = useRouter()
 
@@ -301,36 +312,123 @@ async function submit() {
   }
   loading.value = true
   const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
+  const contentType = 'text/plain'
   const res = await userStore.showWallet
-    .createBrfcChildNode({
-      nodeName: NodeName.SimpleMicroblog,
-      data: JSON.stringify({
-        content: content.value,
-        contentType: 'text/plain',
-        quoteTx: respostBuzz.val ? respostBuzz.val.txId : '',
-        attachments: getAttachmentsMark(attachments),
-        mention: [],
-      }),
-      attachments: attachments.length && typeof attachments[0] === 'string' ? [] : attachments,
-      payTo: respostBuzz.val ? [{ amount: payAmount, address: respostBuzz.val?.zeroAddress }] : [],
-    })
+    .createBrfcChildNode(
+      {
+        nodeName: NodeName.SimpleMicroblog,
+        data: JSON.stringify({
+          content: content.value,
+          contentType: contentType,
+          quoteTx: respostBuzz.val ? respostBuzz.val.txId : '',
+          attachments: getAttachmentsMark(attachments),
+          mention: [],
+        }),
+        attachments: attachments.length && typeof attachments[0] === 'string' ? [] : attachments,
+        payTo: respostBuzz.val
+          ? [{ amount: payAmount, address: respostBuzz.val?.zeroAddress }]
+          : [],
+      },
+      {
+        useQueue: true,
+      }
+    )
     .catch(error => {
       ElMessage.error(error.message)
       loading.value = false
     })
 
   if (res) {
-    Mitt.emit(MittEvent.AddBuzz, { txId: res.currentNode!.txId })
+    const watchJobStatus = watch(
+      () => jobsStore.waitingNotify.find(job => job.id === res.subscribeId)?.status,
+      status => {
+        if (status === JobStatus.Success) {
+          watchJobStatus()
+          GetBuzz({
+            txId: res.currentNode!.txId,
+            metaId: userStore.user!.metaId,
+          }).then(respones => {
+            if (respones.data.results.items.length) {
+              Mitt.emit(MittEvent.UpdateBuzz, respones.data.results.items[0])
+            }
+          })
+        } else if (status === JobStatus.Failed) {
+          watchJobStatus()
+          Mitt.emit(MittEvent.RemoveBuzz, { txId: res.currentNode!.txId })
+        }
+      }
+    )
+    Mitt.emit(MittEvent.AddBuzz, {
+      applauseCount: 0,
+      attachments: [...attachments],
+      avatarTxId: userStore.user!.avatarTxId,
+      avatarType: userStore.user!.avatarType,
+      avatarImage: userStore.user!.avatarImage,
+      blockHeight: -1,
+      comment: [],
+      commentCount: 0,
+      confirmState: 0,
+      content: content.value,
+      contentType: contentType,
+      data: '',
+      displayType: 'SimpleMicroblog',
+      donate: [],
+      encrypt: IsEncrypt.No,
+      history: [],
+      isEdit: false,
+      isFull: false,
+      isNew: true,
+      isSelling: false,
+      isMyFollow: true,
+      isValid: false,
+      like: [],
+      likeCount: 0,
+      metaAccessCodeHash: '',
+      metaAccessContentAmount: '',
+      metaAccessContentEncryptContent: '',
+      metaAccessContentOwnerAvatarTxId: '',
+      metaAccessContentOwnerAvatarType: '',
+      metaAccessContentOwnerMetaId: '',
+      metaAccessContentOwnerName: '',
+      metaAccessContentRevenueAmount: 0,
+      metaAccessGenesisId: '',
+      metaAccessHasPay: '',
+      metaAccessMetanetId: '',
+      metaAccessPayTx: '',
+      metaAccessPutAway: false,
+      metaAccessSellTx: '',
+      metaAccessServiceConfigMetanetId: '',
+      metaAccessServiceConfigTxId: '',
+      metaAccessServiceFee: '',
+      metaAccessServiceMetaId: '',
+      metaAccessServiceName: '',
+      metaAccessServiceUrl: '',
+      metaAccessTokenIndex: '',
+      metaAccessTxId: '',
+      metaId: '',
+      metanetId: '',
+      protocol: 'SimpleMicroblog',
+      publicKey: '',
+      quoteItem: null,
+      rePost: [],
+      rePostCount: 0,
+      serverCode: '',
+      serverPublicKey: '',
+      timestamp: new Date().getTime(),
+      totalValue: 0,
+      txId: res.currentNode!.txId,
+      userName: userStore!.user!.name,
+      zeroAddress: userStore!.user!.address,
+      postTag: 'buzz',
+      postTagId: '',
+    })
     content.value = ''
     attachments.length = 0
     loading.value = false
     layout.$patch({ isShowPublishBuzz: false })
     ElMessage.success(i18n.t('Buzz.publish.success'))
     router.push({
-      name: 'buzzDetail',
-      params: {
-        txId: res.currentNode!.txId,
-      },
+      name: 'buzz',
     })
   } else {
     // 取消

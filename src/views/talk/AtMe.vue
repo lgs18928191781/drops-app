@@ -24,7 +24,7 @@
 <script setup lang="ts">
 import { useTalkStore } from '@/stores/talk'
 import { defineAsyncComponent, onBeforeUnmount, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import DirectContactList from './components/DirectContactList.vue'
 import AtMeHeader from './components/AtMeHeader.vue'
 import TheInput from './components/TheInput.vue'
@@ -36,11 +36,19 @@ const MessageList = defineAsyncComponent({
 
 const route = useRoute()
 const talk = useTalkStore()
+const router = useRouter()
 
 const { channelId } = route.params
 
 onMounted(async () => {
   await talk.initCommunity('@me')
+
+  // 如果是私聊且没有会话，则跳转至虚空页
+  if (talk.activeCommunityChannels.length === 0) {
+    router.push('/talk/channels/@me/the-void')
+    return
+  }
+
   await talk.initChannel('@me', channelId as string)
   await talk.initChannelMessages(talk.selfMetaId)
 })

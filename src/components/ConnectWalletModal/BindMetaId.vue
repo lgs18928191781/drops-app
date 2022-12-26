@@ -77,7 +77,7 @@
         <div class="title">
           {{
             status === BindStatus.BindHavedMetaId
-              ? $t('Login.bindMetaId.bindHavedMetaId')
+              ? $t('Login.bindMetaId.Link to My MetaID')
               : $t('Login.bindMetaId.bindRegisterMetaId')
           }}
         </div>
@@ -657,8 +657,8 @@ function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
             change: hdWallet.rootAddress,
           })
           if (ethBindBrfc) {
-            await hdWallet.provider.broadcast(transfer.toString())
-            await hdWallet.provider.broadcast(ethBindBrfc.hex)
+            await hdWallet.provider.broadcast(transfer.toString(), true)
+            await hdWallet.provider.broadcast(ethBindBrfc.hex!, true)
 
             resolve()
           }

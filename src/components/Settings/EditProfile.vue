@@ -107,7 +107,13 @@ const form = reactive({
 })
 
 const rule = {
-  name: [{ require: true }],
+  name: [
+    {
+      required: true,
+      message: () => i18n.t('Enter User Name'),
+      trigger: 'blur',
+    },
+  ],
 }
 
 async function confirm() {

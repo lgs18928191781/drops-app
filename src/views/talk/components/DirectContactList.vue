@@ -38,4 +38,8 @@ const layout = useLayoutStore()
 const talkStore = useTalkStore()
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+*::-webkit-scrollbar {
+  width: 0px !important;
+}
+</style>

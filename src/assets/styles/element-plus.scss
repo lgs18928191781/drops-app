@@ -4,7 +4,7 @@
     --el-dialog-bg-color: var(--themeBgSecondColor);
     --el-border-radius-base: 8px;
     --el-font-size-large: 20px;
-    --el-border-color: #BFC2CC;
+    --el-border-color: var(--faded-border-color);
     --el-border-width: 2px;
     --el-color-primary: #FFDC51;
     --el-color-primary-light-5: rgba(255, 220, 81, 0.5);
@@ -14,21 +14,29 @@
     --el-color-primary-light-1: rgba(255, 220, 81, 0.1);
     --el-border-radius-sm: 2px;
     --el-border-radius-big: 12px;
+    --el-fill-color-blank: var(--themeBgColor);
 
 }
 
 html.dark {
     --el-bg-color: var(--themeBgSecondColor);
+    --el-text-color-regular: #fff;
+    --el-border-color: var(--faded-border-color) --el-color-primary: #FFDC51;
+    --el-color-primary-light-5: rgba(255, 220, 81, 0.5);
+    --el-color-primary-light-4: rgba(255, 220, 81, 0.4);
+    --el-color-primary-light-3: rgba(255, 220, 81, 0.3);
+    --el-color-primary-light-2: rgba(255, 220, 81, 0.2);
+    --el-color-primary-light-1: rgba(255, 220, 81, 0.1);
+    --el-fill-color-blank: var(--themeBgColor);
 }
 
 .el-button {
     --el-button-text-color: var(--themeTextColor);
     --el-button-hover-text-color: var(--themeTextColor);
-    --el-button-hover-bg-color: var(--themeBgColor);
-    --el-button-active-border-color: var(--normal-border-color);
-    --el-button-hover-border-color: var(--normal-border-color);
+    --el-button-hover-bg-color: transparent;
+    --el-button-active-border-color: var(--border-color);
+    --el-button-hover-border-color: var(--border-color);
     --el-button-active-color: var(--el-color-primary);
-
     border: var(--standard-border-width) solid var(--border-color);
     padding: 12px 20px;
 
@@ -73,8 +81,8 @@ html.dark {
     }
 
     &.el-button--primary {
-        // --el-button-border-color: var(--themeBtnTextColor);
-        // --el-button-text-color: var(--themeBtnTextColor);
+        --el-button-active-border-color: var(--primary-border-color);
+        --el-button-hover-border-color: var(--primary-border-color);
     }
 
     &.is-disabled {
@@ -92,9 +100,9 @@ html.dark {
 }
 
 .el-input {
-    --el-input-hover-border: var(--themeTextColor);
-    --el-input-focus-border-color: var(--themeTextColor);
-    --el-input-height: 56px;
+    --el-input-hover-border: var(--normal-border-color);
+    --el-input-focus-border-color: var(--normal-border-color);
+    --el-input-height: var(--input-height);
     --el-input-border-radius: var(--el-border-radius-big);
 
 
@@ -102,8 +110,8 @@ html.dark {
 
     .el-input__wrapper {
         transition: all 0.5;
-        border: var(--el-border-width) solid var(--el-border-color);
-        box-shadow: 3px 3px 0 var(--el-border-color);
+        border: var(--el-border-width) solid var(--faded-border-color);
+        box-shadow: 3px 3px 0 var(--faded-border-color);
         padding: 0 12px;
 
         &.is-focus {
@@ -145,6 +153,7 @@ html.dark {
 .el-dialog {
     --el-dialog-width: 912px;
     --el-dialog-border-radius: 24px;
+    --el-dialog-padding-primary: 30px;
     position: relative;
     box-sizing: border-box;
     // border-width: var(--el-border-width);
@@ -194,9 +203,42 @@ html.dark {
         position: relative;
     }
 
+    .el-dialog__header {
+        height: 84px;
+        display: flex;
+        align-items: center;
+        padding: 0 var(--el-dialog-padding-primary);
+        position: relative;
+        margin-right: 0;
+    }
+
     .el-dialog__body {
         color: var(--themeBtnTextColor);
-        padding: 20px 48px;
+        padding: 10px 30px 30px 30px;
+    }
+
+    .el-dialog__headerbtn {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--faded-border-color);
+        top: 50%;
+        margin-top: -17px;
+        right: 0;
+        margin-right: 30px;
+
+        .el-dialog__close {
+            color: var(--themeTextColor);
+        }
+
+        &:hover {
+            background: var(--themeTextColor);
+
+            .el-dialog__close {
+                color: var(--themeBgColor);
+            }
+        }
+
     }
 
     &.none-padding {
@@ -205,6 +247,14 @@ html.dark {
         }
 
     }
+
+    .el-loading-mask {
+        box-shadow: 3px 3px 0 var(--el-mask-color);
+    }
+}
+
+.el-message-box__errormsg {
+    margin-top: 10px;
 }
 
 @media only screen and (max-width: 750PX) {
@@ -275,7 +325,7 @@ html.dark {
 .el-dropdown-menu__item:not(.is-disabled):hover,
 .el-dropdown-menu__item:focus {
     background-color: var(--el-color-primary-light-3) !important;
-    color: var(--themeBtnTextColor) !important;
+    color: var(--themeTextColor) !important;
 }
 
 

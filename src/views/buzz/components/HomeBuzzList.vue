@@ -23,6 +23,13 @@
     @get-more="getMore"
     :pagination="pagination"
     @update-item="updateItem"
+    @remove-item="
+      txId =>
+        list.splice(
+          list.findIndex(item => item.txId === txId),
+          1
+        )
+    "
   />
 
   <RecommendContentVue />
@@ -38,6 +45,7 @@ import { useRoute } from 'vue-router'
 import BuzzListVue from './BuzzList.vue'
 import { Mitt, MittEvent } from '@/utils/mitt'
 import RecommendContentVue from './RecommendContent.vue'
+import { BuzzItem } from '@/@types/common'
 
 // interface Props {}
 // const props = withDefaults(defineProps<Props>(), {})
@@ -61,8 +69,12 @@ function getDatas(isCover = false) {
       if (isCover) list.length = 0
       list.push(...res.data.results.items)
 
-      if (res.data.results.items.length === 0) pagination.nothing = true
-      else pagination.nothing = false
+      if (res.data.results.items.length === 0) {
+        pagination.nothing = true
+      } else {
+        pagination.nothing = false
+        pagination.timestamp = res.data.results.items[res.data.results.items.length - 1].timestamp
+      }
     }
     resolve()
   })

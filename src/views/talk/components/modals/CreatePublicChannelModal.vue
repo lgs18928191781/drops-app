@@ -6,19 +6,19 @@
 
     <template #body>
       <div class="flex flex-col h-full">
-        <p class="mt-4.5 text-base text-dark-400 leading-relaxed text-center">
+        <p class="mt-4.5 text-base text-dark-400 dark:text-gray-200 leading-relaxed text-center">
           {{ $t('Talk.Community.create_public_channel_tip') }}
         </p>
 
         <div class="mt-7.5 w-full">
-          <h4 class="text-lg text-dark-800 capitalize">
+          <h4 class="text-lg  capitalize">
             {{ $t('Talk.Community.channel_name') }}
           </h4>
 
           <div class="mt-3">
             <input
               type="text"
-              class="outline-0 main-border faded-switch !bg-white still w-full p-4.5 text-base"
+              class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-700 still w-full p-4 text-base leading-[24PX] font-bold placeholder:font-normal"
               :placeholder="$t('Talk.Community.channel_name')"
               v-model="form.name"
             />
@@ -27,8 +27,10 @@
 
         <div class="flex items-end justify-end grow lg:mt-8">
           <button
-            class="w-14 h-14 main-border primary flex items-center justify-center text-dark-800"
-            :class="{ 'faded still text-dark-300': !form.isFinished }"
+            class="w-14 h-14 main-border primary flex items-center justify-center"
+            :class="{
+              'faded still text-dark-300  dark:text-gray-400 dark:!bg-gray-700': !form.isFinished,
+            }"
             :disabled="!form.isFinished"
             @click="tryCreateChannel"
           >
@@ -41,7 +43,7 @@
 </template>
 
 <script lang="ts" setup>
-import { GroupChannelType } from '@/enum'
+import { ChannelPublicityType, GroupChannelType } from '@/enum'
 import { useChannelFormStore } from '@/stores/forms'
 import { useLayoutStore } from '@/stores/layout'
 import { useTalkStore } from '@/stores/talk'
@@ -50,8 +52,7 @@ import { useUserStore } from '@/stores/user'
 import { createChannel } from '@/utils/talk'
 import { ShowControl } from '@/enum'
 import BaseModal from './BaseModal.vue'
-import { useRouter } from 'vue-router'
-import { sleep } from '@/utils/util'
+import { realRandomString, sleep } from '@/utils/util'
 
 const form = useChannelFormStore()
 form.type = GroupChannelType.PublicText
@@ -65,12 +66,27 @@ const tryCreateChannel = async () => {
 
   layout.isShowCreatePublicChannelModal = false
   layout.isShowLoading = true
-  await createChannel(form, talk.activeCommunityId, userStore.showWallet)
+
+  const res = await createChannel(form, talk.activeCommunityId, userStore.showWallet)
+
+  // 添加占位频道
+  if (res.status === 'success') {
+    const newChannel: any = {
+      id: 'placeholder_' + realRandomString(8),
+      name: form.name,
+      isPlaceHolder: true,
+      roomType: ChannelPublicityType.Public,
+      subscribeId: res.subscribeId,
+    }
+    // 将占位频道添加到频道列表最前面
+    talk.activeCommunityChannels.unshift(newChannel)
+  }
+
   layout.isShowLoading = false
   form.reset()
 
   sleep(2000).then(() => {
-    talk.refetchChannels()
+    // talk.refetchChannels()
   })
 }
 </script>

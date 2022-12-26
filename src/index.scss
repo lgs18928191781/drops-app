@@ -14,7 +14,7 @@ html {
       'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
 
 
-    color: var(--themeBtnTextColor);
+    color: var(--themeTextColor);
     background: var(--themeBgThreeColor);
 
     user-select: none;
@@ -41,29 +41,25 @@ html {
 
     .slim-scrollbar {
       ::-webkit-scrollbar {
-        width: 0px !important;
+        width: 8px;
       }
 
       ::-webkit-scrollbar-track {
         background: #edeff2;
       }
 
-      // .dark & ::-webkit-scrollbar-track {
-      //   background: #111827;
-      // }
+      .dark & ::-webkit-scrollbar-track {
+        background: #111827;
+      }
 
       ::-webkit-scrollbar-thumb {
         background-color: #bfc2cc;
         border-radius: 20px;
       }
 
-      // .dark & ::-webkit-scrollbar-thumb {
-      //   background-color: #374151;
-      // }
-    }
-
-    .slim-scrollbar::-webkit-scrollbar {
-      width: 0px !important;
+      .dark & ::-webkit-scrollbar-thumb {
+        background-color: #374151;
+      }
     }
 
 
@@ -75,6 +71,28 @@ html {
     #app {}
   }
 
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #edeff2;
+    border-radius: 20px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #bfc2cc;
+    border-radius: 20px;
+  }
+
+  &.dark :not(.no-dark)::-webkit-scrollbar-track {
+    background: #111827 !important;
+  }
+
+  &.dark :not(.no-dark)::-webkit-scrollbar-thumb {
+    background-color: #374151 !important;
+  }
 
 }
 

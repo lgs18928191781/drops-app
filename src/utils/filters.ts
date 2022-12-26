@@ -4,7 +4,10 @@ import Decimal from 'decimal.js-light'
 import { useRootStore } from '@/stores/root'
 import { router } from '@/router'
 
-export function dateTimeFormat(timestamp: Date, format: string = 'YYYY-MM-DD HH:mm:ss') {
+export function dateTimeFormat(
+  timestamp: Date | number | string,
+  format: string = 'YYYY-MM-DD HH:mm:ss'
+) {
   if (!timestamp) {
     return null
   }

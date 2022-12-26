@@ -54,7 +54,7 @@
           {{ i18n.t('Cancel') }}
         </a>
         <a class="main-border flex1 primary" v-if="balance >= useAmount" @click="confirm">
-          {{ i18n.t('Confirm') }}
+          {{ i18n.t('SDK.payconfirm.Confirm') }}
         </a>
         <a class="main-border flex1 primary" v-else @click="toRecharge">
           {{ i18n.t('SDK.payconfirm.Recharge') }}

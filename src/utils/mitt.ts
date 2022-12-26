@@ -3,5 +3,8 @@ export const Mitt = new mitt()
 
 export enum MittEvent {
   AddBuzz = 'AddBuzz',
-  FollowUser = 'AddBuzz',
+  UpdateBuzz = 'UpdateBuzz',
+  RemoveBuzz = 'RemoveBuzz',
+  FollowUser = 'FollowUser',
+  SellNFT = 'SellNFT',
 }

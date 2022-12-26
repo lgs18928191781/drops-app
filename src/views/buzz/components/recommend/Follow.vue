@@ -52,17 +52,19 @@
 <script setup lang="ts">
 import { GetRecommendUsers } from '@/api/aggregation'
 import { useUserStore } from '@/stores/user'
-import { reactive } from 'vue'
+import { reactive, watch } from 'vue'
 import { Loading } from '@element-plus/icons-vue'
-import { NodeName } from '@/enum'
+import { JobStatus, NodeName } from '@/enum'
 import { initPagination } from '@/config'
 import { useI18n } from 'vue-i18n'
+import { useJobsStore } from '@/stores/jobs'
 
 const userStore = useUserStore()
 const i18n = useI18n()
 const users: RecommnedUser[] = reactive([])
 const loading: boolean[] = reactive([])
 const pagination = reactive({ ...initPagination, totalPages: 1, pageSize: 5 })
+const jobsStore = useJobsStore()
 
 function getRecommendUsers() {
   return new Promise<void>(async (resolve, reject) => {
@@ -87,21 +89,38 @@ async function follow(item: RecommnedUser, index: number) {
   loading[index] = true
   const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
   const res = await userStore.showWallet
-    .createBrfcChildNode({
-      nodeName: NodeName.PayFollow,
-      data: JSON.stringify({
-        createTime: new Date().getTime(),
-        MetaID: item.metaId,
-        pay: payAmount,
-        payTo: item.address,
-      }),
-      payTo: [{ amount: payAmount, address: item.address }],
-    })
+    .createBrfcChildNode(
+      {
+        nodeName: NodeName.PayFollow,
+        data: JSON.stringify({
+          createTime: new Date().getTime(),
+          MetaID: item.metaId,
+          pay: payAmount,
+          payTo: item.address,
+        }),
+        payTo: [{ amount: payAmount, address: item.address }],
+      },
+      {
+        useQueue: true,
+      }
+    )
     .catch(error => {
       ElMessage.error(error.message)
       loading[index] = false
     })
   if (res) {
+    const watchJobStatus = watch(
+      () => jobsStore.waitingNotify.find(job => job.id === res.subscribeId)?.status,
+      status => {
+        if (status === JobStatus.Success) {
+          watchJobStatus()
+        } else if (status === JobStatus.Failed) {
+          watchJobStatus()
+          item.isMyFollow = false
+          item.total = item.total - 1
+        }
+      }
+    )
     item.isMyFollow = true
     item.total = item.total + 1
     loading[index] = false

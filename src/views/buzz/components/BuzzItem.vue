@@ -11,11 +11,11 @@
         </span>
       </div>
       <!-- 快速转发 -->
-      <template v-if="itemData.displayType === 'quickRePost'">
+      <template v-if="itemData.protocol === 'SimpleRePost'">
         <div class="forward-head" @click.stop="$filters.toUserHome(itemData.metaId)">
           <ShareIcon />
           <UserAvatar class="head" :meta-id="itemData.metaId" :image="itemData.avatarImage" />
-          <div class="name">{{ itemData.userName }}转发了</div>
+          <div class="name">{{ itemData.userName }}&nbsp;{{ $t('Forwarded') }}</div>
         </div>
       </template>
       <div class="header">
@@ -55,6 +55,9 @@
         </template>
         <template v-else-if="displayItemData.protocol === NodeName.SimplePublicShare">
           <BuzzItemContentSimplePublicShareVue :buzz="displayItemData" />
+        </template>
+        <template v-else-if="displayItemData.protocol === NodeName.SellNft">
+          <BuzzItemContentSellNftVue :buzz="displayItemData" />
         </template>
         <template v-else>
           <BuzzItemContentNormalVue
@@ -122,6 +125,7 @@ import { useI18n } from 'vue-i18n'
 import BuzzItemContentNormalVue from './BuzzItemContentNormal.vue'
 import BuzzItemContentMetaNoteVue from './BuzzItemContentMetaNote.vue'
 import BuzzItemContentSimplePublicShareVue from './BuzzItemContentSimplePublicShare.vue'
+import BuzzItemContentSellNftVue from './BuzzItemContentSellNft.vue'
 
 interface Props {
   data?: BuzzItem
@@ -167,8 +171,8 @@ const displayItemData = computed(() => {
   if (!itemData.value) {
     return null
   }
-  switch (itemData.value.displayType) {
-    case 'quickRePost': {
+  switch (itemData.value.protocol) {
+    case 'SimpleRePost': {
       return itemData.value.quoteItem || null
     }
     default: {

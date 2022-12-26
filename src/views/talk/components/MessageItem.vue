@@ -80,13 +80,15 @@
 
       <div class="w-full py-0.5" v-else-if="isGiveawayRedPacket">
         <div
-          class="max-w-full md:max-w-[50%] lg:max-w-[300PX] shadow rounded-xl cursor-pointer origin-center hover:shadow-md transition-all duration-200 bg-white dark:bg-gray-700 group"
+          class="max-w-full sm:max-w-[300PX] shadow rounded-xl cursor-pointer origin-center hover:shadow-md transition-all duration-200 bg-white dark:bg-gray-700 group"
           :class="[hasRedPacketReceived ? 'opacity-50' : 'hover:animate-wiggle-subtle']"
           @click="handleOpenRedPacket"
         >
           <div
             class="rounded-xl p-4 flex space-x-2 bg-gradient-to-br from-[#FFE8D2] via-[#FFF1B9] to-[#FEFFE3] items-center"
-            :class="[hasRedPacketReceived && 'origin-top -skew-x-12 dark:-skew-x-6 shadow-md']"
+            :class="[
+              hasRedPacketReceived ? 'origin-top -skew-x-12 dark:-skew-x-6 shadow-md' : 'shadow',
+            ]"
           >
             <img :src="giftImage" class="h-12 w-12" loading="lazy" />
             <div class="">
@@ -241,7 +243,11 @@ const redPacketReceiveInfo = computed(() => {
 })
 
 const redPacketMessage = computed(() => {
-  return props.message.data?.content || i18n.t('Talk.Channel.default_red_envelope_message')
+  return (
+    props.message.data?.content ||
+    props.message.content.split(':')[1] ||
+    i18n.t('Talk.Channel.default_red_envelope_message')
+  )
 })
 
 const isMyMessage = computed(() => {
@@ -250,10 +256,18 @@ const isMyMessage = computed(() => {
 
 const handleOpenRedPacket = async () => {
   // 如果用户已经领取过红包，则显示红包领取信息
-  const redPacketInfo = await getOneRedPacket({
+  const params: any = {
     channelId: talk.activeChannelId,
     redPacketId: props.message?.txId,
-  })
+  }
+  const redPacketType = props.message?.data?.requireType
+  console.log({ redPacketType })
+  if (redPacketType === '2') {
+    params.address = talk.selfAddress
+  } else if (redPacketType === '2001') {
+    params.address = userStore.user?.evmAddress
+  }
+  const redPacketInfo = await getOneRedPacket(params)
   const hasReceived = redPacketInfo.payList.some((item: any) => item.metaid === talk.selfMetaId)
 
   if (hasReceived) {
@@ -265,10 +279,10 @@ const handleOpenRedPacket = async () => {
 
     return
   }
-
   // 如果用户未领取过红包，则显示红包领取弹窗
   modals.openRedPacket = {
     message: props.message || '',
+    redPacketInfo,
   }
   layout.isShowRedPacketOpenModal = true
 }

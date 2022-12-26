@@ -1,31 +1,159 @@
 <template>
-  <BaseModal v-model="layout[ShowControl.isShowRedPacketModal]">
+  <BaseModal
+    v-model="layout[ShowControl.isShowRedPacketModal]"
+    v-model:show-second-control="layout[ShowControl.isShowChooseTokenModal]"
+  >
     <template #title>
       {{ $t('Talk.Input.giveaway') }}
     </template>
 
     <template #body>
       <TabGroup>
-        <TabList class="w-full bg-dark-100 rounded-xl text-base flex text-dark-800 font-medium">
+        <TabList class="w-full bg-dark-100 dark:bg-gray-900 rounded-xl text-base flex font-medium">
           <Tab
             class="w-full py-3 capitalize border-2 outline-0 rounded-xl transition-[background-color] duration-150"
             :class="[
-              activeTab === 'redPacket' ? 'border-dark-800 bg-primary' : 'border-transparent',
+              activeTab === 'redPacket'
+                ? 'border-dark-800 dark:border-gray-500 bg-primary text-dark-800'
+                : 'border-transparent',
             ]"
-            @click="activeTab = 'redPacket'"
+            @click="changeTab('redPacket')"
           >
             {{ $t('Talk.Input.for_everyone') }}
           </Tab>
-          <!-- <Tab
+          <Tab
             class="w-full py-3 capitalize border-2 outline-0 rounded-xl transition-[background-color] duration-150"
-            :class="[activeTab === 'nft' ? 'border-dark-800 bg-primary' : 'border-transparent']"
-            @click="activeTab = 'nft'"
-            >{{ $t('Talk.Input.nft_limited') }}</Tab
-          > -->
+            :class="[
+              activeTab === 'nft'
+                ? 'border-dark-800 dark:border-gray-500 bg-primary text-dark-800'
+                : 'border-transparent',
+            ]"
+            @click="changeTab('nft')"
+          >
+            {{ $t('Talk.Input.nft_limited') }}
+          </Tab>
         </TabList>
 
         <TabPanels>
           <!-- 红包 -->
+          <TabPanel class="">
+            <form @submit.prevent="form.submit">
+              <!-- 数量 -->
+              <div class="my-7.5 flex flex-col space-y-5 text-base">
+                <div class="grid grid-cols-4 gap-2 items-center">
+                  <div class="capitalize font-medium">{{ $t('Talk.Input.quantity') }}</div>
+                  <div class="col-span-3">
+                    <input
+                      :placeholder="$t('Talk.Input.enter_quantity')"
+                      type="number"
+                      name="quantity"
+                      min="1"
+                      step="1"
+                      class="main-border w-full p-4 outline-0 faded-switch still dark:bg-gray-700"
+                      v-model="form.quantity"
+                      @blur="form.validateQuantity"
+                    />
+                  </div>
+                </div>
+                <div class="grid grid-cols-4 gap-2 items-center">
+                  <div class="capitalize font-medium flex items-center space-x-0.5">
+                    <span>{{ $t('Talk.Input.total') }}</span>
+
+                    <Popover class="relative h-4">
+                      <PopoverButton>
+                        <Icon
+                          name="question_mark_circle"
+                          class="w-4 h-4 text-gray-700 dark:text-gray-300"
+                        />
+                      </PopoverButton>
+
+                      <PopoverPanel
+                        class="absolute z-50 bg-white dark:bg-gray-700 rounded-lg shadow-md text-sm p-2 w-60"
+                      >
+                        {{ $t('Talk.Input.total_explain') }}
+                      </PopoverPanel>
+                    </Popover>
+                  </div>
+                  <div class="col-span-3 relative flex items-center">
+                    <input
+                      type="number"
+                      placeholder="0"
+                      class="main-border w-full p-4 outline-0 faded-switch still dark:bg-gray-700"
+                      v-model="form.amount"
+                      @blur="form.validateAmount"
+                    />
+                    <div class="absolute right-0 z-10">
+                      <Menu as="div" class="relative inline-block">
+                        <div class="">
+                          <MenuButton
+                            class="text-base flex items-center font-medium px-3 py-1 outline-0"
+                            @click="isShowSelectTokenModal = !isShowSelectTokenModal"
+                          >
+                            <span>Sats</span>
+                            <Icon name="chevron_right" class="w-5 h-5 text-dark-480" />
+                          </MenuButton>
+                        </div>
+
+                        <transition
+                          enter-active-class="transition duration-100 ease-out"
+                          enter-from-class="transform scale-95 opacity-50 translate-y-[-10%]"
+                          enter-to-class="transform scale-100 opacity-100"
+                          leave-active-class="transition duration-75 ease-in"
+                          leave-from-class="transform scale-100 opacity-100"
+                          leave-to-class="transform scale-95 opacity-50 translate-y-[-10%]"
+                        >
+                          <MenuItems
+                            class="absolute p-2 bg-white right-0 translate-y-[20PX] rounded-xl shadow-lg z-50 main-border still w-36  dark:!bg-gray-700"
+                          >
+                            <MenuItem v-slot="{ active }">
+                              <button class="p-2">Space Sats</button>
+                            </MenuItem>
+                            <!-- <MenuItem v-slot="{ active }">
+                            <button class="p-2">MC</button>
+                          </MenuItem>
+                          <MenuItem v-slot="{ active }">
+                            <button class="p-2">ShowCoin</button>
+                          </MenuItem> -->
+                          </MenuItems>
+                        </transition>
+                      </Menu>
+                    </div>
+                  </div>
+                </div>
+                <div class="grid grid-cols-4 gap-2 items-center">
+                  <div class="capitalize font-medium">{{ $t('Talk.Input.blessings') }}</div>
+                  <div class="col-span-3">
+                    <input
+                      type="text"
+                      :placeholder="$t('Talk.Input.best_wishes')"
+                      class="main-border w-full p-4 outline-0 faded-switch still dark:bg-gray-700"
+                      v-model="form.message"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="my-7.5 flex justify-center items-baseline space-x-1">
+                <div class="text-4xl font-bold">{{ form.nicerAmount }}</div>
+                <div class="text-base">{{ form.amountUnit }}</div>
+              </div>
+
+              <div class="w-full">
+                <button
+                  class="main-border uppercase font-medium text-base w-full py-3 primary"
+                  @click="form.submit"
+                >
+                  {{ $t('Talk.Input.send') }}
+                </button>
+              </div>
+
+              <div class="w-full mt-4 text-xs text-dark-300 text-center">
+                {{ $t('Talk.Input.red_packet_refund_tip') }}
+              </div>
+            </form>
+          </TabPanel>
+
+          <!-- NFT -->
           <TabPanel class="">
             <div class="my-7.5 flex flex-col space-y-5 text-base">
               <div class="grid grid-cols-4 gap-2 items-center">
@@ -36,19 +164,38 @@
                     type="number"
                     min="1"
                     step="1"
-                    class="main-border w-full p-4 outline-0 faded-switch still"
+                    class="main-border w-full p-4 outline-0 faded-switch still dark:bg-gray-700"
                     v-model="form.quantity"
+                    @blur="form.validateQuantity"
                   />
                 </div>
               </div>
               <div class="grid grid-cols-4 gap-2 items-center">
-                <div class="capitalize font-medium">{{ $t('Talk.Input.total') }}</div>
+                <div class="capitalize font-medium flex items-center space-x-0.5">
+                  <span>{{ $t('Talk.Input.amount_each') }}</span>
+
+                  <Popover class="relative h-4">
+                    <PopoverButton>
+                      <Icon
+                        name="question_mark_circle"
+                        class="w-4 h-4 text-gray-700 dark:text-gray-300"
+                      />
+                    </PopoverButton>
+
+                    <PopoverPanel
+                      class="absolute z-50 bg-white dark:bg-gray-700 rounded-lg shadow-md text-sm p-2 w-60"
+                    >
+                      {{ $t('Talk.Input.amount_each_explain') }}
+                    </PopoverPanel>
+                  </Popover>
+                </div>
                 <div class="col-span-3 relative flex items-center">
                   <input
                     type="number"
                     placeholder="0"
-                    class="main-border w-full p-4 outline-0 faded-switch still"
-                    v-model="form.amount"
+                    class="main-border w-full p-4 outline-0 faded-switch still dark:bg-gray-700"
+                    v-model="form.each"
+                    @blur="form.validateEach"
                   />
                   <div class="absolute right-0 z-10">
                     <Menu as="div" class="relative inline-block">
@@ -57,7 +204,7 @@
                           class="text-base flex items-center font-medium px-3 py-1 outline-0"
                           @click="isShowSelectTokenModal = !isShowSelectTokenModal"
                         >
-                          <span>Space</span>
+                          <span>Sats</span>
                           <Icon name="chevron_right" class="w-5 h-5 text-dark-480" />
                         </MenuButton>
                       </div>
@@ -71,10 +218,10 @@
                         leave-to-class="transform scale-95 opacity-50 translate-y-[-10%]"
                       >
                         <MenuItems
-                          class="absolute p-2 bg-white right-0 translate-y-[20PX] rounded-xl shadow-lg z-50 main-border still"
+                          class="absolute p-2 bg-white right-0 translate-y-[20PX] rounded-xl shadow-lg z-50 main-border still w-36 dark:!bg-gray-700"
                         >
                           <MenuItem v-slot="{ active }">
-                            <button class="p-2">Space</button>
+                            <button class="p-2">Space Sats</button>
                           </MenuItem>
                           <!-- <MenuItem v-slot="{ active }">
                             <button class="p-2">MC</button>
@@ -94,76 +241,69 @@
                   <input
                     type="text"
                     :placeholder="$t('Talk.Input.best_wishes')"
-                    class="main-border w-full p-4 outline-0 faded-switch still"
+                    class="main-border w-full p-4 outline-0 faded-switch still dark:bg-gray-700"
                     v-model="form.message"
                   />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-4 gap-2 items-center">
+                <div class="capitalize font-medium">
+                  {{ $t('Talk.Input.required_nft') }}
+                </div>
+                <div class="col-span-3">
+                  <button
+                    class="outline-0 main-border w-full px-4 py-3 text-base flex justify-between items-center dark:!bg-gray-700"
+                    :class="[!form.nft && 'faded !bg-white dark:!bg-gray-700']"
+                    @click="layout.isShowChooseTokenModal = !layout.isShowChooseTokenModal"
+                  >
+                    <div class="flex items-center gap-x-3">
+                      <template v-if="form.nft">
+                        <div class="w-8 h-8 rounded-full">
+                          <Image
+                            :src="form.nft.nftIcon"
+                            customClass="w-8 h-8 box-content rounded"
+                          />
+                        </div>
+
+                        <span class="text-sm ">
+                          {{ form.nft.nftSeriesName }}
+                        </span>
+                      </template>
+                      <template v-else>
+                        <Icon
+                          name="nft_symbol"
+                          class="w-6 h-6 text-dark-300 dark:text-gray-400 box-content group-hover:text-dark-800"
+                        />
+
+                        <span class="text-sm text-dark-400 dark:text-gray-200">{{
+                          $t('Talk.Input.choose_nft')
+                        }}</span>
+                      </template>
+                    </div>
+
+                    <Icon
+                      name="chevron_right"
+                      class="w-6 h-6  lg:text-dark-300 lg:dark:text-gray-400 lg:group-hover:text-dark-800 dark:lg:group-hover:text-gray-100 -mr-2 transition-all duration-200"
+                    />
+                  </button>
                 </div>
               </div>
             </div>
 
             <div class="my-7.5 flex justify-center items-baseline space-x-1">
-              <div class="text-4xl font-bold">{{ form.nicerAmount }}</div>
+              <div class="text-4xl font-bold">{{ form.each * form.quantity }}</div>
               <div class="text-base">{{ form.amountUnit }}</div>
             </div>
 
             <div class="w-full">
               <button
                 class="main-border uppercase font-medium text-base w-full py-3 primary"
+                :class="{
+                  'faded still text-dark-300 dark:!text-gray-400 dark:!bg-gray-700': !form.isFinished,
+                }"
                 @click="form.submit"
-              >
-                {{ $t('Talk.Input.send') }}
-              </button>
-            </div>
-
-            <div class="w-full mt-4 text-xs text-dark-300 text-center">
-              {{ $t('Talk.Input.red_packet_refund_tip') }}
-            </div>
-          </TabPanel>
-
-          <!-- NFT -->
-          <TabPanel class="">
-            <div class="my-7.5 flex flex-col space-y-5 text-base">
-              <div class="grid grid-cols-4 gap-2 items-center">
-                <div class="capitalize font-medium">{{ $t('Talk.Input.quantity') }}</div>
-                <div class="col-span-3">
-                  <input
-                    type="number"
-                    :placeholder="$t('Talk.Input.enter_quantity')"
-                    class="main-border w-full p-4 outline-0 faded-switch still"
-                  />
-                </div>
-              </div>
-              <div class="grid grid-cols-4 gap-2 items-center">
-                <div class="capitalize font-medium">{{ $t('Talk.Input.total') }}</div>
-                <div class="col-span-3">
-                  <input
-                    type="text"
-                    placeholder="0"
-                    min="0"
-                    class="main-border w-full p-4 outline-0 faded-switch still"
-                  />
-                </div>
-              </div>
-              <div class="grid grid-cols-4 gap-2 items-center">
-                <div class="capitalize font-medium">{{ $t('Talk.Input.blessings') }}</div>
-                <div class="col-span-3">
-                  <input
-                    type="text"
-                    :placeholder="$t('Talk.Input.best_wishes')"
-                    class="main-border w-full p-4 outline-0 faded-switch still"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div class="my-7.5 flex justify-center items-baseline space-x-1">
-              <div class="text-4xl font-bold">{{ form.nicerAmount }}</div>
-              <div class="text-base">Space</div>
-            </div>
-
-            <div class="w-full">
-              <button
-                class="main-border uppercase font-medium tracking-wider text-base w-full py-4 primary"
+                :disabled="!form.isFinished"
               >
                 {{ $t('Talk.Input.send') }}
               </button>
@@ -175,6 +315,122 @@
           </TabPanel>
         </TabPanels>
       </TabGroup>
+    </template>
+
+    <template #secondTitle>
+      <div class="flex items-center space-x-3">
+        <Listbox v-model="selectedChain">
+          <div class="relative mt-1">
+            <ListboxButton
+              class="relative w-full px-2 py-1 text-center focus:outline-none rounded-xl text-sm border border-solid border-dark-200 dark:border-gray-600 dark:text-gray-100 flex items-center space-x-1"
+              v-slot="{ open }"
+            >
+              <div class="w-7.5 h-7.5 shrink-0 flex items-center justify-center">
+                <img :src="selectedChain.icon" class="h-full" />
+              </div>
+              <span class="block truncate w-12 text-left">{{ selectedChain.name }}</span>
+              <Icon
+                name="chevron_right"
+                :class="[
+                  open && 'rotate-90',
+                  'w-4 h-4 text-dark-400 dark:text-gray-200 transition duration-200',
+                ]"
+              />
+            </ListboxButton>
+
+            <transition
+              enter-active-class="transition duration-100 ease-out"
+              enter-from-class="transform scale-95 opacity-0 -translate-y-1/2"
+              enter-to-class="transform scale-100 opacity-100"
+              leave-active-class="transition duration-75 ease-out"
+              leave-from-class="transform scale-100 opacity-100"
+              leave-to-class="transform scale-95 opacity-0"
+            >
+              <ListboxOptions
+                class="absolute mt-2 max-h-60 overflow-auto rounded-xl bg-white dark:bg-gray-600 py-2 text-base shadow-md focus:outline-none z-50 border border-solid border-dark-100 dark:border-gray-600 dark:shadow-blue-100/20"
+              >
+                <ListboxOption
+                  v-slot="{ active, selected }"
+                  v-for="chain in chains"
+                  :key="chain.name"
+                  :value="chain"
+                  as="template"
+                >
+                  <li
+                    :class="[
+                      'relative select-none py-2 p-7.5 text-dark-800 dark:text-gray-100 cursor-pointer flex items-center justify-between min-w-fit group w-45',
+                    ]"
+                  >
+                    <div class="flex items-center space-x-1">
+                      <div class="w-7.5 h-7.5 shrink-0 flex items-center justify-center">
+                        <img :src="chain.icon" class="h-full" />
+                      </div>
+
+                      <span class="shrink-0 group-hover:underline">
+                        {{ chain.name }}
+                      </span>
+                    </div>
+
+                    <Icon
+                      name="check_bold"
+                      v-if="selected"
+                      class="w-3 h-3 inline bg-primary rounded-md p-1 box-content"
+                    />
+                  </li>
+                </ListboxOption>
+              </ListboxOptions>
+            </transition>
+          </div>
+        </Listbox>
+
+        <div class="text-left">{{ $t('Talk.Community.choose_nft') }}</div>
+      </div>
+    </template>
+
+    <template #secondBody>
+      <p
+        class="text-sm text-dark-400 dark:text-gray-200 pb-4.5 border-b border-solid border-dark-200 dark:border-gray-600"
+      >
+        {{ $t('Talk.Input.choose_nft_red_packet_tip') }}
+      </p>
+
+      <!-- NFT -->
+      <div class="h-full">
+        <div
+          v-if="fetching"
+          class="w-full h-full flex items-center justify-center flex-col gap-y-4"
+        >
+          <img :src="DogWalking" class="w-48 h-48" alt="" />
+          <div class="flex items-center space-x-2">
+            <Icon name="loading" class="w-4 h-4 animate-spin text-dark-400 dark:!text-gray-200" />
+            <div class="text-dark-400 dark:text-gray-200 text-base font-medium">
+              {{ $t('Talk.Modals.loading') }}
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col mt-6" v-else-if="nftSeries.length > 0">
+          <div
+            v-for="nft in nftSeries"
+            :key="nft.nftSeriesName"
+            class="flex space-x-3 items-center cursor-pointer hover:bg-dark-100 dark:hover:bg-gray-900 rounded p-2"
+            @click="selectNft(nft)"
+          >
+            <Image
+              :src="nft.nftIcon"
+              customClass="rounded-xl h-13.5 w-13.5 object-contain object-center"
+            />
+            <div class="text-base ">
+              {{ nft.nftSeriesName }}
+            </div>
+          </div>
+        </div>
+        <div class="w-full h-full flex items-center justify-center flex-col gap-y-8" v-else>
+          <img :src="Cat" class="w-36 h-36" alt="" />
+          <div class="text-dark-400 dark:text-gray-200 text-base font-medium">
+            {{ $t('Talk.Community.no_nft_available') }}
+          </div>
+        </div>
+      </div>
     </template>
   </BaseModal>
 </template>
@@ -190,16 +446,114 @@ import {
   MenuButton,
   MenuItems,
   MenuItem,
+  Listbox,
+  ListboxButton,
+  ListboxOptions,
+  ListboxOption,
+  Popover,
+  PopoverButton,
+  PopoverPanel,
 } from '@headlessui/vue'
-import { computed, ref, watch } from 'vue'
-import { ShowControl } from '@/enum'
+import { ref, watch, Ref, watchEffect, onMounted } from 'vue'
+import { object, number } from 'yup'
+import { useForm } from 'vee-validate'
+import { RedPacketDistributeType, ShowControl } from '@/enum'
 import BaseModal from '../BaseModal.vue'
+import Cat from '@/assets/images/cat.svg?url'
+import DogWalking from '@/assets/images/dog_walking.svg?url'
+import ETH from '@/assets/images/eth.png'
+import MVC from '@/assets/images/iocn_mvc.png'
 
 import { useLayoutStore } from '@/stores/layout'
 import { useRedPacketFormStore } from '@/stores/forms'
+import { useUserStore } from '@/stores/user'
+import { GetNFTs } from '@/api/aggregation'
+import { showLoading } from '@/utils/util'
 
 const layout = useLayoutStore()
+const userStore = useUserStore()
+
+const activeTab = ref('redPacket')
+const changeTab = (tab: string) => {
+  activeTab.value = tab
+  if (tab === 'redPacket') {
+    form.type = RedPacketDistributeType.Random
+  } else {
+    form.type = RedPacketDistributeType.Nft
+  }
+}
+
 const form = useRedPacketFormStore()
+/** 验证 */
+const normalSchema = object({
+  quantity: number()
+    .required()
+    .min(1)
+    .max(100),
+})
+const easySchema = {
+  quantity(value: number) {
+    if (value < 1 || value > 100) {
+      return '数量必须在1-100之间'
+    }
+    return true
+  },
+}
+const { errors } = useForm({
+  validationSchema: easySchema,
+})
+
+/** ------ */
+
+const chains = ref([
+  {
+    id: 1,
+    name: 'MVC',
+    icon: MVC,
+    value: 'mvc',
+  },
+])
+const selectedChain = ref(chains.value[0])
+
+const nftSeries: Ref<any[]> = ref([])
+const fetching = ref(false)
+const fetchNftSeries = async () => {
+  let selfAddress: string
+  switch (selectedChain.value.value) {
+    case 'mvc':
+      selfAddress = userStore.user!.address
+      break
+    case 'eth':
+      selfAddress = userStore.user?.evmAddress as string
+      break
+    case 'goerli':
+      selfAddress = userStore.user?.evmAddress as string
+      break
+    default:
+      selfAddress = userStore.user!.address
+      break
+  }
+
+  const {
+    data: {
+      results: { items: _nfts },
+    },
+  } = await GetNFTs({
+    address: selfAddress,
+    chain: selectedChain.value.value,
+    page: 1,
+    pageSize: 100,
+  })
+  nftSeries.value = _nfts
+}
+watchEffect(async () => {
+  await showLoading(fetchNftSeries, fetching)
+})
+const selectNft = (nft: any) => {
+  form.nft = nft
+  form.chain = selectedChain.value.value
+  layout.isShowChooseTokenModal = false
+}
 
 watch(
   () => form.amount,
@@ -211,5 +565,14 @@ watch(
   }
 )
 
-const activeTab = ref('redPacket')
+onMounted(() => {
+  if (userStore.user?.evmAddress) {
+    chains.value.push({
+      id: 2,
+      name: 'Goerli',
+      icon: ETH,
+      value: import.meta.env.VITE_ETH_CHAIN,
+    })
+  }
+})
 </script>
