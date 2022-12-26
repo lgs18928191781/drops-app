@@ -137,7 +137,7 @@
       "red_packet_require_nft": "所需 NFT"
     },
     "Channel": {
-      "members": "成员",
+      "core_members": "核心成员",
       "join_channel": "加入了频道",
       "leave_channel": "离开了频道",
       "come_get_red_envelope": "领取红包",

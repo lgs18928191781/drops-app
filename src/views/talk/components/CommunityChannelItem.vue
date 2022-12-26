@@ -8,7 +8,7 @@
     @click="goChannel()"
   >
     <span
-      class="absolute right-0 top-0 h-full flex items-start top-0 bg-red-500 w-2.5 h-2.5 rounded-full -translate-y-1/3 translate-x-1/3"
+      class="absolute right-0 top-0 flex items-start bg-red-500 w-2.5 h-2.5 rounded-full -translate-y-1/3 translate-x-1/3"
       v-if="talk.hasUnreadMessagesOfChannel(channel.id)"
     >
     </span>

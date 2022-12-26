@@ -420,7 +420,7 @@ const consentTabs = ref([
     id: 1,
     name: 'NFT',
     panelTitle: i18n.t('Talk.Community.choose_nft'),
-    secondTitle: i18n.t('Talk.Community.choose_nft'),
+    secondTitle: i18n.t('Talk.Community.choose_nft_series'),
     secondTip: i18n.t('Talk.Community.choose_nft_tip'),
     buttonText: i18n.t('Talk.Community.choose_nft_as_consent'),
   },

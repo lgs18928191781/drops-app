@@ -6,7 +6,7 @@
     :full-screen="true"
   >
     <template #title>
-      {{ $t('Talk.Modals.enter_password') }}
+      {{ $t('Talk.Modals.join_pass_channel') }}
     </template>
 
     <template #body>
