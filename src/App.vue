@@ -1,6 +1,6 @@
 <template>
   <div class="main flex">
-    <LeftNavigationVue />
+    <LeftNavigationVue v-if="!blackRoute.includes(route.name)" />
     <div class="flex1 main-right">
       <RouterView v-slot="{ Component, route }">
         <KeepAlive>
@@ -24,16 +24,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, reactive } from 'vue'
 import ConnectWalletModalVue from './components/ConnectWalletModal/ConnectWalletModal.vue'
 import LeftNavigationVue from './components/LeftNavigation/LeftNavigation.vue'
 import DragonBall from './views/talk/components/DragonBall.vue'
 import { useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
-
+import { useRoute } from 'vue-router'
 const rootStore = useRootStore()
 const userStore = useUserStore()
-
+const route = useRoute()
+const blackRoute = reactive(['home'])
 const routeKey = (route: any) => {
   if (route.params.communityId) return route.params.communityId
 

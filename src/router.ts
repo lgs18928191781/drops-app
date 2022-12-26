@@ -8,8 +8,21 @@ export const router = createRouter({
   history: routerHistory,
   strict: true,
   routes: [
-    { path: '/', name: 'home', redirect: '/buzz' },
-    // { path: '/', component: () => import('@/views/Home.vue') },
+    {
+      path: '/',
+      redirect: () => {
+        const userStroe = useUserStore()
+        if (userStroe.isAuthorized) {
+          return { name: 'buzzIndex' }
+        } else {
+          return { name: 'home' }
+        }
+      },
+      children: [],
+    },
+
+    // { path: '/', name: 'home', redirect: '/buzz' },
+    { path: '/home', name: 'home', component: () => import('@/views/home/index.vue') },
     {
       path: '/buzz',
       name: 'buzz',
