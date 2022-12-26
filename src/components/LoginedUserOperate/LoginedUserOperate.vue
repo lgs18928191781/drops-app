@@ -263,7 +263,7 @@
                         params: {
                           chain: currentChain,
                           genesis: nft.nftGenesis,
-                          codehash: nft.nftCodehash ? nft.nftCodehash : 'goerli',
+                          codehash: nft.nftCodehash ? nft.nftCodehash : currentChain,
                           tokenIndex: nft.nftTokenIndex,
                         },
                       }"
@@ -309,6 +309,7 @@ import { useLayoutStore } from '@/stores/layout'
 import { copy } from '@/utils/util'
 import ETH from '@/assets/images/eth.png'
 import MVC from '@/assets/images/iocn_mvc.png'
+import POLYGON from '@/assets/images/polygon.png'
 import ME from '@/assets/images/me_logo.png'
 import { GetMyMEBalance } from '@/api/v3'
 import { Loading } from '@element-plus/icons-vue'
@@ -391,6 +392,7 @@ const isShowChains = ref(false)
 const chains = reactive([
   { name: 'MVC', icon: MVC, value: 'mvc' },
   { name: 'ETH', icon: ETH, value: import.meta.env.VITE_ETH_CHAIN },
+  { name: 'POLYGON', icon: POLYGON, value: import.meta.env.VITE_POLYGON_CHAIN },
 ])
 const currentChain = ref('mvc')
 

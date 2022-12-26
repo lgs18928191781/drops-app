@@ -1,4 +1,5 @@
 <template>
+  <div @click="deploy">部署新合约</div>
   <div class="main flex">
     <LeftNavigationVue />
     <div class="flex1 main-right">
@@ -29,7 +30,8 @@ import ConnectWalletModalVue from './components/ConnectWalletModal/ConnectWallet
 import LeftNavigationVue from './components/LeftNavigation/LeftNavigation.vue'
 import { useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
-
+//@ts-ignore
+import { deployContract } from '@/assets/test/deploy.js'
 const rootStore = useRootStore()
 const userStore = useUserStore()
 
@@ -37,6 +39,10 @@ const routeKey = (route: any) => {
   if (route.params.communityId) return route.params.communityId
 
   return route.fullPath
+}
+
+function deploy() {
+  deployContract()
 }
 </script>
 <style lang="css" src="@/assets/styles/tailwind.css"></style>

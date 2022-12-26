@@ -29,7 +29,7 @@ import { TxComposer } from 'meta-contract/dist/tx-composer'
 import { Address, Script, Transaction } from 'meta-contract/dist/mvc'
 import { DEFAULTS } from './wallet/hd-wallet'
 import { useJobsStore } from '@/stores/jobs'
-
+import { currentSupportChain } from '@/config'
 export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   console.log('start')
   // communityId, name, description, cover, metaName, mateNameNft, admins, reserved, icon
@@ -298,7 +298,7 @@ const _getChannelTypeInfo = (form: any, selfMetaId: string) => {
       status = encrypt(selfMetaId.substring(0, 16), MD5Hash(form.nft.nftGenesis).substring(0, 16))
       codehash = form.nft.nftCodehash
       genesis = form.nft.nftGenesis
-      if (form.chain === 'eth' || form.chain === 'goerli') {
+      if (currentSupportChain.some(item => form.chain == item.chainName)) {
         type = '2001'
       } else {
         type = '2'

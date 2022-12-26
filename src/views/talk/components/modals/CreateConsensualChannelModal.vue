@@ -474,6 +474,12 @@ const fetchNftSeries = async () => {
     case 'goerli':
       selfAddress = userStore.user?.evmAddress as string
       break
+    case 'polygon':
+      selfAddress = userStore.user?.evmAddress as string
+      break
+    case 'mumbai':
+      selfAddress = userStore.user?.evmAddress as string
+      break
     default:
       selfAddress = userStore.user!.address
       break

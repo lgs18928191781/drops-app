@@ -83,6 +83,12 @@ export function metafile(metafile: string, width = 235, type: 'metafile' | 'meta
   } else if (metafile.indexOf('goerli://') !== -1) {
     metafile = metafile.replace('goerli://', 'evm/goerli/')
     path = '/metafile/'
+  } else if (metafile.indexOf('polygon://') !== -1) {
+    metafile = metafile.replace('polygon://', 'evm/polygon/')
+    path = '/metafile/'
+  } else if (metafile.indexOf('mumbai://') !== -1) {
+    metafile = metafile.replace('mumbai://', 'evm/mumbai/')
+    path = '/metafile/'
   } else {
     //  普通txId
     path = '/metafile/'

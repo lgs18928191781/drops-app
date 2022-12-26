@@ -656,7 +656,9 @@ async function connectWalletConnect() {
   })
 
   window.WallectConnect = connector
+
   const { accounts, chainId } = await connector.connect()
+
   let res
   const hexChainId = `0x${parseInt(chainId.toString(), 16)}`
   const chainWhiteList = currentSupportChain.filter(item => {
