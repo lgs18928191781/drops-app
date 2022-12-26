@@ -934,3 +934,23 @@ export function randomRange(min: number, max: number) {
 
   return Math.floor(Math.random() * (max - min)) + min
 }
+
+export function getCurrencyAmount(price: string | number, currency: 'CNY') {
+  const rootStore = useRootStore()
+  if (rootStore.currentPrice === 'CNY') {
+    if (currency === 'CNY') {
+      return new Decimal(price).div(100).toNumber()
+    } else {
+      const rate = new Decimal(rootStore.exchangeRate[0].price.CNY)
+        .div(rootStore.exchangeRate[0].price.USD)
+        .toNumber()
+      return new Decimal(
+        new Decimal(price)
+          .div(100)
+          .div(rate)
+          .toFixed(2)
+      ).toNumber()
+    }
+  } else {
+  }
+}

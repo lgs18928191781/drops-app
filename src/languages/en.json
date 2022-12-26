@@ -294,7 +294,7 @@
       "inputTitle": "Write the topic",
       "hotTopics": "Trends",
       "inputPlaceholder": "Enter topic",
-      "Create Community": "Create Community"
+      "Create Community": "Join the Club"
     },
     "follow": {
       "success": "Follow Success"
@@ -342,46 +342,48 @@
   "Number": "Number",
   "Wallet": {
     "Balance": "Balance",
-    "Total balance": "Total balance",
-    "Action Points": "Action Points",
-    "Add Funds": "Add Funds",
-    "Balance Details": "Balance Details",
+    "Total balance": "Total Value",
+    "Action Points": "MetaEnergy",
+    "Add Funds": "Recharge",
+    "Balance Details": "Cryptocurrency",
     "Blockchain": "Blockchain",
-    "Refresh funds": "Refresh funds",
-    "Payment": "Payment",
-    "Add Quantity": "Add Quantity",
-    "Add Amount": "Add Amount",
-    "Add": "Add"
+    "Refresh funds": "Refresh Account",
+    "Payment": "Payment Method",
+    "Add Quantity": "Quantity",
+    "Add Amount": "Total Fees",
+    "Add": "Recharge",
+    "My Wallet": "My Wallet",
+    "Recharge MetaEnergy": "Recharge MetaEnergy"
   },
   "quickPay": "Credit Card",
   "aliPay": "Alipay",
-  "wechatpay": "Alipay",
+  "wechatpay": "WeChat Pay",
   "Pay": "Pay",
   "Setting": {
     "title": "Settings",
-    "Uplink settings": "Uplink settings",
+    "Uplink settings": "MetaEnergy Settings",
     "Language": "Language",
-    "Theme": "Theme",
+    "Theme": "Display",
     "Edit Profile": "Edit Profile"
   },
   "EditProfile": {
-    "intro": "Choose NFT as your avatar or username to show your personality",
+    "intro": "NFT can become your profile picture or user name!",
     "User Name": "User Name",
     "MetaName": {
-      "drsc": "MetaName will take precedence as the username."
+      "drsc": "The system will use MetaName you chose as the username by default."
     }
   },
   "UplinkSetting": {
-    "Uplink Payment Confirmation": "Uplink Payment Confirmation",
-    "ConfirmationIntro": "Once turned on, all winding operations require your confirmation.",
-    "Alert value setting": "Alert value setting",
-    "AlertValueIntro": "For the safety of your ME assets, uplink operations that exceed the alert value still require your confirmation."
+    "Uplink Payment Confirmation": "ME Payment Confirmation",
+    "ConfirmationIntro": "Once turned on, you need to confirm every MetaEnery payment.",
+    "Alert value setting": "Alert Value",
+    "AlertValueIntro": "Confirmation is required every time payment reaches the alert value for your ME assets' safety."
   },
   "Invalid Value": "Invalid Value",
   "Theme": {
     "Light color": "Light",
-    "Dark color": "Dark",
-    "Follow system": "Sync with device"
+    "Dark color": "Dim",
+    "Follow system": "Follow the system"
   },
   "copy": "Copy",
   "MetaMak": {
@@ -486,7 +488,7 @@
   "Forward": "Forward",
   "Comment": "Comment",
   "Like": "Like",
-  "Forwarded": "Forwarded",
+  "Forwarded": "Rebuzzed",
   "NFT": {
     "Creater": "Creater",
     "Set selling price": "Set selling price",
@@ -519,5 +521,7 @@
     "Trading volume": "Trading volume"
   },
   "My NFT": "My NFT",
-  "Done": "Done"
+  "Done": "Done",
+  "sale": "Sell",
+  "offsale": "Off Sell"
 }

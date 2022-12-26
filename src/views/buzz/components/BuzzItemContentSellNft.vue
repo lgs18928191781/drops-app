@@ -1,5 +1,5 @@
 <template>
-  <CardVue class="nft-card" color="#5BA1FF">
+  <CardVue class="nft-card" :color="color">
     <div class="nft-warp" @click.stop="toNFT">
       <ElSkeleton :loading="isSkeleton" animated>
         <template #template>
@@ -30,6 +30,9 @@
               <div class="token-index">#{{parseInt(nftSellItem.val!.tokenIndex) + 1}}</div>
             </div>
           </div>
+          <div class="price flex flex-align-center flex-pack-center">
+            <AmountVue :price="nftSellItem.val!.price" :currency="'CNY'" />
+          </div>
         </template>
       </ElSkeleton>
     </div>
@@ -39,11 +42,13 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
 import CardVue from '@/components/Card/Card.vue'
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { GetSellNft } from '@/api/aggregation'
 import { usePostTagStore } from '@/stores/buzz/tag'
 import NFTCoverVue from '@/components/NFTCover/NFTCover.vue'
 import { useRouter } from 'vue-router'
+import { useRootStore } from '@/stores/root'
+import AmountVue from '@/components/Amount/Amount.vue'
 
 interface Props {
   buzz: BuzzItem
@@ -54,6 +59,9 @@ const userStore = useUserStore()
 const isSkeleton = ref(true)
 const postTagStore = usePostTagStore()
 const router = useRouter()
+const rootStore = useRootStore()
+
+const color = postTagStore.list.find(item => item.id === props.buzz.postTagId)?.color
 
 function getSellNftInfo() {
   return new Promise<void>(async resolve => {

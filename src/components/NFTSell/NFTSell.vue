@@ -214,6 +214,7 @@ async function submitForm() {
             tokenIndex: props.nft.nftTokenIndex,
             chain: props.nft.nftChain,
           })
+          emit('update:modelValue', false)
           loading.value = false
           ElMessage.success('上架成功')
         } else {

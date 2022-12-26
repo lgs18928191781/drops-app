@@ -125,6 +125,8 @@
 
     .tab {
         margin-top: 24px;
+        overflow-y: auto;
+        padding-bottom: 15px;
 
         a {
             display: inline-block;
@@ -135,6 +137,7 @@
             color: #606266;
             border-radius: 40px;
             border: 1px solid transparent;
+            white-space: nowrap;
 
             &:last-child {
                 margin-right: 0;
