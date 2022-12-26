@@ -95,7 +95,11 @@ const userOperates = computed(() => {
     result.unshift({
       name: i18n.t('UserOperate.createGropp'),
       icon: 'plus_circle',
-      func: () => {},
+      func: () => {
+        layout.$patch({
+          isShowCreateCommunityModal: true,
+        })
+      },
     })
     result.push({
       name: i18n.t('UserOperate.logout'),
