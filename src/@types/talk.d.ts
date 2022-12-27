@@ -1,5 +1,6 @@
 import { ChannelType, MessageType } from '@/enum'
 import { Address, HDPrivateKey, PrivateKey, PublicKey, Script } from 'meta-contract/dist/mvc'
+import { AttachmentItem } from './hd-wallet'
 
 declare interface Message {
   protocol?: string
@@ -89,7 +90,7 @@ declare interface MessageDto {
   content: string
   channelId: string
   userName: string
-  attachments?: any[]
+  attachments?: AttachmentItem[]
   originalFileUrl?: any
   channelType?: ChannelType
 }

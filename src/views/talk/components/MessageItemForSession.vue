@@ -200,6 +200,7 @@ import { formatTimestamp } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
 import { useJobsStore } from '@/stores/jobs'
+import { NodeName } from '@/enum'
 
 const i18n = useI18n()
 
@@ -232,8 +233,17 @@ const tryResend = async () => {
 }
 
 const decryptedMessage = computed(() => {
-  if (props.message.data.encrypt !== '1') {
-    return props.message.data.content
+  // 处理mock的图片消息
+  if (
+    props.message.isMock &&
+    (props.message.protocol === NodeName.SimpleFileGroupChat ||
+      props.message.protocol === NodeName.SimpleFileMsg)
+  ) {
+    return props.message.content
+  }
+
+  if (props.message.data?.encrypt !== '1') {
+    return props.message.data?.attachment || props.message.data?.content
   }
 
   // if (
@@ -242,11 +252,6 @@ const decryptedMessage = computed(() => {
   // ) {
   //   return props.message.data.content
   // }
-
-  // 处理mock的图片消息
-  if (props.message.isMock && props.message.protocol === 'SimpleFileGroupChat') {
-    return props.message.data.content
-  }
 
   if (!talkStore.activeChannel) return ''
 

@@ -182,6 +182,7 @@ const resendTitle = computed(() => {
 })
 
 const decryptedMessage = computed(() => {
+  debugger
   if (props.message.encryption === '0') {
     return props.message.content
   }
