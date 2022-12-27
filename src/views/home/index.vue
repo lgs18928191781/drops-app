@@ -171,39 +171,39 @@ const swipers = reactive([
     icon: Swiper1,
 
     title: 'Personality NFTs',
-    content: `Personalized NFTs is mainly used to satisfy the user's personality expression. Some personalized NFTs will also come with unique functions.`,
+    content: `Personalized NFT expresses your personality and social status.Sometimes a personalized NFTs can give you special social features that other users don’t have.`,
   },
   {
     icon: Swiper2,
     title: 'Avatar NFTs',
-    content: `Avatar NFTs are the image projections of users in the Web3 world, and the gamification in Show3 will also be developed around Avatar NFTs.`,
+    content: `Avatar NFT is your virtual image in the world of Web3.Cultivate, Play, and Earn with your avatars!`,
   },
   {
     icon: Swiper3,
     title: 'Equipment NFTs',
-    content: `Equipment NFTs are a unique category on Show3. They can provide users with different attribute bonuses and make it easier for users to participate in Social & Mint.`,
+    content: `It contains 4 special kinds of NFT used to decorate your Avatar, including Background, Costumes, Pet and Treasure. They provide different Attribute Bonuses to your Avatar and makes it extraordinary.`,
   },
   {
     icon: Swiper4,
     title: 'Functional NFTs',
-    content: `Functional NFTs are designed to provide users with special functions, which means that users have the right to use a certain advanced function.`,
+    content: `Unlock advanced features by holding Utility NFTs!More categories like Domain Name NFT and DAO Pass are coming!`,
   },
 ])
 const swipersTwo = reactive([
   {
     icon: Swiper2_1,
-    title: 'Function Introduction',
-    desc: `Social InteractionWeb3 Social Experience`,
+    title: 'Web3 Social Timeline',
+    desc: `See what’s happening on chain!`,
   },
   {
     icon: Swiper2_2,
-    title: 'Function Introduction',
-    desc: `Discover & Join Your Favor Communities`,
+    title: 'Web3 Clubs & DAOs',
+    desc: `Discover & Join Your Favorite Web3 Communities`,
   },
   {
     icon: Swiper2_3,
-    title: 'Function Introduction',
-    desc: `Multi-chain Support`,
+    title: 'All Chains, One Platform',
+    desc: `Support multiple blockchains at the same time.`,
   },
 ])
 const contactIcon = reactive([
@@ -226,7 +226,7 @@ const records = reactive([
     amount: 126785,
   },
   {
-    type: 'Interactive messageNumber of TxIDs',
+    type: 'Interactive(Number of Transactions)',
     amount: 24578,
   },
   {
