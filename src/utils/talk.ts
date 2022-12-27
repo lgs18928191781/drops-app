@@ -450,6 +450,7 @@ export const tryCreateNode = async (node: any, sdk: SDK, mockId: string) => {
   const jobs = useJobsStore()
   const talk = useTalkStore()
   try {
+    debugger
     const nodeRes = await sdk.createBrfcChildNode(node)
     // 取消支付的情况下，删除mock消息
     console.log({ nodeRes })
@@ -569,18 +570,26 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
   // 1.5 encrypt
   const encrypt = '0'
   const attachment = 'metafile://$[0]'
-  const dataCarrier = {
-    groupId,
+  debugger
+  let dataCarrier: any = {
     timestamp,
-    // nickName,
     encrypt,
     fileType,
     attachment,
   }
+  if (messageDto.channelType === ChannelType.Group) {
+    dataCarrier.groupId = groupId
+  } else {
+    dataCarrier.to = groupId
+  }
 
+  const nodeName =
+    messageDto.channelType === ChannelType.Group
+      ? NodeName.SimpleFileGroupChat
+      : NodeName.SimpleFileMsg
   // 2. 构建节点参数
   const node = {
-    nodeName: NodeName.SimpleFileGroupChat,
+    nodeName: nodeName,
     dataType: 'application/json',
     data: JSON.stringify(dataCarrier),
     attachments,
@@ -592,7 +601,7 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
   const mockId = realRandomString(12)
   const mockMessage: Message = {
     mockId,
-    protocol: 'SimpleFileGroupChat',
+    protocol: nodeName,
     contentType: fileType,
     content: originalFileUrl,
     avatarType: userStore.user?.avatarType || 'undefined',
