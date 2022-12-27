@@ -8,7 +8,7 @@
       <el-tooltip
         effect="light"
         popper-class="text-dark-800 dark:text-dark-200 text-base font-medium py-2 px-4 shadow-md rounded-lg"
-        :content="item.title"
+        :content="item.title()"
         :offset="5"
         placement="right"
         :disabled="isMobile"
@@ -129,13 +129,13 @@ const apps = [
     icon: 'feed',
     path: '/buzz',
     extraClass: 'left-navigation-item',
-    title: i18n.t('Talk.Community.feed'),
+    title: () => i18n.t('Talk.Community.feed'),
     symbol: 'buzz',
   },
   {
     icon: 'talk',
     path: '/talk/channels/@me',
-    title: i18n.t('Talk.Community.atme'),
+    title: () => i18n.t('Talk.Community.atme'),
     symbol: '@me',
   },
 ]

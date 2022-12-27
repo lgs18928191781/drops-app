@@ -233,7 +233,6 @@ const tryResend = async () => {
 }
 
 const decryptedMessage = computed(() => {
-  debugger
   // 处理mock的图片消息
   if (
     props.message.isMock &&
@@ -264,7 +263,6 @@ const decryptedMessage = computed(() => {
 })
 
 const parseTextMessage = (text: string) => {
-  debugger
   if (typeof text == 'undefined') {
     return ''
   }
