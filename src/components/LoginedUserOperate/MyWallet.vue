@@ -218,6 +218,7 @@
                       class="item"
                       v-for="nft in item.nftDetailItemList"
                       :key="nft.nftIssueMetaTxId"
+                      @click.stop="toNFT(nft)"
                     >
                       <NFTCoverVue :cover="[nft.nftIcon]" />
                     </RouterLink>
@@ -242,6 +243,7 @@
       :codehash="seriesNFTList.codehash"
       :genesis="seriesNFTList.genesis"
       :seriesName="seriesNFTList.seriesName"
+      @link="emit('update:modelValue', false)"
     />
   </ElDrawer>
 </template>
@@ -269,6 +271,7 @@ import NFTLlistVue from './NFTLlist.vue'
 import LoadMoreVue from '../LoadMore/LoadMore.vue'
 import IsNullVue from '../IsNull/IsNull.vue'
 import { Loading } from '@element-plus/icons-vue'
+import { router } from '@/router'
 
 const props = defineProps<{
   modelValue: boolean
@@ -553,6 +556,19 @@ function load() {
   pagination.page++
   getNFTs().then(() => {
     pagination.loading = false
+  })
+}
+
+function toNFT(nft: GenesisNFTItem) {
+  emit('update:modelValue', false)
+  router.push({
+    name: 'nftDetail',
+    params: {
+      chain: currentChain.value,
+      genesis: nft.nftGenesis,
+      codehash: nft.nftCodehash ? nft.nftCodehash : currentChain.value,
+      tokenIndex: nft.nftTokenIndex,
+    },
   })
 }
 
