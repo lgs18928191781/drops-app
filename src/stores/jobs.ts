@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { Job, JobStep } from '@/@types/common'
 import { reportTask } from '@/api/metaid-base'
 import { JobStatus, JobStepStatus } from '@/enum'
 import { sleep } from '@/utils/util'

@@ -156,7 +156,7 @@ import BindMetaIdVue from './BindMetaId.vue'
 import { onMounted, reactive, Ref, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { BindStatus, InviteActivityTag, NodeName } from '@/enum'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { router } from '@/router'
 import { useRoute } from 'vue-router'
 import { GetUserAllInfo } from '@/api/aggregation'
@@ -177,6 +177,7 @@ import { ethers } from 'ethers'
 import { RegisterSource } from '@/enum'
 import { openLoading } from '@/utils/util'
 import { MD5 } from 'crypto-js'
+
 import { currentSupportChain } from '@/config'
 const rootStore = useRootStore()
 const userStore = useUserStore()
@@ -656,24 +657,70 @@ async function connectWalletConnect() {
 
   window.WallectConnect = connector
   const { accounts, chainId } = await connector.connect()
-
-  if (chainId !== 5) {
-    throw new Error(i18n.t('Login.ETH.changeGoerliNetword'))
+  let res
+  const hexChainId = `0x${parseInt(chainId.toString(), 16)}`
+  const chainWhiteList = currentSupportChain.filter(item => {
+    return item.chainId == hexChainId
+  })
+  if (!chainWhiteList.length) {
+    ElMessageBox.confirm(
+      i18n.t('MetaMak.Chain Network Error Tips') + `${import.meta.env.VITE_DEFAULT_NETWORK}`,
+      i18n.t('MetaMak.Chain Network Error'),
+      {
+        customClass: 'primary',
+        confirmButtonText: i18n.t('MetaMak.Change') + `${import.meta.env.VITE_DEFAULT_NETWORK}`,
+        cancelButtonText: i18n.t('Cancel'),
+      }
+    )
+      .then(async () => {
+        connector
+          .sendCustomRequest({
+            method: 'wallet_switchEthereumChain',
+            params: [
+              {
+                chainId:
+                  import.meta.env.VITE_DEFAULT_NETWORK == 'eth'
+                    ? currentSupportChain[0].chainId
+                    : currentSupportChain[1].chainId,
+              },
+            ],
+          })
+          .then(async () => {
+            res = await connector.signPersonalMessage([
+              ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0])).slice(2, -1),
+              accounts[0],
+            ])
+            if (res) {
+              rootStore.$patch({ isShowLogin: false })
+              await onThreePartLinkSuccess({
+                signAddressHash: res,
+                address: accounts[0],
+              })
+            }
+          })
+          .catch((error: any) => {
+            return ElMessage.error(error.message)
+            // emit('update:modelValue', false)
+          })
+      })
+      .catch((error: any) => {
+        return ElMessage.error(error.message)
+        // emit('update:modelValue', false)
+      })
+  } else {
+    res = await connector.signPersonalMessage([
+      ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0])).slice(2, -1),
+      accounts[0],
+    ])
+    if (res) {
+      rootStore.$patch({ isShowLogin: false })
+      await onThreePartLinkSuccess({
+        signAddressHash: res,
+        address: accounts[0],
+      })
+    }
   }
 
-  const res = await connector.signPersonalMessage([
-    ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0])).slice(2, -1),
-    accounts[0],
-  ])
-  console.log('connector', connector)
-
-  if (res) {
-    rootStore.$patch({ isShowLogin: false })
-    await onThreePartLinkSuccess({
-      signAddressHash: res,
-      address: accounts[0],
-    })
-  }
   // connector.killSession()
 }
 

@@ -1,3 +1,4 @@
+/** @type {import('vite').UserConfig} */
 import * as path from 'path'
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -18,9 +19,11 @@ import nodePolyfills from 'rollup-plugin-polyfill-node'
 import basicSsl from '@vitejs/plugin-basic-ssl'
 
 const pathSrc = path.resolve(__dirname, 'src')
+const productionEnvs = ['prod', 'preview']
 export default ({ mode, command }) => {
   // 加载环境配置文件
   const env = loadEnv(mode, process.cwd())
+  const isProduction = productionEnvs.includes(mode) && command === 'build' ? true : false
   return defineConfig({
     plugins: [
       command === 'serve' &&
@@ -118,26 +121,23 @@ export default ({ mode, command }) => {
       https: false,
       // open: false,
     },
+    esbuild: {
+      drop: isProduction ? ['console', 'debugger'] : [],
+    },
     build: {
       target: 'es2015',
-      minify: mode === 'prod' ? true : false,
-      sourcemap: mode === 'prod' || mode === 'gray' ? false : 'inline',
+      minify: isProduction,
+      sourcemap: isProduction ? false : 'inline',
       rollupOptions: {
         plugins: [nodePolyfills()],
         output: {
-          sourcemap: mode === 'prod' || mode === 'gray' ? false : 'inline',
-        },
-      },
-      terserOptions: {
-        compress: {
-          drop_console: mode === 'prod',
-          drop_debugger: mode === 'prod',
+          sourcemap: isProduction ? false : 'inline',
         },
       },
       commonjsOptions: {
         transformMixedEsModules: true,
       },
     },
-    sourcemap: mode === 'prod' || mode === 'gray' ? false : 'inline',
+    sourcemap: isProduction ? false : 'inline',
   })
 }

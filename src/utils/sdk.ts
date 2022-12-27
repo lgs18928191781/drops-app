@@ -41,6 +41,7 @@ import { resolve } from 'path'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { NodeTransactions, Job, JobStep } from '@/@types/common'
 import { v1 as UUID } from 'uuid'
+import { useLayoutStore } from '@/stores/layout'
 
 enum AppMode {
   PROD = 'prod',
@@ -817,7 +818,7 @@ export class SDK {
               }
               createAttachmentParams.push({
                 nodeName: item.fileName,
-                metaIdTag: MetaIdTag[this.network],
+                metaIdTag: import.meta.env.VITE_METAID_TAG,
                 encrypt: item.encrypt,
                 data: item.data,
                 dataType: item.fileType,
@@ -1044,7 +1045,7 @@ export class SDK {
               let keyPath = `0/${index.toString()}`
               const res = await this.wallet?.createNode({
                 nodeName: item.fileName,
-                metaIdTag: MetaIdTag[this.network],
+                metaIdTag: import.meta.env.VITE_METAID_TAG,
                 encrypt: item.encrypt,
                 data: item.data,
                 dataType: item.fileType,
@@ -1467,6 +1468,14 @@ export class SDK {
                 document.getElementById(divId)?.remove()
               }, 500)
               resolve(false)
+            },
+            onRecharge: () => {
+              setTimeout(() => {
+                document.getElementById(divId)?.remove()
+              }, 500)
+              resolve(false)
+              const layout = useLayoutStore()
+              layout.$patch({ isShowWallet: true })
             },
           }),
           document.getElementById(divId)!

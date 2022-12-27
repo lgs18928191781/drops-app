@@ -202,4 +202,6 @@ declare interface SellNftItem {
   title: string
   tokenIndex: string
   tokenIndexInt: number
+  receivePrice: number
+  royaltyPrice: number
 }

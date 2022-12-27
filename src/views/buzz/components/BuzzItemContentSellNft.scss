@@ -56,4 +56,14 @@
       width: 50px;
     }
   }
+
+  .price {
+    margin-top: 17px;
+    background: var(--color-primary);
+    color: var(--themeBtnTextColor);
+    font-size: 16px;
+    border: 2px solid var(--themeTextColor);
+    border-radius: 6px;
+    height: 36px;
+  }
 }

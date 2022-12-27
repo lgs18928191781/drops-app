@@ -167,12 +167,12 @@ async function startConnect() {
     try {
         const res = await Wallet.connect()
         if (res) {
-            console.log("currentSupportChain", import.meta.env.VITE_DEFAULT_NETWORK)
-            const chainWhiteList = currentSupportChain.filter((item) => {
-              return item.chainId == res.provider.chainId
-            })
-
-            if (chainWhiteList.length) {
+            // console.log("currentSupportChain", import.meta.env.VITE_ETH_CHAIN)
+            // const chainWhiteList = currentSupportChain.filter((item) => {
+            //   return parseInt(item.chainId, 10) === parseInt(res.provider.chainId)
+            // })
+            debugger
+            if (parseInt(res.provider.chainId, 16) === parseInt(import.meta.env.VITE_ETH_CHAINID)) {
                 startProvider(res.provider)
                 const result = await ethPersonalSignSign({
                     address: res.ethAddress,
@@ -183,16 +183,16 @@ async function startConnect() {
                     emit('success',{ signAddressHash:result, address: res.ethAddress});
                 }
             } else {
-                ElMessageBox.confirm(i18n.t('MetaMak.Chain Network Error Tips') + `${import.meta.env.VITE_DEFAULT_NETWORK}`, i18n.t('MetaMak.Chain Network Error'), {
+                ElMessageBox.confirm(i18n.t('MetaMak.Chain Network Error Tips') + `${import.meta.env.VITE_ETH_CHAIN}`, i18n.t('MetaMak.Chain Network Error'), {
                     customClass: 'primary',
-                    confirmButtonText: i18n.t('MetaMak.Change') + `${import.meta.env.VITE_DEFAULT_NETWORK}`,
+                    confirmButtonText: i18n.t('MetaMak.Change') + `${import.meta.env.VITE_ETH_CHAIN}`,
                     cancelButtonText: i18n.t('Cancel')
                 }).then(() => {
 
                     ;(window as any).ethereum
                     .request({ method: 'wallet_switchEthereumChain', params: [{
                         // chainId: ethers.utils.hexValue(parseInt(import.meta.env.VITE_ETH_CHAINID))
-                        chainId: import.meta.env.VITE_DEFAULT_NETWORK == 'eth' ? currentSupportChain[0].chainId : currentSupportChain[1].chainId
+                        chainId: import.meta.env.VITE_ETH_CHAIN == 'eth' ? currentSupportChain[0].chainId : currentSupportChain[1].chainId
                     }]})
                         .then((res: string[]) => {
                         startConnect()

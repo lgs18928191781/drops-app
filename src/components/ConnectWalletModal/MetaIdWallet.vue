@@ -184,6 +184,7 @@
         <template v-if="registerType !== RegisterType.SetPassword">
           <span
             class="check-warp flex flex-align-center flex-pack-center"
+            :class="{ active: form.isAgreePolicy }"
             @click="form.isAgreePolicy = !form.isAgreePolicy"
             ><Icon name="check" v-if="form.isAgreePolicy"
           /></span>

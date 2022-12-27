@@ -438,7 +438,9 @@
     "Payment": "支付方式",
     "Add Quantity": "充值数量",
     "Add Amount": "充值金额",
-    "Add": "充值"
+    "Add": "充值",
+    "My Wallet": "我的钱包",
+    "Recharge MetaEnergy": "充值能量点"
   },
   "registing": "注册中",
   "sendVerifiyCodeError": "验证码填写不正确,请重新填写",
@@ -525,5 +527,7 @@
     "Trading volume": "交易量"
   },
   "My NFT": "我的NFT",
-  "Done": "完成"
+  "Done": "完成",
+  "sale": "上架出售",
+  "offsale": "下架"
 }

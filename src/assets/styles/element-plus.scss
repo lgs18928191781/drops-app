@@ -213,7 +213,7 @@ html.dark {
     }
 
     .el-dialog__body {
-        color: var(--themeBtnTextColor);
+        color: var(--themeTextColor);
         padding: 10px 30px 30px 30px;
     }
 
@@ -409,6 +409,12 @@ html.dark {
         align-items: center;
         justify-content: center;
     }
+
+    &.is-fullscreen {
+        .el-loading-spinner {
+            flex-direction: column;
+        }
+    }
 }
 
 @media screen and (max-width:980PX) {
@@ -442,3 +448,142 @@ html.dark {
 .el-collapse {
     border-color: #fff;
 }
+.el-carousel__arrow i {
+   font-size: 20PX !important;
+ 
+   color: #3D3D3D !important;
+}
+.el-carousel__arrow{
+   border: 3px solid #3D3D3D !important;
+    font-weight: bold !important;
+    padding: 29px !important;
+    border-radius: 12px !important;
+    background: var(--el-color-primary) !important;
+
+  .dark &.primary {
+    --border-color: var(--primary-border-color);
+    color: var(--normal-border-color);
+  }
+
+  // 褪色边框
+  &.faded {
+    --border-color: var(--faded-border-color);
+    background: #EDEFF2;
+  }
+
+  &.faded-switch:not(:active, :hover):placeholder-shown {
+    --border-color: var(--faded-border-color);
+  }
+
+  &.small {
+    --standard-offset: 2PX;
+    --standard-border-width: 1PX;
+  }
+
+
+  // 只有下阴影的情况
+  &.only-bottom {
+    --right-offset: 0PX;
+  }
+
+  border: var(--standard-border-width) solid var(--border-color);
+  box-shadow: var(--right-offset) var(--standard-offset) 0 var(--border-color);
+  border-radius: var(--rounded);
+  transition-property: all;
+  transition-duration: 150ms;
+
+  &.disabled {
+    cursor: not-allowed;
+
+    @media (min-width: 1024PX) {
+      &:hover:not(:active) {
+        box-shadow: var(--right-offset) var(--standard-offset) 0 var(--border-color);
+        transform: none;
+      }
+
+      &:active {
+        box-shadow: var(--right-offset) var(--standard-offset) 0 var(--border-color);
+        transform: none;
+      }
+    }
+  }
+}
+
+.el-carousel__item{
+    padding: 0 150px !important;
+      display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+}
+
+    .el-carousel__indicator.el-carousel__indicator--horizontal.is-active{
+        .el-carousel__button{
+             opacity: 1;
+              background: var(--el-color-primary) !important;
+                // 褪色边框
+  &.faded {
+    --border-color: var(--faded-border-color);
+    background: #EDEFF2;
+  }
+
+  &.faded-switch:not(:active, :hover):placeholder-shown {
+    --border-color: var(--faded-border-color);
+  }
+
+  &.small {
+    --standard-offset: 2PX;
+    --standard-border-width: 1PX;
+  }
+
+
+  // 只有下阴影的情况
+  &.only-bottom {
+    --right-offset: 0PX;
+  }
+
+  border: var(--standard-border-width) solid var(--border-color);
+  box-shadow: var(--right-offset) var(--standard-offset) 0 var(--border-color);
+  border-radius: var(--rounded);
+  transition-property: all;
+  transition-duration: 150ms;
+
+  &.disabled {
+    cursor: not-allowed;
+
+    @media (min-width: 1024PX) {
+      &:hover:not(:active) {
+        box-shadow: var(--right-offset) var(--standard-offset) 0 var(--border-color);
+        transform: none;
+      }
+
+      &:active {
+        box-shadow: var(--right-offset) var(--standard-offset) 0 var(--border-color);
+        transform: none;
+      }
+    }
+  
+   }
+        }
+    }
+  .el-carousel__indicator.el-carousel__indicator--horizontal{
+     
+    .el-carousel__button{
+        font-weight: 500;
+        border-radius: 12px !important;
+        opacity: 1;
+    border: 2px solid #3D3D3D !important;
+    padding: 18px 25px !important;
+        background: #fff;
+         .dark &.primary {
+    --border-color: var(--primary-border-color);
+    color: var(--normal-border-color);
+   
+  }
+}
+}
+.el-carousel__container{
+    height: 800px !important;
+  
+}
+
+
