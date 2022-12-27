@@ -27,7 +27,10 @@ export const useWsStore = defineStore('ws', {
     async init() {
       const selfMetaId = this.selfMetaId
       if (!selfMetaId) return
-      const wsUri = `wss://testmvc.showmoney.app/ws-service?metaId=${selfMetaId}`
+      const wsUri = `${import.meta.env.VITE_BASEAPI.replace(
+        'https://',
+        'wss://'
+      )}/ws-service?metaId=${selfMetaId}`
       this.ws = new WebSocket(wsUri)
       this.wsHeartBeatTimer = this._createHeartBeatTimer(wsUri)
 
