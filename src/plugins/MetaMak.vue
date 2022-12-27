@@ -167,11 +167,12 @@ async function startConnect() {
     try {
         const res = await Wallet.connect()
         if (res) {
-            console.log("currentSupportChain", import.meta.env.VITE_ETH_CHAIN)
-            const chainWhiteList = currentSupportChain.filter((item) => {
-              return item.chainId == res.provider.chainId
-            })
-            if (chainWhiteList.length) {
+            // console.log("currentSupportChain", import.meta.env.VITE_ETH_CHAIN)
+            // const chainWhiteList = currentSupportChain.filter((item) => {
+            //   return parseInt(item.chainId, 10) === parseInt(res.provider.chainId)
+            // })
+            debugger
+            if (parseInt(res.provider.chainId, 16) === parseInt(import.meta.env.VITE_ETH_CHAINID)) {
                 startProvider(res.provider)
                 const result = await ethPersonalSignSign({
                     address: res.ethAddress,

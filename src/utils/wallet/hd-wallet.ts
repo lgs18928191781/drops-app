@@ -201,7 +201,7 @@ export const hdWalletFromMnemonic = async (
   // const hdPrivateKey = Mnemonic.fromString(mnemonic).toHDPrivateKey()
   const seed = bip39.mnemonicToSeedSync(mnemonic)
   const hdPrivateKey = bsv.HDPrivateKey.fromSeed(seed, network)
-  const hdWallet = hdPrivateKey.deriveChild("m/44'/236'/0'")
+  const hdWallet = hdPrivateKey.deriveChild(`m/44'/${import.meta.env.VITE_WALLET_PATH}'/0'`)
   return hdWallet
 }
 

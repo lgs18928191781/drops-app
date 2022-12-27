@@ -42,7 +42,9 @@
         <div class="backup-mnemonic-item flex1 right">
           <div class="title">{{ $t('Login.BackupMnemonic.copyMnemonic') }}</div>
           <div class="msg">
-            <div class="path">{{ $t('Login.BackupMnemonic.path') }}: m/44'/236'/0'</div>
+            <div class="path">
+              {{ $t('Login.BackupMnemonic.path') }}: m/44'/{{ walletPath }}'/0'
+            </div>
             <div class="path">{{ $t('Login.BackupMnemonic.mnemonic') }}: {{ mnemonic }}</div>
           </div>
           <div class="operate main-border primary" @click="finish">
@@ -72,6 +74,7 @@ const userStore = useUserStore()
 const mnemonic = ref('')
 const isBackUp = ref(false)
 const isShowMnemonic = ref(false)
+const walletPath = import.meta.env.VITE_WALLET_PATH
 
 watch(
   () => props.modelValue,
