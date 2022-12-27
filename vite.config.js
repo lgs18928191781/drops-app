@@ -134,12 +134,6 @@ export default ({ mode, command }) => {
           sourcemap: isProduction ? false : 'inline',
         },
       },
-      terserOptions: {
-        compress: {
-          drop_console: isProduction,
-          drop_debugger: isProduction,
-        },
-      },
       commonjsOptions: {
         transformMixedEsModules: true,
       },
