@@ -1,5 +1,5 @@
 import { getToken, getUserName } from '@/stores/user'
-import HttpRequest from 'request-sdk'
+import HttpRequest from '@/utils/request'
 
 // const Pay = new HttpRequest(`${import.meta.env.VITE_WXCOREAPI}/showpaycore`, {
 // @ts-ignore

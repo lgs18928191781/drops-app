@@ -1,4 +1,4 @@
-import HttpRequest from 'request-sdk'
+import HttpRequest from '@/utils/request'
 
 // @ts-ignore
 const Dormancy = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/dormancy`).request

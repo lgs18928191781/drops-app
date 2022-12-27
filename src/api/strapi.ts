@@ -6,7 +6,7 @@
  * @Description: In User Settings Edit
  * @FilePath: \nos.art\src\api\strapi.ts
  */
-import HttpRequest from 'request-sdk'
+import HttpRequest from '@/utils/request'
 
 // @ts-ignore
 const Strapi = new HttpRequest(import.meta.env.VITE_AdminBaseApi).request

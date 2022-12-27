@@ -1,4 +1,4 @@
-import HttpRequest from 'request-sdk'
+import HttpRequest from '@/utils/request'
 // @ts-ignore
 const Remint = new HttpRequest('https://api.showmoney.app/dunhuangnew/ruoxi').request
 // const Remint = new HttpRequest('https://7b67-59-33-61-120.ap.ngrok.io/ruoxi').request

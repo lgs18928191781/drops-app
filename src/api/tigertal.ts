@@ -1,5 +1,5 @@
 import { useUserStore } from '@/stores/user'
-import HttpRequest from 'request-sdk'
+import HttpRequest from '@/utils/request'
 
 const userStore = useUserStore()
 // @ts-ignore

@@ -1,6 +1,6 @@
 import { InviteActivityTag } from '@/enum'
 import { getToken, getUserName } from '@/stores/user'
-import HttpRequest from 'request-sdk'
+import HttpRequest from '@/utils/request'
 
 // @ts-ignore
 const Broad = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/broad`, {

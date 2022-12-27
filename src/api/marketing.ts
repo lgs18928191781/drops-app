@@ -1,6 +1,7 @@
 import { PayPlatform } from '@/enum'
 import { useUserStore } from '@/stores/user'
-import HttpRequest from 'request-sdk'
+import HttpRequest from '@/utils/request'
+import i18n from '@/utils/i18n'
 
 const userStore = useUserStore()
 

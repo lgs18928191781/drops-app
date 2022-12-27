@@ -7,12 +7,16 @@ export default class HttpRequest {
       header?: { [key: string]: any } // 自定义 header
       errorHandel?: (error: any) => Promise<any> // 自定义 错误处理
       responseHandel?: (response: AxiosResponse<any>) => Promise<any> // 自定义 错误处理
+      timeout?: number
+      timeoutErrorMessage?: string
     }
   ) {
     this.request = axios.create({
       baseURL: baseUrl,
-      timeout: 30000,
-      timeoutErrorMessage: '请求超时，请稍后再试'
+      timeout: params?.timeout ? params?.timeout : 30000,
+      timeoutErrorMessage: params?.timeoutErrorMessage
+        ? params?.timeoutErrorMessage
+        : '请求超时，请稍后再试'
     })
     this.request.interceptors.request.use(
       async (config) => {

@@ -82,43 +82,43 @@ export interface PayPlatformItem {
 }
 
 export const payPlatformList: PayPlatformItem[] = [
-  {
-    icon: SandPayIcon,
-    name: () => {
-      // @ts-ignore
-      return i18n.global.t('quickPay')
-    },
-    platform: PayPlatform.UnionPay,
-    background: '#FCA63D',
-    disabled: () => {
-      return false
-    },
-    suffix: true,
-  },
-  {
-    icon: WechatPayIcon,
-    name: () => {
-      return i18n.global.t('wechatpay') as string
-    },
-    platform: PayPlatform.WechatPay,
-    background: '#909399',
-    disabled: () => {
-      return true
-    },
-    suffix: false,
-  },
-  {
-    icon: AliPayIcon,
-    name: () => {
-      return i18n.global.t('aliPay')
-    },
-    platform: PayPlatform.AliPay,
-    background: '#108EE9',
-    disabled: () => {
-      return true
-    },
-    suffix: false,
-  },
+  // {
+  //   icon: SandPayIcon,
+  //   name: () => {
+  //     // @ts-ignore
+  //     return i18n.global.t('quickPay')
+  //   },
+  //   platform: PayPlatform.UnionPay,
+  //   background: '#FCA63D',
+  //   disabled: () => {
+  //     return false
+  //   },
+  //   suffix: true,
+  // },
+  // {
+  //   icon: WechatPayIcon,
+  //   name: () => {
+  //     return i18n.global.t('wechatpay') as string
+  //   },
+  //   platform: PayPlatform.WechatPay,
+  //   background: '#909399',
+  //   disabled: () => {
+  //     return true
+  //   },
+  //   suffix: false,
+  // },
+  // {
+  //   icon: AliPayIcon,
+  //   name: () => {
+  //     return i18n.global.t('aliPay')
+  //   },
+  //   platform: PayPlatform.AliPay,
+  //   background: '#108EE9',
+  //   disabled: () => {
+  //     return true
+  //   },
+  //   suffix: false,
+  // },
   {
     icon: ETHIcon,
     name: () => {

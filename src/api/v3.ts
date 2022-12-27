@@ -1,5 +1,5 @@
 import { PayPlatform, PayType } from '@/enum'
-import HttpRequest from 'request-sdk'
+import HttpRequest from '@/utils/request'
 import { alertCatchError } from '@/utils/util'
 import { ElMessage } from 'element-plus'
 import { getToken, getUserName, useUserStore } from '@/stores/user'

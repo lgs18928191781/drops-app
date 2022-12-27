@@ -530,5 +530,6 @@
   "Done": "完成",
   "sale": "上架出售",
   "offsale": "下架",
-  "Loading": "加载中"
+  "Loading": "加载中",
+  "Request Timeout": "请求超时，请稍后再试"
 }

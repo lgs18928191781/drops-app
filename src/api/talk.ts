@@ -1,4 +1,4 @@
-import HttpRequest from 'request-sdk'
+import HttpRequest from '@/utils/request'
 import { Channel, Community, CommunityAuth } from '@/@types/talk'
 import { sleep } from '@/utils/util'
 

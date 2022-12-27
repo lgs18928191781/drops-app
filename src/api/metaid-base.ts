@@ -1,6 +1,6 @@
-import { Job } from '@/@types/common'
 import { useUserStore } from '@/stores/user'
-import HttpRequest from 'request-sdk'
+import HttpRequest from '@/utils/request'
+import i18n from '@/utils/i18n'
 
 const MetaIdBase = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/metaid-base`, {
   header: () => {
