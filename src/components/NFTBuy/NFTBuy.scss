@@ -1,10 +1,15 @@
+.nft-buy {
+    padding: 0 30px 30px 30px;
+}
+
 .nft-msg-list {
     .nft-msg-item {
         padding: 15px 0;
         border-bottom: 1px solid var(--divid-color);
 
         .key {
-            color: #606266;
+            color: var(--themeTextColor);
+            opacity: 0.5;
         }
 
         .value {

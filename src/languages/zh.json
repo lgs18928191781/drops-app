@@ -531,5 +531,7 @@
   "sale": "上架出售",
   "offsale": "下架",
   "Loading": "加载中",
-  "Request Timeout": "请求超时，请稍后再试"
+  "Request Timeout": "请求超时，请稍后再试",
+  "niceWarning": "温馨提示",
+  "offsaleConfirm": "你确认要就下架"
 }

@@ -10,7 +10,10 @@
           <div class="token-index">#{{ parseInt(nft.nftTokenIndex) + 1 }}</div>
         </div>
         <div class="price" v-if="nft.nftPrice">
-          {{ rootStore.currentPriceSymbol }}{{ nft.nftPrice }}
+          <AmountVue
+            :price="nft.nftIsLegal ? nft.nftLegalPrice : nft.nftPrice"
+            :currency="nft.nftIsLegal ? 'CNY' : 'SPACE'"
+          />
         </div>
       </div>
     </div>
@@ -20,6 +23,8 @@
 <script setup lang="ts">
 import NFTCoverVue from '@/components/NFTCover/NFTCover.vue'
 import { useRootStore } from '@/stores/root'
+import AmountVue from '../Amount/Amount.vue'
+
 const rootStore = useRootStore()
 const props = defineProps<{
   nft: GenesisNFTItem

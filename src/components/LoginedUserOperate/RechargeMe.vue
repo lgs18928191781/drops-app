@@ -195,7 +195,9 @@ const emit = defineEmits(['close', 'update:modelValue'])
 const rate = ref(0)
 
 const isShowPayTypes = ref(false)
-const currentPayPlatform = ref(PayPlatform.UnionPay)
+const currentPayPlatform = ref(
+  userStore.isAuthorized && userStore.user?.evmAddress ? PayPlatform.ETH : PayPlatform.UnionPay
+)
 const isShowCouponMsg = ref(false)
 
 const isStartPay = ref(false)

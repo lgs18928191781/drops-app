@@ -82,19 +82,37 @@ export interface PayPlatformItem {
 }
 
 export const payPlatformList: PayPlatformItem[] = [
-  // {
-  //   icon: SandPayIcon,
-  //   name: () => {
-  //     // @ts-ignore
-  //     return i18n.global.t('quickPay')
-  //   },
-  //   platform: PayPlatform.UnionPay,
-  //   background: '#FCA63D',
-  //   disabled: () => {
-  //     return false
-  //   },
-  //   suffix: true,
-  // },
+  {
+    icon: ETHIcon,
+    name: () => {
+      // @ts-ignore
+      return import.meta.env.VITE_ETH_CHAIN + i18n.global.t('Pay')
+    },
+    platform: PayPlatform.ETH,
+    background: '#108EE9',
+    disabled: () => {
+      let result = true
+      const userStore = useUserStore()
+      if (userStore.isAuthorized && userStore.user?.evmAddress) {
+        result = false
+      }
+      return result
+    },
+    suffix: false,
+  },
+  {
+    icon: SandPayIcon,
+    name: () => {
+      // @ts-ignore
+      return i18n.global.t('quickPay')
+    },
+    platform: PayPlatform.UnionPay,
+    background: '#FCA63D',
+    disabled: () => {
+      return false
+    },
+    suffix: true,
+  },
   // {
   //   icon: WechatPayIcon,
   //   name: () => {
@@ -119,23 +137,6 @@ export const payPlatformList: PayPlatformItem[] = [
   //   },
   //   suffix: false,
   // },
-  {
-    icon: ETHIcon,
-    name: () => {
-      return import.meta.env.VITE_ETH_CHAIN + i18n.global.t('Pay')
-    },
-    platform: PayPlatform.ETH,
-    background: '#108EE9',
-    disabled: () => {
-      let result = true
-      const userStore = useUserStore()
-      if (userStore.isAuthorized && userStore.user?.evmAddress) {
-        result = false
-      }
-      return result
-    },
-    suffix: false,
-  },
 ]
 
 export const currentSupportChain: Array<{

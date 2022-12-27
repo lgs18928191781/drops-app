@@ -7,7 +7,7 @@
   "mywallet": "My Wallet",
   "logout": "Log out",
   "toLoginTip": "Please log in first",
-  "niceWarning": "Confir Tips ",
+  "niceWarning": "Warning",
   "loginingTip": "Logging in, please operate later ",
   "backHome": "Back to Home",
   "signinandout": "Connect Wallet",
@@ -543,5 +543,6 @@
   "Request Timeout": "Request Timeout",
   "metaso-title": "Meet MetaSo",
   "metaso-content": "The Ultimate Decentralized Social Network with Show Platform as the First Node.",
-  "Loading": "Loading"
+  "Loading": "Loading",
+  "offsaleConfirm": "Can you sure offsale "
 }
