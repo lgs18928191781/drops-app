@@ -28,17 +28,17 @@
         </div>
 
         <div class="lang-wrap">
-          <el-dropdown>
+          <el-dropdown trigger="click" @command="toggleLang">
             <span class="el-dropdown-link">
-              EN
+              {{ currentLang }}
               <el-icon class="el-icon--right">
                 <arrow-down />
               </el-icon>
             </span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item>EN</el-dropdown-item>
-                <el-dropdown-item>CN</el-dropdown-item>
+                <el-dropdown-item command="EN">EN</el-dropdown-item>
+                <el-dropdown-item command="CN">CN</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -165,6 +165,7 @@ const i18n = useI18n()
 const router = useRouter()
 const linkGroud = reactive(['Learn', 'White Paper', 'MetaSo'])
 const currentSelectedLink = ref('Learn')
+const currentLang = ref('EN')
 const swipers = reactive([
   {
     icon: Swiper1,
@@ -262,6 +263,10 @@ function toShow3() {
 function handleCommand(command: string) {
   console.log('command', command)
   currentSelectedLink.value = command
+}
+
+function toggleLang(command: string) {
+  currentLang.value = command
 }
 </script>
 
