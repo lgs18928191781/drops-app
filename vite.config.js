@@ -1,3 +1,4 @@
+/** @type {import('vite').UserConfig} */
 import * as path from 'path'
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -120,6 +121,9 @@ export default ({ mode, command }) => {
       https: false,
       // open: false,
     },
+    esbuild: {
+      drop: isProduction ? ['console', 'debugger'] : [],
+    },
     build: {
       target: 'es2015',
       minify: isProduction,
@@ -128,12 +132,6 @@ export default ({ mode, command }) => {
         plugins: [nodePolyfills()],
         output: {
           sourcemap: isProduction ? false : 'inline',
-        },
-      },
-      terserOptions: {
-        compress: {
-          drop_console: isProduction,
-          drop_debugger: isProduction,
         },
       },
       commonjsOptions: {
