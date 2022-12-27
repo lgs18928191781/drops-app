@@ -172,6 +172,11 @@ export const AllNodeName: {
     path: '/Protocols/NftSell',
     version: '1.0.1',
   },
+  [NodeName.SimpleFileMsg]: {
+    brfcId: '1b9ff346f190',
+    path: '/Protocols/SimpleFileMsg',
+    version: '1.0.1',
+  },
 }
 
 export class SDK {

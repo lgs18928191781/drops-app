@@ -285,6 +285,7 @@ export enum NodeName {
   SellNft = 'sell_nft',
   Name = 'name',
   MetaNote = 'metanote',
+  SimpleFileMsg = 'SimpleFileMsg',
 }
 
 export const enum BindStatus {

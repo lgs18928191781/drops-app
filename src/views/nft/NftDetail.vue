@@ -1,19 +1,4 @@
 <template>
-  <div class="menu-wrap">
-    <ElDropdown trigger="click" @command="handleCommand">
-      <a class="tools flex flex-align-center"
-        >{{ $t('prices') }}{{ currentPrice }}
-        <el-icon class="el-icon--right"><arrow-down /></el-icon>
-      </a>
-      <template #dropdown>
-        <el-dropdown-menu>
-          <el-dropdown-item :command="item.name" v-for="item in prices">{{
-            item.name
-          }}</el-dropdown-item>
-        </el-dropdown-menu>
-      </template>
-    </ElDropdown>
-  </div>
   <div class="nft-detail-wrap">
     <ElSkeleton :loading="isShowSkeleton" animated>
       <!-- 骨架屏 -->
