@@ -369,7 +369,6 @@ const imagePreviewUrl = computed(() => {
 })
 
 const trySendImage = async () => {
-  debugger
   const hexedFiles = await FileToAttachmentItem(imageFile.value!)
   const attachments = [hexedFiles]
 
