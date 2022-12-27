@@ -8,18 +8,37 @@
         <div class="menu-groud">
           <a v-for="link in linkGroud">{{ link }}</a>
         </div>
-        <div class="lang-wrap">
-          <el-dropdown>
+
+        <div class="dropDown-wrap">
+          <el-dropdown trigger="click" @command="handleCommand">
             <span class="el-dropdown-link">
-              EN
+              {{ currentSelectedLink }}
               <el-icon class="el-icon--right">
                 <arrow-down />
               </el-icon>
             </span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item>EN</el-dropdown-item>
-                <el-dropdown-item>CN</el-dropdown-item>
+                <el-dropdown-item :command="link" v-for="link in linkGroud">{{
+                  link
+                }}</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </div>
+
+        <div class="lang-wrap">
+          <el-dropdown trigger="click" @command="toggleLang">
+            <span class="el-dropdown-link">
+              {{ currentLang }}
+              <el-icon class="el-icon--right">
+                <arrow-down />
+              </el-icon>
+            </span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="EN">EN</el-dropdown-item>
+                <el-dropdown-item command="CN">CN</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -145,6 +164,8 @@ import { useRouter } from 'vue-router'
 const i18n = useI18n()
 const router = useRouter()
 const linkGroud = reactive(['Learn', 'White Paper', 'MetaSo'])
+const currentSelectedLink = ref('Learn')
+const currentLang = ref('EN')
 const swipers = reactive([
   {
     icon: Swiper1,
@@ -237,6 +258,15 @@ const downloadGroup = reactive([
 
 function toShow3() {
   router.push({ name: 'buzz' })
+}
+
+function handleCommand(command: string) {
+  console.log('command', command)
+  currentSelectedLink.value = command
+}
+
+function toggleLang(command: string) {
+  currentLang.value = command
 }
 </script>
 
