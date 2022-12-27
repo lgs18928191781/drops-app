@@ -67,6 +67,7 @@ export default class ShowmoneyProvider {
   public metaSvHttp
   public metasvSignatureHttp
   public serviceHttp
+  public metaNameApi = `http://47.242.27.95:35000`
   // private metaSvAuthorization: MetaSvAuthorizationOption
   constructor(apiPrefix: string, metaSvApi: string) {
     this.apiPrefix = apiPrefix || 'https://api.showmoney.app'
@@ -92,6 +93,17 @@ export default class ShowmoneyProvider {
     }).request
   }
 
+  private async callMetaNameApi<T = any>(config: ApiRequestTypes): Promise<BaseApiResultTypes<T>> {
+    const Http = new HttpRequests()
+    const url = this.metaNameApi + config.url
+    try {
+      const res = await Http.postFetch<any>(url, config.params, config.options)
+      return res
+    } catch (error) {
+      throw new Error('Network Error: ' + error.msg)
+    }
+  }
+
   private async callApi<T = any>(config: ApiRequestTypes): Promise<BaseApiResultTypes<T>> {
     const Http = new HttpRequests()
     const url = this.apiPrefix + config.url
@@ -101,6 +113,28 @@ export default class ShowmoneyProvider {
       return res
     } catch (error) {
       throw new Error('Network Error: ' + error.message)
+    }
+  }
+
+  //发起MetaName交易前置请求
+  public async reqMetaNameArgs(params: { name: string; address: string; op: number }) {
+    let options = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+    const res = await this.callMetaNameApi({
+      url: '/reqargs',
+      params: {
+        data: JSON.stringify({
+          ...params,
+          source: 'showmoney',
+        }),
+      },
+      options,
+    })
+    if (res.code === 0) {
+      return res.data
     }
   }
 

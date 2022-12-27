@@ -28,7 +28,7 @@ import { AllNodeName } from '../sdk'
 import { ElMessage } from 'element-plus'
 import { NftManager, FtManager, API_TARGET } from 'meta-contract'
 import { useUserStore } from '@/stores/user'
-
+import zlib from 'zlib'
 const bsv = mvc
 
 export enum Network {
@@ -39,6 +39,12 @@ export enum Network {
 export enum MetaIdTag {
   mainnet = 'metaid',
   testnet = 'testmetaid',
+}
+
+export enum MetaNameOp {
+  register = 1,
+  renew = 2,
+  updataInfo = 3,
 }
 
 export interface BaseUserInfoTypes {
@@ -710,7 +716,10 @@ export class HdWallet {
               opReturn: [],
               change: this.rootAddress,
               payTo: [
-                { amount: 1000, address: infoAddress.publicKey.toAddress(this.network).toString() },
+                {
+                  amount: 1000,
+                  address: infoAddress.publicKey.toAddress(this.network).toString(),
+                },
               ],
             })
 
@@ -1669,7 +1678,9 @@ export class HdWallet {
         } else {
           // 不存在根节点
           if (!params.keyPath) {
-            const newBfrcNodekeyPath = await this.getKeyPath({ parentTxid: params.parentTxId })
+            const newBfrcNodekeyPath = await this.getKeyPath({
+              parentTxid: params.parentTxId,
+            })
             if (newBfrcNodekeyPath) {
               params.keyPath = newBfrcNodekeyPath.join('/')
             }
@@ -2129,5 +2140,27 @@ export class HdWallet {
 
       // await this.provider.broadcast(result.txHex)
     })
+  }
+
+  private gzip(data: Buffer | string): Promise<Buffer | string> {
+    return new Promise((resolve, reject) => {
+      zlib.gzip(data, {}, (err, val) => {
+        if (err) {
+          reject(err)
+          return
+        }
+        resolve(val)
+      })
+    })
+  }
+
+  //发起MetaName交易前请求
+  public async MetaNameBeforeReq(params: { name: string; op: MetaNameOp }) {
+    const senderAddress = this._fundingKey
+      .deriveChild(0)
+      .deriveChild(0)
+      .privateKey.toAddress()
+      .toString()
+    return this.provider.reqMetaNameArgs({ ...params, address: senderAddress })
   }
 }
