@@ -11,7 +11,7 @@
           class="guide-item flex flex-align-center"
           v-for="(item, index) in guides"
           :key="index"
-          @click="comeSoon"
+          @click="item.fun()"
         >
           <span class="icon-warp">
             <img :src="item.icon" />
@@ -28,16 +28,28 @@
 import { useI18n } from 'vue-i18n'
 import AppSVG from '@/assets/svg/guides_icon_app.svg?url'
 import LearnSVG from '@/assets/svg/guides_icon_learn.svg?url'
+import { useRouter } from 'vue-router'
 
 const i18n = useI18n()
+const router = useRouter()
 const guides = [
-  { icon: LearnSVG, name: () => i18n.t('Buzz.RecommendContent.Learn the show function'), link: '' },
-  { icon: AppSVG, name: () => i18n.t('Buzz.RecommendContent.Download showApp'), link: '' },
+  {
+    icon: LearnSVG,
+    name: () => i18n.t('Buzz.RecommendContent.Learn the show function'),
+    fun: () => {
+      ElMessage.info(i18n.t('Comming Soon'))
+    },
+  },
+  {
+    icon: AppSVG,
+    name: () => i18n.t('Buzz.RecommendContent.Download showApp'),
+    fun: () => {
+      router.push({
+        name: 'home',
+      })
+    },
+  },
 ]
-
-function comeSoon() {
-  ElMessage.info(i18n.t('Comming Soon'))
-}
 </script>
 
 <style lang="scss" scoped src="./Guide.scss"></style>

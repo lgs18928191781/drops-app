@@ -263,7 +263,7 @@ import { initPagination } from '@/config'
 import { useRootStore } from '@/stores/root'
 import Decimal from 'decimal.js-light'
 import { GetMyMEBalance } from '@/api/v3'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import CardVue from '../Card/Card.vue'
 import NFTCoverVue from '@/components/NFTCover/NFTCover.vue'
 import RechargeMeVue from './RechargeMe.vue'
@@ -271,7 +271,6 @@ import NFTLlistVue from './NFTLlist.vue'
 import LoadMoreVue from '../LoadMore/LoadMore.vue'
 import IsNullVue from '../IsNull/IsNull.vue'
 import { Loading } from '@element-plus/icons-vue'
-import { router } from '@/router'
 
 const props = defineProps<{
   modelValue: boolean
@@ -282,6 +281,7 @@ const isShowUserWalletOperates = ref(false)
 const userStore = useUserStore()
 const rootStore = useRootStore()
 const route = useRoute()
+const router = useRouter()
 const i18n = useI18n()
 
 const loginTypeLogo = {
@@ -571,6 +571,10 @@ function toNFT(nft: GenesisNFTItem) {
     },
   })
 }
+
+router.beforeEach(() => {
+  emit('update:modelValue', false)
+})
 
 watch(
   () => props.modelValue,

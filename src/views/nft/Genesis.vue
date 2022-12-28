@@ -1,12 +1,13 @@
 <template>
   <div>
-    {{ userStore.user?.address }}
-    <ElInput type="number" v-model="form.totalSupply" placeholder="系列数量" />
-    <ElInput type="text" v-model="form.seriesName" placeholder="系列名称" />
+    <ElInput type="number" v-model="form.genesis.totalSupply" placeholder="系列数量" />
+    <ElInput type="text" v-model="form.genesis.seriesName" placeholder="系列名称" />
+    <ElInput type="text" v-model="form.name" placeholder="NFT名称" />
+    <ElInput type="text" v-model="form.desc" placeholder="NFT描述" />
+    <ElInput type="text" v-model="form.metafile" placeholder="metafile" />
+    <ElInput type="number" v-model="form.count" placeholder="铸造数量" />
 
     <ElButton @click="genesis">创建</ElButton>
-
-    <ElButton @click="ftGenesis">FT</ElButton>
   </div>
 </template>
 
@@ -18,21 +19,27 @@ import { reactive } from 'vue'
 const userStore = useUserStore()
 
 const form = reactive({
-  type: 'metacontract',
-  totalSupply: '',
-  seriesName: '',
+  genesis: {
+    type: 'metacontract',
+    totalSupply: '',
+    seriesName: '',
+  },
+  name: '',
+  desc: '',
+  metafile: '',
+  count: 1,
 })
 
 async function genesis() {
   const res = await userStore.showWallet.createBrfcChildNode({
     nodeName: NodeName.NftGenesis,
     data: JSON.stringify({
-      ...form,
+      ...form.genesis,
     }),
   })
   // debugger
   if (res) {
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < form.count; i++) {
       const response = await userStore.showWallet.createBrfcChildNode({
         nodeName: NodeName.NftIssue,
         data: JSON.stringify({
@@ -41,15 +48,14 @@ async function genesis() {
           genesisTxid: res.currentNode?.txId,
           receiverAddress: userStore.user?.address,
           sensibleId: res.currentNode!.sensibleId,
-          name: '爱德华',
-          desc: '爱德华',
-          icon: 'metafile://eea17dec906913709965a236791f9dacd70102c63f0f60fe1bbd54f088ed8ec7.jpg',
+          name: form.name,
+          desc: form.desc,
+          icon: form.metafile,
           backIcon: '',
           website: '',
           issuerName: '',
           data: {
-            originalFileTxid:
-              'metafile://eea17dec906913709965a236791f9dacd70102c63f0f60fe1bbd54f088ed8ec7.jpg',
+            originalFileTxid: form.metafile,
           },
         }),
       })

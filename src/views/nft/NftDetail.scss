@@ -219,6 +219,11 @@
           padding: 20px 0;
           cursor: pointer;
           font-size: 24px;
+          margin-right: 15px;
+
+          &:last-child {
+            margin-right: 0;
+          }
         }
       }
 

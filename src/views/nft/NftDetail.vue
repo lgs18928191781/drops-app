@@ -145,6 +145,16 @@
                 >
                   {{ $t('sale') }}
                 </div>
+
+                <!-- 转赠 -->
+                <div class="main-border primary flex flex-align-center flex1" v-if="!isSale">
+                  <div
+                    class="btn btn-block btn-plain flex1 flex flex-align-center flex-pack-center"
+                    @click="isSHowTransfer = true"
+                  >
+                    {{ $t('NFT.Transfer') }}
+                  </div>
+                </div>
               </template>
             </div>
           </div>
@@ -354,6 +364,7 @@
 
         <NFTSellVue :nft="nft.val!" v-model="isShowSell" @success="getDetail" />
         <NFTBuyVue :nft="nft.val!" v-model="isShowBuy" :is-hide-detail="true" />
+        <NFTTransferVue :nft="nft.val!" v-model="isSHowTransfer" @success="getDetail" />
       </template>
     </ElSkeleton>
   </div>
@@ -398,6 +409,7 @@ import NFTSellVue from '@/components/NFTSell/NFTSell.vue'
 import NFTBuyVue from '@/components/NFTBuy/NFTBuy.vue'
 import { NFTOffSale } from '@/utils/util'
 import AmountVue from '@/components/Amount/Amount.vue'
+import NFTTransferVue from '@/components/NFTTransfer/NFTTransfer.vue'
 
 const isShowSkeleton = ref(true)
 const isShowDrscDetail = ref(false)
@@ -455,6 +467,7 @@ const issueRecord: { val: GetNftHolderListResItem | null } = reactive({
   val: null,
 })
 const isShowBuy = ref(false)
+const isSHowTransfer = ref(false)
 
 const isLegal = computed(() => {
   return route.name === 'legaldetail'
