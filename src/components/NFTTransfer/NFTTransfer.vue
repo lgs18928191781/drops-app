@@ -1,0 +1,133 @@
+<template>
+  <ElDialog
+    :model-value="modelValue"
+    class="sm none-padding"
+    :close-on-click-modal="!loading"
+    :title="$t('NFT.Transfer')"
+    @close="emit('update:modelValue', false)"
+  >
+    <div class="nft-buy" v-loading="loading">
+      <NFTMsgVue :nft="nft" />
+
+      <div class="cont-warp">
+        <template v-if="transferUser.val">
+          <div class="tranfer-user flex flex-align-center">
+            <UserAvatar
+              :meta-id="transferUser.val!.metaId"
+              :image="transferUser.val!.avatarImage"
+              :disabled="true"
+            />
+            <div class="flex1">
+              <div class="name">{{ transferUser.val!.name }}</div>
+              <div class="metaid">
+                {{ transferUser.val!.metaId.slice(0,6)}}...{{ transferUser.val!.metaId.slice(-6)  }}
+              </div>
+            </div>
+          </div>
+
+          <div class="operate flex flex-align-center flex-pack-center" @click="transfer">
+            <a class="main-border flex1" @click="transferUser.val = null"> {{ $t('Cancel') }}</a>
+            <a class="main-border primary flex1" @click="confirmTransfer">
+              {{ $t('NFT.Confirm Transfer') }}</a
+            >
+          </div>
+        </template>
+
+        <template v-else>
+          <ElForm :label-position="'top'">
+            <ElFormItem :label="$t('NFT.Transfer MetaId')">
+              <ElInput type="text" v-model="form.target" />
+            </ElFormItem>
+          </ElForm>
+          <div class="operate  flex flex-align-center flex-pack-center" @click="transfer">
+            <a class="main-border primary flex1">{{ $t('NFT.Transfer') }}</a>
+          </div>
+        </template>
+      </div>
+    </div>
+  </ElDialog>
+</template>
+
+<script setup lang="ts">
+import { PayPlatform } from '@/enum'
+import { useRootStore } from '@/stores/root'
+import { useUserStore } from '@/stores/user'
+import { reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import NFTMsgVue from '../NFTMsg/NFTMsg.vue'
+import { PayPlatformItem, payPlatformList } from '@/config'
+import { GetUserAllInfo } from '@/api/aggregation'
+
+const props = defineProps<{
+  modelValue: boolean
+  nft: GenesisNFTItem
+  isHideDetail?: boolean
+}>()
+
+const emit = defineEmits(['update:modelValue', 'success'])
+const rootStore = useRootStore()
+const userStore = useUserStore()
+const i18n = useI18n()
+const isShowPayTypes = ref(false)
+const transferUser: { val: UserAllInfo | null } = reactive({
+  val: null,
+})
+const form = reactive({
+  target: '',
+})
+
+const loading = ref(false)
+
+const currentPayPlatform = ref(
+  userStore.isAuthorized && userStore.user?.evmAddress ? PayPlatform.ETH : PayPlatform.UnionPay
+)
+
+function choosePayPlatform(item: PayPlatformItem) {
+  if (item.disabled()) return
+  currentPayPlatform.value = item.platform
+}
+
+async function transfer() {
+  loading.value = true
+  let metaId
+  if (form.target.length === 64) {
+    // MetaId
+    metaId = form.target
+  } else {
+    metaId = ''
+  }
+
+  const res = await GetUserAllInfo(metaId).catch(error => {
+    ElMessage.error(error.message)
+    loading.value = false
+  })
+  if (res?.code === 0) {
+    transferUser.val = res.data
+    form.target = ''
+    loading.value = false
+  }
+}
+
+async function confirmTransfer() {
+  loading.value = true
+  const res = await userStore.showWallet
+    .transferNFT({
+      receiverAddress: transferUser.val!.address,
+      codehash: props.nft.nftCodehash,
+      genesis: props.nft.nftGenesis,
+      tokenIndex: props.nft.nftTokenIndex,
+    })
+    .catch(error => {
+      ElMessage.error(error.message)
+      loading.value = false
+    })
+  if (res && res.txid) {
+    emit('success')
+    ElMessage.success(i18n.t('NFT.Transfer Success'))
+    emit('update:modelValue', false)
+    loading.value = false
+  }
+}
+</script>
+
+<style lang="scss" scoped src="./NFTTransfer.scss"></style>

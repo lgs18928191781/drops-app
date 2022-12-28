@@ -1,4 +1,4 @@
-import HttpRequest from 'request-sdk'
+import HttpRequest from '@/utils/request'
 
 const mvcBaseUrL = 'https://testmvc.showmoney.app/showpaycore'
 const mvcApi = new HttpRequest(mvcBaseUrL!, {

@@ -868,7 +868,7 @@ export class HdWallet {
 
   public sigMessage(msg: string, path = '0/0') {
     const privateKey = this.getPathPrivateKey(path)
-    return bsv.Message.sign(msg, privateKey)
+    return mvc.Message.sign(msg, privateKey)
   }
 
   // 根据 path 生成 privateKey

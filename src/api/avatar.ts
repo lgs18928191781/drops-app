@@ -1,7 +1,6 @@
-import HttpRequest from 'request-sdk'
-// @ts-ignore
+import HttpRequest from '@/utils/request'
+
 const Avatar = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/metabot-avatar`).request
-// @ts-ignore
 const Army = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/metabot-army`).request
 // const Army = new HttpRequest(`http://localhost:8133`).request
 

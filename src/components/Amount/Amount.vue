@@ -13,7 +13,7 @@ import { useRootStore } from '@/stores/root'
 
 interface Props {
   price: string | number
-  currency: 'CNY'
+  currency: 'CNY' | 'SPACE'
 }
 const props = withDefaults(defineProps<Props>(), {})
 const loading = ref(true)

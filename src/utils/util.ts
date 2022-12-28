@@ -411,32 +411,6 @@ export function checkAppHasMethod(methodName: string) {
   })
 }
 
-export function offSaleNFT(params: { name: string; uuid: string }) {
-  return new Promise<boolean>(async resolve => {
-    const userStroe = useUserStore()
-    const loading = ElLoading.service()
-    try {
-      const signRes: string = await userStroe.showWallet.sigMessage(userStroe.user?.metaId!, '0/0')
-      if (signRes) {
-        const res = await LegalOffsale({ uuid: params.uuid, sig: signRes })
-        if (res.code === 0) {
-          loading.close()
-          ElMessage.success('下架成功')
-          resolve(true)
-        } else {
-          loading.close()
-          // @ts-ignore
-          ElMessage.error(res.error)
-        }
-      }
-    } catch (error) {
-      loading.close()
-      alertCatchError(error)
-      resolve(false)
-    }
-  })
-}
-
 export function trim(str: string) {
   return str.replace(/(^\s*)|(\s*$)/g, '')
 }
@@ -956,4 +930,37 @@ export function getCurrencyAmount(price: string | number, currency: 'CNY') {
     }
   } else {
   }
+}
+
+export function NFTOffSale(nft: GenesisNFTItem) {
+  return new Promise(async resolve => {
+    ElMessageBox.confirm(
+      `${i18n.global.t('offsaleConfirm')} ${nft.nftName} ?`,
+      i18n.global.t('niceWarning'),
+      {
+        confirmButtonText: i18n.global.t('confirm'),
+        cancelButtonText: i18n.global.t('Cancel'),
+        closeOnClickModal: false,
+        cancelButtonClass: 'main-border',
+        confirmButtonClass: 'main-border primary',
+      }
+    )
+      .then(async () => {
+        const userStroe = useUserStore()
+        const signRes: string = await userStroe.showWallet!.sigMessage(
+          userStroe.user!.metaId!,
+          '0/0'
+        )
+        if (signRes) {
+          const res = await LegalOffsale({ uuid: nft.nftLegalUuid, sig: signRes })
+          if (res.code === 0) {
+            ElMessage.success('下架成功')
+            resolve(true)
+          }
+        }
+      })
+      .catch(() => {
+        resolve(false)
+      })
+  })
 }

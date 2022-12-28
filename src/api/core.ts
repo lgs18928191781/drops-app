@@ -1,6 +1,7 @@
 import { useUserStore } from '@/stores/user'
-import HttpRequest from 'request-sdk'
+import HttpRequest from '@/utils/request'
 import { ApiResultTypes, BaseUserInfoParams } from '.'
+import i18n from '@/utils/i18n'
 
 // @ts-ignore
 const Core = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/showpaycore`, {

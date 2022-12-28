@@ -101,14 +101,25 @@
                 <!-- 购买 -->
                 <div
                   class="main-border flex1 flex flex-align-center flex-pack-center"
-                  :class="[
-                    nft.val!?.nftSellState !== 0 && !blindBoxPage ? 'faded' : blindBoxPage ? 
-                    nft.val!?.remain > 0 ? '' : 'btn-noColor' : ''
-                  ]"
+                  :class="[isSale ? 'primary' : 'faded']"
                   @click="startBuy"
                 >
-                  <template v-if="(nft.val!.nftSellState === 0  && nft.val!.nftIsReady)">
-                    {{ i18n.locale.value === 'zh' ? `以 ${price}  购买` : `Buy Now At ${price} ` }}
+                  <template v-if="isSale">
+                    <template v-if="i18n.locale.value === 'zh'">
+                      以&nbsp;
+                      <AmountVue
+                        :price="nft.val!.nftIsLegal ? nft.val!.nftLegalPrice : nft.val!.nftPrice"
+                        :currency="nft.val!.nftIsLegal ? 'CNY' : 'SPACE'"
+                      />
+                      &nbsp; 购买
+                    </template>
+                    <template v-else>
+                      Buy Now At&nbsp;
+                      <AmountVue
+                        :price="nft.val!.nftIsLegal ? nft.val!.nftLegalPrice : nft.val!.nftPrice"
+                        :currency="nft.val!.nftIsLegal ? 'CNY' : 'SPACE'"
+                      />
+                    </template>
                   </template>
                   <template v-else>{{ $t('isBeBuyedOrCanceled') }}</template>
                 </div>
@@ -119,10 +130,7 @@
                   userStore.user! && userStore.user?.metaId === nft.val!.nftOwnerMetaId
                 "
               >
-                <div
-                  class="main-border primary flex flex-align-center flex1"
-                  v-if="(nft.val!.nftSellState === 0  && nft.val!.nftIsReady)"
-                >
+                <div class="main-border primary flex flex-align-center flex1" v-if="isSale">
                   <div
                     class="btn btn-block btn-plain flex1 flex flex-align-center flex-pack-center"
                     @click="offSale"
@@ -136,6 +144,16 @@
                   @click="toSale"
                 >
                   {{ $t('sale') }}
+                </div>
+
+                <!-- 转赠 -->
+                <div class="main-border primary flex flex-align-center flex1" v-if="!isSale">
+                  <div
+                    class="btn btn-block btn-plain flex1 flex flex-align-center flex-pack-center"
+                    @click="isSHowTransfer = true"
+                  >
+                    {{ $t('NFT.Transfer') }}
+                  </div>
                 </div>
               </template>
             </div>
@@ -345,7 +363,8 @@
         </div>
 
         <NFTSellVue :nft="nft.val!" v-model="isShowSell" @success="getDetail" />
-        <!-- <NFTBuyVue :nft="nft.val!" v-model="isShowSell" /> -->
+        <NFTBuyVue :nft="nft.val!" v-model="isShowBuy" :is-hide-detail="true" />
+        <NFTTransferVue :nft="nft.val!" v-model="isSHowTransfer" @success="getDetail" />
       </template>
     </ElSkeleton>
   </div>
@@ -388,6 +407,9 @@ import PayConfirmVue from '@/components/PayConfirm/PayConfirm.vue'
 import { UnitName } from '@/config'
 import NFTSellVue from '@/components/NFTSell/NFTSell.vue'
 import NFTBuyVue from '@/components/NFTBuy/NFTBuy.vue'
+import { NFTOffSale } from '@/utils/util'
+import AmountVue from '@/components/Amount/Amount.vue'
+import NFTTransferVue from '@/components/NFTTransfer/NFTTransfer.vue'
 
 const isShowSkeleton = ref(true)
 const isShowDrscDetail = ref(false)
@@ -396,6 +418,23 @@ const route = useRoute()
 const i18n = useI18n()
 const tabIndex = ref(0)
 const rootStore = useRootStore()
+
+const isSale = computed(() => {
+  let result = false
+  if (nft.val!) {
+    if (nft.val.nftIsLegal) {
+      if (nft.val.nftSellState === 0) {
+        result = true
+      }
+    } else {
+      if (nft.val.nftSellState === 0 && nft.val.nftIsReady) {
+        result = true
+      }
+    }
+  }
+  return result
+})
+
 // setTimeout(() => {
 //   isShowSkeleton.value = false
 // }, 3000)
@@ -427,6 +466,8 @@ const ownerRecord: { val: GetNftHolderListResItem | null } = reactive({
 const issueRecord: { val: GetNftHolderListResItem | null } = reactive({
   val: null,
 })
+const isShowBuy = ref(false)
+const isSHowTransfer = ref(false)
 
 const isLegal = computed(() => {
   return route.name === 'legaldetail'
@@ -506,11 +547,7 @@ function toWhatsonchain(txId: string) {
 function ToUser(metaId: string) {}
 
 function startBuy() {
-  if (nft.val!.nftSellState !== 0) return
-  if (isLegal.value && !cnyMode.value) {
-    return ElMessage.error(`${i18n.t('notSupportBsvBuyLegal')}`)
-  }
-  isShowConfirm.value = true
+  isShowBuy.value = true
 }
 
 function getDetail() {
@@ -548,33 +585,11 @@ function getDetail() {
 //   })
 // }
 
-function offSale() {
-  //   const loading = ElLoading.service({
-  //     lock: true,
-  //     text: 'Loading',
-  //     spinner: 'el-icon-loading',
-  //     background: 'rgba(0, 0, 0, 0.7)',
-  //     customClass: 'full-loading',
-  //   })
-  //   ElMessageBox.confirm(`${i18n.t('offsaleConfirm')} ${NFT.val!.nftName} ?`, i18n.t('niceWarning'), {
-  //     confirmButtonText: i18n.t('confirm'),
-  //     cancelButtonText: i18n.t('cancel'),
-  //     closeOnClickModal: false,
-  //   })
-  //     .then(async () => {
-  //       if (route.name === 'legaldetail') {
-  //         loading.close()
-  //       } else {
-  //         NftOffSale(NFT.val!, loading)
-  //           .then(() => {
-  //             loading.close()
-  //           })
-  //           .catch(() => {
-  //             loading.close()
-  //           })
-  //       }
-  //     })
-  //     .catch(() => loading.close())
+async function offSale() {
+  const result = await NFTOffSale(nft.val!)
+  if (result) {
+    getDetail()
+  }
 }
 
 function toSale() {
@@ -636,6 +651,16 @@ onMounted(() => {
     getNftHolderList()
   }
 })
+
+watch(
+  () => userStore.isAuthorized,
+  () => {
+    isShowSkeleton.value = true
+    getDetail().then(() => {
+      isShowSkeleton.value = false
+    })
+  }
+)
 </script>
 
 <style lang="scss" src="./NftDetail.scss"></style>

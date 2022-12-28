@@ -35,6 +35,7 @@
             class="nft-item"
             v-for="nft in nfts"
             :key="nft.nftIssueMetaTxId"
+            @click.stop="toNFT(nft)"
           >
             <NFTCover :cover="[nft.nftIcon]" />
           </RouterLink>
@@ -47,6 +48,7 @@
 <script setup lang="ts">
 import { GetGenesisNFTs } from '@/api/aggregation'
 import { initPagination } from '@/config'
+import { router } from '@/router'
 import { useUserStore } from '@/stores/user'
 import { reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
@@ -65,7 +67,7 @@ const userStore = useUserStore()
 const nfts: GenesisNFTItem[] = reactive([])
 const isSkeleton = ref(true)
 
-const emit = defineEmits(['update:modelValue', 'close'])
+const emit = defineEmits(['update:modelValue', 'close', 'link'])
 
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
@@ -92,6 +94,19 @@ function load() {
   pagination.page++
   getDatas().then(() => {
     pagination.loading = false
+  })
+}
+
+function toNFT(nft: GenesisNFTItem) {
+  emit('link')
+  router.push({
+    name: 'nftDetail',
+    params: {
+      chain: nft.nftChain,
+      genesis: nft.nftGenesis,
+      codehash: nft.nftCodehash ? nft.nftCodehash : nft.nftChain,
+      tokenIndex: nft.nftTokenIndex,
+    },
   })
 }
 

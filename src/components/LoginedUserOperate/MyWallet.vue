@@ -218,6 +218,7 @@
                       class="item"
                       v-for="nft in item.nftDetailItemList"
                       :key="nft.nftIssueMetaTxId"
+                      @click.stop="toNFT(nft)"
                     >
                       <NFTCoverVue :cover="[nft.nftIcon]" />
                     </RouterLink>
@@ -242,6 +243,7 @@
       :codehash="seriesNFTList.codehash"
       :genesis="seriesNFTList.genesis"
       :seriesName="seriesNFTList.seriesName"
+      @link="emit('update:modelValue', false)"
     />
   </ElDrawer>
 </template>
@@ -261,7 +263,7 @@ import { initPagination } from '@/config'
 import { useRootStore } from '@/stores/root'
 import Decimal from 'decimal.js-light'
 import { GetMyMEBalance } from '@/api/v3'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import CardVue from '../Card/Card.vue'
 import NFTCoverVue from '@/components/NFTCover/NFTCover.vue'
 import RechargeMeVue from './RechargeMe.vue'
@@ -279,6 +281,7 @@ const isShowUserWalletOperates = ref(false)
 const userStore = useUserStore()
 const rootStore = useRootStore()
 const route = useRoute()
+const router = useRouter()
 const i18n = useI18n()
 
 const loginTypeLogo = {
@@ -555,6 +558,23 @@ function load() {
     pagination.loading = false
   })
 }
+
+function toNFT(nft: GenesisNFTItem) {
+  emit('update:modelValue', false)
+  router.push({
+    name: 'nftDetail',
+    params: {
+      chain: currentChain.value,
+      genesis: nft.nftGenesis,
+      codehash: nft.nftCodehash ? nft.nftCodehash : currentChain.value,
+      tokenIndex: nft.nftTokenIndex,
+    },
+  })
+}
+
+router.beforeEach(() => {
+  emit('update:modelValue', false)
+})
 
 watch(
   () => props.modelValue,

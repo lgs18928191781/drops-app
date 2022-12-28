@@ -22,7 +22,8 @@
     }
 
     .token-index {
-        color: #606266;
+        color: var(--themeTextColor);
+        opacity: 0.5;
     }
 
     .price {

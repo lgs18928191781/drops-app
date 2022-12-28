@@ -1,5 +1,5 @@
 import { PostTag } from '@/stores/buzz/tag'
-import HttpRequest from 'request-sdk'
+import HttpRequest from '@/utils/request'
 
 const aggregation = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation`, {
   header: {
