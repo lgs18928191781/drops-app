@@ -6,7 +6,7 @@
         :key="item.value"
         :class="{ active: item.value === pagintion.chain, disabled: item.disabled() }"
         @click="changeTab(item)"
-        class="flex flex-align-center"
+        class=" main-border flex flex-align-center"
       >
         <img :src="item.icon" />
         <span class="name">{{ item.name }} </span>
