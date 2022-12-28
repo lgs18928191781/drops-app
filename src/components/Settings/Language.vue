@@ -20,7 +20,7 @@
           class="item flex flex-align-center"
           v-for="item in langs"
           :key="item.value"
-          @click="setLang(item.value)"
+          @click="SetLang(item.value)"
         >
           <component class="icon-warp" :is="item.icon" />
           <div class="name flex1">{{ item.name }}</div>
@@ -41,6 +41,8 @@ import DrawerRightHeaderVue from '@/components/DrawerRightHeader/DrawerRightHead
 import EnglishIcon from '@/assets/svg/icon_english.svg?component'
 import ChineseIcon from '@/assets/svg/icon_chinese.svg?component'
 import { useI18n } from 'vue-i18n'
+import { useRootStore } from '@/stores/root'
+import { SetLang } from '@/utils/util'
 
 interface Props {
   modelValue: boolean
@@ -48,17 +50,12 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits(['update:modelValue'])
 const i18n = useI18n()
+const rootStore = useRootStore()
 
 const langs = [
   { icon: EnglishIcon, name: 'English', value: 'en' },
   { icon: ChineseIcon, name: '中文（简体）', value: 'zh' },
 ]
-
-function setLang(value: string) {
-  if (i18n.locale.value === value) return
-  i18n.locale.value = value
-  localStorage.setItem('lang', value)
-}
 </script>
 
 <style lang="scss" scoped src="./Language.scss"></style>

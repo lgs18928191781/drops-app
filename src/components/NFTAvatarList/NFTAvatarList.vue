@@ -1,13 +1,16 @@
 <template>
   <div class="nft-avatar-list-warp flex flex-v">
-    <div class="tab">
+    <div class="tab flex flex-align-center">
       <a
-        v-for="item in tabs"
+        v-for="item in chains"
         :key="item.value"
         :class="{ active: item.value === pagintion.chain, disabled: item.disabled() }"
         @click="changeTab(item)"
-        >{{ item.name }}</a
+        class="flex flex-align-center"
       >
+        <img :src="item.icon" />
+        <span class="name">{{ item.name }} </span>
+      </a>
     </div>
     <div
       class="nft-list flex1"
@@ -37,7 +40,7 @@
 <script setup lang="ts">
 import { GetNFTAvatars } from '@/api/aggregation'
 import { GetNFTs } from '@/api/metaid-base'
-import { initPagination } from '@/config'
+import { initPagination, chains } from '@/config'
 import { useUserStore } from '@/stores/user'
 import { reactive, ref } from 'vue'
 import IsNullVue from '@/components/IsNull/IsNull.vue'
@@ -58,15 +61,6 @@ const pagintion = reactive({
 })
 
 const list: NFTAvatarItem[] = reactive([])
-
-const tabs = reactive([
-  { name: 'MVC NFT Avatar', value: 'mvc', disabled: () => false },
-  {
-    name: 'ETH NFT Avatar',
-    value: import.meta.env.VITE_ETH_CHAIN,
-    disabled: () => !userStore.user!.evmAddress,
-  },
-])
 
 function getMore() {
   if (isSkeleton.value || pagintion.nothing || pagintion.loading) return

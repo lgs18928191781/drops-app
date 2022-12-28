@@ -36,23 +36,22 @@ import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import Logo from '@/assets/images/logo@2x.png'
 import { CaretBottom, Search } from '@element-plus/icons-vue'
+import { useRootStore } from '@/stores/root'
+import { SetLang } from '@/utils/util'
 const i18n = useI18n()
 const env = import.meta.env
 const route = useRoute()
 const router = useRouter()
 const isShowDrawer = ref(false)
 const currentLang = ref('CN')
+const rootStore = useRootStore()
 // 设置语言
 function setLang() {
   const lang = i18n.locale.value === 'en' ? 'zh' : 'en'
-  i18n.locale.value = lang
-  currentLang.value = i18n.locale.value === 'en' ? 'EN' : 'CN'
-  window.localStorage.setItem('lang', lang)
+  SetLang(lang)
 }
 
-function toggleDark() { }
+function toggleDark() {}
 </script>
 
-<style lang="scss" src="./Header.scss">
-
-</style>
+<style lang="scss" src="./Header.scss"></style>

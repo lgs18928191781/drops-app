@@ -964,3 +964,13 @@ export function NFTOffSale(nft: GenesisNFTItem) {
       })
   })
 }
+
+export function SetLang(lang: string) {
+  if (i18n.global.locale.value === lang) return
+  i18n.global.locale.value = lang
+  window.localStorage.setItem('lang', lang)
+  if (!window.localStorage.getItem('currentPrice')) {
+    const rootStore = useRootStore()
+    rootStore.$patch({ currentPrice: i18n.global.locale.value === 'en' ? 'USD' : 'CNY' })
+  }
+}

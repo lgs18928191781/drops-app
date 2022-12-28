@@ -1,6 +1,8 @@
 import { SignUserType } from '@/enum'
 import { defineStore } from 'pinia'
 import { GetCertMetaIdList } from '@/api/aggregation'
+import i18n from '@/utils/i18n'
+
 export interface SignBaseInfo {
   userType: SignUserType
   areaCode: string
@@ -42,6 +44,12 @@ const theme = localStorage.theme
   ? 'dark'
   : 'light'
 
+const initCurrentPrice = window.localStorage.getItem('currentPrice')
+  ? window.localStorage.getItem('currentPrice')
+  : i18n.global.locale.value === 'en'
+  ? 'USD'
+  : 'CNY'
+
 export const useRootStore = defineStore('root', {
   state: () =>
     <RootState>{
@@ -53,7 +61,7 @@ export const useRootStore = defineStore('root', {
       isGetedExchangeRate: false,
       isShowLogin: false,
       isShowMetaMak: false,
-      currentPrice: window.localStorage.getItem('currentPrice') || 'CNY',
+      currentPrice: initCurrentPrice,
       theme,
     },
   getters: {

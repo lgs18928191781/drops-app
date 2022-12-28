@@ -43,10 +43,10 @@
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item @click="setLang('en')"
+                  <el-dropdown-item @click="SetLang('en')"
                     ><div class="lang-item">EN</div></el-dropdown-item
                   >
-                  <el-dropdown-item @click="setLang('zh')"
+                  <el-dropdown-item @click="SetLang('zh')"
                     ><div class="lang-item">ZH</div></el-dropdown-item
                   >
                 </el-dropdown-menu>
@@ -196,9 +196,12 @@ import footIcon3 from '@/assets/show/foot-icon3.png'
 import footIcon4 from '@/assets/show/foot-icon4.png'
 import { useRouter } from 'vue-router'
 import LogoVue from './Logo.vue'
+import { useRootStore } from '@/stores/root'
+import { SetLang } from '@/utils/util'
 
 const i18n = useI18n()
 const router = useRouter()
+const rootStore = useRootStore()
 const linkGroud = reactive([
   { name: () => i18n.t('Home.Learn') },
   { name: () => i18n.t('Home.White Paper') },
@@ -307,11 +310,6 @@ function toShow3() {
 function handleCommand(command: string) {
   console.log('command', command)
   currentSelectedLink.value = command
-}
-
-function setLang(lang: string) {
-  if (i18n.locale.value === lang) return
-  i18n.locale.value = lang
 }
 </script>
 

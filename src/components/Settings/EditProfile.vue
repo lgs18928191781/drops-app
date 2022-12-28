@@ -137,7 +137,10 @@ async function confirm() {
           updateTime: new Date().getTime(),
           memo: currentAvatar.val.desc,
           image: currentAvatar.val.avatarImage,
-          chain: currentAvatar.val.avatarImage.split('://')[0],
+          chain:
+            currentAvatar.val.avatarImage.split('://')[0] === 'metacontract'
+              ? 'mvc'
+              : currentAvatar.val.avatarImage.split('://')[0],
         }),
       })
     }

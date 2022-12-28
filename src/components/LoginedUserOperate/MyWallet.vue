@@ -9,6 +9,7 @@
     :lock-scroll="true"
     custom-class="none-padding"
     :destroy-on-close="isDestroyShowWallet"
+    @close="emit('update:modelValue', false)"
   >
     <div class="user-wallet flex flex-v">
       <div class="user flex flex-align-center">
@@ -259,7 +260,7 @@ import { GetBalance, GetNFTs } from '@/api/aggregation'
 import ETH from '@/assets/images/eth.png'
 import MVC from '@/assets/images/iocn_mvc.png'
 import ME from '@/assets/images/me_logo.png'
-import { initPagination } from '@/config'
+import { initPagination, chains } from '@/config'
 import { useRootStore } from '@/stores/root'
 import Decimal from 'decimal.js-light'
 import { GetMyMEBalance } from '@/api/v3'
@@ -334,10 +335,7 @@ const tabs = [
 const isSkeleton = ref(true)
 const currentChain = ref('mvc')
 const genesisList: UserNFTItem[] = reactive([])
-const chains = reactive([
-  { name: 'MVC', icon: MVC, value: 'mvc' },
-  { name: 'ETH', icon: ETH, value: import.meta.env.VITE_ETH_CHAIN },
-])
+
 const pagination = reactive({ ...initPagination })
 const isShowMERecharge = ref(false)
 const wallets = reactive([

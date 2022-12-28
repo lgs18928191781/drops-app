@@ -3,7 +3,10 @@ import { PayPlatform } from './enum'
 import WechatPayIcon from '@/assets/images/wechatTitle.svg?url'
 import AliPayIcon from '@/assets/images/alipay-circle.svg?url'
 import SandPayIcon from '@/assets/images/sandPay_title.svg?url'
-import ETHIcon from '@/assets/images/eth.png'
+import ETHIcon from '@/assets/svg/eth.svg?url'
+import MVC from '@/assets/svg/mvc.svg?url'
+import POLYGON from '@/assets/svg/polygon.svg?url'
+
 import { useUserStore } from './stores/user'
 export interface Unit {
   unit: string
@@ -158,5 +161,26 @@ export const currentSupportChain: Array<{
   {
     chainId: '0x13881',
     chainName: 'mumbai',
+  },
+]
+
+export const chains = [
+  { name: 'ETH', icon: ETHIcon, value: import.meta.env.VITE_ETH_CHAIN, disabled: () => false },
+  {
+    name: 'POLYGON',
+    icon: POLYGON,
+    value: 'polygon',
+    disabled: () => {
+      return true
+    },
+  },
+  {
+    name: 'MVC',
+    icon: MVC,
+    value: 'mvc',
+    disabled: () => {
+      const userStore = useUserStore()
+      return !(userStore.isAuthorized && userStore.user!.evmAddress)
+    },
   },
 ]
