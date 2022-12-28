@@ -127,7 +127,7 @@
           :class="[message.error && 'opacity-50']"
           @click="previewImage"
         >
-          <Image :src="decryptedMessage" customClass="rounded py-0.5 object-scale-down" />
+          <Image :src="decryptedImageMessage" customClass="rounded py-0.5 object-scale-down" />
         </div>
         <button v-if="message.error" class="ml-3" :title="resendTitle" @click="tryResend">
           <Icon
@@ -232,6 +232,16 @@ const tryResend = async () => {
   await jobs.resend(props.message.timestamp)
 }
 
+const decryptedImageMessage = computed(() => {
+  if (props.message.isMock) {
+    return props.message.content
+  }
+
+  if (props.message.data?.encrypt !== '1') {
+    return props.message.data?.attachment || props.message.data?.content
+  }
+})
+
 const decryptedMessage = computed(() => {
   // 处理mock的图片消息
   if (
@@ -320,7 +330,7 @@ const messageAvatarImage = computed(() => {
 })
 
 const isNftEmoji = computed(() => props.message.protocol === 'SimpleEmojiGroupChat')
-const isImage = computed(() => props.message.protocol === 'SimpleFileGroupChat')
+const isImage = computed(() => props.message.protocol === 'SimpleFileMsg')
 const isGiveawayRedEnvelope = computed(() => props.message.protocol === 'SimpleRedEnvelope')
 const isReceiveRedEnvelope = computed(() => props.message.protocol === 'OpenRedEnvelope')
 const isText = computed(() => props.message.protocol === 'ShowMsg')
