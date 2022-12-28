@@ -2,10 +2,16 @@
 import mvc from 'mvc-lib'
 import { HttpRequests, ApiRequestTypes } from '@/utils/wallet/request2'
 import HttpRequest from 'request-sdk'
-import { BaseUtxo, MetasvUtxoTypes, Network } from './hd-wallet'
+import {
+  BaseUtxo,
+  MetasvUtxoTypes,
+  Network,
+  MetaNameRequestDate,
+  MetaNameReqType,
+} from './hd-wallet'
 import axios, { AxiosInstance } from 'axios'
 import { UtxoItem } from '@/@types/sdk'
-
+import zlib from 'zlib'
 interface BaseApiResultTypes<T> {
   code: number
   msg?: string
@@ -126,15 +132,54 @@ export default class ShowmoneyProvider {
     const res = await this.callMetaNameApi({
       url: '/reqargs',
       params: {
-        data: JSON.stringify({
-          ...params,
-          source: 'showmoney',
-        }),
+        ...params,
+        source: 'showmoney',
       },
       options,
     })
     if (res.code === 0) {
       return res.data
+    }
+  }
+
+  private gzip(data: Buffer | string): Promise<Buffer | string> {
+    return new Promise((resolve, reject) => {
+      zlib.gzip(data, {}, (err, val) => {
+        if (err) {
+          reject(err)
+          return
+        }
+        resolve(val)
+      })
+    })
+  }
+
+  public async registerNewMetaName(params: MetaNameRequestDate, reqTypes: MetaNameReqType) {
+    let options = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+    const compressData = await this.gzip(JSON.stringify(params))
+    try {
+      const res = await this.callMetaNameApi({
+        url: `/${reqTypes}`,
+        params: JSON.stringify({
+          data: compressData,
+        }),
+        options,
+      })
+      if (res.code == 0) {
+        return res
+      } else {
+        throw new Error(`registerNewMetaName error: ${res.msg},
+        requestIndex: ${params.requestIndex},
+        mvcOutputIndex: ${params.mvcOutputIndex}`)
+      }
+    } catch (error) {
+      throw new Error(`registerNewMetaName error: ${(error as any).toString()},
+                 requestIndex: ${params.requestIndex},
+                 mvcOutputIndex: ${params.mvcOutputIndex}`)
     }
   }
 

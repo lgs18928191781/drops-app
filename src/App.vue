@@ -1,4 +1,5 @@
 <template>
+  <div @click="metaname">MetaName点我</div>
   <div class="main flex">
     <LeftNavigationVue v-if="!blackRoute.includes(route.name)" />
     <div class="flex1 main-right">
@@ -39,6 +40,17 @@ const routeKey = (route: any) => {
   if (route.params.communityId) return route.params.communityId
 
   return route.fullPath
+}
+
+async function metaname() {
+  try {
+    const res = await userStore.showWallet.MetaNameBeforeReq({
+      name: `EasonChanOnShow`,
+      op: 1,
+    })
+    console.log('resss', res)
+    debugger
+  } catch (error) {}
 }
 </script>
 <style lang="css" src="@/assets/styles/tailwind.css"></style>

@@ -28,7 +28,8 @@ import { AllNodeName } from '../sdk'
 import { ElMessage } from 'element-plus'
 import { NftManager, FtManager, API_TARGET } from 'meta-contract'
 import { useUserStore } from '@/stores/user'
-import zlib from 'zlib'
+
+import Decimal from 'decimal.js-light'
 const bsv = mvc
 
 export enum Network {
@@ -45,6 +46,43 @@ export enum MetaNameOp {
   register = 1,
   renew = 2,
   updataInfo = 3,
+}
+
+export enum MetaNameReqType {
+  register = 'register',
+  renew = 'renew',
+  updataInfo = 'updataInfo',
+}
+
+export enum MetaNameReqCode {
+  register = 1,
+  renew = 2,
+  updataInfo = 3,
+}
+
+export interface Reqswapargs {
+  requestIndex: number
+  nftToAddress: string
+  mvcToAddress: string
+  txFee: number
+  feePerYear: number
+  op: number
+  nftCodeHash: string
+  nftGenesisID: string
+  nftTokenIndex: string
+}
+
+export interface MetaNameRequestDate {
+  mvcRawTx: string
+  requestIndex: number
+  mvcOutputIndex: number
+  nftRawTx?: string
+  nftOutputIndex?: number
+  years?: number
+  infos?: {
+    metaid?: string
+    mvc?: string
+  }
 }
 
 export interface BaseUserInfoTypes {
@@ -2142,25 +2180,72 @@ export class HdWallet {
     })
   }
 
-  private gzip(data: Buffer | string): Promise<Buffer | string> {
-    return new Promise((resolve, reject) => {
-      zlib.gzip(data, {}, (err, val) => {
-        if (err) {
-          reject(err)
-          return
-        }
-        resolve(val)
-      })
-    })
-  }
-
   //发起MetaName交易前请求
   public async MetaNameBeforeReq(params: { name: string; op: MetaNameOp }) {
-    const senderAddress = this._fundingKey
-      .deriveChild(0)
-      .deriveChild(0)
-      .privateKey.toAddress()
-      .toString()
-    return this.provider.reqMetaNameArgs({ ...params, address: senderAddress })
+    return this.provider.reqMetaNameArgs({ ...params, address: this.rootAddress })
+  }
+
+  //发起MetaName交易前参数构造
+  public async sendMetaNameTransation(params: {
+    op_code: number
+    metaid: string
+    address: string
+    years: number
+    reqswapargs: Reqswapargs
+    payTo: Array<{
+      address: string
+      amount: number
+    }>
+  }) {
+    const { reqswapargs, years, op_code, metaid, address } = params
+    const mvcToAddress = reqswapargs.mvcToAddress
+    const txFee = reqswapargs.txFee
+    const requestIndex = reqswapargs.requestIndex
+    const metaNameOpFee = new Decimal(reqswapargs.feePerYear).mul(years).toNumber()
+    let MetaNameSuccTxid: string
+    let mvcReceivers: Array<{ address: string; amount: number }>
+    let transferNftResult, transferResult, transferAmount
+    const mvcOutputIndex = 0
+    transferAmount = MetaNameReqCode.updataInfo == op_code ? txFee : metaNameOpFee + txFee
+    mvcReceivers = [
+      {
+        address: mvcToAddress,
+        amount: transferAmount,
+      },
+    ]
+    debugger
+    let utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
+    transferResult = await this.makeTx({
+      utxos: utxos,
+      opReturn: [],
+      change: this.rootAddress,
+      payTo: mvcReceivers,
+    })
+    let mvcRawTx = transferResult.toString()
+    debugger
+    if (MetaNameReqCode.register == op_code) {
+      const params: MetaNameRequestDate = {
+        requestIndex,
+        mvcRawTx,
+        mvcOutputIndex,
+        years,
+        infos: {
+          metaid,
+          mvc: address,
+        },
+      }
+      const registerMetaNameResp = await this.provider.registerNewMetaName(
+        params,
+        MetaNameReqType.register
+      )
+      if (registerMetaNameResp.code == 0) {
+        await this.provider.broadcast(transferResult.toString())
+      }
+      MetaNameSuccTxid = registerMetaNameResp.data
+      return {
+        code: 0,
+        MetaNameSuccTxid,
+      }
+    }
   }
 }

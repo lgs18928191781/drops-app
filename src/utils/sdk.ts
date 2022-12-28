@@ -1707,4 +1707,8 @@ export class SDK {
   ftGenesis() {
     return this.wallet?.ftGenesis()
   }
+
+  MetaNameBeforeReq(params: { name: string; op: number }) {
+    return this.wallet?.MetaNameBeforeReq(params)
+  }
 }
