@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+const colors = require('tailwindcss/colors')
 
 module.exports = {
   content: ['./src/**/*.{html,vue,jsx}'],
@@ -114,6 +115,12 @@ module.exports = {
           300: '#909399',
           400: '#606266',
           800: '#303133',
+        },
+        gray: {
+          ...colors.gray,
+          700: '#1F2937',
+          800: '#182333',
+          850: '#142030',
         },
       },
       lineHeight: {
