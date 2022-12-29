@@ -123,6 +123,7 @@ import { Loading } from '@element-plus/icons-vue'
 import { ElMessageBox } from 'element-plus'
 import { NodeName } from '@/enum'
 import { Mitt, MittEvent } from '@/utils/mitt'
+import { metafile } from '@/utils/filters'
 
 const i18n = useI18n()
 const route = useRoute()
@@ -187,8 +188,8 @@ function getUserFoller() {
       resolve()
     })
     if (res?.code === 0) {
-      userFollow.following = res.data.followingList
-      userFollow.follers = res.data.followedList
+      userFollow.following = res.data.followingList ? res.data.followingList : []
+      userFollow.follers = res.data.followedList ? res.data.followedList : []
       resolve()
     }
   })
@@ -276,6 +277,12 @@ function follow() {
 Promise.all([getUserInfo(), getUserFoller(), checkUserIsFollowed()]).then(() => {
   isSkeleton.value = false
 })
+
+console.log(
+  metafile(
+    `sensible://48d6118692b459fabfc2910105f38dda0645fb57/585141c9ef957cf6a02e29469f42c7b0490cd633/6`
+  )
+)
 </script>
 
 <style lang="scss" scoped src="./User.scss"></style>

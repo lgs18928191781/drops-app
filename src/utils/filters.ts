@@ -80,6 +80,9 @@ export function metafile(metafile: string, width = 235, type: 'metafile' | 'meta
   } else if (type === 'metaId') {
     // metaId
     path = '/metafile/avatar/'
+  } else if (metafile.indexOf('sensible://') !== -1) {
+    metafile = metafile.replace('sensible://', 'sensible/')
+    path = '/metafile/'
   } else if (metafile.indexOf('eth://') !== -1) {
     metafile = metafile.replace('eth://', 'evm/eth/')
     path = '/metafile/'

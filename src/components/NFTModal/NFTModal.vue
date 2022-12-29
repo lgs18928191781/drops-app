@@ -17,13 +17,16 @@
         </a>
       </header>
 
-      <div class="tab" v-if="!isShowNFTList">
+      <div class="tab flex flex-align-center" v-if="!isShowNFTList">
         <a
-          v-for="item in tabs"
+          class="main-border flex flex-align-center"
+          v-for="item in chains"
           :key="item.value"
-          :class="{ active: item.value === tabActive, disabled: item.disabled() }"
+          :class="{ primary: item.value === tabActive, faded: item.disabled() }"
           @click="changeTab(item)"
-          >{{ item.name }}</a
+        >
+          <span class="icon flex flex-align-center flex-pack-center"><img :src="item.icon"/></span>
+          {{ item.name }}</a
         >
       </div>
 
@@ -77,7 +80,7 @@
                         :image="item.nftIssueAvatarImage"
                         :disabled="true"
                       />
-                      {{ item.nftIssuer }}
+                      <span class="name">{{ item.nftIssuer }}</span>
                     </div>
                     <div class=" ">{{ $t('Number') }}: {{ item.nftMyCount }}</div>
                   </div>
@@ -107,7 +110,7 @@
 
 <script setup lang="ts">
 import { GetGenesisNFTs, GetNFTs } from '@/api/aggregation'
-import { initPagination } from '@/config'
+import { initPagination, chains } from '@/config'
 import { NodeName } from '@/enum'
 import { useUserStore } from '@/stores/user'
 import { computed, reactive, ref, watch } from 'vue'
@@ -132,15 +135,6 @@ const nftPagination = reactive({ ...initPagination })
 const currentGenesis: { val: null | UserNFTItem } = reactive({ val: null })
 const genesisList: UserNFTItem[] = reactive([])
 const nfts: GenesisNFTItem[] = reactive([])
-const tabs = reactive([
-  { name: 'MVC NFT', value: 'mvc', disabled: () => false },
-  {
-    name: 'ETH NFT',
-    value: import.meta.env.VITE_ETH_CHAIN,
-    disabled: () => !userStore.user!.evmAddress,
-  },
-  // { name: 'NFT On Sale', value: '2' },
-])
 const tabActive = ref('mvc')
 const isSkeleton = ref(true)
 const isNFTSkeleton = ref(true)

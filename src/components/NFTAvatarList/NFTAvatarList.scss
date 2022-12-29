@@ -8,7 +8,6 @@
 
     a {
         font-size: 16px;
-        color: #606266;
         font-weight: 500;
         padding: 8px 12px;
         border-radius: 8px;
@@ -33,7 +32,6 @@
         &:hover,
         &.active {
             border-color: var(--themeBtnTextColor);
-            box-shadow: 3px 3px 0 var(--themeBtnTextColor);
         }
 
         &.active {
@@ -41,8 +39,7 @@
             color: var(--themeBtnTextColor);
         }
 
-        &.disabled {
-            background: #EDEFF2;
+        &.faded {
             cursor: not-allowed;
         }
     }

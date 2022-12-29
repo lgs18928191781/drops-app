@@ -4,7 +4,7 @@
       <a
         v-for="item in chains"
         :key="item.value"
-        :class="{ active: item.value === pagintion.chain, disabled: item.disabled() }"
+        :class="{ active: item.value === pagintion.chain, faded: item.disabled() }"
         @click="changeTab(item)"
         class=" main-border flex flex-align-center"
       >

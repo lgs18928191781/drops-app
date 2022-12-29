@@ -1,5 +1,5 @@
 .top-warp {
-    background: var(--themeBgColor);
+    background: var(--themeBgSecondColor);
     border-radius: 12px;
     position: relative;
     overflow: hidden;
@@ -21,18 +21,26 @@
             &.back {
                 .icon {
                     transform: rotate(90deg);
+
+                    :deep(use) {
+                        fill: var(--themeBtnTextColor);
+                    }
                 }
             }
 
             .icon {
                 width: 16px;
                 height: 16px;
+
+                :deep(use) {
+                    fill: var(--themeBtnTextColor);
+                }
             }
         }
     }
 
     .cover {
-        background: #EDEFF2;
+        background: var(--border-color);
         height: 240px;
 
         .el-skeleton__item {
@@ -51,7 +59,7 @@
     .user {
         padding: 18px;
         margin-top: -50px;
-        border-bottom: 1px solid #F4F7F9;
+        border-bottom: 1px solid var(--divid-color);
 
         .user-top {
             .avatar-warp {
@@ -89,6 +97,7 @@
                     border-radius: 16px;
                     cursor: pointer;
                     margin-right: 17px;
+
 
                     &:last-child {
                         margin-right: 0;
@@ -196,7 +205,7 @@
             }
 
             &.router-link-active {
-                color: var(--themeTextColor);
+                color: var(--themeBtnTextColor);
                 background: var(--el-color-primary);
                 border-color: var(--normal-border-color);
                 box-shadow: 3px 3px 0 var(--normal-border-color);

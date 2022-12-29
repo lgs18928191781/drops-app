@@ -82,7 +82,7 @@
         .back {
             position: relative;
             z-index: 2;
-            background: #EDEFF2;
+            background: var(--themeBgColor);
             width: 34px;
             height: 34px;
             border-radius: 50%;
@@ -95,11 +95,11 @@
             }
 
             &:hover {
-                background: var(--themeBtnTextColor);
+                background: var(--border-color);
 
                 .icon {
                     :deep(use) {
-                        fill: #fff;
+                        fill: var(--themeBtnTextColor);
                     }
                 }
             }

@@ -147,6 +147,7 @@ pre {
   &.faded {
     --border-color: var(--faded-border-color);
     background: #EDEFF2;
+    color: var(--themeBtnTextColor);
   }
 
   &.faded-switch:not(:active, :hover):placeholder-shown {

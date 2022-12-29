@@ -17,14 +17,14 @@
             transform: rotate(90deg);
 
             :deep(use) {
-                fill: #606266;
+                fill: var(--themeBtnTextColor);
             }
         }
 
         &:hover {
             .icon {
                 :deep(use) {
-                    fill: var(--themeTextColor);
+                    fill: var(--themeBtnTextColor);
                 }
             }
         }

@@ -549,19 +549,18 @@ function replay() {
   return new Promise<void>(async resolve => {
     if (comment.value === '') return
     operateLoading.value = true
-
-    const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
-    const dataParams = {
-      createTime: new Date().getTime(),
-      content: comment.value,
-      contentType: 'text/plain',
-      commentTo: replayMsg.val.commentTo,
-      replyTo: replayMsg.val.replyTo,
-      pay: payAmount,
-      payTo: replayMsg.val.userAddress,
-    }
-    const res = await userStore.showWallet
-      ?.createBrfcChildNode(
+    try {
+      const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
+      const dataParams = {
+        createTime: new Date().getTime(),
+        content: comment.value,
+        contentType: 'text/plain',
+        commentTo: replayMsg.val.commentTo,
+        replyTo: replayMsg.val.replyTo,
+        pay: payAmount,
+        payTo: replayMsg.val.userAddress,
+      }
+      const res = await userStore.showWallet?.createBrfcChildNode(
         {
           nodeName: NodeName.PayComment,
           dataType: 'application/json',
@@ -572,88 +571,88 @@ function replay() {
           useQueue: true,
         }
       )
-      .catch(error => {
-        ElMessage.error(error.message)
-        operateLoading.value = false
-      })
-    if (res) {
-      const index = props.list.findIndex(item => item.txId === currentTxId.value)
+      if (res) {
+        const index = props.list.findIndex(item => item.txId === currentTxId.value)
 
-      if (index !== -1) {
-        if (replayMsg.val.commentTo === currentTxId.value) {
-          const buzz = { ...props.list[index] }
-          const watchJobStatus = watch(
-            () => jobsStore.waitingNotify.find(job => job.id === res.subscribeId)?.status,
-            status => {
-              if (status === JobStatus.Success) {
-                watchJobStatus()
-              } else if (status === JobStatus.Failed) {
-                watchJobStatus()
-                buzz.comment.splice(
-                  buzz.comment.findIndex(item => item.txId === res.currentNode!.txId)
-                )
-                emit('updateItem', buzz)
+        if (index !== -1) {
+          if (replayMsg.val.commentTo === currentTxId.value) {
+            const buzz = { ...props.list[index] }
+            const watchJobStatus = watch(
+              () => jobsStore.waitingNotify.find(job => job.id === res.subscribeId)?.status,
+              status => {
+                if (status === JobStatus.Success) {
+                  watchJobStatus()
+                } else if (status === JobStatus.Failed) {
+                  watchJobStatus()
+                  buzz.comment.splice(
+                    buzz.comment.findIndex(item => item.txId === res.currentNode!.txId)
+                  )
+                  emit('updateItem', buzz)
+                }
               }
-            }
-          )
-          buzz.comment.unshift({
-            metaId: userStore.user!.metaId!,
-            timestamp: dataParams.createTime,
-            txId: res.currentNode!.txId,
-            userName: userStore.user!.name!,
-            value: payAmount,
-          })
-          emit('updateItem', buzz)
+            )
+            buzz.comment.unshift({
+              metaId: userStore.user!.metaId!,
+              timestamp: dataParams.createTime,
+              txId: res.currentNode!.txId,
+              userName: userStore.user!.name!,
+              value: payAmount,
+            })
+            emit('updateItem', buzz)
+          }
         }
-      }
 
-      if (route.name !== 'buzzDetail') {
-        router.push({
-          name: 'buzzDetail',
-          params: {
-            txId: currentTxId.value,
-          },
+        if (route.name !== 'buzzDetail') {
+          router.push({
+            name: 'buzzDetail',
+            params: {
+              txId: currentTxId.value,
+            },
+          })
+        }
+        emit('comment', {
+          amount: 'payAmount',
+          avatarImage: userStore.user!.avatarImage,
+          avatarTxId: userStore.user!.avatarTxId,
+          avatarType: userStore.user!.avatarType,
+          blockHeight: 0,
+          buzzTxId: currentTxId.value,
+          commentCount: 0,
+          confirmState: 0,
+          content: comment.value,
+          hasComment: false,
+          hasMyLike: false,
+          isValid: true,
+          likeCount: 0,
+          metaId: userStore.user!.metaId,
+          metanetId: '',
+          protocol: 'PayComment',
+          publicKey: '',
+          replyTo: replayMsg.val!.replyTo,
+          replyToAvatarImage: '',
+          replyToAvatarTxId: '',
+          replyToAvatarType: '',
+          replyToUserName: replayMsg.val!.username,
+          timestamp: dataParams.createTime,
+          txId: res.currentNode!.txId,
+          userName: userStore.user!.name,
+          zeroAddress: userStore.user!.address,
+          subInteractiveItem: [],
+          commentTo: replayMsg.val.commentTo,
         })
-      }
-      emit('comment', {
-        amount: 'payAmount',
-        avatarImage: userStore.user!.avatarImage,
-        avatarTxId: userStore.user!.avatarTxId,
-        avatarType: userStore.user!.avatarType,
-        blockHeight: 0,
-        buzzTxId: currentTxId.value,
-        commentCount: 0,
-        confirmState: 0,
-        content: comment.value,
-        hasComment: false,
-        hasMyLike: false,
-        isValid: true,
-        likeCount: 0,
-        metaId: userStore.user!.metaId,
-        metanetId: '',
-        protocol: 'PayComment',
-        publicKey: '',
-        replyTo: replayMsg.val!.replyTo,
-        replyToAvatarImage: '',
-        replyToAvatarTxId: '',
-        replyToAvatarType: '',
-        replyToUserName: replayMsg.val!.username,
-        timestamp: dataParams.createTime,
-        txId: res.currentNode!.txId,
-        userName: userStore.user!.name,
-        zeroAddress: userStore.user!.address,
-        subInteractiveItem: [],
-        commentTo: replayMsg.val.commentTo,
-      })
-      isShowCommentModal.value = false
-      ElMessage.success(i18n.t('Buzz.comment.success'))
-      operateLoading.value = false
+        isShowCommentModal.value = false
+        ElMessage.success(i18n.t('Buzz.comment.success'))
+        operateLoading.value = false
 
-      comment.value = ''
-      resolve()
-    } else {
+        comment.value = ''
+        resolve()
+      } else {
+        operateLoading.value = false
+        resolve()
+      }
+    } catch (error) {
+      ElMessage.error((error as any).message)
       operateLoading.value = false
-      resolve()
     }
   })
 }
