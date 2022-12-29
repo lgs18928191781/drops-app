@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex lg:hover:bg-gray-200 dark:lg:hover:bg-gray-850 px-4 py-1 relative group transition-all duration-150"
+    class="flex lg:hover:bg-gray-200 dark:lg:hover:bg-gray-800 px-4 py-1 relative group transition-all duration-150"
   >
     <!-- 消息菜单 -->
     <MessageMenu
@@ -10,9 +10,8 @@
     />
     <MessageMenu :message="props.message" v-else />
 
-    <!-- :image="props.message.avatarImage" -->
     <UserAvatar
-      image="sensible://48d6118692b459fabfc2910105f38dda0645fb57/585141c9ef957cf6a02e29469f42c7b0490cd633/6"
+      :image="props.message.avatarImage"
       :meta-id="props.message.metaId"
       class="w-10 h-10 lg:w-13.5 lg:h-13.5 shrink-0 select-none"
       :disabled="true"
