@@ -442,12 +442,23 @@ export const useTalkStore = defineStore('talk', {
       )
 
       if (mockMessage) {
-        this.$patch(state => {
-          mockMessage.txId = message.txId
-          mockMessage.timestamp = message.timestamp
-          mockMessage.data.content = message.data.content
-          delete mockMessage.isMock
-        })
+        console.log('替换中')
+        if (message.protocol === 'SimpleFileMsg') {
+          console.log('image')
+          await sleep(2000)
+          this.$patch(state => {
+            mockMessage.txId = message.txId
+            mockMessage.timestamp = message.timestamp
+            mockMessage.data = message.data
+          })
+        } else {
+          this.$patch(state => {
+            mockMessage.txId = message.txId
+            mockMessage.timestamp = message.timestamp
+            mockMessage.data.content = message.data.content
+            delete mockMessage.isMock
+          })
+        }
 
         return
       }
