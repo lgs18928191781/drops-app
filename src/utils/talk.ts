@@ -118,8 +118,15 @@ export const updateCommunity = async (form: any, sdk: SDK) => {
 export const sendInviteBuzz = async (form: any, sdk: SDK) => {
   // shareProtocol, shareId, shareIdType, shareFromMetaID, shareContent, shareContentType, mention
   const shareProtocol = NodeName.SimpleGroupCreate
-  const shareId = `${form.community.communityId}/${form.channel.groupId}`
-  const shareIdType = 'communityId/channelId'
+  let shareId, shareIdType
+  if (!form.channel) {
+    shareId = `${form.community.communityId}`
+    shareIdType = 'communityId'
+  } else {
+    shareId = `${form.community.communityId}/${form.channel.channelId}`
+    shareIdType = 'communityId/channelId'
+  }
+
   const shareFromMetaID = form.community.metaId
   const shareContent = form.text
   const shareContentType = 'text/plain'
@@ -593,7 +600,6 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
     attachments,
     timestamp: timestamp * 1000, // 服务端返回的是毫秒，所以模拟需要乘以1000
   }
-  console.log({ timestamp })
 
   // 2.5. mock发送
   const mockId = realRandomString(12)

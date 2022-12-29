@@ -380,6 +380,7 @@ const trySendImage = async () => {
     attachments,
     content: '',
     originalFileUrl,
+    channelType: talk.activeChannelType as ChannelType,
   }
   await sendMessage(messageDto)
 
