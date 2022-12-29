@@ -115,11 +115,9 @@ export const getChannelMessages = async (
   params.page = '1'
   const selfMetaId = params.metaId
   delete params.metaId
+  const query = new URLSearchParams(params).toString()
 
   if (type === 'session') {
-    params.endTime = params.timestamp
-    delete params.timestamp
-    const query = new URLSearchParams(params).toString()
     const {
       data: { data: messages },
     } = await TalkApi.get(`/chat/${selfMetaId}/${channelId}?${query}`)
@@ -127,7 +125,6 @@ export const getChannelMessages = async (
     return messages
   }
 
-  const query = new URLSearchParams(params).toString()
   const {
     data: {
       results: { items: messages },
