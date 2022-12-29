@@ -104,7 +104,7 @@
       "nft_candy_bag": "NFT Candy Bag"
     },
     "Channel": {
-      "core_members": "core_members",
+      "core_members": "core members",
       "join_channel": "joined the channel.",
       "leave_channel": "left the channel.",
       "come_get_red_envelope": "Grab a Candy Bag!",
@@ -144,7 +144,7 @@
       "choose_nft_cover": "Select NFT cover",
       "introduction": "Club introduction",
       "introduction_placeholder": "Introduce your Club through a few sentences.",
-      "skip": "Skip this tep",
+      "skip": "Skip this step",
       "no_introduction": "No introduction",
       "members": "member | members",
       "public_channels": "Public channels",
@@ -392,8 +392,8 @@
   "Invalid Value": "Invalid Value",
   "Theme": {
     "Light color": "Light",
-    "Dark color": "Dim",
-    "Follow system": "Follow the system"
+    "Dark color": "Dark",
+    "Follow system": "Sync with device"
   },
   "copy": "Copy",
   "MetaMak": {

@@ -450,7 +450,6 @@ export const tryCreateNode = async (node: any, sdk: SDK, mockId: string) => {
   const jobs = useJobsStore()
   const talk = useTalkStore()
   try {
-    debugger
     const nodeRes = await sdk.createBrfcChildNode(node)
     // 取消支付的情况下，删除mock消息
     console.log({ nodeRes })
@@ -570,7 +569,6 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
   // 1.5 encrypt
   const encrypt = '0'
   const attachment = 'metafile://$[0]'
-  debugger
   let dataCarrier: any = {
     timestamp,
     encrypt,
@@ -599,15 +597,18 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
 
   // 2.5. mock发送
   const mockId = realRandomString(12)
-  const mockMessage: Message = {
+  const mockMessage = {
     mockId,
     protocol: nodeName,
+    nodeName,
     contentType: fileType,
     content: originalFileUrl,
     avatarType: userStore.user?.avatarType || 'undefined',
     avatarTxId: userStore.user?.avatarTxId || 'undefined',
     avatarImage: userStore.user?.avatarImage || '',
+    fromAvatarImage: userStore.user?.avatarImage || '',
     metaId: userStore.user?.metaId || 'undefined',
+    from: userStore.user?.metaId,
     nickName: userStore.user?.name || '',
     timestamp: timestamp * 1000, // 服务端返回的是毫秒，所以模拟需要乘以1000
     txId: '',

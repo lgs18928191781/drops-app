@@ -53,10 +53,7 @@
           >
             <Icon
               name="plus_2"
-              :class="[
-                open && 'rotate-45',
-                'w-3 h-3 text-dark-800 text-dark-800 transition duration-200',
-              ]"
+              :class="[open && 'rotate-45', 'w-3 h-3 text-dark-800 transition duration-200']"
             />
           </div>
         </PopoverButton>

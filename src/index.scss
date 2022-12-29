@@ -20,6 +20,9 @@ html {
     user-select: none;
     -webkit-user-drag: none;
 
+    // 禁用过度滚动
+    overscroll-behavior-y: none;
+
 
     .nftDetailContainer {
       max-width: 1200px;

@@ -1,13 +1,13 @@
 <template>
   <!-- 社区列表 -->
   <div
-    class="w-22.5 bg-white dark:bg-gray-700 space-y-4.5 left-navigation z-50"
+    class="w-22.5 bg-white dark:bg-gray-700 space-y-4.5 left-navigation z-50 py-4.5 overflow-y-auto lg:overflow-y-hidden lg:pr-1 lg:hover:overflow-y-auto lg:hover:pr-0 slimmer-scrollbar"
     :class="[layout.isShowLeftNav ? '' : 'hidden lg:block']"
   >
     <div class="space-y-4.5">
       <el-tooltip
         effect="light"
-        popper-class="text-dark-800 dark:text-dark-200 text-base font-medium py-2 px-4 shadow-md rounded-lg"
+        popper-class="text-dark-800 dark:text-dark-200 !bg-white dark:!bg-gray-800 text-base font-medium py-2 px-4 shadow-md rounded-lg"
         :content="item.title()"
         :offset="5"
         placement="right"
@@ -52,7 +52,7 @@
     <div class="space-y-4.5 flex flex-col items-center justify-center">
       <el-tooltip
         effect="light"
-        popper-class="text-dark-800 dark:text-dark-200 text-base font-medium py-2 px-4 shadow-md rounded-lg"
+        popper-class="text-dark-800 dark:text-dark-200 !bg-white dark:!bg-gray-800 text-base font-medium py-2 px-4 shadow-md rounded-lg"
         :content="community.name"
         :offset="5"
         placement="right"

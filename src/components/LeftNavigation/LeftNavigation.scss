@@ -3,7 +3,6 @@
     position: sticky;
     left: 0;
     top: 0;
-    padding: 18px 0;
 
     .left-navigation-item {
         width: 100%;
@@ -27,5 +26,30 @@
 
     .divide {
         width: 100%;
+    }
+
+
+}
+
+.slimmer-scrollbar {
+    &::-webkit-scrollbar {
+        width: 6px !important;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: white !important;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: #bfc2cc;
+        border-radius: 20px;
+    }
+
+    .dark &:not(.no-dark)::-webkit-scrollbar-track {
+        background: #374151 !important;
+    }
+
+    .dark &:not(.no-dark)::-webkit-scrollbar-thumb {
+        background-color: #111827 !important;
     }
 }
