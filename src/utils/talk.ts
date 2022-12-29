@@ -118,8 +118,15 @@ export const updateCommunity = async (form: any, sdk: SDK) => {
 export const sendInviteBuzz = async (form: any, sdk: SDK) => {
   // shareProtocol, shareId, shareIdType, shareFromMetaID, shareContent, shareContentType, mention
   const shareProtocol = NodeName.SimpleGroupCreate
-  const shareId = `${form.community.communityId}/${form.channel.groupId}`
-  const shareIdType = 'communityId/channelId'
+  let shareId, shareIdType
+  if (!form.channel) {
+    shareId = `${form.community.communityId}`
+    shareIdType = 'communityId'
+  } else {
+    shareId = `${form.community.communityId}/${form.channel.channelId}`
+    shareIdType = 'communityId/channelId'
+  }
+
   const shareFromMetaID = form.community.metaId
   const shareContent = form.text
   const shareContentType = 'text/plain'

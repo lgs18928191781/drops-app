@@ -31,7 +31,10 @@
                   <Icon name="N" class="w-2 h-2" />
                 </div>
               </div>
-              <p class="text-dark-400 dark:text-gray-200 text-xs">
+              <p
+                class="text-dark-400 dark:text-gray-200 text-xs"
+                v-if="talk.invitingChannel.channel"
+              >
                 {{ `# ${talk.invitingChannel.channel.name}` }}
               </p>
             </div>

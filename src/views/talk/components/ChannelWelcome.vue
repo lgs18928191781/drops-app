@@ -47,6 +47,10 @@ const utilities = ref([
     bgColor: 'bg-green-400',
     action: () => {
       talk.inviteLink = `${location.origin}/talk/channels/${talk.activeCommunityId}/the-void`
+      talk.invitingChannel = {
+        community: talk.activeCommunity,
+        channel: null,
+      }
       layout.isShowInviteModal = true
     },
   },
