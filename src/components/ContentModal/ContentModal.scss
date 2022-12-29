@@ -37,5 +37,6 @@
 }
 
 .confirm-btn {
-    color: #02A7FF;
+    color: var(--color-hover);
+    cursor: pointer;
 }

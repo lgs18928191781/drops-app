@@ -86,10 +86,12 @@
                 overflow: hidden;
 
                 .name {
-                    font-size: 16px;
+                    font-size: 15PX;
+                    line-height: 20PX;
                     overflow: hidden;
                     text-overflow: ellipsis;
                     white-space: nowrap;
+                    font-weight: 700;
 
                     .el-skeleton__item {
                         height: 16px;

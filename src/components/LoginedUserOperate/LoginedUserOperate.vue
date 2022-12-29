@@ -83,7 +83,16 @@ const userOperates = computed(() => {
     {
       name: i18n.t('UserOperate.aboutShow'),
       icon: 'plus_circle',
-      func: () => {},
+      func: () => {
+        window.open('https://show3.gitbook.io/show3.0/v/english/', '_blank')
+      },
+    },
+    {
+      name: i18n.t('UserOperate.About MetaSo'),
+      icon: 'plus_circle',
+      func: () => {
+        window.open('https://show3.gitbook.io/show3.0/v/english/', '_blank')
+      },
     },
     {
       name: i18n.t('UserOperate.help'),

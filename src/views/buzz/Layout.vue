@@ -58,3 +58,16 @@ const menus = [
 </script>
 
 <style lang="scss" scoped src="./Layout.scss"></style>
+<style>
+@font-face {
+  font-family: TwitterChirp;
+  font-style: normal;
+  src: local('Chirp'), url('@/assets/fonts/chirp.otf') format('opentype');
+  font-weight: 400;
+}
+html .buzz-warp {
+  font-family: TwitterChirp, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
+  font-weight: 400;
+}
+</style>

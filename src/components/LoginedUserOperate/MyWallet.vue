@@ -53,9 +53,11 @@
           </ElDropdown>
         </div>
         <el-tooltip class="box-item" effect="dark" :content="i18n.t('copy')" placement="bottom">
-          <a class="metaId" @click="copy(userStore.user!.metaId)"
-            >{{userStore.user!.metaId.slice(0, 6)}}...{{userStore.user!.metaId.slice(-6)}}</a
-          >
+          <div class="flex flex-align-center metaId">
+            MetaId:<a @click="copy(userStore.user!.metaId)">
+              {{userStore.user!.metaId.slice(0, 6)}}...{{userStore.user!.metaId.slice(-6)}}</a
+            >
+          </div>
         </el-tooltip>
 
         <a
@@ -108,7 +110,10 @@
             <div class="wallets">
               <div class="wallet-section" v-for="(item, index) in wallets" :key="index">
                 <div class="top flex flex-align-center">
-                  <div class="title flex1">{{ item.title }}</div>
+                  <div class="title flex1 flex flex-align-center">
+                    {{ item.title }}
+                    <Icon v-if="index === 0" name="question_circle" @click="isShowMeIntro = true" />
+                  </div>
                   <a
                     class="add flex flex-align-center"
                     v-if="index === 0"
@@ -246,6 +251,39 @@
       :seriesName="seriesNFTList.seriesName"
       @link="emit('update:modelValue', false)"
     />
+
+    <!-- ME Intro -->
+    <ContentModalVue v-model="isShowMeIntro" :title="$t('ME.What is MetaEnergy')">
+      <template #content>
+        <div class="me-intro">
+          {{ $t('ME.intro1') }}
+
+          <h2>{{ $t('ME.How MetaEnergy is Generated') }}</h2>
+          {{ $t('ME.intro2') }}
+
+          <h2>{{ $t('ME.How to get ME') }}</h2>
+          {{ $t('ME.intro3') }}
+
+          <ul>
+            <li>{{ $t('ME.intro4') }}</li>
+            <li>{{ $t('ME.intro5') }}</li>
+            <li>{{ $t('ME.intro6') }}</li>
+            <li>{{ $t('ME.intro7') }}</li>
+          </ul>
+
+          <h2>{{ $t('ME.How ME burns') }}</h2>
+          {{ $t('ME.intro8') }}
+
+          <ul>
+            <li>{{ $t('ME.intro9') }}</li>
+            <li>{{ $t('ME.intro10') }}</li>
+            <li>{{ $t('ME.intro11') }}</li>
+            <li v-if="$i18n.locale === 'zh'">{{ $t('ME.intro12') }}</li>
+            <li v-if="$i18n.locale === 'zh'">{{ $t('ME.intro13') }}</li>
+          </ul>
+        </div>
+      </template>
+    </ContentModalVue>
   </ElDrawer>
 </template>
 
@@ -272,6 +310,7 @@ import NFTLlistVue from './NFTLlist.vue'
 import LoadMoreVue from '../LoadMore/LoadMore.vue'
 import IsNullVue from '../IsNull/IsNull.vue'
 import { Loading } from '@element-plus/icons-vue'
+import ContentModalVue from '../ContentModal/ContentModal.vue'
 
 const props = defineProps<{
   modelValue: boolean
@@ -398,6 +437,7 @@ const seriesNFTList = reactive({
   genesis: '',
   seriesName: '',
 })
+const isShowMeIntro = ref(false)
 
 const totalBalance = computed(() => {
   let value = 0

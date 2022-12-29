@@ -141,7 +141,8 @@
       "join": "加入",
       "create_candy_bags": "创建红包",
       "lucky_candy_bag": "手气红包",
-      "nft_candy_bag": "NFT 红包"
+      "nft_candy_bag": "NFT 红包",
+      "Draws": "详情"
     },
     "Channel": {
       "core_members": "核心成员",
@@ -317,7 +318,8 @@
     "settings": "设置",
     "aboutShow": "关于Show",
     "help": "帮助",
-    "logout": "退出"
+    "logout": "退出",
+    "About MetaSo": "关于 MetaSo"
   },
   "Buzz": {
     "Timeline": "时间轴",
@@ -539,7 +541,7 @@
   "niceWarning": "温馨提示",
   "offsaleConfirm": "你确认要就下架",
   "group1": "Show: NFTize \n 你的社交生活",
-  "group1-desc": "首个完全去中心化的以NFT为核心的Web3社交平台",
+  "group1-desc": "首个完全去中心化的以NFT为核心的Web3 \n 社交平台",
   "group1-foot-title": "第一个面向所有人的无障碍 Web3 社交平台。",
   "page-two-title": "加入社交与创造革命",
   "Home": {
@@ -551,7 +553,7 @@
     "Personalized NFT": "个性化 NFT",
     "Personalized NFT Drsc": "个性化的 NFT 表达你的个性和社会地位。 有时，个性化的 NFT 可以为您提供其他用户所没有的特殊社交功能。",
     "Avatar NFTs": "头像NFT",
-    "Avatar NFTs Drsc": "Avatar NFT 是您在 Web3 世界中的虚拟形象。 用你的化身培养、玩耍和赚钱！",
+    "Avatar NFTs Drsc": "头像 NFT 是您在 Web3 世界中的虚拟形象。 用你的化身培养、玩耍和赚钱！",
     "Equipment NFTs": "形象 NFT",
     "Equipment NFTs Drsc": "它包含 4 种特殊的 NFT，用于装饰您的头像，包括背景、服装、宠物和宝藏。 它们为您的头像提供不同的属性加成，使其与众不同。",
     "Utility NFTs": "实用 NFT",
@@ -564,10 +566,31 @@
     "All Chains One Platform Drsc": "同时支持多个区块链。",
     "MetaSo": "MetaSo",
     "White Paper": "白皮书",
-    "Learn": "学习"
+    "Learn": "学习",
+    "Menu": "导航"
   },
   "metaso-title": "认识 MetaSo",
   "metaso-content": "以秀场平台为第一节点的终极去中心化社交网络。",
-  "metaso-desc": "Show3 是 MetaSo 的第一个节点，MetaSo 是一个基于 MetaID 协议的开源社交网络 Web3 中间件。 MetaSo旨在打造一个基于区块链技术的极致去中心化社交网络，让每一份数据都真正属于用户。 \n  在 MetaSo 中，每个用户产生的社交数据都可以被重复使用和重新操作。  任何人都可以在没有许可的情况下轻松运行 MetaSo 节点。",
-  "learnMetaSo": "运行我自己的 MetaSo Node"
+  "metaso-desc": "Show3 是 MetaSo 的第一个节点，MetaSo 是一个基于 MetaID 协议的开源社交网络 Web3 中间件。\n  MetaSo旨在打造一个基于区块链技术的极致去中心化社交网络，让每一份数据都真正属于用户。 \n  在 MetaSo 中，每个用户产生的社交数据都可以被重复使用和重新操作。  任何人都可以在没有许可的情况下轻松运行 MetaSo 节点。",
+  "learnMetaSo": "运行我自己的 MetaSo Node",
+  "ME": {
+    "What is MetaEnergy": "什么是ME",
+    "intro1": "ME是全称是MetaEnergy，ME是Show3体系内的积分系统，它不是一般意义上的数字货币，不能出售也不计划上任何交易所，仅用于Show3体系内使用和流通，不会支持任何跨平台的使用。Show团队不会保留ME，也不会出售任何ME，也不鼓励用户囤积ME。Show平台测试期间每个新账号将可免费获得10000ME。",
+    "How MetaEnergy is Generated": "ME的产出",
+    "intro2": "供应量：无上限，由用户行为产出",
+    "How to get ME": "ME的获取",
+    "intro3": "ME主要的获取方式为使用经验值换取 具体公式为： \n MEGaining=EXP*（1+）...  \n 简而言之，每日获得ME的数量和以下因素有关",
+    "intro4": "通过社交和互动获得的经验值",
+    "intro5": "用户的幸运值",
+    "intro6": "所有NFT藏龄总值",
+    "intro7": "Avatar的稀有度",
+    "How ME burns": "ME的燃烧",
+    "intro8": "以下场景将会消耗ME并将ME销毁，Show团队不会保留任何ME",
+    "intro12": "重塑Avatar的属性",
+    "intro13": "还有其他新增的场景将在系统内公告",
+    "intro9": "支付日常的数据上链GAS费",
+    "intro10": "用户Social2Mint的NFT的GAS费",
+    "intro11": "升级相关的NFT，比如Avatar、MetaPet等"
+  },
+  "Data is on-chain": "数据正在上链..."
 }

@@ -10,7 +10,14 @@ import Decimal from 'decimal.js-light'
 import axios from 'axios'
 import { isAndroidApp, isApp, isIOS, useRootStore } from '@/stores/root'
 import { GetBankCards, GetWalletBalance, Inactivation } from '@/api/pay'
-import { BlindboxUUIDStatus, CloudWalletStatus, IsEncrypt, PayPlatform, PayStatus } from '@/enum'
+import {
+  BlindboxUUIDStatus,
+  CloudWalletStatus,
+  IsEncrypt,
+  PayPlatform,
+  PayStatus,
+  ToCurrency,
+} from '@/enum'
 import { CheckBlindboxOrderStatus } from '@/api/v3'
 import AllCardJson from '@/utils/card.json'
 import { GetOrderStatus, IsWtiteUser } from '@/api/wxcore'
@@ -912,15 +919,23 @@ export function randomRange(min: number, max: number) {
   return Math.floor(Math.random() * (max - min)) + min
 }
 
-export function getCurrencyAmount(price: string | number, currency: 'CNY') {
+export function getCurrencyAmount(
+  price: string | number,
+  currency: 'CNY',
+  toCurrency?: ToCurrency
+) {
   const rootStore = useRootStore()
-  if (rootStore.currentPrice === 'CNY') {
+  if (!toCurrency) {
+    toCurrency = rootStore.currentPrice
+  }
+  const rate = rootStore.exchangeRate.find(
+    item => item.symbol.toUpperCase() === toCurrency.toUpperCase()
+  )
+  if (toCurrency === 'CNY') {
     if (currency === 'CNY') {
       return new Decimal(price).div(100).toNumber()
     } else {
-      const rate = new Decimal(rootStore.exchangeRate[0].price.CNY)
-        .div(rootStore.exchangeRate[0].price.USD)
-        .toNumber()
+      const rate = new Decimal(rate.price.CNY).div(rate.price.USD).toNumber()
       return new Decimal(
         new Decimal(price)
           .div(100)
@@ -928,7 +943,13 @@ export function getCurrencyAmount(price: string | number, currency: 'CNY') {
           .toFixed(2)
       ).toNumber()
     }
-  } else {
+  } else if (toCurrency === ToCurrency.ETH) {
+    if (currency === 'CNY') {
+      return new Decimal(rate.price.CNY)
+        .div(price)
+        .div(100)
+        .toNumber()
+    }
   }
 }
 

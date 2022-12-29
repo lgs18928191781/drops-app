@@ -157,6 +157,8 @@ function like(item: BuzzInteractiveItem, index: number) {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            font-weight: 700;
+            font-size: 15px;
           }
           .desc {
             color: #bfc2cc;
@@ -238,9 +240,9 @@ function like(item: BuzzInteractiveItem, index: number) {
       padding-left: 48px;
       margin-top: 18px;
       .text {
-        line-height: 1.7;
+        line-height: 20px;
         padding: 0;
-        font-size: 16px;
+        font-size: 15px;
         white-space: pre-line;
       }
       .children-comment {

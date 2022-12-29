@@ -13,21 +13,18 @@
           </div>
 
           <div class="dropDown-wrap">
-            <el-dropdown trigger="click" @command="handleCommand">
+            <el-dropdown trigger="click">
               <span class="el-dropdown-link">
-                {{ currentSelectedLink }}
+                {{ currentSelectedLink() }}
                 <el-icon class="el-icon--right">
                   <arrow-down />
                 </el-icon>
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item
-                    :command="link"
-                    v-for="(item, index) in linkGroud"
-                    :key="index"
-                    >{{ item.name() }}</el-dropdown-item
-                  >
+                  <el-dropdown-item :command="link" v-for="(item, index) in linkGroud" :key="index">
+                    <div class="nav-item">{{ item.name() }}</div>
+                  </el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -69,16 +66,18 @@
               <span class="desc">{{ i18n.t('group1-desc') }}</span>
             </div>
           </div>
-          <div class="foot">
-            <div class="title">
-              {{ i18n.t('group1-foot-title') }}
-            </div>
-            <div class="download-group">
-              <div class="item main-border primary" v-for="item in downloadGroup">
-                <img :src="item.icon" alt="" />
-                <div class="right">
-                  <span>{{ item.topText }}</span>
-                  <span>{{ item.footText }}</span>
+          <div class="foot-warp">
+            <div class="foot">
+              <div class="title">
+                {{ i18n.t('group1-foot-title') }}
+              </div>
+              <div class="download-group">
+                <div class="item main-border primary" v-for="item in downloadGroup">
+                  <img :src="item.icon" alt="" />
+                  <div class="right">
+                    <span class="sm">{{ item.topText }}</span>
+                    <span class="big">{{ item.footText }}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -207,11 +206,10 @@ const linkGroud = reactive([
   { name: () => i18n.t('Home.White Paper') },
   { name: () => i18n.t('Home.MetaSo') },
 ])
-const currentSelectedLink = ref('Learn')
+const currentSelectedLink = () => i18n.t('Home.Menu')
 const swipers = reactive([
   {
     icon: Swiper1,
-
     title: () => i18n.t('Home.Personalized NFT'),
     content: () => i18n.t('Home.Personalized NFT Drsc'),
   },
@@ -305,11 +303,6 @@ const downloadGroup = reactive([
 
 function toShow3() {
   router.push({ name: 'buzz' })
-}
-
-function handleCommand(command: string) {
-  console.log('command', command)
-  currentSelectedLink.value = command
 }
 </script>
 

@@ -37,7 +37,7 @@ const guides = [
     icon: LearnSVG,
     name: () => i18n.t('Buzz.RecommendContent.Learn the show function'),
     fun: () => {
-      ElMessage.info(i18n.t('Comming Soon'))
+      window.open('https://show3.gitbook.io/show3.0/v/english/', '_blank')
     },
   },
   {

@@ -13,6 +13,7 @@
           <AmountVue
             :price="nft.nftIsLegal ? nft.nftLegalPrice : nft.nftPrice"
             :currency="nft.nftIsLegal ? 'CNY' : 'SPACE'"
+            :toCurrency="toCurrency"
           />
         </div>
       </div>
@@ -22,12 +23,14 @@
 
 <script setup lang="ts">
 import NFTCoverVue from '@/components/NFTCover/NFTCover.vue'
+import { ToCurrency } from '@/enum'
 import { useRootStore } from '@/stores/root'
 import AmountVue from '../Amount/Amount.vue'
 
 const rootStore = useRootStore()
 const props = defineProps<{
   nft: GenesisNFTItem
+  toCurrency?: ToCurrency
 }>()
 </script>
 

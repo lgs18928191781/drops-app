@@ -375,3 +375,9 @@ export enum JobStatus {
   Success = 'success',
   Failed = 'failed',
 }
+
+export enum ToCurrency {
+  ETH = 'ETH',
+  CNY = 'CNY',
+  USD = 'USD',
+}

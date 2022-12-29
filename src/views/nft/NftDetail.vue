@@ -407,7 +407,7 @@ import PayConfirmVue from '@/components/PayConfirm/PayConfirm.vue'
 import { UnitName } from '@/config'
 import NFTSellVue from '@/components/NFTSell/NFTSell.vue'
 import NFTBuyVue from '@/components/NFTBuy/NFTBuy.vue'
-import { NFTOffSale } from '@/utils/util'
+import { checkUserLogin, NFTOffSale } from '@/utils/util'
 import AmountVue from '@/components/Amount/Amount.vue'
 import NFTTransferVue from '@/components/NFTTransfer/NFTTransfer.vue'
 
@@ -546,7 +546,8 @@ function toWhatsonchain(txId: string) {
 
 function ToUser(metaId: string) {}
 
-function startBuy() {
+async function startBuy() {
+  await checkUserLogin()
   isShowBuy.value = true
 }
 

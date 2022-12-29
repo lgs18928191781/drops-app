@@ -4,6 +4,10 @@
   border-radius: calc(100% / 2.5);
   overflow: hidden;
 
+  &.disabled {
+    cursor: auto;
+  }
+
   :deep(img) {
     border-radius: calc(100% / 2.5);
     width: 100%;
@@ -11,6 +15,7 @@
     object-fit: cover;
     display: block;
   }
+
 
   // border: 1px solid var(--themeBtnTextColor);
 }

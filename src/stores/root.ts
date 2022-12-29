@@ -1,4 +1,4 @@
-import { SignUserType } from '@/enum'
+import { SignUserType, ToCurrency } from '@/enum'
 import { defineStore } from 'pinia'
 import { GetCertMetaIdList } from '@/api/aggregation'
 import i18n from '@/utils/i18n'
@@ -18,7 +18,7 @@ interface RootState {
   isShowLogin: boolean
   isShowMetaMak: boolean
   isCertedMetaIds: string[]
-  currentPrice: 'CNY' | 'USD'
+  currentPrice: ToCurrency
   theme: 'light' | 'dark'
 }
 

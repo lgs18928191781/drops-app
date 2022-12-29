@@ -73,7 +73,7 @@
                   <div
                     class="mt-7.5 mb-1.5 flex items-center justify-between self-stretch text-sm text-dark-300"
                   >
-                    <div class="">Draws</div>
+                    <div class="">{{ $t('Talk.Modals.Draws') }}</div>
                     <div class="">{{ `Opened ${draws.length} / ${redPacketResult.count}` }}</div>
                   </div>
 

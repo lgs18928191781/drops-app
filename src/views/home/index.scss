@@ -3,6 +3,27 @@
 }
 
 
+.nav-item {
+    padding: 15px 30px;
+}
+
+.el-carousel {
+    overflow: hidden;
+
+    :deep(.el-carousel__arrow) {
+        svg {
+            path {
+                stroke-width: 1rem;
+                stroke: var(--themeBtnTextColor);
+            }
+        }
+    }
+
+    :deep(.el-carousel__button) {
+        border: 3px solid var(--themeBtnTextColor) !important;
+    }
+}
+
 .container {
     width: 100%;
     max-width: 1200px;
@@ -12,7 +33,9 @@
     box-sizing: border-box;
     height: auto;
     width: 100vw;
+    overflow: hidden;
     background: linear-gradient(0deg, #FFFBEC 0%, rgba(255, 248, 222, 0.03) 100%);
+    white-space: pre-line;
 
     .header {
         height: 100px;
@@ -142,8 +165,13 @@
 
             }
 
+            .foot-warp {
+                margin: -180px auto 0 auto;
+                position: relative;
+                text-align: center;
+            }
+
             .foot {
-                width: 650px;
                 padding: 30px;
                 box-sizing: border-box;
                 border: 1px solid #6A6C6F;
@@ -152,12 +180,11 @@
                 display: flex;
                 align-items: center;
                 flex-direction: column;
-                margin: -180px auto 0 auto;
-                position: relative;
+                display: inline-block;
                 z-index: 2;
 
                 .title {
-                    font-size: 24px;
+                    font-size: 22px;
                     font-weight: 500;
                     color: var(--themeBtnTextColor);
                 }
@@ -189,14 +216,15 @@
                             margin-left: 16px;
                             display: flex;
                             flex-direction: column;
+                            text-align: left;
 
-                            span:nth-child(1) {
+                            .sm {
                                 font-size: 12px;
                             }
 
-                            span:nth-child(2) {
+                            .big {
                                 font-size: 18px;
-                                font-weight: 400;
+                                font-weight: bold;
                             }
                         }
                     }
@@ -238,10 +266,13 @@
 
                 }
 
+                .foot-warp {
+                    margin-top: 30px;
+                }
+
                 .foot {
                     width: 100%;
                     display: flex;
-                    margin-top: 30px;
 
                     .download-group {
                         flex-direction: column;
@@ -259,7 +290,11 @@
                                 display: flex;
                                 flex: 1;
                                 flex-direction: row;
+
+
                             }
+
+
                         }
                     }
 
@@ -273,6 +308,7 @@
             padding-top: 74px;
             padding-bottom: 105px;
             background: linear-gradient(180deg, #FFFBEC 0%, rgba(255, 248, 222, 0.03) 100%);
+            overflow: hidden;
 
             .title {
                 font-size: 54px;
@@ -283,6 +319,7 @@
 
             .drsc {
                 margin-top: 30px;
+                font-size: 30px;
                 text-align: center;
                 color: var(--themeBtnTextColor);
             }
@@ -297,14 +334,17 @@
 
                 .left {
                     margin-right: 30px;
+                    flex: 1;
                     display: grid;
                     grid-template-columns: repeat(2, 1fr);
                     grid-row-gap: 90px;
+                    min-width: 0;
 
                     .item {
                         display: flex;
                         flex-direction: column;
                         align-items: center;
+                        text-align: center;
 
                         span:nth-child(1) {
                             font-size: 42px;
@@ -317,15 +357,19 @@
                         }
 
                         span:nth-child(2) {
+                            margin-top: 12px;
                             font-size: 20px;
                         }
                     }
                 }
 
                 .right {
+                    flex: 1;
+                    min-width: 0;
+
                     img {
-                        width: 627px;
-                        object-fit: cover;
+                        width: 100%;
+                        height: auto;
                     }
                 }
             }
@@ -374,6 +418,7 @@
                 span:nth-child(2) {
                     font-size: 18px;
                     line-height: 36px;
+                    margin-top: 30px;
                 }
             }
 
