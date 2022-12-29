@@ -593,7 +593,6 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
     attachments,
     timestamp: timestamp * 1000, // 服务端返回的是毫秒，所以模拟需要乘以1000
   }
-  console.log({ timestamp })
 
   // 2.5. mock发送
   const mockId = realRandomString(12)
