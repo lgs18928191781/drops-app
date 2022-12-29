@@ -8,7 +8,7 @@ import {
 import { router } from '@/router'
 import Decimal from 'decimal.js-light'
 import axios from 'axios'
-import { isAndroidApp, isApp, isIOS, useRootStore } from '@/stores/root'
+import { isAndroidApp, isApp, isIOS, useRootStore, isAndroid, isIosApp } from '@/stores/root'
 import { GetBankCards, GetWalletBalance, Inactivation } from '@/api/pay'
 import {
   BlindboxUUIDStatus,
@@ -17,6 +17,7 @@ import {
   PayPlatform,
   PayStatus,
   ToCurrency,
+  PayType,
 } from '@/enum'
 import { CheckBlindboxOrderStatus } from '@/api/v3'
 import AllCardJson from '@/utils/card.json'
@@ -38,6 +39,7 @@ import { toClipboard } from '@soerenmartius/vue3-clipboard'
 import i18n from './i18n'
 import { Ref } from 'vue'
 import ShowSVG from '@/assets/svg/show.svg?component'
+import { CreatOrder } from '@/api/wxcore'
 
 export function randomString() {
   return Math.random()
@@ -921,7 +923,7 @@ export function randomRange(min: number, max: number) {
 
 export function getCurrencyAmount(
   price: string | number,
-  currency: 'CNY',
+  currency: ToCurrency,
   toCurrency?: ToCurrency
 ) {
   const rootStore = useRootStore()
@@ -929,27 +931,35 @@ export function getCurrencyAmount(
     toCurrency = rootStore.currentPrice
   }
   const rate = rootStore.exchangeRate.find(
-    item => item.symbol.toUpperCase() === toCurrency.toUpperCase()
+    item => item.symbol.toUpperCase() === toCurrency!.toUpperCase()
   )
   if (toCurrency === 'CNY') {
     if (currency === 'CNY') {
       return new Decimal(price).div(100).toNumber()
     } else {
-      const rate = new Decimal(rate.price.CNY).div(rate.price.USD).toNumber()
+      const rateUSD = new Decimal(rate!.price.CNY).div(rate!.price.USD).toNumber()
       return new Decimal(
         new Decimal(price)
           .div(100)
-          .div(rate)
+          .div(rateUSD)
           .toFixed(2)
       ).toNumber()
     }
   } else if (toCurrency === ToCurrency.ETH) {
     if (currency === 'CNY') {
-      return new Decimal(rate.price.CNY)
-        .div(price)
-        .div(100)
-        .toNumber()
+      let result = new Decimal(
+        new Decimal(price)
+          .div(100)
+          .div(rate!.price.CNY)
+          .toFixed(5)
+      ).toNumber()
+      if (result < 0.00001) result = 0.00001
+      return result
+    } else {
+      return 0
     }
+  } else {
+    return 0
   }
 }
 
@@ -994,4 +1004,48 @@ export function SetLang(lang: string) {
     const rootStore = useRootStore()
     rootStore.$patch({ currentPrice: i18n.global.locale.value === 'en' ? 'USD' : 'CNY' })
   }
+}
+
+export function CreatePayOrder(params: {
+  platform: PayPlatform
+  fullPath: string
+  goods_name: string
+  count: number
+  product_type: 100 | 200 // 100-ME, 200-Legal_NFT,
+}) {
+  return new Promise<PayOrderStatus>(async (resolve, reject) => {
+    const userStore = useUserStore()
+    let from = !isApp ? 'web' : isAndroid ? 'android' : isIOS ? 'ios' : ''
+    from += `:${import.meta.env.VITE_AppName}`
+    // 支付回调地址
+    const quitUrl = setPayQuitUrl({
+      payPlatform: params.platform,
+      fullPath: params.fullPath,
+      isBlindbox: false,
+    })
+    const type = isIosApp
+      ? PayType.H5
+      : isApp
+      ? PayType.App
+      : isAndroid && isIOS
+      ? PayType.H5
+      : PayType.H5
+    const res = await CreatOrder({
+      address: userStore.user!.address!,
+      count:
+        params.product_type === 100 ? new Decimal(params.count).mul(100).toNumber() : params.count,
+      description: params.product_type === 100 ? 'Recharge ME' : 'Buy NFT',
+      from,
+      goods_name: params.goods_name,
+      metaid: userStore.user!.metaId,
+      pay_type: params.platform,
+      quit_url: quitUrl,
+      types: type,
+      from_coin_address: userStore.user?.evmAddress,
+      product_type: params.product_type,
+    })
+    if (res?.code === 0) {
+      resolve(res.data)
+    }
+  })
 }

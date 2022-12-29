@@ -47,7 +47,10 @@
         </div>
       </div>
 
-      <a class="operate main-border primary flex flex-align-center flex-pack-center">
+      <a
+        class="operate main-border primary flex flex-align-center flex-pack-center"
+        @click="confirmBuy"
+      >
         {{ $t('NFT.Buy Now') }}
       </a>
     </div>
@@ -55,14 +58,16 @@
 </template>
 
 <script setup lang="ts">
-import { PayPlatform, ToCurrency } from '@/enum'
-import { useRootStore } from '@/stores/root'
+import { PayPlatform, PayType, ToCurrency } from '@/enum'
+import { isAndroid, isApp, isIOS, isIosApp, useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
 import { Ref, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NFTMsgVue from '../NFTMsg/NFTMsg.vue'
 import { PayPlatformItem, payPlatformList } from '@/config'
 import PayTypeDropdownVue from '../PayTypeDropdown/PayTypeDropdown.vue'
+import { CreatePayOrder, setPayQuitUrl } from '@/utils/util'
+import { useRoute } from 'vue-router'
 
 const props = defineProps<{
   modelValue: boolean
@@ -71,6 +76,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['update:modelValue', 'success'])
+const route = useRoute()
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const i18n = useI18n()
@@ -92,6 +98,24 @@ function onPayPlatformChange() {
     toCurrency.value = ToCurrency.ETH
   } else {
     toCurrency.value = undefined
+  }
+}
+
+async function confirmBuy() {
+  return ElMessage.info(i18n.t('Comming Soon'))
+  const res = await CreatePayOrder({
+    platform: currentPayPlatform.value,
+    fullPath: setPayQuitUrl({
+      payPlatform: currentPayPlatform.value,
+      fullPath: route.fullPath,
+      isBlindbox: false,
+    }),
+    goods_name: props.nft.nftName,
+    count: 1,
+    product_type: 200, // 100-ME, 200-Legal_NFT,
+  })
+  if (res) {
+    debugger
   }
 }
 </script>

@@ -78,6 +78,8 @@ function toItem() {
         channelId: shareInfo.val!.shareId.split('/')[1],
       },
     })
+  } else if (shareInfo.val!.shareIdType === 'communityId') {
+    router.push(`/talk/channels/${shareInfo.val!.shareId}`)
   }
 }
 

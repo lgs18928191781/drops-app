@@ -21,48 +21,11 @@
             <div class="form_item flex flex-align-center">
               <div class="label flex1">{{ $t('Wallet.Payment') }}</div>
               <div class="value" :class="{ active: isShowPayTypes }">
-                <ElDropdown trigger="click" @visible-change="value => (isShowPayTypes = value)">
-                  <a class="flex flex-align-center pay-item" :class="{ active: isShowPayTypes }">
-                    <div class="icon-warp flex flex-align-center flex-pack-center">
-                      <img
-                        :src="
-                          payPlatformList.find(item => item.platform === currentPayPlatform)?.icon
-                        "
-                      />
-                    </div>
-                    <div class="name">
-                      {{
-                        payPlatformList.find(item => item.platform === currentPayPlatform)?.name()
-                      }}
-                    </div>
-                    <Icon name="down" class="down" />
-                  </a>
-                  <template #dropdown>
-                    <ElDropdownMenu>
-                      <ElDropdownItem
-                        v-for="(item, index) in payPlatformList"
-                        :key="index"
-                        @click="choosePayPlatform(item)"
-                        :disabled="item.disabled()"
-                      >
-                        <a
-                          class="flex flex-align-center pay-item"
-                          :class="{ active: currentPayPlatform === item.platform }"
-                        >
-                          <div class="flex1 flex flex-align-center">
-                            <div class="icon-warp flex flex-align-center flex-pack-center">
-                              <img :src="item.icon" />
-                            </div>
-                            <span class="name">{{ item.name() }}</span>
-                          </div>
-                          <div class="check-warp flex flex-align-center flex-pack-center">
-                            <Icon name="check" v-if="currentPayPlatform === item.platform" />
-                          </div>
-                        </a>
-                      </ElDropdownItem>
-                    </ElDropdownMenu>
-                  </template>
-                </ElDropdown>
+                <PayTypeDropdownVue
+                  v-model="isShowPayTypes"
+                  v-model:current-pay-platform="currentPayPlatform"
+                  @change="onPayPlatformChange"
+                />
               </div>
             </div>
           </div>
@@ -176,6 +139,7 @@ import { isAndroid, isApp, isIOS, isIosApp, useRootStore } from '@/stores/root'
 import { setPayQuitUrl } from '@/utils/util'
 import { useRoute } from 'vue-router'
 import ContentModalVue from '@/components/ContentModal/ContentModal.vue'
+import PayTypeDropdownVue from '../PayTypeDropdown/PayTypeDropdown.vue'
 
 const props = defineProps<{
   modelValue: boolean
@@ -346,9 +310,7 @@ function lockScroller() {
   document.body.classList.add('el-popup-parent--hidden')
 }
 
-function choosePayPlatform(item: PayPlatformItem) {
-  if (item.disabled()) return
-  currentPayPlatform.value = item.platform
+function onPayPlatformChange() {
   getRate().then(() => {
     onMeInput()
   })

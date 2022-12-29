@@ -930,21 +930,23 @@ declare interface OrderMsg {
   status: number
   transaction_id: string
 }
+
+declare interface PayOrderStatus {
+  address: string
+  amount: string
+  count: number
+  create_time: number
+  error_status: string
+  goods_name: string
+  metaid: string
+  outside_order_id: string
+  price: number
+  status: number
+  url: string
+  uuid: string
+}
 declare interface GetOrderStatusRes extends apiResponse {
-  data: {
-    address: string
-    amount: string
-    count: number
-    create_time: number
-    error_status: string
-    goods_name: string
-    metaid: string
-    outside_order_id: string
-    price: number
-    status: number
-    url: string
-    uuid: string
-  }
+  data: PayOrderStatus
 }
 
 declare interface LegalGetUserOnSaleResItem {
