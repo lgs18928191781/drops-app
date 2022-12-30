@@ -102,7 +102,7 @@ function onPayPlatformChange() {
 }
 
 async function confirmBuy() {
-  return ElMessage.info(i18n.t('Comming Soon'))
+  // return ElMessage.info(i18n.t('Comming Soon'))
   const res = await CreatePayOrder({
     platform: currentPayPlatform.value,
     fullPath: setPayQuitUrl({
@@ -113,6 +113,7 @@ async function confirmBuy() {
     goods_name: props.nft.nftName,
     count: 1,
     product_type: 200, // 100-ME, 200-Legal_NFT,
+    uuid: props.nft.nftLegalUuid,
   })
   if (res) {
     debugger

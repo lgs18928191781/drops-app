@@ -990,7 +990,8 @@ export function NFTOffSale(nft: GenesisNFTItem) {
           }
         }
       })
-      .catch(() => {
+      .catch(error => {
+        ElMessage.error(error.message)
         resolve(false)
       })
   })
@@ -1012,6 +1013,7 @@ export function CreatePayOrder(params: {
   goods_name: string
   count: number
   product_type: 100 | 200 // 100-ME, 200-Legal_NFT,
+  uuid?: string
 }) {
   return new Promise<PayOrderStatus>(async (resolve, reject) => {
     const userStore = useUserStore()
@@ -1043,6 +1045,7 @@ export function CreatePayOrder(params: {
       types: type,
       from_coin_address: userStore.user?.evmAddress,
       product_type: params.product_type,
+      uuid: params.uuid,
     })
     if (res?.code === 0) {
       resolve(res.data)
