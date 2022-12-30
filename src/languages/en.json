@@ -602,6 +602,8 @@
     "Backwall": "Backwall",
     "Costume": "Costume",
     "Artifacts": "Artifacts",
-    "Pet": "Pet"
+    "Pet": "Pet",
+    "Home": "Home",
+    "Chat": "Chat"
   }
 }

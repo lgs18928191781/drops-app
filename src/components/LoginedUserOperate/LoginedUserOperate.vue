@@ -4,12 +4,17 @@
   </div>
   <template v-if="userStore.isAuthorized">
     <div class="user-warp flex flex-align-center">
-      <UserAvatar
-        :image="userStore.user!.avatarImage"
-        :meta-id="userStore.user!.metaId"
-        class="user-warp-item"
-        :disabled="true"
-      />
+      <el-popover placement="bottom" :width="'auto'" trigger="hover">
+        <template #reference>
+          <UserAvatar
+            :image="userStore.user!.avatarImage"
+            :meta-id="userStore.user!.metaId"
+            class="user-warp-item"
+            :disabled="true"
+          />
+        </template>
+        <UserPersonaVue />
+      </el-popover>
 
       <!-- 钱包 -->
       <a
@@ -67,6 +72,7 @@ import { useLayoutStore } from '@/stores/layout'
 import { useRoute } from 'vue-router'
 import MyWalletVue from './MyWallet.vue'
 import VersionVue from '../Version/Version.vue'
+import UserPersonaVue from '../UserPersona/UserPersona.vue'
 
 const i18n = useI18n()
 const rootStore = useRootStore()

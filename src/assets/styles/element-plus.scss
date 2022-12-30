@@ -595,3 +595,7 @@ html.dark {
     height: 800px !important;
 
 }
+
+.el-popover {
+    --el-popover-border-radius: var(--rounded) !important;
+}

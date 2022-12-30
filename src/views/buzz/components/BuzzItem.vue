@@ -12,14 +12,14 @@
       </div>
       <!-- 快速转发 -->
       <template v-if="itemData.protocol === 'SimpleRePost'">
-        <div class="forward-head" @click.stop="$filters.toUserHome(itemData.metaId)">
+        <div class="forward-head">
           <ShareIcon />
           <UserAvatar class="head" :meta-id="itemData.metaId" :image="itemData.avatarImage" />
           <div class="name">{{ itemData.userName }}&nbsp;|&nbsp;{{ $t('Forwarded') }}</div>
         </div>
       </template>
       <div class="header">
-        <div class="user-info" @click.stop="$filters.toUserHome(displayItemData!.metaId)">
+        <div class="user-info">
           <div class="head">
             <UserAvatar :meta-id="displayItemData.metaId" :image="displayItemData.avatarImage" />
           </div>
