@@ -86,16 +86,16 @@ const userOperates = computed(() => {
     },
     {
       name: i18n.t('UserOperate.aboutShow'),
-      icon: 'plus_circle',
+      icon: 'show',
       func: () => {
         window.open('https://show3.gitbook.io/show3.0/v/english/', '_blank')
       },
     },
     {
       name: i18n.t('UserOperate.About MetaSo'),
-      icon: 'plus_circle',
+      icon: 'meta_so',
       func: () => {
-        window.open('https://show3.gitbook.io/show3.0/v/english/', '_blank')
+        window.open('https://www.metaso.network/', '_blank')
       },
     },
     {
