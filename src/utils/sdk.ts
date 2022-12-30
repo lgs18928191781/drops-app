@@ -17,6 +17,7 @@ import {
   Network,
   NftTransferResult,
   ProtocolOptions,
+  Reqswapargs,
 } from '@/utils/wallet/hd-wallet'
 import { decode, encode } from 'js-base64'
 import { AttachmentItem } from '@/@types/hd-wallet'
@@ -1710,5 +1711,15 @@ export class SDK {
 
   MetaNameBeforeReq(params: { name: string; op: number }) {
     return this.wallet?.MetaNameBeforeReq(params)
+  }
+
+  sendMetaNameTransation(params: {
+    op_code: number
+    address: string
+    metaid: string
+    years: number
+    reqswapargs: Reqswapargs
+  }) {
+    return this.wallet?.sendMetaNameTransation(params)
   }
 }

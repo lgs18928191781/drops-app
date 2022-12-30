@@ -2189,15 +2189,16 @@ export class HdWallet {
   public async sendMetaNameTransation(params: {
     op_code: number
     metaid: string
-    address: string
+    address?: string
     years: number
     reqswapargs: Reqswapargs
-    payTo: Array<{
+    payTo?: Array<{
       address: string
       amount: number
     }>
   }) {
     const { reqswapargs, years, op_code, metaid, address } = params
+    debugger
     const mvcToAddress = reqswapargs.mvcToAddress
     const txFee = reqswapargs.txFee
     const requestIndex = reqswapargs.requestIndex
@@ -2222,7 +2223,7 @@ export class HdWallet {
       payTo: mvcReceivers,
     })
     let mvcRawTx = transferResult.toString()
-    debugger
+
     if (MetaNameReqCode.register == op_code) {
       const params: MetaNameRequestDate = {
         requestIndex,
@@ -2238,13 +2239,13 @@ export class HdWallet {
         params,
         MetaNameReqType.register
       )
+
       if (registerMetaNameResp.code == 0) {
-        await this.provider.broadcast(transferResult.toString())
-      }
-      MetaNameSuccTxid = registerMetaNameResp.data
-      return {
-        code: 0,
-        MetaNameSuccTxid,
+        MetaNameSuccTxid = registerMetaNameResp.data
+        return {
+          code: 0,
+          MetaNameSuccTxid,
+        }
       }
     }
   }

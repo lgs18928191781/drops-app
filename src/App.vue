@@ -45,12 +45,28 @@ const routeKey = (route: any) => {
 async function metaname() {
   try {
     const res = await userStore.showWallet.MetaNameBeforeReq({
-      name: `EasonChanOnShow`,
+      name: `🥕`,
       op: 1,
     })
     console.log('resss', res)
     debugger
-  } catch (error) {}
+    if (res.code == 0) {
+      const { data } = res
+      const result = await userStore.showWallet.sendMetaNameTransation({
+        op_code: data.op,
+        metaid: userStore.user!.metaId,
+        address: userStore.user!.address,
+        years: 1,
+        reqswapargs: data,
+      })
+      console.log('result', result)
+      debugger
+    } else {
+      throw new Error(`${res.msg}`)
+    }
+  } catch (error) {
+    throw new Error(`${(error as any).toString()}`)
+  }
 }
 </script>
 <style lang="css" src="@/assets/styles/tailwind.css"></style>

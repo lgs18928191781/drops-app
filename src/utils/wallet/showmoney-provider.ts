@@ -137,9 +137,7 @@ export default class ShowmoneyProvider {
       },
       options,
     })
-    if (res.code === 0) {
-      return res.data
-    }
+    return res
   }
 
   private gzip(data: Buffer | string): Promise<Buffer | string> {
@@ -164,12 +162,11 @@ export default class ShowmoneyProvider {
     try {
       const res = await this.callMetaNameApi({
         url: `/${reqTypes}`,
-        params: JSON.stringify({
-          data: compressData,
-        }),
+        params: compressData,
         options,
       })
       if (res.code == 0) {
+        debugger
         return res
       } else {
         throw new Error(`registerNewMetaName error: ${res.msg},
