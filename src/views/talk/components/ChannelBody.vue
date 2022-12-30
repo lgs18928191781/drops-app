@@ -76,6 +76,12 @@ const tryInitChannel = async (status: string) => {
           case 'goerli':
             selfAddress = user.user?.evmAddress as string
             break
+          case 'polygon':
+            selfAddress = user.user?.evmAddress as string
+            break
+          case 'mumbai':
+            selfAddress = user.user?.evmAddress as string
+            break
           default:
             selfAddress = user.user!.address
             break
@@ -159,6 +165,12 @@ const tryInitChannel = async (status: string) => {
             selfAddress = user.user?.evmAddress as string
             break
           case 'goerli':
+            selfAddress = user.user?.evmAddress as string
+            break
+          case 'polygon':
+            selfAddress = user.user?.evmAddress as string
+            break
+          case 'mumbai':
             selfAddress = user.user?.evmAddress as string
             break
           default:
