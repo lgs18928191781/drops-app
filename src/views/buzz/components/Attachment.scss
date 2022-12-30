@@ -49,6 +49,10 @@
                 max-width: 100%;
                 max-height: 300px;
 
+                img {
+                    max-height: 300px;
+                }
+
                 .el-skeleton {
                     width: 300px;
                     height: 150px;

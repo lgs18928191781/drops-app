@@ -416,6 +416,7 @@ html.dark {
         .el-loading-text {
             color: var(--themeTextColor);
             font-weight: 700;
+            text-shadow: 1px 1px var(--themeBgColor);
         }
     }
 }
