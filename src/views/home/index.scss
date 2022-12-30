@@ -183,6 +183,10 @@
                 display: inline-block;
                 z-index: 2;
 
+                .logo {
+                    display: inline-flex;
+                }
+
                 .title {
                     font-size: 22px;
                     font-weight: 500;
@@ -561,10 +565,13 @@
                         white-space: pre-line;
                     }
 
+                    .operate {
+                        margin-top: 40px;
+                    }
+
                     .metaso-btn {
                         display: inline-block;
                         cursor: pointer;
-                        margin-top: 40px;
                         font-size: 18px;
                         padding: 18px 24px !important;
                         border-radius: 12px !important;
