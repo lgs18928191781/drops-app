@@ -84,7 +84,7 @@
                 height: 100%;
                 left: 0;
                 top: 0;
-                border: 2px solid var(--themeTextColor);
+                border: var(--standard-border-width) solid var(--themeTextColor);
                 border-radius: 12px;
                 box-sizing: border-box;
                 margin-left: 6px;
@@ -99,7 +99,7 @@
                 left: 0;
                 top: 0;
                 background: #FFFFFF;
-                border: 2px solid var(--themeTextColor);
+                border: var(--standard-border-width) solid var(--themeTextColor);
                 z-index: 2;
                 border-radius: 12px;
 

@@ -119,7 +119,7 @@
 }
 
 .audio-warp {
-    border: 2px solid var(--themeTextColor);
+    border: var(--standard-border-width) solid var(--themeTextColor);
     border-radius: 8px;
     padding: 12px;
 
@@ -158,7 +158,7 @@
     .control {
 
         .play {
-            border: 2px solid #909399;
+            border: var(--standard-border-width) solid #909399;
             border-radius: 50%;
             box-sizing: content-box;
 
@@ -218,7 +218,7 @@
         width: 78px;
         height: 78px;
         margin-right: 12px;
-        border: 2px solid var(--themeBtnTextColor);
+        border: var(--standard-border-width)solid var(--themeBtnTextColor);
         border-radius: 8px;
         position: relative;
 

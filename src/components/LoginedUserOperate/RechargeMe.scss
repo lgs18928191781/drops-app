@@ -107,7 +107,7 @@ header {
             .label {}
 
             .value {
-                border: 2px solid #EDEFF2;
+                border: var(--standard-border-width) solid #EDEFF2;
                 border-radius: 12px;
 
                 &.input {
