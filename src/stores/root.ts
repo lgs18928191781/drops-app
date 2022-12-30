@@ -20,6 +20,7 @@ interface RootState {
   isCertedMetaIds: string[]
   currentPrice: ToCurrency
   theme: 'light' | 'dark'
+  chainWhiteList: Array<string>
 }
 
 const UA = window.navigator.userAgent.toLowerCase()
@@ -63,6 +64,7 @@ export const useRootStore = defineStore('root', {
       isShowMetaMak: false,
       currentPrice: initCurrentPrice,
       theme,
+      chainWhiteList: import.meta.env.MODE == 'gray' ? ['0x5', '0x13881'] : ['0x1', '0x89'],
     },
   getters: {
     currentPriceSymbol: state => {

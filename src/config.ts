@@ -165,13 +165,18 @@ export const currentSupportChain: Array<{
 ]
 
 export const chains = [
-  { name: 'ETH', icon: ETHIcon, value: import.meta.env.VITE_ETH_CHAIN, disabled: () => false },
   {
-    name: 'POLYGON',
+    name: import.meta.env.MODE == 'gray' ? 'Goerli' : 'ETH',
+    icon: ETHIcon,
+    value: import.meta.env.VITE_ETH_CHAIN,
+    disabled: () => false,
+  },
+  {
+    name: import.meta.env.MODE == 'gray' ? 'MUMBAI' : 'POLYGON',
     icon: POLYGON,
-    value: 'polygon',
+    value: import.meta.env.VITE_POLYGON_CHAIN,
     disabled: () => {
-      return true
+      return false
     },
   },
   {
