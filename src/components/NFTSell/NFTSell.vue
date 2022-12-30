@@ -7,7 +7,12 @@
     @close="emit('update:modelValue', false)"
     :show-close="!loading"
   >
-    <div class="sell-nft" v-loading="loading">
+    <div
+      class="sell-nft"
+      v-loading="loading"
+      :element-loading-svg="LoadingTEXT"
+      :element-loading-text="$t('Loading')"
+    >
       <NFTMsgVue :nft="nft" />
 
       <ElForm :model="form" :rules="rule">
@@ -77,6 +82,7 @@ import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NFTCoverVue from '../NFTCover/NFTCover.vue'
 import NFTMsgVue from '../NFTMsg/NFTMsg.vue'
+import { LoadingTEXT } from '@/utils/LoadingSVGText'
 
 const props = defineProps<{
   modelValue: boolean

@@ -18,6 +18,8 @@
       :infinite-scroll-immediate="false"
       :infinite-scroll-distance="100"
       v-loading="isSkeleton"
+      :element-loading-svg="LoadingTEXT"
+      :element-loading-text="$t('Loading')"
     >
       <ElSkeleton :loading="isSkeleton" animated>
         <template #default>
@@ -45,6 +47,7 @@ import { useUserStore } from '@/stores/user'
 import { reactive, ref } from 'vue'
 import IsNullVue from '@/components/IsNull/IsNull.vue'
 import LoadMoreVue from '@/components/LoadMore/LoadMore.vue'
+import { LoadingTEXT } from '@/utils/LoadingSVGText'
 
 interface Props {
   activeTx: string

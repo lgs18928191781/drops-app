@@ -5,7 +5,12 @@
     :close-on-click-modal="false"
     :destroy-on-close="true"
   >
-    <div class="publish" v-loading="loading">
+    <div
+      class="publish"
+      v-loading="loading"
+      :element-loading-svg="LoadingTEXT"
+      :element-loading-text="$t('Loading')"
+    >
       <div class="top flex flex-align-center">
         <div class="user flex flex-align-center flex1">
           <UserAvatar
@@ -48,6 +53,7 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
 import { ref, watch } from 'vue'
+import { LoadingTEXT } from '@/utils/LoadingSVGText'
 
 const props = defineProps<{
   modelValue: boolean

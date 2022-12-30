@@ -53,7 +53,10 @@
                   :image="nft.val!.nftIssueAvatarImage"
                 />
                 <div class="author-msg flex1">
-                  <div class="creater">{{ $t('creater') }}: {{ nft.val!.nftIssuer }}</div>
+                  <div class="creater">
+                    {{ $t('creater') }}:
+                    {{ nft.val!.nftIssuer ? nft.val!.nftIssuer : nft.val!.nftIssueAddress }}
+                  </div>
                   <div class="metaid" v-if="nft.val!.nftIssueMetaId">
                     MetaID:{{ nft.val!.nftIssueMetaId.slice(0, 6) }}
                   </div>
@@ -416,6 +419,7 @@ import NFTBuyVue from '@/components/NFTBuy/NFTBuy.vue'
 import { checkUserLogin, NFTOffSale } from '@/utils/util'
 import AmountVue from '@/components/Amount/Amount.vue'
 import NFTTransferVue from '@/components/NFTTransfer/NFTTransfer.vue'
+import { toClipboard } from '@soerenmartius/vue3-clipboard'
 
 const isShowSkeleton = ref(true)
 const isShowDrscDetail = ref(false)
@@ -505,6 +509,8 @@ const NFTMainMsgDesc = computed(() => {
     : nft.val!.nftSellState === 0 && nft.val!.nftIsReady
     ? nft.val!.nftSellDesc
     : nft.val!.nftDesc
+    ? nft.val!.nftDesc
+    : '--'
 })
 
 watch(
@@ -606,14 +612,14 @@ function toSale() {
 
 // 分享
 function share() {
-  //   const value = `${i18n.t('shareText1')}\r\n ${NFT.val!.nftName}：${window.location.href}`
-  //   toClipboard(value)
-  //     .then(() => {
-  //       ElMessage.success(i18n.t('copyShareSuccess'))
-  //     })
-  //     .catch(() => {
-  //       ElMessage.success(i18n.t('copyerror'))
-  //     })
+  const value = `${i18n.t('shareText1')}\r\n ${nft.val!.nftName}:${window.location.href}`
+  toClipboard(value)
+    .then(() => {
+      ElMessage.success(i18n.t('copyShareSuccess'))
+    })
+    .catch(() => {
+      ElMessage.success(i18n.t('copyerror'))
+    })
 }
 
 //  获取拥有记录

@@ -65,6 +65,24 @@ header {
             &:last-child {
                 margin-right: 0;
             }
+
+            &:hover {
+                position: relative;
+
+                &:after {
+                    content: '';
+                    background: var(--el-color-primary);
+                    width: 40px;
+                    height: 4px;
+                    border-radius: 4px;
+                    position: absolute;
+                    display: block;
+                    left: 50%;
+                    margin-left: -20px;
+                    bottom: 0;
+                    margin-bottom: -10px;
+                }
+            }
         }
     }
 }

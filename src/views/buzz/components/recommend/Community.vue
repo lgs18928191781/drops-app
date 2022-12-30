@@ -1,6 +1,6 @@
 <template>
   <!-- 推荐社区 -->
-  <div class="recommend-section">
+  <div class="recommend-section" v-if="communitys.length">
     <div class="title flex">
       {{ $t('Buzz.Referral Community') }}
     </div>

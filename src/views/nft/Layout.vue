@@ -17,7 +17,7 @@
           </div>
         </div>
         <nav>
-          <a v-for="(item, index) in navs" :key="index">{{ item.name }}</a>
+          <a v-for="(item, index) in navs" :key="index" @click="commonSoon">{{ item.name }}</a>
         </nav>
       </div>
     </div>
@@ -43,6 +43,10 @@ const navs = reactive([
   { name: i18n.t('NFT.NFT Tools') },
   { name: i18n.t('NFT.Help') },
 ])
+
+function commonSoon() {
+  ElMessage.info(i18n.t('Comming Soon'))
+}
 </script>
 
 <style lang="scss" scoped src="./Layout.scss"></style>

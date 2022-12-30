@@ -7,7 +7,12 @@
     :width="'456px'"
   >
     <template #body>
-      <div class="set-base-user-info flex" v-loading="loading">
+      <div
+        class="set-base-user-info flex"
+        v-loading="loading"
+        :element-loading-svg="LoadingTEXT"
+        :element-loading-text="$t('Loading')"
+      >
         <div class="flex1 set-base-user-info-item set-warp">
           <div class="title">
             {{ $t('Login.setBaseInfo.title') }}
@@ -53,7 +58,12 @@
     </template>
 
     <template #secondBody>
-      <div class="set-base-user-info flex" v-loading="loading">
+      <div
+        class="set-base-user-info flex"
+        v-loading="loading"
+        :element-loading-svg="LoadingTEXT"
+        :element-loading-text="$t('Loading')"
+      >
         <div class="flex1 set-base-user-info-item">
           <div class="choose-nft flex flex-v">
             <div class="title">{{ $t('Login.setBaseInfo.chooseNFTTitle') }}</div>
@@ -83,9 +93,9 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
 import { reactive, ref, watch } from 'vue'
-
 import ModalVue from '../Modal/Modal.vue'
 import NFTAvatarListVue from '@/components/NFTAvatarList/NFTAvatarList.vue'
+import { LoadingTEXT } from '@/utils/LoadingSVGText'
 
 interface Props {
   modelValue: boolean

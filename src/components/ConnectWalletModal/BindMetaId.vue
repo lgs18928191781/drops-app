@@ -1,6 +1,11 @@
 <template>
   <ElDialog :model-value="modelValue" class="none-header sm" :close-on-click-modal="false">
-    <div class="bind-metaid" v-loading="loading">
+    <div
+      class="bind-metaid"
+      v-loading="loading"
+      :element-loading-svg="LoadingTEXT"
+      :element-loading-text="$t('Loading')"
+    >
       <!-- 选择绑定类型 -->
       <div class="choose" v-if="status === BindStatus.ChooseType">
         <div class="title">{{ $t('Login.bindMetaId.title1') }}</div>
@@ -161,6 +166,8 @@ import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { openLoading } from '@/utils/util'
 import { MD5 } from 'crypto-js'
+import { LoadingTEXT } from '@/utils/LoadingSVGText'
+
 interface Props {
   modelValue: boolean
   thirdPartyWallet: {

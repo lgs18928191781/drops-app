@@ -6,7 +6,12 @@
     :title="$t('NFT.Transfer')"
     @close="emit('update:modelValue', false)"
   >
-    <div class="nft-buy" v-loading="loading">
+    <div
+      class="nft-buy"
+      v-loading="loading"
+      :element-loading-svg="LoadingTEXT"
+      :element-loading-text="$t('Loading')"
+    >
       <NFTMsgVue :nft="nft" />
 
       <div class="cont-warp">
@@ -57,6 +62,7 @@ import { useI18n } from 'vue-i18n'
 import NFTMsgVue from '../NFTMsg/NFTMsg.vue'
 import { PayPlatformItem, payPlatformList } from '@/config'
 import { GetUserAllInfo } from '@/api/aggregation'
+import { LoadingTEXT } from '@/utils/LoadingSVGText'
 
 const props = defineProps<{
   modelValue: boolean
