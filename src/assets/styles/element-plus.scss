@@ -15,7 +15,7 @@
     --el-border-radius-sm: 2px;
     --el-border-radius-big: 12px;
     --el-fill-color-blank: var(--themeBgColor);
-    --el-bg-color-overlay: transparent;
+    --el-bg-color-overlay: var(--themeBgSecondColor);
 
 }
 
@@ -29,7 +29,7 @@ html.dark {
     --el-color-primary-light-2: rgba(255, 220, 81, 0.2);
     --el-color-primary-light-1: rgba(255, 220, 81, 0.1);
     --el-fill-color-blank: var(--themeBgColor);
-    --el-bg-color-overlay: transparent;
+    --el-bg-color-overlay: var(--themeBgSecondColor);
 }
 
 .el-button {

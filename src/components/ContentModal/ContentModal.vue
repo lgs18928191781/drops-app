@@ -17,7 +17,7 @@
     <template #footer>
       <div class="flex flex-align-center flex-pack-end">
         <a class="confirm-btn" @click="emit('update:modelValue', !modelValue)">{{
-          confirmBtnText ? confirmBtnText : '确认'
+          confirmBtnText ? confirmBtnText : $t('Confirm')
         }}</a>
       </div>
     </template>

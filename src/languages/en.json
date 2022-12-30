@@ -296,8 +296,8 @@
     },
     "repost": {
       "lookTx": "TX",
-      "comment": "Forward with comment",
-      "quick": "fast forward",
+      "comment": "Repost with comment",
+      "quick": "Repost",
       "share": "share",
       "success": "forwarded successfully"
     },
