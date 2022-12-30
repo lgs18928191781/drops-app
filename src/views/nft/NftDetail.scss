@@ -88,6 +88,11 @@
         padding: 20px;
         margin-top: 20px;
 
+        .creater {
+          white-space: nowrap;
+          @extend %text-ellipsis;
+        }
+
         .author {
           @include author(48px, 12px, 24px, 18px, 2px);
         }

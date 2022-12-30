@@ -1,5 +1,10 @@
 <template>
-  <div class="metaid-wallet flex flex-v" v-loading="loading">
+  <div
+    class="metaid-wallet flex flex-v"
+    v-loading="loading"
+    :element-loading-svg="LoadingTEXT"
+    :element-loading-text="$t('Loading')"
+  >
     <div class="back">
       <a class="flex flex-align-center" @click="emit('back')">
         <Icon name="down" />{{ $t('back') }}</a
@@ -135,9 +140,10 @@
               <ElButton
                 size="sm"
                 :disabled="sendCodeBtnDisabled"
-                class="none-box-shadow"
+                class="none-box-shadow send-code-btn"
                 @click="sendCode"
                 v-loading="isSendCodeLoading"
+                :element-loading-svg="LoadingTEXT"
               >
                 {{ sendCodeTimer === 0 ? $t('Send Code') : sendCodeTimer + 's' }}</ElButton
               >
@@ -250,6 +256,7 @@ import {
   SetUserWalletInfo,
 } from '@/api/core'
 import { SDK } from '@/utils/sdk'
+import { LoadingTEXT } from '@/utils/LoadingSVGText'
 
 interface Props {
   type: 'register' | 'login'

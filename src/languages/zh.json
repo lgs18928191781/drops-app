@@ -592,5 +592,7 @@
     "intro10": "用户Social2Mint的NFT的GAS费",
     "intro11": "升级相关的NFT，比如Avatar、MetaPet等"
   },
-  "Data is on-chain": "数据正在上链..."
+  "Data is on-chain": "数据正在上链...",
+  "shareText1": "快来看看这个签名和限量版的数字创作吧！",
+  "copyShareSuccess": "已复制分享链接"
 }

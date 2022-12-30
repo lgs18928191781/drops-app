@@ -402,6 +402,7 @@ html.dark {
 }
 
 .el-loading-mask {
+
     .el-loading-spinner {
         top: 0;
         height: 100%;
@@ -410,16 +411,11 @@ html.dark {
         display: flex;
         align-items: center;
         justify-content: center;
-    }
+        flex-direction: column;
 
-    &.is-fullscreen {
-        .el-loading-spinner {
-            flex-direction: column;
-
-            .el-loading-text {
-                color: var(--themeTextColor);
-                font-weight: 700;
-            }
+        .el-loading-text {
+            color: var(--themeTextColor);
+            font-weight: 700;
         }
     }
 }

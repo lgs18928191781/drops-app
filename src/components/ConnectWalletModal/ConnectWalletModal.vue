@@ -68,7 +68,12 @@
 
   <!-- send buzz -->
   <ElDialog v-model="isShowSendBuzz" :show-close="false" :close-on-click-modal="false">
-    <div class="send-first-buzz" v-loading="isSendBuzzLoading">
+    <div
+      class="send-first-buzz"
+      v-loading="isSendBuzzLoading"
+      :element-loading-svg="LoadingTEXT"
+      :element-loading-text="$t('Loading')"
+    >
       <div class="title">{{ $t('sendFirstBuzz1') }}</div>
       <div class="drsc">{{ $t('sendFirstBuzz2') }}</div>
       <div class="image">
@@ -177,6 +182,7 @@ import { ethers } from 'ethers'
 import { RegisterSource } from '@/enum'
 import { openLoading } from '@/utils/util'
 import { MD5 } from 'crypto-js'
+import { LoadingTEXT } from '@/utils/LoadingSVGText'
 
 import { currentSupportChain } from '@/config'
 const rootStore = useRootStore()

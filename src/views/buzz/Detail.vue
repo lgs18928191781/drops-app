@@ -17,7 +17,12 @@
             :image="userStore.user?.avatarImage || ''"
             :disabled="true"
           />
-          <div class="cont flex1" v-loading="loading">
+          <div
+            class="cont flex1"
+            v-loading="loading"
+            :element-loading-svg="LoadingTEXT"
+            :element-loading-text="$t('Loading')"
+          >
             <input @focus="reply" :placeholder="$t('Buzz.Your reply')" />
           </div>
         </div>
@@ -43,6 +48,7 @@ import BuzzCommentListVue from './components/BuzzCommentList.vue'
 import { checkSdkStatus } from '@/utils/util'
 import { useI18n } from 'vue-i18n'
 import { GetBuzz, GetBuzzInteractive } from '@/api/aggregation'
+import { LoadingTEXT } from '@/utils/LoadingSVGText'
 
 const route = useRoute()
 const userStore = useUserStore()

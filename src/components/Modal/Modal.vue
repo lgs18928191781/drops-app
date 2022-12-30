@@ -34,6 +34,8 @@
                 class="w-full max-w-screen-sm h-full bg-white dark:bg-gray-800 lg:min-w-[456PX] lg:w-auto lg:h-auto lg:rounded-3xl relative lg:shadow-lg lg:dark:shadow-blue-100/30 p-8 flex flex-col"
                 :class="[mobileSize ? 'rounded' : '']"
                 v-loading="loading"
+                :element-loading-svg="LoadingTEXT"
+                :element-loading-text="$t('Loading')"
               >
                 <button
                   class="absolute top-[24PX] right-[24PX] flex items-center justify-center outline-0"
@@ -71,6 +73,8 @@
                   <div
                     class="w-full max-w-screen-sm  bg-white  dark:bg-gray-800 lg:min-w-[456PX] lg:w-auto rounded lg:rounded-3xl lg:shadow-lg lg:dark:shadow-blue-100/30 lg:ml-4 absolute inset-0 z-[65] lg:static lg:self-stretch"
                     v-loading="loading"
+                    :element-loading-svg="LoadingTEXT"
+                    :element-loading-text="$t('Loading')"
                   >
                     <div class="w-full h-full relative p-8 flex flex-col">
                       <button
@@ -109,6 +113,7 @@
 import { useLayoutStore } from '@/stores/layout'
 import { Dialog, DialogPanel, TransitionRoot, TransitionChild } from '@headlessui/vue'
 import { computed } from 'vue'
+import { LoadingTEXT } from '@/utils/LoadingSVGText'
 
 const layout = useLayoutStore()
 
