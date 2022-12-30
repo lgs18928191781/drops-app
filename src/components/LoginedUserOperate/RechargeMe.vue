@@ -9,7 +9,11 @@
     :close-on-click-modal="false"
     @close="emit('close')"
   >
-    <div v-loading="loading">
+    <div
+      v-loading="loading"
+      :element-loading-svg="LoadingTEXT"
+      :element-loading-text="$t('Loading')"
+    >
       <header class="flex flex-align-center">
         <Icon name="down" @click="emit('update:modelValue', false)" />
         <div class="title">{{ $t('Wallet.Recharge MetaEnergy') }}</div>
@@ -140,6 +144,7 @@ import { setPayQuitUrl } from '@/utils/util'
 import { useRoute } from 'vue-router'
 import ContentModalVue from '@/components/ContentModal/ContentModal.vue'
 import PayTypeDropdownVue from '../PayTypeDropdown/PayTypeDropdown.vue'
+import { LoadingTEXT } from '@/utils/LoadingSVGText'
 
 const props = defineProps<{
   modelValue: boolean

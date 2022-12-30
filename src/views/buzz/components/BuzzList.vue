@@ -62,7 +62,12 @@
     :close-on-click-modal="false"
     custom-class="buzz"
   >
-    <div class="repost-list" v-loading="operateLoading">
+    <div
+      class="repost-list"
+      v-loading="operateLoading"
+      :element-loading-svg="LoadingTEXT"
+      :element-loading-text="$t('Loading')"
+    >
       <div class="repost-list-warp">
         <div
           class="respost-item main-border primary"
@@ -113,10 +118,9 @@ import BuzzItemSkeletonVue from './BuzzItemSkeleton.vue'
 import { metafile } from '@/utils/filters'
 import PublishBaseTemplateVue from '@/components/PublishBaseTemplate/PublishBaseTemplate.vue'
 import { useRoute } from 'vue-router'
-import { listenerCount } from 'process'
-import { BuzzItem } from '@/@types/common'
 import { useJobsStore } from '@/stores/jobs'
 import { GetBuzz } from '@/api/aggregation'
+import { LoadingTEXT } from '@/utils/LoadingSVGText'
 
 interface Props {
   list: BuzzItem[]

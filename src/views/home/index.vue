@@ -139,10 +139,10 @@
             <img :src="MetaSo" alt="" class="flex1" />
             <div class="right flex1">
               <span>{{ i18n.t('metaso-desc') }}</span>
-              <div>
+              <div class="operate">
                 <div class="main-border primary metaso-btn">
                   <span>{{ i18n.t('learnMetaSo') }}</span>
-                  <el-icon><TopRight /></el-icon>
+                  <!-- <el-icon><TopRight /></el-icon> -->
                 </div>
               </div>
             </div>

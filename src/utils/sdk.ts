@@ -379,29 +379,33 @@ export class SDK {
   // 签名
   sigMessage(msg: string, path = '0/0') {
     return new Promise<string>(async (resolve, reject) => {
-      await this.checkSdkStatus()
-      const userStore = useUserStore()
-      if (this.appMetaIdJs) {
-        await this.checkAppHasMethod('sigMessage')
-        const callback = (res: MetaIdJsRes) => {
-          this.callback(res, { reject, resolve })
+      try {
+        await this.checkSdkStatus()
+        const userStore = useUserStore()
+        if (this.appMetaIdJs) {
+          await this.checkAppHasMethod('sigMessage')
+          const callback = (res: MetaIdJsRes) => {
+            this.callback(res, { reject, resolve })
+          }
+          const callbackName = 'sigMessageCallback'
+          // @ts-ignore
+          window[callbackName] = callback
+          this.appMetaIdJs!.sigMessage(
+            userStore.user?.token,
+            JSON.stringify({
+              msg,
+              path,
+            }),
+            callbackName
+          )
+        } else {
+          const res = await this.wallet?.sigMessage(msg, path)
+          if (res) {
+            resolve(res)
+          }
         }
-        const callbackName = 'sigMessageCallback'
-        // @ts-ignore
-        window[callbackName] = callback
-        this.appMetaIdJs!.sigMessage(
-          userStore.user?.token,
-          JSON.stringify({
-            msg,
-            path,
-          }),
-          callbackName
-        )
-      } else {
-        const res = await this.wallet?.sigMessage(msg, path)
-        if (res) {
-          resolve(res)
-        }
+      } catch (error) {
+        reject(error)
       }
     })
   }

@@ -1,4 +1,7 @@
 <template>
+  <div class="version-warp">
+    <VersionVue />
+  </div>
   <template v-if="userStore.isAuthorized">
     <div class="user-warp flex flex-align-center">
       <UserAvatar
@@ -63,6 +66,7 @@ import SettingsModalVue from '@/components/Settings/SettingsModal.vue'
 import { useLayoutStore } from '@/stores/layout'
 import { useRoute } from 'vue-router'
 import MyWalletVue from './MyWallet.vue'
+import VersionVue from '../Version/Version.vue'
 
 const i18n = useI18n()
 const rootStore = useRootStore()

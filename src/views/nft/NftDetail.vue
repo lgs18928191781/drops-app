@@ -8,7 +8,7 @@
       <template #default>
         <div class="top flex nftDetailContainer">
           <!-- 封面图 -->
-          <div class="cover">
+          <div class="cover-warp">
             <NFTCover
               :needGizp="true"
               :cover="[
@@ -53,7 +53,10 @@
                   :image="nft.val!.nftIssueAvatarImage"
                 />
                 <div class="author-msg flex1">
-                  <div class="creater">{{ $t('creater') }}: {{ nft.val!.nftIssuer }}</div>
+                  <div class="creater">
+                    {{ $t('creater') }}:
+                    {{ nft.val!.nftIssuer ? nft.val!.nftIssuer : nft.val!.nftIssueAddress }}
+                  </div>
                   <div class="metaid" v-if="nft.val!.nftIssueMetaId">
                     MetaID:{{ nft.val!.nftIssueMetaId.slice(0, 6) }}
                   </div>
@@ -163,7 +166,8 @@
           <div class="bottom-warp">
             <div class="tab">
               <a
-                :class="{ active: index === tabIndex }"
+                class="main-border"
+                :class="{ primary: index === tabIndex }"
                 v-for="(tab, index) in tabs"
                 :key="index"
                 @click="changeTabIndex(index)"
@@ -210,7 +214,7 @@
                   <div class="work-detail-item flex flex-align-baseline">
                     <div class="key">{{ $t('workdrsc') }}：</div>
                     <div class="value flex1">
-                      <pre>{{ nft.val!.nftDesc }}</pre>
+                      {{ nft.val!.nftDesc ? nft.val!.nftDesc : '--' }}
                     </div>
                   </div>
                 </div>
@@ -218,7 +222,7 @@
                   <div class="work-detail-item flex flex-align-center">
                     <div class="key">{{ $t('createtime') }}：</div>
                     <div class="value flex1">
-                      {{ $filters.dateTimeFormat(nft.val!.nftTimestamp) }}
+                      {{ nft.val!.nftTimestamp ? $filters.dateTimeFormat(nft.val!.nftTimestamp) : '--'}}
                     </div>
                   </div>
                   <div
@@ -245,11 +249,16 @@
                   <div class="work-detail-item flex flex-align-center">
                     <div class="key">{{ $t('issueMetaTxId') }}：</div>
                     <div class="value flex1 nowrap">
-                      {{ nft.val!.nftIssueMetaTxId }}
-                      <a class="copy" @click="copy(nft.val!.nftIssueMetaTxId)">{{ $t('copy') }}</a>
-                      <a class="copy" @click="toWhatsonchain(nft.val!.nftIssueMetaTxId)">
-                        {{ $t('look') }}
-                      </a>
+                      <template v-if="nft.val!.nftIssueMetaTxId">
+                        {{ nft.val!.nftIssueMetaTxId }}
+                        <a class="copy" @click="copy(nft.val!.nftIssueMetaTxId)">{{
+                          $t('copy')
+                        }}</a>
+                        <a class="copy" @click="toWhatsonchain(nft.val!.nftIssueMetaTxId)">
+                          {{ $t('look') }}
+                        </a>
+                      </template>
+                      <template v-else>--</template>
                     </div>
                   </div>
                 </div>
@@ -387,7 +396,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed, watch } from 'vue'
 import DetailSkeletonVue from './DetailSkeleton.vue'
-import NFTCover from '@/components/NFT/Cover.vue'
+import NFTCover from '@/components/NFTCover/NFTCover.vue'
 import CertTemp from '@/components/Cert/Cert.vue'
 import { useUserStore } from '@/stores/user'
 import { useRoute } from 'vue-router'
@@ -410,6 +419,7 @@ import NFTBuyVue from '@/components/NFTBuy/NFTBuy.vue'
 import { checkUserLogin, NFTOffSale } from '@/utils/util'
 import AmountVue from '@/components/Amount/Amount.vue'
 import NFTTransferVue from '@/components/NFTTransfer/NFTTransfer.vue'
+import { toClipboard } from '@soerenmartius/vue3-clipboard'
 
 const isShowSkeleton = ref(true)
 const isShowDrscDetail = ref(false)
@@ -499,6 +509,8 @@ const NFTMainMsgDesc = computed(() => {
     : nft.val!.nftSellState === 0 && nft.val!.nftIsReady
     ? nft.val!.nftSellDesc
     : nft.val!.nftDesc
+    ? nft.val!.nftDesc
+    : '--'
 })
 
 watch(
@@ -547,6 +559,7 @@ function toWhatsonchain(txId: string) {
 function ToUser(metaId: string) {}
 
 async function startBuy() {
+  if (!isSale.value) return
   await checkUserLogin()
   isShowBuy.value = true
 }
@@ -599,14 +612,14 @@ function toSale() {
 
 // 分享
 function share() {
-  //   const value = `${i18n.t('shareText1')}\r\n ${NFT.val!.nftName}：${window.location.href}`
-  //   toClipboard(value)
-  //     .then(() => {
-  //       ElMessage.success(i18n.t('copyShareSuccess'))
-  //     })
-  //     .catch(() => {
-  //       ElMessage.success(i18n.t('copyerror'))
-  //     })
+  const value = `${i18n.t('shareText1')}\r\n ${nft.val!.nftName}:${window.location.href}`
+  toClipboard(value)
+    .then(() => {
+      ElMessage.success(i18n.t('copyShareSuccess'))
+    })
+    .catch(() => {
+      ElMessage.success(i18n.t('copyerror'))
+    })
 }
 
 //  获取拥有记录

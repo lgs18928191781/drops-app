@@ -89,7 +89,7 @@ header {
 
 .genesis-list {
     .genesis-item {
-        border: 2px solid var(--themeTextColor);
+        border: var(--standard-border-width) solid var(--themeTextColor);
         border-radius: 12px;
         padding: 18px;
         margin-bottom: 12px;

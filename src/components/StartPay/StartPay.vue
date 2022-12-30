@@ -10,7 +10,11 @@
       :append-to-body="true"
       :close-on-click-modal="false"
     >
-      <div v-loading="isPayIframeLoading">
+      <div
+        v-loading="isPayIframeLoading"
+        :element-loading-svg="LoadingTEXT"
+        :element-loading-text="$t('Loading')"
+      >
         <div class="iosPayWarp" v-html="iosPayHtml"></div>
         <iframe id="pay-iframe" ref="PayIframeRef"></iframe>
       </div>
@@ -31,6 +35,8 @@
         :title="payStatusTitle[payResult.status]"
         :sub-title="payResultMessage"
         v-loading="payResult.status === PayStatus.Ing"
+        :element-loading-svg="LoadingTEXT"
+        :element-loading-text="$t('Loading')"
         element-loading-background="#fff"
       >
         <template #extra>
@@ -157,6 +163,7 @@ import {
   watch,
 } from 'vue'
 import QRCode from 'qrcode'
+import { LoadingTEXT } from '@/utils/LoadingSVGText'
 
 import {
   alertCatchError,

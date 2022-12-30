@@ -109,33 +109,6 @@
       <NFTModalVue v-model="isShowNFTList" @change="chooseNFT" />
     </template>
   </PublishBaseTemplateVue>
-  <!-- <ElDialog
-    :model-value="layout.isShowPublishBuzz"
-    class="sm none-header none-padding"
-    :close-on-click-modal="false"
-    :destroy-on-close="true"
-  >
-    <div class="publish" v-loading="loading">
-      <div class="top flex flex-align-center">
-        <div class="user flex flex-align-center flex1">
-          <UserAvatar :meta-id="userStore.user!.metaId" :image="userStore.user!.avatarImage" />
-          <div class="cont flex1">
-            <div class="name">{{userStore.user!.name}}</div>
-            <div class="metaid">MetaID: {{userStore.user!.metaId!.slice(0, 6)}}</div>
-          </div>
-        </div>
-        <a
-          class="close-btn flex flex-align-center flex-pack-center"
-          @click="layout.$patch({ isShowPublishBuzz: false })"
-        >
-          <Icon name="x_mark" />
-        </a>
-      </div>
-      <div class="text">
-        <textarea v-model="content" autofocus />
-      </div>
-    </div>
-  </ElDialog> -->
 </template>
 
 <script setup lang="ts">
@@ -154,11 +127,7 @@ import QuoteVue from './Quote.vue'
 import { GetBuzz, GetHotTopics } from '@/api/aggregation'
 import NFTModalVue from '@/components/NFTModal/NFTModal.vue'
 import PublishBaseTemplateVue from '@/components/PublishBaseTemplate/PublishBaseTemplate.vue'
-import { BuzzItem } from '@/@types/common'
-import { buildLibraryClass } from 'mvc-scrypt/dist/contract'
 import { useJobsStore } from '@/stores/jobs'
-import { getOneBuzz } from '@/api/buzz'
-import { string } from 'yup'
 
 const attachments: (AttachmentItem | string)[] = reactive([])
 const respostBuzz: { val: null | BuzzItem } = reactive({ val: null })

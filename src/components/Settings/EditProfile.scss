@@ -15,7 +15,7 @@
         .avatar {
             width: 120px;
             height: 120px;
-            border: 2px solid var(--themeBtnTextColor);
+            border: var(--standard-border-width) solid var(--themeBtnTextColor);
             box-shadow: 3px 3px 0 var(--themeBtnTextColor);
         }
 
@@ -25,7 +25,7 @@
             bottom: 0;
             width: 40px;
             height: 40px;
-            border: 2px solid var(--themeBtnTextColor);
+            border: var(--standard-border-width) solid var(--themeBtnTextColor);
             background: var(--el-color-primary);
             border-radius: 50%;
             cursor: pointer;
@@ -91,7 +91,7 @@
 
             :deep(use) {
                 stroke: #000;
-                stroke-width: 2px;
+                stroke-width: var(--standard-border-width);
             }
         }
     }

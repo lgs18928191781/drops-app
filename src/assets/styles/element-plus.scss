@@ -5,7 +5,7 @@
     --el-border-radius-base: 8px;
     --el-font-size-large: 20px;
     --el-border-color: var(--faded-border-color);
-    --el-border-width: 2px;
+    --el-border-width: var(--standard-border-width);
     --el-color-primary: #FFDC51;
     --el-color-primary-light-5: rgba(255, 220, 81, 0.5);
     --el-color-primary-light-4: rgba(255, 220, 81, 0.4);
@@ -402,6 +402,7 @@ html.dark {
 }
 
 .el-loading-mask {
+
     .el-loading-spinner {
         top: 0;
         height: 100%;
@@ -410,11 +411,12 @@ html.dark {
         display: flex;
         align-items: center;
         justify-content: center;
-    }
+        flex-direction: column;
 
-    &.is-fullscreen {
-        .el-loading-spinner {
-            flex-direction: column;
+        .el-loading-text {
+            color: var(--themeTextColor);
+            font-weight: 700;
+            text-shadow: 1px 1px var(--themeBgColor);
         }
     }
 }
@@ -577,7 +579,7 @@ html.dark {
         font-weight: 500;
         border-radius: 12px !important;
         opacity: 1;
-        border: 2px solid #3D3D3D !important;
+        border: var(--standard-border-width) solid #3D3D3D !important;
         padding: 18px 25px !important;
         background: #fff;
 

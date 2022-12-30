@@ -96,6 +96,8 @@
               class="none-box-shadow"
               @click="sendCode"
               v-loading="isSendCodeLoading"
+              :element-loading-svg="LoadingTEXT"
+              :element-loading-text="$t('Loading')"
             >
               {{ sendCodeTimer === 0 ? $t('Send Code') : sendCodeTimer + 's' }}</ElButton
             >
@@ -128,6 +130,8 @@
               slot="append"
               @click="loading ? '' : getImageCodeData()"
               v-loading="isGetImageCodeLoading"
+              :element-loading-svg="LoadingTEXT"
+              :element-loading-text="$t('Loading')"
             >
               <img v-if="imageCodeData !== ''" :src="imageCodeData" />
             </div>
@@ -171,6 +175,7 @@ import {
   SetUserWalletInfo,
 } from '@/api/core'
 import { SDK } from '@/utils/sdk'
+import { LoadingTEXT } from '@/utils/LoadingSVGText'
 
 interface Props {
   modelValue: boolean
