@@ -594,5 +594,11 @@
   },
   "Data is on-chain": "数据正在上链...",
   "shareText1": "快来看看这个签名和限量版的数字创作吧！",
-  "copyShareSuccess": "已复制分享链接"
+  "copyShareSuccess": "已复制分享链接",
+  "User": {
+    "Backwall": "背景",
+    "Pet": "宠物",
+    "Artifacts": "武器",
+    "Costume": "服饰"
+  }
 }
