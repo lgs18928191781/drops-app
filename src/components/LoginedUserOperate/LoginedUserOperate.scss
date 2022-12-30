@@ -5,7 +5,7 @@
     width: 36px;
     height: 36px;
     border-radius: calc(100% / 2.5);
-    border: 2PX solid var(--faded-border-color);
+    border: var(--standard-border-width) solid var(--faded-border-color);
     box-sizing: border-box;
     cursor: pointer;
 
@@ -59,7 +59,9 @@
 }
 
 
-
+.version-warp {
+    margin-right: 15px;
+}
 
 @media only screen and (max-width: 1024PX) {
 

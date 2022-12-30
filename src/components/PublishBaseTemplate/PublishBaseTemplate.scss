@@ -55,7 +55,7 @@
 
     .text {
         margin-top: 18px;
-        border: 2px solid #BFC2CC;
+        border: var(--standard-border-width) solid #BFC2CC;
         border-radius: 12px;
         overflow: hidden;
 

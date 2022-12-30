@@ -8,7 +8,7 @@
       <template #default>
         <div class="top flex nftDetailContainer">
           <!-- 封面图 -->
-          <div class="cover">
+          <div class="cover-warp">
             <NFTCover
               :needGizp="true"
               :cover="[
@@ -163,7 +163,8 @@
           <div class="bottom-warp">
             <div class="tab">
               <a
-                :class="{ active: index === tabIndex }"
+                class="main-border"
+                :class="{ primary: index === tabIndex }"
                 v-for="(tab, index) in tabs"
                 :key="index"
                 @click="changeTabIndex(index)"
@@ -210,7 +211,7 @@
                   <div class="work-detail-item flex flex-align-baseline">
                     <div class="key">{{ $t('workdrsc') }}：</div>
                     <div class="value flex1">
-                      <pre>{{ nft.val!.nftDesc }}</pre>
+                      {{ nft.val!.nftDesc ? nft.val!.nftDesc : '--' }}
                     </div>
                   </div>
                 </div>
@@ -218,7 +219,7 @@
                   <div class="work-detail-item flex flex-align-center">
                     <div class="key">{{ $t('createtime') }}：</div>
                     <div class="value flex1">
-                      {{ $filters.dateTimeFormat(nft.val!.nftTimestamp) }}
+                      {{ nft.val!.nftTimestamp ? $filters.dateTimeFormat(nft.val!.nftTimestamp) : '--'}}
                     </div>
                   </div>
                   <div
@@ -245,11 +246,16 @@
                   <div class="work-detail-item flex flex-align-center">
                     <div class="key">{{ $t('issueMetaTxId') }}：</div>
                     <div class="value flex1 nowrap">
-                      {{ nft.val!.nftIssueMetaTxId }}
-                      <a class="copy" @click="copy(nft.val!.nftIssueMetaTxId)">{{ $t('copy') }}</a>
-                      <a class="copy" @click="toWhatsonchain(nft.val!.nftIssueMetaTxId)">
-                        {{ $t('look') }}
-                      </a>
+                      <template v-if="nft.val!.nftIssueMetaTxId">
+                        {{ nft.val!.nftIssueMetaTxId }}
+                        <a class="copy" @click="copy(nft.val!.nftIssueMetaTxId)">{{
+                          $t('copy')
+                        }}</a>
+                        <a class="copy" @click="toWhatsonchain(nft.val!.nftIssueMetaTxId)">
+                          {{ $t('look') }}
+                        </a>
+                      </template>
+                      <template v-else>--</template>
                     </div>
                   </div>
                 </div>
@@ -387,7 +393,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed, watch } from 'vue'
 import DetailSkeletonVue from './DetailSkeleton.vue'
-import NFTCover from '@/components/NFT/Cover.vue'
+import NFTCover from '@/components/NFTCover/NFTCover.vue'
 import CertTemp from '@/components/Cert/Cert.vue'
 import { useUserStore } from '@/stores/user'
 import { useRoute } from 'vue-router'
@@ -547,6 +553,7 @@ function toWhatsonchain(txId: string) {
 function ToUser(metaId: string) {}
 
 async function startBuy() {
+  if (!isSale.value) return
   await checkUserLogin()
   isShowBuy.value = true
 }

@@ -1,12 +1,12 @@
 <template>
   <ElSkeleton :loading="isSkeleton" animated>
     <template #template>
-      <div class="cover" :class="{ 'none-radius': !isRadius }">
+      <div class="nft-cover" :class="{ 'none-radius': !isRadius }">
         <ElSkeletonItem variant="image" />
       </div>
     </template>
     <template #default>
-      <div class="cover" :class="{ 'none-radius': !isRadius }" @click="preview">
+      <div class="nft-cover" :class="{ 'none-radius': !isRadius }" @click="preview">
         <span class="remint" v-if="isRemint">已合成</span>
         <!-- 附件类型 -->
         <template v-if="attachment && isShowAttachmentIcon">

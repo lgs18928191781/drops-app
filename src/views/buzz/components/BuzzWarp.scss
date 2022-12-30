@@ -24,7 +24,7 @@ header {
             border-radius: 12px;
 
             .icon-warp {
-                border: 2px solid var(--themeBtnTextColor);
+                border: var(--standard-border-width) solid var(--themeBtnTextColor);
                 border-radius: calc(100% / 2.5);
                 width: 24px;
                 height: 24px;
