@@ -583,7 +583,6 @@
                             display: inline-block;
                             vertical-align: middle;
                             margin-left: 5px;
-
                         }
                     }
 
@@ -628,6 +627,10 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
+
+        .logo {
+            display: inline-flex;
+        }
 
         .left {
             width: 150px;
