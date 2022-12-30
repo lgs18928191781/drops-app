@@ -3,7 +3,7 @@
     <div class="header flex flex-align-center">
       <div class="flex1">
         <div class="name">{{ name }}</div>
-        <div class="metaid">MetaID:{{ metaId.slice(0, 6) }}</div>
+        <div class="metaid">MetaID:{{ metaId ? metaId.slice(0, 6) : '--' }}</div>
       </div>
       <div class="operate">
         <a class="main-border primary" @click="toUser">{{ $t('User.Home') }}</a>
