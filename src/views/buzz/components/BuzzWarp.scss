@@ -22,6 +22,7 @@ header {
             position: relative;
             white-space: nowrap;
             border-radius: 12px;
+            background: var(--themeBgSecondColor);
 
             .icon-warp {
                 border: var(--standard-border-width) solid var(--themeBtnTextColor);
@@ -51,7 +52,7 @@ header {
     .buzz-container {
         position: relative;
         width: 95%;
-        max-width: 600px;
+        max-width: 600PX;
         margin: 0 auto;
 
     }
@@ -64,23 +65,23 @@ header {
         position: fixed;
         bottom: 10%;
         right: 50%;
-        margin-right: -396px;
+        margin-right: -396PX;
         z-index: 5;
 
 
 
 
         a {
-            width: 52px;
+            width: 52PX;
             display: block;
-            padding: 14px;
-            margin-bottom: 20px;
+            padding: 14PX;
+            margin-bottom: 20PX;
             cursor: pointer;
 
 
             .icon {
-                width: 20px;
-                height: 20px;
+                width: 20PX;
+                height: 20PX;
 
                 :deep(use) {
                     fill: var(--themeBtnTextColor);
@@ -92,8 +93,8 @@ header {
                 padding: 0;
 
                 .icon {
-                    width: 28px;
-                    height: 28px;
+                    width: 28PX;
+                    height: 28PX;
                     margin: 0 auto;
 
                     :deep(use) {

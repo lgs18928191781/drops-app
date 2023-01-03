@@ -358,6 +358,12 @@
                             -webkit-text-fill-color: transparent;
                             background-clip: text;
                             text-fill-color: transparent;
+
+                            .curreny {
+                                font-size: 24px;
+                                margin-right: 10px;
+                                font-weight: normal;
+                            }
                         }
 
                         span:nth-child(2) {

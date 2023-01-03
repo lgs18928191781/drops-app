@@ -36,12 +36,23 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { debug } from 'console'
+import {
+  inject,
+  onBeforeMount,
+  onBeforeUnmount,
+  onMounted,
+  onUnmounted,
+  reactive,
+  ref,
+  watch,
+} from 'vue'
 import { useI18n } from 'vue-i18n'
 import BuzzWarpVue from './components/BuzzWarp.vue'
 
 const MenuRef = ref()
 const i18n = useI18n()
+let resizeObserver: ResizeObserver
 
 const menus = [
   {
@@ -55,6 +66,26 @@ const menus = [
     path: '/buzz/recommend',
   },
 ]
+
+function setPosition() {
+  const BuzzContainer = document.getElementById('buzz-container')!
+  MenuRef.value.style.left = BuzzContainer.offsetLeft - MenuRef.value.clientWidth - 12 + 'px'
+  MenuRef.value.style.marginLeft = 0
+}
+
+onMounted(() => {
+  setPosition()
+  resizeObserver = new ResizeObserver(entries => {
+    setPosition()
+  })
+
+  //监听对应的dom
+  resizeObserver.observe(document.getElementById('buzz-warp')!)
+})
+
+onBeforeUnmount(() => {
+  resizeObserver.unobserve(document.getElementById('buzz-warp')!)
+})
 </script>
 
 <style lang="scss" scoped src="./Layout.scss"></style>

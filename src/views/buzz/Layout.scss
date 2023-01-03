@@ -3,7 +3,8 @@
     left: 50%;
     margin-left: -445px;
     z-index: 2;
-    top: calc(60px + 12px);
+    top: calc(var(--header-height) + 12px);
+    font-size: 14PX;
 }
 
 
@@ -24,46 +25,18 @@
         position: relative;
     }
 
-    .fast-btn {
-        position: fixed;
-        bottom: 10%;
-        right: 50%;
-        margin-right: -396px;
-        z-index: 5;
-
-
-
-
-        a {
-            width: 52px;
-            display: block;
-            padding: 14px;
-            margin-bottom: 20px;
-            cursor: pointer;
-
-            &:last-child {
-                margin-bottom: 0;
-                background: #F5F7FA;
-            }
-
-            .icon {
-                width: 20px;
-                height: 20px;
-            }
-        }
-    }
 
     .buzz-menu {
-        width: 180px;
+        width: 180PX;
         box-sizing: border-box;
         background: var(--themeBgSecondColor);
-        border-radius: 12px;
-        padding: 12px;
+        border-radius: 12PX;
+        padding: 12PX;
 
         .buzz-menu-item {
-            border-radius: 6px;
-            padding: 12px;
-            margin-bottom: 10px;
+            border-radius: 6PX;
+            padding: 12PX;
+            margin-bottom: 10PX;
             color: var(--themeTextColor);
 
 
@@ -75,14 +48,14 @@
             .icon-warp {
                 border: var(--standard-border-width) solid var(--themeTextColor);
                 border-radius: calc(100% / 2.5);
-                width: 24px;
-                height: 24px;
-                box-shadow: 3px 3px var(--themeTextColor);
-                margin-right: 15px;
+                width: 24PX;
+                height: 24PX;
+                box-shadow: 3PX 3PX var(--themeTextColor);
+                margin-right: 15PX;
 
                 .icon {
-                    width: 16px;
-                    height: 16px;
+                    width: 16PX;
+                    height: 16PX;
 
                     :deep(use) {
                         fill: var(--themeTextColor);
@@ -114,7 +87,7 @@
     }
 }
 
-@media only screen and (max-width: 1024PX) {
+@media only screen and (max-width: 1110PX) {
 
     .buzz-menu-warp {
         display: none;
