@@ -1,6 +1,8 @@
 // @ts-ignore
 import mvc from 'mvc-lib'
 // @ts-ignore
+import { Message } from 'mvc-lib'
+// @ts-ignore
 import { Utf8 } from 'crypto-es/lib/core.js'
 // @ts-ignore
 import { AES } from 'crypto-es/lib/aes.js'
@@ -868,7 +870,8 @@ export class HdWallet {
 
   public sigMessage(msg: string, path = '0/0') {
     const privateKey = this.getPathPrivateKey(path)
-    return mvc.Message.sign(msg, privateKey)
+    const message = new Message(msg)
+    return message.sign(privateKey)
   }
 
   // 根据 path 生成 privateKey

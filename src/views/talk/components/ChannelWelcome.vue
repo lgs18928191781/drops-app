@@ -68,7 +68,8 @@ const utilities = ref([
     icon: 'rocket',
     bgColor: 'bg-yellow-400',
     action: () => {
-      console.log('join')
+      // 跳转到 https://show3.gitbook.io/show3.0/v/english/
+      window.open('https://show3.gitbook.io/show3.0/v/english/', '_blank')
     },
   },
   {
@@ -76,7 +77,8 @@ const utilities = ref([
     icon: 'phone',
     bgColor: 'bg-blue-400',
     action: () => {
-      console.log('invite')
+      // 跳转到 /home
+      router.push('/home')
     },
   },
 ])

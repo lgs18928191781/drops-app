@@ -67,7 +67,11 @@
             <span class="">
               {{ $t('Talk.Community.agree_tip') }}
             </span>
-            <a href="#" class="text-link dark:text-blue-400 ml-1 font-medium" target="_blank">
+            <a
+              href="https://docs.qq.com/doc/DY21TUGRXdG9Kbkl4"
+              class="text-link dark:text-blue-400 ml-1 font-medium"
+              target="_blank"
+            >
               {{ $t('Talk.Community.agree_guidelines') }}
             </a>
             <span>

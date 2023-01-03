@@ -576,7 +576,7 @@ onMounted(() => {
   if (userStore.user?.evmAddress) {
     chains.value.push({
       id: 2,
-      name: 'Goerli',
+      name: 'ETH',
       icon: ETH,
       value: import.meta.env.VITE_ETH_CHAIN,
     })
