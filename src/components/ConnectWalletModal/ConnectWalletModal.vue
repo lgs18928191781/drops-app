@@ -664,17 +664,17 @@ async function connectWalletConnect() {
   window.WallectConnect = connector
   const { accounts, chainId } = await connector.connect()
   let res
-  const hexChainId = `0x${parseInt(chainId.toString(), 16)}`
-  const chainWhiteList = currentSupportChain.filter(item => {
-    return item.chainId == hexChainId
-  })
-  if (!chainWhiteList.length) {
+  const hexChainId = `0x${chainId.toString(16)}`
+  // const chainWhiteList = currentSupportChain.filter(item => {
+  //   return item.chainId == hexChainId
+  // })
+  if (!rootStore.chainWhiteList.includes(hexChainId)) {
     ElMessageBox.confirm(
-      i18n.t('MetaMak.Chain Network Error Tips') + `${import.meta.env.VITE_DEFAULT_NETWORK}`,
+      i18n.t('MetaMak.Chain Network Error Tips') + `${import.meta.env.VITE_ETH_CHAIN}`,
       i18n.t('MetaMak.Chain Network Error'),
       {
         customClass: 'primary',
-        confirmButtonText: i18n.t('MetaMak.Change') + `${import.meta.env.VITE_DEFAULT_NETWORK}`,
+        confirmButtonText: i18n.t('MetaMak.Change') + `${import.meta.env.VITE_ETH_CHAIN}`,
         cancelButtonText: i18n.t('Cancel'),
       }
     )
