@@ -29,7 +29,12 @@
         <!-- 音频 -->
         <template v-if="getAttachmentType(item) === 'audio'">
           <!-- <video :src="typeof item === 'string' ? item : item.url" controls preload="auto"></video> -->
-          <div class="audio-warp flex flex-align-center" v-loading="loading">
+          <div
+            class="audio-warp flex flex-align-center"
+            v-loading="loading"
+            :element-loading-svg="LoadingTEXT"
+            :element-loading-text="$t('Loading')"
+          >
             <div class="audio-icon flex flex-align-center flex-pack-center">
               <img :src="MusicIcon" />
             </div>
@@ -185,7 +190,7 @@ import { downloadFile } from '@/utils/util'
 import { GetMetaFile, GetNFT } from '@/api/aggregation'
 import CardVue from '@/components/Card/Card.vue'
 import NFTCoverVue from '@/components/NFTCover/NFTCover.vue'
-import { chain } from 'lodash'
+import { LoadingTEXT } from '@/utils/LoadingSVGText'
 
 interface Props {
   attachments: (AttachmentItem | string)[]

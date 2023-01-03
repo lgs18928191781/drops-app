@@ -5,7 +5,7 @@
   margin-top: 50px;
 
   .top {
-    .cover {
+    .cover-warp {
       width: 470px;
       background: transparent;
       opacity: 1;
@@ -87,6 +87,11 @@
         background: var(--themeBgSecondColor);
         padding: 20px;
         margin-top: 20px;
+
+        .creater {
+          white-space: nowrap;
+          @extend %text-ellipsis;
+        }
 
         .author {
           @include author(48px, 12px, 24px, 18px, 2px);
@@ -224,6 +229,10 @@
           &:last-child {
             margin-right: 0;
           }
+
+          &.faded {
+            cursor: not-allowed
+          }
         }
       }
 
@@ -256,8 +265,13 @@
     }
 
     .tab {
+      text-align: center;
+
       a {
-        margin-right: 0px !important;
+        margin-right: 20px;
+        padding: 10px 20px;
+        display: inline-block;
+        cursor: pointer;
       }
     }
 

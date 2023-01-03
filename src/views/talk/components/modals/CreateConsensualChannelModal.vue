@@ -498,6 +498,12 @@ const selfAddress = computed(() => {
       return userStore.user?.evmAddress as string
     case 'goerli':
       return userStore.user?.evmAddress as string
+    case 'polygon':
+      return userStore.user?.evmAddress as string
+      break
+    case 'mumbai':
+      return userStore.user?.evmAddress as string
+      break
     default:
       return userStore.user!.address
   }

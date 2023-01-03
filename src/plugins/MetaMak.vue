@@ -171,8 +171,7 @@ async function startConnect() {
             // const chainWhiteList = currentSupportChain.filter((item) => {
             //   return parseInt(item.chainId, 10) === parseInt(res.provider.chainId)
             // })
-            debugger
-            if (parseInt(res.provider.chainId, 16) === parseInt(import.meta.env.VITE_ETH_CHAINID)) {
+            if (root.chainWhiteList.includes(res.provider.chainId)){
                 startProvider(res.provider)
                 const result = await ethPersonalSignSign({
                     address: res.ethAddress,

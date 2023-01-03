@@ -225,7 +225,12 @@ export const giveRedPacket = async (form: any, channelId: string, selfMetaId: st
 
   // 2.1 nft红包处理
   if (form.nft && form.chain) {
-    if (form.chain === 'eth' || form.chain === 'goerli') {
+    if (
+      form.chain === 'eth' ||
+      form.chain === 'goerli' ||
+      form.chain === 'polygon' ||
+      form.chain === 'mumbai'
+    ) {
       dataCarrier.requireType = '2001'
     } else {
       dataCarrier.requireType = '2'
@@ -328,7 +333,12 @@ const _getChannelTypeInfo = (form: any, selfMetaId: string) => {
       status = encrypt(selfMetaId.substring(0, 16), MD5Hash(form.nft.nftGenesis).substring(0, 16))
       codehash = form.nft.nftCodehash
       genesis = form.nft.nftGenesis
-      if (form.chain === 'eth' || form.chain === 'goerli') {
+      if (
+        form.chain === 'eth' ||
+        form.chain === 'goerli' ||
+        form.chain === 'polygon' ||
+        form.chain === 'mumbai'
+      ) {
         type = '2001'
       } else {
         type = '2'

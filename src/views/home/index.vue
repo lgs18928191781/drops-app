@@ -9,7 +9,9 @@
         </div>
         <div class="option-groud">
           <div class="menu-groud">
-            <a v-for="(item, index) in linkGroud" :key="index">{{ item.name() }}</a>
+            <a v-for="(item, index) in linkGroud" :key="index" @click="toLink(item.link)">{{
+              item.name()
+            }}</a>
           </div>
 
           <div class="dropDown-wrap">
@@ -22,7 +24,11 @@
               </span>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item :command="link" v-for="(item, index) in linkGroud" :key="index">
+                  <el-dropdown-item
+                    v-for="(item, index) in linkGroud"
+                    :key="index"
+                    @click="toLink(item.link)"
+                  >
                     <div class="nav-item">{{ item.name() }}</div>
                   </el-dropdown-item>
                 </el-dropdown-menu>
@@ -139,10 +145,10 @@
             <img :src="MetaSo" alt="" class="flex1" />
             <div class="right flex1">
               <span>{{ i18n.t('metaso-desc') }}</span>
-              <div>
+              <div class="operate">
                 <div class="main-border primary metaso-btn">
                   <span>{{ i18n.t('learnMetaSo') }}</span>
-                  <el-icon><TopRight /></el-icon>
+                  <!-- <el-icon><TopRight /></el-icon> -->
                 </div>
               </div>
             </div>
@@ -202,9 +208,15 @@ const i18n = useI18n()
 const router = useRouter()
 const rootStore = useRootStore()
 const linkGroud = reactive([
-  { name: () => i18n.t('Home.Learn') },
-  { name: () => i18n.t('Home.White Paper') },
-  { name: () => i18n.t('Home.MetaSo') },
+  {
+    name: () => i18n.t('Home.Learn'),
+    link: `https://ruoxicdn.nos.art/show3/MetaSo_1230_${i18n.locale.value}.pdf`,
+  },
+  {
+    name: () => i18n.t('Home.White Paper'),
+    link: 'https://show3.gitbook.io/show3.0/v/english/',
+  },
+  { name: () => i18n.t('Home.MetaSo'), link: 'https://www.metaso.network/' },
 ])
 const currentSelectedLink = () => i18n.t('Home.Menu')
 const swipers = reactive([
@@ -303,6 +315,10 @@ const downloadGroup = reactive([
 
 function toShow3() {
   router.push({ name: 'buzz' })
+}
+
+function toLink(link: string) {
+  window.open(link, '_blank')
 }
 </script>
 

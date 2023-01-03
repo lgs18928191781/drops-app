@@ -136,7 +136,7 @@
 
             input {
                 width: 100%;
-                border: 2px solid #BFC2CC;
+                border: var(--standard-border-width) solid #BFC2CC;
                 line-height: 54px;
                 box-sizing: border-box;
                 border-radius: 12px;

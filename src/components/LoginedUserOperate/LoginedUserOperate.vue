@@ -1,12 +1,20 @@
 <template>
+  <div class="version-warp">
+    <VersionVue />
+  </div>
   <template v-if="userStore.isAuthorized">
     <div class="user-warp flex flex-align-center">
-      <UserAvatar
-        :image="userStore.user!.avatarImage"
-        :meta-id="userStore.user!.metaId"
-        class="user-warp-item"
-        :disabled="true"
-      />
+      <el-popover placement="bottom" :width="'auto'" trigger="hover">
+        <template #reference>
+          <UserAvatar
+            :image="userStore.user!.avatarImage"
+            :meta-id="userStore.user!.metaId"
+            class="user-warp-item"
+            :disabled="true"
+          />
+        </template>
+        <UserPersonaVue />
+      </el-popover>
 
       <!-- 钱包 -->
       <a
@@ -63,6 +71,8 @@ import SettingsModalVue from '@/components/Settings/SettingsModal.vue'
 import { useLayoutStore } from '@/stores/layout'
 import { useRoute } from 'vue-router'
 import MyWalletVue from './MyWallet.vue'
+import VersionVue from '../Version/Version.vue'
+import UserPersonaVue from '../UserPersona/UserPersona.vue'
 
 const i18n = useI18n()
 const rootStore = useRootStore()
@@ -82,16 +92,16 @@ const userOperates = computed(() => {
     },
     {
       name: i18n.t('UserOperate.aboutShow'),
-      icon: 'plus_circle',
+      icon: 'show',
       func: () => {
         window.open('https://show3.gitbook.io/show3.0/v/english/', '_blank')
       },
     },
     {
       name: i18n.t('UserOperate.About MetaSo'),
-      icon: 'plus_circle',
+      icon: 'meta_so',
       func: () => {
-        window.open('https://show3.gitbook.io/show3.0/v/english/', '_blank')
+        window.open('https://www.metaso.network/', '_blank')
       },
     },
     {

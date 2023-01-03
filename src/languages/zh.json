@@ -458,7 +458,7 @@
     "Edit Profile": "编辑个人信息"
   },
   "EditProfile": {
-    "intro": "择 NFT 作为您的头像或用户名，展现您的个性",
+    "intro": "选择 NFT 作为您的头像或用户名，展现您的个性",
     "User Name": "用户名",
     "MetaName": {
       "drsc": "MetaName 将优先作为用户名。"
@@ -592,5 +592,15 @@
     "intro10": "用户Social2Mint的NFT的GAS费",
     "intro11": "升级相关的NFT，比如Avatar、MetaPet等"
   },
-  "Data is on-chain": "数据正在上链..."
+  "Data is on-chain": "数据正在上链...",
+  "shareText1": "快来看看这个签名和限量版的数字创作吧！",
+  "copyShareSuccess": "已复制分享链接",
+  "User": {
+    "Backwall": "背景",
+    "Pet": "宠物",
+    "Artifacts": "武器",
+    "Costume": "服饰",
+    "Home": "主页",
+    "Chat": "私信"
+  }
 }

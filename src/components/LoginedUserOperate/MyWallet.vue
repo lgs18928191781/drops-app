@@ -311,7 +311,7 @@ import LoadMoreVue from '../LoadMore/LoadMore.vue'
 import IsNullVue from '../IsNull/IsNull.vue'
 import { Loading } from '@element-plus/icons-vue'
 import ContentModalVue from '../ContentModal/ContentModal.vue'
-
+import { currentSupportChain } from '@/config'
 const props = defineProps<{
   modelValue: boolean
 }>()

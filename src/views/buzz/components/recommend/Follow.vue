@@ -1,6 +1,6 @@
 <template>
   <!-- 推荐关注 -->
-  <div class="recommend-section">
+  <div class="recommend-section" v-if="users.length">
     <div class="title flex">
       {{ $t('Buzz.RecommendContent.Recommend To Follow') }}
     </div>
