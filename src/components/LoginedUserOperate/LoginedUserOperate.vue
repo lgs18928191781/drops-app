@@ -9,6 +9,7 @@
           <UserAvatar
             :image="userStore.user!.avatarImage"
             :meta-id="userStore.user!.metaId"
+            :name="userStore.user!.name"
             class="user-warp-item"
             :disabled="true"
           />

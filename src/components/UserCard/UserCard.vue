@@ -7,9 +7,12 @@
       </div>
       <div class="operate">
         <a class="main-border primary" @click="toUser">{{ $t('User.Home') }}</a>
-        <a class="main-border primary" v-if="userStore.user?.metaId !== metaId">{{
-          $t('User.Chat')
-        }}</a>
+        <a
+          class="main-border primary"
+          v-if="userStore.user?.metaId !== metaId"
+          @click="toMessage"
+          >{{ $t('User.Chat') }}</a
+        >
       </div>
     </div>
 
@@ -19,6 +22,7 @@
 
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
+import { checkUserLogin } from '@/utils/util'
 import { useRouter } from 'vue-router'
 import UserPersonaVue from '../UserPersona/UserPersona.vue'
 
@@ -35,6 +39,16 @@ function toUser(e: Event) {
     name: 'user',
     params: {
       metaId: props.metaId,
+    },
+  })
+}
+
+async function toMessage() {
+  await checkUserLogin()
+  router.push({
+    name: 'talkAtMe',
+    params: {
+      channelId: props.metaId,
     },
   })
 }

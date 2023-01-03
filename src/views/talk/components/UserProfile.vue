@@ -5,7 +5,8 @@
         <!-- 头像 -->
         <UserAvatar
           :meta-id="userStore.user!.metaId"
-          :image="userStore.user?.avatarImage"
+          :image="userStore.user!.avatarImage"
+          :name="userStore.user!.name"
           class="w-12 h-12 shrink-0"
         />
 

@@ -171,6 +171,7 @@
                     <UserAvatar
                       :meta-id="nft.val!.nftIssueMetaId!"
                       :image="nft.val!.nftIssueAvatarImage"
+                      :name="nft.val!.nftIssuer!"
                     ></UserAvatar>
                     <span class="username">{{ nft.val?.nftIssuer }}</span>
                     <span class="label">({{ $t('creater') }})</span>
@@ -179,6 +180,7 @@
                     <UserAvatar
                       :meta-id="nft.val!.nftOwnerMetaId!"
                       :image="nft.val!.nftOwnerAvatarImage"
+                      :name="nft.val!.nftOwnerName!"
                     ></UserAvatar>
                     <span class="username">{{ nft.val?.nftOwnerName }}</span>
                     <span class="label">({{ $t('owner') }})</span>
@@ -234,6 +236,9 @@
 
 
 
+
+
+
                 }}%)
               </div>
               <div class="amount">
@@ -244,6 +249,9 @@
               <div class="name flex1">
                 {{ $t('buyFeeTips2') }}({{
                   new Decimal(fee.val!.royaltyPercentage).mul(100).toNumber()
+
+
+
 
 
 

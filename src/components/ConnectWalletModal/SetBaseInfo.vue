@@ -26,6 +26,7 @@
                     :metaId="userStore.user!.metaId"
                     :disabled="true"
                     :image="currentAvatar.val.avatarImage"
+                    :name="userStore.user!.name"
                     class="main-border"
                   />
                   <Icon name="down" />

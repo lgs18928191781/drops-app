@@ -61,7 +61,7 @@
                 </div>
               </div>
               <div class="opreate flex-self-end">
-                <a class="main-border faded" v-if="isSelf">{{ $t('Message') }}</a>
+                <a class="main-border primary" v-if="!isSelf">{{ $t('User.Chat') }}</a>
                 <a
                   class="main-border primary"
                   :class="[isMyFollowed ? 'faded' : 'primary']"
@@ -116,9 +116,9 @@ import BuzzWarpVue from '../buzz/components/BuzzWarp.vue'
 import { useI18n } from 'vue-i18n'
 import { computed, reactive, ref } from 'vue'
 import { GetUserAllInfo, GetUserFollow } from '@/api/aggregation'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import { copy, tx } from '@/utils/util'
+import { checkUserLogin, copy, tx } from '@/utils/util'
 import { Loading } from '@element-plus/icons-vue'
 import { ElMessageBox } from 'element-plus'
 import { NodeName } from '@/enum'
@@ -126,6 +126,7 @@ import { Mitt, MittEvent } from '@/utils/mitt'
 
 const i18n = useI18n()
 const route = useRoute()
+const router = useRouter()
 const userInfo: { val: null | UserAllInfo } = reactive({ val: null })
 const isSkeleton = ref(true)
 const userStore = useUserStore()
@@ -271,6 +272,16 @@ function follow() {
   } else {
     confirmFollow()
   }
+}
+
+async function toMessage() {
+  await checkUserLogin()
+  router.push({
+    name: 'talkAtMe',
+    params: {
+      channelId: userInfo.val!.metaId,
+    },
+  })
 }
 
 Promise.all([getUserInfo(), getUserFoller(), checkUserIsFollowed()]).then(() => {

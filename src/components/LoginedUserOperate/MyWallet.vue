@@ -23,6 +23,7 @@
                 :meta-id="userStore.user!.metaId"
                 :image="userStore.user!.avatarImage"
                 :disabled="true"
+                :name="userStore.user!.name"
               />
               <div class="name">{{ $t('Wallet.My Wallet') }}</div>
               <Icon name="down" />

@@ -16,6 +16,7 @@
           <UserAvatar
             :meta-id="userStore.user!.metaId"
             :image="userStore.user!.avatarImage"
+            :name="userStore.user!.name"
             :disabled="true"
           />
           <div class="cont flex1">

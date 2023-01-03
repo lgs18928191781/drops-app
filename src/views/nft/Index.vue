@@ -71,7 +71,7 @@
                 <img :src="item.cover" />
               </div>
               <div class="content flex flex-align-center">
-                <UserAvatar :metaId="''" :image="''" />
+                <UserAvatar :metaId="''" :image="''" :name="''" />
                 <div class="flex1">
                   <div class="name flex flex-align-center">
                     <span class="text">"The Sword of Time" NFT </span><IconCert />

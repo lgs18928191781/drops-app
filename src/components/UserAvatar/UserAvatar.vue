@@ -13,7 +13,7 @@ import { useRouter } from 'vue-router'
 import UserCardVue from '../UserCard/UserCard.vue'
 
 interface Props {
-  name: string
+  name?: string
   metaId: string
   image: string
   type?: 'metaId' | 'metafile'

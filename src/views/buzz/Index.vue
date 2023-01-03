@@ -4,7 +4,11 @@
     v-if="userStore.isAuthorized"
     @click="layout.$patch({ isShowPublishBuzz: true })"
   >
-    <UserAvatar :meta-id="userStore.user!.metaId" :image="userStore.user!.avatarImage" />
+    <UserAvatar
+      :meta-id="userStore.user!.metaId"
+      :image="userStore.user!.avatarImage"
+      :name="userStore.user!.name"
+    />
     <div class="cont flex1">
       <div class="input">
         <ElInput type="text" :placeholder="$t('Buzz.publish.placeholder')" />

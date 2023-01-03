@@ -14,14 +14,23 @@
       <template v-if="itemData.protocol === 'SimpleRePost'">
         <div class="forward-head">
           <ShareIcon />
-          <UserAvatar class="head" :meta-id="itemData.metaId" :image="itemData.avatarImage" />
+          <UserAvatar
+            class="head"
+            :meta-id="itemData.metaId"
+            :image="itemData.avatarImage"
+            :name="itemData.userName"
+          />
           <div class="name">{{ itemData.userName }}&nbsp;|&nbsp;{{ $t('Forwarded') }}</div>
         </div>
       </template>
       <div class="header">
         <div class="user-info">
           <div class="head">
-            <UserAvatar :meta-id="displayItemData.metaId" :image="displayItemData.avatarImage" />
+            <UserAvatar
+              :meta-id="displayItemData.metaId"
+              :image="displayItemData.avatarImage"
+              :name="displayItemData.userName"
+            />
           </div>
           <div class="info">
             <div class="name">{{ displayItemData.userName }}</div>

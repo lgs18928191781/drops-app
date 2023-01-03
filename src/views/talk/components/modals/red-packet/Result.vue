@@ -45,12 +45,9 @@
                       />
                     </button>
                   </div>
-                  <UserAvatar
-                    :meta-id="redPacketResult?.metaId"
-                    :image="redPacketResult?.avatarImage"
-                    class="w-15 h-15 rounded-2xl mt-4.5"
-                    :disabled="true"
-                  />
+                  <UserAvatar :meta-id="redPacketResult?.metaId"
+                  :image="redPacketResult?.avatarImage"= class="w-15 h-15 rounded-2xl mt-4.5"
+                  :disabled="true" />
                   <div class="mt-4 text-sm text-dark-300 capitalize font-bold">
                     {{ $t('Talk.Modals.red_packet') }}
                   </div>

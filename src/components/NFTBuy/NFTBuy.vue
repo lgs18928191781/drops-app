@@ -16,6 +16,7 @@
             <UserAvatar
               :meta-id="nft.nftIssueMetaId"
               :image="nft.nftIssueAvatarImage"
+              :name="nft.nftIssuer"
               :disabled="true"
             />{{ nft.nftIssuer }}
           </div>

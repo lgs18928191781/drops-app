@@ -51,6 +51,7 @@
                   class="avatar"
                   :meta-id="nft.val!.nftIssueMetaId"
                   :image="nft.val!.nftIssueAvatarImage"
+                  :name="nft.val!.nftIssuer"
                 />
                 <div class="author-msg flex1">
                   <div class="creater">
@@ -271,6 +272,7 @@
                           class="avatar"
                           :meta-id="nft.val!.nftIssueMetaId"
                           :image="nft.val!.nftIssueAvatarImage"
+                          :name="nft.val!.nftIssuer"
                         />
                         <div class="author-msg flex1">
                           <div class="creater">
@@ -291,6 +293,7 @@
                           class="avatar"
                           :meta-id="nft.val!.nftOwnerMetaId"
                           :image="nft.val!.nftOwnerAvatarImage"
+                          :name="nft.val!.nftOwnerName"
                         />
                         <div class="author-msg flex1">
                           <div class="creater">
@@ -335,6 +338,7 @@
                       class="avatar"
                       :meta-id="record.metaId"
                       :image="record.avatarImage"
+                      :name="record.name"
                     />
                     <span class="name">{{ record.name }}</span>
                   </span>
