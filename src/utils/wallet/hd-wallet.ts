@@ -2207,6 +2207,7 @@ export class HdWallet {
     let mvcReceivers: Array<{ address: string; amount: number }>
     let transferNftResult, transferResult, transferAmount
     const mvcOutputIndex = 0
+    const nftOutputIndex = 0
     transferAmount = MetaNameReqCode.updataInfo == op_code ? txFee : metaNameOpFee + txFee
     mvcReceivers = [
       {
@@ -2214,7 +2215,7 @@ export class HdWallet {
         amount: transferAmount,
       },
     ]
-    debugger
+
     let utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
     transferResult = await this.makeTx({
       utxos: utxos,
@@ -2240,6 +2241,27 @@ export class HdWallet {
         MetaNameReqType.register
       )
 
+      if (registerMetaNameResp.code == 0) {
+        MetaNameSuccTxid = registerMetaNameResp.data
+        return {
+          code: 0,
+          MetaNameSuccTxid,
+        }
+      }
+    } else if (MetaNameReqCode.renew == op_code) {
+      const nftRawTx = ''
+      const params: MetaNameRequestDate = {
+        requestIndex,
+        mvcRawTx,
+        mvcOutputIndex,
+        nftRawTx,
+        nftOutputIndex,
+        years,
+      }
+      const registerMetaNameResp = await this.provider.registerNewMetaName(
+        params,
+        MetaNameReqType.renew
+      )
       if (registerMetaNameResp.code == 0) {
         MetaNameSuccTxid = registerMetaNameResp.data
         return {
