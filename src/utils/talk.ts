@@ -265,6 +265,8 @@ export const createChannel = async (
     form,
     selfMetaId!
   )
+  // 发言设置，0：所有人，1：管理员
+  const chatSettingType = form.adminOnly ? 1 : 0
 
   const dataCarrier = {
     communityId,
@@ -276,6 +278,7 @@ export const createChannel = async (
     codehash,
     genesis,
     limitAmount,
+    chatSettingType,
     timestamp: getTimestampInSeconds(),
   }
 

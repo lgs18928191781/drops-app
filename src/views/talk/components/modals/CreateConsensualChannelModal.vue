@@ -35,11 +35,11 @@
           </h4>
 
           <TabGroup as="div" class="mt-2" :selectedIndex="selectedTab" @change="changeTab">
-            <TabList class="w-full text-sm flex  font-medium gap-x-3 lg:text-base">
+            <TabList class="w-full text-sm flex font-medium gap-x-3 lg:text-base">
               <Tab v-for="tab in consentTabs" :key="tab.id" as="template" v-slot="{ selected }">
                 <button
-                  class="w-full main-border py-3 outline-0 flex items-center justify-center lg:py-4 dark:!bg-gray-700"
-                  :class="{ 'faded !bg-white dark:!bg-gray-700': !selected }"
+                  class="w-full main-border py-3 outline-0 flex items-center justify-center lg:py-4 dark:!bg-gray-700 "
+                  :class="{ 'faded !bg-white dark:!bg-gray-700 dark:!text-gray-400': !selected }"
                 >
                   <span v-if="selected" class="mr-1 flex items-center">
                     <Icon
@@ -171,6 +171,28 @@
                   />
                 </button>
               </template>
+            </div>
+
+            <div class="mt-6">
+              <SwitchGroup>
+                <div class="flex items-center gap-x-3">
+                  <Switch
+                    v-model="form.adminOnly"
+                    :class="form.adminOnly ? 'bg-primary' : 'bg-gray-300 dark:bg-gray-900'"
+                    class="relative inline-flex h-6 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+                  >
+                    <span
+                      aria-hidden="true"
+                      :class="form.adminOnly ? 'translate-x-6' : 'translate-x-0'"
+                      class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white dark:bg-gray-600 shadow-lg ring-0 transition duration-200 ease-in-out"
+                    ></span>
+                  </Switch>
+
+                  <SwitchLabel class="text-dark-400 dark:text-gray-200 text-sm">
+                    {{ $t('Talk.Modals.admin_only') }}
+                  </SwitchLabel>
+                </div>
+              </SwitchGroup>
             </div>
           </TabGroup>
         </div>
@@ -365,6 +387,9 @@ import {
   ListboxButton,
   ListboxOptions,
   ListboxOption,
+  Switch,
+  SwitchLabel,
+  SwitchGroup,
 } from '@headlessui/vue'
 
 import { useChannelFormStore } from '@/stores/forms'

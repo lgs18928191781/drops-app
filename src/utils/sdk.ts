@@ -51,133 +51,133 @@ enum AppMode {
 }
 
 export const AllNodeName: {
-  [key in NodeName]: {
-    brfcId: string
-    path: string
-    version: string
-  }
-} = {
-  [NodeName.SimpleMicroblog]: {
-    brfcId: 'b17e9e277bd7',
-    path: '/Protocols/SimpleMicroblog',
-    version: '1.0.0',
-  },
-  [NodeName.MetaFile]: {
-    brfcId: 'fcac10a5ed83',
-    path: '/Protocols/MetaFile',
-    version: '1.0.1',
-  },
-  [NodeName.SimpleGroupChat]: {
-    brfcId: '96e2649ce8b6',
-    path: '/Protocols/SimpleGroupChat',
-    version: '1.0.2',
-  },
-  [NodeName.SimpleFileGroupChat]: {
-    brfcId: '47cf94e87a8a',
-    path: '/Protocols/SimpleFileGroupChat',
-    version: '1.0.0',
-  },
-  [NodeName.ETHBinding]: {
-    brfcId: '对应ETH钱包地址',
-    path: '/Info/EVMBinding',
-    version: '1.0.0',
-  },
-  [NodeName.NFTAvatar]: {
-    brfcId: 'b1e12b089e71',
-    path: '/Protocols/NFTAvatar',
-    version: '1.0.0',
-  },
-  [NodeName.PayComment]: {
-    brfcId: '9396c994040a',
-    path: '/Protocols/PayComment',
-    version: '1.0.0',
-  },
-  [NodeName.SimpleRePost]: {
-    brfcId: '157cd804478e',
-    path: '/Protocols/SimpleRePost',
-    version: '1.0.0',
-  },
-  [NodeName.PayLike]: {
-    brfcId: '2ae43eeb26d9',
-    path: '/Protocols/PayLike',
-    version: '1.0.0',
-  },
-  [NodeName.SimpleCommunity]: {
-    brfcId: 'c53a596f2df7',
-    path: '/Protocols/SimpleCommunity',
-    version: '1.0.0',
-  },
-  [NodeName.SimpleCommunityJoin]: {
-    brfcId: 'b736fc6b98fd',
-    path: '/Protocols/SimpleCommunityJoin',
-    version: '1.0.0',
-  },
-  [NodeName.ShowMsg]: {
-    brfcId: '1bf2c5a70377',
-    path: '/Protocols/ShowMsg',
-    version: '1.0.1',
-  },
-  [NodeName.SimpleGroupCreate]: {
-    brfcId: '1b40a08e3209',
-    path: '/Protocols/SimpleGroupCreate',
-    version: '1.0.1',
-  },
-  [NodeName.PayFollow]: {
-    brfcId: '203ee2c8b732',
-    path: '/Protocols/PayFollow',
-    version: '1.0.0',
-  },
-  [NodeName.NftIssue]: {
-    brfcId: '5a6fa04c6612',
-    path: '/Protocols/NftIssue',
-    version: '1.0.0',
-  },
-  [NodeName.NftGenesis]: {
-    brfcId: '599aa8e586e8',
-    path: '/Protocols/NftGenesis',
-    version: '1.0.0',
-  },
-  [NodeName.FtIssue]: {
-    brfcId: '97b23b9f3a09',
-    path: '/Protocols/FtIssue',
-    version: '1.0.0',
-  },
-  [NodeName.FtGenesis]: {
-    brfcId: 'c75e9217b9bd',
-    path: '/Protocols/FtGenesis',
-    version: '1.0.0',
-  },
-  [NodeName.SimpleRedEnvelope]: {
-    brfcId: '695e19ddf852',
-    path: '/Protocols/SimpleRedEnvelope',
-    version: '1.0.2',
-  },
-  [NodeName.SimplePublicShare]: {
-    brfcId: 'ba9478837e9a',
-    path: '/Protocols/SimplePublicShare',
-    version: '1.0.0',
-  },
-  [NodeName.OpenRedenvelope]: {
-    brfcId: 'bf90aa3b2d1c',
-    path: '/Protocols/OpenRedenvelope',
-    version: '1.0.1',
-  },
-  [NodeName.MetaNote]: {
-    brfcId: '4934f562fc29',
-    path: '/Protocols/metanote',
-    version: '1.0.1',
-  },
-  [NodeName.NftSell]: {
-    brfcId: '13104a689fd3',
-    path: '/Protocols/NftSell',
-    version: '1.0.1',
-  },
-  [NodeName.SimpleFileMsg]: {
-    brfcId: '1b9ff346f190',
-    path: '/Protocols/SimpleFileMsg',
-    version: '1.0.1',
-  },
-}
+         [key in NodeName]: {
+           brfcId: string
+           path: string
+           version: string
+         }
+       } = {
+         [NodeName.SimpleMicroblog]: {
+           brfcId: 'b17e9e277bd7',
+           path: '/Protocols/SimpleMicroblog',
+           version: '1.0.0',
+         },
+         [NodeName.MetaFile]: {
+           brfcId: 'fcac10a5ed83',
+           path: '/Protocols/MetaFile',
+           version: '1.0.1',
+         },
+         [NodeName.SimpleGroupChat]: {
+           brfcId: '96e2649ce8b6',
+           path: '/Protocols/SimpleGroupChat',
+           version: '1.0.2',
+         },
+         [NodeName.SimpleFileGroupChat]: {
+           brfcId: '47cf94e87a8a',
+           path: '/Protocols/SimpleFileGroupChat',
+           version: '1.0.0',
+         },
+         [NodeName.ETHBinding]: {
+           brfcId: '对应ETH钱包地址',
+           path: '/Info/EVMBinding',
+           version: '1.0.0',
+         },
+         [NodeName.NFTAvatar]: {
+           brfcId: 'b1e12b089e71',
+           path: '/Protocols/NFTAvatar',
+           version: '1.0.0',
+         },
+         [NodeName.PayComment]: {
+           brfcId: '9396c994040a',
+           path: '/Protocols/PayComment',
+           version: '1.0.0',
+         },
+         [NodeName.SimpleRePost]: {
+           brfcId: '157cd804478e',
+           path: '/Protocols/SimpleRePost',
+           version: '1.0.0',
+         },
+         [NodeName.PayLike]: {
+           brfcId: '2ae43eeb26d9',
+           path: '/Protocols/PayLike',
+           version: '1.0.0',
+         },
+         [NodeName.SimpleCommunity]: {
+           brfcId: 'c53a596f2df7',
+           path: '/Protocols/SimpleCommunity',
+           version: '1.0.0',
+         },
+         [NodeName.SimpleCommunityJoin]: {
+           brfcId: 'b736fc6b98fd',
+           path: '/Protocols/SimpleCommunityJoin',
+           version: '1.0.0',
+         },
+         [NodeName.ShowMsg]: {
+           brfcId: '1bf2c5a70377',
+           path: '/Protocols/ShowMsg',
+           version: '1.0.1',
+         },
+         [NodeName.SimpleGroupCreate]: {
+           brfcId: '16cdf1737815',
+           path: '/Protocols/SimpleGroupCreate',
+           version: '1.0.2',
+         },
+         [NodeName.PayFollow]: {
+           brfcId: '203ee2c8b732',
+           path: '/Protocols/PayFollow',
+           version: '1.0.0',
+         },
+         [NodeName.NftIssue]: {
+           brfcId: '5a6fa04c6612',
+           path: '/Protocols/NftIssue',
+           version: '1.0.0',
+         },
+         [NodeName.NftGenesis]: {
+           brfcId: '599aa8e586e8',
+           path: '/Protocols/NftGenesis',
+           version: '1.0.0',
+         },
+         [NodeName.FtIssue]: {
+           brfcId: '97b23b9f3a09',
+           path: '/Protocols/FtIssue',
+           version: '1.0.0',
+         },
+         [NodeName.FtGenesis]: {
+           brfcId: 'c75e9217b9bd',
+           path: '/Protocols/FtGenesis',
+           version: '1.0.0',
+         },
+         [NodeName.SimpleRedEnvelope]: {
+           brfcId: '695e19ddf852',
+           path: '/Protocols/SimpleRedEnvelope',
+           version: '1.0.2',
+         },
+         [NodeName.SimplePublicShare]: {
+           brfcId: 'ba9478837e9a',
+           path: '/Protocols/SimplePublicShare',
+           version: '1.0.0',
+         },
+         [NodeName.OpenRedenvelope]: {
+           brfcId: 'bf90aa3b2d1c',
+           path: '/Protocols/OpenRedenvelope',
+           version: '1.0.1',
+         },
+         [NodeName.MetaNote]: {
+           brfcId: '4934f562fc29',
+           path: '/Protocols/metanote',
+           version: '1.0.1',
+         },
+         [NodeName.NftSell]: {
+           brfcId: '13104a689fd3',
+           path: '/Protocols/NftSell',
+           version: '1.0.1',
+         },
+         [NodeName.SimpleFileMsg]: {
+           brfcId: '1b9ff346f190',
+           path: '/Protocols/SimpleFileMsg',
+           version: '1.0.1',
+         },
+       }
 
 export class SDK {
   appAddress = {
