@@ -57,7 +57,7 @@
             </el-dropdown>
           </div>
           <div @click="toShow3" class="wallet-btn main-border primary connect-wallet">
-            {{ i18n.t('connectWallet') }}
+            {{ $t('Login.connectWallet') }}
           </div>
         </div>
       </div>
@@ -96,8 +96,11 @@
           <div class="drsc">{{ i18n.t('Home.page-two-title-drsc') }}</div>
           <div class="content">
             <div class="left">
-              <div class="item" v-for="item in records">
-                <span>{{ item.amount }}</span>
+              <div class="item" v-for="(item, index) in records" :key="index">
+                <span class="flex flex-align-center flex-pack-center">
+                  <span v-if="index === records.length - 1" class="curreny">$</span
+                  >{{ item.amount }}</span
+                >
                 <span>{{ item.type() }}</span>
               </div>
             </div>
