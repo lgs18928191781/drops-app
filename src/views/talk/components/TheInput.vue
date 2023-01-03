@@ -1,5 +1,8 @@
 <template>
-  <div class="bg-white dark:bg-gray-700 rounded-lg">
+  <div
+    class="bg-white dark:bg-gray-700 rounded-lg"
+    v-if="talk.activeChannel?.chatSettingType === 0 || talk.isAdmin()"
+  >
     <!-- 上传图预览 -->
     <div
       v-if="hasImage"
@@ -233,6 +236,13 @@
         </transition>
       </div>
     </div>
+  </div>
+
+  <div
+    class="bg-gray-100 dark:bg-gray-700 rounded-lg px-4 py-3 text-sm text-dark-250 dark:text-gray-500 cursor-not-allowed truncate"
+    v-else
+  >
+    {{ $t('Talk.Input.dont_have_permission') }}
   </div>
 </template>
 
