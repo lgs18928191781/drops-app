@@ -217,7 +217,7 @@
                         params: {
                           chain: currentChain,
                           genesis: nft.nftGenesis,
-                          codehash: nft.nftCodehash ? nft.nftCodehash : 'goerli',
+                          codehash: nft.nftCodehash ? nft.nftCodehash : currentChain,
                           tokenIndex: nft.nftTokenIndex,
                         },
                       }"
