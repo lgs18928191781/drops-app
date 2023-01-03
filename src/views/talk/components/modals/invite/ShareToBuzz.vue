@@ -66,6 +66,7 @@ import { useTalkStore } from '@/stores/talk'
 import { useUserStore } from '@/stores/user'
 import { sendInviteBuzz } from '@/utils/talk'
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import BaseModal from '../BaseModal.vue'
 
 const layout = useLayoutStore()
@@ -77,7 +78,8 @@ const reset = () => {
   talk.invitingChannel = null
 }
 
-const inviteText = ref('Come join this community and chat with us!')
+const i18n = useI18n()
+const inviteText = ref(i18n.t('Talk.Modals.invite_tip'))
 
 const trySendInviteBuzz = async () => {
   if (!isFinished) return

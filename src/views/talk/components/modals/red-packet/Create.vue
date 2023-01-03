@@ -106,7 +106,7 @@
                             class="absolute p-2 bg-white right-0 translate-y-[20PX] rounded-xl shadow-lg z-50 main-border still w-36  dark:!bg-gray-700"
                           >
                             <MenuItem v-slot="{ active }">
-                              <button class="p-2">Space Sats</button>
+                              <button class="p-2" type="button">Space Sats</button>
                             </MenuItem>
                             <!-- <MenuItem v-slot="{ active }">
                             <button class="p-2">MC</button>
@@ -221,7 +221,7 @@
                           class="absolute p-2 bg-white right-0 translate-y-[20PX] rounded-xl shadow-lg z-50 main-border still w-36 dark:!bg-gray-700"
                         >
                           <MenuItem v-slot="{ active }">
-                            <button class="p-2">Space Sats</button>
+                            <button class="p-2" type="button">Space Sats</button>
                           </MenuItem>
                           <!-- <MenuItem v-slot="{ active }">
                             <button class="p-2">MC</button>
@@ -256,6 +256,7 @@
                     class="outline-0 main-border w-full px-4 py-3 text-base flex justify-between items-center dark:!bg-gray-700"
                     :class="[!form.nft && 'faded !bg-white dark:!bg-gray-700']"
                     @click="layout.isShowChooseTokenModal = !layout.isShowChooseTokenModal"
+                    type="button"
                   >
                     <div class="flex items-center gap-x-3">
                       <template v-if="form.nft">
@@ -575,7 +576,7 @@ onMounted(() => {
   if (userStore.user?.evmAddress) {
     chains.value.push({
       id: 2,
-      name: 'Goerli',
+      name: 'ETH',
       icon: ETH,
       value: import.meta.env.VITE_ETH_CHAIN,
     })

@@ -345,30 +345,30 @@ html.dark {
         }
     }
 
-    &.buzz {
-        width: 600px;
-        left: 50%;
+    // &.buzz {
+    //     width: 600px;
+    //     left: 50%;
 
-        .el-drawer__body {
-            background: var(--themeBgColor);
-            border-radius: 12px 12px 0 0;
-            box-shadow: var(--el-box-shadow-dark);
-            padding: 15px;
-            box-sizing: border-box;
+    //     .el-drawer__body {
+    //         background: var(--themeBgColor);
+    //         border-radius: 12px 12px 0 0;
+    //         box-shadow: var(--el-box-shadow-dark);
+    //         padding: 15px;
+    //         box-sizing: border-box;
 
-            @media only screen and (max-width: 1024PX) {
-                padding: 30px;
-            }
-        }
+    //         @media only screen and (max-width: 1024PX) {
+    //             padding: 30px;
+    //         }
+    //     }
 
-        // width: 608px;
-        // left: 50%;
-        // margin-left: -(calc(608px / 2 - 90px));
-        // border-radius: 12px 12px 0 0;
-        // height: auto !important;
-        // padding: 15px;
-        // box-sizing: border-box;
-    }
+    //     // width: 608px;
+    //     // left: 50%;
+    //     // margin-left: -(calc(608px / 2 - 90px));
+    //     // border-radius: 12px 12px 0 0;
+    //     // height: auto !important;
+    //     // padding: 15px;
+    //     // box-sizing: border-box;
+    // }
 
     &.none-padding {
         .el-drawer__body {
@@ -378,10 +378,10 @@ html.dark {
 
     &.btt {
         left: 50%;
-        width: 600px;
+        width: 600PX;
         margin: 0 auto;
         border-radius: 12px 12px 0 0;
-        margin-left: -(calc((600px - 90px) / 2));
+        margin-left: -(calc((600PX - 90PX) / 2));
         height: auto !important;
 
         @media only screen and (max-width: 1024PX) {

@@ -19,8 +19,8 @@
     </div>
     <LoginedUserOperateVue />
   </header>
-  <div class="buzz-warp" ref="BuuzWarpRef">
-    <div class="buzz-container" ref="BuzzContainerRef">
+  <div class="buzz-warp" ref="BuuzWarpRef" id="buzz-warp">
+    <div class="buzz-container" id="buzz-container" ref="BuzzContainerRef">
       <slot></slot>
     </div>
 
@@ -41,7 +41,16 @@
 </template>
 
 <script setup lang="ts">
-import { KeepAlive, onBeforeUnmount, onMounted, ref, Transition, watch } from 'vue'
+import {
+  KeepAlive,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  Transition,
+  watch,
+  provide,
+  onUnmounted,
+} from 'vue'
 import Header from './components/Header/Header.vue'
 import Footer from './components/Footer/Footer.vue'
 import CollapseItem from '@/components/Collapse/collapse-item.vue'
@@ -74,41 +83,39 @@ const menus = [
 ]
 
 const BuzzContainerRef = ref()
-const MenuRef = ref()
 const FastBtnRef = ref()
 const BuuzWarpRef = ref()
-
-onMounted(() => {
-  setPosition()
-})
-
-watch(
-  () => BuuzWarpRef.value?.clientWidth,
-  () => {
-    setPosition()
-  }
-)
+let resizeObserver: ResizeObserver
 
 function setPosition() {
-  setTimeout(() => {
-    // MenuRef.value.style.left =
-    //   BuzzContainerRef.value.offsetLeft - MenuRef.value.clientWidth - 12 + 'px'
-    // MenuRef.value.style.marginLeft = 0
-
-    if (window.innerWidth > 750) {
-      FastBtnRef.value.style.left =
-        BuzzContainerRef.value.offsetLeft + BuzzContainerRef.value.clientWidth + 12 + 'px'
-      FastBtnRef.value.style.marginRight = 0
-    } else {
-      FastBtnRef.value.style.right = '5%'
-      FastBtnRef.value.style.marginRight = 0
-    }
-  }, 500)
+  if (window.innerWidth > 750) {
+    FastBtnRef.value.style.left =
+      BuzzContainerRef.value.offsetLeft + BuzzContainerRef.value.clientWidth + 12 + 'px'
+    FastBtnRef.value.style.marginRight = 0
+  } else {
+    FastBtnRef.value.style.right = '5%'
+    FastBtnRef.value.style.marginRight = 0
+  }
 }
 
 function scrollTop() {
   window.document.documentElement.scrollTop = 0
 }
+
+onMounted(() => {
+  setPosition()
+
+  resizeObserver = new ResizeObserver(entries => {
+    setPosition()
+  })
+
+  //监听对应的dom
+  resizeObserver.observe(document.getElementById('buzz-warp')!)
+})
+
+onBeforeUnmount(() => {
+  resizeObserver.unobserve(document.getElementById('buzz-warp')!)
+})
 </script>
 
 <style lang="scss" scoped src="./BuzzWarp.scss"></style>
