@@ -4,6 +4,7 @@
     @click="messageThisGuy"
   >
     <UserAvatar
+      :name="member.name"
       :type="member.avatarType"
       :meta-id="member.metaId"
       :image="member.avatarImage"

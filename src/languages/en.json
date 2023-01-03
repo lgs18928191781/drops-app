@@ -103,7 +103,8 @@
       "lucky_candy_bag": "Lucky Candy Bag",
       "nft_candy_bag": "NFT Candy Bag",
       "Draws": "Details",
-      "invite_tip": "Come join this community and chat with us!"
+      "invite_tip": "Come join this community and chat with us!",
+      "admin_only": "Only admins can send messages in this channel."
     },
     "Channel": {
       "core_members": "core members",
@@ -199,7 +200,8 @@
       "total_explain": "The total amount of the gift should be more than 1000 Sats per person, but less than your total wallet balance and less than 1 million Sats.",
       "amount_each": "Amount Each",
       "amount_each_explain": "The amount of each gift should be more than 1000 Sats.",
-      "choose_nft": "Choose NFT..."
+      "choose_nft": "Choose NFT...",
+      "dont_have_permission": "You do not have permission to send messages in this channel."
     },
     "Datetime": {
       "today": "Today at ",
