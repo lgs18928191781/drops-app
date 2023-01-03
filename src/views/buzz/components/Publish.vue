@@ -21,7 +21,13 @@
         >
           {{ $t('Buzz.publish.addImage') }}({{ attachments.length }}/9)
         </div>
-        <AttachmentVue :attachments="attachments" :is-edit="true" @remove="onRemoveAttachment" />
+        <AttachmentVue
+          :attachments="attachments"
+          :is-edit="true"
+          @remove="onRemoveAttachment"
+          @play="onPlay"
+          :play-file="playFile"
+        />
       </div>
 
       <div class="footer flex flex-align-center">
@@ -128,6 +134,7 @@ import { GetBuzz, GetHotTopics } from '@/api/aggregation'
 import NFTModalVue from '@/components/NFTModal/NFTModal.vue'
 import PublishBaseTemplateVue from '@/components/PublishBaseTemplate/PublishBaseTemplate.vue'
 import { useJobsStore } from '@/stores/jobs'
+import { metafile } from '@/utils/filters'
 
 const attachments: (AttachmentItem | string)[] = reactive([])
 const respostBuzz: { val: null | BuzzItem } = reactive({ val: null })
@@ -190,6 +197,12 @@ const publishOperates = [
     },
   },
 ]
+const playFile = ref('')
+let audio: HTMLAudioElement | null
+const isShowTopic = ref(false)
+const topics: GetHotTopicsResItem[] = reactive([])
+const topic = ref('')
+const isShowNFTList = ref(false)
 
 const attachmentType = computed(() => {
   if (attachments && attachments.length) {
@@ -209,10 +222,6 @@ const attachmentType = computed(() => {
     return ''
   }
 })
-const isShowTopic = ref(false)
-const topics: GetHotTopicsResItem[] = reactive([])
-const topic = ref('')
-const isShowNFTList = ref(false)
 
 async function onChooseImage(e: any) {
   loading.value = true
@@ -402,6 +411,27 @@ async function submit() {
   } else {
     // 取消
     loading.value = false
+  }
+}
+
+function onPlay(params: { file: string; type: 'audio' | 'video' }) {
+  if (playFile.value === params.file) playFile.value = ''
+  else playFile.value = params.file
+  if (params.type === 'audio' && playFile.value) {
+    if (!audio) {
+      audio = new Audio()
+    }
+    audio.src = metafile(params.file)
+    audio.play()
+    audio.addEventListener('ended', () => {
+      audio!.src = ''
+      playFile.value = ''
+    })
+  } else {
+    if (audio) {
+      audio.pause()
+      audio.src = ''
+    }
   }
 }
 

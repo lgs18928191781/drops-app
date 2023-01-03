@@ -40,9 +40,12 @@
         element-loading-background="#fff"
       >
         <template #extra>
-          <ElButton type="primary" @click="payStatusButtonFunction[payResult.status]">{{
-            payStatusButtonText[payResult.status]
-          }}</ElButton>
+          <ElButton
+            class="main-border"
+            :class="payResult.status === PayStatus.Success ? 'primary' : ''"
+            @click="payStatusButtonFunction[payResult.status]"
+            >{{ payStatusButtonText[payResult.status] }}</ElButton
+          >
         </template>
       </ElResult>
     </ElDrawer>
@@ -120,7 +123,7 @@
     >
       <div class="balance-pay-confirm">
         <div class="pay-amount">
-          <div>支付金额</div>
+          <div>{{ $t('PayModal.Pay Amount') }}</div>
           <div class="amount">
             ￥{{ new Decimal(balancePay.params.oriTotalAmount).div(100).toFixed(2) }}
           </div>
@@ -137,7 +140,7 @@
             class="flex1"
             :disabled="balancePay.params.smsCode === ''"
             @click="balancePayConfirm"
-            >确认支付</ElButton
+            >{{ $t('PayModal.Confirm Pay') }}</ElButton
           >
         </div>
       </div>
@@ -172,7 +175,7 @@ import {
   openLoading,
 } from '@/utils/util'
 import { ElMessage, LoadingParentElement } from 'element-plus'
-import { GetOrder, GetOrderStatus, PayETHByME } from '@/api/wxcore'
+import { GetOrder, GetOrderStatus, PayETHByME, UpdatePay } from '@/api/wxcore'
 import { useUserStore } from '@/stores/user'
 import { ethers } from 'ethers'
 
@@ -291,10 +294,11 @@ function drawePayCode() {
               },
             ],
           })
-          const res = await PayETHByME({
+          const res = await UpdatePay({
             order_id: props.orderId,
             tx_hash: tx,
             from_coin_address: useStore.user!.evmAddress!,
+            product_type: props.product_type,
           })
           if (res.code === 0) {
             payResult.status = PayStatus.Success
@@ -587,7 +591,6 @@ watch(
   () => props.modelValue,
   () => {
     if (props.modelValue) {
-      debugger
       loading = openLoading()
       drawePayCode()
         .catch(error => {

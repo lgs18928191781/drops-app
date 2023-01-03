@@ -94,7 +94,7 @@
         </template>
 
         <!-- NFT -->
-        <template v-if="getAttachmentType(item) === 'nft'">
+        <template v-else-if="getAttachmentType(item) === 'nft'">
           <CardVue class="nft-card" color="#5BA1FF">
             <div class="nft-warp" @click.stop="toNFT">
               <ElSkeleton :loading="loading" animated>
@@ -137,6 +137,13 @@
               </ElSkeleton>
             </div>
           </CardVue>
+        </template>
+
+        <template v-else-if="getAttachmentType(item) === 'video'">
+          <video
+            controls
+            :src="$filters.metafile(typeof item === 'string' ? item : item.url)"
+          ></video>
         </template>
       </div>
     </div>
@@ -323,7 +330,8 @@ function toNFT() {
 
 function getAttachmentType(attachment: string | AttachmentItem) {
   if (typeof attachment === 'string') {
-    const fileSuffix = attachment.split('.')[attachment.split('.').length - 1]
+    const fileSuffix = attachment.split('.')[attachment.split('.').length - 1].toLowerCase()
+    const videoSuffixs = ['mov', 'mp4']
     if (attachment.indexOf('metacontract://') !== -1 || attachment.indexOf('evm/') !== -1) {
       return 'nft'
     } else if (
@@ -335,6 +343,8 @@ function getAttachmentType(attachment: string | AttachmentItem) {
       return 'image'
     } else if (fileSuffix === 'mp3') {
       return 'audio'
+    } else if (videoSuffixs.includes(fileSuffix)) {
+      return 'video'
     } else {
       return 'image'
     }

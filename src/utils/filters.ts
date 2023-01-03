@@ -102,6 +102,11 @@ export function metafile(metafile: string, width = 235, type: 'metafile' | 'meta
   const fileUrl = `${import.meta.env.VITE_AppImgApi}${path}${metafile.replace('ipfs://', '')}`
   // 文件后缀
   const fileSuffix = metafile.split('.')[metafile.split('.').length - 1]
+  // 非图片格式返回源文件
+  const imageType = ['jpg', 'jpeg', 'png', 'gif']
+  if (fileSuffix !== '' && !imageType.includes(fileSuffix)) {
+    return fileUrl
+  }
   // 原图 格式 直接返回
   if (width === -1) {
     return fileUrl

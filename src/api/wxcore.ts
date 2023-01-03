@@ -155,12 +155,13 @@ export const GetOrderStatus = (params: {
   return Wxcore.get(`/common/order/${params.orderId}/${params.payType}`)
 }
 
-export const PayETHByME = (params: {
+export const UpdatePay = (params: {
   order_id: string
   tx_hash: number
+  product_type: number
   from_coin_address: string
 }): Promise<GetOrderStatusRes> => {
-  return Wxcore.post(`/me/coin/pay`, params)
+  return Wxcore.post(`/product/order/coin/pay`, params)
 }
 
 export const CreatOrder = (params: {

@@ -614,5 +614,9 @@
     "Costume": "服饰",
     "Home": "主页",
     "Chat": "私信"
+  },
+  "PayModal": {
+    "Confirm Pay": "确认支付",
+    "Pay Amount": "支付金额"
   }
 }

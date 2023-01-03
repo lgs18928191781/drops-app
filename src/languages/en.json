@@ -617,5 +617,9 @@
     "Pet": "Pet",
     "Home": "Home",
     "Chat": "Chat"
+  },
+  "PayModal": {
+    "Confirm Pay": "Confirm Pay",
+    "Pay Amount": "Pay Amount"
   }
 }
