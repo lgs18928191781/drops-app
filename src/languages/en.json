@@ -537,7 +537,16 @@
     "Transfer": "Transfer",
     "Transfer MetaId": "Transfer MetaId/Address",
     "Confirm Transfer": "Confirm Transfer",
-    "Transfer Success": "Transfer Success"
+    "Transfer Success": "Transfer Success",
+    "NFT Introduction": "NFT Introduction",
+    "intro1": "Massive application scenarios",
+    "intro1_drsc": "More than an art collection, this is functional NFT",
+    "intro2": "Extremely low casting costs",
+    "intro2_drsc": "Quick casting of different types of NFTs for $0.1",
+    "intro3": "Covering the entire network of users",
+    "intro3_drsc": "All MetaID users can see your shelf NFT",
+    "intro4": "Creator Certification",
+    "intro4_drsc": "Rigorous vetting mechanism gives NFT more significant value"
   },
   "My NFT": "My NFT",
   "Done": "Done",

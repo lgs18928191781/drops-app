@@ -1,7 +1,7 @@
 <template>
   <div class="user-card">
     <div class="header flex flex-align-center">
-      <div class="flex1">
+      <div class="flex1 cont">
         <div class="name">{{ name }}</div>
         <div class="metaid">MetaID:{{ metaId ? metaId.slice(0, 6) : '--' }}</div>
       </div>

@@ -533,7 +533,16 @@
     "Transfer": "转赠",
     "Transfer MetaId": "转赠MetaId或地址",
     "Confirm Transfer": "确认转赠",
-    "Transfer Success": "转赠成功"
+    "Transfer Success": "转赠成功",
+    "NFT Introduction": "NFT介绍",
+    "intro1": "海量应用场景",
+    "intro1_drsc": "不仅仅是艺术收藏品，这是功能性 NFT",
+    "intro2": "铸造成本极低",
+    "intro2_drsc": "只需 0.1 美元即可快速铸造不同类型的 NFT",
+    "intro3": "覆盖全网用户",
+    "intro3_drsc": "所有 MetaID 用户都可以看到你的货架 NFT",
+    "intro4": "创作者认证",
+    "intro4_drsc": "严格的审查机制赋予 NFT 更显着的价值"
   },
   "My NFT": "我的NFT",
   "Done": "完成",

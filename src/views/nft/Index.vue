@@ -139,6 +139,19 @@
           </div>
         </div>
       </div>
+
+      <!-- NFT Introduction -->
+      <div class="nft-home-module">
+        <div class="title">{{ $t('NFT.NFT Introduction') }}</div>
+        <div class="cont">
+          <div class="nft-intro-list flex flex-align-center">
+            <a class="nft-intro-item" v-for="(item, index) in NFTIntroList" :key="index">
+              <div class="name">{{ item.name() }}</div>
+              <div class="drsc">{{ item.drsc() }}</div>
+            </a>
+          </div>
+        </div>
+      </div>
     </template>
   </ElSkeleton>
 </template>
@@ -154,8 +167,10 @@ import Collection from '@/assets/images/collection.jpg'
 import IconCert from '@/assets/svg/icon_cer.svg'
 import { ElSelect } from 'element-plus'
 import IndexSkeletonVue from './IndexSkeleton.vue'
+import { useI18n } from 'vue-i18n'
 
 const banners = reactive([{ url: Banner }])
+const i18n = useI18n()
 const isSkeleton = ref(false)
 const hotCollections = reactive([
   {
@@ -191,6 +206,12 @@ const hotCollections = reactive([
     cover: Collection,
   },
 ])
+const NFTIntroList = [
+  { name: () => i18n.t('NFT.intro1'), drsc: () => i18n.t('NFT.intro1_drsc'), path: '' },
+  { name: () => i18n.t('NFT.intro2'), drsc: () => i18n.t('NFT.intro2_drsc'), path: '' },
+  { name: () => i18n.t('NFT.intro3'), drsc: () => i18n.t('NFT.intro3_drsc'), path: '' },
+  { name: () => i18n.t('NFT.intro4'), drsc: () => i18n.t('NFT.intro4_drsc'), path: '' },
+]
 
 const hotCollectionSlidesPerView = ref(document.body.clientWidth > 750 ? 4 : 2)
 const latestCollectionSlidesPerView = ref(document.body.clientWidth > 750 ? 3 : 2)

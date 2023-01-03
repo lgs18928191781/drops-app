@@ -1,7 +1,12 @@
 <template>
   <div class="top flex container">
     <!-- {{ nft.val.coverUrl }} -->
-    <ElSkeletonItem class="cover" variant="image" />
+    <div class="cover-warp">
+      <div class="skeleton-image-warp">
+        <ElSkeletonItem variant="image" />
+      </div>
+    </div>
+
     <div class="cont flex1 flex flex-v">
       <div class="name flex flex-align-center">
         <ElSkeletonItem class="text" variant="text" style="width: 80%" />

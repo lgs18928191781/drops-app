@@ -18,6 +18,22 @@ const Wxcore = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/wxcore`, {
       return {}
     }
   },
+  responseHandel: response => {
+    return new Promise((resolve, reject) => {
+      if (response?.data && typeof response.data?.code === 'number') {
+        if (response.data.code === 0) {
+          resolve(response.data)
+        } else {
+          reject({
+            code: response.data.code,
+            message: response.data.data,
+          })
+        }
+      } else {
+        resolve(response.data)
+      }
+    })
+  },
   errorHandel(error: any) {
     if (error.status === 401) {
       if (error.response && error.response.data && error.response.data.data) {

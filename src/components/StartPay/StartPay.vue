@@ -414,6 +414,7 @@ async function onPayIframeClose() {
 function checkOrderStatus() {
   setTimeout(
     async () => {
+      debugger
       const res = await GetOrder({
         order_id: props.orderId,
         pay_type: props.payPlatform,
@@ -586,6 +587,7 @@ watch(
   () => props.modelValue,
   () => {
     if (props.modelValue) {
+      debugger
       loading = openLoading()
       drawePayCode()
         .catch(error => {

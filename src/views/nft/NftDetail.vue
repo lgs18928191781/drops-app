@@ -112,16 +112,18 @@
                     <template v-if="i18n.locale.value === 'zh'">
                       以&nbsp;
                       <AmountVue
+                        class="amount-warp"
                         :price="nft.val!.nftIsLegal ? nft.val!.nftLegalPrice : nft.val!.nftPrice"
-                        :currency="nft.val!.nftIsLegal ? 'CNY' : 'SPACE'"
+                        :currency="nft.val!.nftIsLegal ? ToCurrency.CNY : ToCurrency.MVC"
                       />
                       &nbsp; 购买
                     </template>
                     <template v-else>
                       Buy Now At&nbsp;
                       <AmountVue
+                        class="amount-warp"
                         :price="nft.val!.nftIsLegal ? nft.val!.nftLegalPrice : nft.val!.nftPrice"
-                        :currency="nft.val!.nftIsLegal ? 'CNY' : 'SPACE'"
+                        :currency="nft.val!.nftIsLegal ? ToCurrency.CNY : ToCurrency.MVC"
                       />
                     </template>
                   </template>
@@ -134,12 +136,17 @@
                   userStore.user! && userStore.user?.metaId === nft.val!.nftOwnerMetaId
                 "
               >
-                <div class="main-border primary flex flex-align-center flex1" v-if="isSale">
+                <div class="main-border primary flex flex-align-center flex1" v-if="isSale" @click="offSale">
                   <div
                     class="btn btn-block btn-plain flex1 flex flex-align-center flex-pack-center"
-                    @click="offSale"
+                    
                   >
-                    {{ $t('offsale') }}
+                    <span class="amount-warp">
+                      <AmountVue
+                        :price="nft.val!.nftIsLegal ? nft.val!.nftLegalPrice : nft.val!.nftPrice"
+                        :currency="nft.val!.nftIsLegal ? ToCurrency.CNY : ToCurrency.SPACE"
+                      /> </span
+                    >{{ $t('offsale') }}
                   </div>
                 </div>
                 <div
@@ -424,6 +431,7 @@ import { checkUserLogin, NFTOffSale } from '@/utils/util'
 import AmountVue from '@/components/Amount/Amount.vue'
 import NFTTransferVue from '@/components/NFTTransfer/NFTTransfer.vue'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
+import { ToCurrency } from '@/enum'
 
 const isShowSkeleton = ref(true)
 const isShowDrscDetail = ref(false)

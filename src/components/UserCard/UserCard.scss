@@ -1,11 +1,19 @@
+@import '@/assets/styles/var.scss';
+
 .user-card {
     .header {
         padding: 21px;
         border-bottom: 1px solid var(--divid-color);
 
+        .cont {
+            margin-right: 15px;
+        }
+
         .name {
             font-size: 700;
             font-size: 16px;
+            max-width: 100px;
+            @extend %text-ellipsis;
         }
 
         .metaid {

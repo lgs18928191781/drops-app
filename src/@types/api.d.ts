@@ -944,6 +944,8 @@ declare interface PayOrderStatus {
   status: number
   url: string
   uuid: string
+  buyOrderId: string
+  wxCoreOrderId: string
 }
 declare interface GetOrderStatusRes extends apiResponse {
   data: PayOrderStatus
