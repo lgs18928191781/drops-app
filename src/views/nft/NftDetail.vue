@@ -136,15 +136,18 @@
                   userStore.user! && userStore.user?.metaId === nft.val!.nftOwnerMetaId
                 "
               >
-                <div class="main-border primary flex flex-align-center flex1" v-if="isSale" @click="offSale">
+                <div
+                  class="main-border primary flex flex-align-center flex1"
+                  v-if="isSale"
+                  @click="offSale"
+                >
                   <div
                     class="btn btn-block btn-plain flex1 flex flex-align-center flex-pack-center"
-                    
                   >
                     <span class="amount-warp">
                       <AmountVue
                         :price="nft.val!.nftIsLegal ? nft.val!.nftLegalPrice : nft.val!.nftPrice"
-                        :currency="nft.val!.nftIsLegal ? ToCurrency.CNY : ToCurrency.SPACE"
+                        :currency="nft.val!.nftIsLegal ? ToCurrency.CNY : ToCurrency.MVC"
                       /> </span
                     >{{ $t('offsale') }}
                   </div>
@@ -161,7 +164,7 @@
                 <div class="main-border primary flex flex-align-center flex1" v-if="!isSale">
                   <div
                     class="btn btn-block btn-plain flex1 flex flex-align-center flex-pack-center"
-                    @click="isSHowTransfer = true"
+                    @click="transfer"
                   >
                     {{ $t('NFT.Transfer') }}
                   </div>
@@ -384,7 +387,7 @@
 
         <NFTSellVue :nft="nft.val!" v-model="isShowSell" @success="getDetail" />
         <NFTBuyVue :nft="nft.val!" v-model="isShowBuy" :is-hide-detail="true" />
-        <NFTTransferVue :nft="nft.val!" v-model="isSHowTransfer" @success="getDetail" />
+        <NFTTransferVue :nft="nft.val!" v-model="isShowTransfer" @success="getDetail" />
       </template>
     </ElSkeleton>
   </div>
@@ -489,7 +492,7 @@ const issueRecord: { val: GetNftHolderListResItem | null } = reactive({
   val: null,
 })
 const isShowBuy = ref(false)
-const isSHowTransfer = ref(false)
+const isShowTransfer = ref(false)
 
 const isLegal = computed(() => {
   return route.name === 'legaldetail'
@@ -612,6 +615,7 @@ function getDetail() {
 // }
 
 async function offSale() {
+  return ElMessage.info(i18n.t('Comming Soon'))
   const result = await NFTOffSale(nft.val!)
   if (result) {
     getDetail()
@@ -619,6 +623,7 @@ async function offSale() {
 }
 
 function toSale() {
+  return ElMessage.info(i18n.t('Comming Soon'))
   isShowSell.value = true
 }
 
@@ -632,6 +637,11 @@ function share() {
     .catch(() => {
       ElMessage.success(i18n.t('copyerror'))
     })
+}
+
+function transfer() {
+  return ElMessage.info(i18n.t('Comming Soon'))
+  isShowTransfer.value = true
 }
 
 //  获取拥有记录
@@ -650,7 +660,6 @@ async function getNftHolderList(isCover = false) {
         records.length = 0
       }
       records.push(...res.data.results.items.holderList)
-      console.log('x222xxxxxxxxxxxzxz', records)
       ownerRecord.val = res.data.results.items.owner
       issueRecord.val = res.data.results.items.issuer
       const totalPages = Math.ceil(res.data.total / ownerHistoryPagination.pageSize)
