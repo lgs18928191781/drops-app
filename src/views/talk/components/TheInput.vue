@@ -1,7 +1,11 @@
 <template>
   <div
     class="bg-white dark:bg-gray-700 rounded-lg"
-    v-if="talk.activeChannel?.chatSettingType === 0 || talk.isAdmin()"
+    v-if="
+      talk.activeChannelType === ChannelType.Session ||
+        talk.activeChannel?.chatSettingType === 0 ||
+        talk.isAdmin()
+    "
   >
     <!-- 上传图预览 -->
     <div
