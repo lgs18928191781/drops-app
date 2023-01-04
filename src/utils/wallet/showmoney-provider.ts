@@ -1,11 +1,17 @@
 // @ts-ignore
 import mvc from 'mvc-lib'
 import { HttpRequests, ApiRequestTypes } from '@/utils/wallet/request2'
-import HttpRequest from '@/utils/request'
-import { BaseUtxo, MetasvUtxoTypes, Network } from './hd-wallet'
+import HttpRequest from 'request-sdk'
+import {
+  BaseUtxo,
+  MetasvUtxoTypes,
+  Network,
+  MetaNameRequestDate,
+  MetaNameReqType,
+} from './hd-wallet'
 import axios, { AxiosInstance } from 'axios'
 import { UtxoItem } from '@/@types/sdk'
-
+import zlib from 'zlib'
 interface BaseApiResultTypes<T> {
   code: number
   msg?: string
@@ -67,6 +73,7 @@ export default class ShowmoneyProvider {
   public metaSvHttp
   public metasvSignatureHttp
   public serviceHttp
+  public metaNameApi = `http://47.242.27.95:35000`
   // private metaSvAuthorization: MetaSvAuthorizationOption
   constructor(apiPrefix: string, metaSvApi: string) {
     this.apiPrefix = apiPrefix || 'https://api.showmoney.app'
@@ -92,6 +99,17 @@ export default class ShowmoneyProvider {
     }).request
   }
 
+  private async callMetaNameApi<T = any>(config: ApiRequestTypes): Promise<BaseApiResultTypes<T>> {
+    const Http = new HttpRequests()
+    const url = this.metaNameApi + config.url
+    try {
+      const res = await Http.postFetch<any>(url, config.params, config.options)
+      return res
+    } catch (error) {
+      throw new Error('Network Error: ' + error.msg)
+    }
+  }
+
   private async callApi<T = any>(config: ApiRequestTypes): Promise<BaseApiResultTypes<T>> {
     const Http = new HttpRequests()
     const url = this.apiPrefix + config.url
@@ -101,6 +119,64 @@ export default class ShowmoneyProvider {
       return res
     } catch (error) {
       throw new Error('Network Error: ' + error.message)
+    }
+  }
+
+  //发起MetaName交易前置请求
+  public async reqMetaNameArgs(params: { name: string; address: string; op: number }) {
+    let options = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+    const res = await this.callMetaNameApi({
+      url: '/reqargs',
+      params: {
+        ...params,
+        source: 'showmoney',
+      },
+      options,
+    })
+    return res
+  }
+
+  private gzip(data: Buffer | string): Promise<Buffer | string> {
+    return new Promise((resolve, reject) => {
+      zlib.gzip(data, {}, (err, val) => {
+        if (err) {
+          reject(err)
+          return
+        }
+        resolve(val)
+      })
+    })
+  }
+
+  public async registerNewMetaName(params: MetaNameRequestDate, reqTypes: MetaNameReqType) {
+    let options = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+    const compressData = await this.gzip(JSON.stringify(params))
+    try {
+      const res = await this.callMetaNameApi({
+        url: `/${reqTypes}`,
+        params: compressData,
+        options,
+      })
+      if (res.code == 0) {
+        debugger
+        return res
+      } else {
+        throw new Error(`registerNewMetaName error: ${res.msg},
+        requestIndex: ${params.requestIndex},
+        mvcOutputIndex: ${params.mvcOutputIndex}`)
+      }
+    } catch (error) {
+      throw new Error(`registerNewMetaName error: ${(error as any).toString()},
+                 requestIndex: ${params.requestIndex},
+                 mvcOutputIndex: ${params.mvcOutputIndex}`)
     }
   }
 

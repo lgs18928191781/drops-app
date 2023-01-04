@@ -173,9 +173,13 @@ async function startConnect() {
             // })
             if (root.chainWhiteList.includes(res.provider.chainId)){
                 startProvider(res.provider)
+
+
+
                 const result = await ethPersonalSignSign({
                     address: res.ethAddress,
-                    message: ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1),
+                    message:ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).split('0x')[1]
+                    // message: ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -2),
                 })
 
                 if (result) {
@@ -215,10 +219,15 @@ function ethPersonalSignSign(params: {
     message: string,
     address: string
 }) {
+    // console.log("messages",ethers.utils.hexValue(params.message) )
+    //  debugger
     return new Promise<string>(async (resolve, reject) => {
+
         (window as any).ethereum
           .request({ method: 'personal_sign', params: [params.message,params.address] })
-          .then((res: string) => {
+            .then((res: string) => {
+             console.log('getMnemonicRes', res)
+            debugger
             resolve(res)
           }).catch((error: any) => {
             reject({
@@ -244,6 +253,7 @@ function sign() {
                     throw new Error(error.message)
                 }
             })
+
             if (getMnemonicRes?.code === 0 && getMnemonicRes.data) {
                 // 有密码直接登录， 没有密码就要用户输入
                 if (props.password || ruleForm.pass) {
