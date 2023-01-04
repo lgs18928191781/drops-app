@@ -41,7 +41,13 @@
 
         <template v-else>
           <ElForm :label-position="'top'">
-            <ElFormItem :label="$t('NFT.Transfer MetaId')">
+            <ElFormItem
+              :label="
+                nft.nftChain === 'mvc'
+                  ? $t('NFT.Transfer MetaId')
+                  : nft.nftChain + '&nbsp;' + $t('Address')
+              "
+            >
               <ElInput type="text" v-model="form.target" />
             </ElFormItem>
           </ElForm>
@@ -62,7 +68,7 @@ import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NFTMsgVue from '../NFTMsg/NFTMsg.vue'
 import { PayPlatformItem, payPlatformList } from '@/config'
-import { GetUserAllInfo } from '@/api/aggregation'
+import { GetMetaIdByAddress, GetUserAllInfo } from '@/api/aggregation'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
 
 const props = defineProps<{
@@ -95,23 +101,31 @@ function choosePayPlatform(item: PayPlatformItem) {
 }
 
 async function transfer() {
+  if (form.target === '') return
   loading.value = true
-  let metaId
-  if (form.target.length === 64) {
-    // MetaId
-    metaId = form.target
-  } else {
-    metaId = ''
-  }
 
-  const res = await GetUserAllInfo(metaId).catch(error => {
-    ElMessage.error(error.message)
-    loading.value = false
-  })
-  if (res?.code === 0) {
-    transferUser.val = res.data
-    form.target = ''
-    loading.value = false
+  if (props.nft.nftChain === 'mvc') {
+    let metaId: string
+    if (form.target.length === 64) {
+      // MetaId
+      metaId = form.target
+    } else {
+      const res = await GetMetaIdByAddress(form.target)
+      if (res.code === 0) {
+        metaId = res.data
+      }
+    }
+
+    const res = await GetUserAllInfo(metaId!).catch(error => {
+      ElMessage.error(error.message)
+      loading.value = false
+    })
+    if (res?.code === 0) {
+      transferUser.val = res.data
+      form.target = ''
+      loading.value = false
+    }
+  } else {
   }
 }
 

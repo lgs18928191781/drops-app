@@ -1082,3 +1082,63 @@ export function CreatePayOrder(params: {
     }
   })
 }
+
+export function CheckMetaMaskAccount(address: string) {
+  return new Promise<void>(async (resolve, reject) => {
+    const root = useRootStore()
+    const chain = (window as any).ethereum.chainId
+    const chainId = parseInt(chain).toString()
+    if (chainId === import.meta.env.VITE_ETH_CHAINID) {
+    } else {
+      await ChangeMetaMaskChain()
+    }
+    const request = await (window as any).ethereum.request({
+      method: 'eth_requestAccounts',
+      params: [address],
+    })
+    const res = await (window as any).ethereum.request({
+      method: 'wallet_requestPermissions',
+      params: [{ eth_accounts: address }],
+    })
+    debugger
+    resolve()
+  })
+}
+
+export function ChangeMetaMaskChain() {
+  return new Promise(async (resolve, reject) => {
+    const res = await ElMessageBox.confirm(
+      i18n.global.t('MetaMak.Chain Network Error Tips') + `${import.meta.env.VITE_ETH_CHAIN}`,
+      i18n.global.t('MetaMak.Chain Network Error'),
+      {
+        customClass: 'primary',
+        confirmButtonText: i18n.global.t('MetaMak.Change') + `${import.meta.env.VITE_ETH_CHAIN}`,
+        cancelButtonText: i18n.global.t('Cancel'),
+      }
+    )
+      .then(() => {
+        ;(window as any).ethereum
+          .request({
+            method: 'wallet_switchEthereumChain',
+            params: [
+              {
+                // chainId: ethers.utils.hexValue(parseInt(import.meta.env.VITE_ETH_CHAINID))
+                chainId:
+                  import.meta.env.VITE_ETH_CHAIN == 'eth'
+                    ? currentSupportChain[0].chainId
+                    : currentSupportChain[1].chainId,
+              },
+            ],
+          })
+          .then((res: string[]) => {
+            resolve()
+          })
+          .catch((error: any) => {
+            reject(error)
+          })
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}

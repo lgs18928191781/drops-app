@@ -96,12 +96,7 @@
             </div>
             <div class="operate-warp flex flex-align-center">
               <!-- 非自己的 -->
-              <template
-                v-if="
-                  !userStore.user ||
-                    (userStore.user && userStore.user?.metaId !== nft.val!.nftOwnerMetaId)
-                "
-              >
+              <template v-if="!isMyNFT">
                 <!-- 购买 -->
                 <div
                   class="main-border flex1 flex flex-align-center flex-pack-center"
@@ -131,11 +126,7 @@
                 </div>
               </template>
               <!-- 自己的 -->
-              <template
-                v-else-if="
-                  userStore.user! && userStore.user?.metaId === nft.val!.nftOwnerMetaId
-                "
-              >
+              <template v-else-if="isMyNFT">
                 <div
                   class="main-border primary flex flex-align-center flex1"
                   v-if="isSale"
@@ -161,10 +152,13 @@
                 </div>
 
                 <!-- 转赠 -->
-                <div class="main-border primary flex flex-align-center flex1" v-if="!isSale">
+                <div
+                  class="main-border primary flex flex-align-center flex1"
+                  v-if="!isSale"
+                  @click="transfer"
+                >
                   <div
                     class="btn btn-block btn-plain flex1 flex flex-align-center flex-pack-center"
-                    @click="transfer"
                   >
                     {{ $t('NFT.Transfer') }}
                   </div>
@@ -460,9 +454,26 @@ const isSale = computed(() => {
   return result
 })
 
+const isMyNFT = computed(() => {
+  let result = false
+  if (nft.val && userStore.isAuthorized) {
+    if (nft.val.nftChain === 'mvc') {
+      if (nft.val.nftOwnerMetaId === userStore.user?.metaId) {
+        result = true
+      }
+    } else {
+      if (nft.val.nftOwnerAddress === userStore.user?.evmAddress) {
+        result = true
+      }
+    }
+  }
+  return result
+})
+
 // setTimeout(() => {
 //   isShowSkeleton.value = false
 // }, 3000)
+
 const currentPrice = computed(() => {
   return rootStore.currentPrice
 })
@@ -615,7 +626,7 @@ function getDetail() {
 // }
 
 async function offSale() {
-  return ElMessage.info(i18n.t('Comming Soon'))
+  // return ElMessage.info(i18n.t('Comming Soon'))
   const result = await NFTOffSale(nft.val!)
   if (result) {
     getDetail()
@@ -640,7 +651,7 @@ function share() {
 }
 
 function transfer() {
-  return ElMessage.info(i18n.t('Comming Soon'))
+  // return ElMessage.info(i18n.t('Comming Soon'))
   isShowTransfer.value = true
 }
 

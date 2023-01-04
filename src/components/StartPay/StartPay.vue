@@ -171,6 +171,7 @@ import { LoadingTEXT } from '@/utils/LoadingSVGText'
 import {
   alertCatchError,
   checkAppHasMethod,
+  CheckMetaMaskAccount,
   checkOrderStatus as CheckOrderStatus,
   openLoading,
 } from '@/utils/util'
@@ -284,25 +285,28 @@ function drawePayCode() {
     try {
       if (props.url) {
         if (props.payPlatform === PayPlatform.ETH) {
-          const tx = await window.ethereum!.request!({
-            method: 'eth_sendTransaction',
-            params: [
-              {
-                value: ethers.utils.hexValue(new Decimal(props.amount).toNumber()),
-                to: props.url,
-                from: useStore.user?.evmAddress,
-              },
-            ],
-          })
-          const res = await UpdatePay({
-            order_id: props.orderId,
-            tx_hash: tx,
-            from_coin_address: useStore.user!.evmAddress!,
-            product_type: props.product_type,
-          })
-          if (res.code === 0) {
-            payResult.status = PayStatus.Success
-            isShowPayStatusModal.value = true
+          if (window.ethereum) {
+            await CheckMetaMaskAccount(useStore.user?.evmAddress)
+            const tx = await window.ethereum!.request!({
+              method: 'eth_sendTransaction',
+              params: [
+                {
+                  value: ethers.utils.hexValue(new Decimal(props.amount).toNumber()),
+                  to: props.url,
+                  from: useStore.user?.evmAddress,
+                },
+              ],
+            })
+            const res = await UpdatePay({
+              order_id: props.orderId,
+              tx_hash: tx,
+              from_coin_address: useStore.user!.evmAddress!,
+              product_type: props.product_type,
+            })
+            if (res.code === 0) {
+              payResult.status = PayStatus.Success
+              isShowPayStatusModal.value = true
+            }
           }
         }
         // 余额支付

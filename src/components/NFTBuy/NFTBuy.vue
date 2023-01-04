@@ -121,28 +121,28 @@ function onPayPlatformChange() {
 }
 
 async function confirmBuy() {
-  return ElMessage.info(i18n.t('Comming Soon'))
-  // const res = await CreatePayOrder({
-  //   platform: currentPayPlatform.value,
-  //   fullPath: setPayQuitUrl({
-  //     payPlatform: currentPayPlatform.value,
-  //     fullPath: route.fullPath,
-  //     isBlindbox: false,
-  //   }),
-  //   goods_name: props.nft.nftName,
-  //   count: 1,
-  //   product_type: product_type,
-  //   uuid: props.nft.nftLegalUuid,
-  // }).catch(error => {
-  //   ElMessage.error(error.message)
-  // })
-  // if (res) {
-  //   debugger
-  //   payMsg.amount = res.amount
-  //   payMsg.orderId = res.wxCoreOrderId
-  //   payMsg.url = res.url
-  //   isShowPayModal.value = true
-  // }
+  // return ElMessage.info(i18n.t('Comming Soon'))
+  const res = await CreatePayOrder({
+    platform: currentPayPlatform.value,
+    fullPath: setPayQuitUrl({
+      payPlatform: currentPayPlatform.value,
+      fullPath: route.fullPath,
+      isBlindbox: false,
+    }),
+    goods_name: props.nft.nftName,
+    count: 1,
+    product_type: product_type,
+    uuid: props.nft.nftLegalUuid,
+  }).catch(error => {
+    ElMessage.error(error.message)
+  })
+  if (res) {
+    debugger
+    payMsg.amount = res.amount
+    payMsg.orderId = res.wxCoreOrderId
+    payMsg.url = res.url
+    isShowPayModal.value = true
+  }
 }
 </script>
 

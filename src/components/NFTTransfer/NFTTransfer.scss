@@ -25,7 +25,7 @@
 }
 
 .tranfer-user {
-    background: var(--themeBgColor);
+    background: var(--divid-color);
     border-radius: var(--rounded);
     padding: 18px;
 
@@ -33,5 +33,15 @@
         width: 60px;
         height: 60px;
         margin-right: 18px;
+    }
+
+    .name {
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .metaid {
+        opacity: 0.5;
+        margin-top: 5px;
     }
 }

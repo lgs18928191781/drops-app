@@ -618,5 +618,6 @@
   "PayModal": {
     "Confirm Pay": "确认支付",
     "Pay Amount": "支付金额"
-  }
+  },
+  "Address": "地址"
 }
