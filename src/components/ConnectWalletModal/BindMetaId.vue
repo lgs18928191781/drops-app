@@ -136,7 +136,7 @@
 
 <script setup lang="ts">
 import { BindMetaIdRes, BindUserInfo } from '@/@types/common'
-import { GetUserInfo } from '@/api/aggregation'
+import { GetUserInfo, GetBindMetaidAddressList } from '@/api/aggregation'
 import {
   GetMetaIdByLoginName,
   GetRandomWord,
@@ -147,7 +147,7 @@ import {
   MnemoicLogin,
   setHashData,
 } from '@/api/core'
-import { BindStatus, NodeName } from '@/enum'
+import { BindStatus, NodeName, CurrentSupportChain } from '@/enum'
 import { useUserStore } from '@/stores/user'
 import { AllNodeName, SDK } from '@/utils/sdk'
 import {
@@ -167,7 +167,7 @@ import { useI18n } from 'vue-i18n'
 import { openLoading } from '@/utils/util'
 import { MD5 } from 'crypto-js'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
-
+import { ethBindingData } from '@/config'
 interface Props {
   modelValue: boolean
   thirdPartyWallet: {
@@ -367,7 +367,48 @@ function loginSuccess(params: BindMetaIdRes) {
   return new Promise<void>(async (resolve, reject) => {
     try {
       const metaIdInfo = await GetUserInfo(params.userInfo.metaId)
-      console.log('metaIdInfo', metaIdInfo)
+      // console.log('metaIdInfo', metaIdInfo)
+      // const bingdMetaidTypes = await GetBindMetaidAddressList(params.userInfo.metaId)
+      // if (bingdMetaidTypes.code == 0 && bingdMetaidTypes.data.thirdPartyAddresses) {
+      //   let ethBindingData: Partial<ethBindingData> = {}
+      //   const bindingAddress=JSON.parse(bingdMetaidTypes.data.thirdPartyAddresses)
+      //   if (currentChain() == 'eth' && !bindingAddress.eth) {
+      //     ethBindingData.eth = props.thirdPartyWallet.address
+      //   } else if (currentChain() == 'polygon' && !bindingAddress.polygon) {
+      //     ethBindingData.polygon = props.thirdPartyWallet.address
+      //   }
+      //   if (!bindingAddress.eth || !bindingAddress.polygon) {
+      //       ethBindingData = {
+      //       ...ethBindingData,
+      //       ...JSON.parse(bingdMetaidTypes.data.thirdPartyAddresses),
+      //     }
+      //     if (metaIdInfo.code == 0) {
+      //       const newBfrcNodekeyPath = await hdWallet.getKeyPath({
+      //       parentTxid: res.data.infoTxId,
+      //     })
+      //     const ethBindBrfc = await hdWallet.createNode({
+      //       nodeName: NodeName.ETHBinding,
+      //       parentTxId: res.data.infoTxId,
+      //       keyPath: newBfrcNodekeyPath.join('/'),
+      //       parentAddress: hdWallet
+      //         ?.getPathPrivateKey(hdWallet.keyPathMap.Info.keyPath)
+      //         .publicKey.toAddress(hdWallet.network)
+      //         .toString(),
+      //       data: JSON.stringify(ethBindingData),
+      //       utxos: utxos,
+      //       change: hdWallet.rootAddress,
+      //     })
+
+      //     if (ethBindBrfc) {
+      //       await hdWallet.provider.broadcast(transfer.toString(), true)
+      //       await hdWallet.provider.broadcast(ethBindBrfc.hex!, true)
+
+      //     }
+      //     }
+
+      //   }
+      // }
+      debugger
       console.log('userStore', userStore)
 
       userStore.updateUserInfo({
@@ -608,6 +649,14 @@ function createMetaidAccount() {
   })
 }
 
+function currentChain() {
+  if (window.ethereum.chainId == '0x1' || window.ethereum.chainId == '0x5') {
+    return 'eth'
+  } else if (window.ethereum.chainId == '0x13881' || window.ethereum.chainId == '0x89') {
+    return 'polygon'
+  }
+}
+
 //创建 eht 绑定的brfc 节点
 function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
   return new Promise<void>(async (resolve, reject) => {
@@ -647,6 +696,21 @@ function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
         }
         // 创建 eht 绑定的brfc 节点
         const res = await GetUserInfo(metaId)
+        let ethBindingData: Partial<ethBindingData> = {}
+        const bingdMetaidTypes = await GetBindMetaidAddressList(metaId)
+
+        if (currentChain() == CurrentSupportChain.Eth) {
+          ethBindingData.eth = props.thirdPartyWallet.address
+        } else if (currentChain() == CurrentSupportChain.Polygon) {
+          ethBindingData.polygon = props.thirdPartyWallet.address
+        }
+        if (bingdMetaidTypes.code == 0 && bingdMetaidTypes.data.thirdPartyAddresses) {
+          ethBindingData = {
+            ...ethBindingData,
+            ...JSON.parse(bingdMetaidTypes.data.thirdPartyAddresses),
+          }
+        }
+
         if (res.code === 0) {
           const newBfrcNodekeyPath = await hdWallet.getKeyPath({
             parentTxid: res.data.infoTxId,
@@ -659,14 +723,14 @@ function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
               ?.getPathPrivateKey(hdWallet.keyPathMap.Info.keyPath)
               .publicKey.toAddress(hdWallet.network)
               .toString(),
-            data: JSON.stringify({ evmAddress: props.thirdPartyWallet.address }),
+            data: JSON.stringify(ethBindingData),
             utxos: utxos,
             change: hdWallet.rootAddress,
           })
+
           if (ethBindBrfc) {
             await hdWallet.provider.broadcast(transfer.toString(), true)
             await hdWallet.provider.broadcast(ethBindBrfc.hex!, true)
-
             resolve()
           }
         }

@@ -13,6 +13,11 @@ export interface Unit {
   sats: number
 }
 
+export interface ethBindingData {
+  eth: string
+  polygon: string
+}
+
 export enum UnitName {
   BSV = 'BSV',
   SATS = 'SATS',

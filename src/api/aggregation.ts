@@ -546,3 +546,14 @@ export const GetSellNft = (
 }> => {
   return aggregation.get(`/v2/app/show/posts/nftmarket/${txId}/info`)
 }
+
+export const GetBindMetaidAddressList = (
+  metaid: string
+): Promise<{
+  code: number
+  data: {
+    thirdPartyAddresses?: string
+  }
+}> => {
+  return aggregation.get(`/v2/app/user/${metaid}/third/addresses`)
+}

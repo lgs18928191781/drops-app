@@ -259,6 +259,11 @@ export enum SignUserType {
   Email = 'email',
 }
 
+export enum CurrentSupportChain {
+  Eth = 'eth',
+  Polygon = 'polygon',
+}
+
 export enum NodeName {
   ETHBinding = 'EVMBinding',
   MetaFile = 'MetaFile',
