@@ -1,5 +1,5 @@
 <template>
-  <span class="version">Testnet Beta</span>
+  <span class="version">Private Beta</span>
 </template>
 
 <script setup lang="ts"></script>
