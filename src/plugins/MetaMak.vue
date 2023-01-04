@@ -226,8 +226,7 @@ function ethPersonalSignSign(params: {
         (window as any).ethereum
           .request({ method: 'personal_sign', params: [params.message,params.address] })
             .then((res: string) => {
-             console.log('getMnemonicRes', res)
-            debugger
+
             resolve(res)
           }).catch((error: any) => {
             reject({

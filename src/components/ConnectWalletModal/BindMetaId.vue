@@ -412,7 +412,7 @@ function loginSuccess(params: BindMetaIdRes) {
 
       //   }
       // }
-      debugger
+
       console.log('userStore', userStore)
 
       userStore.updateUserInfo({

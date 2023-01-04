@@ -2201,7 +2201,7 @@ export class HdWallet {
     }>
   }) {
     const { reqswapargs, years, op_code, metaid, address } = params
-    debugger
+
     const mvcToAddress = reqswapargs.mvcToAddress
     const txFee = reqswapargs.txFee
     const requestIndex = reqswapargs.requestIndex
