@@ -124,9 +124,21 @@ export const useCommunityUpdateFormStore = defineStore('communityUpdateForm', {
   },
 })
 
+export interface ChannelFormState {
+  type: GroupChannelType
+  name: string
+  password: string
+  chain: null | string
+  nft: null | UserNFTItem
+  ft: null | FungibleToken
+  amount: number
+  adminOnly: boolean // 发言设置，0：所有人，1：管理员
+  publicKey?: string
+  uuid?: string
+}
 export const useChannelFormStore = defineStore('channelForm', {
   state: () => {
-    return {
+    return <ChannelFormState>{
       type: GroupChannelType.PublicText,
       name: '',
       password: '',
@@ -135,6 +147,8 @@ export const useChannelFormStore = defineStore('channelForm', {
       ft: null as any,
       amount: 1,
       adminOnly: false, // 发言设置，0：所有人，1：管理员
+      publicKey: undefined,
+      uuid: undefined, // 用于 订阅和 key， 不可修改
     }
   },
 
@@ -165,6 +179,9 @@ export const useChannelFormStore = defineStore('channelForm', {
       this.ft = null
       this.chain = null
       this.amount = 1
+      this.adminOnly = false
+      this.publicKey = undefined
+      this.uuid = undefined
     },
   },
 })

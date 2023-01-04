@@ -207,6 +207,11 @@ pre {
       }
     }
   }
+
+  // v-loading
+  .el-loading-mask {
+    border-radius: var(--rounded);
+  }
 }
 
 // MetaName字体样式

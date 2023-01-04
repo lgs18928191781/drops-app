@@ -66,23 +66,36 @@ declare interface CommunityAuth {
 }
 
 declare interface Channel {
+  uuid: string // 用于key,不修改
   id: string
-  communityId?: string
-  address: string
-  admins: string[]
-  cover: string
-  description: string
-  metaId: string
-  metaName: string
-  metaNameNft: string
-  metanetId: string
   name: string
-  publicKey: string
-  reserved: string
+  chatSettingType: number
+  communityId: string
+  createUserMetaId: string
+  deleteStatus: number
+  groupId: string
+  metanetId: string
+  roomAvatarUrl: string
+  roomCodeHash: string
+  roomGenesis: string
+  roomGenesisSeriesName: string
+  roomJoinType: string
+  roomLimitAmount: number
+  roomName: string
+  roomNewestContent: string
+  roomNewestMetaId: string
+  roomNewestProtocol: string
+  roomNewestTimestamp: number
+  roomNewestTxId: string
+  roomNewestUserName: string
+  roomNinePersonHash: string
+  roomNote: string
+  roomPublicKey: string
+  roomStatus: string
+  roomType: import('@/enum').ChannelRoomType
   timestamp: number
   txId: string
-  zeroAddress: string
-  icon: string
+  userCount: number
 }
 
 declare interface MessageDto {

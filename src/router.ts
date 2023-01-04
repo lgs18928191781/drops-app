@@ -80,6 +80,11 @@ export const router = createRouter({
           component: () => import('@/views/nft/Index.vue'),
         },
         {
+          path: 'issue',
+          name: 'nftIssue',
+          component: () => import('@/views/nft/Issue.vue'),
+        },
+        {
           path: 'genesis',
           name: 'nftGenesis',
           component: () => import('@/views/nft/Genesis.vue'),

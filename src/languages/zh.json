@@ -214,7 +214,9 @@
       "settings_short": "设置",
       "atme": "私聊",
       "feed": "Buzz",
-      "choose_nft_series": "选择 NFT 系列"
+      "choose_nft_series": "选择 NFT 系列",
+      "edit_public_channel": "修改公开频道",
+      "edit_consensual_channel": "修改凭证频道"
     },
     "Input": {
       "nft_stickers": "NFT表情",
@@ -542,7 +544,17 @@
     "intro3": "覆盖全网用户",
     "intro3_drsc": "所有 MetaID 用户都可以看到你的货架 NFT",
     "intro4": "创作者认证",
-    "intro4_drsc": "严格的审查机制赋予 NFT 更显着的价值"
+    "intro4_drsc": "严格的审查机制赋予 NFT 更显着的价值",
+    "Name": "名称",
+    "Drsc": "描述",
+    "Cover": "封面",
+    "Accept Address": "接收地址",
+    "Source File": "源文件",
+    "Issue Count": "铸造数量",
+    "Belong Genesis": "所属系列",
+    "Issue NFT Options": "铸造NFT选项",
+    "Choose Image": "选择图片",
+    "Remove": "删除"
   },
   "My NFT": "我的NFT",
   "Done": "完成",
