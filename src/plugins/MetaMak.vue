@@ -178,7 +178,7 @@ async function startConnect() {
 
                 const result = await ethPersonalSignSign({
                     address: res.ethAddress,
-                    message:ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).split('0x')[1]
+                    message:ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).split('0x')[1].toLocaleUpperCase()
                     // message: ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -2),
                 })
 
