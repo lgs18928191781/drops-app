@@ -555,3 +555,14 @@ export const GetMetaIdByAddress = (
 }> => {
   return aggregation.get(`/v2/app/user/metaId/${address}/address/absolute`)
 }
+
+export const GetBindMetaidAddressList = (
+  metaid: string
+): Promise<{
+  code: number
+  data: {
+    thirdPartyAddresses?: string
+  }
+}> => {
+  return aggregation.get(`/v2/app/user/${metaid}/third/addresses`)
+}
