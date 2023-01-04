@@ -18,6 +18,7 @@
           <UserAvatar
             :meta-id="userStore.user!.metaId"
             :image="currentAvatar.val.avatarImage"
+            :name="userStore.user!.name"
             :type="'metafile'"
             :disabled="true"
           />

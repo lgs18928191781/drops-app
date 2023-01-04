@@ -5,7 +5,7 @@
         <div class="header flex flex-align-center">
           <div class="user-info flex1">
             <div class="head">
-              <UserAvatar :meta-id="item.metaId" :image="item.avatarImage" />
+              <UserAvatar :meta-id="item.metaId" :image="item.avatarImage" :name="item.userName" />
             </div>
             <div class="info">
               <div class="name">{{ item.userName }}</div>
@@ -59,7 +59,11 @@
                   })
                 "
               >
-                <UserAvatar :meta-id="child.metaId" :image="child.avatarImage"></UserAvatar>
+                <UserAvatar
+                  :meta-id="child.metaId"
+                  :image="child.avatarImage"
+                  :name="child.userName"
+                ></UserAvatar>
                 <div class="name flex flex-align-center">
                   <a>{{ child.userName }}</a>
                   <template v-if="child.replyToUserName"

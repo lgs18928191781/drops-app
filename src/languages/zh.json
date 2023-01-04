@@ -143,7 +143,8 @@
       "lucky_candy_bag": "手气红包",
       "nft_candy_bag": "NFT 红包",
       "Draws": "详情",
-      "invite_tip": "快来加入我们的社区吧！"
+      "invite_tip": "快来加入我们的社区吧！",
+      "admin_only": "仅限管理员发言"
     },
     "Channel": {
       "core_members": "核心成员",
@@ -239,7 +240,8 @@
       "total_explain": "红包总金额应当满足超过每份1000聪，且总金额不超过1000万聪，也不超过您的钱包余额。",
       "amount_each": "每份金额",
       "amount_each_explain": "每份红包的金额应当超过1000聪。",
-      "choose_nft": "选择 NFT……"
+      "choose_nft": "选择 NFT……",
+      "dont_have_permission": "您没有权限在本频道中发送消息。"
     },
     "Datetime": {
       "today": "今天",
@@ -531,7 +533,16 @@
     "Transfer": "转赠",
     "Transfer MetaId": "转赠MetaId或地址",
     "Confirm Transfer": "确认转赠",
-    "Transfer Success": "转赠成功"
+    "Transfer Success": "转赠成功",
+    "NFT Introduction": "NFT介绍",
+    "intro1": "海量应用场景",
+    "intro1_drsc": "不仅仅是艺术收藏品，这是功能性 NFT",
+    "intro2": "铸造成本极低",
+    "intro2_drsc": "只需 0.1 美元即可快速铸造不同类型的 NFT",
+    "intro3": "覆盖全网用户",
+    "intro3_drsc": "所有 MetaID 用户都可以看到你的货架 NFT",
+    "intro4": "创作者认证",
+    "intro4_drsc": "严格的审查机制赋予 NFT 更显着的价值"
   },
   "My NFT": "我的NFT",
   "Done": "完成",
@@ -603,5 +614,9 @@
     "Costume": "服饰",
     "Home": "主页",
     "Chat": "私信"
+  },
+  "PayModal": {
+    "Confirm Pay": "确认支付",
+    "Pay Amount": "支付金额"
   }
 }

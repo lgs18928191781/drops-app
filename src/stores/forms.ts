@@ -134,6 +134,7 @@ export const useChannelFormStore = defineStore('channelForm', {
       nft: null as any,
       ft: null as any,
       amount: 1,
+      adminOnly: false, // 发言设置，0：所有人，1：管理员
     }
   },
 

@@ -385,4 +385,5 @@ export enum ToCurrency {
   ETH = 'ETH',
   CNY = 'CNY',
   USD = 'USD',
+  MVC = 'MVC',
 }

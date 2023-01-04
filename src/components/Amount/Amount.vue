@@ -2,7 +2,7 @@
   <ElIcon class="is-loading" v-if="loading">
     <Loading />
   </ElIcon>
-  <span v-else>
+  <span v-else class="amount">
     {{ toCurrency ? toCurrency : rootStore.currentPriceSymbol }}&nbsp;&nbsp;{{
       amount.toFixed(toCurrency === ToCurrency.ETH ? 5 : 2)
     }}

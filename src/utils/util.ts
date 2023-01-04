@@ -935,8 +935,10 @@ export function getCurrencyAmount(
   )
   if (toCurrency === 'CNY') {
     if (currency === 'CNY') {
+      //  cny -> cny
       return new Decimal(price).div(100).toNumber()
     } else {
+      // mvc -> cny
       const rateUSD = new Decimal(rate!.price.CNY).div(rate!.price.USD).toNumber()
       return new Decimal(
         new Decimal(price)
@@ -947,6 +949,7 @@ export function getCurrencyAmount(
     }
   } else if (toCurrency === ToCurrency.ETH) {
     if (currency === 'CNY') {
+      // cny -> eth
       let result = new Decimal(
         new Decimal(price)
           .div(100)
@@ -956,10 +959,32 @@ export function getCurrencyAmount(
       if (result < 0.00001) result = 0.00001
       return result
     } else {
+      // mvc -> eth
       return 0
     }
   } else {
-    return 0
+    //  USD
+
+    if (currency === 'CNY') {
+      // cny -> usd
+      const rateUSD = new Decimal(rootStore.exchangeRate[0]!.price.CNY)
+        .div(rootStore.exchangeRate[0]!.price.USD)
+        .toNumber()
+      return new Decimal(
+        new Decimal(price)
+          .div(100)
+          .div(rateUSD)
+          .toFixed(2)
+      ).toNumber()
+    } else {
+      // mvc -> usd
+      return new Decimal(
+        new Decimal(price)
+          .div(Math.pow(10, 8))
+          .mul(rate!.price.USD)
+          .toFixed(2)
+      ).toNumber()
+    }
   }
 }
 
@@ -991,7 +1016,6 @@ export function NFTOffSale(nft: GenesisNFTItem) {
         }
       })
       .catch(error => {
-        ElMessage.error(error.message)
         resolve(false)
       })
   })
@@ -1016,39 +1040,45 @@ export function CreatePayOrder(params: {
   uuid?: string
 }) {
   return new Promise<PayOrderStatus>(async (resolve, reject) => {
-    const userStore = useUserStore()
-    let from = !isApp ? 'web' : isAndroid ? 'android' : isIOS ? 'ios' : ''
-    from += `:${import.meta.env.VITE_AppName}`
-    // 支付回调地址
-    const quitUrl = setPayQuitUrl({
-      payPlatform: params.platform,
-      fullPath: params.fullPath,
-      isBlindbox: false,
-    })
-    const type = isIosApp
-      ? PayType.H5
-      : isApp
-      ? PayType.App
-      : isAndroid && isIOS
-      ? PayType.H5
-      : PayType.H5
-    const res = await CreatOrder({
-      address: userStore.user!.address!,
-      count:
-        params.product_type === 100 ? new Decimal(params.count).mul(100).toNumber() : params.count,
-      description: params.product_type === 100 ? 'Recharge ME' : 'Buy NFT',
-      from,
-      goods_name: params.goods_name,
-      metaid: userStore.user!.metaId,
-      pay_type: params.platform,
-      quit_url: quitUrl,
-      types: type,
-      from_coin_address: userStore.user?.evmAddress,
-      product_type: params.product_type,
-      uuid: params.uuid,
-    })
-    if (res?.code === 0) {
-      resolve(res.data)
+    try {
+      const userStore = useUserStore()
+      let from = !isApp ? 'web' : isAndroid ? 'android' : isIOS ? 'ios' : ''
+      from += `:${import.meta.env.VITE_AppName}`
+      // 支付回调地址
+      const quitUrl = setPayQuitUrl({
+        payPlatform: params.platform,
+        fullPath: params.fullPath,
+        isBlindbox: false,
+      })
+      const type = isIosApp
+        ? PayType.H5
+        : isApp
+        ? PayType.App
+        : isAndroid && isIOS
+        ? PayType.H5
+        : PayType.H5
+      const res = await CreatOrder({
+        address: userStore.user!.address!,
+        count:
+          params.product_type === 100
+            ? new Decimal(params.count).mul(100).toNumber()
+            : params.count,
+        description: params.product_type === 100 ? 'Recharge ME' : 'Buy NFT',
+        from,
+        goods_name: params.goods_name,
+        metaid: userStore.user!.metaId,
+        pay_type: params.platform,
+        quit_url: quitUrl,
+        types: type,
+        from_coin_address: userStore.user?.evmAddress,
+        product_type: params.product_type,
+        uuid: params.uuid,
+      })
+      if (res?.code === 0) {
+        resolve(res.data)
+      }
+    } catch (error) {
+      reject(error)
     }
   })
 }

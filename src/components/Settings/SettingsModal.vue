@@ -28,7 +28,11 @@
         v-if="userStore.isAuthorized"
       >
         <span class="icon-warp flex flex-align-center flex-pack-center">
-          <UserAvatar :meta-id="userStore.user!.metaId" :image="userStore.user!.avatarImage" />
+          <UserAvatar
+            :meta-id="userStore.user!.metaId"
+            :image="userStore.user!.avatarImage"
+            :name="userStore.user!.name"
+          />
         </span>
         <span class="flex1 name">{{ $t('Setting.Edit Profile') }}</span>
         <Icon class="right" name="down" />

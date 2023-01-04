@@ -51,6 +51,7 @@
                   class="avatar"
                   :meta-id="nft.val!.nftIssueMetaId"
                   :image="nft.val!.nftIssueAvatarImage"
+                  :name="nft.val!.nftIssuer"
                 />
                 <div class="author-msg flex1">
                   <div class="creater">
@@ -111,16 +112,18 @@
                     <template v-if="i18n.locale.value === 'zh'">
                       以&nbsp;
                       <AmountVue
+                        class="amount-warp"
                         :price="nft.val!.nftIsLegal ? nft.val!.nftLegalPrice : nft.val!.nftPrice"
-                        :currency="nft.val!.nftIsLegal ? 'CNY' : 'SPACE'"
+                        :currency="nft.val!.nftIsLegal ? ToCurrency.CNY : ToCurrency.MVC"
                       />
                       &nbsp; 购买
                     </template>
                     <template v-else>
                       Buy Now At&nbsp;
                       <AmountVue
+                        class="amount-warp"
                         :price="nft.val!.nftIsLegal ? nft.val!.nftLegalPrice : nft.val!.nftPrice"
-                        :currency="nft.val!.nftIsLegal ? 'CNY' : 'SPACE'"
+                        :currency="nft.val!.nftIsLegal ? ToCurrency.CNY : ToCurrency.MVC"
                       />
                     </template>
                   </template>
@@ -133,12 +136,20 @@
                   userStore.user! && userStore.user?.metaId === nft.val!.nftOwnerMetaId
                 "
               >
-                <div class="main-border primary flex flex-align-center flex1" v-if="isSale">
+                <div
+                  class="main-border primary flex flex-align-center flex1"
+                  v-if="isSale"
+                  @click="offSale"
+                >
                   <div
                     class="btn btn-block btn-plain flex1 flex flex-align-center flex-pack-center"
-                    @click="offSale"
                   >
-                    {{ $t('offsale') }}
+                    <span class="amount-warp">
+                      <AmountVue
+                        :price="nft.val!.nftIsLegal ? nft.val!.nftLegalPrice : nft.val!.nftPrice"
+                        :currency="nft.val!.nftIsLegal ? ToCurrency.CNY : ToCurrency.MVC"
+                      /> </span
+                    >{{ $t('offsale') }}
                   </div>
                 </div>
                 <div
@@ -153,7 +164,7 @@
                 <div class="main-border primary flex flex-align-center flex1" v-if="!isSale">
                   <div
                     class="btn btn-block btn-plain flex1 flex flex-align-center flex-pack-center"
-                    @click="isSHowTransfer = true"
+                    @click="transfer"
                   >
                     {{ $t('NFT.Transfer') }}
                   </div>
@@ -271,6 +282,7 @@
                           class="avatar"
                           :meta-id="nft.val!.nftIssueMetaId"
                           :image="nft.val!.nftIssueAvatarImage"
+                          :name="nft.val!.nftIssuer"
                         />
                         <div class="author-msg flex1">
                           <div class="creater">
@@ -291,6 +303,7 @@
                           class="avatar"
                           :meta-id="nft.val!.nftOwnerMetaId"
                           :image="nft.val!.nftOwnerAvatarImage"
+                          :name="nft.val!.nftOwnerName"
                         />
                         <div class="author-msg flex1">
                           <div class="creater">
@@ -335,6 +348,7 @@
                       class="avatar"
                       :meta-id="record.metaId"
                       :image="record.avatarImage"
+                      :name="record.name"
                     />
                     <span class="name">{{ record.name }}</span>
                   </span>
@@ -373,7 +387,7 @@
 
         <NFTSellVue :nft="nft.val!" v-model="isShowSell" @success="getDetail" />
         <NFTBuyVue :nft="nft.val!" v-model="isShowBuy" :is-hide-detail="true" />
-        <NFTTransferVue :nft="nft.val!" v-model="isSHowTransfer" @success="getDetail" />
+        <NFTTransferVue :nft="nft.val!" v-model="isShowTransfer" @success="getDetail" />
       </template>
     </ElSkeleton>
   </div>
@@ -420,6 +434,7 @@ import { checkUserLogin, NFTOffSale } from '@/utils/util'
 import AmountVue from '@/components/Amount/Amount.vue'
 import NFTTransferVue from '@/components/NFTTransfer/NFTTransfer.vue'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
+import { ToCurrency } from '@/enum'
 
 const isShowSkeleton = ref(true)
 const isShowDrscDetail = ref(false)
@@ -477,7 +492,7 @@ const issueRecord: { val: GetNftHolderListResItem | null } = reactive({
   val: null,
 })
 const isShowBuy = ref(false)
-const isSHowTransfer = ref(false)
+const isShowTransfer = ref(false)
 
 const isLegal = computed(() => {
   return route.name === 'legaldetail'
@@ -600,6 +615,7 @@ function getDetail() {
 // }
 
 async function offSale() {
+  return ElMessage.info(i18n.t('Comming Soon'))
   const result = await NFTOffSale(nft.val!)
   if (result) {
     getDetail()
@@ -607,6 +623,7 @@ async function offSale() {
 }
 
 function toSale() {
+  return ElMessage.info(i18n.t('Comming Soon'))
   isShowSell.value = true
 }
 
@@ -620,6 +637,11 @@ function share() {
     .catch(() => {
       ElMessage.success(i18n.t('copyerror'))
     })
+}
+
+function transfer() {
+  return ElMessage.info(i18n.t('Comming Soon'))
+  isShowTransfer.value = true
 }
 
 //  获取拥有记录
@@ -638,7 +660,6 @@ async function getNftHolderList(isCover = false) {
         records.length = 0
       }
       records.push(...res.data.results.items.holderList)
-      console.log('x222xxxxxxxxxxxzxz', records)
       ownerRecord.val = res.data.results.items.owner
       issueRecord.val = res.data.results.items.issuer
       const totalPages = Math.ceil(res.data.total / ownerHistoryPagination.pageSize)

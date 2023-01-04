@@ -16,6 +16,7 @@
             <UserAvatar
               :meta-id="nft.nftIssueMetaId"
               :image="nft.nftIssueAvatarImage"
+              :name="nft.nftIssuer"
               :disabled="true"
             />{{ nft.nftIssuer }}
           </div>
@@ -54,6 +55,15 @@
         {{ $t('NFT.Buy Now') }}
       </a>
     </div>
+
+    <StartPayVue
+      v-model="isShowPayModal"
+      :payPlatform="currentPayPlatform"
+      :product_type="product_type"
+      :order-id="payMsg.orderId"
+      :amount="payMsg.amount"
+      :url="payMsg.url"
+    />
   </ElDialog>
 </template>
 
@@ -61,13 +71,15 @@
 import { PayPlatform, PayType, ToCurrency } from '@/enum'
 import { isAndroid, isApp, isIOS, isIosApp, useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
-import { Ref, ref } from 'vue'
+import { reactive, Ref, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NFTMsgVue from '../NFTMsg/NFTMsg.vue'
 import { PayPlatformItem, payPlatformList } from '@/config'
 import PayTypeDropdownVue from '../PayTypeDropdown/PayTypeDropdown.vue'
 import { CreatePayOrder, setPayQuitUrl } from '@/utils/util'
 import { useRoute } from 'vue-router'
+import StartPayVue from '../StartPay/StartPay.vue'
+import { ElMessage } from 'element-plus'
 
 const props = defineProps<{
   modelValue: boolean
@@ -87,6 +99,13 @@ const currentPayPlatform = ref(
 const toCurrency: Ref<undefined | ToCurrency> = ref(
   currentPayPlatform.value === PayPlatform.ETH ? ToCurrency.ETH : undefined
 )
+const isShowPayModal = ref(false)
+const product_type = 200 // 100-ME, 200-Legal_NFT
+const payMsg = reactive({
+  url: '',
+  orderId: '',
+  amount: '',
+})
 
 function choosePayPlatform(item: PayPlatformItem) {
   if (item.disabled()) return
@@ -102,22 +121,28 @@ function onPayPlatformChange() {
 }
 
 async function confirmBuy() {
-  // return ElMessage.info(i18n.t('Comming Soon'))
-  const res = await CreatePayOrder({
-    platform: currentPayPlatform.value,
-    fullPath: setPayQuitUrl({
-      payPlatform: currentPayPlatform.value,
-      fullPath: route.fullPath,
-      isBlindbox: false,
-    }),
-    goods_name: props.nft.nftName,
-    count: 1,
-    product_type: 200, // 100-ME, 200-Legal_NFT,
-    uuid: props.nft.nftLegalUuid,
-  })
-  if (res) {
-    debugger
-  }
+  return ElMessage.info(i18n.t('Comming Soon'))
+  // const res = await CreatePayOrder({
+  //   platform: currentPayPlatform.value,
+  //   fullPath: setPayQuitUrl({
+  //     payPlatform: currentPayPlatform.value,
+  //     fullPath: route.fullPath,
+  //     isBlindbox: false,
+  //   }),
+  //   goods_name: props.nft.nftName,
+  //   count: 1,
+  //   product_type: product_type,
+  //   uuid: props.nft.nftLegalUuid,
+  // }).catch(error => {
+  //   ElMessage.error(error.message)
+  // })
+  // if (res) {
+  //   debugger
+  //   payMsg.amount = res.amount
+  //   payMsg.orderId = res.wxCoreOrderId
+  //   payMsg.url = res.url
+  //   isShowPayModal.value = true
+  // }
 }
 </script>
 

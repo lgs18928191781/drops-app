@@ -18,6 +18,22 @@ const Wxcore = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/wxcore`, {
       return {}
     }
   },
+  responseHandel: response => {
+    return new Promise((resolve, reject) => {
+      if (response?.data && typeof response.data?.code === 'number') {
+        if (response.data.code === 0) {
+          resolve(response.data)
+        } else {
+          reject({
+            code: response.data.code,
+            message: response.data.data,
+          })
+        }
+      } else {
+        resolve(response.data)
+      }
+    })
+  },
   errorHandel(error: any) {
     if (error.status === 401) {
       if (error.response && error.response.data && error.response.data.data) {
@@ -139,12 +155,13 @@ export const GetOrderStatus = (params: {
   return Wxcore.get(`/common/order/${params.orderId}/${params.payType}`)
 }
 
-export const PayETHByME = (params: {
+export const UpdatePay = (params: {
   order_id: string
   tx_hash: number
+  product_type: number
   from_coin_address: string
 }): Promise<GetOrderStatusRes> => {
-  return Wxcore.post(`/me/coin/pay`, params)
+  return Wxcore.post(`/product/order/coin/pay`, params)
 }
 
 export const CreatOrder = (params: {

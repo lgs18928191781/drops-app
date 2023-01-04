@@ -20,6 +20,7 @@
             <UserAvatar
               :meta-id="transferUser.val!.metaId"
               :image="transferUser.val!.avatarImage"
+              :name="transferUser.val!.name"
               :disabled="true"
             />
             <div class="flex1">

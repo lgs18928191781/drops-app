@@ -79,6 +79,7 @@
                         :meta-id="item.nftIssueMetaId"
                         :image="item.nftIssueAvatarImage"
                         :disabled="true"
+                        :name="item.nftIssuer"
                       />
                       <span class="name">{{ item.nftIssuer }}</span>
                     </div>
