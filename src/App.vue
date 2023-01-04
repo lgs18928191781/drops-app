@@ -1,4 +1,5 @@
 <template>
+  <!-- <div @click="metaname">MetaName点我</div> -->
   <div class="main flex">
     <LeftNavigationVue v-if="!blackRoute.includes(route.name)" />
     <div class="flex1 main-right">
@@ -39,6 +40,33 @@ const routeKey = (route: any) => {
   if (route.params.communityId) return route.params.communityId
 
   return route.fullPath
+}
+
+async function metaname() {
+  try {
+    const res = await userStore.showWallet.MetaNameBeforeReq({
+      name: `🥕`,
+      op: 1,
+    })
+    console.log('resss', res)
+    debugger
+    if (res.code == 0) {
+      const { data } = res
+      const result = await userStore.showWallet.sendMetaNameTransation({
+        op_code: data.op,
+        metaid: userStore.user!.metaId,
+        address: userStore.user!.address,
+        years: 1,
+        reqswapargs: data,
+      })
+      console.log('result', result)
+      debugger
+    } else {
+      throw new Error(`${res.msg}`)
+    }
+  } catch (error) {
+    throw new Error(`${(error as any).toString()}`)
+  }
 }
 </script>
 <style lang="css" src="@/assets/styles/tailwind.css"></style>
