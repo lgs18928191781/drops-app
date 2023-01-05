@@ -18,6 +18,8 @@
     <ElInput type="text" v-model="form.receiveAddress" placeholder="接受的地址" />
 
     <ElButton @click="genesis">创建</ElButton>
+
+    <IssueModalVue />
   </div>
 </template>
 
@@ -27,6 +29,7 @@ import { NodeName } from '@/enum'
 import { useUserStore } from '@/stores/user'
 import { ElOption, ElSelect } from 'element-plus'
 import { reactive, ref } from 'vue'
+import IssueModalVue from './components/IssueModal.vue'
 
 const userStore = useUserStore()
 
@@ -37,10 +40,16 @@ const form = reactive({
     seriesName: '',
   },
   name: '',
+  isSameName: false,
   desc: '',
-  metafile: '',
+  isSameDesc: false,
+  cover: null,
+  isSameCover: false,
   count: 1,
-  receiveAddress: userStore.user?.address || '',
+  acceptAddress: userStore.user?.address || '',
+  isSameAcceptAddress: false,
+  sourceFile: null,
+  isSameSourceFile: false,
 })
 
 const genesisList: GenesisItem[] = reactive([])

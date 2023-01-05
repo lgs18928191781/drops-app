@@ -175,7 +175,9 @@
       "atme": "Contacts",
       "feed": "Buzz",
       "choose_nft_series": "Select NFT Series",
-      "general_channels": "General Channels"
+      "general_channels": "General Channels",
+      "edit_public_channel": "Edit Public Channel",
+      "edit_consensual_channel": "Edit Pass Channel"
     },
     "Input": {
       "nft_stickers": "NFT Emoji",
@@ -547,7 +549,17 @@
     "intro3": "Covering the entire network of users",
     "intro3_drsc": "All MetaID users can see your shelf NFT",
     "intro4": "Creator Certification",
-    "intro4_drsc": "Rigorous vetting mechanism gives NFT more significant value"
+    "intro4_drsc": "Rigorous vetting mechanism gives NFT more significant value",
+    "Name": "Name",
+    "Drsc": "Describe",
+    "Cover": "Cover",
+    "Accept Address": "Accept Address",
+    "Source File": "Source File",
+    "Issue Count": "Issue Count",
+    "Belong Genesis": "Belong Genesis",
+    "Issue NFT Options": "Issue NFT Options",
+    "Choose Image": "Choose Image",
+    "Remove": "Remove"
   },
   "My NFT": "My NFT",
   "Done": "Done",

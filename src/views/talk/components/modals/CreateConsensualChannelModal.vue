@@ -2,9 +2,14 @@
   <BaseModal
     v-model="layout[ShowControl.isShowCreateConsensualChannelModal]"
     v-model:show-second-control="layout[ShowControl.isShowChooseTokenModal]"
+    :extra-close-event="form.reset"
   >
     <template #title>
-      {{ $t('Talk.Community.create_consensual_channel') }}
+      {{
+        form.publicKey
+          ? $t('Talk.Community.edit_consensual_channel')
+          : $t('Talk.Community.create_consensual_channel')
+      }}
     </template>
 
     <template #body>
@@ -478,10 +483,12 @@ const tryCreateChannel = async () => {
   layout.isShowCreateConsensualChannelModal = false
   layout.isShowLoading = true
 
+  const subscribeId = form.uuid || realRandomString(32)
   const res = await createChannel(
     form,
     talk.activeCommunityId,
     userStore.showWallet,
+    subscribeId,
     userStore.user!.metaId
   )
 
@@ -493,14 +500,23 @@ const tryCreateChannel = async () => {
       isPlaceHolder: true,
       roomType: ChannelPublicityType.Private,
       roomJoinType: form.type,
-      subscribeId: res.subscribeId,
+      uuid: res.subscribeId,
+      roomPublicKey: form.publicKey,
     }
     // 将占位频道添加到频道列表最前面
-    talk.activeCommunityChannels.unshift(newChannel)
+    if (form.publicKey) {
+      const index = talk.activeCommunityChannels.findIndex(
+        item => item.roomPublicKey === form.publicKey
+      )
+      if (index !== -1) {
+        talk.activeCommunityChannels[index] = newChannel
+      }
+    } else {
+      talk.activeCommunityChannels.unshift(newChannel)
+    }
   }
 
   layout.isShowLoading = false
-  form.reset()
 }
 
 const selectNft = (nft: any) => {

@@ -1,7 +1,14 @@
 <template>
-  <BaseModal v-model="layout[ShowControl.isShowCreatePublicChannelModal]">
+  <BaseModal
+    v-model="layout[ShowControl.isShowCreatePublicChannelModal]"
+    :extraCloseEvent="form.reset"
+  >
     <template #title>
-      {{ $t('Talk.Community.create_public_channel') }}
+      {{
+        form.publicKey
+          ? $t('Talk.Community.edit_public_channel')
+          : $t('Talk.Community.create_public_channel')
+      }}
     </template>
 
     <template #body>
@@ -76,6 +83,8 @@ import { createChannel } from '@/utils/talk'
 import { ShowControl } from '@/enum'
 import BaseModal from './BaseModal.vue'
 import { realRandomString, sleep } from '@/utils/util'
+import { Channel } from '@/@types/talk'
+import { watch } from 'vue'
 
 const form = useChannelFormStore()
 form.type = GroupChannelType.PublicText
@@ -89,8 +98,8 @@ const tryCreateChannel = async () => {
 
   layout.isShowCreatePublicChannelModal = false
   layout.isShowLoading = true
-
-  const res = await createChannel(form, talk.activeCommunityId, userStore.showWallet)
+  const subscribeId = form.uuid || realRandomString(32)
+  const res = await createChannel(form, talk.activeCommunityId, userStore.showWallet, subscribeId)
 
   // 添加占位频道
   if (res.status === 'success') {
@@ -99,14 +108,28 @@ const tryCreateChannel = async () => {
       name: form.name,
       isPlaceHolder: true,
       roomType: ChannelPublicityType.Public,
-      subscribeId: res.subscribeId,
+      uuid: res.subscribeId,
+      roomPublicKey: form.publicKey,
     }
     // 将占位频道添加到频道列表最前面
-    talk.activeCommunityChannels.unshift(newChannel)
+    if (form.publicKey) {
+      const communityIndex = talk.communities.findIndex(
+        item => item.communityId === talk.activeCommunityId
+      )
+      if (communityIndex !== -1) {
+        const index = talk.communities[communityIndex].channels?.findIndex(
+          item => item.roomPublicKey === form.publicKey
+        )
+        if (index !== -1) {
+          talk.communities[communityIndex].channels[index] = newChannel
+        }
+      }
+    } else {
+      talk.activeCommunityChannels.unshift(newChannel)
+    }
   }
 
   layout.isShowLoading = false
-  form.reset()
 
   sleep(2000).then(() => {
     // talk.refetchChannels()

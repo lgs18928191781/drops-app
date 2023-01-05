@@ -11,7 +11,7 @@ import { ChannelPublicityType, ChannelType, GroupChannelType } from '@/enum'
 import { defineStore } from 'pinia'
 import { router } from '@/router'
 import { useLayoutStore } from './layout'
-import { Message, TalkError } from '@/@types/talk'
+import { Channel, Message, TalkError } from '@/@types/talk'
 import { sleep } from '@/utils/util'
 import { useUserStore } from './user'
 import { GetUserInfo } from '@/api/aggregation'
@@ -20,7 +20,12 @@ import { useWsStore } from './ws'
 export const useTalkStore = defineStore('talk', {
   state: () => {
     return {
-      communities: [{ id: '@me' }] as any[],
+      communities: [{ id: '@me' }] as {
+        id?: string
+        communityId: string
+        channels: Channel[]
+        admins?: string[]
+      }[],
       members: [] as any,
 
       activeCommunityId: '' as string,
@@ -107,9 +112,8 @@ export const useTalkStore = defineStore('talk', {
       return this.channelType(this.activeChannel)
     },
 
-    activeCommunityChannels(): any[] {
+    activeCommunityChannels(): Channel[] {
       if (!this.activeCommunity) return []
-
       return this.activeCommunity.channels || []
     },
 
@@ -225,7 +229,8 @@ export const useTalkStore = defineStore('talk', {
             communityId,
           })
 
-      this.activeCommunity.channels = channels
+      if (!this.activeCommunity?.channels) this.activeCommunity!.channels = []
+      this.activeCommunity!.channels = channels
 
       // 写入存储
       this.initCommunityChannelIds()

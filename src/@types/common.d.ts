@@ -441,6 +441,7 @@ declare interface JobStep {
   status: import('@/enum').JobStepStatus
   resultTxId?: string
   resultTxMessage?: string
+  metanetId?: string
 }
 
 declare interface Job {
@@ -448,4 +449,19 @@ declare interface Job {
   name: string
   steps: JobStep[]
   status: import('@/enum').JobStatus
+}
+
+declare interface GenesisItem {
+  codehash: string
+  count: number
+  currentTotalSupply: number
+  genesis: string
+  genesisTimestamp: number
+  genesisTxId: string
+  minted: string
+  pendingCount: number
+  sensibleId: string
+  seriesName: string
+  symbol: string
+  totalSupply: number
 }

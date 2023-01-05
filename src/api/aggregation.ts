@@ -566,3 +566,36 @@ export const GetBindMetaidAddressList = (
 }> => {
   return aggregation.get(`/v2/app/user/${metaid}/third/addresses`)
 }
+
+export const GetGenesis = (params: {
+  chain: string
+  codehash?: string
+  genesis: string
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    results: {
+      items: UserNFTItem[]
+    }
+  }
+}> => {
+  return aggregation.get(`/v2/app/show/nft/summary`, { params })
+}
+
+export const GetUserGenesisList = (params: {
+  metaId: string
+  page: number
+  pageSize: number
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    results: {
+      items: GenesisItem[]
+    }
+  }
+}> => {
+  const { metaId, ..._params } = params
+  return aggregation.get(`/v2/app/sensible/getMyGenesisList/${metaId}`, { params: _params })
+}

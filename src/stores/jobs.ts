@@ -94,6 +94,7 @@ export const useJobsStore = defineStore('jobs', {
         for (let i = 0; i < job.steps.length; i++) {
           const step = job.steps[i]
           const stepInMessage = message.list[i]
+          step.metanetId = stepInMessage.resultMetanetId
           step.status = stepInMessage.resultTxId ? JobStepStatus.Success : JobStepStatus.Failed
         }
 

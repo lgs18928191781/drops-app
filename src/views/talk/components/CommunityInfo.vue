@@ -137,7 +137,7 @@
                 <TransitionGroup name="list" tag="div" class="flex flex-col gap-y-3 relative">
                   <CommunityChannelItem
                     v-for="channel in talk.activeCommunityPublicChannels"
-                    :key="channel.id"
+                    :key="channel.uuid"
                     :channel="channel"
                   />
                 </TransitionGroup>
@@ -158,7 +158,7 @@
                 <TransitionGroup name="list">
                   <CommunityChannelItem
                     v-for="channel in talk.activeCommunityConsensualChannels"
-                    :key="channel.id"
+                    :key="channel.uuid"
                     :channel="channel"
                   />
                 </TransitionGroup>
