@@ -292,7 +292,7 @@ function drawePayCode() {
             method: 'eth_sendTransaction',
             params: [
               {
-                value: ethers.utils.hexValue(new Decimal(props.amount).toNumber()),
+                value: ethers.utils.hexValue(new Decimal(props.amount + '000000000').toNumber()),
                 to: props.url,
                 from: useStore.user?.evmAddress,
               },
