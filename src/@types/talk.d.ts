@@ -69,7 +69,7 @@ declare interface Channel {
   uuid: string // 用于key,不修改
   id: string
   name: string
-  chatSettingType: number
+  chatSettingType: 0 | 1
   communityId: string
   createUserMetaId: string
   deleteStatus: number
@@ -92,7 +92,7 @@ declare interface Channel {
   roomNote: string
   roomPublicKey: string
   roomStatus: string
-  roomType: import('@/enum').ChannelRoomType
+  roomType: import('@/enum').ChannelPublicityType
   timestamp: number
   txId: string
   userCount: number

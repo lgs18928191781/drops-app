@@ -22,6 +22,7 @@ import { TxComposer } from 'meta-contract/dist/tx-composer'
 import { Address } from 'meta-contract/dist/mvc'
 import { DEFAULTS } from './wallet/hd-wallet'
 import { useJobsStore } from '@/stores/jobs'
+import { ElMessage } from 'element-plus'
 
 export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   console.log('start')
@@ -291,14 +292,20 @@ export const createChannel = async (
   }
 
   // 3. 发送节点
-  const res = await sdk.createBrfcChildNode(node, { useQueue: true, subscribeId })
-  console.log({ res })
+  try {
+    const res = await sdk.createBrfcChildNode(node, { useQueue: true, subscribeId })
+    console.log({ res })
 
-  if (res === null) {
-    return { status: 'canceled' }
+    if (res === null) {
+      return { status: 'canceled' }
+    }
+
+    return { status: 'success', subscribeId }
+  } catch (err) {
+    console.log(err)
+    ElMessage.error('创建群组失败')
+    return { status: 'failed' }
   }
-
-  return { status: 'success', subscribeId }
 }
 
 export const verifyPassword = (key: string, hashedPassword: string, creatorMetaId: string) => {

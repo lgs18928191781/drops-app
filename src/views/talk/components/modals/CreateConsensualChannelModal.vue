@@ -473,6 +473,13 @@ const nftSeries: Ref<any[]> = ref([])
 const ftSeries: Ref<FungibleToken[]> = ref([])
 
 const form = useChannelFormStore()
+if (form.type === GroupChannelType.NFT) {
+  selectedTab.value = 0
+} else if (form.type === GroupChannelType.FT) {
+  selectedTab.value = 1
+} else if (form.type === GroupChannelType.Password) {
+  selectedTab.value = 2
+}
 changeTab(selectedTab.value)
 const talk = useTalkStore()
 const userStore = useUserStore()

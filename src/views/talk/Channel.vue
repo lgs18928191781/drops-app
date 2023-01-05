@@ -61,13 +61,6 @@ const layout = useLayoutStore()
 
 const { communityId } = route.params
 
-// const code = '6C9IUJ'
-// const subId = '3ab41c4a90d3'
-// const createTime = '1671509888031'
-// const key = `${subId.toLocaleLowerCase()}${code.toLocaleLowerCase()}${createTime}`
-// const { wif, addressStr } = buildCryptoInfo(key, 'testnet')
-// console.log('wif', wif, 'addressStr', addressStr)
-
 talk.checkMembership(communityId as string).then(async (isMember: boolean) => {
   if (!isMember) {
     await talk.invite(communityId as string)
