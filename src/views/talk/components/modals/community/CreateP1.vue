@@ -84,7 +84,7 @@
 
     <div class="grow flex items-end justify-end lg:mt-8">
       <button
-        class="w-14 h-14 main-border primary flex items-center justify-center dark:!bg-gray-600"
+        class="w-14 h-14 main-border primary flex items-center justify-center "
         :class="{
           'faded still text-dark-300 dark:!text-gray-400 dark:!bg-gray-700': !form.isStep1Finished,
         }"

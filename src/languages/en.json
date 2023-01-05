@@ -174,7 +174,8 @@
       "settings_short": "settings",
       "atme": "Contacts",
       "feed": "Buzz",
-      "choose_nft_series": "Select NFT Series"
+      "choose_nft_series": "Select NFT Series",
+      "general_channels": "General Channels"
     },
     "Input": {
       "nft_stickers": "NFT Emoji",
