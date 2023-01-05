@@ -267,6 +267,7 @@ const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits(['update:modelValue', 'update:type', 'success', 'back', 'update:loading'])
 const i18n = useI18n()
 const userStore = useUserStore()
+const emailReg = /^[A-Za-z0-9\u4e00-\u9fa5_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
 
 const tabs = [
   {
@@ -313,7 +314,7 @@ const rules = reactive({
       trigger: 'blur',
     },
     {
-      pattern: /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/,
+      pattern: emailReg,
       message: () => i18n.t('Email Address Error'),
       trigger: 'blur',
     },
@@ -384,7 +385,7 @@ const characteristic = ref('')
 const imageCodeData = ref('')
 const isGetImageCodeLoading = ref(false)
 const isSendCodeLoading = ref(false)
-const emailReg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+
 const sendCodeTimer = ref(0)
 const registerInfo: {
   val: null | {

@@ -315,7 +315,8 @@
     },
     "MetaIdWallet": {
       "accountAlreadyRegistered": "该账号已被注册"
-    }
+    },
+    "No wallet": "没有钱包"
   },
   "back": "返回",
   "UserOperate": {
@@ -424,7 +425,9 @@
       "Payment required": "大约需要支付",
       "My": "我的",
       "Recharge": "充值",
-      "Confirm": "支付"
+      "Confirm": "支付",
+      "ME is used to pay for Gas Fee": "ME是用于支付Gas Fee的积分，",
+      "Learn More": "了解更多"
     }
   },
   "Please Login First": "请先登录",
@@ -496,7 +499,7 @@
   "Already on NFT": "NFT",
   "Replay": "回复",
   "Cancel Follow": "取消关注",
-  "cancelFollowTips": "你去确定要取消关注用户",
+  "cancelFollowTips": "你确定要取消关注用户",
   "Warning": "温馨提示",
   "Forward": "转发",
   "Comment": "评论",
@@ -567,34 +570,34 @@
   "group1": "Show: NFTize \n 你的社交生活",
   "group1-desc": "首个完全去中心化的以NFT为核心的Web3 \n 社交平台",
   "group1-foot-title": "第一个面向所有人的无障碍 Web3 社交平台。",
-  "page-two-title": "加入社交与创造革命",
+  "page-two-title": "参与 Social & Mint 革命",
   "Home": {
     "Users": "用户",
     "Interactive": "互动（交易次数）",
-    "Minted NFT": "铸造 NFT",
-    "Total Volume": "总数量",
-    "page-two-title-drsc": "链上积累社交互动，享受NFT免费铸币！",
-    "Personalized NFT": "个性化 NFT",
-    "Personalized NFT Drsc": "个性化的 NFT 表达你的个性和社会地位。 有时，个性化的 NFT 可以为您提供其他用户所没有的特殊社交功能。",
-    "Avatar NFTs": "头像NFT",
-    "Avatar NFTs Drsc": "头像 NFT 是您在 Web3 世界中的虚拟形象。 用你的化身培养、玩耍和赚钱！",
-    "Equipment NFTs": "形象 NFT",
-    "Equipment NFTs Drsc": "它包含 4 种特殊的 NFT，用于装饰您的头像，包括背景、服装、宠物和宝藏。 它们为您的头像提供不同的属性加成，使其与众不同。",
-    "Utility NFTs": "实用 NFT",
-    "Utility NFTs Drsc": "持有 Utility NFT 解锁高级功能！ 域名NFT、DAO通证等更多品类来袭！",
-    "Web3 Social Timeline": "Web3 社交时间表",
-    "Web3 Social Timeline Drsc": "看看链上发生了什么！",
+    "Minted NFT": "已铸造NFT",
+    "Total Volume": "总交易量",
+    "page-two-title-drsc": "积累链上社交互动，享受免费铸造NFT",
+    "Personalized NFT": "个性化NFT",
+    "Personalized NFT Drsc": "个性化 NFT 彰显你的社交身份，更重要的是个性化NFT可以为你提供其他用户所没有的特殊社交功能。",
+    "Avatar NFTs": "虚拟化身类NFT",
+    "Avatar NFTs Drsc": "虚拟化身类 NFT 是您在 Web3 世界的虚拟形象，一起来打造你的形象，并用于游戏和赚钱。",
+    "Equipment NFTs": "装备类 NFT",
+    "Equipment NFTs Drsc": "包含4种特殊的 NFT ，用于装饰您的虚拟形象，包括背景、服饰、宠物和宝藏，为您的虚拟化身提供不同的属性加成，使之更加与众不同。",
+    "Utility NFTs": "功能类NFT",
+    "Utility NFTs Drsc": "持有功能类 NFT 可解锁高级功能！域名 NFT、DAO 通证等更多种类来袭！",
+    "Web3 Social Timeline": "Web3社交时间线",
+    "Web3 Social Timeline Drsc": "实时掌握你的链上最新动态！",
     "Web3 Clubs DAOs": "Web3 俱乐部和 DAO",
     "Web3 Clubs DAOs Drsc": "发现并加入您最喜爱的 Web3 社区",
-    "All Chains One Platform": "全链同平台",
-    "All Chains One Platform Drsc": "同时支持多个区块链。",
+    "All Chains One Platform": "集全链于一身",
+    "All Chains One Platform Drsc": "同时支持多个区块链",
     "MetaSo": "MetaSo",
     "White Paper": "白皮书",
     "Learn": "学习",
     "Menu": "导航"
   },
   "metaso-title": "认识 MetaSo",
-  "metaso-content": "以秀场平台为第一节点的终极去中心化社交网络。",
+  "metaso-content": "以Show平台为第一节点的完全去中心化社交网络",
   "metaso-desc": "Show3 是 MetaSo 的第一个节点，MetaSo 是一个基于 MetaID 协议的开源社交网络 Web3 中间件。\n  MetaSo旨在打造一个基于区块链技术的极致去中心化社交网络，让每一份数据都真正属于用户。 \n  在 MetaSo 中，每个用户产生的社交数据都可以被重复使用和重新操作。  任何人都可以在没有许可的情况下轻松运行 MetaSo 节点。",
   "learnMetaSo": "运行我自己的 MetaSo Node",
   "ME": {
@@ -629,6 +632,28 @@
   },
   "PayModal": {
     "Confirm Pay": "确认支付",
-    "Pay Amount": "支付金额"
+    "Pay Amount": "支付金额",
+    "Order Pay": "订单支付",
+    "Buy": "购买",
+    "Order Amount": "订单金额",
+    "PayTips1": "支付成功后，可在“我的NFT”中查看",
+    "PayTips2": "请使用支付宝扫码支付",
+    "PayTips3": "付款二维码已失效",
+    "PayTips4": "支付确认中，请勿关闭窗口",
+    "PayTips5": "等待太久？",
+    "PayTips6": "我已支付成功，继续浏览其他NFT",
+    "PayTips7": "（可约1分钟后前往我的NFT查看）",
+    "PayTips8": " 二维码有效期为1分钟，请尽快扫码支付(如二维码超过有效期后需等待3分钟方可重新发起订单)",
+    "Balance Pay": "余额支付",
+    "Enter Code ": "请填写短信验证码",
+    "Pay Fail": "支付失败",
+    "Pay Success": "支付成功",
+    "Finish": "完成",
+    "Get Order Amount Fail": "获取订单金额失败",
+    "Platform exception": "平台异常,请稍后重试(6001)",
+    "Parsing App callback parameter error": "解析App回调参数错误, "
+  },
+  "PayModel": {
+    "Paying": "正在支付中.."
   }
 }

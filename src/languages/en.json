@@ -91,7 +91,7 @@
       "choose_cover_tip": "Only supports NFT in Club Cover. you need to be a level X users to use this feature.",
       "choose_cover": "Choose Cover",
       "introduction": "Club Introduction",
-      "red_packet_all_claimed": "All gift packs have been claimed.",
+      "red_packet_all_claimed": "All the Candy Bags have been opened.",
       "view_details": "View details",
       "lucky": "Best Luck",
       "red_packet_no_token": "You don't have required NFT to claim this gift pack.",
@@ -271,7 +271,8 @@
       "title": "🎉 Welcome to Show3! \n Get Your Account Ready for More Followers!",
       "Choose NFT Profile Picture": "Choose NFT Profile Picture"
     },
-    "useMetaIdWallet": "Connect MetaID Wallet"
+    "useMetaIdWallet": "Connect MetaID Wallet",
+    "No wallet": "No wallet"
   },
   "UserOperate": {
     "createGropp": "Create Group",
@@ -347,7 +348,9 @@
       "Payment required": "Payment required",
       "My": "My ",
       "Recharge": "Recharge",
-      "Confirm": "Pay Now"
+      "Confirm": "Pay Now",
+      "ME is used to pay for Gas Fee": "ME is used to pay for Gas Fee, ",
+      "Learn More": "Learn More"
     }
   },
   "Please Login First": "Please Login First",
@@ -359,7 +362,7 @@
   "Number": "Number",
   "Wallet": {
     "Balance": "Balance",
-    "Total balance": "Total Value",
+    "Total balance": "Total Balance",
     "Action Points": "MetaEnergy",
     "Add Funds": "Recharge",
     "Balance Details": "Cryptocurrency",
@@ -632,6 +635,28 @@
   },
   "PayModal": {
     "Confirm Pay": "Confirm Pay",
-    "Pay Amount": "Pay Amount"
+    "Pay Amount": "Pay Amount",
+    "Order Pay": "Order Pay",
+    "Buy": "Buy",
+    "Order Amount": "Order Amount",
+    "PayTips1": "After the payment is successful, you can view it in \"My NFT\"",
+    "PayTips2": "Please use Alipay scan code to pay",
+    "PayTips3": "The payment QR code has expired",
+    "PayTips4": "Payment confirmation, please do not close the window",
+    "PayTips5": "Waiting too long?",
+    "PayTips6": "I have paid successfully, continue to browse other NFT",
+    "PayTips7": "(You can go to my NFT to view it in about 1 minute)",
+    "PayTips8": "The QR code is valid for 1 minute, please scan the code to pay as soon as possible (if the QR code expires, you need to wait for 3 minutes before re-initiating the order)",
+    "Balance Pay": "Balance Pay",
+    "Enter Code ": "Enter SMS verification code",
+    "Pay Fail": "Pay Fail",
+    "Pay Success": "Pay Success",
+    "Finish": "Finish",
+    "Get Order Amount Fail": "Get Order Amount Fail",
+    "Platform exception": "Platform exception, please try again later (6001)",
+    "Parsing App callback parameter error": "Parsing App callback parameter error,"
+  },
+  "PayModel": {
+    "Paying": "Paying.."
   }
 }

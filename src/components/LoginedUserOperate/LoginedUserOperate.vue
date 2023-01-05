@@ -74,6 +74,7 @@ import { useRoute } from 'vue-router'
 import MyWalletVue from './MyWallet.vue'
 import VersionVue from '../Version/Version.vue'
 import UserPersonaVue from '../UserPersona/UserPersona.vue'
+import { router } from '@/router'
 
 const i18n = useI18n()
 const rootStore = useRootStore()
@@ -108,7 +109,11 @@ const userOperates = computed(() => {
     {
       name: i18n.t('UserOperate.help'),
       icon: 'question_circle',
-      func: () => {},
+      func: () => {
+        router.push(
+          `/talk/channels/74462f14a033849bf6067de63ad3d6c54edfa48ec1f2759e8ed8c6165b3f58b2/0dcdbc9d4eba293f8adce8a9b5d82370b66b80f0d53e2ed85a695fcda832c957`
+        )
+      },
     },
   ]
   if (userStore.isAuthorized) {

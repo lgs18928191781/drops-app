@@ -19,12 +19,12 @@
   </div>
   <!-- 引用buzz -->
   <div class="content-item" v-if="buzz.quoteItem && buzz.protocol !== 'SimpleRePost' && !isQuote">
-    <QuoteVue :buzz="buzz.quoteItem" />
+    <QuoteVue :buzz="buzz.quoteItem" @play="val => emit('play', val)" :playFile="playFile" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import Attachment from './Attachment.vue'
 import QuoteVue from './Quote.vue'
 
@@ -33,6 +33,7 @@ interface Props {
   playFile?: string
   isQuote?: boolean
 }
+
 const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits<{
   (e: 'play', txId: any): void

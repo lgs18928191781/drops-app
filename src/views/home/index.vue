@@ -9,7 +9,7 @@
         </div>
         <div class="option-groud">
           <div class="menu-groud">
-            <a v-for="(item, index) in linkGroud" :key="index" @click="toLink(item.link)">{{
+            <a v-for="(item, index) in linkGroud" :key="index" @click="item.fun">{{
               item.name()
             }}</a>
           </div>
@@ -27,7 +27,7 @@
                   <el-dropdown-item
                     v-for="(item, index) in linkGroud"
                     :key="index"
-                    @click="toLink(item.link)"
+                    @click="item.fun"
                   >
                     <div class="nav-item">{{ item.name() }}</div>
                   </el-dropdown-item>
@@ -205,7 +205,7 @@ import footIcon4 from '@/assets/show/foot-icon4.png'
 import { useRouter } from 'vue-router'
 import LogoVue from './Logo.vue'
 import { useRootStore } from '@/stores/root'
-import { SetLang } from '@/utils/util'
+import { checkUserLogin, SetLang } from '@/utils/util'
 
 const i18n = useI18n()
 const router = useRouter()
@@ -213,13 +213,22 @@ const rootStore = useRootStore()
 const linkGroud = reactive([
   {
     name: () => i18n.t('Home.Learn'),
-    link: `https://ruoxicdn.nos.art/show3/MetaSo_1230_${i18n.locale.value}.pdf`,
+    fun: () => {
+      ElMessage.info(i18n.t('Comming Soon'))
+    },
   },
   {
     name: () => i18n.t('Home.White Paper'),
-    link: 'https://show3.gitbook.io/show3.0/v/english/',
+    fun: () => {
+      toLink('https://show3.gitbook.io/show3.0/v/english/')
+    },
   },
-  { name: () => i18n.t('Home.MetaSo'), link: 'https://www.metaso.network/' },
+  {
+    name: () => i18n.t('Home.MetaSo'),
+    fun: () => {
+      toLink('https://www.metaso.network/')
+    },
+  },
 ])
 const currentSelectedLink = () => i18n.t('Home.Menu')
 const swipers = reactive([
@@ -316,7 +325,8 @@ const downloadGroup = reactive([
   },
 ])
 
-function toShow3() {
+async function toShow3() {
+  await checkUserLogin()
   router.push({ name: 'buzz' })
 }
 

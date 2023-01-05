@@ -52,7 +52,7 @@
                 <input
                   v-if="!item.disabled() && (item.icon === 'buzz_img' || item.icon === 'music')"
                   type="file"
-                  :accept="item.icon === 'buzz_img' ? 'images/*' : 'audio/*'"
+                  :accept="item.icon === 'buzz_img' ? 'image/*' : 'audio/*'"
                   multiple
                   @change="onChooseImage"
                   ref="inputFileRef"
