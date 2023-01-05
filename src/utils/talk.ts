@@ -76,16 +76,19 @@ export const updateCommunity = async (form: any, sdk: SDK) => {
   let { icon, description, cover, original, metaName } = form
 
   const attachments = []
+  let replaceIndex = 0
   let iconPlaceholder = original.icon
   if (icon) {
-    iconPlaceholder = 'metafile://$[0]'
+    iconPlaceholder = `metafile://$[${replaceIndex}]`
     attachments.push(await FileToAttachmentItem(icon))
+    replaceIndex++
   }
 
   let coverPlaceholder = original.cover
   if (cover) {
-    coverPlaceholder = 'metafile://$[1]'
+    coverPlaceholder = `metafile://$[${replaceIndex}]`
     attachments.push(await FileToAttachmentItem(cover))
+    replaceIndex++
   }
 
   const admins = original.admins
