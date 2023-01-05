@@ -103,13 +103,14 @@ const tryCreateChannel = async () => {
 
   // 添加占位频道
   if (res.status === 'success') {
-    const newChannel: any = {
+    const newChannel = {
       id: 'placeholder_' + realRandomString(8),
       name: form.name,
       isPlaceHolder: true,
       roomType: ChannelPublicityType.Public,
       uuid: res.subscribeId,
       roomPublicKey: form.publicKey,
+      chatSettingType: form.adminOnly ? 1 : 0,
     }
     // 将占位频道添加到频道列表最前面
     if (form.publicKey) {
