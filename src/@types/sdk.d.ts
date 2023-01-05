@@ -448,12 +448,14 @@ export interface createBrfcChildNodeParams {
   needConfirm?: boolean // 是否需要确认
   attachments?: AttachmentItem[] // 附件
   utxos?: any[] // 传入的utxos
-  publickey?: string // 修改时 用的publicekey
   ecdh?: { type: string; publickey: string } // ecdh
   useFeeb?: number // 费率
   meConvertSatoshi?: number // 1Me 等于多少聪
   loading?: { close: () => void }
   payType?: SdkPayType
+  // 修改
+  publickey?: string // 修改时 用的publicekey
+  txId?: string
 }
 
 export interface CreateNodeRes {

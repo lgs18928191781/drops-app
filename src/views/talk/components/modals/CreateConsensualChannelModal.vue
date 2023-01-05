@@ -503,9 +503,10 @@ const tryCreateChannel = async () => {
       uuid: res.subscribeId,
       roomPublicKey: form.publicKey,
       chatSettingType: form.adminOnly ? 1 : 0,
+      txId: form.txId,
     }
     // 将占位频道添加到频道列表最前面
-    if (form.publicKey) {
+    if (form.publicKey && form.txId) {
       const index = talk.activeCommunityChannels.findIndex(
         item => item.roomPublicKey === form.publicKey
       )

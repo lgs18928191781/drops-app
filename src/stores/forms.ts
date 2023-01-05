@@ -133,8 +133,10 @@ export interface ChannelFormState {
   ft: null | FungibleToken
   amount: number
   adminOnly: boolean // 发言设置，0：所有人，1：管理员
-  publicKey?: string
   uuid?: string
+  // 修改
+  publicKey?: string
+  txId?: string
 }
 export const useChannelFormStore = defineStore('channelForm', {
   state: () => {
@@ -149,6 +151,7 @@ export const useChannelFormStore = defineStore('channelForm', {
       adminOnly: false, // 发言设置，0：所有人，1：管理员
       publicKey: undefined,
       uuid: undefined, // 用于 订阅和 key， 不可修改
+      txId: undefined,
     }
   },
 
@@ -182,6 +185,7 @@ export const useChannelFormStore = defineStore('channelForm', {
       this.adminOnly = false
       this.publicKey = undefined
       this.uuid = undefined
+      this.txId = undefined
     },
   },
 })

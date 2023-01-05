@@ -78,6 +78,7 @@ watch(
     if (status === JobStatus.Success) {
       const job = jobsStore.waitingNotify.find(job => job.id === props.channel.uuid)
       props.channel.id = job!.steps.at(-1)?.metanetId
+      props.channel.txId = job!.steps.at(-1)?.txId
       // 删除占位符标识，并写入真正的channelId
       props.channel.isPlaceHolder = false
     } else if (status === JobStatus.Failed) {
@@ -175,6 +176,7 @@ async function editChannel() {
   form.adminOnly = channel.chatSettingType ? true : false // 发言设置，0：所有人，1：管理员
   form.publicKey = channel.roomPublicKey
   form.uuid = channel.uuid
+  form.txId = channel.txId
 
   if (props.channel.roomType === '1') {
     layout.isShowCreatePublicChannelModal = true

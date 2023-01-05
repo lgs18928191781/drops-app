@@ -85,6 +85,7 @@ import BaseModal from './BaseModal.vue'
 import { realRandomString, sleep } from '@/utils/util'
 import { Channel } from '@/@types/talk'
 import { watch } from 'vue'
+import { fromBase64 } from 'js-base64'
 
 const form = useChannelFormStore()
 form.type = GroupChannelType.PublicText
@@ -111,19 +112,13 @@ const tryCreateChannel = async () => {
       uuid: res.subscribeId,
       roomPublicKey: form.publicKey,
       chatSettingType: form.adminOnly ? 1 : 0,
+      txId: form.txId,
     }
     // 将占位频道添加到频道列表最前面
-    if (form.publicKey) {
-      const communityIndex = talk.communities.findIndex(
-        item => item.communityId === talk.activeCommunityId
-      )
-      if (communityIndex !== -1) {
-        const index = talk.communities[communityIndex].channels?.findIndex(
-          item => item.roomPublicKey === form.publicKey
-        )
-        if (index !== -1) {
-          talk.communities[communityIndex].channels[index] = newChannel
-        }
+    if (form.publicKey && form.txId) {
+      const index = talk.activeCommunityChannels.findIndex(item => item.txId === form.txId)
+      if (index !== -1) {
+        talk.activeCommunityChannels[index] = newChannel
       }
     } else {
       talk.activeCommunityChannels.unshift(newChannel)
