@@ -1,4 +1,4 @@
-import { GroupChannelType, RedPacketDistributeType } from '@/enum'
+import { Chains, ChannelPublicityType, GroupChannelType, RedPacketDistributeType } from '@/enum'
 import { giveRedPacket, updateCommunity } from '@/utils/talk'
 import { sleep } from '@/utils/util'
 import { defineStore } from 'pinia'
@@ -6,6 +6,8 @@ import { useLayoutStore } from './layout'
 import { getCommunityAuth } from '@/api/talk'
 import { useTalkStore } from './talk'
 import { useUserStore } from './user'
+import { Channel } from '@/@types/talk'
+import { GetFT, GetGenesis } from '@/api/aggregation'
 
 export const useCommunityFormStore = defineStore('communityForm', {
   state: () => {
@@ -128,13 +130,15 @@ export interface ChannelFormState {
   type: GroupChannelType
   name: string
   password: string
-  chain: null | string
+  chain: null | Chains
   nft: null | UserNFTItem
   ft: null | FungibleToken
   amount: number
   adminOnly: boolean // 发言设置，0：所有人，1：管理员
-  publicKey?: string
   uuid?: string
+  // 修改
+  publicKey?: string
+  txId?: string
 }
 export const useChannelFormStore = defineStore('channelForm', {
   state: () => {
@@ -142,13 +146,14 @@ export const useChannelFormStore = defineStore('channelForm', {
       type: GroupChannelType.PublicText,
       name: '',
       password: '',
-      chain: null as any,
+      chain: null,
       nft: null as any,
       ft: null as any,
       amount: 1,
       adminOnly: false, // 发言设置，0：所有人，1：管理员
       publicKey: undefined,
       uuid: undefined, // 用于 订阅和 key， 不可修改
+      txId: undefined,
     }
   },
 
@@ -171,6 +176,63 @@ export const useChannelFormStore = defineStore('channelForm', {
   },
 
   actions: {
+    // 从现有数据恢复填充表单，用于编辑
+    async recover(channel: Channel) {
+      this.reset()
+
+      if (channel.roomType === ChannelPublicityType.Public) {
+        this.type = GroupChannelType.PublicText
+      }
+
+      if (channel.roomType === ChannelPublicityType.Private) {
+        switch (channel.roomJoinType) {
+          case '1':
+            this.type = GroupChannelType.Password
+            break
+          case '2':
+            this.type = GroupChannelType.NFT
+            this.chain = Chains.MVC
+            break
+          case '3':
+            this.type = GroupChannelType.FT
+            break
+          case '2001':
+            this.type = GroupChannelType.NFT
+            this.chain = import.meta.env.VITE_ETH_CHAIN as Chains
+            break
+          default:
+            this.type = GroupChannelType.PublicText
+        }
+      }
+      if (this.type === GroupChannelType.NFT) {
+        const nftSeriesRes = await GetGenesis({
+          chain: this.chain as string,
+          codehash: channel.roomCodeHash,
+          genesis: channel.roomGenesis,
+        })
+        if (nftSeriesRes.code === 0) {
+          this.nft = nftSeriesRes.data.results.items[0]
+        }
+      }
+      if (this.type === GroupChannelType.FT) {
+        const ftSeriesRes = await GetFT({
+          chain: this.chain as string,
+          codehash: channel.roomCodeHash,
+          genesis: channel.roomGenesis,
+        })
+        if (ftSeriesRes.code === 0) {
+          this.ft = ftSeriesRes.data.results.items[0]
+          this.amount = channel.roomLimitAmount
+        }
+      }
+
+      this.name = channel.name
+      this.adminOnly = channel.chatSettingType === 1
+      this.publicKey = channel.roomPublicKey
+      this.uuid = channel.uuid
+      this.txId = channel.txId
+    },
+
     reset() {
       this.type = GroupChannelType.PublicText
       this.name = ''
@@ -182,6 +244,7 @@ export const useChannelFormStore = defineStore('channelForm', {
       this.adminOnly = false
       this.publicKey = undefined
       this.uuid = undefined
+      this.txId = undefined
     },
   },
 })
@@ -260,7 +323,6 @@ export const useRedPacketFormStore = defineStore('redPacketForm', {
     },
     validateAmount() {
       // 每个人最少 1000 sat（0.00001 Space）
-      console.log('hi')
       const minAmount = 1000 * this.quantity
       const maxAmount = 1_000_000
       if (this.amount < minAmount) {
@@ -271,7 +333,6 @@ export const useRedPacketFormStore = defineStore('redPacketForm', {
       }
     },
     validateEach() {
-      console.log('what?')
       if (this.each < 1000) {
         this.each = 1000
       }

@@ -1584,7 +1584,7 @@ export class HdWallet {
     return response
   }
 
-  private async getProtocolInfo(protocolType: string, protocolsTxId: string, brfcId: string) {
+  async getProtocolInfo(protocolType: string, protocolsTxId: string, brfcId: string) {
     return new Promise<{
       address: string
       data: string

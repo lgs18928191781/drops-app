@@ -28,7 +28,6 @@ import { PayToItem } from '@/@types/hd-wallet'
 import { SdkPayType, IsEncrypt, NodeName, JobStepStatus, JobStatus } from '@/enum'
 import { GetMeUtxos, GetMyMEBalance, GetProtocolMeInfo } from '@/api/v3'
 import * as bsv from '@sensible-contract/bsv'
-// import bsv from 'bsv'
 import { openLoading, realRandomString } from './util'
 import { Toast } from 'vant'
 import { Transaction } from 'dexie'
@@ -40,9 +39,9 @@ import { h, render } from 'vue'
 import { NftManager, FtManager, API_NET, API_TARGET, TxComposer, mvc } from 'meta-contract'
 import { resolve } from 'path'
 import detectEthereumProvider from '@metamask/detect-provider'
-import { NodeTransactions, Job, JobStep } from '@/@types/common'
 import { v1 as UUID } from 'uuid'
 import { useLayoutStore } from '@/stores/layout'
+import { GetTx } from '@/api/metaid-base'
 
 enum AppMode {
   PROD = 'prod',
@@ -848,16 +847,37 @@ export class SDK {
           //  处理当前节点
           if (params.nodeName !== NodeName.MetaFile) {
             // 当前节点的brfc 节点
-            transactions.currentNodeBrfc = await this.wallet?.createBrfcNode(
-              {
-                nodeName: params.nodeName,
-                parentTxId: userStore.user?.protocolTxId!,
-                parentAddress: this.wallet.protocolAddress,
-                utxos: params.utxos,
-                useFeeb: params.useFeeb,
-              },
-              { isBroadcast: false }
-            )
+
+            if (params.publickey && params.txId) {
+              // 修改
+              const res = await GetTx(params.txId)
+              if (res.code === 0) {
+                const protocol = await this.wallet!.getProtocolInfo(
+                  params.nodeName,
+                  res.data.parentTxId,
+                  res.data.parentData
+                )
+                transactions.currentNodeBrfc = {
+                  address: res.data.parentAddress,
+                  txId: res.data.parentTxId,
+                  addressType: protocol!.addressType,
+                  addressIndex: protocol!.addressIndex,
+                }
+              }
+            } else {
+              // 新增
+              transactions.currentNodeBrfc = await this.wallet?.createBrfcNode(
+                {
+                  nodeName: params.nodeName,
+                  parentTxId: userStore.user?.protocolTxId!,
+                  parentAddress: this.wallet.protocolAddress,
+                  utxos: params.utxos,
+                  useFeeb: params.useFeeb,
+                },
+                { isBroadcast: false }
+              )
+            }
+
             // 子节点的 publickey， 如有有传 则为修改，使用传进来的值， 如果有 brfctx则需要创建父节点, 子节点就是父节点的0/0地址专为， 否则传空，自己会去去获取新的
             const publickey = params.publickey
               ? params.publickey

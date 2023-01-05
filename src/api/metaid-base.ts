@@ -60,3 +60,19 @@ export const reportTask = (body: {
 }): Promise<any> => {
   return MetaIdBase.post(`/v1/meta/upload/task`, body)
 }
+
+export const GetTx = (
+  txId: string
+): Promise<{
+  code: number
+  data: {
+    metanetId: string
+    parentAddress: string
+    parentTxId: string
+    parentData: string
+    publicKey: string
+    txId: string
+  }
+}> => {
+  return MetaIdBase.get(`/v1/meta/${txId}/info`)
+}

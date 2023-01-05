@@ -274,7 +274,11 @@ export const useTalkStore = defineStore('talk', {
       this.communityStatus = 'loading'
       const isAtMe = routeCommunityId === '@me'
       this.activeCommunityId = routeCommunityId
-      this.members = isAtMe ? [] : await getCommunityMembers(routeCommunityId)
+      try {
+        this.members = isAtMe ? [] : await getCommunityMembers(routeCommunityId)
+      } catch {
+        ElMessage.error('获取社区成员失败')
+      }
 
       await this.fetchChannels(routeCommunityId)
 

@@ -22,6 +22,7 @@ import { TxComposer } from 'meta-contract/dist/tx-composer'
 import { Address } from 'meta-contract/dist/mvc'
 import { DEFAULTS } from './wallet/hd-wallet'
 import { useJobsStore } from '@/stores/jobs'
+import { ElMessage } from 'element-plus'
 
 export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   console.log('start')
@@ -75,16 +76,19 @@ export const updateCommunity = async (form: any, sdk: SDK) => {
   let { icon, description, cover, original, metaName } = form
 
   const attachments = []
+  let replaceIndex = 0
   let iconPlaceholder = original.icon
   if (icon) {
-    iconPlaceholder = 'metafile://$[0]'
+    iconPlaceholder = `metafile://$[${replaceIndex}]`
     attachments.push(await FileToAttachmentItem(icon))
+    replaceIndex++
   }
 
   let coverPlaceholder = original.cover
   if (cover) {
-    coverPlaceholder = 'metafile://$[1]'
+    coverPlaceholder = `metafile://$[${replaceIndex}]`
     attachments.push(await FileToAttachmentItem(cover))
+    replaceIndex++
   }
 
   const admins = original.admins
@@ -288,17 +292,24 @@ export const createChannel = async (
     nodeName: NodeName.SimpleGroupCreate,
     data: JSON.stringify(dataCarrier),
     publickey: form.publicKey,
+    txId: form.txId,
   }
 
   // 3. 发送节点
-  const res = await sdk.createBrfcChildNode(node, { useQueue: true, subscribeId })
-  console.log({ res })
+  try {
+    const res = await sdk.createBrfcChildNode(node, { useQueue: true, subscribeId })
+    console.log({ res })
 
-  if (res === null) {
-    return { status: 'canceled' }
+    if (res === null) {
+      return { status: 'canceled' }
+    }
+
+    return { status: 'success', subscribeId }
+  } catch (err) {
+    console.log(err)
+    ElMessage.error('创建群组失败')
+    return { status: 'failed' }
   }
-
-  return { status: 'success', subscribeId }
 }
 
 export const verifyPassword = (key: string, hashedPassword: string, creatorMetaId: string) => {

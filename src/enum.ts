@@ -395,3 +395,9 @@ export enum ChannelRoomType {
   FT = '3',
   ETHNFT = '2001',
 }
+
+export enum Chains {
+  MVC = 'mvc',
+  ETH = 'eth',
+  Goerli = 'goerli',
+}
