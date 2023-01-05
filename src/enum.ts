@@ -387,3 +387,11 @@ export enum ToCurrency {
   USD = 'USD',
   MVC = 'MVC',
 }
+
+export enum ChannelRoomType {
+  Publice = '',
+  Private = '1',
+  NFT = '2',
+  FT = '3',
+  ETHNFT = '2001',
+}

@@ -99,6 +99,7 @@ export const getChannels = async (params: any): Promise<Channel[]> => {
       return res.data.results.items.map((channel: any) => {
         channel.id = channel.groupId
         channel.name = channel.roomName
+        channel.uuid = channel.txId // 用于key,不修改
         return channel
       })
     }

@@ -256,6 +256,7 @@ export const createChannel = async (
   form: any,
   communityId: string,
   sdk: SDK,
+  subscribeId: string,
   selfMetaId?: string
 ) => {
   // communityId, groupName, groupNote, timestamp, groupType, status, type, codehash, genesis, limitAmount
@@ -286,10 +287,10 @@ export const createChannel = async (
   const node = {
     nodeName: NodeName.SimpleGroupCreate,
     data: JSON.stringify(dataCarrier),
+    publickey: form.publicKey,
   }
 
   // 3. 发送节点
-  const subscribeId = realRandomString(32)
   const res = await sdk.createBrfcChildNode(node, { useQueue: true, subscribeId })
   console.log({ res })
 

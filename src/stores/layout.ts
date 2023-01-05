@@ -1,3 +1,4 @@
+import { Channel } from '@/@types/talk'
 import { checkUserLogin } from '@/utils/util'
 import { defineStore } from 'pinia'
 
