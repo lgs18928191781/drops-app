@@ -289,6 +289,7 @@ export const createChannel = async (
     nodeName: NodeName.SimpleGroupCreate,
     data: JSON.stringify(dataCarrier),
     publickey: form.publicKey,
+    txId: form.txId,
   }
 
   // 3. 发送节点
