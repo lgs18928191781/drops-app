@@ -619,5 +619,6 @@
     "Confirm Pay": "确认支付",
     "Pay Amount": "支付金额"
   },
-  "Address": "地址"
+  "Address": "地址",
+  "metaidIsBinded": "MetaId已被其他账户绑定,请检查后重试"
 }

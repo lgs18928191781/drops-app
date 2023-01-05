@@ -622,5 +622,6 @@
     "Confirm Pay": "Confirm Pay",
     "Pay Amount": "Pay Amount"
   },
-  "Address": "Address"
+  "Address": "Address",
+  "metaidIsBinded": "MetaId has been bound by another account, please check and try again"
 }

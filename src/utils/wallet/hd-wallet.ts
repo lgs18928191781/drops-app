@@ -862,6 +862,7 @@ export class HdWallet {
         tokenIndex: params.tokenIndex,
         noBroadcast: !option!.isBroadcast,
       })
+      debugger
       resolve(result)
     })
 
@@ -2203,6 +2204,7 @@ export class HdWallet {
     const { reqswapargs, years, op_code, metaid, address } = params
 
     const mvcToAddress = reqswapargs.mvcToAddress
+    const nftToAddress = reqswapargs.nftToAddress
     const txFee = reqswapargs.txFee
     const requestIndex = reqswapargs.requestIndex
     const metaNameOpFee = new Decimal(reqswapargs.feePerYear).mul(years).toNumber()
@@ -2252,12 +2254,24 @@ export class HdWallet {
         }
       }
     } else if (MetaNameReqCode.renew == op_code) {
-      const nftRawTx = ''
+      debugger
+      const nftRawTx = await this.transferNft(
+        {
+          receiverAddress: nftToAddress,
+          codehash: reqswapargs.nftCodeHash,
+          genesis: reqswapargs.nftGenesisID,
+          tokenIndex: reqswapargs.nftTokenIndex,
+        },
+        {
+          isBroadcast: false,
+        }
+      )
+      debugger
       const params: MetaNameRequestDate = {
         requestIndex,
         mvcRawTx,
         mvcOutputIndex,
-        nftRawTx,
+        nftRawTx: nftRawTx.txHex,
         nftOutputIndex,
         years,
       }
