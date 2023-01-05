@@ -21,7 +21,7 @@
     >
       <Icon
         :name="channelSymbol(channel)"
-        class="w-5 h-4 text-dark-400 dark:text-gray-200"
+        class="w-5 h-4 text-dark-400 dark:text-gray-200 shrink-0"
         :class="talk.channelType(channel) === 'FT' ? 'py-0.75' : ''"
       />
 
@@ -30,8 +30,7 @@
       </div>
 
       <button
-        class="hover:text-dark-800 dark:hover:text-white text-dark-300 dark:text-gray-400 mr-2"
-        :class="[channel.id === talk.activeChannelId ? '' : 'hidden group-hover:!block']"
+        class="hover:text-dark-800 dark:hover:text-white text-dark-300 dark:text-gray-400 mr-2 hidden group-hover:!block"
         @click.stop="editChannel"
         v-if="talk.isAdmin()"
       >
@@ -39,8 +38,7 @@
       </button>
 
       <button
-        class="hover:text-dark-800 dark:hover:text-white text-dark-300 dark:text-gray-400"
-        :class="[channel.id === talk.activeChannelId ? '' : 'hidden group-hover:!block']"
+        class="hover:text-dark-800 dark:hover:text-white text-dark-300 dark:text-gray-400 hidden group-hover:!block"
         @click.stop="popInvite(channel.id)"
       >
         <Icon name="user_plus" class="w-4 h-4" />
