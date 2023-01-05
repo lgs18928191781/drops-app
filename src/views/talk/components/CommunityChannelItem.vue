@@ -135,49 +135,50 @@ const popInvite = (channelId: string) => {
 
 async function editChannel() {
   loading.value = true
-  const channel = props.channel as Channel
-  const chanin =
-    channel.roomType === ChannelRoomType.Publice || channel.roomType === ChannelRoomType.Private
-      ? null
-      : channel.roomType === ChannelRoomType.NFT || channel.roomType === ChannelRoomType.FT
-      ? 'mvc'
-      : import.meta.env.VITE_ETH_CHAIN
-  let nft: null | UserNFTItem = null
-  let ft: null | FungibleToken = null
+  // const channel = props.channel as Channel
+  // const chanin =
+  //   channel.roomType === ChannelRoomType.Publice || channel.roomType === ChannelRoomType.Private
+  //     ? null
+  //     : channel.roomType === ChannelRoomType.NFT || channel.roomType === ChannelRoomType.FT
+  //     ? 'mvc'
+  //     : import.meta.env.VITE_ETH_CHAIN
+  // let nft: null | UserNFTItem = null
+  // let ft: null | FungibleToken = null
 
-  if (channel.roomType === ChannelRoomType.NFT || channel.roomType === ChannelRoomType.ETHNFT) {
-    const res = await GetGenesis({
-      chain: chanin!,
-      codehash: channel.roomCodeHash!,
-      genesis: channel.roomGenesis!,
-    })
-    if (res.code === 0) {
-      nft = res.data.results.items[0]
-    }
-  } else if (channel.roomType === ChannelRoomType.FT) {
-    const res = await GetFT({
-      chain: chanin,
-      codehash: channel.roomCodeHash,
-      genesis: channel.roomGenesis,
-    })
-    if (res.code === 0) {
-      ft = res.data.results.items[0]
-    }
-  }
+  // if (channel.roomType === ChannelRoomType.NFT || channel.roomType === ChannelRoomType.ETHNFT) {
+  //   const res = await GetGenesis({
+  //     chain: chanin!,
+  //     codehash: channel.roomCodeHash!,
+  //     genesis: channel.roomGenesis!,
+  //   })
+  //   if (res.code === 0) {
+  //     nft = res.data.results.items[0]
+  //   }
+  // } else if (channel.roomType === ChannelRoomType.FT) {
+  //   const res = await GetFT({
+  //     chain: chanin,
+  //     codehash: channel.roomCodeHash,
+  //     genesis: channel.roomGenesis,
+  //   })
+  //   if (res.code === 0) {
+  //     ft = res.data.results.items[0]
+  //   }
+  // }
+
+  // const form = useChannelFormStore()
+  // form.type = GroupChannelType.PublicText
+  // form.name = channel.name
+  // form.password = ''
+  // form.chain = chanin
+  // form.nft = nft
+  // form.ft = ft
+  // form.amount = 1
+  // form.adminOnly = channel.chatSettingType ? true : false // 发言设置，0：所有人，1：管理员
+  // form.publicKey = channel.roomPublicKey
+  // form.uuid = channel.uuid
 
   const form = useChannelFormStore()
-  form.type = GroupChannelType.PublicText
-  form.name = channel.name
-  form.password = ''
-  form.chain = chanin
-  form.nft = nft
-  form.ft = ft
-  form.amount = 1
-  form.adminOnly = channel.chatSettingType ? true : false // 发言设置，0：所有人，1：管理员
-  form.publicKey = channel.roomPublicKey
-  form.uuid = channel.uuid
-  form.txId = channel.txId
-
+  await form.recover(props.channel)
   if (props.channel.roomType === '1') {
     layout.isShowCreatePublicChannelModal = true
   } else {

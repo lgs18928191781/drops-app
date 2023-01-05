@@ -112,7 +112,7 @@ export const getChannelMessages = async (
   type?: string
 ): Promise<any> => {
   params = params || {}
-  params.pageSize = '100'
+  params.pageSize = '30'
   params.page = '1'
   const selfMetaId = params.metaId
   delete params.metaId

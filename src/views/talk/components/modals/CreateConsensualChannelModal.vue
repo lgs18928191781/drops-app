@@ -380,7 +380,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ChannelPublicityType, GroupChannelType, ShowControl } from '@/enum'
+import { Chains, ChannelPublicityType, GroupChannelType, ShowControl } from '@/enum'
 import BaseModal from './BaseModal.vue'
 import {
   TabList,
@@ -441,7 +441,7 @@ const chains = ref([
     id: 1,
     name: 'MVC',
     icon: MVC,
-    value: 'mvc',
+    value: 'mvc' as Chains,
   },
 ])
 const selectedChain = ref(chains.value[0])
@@ -473,6 +473,13 @@ const nftSeries: Ref<any[]> = ref([])
 const ftSeries: Ref<FungibleToken[]> = ref([])
 
 const form = useChannelFormStore()
+if (form.type === GroupChannelType.NFT) {
+  selectedTab.value = 0
+} else if (form.type === GroupChannelType.FT) {
+  selectedTab.value = 1
+} else if (form.type === GroupChannelType.Password) {
+  selectedTab.value = 2
+}
 changeTab(selectedTab.value)
 const talk = useTalkStore()
 const userStore = useUserStore()
@@ -494,12 +501,25 @@ const tryCreateChannel = async () => {
 
   // 添加占位频道
   if (res.status === 'success') {
+    let roomJoinType
+    if (form.type === GroupChannelType.PublicText) {
+      roomJoinType = ''
+    } else if (form.type === GroupChannelType.Password) {
+      roomJoinType = '1'
+    } else if (form.type === GroupChannelType.NFT) {
+      roomJoinType = '2'
+    } else if (form.type === GroupChannelType.FT) {
+      roomJoinType = '3'
+    }
     const newChannel: any = {
       id: 'placeholder_' + realRandomString(8),
       name: form.name,
       isPlaceHolder: true,
-      roomType: ChannelPublicityType.Private,
-      roomJoinType: form.type,
+      roomType:
+        form.type === GroupChannelType.PublicText
+          ? ChannelPublicityType.Public
+          : ChannelPublicityType.Private,
+      roomJoinType,
       uuid: res.subscribeId,
       roomPublicKey: form.publicKey,
       chatSettingType: form.adminOnly ? 1 : 0,
@@ -543,10 +563,8 @@ const selfAddress = computed(() => {
       return userStore.user?.evmAddress as string
     case 'polygon':
       return userStore.user?.evmAddress as string
-      break
     case 'mumbai':
       return userStore.user?.evmAddress as string
-      break
     default:
       return userStore.user!.address
   }
@@ -589,7 +607,7 @@ onMounted(() => {
   if (userStore.user?.evmAddress) {
     chains.value.push({
       id: 2,
-      name: 'Goerli',
+      name: import.meta.env.VITE_ETH_CHAIN,
       icon: ETH,
       value: import.meta.env.VITE_ETH_CHAIN,
     })
