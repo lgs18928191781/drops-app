@@ -349,7 +349,7 @@ function submitForm() {
             evmAddress: props.thirdPartyWallet.address,
             chainId: window.ethereum.chainId,
           })
-          debugger
+
           if (getMnemonicRes?.code === 0 && getMnemonicRes.data) {
             res = await loginByMnemonic(getMnemonicRes.data.evmEnMnemonic, form.pass)
           }

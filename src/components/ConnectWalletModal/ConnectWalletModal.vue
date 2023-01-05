@@ -726,6 +726,7 @@ async function connectWalletConnect() {
         .toLocaleUpperCase()}`,
       accounts[0],
     ])
+
     if (res) {
       rootStore.$patch({ isShowLogin: false })
       await onThreePartLinkSuccess({

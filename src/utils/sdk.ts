@@ -1718,6 +1718,19 @@ export class SDK {
     return this.wallet?.ftGenesis()
   }
 
+  async sendMoney(payTo: Array<{ amount: number; address: string }>) {
+    const Utxos = await this.wallet?.provider.getUtxos(this.wallet.wallet.xpubkey.toString())
+
+    const res = await this.wallet?.makeTx({
+      utxos: Utxos,
+      opReturn: [],
+      change: this.wallet.wallet.rootAddress,
+      payTo: payTo,
+    })
+
+    await this.wallet?.provider.broadcast(res.toString(), true)
+  }
+
   MetaNameBeforeReq(params: { name: string; op: number }) {
     return this.wallet?.MetaNameBeforeReq(params)
   }

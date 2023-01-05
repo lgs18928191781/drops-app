@@ -58,8 +58,8 @@ export enum MetaNameReqType {
 
 export enum MetaNameReqCode {
   register = 1,
-  renew = 2,
-  updataInfo = 3,
+  renew = 21,
+  updataInfo = 22,
 }
 
 export interface Reqswapargs {
@@ -2201,6 +2201,7 @@ export class HdWallet {
       amount: number
     }>
   }) {
+    debugger
     const { reqswapargs, years, op_code, metaid, address } = params
 
     const mvcToAddress = reqswapargs.mvcToAddress
