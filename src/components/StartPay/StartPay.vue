@@ -2,7 +2,7 @@
   <template v-if="modelValue">
     <!-- 订单支付 -->
     <ElDrawer
-      title="订单支付"
+      :title="$t('PayModal.Order Pay')"
       v-model="isShowPayIframe"
       direction="btt"
       @close="onPayIframeClose"
@@ -58,12 +58,12 @@
       @close="wechatPayQRCodeOnclose"
     >
       <div class="qrcode-pay">
-        <div class="ttitle">购买 {{ nft.val?.nftName }}</div>
+        <div class="ttitle">{{ $t('PayModal.Buy') + '&nbsp;' + nft.val?.nftName }}</div>
         <div class="orderAmount">
           <div class="top flex flex-align-center">
             <div class="left flex1">
-              <div class="label">订单金额</div>
-              <div class="tips">支付成功后，可在“我的NFT”中查看</div>
+              <div class="label">{{ $t('PayModal.Order Amount') }}</div>
+              <div class="tips">{{ $t('PayModal.PayTips1') }}</div>
             </div>
             <div class="right">
               <NFTAmountVue
@@ -80,7 +80,8 @@
           <img :src="qrcodeData" />
           <div class="paycode-tips flex flex-align-center flex-pack-center">
             <template v-if="isQrcodeInTime">
-              请使用支付宝扫码支付
+              {{ $t('PayModal.PayTips2') }}
+
               <div class="countdown">
                 <!-- <VueCountdown
                 :time="60 * 1000"
@@ -93,7 +94,7 @@
               </VueCountdown> -->
               </div>
             </template>
-            <template v-else>付款二维码已失效</template>
+            <template v-else>{{ $t('PayModal.PayTips3') }}</template>
           </div>
         </div>
 
@@ -101,14 +102,14 @@
           <ElIcon class="is-loading">
             <Loading />
           </ElIcon>
-          支付确认中，请勿关闭窗口
+          {{ $t('PayModal.PayTips4') }}
         </div>
         <div class="other-tips">
-          等待太久？<a @click="$router.back()">我已支付成功，继续浏览其他NFT</a
-          >（可约1分钟后前往我的NFT查看）
+          {{ $t('PayModal.PayTips5') }}<a @click="$router.back()">{{ $t('PayModal.PayTips6') }}</a
+          >{{ $t('PayModal.PayTips7') }}
         </div>
         <div class="other-tips">
-          二维码有效期为1分钟，请尽快扫码支付(如二维码超过有效期后需等待3分钟方可重新发起订单)
+          {{ $t('PayModal.PayTips8') }}
         </div>
       </div>
     </ElDrawer>
@@ -117,7 +118,7 @@
     <ElDialog
       v-model="balancePay.visible"
       center
-      title="余额支付"
+      :title="$t('PayModal.Balance Pay')"
       :close-on-click-modal="false"
       @close="onBalancePayClose"
     >
@@ -131,7 +132,7 @@
         <ElInput
           tyype="number"
           v-model="balancePay.params.smsCode"
-          placeholder="请填写短信验证码"
+          :placeholder="$t('PayModal.Enter Code ')"
         />
         <div class="operate flex">
           <ElButton
@@ -179,6 +180,7 @@ import { ElMessage, LoadingParentElement } from 'element-plus'
 import { GetOrder, GetOrderStatus, PayETHByME, UpdatePay } from '@/api/wxcore'
 import { useUserStore } from '@/stores/user'
 import { ethers } from 'ethers'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   modelValue: boolean
@@ -193,6 +195,8 @@ const rootStore = useRootStore()
 
 const emit = defineEmits(['success', 'fail', 'update:modelValue'])
 const nft: { val: null | NFTApiGetNFTDetailResDataItem } = inject('nft')!
+const i18n = useI18n()
+
 const payStatusType = {
   [PayStatus.Ing]: 'loading',
   [PayStatus.Fail]: 'error',
@@ -202,20 +206,20 @@ const useStore = useUserStore()
 
 const payStatusTitle = {
   [PayStatus.Ing]: '',
-  [PayStatus.Fail]: '支付失败',
-  [PayStatus.Success]: '支付成功',
+  [PayStatus.Fail]: i18n.t('PayModal.Pay Fail'),
+  [PayStatus.Success]: i18n.t('PayModal.Pay Success'),
 }
 
 const payStatusModelTitle = {
-  [PayStatus.Ing]: '正在支付中..',
-  [PayStatus.Fail]: '支付失败',
-  [PayStatus.Success]: '支付成功',
+  [PayStatus.Ing]: i18n.t('PayModel.Paying'),
+  [PayStatus.Fail]: i18n.t('PayModal.Pay Fail'),
+  [PayStatus.Success]: i18n.t('PayModal.Pay Success'),
 }
 
 const payStatusButtonText = {
   [PayStatus.Ing]: '',
-  [PayStatus.Fail]: '确认',
-  [PayStatus.Success]: '完成',
+  [PayStatus.Fail]: i18n.t('Confirm'),
+  [PayStatus.Success]: i18n.t('PayModal.Finish'),
 }
 
 const payStatusButtonFunction = {
@@ -285,28 +289,26 @@ function drawePayCode() {
     try {
       if (props.url) {
         if (props.payPlatform === PayPlatform.ETH) {
-          if (window.ethereum) {
-            await CheckMetaMaskAccount(useStore.user?.evmAddress)
-            const tx = await window.ethereum!.request!({
-              method: 'eth_sendTransaction',
-              params: [
-                {
-                  value: ethers.utils.hexValue(new Decimal(props.amount).toNumber()),
-                  to: props.url,
-                  from: useStore.user?.evmAddress,
-                },
-              ],
-            })
-            const res = await UpdatePay({
-              order_id: props.orderId,
-              tx_hash: tx,
-              from_coin_address: useStore.user!.evmAddress!,
-              product_type: props.product_type,
-            })
-            if (res.code === 0) {
-              payResult.status = PayStatus.Success
-              isShowPayStatusModal.value = true
-            }
+          await CheckMetaMaskAccount(useStore.user!.evmAddress!)
+          const tx = await window.ethereum!.request!({
+            method: 'eth_sendTransaction',
+            params: [
+              {
+                value: ethers.utils.hexValue(new Decimal(props.amount + '000000000').toNumber()),
+                to: props.url,
+                from: useStore.user?.evmAddress,
+              },
+            ],
+          })
+          const res = await UpdatePay({
+            order_id: props.orderId,
+            tx_hash: tx,
+            from_coin_address: useStore.user!.evmAddress!,
+            product_type: props.product_type,
+          })
+          if (res.code === 0) {
+            payResult.status = PayStatus.Success
+            isShowPayStatusModal.value = true
           }
         }
         // 余额支付
@@ -314,7 +316,7 @@ function drawePayCode() {
           const getOrdetAmount = await GetOrderAmout({
             address: useStore.user!.address!,
             oriCustomerOrderNo: props.url,
-          }).catch(() => reject(Error('获取订单金额失败')))
+          }).catch(() => reject(Error(i18n.t('PayModal.Get Order Amount Fail'))))
           if (getOrdetAmount?.success) {
             balancePay.params.oriCustomerOrderNo = props.url
             balancePay.params.oriTotalAmount = getOrdetAmount.data.total_amount
@@ -403,7 +405,7 @@ function drawePayCode() {
         }
         resolve()
       } else {
-        throw new Error('平台异常,请稍后重试(6001)')
+        throw new Error(i18n.t('PayModal.Platform exception'))
       }
     } catch (error) {
       reject(error)
@@ -535,7 +537,9 @@ function onAppPayCallBack(res: any) {
       payResult.status = PayStatus.Fail
     }
   } catch (error) {
-    ElMessage.error('解析App回调参数错误, ' + (error as any).message)
+    ElMessage.error(
+      i18n.t('PayModal.Parsing App callback parameter error') + (error as any).message
+    )
   }
 }
 

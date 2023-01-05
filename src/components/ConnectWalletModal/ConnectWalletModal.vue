@@ -5,7 +5,7 @@
     :close-on-click-modal="false"
     :show-close="!loading"
     class="none-header"
-    @close="rootStore.$patch({ isShowLogin: false })"
+    @close="onModalClose"
   >
     <div class="login-warp flex">
       <a
@@ -21,14 +21,15 @@
       <div class="flex1">
         <!-- 选择钱包 -->
         <div class="connect-wallet flex flex-v" v-if="status === ConnectWalletStatus.Watting">
-          <div class="connect-wallet-section flex1" v-for="(item, index) in wallets" :key="index">
+          <div class="connect-wallet-section" v-for="(item, index) in wallets" :key="index">
             <div class="title">{{ item.title() }}</div>
-            <div
-              class="btn-list flex flex-v"
-              v-for="(wallet, walletIndex) in item.list"
-              :key="walletIndex"
-            >
-              <div class="main-border flex flex-align-center" @click="wallet.fun()">
+            <div class="btn-list flex flex-v">
+              <div
+                class="main-border flex flex-align-center"
+                @click="wallet.fun()"
+                v-for="(wallet, walletIndex) in item.list"
+                :key="walletIndex"
+              >
                 <img class="icon" :src="wallet.icon" />
                 {{ wallet.name() }}
                 <span class="desc">{{ wallet.desc() }}</span>
@@ -255,7 +256,29 @@ const wallets = [
   },
   {
     title: () => {
-      return i18n.t('Login.useMetaIdWallet')
+      return i18n.t('Login.connectMetaIdWallet')
+    },
+    list: [
+      {
+        name: () => {
+          return i18n.t('Login.connectMetaIdWallet')
+        },
+        desc: () => {
+          return ''
+        },
+        icon: IconLine,
+        fun: () => {
+          type.value = 'login'
+          // rootStore.$patch({ isShowLogin: false })
+          // isShowLoginAndRegister.value = true
+          status.value = ConnectWalletStatus.UseMetaId
+        },
+      },
+    ],
+  },
+  {
+    title: () => {
+      return i18n.t('Login.No wallet')
     },
     list: [
       {
@@ -268,21 +291,6 @@ const wallets = [
         icon: IconAdd,
         fun: () => {
           type.value = 'register'
-          status.value = ConnectWalletStatus.UseMetaId
-        },
-      },
-      {
-        name: () => {
-          return i18n.t('Login.connectWallet')
-        },
-        desc: () => {
-          return ''
-        },
-        icon: IconLine,
-        fun: () => {
-          type.value = 'login'
-          // rootStore.$patch({ isShowLogin: false })
-          // isShowLoginAndRegister.value = true
           status.value = ConnectWalletStatus.UseMetaId
         },
       },
@@ -734,6 +742,16 @@ async function connectWalletConnect() {
   }
 
   // connector.killSession()
+}
+
+function onModalClose() {
+  rootStore.$patch({ isShowLogin: false })
+  // 如果在首页登录完，要自动跳转到buzz
+  if (userStore.isAuthorized && route.name === 'home') {
+    router.push({
+      name: 'buzz',
+    })
+  }
 }
 
 // onMounted(async () => {

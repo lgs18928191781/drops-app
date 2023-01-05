@@ -529,6 +529,7 @@ async function onFollow(
 }
 
 function onPlay(params: { file: string; type: 'audio' | 'video' }) {
+  debugger
   if (playFile.value === params.file) playFile.value = ''
   else playFile.value = params.file
   if (params.type === 'audio' && playFile.value) {

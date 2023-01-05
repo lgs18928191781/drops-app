@@ -23,6 +23,10 @@
             <div class="lable">{{ payType }}</div>
           </div>
           <div class="text">{{ i18n.t('SDK.payconfirm.Payment required') }}</div>
+          <div class="me-tips">
+            {{ i18n.t('SDK.payconfirm.ME is used to pay for Gas Fee') }}
+            <a @click="isShowMEIntro = true">{{ i18n.t('SDK.payconfirm.Learn More') }}</a>
+          </div>
         </div>
       </div>
 
@@ -64,6 +68,8 @@
 
     <!-- ME充值 -->
     <RechargeMeVue v-model="isShowMERecharge" />
+
+    <MEIntroVue v-model="isShowMEIntro" :i18n="i18n" />
   </ElDialog>
 </template>
 
@@ -72,6 +78,7 @@ import { SdkPayType } from '@/enum'
 import { ref } from 'vue'
 import { Router } from 'vue-router'
 import RechargeMeVue from '../LoginedUserOperate/RechargeMe.vue'
+import MEIntroVue from '../MEIntro/MEIntro.vue'
 
 interface Props {
   confirmVisible: boolean
@@ -89,6 +96,7 @@ const isShow = ref(true)
 const isShowConformCheck = ref(props.confirmVisible)
 const emit = defineEmits(['changeConfirmVisible', 'confirm', 'cancel', 'recharge'])
 const isShowMERecharge = ref(false)
+const isShowMEIntro = ref(false)
 
 function changeConfirmVisible() {
   isShowConformCheck.value = !isShowConformCheck.value
