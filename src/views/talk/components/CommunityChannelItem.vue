@@ -71,30 +71,24 @@ const props = withDefaults(defineProps<Props>(), {})
 const loading = ref(false)
 
 // 如果是占位符，则使用订阅id来观察ws消息
-if (props.channel.isPlaceHolder) {
-  const jobsStore = useJobsStore()
-  watch(
-    () => jobsStore.waitingNotify.find(job => job.id === props.channel.uuid)?.status,
-    status => {
-      if (status === JobStatus.Success) {
-        // 删除占位符标识，并写入真正的channelId
-        const result = jobsStore.waitingNotify.find(job => job.id === props.channel.uuid)
-        debugger
-
-        props.channel.isPlaceHolder = false
-        props.channel.id = jobsStore.waitingNotify
-          .find(job => job.id === props.channel.uuid)
-          ?.steps.at(-1)?.metanetId
-      } else if (status === JobStatus.Failed) {
-        // 从列表中删除
-        talk.activeCommunityChannels.splice(
-          talk.activeCommunityChannels.findIndex(channel => channel.id === props.channel.id),
-          1
-        )
-      }
+const jobsStore = useJobsStore()
+watch(
+  () => jobsStore.waitingNotify.find(job => job.id === props.channel.uuid)?.status,
+  status => {
+    if (status === JobStatus.Success) {
+      const job = jobsStore.waitingNotify.find(job => job.id === props.channel.uuid)
+      props.channel.id = job!.steps.at(-1)?.metanetId
+      // 删除占位符标识，并写入真正的channelId
+      props.channel.isPlaceHolder = false
+    } else if (status === JobStatus.Failed) {
+      // 从列表中删除
+      talk.activeCommunityChannels.splice(
+        talk.activeCommunityChannels.findIndex(channel => channel.id === props.channel.uuid),
+        1
+      )
     }
-  )
-}
+  }
+)
 
 const goChannel = () => {
   if (props.channel.isPlaceHolder) {
