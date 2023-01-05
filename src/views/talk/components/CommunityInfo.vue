@@ -102,6 +102,25 @@
                   </div>
                 </template>
 
+                <!-- 功能频道 -->
+                <!-- <div class="flex justify-between">
+                  <div class="uppercase text-dark-400 dark:text-gray-200 text-xs">
+                    {{ $t('Talk.Community.general_channels') }}
+                  </div>
+                  <Icon
+                    name="plus"
+                    class="w-4 h-4 text-black dark:text-white cursor-pointer"
+                    v-if="talk.isAdmin()"
+                    @click="layout.isShowCreatePublicChannelModal = true"
+                  />
+                </div>
+
+                <div
+                  class="py-3 px-2 main-border only-bottom cursor-pointer !bg-white dark:!bg-gray-700 relative group faded !text-dark-800 dark:!text-gray-100"
+                >
+                  123
+                </div> -->
+
                 <!-- 公共频道 -->
                 <div class="flex justify-between">
                   <div class="uppercase text-dark-400 dark:text-gray-200 text-xs">

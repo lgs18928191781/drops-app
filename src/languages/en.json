@@ -175,8 +175,9 @@
       "atme": "Contacts",
       "feed": "Buzz",
       "choose_nft_series": "Select NFT Series",
+      "general_channels": "General Channels",
       "edit_public_channel": "Edit Public Channel",
-      "edit_consensual_channel": "Create Pass Channel"
+      "edit_consensual_channel": "Edit Pass Channel"
     },
     "Input": {
       "nft_stickers": "NFT Emoji",
