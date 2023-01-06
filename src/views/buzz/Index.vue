@@ -42,13 +42,13 @@
     "
   >
     <template #recommendCommunity>
-      <CommunityVue v-if="myFollowNum > 0 && myFollowNum < 10" />
+      <CommunityVue v-if="myFollowNum > 0" />
     </template>
     <template #recommendFollow>
-      <FollowVue v-if="myFollowNum > 0 && myFollowNum < 10" />
+      <FollowVue v-if="myFollowNum > 0" />
     </template>
     <template #recommendGuide>
-      <GuideVue v-if="myFollowNum > 0 && myFollowNum < 10" />
+      <GuideVue v-if="myFollowNum > 0" />
     </template>
   </BuzzListVue>
 </template>
@@ -65,8 +65,6 @@ import { Mitt, MittEvent } from '@/utils/mitt'
 import CommunityVue from './components/recommend/Community.vue'
 import FollowVue from './components/recommend/Follow.vue'
 import GuideVue from './components/recommend/Guide.vue'
-import { BuzzItem } from '@/@types/common'
-
 // interface Props {}
 // const props = withDefaults(defineProps<Props>(), {})
 

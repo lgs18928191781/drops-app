@@ -288,11 +288,14 @@ function drawePayCode() {
     try {
       if (props.url) {
         if (props.payPlatform === PayPlatform.ETH) {
+          debugger
           const tx = await window.ethereum!.request!({
             method: 'eth_sendTransaction',
             params: [
               {
-                value: ethers.utils.hexValue(new Decimal(props.amount + '000000000').toNumber()),
+                value: ethers.utils.hexValue(
+                  new Decimal(props.amount).mul(Math.pow(10, 9)).toNumber()
+                ),
                 to: props.url,
                 from: useStore.user?.evmAddress,
               },

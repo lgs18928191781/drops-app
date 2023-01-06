@@ -135,6 +135,9 @@
                         <img :src="wallet.icon" />
                       </div>
                       <div class="name">{{ wallet.name }}</div>
+                      <span class="address" v-if="wallet.address" @click="copy(wallet.address)">{{
+                        wallet.address.slice(0, 6) + '...' + wallet.address.slice(-6)
+                      }}</span>
                     </div>
                     <div class="value">
                       <template v-if="wallet.loading">
@@ -357,6 +360,7 @@ const wallets = reactive([
         icon: ME,
         name: 'ME',
         value: 0,
+        address: '',
         price: function() {
           const rate = rootStore.exchangeRate.find(item => item.symbol === 'ME')
           if (rate) {
@@ -373,8 +377,9 @@ const wallets = reactive([
     list: [
       {
         icon: ETH,
-        name: import.meta.env.VITE_ETH_CHAIN,
+        name: import.meta.env.VITE_ETH_CHAIN.toUpperCase(),
         value: 0,
+        address: userStore.user!.evmAddress || '',
         price: function() {
           const rate = rootStore.exchangeRate.find(
             item => item.symbol === import.meta.env.VITE_ETH_CHAIN
@@ -390,6 +395,7 @@ const wallets = reactive([
         icon: MVC,
         name: 'SPACE',
         value: 0,
+        address: userStore.user!.address,
         price: function() {
           const rate = rootStore.exchangeRate.find(item => item.symbol === 'mvc')
           if (rate) {

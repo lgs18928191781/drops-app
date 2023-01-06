@@ -327,7 +327,8 @@
       "Learn the show function": "Explore show3 Features",
       "Download showApp": "Download show3"
     },
-    "Your reply": "Write a comment..."
+    "Your reply": "Write a comment...",
+    "Show3 Faq": "Show3 FAQ"
   },
   "Follow": "Follow",
   "walletError": "Signing failed, unable to log in to wallet",
@@ -626,9 +627,9 @@
   "shareText1": "Come see this signed and limited edition digital creation today!",
   "copyShareSuccess": "Copied share link",
   "User": {
-    "Backwall": "Backwall",
-    "Costume": "Costume",
-    "Artifacts": "Artifacts",
+    "Backwall": "BG",
+    "Costume": "Costumes",
+    "Artifacts": "Treature",
     "Pet": "Pet",
     "Home": "Home",
     "Chat": "Chat"

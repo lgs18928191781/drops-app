@@ -29,7 +29,10 @@
             <Icon name="link" />
           </div>
           <div class="cont flex1">
-            <div class="name">{{ shareInfo.val!.title }}</div>
+            <div class="name flex flex-align-center" :class="{ metaName: isMetaName }">
+              <span class="text">{{ shareInfo.val!.title }}</span>
+              <TagSvg v-if="isMetaName" />
+            </div>
             <div class="drsc">{{ shareInfo.val!.detail }}</div>
           </div>
           <Icon name="down" class="right" />
@@ -46,6 +49,7 @@ import { reactive, ref } from 'vue'
 import { GetPublishShare } from '@/api/aggregation'
 import { usePostTagStore } from '@/stores/buzz/tag'
 import { useRouter } from 'vue-router'
+import TagSvg from '@/assets/svg/tag_nft.svg'
 
 interface Props {
   buzz: BuzzItem
@@ -56,6 +60,7 @@ const userStore = useUserStore()
 const isSkeleton = ref(true)
 const postTagStore = usePostTagStore()
 const router = useRouter()
+const isMetaName = ref(false)
 
 function getShareInfo() {
   return new Promise<void>(async resolve => {
@@ -64,6 +69,12 @@ function getShareInfo() {
     })
     if (res?.code === 0) {
       shareInfo.val = res.data
+      if (
+        shareInfo.val!.shareIdType === 'communityId/channelId' ||
+        shareInfo.val!.shareIdType === 'communityId'
+      ) {
+        isMetaName.value = true
+      }
       resolve()
     }
   })

@@ -286,7 +286,7 @@ const contactIcon = reactive([
   },
   {
     icon: footIcon4,
-    link: 'mailto:marketing@show.sv',
+    link: 'mailto:official@show3.io',
   },
 ])
 const records = reactive([

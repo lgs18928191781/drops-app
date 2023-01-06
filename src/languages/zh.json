@@ -369,7 +369,8 @@
       "Learn the show function": "学习 Show 功能",
       "Download showApp": "下载showApp"
     },
-    "Your reply": "你的评论~"
+    "Your reply": "你的评论~",
+    "Show3 Faq": "Show3 常见问题"
   },
   "Follow": "关注",
   "walletError": "签名失败,无法登录钱包",
@@ -567,9 +568,9 @@
   "Request Timeout": "请求超时，请稍后再试",
   "niceWarning": "温馨提示",
   "offsaleConfirm": "你确认要就下架",
-  "group1": "Show: NFTize \n 你的社交生活",
+  "group1": "show: NFT化你的社交生活",
   "group1-desc": "首个完全去中心化的以NFT为核心的Web3 \n 社交平台",
-  "group1-foot-title": "第一个面向所有人的无障碍 Web3 社交平台。",
+  "group1-foot-title": "第一个面向所有人的无门槛Web3社交平台",
   "page-two-title": "参与 Social & Mint 革命",
   "Home": {
     "Users": "用户",

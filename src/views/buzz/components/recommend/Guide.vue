@@ -28,6 +28,7 @@
 import { useI18n } from 'vue-i18n'
 import AppSVG from '@/assets/svg/guides_icon_app.svg?url'
 import LearnSVG from '@/assets/svg/guides_icon_learn.svg?url'
+import Question from '@/assets/svg/question.svg?url'
 import { useRouter } from 'vue-router'
 
 const i18n = useI18n()
@@ -47,6 +48,18 @@ const guides = [
       router.push({
         name: 'home',
       })
+    },
+  },
+  {
+    icon: Question,
+    name: () => i18n.t('Buzz.Show3 Faq'),
+    fun: () => {
+      window.open(
+        i18n.locale.value === 'zh'
+          ? 'https://docs.qq.com/doc/DQ255YVluY2Zma050'
+          : 'https://docs.qq.com/doc/DQ3ZobHhhSUdORHF3',
+        '_blank'
+      )
     },
   },
 ]

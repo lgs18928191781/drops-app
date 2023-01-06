@@ -34,9 +34,28 @@
         font-size: 16px;
         margin-top: 3px;
 
+        .text {
+            font-weight: bold;
+        }
+
+
+        &.metaName {
+            .text {
+                background: linear-gradient(90deg, #F700FB 0%, #FFC051 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                text-fill-color: transparent
+            }
+        }
+
         .el-skeleton__item {
             height: 16px;
             width: 30%;
+        }
+
+        svg {
+            margin-left: 10px;
         }
     }
 
