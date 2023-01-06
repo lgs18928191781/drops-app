@@ -77,7 +77,10 @@ function getMore() {
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetNFTAvatars({
-      address: pagintion.chain === 'mvc' ? userStore.user!.address : userStore.user!.evmAddress!,
+      address:
+        pagintion.chain === 'mvc'
+          ? userStore.user!.address
+          : userStore.user!.evmAddress! || userStore.user?.ethAddress,
       ...pagintion,
     }).catch(error => {
       ElMessage.error(error.message)

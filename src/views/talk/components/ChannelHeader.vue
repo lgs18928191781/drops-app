@@ -50,19 +50,35 @@
         <LoginedUserOperate />
       </div>
 
-      <div
-        class="text-xs text-dark-300 dark:text-gray-400 bg-dark-100 dark:bg-gray-800 px-3 py-1 ml-1 rounded  hidden lg:block"
-        v-if="talkStore.activeChannel?.id"
-      >
-        {{ shortenMetaId(talkStore.activeChannel.id) }}
+      <div class="ml-1 hidden lg:flex lg:items-center group" v-if="talkStore.activeChannel?.id">
+        <div
+          class="text-xs text-dark-300 dark:text-gray-400 bg-dark-100 dark:bg-gray-800 px-3 py-1 rounded"
+        >
+          {{ shortenMetaId(talkStore.activeChannel.id) }}
+        </div>
+        <Icon
+          name="arrow_up_right"
+          class="w-3 h-3 p-1 box-content text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 hidden group-hover:block cursor-pointer"
+          @click="goCheckTxId(talkStore.activeChannel?.txId)"
+        />
       </div>
 
       <div
-        class="text-xs text-dark-300 dark:text-gray-400 bg-dark-100 dark:bg-gray-800 px-3 py-1 ml-1 rounded  hidden lg:block"
+        class="ml-1 hidden lg:flex lg:items-center group"
         v-else-if="talkStore.isActiveChannelReserved && talkStore.activeCommunityId"
       >
-        {{ shortenMetaId(talkStore.activeCommunityId) }}
+        <div
+          class="text-xs text-dark-300 dark:text-gray-400 bg-dark-100 dark:bg-gray-800 px-3 py-1 rounded"
+        >
+          {{ shortenMetaId(talkStore.activeCommunityId) }}
+        </div>
+        <Icon
+          name="arrow_up_right"
+          class="w-3 h-3 p-1 box-content text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 hidden group-hover:block cursor-pointer"
+          @click="goCheckTxId(talkStore.activeCommunity?.txId)"
+        />
       </div>
+
       <!-- 占位 -->
       <div v-else class="w-1"></div>
       <!-- <div
@@ -119,6 +135,10 @@ const shortenMetaId = (id: string) => {
 
 const createCommunity = () => {
   console.log('createCommunity')
+}
+
+const goCheckTxId = (txId: string) => {
+  window.open(`https://mvcscan.com/tx/${txId}`, '_blank')
 }
 
 const doNothing = () => {}

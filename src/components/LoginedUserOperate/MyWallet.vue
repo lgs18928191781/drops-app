@@ -474,7 +474,10 @@ function changeTab(value: number) {
 
 function getNFTs(isCover = false) {
   return new Promise<void>(async resolve => {
-    if (currentChain.value !== 'mvc' && !userStore.user!.evmAddress) {
+    if (
+      currentChain.value !== 'mvc' &&
+      (!userStore.user!.evmAddress || !userStore.user?.ethAddress)
+    ) {
       genesisList.length = 0
       resolve()
     } else {
@@ -482,7 +485,7 @@ function getNFTs(isCover = false) {
         address:
           chains.find(item => item.value === currentChain.value)!.value === 'mvc'
             ? userStore.user!.address!
-            : userStore.user!.evmAddress!,
+            : userStore.user!.evmAddress! || userStore.user?.ethAddress,
         chain:
           chains.find(item => item.value === currentChain.value)!.value !== 'mvc'
             ? chains.find(item => item.value === currentChain.value)!.value
@@ -563,7 +566,7 @@ function getETHBalance() {
     if (userStore.user!.evmAddress) {
       const res = await GetBalance({
         chain: import.meta.env.VITE_ETH_CHAIN,
-        address: userStore.user!.evmAddress!,
+        address: userStore.user!.evmAddress! || userStore.user?.ethAddress,
       }).catch(error => {
         ElMessage.error(error.message)
         resolve()

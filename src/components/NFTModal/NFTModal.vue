@@ -148,7 +148,10 @@ const title = computed(() => {
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetNFTs({
-      address: tabActive.value === 'mvc' ? userStore.user!.address : userStore.user!.evmAddress!,
+      address:
+        tabActive.value === 'mvc'
+          ? userStore.user!.address
+          : userStore.user!.evmAddress! || userStore.user!.ethAddress,
       chain: tabActive.value,
       ...pagination,
     })
@@ -164,7 +167,10 @@ function getDatas(isCover = false) {
 function getGenesisNTFs(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetGenesisNFTs({
-      address: tabActive.value === 'mvc' ? userStore.user!.address : userStore.user!.evmAddress!,
+      address:
+        tabActive.value === 'mvc'
+          ? userStore.user!.address
+          : userStore.user!.evmAddress! || userStore.user?.ethAddress,
       chain: tabActive.value,
       codehash: currentGenesis.val!.nftCodehash,
       genesis: currentGenesis.val!.nftGenesis,
@@ -181,6 +187,7 @@ function getGenesisNTFs(isCover = false) {
 
 function changeTab(item: { name: string; value: string; disabled: () => boolean }) {
   if (tabActive.value === item.value || item.disabled()) return
+
   tabActive.value = item.value
   isSkeleton.value = true
   pagination.page = 1
