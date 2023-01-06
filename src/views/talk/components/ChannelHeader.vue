@@ -19,7 +19,7 @@
         <div
           :class="[
             talkStore.isActiveChannelReserved ? 'meta-name' : 'text-dark-800 dark:text-white',
-            'text-base leading-tight no-wrap grow whitespace-nowrap truncate mr-2 max-w-[50vw] lg:max-w-[600PX] capitalize',
+            'text-base leading-tight no-wrap grow whitespace-nowrap truncate mr-2 max-w-[35vw] lg:max-w-[600PX] capitalize',
           ]"
         >
           {{

@@ -119,6 +119,34 @@ export const updateCommunity = async (form: any, sdk: SDK) => {
   // return { communityId }
 }
 
+export const switchFollowUser = async (form: any, sdk: SDK) => {
+  const { metaId, address, isFollowed } = form
+  const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
+  const dataCarrier = {
+    createTime: new Date().getTime(),
+    MetaID: metaId,
+    pay: payAmount,
+    payTo: address,
+    status: isFollowed ? -1 : 1,
+  }
+  console.log({ dataCarrier, isFollowed })
+
+  // 2. 构建节点参数
+  const node = {
+    nodeName: NodeName.PayFollow,
+    data: JSON.stringify(dataCarrier),
+    payTo: [
+      {
+        amount: payAmount,
+        address,
+      },
+    ],
+  }
+
+  // 3. 发送节点
+  await sdk.createBrfcChildNode(node)
+}
+
 export const sendInviteBuzz = async (form: any, sdk: SDK) => {
   // shareProtocol, shareId, shareIdType, shareFromMetaID, shareContent, shareContentType, mention
   const shareProtocol = NodeName.SimpleGroupCreate

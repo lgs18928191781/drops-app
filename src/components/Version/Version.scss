@@ -6,4 +6,9 @@
     color: #fff;
     border-radius: 10px;
     padding: 2px 5px;
+
+    .dark & {
+        background: #182333;
+        color: #bfdbfe;
+    }
 }
