@@ -263,7 +263,7 @@ const handleOpenRedPacket = async () => {
   console.log({ redPacketType })
   if (redPacketType === '2') {
     params.address = talk.selfAddress
-  } else if (redPacketType === '2001') {
+  } else if (redPacketType === '2001' || redPacketType === '2002') {
     params.address = userStore.user?.evmAddress
   }
   const redPacketInfo = await getOneRedPacket(params)

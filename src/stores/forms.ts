@@ -200,6 +200,9 @@ export const useChannelFormStore = defineStore('channelForm', {
             this.type = GroupChannelType.NFT
             this.chain = import.meta.env.VITE_ETH_CHAIN as Chains
             break
+          case '2002':
+            this.type = GroupChannelType.NFT
+            this.chain = import.meta.env.VITE_POLYGON_CHAIN as Chains
           default:
             this.type = GroupChannelType.PublicText
         }

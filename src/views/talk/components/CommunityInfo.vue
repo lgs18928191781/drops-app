@@ -48,7 +48,7 @@
               </div>
 
               <div
-                class="mt-1.5 text-xs text-dark-400 dark:text-gray-200 leading-kinda-loose break-all font-normal"
+                class="mt-1.5 text-xs text-dark-400 dark:text-gray-200 leading-kinda-loose break-all font-normal max-h-36 overflow-y-scroll"
               >
                 {{ talk.activeCommunity?.description || $t('Talk.Community.no_introduction') }}
               </div>

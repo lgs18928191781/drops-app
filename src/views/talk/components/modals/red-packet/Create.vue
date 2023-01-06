@@ -458,12 +458,13 @@ import {
 import { ref, watch, Ref, watchEffect, onMounted } from 'vue'
 import { object, number } from 'yup'
 import { useForm } from 'vee-validate'
-import { RedPacketDistributeType, ShowControl } from '@/enum'
+import { Chains, RedPacketDistributeType, ShowControl } from '@/enum'
 import BaseModal from '../BaseModal.vue'
 import Cat from '@/assets/images/cat.svg?url'
 import DogWalking from '@/assets/images/dog_walking.svg?url'
 import ETH from '@/assets/images/eth.png'
 import MVC from '@/assets/images/iocn_mvc.png'
+import POLYGON from '@/assets/svg/polygon.svg?url'
 
 import { useLayoutStore } from '@/stores/layout'
 import { useRedPacketFormStore } from '@/stores/forms'
@@ -511,7 +512,19 @@ const chains = ref([
     id: 1,
     name: 'MVC',
     icon: MVC,
-    value: 'mvc',
+    value: 'mvc' as Chains,
+  },
+  {
+    id: 2,
+    name: import.meta.env.VITE_ETH_CHAIN,
+    icon: ETH,
+    value: import.meta.env.VITE_ETH_CHAIN,
+  },
+  {
+    id: 3,
+    name: import.meta.env.VITE_POLYGON_CHAIN,
+    icon: POLYGON,
+    value: import.meta.env.VITE_POLYGON_CHAIN,
   },
 ])
 const selectedChain = ref(chains.value[0])
@@ -572,14 +585,14 @@ watch(
   }
 )
 
-onMounted(() => {
-  if (userStore.user?.evmAddress) {
-    chains.value.push({
-      id: 2,
-      name: 'ETH',
-      icon: ETH,
-      value: import.meta.env.VITE_ETH_CHAIN,
-    })
-  }
-})
+// onMounted(() => {
+//   if (userStore.user?.evmAddress) {
+//     chains.value.push({
+//       id: 2,
+//       name: 'ETH',
+//       icon: ETH,
+//       value: import.meta.env.VITE_ETH_CHAIN,
+//     })
+//   }
+// })
 </script>

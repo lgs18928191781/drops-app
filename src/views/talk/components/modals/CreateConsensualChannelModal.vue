@@ -228,7 +228,7 @@
               <div class="w-7.5 h-7.5 shrink-0 flex items-center justify-center">
                 <img :src="selectedChain.icon" class="h-full" />
               </div>
-              <span class="block truncate w-12 text-left">{{ selectedChain.name }}</span>
+              <span class="block truncate w-12 text-left capitalize">{{ selectedChain.name }}</span>
               <Icon
                 name="chevron_right"
                 :class="[
@@ -410,6 +410,7 @@ import { useRouter } from 'vue-router'
 import { GetNFTs, GetFTs } from '@/api/aggregation'
 import ETH from '@/assets/images/eth.png'
 import MVC from '@/assets/images/iocn_mvc.png'
+import POLYGON from '@/assets/svg/polygon.svg?url'
 import { realRandomString, showLoading, sleep } from '@/utils/util'
 
 const isShowingPassword = ref(false)
@@ -442,6 +443,18 @@ const chains = ref([
     name: 'MVC',
     icon: MVC,
     value: 'mvc' as Chains,
+  },
+  {
+    id: 2,
+    name: import.meta.env.VITE_ETH_CHAIN,
+    icon: ETH,
+    value: import.meta.env.VITE_ETH_CHAIN,
+  },
+  {
+    id: 3,
+    name: import.meta.env.VITE_POLYGON_CHAIN,
+    icon: POLYGON,
+    value: import.meta.env.VITE_POLYGON_CHAIN,
   },
 ])
 const selectedChain = ref(chains.value[0])
@@ -538,7 +551,12 @@ const tryCreateChannel = async () => {
     }
   }
 
-  layout.isShowLoading = false
+  sleep(2000).then(() => {
+    layout.isShowLoading = false
+    // 跳转刷新
+    window.location.reload()
+    // talk.refetchChannels()
+  })
 }
 
 const selectNft = (nft: any) => {
@@ -603,14 +621,14 @@ watchEffect(async () => {
   await showLoading(fetchFtSeries, fetching)
 })
 
-onMounted(() => {
-  if (userStore.user?.evmAddress) {
-    chains.value.push({
-      id: 2,
-      name: import.meta.env.VITE_ETH_CHAIN,
-      icon: ETH,
-      value: import.meta.env.VITE_ETH_CHAIN,
-    })
-  }
-})
+// onMounted(() => {
+//   if (userStore.user?.evmAddress) {
+//     chains.value.push({
+//       id: 2,
+//       name: import.meta.env.VITE_ETH_CHAIN,
+//       icon: ETH,
+//       value: import.meta.env.VITE_ETH_CHAIN,
+//     })
+//   }
+// })
 </script>
