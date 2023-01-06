@@ -76,6 +76,7 @@ function getMore() {
 
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
+    console.log('zxzxzzx', userStore)
     const res = await GetNFTAvatars({
       address:
         pagintion.chain === 'mvc'
