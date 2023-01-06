@@ -177,6 +177,7 @@ interface Props {
   thirdPartyWallet: {
     signAddressHash: string
     address: string
+    chainId: string
   }
 }
 const props = withDefaults(defineProps<Props>(), {})
@@ -750,7 +751,9 @@ function loginByMnemonic(mnemonic: string, password: string, isInitMnemonic = fa
   return new Promise<BindMetaIdRes>(async (resolve, reject) => {
     try {
       const decodeMnemonic = decryptMnemonic(mnemonic, password)
+
       const word = await GetRandomWord()
+
       if (word.code == 0) {
         const hdWallet = await hdWalletFromMnemonic(decodeMnemonic, 'new', Network.testnet)
 
@@ -798,12 +801,13 @@ function bindingMetaidOrAddressLogin() {
         userType: numberReg.test(form.account) ? 'phone' : 'email',
         phone: numberReg.test(form.account) ? form.account : undefined,
         email: numberReg.test(form.account) ? undefined : form.account,
+        evmAddress: props.thirdPartyWallet.address,
+        chainId: props.thirdPartyWallet.chainId,
       }
 
       const resp = await GetMetaIdByLoginName(params)
+      debugger
       if (resp.code === 0) {
-        console.log('resp', resp)
-
         // const mnemonic = await loginByMetaidOrAddress({
         //   metaId: resp.result.metaId,
         // })
@@ -815,10 +819,12 @@ function bindingMetaidOrAddressLogin() {
           console.log('userStore', userStore)
 
           await createETHBindingBrfcNode(res.wallet, res.userInfo.metaId)
-          res.userInfo.evmAddress = window.WallectConnect?.accounts[0]
-            ? window.WallectConnect?.accounts[0]
-            : window.ethereum.selectedAddress
-          res.userInfo.chainId = window.ethereum.chainId
+          res.userInfo.evmAddress = props.thirdPartyWallet.address
+
+          // res.userInfo.evmAddress = window.WallectConnect?.accounts[0]
+          //   ? window.WallectConnect?.accounts[0]
+          //   : window.ethereum.selectedAddress
+          res.userInfo.chainId = props.thirdPartyWallet.chainId
 
           await sendHash(res.userInfo)
           resolve(res)

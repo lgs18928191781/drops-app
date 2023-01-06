@@ -1100,7 +1100,7 @@ export function CheckMetaMaskAccount(address: string) {
       method: 'wallet_requestPermissions',
       params: [{ eth_accounts: address }],
     })
-    debugger
+
     resolve()
   })
 }

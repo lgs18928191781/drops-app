@@ -178,8 +178,8 @@ async function startConnect() {
 
                 const result = await ethPersonalSignSign({
                     address: res.ethAddress,
-                    message:ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).split('0x')[1].toLocaleUpperCase()
-                    // message: ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -2),
+                    message:import.meta.env.MODE == 'gray' ?  ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).split('0x')[1].toLocaleUpperCase() : ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1)
+                    // message: ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1),
                 })
 
                 if (result) {
@@ -296,7 +296,9 @@ function loginByMnemonic(mnemonic: string) {
                 password.value
             )
 
+
             const word = await getRandomWord()
+
             if (word.code == 0) {
                 const hdWallet = await props.hdWalletFromMnemonic(decodeMnemonic, 'new', Network.testnet)
                 const sign = signature(

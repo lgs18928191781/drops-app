@@ -256,6 +256,8 @@ export const GetMetaIdByLoginName = (params: {
   userType: 'phone' | 'emial'
   phone?: string
   email?: string
+  evmAddress?: string
+  chainId?: string
 }): Promise<{ code: number; result: { metaId: string } }> => {
   return Core.post(`/api/v1/evm/wallet/user/info`, params)
 }
