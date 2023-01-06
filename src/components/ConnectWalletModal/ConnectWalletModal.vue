@@ -703,10 +703,12 @@ async function connectWalletConnect() {
           })
           .then(async () => {
             res = await connector.signPersonalMessage([
-              `0x${ethers.utils
-                .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
-                .split('0x')[1]
-                .toLocaleUpperCase()}`,
+              import.meta.env.MODE == 'gray'
+                ? `0x${ethers.utils
+                    .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+                    .split('0x')[1]
+                    .toLocaleUpperCase()}`
+                : `${ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0])).slice(2, -1)}`,
               accounts[0],
             ])
             if (res) {
@@ -728,10 +730,12 @@ async function connectWalletConnect() {
       })
   } else {
     res = await connector.signPersonalMessage([
-      `0x${ethers.utils
-        .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
-        .split('0x')[1]
-        .toLocaleUpperCase()}`,
+      import.meta.env.MODE == 'gray'
+        ? `0x${ethers.utils
+            .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+            .split('0x')[1]
+            .toLocaleUpperCase()}`
+        : `${ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0])).slice(2, -1)}`,
       accounts[0],
     ])
 

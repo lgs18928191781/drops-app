@@ -805,7 +805,7 @@ function bindingMetaidOrAddressLogin() {
       }
 
       const resp = await GetMetaIdByLoginName(params)
-
+      debugger
       if (resp.code === 0) {
         // const mnemonic = await loginByMetaidOrAddress({
         //   metaId: resp.result.metaId,
