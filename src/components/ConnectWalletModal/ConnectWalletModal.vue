@@ -153,12 +153,9 @@ import { BindStatus, NodeName } from '@/enum'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { router } from '@/router'
 import { useRoute } from 'vue-router'
-import { GetUserAllInfo } from '@/api/aggregation'
+import { GetUserAllInfo, GetUserFollow } from '@/api/aggregation'
 import { debug } from 'console'
-import {
-  LoginByEthAddress,
-  SetUserInfo,
-} from '@/api/core'
+import { LoginByEthAddress, SetUserInfo } from '@/api/core'
 import { decode, encode } from 'js-base64'
 import WalletConnect from '@walletconnect/client'
 import QRCodeModal from '@walletconnect/qrcode-modal'
@@ -735,13 +732,26 @@ async function connectWalletConnect() {
   // connector.killSession()
 }
 
-function onModalClose() {
+async function onModalClose() {
   rootStore.$patch({ isShowLogin: false })
   // 如果在首页登录完，要自动跳转到buzz
   if (userStore.isAuthorized && route.name === 'home') {
-    router.push({
-      name: 'buzz',
+    const res = await GetUserFollow(userStore.user!.metaId).catch(() => {
+      router.push({
+        name: 'buzz',
+      })
     })
+    if (res?.code === 0) {
+      if (res.data.followingList && res.data.followingList.length) {
+        router.push({
+          name: 'buzzIndex',
+        })
+      } else {
+        router.push({
+          name: 'buzzRecommend',
+        })
+      }
+    }
   }
 }
 

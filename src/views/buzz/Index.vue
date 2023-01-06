@@ -21,12 +21,6 @@
     </div>
   </div>
 
-  <template v-if="!isSkeleton && myFollowNum === 0">
-    <CommunityVue />
-    <FollowVue />
-    <GuideVue />
-  </template>
-
   <BuzzListVue
     :list="list"
     :loading="isSkeleton"
@@ -40,17 +34,7 @@
           1
         )
     "
-  >
-    <template #recommendCommunity>
-      <CommunityVue v-if="myFollowNum > 0" />
-    </template>
-    <template #recommendFollow>
-      <FollowVue v-if="myFollowNum > 0" />
-    </template>
-    <template #recommendGuide>
-      <GuideVue v-if="myFollowNum > 0" />
-    </template>
-  </BuzzListVue>
+  ></BuzzListVue>
 </template>
 
 <script setup lang="ts">
