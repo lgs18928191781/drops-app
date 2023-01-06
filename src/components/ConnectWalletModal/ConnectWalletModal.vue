@@ -120,7 +120,7 @@
   </ElDialog>
 
   <!-- 助记词备份 -->
-  <BackupMnemonicVue v-model="isSHowBackupMnemonic" />
+  <BackupMnemonicVue v-model="isSHowBackupMnemonic" @finish="onModalClose" />
 
   <!-- 绑定metaId -->
   <BindMetaIdVue
@@ -128,6 +128,7 @@
     ref="BindMetaIdRef"
     v-model="isShowBindModal"
     @register="isShowSetBaseInfo = true"
+    @success="onModalClose"
   />
 </template>
 
@@ -136,32 +137,19 @@ import IconMetaMask from '@/assets/images/login_logo_matamask.png'
 import IconWallteConnect from '@/assets/images/login_logo_wallteconnect.png'
 import IconAdd from '@/assets/images/wallte_icon_add.png'
 import IconLine from '@/assets/images/wallte_icon_line.png'
-import IconMVC from '@/assets/images/iocn_mvc.png'
-import IconShowmoney from '@/assets/images/iocn_showmoney.png'
 import MetaMask, { MetaMaskLoginRes } from '@/plugins/MetaMak.vue'
 import { useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
 import { AllNodeName, SDK } from '@/utils/sdk'
-import {
-  HdWallet,
-  hdWalletFromMnemonic,
-  eciesDecryptData,
-  BaseUserInfoTypes,
-  hdWalletFromAccount,
-  encryptPassword,
-  encryptMnemonic,
-} from '@/utils/wallet/hd-wallet'
-import LoginAndRegisterModalVue from '@/components/LoginAndRegisterModal/LoginAndRegisterModal.vue'
 import FirstBuzzImg from '@/assets/images/first_buzz.svg?url'
 import { toMvcScan } from '@/utils/util'
 import MetaIdWalletVue, { MetaIdWalletRegisterBaseInfo } from './MetaIdWallet.vue'
 import SetBaseInfoVue from './SetBaseInfo.vue'
 import BackupMnemonicVue from './BackupMnemonic.vue'
 import BindMetaIdVue from './BindMetaId.vue'
-
-import { onMounted, reactive, Ref, ref } from 'vue'
+import { reactive, Ref, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { BindStatus, InviteActivityTag, NodeName } from '@/enum'
+import { BindStatus, NodeName } from '@/enum'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { router } from '@/router'
 import { useRoute } from 'vue-router'
@@ -169,19 +157,13 @@ import { GetUserAllInfo } from '@/api/aggregation'
 import { debug } from 'console'
 import {
   LoginByEthAddress,
-  RegisterCheck,
   SetUserInfo,
-  SetUserPassword,
-  SetUserWalletInfo,
 } from '@/api/core'
 import { decode, encode } from 'js-base64'
-import { CommitActivity } from '@/api/broad'
 import WalletConnect from '@walletconnect/client'
-import AuthClient, { generateNonce } from '@walletconnect/auth-client'
 import QRCodeModal from '@walletconnect/qrcode-modal'
 import { ethers } from 'ethers'
 import { RegisterSource } from '@/enum'
-import { openLoading } from '@/utils/util'
 import { MD5 } from 'crypto-js'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
 
@@ -394,7 +376,6 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
       thirdPartyWallet.chainId = window.ethereum.chainId
       BindMetaIdRef.value.status = BindStatus.ChooseType
       rootStore.$patch({ isShowMetaMak: false })
-
       isShowBindModal.value = true
     } else {
       throw new Error(error.message)
@@ -432,6 +413,7 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
       if (res) {
         await BindMetaIdRef.value.loginSuccess(res)
         rootStore.$patch({ isShowMetaMak: false })
+        onModalClose()
       }
     } catch (error) {
       rootStore.$patch({ isShowMetaMak: false })
@@ -454,6 +436,7 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
 
       if (res) {
         await BindMetaIdRef.value.loginSuccess(res)
+        onModalClose()
       }
     } else {
       try {
@@ -465,6 +448,7 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
         if (res) {
           await BindMetaIdRef.value.loginSuccess(res)
           rootStore.$patch({ isShowMetaMak: false })
+          onModalClose()
         }
       } catch (error) {
         thirdPartyWallet.signAddressHash = params.signAddressHash
@@ -703,10 +687,12 @@ async function connectWalletConnect() {
           })
           .then(async () => {
             res = await connector.signPersonalMessage([
-              `0x${ethers.utils
-                .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
-                .split('0x')[1]
-                .toLocaleUpperCase()}`,
+              import.meta.env.MODE == 'gray'
+                ? `0x${ethers.utils
+                    .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+                    .split('0x')[1]
+                    .toLocaleUpperCase()}`
+                : `${ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0])).slice(2, -1)}`,
               accounts[0],
             ])
             if (res) {
@@ -728,10 +714,12 @@ async function connectWalletConnect() {
       })
   } else {
     res = await connector.signPersonalMessage([
-      `0x${ethers.utils
-        .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
-        .split('0x')[1]
-        .toLocaleUpperCase()}`,
+      import.meta.env.MODE == 'gray'
+        ? `0x${ethers.utils
+            .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+            .split('0x')[1]
+            .toLocaleUpperCase()}`
+        : `${ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0])).slice(2, -1)}`,
       accounts[0],
     ])
 

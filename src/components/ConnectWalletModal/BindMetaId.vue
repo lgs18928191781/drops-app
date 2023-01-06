@@ -184,7 +184,7 @@ const props = withDefaults(defineProps<Props>(), {})
 const i18n = useI18n()
 const userStore = useUserStore()
 
-const emit = defineEmits(['update:modelValue', 'register'])
+const emit = defineEmits(['update:modelValue', 'register', 'finish'])
 
 const status = ref(BindStatus.ChooseType)
 
@@ -283,6 +283,7 @@ const formRef = ref()
 function signMnemonicSeed() {}
 
 function skip() {
+  emit('finish')
   emit('update:modelValue', false)
 }
 
@@ -805,7 +806,7 @@ function bindingMetaidOrAddressLogin() {
       }
 
       const resp = await GetMetaIdByLoginName(params)
-
+      debugger
       if (resp.code === 0) {
         // const mnemonic = await loginByMetaidOrAddress({
         //   metaId: resp.result.metaId,

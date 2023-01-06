@@ -165,6 +165,7 @@ export default class ShowmoneyProvider {
         params: compressData,
         options,
       })
+      debugger
       if (res.code == 0) {
         debugger
         return res

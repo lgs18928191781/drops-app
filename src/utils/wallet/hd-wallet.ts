@@ -2269,6 +2269,7 @@ export class HdWallet {
           isBroadcast: false,
         }
       )
+      console.log('zxzx', nftRawTx.tx.toString())
       debugger
       const params: MetaNameRequestDate = {
         requestIndex,
