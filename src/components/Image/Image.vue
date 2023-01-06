@@ -19,21 +19,22 @@ import DefaultMetafile from '@/assets/images/default_metafile.svg?url'
 // import 'lazysizes'
 import { DB } from '@/utils/db'
 
-const Default = {
-  metafile: DefaultMetafile,
-  metaId: DefaultAvatar,
-}
-
 interface Props {
   src: string
   customClass?: string
   width?: number
   type?: 'metafile' | 'metaId'
+  defaultImage?: string
 }
 const props = withDefaults(defineProps<Props>(), {
   width: 235,
   type: 'metafile',
 })
+
+const Default = {
+  metafile: props.defaultImage ? props.defaultImage : DefaultMetafile,
+  metaId: props.defaultImage ? props.defaultImage : DefaultAvatar,
+}
 
 const imgRef = ref()
 
