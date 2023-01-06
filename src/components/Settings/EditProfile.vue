@@ -125,6 +125,7 @@ async function confirm() {
   )
     return
   loading.value = true
+
   try {
     const paramsList: createBrfcChildNodeParams[] = []
     if (currentAvatar.val!.avatarImage !== userStore.user?.avatarImage) {
