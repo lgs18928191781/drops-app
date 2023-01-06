@@ -178,7 +178,7 @@ import {
 import { ElMessage, LoadingParentElement } from 'element-plus'
 import { GetOrder, GetOrderStatus, PayETHByME, UpdatePay } from '@/api/wxcore'
 import { useUserStore } from '@/stores/user'
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import { useI18n } from 'vue-i18n'
 
 interface Props {
@@ -288,28 +288,31 @@ function drawePayCode() {
     try {
       if (props.url) {
         if (props.payPlatform === PayPlatform.ETH) {
-          debugger
           const tx = await window.ethereum!.request!({
             method: 'eth_sendTransaction',
             params: [
               {
-                value: ethers.utils.hexValue(
-                  new Decimal(props.amount).mul(Math.pow(10, 9)).toNumber()
-                ),
+                value: BigNumber.from(
+                  new Decimal(props.amount).mul(Math.pow(10, 9)).toString()
+                ).toHexString(),
                 to: props.url,
                 from: useStore.user?.evmAddress,
               },
             ],
           })
-          const res = await UpdatePay({
-            order_id: props.orderId,
-            tx_hash: tx,
-            from_coin_address: useStore.user!.evmAddress!,
-            product_type: props.product_type,
-          })
-          if (res.code === 0) {
-            payResult.status = PayStatus.Success
-            isShowPayStatusModal.value = true
+          if (tx) {
+            const res = await UpdatePay({
+              order_id: props.orderId,
+              tx_hash: tx,
+              from_coin_address: useStore.user!.evmAddress!,
+              product_type: props.product_type,
+            })
+            if (res.code === 0) {
+              payResult.status = PayStatus.Success
+              isShowPayStatusModal.value = true
+            }
+          } else {
+            debugger
           }
         }
         // 余额支付
@@ -425,7 +428,6 @@ async function onPayIframeClose() {
 function checkOrderStatus() {
   setTimeout(
     async () => {
-      debugger
       const res = await GetOrder({
         order_id: props.orderId,
         pay_type: props.payPlatform,
@@ -457,7 +459,6 @@ function openPayIframe(url: string) {
         PayIframeRef.value.srcdoc = url
       }
     } else {
-      debugger
       if (isIOS && !isApp) {
         // ios 网页
         window.addEventListener('message', function(event) {
@@ -513,7 +514,6 @@ function intervalChceckOrderStatus() {
 }
 
 function setPayFail(reason: string) {
-  debugger
   payResult.intro = reason
   payResult.status = PayStatus.Fail
   isShowPayStatusModal.value = true
