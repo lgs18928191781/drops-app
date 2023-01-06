@@ -1092,14 +1092,14 @@ export function CheckMetaMaskAccount(address: string) {
     } else {
       await ChangeMetaMaskChain()
     }
-    const request = await (window as any).ethereum.request({
-      method: 'eth_requestAccounts',
-      params: [address],
-    })
-    const res = await (window as any).ethereum.request({
-      method: 'wallet_requestPermissions',
-      params: [{ eth_accounts: address }],
-    })
+    // const request = await (window as any).ethereum.request({
+    //   method: 'eth_requestAccounts',
+    //   params: [address],
+    // })
+    // const res = await (window as any).ethereum.request({
+    //   method: 'wallet_requestPermissions',
+    //   params: [{ eth_accounts: address }],
+    // })
 
     resolve()
   })

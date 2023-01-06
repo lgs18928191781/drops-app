@@ -29,6 +29,7 @@ import { useI18n } from 'vue-i18n'
 import AppSVG from '@/assets/svg/guides_icon_app.svg?url'
 import LearnSVG from '@/assets/svg/guides_icon_learn.svg?url'
 import Question from '@/assets/svg/question.svg?url'
+import Learn from '@/assets/svg/lern.svg?url'
 import { useRouter } from 'vue-router'
 
 const i18n = useI18n()
@@ -48,6 +49,18 @@ const guides = [
       router.push({
         name: 'home',
       })
+    },
+  },
+  {
+    icon: Learn,
+    name: () => i18n.t('Buzz.New User Onboarding How to Use Show3'),
+    fun: () => {
+      window.open(
+        i18n.locale.value === 'zh'
+          ? 'https://docs.qq.com/doc/DSHFRVnZKYXZhTURo'
+          : 'https://docs.qq.com/doc/DQ0pYd2dFUGdmcm9X',
+        '_blank'
+      )
     },
   },
   {

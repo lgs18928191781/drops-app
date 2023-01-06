@@ -1,6 +1,6 @@
 <template>
   <div class="avatar" :class="{ disabled }" @click.stop="() => {}">
-    <el-popover placement="right-start" :width="'auto'" trigger="hover" :disabled="disabled">
+    <el-popover placement="right-start" :width="'auto'" trigger="click" :disabled="disabled">
       <template #reference>
         <Image :src="image" :type="type" />
       </template>
