@@ -379,7 +379,7 @@ const wallets = reactive([
         icon: ETH,
         name: import.meta.env.VITE_ETH_CHAIN.toUpperCase(),
         value: 0,
-        address: userStore.user!.evmAddress || '',
+        address: userStore.user?.evmAddress || '',
         price: function() {
           const rate = rootStore.exchangeRate.find(
             item => item.symbol === import.meta.env.VITE_ETH_CHAIN
@@ -395,7 +395,7 @@ const wallets = reactive([
         icon: MVC,
         name: 'SPACE',
         value: 0,
-        address: userStore.user!.address,
+        address: userStore.user?.address,
         price: function() {
           const rate = rootStore.exchangeRate.find(item => item.symbol === 'mvc')
           if (rate) {

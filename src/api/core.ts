@@ -23,7 +23,7 @@ const Core = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/showpaycore`, {
   responseHandel: response => {
     return new Promise((resolve, reject) => {
       if (response?.data && typeof response.data?.code === 'number') {
-        if (response.data.code === 0) {
+        if (response.data.code === 0 || response.data.code === 601) {
           resolve(response.data)
         } else {
           reject({
