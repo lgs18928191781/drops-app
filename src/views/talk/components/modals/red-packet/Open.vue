@@ -104,7 +104,7 @@
                         />
                         <div class="ml-2 flex flex-col items-start">
                           <div class="font-medium text-sm">{{ requireNft?.name }}</div>
-                          <div class="text-xs  font-bold text-amber-400">
+                          <div class="text-xs capitalize font-bold text-amber-400">
                             {{ requireNft?.chain }}
                           </div>
                         </div>
@@ -202,7 +202,7 @@ const tryOpenRedPacket = async () => {
   const redPacketType = redPacket.value?.requireType
   if (redPacketType === '2') {
     params.address = talk.selfAddress
-  } else if (redPacketType === '2001') {
+  } else if (redPacketType === '2001' || redPacketType === '2002') {
     params.address = user.user?.evmAddress
   }
 
@@ -240,7 +240,7 @@ onMounted(async () => {
   const redPacketType = redPacket.value?.requireType
   if (redPacketType === '2') {
     params.address = talk.selfAddress
-  } else if (redPacketType === '2001') {
+  } else if (redPacketType === '2001' || redPacketType === '2002') {
     params.address = user.user?.evmAddress
   }
   getRedPacketRemains(params).then(res => {
@@ -249,8 +249,15 @@ onMounted(async () => {
   })
 
   // 如果是nft红包，获取nft信息
-  if (redPacketType === '2001' || redPacketType === '2') {
-    const chain = redPacketType === '2001' ? import.meta.env.VITE_ETH_CHAIN : 'mvc'
+  if (redPacketType === '2001' || redPacketType === '2' || redPacketType === '2002') {
+    let chain
+    if (redPacketType === '2001') {
+      chain = import.meta.env.VITE_ETH_CHAIN
+    } else if (redPacketType === '2002') {
+      chain = import.meta.env.VITE_POLYGON_CHAIN
+    } else {
+      chain = 'mvc'
+    }
     const {
       data: {
         results: { items },

@@ -127,7 +127,7 @@ export const sendInviteBuzz = async (form: any, sdk: SDK) => {
     shareId = `${form.community.communityId}`
     shareIdType = 'communityId'
   } else {
-    shareId = `${form.community.communityId}/${form.channel.channelId}`
+    shareId = `${form.community.communityId}/${form.channel.id}`
     shareIdType = 'communityId/channelId'
   }
 
@@ -143,7 +143,6 @@ export const sendInviteBuzz = async (form: any, sdk: SDK) => {
     shareContentType,
   }
 
-  console.log({ form, dataCarrier })
   // 2. 构建节点参数
   const node = {
     nodeName: NodeName.SimplePublicShare,
@@ -229,13 +228,10 @@ export const giveRedPacket = async (form: any, channelId: string, selfMetaId: st
 
   // 2.1 nft红包处理
   if (form.nft && form.chain) {
-    if (
-      form.chain === 'eth' ||
-      form.chain === 'goerli' ||
-      form.chain === 'polygon' ||
-      form.chain === 'mumbai'
-    ) {
+    if (form.chain === 'eth' || form.chain === 'goerli') {
       dataCarrier.requireType = '2001'
+    } else if (form.chain === 'polygon' || form.chain === 'mumbai') {
+      dataCarrier.requireType = '2002'
     } else {
       dataCarrier.requireType = '2'
     }
@@ -348,13 +344,10 @@ const _getChannelTypeInfo = (form: any, selfMetaId: string) => {
       status = encrypt(selfMetaId.substring(0, 16), MD5Hash(form.nft.nftGenesis).substring(0, 16))
       codehash = form.nft.nftCodehash
       genesis = form.nft.nftGenesis
-      if (
-        form.chain === 'eth' ||
-        form.chain === 'goerli' ||
-        form.chain === 'polygon' ||
-        form.chain === 'mumbai'
-      ) {
+      if (form.chain === 'eth' || form.chain === 'goerli') {
         type = '2001'
+      } else if (form.chain === 'polygon' || form.chain === 'mumbai') {
+        type = '2002'
       } else {
         type = '2'
       }
