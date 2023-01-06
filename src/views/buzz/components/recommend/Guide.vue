@@ -57,8 +57,8 @@ const guides = [
     fun: () => {
       window.open(
         i18n.locale.value === 'zh'
-          ? 'https://docs.qq.com/doc/DSHFRVnZKYXZhTURo'
-          : 'https://docs.qq.com/doc/DQ0pYd2dFUGdmcm9X',
+          ? 'https://www.show3.io/新手攻略：如何玩转Show3.pdf'
+          : 'https://www.show3.io/New_User_Onboarding_How_to_Use_Show3.pdf',
         '_blank'
       )
     },
@@ -69,8 +69,8 @@ const guides = [
     fun: () => {
       window.open(
         i18n.locale.value === 'zh'
-          ? 'https://docs.qq.com/doc/DQ255YVluY2Zma050'
-          : 'https://docs.qq.com/doc/DQ3ZobHhhSUdORHF3',
+          ? 'https://www.show3.io/Show3常见问题.pdf'
+          : 'https://www.show3.io/Show3_FAQ.pdf',
         '_blank'
       )
     },

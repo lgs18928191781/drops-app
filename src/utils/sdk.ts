@@ -419,14 +419,7 @@ export class SDK {
       subscribeId?: string
     }
   ) {
-    return new Promise<{
-      payToAddress?: CreateNodeRes
-      metaFileBrfc?: CreateNodeRes
-      metaFiles?: CreateNodeRes[]
-      currentNodeBrfc?: CreateNodeRes
-      currentNode?: CreateNodeRes
-      subscribeId?: string
-    } | null>(async (resolve, reject) => {
+    return new Promise<NodeTransactions | null>(async (resolve, reject) => {
       const initOption = {
         isBroadcast: true,
         payType: SdkPayType.ME,

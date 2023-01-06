@@ -1,14 +1,21 @@
 <template>
   <div class="avatar" :class="{ disabled }" @click.stop="() => {}">
-    <el-popover placement="right-start" :width="'auto'" trigger="click" :disabled="disabled">
+    <el-popover
+      placement="right-start"
+      :width="'auto'"
+      trigger="click"
+      :disabled="disabled"
+      v-model:visible="isShowUserCard"
+    >
       <template #reference>
         <Image :src="image" :type="type" />
       </template>
-      <UserCardVue :meta-id="metaId" :name="name" />
+      <UserCardVue :meta-id="metaId" :name="name" v-model="isShowUserCard" />
     </el-popover>
   </div>
 </template>
 <script lang="ts" setup>
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import UserCardVue from '../UserCard/UserCard.vue'
 
@@ -23,5 +30,7 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   type: 'metaId',
 })
+
+const isShowUserCard = ref(false)
 </script>
 <style lang="scss" scoped src="./UserAvatar.scss"></style>

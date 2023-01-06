@@ -18,6 +18,7 @@ import {
   PayStatus,
   ToCurrency,
   PayType,
+  NodeName,
 } from '@/enum'
 import { CheckBlindboxOrderStatus } from '@/api/v3'
 import AllCardJson from '@/utils/card.json'
@@ -41,6 +42,7 @@ import { Ref } from 'vue'
 import ShowSVG from '@/assets/svg/show.svg?component'
 import { CreatOrder } from '@/api/wxcore'
 import { LoadingTEXT } from './LoadingSVGText'
+import { Mitt, MittEvent } from './mitt'
 
 export function randomString() {
   return Math.random()
@@ -1140,5 +1142,62 @@ export function ChangeMetaMaskChain() {
       .catch(error => {
         reject(error)
       })
+  })
+}
+
+export function followUser(params: {
+  value: boolean
+  name: string
+  metaId: string
+  address: string
+}) {
+  return new Promise<void | NodeTransactions | null>(async (resolve, reject) => {
+    if (!params.value) {
+      ElMessageBox.confirm(
+        // @ts-ignore
+        `${i18n.global.t('cancelFollowTips')}: ${params.name}`,
+        i18n.global.t('Warning'),
+        {
+          confirmButtonText: i18n.global.t('Confirm'),
+          cancelButtonText: i18n.global.t('Cancel'),
+          confirmButtonClass: 'main-border primary',
+          cancelButtonClass: 'main-border',
+        }
+      )
+        .then(async () => {
+          const res = await confirmFollow(params)
+          resolve(res)
+        })
+        .catch(() => {
+          resolve(null)
+        })
+    } else {
+      const res = await confirmFollow(params)
+      resolve(res)
+    }
+  })
+}
+
+export async function confirmFollow(params: { address: string; metaId: string; value: boolean }) {
+  return new Promise<void | NodeTransactions | null>(async (resolve, reject) => {
+    const userStore = useUserStore()
+    const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
+    const res = await userStore.showWallet
+      .createBrfcChildNode({
+        nodeName: NodeName.PayFollow,
+        data: JSON.stringify({
+          createTime: new Date().getTime(),
+          MetaID: params.metaId,
+          pay: payAmount,
+          payTo: params.address,
+          status: params.value ? 1 : -1,
+        }),
+        payTo: [{ amount: payAmount, address: params.address }],
+      })
+      .catch(error => reject(error))
+    if (res) {
+      Mitt.emit(MittEvent.FollowUser, { metaId: params.metaId, result: params.value })
+    }
+    resolve(res)
   })
 }

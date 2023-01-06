@@ -31,7 +31,7 @@
           <div class="cont flex1">
             <div class="name flex flex-align-center" :class="{ metaName: isMetaName }">
               <span class="text">{{ shareInfo.val!.title }}</span>
-              <TagSvg v-if="isMetaName" />
+              <Icon name="tag_nft" v-if="isMetaName" />
             </div>
             <div class="drsc">{{ shareInfo.val!.detail }}</div>
           </div>
@@ -49,7 +49,6 @@ import { reactive, ref } from 'vue'
 import { GetPublishShare } from '@/api/aggregation'
 import { usePostTagStore } from '@/stores/buzz/tag'
 import { useRouter } from 'vue-router'
-import TagSvg from '@/assets/svg/tag_nft.svg'
 
 interface Props {
   buzz: BuzzItem

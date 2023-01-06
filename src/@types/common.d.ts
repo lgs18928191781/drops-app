@@ -425,6 +425,7 @@ declare interface GenesisNFTItem {
 }
 
 declare interface NodeTransactions {
+  payToAddress?: CreateNodeRes
   metaFileBrfc?: CreateNodeRes
   metaFiles?: CreateNodeRes[]
   currentNodeBrfc?: CreateNodeRes
@@ -433,6 +434,7 @@ declare interface NodeTransactions {
     transaction: bsv.Transaction
     txId?: string
   }
+  subscribeId?: string
 }
 
 declare interface JobStep {

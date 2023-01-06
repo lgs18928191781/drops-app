@@ -118,7 +118,7 @@ import { computed, reactive, ref } from 'vue'
 import { GetUserAllInfo, GetUserFollow } from '@/api/aggregation'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import { checkUserLogin, copy, tx } from '@/utils/util'
+import { checkUserLogin, copy, followUser, tx } from '@/utils/util'
 import { Loading } from '@element-plus/icons-vue'
 import { ElMessageBox } from 'element-plus'
 import { NodeName } from '@/enum'
@@ -254,23 +254,35 @@ async function confirmFollow() {
   }
 }
 
-function follow() {
+async function follow() {
   if (loading.value) return
-  if (isMyFollowed.value) {
-    ElMessageBox.confirm(
-      `${i18n.t('cancelFollowTips')}: ${userInfo.val!.name}`,
-      i18n.t('Warning'),
-      {
-        confirmButtonText: i18n.t('Confirm'),
-        cancelButtonText: i18n.t('Cancel'),
-        confirmButtonClass: 'main-border primary',
-        cancelButtonClass: 'main-border',
-      }
-    ).then(() => {
-      confirmFollow()
-    })
+  loading.value = true
+  const res = await followUser({
+    value: !isMyFollowed.value,
+    name: userInfo.val!.name,
+    metaId: userInfo.val!.metaId,
+    address: userInfo.val!.address,
+  }).catch(error => {
+    ElMessage.error(error.message)
+    loading.value = false
+  })
+  if (res) {
+    isMyFollowed.value = !isMyFollowed.value
+    if (isMyFollowed.value) {
+      userFollow.following.push(userStore.user!.metaId)
+    } else {
+      userFollow.following.splice(
+        userFollow.following.findIndex(item => item === userStore.user!.metaId),
+        1
+      )
+    }
+    const message = `${isMyFollowed.value ? i18n.t('Cancel Follow') : i18n.t('Follow')} ${i18n.t(
+      'Success'
+    )}`
+    ElMessage.success(message)
+    loading.value = false
   } else {
-    confirmFollow()
+    loading.value = false
   }
 }
 
