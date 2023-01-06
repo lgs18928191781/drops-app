@@ -58,8 +58,8 @@ export enum MetaNameReqType {
 
 export enum MetaNameReqCode {
   register = 1,
-  renew = 2,
-  updataInfo = 3,
+  renew = 21,
+  updataInfo = 22,
 }
 
 export interface Reqswapargs {
@@ -258,6 +258,7 @@ export const hdWalletFromAccount = async (
   // console.log(account)
   const loginName = account.userType === 'phone' ? account.phone : account.email
   const password = account.password
+
   // console.log('account', account)
   if (!loginName || !password) {
     throw new Error('参数错误')
@@ -282,6 +283,7 @@ export const hdWalletFromAccount = async (
   // const mnemonic = new Mnemonic(Buffer.from(hex)).toString()
   const wallet = await hdWalletFromMnemonic(mnemonic, account.tag, network)
   const root = wallet.deriveChild(0).deriveChild(0).privateKey
+
   return {
     mnemonic: mnemonic,
     wallet: wallet,
@@ -862,6 +864,7 @@ export class HdWallet {
         tokenIndex: params.tokenIndex,
         noBroadcast: !option!.isBroadcast,
       })
+      debugger
       resolve(result)
     })
 
@@ -2200,9 +2203,11 @@ export class HdWallet {
       amount: number
     }>
   }) {
+    debugger
     const { reqswapargs, years, op_code, metaid, address } = params
 
     const mvcToAddress = reqswapargs.mvcToAddress
+    const nftToAddress = reqswapargs.nftToAddress
     const txFee = reqswapargs.txFee
     const requestIndex = reqswapargs.requestIndex
     const metaNameOpFee = new Decimal(reqswapargs.feePerYear).mul(years).toNumber()
@@ -2252,12 +2257,24 @@ export class HdWallet {
         }
       }
     } else if (MetaNameReqCode.renew == op_code) {
-      const nftRawTx = ''
+      debugger
+      const nftRawTx = await this.transferNft(
+        {
+          receiverAddress: nftToAddress,
+          codehash: reqswapargs.nftCodeHash,
+          genesis: reqswapargs.nftGenesisID,
+          tokenIndex: reqswapargs.nftTokenIndex,
+        },
+        {
+          isBroadcast: false,
+        }
+      )
+      debugger
       const params: MetaNameRequestDate = {
         requestIndex,
         mvcRawTx,
         mvcOutputIndex,
-        nftRawTx,
+        nftRawTx: nftRawTx.txHex,
         nftOutputIndex,
         years,
       }

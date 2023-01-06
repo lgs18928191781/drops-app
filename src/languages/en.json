@@ -660,5 +660,6 @@
   "Address": "Address",
   "PayModel": {
     "Paying": "Paying.."
-  }
+  },
+  "metaidIsBinded": "MetaId has been bound by another account, please check and try again"
 }

@@ -1,5 +1,6 @@
 <template>
-  <!-- <div @click="metaname">MetaName点我</div> -->
+  <!-- <div @click="metaname(1)">MetaName点我</div>
+  <div @click="metaname(21)">续费</div> -->
   <div class="main flex">
     <LeftNavigationVue v-if="!blackRoute.includes(route.name)" />
     <div class="flex1 main-right">
@@ -42,14 +43,13 @@ const routeKey = (route: any) => {
   return route.fullPath
 }
 
-async function metaname() {
+async function metaname(op: number) {
   try {
     const res = await userStore.showWallet.MetaNameBeforeReq({
-      name: `🥕`,
-      op: 1,
+      name: `eason.l`,
+      op: op,
     })
-    console.log('resss', res)
-    debugger
+
     if (res.code == 0) {
       const { data } = res
       const result = await userStore.showWallet.sendMetaNameTransation({
@@ -60,7 +60,6 @@ async function metaname() {
         reqswapargs: data,
       })
       console.log('result', result)
-      debugger
     } else {
       throw new Error(`${res.msg}`)
     }

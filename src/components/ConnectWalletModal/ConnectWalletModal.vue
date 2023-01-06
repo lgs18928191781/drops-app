@@ -217,6 +217,7 @@ const BindMetaIdRef = ref()
 const thirdPartyWallet = reactive({
   signAddressHash: '',
   address: '',
+  chainId: '',
 })
 const isShowBindModal = ref(false)
 const metaIdWalletRegisterBaseInfo: { val: undefined | MetaIdWalletRegisterBaseInfo } = reactive({
@@ -390,6 +391,7 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
       // 还没绑定
       thirdPartyWallet.signAddressHash = params.signAddressHash
       thirdPartyWallet.address = params.address
+      thirdPartyWallet.chainId = window.ethereum.chainId
       BindMetaIdRef.value.status = BindStatus.ChooseType
       rootStore.$patch({ isShowMetaMak: false })
 
@@ -732,6 +734,7 @@ async function connectWalletConnect() {
         .toLocaleUpperCase()}`,
       accounts[0],
     ])
+
     if (res) {
       rootStore.$patch({ isShowLogin: false })
       await onThreePartLinkSuccess({

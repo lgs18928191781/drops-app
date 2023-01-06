@@ -656,5 +656,6 @@
   "Address": "地址",
   "PayModel": {
     "Paying": "正在支付中.."
-  }
+  },
+  "metaidIsBinded": "MetaId已被其他账户绑定,请检查后重试"
 }
