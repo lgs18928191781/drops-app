@@ -190,7 +190,11 @@
             }
 
             .wallet-item {
-                margin-bottom: 12px;
+                margin-bottom: 24px;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
 
                 &:last-child {
                     margin-bottom: 0;

@@ -272,6 +272,7 @@ import { GetBalance, GetNFTs } from '@/api/aggregation'
 import ETH from '@/assets/images/eth.png'
 import MVC from '@/assets/images/iocn_mvc.png'
 import ME from '@/assets/images/me_logo.png'
+import Polygon from '@/assets/svg/polygon.svg?url'
 import { initPagination, chains } from '@/config'
 import { useRootStore } from '@/stores/root'
 import Decimal from 'decimal.js-light'
@@ -383,6 +384,22 @@ const wallets = reactive([
         price: function() {
           const rate = rootStore.exchangeRate.find(
             item => item.symbol === import.meta.env.VITE_ETH_CHAIN
+          )
+          if (rate) {
+            return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
+          }
+          return '--'
+        },
+        loading: true,
+      },
+      {
+        icon: Polygon,
+        name: import.meta.env.VITE_POLYGON_CHAIN.toUpperCase(),
+        value: 0,
+        address: userStore.user!.evmAddress || '',
+        price: function() {
+          const rate = rootStore.exchangeRate.find(
+            item => item.symbol === import.meta.env.VITE_POLYGON_CHAIN
           )
           if (rate) {
             return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
