@@ -440,15 +440,15 @@ const i18n = useI18n()
 const chains = ref([
   {
     id: 1,
-    name: 'MVC',
-    icon: MVC,
-    value: 'mvc' as Chains,
-  },
-  {
-    id: 2,
     name: import.meta.env.VITE_ETH_CHAIN,
     icon: ETH,
     value: import.meta.env.VITE_ETH_CHAIN,
+  },
+  {
+    id: 2,
+    name: 'MVC',
+    icon: MVC,
+    value: 'mvc' as Chains,
   },
   {
     id: 3,

@@ -173,7 +173,9 @@
       "welcome_invite": "邀请好友进入频道",
       "you_received_a_new_message": "您收到了一条新消息",
       "no_contacts_yet": "还没有添加任何联系人",
-      "back_to_buzz": "返回 Buzz"
+      "back_to_buzz": "返回 Buzz",
+      "follow": "关注",
+      "followed": "已关注"
     },
     "Community": {
       "create": "创建社区",
