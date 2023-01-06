@@ -209,6 +209,19 @@
                     }
                 }
 
+                .address {
+                    margin-left: 10px;
+                    font-size: 12px;
+                    background: var(--divid-color);
+                    padding: 2px 5px;
+                    border-radius: 5px;
+                    cursor: pointer;
+
+                    &:hover {
+                        background: var(--faded-border-color);
+                    }
+                }
+
                 .value {
                     text-align: right;
 

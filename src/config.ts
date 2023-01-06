@@ -171,10 +171,18 @@ export const currentSupportChain: Array<{
 
 export const chains = [
   {
-    name: import.meta.env.MODE == 'gray' ? 'Goerli' : 'ETH',
+    name: import.meta.env.VITE_ETH_CHAIN.toUpperCase(),
     icon: ETHIcon,
     value: import.meta.env.VITE_ETH_CHAIN,
     disabled: () => false,
+    address: () => {
+      const userStore = useUserStore()
+      return userStore.user?.evmAddress || ''
+    },
+    // disabled: () => {
+    //   const userStore = useUserStore()
+    //   return !(userStore.isAuthorized && userStore.user!.evmAddress)
+    // },
   },
   {
     name: import.meta.env.MODE == 'gray' ? 'MUMBAI' : 'POLYGON',
@@ -183,14 +191,14 @@ export const chains = [
     disabled: () => {
       return false
     },
+    address: () => {
+      return ''
+    },
   },
   {
     name: 'MVC',
     icon: MVC,
     value: 'mvc',
-    disabled: () => {
-      const userStore = useUserStore()
-      return !(userStore.isAuthorized && userStore.user!.evmAddress)
-    },
+    disabled: () => false,
   },
 ]

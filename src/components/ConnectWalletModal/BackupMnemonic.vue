@@ -68,7 +68,7 @@ interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {})
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'finish'])
 const userStore = useUserStore()
 
 const mnemonic = ref('')
@@ -87,6 +87,7 @@ watch(
 )
 
 function skip() {
+  emit('finish')
   emit('update:modelValue', false)
   if (userStore.user!.name == `${import.meta.env.VITE_DefaultName}`) {
     window.location.reload()
@@ -95,6 +96,7 @@ function skip() {
 
 function confirm() {
   if (!isBackUp.value) return
+  emit('finish')
   emit('update:modelValue', false)
   if (userStore.user!.name == `${import.meta.env.VITE_DefaultName}`) {
     window.location.reload()

@@ -328,7 +328,8 @@
       "Learn the show function": "Explore show3 Features",
       "Download showApp": "Download show3"
     },
-    "Your reply": "Write a comment..."
+    "Your reply": "Write a comment...",
+    "Show3 Faq": "Show3 FAQ"
   },
   "Follow": "Follow",
   "walletError": "Signing failed, unable to log in to wallet",
@@ -569,7 +570,7 @@
   "sale": "Sell",
   "offsale": "Off Sell",
   "group1": "Show: NFTize  \n Your Social Life",
-  "group1-desc": "The first completely decentralized Web3 \n social platform with NFT as the core",
+  "group1-desc": "The Ultimate Decentralized Social Platform Centered in NFT",
   "group1-foot-title": "The First Web3 Social Platform for Everyone with no Barriers.",
   "page-two-title": "Join the Social & Mint Revolution",
   "learnMetaSo": "Run My Own MetaSo Node",
@@ -627,9 +628,9 @@
   "shareText1": "Come see this signed and limited edition digital creation today!",
   "copyShareSuccess": "Copied share link",
   "User": {
-    "Backwall": "Backwall",
-    "Costume": "Costume",
-    "Artifacts": "Artifacts",
+    "Backwall": "BG",
+    "Costume": "Costumes",
+    "Artifacts": "Treature",
     "Pet": "Pet",
     "Home": "Home",
     "Chat": "Chat"
