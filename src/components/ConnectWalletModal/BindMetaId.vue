@@ -703,7 +703,7 @@ function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
         const res = await GetUserInfo(metaId)
         let ethBindingData: Partial<ethBindingData> = {}
         const bingdMetaidTypes = await GetBindMetaidAddressList(metaId)
-        debugger
+
         if (currentChain() == CurrentSupportChain.Eth) {
           ethBindingData.eth = props.thirdPartyWallet.address
         } else if (currentChain() == CurrentSupportChain.Polygon) {

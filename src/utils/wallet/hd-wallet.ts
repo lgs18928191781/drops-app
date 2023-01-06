@@ -258,6 +258,7 @@ export const hdWalletFromAccount = async (
   // console.log(account)
   const loginName = account.userType === 'phone' ? account.phone : account.email
   const password = account.password
+
   // console.log('account', account)
   if (!loginName || !password) {
     throw new Error('参数错误')
@@ -282,6 +283,7 @@ export const hdWalletFromAccount = async (
   // const mnemonic = new Mnemonic(Buffer.from(hex)).toString()
   const wallet = await hdWalletFromMnemonic(mnemonic, account.tag, network)
   const root = wallet.deriveChild(0).deriveChild(0).privateKey
+
   return {
     mnemonic: mnemonic,
     wallet: wallet,
