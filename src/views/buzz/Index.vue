@@ -21,12 +21,6 @@
     </div>
   </div>
 
-  <template v-if="!isSkeleton && myFollowNum === 0">
-    <CommunityVue />
-    <FollowVue />
-    <GuideVue />
-  </template>
-
   <BuzzListVue
     :list="list"
     :loading="isSkeleton"
