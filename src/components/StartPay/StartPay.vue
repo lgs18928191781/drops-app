@@ -289,10 +289,7 @@ function drawePayCode() {
     try {
       if (props.url) {
         if (props.payPlatform === PayPlatform.ETH) {
-<<<<<<< HEAD
           await CheckMetaMaskAccount(useStore.user!.evmAddress!)
-=======
->>>>>>> preview
           const tx = await window.ethereum!.request!({
             method: 'eth_sendTransaction',
             params: [
