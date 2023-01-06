@@ -95,6 +95,7 @@ export const useTalkStore = defineStore('talk', {
         if (channel.roomJoinType === '2') return GroupChannelType.NFT
         if (channel.roomJoinType === '3') return GroupChannelType.FT
         if (channel.roomJoinType === '2001') return GroupChannelType.ETH_NFT
+        if (channel.roomJoinType === '2002') return GroupChannelType.POLYGON_NFT
 
         return null
       }
@@ -274,10 +275,14 @@ export const useTalkStore = defineStore('talk', {
       this.communityStatus = 'loading'
       const isAtMe = routeCommunityId === '@me'
       this.activeCommunityId = routeCommunityId
-      try {
-        this.members = isAtMe ? [] : await getCommunityMembers(routeCommunityId)
-      } catch {
-        ElMessage.error('获取社区成员失败')
+      if (!isAtMe) {
+        getCommunityMembers(routeCommunityId)
+          .then((members: any) => {
+            this.members = members
+          })
+          .catch(() => {
+            ElMessage.error('获取社区成员失败')
+          })
       }
 
       await this.fetchChannels(routeCommunityId)

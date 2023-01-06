@@ -35,6 +35,7 @@ const tryInitChannel = async (status: string) => {
   await nextTick()
   if (!talk.canAccessActiveChannel) {
     let chain: string
+    console.log('talk.activeChannel', talk.activeGroupChannelType)
     switch (talk.activeGroupChannelType) {
       case GroupChannelType.Password:
         // 先检查是否本地有存储该频道密码
@@ -60,11 +61,23 @@ const tryInitChannel = async (status: string) => {
         return
 
       case GroupChannelType.NFT:
+      case GroupChannelType.POLYGON_NFT:
       case GroupChannelType.ETH_NFT: {
-        const chain =
-          talk.activeGroupChannelType === GroupChannelType.NFT
-            ? 'mvc'
-            : import.meta.env.VITE_ETH_CHAIN
+        let chain: string
+        switch (talk.activeGroupChannelType) {
+          case GroupChannelType.NFT:
+            chain = 'mvc'
+            break
+          case GroupChannelType.POLYGON_NFT:
+            chain = import.meta.env.VITE_POLYGON_CHAIN
+            break
+          case GroupChannelType.ETH_NFT:
+            chain = import.meta.env.VITE_ETH_CHAIN
+            break
+          default:
+            chain = 'mvc'
+            break
+        }
         let selfAddress: string
         switch (chain) {
           case 'mvc':

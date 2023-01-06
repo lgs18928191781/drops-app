@@ -126,7 +126,7 @@
                       <Image :src="requireNft.icon" customClass="w-10 h-10 rounded-md" />
                       <div class="ml-2 flex flex-col items-start">
                         <div class="font-medium text-sm">{{ requireNft.name }}</div>
-                        <div class="text-xs  font-bold text-amber-400">
+                        <div class="text-xs capitalize font-bold text-amber-400">
                           {{ requireNft.chain }}
                         </div>
                       </div>
@@ -206,10 +206,17 @@ const nicerAmountWithUnit = (amount: string) => {
 
 onMounted(async () => {
   const requireType = redPacketResult?.requireType
-  const needsNft = requireType === '2' || requireType === '2001'
+  const needsNft = requireType === '2' || requireType === '2001' || requireType === '2002'
 
   if (needsNft) {
-    const chain = requireType === '2001' ? import.meta.env.VITE_ETH_CHAIN : 'mvc'
+    let chain
+    if (requireType === '2001') {
+      chain = import.meta.env.VITE_ETH_CHAIN
+    } else if (requireType === '2002') {
+      chain = import.meta.env.VITE_POLYGON_CHAIN
+    } else {
+      chain = 'mvc'
+    }
     const {
       data: {
         results: { items },

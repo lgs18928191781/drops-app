@@ -30,7 +30,7 @@
       </div>
 
       <div class="mt-12 w-full">
-        <h4 class="text-lg capitalize">
+        <h4 class="text-sm capitalize">
           {{ $t('Talk.Community.community_name_tip') }}
         </h4>
 

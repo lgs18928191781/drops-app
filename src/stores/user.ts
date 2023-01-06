@@ -124,8 +124,11 @@ export const useUserStore = defineStore('user', {
         // localStorage.removeItem(encode('user'))
         // localStorage.removeItem(encode('password'))
         // localStorage.removeItem('walletconnect')
-        this.user = null
-        this.password = null
+        try {
+          this.user = null
+          this.password = null
+        } catch {}
+
         talkStore.reset()
         if (route.meta.isAuth) router.push('/')
         resolve()
@@ -155,7 +158,9 @@ export const useUserStore = defineStore('user', {
           window.localStorage.setItem(encode('password'), encode(password))
         }
 
-        this.user = data
+        try {
+          this.user = data
+        } catch {}
         resolve()
       })
     },
