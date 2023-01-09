@@ -118,8 +118,9 @@ export default ({ mode, command }) => {
     server: {
       // host: 'show-app.com',
       // port: 5174,
+
       https: false,
-      // open: false,
+      // open: true,
     },
     esbuild: {
       drop: isProduction ? ['console', 'debugger'] : [],

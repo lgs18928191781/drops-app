@@ -1757,8 +1757,12 @@ export class SDK {
 
   sendMetaNameTransation(params: {
     op_code: number
-    address: string
-    metaid: string
+    info: {
+      metaid?: string
+      mvc?: string
+      icon?: string
+      [key: string]: any
+    }
     years: number
     reqswapargs: Reqswapargs
   }) {
