@@ -403,6 +403,7 @@ const wallets = reactive([
         value: 0,
         address: () => userStore.user?.evmAddress || '',
         price: function() {
+          return 0
           const rate = rootStore.exchangeRate.find(
             item => item.symbol === import.meta.env.VITE_POLYGON_CHAIN
           )
@@ -411,7 +412,7 @@ const wallets = reactive([
           }
           return '--'
         },
-        loading: true,
+        loading: false,
       },
       {
         icon: MVC,
@@ -556,10 +557,11 @@ function getSpaceBalance() {
         resolve()
       })
     if (typeof res === 'number') {
-      wallets[1].list[1].value = new Decimal(
-        new Decimal(res).div(Math.pow(10, 8)).toFixed(8)
-      ).toNumber()
-      wallets[1].list[1].loading = false
+      const item = wallets[1].list.find(item => item.name === 'SPACE')
+      if (item) {
+        item.value = new Decimal(new Decimal(res).div(Math.pow(10, 8)).toFixed(8)).toNumber()
+        item.loading = false
+      }
       resolve()
     }
   })
@@ -568,25 +570,30 @@ function getSpaceBalance() {
 function getETHBalance() {
   return new Promise<void>(async resolve => {
     // 获取余额
-    if (userStore.user!.evmAddress) {
-      const res = await GetBalance({
-        chain: import.meta.env.VITE_ETH_CHAIN,
-        address: userStore.user!.evmAddress! || userStore.user?.ethAddress,
-      }).catch(error => {
-        ElMessage.error(error.message)
-        resolve()
-      })
-      if (res?.code === 0) {
-        wallets[1].list[0].value = new Decimal(
-          new Decimal(res.data.balance).div(Math.pow(10, 18)).toFixed(4)
-        ).toNumber()
-        wallets[1].list[0].loading = false
+    const item = wallets[1].list.find(
+      item => item.name === import.meta.env.VITE_ETH_CHAIN.toUpperCase()
+    )
+    if (item) {
+      if (userStore.user!.evmAddress) {
+        const res = await GetBalance({
+          chain: import.meta.env.VITE_ETH_CHAIN,
+          address: userStore.user!.evmAddress! || userStore.user?.ethAddress,
+        }).catch(error => {
+          ElMessage.error(error.message)
+          resolve()
+        })
+        if (res?.code === 0) {
+          item.value = new Decimal(
+            new Decimal(res.data.balance).div(Math.pow(10, 18)).toFixed(4)
+          ).toNumber()
+          item.loading = false
+          resolve()
+        }
+      } else {
+        item.value = 0
+        item.loading = false
         resolve()
       }
-    } else {
-      wallets[1].list[0].value = 0
-      wallets[1].list[0].loading = false
-      resolve()
     }
   })
 }
