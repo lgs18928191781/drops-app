@@ -96,28 +96,6 @@ export const router = createRouter({
         },
       ],
     },
-    // {
-    //   path: '/sign',
-    //   name: 'sign',
-    //   component: () => import('@/views/sign/Index.vue'),
-    //   children: [
-    //     {
-    //       path: 'pre',
-    //       name: 'preLogin',
-    //       component: () => import('@/views/sign/PreLogin.vue'),
-    //     },
-    //     {
-    //       path: 'in',
-    //       name: 'login',
-    //       component: () => import('@/views/sign/Login.vue'),
-    //     },
-    //     {
-    //       path: 'up',
-    //       name: 'register',
-    //       component: () => import('@/views/sign/register.vue'),
-    //     },
-    //   ],
-    // },
 
     // ShowTalk
     {
@@ -191,6 +169,64 @@ export const router = createRouter({
           path: 'nft',
           name: 'userNFT',
           component: () => import('@/views/user/NFT.vue'),
+        },
+      ],
+    },
+
+    // MetaName
+    {
+      path: '/metaname',
+      name: 'metaName',
+      component: () => import('@/views/metaname/Layout.vue'),
+      redirect: '/metaname/index',
+      children: [
+        {
+          path: 'index',
+          name: 'metaNameIndex',
+          component: () => import('@/views/metaname/Index.vue'),
+        },
+        {
+          path: 'mine',
+          name: 'metaNameMine',
+          meta: { isAuth: true },
+          component: () => RouterView,
+          redirect: { name: 'mineIndex' },
+          children: [
+            {
+              path: 'index',
+              name: 'mineIndex',
+              component: () => import('@/views/metaname/mine/Mine.vue'),
+            },
+            {
+              path: 'metaname/:metaName',
+              name: 'mineMetaName',
+              component: () => import('@/views/metaname/mine/MetaName.vue'),
+            },
+          ],
+        },
+        {
+          path: 'market',
+          name: 'metaNameMarket',
+          component: () => import('@/views/metaname/Market.vue'),
+        },
+        {
+          path: 'search',
+          name: 'metaNameSearch',
+          component: () => RouterView,
+          redirect: '/metaname/search/index',
+          children: [
+            {
+              path: 'index',
+              name: 'metaNameSearchIndex',
+              component: () => import('@/views/metaname/search/Search.vue'),
+            },
+            {
+              path: 'register/:metaName',
+              name: 'metaNameSearchRegister',
+              meta: { isAuth: true },
+              component: () => import('@/views/metaname/search/Register.vue'),
+            },
+          ],
         },
       ],
     },

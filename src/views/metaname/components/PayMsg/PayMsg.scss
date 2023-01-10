@@ -1,0 +1,113 @@
+.order-msg {
+    .order-msg-item {
+        padding-bottom: 24px;
+        border-bottom: 1px solid var(--divid-color);
+    }
+
+    .pay-amount {
+        .label {
+            font-size: 16px;
+            color: #606266;
+        }
+
+        .amount {
+            font-size: 30px;
+            font-weight: bold;
+        }
+    }
+
+    .pay-type {
+        .title {
+            color: #606266;
+        }
+
+        .pay-type-list {
+            margin-top: 24px;
+            border: 1px solid var(--divid-color);
+            border-radius: 8px;
+            overflow: hidden;
+
+            .pay-type-item {
+                padding: 12px 24px;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: var(--divid-color);
+                }
+
+                .logo {
+                    width: 36px;
+                    height: 36px;
+                    background: var(--divid-color);
+                    border-radius: 50%;
+                    margin-right: 12px;
+
+                    img {
+
+                        width: 18px;
+                        height: 18px;
+                    }
+                }
+
+
+
+                .name {
+                    font-size: 18px;
+                }
+
+                .check-warp {
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 50%;
+                    background: linear-gradient(137deg, #5721A1 2%, #2DEBD8 99%);
+
+                    .icon {
+                        width: 10px;
+                        height: 10px;
+                        color: #fff;
+
+                        :deep(use) {
+                            stroke: #fff;
+                            stroke-width: 2px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .result-amount {
+        text-align: center;
+        margin-top: 24px;
+
+        .amount {
+            font-weight: bold;
+            font-size: 30px;
+        }
+
+        .usd {
+            color: #606266;
+            font-size: 16px;
+        }
+    }
+
+    .btn {
+        margin-top: 24px;
+    }
+
+    .back {
+        text-align: center;
+        margin-top: 18px;
+
+        a {
+            cursor: pointer;
+        }
+    }
+}
+
+.btn {
+    text-align: center;
+    font-size: 18px;
+    line-height: 70px;
+    cursor: pointer;
+}

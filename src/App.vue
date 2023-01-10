@@ -1,7 +1,14 @@
 <template>
   <!-- <div @click="metaname(1)">MetaName点我</div>
   <div @click="metaname(21)">续费</div> -->
-  <div class="main flex">
+  <RouterView
+    v-if="
+      $route.path === '/' ||
+        $route.path.indexOf('/metaname') !== -1 ||
+        $route.path.indexOf('/home') !== -1
+    "
+  />
+  <div class="main flex" v-else>
     <LeftNavigationVue v-if="!blackRoute.includes(route.name)" />
     <div class="flex1 main-right">
       <RouterView v-slot="{ Component, route }">
@@ -33,6 +40,7 @@ import DragonBall from './views/talk/components/DragonBall.vue'
 import { useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
 import { useRoute } from 'vue-router'
+
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const route = useRoute()

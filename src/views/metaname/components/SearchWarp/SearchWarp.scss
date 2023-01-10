@@ -1,0 +1,32 @@
+.search-warp {
+    background: var(--themeBgSecondColor);
+    height: 72px;
+    padding: 0 24px;
+    border-radius: var(--rounded);
+    font-size: 16px;
+
+    .icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    input {
+        width: 100%;
+        line-height: 72px;
+        border: none;
+        outline: none;
+        padding: 0 12px;
+    }
+
+    .divid {
+        width: 1px;
+        height: 24px;
+        border-radius: 1px;
+        background: linear-gradient(0deg, #29FFD1 0%, #3A8FF6 50%, #5E0887 100%);
+        margin: 0 24px;
+    }
+
+    a {
+        cursor: pointer;
+    }
+}

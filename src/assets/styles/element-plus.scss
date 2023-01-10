@@ -253,6 +253,36 @@ html.dark {
     .el-loading-mask {
         box-shadow: 3px 3px 0 var(--el-mask-color);
     }
+
+    &.metaname {
+        --el-dialog-border-radius: 12px;
+        --el-dialog-width: 600PX;
+
+        .el-dialog__header {
+            background: linear-gradient(99deg, #5721A1 0%, #2FE3D6 99%);
+            border-radius: 12px 12px 0 0;
+            height: 107px;
+
+            .el-dialog__title {
+                color: #fff;
+                font-size: 24px;
+            }
+
+            .el-dialog__headerbtn {
+                background: transparent;
+
+                .el-dialog__close {
+                    color: #fff;
+                    width: 16px;
+                    height: 16px;
+                }
+            }
+        }
+
+        .el-dialog__body {
+            padding: 24px;
+        }
+    }
 }
 
 .el-message-box__errormsg {
