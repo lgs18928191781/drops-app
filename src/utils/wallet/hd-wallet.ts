@@ -77,7 +77,7 @@ export interface Reqswapargs {
 
 export interface MetaNameRequestDate {
   mvcRawTx?: string
-  requestIndex: number
+  requestIndex: string
   mvcOutputIndex?: number
   nftRawTx?: string
   nftOutputIndex?: number
@@ -2205,13 +2205,13 @@ export class HdWallet {
   //发起MetaName交易前参数构造
   public async sendMetaNameTransation(params: {
     op_code: number
-    info: {
+    info?: {
       [key: string]: any
       metaid?: string
       mvc?: string
       icon?: string
     }
-    years: number
+    years?: number
     reqswapargs: Reqswapargs
     payTo?: Array<{
       address: string
@@ -2222,8 +2222,11 @@ export class HdWallet {
     const mvcToAddress = reqswapargs.mvcToAddress
     const nftToAddress = reqswapargs.nftToAddress
     const txFee = reqswapargs.txFee
-    const requestIndex = reqswapargs.requestIndex
-    const metaNameOpFee = new Decimal(reqswapargs.feePerYear).mul(years).toNumber()
+    const requestIndex = reqswapargs.requestIndex.toString()
+    const metaNameOpFee =
+      MetaNameReqCode.updataInfo == op_code
+        ? 0
+        : new Decimal(reqswapargs.feePerYear).mul(years!).toNumber()
     let MetaNameSuccTxid: string
     let mvcReceivers: Array<{ address: string; amount: number }>
     let transferNftResult,
@@ -2235,7 +2238,7 @@ export class HdWallet {
       mvcRawTx
     const mvcOutputIndex = 0
     const nftOutputIndex = 0
-    transferAmount = MetaNameReqCode.updataInfo == op_code ? txFee : metaNameOpFee + txFee
+    transferAmount = metaNameOpFee + txFee
     mvcReceivers = [
       {
         address: mvcToAddress,
@@ -2249,6 +2252,7 @@ export class HdWallet {
     }
     //拆分UTXO交易
     if (op_code == MetaNameReqCode.updataInfo) {
+      debugger
       const devides = [
         {
           address: this.rootAddress!,
@@ -2280,6 +2284,7 @@ export class HdWallet {
           }
         }
       })
+      debugger
       transferResult = await this.makeTx({
         utxos: [mvcUtxo],
         opReturn: [],
@@ -2297,6 +2302,7 @@ export class HdWallet {
         years,
         infos: info,
       }
+      debugger
       registerMetaNameResp = JSON.stringify(params)
       // registerMetaNameResp = await this.provider.registerNewMetaName(
       //   params,
@@ -2327,6 +2333,7 @@ export class HdWallet {
       // registerMetaNameResp = await this.provider.registerNewMetaName(params, MetaNameReqType.renew)
       registerMetaNameResp = JSON.stringify(params)
     } else if (MetaNameReqCode.updataInfo) {
+      debugger
       const nftRawTx = await this.transferNft(
         {
           receiverAddress: nftToAddress,

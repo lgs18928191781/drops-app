@@ -1092,8 +1092,9 @@ export function CheckMetaMaskAccount(address: string) {
   return new Promise<void>(async (resolve, reject) => {
     const root = useRootStore()
     const chain = (window as any).ethereum.chainId
-    const chainId = parseInt(chain).toString()
-    if (root.chainWhiteList.includes(chainId)) {
+    // const chainId = parseInt(chain).toString()
+    debugger
+    if (root.chainWhiteList.includes(chain)) {
     } else {
       await ChangeMetaMaskChain()
     }
