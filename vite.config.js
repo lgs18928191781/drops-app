@@ -17,7 +17,8 @@ import stdLibBrowser from 'node-stdlib-browser'
 import { viteExternalsPlugin } from 'vite-plugin-externals'
 import nodePolyfills from 'rollup-plugin-polyfill-node'
 import basicSsl from '@vitejs/plugin-basic-ssl'
-
+// import dns from 'dns'
+// dns.setDefaultResultOrder('verbatim')
 const pathSrc = path.resolve(__dirname, 'src')
 const productionEnvs = ['prod', 'preview']
 export default ({ mode, command }) => {
@@ -116,10 +117,18 @@ export default ({ mode, command }) => {
       _APP_VERSION: JSON.stringify(pkg.version),
     },
     server: {
-      // host: 'show-app.com',
-      // port: 5174,
+      host: '0.0.0.0',
+      port: 8080,
+
       https: false,
-      // open: false,
+      // open: true,
+      // proxy: {
+      //   '^/metasv/': {
+      //     target: 'https://192.168.168.147:443',
+      //     changeOrigin: true,
+      //     rewrite: path => path.replace(/^\/metasv/, ''),
+      //   },
+      // },
     },
     esbuild: {
       drop: isProduction ? ['console', 'debugger'] : [],

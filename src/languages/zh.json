@@ -742,5 +742,8 @@
     "IndexDrsc6": "MetaName使您的应用程序更加与众不同，并使您的应用程序更加突出",
     "MetaName cannot be empty": "MetaName 不能为空"
   },
-  "Menu": "菜单"
+  "Menu": "菜单",
+  "metanameNotAllowOverLenght": "注册名称长度不能超过63位字符",
+  "metanameNotAllowMin": "暂不支持1-2位字符注册",
+  "metanameNftImgError": "上链MetaName封面失败"
 }

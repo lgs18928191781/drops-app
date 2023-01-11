@@ -133,7 +133,7 @@ export default class ShowmoneyProvider {
       url: '/reqargs',
       params: {
         ...params,
-        source: 'showmoney',
+        source: 'show',
       },
       options,
     })
