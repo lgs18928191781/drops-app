@@ -41,6 +41,7 @@ import { Ref } from 'vue'
 import ShowSVG from '@/assets/svg/show.svg?component'
 import { CreatOrder } from '@/api/wxcore'
 import { LoadingTEXT } from './LoadingSVGText'
+import { resolve } from 'path'
 
 export function randomString() {
   return Math.random()
@@ -513,6 +514,8 @@ export function openLoading(params?: {
 
 export function urlToBlob(url: string): Promise<Blob> {
   return axios.get(url, { responseType: 'blob' }).then(res => {
+    console.log('res1', res)
+    debugger
     return res.data
   })
 }
@@ -863,6 +866,7 @@ export function FileToAttachmentItem(file: File, encrypt: IsEncrypt = IsEncrypt.
     for (let index = 0; index < file.size; index += chunkSize) {
       await readResult(file.slice(index, index + chunkSize))
     }
+    debugger
     resolve({
       data: hex,
       fileName: file.name,
@@ -1088,7 +1092,7 @@ export function CheckMetaMaskAccount(address: string) {
     const root = useRootStore()
     const chain = (window as any).ethereum.chainId
     const chainId = parseInt(chain).toString()
-    if (chainId === import.meta.env.VITE_ETH_CHAINID) {
+    if (root.chainWhiteList.includes(chainId)) {
     } else {
       await ChangeMetaMaskChain()
     }
@@ -1141,4 +1145,80 @@ export function ChangeMetaMaskChain() {
         reject(error)
       })
   })
+}
+
+function getBase64(url: string, callback: Function) {
+  debugger
+  //通过构造函数来创建的 img 实例，在赋予 src 值后就会立刻下载图片，相比 createElement() 创建 <img> 省去了 append()，也就避免了文档冗余和污染
+  let Img = new Image()
+  let dataURL = ''
+  Img.src = url + '?v=' + Math.random() // 处理缓存,fix缓存bug,有缓存，浏览器会报错;
+  Img.setAttribute('crossOrigin', 'Anonymous') // 解决控制台跨域报错的问题
+  Img.onload = function() {
+    //要先确保图片完整获取到，这是个异步事件
+    debugger
+    let canvas = document.createElement('canvas'), //创建canvas元素
+      context = canvas.getContext('2d'),
+      width = Img.width, //确保canvas的尺寸和图片一样
+      height = Img.height
+    canvas.width = width
+    canvas.height = height
+    context!.drawImage(Img, 0, 0, width, height) //将图片绘制到canvas中
+    dataURL = canvas.toDataURL('image/png') //转换图片为dataURL
+    //  debugger
+    // canvas.toBlob(blob => {
+
+    //   resolve(blob)
+    // },'image/png')
+    callback(dataURL)
+  }
+}
+
+function dataURLtoFile(dataurl, filename: string) {
+  debugger
+  //将base64转换为文件，dataurl为base64字符串，filename为文件名（必须带后缀名，如.jpg,.png）
+  let arr = dataurl.split(','),
+    mime = arr[0].match(/:(.*?);/)[1],
+    bstr = atob(arr[1]),
+    n = bstr.length,
+    u8arr = new Uint8Array(n)
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n)
+  }
+  return new File([u8arr], filename, { type: mime })
+}
+
+export const setInitImg = (
+  url: string,
+  callback: Function
+): Promise<{ file: File; base64Res: string | ArrayBuffer | null }> => {
+  let img = url //这里是图片URL
+  return new Promise(resolve => {
+    getBase64(img, async dataURL => {
+      let fileImgRes = dataURLtoFile(dataURL, img)
+      const file = await callback(fileImgRes)
+      let reader = new FileReader()
+      reader.readAsDataURL(fileImgRes)
+      reader.onload = function() {
+        let base64Res = reader.result
+        resolve({
+          file,
+          base64Res,
+        })
+      }
+    })
+  })
+}
+
+export const bytesLength = (str: string) => {
+  let intLength = 0
+  for (let i = 0; i < str.length; i++) {
+    let a = str.charAt(i)
+    if (a.match(/[^\x00-\xff]/gi) != null) {
+      intLength += 2
+    } else {
+      intLength += 1
+    }
+  }
+  return intLength
 }

@@ -76,9 +76,9 @@ export interface Reqswapargs {
 }
 
 export interface MetaNameRequestDate {
-  mvcRawTx: string
+  mvcRawTx?: string
   requestIndex: number
-  mvcOutputIndex: number
+  mvcOutputIndex?: number
   nftRawTx?: string
   nftOutputIndex?: number
   years?: number
@@ -839,7 +839,7 @@ export class HdWallet {
       codehash: string
       genesis: string
       tokenIndex: string
-      utxos: any[]
+      utxos?: any[]
     },
     option?: {
       isBroadcast: boolean
@@ -860,7 +860,7 @@ export class HdWallet {
       const nftManager = await this.getNftManager()
       console.log('nftManager', nftManager)
       debugger
-      const result = await nftManager.transfer({
+      let transferParams: any = {
         codehash: params.codehash,
         genesis: params.genesis,
         receiverAddress: params.receiverAddress,
@@ -869,8 +869,11 @@ export class HdWallet {
           .privateKey.toString(),
         tokenIndex: params.tokenIndex,
         noBroadcast: !option!.isBroadcast,
-        utxos: params.utxos,
-      })
+      }
+      if (params.utxos?.length) {
+        transferParams = { ...transferParams, utxos: params.utxos }
+      }
+      const result = await nftManager.transfer(transferParams)
       debugger
       resolve(result)
     })
@@ -2215,9 +2218,7 @@ export class HdWallet {
       amount: number
     }>
   }) {
-    debugger
     const { reqswapargs, years, op_code, info } = params
-
     const mvcToAddress = reqswapargs.mvcToAddress
     const nftToAddress = reqswapargs.nftToAddress
     const txFee = reqswapargs.txFee
@@ -2230,7 +2231,8 @@ export class HdWallet {
       transferAmount: number,
       mvcUtxo,
       nftUtxo,
-      registerMetaNameResp
+      registerMetaNameResp,
+      mvcRawTx
     const mvcOutputIndex = 0
     const nftOutputIndex = 0
     transferAmount = MetaNameReqCode.updataInfo == op_code ? txFee : metaNameOpFee + txFee
@@ -2245,24 +2247,28 @@ export class HdWallet {
     if (utxos.length <= 0) {
       throw new Error(`utxo is null`)
     }
-    debugger
-    if (op_code !== 1) {
+    //拆分UTXO交易
+    if (op_code == MetaNameReqCode.updataInfo) {
       const devides = [
+        {
+          address: this.rootAddress!,
+          amount: transferAmount + 10000,
+        },
         {
           address: this.rootAddress!,
           amount: 100000,
         },
       ]
-      const devidesUtxo = []
-      for (let i = 0; i < utxos.length; i++) {
-        if (new Decimal(utxos[i].satoshis).add(100000).toNumber() > transferAmount) {
-          devidesUtxo.push(utxos[i])
-        }
-      }
-      // await this.devideUtxo(devides, [devidesUtxo[0]])
-      // utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
+      // const devidesUtxo = []
+      // for (let i = 0; i < utxos.length; i++) {
+      //   if (new Decimal(utxos[i].satoshis).add(100000).toNumber() > transferAmount) {
+      //     devidesUtxo.push(utxos[i])
+      //   }
+      // }
+      await this.devideUtxo(devides, utxos)
+      utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
       utxos.forEach(item => {
-        if (new Decimal(item.satoshis).toNumber() > transferAmount) {
+        if (new Decimal(item.satoshis).toNumber() == transferAmount + 10000) {
           mvcUtxo = item
         }
         if (item.satoshis == 100000) {
@@ -2274,28 +2280,28 @@ export class HdWallet {
           }
         }
       })
+      transferResult = await this.makeTx({
+        utxos: [mvcUtxo],
+        opReturn: [],
+        change: this.rootAddress,
+        payTo: mvcReceivers,
+      })
+      mvcRawTx = transferResult.toString()
     }
-
-    transferResult = await this.makeTx({
-      utxos: MetaNameReqCode.register == op_code ? utxos : [mvcUtxo],
-      opReturn: [],
-      change: this.rootAddress,
-      payTo: mvcReceivers,
-    })
-    let mvcRawTx = transferResult.toString()
-
+    debugger
     if (MetaNameReqCode.register == op_code) {
       const params: MetaNameRequestDate = {
         requestIndex,
-        mvcRawTx,
-        mvcOutputIndex,
+        // mvcRawTx,
+        // mvcOutputIndex,
         years,
         infos: info,
       }
-      registerMetaNameResp = await this.provider.registerNewMetaName(
-        params,
-        MetaNameReqType.register
-      )
+      registerMetaNameResp = JSON.stringify(params)
+      // registerMetaNameResp = await this.provider.registerNewMetaName(
+      //   params,
+      //   MetaNameReqType.register
+      // )
     } else if (MetaNameReqCode.renew == op_code) {
       const nftRawTx = await this.transferNft(
         {
@@ -2303,7 +2309,7 @@ export class HdWallet {
           codehash: reqswapargs.nftCodeHash,
           genesis: reqswapargs.nftGenesisID,
           tokenIndex: reqswapargs.nftTokenIndex,
-          utxos: [nftUtxo],
+          // utxos: [nftUtxo],
         },
         {
           isBroadcast: false,
@@ -2312,13 +2318,14 @@ export class HdWallet {
 
       const params: MetaNameRequestDate = {
         requestIndex,
-        mvcRawTx,
-        mvcOutputIndex,
+        // mvcRawTx,
+        // mvcOutputIndex,
         nftRawTx: nftRawTx.txHex,
         nftOutputIndex,
         years,
       }
-      registerMetaNameResp = await this.provider.registerNewMetaName(params, MetaNameReqType.renew)
+      // registerMetaNameResp = await this.provider.registerNewMetaName(params, MetaNameReqType.renew)
+      registerMetaNameResp = JSON.stringify(params)
     } else if (MetaNameReqCode.updataInfo) {
       const nftRawTx = await this.transferNft(
         {
@@ -2340,18 +2347,18 @@ export class HdWallet {
         nftOutputIndex,
         infos: info,
       }
-      registerMetaNameResp = await this.provider.registerNewMetaName(
-        params,
-        MetaNameReqType.updataInfo
-      )
+      // registerMetaNameResp = await this.provider.registerNewMetaName(
+      //   params,
+      //   MetaNameReqType.updataInfo
+      // )
+      registerMetaNameResp = JSON.stringify(params)
     }
-    debugger
-    if (registerMetaNameResp?.code == 0) {
-      MetaNameSuccTxid = registerMetaNameResp!.data
-      return {
-        code: 0,
-        MetaNameSuccTxid,
-      }
+    return {
+      registerMetaNameResp,
+      MvcToAddress: reqswapargs.mvcToAddress,
+      NftToAddress: reqswapargs.nftToAddress,
+      TxFee: reqswapargs.txFee,
+      FeePerYear: reqswapargs.feePerYear,
     }
   }
 }

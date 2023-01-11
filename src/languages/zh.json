@@ -659,5 +659,8 @@
   "PayModel": {
     "Paying": "正在支付中.."
   },
-  "metaidIsBinded": "MetaId已被其他账户绑定,请检查后重试"
+  "metaidIsBinded": "MetaId已被其他账户绑定,请检查后重试",
+  "metanameNotAllowOverLenght": "注册名称长度不能超过63位字符",
+  "metanameNotAllowMin": "暂不支持1-2位字符注册",
+  "metanameNftImgError": "上链MetaName封面失败"
 }

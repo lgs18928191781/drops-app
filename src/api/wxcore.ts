@@ -166,12 +166,12 @@ export const UpdatePay = (params: {
 
 export const CreatOrder = (params: {
   address: string
-  count: number
+  count?: number
   from: string
   goods_name: string
   metaid: string
   pay_type: number
-  product_type: 100 | 200 // 商品订单类型：100-ME, 200-Legal_NFT
+  product_type: 100 | 200 | 300 // 商品订单类型：100-ME, 200-Legal_NFT ,300-MetaName
   quit_url: string
   types: number
   uuid?: string
@@ -179,6 +179,13 @@ export const CreatOrder = (params: {
   from_coin_address?: string
   coupon_id?: string
   description?: string
+  operate_type?: 1 | 2 | 3
+  meta_name_len?: number
+  data?: string
+  mvc_to_address?: string
+  nft_to_address?: string
+  tx_fee?: number
+  fee_per_year?: number
 }): Promise<GetOrderStatusRes> => {
   return Wxcore.post(`/product/order`, params)
 }
