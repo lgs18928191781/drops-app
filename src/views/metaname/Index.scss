@@ -65,6 +65,7 @@
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
+    animation: module1Anim 3s infinite ease-in-out;
 
     .title {
         font-size: 72px;
@@ -124,6 +125,7 @@
 
             filter: blur(200px);
             z-index: 1;
+            animation: module2Anim 3s infinite ease-in-out;
         }
 
         .content {
@@ -170,6 +172,7 @@
         top: 0;
         margin-left: 280px;
         margin-top: -50px;
+        animation: module3Anim 3s infinite ease-in-out;
     }
 
     .imgs {
@@ -196,6 +199,7 @@
         right: 50%;
         bottom: 0;
         z-index: 1;
+        animation: module2Anim 3s infinite ease-in-out;
     }
 
     .cover {
@@ -225,6 +229,7 @@
         height: 400px;
         margin-top: -250px;
         margin-right: -50px;
+        animation: module3Anim 3s infinite ease-in-out;
     }
 
     .apps {
@@ -263,6 +268,7 @@
         width: auto;
         bottom: 0;
         margin-bottom: -500px;
+        animation: module6Anim 10s infinite ease;
     }
 
     .operate {
@@ -309,6 +315,71 @@ footer {
     }
 }
 
+@keyframes module1Anim {
+    0% {
+        background-position-x: center;
+        background-position-y: center;
+        background-size: 100%;
+    }
+
+    50% {
+        background-position-x: 49%;
+        background-position-y: 49%;
+        background-size: 105%;
+    }
+
+    100% {
+        background-position-x: center;
+        background-position-y: center;
+        background-size: 100%
+    }
+}
+
+@keyframes module2Anim {
+    0% {
+        transform: scale(1);
+        filter: blur(200px);
+    }
+
+    50% {
+        transform: scale(1.5);
+        filter: blur(100px);
+    }
+
+    100% {
+        transform: scale(1);
+        filter: blur(200px);
+    }
+}
+
+@keyframes module3Anim {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.5);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes module6Anim {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
 
 @media only screen and (max-width: 750PX) {
 
@@ -322,7 +393,26 @@ footer {
         background-size: contain;
     }
 
+    .module2 {
+        .metaname-container {
+            .bg {
+                left: 50%;
+                margin-left: -200px;
+                top: 50%;
+                margin-top: -200px;
+            }
+        }
+
+    }
+
     .module3 {
+
+        .bg {
+            left: auto;
+            right: 0;
+            top: 0;
+        }
+
         .imgs {
             flex-direction: column;
 
