@@ -7,6 +7,8 @@ const aggregation = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation
   },
 }).request
 
+const metanameApi = new HttpRequest(`${import.meta.env.VITE_MetaName_BaseApi}`, {}).request
+
 export const MetaBotV1 = (params: {
   address: string
   page: number
@@ -598,4 +600,21 @@ export const GetUserGenesisList = (params: {
 }> => {
   const { metaId, ..._params } = params
   return aggregation.get(`/v2/app/sensible/getMyGenesisList/${metaId}`, { params: _params })
+}
+
+//metaname注册查询
+export const GetMetaNameIsRegister = (
+  name: string
+): Promise<{
+  code: number
+  data: {
+    name: string
+    expiredBlockHeight: number
+    nftCodeHash: string
+    genesisId: string
+    tokenIndex: string
+    resolver: string
+  }
+}> => {
+  return metanameApi.get(`/getinfo/?name=${name}`)
 }
