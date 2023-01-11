@@ -561,7 +561,16 @@
     "Belong Genesis": "所属系列",
     "Issue NFT Options": "铸造NFT选项",
     "Choose Image": "选择图片",
-    "Remove": "删除"
+    "Remove": "删除",
+    "CoverIsSameSourFille": "封面图和源文件相同",
+    "AllSame": "所有相同",
+    "Add Issue": "添加铸造",
+    "Issue NFT": "铸造NFT",
+    "Create Genesis": "创建系列",
+    "Enter genesis name": "请填写系列名称",
+    "Genesis Name": "系列名称",
+    "Genesis Count": "系列NFT个数",
+    "Enter genesis nft count": "请填写系列NFT个数"
   },
   "My NFT": "我的NFT",
   "Done": "完成",

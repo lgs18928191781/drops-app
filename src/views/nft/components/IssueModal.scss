@@ -1,0 +1,26 @@
+.switch-list {
+    .switch-item {
+        margin-right: 15px;
+
+        &:last-child {
+            margin-right: 0;
+        }
+
+        .label {
+            font-size: 12px;
+            margin-right: 10px;
+            opacity: 0.5;
+        }
+    }
+}
+
+.main-border {
+    margin-top: 30px;
+    padding: 10px 0;
+}
+
+.create-genesis {
+    cursor: pointer;
+    margin-right: 10px;
+    color: var(--color-hover);
+}

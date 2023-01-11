@@ -566,7 +566,16 @@
     "Belong Genesis": "Belong Genesis",
     "Issue NFT Options": "Issue NFT Options",
     "Choose Image": "Choose Image",
-    "Remove": "Remove"
+    "Remove": "Remove",
+    "CoverIsSameSourFille": "Cover Same SourFile",
+    "AllSame": "All Same",
+    "Add Issue": "Add Issue",
+    "Issue NFT": "Issue NFT",
+    "Create Genesis": "Create Genesis",
+    "Enter genesis name": "Enter genesis name",
+    "Genesis Name": "Genesis Name",
+    "Genesis Count": "Genesis NFT Count",
+    "Enter genesis nft count": "Enter genesis nft count"
   },
   "My NFT": "My NFT",
   "Done": "Done",
