@@ -523,8 +523,6 @@ export function openLoading(params?: {
 
 export function urlToBlob(url: string): Promise<Blob> {
   return axios.get(url, { responseType: 'blob' }).then(res => {
-    console.log('res1', res)
-    debugger
     return res.data
   })
 }
@@ -875,7 +873,6 @@ export function FileToAttachmentItem(file: File, encrypt: IsEncrypt = IsEncrypt.
     for (let index = 0; index < file.size; index += chunkSize) {
       await readResult(file.slice(index, index + chunkSize))
     }
-    debugger
     resolve({
       data: hex,
       fileName: file.name,
@@ -1123,7 +1120,6 @@ export function CheckMetaMaskAccount(address: string) {
     const result = await (window as any).ethereum.enable()
     if (result && result.length) {
       const root = useRootStore()
-      debugger
       const chain = (window as any).ethereum.chainId
       const chainId = parseInt(chain).toString()
       if (chainId === import.meta.env.VITE_ETH_CHAINID) {
@@ -1157,7 +1153,6 @@ export function ChangeMetaMaskChain() {
       }
     )
       .then(() => {
-        debugger
         ;(window as any).ethereum
           .request({
             method: 'wallet_switchEthereumChain',
@@ -1179,7 +1174,6 @@ export function ChangeMetaMaskChain() {
           })
       })
       .catch(error => {
-        debugger
         reject(error)
       })
   })
@@ -1257,7 +1251,6 @@ function getBase64(url: string, callback: Function) {
     canvas.height = height
     context!.drawImage(Img, 0, 0, width, height) //将图片绘制到canvas中
     dataURL = canvas.toDataURL('image/png') //转换图片为dataURL
-    //  debugger
     // canvas.toBlob(blob => {
 
     //   resolve(blob)

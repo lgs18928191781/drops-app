@@ -467,3 +467,10 @@ declare interface GenesisItem {
   symbol: string
   totalSupply: number
 }
+
+declare interface Order {
+  status: number
+  order_id: string
+  transaction_id: string
+  pay_amount: number
+}

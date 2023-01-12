@@ -192,16 +192,11 @@ export const CreatOrder = (params: {
 
 export const GetOrder = (params: {
   order_id: string
-  pay_type: number
-  product_type: number
+  pay_type: number | string
+  product_type: number | string
 }): Promise<{
   code: number
-  data: {
-    status: number
-    order_id: string
-    transaction_id: string
-    pay_amount: number
-  }
+  data: Order
 }> => {
   const { order_id, ..._params } = params
   return Wxcore.get(`/product/order/${order_id}/info`, { params: _params })
