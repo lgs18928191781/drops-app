@@ -29,4 +29,8 @@
     a {
         cursor: pointer;
     }
+
+    .el-loading-mask {
+        border-radius: var(--rounded);
+    }
 }

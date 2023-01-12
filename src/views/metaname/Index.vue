@@ -130,8 +130,8 @@
             v-for="(item, index) in contactIcon"
             :key="index"
           >
-            <img :src="item.icon"
-          /></a>
+            <Icon :name="item.icon" />
+          </a>
         </div>
       </div>
     </footer>
@@ -202,21 +202,17 @@ const apps = [
 
 const contactIcon = [
   {
-    icon: footIcon1,
+    icon: 'show_fill',
     link:
-      'https://www.show3.io/talk/channels/74462f14a033849bf6067de63ad3d6c54edfa48ec1f2759e8ed8c6165b3f58b2/bc8c85d916cbe1582ae6ff5ded9220ac18301122a7167e45024f6483a59adaeb',
+      'https://www.show3.io/talk/channels/8bef622b119ed8bdbe7cb10f4fd3b844db2f08663a4c66a010661e8cd1220a27/d15591ee6ec34aa2f8d34665c8874d6616ccef8cee30fe8754242dd85c4aeb1b',
   },
   {
-    icon: footIcon2,
-    link: 'https://twitter.com/show3official',
+    icon: 'twitter',
+    link: 'https://twitter.com/matanamedao',
   },
   {
-    icon: footIcon3,
-    link: 'https://t.me/showappoffcial',
-  },
-  {
-    icon: footIcon4,
-    link: 'mailto:official@show3.io',
+    icon: 'email',
+    link: 'mailto:metanamedao@outlook.com',
   },
 ]
 

@@ -275,7 +275,7 @@ const payResultMessage = computed(() => {
         : rootStore.currentPriceSymbol
     const amount =
       props.payPlatform === PayPlatform.ETH
-        ? new Decimal(props.amount).div(Math.pow(10, 18)).toFixed(10)
+        ? new Decimal(props.amount).div(Math.pow(10, 9)).toFixed(5)
         : new Decimal(props.amount).div(100).toFixed(2)
     msg = `ShowPayLimited: ${symbol} ${amount}`
   } else if (payResult.status === PayStatus.Fail) {
@@ -602,6 +602,7 @@ watch(
   () => props.modelValue,
   () => {
     if (props.modelValue) {
+      debugger
       loading = openLoading()
       drawePayCode()
         .catch(error => {

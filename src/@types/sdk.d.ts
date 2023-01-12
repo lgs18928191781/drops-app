@@ -472,3 +472,11 @@ export interface CreateNodeRes {
   codehash?: string
   sensibleId?: string
 }
+
+export interface SendMetaNameTransationResult {
+  registerMetaNameResp: any
+  MvcToAddress: string
+  NftToAddress: string
+  TxFee: number
+  FeePerYear: number
+}

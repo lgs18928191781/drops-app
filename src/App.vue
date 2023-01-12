@@ -40,7 +40,6 @@ import DragonBall from './views/talk/components/DragonBall.vue'
 import { useRootStore, isAndroid, isApp, isIOS, isIosApp } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
 import { useRoute } from 'vue-router'
-import { GetMetaNameIsRegister } from '@/api/aggregation'
 import { dayjs, ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { MetaNameFeePerYear } from '@/enum'
@@ -60,6 +59,7 @@ import { MetaNameReqCode } from '@/utils/wallet/hd-wallet'
 import { CreatOrder, UpdatePay } from '@/api/wxcore'
 import { PayPlatform, PayType, ProductType, MetaNameOperateType, OrderPayType } from '@/enum'
 import { BigNumber } from 'ethers'
+import { GetMetaNameIsRegister } from './api/metaname'
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const i18n = useI18n()
@@ -226,7 +226,6 @@ async function registerMetaName(params: {
       debugger
       if (orderRes.code == 0) {
         const { pay_amount, pay_decimal_num, url, outside_order_id, pay_currency } = orderRes.data
-        debugger
         await sendEth({
           amount: pay_amount!,
           ethRecevierAddress: url,
@@ -307,7 +306,6 @@ async function sendEth(params: {
   orderId: string
   product_type: number
 }) {
-  debugger
   const tx = await window.ethereum!.request!({
     method: 'eth_sendTransaction',
     params: [

@@ -101,7 +101,6 @@ const callMetasvApi = async (
   if (!signature || Date.now() - Number(signature.timestamp) > 5 * 60 * 1000) {
     signature = await getMetasvSig(path)
   }
-  debugger
   const url = metasvApi + path
   const Http = new HttpRequests()
   if (method === 'post') {
@@ -130,7 +129,6 @@ const callMetasvApi = async (
       },
     })
       .then(res => {
-        debugger
         return res
       })
       .catch(error => {
@@ -140,7 +138,6 @@ const callMetasvApi = async (
 }
 
 export const getBlockHeight = (): Promise<any> => {
-  debugger
   return callMetasvApi('/block/info')
 }
 

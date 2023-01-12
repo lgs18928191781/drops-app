@@ -19,6 +19,9 @@ import {
   ToCurrency,
   PayType,
   NodeName,
+  MetaNameFeePerYear,
+  MetaNameOperateType,
+  ProductType,
 } from '@/enum'
 import { CheckBlindboxOrderStatus } from '@/api/v3'
 import AllCardJson from '@/utils/card.json'
@@ -43,6 +46,11 @@ import ShowSVG from '@/assets/svg/show.svg?component'
 import { CreatOrder } from '@/api/wxcore'
 import { LoadingTEXT } from './LoadingSVGText'
 import { Mitt, MittEvent } from './mitt'
+import { ethers } from 'ethers'
+import { getBlockHeight } from '@/api'
+import { GetMetaNameIsRegister } from '@/api/metaname'
+import { dateTimeFormat } from './filters'
+import dayjs from 'dayjs'
 
 export function randomString() {
   return Math.random()
@@ -963,6 +971,11 @@ export function getCurrencyAmount(
       ).toNumber()
       if (result < 0.00001) result = 0.00001
       return result
+    } else if (currency === ToCurrency.USD) {
+      // usd -> eth
+      let result = new Decimal(new Decimal(price).div(rate!.price.USD).toFixed(5)).toNumber()
+      if (result < 0.00001) result = 0.00001
+      return result
     } else {
       // mvc -> eth
       return 0
@@ -1041,8 +1054,17 @@ export function CreatePayOrder(params: {
   fullPath: string
   goods_name: string
   count: number
-  product_type: 100 | 200 // 100-ME, 200-Legal_NFT,
+  product_type: ProductType // 100-ME, 200-Legal_NFT,
   uuid?: string
+
+  // metanem
+  data?: string
+  operate_type?: MetaNameOperateType
+  mvc_to_address?: string
+  nft_to_address?: string
+  tx_fee?: number
+  fee_per_year?: number
+  meta_name_len?: number
 }) {
   return new Promise<PayOrderStatus>(async (resolve, reject) => {
     try {
@@ -1078,6 +1100,14 @@ export function CreatePayOrder(params: {
         from_coin_address: userStore.user?.evmAddress,
         product_type: params.product_type,
         uuid: params.uuid,
+        // metaname
+        data: params.data,
+        operate_type: params.operate_type,
+        mvc_to_address: params.mvc_to_address,
+        nft_to_address: params.nft_to_address,
+        tx_fee: params.tx_fee,
+        fee_per_year: params.fee_per_year,
+        meta_name_len: params.meta_name_len,
       })
       if (res?.code === 0) {
         resolve(res.data)
@@ -1090,29 +1120,34 @@ export function CreatePayOrder(params: {
 
 export function CheckMetaMaskAccount(address: string) {
   return new Promise<void>(async (resolve, reject) => {
-    const root = useRootStore()
-    const chain = (window as any).ethereum.chainId
-    const chainId = parseInt(chain).toString()
-    if (root.chainWhiteList.includes(chainId)) {
-    } else {
-      await ChangeMetaMaskChain()
-    }
-    // const request = await (window as any).ethereum.request({
-    //   method: 'eth_requestAccounts',
-    //   params: [address],
-    // })
-    // const res = await (window as any).ethereum.request({
-    //   method: 'wallet_requestPermissions',
-    //   params: [{ eth_accounts: address }],
-    // })
+    const result = await (window as any).ethereum.enable()
+    if (result && result.length) {
+      const root = useRootStore()
+      debugger
+      const chain = (window as any).ethereum.chainId
+      const chainId = parseInt(chain).toString()
+      if (chainId === import.meta.env.VITE_ETH_CHAINID) {
+      } else {
+        await ChangeMetaMaskChain().catch(error => reject(error))
+      }
+      // const request = await (window as any).ethereum.request({
+      //   method: 'eth_requestAccounts',
+      //   params: [address],
+      // })
+      // const res = await (window as any).ethereum.request({
+      //   method: 'wallet_requestPermissions',
+      //   params: [{ eth_accounts: address }],
+      // })
 
-    resolve()
+      resolve()
+    }
   })
 }
 
 export function ChangeMetaMaskChain() {
-  return new Promise(async (resolve, reject) => {
+  return new Promise<void>(async (resolve, reject) => {
     const res = await ElMessageBox.confirm(
+      // @ts-ignore
       i18n.global.t('MetaMak.Chain Network Error Tips') + `${import.meta.env.VITE_ETH_CHAIN}`,
       i18n.global.t('MetaMak.Chain Network Error'),
       {
@@ -1122,16 +1157,17 @@ export function ChangeMetaMaskChain() {
       }
     )
       .then(() => {
+        debugger
         ;(window as any).ethereum
           .request({
             method: 'wallet_switchEthereumChain',
             params: [
               {
-                // chainId: ethers.utils.hexValue(parseInt(import.meta.env.VITE_ETH_CHAINID))
-                chainId:
-                  import.meta.env.VITE_ETH_CHAIN == 'eth'
-                    ? currentSupportChain[0].chainId
-                    : currentSupportChain[1].chainId,
+                chainId: ethers.utils.hexValue(parseInt(import.meta.env.VITE_ETH_CHAINID)),
+                // chainId:
+                //   import.meta.env.VITE_ETH_CHAIN == 'eth'
+                //     ? currentSupportChain[0].chainId
+                //     : currentSupportChain[1].chainId,
               },
             ],
           })
@@ -1143,6 +1179,7 @@ export function ChangeMetaMaskChain() {
           })
       })
       .catch(error => {
+        debugger
         reject(error)
       })
   })
@@ -1205,7 +1242,6 @@ export async function confirmFollow(params: { address: string; metaId: string; v
   })
 }
 function getBase64(url: string, callback: Function) {
-  debugger
   //通过构造函数来创建的 img 实例，在赋予 src 值后就会立刻下载图片，相比 createElement() 创建 <img> 省去了 append()，也就避免了文档冗余和污染
   let Img = new Image()
   let dataURL = ''
@@ -1213,7 +1249,6 @@ function getBase64(url: string, callback: Function) {
   Img.setAttribute('crossOrigin', 'Anonymous') // 解决控制台跨域报错的问题
   Img.onload = function() {
     //要先确保图片完整获取到，这是个异步事件
-    debugger
     let canvas = document.createElement('canvas'), //创建canvas元素
       context = canvas.getContext('2d'),
       width = Img.width, //确保canvas的尺寸和图片一样
@@ -1231,8 +1266,7 @@ function getBase64(url: string, callback: Function) {
   }
 }
 
-function dataURLtoFile(dataurl, filename: string) {
-  debugger
+export function dataURLtoFile(dataurl: any, filename: string) {
   //将base64转换为文件，dataurl为base64字符串，filename为文件名（必须带后缀名，如.jpg,.png）
   let arr = dataurl.split(','),
     mime = arr[0].match(/:(.*?);/)[1],
@@ -1278,4 +1312,31 @@ export const bytesLength = (str: string) => {
     }
   }
   return intLength
+}
+
+export const getMetaNamePrice = (metaName: string) => {
+  const result = bytesLength(metaName)
+  if (result === 3) return MetaNameFeePerYear.third
+  else if (result === 4) return MetaNameFeePerYear.four
+  else return MetaNameFeePerYear.five
+}
+
+//获取UTC到期时间
+export function GetExpiredUTC(expiredBlockHeight: number) {
+  return new Promise<string | null>(async (resolve, reject) => {
+    try {
+      //获取当前块高信息：medianTime，blocks
+      const blockHeight = await getBlockHeight()
+      const distanceDay = new Decimal(expiredBlockHeight)
+        .sub(blockHeight.blocks)
+        .div(144)
+        .toNumber()
+      const date: any = dateTimeFormat(blockHeight.medianTime * 1000)
+      const res = dayjs(date).add(distanceDay, 'day')
+      const result = dateTimeFormat(res.valueOf(), 'UTC')
+      resolve(result)
+    } catch (error) {
+      reject(error)
+    }
+  })
 }

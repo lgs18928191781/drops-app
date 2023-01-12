@@ -601,20 +601,3 @@ export const GetUserGenesisList = (params: {
   const { metaId, ..._params } = params
   return aggregation.get(`/v2/app/sensible/getMyGenesisList/${metaId}`, { params: _params })
 }
-
-//metaname注册查询
-export const GetMetaNameIsRegister = (
-  name: string
-): Promise<{
-  code: number
-  data: {
-    name: string
-    expiredBlockHeight: number
-    nftCodeHash: string
-    genesisId: string
-    tokenIndex: string
-    resolver: string
-  }
-}> => {
-  return metanameApi.get(`/getinfo/?name=${name}`)
-}

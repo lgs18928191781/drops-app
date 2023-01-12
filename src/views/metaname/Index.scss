@@ -302,10 +302,15 @@ footer {
             border-radius: 50%;
             border: 1px solid var(--themeTextColor);
             margin-right: 30px;
+            box-sizing: border-box;
 
-            img {
-                width: 20px;
-                height: 20px;
+            &:hover {
+                border-width: 2px;
+            }
+
+            .icon {
+                width: 24px;
+                height: 24px;
             }
 
             &:last-child {

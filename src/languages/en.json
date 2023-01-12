@@ -746,5 +746,7 @@
     "IndexDrsc6": "MetaName makes your application more distinctive and makes your application more prominent",
     "MetaName cannot be empty": "MetaName cannot be empty"
   },
-  "Menu": "Menu"
+  "Menu": "Menu",
+  "metanameNotAllowMin": "Currently does not support 1-2 character registration",
+  "metanameNotAllowOverLenght": "The length of the registration name cannot exceed 63 characters"
 }

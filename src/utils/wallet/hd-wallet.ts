@@ -25,7 +25,13 @@ import { SA_utxo } from 'sensible-sdk/dist/sensible-api'
 import { isEmail, sleep } from '../util'
 import { IsEncrypt, NodeName } from '@/enum'
 import { AttachmentItem, PayToItem } from '@/@types/hd-wallet'
-import { CreateNodeOptions, CreateNodeRes, TransferTypes, UtxoItem } from '@/@types/sdk'
+import {
+  CreateNodeOptions,
+  CreateNodeRes,
+  TransferTypes,
+  UtxoItem,
+  SendMetaNameTransationResult,
+} from '@/@types/sdk'
 import { AllNodeName } from '../sdk'
 import { ElMessage } from 'element-plus'
 import { NftManager, FtManager, API_TARGET } from 'meta-contract'
@@ -2203,7 +2209,7 @@ export class HdWallet {
   }
 
   //发起MetaName交易前参数构造
-  public async sendMetaNameTransation(params: {
+  public sendMetaNameTransation(params: {
     op_code: number
     info: {
       [key: string]: any
@@ -2218,147 +2224,146 @@ export class HdWallet {
       amount: number
     }>
   }) {
-    const { reqswapargs, years, op_code, info } = params
-    const mvcToAddress = reqswapargs.mvcToAddress
-    const nftToAddress = reqswapargs.nftToAddress
-    const txFee = reqswapargs.txFee
-    const requestIndex = reqswapargs.requestIndex
-    const metaNameOpFee = new Decimal(reqswapargs.feePerYear).mul(years).toNumber()
-    let MetaNameSuccTxid: string
-    let mvcReceivers: Array<{ address: string; amount: number }>
-    let transferNftResult,
-      transferResult,
-      transferAmount: number,
-      mvcUtxo,
-      nftUtxo,
-      registerMetaNameResp,
-      mvcRawTx
-    const mvcOutputIndex = 0
-    const nftOutputIndex = 0
-    transferAmount = MetaNameReqCode.updataInfo == op_code ? txFee : metaNameOpFee + txFee
-    mvcReceivers = [
-      {
-        address: mvcToAddress,
-        amount: transferAmount,
-      },
-    ]
+    return new Promise<SendMetaNameTransationResult>(async (resolve, reject) => {
+      try {
+        const { reqswapargs, years, op_code, info } = params
+        const mvcToAddress = reqswapargs.mvcToAddress
+        const nftToAddress = reqswapargs.nftToAddress
+        const txFee = reqswapargs.txFee
+        const requestIndex = reqswapargs.requestIndex
+        const metaNameOpFee = new Decimal(reqswapargs.feePerYear).mul(years).toNumber()
+        let MetaNameSuccTxid: string
+        let mvcReceivers: Array<{ address: string; amount: number }>
+        let transferNftResult,
+          transferResult,
+          transferAmount: number,
+          mvcUtxo,
+          nftUtxo,
+          registerMetaNameResp,
+          mvcRawTx
+        const mvcOutputIndex = 0
+        const nftOutputIndex = 0
+        transferAmount = MetaNameReqCode.updataInfo == op_code ? txFee : metaNameOpFee + txFee
+        mvcReceivers = [
+          {
+            address: mvcToAddress,
+            amount: transferAmount,
+          },
+        ]
 
-    let utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
-    if (utxos.length <= 0) {
-      throw new Error(`utxo is null`)
-    }
-    //拆分UTXO交易
-    if (op_code == MetaNameReqCode.updataInfo) {
-      const devides = [
-        {
-          address: this.rootAddress!,
-          amount: transferAmount + 10000,
-        },
-        {
-          address: this.rootAddress!,
-          amount: 100000,
-        },
-      ]
-      // const devidesUtxo = []
-      // for (let i = 0; i < utxos.length; i++) {
-      //   if (new Decimal(utxos[i].satoshis).add(100000).toNumber() > transferAmount) {
-      //     devidesUtxo.push(utxos[i])
-      //   }
-      // }
-      await this.devideUtxo(devides, utxos)
-      utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
-      utxos.forEach(item => {
-        if (new Decimal(item.satoshis).toNumber() == transferAmount + 10000) {
-          mvcUtxo = item
+        let utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
+        if (utxos.length <= 0) {
+          throw new Error(`utxo is null`)
         }
-        if (item.satoshis == 100000) {
-          nftUtxo = {
-            ...item,
-            wif: this.wallet!.deriveChild(0)
-              .deriveChild(0)
-              .privateKey.toString(),
+        //拆分UTXO交易
+        if (op_code == MetaNameReqCode.updataInfo) {
+          const devides = [
+            {
+              address: this.rootAddress!,
+              amount: transferAmount + 10000,
+            },
+            {
+              address: this.rootAddress!,
+              amount: 100000,
+            },
+          ]
+          await this.devideUtxo(devides, utxos)
+          utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
+          utxos.forEach(item => {
+            if (new Decimal(item.satoshis).toNumber() == transferAmount + 10000) {
+              mvcUtxo = item
+            }
+            if (item.satoshis == 100000) {
+              nftUtxo = {
+                ...item,
+                wif: this.wallet!.deriveChild(0)
+                  .deriveChild(0)
+                  .privateKey.toString(),
+              }
+            }
+          })
+          transferResult = await this.makeTx({
+            utxos: [mvcUtxo],
+            opReturn: [],
+            change: this.rootAddress,
+            payTo: mvcReceivers,
+          })
+          mvcRawTx = transferResult.toString()
+        }
+        if (MetaNameReqCode.register == op_code) {
+          const params: MetaNameRequestDate = {
+            requestIndex,
+            // mvcRawTx,
+            // mvcOutputIndex,
+            years,
+            infos: info,
           }
-        }
-      })
-      transferResult = await this.makeTx({
-        utxos: [mvcUtxo],
-        opReturn: [],
-        change: this.rootAddress,
-        payTo: mvcReceivers,
-      })
-      mvcRawTx = transferResult.toString()
-    }
-    debugger
-    if (MetaNameReqCode.register == op_code) {
-      const params: MetaNameRequestDate = {
-        requestIndex,
-        // mvcRawTx,
-        // mvcOutputIndex,
-        years,
-        infos: info,
-      }
-      registerMetaNameResp = JSON.stringify(params)
-      // registerMetaNameResp = await this.provider.registerNewMetaName(
-      //   params,
-      //   MetaNameReqType.register
-      // )
-    } else if (MetaNameReqCode.renew == op_code) {
-      const nftRawTx = await this.transferNft(
-        {
-          receiverAddress: nftToAddress,
-          codehash: reqswapargs.nftCodeHash,
-          genesis: reqswapargs.nftGenesisID,
-          tokenIndex: reqswapargs.nftTokenIndex,
-          // utxos: [nftUtxo],
-        },
-        {
-          isBroadcast: false,
-        }
-      )
+          registerMetaNameResp = JSON.stringify(params)
+          // registerMetaNameResp = await this.provider.registerNewMetaName(
+          //   params,
+          //   MetaNameReqType.register
+          // )
+        } else if (MetaNameReqCode.renew == op_code) {
+          const nftRawTx = await this.transferNft(
+            {
+              receiverAddress: nftToAddress,
+              codehash: reqswapargs.nftCodeHash,
+              genesis: reqswapargs.nftGenesisID,
+              tokenIndex: reqswapargs.nftTokenIndex,
+              // utxos: [nftUtxo],
+            },
+            {
+              isBroadcast: false,
+            }
+          )
 
-      const params: MetaNameRequestDate = {
-        requestIndex,
-        // mvcRawTx,
-        // mvcOutputIndex,
-        nftRawTx: nftRawTx.txHex,
-        nftOutputIndex,
-        years,
-      }
-      // registerMetaNameResp = await this.provider.registerNewMetaName(params, MetaNameReqType.renew)
-      registerMetaNameResp = JSON.stringify(params)
-    } else if (MetaNameReqCode.updataInfo) {
-      const nftRawTx = await this.transferNft(
-        {
-          receiverAddress: nftToAddress,
-          codehash: reqswapargs.nftCodeHash,
-          genesis: reqswapargs.nftGenesisID,
-          tokenIndex: reqswapargs.nftTokenIndex,
-          utxos: [nftUtxo],
-        },
-        {
-          isBroadcast: false,
+          const params: MetaNameRequestDate = {
+            requestIndex,
+            // mvcRawTx,
+            // mvcOutputIndex,
+            nftRawTx: nftRawTx.txHex,
+            nftOutputIndex,
+            years,
+          }
+          // registerMetaNameResp = await this.provider.registerNewMetaName(params, MetaNameReqType.renew)
+          registerMetaNameResp = JSON.stringify(params)
+        } else if (MetaNameReqCode.updataInfo) {
+          const nftRawTx = await this.transferNft(
+            {
+              receiverAddress: nftToAddress,
+              codehash: reqswapargs.nftCodeHash,
+              genesis: reqswapargs.nftGenesisID,
+              tokenIndex: reqswapargs.nftTokenIndex,
+              utxos: [nftUtxo],
+            },
+            {
+              isBroadcast: false,
+            }
+          )
+          const params: MetaNameRequestDate = {
+            requestIndex,
+            mvcRawTx,
+            mvcOutputIndex,
+            nftRawTx: nftRawTx.txHex,
+            nftOutputIndex,
+            infos: info,
+          }
+          // registerMetaNameResp = await this.provider.registerNewMetaName(
+          //   params,
+          //   MetaNameReqType.updataInfo
+          // )
+          registerMetaNameResp = JSON.stringify(params)
         }
-      )
-      const params: MetaNameRequestDate = {
-        requestIndex,
-        mvcRawTx,
-        mvcOutputIndex,
-        nftRawTx: nftRawTx.txHex,
-        nftOutputIndex,
-        infos: info,
+        resolve({
+          registerMetaNameResp,
+          MvcToAddress: reqswapargs.mvcToAddress,
+          NftToAddress: reqswapargs.nftToAddress,
+          TxFee: reqswapargs.txFee,
+          FeePerYear: reqswapargs.feePerYear,
+        })
+      } catch (error) {
+        reject(error)
       }
-      // registerMetaNameResp = await this.provider.registerNewMetaName(
-      //   params,
-      //   MetaNameReqType.updataInfo
-      // )
-      registerMetaNameResp = JSON.stringify(params)
-    }
-    return {
-      registerMetaNameResp,
-      MvcToAddress: reqswapargs.mvcToAddress,
-      NftToAddress: reqswapargs.nftToAddress,
-      TxFee: reqswapargs.txFee,
-      FeePerYear: reqswapargs.feePerYear,
-    }
+    })
   }
 }

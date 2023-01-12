@@ -1760,9 +1760,6 @@ export class SDK {
     name: string
     op: number
   }): Promise<{ code: number; data: Reqswapargs; msg: string }> {
-    // return this.wallet?.MetaNameBeforeReq(params)
-    console.log('this.wallet?.wallet.rootAddress', this.wallet!.rootAddress)
-    debugger
     const newParams = {
       ...params,
       address: this.wallet!.rootAddress,

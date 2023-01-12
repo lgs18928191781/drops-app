@@ -87,6 +87,7 @@ export interface PayPlatformItem {
   background: string
   disabled: () => boolean
   suffix: boolean
+  key: string
 }
 
 export const payPlatformList: PayPlatformItem[] = [
@@ -98,6 +99,7 @@ export const payPlatformList: PayPlatformItem[] = [
     },
     platform: PayPlatform.ETH,
     background: '#108EE9',
+    key: import.meta.env.VITE_ETH_CHAIN,
     disabled: () => {
       let result = true
       const userStore = useUserStore()
@@ -114,6 +116,7 @@ export const payPlatformList: PayPlatformItem[] = [
       // @ts-ignore
       return i18n.global.t('quickPay')
     },
+    key: 'UnionPay',
     platform: PayPlatform.UnionPay,
     background: '#FCA63D',
     disabled: () => {

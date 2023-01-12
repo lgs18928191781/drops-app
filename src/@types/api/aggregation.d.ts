@@ -205,3 +205,12 @@ declare interface SellNftItem {
   receivePrice: number
   royaltyPrice: number
 }
+
+declare interface MetaNameSearchResult {
+  name: string
+  expiredBlockHeight: number
+  nftCodeHash: string
+  genesisId: string
+  tokenIndex: string
+  resolver: string
+}
