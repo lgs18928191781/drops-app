@@ -1,0 +1,152 @@
+.metaname-search-index {
+    padding: 24px 0;
+}
+
+.fee-warp {
+    background: var(--themeBgSecondColor);
+    border-radius: var(--rounded);
+    padding: 24px;
+    margin-top: 24px;
+
+    .title {
+        font-size: 18px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid var(--divid-color);
+    }
+
+    .fee-list {
+        margin-top: 24px;
+
+        .fee-item {
+            font-size: 16px;
+            padding: 8px 0;
+
+            .price {
+                width: 100px;
+            }
+
+            .case {
+                text-align: right;
+            }
+
+            &.th {
+                color: #909399;
+            }
+        }
+    }
+}
+
+.result-warp {
+    border-radius: var(--rounded);
+    padding: 24px;
+    margin-top: 24px;
+    background: linear-gradient(99deg, #5721A1 0%, #2FE3D6 99%);
+    color: #fff;
+
+    &.disabled {
+        background: linear-gradient(100deg, #909399 9%, #BFC2CC 99%);
+    }
+
+    .name {
+        font-size: 24px;
+    }
+
+    .msg {
+        margin-top: 5px;
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #fff;
+        }
+
+        span {
+            margin-right: 6px;
+        }
+    }
+
+    a {
+        font-size: 16px;
+        padding: 12px 24px;
+        border-radius: 8px;
+        cursor: pointer;
+        background: #fff;
+        color: var(--themeBtnTextColor);
+
+        &:hover {
+            font-weight: bold;
+        }
+
+        .icon {
+            width: 22px;
+            height: 22px;
+            margin-right: 6px;
+
+            :deep(use) {
+                fill: var(--themeBtnTextColor);
+                ;
+            }
+        }
+    }
+}
+
+
+
+.metaname-register {
+
+
+    .year {
+        font-size: 16px;
+        padding-bottom: 28px;
+        border-bottom: 1px solid var(--divid-color);
+
+        .count {
+            a {
+                width: 30px;
+                height: 30px;
+                font-size: 24px;
+                border-radius: 4px;
+                border: 1px solid var(--divid-color);
+                cursor: pointer;
+
+                &:hover {
+                    border-color: var(--themeTextColor);
+                }
+            }
+
+            span {
+                font-weight: bold;
+                margin: 0 12px;
+            }
+        }
+    }
+
+
+    .amount {
+        padding: 48px 0;
+        text-align: center;
+
+        .price {
+            font-size: 56px;
+            font-weight: bold;
+        }
+
+        .label {
+            font-size: 16px;
+        }
+    }
+
+
+
+}
+
+
+
+
+.btn {
+    text-align: center;
+    font-size: 18px;
+    line-height: 70px;
+    cursor: pointer;
+}

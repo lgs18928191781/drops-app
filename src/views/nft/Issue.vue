@@ -1,26 +1,14 @@
 <template>
-  <div>
-    <ElSelect v-model="currentGenesis">
-      <ElOption
-        v-for="item in genesisList"
-        :key="item.codehash + item.genesis"
-        :label="item.seriesName"
-        :value="item.genesis + '/' + item.codehash"
-      ></ElOption>
-    </ElSelect>
-
-    <ElInput type="number" v-model="form.genesis.totalSupply" placeholder="系列数量" />
-    <ElInput type="text" v-model="form.genesis.seriesName" placeholder="系列名称" />
-    <ElInput type="text" v-model="form.name" placeholder="NFT名称" />
-    <ElInput type="text" v-model="form.desc" placeholder="NFT描述" />
-    <ElInput type="text" v-model="form.metafile" placeholder="metafile" />
-    <ElInput type="number" v-model="form.count" placeholder="铸造数量" />
-    <ElInput type="text" v-model="form.receiveAddress" placeholder="接受的地址" />
-
-    <ElButton @click="genesis">创建</ElButton>
-
-    <IssueModalVue />
+  <div class="nft-issue">
+    <header class="flex flex-align-center">
+      <div class="flex1">
+        <span class="title">{{ $t('NFT.Issue NFT') }}</span>
+      </div>
+      <a class="main-border primary" @click="isShowOption = true">{{ $t('NFT.Add Issue') }}</a>
+    </header>
   </div>
+
+  <IssueModalVue v-model="isShowOption" />
 </template>
 
 <script setup lang="ts">
@@ -33,6 +21,7 @@ import IssueModalVue from './components/IssueModal.vue'
 
 const userStore = useUserStore()
 
+const isShowOption = ref(false)
 const form = reactive({
   genesis: {
     type: 'metacontract',
@@ -110,4 +99,4 @@ async function ftGenesis() {
 getGenesisList()
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped src="./Issue.scss"></style>

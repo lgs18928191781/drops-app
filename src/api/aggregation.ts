@@ -7,6 +7,8 @@ const aggregation = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation
   },
 }).request
 
+const metanameApi = new HttpRequest(`${import.meta.env.VITE_MetaName_BaseApi}`, {}).request
+
 export const MetaBotV1 = (params: {
   address: string
   page: number

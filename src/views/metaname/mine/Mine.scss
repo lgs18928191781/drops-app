@@ -1,0 +1,100 @@
+.mine-section {
+    margin-bottom: 36px;
+
+    &:first-child {
+        margin-top: 24px;
+    }
+
+    &:last-child {
+        margin-bottom: 0px;
+        padding-bottom: 24px;
+        ;
+    }
+
+    .title {
+        font-size: 16px;
+        color: #606266;
+    }
+
+    .content {
+        margin-top: 18px;
+    }
+}
+
+
+.current-wallet {
+    background: var(--themeBgSecondColor);
+    border-radius: var(--rounded);
+    padding: 24px;
+
+    .avatar {
+        width: 54px;
+        height: 54px;
+        margin-right: 12px;
+    }
+
+    .name {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .metaid {
+        opacity: 0.5;
+        margin-top: 5px;
+    }
+
+    .plain-btn {
+        :deep(.content) {
+            padding: 6px 12px;
+        }
+    }
+}
+
+
+.metaname-list {
+    .metaname-item {
+        background: var(--themeBgSecondColor);
+        border-radius: var(--rounded);
+        padding: 18px;
+        margin-bottom: 12px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        .cover {
+            width: 96px;
+            height: 120px;
+            border-radius: 8px;
+            margin-right: 18px;
+        }
+
+        .name {
+            font-size: 24px;
+        }
+
+        .time {
+            color: #909399;
+            margin-top: 6px;
+            font-size: 16px;
+        }
+
+        .operate {
+            margin-top: 26px;
+
+            .btn {
+                padding: 6px 12px;
+                margin-right: 12px;
+                cursor: pointer;
+            }
+
+            .plain-btn {
+                cursor: pointer;
+
+                :deep(.content) {
+                    padding: 6px 12px;
+                }
+            }
+        }
+    }
+}

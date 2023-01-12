@@ -1,98 +1,35 @@
 <template>
-  <ElDialog :model-value="true" :title="$t('NFT.Issue NFT Options')" class="sm">
-    <ElForm :model="form" :label-position="'top'">
-      <ElFormItem prop="cover">
-        <template #label>
-          <div class="label-warp flex flex-align-center">
-            <div class="flex1">
-              {{ $t('NFT.Cover') }}
-            </div>
-            <ElSwitch v-model="form.isSoureFileSameCover" />
-            <ElSwitch v-model="form.isSameCover" />
-          </div>
-        </template>
-        <div class="form-item flex flex-align-center flex1">
-          <div class="flex1">
-            <div class="w-30">
-              <AddImageWarpVue v-model:attachment="form.cover" />
-            </div>
-          </div>
-        </div>
-      </ElFormItem>
-
-      <ElFormItem prop="sourceFile" v-if="!form.isSoureFileSameCover">
-        <template #label>
-          <div class="label-warp flex flex-align-center">
-            <div class="flex1">
-              {{ $t('NFT.Source File') }}
-            </div>
-            <ElSwitch v-model="form.isSameSourceFile" />
-          </div>
-        </template>
-        <div class="form-item flex flex-align-center flex1">
-          <div class="flex1">
-            <div class="w-30">
-              <AddImageWarpVue v-model:attachment="form.sourceFile" />
-            </div>
-          </div>
-        </div>
-      </ElFormItem>
-
-      <ElFormItem prop="name">
-        <template #label>
-          <div class="label-warp flex flex-align-center">
-            <div class="flex1">
-              {{ $t('NFT.Name') }}
-            </div>
-            <ElSwitch v-model="form.isSameName" />
-          </div>
-        </template>
-        <div class="form-item flex flex-align-center flex1">
-          <div class="flex1"><ElInput type="text" v-model="form.name" /></div>
-        </div>
-      </ElFormItem>
-
-      <ElFormItem prop="desc">
-        <template #label>
-          <div class="label-warp flex flex-align-center">
-            <div class="flex1">
-              {{ $t('NFT.Drsc') }}
-            </div>
-            <ElSwitch v-model="form.isSameDesc" />
-          </div>
-        </template>
-        <div class="form-item flex flex-align-center flex1">
-          <div class="flex1"><ElInput type="text" v-model="form.desc" /></div>
-        </div>
-      </ElFormItem>
-
-      <ElFormItem prop="acceptAddress">
-        <template #label>
-          <div class="label-warp flex flex-align-center">
-            <div class="flex1">
-              {{ $t('NFT.Accept Address') }}
-            </div>
-            <ElSwitch v-model="form.isSameAcceptAddress" />
-          </div>
-        </template>
-        <div class="form-item flex flex-align-center flex1">
-          <div class="flex1"><ElInput type="text" v-model="form.acceptAddress" /></div>
-        </div>
-      </ElFormItem>
-
+  <ElDialog
+    :model-value="modelValue"
+    :title="$t('NFT.Issue NFT Options')"
+    class="sm"
+    :close-on-click-modal="false"
+    @close="emit('update:modelValue', false)"
+  >
+    <ElForm :model="form" :label-position="'top'" ref="FormRef">
+      <!-- count -->
       <ElFormItem :label="$t('NFT.Issue Count')" prop="count">
         <div class="form-item flex flex-align-center flex1">
           <div class="flex1"><ElInput type="text" v-model="form.count" /></div>
         </div>
       </ElFormItem>
 
+      <!-- genesis -->
       <ElFormItem :label="$t('NFT.Belong Genesis')" prop="genesis">
         <template #label>
           <div class="label-warp flex flex-align-center">
             <div class="flex1">
               {{ $t('NFT.Belong Genesis') }}
             </div>
-            <ElSwitch v-model="form.isSameGenesis" />
+            <a class="create-genesis" @click="isShowCreateGenesis = true">{{
+              $t('NFT.Create Genesis')
+            }}</a>
+            <div class="switch-list flex flex-align-center">
+              <div class="switch-item flex flex-align-center">
+                <span class="label">{{ $t('NFT.AllSame') }}</span>
+                <ElSwitch v-model="form.isSameGenesis" />
+              </div>
+            </div>
           </div>
         </template>
         <div class="form-item flex flex-align-center flex1">
@@ -111,7 +48,130 @@
           </div>
         </div>
       </ElFormItem>
+
+      <!-- cover -->
+      <ElFormItem prop="cover">
+        <template #label>
+          <div class="label-warp flex flex-align-center">
+            <div class="flex1">
+              {{ $t('NFT.Cover') }}
+            </div>
+            <div class="switch-list flex flex-align-center">
+              <div class="switch-item flex flex-align-center">
+                <span class="label">{{ $t('NFT.CoverIsSameSourFille') }}</span>
+                <ElSwitch v-model="form.isSoureFileSameCover" />
+              </div>
+              <div class="switch-item flex flex-align-center">
+                <span class="label">{{ $t('NFT.AllSame') }}</span>
+                <ElSwitch v-model="form.isSameCover" />
+              </div>
+            </div>
+          </div>
+        </template>
+        <div class="form-item flex flex-align-center flex1">
+          <div class="flex1">
+            <div class="w-30">
+              <AddImageWarpVue v-model:attachment="form.cover" />
+            </div>
+          </div>
+        </div>
+      </ElFormItem>
+
+      <!-- sourceFile -->
+      <ElFormItem prop="sourceFile" v-if="!form.isSoureFileSameCover">
+        <template #label>
+          <div class="label-warp flex flex-align-center">
+            <div class="flex1">
+              {{ $t('NFT.Source File') }}
+            </div>
+            <div class="switch-list flex flex-align-center">
+              <div class="switch-item flex flex-align-center">
+                <span class="label">{{ $t('NFT.AllSame') }}</span>
+                <ElSwitch v-model="form.isSameSourceFile" />
+              </div>
+            </div>
+          </div>
+        </template>
+        <div class="form-item flex flex-align-center flex1">
+          <div class="flex1">
+            <div class="w-30">
+              <AddImageWarpVue v-model:attachment="form.sourceFile" />
+            </div>
+          </div>
+        </div>
+      </ElFormItem>
+
+      <!-- name -->
+      <ElFormItem prop="name">
+        <template #label>
+          <div class="label-warp flex flex-align-center">
+            <div class="flex1">
+              {{ $t('NFT.Name') }}
+            </div>
+            <div class="switch-list flex flex-align-center">
+              <div class="switch-item flex flex-align-center">
+                <span class="label">{{ $t('NFT.AllSame') }}</span>
+                <ElSwitch v-model="form.isSameName" />
+              </div>
+            </div>
+          </div>
+        </template>
+        <div class="form-item flex flex-align-center flex1">
+          <div class="flex1"><ElInput type="text" v-model="form.name" /></div>
+        </div>
+      </ElFormItem>
+
+      <!-- desc -->
+      <ElFormItem prop="desc">
+        <template #label>
+          <div class="label-warp flex flex-align-center">
+            <div class="flex1">
+              {{ $t('NFT.Drsc') }}
+            </div>
+            <div class="switch-list flex flex-align-center">
+              <div class="switch-item flex flex-align-center">
+                <span class="label">{{ $t('NFT.AllSame') }}</span>
+                <ElSwitch v-model="form.isSameDesc" />
+              </div>
+            </div>
+          </div>
+        </template>
+        <div class="form-item flex flex-align-center flex1">
+          <div class="flex1"><ElInput type="text" v-model="form.desc" /></div>
+        </div>
+      </ElFormItem>
+
+      <!-- acceptAddress -->
+      <ElFormItem prop="acceptAddress">
+        <template #label>
+          <div class="label-warp flex flex-align-center">
+            <div class="flex1">
+              {{ $t('NFT.Accept Address') }}
+            </div>
+            <div class="switch-list flex flex-align-center">
+              <div class="switch-item flex flex-align-center">
+                <span class="label">{{ $t('NFT.AllSame') }}</span>
+                <ElSwitch v-model="form.isSameAcceptAddress" />
+              </div>
+            </div>
+          </div>
+        </template>
+        <div class="form-item flex flex-align-center flex1">
+          <div class="flex1"><ElInput type="text" v-model="form.acceptAddress" /></div>
+        </div>
+      </ElFormItem>
+
+      <ElFormItem>
+        <a
+          class="main-border primary flex1 flex flex-align-center flex-pack-center"
+          @click="confirm"
+        >
+          {{ $t('Confirm') }}
+        </a>
+      </ElFormItem>
     </ElForm>
+
+    <CreateGenesis v-model="isShowCreateGenesis" />
   </ElDialog>
 </template>
 
@@ -137,10 +197,18 @@ export interface IssueNFTOption {
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { GetUserGenesisList } from '@/api/aggregation'
 import { useUserStore } from '@/stores/user'
-import { ElSwitch } from 'element-plus'
-import { reactive } from 'vue'
+import { ElSwitch, FormInstance } from 'element-plus'
+import { reactive, ref } from 'vue'
 import AddImageWarpVue from '@/components/AddImageWarp/AddImageWarp.vue'
+import CreateGenesis from './CreateGenesis.vue'
 
+interface Props {
+  modelValue: boolean
+}
+const props = withDefaults(defineProps<Props>(), {})
+
+const emit = defineEmits(['confirm', 'update:modelValue'])
+const FormRef = ref<FormInstance>()
 const userStore = useUserStore()
 const genesisList: GenesisItem[] = reactive([])
 const form: IssueNFTOption = reactive({
@@ -159,6 +227,7 @@ const form: IssueNFTOption = reactive({
   isSameGenesis: false,
   isSoureFileSameCover: false,
 })
+const isShowCreateGenesis = ref(false)
 
 function getGenesisList() {
   return new Promise<void>(async (resolve, reject) => {
@@ -176,6 +245,12 @@ function getGenesisList() {
 }
 
 getGenesisList()
+
+function confirm() {
+  emit('confirm', form)
+  FormRef.value?.resetFields()
+  emit('update:modelValue', false)
+}
 </script>
 
 <style lang="scss" scoped src="./IssueModal.scss"></style>

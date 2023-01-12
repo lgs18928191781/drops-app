@@ -404,3 +404,35 @@ export enum Chains {
   ETH = 'eth',
   Goerli = 'goerli',
 }
+
+export enum MetaNameFeePerYear {
+  third = 660,
+  four = 160,
+  five = 5,
+}
+
+export enum ProductType {
+  ME = 100,
+  LegalNft = 200,
+  MetaName = 300,
+}
+
+export enum MetaNameOperateType {
+  Register = 1,
+  Renew = 2,
+  UpdateInfo = 3,
+}
+
+export enum OrderPayType {
+  wechat = 1,
+  alipay = 2,
+  sandpay = 300,
+  eth = 1001,
+}
+
+export enum MetaNameRegisterStatus {
+  Finish = 'finish',
+  Error = 'error',
+  Wait = 'wait',
+  Process = 'process',
+}

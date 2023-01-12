@@ -1,0 +1,467 @@
+.metaname-index {
+    position: relative;
+    overflow: hidden;
+}
+
+.module {
+    height: 100vh;
+    background: var(--themeBgSecondColor);
+
+
+    .metaname-container {
+        position: relative;
+
+        .content {
+            position: relative;
+            z-index: 2;
+        }
+    }
+
+
+    .title {
+        font-size: 54px;
+        font-weight: bold;
+        text-align: center;
+        line-height: 80px;
+    }
+
+    .drsc {
+        font-size: 18px;
+        margin-top: 24px;
+        text-align: center;
+        line-height: 40px;
+    }
+
+    .hover {
+        text-align: center;
+        color: var(--color-hover);
+        margin-top: 24px;
+
+        a {
+            cursor: pointer;
+            opacity: 0.8;
+            transition: all 0.5s;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+
+        .icon {
+            transform: rotate(-90deg);
+            width: 12px;
+            height: 12px;
+            margin-left: 10px;
+
+            :deep(use) {
+                fill: var(--color-hover);
+            }
+        }
+    }
+}
+
+.module1 {
+    background-image: url('@/assets/metaname/bg1.png');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    animation: module1Anim 3s infinite ease-in-out;
+
+    .title {
+        font-size: 72px;
+        line-height: 120px;
+    }
+
+    .drsc {
+        font-size: 24px;
+    }
+
+    .tag {
+        margin-top: 24px;
+        text-align: center;
+
+        .tag-warp {
+            display: inline-block;
+            border-radius: 28px;
+
+            :deep(.content) {
+                padding: 16px 24px;
+                border-radius: 28px;
+            }
+        }
+
+        .icon {
+            width: 80px;
+            height: 18px;
+        }
+    }
+
+    .search {
+        width: 95%;
+        max-width: 600px;
+        margin: 136px auto 0 auto;
+        cursor: pointer;
+
+        &:hover {
+            :deep(input) {
+                font-weight: normal;
+            }
+        }
+    }
+}
+
+.module2 {
+    .metaname-container {
+        position: relative;
+
+        .bg {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(219deg, #29FFD1 12%, #3A8FF6 51%, #5E0887 90%);
+            left: 0;
+            top: 0;
+            opacity: 0.5;
+
+            filter: blur(200px);
+            z-index: 1;
+            animation: module2Anim 3s infinite ease-in-out;
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+        }
+    }
+
+    .wallets {
+        margin-top: 24px;
+
+        .wallet {
+            margin-right: 36px;
+
+            &:last-child {
+                margin-right: 0;
+            }
+
+            .logo {
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                object-fit: cover;
+                background: #fff;
+                margin-right: 12px;
+            }
+        }
+    }
+
+    .cover {
+        width: 95%;
+        max-width: 580px;
+        display: block;
+        margin: 60px auto 0 auto;
+    }
+}
+
+.module3 {
+    .bg {
+        position: absolute;
+        width: 81px;
+        height: 81px;
+        left: 50%;
+        top: 0;
+        margin-left: 280px;
+        margin-top: -50px;
+        animation: module3Anim 3s infinite ease-in-out;
+    }
+
+    .imgs {
+        margin-top: 60px;
+
+        img {
+            margin-right: 24px;
+
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+    }
+}
+
+.module4 {
+    .bg {
+        position: absolute;
+        width: 320px;
+        height: 320px;
+        opacity: 0.5;
+        background: linear-gradient(219deg, #29FFD1 12%, #3A8FF6 51%, #5E0887 90%);
+        filter: blur(200px);
+        right: 50%;
+        bottom: 0;
+        z-index: 1;
+        animation: module2Anim 3s infinite ease-in-out;
+    }
+
+    .cover {
+        width: 95%;
+        max-width: 840px;
+        margin: 60px auto 0 auto;
+    }
+}
+
+.module5 {
+    position: relative;
+
+
+    .plane {
+        position: absolute;
+        height: 284px;
+        width: auto;
+        bottom: 0;
+        margin-bottom: -142px;
+    }
+
+    .bg {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 400px;
+        height: 400px;
+        margin-top: -250px;
+        margin-right: -50px;
+        animation: module3Anim 3s infinite ease-in-out;
+    }
+
+    .apps {
+        margin-top: 120px;
+
+        .app {
+            margin-right: 90px;
+
+            &:last-child {
+                margin-right: 0;
+            }
+
+            .logo {
+                width: 78px;
+                height: 78px;
+                background: #fff;
+                border: 1px solid #EDEFF2;
+                border-radius: 18px;
+            }
+
+            .name {
+                font-size: 16px;
+                text-align: center;
+                margin-top: 18px;
+            }
+        }
+    }
+}
+
+.module6 {
+
+
+    .bg {
+        position: absolute;
+        height: 900px;
+        width: auto;
+        bottom: 0;
+        margin-bottom: -500px;
+        animation: module6Anim 10s infinite ease;
+    }
+
+    .operate {
+        margin-top: 60px;
+
+        .btn {
+            padding: 20px 36px;
+            cursor: pointer;
+        }
+    }
+
+
+}
+
+footer {
+    width: 100%;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+
+    z-index: 2;
+
+    .metaname-container {
+        height: 100px;
+    }
+
+    .apps {
+        a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--themeTextColor);
+            margin-right: 30px;
+            box-sizing: border-box;
+
+            &:hover {
+                border-width: 2px;
+            }
+
+            .icon {
+                width: 24px;
+                height: 24px;
+            }
+
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+    }
+}
+
+@keyframes module1Anim {
+    0% {
+        background-position-x: center;
+        background-position-y: center;
+        background-size: 100%;
+    }
+
+    50% {
+        background-position-x: 49%;
+        background-position-y: 49%;
+        background-size: 105%;
+    }
+
+    100% {
+        background-position-x: center;
+        background-position-y: center;
+        background-size: 100%
+    }
+}
+
+@keyframes module2Anim {
+    0% {
+        transform: scale(1);
+        filter: blur(200px);
+    }
+
+    50% {
+        transform: scale(1.5);
+        filter: blur(100px);
+    }
+
+    100% {
+        transform: scale(1);
+        filter: blur(200px);
+    }
+}
+
+@keyframes module3Anim {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.5);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes module6Anim {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+
+@media only screen and (max-width: 750PX) {
+
+
+    .module {
+        height: auto;
+        padding: 150px 0;
+    }
+
+    .module1 {
+        background-size: contain;
+    }
+
+    .module2 {
+        .metaname-container {
+            .bg {
+                left: 50%;
+                margin-left: -200px;
+                top: 50%;
+                margin-top: -200px;
+            }
+        }
+
+    }
+
+    .module3 {
+
+        .bg {
+            left: auto;
+            right: 0;
+            top: 0;
+        }
+
+        .imgs {
+            flex-direction: column;
+
+            img {
+                margin-right: 0;
+                margin-bottom: 30px;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+            }
+        }
+    }
+
+    .module5 {
+        .apps {
+            display: block;
+
+            .app {
+                display: inline-block;
+                width: calc(100% / 3);
+                margin-right: 0;
+                text-align: center;
+                margin-bottom: 30px;
+
+                .logo {
+                    margin: 0 auto;
+                }
+            }
+        }
+    }
+
+    .module6 {
+        .title {
+            margin-top: 80px;
+        }
+
+        .bg {
+            width: 100%;
+            height: auto;
+            margin-bottom: 0;
+            margin-bottom: -300px;
+        }
+    }
+
+    footer {}
+}

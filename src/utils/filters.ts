@@ -3,15 +3,29 @@ import dayjs from 'dayjs'
 import Decimal from 'decimal.js-light'
 import { useRootStore } from '@/stores/root'
 import { router } from '@/router'
-
+import utc from 'dayjs/plugin/utc'
+dayjs.extend(utc)
 export function dateTimeFormat(
   timestamp: Date | number | string,
+  type: string = 'local',
   format: string = 'YYYY-MM-DD HH:mm:ss'
 ) {
   if (!timestamp) {
     return null
   }
-  return dayjs(timestamp).format(format)
+  if (type === 'UTC') {
+    console.log(
+      'utc',
+      dayjs(timestamp)
+        .utc()
+        .format(format)
+    )
+    return dayjs(timestamp)
+      .utc()
+      .format(format)
+  } else {
+    return dayjs(timestamp).format(format)
+  }
 }
 
 export function legalNftConverterCNY(amount: number | string) {

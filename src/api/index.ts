@@ -1,6 +1,6 @@
 import { HttpRequests, ApiRequestTypes } from '@/utils/wallet/request2'
 import { ElMessage } from 'element-plus'
-
+import { Reqswapargs } from '@/utils/wallet/hd-wallet'
 export interface ApiResultTypes {
   code: number
   msg: string
@@ -74,7 +74,9 @@ const callApi = async (config: ApiRequestTypes): Promise<ApiResultTypes> => {
 const _cachedSigs: ObjTypes<any> = {}
 const getMetasvSig = async (path: string): Promise<MetasvSigTypes> => {
   const Http = new HttpRequests()
-  const url = baseApi + '/metasv-signature/signature'
+  // const url = baseApi + '/metasv-signature/signature'
+  const url = 'https://api.showmoney.app' + '/metasv-signature/signature'
+
   return Http.postFetch<BaseApiResultTypes<MetasvSigTypes>>(url, {
     path: path,
   }).then(res => {
@@ -94,6 +96,7 @@ const callMetasvApi = async (
   method = 'get'
 ): Promise<unknown> => {
   let signature = _cachedSigs[path]
+
   // 5 分钟内相同地址只请求一次签名，有效间隔时间待确认
   if (!signature || Date.now() - Number(signature.timestamp) > 5 * 60 * 1000) {
     signature = await getMetasvSig(path)
@@ -543,4 +546,25 @@ export const GetCertUserInfo = (metaId?: string): Promise<GetCertUserInfoRes> =>
   const Http = new HttpRequests()
   const url = `https://api.showmoney.app/broad/v1/nos/certification/getNosCertificationUserInfo/${metaId}`
   return Http.getFetch(url)
+}
+
+export const MetaNameBeforeReqRes = (parmas: {
+  address: string
+  name: string
+  op: number
+}): Promise<{ code: number; data: Reqswapargs; msg: string }> => {
+  const Http = new HttpRequests()
+  const url = baseApi + '/wxcore/metaname/reqargs'
+  return Http.postFetch(url, {
+    ...parmas,
+    source: 'Show',
+  })
+}
+
+export const MetaNameUpdateInfo = (parmas: string): Promise<{ code: number; data: string }> => {
+  const Http = new HttpRequests()
+  const url = baseApi + '/wxcore/metaname/updateinfo'
+  return Http.postFetch(url, {
+    data: parmas,
+  })
 }

@@ -1,0 +1,63 @@
+.renew {
+    .section {
+        padding: 24px 0;
+        border-bottom: 1px dashed var(--divid-color);
+    }
+}
+
+.year {
+    .label {
+        text-align: center;
+        font-size: 16px;
+    }
+
+    .count {
+        margin-top: 24px;
+
+        a {
+            width: 30px;
+            height: 30px;
+            font-size: 18px;
+            border: 1px solid var(--divid-color);
+            cursor: pointer;
+            border-radius: 4px;
+
+            &:hover {
+                border-color: var(--themeTextColor);
+            }
+        }
+
+        .value {
+            font-size: 36px;
+            margin: 0 30px;
+            font-weight: bold;
+        }
+    }
+}
+
+.fee {
+    font-size: 16px;
+
+    .label {}
+
+    .value {
+        .icon {
+            width: 18px;
+            height: 18px;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+
+        .amount {
+            font-size: 30px;
+            font-weight: bold;
+        }
+    }
+}
+
+.btn {
+    margin-top: 24px;
+    text-align: center;
+    padding: 22px 0;
+    cursor: pointer;
+}

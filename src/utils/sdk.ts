@@ -42,7 +42,7 @@ import detectEthereumProvider from '@metamask/detect-provider'
 import { v1 as UUID } from 'uuid'
 import { useLayoutStore } from '@/stores/layout'
 import { GetTx } from '@/api/metaid-base'
-
+import { MetaNameBeforeReqRes } from '@/api/index'
 enum AppMode {
   PROD = 'prod',
   GRAY = 'gray',
@@ -427,6 +427,7 @@ export class SDK {
       payType?: SdkPayType
       useQueue?: boolean
       subscribeId?: string
+      checkOnly?: boolean //false弹窗，true不弹窗
     }
   ) {
     return new Promise<NodeTransactions | null>(async (resolve, reject) => {
@@ -504,9 +505,14 @@ export class SDK {
 
             //  获取余额
             const balance = await this.getBalance(option.payType!)
-
+            debugger
             // 等待 确认支付
-            const result = await this.awitSdkPayconfirm(option.payType!, totalAmount, balance!)
+            const result = await this.awitSdkPayconfirm(
+              option.payType!,
+              totalAmount,
+              balance!,
+              option.checkOnly
+            )
             if (result) {
               // 确认支付
 
@@ -1463,13 +1469,19 @@ export class SDK {
     })
   }
 
-  private awitSdkPayconfirm(payType: SdkPayType, useAmount: number, balance: number) {
+  private awitSdkPayconfirm(
+    payType: SdkPayType,
+    useAmount: number,
+    balance: number,
+    checkOnly: boolean = false
+  ) {
     return new Promise<boolean>((resolve, reject) => {
       const userStore = useUserStore()
       if (
-        userStore.sdkPayConfirm[payType].visible ||
-        (!userStore.sdkPayConfirm[payType].visible &&
-          userStore.sdkPayConfirm[payType].value < useAmount)
+        !checkOnly &&
+        (userStore.sdkPayConfirm[payType].visible ||
+          (!userStore.sdkPayConfirm[payType].visible &&
+            userStore.sdkPayConfirm[payType].value < useAmount))
       ) {
         // 需要弹出确认框操作
         const divId = `sdk-pay-conirm-${new Date().getTime()}`
@@ -1753,15 +1765,26 @@ export class SDK {
     await this.wallet?.provider.broadcast(res.toString(), true)
   }
 
-  MetaNameBeforeReq(params: { name: string; op: number }) {
-    return this.wallet?.MetaNameBeforeReq(params)
+  MetaNameBeforeReq(params: {
+    name: string
+    op: number
+  }): Promise<{ code: number; data: Reqswapargs; msg: string }> {
+    const newParams = {
+      ...params,
+      address: this.wallet!.rootAddress,
+    }
+    return MetaNameBeforeReqRes(newParams)
   }
 
   sendMetaNameTransation(params: {
     op_code: number
-    address: string
-    metaid: string
-    years: number
+    info?: {
+      metaid?: string
+      mvc?: string
+      icon?: string
+      [key: string]: any
+    }
+    years?: number
     reqswapargs: Reqswapargs
   }) {
     return this.wallet?.sendMetaNameTransation(params)
