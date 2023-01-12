@@ -100,6 +100,7 @@ import {
   dataURLtoFile,
   FileToAttachmentItem,
   getCurrencyAmount,
+  metanameOperation,
   randomNumber,
   setPayQuitUrl,
   urlToBase64,
@@ -172,39 +173,6 @@ function changePayType(platform: PayPlatform) {
   }
 }
 
-async function metanameOperation(params: {
-  //注册时mvc跟metaid,更新信息时不需要传入years,注册时必须要传入icon
-  registerName: string
-  op: MetaNameReqCode
-  //注册和更新操作info必填,续费info字段不需要
-  info?: Partial<MetaNameInfo>
-  years?: number
-}) {
-  return new Promise<SendMetaNameTransationResult>(async (resolve, reject) => {
-    try {
-      const res = await userStore.showWallet.MetaNameBeforeReq({
-        name: `${params.registerName}`,
-        op: params.op,
-      })
-      if (res.code == 0) {
-        const { data } = res
-        const metaNameParams = {
-          op_code: data.op,
-          info: params.info,
-          years: params.years!,
-          reqswapargs: data,
-        }
-        const result = await userStore.showWallet.sendMetaNameTransation(metaNameParams)
-        if (result) {
-          resolve(result)
-        }
-      }
-    } catch (error) {
-      reject(error)
-    }
-  })
-}
-
 async function pay() {
   loading.value = true
   try {
@@ -227,6 +195,7 @@ async function pay() {
         metafile = result!.metaFiles![0].txId
       }
     }
+    debugger
     const metaNameOpParams: {
       registerName: string
       op: MetaNameReqCode

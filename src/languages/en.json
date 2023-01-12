@@ -778,7 +778,8 @@
     "error6": "order timeout",
     "error7": "Successful payment and hedging failure",
     "error8": "The payment was sent successfully and failed, trying to send again",
-    "error9": "If the payment is successful, resending fails twice and ends"
+    "error9": "If the payment is successful, resending fails twice and ends",
+    "UpdateInfoSuccess": "Update Success"
   },
   "Menu": "Menu",
   "metanameNotAllowMin": "Currently does not support 1-2 character registration",

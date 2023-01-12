@@ -213,12 +213,6 @@ declare interface MetaNameSearchResult {
   nftCodeHash: string
   resolver: string
   tokenIndex: string
-  infos: {
-    icon: string
-    metaid: string
-    mvc: string
-    eth: string
-    polygon: string
-    metaid: string
-  }
+  infos: Partial<MetaNameInfo>
+  txid: string
 }

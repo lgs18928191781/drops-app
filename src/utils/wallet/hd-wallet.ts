@@ -39,6 +39,7 @@ import { useUserStore } from '@/stores/user'
 
 import Decimal from 'decimal.js-light'
 import { number } from 'yup'
+import { GetMeUtxos } from '@/api/v3'
 const bsv = mvc
 
 export enum Network {
@@ -1236,6 +1237,7 @@ export class HdWallet {
           amount: OutPut.satoshis * 1e-8,
           script: OutPut.script.toHex(),
           outputIndex: params.outPutIndex!,
+          txIndex: params.outPutIndex!,
           txId: params.tx.id,
           addressType: params!.addressInfo?.addressType!,
           addressIndex: params!.addressInfo?.addressIndex!,
@@ -2227,6 +2229,8 @@ export class HdWallet {
   }) {
     return new Promise<SendMetaNameTransationResult>(async (resolve, reject) => {
       try {
+        const userStore = useUserStore()
+        debugger
         const { reqswapargs, years, op_code, info } = params
         const mvcToAddress = reqswapargs.mvcToAddress
         const nftToAddress = reqswapargs.nftToAddress
@@ -2254,11 +2258,38 @@ export class HdWallet {
             amount: transferAmount,
           },
         ]
+        let utxos = []
+        if (op_code !== MetaNameReqCode.register) {
+          const toatlAmount = transferAmount + 20000 + 100000
+          const getMeUtxo = await GetMeUtxos({
+            address: this.rootAddress,
+            amount: toatlAmount,
+            meta_id: userStore.user!.metaId,
+            protocol: 'UpdateMetaNameINfo',
+            // 打钱地址： 如果需要创建brfc节点则打到 protocol 地址，否则打到 brfc 节点地址
+            receive_address: this.rootAddress,
+          })
+          if (getMeUtxo.code === 0) {
+            utxos[0] = {
+              address: getMeUtxo.data.address,
+              // utxo 所在的路径
+              addressIndex: 0,
+              addressType: 0,
+              outputIndex: 0,
+              txId: getMeUtxo.data.tx,
+              xpub: this.wallet.xpubkey.toString(),
+              script: getMeUtxo.data.script,
+              satoshis: getMeUtxo.data.amount,
+              amount: getMeUtxo.data.amount / 1e8,
+            }
+          }
 
-        let utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
-        if (utxos.length <= 0) {
-          throw new Error(`utxo is null`)
+          if (utxos.length <= 0) {
+            throw new Error(`utxo is null`)
+          }
         }
+        // let utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
+
         //拆分UTXO交易
         if (op_code == MetaNameReqCode.updataInfo) {
           const devides = [
@@ -2271,21 +2302,36 @@ export class HdWallet {
               amount: 100000,
             },
           ]
-          await this.devideUtxo(devides, utxos)
-          utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
-          utxos.forEach(item => {
-            if (new Decimal(item.satoshis).toNumber() == transferAmount + 10000) {
-              mvcUtxo = item
-            }
-            if (item.satoshis == 100000) {
-              nftUtxo = {
-                ...item,
-                wif: this.wallet!.deriveChild(0)
-                  .deriveChild(0)
-                  .privateKey.toString(),
-              }
-            }
-          })
+          const devTx = await this.devideUtxo(devides, utxos)
+          nftUtxo = await this.utxoFromTx({ tx: devTx, outPutIndex: 1 })
+          nftUtxo = {
+            ...nftUtxo,
+            wif: this.wallet!.deriveChild(0)
+              .deriveChild(0)
+              .privateKey.toString(),
+          }
+          mvcUtxo = await this.utxoFromTx({ tx: devTx, outPutIndex: 0 })
+          mvcUtxo = {
+            ...mvcUtxo,
+            wif: this.wallet!.deriveChild(0)
+              .deriveChild(0)
+              .privateKey.toString(),
+          }
+          debugger
+          // utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
+          // utxos.forEach(item => {
+          //   if (new Decimal(item.satoshis).toNumber() == transferAmount + 10000) {
+          //     mvcUtxo = item
+          //   }
+          //   if (item.satoshis == 100000) {
+          //     nftUtxo = {
+          //       ...item,
+          //       wif: this.wallet!.deriveChild(0)
+          //         .deriveChild(0)
+          //         .privateKey.toString(),
+          //     }
+          //   }
+          // })
           transferResult = await this.makeTx({
             utxos: [mvcUtxo],
             opReturn: [],
@@ -2314,7 +2360,7 @@ export class HdWallet {
               codehash: reqswapargs.nftCodeHash,
               genesis: reqswapargs.nftGenesisID,
               tokenIndex: reqswapargs.nftTokenIndex,
-              // utxos: [nftUtxo],
+              utxos: utxos,
             },
             {
               isBroadcast: false,

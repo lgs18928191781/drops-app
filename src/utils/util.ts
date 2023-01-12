@@ -38,7 +38,12 @@ import { GetFeeInfo } from '@/api/broad'
 import { GetMyLegalAmount, LegalOffsale } from '@/api/legal'
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { useUserStore } from '@/stores/user'
-import { createMnemonic, encryptMnemonic, hdWalletFromMnemonic } from './wallet/hd-wallet'
+import {
+  createMnemonic,
+  encryptMnemonic,
+  hdWalletFromMnemonic,
+  MetaNameReqCode,
+} from './wallet/hd-wallet'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
 import i18n from './i18n'
 import { Ref } from 'vue'
@@ -51,6 +56,7 @@ import { getBlockHeight } from '@/api'
 import { GetMetaNameIsRegister } from '@/api/metaname'
 import { dateTimeFormat } from './filters'
 import dayjs from 'dayjs'
+import { SendMetaNameTransationResult } from '@/@types/sdk'
 
 export function randomString() {
   return Math.random()
@@ -1328,6 +1334,40 @@ export function GetExpiredUTC(expiredBlockHeight: number) {
       const res = dayjs(date).add(distanceDay, 'day')
       const result = dateTimeFormat(res.valueOf(), 'UTC')
       resolve(result)
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
+export async function metanameOperation(params: {
+  //注册时mvc跟metaid,更新信息时不需要传入years,注册时必须要传入icon
+  registerName: string
+  op: MetaNameReqCode
+  //注册和更新操作info必填,续费info字段不需要
+  info?: Partial<MetaNameInfo>
+  years?: number
+}) {
+  return new Promise<SendMetaNameTransationResult>(async (resolve, reject) => {
+    try {
+      const userStore = useUserStore()
+      const res = await userStore.showWallet.MetaNameBeforeReq({
+        name: `${params.registerName}`,
+        op: params.op,
+      })
+      if (res.code == 0) {
+        const { data } = res
+        const metaNameParams = {
+          op_code: data.op,
+          info: params.info,
+          years: params.years!,
+          reqswapargs: data,
+        }
+        const result = await userStore.showWallet.sendMetaNameTransation(metaNameParams)
+        if (result) {
+          resolve(result)
+        }
+      }
     } catch (error) {
       reject(error)
     }

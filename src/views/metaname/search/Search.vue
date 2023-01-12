@@ -36,7 +36,7 @@
             ><span class="time" v-if="metaNameInfo.val.expiredBlockHeight !== -1"
               >,&nbsp;{{ $t('MetaName.Expire date') }}:&nbsp;
               <template v-if="isGetExpireDateLoading">
-                <ElIcon class="is-loading" v-if="loading">
+                <ElIcon class="is-loading">
                   <Loading />
                 </ElIcon>
               </template>
@@ -183,7 +183,7 @@ function searchSubmit(data: string) {
 function searchMetaName() {
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetMetaNameIsRegister(metaName.value).catch(error => {
-      if (error.code === 105) {
+      if (error.code === 1) {
         metaNameInfo.val = {
           name: metaName.value,
           expiredBlockHeight: -1,
