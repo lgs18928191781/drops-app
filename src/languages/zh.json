@@ -85,6 +85,9 @@
       "dark": "深色",
       "light": "明亮"
     },
+    "MetaName": {
+      "resolving": "MetaName 解析中…"
+    },
     "Messages": {
       "repost": "转发了您的buzz",
       "repost_with_comment": "转发并评论了您的buzz",
@@ -93,6 +96,24 @@
       "follow": "已关注，我们聊天吧。",
       "token_transfer": "代币转账",
       "resend": "重新发送"
+    },
+    "General": {
+      "publish_new_announcement": "发表新公告",
+      "announcements_total": "共 {count} 条公告",
+      "new_announcement": "新公告",
+      "announcement_title": "公告标题",
+      "announcement_content": "公告内容……",
+      "publish": "发布",
+      "no_announcement": "暂无公告",
+      "new": "新",
+      "publish_success": "操作成功",
+      "delete_announcement": "删除公告",
+      "delete_announcement_tip": "确定删除该公告吗？",
+      "cancel": "取消",
+      "delete": "删除",
+      "update": "更新",
+      "edit_announcement": "编辑公告",
+      "title_is": "标题 "
     },
     "Modals": {
       "enter_password": "请输入密码",
@@ -181,8 +202,8 @@
       "create": "创建社区",
       "create_fist_step_tip": "填写社区名称、上传社区图标。你可以在之后修改这些信息。",
       "community_name": "社区名",
-      "community_name_placeholder": "选择社区名",
-      "community_name_tip": "你需要选择一个MetaName NFT 作为社区名",
+      "community_name_placeholder": "选择社区域名",
+      "community_name_tip": "你需要选择一个MetaName NFT 作为社区域名",
       "agree_tip": "创建社区，即代表您同意了 Show3.0 的",
       "agree_guidelines": "社区守则",
       "customize_information": "定制化您的社区",
@@ -218,7 +239,10 @@
       "feed": "Buzz",
       "choose_nft_series": "选择 NFT 系列",
       "edit_public_channel": "修改公开频道",
-      "edit_consensual_channel": "修改凭证频道"
+      "edit_consensual_channel": "修改凭证频道",
+      "general_channels": "功能频道",
+      "announcements": "公告",
+      "topics": "话题"
     },
     "Input": {
       "nft_stickers": "NFT表情",
@@ -249,7 +273,9 @@
     },
     "Datetime": {
       "today": "今天",
-      "yesterday": "昨天"
+      "yesterday": "昨天",
+      "today_with_comma": "今天，",
+      "yesterday_with_comma": "昨天，"
     },
     "Errors": {
       "default": "发生了一个错误",
@@ -754,5 +780,8 @@
   "Menu": "菜单",
   "metanameNotAllowOverLenght": "注册名称长度不能超过63位字符",
   "metanameNotAllowMin": "暂不支持1-2位字符注册",
-  "metanameNftImgError": "上链MetaName封面失败"
+  "metanameNftImgError": "上链MetaName封面失败",
+  "getMetaNameInfoError": "获取MetaName信息失败",
+  "registerNameIllgel": "提交注册的MetaName字符存在不合法",
+  "inputMetaNameIllgel": "* 查询的MetaName不符合规范"
 }

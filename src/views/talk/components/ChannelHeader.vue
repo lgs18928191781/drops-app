@@ -11,37 +11,47 @@
 
       <div class="flex shrink-0 items-center">
         <div class=" hidden lg:block" v-if="talkStore.isActiveChannelReserved">
+          <!-- 图标：仅保留频道拥有 -->
           <Image
-            :src="talkStore.activeCommunity?.icon"
+            v-if="talkStore.activeCommunity?.icon"
+            :src="talkStore.activeCommunity.icon"
             :customClass="'!w-8 !h-8 rounded-2xl object-cover object-center mr-2'"
           />
         </div>
-        <div
-          :class="[
-            talkStore.isActiveChannelReserved ? 'meta-name' : 'text-dark-800 dark:text-white',
-            'text-base leading-tight no-wrap grow whitespace-nowrap truncate mr-2 max-w-[35vw] lg:max-w-[600PX] capitalize',
-          ]"
-        >
-          {{
-            talkStore.isActiveChannelReserved
-              ? talkStore.activeCommunity?.name
-              : talkStore.activeChannel?.name || talkStore.activeCommunity?.name
-          }}
+
+        <!-- 功能频道头 -->
+        <div class="" v-if="talkStore.isActiveChannelGeneral && talkStore.activeChannel?.nameKey">
+          {{ $t(talkStore.activeChannel.nameKey) }}
         </div>
 
-        <template v-if="talkStore.activeChannel?.name && !talkStore.isActiveChannelReserved">
+        <template v-else>
           <div
-            class="border-r border-solid border-dark-300 dark:border-gray-400 hidden lg:block"
-          ></div>
-          <div
-            class="text-base leading-tight no-wrap grow whitespace-nowrap text-dark-300 dark:text-gray-400 px-2 hidden lg:block capitalize"
+            :class="[
+              talkStore.isActiveChannelReserved ? 'meta-name' : 'text-dark-800 dark:text-white',
+              'text-base leading-tight no-wrap grow whitespace-nowrap truncate mr-2 max-w-[35vw] lg:max-w-[600PX] capitalize',
+            ]"
           >
             {{
-              talkStore.isActiveChannelPublic
-                ? $t('Talk.Channel.public_channel')
-                : $t('Talk.Channel.private_channel')
+              talkStore.isActiveChannelReserved
+                ? talkStore.activeCommunity?.name
+                : talkStore.activeChannel?.name || talkStore.activeCommunity?.name
             }}
           </div>
+
+          <template v-if="talkStore.activeChannel?.name && !talkStore.isActiveChannelReserved">
+            <div
+              class="border-r border-solid border-dark-300 dark:border-gray-400 hidden lg:block"
+            ></div>
+            <div
+              class="text-base leading-tight no-wrap grow whitespace-nowrap text-dark-300 dark:text-gray-400 px-2 hidden lg:block capitalize"
+            >
+              {{
+                talkStore.isActiveChannelPublic
+                  ? $t('Talk.Channel.public_channel')
+                  : $t('Talk.Channel.private_channel')
+              }}
+            </div>
+          </template>
         </template>
       </div>
     </div>
@@ -50,7 +60,10 @@
         <LoginedUserOperate />
       </div>
 
-      <div class="ml-1 hidden lg:flex lg:items-center group" v-if="talkStore.activeChannel?.id">
+      <div
+        class="ml-1 hidden lg:flex lg:items-center group"
+        v-if="!talkStore.isActiveChannelGeneral && talkStore.activeChannel?.id"
+      >
         <div
           class="text-xs text-dark-300 dark:text-gray-400 bg-dark-100 dark:bg-gray-800 px-3 py-1 rounded"
         >

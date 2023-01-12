@@ -1,4 +1,5 @@
 <template>
+  <!-- <div @click="test()">更新信息</div> -->
   <RouterView
     v-if="
       $route.path === '/' ||
@@ -41,7 +42,7 @@ import { useRoute } from 'vue-router'
 import { dayjs, ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { MetaNameFeePerYear } from '@/enum'
-import { getBlockHeight, MetaNameUpdateInfo } from '@/api/index'
+import { getBlockHeight, MetaNameUpdateInfo, GetMetaNameInfo } from '@/api/index'
 import Decimal from 'decimal.js-light'
 import { dateTimeFormat } from '@/utils/filters'
 import {
@@ -58,6 +59,8 @@ import { CreatOrder, UpdatePay } from '@/api/wxcore'
 import { PayPlatform, PayType, ProductType, MetaNameOperateType, OrderPayType } from '@/enum'
 import { BigNumber } from 'ethers'
 import { GetMetaNameIsRegister } from './api/metaname'
+//@ts-ignore
+import namehash from 'eth-ens-namehash'
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const i18n = useI18n()
@@ -158,19 +161,33 @@ function checkInputName(name: string) {
       return false
   }
 }
+//校验名称合法性
+function validateNameIllgel(name: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const illgelRes = namehash.normalize(name)
+    if (!illgelRes) {
+      reject()
+    }
+    resolve(illgelRes)
+  })
+}
+
+onMounted(() => {})
 
 async function test() {
+  //更新信息前调用一下https://testmvc.showmoney.app/metaname-indexer/getinfo?name=xxx接口,把info信息保存下来
   await registerMetaName(
     {
-      registerName: 'easonduo',
+      registerName: 'Eason',
       op: MetaNameReqCode.updataInfo,
       info: {
-        ethAddress: userStore.user?.evmAddress,
-        polygonAddress: userStore.user?.evmAddress,
+        eth: userStore.user?.evmAddress,
+        polygon: userStore.user?.evmAddress,
         // icon: `metafile://adb7015c50d9d32e803b85cc9d67c0f5b7a663a848e8c3d2ef18dffb7a745941.png`,
-        // metaid: userStore.user!.metaId,
-        // mvc: userStore.user!.address,
+        metaid: userStore.user!.metaId,
+        mvc: userStore.user!.address,
       },
+
       // years: 1,
     },
     MetaNameOperateType.UpdateInfo
@@ -183,17 +200,25 @@ async function registerMetaName(
     registerName: string
     op: MetaNameReqCode
     //注册和更新操作info必填,续费info字段不需要
-    info?: {
-      [k: string]: any
-      metaid?: string
-      mvc?: string
-      icon?: string //格式:metafile://tx
-    }
+    info?: Partial<MetaNameInfo>
     years?: number
   },
   operationType: MetaNameOperateType
 ) {
   debugger
+
+  if (params.op == MetaNameReqCode.updataInfo) {
+    const metaNameInfo = await GetMetaNameInfo(params.registerName)
+    if (metaNameInfo.code == 0) {
+      params.info = {
+        ...params.info,
+        ...metaNameInfo.data.infos,
+      }
+      debugger
+    } else {
+      return ElMessage.error(`${i18n.t('getMetaNameInfoError')}`)
+    }
+  }
   // const params = {
   //   registerName: 'Stars',
   //   op: MetaNameReqCode.register,
@@ -207,7 +232,7 @@ async function registerMetaName(
   try {
     const res = await metanameOperation(params)
     debugger
-    if (JSON.parse(res!.registerMetaNameResp!) && params.op != MetaNameReqCode.updataInfo) {
+    if (params.op != MetaNameReqCode.updataInfo && res) {
       let from = !isApp ? 'web' : isAndroid ? 'android' : isIOS ? 'ios' : ''
       from += `:${import.meta.env.VITE_AppName}`
       // 支付回调地址
@@ -259,10 +284,11 @@ async function registerMetaName(
       //
       // }
     } else {
-      debugger
-      const updateInfoTx = await MetaNameUpdateInfo(res!.registerMetaNameResp!.toString())
-      console.log('zxcxz', updateInfoTx)
-      debugger
+      const updateInfoTx = await MetaNameUpdateInfo(res!.registerMetaNameResp!)
+      if (updateInfoTx.code == 0) {
+        //更新成功
+        console.log('updateInfoTx', updateInfoTx.data)
+      }
     }
   } catch (error) {
     ElMessage.error(`${(error as any).toString()}`)
@@ -390,25 +416,4 @@ async function sendEth(params: {
   src: local('Whitney Bold'), url('@/assets/fonts/whitneybold.otf') format('opentype');
   font-weight: 700;
 }
-
-// *::-webkit-scrollbar {
-//   width: 8px;
-// }
-
-// *::-webkit-scrollbar-track {
-//   background: #edeff2;
-// }
-
-// .dark *::-webkit-scrollbar-track {
-//   background: #111827;
-// }
-
-// *::-webkit-scrollbar-thumb {
-//   background-color: #bfc2cc;
-//   border-radius: 20px;
-// }
-
-// .dark *::-webkit-scrollbar-thumb {
-//   background-color: #374151;
-// }
 </style>

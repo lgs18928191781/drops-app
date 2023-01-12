@@ -3,12 +3,12 @@
     <h3 class="text-xl lg:text-2xl text-dark-800 dark:text-gray-100 capitalize font-thin">
       {{ $t('Talk.Channel.welcome') }}
     </h3>
-    <h3 class="text-2xl lg:text-3xl capitalize mt-1 meta-name text-center">
+    <h3 class="text-2xl lg:text-3xl capitalize mt-1 meta-name with-reflection text-center">
       {{ talk.activeCommunity?.name }}
     </h3>
 
     <!-- 功能 -->
-    <div class="flex flex-col items-center mt-8 space-y-2">
+    <div class="flex flex-col items-center mt-12 space-y-2">
       <div
         class="p-3 w-[80vw] lg:w-90 bg-white dark:bg-gray-700 rounded-xl flex items-center justify-between cursor-pointer group"
         v-for="utility in visibleUtilities"
@@ -46,7 +46,7 @@ const utilities = ref([
     icon: 'user_plus',
     bgColor: 'bg-green-400',
     action: () => {
-      talk.inviteLink = `${location.origin}/talk/channels/${talk.activeCommunityId}/the-void`
+      talk.inviteLink = `${location.origin}/talk/channels/${talk.activeCommunitySymbol}/the-void`
       talk.invitingChannel = {
         community: talk.activeCommunity,
         channel: null,

@@ -33,18 +33,30 @@
             </div>
 
             <!-- 社区信息 -->
-            <div class="px-4.5 overflow-y-auto">
+            <div class="px-3 overflow-y-auto">
               <!-- 社区名 -->
+              <div class="w-full mt-4 truncate text-lg" :title="talk.activeCommunity?.name">
+                {{ talk.activeCommunity?.name }}
+              </div>
+
+              <!-- 社区MetaName -->
               <div
-                class="w-full mt-4 flex items-center space-x-2"
-                :title="talk.activeCommunity?.name"
+                class="w-full mt-1 flex items-center justify-between space-x-2 cursor-pointer"
+                :title="talk.activeCommunitySymbolInfo.name"
+                v-if="talk.activeCommunitySymbolInfo"
               >
-                <span class="text-lg meta-name truncate">{{ talk.activeCommunity?.name }}</span>
-                <div
-                  class="p-1 bg-gradient-to-tr from-[#F700FB] to-[#FFC051] rounded-sm leading-none text-center flex items-center justify-center shrink-0"
-                >
-                  <Icon name="N" class="w-2 h-2" />
+                <div class="flex items-center justify-start space-x-0.5 shrink overflow-x-hidden">
+                  <span class="text-lg meta-name truncate">{{
+                    talk.activeCommunitySymbolInfo.name
+                  }}</span>
+
+                  <MetaNameTag :type="talk.activeCommunitySymbolInfo.suffix" />
                 </div>
+
+                <Icon
+                  name="chevron_right"
+                  class="w-3 h-3 text-dark-800 dark:text-gray-100 shrink-0"
+                />
               </div>
 
               <div
@@ -103,26 +115,27 @@
                 </template>
 
                 <!-- 功能频道 -->
-                <!-- <div class="flex justify-between">
+                <div class="flex justify-between">
                   <div class="uppercase text-dark-400 dark:text-gray-200 text-xs">
                     {{ $t('Talk.Community.general_channels') }}
                   </div>
-                  <Icon
+                  <!-- <Icon
                     name="plus"
                     class="w-4 h-4 text-black dark:text-white cursor-pointer"
                     v-if="talk.isAdmin()"
                     @click="layout.isShowCreatePublicChannelModal = true"
-                  />
+                  /> -->
                 </div>
 
-                <div
-                  class="py-3 px-2 main-border only-bottom cursor-pointer !bg-white dark:!bg-gray-700 relative group faded !text-dark-800 dark:!text-gray-100"
-                >
-                  123
-                </div> -->
+                <CommunityChannelItem
+                  v-for="channel in generalChannels"
+                  :key="channel.id"
+                  :channel="channel"
+                  :has-buttons="false"
+                />
 
                 <!-- 公共频道 -->
-                <div class="flex justify-between">
+                <div class="flex justify-between mt-4">
                   <div class="uppercase text-dark-400 dark:text-gray-200 text-xs">
                     {{ $t('Talk.Community.public_channels') }}
                   </div>
@@ -181,16 +194,30 @@ import { useLayoutStore } from '@/stores/layout'
 import CommunityChannelItem from './CommunityChannelItem.vue'
 import { useTalkStore } from '@/stores/talk'
 import { useCommunityUpdateFormStore } from '@/stores/forms'
+import { useI18n } from 'vue-i18n'
+import { computed } from 'vue'
+import MetaNameTag from '@/components/MetaName/Tag.vue'
 
 const layout = useLayoutStore()
 const talk = useTalkStore()
+const i18n = useI18n()
 
 const popSettingsModal = () => {
   const form = useCommunityUpdateFormStore()
   form.original = talk.activeCommunity
-  form.description = talk.activeCommunity.description
+  form.description = talk.activeCommunity?.description || ''
   layout.isShowCommunitySettingsModal = true
 }
+
+// 功能频道列表
+const generalChannels = computed(() => {
+  return talk.generalChannels.map(channel => {
+    return {
+      id: channel.id,
+      name: i18n.t(channel.nameKey),
+    }
+  })
+})
 </script>
 
 <style lang="scss" scoped>

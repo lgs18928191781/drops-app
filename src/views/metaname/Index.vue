@@ -22,6 +22,7 @@
             "
           />
         </PlainBtn>
+        <div class="validateText" v-if="MetaNameNotIllgel">{{ $t('inputMetaNameIllgel') }}</div>
       </div>
     </div>
 
@@ -155,6 +156,7 @@ import footIcon4 from '@/assets/show/foot-icon4.png'
 import { checkUserLogin } from '@/utils/util'
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
+import i18n from '@/utils/i18n'
 
 const router = useRouter()
 
@@ -215,6 +217,9 @@ const contactIcon = [
     link: 'mailto:metanamedao@outlook.com',
   },
 ]
+const MetaNameNotIllgel = ref(false)
+
+async function validateMetaName() {}
 
 async function toMine() {
   await checkUserLogin()

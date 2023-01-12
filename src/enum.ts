@@ -291,6 +291,8 @@ export enum NodeName {
   Name = 'name',
   MetaNote = 'metanote',
   SimpleFileMsg = 'SimpleFileMsg',
+  SimpleCreateAnnouncement = 'SimpleCreateAnnouncement',
+  SimpleAnnouncementQuote = 'SimpleAnnouncementQuote',
 }
 
 export const enum BindStatus {

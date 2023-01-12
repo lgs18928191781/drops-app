@@ -102,9 +102,7 @@ export const router = createRouter({
       path: '/talk',
       name: 'talk',
       meta: { isAuth: true },
-      redirect:
-        '/talk/channels/123/88a92826842757cade6e84378df9db88526578c3bce7b8cb6348b7f1f9598d0a',
-      // component: () => import('@/views/talk/Index.vue'),
+      redirect: '/talk/channels/@me',
     },
     {
       path: '/talk/channels/@me/the-void',
@@ -119,11 +117,40 @@ export const router = createRouter({
       meta: { isAuth: true },
     },
 
+    // .meta解析
+    {
+      path: '/talk/channels/:metaName([a-zA-Z0-9_-]+[.][a-zA-Z0-9_-]+)/',
+      name: 'talkMeta',
+      component: () => import('@/views/talk/MetaName.vue'),
+    },
+    {
+      path: '/talk/channels/:metaName([\\s\\S]+[.][a-zA-Z0-9_-]+)/:others*',
+      name: 'talkMeta',
+      component: () => import('@/views/talk/MetaName.vue'),
+    },
+
     {
       path: '/talk/channels/:communityId',
       component: () => import('@/views/talk/Channel.vue'),
       meta: { isAuth: true },
       children: [
+        {
+          path: 'index',
+          redirect: to => {
+            const { communityId } = to.params
+            return { name: 'talkChannel', params: { communityId, channelId: 'the-void' } }
+          },
+        },
+        {
+          path: 'announcements',
+          name: 'talkAnnouncements',
+          component: () => import('@/views/talk/components/announcements/Body.vue'),
+        },
+        {
+          path: 'topics',
+          name: 'talkTopics',
+          component: () => import('@/views/talk/components/topics/Body.vue'),
+        },
         {
           path: ':channelId',
           name: 'talkChannel',

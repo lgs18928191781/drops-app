@@ -29,27 +29,29 @@
         {{ channel.name }}
       </div>
 
-      <button
-        class="hover:text-dark-800 dark:hover:text-white text-dark-300 dark:text-gray-400 mr-2 hidden group-hover:!block"
-        @click.stop="editChannel"
-        v-if="talk.isAdmin()"
-      >
-        <Icon name="edit" class="w-3 h-3" />
-      </button>
+      <template v-if="hasButtons">
+        <button
+          class="hover:text-dark-800 dark:hover:text-white text-dark-300 dark:text-gray-400 mr-2 hidden group-hover:!block"
+          @click.stop="editChannel"
+          v-if="talk.isAdmin()"
+        >
+          <Icon name="edit" class="w-3 h-3" />
+        </button>
 
-      <button
-        class="hover:text-dark-800 dark:hover:text-white text-dark-300 dark:text-gray-400 hidden group-hover:!block"
-        @click.stop="popInvite(channel.id)"
-      >
-        <Icon name="user_plus" class="w-4 h-4" />
-      </button>
+        <button
+          class="hover:text-dark-800 dark:hover:text-white text-dark-300 dark:text-gray-400 hidden group-hover:!block"
+          @click.stop="popInvite(channel.id)"
+        >
+          <Icon name="user_plus" class="w-4 h-4" />
+        </button>
+      </template>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { Channel } from '@/@types/talk'
-import { ChannelRoomType, GroupChannelType, JobStatus } from '@/enum'
+import { GroupChannelType, JobStatus } from '@/enum'
 import { useChannelFormStore } from '@/stores/forms'
 import { useJobsStore } from '@/stores/jobs'
 import { useLayoutStore } from '@/stores/layout'
@@ -57,15 +59,18 @@ import { useTalkStore } from '@/stores/talk'
 import { defineProps, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
-import { GetFT, GetGenesis } from '@/api/aggregation'
 
 const talk = useTalkStore()
 const router = useRouter()
 const layout = useLayoutStore()
 interface Props {
   channel: any
+  hasButtons: boolean
 }
-const props = withDefaults(defineProps<Props>(), {})
+const props = withDefaults(defineProps<Props>(), {
+  channel: {} as Channel,
+  hasButtons: true,
+})
 const loading = ref(false)
 
 // 如果是占位符，则使用订阅id来观察ws消息
@@ -107,6 +112,14 @@ const goChannel = () => {
 }
 
 const channelSymbol = (channel: any) => {
+  // 功能频道
+  switch (channel.id) {
+    case 'announcements':
+      return 'megaphone'
+    case 'topics':
+      return 'fire'
+  }
+
   switch (talk.channelType(channel)) {
     case GroupChannelType.PublicText:
       return 'hashtag'
@@ -124,7 +137,7 @@ const channelSymbol = (channel: any) => {
 }
 
 const popInvite = (channelId: string) => {
-  talk.inviteLink = `${location.origin}/talk/channels/${talk.activeCommunityId}/${channelId}`
+  talk.inviteLink = `${location.origin}/talk/channels/${talk.activeCommunitySymbol}/${channelId}`
   talk.invitingChannel = {
     community: talk.activeCommunity,
     channel: talk.activeCommunityChannels.find(c => c.id === channelId),
@@ -134,47 +147,6 @@ const popInvite = (channelId: string) => {
 
 async function editChannel() {
   loading.value = true
-  // const channel = props.channel as Channel
-  // const chanin =
-  //   channel.roomType === ChannelRoomType.Publice || channel.roomType === ChannelRoomType.Private
-  //     ? null
-  //     : channel.roomType === ChannelRoomType.NFT || channel.roomType === ChannelRoomType.FT
-  //     ? 'mvc'
-  //     : import.meta.env.VITE_ETH_CHAIN
-  // let nft: null | UserNFTItem = null
-  // let ft: null | FungibleToken = null
-
-  // if (channel.roomType === ChannelRoomType.NFT || channel.roomType === ChannelRoomType.ETHNFT) {
-  //   const res = await GetGenesis({
-  //     chain: chanin!,
-  //     codehash: channel.roomCodeHash!,
-  //     genesis: channel.roomGenesis!,
-  //   })
-  //   if (res.code === 0) {
-  //     nft = res.data.results.items[0]
-  //   }
-  // } else if (channel.roomType === ChannelRoomType.FT) {
-  //   const res = await GetFT({
-  //     chain: chanin,
-  //     codehash: channel.roomCodeHash,
-  //     genesis: channel.roomGenesis,
-  //   })
-  //   if (res.code === 0) {
-  //     ft = res.data.results.items[0]
-  //   }
-  // }
-
-  // const form = useChannelFormStore()
-  // form.type = GroupChannelType.PublicText
-  // form.name = channel.name
-  // form.password = ''
-  // form.chain = chanin
-  // form.nft = nft
-  // form.ft = ft
-  // form.amount = 1
-  // form.adminOnly = channel.chatSettingType ? true : false // 发言设置，0：所有人，1：管理员
-  // form.publicKey = channel.roomPublicKey
-  // form.uuid = channel.uuid
 
   const form = useChannelFormStore()
   await form.recover(props.channel)

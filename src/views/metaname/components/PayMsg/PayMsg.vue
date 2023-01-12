@@ -111,10 +111,13 @@ import { result } from 'lodash'
 import { nextTick, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import StartPay from '@/components/StartPay/StartPay.vue'
+//@ts-ignore
 import html2canvas from 'html2canvas'
 import MetaTag from '@/assets/metaname/img_meta.png'
 import MetaNameLogo from '@/assets/metaname/logo_metaname.png'
 
+import { getBlockHeight, MetaNameUpdateInfo, GetMetaNameInfo } from '@/api/index'
+import { useI18n } from 'vue-i18n'
 interface Props {
   price: number
   year: number
@@ -131,6 +134,7 @@ const emit = defineEmits(['back', 'success'])
 const currentPayPlatform = ref(
   userStore.isAuthorized && userStore.user?.evmAddress ? PayPlatform.ETH : PayPlatform.UnionPay
 )
+const i18n = useI18n()
 const currencyAmount = ref(0)
 const loading = ref(false)
 const productType = ProductType.MetaName
@@ -173,12 +177,7 @@ async function metanameOperation(params: {
   registerName: string
   op: MetaNameReqCode
   //注册和更新操作info必填,续费info字段不需要
-  info?: {
-    [k: string]: any
-    metaid?: string
-    mvc?: string
-    icon?: string //格式:metafile://tx
-  }
+  info?: Partial<MetaNameInfo>
   years?: number
 }) {
   return new Promise<SendMetaNameTransationResult>(async (resolve, reject) => {
@@ -228,22 +227,54 @@ async function pay() {
         metafile = result!.metaFiles![0].txId
       }
     }
-
-    const res = await metanameOperation({
+    const metaNameOpParams: {
+      registerName: string
+      op: MetaNameReqCode
+      info?: Partial<MetaNameInfo>
+      years?: number
+    } = {
       registerName: props.name,
       op: props.type,
       info: {
-        metaid: userStore.user!.metaId,
+        // metaid: userStore.user!.metaId,
         mvc: userStore.user!.address,
         icon: `metafile://${metafile}.png`,
       },
       years: props.year,
-    })
+    }
+    if (props.type == MetaNameReqCode.updataInfo) {
+      const metaNameInfo = await GetMetaNameInfo(props.name)
+      if (metaNameInfo.code == 0) {
+        metaNameOpParams.info = {
+          ...metaNameOpParams.info,
+          ...metaNameInfo.data.infos,
+        }
+        delete metaNameOpParams.years
+        debugger
+      } else {
+        loading.value = false
+        return ElMessage.error(`${i18n.t('getMetaNameInfoError')}`)
+      }
+    }
+    if (props.type == MetaNameReqCode.renew) {
+      delete metaNameOpParams.info
+    }
+    const res = await metanameOperation(metaNameOpParams)
 
     const operateType = {
       [MetaNameReqCode.register]: MetaNameOperateType.Register,
       [MetaNameReqCode.renew]: MetaNameOperateType.Renew,
       [MetaNameReqCode.updataInfo]: MetaNameOperateType.UpdateInfo,
+    }
+    if (props.type == MetaNameReqCode.updataInfo) {
+      const updateInfoTx = await MetaNameUpdateInfo(res!.registerMetaNameResp!)
+      if (updateInfoTx.code == 0) {
+        //更新成功,这里不能用
+        console.log('updateInfoTx', updateInfoTx.data)
+        loading.value = false
+        debugger
+        return
+      }
     }
     const result = await CreatePayOrder({
       platform: currentPayPlatform.value,

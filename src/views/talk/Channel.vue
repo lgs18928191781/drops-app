@@ -5,9 +5,7 @@
     <div class="lg:grow lg:h-screen lg:relative lg:flex">
       <ChannelHeader />
 
-      <div
-        class="pt-12 pb-17.5 h-screen lg:relative w-full bg-dark-200 dark:bg-gray-900 lg:pt-15 lg:pb-20"
-      >
+      <div class="pt-12 h-screen lg:relative w-full bg-dark-200 dark:bg-gray-900 lg:pt-15">
         <router-view :key="($route.params.channelId as string)"></router-view>
       </div>
 
@@ -97,7 +95,7 @@ onBeforeUnmount(() => {
   opacity: 0;
 }
 
-*::-webkit-scrollbar {
-  width: 0px !important;
+::-webkit-scrollbar {
+  width: 0px;
 }
 </style>

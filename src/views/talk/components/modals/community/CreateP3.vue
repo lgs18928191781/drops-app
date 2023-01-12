@@ -14,17 +14,14 @@
       <div
         v-for="metaName in metaNames"
         :key="metaName.metaName"
-        class="flex space-x-3 items-center cursor-pointer hover:bg-dark-100 dark:hover:bg-gray-900 rounded py-3 px-4"
+        class="flex space-x-1.5 items-center cursor-pointer hover:bg-dark-100 dark:hover:bg-gray-900 rounded py-3 px-4"
         @click="selectMetaName(metaName)"
       >
         <div class="text-lg meta-name">
           {{ metaName.metaName }}
         </div>
-        <div
-          class="p-1.5 bg-gradient-to-tr from-[#F700FB] to-[#FFC051] rounded-sm leading-none text-center flex items-center justify-center"
-        >
-          <Icon name="N" class="w-2 h-2" />
-        </div>
+
+        <MetaNameTag />
       </div>
     </div>
 
@@ -46,6 +43,8 @@ import { getMetaNames } from '@/api/talk'
 import { useTalkStore } from '@/stores/talk'
 import { useCommunityFormStore } from '@/stores/forms'
 import { useLayoutStore } from '@/stores/layout'
+import MetaNameTag from '@/components/MetaName/Tag.vue'
+
 const talk = useTalkStore()
 const layout = useLayoutStore()
 const form = useCommunityFormStore()

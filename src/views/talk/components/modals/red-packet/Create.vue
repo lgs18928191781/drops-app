@@ -477,6 +477,10 @@ const userStore = useUserStore()
 
 const activeTab = ref('redPacket')
 const changeTab = (tab: string) => {
+  if (tab !== activeTab.value) {
+    layout[ShowControl.isShowChooseTokenModal] = false
+  }
+
   activeTab.value = tab
   if (tab === 'redPacket') {
     form.type = RedPacketDistributeType.Random
@@ -553,6 +557,9 @@ const fetchNftSeries = async () => {
       selfAddress = userStore.user!.address
       break
   }
+
+  // 如无对应地址，则不执行请求
+  if (!selfAddress) return
 
   const {
     data: {

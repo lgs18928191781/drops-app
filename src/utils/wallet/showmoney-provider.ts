@@ -140,7 +140,7 @@ export default class ShowmoneyProvider {
     return res
   }
 
-  private gzip(data: Buffer | string): Promise<Buffer | string> {
+  public gzip(data: Buffer | string): Promise<Buffer | string> {
     return new Promise((resolve, reject) => {
       zlib.gzip(data, {}, (err, val) => {
         if (err) {
