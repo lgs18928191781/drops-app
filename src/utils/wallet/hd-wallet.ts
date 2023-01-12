@@ -256,6 +256,7 @@ export const hdWalletFromMnemonic = async (
   // const hdPrivateKey = Mnemonic.fromString(mnemonic).toHDPrivateKey()
   const seed = bip39.mnemonicToSeedSync(mnemonic)
   const hdPrivateKey = bsv.HDPrivateKey.fromSeed(seed, network)
+
   const hdWallet = hdPrivateKey.deriveChild(`m/44'/${import.meta.env.VITE_WALLET_PATH}'/0'`)
   return hdWallet
 }
@@ -2230,8 +2231,11 @@ export class HdWallet {
         const mvcToAddress = reqswapargs.mvcToAddress
         const nftToAddress = reqswapargs.nftToAddress
         const txFee = reqswapargs.txFee
-        const requestIndex = reqswapargs.requestIndex
-        const metaNameOpFee = new Decimal(reqswapargs.feePerYear).mul(years).toNumber()
+        const requestIndex = new Decimal(reqswapargs.requestIndex).toString()
+        const metaNameOpFee =
+          params.op_code == MetaNameReqCode.updataInfo
+            ? 0
+            : new Decimal(reqswapargs.feePerYear).mul(years!).toNumber()
         let MetaNameSuccTxid: string
         let mvcReceivers: Array<{ address: string; amount: number }>
         let transferNftResult,
@@ -2243,7 +2247,7 @@ export class HdWallet {
           mvcRawTx
         const mvcOutputIndex = 0
         const nftOutputIndex = 0
-        transferAmount = MetaNameReqCode.updataInfo == op_code ? txFee : metaNameOpFee + txFee
+        transferAmount = metaNameOpFee + txFee
         mvcReceivers = [
           {
             address: mvcToAddress,
@@ -2348,11 +2352,7 @@ export class HdWallet {
             nftOutputIndex,
             infos: info,
           }
-          // registerMetaNameResp = await this.provider.registerNewMetaName(
-          //   params,
-          //   MetaNameReqType.updataInfo
-          // )
-          registerMetaNameResp = JSON.stringify(params)
+          registerMetaNameResp = await this.provider.gzip(JSON.stringify(params))
         }
         resolve({
           registerMetaNameResp,

@@ -745,5 +745,8 @@
   "Menu": "菜单",
   "metanameNotAllowOverLenght": "注册名称长度不能超过63位字符",
   "metanameNotAllowMin": "暂不支持1-2位字符注册",
-  "metanameNftImgError": "上链MetaName封面失败"
+  "metanameNftImgError": "上链MetaName封面失败",
+  "getMetaNameInfoError": "获取MetaName信息失败",
+  "registerNameIllgel": "提交注册的MetaName字符存在不合法",
+  "inputMetaNameIllgel": "* 查询的MetaName不符合规范"
 }
