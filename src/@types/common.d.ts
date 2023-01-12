@@ -468,6 +468,12 @@ declare interface GenesisItem {
   totalSupply: number
 }
 
+declare interface Order {
+  status: number
+  order_id: string
+  transaction_id: string
+  pay_amount: number
+}
 declare interface MetaNameInfo {
   metaid: string
   eth: string

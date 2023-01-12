@@ -769,7 +769,17 @@
     "IndexBtn6": "Connect Wallet｜Domain Name Management",
     "IndexTitle6": "Own your MetaName now",
     "IndexDrsc6": "MetaName makes your application more distinctive and makes your application more prominent",
-    "MetaName cannot be empty": "MetaName cannot be empty"
+    "MetaName cannot be empty": "MetaName cannot be empty",
+    "error1": "Payment successfully sent failed",
+    "error2": "already canceled",
+    "error3": "refunded",
+    "error4": "Manually refunded",
+    "error5": "lock list",
+    "error6": "order timeout",
+    "error7": "Successful payment and hedging failure",
+    "error8": "The payment was sent successfully and failed, trying to send again",
+    "error9": "If the payment is successful, resending fails twice and ends",
+    "UpdateInfoSuccess": "Update Success"
   },
   "Menu": "Menu",
   "metanameNotAllowMin": "Currently does not support 1-2 character registration",

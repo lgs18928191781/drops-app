@@ -248,7 +248,7 @@ export const router = createRouter({
               component: () => import('@/views/metaname/search/Search.vue'),
             },
             {
-              path: 'register/:metaName',
+              path: 'register/:metaName/:orderId/:platform/:productType/:metaFile',
               name: 'metaNameSearchRegister',
               meta: { isAuth: true },
               component: () => import('@/views/metaname/search/Register.vue'),

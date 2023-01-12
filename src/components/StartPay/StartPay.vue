@@ -234,7 +234,11 @@ const payStatusButtonFunction = {
   },
   [PayStatus.Success]: () => {
     isShowPayStatusModal.value = false
-    emit('success')
+    emit('success', {
+      orderId: props.orderId,
+      platform: props.payPlatform,
+      productType: props.product_type,
+    })
     emit('update:modelValue', false)
     payResult.status = PayStatus.Ing
   },

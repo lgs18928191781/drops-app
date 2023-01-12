@@ -4258,7 +4258,7 @@ etag@^1.8.1:
 
 eth-ens-namehash@^2.0.8:
   version "2.0.8"
-  resolved "https://registry.npmmirror.com/eth-ens-namehash/-/eth-ens-namehash-2.0.8.tgz#229ac46eca86d52e0c991e7cb2aef83ff0f68bcf"
+  resolved "https://registry.yarnpkg.com/eth-ens-namehash/-/eth-ens-namehash-2.0.8.tgz#229ac46eca86d52e0c991e7cb2aef83ff0f68bcf"
   integrity sha512-VWEI1+KJfz4Km//dadyvBBoBeSQ0MHTXPvr8UIXiLW6IanxvAV+DmlZAijZwAyggqGUfwQBeHf7tc9wzc1piSw==
   dependencies:
     idna-uts46-hx "^2.3.1"
