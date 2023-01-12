@@ -177,6 +177,16 @@ export const AllNodeName: {
     path: '/Protocols/SimpleFileMsg',
     version: '1.0.1',
   },
+  [NodeName.SimpleCreateAnnouncement]: {
+    brfcId: '97b6023a62e8',
+    path: '/Protocols/SimpleCreateAnnouncement',
+    version: '1.0.4',
+  },
+  [NodeName.SimpleAnnouncementQuote]: {
+    brfcId: '4118a343ce29',
+    path: '/Protocols/SimpleAnnouncementQuote',
+    version: '1.0.5',
+  },
 }
 
 export class SDK {
@@ -840,7 +850,6 @@ export class SDK {
           //  处理当前节点
           if (params.nodeName !== NodeName.MetaFile) {
             // 当前节点的brfc 节点
-
             if (params.publickey && params.txId) {
               // 修改
               const res = await GetTx(params.txId)

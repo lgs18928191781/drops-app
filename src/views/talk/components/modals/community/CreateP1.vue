@@ -30,25 +30,37 @@
       </div>
 
       <div class="mt-12 w-full">
-        <h4 class="text-sm capitalize">
+        <!-- 社区名 -->
+        <h4 class="text-lg capitalize">
+          {{ $t('Talk.Community.community_name') }}
+        </h4>
+
+        <div class="mt-2">
+          <input
+            type="text"
+            class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-700 still w-full px-4 py-3 text-base leading-[24PX] font-bold placeholder:font-normal"
+            :placeholder="$t('Talk.Community.community_name')"
+            v-model="form.name"
+          />
+        </div>
+
+        <!-- MetaName -->
+        <h4 class="text-sm capitalize mt-8">
           {{ $t('Talk.Community.community_name_tip') }}
         </h4>
 
-        <div class="mt-3">
+        <div class="mt-2">
           <button
-            class="outline-0 main-border w-full px-4 py-3 text-base flex justify-between items-center dark:!bg-gray-600 group"
+            class="outline-0 main-border w-full px-4 py-3 text-base flex justify-between items-center group"
             @click="layout.isShowChooseMetaNameModal = !layout.isShowChooseMetaNameModal"
           >
-            <div class="flex items-center gap-x-2">
+            <div class="flex items-center gap-x-1.5">
               <template v-if="form.metaName">
                 <span class="text-sm meta-name">
                   {{ form.metaName.metaName }}
                 </span>
-                <div
-                  class="p-1.5 bg-gradient-to-tr from-[#F700FB] to-[#FFC051] rounded-sm leading-none text-center flex items-center justify-center"
-                >
-                  <Icon name="N" class="w-2 h-2" />
-                </div>
+
+                <Icon name="tag_nft" class="w-9.5 h-4" />
               </template>
               <template v-else>
                 <span class="text-dark-250 select-none font-sm dark:text-gray-400">{{
@@ -63,7 +75,7 @@
             />
           </button>
 
-          <p class="mt-1.5 text-xs text-dark-300 dark:text-gray-400">
+          <p class="mt-3 text-xs text-dark-300 dark:text-gray-400">
             <span class="">
               {{ $t('Talk.Community.agree_tip') }}
             </span>

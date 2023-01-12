@@ -1,5 +1,11 @@
 import { Chains, ChannelPublicityType, GroupChannelType, RedPacketDistributeType } from '@/enum'
-import { giveRedPacket, updateCommunity } from '@/utils/talk'
+import {
+  createAnnouncement,
+  deleteAnnouncement,
+  editAnnouncement,
+  giveRedPacket,
+  updateCommunity,
+} from '@/utils/talk'
 import { sleep } from '@/utils/util'
 import { defineStore } from 'pinia'
 import { useLayoutStore } from './layout'
@@ -15,6 +21,7 @@ export const useCommunityFormStore = defineStore('communityForm', {
       icon: null as File | null,
       description: '',
       cover: null as File | null,
+      name: '',
       metaName: null as any,
     }
   },
@@ -50,6 +57,7 @@ export const useCommunityFormStore = defineStore('communityForm', {
       this.icon = null
       this.description = ''
       this.cover = null
+      this.name = ''
       this.metaName = null
     },
   },
@@ -62,6 +70,7 @@ export const useCommunityUpdateFormStore = defineStore('communityUpdateForm', {
       description: '',
       cover: null as File | null,
       original: null as any,
+      name: '',
     }
   },
 
@@ -89,12 +98,14 @@ export const useCommunityUpdateFormStore = defineStore('communityUpdateForm', {
       this.icon = null
       this.description = ''
       this.cover = null
+      this.name = ''
     },
 
     resetInForm() {
       this.icon = null
       this.cover = null
       this.description = this.original.description
+      this.name = this.original.name
     },
 
     async submit() {
@@ -377,6 +388,111 @@ export const useRedPacketFormStore = defineStore('redPacketForm', {
       )
       layout.isShowLoading = false
       this.reset()
+    },
+  },
+})
+
+// 新公告、编辑公告
+export const useCreateAnnouncementFormStore = defineStore('createAnnouncementForm', {
+  state: () => {
+    return {
+      title: '',
+      content: '',
+      communityId: '',
+      type: 'create' as 'create' | 'edit',
+      txId: null as null | string,
+      publickey: null as null | string,
+    }
+  },
+
+  getters: {
+    isFinished(state) {
+      return !!state.title && !!state.content
+    },
+  },
+
+  actions: {
+    async submit() {
+      if (!this.isFinished) return
+
+      const user = useUserStore()
+      const layout = useLayoutStore()
+      layout.isShowLoading = true
+
+      const form: {
+        title: string
+        content: string
+        communityId: string
+        txId?: string
+        publickey?: string
+      } = {
+        title: this.title,
+        content: this.content,
+        communityId: this.communityId,
+      }
+      if (this.type === 'edit') {
+        form.txId = this.txId as string
+        form.publickey = this.publickey as string
+        await editAnnouncement(form, user.showWallet)
+      } else {
+        await createAnnouncement(form, user.showWallet)
+      }
+
+      layout.isShowLoading = false
+      this.reset()
+    },
+
+    reset() {
+      this.title = ''
+      this.content = ''
+      this.communityId = ''
+      this.type = 'create'
+      this.txId = null
+      this.publickey = null
+    },
+  },
+})
+
+// 删除公告
+export const useDeleteAnnouncementFormStore = defineStore('deleteAnnouncementForm', {
+  state: () => {
+    return {
+      announcementId: '',
+      communityId: '',
+      title: '',
+    }
+  },
+
+  getters: {
+    isFinished(state) {
+      return !!state.announcementId && !!state.communityId
+    },
+  },
+
+  actions: {
+    async submit() {
+      if (!this.isFinished) return
+
+      const user = useUserStore()
+      const layout = useLayoutStore()
+      layout.isShowLoading = true
+
+      await deleteAnnouncement(
+        {
+          announcementId: this.announcementId,
+          communityId: this.communityId,
+        },
+        user.showWallet
+      )
+
+      layout.isShowLoading = false
+      this.reset()
+    },
+
+    reset() {
+      this.announcementId = ''
+      this.communityId = ''
+      this.title = ''
     },
   },
 })

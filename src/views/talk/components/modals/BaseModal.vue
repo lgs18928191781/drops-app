@@ -109,11 +109,8 @@
 </template>
 
 <script lang="ts" setup>
-import { useLayoutStore } from '@/stores/layout'
 import { Dialog, DialogPanel, TransitionRoot, TransitionChild } from '@headlessui/vue'
 import { computed } from 'vue'
-
-const layout = useLayoutStore()
 
 const props = defineProps<{
   modelValue: boolean

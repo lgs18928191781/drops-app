@@ -42,8 +42,10 @@ html {
     }
 
     .slim-scrollbar {
+
       ::-webkit-scrollbar {
-        width: 8px;
+        /* prettier-ignore */
+        width: 6PX !important;
       }
 
       ::-webkit-scrollbar-track {
@@ -56,7 +58,8 @@ html {
 
       ::-webkit-scrollbar-thumb {
         background-color: #bfc2cc;
-        border-radius: 20px;
+        /* prettier-ignore */
+        border-radius: 20PX;
       }
 
       .dark & ::-webkit-scrollbar-thumb {
@@ -154,7 +157,13 @@ pre {
   &.faded {
     --border-color: var(--faded-border-color);
     background: #EDEFF2;
-    color: var(--themeBtnTextColor);
+    color: var(--faded-border-color);
+  }
+
+  .dark &.faded {
+    --border-color: var(--faded-border-color);
+    background: #1F2937;
+    color: var(--faded-border-color);
   }
 
   &.faded-switch:not(:active, :hover):placeholder-shown {
@@ -176,13 +185,13 @@ pre {
   box-shadow: var(--right-offset) var(--standard-offset) 0 var(--border-color);
   border-radius: var(--rounded);
   transition-property: all;
-  transition-duration: 150ms;
+  transition-duration: 200ms;
 
   // hover时浮起（只在桌面端）
   @media (min-width: 1024PX) {
     &:not(.still):hover:not(:active) {
-      box-shadow: calc(var(--right-offset) + var(--move-range)) calc(var(--standard-offset) + var(--move-range)) 0 var(--border-color);
-      transform: translateX(calc(0PX - var(--move-range))) translateY(calc(0PX - var(--move-range)));
+      box-shadow: calc(var(--right-offset) + var(--move-range) / 2) calc(var(--standard-offset) + var(--move-range) / 2) 0 var(--border-color);
+      transform: translateX(calc(0PX - var(--move-range) / 2)) translateY(calc(0PX - var(--move-range) / 2));
     }
   }
 
@@ -218,9 +227,19 @@ pre {
 .meta-name {
   background-clip: text;
   color: transparent;
-  background-image: linear-gradient(to top right, #F700FB, #FFC051);
+  background-image: linear-gradient(to right, #F700FB, #FFC051);
   font-weight: 700;
   letter-spacing: 0.05em;
+  text-shadow: rgba(255, 192, 81, 0.3) 0 -1PX 1PX;
+
+  .dark & {
+    text-shadow: rgba(255, 192, 81, 0.4) 0 -1PX 4PX;
+
+
+    &.with-reflection {
+      -webkit-box-reflect: below 0px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(35%, transparent), to(rgba(255, 255, 255, 0.08)));
+    }
+  }
 }
 
 

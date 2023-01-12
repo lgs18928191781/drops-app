@@ -39,7 +39,7 @@ declare interface Contact {
 }
 
 declare interface Community {
-  id: string
+  id?: string
   communityId: string
   address: string
   admins: string[]
@@ -56,6 +56,8 @@ declare interface Community {
   txId: string
   zeroAddress: string
   icon: string
+  channels: Channel[]
+  memberTotal?: number
 }
 
 declare interface CommunityAuth {

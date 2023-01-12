@@ -599,3 +599,28 @@ export const GetUserGenesisList = (params: {
   const { metaId, ..._params } = params
   return aggregation.get(`/v2/app/sensible/getMyGenesisList/${metaId}`, { params: _params })
 }
+
+export const GetAllAnnouncements = (params: {
+  page: number
+  pageSize: number
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    results: {
+      items: AnnouncementItem[]
+    }
+  }
+}> => {
+  return aggregation.get(`/v2/app/announcement/list`, { params })
+}
+
+export const GetOneAnnouncement = (params: {
+  txId: string
+}): Promise<{
+  code: number
+  data: AnnouncementItem
+}> => {
+  const { txId } = params
+  return aggregation.get(`/v2/app/announcement/one/${txId}`)
+}

@@ -26,7 +26,7 @@
           <div class="mt-2">
             <input
               type="text"
-              class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-700 still w-full p-4 text-base leading-[24PX] caret-dark-800 dark:caret-gray-100 font-bold placeholder:font-normal"
+              class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-700 still w-full py-3 px-4 text-base leading-[24PX] caret-dark-800 dark:caret-gray-100 font-bold placeholder:font-normal"
               :placeholder="$t('Talk.Community.channel_name') + '...'"
               v-model="form.name"
               autocomplete="nope"
@@ -139,7 +139,7 @@
                 <div class="ml-4" v-if="form.ft">
                   <input
                     type="number"
-                    class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-700 still w-full p-4 text-base leading-[24PX]  caret-dark-800 font-bold placeholder:font-normal"
+                    class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-700 still w-full py-3 px-4 text-base leading-[24PX]  caret-dark-800 font-bold placeholder:font-normal"
                     min="1"
                     :placeholder="$t('Talk.Modals.amount_needed')"
                     v-model="form.amount"
@@ -159,7 +159,7 @@
                   :type="isShowingPassword ? 'text' : 'password'"
                   autocomplete="new-password"
                   minlength="6"
-                  class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-700 still w-full p-4 text-base px-12 leading-[24PX]"
+                  class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-700 still w-full py-3 px-4 text-base px-12 leading-[24PX]"
                   :placeholder="$t('Talk.Community.password') + '...'"
                   v-model="form.password"
                 />
@@ -590,6 +590,7 @@ const selfAddress = computed(() => {
 
 const fetching = ref(false)
 const fetchNftSeries = async () => {
+  if (!selfAddress.value) return
   const {
     data: {
       results: { items: _nfts },
@@ -602,7 +603,9 @@ const fetchNftSeries = async () => {
   })
   nftSeries.value = _nfts
 }
+
 const fetchFtSeries = async () => {
+  if (!selfAddress.value) return
   const {
     data: {
       results: { items: _fts },

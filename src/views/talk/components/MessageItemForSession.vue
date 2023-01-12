@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex lg:hover:bg-gray-200 lg:dark:hover:bg-gray-850 px-4 py-1.5 relative group transition-all duration-150"
+    class="flex lg:hover:bg-gray-200 lg:dark:hover:bg-gray-950 px-4 py-1.5 relative group transition-all duration-150"
   >
     <!-- 消息菜单 -->
     <MessageMenu
@@ -77,11 +77,7 @@
         >
           <Icon name="message_repost" class="w-4 h-4 mr-1.5" />
           <span>
-            {{
-              message.data.rePostComment
-                ? $t('Talk.Messages.repost_with_comment')
-                : $t('Talk.Messages.repost')
-            }}
+            {{ $t('Talk.Messages.repost') }}
           </span>
         </div>
         <div
@@ -89,6 +85,24 @@
           v-if="message.data.rePostComment"
         >
           {{ message.data.rePostComment }}
+        </div>
+      </div>
+
+      <div class="my-1.5 flex flex-col items-start" v-else-if="isRepostWithComment">
+        <div
+          class="text-sm text-dark-800 dark:text-gray-100 font-normal break-all p-3 rounded-xl rounded-tl flex items-center"
+          :class="isMyMessage ? 'bg-primary dark:text-gray-800' : 'bg-white dark:bg-gray-700'"
+        >
+          <Icon name="message_repost" class="w-4 h-4 mr-1.5" />
+          <span>
+            {{ $t('Talk.Messages.repost_with_comment') }}
+          </span>
+        </div>
+        <div
+          class="mt-1.5 bg-dark-800/5 dark:bg-gray-800  text-sm text-dark-400 dark:text-gray-200 rounded-xl px-3 py-2"
+          v-if="message.data.content"
+        >
+          {{ message.data.content }}
         </div>
       </div>
 
@@ -337,6 +351,7 @@ const isText = computed(() => props.message.protocol === 'ShowMsg')
 const isLike = computed(() => props.message.protocol === 'PayLike')
 const isFollow = computed(() => props.message.protocol === 'PayFollow')
 const isRepost = computed(() => props.message.protocol === 'SimpleRePost')
+const isRepostWithComment = computed(() => props.message.nodeName === 'SimpleMicroblog')
 const isComment = computed(() => props.message.protocol === 'PayComment')
 const isFtTransfer = computed(() => props.message.protocol === 'FtTransfer')
 </script>

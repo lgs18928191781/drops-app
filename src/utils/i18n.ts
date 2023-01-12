@@ -13,6 +13,7 @@ for (let i in messages) {
     messages[i].el = zhLocale.el
   }
 }
+
 const i18n = createI18n({
   locale: lang, // set locale
   fallbackLocale: enLocale.name,

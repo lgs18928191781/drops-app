@@ -35,7 +35,6 @@ const tryInitChannel = async (status: string) => {
   await nextTick()
   if (!talk.canAccessActiveChannel) {
     let chain: string
-    console.log('talk.activeChannel', talk.activeGroupChannelType)
     switch (talk.activeGroupChannelType) {
       case GroupChannelType.Password:
         // 先检查是否本地有存储该频道密码

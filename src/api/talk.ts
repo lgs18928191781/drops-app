@@ -182,3 +182,19 @@ export const grabRedPacket = async (params: any): Promise<any> => {
     console.log(res)
   })
 }
+
+// 获取某个频道的引用公告列表
+export const GetCommunityAnnouncements = (params: {
+  communityId: string
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    results: {
+      items: AnnouncementItem[]
+    }
+  }
+}> => {
+  const { communityId, ..._params } = params
+  return TalkApi.get('/community/' + communityId + '/announcements', { params: _params })
+}

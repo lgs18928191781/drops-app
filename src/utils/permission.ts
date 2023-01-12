@@ -14,7 +14,7 @@ router.beforeEach(async (to, from, next) => {
   const rootStore = useRootStore()
 
   // talk之间的页面跳转不处理
-  const isTalkRoutes = (route: any) => route.name === 'talkChannel' || route.name === 'talkAtMe'
+  const isTalkRoutes = (route: any) => route.name?.startsWith('talk')
   if (isTalkRoutes(to) && isTalkRoutes(from)) return next()
 
   loading = openLoading()
