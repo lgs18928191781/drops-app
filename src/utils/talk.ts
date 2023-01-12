@@ -23,11 +23,11 @@ import { Address } from 'meta-contract/dist/mvc'
 import { DEFAULTS } from './wallet/hd-wallet'
 import { useJobsStore } from '@/stores/jobs'
 import { ElMessage } from 'element-plus'
+import { GetOneAnnouncement } from '@/api/aggregation'
 
 export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
-  console.log('start')
   // communityId, name, description, cover, metaName, mateNameNft, admins, reserved, icon
-  const { icon, metaName, description, cover } = form
+  const { icon, metaName, description, cover, name } = form
   const communityId = metaName.communityId
   const reserved = metaName.signature
 
@@ -45,7 +45,7 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   const admins = [userStore.user?.metaId]
   const dataCarrier = {
     communityId,
-    name: metaName.metaName,
+    name,
     metaName: metaName.metaName,
     // metaNameNft: ''
     icon: iconPlaceholder,
@@ -73,7 +73,7 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
 
 export const updateCommunity = async (form: any, sdk: SDK) => {
   // communityId, name, description, cover, metaName, mateNameNft, admins, reserved, icon
-  let { icon, description, cover, original, metaName } = form
+  let { icon, description, cover, original, metaName, name } = form
 
   const attachments = []
   let replaceIndex = 0
@@ -95,7 +95,7 @@ export const updateCommunity = async (form: any, sdk: SDK) => {
 
   const dataCarrier = {
     communityId: metaName.communityId,
-    name: metaName.metaName,
+    name,
     metaName: metaName.metaName,
     // metaNameNft: ''
     icon: iconPlaceholder,
@@ -784,4 +784,116 @@ const _buildOpReturn = () => {
     'application/json',
     'UTF-8',
   ]
+}
+
+export async function createAnnouncement(
+  form: {
+    title: string
+    content: string
+    communityId: string
+  },
+  sdk: SDK
+) {
+  const createTime = new Date().getTime()
+  const dataCarrier = {
+    title: form.title,
+    content: form.content,
+    contentType: 'text/plain',
+    createTime,
+  }
+
+  // 2. 构建节点参数
+  const node = {
+    nodeName: NodeName.SimpleCreateAnnouncement,
+    data: JSON.stringify(dataCarrier),
+  }
+  console.log('node', node)
+
+  const res = await sdk.createBrfcChildNode(node)
+  const announcementTxId = res?.currentNode.txId
+  if (!announcementTxId) {
+    throw new Error('announcementId is null') // TODO
+  }
+
+  // 使用txId获取metanetId
+  console.log('announcementTxId', announcementTxId)
+  const { data: announcement } = await GetOneAnnouncement({ txId: announcementTxId })
+
+  // 构建公告引用
+  const quoteDateCarrier = {
+    announcementId: announcement.metanetId,
+    createTime,
+    quoteId: form.communityId,
+    disable: 0, // 0: 未禁用，1：禁用
+  }
+  console.log('quoteDateCarrier', quoteDateCarrier)
+
+  const quoteNode = {
+    nodeName: NodeName.SimpleAnnouncementQuote,
+    data: JSON.stringify(quoteDateCarrier),
+  }
+
+  await sdk.createBrfcChildNode(quoteNode)
+
+  return 'success'
+}
+
+export async function editAnnouncement(
+  form: {
+    title: string
+    content: string
+    communityId: string
+    txId: string
+    publickey: string
+  },
+  sdk: SDK
+) {
+  const createTime = new Date().getTime()
+  const dataCarrier = {
+    title: form.title,
+    content: form.content,
+    contentType: 'text/plain',
+    createTime,
+  }
+
+  // 2. 构建节点参数
+  const node = {
+    nodeName: NodeName.SimpleCreateAnnouncement,
+    data: JSON.stringify(dataCarrier),
+    publickey: form.publickey,
+    txId: form.txId,
+  }
+  console.log('node', node)
+
+  const res = await sdk.createBrfcChildNode(node)
+
+  return 'success'
+}
+
+export async function deleteAnnouncement(
+  form: {
+    announcementId: string
+    communityId: string
+  },
+  sdk: SDK
+) {
+  const createTime = new Date().getTime()
+
+  // 构建公告的禁用引用
+  const quoteDateCarrier = {
+    announcementId: form.announcementId,
+    createTime,
+    quoteId: form.communityId,
+    disable: 1, // 0: 未禁用，1：禁用
+  }
+  console.log('quoteDateCarrier', quoteDateCarrier)
+
+  const quoteNode = {
+    nodeName: NodeName.SimpleAnnouncementQuote,
+    data: JSON.stringify(quoteDateCarrier),
+  }
+
+  await sdk.createBrfcChildNode(quoteNode)
+
+  return 'success'
 }

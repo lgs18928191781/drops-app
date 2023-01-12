@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full">
+  <div class="h-full pb-17.5 lg:pb-20">
     <MessageList />
   </div>
 

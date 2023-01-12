@@ -11,7 +11,7 @@ import { ChannelPublicityType, ChannelType, GroupChannelType } from '@/enum'
 import { defineStore } from 'pinia'
 import { router } from '@/router'
 import { useLayoutStore } from './layout'
-import { Channel, Message, TalkError } from '@/@types/talk'
+import { Channel, Community, Message, TalkError } from '@/@types/talk'
 import { sleep } from '@/utils/util'
 import { useUserStore } from './user'
 import { GetUserInfo } from '@/api/aggregation'
@@ -20,16 +20,25 @@ import { useWsStore } from './ws'
 export const useTalkStore = defineStore('talk', {
   state: () => {
     return {
-      communities: [{ id: '@me' }] as {
-        id?: string
-        communityId: string
-        channels: Channel[]
-        admins?: string[]
-      }[],
+      communities: [{ id: '@me' }] as Community[],
       members: [] as any,
 
       activeCommunityId: '' as string,
       activeChannelId: '' as string,
+
+      generalChannels: [
+        {
+          id: 'announcements',
+          nameKey: 'Talk.Community.announcements',
+        },
+        // {
+        //   id: 'topics',
+        //   nameKey: 'Talk.Community.topics',
+        // },
+      ] as {
+        id: string
+        nameKey: string
+      }[],
 
       error: {} as TalkError,
 
@@ -79,8 +88,45 @@ export const useTalkStore = defineStore('talk', {
       return state.communities.find(community => community.id === state.activeCommunityId)
     },
 
+    // 当前社区的标志：优先使用metaName，如果没有就使用id
+    activeCommunitySymbol(): string {
+      if (!this.activeCommunity) return ''
+
+      let communitySymbol: string
+      if (this.activeCommunity.metaName) {
+        const metaName = this.activeCommunity.metaName
+        // 如果不带后缀，就加上
+        if (!metaName.includes('.')) {
+          communitySymbol = metaName + '.meta'
+        } else {
+          communitySymbol = metaName
+        }
+      } else {
+        communitySymbol = this.activeCommunityId
+      }
+
+      return communitySymbol
+    },
+
+    activeCommunitySymbolInfo(): {
+      name: string
+      suffix: 'meta' | 'eth' | 'bit'
+    } {
+      if (!this.activeCommunitySymbol) return { name: '', suffix: 'meta' }
+
+      return {
+        name: this.activeCommunitySymbol.split('.')[0],
+        suffix: this.activeCommunitySymbol.split('.')[1] as 'meta' | 'eth' | 'bit',
+      }
+    },
+
     activeChannel(state): any {
       if (!this.activeCommunity) return null
+
+      // 功能频道
+      if (this.isActiveChannelGeneral) {
+        return this.generalChannels.find(channel => channel.id === state.activeChannelId)
+      }
 
       return this.activeCommunity.channels?.find((channel: any) => {
         return channel.id === state.activeChannelId
@@ -185,6 +231,10 @@ export const useTalkStore = defineStore('talk', {
 
     isActiveChannelReserved(): boolean {
       return this.isActiveChannelTheVoid || this.isActiveChannelSettings
+    },
+
+    isActiveChannelGeneral(): boolean {
+      return this.generalChannels.some((channel: any) => channel.id === this.activeChannelId)
     },
 
     newMessages(): any {
@@ -330,6 +380,7 @@ export const useTalkStore = defineStore('talk', {
       }
 
       // 将最后阅读频道存储到本地
+      console.log('routeChannelId', routeChannelId)
       latestChannels[routeCommunityId] = routeChannelId
       localStorage.setItem('latestChannels-' + this.selfMetaId, JSON.stringify(latestChannels))
 

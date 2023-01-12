@@ -488,3 +488,18 @@ declare interface MetaNameInfo {
   twitter: string
   telegram: string
 }
+declare interface AnnouncementItem {
+  address: string
+  attachments: string[]
+  blockHeight: number
+  content: string
+  contentType: string
+  isNew: boolean
+  isValid: boolean
+  metaId: string
+  metanetId: string
+  publicKey: string
+  timestamp: number
+  title: string
+  txId: string
+}

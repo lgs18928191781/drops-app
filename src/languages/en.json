@@ -45,6 +45,9 @@
       "dark": "dark",
       "light": "light"
     },
+    "MetaName": {
+      "resolving": "MetaName Resolving..."
+    },
     "Messages": {
       "repost": "I reposted your buzz!",
       "repost_with_comment": "I reposted your buzz with my comment!",
@@ -53,6 +56,24 @@
       "follow": "I followed you! Let's be friends!",
       "token_transfer": "Token Transfer",
       "resend": "Resend"
+    },
+    "General": {
+      "publish_new_announcement": "Publish a new announcement",
+      "announcements_total": "1 announcement in total | {count} announcements in total",
+      "new_announcement": "New Announcement",
+      "announcement_title": "Announcement Title",
+      "announcement_content": "Content Here...",
+      "publish": "Publish",
+      "no_announcement": "No announcement yet.",
+      "new": "NEW",
+      "publish_success": "Operation successfully!",
+      "delete_announcement": "Delete Announcement",
+      "delete_announcement_tip": "Are you sure you want to delete this announcement?",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit_announcement": "Edit Announcement",
+      "update": "Update",
+      "title_is": "title: "
     },
     "Modals": {
       "enter_password": "Enter Password",
@@ -73,7 +94,7 @@
       "you_dont_have_ft": "You don't have the required Token to join this channel.",
       "confirm": "OK",
       "loading": "Loading...",
-      "choose_meta_name": "Select Club Name",
+      "choose_meta_name": "Select Club Domain Name",
       "no_meta_name_available": "No MetaName available",
       "share_invite_link_tip": "Send a club invite link to a friend",
       "share_to_buzz_tip": "Or, share it via a buzz!",
@@ -140,9 +161,9 @@
     "Community": {
       "create": "Create Club",
       "create_fist_step_tip": "Please upload the club icon and set the club name. You can change them at any time.",
-      "community_name": "club name",
-      "community_name_placeholder": "Select Club Name",
-      "community_name_tip": "You must select a MetaName NFT as the club name.",
+      "community_name": "Club Name",
+      "community_name_placeholder": "Select Club Domain Name",
+      "community_name_tip": "Select a MetaName NFT as the club domain.",
       "agree_tip": "By creating a club, you agree to Show3's",
       "agree_guidelines": "Club Guidelines",
       "customize_information": "Customize your club",
@@ -179,7 +200,9 @@
       "choose_nft_series": "Select NFT Series",
       "general_channels": "General Channels",
       "edit_public_channel": "Edit Public Channel",
-      "edit_consensual_channel": "Edit Pass Channel"
+      "edit_consensual_channel": "Edit Pass Channel",
+      "announcements": "Announcements",
+      "topics": "Topics"
     },
     "Input": {
       "nft_stickers": "NFT Emoji",
@@ -210,7 +233,9 @@
     },
     "Datetime": {
       "today": "Today at ",
-      "yesterday": "Yesterday at "
+      "yesterday": "Yesterday at ",
+      "today_with_comma": "Today, ",
+      "yesterday_with_comma": "Yesterday, "
     },
     "Errors": {
       "default": "An error occurred.",

@@ -22,10 +22,10 @@
             {{ $t('Talk.Community.channel_name') }}
           </h4>
 
-          <div class="mt-3">
+          <div class="mt-2">
             <input
               type="text"
-              class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-700 still w-full p-4 text-base leading-[24PX] font-bold placeholder:font-normal"
+              class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-700 still w-full px-4 py-3 text-base leading-[24PX] font-bold placeholder:font-normal"
               :placeholder="$t('Talk.Community.channel_name')"
               v-model="form.name"
             />
