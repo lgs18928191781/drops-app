@@ -217,9 +217,6 @@ const contactIcon = [
     link: 'mailto:metanamedao@outlook.com',
   },
 ]
-const MetaNameNotIllgel = ref(false)
-
-async function validateMetaName() {}
 
 async function toMine() {
   await checkUserLogin()

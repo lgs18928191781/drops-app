@@ -774,5 +774,5 @@
   "metanameNftImgError": "上链MetaName封面失败",
   "getMetaNameInfoError": "获取MetaName信息失败",
   "registerNameIllgel": "提交注册的MetaName字符存在不合法",
-  "inputMetaNameIllgel": "* 查询的MetaName不符合规范"
+  "inputMetaNameIllgel": "输入的MetaName不符合规范"
 }

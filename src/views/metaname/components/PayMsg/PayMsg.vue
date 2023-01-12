@@ -224,7 +224,6 @@ async function pay() {
       registerName: props.name,
       op: props.type,
       info: {
-        // metaid: userStore.user!.metaId,
         mvc: userStore.user!.address,
         icon: 'metafile://adb7015c50d9d32e803b85cc9d67c0f5b7a663a848e8c3d2ef18dffb7a745941.png',
       },
