@@ -1804,3 +1804,13 @@ declare interface CertUserInfo {
   userCertificationType: number
   userProfile: string
 }
+
+declare interface MetaNameIndexerInfo {
+  name: string
+  expiredBlockHeight: number
+  nftCodeHash: string
+  genesisId: string
+  tokenIndex: string
+  resolver: string
+  infos?: Partial<MetaNameInfo>
+}

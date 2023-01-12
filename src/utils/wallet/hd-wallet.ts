@@ -2275,7 +2275,7 @@ export class HdWallet {
         if (new Decimal(item.satoshis).toNumber() == transferAmount + 10000) {
           mvcUtxo = item
         }
-        if (item.satoshis == 100000) {
+        if (new Decimal(item.satoshis).toNumber() == 100000) {
           nftUtxo = {
             ...item,
             wif: this.wallet!.deriveChild(0)
@@ -2358,7 +2358,8 @@ export class HdWallet {
       //   params,
       //   MetaNameReqType.updataInfo
       // )
-      registerMetaNameResp = JSON.stringify(params)
+      registerMetaNameResp = await this.provider.gzip(JSON.stringify(params))
+      debugger
     }
     return {
       registerMetaNameResp,

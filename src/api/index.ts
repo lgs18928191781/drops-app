@@ -564,10 +564,33 @@ export const MetaNameBeforeReqRes = (parmas: {
   })
 }
 
-export const MetaNameUpdateInfo = (parmas: string): Promise<{ code: number; data: string }> => {
+export const MetaNameUpdateInfo = (
+  parmas: string | ArrayBuffer
+): Promise<{
+  code: number
+  data: {
+    expiredBlockHeight: number
+    nftCodeHash: string
+    nftGenesisId: string
+    nftTokenIndex: string
+    txid: string
+  }
+  msg: string
+}> => {
   const Http = new HttpRequests()
   const url = baseApi + '/wxcore/metaname/updateinfo'
   return Http.postFetch(url, {
     data: parmas,
   })
+}
+
+export const GetMetaNameInfo = (
+  name: string
+): Promise<{
+  code: number
+  data: MetaNameIndexerInfo
+}> => {
+  const Http = new HttpRequests()
+  const url = `${baseApi}/metaname-indexer/getinfo?name=${name}`
+  return Http.getFetch(url)
 }

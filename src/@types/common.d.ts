@@ -467,3 +467,24 @@ declare interface GenesisItem {
   symbol: string
   totalSupply: number
 }
+
+declare interface MetaNameInfo {
+  metaid: string
+  eth: string
+  polygon: string
+  solana: string
+  BTC: string
+  BSV: string
+  mvc: string
+  IPFS: string
+  icon: string //metafile
+  DNS: string
+  Content: string
+  email: string
+  url: string
+  discord: string
+  github: string
+  reddit: string
+  twitter: string
+  telegram: string
+}
