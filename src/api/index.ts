@@ -560,3 +560,11 @@ export const MetaNameBeforeReqRes = (parmas: {
     source: 'Show',
   })
 }
+
+export const MetaNameUpdateInfo = (parmas: string): Promise<{ code: number; data: string }> => {
+  const Http = new HttpRequests()
+  const url = baseApi + '/wxcore/metaname/updateinfo'
+  return Http.postFetch(url, {
+    data: parmas,
+  })
+}

@@ -1,6 +1,4 @@
 <template>
-  <!-- <div @click="metaname(1)">MetaName点我</div>
-  <div @click="metaname(21)">续费</div> -->
   <RouterView
     v-if="
       $route.path === '/' ||
@@ -43,7 +41,7 @@ import { useRoute } from 'vue-router'
 import { dayjs, ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { MetaNameFeePerYear } from '@/enum'
-import { getBlockHeight } from '@/api/index'
+import { getBlockHeight, MetaNameUpdateInfo } from '@/api/index'
 import Decimal from 'decimal.js-light'
 import { dateTimeFormat } from '@/utils/filters'
 import {
@@ -161,19 +159,41 @@ function checkInputName(name: string) {
   }
 }
 
-async function registerMetaName(params: {
-  //注册时mvc跟metaid,更新信息时不需要传入years,注册时必须要传入icon
-  registerName: string
-  op: MetaNameReqCode
-  //注册和更新操作info必填,续费info字段不需要
-  info?: {
-    [k: string]: any
-    metaid?: string
-    mvc?: string
-    icon?: string //格式:metafile://tx
-  }
-  years?: number
-}) {
+async function test() {
+  await registerMetaName(
+    {
+      registerName: 'easonduo',
+      op: MetaNameReqCode.updataInfo,
+      info: {
+        ethAddress: userStore.user?.evmAddress,
+        polygonAddress: userStore.user?.evmAddress,
+        // icon: `metafile://adb7015c50d9d32e803b85cc9d67c0f5b7a663a848e8c3d2ef18dffb7a745941.png`,
+        // metaid: userStore.user!.metaId,
+        // mvc: userStore.user!.address,
+      },
+      // years: 1,
+    },
+    MetaNameOperateType.UpdateInfo
+  )
+}
+
+async function registerMetaName(
+  params: {
+    //注册时mvc跟metaid,更新信息时不需要传入years,注册时必须要传入icon
+    registerName: string
+    op: MetaNameReqCode
+    //注册和更新操作info必填,续费info字段不需要
+    info?: {
+      [k: string]: any
+      metaid?: string
+      mvc?: string
+      icon?: string //格式:metafile://tx
+    }
+    years?: number
+  },
+  operationType: MetaNameOperateType
+) {
+  debugger
   // const params = {
   //   registerName: 'Stars',
   //   op: MetaNameReqCode.register,
@@ -186,7 +206,8 @@ async function registerMetaName(params: {
   // }
   try {
     const res = await metanameOperation(params)
-    if (JSON.parse(res!.registerMetaNameResp!)) {
+    debugger
+    if (JSON.parse(res!.registerMetaNameResp!) && params.op != MetaNameReqCode.updataInfo) {
       let from = !isApp ? 'web' : isAndroid ? 'android' : isIOS ? 'ios' : ''
       from += `:${import.meta.env.VITE_AppName}`
       // 支付回调地址
@@ -214,7 +235,7 @@ async function registerMetaName(params: {
         pay_type: currentPayPlatform.value,
         quit_url: quitUrl,
         types: type,
-        operate_type: MetaNameOperateType.Register,
+        operate_type: operationType,
         from_coin_address: userStore.user?.evmAddress,
         product_type: ProductType.MetaName,
         mvc_to_address: res?.MvcToAddress,
@@ -237,6 +258,11 @@ async function registerMetaName(params: {
       // if (orderRes) {
       //
       // }
+    } else {
+      debugger
+      const updateInfoTx = await MetaNameUpdateInfo(res!.registerMetaNameResp!.toString())
+      console.log('zxcxz', updateInfoTx)
+      debugger
     }
   } catch (error) {
     ElMessage.error(`${(error as any).toString()}`)
@@ -287,8 +313,14 @@ async function metanameOperation(params: {
       const metaNameParams = {
         op_code: data.op,
         info: params.info,
-        years: params.years!,
+        years: params?.years,
         reqswapargs: data,
+      }
+      if (params.op == MetaNameReqCode.renew) {
+        delete metaNameParams.info
+      }
+      if (params.op == MetaNameReqCode.updataInfo) {
+        delete metaNameParams.years
       }
       const result = await userStore.showWallet.sendMetaNameTransation(metaNameParams)
       return result

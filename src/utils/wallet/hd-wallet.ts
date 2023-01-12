@@ -83,7 +83,7 @@ export interface Reqswapargs {
 
 export interface MetaNameRequestDate {
   mvcRawTx?: string
-  requestIndex: number
+  requestIndex: string
   mvcOutputIndex?: number
   nftRawTx?: string
   nftOutputIndex?: number
@@ -2211,13 +2211,13 @@ export class HdWallet {
   //发起MetaName交易前参数构造
   public sendMetaNameTransation(params: {
     op_code: number
-    info: {
+    info?: {
       [key: string]: any
       metaid?: string
       mvc?: string
       icon?: string
     }
-    years: number
+    years?: number
     reqswapargs: Reqswapargs
     payTo?: Array<{
       address: string

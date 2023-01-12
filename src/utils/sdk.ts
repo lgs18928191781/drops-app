@@ -1769,13 +1769,13 @@ export class SDK {
 
   sendMetaNameTransation(params: {
     op_code: number
-    info: {
+    info?: {
       metaid?: string
       mvc?: string
       icon?: string
       [key: string]: any
     }
-    years: number
+    years?: number
     reqswapargs: Reqswapargs
   }) {
     return this.wallet?.sendMetaNameTransation(params)
