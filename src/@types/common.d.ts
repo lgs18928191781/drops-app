@@ -459,12 +459,9 @@ declare interface GenesisItem {
   currentTotalSupply: number
   genesis: string
   genesisTimestamp: number
-  genesisTxId: string
   minted: string
   pendingCount: number
-  sensibleId: string
   seriesName: string
-  symbol: string
   totalSupply: number
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <header class="flex flex-align-center">
+  <header class="flex flex-align-center" v-if="!isHideHeader">
     <div class="flex1">
       <PhoneMenuBtnVue>
         <div class="buzz-menu flex flex-align-center">
@@ -64,6 +64,11 @@ import { useLayoutStore } from '@/stores/layout'
 import PublishVue from '@/views/buzz/components/Publish.vue'
 import PhoneMenuBtnVue from '@/components/PhoneMenuBtn/PhoneMenuBtn.vue'
 
+interface Props {
+  isHideHeader?: boolean
+}
+const props = withDefaults(defineProps<Props>(), {})
+
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const layout = useLayoutStore()
@@ -89,6 +94,7 @@ let resizeObserver: ResizeObserver
 
 function setPosition() {
   if (window.innerWidth > 750) {
+    debugger
     FastBtnRef.value.style.left =
       BuzzContainerRef.value.offsetLeft + BuzzContainerRef.value.clientWidth + 12 + 'px'
     FastBtnRef.value.style.marginRight = 0
