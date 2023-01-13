@@ -1,32 +1,33 @@
 <template>
   <div class="metaname-card-warp">
-    <div
-      class="metaname-card flex flex-v"
-      id="metaname-card"
-      ref="MetaNameRef"
-      :style="{
-        background: `linear-gradient(143deg, ${metaNameBgColors[metaNameBgColorIndex][0]} 1%, ${metaNameBgColors[metaNameBgColorIndex][1]} 99%)`,
-      }"
-    >
-      <img class="metaname" src="@/assets/images/metaname.png" />
+    <div class="metaname-card" id="metaname-card" ref="MetaNameRef">
       <div
-        class="name flex1"
-        :class="[
-          'length' +
-            (bytesLength(name) >= 5 && bytesLength(name) <= 11
-              ? 5
-              : bytesLength(name) >= 12
-              ? '-normal'
-              : bytesLength(name)),
-        ]"
-      >
-        <span>
-          {{ name }}
-        </span>
-      </div>
+        class="bg"
+        :style="{
+          background: `linear-gradient(143deg, ${metaNameBgColors[metaNameBgColorIndex][0]} 1%, ${metaNameBgColors[metaNameBgColorIndex][1]} 99%)`,
+        }"
+      ></div>
+      <div class="content  flex flex-v">
+        <img class="metaname" :src="metaNameLogoString" />
+        <div
+          class="name flex1  flex flex-align-center flex-pack-center"
+          :class="[
+            'length' +
+              (bytesLength(name) >= 5 && bytesLength(name) <= 11
+                ? 5
+                : bytesLength(name) >= 12
+                ? '-normal'
+                : bytesLength(name)),
+          ]"
+        >
+          <span>
+            {{ name }}
+          </span>
+        </div>
 
-      <div class="tag">
-        .meta
+        <div class="tag">
+          <img :src="metaTagString" />
+        </div>
       </div>
     </div>
   </div>
@@ -91,25 +92,33 @@
 <script setup lang="ts">
 import { SendMetaNameTransationResult } from '@/@types/sdk'
 import { payPlatformList } from '@/config'
-import { MetaNameOperateType, PayPlatform, ProductType, ToCurrency } from '@/enum'
+import { MetaNameOperateType, NodeName, PayPlatform, ProductType, ToCurrency } from '@/enum'
 import { useUserStore } from '@/stores/user'
 import {
   bytesLength,
   CreatePayOrder,
   dataURLtoFile,
+  FileToAttachmentItem,
   getCurrencyAmount,
+  metanameOperation,
   randomNumber,
   setPayQuitUrl,
+  urlToBase64,
 } from '@/utils/util'
 import { MetaNameReqCode } from '@/utils/wallet/hd-wallet'
 import Decimal from 'decimal.js-light'
 import { BigNumber } from 'ethers'
 import { result } from 'lodash'
-import { reactive, ref } from 'vue'
+import { nextTick, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import StartPay from '@/components/StartPay/StartPay.vue'
+//@ts-ignore
 import html2canvas from 'html2canvas'
+import MetaTag from '@/assets/metaname/img_meta.png'
+import MetaNameLogo from '@/assets/metaname/logo_metaname.png'
 
+import { getBlockHeight, MetaNameUpdateInfo, GetMetaNameInfo } from '@/api/index'
+import { useI18n } from 'vue-i18n'
 interface Props {
   price: number
   year: number
@@ -119,9 +128,6 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {})
 
-const testname =
-  '我我我我我我我我我我我我我我我我我我我我我我我我我我我我我我我我我我我我我我我我我我'
-
 const userStore = useUserStore()
 const route = useRoute()
 const router = useRouter()
@@ -129,6 +135,7 @@ const emit = defineEmits(['back', 'success'])
 const currentPayPlatform = ref(
   userStore.isAuthorized && userStore.user?.evmAddress ? PayPlatform.ETH : PayPlatform.UnionPay
 )
+const i18n = useI18n()
 const currencyAmount = ref(0)
 const loading = ref(false)
 const productType = ProductType.MetaName
@@ -152,6 +159,9 @@ const metaNameBgColors = [
   ['#E6B980', '#EACDA3'],
 ]
 const MetaNameRef = ref()
+const metaTagString = ref('')
+const metaNameLogoString = ref('')
+let metafile = ''
 
 function changePayType(platform: PayPlatform) {
   if (currentPayPlatform.value === platform) return
@@ -163,75 +173,76 @@ function changePayType(platform: PayPlatform) {
   }
 }
 
-async function metanameOperation(params: {
-  //注册时mvc跟metaid,更新信息时不需要传入years,注册时必须要传入icon
-  registerName: string
-  op: MetaNameReqCode
-  //注册和更新操作info必填,续费info字段不需要
-  info?: {
-    [k: string]: any
-    metaid?: string
-    mvc?: string
-    icon?: string //格式:metafile://tx
-  }
-  years?: number
-}) {
-  return new Promise<SendMetaNameTransationResult>(async (resolve, reject) => {
-    try {
-      const res = await userStore.showWallet.MetaNameBeforeReq({
-        name: `${params.registerName}`,
-        op: params.op,
-      })
-      if (res.code == 0) {
-        const { data } = res
-        const metaNameParams = {
-          op_code: data.op,
-          info: params.info,
-          years: params.years!,
-          reqswapargs: data,
-        }
-        const result = await userStore.showWallet.sendMetaNameTransation(metaNameParams)
-        if (result) {
-          resolve(result)
-        }
-      }
-    } catch (error) {
-      reject(error)
-    }
-  })
-}
-
 async function pay() {
   loading.value = true
   try {
     if (props.type === MetaNameReqCode.register) {
       metaNameBgColorIndex.value = randomNumber(0, 9)
+      await nextTick()
       const res = await html2canvas(MetaNameRef.value, {
-        scale: 5,
+        scale: 2,
         backgroundColor: null,
+        removeContainer: true,
       })
       if (res) {
         const base64 = res.toDataURL('image/png')
         const file = dataURLtoFile(base64, `${props.name}.png`)
+        const attachment = await FileToAttachmentItem(file)
+        const result = await userStore.showWallet.createBrfcChildNode({
+          nodeName: NodeName.MetaFile,
+          attachments: [attachment],
+        })
+        metafile = result!.metaFiles![0].txId
       }
-      return
     }
-
-    const res = await metanameOperation({
+    debugger
+    const metaNameOpParams: {
+      registerName: string
+      op: MetaNameReqCode
+      info?: Partial<MetaNameInfo>
+      years?: number
+    } = {
       registerName: props.name,
       op: props.type,
       info: {
-        metaid: userStore.user!.metaId,
         mvc: userStore.user!.address,
-        icon: 'metafile://adb7015c50d9d32e803b85cc9d67c0f5b7a663a848e8c3d2ef18dffb7a745941.png',
+        icon: `metafile://${metafile}.png`,
       },
       years: props.year,
-    })
+    }
+    if (props.type == MetaNameReqCode.updataInfo) {
+      const metaNameInfo = await GetMetaNameInfo(props.name)
+      if (metaNameInfo.code == 0) {
+        metaNameOpParams.info = {
+          ...metaNameOpParams.info,
+          ...metaNameInfo.data.infos,
+        }
+        delete metaNameOpParams.years
+        debugger
+      } else {
+        loading.value = false
+        return ElMessage.error(`${i18n.t('getMetaNameInfoError')}`)
+      }
+    }
+    if (props.type == MetaNameReqCode.renew) {
+      delete metaNameOpParams.info
+    }
+    const res = await metanameOperation(metaNameOpParams)
 
     const operateType = {
       [MetaNameReqCode.register]: MetaNameOperateType.Register,
       [MetaNameReqCode.renew]: MetaNameOperateType.Renew,
       [MetaNameReqCode.updataInfo]: MetaNameOperateType.UpdateInfo,
+    }
+    if (props.type == MetaNameReqCode.updataInfo) {
+      const updateInfoTx = await MetaNameUpdateInfo(res!.registerMetaNameResp!)
+      if (updateInfoTx.code == 0) {
+        //更新成功,这里不能用
+        console.log('updateInfoTx', updateInfoTx.data)
+        loading.value = false
+        debugger
+        return
+      }
     }
     const result = await CreatePayOrder({
       platform: currentPayPlatform.value,
@@ -262,12 +273,16 @@ async function pay() {
   }
 }
 
-function onPaySuccess() {
+function onPaySuccess(params: { orderId: string; platform: PayPlatform; productType: number }) {
   loading.value = false
   router.push({
     name: 'metaNameSearchRegister',
     params: {
       metaName: props.name,
+      orderId: params.orderId,
+      platform: params.platform,
+      productType: params.productType,
+      metaFile: metafile,
     },
   })
   emit('success')
@@ -278,6 +293,12 @@ if (currentPayPlatform.value === PayPlatform.UnionPay) {
 } else {
   currencyAmount.value = getCurrencyAmount(props.price, ToCurrency.USD, ToCurrency.ETH)
 }
+urlToBase64(MetaTag).then(val => {
+  metaTagString.value = val
+})
+urlToBase64(MetaNameLogo).then(val => {
+  metaNameLogoString.value = val
+})
 </script>
 
 <style lang="scss" scoped src="./PayMsg.scss"></style>

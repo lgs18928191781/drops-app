@@ -39,6 +39,7 @@ import { useUserStore } from '@/stores/user'
 
 import Decimal from 'decimal.js-light'
 import { number } from 'yup'
+import { GetMeUtxos } from '@/api/v3'
 const bsv = mvc
 
 export enum Network {
@@ -256,6 +257,7 @@ export const hdWalletFromMnemonic = async (
   // const hdPrivateKey = Mnemonic.fromString(mnemonic).toHDPrivateKey()
   const seed = bip39.mnemonicToSeedSync(mnemonic)
   const hdPrivateKey = bsv.HDPrivateKey.fromSeed(seed, network)
+
   const hdWallet = hdPrivateKey.deriveChild(`m/44'/${import.meta.env.VITE_WALLET_PATH}'/0'`)
   return hdWallet
 }
@@ -1231,6 +1233,7 @@ export class HdWallet {
           amount: OutPut.satoshis * 1e-8,
           script: OutPut.script.toHex(),
           outputIndex: params.outPutIndex!,
+          txIndex: params.outPutIndex!,
           txId: params.tx.id,
           addressType: params!.addressInfo?.addressType!,
           addressIndex: params!.addressInfo?.addressIndex!,
@@ -2221,12 +2224,17 @@ export class HdWallet {
   }) {
     return new Promise<SendMetaNameTransationResult>(async (resolve, reject) => {
       try {
+        const userStore = useUserStore()
+        debugger
         const { reqswapargs, years, op_code, info } = params
         const mvcToAddress = reqswapargs.mvcToAddress
         const nftToAddress = reqswapargs.nftToAddress
         const txFee = reqswapargs.txFee
-        const requestIndex = reqswapargs.requestIndex
-        const metaNameOpFee = new Decimal(reqswapargs.feePerYear).mul(years).toNumber()
+        const requestIndex = new Decimal(reqswapargs.requestIndex).toString()
+        const metaNameOpFee =
+          params.op_code == MetaNameReqCode.updataInfo
+            ? 0
+            : new Decimal(reqswapargs.feePerYear).mul(years!).toNumber()
         let MetaNameSuccTxid: string
         let mvcReceivers: Array<{ address: string; amount: number }>
         let transferNftResult,
@@ -2238,18 +2246,45 @@ export class HdWallet {
           mvcRawTx
         const mvcOutputIndex = 0
         const nftOutputIndex = 0
-        transferAmount = MetaNameReqCode.updataInfo == op_code ? txFee : metaNameOpFee + txFee
+        transferAmount = metaNameOpFee + txFee
         mvcReceivers = [
           {
             address: mvcToAddress,
             amount: transferAmount,
           },
         ]
+        let utxos = []
+        if (op_code !== MetaNameReqCode.register) {
+          const toatlAmount = transferAmount + 20000 + 100000
+          const getMeUtxo = await GetMeUtxos({
+            address: this.rootAddress,
+            amount: toatlAmount,
+            meta_id: userStore.user!.metaId,
+            protocol: 'UpdateMetaNameINfo',
+            // 打钱地址： 如果需要创建brfc节点则打到 protocol 地址，否则打到 brfc 节点地址
+            receive_address: this.rootAddress,
+          })
+          if (getMeUtxo.code === 0) {
+            utxos[0] = {
+              address: getMeUtxo.data.address,
+              // utxo 所在的路径
+              addressIndex: 0,
+              addressType: 0,
+              outputIndex: 0,
+              txId: getMeUtxo.data.tx,
+              xpub: this.wallet.xpubkey.toString(),
+              script: getMeUtxo.data.script,
+              satoshis: getMeUtxo.data.amount,
+              amount: getMeUtxo.data.amount / 1e8,
+            }
+          }
 
-        let utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
-        if (utxos.length <= 0) {
-          throw new Error(`utxo is null`)
+          if (utxos.length <= 0) {
+            throw new Error(`utxo is null`)
+          }
         }
+        // let utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
+
         //拆分UTXO交易
         if (op_code == MetaNameReqCode.updataInfo) {
           const devides = [
@@ -2262,21 +2297,36 @@ export class HdWallet {
               amount: 100000,
             },
           ]
-          await this.devideUtxo(devides, utxos)
-          utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
-          utxos.forEach(item => {
-            if (new Decimal(item.satoshis).toNumber() == transferAmount + 10000) {
-              mvcUtxo = item
-            }
-            if (item.satoshis == 100000) {
-              nftUtxo = {
-                ...item,
-                wif: this.wallet!.deriveChild(0)
-                  .deriveChild(0)
-                  .privateKey.toString(),
-              }
-            }
-          })
+          const devTx = await this.devideUtxo(devides, utxos)
+          nftUtxo = await this.utxoFromTx({ tx: devTx, outPutIndex: 1 })
+          nftUtxo = {
+            ...nftUtxo,
+            wif: this.wallet!.deriveChild(0)
+              .deriveChild(0)
+              .privateKey.toString(),
+          }
+          mvcUtxo = await this.utxoFromTx({ tx: devTx, outPutIndex: 0 })
+          mvcUtxo = {
+            ...mvcUtxo,
+            wif: this.wallet!.deriveChild(0)
+              .deriveChild(0)
+              .privateKey.toString(),
+          }
+          debugger
+          // utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
+          // utxos.forEach(item => {
+          //   if (new Decimal(item.satoshis).toNumber() == transferAmount + 10000) {
+          //     mvcUtxo = item
+          //   }
+          //   if (item.satoshis == 100000) {
+          //     nftUtxo = {
+          //       ...item,
+          //       wif: this.wallet!.deriveChild(0)
+          //         .deriveChild(0)
+          //         .privateKey.toString(),
+          //     }
+          //   }
+          // })
           transferResult = await this.makeTx({
             utxos: [mvcUtxo],
             opReturn: [],
@@ -2305,7 +2355,7 @@ export class HdWallet {
               codehash: reqswapargs.nftCodeHash,
               genesis: reqswapargs.nftGenesisID,
               tokenIndex: reqswapargs.nftTokenIndex,
-              // utxos: [nftUtxo],
+              utxos: utxos,
             },
             {
               isBroadcast: false,
@@ -2343,11 +2393,7 @@ export class HdWallet {
             nftOutputIndex,
             infos: info,
           }
-          // registerMetaNameResp = await this.provider.registerNewMetaName(
-          //   params,
-          //   MetaNameReqType.updataInfo
-          // )
-          registerMetaNameResp = JSON.stringify(params)
+          registerMetaNameResp = await this.provider.gzip(JSON.stringify(params))
         }
         resolve({
           registerMetaNameResp,

@@ -766,10 +766,23 @@
     "IndexBtn6": "连接钱包｜域名管理",
     "IndexTitle6": "立即拥有属于您的MetaName",
     "IndexDrsc6": "MetaName使您的应用程序更加与众不同，并使您的应用程序更加突出",
-    "MetaName cannot be empty": "MetaName 不能为空"
+    "MetaName cannot be empty": "MetaName 不能为空",
+    "error1": "支付成功发送失败",
+    "error2": "已经取消",
+    "error3": "已经退款",
+    "error4": "已经手动退款",
+    "error5": "锁单",
+    "error6": "订单超时",
+    "error7": "支付成功对冲失败",
+    "error8": "支付成功发送失败,正在重新尝试发送",
+    "error9": "支付成功重新2次发送失败并结束",
+    "UpdateInfoSuccess": "更新成功"
   },
   "Menu": "菜单",
   "metanameNotAllowOverLenght": "注册名称长度不能超过63位字符",
   "metanameNotAllowMin": "暂不支持1-2位字符注册",
-  "metanameNftImgError": "上链MetaName封面失败"
+  "metanameNftImgError": "上链MetaName封面失败",
+  "getMetaNameInfoError": "获取MetaName信息失败",
+  "registerNameIllgel": "提交注册的MetaName字符存在不合法",
+  "inputMetaNameIllgel": "输入的MetaName不符合规范"
 }

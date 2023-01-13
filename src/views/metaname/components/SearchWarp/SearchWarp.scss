@@ -5,6 +5,15 @@
     border-radius: var(--rounded);
     font-size: 16px;
 
+    .el-loading-mask {
+        border-radius: var(--rounded);
+    }
+
+    .ruleForm {
+        display: flex;
+        flex-direction: row;
+    }
+
     .icon {
         width: 20px;
         height: 20px;
@@ -30,7 +39,4 @@
         cursor: pointer;
     }
 
-    .el-loading-mask {
-        border-radius: var(--rounded);
-    }
 }

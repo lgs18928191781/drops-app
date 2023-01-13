@@ -69,7 +69,7 @@ import PlainBtnVue from '../components/PlainBtn/PlainBtn.vue'
 import RenewModal from '../components/RenewModal/RenewModal.vue'
 
 const userStore = useUserStore()
-const isShowRenew = ref(true)
+const isShowRenew = ref(false)
 
 function load() {}
 </script>

@@ -1,6 +1,6 @@
 import HttpRequest from '@/utils/request'
 
-const metanameApi = new HttpRequest(`${import.meta.env.VITE_MetaName_BaseApi}`, {
+const metanameApi = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/metaname-indexer`, {
   responseHandel: response => {
     return new Promise((resolve, reject) => {
       if (response?.data && typeof response.data?.code === 'number') {

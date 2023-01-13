@@ -468,6 +468,32 @@ declare interface GenesisItem {
   totalSupply: number
 }
 
+declare interface Order {
+  status: number
+  order_id: string
+  transaction_id: string
+  pay_amount: number
+}
+declare interface MetaNameInfo {
+  metaid: string
+  eth: string
+  polygon: string
+  solana: string
+  BTC: string
+  BSV: string
+  mvc: string
+  IPFS: string
+  icon: string //metafile
+  DNS: string
+  Content: string
+  email: string
+  url: string
+  discord: string
+  github: string
+  reddit: string
+  twitter: string
+  telegram: string
+}
 declare interface AnnouncementItem {
   address: string
   attachments: string[]
