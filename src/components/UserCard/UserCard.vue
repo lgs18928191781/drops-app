@@ -1,14 +1,16 @@
 <template>
-  <div class="user-card">
-    <div class="header flex flex-align-center">
+  <div class="user-card p-3">
+    <div class="header flex flex-align-center pb-4.5">
       <div class="flex1 cont">
         <div class="name">{{ name }}</div>
         <div class="metaid">MetaID:{{ metaId ? metaId.slice(0, 6) : '--' }}</div>
       </div>
-      <div class="operate">
-        <a class="main-border primary" @click="toUser">{{ $t('User.Home') }}</a>
-        <a
-          class="main-border primary"
+      <div class="h-full flex gap-x-2">
+        <button class="main-border primary !rounded-full py-1 px-3 text-xs" @click="toUser">
+          {{ $t('User.Home') }}
+        </button>
+        <button
+          class="main-border primary !rounded-full py-1 px-3 text-xs"
           :class="[isMyFollowed ? 'faded' : '']"
           v-if="userStore.user?.metaId !== metaId"
           @click="follow"
@@ -21,11 +23,11 @@
           <template v-else>
             {{ isMyFollowed ? $t('Cancel Follow') : $t('Follow') }}
           </template>
-        </a>
+        </button>
       </div>
     </div>
 
-    <UserPersonaVue />
+    <UserPersonaVue class="mt-4.5" />
   </div>
 </template>
 

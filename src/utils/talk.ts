@@ -97,7 +97,6 @@ export const updateCommunity = async (form: any, sdk: SDK) => {
     communityId: metaName.communityId,
     name,
     metaName: metaName.metaName,
-    // metaNameNft: ''
     icon: iconPlaceholder,
     admins,
     description,

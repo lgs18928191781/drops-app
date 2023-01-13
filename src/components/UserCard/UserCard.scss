@@ -2,7 +2,6 @@
 
 .user-card {
     .header {
-        padding: 21px;
         border-bottom: 1px solid var(--divid-color);
 
         .cont {
@@ -19,19 +18,6 @@
         .metaid {
             color: #909399;
             font-size: 12px;
-        }
-
-        .operate {
-            a {
-                padding: 8px 10px;
-                cursor: pointer;
-                border-radius: 14px;
-                margin-right: 10px;
-
-                &:last-child {
-                    margin-right: 0;
-                }
-            }
         }
     }
 }

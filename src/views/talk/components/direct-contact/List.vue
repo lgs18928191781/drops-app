@@ -12,7 +12,7 @@
       >
         <div class="flex flex-col overflow-y-hidden">
           <!-- 搜索栏 -->
-          <!-- <DirectContactSearch /> -->
+          <DirectContactSearch />
 
           <!-- 联系人列表 -->
           <div class="overflow-y-auto">
@@ -30,8 +30,8 @@
 
 <script lang="ts" setup>
 import { useLayoutStore } from '@/stores/layout'
-import DirectContactSearch from './DirectContactSearch.vue'
-import DirectContactItem from './DirectContactItem.vue'
+import DirectContactSearch from './Search.vue'
+import DirectContactItem from './Item.vue'
 import { useTalkStore } from '@/stores/talk'
 
 const layout = useLayoutStore()

@@ -359,6 +359,7 @@ export enum ShowControl {
   isShowShareSuccessModal = 'isShowShareSuccessModal',
   isShowCommunitySettingsModal = 'isShowCommunitySettingsModal',
   isShowRequireFtModal = 'isShowRequireFtModal',
+  isShowUserInfo = 'isShowUserInfo',
   never = 'never',
 }
 

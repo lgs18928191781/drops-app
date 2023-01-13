@@ -35,7 +35,10 @@
             <!-- 社区信息 -->
             <div class="px-3 overflow-y-auto">
               <!-- 社区名 -->
-              <div class="w-full mt-4 truncate text-lg" :title="talk.activeCommunity?.name">
+              <div
+                class="w-full mt-4 truncate text-lg font-medium"
+                :title="talk.activeCommunity?.name"
+              >
                 {{ talk.activeCommunity?.name }}
               </div>
 
@@ -45,8 +48,8 @@
                 :title="talk.activeCommunitySymbolInfo.name"
                 v-if="talk.activeCommunitySymbolInfo"
               >
-                <div class="flex items-center justify-start space-x-0.5 shrink overflow-x-hidden">
-                  <span class="text-lg meta-name truncate">{{
+                <div class="flex items-center justify-start space-x-1 shrink overflow-x-hidden">
+                  <span class="text-sm meta-name truncate">{{
                     talk.activeCommunitySymbolInfo.name
                   }}</span>
 
@@ -60,14 +63,14 @@
               </div>
 
               <div
-                class="mt-1.5 text-xs text-dark-400 dark:text-gray-200 leading-kinda-loose break-all font-normal max-h-36 overflow-y-scroll"
+                class="mt-4.5 text-xs text-dark-400 dark:text-gray-200 leading-kinda-loose break-all font-normal max-h-36 overflow-y-scroll"
               >
                 {{ talk.activeCommunity?.description || $t('Talk.Community.no_introduction') }}
               </div>
 
               <!-- 社区介绍 -->
               <div
-                class="mt-3 flex w-full items-center justify-between cursor-pointer"
+                class="mt-4.5 flex w-full items-center justify-between cursor-pointer"
                 @click="layout.isShowMemberList = !layout.isShowMemberList"
               >
                 <div
@@ -135,7 +138,10 @@
                 />
 
                 <!-- 公共频道 -->
-                <div class="flex justify-between mt-4">
+                <div
+                  class="flex justify-between mt-4"
+                  v-if="talk.activeCommunityPublicChannels.length || talk.isAdmin()"
+                >
                   <div class="uppercase text-dark-400 dark:text-gray-200 text-xs">
                     {{ $t('Talk.Community.public_channels') }}
                   </div>
@@ -156,7 +162,10 @@
                 </TransitionGroup>
 
                 <!-- 凭证频道 -->
-                <div class="flex justify-between mt-4">
+                <div
+                  class="flex justify-between mt-4"
+                  v-if="talk.activeCommunityConsensualChannels.length || talk.isAdmin()"
+                >
                   <div class="uppercase text-dark-400 dark:text-gray-200 text-xs">
                     {{ $t('Talk.Community.consensual_channels') }}
                   </div>
@@ -205,6 +214,7 @@ const i18n = useI18n()
 const popSettingsModal = () => {
   const form = useCommunityUpdateFormStore()
   form.original = talk.activeCommunity
+  form.name = talk.activeCommunity?.name || ''
   form.description = talk.activeCommunity?.description || ''
   layout.isShowCommunitySettingsModal = true
 }

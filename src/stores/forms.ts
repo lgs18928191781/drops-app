@@ -28,7 +28,7 @@ export const useCommunityFormStore = defineStore('communityForm', {
 
   getters: {
     isStep1Finished(state) {
-      return !!state.icon && !!state.metaName
+      return !!state.icon && !!state.metaName && state.name.length > 0
     },
 
     isStep2Finished(state) {
@@ -36,11 +36,13 @@ export const useCommunityFormStore = defineStore('communityForm', {
     },
 
     isFinished(state) {
-      return !!state.icon && !!state.metaName
+      return !!state.icon && !!state.metaName && !!state.name
     },
 
     isAllFinished(state) {
-      return !!state.icon && !!state.metaName && !!state.description && !!state.cover
+      return (
+        !!state.icon && !!state.metaName && !!state.description && !!state.cover && !!state.name
+      )
     },
 
     iconPreviewUrl(state) {
@@ -77,11 +79,12 @@ export const useCommunityUpdateFormStore = defineStore('communityUpdateForm', {
   getters: {
     isChanged(state) {
       const descriptionChanged = state.description !== state.original.description
-      return state.icon || state.cover || descriptionChanged
+      const nameChanged = state.name !== state.original.name
+      return state.icon || state.cover || descriptionChanged || nameChanged
     },
 
     isFinished(state): boolean {
-      return this.isChanged && this.description !== ''
+      return this.isChanged && this.description !== '' && this.name !== ''
     },
 
     iconPreviewUrl(state) {
@@ -123,6 +126,7 @@ export const useCommunityUpdateFormStore = defineStore('communityUpdateForm', {
         cover: this.cover,
         original: this.original,
         metaName,
+        name: this.name,
       }
       await updateCommunity(form, user.showWallet)
 
