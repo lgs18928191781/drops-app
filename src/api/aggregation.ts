@@ -626,3 +626,22 @@ export const GetOneAnnouncement = (params: {
   const { txId } = params
   return aggregation.get(`/v2/app/announcement/one/${txId}`)
 }
+
+export const GetUserMetaNames = (params: {
+  address: string
+  page: number
+  pageSize: number
+  flag: string
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    nextFlag: string
+    results: {
+      items: MetaNameItem[]
+    }
+  }
+}> => {
+  const { address, ..._params } = params
+  return aggregation.get(`/v2/app/metaname/${address}/list?`, { params: _params })
+}

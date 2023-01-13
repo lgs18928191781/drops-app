@@ -779,7 +779,11 @@
     "error7": "Successful payment and hedging failure",
     "error8": "The payment was sent successfully and failed, trying to send again",
     "error9": "If the payment is successful, resending fails twice and ends",
-    "UpdateInfoSuccess": "Update Success"
+    "UpdateInfoSuccess": "Update Success",
+    "Expire date Tips": "The expiry time here is an estimated value, and the expiry time of MetaName is based on the block height of the blockchain.",
+    "Renew Success": "Renew Success",
+    "Renewing": "Renewing",
+    "RenewingTips": "It will take about 3 minutes, please be patient. \nYou can check the renewal status of this domain name on the \"My\" page later."
   },
   "Menu": "Menu",
   "metanameNotAllowMin": "Currently does not support 1-2 character registration",

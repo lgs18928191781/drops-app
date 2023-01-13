@@ -10,7 +10,7 @@
           <template v-for="(item, index) in list" :key="index">
             <template v-if="index !== list.length - 1"> {{ item }} - </template>
             <template v-else>
-              <span>{{ $t('MetaName.Registering') }}</span>
+              <span>{{ item }}</span>
             </template>
           </template>
         </div>

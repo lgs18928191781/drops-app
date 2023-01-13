@@ -69,7 +69,7 @@
       <div class="usd">{{ price }} USD</div>
     </div>
 
-    <div class="btn primary" @click="pay" v-loading="loading">
+    <div class="btn primary" @click="pay">
       {{ $t('MetaName.Pay') }}
     </div>
     <div class="back">
@@ -84,7 +84,7 @@
     :url="payOrderInfo.url"
     :amount="payOrderInfo.amount"
     :order-id="payOrderInfo.orderId"
-    @fail="loading = false"
+    @fail="emit('update:loading', false)"
     @success="onPaySuccess"
   />
 </template>
@@ -124,6 +124,8 @@ interface Props {
   year: number
   name: string
   type: MetaNameReqCode
+  metafile?: string
+  loading: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {})
@@ -131,13 +133,12 @@ const props = withDefaults(defineProps<Props>(), {})
 const userStore = useUserStore()
 const route = useRoute()
 const router = useRouter()
-const emit = defineEmits(['back', 'success'])
+const emit = defineEmits(['back', 'success', 'update:loading'])
 const currentPayPlatform = ref(
   userStore.isAuthorized && userStore.user?.evmAddress ? PayPlatform.ETH : PayPlatform.UnionPay
 )
 const i18n = useI18n()
 const currencyAmount = ref(0)
-const loading = ref(false)
 const productType = ProductType.MetaName
 const isStartPay = ref(false)
 const payOrderInfo = reactive({
@@ -174,7 +175,7 @@ function changePayType(platform: PayPlatform) {
 }
 
 async function pay() {
-  loading.value = true
+  emit('update:loading', true)
   try {
     if (props.type === MetaNameReqCode.register) {
       metaNameBgColorIndex.value = randomNumber(0, 9)
@@ -195,7 +196,6 @@ async function pay() {
         metafile = result!.metaFiles![0].txId
       }
     }
-    debugger
     const metaNameOpParams: {
       registerName: string
       op: MetaNameReqCode
@@ -218,9 +218,8 @@ async function pay() {
           ...metaNameInfo.data.infos,
         }
         delete metaNameOpParams.years
-        debugger
       } else {
-        loading.value = false
+        emit('update:loading', false)
         return ElMessage.error(`${i18n.t('getMetaNameInfoError')}`)
       }
     }
@@ -238,9 +237,7 @@ async function pay() {
       const updateInfoTx = await MetaNameUpdateInfo(res!.registerMetaNameResp!)
       if (updateInfoTx.code == 0) {
         //更新成功,这里不能用
-        console.log('updateInfoTx', updateInfoTx.data)
-        loading.value = false
-        debugger
+        emit('update:loading', false)
         return
       }
     }
@@ -274,15 +271,15 @@ async function pay() {
 }
 
 function onPaySuccess(params: { orderId: string; platform: PayPlatform; productType: number }) {
-  loading.value = false
+  emit('update:loading', false)
   router.push({
-    name: 'metaNameSearchRegister',
+    name: props.type === MetaNameReqCode.register ? 'metaNameSearchRegister' : 'metaNameMineStatus',
     params: {
       metaName: props.name,
       orderId: params.orderId,
       platform: params.platform,
       productType: params.productType,
-      metaFile: metafile,
+      metaFile: metafile ? metafile : props.metafile,
     },
   })
   emit('success')

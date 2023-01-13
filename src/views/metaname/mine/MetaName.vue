@@ -66,7 +66,7 @@
                     <Loading />
                   </ElIcon>
                 </template>
-                <template v-else>{{ $filters.dateTimeFormat(registerDate) }} </template>
+                <template v-else>{{ $filters.dateTimeFormat(registerDate) }} (UTC)</template>
               </span>
             </div>
             <div class="info-item flex flex-align-center">
@@ -79,9 +79,15 @@
                     <Loading />
                   </ElIcon>
                 </template>
-                <template v-else>{{ expireDate }} </template>
-                <Icon name="question_circle"
-              /></span>
+                <template v-else>{{ expireDate }} (UTC)</template>
+                <el-tooltip
+                  class="pre-line"
+                  :content="$t('MetaName.Expire date Tips')"
+                  placement="top"
+                >
+                  <Icon name="question_circle" />
+                </el-tooltip>
+              </span>
             </div>
           </div>
 
@@ -102,7 +108,14 @@
     </ElSkeleton>
   </div>
 
-  <RenewModal v-model="isShowRenew" v-if="metaName.val" :metaname="metaName.val!.name" />
+  <RenewModal
+    v-model="isShowRenew"
+    v-if="metaName.val"
+    :metaname="metaName.val!.name"
+    :expire-date="expireDate"
+    :metafile="`metacontract://${metaName.val!.nftCodeHash}/${metaName.val!.genesisId}/${metaName.val!.tokenIndex}`"
+    @success="getData"
+  />
 </template>
 
 <script setup lang="ts">
@@ -117,6 +130,7 @@ import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import Navigation from '../components/Navigation/Navigation.vue'
 import RenewModal from '../components/RenewModal/RenewModal.vue'
+import { Loading } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const userStore = useUserStore()
@@ -310,17 +324,21 @@ function getExporeDate(height: number) {
   })
 }
 
-getInfo().then(() => {
-  isSkeleton.value = false
-  getExporeDate(metaName.val!.expiredBlockHeight).then(res => {
-    expireDate.value = res
-    isGetExpireDateLoading.value = false
+function getData() {
+  getInfo().then(() => {
+    isSkeleton.value = false
+    getExporeDate(metaName.val!.expiredBlockHeight).then(res => {
+      expireDate.value = res
+      isGetExpireDateLoading.value = false
+    })
+    GetTx(metaName.val!.txid).then(res => {
+      registerDate.value = res.txDetail.timestamp * 1000
+      isGetRegisterDateLoading.value = false
+    })
   })
-  GetTx(metaName.val!.txid).then(res => {
-    registerDate.value = res.txDetail.timestamp * 1000
-    isGetRegisterDateLoading.value = false
-  })
-})
+}
+
+getData()
 </script>
 
 <style lang="scss" scoped src="./MetaName.scss"></style>

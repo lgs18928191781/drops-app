@@ -1321,11 +1321,13 @@ export const getMetaNamePrice = (metaName: string) => {
 }
 
 //获取UTC到期时间
-export function GetExpiredUTC(expiredBlockHeight: number) {
+export function GetExpiredUTC(expiredBlockHeight: number, blockHeight?: any) {
   return new Promise<string | null>(async (resolve, reject) => {
     try {
       //获取当前块高信息：medianTime，blocks
-      const blockHeight = await getBlockHeight()
+      if (!blockHeight) {
+        blockHeight = await getBlockHeight()
+      }
       const distanceDay = new Decimal(expiredBlockHeight)
         .sub(blockHeight.blocks)
         .div(144)
@@ -1354,6 +1356,7 @@ export async function metanameOperation(params: {
       const res = await userStore.showWallet.MetaNameBeforeReq({
         name: `${params.registerName}`,
         op: params.op,
+        years: params.years,
       })
       if (res.code == 0) {
         const { data } = res

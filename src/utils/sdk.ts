@@ -505,7 +505,6 @@ export class SDK {
 
             //  获取余额
             const balance = await this.getBalance(option.payType!)
-            debugger
             // 等待 确认支付
             const result = await this.awitSdkPayconfirm(
               option.payType!,

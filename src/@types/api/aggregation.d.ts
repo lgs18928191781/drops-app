@@ -216,3 +216,18 @@ declare interface MetaNameSearchResult {
   infos: Partial<MetaNameInfo>
   txid: string
 }
+
+declare interface MetaNameItem {
+  codeHash: string
+  expiredBlockHeight: number
+  genesis: string
+  icon: string
+  infos: string
+  mnsIndex: number
+  name: string
+  op: number
+  resolver: string
+  tokenIndex: string
+  txid: string
+  expireDate: string
+}

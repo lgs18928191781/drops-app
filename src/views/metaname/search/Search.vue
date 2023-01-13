@@ -63,40 +63,45 @@
     class="metaname"
     :title="metaNameInfo.val ? $t('MetaName.Register') + ':' + ' ' + metaNameInfo.val!.name : ''"
     :destroy-on-close="true"
+    :close-on-click-modal="false"
+    :show-close="!submitLoading"
   >
-    <div class="metaname-register" v-if="!isNextStep">
-      <div class="year flex flex-align-center">
-        <div class="title flex1">{{ $t('MetaName.Registration period') }}</div>
-        <div class="count flex flex-align-center">
-          <a
-            class="flex flex-align-center flex-pack-center"
-            @click="year > 1 ? (year = year - 1) : ''"
-            >-</a
-          >
-          <span class="value">{{ year }} {{ $t('MetaName.Year') }}</span>
-          <a @click="year = year + 1" class="flex flex-align-center flex-pack-center">+</a>
+    <div v-loading="submitLoading">
+      <div class="metaname-register" v-if="!isNextStep">
+        <div class="year flex flex-align-center">
+          <div class="title flex1">{{ $t('MetaName.Registration period') }}</div>
+          <div class="count flex flex-align-center">
+            <a
+              class="flex flex-align-center flex-pack-center"
+              @click="year > 1 ? (year = year - 1) : ''"
+              >-</a
+            >
+            <span class="value">{{ year }} {{ $t('MetaName.Year') }}</span>
+            <a @click="year = year + 1" class="flex flex-align-center flex-pack-center">+</a>
+          </div>
         </div>
+
+        <div class="amount">
+          <div class="price">${{ totalPrice }}</div>
+          <div class="label">{{ $t('MetaName.Total Fee') }}</div>
+        </div>
+        <div class="btn primary" @click="isNextStep = true">{{ $t('MetaName.Next Step') }}</div>
       </div>
 
-      <div class="amount">
-        <div class="price">${{ totalPrice }}</div>
-        <div class="label">{{ $t('MetaName.Total Fee') }}</div>
-      </div>
-      <div class="btn primary" @click="isNextStep = true">{{ $t('MetaName.Next Step') }}</div>
-    </div>
-
-    <template v-else>
-      <template v-if="metaNameInfo.val">
-        <PayMsg
-          :name="metaNameInfo.val!.name"
-          @back="isNextStep = false"
-          :price="totalPrice"
-          :year="year"
-          :type="MetaNameReqCode.register"
-          @success="onPaySuceess"
-        />
+      <template v-else>
+        <template v-if="metaNameInfo.val">
+          <PayMsg
+            :name="metaNameInfo.val!.name"
+            @back="isNextStep = false"
+            :price="totalPrice"
+            :year="year"
+            :type="MetaNameReqCode.register"
+            v-model:loading="submitLoading"
+            @success="onPaySuceess"
+          />
+        </template>
       </template>
-    </template>
+    </div>
   </ElDialog>
 </template>
 
@@ -150,6 +155,7 @@ const loading = ref(false)
 const isNextStep = ref(false)
 const expireDate = ref('')
 const isGetExpireDateLoading = ref(false)
+const submitLoading = ref(false)
 
 const currentPayPlatform = ref(
   userStore.isAuthorized && userStore.user?.evmAddress ? PayPlatform.ETH : PayPlatform.UnionPay

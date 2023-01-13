@@ -1,0 +1,135 @@
+.search-register {
+    padding: 24px 0;
+}
+
+.el-skeleton {
+    margin-top: 24px;
+}
+
+.metaname-card {
+    width: 240px;
+    height: 300px;
+    display: block;
+    margin: 0 auto;
+    border-radius: var(--rounded);
+    overflow: hidden;
+    margin-top: 24px;
+}
+
+.tips {
+    color: #909399;
+    text-align: center;
+    margin-top: 36px;
+}
+
+.status {
+    margin-top: 18px;
+    background: var(--themeBgSecondColor);
+    padding: 24px;
+    border-radius: var(--rounded);
+
+    .status-item {
+        font-size: 16px;
+        color: #909399;
+        margin-bottom: 24px;
+
+        &.active {
+            color: var(--themeTextColor);
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        .index {
+            margin-right: 5px;
+        }
+
+
+        .check-warp {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(137deg, #5721A1 2%, #2DEBD8 99%);
+
+            .icon {
+                width: 10px;
+                height: 10px;
+
+                &:deep(use) {
+                    stroke: #fff;
+                    stroke-width: 2px;
+                }
+            }
+        }
+
+        .el-icon {
+            width: 24px;
+            height: 24px;
+
+            :deep(svg) {
+                width: 24px;
+                height: 24px;
+            }
+        }
+
+        &.error {
+            color: #FC6D5E;
+
+            .check-warp {
+                background: #FC6D5E;
+            }
+        }
+    }
+}
+
+.operat {
+    margin-top: 24px;
+
+    a {
+        margin-right: 12px;
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+
+    .btn {
+        height: 70px;
+        text-align: center;
+        line-height: 70px;
+    }
+}
+
+.plain-btn {
+
+    cursor: pointer;
+
+    :deep(.content) {
+        line-height: 70px;
+    }
+}
+
+.success-warp {
+    background: var(--themeBgSecondColor);
+    border-radius: var(--rounded);
+    padding: 24px;
+    margin-top: 24px;
+
+    .list {
+        .info-item {
+            font-size: 16px;
+            margin-bottom: 12px;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+
+            .icon {
+                width: 18px;
+                height: 18px;
+                margin-left: 10px;
+            }
+        }
+    }
+}

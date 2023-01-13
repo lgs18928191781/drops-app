@@ -318,7 +318,6 @@ function drawePayCode() {
               isShowPayStatusModal.value = true
             }
           } else {
-            debugger
           }
         }
         // 余额支付
@@ -606,11 +605,9 @@ watch(
   () => props.modelValue,
   () => {
     if (props.modelValue) {
-      debugger
       loading = openLoading()
       drawePayCode()
         .catch(error => {
-          debugger
           setPayFail(error.message)
         })
         .finally(() => {

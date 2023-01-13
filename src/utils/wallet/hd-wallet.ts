@@ -867,7 +867,6 @@ export class HdWallet {
       }
       const nftManager = await this.getNftManager()
       console.log('nftManager', nftManager)
-      debugger
       let transferParams: any = {
         codehash: params.codehash,
         genesis: params.genesis,
@@ -882,7 +881,6 @@ export class HdWallet {
         transferParams = { ...transferParams, utxos: params.utxos }
       }
       const result = await nftManager.transfer(transferParams)
-      debugger
       resolve(result)
     })
 
@@ -1532,7 +1530,6 @@ export class HdWallet {
         .privateKey.toString(),
       feeb: DEFAULTS.feeb,
     })
-    debugger
     return nftManager
   }
 
@@ -2230,16 +2227,15 @@ export class HdWallet {
     return new Promise<SendMetaNameTransationResult>(async (resolve, reject) => {
       try {
         const userStore = useUserStore()
-        debugger
         const { reqswapargs, years, op_code, info } = params
         const mvcToAddress = reqswapargs.mvcToAddress
         const nftToAddress = reqswapargs.nftToAddress
         const txFee = reqswapargs.txFee
         const requestIndex = new Decimal(reqswapargs.requestIndex).toString()
         const metaNameOpFee =
-          params.op_code == MetaNameReqCode.updataInfo
-            ? 0
-            : new Decimal(reqswapargs.feePerYear).mul(years!).toNumber()
+          params.op_code == MetaNameReqCode.register
+            ? new Decimal(reqswapargs.feePerYear).mul(years!).toNumber()
+            : 0
         let MetaNameSuccTxid: string
         let mvcReceivers: Array<{ address: string; amount: number }>
         let transferNftResult,
@@ -2260,7 +2256,11 @@ export class HdWallet {
         ]
         let utxos = []
         if (op_code !== MetaNameReqCode.register) {
-          const toatlAmount = transferAmount + 20000 + 100000
+          const toatlAmount = new Decimal(transferAmount)
+            .add(10000)
+            .add(100000)
+            .add(2000)
+            .toNumber()
           const getMeUtxo = await GetMeUtxos({
             address: this.rootAddress,
             amount: toatlAmount,
@@ -2281,6 +2281,9 @@ export class HdWallet {
               script: getMeUtxo.data.script,
               satoshis: getMeUtxo.data.amount,
               amount: getMeUtxo.data.amount / 1e8,
+              wif: this.wallet!.deriveChild(0)
+                .deriveChild(0)
+                .privateKey.toString(),
             }
           }
 
@@ -2317,7 +2320,6 @@ export class HdWallet {
               .deriveChild(0)
               .privateKey.toString(),
           }
-          debugger
           // utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
           // utxos.forEach(item => {
           //   if (new Decimal(item.satoshis).toNumber() == transferAmount + 10000) {

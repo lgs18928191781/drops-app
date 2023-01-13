@@ -222,12 +222,20 @@ export const router = createRouter({
             {
               path: 'index',
               name: 'mineIndex',
+              meta: { isAuth: true },
               component: () => import('@/views/metaname/mine/Mine.vue'),
             },
             {
               path: 'metaname/:metaName',
               name: 'mineMetaName',
+              meta: { isAuth: true },
               component: () => import('@/views/metaname/mine/MetaName.vue'),
+            },
+            {
+              path: 'status/:metaName/:orderId/:platform/:productType',
+              name: 'metaNameMineStatus',
+              meta: { isAuth: true },
+              component: () => import('@/views/metaname/mine/Status.vue'),
             },
           ],
         },

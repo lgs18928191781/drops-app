@@ -1,10 +1,10 @@
 <template>
   <StatusInfo
-    :navigation="[$t('MetaName.Search'), $t('MetaName.Register'), $t('MetaName.Registering')]"
+    :navigation="[$t('MetaName.My MetaName'), $t('MetaName.Renewing')]"
     :order-id="($route.params.orderId as string)"
     :platform="($route.params.platform as string)"
     :productType="($route.params.productType as string)"
-    :type="MetaNameOperateType.Register"
+    :type="MetaNameOperateType.Renew"
     :name="($route.params.metaName as string)"
   />
 </template>
@@ -14,4 +14,4 @@ import StatusInfo from '../components/StatusInfo/StatusInfo.vue'
 import { MetaNameOperateType } from '@/enum'
 </script>
 
-<style lang="scss" scoped src="./Register.scss"></style>
+<style lang="scss" scoped src="./Status.scss"></style>
