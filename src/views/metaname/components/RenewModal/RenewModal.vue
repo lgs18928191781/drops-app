@@ -24,7 +24,7 @@
 
         <div class="fee section flex flex-align-center">
           <div class="flex1">
-            <span class="label">{{ $t('MetaName.Renewal time') }}</span>
+            <span class="label">{{ $t('MetaName.Renewal Fee') }}</span>
           </div>
           <span class="value"
             ><span class="amount">${{ totalPrice }}</span></span

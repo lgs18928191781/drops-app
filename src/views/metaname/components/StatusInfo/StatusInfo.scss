@@ -20,6 +20,11 @@
     color: #909399;
     text-align: center;
     margin-top: 36px;
+
+    &.success {
+        color: var(--themeTextColor);
+        font-size: 24px;
+    }
 }
 
 .status {

@@ -1,6 +1,6 @@
 <template>
   <StatusInfo
-    :navigation="[$t('MetaName.Search'), $t('MetaName.Register'), $t('MetaName.Registering')]"
+    :navigation="[$t('MetaName.Search'), $t('MetaName.Registration'), $t('MetaName.Registering')]"
     :order-id="($route.params.orderId as string)"
     :platform="($route.params.platform as string)"
     :productType="($route.params.productType as string)"

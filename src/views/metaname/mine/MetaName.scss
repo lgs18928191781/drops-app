@@ -108,9 +108,11 @@
         .label {}
 
         .value {
-            a{
+            a {
                 cursor: pointer;
+                color: var(--color-hover);
             }
+
             .icon {
                 width: 18px;
                 height: 18px;

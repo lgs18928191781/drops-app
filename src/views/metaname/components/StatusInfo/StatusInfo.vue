@@ -9,11 +9,22 @@
           :src="metaName.val ? `metacontract://${metaName.val!.nftCodeHash}/${metaName.val!.genesisId}/${metaName.val!.tokenIndex}` : $route.params.metaFile as string"
         />
 
-        <div class="tips">
+        <div class="tips" v-if="order.val!.status !== 3">
           {{
             type === MetaNameOperateType.Register
               ? $t('MetaName.RegisteringTips')
               : $t('MetaName.RenewingTips')
+          }}
+        </div>
+
+        <div class="tips success" v-else>
+          {{
+            type === MetaNameOperateType.Register
+              ? $t('MetaName.RegisterSuccessTips') +
+                name +
+                '.meta ' +
+                $t('MetaName.RegisterSuccessTips2')
+              : $t('MetaName.RenewSuccessTips') + name + '.meta ' + $t('MetaName.RenewSuccessTips2')
           }}
         </div>
 
@@ -96,7 +107,7 @@
           <RouterLink
             :to="{ name: 'mineMetaName', params: { metaName: metaName.val!.name } }"
             class="btn primary flex1"
-            v-if="order.val?.status === 3"
+            v-if="order.val?.status === 3 && metaName.val"
             >{{ $t('MetaName.Look MetaName') }}</RouterLink
           >
         </div>
@@ -168,7 +179,7 @@ const statusList = [
   },
   {
     name: () =>
-      i18n.t('MetaName.Confirm') + ' ' + props.name + ' ' + i18n.t('MetaName.is uniqueness'),
+      i18n.t('MetaName.Confirm uniq') + ' ' + props.name + ' ' + i18n.t('MetaName.is uniqueness'),
     value: 2,
   },
   {

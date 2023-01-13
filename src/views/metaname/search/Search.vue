@@ -135,17 +135,17 @@ const fees = [
   },
   {
     name: () => i18n.t('MetaName.feeCharacter2'),
-    price: () => `$${MetaNameFeePerYear.third}/年`,
+    price: () => `$${MetaNameFeePerYear.third}/${i18n.t('MetaName.Year')}`,
     case: 'san.meta',
   },
   {
     name: () => i18n.t('MetaName.feeCharacter3'),
-    price: () => `$${MetaNameFeePerYear.four}/年`,
+    price: () => `$${MetaNameFeePerYear.four}/${i18n.t('MetaName.Year')}`,
     case: 'jack.meta',
   },
   {
     name: () => i18n.t('MetaName.feeCharacter4'),
-    price: () => `$${MetaNameFeePerYear.five}/年`,
+    price: () => `$${MetaNameFeePerYear.five}/${i18n.t('MetaName.Year')}`,
     case: 'jonathan.meta',
   },
 ]

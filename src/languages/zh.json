@@ -781,7 +781,14 @@
     "Renew Success": "续费成功",
     "Renewing": "续费中",
     "RenewingTips": "大概需要3分钟，请耐心等待。稍后你可以在「我的」页面查看此域名的续费状态。",
-    "Look MetaName": "查看域名"
+    "Look MetaName": "查看域名",
+    "Registration": "注册",
+    "Confirm uniq": "确认",
+    "RegisterSuccessTips": "🎉 恭喜您已成功注册 ",
+    "RegisterSuccessTips2": " ",
+    "RenewSuccessTips": "🎉 恭喜您已成功续费 ",
+    "RenewSuccessTips2": " ",
+    "Renewal Fee": "续期费用"
   },
   "Menu": "菜单",
   "metanameNotAllowOverLenght": "注册名称长度不能超过63位字符",

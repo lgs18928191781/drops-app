@@ -15,9 +15,9 @@
               {{ userStore.user!.metaId.slice(0, 6) }}...{{ userStore.user!.metaId.slice(-6) }}
             </div>
           </div>
-          <PlainBtnVue>
+          <!-- <PlainBtnVue>
             {{ $t('MetaName.Switch Wallet') }}
-          </PlainBtnVue>
+          </PlainBtnVue> -->
         </div>
       </div>
     </div>

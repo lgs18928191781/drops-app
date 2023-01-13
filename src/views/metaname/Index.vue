@@ -149,14 +149,8 @@ import Buzzbit from '@/assets/images/logo_buzzbit.png'
 import ShowBuzz from '@/assets/images/logo_showbuzz.png'
 import PlainBtn from './components/PlainBtn/PlainBtn.vue'
 import Logo from './components/Logo/Logo.vue'
-import footIcon1 from '@/assets/show/show.png'
-import footIcon2 from '@/assets/show/foot-icon2.png'
-import footIcon3 from '@/assets/show/foot-icon3.png'
-import footIcon4 from '@/assets/show/foot-icon4.png'
 import { checkUserLogin } from '@/utils/util'
 import { useRouter } from 'vue-router'
-import { ref } from 'vue'
-import i18n from '@/utils/i18n'
 
 const router = useRouter()
 
