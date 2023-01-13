@@ -39,7 +39,7 @@ import Cat from '@/assets/images/cat.svg?url'
 import DogWalking from '@/assets/images/dog_walking.svg?url'
 import { Ref, ref, watchEffect } from 'vue'
 import { showLoading } from '@/utils/util'
-import { getMetaNames } from '@/api/talk'
+import { getMetaNames, getNewMetaNames } from '@/api/talk'
 import { useTalkStore } from '@/stores/talk'
 import { useCommunityFormStore } from '@/stores/forms'
 import { useLayoutStore } from '@/stores/layout'
@@ -53,7 +53,8 @@ const fetching = ref(false)
 const metaNames: Ref<any[]> = ref([])
 
 const fetchMetaNames = async () => {
-  const _ = await getMetaNames({ metaId: talk.selfMetaId, page: 1, pageSize: 20 })
+  // const _ = await getMetaNames({ metaId: talk.selfMetaId, page: 1, pageSize: 20 })
+  const _ = await getNewMetaNames({ address: talk.selfAddress, page: 1, pageSize: 20 })
   metaNames.value = _
 }
 

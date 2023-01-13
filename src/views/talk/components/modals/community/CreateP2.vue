@@ -30,7 +30,7 @@
         <div class="mt-3">
           <textarea
             rows="3"
-            class="outline-0 main-border faded-switch !bg-white still w-full p-4 text-base resize-none dark:!bg-gray-600"
+            class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-700 still w-full p-4 text-base resize-none"
             :placeholder="$t('Talk.Community.introduction_placeholder')"
             v-model="form.description"
           />
@@ -47,7 +47,7 @@
           {{ $t('Talk.Community.skip') }}
         </button>
         <button
-          class="w-14 h-14 main-border primary flex items-center justify-center  dark:!bg-gray-600"
+          class="w-14 h-14 main-border primary flex items-center justify-center"
           :class="{
             'faded still text-dark-300 dark:!text-gray-400 dark:!bg-gray-700': !form.isStep2Finished,
           }"

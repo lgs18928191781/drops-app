@@ -33,6 +33,15 @@ export const getMetaNames = async (params?: any): Promise<any[]> => {
   })
 }
 
+export const getNewMetaNames = async (params?: any): Promise<any[]> => {
+  const { address, ..._params } = params
+  delete params.metaId
+
+  return TalkApi.get(`/community/metaname/${address}`, { params: _params }).then(res => {
+    return res.data.results.items
+  })
+}
+
 export const getOneCommunity = async (communityId: string): Promise<Community[]> => {
   return TalkApi.get(`/community/${communityId}`).then(res => {
     const community = res.data

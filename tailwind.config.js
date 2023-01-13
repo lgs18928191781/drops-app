@@ -49,6 +49,7 @@ module.exports = {
       30: '120PX',
       32: '128PX',
       36: '144PX',
+      37: '148PX',
       40: '160PX',
       44: '176PX',
       45: '180PX',
@@ -108,6 +109,7 @@ module.exports = {
     extend: {
       colors: {
         primary: '#FFDC51',
+        'primary-border': '#FFC051',
         link: '#5586BB',
         dark: {
           100: '#F5F7FA',

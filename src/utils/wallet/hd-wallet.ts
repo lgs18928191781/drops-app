@@ -866,7 +866,6 @@ export class HdWallet {
         ...option,
       }
       const nftManager = await this.getNftManager()
-      console.log('nftManager', nftManager)
       let transferParams: any = {
         codehash: params.codehash,
         genesis: params.genesis,
@@ -1044,7 +1043,6 @@ export class HdWallet {
         //   throw new Error("Cant't get parent address")
         // }
         const nodeTx = await this.makeTx(makeTxOptions)
-        console.log('nodeTx', nodeTx.toString())
 
         if (nodeTx) {
           resolve({

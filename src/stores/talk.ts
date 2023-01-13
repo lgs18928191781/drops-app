@@ -380,7 +380,6 @@ export const useTalkStore = defineStore('talk', {
       }
 
       // 将最后阅读频道存储到本地
-      console.log('routeChannelId', routeChannelId)
       latestChannels[routeCommunityId] = routeChannelId
       localStorage.setItem('latestChannels-' + this.selfMetaId, JSON.stringify(latestChannels))
 

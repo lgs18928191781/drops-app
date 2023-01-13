@@ -31,7 +31,7 @@
         <div
           :class="[
             isShowingTabs ? 'hidden' : 'block',
-            'w-full lg:block lg:grow p-7.5 divide-y divide-solid divide-dark-100 dark:divide-gray-900',
+            'w-full lg:block lg:grow p-7.5 divide-y divide-solid divide-dark-100 dark:divide-gray-900 overflow-y-auto',
           ]"
         >
           <div class="flex items-center justify-end pb-6">
@@ -55,47 +55,64 @@
             </div>
           </div>
 
-          <!-- 图标 -->
-          <div class="py-6">
-            <h4 class="text-dark-400 dark:text-gray-200 text-sm mb-6">
-              {{ $t('Talk.Modals.icon') }}
-            </h4>
+          <!-- 图标、名字 -->
+          <div class="py-6 flex flex-col lg:flex-row gap-y-12 lg:gap-y-0 lg:gap-x-12">
+            <div class="">
+              <h4 class="text-dark-400 dark:text-gray-200 text-sm mb-6">
+                {{ $t('Talk.Modals.icon') }}
+              </h4>
 
-            <div class="flex">
-              <div
-                class="w-22.5 h-22.5 rounded-full flex items-center justify-center relative cursor-pointer"
-                @click="iconUploader?.click()"
-              >
-                <img
-                  :src="form.iconPreviewUrl"
-                  alt=""
-                  v-if="form.iconPreviewUrl"
-                  class="rounded-full !w-22.5 !h-22.5 object-cover object-center"
-                />
+              <div class="flex">
+                <div
+                  class="w-22.5 h-22.5 rounded-full flex items-center justify-center relative cursor-pointer"
+                  @click="iconUploader?.click()"
+                >
+                  <img
+                    :src="form.iconPreviewUrl"
+                    alt=""
+                    v-if="form.iconPreviewUrl"
+                    class="rounded-full !w-22.5 !h-22.5 object-cover object-center"
+                  />
 
-                <Image
-                  :src="form.original.icon"
-                  customClass="rounded-full !w-22.5 !h-22.5 object-cover object-center"
-                  v-else
-                />
-                <!-- <Icon name="photo_2" class="w-9 h-9" v-else /> -->
+                  <Image
+                    :src="form.original.icon"
+                    customClass="rounded-full !w-22.5 !h-22.5 object-cover object-center"
+                    v-else
+                  />
+                  <!-- <Icon name="photo_2" class="w-9 h-9" v-else /> -->
 
-                <div class="absolute right-[-2PX] bottom-[-2PX] z-10">
-                  <div
-                    class="flex items-center justify-center w-10 h-10 bg-primary border-2 border-solid border-dark-800 rounded-full"
-                  >
-                    <Icon name="plus_2" class="w-4 h-4 text-dark-800" />
+                  <div class="absolute right-[-2PX] bottom-[-2PX] z-10">
+                    <div
+                      class="flex items-center justify-center w-10 h-10 bg-primary border-2 border-solid border-dark-800 rounded-full"
+                    >
+                      <Icon name="plus_2" class="w-4 h-4 text-dark-800" />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <input
-                type="file"
-                class="hidden"
-                ref="iconUploader"
-                accept="image/*"
-                @change="handleIconChange"
-              />
+                <input
+                  type="file"
+                  class="hidden"
+                  ref="iconUploader"
+                  accept="image/*"
+                  @change="handleIconChange"
+                />
+              </div>
+            </div>
+
+            <div class="lg:grow">
+              <h4 class="text-dark-400 dark:text-gray-200 text-sm mb-6">
+                {{ $t('Talk.Community.community_name') }}
+              </h4>
+
+              <div class="mt-2">
+                <input
+                  type="text"
+                  class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-700 still w-full px-4 py-3 text-base leading-[24PX] font-bold placeholder:font-normal"
+                  :placeholder="$t('Talk.Community.community_name')"
+                  v-model="form.name"
+                />
+              </div>
             </div>
           </div>
 

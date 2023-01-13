@@ -17,6 +17,8 @@
           <TheErrorBox />
         </div>
       </div>
+
+      <DirectContactInfo />
     </div>
   </div>
 </template>
@@ -25,10 +27,12 @@
 import { useTalkStore } from '@/stores/talk'
 import { defineAsyncComponent, onBeforeUnmount, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import DirectContactList from './components/DirectContactList.vue'
+import DirectContactList from './components/direct-contact/List.vue'
+import DirectContactInfo from './components/direct-contact/Info.vue'
 import AtMeHeader from './components/AtMeHeader.vue'
 import TheInput from './components/TheInput.vue'
 import TheErrorBox from './components/TheErrorBox.vue'
+import { useLayoutStore } from '@/stores/layout'
 
 const MessageList = defineAsyncComponent({
   loader: () => import('./components/MessageList.vue'),
@@ -37,6 +41,7 @@ const MessageList = defineAsyncComponent({
 const route = useRoute()
 const talk = useTalkStore()
 const router = useRouter()
+const layout = useLayoutStore()
 
 const { channelId } = route.params
 
@@ -51,6 +56,8 @@ onMounted(async () => {
 
   await talk.initChannel('@me', channelId as string)
   await talk.initChannelMessages(talk.selfMetaId)
+
+  layout.isShowUserInfo = false
 })
 
 onBeforeUnmount(() => {
@@ -59,5 +66,3 @@ onBeforeUnmount(() => {
   talk.closeReadPointerTimer()
 })
 </script>
-
-<style lang="scss" scoped></style>
