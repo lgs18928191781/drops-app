@@ -406,12 +406,27 @@ export const useCreateAnnouncementFormStore = defineStore('createAnnouncementFor
       type: 'create' as 'create' | 'edit',
       txId: null as null | string,
       publickey: null as null | string,
+      original: null as any,
     }
   },
 
   getters: {
-    isFinished(state) {
-      return !!state.title && !!state.content
+    hasWhitespaceField(state): boolean {
+      return !state.title.trim() || !state.content.trim()
+    },
+
+    hasChanged(state): boolean {
+      if (!state.original) return true
+
+      return state.title !== state.original.title || state.content !== state.original.content
+    },
+
+    isFinished(state): boolean {
+      if (state.type === 'edit') {
+        return !!state.title && !!state.content && !this.hasWhitespaceField && this.hasChanged
+      }
+
+      return !!state.title && !!state.content && !this.hasWhitespaceField
     },
   },
 
@@ -453,6 +468,7 @@ export const useCreateAnnouncementFormStore = defineStore('createAnnouncementFor
       this.type = 'create'
       this.txId = null
       this.publickey = null
+      this.original = null
     },
   },
 })

@@ -73,7 +73,8 @@
       "delete": "Delete",
       "edit_announcement": "Edit Announcement",
       "update": "Update",
-      "title_is": "title: "
+      "title_is": "title: ",
+      "read_more": "Read More"
     },
     "Modals": {
       "enter_password": "Enter Password",

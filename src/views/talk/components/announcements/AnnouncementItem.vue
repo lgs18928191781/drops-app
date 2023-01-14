@@ -34,7 +34,20 @@
     </div>
 
     <!-- content -->
-    <div v-html="parsedContent"></div>
+    <template v-if="isTooLong && !isExpanded">
+      <div class="line-clamp-6" v-html="parsedContent"></div>
+      <div class="flex justify-center">
+        <button
+          class="text-dark-300 dark:text-gray-300 flex gap-x-1 group/expand"
+          @click="isExpanded = true"
+        >
+          <Icon name="chevron_double_down" class="w-4 h-4" />
+          <span class="group-hover/expand:underline">{{ $t('Talk.General.read_more') }}</span>
+        </button>
+      </div>
+    </template>
+
+    <div v-html="parsedContent" v-else></div>
 
     <!-- footer -->
     <div class="text-dark-300 dark:text-gray-400 flex items-center justify-between">
@@ -54,7 +67,7 @@
 
 <script lang="ts" setup>
 import { toMvcScan } from '@/utils/util'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import dayjs from 'dayjs'
 import { useTalkStore } from '@/stores/talk'
@@ -134,4 +147,17 @@ const shortenedTxId = computed(() => {
   const txId = props.announcement.txId
   return `${txId.slice(0, 6)}...${txId.slice(-6)}`
 })
+
+// 过长的内容的展开收起
+const isTooLong = computed(() => {
+  const content = parsedContent.value
+  if (typeof content == 'undefined') {
+    return false
+  }
+
+  // 超过1000个字符，就认为是过长的
+  return content.length > 300
+})
+
+const isExpanded = ref(false)
 </script>

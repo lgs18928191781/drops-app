@@ -2,7 +2,7 @@
   <div class="text-sm p-4.5 h-full overflow-y-scroll slim-scrollbar" ref="scroller" id="scroller">
     <!-- 编写，仅管理员可见 -->
     <div
-      class="flex justify-between items-center bg-white dark:bg-gray-800 p-4.5 rounded-xl group cursor-pointer"
+      class="flex justify-between items-center bg-white dark:bg-gray-800 p-4.5 rounded-xl group cursor-pointer mb-4.5"
       @click="showCreateModal = true"
       v-if="talk.isAdmin()"
     >
@@ -25,10 +25,7 @@
     </div>
 
     <!-- 分割线 -->
-    <div
-      class="w-full flex items-center gap-x-8 my-4.5"
-      v-if="talk.isAdmin() && announcements.length > 0"
-    >
+    <div class="w-full flex items-center gap-x-8 mb-4.5" v-if="announcements.length > 0">
       <div class="border-b border-solid border-dark-300/20 dark:border-gray-400/20 grow"></div>
       <div class="shrink-0 text-dark-300 dark:text-gray-400">
         {{ $t('Talk.General.announcements_total', announcementsCount) }}
@@ -41,7 +38,7 @@
       <LoadingList :item-count="5" />
     </div>
     <template v-else>
-      <div class="space-y-1.5" v-if="announcements.length">
+      <div class="space-y-2" v-if="announcements.length">
         <AnnouncementItem
           v-for="announcement in announcements"
           :key="announcement.txId"
@@ -176,6 +173,7 @@ function popEditModal(announcement: AnnouncementItem) {
   createForm.type = 'edit'
   createForm.txId = announcement.txId
   createForm.publickey = announcement.publicKey
+  createForm.original = announcement
 
   showCreateModal.value = true
 }
