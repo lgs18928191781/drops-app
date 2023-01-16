@@ -331,8 +331,8 @@
     },
     "repost": {
       "lookTx": "TX",
-      "comment": "Repost with comment",
-      "quick": "Repost",
+      "comment": "Forward with comment",
+      "quick": "Forward",
       "share": "share",
       "success": "forwarded successfully"
     },

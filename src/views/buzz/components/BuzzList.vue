@@ -75,7 +75,7 @@
           :key="index"
           @click="item.fun()"
         >
-          {{ item.name }}
+          {{ item.name() }}
         </div>
         <div class="respost-item main-border" @click="isShowOperateModal = false">
           {{ $t('Cancel') }}
@@ -162,13 +162,13 @@ const repostTxId: Ref<string> = inject('repostTxId')!
 
 const operates: {
   [key: string]: {
-    name: string
+    name: () => string
     fun: () => void
   }[]
 } = {
   repost: [
     {
-      name: i18n.t('Buzz.repost.quick'),
+      name: () => i18n.t('Buzz.repost.quick'),
       fun: async () => {
         operateLoading.value = true
         try {
@@ -319,7 +319,7 @@ const operates: {
       },
     },
     {
-      name: i18n.t('Buzz.repost.comment'),
+      name: () => i18n.t('Buzz.repost.comment'),
       fun: () => {
         operateLoading.value = false
         isShowOperateModal.value = false
@@ -330,7 +330,7 @@ const operates: {
   ],
   more: [
     {
-      name: i18n.t('Buzz.repost.share'),
+      name: () => i18n.t('Buzz.repost.share'),
       fun: () => {
         copy(
           `${location.origin}${
@@ -347,7 +347,7 @@ const operates: {
       },
     },
     {
-      name: i18n.t('Buzz.repost.lookTx'),
+      name: () => i18n.t('Buzz.repost.lookTx'),
       fun: () => {
         tx(currentTxId.value)
         isShowOperateModal.value = false
