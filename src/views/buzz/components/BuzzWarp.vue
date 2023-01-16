@@ -29,7 +29,7 @@
       <a class="top" @click="scrollTop">
         <Icon name="buzz_icon_top" />
       </a>
-      <a class="main-border primary" @click="layout.publish()">
+      <a class="main-border primary" @click="isShowBuzzPublish = true">
         <Icon name="buzz_icon_post" />
       </a>
     </div>
@@ -37,7 +37,12 @@
   </div>
 
   <!-- publish -->
-  <PublishVue />
+  <PublishVue
+    v-model="isShowBuzzPublish"
+    :topic="publishTopic"
+    v-model:repost-tx-id="publishRepostTxId"
+    @success="onPublishSuccess"
+  />
 </template>
 
 <script setup lang="ts">
@@ -50,6 +55,7 @@ import {
   watch,
   provide,
   onUnmounted,
+  reactive,
 } from 'vue'
 import Header from './components/Header/Header.vue'
 import Footer from './components/Footer/Footer.vue'
@@ -63,16 +69,26 @@ import { useI18n } from 'vue-i18n'
 import { useLayoutStore } from '@/stores/layout'
 import PublishVue from '@/views/buzz/components/Publish.vue'
 import PhoneMenuBtnVue from '@/components/PhoneMenuBtn/PhoneMenuBtn.vue'
+import { useRouter } from 'vue-router'
 
 interface Props {
   isHideHeader?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {})
 
+const router = useRouter()
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const layout = useLayoutStore()
 const i18n = useI18n()
+const isShowBuzzPublish = ref(false)
+const publishTopic = ref('')
+const publishRepostTxId = ref('')
+const publiseSuccessCallBack = ref(() => {
+  router.push({
+    name: 'buzz',
+  })
+})
 
 const menus = [
   {
@@ -118,8 +134,21 @@ onMounted(() => {
   resizeObserver.observe(document.getElementById('buzz-warp')!)
 })
 
+function onPublishSuccess() {
+  publiseSuccessCallBack.value()
+}
+
 onBeforeUnmount(() => {
   resizeObserver.unobserve(document.getElementById('buzz-warp')!)
+})
+
+provide('isShowBuzzPublish', isShowBuzzPublish)
+provide('topic', publishTopic)
+provide('repostTxId', publishRepostTxId)
+provide('publiseSuccessCallBack', publiseSuccessCallBack)
+defineExpose({
+  publishTopic: publishTopic,
+  publiseSuccessCallBack: publiseSuccessCallBack,
 })
 </script>
 

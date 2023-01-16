@@ -9,7 +9,7 @@
       </span>
       <span class="namt">{{ $route.params.topic }}</span>
     </div>
-    <a class="flex flex-align-center operate" @click="publishTopic">
+    <a class="flex flex-align-center operate" @click="isShowBuzzPublish = true">
       <Icon name="plus" />
       {{ $t('Buzz.topic.Create Community') }}
     </a>
@@ -20,6 +20,7 @@
       :list="list"
       :pagination="pagination"
       :loading="isSkeleton"
+      @add-item="val => list.unshift(val)"
       @get-more="getMore"
       @update-item="updateItem"
     />
@@ -29,7 +30,7 @@
 <script setup lang="ts">
 import { initPagination } from '@/config'
 import { useLayoutStore } from '@/stores/layout'
-import { reactive, ref } from 'vue'
+import { inject, onMounted, reactive, Ref, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import BuzzListVue from './components/BuzzList.vue'
 import { GetTopicBuzzs } from '@/api/aggregation'
@@ -42,9 +43,11 @@ const userStore = useUserStore()
 const pagination = reactive({ ...initPagination })
 const list: BuzzItem[] = reactive([])
 const isSkeleton = ref(true)
-
-function publishTopic() {
-  layout.publish({ topic: route.params.topic as string })
+const isShowBuzzPublish: Ref<boolean> = inject('isShowBuzzPublish')!
+const topic: Ref<string> = inject('topic')!
+const publiseSuccessCallBack: Ref<() => void> = inject('publiseSuccessCallBack')!
+publiseSuccessCallBack.value = () => {
+  return
 }
 
 function getDatas(isCover = false) {
@@ -84,6 +87,10 @@ function updateItem(buzz: BuzzItem) {
 
 getDatas(true).then(() => {
   isSkeleton.value = false
+})
+
+onMounted(() => {
+  topic.value = route.params.topic as string
 })
 </script>
 

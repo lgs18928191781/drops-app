@@ -104,7 +104,7 @@
 <script setup lang="ts">
 import BuzzItemVue from './BuzzItem.vue'
 import { ElDrawer } from 'element-plus'
-import { computed, reactive, Ref, ref, watch } from 'vue'
+import { computed, inject, reactive, Ref, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import IsNullVue from '@/components/IsNull/IsNull.vue'
 import LoadMoreVue from '@/components/LoadMore/LoadMore.vue'
@@ -129,7 +129,7 @@ interface Props {
   isInDetailPage?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {})
-const emit = defineEmits(['getMore', 'comment', 'like', 'updateItem', 'removeItem'])
+const emit = defineEmits(['getMore', 'comment', 'like', 'updateItem', 'removeItem', 'addItem'])
 
 const i18n = useI18n()
 const userStore = useUserStore()
@@ -157,6 +157,8 @@ const replayMsg = reactive({
   },
 })
 let audio: HTMLAudioElement | null
+const isShowBuzzPublish: Ref<boolean> = inject('isShowBuzzPublish')!
+const repostTxId: Ref<string> = inject('repostTxId')!
 
 const operates: {
   [key: string]: {
@@ -321,7 +323,8 @@ const operates: {
       fun: () => {
         operateLoading.value = false
         isShowOperateModal.value = false
-        layout.publish({ repostTxId: currentTxId.value })
+        repostTxId.value = currentTxId.value
+        isShowBuzzPublish.value = true
       },
     },
   ],
@@ -680,14 +683,20 @@ Mitt.on(MittEvent.FollowUser, async (params: { metaId: string; result: boolean }
 })
 
 Mitt.on(MittEvent.UpdateBuzz, (buzz: BuzzItem) => {
-  const index = props.list.findIndex(item => item.txId === buzz.txId)
-  if (index !== -1) {
-    emit('updateItem', buzz)
+  if (props.list.length) {
+    const index = props.list.findIndex(item => item && item.txId === buzz.txId)
+    if (index !== -1) {
+      emit('updateItem', buzz)
+    }
   }
 })
 
 Mitt.on(MittEvent.RemoveBuzz, (txId: string) => {
   emit('removeItem', txId)
+})
+
+Mitt.on(MittEvent.AddBuzz, (buzz: BuzzItem) => {
+  emit('addItem', buzz)
 })
 
 defineExpose({

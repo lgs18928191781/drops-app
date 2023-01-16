@@ -6,6 +6,7 @@
     @comment="onReplayCommentSucccess"
     @like="onLikeCommentSuccess"
     @update-item="updateItem"
+    @add-item="val => list.unshift(val)"
     :isInDetailPage="true"
   >
     <template #comment>

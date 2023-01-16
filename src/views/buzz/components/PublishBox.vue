@@ -21,6 +21,7 @@
 <script setup lang="ts">
 import { useLayoutStore } from '@/stores/layout'
 import { useUserStore } from '@/stores/user'
+import { inject, Ref } from 'vue'
 
 interface Props {
   topic?: string
@@ -29,6 +30,8 @@ const props = withDefaults(defineProps<Props>(), {})
 
 const layout = useLayoutStore()
 const userStore = useUserStore()
+const isShowBuzzPublish: Ref<boolean> = inject('isShowBuzzPublish')!
+const topic: Ref<string> = inject('topic')!
 
 const publishOperates = [
   {
@@ -51,8 +54,8 @@ const publishOperates = [
 
 function publish() {
   const params: any = {}
-  if (props.topic) params.topic = props.topic
-  layout.publish(params)
+  if (props.topic) topic.value = props.topic
+  isShowBuzzPublish.value = true
 }
 </script>
 

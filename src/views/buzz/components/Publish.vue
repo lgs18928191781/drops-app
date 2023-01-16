@@ -1,9 +1,11 @@
 <template>
   <PublishBaseTemplateVue
-    v-model="layout.isShowPublishBuzz"
+    :model-value="modelValue"
     v-model:text="content"
     :loading="loading"
     :placeholder="$t('Buzz.publish.placeholder')"
+    @update:model-value="val => emit('update:modelValue', val)"
+    @close="emit('update:repostTxId', '')"
   >
     <template #repostBuzz>
       <div class="respost-buzz" v-if="respostBuzz.val">
@@ -136,9 +138,17 @@ import PublishBaseTemplateVue from '@/components/PublishBaseTemplate/PublishBase
 import { useJobsStore } from '@/stores/jobs'
 import { metafile } from '@/utils/filters'
 
+interface Props {
+  modelValue: boolean
+  topic?: string
+  repostTxId?: string
+}
+const props = withDefaults(defineProps<Props>(), {})
+
 const attachments: (AttachmentItem | string)[] = reactive([])
 const respostBuzz: { val: null | BuzzItem } = reactive({ val: null })
 const content = ref('')
+const emit = defineEmits(['update:modelValue', 'update:repostTxId', 'success'])
 
 const layout = useLayoutStore()
 const userStore = useUserStore()
@@ -403,11 +413,9 @@ async function submit() {
     content.value = ''
     attachments.length = 0
     loading.value = false
-    layout.$patch({ isShowPublishBuzz: false })
+    emit('update:modelValue', false)
     ElMessage.success(i18n.t('Buzz.publish.success'))
-    router.push({
-      name: 'buzz',
-    })
+    emit('success')
   } else {
     // 取消
     loading.value = false
@@ -436,28 +444,32 @@ function onPlay(params: { file: string; type: 'audio' | 'video' }) {
 }
 
 watch(
-  () => layout.publishBuzzOption.repostTxId,
-  () => {
-    if (layout.publishBuzzOption.repostTxId) {
-      GetBuzz({ txId: layout.publishBuzzOption.repostTxId, metaId: userStore.user?.metaId }).then(
-        res => {
-          if (res.code === 0) {
-            respostBuzz.val = res.data.results.items[0]
-          }
+  () => props.repostTxId,
+  repostTxId => {
+    if (repostTxId) {
+      GetBuzz({ txId: repostTxId, metaId: userStore.user?.metaId }).then(res => {
+        if (res.code === 0) {
+          respostBuzz.val = res.data.results.items[0]
         }
-      )
+      })
     } else {
       respostBuzz.val = null
     }
+  },
+  {
+    immediate: true,
   }
 )
 
 watch(
-  () => layout.publishBuzzOption.topic,
-  () => {
-    if (layout.publishBuzzOption.topic) {
-      content.value += `  #${layout.publishBuzzOption.topic}  `
+  () => props.topic,
+  topic => {
+    if (topic) {
+      content.value += `  #${topic}  `
     }
+  },
+  {
+    immediate: true,
   }
 )
 </script>

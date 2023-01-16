@@ -7,6 +7,7 @@
     @get-more="getMore"
     :pagination="pagination"
     @update-item="updateItem"
+    @add-item="val => list.unshift(val)"
     @remove-item="
       txId =>
         list.splice(
