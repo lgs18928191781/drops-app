@@ -501,7 +501,8 @@
     "User Name": "用户名",
     "MetaName": {
       "drsc": "MetaName 将优先作为用户名。"
-    }
+    },
+    "Select MetaName": "选择 MetaName..."
   },
   "UplinkSetting": {
     "Uplink Payment Confirmation": "上链支付确认",

@@ -369,6 +369,7 @@ function submitForm() {
 }
 
 function loginSuccess(params: BindMetaIdRes) {
+  debugger
   console.log('params', params)
   return new Promise<void>(async (resolve, reject) => {
     try {

@@ -32,7 +32,17 @@
         <ElFormItem prop="metaName" label="">
           <div class="form-item">
             <div class="label flex flex-align-center active">MetaName <MetaName /></div>
-            <ElInput type="text" v-model="form.metaName" />
+            <ElInput
+              type="text"
+              v-model="form.metaName"
+              :readonly="true"
+              :placeholder="$t('EditProfile.Select MetaName')"
+              @click="choose(EditType.MetaName)"
+            >
+              <template #suffix>
+                <Icon name="down" class="right-icon" />
+              </template>
+            </ElInput>
             <div class="drsc">
               {{ $t('EditProfile.MetaName.drsc') }}
             </div>
@@ -57,14 +67,18 @@
 
     <!-- secondBody -->
     <template #secondBody>
-      <NFTAvatarListVue
-        :active-tx="currentAvatar.val.avatarImage"
-        @change="item => (currentAvatar.val = item)"
-      />
+      <template v-if="editType === EditType.Avatar">
+        <NFTAvatarListVue
+          :active-tx="currentAvatar.val.avatarImage"
+          @change="item => (currentAvatar.val = item)"
+        />
+      </template>
+      <template v-else>
+        <ChooseMetaNameVue @change="onChangeMetaName" />
+      </template>
     </template>
   </ModalVue>
 </template>
-
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
 import { reactive, ref, watch } from 'vue'
@@ -74,6 +88,7 @@ import NFTAvatarListVue from '@/components/NFTAvatarList/NFTAvatarList.vue'
 import { NodeName } from '@/enum'
 import { createBrfcChildNodeParams } from '@/@types/sdk'
 import { useI18n } from 'vue-i18n'
+import ChooseMetaNameVue from '@/components/ChooseMetaName/ChooseMetaName.vue'
 
 interface Props {
   modelValue: boolean
@@ -85,11 +100,32 @@ const i18n = useI18n()
 const userStore = useUserStore()
 const isShowSecondModal = ref(false)
 const loading = ref(false)
+enum EditType {
+  Avatar = 'avatar',
+  MetaName = 'MetaName',
+}
+const editType = ref(EditType.Avatar)
 
 // @ts-ignore
 const currentAvatar: { val: NFTAvatarItem } = reactive({
   val: {
     avatarImage: userStore.user?.avatarImage,
+  },
+})
+const currentMetaName: { val: MetaNameItem } = reactive({
+  val: {
+    codeHash: '',
+    expiredBlockHeight: -1,
+    genesis: '',
+    icon: '',
+    infos: '',
+    mnsIndex: 0,
+    name: '',
+    op: 0,
+    resolver: '',
+    tokenIndex: '',
+    txid: '',
+    expireDate: '',
   },
 })
 
@@ -171,6 +207,15 @@ async function confirm() {
     ElMessage.error((error as any).message)
     loading.value = false
   }
+}
+
+function choose(type: EditType) {
+  editType.value = type
+  isShowSecondModal.value = true
+}
+
+function onChangeMetaName(metaName: MetaNameItem) {
+  currentMetaName.val = metaName
 }
 </script>
 

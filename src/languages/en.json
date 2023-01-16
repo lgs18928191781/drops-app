@@ -422,7 +422,8 @@
     "User Name": "User Name",
     "MetaName": {
       "drsc": "The system will use MetaName you chose as the username by default."
-    }
+    },
+    "Select MetaName": "Select MetaName..."
   },
   "UplinkSetting": {
     "Uplink Payment Confirmation": "ME Payment Confirmation",

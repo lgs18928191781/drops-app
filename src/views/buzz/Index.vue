@@ -71,10 +71,6 @@ watch(
   }
 )
 
-Mitt.on(MittEvent.AddBuzz, async (buzz: BuzzItem) => {
-  list.unshift(buzz)
-})
-
 const publishOperates = [
   {
     icon: 'buzzn_emoji',
