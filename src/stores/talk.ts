@@ -31,10 +31,10 @@ export const useTalkStore = defineStore('talk', {
           id: 'announcements',
           nameKey: 'Talk.Community.announcements',
         },
-        // {
-        //   id: 'topics',
-        //   nameKey: 'Talk.Community.topics',
-        // },
+        {
+          id: 'topics',
+          nameKey: 'Talk.Community.topics',
+        },
       ] as {
         id: string
         nameKey: string

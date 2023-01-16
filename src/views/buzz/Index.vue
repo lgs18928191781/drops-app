@@ -1,25 +1,5 @@
 <template>
-  <div
-    class="publish flex "
-    v-if="userStore.isAuthorized"
-    @click="layout.$patch({ isShowPublishBuzz: true })"
-  >
-    <UserAvatar
-      :meta-id="userStore.user!.metaId"
-      :image="userStore.user!.avatarImage"
-      :name="userStore.user!.name"
-    />
-    <div class="cont flex1">
-      <div class="input">
-        <ElInput type="text" :placeholder="$t('Buzz.publish.placeholder')" />
-      </div>
-      <div class="operate flex flex-pack-end">
-        <a v-for="(item, index) in publishOperates" :key="index" @click="item.fun()">
-          <Icon :name="item.icon" />
-        </a>
-      </div>
-    </div>
-  </div>
+  <PublishBoxVue />
 
   <BuzzListVue
     :list="list"
@@ -46,11 +26,7 @@ import { reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import BuzzListVue from './components/BuzzList.vue'
 import { Mitt, MittEvent } from '@/utils/mitt'
-import CommunityVue from './components/recommend/Community.vue'
-import FollowVue from './components/recommend/Follow.vue'
-import GuideVue from './components/recommend/Guide.vue'
-// interface Props {}
-// const props = withDefaults(defineProps<Props>(), {})
+import PublishBoxVue from './components/PublishBox.vue'
 
 const pagination = reactive({ ...initPagination, timestamp: 0 })
 const userStore = useUserStore()
@@ -163,4 +139,4 @@ getUserFollow().then(() => {
 })
 </script>
 
-<style lang="scss" scoped src="./components/HomeBuzzList.scss"></style>
+<style lang="scss" scoped src="./Index.scss"></style>

@@ -1,5 +1,5 @@
 <template>
-  <header class="flex flex-align-center">
+  <header class="flex flex-align-center" v-if="!isHideHeader">
     <div class="flex1">
       <PhoneMenuBtnVue>
         <div class="buzz-menu flex flex-align-center">
@@ -63,6 +63,11 @@ import { useI18n } from 'vue-i18n'
 import { useLayoutStore } from '@/stores/layout'
 import PublishVue from '@/views/buzz/components/Publish.vue'
 import PhoneMenuBtnVue from '@/components/PhoneMenuBtn/PhoneMenuBtn.vue'
+
+interface Props {
+  isHideHeader?: boolean
+}
+const props = withDefaults(defineProps<Props>(), {})
 
 const rootStore = useRootStore()
 const userStore = useUserStore()

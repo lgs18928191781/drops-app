@@ -9,10 +9,13 @@ const genesis = !userStore.isAuthorized
   ? JSON.parse(localStorage.getItem(key)!)
   : []
 
-export const useRootStore = defineStore('genesis', {
+export const useGenesisStore = defineStore('genesis', {
   state: () => <GenesisItem[]>[...genesis],
   getters: {},
   actions: {
-    add: function(genesis: GenesisItem) {},
+    add: function(genesis: GenesisItem) {
+      this.$state.unshift(genesis)
+      localStorage.setItem(key, JSON.stringify({ ...this.$state }))
+    },
   },
 })

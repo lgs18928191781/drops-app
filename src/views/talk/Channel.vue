@@ -1,11 +1,11 @@
 <template>
-  <div class="relative h-screen lg:flex text-base">
+  <div class="static h-screen lg:flex text-base">
     <CommunityInfo />
 
-    <div class="lg:grow lg:h-screen lg:relative lg:flex">
+    <div class="lg:grow lg:h-screen lg:static lg:flex">
       <ChannelHeader />
 
-      <div class="pt-12 h-screen lg:relative w-full bg-dark-200 dark:bg-gray-900 lg:pt-15">
+      <div class="pt-12 h-screen lg:static w-full bg-dark-200 dark:bg-gray-900 lg:pt-15">
         <router-view :key="($route.params.channelId as string)"></router-view>
       </div>
 
