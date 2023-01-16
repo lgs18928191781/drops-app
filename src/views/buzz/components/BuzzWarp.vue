@@ -94,7 +94,6 @@ let resizeObserver: ResizeObserver
 
 function setPosition() {
   if (window.innerWidth > 750) {
-    debugger
     FastBtnRef.value.style.left =
       BuzzContainerRef.value.offsetLeft + BuzzContainerRef.value.clientWidth + 12 + 'px'
     FastBtnRef.value.style.marginRight = 0

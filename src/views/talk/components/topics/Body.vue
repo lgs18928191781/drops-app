@@ -1,6 +1,7 @@
 <template>
   <div class="warp">
     <BuzzWarp :is-hide-header="true">
+      <PublishBox />
       <div class="buzz-list-warp">
         <BuzzListVue
           :list="list"
@@ -25,6 +26,7 @@ import { reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { GetTopicBuzzs } from '@/api/aggregation'
 import { useUserStore } from '@/stores/user'
+import PublishBox from '@/views/buzz/components/PublishBox.vue'
 
 const talk = useTalkStore()
 talk.activeChannelId = 'topics'

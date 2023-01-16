@@ -1,25 +1,5 @@
 <template>
-  <div
-    class="publish flex "
-    v-if="userStore.isAuthorized"
-    @click="layout.$patch({ isShowPublishBuzz: true })"
-  >
-    <UserAvatar
-      :meta-id="userStore.user!.metaId"
-      :image="userStore.user!.avatarImage"
-      :name="userStore.user!.name"
-    />
-    <div class="cont flex1">
-      <div class="input">
-        <ElInput type="text" :placeholder="$t('Buzz.publish.placeholder')" />
-      </div>
-      <div class="operate flex flex-pack-end">
-        <a v-for="(item, index) in publishOperates" :key="index" @click="item.fun()">
-          <Icon :name="item.icon" />
-        </a>
-      </div>
-    </div>
-  </div>
+  <PublishBox />
 
   <BuzzListVue
     :list="list"
@@ -49,7 +29,7 @@ import { useRoute } from 'vue-router'
 import BuzzListVue from './BuzzList.vue'
 import { Mitt, MittEvent } from '@/utils/mitt'
 import RecommendContentVue from './RecommendContent.vue'
-import { BuzzItem } from '@/@types/common'
+import PublishBox from './PublishBox.vue'
 
 // interface Props {}
 // const props = withDefaults(defineProps<Props>(), {})
