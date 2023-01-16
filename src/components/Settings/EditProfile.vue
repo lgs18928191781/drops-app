@@ -14,7 +14,7 @@
         {{ $t('EditProfile.intro') }}
       </div>
       <div class="avatar">
-        <div class="avatar-warp" @click="isShowSecondModal = true">
+        <div class="avatar-warp" @click="choose(EditType.Avatar)">
           <UserAvatar
             :meta-id="userStore.user!.metaId"
             :image="currentAvatar.val.avatarImage"
@@ -30,14 +30,15 @@
 
       <ElForm :model="form" :rules="rule" label-width="0">
         <ElFormItem prop="metaName" label="">
-          <div class="form-item">
-            <div class="label flex flex-align-center active">MetaName <MetaName /></div>
+          <div class="form-item" @click="choose(EditType.MetaName)">
+            <div class="label flex flex-align-center ">
+              <span class="meta-name">MetaName</span><MetaName />
+            </div>
             <ElInput
               type="text"
-              v-model="form.metaName"
+              v-model="currentMetaName.val.name"
               :readonly="true"
               :placeholder="$t('EditProfile.Select MetaName')"
-              @click="choose(EditType.MetaName)"
             >
               <template #suffix>
                 <Icon name="down" class="right-icon" />
@@ -65,6 +66,14 @@
       </ElForm>
     </template>
 
+    <template #secondTitle>
+      {{
+        editType === EditType.MetaName
+          ? $t('EditProfile.Select MetaName')
+          : $t('EditProfile.Choose NFT Avatar')
+      }}
+    </template>
+
     <!-- secondBody -->
     <template #secondBody>
       <template v-if="editType === EditType.Avatar">
@@ -74,7 +83,12 @@
         />
       </template>
       <template v-else>
-        <ChooseMetaNameVue @change="onChangeMetaName" />
+        <div class="choose-meta-name-warp">
+          <div class="tips">
+            {{ $t('EditProfile.MetaNameTips') }}
+          </div>
+          <ChooseMetaNameVue @change="onChangeMetaName" :name="currentMetaName.val.name" />
+        </div>
       </template>
     </template>
   </ModalVue>
@@ -112,20 +126,10 @@ const currentAvatar: { val: NFTAvatarItem } = reactive({
     avatarImage: userStore.user?.avatarImage,
   },
 })
+// @ts-ignore
 const currentMetaName: { val: MetaNameItem } = reactive({
   val: {
-    codeHash: '',
-    expiredBlockHeight: -1,
-    genesis: '',
-    icon: '',
-    infos: '',
-    mnsIndex: 0,
-    name: '',
-    op: 0,
-    resolver: '',
-    tokenIndex: '',
-    txid: '',
-    expireDate: '',
+    name: userStore.user?.metaName || '',
   },
 })
 
@@ -140,7 +144,6 @@ watch(
 
 const form = reactive({
   name: userStore.user!.name,
-  metaName: '',
 })
 
 const rule = {
@@ -157,7 +160,8 @@ async function confirm() {
   if (
     form.name === '' ||
     (form.name === userStore.user!.name &&
-      currentAvatar.val.avatarImage === userStore.user?.avatarImage)
+      currentAvatar.val.avatarImage === userStore.user?.avatarImage &&
+      userStore.user!.metaName === currentMetaName.val!.name)
   )
     return
   loading.value = true
@@ -190,6 +194,22 @@ async function confirm() {
       })
     }
 
+    if (currentMetaName.val.name !== userStore.user!.metaName) {
+      paramsList.push({
+        nodeName: NodeName.NftName,
+        data: JSON.stringify({
+          type: currentMetaName.val.name === '' ? 'name' : 'nft', //string type 取值⻅下⽅
+          chain: 'mvc', //string type 链类型
+          name: currentMetaName.val.name, //string type, 图片路由
+          codehash: currentMetaName.val.codeHash, //string type nft的codehash
+          genesis: currentMetaName.val.genesis, //string type nft的genesis 或 nft的tokenAddress
+          tokenIndex: currentMetaName.val.tokenIndex, //string type nft的tokenIndex 或 nft的tokenId
+          updateTime: new Date().getTime(), //long type 更新时间
+          memo: '', //string type 备注 预留字段
+        }),
+      })
+    }
+
     const res = await userStore.showWallet.batchCreateBrfcChildNode(paramsList)
     if (res) {
       emit('update:modelValue', false)
@@ -199,6 +219,7 @@ async function confirm() {
         ...userStore.user,
         name: form.name,
         avatarImage: currentAvatar.val.avatarImage,
+        metaName: currentMetaName.val.name,
       })
       ElMessage.success(i18n.t('Setting.Edit Profile') + ' ' + i18n.t('Success'))
       loading.value = false
@@ -215,7 +236,15 @@ function choose(type: EditType) {
 }
 
 function onChangeMetaName(metaName: MetaNameItem) {
-  currentMetaName.val = metaName
+  debugger
+  if (metaName.name === currentMetaName.val.name) {
+    // @ts-ignore
+    currentMetaName.val = {
+      name: '',
+    }
+  } else {
+    currentMetaName.val = metaName
+  }
 }
 </script>
 

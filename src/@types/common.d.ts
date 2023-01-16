@@ -39,6 +39,7 @@ declare interface UserInfo {
   flag?: boolean
   evmAddress?: string
   loginType: 'MetaId' | 'MetaMask'
+  metaName: string
 }
 
 declare interface SetUserInfo extends UserInfo {

@@ -17,11 +17,19 @@
         class="flex space-x-1.5 items-center cursor-pointer hover:bg-dark-100 dark:hover:bg-gray-900 rounded py-3 px-4"
         @click="selectMetaName(metaName)"
       >
-        <div class="text-lg meta-name">
-          {{ metaName.name }}
-        </div>
+        <div class="flex1 flex flex-align-center">
+          <div class="text-lg meta-name flex flex-align-center">
+            {{ metaName.name }}
+          </div>
 
-        <MetaNameTag />
+          <MetaNameTag class="ml-2" />
+        </div>
+        <span
+          class="check-warp flex flex-align-center flex-pack-center"
+          v-if="metaName.name === name"
+        >
+          <Icon name="check" />
+        </span>
       </div>
     </div>
 
@@ -44,7 +52,11 @@ import { useTalkStore } from '@/stores/talk'
 import { useCommunityFormStore } from '@/stores/forms'
 import { useLayoutStore } from '@/stores/layout'
 import MetaNameTag from '@/components/MetaName/Tag.vue'
-import { emit } from 'process'
+
+interface Props {
+  name?: string
+}
+const props = withDefaults(defineProps<Props>(), {})
 
 const emit = defineEmits(['change'])
 const talk = useTalkStore()

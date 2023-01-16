@@ -502,7 +502,8 @@
     "MetaName": {
       "drsc": "MetaName 将优先作为用户名。"
     },
-    "Select MetaName": "选择 MetaName..."
+    "Select MetaName": "选择 MetaName...",
+    "Choose NFT Avatar": "选择NFT头像"
   },
   "UplinkSetting": {
     "Uplink Payment Confirmation": "上链支付确认",
