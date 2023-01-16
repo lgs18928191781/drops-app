@@ -22,7 +22,7 @@ export const useCommunityFormStore = defineStore('communityForm', {
       description: '',
       cover: null as File | null,
       name: '',
-      metaName: null as any,
+      metaName: null as MetaNameItem | null,
     }
   },
 

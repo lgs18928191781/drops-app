@@ -506,3 +506,24 @@ declare interface AnnouncementItem {
   title: string
   txId: string
 }
+
+declare interface MetaNameItem {
+  codeHash: string
+  expiredBlockHeight: number
+  genesis: string
+  icon: string
+  infos: {
+    IPFS: string
+    discord: string
+    icon: string
+    mvc: string
+    url: string
+  }
+  mnsIndex: number
+  op: number
+  resolver: string
+  tokenIndex: string
+  txid: string
+  communityId: string
+  signature?: string
+}

@@ -57,7 +57,7 @@
             <div class="flex items-center gap-x-1.5">
               <template v-if="form.metaName">
                 <span class="text-sm meta-name">
-                  {{ form.metaName.metaName }}
+                  {{ form.metaName.name }}
                 </span>
 
                 <Icon name="tag_nft" class="w-9.5 h-4" />

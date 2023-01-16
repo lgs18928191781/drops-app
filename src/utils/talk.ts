@@ -25,11 +25,21 @@ import { useJobsStore } from '@/stores/jobs'
 import { ElMessage } from 'element-plus'
 import { GetOneAnnouncement } from '@/api/aggregation'
 
+type CommunityData = {
+  communityId: string
+  name: string
+  metaName: string
+  icon: string | null
+  admins: string[]
+  description: string
+  cover: string | null
+  reserved?: string
+}
+
 export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   // communityId, name, description, cover, metaName, mateNameNft, admins, reserved, icon
   const { icon, metaName, description, cover, name } = form
   const communityId = metaName.communityId
-  const reserved = metaName.signature
 
   const attachments = []
   attachments.push(await FileToAttachmentItem(icon))
@@ -43,16 +53,17 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   }
 
   const admins = [userStore.user?.metaId]
-  const dataCarrier = {
+  const dataCarrier: CommunityData = {
     communityId,
     name,
-    metaName: metaName.metaName,
-    // metaNameNft: ''
+    metaName: metaName.name,
     icon: iconPlaceholder,
     admins,
     description,
     cover: coverPlaceholder || '',
-    reserved,
+  }
+  if (metaName.signature) {
+    dataCarrier.reserved = metaName.signature
   }
   console.log({ dataCarrier })
 
@@ -93,7 +104,7 @@ export const updateCommunity = async (form: any, sdk: SDK) => {
 
   const admins = original.admins
 
-  const dataCarrier = {
+  const dataCarrier: CommunityData = {
     communityId: metaName.communityId,
     name,
     metaName: metaName.metaName,
@@ -101,7 +112,10 @@ export const updateCommunity = async (form: any, sdk: SDK) => {
     admins,
     description,
     cover: coverPlaceholder || '',
-    reserved: metaName.signature,
+  }
+
+  if (metaName.signature) {
+    dataCarrier.reserved = metaName.signature
   }
   console.log({ dataCarrier, form, original })
 
