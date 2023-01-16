@@ -113,7 +113,8 @@
       "delete": "删除",
       "update": "更新",
       "edit_announcement": "编辑公告",
-      "title_is": "标题 "
+      "title_is": "标题 ",
+      "read_more": "查看全文"
     },
     "Modals": {
       "enter_password": "请输入密码",

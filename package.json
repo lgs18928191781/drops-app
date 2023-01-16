@@ -6,10 +6,10 @@
     "gray": "yarn vite --host --mode gray",
     "prod": "yarn vite --mode prod",
     "prev": "yarn vite --mode preview",
-    "build:dev2": "node --max_old_space_size=14336 ./node_modules/vite/bin/vite.js build --mode dev2",
-    "build:gray": "node --max_old_space_size=14336 ./node_modules/vite/bin/vite.js build --mode gray",
-    "build:prod": "node --max_old_space_size=14336 ./node_modules/vite/bin/vite.js build --mode prod",
-    "build:preview": "node --max_old_space_size=14336 ./node_modules/vite/bin/vite.js build --mode preview"
+    "build:dev2": "node --max_old_space_size=12336 ./node_modules/vite/bin/vite.js build --mode dev2",
+    "build:gray": "node --max_old_space_size=12336 ./node_modules/vite/bin/vite.js build --mode gray",
+    "build:prod": "node --max_old_space_size=12336 ./node_modules/vite/bin/vite.js build --mode prod",
+    "build:preview": "node --max_old_space_size=12336 ./node_modules/vite/bin/vite.js build --mode preview"
   },
   "dependencies": {
     "@harlem/core": "^2.3.9",
@@ -67,6 +67,7 @@
   "devDependencies": {
     "@intlify/vite-plugin-vue-i18n": "^2.3.0",
     "@rollup/plugin-inject": "^5.0.0",
+    "@tailwindcss/line-clamp": "^0.4.2",
     "@types/crypto-js": "^4.1.1",
     "@types/node": "^15.14.0",
     "@types/qrcode": "^1.5.0",

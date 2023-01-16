@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 //@ts-ignore
 import namehash from 'eth-ens-namehash'
@@ -27,7 +27,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {})
 const value = ref(props.metaName ? encodeURIComponent(props.metaName) : '')
-
+const MetaNameReg = /\./g
 const i18n = useI18n()
 const emit = defineEmits(['submit', 'error'])
 
@@ -35,6 +35,7 @@ function submit() {
   if (value.value === '') {
     return ElMessage.error(i18n.t('MetaName.MetaName cannot be empty'))
   }
+
   const name = validateMetaName()
   if (!name) {
     return ElMessage.error(`${i18n.t('inputMetaNameIllgel')}`)
@@ -66,11 +67,17 @@ function checkInputName(name: string) {
 }
 
 const validateMetaName = () => {
+  let illgelRes: any
+
   try {
-    const illgelRes = namehash.normalize(value.value)
+    illgelRes = namehash.normalize(value.value)
+    if (MetaNameReg.test(illgelRes)) return false
     return illgelRes
   } catch {
-    return false
+    const { content } = JSON.parse(`{"content":"${value.value}"}`)
+    illgelRes = namehash.normalize(content)
+    if (MetaNameReg.test(illgelRes)) return false
+    return illgelRes
   }
 }
 </script>
