@@ -93,9 +93,12 @@ const BuuzWarpRef = ref()
 let resizeObserver: ResizeObserver
 
 function setPosition() {
-  if (window.innerWidth > 750) {
+  if (window.innerWidth > 1368) {
     FastBtnRef.value.style.left =
-      BuzzContainerRef.value.offsetLeft + BuzzContainerRef.value.clientWidth + 12 + 'px'
+      BuzzContainerRef.value.getBoundingClientRect().left +
+      BuzzContainerRef.value.clientWidth +
+      12 +
+      'px'
     FastBtnRef.value.style.marginRight = 0
   } else {
     FastBtnRef.value.style.right = '5%'
