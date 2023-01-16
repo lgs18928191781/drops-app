@@ -1,9 +1,5 @@
 <template>
-  <div
-    class="publish flex "
-    v-if="userStore.isAuthorized"
-    @click="layout.$patch({ isShowPublishBuzz: true })"
-  >
+  <div class="publish flex " v-if="userStore.isAuthorized" @click="publish">
     <UserAvatar
       :meta-id="userStore.user!.metaId"
       :image="userStore.user!.avatarImage"
@@ -14,7 +10,7 @@
         <ElInput type="text" :placeholder="$t('Buzz.publish.placeholder')" />
       </div>
       <div class="operate flex flex-pack-end">
-        <a v-for="(item, index) in publishOperates" :key="index" @click="item.fun()">
+        <a v-for="(item, index) in publishOperates" :key="index">
           <Icon :name="item.icon" />
         </a>
       </div>
@@ -25,6 +21,11 @@
 <script setup lang="ts">
 import { useLayoutStore } from '@/stores/layout'
 import { useUserStore } from '@/stores/user'
+
+interface Props {
+  topic?: string
+}
+const props = withDefaults(defineProps<Props>(), {})
 
 const layout = useLayoutStore()
 const userStore = useUserStore()
@@ -47,6 +48,12 @@ const publishOperates = [
     fun: () => {},
   },
 ]
+
+function publish() {
+  const params: any = {}
+  if (props.topic) params.topic = props.topic
+  layout.publish(params)
+}
 </script>
 
 <style lang="scss" scoped src="./PublishBox.scss"></style>

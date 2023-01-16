@@ -1,7 +1,7 @@
 <template>
   <div class="warp">
     <BuzzWarp :is-hide-header="true">
-      <PublishBox />
+      <PublishBox :topic="talk.activeCommunity?.name || ''" />
       <div class="buzz-list-warp">
         <BuzzListVue
           :list="list"
