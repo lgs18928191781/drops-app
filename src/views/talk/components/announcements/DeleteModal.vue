@@ -12,7 +12,7 @@
             {{ $t('Talk.General.delete_announcement_tip') }}
           </p>
           <div class="mt-4">
-            <span class="text-dark-300 dark:text-gray-400">title: </span>
+            <span class="text-dark-300 dark:text-gray-400">{{ $t('Talk.General.title_is') }} </span>
             <span class="bg-dark-200 dark:bg-gray-900 text-base font-medium py-1 px-3 rounded-md">
               {{ deleteForm.title }}
             </span>
