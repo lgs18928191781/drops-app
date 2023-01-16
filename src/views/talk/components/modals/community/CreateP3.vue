@@ -13,12 +13,12 @@
     <div class="flex flex-col overflow-y-auto slim-scrollbar" v-else-if="metaNames.length > 0">
       <div
         v-for="metaName in metaNames"
-        :key="metaName.metaName"
+        :key="metaName.name"
         class="flex space-x-1.5 items-center cursor-pointer hover:bg-dark-100 dark:hover:bg-gray-900 rounded py-3 px-4"
         @click="selectMetaName(metaName)"
       >
         <div class="text-lg meta-name">
-          {{ metaName.metaName }}
+          {{ metaName.name }}
         </div>
 
         <MetaNameTag />
@@ -50,7 +50,7 @@ const layout = useLayoutStore()
 const form = useCommunityFormStore()
 
 const fetching = ref(false)
-const metaNames: Ref<any[]> = ref([])
+const metaNames: Ref<MetaNameItem[]> = ref([])
 
 const fetchMetaNames = async () => {
   // const _ = await getMetaNames({ metaId: talk.selfMetaId, page: 1, pageSize: 20 })

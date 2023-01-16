@@ -33,7 +33,7 @@ export const getMetaNames = async (params?: any): Promise<any[]> => {
   })
 }
 
-export const getNewMetaNames = async (params?: any): Promise<any[]> => {
+export const getNewMetaNames = async (params?: any): Promise<MetaNameItem[]> => {
   const { address, ..._params } = params
   delete params.metaId
 
