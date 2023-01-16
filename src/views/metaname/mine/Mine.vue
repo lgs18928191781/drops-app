@@ -59,6 +59,9 @@
                 </div>
               </div>
             </div>
+
+            <IsNull v-if="list.length === 0" />
+            <LoadMore v-else :pagination="pagination" />
           </ElSkeleton>
         </div>
       </div>
@@ -84,6 +87,8 @@ import { GetExpiredUTC } from '@/utils/util'
 import { reactive, ref } from 'vue'
 import PlainBtnVue from '../components/PlainBtn/PlainBtn.vue'
 import RenewModal from '../components/RenewModal/RenewModal.vue'
+import IsNull from '@/components/IsNull/IsNull.vue'
+import LoadMore from '@/components/LoadMore/LoadMore.vue'
 
 const userStore = useUserStore()
 const isShowRenew = ref(false)
@@ -132,7 +137,14 @@ function getBlock() {
   })
 }
 
-function load() {}
+function load() {
+  if (isSkeleton.value || pagination.loading || pagination.nothing) return
+  pagination.page++
+  pagination.loading = true
+  getDatas().then(() => {
+    pagination.loading = false
+  })
+}
 
 function refreshDatas() {
   pagination.page = 1

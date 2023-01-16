@@ -29,7 +29,7 @@
       </div>
 
       <ElForm :model="form" :rules="rule" label-width="0">
-        <!-- <ElFormItem prop="metaName" label="">
+        <ElFormItem prop="metaName" label="">
           <div class="form-item">
             <div class="label flex flex-align-center active">MetaName <MetaName /></div>
             <ElInput type="text" v-model="form.metaName" />
@@ -37,7 +37,7 @@
               {{ $t('EditProfile.MetaName.drsc') }}
             </div>
           </div>
-        </ElFormItem> -->
+        </ElFormItem>
         <ElFormItem prop="name">
           <div class="form-item">
             <div class="label">{{ $t('EditProfile.User Name') }}</div>
