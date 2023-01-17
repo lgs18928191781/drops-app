@@ -40,10 +40,14 @@
               <Image class="cover" :src="item.icon" />
               <div class="cont flex1">
                 <div class="name">{{ item.name }}</div>
-                <div class="time">
-                  {{ $t('MetaName.Expire date') }}:&nbsp;{{ $t('MetaName.About') }}&nbsp;{{
-                    $filters.dateTimeFormat(item.expireDate)
-                  }}
+                <div :class="[remindExpired(item.expireDate) ? 'waringTime' : 'time']">
+                  {{
+                    remindExpired(item.expireDate)
+                      ? $t('MetaName.ReadyExpire')
+                      : $t('MetaName.Expire date')
+                  }}:&nbsp;{{ $t('MetaName.About') }}&nbsp;{{
+                    $filters.dateTimeFormat(item.expireDate, 'UTC')
+                  }}(UTC)
                 </div>
                 <div class="operate flex flex-align-center flex-pack-end">
                   <a class="btn primary" @click="renewItem(item)">
@@ -84,7 +88,7 @@ import { GetExpiredUTC } from '@/utils/util'
 import { reactive, ref } from 'vue'
 import PlainBtnVue from '../components/PlainBtn/PlainBtn.vue'
 import RenewModal from '../components/RenewModal/RenewModal.vue'
-
+import { remindExpired } from '@/utils/util'
 const userStore = useUserStore()
 const isShowRenew = ref(false)
 const list: MetaNameItem[] = reactive([])

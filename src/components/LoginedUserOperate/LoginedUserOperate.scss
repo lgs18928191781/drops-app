@@ -1,3 +1,10 @@
+.outsideMore{
+     margin-right: 14px;
+      .metanameLogo{
+        width: 22px;
+        height: 22px;
+    }
+}
 .user-warp {
 
     .avatar{
@@ -18,7 +25,7 @@
     &.active {
         border-color: var(--border-color);
     }
-
+   
     .icon {
         width: 22px;
         height: 22px;
