@@ -521,6 +521,7 @@ function createMetaidAccount() {
                 hashData: ethAddress.value,
                 mnemonic: encryptmnemonic,
                 userName: account.name,
+                path: parseInt(import.meta.env.VITE_WALLET_PATH),
             })
             // @ts-ignore
             if (userInfo.code == 0) {

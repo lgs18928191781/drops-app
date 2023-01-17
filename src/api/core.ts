@@ -148,6 +148,7 @@ interface SetUserWalletInfoParams extends BaseUserInfoParams {
   remark: string
   type?: number
   headers?: ObjTypes<string | number>
+  path: number
 }
 // 提交用户钱包信息
 export const SetUserWalletInfo = (params: SetUserWalletInfoParams): Promise<ApiResultTypes> => {
@@ -215,7 +216,6 @@ export const GetWordBeforeReg = (params: { evmAddress: string; chainId: string }
 }
 
 //新用户登录
-
 export const LoginByNewUser = (params: {
   word: string
   address: string
@@ -225,6 +225,7 @@ export const LoginByNewUser = (params: {
   evmAddress: string
   chainId: string
   userName: string
+  path: number | string
 }) => {
   return Core.post(`/api/v1/evm/wallet/mnemonic/info/add`, params)
 }
@@ -248,6 +249,7 @@ export const LoginByNewUser = (params: {
 export const LoginByEthAddress = (params: {
   evmAddress: string
   chainId: string
+  path: number
 }): Promise<any> => {
   return Core.post(`/api/v1/evm/wallet/mnemonic/check`, params)
 }

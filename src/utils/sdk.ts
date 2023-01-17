@@ -233,7 +233,8 @@ export class SDK {
               ...userInfo,
               password: password,
             },
-            this.network
+            this.network,
+            userInfo.path
           )
 
           const wallet = new HdWallet(walletObj.wallet)

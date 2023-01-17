@@ -128,7 +128,7 @@
     ref="BindMetaIdRef"
     v-model="isShowBindModal"
     @register="isShowSetBaseInfo = true"
-    @success="onModalClose"
+    @finish="onModalClose"
   />
 </template>
 
@@ -365,6 +365,7 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
   const getMnemonicRes = await LoginByEthAddress({
     evmAddress: params.address,
     chainId: window.ethereum.chainId,
+    path: parseInt(import.meta.env.VITE_WALLET_PATH),
   }).catch(error => {
     if (error.code === -1) {
       // 还没绑定
