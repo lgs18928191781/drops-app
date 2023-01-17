@@ -249,8 +249,15 @@ export const LoginByNewUser = (params: {
 export const LoginByEthAddress = (params: {
   evmAddress: string
   chainId: string
-  path: number
-}): Promise<any> => {
+}): Promise<{
+  code: number
+  data: {
+    evmEnMnemonic: string
+    metaId: string
+    path: number
+    registerSource: string
+  }
+}> => {
   return Core.post(`/api/v1/evm/wallet/mnemonic/check`, params)
 }
 
@@ -260,6 +267,6 @@ export const GetMetaIdByLoginName = (params: {
   email?: string
   evmAddress?: string
   chainId?: string
-}): Promise<{ code: number; result: { metaId: string } }> => {
+}): Promise<{ code: number; result: { metaId: string; path: number; enMnemonic: string } }> => {
   return Core.post(`/api/v1/evm/wallet/user/info`, params)
 }

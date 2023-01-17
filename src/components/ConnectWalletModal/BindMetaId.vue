@@ -348,11 +348,15 @@ function submitForm() {
           const getMnemonicRes = await LoginByEthAddress({
             evmAddress: props.thirdPartyWallet.address,
             chainId: window.ethereum.chainId,
-            path: parseInt(import.meta.env.VITE_WALLET_PATH),
           })
 
           if (getMnemonicRes?.code === 0 && getMnemonicRes.data) {
-            res = await loginByMnemonic(getMnemonicRes.data.evmEnMnemonic, form.pass)
+            res = await loginByMnemonic(
+              getMnemonicRes.data.evmEnMnemonic,
+              form.pass,
+              false,
+              getMnemonicRes.data.path
+            )
           }
         } else if (status.value === BindStatus.BindSuccess) {
           emit('update:modelValue', false)
@@ -758,7 +762,7 @@ function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
   })
 }
 
-function loginByMnemonic(mnemonic: string, password: string, isInitMnemonic = false) {
+function loginByMnemonic(mnemonic: string, password: string, isInitMnemonic = false, path: number) {
   return new Promise<BindMetaIdRes>(async (resolve, reject) => {
     try {
       const decodeMnemonic = decryptMnemonic(mnemonic, password)
@@ -766,7 +770,13 @@ function loginByMnemonic(mnemonic: string, password: string, isInitMnemonic = fa
       const word = await GetRandomWord()
 
       if (word.code == 0) {
-        const hdWallet = await hdWalletFromMnemonic(decodeMnemonic, 'new', Network.testnet)
+        debugger
+        const hdWallet = await hdWalletFromMnemonic(
+          decodeMnemonic,
+          'new',
+          import.meta.env.VITE_NET_WORK,
+          path
+        )
 
         const sign = signature(
           word.data.word,
@@ -817,6 +827,7 @@ function bindingMetaidOrAddressLogin() {
       }
 
       const resp = await GetMetaIdByLoginName(params)
+      debugger
 
       if (resp.code === 0) {
         // const mnemonic = await loginByMetaidOrAddress({
@@ -824,7 +835,12 @@ function bindingMetaidOrAddressLogin() {
         // })
         // @ts-ignore
         if (resp.code == 0) {
-          const res = await loginByMnemonic(resp.result.enMnemonic, form.pass, true)
+          const res = await loginByMnemonic(
+            resp.result.enMnemonic,
+            form.pass,
+            true,
+            resp.result.path
+          )
 
           console.log('res', res)
           console.log('userStore', userStore)

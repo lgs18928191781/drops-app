@@ -39,10 +39,11 @@
               :model-value="form.genesis ? form.genesis.genesis + '/' + form.genesis.codehash : ''"
             >
               <ElOption
-                v-for="item in genesisList"
+                v-for="item in genesisStore.list"
                 :key="item.codehash + item.genesis"
                 :label="item.seriesName"
                 :value="item.genesis + '/' + item.codehash"
+                @click="form.genesis = item"
               ></ElOption>
             </ElSelect>
           </div>
@@ -201,6 +202,7 @@ import { ElSwitch, FormInstance } from 'element-plus'
 import { reactive, ref } from 'vue'
 import AddImageWarpVue from '@/components/AddImageWarp/AddImageWarp.vue'
 import CreateGenesis from './CreateGenesis.vue'
+import { useGenesisStore } from '@/stores/genesis'
 
 interface Props {
   modelValue: boolean
@@ -210,6 +212,7 @@ const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits(['confirm', 'update:modelValue'])
 const FormRef = ref<FormInstance>()
 const userStore = useUserStore()
+const genesisStore = useGenesisStore()
 const genesisList: GenesisItem[] = reactive([])
 const form: IssueNFTOption = reactive({
   name: '',
