@@ -601,7 +601,9 @@
     "Genesis Count": "系列NFT个数",
     "Enter genesis nft count": "请填写系列NFT个数",
     "Genesis nft count must more than1": "系列NFT个数必须大于等于1",
-    "Create genesis success": "创建系列成功"
+    "Create genesis success": "创建系列成功",
+    "issueToknIndex": "所在系列序号",
+    "Confirm Issue": "确认铸造"
   },
   "My NFT": "我的NFT",
   "Done": "完成",

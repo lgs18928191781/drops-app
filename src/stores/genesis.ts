@@ -21,7 +21,7 @@ export const useGenesisStore = defineStore('genesis', {
   actions: {
     add: function(genesis: GenesisItem) {
       this.list.unshift(genesis)
-      localStorage.setItem(key, JSON.stringify({ ...this.list }))
+      localStorage.setItem(key, JSON.stringify([...this.list]))
     },
   },
 })

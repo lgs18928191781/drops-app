@@ -634,7 +634,7 @@ async function offSale() {
 }
 
 function toSale() {
-  return ElMessage.info(i18n.t('Comming Soon'))
+  // return ElMessage.info(i18n.t('Comming Soon'))
   isShowSell.value = true
 }
 
@@ -690,6 +690,7 @@ function getMoreRecords() {
 }
 
 onMounted(() => {
+  console.log(userStore.user)
   if (route.params.genesis && route.params.codehash && route.params.tokenIndex) {
     getDetail().then(() => {
       isShowSkeleton.value = false

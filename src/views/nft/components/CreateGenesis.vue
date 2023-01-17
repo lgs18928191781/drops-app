@@ -83,6 +83,7 @@ async function genesis() {
       loading.value = false
     })
   if (res) {
+    debugger
     genesisStore.add({
       codehash: res.currentNode!.codehash,
       count: 0,
@@ -93,6 +94,7 @@ async function genesis() {
       pendingCount: 0,
       seriesName: form.name,
       totalSupply: form.count,
+      sensibleId: res.currentNode!.sensibleId,
     })
     FormRef.value.resetFields()
     loading.value = false

@@ -80,6 +80,7 @@ import { CreatePayOrder, setPayQuitUrl } from '@/utils/util'
 import { useRoute } from 'vue-router'
 import StartPayVue from '../StartPay/StartPay.vue'
 import { ElMessage } from 'element-plus'
+import Decimal from 'decimal.js-light'
 
 const props = defineProps<{
   modelValue: boolean
@@ -137,8 +138,7 @@ async function confirmBuy() {
     ElMessage.error(error.message)
   })
   if (res) {
-    debugger
-    payMsg.amount = res.amount
+    payMsg.amount = res.pay_amount!.toString()
     payMsg.orderId = res.wxCoreOrderId
     payMsg.url = res.url
     isShowPayModal.value = true

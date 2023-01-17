@@ -361,7 +361,6 @@ async function connectMetaLet() {
 
 async function onThreePartLinkSuccess(params: { signAddressHash: string; address: string }) {
   //检查hash是否已绑定
-  debugger
   const getMnemonicRes = await LoginByEthAddress({
     evmAddress: params.address,
     chainId: window.ethereum.chainId,
@@ -388,7 +387,6 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
 
     try {
       let signHashForMnemonic
-      debugger
       res = await BindMetaIdRef.value.loginByMnemonic(
         getMnemonicRes.data.evmEnMnemonic,
         MD5(params.signAddressHash).toString(),

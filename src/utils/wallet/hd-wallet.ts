@@ -454,6 +454,7 @@ export class HdWallet {
   public provider: ShowmoneyProvider
   private _utxos: MetasvUtxoTypes[] = []
   public _root: bsv.PrivateKey
+  private protocols = []
   public keyPathMap: KeyPathObjTypes = {
     Root: {
       keyPath: '0/0',

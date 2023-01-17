@@ -373,7 +373,6 @@ function submitForm() {
 }
 
 function loginSuccess(params: BindMetaIdRes) {
-  debugger
   console.log('params', params)
   return new Promise<void>(async (resolve, reject) => {
     try {
@@ -419,9 +418,6 @@ function loginSuccess(params: BindMetaIdRes) {
 
       //   }
       // }
-
-      console.log('userStore', userStore)
-      debugger
       userStore.updateUserInfo({
         ...params.userInfo,
         ...metaIdInfo.data,
@@ -555,7 +551,6 @@ function createMetaidAccount() {
               ? props.thirdPartyWallet.address
               : window.ethereum.selectedAddress,
           })
-          debugger
           const newUserInfo = Object.assign(getUserInfoRes.data, {
             metaId: metaId,
             evmAddress: props.thirdPartyWallet.address
@@ -770,7 +765,6 @@ function loginByMnemonic(mnemonic: string, password: string, isInitMnemonic = fa
       const word = await GetRandomWord()
 
       if (word.code == 0) {
-        debugger
         const hdWallet = await hdWalletFromMnemonic(
           decodeMnemonic,
           'new',
@@ -827,7 +821,6 @@ function bindingMetaidOrAddressLogin() {
       }
 
       const resp = await GetMetaIdByLoginName(params)
-      debugger
 
       if (resp.code === 0) {
         // const mnemonic = await loginByMetaidOrAddress({

@@ -465,6 +465,7 @@ declare interface GenesisItem {
   pendingCount: number
   seriesName: string
   totalSupply: number
+  sensibleId: string
 }
 
 declare interface Order {
