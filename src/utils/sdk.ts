@@ -187,6 +187,11 @@ export const AllNodeName: {
     path: '/Protocols/SimpleAnnouncementQuote',
     version: '1.0.5',
   },
+  [NodeName.NftName]: {
+    brfcId: '6ed1b1d1119d',
+    path: '/Protocols/NftName',
+    version: '1.0.0',
+  },
 }
 
 export class SDK {
@@ -228,7 +233,8 @@ export class SDK {
               ...userInfo,
               password: password,
             },
-            this.network
+            this.network,
+            userInfo.path
           )
 
           const wallet = new HdWallet(walletObj.wallet)

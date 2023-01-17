@@ -293,6 +293,7 @@ export enum NodeName {
   SimpleFileMsg = 'SimpleFileMsg',
   SimpleCreateAnnouncement = 'SimpleCreateAnnouncement',
   SimpleAnnouncementQuote = 'SimpleAnnouncementQuote',
+  NftName = 'NftName',
 }
 
 export const enum BindStatus {

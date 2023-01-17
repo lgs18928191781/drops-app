@@ -139,7 +139,6 @@
 </template>
 
 <script setup lang="ts">
-import { BindMetaIdRes, BindUserInfo } from '@/@types/common'
 import { GetUserInfo, GetBindMetaidAddressList } from '@/api/aggregation'
 import {
   GetMetaIdByLoginName,
@@ -352,7 +351,12 @@ function submitForm() {
           })
 
           if (getMnemonicRes?.code === 0 && getMnemonicRes.data) {
-            res = await loginByMnemonic(getMnemonicRes.data.evmEnMnemonic, form.pass)
+            res = await loginByMnemonic(
+              getMnemonicRes.data.evmEnMnemonic,
+              form.pass,
+              false,
+              getMnemonicRes.data.path
+            )
           }
         } else if (status.value === BindStatus.BindSuccess) {
           emit('update:modelValue', false)
@@ -369,6 +373,7 @@ function submitForm() {
 }
 
 function loginSuccess(params: BindMetaIdRes) {
+  debugger
   console.log('params', params)
   return new Promise<void>(async (resolve, reject) => {
     try {
@@ -416,7 +421,7 @@ function loginSuccess(params: BindMetaIdRes) {
       // }
 
       console.log('userStore', userStore)
-
+      debugger
       userStore.updateUserInfo({
         ...params.userInfo,
         ...metaIdInfo.data,
@@ -481,7 +486,12 @@ function createMetaidAccount() {
     try {
       const mnemonic = await createMnemonic(props.thirdPartyWallet.signAddressHash)
 
-      const hdWallet = await hdWalletFromMnemonic(mnemonic, 'new', Network.testnet)
+      const hdWallet = await hdWalletFromMnemonic(
+        mnemonic,
+        'new',
+        Network.testnet,
+        import.meta.env.VITE_WALLET_PATH
+      )
 
       const HdWalletInstance = new HdWallet(hdWallet)
 
@@ -504,7 +514,7 @@ function createMetaidAccount() {
       console.log('hdWallet', HdWalletInstance)
 
       if ((window as any).WallectConnect) {
-        // await window.WallectConnect.connect()
+        // WallectConnect
         const encryptmnemonic = encryptMnemonic(
           mnemonic,
           MD5(props.thirdPartyWallet.signAddressHash).toString()
@@ -527,6 +537,7 @@ function createMetaidAccount() {
           evmAddress: props.thirdPartyWallet.address,
           chainId: window.ethereum.chainId,
           userName: account.name,
+          path: parseInt(import.meta.env.VITE_WALLET_PATH),
         })
         // @ts-ignore
         if (getUserInfoRes.code == 0) {
@@ -544,7 +555,7 @@ function createMetaidAccount() {
               ? props.thirdPartyWallet.address
               : window.ethereum.selectedAddress,
           })
-
+          debugger
           const newUserInfo = Object.assign(getUserInfoRes.data, {
             metaId: metaId,
             evmAddress: props.thirdPartyWallet.address
@@ -552,6 +563,7 @@ function createMetaidAccount() {
               : window.ethereum.selectedAddress,
             enCryptedMnemonic: encryptmnemonic,
             chainId: window.ethereum.chainId,
+            path: parseInt(import.meta.env.VITE_WALLET_PATH),
           })
           await sendHash(newUserInfo)
 
@@ -565,6 +577,7 @@ function createMetaidAccount() {
           })
         }
       } else {
+        // MetaMask
         const encryptmnemonic = encryptMnemonic(
           mnemonic,
           MD5(props.thirdPartyWallet.signAddressHash).toString()
@@ -588,6 +601,7 @@ function createMetaidAccount() {
           evmAddress: props.thirdPartyWallet.address,
           chainId: window.ethereum.chainId,
           userName: account.name,
+          path: parseInt(import.meta.env.VITE_WALLET_PATH),
         })
         // @ts-ignore
         if (getUserInfoRes.code == 0) {
@@ -612,6 +626,7 @@ function createMetaidAccount() {
               : window.ethereum.selectedAddress,
             enCryptedMnemonic: encryptmnemonic,
             chainId: window.ethereum.chainId,
+            path: parseInt(import.meta.env.VITE_WALLET_PATH),
           })
           await sendHash(newUserInfo)
           resolve({
@@ -747,7 +762,7 @@ function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
   })
 }
 
-function loginByMnemonic(mnemonic: string, password: string, isInitMnemonic = false) {
+function loginByMnemonic(mnemonic: string, password: string, isInitMnemonic = false, path: number) {
   return new Promise<BindMetaIdRes>(async (resolve, reject) => {
     try {
       const decodeMnemonic = decryptMnemonic(mnemonic, password)
@@ -755,7 +770,13 @@ function loginByMnemonic(mnemonic: string, password: string, isInitMnemonic = fa
       const word = await GetRandomWord()
 
       if (word.code == 0) {
-        const hdWallet = await hdWalletFromMnemonic(decodeMnemonic, 'new', Network.testnet)
+        debugger
+        const hdWallet = await hdWalletFromMnemonic(
+          decodeMnemonic,
+          'new',
+          import.meta.env.VITE_NET_WORK,
+          path
+        )
 
         const sign = signature(
           word.data.word,
@@ -806,6 +827,7 @@ function bindingMetaidOrAddressLogin() {
       }
 
       const resp = await GetMetaIdByLoginName(params)
+      debugger
 
       if (resp.code === 0) {
         // const mnemonic = await loginByMetaidOrAddress({
@@ -813,7 +835,12 @@ function bindingMetaidOrAddressLogin() {
         // })
         // @ts-ignore
         if (resp.code == 0) {
-          const res = await loginByMnemonic(resp.result.enMnemonic, form.pass, true)
+          const res = await loginByMnemonic(
+            resp.result.enMnemonic,
+            form.pass,
+            true,
+            resp.result.path
+          )
 
           console.log('res', res)
           console.log('userStore', userStore)

@@ -492,6 +492,7 @@ function submitForm() {
                 timestamp: Date.now(),
                 userName: loginName,
               },
+              path: parseInt(import.meta.env.VITE_WALLET_PATH),
             })
             if (setWalletRes.code !== 0) {
               throw new Error('保存钱包信息失败 -1')

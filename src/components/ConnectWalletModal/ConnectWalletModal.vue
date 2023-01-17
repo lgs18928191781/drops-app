@@ -128,7 +128,7 @@
     ref="BindMetaIdRef"
     v-model="isShowBindModal"
     @register="isShowSetBaseInfo = true"
-    @success="onModalClose"
+    @finish="onModalClose"
   />
 </template>
 
@@ -361,7 +361,7 @@ async function connectMetaLet() {
 
 async function onThreePartLinkSuccess(params: { signAddressHash: string; address: string }) {
   //检查hash是否已绑定
-
+  debugger
   const getMnemonicRes = await LoginByEthAddress({
     evmAddress: params.address,
     chainId: window.ethereum.chainId,
@@ -378,7 +378,7 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
       throw new Error(error.message)
     }
   })
-  let res
+  let res: BindMetaIdRes
 
   if (
     getMnemonicRes?.data?.metaId &&
@@ -388,24 +388,12 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
 
     try {
       let signHashForMnemonic
-
-      console.log('params.address', params.address, getMnemonicRes?.data)
-
-      // if ((window as any).WallectConnect) {
-      //   signHashForMnemonic = await (window as any).WallectConnect.signPersonalMessage([
-      //     MD5(params.signAddressHash),
-      //     params.address,
-      //   ])
-      // } else {
-      //   signHashForMnemonic = await MetaMaskRef.value.ethPersonalSignSign({
-      //     address: params.address,
-      //     message: MD5(params.signAddressHash),
-      //   })
-      // }
-
+      debugger
       res = await BindMetaIdRef.value.loginByMnemonic(
         getMnemonicRes.data.evmEnMnemonic,
-        MD5(params.signAddressHash).toString()
+        MD5(params.signAddressHash).toString(),
+        false,
+        getMnemonicRes.data.path
       )
       if (res) {
         await BindMetaIdRef.value.loginSuccess(res)
@@ -428,7 +416,9 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
     if (password) {
       res = await BindMetaIdRef.value.loginByMnemonic(
         getMnemonicRes.data.menmonic,
-        decode(password)
+        decode(password),
+        false,
+        getMnemonicRes.data.path
       )
 
       if (res) {
@@ -439,7 +429,9 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
       try {
         res = await BindMetaIdRef.value.loginByMnemonic(
           getMnemonicRes.data.evmEnMnemonic,
-          MD5(params.signAddressHash).toString()
+          MD5(params.signAddressHash).toString(),
+          false,
+          getMnemonicRes.data.path
         )
 
         if (res) {

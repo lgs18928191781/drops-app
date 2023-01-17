@@ -14,7 +14,7 @@
         {{ $t('EditProfile.intro') }}
       </div>
       <div class="avatar">
-        <div class="avatar-warp" @click="isShowSecondModal = true">
+        <div class="avatar-warp" @click="choose(EditType.Avatar)">
           <UserAvatar
             :meta-id="userStore.user!.metaId"
             :image="currentAvatar.val.avatarImage"
@@ -29,15 +29,26 @@
       </div>
 
       <ElForm :model="form" :rules="rule" label-width="0">
-        <!-- <ElFormItem prop="metaName" label="">
-          <div class="form-item">
-            <div class="label flex flex-align-center active">MetaName <MetaName /></div>
-            <ElInput type="text" v-model="form.metaName" />
+        <ElFormItem prop="metaName" label="">
+          <div class="form-item" @click="choose(EditType.MetaName)">
+            <div class="label flex flex-align-center ">
+              <span class="meta-name">MetaName</span><MetaName />
+            </div>
+            <ElInput
+              type="text"
+              v-model="currentMetaName.val.name"
+              :readonly="true"
+              :placeholder="$t('EditProfile.Select MetaName')"
+            >
+              <template #suffix>
+                <Icon name="down" class="right-icon" />
+              </template>
+            </ElInput>
             <div class="drsc">
               {{ $t('EditProfile.MetaName.drsc') }}
             </div>
           </div>
-        </ElFormItem> -->
+        </ElFormItem>
         <ElFormItem prop="name">
           <div class="form-item">
             <div class="label">{{ $t('EditProfile.User Name') }}</div>
@@ -55,16 +66,33 @@
       </ElForm>
     </template>
 
+    <template #secondTitle>
+      {{
+        editType === EditType.MetaName
+          ? $t('EditProfile.Select MetaName')
+          : $t('EditProfile.Choose NFT Avatar')
+      }}
+    </template>
+
     <!-- secondBody -->
     <template #secondBody>
-      <NFTAvatarListVue
-        :active-tx="currentAvatar.val.avatarImage"
-        @change="item => (currentAvatar.val = item)"
-      />
+      <template v-if="editType === EditType.Avatar">
+        <NFTAvatarListVue
+          :active-tx="currentAvatar.val.avatarImage"
+          @change="item => (currentAvatar.val = item)"
+        />
+      </template>
+      <template v-else>
+        <div class="choose-meta-name-warp">
+          <div class="tips">
+            {{ $t('EditProfile.MetaNameTips') }}
+          </div>
+          <ChooseMetaNameVue @change="onChangeMetaName" :name="currentMetaName.val.name" />
+        </div>
+      </template>
     </template>
   </ModalVue>
 </template>
-
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
 import { reactive, ref, watch } from 'vue'
@@ -74,6 +102,7 @@ import NFTAvatarListVue from '@/components/NFTAvatarList/NFTAvatarList.vue'
 import { NodeName } from '@/enum'
 import { createBrfcChildNodeParams } from '@/@types/sdk'
 import { useI18n } from 'vue-i18n'
+import ChooseMetaNameVue from '@/components/ChooseMetaName/ChooseMetaName.vue'
 
 interface Props {
   modelValue: boolean
@@ -85,11 +114,22 @@ const i18n = useI18n()
 const userStore = useUserStore()
 const isShowSecondModal = ref(false)
 const loading = ref(false)
+enum EditType {
+  Avatar = 'avatar',
+  MetaName = 'MetaName',
+}
+const editType = ref(EditType.Avatar)
 
 // @ts-ignore
 const currentAvatar: { val: NFTAvatarItem } = reactive({
   val: {
     avatarImage: userStore.user?.avatarImage,
+  },
+})
+// @ts-ignore
+const currentMetaName: { val: MetaNameItem } = reactive({
+  val: {
+    name: userStore.user?.metaName || '',
   },
 })
 
@@ -104,7 +144,6 @@ watch(
 
 const form = reactive({
   name: userStore.user!.name,
-  metaName: '',
 })
 
 const rule = {
@@ -121,7 +160,8 @@ async function confirm() {
   if (
     form.name === '' ||
     (form.name === userStore.user!.name &&
-      currentAvatar.val.avatarImage === userStore.user?.avatarImage)
+      currentAvatar.val.avatarImage === userStore.user?.avatarImage &&
+      userStore.user!.metaName === currentMetaName.val!.name)
   )
     return
   loading.value = true
@@ -154,6 +194,22 @@ async function confirm() {
       })
     }
 
+    if (currentMetaName.val.name !== userStore.user!.metaName) {
+      paramsList.push({
+        nodeName: NodeName.NftName,
+        data: JSON.stringify({
+          type: currentMetaName.val.name === '' ? 'name' : 'nft', //string type 取值⻅下⽅
+          chain: 'mvc', //string type 链类型
+          name: currentMetaName.val.name, //string type, 图片路由
+          codehash: currentMetaName.val.codeHash, //string type nft的codehash
+          genesis: currentMetaName.val.genesis, //string type nft的genesis 或 nft的tokenAddress
+          tokenIndex: currentMetaName.val.tokenIndex, //string type nft的tokenIndex 或 nft的tokenId
+          updateTime: new Date().getTime(), //long type 更新时间
+          memo: '', //string type 备注 预留字段
+        }),
+      })
+    }
+
     const res = await userStore.showWallet.batchCreateBrfcChildNode(paramsList)
     if (res) {
       emit('update:modelValue', false)
@@ -163,6 +219,7 @@ async function confirm() {
         ...userStore.user,
         name: form.name,
         avatarImage: currentAvatar.val.avatarImage,
+        metaName: currentMetaName.val.name,
       })
       ElMessage.success(i18n.t('Setting.Edit Profile') + ' ' + i18n.t('Success'))
       loading.value = false
@@ -170,6 +227,23 @@ async function confirm() {
   } catch (error) {
     ElMessage.error((error as any).message)
     loading.value = false
+  }
+}
+
+function choose(type: EditType) {
+  editType.value = type
+  isShowSecondModal.value = true
+}
+
+function onChangeMetaName(metaName: MetaNameItem) {
+  debugger
+  if (metaName.name === currentMetaName.val.name) {
+    // @ts-ignore
+    currentMetaName.val = {
+      name: '',
+    }
+  } else {
+    currentMetaName.val = metaName
   }
 }
 </script>

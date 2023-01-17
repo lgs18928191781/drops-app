@@ -246,7 +246,6 @@ import { CommitActivity } from '@/api/broad'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   GetImageCode,
-  GetMetaIdByLoginName,
   LoginCheck,
   LoginGetCode,
   RegisterCheck,
@@ -571,7 +570,11 @@ function submitForm() {
                 password: form.password,
               }
               // @ts-ignore
-              const walletInfo = await hdWalletFromAccount(account, import.meta.env.VITE_NET_WORK)
+              const walletInfo = await hdWalletFromAccount(
+                account,
+                import.meta.env.VITE_NET_WORK,
+                loginInfo.path.toString()
+              )
               const hdWallet = new HdWallet(walletInfo.wallet)
               const metaIdInfo = await hdWallet.getMetaIdInfo(walletInfo.rootAddress)
 
@@ -643,11 +646,13 @@ function submitForm() {
                 ...registerInfo.val!,
                 userType: registerInfo.val!.registerType,
                 password: form.password,
+                path: parseInt(import.meta.env.VITE_WALLET_PATH),
               }
               const walletInfo = await hdWalletFromAccount(
                 // @ts-ignore
                 userInfo,
-                import.meta.env.VITE_NET_WORK
+                import.meta.env.VITE_NET_WORK,
+                import.meta.env.VITE_WALLET_PATH
               )
               const userInfoParams = {
                 ...userInfo,
@@ -664,6 +669,7 @@ function submitForm() {
                   timestamp: Date.now(),
                   userName: loginName,
                 },
+                path: parseInt(import.meta.env.VITE_WALLET_PATH),
               })
               if (setWalletRes.code !== 0) {
                 throw new Error('保存钱包信息失败 -1')

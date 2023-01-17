@@ -8,7 +8,7 @@
     </header>
   </div>
 
-  <IssueModalVue v-model="isShowOption" />
+  <IssueModalVue v-model="isShowOption" @confirm="addIssueItem" />
 </template>
 
 <script setup lang="ts">
@@ -17,7 +17,7 @@ import { NodeName } from '@/enum'
 import { useUserStore } from '@/stores/user'
 import { ElOption, ElSelect } from 'element-plus'
 import { reactive, ref } from 'vue'
-import IssueModalVue from './components/IssueModal.vue'
+import IssueModalVue, { IssueNFTOption } from './components/IssueModal.vue'
 
 const userStore = useUserStore()
 
@@ -94,6 +94,15 @@ async function genesis() {
 
 async function ftGenesis() {
   const res = await userStore.showWallet.ftGenesis()
+}
+
+function addIssueItem(option: IssueNFTOption) {
+  let result: any = []
+  for (let i = 0; i < option.count; i++) {
+    result.push({
+      genesis: option.genesis,
+    })
+  }
 }
 
 getGenesisList()

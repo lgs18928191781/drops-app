@@ -111,6 +111,7 @@ export interface BaseUserInfoTypes {
   appToken: string
   ethAddress?: string
   evmAddress?: string
+  path: number
 }
 interface TransferNftParams {
   network?: string
@@ -252,19 +253,21 @@ export const DEFAULTS = {
 export const hdWalletFromMnemonic = async (
   mnemonic: string,
   tag: 'new' | 'old' = 'new',
-  network: Network = Network.mainnet
+  network: Network = Network.mainnet,
+  path?: string | number = import.meta.env.VITE_WALLET_PATH
 ): Promise<bsv.HDPrivateKey> => {
   // const hdPrivateKey = Mnemonic.fromString(mnemonic).toHDPrivateKey()
   const seed = bip39.mnemonicToSeedSync(mnemonic)
   const hdPrivateKey = bsv.HDPrivateKey.fromSeed(seed, network)
 
-  const hdWallet = hdPrivateKey.deriveChild(`m/44'/${import.meta.env.VITE_WALLET_PATH}'/0'`)
+  const hdWallet = hdPrivateKey.deriveChild(`m/44'/${path}'/0'`)
   return hdWallet
 }
 
 export const hdWalletFromAccount = async (
   account: BaseUserInfoTypes,
-  network: Network = Network.mainnet
+  network: Network = Network.mainnet,
+  path: string | number
 ): Promise<any> => {
   // console.log(account)
   const loginName = account.userType === 'phone' ? account.phone : account.email
@@ -292,7 +295,7 @@ export const hdWalletFromAccount = async (
     mnemonic = bip39.entropyToMnemonic(hex, englishWords)
   }
   // const mnemonic = new Mnemonic(Buffer.from(hex)).toString()
-  const wallet = await hdWalletFromMnemonic(mnemonic, account.tag, network)
+  const wallet = await hdWalletFromMnemonic(mnemonic, account.tag, network, path)
   const root = wallet.deriveChild(0).deriveChild(0).privateKey
 
   return {
