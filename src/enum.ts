@@ -84,7 +84,7 @@ export enum PayPlatform {
   QuickPay = 301,
   BalancePay = 350,
   ETH = 1001,
-  POLYGON = 0,
+  POLYGON = 1002,
 }
 
 export enum NFTSellState {
