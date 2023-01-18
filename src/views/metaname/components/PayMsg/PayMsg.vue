@@ -41,23 +41,24 @@
     <div class="pay-type order-msg-item">
       <div class="title">{{ $t('MetaName.Choose Pay Type') }}</div>
       <div class="pay-type-list">
-        <div
-          class="pay-type-item flex flex-align-center"
-          v-for="(item, index) in payPlatformList"
-          :key="index"
-          @click="changePayType(item.platform)"
-        >
-          <div class="logo flex flex-align-center flex-pack-center">
-            <img :src="item.icon" />
-          </div>
-          <div class="name flex1">{{ item.name() }}</div>
-          <span
-            class="check-warp flex flex-align-center flex-pack-center"
-            v-if="currentPayPlatform === item.platform"
+        <template v-for="(item, index) in payPlatformList" :key="index">
+          <div
+            class="pay-type-item flex flex-align-center"
+            v-if="item.disabled()"
+            @click="changePayType(item.platform)"
           >
-            <Icon name="check" />
-          </span>
-        </div>
+            <div class="logo flex flex-align-center flex-pack-center">
+              <img :src="item.icon" />
+            </div>
+            <div class="name flex1">{{ item.name() }}</div>
+            <span
+              class="check-warp flex flex-align-center flex-pack-center"
+              v-if="currentPayPlatform === item.platform"
+            >
+              <Icon name="check" />
+            </span>
+          </div>
+        </template>
       </div>
     </div>
 
