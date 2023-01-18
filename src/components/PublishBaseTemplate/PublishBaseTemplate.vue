@@ -4,6 +4,7 @@
     class="sm none-header none-padding"
     :close-on-click-modal="false"
     :destroy-on-close="true"
+    @close="emit('close')"
   >
     <div
       class="publish"
@@ -64,7 +65,7 @@ const props = defineProps<{
   placeholder?: string
 }>()
 
-const emit = defineEmits(['update:modelValue', 'update:text'])
+const emit = defineEmits(['update:modelValue', 'update:text', 'close'])
 const userStore = useUserStore()
 const content = ref(props.text)
 

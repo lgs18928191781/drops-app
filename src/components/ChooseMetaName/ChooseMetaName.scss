@@ -1,0 +1,17 @@
+.check-warp {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+
+    .icon {
+        width: 12px;
+        height: 12px;
+        color: var(--themeBtnTextColor);
+
+        :deep(use) {
+            stroke: var(--themeBtnTextColor);
+            stroke-width: 2PX;
+        }
+    }
+}

@@ -33,19 +33,8 @@ export const useLayoutStore = defineStore('layout', {
       isShowUserInfo: true,
       isShowLoading: false,
       never: false,
-      publishBuzzOption: {
-        repostTxId: '', // 转发的TxId
-        topic: '', // 发表话题
-      },
       isShowWallet: false,
     }
   },
-  actions: {
-    async publish(params?: { repostTxId?: string; topic?: string }) {
-      await checkUserLogin()
-      this.publishBuzzOption.repostTxId = params?.repostTxId || ''
-      this.publishBuzzOption.topic = params?.topic || ''
-      this.isShowPublishBuzz = true
-    },
-  },
+  actions: {},
 })

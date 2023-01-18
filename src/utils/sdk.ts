@@ -187,10 +187,17 @@ export const AllNodeName: {
     path: '/Protocols/SimpleAnnouncementQuote',
     version: '1.0.5',
   },
+<<<<<<< HEAD
   [NodeName.SimpleDAOCreate]: {
     brfcId: '7dac362b04b7',
     path: '/Protocols/SimpleDAOCreate',
     version: '1.0.4',
+=======
+  [NodeName.NftName]: {
+    brfcId: '6ed1b1d1119d',
+    path: '/Protocols/NftName',
+    version: '1.0.0',
+>>>>>>> 259f7995a798bdec7583af921c910ad63229705d
   },
 }
 
@@ -233,7 +240,8 @@ export class SDK {
               ...userInfo,
               password: password,
             },
-            this.network
+            this.network,
+            userInfo.path
           )
 
           const wallet = new HdWallet(walletObj.wallet)

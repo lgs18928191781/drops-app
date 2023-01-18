@@ -1342,6 +1342,17 @@ export function GetExpiredUTC(expiredBlockHeight: number, blockHeight?: any) {
   })
 }
 
+//到期时间提醒
+export function remindExpired(expireTime: any) {
+  const remindTime = 3 //单位:月
+  return (
+    dayjs(expireTime.split(' ')[0]).diff(
+      dateTimeFormat(+Date.now(), 'UTC', 'YYYY-MM-DD'),
+      'month'
+    ) < remindTime
+  )
+}
+
 export async function metanameOperation(params: {
   //注册时mvc跟metaid,更新信息时不需要传入years,注册时必须要传入icon
   registerName: string

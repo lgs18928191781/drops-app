@@ -6,6 +6,7 @@
       :loading="isSkeleton"
       @get-more="getMore"
       @update-item="updateItem"
+      @add-item="val => list.unshift(val)"
       @remove-item="
         txId =>
           list.splice(

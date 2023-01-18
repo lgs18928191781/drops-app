@@ -1,7 +1,7 @@
 <template>
   <div class="warp">
-    <BuzzWarp :is-hide-header="true">
-      <PublishBox :topic="talk.activeCommunity?.metaName || ''" />
+    <BuzzWarp :is-hide-header="true" ref="BuzzWarpRef">
+      <PublishBox />
       <div class="buzz-list-warp">
         <BuzzListVue
           :list="list"
@@ -9,6 +9,7 @@
           :loading="isSkeleton"
           @get-more="getMore"
           @update-item="updateItem"
+          @add-item="val => list.unshift(val)"
         />
       </div>
     </BuzzWarp>
@@ -16,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import { watch } from 'vue'
+import { onMounted, watch } from 'vue'
 import BuzzWarp from '@/views/buzz/components/BuzzWarp.vue'
 import BuzzListVue from '@/views/buzz/components/BuzzList.vue'
 import { useTalkStore } from '@/stores/talk'
@@ -38,10 +39,7 @@ const userStore = useUserStore()
 const pagination = reactive({ ...initPagination })
 const list: BuzzItem[] = reactive([])
 const isSkeleton = ref(true)
-
-function publishTopic() {
-  layout.publish({ topic: route.params.topic as string })
-}
+const BuzzWarpRef = ref()
 
 function getDatas(isCover = false) {
   return new Promise<void>(async resolve => {
@@ -82,6 +80,10 @@ watch(
   () => talk.activeCommunity,
   result => {
     if (result) {
+      if (BuzzWarpRef.value) {
+        BuzzWarpRef.value.publishTopic = talk.activeCommunity?.name
+        BuzzWarpRef.value.publiseSuccessCallBack = () => false
+      }
       getDatas(true).then(() => {
         isSkeleton.value = false
       })

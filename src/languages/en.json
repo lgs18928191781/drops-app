@@ -337,8 +337,8 @@
     },
     "repost": {
       "lookTx": "TX",
-      "comment": "Repost with comment",
-      "quick": "Repost",
+      "comment": "Forward with comment",
+      "quick": "Forward",
       "share": "share",
       "success": "forwarded successfully"
     },
@@ -428,7 +428,10 @@
     "User Name": "User Name",
     "MetaName": {
       "drsc": "The system will use MetaName you chose as the username by default."
-    }
+    },
+    "Select MetaName": "Select MetaName...",
+    "MetaNameTips": "MetaNema can be preferred as your username and looks more shiny.",
+    "Choose NFT Avatar": "Choose NFT Avatar"
   },
   "UplinkSetting": {
     "Uplink Payment Confirmation": "ME Payment Confirmation",

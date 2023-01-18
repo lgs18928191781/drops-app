@@ -1,6 +1,6 @@
 .topic-header {
     border-radius: 12px;
-    background: #FFFFFF;
+    background: var(--themeBgSecondColor);
     padding: 18px;
 
     .back {
@@ -17,7 +17,7 @@
             transform: rotate(90deg);
 
             :deep(use) {
-                fill: var(--themeBtnTextColor);
+                fill: var(--themeTextColor);
             }
         }
 

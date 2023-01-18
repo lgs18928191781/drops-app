@@ -59,6 +59,7 @@ export const loginByNewUser = (params: {
   hashData: string
   mnemonic: string
   userName: string
+  path: number
 }) => {
   return mvcApi.post(`/api/v1/thirdparty/setUserWalletInfo`, params)
 }

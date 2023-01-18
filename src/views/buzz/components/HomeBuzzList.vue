@@ -7,6 +7,7 @@
     @get-more="getMore"
     :pagination="pagination"
     @update-item="updateItem"
+    @add-item="val => list.unshift(val)"
     @remove-item="
       txId =>
         list.splice(
@@ -63,16 +64,6 @@ function getDatas(isCover = false) {
     resolve()
   })
 }
-
-Mitt.on(MittEvent.AddBuzz, async (params: { txId: string }) => {
-  const res = await GetBuzz({
-    txId: params.txId,
-    metaId: userStore.user?.metaId,
-  })
-  if (res && res.code === 0) {
-    list.unshift(res.data.results.items[0])
-  }
-})
 
 const publishOperates = [
   {

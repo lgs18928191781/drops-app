@@ -40,7 +40,7 @@
                   <Loading />
                 </ElIcon>
               </template>
-              <template v-else> {{ $t('MetaName.About') }}&nbsp;{{ expireDate }} </template>
+              <template v-else> {{ $t('MetaName.About') }}&nbsp;{{ expireDate }}(UTC) </template>
             </span>
           </div>
         </div>

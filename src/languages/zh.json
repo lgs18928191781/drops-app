@@ -501,7 +501,9 @@
     "User Name": "用户名",
     "MetaName": {
       "drsc": "MetaName 将优先作为用户名。"
-    }
+    },
+    "Select MetaName": "选择 MetaName...",
+    "Choose NFT Avatar": "选择NFT头像"
   },
   "UplinkSetting": {
     "Uplink Payment Confirmation": "上链支付确认",
@@ -791,7 +793,8 @@
     "RegisterSuccessTips2": " ",
     "RenewSuccessTips": "🎉 恭喜您已成功续费 ",
     "RenewSuccessTips2": " ",
-    "Renewal Fee": "续期费用"
+    "Renewal Fee": "续期费用",
+    "ReadyExpire": "即将到期"
   },
   "Menu": "菜单",
   "metanameNotAllowOverLenght": "注册名称长度不能超过63位字符",

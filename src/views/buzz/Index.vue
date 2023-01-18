@@ -7,6 +7,7 @@
     @get-more="getMore"
     :pagination="pagination"
     @update-item="updateItem"
+    @add-item="val => list.unshift(val)"
     @remove-item="
       txId =>
         list.splice(
@@ -69,10 +70,6 @@ watch(
     }
   }
 )
-
-Mitt.on(MittEvent.AddBuzz, async (buzz: BuzzItem) => {
-  list.unshift(buzz)
-})
 
 const publishOperates = [
   {

@@ -2,6 +2,13 @@
   <div class="version-warp">
     <VersionVue />
   </div>
+  <a
+    v-if="!userStore.isAuthorized"
+    @click="toMetaName"
+    class="outsideMore flex flex-align-center flex-pack-center user-warp-item"
+  >
+    <img class="metanameLogo" :src="MetaNameLogo" alt="" />
+  </a>
   <template v-if="userStore.isAuthorized">
     <div class="user-warp flex flex-align-center">
       <el-popover placement="bottom" :width="'auto'" trigger="hover">
@@ -16,7 +23,12 @@
         </template>
         <UserPersonaVue />
       </el-popover>
-
+      <a
+        @click="toMetaName"
+        class="outsideMore flex flex-align-center flex-pack-center user-warp-item"
+      >
+        <img class="metanameLogo" :src="MetaNameLogo" alt="" />
+      </a>
       <!-- 钱包 -->
       <a
         class="flex flex-align-center flex-pack-center user-warp-item"
@@ -75,7 +87,7 @@ import MyWalletVue from './MyWallet.vue'
 import VersionVue from '../Version/Version.vue'
 import UserPersonaVue from '../UserPersona/UserPersona.vue'
 import { router } from '@/router'
-
+import MetaNameLogo from '@/assets/svg/meta_name.svg?url'
 const i18n = useI18n()
 const rootStore = useRootStore()
 const userStore = useUserStore()
@@ -137,6 +149,10 @@ const userOperates = computed(() => {
 
   return result
 })
+
+const toMetaName = () => {
+  router.push('/metaname')
+}
 </script>
 
 <style lang="scss" scoped src="./LoginedUserOperate.scss"></style>
