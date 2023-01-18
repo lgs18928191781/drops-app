@@ -511,7 +511,7 @@ declare interface AnnouncementItem {
 
 declare interface MetaNameItem {
   codeHash: string
-  expiredBlockHeight: number
+  expiredBlockTime: number
   genesis: string
   icon: string
   infos: {

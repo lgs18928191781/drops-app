@@ -8,6 +8,7 @@ import MVC from '@/assets/svg/mvc.svg?url'
 import POLYGON from '@/assets/svg/polygon.svg?url'
 
 import { useUserStore } from './stores/user'
+import { useRootStore } from './stores/root'
 export interface Unit {
   unit: string
   sats: number
@@ -90,6 +91,16 @@ export interface PayPlatformItem {
   key: string
 }
 
+function GetChain() {
+  const polygon = ['0x89', '0x13881']
+  const eth = ['0x1', '0x5']
+  if (polygon.includes(window.ethereum.chainId)) {
+    return 'polygon'
+  } else if (eth.includes(window.ethereum.chainId)) {
+    return 'eth'
+  }
+}
+
 export const payPlatformList: PayPlatformItem[] = [
   {
     icon: ETHIcon,
@@ -103,7 +114,26 @@ export const payPlatformList: PayPlatformItem[] = [
     disabled: () => {
       let result = true
       const userStore = useUserStore()
-      if (userStore.isAuthorized && userStore.user?.evmAddress) {
+      if (userStore.isAuthorized && userStore.user?.evmAddress && GetChain() == 'eth') {
+        result = false
+      }
+      return result
+    },
+    suffix: false,
+  },
+  {
+    icon: POLYGON,
+    name: () => {
+      // @ts-ignore
+      return `MATIC${i18n.global.t('Pay')}`
+    },
+    platform: PayPlatform.POLYGON,
+    background: '#108EE9',
+    key: 'MATIC',
+    disabled: () => {
+      let result = true
+      const userStore = useUserStore()
+      if (userStore.isAuthorized && userStore.user?.evmAddress && GetChain() == 'polygon') {
         result = false
       }
       return result

@@ -373,7 +373,6 @@ function submitForm() {
 }
 
 function loginSuccess(params: BindMetaIdRes) {
-  debugger
   console.log('params', params)
   return new Promise<void>(async (resolve, reject) => {
     try {
@@ -420,8 +419,9 @@ function loginSuccess(params: BindMetaIdRes) {
       //   }
       // }
 
-      console.log('userStore', userStore)
-      debugger
+      if (!params.userInfo.evmAddress) {
+        params.userInfo.evmAddress = params.userInfo.ethAddress
+      }
       userStore.updateUserInfo({
         ...params.userInfo,
         ...metaIdInfo.data,
@@ -555,7 +555,7 @@ function createMetaidAccount() {
               ? props.thirdPartyWallet.address
               : window.ethereum.selectedAddress,
           })
-          debugger
+
           const newUserInfo = Object.assign(getUserInfoRes.data, {
             metaId: metaId,
             evmAddress: props.thirdPartyWallet.address
@@ -565,6 +565,7 @@ function createMetaidAccount() {
             chainId: window.ethereum.chainId,
             path: parseInt(import.meta.env.VITE_WALLET_PATH),
           })
+
           await sendHash(newUserInfo)
 
           resolve({
@@ -839,6 +840,7 @@ function bindingMetaidOrAddressLogin() {
             resp.result.enMnemonic,
             form.pass,
             true,
+
             resp.result.path
           )
 

@@ -116,12 +116,11 @@ function getDatas(isCover = false) {
       pagination.flag = res.data.nextFlag
       if (!pagination.flag) pagination.nothing = true
       for (let item of res.data.results.items) {
-        const result = await GetExpiredUTC(item.expiredBlockHeight, blockHeight).catch(error => {
-          ElMessage.error(error.message)
-          item.expireDate = '0'
-        })
+        const result = GetExpiredUTC(item.expiredBlockTime)
         if (result) {
           item.expireDate = result
+        } else {
+          item.expireDate = '0'
         }
       }
       list.push(...res.data.results.items)

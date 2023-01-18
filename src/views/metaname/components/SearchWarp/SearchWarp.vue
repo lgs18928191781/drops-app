@@ -26,7 +26,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {})
-const value = ref(props.metaName ? encodeURIComponent(props.metaName) : '')
+const value = ref(props.metaName ? decodeURIComponent(props.metaName) : '')
 const MetaNameReg = /\./g
 const i18n = useI18n()
 const emit = defineEmits(['submit', 'error'])

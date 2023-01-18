@@ -207,7 +207,7 @@ declare interface SellNftItem {
 }
 
 declare interface MetaNameSearchResult {
-  expiredBlockHeight: number
+  expiredBlockTime: number
   genesisId: string
   name: string
   nftCodeHash: string
@@ -219,7 +219,7 @@ declare interface MetaNameSearchResult {
 
 declare interface MetaNameItem {
   codeHash: string
-  expiredBlockHeight: number
+  expiredBlockTime: number
   genesis: string
   icon: string
   infos: string

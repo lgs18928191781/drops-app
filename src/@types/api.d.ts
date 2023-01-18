@@ -1807,7 +1807,7 @@ declare interface CertUserInfo {
 
 declare interface MetaNameIndexerInfo {
   name: string
-  expiredBlockHeight: number
+  expiredBlockTime: number
   nftCodeHash: string
   genesisId: string
   tokenIndex: string

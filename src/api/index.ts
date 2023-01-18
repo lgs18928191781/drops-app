@@ -566,7 +566,7 @@ export const MetaNameUpdateInfo = (
 ): Promise<{
   code: number
   data: {
-    expiredBlockHeight: number
+    expiredBlockTime: number
     nftCodeHash: string
     nftGenesisId: string
     nftTokenIndex: string
