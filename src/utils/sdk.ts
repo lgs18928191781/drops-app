@@ -103,9 +103,9 @@ export const AllNodeName: {
     version: '1.0.0',
   },
   [NodeName.SimpleCommunity]: {
-    brfcId: 'c53a596f2df7',
+    brfcId: 'c12f783a883f',
     path: '/Protocols/SimpleCommunity',
-    version: '1.0.0',
+    version: '1.0.3',
   },
   [NodeName.SimpleCommunityJoin]: {
     brfcId: 'b736fc6b98fd',
@@ -186,6 +186,11 @@ export const AllNodeName: {
     brfcId: '4118a343ce29',
     path: '/Protocols/SimpleAnnouncementQuote',
     version: '1.0.5',
+  },
+  [NodeName.SimpleDAOCreate]: {
+    brfcId: '7dac362b04b7',
+    path: '/Protocols/SimpleDAOCreate',
+    version: '1.0.4',
   },
 }
 

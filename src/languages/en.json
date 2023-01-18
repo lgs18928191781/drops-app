@@ -74,7 +74,13 @@
       "edit_announcement": "Edit Announcement",
       "update": "Update",
       "title_is": "title: ",
-      "read_more": "Read More"
+      "read_more": "Read More",
+      "add_channel:": "Add General Channel",
+      "dao": "DAO",
+      "dao_description": "Community governance tools",
+      "market": "NFT Market",
+      "market_description": "It is where all the members mint and sell their NFTs.",
+      "add_channel": "+ Add"
     },
     "Modals": {
       "enter_password": "Enter Password",

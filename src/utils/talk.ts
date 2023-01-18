@@ -14,7 +14,7 @@ import {
 import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
 import { SDK } from './sdk'
-import { FileToAttachmentItem, getTimestampInSeconds, realRandomString } from './util'
+import { FileToAttachmentItem, getTimestampInSeconds, realRandomString, sleep } from './util'
 import { Message, MessageDto } from '@/@types/talk'
 import { buildCryptoInfo, decrypt, encrypt, MD5Hash } from './crypto'
 import Decimal from 'decimal.js-light'
@@ -29,11 +29,13 @@ type CommunityData = {
   communityId: string
   name: string
   metaName: string
+  metaNameNft?: string
   icon: string | null
   admins: string[]
   description: string
   cover: string | null
   reserved?: string
+  disabled?: 0 | 1
 }
 
 export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
@@ -53,25 +55,24 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   }
 
   const admins = [userStore.user?.metaId]
+  const metaNameNft = `metacontract://${metaName.codeHash}/${metaName.genesis}/${metaName.tokenIndex}`
   const dataCarrier: CommunityData = {
     communityId,
     name,
     metaName: metaName.name,
+    metaNameNft,
     icon: iconPlaceholder,
     admins,
     description,
     cover: coverPlaceholder || '',
+    reserved: metaName.signature || '',
+    disabled: 0,
   }
-  if (metaName.signature) {
-    dataCarrier.reserved = metaName.signature
-  }
-  console.log({ dataCarrier })
+  console.log('dataCarrier', dataCarrier)
 
   // 2. 构建节点参数
   const node = {
     nodeName: NodeName.SimpleCommunity,
-    encrypt: IsEncrypt.No,
-    dataType: 'application/json',
     data: JSON.stringify(dataCarrier),
     attachments,
   }
@@ -105,19 +106,24 @@ export const updateCommunity = async (form: any, sdk: SDK) => {
   const admins = original.admins
 
   const dataCarrier: CommunityData = {
-    communityId: metaName.communityId,
+    communityId: original.communityId,
     name,
-    metaName: metaName.metaName,
+    metaName: original.metaName,
+    metaNameNft: original.metaNameNft,
     icon: iconPlaceholder,
     admins,
     description,
     cover: coverPlaceholder || '',
+    disabled: 0,
   }
 
   if (metaName.signature) {
     dataCarrier.reserved = metaName.signature
   }
   console.log({ dataCarrier, form, original })
+  console.log('here?')
+  await sleep(100000)
+  return
 
   // 2. 构建节点参数
   const node = {

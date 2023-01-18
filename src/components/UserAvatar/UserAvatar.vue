@@ -21,7 +21,7 @@ import UserCardVue from '../UserCard/UserCard.vue'
 
 interface Props {
   name?: string
-  metaId: string
+  metaId?: string
   image: string
   type?: 'metaId' | 'metafile'
   disabled?: boolean

@@ -40,10 +40,10 @@
 
             <div class="relative mt-7.5 h-full group">
               <div
-                class="hidden lg:dark:block absolute inset-0 bg-gradient-to-tr from-indigo-500 to-sky-500 rounded-3xl blur-xl opacity-25 translate-x-1 translate-y-1 lg:dark:group-hover:opacity-50 transition-all duration-1000 lg:dark:group-hover:duration-300 z-40"
+                class="hidden lg:dark:block absolute inset-0 bg-gradient-to-tr from-indigo-500 to-sky-500 rounded-3xl blur-xl opacity-25 translate-x-1 translate-y-1 lg:dark:group-hover:opacity-50 transition-all duration-1000 lg:dark:group-hover:duration-300 z-40  lg:max-h-[85vh]"
               ></div>
               <div
-                class="h-full lg:bg-white lg:dark:!bg-gray-800 lg:rounded-3xl overflow-y-auto lg:shadow-lg lg:dark:shadow-none z-50 relative"
+                class="h-full lg:bg-white lg:dark:!bg-gray-800 lg:rounded-3xl overflow-y-auto lg:shadow-lg lg:dark:shadow-none z-50 relative  lg:max-h-[85vh]"
               >
                 <!-- lg:shadow-lg lg:dark:shadow-blue-100/30 -->
                 <slot name="body"></slot>

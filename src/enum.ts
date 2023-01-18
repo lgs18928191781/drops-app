@@ -293,6 +293,7 @@ export enum NodeName {
   SimpleFileMsg = 'SimpleFileMsg',
   SimpleCreateAnnouncement = 'SimpleCreateAnnouncement',
   SimpleAnnouncementQuote = 'SimpleAnnouncementQuote',
+  SimpleDAOCreate = 'SimpleDAOCreate',
 }
 
 export const enum BindStatus {
@@ -347,6 +348,9 @@ export enum ShowControl {
   isShowCreateCommunityModal = 'isShowCreateCommunityModal',
   isShowCreatePublicChannelModal = 'isShowCreatePublicChannelModal',
   isShowCreateConsensualChannelModal = 'isShowCreateConsensualChannelModal',
+  isShowCreateGeneralChannelModal = 'isShowCreateGeneralChannelModal',
+  isShowCreateDaoModal = 'isShowCreateDaoModal',
+  isShowCommunityInfoModal = 'isShowCommunityInfoModal',
   isShowChooseTokenModal = 'isShowChooseTokenModal',
   isShowRedPacketModal = 'isShowRedPacketModal',
   isShowRedPacketResultModal = 'isShowRedPacketResultModal',

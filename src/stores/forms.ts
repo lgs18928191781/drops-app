@@ -516,3 +516,41 @@ export const useDeleteAnnouncementFormStore = defineStore('deleteAnnouncementFor
     },
   },
 })
+
+// 创建、编辑DAO
+export const useMutateDaoFormStore = defineStore('mutateDaoForm', {
+  state: () => {
+    return {
+      name: '',
+      description: '',
+      communityId: '',
+      type: 'create' as 'create' | 'edit',
+      txId: null as null | string,
+      publickey: null as null | string,
+      original: null as any,
+
+      // 创建DAO时的参数
+      categories: [] as string[],
+    }
+  },
+
+  actions: {
+    switchCategory(category: string) {
+      if (this.categories.includes(category)) {
+        this.categories = this.categories.filter(c => c !== category)
+      } else {
+        this.categories.push(category)
+      }
+    },
+
+    reset() {
+      this.name = ''
+      this.description = ''
+      this.communityId = ''
+      this.type = 'create'
+      this.txId = null
+      this.publickey = null
+      this.original = null
+    },
+  },
+})
