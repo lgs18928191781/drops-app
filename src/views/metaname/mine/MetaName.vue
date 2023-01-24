@@ -315,9 +315,7 @@ function update(params: object) {
 
 function getExporeDate(height: number) {
   return new Promise<string>(async (resolve, reject) => {
-    const res = await GetExpiredUTC(height).catch(error => {
-      ElMessage.error(error.message)
-    })
+    const res = GetExpiredUTC(height)
     if (res) {
       resolve(res)
     }
@@ -327,7 +325,7 @@ function getExporeDate(height: number) {
 function getData() {
   getInfo().then(() => {
     isSkeleton.value = false
-    getExporeDate(metaName.val!.expiredBlockHeight).then(res => {
+    getExporeDate(metaName.val!.expiredBlockTime).then(res => {
       expireDate.value = res
       isGetExpireDateLoading.value = false
     })

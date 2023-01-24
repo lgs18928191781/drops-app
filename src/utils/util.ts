@@ -1068,6 +1068,7 @@ export function CreatePayOrder(params: {
   tx_fee?: number
   fee_per_year?: number
   meta_name_len?: number
+  meta_name_uts_ascii?: string
 }) {
   return new Promise<PayOrderStatus>(async (resolve, reject) => {
     try {
@@ -1111,6 +1112,7 @@ export function CreatePayOrder(params: {
         tx_fee: params.tx_fee,
         fee_per_year: params.fee_per_year,
         meta_name_len: params.meta_name_len,
+        meta_name_uts_ascii: params.meta_name_uts_ascii,
       })
       if (res?.code === 0) {
         resolve(res.data)
@@ -1321,25 +1323,34 @@ export const getMetaNamePrice = (metaName: string) => {
 }
 
 //获取UTC到期时间
-export function GetExpiredUTC(expiredBlockHeight: number, blockHeight?: any) {
-  return new Promise<string | null>(async (resolve, reject) => {
-    try {
-      //获取当前块高信息：medianTime，blocks
-      if (!blockHeight) {
-        blockHeight = await getBlockHeight()
-      }
-      const distanceDay = new Decimal(expiredBlockHeight)
-        .sub(blockHeight.blocks)
-        .div(144)
-        .toNumber()
-      const date: any = dateTimeFormat(blockHeight.medianTime * 1000)
-      const res = dayjs(date).add(distanceDay, 'day')
-      const result = dateTimeFormat(res.valueOf(), 'UTC')
-      resolve(result)
-    } catch (error) {
-      reject(error)
-    }
-  })
+// export function GetExpiredUTC(expiredBlockHeight: number, blockHeight?: any) {
+//   return new Promise<string | null>(async (resolve, reject) => {
+//     try {
+//       //获取当前块高信息：medianTime，blocks
+//       if (!blockHeight) {
+//         blockHeight = await getBlockHeight()
+//       }
+//       const distanceDay = new Decimal(expiredBlockHeight)
+//         .sub(blockHeight.blocks)
+//         .div(144)
+//         .toNumber()
+//       const date: any = dateTimeFormat(blockHeight.medianTime * 1000)
+//       const res = dayjs(date).add(distanceDay, 'day')
+//       const result = dateTimeFormat(res.valueOf(), 'UTC')
+//       resolve(result)
+//     } catch (error) {
+//       reject(error)
+//     }
+//   })
+// }
+
+//获取UTC到期时间
+export function GetExpiredUTC(expiredBlockTime: number) {
+  if (new Decimal(expiredBlockTime).toString().length < 13) {
+    return dateTimeFormat(new Decimal(expiredBlockTime).mul(1000).toNumber(), 'UTC')
+  } else {
+    return dateTimeFormat(expiredBlockTime, 'UTC')
+  }
 }
 
 //到期时间提醒

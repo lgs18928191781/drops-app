@@ -186,6 +186,7 @@ export const CreatOrder = (params: {
   nft_to_address?: string
   tx_fee?: number
   fee_per_year?: number
+  meta_name_uts_ascii?: string
 }): Promise<GetOrderStatusRes> => {
   return Wxcore.post(`/product/order`, params)
 }

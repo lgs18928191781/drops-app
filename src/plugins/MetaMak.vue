@@ -295,7 +295,8 @@ function loginByMnemonic(mnemonic: string) {
                 mnemonic,
                 password.value
             )
-
+            console.log('decodeMnemonic',decodeMnemonic)
+            debugger
 
             const word = await getRandomWord()
 
@@ -536,9 +537,11 @@ function createMetaidAccount() {
                     email: userInfo.data.email,
                     phone: userInfo.data.phone
                 })
+                debugger
                 const newUserInfo = Object.assign(userInfo.data, {
                     metaId: metaId,
                 })
+                debugger
                 await sendHash(newUserInfo)
                 resolve({
                     userInfo: newUserInfo,

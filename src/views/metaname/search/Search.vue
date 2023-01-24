@@ -21,7 +21,7 @@
 
       <div
         class="result-warp flex flex-align-center"
-        :class="{ disabled: metaNameInfo.val && metaNameInfo.val.expiredBlockHeight !== -1 }"
+        :class="{ disabled: metaNameInfo.val && metaNameInfo.val.expiredBlockTime !== -1 }"
         v-if="metaNameInfo.val"
       >
         <div class="flex1">
@@ -29,11 +29,11 @@
           <div class="msg flex flex-align-center">
             <span class="dot"></span>
             <span class="status">{{
-              metaNameInfo.val.expiredBlockHeight === -1
+              metaNameInfo.val.expiredBlockTime === -1
                 ? $t('MetaName.UnRegistered')
                 : $t('MetaName.Registered')
             }}</span
-            ><span class="time" v-if="metaNameInfo.val.expiredBlockHeight !== -1"
+            ><span class="time" v-if="metaNameInfo.val.expiredBlockTime !== -1"
               >,&nbsp;{{ $t('MetaName.Expire date') }}:&nbsp;
               <template v-if="isGetExpireDateLoading">
                 <ElIcon class="is-loading">
@@ -46,7 +46,7 @@
         </div>
         <a
           class="flex flex-align-center"
-          v-if="metaNameInfo.val.expiredBlockHeight === -1"
+          v-if="metaNameInfo.val.expiredBlockTime === -1"
           @click="isShowRegister = true"
         >
           {{ $t('MetaName.Sign up now') }}</a
@@ -192,7 +192,7 @@ function searchMetaName() {
       if (error.code === 1) {
         metaNameInfo.val = {
           name: metaName.value,
-          expiredBlockHeight: -1,
+          expiredBlockTime: -1,
           nftCodeHash: '',
           genesisId: '',
           tokenIndex: '',
@@ -222,12 +222,12 @@ function onPaySuceess() {
 
 function getExporeDate() {
   return new Promise<void>(async (resolve, reject) => {
-    const res = await GetExpiredUTC(metaNameInfo.val!.expiredBlockHeight).catch(error => {
-      ElMessage.error(error.message)
-    })
+    const res = GetExpiredUTC(metaNameInfo.val!.expiredBlockTime)
     if (res) {
       expireDate.value = res
       resolve()
+    } else {
+      reject()
     }
   })
 }

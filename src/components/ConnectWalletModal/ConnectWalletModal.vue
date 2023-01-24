@@ -388,7 +388,7 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
 
     try {
       let signHashForMnemonic
-      debugger
+
       res = await BindMetaIdRef.value.loginByMnemonic(
         getMnemonicRes.data.evmEnMnemonic,
         MD5(params.signAddressHash).toString(),

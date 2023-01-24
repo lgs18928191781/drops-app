@@ -151,7 +151,10 @@ const userOperates = computed(() => {
 })
 
 const toMetaName = () => {
-  router.push('/metaname')
+  const routerUrl = router.resolve({
+    path: '/metaname',
+  })
+  window.open(routerUrl.href, '_blank')
 }
 </script>
 

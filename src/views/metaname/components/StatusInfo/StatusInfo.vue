@@ -229,14 +229,13 @@ function getOrder() {
 
 function getTimeInfo() {
   setTimeout(() => {
-    GetExpiredUTC(metaName.val!.expiredBlockHeight)
-      .then(res => {
-        expireDate.value = res!
-        isGetExpireDateLoading.value = false
-      })
-      .catch(error => {
-        ElMessage.error(error.message)
-      })
+    const expiredBlockTime = GetExpiredUTC(metaName.val!.expiredBlockTime)
+    if (!expiredBlockTime) {
+      expireDate.value = expiredBlockTime!
+      isGetExpireDateLoading.value = false
+    } else {
+      ElMessage.error(`${i18n.t('getExpiredTimeFail')}`)
+    }
 
     GetTx(metaName.val!.txid).then(res => {
       registerDate.value = res.txDetail.timestamp * 1000
