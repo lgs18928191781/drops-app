@@ -187,17 +187,15 @@ export const AllNodeName: {
     path: '/Protocols/SimpleAnnouncementQuote',
     version: '1.0.5',
   },
-<<<<<<< HEAD
   [NodeName.SimpleDAOCreate]: {
     brfcId: '7dac362b04b7',
     path: '/Protocols/SimpleDAOCreate',
     version: '1.0.4',
-=======
+  },
   [NodeName.NftName]: {
     brfcId: '6ed1b1d1119d',
     path: '/Protocols/NftName',
     version: '1.0.0',
->>>>>>> 259f7995a798bdec7583af921c910ad63229705d
   },
 }
 
@@ -233,8 +231,16 @@ export class SDK {
       } else {
         try {
           const password = decode(localPassword)
-
           const userInfo: UserInfo = JSON.parse(decode(localUserInfo))
+
+          // 如果缓存是老的（没有Path），则删除缓存重新登录
+          if (!userInfo.path) {
+            window.localStorage.removeItem(encode('password'))
+            window.localStorage.removeItem(encode('user'))
+            // reload
+            window.location.reload()
+          }
+
           const walletObj = await hdWalletFromAccount(
             {
               ...userInfo,

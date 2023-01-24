@@ -230,6 +230,9 @@ pre {
 // MetaName字体样式
 .meta-name {
   background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
   color: transparent;
   background-image: linear-gradient(to right, #F700FB, #FFC051);
   font-weight: 700;

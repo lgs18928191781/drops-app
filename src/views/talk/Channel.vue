@@ -19,6 +19,7 @@
     <RequireNftModal v-if="layout.isShowRequireNftModal" />
     <RequireFtModal v-if="layout.isShowRequireFtModal" />
     <InviteModal v-if="layout.isShowInviteModal" />
+    <CommunityCardModal v-if="layout.isShowCommunityCardModal" />
     <AcceptInviteModal v-if="layout.isShowAcceptInviteModal" />
     <LoadingCover v-if="layout.isShowLoading" />
     <RedPacketOpenModal v-if="layout.isShowRedPacketOpenModal" />
@@ -31,13 +32,14 @@
 </template>
 
 <script setup lang="ts">
-import ChannelHeader from './components/ChannelHeader.vue'
-import CommunityInfo from './components/CommunityInfo.vue'
-import ChannelMemberList from './components/ChannelMemberList.vue'
 import { onBeforeUnmount, watch } from 'vue'
 import { useTalkStore } from '@/stores/talk'
 import { useRoute } from 'vue-router'
 import { useLayoutStore } from '@/stores/layout'
+
+import ChannelHeader from './components/ChannelHeader.vue'
+import CommunityInfo from './components/CommunityInfo.vue'
+import ChannelMemberList from './components/ChannelMemberList.vue'
 import PasswordModal from './components/modals/consensus/Password.vue'
 import CommunitySettingsModal from './components/modals/community/Settings.vue'
 import RequireNftModal from './components/modals/consensus/RequireNft.vue'
@@ -47,11 +49,10 @@ import RedPacketResultModal from './components/modals/red-packet/Result.vue'
 import RedPacketCreateModal from './components/modals/red-packet/Create.vue'
 import AcceptInviteModal from './components/modals/invite/Accept.vue'
 import InviteModal from './components/modals/invite/Invite.vue'
+import CommunityCardModal from './components/modals/invite/CommunityCard.vue'
 import ShareToBuzzModal from './components/modals/invite/ShareToBuzz.vue'
 import ShareSuccessModal from './components/modals/invite/ShareSuccess.vue'
-
 import LoadingCover from './components/modals/LoadingCover.vue'
-import { buildCryptoInfo } from '@/utils/crypto'
 
 const talk = useTalkStore()
 const route = useRoute()

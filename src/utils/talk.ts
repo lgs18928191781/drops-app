@@ -442,6 +442,30 @@ export const joinCommunity = async (communityId: string, sdk: SDK) => {
   return { communityId }
 }
 
+export const leaveCommunity = async (communityId: string, sdk: SDK) => {
+  const dataCarrier = {
+    communityId,
+    state: CommunityJoinAction.Leave,
+  }
+
+  // 2. 构建节点参数
+  const node = {
+    nodeName: NodeName.SimpleCommunityJoin,
+    data: JSON.stringify(dataCarrier),
+  }
+
+  // 3. 发送节点
+  const nodeRes = await sdk.createBrfcChildNode(node)
+
+  if (nodeRes === null) {
+    return {
+      status: 'failed',
+    }
+  }
+
+  return { communityId }
+}
+
 export const sendMessage = async (messageDto: MessageDto) => {
   try {
     switch (messageDto.type) {

@@ -103,8 +103,10 @@
       "loading": "Loading...",
       "choose_meta_name": "Select Club Domain Name",
       "no_meta_name_available": "No MetaName available",
-      "share_invite_link_tip": "Send a club invite link to a friend",
-      "share_to_buzz_tip": "Or, share it via a buzz!",
+      "share_invite_link_tip": "Send a club invite link to a friend...",
+      "share_to_buzz_tip": "You can also share it via a buzz!",
+      "share_card_tip": "Or, make a club card and share it!",
+      "card": "Club Card",
       "share_to_buzz_button": "Share to Buzz",
       "share_to_buzz_title": "Share to Buzz",
       "share_successfully": "Buzzed!",
@@ -132,7 +134,12 @@
       "nft_candy_bag": "NFT Candy Bag",
       "Draws": "Details",
       "invite_tip": "Come join this community and chat with us!",
-      "admin_only": "Only admins can send messages in this channel."
+      "admin_only": "Only admins can send messages in this channel.",
+      "owner": "Owner",
+      "share": "Share",
+      "leave": "Leave the club",
+      "nftize_title": "Show: NFTize Your Social Life",
+      "scan_to_join": "Scan to Join the Club"
     },
     "Channel": {
       "core_members": "core members",

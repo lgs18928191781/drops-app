@@ -13,6 +13,7 @@ export const useLayoutStore = defineStore('layout', {
       isShowCreateGeneralChannelModal: false,
       isShowCreateDaoModal: false,
       isShowCommunityInfoModal: false,
+      isShowCommunityCardModal: false,
 
       isShowSettingsModal: false,
       isShowChooseTokenModal: false,
