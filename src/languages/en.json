@@ -627,7 +627,17 @@
     "Genesis nft count must more than1": "The number of genesis NFTs must be greater than or equal to 1",
     "Create genesis success": "Create genesis success",
     "issueToknIndex": "TokenIndex",
-    "Confirm Issue": "Confirm Issue"
+    "Confirm Issue": "Confirm Issue",
+    "Discover More": "Discover More",
+    "Initial Price": "Initial Price",
+    "Floor Price": "Floor Price",
+    "Highest Price": "Highest Price",
+    "Supply": "Supply",
+    "Owner": "Owner",
+    "Blockchain": "Blockchain",
+    "Collection works": "Collection works",
+    "Price Trend": "Price Trend",
+    "Filter": "Filter"
   },
   "My NFT": "My NFT",
   "Done": "Done",

@@ -718,7 +718,9 @@ export class SDK {
       let totalAmount = 0 // 总价
       let useSatoshis = 0
       for (let [index, item] of params.entries()) {
+        debugger
         const transactions = await this.createBrfcChildNodeTransactions(item)
+        debugger
         transactionsList.push(transactions)
 
         //  + transactions 价格
@@ -831,7 +833,7 @@ export class SDK {
                 item => item.nodeName === NodeName.MetaFile
               )?.data
             } else {
-              transactions.metaFileBrfc = this.getBrfcNode(
+              transactions.metaFileBrfc = await this.getBrfcNode(
                 {
                   nodeName: NodeName.MetaFile,
                   parentTxId: userStore.user?.protocolTxId!,

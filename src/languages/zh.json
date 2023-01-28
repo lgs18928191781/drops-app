@@ -616,7 +616,17 @@
     "Genesis nft count must more than1": "系列NFT个数必须大于等于1",
     "Create genesis success": "创建系列成功",
     "issueToknIndex": "所在系列序号",
-    "Confirm Issue": "确认铸造"
+    "Confirm Issue": "确认铸造",
+    "Discover More": "查看详情",
+    "Initial Price": "初始价格",
+    "Floor Price": "地板价",
+    "Highest Price": "最高价",
+    "Owner": "拥有人数",
+    "Supply": "总发行量",
+    "Blockchain": "所在链",
+    "Price Trend": "价格趋势",
+    "Collection works": "专辑作品",
+    "Filter": "筛选"
   },
   "My NFT": "我的NFT",
   "Done": "完成",

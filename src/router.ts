@@ -94,6 +94,11 @@ export const router = createRouter({
           name: 'nftDetail',
           component: () => import('@/views/nft/NftDetail.vue'),
         },
+        {
+          path: 'collection',
+          name: 'nftCollection',
+          component: () => import('@/views/nft/Collection.vue'),
+        },
       ],
     },
 
