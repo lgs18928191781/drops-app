@@ -513,7 +513,7 @@ async function sendCode() {
       userType: form.userType || 'phone',
       phone: (form.area !== '86' ? '+' : '') + phoneNum,
       email: form.email,
-      platform: 1,
+      platform: 0, // 1是若喜 0是showmoney
     }
     let res: any
     if (props.type === 'login') {
