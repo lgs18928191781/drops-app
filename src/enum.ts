@@ -84,6 +84,7 @@ export enum PayPlatform {
   QuickPay = 301,
   BalancePay = 350,
   ETH = 1001,
+  POLYGON = 1002,
 }
 
 export enum NFTSellState {
@@ -293,6 +294,7 @@ export enum NodeName {
   SimpleFileMsg = 'SimpleFileMsg',
   SimpleCreateAnnouncement = 'SimpleCreateAnnouncement',
   SimpleAnnouncementQuote = 'SimpleAnnouncementQuote',
+  SimpleDAOCreate = 'SimpleDAOCreate',
   NftName = 'NftName',
 }
 
@@ -348,6 +350,10 @@ export enum ShowControl {
   isShowCreateCommunityModal = 'isShowCreateCommunityModal',
   isShowCreatePublicChannelModal = 'isShowCreatePublicChannelModal',
   isShowCreateConsensualChannelModal = 'isShowCreateConsensualChannelModal',
+  isShowCreateGeneralChannelModal = 'isShowCreateGeneralChannelModal',
+  isShowCreateDaoModal = 'isShowCreateDaoModal',
+  isShowCommunityCardModal = 'isShowCommunityCardModal',
+  isShowCommunityInfoModal = 'isShowCommunityInfoModal',
   isShowChooseTokenModal = 'isShowChooseTokenModal',
   isShowRedPacketModal = 'isShowRedPacketModal',
   isShowRedPacketResultModal = 'isShowRedPacketResultModal',

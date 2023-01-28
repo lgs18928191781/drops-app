@@ -44,7 +44,7 @@ const BuzzWarpRef = ref()
 function getDatas(isCover = false) {
   return new Promise<void>(async resolve => {
     const res = await GetTopicBuzzs({
-      tag: talk.activeCommunity!.name,
+      tag: talk.activeCommunity!.metaName,
       metaId: userStore.user?.metaId,
       ...pagination,
     }).catch(error => {

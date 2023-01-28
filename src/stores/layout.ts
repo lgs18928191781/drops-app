@@ -10,6 +10,11 @@ export const useLayoutStore = defineStore('layout', {
       isShowCreateCommunityModal: false,
       isShowCreatePublicChannelModal: false,
       isShowCreateConsensualChannelModal: false,
+      isShowCreateGeneralChannelModal: false,
+      isShowCreateDaoModal: false,
+      isShowCommunityInfoModal: false,
+      isShowCommunityCardModal: false,
+
       isShowSettingsModal: false,
       isShowChooseTokenModal: false,
       isShowChooseMetaNameModal: false,

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-white dark:bg-gray-700 shadow-lg dark:shadow-blue-100/30  fixed bottom-24 lg:bottom-6 right-6 z-50 cursor-pointer warp"
+    class="bg-white dark:bg-gray-700 shadow-lg dark:shadow-blue-100/30  fixed bottom-24 lg:bottom-6 right-6 z-50 cursor-pointer warp w-20 !h-20"
     :class="[jobs.hasFailed && 'shadow-red-400/30']"
     v-show="jobs.hasUnresolved"
   >

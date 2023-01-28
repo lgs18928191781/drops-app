@@ -41,23 +41,24 @@
     <div class="pay-type order-msg-item">
       <div class="title">{{ $t('MetaName.Choose Pay Type') }}</div>
       <div class="pay-type-list">
-        <div
-          class="pay-type-item flex flex-align-center"
-          v-for="(item, index) in payPlatformList"
-          :key="index"
-          @click="changePayType(item.platform)"
-        >
-          <div class="logo flex flex-align-center flex-pack-center">
-            <img :src="item.icon" />
-          </div>
-          <div class="name flex1">{{ item.name() }}</div>
-          <span
-            class="check-warp flex flex-align-center flex-pack-center"
-            v-if="currentPayPlatform === item.platform"
+        <template v-for="(item, index) in payPlatformList" :key="index">
+          <div
+            class="pay-type-item flex flex-align-center"
+            v-if="item.disabled()"
+            @click="changePayType(item.platform)"
           >
-            <Icon name="check" />
-          </span>
-        </div>
+            <div class="logo flex flex-align-center flex-pack-center">
+              <img :src="item.icon" />
+            </div>
+            <div class="name flex1">{{ item.name() }}</div>
+            <span
+              class="check-warp flex flex-align-center flex-pack-center"
+              v-if="currentPayPlatform === item.platform"
+            >
+              <Icon name="check" />
+            </span>
+          </div>
+        </template>
       </div>
     </div>
 
@@ -94,6 +95,7 @@ import { SendMetaNameTransationResult } from '@/@types/sdk'
 import { payPlatformList } from '@/config'
 import { MetaNameOperateType, NodeName, PayPlatform, ProductType, ToCurrency } from '@/enum'
 import { useUserStore } from '@/stores/user'
+import { useRootStore } from '@/stores/root'
 import {
   bytesLength,
   CreatePayOrder,
@@ -107,9 +109,9 @@ import {
 } from '@/utils/util'
 import { MetaNameReqCode } from '@/utils/wallet/hd-wallet'
 import Decimal from 'decimal.js-light'
-import { BigNumber } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import { result } from 'lodash'
-import { nextTick, reactive, ref } from 'vue'
+import { nextTick, reactive, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import StartPay from '@/components/StartPay/StartPay.vue'
 //@ts-ignore
@@ -131,12 +133,19 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {})
 
 const userStore = useUserStore()
+
 const route = useRoute()
 const router = useRouter()
 const emit = defineEmits(['back', 'success', 'update:loading'])
+
 const currentPayPlatform = ref(
-  userStore.isAuthorized && userStore.user?.evmAddress ? PayPlatform.ETH : PayPlatform.UnionPay
+  userStore.isAuthorized && userStore.user?.evmAddress
+    ? mappingChainId((window as any).ethereum.chainId)
+    : PayPlatform.UnionPay
 )
+
+onMounted(() => {})
+
 const i18n = useI18n()
 const currencyAmount = ref(0)
 const productType = ProductType.MetaName
@@ -163,6 +172,21 @@ const MetaNameRef = ref()
 const metaTagString = ref('')
 const metaNameLogoString = ref('')
 let metafile = ''
+
+function mappingChainId(chainId: string) {
+  switch (chainId) {
+    case '0x1':
+      return PayPlatform.ETH
+    case '0x5':
+      return PayPlatform.ETH
+    case '0x89':
+      return PayPlatform.POLYGON
+    case '0x13881':
+      return PayPlatform.POLYGON
+    default:
+      break
+  }
+}
 
 function changePayType(platform: PayPlatform) {
   if (currentPayPlatform.value === platform) return
@@ -241,6 +265,7 @@ async function pay() {
         return
       }
     }
+
     const result = await CreatePayOrder({
       platform: currentPayPlatform.value,
       fullPath: setPayQuitUrl({
@@ -258,6 +283,7 @@ async function pay() {
       fee_per_year: res?.FeePerYear,
       meta_name_len: bytesLength(props.name),
       data: res?.registerMetaNameResp?.toString(),
+      meta_name_uts_ascii: props.name,
     })
     if (result) {
       payOrderInfo.amount = result.pay_amount!.toString()
@@ -266,6 +292,7 @@ async function pay() {
       isStartPay.value = true
     }
   } catch (error) {
+    emit('update:loading', false)
     ElMessage.error((error as any).message)
   }
 }

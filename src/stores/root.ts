@@ -51,6 +51,9 @@ const initCurrentPrice = window.localStorage.getItem('currentPrice')
   ? 'USD'
   : 'CNY'
 
+const polygonChian = ['0x89', '0x13881']
+const ethChian = ['0x1', '0x5']
+
 export const useRootStore = defineStore('root', {
   state: () =>
     <RootState>{
@@ -67,6 +70,14 @@ export const useRootStore = defineStore('root', {
       chainWhiteList: import.meta.env.MODE == 'gray' ? ['0x5', '0x13881'] : ['0x1', '0x89'],
     },
   getters: {
+    GetCurrentChain: state => {
+      debugger
+      window.ethereum && polygonChian.includes(window.ethereum.chainId)
+        ? (state.currentChain = 'polygon')
+        : window.ethereum && ethChian.includes(window.ethereum.chainId)
+        ? (state.currentChain = 'eth')
+        : ''
+    },
     currentPriceSymbol: state => {
       const Symbols = {
         USD: '$',

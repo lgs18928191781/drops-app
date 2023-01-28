@@ -1,6 +1,9 @@
 <template>
   <CreatePublicChannelModal v-if="layout.isShowCreatePublicChannelModal" />
   <CreateConsensualChannelModal v-if="layout.isShowCreateConsensualChannelModal" />
+  <CreateGeneralChannelModal v-if="layout.isShowCreateGeneralChannelModal" />
+  <CreateDaoModal v-if="layout.isShowCreateDaoModal" />
+  <CommunityInfoModal v-if="layout.isShowCommunityInfoModal" />
 
   <div
     class="bg-white dark:bg-gray-700 fixed inset-0 h-screen w-screen z-40 lg:static lg:shrink-0 lg:w-auto"
@@ -36,15 +39,16 @@
             <div class="px-3 overflow-y-auto">
               <!-- 社区名 -->
               <div
-                class="w-full mt-4 truncate text-lg font-medium"
+                class="w-full mt-4 truncate text-lg font-medium lg:hover:underline cursor-pointer"
                 :title="talk.activeCommunity?.name"
+                @click="layout.isShowCommunityInfoModal = true"
               >
                 {{ talk.activeCommunity?.name }}
               </div>
 
               <!-- 社区MetaName -->
               <div
-                class="w-full mt-1 flex items-center justify-between space-x-2 cursor-pointer"
+                class="w-full mt-2 flex items-center justify-between space-x-2 cursor-pointer"
                 :title="talk.activeCommunitySymbolInfo.name"
                 v-if="talk.activeCommunitySymbolInfo"
               >
@@ -126,7 +130,7 @@
                     name="plus"
                     class="w-4 h-4 text-black dark:text-white cursor-pointer"
                     v-if="talk.isAdmin()"
-                    @click="layout.isShowCreatePublicChannelModal = true"
+                    @click="layout.isShowCreateGeneralChannelModal = true"
                   /> -->
                 </div>
 
@@ -199,6 +203,9 @@
 <script lang="ts" setup>
 import CreatePublicChannelModal from './modals/CreatePublicChannelModal.vue'
 import CreateConsensualChannelModal from './modals/CreateConsensualChannelModal.vue'
+import CreateGeneralChannelModal from './modals/CreateGeneralChannelModal.vue'
+import CreateDaoModal from './modals/CreateDaoModal.vue'
+import CommunityInfoModal from './modals/community/Info.vue'
 import { useLayoutStore } from '@/stores/layout'
 import CommunityChannelItem from './CommunityChannelItem.vue'
 import { useTalkStore } from '@/stores/talk'

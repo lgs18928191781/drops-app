@@ -101,6 +101,15 @@ export const GetUserAllInfo = (
   return aggregation.get(`/v2/app/user/getUserAllInfo/${metaId}`)
 }
 
+export const GetUserSimpleInfo = (
+  metaId: string
+): Promise<{
+  code: number
+  data: UserAllInfo
+}> => {
+  return aggregation.get(`/v2/app/user/getUserSimpleInfo/${metaId}`)
+}
+
 export const GetUserInfo = (
   metaId: string
 ): Promise<{

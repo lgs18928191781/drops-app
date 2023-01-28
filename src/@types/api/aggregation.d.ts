@@ -170,6 +170,30 @@ declare interface UserAllInfo {
   timestamp: number
 }
 
+declare interface UserSimpleInfo {
+  metaId: string
+  metaIdTag: string
+  address: string
+  pubKey: string
+  infoTxId: string
+  infoPublicKey: string
+  protocolTxId: string
+  protocolPublicKey: string
+  name: string
+  nameEncrypt: string
+  phone: string
+  phoneEncrypt: string
+  email: string
+  emailEncrypt: string
+  avatarTxId: string
+  avatarImage: string
+  avatarEncrypt: string
+  coverUrl: string
+  coverType: string
+  coverPublicKey: string
+  timestamp: number
+}
+
 declare interface PublishShareItem {
   icon: string
   cover: string
@@ -207,7 +231,7 @@ declare interface SellNftItem {
 }
 
 declare interface MetaNameSearchResult {
-  expiredBlockHeight: number
+  expiredBlockTime: number
   genesisId: string
   name: string
   nftCodeHash: string
@@ -219,7 +243,7 @@ declare interface MetaNameSearchResult {
 
 declare interface MetaNameItem {
   codeHash: string
-  expiredBlockHeight: number
+  expiredBlockTime: number
   genesis: string
   icon: string
   infos: string

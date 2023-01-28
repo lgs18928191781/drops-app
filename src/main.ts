@@ -21,10 +21,12 @@ import Image from '@/components/Image/Image.vue'
 import Icon from '@/components/Icon/Icon.vue'
 import GlobalDialog from '@/components/GlobalDialog/index.vue'
 import { createPinia } from 'pinia'
+import { VueQueryPlugin } from '@tanstack/vue-query' // TanStack Query
 
 const app = createApp(App)
 
 // 挂载全局过滤器
+// @ts-ignore
 app.config.globalProperties.$filters = {
   ...filters,
 }
@@ -41,4 +43,5 @@ app
   .use(router)
   .use(ElLoading)
   .use(i18n)
+  .use(VueQueryPlugin)
   .mount('#app')

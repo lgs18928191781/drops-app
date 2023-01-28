@@ -418,6 +418,10 @@ function loginSuccess(params: BindMetaIdRes) {
 
       //   }
       // }
+
+      if (!params.userInfo.evmAddress) {
+        params.userInfo.evmAddress = params.userInfo.ethAddress
+      }
       userStore.updateUserInfo({
         ...params.userInfo,
         ...metaIdInfo.data,
@@ -560,6 +564,7 @@ function createMetaidAccount() {
             chainId: window.ethereum.chainId,
             path: parseInt(import.meta.env.VITE_WALLET_PATH),
           })
+
           await sendHash(newUserInfo)
 
           resolve({
@@ -832,6 +837,7 @@ function bindingMetaidOrAddressLogin() {
             resp.result.enMnemonic,
             form.pass,
             true,
+
             resp.result.path
           )
 

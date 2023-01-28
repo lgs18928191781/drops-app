@@ -123,9 +123,13 @@
                       $t('Talk.Modals.red_packet_require_nft')
                     }}</span>
                     <div class="flex items-center text-sm ml-2">
-                      <Image :src="requireNft.icon" customClass="w-10 h-10 rounded-md" />
+                      <Image
+                        v-if="requireNft.icon"
+                        :src="requireNft.icon"
+                        custom-class="w-10 h-10 rounded-md"
+                      />
                       <div class="ml-2 flex flex-col items-start">
-                        <div class="font-medium text-sm">{{ requireNft.name }}</div>
+                        <div class="font-medium text-base">{{ requireNft.name }}</div>
                         <div class="text-xs capitalize font-bold text-amber-400">
                           {{ requireNft.chain }}
                         </div>
@@ -229,7 +233,7 @@ onMounted(async () => {
     })
     requireNft.value = {
       icon: items[0].nftIcon,
-      name: items[0].nftName,
+      name: items[0].nftSeriesName,
       seriesName: items[0].nftSeriesName || items[0].nftName,
       chain,
     }

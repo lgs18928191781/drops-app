@@ -138,7 +138,9 @@
       "choose_meta_name": "选择 MetaName",
       "no_meta_name_available": "您没有可用的 MetaName",
       "share_invite_link_tip": "向好友发送邀请链接",
-      "share_to_buzz_tip": "或者分享到 Buzz",
+      "share_to_buzz_tip": "分享到 Buzz",
+      "share_card_tip": "分享社区名片",
+      "card": "社区名片",
       "share_to_buzz_button": "分享到 Buzz",
       "share_to_buzz_title": "分享到 Buzz",
       "share_successfully": "成功分享",
@@ -166,7 +168,12 @@
       "nft_candy_bag": "NFT 红包",
       "Draws": "详情",
       "invite_tip": "快来加入我们的社区吧！",
-      "admin_only": "仅限管理员发言"
+      "admin_only": "仅限管理员发言",
+      "owner": "所有者",
+      "share": "分享",
+      "leave": "离开社区",
+      "nftize_title": "Show：NFT化你的社交生活",
+      "scan_to_join": "扫码加入社区"
     },
     "Channel": {
       "core_members": "核心成员",
@@ -613,7 +620,7 @@
   "Request Timeout": "请求超时，请稍后再试",
   "niceWarning": "温馨提示",
   "offsaleConfirm": "你确认要就下架",
-  "group1": "Show: NFT化你的社交生活",
+  "group1": "Show：NFT化你的社交生活",
   "group1-desc": "首个完全去中心化的以NFT为核心的Web3 \n 社交平台",
   "group1-foot-title": "第一个面向所有人的无门槛Web3社交平台",
   "page-two-title": "参与 Social & Mint 革命",
@@ -795,7 +802,8 @@
     "RegisterSuccessTips2": " ",
     "RenewSuccessTips": "🎉 恭喜您已成功续费 ",
     "RenewSuccessTips2": " ",
-    "Renewal Fee": "续期费用"
+    "Renewal Fee": "续期费用",
+    "ReadyExpire": "即将到期"
   },
   "Menu": "菜单",
   "metanameNotAllowOverLenght": "注册名称长度不能超过63位字符",
@@ -803,5 +811,6 @@
   "metanameNftImgError": "上链MetaName封面失败",
   "getMetaNameInfoError": "获取MetaName信息失败",
   "registerNameIllgel": "提交注册的MetaName字符存在不合法",
-  "inputMetaNameIllgel": "输入的MetaName不符合规范"
+  "inputMetaNameIllgel": "输入的MetaName不符合规范",
+  "getExpiredTimeFail": "获取到期时间失败"
 }
