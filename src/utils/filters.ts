@@ -143,13 +143,20 @@ export function toUserHome(metaId: string) {
 }
 
 export function buzzTextContent(content: string) {
-  return content
-    .replace(/\\n/g, '\n')
-    .replace(
-      /#.*?[\s\n\r#]{1}|#.*?$/g,
-      val =>
-        `<a href='/buzz/topic/${val
-          .replace('#', '')
-          .replace(/(^\s*)|(\s*$)/g, '')}' style='color:#fc6d5e' >${val}</a>&nbsp;`
-    )
+  return (
+    content
+      .replace(/\\n/g, '\n')
+      .replace(
+        /#.*?[\s\n\r#]{1}|#.*?$/g,
+        val =>
+          `<a href='/buzz/topic/${val
+            .replace('#', '')
+            .replace(/(^\s*)|(\s*$)/g, '')}' style='color:#fc6d5e' >${val}</a>&nbsp;`
+      )
+      // 超链接
+      .replace(
+        /^(?:ftp|http|https):\/\/(?:[\w\.\-\+]+:{0,1}[\w\.\-\+]*@)?(?:[a-z0-9\-\.]+)(?::[0-9]+)?(?:\/|\/(?:[\w#!:\.\?\+=&%@!\-\/\(\)]+)|\?(?:[\w#!:\.\?\+=&%@!\-\/\(\)]+))?$/g,
+        val => `<a href='${val}' target="_blank" style='color:#fc6d5e'>${val}</a>&nbsp;`
+      )
+  )
 }

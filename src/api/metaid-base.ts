@@ -103,5 +103,5 @@ export const GetTxChainInfo = (
     chainFlag: string
   }
 }> => {
-  return MetaIdBase.get(`/v1/meta/${txId}/info`)
+  return MetaIdBase.get(`/v1/meta/${txId}/info/chain`)
 }
