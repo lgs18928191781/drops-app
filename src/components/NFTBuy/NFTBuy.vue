@@ -63,6 +63,7 @@
       :order-id="payMsg.orderId"
       :amount="payMsg.amount"
       :url="payMsg.url"
+      @success="onPaySuccess"
     />
   </ElDialog>
 </template>
@@ -143,6 +144,11 @@ async function confirmBuy() {
     payMsg.url = res.url
     isShowPayModal.value = true
   }
+}
+
+function onPaySuccess() {
+  emit('update:modelValue', false)
+  emit('success')
 }
 </script>
 

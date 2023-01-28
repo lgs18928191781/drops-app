@@ -380,7 +380,12 @@
         </div>
 
         <NFTSellVue :nft="nft.val!" v-model="isShowSell" @success="getDetail" />
-        <NFTBuyVue :nft="nft.val!" v-model="isShowBuy" :is-hide-detail="true" />
+        <NFTBuyVue
+          :nft="nft.val!"
+          v-model="isShowBuy"
+          :is-hide-detail="true"
+          @success="getDetail"
+        />
         <NFTTransferVue :nft="nft.val!" v-model="isShowTransfer" @success="getDetail" />
       </template>
     </ElSkeleton>
