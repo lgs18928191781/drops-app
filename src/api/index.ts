@@ -49,7 +49,7 @@ interface SetUserPasswordParams extends BaseUserInfoParams {
 }
 
 const baseApi = import.meta.env.VITE_BASEAPI
-const metasvApi = import.meta.env.VITE_METASVAPI
+const metasvApi = import.meta.env.VITE_META_SV_API
 const wxcoreApi = import.meta.env.VITE_WXCOREAPI
 
 const callApi = async (config: ApiRequestTypes): Promise<ApiResultTypes> => {

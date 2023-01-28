@@ -488,7 +488,13 @@
     "Add Amount": "充值金额",
     "Add": "充值",
     "My Wallet": "我的钱包",
-    "Recharge MetaEnergy": "充值能量点"
+    "Recharge MetaEnergy": "充值能量点",
+    "Transfer": "转账",
+    "Transfer Address": "转账地址",
+    "Transfer Amount": "转账金额",
+    "Enter Transfer Address": "请填写转账地址",
+    "Enter Transfer Amount": "请填写转账金额",
+    "Transfer Success": "转账成功"
   },
   "registing": "注册中",
   "sendVerifiyCodeError": "验证码填写不正确,请重新填写",

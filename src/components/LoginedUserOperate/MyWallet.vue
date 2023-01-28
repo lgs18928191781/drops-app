@@ -140,10 +140,16 @@
                         v-if="wallet.address()"
                         @click="copy(wallet.address())"
                         >{{
-                          wallet.address().slice(0, 6) + '...' + wallet.address().slice(-6)
+                          wallet.address().slice(0, 6) + '...' + wallet.address().slice(-3)
                         }}</span
                       >
                     </div>
+                    <a
+                      class="transfer main-border"
+                      v-if="wallet.isCanTransfer"
+                      @click="isShowTransfer = true"
+                      >{{ $t('Wallet.Transfer') }}</a
+                    >
                     <div class="value">
                       <template v-if="wallet.loading">
                         <ElIcon class="is-loading">
@@ -263,6 +269,9 @@
 
     <!-- ME Intro -->
     <MEIntroVue v-model="isShowMeIntro" />
+
+    <!-- Transfer -->
+    <Transfer v-model="isShowTransfer" />
   </ElDrawer>
 </template>
 
@@ -293,6 +302,8 @@ import { Loading } from '@element-plus/icons-vue'
 import ContentModalVue from '../ContentModal/ContentModal.vue'
 import { currentSupportChain } from '@/config'
 import MEIntroVue from '../MEIntro/MEIntro.vue'
+import Transfer from './Transfer.vue'
+
 const props = defineProps<{
   modelValue: boolean
 }>()
@@ -358,6 +369,7 @@ const genesisList: UserNFTItem[] = reactive([])
 
 const pagination = reactive({ ...initPagination })
 const isShowMERecharge = ref(false)
+const isShowTransfer = ref(false)
 const wallets = reactive([
   {
     title: i18n.t('Wallet.Action Points'),
@@ -367,6 +379,7 @@ const wallets = reactive([
         name: 'ME',
         value: 0,
         address: () => '',
+        isCanTransfer: false,
         price: function() {
           const rate = rootStore.exchangeRate.find(item => item.symbol === 'ME')
           if (rate) {
@@ -386,6 +399,7 @@ const wallets = reactive([
         name: import.meta.env.VITE_ETH_CHAIN.toUpperCase(),
         value: 0,
         address: () => userStore.user?.evmAddress || '',
+        isCanTransfer: false,
         price: function() {
           const rate = rootStore.exchangeRate.find(
             item => item.symbol === import.meta.env.VITE_ETH_CHAIN
@@ -402,6 +416,7 @@ const wallets = reactive([
         name: import.meta.env.VITE_POLYGON_CHAIN.toUpperCase(),
         value: 0,
         address: () => userStore.user?.evmAddress || '',
+        isCanTransfer: false,
         price: function() {
           return 0
           const rate = rootStore.exchangeRate.find(
@@ -419,6 +434,7 @@ const wallets = reactive([
         name: 'SPACE',
         value: 0,
         address: () => userStore.user?.address || '',
+        isCanTransfer: true,
         price: function() {
           const rate = rootStore.exchangeRate.find(item => item.symbol === 'mvc')
           if (rate) {

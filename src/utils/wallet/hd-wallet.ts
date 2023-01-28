@@ -490,7 +490,13 @@ export class HdWallet {
     },
   }
 
-  public usedPublicekeyAddress: string[] = [] // 已使用的publickey 地址，避免重复使用
+  public publishkeyList: {
+    address: string
+    index: number
+    path: string
+    publicKey: string
+    isUsed: boolean
+  }[] = [] // 已使用的publickey 地址，避免重复使用
 
   get rootAddress(): string {
     return this._root.toAddress(this.network).toString()
@@ -1926,28 +1932,54 @@ export class HdWallet {
   }) {
     return new Promise<string[]>(async (resolve, reject) => {
       try {
-        if (!params.count) params.count = 15
-        if (typeof params.count === 'undefined') params.checkOnly = true
-        const result = await this.provider.getPulicKeyForNewNode(
-          this.wallet.xpubkey.toString(),
-          params.parentTxid,
-          params.count
-        )
-        if (result.length > 0) {
-          // 过滤掉已使用的地址， 避免重复使用
-          const unUseResult = result.filter(
-            item => !this.usedPublicekeyAddress.includes(item.address)
+        const index = this.publishkeyList.findIndex(item => item.isUsed === false)
+        if (index === -1) {
+          if (typeof params.count === 'undefined') params.checkOnly = true
+          if (!params.count) params.count = 50
+          const result = await this.provider.getPulicKeyForNewNode(
+            this.wallet.xpubkey.toString(),
+            params.parentTxid,
+            params.count
           )
-          // 标记已使用
-          if (unUseResult.length > 0) {
-            this.usedPublicekeyAddress.push(unUseResult[0].address)
-            resolve(unUseResult[0].path.split('/'))
-          } else {
-            throw new Error('getPublicKeyForNewNode fail')
+          if (result && result.length) {
+            for (let item of result) {
+              if (!this.publishkeyList.some(_item => _item.publicKey === item.publicKey)) {
+                this.publishkeyList.push({
+                  ...item,
+                  isUsed: false,
+                })
+              }
+            }
           }
+          const _index = this.publishkeyList.findIndex(item => item.isUsed === false)
+          this.publishkeyList[_index].isUsed = true
+          resolve(this.publishkeyList[_index].path.split('/'))
         } else {
-          throw new Error('getPublicKeyForNewNode fail')
+          this.publishkeyList[index].isUsed = true
+          resolve(this.publishkeyList[index].path.split('/'))
         }
+        // if (!params.count) params.count = 15
+        // if (typeof params.count === 'undefined') params.checkOnly = true
+        // const result = await this.provider.getPulicKeyForNewNode(
+        //   this.wallet.xpubkey.toString(),
+        //   params.parentTxid,
+        //   params.count
+        // )
+        // if (result.length > 0) {
+        //   // 过滤掉已使用的地址， 避免重复使用
+        //   const unUseResult = result.filter(
+        //     item => !this.usedPublicekeyAddress.includes(item.address)
+        //   )
+        //   // 标记已使用
+        //   if (unUseResult.length > 0) {
+        //     this.usedPublicekeyAddress.push(unUseResult[0].address)
+        //     resolve(unUseResult[0].path.split('/'))
+        //   } else {
+        //     throw new Error('getPublicKeyForNewNode fail')
+        //   }
+        // } else {
+        //   throw new Error('getPublicKeyForNewNode fail')
+        // }
       } catch (error) {
         reject(error)
       }

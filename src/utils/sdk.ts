@@ -210,6 +210,7 @@ export class SDK {
   wallet: HdWallet | null = null
   isInitSdked = false
   network = Network.mainnet
+  bfrcNodeList: { nodeName: NodeName; data: CreateNodeRes }[] = [] // 存储Brfc节点， 防止未广播时重复构建
 
   constructor(network: any) {
     this.network = network
@@ -826,18 +827,24 @@ export class SDK {
           // 如果有附件
           if (params.attachments && params.attachments!.length > 0) {
             const createAttachmentParams: any = []
-            transactions.metaFileBrfc = await this.wallet?.createBrfcNode(
-              {
-                nodeName: NodeName.MetaFile,
-                parentTxId: userStore.user?.protocolTxId!,
-                parentAddress: this.wallet.protocolAddress,
-                utxos: [],
-                useFeeb: params.useFeeb,
-              },
-              {
-                isBroadcast: false,
-              }
-            )
+            if (this.bfrcNodeList.some(item => item.nodeName === NodeName.MetaFile)) {
+              transactions.metaFileBrfc = this.bfrcNodeList.find(
+                item => item.nodeName === NodeName.MetaFile
+              )?.data
+            } else {
+              transactions.metaFileBrfc = this.getBrfcNode(
+                {
+                  nodeName: NodeName.MetaFile,
+                  parentTxId: userStore.user?.protocolTxId!,
+                  parentAddress: this.wallet.protocolAddress,
+                  utxos: [],
+                  useFeeb: params.useFeeb,
+                },
+                {
+                  isBroadcast: false,
+                }
+              )
+            }
 
             for (const item of params.attachments!) {
               const index = params.attachments!.findIndex(_item => _item.sha256 === item.sha256)
@@ -892,7 +899,7 @@ export class SDK {
               }
             } else {
               // 新增
-              transactions.currentNodeBrfc = await this.wallet?.createBrfcNode(
+              transactions.currentNodeBrfc = await this.getBrfcNode(
                 {
                   nodeName: params.nodeName,
                   parentTxId: userStore.user?.protocolTxId!,
@@ -912,6 +919,7 @@ export class SDK {
               : undefined
 
             // 处理brfc 子节点
+
             let res = await this.wallet?.createBrfcChildNode(
               {
                 ...params,
@@ -992,6 +1000,33 @@ export class SDK {
         resolve(transactions)
       } catch (error) {
         reject(error)
+      }
+    })
+  }
+
+  private getBrfcNode(
+    params: {
+      nodeName: NodeName
+      parentTxId: string
+      parentAddress: string
+      utxos: UtxoItem[]
+      useFeeb: number
+    },
+    option?: { isBroadcast: boolean }
+  ) {
+    return new Promise<CreateNodeRes>(async (resolve, reject) => {
+      if (this.bfrcNodeList.some(item => item.nodeName === params.nodeName)) {
+        resolve(this.bfrcNodeList.find(item => item.nodeName === params.nodeName)!.data)
+      } else {
+        const currentNodeBrfc = await this.wallet?.createBrfcNode(params, option)
+        this.bfrcNodeList.push({
+          nodeName: params.nodeName,
+          data: {
+            ...currentNodeBrfc!,
+            transaction: undefined,
+          },
+        })
+        resolve(currentNodeBrfc!)
       }
     })
   }
@@ -1780,7 +1815,7 @@ export class SDK {
       payTo: payTo,
     })
 
-    await this.wallet?.provider.broadcast(res.toString(), true)
+    return await this.wallet?.provider.broadcast(res.toString(), true)
   }
 
   MetaNameBeforeReq(params: {

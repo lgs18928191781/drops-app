@@ -417,7 +417,13 @@
     "Add Amount": "Total Fees",
     "Add": "Recharge",
     "My Wallet": "My Wallet",
-    "Recharge MetaEnergy": "Recharge MetaEnergy"
+    "Recharge MetaEnergy": "Recharge MetaEnergy",
+    "Transfer": "Transfer",
+    "Enter Transfer Address": "Enter Transfer Address",
+    "Transfer Address": "Transfer Address",
+    "Transfer Amount": "Transfer Amount",
+    "Enter Transfer Amount": "Enter Transfer Amount",
+    "Transfer Success": "Transfer Success"
   },
   "quickPay": "Credit Card",
   "aliPay": "Alipay",

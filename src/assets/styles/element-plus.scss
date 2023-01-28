@@ -123,7 +123,15 @@ html.dark {
     }
 
 
+    &.el-input-group--append {
+        .el-input__wrapper {
+            border-right: none;
+        }
 
+        .el-input-group__append {
+            box-shadow: 3px 3px 0 var(--faded-border-color);
+        }
+    }
 
 
 }
@@ -131,7 +139,9 @@ html.dark {
 .el-form-item {
     &.is-success {
         .el-input {
-            .el-input__wrapper {
+
+            .el-input__wrapper,
+            .el-input-group__append {
                 border-color: var(--themeTextColor);
                 box-shadow: 3px 3px 0 var(--themeTextColor);
             }
@@ -140,7 +150,9 @@ html.dark {
 
     &.is-error {
         .el-input {
-            .el-input__wrapper {
+
+            .el-input__wrapper,
+            .el-input-group__append {
                 border-color: var(--el-color-danger);
                 box-shadow: 3px 3px 0 var(--el-color-danger);
             }
