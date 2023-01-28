@@ -248,6 +248,7 @@ function like(item: BuzzInteractiveItem, index: number) {
         padding: 0;
         font-size: 15px;
         white-space: pre-line;
+        word-break: break-word;
       }
       .children-comment {
         padding: 8px 12px;

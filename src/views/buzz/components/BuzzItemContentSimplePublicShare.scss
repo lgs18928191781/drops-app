@@ -1,6 +1,7 @@
 .text {
     font-size: 15PX;
     white-space: pre-line;
+    word-break: break-word;
     line-height: 20PX;
 
     .el-skeleton__item {

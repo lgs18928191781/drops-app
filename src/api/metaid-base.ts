@@ -92,3 +92,16 @@ export const GetTx = (
 }> => {
   return MetaIdBase.get(`/v1/meta/${txId}/info`)
 }
+
+export const GetTxChainInfo = (
+  txId: string
+): Promise<{
+  code: number
+  data: {
+    metanetId: string
+    txId: string
+    chainFlag: string
+  }
+}> => {
+  return MetaIdBase.get(`/v1/meta/${txId}/info`)
+}

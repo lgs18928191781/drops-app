@@ -241,7 +241,6 @@ export class SDK {
             // reload
             window.location.reload()
           }
-
           const walletObj = await hdWalletFromAccount(
             {
               ...userInfo,

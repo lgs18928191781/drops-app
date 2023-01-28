@@ -1,23 +1,26 @@
 <template>
   <div class="nft-issue">
-    <header class="flex flex-align-center">
-      <div class="flex1">
-        <span class="title">{{ $t('NFT.Issue NFT') }}</span>
-      </div>
-      <a class="main-border primary" @click="isShowOption = true">{{ $t('NFT.Add Issue') }}</a>
-      <a class="main-border primary" @click="confirmIssue">{{ $t('NFT.Confirm Issue') }}</a>
-    </header>
+    <div class="nft-issue-header">
+      <header class="flex flex-align-center">
+        <div class="flex1">
+          <span class="title">{{ $t('NFT.Issue NFT') }}</span>
+        </div>
+        <a class="main-border primary" @click="isShowOption = true">{{ $t('NFT.Add Issue') }}</a>
+        <a class="main-border primary" @click="confirmIssue">{{ $t('NFT.Confirm Issue') }}</a>
+      </header>
 
-    <div class="issue-list">
-      <div class="issue-th flex flex-align-center">
-        <span class="flex1">{{ $t('NFT.Belong Genesis') }}</span>
+      <div class="issue-th issue-item flex flex-align-center">
+        <span class="w-50">{{ $t('NFT.Belong Genesis') }}</span>
         <span class="w-20">{{ $t('NFT.Cover') }}</span>
         <span class="w-20">{{ $t('NFT.Source File') }}</span>
         <span class="flex1">{{ $t('NFT.Name') }}</span>
         <span class="flex1">{{ $t('NFT.Drsc') }}</span>
         <span class="flex1">{{ $t('NFT.Accept Address') }}</span>
-        <span class="flex1">{{ $t('NFT.issueToknIndex') }}</span>
+        <span class="w-30">{{ $t('NFT.issueToknIndex') }}</span>
       </div>
+    </div>
+
+    <div class="issue-list">
       <div class="issue-item flex flex-align-center" v-for="item in list" :key="item.uuid">
         <ElForm
           :model="item"
@@ -26,7 +29,7 @@
           class="flex flex-align-center flex1"
         >
           <!-- genesis -->
-          <ElFormItem prop="genesis" class="flex1">
+          <ElFormItem prop="genesis" class="w-50">
             <div class="form-item flex flex-align-center flex1">
               <div class="flex1 flex flex-align-center">
                 <ElSelect
@@ -91,7 +94,7 @@
           </ElFormItem>
 
           <!-- index -->
-          <ElFormItem prop="acceptAddress" class="flex1">
+          <ElFormItem prop="acceptAddress" class="w-30">
             <div class="form-item flex flex-align-center flex1">
               <div class="flex1">
                 <ElInput type="number" :readonly="true" v-model="item.index" />
@@ -193,16 +196,14 @@ async function ftGenesis() {
 }
 
 function addIssueItem(option: IssueNFTOption) {
-  const result: IssueItem[] = []
   let errorMsg
   for (let i = 0; i < option.count; i++) {
     try {
-      debugger
       const genesis = i === 0 || option.isSameGenesis ? option.genesis : null
       const name = i === 0 || option.isSameName ? option.name : ''
       const cover = i === 0 || option.isSameCover ? option.cover : null
       const sourceFile =
-        i === 0 || (option.isSameSourceFile && option.isSoureFileSameCover)
+        i === 0 || option.isSoureFileSameCover
           ? option.cover
           : i === 0 || option.isSameSourceFile
           ? option.sourceFile
@@ -211,7 +212,7 @@ function addIssueItem(option: IssueNFTOption) {
       const desc = i === 0 || option.isSameDesc ? option.desc : ''
       const index = getCurrentGenesisIndex(genesis)
       const uuid = v1()
-      result.push({
+      list.push({
         genesis,
         name,
         cover,
@@ -232,14 +233,13 @@ function addIssueItem(option: IssueNFTOption) {
 
   if (errorMsg) {
     return ElMessage.error(errorMsg)
-  } else {
-    list.push(...result)
   }
 }
 
 function getCurrentGenesisIndex(genesis?: GenesisItem | null) {
   if (!genesis) return 0
   else {
+    debugger
     const currentGenesisList = list.filter(
       item =>
         item.genesis &&
@@ -247,9 +247,9 @@ function getCurrentGenesisIndex(genesis?: GenesisItem | null) {
         item.genesis.genesis === genesis.genesis
     )
     if (currentGenesisList && currentGenesisList.length) {
-      return currentGenesisList[-1].index + 1
+      return currentGenesisList[currentGenesisList.length - 1].index + 1
     } else {
-      return genesis.currentTotalSupply
+      return genesis.currentTotalSupply + 1
     }
   }
 }

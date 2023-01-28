@@ -40,6 +40,7 @@ import { useUserStore } from '@/stores/user'
 import Decimal from 'decimal.js-light'
 import { number } from 'yup'
 import { GetMeUtxos } from '@/api/v3'
+import { GetTxChainInfo } from '@/api/metaid-base'
 const bsv = mvc
 
 export enum Network {
@@ -1024,10 +1025,16 @@ export class HdWallet {
           }
         }
 
+        const chainInfoRes = await GetTxChainInfo(parentTxId)
+        const chain =
+          chainInfoRes.code === 0 && chainInfoRes.data.chainFlag
+            ? chainInfoRes.data.chainFlag
+            : 'mvc'
+
         const scriptPlayload = [
           'mvc',
           nodeAddress.publicKey.toString(),
-          parentTxId,
+          `${chain}:${parentTxId}`,
           metaIdTag.toLowerCase(),
           nodeName,
           data,

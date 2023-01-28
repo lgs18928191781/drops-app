@@ -44,7 +44,7 @@ router.beforeEach(async (to, from, next) => {
   }
 
   if (!userStore.showWallet) {
-    userStore.$patch({ wallet: new SDK(Network.testnet) })
+    userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
   }
 
   if (userStore.isAuthorized) {
