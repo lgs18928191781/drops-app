@@ -276,7 +276,7 @@ async function follow() {
         1
       )
     }
-    const message = `${isMyFollowed.value ? i18n.t('Cancel Follow') : i18n.t('Follow')} ${i18n.t(
+    const message = `${!isMyFollowed.value ? i18n.t('Cancel Follow') : i18n.t('Follow')} ${i18n.t(
       'Success'
     )}`
     ElMessage.success(message)
