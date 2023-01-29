@@ -94,6 +94,14 @@
                 }
             }
         }
+
+        &.nft {
+            .remove {
+                background: var(--color-error);
+                margin-top: -12px;
+                margin-right: -12px;
+            }
+        }
     }
 }
 

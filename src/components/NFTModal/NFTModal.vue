@@ -112,7 +112,7 @@
 <script setup lang="ts">
 import { GetGenesisNFTs, GetNFTs } from '@/api/aggregation'
 import { initPagination, chains } from '@/config'
-import { NodeName } from '@/enum'
+import { Chains, NodeName } from '@/enum'
 import { useUserStore } from '@/stores/user'
 import { computed, reactive, ref, watch } from 'vue'
 import NFTCoverVue from '../NFTCover/NFTCover.vue'
@@ -149,7 +149,7 @@ function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetNFTs({
       address:
-        tabActive.value === 'mvc'
+        tabActive.value === Chains.MVC || tabActive.value === Chains.BSV
           ? userStore.user!.address
           : userStore.user!.evmAddress! || userStore.user!.ethAddress,
       chain: tabActive.value,

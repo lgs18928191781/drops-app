@@ -284,13 +284,13 @@ function confirmTopic() {
 
 function chooseNFT(nft: BaseNFT) {
   const sufix = <{ [key: string]: string }>{
-    mvc: 'metacontract',
-    goerli: 'goerli',
+    mvc: 'metacontract:/',
+    goerli: `evm/${nft.chain}`,
+    eth: `evm/${nft.chain}`,
+    bsv: 'sensible:/',
   }
   attachments.push(
-    `${nft.chain === 'mvc' ? 'metacontract:/' : 'evm/' + nft.chain}/${nft.codehash}${
-      nft.codehash ? '/' : ''
-    }${nft.genesis}/${nft.tokenIndex}`
+    `${sufix[nft.chain]}/${nft.codehash}${nft.codehash ? '/' : ''}${nft.genesis}/${nft.tokenIndex}`
   )
 }
 
