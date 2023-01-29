@@ -332,7 +332,11 @@ function getAttachmentType(attachment: string | AttachmentItem) {
   if (typeof attachment === 'string') {
     const fileSuffix = attachment.split('.')[attachment.split('.').length - 1].toLowerCase()
     const videoSuffixs = ['mov', 'mp4']
-    if (attachment.indexOf('metacontract://') !== -1 || attachment.indexOf('evm/') !== -1) {
+    if (
+      attachment.indexOf('metacontract://') !== -1 ||
+      attachment.indexOf('evm/') !== -1 ||
+      attachment.indexOf('sensible://') !== -1
+    ) {
       return 'nft'
     } else if (
       fileSuffix === 'png' ||
@@ -398,10 +402,20 @@ function getAttachmentInfo() {
     } else if (getAttachmentType(props.attachments[0]) === 'nft') {
       loading.value = true
       const array = (props.attachments[0] as string).split(
-        `${(props.attachments[0] as string).indexOf('metacontract') !== -1 ? '://' : 'evm/'}`
+        `${
+          (props.attachments[0] as string).indexOf('metacontract') !== -1 ||
+          (props.attachments[0] as string).indexOf('sensible') !== -1
+            ? '://'
+            : 'evm/'
+        }`
       )
       GetNFT({
-        chain: array[0] === 'metacontract' ? 'mvc' : array[1].split('/')[0],
+        chain:
+          array[0] === 'metacontract'
+            ? 'mvc'
+            : array[0] === 'sensible'
+            ? 'bsv'
+            : array[1].split('/')[0],
         genesis: array[1].split('/')[1],
         codehash: array[0] === 'metacontract' ? array[1].split('/')[0] : array[1].split('/')[0],
         tokenIndex: array[1].split('/')[2],

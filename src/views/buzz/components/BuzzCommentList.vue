@@ -253,7 +253,7 @@ function like(item: BuzzInteractiveItem, index: number) {
       .children-comment {
         padding: 8px 12px;
         border-radius: 8px;
-        background: #f5f7fa;
+        background: var(--divid-color);
         margin-top: 18px;
 
         .child-comment-item {

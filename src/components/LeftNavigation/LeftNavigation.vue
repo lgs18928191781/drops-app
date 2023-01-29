@@ -112,7 +112,7 @@ import { useTalkStore } from '@/stores/talk'
 import { useUserStore } from '@/stores/user'
 import { isMobile, useRootStore } from '@/stores/root'
 import CreateCommunityModal from '@/views/talk/components/modals/community/Create.vue'
-import { onBeforeUnmount, watch } from 'vue'
+import { onBeforeUnmount, reactive, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useWsStore } from '@/stores/ws'
@@ -124,7 +124,7 @@ const route = useRoute()
 const rootStore = useRootStore()
 const i18n = useI18n()
 
-const apps = [
+const apps = reactive([
   {
     icon: 'feed',
     path: '/buzz',
@@ -138,13 +138,16 @@ const apps = [
     title: () => i18n.t('Talk.Community.atme'),
     symbol: '@me',
   },
-  {
+])
+
+if (import.meta.env.MODE !== 'mainnet') {
+  apps.push({
     icon: 'market',
     path: '/nft',
     title: () => i18n.t('NFT.NFT Market'),
     symbol: 'nft',
-  },
-]
+  })
+}
 
 if (userStore.isAuthorized) {
   talk.fetchCommunities()
