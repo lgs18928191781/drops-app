@@ -20,7 +20,7 @@ import basicSsl from '@vitejs/plugin-basic-ssl'
 // import dns from 'dns'
 // dns.setDefaultResultOrder('verbatim')
 const pathSrc = path.resolve(__dirname, 'src')
-const productionEnvs = ['prod', 'preview']
+const productionEnvs = ['mainnet']
 export default ({ mode, command }) => {
   // 加载环境配置文件
   const env = loadEnv(mode, process.cwd())
