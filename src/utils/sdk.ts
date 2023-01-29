@@ -664,6 +664,13 @@ export class SDK {
     option?: {
       isBroadcast?: boolean
       payType?: SdkPayType
+      callback?: (params: {
+        index: number
+        transactions: NodeTransactions
+      }) => Promise<{
+        isContinue: boolean
+        error?: string
+      }>
     }
   ) {
     return new Promise<null | {
@@ -701,16 +708,7 @@ export class SDK {
         }
       }
 
-      const transactionsList: {
-        metaFileBrfc?: CreateNodeRes
-        metaFiles?: CreateNodeRes[]
-        currentNodeBrfc?: CreateNodeRes
-        currentNode?: CreateNodeRes
-        issueNFT?: {
-          transaction: bsv.Transaction
-          txId?: string
-        }
-      }[] = []
+      const transactionsList: NodeTransactions[] = []
 
       let payToRes: CreateNodeRes | undefined = undefined
 
@@ -782,20 +780,35 @@ export class SDK {
         }
 
         // 广播
+        let error
         if (option.isBroadcast) {
           // 广播 打钱操作
           if (payToRes && payToRes.transaction) {
             await this.wallet?.provider.broadcast(payToRes.transaction.toString())
           }
-          for (let transactions of transactionsList) {
+          for (let [index, transactions] of transactionsList.entries()) {
             await this.broadcastNodeTransactions(transactions)
+            if (option.callback) {
+              const result = await option.callback({
+                index,
+                transactions,
+              })
+              if (!result.isContinue) {
+                error = result.error
+                break
+              }
+            }
           }
         }
 
-        resolve({
-          payToRes: payToRes,
-          transactionsList,
-        })
+        if (error) {
+          reject(new Error(error))
+        } else {
+          resolve({
+            payToRes: payToRes,
+            transactionsList,
+          })
+        }
       } else {
         resolve(null)
       }
@@ -1297,6 +1310,7 @@ export class SDK {
                   changeAddres: lastChangeAddress,
                 })
                 if (res) {
+                  debugger
                   transactions.issueNFT = {
                     // @ts-ignore
                     transaction: res.tx,

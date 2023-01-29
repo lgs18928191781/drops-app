@@ -278,7 +278,16 @@ async function confirmIssue() {
       attachments: [list[i].cover, list[i].sourceFile],
     })
   }
-  const response = await userStore.showWallet.batchCreateBrfcChildNode(taskParams)
+  const response = await userStore.showWallet.batchCreateBrfcChildNode(taskParams, {
+    callback: params => {
+      return new Promise(resolve => {
+        console.log(params.transactions)
+        resolve({
+          isContinue: true,
+        })
+      })
+    },
+  })
   if (response) {
     debugger
   }
