@@ -3,7 +3,7 @@
     <VersionVue />
   </div>
   <a
-    v-if="!userStore.isAuthorized"
+    v-if="!userStore.isAuthorized && !isProduction"
     @click="toMetaName"
     class="outsideMore flex flex-align-center flex-pack-center user-warp-item"
   >
@@ -26,6 +26,7 @@
       <a
         @click="toMetaName"
         class="outsideMore flex flex-align-center flex-pack-center user-warp-item"
+        v-if="!isProduction"
       >
         <img class="metanameLogo" :src="MetaNameLogo" alt="" />
       </a>
@@ -93,6 +94,7 @@ const rootStore = useRootStore()
 const userStore = useUserStore()
 const layout = useLayoutStore()
 const route = useRoute()
+const isProduction = import.meta.env.MODE === 'mainnet'
 
 const isShowUserMenu = ref(false)
 const userOperates = computed(() => {
