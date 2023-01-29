@@ -454,33 +454,6 @@ function loginSuccess(params: BindMetaIdRes) {
   })
 }
 
-// function createMnemonicSeed() {
-//   return new Promise<BindMetaIdRes>(async (resolve, reject) => {
-//     try {
-//       debugger
-//       const mnemonic = await createMnemonic(
-//         props.thirdPartyWallet.signAddressHash,
-//         encode(form.pass)
-//       )
-//        const hdWallet = await hdWalletFromMnemonic(mnemonic, 'new', Network.testnet)
-//       const HdWalletInstance = new HdWallet(hdWallet)
-//       const address = hdWallet
-//         .deriveChild(0)
-//         .deriveChild(0)
-//         .privateKey.toAddress()
-//         .toString()
-//       //
-//       const pubKey = hdWallet
-//         .deriveChild(0)
-//         .deriveChild(0)
-//         .publicKey.toString()
-//     } catch (error) {
-
-//     }
-//   })
-
-// }
-
 function createMetaidAccount() {
   return new Promise<BindMetaIdRes>(async (resolve, reject) => {
     try {
@@ -489,7 +462,7 @@ function createMetaidAccount() {
       const hdWallet = await hdWalletFromMnemonic(
         mnemonic,
         'new',
-        Network.testnet,
+        import.meta.env.VITE_NET_WORK,
         import.meta.env.VITE_WALLET_PATH
       )
 

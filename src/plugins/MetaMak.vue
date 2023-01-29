@@ -301,7 +301,7 @@ function loginByMnemonic(mnemonic: string) {
             const word = await getRandomWord()
 
             if (word.code == 0) {
-                const hdWallet = await props.hdWalletFromMnemonic(decodeMnemonic, 'new', Network.testnet)
+                const hdWallet = await props.hdWalletFromMnemonic(decodeMnemonic, 'new', import.meta.env.VITE_NET_WORK)
                 const sign = signature(
                     word.data.word,
                     hdWallet
@@ -494,7 +494,7 @@ function createMetaidAccount() {
                 ethAddress.value,
                 encode(ruleForm.pass)
             )
-            const hdWallet = await hdWalletFromMnemonic(mnemonic, 'new', Network.testnet)
+            const hdWallet = await hdWalletFromMnemonic(mnemonic, 'new', import.meta.env.VITE_NET_WORK)
             const HdWalletInstance = new HdWallet(hdWallet)
             const account: any = {
                 name: ruleForm.name,

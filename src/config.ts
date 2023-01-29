@@ -6,6 +6,7 @@ import SandPayIcon from '@/assets/images/sandPay_title.svg?url'
 import ETHIcon from '@/assets/svg/eth.svg?url'
 import MVC from '@/assets/svg/mvc.svg?url'
 import POLYGON from '@/assets/svg/polygon.svg?url'
+import BSV from '@/assets/images/bsv.png'
 
 import { useUserStore } from './stores/user'
 import { useRootStore } from './stores/root'
@@ -232,6 +233,12 @@ export const chains = [
     name: 'MVC',
     icon: MVC,
     value: 'mvc',
+    disabled: () => false,
+  },
+  {
+    name: 'BSV',
+    icon: BSV,
+    value: 'bsv',
     disabled: () => false,
   },
 ]

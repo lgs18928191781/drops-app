@@ -286,6 +286,7 @@ import { GetBalance, GetNFTs } from '@/api/aggregation'
 import ETH from '@/assets/images/eth.png'
 import MVC from '@/assets/images/iocn_mvc.png'
 import ME from '@/assets/images/me_logo.png'
+import BSV from '@/assets/images/bsv.png'
 import Polygon from '@/assets/svg/polygon.svg?url'
 import { initPagination, chains } from '@/config'
 import { useRootStore } from '@/stores/root'
@@ -303,6 +304,7 @@ import ContentModalVue from '../ContentModal/ContentModal.vue'
 import { currentSupportChain } from '@/config'
 import MEIntroVue from '../MEIntro/MEIntro.vue'
 import Transfer from './Transfer.vue'
+import { Chains } from '@/enum'
 
 const props = defineProps<{
   modelValue: boolean
@@ -444,6 +446,21 @@ const wallets = reactive([
         },
         loading: true,
       },
+      {
+        icon: BSV,
+        name: 'BSV',
+        value: 0,
+        address: () => userStore.user?.address || '',
+        isCanTransfer: false,
+        price: function() {
+          const rate = rootStore.exchangeRate.find(item => item.symbol === 'bsv')
+          if (rate) {
+            return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
+          }
+          return '--'
+        },
+        loading: true,
+      },
     ],
   },
 ])
@@ -497,7 +514,8 @@ function changeTab(value: number) {
 function getNFTs(isCover = false) {
   return new Promise<void>(async resolve => {
     if (
-      currentChain.value !== 'mvc' &&
+      currentChain.value !== Chains.MVC &&
+      currentChain.value !== Chains.BSV &&
       (!userStore.user!.evmAddress || !userStore.user?.ethAddress)
     ) {
       genesisList.length = 0
@@ -505,13 +523,10 @@ function getNFTs(isCover = false) {
     } else {
       const res = await GetNFTs({
         address:
-          chains.find(item => item.value === currentChain.value)!.value === 'mvc'
+          currentChain.value === Chains.MVC || currentChain.value === Chains.BSV
             ? userStore.user!.address!
             : userStore.user!.evmAddress! || userStore.user?.ethAddress,
-        chain:
-          chains.find(item => item.value === currentChain.value)!.value !== 'mvc'
-            ? chains.find(item => item.value === currentChain.value)!.value
-            : '',
+        chain: currentChain.value,
         ...pagination,
       })
       if (res.code === 0) {
@@ -544,7 +559,7 @@ function chooseSeries(item: UserNFTItem) {
 }
 
 function getAllBalace() {
-  return Promise.all([getMEBalance(), getSpaceBalance(), getETHBalance()])
+  return Promise.all([getMEBalance(), getSpaceBalance(), getETHBalance(), getBsvBalance()])
 }
 
 function getMEBalance() {
@@ -610,6 +625,25 @@ function getETHBalance() {
         item.loading = false
         resolve()
       }
+    }
+  })
+}
+
+function getBsvBalance() {
+  return new Promise<void>(async (resolve, reject) => {
+    const res = await GetBalance({
+      chain: Chains.BSV,
+      xpub: userStore.showWallet.wallet?.wallet.xpubkey.toString(),
+    }).catch(error => {
+      ElMessage.error(error.message)
+      resolve()
+    })
+    if (res?.code === 0) {
+      wallets[1].list[3].value = new Decimal(
+        new Decimal(res.data.balance).div(Math.pow(10, 8)).toFixed(4)
+      ).toNumber()
+      wallets[1].list[3].loading = false
+      resolve()
     }
   })
 }

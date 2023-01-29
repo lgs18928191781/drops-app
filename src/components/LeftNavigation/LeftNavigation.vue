@@ -138,6 +138,12 @@ const apps = [
     title: () => i18n.t('Talk.Community.atme'),
     symbol: '@me',
   },
+  {
+    icon: 'market',
+    path: '/nft',
+    title: () => i18n.t('NFT.NFT Market'),
+    symbol: 'nft',
+  },
 ]
 
 if (userStore.isAuthorized) {

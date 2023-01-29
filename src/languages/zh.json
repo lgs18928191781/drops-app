@@ -494,7 +494,9 @@
     "Transfer Amount": "转账金额",
     "Enter Transfer Address": "请填写转账地址",
     "Enter Transfer Amount": "请填写转账金额",
-    "Transfer Success": "转账成功"
+    "Transfer Success": "转账成功",
+    "Confirm Transfer": "确认转账",
+    "Transfer To": "给"
   },
   "registing": "注册中",
   "sendVerifiyCodeError": "验证码填写不正确,请重新填写",

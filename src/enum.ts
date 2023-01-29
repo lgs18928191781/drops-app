@@ -1,3 +1,4 @@
+const POLYGON_CHAIN = import.meta.env.VITE_POLYGON_CHAIN
 export const enum SortType {
   Time = 0,
   Price = 1,
@@ -411,6 +412,9 @@ export enum Chains {
   MVC = 'mvc',
   ETH = 'eth',
   Goerli = 'goerli',
+  MUMBAI = 'mumbai',
+  POLYGON = 'polygon',
+  BSV = 'bsv',
 }
 
 export enum MetaNameFeePerYear {

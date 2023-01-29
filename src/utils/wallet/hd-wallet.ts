@@ -1228,7 +1228,13 @@ export class HdWallet {
     return new Promise<UtxoItem>(async (resolve, reject) => {
       try {
         // 默认  outPutIndex = changeIndex
-        if (typeof params?.outPutIndex === 'undefined') params.outPutIndex = params.tx._changeIndex
+        if (typeof params?.outPutIndex === 'undefined') {
+          if (params.tx._changeIndex) {
+            params.outPutIndex = params.tx._changeIndex
+          } else {
+            params.outPutIndex = params.tx.outputs.length - 1
+          }
+        }
         const OutPut = params.tx.outputs[params.outPutIndex]
         if (!params.addressInfo) {
           const addressInfo = await this.provider.getPathWithNetWork({

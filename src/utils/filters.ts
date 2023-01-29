@@ -145,7 +145,9 @@ export function toUserHome(metaId: string) {
 export function buzzTextContent(content: string) {
   return (
     content
+      // 替换换行
       .replace(/\\n/g, '\n')
+      // 话题处理
       .replace(
         /#.*?[\s\n\r#]{1}|#.*?$/g,
         val =>
@@ -153,9 +155,9 @@ export function buzzTextContent(content: string) {
             .replace('#', '')
             .replace(/(^\s*)|(\s*$)/g, '')}' style='color:#fc6d5e' >${val}</a>&nbsp;`
       )
-      // 超链接
+      // 超链接处理
       .replace(
-        /^(?:ftp|http|https):\/\/(?:[\w\.\-\+]+:{0,1}[\w\.\-\+]*@)?(?:[a-z0-9\-\.]+)(?::[0-9]+)?(?:\/|\/(?:[\w#!:\.\?\+=&%@!\-\/\(\)]+)|\?(?:[\w#!:\.\?\+=&%@!\-\/\(\)]+))?$/g,
+        /(http:\/\/|https:\/\/)((\w|=|\?|\.|\/|&|-|%|~|@|:)+)/g,
         val => `<a href='${val}' target="_blank" style='color:#fc6d5e'>${val}</a>&nbsp;`
       )
   )

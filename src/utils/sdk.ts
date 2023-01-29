@@ -718,9 +718,7 @@ export class SDK {
       let totalAmount = 0 // 总价
       let useSatoshis = 0
       for (let [index, item] of params.entries()) {
-        debugger
         const transactions = await this.createBrfcChildNodeTransactions(item)
-        debugger
         transactionsList.push(transactions)
 
         //  + transactions 价格

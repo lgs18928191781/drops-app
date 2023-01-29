@@ -381,7 +381,8 @@ export const GetFTs = (params: {
 
 export const GetBalance = (params: {
   chain: string
-  address: string
+  address?: string
+  xpub?: string
 }): Promise<{
   code: number
   data: {

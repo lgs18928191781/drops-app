@@ -423,7 +423,9 @@
     "Transfer Address": "Transfer Address",
     "Transfer Amount": "Transfer Amount",
     "Enter Transfer Amount": "Enter Transfer Amount",
-    "Transfer Success": "Transfer Success"
+    "Transfer Success": "Transfer Success",
+    "Confirm Transfer": "Confirm Transfer",
+    "Transfer To": "To"
   },
   "quickPay": "Credit Card",
   "aliPay": "Alipay",

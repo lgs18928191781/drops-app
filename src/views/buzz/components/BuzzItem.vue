@@ -11,7 +11,9 @@
         </span>
       </div>
       <!-- 快速转发 -->
-      <template v-if="itemData.protocol === 'SimpleRePost'">
+      <template
+        v-if="itemData.protocol === 'SimpleRePost' && itemData.displayType === 'quickRePost'"
+      >
         <div class="forward-head">
           <ShareIcon />
           <UserAvatar
@@ -182,7 +184,11 @@ const displayItemData = computed(() => {
   }
   switch (itemData.value.protocol) {
     case 'SimpleRePost': {
-      return itemData.value.quoteItem || null
+      if (itemData.value.displayType === 'quickRePost') {
+        return itemData.value.quoteItem
+      } else {
+        return itemData.value
+      }
     }
     default: {
       return itemData.value

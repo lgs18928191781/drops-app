@@ -69,6 +69,7 @@ import Decimal from 'decimal.js-light'
 import { useI18n } from 'vue-i18n'
 import DrawerRightHeader from '../DrawerRightHeader/DrawerRightHeader.vue'
 import { useUserStore } from '@/stores/user'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 const props = defineProps<{
   modelValue: boolean
@@ -126,27 +127,41 @@ function onAmountChange() {
 function transfer() {
   FormRef.value.validate(async (valid: boolean) => {
     if (valid) {
-      loading.value = true
       const value =
         unit.value === 'Satoshi'
           ? new Decimal(form.amount).toNumber()
           : new Decimal(form.amount).mul(Math.pow(10, 8)).toNumber()
-      const res = await userStore.showWallet
-        .sendMoney([
-          {
-            amount: value,
-            address: form.address,
-          },
-        ])
-        .catch(error => {
-          ElMessage.error(error.message)
+
+      ElMessageBox.confirm(
+        `${i18n.t('Wallet.Transfer')} ${value} Satoshi ${i18n.t('Wallet.Transfer To')}: ${
+          form.address
+        }`,
+        `${i18n.t('Wallet.Confirm Transfer')}?`,
+        {
+          confirmButtonText: i18n.t('Confirm'),
+          cancelButtonText: i18n.t('Cancel'),
+          cancelButtonClass: 'main-border',
+          confirmButtonClass: 'main-border primary',
+        }
+      ).then(async () => {
+        loading.value = true
+        const res = await userStore.showWallet
+          .sendMoney([
+            {
+              amount: value,
+              address: form.address,
+            },
+          ])
+          .catch(error => {
+            ElMessage.error(error.message)
+            loading.value = false
+          })
+        if (res) {
+          FormRef.value.resetFields()
+          ElMessage.success(i18n.t('Wallet.Transfer Success'))
           loading.value = false
-        })
-      if (res) {
-        FormRef.value.resetFields()
-        ElMessage.success(i18n.t('Wallet.Transfer Success'))
-        loading.value = false
-      }
+        }
+      })
     }
   })
 }
