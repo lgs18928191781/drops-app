@@ -531,6 +531,7 @@ function getNFTs(isCover = false) {
       })
       if (res.code === 0) {
         if (isCover) genesisList.length = 0
+        if (res.data.results.items.length === 0) pagination.nothing = true
         genesisList.push(...res.data.results.items)
         resolve()
       }

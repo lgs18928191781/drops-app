@@ -560,6 +560,7 @@ function submitForm() {
             const loginRes = await LoginCheck(params)
             if (loginRes.code === 0 || loginRes.code === 601) {
               const loginInfo = loginRes.data as BaseUserInfoTypes
+              debugger
               const account = {
                 ...loginInfo,
                 userType: params.userType,
@@ -596,6 +597,7 @@ function submitForm() {
               userStore.updateUserInfo({
                 ...metaIdInfo,
                 ...account,
+                metaId: metaIdInfo.metaId, // account 有时拿回来的metaId为空
                 password: form.password,
                 address: hdWallet.rootAddress,
                 loginType: 'MetaId',

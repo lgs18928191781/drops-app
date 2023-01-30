@@ -23,7 +23,7 @@ import * as ECIES from 'mvc-lib/ecies'
 import { englishWords } from './english'
 import { SA_utxo } from 'sensible-sdk/dist/sensible-api'
 import { isEmail, sleep } from '../util'
-import { IsEncrypt, NodeName } from '@/enum'
+import { Chains, IsEncrypt, NodeName } from '@/enum'
 import { AttachmentItem, PayToItem } from '@/@types/hd-wallet'
 import {
   CreateNodeOptions,
@@ -38,7 +38,6 @@ import { NftManager, FtManager, API_TARGET } from 'meta-contract'
 import { useUserStore } from '@/stores/user'
 
 import Decimal from 'decimal.js-light'
-import { number } from 'yup'
 import { GetMeUtxos } from '@/api/v3'
 import { GetTxChainInfo } from '@/api/metaid-base'
 const bsv = mvc
@@ -1029,7 +1028,7 @@ export class HdWallet {
         const chain =
           chainInfoRes.code === 0 && chainInfoRes.data.chainFlag
             ? chainInfoRes.data.chainFlag
-            : 'mvc'
+            : Chains.MVC
 
         const scriptPlayload = [
           'mvc',
