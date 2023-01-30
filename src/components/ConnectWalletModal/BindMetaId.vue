@@ -706,17 +706,13 @@ function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
         }
 
         if (res.code === 0) {
-          const newBfrcNodekeyPath = await hdWallet.getKeyPath({
-            parentTxid: res.data.infoTxId,
-          })
+          const newBfrcNode = await hdWallet.provider.getNewBrfcNodeBaseInfo(
+            hdWallet.wallet.xpubkey.toString(),
+            res.data.infoTxId
+          )
           const ethBindBrfc = await hdWallet.createNode({
             nodeName: NodeName.ETHBinding,
             parentTxId: res.data.infoTxId,
-            keyPath: newBfrcNodekeyPath.join('/'),
-            parentAddress: hdWallet
-              ?.getPathPrivateKey(hdWallet.keyPathMap.Info.keyPath)
-              .publicKey.toAddress(hdWallet.network)
-              .toString(),
             data: JSON.stringify(ethBindingData),
             utxos: utxos,
             change: hdWallet.rootAddress,

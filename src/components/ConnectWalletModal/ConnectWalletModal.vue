@@ -522,14 +522,17 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
           outPutIndex: 1,
         })
         if (utxo) utxos = [utxo]
+        const NFTAvatarBrfcNodeBaseInfo = await wallet?.provider.getNewBrfcNodeBaseInfo(
+          wallet.wallet.xpubkey.toString(),
+          userStore.user!.infoTxId
+        )
         const createNFTAvatarBrfcNode = await wallet!.createNode({
           nodeName: NodeName.NFTAvatar,
           parentTxId: userStore.user!.infoTxId,
-          parentAddress: wallet?.protocolAddress,
-          keyPath: '0/0',
           data: AllNodeName[NodeName.NFTAvatar].brfcId,
           utxos: utxos,
           change: wallet!.createAddress('0/0').address,
+          node: NFTAvatarBrfcNodeBaseInfo,
         })
         broadcasts.push(createNFTAvatarBrfcNode!.hex!)
 
@@ -542,30 +545,25 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
           },
         })
         if (utxo) utxos = [utxo]
-        const createNFTAvatarBrfcChildNode = await wallet!.createNode({
-          nodeName: [
-            NodeName.NFTAvatar,
-            wallet!
-              .createAddress('0/0')
-              .publicKey.toString()
-              .slice(0, 11),
-          ].join('-'),
-          parentTxId: createNFTAvatarBrfcNode.txId,
-          parentAddress: wallet!.createAddress('0/0').address,
-          keyPath: '0/0',
-          data: JSON.stringify({
-            type: 'nft',
-            tx: params.nft.txId,
-            codehash: params.nft.codehash,
-            genesis: params.nft.genesis,
-            tokenIndex: params.nft.tokenIndex,
-            updateTime: new Date().getTime(),
-            memo: params.nft.desc,
-            image: params.nft.avatarImage,
-            chain: params.nft.avatarImage.split('://')[0],
-          }),
-          utxos: utxos,
-        })
+        const createNFTAvatarBrfcChildNode = await wallet!.createBrfcChildNode(
+          {
+            nodeName: NodeName.NFTAvatar,
+            brfcTxId: createNFTAvatarBrfcNode!.txId,
+            data: JSON.stringify({
+              type: 'nft',
+              tx: params.nft.txId,
+              codehash: params.nft.codehash,
+              genesis: params.nft.genesis,
+              tokenIndex: params.nft.tokenIndex,
+              updateTime: new Date().getTime(),
+              memo: params.nft.desc,
+              image: params.nft.avatarImage,
+              chain: params.nft.avatarImage.split('://')[0],
+            }),
+            utxos: utxos,
+          },
+          { isBroadcast: false }
+        )
         broadcasts.push(createNFTAvatarBrfcChildNode!.transaction.toString())
       }
       //  广播

@@ -839,38 +839,20 @@ export class SDK {
           // 如果有附件
           if (params.attachments && params.attachments!.length > 0) {
             const createAttachmentParams: any = []
-            if (this.bfrcNodeList.some(item => item.nodeName === NodeName.MetaFile)) {
-              transactions.metaFileBrfc = this.bfrcNodeList.find(
-                item => item.nodeName === NodeName.MetaFile
-              )?.data
-            } else {
-              transactions.metaFileBrfc = await this.getBrfcNode(
-                {
-                  nodeName: NodeName.MetaFile,
-                  parentTxId: userStore.user?.protocolTxId!,
-                  parentAddress: this.wallet.protocolAddress,
-                  utxos: [],
-                  useFeeb: params.useFeeb,
-                },
-                {
-                  isBroadcast: false,
-                }
-              )
-            }
+            transactions.metaFileBrfc = await this.getBrfcNode(
+              {
+                nodeName: NodeName.MetaFile,
+                parentTxId: userStore.user?.protocolTxId!,
+                utxos: [],
+                useFeeb: params.useFeeb,
+              },
+              {
+                isBroadcast: false,
+              }
+            )
 
             for (const item of params.attachments!) {
               const index = params.attachments!.findIndex(_item => _item.sha256 === item.sha256)
-              let keyPath = ''
-              if (transactions.metaFileBrfc?.transaction) {
-                keyPath = `0/${index.toString()}`
-              } else {
-                const newKeyPath = await this.wallet!.getKeyPath({
-                  parentTxid: transactions.metaFileBrfc?.txId!,
-                })
-                if (newKeyPath) {
-                  keyPath = newKeyPath.join('/')
-                }
-              }
               createAttachmentParams.push({
                 nodeName: item.fileName,
                 metaIdTag: import.meta.env.VITE_METAID_TAG,
@@ -879,8 +861,6 @@ export class SDK {
                 dataType: item.fileType,
                 encoding: 'binary',
                 parentTxId: transactions.metaFileBrfc!.txId,
-                parentAddress: transactions.metaFileBrfc!.address,
-                keyPath,
               })
               const res = await this.wallet?.createNode(createAttachmentParams[index])
               if (res) {
@@ -915,7 +895,6 @@ export class SDK {
                 {
                   nodeName: params.nodeName,
                   parentTxId: userStore.user?.protocolTxId!,
-                  parentAddress: this.wallet.protocolAddress,
                   utxos: params.utxos,
                   useFeeb: params.useFeeb,
                 },
@@ -936,7 +915,7 @@ export class SDK {
               {
                 ...params,
                 publickey,
-                brfc: transactions.currentNodeBrfc!,
+                brfcTxId: transactions.currentNodeBrfc!.txId,
                 ...AllNodeName[params.nodeName as NodeName]!,
               },
               {
@@ -1016,29 +995,24 @@ export class SDK {
     })
   }
 
-  private getBrfcNode(
-    params: {
-      nodeName: NodeName
-      parentTxId: string
-      parentAddress: string
-      utxos: UtxoItem[]
-      useFeeb: number
-    },
-    option?: { isBroadcast: boolean }
-  ) {
+  private getBrfcNode(params: CreateBrfcNodePrams, option?: { isBroadcast: boolean }) {
     return new Promise<CreateNodeRes>(async (resolve, reject) => {
-      if (this.bfrcNodeList.some(item => item.nodeName === params.nodeName)) {
-        resolve(this.bfrcNodeList.find(item => item.nodeName === params.nodeName)!.data)
-      } else {
-        const currentNodeBrfc = await this.wallet?.createBrfcNode(params, option)
-        this.bfrcNodeList.push({
-          nodeName: params.nodeName,
-          data: {
-            ...currentNodeBrfc!,
-            transaction: undefined,
-          },
-        })
-        resolve(currentNodeBrfc!)
+      try {
+        if (this.bfrcNodeList.some(item => item.nodeName === params.nodeName)) {
+          resolve(this.bfrcNodeList.find(item => item.nodeName === params.nodeName)!.data)
+        } else {
+          const currentNodeBrfc = await this.wallet?.createBrfcNode(params, option)
+          this.bfrcNodeList.push({
+            nodeName: params.nodeName,
+            data: {
+              ...currentNodeBrfc!,
+              transaction: undefined,
+            },
+          })
+          resolve(currentNodeBrfc!)
+        }
+      } catch (error) {
+        reject(error)
       }
     })
   }
@@ -1144,8 +1118,6 @@ export class SDK {
             // 当有 metafile Brfc 改变时 metafile 节点也需要重新构建，因为父节点Brfc的txid 已改变
             transactions.metaFiles!.length = 0
             for (const item of params.attachments!) {
-              const index = params.attachments!.findIndex(_item => _item.sha256 === item.sha256)
-              let keyPath = `0/${index.toString()}`
               const res = await this.wallet?.createNode({
                 nodeName: item.fileName,
                 metaIdTag: import.meta.env.VITE_METAID_TAG,
@@ -1154,8 +1126,6 @@ export class SDK {
                 dataType: item.fileType,
                 encoding: 'binary',
                 parentTxId: transactions.metaFileBrfc!.txId,
-                parentAddress: transactions.metaFileBrfc!.address,
-                keyPath,
               })
               if (res) {
                 if (!transactions.metaFiles) transactions.metaFiles = []
@@ -1229,10 +1199,7 @@ export class SDK {
                 // @ts-ignore
                 {
                   ...params,
-                  brfc: {
-                    address: transactions.currentNodeBrfc!.address!,
-                    txId: transactions.currentNodeBrfc!.txId!,
-                  },
+                  brfcTxId: transactions.currentNodeBrfc!.txId!,
                   ...AllNodeName[params.nodeName as NodeName]!,
                 },
                 {
