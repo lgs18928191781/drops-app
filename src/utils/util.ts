@@ -1139,7 +1139,8 @@ export function CheckMetaMaskAccount(address: string) {
       const root = useRootStore()
       const chain = (window as any).ethereum.chainId
       const chainId = parseInt(chain).toString()
-      if (chainId === import.meta.env.VITE_ETH_CHAINID) {
+
+      if (root.chainWhiteList.includes(chain)) {
       } else {
         await ChangeMetaMaskChain().catch(error => reject(error))
       }
@@ -1159,6 +1160,8 @@ export function CheckMetaMaskAccount(address: string) {
 
 export function ChangeMetaMaskChain() {
   return new Promise<void>(async (resolve, reject) => {
+    // if ((window as any).ethereum.chainId)
+
     const res = await ElMessageBox.confirm(
       // @ts-ignore
       i18n.global.t('MetaMak.Chain Network Error Tips') + `${import.meta.env.VITE_ETH_CHAIN}`,

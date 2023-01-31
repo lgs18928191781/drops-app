@@ -1277,7 +1277,6 @@ export class SDK {
                   changeAddres: lastChangeAddress,
                 })
                 if (res) {
-                  debugger
                   transactions.issueNFT = {
                     // @ts-ignore
                     transaction: res.tx,

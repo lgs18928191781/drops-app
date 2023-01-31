@@ -166,9 +166,8 @@ export default class ShowmoneyProvider {
         params: compressData,
         options,
       })
-      debugger
+
       if (res.code == 0) {
-        debugger
         return res
       } else {
         throw new Error(`registerNewMetaName error: ${res.msg},
