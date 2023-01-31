@@ -76,22 +76,24 @@ function updateItem(buzz: BuzzItem) {
   }
 }
 
-watch(
-  () => talk.activeCommunity,
-  result => {
-    if (result) {
-      if (BuzzWarpRef.value) {
-        BuzzWarpRef.value.publishTopic = talk.activeCommunity?.name
-        BuzzWarpRef.value.publiseSuccessCallBack = () => false
+onMounted(() => {
+  watch(
+    () => talk.activeCommunity?.name,
+    result => {
+      if (result) {
+        if (BuzzWarpRef.value) {
+          BuzzWarpRef.value.publishTopic = talk.activeCommunity?.metaName
+          BuzzWarpRef.value.publiseSuccessCallBack = () => false
+        }
+        getDatas(true).then(() => {
+          isSkeleton.value = false
+        })
       }
-      getDatas(true).then(() => {
-        isSkeleton.value = false
-      })
+    },
+    {
+      immediate: true,
     }
-  },
-  {
-    immediate: true,
-  }
-)
+  )
+})
 </script>
 <style lang="scss" src="./Body.scss"></style>
