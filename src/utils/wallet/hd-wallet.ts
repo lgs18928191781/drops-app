@@ -1097,7 +1097,6 @@ export class HdWallet {
   }: TransferTypes): Promise<mvc.Transaction> {
     return new Promise(async (resolve, reject) => {
       try {
-        debugger
         const { tx } = await this.makeTxNotUtxos({
           payTo,
           outputs,
