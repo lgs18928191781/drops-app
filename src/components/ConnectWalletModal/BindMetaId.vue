@@ -653,8 +653,8 @@ function currentChain() {
 }
 
 //创建 eht 绑定的brfc 节点
-function createETHBindingBrfcNode(res: BindMetaIdRes) {
-  const {wallet,userInfo}=res
+function createETHBindingBrfcNode(MetaidRes: BindMetaIdRes) {
+  const {wallet,userInfo}=MetaidRes
   return new Promise<void>(async (resolve, reject) => {
     try {
       const hdWallet = new HdWallet(wallet)
@@ -662,14 +662,12 @@ function createETHBindingBrfcNode(res: BindMetaIdRes) {
       let utxos = await hdWallet.provider.getUtxos(hdWallet.wallet.xpubkey.toString())
       if (!utxos.length) {
         const initUtxo = await hdWallet.provider.getInitAmount({
-          address: userInfo.address,
+          address: hdWallet.rootAddress,
           xpub: hdWallet.wallet.xpubkey.toString(),
           token: userInfo.token || '',
           userName: userInfo.userType === 'phone' ? userInfo.phone : userInfo.email,
         })
         utxos = [initUtxo]
-
-
         // const error = {
         //   message: `${i18n.t('spaceEnghout')}`,
         // }
@@ -704,6 +702,7 @@ function createETHBindingBrfcNode(res: BindMetaIdRes) {
           utxos = [utxo]
         }
         // 创建 eht 绑定的brfc 节点
+        debugger
         const res = await GetUserInfo(userInfo.metaId)
         let ethBindingData: Partial<ethBindingData> = {}
         const bingdMetaidTypes = await GetBindMetaidAddressList(userInfo.metaId)
