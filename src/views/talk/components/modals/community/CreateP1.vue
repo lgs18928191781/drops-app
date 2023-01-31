@@ -79,7 +79,11 @@
             <span class="">
               {{ $t('Talk.Community.agree_tip') }}
             </span>
-            <a href="#" class="text-link dark:text-blue-400 ml-1 font-medium" target="_blank">
+            <a
+              href="https://docs.google.com/document/d/1nwglSl4xeqnbdmp0v9xlJFNuNMHKPW5YAOLgjEh3Ql8/edit?usp=sharing"
+              class="text-link dark:text-blue-400 ml-1 font-medium"
+              target="_blank"
+            >
               {{ $t('Talk.Community.agree_guidelines') }}
             </a>
             <span>
