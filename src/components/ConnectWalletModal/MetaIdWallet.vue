@@ -596,6 +596,7 @@ function submitForm() {
               userStore.updateUserInfo({
                 ...metaIdInfo,
                 ...account,
+                metaId: metaIdInfo.metaId, // account 有时拿回来的metaId为空
                 password: form.password,
                 address: hdWallet.rootAddress,
                 loginType: 'MetaId',

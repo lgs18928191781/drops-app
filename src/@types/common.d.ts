@@ -544,3 +544,42 @@ declare interface MetaNameItem {
   communityId: string
   signature?: string
 }
+
+declare interface NewNodeBaseInfo {
+  address: string
+  path: string
+  publicKey: string
+}
+
+declare interface NewBrfcNodeBaseInfo extends NewNodeBaseInfo {
+  isUsed: boolean
+  parentTxId: string
+}
+
+declare interface CreateBrfcNodePrams {
+  nodeName: NodeName
+  parentTxId: string
+  payTo?: { amount: number; address: string }[]
+  utxos?: UtxoItem[]
+  useFeeb?: number
+}
+
+declare interface ProtocolBrfcNode {
+  address: string
+  data: string
+  nodeName: string
+  parentPublicKey: string
+  parentTxId: string
+  publicKey: string
+  timestamp: number
+  txId: string
+  version: string
+  xpub: string
+  addressType: number
+  addressIndex: number
+}
+
+declare interface UserProtocolBrfcNode extends ProtocolBrfcNode {
+  nodeName: import('@/enum').NodeName
+  brfcId: string
+}

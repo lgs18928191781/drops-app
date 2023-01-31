@@ -64,6 +64,8 @@
                 <span class="sufix">{{
                   currentPayPlatform === PayPlatform.ETH
                     ? ETHName
+                    : currentPayPlatform === PayPlatform.POLYGON
+                    ? PolygonSymbol
                     : priceSymbol[rootStore.currentPrice]
                 }}</span>
                 <input
@@ -84,7 +86,13 @@
         </div>
         <div class="rate">
           1ME = {{ rate }}
-          {{ currentPayPlatform === PayPlatform.ETH ? ETHName : rootStore.currentPrice }}
+          {{
+            currentPayPlatform === PayPlatform.ETH
+              ? ETHName
+              : currentPayPlatform === PayPlatform.POLYGON
+              ? PolygonSymbol
+              : rootStore.currentPrice
+          }}
         </div>
 
         <div class="discount flex flex-align-center" v-if="coupon.val">
@@ -165,7 +173,9 @@ const rate = ref(0)
 
 const isShowPayTypes = ref(false)
 const currentPayPlatform = ref(
-  userStore.isAuthorized && userStore.user?.evmAddress ? PayPlatform.ETH : PayPlatform.UnionPay
+  userStore.isAuthorized && userStore.user?.evmAddress
+    ? mappingChainId((window as any).ethereum.chainId)
+    : PayPlatform.UnionPay
 )
 const isShowCouponMsg = ref(false)
 
@@ -176,6 +186,8 @@ const orderAmount = ref('')
 const product_type = 100
 const loading = ref(false)
 const ETHName = import.meta.env.VITE_ETH_CHAIN
+const POLYGONName = import.meta.env.VITE_POLYGON_CHAIN
+const PolygonSymbol = import.meta.env.VITE_POLYGON_SYMBOL
 const priceSymbol = {
   CNY: '￥',
   USD: '$',
@@ -190,6 +202,17 @@ const isDisabled = computed(() => {
 })
 
 const activeElement = ref(document.activeElement)
+
+function mappingChainId(chainId: string) {
+  switch (chainId) {
+    case '0x1' || '0x5':
+      return PayPlatform.ETH
+    case '0x89' || '0x13881':
+      return PayPlatform.POLYGON
+    default:
+      break
+  }
+}
 
 function getActiveElement() {
   activeElement.value = document.activeElement
@@ -206,10 +229,13 @@ function getRate() {
       coin:
         currentPayPlatform.value === PayPlatform.ETH
           ? ETHName
+          : currentPayPlatform.value === PayPlatform.POLYGON
+          ? POLYGONName
           : rootStore.currentPrice.toLocaleLowerCase(),
     }).catch(error => {
       ElMessage.error(error.message)
     })
+
     if (res?.code === 0) {
       rate.value = res.data.rate
       resolve()
@@ -274,6 +300,7 @@ async function recharge() {
     fullPath: route.fullPath,
     isBlindbox: false,
   })
+  debugger
   const type = isIosApp
     ? PayType.H5
     : isApp
@@ -297,6 +324,7 @@ async function recharge() {
     ElMessage.error(error.message)
     loading.value = false
   })
+  debugger
   if (res?.code === 0) {
     payUrl.value = res.data.url
     orderId.value = res.data.outside_order_id
