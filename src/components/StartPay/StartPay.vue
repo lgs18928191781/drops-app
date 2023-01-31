@@ -292,7 +292,8 @@ function drawePayCode() {
   return new Promise<void>(async (resolve, reject) => {
     try {
       if (props.url) {
-        if (props.payPlatform === PayPlatform.ETH) {
+        if (props.payPlatform === PayPlatform.ETH || props.payPlatform === PayPlatform.POLYGON) {
+          debugger
           await CheckMetaMaskAccount(useStore.user!.evmAddress!)
           const tx = await window.ethereum!.request!({
             method: 'eth_sendTransaction',
@@ -427,6 +428,7 @@ async function onPayIframeClose() {
     //
   })
   isShowPayStatusModal.value = true
+
   checkOrderStatus()
 }
 

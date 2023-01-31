@@ -420,10 +420,12 @@ const wallets = reactive([
         address: () => userStore.user?.evmAddress || '',
         isCanTransfer: false,
         price: function() {
-          return 0
+          // return 0
+
           const rate = rootStore.exchangeRate.find(
             item => item.symbol === import.meta.env.VITE_POLYGON_CHAIN
           )
+          // debugger
           if (rate) {
             return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
           }

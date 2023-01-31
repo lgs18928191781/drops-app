@@ -835,5 +835,6 @@
   "Menu": "Menu",
   "metanameNotAllowMin": "Currently does not support 1-2 character registration",
   "metanameNotAllowOverLenght": "The length of the registration name cannot exceed 63 characters",
-  "inputMetaNameIllgel": "The entered MetaName does not conform to the specification"
+  "inputMetaNameIllgel": "The entered MetaName does not conform to the specification",
+  "spaceEnghout": "The account Space balance is insufficient, please recharge before performing the binding operation!"
 }

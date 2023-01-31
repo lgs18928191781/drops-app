@@ -619,7 +619,7 @@ async function connectWalletConnect() {
       description: 'My website description ',
       url: 'https://mywebsite.url',
       icons: ['../assets/svg/icon.svg'],
-      name: 'My website name',
+      name: 'Show3',
     },
   })
 

@@ -140,6 +140,7 @@
 
 <script setup lang="ts">
 import { GetUserInfo, GetBindMetaidAddressList } from '@/api/aggregation'
+import type { MetaMaskLoginUserInfo } from '@/plugins/utils/api';
 import {
   GetMetaIdByLoginName,
   GetRandomWord,
@@ -373,7 +374,6 @@ function submitForm() {
 }
 
 function loginSuccess(params: BindMetaIdRes) {
-  console.log('params', params)
   return new Promise<void>(async (resolve, reject) => {
     try {
       const metaIdInfo = await GetUserInfo(params.userInfo.metaId)
@@ -448,6 +448,7 @@ function loginSuccess(params: BindMetaIdRes) {
       loading.value = false
       resolve()
     } catch (error) {
+      loading.value = false
       emit('update:modelValue', false)
       reject(error)
     }
@@ -652,14 +653,28 @@ function currentChain() {
 }
 
 //创建 eht 绑定的brfc 节点
-function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
+function createETHBindingBrfcNode(res: BindMetaIdRes) {
+  const {wallet,userInfo}=res
   return new Promise<void>(async (resolve, reject) => {
     try {
       const hdWallet = new HdWallet(wallet)
-
       // 1. 先获取utxo
       let utxos = await hdWallet.provider.getUtxos(hdWallet.wallet.xpubkey.toString())
+      if (!utxos.length) {
+        const initUtxo = await hdWallet.provider.getInitAmount({
+          address: userInfo.address,
+          xpub: hdWallet.wallet.xpubkey.toString(),
+          token: userInfo.token || '',
+          userName: userInfo.userType === 'phone' ? userInfo.phone : userInfo.email,
+        })
+        utxos = [initUtxo]
 
+
+        // const error = {
+        //   message: `${i18n.t('spaceEnghout')}`,
+        // }
+        // reject(error)
+      }
       // 2. 把钱打到protocols节点
       // 先把钱打回到 protocolAddress
       const transfer = await hdWallet.makeTx({
@@ -689,9 +704,9 @@ function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
           utxos = [utxo]
         }
         // 创建 eht 绑定的brfc 节点
-        const res = await GetUserInfo(metaId)
+        const res = await GetUserInfo(userInfo.metaId)
         let ethBindingData: Partial<ethBindingData> = {}
-        const bingdMetaidTypes = await GetBindMetaidAddressList(metaId)
+        const bingdMetaidTypes = await GetBindMetaidAddressList(userInfo.metaId)
 
         if (currentChain() == CurrentSupportChain.Eth) {
           ethBindingData.eth = props.thirdPartyWallet.address
@@ -813,7 +828,7 @@ function bindingMetaidOrAddressLogin() {
           console.log('res', res)
           console.log('userStore', userStore)
 
-          await createETHBindingBrfcNode(res.wallet, res.userInfo.metaId)
+          await createETHBindingBrfcNode(res)
           res.userInfo.evmAddress = props.thirdPartyWallet.address
 
           // res.userInfo.evmAddress = window.WallectConnect?.accounts[0]
