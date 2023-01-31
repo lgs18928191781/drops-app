@@ -205,35 +205,35 @@ const metaIdWalletRegisterBaseInfo: { val: undefined | MetaIdWalletRegisterBaseI
 const isSHowBackupMnemonic = ref(false)
 
 const wallets = [
-  // {
-  //   title: () => {
-  //     return i18n.t('Login.connectWallet')
-  //   },
-  //   list: [
-  //     {
-  //       name: () => {
-  //         return 'MetaMask'
-  //       },
-  //       desc: () => {
-  //         return ``
-  //       },
-  //       icon: IconMetaMask,
-  //       fun: () => {
-  //         rootStore.$patch({ isShowLogin: false, isShowMetaMak: true })
-  //       },
-  //     },
-  //     {
-  //       name: () => {
-  //         return 'WallteConnect'
-  //       },
-  //       desc: () => {
-  //         return ``
-  //       },
-  //       icon: IconWallteConnect,
-  //       fun: connectWalletConnect,
-  //     },
-  //   ],
-  // },
+  {
+    title: () => {
+      return i18n.t('Login.connectWallet')
+    },
+    list: [
+      {
+        name: () => {
+          return 'MetaMask'
+        },
+        desc: () => {
+          return ``
+        },
+        icon: IconMetaMask,
+        fun: () => {
+          rootStore.$patch({ isShowLogin: false, isShowMetaMak: true })
+        },
+      },
+      {
+        name: () => {
+          return 'WallteConnect'
+        },
+        desc: () => {
+          return ``
+        },
+        icon: IconWallteConnect,
+        fun: connectWalletConnect,
+      },
+    ],
+  },
   {
     title: () => {
       return i18n.t('Login.connectMetaIdWallet')
