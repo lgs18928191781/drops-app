@@ -78,7 +78,10 @@
         .name {
             font-size: 18px;
             cursor: pointer;
-            @extend %text-ellipsis;
+
+            span {
+                @extend %text-ellipsis;
+            }
 
             .icon {
                 min-width: 8px;
@@ -89,6 +92,7 @@
                 transform: rotate(-90deg);
             }
         }
+
 
         .people {
             color: #909399;

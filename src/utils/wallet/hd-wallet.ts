@@ -487,13 +487,17 @@ export class HdWallet {
     },
   }
 
-  public publishkeyList: {
+  // 已使用的publickey 地址，避免重复使用
+  private publishkeyList: {
     address: string
     index: number
     path: string
     publicKey: string
     isUsed: boolean
-  }[] = [] // 已使用的publickey 地址，避免重复使用
+  }[] = []
+
+  // 当查询是有某个节点时， 查询完存到这里， 反之重复调接口查询
+  private userBrfcNodeList: UserProtocolBrfcNode[] = []
 
   get rootAddress(): string {
     return this._root.toAddress(this.network).toString()
@@ -1034,7 +1038,6 @@ export class HdWallet {
           dataType,
           encoding,
         ]
-
         const makeTxOptions = {
           from: [],
           utxos: utxos,
@@ -1616,47 +1619,47 @@ export class HdWallet {
     return response
   }
 
-  async getProtocolInfo(protocolType: string, protocolsTxId: string, brfcId: string) {
-    return new Promise<{
-      address: string
-      data: string
-      nodeName: string
-      parentPublicKey: string
-      parentTxId: string
-      publicKey: string
-      timestamp: number
-      txId: string
-      version: string
-      xpub: string
-      addressType: number
-      addressIndex: number
-    } | null>(async (resolve, reject) => {
+  async getProtocolInfo(nodeName: NodeName, protocolsTxId: string, brfcId: string) {
+    return new Promise<ProtocolBrfcNode | null>(async (resolve, reject) => {
       try {
-        const protocols: any = await this.getProtocols({
-          protocolsTxId: protocolsTxId,
-          protocolType: protocolType,
-        })
-
-        const protocol = protocols.filter((item: any) => {
-          return item?.nodeName === protocolType && item?.data === brfcId
-        })[0]
-        if (protocol) {
-          const protocolInfo = await this.provider.getXpubLiteAddressInfo(
-            this.wallet.xpubkey.toString(),
-            protocol.address
-          )
-          if (protocolInfo) {
-            if (protocolInfo.addressIndex <= 150) {
-              resolve({
-                ...protocol,
-                ...protocolInfo,
-              })
-            } else {
-              throw new Error('path>150 异常，请联系客服处理')
-            }
-          }
+        let brfcNode = this.userBrfcNodeList.find(
+          item => item.nodeName == nodeName && item.brfcId === brfcId
+        )
+        if (brfcNode) {
+          resolve(brfcNode)
         } else {
-          resolve(null)
+          const protocols: any = await this.getProtocols({
+            protocolsTxId: protocolsTxId,
+            protocolType: nodeName,
+          })
+
+          const protocol = protocols.filter((item: any) => {
+            return item?.nodeName === nodeName && item?.data === brfcId
+          })[0]
+          if (protocol) {
+            const protocolInfo = await this.provider.getXpubLiteAddressInfo(
+              this.wallet.xpubkey.toString(),
+              protocol.address
+            )
+            if (protocolInfo) {
+              if (protocolInfo.addressIndex <= 150) {
+                this.userBrfcNodeList.push({
+                  ...protocol,
+                  ...protocolInfo,
+                  nodeName,
+                  brfcId,
+                })
+                resolve({
+                  ...protocol,
+                  ...protocolInfo,
+                })
+              } else {
+                throw new Error('path>150 异常，请联系客服处理')
+              }
+            }
+          } else {
+            resolve(null)
+          }
         }
       } catch (error) {
         reject(error)
@@ -1781,7 +1784,7 @@ export class HdWallet {
       appId?: string[]
       encrypt?: IsEncrypt
       version?: string
-      data: string
+      data?: string
       dataType?: string
       payCurrency?: string
       payTo?: PayToItem[]
