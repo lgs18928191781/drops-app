@@ -1,6 +1,6 @@
-import mvc from 'mvc-std-lib'
+import mvc from 'mvc-lib'
 // @ts-ignore
-import { Message } from 'mvc-std-lib'
+import { Message } from 'mvc-lib'
 // @ts-ignore
 import { Utf8 } from 'crypto-es/lib/core.js'
 // @ts-ignore
@@ -17,7 +17,7 @@ import * as bip39 from 'bip39'
 import { isBtcAddress, isNaturalNumber } from '@/utils/wallet/is'
 import ShowmoneyProvider from './showmoney-provider'
 // @ts-ignore
-import * as ECIES from 'mvc-std-lib/ecies'
+import * as ECIES from 'mvc-lib/ecies'
 import { englishWords } from './english'
 import { SA_utxo } from 'sensible-sdk/dist/sensible-api'
 import { isEmail, sleep } from '../util'

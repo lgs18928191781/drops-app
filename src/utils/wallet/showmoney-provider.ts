@@ -1,5 +1,5 @@
 // @ts-ignore
-import mvc from 'mvc-std-lib'
+import mvc from 'mvc-lib'
 import { HttpRequests, ApiRequestTypes } from '@/utils/wallet/request2'
 import HttpRequest from 'request-sdk'
 import {
