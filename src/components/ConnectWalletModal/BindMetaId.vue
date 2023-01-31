@@ -654,7 +654,8 @@ function currentChain() {
 
 //创建 eht 绑定的brfc 节点
 function createETHBindingBrfcNode(MetaidRes: BindMetaIdRes) {
-  const {wallet,userInfo}=MetaidRes
+  const { wallet, userInfo } = MetaidRes
+  userInfo.metaId='f21f4fc0328e2398e0978d6171d970620c6827976bd77345188ae7a1ae85b5dd'
   return new Promise<void>(async (resolve, reject) => {
     try {
       const hdWallet = new HdWallet(wallet)
@@ -806,6 +807,7 @@ function bindingMetaidOrAddressLogin() {
         email: numberReg.test(form.account) ? undefined : form.account,
         evmAddress: props.thirdPartyWallet.address,
         chainId: props.thirdPartyWallet.chainId,
+
       }
 
       const resp = await GetMetaIdByLoginName(params)
@@ -829,6 +831,7 @@ function bindingMetaidOrAddressLogin() {
 
           await createETHBindingBrfcNode(res)
           res.userInfo.evmAddress = props.thirdPartyWallet.address
+
 
           // res.userInfo.evmAddress = window.WallectConnect?.accounts[0]
           //   ? window.WallectConnect?.accounts[0]

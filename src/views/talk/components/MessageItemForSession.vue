@@ -50,7 +50,7 @@
       <div class="my-1.5 flex" v-else-if="isFtTransfer">
         <div class="max-w-full min-w-[240PX] md:w-[300PX] shadow rounded-xl rounded-tl bg-blue-400">
           <div
-            class="rounded-xl p-4 flex space-x-4.5 bg-white dark:bg-gray-700 items-center rounded-tl"
+            class="rounded-xl p-4 flex space-x-4.5 bg-white dark:bg-gray-700 items-center rounded-tl border border-solid border-blue-400"
           >
             <Image :src="message.icon" customClass="h-15 w-15 rounded-full" loading="lazy" />
             <div class="flex flex-col space-y-1.5">
@@ -66,6 +66,29 @@
           <div class="flex py-2.5 items-center space-x-1.5 px-4">
             <Icon name="message_token" class="w-4 h-4 text-white" />
             <div class="text-white text-xs">{{ $t('Talk.Messages.token_transfer') }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="my-1.5 flex" v-else-if="isNftTransfer">
+        <div class="max-w-full min-w-[240PX] md:w-[300PX] shadow rounded-xl rounded-tl bg-blue-400">
+          <div
+            class="rounded-xl p-4 flex space-x-4.5 bg-white dark:bg-gray-700 items-center rounded-tl border border-solid border-blue-400"
+          >
+            <Image :src="message.icon" customClass="h-15 w-15" loading="lazy" />
+            <div class="flex flex-col space-y-1.5">
+              <div class="text-dark-800 dark:text-gray-100 text-base font-medium capitalize">
+                {{ message.memo }}
+              </div>
+              <div class="text-dark-400 dark:text-gray-200 text-xs" v-if="message.data">
+                # {{ message.data.tokenIndex }}
+              </div>
+            </div>
+          </div>
+
+          <div class="flex py-2.5 items-center space-x-1.5 px-4">
+            <Icon name="message_token" class="w-4 h-4 text-white" />
+            <div class="text-white text-xs">{{ $t('Talk.Messages.nft_transfer') }}</div>
           </div>
         </div>
       </div>
@@ -354,6 +377,7 @@ const isRepost = computed(() => props.message.protocol === 'SimpleRePost')
 const isRepostWithComment = computed(() => props.message.nodeName === 'SimpleMicroblog')
 const isComment = computed(() => props.message.protocol === 'PayComment')
 const isFtTransfer = computed(() => props.message.protocol === 'FtTransfer')
+const isNftTransfer = computed(() => props.message.protocol === 'NftTransfer')
 </script>
 
 <style lang="scss" scoped></style>

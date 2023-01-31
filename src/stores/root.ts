@@ -71,7 +71,6 @@ export const useRootStore = defineStore('root', {
     },
   getters: {
     GetCurrentChain: state => {
-      debugger
       window.ethereum && polygonChian.includes(window.ethereum.chainId)
         ? (state.currentChain = 'polygon')
         : window.ethereum && ethChian.includes(window.ethereum.chainId)

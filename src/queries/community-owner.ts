@@ -22,6 +22,10 @@ export async function getCommunityOwner({
 
   const [solution, nft] = metaName.split('://') as [Solution, string]
   const [codehash, genesis, tokenIndex] = nft.split('/')
+  // 如果解析不出genesis，也尝试使用 communityId 作为 兼容查询
+  if (!genesis) {
+    return getCommunityOwnerByCommunityId(communityId)
+  }
   const chain = solutionChainMapping[solution]
   const {
     data: {

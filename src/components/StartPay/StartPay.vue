@@ -272,13 +272,16 @@ const isQrcodeInTime = ref(true) // 付款码是否在有效时间
 
 const payResultMessage = computed(() => {
   let msg = ''
+  console.log('propsprops', payResult)
   if (payResult.status === PayStatus.Success) {
     const symbol =
       props.payPlatform === PayPlatform.ETH
         ? import.meta.env.VITE_ETH_CHAIN
+        : props.payPlatform === PayPlatform.POLYGON
+        ? import.meta.env.VITE_POLYGON_SYMBOL
         : rootStore.currentPriceSymbol
     const amount =
-      props.payPlatform === PayPlatform.ETH
+      props.payPlatform === PayPlatform.ETH || props.payPlatform === PayPlatform.POLYGON
         ? new Decimal(props.amount).div(Math.pow(10, 9)).toFixed(5)
         : new Decimal(props.amount).div(100).toFixed(2)
     msg = `ShowPayLimited: ${symbol} ${amount}`
@@ -293,8 +296,8 @@ function drawePayCode() {
     try {
       if (props.url) {
         if (props.payPlatform === PayPlatform.ETH || props.payPlatform === PayPlatform.POLYGON) {
-          debugger
           await CheckMetaMaskAccount(useStore.user!.evmAddress!)
+
           const tx = await window.ethereum!.request!({
             method: 'eth_sendTransaction',
             params: [
@@ -307,6 +310,7 @@ function drawePayCode() {
               },
             ],
           })
+
           if (tx) {
             const res = await UpdatePay({
               order_id: props.orderId,
@@ -513,6 +517,7 @@ function intervalChceckOrderStatus() {
     checkOrderTimeOut = setTimeout(() => {
       isShowQrcode.value = false
       clearInterval(checkOrderTimeOut)
+
       payResult.status = PayStatus.Fail
       isShowPayStatusModal.value = true
       resolve()

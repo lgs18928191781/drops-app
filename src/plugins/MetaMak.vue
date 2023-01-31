@@ -165,6 +165,7 @@ const dialogTitle = computed(() => {
 
 async function startConnect() {
     try {
+
         const res = await Wallet.connect()
         if (res) {
             // console.log("currentSupportChain", import.meta.env.VITE_ETH_CHAIN)
@@ -173,9 +174,6 @@ async function startConnect() {
             // })
             if (root.chainWhiteList.includes(res.provider.chainId)){
                 startProvider(res.provider)
-
-
-
                 const result = await ethPersonalSignSign({
                     address: res.ethAddress,
                     message:import.meta.env.MODE == 'gray' ?  ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).split('0x')[1].toLocaleUpperCase() : ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1)
@@ -211,6 +209,7 @@ async function startConnect() {
             }
         }
     } catch (error) {
+
         emit('update:modelValue', false)
     }
 }
@@ -296,7 +295,7 @@ function loginByMnemonic(mnemonic: string) {
                 password.value
             )
             console.log('decodeMnemonic',decodeMnemonic)
-            debugger
+
 
             const word = await getRandomWord()
 
@@ -537,11 +536,11 @@ function createMetaidAccount() {
                     email: userInfo.data.email,
                     phone: userInfo.data.phone
                 })
-                debugger
+
                 const newUserInfo = Object.assign(userInfo.data, {
                     metaId: metaId,
                 })
-                debugger
+
                 await sendHash(newUserInfo)
                 resolve({
                     userInfo: newUserInfo,
