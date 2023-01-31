@@ -563,3 +563,23 @@ declare interface CreateBrfcNodePrams {
   utxos?: UtxoItem[]
   useFeeb?: number
 }
+
+declare interface ProtocolBrfcNode {
+  address: string
+  data: string
+  nodeName: string
+  parentPublicKey: string
+  parentTxId: string
+  publicKey: string
+  timestamp: number
+  txId: string
+  version: string
+  xpub: string
+  addressType: number
+  addressIndex: number
+}
+
+declare interface UserProtocolBrfcNode extends ProtocolBrfcNode {
+  nodeName: import('@/enum').NodeName
+  brfcId: string
+}
