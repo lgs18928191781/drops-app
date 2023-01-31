@@ -702,7 +702,7 @@ function createETHBindingBrfcNode(MetaidRes: BindMetaIdRes) {
           utxos = [utxo]
         }
         // 创建 eht 绑定的brfc 节点
-        debugger
+
         const res = await GetUserInfo(userInfo.metaId)
         let ethBindingData: Partial<ethBindingData> = {}
         const bingdMetaidTypes = await GetBindMetaidAddressList(userInfo.metaId)
