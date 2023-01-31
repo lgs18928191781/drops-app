@@ -95,6 +95,7 @@
       "like": "给您的buzz点了个赞！",
       "follow": "已关注，我们聊天吧。",
       "token_transfer": "代币转账",
+      "nft_transfer": "NFT 转账",
       "resend": "重新发送"
     },
     "General": {
@@ -830,5 +831,6 @@
   "getMetaNameInfoError": "获取MetaName信息失败",
   "registerNameIllgel": "提交注册的MetaName字符存在不合法",
   "inputMetaNameIllgel": "输入的MetaName不符合规范",
-  "getExpiredTimeFail": "获取到期时间失败"
+  "getExpiredTimeFail": "获取到期时间失败",
+  "spaceEnghout": "账户Space余额不足，请充值后再进行绑定操作！"
 }

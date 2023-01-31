@@ -74,7 +74,8 @@ export default class ShowmoneyProvider {
   public metasvSignatureHttp
   public serviceHttp
   public metaNameApi = `http://47.242.27.95:35000`
-  // private metaSvAuthorization: MetaSvAuthorizationOption
+  public newBrfcNodeBaseInfoList: NewBrfcNodeBaseInfo[] = []
+
   constructor(apiPrefix: string, metaSvApi: string) {
     this.apiPrefix = apiPrefix || 'https://api.showmoney.app'
     this.metaSvApi = metaSvApi
@@ -165,9 +166,8 @@ export default class ShowmoneyProvider {
         params: compressData,
         options,
       })
-      debugger
+
       if (res.code == 0) {
-        debugger
         return res
       } else {
         throw new Error(`registerNewMetaName error: ${res.msg},
@@ -473,28 +473,36 @@ export default class ShowmoneyProvider {
     })
   }
 
-  async getPulicKeyForNewNode(xpub: string, parentTxId: string, count = 50) {
-    return new Promise<
-      {
-        address: string
-        index: number
-        path: string
-        publicKey: string
-      }[]
-    >(async (resolve, reject) => {
-      const res = await this.serviceHttp
-        .post('/api/v1/showService/getPublicKeyForNewNode', {
-          data: JSON.stringify({ xpub, parentTxId, count }),
-        })
-        .catch(error => reject(error))
-      if (res?.code === 200) {
-        resolve(res.result.data)
-      } else {
-        reject({
-          code: res.code,
-          message: res.error,
-        })
+  async getNewBrfcNodeBaseInfo(xpub: string, parentTxId: string) {
+    return new Promise<NewNodeBaseInfo>(async (resolve, reject) => {
+      let node = this.newBrfcNodeBaseInfoList.find(
+        item => !item.isUsed && item.parentTxId === parentTxId
+      )
+      if (!node) {
+        const res: any = await this.serviceHttp
+          .post('/api/v1/showService/getPublicKeyForNewNode', {
+            data: JSON.stringify({ xpub, parentTxId, count: 30 }),
+          })
+          .catch(error => reject(error))
+        if (res?.code === 200) {
+          for (let item of res.result.data) {
+            this.newBrfcNodeBaseInfoList.push({
+              ...item,
+              parentTxId,
+            })
+          }
+          node = this.newBrfcNodeBaseInfoList.find(
+            item => !item.isUsed && item.parentTxId === parentTxId
+          )
+        } else {
+          reject({
+            code: res.code,
+            message: res.error,
+          })
+        }
       }
+      node!.isUsed = true
+      resolve(node!)
     })
   }
 

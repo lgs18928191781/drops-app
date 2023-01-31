@@ -55,6 +55,7 @@
       "like": "I liked your buzz!",
       "follow": "I followed you! Let's be friends!",
       "token_transfer": "Token Transfer",
+      "nft_transfer": "NFT Transfer",
       "resend": "Resend"
     },
     "General": {
@@ -435,7 +436,7 @@
     "title": "Settings",
     "Uplink settings": "MetaEnergy Settings",
     "Language": "Language",
-    "Theme": "Display",
+    "Theme": "Theme",
     "Edit Profile": "Edit Profile"
   },
   "EditProfile": {
@@ -835,5 +836,6 @@
   "Menu": "Menu",
   "metanameNotAllowMin": "Currently does not support 1-2 character registration",
   "metanameNotAllowOverLenght": "The length of the registration name cannot exceed 63 characters",
-  "inputMetaNameIllgel": "The entered MetaName does not conform to the specification"
+  "inputMetaNameIllgel": "The entered MetaName does not conform to the specification",
+  "spaceEnghout": "The account Space balance is insufficient, please recharge before performing the binding operation!"
 }

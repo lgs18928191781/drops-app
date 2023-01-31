@@ -115,7 +115,7 @@ export const payPlatformList: PayPlatformItem[] = [
     disabled: () => {
       let result = true
       const userStore = useUserStore()
-      if (userStore.isAuthorized && userStore.user?.evmAddress && GetChain() == 'polygon') {
+      if (userStore.isAuthorized && userStore.user?.evmAddress && GetChain() == 'eth') {
         result = false
       }
       return result
@@ -134,7 +134,7 @@ export const payPlatformList: PayPlatformItem[] = [
     disabled: () => {
       let result = true
       const userStore = useUserStore()
-      if (userStore.isAuthorized && userStore.user?.evmAddress && GetChain() == 'eth') {
+      if (userStore.isAuthorized && userStore.user?.evmAddress && GetChain() == 'polygon') {
         result = false
       }
       return result

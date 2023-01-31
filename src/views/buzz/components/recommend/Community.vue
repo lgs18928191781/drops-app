@@ -12,15 +12,12 @@
             <div class="follow-item-warp card flex">
               <div class="community-cover">
                 <span class="radius"></span>
-                <Image :src="item.cover" :default-image="DefaultImage" />
+                <Image :src="item.cover ? item.cover : item.icon" :default-image="DefaultImage" />
                 <Icon name="emb" />
               </div>
               <div class="flex1">
                 <div class="name flex flex-align-center">
-                  <span
-                    >{{ item.name.slice(0, 8) }}
-                    <template v-if="item.name.length > 8">.</template></span
-                  >
+                  <span>{{ item.name }} </span>
                   <Icon name="down" />
                 </div>
 

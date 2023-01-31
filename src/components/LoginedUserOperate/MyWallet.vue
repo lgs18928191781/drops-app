@@ -420,10 +420,12 @@ const wallets = reactive([
         address: () => userStore.user?.evmAddress || '',
         isCanTransfer: false,
         price: function() {
-          return 0
+          // return 0
+
           const rate = rootStore.exchangeRate.find(
             item => item.symbol === import.meta.env.VITE_POLYGON_CHAIN
           )
+          // debugger
           if (rate) {
             return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
           }
@@ -531,6 +533,7 @@ function getNFTs(isCover = false) {
       })
       if (res.code === 0) {
         if (isCover) genesisList.length = 0
+        if (res.data.results.items.length === 0) pagination.nothing = true
         genesisList.push(...res.data.results.items)
         resolve()
       }

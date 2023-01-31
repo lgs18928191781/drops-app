@@ -93,18 +93,21 @@ export interface CreateNodeOptions {
   nodeName: string
   metaIdTag?: string
   data?: string | Buffer
-  keyPath?: string
   parentTxId?: string
-  parentAddress?: string
   outputs?: any[]
   change?: string
   utxos?: UtxoItem[]
   payTo?: PayToItem[]
-  parentKeyPath?: string
   encrypt?: IsEncrypt
   version?: string
   dataType?: string
   encoding?: string
+  node?: {
+    // 创建新节点的信息， 当创建bfrc节点时需要传， 创建bfrc 子节点时不用传，自动生成
+    address: string
+    publicKey: string
+    path: string
+  }
 }
 
 export interface TransferTypes {

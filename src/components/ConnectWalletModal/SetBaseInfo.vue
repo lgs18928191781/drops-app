@@ -141,7 +141,7 @@ const isShowAvatasList = ref(false)
 
 function submitForm() {
   console.log('zxczxc', currentAvatar.val)
-  debugger
+
   FormRef.value.validate(async (valid: boolean) => {
     if (valid) {
       emit('success', {

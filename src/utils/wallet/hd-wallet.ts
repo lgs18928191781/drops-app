@@ -1,4 +1,3 @@
-// @ts-ignore
 import mvc from 'mvc-lib'
 // @ts-ignore
 import { Message } from 'mvc-lib'
@@ -19,11 +18,10 @@ import { isBtcAddress, isNaturalNumber } from '@/utils/wallet/is'
 import ShowmoneyProvider from './showmoney-provider'
 // @ts-ignore
 import * as ECIES from 'mvc-lib/ecies'
-// import * as Mnemonic from 'bsv/mnemonic'
 import { englishWords } from './english'
 import { SA_utxo } from 'sensible-sdk/dist/sensible-api'
 import { isEmail, sleep } from '../util'
-import { IsEncrypt, NodeName } from '@/enum'
+import { Chains, IsEncrypt, NodeName } from '@/enum'
 import { AttachmentItem, PayToItem } from '@/@types/hd-wallet'
 import {
   CreateNodeOptions,
@@ -38,10 +36,8 @@ import { NftManager, FtManager, API_TARGET } from 'meta-contract'
 import { useUserStore } from '@/stores/user'
 
 import Decimal from 'decimal.js-light'
-import { number } from 'yup'
 import { GetMeUtxos } from '@/api/v3'
 import { GetTxChainInfo } from '@/api/metaid-base'
-const bsv = mvc
 
 export enum Network {
   mainnet = 'mainnet',
@@ -99,6 +95,7 @@ export interface MetaNameRequestDate {
 }
 
 export interface BaseUserInfoTypes {
+  accessKey?: string
   userType: string
   name: string
   phone: string
@@ -134,7 +131,7 @@ export interface PaytoTypes {
 
 export interface NftTransferResult {
   txid: string
-  tx: bsv.Transaction
+  tx: mvc.Transaction
   txHex: string
 }
 export interface BaseUtxo {
@@ -159,7 +156,7 @@ export interface MetasvUtxoTypes extends BaseUtxo {
   flag?: string | null
 }
 interface OutputTypes {
-  script: bsv.Script
+  script: mvc.Script
   satoshis: number
 }
 
@@ -177,7 +174,7 @@ interface KeyPathObjTypes {
 }
 
 interface MakeTxResultTypes {
-  tx: bsv.Transaction
+  tx: mvc.Transaction
   changeUtxo: MetasvUtxoTypes
 }
 interface MetaIdInfoTypes {
@@ -256,10 +253,10 @@ export const hdWalletFromMnemonic = async (
   tag: 'new' | 'old' = 'new',
   network: Network = Network.mainnet,
   path?: string | number = import.meta.env.VITE_WALLET_PATH
-): Promise<bsv.HDPrivateKey> => {
+): Promise<mvc.HDPrivateKey> => {
   // const hdPrivateKey = Mnemonic.fromString(mnemonic).toHDPrivateKey()
   const seed = bip39.mnemonicToSeedSync(mnemonic)
-  const hdPrivateKey = bsv.HDPrivateKey.fromSeed(seed, network)
+  const hdPrivateKey = mvc.HDPrivateKey.fromSeed(seed, network)
 
   const hdWallet = hdPrivateKey.deriveChild(`m/44'/${path}'/0'`)
   return hdWallet
@@ -284,11 +281,11 @@ export const hdWalletFromAccount = async (
   } else {
     // 根据用户名、密码和 pk2 生成助记词
     const ppBuffer = Buffer.from([loginName, password].join('/'))
-    const ppHex = bsv.crypto.Hash.sha256(ppBuffer).toString('hex')
+    const ppHex = mvc.crypto.Hash.sha256(ppBuffer).toString('hex')
     let hex: string | Buffer
     if (account.tag === 'old') {
       hex = Buffer.from(ppHex + account.pk2)
-      hex = bsv.crypto.Hash.sha256sha256(hex).toString('hex')
+      hex = mvc.crypto.Hash.sha256sha256(hex).toString('hex')
     } else {
       hex = Buffer.from((ppHex + account.pk2).toLowerCase(), 'hex').toString('hex')
       hex = Ripemd128(hex).toString()
@@ -368,7 +365,7 @@ export const decryptMnemonic = (encryptedMnemonic: string, password: string): st
 
 export function eciesDecryptData(
   data: Buffer | string,
-  privateKey: bsv.PrivateKey | string,
+  privateKey: mvc.PrivateKey | string,
   publicKey?: string
 ): string {
   publicKey = publicKey || data.toString().substring(8, 74)
@@ -395,8 +392,8 @@ export function eciesDecryptData(
 }
 
 export const signature = (message: string, privateKey: string) => {
-  const hash = bsv.crypto.Hash.sha256(Buffer.from(message))
-  const sign = bsv.crypto.ECDSA.sign(hash, bsv.PrivateKey(privateKey))
+  const hash = mvc.crypto.Hash.sha256(Buffer.from(message))
+  const sign = mvc.crypto.ECDSA.sign(hash, new mvc.PrivateKey(privateKey))
   return sign.toBuffer().toString('base64')
 }
 
@@ -411,7 +408,7 @@ function reverceFtByteString(str) {
 
 export const createMnemonic = (address: string) => {
   const ppBuffer = Buffer.from(address)
-  const ppHex = bsv.crypto.Hash.sha256(ppBuffer).toString('hex')
+  const ppHex = mvc.crypto.Hash.sha256(ppBuffer).toString('hex')
   let hex
   let mnemonic
   hex = Buffer.from(ppHex.toLowerCase(), 'hex').toString('hex')
@@ -451,10 +448,10 @@ const defaultSigners = [
 export class HdWallet {
   public network = Network.mainnet
   public mnemonic: string
-  public wallet: bsv.HDPrivateKey
+  public wallet: mvc.HDPrivateKey
   public provider: ShowmoneyProvider
   private _utxos: MetasvUtxoTypes[] = []
-  public _root: bsv.PrivateKey
+  public _root: mvc.PrivateKey
   private protocols = []
   public keyPathMap: KeyPathObjTypes = {
     Root: {
@@ -491,13 +488,17 @@ export class HdWallet {
     },
   }
 
-  public publishkeyList: {
+  // 已使用的publickey 地址，避免重复使用
+  private publishkeyList: {
     address: string
     index: number
     path: string
     publicKey: string
     isUsed: boolean
-  }[] = [] // 已使用的publickey 地址，避免重复使用
+  }[] = []
+
+  // 当查询是有某个节点时， 查询完存到这里， 反之重复调接口查询
+  private userBrfcNodeList: UserProtocolBrfcNode[] = []
 
   get rootAddress(): string {
     return this._root.toAddress(this.network).toString()
@@ -511,7 +512,8 @@ export class HdWallet {
     return this.createAddress(this.keyPathMap.Info.keyPath).address
   }
 
-  constructor(wallet: bsv.HDPrivateKey) {
+  constructor(wallet: mvc.HDPrivateKey) {
+    // @ts-ignore
     this.network = wallet.network.name
     this.wallet = wallet
     const root = wallet.deriveChild(0).deriveChild(0).privateKey
@@ -597,9 +599,7 @@ export class HdWallet {
             let errorMsg: any
             // 广播
             try {
-              console.log('rootTx', rootTx)
-
-              await this.provider.broadcast(rootTx.hex)
+              await this.provider.broadcast(rootTx.hex!)
             } catch (error) {
               errorMsg = error
             }
@@ -636,7 +636,7 @@ export class HdWallet {
               const initUtxo = await this.provider.getInitAmount({
                 address: this.rootAddress,
                 xpub: this.wallet.xpubkey.toString(),
-                token: account.token || '',
+                token: account.token || account.accessKey || '',
                 userName: account.userType === 'phone' ? account.phone : account.email,
               })
               utxos = [initUtxo]
@@ -646,7 +646,7 @@ export class HdWallet {
             if (account.referrerId) {
               outputs = [
                 {
-                  script: bsv.Script.buildSafeDataOut(['ref:' + account.referrerId]),
+                  script: mvc.Script.buildSafeDataOut(['ref:' + account.referrerId]),
                   satoshis: 0,
                 },
               ]
@@ -800,15 +800,20 @@ export class HdWallet {
               if (newUtxo) utxos = [newUtxo]
 
               // 创建 eth brfc节点 brfcId = ehtAddress
+              const privateKey = this.getPathPrivateKey('0/6')
+              const node: NewNodeBaseInfo = {
+                address: privateKey.toAddress().toString(),
+                publicKey: privateKey.toPublicKey().toString(),
+                path: '0/6',
+              }
               const ethBindBrfc = await this.createNode({
                 nodeName: NodeName.ETHBinding,
                 parentTxId: metaIdInfo.infoTxId,
                 metaIdTag: import.meta.env.VITE_METAID_TAG,
-                keyPath: '0/6',
-                parentAddress: infoAddress.publicKey.toAddress(this.network).toString(),
                 data: JSON.stringify({ evmAddress: account.ethAddress! }),
                 utxos: utxos,
                 change: this.rootAddress,
+                node,
               })
               if (ethBindBrfc) {
                 hexTxs.push(ethBindBrfc.transaction.toString())
@@ -960,9 +965,6 @@ export class HdWallet {
 
   public async createNode({
     nodeName,
-    parentAddress,
-    parentKeyPath,
-    keyPath,
     payTo = [],
     utxos = [],
     change,
@@ -974,47 +976,41 @@ export class HdWallet {
     dataType = 'text/plain',
     encoding = 'UTF-8',
     outputs = [],
+    node,
   }: CreateNodeOptions) {
     return new Promise<CreateNodeRes>(async (resolve, reject) => {
       try {
         if (!nodeName) {
           throw new Error('Parameter Error: NodeName can not empty')
         }
-        let nodeAddress, parentUtxos: MetasvUtxoTypes[]
         let privateKey = this.getPathPrivateKey('0/0')
-        let nodeKeyPath: string
         // TODO: 自定义节点支持
         if (this.keyPathMap[nodeName]) {
           const nodeInfo = this.keyPathMap[nodeName]
-          parentKeyPath = nodeInfo.parentKeyPath
-          nodeKeyPath = nodeInfo.keyPath
-          parentAddress = this.createAddress(parentKeyPath).address
-          nodeAddress = this.createAddress(nodeKeyPath)
-          privateKey = this.getPathPrivateKey(nodeKeyPath)
-        } else if (keyPath && parentAddress) {
-          nodeKeyPath = keyPath
-          nodeAddress = this.createAddress(keyPath)
-          // 查找 parentKeyPath
-          try {
-            const pathInfo = await this.provider.getPathWithNetWork({
-              address: parentAddress,
-              xpub: this.wallet.xpubkey.toString(),
-            })
-            parentKeyPath = `${pathInfo.addressType}/${pathInfo.addressIndex}`
-          } catch (error) {
-            if (parentKeyPath === '-1/-1') {
-              const protocolAddr = this.createAddress(this.keyPathMap.Protocols.keyPath).address
-              if (parentAddress === protocolAddr) {
-                parentKeyPath = this.keyPathMap.Protocols.keyPath
-                this._addressList.push({
-                  Address: protocolAddr,
-                  Path: parentKeyPath,
-                })
-              }
-            }
+          node = {
+            path: nodeInfo.keyPath,
+            publicKey: this.createAddress(nodeInfo.keyPath).publicKey,
+            address: this.createAddress(nodeInfo.keyPath).address,
           }
         } else {
-          throw new Error('Unsupported Node Type')
+          if (encoding === encoding) {
+            // 文件
+            if (!node) {
+              // @ts-ignore
+              const _privateKey = new mvc.PrivateKey(undefined, this.network)
+              const _publickey = _privateKey.toPublicKey().toString()
+              const _address = _privateKey.toAddress().toString()
+              node = {
+                address: _address,
+                publicKey: _publickey,
+                path: `-1/-1`,
+              }
+            }
+          } else {
+            if (!node) {
+              throw new Error('Parameter Error: node can not empty')
+            }
+          }
         }
         // 数据加密
         if (+encrypt === 1) {
@@ -1029,11 +1025,11 @@ export class HdWallet {
         const chain =
           chainInfoRes.code === 0 && chainInfoRes.data.chainFlag
             ? chainInfoRes.data.chainFlag
-            : 'mvc'
+            : Chains.MVC
 
         const scriptPlayload = [
           'mvc',
-          nodeAddress.publicKey.toString(),
+          node.publicKey.toString(),
           `${chain}:${parentTxId}`,
           metaIdTag.toLowerCase(),
           nodeName,
@@ -1043,7 +1039,6 @@ export class HdWallet {
           dataType,
           encoding,
         ]
-
         const makeTxOptions = {
           from: [],
           utxos: utxos,
@@ -1066,9 +1061,9 @@ export class HdWallet {
             hex: nodeTx.toString(),
             transaction: nodeTx,
             txId: nodeTx.id,
-            address: nodeAddress!.address,
-            addressType: parseInt(nodeKeyPath.split('/')[0]),
-            addressIndex: parseInt(nodeKeyPath.split('/')[1]),
+            address: node.address,
+            addressType: parseInt(node.path.split('/')[0]),
+            addressIndex: parseInt(node.path.split('/')[1]),
             scriptPlayload: scriptPlayload,
           })
         }
@@ -1099,7 +1094,7 @@ export class HdWallet {
     opReturn,
     utxos,
     useFeeb = DEFAULTS.feeb,
-  }: TransferTypes): Promise<bsv.Transaction> {
+  }: TransferTypes): Promise<mvc.Transaction> {
     return new Promise(async (resolve, reject) => {
       try {
         const { tx } = await this.makeTxNotUtxos({
@@ -1121,8 +1116,8 @@ export class HdWallet {
           const offerFed = Math.ceil(amount * useFeeb)
           // if (amount < minAmount) amount = minAmount
           const total =
-            offerFed + amount < bsv.Transaction.DUST_AMOUNT
-              ? bsv.Transaction.DUST_AMOUNT + 30
+            offerFed + amount < mvc.Transaction.DUST_AMOUNT
+              ? mvc.Transaction.DUST_AMOUNT + 30
               : offerFed + amount
 
           return total
@@ -1131,7 +1126,7 @@ export class HdWallet {
         tx.isNeedChange = function() {
           return (
             // @ts-ignore
-            ((this._getUnspentValue() - this.getNeedFee()) as number) >= bsv.Transaction.DUST_AMOUNT
+            ((this._getUnspentValue() - this.getNeedFee()) as number) >= mvc.Transaction.DUST_AMOUNT
           )
         }
         // @ts-ignore
@@ -1164,7 +1159,7 @@ export class HdWallet {
     if (!this.wallet) {
       throw new Error('Wallet uninitialized! (core-makeTx)')
     }
-    const tx = new bsv.Transaction()
+    const tx = new mvc.Transaction()
     // 添加 payto
     if (Array.isArray(payTo) && payTo.length) {
       payTo.forEach(item => {
@@ -1178,8 +1173,8 @@ export class HdWallet {
     // 添加 opReturn 内容
     if (opReturn) {
       tx.addOutput(
-        new bsv.Transaction.Output({
-          script: bsv.Script.buildSafeDataOut(opReturn),
+        new mvc.Transaction.Output({
+          script: mvc.Script.buildSafeDataOut(opReturn),
           satoshis: 0,
         })
       )
@@ -1187,7 +1182,7 @@ export class HdWallet {
 
     if (Array.isArray(outputs) && outputs.length) {
       outputs.forEach(output => {
-        tx.addOutput(new bsv.Transaction.Output(output))
+        tx.addOutput(new mvc.Transaction.Output(output))
       })
     }
 
@@ -1204,7 +1199,7 @@ export class HdWallet {
     return new Promise<number>(resolve => {
       if (!params) params = {}
       if (!params?.useFeeb) params.useFeeb = DEFAULTS.feeb
-      const tx = new bsv.Transaction()
+      const tx = new mvc.Transaction()
       tx.change(this.rootAddress)
       // @ts-ignore
       tx.from(params.utxo)
@@ -1218,7 +1213,7 @@ export class HdWallet {
   }
 
   utxoFromTx(params: {
-    tx: bsv.Transaction
+    tx: mvc.Transaction
     addressInfo?: {
       addressType: number
       addressIndex: number
@@ -1326,7 +1321,7 @@ export class HdWallet {
     }
   }
 
-  public getUtxosPrivateKeys(utxos: UtxoItem[]): bsv.PrivateKey[] {
+  public getUtxosPrivateKeys(utxos: UtxoItem[]): mvc.PrivateKey[] {
     return utxos.map(u => {
       return this.wallet.deriveChild(u.addressType || 0).deriveChild(u.addressIndex || 0).privateKey
     })
@@ -1337,8 +1332,8 @@ export class HdWallet {
    */
   public eciesEncryptData(
     data: string | Buffer,
-    privateKey?: bsv.PrivateKey,
-    publicKey?: bsv.PublicKey
+    privateKey?: mvc.PrivateKey,
+    publicKey?: mvc.PublicKey
   ): Buffer {
     privateKey = privateKey || this.getPathPrivateKey('0/0')
     publicKey = publicKey || this.getPathPrivateKey('0/0').toPublicKey()
@@ -1353,7 +1348,7 @@ export class HdWallet {
    */
   public eciesDecryptData(
     data: Buffer | string,
-    privateKey?: bsv.PrivateKey | string,
+    privateKey?: mvc.PrivateKey | string,
     publicKey?: string
   ): string {
     privateKey = privateKey || this.getPathPrivateKey('0/0')
@@ -1501,7 +1496,7 @@ export class HdWallet {
       .then(res => res.balance + res.pendingBalance)
 
     if (balance < usefulThreshold * neededUtxosCount) {
-      throw new Error('BSV余额不足，不能进行NFT传输')
+      throw new Error('Space余额不足，不能进行NFT传输')
     }
 
     // 开始拆分
@@ -1563,13 +1558,13 @@ export class HdWallet {
       return
     }
 
-    const tx = new bsv.Transaction()
+    const tx = new mvc.Transaction()
     const fee = Math.ceil((utxosFromAll.length * 148 + 34 + 10) * 0.5)
     const totalAmount = utxosFromAll.reduce((acc: number, utxo: any) => acc + utxo.value, 0)
     tx.addOutput(
-      new bsv.Transaction.Output({
+      new mvc.Transaction.Output({
         satoshis: totalAmount - fee,
-        script: bsv.Script.fromAddress(this.rootAddress),
+        script: mvc.Script.fromAddress(this.rootAddress),
       })
     )
 
@@ -1578,11 +1573,11 @@ export class HdWallet {
         txId: utxo.txid,
         outputIndex: utxo.txIndex,
         satoshis: utxo.value,
-        script: bsv.Script.buildPublicKeyHashOut(utxo.address).toHex(),
+        script: mvc.Script.buildPublicKeyHashOut(utxo.address).toHex(),
       }
     })
     const privateKeys = utxosFromAll.map((utxo: any) => {
-      return bsv.HDPrivateKey.fromString(this.wallet.xprivkey.toString())
+      return mvc.HDPrivateKey.fromString(this.wallet.xprivkey.toString())
         .deriveChild(utxo.addressType)
         .deriveChild(utxo.addressIndex).privateKey
     })
@@ -1625,47 +1620,47 @@ export class HdWallet {
     return response
   }
 
-  async getProtocolInfo(protocolType: string, protocolsTxId: string, brfcId: string) {
-    return new Promise<{
-      address: string
-      data: string
-      nodeName: string
-      parentPublicKey: string
-      parentTxId: string
-      publicKey: string
-      timestamp: number
-      txId: string
-      version: string
-      xpub: string
-      addressType: number
-      addressIndex: number
-    } | null>(async (resolve, reject) => {
+  async getProtocolInfo(nodeName: NodeName, protocolsTxId: string, brfcId: string) {
+    return new Promise<ProtocolBrfcNode | null>(async (resolve, reject) => {
       try {
-        const protocols: any = await this.getProtocols({
-          protocolsTxId: protocolsTxId,
-          protocolType: protocolType,
-        })
-
-        const protocol = protocols.filter((item: any) => {
-          return item?.nodeName === protocolType && item?.data === brfcId
-        })[0]
-        if (protocol) {
-          const protocolInfo = await this.provider.getXpubLiteAddressInfo(
-            this.wallet.xpubkey.toString(),
-            protocol.address
-          )
-          if (protocolInfo) {
-            if (protocolInfo.addressIndex <= 150) {
-              resolve({
-                ...protocol,
-                ...protocolInfo,
-              })
-            } else {
-              throw new Error('path>150 异常，请联系客服处理')
-            }
-          }
+        let brfcNode = this.userBrfcNodeList.find(
+          item => item.nodeName == nodeName && item.brfcId === brfcId
+        )
+        if (brfcNode) {
+          resolve(brfcNode)
         } else {
-          resolve(null)
+          const protocols: any = await this.getProtocols({
+            protocolsTxId: protocolsTxId,
+            protocolType: nodeName,
+          })
+
+          const protocol = protocols.filter((item: any) => {
+            return item?.nodeName === nodeName && item?.data === brfcId
+          })[0]
+          if (protocol) {
+            const protocolInfo = await this.provider.getXpubLiteAddressInfo(
+              this.wallet.xpubkey.toString(),
+              protocol.address
+            )
+            if (protocolInfo) {
+              if (protocolInfo.addressIndex <= 150) {
+                this.userBrfcNodeList.push({
+                  ...protocol,
+                  ...protocolInfo,
+                  nodeName,
+                  brfcId,
+                })
+                resolve({
+                  ...protocol,
+                  ...protocolInfo,
+                })
+              } else {
+                throw new Error('path>150 异常，请联系客服处理')
+              }
+            }
+          } else {
+            resolve(null)
+          }
         }
       } catch (error) {
         reject(error)
@@ -1706,15 +1701,7 @@ export class HdWallet {
 
   // 创建协议节点
   public createBrfcNode(
-    params: {
-      nodeName: NodeName
-      parentTxId: string
-      keyPath?: string
-      parentAddress: string
-      payTo?: { amount: number; address: string }[]
-      utxos?: UtxoTypes[]
-      useFeeb?: number
-    },
+    params: CreateBrfcNodePrams,
     option?: {
       isBroadcast: boolean
     }
@@ -1759,20 +1746,17 @@ export class HdWallet {
           // 已存在根节点
         } else {
           // 不存在根节点
-          if (!params.keyPath) {
-            const newBfrcNodekeyPath = await this.getKeyPath({
-              parentTxid: params.parentTxId,
-            })
-            if (newBfrcNodekeyPath) {
-              params.keyPath = newBfrcNodekeyPath.join('/')
-            }
-          }
+          const newBrfcNodeBaseInfo = await this.provider.getNewBrfcNodeBaseInfo(
+            this.wallet.xpubkey.toString(),
+            params.parentTxId
+          )
 
           const protocolRoot = await this.createNode({
             ...params,
             metaIdTag: import.meta.env.VITE_METAID_TAG,
             data: nodeName.brfcId,
             utxos: params.utxos,
+            node: newBrfcNodeBaseInfo,
           })
           if (protocolRoot) {
             if (option.isBroadcast) {
@@ -1782,8 +1766,8 @@ export class HdWallet {
             resolve({
               address: protocolRoot.address,
               txId: protocolRoot.txId,
-              addressType: parseInt(params.keyPath!.split('/')[0]),
-              addressIndex: parseInt(params.keyPath!.split('/')[1]),
+              addressType: parseInt(newBrfcNodeBaseInfo.path!.split('/')[0]),
+              addressIndex: parseInt(newBrfcNodeBaseInfo.path!.split('/')[1]),
               transaction: protocolRoot.transaction,
             })
           }
@@ -1801,24 +1785,19 @@ export class HdWallet {
       appId?: string[]
       encrypt?: IsEncrypt
       version?: string
-      data: string
+      data?: string
       dataType?: string
       payCurrency?: string
       payTo?: PayToItem[]
       encoding?: string
-      path: string
       needConfirm?: boolean // 是否需要确认
       attachments?: AttachmentItem[] // 附件
       utxos?: any[] // 传入的utxos
       publickey?: string // 修改时 用的publicekey
       ecdh?: { type: string; publickey: string } // ecdh
       useFeeb?: number // 费率
-
       meConvertSatoshi?: number
-      brfc: {
-        txId: string
-        address: string
-      }
+      brfcTxId: string
     },
     option?: {
       isBroadcast: boolean // 是否广播
@@ -1831,7 +1810,7 @@ export class HdWallet {
         data: 'NULL',
         dataType: 'application/json',
         encoding: 'UTF-8',
-        payCurrency: 'BSV',
+        payCurrency: 'Space',
         payTo: [],
         attachments: [],
         utxos: [],
@@ -1848,65 +1827,58 @@ export class HdWallet {
         ...initOption,
         ...option,
       }
-
-      let keyPath: number[] | string[]
       try {
         // 是否指定地址
+        let address
+        let publickey
+        const addressType = -1 // 叶子节点都用 -1
+        const addressIndex = -1 // 叶子节点都用 -1
         if (params.publickey) {
-          let address
-          if (params.publickey === '0') {
-            address = this.rootAddress
-          } else {
-            address = bsv.PublicKey.fromHex(params.publickey)
-              .toAddress(this.network)
-              .toString()
-          }
-          const addressInfo = await this.provider.getPathWithNetWork({
-            address,
-            xpub: this.wallet.xpubkey.toString(),
-          })
-          if (!addressInfo) {
-            Error('Permission denied')
-          }
-          keyPath = [addressInfo.addressType, addressInfo.addressIndex]
+          publickey = params.publickey
+          address = mvc.PublicKey.fromHex(params.publickey)
+            .toAddress(this.network)
+            .toString()
         } else {
-          keyPath = await this.getKeyPath({ parentTxid: params.brfc.txId })
+          // 随机生生产 私钥
+          // @ts-ignore
+          const privateKey = new mvc.PrivateKey(undefined, this.network)
+          publickey = privateKey.toPublicKey().toString()
+          address = privateKey.toAddress().toString()
+        }
+        const node: NewNodeBaseInfo = {
+          address,
+          publicKey: publickey,
+          path: `${addressType}/${addressIndex}`,
         }
 
         if (params.ecdh) {
-          if (params.data !== 'NULL' && typeof params.data === 'string') {
-            let r: any
-            r = JSON.parse(params.data)
-            r[params.ecdh.type] = this.ecdhEncryptData(
-              r[params.ecdh.type],
-              params.ecdh.publickey,
-              keyPath.join('/')
-            )
-            params.data = JSON.stringify(r)
-          }
+          // 付费Buzz 待完善
+          // if (params.data !== 'NULL' && typeof params.data === 'string') {
+          //   let r: any
+          //   r = JSON.parse(params.data)
+          //   r[params.ecdh.type] = this.ecdhEncryptData(
+          //     r[params.ecdh.type],
+          //     params.ecdh.publickey,
+          //     keyPath.join('/')
+          //   )
+          //   params.data = JSON.stringify(r)
+          // }
         }
-        const nodeAddress = this.createAddress(keyPath.join('/'))
-        const protocolNodeOptions = {
+        const res = await this.createNode({
           nodeName: params.autoRename
-            ? [params.nodeName, nodeAddress.publicKey.toString().slice(0, 11)].join('-')
+            ? [params.nodeName, publickey.toString().slice(0, 11)].join('-')
             : params.nodeName,
           metaIdTag: import.meta.env.VITE_METAID_TAG,
-          parentTxId: params.brfc.txId,
-          appId: params.appId,
-          keyPath: keyPath.join('/'),
+          parentTxId: params.brfcTxId,
           encrypt: params.encrypt,
-          parentAddress: params.brfc.address,
           data: params.data,
-          payCurrency: params.payCurrency,
           payTo: params.payTo,
-          needConfirm: params.needConfirm,
           dataType: params.dataType,
           version: params.version,
           encoding: params.encoding,
           utxos: params.utxos,
-          useFeeb: params.useFeeb,
-        }
-        const res = await this.createNode(protocolNodeOptions)
+          node,
+        })
         if (res) {
           if (option.isBroadcast) {
             const response = await this.provider.broadcast(res.transaction!.toString())
@@ -1917,82 +1889,6 @@ export class HdWallet {
             resolve(res)
           }
         }
-        // return protocolQueue.result().then(result => {
-        //   const sendTask = this.createTransTask(txArray)
-        //   protocolRes.data.transactionHex = txArray
-        //   protocolRes.data.transactionTask = sendTask
-        //   protocolRes.data.usedAmount = Math.ceil(usedAmount)
-        //   protocolRes.data.txDetai = txDetail
-        //   protocolRes.data.usedAmountCent = this.satToCent(usedAmount)
-        //   // protocolRes.data.utxos = utxos
-        //   if (needConfirm) {
-        //     return protocolRes
-        //   } else {
-        //     return this.resumeTransaction(protocolRes.data.transactionTask)
-        //   }
-        // })
-      } catch (error) {
-        reject(error)
-      }
-    })
-  }
-
-  async getKeyPath(params: {
-    parentTxid: string
-    count?: number
-    refresh?: boolean
-    checkOnly?: true
-  }) {
-    return new Promise<string[]>(async (resolve, reject) => {
-      try {
-        const index = this.publishkeyList.findIndex(item => item.isUsed === false)
-        if (index === -1) {
-          if (typeof params.count === 'undefined') params.checkOnly = true
-          if (!params.count) params.count = 50
-          const result = await this.provider.getPulicKeyForNewNode(
-            this.wallet.xpubkey.toString(),
-            params.parentTxid,
-            params.count
-          )
-          if (result && result.length) {
-            for (let item of result) {
-              if (!this.publishkeyList.some(_item => _item.publicKey === item.publicKey)) {
-                this.publishkeyList.push({
-                  ...item,
-                  isUsed: false,
-                })
-              }
-            }
-          }
-          const _index = this.publishkeyList.findIndex(item => item.isUsed === false)
-          this.publishkeyList[_index].isUsed = true
-          resolve(this.publishkeyList[_index].path.split('/'))
-        } else {
-          this.publishkeyList[index].isUsed = true
-          resolve(this.publishkeyList[index].path.split('/'))
-        }
-        // if (!params.count) params.count = 15
-        // if (typeof params.count === 'undefined') params.checkOnly = true
-        // const result = await this.provider.getPulicKeyForNewNode(
-        //   this.wallet.xpubkey.toString(),
-        //   params.parentTxid,
-        //   params.count
-        // )
-        // if (result.length > 0) {
-        //   // 过滤掉已使用的地址， 避免重复使用
-        //   const unUseResult = result.filter(
-        //     item => !this.usedPublicekeyAddress.includes(item.address)
-        //   )
-        //   // 标记已使用
-        //   if (unUseResult.length > 0) {
-        //     this.usedPublicekeyAddress.push(unUseResult[0].address)
-        //     resolve(unUseResult[0].path.split('/'))
-        //   } else {
-        //     throw new Error('getPublicKeyForNewNode fail')
-        //   }
-        // } else {
-        //   throw new Error('getPublicKeyForNewNode fail')
-        // }
       } catch (error) {
         reject(error)
       }
@@ -2008,7 +1904,7 @@ export class HdWallet {
     opReturn?: string[]
     utxos?: UtxoItem[]
   }) {
-    return new Promise<bsv.Transaction>(async (resolve, reject) => {
+    return new Promise<mvc.Transaction>(async (resolve, reject) => {
       try {
         if (typeof params.isBroadcast === 'undefined') params.isBroadcast = true
         if (!params.opReturn) params.opReturn = ['nos.art']
@@ -2024,7 +1920,7 @@ export class HdWallet {
           }
         }
         const tx = await this.makeTx({
-          payCurrency: 'BSV',
+          payCurrency: 'SPACE',
           payTo: params.payTo,
           opReturn: params.opReturn,
           utxos: params.utxos,
@@ -2056,7 +1952,6 @@ export class HdWallet {
       let bFrcRes = await this.createBrfcNode(
         {
           nodeName: NodeName.FtGenesis,
-          parentAddress: this.protocolAddress,
           parentTxId: userStore.user!.protocolTxId,
           useFeeb: 1,
         },
@@ -2082,7 +1977,6 @@ export class HdWallet {
         utxos = [utxo]
         bFrcRes = await this.createBrfcNode({
           nodeName: NodeName.FtGenesis,
-          parentAddress: this.protocolAddress,
           parentTxId: userStore.user!.protocolTxId,
           useFeeb: 1,
           utxos,
@@ -2121,7 +2015,7 @@ export class HdWallet {
             useFeeb: 1,
           }),
           ...AllNodeName[NodeName.FtGenesis],
-          brfc: bFrcRes,
+          brfcTxId: bFrcRes.txId,
         },
         {
           isBroadcast: false,
@@ -2150,7 +2044,6 @@ export class HdWallet {
       let IssueFrfcRes = await this.createBrfcNode(
         {
           nodeName: NodeName.FtIssue,
-          parentAddress: this.protocolAddress,
           parentTxId: userStore.user!.protocolTxId,
           useFeeb: 1,
         },
@@ -2177,7 +2070,6 @@ export class HdWallet {
         utxos = [utxo]
         IssueFrfcRes = await this.createBrfcNode({
           nodeName: NodeName.FtIssue,
-          parentAddress: this.protocolAddress,
           parentTxId: userStore.user!.protocolTxId,
           useFeeb: 1,
           utxos,
@@ -2215,7 +2107,7 @@ export class HdWallet {
             allowIncreaseIssues: true,
           }),
           ...AllNodeName[NodeName.FtIssue],
-          brfc: IssueFrfcRes,
+          brfcTxId: IssueFrfcRes.txId,
           utxos,
           useFeeb: 1,
         },
