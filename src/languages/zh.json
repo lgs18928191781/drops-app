@@ -95,6 +95,7 @@
       "like": "给您的buzz点了个赞！",
       "follow": "已关注，我们聊天吧。",
       "token_transfer": "代币转账",
+      "nft_transfer": "NFT 转账",
       "resend": "重新发送"
     },
     "General": {

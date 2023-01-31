@@ -55,6 +55,7 @@
       "like": "I liked your buzz!",
       "follow": "I followed you! Let's be friends!",
       "token_transfer": "Token Transfer",
+      "nft_transfer": "NFT Transfer",
       "resend": "Resend"
     },
     "General": {
@@ -435,7 +436,7 @@
     "title": "Settings",
     "Uplink settings": "MetaEnergy Settings",
     "Language": "Language",
-    "Theme": "Display",
+    "Theme": "Theme",
     "Edit Profile": "Edit Profile"
   },
   "EditProfile": {
