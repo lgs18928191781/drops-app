@@ -106,6 +106,7 @@ export interface BaseUserInfoTypes {
   password?: string
   pk2: string
   token?: string
+  accessKey?: string
   enCryptedMnemonic?: string
   tag?: 'new' | 'old'
   referrerId?: string
@@ -636,7 +637,7 @@ export class HdWallet {
               const initUtxo = await this.provider.getInitAmount({
                 address: this.rootAddress,
                 xpub: this.wallet.xpubkey.toString(),
-                token: account.token || '',
+                token: account.token || account.accessKey || '',
                 userName: account.userType === 'phone' ? account.phone : account.email,
               })
               utxos = [initUtxo]
