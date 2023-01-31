@@ -1,5 +1,5 @@
 {
-  "name": "start-template",
+  "name": "show3.0",
   "version": "0.0.1",
   "scripts": {
     "gray": "yarn vite --host --mode gray",

@@ -26,9 +26,9 @@
             <!-- 主要信息 -->
             <div class="flex flex-col items-center">
               <!-- 标题 -->
-              <div class="gap-x-2 flex items-end bg-yellow-300">
-                <img :src="ShowIconImg" class="w-[26PX] !h-5 object-contain bg-green-300" />
-                <h3 class="text-lg font-bold lg:tracking-wide shrink-0 bg-blue-300 leading-none">
+              <div class="gap-x-2 flex items-top ">
+                <!-- <img :src="ShowIconImg" class="w-[26PX] !h-5 object-contain bg-green-300" /> -->
+                <h3 class="text-lg font-bold lg:tracking-wide shrink-0  leading-none">
                   {{ $t('Talk.Modals.nftize_title') }}
                 </h3>
               </div>
@@ -50,7 +50,23 @@
 
               <!-- MetaName -->
               <div class=" relative mt-1">
-                <div class="flex items-center justify-start space-x-1 shrink overflow-x-hidden">
+                <!-- 兼容canvas -->
+                <div
+                  class="flex items-baseline justify-start space-x-1 shrink overflow-x-hidden text-dark-300"
+                  v-if="isScreenShotting"
+                >
+                  <span class="text-base truncate py-2 font-bold">
+                    {{ talk.activeCommunitySymbolInfo.name }}
+                  </span>
+                  <span class="text-sm truncate py-2">
+                    {{ '.' + talk.activeCommunitySymbolInfo.suffix }}
+                  </span>
+                </div>
+
+                <div
+                  class="flex items-baseline justify-start space-x-1 shrink overflow-x-hidden"
+                  v-else
+                >
                   <span class="text-sm meta-name truncate">
                     {{ talk.activeCommunitySymbolInfo.name }}
                   </span>
@@ -75,25 +91,30 @@
 
           <!-- 层高 -->
           <div
-            class="absolute w-full h-full inset-0 z-10 card-border translate-x-2 translate-y-1.5 bg-primary rounded-xl"
+            class="absolute w-full h-full inset-0 z-10 card-border translate-x-2 translate-y-1.5  rounded-xl"
+            :class="isScreenShotting ? 'bg-transparent' : 'bg-primary'"
           ></div>
         </div>
 
         <div class="mt-6">
-          <button class="main-border primary w-full py-3 text-base font-bold" @click="saveCard">
+          <button
+            class="main-border primary w-full py-3 text-base font-bold"
+            @click="saveCard"
+            :disabled="isScreenShotting"
+          >
             {{ $t('Talk.Modals.save') }}
           </button>
         </div>
 
         <!-- 卡片画布 -->
-        <canvas ref="cardDrawer" class=""></canvas>
+        <canvas ref="cardDrawer" class="hidden"></canvas>
       </div>
     </template>
   </BaseModal>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watchEffect } from 'vue'
+import { computed, ref, watchEffect, nextTick } from 'vue'
 import QRCode from 'qrcode'
 import html2canvas from 'html2canvas'
 
@@ -124,9 +145,12 @@ watchEffect(() => {
 })
 
 // 将整个卡片保存为图片
+const isScreenShotting = ref(false)
 const cardDrawer = ref<HTMLCanvasElement | null>(null)
 const cardContainer = ref<HTMLDivElement | null>(null)
-const saveCard = () => {
+const saveCard = async () => {
+  isScreenShotting.value = true
+  await nextTick()
   const card = cardContainer.value as HTMLDivElement
   const cardRect = card.getBoundingClientRect()
 
@@ -153,7 +177,10 @@ const saveCard = () => {
     const a = document.createElement('a')
     a.href = canvas.toDataURL('image/png')
     a.download = 'show3.png'
-    // a.click()
+    a.click()
+    isScreenShotting.value = false
+    // 关闭弹窗
+    layout.isShowCommunityCardModal = false
   })
 }
 </script>

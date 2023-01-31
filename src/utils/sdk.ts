@@ -902,19 +902,12 @@ export class SDK {
               )
             }
 
-            // 子节点的 publickey， 如有有传 则为修改，使用传进来的值， 如果有 brfctx则需要创建父节点, 子节点就是父节点的0/0地址专为， 否则传空，自己会去去获取新的
-            const publickey = params.publickey
-              ? params.publickey
-              : transactions.currentNodeBrfc?.transaction
-              ? '0'
-              : undefined
-
             // 处理brfc 子节点
 
             let res = await this.wallet?.createBrfcChildNode(
               {
                 ...params,
-                publickey,
+                publickey: params.publickey,
                 brfcTxId: transactions.currentNodeBrfc!.txId,
                 ...AllNodeName[params.nodeName as NodeName]!,
               },
@@ -1109,6 +1102,8 @@ export class SDK {
             )
             // 更新txId
             transactions.metaFileBrfc.txId = transactions.metaFileBrfc.transaction.id
+            // 更新本地bfrcNodeList
+            this.updateBfrcNodeList(NodeName.MetaFile, transactions.metaFileBrfc)
 
             // 组装新 utxo
             utxo = await this.wallet!.utxoFromTx({
@@ -1165,6 +1160,8 @@ export class SDK {
             )
             // 更新txId
             transactions.currentNodeBrfc.txId = transactions.currentNodeBrfc.transaction.id
+            // 更新本地bfrcNodeList
+            this.updateBfrcNodeList(params.nodeName, transactions.currentNodeBrfc)
 
             if (transactions.currentNode?.transaction) {
               // 组装新 utxo
@@ -1228,7 +1225,7 @@ export class SDK {
             if (params.nodeName === NodeName.NftGenesis) {
               utxo.wif = this.getPathPrivateKey(
                 `${utxo.addressType}/${utxo.addressIndex}`
-              ).toString()
+              )!.toString()
               const res = await nftManager!.genesis({
                 ...JSON.parse(params.data!),
                 opreturnData: transactions.currentNode.scriptPlayload!,
@@ -1265,7 +1262,7 @@ export class SDK {
                 })
                 utxo.wif = this.getPathPrivateKey(
                   `${utxo.addressType}/${utxo.addressIndex}`
-                ).toString()
+                )!.toString()
                 // @ts-ignore
                 const data = JSON.parse(params.data)
                 const res = await nftManager!.mint({
@@ -1294,6 +1291,17 @@ export class SDK {
         reject(error)
       }
     })
+  }
+
+  // 更新本地存储的brfc节点信息
+  private updateBfrcNodeList(nodeName: NodeName, nodeInfo: CreateNodeRes) {
+    const index = this.bfrcNodeList.findIndex(item => item.nodeName === nodeName)
+    if (index !== -1) {
+      this.bfrcNodeList[index].data = {
+        ...nodeInfo,
+        transaction: undefined,
+      }
+    }
   }
 
   private broadcastNodeTransactions(transactions: NodeTransactions) {
