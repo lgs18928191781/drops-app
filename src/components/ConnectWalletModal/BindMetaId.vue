@@ -655,7 +655,7 @@ function currentChain() {
 //创建 eht 绑定的brfc 节点
 function createETHBindingBrfcNode(MetaidRes: BindMetaIdRes) {
   const { wallet, userInfo } = MetaidRes
-  userInfo.metaId='f21f4fc0328e2398e0978d6171d970620c6827976bd77345188ae7a1ae85b5dd'
+
   return new Promise<void>(async (resolve, reject) => {
     try {
       const hdWallet = new HdWallet(wallet)
