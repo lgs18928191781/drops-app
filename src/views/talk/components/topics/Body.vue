@@ -82,7 +82,7 @@ onMounted(() => {
     result => {
       if (result) {
         if (BuzzWarpRef.value) {
-          BuzzWarpRef.value.publishTopic = talk.activeCommunity?.name
+          BuzzWarpRef.value.publishTopic = talk.activeCommunity?.metaName
           BuzzWarpRef.value.publiseSuccessCallBack = () => false
         }
         getDatas(true).then(() => {
