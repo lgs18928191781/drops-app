@@ -1,5 +1,5 @@
 import i18n from '@/utils/i18n'
-import { PayPlatform } from './enum'
+import { Chains, Lang, PayPlatform } from './enum'
 import WechatPayIcon from '@/assets/images/wechatTitle.svg?url'
 import AliPayIcon from '@/assets/images/alipay-circle.svg?url'
 import SandPayIcon from '@/assets/images/sandPay_title.svg?url'
@@ -107,7 +107,11 @@ export const payPlatformList: PayPlatformItem[] = [
     icon: ETHIcon,
     name: () => {
       // @ts-ignore
-      return import.meta.env.VITE_ETH_CHAIN + i18n.global.t('Pay')
+      return `${import.meta.env.VITE_ETH_CHAIN.toUpperCase()}${
+        // @ts-ignore
+        i18n.global.locale === Lang.ZH ? '' : ' '
+        // @ts-ignore
+      }${i18n.global.t('Pay')}`
     },
     platform: PayPlatform.ETH,
     background: '#108EE9',
@@ -115,7 +119,7 @@ export const payPlatformList: PayPlatformItem[] = [
     disabled: () => {
       let result = true
       const userStore = useUserStore()
-      if (userStore.isAuthorized && userStore.user?.evmAddress && GetChain() == 'eth') {
+      if (userStore.isAuthorized && userStore.user?.evmAddress && GetChain() === Chains.ETH) {
         result = false
       }
       return result
@@ -126,7 +130,7 @@ export const payPlatformList: PayPlatformItem[] = [
     icon: POLYGON,
     name: () => {
       // @ts-ignore
-      return `MATIC${i18n.global.t('Pay')}`
+      return `MATIC${i18n.global.locale === Lang.ZH ? '' : ' '}${i18n.global.t('Pay')}`
     },
     platform: PayPlatform.POLYGON,
     background: '#108EE9',
@@ -134,11 +138,23 @@ export const payPlatformList: PayPlatformItem[] = [
     disabled: () => {
       let result = true
       const userStore = useUserStore()
-      if (userStore.isAuthorized && userStore.user?.evmAddress && GetChain() == 'polygon') {
+      if (userStore.isAuthorized && userStore.user?.evmAddress && GetChain() === Chains.POLYGON) {
         result = false
       }
       return result
     },
+    suffix: false,
+  },
+  {
+    icon: BSV,
+    name: () => {
+      // @ts-ignore
+      return `BSV${i18n.global.locale === Lang.ZH ? '' : ' '}${i18n.global.t('Pay')}`
+    },
+    platform: PayPlatform.BSV,
+    background: '#108EE9',
+    key: 'BSV',
+    disabled: () => false,
     suffix: false,
   },
   {
