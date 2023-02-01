@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import DefaultAvatar from '@/assets/images/default_avatar.png'
-import DefaultMetafile from '@/assets/images/default_metafile.svg?url'
+import DefaultMetafile from '@/assets/images/release_add_img.svg?url'
 // import 'lazysizes'
 import { DB } from '@/utils/db'
 

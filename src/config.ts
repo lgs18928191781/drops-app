@@ -208,22 +208,22 @@ export const chains = [
     name: import.meta.env.VITE_ETH_CHAIN.toUpperCase(),
     icon: ETHIcon,
     value: import.meta.env.VITE_ETH_CHAIN,
-    disabled: () => false,
     address: () => {
       const userStore = useUserStore()
       return userStore.user?.evmAddress || ''
     },
-    // disabled: () => {
-    //   const userStore = useUserStore()
-    //   return !(userStore.isAuthorized && userStore.user!.evmAddress)
-    // },
+    disabled: () => {
+      const userStore = useUserStore()
+      return !(userStore.isAuthorized && userStore.user!.evmAddress)
+    },
   },
   {
     name: import.meta.env.MODE == 'gray' ? 'MUMBAI' : 'POLYGON',
     icon: POLYGON,
     value: import.meta.env.VITE_POLYGON_CHAIN,
     disabled: () => {
-      return false
+      const userStore = useUserStore()
+      return !(userStore.isAuthorized && userStore.user!.evmAddress)
     },
     address: () => {
       return ''
