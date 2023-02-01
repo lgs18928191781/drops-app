@@ -61,7 +61,10 @@
       >
         <router-link
           :to="
-            '/talk/channels/' + community.id + '/' + talk.communityLastReadChannelId(community.id)
+            '/talk/channels/' +
+              getCommunityKey(community) +
+              '/' +
+              talk.communityLastReadChannelId(community.id)
           "
           class="flex items-center justify-center relative w-full group"
           :key="index"
@@ -116,6 +119,7 @@ import { onBeforeUnmount, reactive, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useWsStore } from '@/stores/ws'
+import { Community } from '@/@types/talk'
 const layout = useLayoutStore()
 const talk = useTalkStore()
 const ws = useWsStore()
@@ -123,6 +127,13 @@ const userStore = useUserStore()
 const route = useRoute()
 const rootStore = useRootStore()
 const i18n = useI18n()
+
+function getCommunityKey(community: Community) {
+  if (!community.metaName) return community.id
+
+  const originalMetaName = community.metaName
+  return originalMetaName.includes('.') ? originalMetaName : `${originalMetaName}.meta`
+}
 
 const apps = reactive([
   {

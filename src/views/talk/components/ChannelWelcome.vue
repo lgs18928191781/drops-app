@@ -46,7 +46,7 @@ const utilities = ref([
     icon: 'user_plus',
     bgColor: 'bg-green-400',
     action: () => {
-      talk.inviteLink = `${location.origin}/talk/channels/${talk.activeCommunitySymbol}/the-void`
+      talk.inviteLink = `${location.origin}/talk/channels/${talk.activeCommunitySymbol}/index`
       talk.invitingChannel = {
         community: talk.activeCommunity,
         channel: null,

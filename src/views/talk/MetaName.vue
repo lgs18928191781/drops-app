@@ -43,17 +43,18 @@ async function resolveMetaName() {
     await sleep(minResolveDuration - duration)
   }
 
+  // URI编码metaName
+  const uriEncoded = encodeURIComponent(metaName)
+
   return {
     communityId: hashHex,
-    metaName,
+    uriEncoded,
   }
 }
 
-resolveMetaName().then(({ communityId, metaName }) => {
-  // URI编码metaName
-  const encodedMetaName = encodeURIComponent(metaName)
+resolveMetaName().then(({ communityId, uriEncoded }) => {
   // 跳转到communityId对应的社区
-  const fullPath = route.fullPath.replace(encodedMetaName, communityId)
+  const fullPath = route.fullPath.replace(uriEncoded, communityId)
 
   router.push(fullPath)
 })

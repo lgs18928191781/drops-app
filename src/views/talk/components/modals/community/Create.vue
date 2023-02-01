@@ -83,7 +83,7 @@ const tryCreateCommunity = async () => {
   // function* createCommunityJob() {
   //   const { communityId } = yield createCommunity(form, userStore, userStore.showWallet)
   //   console.log({ communityId })
-  //   return router.push(`/talk/channels/${communityId}/the-void`)
+  //   return router.push(`/talk/channels/${communityId}/index`)
   // }
 
   // const job = createCommunityJob()
@@ -97,7 +97,7 @@ const tryCreateCommunity = async () => {
   layout.isShowLoading = false
   form.reset()
 
-  router.push(`/talk/channels/${communityId}/the-void`)
+  router.push(`/talk/channels/${communityId}/index`)
 
   return
 }
