@@ -33,7 +33,7 @@
       <div class="balance">
         <span
           >{{ i18n.t('SDK.payconfirm.My')
-          }}{{ payType === SdkPayType.ME ? i18n.t('SDK.payconfirm.ME') : 'SPACE' }}：</span
+          }}{{ payType === SdkPayType.ME ? i18n.t('SDK.payconfirm.ME') : 'Satoshi' }}：</span
         >{{ balance }}
       </div>
 
@@ -48,7 +48,7 @@
         </span>
         <div class="flex1 cont">
           {{ i18n.t('SDK.payconfirm.tips') }} <a>{{ maxCount }}</a>
-          {{ payType === SdkPayType.ME ? i18n.t('SDK.payconfirm.ME') : 'SPACE' }}
+          {{ payType === SdkPayType.ME ? i18n.t('SDK.payconfirm.ME') : 'Satoshi' }}
           {{ i18n.t('SDK.payconfirm.tips2') }}
         </div>
       </div>
