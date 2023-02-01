@@ -1,6 +1,6 @@
 <template>
   <div class="nft-avatar-list-warp flex flex-v">
-    <div class="tab flex flex-align-center">
+    <div class="tab">
       <a
         v-for="item in chains"
         :key="item.value"
@@ -61,6 +61,7 @@ const isSkeleton = ref(true)
 const pagintion = reactive({
   ...initPagination,
   chain: 'mvc',
+  flag: '',
 })
 
 const list: NFTAvatarItem[] = reactive([])
@@ -76,7 +77,6 @@ function getMore() {
 
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
-    console.log('zxzxzzx', userStore)
     const res = await GetNFTAvatars({
       address:
         pagintion.chain === 'mvc'
@@ -89,7 +89,7 @@ function getDatas(isCover = false) {
     if (res?.code === 0) {
       if (isCover) list.length = 0
       if (res.data.results.items.length > 0) {
-        // pagintion.flag = res.data.results.items[res.data.results.items.length - 1].txId
+        pagintion.flag = res.data.results.items[res.data.results.items.length - 1].txId
       } else {
         pagintion.nothing = false
       }
@@ -111,6 +111,7 @@ function changeTab(item: { name: string; value: string; disabled: () => boolean 
   pagintion.page = 1
   pagintion.loading = false
   pagintion.nothing = false
+  pagintion.flag = ''
   getDatas(true).then(() => {
     isSkeleton.value = false
   })

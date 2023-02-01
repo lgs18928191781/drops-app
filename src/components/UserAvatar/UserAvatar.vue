@@ -1,6 +1,6 @@
 <template>
   <div class="avatar" :class="{ disabled }" @click.stop="() => {}">
-    <Image :src="image" :type="type" />
+    <Image :src="image" :type="type" :default-image="DefaultAvatar" />
     <!-- <el-popover
       placement="right-start"
       :width="'auto'"
@@ -19,6 +19,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import UserCardVue from '../UserCard/UserCard.vue'
+import DefaultAvatar from '@/assets/images/default_avatar.png'
 
 interface Props {
   name?: string
