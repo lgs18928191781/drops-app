@@ -294,7 +294,7 @@ export const giveRedPacket = async (form: any, channelId: string, selfMetaId: st
   }
 
   // 3. 发送节点
-  await sdk.createBrfcChildNode(node)
+  await sdk.createBrfcChildNode(node, { payType: SdkPayType.SPACE })
 
   return
 }

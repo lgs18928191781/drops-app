@@ -345,6 +345,7 @@ export enum GroupChannelType {
   Password = 'password',
   NFT = 'NFT',
   FT = 'FT',
+  Native = 'native',
   ETH_NFT = 'ETH_NFT',
   POLYGON_NFT = 'POLYGON_NFT',
 }
@@ -403,11 +404,13 @@ export enum ToCurrency {
 }
 
 export enum ChannelRoomType {
-  Publice = '',
+  Public = '',
   Private = '1',
   NFT = '2',
   FT = '3',
   ETHNFT = '2001',
+  Native_MVC = '4000',
+  Native_BSV = '4001',
 }
 
 export enum Chains {

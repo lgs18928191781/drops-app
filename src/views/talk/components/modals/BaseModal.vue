@@ -109,7 +109,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Dialog, DialogPanel, TransitionRoot, TransitionChild } from '@headlessui/vue'
+import { Dialog, DialogTitle, DialogPanel, TransitionRoot, TransitionChild } from '@headlessui/vue'
 import { computed } from 'vue'
 
 const props = defineProps<{
