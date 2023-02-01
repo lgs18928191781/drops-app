@@ -129,8 +129,8 @@ const tryCreateChannel = async () => {
 
   sleep(2000).then(() => {
     // 跳转刷新
-    // window.location.reload()
-    talk.refetchChannels()
+    window.location.reload()
+    // talk.refetchChannels()
   })
 }
 </script>
