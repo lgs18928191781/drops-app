@@ -20,7 +20,7 @@
         <div>
           <div class="msg flex flex-align-end flex-pack-center">
             <div class="count">{{ useAmount }}</div>
-            <div class="lable">{{ payType }}</div>
+            <div class="lable">{{ payType === SdkPayType.ME ? payType : 'Satoshi' }}</div>
           </div>
           <div class="text">{{ i18n.t('SDK.payconfirm.Payment required') }}</div>
           <div class="me-tips">
