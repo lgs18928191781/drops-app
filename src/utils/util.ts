@@ -1410,3 +1410,24 @@ export async function metanameOperation(params: {
     }
   })
 }
+
+export function getLocalAccount() {
+  const localPassword = window.localStorage.getItem(encode('password'))
+  const localUserInfo = window.localStorage.getItem(encode('user'))
+  if (!localPassword || !localUserInfo) {
+    throw new Error('用户登录失败')
+  }
+  const password = decode(localPassword)
+  const userInfo: UserInfo = JSON.parse(decode(localUserInfo))
+  // 如果缓存是老的（没有Path），则删除缓存重新登录
+  if (!userInfo.path) {
+    window.localStorage.removeItem(encode('password'))
+    window.localStorage.removeItem(encode('user'))
+    // reload
+    window.location.reload()
+  }
+  return {
+    password,
+    userInfo,
+  }
+}

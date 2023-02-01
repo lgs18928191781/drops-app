@@ -460,3 +460,7 @@ export enum Lang {
   ZH = 'zh',
   EN = 'en',
 }
+
+export enum WalletTxVersion {
+  BSV = 1,
+}

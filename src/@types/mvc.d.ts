@@ -99,6 +99,7 @@ declare module 'mvc-lib' {
     readonly outputAmount: number
     readonly DUST_AMOUNT: number
     nid: string
+    version: number
 
     constructor(serialized?: any)
 

@@ -446,11 +446,24 @@ declare interface NodeTransactions {
   metaFiles?: CreateNodeRes[]
   currentNodeBrfc?: CreateNodeRes
   currentNode?: CreateNodeRes
-  issueNFT?: {
-    transaction: bsv.Transaction
-    txId?: string
-  }
   subscribeId?: string
+  nft?: {
+    issue?: {
+      transaction: bsv.Transaction
+      txId: string
+    }
+    genesis?: {
+      transaction: bsv.Transaction
+      genesis: string
+      codehash: string
+      sensibleId: string
+      txId: string
+    }
+    transfer?: {
+      transaction: bsv.Transaction
+      txId: string
+    }
+  }
 }
 
 declare interface JobStep {

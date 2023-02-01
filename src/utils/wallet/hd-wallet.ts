@@ -447,7 +447,7 @@ const defaultSigners = [
 ]
 export class HdWallet {
   public network = Network.mainnet
-  public mnemonic: string
+  public mnemonic: string = ''
   public wallet: mvc.HDPrivateKey
   public provider: ShowmoneyProvider
   private _utxos: MetasvUtxoTypes[] = []
@@ -500,6 +500,23 @@ export class HdWallet {
   // 当查询是有某个节点时， 查询完存到这里， 反之重复调接口查询
   private userBrfcNodeList: UserProtocolBrfcNode[] = []
 
+  constructor(
+    wallet: mvc.HDPrivateKey,
+    params?: {
+      metaSvApi: string
+    }
+  ) {
+    // @ts-ignore
+    this.network = wallet.network.name
+    this.wallet = wallet
+    const root = wallet.deriveChild(0).deriveChild(0).privateKey
+    this._root = root
+    this.provider = new ShowmoneyProvider(
+      import.meta.env.VITE_BASEAPI,
+      params && params.metaSvApi ? params.metaSvApi : import.meta.env.VITE_META_SV_API
+    )
+  }
+
   get rootAddress(): string {
     return this._root.toAddress(this.network).toString()
   }
@@ -510,19 +527,6 @@ export class HdWallet {
 
   get infoAddress(): string {
     return this.createAddress(this.keyPathMap.Info.keyPath).address
-  }
-
-  constructor(wallet: mvc.HDPrivateKey) {
-    // @ts-ignore
-    this.network = wallet.network.name
-    this.wallet = wallet
-    const root = wallet.deriveChild(0).deriveChild(0).privateKey
-    this._root = root
-    // this.rootAddress = root.toAddress(Network.mainnet).toString()
-    this.provider = new ShowmoneyProvider(
-      import.meta.env.VITE_BASEAPI,
-      import.meta.env.VITE_META_SV_API
-    )
   }
 
   static async createFromAccount(

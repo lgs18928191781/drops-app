@@ -469,11 +469,6 @@ export interface CreateNodeRes {
   transaction?: bsv.Transaction
   scriptPlayload?: (string | Buffer)[]
   hex?: string
-
-  // nft genesis
-  genesis?: string
-  codehash?: string
-  sensibleId?: string
 }
 
 export interface SendMetaNameTransationResult {

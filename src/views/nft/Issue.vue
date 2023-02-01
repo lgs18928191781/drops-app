@@ -158,43 +158,6 @@ function getGenesisList() {
   })
 }
 
-async function genesis() {
-  const res = await userStore.showWallet.createBrfcChildNode({
-    nodeName: NodeName.NftGenesis,
-    data: JSON.stringify({
-      ...form.genesis,
-    }),
-  })
-  // debugger
-  if (res) {
-    for (let i = 0; i < form.count; i++) {
-      const response = await userStore.showWallet.createBrfcChildNode({
-        nodeName: NodeName.NftIssue,
-        data: JSON.stringify({
-          type: 'metacontract',
-          genesisId: res.currentNode?.genesis,
-          genesisTxid: res.currentNode?.txId,
-          receiverAddress: userStore.user?.address,
-          sensibleId: res.currentNode!.sensibleId,
-          name: form.name,
-          desc: form.desc,
-          icon: form.metafile,
-          backIcon: '',
-          website: '',
-          issuerName: '',
-          data: {
-            originalFileTxid: form.metafile,
-          },
-        }),
-      })
-    }
-  }
-}
-
-async function ftGenesis() {
-  const res = await userStore.showWallet.ftGenesis()
-}
-
 function addIssueItem(option: IssueNFTOption) {
   let errorMsg
   for (let i = 0; i < option.count; i++) {

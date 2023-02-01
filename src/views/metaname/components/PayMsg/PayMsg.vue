@@ -44,7 +44,7 @@
         <template v-for="(item, index) in payPlatformList" :key="index">
           <div
             class="pay-type-item flex flex-align-center"
-            v-if="item.disabled()"
+            v-if="!item.disabled()"
             @click="changePayType(item.platform)"
           >
             <div class="logo flex flex-align-center flex-pack-center">
