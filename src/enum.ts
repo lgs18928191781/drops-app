@@ -289,7 +289,7 @@ export enum NodeName {
   SimpleRedEnvelope = 'SimpleRedEnvelope',
   OpenRedenvelope = 'OpenRedenvelope',
   SimplePublicShare = 'SimplePublicShare',
-  SellNft = 'sell_nft',
+  LegalSellNft = 'sell_nft',
   Name = 'name',
   MetaNote = 'metanote',
   SimpleFileMsg = 'SimpleFileMsg',
@@ -297,6 +297,7 @@ export enum NodeName {
   SimpleAnnouncementQuote = 'SimpleAnnouncementQuote',
   SimpleDAOCreate = 'SimpleDAOCreate',
   NftName = 'NftName',
+  NftTransfer = 'NftTransfer',
 }
 
 export const enum BindStatus {

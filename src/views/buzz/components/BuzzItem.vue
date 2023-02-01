@@ -67,7 +67,7 @@
         <template v-else-if="displayItemData.protocol === NodeName.SimplePublicShare">
           <BuzzItemContentSimplePublicShareVue :buzz="displayItemData" />
         </template>
-        <template v-else-if="displayItemData.protocol === NodeName.SellNft">
+        <template v-else-if="displayItemData.protocol === NodeName.LegalSellNft">
           <BuzzItemContentSellNftVue :buzz="displayItemData" />
         </template>
         <template v-else>

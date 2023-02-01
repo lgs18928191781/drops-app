@@ -557,7 +557,7 @@ declare interface NewBrfcNodeBaseInfo extends NewNodeBaseInfo {
 }
 
 declare interface CreateBrfcNodePrams {
-  nodeName: NodeName
+  nodeName: import('@/enum').NodeName
   parentTxId: string
   payTo?: { amount: number; address: string }[]
   utxos?: UtxoItem[]

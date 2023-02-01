@@ -30,7 +30,6 @@ import {
   UtxoItem,
   SendMetaNameTransationResult,
 } from '@/@types/sdk'
-import { AllNodeName } from '../sdk'
 import { ElMessage } from 'element-plus'
 import { NftManager, FtManager, API_TARGET } from 'meta-contract'
 import { useUserStore } from '@/stores/user'
@@ -38,6 +37,7 @@ import { useUserStore } from '@/stores/user'
 import Decimal from 'decimal.js-light'
 import { GetMeUtxos } from '@/api/v3'
 import { GetTxChainInfo } from '@/api/metaid-base'
+import AllNodeName from '../AllNodeName'
 
 export enum Network {
   mainnet = 'mainnet',

@@ -153,7 +153,7 @@ import {
 } from '@/api/core'
 import { BindStatus, NodeName, CurrentSupportChain } from '@/enum'
 import { useUserStore } from '@/stores/user'
-import { AllNodeName, SDK } from '@/utils/sdk'
+import {  SDK } from '@/utils/sdk'
 import {
   createMnemonic,
   decryptMnemonic,
