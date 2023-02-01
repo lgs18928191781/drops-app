@@ -140,7 +140,7 @@ import IconLine from '@/assets/images/wallte_icon_line.png'
 import MetaMask, { MetaMaskLoginRes } from '@/plugins/MetaMak.vue'
 import { useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
-import { AllNodeName, SDK } from '@/utils/sdk'
+import { SDK } from '@/utils/sdk'
 import FirstBuzzImg from '@/assets/images/first_buzz.svg?url'
 import { toMvcScan } from '@/utils/util'
 import MetaIdWalletVue, { MetaIdWalletRegisterBaseInfo } from './MetaIdWallet.vue'
@@ -165,6 +165,7 @@ import { MD5 } from 'crypto-js'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
 
 import { currentSupportChain } from '@/config'
+import AllNodeName from '@/utils/AllNodeName'
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const route = useRoute()
