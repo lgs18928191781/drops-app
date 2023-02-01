@@ -496,7 +496,7 @@ function createMetaidAccount() {
         const {
           data: { word },
         } = await GetWordBeforeReg({
-          evmAddress: props.thirdPartyWallet.address,
+          evmAddress: props.thirdPartyWallet.address || (window as any).ethereum.selectedAddress,
           chainId: (window as any).ethereum.chainId,
         }).catch(e => {
           throw new Error(e.toString())
@@ -508,8 +508,8 @@ function createMetaidAccount() {
           xpub: hdWallet.xpubkey,
           pubKey: pubKey,
           evmEnMnemonic: encryptmnemonic,
-          evmAddress: props.thirdPartyWallet.address,
-          chainId: window.ethereum.chainId,
+          evmAddress: props.thirdPartyWallet.address || (window as any).ethereum.selectedAddress,
+          chainId: (window as any).ethereum.chainId,
           userName: account.name,
           path: parseInt(import.meta.env.VITE_WALLET_PATH),
         })
@@ -560,7 +560,7 @@ function createMetaidAccount() {
         const {
           data: { word },
         } = await GetWordBeforeReg({
-          evmAddress: props.thirdPartyWallet.address,
+          evmAddress: props.thirdPartyWallet.address ||  (window as any).ethereum.selectedAddress,
           chainId: (window as any).ethereum.chainId,
         }).catch(e => {
           throw new Error(e.toString())
@@ -572,8 +572,8 @@ function createMetaidAccount() {
           xpub: hdWallet.xpubkey,
           pubKey: pubKey,
           evmEnMnemonic: encryptmnemonic,
-          evmAddress: props.thirdPartyWallet.address,
-          chainId: window.ethereum.chainId,
+          evmAddress: props.thirdPartyWallet.address || (window as any).ethereum.selectedAddress,
+          chainId: (window as any).ethereum.chainId,
           userName: account.name,
           path: parseInt(import.meta.env.VITE_WALLET_PATH),
         })

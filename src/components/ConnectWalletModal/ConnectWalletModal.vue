@@ -446,6 +446,15 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
         isShowBindModal.value = true
       }
     }
+  } else if (
+    !getMnemonicRes?.data.metaId &&
+    getMnemonicRes?.data?.registerSource === RegisterSource.metamask
+  ) {
+    rootStore.$patch({ isShowMetaMak: false })
+    return ElMessage.error(`${i18n.t('MetaidIsNull')}`)
+    // BindMetaIdRef.value.status = BindStatus.ChooseType
+    // rootStore.$patch({ isShowMetaMak: false })
+    // isShowBindModal.value = true
   }
 }
 

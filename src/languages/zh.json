@@ -832,5 +832,6 @@
   "registerNameIllgel": "提交注册的MetaName字符存在不合法",
   "inputMetaNameIllgel": "输入的MetaName不符合规范",
   "getExpiredTimeFail": "获取到期时间失败",
-  "spaceEnghout": "账户Space余额不足，请充值后再进行绑定操作！"
+  "spaceEnghout": "账户Space余额不足，请充值后再进行绑定操作！",
+  "MetaidIsNull": "绑定账号的Metaid为空，请联系客服人员"
 }
