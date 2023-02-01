@@ -125,43 +125,43 @@
                   </a>
                 </div>
                 <div class="wallet-list">
-                  <div
-                    class="wallet-item flex flex-align-center"
-                    v-for="wallet in item.list"
-                    :key="wallet.name"
-                  >
-                    <div class="flex1 flex flex-align-center flex-pack-start">
-                      <div class="icon flex flex-align-center flex-pack-center">
-                        <img :src="wallet.icon" />
-                      </div>
-                      <div class="name">{{ wallet.name }}</div>
-                      <span
-                        class="address"
-                        v-if="wallet.address()"
-                        @click="copy(wallet.address())"
-                        >{{
-                          wallet.address().slice(0, 6) + '...' + wallet.address().slice(-3)
-                        }}</span
-                      >
-                    </div>
-                    <a
-                      class="transfer main-border"
-                      v-if="wallet.isCanTransfer"
-                      @click="isShowTransfer = true"
-                      >{{ $t('Wallet.Transfer') }}</a
-                    >
-                    <div class="value">
-                      <template v-if="wallet.loading">
-                        <ElIcon class="is-loading">
-                          <Loading />
-                        </ElIcon>
-                      </template>
-                      <template v-else>
-                        <div class="value">{{ wallet.value }}</div>
-                        <div class="usd">
-                          {{ rootStore.currentPriceSymbol }} {{ wallet.price() }}
+                  <div class="wallet-item" v-for="wallet in item.list" :key="wallet.name">
+                    <div class="header flex flex-align-center">
+                      <div class="flex1 flex flex-align-center flex-pack-start">
+                        <div class="icon flex flex-align-center flex-pack-center">
+                          <img :src="wallet.icon" />
                         </div>
-                      </template>
+                        <div>
+                          <div class="name">{{ wallet.name }}</div>
+                          <span
+                            class="address"
+                            v-if="wallet.address()"
+                            @click="copy(wallet.address())"
+                            >{{
+                              wallet.address().slice(0, 6) + '...' + wallet.address().slice(-3)
+                            }}</span
+                          >
+                        </div>
+                      </div>
+                      <a
+                        class="transfer main-border"
+                        v-if="wallet.isCanTransfer"
+                        @click="isShowTransfer = true"
+                        >{{ $t('Wallet.Transfer') }}</a
+                      >
+                      <div class="value">
+                        <template v-if="wallet.loading">
+                          <ElIcon class="is-loading">
+                            <Loading />
+                          </ElIcon>
+                        </template>
+                        <template v-else>
+                          <div class="value">{{ wallet.value }}</div>
+                          <div class="usd">
+                            {{ rootStore.currentPriceSymbol }} {{ wallet.price() }}
+                          </div>
+                        </template>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -385,6 +385,7 @@ const wallets = reactive([
         price: function() {
           const rate = rootStore.exchangeRate.find(item => item.symbol === 'ME')
           if (rate) {
+            // @ts-ignore
             return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
           }
           return '--'
@@ -407,6 +408,7 @@ const wallets = reactive([
             item => item.symbol === import.meta.env.VITE_ETH_CHAIN
           )
           if (rate) {
+            // @ts-ignore
             return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
           }
           return '--'
@@ -420,13 +422,11 @@ const wallets = reactive([
         address: () => userStore.user?.evmAddress || '',
         isCanTransfer: false,
         price: function() {
-          // return 0
-
           const rate = rootStore.exchangeRate.find(
             item => item.symbol === import.meta.env.VITE_POLYGON_CHAIN
           )
-          // debugger
           if (rate) {
+            // @ts-ignore
             return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
           }
           return '--'
@@ -440,8 +440,9 @@ const wallets = reactive([
         address: () => userStore.user?.address || '',
         isCanTransfer: true,
         price: function() {
-          const rate = rootStore.exchangeRate.find(item => item.symbol === 'mvc')
+          const rate = rootStore.exchangeRate.find(item => item.symbol === Chains.MVC)
           if (rate) {
+            // @ts-ignore
             return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
           }
           return '--'
@@ -455,8 +456,9 @@ const wallets = reactive([
         address: () => userStore.user?.address || '',
         isCanTransfer: false,
         price: function() {
-          const rate = rootStore.exchangeRate.find(item => item.symbol === 'bsv')
+          const rate = rootStore.exchangeRate.find(item => item.symbol === Chains.BSV)
           if (rate) {
+            // @ts-ignore
             return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
           }
           return '--'
