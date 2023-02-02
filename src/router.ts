@@ -137,7 +137,6 @@ export const router = createRouter({
     {
       path: '/talk/channels/:communityId',
       component: () => import('@/views/talk/Channel.vue'),
-      meta: { isAuth: true },
       children: [
         {
           path: 'index',

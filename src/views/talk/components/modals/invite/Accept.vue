@@ -57,13 +57,25 @@ import { useTalkStore } from '@/stores/talk'
 import { joinCommunity } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
+import { useRootStore } from '@/stores/root'
 
 const layout = useLayoutStore()
+const root = useRootStore()
 const talk = useTalkStore()
 const user = useUserStore()
 const router = useRouter()
 
+const loginFirst = () => {
+  // layout[ShowControl.isShowAcceptInviteModal] = false
+  root.isShowLogin = true
+}
+
 const tryJoinCommunity = async () => {
+  // 游客
+  if (!user.isAuthorized) {
+    return loginFirst()
+  }
+
   layout[ShowControl.isShowAcceptInviteModal] = false
   layout.isShowLoading = true
   const joinRes = await joinCommunity(talk.invitedCommunity.communityId, user.showWallet)

@@ -55,12 +55,20 @@ import CommunityCardModal from './components/modals/invite/CommunityCard.vue'
 import ShareToBuzzModal from './components/modals/invite/ShareToBuzz.vue'
 import ShareSuccessModal from './components/modals/invite/ShareSuccess.vue'
 import LoadingCover from './components/modals/LoadingCover.vue'
+import { useUserStore } from '@/stores/user'
 
 const talk = useTalkStore()
+const user = useUserStore()
 const route = useRoute()
 const layout = useLayoutStore()
 
+// 初始化频道
 function init(communityId: string) {
+  // 如果是游客，则返回游客模式
+  if (!user.isAuthorized) {
+    return initGuestMode(communityId)
+  }
+
   talk.checkMembership(communityId).then(async (isMember: boolean) => {
     if (!isMember) {
       await talk.invite(communityId)
@@ -71,23 +79,42 @@ function init(communityId: string) {
   })
 }
 
+// 初始化游客模式
+async function initGuestMode(communityId: string) {
+  console.log('guest')
+  // 1. 将当前社区推入社区列表
+  await talk.addTempCommunity(communityId)
+
+  // 2. 弹出邀请框
+  await talk.invite(communityId)
+  return
+
+  // await talk.initTempCommunity(communityId)
+
+  // 2. 弹出注册框
+
+  // 4. 接受邀请逻辑
+}
+
 const { communityId } = route.params as { communityId: string }
 
 // 解析 communityId 为 metaName 的情况
-
-if (isMetaName(communityId)) {
-  resolveMetaName(communityId).then(({ communityId: realCommunityId }) => {
-    init(realCommunityId)
-  })
-} else {
-  init(communityId)
+function resolve(communityId: string) {
+  if (isMetaName(communityId)) {
+    resolveMetaName(communityId).then(({ communityId: realCommunityId }) => {
+      init(realCommunityId)
+    })
+  } else {
+    init(communityId)
+  }
 }
+resolve(communityId)
 
 watch(
   () => talk.communityStatus,
   async (status: string) => {
     if (status === 'invited') {
-      await talk.initCommunity(communityId as string)
+      resolve(communityId)
     }
   },
   { immediate: true }

@@ -138,7 +138,7 @@
           >
             <template #suffix>
               <ElButton
-                size="sm"
+                size="small"
                 :disabled="sendCodeBtnDisabled"
                 class="none-box-shadow send-code-btn"
                 @click="sendCode"

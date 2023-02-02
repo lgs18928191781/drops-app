@@ -294,7 +294,14 @@ export const giveRedPacket = async (form: any, channelId: string, selfMetaId: st
   }
 
   // 3. 发送节点
-  await sdk.createBrfcChildNode(node, { payType: SdkPayType.SPACE })
+  try {
+    const res = await sdk.createBrfcChildNode(node, { payType: SdkPayType.SPACE })
+    console.log({ res })
+  } catch (err) {
+    console.log(err)
+    ElMessage.error('Failed')
+    return
+  }
 
   return
 }

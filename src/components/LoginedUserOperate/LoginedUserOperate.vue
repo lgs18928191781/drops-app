@@ -21,7 +21,9 @@
             :disabled="true"
           />
         </template>
-        <UserPersonaVue />
+        <div class="p-4">
+          <UserPersonaVue />
+        </div>
       </el-popover>
       <a
         @click="toMetaName"
