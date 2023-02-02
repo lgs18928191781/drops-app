@@ -284,10 +284,10 @@ const tabs = [
 ]
 const FormRef = ref()
 const form = reactive({
-  userType: 'phone',
+  userType: SignUserType.Email,
   password: '',
-  area: '86',
-  countryCode: 'cn',
+  area: '1',
+  countryCode: 'us',
   phone: '',
   email: '',
   name: '',
