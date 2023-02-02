@@ -478,3 +478,24 @@ export interface SendMetaNameTransationResult {
   TxFee: number
   FeePerYear: number
 }
+
+export interface HdWalletCreateBrfcChildNodeParams {
+  nodeName: string
+  autoRename?: Boolean
+  appId?: string[]
+  encrypt?: IsEncrypt
+  version?: string
+  data?: string
+  dataType?: string
+  payCurrency?: string
+  payTo?: PayToItem[]
+  encoding?: string
+  needConfirm?: boolean // 是否需要确认
+  attachments?: AttachmentItem[] // 附件
+  utxos?: any[] // 传入的utxos
+  publickey?: string // 修改时 用的publicekey
+  ecdh?: { type: string; publickey: string } // ecdh
+  useFeeb?: number // 费率
+  meConvertSatoshi?: number
+  brfcTxId: string
+}

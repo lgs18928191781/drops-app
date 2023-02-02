@@ -29,6 +29,7 @@ import {
   TransferTypes,
   UtxoItem,
   SendMetaNameTransationResult,
+  HdWalletCreateBrfcChildNodeParams,
 } from '@/@types/sdk'
 import { ElMessage } from 'element-plus'
 import { NftManager, FtManager, API_TARGET } from 'meta-contract'
@@ -1540,7 +1541,7 @@ export class HdWallet {
     return wallet
   }
 
-  private getNftManager = async (): Promise<NftManager> => {
+  public getNftManager = (): NftManager => {
     const nftManager = new NftManager({
       apiTarget: API_TARGET.MVC,
       // @ts-ignore
@@ -1783,26 +1784,7 @@ export class HdWallet {
   }
 
   public async createBrfcChildNode(
-    params: {
-      nodeName: string
-      autoRename?: Boolean
-      appId?: string[]
-      encrypt?: IsEncrypt
-      version?: string
-      data?: string
-      dataType?: string
-      payCurrency?: string
-      payTo?: PayToItem[]
-      encoding?: string
-      needConfirm?: boolean // 是否需要确认
-      attachments?: AttachmentItem[] // 附件
-      utxos?: any[] // 传入的utxos
-      publickey?: string // 修改时 用的publicekey
-      ecdh?: { type: string; publickey: string } // ecdh
-      useFeeb?: number // 费率
-      meConvertSatoshi?: number
-      brfcTxId: string
-    },
+    params: HdWalletCreateBrfcChildNodeParams,
     option?: {
       isBroadcast: boolean // 是否广播
     }
