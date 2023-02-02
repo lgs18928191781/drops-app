@@ -345,7 +345,7 @@ export class SDK {
         } else {
           // 构建没有utxo 的所有 transaction
           let transactions = await this.createBrfcChildNodeTransactions(params)
-
+          debugger
           let payToRes: CreateNodeRes | undefined = undefined
           if (!params.utxos!.length) {
             // 计算总价
@@ -753,17 +753,26 @@ export class SDK {
             ) {
               // NFT genesis/transfer
               if (!transactions.nft) transactions.nft = {}
-              const scriptPlayload = this.getScriptPlayload(createCurrentNodeParams)
+
+              const scriptPlayload = await this.getScriptPlayload(createCurrentNodeParams)
+              let _params = {
+                opreturnData: scriptPlayload!,
+                utxoMaxCount: 1,
+              }
+              if (params.nodeName === NodeName.NftTransfer) {
+                _params = {
+                  ..._params,
+                  ...JSON.parse(params.data!),
+                }
+              }
               const nftManager = this.wallet!.getNftManager()
+              debugger
               const feeNumber = await nftManager[
                 params.nodeName === NodeName.NftGenesis
                   ? 'getGenesisEstimateFee'
                   : 'getTransferEstimateFee'
-              ]({
-                ...JSON.parse(params.data!),
-                opreturnData: scriptPlayload!,
-                utxoMaxCount: 1,
-              })
+                // @ts-ignore
+              ](_params)
               // @ts-ignore
               const res = {
                 txId: '',
@@ -802,6 +811,7 @@ export class SDK {
                   calcFee: true,
                 })
                 if (response) {
+                  if (!transactions.nft) transactions.nft = {}
                   transactions.nft!.issue = {
                     txId: '',
                     transaction: {
@@ -1035,7 +1045,7 @@ export class SDK {
             utxo.wif = this.getPathPrivateKey(
               `${utxo.addressType}/${utxo.addressIndex}`
             )!.toString()
-            const scriptPlayload = this.getScriptPlayload(createCurrentNodeParams)
+            const scriptPlayload = await this.getScriptPlayload(createCurrentNodeParams)
             const nftManager = this.wallet!.getNftManager()
             const res = await nftManager![
               params.nodeName === NodeName.NftGenesis ? 'genesis' : 'transfer'
