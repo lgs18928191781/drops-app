@@ -348,7 +348,9 @@
       "comment": "Forward with comment",
       "quick": "Forward",
       "share": "share",
-      "success": "forwarded successfully"
+      "success": "forwarded successfully",
+      "Translate": "Translate",
+      "Show original text": "Show original text"
     },
     "topic": {
       "topics": "Topics",
