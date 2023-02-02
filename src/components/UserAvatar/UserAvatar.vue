@@ -1,7 +1,7 @@
 <template>
   <div class="avatar" :class="{ disabled }" @click.stop="() => {}">
-    <Image :src="image" :type="type" :default-image="DefaultAvatar" />
-    <!-- <el-popover
+    <!-- <Image :src="image" :type="type" :default-image="DefaultAvatar" /> -->
+    <el-popover
       placement="right-start"
       :width="'auto'"
       trigger="click"
@@ -12,7 +12,7 @@
         <Image :src="image" :type="type" />
       </template>
       <UserCardVue :meta-id="metaId" :name="name" v-model="isShowUserCard" />
-    </el-popover> -->
+    </el-popover>
   </div>
 </template>
 <script lang="ts" setup>

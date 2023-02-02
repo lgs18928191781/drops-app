@@ -6,6 +6,8 @@
     <MessageMenu
       :message="props.message"
       :parsed="parseTextMessage(decryptedMessage)"
+      v-model:translateStatus="translateStatus"
+      v-model:translatedContent="translatedContent"
       v-if="isText"
     />
     <MessageMenu :message="props.message" v-else />
@@ -116,6 +118,16 @@
             isMyMessage ? 'bg-primary dark:text-gray-800' : 'bg-white dark:bg-gray-700',
             message.error && 'bg-red-200 dark:bg-red-700 opacity-50',
           ]"
+          v-if="translateStatus === 'showing'"
+          v-html="translatedContent"
+        ></div>
+        <div
+          class="text-sm text-dark-800 dark:text-gray-100 font-normal break-all p-3 rounded-xl rounded-tl transition-all duration-200"
+          :class="[
+            isMyMessage ? 'bg-primary dark:text-gray-800' : 'bg-white dark:bg-gray-700',
+            message.error && 'bg-red-200 dark:bg-red-700 opacity-50',
+          ]"
+          v-else
           v-html="parseTextMessage(decryptedMessage)"
         ></div>
         <button v-if="message.error" class="ml-3" :title="resendTitle" @click="tryResend">
@@ -134,7 +146,7 @@ import { decrypt } from '@/utils/crypto'
 import NftLabel from './NftLabel.vue'
 import MessageMenu from './MessageMenu.vue'
 import TalkImagePreview from './ImagePreview.vue'
-import { computed, ref } from 'vue'
+import { computed, ref, Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { formatTimestamp } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
@@ -156,21 +168,11 @@ const jobs = useJobsStore()
 
 const props = defineProps(['message'])
 
-const randomNameColor = computed(() => {
-  const colors = [
-    'text-blue-500',
-    'text-green-500',
-    'text-yellow-500',
-    'text-red-500',
-    'text-indigo-500',
-    'text-amber-500',
-  ]
-  // 将用户名转换为数字
-  const name = props.message.nickName
-  const nameCode = name.split('').reduce((acc: number, cur: any) => acc + cur.charCodeAt(0), 0)
-
-  return colors[nameCode % colors.length]
-})
+/** 翻译 */
+type TranslateStatus = 'hidden' | 'showing' | 'processing'
+const translateStatus: Ref<TranslateStatus> = ref('hidden')
+const translatedContent = ref('Hello Guys')
+/** 翻译 end */
 
 const previewImage = () => {
   showImagePreview.value = true

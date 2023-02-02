@@ -31,6 +31,7 @@
 </template>
 
 <script setup lang="ts">
+import { useCommunityUpdateFormStore } from '@/stores/forms'
 import { useLayoutStore } from '@/stores/layout'
 import { useTalkStore } from '@/stores/talk'
 import { computed, ref } from 'vue'
@@ -60,7 +61,13 @@ const utilities = ref([
     needsAdmin: true,
     bgColor: 'bg-orange-400',
     action: () => {
-      router.push('/talk/channels/' + talk.activeCommunityId + '/settings')
+      // router.push('/talk/channels/' + talk.activeCommunityId + '/settings')
+
+      const form = useCommunityUpdateFormStore()
+      form.original = talk.activeCommunity
+      form.name = talk.activeCommunity?.name || ''
+      form.description = talk.activeCommunity?.description || ''
+      layout.isShowCommunitySettingsModal = true
     },
   },
   {

@@ -384,7 +384,9 @@
       "comment": "带评论转发",
       "share": "分享",
       "lookTx": "查看TX",
-      "success": "转发成功"
+      "success": "转发成功",
+      "Translate": "翻译",
+      "Show original text": "显示原文"
     },
     "comment": {
       "publishPlaceholder": "发表评论",

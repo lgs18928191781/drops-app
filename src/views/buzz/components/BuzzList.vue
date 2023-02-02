@@ -121,6 +121,7 @@ import { useRoute } from 'vue-router'
 import { useJobsStore } from '@/stores/jobs'
 import { GetBuzz } from '@/api/aggregation'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
+import { Translate } from '@/api/core'
 
 interface Props {
   list: BuzzItem[]
@@ -159,6 +160,11 @@ const replayMsg = reactive({
 let audio: HTMLAudioElement | null
 const isShowBuzzPublish: Ref<boolean> = inject('isShowBuzzPublish')!
 const repostTxId: Ref<string> = inject('repostTxId')!
+const translatedTx: {
+  txId: string
+  originalText: string
+  originalQuiteText?: string
+}[] = []
 
 const operates: {
   [key: string]: {
@@ -344,6 +350,86 @@ const operates: {
         ).then(() => {
           isShowOperateModal.value = false
         })
+      },
+    },
+    {
+      name: () =>
+        translatedTx.some(item => item.txId === currentTxId.value)
+          ? i18n.t('Buzz.repost.Show original text')
+          : i18n.t('Buzz.repost.Translate'),
+      fun: async () => {
+        const translatedTxIndex = translatedTx.findIndex(item => item.txId === currentTxId.value)
+        const index = props.list.findIndex(item => item.txId === currentTxId.value)
+        if (translatedTxIndex !== -1) {
+          if (
+            props.list[index].protocol === 'SimpleRePost' &&
+            props.list[index].displayType === 'quickRePost'
+          ) {
+            props.list[index]!.quoteItem.content = translatedTx[translatedTxIndex].originalText
+          } else {
+            props.list[index]!.content = translatedTx[translatedTxIndex].originalText
+          }
+
+          if (translatedTx[translatedTxIndex].originalQuiteText) {
+            props.list[index]!.quoteItem.content = translatedTx[
+              translatedTxIndex
+            ].originalQuiteText!
+          }
+          translatedTx.splice(translatedTxIndex, 1)
+          isShowOperateModal.value = false
+        } else {
+          operateLoading.value = false
+          try {
+            let translated: any = {}
+            const originalText =
+              props.list[index].protocol === 'SimpleRePost' &&
+              props.list[index].displayType === 'quickRePost'
+                ? props.list[index].quoteItem.content
+                : props.list[index].content
+            const originalQuiteText =
+              props.list[index].displayType !== 'quickRePost' && props.list[index].quoteItem
+                ? props.list[index].quoteItem.content
+                : undefined
+            const res = await Translate({
+              query: originalText,
+              to: i18n.locale.value,
+            })
+            if (res.code === 0) {
+              translated.originalText = res.result.transResult
+              if (originalQuiteText) {
+                const res = await Translate({
+                  query: originalQuiteText,
+                  to: i18n.locale.value,
+                })
+                if (res.code === 0) {
+                  translated.originalQuiteText = res.result.transResult
+                }
+              }
+              if (
+                props.list[index].protocol === 'SimpleRePost' &&
+                props.list[index].displayType === 'quickRePost'
+              ) {
+                props.list[index].quoteItem.content = translated.originalText
+              } else {
+                props.list[index].content = translated.originalText
+              }
+
+              if (originalQuiteText) {
+                props.list[index].quoteItem.content = translated.originalQuiteText
+              }
+              translatedTx.push({
+                txId: currentTxId.value,
+                originalText,
+                originalQuiteText,
+              })
+              operateLoading.value = false
+              isShowOperateModal.value = false
+            }
+          } catch (error) {
+            ElMessage.error((error as any).message)
+            operateLoading.value = false
+          }
+        }
       },
     },
     {
