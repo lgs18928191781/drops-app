@@ -598,6 +598,7 @@ function submitForm() {
                 ...metaIdInfo,
                 ...account,
                 metaId: metaIdInfo.metaId, // account 有时拿回来的metaId为空
+                name: metaIdInfo.name!, // account 有时拿回来的name 是旧 name
                 password: form.password,
                 address: hdWallet.rootAddress,
                 loginType: 'MetaId',
