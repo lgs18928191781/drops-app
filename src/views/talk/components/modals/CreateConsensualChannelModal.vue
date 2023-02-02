@@ -151,7 +151,7 @@
               </template>
 
               <!-- Native -->
-              <template v-if="selectedTab === 2">
+              <!-- <template v-if="selectedTab === 2">
                 <div class="w-full flex items-center justify-start gap-x-4">
                   <ChainSelect
                     :chains="chains.filter(chain => chain.name === 'MVC')"
@@ -166,10 +166,10 @@
                     autocomplete="nope"
                   />
                 </div>
-              </template>
+              </template> -->
 
               <!-- Password -->
-              <template v-if="selectedTab === 3">
+              <template v-if="selectedTab === 2">
                 <Icon
                   name="lock"
                   class="w-5 h-5 lg:text-dark-300 lg:dark:text-gray-400 absolute left-4 box-content lg:group-hover:text-dark-800 dark:lg:group-hover:!text-gray-100 transition-all duration-200"
@@ -434,14 +434,14 @@ const consentTabs = ref([
     secondTip: i18n.t('Talk.Community.choose_ft_tip'),
     buttonText: i18n.t('Talk.Community.choose_ft_as_consent'),
   },
-  {
-    id: 3,
-    name: 'Native',
-    panelTitle: i18n.t('Talk.Community.choose_native'),
-    secondTitle: i18n.t('Talk.Community.choose_native'),
-    secondTip: i18n.t('Talk.Community.choose_native_tip'),
-    buttonText: i18n.t('Talk.Community.choose_native_as_consent'),
-  },
+  // {
+  //   id: 3,
+  //   name: 'Native',
+  //   panelTitle: i18n.t('Talk.Community.choose_native'),
+  //   secondTitle: i18n.t('Talk.Community.choose_native'),
+  //   secondTip: i18n.t('Talk.Community.choose_native_tip'),
+  //   buttonText: i18n.t('Talk.Community.choose_native_as_consent'),
+  // },
   {
     id: 4,
     name: i18n.t('Talk.Community.password'),

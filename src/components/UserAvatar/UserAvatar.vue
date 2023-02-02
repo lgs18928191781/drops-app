@@ -9,7 +9,7 @@
       v-model:visible="isShowUserCard"
     >
       <template #reference>
-        <Image :src="image" :type="type" />
+        <Image :src="image" :type="type" :default-image="DefaultAvatar" />
       </template>
       <UserCardVue :meta-id="metaId" :name="name" v-model="isShowUserCard" />
     </el-popover>
@@ -19,7 +19,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import UserCardVue from '../UserCard/UserCard.vue'
-import DefaultAvatar from '@/assets/images/default_avatar.png'
+import DefaultAvatar from '@/assets/images/default_user.png'
 
 interface Props {
   name?: string
