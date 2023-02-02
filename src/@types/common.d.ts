@@ -38,7 +38,7 @@ declare interface UserInfo {
   protocolTxId: string
   flag?: boolean
   evmAddress?: string
-  loginType: 'MetaId' | 'MetaMask'
+  loginType: 'MetaID' | 'MetaMask'
   metaName: string
   path: number
 }

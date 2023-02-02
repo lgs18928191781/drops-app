@@ -601,7 +601,7 @@ function submitForm() {
                 name: metaIdInfo.name!, // account 有时拿回来的name 是旧 name
                 password: form.password,
                 address: hdWallet.rootAddress,
-                loginType: 'MetaId',
+                loginType: 'MetaID',
               })
               userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
               userStore.showWallet.initWallet()
@@ -727,7 +727,7 @@ function submitForm() {
               // @ts-ignore
               await userStore.updateUserInfo({
                 ...userInfo,
-                loginType: 'MetaId',
+                loginType: 'MetaID',
               })
               userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
               userStore.showWallet.initWallet()

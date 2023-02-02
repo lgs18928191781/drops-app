@@ -78,7 +78,11 @@
                 {{ i18n.t('group1-foot-title') }}
               </div>
               <div class="download-group">
-                <div class="item main-border primary" v-for="item in downloadGroup">
+                <div
+                  class="item main-border primary"
+                  v-for="item in downloadGroup"
+                  @click="comming"
+                >
                   <img :src="item.icon" alt="" />
                   <div class="right">
                     <span class="sm">{{ item.topText }}</span>
@@ -206,6 +210,7 @@ import { useRouter } from 'vue-router'
 import LogoVue from './Logo.vue'
 import { useRootStore } from '@/stores/root'
 import { checkUserLogin, SetLang } from '@/utils/util'
+import { ElMessage } from 'element-plus'
 
 const i18n = useI18n()
 const router = useRouter()
@@ -332,6 +337,10 @@ async function toShow3() {
 
 function toLink(link: string) {
   window.open(link, '_blank')
+}
+
+function comming() {
+  ElMessage.info(i18n.t('Comming Soon'))
 }
 </script>
 
