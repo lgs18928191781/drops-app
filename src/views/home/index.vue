@@ -153,7 +153,10 @@
             <div class="right flex1">
               <span>{{ i18n.t('metaso-desc') }}</span>
               <div class="operate">
-                <div class="main-border primary metaso-btn">
+                <div
+                  class="main-border primary metaso-btn"
+                  @click="toLink('https://www.metaso.network/')"
+                >
                   <span>{{ i18n.t('learnMetaSo') }}</span>
                   <!-- <el-icon><TopRight /></el-icon> -->
                 </div>
