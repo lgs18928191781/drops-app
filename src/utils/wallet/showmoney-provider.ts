@@ -289,7 +289,7 @@ export default class ShowmoneyProvider {
         userName: params?.userName,
       },
     }
-
+    debugger
     const res = await this.callApi({
       url: '/nodemvc/api/v1/pri/wallet/sendInitSatsForMetaSV',
       params: {

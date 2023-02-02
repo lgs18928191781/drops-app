@@ -513,6 +513,7 @@ function createMetaidAccount() {
           userName: account.name,
           path: parseInt(import.meta.env.VITE_WALLET_PATH),
         })
+
         // @ts-ignore
         if (getUserInfoRes.code == 0) {
           ;(account.accessKey = getUserInfoRes.data.token),
@@ -520,6 +521,7 @@ function createMetaidAccount() {
               getUserInfoRes.data.registerType === 'email'
                 ? getUserInfoRes.data.email
                 : getUserInfoRes.data.phone)
+
           const { metaId } = await HdWalletInstance.initMetaIdNode({
             ...account,
             userType: getUserInfoRes.data.registerType,
@@ -577,6 +579,7 @@ function createMetaidAccount() {
           userName: account.name,
           path: parseInt(import.meta.env.VITE_WALLET_PATH),
         })
+
         // @ts-ignore
         if (getUserInfoRes.code == 0) {
           ;(account.accessKey = getUserInfoRes.data.token),
@@ -584,6 +587,7 @@ function createMetaidAccount() {
               getUserInfoRes.data.registerType === 'email'
                 ? getUserInfoRes.data.email
                 : getUserInfoRes.data.phone)
+
           const { metaId } = await HdWalletInstance.initMetaIdNode({
             ...account,
             userType: getUserInfoRes.data.registerType,

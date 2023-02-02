@@ -441,11 +441,11 @@ declare interface GenesisNFTItem {
 }
 
 declare interface NodeTransactions {
-  payToAddress?: CreateNodeRes
-  metaFileBrfc?: CreateNodeRes
-  metaFiles?: CreateNodeRes[]
-  currentNodeBrfc?: CreateNodeRes
-  currentNode?: CreateNodeRes
+  payToAddress?: import('@/@types/sdk.d.ts').CreateNodeRes
+  metaFileBrfc?: import('@/@types/sdk.d.ts').CreateNodeRes
+  metaFiles?: import('@/@types/sdk.d.ts').CreateNodeRes[]
+  currentNodeBrfc?: import('@/@types/sdk.d.ts').CreateNodeRes
+  currentNode?: import('@/@types/sdk.d.ts').CreateNodeRes
   subscribeId?: string
   nft?: {
     issue?: {
