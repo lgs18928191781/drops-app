@@ -115,6 +115,7 @@
       "go_check_out": "Check it out!",
       "community_settings": "Club Settings",
       "community_settings_overview": "Overview",
+      "community_settings_channels": "Channels",
       "reset": "Reset",
       "save": "Save",
       "icon": "Icon",
@@ -200,11 +201,14 @@
       "password": "Password",
       "choose_nft": "Select NFT",
       "choose_ft": "Select Token",
+      "choose_native": "Select Native Token",
       "set_password": "Set Password",
       "choose_nft_tip": "Select one NFT series you hold as the Pass of this channel. Other users must also be a holder to join.",
       "choose_ft_tip": "Select a Token you hold as the Pass of this channel. Other users must also be a holder to join.",
+      "choose_native_tip": "Select a Native Token you hold as the Pass of this channel. Other users must also be a holder to join.",
       "choose_nft_as_consent": "Select NFT Series...",
       "choose_ft_as_consent": "Select a token...",
+      "choose_native_as_consent": "Select a native token...",
       "no_nft_available": "No NFTs available.",
       "no_ft_available": "No tokens available.",
       "processing": "Processing...",
@@ -266,14 +270,14 @@
       "title2": "Link MetaID",
       "bindHavedMetaId": "I Already Have a MetaID",
       "bindHavedMetaIdIntro": "🔗️ Manage your assets and data easily by linking your wallet to a MetaID.",
-      "bindRegisterMetaId": "Bind the newly registered MetaId",
+      "bindRegisterMetaId": "Bind the newly registered MetaID",
       "bindSuccessTitle": "🎉 Your Wallet is Linked to a MetaID. Let's Get Your Web3 Social Life Started!",
       "createMetaId": "Create a new MetaID",
       "inputPasswordTitle": "Please enter wallet password",
       "Link to My MetaID": "Link to My MetaID"
     },
-    "connectMetaIdWallet": "Connect MetaId Wallet",
-    "registerMetaIdWallet": "Register MetaId Wallet",
+    "connectMetaIdWallet": "Connect MetaID Wallet",
+    "registerMetaIdWallet": "Register MetaID Wallet",
     "registerSetPassword": "Set Password",
     "changePhoneNumber": "Change Phone Number",
     "changeEmailAddress": "Change Email Address",
@@ -315,7 +319,7 @@
       "Choose NFT Profile Picture": "Choose NFT Profile Picture"
     },
     "useMetaIdWallet": "Connect MetaID Wallet",
-    "No wallet": "No wallet"
+    "No wallet": "No Wallet"
   },
   "UserOperate": {
     "createGropp": "Create Group",
@@ -326,7 +330,7 @@
     "About MetaSo": "About MetaSo"
   },
   "Comming Soon": "Coming Soon",
-  "Use MetaId Wallet": "Use MetaId Wallet",
+  "Use MetaId Wallet": "Use MetaID Wallet",
   "Buzz": {
     "Timeline": "Timeline",
     "Recommend": "Trending🔥",
@@ -837,5 +841,6 @@
   "metanameNotAllowMin": "Currently does not support 1-2 character registration",
   "metanameNotAllowOverLenght": "The length of the registration name cannot exceed 63 characters",
   "inputMetaNameIllgel": "The entered MetaName does not conform to the specification",
-  "spaceEnghout": "The account Space balance is insufficient, please recharge before performing the binding operation!"
+  "spaceEnghout": "The account Space balance is insufficient, please recharge before performing the binding operation!",
+  "MetaidIsNull": " The Metaid of the bound account is empty, please contact customer service"
 }

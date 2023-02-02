@@ -111,7 +111,7 @@
 
 <script lang="ts" setup>
 import { useLayoutStore } from '@/stores/layout'
-import { Dialog, DialogPanel, TransitionRoot, TransitionChild } from '@headlessui/vue'
+import { Dialog, DialogTitle, DialogPanel, TransitionRoot, TransitionChild } from '@headlessui/vue'
 import { computed } from 'vue'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
 
