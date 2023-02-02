@@ -377,7 +377,7 @@ const wallets = reactive([
     title: i18n.t('Wallet.Action Points'),
     list: [
       {
-        icon: ME,
+        icon: '',
         name: 'ME',
         value: 0,
         address: () => '',

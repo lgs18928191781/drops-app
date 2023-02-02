@@ -88,7 +88,9 @@ import LoadingList from './LoadingList.vue'
 import MessageItem from './MessageItem.vue'
 import MessageItemForSession from './MessageItemForSession.vue'
 import { sleep } from '@/utils/util'
+import { useUserStore } from '@/stores/user'
 
+const user = useUserStore()
 const talk = useTalkStore()
 const layout = useLayoutStore()
 
@@ -98,6 +100,8 @@ const isAtTop = ref(false)
 const messagesScroll = ref<HTMLElement>()
 
 const handleScroll = async () => {
+  if (!user.isAuthorized) return
+
   const topAnchor = document.getElementById('topAnchor')
   if (topAnchor) {
     const topAnchorRect = topAnchor.getBoundingClientRect()

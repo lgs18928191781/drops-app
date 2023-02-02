@@ -2,7 +2,7 @@
   <BaseModal
     v-model="layout[ShowControl.isShowAcceptInviteModal]"
     :no-close="true"
-    :full-screen="true"
+    :full-screen="false"
   >
     <template #title>
       {{ $t('Talk.Modals.accept_invite') }}
@@ -57,13 +57,27 @@ import { useTalkStore } from '@/stores/talk'
 import { joinCommunity } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
+import { useRootStore } from '@/stores/root'
+import { sleep } from '@/utils/util'
 
 const layout = useLayoutStore()
+const root = useRootStore()
 const talk = useTalkStore()
 const user = useUserStore()
 const router = useRouter()
 
+const loginFirst = () => {
+  talk.communityStatus = 'auth processing'
+  layout[ShowControl.isShowAcceptInviteModal] = false
+  root.isShowLogin = true
+}
+
 const tryJoinCommunity = async () => {
+  // 游客
+  if (!user.isAuthorized) {
+    return loginFirst()
+  }
+
   layout[ShowControl.isShowAcceptInviteModal] = false
   layout.isShowLoading = true
   const joinRes = await joinCommunity(talk.invitedCommunity.communityId, user.showWallet)
@@ -84,6 +98,9 @@ const tryJoinCommunity = async () => {
     talk.communities.push(talk.invitedCommunity)
   }
   talk.invitedCommunity = null
+
+  // 等待3秒后改变状态（防止后端还未同步）
+  await sleep(3000)
 
   talk.communityStatus = 'invited'
 }

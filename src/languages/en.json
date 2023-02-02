@@ -279,8 +279,8 @@
     "connectMetaIdWallet": "Connect MetaID Wallet",
     "registerMetaIdWallet": "Register MetaID Wallet",
     "registerSetPassword": "Set Password",
-    "changePhoneNumber": "Change Phone Number",
-    "changeEmailAddress": "Change Email Address",
+    "changePhoneNumber": "via Phone Number",
+    "changeEmailAddress": "via Email Address",
     "account": "Account",
     "BackupMnemonic": {
       "copyMnemonic": "✒️ Please Write Down",
@@ -352,7 +352,9 @@
       "comment": "Forward with comment",
       "quick": "Forward",
       "share": "share",
-      "success": "forwarded successfully"
+      "success": "forwarded successfully",
+      "Translate": "Translate",
+      "Show original text": "Show original text"
     },
     "topic": {
       "topics": "Topics",
@@ -371,8 +373,8 @@
       "Recommend To Follow": "Who to follow",
       "View More": "View More",
       "Introduction to Guiding": "Show3 101",
-      "Learn the show function": "Explore show3 Features",
-      "Download showApp": "Download show3"
+      "Learn the show function": "Explore Show3 Features",
+      "Download showApp": "Download Show3"
     },
     "Your reply": "Write a comment...",
     "Show3 Faq": "Show3 FAQ",

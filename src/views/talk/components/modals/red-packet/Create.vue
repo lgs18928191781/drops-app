@@ -348,7 +348,7 @@
               leave-to-class="transform scale-95 opacity-0"
             >
               <ListboxOptions
-                class="absolute mt-2 max-h-60 overflow-auto rounded-xl bg-white dark:bg-gray-600 py-2 text-base shadow-md focus:outline-none z-50 border border-solid border-dark-100 dark:border-gray-600 dark:shadow-blue-100/20"
+                class="absolute mt-2 max-h-60 overflow-auto rounded-xl bg-white dark:bg-gray-700 py-2 text-base shadow-md focus:outline-none z-50 border border-solid border-dark-100 dark:border-gray-600 dark:shadow-blue-100/20"
               >
                 <ListboxOption
                   v-slot="{ active, selected }"

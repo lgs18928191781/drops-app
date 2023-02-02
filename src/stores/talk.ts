@@ -268,7 +268,7 @@ export const useTalkStore = defineStore('talk', {
       this.communities = [...communities, this.atMeCommunity]
     },
 
-    async fetchChannels(communityId?: string) {
+    async fetchChannels(communityId?: string, isGuest?: boolean) {
       if (!communityId) communityId = this.activeCommunityId
       const isAtMe = communityId === '@me'
 
@@ -283,15 +283,17 @@ export const useTalkStore = defineStore('talk', {
       if (!this.activeCommunity?.channels) this.activeCommunity!.channels = []
       this.activeCommunity!.channels = channels
 
-      // 写入存储
-      this.initCommunityChannelIds()
-      // 只保存频道id
-      const channelIds = channels.map((channel: any) => channel.id)
-      this.communityChannelIds[communityId] = channelIds
-      localStorage.setItem(
-        'communityChannels-' + this.selfMetaId,
-        JSON.stringify(this.communityChannelIds)
-      )
+      if (!isGuest) {
+        // 写入存储
+        this.initCommunityChannelIds()
+        // 只保存频道id
+        const channelIds = channels.map((channel: any) => channel.id)
+        this.communityChannelIds[communityId] = channelIds
+        localStorage.setItem(
+          'communityChannels-' + this.selfMetaId,
+          JSON.stringify(this.communityChannelIds)
+        )
+      }
     },
 
     async refetchChannels() {
@@ -312,11 +314,39 @@ export const useTalkStore = defineStore('talk', {
       return isMember
     },
 
+    async addTempCommunity(communityId: string) {
+      const tempCommunity = await getOneCommunity(communityId)
+      this.communities.push(tempCommunity)
+      this.activeCommunityId = communityId
+
+      getCommunityMembers(communityId)
+        .then((members: any) => {
+          this.members = members
+        })
+        .catch(() => {
+          ElMessage.error('获取社区成员失败')
+        })
+
+      const isGuest = true
+      await this.fetchChannels(communityId, isGuest)
+    },
+
     async invite(routeCommunityId: string) {
       const layout = useLayoutStore()
       this.invitedCommunity = await getOneCommunity(routeCommunityId)
       layout.isShowAcceptInviteModal = true
       this.communityStatus = 'inviting'
+
+      getCommunityMembers(routeCommunityId)
+        .then((members: any) => {
+          this.members = members
+        })
+        .catch(() => {
+          ElMessage.error('获取社区成员失败')
+        })
+
+      const isGuest = true
+      await this.fetchChannels(routeCommunityId, isGuest)
 
       return
     },

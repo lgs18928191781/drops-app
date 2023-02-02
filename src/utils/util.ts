@@ -94,8 +94,8 @@ export function realRandomString(length: number): string {
 
 export function checkSdkStatus(path: string, params?: ElMessageBoxOptions) {
   return new Promise<void>((resolve, reject) => {
-    const userStroe = useUserStore()
-    if (!userStroe.isAuthorized) {
+    const userStore = useUserStore()
+    if (!userStore.isAuthorized) {
       openLoginConfirm(path, params)
     } else {
       resolve()
@@ -105,11 +105,11 @@ export function checkSdkStatus(path: string, params?: ElMessageBoxOptions) {
 
 export function checkUserLogin() {
   return new Promise<void>((resolve, reject) => {
-    const userStroe = useUserStore()
+    const userStore = useUserStore()
     const rootStore = useRootStore()
-    if (!userStroe.isAuthorized) {
+    if (!userStore.isAuthorized) {
       rootStore.$patch({ isShowLogin: true })
-      reject(new Error(i18n.global.t('Please Login First')))
+      // reject(new Error(i18n.global.t('Please Login First')))
     } else {
       resolve()
     }
@@ -118,8 +118,8 @@ export function checkUserLogin() {
 
 export function openLoginConfirm(path: string, params?: ElMessageBoxOptions) {
   return new Promise<void>((resolve, reject) => {
-    const userStroe = useUserStore()
-    if (userStroe.isAuthorized) {
+    const userStore = useUserStore()
+    if (userStore.isAuthorized) {
       resolve()
     } else {
       ElMessageBox.confirm('请先登录再操作', '温馨提示', {
@@ -130,7 +130,7 @@ export function openLoginConfirm(path: string, params?: ElMessageBoxOptions) {
       })
         .then(result => {
           if (result === 'confirm') {
-            userStroe.showWallet?.toLogin(path)
+            userStore.showWallet?.toLogin(path)
           }
         })
         .catch(() => {
@@ -208,7 +208,7 @@ export function getUserBuyExtraFee(params: {
     coin_service: number
   }>(async (resolve, reject) => {
     try {
-      const userStroe = useUserStore()
+      const userStore = useUserStore()
       let coin_service = 0
       let platformPercentage = params.isFirstSell ? firstPlatform : platform
       let royaltyPercentage = params.isFirstSell ? firstRoyalty : royalty
@@ -223,7 +223,7 @@ export function getUserBuyExtraFee(params: {
           const res = await GetFeeInfo({
             codehash: params.codehash,
             genesis: params.genesis,
-            address: userStroe.user?.address,
+            address: userStore.user?.address,
             ignoreIndex: params.ignoreIndex,
           })
           if (res.code === 0 && res.data) {
@@ -486,10 +486,10 @@ export function toUrl(url: string | undefined) {
 }
 
 export async function downloadFile(url: string, name = 'file') {
-  const userStroe = useUserStore()
+  const userStore = useUserStore()
   if (isAndroidApp) {
     await checkAppHasMethod('saveShareImage')
-    window.appMetaIdJsV2.saveShareImage(userStroe.user?.token, url, name)
+    window.appMetaIdJsV2.saveShareImage(userStore.user?.token, url, name)
   } else {
     const a = document.createElement('a')
     a.href = url
@@ -552,11 +552,11 @@ export function urlToBase64(url: string): Promise<string> {
 
 export function getRuoxiWalletBalance() {
   return new Promise<number>(async resolve => {
-    const userStroe = useUserStore()
+    const userStore = useUserStore()
     let amount = 0
     const res = await GetMyLegalAmount({
       currency: 'CNY',
-      metaid: userStroe.user!.metaId,
+      metaid: userStore.user!.metaId,
     }).catch(() => resolve(amount))
     if (res?.code === 0) {
       if (res.data.amount < 0) res.data.amount = 0
@@ -568,10 +568,10 @@ export function getRuoxiWalletBalance() {
 
 export function getCloudWalletBalance() {
   return new Promise<number>(async resolve => {
-    const userStroe = useUserStore()
+    const userStore = useUserStore()
     let amount = 0
     const res = await GetWalletBalance({
-      bizUserNo: userStroe.user!.address!,
+      bizUserNo: userStore.user!.address!,
       accountType: '01',
     }).catch(() => resolve(amount))
     if (res?.success) {
@@ -603,9 +603,9 @@ export function getWalletBalance() {
 }
 
 export async function toCreateWallet(status: CloudWalletStatus, fullPath: string) {
-  const userStroe = useUserStore()
+  const userStore = useUserStore()
   // 控制是否有权限使用余额支付
-  const result = await IsWtiteUser(userStroe.user!.metaId!)
+  const result = await IsWtiteUser(userStore.user!.metaId!)
   if (!result) {
     return ElMessage.error('抱歉，您暂无权限使用此功能')
   }
@@ -619,7 +619,7 @@ export async function toCreateWallet(status: CloudWalletStatus, fullPath: string
   } else {
     const loading = openLoading()
     const res = await Inactivation({
-      address: userStroe.user!.address!,
+      address: userStore.user!.address!,
       frontUrl: window.origin + '/wallet/check?form' + encodeURIComponent(fullPath),
     }).catch(error => {
       loading.close()
@@ -686,10 +686,10 @@ export function checkOrderStatus(params: {
 
 export function getUserBankCard() {
   return new Promise<BankCardItem[]>(async resolve => {
-    const userStroe = useUserStore()
+    const userStore = useUserStore()
     const cards: BankCardItem[] = []
     const res = await GetBankCards({
-      address: userStroe.user!.address,
+      address: userStore.user!.address,
     }).catch(error => {
       alertCatchError(error)
       resolve(cards)
@@ -1032,9 +1032,9 @@ export function NFTOffSale(nft: GenesisNFTItem) {
       }
     )
       .then(async () => {
-        const userStroe = useUserStore()
-        const signRes: string = await userStroe.showWallet!.sigMessage(
-          userStroe.user!.metaId!,
+        const userStore = useUserStore()
+        const signRes: string = await userStore.showWallet!.sigMessage(
+          userStore.user!.metaId!,
           '0/0'
         )
         if (signRes) {
