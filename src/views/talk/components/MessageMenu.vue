@@ -13,9 +13,10 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
-const props = defineProps(['message', 'parsed'])
+const props = defineProps(['message', 'parsed', 'translateStatus', 'translatedContent'])
+const emit = defineEmits(['update:translateStatus', 'update:translatedContent'])
 
 const isText = computed(() => ['ShowMsg', 'simpleGroupChat'].includes(props.message.protocol))
 
@@ -37,6 +38,25 @@ const actions = computed(() => {
   //   },
   // })
   if (isText.value) {
+    actions.push({
+      name: 'Talk.MessageMenu.translate',
+      icon: 'translate',
+      action: () => {
+        // 翻译该消息内容
+        if (props.translateStatus === 'hidden') {
+          if (props.translatedContent === '') {
+            emit('update:translateStatus', 'processing')
+          } else {
+            emit('update:translateStatus', 'showing')
+          }
+        } else if (props.translateStatus === 'showing') {
+          emit('update:translateStatus', 'hidden')
+        }
+        const translated = Date.now().toString()
+        emit('update:translatedContent', translated)
+      },
+    })
+
     actions.push({
       name: 'Talk.MessageMenu.copy',
       icon: 'copy',
