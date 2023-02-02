@@ -66,6 +66,7 @@ import { useI18n } from 'vue-i18n'
 import { useTalkStore } from '@/stores/talk'
 import { sleep } from '@/utils/util'
 import DefaultImage from '@/assets/icons/photo_3.svg?url'
+import { ElMessage } from 'element-plus'
 
 const pagination = reactive({ ...initPagination, pageSize: 4, totalPages: 1 })
 const userStore = useUserStore()

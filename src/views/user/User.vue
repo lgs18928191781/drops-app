@@ -120,7 +120,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { checkUserLogin, copy, followUser, tx } from '@/utils/util'
 import { Loading } from '@element-plus/icons-vue'
-import { ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { NodeName } from '@/enum'
 import { Mitt, MittEvent } from '@/utils/mitt'
 
@@ -214,44 +214,6 @@ function checkUserIsFollowed() {
     }
     resolve()
   })
-}
-
-async function confirmFollow() {
-  loading.value = true
-  const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
-  const res = await userStore.showWallet
-    .createBrfcChildNode({
-      nodeName: NodeName.PayFollow,
-      data: JSON.stringify({
-        createTime: new Date().getTime(),
-        MetaID: userInfo.val!.metaId,
-        pay: payAmount,
-        payTo: userInfo.val!.address,
-        status: isMyFollowed.value ? -1 : 1,
-      }),
-      payTo: [{ amount: payAmount, address: userInfo.val!.address }],
-    })
-    .catch(error => {
-      ElMessage.error(error.message)
-      loading.value = false
-    })
-  if (res) {
-    isMyFollowed.value = !isMyFollowed.value
-    Mitt.emit(MittEvent.FollowUser, { metaId: userInfo.val!.metaId, result: isMyFollowed.value })
-    if (isMyFollowed.value) {
-      userFollow.following.push(userStore.user!.metaId)
-    } else {
-      userFollow.following.splice(
-        userFollow.following.findIndex(item => item === userStore.user!.metaId),
-        1
-      )
-    }
-    const message = `${isMyFollowed.value ? i18n.t('Cancel Follow') : i18n.t('Follow')} ${i18n.t(
-      'Success'
-    )}`
-    ElMessage.success(message)
-    loading.value = false
-  }
 }
 
 async function follow() {

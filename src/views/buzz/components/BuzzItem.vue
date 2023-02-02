@@ -137,6 +137,7 @@ import BuzzItemContentNormalVue from './BuzzItemContentNormal.vue'
 import BuzzItemContentMetaNoteVue from './BuzzItemContentMetaNote.vue'
 import BuzzItemContentSimplePublicShareVue from './BuzzItemContentSimplePublicShare.vue'
 import BuzzItemContentSellNftVue from './BuzzItemContentSellNft.vue'
+import { ElMessage } from 'element-plus'
 
 interface Props {
   data?: BuzzItem
