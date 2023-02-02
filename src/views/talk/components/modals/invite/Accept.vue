@@ -58,6 +58,7 @@ import { joinCommunity } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import { useRootStore } from '@/stores/root'
+import { sleep } from '@/utils/util'
 
 const layout = useLayoutStore()
 const root = useRootStore()
@@ -97,6 +98,9 @@ const tryJoinCommunity = async () => {
     talk.communities.push(talk.invitedCommunity)
   }
   talk.invitedCommunity = null
+
+  // 等待3秒后改变状态（防止后端还未同步）
+  await sleep(3000)
 
   talk.communityStatus = 'invited'
 }

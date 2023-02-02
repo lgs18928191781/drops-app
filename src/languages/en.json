@@ -279,8 +279,8 @@
     "connectMetaIdWallet": "Connect MetaID Wallet",
     "registerMetaIdWallet": "Register MetaID Wallet",
     "registerSetPassword": "Set Password",
-    "changePhoneNumber": "Change Phone Number",
-    "changeEmailAddress": "Change Email Address",
+    "changePhoneNumber": "via Phone Number",
+    "changeEmailAddress": "via Email Address",
     "account": "Account",
     "BackupMnemonic": {
       "copyMnemonic": "✒️ Please Write Down",
