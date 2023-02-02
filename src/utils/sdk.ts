@@ -1056,130 +1056,46 @@ export class SDK {
               }
             }
           } else {
-          }
-
-          if (
-            transactions.currentNode?.transaction ||
-            params.nodeName === NodeName.NftGenesis ||
-            params.nodeName === NodeName.NftTransfer
-          ) {
-            // 有附件 或则 需要创建brfc节点时， 都需要重新构建currentNode节点
-            if (
-              (transactions.metaFiles && transactions.metaFiles.length) ||
-              transactions.currentNodeBrfc?.transaction ||
-              params.nodeName === NodeName.NftGenesis ||
-              params.nodeName === NodeName.NftTransfer
-            ) {
-              // metafile txId变了，所以要改变currentNode 节点的data 对应数据
-              if (transactions.metaFiles && transactions.metaFiles.length) {
-                for (let i = 0; i < transactions.metaFiles.length; i++) {
-                  const fileSuffix = params.attachments![i].fileName.split('.')[
-                    params.attachments![i].fileName.split('.').length - 1
-                  ]
-                  params.data = params.data!.replace(
-                    `$[${i}]`,
-                    transactions.metaFiles[i].transaction.id + `.${fileSuffix}`
-                  )
-                }
+            const res = await this.wallet?.createBrfcChildNode(
+              // @ts-ignore
+              createCurrentNodeParams,
+              {
+                isBroadcast: false,
               }
+            )
+            if (res) transactions.currentNode = res
+            this.setTransferUtxoAndOutputAndSign(
+              transactions.currentNode.transaction,
+              [utxo],
+              params.nodeName === NodeName.NftIssue ? this.wallet!.rootAddress : lastChangeAddress
+            )
+            // 更新txId
+            transactions.currentNode.txId = transactions.currentNode.transaction.id
 
-              // 因为 currentNode Params.data 改变了，是所以需要重新构建 current node transtation
-              const res = await this.wallet?.createBrfcChildNode(
-                // @ts-ignore
-                {
-                  ...params,
-                  brfcTxId: transactions.currentNodeBrfc!.txId!,
-                  ...AllNodeName[params.nodeName as NodeName]!,
-                },
-                {
-                  isBroadcast: false,
-                }
-              )
-              if (res) transactions.currentNode = res
-            }
-
-            let nftManager: NftManager
-            // NFT
-            if (this.isNFTProtocol(params.nodeName)) {
-              nftManager = new NftManager({
-                apiTarget: API_TARGET.MVC,
-                // @ts-ignore
-                network: this.network,
-                purse: this.wallet?.wallet
-                  .deriveChild(0)
-                  .deriveChild(0)
-                  .privateKey.toString(),
-                feeb: params.useFeeb,
+            if (params.nodeName === NodeName.NftIssue) {
+              // 组装新 utxo
+              utxo = await this.wallet!.utxoFromTx({
+                tx: transactions.currentNode!.transaction,
               })
-            }
 
-            // NftGenesis
-            if (
-              params.nodeName === NodeName.NftGenesis ||
-              params.nodeName === NodeName.NftTransfer
-            ) {
               utxo.wif = this.getPathPrivateKey(
                 `${utxo.addressType}/${utxo.addressIndex}`
               )!.toString()
-
-              const res = await nftManager![
-                params.nodeName === NodeName.NftGenesis ? 'genesis' : 'transfer'
-              ]({
-                ...JSON.parse(params.data!),
-                opreturnData: transactions.currentNode.scriptPlayload!,
+              const data = JSON.parse(params.data!)
+              const nftManager = this.wallet!.getNftManager()
+              const res = await nftManager!.mint({
+                sensibleId: data.sensibleId,
+                metaTxId: transactions.currentNode.txId,
                 noBroadcast: true,
+                metaOutputIndex: 0,
                 utxos: [utxo],
-                changeAddress: lastChangeAddress,
+                changeAddres: lastChangeAddress,
               })
-              if (res && typeof res !== 'number') {
-                if (params.nodeName === NodeName.NftGenesis) {
-                  transactions.nft!.genesis = {
-                    txId: res.txid!,
-                    transaction: res.tx!,
-                    codehash: res!.codehash!,
-                    genesis: res!.genesis!,
-                    sensibleId: res!.sensibleId!,
-                  }
-                } else {
-                  transactions.nft!.transfer = {
-                    txId: res.txid!,
-                    transaction: res.tx!,
-                  }
-                }
-              }
-            } else {
-              this.setTransferUtxoAndOutputAndSign(
-                transactions.currentNode.transaction,
-                [utxo],
-                params.nodeName === NodeName.NftIssue ? this.wallet!.rootAddress : lastChangeAddress
-              )
-              // 更新txId
-              transactions.currentNode.txId = transactions.currentNode.transaction.id
-
-              if (params.nodeName === NodeName.NftIssue) {
-                // 组装新 utxo
-                utxo = await this.wallet!.utxoFromTx({
-                  tx: transactions.currentNode!.transaction,
-                })
-                utxo.wif = this.getPathPrivateKey(
-                  `${utxo.addressType}/${utxo.addressIndex}`
-                )!.toString()
-                // @ts-ignore
-                const data = JSON.parse(params.data)
-                const res = await nftManager!.mint({
-                  sensibleId: data.sensibleId,
-                  metaTxId: transactions.currentNode.txId,
-                  noBroadcast: true,
-                  metaOutputIndex: 0,
-                  utxos: [utxo],
-                  changeAddres: lastChangeAddress,
-                })
-                if (res) {
-                  transactions.nft!.issue = {
-                    transaction: res.tx,
-                    // @ts-ignore
-                    txId: res!.txid!,
-                  }
+              if (res) {
+                transactions.nft!.issue = {
+                  transaction: res.tx,
+                  // @ts-ignore
+                  txId: res!.txid!,
                 }
               }
             }
