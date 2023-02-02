@@ -367,9 +367,9 @@ export const useTalkStore = defineStore('talk', {
 
       this.fetchChannels(routeCommunityId).then(() => {
         this.updateReadPointers()
+        this.communityStatus = 'ready'
       })
 
-      this.communityStatus = 'ready'
       return
     },
 
