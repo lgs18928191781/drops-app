@@ -56,7 +56,8 @@
       "follow": "I followed you! Let's be friends!",
       "token_transfer": "Token Transfer",
       "nft_transfer": "NFT Transfer",
-      "resend": "Resend"
+      "resend": "Resend",
+      "translated": "Translated"
     },
     "General": {
       "publish_new_announcement": "Publish a new announcement",

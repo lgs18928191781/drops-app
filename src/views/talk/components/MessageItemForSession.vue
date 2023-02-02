@@ -6,6 +6,8 @@
     <MessageMenu
       :message="props.message"
       :parsed="parseTextMessage(decryptedMessage)"
+      v-model:translateStatus="translateStatus"
+      v-model:translatedContent="translatedContent"
       v-if="isText"
     />
     <MessageMenu :message="props.message" v-else />
@@ -210,8 +212,23 @@
           class="text-sm text-dark-800 dark:text-gray-100 font-normal break-all p-3 rounded-xl rounded-tl transition-all duration-200"
           :class="[
             isMyMessage ? 'bg-primary dark:text-gray-800' : 'bg-white dark:bg-gray-700',
-            message.error && 'bg-red-200 opacity-50',
+            message.error && 'bg-red-200 dark:bg-red-700 opacity-50',
           ]"
+          v-if="translateStatus === 'showing'"
+        >
+          <div class="" v-html="translatedContent"></div>
+          <div class="text-xxs text-dark-300 dark:text-gray-400 mt-1 underline">
+            {{ $t('Talk.Messages.translated') }}
+          </div>
+        </div>
+
+        <div
+          class="text-sm text-dark-800 dark:text-gray-100 font-normal break-all p-3 rounded-xl rounded-tl transition-all duration-200"
+          :class="[
+            isMyMessage ? 'bg-primary dark:text-gray-800' : 'bg-white dark:bg-gray-700',
+            message.error && 'bg-red-200 dark:bg-red-700 opacity-50',
+          ]"
+          v-else
           v-html="parseTextMessage(decryptedMessage)"
         ></div>
         <button v-if="message.error" class="ml-3" :title="resendTitle" @click="tryResend">
@@ -231,7 +248,7 @@ import NftLabel from './NftLabel.vue'
 import MessageMenu from './MessageMenu.vue'
 import redEnvelopeImg from '@/assets/images/red-envelope.svg?url'
 import TalkImagePreview from './ImagePreview.vue'
-import { computed, ref, toRaw } from 'vue'
+import { computed, ref, toRaw, Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { formatTimestamp } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
@@ -247,6 +264,12 @@ const userStore = useUserStore()
 const talkStore = useTalkStore()
 const activeChannel = computed(() => talkStore.activeChannel)
 const jobs = useJobsStore()
+
+/** 翻译 */
+type TranslateStatus = 'hidden' | 'showing' | 'processing'
+const translateStatus: Ref<TranslateStatus> = ref('hidden')
+const translatedContent = ref('')
+/** 翻译 end */
 
 const senderName = computed(() => {
   if (props.message.from === userStore.user?.metaId) {
