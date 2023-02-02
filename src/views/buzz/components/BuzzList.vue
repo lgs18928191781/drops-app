@@ -376,6 +376,7 @@ const operates: {
             ].originalQuiteText!
           }
           translatedTx.splice(translatedTxIndex, 1)
+          isShowOperateModal.value = false
         } else {
           operateLoading.value = false
           try {
