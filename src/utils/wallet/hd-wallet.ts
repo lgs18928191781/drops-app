@@ -509,7 +509,7 @@ export class HdWallet {
     }
   ) {
     // @ts-ignore
-    this.network = wallet.network.alias
+    this.network = wallet.network.alias ? wallet.network.alias : wallet.network.name
     this.wallet = wallet
     const root = wallet.deriveChild(0).deriveChild(0).privateKey
     this._root = root
@@ -1543,7 +1543,6 @@ export class HdWallet {
   }
 
   public getNftManager = (): NftManager => {
-    debugger
     const nftManager = new NftManager({
       apiTarget: API_TARGET.MVC,
       // @ts-ignore
