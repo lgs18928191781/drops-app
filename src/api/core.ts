@@ -270,3 +270,10 @@ export const GetMetaIdByLoginName = (params: {
 }): Promise<{ code: number; result: { metaId: string; path: number; enMnemonic: string } }> => {
   return Core.post(`/api/v1/evm/wallet/user/info`, params)
 }
+
+export const Translate = (params: {
+  query: string
+  to: string
+}): Promise<{ code: number; result: { transResult: string } }> => {
+  return Core.post(`/api/v1/i18n/translate`, params)
+}
