@@ -243,7 +243,7 @@ export default class ShowmoneyProvider {
     } else if (res.code === 601) {
       return null
     } else {
-      throw new Error('无法获取 MetaId')
+      throw new Error('无法获取 MetaID')
     }
   }
 
@@ -261,7 +261,7 @@ export default class ShowmoneyProvider {
     } else if (res.code === 601) {
       return null
     } else {
-      throw new Error('无法获取 MetaId')
+      throw new Error('无法获取 MetaID')
     }
   }
 

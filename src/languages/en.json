@@ -266,14 +266,14 @@
       "title2": "Link MetaID",
       "bindHavedMetaId": "I Already Have a MetaID",
       "bindHavedMetaIdIntro": "🔗️ Manage your assets and data easily by linking your wallet to a MetaID.",
-      "bindRegisterMetaId": "Bind the newly registered MetaId",
+      "bindRegisterMetaId": "Bind the newly registered MetaID",
       "bindSuccessTitle": "🎉 Your Wallet is Linked to a MetaID. Let's Get Your Web3 Social Life Started!",
       "createMetaId": "Create a new MetaID",
       "inputPasswordTitle": "Please enter wallet password",
       "Link to My MetaID": "Link to My MetaID"
     },
-    "connectMetaIdWallet": "Connect MetaId Wallet",
-    "registerMetaIdWallet": "Register MetaId Wallet",
+    "connectMetaIdWallet": "Connect MetaID Wallet",
+    "registerMetaIdWallet": "Register MetaID Wallet",
     "registerSetPassword": "Set Password",
     "changePhoneNumber": "Change Phone Number",
     "changeEmailAddress": "Change Email Address",
@@ -326,7 +326,7 @@
     "About MetaSo": "About MetaSo"
   },
   "Comming Soon": "Coming Soon",
-  "Use MetaId Wallet": "Use MetaId Wallet",
+  "Use MetaId Wallet": "Use MetaID Wallet",
   "Buzz": {
     "Timeline": "Timeline",
     "Recommend": "Trending🔥",
@@ -596,7 +596,7 @@
     "View all": "View all",
     "Trading volume": "Trading volume",
     "Transfer": "Transfer",
-    "Transfer MetaId": "Transfer MetaId/Address",
+    "Transfer MetaId": "Transfer MetaID/Address",
     "Confirm Transfer": "Confirm Transfer",
     "Transfer Success": "Transfer Success",
     "NFT Introduction": "NFT Introduction",
@@ -739,7 +739,7 @@
   "PayModel": {
     "Paying": "Paying.."
   },
-  "metaidIsBinded": "MetaId has been bound by another account, please check and try again",
+  "metaidIsBinded": "MetaID has been bound by another account, please check and try again",
   "MetaName": {
     "Search": "Search",
     "Mine": "My",
