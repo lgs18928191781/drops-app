@@ -83,18 +83,17 @@ async function genesis() {
       loading.value = false
     })
   if (res) {
-    debugger
     genesisStore.add({
-      codehash: res.currentNode!.codehash,
+      codehash: res.nft!.genesis!.codehash,
       count: 0,
       currentTotalSupply: 0,
-      genesis: res.currentNode!.genesis,
+      genesis: res.nft!.genesis!.genesis,
       genesisTimestamp: new Date().getTime(),
       minted: '',
       pendingCount: 0,
       seriesName: form.name,
       totalSupply: form.count,
-      sensibleId: res.currentNode!.sensibleId,
+      sensibleId: res.nft!.genesis!.sensibleId,
     })
     FormRef.value.resetFields()
     loading.value = false
