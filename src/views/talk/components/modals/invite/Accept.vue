@@ -2,7 +2,7 @@
   <BaseModal
     v-model="layout[ShowControl.isShowAcceptInviteModal]"
     :no-close="true"
-    :full-screen="true"
+    :full-screen="false"
   >
     <template #title>
       {{ $t('Talk.Modals.accept_invite') }}
@@ -66,7 +66,8 @@ const user = useUserStore()
 const router = useRouter()
 
 const loginFirst = () => {
-  // layout[ShowControl.isShowAcceptInviteModal] = false
+  talk.communityStatus = 'auth processing'
+  layout[ShowControl.isShowAcceptInviteModal] = false
   root.isShowLogin = true
 }
 

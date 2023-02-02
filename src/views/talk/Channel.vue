@@ -89,8 +89,6 @@ async function initGuestMode(communityId: string) {
   await talk.invite(communityId)
   return
 
-  // await talk.initTempCommunity(communityId)
-
   // 2. 弹出注册框
 
   // 4. 接受邀请逻辑
@@ -114,7 +112,18 @@ watch(
   () => talk.communityStatus,
   async (status: string) => {
     if (status === 'invited') {
-      resolve(communityId)
+      return resolve(communityId)
+    }
+  },
+  { immediate: true }
+)
+
+watch(
+  [() => talk.communityStatus, () => user.isAuthorized],
+  ([status, isAuthorized]) => {
+    if (status === 'auth processing' && isAuthorized) {
+      talk.communityStatus = 'authed'
+      return resolve(communityId)
     }
   },
   { immediate: true }

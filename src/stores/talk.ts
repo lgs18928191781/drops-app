@@ -317,11 +317,26 @@ export const useTalkStore = defineStore('talk', {
     async addTempCommunity(communityId: string) {
       const tempCommunity = await getOneCommunity(communityId)
       this.communities.push(tempCommunity)
+      this.activeCommunityId = communityId
+
+      getCommunityMembers(communityId)
+        .then((members: any) => {
+          this.members = members
+        })
+        .catch(() => {
+          ElMessage.error('获取社区成员失败')
+        })
+
+      const isGuest = true
+      await this.fetchChannels(communityId, isGuest)
     },
 
-    async initTempCommunity(routeCommunityId: string) {
-      this.communityStatus = 'loading'
-      this.activeCommunityId = routeCommunityId
+    async invite(routeCommunityId: string) {
+      const layout = useLayoutStore()
+      this.invitedCommunity = await getOneCommunity(routeCommunityId)
+      layout.isShowAcceptInviteModal = true
+      this.communityStatus = 'inviting'
+
       getCommunityMembers(routeCommunityId)
         .then((members: any) => {
           this.members = members
@@ -332,17 +347,6 @@ export const useTalkStore = defineStore('talk', {
 
       const isGuest = true
       await this.fetchChannels(routeCommunityId, isGuest)
-
-      this.communityStatus = 'ready'
-
-      return
-    },
-
-    async invite(routeCommunityId: string) {
-      const layout = useLayoutStore()
-      this.invitedCommunity = await getOneCommunity(routeCommunityId)
-      layout.isShowAcceptInviteModal = true
-      this.communityStatus = 'inviting'
 
       return
     },
