@@ -40,16 +40,18 @@
           </h4>
 
           <TabGroup as="div" class="mt-2" :selectedIndex="selectedTab" @change="changeTab">
-            <TabList class="w-full text-sm flex font-medium gap-x-3 lg:text-base">
+            <TabList
+              class="w-full text-sm grid grid-cols-2 lg:grid-cols-4 font-medium gap-x-2 gap-y-3 lg:text-base"
+            >
               <Tab v-for="tab in consentTabs" :key="tab.id" as="template" v-slot="{ selected }">
                 <button
-                  class="w-full main-border py-3 outline-0 flex items-center justify-center lg:py-4 dark:!bg-gray-700 "
+                  class="w-full main-border outline-0 flex items-center justify-center py-4 dark:!bg-gray-700 text-sm"
                   :class="{ 'faded !bg-white dark:!bg-gray-700 dark:!text-gray-400': !selected }"
                 >
                   <span v-if="selected" class="mr-1 flex items-center">
                     <Icon
                       name="check_bold"
-                      class="w-3 h-3 inline bg-primary rounded-md p-1 box-content"
+                      class="w-3 h-3 inline bg-primary rounded-sm p-0.5 box-content"
                     />
                   </span>
                   <span>
@@ -61,7 +63,7 @@
 
             <TabPanels class="mt-6 w-full">
               <TabPanel v-for="tab in consentTabs" :key="tab.id">
-                <h4 class="text-lg  capitalize font-medium">{{ tab.name }}</h4>
+                <h4 class="text-lg capitalize font-medium">{{ tab.name }}</h4>
               </TabPanel>
             </TabPanels>
 
@@ -148,8 +150,26 @@
                 </div>
               </template>
 
-              <!-- Password -->
+              <!-- Native -->
               <template v-if="selectedTab === 2">
+                <div class="w-full flex items-center justify-start gap-x-4">
+                  <ChainSelect
+                    :chains="chains.filter(chain => chain.name === 'MVC')"
+                    v-model:selected-chain="selectedChainForNative"
+                  />
+                  <input
+                    type="number"
+                    class="outline-0 main-border  faded-switch !bg-white dark:!bg-gray-700 still py-2 px-4 text-sm placeholder:font-normal w-full"
+                    min="1"
+                    :placeholder="$t('Talk.Modals.amount_needed')"
+                    v-model="form.amount"
+                    autocomplete="nope"
+                  />
+                </div>
+              </template>
+
+              <!-- Password -->
+              <template v-if="selectedTab === 3">
                 <Icon
                   name="lock"
                   class="w-5 h-5 lg:text-dark-300 lg:dark:text-gray-400 absolute left-4 box-content lg:group-hover:text-dark-800 dark:lg:group-hover:!text-gray-100 transition-all duration-200"
@@ -219,69 +239,7 @@
 
     <template #secondTitle>
       <div class="flex items-center space-x-3">
-        <Listbox v-model="selectedChain">
-          <div class="relative mt-1">
-            <ListboxButton
-              class="relative w-full px-2 py-1 text-center focus:outline-none rounded-xl text-sm border border-solid border-dark-200 dark:border-gray-600 dark:text-gray-100 flex items-center space-x-1"
-              v-slot="{ open }"
-            >
-              <div class="w-7.5 h-7.5 shrink-0 flex items-center justify-center">
-                <img :src="selectedChain.icon" class="h-full" />
-              </div>
-              <span class="block truncate w-12 text-left capitalize">{{ selectedChain.name }}</span>
-              <Icon
-                name="chevron_right"
-                :class="[
-                  open && 'rotate-90',
-                  'w-4 h-4 text-dark-400 dark:text-gray-200 transition duration-200',
-                ]"
-              />
-            </ListboxButton>
-
-            <transition
-              enter-active-class="transition duration-100 ease-out"
-              enter-from-class="transform scale-95 opacity-0 -translate-y-1/2"
-              enter-to-class="transform scale-100 opacity-100"
-              leave-active-class="transition duration-75 ease-out"
-              leave-from-class="transform scale-100 opacity-100"
-              leave-to-class="transform scale-95 opacity-0"
-            >
-              <ListboxOptions
-                class="absolute mt-2 max-h-60 overflow-auto rounded-xl bg-white dark:bg-gray-700 py-2 text-base shadow-md focus:outline-none z-50 border border-solid border-dark-100 dark:border-gray-600 dark:shadow-blue-100/20"
-              >
-                <ListboxOption
-                  v-slot="{ active, selected }"
-                  v-for="chain in chains"
-                  :key="chain.name"
-                  :value="chain"
-                  as="template"
-                >
-                  <li
-                    :class="[
-                      'relative select-none py-2 p-7.5 text-dark-800 dark:text-gray-100 cursor-pointer flex items-center justify-between min-w-fit group w-45',
-                    ]"
-                  >
-                    <div class="flex items-center space-x-1">
-                      <div class="w-7.5 h-7.5 shrink-0 flex items-center justify-center">
-                        <img :src="chain.icon" class="h-full" />
-                      </div>
-
-                      <span class="shrink-0 group-hover:underline">
-                        {{ chain.name }}
-                      </span>
-                    </div>
-
-                    <Icon
-                      name="check_bold"
-                      v-if="selected"
-                      class="w-3 h-3 inline bg-primary rounded-md p-1 box-content"
-                    />
-                  </li>
-                </ListboxOption>
-              </ListboxOptions>
-            </transition>
-          </div>
-        </Listbox>
+        <ChainSelect :chains="chains" v-model:selected-chain="selectedChain" />
 
         <div class="text-left">{{ consentTabs[selectedTab].secondTitle }}</div>
       </div>
@@ -380,38 +338,35 @@
 </template>
 
 <script lang="ts" setup>
-import { Chains, ChannelPublicityType, GroupChannelType, ShowControl } from '@/enum'
-import BaseModal from './BaseModal.vue'
 import {
   TabList,
   Tab,
   TabGroup,
   TabPanel,
   TabPanels,
-  Listbox,
-  ListboxButton,
-  ListboxOptions,
-  ListboxOption,
   Switch,
   SwitchLabel,
   SwitchGroup,
 } from '@headlessui/vue'
+import { Ref, ref, watchEffect, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { useChannelFormStore } from '@/stores/forms'
-import { onMounted, Ref, ref, toRaw, watchEffect, computed } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { createChannel } from '@/utils/talk'
 import { useTalkStore } from '@/stores/talk'
 import { useUserStore } from '@/stores/user'
 import { useLayoutStore } from '@/stores/layout'
 import Cat from '@/assets/images/cat.svg?url'
 import DogWalking from '@/assets/images/dog_walking.svg?url'
-import { useRouter } from 'vue-router'
 import { GetNFTs, GetFTs } from '@/api/aggregation'
 import ETH from '@/assets/images/eth.png'
 import MVC from '@/assets/images/iocn_mvc.png'
 import POLYGON from '@/assets/svg/polygon.svg?url'
 import { realRandomString, showLoading, sleep } from '@/utils/util'
+import { Chains, ChannelPublicityType, GroupChannelType, ShowControl } from '@/enum'
+
+import BaseModal from './BaseModal.vue'
+import ChainSelect from '../ChainSelect.vue'
 
 const isShowingPassword = ref(false)
 const layout = useLayoutStore()
@@ -431,6 +386,9 @@ function changeTab(index: number) {
       form.type = GroupChannelType.FT
       break
     case 2:
+      form.type = GroupChannelType.Native
+      break
+    case 3:
       form.type = GroupChannelType.Password
       break
   }
@@ -458,6 +416,7 @@ const chains = ref([
   },
 ])
 const selectedChain = ref(chains.value[0])
+const selectedChainForNative = ref(chains.value[1])
 const consentTabs = ref([
   {
     id: 1,
@@ -477,6 +436,14 @@ const consentTabs = ref([
   },
   {
     id: 3,
+    name: 'Native',
+    panelTitle: i18n.t('Talk.Community.choose_native'),
+    secondTitle: i18n.t('Talk.Community.choose_native'),
+    secondTip: i18n.t('Talk.Community.choose_native_tip'),
+    buttonText: i18n.t('Talk.Community.choose_native_as_consent'),
+  },
+  {
+    id: 4,
     name: i18n.t('Talk.Community.password'),
     panelTitle: i18n.t('Talk.Community.set_password'),
   },
@@ -490,8 +457,10 @@ if (form.type === GroupChannelType.NFT) {
   selectedTab.value = 0
 } else if (form.type === GroupChannelType.FT) {
   selectedTab.value = 1
-} else if (form.type === GroupChannelType.Password) {
+} else if (form.type === GroupChannelType.Native) {
   selectedTab.value = 2
+} else if (form.type === GroupChannelType.Password) {
+  selectedTab.value = 3
 }
 changeTab(selectedTab.value)
 const talk = useTalkStore()
@@ -514,7 +483,7 @@ const tryCreateChannel = async () => {
 
   // 添加占位频道
   if (res.status === 'success') {
-    let roomJoinType
+    let roomJoinType = ''
     if (form.type === GroupChannelType.PublicText) {
       roomJoinType = ''
     } else if (form.type === GroupChannelType.Password) {
@@ -523,6 +492,8 @@ const tryCreateChannel = async () => {
       roomJoinType = '2'
     } else if (form.type === GroupChannelType.FT) {
       roomJoinType = '3'
+    } else if (form.type === GroupChannelType.Native) {
+      roomJoinType = '4'
     }
     const newChannel: any = {
       id: 'placeholder_' + realRandomString(8),
@@ -590,6 +561,7 @@ const selfAddress = computed(() => {
 
 const fetching = ref(false)
 const fetchNftSeries = async () => {
+  nftSeries.value = []
   if (!selfAddress.value) return
   const {
     data: {
@@ -605,6 +577,7 @@ const fetchNftSeries = async () => {
 }
 
 const fetchFtSeries = async () => {
+  ftSeries.value = []
   if (!selfAddress.value) return
   const {
     data: {
@@ -620,8 +593,11 @@ const fetchFtSeries = async () => {
 }
 
 watchEffect(async () => {
-  await showLoading(fetchNftSeries, fetching)
-  await showLoading(fetchFtSeries, fetching)
+  if (selectedTab.value === 0) {
+    await showLoading(fetchNftSeries, fetching)
+  } else if (selectedTab.value === 1) {
+    await showLoading(fetchFtSeries, fetching)
+  }
 })
 
 // onMounted(() => {

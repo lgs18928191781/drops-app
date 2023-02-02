@@ -433,7 +433,7 @@ import { checkUserLogin, NFTOffSale } from '@/utils/util'
 import AmountVue from '@/components/Amount/Amount.vue'
 import NFTTransferVue from '@/components/NFTTransfer/NFTTransfer.vue'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
-import { ToCurrency } from '@/enum'
+import { Chains, ToCurrency } from '@/enum'
 
 const isShowSkeleton = ref(true)
 const isShowDrscDetail = ref(false)
@@ -462,7 +462,7 @@ const isSale = computed(() => {
 const isMyNFT = computed(() => {
   let result = false
   if (nft.val && userStore.isAuthorized) {
-    if (nft.val.nftChain === 'mvc') {
+    if (nft.val.nftChain === Chains.MVC || nft.val.nftChain === Chains.BSV) {
       if (nft.val.nftOwnerMetaId === userStore.user?.metaId) {
         result = true
       }

@@ -140,7 +140,7 @@ import IconLine from '@/assets/images/wallte_icon_line.png'
 import MetaMask, { MetaMaskLoginRes } from '@/plugins/MetaMak.vue'
 import { useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
-import { AllNodeName, SDK } from '@/utils/sdk'
+import { SDK } from '@/utils/sdk'
 import FirstBuzzImg from '@/assets/images/first_buzz.svg?url'
 import { toMvcScan } from '@/utils/util'
 import MetaIdWalletVue, { MetaIdWalletRegisterBaseInfo } from './MetaIdWallet.vue'
@@ -165,6 +165,7 @@ import { MD5 } from 'crypto-js'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
 
 import { currentSupportChain } from '@/config'
+import AllNodeName from '@/utils/AllNodeName'
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const route = useRoute()
@@ -361,6 +362,7 @@ async function connectMetaLet() {
 
 async function onThreePartLinkSuccess(params: { signAddressHash: string; address: string }) {
   //检查hash是否已绑定
+
   const getMnemonicRes = await LoginByEthAddress({
     evmAddress: params.address,
     chainId: window.ethereum.chainId,
@@ -445,6 +447,15 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
         isShowBindModal.value = true
       }
     }
+  } else if (
+    !getMnemonicRes?.data.metaId &&
+    getMnemonicRes?.data?.registerSource === RegisterSource.metamask
+  ) {
+    rootStore.$patch({ isShowMetaMak: false })
+    return ElMessage.error(`${i18n.t('MetaidIsNull')}`)
+    // BindMetaIdRef.value.status = BindStatus.ChooseType
+    // rootStore.$patch({ isShowMetaMak: false })
+    // isShowBindModal.value = true
   }
 }
 
@@ -522,14 +533,17 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
           outPutIndex: 1,
         })
         if (utxo) utxos = [utxo]
+        const NFTAvatarBrfcNodeBaseInfo = await wallet?.provider.getNewBrfcNodeBaseInfo(
+          wallet.wallet.xpubkey.toString(),
+          userStore.user!.infoTxId
+        )
         const createNFTAvatarBrfcNode = await wallet!.createNode({
           nodeName: NodeName.NFTAvatar,
           parentTxId: userStore.user!.infoTxId,
-          parentAddress: wallet?.protocolAddress,
-          keyPath: '0/0',
           data: AllNodeName[NodeName.NFTAvatar].brfcId,
           utxos: utxos,
           change: wallet!.createAddress('0/0').address,
+          node: NFTAvatarBrfcNodeBaseInfo,
         })
         broadcasts.push(createNFTAvatarBrfcNode!.hex!)
 
@@ -542,30 +556,25 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
           },
         })
         if (utxo) utxos = [utxo]
-        const createNFTAvatarBrfcChildNode = await wallet!.createNode({
-          nodeName: [
-            NodeName.NFTAvatar,
-            wallet!
-              .createAddress('0/0')
-              .publicKey.toString()
-              .slice(0, 11),
-          ].join('-'),
-          parentTxId: createNFTAvatarBrfcNode.txId,
-          parentAddress: wallet!.createAddress('0/0').address,
-          keyPath: '0/0',
-          data: JSON.stringify({
-            type: 'nft',
-            tx: params.nft.txId,
-            codehash: params.nft.codehash,
-            genesis: params.nft.genesis,
-            tokenIndex: params.nft.tokenIndex,
-            updateTime: new Date().getTime(),
-            memo: params.nft.desc,
-            image: params.nft.avatarImage,
-            chain: params.nft.avatarImage.split('://')[0],
-          }),
-          utxos: utxos,
-        })
+        const createNFTAvatarBrfcChildNode = await wallet!.createBrfcChildNode(
+          {
+            nodeName: NodeName.NFTAvatar,
+            brfcTxId: createNFTAvatarBrfcNode!.txId,
+            data: JSON.stringify({
+              type: 'nft',
+              tx: params.nft.txId,
+              codehash: params.nft.codehash,
+              genesis: params.nft.genesis,
+              tokenIndex: params.nft.tokenIndex,
+              updateTime: new Date().getTime(),
+              memo: params.nft.desc,
+              image: params.nft.avatarImage,
+              chain: params.nft.avatarImage.split('://')[0],
+            }),
+            utxos: utxos,
+          },
+          { isBroadcast: false }
+        )
         broadcasts.push(createNFTAvatarBrfcChildNode!.transaction.toString())
       }
       //  广播
@@ -621,7 +630,7 @@ async function connectWalletConnect() {
       description: 'My website description ',
       url: 'https://mywebsite.url',
       icons: ['../assets/svg/icon.svg'],
-      name: 'My website name',
+      name: 'Show3',
     },
   })
 

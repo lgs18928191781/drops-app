@@ -33,15 +33,17 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, watch } from 'vue'
-import { useTalkStore } from '@/stores/talk'
 import { useRoute } from 'vue-router'
+
+import { useTalkStore } from '@/stores/talk'
 import { useLayoutStore } from '@/stores/layout'
+import { isMetaName, resolveMetaName } from '@/utils/meta-name'
 
 import ChannelHeader from './components/ChannelHeader.vue'
 import CommunityInfo from './components/CommunityInfo.vue'
 import ChannelMemberList from './components/ChannelMemberList.vue'
 import PasswordModal from './components/modals/consensus/Password.vue'
-import CommunitySettingsModal from './components/modals/community/Settings.vue'
+import CommunitySettingsModal from './components/modals/community/settings/Index.vue'
 import RequireNftModal from './components/modals/consensus/RequireNft.vue'
 import RequireFtModal from './components/modals/consensus/RequireFt.vue'
 import RedPacketOpenModal from './components/modals/red-packet/Open.vue'
@@ -58,16 +60,28 @@ const talk = useTalkStore()
 const route = useRoute()
 const layout = useLayoutStore()
 
-const { communityId } = route.params
+function init(communityId: string) {
+  talk.checkMembership(communityId).then(async (isMember: boolean) => {
+    if (!isMember) {
+      await talk.invite(communityId)
+      return
+    }
 
-talk.checkMembership(communityId as string).then(async (isMember: boolean) => {
-  if (!isMember) {
-    await talk.invite(communityId as string)
-    return
-  }
+    talk.initCommunity(communityId)
+  })
+}
 
-  talk.initCommunity(communityId as string)
-})
+const { communityId } = route.params as { communityId: string }
+
+// 解析 communityId 为 metaName 的情况
+
+if (isMetaName(communityId)) {
+  resolveMetaName(communityId).then(({ communityId: realCommunityId }) => {
+    init(realCommunityId)
+  })
+} else {
+  init(communityId)
+}
 
 watch(
   () => talk.communityStatus,

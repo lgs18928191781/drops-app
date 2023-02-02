@@ -151,7 +151,7 @@
 
 <script setup lang="ts">
 import { GetOrderAmout, PayOrderConfirm } from '@/api/pay'
-import { PayPlatform, PayStatus } from '@/enum'
+import { PayPlatform, PayStatus, WalletTxVersion } from '@/enum'
 import { isApp, isIOS, isIosApp, isWechat, useRootStore } from '@/stores/root'
 import Decimal from 'decimal.js-light'
 import {
@@ -181,6 +181,9 @@ import { GetOrder, GetOrderStatus, PayETHByME, UpdatePay } from '@/api/wxcore'
 import { useUserStore } from '@/stores/user'
 import { BigNumber, ethers } from 'ethers'
 import { useI18n } from 'vue-i18n'
+import { useBsvStore } from '@/stores/bsv'
+import { Wallet } from 'meta-contract'
+import { bsv } from '@/utils/filters'
 
 interface Props {
   modelValue: boolean
@@ -269,16 +272,20 @@ const qrcodeData = ref('')
 const iosPayHtml = ref('')
 const PayIframeRef = ref()
 const isQrcodeInTime = ref(true) // 付款码是否在有效时间
+const bsvStore = useBsvStore()
 
 const payResultMessage = computed(() => {
   let msg = ''
+  console.log('propsprops', payResult)
   if (payResult.status === PayStatus.Success) {
     const symbol =
       props.payPlatform === PayPlatform.ETH
         ? import.meta.env.VITE_ETH_CHAIN
+        : props.payPlatform === PayPlatform.POLYGON
+        ? import.meta.env.VITE_POLYGON_SYMBOL
         : rootStore.currentPriceSymbol
     const amount =
-      props.payPlatform === PayPlatform.ETH
+      props.payPlatform === PayPlatform.ETH || props.payPlatform === PayPlatform.POLYGON
         ? new Decimal(props.amount).div(Math.pow(10, 9)).toFixed(5)
         : new Decimal(props.amount).div(100).toFixed(2)
     msg = `ShowPayLimited: ${symbol} ${amount}`
@@ -292,32 +299,50 @@ function drawePayCode() {
   return new Promise<void>(async (resolve, reject) => {
     try {
       if (props.url) {
-        if (props.payPlatform === PayPlatform.ETH) {
-          await CheckMetaMaskAccount(useStore.user!.evmAddress!)
-          const tx = await window.ethereum!.request!({
-            method: 'eth_sendTransaction',
-            params: [
-              {
-                value: BigNumber.from(
-                  new Decimal(props.amount).mul(Math.pow(10, 9)).toString()
-                ).toHexString(),
-                to: props.url,
-                from: useStore.user?.evmAddress,
-              },
-            ],
-          })
+        // 原生币支付
+        const nativeCurrencyPay = [PayPlatform.ETH, PayPlatform.POLYGON, PayPlatform.BSV]
+        if (nativeCurrencyPay.includes(props.payPlatform)) {
+          //  ETH POLYGON 支付
+          let tx
+          let from_coin_address = ''
+          if (props.payPlatform === PayPlatform.ETH || props.payPlatform === PayPlatform.POLYGON) {
+            await CheckMetaMaskAccount(useStore.user!.evmAddress!)
+            from_coin_address = useStore.user!.evmAddress!
+            tx = await window.ethereum!.request!({
+              method: 'eth_sendTransaction',
+              params: [
+                {
+                  value: BigNumber.from(
+                    new Decimal(props.amount).mul(Math.pow(10, 9)).toString()
+                  ).toHexString(),
+                  to: props.url,
+                  from: useStore.user?.evmAddress,
+                },
+              ],
+            })
+          } else if (props.payPlatform === PayPlatform.BSV) {
+            // bsv 支付
+            await bsvStore.initWallet()
+            from_coin_address = bsvStore.wallet!.rootAddress
+            const tx = await bsvStore.wallet!.sendMoney({
+              payTo: [{ address: props.url, amount: new Decimal(props.amount).toNumber() }],
+              isBroadcast: false,
+            })
+            tx.version = WalletTxVersion.BSV
+            await bsvStore.wallet!.provider.broadcast(tx.toString())
+          }
+
           if (tx) {
             const res = await UpdatePay({
               order_id: props.orderId,
               tx_hash: tx,
-              from_coin_address: useStore.user!.evmAddress!,
+              from_coin_address,
               product_type: props.product_type,
             })
             if (res.code === 0) {
               payResult.status = PayStatus.Success
               isShowPayStatusModal.value = true
             }
-          } else {
           }
         }
         // 余额支付
@@ -427,6 +452,7 @@ async function onPayIframeClose() {
     //
   })
   isShowPayStatusModal.value = true
+
   checkOrderStatus()
 }
 
@@ -511,6 +537,7 @@ function intervalChceckOrderStatus() {
     checkOrderTimeOut = setTimeout(() => {
       isShowQrcode.value = false
       clearInterval(checkOrderTimeOut)
+
       payResult.status = PayStatus.Fail
       isShowPayStatusModal.value = true
       resolve()

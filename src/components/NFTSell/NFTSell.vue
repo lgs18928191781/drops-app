@@ -83,6 +83,7 @@ import { useI18n } from 'vue-i18n'
 import NFTCoverVue from '../NFTCover/NFTCover.vue'
 import NFTMsgVue from '../NFTMsg/NFTMsg.vue'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
+import { NodeName } from '@/enum'
 
 const props = defineProps<{
   modelValue: boolean
@@ -200,17 +201,26 @@ async function submitForm() {
     loading.value = true
     const getAddressRes = await GetLegalRecevierAddress()
     if (getAddressRes.code === 0) {
-      const transferNFTRes = await userStore.showWallet!.transferNFT({
-        receiverAddress: getAddressRes.data.address,
-        tokenIndex: props.nft.nftTokenIndex,
-        codehash: props.nft.nftCodehash,
-        genesis: props.nft.nftGenesis,
+      const transferNFTRes = await userStore.showWallet!.createBrfcChildNode({
+        nodeName: NodeName.NftTransfer,
+        data: JSON.stringify({
+          receiverAddress: getAddressRes.data.address,
+          tokenIndex: props.nft.nftTokenIndex,
+          codehash: props.nft.nftCodehash,
+          genesis: props.nft.nftGenesis,
+        }),
       })
-      if (transferNFTRes && transferNFTRes.txid) {
+      // const transferNFTRes = await userStore.showWallet!.transferNFT({
+      //   receiverAddress: getAddressRes.data.address,
+      //   tokenIndex: props.nft.nftTokenIndex,
+      //   codehash: props.nft.nftCodehash,
+      //   genesis: props.nft.nftGenesis,
+      // })
+      if (transferNFTRes && transferNFTRes.nft) {
         const result = await LegalSaleNft({
           price: new Decimal(form.actualincomePrice).mul(100).toString(),
           sellDesc: 'ShowV3',
-          txid: transferNFTRes.txid,
+          txid: transferNFTRes.nft.transfer!.txId,
         })
         if (result.code === 0) {
           emit('success')

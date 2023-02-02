@@ -55,7 +55,9 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   }
 
   const admins = [userStore.user?.metaId]
-  const metaNameNft = `metacontract://${metaName.codeHash}/${metaName.genesis}/${metaName.tokenIndex}`
+  const metaNameNft = metaName.genesis
+    ? `metacontract://${metaName.codeHash}/${metaName.genesis}/${metaName.tokenIndex}`
+    : ''
   const dataCarrier: CommunityData = {
     communityId,
     name,
@@ -114,6 +116,7 @@ export const updateCommunity = async (form: any, sdk: SDK) => {
     admins,
     description,
     cover: coverPlaceholder || '',
+    reserved: original.reserved,
     disabled: 0,
   }
 
@@ -121,9 +124,6 @@ export const updateCommunity = async (form: any, sdk: SDK) => {
     dataCarrier.reserved = metaName.signature
   }
   console.log({ dataCarrier, form, original })
-  console.log('here?')
-  await sleep(100000)
-  return
 
   // 2. 构建节点参数
   const node = {
@@ -294,7 +294,7 @@ export const giveRedPacket = async (form: any, channelId: string, selfMetaId: st
   }
 
   // 3. 发送节点
-  await sdk.createBrfcChildNode(node)
+  await sdk.createBrfcChildNode(node, { payType: SdkPayType.SPACE })
 
   return
 }

@@ -222,7 +222,7 @@ export const useTalkStore = defineStore('talk', {
     },
 
     isActiveChannelTheVoid(): boolean {
-      return this.activeChannelId === 'the-void'
+      return this.activeChannelId === 'index'
     },
 
     isActiveChannelSettings(): boolean {
@@ -255,7 +255,7 @@ export const useTalkStore = defineStore('talk', {
           localStorage.getItem('latestChannels-' + selfMetaId) || JSON.stringify({})
         const latestChannels = JSON.parse(latestChannelsRecords)
 
-        return latestChannels[communityId] || 'the-void'
+        return latestChannels[communityId] || 'index'
       }
     },
   },
@@ -372,7 +372,7 @@ export const useTalkStore = defineStore('talk', {
         if (routeCommunityId === '@me') {
           channelId = this.activeCommunityChannels[0].id
         } else {
-          channelId = latestChannels[routeCommunityId] || 'the-void'
+          channelId = latestChannels[routeCommunityId] || 'index'
         }
 
         router.push(`/talk/channels/${routeCommunityId}/${channelId}`)

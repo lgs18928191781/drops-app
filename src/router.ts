@@ -110,7 +110,7 @@ export const router = createRouter({
       redirect: '/talk/channels/@me',
     },
     {
-      path: '/talk/channels/@me/the-void',
+      path: '/talk/channels/@me/index',
       name: 'talkAtMeDefault',
       component: () => import('@/views/talk/AtMeDefault.vue'),
       meta: { isAuth: true },
@@ -123,16 +123,16 @@ export const router = createRouter({
     },
 
     // .meta解析
-    {
-      path: '/talk/channels/:metaName([a-zA-Z0-9_-]+[.][a-zA-Z0-9_-]+)/',
-      name: 'talkMeta',
-      component: () => import('@/views/talk/MetaName.vue'),
-    },
-    {
-      path: '/talk/channels/:metaName([\\s\\S]+[.][a-zA-Z0-9_-]+)/:others*',
-      name: 'talkMeta',
-      component: () => import('@/views/talk/MetaName.vue'),
-    },
+    // {
+    //   path: '/talk/channels/:metaName([a-zA-Z0-9_-]+[.][a-zA-Z0-9_-]+)/',
+    //   name: 'talkMeta',
+    //   component: () => import('@/views/talk/MetaName.vue'),
+    // },
+    // {
+    //   path: '/talk/channels/:metaName([\\s\\S]+[.][a-zA-Z0-9_-]+)/:others*',
+    //   name: 'talkMeta',
+    //   component: () => import('@/views/talk/MetaName.vue'),
+    // },
 
     {
       path: '/talk/channels/:communityId',
@@ -143,7 +143,7 @@ export const router = createRouter({
           path: 'index',
           redirect: to => {
             const { communityId } = to.params
-            return { name: 'talkChannel', params: { communityId, channelId: 'the-void' } }
+            return { name: 'talkChannel', params: { communityId, channelId: 'index' } }
           },
         },
         {

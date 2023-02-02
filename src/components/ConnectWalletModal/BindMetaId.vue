@@ -140,6 +140,7 @@
 
 <script setup lang="ts">
 import { GetUserInfo, GetBindMetaidAddressList } from '@/api/aggregation'
+import type { MetaMaskLoginUserInfo } from '@/plugins/utils/api';
 import {
   GetMetaIdByLoginName,
   GetRandomWord,
@@ -152,7 +153,7 @@ import {
 } from '@/api/core'
 import { BindStatus, NodeName, CurrentSupportChain } from '@/enum'
 import { useUserStore } from '@/stores/user'
-import { AllNodeName, SDK } from '@/utils/sdk'
+import {  SDK } from '@/utils/sdk'
 import {
   createMnemonic,
   decryptMnemonic,
@@ -373,7 +374,6 @@ function submitForm() {
 }
 
 function loginSuccess(params: BindMetaIdRes) {
-  console.log('params', params)
   return new Promise<void>(async (resolve, reject) => {
     try {
       const metaIdInfo = await GetUserInfo(params.userInfo.metaId)
@@ -448,6 +448,7 @@ function loginSuccess(params: BindMetaIdRes) {
       loading.value = false
       resolve()
     } catch (error) {
+      loading.value = false
       emit('update:modelValue', false)
       reject(error)
     }
@@ -495,7 +496,7 @@ function createMetaidAccount() {
         const {
           data: { word },
         } = await GetWordBeforeReg({
-          evmAddress: props.thirdPartyWallet.address,
+          evmAddress: props.thirdPartyWallet.address || (window as any).ethereum.selectedAddress,
           chainId: (window as any).ethereum.chainId,
         }).catch(e => {
           throw new Error(e.toString())
@@ -507,8 +508,8 @@ function createMetaidAccount() {
           xpub: hdWallet.xpubkey,
           pubKey: pubKey,
           evmEnMnemonic: encryptmnemonic,
-          evmAddress: props.thirdPartyWallet.address,
-          chainId: window.ethereum.chainId,
+          evmAddress: props.thirdPartyWallet.address || (window as any).ethereum.selectedAddress,
+          chainId: (window as any).ethereum.chainId,
           userName: account.name,
           path: parseInt(import.meta.env.VITE_WALLET_PATH),
         })
@@ -561,7 +562,7 @@ function createMetaidAccount() {
         const {
           data: { word },
         } = await GetWordBeforeReg({
-          evmAddress: props.thirdPartyWallet.address,
+          evmAddress: props.thirdPartyWallet.address ||  (window as any).ethereum.selectedAddress,
           chainId: (window as any).ethereum.chainId,
         }).catch(e => {
           throw new Error(e.toString())
@@ -573,8 +574,8 @@ function createMetaidAccount() {
           xpub: hdWallet.xpubkey,
           pubKey: pubKey,
           evmEnMnemonic: encryptmnemonic,
-          evmAddress: props.thirdPartyWallet.address,
-          chainId: window.ethereum.chainId,
+          evmAddress: props.thirdPartyWallet.address || (window as any).ethereum.selectedAddress,
+          chainId: (window as any).ethereum.chainId,
           userName: account.name,
           path: parseInt(import.meta.env.VITE_WALLET_PATH),
         })
@@ -656,14 +657,27 @@ function currentChain() {
 }
 
 //创建 eht 绑定的brfc 节点
-function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
+function createETHBindingBrfcNode(MetaidRes: BindMetaIdRes) {
+  const { wallet, userInfo } = MetaidRes
+
   return new Promise<void>(async (resolve, reject) => {
     try {
       const hdWallet = new HdWallet(wallet)
-
       // 1. 先获取utxo
       let utxos = await hdWallet.provider.getUtxos(hdWallet.wallet.xpubkey.toString())
-
+      if (!utxos.length) {
+        const initUtxo = await hdWallet.provider.getInitAmount({
+          address: hdWallet.rootAddress,
+          xpub: hdWallet.wallet.xpubkey.toString(),
+          token: userInfo.token || '',
+          userName: userInfo.userType === 'phone' ? userInfo.phone : userInfo.email,
+        })
+        utxos = [initUtxo]
+        // const error = {
+        //   message: `${i18n.t('spaceEnghout')}`,
+        // }
+        // reject(error)
+      }
       // 2. 把钱打到protocols节点
       // 先把钱打回到 protocolAddress
       const transfer = await hdWallet.makeTx({
@@ -693,9 +707,10 @@ function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
           utxos = [utxo]
         }
         // 创建 eht 绑定的brfc 节点
-        const res = await GetUserInfo(metaId)
+
+        const res = await GetUserInfo(userInfo.metaId)
         let ethBindingData: Partial<ethBindingData> = {}
-        const bingdMetaidTypes = await GetBindMetaidAddressList(metaId)
+        const bingdMetaidTypes = await GetBindMetaidAddressList(userInfo.metaId)
 
         if (currentChain() == CurrentSupportChain.Eth) {
           ethBindingData.eth = props.thirdPartyWallet.address
@@ -710,17 +725,13 @@ function createETHBindingBrfcNode(wallet: bsv.HDPrivateKey, metaId: string) {
         }
 
         if (res.code === 0) {
-          const newBfrcNodekeyPath = await hdWallet.getKeyPath({
-            parentTxid: res.data.infoTxId,
-          })
+          const newBfrcNode = await hdWallet.provider.getNewBrfcNodeBaseInfo(
+            hdWallet.wallet.xpubkey.toString(),
+            res.data.infoTxId
+          )
           const ethBindBrfc = await hdWallet.createNode({
             nodeName: NodeName.ETHBinding,
             parentTxId: res.data.infoTxId,
-            keyPath: newBfrcNodekeyPath.join('/'),
-            parentAddress: hdWallet
-              ?.getPathPrivateKey(hdWallet.keyPathMap.Info.keyPath)
-              .publicKey.toAddress(hdWallet.network)
-              .toString(),
             data: JSON.stringify(ethBindingData),
             utxos: utxos,
             change: hdWallet.rootAddress,
@@ -800,6 +811,7 @@ function bindingMetaidOrAddressLogin() {
         email: numberReg.test(form.account) ? undefined : form.account,
         evmAddress: props.thirdPartyWallet.address,
         chainId: props.thirdPartyWallet.chainId,
+
       }
 
       const resp = await GetMetaIdByLoginName(params)
@@ -821,8 +833,9 @@ function bindingMetaidOrAddressLogin() {
           console.log('res', res)
           console.log('userStore', userStore)
 
-          await createETHBindingBrfcNode(res.wallet, res.userInfo.metaId)
+          await createETHBindingBrfcNode(res)
           res.userInfo.evmAddress = props.thirdPartyWallet.address
+
 
           // res.userInfo.evmAddress = window.WallectConnect?.accounts[0]
           //   ? window.WallectConnect?.accounts[0]

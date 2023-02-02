@@ -446,11 +446,24 @@ declare interface NodeTransactions {
   metaFiles?: CreateNodeRes[]
   currentNodeBrfc?: CreateNodeRes
   currentNode?: CreateNodeRes
-  issueNFT?: {
-    transaction: bsv.Transaction
-    txId?: string
-  }
   subscribeId?: string
+  nft?: {
+    issue?: {
+      transaction: bsv.Transaction
+      txId: string
+    }
+    genesis?: {
+      transaction: bsv.Transaction
+      genesis: string
+      codehash: string
+      sensibleId: string
+      txId: string
+    }
+    transfer?: {
+      transaction: bsv.Transaction
+      txId: string
+    }
+  }
 }
 
 declare interface JobStep {
@@ -543,4 +556,43 @@ declare interface MetaNameItem {
   txid: string
   communityId: string
   signature?: string
+}
+
+declare interface NewNodeBaseInfo {
+  address: string
+  path: string
+  publicKey: string
+}
+
+declare interface NewBrfcNodeBaseInfo extends NewNodeBaseInfo {
+  isUsed: boolean
+  parentTxId: string
+}
+
+declare interface CreateBrfcNodePrams {
+  nodeName: import('@/enum').NodeName
+  parentTxId: string
+  payTo?: { amount: number; address: string }[]
+  utxos?: UtxoItem[]
+  useFeeb?: number
+}
+
+declare interface ProtocolBrfcNode {
+  address: string
+  data: string
+  nodeName: string
+  parentPublicKey: string
+  parentTxId: string
+  publicKey: string
+  timestamp: number
+  txId: string
+  version: string
+  xpub: string
+  addressType: number
+  addressIndex: number
+}
+
+declare interface UserProtocolBrfcNode extends ProtocolBrfcNode {
+  nodeName: import('@/enum').NodeName
+  brfcId: string
 }

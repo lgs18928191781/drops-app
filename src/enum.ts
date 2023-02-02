@@ -86,6 +86,7 @@ export enum PayPlatform {
   BalancePay = 350,
   ETH = 1001,
   POLYGON = 1002,
+  BSV = 1003,
 }
 
 export enum NFTSellState {
@@ -289,7 +290,7 @@ export enum NodeName {
   SimpleRedEnvelope = 'SimpleRedEnvelope',
   OpenRedenvelope = 'OpenRedenvelope',
   SimplePublicShare = 'SimplePublicShare',
-  SellNft = 'sell_nft',
+  LegalSellNft = 'sell_nft',
   Name = 'name',
   MetaNote = 'metanote',
   SimpleFileMsg = 'SimpleFileMsg',
@@ -297,6 +298,7 @@ export enum NodeName {
   SimpleAnnouncementQuote = 'SimpleAnnouncementQuote',
   SimpleDAOCreate = 'SimpleDAOCreate',
   NftName = 'NftName',
+  NftTransfer = 'NftTransfer',
 }
 
 export const enum BindStatus {
@@ -343,6 +345,7 @@ export enum GroupChannelType {
   Password = 'password',
   NFT = 'NFT',
   FT = 'FT',
+  Native = 'native',
   ETH_NFT = 'ETH_NFT',
   POLYGON_NFT = 'POLYGON_NFT',
 }
@@ -401,11 +404,13 @@ export enum ToCurrency {
 }
 
 export enum ChannelRoomType {
-  Publice = '',
+  Public = '',
   Private = '1',
   NFT = '2',
   FT = '3',
   ETHNFT = '2001',
+  Native_MVC = '4000',
+  Native_BSV = '4001',
 }
 
 export enum Chains {
@@ -447,4 +452,18 @@ export enum MetaNameRegisterStatus {
   Error = 'error',
   Wait = 'wait',
   Process = 'process',
+}
+
+export enum WalletPath {
+  BSV = 236,
+  MVC = 10001,
+}
+
+export enum Lang {
+  ZH = 'zh',
+  EN = 'en',
+}
+
+export enum WalletTxVersion {
+  BSV = 1,
 }

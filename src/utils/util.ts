@@ -22,6 +22,7 @@ import {
   MetaNameFeePerYear,
   MetaNameOperateType,
   ProductType,
+  Chains,
 } from '@/enum'
 import { CheckBlindboxOrderStatus } from '@/api/v3'
 import AllCardJson from '@/utils/card.json'
@@ -57,6 +58,7 @@ import { GetMetaNameIsRegister } from '@/api/metaname'
 import { dateTimeFormat } from './filters'
 import dayjs from 'dayjs'
 import { SendMetaNameTransationResult } from '@/@types/sdk'
+import { GetTxChainInfo } from '@/api/metaid-base'
 
 export function randomString() {
   return Math.random()
@@ -925,9 +927,16 @@ export function copy(
   })
 }
 
-export function tx(txId: string | undefined) {
+export async function tx(txId: string | undefined) {
   if (!txId) return
-  window.open(`https://mvcscan.com/tx/${txId}`, '_blank')
+  const chainInfoRes = await GetTxChainInfo(txId)
+  const chain =
+    chainInfoRes.code === 0 && chainInfoRes.data.chainFlag
+      ? chainInfoRes.data.chainFlag
+      : Chains.MVC
+  const url =
+    chain === Chains.MVC ? `https://mvcscan.com/tx/${txId}` : `https://whatsonchain.com/tx/${txId}`
+  window.open(url, '_blank')
 }
 
 // 随机数
@@ -1130,7 +1139,8 @@ export function CheckMetaMaskAccount(address: string) {
       const root = useRootStore()
       const chain = (window as any).ethereum.chainId
       const chainId = parseInt(chain).toString()
-      if (chainId === import.meta.env.VITE_ETH_CHAINID) {
+
+      if (root.chainWhiteList.includes(chain)) {
       } else {
         await ChangeMetaMaskChain().catch(error => reject(error))
       }
@@ -1150,6 +1160,8 @@ export function CheckMetaMaskAccount(address: string) {
 
 export function ChangeMetaMaskChain() {
   return new Promise<void>(async (resolve, reject) => {
+    // if ((window as any).ethereum.chainId)
+
     const res = await ElMessageBox.confirm(
       // @ts-ignore
       i18n.global.t('MetaMak.Chain Network Error Tips') + `${import.meta.env.VITE_ETH_CHAIN}`,
@@ -1397,4 +1409,25 @@ export async function metanameOperation(params: {
       reject(error)
     }
   })
+}
+
+export function getLocalAccount() {
+  const localPassword = window.localStorage.getItem(encode('password'))
+  const localUserInfo = window.localStorage.getItem(encode('user'))
+  if (!localPassword || !localUserInfo) {
+    throw new Error('用户登录失败')
+  }
+  const password = decode(localPassword)
+  const userInfo: UserInfo = JSON.parse(decode(localUserInfo))
+  // 如果缓存是老的（没有Path），则删除缓存重新登录
+  if (!userInfo.path) {
+    window.localStorage.removeItem(encode('password'))
+    window.localStorage.removeItem(encode('user'))
+    // reload
+    window.location.reload()
+  }
+  return {
+    password,
+    userInfo,
+  }
 }

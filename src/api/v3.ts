@@ -12,6 +12,7 @@ const V3 = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/v3`, {
       return {
         token: userStore.user!.token,
         meta_id: userStore.user!.metaId,
+        userName: userStore.userName,
       }
     } else {
       return {}

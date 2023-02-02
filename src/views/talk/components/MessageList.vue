@@ -154,7 +154,7 @@ const loadMore = async () => {
   }
 
   for (const item of items) {
-    talk.activeChannel.pastMessages.push(item)
+    talk.activeChannel?.pastMessages.push(item)
   }
 
   // 滚动到原来的位置

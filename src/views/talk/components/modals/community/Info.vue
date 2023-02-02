@@ -109,7 +109,7 @@ const { isLoading, isError, data: owner } = useQuery({
 
 // 分享
 function popShareModal() {
-  talk.inviteLink = `${location.origin}/talk/channels/${talk.activeCommunitySymbol}/the-void`
+  talk.inviteLink = `${location.origin}/talk/channels/${talk.activeCommunitySymbol}/index`
   talk.invitingChannel = {
     community: talk.activeCommunity,
     channel: null,

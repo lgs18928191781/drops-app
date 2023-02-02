@@ -1,7 +1,6 @@
 import { PayPlatform } from '@/enum'
 import { getToken, getUserName, useUserStore } from '@/stores/user'
 import HttpRequest from '@/utils/request'
-import i18n from '@/utils/i18n'
 
 // const Legal = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/legal-currency`, {
 // @ts-ignore

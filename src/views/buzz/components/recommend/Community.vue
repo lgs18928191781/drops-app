@@ -12,15 +12,12 @@
             <div class="follow-item-warp card flex">
               <div class="community-cover">
                 <span class="radius"></span>
-                <Image :src="item.cover" :default-image="DefaultImage" />
+                <Image :src="item.cover ? item.cover : item.icon" :default-image="DefaultImage" />
                 <Icon name="emb" />
               </div>
               <div class="flex1">
                 <div class="name flex flex-align-center">
-                  <span
-                    >{{ item.name.slice(0, 8) }}
-                    <template v-if="item.name.length > 8">.</template></span
-                  >
+                  <span>{{ item.name }} </span>
                   <Icon name="down" />
                 </div>
 
@@ -69,6 +66,7 @@ import { useI18n } from 'vue-i18n'
 import { useTalkStore } from '@/stores/talk'
 import { sleep } from '@/utils/util'
 import DefaultImage from '@/assets/icons/photo_3.svg?url'
+import { ElMessage } from 'element-plus'
 
 const pagination = reactive({ ...initPagination, pageSize: 4, totalPages: 1 })
 const userStore = useUserStore()
