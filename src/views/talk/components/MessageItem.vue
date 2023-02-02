@@ -119,8 +119,13 @@
             message.error && 'bg-red-200 dark:bg-red-700 opacity-50',
           ]"
           v-if="translateStatus === 'showing'"
-          v-html="translatedContent"
-        ></div>
+        >
+          <div class="" v-html="translatedContent"></div>
+          <div class="text-xxs text-dark-300 dark:text-gray-400 mt-1 underline">
+            {{ $t('Talk.Messages.translated') }}
+          </div>
+        </div>
+
         <div
           class="text-sm text-dark-800 dark:text-gray-100 font-normal break-all p-3 rounded-xl rounded-tl transition-all duration-200"
           :class="[
@@ -171,7 +176,7 @@ const props = defineProps(['message'])
 /** 翻译 */
 type TranslateStatus = 'hidden' | 'showing' | 'processing'
 const translateStatus: Ref<TranslateStatus> = ref('hidden')
-const translatedContent = ref('Hello Guys')
+const translatedContent = ref('')
 /** 翻译 end */
 
 const previewImage = () => {

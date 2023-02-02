@@ -11,20 +11,13 @@
   </a>
   <template v-if="userStore.isAuthorized">
     <div class="user-warp flex flex-align-center">
-      <el-popover placement="bottom" :width="'auto'" trigger="hover">
-        <template #reference>
-          <UserAvatar
-            :image="userStore.user!.avatarImage"
-            :meta-id="userStore.user!.metaId"
-            :name="userStore.user!.name"
-            class="user-warp-item"
-            :disabled="true"
-          />
-        </template>
-        <div class="p-4">
-          <UserPersonaVue />
-        </div>
-      </el-popover>
+      <UserAvatar
+        :image="userStore.user!.avatarImage"
+        :meta-id="userStore.user!.metaId"
+        :name="userStore.user!.name"
+        class="user-warp-item"
+      />
+
       <a
         @click="toMetaName"
         class="outsideMore flex flex-align-center flex-pack-center user-warp-item"
@@ -89,6 +82,7 @@ import { useRoute } from 'vue-router'
 import MyWalletVue from './MyWallet.vue'
 import VersionVue from '../Version/Version.vue'
 import UserPersonaVue from '../UserPersona/UserPersona.vue'
+import UserCardVue from '../UserCard/UserCard.vue'
 import { router } from '@/router'
 import MetaNameLogo from '@/assets/svg/meta_name.svg?url'
 const i18n = useI18n()

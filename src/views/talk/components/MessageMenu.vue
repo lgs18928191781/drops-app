@@ -13,7 +13,11 @@
 </template>
 
 <script lang="ts" setup>
+import { Translate } from '@/api/core'
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const i18n = useI18n()
 
 const props = defineProps(['message', 'parsed', 'translateStatus', 'translatedContent'])
 const emit = defineEmits(['update:translateStatus', 'update:translatedContent'])
@@ -41,19 +45,29 @@ const actions = computed(() => {
     actions.push({
       name: 'Talk.MessageMenu.translate',
       icon: 'translate',
-      action: () => {
+      action: async () => {
         // 翻译该消息内容
         if (props.translateStatus === 'hidden') {
           if (props.translatedContent === '') {
             emit('update:translateStatus', 'processing')
+            // 如果未请求过翻译，请求翻译
+            const content = props.parsed
+            const params = {
+              query: content,
+              to: i18n.locale.value,
+            }
+            const translateRes = await Translate(params)
+
+            if (translateRes.code === 0) {
+              emit('update:translatedContent', translateRes.result.transResult)
+            }
+            emit('update:translateStatus', 'showing')
           } else {
             emit('update:translateStatus', 'showing')
           }
         } else if (props.translateStatus === 'showing') {
           emit('update:translateStatus', 'hidden')
         }
-        const translated = Date.now().toString()
-        emit('update:translatedContent', translated)
       },
     })
 
