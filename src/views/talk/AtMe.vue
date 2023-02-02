@@ -50,7 +50,7 @@ onMounted(async () => {
 
   // 如果是私聊且没有会话，则跳转至虚空页
   if (talk.activeCommunityChannels.length === 0) {
-    router.push('/talk/channels/@me/the-void')
+    router.push('/talk/channels/@me/index')
     return
   }
 

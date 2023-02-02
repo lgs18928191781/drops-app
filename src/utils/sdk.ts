@@ -313,6 +313,10 @@ export class SDK {
         ...option,
         subscribeId,
       }
+      if (params.payTo && params.payTo.length) {
+        params.payTo = params.payTo.filter(item => item.amount)
+      }
+
       const userStore = useUserStore()
       try {
         // App 端

@@ -64,8 +64,8 @@ const goBack = () => {
   talk.consensualFt = null
   layout.isShowRequireFtModal = false
 
-  // 去 the-void
-  const theVoid = `/talk/channels/${talk.activeCommunityId}/the-void`
+  // 去 index
+  const theVoid = `/talk/channels/${talk.activeCommunityId}/index`
   router.push(theVoid)
 }
 </script>
