@@ -53,10 +53,11 @@ enum AppMode {
 }
 
 export class SDK {
+  // Nft收手续费的地址
   appAddress = {
     [AppMode.PROD]: '19NeJJM6eEa3bruYnqkTA4Cp6VvdFGSepd',
     [AppMode.TEST]: '1BrfsynMJ56gc2HFicgpBhEKRtRQYTm82E',
-  } // Nft收手续费的地址
+  }
 
   appMsg: AppMsg | null = null
   appMetaIdJs = (window as any).appMetaIdJsV2
