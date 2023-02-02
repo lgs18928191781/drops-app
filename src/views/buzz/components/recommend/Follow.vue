@@ -18,7 +18,7 @@
               <div class="name flex flex-align-center">
                 {{ item.name }}
               </div>
-              <div class="intro flex flex-align-center">MetaId: {{ item.metaId.slice(0, 6) }}</div>
+              <div class="intro flex flex-align-center">MetaID: {{ item.metaId.slice(0, 6) }}</div>
             </div>
             <div class="operate">
               <a
@@ -58,6 +58,7 @@ import { JobStatus, NodeName } from '@/enum'
 import { initPagination } from '@/config'
 import { useI18n } from 'vue-i18n'
 import { useJobsStore } from '@/stores/jobs'
+import { ElMessage } from 'element-plus'
 
 const userStore = useUserStore()
 const i18n = useI18n()

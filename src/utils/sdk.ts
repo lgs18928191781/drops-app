@@ -393,7 +393,11 @@ export class SDK {
               transactions = await this.setUtxoForCreateChileNodeTransactions(
                 transactions,
                 currentUtxo!,
-                params
+                params,
+                // 支付方式为Me时， 最后的找回地址是官方的地址， 不是就找回用户地址
+                option.payType === SdkPayType.ME
+                  ? import.meta.env.VITE_CHANGE_ADDRESS
+                  : this.wallet!.rootAddress
               )
 
               // 广播
@@ -604,6 +608,8 @@ export class SDK {
             index < transactionsList.length - 1
               ? this.getNodeTransactionsFirstReceive(transactionsList[index + 1], params[index + 1])
                   .address
+              : option.payType === SdkPayType.ME
+              ? import.meta.env.VITE_CHANGE_ADDRESS
               : this.wallet!.rootAddress
           transactions = await this.setUtxoForCreateChileNodeTransactions(
             transactions,
@@ -906,7 +912,7 @@ export class SDK {
     transactions: NodeTransactions,
     utxo: UtxoItem,
     params: createBrfcChildNodeParams,
-    lastChangeAddress = this.wallet!.rootAddress
+    lastChangeAddress: string
   ) {
     return new Promise<{
       metaFileBrfc?: CreateNodeRes

@@ -284,10 +284,10 @@ const tabs = [
 ]
 const FormRef = ref()
 const form = reactive({
-  userType: 'phone',
+  userType: SignUserType.Email,
   password: '',
-  area: '86',
-  countryCode: 'cn',
+  area: '1',
+  countryCode: 'us',
   phone: '',
   email: '',
   name: '',
@@ -598,6 +598,7 @@ function submitForm() {
                 ...metaIdInfo,
                 ...account,
                 metaId: metaIdInfo.metaId, // account 有时拿回来的metaId为空
+                name: metaIdInfo.name!, // account 有时拿回来的name 是旧 name
                 password: form.password,
                 address: hdWallet.rootAddress,
                 loginType: 'MetaId',

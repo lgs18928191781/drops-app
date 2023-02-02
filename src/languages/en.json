@@ -600,7 +600,7 @@
     "View all": "View all",
     "Trading volume": "Trading volume",
     "Transfer": "Transfer",
-    "Transfer MetaId": "Transfer MetaId/Address",
+    "Transfer MetaId": "Transfer MetaID/Address",
     "Confirm Transfer": "Confirm Transfer",
     "Transfer Success": "Transfer Success",
     "NFT Introduction": "NFT Introduction",
@@ -743,7 +743,7 @@
   "PayModel": {
     "Paying": "Paying.."
   },
-  "metaidIsBinded": "MetaId has been bound by another account, please check and try again",
+  "metaidIsBinded": "MetaID has been bound by another account, please check and try again",
   "MetaName": {
     "Search": "Search",
     "Mine": "My",

@@ -55,7 +55,7 @@
         </div>
         <el-tooltip class="box-item" effect="dark" :content="i18n.t('copy')" placement="bottom">
           <div class="flex flex-align-center metaId">
-            MetaId:<a @click="copy(userStore.user!.metaId)">
+            MetaID:<a @click="copy(userStore.user!.metaId)">
               {{userStore.user!.metaId.slice(0, 6)}}...{{userStore.user!.metaId.slice(-6)}}</a
             >
           </div>

@@ -54,7 +54,7 @@ function getDatas(isCover = false) {
       if (isCover) list.length = 0
       list.push(...res.data.results.items)
 
-      if (res.data.results.items.length === 0 || pagination.page >= 10) {
+      if (res.data.results.items.length === 0 || pagination.page >= 3) {
         pagination.nothing = true
       } else {
         pagination.nothing = false
