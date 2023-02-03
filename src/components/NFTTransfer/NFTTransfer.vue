@@ -25,10 +25,21 @@
               :disabled="true"
             />
             <div class="flex1">
-              <div class="name">{{ transferUser.val!.name }}</div>
-              <div class="metaid">
-                {{ transferUser.val!.metaId.slice(0,6)}}...{{ transferUser.val!.metaId.slice(-6)  }}
-              </div>
+              <template v-if="transferUser.val!.metaId === ''">
+                Address:
+                <div>{{ transferUser.val!.address }}</div>
+              </template>
+              <template v-else>
+                <div class="name">{{ transferUser.val!.name }}</div>
+                <div class="metaid">
+                  {{ transferUser.val!.metaId.slice(0,6)
+
+
+
+
+                  }}...{{ transferUser.val!.metaId.slice(-6)  }}
+                </div>
+              </template>
             </div>
           </div>
 
@@ -106,25 +117,38 @@ async function transfer() {
   loading.value = true
 
   if (props.nft.nftChain === 'mvc') {
-    let metaId: string
+    let metaId: string = ''
     if (form.target.length === 64) {
       // MetaId
       metaId = form.target
     } else {
-      const res = await GetMetaIdByAddress(form.target)
-      if (res.code === 0) {
+      const res = await GetMetaIdByAddress(form.target).catch(() => {
+        metaId = ''
+      })
+      if (res?.code === 0) {
         metaId = res.data
       }
     }
-
-    const res = await GetUserAllInfo(metaId!).catch(error => {
-      ElMessage.error(error.message)
-      loading.value = false
-    })
-    if (res?.code === 0) {
-      transferUser.val = res.data
+    if (metaId === '') {
+      // @ts-ignore
+      transferUser.val = {
+        metaId: '',
+        address: form.target,
+        name: '',
+        avatarImage: '',
+      }
       form.target = ''
       loading.value = false
+    } else {
+      const res = await GetUserAllInfo(metaId!).catch(error => {
+        ElMessage.error(error.message)
+        loading.value = false
+      })
+      if (res?.code === 0) {
+        transferUser.val = res.data
+        form.target = ''
+        loading.value = false
+      }
     }
   } else {
   }
