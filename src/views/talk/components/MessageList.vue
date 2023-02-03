@@ -134,6 +134,8 @@ const popInvite = () => {
 }
 
 const loadMore = async () => {
+  if (!talk.activeChannelId || !talk.selfMetaId) return
+
   const earliestMessage =
     talk.activeChannel?.pastMessages[talk.activeChannel?.pastMessages.length - 1]
   const earliestMessageTimestamp = earliestMessage?.timestamp
@@ -141,10 +143,15 @@ const loadMore = async () => {
   const earliestMessagePosition = earliestMessageElement?.getBoundingClientRect().bottom
 
   let params
+
   if (earliestMessageTimestamp) {
     params = {
       timestamp: earliestMessageTimestamp,
       timestampType: 0,
+      metaId: talk.selfMetaId,
+    }
+  } else {
+    params = {
       metaId: talk.selfMetaId,
     }
   }
