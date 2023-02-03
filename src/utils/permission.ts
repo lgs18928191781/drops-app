@@ -7,11 +7,13 @@ import { openLoading } from './util'
 import { SDK } from './sdk'
 import { Network } from './wallet/hd-wallet'
 import { usePostTagStore } from '@/stores/buzz/tag'
+import { useMetaNameStore } from '@/stores/metaname'
 
 let loading: any
 router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore()
   const rootStore = useRootStore()
+  const metaNameStore = useMetaNameStore()
 
   // talk之间的页面跳转不处理
   const isTalkRoutes = (route: any) => route.name?.startsWith('talk')
@@ -59,8 +61,18 @@ router.beforeEach(async (to, from, next) => {
       // await userStore.setKycInfo()
     }
 
-    //  设置是否是否测试用户
+    // MetaName
+    if (
+      to.path.indexOf('/metaname/') !== -1 &&
+      (metaNameStore.MetaNameFeePerYear.third === 0 ||
+        metaNameStore.MetaNameFeePerYear.four === 0 ||
+        metaNameStore.MetaNameFeePerYear.five === 0)
+    ) {
+      await metaNameStore.getMetaNameAllPrice()
+    }
+
     if (!userStore.isSetedisTestUser) {
+      //  设置是否是否测试用户
       // todo:暂时注释掉
       // await userStore.setIsTestUser()
     }

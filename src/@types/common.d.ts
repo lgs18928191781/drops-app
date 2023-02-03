@@ -206,6 +206,20 @@ declare interface BuzzItem {
   zeroAddress: string
   postTag: string
   postTagId: number
+  userInfo: {
+    address: string
+    avatarImage: string
+    avatarTxId: string
+    avatarType: string
+    coverPublicKey: string
+    coverType: string
+    coverUrl: string
+    metaIdTimestamp: number
+    name: string
+    nameType: string
+    nftNamePublicKey: string
+    publicKey: string
+  }
 }
 
 declare interface BatchSaleSessionItem {

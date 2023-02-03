@@ -289,7 +289,6 @@ export default class ShowmoneyProvider {
         userName: params?.userName,
       },
     }
-    debugger
     const res = await this.callApi({
       url: '/nodemvc/api/v1/pri/wallet/sendInitSatsForMetaSV',
       params: {
@@ -396,44 +395,30 @@ export default class ShowmoneyProvider {
 
   // public
 
-  public async broadcast(txHex: string, sync = false) {
+  public async broadcast(txHex: string) {
     return new Promise<{
       txid: string
     }>(async (resolve, reject) => {
-      if (sync) {
-        const res = await this.callMetasvApi(
-          '/tx/broadcast',
-          {
-            hex: txHex,
-          },
-          'post'
-        ).catch(error => {
-          // 广播容错，忽略返回
-          // this.sendRawTx(txHex)
-          reject(error)
-        })
-        if (res?.txid) {
-          await this.sendRawTx(txHex)
-          resolve(res)
-        } else {
-          const response = JSON.parse(res.message)
-          reject({
-            code: response.code,
-            message: response.message,
-          })
-        }
-      } else {
+      const res = await this.callMetasvApi(
+        '/tx/broadcast',
+        {
+          hex: txHex,
+        },
+        'post'
+      ).catch(error => {
+        // 广播容错，忽略返回
+        // this.sendRawTx(txHex)
+        reject(error)
+      })
+      if (res?.txid) {
         await this.sendRawTx(txHex)
-        resolve({
-          txid: new mvc.Transaction(txHex).id,
+        resolve(res)
+      } else {
+        const response = JSON.parse(res.message)
+        reject({
+          code: response.code,
+          message: response.message,
         })
-        this.callMetasvApi(
-          '/tx/broadcast',
-          {
-            hex: txHex,
-          },
-          'post'
-        )
       }
     })
   }

@@ -5,6 +5,7 @@
     :close-on-click-modal="!loading"
     :title="$t('NFT.Transfer')"
     @close="emit('update:modelValue', false)"
+    :show-close="!loading"
   >
     <div
       class="nft-buy"
@@ -24,10 +25,21 @@
               :disabled="true"
             />
             <div class="flex1">
-              <div class="name">{{ transferUser.val!.name }}</div>
-              <div class="metaid">
-                {{ transferUser.val!.metaId.slice(0,6)}}...{{ transferUser.val!.metaId.slice(-6)  }}
-              </div>
+              <template v-if="transferUser.val!.metaId === ''">
+                Address:
+                <div>{{ transferUser.val!.address }}</div>
+              </template>
+              <template v-else>
+                <div class="name">{{ transferUser.val!.name }}</div>
+                <div class="metaid">
+                  {{ transferUser.val!.metaId.slice(0,6)
+
+
+
+
+                  }}...{{ transferUser.val!.metaId.slice(-6)  }}
+                </div>
+              </template>
             </div>
           </div>
 
@@ -61,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { PayPlatform } from '@/enum'
+import { NodeName, PayPlatform } from '@/enum'
 import { useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
 import { reactive, ref } from 'vue'
@@ -105,25 +117,38 @@ async function transfer() {
   loading.value = true
 
   if (props.nft.nftChain === 'mvc') {
-    let metaId: string
+    let metaId: string = ''
     if (form.target.length === 64) {
       // MetaId
       metaId = form.target
     } else {
-      const res = await GetMetaIdByAddress(form.target)
-      if (res.code === 0) {
+      const res = await GetMetaIdByAddress(form.target).catch(() => {
+        metaId = ''
+      })
+      if (res?.code === 0) {
         metaId = res.data
       }
     }
-
-    const res = await GetUserAllInfo(metaId!).catch(error => {
-      ElMessage.error(error.message)
-      loading.value = false
-    })
-    if (res?.code === 0) {
-      transferUser.val = res.data
+    if (metaId === '') {
+      // @ts-ignore
+      transferUser.val = {
+        metaId: '',
+        address: form.target,
+        name: '',
+        avatarImage: '',
+      }
       form.target = ''
       loading.value = false
+    } else {
+      const res = await GetUserAllInfo(metaId!).catch(error => {
+        ElMessage.error(error.message)
+        loading.value = false
+      })
+      if (res?.code === 0) {
+        transferUser.val = res.data
+        form.target = ''
+        loading.value = false
+      }
     }
   } else {
   }
@@ -132,22 +157,44 @@ async function transfer() {
 async function confirmTransfer() {
   loading.value = true
   const res = await userStore.showWallet
-    .transferNFT({
-      receiverAddress: transferUser.val!.address,
-      codehash: props.nft.nftCodehash,
-      genesis: props.nft.nftGenesis,
-      tokenIndex: props.nft.nftTokenIndex,
+    .createBrfcChildNode({
+      nodeName: NodeName.NftTransfer,
+      data: JSON.stringify({
+        receiverAddress: transferUser.val!.address,
+        codehash: props.nft.nftCodehash,
+        genesis: props.nft.nftGenesis,
+        tokenIndex: props.nft.nftTokenIndex,
+      }),
     })
     .catch(error => {
       ElMessage.error(error.message)
       loading.value = false
     })
-  if (res && res.txid) {
+  if (res) {
     emit('success')
     ElMessage.success(i18n.t('NFT.Transfer Success'))
     emit('update:modelValue', false)
     loading.value = false
+  } else {
+    loading.value = false
   }
+  // const res = await userStore.showWallet
+  //   .transferNFT({
+  //     receiverAddress: transferUser.val!.address,
+  //     codehash: props.nft.nftCodehash,
+  //     genesis: props.nft.nftGenesis,
+  //     tokenIndex: props.nft.nftTokenIndex,
+  //   })
+  //   .catch(error => {
+  //     ElMessage.error(error.message)
+  //     loading.value = false
+  //   })
+  // if (res && res.txid) {
+  //   emit('success')
+  //   ElMessage.success(i18n.t('NFT.Transfer Success'))
+  //   emit('update:modelValue', false)
+  //   loading.value = false
+  // }
 }
 </script>
 

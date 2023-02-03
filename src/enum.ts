@@ -401,6 +401,8 @@ export enum ToCurrency {
   CNY = 'CNY',
   USD = 'USD',
   MVC = 'MVC',
+  BSV = 'BSV',
+  POLYGON = 'POLYGON',
 }
 
 export enum ChannelRoomType {
@@ -420,12 +422,6 @@ export enum Chains {
   MUMBAI = 'mumbai',
   POLYGON = 'polygon',
   BSV = 'bsv',
-}
-
-export enum MetaNameFeePerYear {
-  third = 660,
-  four = 160,
-  five = 5,
 }
 
 export enum ProductType {

@@ -365,13 +365,13 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
 
   const getMnemonicRes = await LoginByEthAddress({
     evmAddress: params.address,
-    chainId: window.ethereum.chainId,
+    chainId: window.ethereum?.chainId,
   }).catch(error => {
     if (error.code === -1) {
       // 还没绑定
       thirdPartyWallet.signAddressHash = params.signAddressHash
       thirdPartyWallet.address = params.address
-      thirdPartyWallet.chainId = window.ethereum.chainId
+      thirdPartyWallet.chainId = window.ethereum?.chainId
       BindMetaIdRef.value.status = BindStatus.ChooseType
       rootStore.$patch({ isShowMetaMak: false })
       isShowBindModal.value = true

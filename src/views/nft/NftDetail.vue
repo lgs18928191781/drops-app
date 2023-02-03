@@ -631,10 +631,11 @@ function getDetail() {
 // }
 
 async function offSale() {
-  return ElMessage.info(i18n.t('Comming Soon'))
+  // return ElMessage.info(i18n.t('Comming Soon'))
   const result = await NFTOffSale(nft.val!)
   if (result) {
-    getDetail()
+    nft.val!.nftSellState = 1
+    // getDetail()
   }
 }
 
