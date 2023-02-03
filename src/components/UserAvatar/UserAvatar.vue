@@ -1,7 +1,16 @@
 <template>
   <!-- <Popover class="relative cursor-pointer w-10 h-10 max-w-full max-h-full">
     <PopoverButton class="outline-none"> -->
-  <Image :src="image" :type="type" :default-image="DefaultAvatar" :custom-class="customClass" />
+
+  <!-- // 很多地方用了 avatar 选择 -->
+  <Image
+    class="avatar"
+    :src="image"
+    :type="type"
+    :default-image="DefaultAvatar"
+    :custom-class="customClass"
+  />
+
   <!-- </PopoverButton> -->
 
   <!-- <PopoverOverlay class="fixed inset-0 bg-black opacity-50 z-[100]" />
