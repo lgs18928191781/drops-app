@@ -30,7 +30,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 
 import { useTalkStore } from '@/stores/talk'
@@ -41,11 +41,22 @@ const talkStore = useTalkStore()
 
 // 虚拟列表
 const membersContainer = ref(null)
-const vir = useVirtualizer({
-  count: 93,
-  getScrollElement: () => membersContainer.value,
-  estimateSize: () => 52,
-})
+
+let vir: any
+
+watch(
+  () => talkStore.members.length,
+  count => {
+    if (count) {
+      vir = useVirtualizer({
+        count,
+        getScrollElement: () => membersContainer.value,
+        estimateSize: () => 52,
+      })
+    }
+  },
+  { immediate: true }
+)
 </script>
 
 <style lang="scss" scoped>
