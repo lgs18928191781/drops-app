@@ -22,7 +22,11 @@
             :image="itemData.avatarImage"
             :name="itemData.userName"
           />
-          <div class="name">{{ itemData.userName }}&nbsp;|&nbsp;{{ $t('Forwarded') }}</div>
+          <div class="name">
+            <UserName :name="itemData.userName" :metaName="itemData.userInfo.name" />&nbsp;|&nbsp;{{
+              $t('Forwarded')
+            }}
+          </div>
         </div>
       </template>
       <div class="header">
@@ -35,7 +39,12 @@
             />
           </div>
           <div class="info">
-            <div class="name">{{ displayItemData.userName }}</div>
+            <div class="name">
+              <UserName
+                :name="displayItemData.userName"
+                :metaName="displayItemData.userInfo.name"
+              />
+            </div>
             <div class="desc">
               <span>MetaID: {{ sliceStr(displayItemData.metaId) }}</span>
               <span class="time">{{

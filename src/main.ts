@@ -18,6 +18,7 @@ import UserAvatar from '@/components/UserAvatar/UserAvatar.vue'
 import './utils/permission' // 路由控制
 import 'virtual:svg-icons-register'
 import Image from '@/components/Image/Image.vue'
+import UserName from '@/components/UserName/UserName.vue'
 import Icon from '@/components/Icon/Icon.vue'
 import GlobalDialog from '@/components/GlobalDialog/index.vue'
 import { createPinia } from 'pinia'
@@ -35,6 +36,7 @@ const pinia = createPinia()
 // 全局组件
 app.component('UserAvatar', UserAvatar)
 app.component('Image', Image)
+app.component('UserName', UserName)
 app.component('Icon', Icon)
 app.component('Dialog', GlobalDialog)
 
