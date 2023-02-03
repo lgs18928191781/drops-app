@@ -348,7 +348,7 @@ function submitForm() {
 
           const getMnemonicRes = await LoginByEthAddress({
             evmAddress: props.thirdPartyWallet.address,
-            chainId: window.ethereum.chainId,
+            chainId: window.ethereum!.chainId,
           })
 
           if (getMnemonicRes?.code === 0 && getMnemonicRes.data) {

@@ -581,14 +581,16 @@ function submitForm() {
 
               if (!metaIdInfo.metaId) {
                 return ElMessageBox.alert(
-                  '抱歉，此账号有问题，请到www.showmoney.app上修复',
-                  '提示',
+                  `${i18n.t('FixAccountTips1')} ${import.meta.env.VITE_SHOW_MONEY_APP} ${i18n.t(
+                    'FixAccountTips2'
+                  )}`,
+                  i18n.t('niceWarning'),
                   {
                     showClose: false,
-                    confirmButtonText: '去修复',
+                    confirmButtonText: `${i18n.t('FixAccountTips3')}`,
                   }
                 ).then(() => {
-                  location.href = `${import.meta.env.VITE_FIXACCOUTURL}`
+                  location.href = `${import.meta.env.VITE_SHOW_MONEY_APP}`
                 })
               }
 
