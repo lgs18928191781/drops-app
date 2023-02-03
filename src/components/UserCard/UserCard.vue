@@ -44,8 +44,8 @@ import { Mitt, MittEvent } from '@/utils/mitt'
 
 const props = defineProps<{
   modelValue: boolean
-  metaId: string
-  name: string
+  metaId?: string
+  name?: string
 }>()
 
 const router = useRouter()

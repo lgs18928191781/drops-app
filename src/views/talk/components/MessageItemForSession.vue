@@ -14,7 +14,8 @@
 
     <UserAvatar
       :image="messageAvatarImage"
-      :meta-id="props.message.metaId"
+      :meta-id="'undefined'"
+      :name="message.fromName"
       class="w-10 h-10 lg:w-13.5 lg:h-13.5 shrink-0 select-none"
       :disabled="true"
     />
