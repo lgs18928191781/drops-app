@@ -191,6 +191,10 @@ function mappingChainId(chainId: string) {
 function changePayType(platform: PayPlatform) {
   if (currentPayPlatform.value === platform) return
   currentPayPlatform.value = platform
+  setCurrencyAmount()
+}
+
+function setCurrencyAmount() {
   if (currentPayPlatform.value === PayPlatform.UnionPay) {
     currencyAmount.value = props.price
   } else if (currentPayPlatform.value === PayPlatform.ETH) {
@@ -316,11 +320,7 @@ function onPaySuccess(params: { orderId: string; platform: PayPlatform; productT
   emit('success')
 }
 
-if (currentPayPlatform.value === PayPlatform.UnionPay) {
-  currencyAmount.value = props.price
-} else {
-  currencyAmount.value = getCurrencyAmount(props.price, ToCurrency.USD, ToCurrency.ETH)
-}
+setCurrencyAmount()
 urlToBase64(MetaTag).then(val => {
   metaTagString.value = val
 })
