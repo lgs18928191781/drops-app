@@ -1,7 +1,8 @@
 <template>
-  <!-- <div class="relative h-screen w-screen"> -->
-  <ChannelHeader />
-  <ChannelInput />
+  <div class="">
+    <ChannelHeader />
+    <ChannelInput />
+  </div>
   <!-- </div> -->
 </template>
 
