@@ -845,5 +845,7 @@
   "metanameNotAllowOverLenght": "The length of the registration name cannot exceed 63 characters",
   "inputMetaNameIllgel": "The entered MetaName does not conform to the specification",
   "spaceEnghout": "The account Space balance is insufficient, please recharge before performing the binding operation!",
-  "MetaidIsNull": " The Metaid of the bound account is empty, please contact customer service"
+  "MetaidIsNull": " The Metaid of the bound account is empty, please contact customer service",
+  "FixAccountTips2": "on repair",
+  "FixAccountTips3": "to fix"
 }

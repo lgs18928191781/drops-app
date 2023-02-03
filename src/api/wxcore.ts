@@ -202,3 +202,13 @@ export const GetOrder = (params: {
   const { order_id, ..._params } = params
   return Wxcore.get(`/product/order/${order_id}/info`, { params: _params })
 }
+
+export const MetaNameAllPrice = (): Promise<{
+  Prices: {
+    meta_name_len: number
+    usd: number
+    cny: number
+  }[]
+}> => {
+  return Wxcore.post(`/metaname/price`)
+}

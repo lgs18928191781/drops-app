@@ -93,6 +93,7 @@ export interface PayPlatformItem {
 }
 
 function GetChain() {
+  if (!window.ethereum) return ''
   const polygon = ['0x89', '0x13881']
   const eth = ['0x1', '0x5']
   if (polygon.includes(window.ethereum.chainId)) {

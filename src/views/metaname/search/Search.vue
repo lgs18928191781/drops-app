@@ -1,60 +1,62 @@
 <template>
   <div class="metaname-search-index">
     <div class="metaname-sm-container">
-      <SearchWarp :meta-name="metaName" @submit="searchSubmit" v-loading="loading" />
+      <ElSkeleton :loading="isSkeleton" animated>
+        <SearchWarp :meta-name="metaName" @submit="searchSubmit" v-loading="loading" />
 
-      <div class="fee-warp">
-        <div class="title">{{ $t('MetaName.Annual registration fee') }}</div>
-        <div class="fee-list">
-          <div class="fee-item th flex flex-align-center">
-            <span class="flex1">{{ $t('MetaName.Character') }}</span>
-            <span class="price">{{ $t('MetaName.Price') }}</span>
-            <span class="flex1 case">{{ $t('MetaName.Case') }}</span>
-          </div>
-          <div class="fee-item flex flex-align-center" v-for="(item, index) in fees" :key="index">
-            <span class="flex1">{{ item.name() }}</span>
-            <span class="price">{{ item.price() }}</span>
-            <span class="flex1 case">{{ item.case }}</span>
+        <div class="fee-warp">
+          <div class="title">{{ $t('MetaName.Annual registration fee') }}</div>
+          <div class="fee-list">
+            <div class="fee-item th flex flex-align-center">
+              <span class="flex1">{{ $t('MetaName.Character') }}</span>
+              <span class="price">{{ $t('MetaName.Price') }}</span>
+              <span class="flex1 case">{{ $t('MetaName.Case') }}</span>
+            </div>
+            <div class="fee-item flex flex-align-center" v-for="(item, index) in fees" :key="index">
+              <span class="flex1">{{ item.name() }}</span>
+              <span class="price">{{ item.price() }}</span>
+              <span class="flex1 case">{{ item.case }}</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div
-        class="result-warp flex flex-align-center"
-        :class="{ disabled: metaNameInfo.val && metaNameInfo.val.expiredBlockTime !== -1 }"
-        v-if="metaNameInfo.val"
-      >
-        <div class="flex1">
-          <div class="name">{{ metaNameInfo.val!.name }}</div>
-          <div class="msg flex flex-align-center">
-            <span class="dot"></span>
-            <span class="status">{{
-              metaNameInfo.val.expiredBlockTime === -1
-                ? $t('MetaName.UnRegistered')
-                : $t('MetaName.Registered')
-            }}</span
-            ><span class="time" v-if="metaNameInfo.val.expiredBlockTime !== -1"
-              >,&nbsp;{{ $t('MetaName.Expire date') }}:&nbsp;
-              <template v-if="isGetExpireDateLoading">
-                <ElIcon class="is-loading">
-                  <Loading />
-                </ElIcon>
-              </template>
-              <template v-else> {{ $t('MetaName.About') }}&nbsp;{{ expireDate }}(UTC) </template>
-            </span>
+        <div
+          class="result-warp flex flex-align-center"
+          :class="{ disabled: metaNameInfo.val && metaNameInfo.val.expiredBlockTime !== -1 }"
+          v-if="metaNameInfo.val"
+        >
+          <div class="flex1">
+            <div class="name">{{ metaNameInfo.val!.name }}</div>
+            <div class="msg flex flex-align-center">
+              <span class="dot"></span>
+              <span class="status">{{
+                metaNameInfo.val.expiredBlockTime === -1
+                  ? $t('MetaName.UnRegistered')
+                  : $t('MetaName.Registered')
+              }}</span
+              ><span class="time" v-if="metaNameInfo.val.expiredBlockTime !== -1"
+                >,&nbsp;{{ $t('MetaName.Expire date') }}:&nbsp;
+                <template v-if="isGetExpireDateLoading">
+                  <ElIcon class="is-loading">
+                    <Loading />
+                  </ElIcon>
+                </template>
+                <template v-else> {{ $t('MetaName.About') }}&nbsp;{{ expireDate }}(UTC) </template>
+              </span>
+            </div>
           </div>
+          <a
+            class="flex flex-align-center"
+            v-if="metaNameInfo.val.expiredBlockTime === -1"
+            @click="isShowRegister = true"
+          >
+            {{ $t('MetaName.Sign up now') }}</a
+          >
+          <RouterLink :to="{ name: 'metaNameMarket' }" class="flex flex-align-center" v-else>
+            <Icon name="market" /> {{ $t('MetaName.To Market Check') }}</RouterLink
+          >
         </div>
-        <a
-          class="flex flex-align-center"
-          v-if="metaNameInfo.val.expiredBlockTime === -1"
-          @click="isShowRegister = true"
-        >
-          {{ $t('MetaName.Sign up now') }}</a
-        >
-        <RouterLink :to="{ name: 'metaNameMarket' }" class="flex flex-align-center" v-else>
-          <Icon name="market" /> {{ $t('MetaName.To Market Check') }}</RouterLink
-        >
-      </div>
+      </ElSkeleton>
     </div>
   </div>
 
@@ -120,6 +122,7 @@ import { bytesLength, GetExpiredUTC, getMetaNamePrice, urlToBase64 } from '@/uti
 import Decimal from 'decimal.js-light'
 import { MetaNameReqCode } from '@/utils/wallet/hd-wallet'
 import { Loading } from '@element-plus/icons-vue'
+import { MetaNameAllPrice } from '@/api/wxcore'
 
 const i18n = useI18n()
 const userStore = useUserStore()
@@ -156,6 +159,7 @@ const isNextStep = ref(false)
 const expireDate = ref('')
 const isGetExpireDateLoading = ref(false)
 const submitLoading = ref(false)
+const isSkeleton = ref(true)
 
 const currentPayPlatform = ref(
   userStore.isAuthorized && userStore.user?.evmAddress ? PayPlatform.ETH : PayPlatform.UnionPay
@@ -232,12 +236,40 @@ function getExporeDate() {
   })
 }
 
-if (route.query.metaName) {
-  loading.value = true
-  searchMetaName().then(() => {
-    loading.value = false
+function getMetaNameAllPrice() {
+  return new Promise<void>(async resolve => {
+    const res = await MetaNameAllPrice().catch(error => {
+      ElMessage.error(error.message)
+    })
+    if (res) {
+      // @ts-ignore
+      MetaNameFeePerYear.third = new Decimal(res.Prices.find(item => item.meta_name_len === 3)!.usd)
+        .div(100)
+        .toNumber()
+      // @ts-ignore
+      MetaNameFeePerYear.four = new Decimal(res.Prices.find(item => item.meta_name_len === 4)!.usd)
+        .div(100)
+        .toNumber()
+      // @ts-ignore
+      MetaNameFeePerYear.five = new Decimal(res.Prices.find(item => item.meta_name_len === 5)!.usd)
+        .div(100)
+        .toNumber()
+      // metanamePrice.length = 0
+      // metanamePrice.push(...res.Prices)
+      resolve()
+    }
   })
 }
+
+getMetaNameAllPrice().then(() => {
+  isSkeleton.value = false
+  if (route.query.metaName) {
+    loading.value = true
+    searchMetaName().then(() => {
+      loading.value = false
+    })
+  }
+})
 </script>
 
 <style lang="scss" scoped src="./Search.scss"></style>
