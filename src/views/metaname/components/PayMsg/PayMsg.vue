@@ -209,10 +209,9 @@ async function pay() {
       metaNameBgColorIndex.value = randomNumber(0, 9)
       await nextTick()
       const res = await html2canvas(MetaNameRef.value, {
+        scale: 2,
         backgroundColor: null,
         removeContainer: true,
-        width: 480,
-        height: 600,
       })
       if (res) {
         const base64 = res.toDataURL('image/png')
