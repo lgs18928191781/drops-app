@@ -41,7 +41,7 @@
     <div class="pay-type order-msg-item">
       <div class="title">{{ $t('MetaName.Choose Pay Type') }}</div>
       <div class="pay-type-list">
-        <template v-for="(item, index) in payPlatformList" :key="index">
+        <template v-for="(item, index) in payPlatformList" :key="item.key">
           <div
             class="pay-type-item flex flex-align-center"
             v-if="!item.disabled()"
@@ -139,8 +139,8 @@ const router = useRouter()
 const emit = defineEmits(['back', 'success', 'update:loading'])
 
 const currentPayPlatform = ref(
-  userStore.isAuthorized && userStore.user?.evmAddress
-    ? mappingChainId((window as any).ethereum.chainId)
+  userStore.isAuthorized && userStore.user?.evmAddress && (window as any).ethereum
+    ? mappingChainId((window as any).ethereum?.chainId)
     : PayPlatform.UnionPay
 )
 
@@ -193,8 +193,10 @@ function changePayType(platform: PayPlatform) {
   currentPayPlatform.value = platform
   if (currentPayPlatform.value === PayPlatform.UnionPay) {
     currencyAmount.value = props.price
-  } else {
+  } else if (currentPayPlatform.value === PayPlatform.ETH) {
     currencyAmount.value = getCurrencyAmount(props.price, ToCurrency.USD, ToCurrency.ETH)
+  } else if (currentPayPlatform.value === PayPlatform.BSV) {
+    currencyAmount.value = getCurrencyAmount(props.price, ToCurrency.USD, ToCurrency.BSV)
   }
 }
 

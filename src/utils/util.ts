@@ -19,7 +19,6 @@ import {
   ToCurrency,
   PayType,
   NodeName,
-  MetaNameFeePerYear,
   MetaNameOperateType,
   ProductType,
   Chains,
@@ -59,6 +58,7 @@ import { dateTimeFormat } from './filters'
 import dayjs from 'dayjs'
 import { SendMetaNameTransationResult } from '@/@types/sdk'
 import { GetTxChainInfo } from '@/api/metaid-base'
+import { useMetaNameStore } from '@/stores/metaname'
 
 export function randomString() {
   return Math.random()
@@ -992,6 +992,25 @@ export function getCurrencyAmount(
       // mvc -> eth
       return 0
     }
+  } else if (toCurrency === ToCurrency.BSV) {
+    if (currency === 'CNY') {
+      let result = new Decimal(
+        new Decimal(price)
+          .div(100)
+          .div(rate!.price.CNY)
+          .toFixed(5)
+      ).toNumber()
+      if (result < 0.00001) result = 0.00001
+      return result
+    } else if (currency === ToCurrency.USD) {
+      // usd -> eth
+      let result = new Decimal(new Decimal(price).div(rate!.price.USD).toFixed(5)).toNumber()
+      if (result < 0.00001) result = 0.00001
+      return result
+    } else {
+      // mvc -> eth
+      return 0
+    }
   } else {
     //  USD
 
@@ -1137,7 +1156,7 @@ export function CheckMetaMaskAccount(address: string) {
     const result = await (window as any).ethereum.enable()
     if (result && result.length) {
       const root = useRootStore()
-      const chain = (window as any).ethereum.chainId
+      const chain = (window as any).ethereum?.chainId
       const chainId = parseInt(chain).toString()
 
       if (root.chainWhiteList.includes(chain)) {
@@ -1160,7 +1179,7 @@ export function CheckMetaMaskAccount(address: string) {
 
 export function ChangeMetaMaskChain() {
   return new Promise<void>(async (resolve, reject) => {
-    // if ((window as any).ethereum.chainId)
+    // if ((window as any).ethereum?.chainId)
 
     const res = await ElMessageBox.confirm(
       // @ts-ignore
@@ -1328,10 +1347,11 @@ export const bytesLength = (str: string) => {
 }
 
 export const getMetaNamePrice = (metaName: string) => {
+  const metaNameStore = useMetaNameStore()
   const result = bytesLength(metaName)
-  if (result === 3) return MetaNameFeePerYear.third
-  else if (result === 4) return MetaNameFeePerYear.four
-  else return MetaNameFeePerYear.five
+  if (result === 3) return metaNameStore.MetaNameFeePerYear.third
+  else if (result === 4) return metaNameStore.MetaNameFeePerYear.four
+  else return metaNameStore.MetaNameFeePerYear.five
 }
 
 //获取UTC到期时间
@@ -1430,4 +1450,72 @@ export function getLocalAccount() {
     password,
     userInfo,
   }
+}
+
+export function loopExecution(
+  fun: (params: any) => Promise<any>,
+  funParams: any,
+  params?: {
+    sleepTime?: number
+    maxLoopCount?: number
+  }
+) {
+  return new Promise(async (resolve, reject) => {
+    const initParams = {
+      maxLoopCount: 10,
+      sleepTime: 1000,
+    }
+    params = {
+      ...initParams,
+      ...params,
+    }
+    debugger
+    // @ts-ignore
+    const res = await loopExecutionRun({
+      fun,
+      funParams,
+      ...params!,
+    }).catch(error => {
+      debugger
+      reject(error)
+    })
+    if (res) {
+      debugger
+      resolve(res)
+    }
+  })
+}
+
+function loopExecutionRun(params: {
+  maxLoopCount: number
+  sleepTime: number
+  currentCount?: number
+  fun: (params: any) => Promise<any>
+  funParams: any
+  parentResolve?: () => any
+  parentReject?: (reason?: any) => void
+}) {
+  return new Promise<any>(async (resolve, reject) => {
+    if (!params.currentCount) params.currentCount = 1
+    const res = await params.fun(params.funParams).catch(error => {
+      debugger
+      if (params.currentCount! < params.maxLoopCount) {
+        setTimeout(() => {
+          loopExecutionRun({
+            ...params,
+            currentCount: params.currentCount! + 1,
+            parentResolve: params.parentResolve ? params.parentResolve : (resolve as () => any),
+            parentReject: params.parentReject ? params.parentReject : reject,
+          })
+        }, params.sleepTime)
+      } else {
+        if (params.parentReject) params.parentReject(error)
+        else reject(error)
+      }
+    })
+    if (res) {
+      if (params.parentResolve) params.parentResolve(res)
+      else resolve(res)
+    }
+  })
 }

@@ -126,7 +126,7 @@ import Navigation from '../Navigation/Navigation.vue'
 import { GetMetaNameIsRegister } from '@/api/metaname'
 import { GetOrder } from '@/api/wxcore'
 import { MetaNameOperateType } from '@/enum'
-import { GetExpiredUTC } from '@/utils/util'
+import { GetExpiredUTC, loopExecution } from '@/utils/util'
 import { GetTx } from '@/api'
 
 interface Props {
@@ -228,19 +228,22 @@ function getOrder() {
 }
 
 function getTimeInfo() {
-  setTimeout(() => {
+  setTimeout(async () => {
     const expiredBlockTime = GetExpiredUTC(metaName.val!.expiredBlockTime)
-    if (!expiredBlockTime) {
+    if (expiredBlockTime) {
       expireDate.value = expiredBlockTime!
       isGetExpireDateLoading.value = false
     } else {
       ElMessage.error(`${i18n.t('getExpiredTimeFail')}`)
     }
 
-    GetTx(metaName.val!.txid).then(res => {
+    const res: any = await loopExecution(GetTx, metaName.val!.txid).catch(error => {
+      ElMessage.error(error.message)
+    })
+    if (res) {
       registerDate.value = res.txDetail.timestamp * 1000
       isGetRegisterDateLoading.value = false
-    })
+    }
   }, 3000)
 }
 

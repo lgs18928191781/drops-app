@@ -497,7 +497,7 @@ function createMetaidAccount() {
           data: { word },
         } = await GetWordBeforeReg({
           evmAddress: props.thirdPartyWallet.address || (window as any).ethereum.selectedAddress,
-          chainId: (window as any).ethereum.chainId,
+          chainId: (window as any).ethereum?.chainId,
         }).catch(e => {
           throw new Error(e.toString())
         })
@@ -509,7 +509,7 @@ function createMetaidAccount() {
           pubKey: pubKey,
           evmEnMnemonic: encryptmnemonic,
           evmAddress: props.thirdPartyWallet.address || (window as any).ethereum.selectedAddress,
-          chainId: (window as any).ethereum.chainId,
+          chainId: (window as any).ethereum?.chainId,
           userName: account.name,
           path: parseInt(import.meta.env.VITE_WALLET_PATH),
         })
@@ -537,7 +537,7 @@ function createMetaidAccount() {
               ? props.thirdPartyWallet.address
               : window.ethereum.selectedAddress,
             enCryptedMnemonic: encryptmnemonic,
-            chainId: window.ethereum.chainId,
+            chainId: window.ethereum?.chainId,
             path: parseInt(import.meta.env.VITE_WALLET_PATH),
           })
 
@@ -563,7 +563,7 @@ function createMetaidAccount() {
           data: { word },
         } = await GetWordBeforeReg({
           evmAddress: props.thirdPartyWallet.address ||  (window as any).ethereum.selectedAddress,
-          chainId: (window as any).ethereum.chainId,
+          chainId: (window as any).ethereum?.chainId,
         }).catch(e => {
           throw new Error(e.toString())
         })
@@ -575,7 +575,7 @@ function createMetaidAccount() {
           pubKey: pubKey,
           evmEnMnemonic: encryptmnemonic,
           evmAddress: props.thirdPartyWallet.address || (window as any).ethereum.selectedAddress,
-          chainId: (window as any).ethereum.chainId,
+          chainId: (window as any).ethereum?.chainId,
           userName: account.name,
           path: parseInt(import.meta.env.VITE_WALLET_PATH),
         })
@@ -603,7 +603,7 @@ function createMetaidAccount() {
               ? props.thirdPartyWallet.address
               : window.ethereum.selectedAddress,
             enCryptedMnemonic: encryptmnemonic,
-            chainId: window.ethereum.chainId,
+            chainId: window.ethereum?.chainId,
             path: parseInt(import.meta.env.VITE_WALLET_PATH),
           })
           await sendHash(newUserInfo)
@@ -649,9 +649,9 @@ function createMetaidAccount() {
 }
 
 function currentChain() {
-  if (window.ethereum.chainId == '0x1' || window.ethereum.chainId == '0x5') {
+  if (window.ethereum?.chainId == '0x1' || window.ethereum?.chainId == '0x5') {
     return 'eth'
-  } else if (window.ethereum.chainId == '0x13881' || window.ethereum.chainId == '0x89') {
+  } else if (window.ethereum?.chainId == '0x13881' || window.ethereum?.chainId == '0x89') {
     return 'polygon'
   }
 }
