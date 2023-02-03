@@ -27,7 +27,7 @@
             leave-to="opacity-0 scale-75"
           >
             <DialogPanel
-              class="flex w-full h-full lg:max-w-screen-sm lg:items-stretch justify-center lg:w-auto relative lg:static lg:h-auto text-dark-800"
+              class="flex w-auto h-auto lg:max-w-screen-sm lg:items-stretch justify-center lg:w-auto relative lg:static lg:h-auto text-dark-800"
             >
               <div class="flex flex-col items-center justify-center">
                 <div class="w-[95vw] lg:w-108 h-15 flex items-end">
