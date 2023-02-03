@@ -271,7 +271,6 @@ export const useTalkStore = defineStore('talk', {
     async fetchChannels(communityId?: string, isGuest?: boolean) {
       if (!communityId) communityId = this.activeCommunityId
       const isAtMe = communityId === '@me'
-
       const channels = isAtMe
         ? await getAtMeChannels({
             metaId: this.selfMetaId,
@@ -365,10 +364,9 @@ export const useTalkStore = defineStore('talk', {
           })
       }
 
-      this.fetchChannels(routeCommunityId).then(() => {
-        this.updateReadPointers()
-        this.communityStatus = 'ready'
-      })
+      await this.fetchChannels(routeCommunityId)
+      this.updateReadPointers()
+      this.communityStatus = 'ready'
 
       return
     },
@@ -397,7 +395,7 @@ export const useTalkStore = defineStore('talk', {
       const latestChannelsRecords =
         localStorage.getItem('latestChannels-' + this.selfMetaId) || JSON.stringify({})
       const latestChannels = JSON.parse(latestChannelsRecords)
-      if (!routeChannelId) {
+      if (!routeChannelId || routeChannelId === 'index') {
         let channelId
         if (routeCommunityId === '@me') {
           channelId = this.activeCommunityChannels[0].id
@@ -405,8 +403,11 @@ export const useTalkStore = defineStore('talk', {
           channelId = latestChannels[routeCommunityId] || 'index'
         }
 
-        router.push(`/talk/channels/${routeCommunityId}/${channelId}`)
-        return 'redirect'
+        this.activeChannelId = channelId
+        return
+
+        // router.push(`/talk/channels/${routeCommunityId}/${channelId}`)
+        // return 'redirect'
       }
 
       // 将最后阅读频道存储到本地

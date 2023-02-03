@@ -24,6 +24,7 @@
                 :image="userStore.user!.avatarImage"
                 :disabled="true"
                 :name="userStore.user!.name"
+                class="mr-1"
               />
               <div class="name">{{ $t('Wallet.My Wallet') }}</div>
               <Icon name="down" />

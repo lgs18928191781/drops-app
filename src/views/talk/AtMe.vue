@@ -46,6 +46,7 @@ const layout = useLayoutStore()
 const { channelId } = route.params
 
 onMounted(async () => {
+  console.log('AtMe.vue onMounted')
   await talk.initCommunity('@me')
 
   // 如果是私聊且没有会话，则跳转至虚空页

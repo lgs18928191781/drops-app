@@ -97,11 +97,10 @@ async function initGuestMode(communityId: string) {
 const { communityId } = route.params as { communityId: string }
 
 // 解析 communityId 为 metaName 的情况
-function resolve(communityId: string) {
+async function resolve(communityId: string) {
   if (isMetaName(communityId)) {
-    resolveMetaName(communityId).then(({ communityId: realCommunityId }) => {
-      init(realCommunityId)
-    })
+    const resolveRes = await resolveMetaName(communityId)
+    init(resolveRes.communityId)
   } else {
     init(communityId)
   }

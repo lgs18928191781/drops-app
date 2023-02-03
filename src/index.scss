@@ -17,7 +17,10 @@ html {
     color: var(--themeTextColor);
     background: var(--themeBgThreeColor);
 
-    // user-select: none;
+    @media only screen and (max-width: 1024PX) {
+      user-select: none;
+    }
+
     -webkit-user-drag: none;
 
     // 禁用过度滚动
@@ -143,6 +146,10 @@ pre {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+.avatar-rounded {
+  border-radius: 40%;
 }
 
 

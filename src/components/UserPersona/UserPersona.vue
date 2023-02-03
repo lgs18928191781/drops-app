@@ -21,42 +21,30 @@
       </div>
 
       <!-- 2. 形象 -->
-      <img class="w-48 h:64 lg:w-36 lg:h-48 object-cover" src="@/assets/images/bot.png" />
+      <img class="w-48 h-64 lg:w-36 lg:h-48 object-cover" src="@/assets/images/bot.png" />
     </div>
 
     <!-- 3. 装备 -->
     <div
-      class="flex justify-center items-center gap-x-4 lg:gap-x-2.5 text-sm lg:text-xs  font-bold lg:font-normal"
+      class="flex justify-center items-center gap-x-2.5 text-sm lg:text-xs  font-bold lg:font-normal"
     >
       <div class="flex flex-col items-center">
-        <Icon
-          name="part"
-          class="w-16 h-16 lg:w-12 lg:h-12  rounded text-dark-250 dark:text-gray-600"
-        />
+        <Icon name="part" class="w-12 h-12  rounded text-dark-250 dark:text-gray-600" />
         <div class="mt-2 lg:mt-1">{{ $t('User.Backwall') }}</div>
       </div>
 
       <div class="flex flex-col items-center">
-        <Icon
-          name="part"
-          class="w-16 h-16 lg:w-12 lg:h-12 rounded text-dark-250 dark:text-gray-600"
-        />
+        <Icon name="part" class="w-12 h-12 rounded text-dark-250 dark:text-gray-600" />
         <div class="mt-2 lg:mt-1">{{ $t('User.Costume') }}</div>
       </div>
 
       <div class="flex flex-col items-center">
-        <Icon
-          name="part"
-          class="w-16 h-16 lg:w-12 lg:h-12 rounded text-dark-250 dark:text-gray-600"
-        />
+        <Icon name="part" class="w-12 h-12 rounded text-dark-250 dark:text-gray-600" />
         <div class="mt-2 lg:mt-1">{{ $t('User.Artifacts') }}</div>
       </div>
 
       <div class="flex flex-col items-center">
-        <Icon
-          name="part"
-          class="w-16 h-16 lg:w-12 lg:h-12  rounded text-dark-250 dark:text-gray-600"
-        />
+        <Icon name="part" class="w-12 h-12  rounded text-dark-250 dark:text-gray-600" />
         <div class="mt-2 lg:mt-1">{{ $t('User.Pet') }}</div>
       </div>
     </div>

@@ -4,6 +4,7 @@
       :meta-id="userStore.user!.metaId"
       :image="userStore.user!.avatarImage"
       :name="userStore.user!.name"
+      class="mr-2"
     />
     <div class="cont flex1">
       <div class="input">

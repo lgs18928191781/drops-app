@@ -1,9 +1,9 @@
 <template>
-  <div class="user-card p-3">
+  <div class="p-4.5 bg-white dark:bg-gray-700 rounded-xl">
     <div class="header flex flex-align-center pb-4.5">
       <div class="flex1 cont">
-        <div class="name">{{ name }}</div>
-        <div class="metaid">MetaID:{{ metaId ? metaId.slice(0, 6) : '--' }}</div>
+        <div class="text-base">{{ name }}</div>
+        <div class="text-xs text-dark-300">MetaID:{{ metaId ? metaId.slice(0, 6) : '--' }}</div>
       </div>
       <div class="h-full flex gap-x-2">
         <button class="main-border primary !rounded-full py-1 px-3 text-xs" @click="toUser">
@@ -135,5 +135,3 @@ watch(
   }
 )
 </script>
-
-<style lang="scss" scoped src="./UserCard.scss"></style>

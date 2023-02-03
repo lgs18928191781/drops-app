@@ -127,7 +127,7 @@ const parseTextMessage = (text: string) => {
 }
 
 const isActive = computed<boolean>(() => {
-  const currentChannelId = router.currentRoute.value.params.channelId
+  const currentChannelId = talk.activeChannelId || router.currentRoute.value.params.channelId
 
   return currentChannelId === contact.value.metaId
 })

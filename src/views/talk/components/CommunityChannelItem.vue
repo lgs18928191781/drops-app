@@ -65,7 +65,7 @@ const router = useRouter()
 const layout = useLayoutStore()
 interface Props {
   channel: any
-  hasButtons: boolean
+  hasButtons?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {
   channel: {} as Channel,
