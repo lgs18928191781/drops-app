@@ -96,9 +96,9 @@ function GetChain() {
   if (!window.ethereum) return ''
   const polygon = ['0x89', '0x13881']
   const eth = ['0x1', '0x5']
-  if (polygon.includes(window.ethereum.chainId)) {
+  if (polygon.includes(window.ethereum?.chainId)) {
     return 'polygon'
-  } else if (eth.includes(window.ethereum.chainId)) {
+  } else if (eth.includes(window.ethereum?.chainId)) {
     return 'eth'
   }
 }

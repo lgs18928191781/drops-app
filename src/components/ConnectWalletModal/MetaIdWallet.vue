@@ -560,7 +560,7 @@ function submitForm() {
             const loginRes = await LoginCheck(params)
             if (loginRes.code === 0 || loginRes.code === 601) {
               const loginInfo = loginRes.data as BaseUserInfoTypes
-
+              debugger
               const account = {
                 ...loginInfo,
                 userType: params.userType,
@@ -574,7 +574,7 @@ function submitForm() {
               const walletInfo = await hdWalletFromAccount(
                 account,
                 import.meta.env.VITE_NET_WORK,
-                loginInfo.path.toString()
+                loginInfo.path.toString() || 10001
               )
               const hdWallet = new HdWallet(walletInfo.wallet)
               const metaIdInfo = await hdWallet.getMetaIdInfo(walletInfo.rootAddress)

@@ -480,35 +480,37 @@ function openPayIframe(url: string) {
   isPayIframeLoading.value = true
   isShowPayIframe.value = true
   nextTick(() => {
-    if (url.indexOf('<html>') !== -1 || url.indexOf('<form') !== -1) {
-      if (props.payPlatform === PayPlatform.AliPay && isIOS && !isApp) {
-        iosPayHtml.value = url
-        nextTick(() => {
-          document.forms[0].submit()
-        })
+    setTimeout(() => {
+      if (url.indexOf('<html>') !== -1 || url.indexOf('<form') !== -1) {
+        if (props.payPlatform === PayPlatform.AliPay && isIOS && !isApp) {
+          iosPayHtml.value = url
+          nextTick(() => {
+            document.forms[0].submit()
+          })
+        } else {
+          PayIframeRef.value.srcdoc = url
+        }
       } else {
-        PayIframeRef.value.srcdoc = url
-      }
-    } else {
-      if (isIOS && !isApp) {
-        // ios 网页
-        window.addEventListener('message', function(event) {
-          const result = event.data
-          if (result.openUrl) {
-            window.location.href = result.openUrl
-          }
-        })
+        if (isIOS && !isApp) {
+          // ios 网页
+          window.addEventListener('message', function(event) {
+            const result = event.data
+            if (result.openUrl) {
+              window.location.href = result.openUrl
+            }
+          })
 
-        const script = document.createElement('SCRIPT')
-        script.append(`
+          const script = document.createElement('SCRIPT')
+          script.append(`
         window.parent.postMessage({ openUrl: '${url}' }, "*");
       `)
-        PayIframeRef.value!.appendChild(script)
-      } else {
-        PayIframeRef.value.src = url
+          PayIframeRef.value!.appendChild(script)
+        } else {
+          PayIframeRef.value.src = url
+        }
       }
-    }
-    isPayIframeLoading.value = false
+      isPayIframeLoading.value = false
+    }, 1000)
   })
 }
 

@@ -41,7 +41,7 @@
     <div class="pay-type order-msg-item">
       <div class="title">{{ $t('MetaName.Choose Pay Type') }}</div>
       <div class="pay-type-list">
-        <template v-for="(item, index) in payPlatformList" :key="index">
+        <template v-for="(item, index) in payPlatformList" :key="item.key">
           <div
             class="pay-type-item flex flex-align-center"
             v-if="!item.disabled()"
@@ -139,8 +139,8 @@ const router = useRouter()
 const emit = defineEmits(['back', 'success', 'update:loading'])
 
 const currentPayPlatform = ref(
-  userStore.isAuthorized && userStore.user?.evmAddress
-    ? mappingChainId((window as any).ethereum.chainId)
+  userStore.isAuthorized && userStore.user?.evmAddress && (window as any).ethereum
+    ? mappingChainId((window as any).ethereum?.chainId)
     : PayPlatform.UnionPay
 )
 
@@ -191,10 +191,18 @@ function mappingChainId(chainId: string) {
 function changePayType(platform: PayPlatform) {
   if (currentPayPlatform.value === platform) return
   currentPayPlatform.value = platform
+  setCurrencyAmount()
+}
+
+function setCurrencyAmount() {
   if (currentPayPlatform.value === PayPlatform.UnionPay) {
     currencyAmount.value = props.price
-  } else {
+  } else if (currentPayPlatform.value === PayPlatform.ETH) {
     currencyAmount.value = getCurrencyAmount(props.price, ToCurrency.USD, ToCurrency.ETH)
+  } else if (currentPayPlatform.value === PayPlatform.BSV) {
+    currencyAmount.value = getCurrencyAmount(props.price, ToCurrency.USD, ToCurrency.BSV)
+  } else if (currentPayPlatform.value === PayPlatform.POLYGON) {
+    currencyAmount.value = getCurrencyAmount(props.price, ToCurrency.USD, ToCurrency.POLYGON)
   }
 }
 
@@ -205,10 +213,9 @@ async function pay() {
       metaNameBgColorIndex.value = randomNumber(0, 9)
       await nextTick()
       const res = await html2canvas(MetaNameRef.value, {
+        scale: 2,
         backgroundColor: null,
         removeContainer: true,
-        width: 240,
-        height: 300,
       })
       if (res) {
         const base64 = res.toDataURL('image/png')
@@ -313,11 +320,7 @@ function onPaySuccess(params: { orderId: string; platform: PayPlatform; productT
   emit('success')
 }
 
-if (currentPayPlatform.value === PayPlatform.UnionPay) {
-  currencyAmount.value = props.price
-} else {
-  currencyAmount.value = getCurrencyAmount(props.price, ToCurrency.USD, ToCurrency.ETH)
-}
+setCurrencyAmount()
 urlToBase64(MetaTag).then(val => {
   metaTagString.value = val
 })

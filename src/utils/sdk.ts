@@ -984,10 +984,7 @@ export class SDK {
           if (transactions.metaFiles && transactions.metaFiles.length) {
             for (const item of transactions.metaFiles) {
               const index = transactions.metaFiles.findIndex(_item => _item.txId === item.txId)
-              this.setTransferUtxoAndOutputAndSign(
-                item.transaction,
-                [utxo],
-                // 最后一个metafile 的找零地址 如果之后需要创建brfc节点 则打到 protocol 地址 否则 打到 bfr节点地址
+              const changeAddress =
                 index < transactions.metaFiles.length - 1
                   ? transactions.metaFileBrfc!.address
                   : transactions.currentNodeBrfc?.transaction
@@ -995,16 +992,42 @@ export class SDK {
                   : transactions.nft?.issue?.transaction || transactions.currentNode?.transaction
                   ? transactions.currentNodeBrfc!.address
                   : lastChangeAddress
+
+              debugger
+              this.setTransferUtxoAndOutputAndSign(
+                item.transaction,
+                [utxo],
+                // 最后一个metafile 的找零地址 如果之后需要创建brfc节点 则打到 protocol 地址 否则 打到 bfr节点地址
+                changeAddress
               )
               // 更新txId
               transactions.metaFiles[index].txId = transactions.metaFiles[index].transaction.id
               // 组装新 utxo
+              const addressInfo: any = {}
+              if (index < transactions.metaFiles.length - 1) {
+                addressInfo.addressIndex = transactions.metaFileBrfc!.addressIndex
+                addressInfo.addressType = transactions.metaFileBrfc!.addressType
+              } else if (transactions.currentNodeBrfc?.transaction) {
+                addressInfo.addressType = parseInt(
+                  this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[0]
+                )
+                addressInfo.addressIndex = parseInt(
+                  this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[1]
+                )
+              } else if (
+                transactions.nft?.issue?.transaction ||
+                transactions.currentNode?.transaction
+              ) {
+                addressInfo.addressIndex = transactions.currentNodeBrfc!.addressIndex
+                addressInfo.addressType = transactions.currentNodeBrfc!.addressType
+              }
               utxo = await this.wallet!.utxoFromTx({
                 tx: item.transaction,
-                addressInfo: {
-                  addressIndex: transactions.metaFileBrfc!.addressIndex,
-                  addressType: transactions.metaFileBrfc!.addressType,
-                },
+                addressInfo,
+                // addressInfo: {
+                //   addressIndex: transactions.metaFileBrfc!.addressIndex,
+                //   addressType: transactions.metaFileBrfc!.addressType,
+                // },
               })
               debugger
             }
@@ -1092,6 +1115,7 @@ export class SDK {
                 }
               )
               if (res) transactions.currentNode = res
+              debugger
               this.setTransferUtxoAndOutputAndSign(
                 transactions.currentNode.transaction,
                 [utxo],

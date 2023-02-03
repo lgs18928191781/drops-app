@@ -20,7 +20,7 @@ import { useI18n } from 'vue-i18n'
 //@ts-ignore
 import namehash from 'eth-ens-namehash'
 import { bytesLength } from '@/utils/util'
-import { MetaNameFeePerYear } from '@/enum'
+import { useMetaNameStore } from '@/stores/metaname'
 interface Props {
   metaName?: string
 }
@@ -30,6 +30,7 @@ const value = ref(props.metaName ? decodeURIComponent(props.metaName) : '')
 const MetaNameReg = /\./g
 const i18n = useI18n()
 const emit = defineEmits(['submit', 'error'])
+const metaNameStore = useMetaNameStore()
 
 function submit() {
   if (value.value === '') {
@@ -50,11 +51,11 @@ function checkInputName(name: string) {
   const testResult = bytesLength(name.trim())
   switch (true) {
     case testResult >= 5 && testResult <= 63:
-      return MetaNameFeePerYear.five
+      return metaNameStore.MetaNameFeePerYear.five
     case testResult == 4:
-      return MetaNameFeePerYear.four
+      return metaNameStore.MetaNameFeePerYear.four
     case testResult == 3:
-      return MetaNameFeePerYear.third
+      return metaNameStore.MetaNameFeePerYear.third
     case testResult > 0 && testResult <= 2:
       ElMessage.error(`${i18n.t('metanameNotAllowMin')}`)
       return false
