@@ -464,7 +464,7 @@
   "confirm": "确认",
   "SDK": {
     "payconfirm": {
-      "Payment": "支付",
+      "Payment": "支付上链费",
       "ME": "能量点",
       "tips": "对于低于",
       "tips2": "的操作，不再有付款确认提示",

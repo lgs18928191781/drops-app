@@ -9,7 +9,7 @@
     id="messagesScroll"
     v-show="!layout.isShowMessagesLoading"
   >
-    <div class="overflow-x-hidden">
+    <div class="">
       <div class="flex flex-col-reverse space-y-2 space-y-reverse">
         <template v-if="talk.activeChannelType === 'group'">
           <MessageItem

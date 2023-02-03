@@ -19,7 +19,7 @@
       >
         <ChannelMemberItem
           v-for="item in vir.getVirtualItems()"
-          class="absolute top-0 left-0 w-full"
+          class="absolute top-0 left-0 w-full z-0"
           :id="item.index"
           :style="{ transform: `translateY(${item.start}px)` }"
           :member="talkStore.members.at(item.index)"
