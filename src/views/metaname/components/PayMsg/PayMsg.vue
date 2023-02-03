@@ -211,8 +211,8 @@ async function pay() {
       const res = await html2canvas(MetaNameRef.value, {
         backgroundColor: null,
         removeContainer: true,
-        width: 240,
-        height: 300,
+        width: 480,
+        height: 600,
       })
       if (res) {
         const base64 = res.toDataURL('image/png')
