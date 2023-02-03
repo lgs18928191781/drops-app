@@ -5,6 +5,7 @@
     :close-on-click-modal="!loading"
     :title="$t('NFT.Transfer')"
     @close="emit('update:modelValue', false)"
+    :show-close="!loading"
   >
     <div
       class="nft-buy"
@@ -61,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { PayPlatform } from '@/enum'
+import { NodeName, PayPlatform } from '@/enum'
 import { useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
 import { reactive, ref } from 'vue'
@@ -132,22 +133,44 @@ async function transfer() {
 async function confirmTransfer() {
   loading.value = true
   const res = await userStore.showWallet
-    .transferNFT({
-      receiverAddress: transferUser.val!.address,
-      codehash: props.nft.nftCodehash,
-      genesis: props.nft.nftGenesis,
-      tokenIndex: props.nft.nftTokenIndex,
+    .createBrfcChildNode({
+      nodeName: NodeName.NftTransfer,
+      data: JSON.stringify({
+        receiverAddress: transferUser.val!.address,
+        codehash: props.nft.nftCodehash,
+        genesis: props.nft.nftGenesis,
+        tokenIndex: props.nft.nftTokenIndex,
+      }),
     })
     .catch(error => {
       ElMessage.error(error.message)
       loading.value = false
     })
-  if (res && res.txid) {
+  if (res) {
     emit('success')
     ElMessage.success(i18n.t('NFT.Transfer Success'))
     emit('update:modelValue', false)
     loading.value = false
+  } else {
+    loading.value = false
   }
+  // const res = await userStore.showWallet
+  //   .transferNFT({
+  //     receiverAddress: transferUser.val!.address,
+  //     codehash: props.nft.nftCodehash,
+  //     genesis: props.nft.nftGenesis,
+  //     tokenIndex: props.nft.nftTokenIndex,
+  //   })
+  //   .catch(error => {
+  //     ElMessage.error(error.message)
+  //     loading.value = false
+  //   })
+  // if (res && res.txid) {
+  //   emit('success')
+  //   ElMessage.success(i18n.t('NFT.Transfer Success'))
+  //   emit('update:modelValue', false)
+  //   loading.value = false
+  // }
 }
 </script>
 
