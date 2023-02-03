@@ -197,6 +197,8 @@ function changePayType(platform: PayPlatform) {
     currencyAmount.value = getCurrencyAmount(props.price, ToCurrency.USD, ToCurrency.ETH)
   } else if (currentPayPlatform.value === PayPlatform.BSV) {
     currencyAmount.value = getCurrencyAmount(props.price, ToCurrency.USD, ToCurrency.BSV)
+  } else if (currentPayPlatform.value === PayPlatform.POLYGON) {
+    currencyAmount.value = getCurrencyAmount(props.price, ToCurrency.USD, ToCurrency.POLYGON)
   }
 }
 

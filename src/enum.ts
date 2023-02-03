@@ -402,6 +402,7 @@ export enum ToCurrency {
   USD = 'USD',
   MVC = 'MVC',
   BSV = 'BSV',
+  POLYGON = 'POLYGON',
 }
 
 export enum ChannelRoomType {
