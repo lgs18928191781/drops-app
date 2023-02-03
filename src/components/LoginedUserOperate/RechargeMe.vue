@@ -174,7 +174,7 @@ const rate = ref(0)
 const isShowPayTypes = ref(false)
 const currentPayPlatform = ref(
   userStore.isAuthorized && userStore.user?.evmAddress
-    ? mappingChainId((window as any).ethereum.chainId)
+    ? mappingChainId((window as any).ethereum?.chainId)
     : PayPlatform.UnionPay
 )
 const isShowCouponMsg = ref(false)
