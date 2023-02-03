@@ -1,17 +1,17 @@
 <template>
-  <Popover class="relative cursor-pointer w-10 h-10 max-w-full max-h-full">
-    <PopoverButton class="outline-none">
-      <Image :src="image" :type="type" :default-image="DefaultAvatar" :custom-class="customClass" />
-    </PopoverButton>
+  <!-- <Popover class="relative cursor-pointer w-10 h-10 max-w-full max-h-full">
+    <PopoverButton class="outline-none"> -->
+  <Image :src="image" :type="type" :default-image="DefaultAvatar" :custom-class="customClass" />
+  <!-- </PopoverButton> -->
 
-    <!-- <PopoverOverlay class="fixed inset-0 bg-black opacity-50 z-[100]" />
+  <!-- <PopoverOverlay class="fixed inset-0 bg-black opacity-50 z-[100]" />
 
     <PopoverPanel class="w-auto h-auto">
       <div class="fixed top-0 left-0 z-[9000] w-auto h-auto" ref="userCard">
         <UserCardVue :meta-id="metaId" :name="name" v-model="isShowUserCard" />
       </div>
     </PopoverPanel> -->
-  </Popover>
+  <!-- </Popover> -->
 </template>
 <script lang="ts" setup>
 import { ref, computed, Ref } from 'vue'
