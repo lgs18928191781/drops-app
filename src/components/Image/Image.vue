@@ -6,7 +6,13 @@
       </template>
       <template #default>
         <!-- <img ref="imgRef" :data-src="url" :class="imageClass" @error="fail" loading="lazy" /> -->
-        <img ref="imgRef" :src="url" :class="imageClass" @error="fail" loading="lazy" />
+        <img
+          ref="imgRef"
+          :src="url"
+          :class="[imageClass, 'object-center object-cover']"
+          @error="fail"
+          loading="lazy"
+        />
       </template>
     </ElSkeleton>
   </div>

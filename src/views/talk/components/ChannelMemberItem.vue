@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex items-center py-1 lg:py-2 group cursor-pointer hover:bg-dark-200 hover:dark:bg-gray-900 px-4 -mx-4"
+    class="flex items-center py-1 lg:py-2 group cursor-pointer hover:bg-dark-200 hover:dark:bg-gray-900 px-4"
     @click="messageThisGuy"
   >
     <UserAvatar
@@ -8,7 +8,8 @@
       :type="member.avatarType"
       :meta-id="member.metaId"
       :image="member.avatarImage"
-      class="w-9 h-9 shrink-0"
+      :image-class="'w-9 h-9'"
+      class="shrink-0"
     />
     <div class="ml-2 flex flex-col">
       <div
