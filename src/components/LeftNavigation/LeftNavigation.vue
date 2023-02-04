@@ -1,7 +1,7 @@
 <template>
   <!-- 社区列表 -->
   <div
-    class="w-22.5 dark:bg-gray-700 space-y-4.5 left-navigation z-50 py-4.5 overflow-y-auto lg:overflow-y-hidden lg:hover:overflow-y-auto  slimmer-scrollbar"
+    class="w-22.5 fullscreen dark:bg-gray-700 space-y-4.5 left-navigation z-50 py-4.5 overflow-y-auto lg:overflow-y-hidden lg:hover:overflow-y-auto  slimmer-scrollbar"
     :class="[layout.isShowLeftNav ? '' : 'hidden lg:block']"
   >
     <div class="space-y-4.5">
