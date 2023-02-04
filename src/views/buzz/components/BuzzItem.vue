@@ -42,7 +42,7 @@
             <div class="name">
               <UserName
                 :name="displayItemData.userName"
-                :metaName="displayItemData.userInfo.name"
+                :metaName="displayItemData?.userInfo?.name"
               />
             </div>
             <div class="desc">

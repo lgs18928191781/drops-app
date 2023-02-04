@@ -8,7 +8,7 @@
 <script setup lang="ts">
 interface Props {
   name: string
-  metaName: string
+  metaName?: string
 }
 const props = withDefaults(defineProps<Props>(), {})
 </script>
