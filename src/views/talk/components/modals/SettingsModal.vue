@@ -1,6 +1,6 @@
 <template>
   <div
-    class="fixed inset-0 h-screen w-screen z-50 bg-dark-100 flex justify-center items-center select-none"
+    class="fixed inset-0 fullscreen w-screen z-50 bg-dark-100 flex justify-center items-center select-none"
   >
     <div
       class="h-full w-full relative bg-dark-100 px-5 py-2.5 lg:w-96 lg:bg-white lg:h-4/5 lg:rounded-lg lg:shadow-lg"

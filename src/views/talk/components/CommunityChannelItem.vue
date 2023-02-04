@@ -99,7 +99,6 @@ watch(
 )
 
 const goChannel = () => {
-  console.log('hi')
   if (props.channel.isPlaceHolder) {
     return
   }

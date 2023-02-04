@@ -345,7 +345,7 @@ export class SDK {
         } else {
           // 构建没有utxo 的所有 transaction
           let transactions = await this.createBrfcChildNodeTransactions(params)
-          debugger
+          
           let payToRes: CreateNodeRes | undefined = undefined
           if (!params.utxos!.length) {
             // 计算总价
@@ -378,7 +378,7 @@ export class SDK {
               // 打钱地址
               let receive = this.getNodeTransactionsFirstReceive(transactions, params)
 
-              debugger
+              
               // 获取上链时的utxo
               const getUtxoRes = await this.getAmountUxto({
                 sdkPayType: option.payType!,
@@ -767,7 +767,7 @@ export class SDK {
                 }
               }
               const nftManager = this.wallet!.getNftManager()
-              debugger
+              
               const feeNumber = await nftManager[
                 params.nodeName === NodeName.NftGenesis
                   ? 'getGenesisEstimateFee'
@@ -993,7 +993,7 @@ export class SDK {
                   ? transactions.currentNodeBrfc!.address
                   : lastChangeAddress
 
-              debugger
+              
               this.setTransferUtxoAndOutputAndSign(
                 item.transaction,
                 [utxo],
@@ -1029,7 +1029,7 @@ export class SDK {
                 //   addressType: transactions.metaFileBrfc!.addressType,
                 // },
               })
-              debugger
+              
             }
           }
 
@@ -1115,7 +1115,7 @@ export class SDK {
                 }
               )
               if (res) transactions.currentNode = res
-              debugger
+              
               this.setTransferUtxoAndOutputAndSign(
                 transactions.currentNode.transaction,
                 [utxo],
@@ -1208,7 +1208,7 @@ export class SDK {
         // 广播 nft issue
         if (transactions.nft) {
           for (let i in transactions.nft) {
-            debugger
+            
             // @ts-ignore
             await this.wallet?.provider.broadcast(transactions.nft[i].transaction.toString())
           }

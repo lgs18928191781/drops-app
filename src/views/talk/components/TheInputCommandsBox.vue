@@ -2,7 +2,7 @@
   <Teleport to="body">
     <div
       v-show="showMoreCommandsBox"
-      class="fixed z-50 inset-0 h-screen w-screen bg-transparent"
+      class="fixed z-50 inset-0 fullscreen w-screen bg-transparent"
       @click="showMoreCommandsBox = false"
     >
       <div class="relative h-full w-full">
