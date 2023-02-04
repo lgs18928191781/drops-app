@@ -29,7 +29,7 @@
         {{ channel.name }}
       </div>
 
-      <template v-if="hasButtons">
+      <template v-if="hasButtons && isDesktop">
         <button
           class="hover:text-dark-800 dark:hover:text-white text-dark-300 dark:text-gray-400 mr-2 hidden group-hover:!block"
           @click.stop="editChannel"
@@ -50,19 +50,21 @@
 </template>
 
 <script lang="ts" setup>
+import { defineProps, ref, watch, computed } from 'vue'
+import { useRouter } from 'vue-router'
+
 import { Channel } from '@/@types/talk'
 import { GroupChannelType, JobStatus } from '@/enum'
 import { useChannelFormStore } from '@/stores/forms'
 import { useJobsStore } from '@/stores/jobs'
 import { useLayoutStore } from '@/stores/layout'
 import { useTalkStore } from '@/stores/talk'
-import { defineProps, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
 
 const talk = useTalkStore()
 const router = useRouter()
 const layout = useLayoutStore()
+
 interface Props {
   channel: any
   hasButtons?: boolean
@@ -71,7 +73,9 @@ const props = withDefaults(defineProps<Props>(), {
   channel: {} as Channel,
   hasButtons: true,
 })
+
 const loading = ref(false)
+const isDesktop = computed(() => window.innerWidth > 1024)
 
 // 如果是占位符，则使用订阅id来观察ws消息
 const jobsStore = useJobsStore()
@@ -95,6 +99,7 @@ watch(
 )
 
 const goChannel = () => {
+  console.log('hi')
   if (props.channel.isPlaceHolder) {
     return
   }

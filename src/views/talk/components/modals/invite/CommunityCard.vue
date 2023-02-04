@@ -5,8 +5,8 @@
     </template>
 
     <template #body>
-      <div class="h-full w-full flex flex-col items-stretch justify-between text-dark-800">
-        <div class="relative w-94 aspect-[3/4]" ref="cardContainer">
+      <div class="h-full w-full flex flex-col items-center justify-between text-dark-800">
+        <div class="relative card-height aspect-[3/4]" ref="cardContainer">
           <div
             class="w-full h-full card-border rounded-lg z-20 relative bg-white flex flex-col items-center justify-between p-7.5"
           >
@@ -37,7 +37,7 @@
               <div class="mt-10">
                 <Image
                   :src="inviting.community?.icon"
-                  custom-class="w-22.5 h-22.5 rounded-[45%] border-2 border-dark-800"
+                  custom-class="w-22.5 h-22.5 rounded-[45%] border-2 border-dark-800 box-content"
                 />
               </div>
 
@@ -96,7 +96,7 @@
           ></div>
         </div>
 
-        <div class="mt-6">
+        <div class="mt-6 self-stretch">
           <button
             class="main-border primary w-full py-3 text-base font-bold"
             @click="saveCard"
@@ -200,6 +200,11 @@ const saveCard = async () => {
     rgba(255, 229, 126, 0.54) 360deg,
     #ffbc75 360deg
   );
+}
+
+.card-height {
+  /* 65vh */
+  height: calc(var(--vh, 1vh) * 65);
 }
 
 .move {

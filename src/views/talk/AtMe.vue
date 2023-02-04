@@ -1,12 +1,12 @@
 <template>
-  <div class="relative h-screen lg:flex text-base">
+  <div class="relative fullscreen lg:flex text-base">
     <DirectContactList />
 
     <div class="lg:grow lg:h-screen lg:relative lg:flex">
       <AtMeHeader />
 
       <div
-        class="pt-12 pb-17.5 h-screen lg:relative w-full bg-dark-200 dark:bg-gray-900 lg:pt-15 lg:pb-20"
+        class="pt-12 pb-17.5 fullscreen lg:relative w-full bg-dark-200 dark:bg-gray-900 lg:pt-15 lg:pb-20"
       >
         <div class="h-full">
           <MessageList />
