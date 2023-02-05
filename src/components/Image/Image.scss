@@ -1,16 +1,16 @@
 .image {
-    // position: relative;
+    position: relative;
 
     img {}
 
     .el-skeleton {
         position: absolute;
-        max-width: 100%;
-        max-height: 100%;
+        width: 100%;
+        height: 100%;
 
         .el-skeleton__image {
-            max-width: 100%;
-            max-height: 100%;
+            width: 100%;
+            height: 100%;
         }
     }
 }

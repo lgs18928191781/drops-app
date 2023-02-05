@@ -9,7 +9,7 @@
         <img
           ref="imgRef"
           :src="url"
-          :class="[imageClass, 'object-center object-cover max-w-full']"
+          :class="[imageClass, 'object-center object-cover']"
           @error="fail"
           loading="lazy"
         />

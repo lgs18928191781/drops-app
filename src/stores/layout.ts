@@ -31,7 +31,7 @@ export const useLayoutStore = defineStore('layout', {
       isShowPasswordModal: false,
       isShowRequireNftModal: false,
       isShowRequireFtModal: false,
-      isShowUserInfo: true,
+      isShowUserInfo: false,
       isShowLoading: false,
       never: false,
       isShowWallet: false,

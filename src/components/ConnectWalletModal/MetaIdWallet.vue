@@ -293,6 +293,13 @@ const form = reactive({
   remark: '',
   isAgreePolicy: false,
 })
+// 从存储读取最近选择的地区码
+// const lastAreaCode = localStorage.getItem('lastAreaCode')
+// if (lastAreaCode) {
+//   form.area = lastAreaCode
+//   const country = Vue3CountryIntl.getCountryByCode(lastAreaCode)
+//   // form.countryCode =
+// }
 
 const rules = reactive({
   phone: [
