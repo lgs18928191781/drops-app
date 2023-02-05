@@ -194,15 +194,11 @@
             @click="form.isAgreePolicy = !form.isAgreePolicy"
             ><Icon name="check" v-if="form.isAgreePolicy"
           /></span>
-          <span class="text flex1 flex flex-align-center">
-            {{ $t('Login.policy')
-            }}<a :href="userProtocolAdnPrivitePolicy(1)" target="_blank">{{
-              $t('Login.policy1')
-            }}</a
-            >{{ $t('Login.policy2')
-            }}<a :href="userProtocolAdnPrivitePolicy(2)" target="_blank">{{
-              $t('Login.policy3')
-            }}</a>
+          <span class="text space-x-0.5">
+            <span>{{ $t('Login.policy') }}</span>
+            <a :href="userProtocolAdnPrivitePolicy(1)" target="_blank">{{ $t('Login.policy1') }}</a>
+            <span>{{ $t('Login.policy2') }}</span>
+            <a :href="userProtocolAdnPrivitePolicy(2)" target="_blank">{{ $t('Login.policy3') }}</a>
           </span>
         </template>
       </div>
