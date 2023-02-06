@@ -6,7 +6,7 @@
         $route.path.indexOf('/home') !== -1
     "
   />
-  <div class="flex items-stretch" v-else>
+  <div class="flex main" v-else>
     <LeftNavigationVue v-if="!blackRoute.includes(route.name)" />
     <div class="flex1 main-right">
       <RouterView v-slot="{ Component, route }">

@@ -146,6 +146,7 @@ export interface ChannelFormState {
   name: string
   password: string
   chain: null | Chains
+  chainInfo: null | any
   nft: null | UserNFTItem
   ft: null | FungibleToken
   amount: number
@@ -169,6 +170,7 @@ export const useChannelFormStore = defineStore('channelForm', {
       publicKey: undefined,
       uuid: undefined, // 用于 订阅和 key， 不可修改
       txId: undefined,
+      chainInfo: null as any,
     }
   },
 
@@ -183,6 +185,8 @@ export const useChannelFormStore = defineStore('channelForm', {
           return !!state.name && !!state.nft && !!state.chain
         case GroupChannelType.FT:
           return !!state.name && !!state.ft && !!state.chain
+        case GroupChannelType.Native:
+          return !!state.name && !!state.chain && !!state.amount
 
         default:
           return true

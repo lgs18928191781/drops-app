@@ -77,7 +77,7 @@ export const showLoading = async (fetch: Function, loading: Ref<boolean>) => {
   await fetch()
 
   // 保证至少1秒
-  const delay = Math.max(500 - (new Date().getTime() - currentTimestamp), 0)
+  const delay = Math.max(1000 - (new Date().getTime() - currentTimestamp), 0)
   if (delay) await sleep(delay)
   loading.value = false
 }

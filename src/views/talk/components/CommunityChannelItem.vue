@@ -135,6 +135,8 @@ const channelSymbol = (channel: any) => {
       return 'NFT'
     case GroupChannelType.FT:
       return 'FT'
+    case GroupChannelType.Native:
+      return 'circle_stack'
     default:
       return 'hashtag'
   }
