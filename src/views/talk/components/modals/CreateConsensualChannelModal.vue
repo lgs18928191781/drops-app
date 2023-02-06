@@ -611,9 +611,9 @@ const updateNativeAmount = async (event: any) => {
   const rawAmount = Number(event.target.value)
   let amountInMinUnit = rawAmount * 10 ** selectedChainForNative.value.precision
 
-  if (amountInMinUnit > nativeBalance.value) {
-    amountInMinUnit = nativeBalance.value
-  }
+  // if (amountInMinUnit > nativeBalance.value) {
+  //   amountInMinUnit = nativeBalance.value
+  // }
   nativeAmount.value = amountInMinUnit / 10 ** selectedChainForNative.value.precision
 
   // 更新到表单
@@ -625,15 +625,6 @@ const fetchNativeBalance = async () => {
   )
   nativeBalance.value = balance
 }
-
-// watch(
-//   () => form.amount,
-//   (val: number) => {
-//     if (selectedTab.value === 2 && val > nativeBalance.value) {
-//       form.amount = nativeBalance.value
-//     }
-//   }
-// )
 
 watchEffect(async () => {
   if (selectedTab.value === 0) {
