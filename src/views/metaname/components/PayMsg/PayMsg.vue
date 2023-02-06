@@ -121,6 +121,7 @@ import MetaNameLogo from '@/assets/metaname/logo_metaname.png'
 
 import { getBlockHeight, MetaNameUpdateInfo, GetMetaNameInfo } from '@/api/index'
 import { useI18n } from 'vue-i18n'
+import { UploadMetaNameCover } from '@/api/wxcore'
 interface Props {
   price: number
   year: number
@@ -220,12 +221,18 @@ async function pay() {
       if (res) {
         const base64 = res.toDataURL('image/png')
         const file = dataURLtoFile(base64, `${props.name}.png`)
-        const attachment = await FileToAttachmentItem(file)
-        const result = await userStore.showWallet.createBrfcChildNode({
-          nodeName: NodeName.MetaFile,
-          attachments: [attachment],
-        })
-        metafile = result!.metaFiles![0].txId
+        const formData = new FormData()
+        formData.append('file', file)
+        const response = await UploadMetaNameCover(formData)
+        if (response) {
+          metafile = response.image_tx_id
+        }
+        // const attachment = await FileToAttachmentItem(file)
+        // const result = await userStore.showWallet.createBrfcChildNode({
+        //   nodeName: NodeName.MetaFile,
+        //   attachments: [attachment],
+        // })
+        // metafile = result!.metaFiles![0].txId
       }
     }
     const metaNameOpParams: {

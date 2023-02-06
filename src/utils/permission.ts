@@ -49,6 +49,16 @@ router.beforeEach(async (to, from, next) => {
     userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
   }
 
+  // MetaName
+  if (
+    to.path.indexOf('/metaname/') !== -1 &&
+    (metaNameStore.MetaNameFeePerYear.third === 0 ||
+      metaNameStore.MetaNameFeePerYear.four === 0 ||
+      metaNameStore.MetaNameFeePerYear.five === 0)
+  ) {
+    await metaNameStore.getMetaNameAllPrice()
+  }
+
   if (userStore.isAuthorized) {
     // 用户已登录但未初始化sdk 里面钱包， 则去 初始化 sdk 里面的钱包
     if (!userStore.showWallet.isInitSdked) {
@@ -59,16 +69,6 @@ router.beforeEach(async (to, from, next) => {
     if (!userStore.isGetedKycInfo) {
       // todo: 暂时注释掉
       // await userStore.setKycInfo()
-    }
-
-    // MetaName
-    if (
-      to.path.indexOf('/metaname/') !== -1 &&
-      (metaNameStore.MetaNameFeePerYear.third === 0 ||
-        metaNameStore.MetaNameFeePerYear.four === 0 ||
-        metaNameStore.MetaNameFeePerYear.five === 0)
-    ) {
-      await metaNameStore.getMetaNameAllPrice()
     }
 
     if (!userStore.isSetedisTestUser) {

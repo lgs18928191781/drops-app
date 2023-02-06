@@ -366,7 +366,6 @@ function drawePayCode() {
             props.payPlatform === PayPlatform.QuickPay
           ) {
             openPayIframe(props.url)
-            isShowPayStatusModal.value = true
           } else {
             const canvas: any = document.querySelector('#qrcodeContainer')
             QRCode.toCanvas(canvas, props.url, (err: any) => {
