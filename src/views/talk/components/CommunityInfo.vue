@@ -6,7 +6,7 @@
   <CommunityInfoModal v-if="layout.isShowCommunityInfoModal" />
 
   <div
-    class="bg-white dark:bg-gray-700 fixed inset-0 h-screen w-screen z-40 lg:static lg:shrink-0 lg:w-auto"
+    class="bg-white dark:bg-gray-700 fixed inset-0 fullscreen w-screen z-40 lg:static lg:shrink-0 lg:w-auto"
     :class="[layout.isShowLeftNav ? '' : 'hidden lg:block']"
   >
     <div class="w-full h-full flex">

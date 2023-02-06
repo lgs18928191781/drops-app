@@ -1,0 +1,197 @@
+.collection {
+    border-radius: var(--rounded) var(--rounded) 0px 0px;
+    overflow: hidden;
+    background: var(--themeBgSecondColor);
+
+    .cover {
+        width: 100%;
+        height: 240px;
+        background: red;
+    }
+
+    .collection-content {
+        padding: 60px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .collection-avatar {
+        margin-top: -140px;
+
+        img {
+            box-sizing: border-box;
+            border: 4px solid #FFFFFF;
+            box-shadow: 0px 4px 6px 0px rgba(48, 49, 51, 0.2);
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+        }
+    }
+
+    .collection-msg {
+        margin-top: 30px;
+
+        .name {
+            font-size: 24px;
+
+            .icon {
+                width: 18px;
+                height: 18px;
+                margin-left: 12px;
+            }
+        }
+
+        .creator {
+            margin-top: 13px;
+            font-size: 16px;
+
+            a {
+                color: var(--color-hover);
+                margin-left: 5px;
+                cursor: pointer;
+            }
+
+            .icon {
+                width: 24px;
+                height: 24px;
+                margin-left: 6px;
+            }
+
+
+        }
+
+        .drsc {
+            margin-top: 13px;
+            font-size: 16px;
+            max-width: 480PX;
+
+            .text {
+                opacity: 0.6;
+            }
+
+            a {
+                color: var(--color-hover);
+                cursor: pointer;
+            }
+        }
+    }
+
+    .statiscs-list {
+        .statiscs-item {
+
+            display: inline-block;
+            vertical-align: middle;
+            // margin-right: 38px;
+            width: calc(100% / 3);
+            margin: 9px 0;
+
+            .value,
+            .label {
+                text-align: left;
+            }
+
+            .value {
+                font-size: 20px;
+            }
+
+            .label {
+                opacity: 0.6;
+                margin-top: 4px;
+            }
+
+            .statiscs-item-warp {
+                // width: 150px;
+            }
+        }
+    }
+
+
+    .tab {
+        margin-top: 60px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #BFC2CC;
+
+        a {
+            opacity: 0.6;
+            margin-right: 30px;
+            font-size: 16px;
+            cursor: pointer;
+
+            &:last-child {
+                margin-right: 0;
+            }
+
+            &.active {
+                opacity: 1;
+                position: relative;
+
+                &::before {
+                    content: '';
+                    position: absolute;
+                    left: 0;
+                    bottom: 0;
+                    width: 100%;
+                    height: 2px;
+                    background-color: var(--themeTextColor);
+                    margin-bottom: -12px;
+                }
+            }
+        }
+    }
+
+    .screen {
+        margin-top: 18px;
+
+        .main-border {
+            display: inline-flex;
+            cursor: pointer;
+            padding: 13px 24px;
+
+            .icon {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        .display {
+            background: #F5F7FA;
+            border-radius: var(--rounded);
+            margin-left: 23px;
+
+            a {
+                padding: 12px 24px;
+                cursor: pointer;
+
+                .icon {
+                    width: 24px;
+                    height: 24px;
+
+                    :deep(use) {
+                        opacity: 0.6;
+                    }
+                }
+
+                &:hover {
+                    :deep(use) {
+                        opacity: 1;
+                    }
+                }
+
+                &.active {
+                    background: var(--color-primary);
+                    border-radius: var(--rounded);
+                    border: 2px solid #303133;
+
+                    :deep(use) {
+                        opacity: 1;
+                    }
+
+                }
+            }
+        }
+    }
+
+    .nft-list {
+        margin-top: 18px;
+    }
+}

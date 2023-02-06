@@ -211,5 +211,22 @@ export const MetaNameAllPrice = (): Promise<{
     cny: number
   }[]
 }> => {
-  return Wxcore.post(`/metaname/price`)
+  return Wxcore.get(`/metaname/price`)
+}
+
+export const UploadMetaNameCover = (
+  params: any
+): Promise<{
+  image_tx_id: string
+  name: string
+}> => {
+  return Wxcore.post(`/metaname/image/upload`, params, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+}
+
+export const GetMetaNameInfo = (name: string): Promise<MetaNameIndexerInfo> => {
+  return Wxcore.get(`/metaname/indexer/info`, { params: { name } })
 }

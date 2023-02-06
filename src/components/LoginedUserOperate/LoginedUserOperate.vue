@@ -15,7 +15,7 @@
         :image="userStore.user!.avatarImage"
         :meta-id="userStore.user!.metaId"
         :name="userStore.user!.name"
-        class="user-warp-item"
+        class="user-warp-item overflow-hidden"
       />
 
       <a

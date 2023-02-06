@@ -77,7 +77,7 @@ export const showLoading = async (fetch: Function, loading: Ref<boolean>) => {
   await fetch()
 
   // 保证至少1秒
-  const delay = Math.max(500 - (new Date().getTime() - currentTimestamp), 0)
+  const delay = Math.max(1000 - (new Date().getTime() - currentTimestamp), 0)
   if (delay) await sleep(delay)
   loading.value = false
 }
@@ -1035,8 +1035,8 @@ export function getCurrencyAmount(
 
     if (currency === 'CNY') {
       // cny -> usd
-      const rateUSD = new Decimal(rootStore.exchangeRate[0]!.price.CNY)
-        .div(rootStore.exchangeRate[0]!.price.USD)
+      const rateUSD = new Decimal(rootStore.exchangeRate[1]!.price.CNY)
+        .div(rootStore.exchangeRate[1]!.price.USD)
         .toNumber()
       return new Decimal(
         new Decimal(price)

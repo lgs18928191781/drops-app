@@ -87,7 +87,11 @@
           <div class="tips">
             {{ $t('EditProfile.MetaNameTips') }}
           </div>
-          <ChooseMetaNameVue @change="onChangeMetaName" :name="currentMetaName.val.name" />
+          <ChooseMetaNameVue
+            @change="onChangeMetaName"
+            :name="currentMetaName.val.name"
+            :is-show-all-meta-name="true"
+          />
         </div>
       </template>
     </template>

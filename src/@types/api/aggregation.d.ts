@@ -168,6 +168,8 @@ declare interface UserAllInfo {
   coverType: string
   coverPublicKey: string
   timestamp: number
+  metaName: string
+  nameType: string
 }
 
 declare interface UserSimpleInfo {

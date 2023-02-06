@@ -59,6 +59,7 @@ export const useTalkStore = defineStore('talk', {
 
       consensualNft: null as any,
       consensualFt: null as any,
+      consensualNative: null as any,
     }
   },
 
@@ -142,6 +143,7 @@ export const useTalkStore = defineStore('talk', {
         if (channel.roomJoinType === '3') return GroupChannelType.FT
         if (channel.roomJoinType === '2001') return GroupChannelType.ETH_NFT
         if (channel.roomJoinType === '2002') return GroupChannelType.POLYGON_NFT
+        if (channel.roomJoinType === '4000') return GroupChannelType.Native
 
         return null
       }
@@ -222,7 +224,7 @@ export const useTalkStore = defineStore('talk', {
     },
 
     isActiveChannelTheVoid(): boolean {
-      return this.activeChannelId === 'index'
+      return this.activeChannelId === 'welcome'
     },
 
     isActiveChannelSettings(): boolean {
@@ -400,7 +402,7 @@ export const useTalkStore = defineStore('talk', {
         if (routeCommunityId === '@me') {
           channelId = this.activeCommunityChannels[0].id
         } else {
-          channelId = latestChannels[routeCommunityId] || 'index'
+          channelId = latestChannels[routeCommunityId] || 'welcome'
         }
 
         this.activeChannelId = channelId

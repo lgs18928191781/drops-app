@@ -10,7 +10,9 @@
             :name="userStore.user!.name"
           />
           <div class="cont flex1">
-            <div class="name">{{ userStore.user!.name }}</div>
+            <div class="name">
+              <UserName :name="userStore.user!.name" :meta-name="userStore.user!.metaName" />
+            </div>
             <div class="metaid">
               {{ userStore.user!.metaId.slice(0, 6) }}...{{ userStore.user!.metaId.slice(-6) }}
             </div>

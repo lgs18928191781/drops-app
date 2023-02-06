@@ -23,9 +23,10 @@
             :name="itemData.userName"
           />
           <div class="name">
-            <UserName :name="itemData.userName" :metaName="itemData.userInfo.name" />&nbsp;|&nbsp;{{
-              $t('Forwarded')
-            }}
+            <UserName
+              :name="itemData.userName"
+              :metaName="itemData.userInfo.metaName"
+            />&nbsp;|&nbsp;{{ $t('Forwarded') }}
           </div>
         </div>
       </template>
@@ -42,7 +43,7 @@
             <div class="name">
               <UserName
                 :name="displayItemData.userName"
-                :metaName="displayItemData.userInfo.name"
+                :metaName="displayItemData?.userInfo?.metaName"
               />
             </div>
             <div class="desc">

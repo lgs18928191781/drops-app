@@ -151,25 +151,51 @@
               </template>
 
               <!-- Native -->
-              <!-- <template v-if="selectedTab === 2">
-                <div class="w-full flex items-center justify-start gap-x-4">
-                  <ChainSelect
-                    :chains="chains.filter(chain => chain.name === 'MVC')"
-                    v-model:selected-chain="selectedChainForNative"
-                  />
-                  <input
-                    type="number"
-                    class="outline-0 main-border  faded-switch !bg-white dark:!bg-gray-700 still py-2 px-4 text-sm placeholder:font-normal w-full"
-                    min="1"
-                    :placeholder="$t('Talk.Modals.amount_needed')"
-                    v-model="form.amount"
-                    autocomplete="nope"
-                  />
+              <template v-if="selectedTab === 2">
+                <div class="w-full">
+                  <div class="w-full flex items-center justify-start gap-x-4">
+                    <ChainSelect
+                      :chains="chains.filter(chain => chain.name === 'MVC')"
+                      v-model:selected-chain="selectedChainForNative"
+                      :use-coin-name="true"
+                    />
+                    <div class="relative grow">
+                      <input
+                        type="number"
+                        class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-700 still py-2 pl-4 pr-12 text-sm placeholder:font-normal w-full"
+                        min="1"
+                        :placeholder="$t('Talk.Modals.amount_needed')"
+                        :value="nativeAmount"
+                        @input="updateNativeAmount"
+                        autocomplete="nope"
+                      />
+                      <span
+                        class="absolute top-0 right-0 h-full inline-flex items-center justify-center"
+                      >
+                        <span
+                          class="text-dark-400 dark:text-gray-300 text-sm pl-2 pr-3 border-l-2 border-solid border-dark-250 dark:border-gray-400"
+                        >
+                          {{ selectedChainForNative?.unit }}
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="mt-2 text-sm space-x-2 flex items-center">
+                    <span>{{ $t('Talk.Modals.you_have') }}</span>
+                    <Icon
+                      name="loading"
+                      class="w-4 h-4 animate-spin text-dark-400 dark:text-gray-200"
+                      v-if="fetchingNative"
+                    />
+                    <span v-else>
+                      {{ nativeBalanceInBigUnit }} {{ selectedChainForNative?.unit }}
+                    </span>
+                  </div>
                 </div>
-              </template> -->
+              </template>
 
               <!-- Password -->
-              <template v-if="selectedTab === 2">
+              <template v-if="selectedTab === 3">
                 <Icon
                   name="lock"
                   class="w-5 h-5 lg:text-dark-300 lg:dark:text-gray-400 absolute left-4 box-content lg:group-hover:text-dark-800 dark:lg:group-hover:!text-gray-100 transition-all duration-200"
@@ -348,7 +374,7 @@ import {
   SwitchLabel,
   SwitchGroup,
 } from '@headlessui/vue'
-import { Ref, ref, watchEffect, computed } from 'vue'
+import { Ref, ref, watchEffect, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 import { useChannelFormStore } from '@/stores/forms'
@@ -364,6 +390,7 @@ import MVC from '@/assets/images/iocn_mvc.png'
 import POLYGON from '@/assets/svg/polygon.svg?url'
 import { realRandomString, showLoading, sleep } from '@/utils/util'
 import { Chains, ChannelPublicityType, GroupChannelType, ShowControl } from '@/enum'
+import chains from '@/utils/chains'
 
 import BaseModal from './BaseModal.vue'
 import ChainSelect from '../ChainSelect.vue'
@@ -381,12 +408,16 @@ function changeTab(index: number) {
   switch (index) {
     case 0:
       form.type = GroupChannelType.NFT
+      form.chain = selectedChain.value.value
       break
     case 1:
       form.type = GroupChannelType.FT
+      form.chain = selectedChain.value.value
       break
     case 2:
       form.type = GroupChannelType.Native
+      form.chain = selectedChainForNative.value.value
+      form.chainInfo = selectedChainForNative.value
       break
     case 3:
       form.type = GroupChannelType.Password
@@ -395,28 +426,9 @@ function changeTab(index: number) {
 }
 
 const i18n = useI18n()
-const chains = ref([
-  {
-    id: 1,
-    name: import.meta.env.VITE_ETH_CHAIN,
-    icon: ETH,
-    value: import.meta.env.VITE_ETH_CHAIN,
-  },
-  {
-    id: 2,
-    name: 'MVC',
-    icon: MVC,
-    value: 'mvc' as Chains,
-  },
-  {
-    id: 3,
-    name: import.meta.env.VITE_POLYGON_CHAIN,
-    icon: POLYGON,
-    value: import.meta.env.VITE_POLYGON_CHAIN,
-  },
-])
-const selectedChain = ref(chains.value[0])
-const selectedChainForNative = ref(chains.value[1])
+
+const selectedChain = ref(chains[0])
+const selectedChainForNative = ref(chains[1])
 const consentTabs = ref([
   {
     id: 1,
@@ -434,14 +446,10 @@ const consentTabs = ref([
     secondTip: i18n.t('Talk.Community.choose_ft_tip'),
     buttonText: i18n.t('Talk.Community.choose_ft_as_consent'),
   },
-  // {
-  //   id: 3,
-  //   name: 'Native',
-  //   panelTitle: i18n.t('Talk.Community.choose_native'),
-  //   secondTitle: i18n.t('Talk.Community.choose_native'),
-  //   secondTip: i18n.t('Talk.Community.choose_native_tip'),
-  //   buttonText: i18n.t('Talk.Community.choose_native_as_consent'),
-  // },
+  {
+    id: 3,
+    name: i18n.t('Talk.Modals.native'),
+  },
   {
     id: 4,
     name: i18n.t('Talk.Community.password'),
@@ -451,6 +459,10 @@ const consentTabs = ref([
 
 const nftSeries: Ref<any[]> = ref([])
 const ftSeries: Ref<FungibleToken[]> = ref([])
+const nativeBalance: Ref<number> = ref(0)
+const nativeBalanceInBigUnit = computed(() => {
+  return nativeBalance.value / 10 ** selectedChainForNative.value.precision
+})
 
 const form = useChannelFormStore()
 if (form.type === GroupChannelType.NFT) {
@@ -592,17 +604,41 @@ const fetchFtSeries = async () => {
   ftSeries.value = _fts
 }
 
+const fetchingNative = ref(false)
+const nativeAmount = ref(0)
+const updateNativeAmount = async (event: any) => {
+  // 输入的额度不能超过余额
+  const rawAmount = Number(event.target.value)
+  let amountInMinUnit = rawAmount * 10 ** selectedChainForNative.value.precision
+
+  // if (amountInMinUnit > nativeBalance.value) {
+  //   amountInMinUnit = nativeBalance.value
+  // }
+  nativeAmount.value = amountInMinUnit / 10 ** selectedChainForNative.value.precision
+
+  // 更新到表单
+  form.amount = amountInMinUnit
+}
+const fetchNativeBalance = async () => {
+  const balance = await userStore.showWallet!.wallet!.provider.getXpubBalance(
+    userStore.showWallet!.wallet!.wallet.xpubkey.toString()
+  )
+  nativeBalance.value = balance
+}
+
 watchEffect(async () => {
   if (selectedTab.value === 0) {
     await showLoading(fetchNftSeries, fetching)
   } else if (selectedTab.value === 1) {
     await showLoading(fetchFtSeries, fetching)
+  } else if (selectedTab.value === 2) {
+    await showLoading(fetchNativeBalance, fetchingNative)
   }
 })
 
 // onMounted(() => {
 //   if (userStore.user?.evmAddress) {
-//     chains.value.push({
+//     chains.push({
 //       id: 2,
 //       name: import.meta.env.VITE_ETH_CHAIN,
 //       icon: ETH,

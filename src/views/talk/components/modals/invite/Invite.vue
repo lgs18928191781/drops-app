@@ -84,8 +84,44 @@ const selectLink = () => {
 }
 
 const copyInviteLink = () => {
-  navigator.clipboard.writeText(talk.inviteLink)
+  if (!navigator.clipboard) {
+    fallbackCopy()
+  } else {
+    navigator.clipboard.writeText(talk.inviteLink)
+  }
+
   isCopied.value = true
+}
+
+const fallbackCopy = () => {
+  const isIos = navigator.userAgent.match(/ipad|iphone/i)
+  const textarea = document.createElement('textarea')
+
+  // create textarea
+  textarea.value = talk.inviteLink
+
+  // ios will zoom in on the input if the font-size is < 16px
+  textarea.style.fontSize = '20PX'
+  document.body.appendChild(textarea)
+
+  // select text
+  if (isIos) {
+    const range = document.createRange()
+    range.selectNodeContents(textarea)
+
+    const selection = window.getSelection() as Selection
+    selection.removeAllRanges()
+    selection.addRange(range)
+    textarea.setSelectionRange(0, 999999)
+  } else {
+    textarea.select()
+  }
+
+  // copy selection
+  document.execCommand('copy')
+
+  // cleanup
+  document.body.removeChild(textarea)
 }
 
 const shareToBuzz = () => {

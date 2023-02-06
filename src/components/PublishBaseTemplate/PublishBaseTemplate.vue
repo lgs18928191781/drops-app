@@ -21,7 +21,9 @@
             :disabled="true"
           />
           <div class="cont flex1">
-            <div class="name">{{userStore.user!.name}}</div>
+            <div class="name">
+              <UserName :name="userStore.user!.name" :meta-name="userStore.user!.metaName" />
+            </div>
             <div class="metaid">
               {{replayUser ? $t('Replying to') :  'MetaID: ' + userStore.user!.metaId!.slice(0, 6)}}
               <template v-if="replayUser"

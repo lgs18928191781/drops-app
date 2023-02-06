@@ -1,11 +1,11 @@
 <template>
-  <div class="relative h-screen lg:flex text-base">
+  <div class="relative lg:flex text-base fullscreen overscroll-y-none">
     <CommunityInfo />
 
-    <div class="lg:grow lg:h-screen lg:relative lg:flex">
+    <div class="lg:grow fullscreen lg:!h-screen lg:relative lg:flex">
       <ChannelHeader />
 
-      <div class="pt-12 h-screen lg:relative w-full bg-dark-200 dark:bg-gray-900 lg:pt-15">
+      <div class="pt-12 lg:relative w-full bg-dark-200 dark:bg-gray-900 lg:pt-15 h-full">
         <router-view :key="($route.params.channelId as string)"></router-view>
       </div>
 
@@ -18,6 +18,7 @@
     <PasswordModal v-if="layout.isShowPasswordModal" />
     <RequireNftModal v-if="layout.isShowRequireNftModal" />
     <RequireFtModal v-if="layout.isShowRequireFtModal" />
+    <RequireNativeModal v-if="layout.isShowRequireNativeModal" />
     <InviteModal v-if="layout.isShowInviteModal" />
     <CommunityCardModal v-if="layout.isShowCommunityCardModal" />
     <AcceptInviteModal v-if="layout.isShowAcceptInviteModal" />
@@ -46,6 +47,7 @@ import PasswordModal from './components/modals/consensus/Password.vue'
 import CommunitySettingsModal from './components/modals/community/settings/Index.vue'
 import RequireNftModal from './components/modals/consensus/RequireNft.vue'
 import RequireFtModal from './components/modals/consensus/RequireFt.vue'
+import RequireNativeModal from './components/modals/consensus/RequireNative.vue'
 import RedPacketOpenModal from './components/modals/red-packet/Open.vue'
 import RedPacketResultModal from './components/modals/red-packet/Result.vue'
 import RedPacketCreateModal from './components/modals/red-packet/Create.vue'

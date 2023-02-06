@@ -252,6 +252,76 @@ const tryInitChannel = async (status: string) => {
         }
         return
       }
+
+      case GroupChannelType.Native:
+        const chain: string = 'mvc'
+        let selfAddress: string
+        switch (chain) {
+          case 'mvc':
+            selfAddress = user.user!.address
+            break
+          case 'eth':
+            selfAddress = user.user?.evmAddress as string
+            break
+          case 'goerli':
+            selfAddress = user.user?.evmAddress as string
+            break
+          case 'polygon':
+            selfAddress = user.user?.evmAddress as string
+            break
+          case 'mumbai':
+            selfAddress = user.user?.evmAddress as string
+            break
+          default:
+            selfAddress = user.user!.address
+            break
+        }
+
+        // 如果不存在该链地址，则直接拒绝进入
+        if (!selfAddress) {
+          // const {
+          //   data: {
+          //     results: { items },
+          //   },
+          // } = await GetFT({
+          //   codehash: consensualCodehash,
+          //   genesis: consensualGenesis,
+          //   chain,
+          // })
+          // const ftInfo = {
+          //   codehash: consensualCodehash,
+          //   genesis: consensualGenesis,
+          //   icon: items[0].icon,
+          //   name: items[0].name,
+          //   chain,
+          // }
+          // talk.consensualFt = ftInfo
+          // layout.isShowRequireFtModal = true
+          return
+        }
+
+        // 检查币数量
+        // 获取余额
+        const balance = await user
+          .showWallet!.wallet!.provider.getXpubBalance(
+            user.showWallet!.wallet!.wallet.xpubkey.toString()
+          )
+          .catch(error => {
+            ElMessage.error(error.message)
+          })
+        let requiredAmount = Number(talk.activeChannel.roomLimitAmount)
+        if (balance >= requiredAmount) {
+          talk.hasActiveChannelConsent = true
+        } else {
+          talk.consensualNative = {
+            amount: requiredAmount,
+            chain,
+            balance,
+          }
+          layout.isShowRequireNativeModal = true
+        }
+
+        return
     }
   }
 

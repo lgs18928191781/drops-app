@@ -1,6 +1,4 @@
 <template>
-  <!-- <a :href="tpUrl" target="_blank">Tp钱包调起</a> -->
-  <!-- <a :href="signUrl" target="_blank" rel="noopener noreferrer">签名登录</a> -->
   <RouterView
     v-if="
       $route.path === '/' ||
@@ -8,8 +6,7 @@
         $route.path.indexOf('/home') !== -1
     "
   />
-
-  <div class="main flex" v-else>
+  <div class="flex main" v-else>
     <LeftNavigationVue v-if="!blackRoute.includes(route.name)" />
     <div class="flex1 main-right">
       <RouterView v-slot="{ Component, route }">
@@ -99,9 +96,6 @@ const routeKey = (route: any) => {
 </script>
 <style lang="css" src="@/assets/styles/tailwind.css"></style>
 <style lang="scss" scoped>
-.main {
-}
-
 @font-face {
   font-family: Whitney;
   font-style: normal;

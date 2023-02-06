@@ -416,6 +416,17 @@ const _getChannelTypeInfo = (form: any, selfMetaId: string) => {
       limitAmount = form.amount.toString()
       break
 
+    // 原生币
+    case GroupChannelType.Native:
+      groupType = '2'
+      if (form.chain === 'bsv') {
+        type = '4001'
+      } else {
+        type = '4000'
+      }
+      limitAmount = form.amount.toString()
+      break
+
     default:
       break
   }

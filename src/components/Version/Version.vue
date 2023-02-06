@@ -1,5 +1,5 @@
 <template>
-  <span class="version">Private Beta</span>
+  <span class="version">Public Beta</span>
 </template>
 
 <script setup lang="ts"></script>
