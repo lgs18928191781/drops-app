@@ -1,7 +1,7 @@
 <template>
   <span class="user-name">
-    <span class="">{{ metaName ? metaName : name }}</span>
-    <!-- <Icon name="tag_nft" v-if="metaName" /> -->
+    <span :class="{ 'meta-name': metaName }">{{ metaName ? metaName : name }}</span>
+    <Icon name="tag_nft" v-if="metaName" />
   </span>
 </template>
 

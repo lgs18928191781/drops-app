@@ -219,6 +219,7 @@ declare interface BuzzItem {
     nameType: string
     nftNamePublicKey: string
     publicKey: string
+    metaName: string
   }
 }
 

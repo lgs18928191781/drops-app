@@ -45,16 +45,19 @@
 <script lang="ts" setup>
 import Cat from '@/assets/images/cat.svg?url'
 import DogWalking from '@/assets/images/dog_walking.svg?url'
-import { Ref, ref, watchEffect } from 'vue'
+import { reactive, Ref, ref, watchEffect } from 'vue'
 import { showLoading } from '@/utils/util'
 import { getMetaNames, getNewMetaNames } from '@/api/talk'
 import { useTalkStore } from '@/stores/talk'
 import { useCommunityFormStore } from '@/stores/forms'
 import { useLayoutStore } from '@/stores/layout'
 import MetaNameTag from '@/components/MetaName/Tag.vue'
+import { GetUserMetaNames } from '@/api/aggregation'
+import { initPagination } from '@/config'
 
 interface Props {
   name?: string
+  isShowAllMetaName?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {})
 
@@ -65,20 +68,35 @@ const form = useCommunityFormStore()
 
 const fetching = ref(false)
 const metaNames: Ref<MetaNameItem[]> = ref([])
+const pagination = reactive({ ...initPagination, flag: '' })
 
 const fetchMetaNames = async () => {
   // const _ = await getMetaNames({ metaId: talk.selfMetaId, page: 1, pageSize: 20 })
-  const _ = await getNewMetaNames({ address: talk.selfAddress, page: 1, pageSize: 20 })
-  metaNames.value = _
+  let res
+  if (props.isShowAllMetaName) {
+    res = await GetUserMetaNames({ address: talk.selfAddress, ...pagination })
+  } else {
+    res = await getNewMetaNames({ address: talk.selfAddress, ...pagination })
+  }
+  if (res.code === 0) {
+    if (res.data.results.items.length) {
+      metaNames.value.push(...res.data.results.items)
+    } else {
+      pagination.nothing = true
+    }
+    pagination.flag = res.data.nextFlag
+  }
 }
 
-watchEffect(async () => {
-  await showLoading(fetchMetaNames, fetching)
-})
+// watchEffect(async () => {
+//   await showLoading(fetchMetaNames, fetching)
+// })
 
 const selectMetaName = (metaName: MetaNameItem) => {
   emit('change', metaName)
 }
+
+fetchMetaNames()
 </script>
 
 <style lang="scss" src="./ChooseMetaName.scss"></style>

@@ -210,5 +210,5 @@ export const MetaNameAllPrice = (): Promise<{
     cny: number
   }[]
 }> => {
-  return Wxcore.post(`/metaname/price`)
+  return Wxcore.get(`/metaname/price`)
 }

@@ -79,7 +79,9 @@
                 </a>
               </div>
             </div>
-            <div class="name">{{userInfo.val!.name}}</div>
+            <div class="name">
+              <UserName :name="userInfo.val!.name" :meta-name="userInfo.val!.metaName" />
+            </div>
             <div class="metaid flex flex-align-center">
               <span class="id" @click="copy(userInfo.val!.metaId)"
                 >MetaID: {{userInfo.val!.metaId.slice(0, 6)}}</span

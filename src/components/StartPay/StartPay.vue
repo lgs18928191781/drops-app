@@ -479,6 +479,7 @@ function checkOrderStatus() {
 function openPayIframe(url: string) {
   isPayIframeLoading.value = true
   isShowPayIframe.value = true
+  isShowPayStatusModal.value = false
   nextTick(() => {
     setTimeout(() => {
       if (url.indexOf('<html>') !== -1 || url.indexOf('<form') !== -1) {
