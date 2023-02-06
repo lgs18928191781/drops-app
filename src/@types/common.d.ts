@@ -315,6 +315,21 @@ declare interface RecommnedUser {
   metaId: string
   name: string
   total: number
+  userInfo: {
+    name: string
+    metaName: string
+    nameType: string
+    nftNamePublicKey: string
+    avatarTxId: string
+    avatarImage: string
+    avatarType: string
+    address: string
+    publicKey: string
+    coverUrl: string
+    coverType: string
+    coverPublicKey: string
+    metaIdTimestamp: number
+  }
 }
 
 declare interface UserNFTItem {

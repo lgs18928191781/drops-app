@@ -3,47 +3,82 @@
     <!-- cover -->
     <Image class="cover" src="" />
 
-    <!-- collection-avatar -->
-    <div class="collection-avatar">
-      <img src="" />
-    </div>
-
-    <!-- collection-msg -->
-    <div class="collection-msg flex">
-      <div class="flex1">
-        <div class="name flex flex-align-center">MetaBot Avatar <Icon name="certed" /></div>
-        <div class="creator flex flex-align-center">
-          {{ $t('NFT.Creater') }}: <a>ShowPayTeam</a> <Icon name="center_star" />
-        </div>
-        <div class="drsc">
-          MetaBot is the original robot living on the MetaNet blockchain in the future. They were
-          born at the...<a>{{ $t('NFT.Discover More') }}</a>
-        </div>
+    <div class="collection-content">
+      <!-- collection-avatar -->
+      <div class="collection-avatar">
+        <img src="" />
       </div>
-      <div class="flex1">
-        <div class="statiscs-list">
-          <div class="statiscs-item" v-for="(item, index) in statiscs" :key="index">
-            <div class="value">{{ item.value() }}</div>
-            <div class="label">{{ item.name() }}</div>
+
+      <!-- collection-msg -->
+      <div class="collection-msg flex">
+        <div class="flex3">
+          <div class="name flex flex-align-center">MetaBot Avatar <Icon name="certed" /></div>
+          <div class="creator flex flex-align-center">
+            {{ $t('NFT.Creater') }}: <a>ShowPayTeam</a> <Icon name="center_star" />
+          </div>
+          <div class="drsc">
+            <span class="text"
+              >MetaBot is the original robot living on the MetaNet blockchain in the future. They
+              were born at the...</span
+            ><a>{{ $t('NFT.Discover More') }}</a>
+          </div>
+        </div>
+        <div class="flex1">
+          <div class="statiscs-list">
+            <div class="statiscs-item" v-for="(item, index) in statiscs" :key="index">
+              <div class="flex flex-align-center flex-pack-end">
+                <div class="statiscs-item-warp">
+                  <div class="value">{{ item.value() }}</div>
+                  <div class="label">{{ item.name() }}</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- tab -->
-    <div class="tab">
-      <a v-for="(item, index) in tabs" :key="index" :class="{ active: item.value === tabActive }">{{
-        item.name()
-      }}</a>
-    </div>
-
-    <!-- screen -->
-    <div class="screen flex flex-align-center">
-      <div class="flex1">
-        <a class="main-border flex flex-align-center">
-          <Icon name="filter" /> {{ $t('NFT.Filter') }}
-        </a>
+      <!-- tab -->
+      <div class="tab flex flex-align-center">
+        <a
+          v-for="(item, index) in tabs"
+          :key="index"
+          :class="{ active: item.value === tabActive }"
+          >{{ item.name() }}</a
+        >
       </div>
+
+      <!-- screen -->
+      <div class="screen flex flex-align-center">
+        <div class="flex1">
+          <a class="main-border flex flex-align-center">
+            <Icon name="filter" /> {{ $t('NFT.Filter') }}
+          </a>
+        </div>
+        <ElSelect>
+          <option></option>
+        </ElSelect>
+        <div class="display flex flex-align-center">
+          <a>
+            <Icon name="layout-grid-fill" />
+          </a>
+          <a>
+            <Icon name="grid-fill" />
+          </a>
+        </div>
+      </div>
+
+      <ElRow class="nft-list">
+        <ElCol
+          :xs="12"
+          :sm="8"
+          :md="6"
+          :lg="6"
+          :xl="4"
+          v-for="(item, index) in Array.from({ length: 36 })"
+        >
+          <NFTItemVue />
+        </ElCol>
+      </ElRow>
     </div>
   </div>
 </template>
@@ -51,6 +86,8 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import NFTItemVue from '@/components/NFTItem/NFTItem.vue'
+import { ElCol } from 'element-plus'
 
 const i18n = useI18n()
 enum NFTCollectTab {

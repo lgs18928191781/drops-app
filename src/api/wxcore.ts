@@ -225,3 +225,7 @@ export const UploadMetaNameCover = (
     },
   })
 }
+
+export const GetMetaNameInfo = (name: string): Promise<MetaNameIndexerInfo> => {
+  return Wxcore.get(`/metaname/indexer/info`, { params: { name } })
+}
