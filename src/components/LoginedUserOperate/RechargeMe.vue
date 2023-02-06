@@ -62,10 +62,8 @@
                 :class="{ active: activeElement === AmountRef }"
               >
                 <span class="sufix">{{
-                  currentPayPlatform === PayPlatform.ETH
-                    ? ETHName
-                    : currentPayPlatform === PayPlatform.POLYGON
-                    ? PolygonSymbol
+                  platformCionName[currentPayPlatform]
+                    ? platformCionName[currentPayPlatform].toUpperCase()
                     : priceSymbol[rootStore.currentPrice]
                 }}</span>
                 <input
@@ -85,12 +83,11 @@
           {{ $t('Wallet.Add') }}
         </div>
         <div class="rate">
+          {{ currentPayPlatform.value }}
           1ME = {{ rate }}
           {{
-            currentPayPlatform === PayPlatform.ETH
-              ? ETHName
-              : currentPayPlatform === PayPlatform.POLYGON
-              ? PolygonSymbol
+            platformCionName[currentPayPlatform]
+              ? platformCionName[currentPayPlatform].toUpperCase()
               : rootStore.currentPrice
           }}
         </div>
@@ -141,14 +138,14 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue'
 import { PayPlatformItem, payPlatformList } from '@/config'
-import { PayPlatform, PayType } from '@/enum'
+import { Chains, PayPlatform, PayType } from '@/enum'
 import Decimal from 'decimal.js-light'
 import { CreateMeOrder, GetMeRate } from '@/api/v3'
 import { useUserStore } from '@/stores/user'
 import { CreatOrder, GetCouponInfo } from '@/api/wxcore'
 import StartPayVue from '../StartPay/StartPay.vue'
 import { isAndroid, isApp, isIOS, isIosApp, useRootStore } from '@/stores/root'
-import { setPayQuitUrl } from '@/utils/util'
+import { mappingChainId, setPayQuitUrl } from '@/utils/util'
 import { useRoute } from 'vue-router'
 import ContentModalVue from '@/components/ContentModal/ContentModal.vue'
 import PayTypeDropdownVue from '../PayTypeDropdown/PayTypeDropdown.vue'
@@ -193,6 +190,12 @@ const priceSymbol = {
   USD: '$',
 }
 
+const platformCionName = reactive({
+  [PayPlatform.ETH]: import.meta.env.VITE_ETH_CHAIN,
+  [PayPlatform.POLYGON]: import.meta.env.VITE_POLYGON_CHAIN,
+  [PayPlatform.BSV]: Chains.BSV,
+})
+
 const isDisabled = computed(() => {
   let result = true
   if (new Decimal(amount.value).toNumber() && new Decimal(amount.value).toNumber()) {
@@ -202,17 +205,6 @@ const isDisabled = computed(() => {
 })
 
 const activeElement = ref(document.activeElement)
-
-function mappingChainId(chainId: string) {
-  switch (chainId) {
-    case '0x1' || '0x5':
-      return PayPlatform.ETH
-    case '0x89' || '0x13881':
-      return PayPlatform.POLYGON
-    default:
-      break
-  }
-}
 
 function getActiveElement() {
   activeElement.value = document.activeElement
@@ -226,12 +218,9 @@ function getRate() {
   return new Promise<void>(async resolve => {
     const res = await GetMeRate({
       meta_id: userStore.user!.metaId,
-      coin:
-        currentPayPlatform.value === PayPlatform.ETH
-          ? ETHName
-          : currentPayPlatform.value === PayPlatform.POLYGON
-          ? POLYGONName
-          : rootStore.currentPrice.toLocaleLowerCase(),
+      coin: platformCionName[currentPayPlatform.value]
+        ? platformCionName[currentPayPlatform.value]
+        : rootStore.currentPrice.toLocaleLowerCase(),
     }).catch(error => {
       ElMessage.error(error.message)
     })
@@ -249,7 +238,7 @@ function onMeInput() {
     amount.value = new Decimal(count.value ? count.value : 0)
       .mul(rate.value)
       .mul(coupon.val ? coupon.val.coupon_value : 1)
-      .toFixed(currentPayPlatform.value === PayPlatform.ETH ? 10 : 2)
+      .toFixed(platformCionName[currentPayPlatform.value] ? 8 : 2)
   } else {
     amount.value = ''
   }

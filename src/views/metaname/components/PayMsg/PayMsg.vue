@@ -102,6 +102,7 @@ import {
   dataURLtoFile,
   FileToAttachmentItem,
   getCurrencyAmount,
+  mappingChainId,
   metanameOperation,
   randomNumber,
   setPayQuitUrl,
@@ -173,21 +174,6 @@ const MetaNameRef = ref()
 const metaTagString = ref('')
 const metaNameLogoString = ref('')
 let metafile = ''
-
-function mappingChainId(chainId: string) {
-  switch (chainId) {
-    case '0x1':
-      return PayPlatform.ETH
-    case '0x5':
-      return PayPlatform.ETH
-    case '0x89':
-      return PayPlatform.POLYGON
-    case '0x13881':
-      return PayPlatform.POLYGON
-    default:
-      break
-  }
-}
 
 function changePayType(platform: PayPlatform) {
   if (currentPayPlatform.value === platform) return
