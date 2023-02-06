@@ -8,7 +8,9 @@
         <div class="w-7.5 h-7.5 shrink-0 flex items-center justify-center">
           <img :src="selectedChainRef.icon" class="h-full" />
         </div>
-        <span class="block truncate w-12 text-left capitalize">{{ selectedChainRef.name }}</span>
+        <span class="block truncate w-12 text-left capitalize">
+          {{ useCoinName ? selectedChainRef.coinName : selectedChainRef.name }}
+        </span>
         <Icon
           name="chevron_right"
           :class="[
@@ -47,7 +49,7 @@
                 </div>
 
                 <span class="shrink-0 group-hover:underline">
-                  {{ chain.name }}
+                  {{ useCoinName ? chain.coinName : chain.name }}
                 </span>
               </div>
 
@@ -73,14 +75,17 @@ const props = defineProps<{
     id: number
     name: string
     icon: string
+    coinName: string
     value: string
   }[]
   selectedChain: {
     id: number
     name: string
     icon: string
+    coinName: string
     value: string
   }
+  useCoinName?: boolean
 }>()
 const emit = defineEmits(['update:selectedChain'])
 

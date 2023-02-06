@@ -157,14 +157,16 @@
                     <ChainSelect
                       :chains="chains.filter(chain => chain.name === 'MVC')"
                       v-model:selected-chain="selectedChainForNative"
+                      :use-coin-name="true"
                     />
-                    <div class="relative">
+                    <div class="relative grow">
                       <input
                         type="number"
                         class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-700 still py-2 pl-4 pr-12 text-sm placeholder:font-normal w-full"
                         min="1"
                         :placeholder="$t('Talk.Modals.amount_needed')"
-                        v-model="form.amount"
+                        :value="nativeAmount"
+                        @input="updateNativeAmount"
                         autocomplete="nope"
                       />
                       <span
@@ -173,7 +175,7 @@
                         <span
                           class="text-dark-400 dark:text-gray-300 text-sm pl-2 pr-3 border-l-2 border-solid border-dark-250 dark:border-gray-400"
                         >
-                          {{ selectedChainForNative?.minUnit }}
+                          {{ selectedChainForNative?.unit }}
                         </span>
                       </span>
                     </div>
@@ -185,7 +187,9 @@
                       class="w-4 h-4 animate-spin text-dark-400 dark:text-gray-200"
                       v-if="fetchingNative"
                     />
-                    <span v-else> {{ nativeBalance }} {{ selectedChainForNative?.minUnit }} </span>
+                    <span v-else>
+                      {{ nativeBalanceInBigUnit }} {{ selectedChainForNative?.unit }}
+                    </span>
                   </div>
                 </div>
               </template>
@@ -386,6 +390,7 @@ import MVC from '@/assets/images/iocn_mvc.png'
 import POLYGON from '@/assets/svg/polygon.svg?url'
 import { realRandomString, showLoading, sleep } from '@/utils/util'
 import { Chains, ChannelPublicityType, GroupChannelType, ShowControl } from '@/enum'
+import chains from '@/utils/chains'
 
 import BaseModal from './BaseModal.vue'
 import ChainSelect from '../ChainSelect.vue'
@@ -421,34 +426,9 @@ function changeTab(index: number) {
 }
 
 const i18n = useI18n()
-const chains = ref([
-  {
-    id: 1,
-    name: import.meta.env.VITE_ETH_CHAIN,
-    icon: ETH,
-    value: import.meta.env.VITE_ETH_CHAIN,
-    precision: 18,
-    minUnit: 'wei',
-  },
-  {
-    id: 2,
-    name: 'MVC',
-    icon: MVC,
-    value: 'mvc' as Chains,
-    precision: 8,
-    minUnit: 'sat',
-  },
-  {
-    id: 3,
-    name: import.meta.env.VITE_POLYGON_CHAIN,
-    icon: POLYGON,
-    value: import.meta.env.VITE_POLYGON_CHAIN,
-    precision: 18,
-    minUnit: 'wei',
-  },
-])
-const selectedChain = ref(chains.value[0])
-const selectedChainForNative = ref(chains.value[1])
+
+const selectedChain = ref(chains[0])
+const selectedChainForNative = ref(chains[1])
 const consentTabs = ref([
   {
     id: 1,
@@ -480,6 +460,9 @@ const consentTabs = ref([
 const nftSeries: Ref<any[]> = ref([])
 const ftSeries: Ref<FungibleToken[]> = ref([])
 const nativeBalance: Ref<number> = ref(0)
+const nativeBalanceInBigUnit = computed(() => {
+  return nativeBalance.value / 10 ** selectedChainForNative.value.precision
+})
 
 const form = useChannelFormStore()
 if (form.type === GroupChannelType.NFT) {
@@ -622,21 +605,35 @@ const fetchFtSeries = async () => {
 }
 
 const fetchingNative = ref(false)
+const nativeAmount = ref(0)
+const updateNativeAmount = async (event: any) => {
+  // 输入的额度不能超过余额
+  const rawAmount = Number(event.target.value)
+  let amountInMinUnit = rawAmount * 10 ** selectedChainForNative.value.precision
+
+  if (amountInMinUnit > nativeBalance.value) {
+    amountInMinUnit = nativeBalance.value
+  }
+  nativeAmount.value = amountInMinUnit / 10 ** selectedChainForNative.value.precision
+
+  // 更新到表单
+  form.amount = amountInMinUnit
+}
 const fetchNativeBalance = async () => {
   const balance = await userStore.showWallet!.wallet!.provider.getXpubBalance(
     userStore.showWallet!.wallet!.wallet.xpubkey.toString()
   )
   nativeBalance.value = balance
 }
-// 输入的额度不能超过余额
-watch(
-  () => form.amount,
-  (val: number) => {
-    if (selectedTab.value === 2 && val > nativeBalance.value) {
-      form.amount = nativeBalance.value
-    }
-  }
-)
+
+// watch(
+//   () => form.amount,
+//   (val: number) => {
+//     if (selectedTab.value === 2 && val > nativeBalance.value) {
+//       form.amount = nativeBalance.value
+//     }
+//   }
+// )
 
 watchEffect(async () => {
   if (selectedTab.value === 0) {
@@ -650,7 +647,7 @@ watchEffect(async () => {
 
 // onMounted(() => {
 //   if (userStore.user?.evmAddress) {
-//     chains.value.push({
+//     chains.push({
 //       id: 2,
 //       name: import.meta.env.VITE_ETH_CHAIN,
 //       icon: ETH,

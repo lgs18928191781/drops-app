@@ -9,7 +9,7 @@
         <img
           ref="imgRef"
           :src="url"
-          :class="[imageClass, 'object-center object-cover']"
+          :class="[customClass, 'lazyload']"
           @error="fail"
           loading="lazy"
         />
@@ -43,10 +43,6 @@ const Default = {
 }
 
 const imgRef = ref()
-
-const imageClass = computed(() => {
-  return props.customClass ? props.customClass + ' lazyload' : 'lazyload'
-})
 
 const isSkeleton = ref(true)
 const url = ref('')
