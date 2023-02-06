@@ -8,7 +8,7 @@
         }"
       ></div>
       <div class="content  flex flex-v">
-        <img class="metaname" :src="MetaNameLogo" />
+        <img class="metaname" :src="metaNameLogoString" />
         <div
           class="name flex1  flex flex-align-center flex-pack-center"
           :class="[
@@ -26,7 +26,7 @@
         </div>
 
         <div class="tag">
-          <img :src="MetaTag" />
+          <img :src="metaTagString" />
         </div>
       </div>
     </div>
@@ -217,7 +217,6 @@ async function pay() {
         scale: 2,
         backgroundColor: null,
         removeContainer: true,
-        useCORS: true,
       })
       if (res) {
         const base64 = res.toDataURL('image/png')
