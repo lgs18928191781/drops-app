@@ -47,9 +47,12 @@
       <ElSelect>
         <option></option>
       </ElSelect>
-      <div class="display">
+      <div class="display flex flex-align-center">
         <a>
-          <Icon name="" />
+          <Icon name="layout-grid-fill" />
+        </a>
+        <a>
+          <Icon name="grid-fill" />
         </a>
       </div>
     </div>

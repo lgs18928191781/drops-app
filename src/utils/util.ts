@@ -1035,8 +1035,8 @@ export function getCurrencyAmount(
 
     if (currency === 'CNY') {
       // cny -> usd
-      const rateUSD = new Decimal(rootStore.exchangeRate[0]!.price.CNY)
-        .div(rootStore.exchangeRate[0]!.price.USD)
+      const rateUSD = new Decimal(rootStore.exchangeRate[1]!.price.CNY)
+        .div(rootStore.exchangeRate[1]!.price.USD)
         .toNumber()
       return new Decimal(
         new Decimal(price)
