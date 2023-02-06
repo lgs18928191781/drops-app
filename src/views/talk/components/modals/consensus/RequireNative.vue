@@ -22,22 +22,24 @@
             <p class="text-sm lg:text-base text-dark-400 dark:text-gray-200">
               {{ $t('Talk.Modals.you_dont_have_native') }}
             </p>
-            <div class="mt-4.5 flex space-x-4 items-center">
+            <div class="mt-4.5 flex space-x-2 items-center">
               <img v-if="activeChain?.icon" :src="activeChain?.icon" class="w-14 h-14 rounded" />
               <div class="flex flex-col items-start">
                 <h4 class="text-2xl text-amber-400 font-bold">
-                  {{ activeChain?.name }}
+                  {{ activeChain?.coinName }}
                 </h4>
               </div>
             </div>
             <div class="mt-2 flex flex-col items-start text-base text-dark-400 dark:text-gray-200">
               <p>
-                {{ $t('Talk.Modals.require') }} {{ talk.consensualNative.amount }}
-                {{ activeChain?.minUnit }}
+                {{ $t('Talk.Modals.require') }}
+                {{ talk.consensualNative.amount / 10 ** (activeChain?.precision || 8) }}
+                {{ activeChain?.unit }}
               </p>
               <p>
-                {{ $t('Talk.Modals.you_have') }} {{ talk.consensualNative.balance }}
-                {{ activeChain?.minUnit }}
+                {{ $t('Talk.Modals.you_have') }}
+                {{ talk.consensualNative.balance / 10 ** (activeChain?.precision || 8) }}
+                {{ activeChain?.unit }}
               </p>
             </div>
           </div>
