@@ -307,7 +307,9 @@ async function recharge() {
     pay_type: currentPayPlatform.value,
     quit_url: quitUrl,
     types: type,
-    from_coin_address: userStore.user?.evmAddress,
+    from_coin_address: isETHChain(currentPayPlatform.value)
+      ? userStore.user?.evmAddress
+      : userStore.user?.address,
     product_type,
   }).catch(error => {
     ElMessage.error(error.message)
@@ -321,6 +323,10 @@ async function recharge() {
     loading.value = false
     isStartPay.value = true
   }
+}
+function isETHChain(platform: PayPlatform) {
+  const ethChain = [PayPlatform.ETH, PayPlatform.POLYGON, PayPlatform]
+  return ethChain.includes(platform)
 }
 
 function onPaySuceess() {
