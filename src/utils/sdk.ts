@@ -345,7 +345,7 @@ export class SDK {
         } else {
           // 构建没有utxo 的所有 transaction
           let transactions = await this.createBrfcChildNodeTransactions(params)
-          
+
           let payToRes: CreateNodeRes | undefined = undefined
           if (!params.utxos!.length) {
             // 计算总价
@@ -378,7 +378,6 @@ export class SDK {
               // 打钱地址
               let receive = this.getNodeTransactionsFirstReceive(transactions, params)
 
-              
               // 获取上链时的utxo
               const getUtxoRes = await this.getAmountUxto({
                 sdkPayType: option.payType!,
@@ -767,7 +766,7 @@ export class SDK {
                 }
               }
               const nftManager = this.wallet!.getNftManager()
-              
+
               const feeNumber = await nftManager[
                 params.nodeName === NodeName.NftGenesis
                   ? 'getGenesisEstimateFee'
@@ -993,7 +992,6 @@ export class SDK {
                   ? transactions.currentNodeBrfc!.address
                   : lastChangeAddress
 
-              
               this.setTransferUtxoAndOutputAndSign(
                 item.transaction,
                 [utxo],
@@ -1029,7 +1027,6 @@ export class SDK {
                 //   addressType: transactions.metaFileBrfc!.addressType,
                 // },
               })
-              
             }
           }
 
@@ -1045,12 +1042,10 @@ export class SDK {
               // 更新本地bfrcNodeList
               this.updateBfrcNodeList(params.nodeName, transactions.currentNodeBrfc)
 
-              if (transactions.currentNode?.transaction) {
-                // 组装新 utxo
-                utxo = await this.wallet!.utxoFromTx({
-                  tx: transactions.currentNodeBrfc!.transaction,
-                })
-              }
+              // 组装新 utxo
+              utxo = await this.wallet!.utxoFromTx({
+                tx: transactions.currentNodeBrfc!.transaction,
+              })
             }
 
             // metafile txId变了，所以要改变currentNode 节点的data 对应数据
@@ -1115,7 +1110,7 @@ export class SDK {
                 }
               )
               if (res) transactions.currentNode = res
-              
+
               this.setTransferUtxoAndOutputAndSign(
                 transactions.currentNode.transaction,
                 [utxo],
@@ -1208,7 +1203,6 @@ export class SDK {
         // 广播 nft issue
         if (transactions.nft) {
           for (let i in transactions.nft) {
-            
             // @ts-ignore
             await this.wallet?.provider.broadcast(transactions.nft[i].transaction.toString())
           }

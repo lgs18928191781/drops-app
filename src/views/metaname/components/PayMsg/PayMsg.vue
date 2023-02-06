@@ -119,9 +119,9 @@ import html2canvas from 'html2canvas'
 import MetaTag from '@/assets/metaname/img_meta.png'
 import MetaNameLogo from '@/assets/metaname/logo_metaname.png'
 
-import { getBlockHeight, MetaNameUpdateInfo, GetMetaNameInfo } from '@/api/index'
+import { getBlockHeight, MetaNameUpdateInfo } from '@/api/index'
 import { useI18n } from 'vue-i18n'
-import { UploadMetaNameCover } from '@/api/wxcore'
+import { GetMetaNameInfo, UploadMetaNameCover } from '@/api/wxcore'
 interface Props {
   price: number
   year: number
@@ -251,10 +251,10 @@ async function pay() {
     }
     if (props.type == MetaNameReqCode.updataInfo) {
       const metaNameInfo = await GetMetaNameInfo(props.name)
-      if (metaNameInfo.code == 0) {
+      if (metaNameInfo) {
         metaNameOpParams.info = {
           ...metaNameOpParams.info,
-          ...metaNameInfo.data.infos,
+          ...metaNameInfo,
         }
         delete metaNameOpParams.years
       } else {
@@ -282,9 +282,9 @@ async function pay() {
     }
 
     const result = await CreatePayOrder({
-      platform: currentPayPlatform.value,
+      platform: currentPayPlatform.value!,
       fullPath: setPayQuitUrl({
-        payPlatform: currentPayPlatform.value,
+        payPlatform: currentPayPlatform.value!,
         fullPath: route.fullPath,
         isBlindbox: false,
       }),

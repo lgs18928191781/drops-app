@@ -16,7 +16,7 @@
             <UserAvatar :meta-id="item.metaId" :image="item.avatarImage" :name="item.name" />
             <div class="flex1">
               <div class="name flex flex-align-center">
-                {{ item.name }}
+                <UserName :name="item.name" :meta-name="item.userInfo.metaName" />
               </div>
               <div class="intro flex flex-align-center">MetaID: {{ item.metaId.slice(0, 6) }}</div>
             </div>
