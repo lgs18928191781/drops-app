@@ -333,11 +333,14 @@ function drawePayCode() {
           }
 
           if (tx) {
+            //UpdatePay里面包含了以太坊交易上报，不能随意更改里面的参数，否则会导致交易遗漏
             const res = await UpdatePay({
               order_id: props.orderId,
               tx_hash: tx,
               from_coin_address,
               product_type: props.product_type,
+              chain_id:
+                props.payPlatform === PayPlatform.BSV ? '' : (window as any).ethereum.chainId,
             })
             if (res.code === 0) {
               payResult.status = PayStatus.Success

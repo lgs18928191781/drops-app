@@ -1,4 +1,6 @@
 <template>
+  <!-- <a :href="tpUrl" target="_blank">Tp钱包调起</a> -->
+  <!-- <a :href="signUrl" target="_blank" rel="noopener noreferrer">签名登录</a> -->
   <RouterView
     v-if="
       $route.path === '/' ||
@@ -6,6 +8,7 @@
         $route.path.indexOf('/home') !== -1
     "
   />
+
   <div class="main flex" v-else>
     <LeftNavigationVue v-if="!blackRoute.includes(route.name)" />
     <div class="flex1 main-right">
@@ -31,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import ConnectWalletModalVue from './components/ConnectWalletModal/ConnectWalletModal.vue'
 import LeftNavigationVue from './components/LeftNavigation/LeftNavigation.vue'
 import DragonBall from './views/talk/components/DragonBall.vue'
@@ -43,6 +46,50 @@ const rootStore = useRootStore()
 const userStore = useUserStore()
 const route = useRoute()
 const blackRoute = reactive(['home'])
+
+// const tpUrl = computed(() => {
+//   const params = JSON.stringify({
+//     callbackUrl: route.fullPath,
+//     action: 'login',
+//     actionId: '1648522106711',
+//     blockchains: [
+//       {
+//         chainId: 1,
+//         network: 'ethereum',
+//       },
+//     ],
+//     dappIcon: '',
+//     dappName: 'show3',
+//     protocol: 'TokenPocket',
+//     version: '1.0',
+//   })
+//   console.log('params', params)
+//   // debugger
+//   return `tpoutside://pull.activity?param=${encodeURIComponent(params)}`
+// })
+
+// const signUrl = computed(() => {
+//   const params = JSON.stringify({
+//     hash: false,
+//     message: `hello world`,
+//     memo: 'demo',
+//     callbackUrl: `http://192.168.168.142:5173`,
+//     action: 'sign',
+//     actionId: 'web-db4c5466-1a03-438c-90c9-2172e8becea5',
+//     blockchains: [
+//       {
+//         chainId: 1,
+//         network: 'ethereum',
+//       },
+//     ],
+//     dappIcon: '',
+//     dappName: 'show3',
+//     protocol: 'TokenPocket',
+//     version: '1.0',
+//   })
+//   console.log('params', params)
+//   return `tpoutside://pull.activity?param=${encodeURIComponent(params)}`
+// })
 
 const routeKey = (route: any) => {
   if (route.params.communityId) return route.params.communityId
