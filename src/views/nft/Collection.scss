@@ -63,6 +63,7 @@
         .drsc {
             margin-top: 13px;
             font-size: 16px;
+            max-width: 480PX;
 
             .text {
                 opacity: 0.6;
@@ -139,6 +140,58 @@
     }
 
     .screen {
+        margin-top: 18px;
+
+        .main-border {
+            display: inline-flex;
+            cursor: pointer;
+            padding: 13px 24px;
+
+            .icon {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        .display {
+            background: #F5F7FA;
+            border-radius: var(--rounded);
+            margin-left: 23px;
+
+            a {
+                padding: 12px 24px;
+                cursor: pointer;
+
+                .icon {
+                    width: 24px;
+                    height: 24px;
+
+                    :deep(use) {
+                        opacity: 0.6;
+                    }
+                }
+
+                &:hover {
+                    :deep(use) {
+                        opacity: 1;
+                    }
+                }
+
+                &.active {
+                    background: var(--color-primary);
+                    border-radius: var(--rounded);
+                    border: 2px solid #303133;
+
+                    :deep(use) {
+                        opacity: 1;
+                    }
+
+                }
+            }
+        }
+    }
+
+    .nft-list {
         margin-top: 18px;
     }
 }

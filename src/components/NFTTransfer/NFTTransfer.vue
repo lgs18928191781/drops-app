@@ -30,13 +30,14 @@
                 <div>{{ transferUser.val!.address }}</div>
               </template>
               <template v-else>
-                <div class="name">{{ transferUser.val!.name }}</div>
+                <div class="name">
+                  <UserName
+                    :name="transferUser.val!.name"
+                    :meta-name="transferUser.val!.metaName"
+                  />
+                </div>
                 <div class="metaid">
                   {{ transferUser.val!.metaId.slice(0,6)
-
-
-
-
                   }}...{{ transferUser.val!.metaId.slice(-6)  }}
                 </div>
               </template>

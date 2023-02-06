@@ -1,0 +1,65 @@
+@import '@/assets/styles/var.scss';
+
+.nft-item {
+    border: 2px solid var(--themeTextColor);
+    padding: 18px;
+    border-radius: var(--rounded);
+    margin-bottom: 22px;
+
+    :deep(.nft-cover) {
+        border: 2px solid var(--themeTextColor);
+        border-radius: var(--rounded);
+    }
+
+    .name {
+        margin-top: 18px;
+        font-size: 20px;
+    }
+
+    .amount {
+        font-size: 20px;
+        line-height: 24px;
+        margin-top: 18px;
+    }
+
+    .user-list {
+        margin-top: 18px;
+
+        .user-item {
+            line-height: 24px;
+            margin-bottom: 6px;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+
+            .avatar {
+                width: 24px;
+                height: 24px;
+                min-height: 24px;
+                min-width: 24px;
+            }
+
+            .info {
+                opacity: 0.6;
+            }
+
+            .user-name {
+                @extend %text-ellipsis;
+                margin: 0 5px;
+            }
+
+            .role {
+                white-space: nowrap;
+            }
+        }
+    }
+
+    .main-border {
+        margin-top: 18px;
+        font-size: 16px;
+        padding: 13px 0;
+        text-align: center;
+        cursor: pointer;
+    }
+}
