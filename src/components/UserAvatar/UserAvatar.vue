@@ -9,6 +9,7 @@
     :type="type"
     :default-image="DefaultAvatar"
     :custom-class="customClass"
+    @click="toUserPage"
   />
 
   <!-- </PopoverButton> -->
@@ -24,10 +25,14 @@
 </template>
 <script lang="ts" setup>
 import { ref, computed, Ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { Popover, PopoverButton, PopoverPanel, PopoverOverlay } from '@headlessui/vue'
 
-import UserCardVue from '../UserCard/UserCard.vue'
 import DefaultAvatar from '@/assets/images/default_user.png'
+
+import UserCardVue from '../UserCard/UserCard.vue'
+
+const router = useRouter()
 
 interface Props {
   name?: string
@@ -45,6 +50,13 @@ const props = withDefaults(defineProps<Props>(), {
 const customClass = computed(() => {
   return props.imageClass ? props.imageClass + ' avatar-rounded' : 'avatar-rounded'
 })
+
+const toUserPage = () => {
+  if (props.disabled) return
+  if (props.metaId) {
+    router.push(`/user/${props.metaId}`)
+  }
+}
 
 /** 弹出框 */
 const userCard = ref<HTMLElement>() as Ref<HTMLElement>
