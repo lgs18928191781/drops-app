@@ -58,7 +58,7 @@
           <option></option>
         </ElSelect>
         <div class="display flex flex-align-center">
-          <a>
+          <a class="active">
             <Icon name="layout-grid-fill" />
           </a>
           <a>
@@ -67,7 +67,7 @@
         </div>
       </div>
 
-      <ElRow class="nft-list">
+      <ElRow :gutter="22" class="nft-list">
         <ElCol
           :xs="12"
           :sm="8"
@@ -87,7 +87,6 @@
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NFTItemVue from '@/components/NFTItem/NFTItem.vue'
-import { ElCol } from 'element-plus'
 
 const i18n = useI18n()
 enum NFTCollectTab {
