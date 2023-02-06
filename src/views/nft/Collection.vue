@@ -44,6 +44,14 @@
           <Icon name="filter" /> {{ $t('NFT.Filter') }}
         </a>
       </div>
+      <ElSelect>
+        <option></option>
+      </ElSelect>
+      <div class="display">
+        <a>
+          <Icon name="" />
+        </a>
+      </div>
     </div>
   </div>
 </template>
