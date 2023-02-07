@@ -25,19 +25,23 @@
       </RouterView>
     </div>
   </div>
-
-  <DragonBall />
+  <Drav cvbmgonBall />
+  <SearchModal />
   <ConnectWalletModalVue />
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue'
+import { reactive } from 'vue'
+import { useRoute } from 'vue-router'
+
+import { useRootStore } from '@/stores/root'
+import { useUserStore } from '@/stores/user'
+
 import ConnectWalletModalVue from './components/ConnectWalletModal/ConnectWalletModal.vue'
 import LeftNavigationVue from './components/LeftNavigation/LeftNavigation.vue'
 import DragonBall from './views/talk/components/DragonBall.vue'
-import { useRootStore } from '@/stores/root'
-import { useUserStore } from '@/stores/user'
-import { useRoute } from 'vue-router'
+
+import SearchModal from './components/Search/Index.vue'
 
 const rootStore = useRootStore()
 const userStore = useUserStore()

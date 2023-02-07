@@ -25,7 +25,7 @@ html {
     -webkit-user-drag: none;
 
     // 禁用过度滚动
-    overscroll-behavior-y: none; // 好像会影响下拉滚动加载
+    overscroll-behavior: none; // 好像会影响下拉滚动加载
 
     .nftDetailContainer {
       max-width: 1200px;

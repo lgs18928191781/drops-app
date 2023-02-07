@@ -12,11 +12,7 @@
       class="shrink-0"
     />
     <div class="ml-2 flex flex-col">
-      <div
-        class="text-sm text-dark-800 dark:text-gray-100 truncate w-36 group-hover:underline flex space-x-2"
-      >
-        <div class="">{{ member.name }}</div>
-      </div>
+      <UserName :name="member.name" :meta-name="member?.userInfo?.metaName" />
       <div class="text-xxs text-dark-300 dark:text-gray-400" v-if="member.metaId">
         MetaID: {{ member.metaId.substring(0, 6) }}
       </div>
@@ -27,6 +23,8 @@
 import { useTalkStore } from '@/stores/talk'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+
+// import UserName from
 
 const props = defineProps(['member'])
 const talk = useTalkStore()

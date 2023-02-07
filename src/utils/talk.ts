@@ -402,8 +402,10 @@ const _getChannelTypeInfo = (form: any, selfMetaId: string) => {
         type = '2001'
       } else if (form.chain === 'polygon' || form.chain === 'mumbai') {
         type = '2002'
+      } else if (form.chain === 'bsv') {
+        type = '2003'
       } else {
-        type = '2'
+        type = '2000'
       }
       break
 
