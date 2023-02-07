@@ -155,6 +155,7 @@ export interface ChannelFormState {
   // 修改
   publicKey?: string
   txId?: string
+  nativeAmount?: number
 }
 export const useChannelFormStore = defineStore('channelForm', {
   state: () => {
