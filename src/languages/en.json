@@ -105,6 +105,7 @@
       "you_dont_have_nft": "Sorry, you need to be a holder of",
       "you_dont_have_ft": "You don't have the required Token to join this channel.",
       "you_dont_have_native": "You don't have the required amount of coins to join this channel.",
+      "checking": "Pass Checking...",
       "require": "Require",
       "you_have": "You have",
       "native": "Coin",

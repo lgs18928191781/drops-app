@@ -139,6 +139,7 @@
       "you_dont_have_nft": "你没有相关系列的NFT，不能进入本频道",
       "you_dont_have_ft": "你没有进入本频道所需数量的Token",
       "you_dont_have_native": "你没有进入本频道所需数量的原生币",
+      "checking": "检查凭证中……",
       "require": "需要持有",
       "you_have": "当前持有",
       "native": "原生币",
