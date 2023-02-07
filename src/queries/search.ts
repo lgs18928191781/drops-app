@@ -25,5 +25,5 @@ const performSearch = async (keyword: string) => {
 export const useSearchQuery = (keyword: string) =>
   useQuery({
     queryKey: ['searchResults', { keyword }],
-    // queryFn: () => fetchChannels(community, state),
+    queryFn: () => performSearch(keyword),
   })

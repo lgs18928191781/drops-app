@@ -385,6 +385,7 @@ export enum ShowControl {
   isShowCommunitySettingsModal = 'isShowCommunitySettingsModal',
   isShowRequireFtModal = 'isShowRequireFtModal',
   isShowRequireNativeModal = 'isShowRequireNativeModal',
+  isShowCheckingPass = 'isShowCheckingPass',
   isShowUserInfo = 'isShowUserInfo',
   never = 'never',
 }

@@ -5,17 +5,20 @@
 </template>
 
 <script lang="ts" setup>
-import ChannelSettings from './ChannelSettings.vue'
-import ChannelWelcome from './ChannelWelcome.vue'
-import ChannelContent from './ChannelContent.vue'
-import { useTalkStore } from '@/stores/talk'
 import { useRoute } from 'vue-router'
 import { nextTick, onBeforeUnmount, watch } from 'vue'
+
+import { useTalkStore } from '@/stores/talk'
 import { GroupChannelType } from '@/enum'
 import { verifyPassword } from '@/utils/talk'
 import { useLayoutStore } from '@/stores/layout'
 import { GetGenesisNFTs, GetNFT, GetFT, GetFTs } from '@/api/aggregation'
 import { useUserStore } from '@/stores/user'
+import { sleep } from '@/utils/util'
+
+import ChannelSettings from './ChannelSettings.vue'
+import ChannelWelcome from './ChannelWelcome.vue'
+import ChannelContent from './ChannelContent.vue'
 
 const talk = useTalkStore()
 const layout = useLayoutStore()
@@ -34,6 +37,19 @@ const tryInitChannel = async (status: string) => {
   talk.hasActiveChannelConsent = false
   await nextTick()
   if (!talk.canAccessActiveChannel) {
+    // 添加遮罩先
+    layout.isShowCheckingPass = true
+    const minCheckingDuration = 1000 // 最少检查时间
+    const start = Date.now()
+
+    const checkAtLeastMinDuration = async () => {
+      const duration = Date.now() - start
+      if (duration < minCheckingDuration) {
+        await sleep(minCheckingDuration - duration)
+      }
+      layout.isShowCheckingPass = false
+    }
+
     let chain: string
     switch (talk.activeGroupChannelType) {
       case GroupChannelType.Password:
@@ -44,6 +60,7 @@ const tryInitChannel = async (status: string) => {
 
         // 如果没有，则弹出密码输入框
         if (!hashedPassword) {
+          await checkAtLeastMinDuration()
           layout.isShowPasswordModal = true
           return
         }
@@ -51,9 +68,14 @@ const tryInitChannel = async (status: string) => {
         // 检查密码是否正确
         const channelKey = talk.activeChannel.roomStatus
         const creatorMetaId = talk.activeChannel.createUserMetaId
+
+        await checkAtLeastMinDuration()
+
         if (verifyPassword(channelKey, hashedPassword, creatorMetaId)) {
+          await checkAtLeastMinDuration()
           talk.hasActiveChannelConsent = true
         } else {
+          await checkAtLeastMinDuration()
           layout.isShowPasswordModal = true
         }
 
@@ -126,6 +148,9 @@ const tryInitChannel = async (status: string) => {
             chain,
           }
           talk.consensualNft = nftInfo
+
+          await checkAtLeastMinDuration()
+
           layout.isShowRequireNftModal = true
           return
         }
@@ -144,6 +169,8 @@ const tryInitChannel = async (status: string) => {
         })
 
         if (userNfts.length > 0) {
+          await checkAtLeastMinDuration()
+
           talk.hasActiveChannelConsent = true
         } else {
           const {
@@ -165,6 +192,7 @@ const tryInitChannel = async (status: string) => {
             chain,
           }
           talk.consensualNft = nftInfo
+          await checkAtLeastMinDuration()
           layout.isShowRequireNftModal = true
         }
         return
@@ -215,6 +243,7 @@ const tryInitChannel = async (status: string) => {
             chain,
           }
           talk.consensualFt = ftInfo
+          await checkAtLeastMinDuration()
           layout.isShowRequireFtModal = true
           return
         }
@@ -233,6 +262,7 @@ const tryInitChannel = async (status: string) => {
         })
 
         if (userNfts.length > 0) {
+          await checkAtLeastMinDuration()
           talk.hasActiveChannelConsent = true
         } else {
           // const {
@@ -252,6 +282,7 @@ const tryInitChannel = async (status: string) => {
             chain,
           }
           talk.consensualFt = ftInfo
+          await checkAtLeastMinDuration()
           layout.isShowRequireFtModal = true
         }
         return
@@ -283,24 +314,7 @@ const tryInitChannel = async (status: string) => {
 
         // 如果不存在该链地址，则直接拒绝进入
         if (!selfAddress) {
-          // const {
-          //   data: {
-          //     results: { items },
-          //   },
-          // } = await GetFT({
-          //   codehash: consensualCodehash,
-          //   genesis: consensualGenesis,
-          //   chain,
-          // })
-          // const ftInfo = {
-          //   codehash: consensualCodehash,
-          //   genesis: consensualGenesis,
-          //   icon: items[0].icon,
-          //   name: items[0].name,
-          //   chain,
-          // }
-          // talk.consensualFt = ftInfo
-          // layout.isShowRequireFtModal = true
+          await checkAtLeastMinDuration()
           return
         }
 
@@ -315,6 +329,7 @@ const tryInitChannel = async (status: string) => {
           })
         let requiredAmount = Number(talk.activeChannel.roomLimitAmount)
         if (balance >= requiredAmount) {
+          await checkAtLeastMinDuration()
           talk.hasActiveChannelConsent = true
         } else {
           talk.consensualNative = {
@@ -322,6 +337,7 @@ const tryInitChannel = async (status: string) => {
             chain,
             balance,
           }
+          await checkAtLeastMinDuration()
           layout.isShowRequireNativeModal = true
         }
 

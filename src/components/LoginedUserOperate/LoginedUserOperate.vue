@@ -36,6 +36,7 @@
       <a
         class="flex flex-align-center flex-pack-center user-warp-item"
         @click="layout.$patch({ isShowSearchModal: true })"
+        v-if="!isProduction"
       >
         <Icon name="search" />
       </a>

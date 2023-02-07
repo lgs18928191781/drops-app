@@ -25,7 +25,7 @@
           <div class="name">
             <UserName
               :name="itemData.userName"
-              :metaName="itemData.userInfo.metaName"
+              :metaName="itemData?.userInfo?.metaName"
             />&nbsp;|&nbsp;{{ $t('Forwarded') }}
           </div>
         </div>
