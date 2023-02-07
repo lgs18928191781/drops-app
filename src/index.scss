@@ -236,6 +236,20 @@ pre {
   }
 }
 
+// 输入框
+.field-input {
+  outline-width: 0;
+  background-color: white;
+  width: 100%;
+  padding: 12PX 16PX;
+  font-size: 14PX;
+  line-height: 1.5;
+
+  .dark & {
+    background-color: #1f2937;
+  }
+}
+
 // MetaName字体样式
 .meta-name {
   background-clip: text;

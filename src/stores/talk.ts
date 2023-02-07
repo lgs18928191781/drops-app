@@ -156,7 +156,8 @@ export const useTalkStore = defineStore('talk', {
     canAccessActiveChannel(): boolean {
       if (!this.activeChannel) return true
 
-      return this.isActiveChannelPublic || this.hasActiveChannelConsent
+      // 判定：是公开频道，或者持有共识，或者是管理员
+      return this.isActiveChannelPublic || this.hasActiveChannelConsent || this.isAdmin()
     },
 
     activeGroupChannelType(): GroupChannelType | null {
