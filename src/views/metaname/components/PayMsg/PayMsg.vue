@@ -1,37 +1,4 @@
 <template>
-  <div class="metaname-card-warp">
-    <div class="metaname-card" id="metaname-card" ref="MetaNameRef">
-      <div
-        class="bg"
-        :style="{
-          background: `linear-gradient(143deg, ${metaNameBgColors[metaNameBgColorIndex][0]} 1%, ${metaNameBgColors[metaNameBgColorIndex][1]} 99%)`,
-        }"
-      ></div>
-      <div class="content  flex flex-v">
-        <img class="metaname" :src="metaNameLogoString" />
-        <div
-          class="name flex1  flex flex-align-center flex-pack-center"
-          :class="[
-            'length' +
-              (bytesLength(name) >= 5 && bytesLength(name) <= 11
-                ? 5
-                : bytesLength(name) >= 12
-                ? '-normal'
-                : bytesLength(name)),
-          ]"
-        >
-          <span>
-            {{ name }}
-          </span>
-        </div>
-
-        <div class="tag">
-          <img :src="metaTagString" />
-        </div>
-      </div>
-    </div>
-  </div>
-
   <div class="order-msg">
     <div class="pay-amount flex flex-align-center order-msg-item">
       <div class="label flex1">{{ $t('MetaName.Pay Amount') }}</div>
@@ -44,8 +11,8 @@
         <template v-for="(item, index) in payPlatformList" :key="item.key">
           <div
             class="pay-type-item flex flex-align-center"
-            v-if="!item.disabled()"
-            @click="changePayType(item.platform)"
+            :class="{ disabled: item.disabled() }"
+            @click="changePayType(item)"
           >
             <div class="logo flex flex-align-center flex-pack-center">
               <img :src="item.icon" />
@@ -92,7 +59,7 @@
 
 <script setup lang="ts">
 import { SendMetaNameTransationResult } from '@/@types/sdk'
-import { payPlatformList } from '@/config'
+import { PayPlatformItem, payPlatformList } from '@/config'
 import { MetaNameOperateType, NodeName, PayPlatform, ProductType, ToCurrency } from '@/enum'
 import { useUserStore } from '@/stores/user'
 import { useRootStore } from '@/stores/root'
@@ -123,6 +90,8 @@ import MetaNameLogo from '@/assets/metaname/logo_metaname.png'
 import { getBlockHeight, MetaNameUpdateInfo } from '@/api/index'
 import { useI18n } from 'vue-i18n'
 import { GetMetaNameInfo, UploadMetaNameCover } from '@/api/wxcore'
+import { GetMetaNameCover } from '@/api/canvas-base'
+import Item from '@/views/talk/components/direct-contact/Item.vue'
 interface Props {
   price: number
   year: number
@@ -175,9 +144,9 @@ const metaTagString = ref('')
 const metaNameLogoString = ref('')
 let metafile = ''
 
-function changePayType(platform: PayPlatform) {
-  if (currentPayPlatform.value === platform) return
-  currentPayPlatform.value = platform
+function changePayType(item: PayPlatformItem) {
+  if (item.disabled() || currentPayPlatform.value === item.platform) return
+  currentPayPlatform.value = item.platform
   setCurrencyAmount()
 }
 
@@ -197,29 +166,35 @@ async function pay() {
   emit('update:loading', true)
   try {
     if (props.type === MetaNameReqCode.register) {
-      metaNameBgColorIndex.value = randomNumber(0, 9)
-      await nextTick()
-      const res = await html2canvas(MetaNameRef.value, {
-        scale: 2,
-        backgroundColor: null,
-        removeContainer: true,
-      })
-      if (res) {
-        const base64 = res.toDataURL('image/png')
-        const file = dataURLtoFile(base64, `${props.name}.png`)
-        const formData = new FormData()
-        formData.append('file', file)
-        const response = await UploadMetaNameCover(formData)
-        if (response) {
-          metafile = response.image_tx_id
-        }
-        // const attachment = await FileToAttachmentItem(file)
-        // const result = await userStore.showWallet.createBrfcChildNode({
-        //   nodeName: NodeName.MetaFile,
-        //   attachments: [attachment],
-        // })
-        // metafile = result!.metaFiles![0].txId
+      const cover = await GetMetaNameCover(props.name)
+      debugger
+      // metaNameBgColorIndex.value = randomNumber(0, 9)
+      // await nextTick()
+      // const res = await html2canvas(MetaNameRef.value, {
+      //   scale: 2,
+      //   backgroundColor: null,
+      //   removeContainer: true,
+      // })
+      // if (res) {
+
+      // }
+
+      // const base64 = res.toDataURL('image/png')
+      // const file = dataURLtoFile(base64, `${props.name}.png`)
+      const formData = new FormData()
+      // @ts-ignore
+      formData.append('file', cover)
+      const response = await UploadMetaNameCover(formData)
+      debugger
+      if (response) {
+        metafile = response.image_tx_id
       }
+      // const attachment = await FileToAttachmentItem(file)
+      // const result = await userStore.showWallet.createBrfcChildNode({
+      //   nodeName: NodeName.MetaFile,
+      //   attachments: [attachment],
+      // })
+      // metafile = result!.metaFiles![0].txId
     }
     const metaNameOpParams: {
       registerName: string

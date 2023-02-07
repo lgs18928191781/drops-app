@@ -49,6 +49,11 @@
                 padding: 12px 24px;
                 cursor: pointer;
 
+                &.disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                }
+
                 &:hover {
                     background-color: var(--divid-color);
                 }
