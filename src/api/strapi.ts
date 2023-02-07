@@ -1,11 +1,3 @@
-/*
- * @Author: your name
- * @Date: 2022-07-19 17:09:30
- * @LastEditTime: 2022-07-19 19:17:52
- * @LastEditors: XTZJ-2020JWVBKJ
- * @Description: In User Settings Edit
- * @FilePath: \nos.art\src\api\strapi.ts
- */
 import HttpRequest from '@/utils/request'
 
 // @ts-ignore
