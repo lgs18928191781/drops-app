@@ -151,7 +151,7 @@
 
 <script setup lang="ts">
 import { GetOrderAmout, PayOrderConfirm } from '@/api/pay'
-import { PayPlatform, PayStatus, WalletTxVersion } from '@/enum'
+import { PayPlatform, PayPlatformUnit, PayStatus, WalletTxVersion } from '@/enum'
 import { isApp, isIOS, isIosApp, isWechat, useRootStore } from '@/stores/root'
 import Decimal from 'decimal.js-light'
 import {
@@ -274,20 +274,38 @@ const PayIframeRef = ref()
 const isQrcodeInTime = ref(true) // 付款码是否在有效时间
 const bsvStore = useBsvStore()
 
+const payPlatformAmountRate = {
+  [PayPlatform.ETH]: Math.pow(10, 9),
+  [PayPlatform.POLYGON]: Math.pow(10, 9),
+  [PayPlatform.BSV]: Math.pow(10, 8),
+  [PayPlatform.AliPay]: 100,
+  [PayPlatform.AliPaySelf]: 100,
+  [PayPlatform.BalancePay]: 100,
+  [PayPlatform.QuickPay]: 100,
+  [PayPlatform.UnionPay]: 100,
+  [PayPlatform.WechatPay]: 100,
+}
+const payPlatformAmountFix = {
+  [PayPlatform.ETH]: 8,
+  [PayPlatform.POLYGON]: 8,
+  [PayPlatform.BSV]: 8,
+  [PayPlatform.AliPay]: 2,
+  [PayPlatform.AliPaySelf]: 2,
+  [PayPlatform.BalancePay]: 2,
+  [PayPlatform.QuickPay]: 2,
+  [PayPlatform.UnionPay]: 2,
+  [PayPlatform.WechatPay]: 2,
+}
+const nativePayPlatforms = [PayPlatform.ETH, PayPlatform.POLYGON, PayPlatform.BSV]
+
 const payResultMessage = computed(() => {
   let msg = ''
   console.log('propsprops', payResult)
   if (payResult.status === PayStatus.Success) {
-    const symbol =
-      props.payPlatform === PayPlatform.ETH
-        ? import.meta.env.VITE_ETH_CHAIN
-        : props.payPlatform === PayPlatform.POLYGON
-        ? import.meta.env.VITE_POLYGON_SYMBOL
-        : rootStore.currentPriceSymbol
-    const amount =
-      props.payPlatform === PayPlatform.ETH || props.payPlatform === PayPlatform.POLYGON
-        ? new Decimal(props.amount).div(Math.pow(10, 9)).toFixed(5)
-        : new Decimal(props.amount).div(100).toFixed(2)
+    const symbol = getPlatformSymbol(props.payPlatform)
+    const amount = new Decimal(props.amount)
+      .div(payPlatformAmountRate[props.payPlatform])
+      .toFixed(payPlatformAmountFix[props.payPlatform])
     msg = `ShowPayLimited: ${symbol} ${amount}`
   } else if (payResult.status === PayStatus.Fail) {
     msg = payResult.intro
@@ -295,13 +313,21 @@ const payResultMessage = computed(() => {
   return msg
 })
 
+function getPlatformSymbol(platform: PayPlatform) {
+  if (nativePayPlatforms.includes(platform)) {
+    return PayPlatformUnit[platform]
+  } else {
+    return rootStore.currentPriceSymbol
+  }
+}
+
 function drawePayCode() {
   return new Promise<void>(async (resolve, reject) => {
     try {
       if (props.url) {
         // 原生币支付
-        const nativeCurrencyPay = [PayPlatform.ETH, PayPlatform.POLYGON, PayPlatform.BSV]
-        if (nativeCurrencyPay.includes(props.payPlatform)) {
+        let raw_tx
+        if (nativePayPlatforms.includes(props.payPlatform)) {
           //  ETH POLYGON 支付
           let tx
           let from_coin_address = ''
@@ -323,22 +349,26 @@ function drawePayCode() {
           } else if (props.payPlatform === PayPlatform.BSV) {
             // bsv 支付
             await bsvStore.initWallet()
+            debugger
             from_coin_address = bsvStore.wallet!.rootAddress
-            const tx = await bsvStore.wallet!.sendMoney({
+            const transaction = await bsvStore.wallet!.sendMoney({
               payTo: [{ address: props.url, amount: new Decimal(props.amount).toNumber() }],
               isBroadcast: false,
             })
-            tx.version = WalletTxVersion.BSV
-            await bsvStore.wallet!.provider.broadcast(tx.toString())
+            transaction.version = WalletTxVersion.BSV
+            tx = transaction.id
+            raw_tx = transaction.toString()
           }
 
           if (tx) {
-            const res = await UpdatePay({
+            const params: any = {
               order_id: props.orderId,
               tx_hash: tx,
               from_coin_address,
               product_type: props.product_type,
-            })
+            }
+            if (props.payPlatform === PayPlatform.BSV) params.raw_tx = raw_tx
+            const res = await UpdatePay(params)
             if (res.code === 0) {
               payResult.status = PayStatus.Success
               isShowPayStatusModal.value = true
