@@ -1538,3 +1538,13 @@ function loopExecutionRun(params: {
     }
   })
 }
+
+export function mappingChainId(chainId: string) {
+  switch (chainId) {
+    case '0x1':
+    case '0x5':
+      return PayPlatform.ETH
+    default:
+      return PayPlatform.POLYGON
+  }
+}

@@ -1894,7 +1894,7 @@ export class HdWallet {
     return new Promise<mvc.Transaction>(async (resolve, reject) => {
       try {
         if (typeof params.isBroadcast === 'undefined') params.isBroadcast = true
-        if (!params.opReturn) params.opReturn = ['nos.art']
+        if (!params.opReturn) params.opReturn = ['show3']
         if (!params.utxos) {
           params.utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
         }

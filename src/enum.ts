@@ -89,6 +89,18 @@ export enum PayPlatform {
   BSV = 1003,
 }
 
+export const PayPlatformUnit = {
+  [PayPlatform.AliPay]: 'AliPay',
+  [PayPlatform.WechatPay]: 'WechatPay',
+  [PayPlatform.AliPaySelf]: 'AliPaySelf',
+  [PayPlatform.UnionPay]: 'UnionPay',
+  [PayPlatform.QuickPay]: 'QuickPay',
+  [PayPlatform.BalancePay]: 'BalancePay',
+  [PayPlatform.ETH]: import.meta.env.VITE_ETH_CHAIN.toUpperCase(),
+  [PayPlatform.POLYGON]: import.meta.env.VITE_POLYGON_CHAIN.toUpperCase(),
+  [PayPlatform.BSV]: 'BSV',
+}
+
 export enum NFTSellState {
   Sale = 0, // 可购买
   OffSale, // 下架
@@ -348,6 +360,7 @@ export enum GroupChannelType {
   Native = 'native',
   ETH_NFT = 'ETH_NFT',
   POLYGON_NFT = 'POLYGON_NFT',
+  BSV_NFT = 'BSV_NFT',
 }
 
 export enum ShowControl {
@@ -356,6 +369,7 @@ export enum ShowControl {
   isShowCreateConsensualChannelModal = 'isShowCreateConsensualChannelModal',
   isShowCreateGeneralChannelModal = 'isShowCreateGeneralChannelModal',
   isShowCreateDaoModal = 'isShowCreateDaoModal',
+  isShowSearchModal = 'isShowSearchModal',
   isShowCommunityCardModal = 'isShowCommunityCardModal',
   isShowCommunityInfoModal = 'isShowCommunityInfoModal',
   isShowChooseTokenModal = 'isShowChooseTokenModal',

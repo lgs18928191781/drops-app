@@ -1814,3 +1814,5 @@ declare interface MetaNameIndexerInfo {
   resolver: string
   infos?: Partial<MetaNameInfo>
 }
+
+declare type Ens = string

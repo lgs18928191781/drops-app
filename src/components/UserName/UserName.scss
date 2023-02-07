@@ -4,12 +4,14 @@
 
     span {
         font-family: TwitterChirp, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
 
     .icon {
         width: 38px;
         height: 16px;
-        margin-left: 10px;
     }
 }

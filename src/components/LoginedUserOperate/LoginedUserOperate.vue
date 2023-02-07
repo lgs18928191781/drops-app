@@ -32,6 +32,13 @@
       >
         <Icon name="wallet_fill" />
       </a>
+      <!-- 搜索 -->
+      <a
+        class="flex flex-align-center flex-pack-center user-warp-item"
+        @click="layout.$patch({ isShowSearchModal: true })"
+      >
+        <Icon name="search" />
+      </a>
     </div>
   </template>
   <template v-else>

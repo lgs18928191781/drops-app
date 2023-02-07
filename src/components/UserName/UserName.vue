@@ -1,5 +1,5 @@
 <template>
-  <span class="user-name">
+  <span class="user-name space-x-1">
     <span :class="{ 'meta-name': metaName }">{{ metaName ? metaName : name }}</span>
     <Icon name="tag_nft" v-if="metaName" />
   </span>
