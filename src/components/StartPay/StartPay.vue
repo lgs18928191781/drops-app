@@ -174,6 +174,7 @@ import {
   checkAppHasMethod,
   CheckMetaMaskAccount,
   checkOrderStatus as CheckOrderStatus,
+  getUserBsvBalance,
   openLoading,
 } from '@/utils/util'
 import { ElMessage, LoadingParentElement } from 'element-plus'
@@ -347,6 +348,10 @@ function drawePayCode() {
               ],
             })
           } else if (props.payPlatform === PayPlatform.BSV) {
+            const bsvBalance = await getUserBsvBalance()
+            if (bsvBalance < new Decimal(props.amount).plus(560).toNumber()) {
+              throw new Error(i18n.t('BSV Insufficient balance'))
+            }
             // bsv 支付
             await bsvStore.initWallet()
             debugger

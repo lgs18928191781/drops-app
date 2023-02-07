@@ -847,5 +847,6 @@
   "MetaidIsNull": "绑定账号的Metaid为空，请联系客服人员",
   "FixAccountTips1": "抱歉，此账号有问题，请到",
   "FixAccountTips2": "上修复",
-  "FixAccountTips3": "去修复"
+  "FixAccountTips3": "去修复",
+  "BSV Insufficient balance": "BSV 余额不足"
 }
