@@ -1,6 +1,7 @@
 import { Chains } from '@/enum'
 import ETH from '@/assets/images/eth.png'
-import MVC from '@/assets/images/iocn_mvc.png'
+import MVC from '@/assets/images/icon_mvc.png'
+import BSV from '@/assets/images/bsv.png'
 import POLYGON from '@/assets/svg/polygon.svg?url'
 
 export default [
@@ -36,5 +37,16 @@ export default [
     precision: 18,
     minUnit: 'wei',
     unit: 'matic',
+  },
+  {
+    id: 2,
+    key: 'bsv',
+    name: 'BSV',
+    coinName: 'BSV',
+    icon: BSV,
+    value: 'bsv' as Chains,
+    precision: 8,
+    minUnit: 'sat',
+    unit: 'bsv',
   },
 ]

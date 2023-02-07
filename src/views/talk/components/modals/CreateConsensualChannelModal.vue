@@ -265,7 +265,7 @@
 
     <template #secondTitle>
       <div class="flex items-center space-x-3">
-        <ChainSelect :chains="chains" v-model:selected-chain="selectedChain" />
+        <ChainSelect v-model:selected-chain="selectedChain" />
 
         <div class="text-left">{{ consentTabs[selectedTab].secondTitle }}</div>
       </div>
@@ -296,7 +296,7 @@
           <div
             v-for="nft in nftSeries"
             :key="nft.nftSeriesName"
-            class="flex space-x-3 items-center cursor-pointer hover:bg-dark-100 dark:hover:bg-gray-900 rounded p-2 -mx-2"
+            class="flex space-x-3 items-center cursor-pointer hover:bg-dark-100 dark:hover:bg-gray-900 rounded p-2"
             @click="selectNft(nft)"
           >
             <Image
@@ -334,7 +334,7 @@
           <div
             v-for="ft in ftSeries"
             :key="ft.name"
-            class="flex items-center justify-between cursor-pointer hover:bg-dark-100 dark:hover:bg-gray-900 rounded p-2 -mx-2"
+            class="flex items-center justify-between cursor-pointer hover:bg-dark-100 dark:hover:bg-gray-900 rounded p-2"
             @click="selectFt(ft)"
           >
             <div class="flex items-center justify-start space-x-3">
@@ -386,7 +386,7 @@ import Cat from '@/assets/images/cat.svg?url'
 import DogWalking from '@/assets/images/dog_walking.svg?url'
 import { GetNFTs, GetFTs } from '@/api/aggregation'
 import ETH from '@/assets/images/eth.png'
-import MVC from '@/assets/images/iocn_mvc.png'
+import MVC from '@/assets/images/icon_mvc.png'
 import POLYGON from '@/assets/svg/polygon.svg?url'
 import { realRandomString, showLoading, sleep } from '@/utils/util'
 import { Chains, ChannelPublicityType, GroupChannelType, ShowControl } from '@/enum'

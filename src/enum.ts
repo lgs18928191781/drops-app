@@ -360,6 +360,7 @@ export enum GroupChannelType {
   Native = 'native',
   ETH_NFT = 'ETH_NFT',
   POLYGON_NFT = 'POLYGON_NFT',
+  BSV_NFT = 'BSV_NFT',
 }
 
 export enum ShowControl {
@@ -368,6 +369,7 @@ export enum ShowControl {
   isShowCreateConsensualChannelModal = 'isShowCreateConsensualChannelModal',
   isShowCreateGeneralChannelModal = 'isShowCreateGeneralChannelModal',
   isShowCreateDaoModal = 'isShowCreateDaoModal',
+  isShowSearchModal = 'isShowSearchModal',
   isShowCommunityCardModal = 'isShowCommunityCardModal',
   isShowCommunityInfoModal = 'isShowCommunityInfoModal',
   isShowChooseTokenModal = 'isShowChooseTokenModal',

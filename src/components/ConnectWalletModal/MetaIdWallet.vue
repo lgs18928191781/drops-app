@@ -189,7 +189,7 @@
       <div class="flex1 flex flex-align-center">
         <template v-if="registerType !== RegisterType.SetPassword">
           <span
-            class="check-warp flex flex-align-center flex-pack-center"
+            class="check-warp flex flex-align-center flex-pack-center shrink-0"
             :class="{ active: form.isAgreePolicy }"
             @click="form.isAgreePolicy = !form.isAgreePolicy"
             ><Icon name="check" v-if="form.isAgreePolicy"

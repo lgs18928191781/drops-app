@@ -61,11 +61,15 @@ const tryInitChannel = async (status: string) => {
 
       case GroupChannelType.NFT:
       case GroupChannelType.POLYGON_NFT:
+      case GroupChannelType.BSV_NFT:
       case GroupChannelType.ETH_NFT: {
         let chain: string
         switch (talk.activeGroupChannelType) {
           case GroupChannelType.NFT:
             chain = 'mvc'
+            break
+          case GroupChannelType.BSV_NFT:
+            chain = 'bsv'
             break
           case GroupChannelType.POLYGON_NFT:
             chain = import.meta.env.VITE_POLYGON_CHAIN

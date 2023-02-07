@@ -372,7 +372,11 @@ function drawePayCode() {
               from_coin_address,
               product_type: props.product_type,
             }
-            if (props.payPlatform === PayPlatform.BSV) params.raw_tx = raw_tx
+            if (props.payPlatform === PayPlatform.BSV) {
+              params.raw_tx = raw_tx
+            } else {
+              params.chain_id = (window as any).ethereum?.chainId
+            }
             const res = await UpdatePay(params)
             if (res.code === 0) {
               payResult.status = PayStatus.Success
