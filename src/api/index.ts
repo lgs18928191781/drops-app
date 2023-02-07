@@ -581,17 +581,6 @@ export const MetaNameUpdateInfo = (
   })
 }
 
-export const GetMetaNameInfo = (
-  name: string
-): Promise<{
-  code: number
-  data: MetaNameIndexerInfo
-}> => {
-  const Http = new HttpRequests()
-  const url = `${baseApi}/metaname-indexer/getinfo?name=${name}`
-  return Http.getFetch(url)
-}
-
 export const GetTx = (txId: string): Promise<any> => {
   return callMetasvApi(`/tx/${txId}`)
 }

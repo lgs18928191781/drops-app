@@ -123,8 +123,7 @@ import { useRoute } from 'vue-router'
 import { Loading } from '@element-plus/icons-vue'
 import PlainBtnVue from '../PlainBtn/PlainBtn.vue'
 import Navigation from '../Navigation/Navigation.vue'
-import { GetMetaNameIsRegister } from '@/api/metaname'
-import { GetOrder } from '@/api/wxcore'
+import { GetMetaNameInfo, GetOrder } from '@/api/wxcore'
 import { MetaNameOperateType } from '@/enum'
 import { GetExpiredUTC, loopExecution } from '@/utils/util'
 import { GetTx } from '@/api'
@@ -143,7 +142,7 @@ const i18n = useI18n()
 const route = useRoute()
 
 const status = ref(0)
-const metaName: { val: null | MetaNameSearchResult } = reactive({ val: null })
+const metaName: { val: null | MetaNameIndexerInfo } = reactive({ val: null })
 const isSkeleton = ref(true)
 const order: { val: null | Order } = reactive({ val: null })
 let intervar: NodeJS.Timeout
@@ -193,11 +192,11 @@ const statusList = [
 
 function getMetaName() {
   return new Promise<void>(async (resolve, reject) => {
-    const res = await GetMetaNameIsRegister(props.name).catch(error => {
+    const res = await GetMetaNameInfo(props.name).catch(error => {
       ElMessage.error(error.message)
     })
-    if (res?.code === 0) {
-      metaName.val = res.data
+    if (res) {
+      metaName.val = res
       resolve()
     }
   })

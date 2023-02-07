@@ -21,19 +21,24 @@
 
       <div
         class="result-warp flex flex-align-center"
-        :class="{ disabled: metaNameInfo.val && metaNameInfo.val.expiredBlockTime !== -1 }"
+        :class="{
+          disabled:
+            metaNameInfo.val && metaNameInfo.val.registerState !== MetaNameRegisterState.UnRegister,
+        }"
         v-if="metaNameInfo.val"
       >
-        <div class="flex1">
+        <div class="flex1 cont">
           <div class="name">{{ metaNameInfo.val!.name }}</div>
           <div class="msg flex flex-align-center">
             <span class="dot"></span>
             <span class="status">{{
-              metaNameInfo.val.expiredBlockTime === -1
+              metaNameInfo.val.registerState === MetaNameRegisterState.UnRegister
                 ? $t('MetaName.UnRegistered')
                 : $t('MetaName.Registered')
             }}</span
-            ><span class="time" v-if="metaNameInfo.val.expiredBlockTime !== -1"
+            ><span
+              class="time"
+              v-if="metaNameInfo.val.registerState !== MetaNameRegisterState.UnRegister"
               >,&nbsp;{{ $t('MetaName.Expire date') }}:&nbsp;
               <template v-if="isGetExpireDateLoading">
                 <ElIcon class="is-loading">
@@ -46,7 +51,7 @@
         </div>
         <a
           class="flex flex-align-center"
-          v-if="metaNameInfo.val.expiredBlockTime === -1"
+          v-if="metaNameInfo.val.registerState === MetaNameRegisterState.UnRegister"
           @click="isShowRegister = true"
         >
           {{ $t('MetaName.Sign up now') }}</a
@@ -115,19 +120,25 @@ import PayMsg from '../components/PayMsg/PayMsg.vue'
 import SearchWarp from '../components/SearchWarp/SearchWarp.vue'
 import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { GetMetaNameIsRegister } from '@/api/metaname'
-import { bytesLength, GetExpiredUTC, getMetaNamePrice, urlToBase64 } from '@/utils/util'
+import {
+  bytesLength,
+  GetExpiredUTC,
+  getMetaNamePrice,
+  urlToBase64,
+  validateMetaName,
+} from '@/utils/util'
 import Decimal from 'decimal.js-light'
 import { MetaNameReqCode } from '@/utils/wallet/hd-wallet'
 import { Loading } from '@element-plus/icons-vue'
-import { MetaNameAllPrice } from '@/api/wxcore'
+import { GetMetaNameInfo, MetaNameAllPrice } from '@/api/wxcore'
 import { useMetaNameStore } from '@/stores/metaname'
+import { MetaNameRegisterState } from '@/enum'
 
 const i18n = useI18n()
 const userStore = useUserStore()
 const route = useRoute()
 const metaName = ref(route.query.metaName ? (route.query.metaName as string) : '')
-const metaNameInfo: { val: null | MetaNameSearchResult } = reactive({ val: null })
+const metaNameInfo: { val: null | MetaNameIndexerInfo } = reactive({ val: null })
 const metaNameStore = useMetaNameStore()
 
 const fees = [
@@ -179,35 +190,18 @@ function changePayType(platform: PayPlatform) {
 }
 
 function searchSubmit(data: string) {
-  const testResult = bytesLength(data.trim())
-  if (testResult > 0 && testResult <= 2) {
-    return ElMessage.error(`${i18n.t('metanameNotAllowMin')}`)
-  } else if (testResult > 63) {
-    return ElMessage.error(`${i18n.t('metanameNotAllowOverLenght')}`)
-  }
   metaName.value = data
   searchMetaName()
 }
 
 function searchMetaName() {
   return new Promise<void>(async (resolve, reject) => {
-    const res = await GetMetaNameIsRegister(metaName.value).catch(error => {
-      if (error.code === 1) {
-        metaNameInfo.val = {
-          name: metaName.value,
-          expiredBlockTime: -1,
-          nftCodeHash: '',
-          genesisId: '',
-          tokenIndex: '',
-          resolver: '',
-        }
-      } else {
-        ElMessage.error(error.message)
-      }
+    const res = await GetMetaNameInfo(metaName.value).catch(error => {
+      ElMessage.error(error.message)
       resolve()
     })
-    if (res?.code == 0) {
-      metaNameInfo.val = res.data
+    if (res) {
+      metaNameInfo.val = res
       isGetExpireDateLoading.value = true
       getExporeDate().then(() => {
         isGetExpireDateLoading.value = false
@@ -236,10 +230,13 @@ function getExporeDate() {
 }
 
 if (route.query.metaName) {
-  loading.value = true
-  searchMetaName().then(() => {
-    loading.value = false
-  })
+  const result = validateMetaName(route.query.metaName as string)
+  if (result) {
+    loading.value = true
+    searchMetaName().then(() => {
+      loading.value = false
+    })
+  }
 }
 </script>
 

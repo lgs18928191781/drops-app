@@ -47,12 +47,18 @@
         background: linear-gradient(100deg, #909399 9%, #BFC2CC 99%);
     }
 
+    .cont {
+        margin-right: 30px;
+    }
+
     .name {
         font-size: 24px;
+        word-break: break-word;
     }
 
     .msg {
         margin-top: 5px;
+        font-size: 0;
 
         .dot {
             width: 6px;
@@ -63,6 +69,7 @@
 
         span {
             margin-right: 6px;
+            font-size: 14px;
         }
     }
 
