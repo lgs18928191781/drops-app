@@ -139,10 +139,14 @@ export const useTalkStore = defineStore('talk', {
         if (channel.roomType === ChannelPublicityType.Public) return GroupChannelType.PublicText
 
         if (channel.roomJoinType === '1') return GroupChannelType.Password
-        if (channel.roomJoinType === '2') return GroupChannelType.NFT
-        if (channel.roomJoinType === '3') return GroupChannelType.FT
+        if (channel.roomJoinType === '2' || channel.roomJoinType === '2000') {
+          return GroupChannelType.NFT
+        }
         if (channel.roomJoinType === '2001') return GroupChannelType.ETH_NFT
         if (channel.roomJoinType === '2002') return GroupChannelType.POLYGON_NFT
+        if (channel.roomJoinType === '2003') return GroupChannelType.BSV_NFT
+        if (channel.roomJoinType === '3') return GroupChannelType.FT
+
         if (channel.roomJoinType === '4000') return GroupChannelType.Native
 
         return null

@@ -131,6 +131,7 @@ const channelSymbol = (channel: any) => {
       return 'lock'
     case GroupChannelType.NFT:
     case GroupChannelType.ETH_NFT:
+    case GroupChannelType.BSV_NFT:
     case GroupChannelType.POLYGON_NFT:
       return 'NFT'
     case GroupChannelType.FT:

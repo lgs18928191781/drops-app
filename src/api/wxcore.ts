@@ -160,6 +160,7 @@ export const UpdatePay = (params: {
   tx_hash: number
   product_type: number
   from_coin_address: string
+  chain_id?: string //用于以太坊交易上报校验，普通交易更新可不传
 }): Promise<GetOrderStatusRes> => {
   return Wxcore.post(`/product/order/coin/pay`, params)
 }

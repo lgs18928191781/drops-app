@@ -2,13 +2,15 @@
   <Listbox :modelValue="selectedChainRef" @update:modelValue="selectChain">
     <div class="relative mt-1">
       <ListboxButton
-        class="relative w-full px-2 py-1 text-center focus:outline-none rounded-xl text-sm border border-solid border-dark-200 dark:border-gray-600 dark:text-gray-100 flex items-center space-x-1"
+        class="relative w-full px-2 py-1 text-center focus:outline-none rounded-xl text-sm border border-solid border-dark-200 dark:border-gray-600 dark:text-gray-100 flex items-center space-x-1.5"
         v-slot="{ open }"
       >
         <div class="w-7.5 h-7.5 shrink-0 flex items-center justify-center">
           <img :src="selectedChainRef.icon" class="h-full" />
         </div>
-        <span class="block truncate w-12 text-left capitalize">{{ selectedChainRef.name }}</span>
+        <span class="block truncate w-12 text-left capitalize">
+          {{ useCoinName ? selectedChainRef.coinName : selectedChainRef.name }}
+        </span>
         <Icon
           name="chevron_right"
           :class="[
@@ -31,7 +33,7 @@
         >
           <ListboxOption
             v-slot="{ active, selected }"
-            v-for="chain in chains"
+            v-for="chain in availableChains"
             :key="chain.name"
             :value="chain"
             as="template"
@@ -41,13 +43,13 @@
                 'relative select-none py-2 p-7.5 text-dark-800 dark:text-gray-100 cursor-pointer flex items-center justify-between min-w-fit group w-45',
               ]"
             >
-              <div class="flex items-center space-x-1">
+              <div class="flex items-center space-x-1.5">
                 <div class="w-7.5 h-7.5 shrink-0 flex items-center justify-center">
                   <img :src="chain.icon" class="h-full" />
                 </div>
 
                 <span class="shrink-0 group-hover:underline">
-                  {{ chain.name }}
+                  {{ useCoinName ? chain.coinName : chain.name }}
                 </span>
               </div>
 
@@ -68,23 +70,29 @@
 import { Listbox, ListboxButton, ListboxOptions, ListboxOption } from '@headlessui/vue'
 import { ref } from 'vue'
 
+import allChains from '@/utils/chains'
+
 const props = defineProps<{
-  chains: {
+  chains?: {
     id: number
     name: string
     icon: string
+    coinName: string
     value: string
   }[]
   selectedChain: {
     id: number
     name: string
     icon: string
+    coinName: string
     value: string
   }
+  useCoinName?: boolean
 }>()
 const emit = defineEmits(['update:selectedChain'])
 
 const selectedChainRef = ref(props.selectedChain)
+const availableChains = ref(props.chains || allChains)
 
 function selectChain(value: any) {
   selectedChainRef.value = value

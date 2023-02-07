@@ -463,7 +463,7 @@ import BaseModal from '../BaseModal.vue'
 import Cat from '@/assets/images/cat.svg?url'
 import DogWalking from '@/assets/images/dog_walking.svg?url'
 import ETH from '@/assets/images/eth.png'
-import MVC from '@/assets/images/iocn_mvc.png'
+import MVC from '@/assets/images/icon_mvc.png'
 import POLYGON from '@/assets/svg/polygon.svg?url'
 
 import { useLayoutStore } from '@/stores/layout'

@@ -65,7 +65,7 @@ const goBack = () => {
   layout.isShowRequireNftModal = false
 
   // 去 index
-  const theVoid = `/talk/channels/${talk.activeCommunityId}/index`
+  const theVoid = `/talk/channels/${talk.activeCommunityId}/welcome`
   router.push(theVoid)
 }
 </script>
