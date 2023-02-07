@@ -89,6 +89,18 @@ export enum PayPlatform {
   BSV = 1003,
 }
 
+export const PayPlatformUnit = {
+  [PayPlatform.AliPay]: 'AliPay',
+  [PayPlatform.WechatPay]: 'WechatPay',
+  [PayPlatform.AliPaySelf]: 'AliPaySelf',
+  [PayPlatform.UnionPay]: 'UnionPay',
+  [PayPlatform.QuickPay]: 'QuickPay',
+  [PayPlatform.BalancePay]: 'BalancePay',
+  [PayPlatform.ETH]: import.meta.env.VITE_ETH_CHAIN.toUpperCase(),
+  [PayPlatform.POLYGON]: import.meta.env.VITE_POLYGON_CHAIN.toUpperCase(),
+  [PayPlatform.BSV]: 'BSV',
+}
+
 export enum NFTSellState {
   Sale = 0, // 可购买
   OffSale, // 下架

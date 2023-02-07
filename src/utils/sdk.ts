@@ -1466,11 +1466,11 @@ export class SDK {
   }
 
   getOnLinkAppUrl() {
-    return import.meta.env.MODE === 'prod'
-      ? 'https://nft.nos.art'
-      : import.meta.env.MODE === 'gray'
+    return import.meta.env.MODE === 'mainnet'
+      ? 'https://show3.io'
+      : import.meta.env.MODE === 'mainnetgray'
       ? 'gray'
-      : import.meta.env.MODE === 'test'
+      : import.meta.env.MODE === 'gray'
       ? 'test'
       : 'dev'
   }
