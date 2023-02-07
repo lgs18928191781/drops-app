@@ -21,6 +21,7 @@ import { useI18n } from 'vue-i18n'
 import namehash from 'eth-ens-namehash'
 import { bytesLength, validateMetaName } from '@/utils/util'
 import { useMetaNameStore } from '@/stores/metaname'
+import { EnvMode } from '@/enum'
 interface Props {
   metaName?: string
 }
@@ -33,6 +34,9 @@ const emit = defineEmits(['submit', 'error'])
 const metaNameStore = useMetaNameStore()
 
 function submit() {
+  if (import.meta.env.MODE === EnvMode.Mainnet) {
+    return ElMessage.info(i18n.t('Comming Soon'))
+  }
   const name = validateMetaName(value.value)
   if (name) {
     if (checkInputName(name)) {
