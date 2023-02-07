@@ -2,11 +2,7 @@
   <div class="version-warp">
     <VersionVue />
   </div>
-  <a
-    v-if="!userStore.isAuthorized && !isProduction"
-    @click="toMetaName"
-    class="outsideMore flex flex-align-center flex-pack-center user-warp-item"
-  >
+  <a @click="toMetaName" class="outsideMore flex flex-align-center flex-pack-center user-warp-item">
     <img class="metanameLogo" :src="MetaNameLogo" alt="" />
   </a>
   <template v-if="userStore.isAuthorized">
@@ -21,7 +17,6 @@
       <a
         @click="toMetaName"
         class="outsideMore flex flex-align-center flex-pack-center user-warp-item"
-        v-if="!isProduction"
       >
         <img class="metanameLogo" :src="MetaNameLogo" alt="" />
       </a>
