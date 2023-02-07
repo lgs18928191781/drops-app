@@ -46,7 +46,8 @@
       "light": "light"
     },
     "Search": {
-      "placeholder": "Search for MetaID or username"
+      "placeholder": "Search MetaID...",
+      "searching": "Searching..."
     },
     "MetaName": {
       "resolving": "MetaName Resolving..."
@@ -105,6 +106,7 @@
       "you_dont_have_nft": "Sorry, you need to be a holder of",
       "you_dont_have_ft": "You don't have the required Token to join this channel.",
       "you_dont_have_native": "You don't have the required amount of coins to join this channel.",
+      "checking": "Pass Checking...",
       "require": "Require",
       "you_have": "You have",
       "native": "Coin",
@@ -854,5 +856,8 @@
   "spaceEnghout": "The account Space balance is insufficient, please recharge before performing the binding operation!",
   "MetaidIsNull": " The Metaid of the bound account is empty, please contact customer service",
   "FixAccountTips2": "on repair",
-  "FixAccountTips3": "to fix"
+  "FixAccountTips3": "to fix",
+  "BSV Insufficient balance": "BSV Insufficient balance",
+  "metanameNotAllowCh": "Registration in Chinese is not currently supported",
+  "metanameNotAllowSpace": "Registration name cannot have spaces"
 }

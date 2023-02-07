@@ -282,7 +282,7 @@ import { computed, reactive, ref, watch } from 'vue'
 import MetaMaskLogo from '@/assets/images/login_logo_matamask.png'
 import MetaIdLogo from '@/assets/images/iocn_showmoney.png'
 import { useI18n } from 'vue-i18n'
-import { copy } from '@/utils/util'
+import { copy, getUserBsvBalance } from '@/utils/util'
 import { GetBalance, GetNFTs } from '@/api/aggregation'
 import ETH from '@/assets/images/eth.png'
 import MVC from '@/assets/images/icon_mvc.png'
@@ -306,6 +306,7 @@ import { currentSupportChain } from '@/config'
 import MEIntroVue from '../MEIntro/MEIntro.vue'
 import Transfer from './Transfer.vue'
 import { Chains } from '@/enum'
+import { num2bin } from 'mvc-scrypt/dist'
 
 const props = defineProps<{
   modelValue: boolean
@@ -637,16 +638,13 @@ function getETHBalance() {
 
 function getBsvBalance() {
   return new Promise<void>(async (resolve, reject) => {
-    const res = await GetBalance({
-      chain: Chains.BSV,
-      xpub: userStore.showWallet.wallet?.wallet.xpubkey.toString(),
-    }).catch(error => {
+    const res = await getUserBsvBalance().catch(error => {
       ElMessage.error(error.message)
       resolve()
     })
-    if (res?.code === 0) {
+    if (typeof res === 'number') {
       wallets[1].list[3].value = new Decimal(
-        new Decimal(res.data.balance).div(Math.pow(10, 8)).toFixed(4)
+        new Decimal(res).div(Math.pow(10, 8)).toFixed(4)
       ).toNumber()
       wallets[1].list[3].loading = false
       resolve()

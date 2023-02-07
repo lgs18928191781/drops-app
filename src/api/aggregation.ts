@@ -655,3 +655,32 @@ export const GetUserMetaNames = (params: {
   const { address, ..._params } = params
   return aggregation.get(`/v2/app/metaname/${address}/list?`, { params: _params })
 }
+
+export const GetCollectionNFTs = (params: {
+  topicType: string
+  page: number
+  pageSize: number
+  certificationType?: number
+  sortType?: number
+  orderType?: number
+  sellType?: string
+  metaId?: string
+  startPrice?: string
+  endPrice?: string
+  startIndex?: string
+  endIndex?: string
+  filterIndex?: string
+  filterTagList?: string[]
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    nextFlag: string
+    results: {
+      items: GenesisNFTItem[]
+    }
+  }
+}> => {
+  const { topicType, ..._params } = params
+  return aggregation.get(`/v2/app/show/market/topic/${topicType}`, { params: _params })
+}

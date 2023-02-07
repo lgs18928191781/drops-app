@@ -385,6 +385,7 @@ export enum ShowControl {
   isShowCommunitySettingsModal = 'isShowCommunitySettingsModal',
   isShowRequireFtModal = 'isShowRequireFtModal',
   isShowRequireNativeModal = 'isShowRequireNativeModal',
+  isShowCheckingPass = 'isShowCheckingPass',
   isShowUserInfo = 'isShowUserInfo',
   never = 'never',
 }
@@ -477,4 +478,10 @@ export enum Lang {
 
 export enum WalletTxVersion {
   BSV = 1,
+}
+
+export enum MetaNameRegisterState {
+  Registered = 1,
+  RegisteredAndSending = 2,
+  UnRegister = 3,
 }

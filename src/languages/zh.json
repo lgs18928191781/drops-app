@@ -86,7 +86,8 @@
       "light": "明亮"
     },
     "Search": {
-      "placeholder": "搜索MetaID或用户名"
+      "placeholder": "搜索MetaID……",
+      "searching": "搜索中……"
     },
     "MetaName": {
       "resolving": "MetaName 解析中…"
@@ -139,6 +140,7 @@
       "you_dont_have_nft": "你没有相关系列的NFT，不能进入本频道",
       "you_dont_have_ft": "你没有进入本频道所需数量的Token",
       "you_dont_have_native": "你没有进入本频道所需数量的原生币",
+      "checking": "检查凭证中……",
       "require": "需要持有",
       "you_have": "当前持有",
       "native": "原生币",
@@ -850,5 +852,8 @@
   "MetaidIsNull": "绑定账号的Metaid为空，请联系客服人员",
   "FixAccountTips1": "抱歉，此账号有问题，请到",
   "FixAccountTips2": "上修复",
-  "FixAccountTips3": "去修复"
+  "FixAccountTips3": "去修复",
+  "BSV Insufficient balance": "BSV 余额不足",
+  "metanameNotAllowCh": "暂不支持注册中文",
+  "metanameNotAllowSpace": "注册名称不可以有空格"
 }
