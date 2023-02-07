@@ -12,7 +12,7 @@
       >
         <div
           class="fixed inset-0"
-          :class="[fullScreen ? 'bg-gray-100 dark:bg-gray-900' : 'bg-black/30']"
+          :class="[fullScreen ? 'bg-gray-100 dark:bg-gray-900' : 'bg-black/30 backdrop-blur-sm']"
         ></div>
       </TransitionChild>
 
