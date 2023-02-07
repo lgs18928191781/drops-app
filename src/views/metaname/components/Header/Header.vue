@@ -96,6 +96,7 @@ import { useUserStore } from '@/stores/user'
 import { useRoute, useRouter } from 'vue-router'
 import PlainBtn from '../PlainBtn/PlainBtn.vue'
 import { useRootStore } from '@/stores/root'
+import { EnvMode } from '@/enum'
 
 const rootStore = useRootStore()
 const userStore = useUserStore()
@@ -114,26 +115,29 @@ const userOperates = [
   },
 ]
 
-const navs = [
-  {
-    name: () => i18n.t('MetaName.Search'),
-    route: {
-      name: 'metaNameSearch',
-    },
-  },
-  {
-    name: () => i18n.t('MetaName.Mine'),
-    route: {
-      name: 'metaNameMine',
-    },
-  },
-  {
-    name: () => i18n.t('MetaName.Market'),
-    route: {
-      name: 'metaNameMarket',
-    },
-  },
-]
+const navs =
+  import.meta.env.MODE === EnvMode.Mainnet
+    ? []
+    : [
+        {
+          name: () => i18n.t('MetaName.Search'),
+          route: {
+            name: 'metaNameSearch',
+          },
+        },
+        {
+          name: () => i18n.t('MetaName.Mine'),
+          route: {
+            name: 'metaNameMine',
+          },
+        },
+        {
+          name: () => i18n.t('MetaName.Market'),
+          route: {
+            name: 'metaNameMarket',
+          },
+        },
+      ]
 </script>
 
 <style lang="scss" scoped src="./Header.scss"></style>

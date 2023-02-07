@@ -485,3 +485,9 @@ export enum MetaNameRegisterState {
   RegisteredAndSending = 2,
   UnRegister = 3,
 }
+
+export enum EnvMode {
+  Mainnet = 'mainnet',
+  MainnetGray = 'mainnetgray',
+  TestnetGray = 'gray',
+}
