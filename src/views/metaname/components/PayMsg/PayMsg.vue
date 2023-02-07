@@ -167,7 +167,6 @@ async function pay() {
   try {
     if (props.type === MetaNameReqCode.register) {
       const cover = await GetMetaNameCover(props.name)
-      debugger
       // metaNameBgColorIndex.value = randomNumber(0, 9)
       // await nextTick()
       // const res = await html2canvas(MetaNameRef.value, {
@@ -185,7 +184,6 @@ async function pay() {
       // @ts-ignore
       formData.append('file', cover)
       const response = await UploadMetaNameCover(formData)
-      debugger
       if (response) {
         metafile = response.image_tx_id
       }

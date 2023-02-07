@@ -1489,18 +1489,15 @@ export function loopExecution(
       ...initParams,
       ...params,
     }
-    debugger
     // @ts-ignore
     const res = await loopExecutionRun({
       fun,
       funParams,
       ...params!,
     }).catch(error => {
-      debugger
       reject(error)
     })
     if (res) {
-      debugger
       resolve(res)
     }
   })
