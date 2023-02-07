@@ -13,7 +13,18 @@ export async function resolveMetaName(metaName: string) {
     : metaName
 
   // 转为小写（白名单的除外）
-  const whiteList = ['YOU', 'Soul']
+  const whiteList = [
+    'YOU',
+    'Soul',
+    'MetaID',
+    'MVC',
+    'Show3',
+    'TEST_MVC_COMMUNITY',
+    'AVATAR2',
+    'MAN',
+    'One World One Community',
+    'MetaId Test',
+  ]
   if (!whiteList.includes(metaNameWithoutSuffix)) {
     metaNameWithoutSuffix = metaNameWithoutSuffix.toLowerCase()
   }

@@ -86,7 +86,8 @@
       "light": "明亮"
     },
     "Search": {
-      "placeholder": "搜索MetaID或用户名"
+      "placeholder": "搜索MetaID……",
+      "searching": "搜索中……"
     },
     "MetaName": {
       "resolving": "MetaName 解析中…"

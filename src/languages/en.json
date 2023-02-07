@@ -46,7 +46,8 @@
       "light": "light"
     },
     "Search": {
-      "placeholder": "Search for MetaID or username"
+      "placeholder": "Search MetaID...",
+      "searching": "Searching..."
     },
     "MetaName": {
       "resolving": "MetaName Resolving..."
