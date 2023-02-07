@@ -59,6 +59,7 @@ import dayjs from 'dayjs'
 import { SendMetaNameTransationResult } from '@/@types/sdk'
 import { GetTxChainInfo } from '@/api/metaid-base'
 import { useMetaNameStore } from '@/stores/metaname'
+import { GetBalance } from '@/api/aggregation'
 
 export function randomString() {
   return Math.random()
@@ -1547,4 +1548,19 @@ export function mappingChainId(chainId: string) {
     default:
       return PayPlatform.POLYGON
   }
+}
+
+export function getUserBsvBalance() {
+  return new Promise<number>(async (resolve, reject) => {
+    const userStore = useUserStore()
+    const res = await GetBalance({
+      chain: Chains.BSV,
+      xpub: userStore.showWallet.wallet?.wallet.xpubkey.toString(),
+    }).catch(error => {
+      reject(error)
+    })
+    if (res?.code === 0) {
+      resolve(new Decimal(res.data.balance).toNumber())
+    }
+  })
 }

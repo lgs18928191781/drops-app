@@ -855,5 +855,6 @@
   "spaceEnghout": "The account Space balance is insufficient, please recharge before performing the binding operation!",
   "MetaidIsNull": " The Metaid of the bound account is empty, please contact customer service",
   "FixAccountTips2": "on repair",
-  "FixAccountTips3": "to fix"
+  "FixAccountTips3": "to fix",
+  "BSV Insufficient balance": "BSV Insufficient balance"
 }
