@@ -479,3 +479,9 @@ export enum Lang {
 export enum WalletTxVersion {
   BSV = 1,
 }
+
+export enum MetaNameRegisterState {
+  Registered = 1,
+  RegisteredAndSending = 2,
+  UnRegister = 3,
+}

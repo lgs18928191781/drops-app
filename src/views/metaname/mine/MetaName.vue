@@ -120,7 +120,6 @@
 
 <script setup lang="ts">
 import { GetTx, MetaNameUpdateInfo } from '@/api'
-import { GetMetaNameIsRegister } from '@/api/metaname'
 import { useUserStore } from '@/stores/user'
 import { copy, GetExpiredUTC, metanameOperation, openLoading, tx } from '@/utils/util'
 import { MetaNameReqCode } from '@/utils/wallet/hd-wallet'
@@ -131,6 +130,7 @@ import { useRoute } from 'vue-router'
 import Navigation from '../components/Navigation/Navigation.vue'
 import RenewModal from '../components/RenewModal/RenewModal.vue'
 import { Loading } from '@element-plus/icons-vue'
+import { GetMetaNameInfo } from '@/api/wxcore'
 
 const route = useRoute()
 const userStore = useUserStore()
@@ -246,11 +246,11 @@ const i18n = useI18n()
 
 function getInfo() {
   return new Promise<void>(async (resolve, reject) => {
-    const res = await GetMetaNameIsRegister(route.params.metaName as string).catch(error => {
+    const res = await GetMetaNameInfo(route.params.metaName as string).catch(error => {
       ElMessage.error(error.message)
     })
-    if (res?.code === 0) {
-      metaName.val = res.data
+    if (res) {
+      metaName.val = res
       resolve()
     }
   })

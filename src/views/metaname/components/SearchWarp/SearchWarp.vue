@@ -19,7 +19,7 @@ import { ref, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 //@ts-ignore
 import namehash from 'eth-ens-namehash'
-import { bytesLength } from '@/utils/util'
+import { bytesLength, validateMetaName } from '@/utils/util'
 import { useMetaNameStore } from '@/stores/metaname'
 interface Props {
   metaName?: string
@@ -27,33 +27,14 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {})
 const value = ref(props.metaName ? decodeURIComponent(props.metaName) : '')
-const MetaNameReg = /\./g
+
 const i18n = useI18n()
 const emit = defineEmits(['submit', 'error'])
 const metaNameStore = useMetaNameStore()
 
 function submit() {
-  if (value.value === '') {
-    return ElMessage.error(i18n.t('MetaName.MetaName cannot be empty'))
-  } else if (value.value.trim() !== value.value || /\s/.test(value.value)) {
-    return ElMessage.error(`${i18n.t('metanameNotAllowSpace')}`)
-  }
-  // else if (/[^x00-xff]/.test(value.value)) {
-  //   return ElMessage.error(`${i18n.t('metanameNotAllowCh')}`)
-  // }
-  else {
-    const testResult = bytesLength(value.value.trim())
-    if (testResult > 0 && testResult <= 2) {
-      return ElMessage.error(`${i18n.t('metanameNotAllowMin')}`)
-    } else if (testResult > 63) {
-      return ElMessage.error(`${i18n.t('metanameNotAllowOverLenght')}`)
-    }
-  }
-
-  const name = validateMetaName()
-  if (!name) {
-    return ElMessage.error(`${i18n.t('inputMetaNameIllgel')}`)
-  } else {
+  const name = validateMetaName(value.value)
+  if (name) {
     if (checkInputName(name)) {
       emit('submit', name)
     }
@@ -77,21 +58,6 @@ function checkInputName(name: string) {
       return false
     default:
       return false
-  }
-}
-
-const validateMetaName = () => {
-  let illgelRes: any
-
-  try {
-    illgelRes = namehash.normalize(value.value)
-    if (MetaNameReg.test(illgelRes)) return false
-    return illgelRes
-  } catch {
-    const { content } = JSON.parse(`{"content":"${value.value}"}`)
-    illgelRes = namehash.normalize(content)
-    if (MetaNameReg.test(illgelRes)) return false
-    return illgelRes
   }
 }
 </script>

@@ -18,13 +18,3 @@ const metanameApi = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/metaname-in
     })
   },
 }).request
-
-//metaname注册查询
-export const GetMetaNameIsRegister = (
-  name: string
-): Promise<{
-  code: number
-  data: MetaNameSearchResult
-}> => {
-  return metanameApi.get(`/getinfo/?name=${name}`)
-}
