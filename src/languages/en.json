@@ -856,5 +856,6 @@
   "MetaidIsNull": " The Metaid of the bound account is empty, please contact customer service",
   "FixAccountTips2": "on repair",
   "FixAccountTips3": "to fix",
-  "BSV Insufficient balance": "BSV Insufficient balance"
+  "BSV Insufficient balance": "BSV Insufficient balance",
+  "metanameNotAllowCh": "Registration in Chinese is not currently supported"
 }
