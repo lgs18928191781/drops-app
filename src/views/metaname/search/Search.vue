@@ -179,14 +179,6 @@ function changePayType(platform: PayPlatform) {
 }
 
 function searchSubmit(data: string) {
-  const testResult = bytesLength(data.trim())
-  if (/[^x00-xff]/.test(data)) {
-    return ElMessage.error(`${i18n.t('metanameNotAllowCh')}`)
-  } else if (testResult > 0 && testResult <= 2) {
-    return ElMessage.error(`${i18n.t('metanameNotAllowMin')}`)
-  } else if (testResult > 63) {
-    return ElMessage.error(`${i18n.t('metanameNotAllowOverLenght')}`)
-  }
   metaName.value = data
   searchMetaName()
 }

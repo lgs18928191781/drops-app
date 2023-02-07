@@ -35,6 +35,19 @@ const metaNameStore = useMetaNameStore()
 function submit() {
   if (value.value === '') {
     return ElMessage.error(i18n.t('MetaName.MetaName cannot be empty'))
+  } else if (value.value.trim() !== value.value || /\s/.test(value.value)) {
+    return ElMessage.error(`${i18n.t('metanameNotAllowSpace')}`)
+  }
+  // else if (/[^x00-xff]/.test(value.value)) {
+  //   return ElMessage.error(`${i18n.t('metanameNotAllowCh')}`)
+  // }
+  else {
+    const testResult = bytesLength(value.value.trim())
+    if (testResult > 0 && testResult <= 2) {
+      return ElMessage.error(`${i18n.t('metanameNotAllowMin')}`)
+    } else if (testResult > 63) {
+      return ElMessage.error(`${i18n.t('metanameNotAllowOverLenght')}`)
+    }
   }
 
   const name = validateMetaName()

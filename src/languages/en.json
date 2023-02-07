@@ -857,5 +857,6 @@
   "FixAccountTips2": "on repair",
   "FixAccountTips3": "to fix",
   "BSV Insufficient balance": "BSV Insufficient balance",
-  "metanameNotAllowCh": "Registration in Chinese is not currently supported"
+  "metanameNotAllowCh": "Registration in Chinese is not currently supported",
+  "metanameNotAllowSpace": "Registration name cannot have spaces"
 }
