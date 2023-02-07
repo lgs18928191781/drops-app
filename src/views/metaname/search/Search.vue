@@ -24,7 +24,7 @@
         :class="{ disabled: metaNameInfo.val && metaNameInfo.val.expiredBlockTime !== -1 }"
         v-if="metaNameInfo.val"
       >
-        <div class="flex1">
+        <div class="flex1 cont">
           <div class="name">{{ metaNameInfo.val!.name }}</div>
           <div class="msg flex flex-align-center">
             <span class="dot"></span>
