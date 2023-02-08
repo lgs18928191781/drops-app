@@ -1698,7 +1698,7 @@ export class SDK {
       payTo: payTo,
     })
 
-    return await this.wallet?.provider.broadcast(res.toString(), true)
+    return await this.wallet?.provider.broadcast(res.toString())
   }
 
   MetaNameBeforeReq(params: {
