@@ -12,7 +12,7 @@
       class="shrink-0"
     />
     <div class="ml-2 flex flex-col">
-      <UserName :name="member.name" :meta-name="member?.userInfo?.metaName" />
+      <UserName :name="member.name" :meta-name="member?.userInfo?.metaName" class="text-sm" />
       <div class="text-xxs text-dark-300 dark:text-gray-400" v-if="member.metaId">
         MetaID: {{ member.metaId.substring(0, 6) }}
       </div>

@@ -47,7 +47,10 @@
     },
     "Search": {
       "placeholder": "Search MetaID...",
-      "searching": "Searching..."
+      "searching": "Searching...",
+      "users": "Users",
+      "home": "Home",
+      "no_results": "No results for "
     },
     "MetaName": {
       "resolving": "MetaName Resolving..."

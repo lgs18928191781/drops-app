@@ -68,15 +68,17 @@
 </template>
 
 <script lang="ts" setup>
+import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+
 import { GetUserAllInfo, GetUserFollow } from '@/api/aggregation'
 import { useTalkStore } from '@/stores/talk'
 import { useUserStore } from '@/stores/user'
 import { useLayoutStore } from '@/stores/layout'
 import { switchFollowUser } from '@/utils/talk'
 import { showLoading, sleep } from '@/utils/util'
-import { computed, ref, watch } from 'vue'
+
 import UserPersona from '@/components/UserPersona/UserPersona.vue'
-import { useI18n } from 'vue-i18n'
 
 const talk = useTalkStore()
 const user = useUserStore()
