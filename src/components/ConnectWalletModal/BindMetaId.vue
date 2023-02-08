@@ -671,14 +671,17 @@ function createETHBindingBrfcNode(MetaidRes: BindMetaIdRes) {
           xpub: hdWallet.wallet.xpubkey.toString(),
           token: userInfo.token || '',
           userName: userInfo.userType === 'phone' ? userInfo.phone : userInfo.email,
+        }).catch((error) => {
+            console.log(error)
         })
-        utxos = [initUtxo]
-        // const error = {
-        //   message: `${i18n.t('spaceEnghout')}`,
-        // }
-        // reject(error)
+        if (initUtxo){
+          utxos = [initUtxo]
+        }
+
       }
-      // 2. 把钱打到protocols节点
+
+      if (utxos.length) {
+        // 2. 把钱打到protocols节点
       // 先把钱打回到 protocolAddress
       const transfer = await hdWallet.makeTx({
         utxos: utxos,
@@ -743,6 +746,9 @@ function createETHBindingBrfcNode(MetaidRes: BindMetaIdRes) {
             resolve()
           }
         }
+      }
+      } else {
+        reject(new Error(i18n.t('spaceEnghout')))
       }
     } catch (error) {
       reject(error)
