@@ -26,7 +26,15 @@ import { router } from '@/router'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
 import { isAndroid, isAndroidApp, isIOS, isIosApp } from '@/stores/root'
 import { PayToItem } from '@/@types/hd-wallet'
-import { SdkPayType, IsEncrypt, NodeName, JobStepStatus, JobStatus, HdWalletChain } from '@/enum'
+import {
+  SdkPayType,
+  IsEncrypt,
+  NodeName,
+  JobStepStatus,
+  JobStatus,
+  HdWalletChain,
+  WalletTxVersion,
+} from '@/enum'
 import { GetMeUtxos, GetMyMEBalance, GetProtocolMeInfo } from '@/api/v3'
 import * as bsv from '@sensible-contract/bsv'
 import { getLocalAccount, openLoading, realRandomString } from './util'
@@ -772,13 +780,15 @@ export class SDK {
                 }
               }
               const nftManager = this.wallet!.getNftManager()
-
+              debugger
               const feeNumber = await nftManager[
                 params.nodeName === NodeName.NftGenesis
                   ? 'getGenesisEstimateFee'
                   : 'getTransferEstimateFee'
                 // @ts-ignore
               ](_params)
+
+              debugger
               // @ts-ignore
               const res = {
                 txId: '',
@@ -803,7 +813,7 @@ export class SDK {
                 createCurrentNodeParams,
                 {
                   isBroadcast: false,
-                  chain: params.payType === SdkPayType.BSV ? HdWalletChain.BSV : HdWalletChain.MVC,
+                  chain,
                 }
               )
               // nft issue
@@ -971,6 +981,7 @@ export class SDK {
             // 组装新 utxo
             utxo = await this.wallet!.utxoFromTx({
               tx: transactions.metaFileBrfc.transaction,
+              chain,
             })
 
             // 当有 metafile Brfc 改变时 metafile 节点也需要重新构建，因为父节点Brfc的txid 已改变
@@ -984,6 +995,7 @@ export class SDK {
                 dataType: item.fileType,
                 encoding: 'binary',
                 parentTxId: transactions.metaFileBrfc!.txId,
+                chain,
               })
               if (res) {
                 if (!transactions.metaFiles) transactions.metaFiles = []
@@ -1034,6 +1046,7 @@ export class SDK {
               utxo = await this.wallet!.utxoFromTx({
                 tx: item.transaction,
                 addressInfo,
+                chain,
                 // addressInfo: {
                 //   addressIndex: transactions.metaFileBrfc!.addressIndex,
                 //   addressType: transactions.metaFileBrfc!.addressType,
@@ -1057,6 +1070,7 @@ export class SDK {
               // 组装新 utxo
               utxo = await this.wallet!.utxoFromTx({
                 tx: transactions.currentNodeBrfc!.transaction,
+                chain,
               })
             }
 
@@ -1119,6 +1133,7 @@ export class SDK {
                 createCurrentNodeParams,
                 {
                   isBroadcast: false,
+                  chain,
                 }
               )
               if (res) transactions.currentNode = res
@@ -1135,6 +1150,7 @@ export class SDK {
                 // 组装新 utxo
                 utxo = await this.wallet!.utxoFromTx({
                   tx: transactions.currentNode!.transaction,
+                  chain,
                 })
 
                 utxo.wif = this.getPathPrivateKey(
@@ -1158,6 +1174,19 @@ export class SDK {
                   }
                 }
               }
+            }
+          }
+        }
+
+        // 把nft mvc transaction -> Bsv transaction
+        if (params.payType === SdkPayType.BSV && transactions.nft) {
+          for (let i in transactions.nft) {
+            // @ts-ignore
+            if (transactions.nft[i].transaction) {
+              // @ts-ignore
+              transactions.nft[i].transaction.version = WalletTxVersion.BSV
+              // @ts-ignore
+              transactions.nft[i].id = transactions.nft[i].transaction.id
             }
           }
         }
@@ -1313,14 +1342,17 @@ export class SDK {
       let utxo: UtxoItem
       let payToRes: CreateNodeRes | undefined = undefined
       try {
-        if (params.sdkPayType === SdkPayType.SPACE) {
+        if (params.sdkPayType === SdkPayType.SPACE || params.sdkPayType === SdkPayType.BSV) {
+          const chain =
+            params.sdkPayType === SdkPayType.SPACE ? HdWalletChain.MVC : HdWalletChain.BSV
           const allUtxos = await this.wallet?.provider.getUtxos(
-            this.wallet.wallet.xpubkey.toString()
+            this.wallet.wallet.xpubkey.toString(),
+            chain
           )
           const useUtxos = []
           if (allUtxos && allUtxos?.length > 0) {
             // 总价加个 最小金额  给转账费用
-            let leftAmount = params.amount + bsv.Transaction.DUST_AMOUNT
+            let leftAmount = params.amount + mvc.Transaction.DUST_AMOUNT
             for (let i = 0; i < allUtxos.length; i++) {
               if (leftAmount > 0) {
                 useUtxos.push(allUtxos[i])
@@ -1343,6 +1375,7 @@ export class SDK {
                     address: params.receive.address,
                   },
                 ],
+                chain,
               })
               if (res) {
                 payToRes = {
@@ -1356,6 +1389,7 @@ export class SDK {
                 utxo = await this.wallet!.utxoFromTx({
                   tx: payToRes.transaction,
                   outPutIndex: 0,
+                  chain,
                 })
               }
             }

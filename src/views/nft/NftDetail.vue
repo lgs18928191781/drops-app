@@ -658,7 +658,13 @@ function share() {
 
 function transfer() {
   // return ElMessage.info(i18n.t('Comming Soon'))
-  isShowTransfer.value = true
+  if (nft.val!.nftChain === 'bsv' || nft.val!.nftChain === 'mvc') {
+    isShowTransfer.value = true
+  } else {
+    ElMessage.info(
+      `${i18n.t('NotSupportCurrentChainNFTTransfer')}: ${nft.val!.nftChain.toUpperCase()}`
+    )
+  }
 }
 
 //  获取拥有记录

@@ -316,7 +316,8 @@ function getPlatformSymbol(platform: PayPlatform) {
   if (nativePayPlatforms.includes(platform)) {
     return PayPlatformUnit[platform]
   } else {
-    return rootStore.currentPriceSymbol
+    // return rootStore.currentPriceSymbol
+    return '￥'
   }
 }
 
@@ -356,7 +357,6 @@ function drawePayCode() {
               isBroadcast: false,
               chain: HdWalletChain.BSV,
             })
-            transaction.version = WalletTxVersion.BSV
             tx = transaction.id
             raw_tx = transaction.toString()
           }
