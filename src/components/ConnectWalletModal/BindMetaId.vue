@@ -335,7 +335,7 @@ function submitForm() {
       try {
         if (status.value == BindStatus.BindHavedMetaId) {
           //绑定metaid用户
-
+          debugger
           res = await bindingMetaidOrAddressLogin()
           res.password = MD5(props.thirdPartyWallet.signAddressHash).toString()
         }

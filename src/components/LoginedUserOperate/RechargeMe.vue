@@ -35,8 +35,8 @@
           </div>
 
           <div class="form-section">
-            <div class="form_item flex flex-align-center">
-              <div class="label flex1">{{ $t('Wallet.Add Quantity') }}</div>
+            <div class="form_item flex flex-v">
+              <div class="label">{{ $t('Wallet.Add Quantity') }}:</div>
               <div
                 class="value input flex flex-align-center"
                 @click="getFoucus(CountRef)"
@@ -54,8 +54,8 @@
               </div>
             </div>
 
-            <div class="form_item flex flex-align-center">
-              <div class="label flex1">{{ $t('Wallet.Add Amount') }}</div>
+            <div class="form_item flex flex-v">
+              <div class="label">{{ $t('Wallet.Add Amount') }}:</div>
               <div
                 class="value input flex flex-align-center"
                 @click="getFoucus(AmountRef)"

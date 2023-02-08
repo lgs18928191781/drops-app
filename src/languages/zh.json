@@ -855,5 +855,6 @@
   "FixAccountTips3": "去修复",
   "BSV Insufficient balance": "BSV 余额不足",
   "metanameNotAllowCh": "暂不支持注册中文",
-  "metanameNotAllowSpace": "注册名称不可以有空格"
+  "metanameNotAllowSpace": "注册名称不可以有空格",
+  "NotSupportCurrentChainNFTTransfer": "暂不支持所在链NFT转赠"
 }
