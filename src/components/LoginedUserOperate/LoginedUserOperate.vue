@@ -1,5 +1,5 @@
 <template>
-  <div class="version-warp">
+  <div class="version-warp hidden lg:block">
     <VersionVue />
   </div>
   <a
@@ -18,28 +18,30 @@
         class="user-warp-item overflow-hidden"
       />
 
-      <a
-        @click="toMetaName"
-        class="outsideMore flex flex-align-center flex-pack-center user-warp-item"
-        v-if="!isProduction"
-      >
-        <img class="metanameLogo" :src="MetaNameLogo" alt="" />
-      </a>
-      <!-- 钱包 -->
-      <a
-        class="flex flex-align-center flex-pack-center user-warp-item"
-        @click="layout.$patch({ isShowWallet: true })"
-      >
-        <Icon name="wallet_fill" />
-      </a>
-      <!-- 搜索 -->
-      <a
-        class="flex flex-align-center flex-pack-center user-warp-item"
-        @click="layout.$patch({ isShowSearchModal: true })"
-        v-if="!isProduction"
-      >
-        <Icon name="search" />
-      </a>
+      <template v-if="!isMobile">
+        <a
+          @click="toMetaName"
+          class="outsideMore flex flex-align-center flex-pack-center user-warp-item"
+          v-if="!isProduction"
+        >
+          <img class="metanameLogo" :src="MetaNameLogo" alt="" />
+        </a>
+        <!-- 钱包 -->
+        <a
+          class="flex flex-align-center flex-pack-center user-warp-item"
+          @click="layout.$patch({ isShowWallet: true })"
+        >
+          <Icon name="wallet_fill" />
+        </a>
+        <!-- 搜索 -->
+        <a
+          class="flex flex-align-center flex-pack-center user-warp-item"
+          @click="layout.$patch({ isShowSearchModal: true })"
+          v-if="userStore.isAuthorized && !isProduction"
+        >
+          <Icon name="search" />
+        </a>
+      </template>
     </div>
   </template>
   <template v-else>
@@ -60,6 +62,29 @@
     </a>
     <template #dropdown>
       <ElDropdownMenu>
+        <template v-if="isMobile">
+          <ElDropdownItem @click="toMetaName">
+            <div class="flex flex-align-center user-operate-item">
+              <img class="icon" :src="MetaNameLogo" alt="" />
+              <span class="name">MetaName</span>
+            </div>
+          </ElDropdownItem>
+
+          <ElDropdownItem @click="layout.$patch({ isShowWallet: true })">
+            <div class="flex flex-align-center user-operate-item">
+              <Icon name="wallet_fill" />
+              <span class="name">Wallet</span>
+            </div>
+          </ElDropdownItem>
+
+          <ElDropdownItem @click="layout.$patch({ isShowSearchModal: true })">
+            <div class="flex flex-align-center user-operate-item">
+              <Icon name="search" />
+              <span class="name">Search</span>
+            </div>
+          </ElDropdownItem>
+        </template>
+
         <ElDropdownItem v-for="(item, index) in userOperates" :key="index" @click="item.func()">
           <div class="flex flex-align-center user-operate-item">
             <Icon :name="item.icon" />
@@ -79,7 +104,7 @@
 </template>
 
 <script setup lang="ts">
-import { useRootStore } from '@/stores/root'
+import { useRootStore, isMobile } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
 import { ElDropdown } from 'element-plus'
 import { computed, ref } from 'vue'

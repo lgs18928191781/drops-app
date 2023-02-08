@@ -87,7 +87,10 @@
     },
     "Search": {
       "placeholder": "搜索MetaID……",
-      "searching": "搜索中……"
+      "searching": "搜索中……",
+      "users": "用户",
+      "no_results": "没有搜索结果：",
+      "home": "主页"
     },
     "MetaName": {
       "resolving": "MetaName 解析中…"
