@@ -21,7 +21,7 @@ import * as ECIES from 'mvc-lib/ecies'
 import { englishWords } from './english'
 import { SA_utxo } from 'sensible-sdk/dist/sensible-api'
 import { isEmail, sleep } from '../util'
-import { Chains, IsEncrypt, NodeName } from '@/enum'
+import { Chains, HdWalletChain, IsEncrypt, NodeName } from '@/enum'
 import { AttachmentItem, PayToItem } from '@/@types/hd-wallet'
 import {
   CreateNodeOptions,
@@ -297,7 +297,13 @@ export const hdWalletFromAccount = async (
   // const mnemonic = new Mnemonic(Buffer.from(hex)).toString()
   const wallet = await hdWalletFromMnemonic(mnemonic, account.tag, network, path)
   const root = wallet.deriveChild(0).deriveChild(0).privateKey
-
+  console.log({
+    mnemonic: mnemonic,
+    wallet: wallet,
+    rootAddress: root.toAddress(network).toString(),
+    rootWif: root.toString(),
+    network,
+  })
   return {
     mnemonic: mnemonic,
     wallet: wallet,
@@ -359,6 +365,7 @@ export const encryptMnemonic = (mnemonic: string, password: string): string => {
   const mnemonicStr = mnemonic.split(' ').join(',')
   return aesEncrypt(mnemonicStr, password)
 }
+
 // 解密助记词
 export const decryptMnemonic = (encryptedMnemonic: string, password: string): string => {
   const mnemonic = aesDecrypt(encryptedMnemonic, password)
@@ -420,6 +427,7 @@ export const createMnemonic = (address: string) => {
 }
 
 const metasvServiceSecret = 'KxSQqTxhonc5i8sVGGhP1cMBGh5cetVDMfZjQdFursveABTGVbZD'
+
 const defaultSigners = [
   {
     satotxApiPrefix: 'https://s1.satoplay.cn,https://s1.satoplay.com',
@@ -505,7 +513,9 @@ export class HdWallet {
   constructor(
     wallet: mvc.HDPrivateKey,
     params?: {
-      metaSvApi: string
+      baseApi?: string
+      mvcMetaSvApi?: string
+      bsvMetaSvApi?: string
     }
   ) {
     // @ts-ignore
@@ -513,10 +523,7 @@ export class HdWallet {
     this.wallet = wallet
     const root = wallet.deriveChild(0).deriveChild(0).privateKey
     this._root = root
-    this.provider = new ShowmoneyProvider(
-      import.meta.env.VITE_BASEAPI,
-      params && params.metaSvApi ? params.metaSvApi : import.meta.env.VITE_META_SV_API
-    )
+    this.provider = new ShowmoneyProvider()
   }
 
   get rootAddress(): string {
@@ -1890,13 +1897,23 @@ export class HdWallet {
     isBroadcast?: boolean
     opReturn?: string[]
     utxos?: UtxoItem[]
+    chain?: HdWalletChain
   }) {
     return new Promise<mvc.Transaction>(async (resolve, reject) => {
       try {
-        if (typeof params.isBroadcast === 'undefined') params.isBroadcast = true
-        if (!params.opReturn) params.opReturn = ['show3']
-        if (!params.utxos) {
-          params.utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
+        const initParams = {
+          payTo: [],
+          isBroadcast: true,
+          opReturn: ['show3'],
+          utxos: [],
+          chain: HdWalletChain.MVC,
+        }
+        params = {
+          ...initParams,
+          ...params,
+        }
+        if (!params.utxos!.length) {
+          params.utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString(), params.chain)
         }
         for (const item of params.payTo) {
           if (!item.address) {
@@ -1913,15 +1930,13 @@ export class HdWallet {
           utxos: params.utxos,
         })
         if (params.isBroadcast) {
-          const res = await this.provider.broadcast(tx.toString())
+          const res = await this.provider.broadcast(tx.toString(), params.chain)
           if (res) {
             resolve(tx)
           }
         } else {
           resolve(tx)
         }
-
-        // this.sendTx(tx.toString())
       } catch (error) {
         reject(error)
       }

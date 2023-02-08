@@ -151,7 +151,7 @@
 
 <script setup lang="ts">
 import { GetOrderAmout, PayOrderConfirm } from '@/api/pay'
-import { PayPlatform, PayPlatformUnit, PayStatus, WalletTxVersion } from '@/enum'
+import { HdWalletChain, PayPlatform, PayPlatformUnit, PayStatus, WalletTxVersion } from '@/enum'
 import { isApp, isIOS, isIosApp, isWechat, useRootStore } from '@/stores/root'
 import Decimal from 'decimal.js-light'
 import {
@@ -182,7 +182,6 @@ import { GetOrder, GetOrderStatus, PayETHByME, UpdatePay } from '@/api/wxcore'
 import { useUserStore } from '@/stores/user'
 import { BigNumber, ethers } from 'ethers'
 import { useI18n } from 'vue-i18n'
-import { useBsvStore } from '@/stores/bsv'
 import { Wallet } from 'meta-contract'
 import { bsv } from '@/utils/filters'
 
@@ -206,7 +205,7 @@ const payStatusType = {
   [PayStatus.Fail]: 'error',
   [PayStatus.Success]: 'success',
 }
-const useStore = useUserStore()
+const userStore = useUserStore()
 
 const payStatusTitle = {
   [PayStatus.Ing]: '',
@@ -273,7 +272,6 @@ const qrcodeData = ref('')
 const iosPayHtml = ref('')
 const PayIframeRef = ref()
 const isQrcodeInTime = ref(true) // 付款码是否在有效时间
-const bsvStore = useBsvStore()
 
 const payPlatformAmountRate = {
   [PayPlatform.ETH]: Math.pow(10, 9),
@@ -333,8 +331,8 @@ function drawePayCode() {
           let tx
           let from_coin_address = ''
           if (props.payPlatform === PayPlatform.ETH || props.payPlatform === PayPlatform.POLYGON) {
-            await CheckMetaMaskAccount(useStore.user!.evmAddress!)
-            from_coin_address = useStore.user!.evmAddress!
+            await CheckMetaMaskAccount(userStore.user!.evmAddress!)
+            from_coin_address = userStore.user!.evmAddress!
             tx = await window.ethereum!.request!({
               method: 'eth_sendTransaction',
               params: [
@@ -343,7 +341,7 @@ function drawePayCode() {
                     new Decimal(props.amount).mul(Math.pow(10, 9)).toString()
                   ).toHexString(),
                   to: props.url,
-                  from: useStore.user?.evmAddress,
+                  from: userStore.user?.evmAddress,
                 },
               ],
             })
@@ -352,13 +350,11 @@ function drawePayCode() {
             if (bsvBalance < new Decimal(props.amount).plus(560).toNumber()) {
               throw new Error(i18n.t('BSV Insufficient balance'))
             }
-            // bsv 支付
-            await bsvStore.initWallet()
-            debugger
-            from_coin_address = bsvStore.wallet!.rootAddress
-            const transaction = await bsvStore.wallet!.sendMoney({
+            from_coin_address = userStore.showWallet.wallet!.rootAddress
+            const transaction = await userStore.showWallet.wallet!.sendMoney({
               payTo: [{ address: props.url, amount: new Decimal(props.amount).toNumber() }],
               isBroadcast: false,
+              chain: HdWalletChain.BSV,
             })
             transaction.version = WalletTxVersion.BSV
             tx = transaction.id
@@ -387,7 +383,7 @@ function drawePayCode() {
         // 余额支付
         else if (props.payPlatform === PayPlatform.BalancePay) {
           const getOrdetAmount = await GetOrderAmout({
-            address: useStore.user!.address!,
+            address: userStore.user!.address!,
             oriCustomerOrderNo: props.url,
           }).catch(() => reject(Error(i18n.t('PayModal.Get Order Amount Fail'))))
           if (getOrdetAmount?.success) {
@@ -449,7 +445,7 @@ function drawePayCode() {
                 orderInfo: props.url,
               }
               window.appMetaIdJsV2.payForApp(
-                useStore.user!.token,
+                userStore.user!.token,
                 JSON.stringify(params),
                 'onAppPayCallBack'
               )
@@ -621,7 +617,7 @@ async function balancePayConfirm() {
   const loading = openLoading()
   const res = await PayOrderConfirm({
     ...balancePay.params,
-    address: useStore.user!.address!,
+    address: userStore.user!.address!,
   }).catch(error => {
     payResult.intro = error.message
     payResult.status = PayStatus.Fail

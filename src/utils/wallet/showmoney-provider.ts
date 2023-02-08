@@ -12,6 +12,7 @@ import {
 import axios, { AxiosInstance } from 'axios'
 import { UtxoItem } from '@/@types/sdk'
 import zlib from 'zlib'
+import { HdWalletChain } from '@/enum'
 interface BaseApiResultTypes<T> {
   code: number
   msg?: string
@@ -67,8 +68,9 @@ interface GetBalanceData {
 // const metaSvPrivateKey = 'KxSQqTxhonc5i8sVGGhP1cMBGh5cetVDMfZjQdFursveABTGVbZD'
 
 export default class ShowmoneyProvider {
-  public apiPrefix: string
-  public metaSvApi: string
+  public apiPrefix: string = import.meta.env.VITE_BASEAPI
+  public metaSvApi: string = import.meta.env.VITE_META_SV_API
+  public bsvMetaSvApi: string = import.meta.env.VITE_BSV_META_SV_API
   public metaSvMirror = 'https://api.showmoney.app/metasv'
   public metaSvHttp
   public metasvSignatureHttp
@@ -76,9 +78,11 @@ export default class ShowmoneyProvider {
   public metaNameApi = `http://47.242.27.95:35000`
   public newBrfcNodeBaseInfoList: NewBrfcNodeBaseInfo[] = []
 
-  constructor(apiPrefix: string, metaSvApi: string) {
-    this.apiPrefix = apiPrefix || 'https://api.showmoney.app'
-    this.metaSvApi = metaSvApi
+  constructor(params?: { baseApi?: string; mvcMetaSvApi?: string; bsvMetaSvApi?: string }) {
+    if (params?.baseApi) this.apiPrefix = params.baseApi
+    if (params?.mvcMetaSvApi) this.metaSvApi = params.mvcMetaSvApi
+    if (params?.bsvMetaSvApi) this.bsvMetaSvApi = params.bsvMetaSvApi
+
     this.metaSvHttp = new HttpRequest(this.metaSvApi).request
     this.serviceHttp = new HttpRequest(this.apiPrefix + '/serviceapi').request
     // 初始化 metasv签名接口 http
@@ -195,7 +199,8 @@ export default class ShowmoneyProvider {
   private async callMetasvApi(
     path: string,
     params: ObjTypes<string | number> = {},
-    method = 'get'
+    method = 'get',
+    chain: HdWalletChain = HdWalletChain.MVC
   ): Promise<any> {
     const signature = await this.getMetasvSig(path)
     const headers = {
@@ -205,7 +210,7 @@ export default class ShowmoneyProvider {
       'MetaSV-Nonce': signature.nonce,
       'MetaSV-Signature': signature.signEncoded,
     }
-    const url = this.metaSvApi + path
+    const url = `${chain === HdWalletChain.MVC ? this.metaSvApi : this.bsvMetaSvApi}${path}`
     const Http = new HttpRequests()
     let res
     try {
@@ -317,8 +322,11 @@ export default class ShowmoneyProvider {
     }
   }
 
-  public async getUtxos(xpub: string): Promise<UtxoItem[]> {
-    const res = await this.callMetasvApi(`/xpubLite/${xpub}/utxo`)
+  public async getUtxos(
+    xpub: string,
+    chain: HdWalletChain = HdWalletChain.MVC
+  ): Promise<UtxoItem[]> {
+    const res = await this.callMetasvApi(`/xpubLite/${xpub}/utxo`, {}, 'get', chain)
     const utxos: UtxoItem[] = []
     if (Array.isArray(res)) {
       res.forEach(item => {
@@ -395,7 +403,7 @@ export default class ShowmoneyProvider {
 
   // public
 
-  public async broadcast(txHex: string) {
+  public async broadcast(txHex: string, chain: HdWalletChain = HdWalletChain.MVC) {
     return new Promise<{
       txid: string
     }>(async (resolve, reject) => {
@@ -404,7 +412,8 @@ export default class ShowmoneyProvider {
         {
           hex: txHex,
         },
-        'post'
+        'post',
+        chain
       ).catch(error => {
         // 广播容错，忽略返回
         // this.sendRawTx(txHex)
