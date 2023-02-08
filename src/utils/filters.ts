@@ -162,3 +162,7 @@ export function buzzTextContent(content: string) {
       )
   )
 }
+
+export function strapiImage(url: string) {
+  return `${import.meta.env.VITE_AdminBaseApi}${url}`
+}
