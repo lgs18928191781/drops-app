@@ -335,12 +335,13 @@
     "No wallet": "No Wallet"
   },
   "UserOperate": {
-    "createGropp": "Create Group",
     "settings": "Settings",
     "aboutShow": "About Show",
     "help": "Help",
     "logout": "Logout",
-    "About MetaSo": "About MetaSo"
+    "About MetaSo": "About MetaSo",
+    "wallet": "Wallet",
+    "metaName": "MetaName"
   },
   "Comming Soon": "Coming Soon",
   "Use MetaId Wallet": "Use MetaID Wallet",

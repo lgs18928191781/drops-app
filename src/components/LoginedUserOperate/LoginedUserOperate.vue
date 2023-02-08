@@ -1,5 +1,5 @@
 <template>
-  <div class="version-warp hidden lg:block">
+  <div class="version-warp">
     <VersionVue />
   </div>
   <a
@@ -160,15 +160,6 @@ const userOperates = computed(() => {
     },
   ]
   if (userStore.isAuthorized) {
-    result.unshift({
-      name: i18n.t('UserOperate.createGropp'),
-      icon: 'plus_circle',
-      func: () => {
-        layout.$patch({
-          isShowCreateCommunityModal: true,
-        })
-      },
-    })
     result.push({
       name: i18n.t('UserOperate.logout'),
       icon: 'logout',
