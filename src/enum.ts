@@ -236,6 +236,7 @@ export enum PayMeParamsType {
 export enum SdkPayType {
   ME = 'ME',
   SPACE = 'SPACE',
+  BSV = 'BSV',
 }
 
 export enum BuzzTabType {
@@ -484,4 +485,15 @@ export enum MetaNameRegisterState {
   Registered = 1,
   RegisteredAndSending = 2,
   UnRegister = 3,
+}
+
+export enum EnvMode {
+  Mainnet = 'mainnet',
+  MainnetGray = 'mainnetgray',
+  TestnetGray = 'gray',
+}
+
+export enum HdWalletChain {
+  BSV = 'bsv',
+  MVC = 'mvc',
 }

@@ -380,82 +380,89 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
     }
   })
   let res: BindMetaIdRes
+  if (getMnemonicRes?.code === 0) {
+    if (
+      getMnemonicRes?.data?.metaId &&
+      getMnemonicRes?.data?.registerSource === RegisterSource.metamask
+    ) {
+      //这里需要再判断一下用户注册来源，如果是metamask注册的用户要拿metaid来解
 
-  if (
-    getMnemonicRes?.data?.metaId &&
-    getMnemonicRes?.data?.registerSource === RegisterSource.metamask
-  ) {
-    //这里需要再判断一下用户注册来源，如果是metamask注册的用户要拿metaid来解
-
-    try {
-      let signHashForMnemonic
-      res = await BindMetaIdRef.value.loginByMnemonic(
-        getMnemonicRes.data.evmEnMnemonic,
-        MD5(params.signAddressHash).toString(),
-        false,
-        getMnemonicRes.data.path
-      )
-      if (res) {
-        await BindMetaIdRef.value.loginSuccess(res)
-        rootStore.$patch({ isShowMetaMak: false })
-        onModalClose()
-      }
-    } catch (error) {
-      rootStore.$patch({ isShowMetaMak: false })
-      return ElMessage.error(`${i18n.t('walletError')}`)
-    }
-
-    // return  emit('update:modelValue', false)
-  } else if (
-    getMnemonicRes?.code === 0 &&
-    getMnemonicRes.data.evmEnMnemonic &&
-    getMnemonicRes?.data?.registerSource === RegisterSource.showmoney
-  ) {
-    // 有密码直接登录， 没有密码就要用户输入
-    const password = localStorage.getItem(encode('password'))
-    if (password) {
-      res = await BindMetaIdRef.value.loginByMnemonic(
-        getMnemonicRes.data.menmonic,
-        decode(password),
-        false,
-        getMnemonicRes.data.path
-      )
-
-      if (res) {
-        await BindMetaIdRef.value.loginSuccess(res)
-        onModalClose()
-      }
-    } else {
       try {
+        let signHashForMnemonic
         res = await BindMetaIdRef.value.loginByMnemonic(
           getMnemonicRes.data.evmEnMnemonic,
           MD5(params.signAddressHash).toString(),
           false,
           getMnemonicRes.data.path
         )
-
         if (res) {
           await BindMetaIdRef.value.loginSuccess(res)
           rootStore.$patch({ isShowMetaMak: false })
           onModalClose()
         }
       } catch (error) {
-        thirdPartyWallet.signAddressHash = params.signAddressHash
-        thirdPartyWallet.address = params.address
-        BindMetaIdRef.value.status = BindStatus.InputPassword
         rootStore.$patch({ isShowMetaMak: false })
-        isShowBindModal.value = true
+        return ElMessage.error(`${i18n.t('walletError')}`)
       }
+
+      // return  emit('update:modelValue', false)
+    } else if (
+      getMnemonicRes.data.evmEnMnemonic &&
+      getMnemonicRes?.data?.registerSource === RegisterSource.showmoney
+    ) {
+      // 有密码直接登录， 没有密码就要用户输入
+      const password = localStorage.getItem(encode('password'))
+      if (password) {
+        res = await BindMetaIdRef.value.loginByMnemonic(
+          getMnemonicRes.data.menmonic,
+          decode(password),
+          false,
+          getMnemonicRes.data.path
+        )
+
+        if (res) {
+          await BindMetaIdRef.value.loginSuccess(res)
+          onModalClose()
+        }
+      } else {
+        try {
+          res = await BindMetaIdRef.value.loginByMnemonic(
+            getMnemonicRes.data.evmEnMnemonic,
+            MD5(params.signAddressHash).toString(),
+            false,
+            getMnemonicRes.data.path
+          )
+
+          if (res) {
+            await BindMetaIdRef.value.loginSuccess(res)
+            rootStore.$patch({ isShowMetaMak: false })
+            onModalClose()
+          }
+        } catch (error) {
+          thirdPartyWallet.signAddressHash = params.signAddressHash
+          thirdPartyWallet.address = params.address
+          BindMetaIdRef.value.status = BindStatus.InputPassword
+          rootStore.$patch({ isShowMetaMak: false })
+          isShowBindModal.value = true
+        }
+      }
+    } else if (
+      !getMnemonicRes?.data.metaId &&
+      getMnemonicRes?.data?.registerSource === RegisterSource.metamask
+    ) {
+      rootStore.$patch({ isShowMetaMak: false })
+
+      // 修复有问题的账号 待完善
+      // await BindMetaIdRef.value
+      //   .createMetaidAccount(thirdPartyWallet.signAddressHash)
+      //   .catch(error => {
+      //     ElMessage.error(error.message)
+      //   })
+      return ElMessage.error(`${i18n.t('MetaidIsNull')}`)
+      // BindMetaIdRef.value.status = BindStatus.ChooseType
+      // rootStore.$patch({ isShowMetaMak: false })
+      // isShowBindModal.value = true
     }
-  } else if (
-    !getMnemonicRes?.data.metaId &&
-    getMnemonicRes?.data?.registerSource === RegisterSource.metamask
-  ) {
-    rootStore.$patch({ isShowMetaMak: false })
-    return ElMessage.error(`${i18n.t('MetaidIsNull')}`)
-    // BindMetaIdRef.value.status = BindStatus.ChooseType
-    // rootStore.$patch({ isShowMetaMak: false })
-    // isShowBindModal.value = true
   }
 }
 
@@ -581,7 +588,7 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
       let errorMsg: any
       for (let i = 0; i < broadcasts.length; i++) {
         try {
-          await wallet?.provider.broadcast(broadcasts[i], true)
+          await wallet?.provider.broadcast(broadcasts[i])
         } catch (error) {
           errorMsg = error
           break

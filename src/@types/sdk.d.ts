@@ -1,4 +1,4 @@
-import { IsEncrypt } from '@/enum'
+import { HdWalletChain, IsEncrypt } from '@/enum'
 import { PayToItem } from '@/typings/sdk'
 import { MetaIdJs, ProtocolOptions } from 'metaidjs'
 
@@ -108,6 +108,7 @@ export interface CreateNodeOptions {
     publicKey: string
     path: string
   }
+  chain?: HdWalletChain
 }
 
 export interface TransferTypes {
@@ -122,6 +123,7 @@ export interface TransferTypes {
   opReturn?: (string | Buffer)[]
   needConfirm?: boolean
   useFeeb?: number
+  chain?: HdWalletChain
 }
 
 export interface ConstructorOptionsTypes {

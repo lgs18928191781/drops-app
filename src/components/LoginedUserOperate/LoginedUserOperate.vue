@@ -3,9 +3,9 @@
     <VersionVue />
   </div>
   <a
-    v-if="!userStore.isAuthorized && !isProduction"
     @click="toMetaName"
     class="outsideMore flex flex-align-center flex-pack-center user-warp-item"
+    v-if="!userStore.isAuthorized"
   >
     <img class="metanameLogo" :src="MetaNameLogo" alt="" />
   </a>

@@ -410,8 +410,8 @@ function loginSuccess(params: BindMetaIdRes) {
       //     })
 
       //     if (ethBindBrfc) {
-      //       await hdWallet.provider.broadcast(transfer.toString(), true)
-      //       await hdWallet.provider.broadcast(ethBindBrfc.hex!, true)
+      //       await hdWallet.provider.broadcast(transfer.toString())
+      //       await hdWallet.provider.broadcast(ethBindBrfc.hex!)
 
       //     }
       //     }
@@ -738,8 +738,8 @@ function createETHBindingBrfcNode(MetaidRes: BindMetaIdRes) {
           })
 
           if (ethBindBrfc) {
-            await hdWallet.provider.broadcast(transfer.toString(), true)
-            await hdWallet.provider.broadcast(ethBindBrfc.hex!, true)
+            await hdWallet.provider.broadcast(transfer.toString())
+            await hdWallet.provider.broadcast(ethBindBrfc.hex!)
             resolve()
           }
         }
@@ -885,6 +885,7 @@ defineExpose({
   loginByMnemonic,
   loginSuccess,
   status: status,
+  createMetaidAccount
 })
 </script>
 

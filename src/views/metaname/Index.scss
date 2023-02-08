@@ -191,6 +191,7 @@
 
         img {
             margin-right: 24px;
+            height: auto;
 
             &:last-child {
                 margin-right: 0;
@@ -430,7 +431,7 @@ footer {
         }
 
         .imgs {
-            flex-direction: column;
+            display: block;
 
             img {
                 margin-right: 0;

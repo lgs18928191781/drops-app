@@ -151,8 +151,11 @@ import PlainBtn from './components/PlainBtn/PlainBtn.vue'
 import Logo from './components/Logo/Logo.vue'
 import { checkUserLogin } from '@/utils/util'
 import { useRouter } from 'vue-router'
+import { EnvMode } from '@/enum'
+import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
+const i18n = useI18n()
 
 const wallets = [
   {
@@ -199,8 +202,7 @@ const apps = [
 const contactIcon = [
   {
     icon: 'show_fill',
-    link:
-      'https://www.show3.io/talk/channels/8bef622b119ed8bdbe7cb10f4fd3b844db2f08663a4c66a010661e8cd1220a27/d15591ee6ec34aa2f8d34665c8874d6616ccef8cee30fe8754242dd85c4aeb1b',
+    link: 'https://www.show3.io/talk/channels/Show3.meta/index',
   },
   {
     icon: 'twitter',
@@ -213,6 +215,9 @@ const contactIcon = [
 ]
 
 async function toMine() {
+  if (import.meta.env.MODE === EnvMode.Mainnet) {
+    return ElMessage.info(i18n.t('Comming Soon'))
+  }
   await checkUserLogin()
   router.push({
     name: 'metaNameMine',

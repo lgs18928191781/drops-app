@@ -644,7 +644,7 @@ function getBsvBalance() {
     })
     if (typeof res === 'number') {
       wallets[1].list[3].value = new Decimal(
-        new Decimal(res).div(Math.pow(10, 8)).toFixed(4)
+        new Decimal(res).div(Math.pow(10, 8)).toFixed(8)
       ).toNumber()
       wallets[1].list[3].loading = false
       resolve()
