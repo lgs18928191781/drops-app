@@ -236,6 +236,7 @@ export enum PayMeParamsType {
 export enum SdkPayType {
   ME = 'ME',
   SPACE = 'SPACE',
+  BSV = 'BSV',
 }
 
 export enum BuzzTabType {

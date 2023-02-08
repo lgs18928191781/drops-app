@@ -26,7 +26,7 @@ import { router } from '@/router'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
 import { isAndroid, isAndroidApp, isIOS, isIosApp } from '@/stores/root'
 import { PayToItem } from '@/@types/hd-wallet'
-import { SdkPayType, IsEncrypt, NodeName, JobStepStatus, JobStatus } from '@/enum'
+import { SdkPayType, IsEncrypt, NodeName, JobStepStatus, JobStatus, HdWalletChain } from '@/enum'
 import { GetMeUtxos, GetMyMEBalance, GetProtocolMeInfo } from '@/api/v3'
 import * as bsv from '@sensible-contract/bsv'
 import { getLocalAccount, openLoading, realRandomString } from './util'
@@ -45,6 +45,7 @@ import { useLayoutStore } from '@/stores/layout'
 import { GetTx } from '@/api/metaid-base'
 import { MetaNameBeforeReqRes } from '@/api/index'
 import AllNodeName from './AllNodeName'
+import { tr } from 'element-plus/es/locale'
 enum AppMode {
   PROD = 'prod',
   GRAY = 'gray',
@@ -666,11 +667,13 @@ export class SDK {
     return new Promise<NodeTransactions>(async (resolve, reject) => {
       try {
         const userStore = useUserStore()
+        const chain = params.payType === SdkPayType.BSV ? HdWalletChain.BSV : HdWalletChain.MVC
         let transactions: NodeTransactions = {}
         if (params.nodeName === NodeName.Name) {
           const res = await this.wallet?.createNode({
             ...params,
             parentTxId: userStore.user!.infoTxId,
+            chain,
           })
           transactions.currentNode = res
         } else {
@@ -686,6 +689,7 @@ export class SDK {
               },
               {
                 isBroadcast: false,
+                chain,
               }
             )
 
@@ -699,6 +703,7 @@ export class SDK {
                 dataType: item.fileType,
                 encoding: 'binary',
                 parentTxId: transactions.metaFileBrfc!.txId,
+                chain,
               })
               const res = await this.wallet?.createNode(createAttachmentParams[index])
               if (res) {
@@ -718,7 +723,8 @@ export class SDK {
                 const protocol = await this.wallet!.getProtocolInfo(
                   params.nodeName,
                   res.data.parentTxId,
-                  res.data.parentData
+                  res.data.parentData,
+                  chain
                 )
                 transactions.currentNodeBrfc = {
                   address: res.data.parentAddress,
@@ -736,7 +742,7 @@ export class SDK {
                   utxos: params.utxos,
                   useFeeb: params.useFeeb,
                 },
-                { isBroadcast: false }
+                { isBroadcast: false, chain }
               )
             }
 
@@ -754,7 +760,7 @@ export class SDK {
               // NFT genesis/transfer
               if (!transactions.nft) transactions.nft = {}
 
-              const scriptPlayload = await this.getScriptPlayload(createCurrentNodeParams)
+              const scriptPlayload = await this.getScriptPlayload(createCurrentNodeParams, chain)
               let _params = {
                 opreturnData: scriptPlayload!,
                 utxoMaxCount: 1,
@@ -797,6 +803,7 @@ export class SDK {
                 createCurrentNodeParams,
                 {
                   isBroadcast: false,
+                  chain: params.payType === SdkPayType.BSV ? HdWalletChain.BSV : HdWalletChain.MVC,
                 }
               )
               // nft issue
@@ -833,7 +840,10 @@ export class SDK {
     })
   }
 
-  private getBrfcNode(params: CreateBrfcNodePrams, option?: { isBroadcast: boolean }) {
+  private getBrfcNode(
+    params: CreateBrfcNodePrams,
+    option?: { isBroadcast?: boolean; chain?: HdWalletChain }
+  ) {
     return new Promise<CreateNodeRes>(async (resolve, reject) => {
       try {
         if (this.bfrcNodeList.some(item => item.nodeName === params.nodeName)) {
@@ -904,11 +914,12 @@ export class SDK {
     return receive
   }
 
-  private getScriptPlayload(params: HdWalletCreateBrfcChildNodeParams) {
+  private getScriptPlayload(params: HdWalletCreateBrfcChildNodeParams, chain = HdWalletChain.MVC) {
     return new Promise<(string | Buffer)[]>(async (resolve, reject) => {
       const res = await this.wallet
         ?.createBrfcChildNode(params, {
           isBroadcast: false,
+          chain,
         })
         .catch(error => {
           reject(error)
@@ -936,6 +947,7 @@ export class SDK {
       }
     }>(async (resolve, reject) => {
       try {
+        const chain = params.payType === SdkPayType.BSV ? HdWalletChain.BSV : HdWalletChain.MVC
         if (params.nodeName === NodeName.Name) {
           this.setTransferUtxoAndOutputAndSign(
             transactions.currentNode!.transaction,
@@ -1074,7 +1086,7 @@ export class SDK {
               utxo.wif = this.getPathPrivateKey(
                 `${utxo.addressType}/${utxo.addressIndex}`
               )!.toString()
-              const scriptPlayload = await this.getScriptPlayload(createCurrentNodeParams)
+              const scriptPlayload = await this.getScriptPlayload(createCurrentNodeParams, chain)
               const nftManager = this.wallet!.getNftManager()
               const res = await nftManager![
                 params.nodeName === NodeName.NftGenesis ? 'genesis' : 'transfer'
@@ -1262,13 +1274,19 @@ export class SDK {
             this.wallet.wallet.xpubkey.toString()
           )
           if (typeof res === 'number') balance = res
-        } else {
+        } else if (type === SdkPayType.ME) {
           const userMeRes = await GetMyMEBalance({
             address: userStore.user?.address!,
           })
           if (userMeRes.code === 0) {
             balance = userMeRes.data.count / 100
           }
+        } else if (type === SdkPayType.BSV) {
+          const res = await this.wallet?.provider.getXpubBalance(
+            this.wallet.wallet.xpubkey.toString(),
+            HdWalletChain.BSV
+          )
+          if (typeof res === 'number') balance = res
         }
         resolve(balance)
       } catch (error) {
@@ -1440,8 +1458,14 @@ export class SDK {
   }
 
   private getNodeTransactionsLastTx(transactions: NodeTransactions) {
-    if (transactions.issueNFT?.transaction) {
-      return transactions.issueNFT?.transaction
+    if (transactions.nft) {
+      if (transactions.nft.genesis) {
+        return transactions.nft?.genesis?.transaction
+      } else if (transactions.nft.transfer) {
+        return transactions.nft?.transfer?.transaction
+      } else if (transactions.nft.issue) {
+        return transactions.nft?.issue?.transaction
+      }
     } else if (transactions.currentNode?.transaction) {
       return transactions.currentNode?.transaction
     } else if (transactions.currentNodeBrfc?.transaction) {

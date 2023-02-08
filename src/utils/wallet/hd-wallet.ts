@@ -21,7 +21,7 @@ import * as ECIES from 'mvc-lib/ecies'
 import { englishWords } from './english'
 import { SA_utxo } from 'sensible-sdk/dist/sensible-api'
 import { isEmail, sleep } from '../util'
-import { Chains, HdWalletChain, IsEncrypt, NodeName } from '@/enum'
+import { Chains, HdWalletChain, IsEncrypt, NodeName, WalletTxVersion } from '@/enum'
 import { AttachmentItem, PayToItem } from '@/@types/hd-wallet'
 import {
   CreateNodeOptions,
@@ -839,8 +839,7 @@ export class HdWallet {
           for (let i = 0; i < hexTxs.length; i++) {
             try {
               const tx = hexTxs[i]
-
-              await this.provider.broadcast(tx, true)
+              await this.provider.broadcast(tx)
             } catch (error) {
               errorMsg = error
             }
@@ -990,6 +989,7 @@ export class HdWallet {
     encoding = 'UTF-8',
     outputs = [],
     node,
+    chain = HdWalletChain.MVC,
   }: CreateNodeOptions) {
     return new Promise<CreateNodeRes>(async (resolve, reject) => {
       try {
@@ -1059,6 +1059,7 @@ export class HdWallet {
           change: change,
           outputs,
           payTo,
+          chain,
         }
 
         // TODO: 父节点 utxo 管理
@@ -1107,6 +1108,7 @@ export class HdWallet {
     opReturn,
     utxos,
     useFeeb = DEFAULTS.feeb,
+    chain = HdWalletChain.MVC,
   }: TransferTypes): Promise<mvc.Transaction> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1116,6 +1118,7 @@ export class HdWallet {
           opReturn,
           useFeeb,
           utxos,
+          chain,
         })
         tx.change(change)
         // @ts-ignore
@@ -1168,11 +1171,14 @@ export class HdWallet {
     utxos = [],
     opReturn,
     useFeeb = DEFAULTS.feeb,
+    chain = HdWalletChain.MVC,
   }: TransferTypes) {
     if (!this.wallet) {
       throw new Error('Wallet uninitialized! (core-makeTx)')
     }
     const tx = new mvc.Transaction()
+    // 更改 Transaction 为 Bsv  Transaction
+    if (chain === HdWalletChain.BSV) tx.version = WalletTxVersion.BSV
     // 添加 payto
     if (Array.isArray(payTo) && payTo.length) {
       payTo.forEach(item => {
@@ -1633,7 +1639,12 @@ export class HdWallet {
     return response
   }
 
-  async getProtocolInfo(nodeName: NodeName, protocolsTxId: string, brfcId: string) {
+  async getProtocolInfo(
+    nodeName: NodeName,
+    protocolsTxId: string,
+    brfcId: string,
+    chain = HdWalletChain.MVC
+  ) {
     return new Promise<ProtocolBrfcNode | null>(async (resolve, reject) => {
       try {
         let brfcNode = this.userBrfcNodeList.find(
@@ -1653,7 +1664,8 @@ export class HdWallet {
           if (protocol) {
             const protocolInfo = await this.provider.getXpubLiteAddressInfo(
               this.wallet.xpubkey.toString(),
-              protocol.address
+              protocol.address,
+              chain
             )
             if (protocolInfo) {
               if (protocolInfo.addressIndex <= 150) {
@@ -1716,7 +1728,8 @@ export class HdWallet {
   public createBrfcNode(
     params: CreateBrfcNodePrams,
     option?: {
-      isBroadcast: boolean
+      isBroadcast?: boolean
+      chain?: HdWalletChain
     }
   ) {
     return new Promise<CreateNodeRes>(async (resolve, reject) => {
@@ -1728,6 +1741,7 @@ export class HdWallet {
         }
         const initOption = {
           isBroadcast: true,
+          chain: HdWalletChain.MVC,
         }
         params = {
           ...initParams,
@@ -1745,7 +1759,8 @@ export class HdWallet {
         let protocol = await this.getProtocolInfo(
           params.nodeName,
           params.parentTxId,
-          nodeName.brfcId
+          nodeName.brfcId,
+          option!.chain!
         )
 
         //  处理根节点
@@ -1770,10 +1785,11 @@ export class HdWallet {
             data: nodeName.brfcId,
             utxos: params.utxos,
             node: newBrfcNodeBaseInfo,
+            chain: option!.chain!,
           })
           if (protocolRoot) {
             if (option.isBroadcast) {
-              await this.provider.broadcast(protocolRoot.transaction.toString())
+              await this.provider.broadcast(protocolRoot.transaction.toString(), option!.chain)
             }
 
             resolve({
@@ -1795,6 +1811,7 @@ export class HdWallet {
     params: HdWalletCreateBrfcChildNodeParams,
     option?: {
       isBroadcast: boolean // 是否广播
+      chain?: HdWalletChain
     }
   ): Promise<CreateNodeRes> {
     return new Promise<CreateNodeRes>(async (resolve, reject) => {
@@ -1812,6 +1829,7 @@ export class HdWallet {
       }
       const initOption = {
         isBroadcast: true,
+        chain: HdWalletChain.MVC,
       }
       params = {
         ...initParams,
@@ -1872,6 +1890,7 @@ export class HdWallet {
           encoding: params.encoding,
           utxos: params.utxos,
           node,
+          chain: option.chain,
         })
         if (res) {
           if (option.isBroadcast) {

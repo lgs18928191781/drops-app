@@ -885,6 +885,7 @@ defineExpose({
   loginByMnemonic,
   loginSuccess,
   status: status,
+  createMetaidAccount
 })
 </script>
 

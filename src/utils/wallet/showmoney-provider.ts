@@ -343,11 +343,13 @@ export default class ShowmoneyProvider {
     return utxos
   }
 
-  public getXpubBalance(xpub: string): Promise<number> {
+  public getXpubBalance(xpub: string, chain = HdWalletChain.MVC): Promise<number> {
     return new Promise(async (resolve, reject) => {
-      const res = await this.callMetasvApi(`/xpubLite/${xpub}/balance`).catch(error => {
-        reject(error)
-      })
+      const res = await this.callMetasvApi(`/xpubLite/${xpub}/balance`, {}, 'get', chain).catch(
+        error => {
+          reject(error)
+        }
+      )
       if (res) {
         resolve(res.balance)
       }
@@ -384,7 +386,8 @@ export default class ShowmoneyProvider {
 
   public async getXpubLiteAddressInfo(
     xpub: string,
-    address: string
+    address: string,
+    chain = HdWalletChain.MVC
   ): Promise<{
     xpub: string
     address: string
@@ -392,7 +395,12 @@ export default class ShowmoneyProvider {
     addressIndex: number
   }> {
     return new Promise(async (resolve, reject) => {
-      const res = await this.callMetasvApi(`/xpubLite/${xpub}/address/${address}`).catch(err => {
+      const res = await this.callMetasvApi(
+        `/xpubLite/${xpub}/address/${address}`,
+        {},
+        'get',
+        chain
+      ).catch(err => {
         reject(err)
       })
       if (res) {
