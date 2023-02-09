@@ -205,6 +205,12 @@ async function pay() {
       info: {
         mvc: userStore.user!.address,
         icon: `metafile://${metafile}.png`,
+        desc: `MetaName, Web3 Naming Brings You Real Value
+
+MetaName is a Decentralized, Open-sourced and Cross-chain Name System Based on MetaID Protocol`,
+        data: {
+          classifyList: ['Name'],
+        },
       },
       years: props.year,
     }
@@ -287,12 +293,12 @@ function onPaySuccess(params: { orderId: string; platform: PayPlatform; productT
 }
 
 setCurrencyAmount()
-urlToBase64(MetaTag).then(val => {
-  metaTagString.value = val
-})
-urlToBase64(MetaNameLogo).then(val => {
-  metaNameLogoString.value = val
-})
+// urlToBase64(MetaTag).then(val => {
+//   metaTagString.value = val
+// })
+// urlToBase64(MetaNameLogo).then(val => {
+//   metaNameLogoString.value = val
+// })
 </script>
 
 <style lang="scss" scoped src="./PayMsg.scss"></style>
