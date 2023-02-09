@@ -2,7 +2,6 @@ import { sleep } from '@/utils/util'
 import { useQuery, useQueryClient } from '@tanstack/vue-query'
 
 export const performSearch = async (keyword: string) => {
-  console.log({ keyword })
   const allUsers = [
     {
       metaId: '74cc371c55d9fa38fc98467396c22fe6b20bfc3459a11530362fcdb1b6c07c5c',
@@ -21,10 +20,15 @@ export const performSearch = async (keyword: string) => {
     },
   ]
 
-  const data = allUsers.filter(user => user.metaId.includes(keyword))
+  let data = allUsers.filter(user => user.metaId.includes(keyword))
+  // 堆10倍
+  // for (let i = 0; i < 3; i++) {
+  //   data = data.concat(data)
+  // }
   await sleep(1000)
 
-  return data
+  // 只取5个
+  return data.slice(0, 5)
 }
 
 // export const useSearchQuery = (keyword: string, onSettled: Function) =>

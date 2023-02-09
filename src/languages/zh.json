@@ -87,7 +87,10 @@
     },
     "Search": {
       "placeholder": "搜索MetaID……",
-      "searching": "搜索中……"
+      "searching": "搜索中……",
+      "users": "用户",
+      "no_results": "没有搜索结果：",
+      "home": "主页"
     },
     "MetaName": {
       "resolving": "MetaName 解析中…"
@@ -855,5 +858,6 @@
   "FixAccountTips3": "去修复",
   "BSV Insufficient balance": "BSV 余额不足",
   "metanameNotAllowCh": "暂不支持注册中文",
-  "metanameNotAllowSpace": "注册名称不可以有空格"
+  "metanameNotAllowSpace": "注册名称不可以有空格",
+  "NotSupportCurrentChainNFTTransfer": "暂不支持所在链NFT转赠"
 }

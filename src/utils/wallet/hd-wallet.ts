@@ -1238,6 +1238,7 @@ export class HdWallet {
       addressIndex: number
     }
     outPutIndex?: number
+    chain?: HdWalletChain
   }) {
     return new Promise<UtxoItem>(async (resolve, reject) => {
       try {
@@ -1250,10 +1251,12 @@ export class HdWallet {
           }
         }
         const OutPut = params.tx.outputs[params.outPutIndex]
+        if (!params.chain) params.chain = HdWalletChain.MVC
         if (!params.addressInfo) {
           const addressInfo = await this.provider.getPathWithNetWork({
             address: OutPut.script.toAddress(this.network).toString(),
             xpub: this.wallet.xpubkey.toString(),
+            chain,
           })
           if (addressInfo) {
             params.addressInfo = {
@@ -1947,6 +1950,7 @@ export class HdWallet {
           payTo: params.payTo,
           opReturn: params.opReturn,
           utxos: params.utxos,
+          chain: params!.chain,
         })
         if (params.isBroadcast) {
           const res = await this.provider.broadcast(tx.toString(), params.chain)

@@ -336,6 +336,7 @@ export const createChannel = async (
     chatSettingType,
     timestamp: getTimestampInSeconds(),
   }
+  console.log({ dataCarrier })
 
   // 2. 构建节点参数
   const node = {
@@ -395,9 +396,11 @@ const _getChannelTypeInfo = (form: any, selfMetaId: string) => {
 
     case GroupChannelType.NFT:
       groupType = '2'
-      status = encrypt(selfMetaId.substring(0, 16), MD5Hash(form.nft.nftGenesis).substring(0, 16))
       codehash = form.nft.nftCodehash
       genesis = form.nft.nftGenesis
+
+      status = encrypt(selfMetaId.substring(0, 16), MD5Hash(genesis).substring(0, 16))
+
       if (form.chain === 'eth' || form.chain === 'goerli') {
         type = '2001'
       } else if (form.chain === 'polygon' || form.chain === 'mumbai') {

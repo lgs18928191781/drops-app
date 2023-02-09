@@ -38,6 +38,9 @@
                 </div>
                 <div class="metaid">
                   {{ transferUser.val!.metaId.slice(0,6)
+
+
+
                   }}...{{ transferUser.val!.metaId.slice(-6)  }}
                 </div>
               </template>
@@ -74,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import { NodeName, PayPlatform } from '@/enum'
+import { NodeName, PayPlatform, SdkPayType } from '@/enum'
 import { useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
 import { reactive, ref } from 'vue'
@@ -117,7 +120,7 @@ async function transfer() {
   if (form.target === '') return
   loading.value = true
 
-  if (props.nft.nftChain === 'mvc') {
+  if (props.nft.nftChain === 'mvc' || props.nft.nftChain === 'bsv') {
     let metaId: string = ''
     if (form.target.length === 64) {
       // MetaId
@@ -158,15 +161,20 @@ async function transfer() {
 async function confirmTransfer() {
   loading.value = true
   const res = await userStore.showWallet
-    .createBrfcChildNode({
-      nodeName: NodeName.NftTransfer,
-      data: JSON.stringify({
-        receiverAddress: transferUser.val!.address,
-        codehash: props.nft.nftCodehash,
-        genesis: props.nft.nftGenesis,
-        tokenIndex: props.nft.nftTokenIndex,
-      }),
-    })
+    .createBrfcChildNode(
+      {
+        nodeName: NodeName.NftTransfer,
+        data: JSON.stringify({
+          receiverAddress: transferUser.val!.address,
+          codehash: props.nft.nftCodehash,
+          genesis: props.nft.nftGenesis,
+          tokenIndex: props.nft.nftTokenIndex,
+        }),
+      },
+      {
+        payType: props.nft.nftChain === 'bsv' ? SdkPayType.BSV : SdkPayType.ME,
+      }
+    )
     .catch(error => {
       ElMessage.error(error.message)
       loading.value = false

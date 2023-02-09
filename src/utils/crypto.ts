@@ -1,6 +1,5 @@
 import { enc, AES, mode, pad, MD5, SHA256 } from 'crypto-js'
 import crypto from 'crypto'
-import { mvc } from 'meta-contract'
 import { HDPrivateKey, Script } from 'meta-contract/dist/mvc'
 import { CryptoInfo } from '@/@types/talk'
 

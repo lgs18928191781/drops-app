@@ -15,6 +15,7 @@
 
         .cover {
             display: block;
+            cursor: pointer;
 
             img {
                 width: 100%;
@@ -56,11 +57,13 @@
 
     .cont {
         margin-top: 30px;
+        position: relative;
     }
 }
 
 .hot-collection {
     padding-bottom: 30px;
+
 
     .el-skeleton__item {
         height: 327px;
@@ -78,14 +81,27 @@
         position: relative;
         overflow: hidden;
         border-radius: var(--rounded);
-        overflow: hidden;
 
-        img {
+        .image {
             width: 100%;
-            display: block;
-            border-radius: var(--rounded);
+            height: 0;
+            padding-bottom: 75%;
+            position: relative;
             overflow: hidden;
-            transition: all 0.5s;
+            border-radius: var(--rounded);
+
+            img {
+                left: 0;
+                top: 0;
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                display: block;
+
+
+                transition: all 0.5s;
+                object-fit: cover;
+            }
         }
 
         .cover {
@@ -313,6 +329,42 @@
     }
 }
 
+.swiper-button-next,
+.swiper-button-prev {
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    box-shadow: 0px 0px 6px 0px var(--faded-border-color);
+    background: var(--themeBgColor);
+    top: 50%;
+    margin-top: -17px;
+    z-index: 3;
+
+    .icon {
+        width: 10px;
+        height: 10px;
+    }
+
+    &:hover {
+        .icon {
+            transform: scale(1.3);
+        }
+    }
+}
+
+.swiper-button-next {
+    right: 0;
+    transform: rotate(-90deg);
+    margin-right: -17px;
+}
+
+.swiper-button-prev {
+    left: 0;
+    transform: rotate(90deg);
+    margin-left: -17px;
+}
+
 
 @media only screen and (max-width: 750PX) {
 
@@ -397,4 +449,30 @@
 }
 
 
-.nft-intro-list {}
+.nft-intro-list {
+    .nft-intro-item {
+        padding: 30px;
+        background-image: url('@/assets/nft/image-bg.png');
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+        margin-right: 15px;
+
+
+        &:last-child {
+            margin-right: 0;
+        }
+
+        .name {
+            font-size: 18px;
+            line-height: 26px;
+            height: 52px;
+        }
+
+        .drsc {
+            opacity: 0.6;
+            line-height: 24px;
+            height: 48px;
+        }
+    }
+}

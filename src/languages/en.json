@@ -47,7 +47,10 @@
     },
     "Search": {
       "placeholder": "Search MetaID...",
-      "searching": "Searching..."
+      "searching": "Searching...",
+      "users": "Users",
+      "home": "Home",
+      "no_results": "No results for "
     },
     "MetaName": {
       "resolving": "MetaName Resolving..."
@@ -859,5 +862,6 @@
   "FixAccountTips3": "to fix",
   "BSV Insufficient balance": "BSV Insufficient balance",
   "metanameNotAllowCh": "Registration in Chinese is not currently supported",
-  "metanameNotAllowSpace": "Registration name cannot have spaces"
+  "metanameNotAllowSpace": "Registration name cannot have spaces",
+  "NotSupportCurrentChainNFTTransfer": "NFT transfer in the chain is not supported temporarily"
 }

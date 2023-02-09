@@ -1,9 +1,14 @@
 <template>
   <div class="nft-item">
-    <NFTCover :cover="['']" />
+    <NFTCover :cover="[nft.nftIcon]" />
 
-    <div class="name">MetaBot NFT Avatar</div>
-    <div class="amount">0.86 Space</div>
+    <div class="name">{{ nft.nftName }}</div>
+    <div class="amount">
+      <template v-if="isCanBuy">
+        <Amount :currency="ToCurrency.CNY" :price="nft.nftSpecialLegalCnyPrice" />
+      </template>
+      <template v-else>--</template>
+    </div>
 
     <div class="user-list">
       <div class="user-item flex flex-align-center">
@@ -30,6 +35,27 @@
 
 <script setup lang="ts">
 import NFTCover from '../NFTCover/NFTCover.vue'
+import Amount from '../Amount/Amount.vue'
+import { NFTSellState, ToCurrency } from '@/enum'
+import { computed } from 'vue'
+
+const props = defineProps<{
+  nft: GenesisNFTItem
+}>()
+
+const isCanBuy = computed(() => {
+  let result = false
+  if (props.nft.nftSellState === NFTSellState.Sale) {
+    if (props.nft.nftIsLegal) {
+      result = true
+    } else {
+      if (props.nft.nftIsReady) {
+        result = true
+      }
+    }
+  }
+  return result
+})
 </script>
 
 <style lang="scss" scoped src="./NFTItem.scss"></style>

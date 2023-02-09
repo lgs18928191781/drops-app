@@ -1,13 +1,15 @@
-.outsideMore{
-     margin-right: 14px;
-      .metanameLogo{
+.outsideMore {
+    margin-right: 14px;
+
+    .metanameLogo {
         width: 22px;
         height: 22px;
     }
 }
+
 .user-warp {
 
-    .avatar{
+    .avatar {
         cursor: pointer;
     }
 }
@@ -25,7 +27,7 @@
     &.active {
         border-color: var(--border-color);
     }
-   
+
     .icon {
         width: 22px;
         height: 22px;
