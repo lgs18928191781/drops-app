@@ -40,7 +40,7 @@ router.beforeEach(async (to, from, next) => {
     })
   } else {
     useHead({
-      title: `MetaName, Web3 Naming Brings You Real Value`,
+      title: `Show3, the World's First NFT-Universal Web3 Social Application.`,
       meta: [
         {
           name: 'description',
@@ -48,7 +48,7 @@ router.beforeEach(async (to, from, next) => {
         },
         {
           name: 'keywords',
-          content: 'Name system, Web3 Naming, MetaName, Meta, MetaID',
+          content: 'did,web3,social,NFT,decentralized,socail,metaid,social-fi,show3',
         },
       ],
       link: [
