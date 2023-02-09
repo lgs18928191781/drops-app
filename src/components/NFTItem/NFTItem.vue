@@ -4,7 +4,10 @@
 
     <div class="name">{{ nft.nftName }}</div>
     <div class="amount">
-      <Amount :currency="ToCurrency.CNY" :price="nft.nftSpecialLegalCnyPrice" />
+      <template v-if="isCanBuy">
+        <Amount :currency="ToCurrency.CNY" :price="nft.nftSpecialLegalCnyPrice" />
+      </template>
+      <template v-else>--</template>
     </div>
 
     <div class="user-list">
@@ -51,7 +54,6 @@ const isCanBuy = computed(() => {
       }
     }
   }
-
   return result
 })
 </script>
