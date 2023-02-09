@@ -8,12 +8,37 @@ import { SDK } from './sdk'
 import { Network } from './wallet/hd-wallet'
 import { usePostTagStore } from '@/stores/buzz/tag'
 import { useMetaNameStore } from '@/stores/metaname'
+import { useHead } from '@vueuse/head'
 
 let loading: any
 router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore()
   const rootStore = useRootStore()
   const metaNameStore = useMetaNameStore()
+
+  if (to.path.indexOf('/metaname/') !== -1) {
+    useHead({
+      title: 'MetaName, Web3 Naming Brings You Real Value',
+      meta: [
+        {
+          name: 'description',
+          content:
+            'MetaName is a Decentralized, Open-sourced and Cross-chain Name System Based on MetaID Protocol',
+        },
+        {
+          name: 'keywords',
+          content: 'Name system, Web3 Naming, MetaName, Meta, MetaID',
+        },
+      ],
+      link: [
+        {
+          rel: 'icon',
+          key: 'favicon',
+          href: '/metaname.ico',
+        },
+      ],
+    })
+  }
 
   // talk之间的页面跳转不处理
   const isTalkRoutes = (route: any) => route.name?.startsWith('talk')

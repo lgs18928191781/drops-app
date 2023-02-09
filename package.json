@@ -21,6 +21,7 @@
     "@tanstack/vue-virtual": "^3.0.0-beta.41",
     "@vueuse/components": "^9.3.0",
     "@vueuse/core": "^9.3.0",
+    "@vueuse/head": "^1.0.25",
     "@walletconnect/auth-client": "^1.0.0",
     "@walletconnect/client": "^1.8.0",
     "@walletconnect/qrcode-modal": "^1.8.0",
