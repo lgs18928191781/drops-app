@@ -351,6 +351,7 @@ function drawePayCode() {
             if (bsvBalance < new Decimal(props.amount).plus(560).toNumber()) {
               throw new Error(i18n.t('BSV Insufficient balance'))
             }
+            debugger
             from_coin_address = userStore.showWallet.wallet!.rootAddress
             const transaction = await userStore.showWallet.wallet!.sendMoney({
               payTo: [{ address: props.url, amount: new Decimal(props.amount).toNumber() }],

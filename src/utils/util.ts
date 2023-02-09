@@ -1149,7 +1149,10 @@ export function CreatePayOrder(params: {
         pay_type: params.platform,
         quit_url: quitUrl,
         types: type,
-        from_coin_address: userStore.user?.evmAddress,
+        from_coin_address:
+          params.platform === PayPlatform.ETH || params.platform === PayPlatform.POLYGON
+            ? userStore.user?.evmAddress
+            : userStore.user!.address,
         product_type: params.product_type,
         uuid: params.uuid,
         // metaname
