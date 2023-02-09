@@ -863,5 +863,8 @@
   "BSV Insufficient balance": "BSV Insufficient balance",
   "metanameNotAllowCh": "Registration in Chinese is not currently supported",
   "metanameNotAllowSpace": "Registration name cannot have spaces",
-  "NotSupportCurrentChainNFTTransfer": "NFT transfer in the chain is not supported temporarily"
+  "NotSupportCurrentChainNFTTransfer": "NFT transfer in the chain is not supported temporarily",
+  "You need to pay": "You need to pay",
+  "You canceled the payment": "You canceled the payment",
+  "Confirm Pay": "Confirm Payment"
 }

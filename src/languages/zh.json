@@ -859,5 +859,8 @@
   "BSV Insufficient balance": "BSV 余额不足",
   "metanameNotAllowCh": "暂不支持注册中文",
   "metanameNotAllowSpace": "注册名称不可以有空格",
-  "NotSupportCurrentChainNFTTransfer": "暂不支持所在链NFT转赠"
+  "NotSupportCurrentChainNFTTransfer": "暂不支持所在链NFT转赠",
+  "You need to pay": "你需要支付",
+  "You canceled the payment": "你取消了支付",
+  "Confirm Pay": "确认支付"
 }

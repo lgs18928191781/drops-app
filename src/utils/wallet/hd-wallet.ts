@@ -1256,7 +1256,7 @@ export class HdWallet {
           const addressInfo = await this.provider.getPathWithNetWork({
             address: OutPut.script.toAddress(this.network).toString(),
             xpub: this.wallet.xpubkey.toString(),
-            chain,
+            chain: params.chain,
           })
           if (addressInfo) {
             params.addressInfo = {
