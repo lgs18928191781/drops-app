@@ -38,6 +38,27 @@ router.beforeEach(async (to, from, next) => {
         },
       ],
     })
+  } else {
+    useHead({
+      title: `MetaName, Web3 Naming Brings You Real Value`,
+      meta: [
+        {
+          name: 'description',
+          content: `Show3 is the World's First NFT-Universal Web3 Social Application. It is the first decentralized social platform based on the DID protocol with fully on-chain data.`,
+        },
+        {
+          name: 'keywords',
+          content: 'Name system, Web3 Naming, MetaName, Meta, MetaID',
+        },
+      ],
+      link: [
+        {
+          rel: 'icon',
+          key: 'favicon',
+          href: '/favicon.ico',
+        },
+      ],
+    })
   }
 
   // talk之间的页面跳转不处理
