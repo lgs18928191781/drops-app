@@ -7,7 +7,7 @@
       <div class="collection-content">
         <!-- collection-avatar -->
         <div class="collection-avatar">
-          <img src="" />
+          <img :src="$filters.strapiImage(collection.val!.icon.url)" />
         </div>
 
         <!-- collection-msg -->
@@ -17,13 +17,17 @@
               {{ collection.val!.name }} <Icon name="certed" />
             </div>
             <div class="creator flex flex-align-center">
-              {{ $t('NFT.Creater') }}: <a>{{ collection.val!.creatorName }}</a>
+              {{ $t('NFT.Creater') }}:
+              <RouterLink
+                :to="{ name: 'user', params: {metaId: collection.val!.creatorMetaId}}"
+                >{{ collection.val!.creatorName }}</RouterLink
+              >
               <Icon name="center_star" />
             </div>
             <div class="drsc">
               <template v-if="collection.val!.intro.length > 100">
                 <span class="text"> {{ collection.val!.intro.slice(0, 100) }}...</span
-                ><a>{{ $t('NFT.Discover More') }}</a>
+                ><a @click="isShowContent = true">{{ $t('NFT.Discover More') }}</a>
               </template>
               <template v-else>{{ collection.val!.intro }}</template>
             </div>
@@ -79,13 +83,20 @@
             :md="6"
             :lg="6"
             :xl="4"
-            v-for="(item, index) in Array.from({ length: 36 })"
+            v-for="item in nfts"
+            :key="item.nftGenesis + item.nftCodehash + item.nftTokenIndex"
           >
-            <NFTItemVue />
+            <NFTItemVue :nft="item" />
           </ElCol>
         </ElRow>
       </div>
     </div>
+
+    <ContentModal
+      v-model="isShowContent"
+      :title="collection.val!.name"
+      :content="collection.val!.intro"
+    />
   </ElSkeleton>
 </template>
 
@@ -95,6 +106,9 @@ import { useI18n } from 'vue-i18n'
 import NFTItemVue from '@/components/NFTItem/NFTItem.vue'
 import { GetCollect } from '@/api/strapi'
 import { useRoute } from 'vue-router'
+import ContentModal from '@/components/ContentModal/ContentModal.vue'
+import { GetCollectionNFTs } from '@/api/aggregation'
+import { initPagination } from '@/config'
 
 const i18n = useI18n()
 const route = useRoute()
@@ -141,6 +155,9 @@ const statiscs = reactive([
 ])
 const collection: { val: null | Collect } = reactive({ val: null })
 const isSkeleton = ref(true)
+const isShowContent = ref(false)
+const pagination = reactive({ ...initPagination })
+const nfts: GenesisNFTItem[] = reactive([])
 
 function getCollection() {
   return new Promise<void>(async resolve => {
@@ -154,8 +171,26 @@ function getCollection() {
   })
 }
 
+function getDatas(isCover = false) {
+  return new Promise<void>(async (resolve, reject) => {
+    const res = await GetCollectionNFTs({
+      topicType: collection.val!.topicType,
+      ...pagination,
+    }).catch(error => {
+      ElMessage.error(error.message)
+    })
+    if (res?.code === 0) {
+      if (isCover) nfts.length = 0
+      nfts.push(...res.data.results.items)
+      resolve()
+    }
+  })
+}
+
 getCollection().then(() => {
-  isSkeleton.value = false
+  getDatas(true).then(() => {
+    isSkeleton.value = false
+  })
 })
 </script>
 

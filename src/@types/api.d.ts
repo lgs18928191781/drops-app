@@ -1194,6 +1194,7 @@ declare interface Collect {
   published_at: string
   created_at: string
   updated_at: string
+  icon: Pic
   banner: Pic
   cover: Pic
 }
