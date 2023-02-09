@@ -186,7 +186,7 @@
     </div>
 
     <div class="policy flex flex-align-center">
-      <div class="flex1 flex flex-align-center">
+      <div class="flex1 flex flex-align-center mr-4">
         <template v-if="registerType !== RegisterType.SetPassword">
           <span
             class="check-warp flex flex-align-center flex-pack-center shrink-0"
