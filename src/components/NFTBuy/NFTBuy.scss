@@ -7,6 +7,10 @@
         padding: 15px 0;
         border-bottom: 1px solid var(--divid-color);
 
+        &.link{
+            cursor: pointer;
+        }
+
         .key {
             color: var(--themeTextColor);
             opacity: 0.5;

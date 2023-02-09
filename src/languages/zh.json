@@ -643,12 +643,19 @@
     "Initial Price": "初始价格",
     "Floor Price": "地板价",
     "Highest Price": "最高价",
-    "Owner": "拥有人数",
+    "Owner": "持有者",
     "Supply": "总发行量",
     "Blockchain": "所在链",
     "Price Trend": "价格趋势",
     "Collection works": "专辑作品",
-    "Filter": "筛选"
+    "Filter": "筛选",
+    "Sort": {
+      "Default Ranking": "默认排序",
+      "Price high to low": "价格由高到低",
+      "Price low to high": "价格由低到高",
+      "Number: X to 1": "序号由大到小",
+      "Number: 1 to X": "序号由小到大"
+    }
   },
   "My NFT": "我的NFT",
   "Done": "完成",

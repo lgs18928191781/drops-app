@@ -52,43 +52,64 @@
             v-for="(item, index) in tabs"
             :key="index"
             :class="{ active: item.value === tabActive }"
+            @click="tabActive = item.value"
             >{{ item.name() }}</a
           >
         </div>
 
-        <!-- screen -->
-        <div class="screen flex flex-align-center">
-          <div class="flex1">
-            <a class="main-border flex flex-align-center">
-              <Icon name="filter" /> {{ $t('NFT.Filter') }}
-            </a>
+        <!-- CollectionWorks -->
+        <template v-if="tabActive === NFTCollectTab.CollectionWorks">
+          <!-- screen -->
+          <div class="screen flex flex-align-center">
+            <div class="flex1">
+              <a class="main-border flex flex-align-center">
+                <Icon name="filter" /> {{ $t('NFT.Filter') }}
+              </a>
+            </div>
+            <ElSelect v-model="sortIndex" @change="refreshDatas">
+              <ElOption
+                v-for="(item, index) in sorts"
+                :key="index"
+                :label="item.name()"
+                :value="index"
+              />
+            </ElSelect>
+            <div class="display flex flex-align-center">
+              <a
+                @click="changeCell(item.value)"
+                v-for="item in cells"
+                :key="item.value"
+                :class="{ active: item.value === cell.val.value }"
+              >
+                <Icon :name="item.icon" />
+              </a>
+            </div>
           </div>
-          <ElSelect>
-            <option></option>
-          </ElSelect>
-          <div class="display flex flex-align-center">
-            <a class="active">
-              <Icon name="layout-grid-fill" />
-            </a>
-            <a>
-              <Icon name="grid-fill" />
-            </a>
-          </div>
-        </div>
 
-        <ElRow :gutter="22" class="nft-list">
-          <ElCol
-            :xs="12"
-            :sm="8"
-            :md="6"
-            :lg="6"
-            :xl="4"
-            v-for="item in nfts"
-            :key="item.nftGenesis + item.nftCodehash + item.nftTokenIndex"
+          <ElRow
+            :gutter="22"
+            class="nft-list"
+            v-infinite-scroll="getMore"
+            :infinite-scroll-immediate="false"
+            :infinite-scroll-distance="100"
           >
-            <NFTItemVue :nft="item" />
-          </ElCol>
-        </ElRow>
+            <ElCol
+              :xs="cell.val.xs"
+              :sm="cell.val.sm"
+              :md="cell.val.md"
+              :lg="cell.val.lg"
+              :xl="cell.val.xl"
+              v-for="item in nfts"
+              :key="item.nftGenesis + item.nftCodehash + item.nftTokenIndex"
+            >
+              <NFTItemVue :nft="item" @buy="buyNFT" />
+            </ElCol>
+          </ElRow>
+
+          <LoadMore :pagination="pagination" />
+        </template>
+        <!-- PriceTrend -->
+        <template v-else></template>
       </div>
     </div>
 
@@ -97,6 +118,9 @@
       :title="collection.val!.name"
       :content="collection.val!.intro"
     />
+
+    <!-- NFTBuy -->
+    <NFTBuy :nft="nft.val!" v-model="isShowNftBuy" />
   </ElSkeleton>
 </template>
 
@@ -109,6 +133,9 @@ import { useRoute } from 'vue-router'
 import ContentModal from '@/components/ContentModal/ContentModal.vue'
 import { GetCollectionNFTs } from '@/api/aggregation'
 import { initPagination } from '@/config'
+import LoadMore from '@/components/LoadMore/LoadMore.vue'
+import NFTBuy from '@/components/NFTBuy/NFTBuy.vue'
+import { CollectionOrderType, CollectionSortType } from '@/enum'
 
 const i18n = useI18n()
 const route = useRoute()
@@ -156,8 +183,61 @@ const statiscs = reactive([
 const collection: { val: null | Collect } = reactive({ val: null })
 const isSkeleton = ref(true)
 const isShowContent = ref(false)
-const pagination = reactive({ ...initPagination })
+const pagination = reactive({ ...initPagination, pageSize: 24 })
 const nfts: GenesisNFTItem[] = reactive([])
+const nft: { val: GenesisNFTItem | null } = reactive({ val: null })
+const isShowNftBuy = ref(false)
+const cells = [
+  {
+    value: 0,
+    xs: 12,
+    sm: 8,
+    md: 6,
+    lg: 6,
+    xl: 4,
+    icon: 'layout-grid-fill',
+  },
+  {
+    value: 1,
+    xs: 24,
+    sm: 12,
+    md: 8,
+    lg: 8,
+    xl: 6,
+    icon: 'grid-fill',
+  },
+]
+const cell = reactive({ val: cells[0] })
+
+const sorts = [
+  {
+    name: () => i18n.t('NFT.Sort.Default Ranking'),
+    sortType: CollectionSortType.Default,
+    orderType: CollectionOrderType.ASC,
+  },
+  {
+    name: () => i18n.t('NFT.Sort.Price high to low'),
+    sortType: CollectionSortType.Price,
+    orderType: CollectionOrderType.DESC,
+  },
+  {
+    name: () => i18n.t('NFT.Sort.Price low to high'),
+    sortType: CollectionSortType.Price,
+    orderType: CollectionOrderType.ASC,
+  },
+  {
+    name: () => i18n.t('NFT.Sort.Number: X to 1'),
+    sortType: CollectionSortType.TokenIndex,
+    orderType: CollectionOrderType.DESC,
+  },
+  {
+    name: () => i18n.t('NFT.Sort.Number: 1 to X'),
+    sortType: CollectionSortType.TokenIndex,
+    orderType: CollectionOrderType.ASC,
+  },
+]
+
+const sortIndex = ref(0)
 
 function getCollection() {
   return new Promise<void>(async resolve => {
@@ -173,18 +253,48 @@ function getCollection() {
 
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
+    const sort = sorts[sortIndex.value]
     const res = await GetCollectionNFTs({
       topicType: collection.val!.topicType,
+      sortType: sort.sortType,
+      orderType: sort.orderType,
       ...pagination,
     }).catch(error => {
       ElMessage.error(error.message)
     })
     if (res?.code === 0) {
       if (isCover) nfts.length = 0
+      if (res.data.results.items.length === 0) pagination.nothing = true
       nfts.push(...res.data.results.items)
       resolve()
     }
   })
+}
+
+function getMore() {
+  if (isSkeleton.value || pagination.loading || pagination.nothing) return
+  pagination.loading = true
+  pagination.page++
+  getDatas().then(() => {
+    pagination.loading = false
+  })
+}
+
+function changeCell(cellValue: number) {
+  if (cell.val.value === cellValue) return
+  cell.val = cells.find(item => item.value === cellValue)!
+}
+
+function buyNFT(item: GenesisNFTItem) {
+  nft.val = item
+  isShowNftBuy.value = true
+}
+
+function refreshDatas() {
+  pagination.page = 1
+  pagination.loading = false
+  pagination.nothing = false
+  getDatas(true)
 }
 
 getCollection().then(() => {

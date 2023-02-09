@@ -29,7 +29,7 @@
           </div>
         </div>
 
-        <div class="nft-msg-item flex flex-align-center" v-if="!isHideDetail">
+        <div class="nft-msg-item flex flex-align-center link" v-if="!isHideDetail" @click="toNFT">
           <div class="key flex1">{{ $t('NFT.NFT Details') }}：</div>
           <div class="value flex flex-align-center">
             <Icon name="down" />
@@ -78,7 +78,7 @@ import NFTMsgVue from '../NFTMsg/NFTMsg.vue'
 import { PayPlatformItem, payPlatformList } from '@/config'
 import PayTypeDropdownVue from '../PayTypeDropdown/PayTypeDropdown.vue'
 import { CreatePayOrder, setPayQuitUrl } from '@/utils/util'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import StartPayVue from '../StartPay/StartPay.vue'
 import { ElMessage } from 'element-plus'
 import Decimal from 'decimal.js-light'
@@ -91,6 +91,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:modelValue', 'success'])
 const route = useRoute()
+const router = useRouter()
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const i18n = useI18n()
@@ -144,6 +145,18 @@ async function confirmBuy() {
     payMsg.url = res.url
     isShowPayModal.value = true
   }
+}
+
+function toNFT() {
+  router.push({
+    name: 'nftDetail',
+    params: {
+      chain: props.nft.nftChain,
+      genesis: props.nft.nftGenesis,
+      tokenIndex: props.nft.nftTokenIndex,
+      codehash: props.nft.nftCodehash ? props.nft.nftCodehash : props.nft.nftChain,
+    },
+  })
 }
 
 function onPaySuccess() {

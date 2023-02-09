@@ -386,7 +386,6 @@ export class SDK {
 
               // 打钱地址
               let receive = this.getNodeTransactionsFirstReceive(transactions, params)
-
               // 获取上链时的utxo
               const getUtxoRes = await this.getAmountUxto({
                 sdkPayType: option.payType!,
@@ -394,6 +393,7 @@ export class SDK {
                 nodeName: params.nodeName,
                 receive,
               })
+
               const currentUtxo = getUtxoRes.utxo
               if (getUtxoRes.payToRes) {
                 payToRes = getUtxoRes.payToRes
@@ -957,6 +957,7 @@ export class SDK {
       }
     }>(async (resolve, reject) => {
       try {
+        debugger
         const chain = params.payType === SdkPayType.BSV ? HdWalletChain.BSV : HdWalletChain.MVC
         if (params.nodeName === NodeName.Name) {
           this.setTransferUtxoAndOutputAndSign(

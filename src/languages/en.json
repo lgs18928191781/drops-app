@@ -659,7 +659,14 @@
     "Blockchain": "Blockchain",
     "Collection works": "Collection works",
     "Price Trend": "Price Trend",
-    "Filter": "Filter"
+    "Filter": "Filter",
+    "Sort": {
+      "Default Ranking": "Default Ranking",
+      "Price high to low": "Price high to low",
+      "Price low to high": "Price low to high",
+      "Number: X to 1": "Number: X to 1",
+      "Number: 1 to X": "Number: 1 to X"
+    }
   },
   "My NFT": "My NFT",
   "Done": "Done",
