@@ -1419,42 +1419,6 @@ export function remindExpired(expireTime: any) {
   )
 }
 
-export async function metanameOperation(params: {
-  //注册时mvc跟metaid,更新信息时不需要传入years,注册时必须要传入icon
-  registerName: string
-  op: MetaNameReqCode
-  //注册和更新操作info必填,续费info字段不需要
-  info?: Partial<MetaNameInfo>
-  years?: number
-}) {
-  return new Promise<SendMetaNameTransationResult>(async (resolve, reject) => {
-    try {
-      const userStore = useUserStore()
-      const res = await MetaNameBeforeReqRes({
-        name: `${params.registerName}`,
-        op: params.op,
-        years: params.years,
-        address: userStore.showWallet.wallet!.rootAddress,
-      })
-      if (res.code == 0) {
-        const { data } = res
-        const metaNameParams = {
-          op_code: data.op,
-          info: params.info,
-          years: params.years!,
-          reqswapargs: data,
-        }
-        const result = await userStore.showWallet.sendMetaNameTransation(metaNameParams)
-        if (result) {
-          resolve(result)
-        }
-      }
-    } catch (error) {
-      reject(error)
-    }
-  })
-}
-
 export function getLocalAccount() {
   const localPassword = window.localStorage.getItem(encode('password'))
   const localUserInfo = window.localStorage.getItem(encode('user'))

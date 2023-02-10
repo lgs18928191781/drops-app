@@ -41,6 +41,19 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
                   }}...{{ transferUser.val!.metaId.slice(-6)  }}
                 </div>
               </template>

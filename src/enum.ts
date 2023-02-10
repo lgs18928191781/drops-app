@@ -312,6 +312,7 @@ export enum NodeName {
   SimpleDAOCreate = 'SimpleDAOCreate',
   NftName = 'NftName',
   NftTransfer = 'NftTransfer',
+  SendMoney = 'SendMoney',
 }
 
 export const enum BindStatus {

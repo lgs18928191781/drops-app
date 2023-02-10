@@ -4,7 +4,7 @@ import { useUserStore } from '@/stores/user'
 import Decimal from 'decimal.js-light'
 import { MetaNameReqCode, MetaNameRequestDate, Reqswapargs } from './wallet/hd-wallet'
 
-export function getRegisterOrRenewMetaNameParams(params: {
+export function getMetaNameOperateParams(params: {
   op_code: number
   info?: {
     [key: string]: any
@@ -28,42 +28,64 @@ export function getRegisterOrRenewMetaNameParams(params: {
         requestIndex,
         years,
       }
-      if (op_code === MetaNameReqCode.register) {
+      if (op_code === MetaNameReqCode.register || op_code === MetaNameReqCode.updataInfo) {
         // register
         _params.infos = info
-      } else {
+      }
+
+      if (op_code !== MetaNameReqCode.register) {
         // renew
         _params.nftOutputIndex = 0
-        const res = await userStore.showWallet.createBrfcChildNode(
-          {
-            nodeName: NodeName.NftTransfer,
-            data: JSON.stringify({
-              receiverAddress: reqswapargs.nftToAddress,
-              tokenIndex: reqswapargs.nftTokenIndex,
-              codehash: reqswapargs.nftCodeHash,
-              genesis: reqswapargs.nftGenesisID,
-            }),
-          },
-          {
-            isBroadcast: false,
-            payType: SdkPayType.SPACE,
-          }
-        )
+        const taskList: any[] = []
 
-        if (res?.payToAddress?.transaction) {
+        if (op_code === MetaNameReqCode.updataInfo) {
+          taskList.push({
+            nodeName: NodeName.SendMoney,
+            payTo: [
+              {
+                address: reqswapargs.mvcToAddress,
+                amount: reqswapargs.txFee,
+              },
+            ],
+          })
+        }
+
+        taskList.push({
+          nodeName: NodeName.NftTransfer,
+          data: JSON.stringify({
+            receiverAddress: reqswapargs.nftToAddress,
+            tokenIndex: reqswapargs.nftTokenIndex,
+            codehash: reqswapargs.nftCodeHash,
+            genesis: reqswapargs.nftGenesisID,
+          }),
+        })
+
+        const res = await userStore.showWallet.batchCreateBrfcChildNode(taskList, {
+          isBroadcast: false,
+          payType: SdkPayType.SPACE,
+        })
+        if (res?.payToRes?.transaction) {
           await userStore.showWallet.wallet!.provider!.broadcast(
-            res?.payToAddress?.transaction.toString()
+            res?.payToRes?.transaction.toString()
           )
         }
-        if (res?.currentNodeBrfc.transaction) {
-          await userStore.showWallet.wallet!.provider!.broadcast(
-            res?.currentNodeBrfc?.transaction.toString()
-          )
+        if (op_code === MetaNameReqCode.updataInfo) {
+          _params.mvcOutputIndex = 0
+          _params.mvcRawTx = res!.transactionsList[0].sendMoney?.transaction.toString()
         }
-        debugger
-        _params.nftRawTx = res!.nft!.transfer?.transaction.toString()
+        _params.nftRawTx = res!.transactionsList[
+          res!.transactionsList.length - 1
+        ].nft!.transfer?.transaction.toString()
       }
-      const registerMetaNameResp = JSON.stringify(_params)
+
+      let registerMetaNameResp
+      if (op_code === MetaNameReqCode.updataInfo) {
+        registerMetaNameResp = await userStore.showWallet.wallet!.provider.gzip(
+          JSON.stringify(_params)
+        )
+      } else {
+        registerMetaNameResp = JSON.stringify(_params)
+      }
       resolve({
         registerMetaNameResp,
         MvcToAddress: reqswapargs.mvcToAddress,

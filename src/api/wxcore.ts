@@ -27,7 +27,7 @@ const Wxcore = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/wxcore`, {
         } else {
           reject({
             code: response.data.code,
-            message: response.data.data,
+            message: response.data.data || response.data.msg,
           })
         }
       } else {
@@ -242,4 +242,20 @@ export const MetaNameBeforeReqRes = (parmas: {
     ...parmas,
     source: 'Show',
   })
+}
+
+export const MetaNameUpdateInfo = (
+  parmas: string | ArrayBuffer
+): Promise<{
+  code: number
+  data: {
+    expiredBlockTime: number
+    nftCodeHash: string
+    nftGenesisId: string
+    nftTokenIndex: string
+    txid: string
+  }
+  msg: string
+}> => {
+  return Wxcore.post(`/metaname/updateinfo`, { data: parmas })
 }

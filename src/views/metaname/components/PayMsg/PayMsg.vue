@@ -58,41 +58,23 @@
 </template>
 
 <script setup lang="ts">
-import { SendMetaNameTransationResult } from '@/@types/sdk'
 import { PayPlatformItem, payPlatformList } from '@/config'
-import { MetaNameOperateType, NodeName, PayPlatform, ProductType, ToCurrency } from '@/enum'
+import { MetaNameOperateType, PayPlatform, ProductType, ToCurrency } from '@/enum'
 import { useUserStore } from '@/stores/user'
-import { useRootStore } from '@/stores/root'
 import {
   bytesLength,
   CreatePayOrder,
-  dataURLtoFile,
-  FileToAttachmentItem,
   getCurrencyAmount,
   mappingChainId,
-  metanameOperation,
-  randomNumber,
   setPayQuitUrl,
-  urlToBase64,
 } from '@/utils/util'
 import { MetaNameReqCode } from '@/utils/wallet/hd-wallet'
-import Decimal from 'decimal.js-light'
-import { BigNumber, ethers } from 'ethers'
-import { result } from 'lodash'
-import { nextTick, reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import StartPay from '@/components/StartPay/StartPay.vue'
-//@ts-ignore
-import html2canvas from 'html2canvas'
-import MetaTag from '@/assets/metaname/img_meta.png'
-import MetaNameLogo from '@/assets/metaname/logo_metaname.png'
-
-import { getBlockHeight, MetaNameUpdateInfo } from '@/api/index'
-import { useI18n } from 'vue-i18n'
-import { GetMetaNameInfo, MetaNameBeforeReqRes, UploadMetaNameCover } from '@/api/wxcore'
+import { MetaNameBeforeReqRes, UploadMetaNameCover } from '@/api/wxcore'
 import { GetMetaNameCover } from '@/api/canvas-base'
-import Item from '@/views/talk/components/direct-contact/Item.vue'
-import { getRegisterOrRenewMetaNameParams, registerMetaName } from '@/utils/metaname'
+import { getMetaNameOperateParams } from '@/utils/metaname'
 interface Props {
   price: number
   year: number
@@ -118,7 +100,6 @@ const currentPayPlatform = ref(
 
 onMounted(() => {})
 
-const i18n = useI18n()
 const currencyAmount = ref(0)
 const productType = ProductType.MetaName
 const isStartPay = ref(false)
@@ -127,22 +108,6 @@ const payOrderInfo = reactive({
   orderId: '',
   amount: '',
 })
-const metaNameBgColorIndex = ref(0)
-const metaNameBgColors = [
-  ['#5721A1', '#2DEBD8'],
-  ['#F68084', '#A6C0FE'],
-  ['#FA709A', '#FEE140'],
-  ['#009EFD', '#2AF598'],
-  ['#FA71CD', '#C471F5'],
-  ['#005BEA', '#00C6FB '],
-  ['#7028E4', '#E5B2CA'],
-  ['#FF758C', '#FF7EB3'],
-  ['#8BAAAA', '#AE8B9C'],
-  ['#E6B980', '#EACDA3'],
-]
-const MetaNameRef = ref()
-const metaTagString = ref('')
-const metaNameLogoString = ref('')
 let metafile = ''
 
 function changePayType(item: PayPlatformItem) {
@@ -210,7 +175,7 @@ MetaName is a Decentralized, Open-sourced and Cross-chain Name System Based on M
         years: metaNameOpParams.years!,
         reqswapargs: response.data,
       }
-      const res = await getRegisterOrRenewMetaNameParams(metaNameParams)
+      const res = await getMetaNameOperateParams(metaNameParams)
       if (res) {
         const operateType = {
           [MetaNameReqCode.register]: MetaNameOperateType.Register,
@@ -266,12 +231,6 @@ function onPaySuccess(params: { orderId: string; platform: PayPlatform; productT
 }
 
 setCurrencyAmount()
-// urlToBase64(MetaTag).then(val => {
-//   metaTagString.value = val
-// })
-// urlToBase64(MetaNameLogo).then(val => {
-//   metaNameLogoString.value = val
-// })
 </script>
 
 <style lang="scss" scoped src="./PayMsg.scss"></style>

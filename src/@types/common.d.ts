@@ -476,6 +476,7 @@ declare interface NodeTransactions {
   metaFiles?: import('@/@types/sdk.d.ts').CreateNodeRes[]
   currentNodeBrfc?: import('@/@types/sdk.d.ts').CreateNodeRes
   currentNode?: import('@/@types/sdk.d.ts').CreateNodeRes
+  sendMoney?: import('@/@types/sdk.d.ts').CreateNodeRes
   subscribeId?: string
   nft?: {
     issue?: {

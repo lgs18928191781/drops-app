@@ -119,9 +119,9 @@
 </template>
 
 <script setup lang="ts">
-import { GetTx, MetaNameUpdateInfo } from '@/api'
+import { GetTx } from '@/api'
 import { useUserStore } from '@/stores/user'
-import { copy, GetExpiredUTC, metanameOperation, openLoading, tx } from '@/utils/util'
+import { copy, GetExpiredUTC, openLoading, tx } from '@/utils/util'
 import { MetaNameReqCode } from '@/utils/wallet/hd-wallet'
 import { ElMessageBox } from 'element-plus'
 import { reactive, ref } from 'vue'
@@ -130,7 +130,8 @@ import { useRoute } from 'vue-router'
 import Navigation from '../components/Navigation/Navigation.vue'
 import RenewModal from '../components/RenewModal/RenewModal.vue'
 import { Loading } from '@element-plus/icons-vue'
-import { GetMetaNameInfo } from '@/api/wxcore'
+import { GetMetaNameInfo, MetaNameBeforeReqRes, MetaNameUpdateInfo } from '@/api/wxcore'
+import { getMetaNameOperateParams } from '@/utils/metaname'
 
 const route = useRoute()
 const userStore = useUserStore()
@@ -287,26 +288,34 @@ function edit(item: any) {
 function update(params: object) {
   return new Promise<void>(async (resolve, reject) => {
     try {
-      const metaNameOpParams = {
-        registerName: metaName.val!.name,
+      const response = await MetaNameBeforeReqRes({
+        name: metaName.val!.name,
         op: MetaNameReqCode.updataInfo,
-        info: {
-          ...metaName.val!.infos,
-          ...params,
-        },
-      }
-      const res = await metanameOperation(metaNameOpParams)
-      if (res) {
-        const updateInfoTx = await MetaNameUpdateInfo(res!.registerMetaNameResp!)
-        if (updateInfoTx.code == 0) {
-          for (let i in params) {
-            // @ts-ignore
-            metaName.val!.infos[i] = params[i]
+        address: userStore.showWallet.wallet!.rootAddress,
+      })
+      if (response.code == 0) {
+        const metaNameParams = {
+          op_code: response.data.op,
+          info: {
+            ...metaName.val!.infos,
+            ...params,
+          },
+          reqswapargs: response.data,
+        }
+        const res = await getMetaNameOperateParams(metaNameParams)
+
+        if (res) {
+          const updateInfoTx = await MetaNameUpdateInfo(res!.registerMetaNameResp!)
+          if (updateInfoTx.code == 0) {
+            for (let i in params) {
+              // @ts-ignore
+              metaName.val!.infos[i] = params[i]
+            }
+            ElMessage.success(i18n.t('MetaName.UpdateInfoSuccess'))
+            resolve()
           }
-          ElMessage.success(i18n.t('MetaName.UpdateInfoSuccess'))
         }
       }
-      resolve()
     } catch (error) {
       reject(error)
     }
