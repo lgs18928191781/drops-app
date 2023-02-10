@@ -27,7 +27,7 @@
         <template v-else>
           <div
             :class="[
-              talkStore.isActiveChannelReserved ? 'meta-name' : 'text-dark-800 dark:text-white',
+              talkStore.isActiveChannelReserved ? metaNameClass : 'text-dark-800 dark:text-white',
               'text-base leading-tight no-wrap grow whitespace-nowrap truncate mr-2 max-w-[40vw] lg:max-w-[600PX]',
             ]"
           >
@@ -130,17 +130,15 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
-import ScreenModal from './modals/ScreenModal.vue'
+import { ref, computed } from 'vue'
+
 import { useLayoutStore } from '@/stores/layout'
-import LoginedUserOperate from '@/components/LoginedUserOperate/LoginedUserOperate.vue'
 import { useTalkStore } from '@/stores/talk'
+
+import LoginedUserOperate from '@/components/LoginedUserOperate/LoginedUserOperate.vue'
 
 const talkStore = useTalkStore()
 const layout = useLayoutStore()
-const channel = talkStore.activeChannel
-
-const showDescModal = ref(false)
 
 const shortenMetaId = (id: string) => {
   return id.substring(0, 6) + '...' + id.substring(id.length - 6)
@@ -149,6 +147,10 @@ const shortenMetaId = (id: string) => {
 const createCommunity = () => {
   console.log('createCommunity')
 }
+
+const metaNameClass = computed(() => {
+  return talkStore.activeCommunitySymbolInfo.suffix === 'eth' ? 'meta-name ens' : 'meta-name'
+})
 
 const goCheckTxId = (txId: string) => {
   window.open(`https://mvcscan.com/tx/${txId}`, '_blank')

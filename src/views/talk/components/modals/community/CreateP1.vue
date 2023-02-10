@@ -56,7 +56,7 @@
           >
             <div class="flex items-center gap-x-1.5">
               <template v-if="form.metaName">
-                <MetaNameDisplay :meta-name="form.metaName" :text-class="'!text-sm !font-bold'" />
+                <MetaNameDisplay :name="form.metaName.name" :text-class="'!text-sm !font-bold'" />
                 <!-- <span class="text-sm font-bold">
                   {{ form.metaName.name }}
                 </span>

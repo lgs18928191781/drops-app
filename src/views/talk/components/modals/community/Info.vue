@@ -18,11 +18,11 @@
             {{ talk.activeCommunity?.name }}
           </h4>
 
-          <div class="flex items-center justify-start space-x-1 mt-1">
-            <span class="meta-name truncate">{{ talk.activeCommunitySymbolInfo.name }}</span>
-
-            <MetaNameTag :type="talk.activeCommunitySymbolInfo.suffix" />
-          </div>
+          <MetaNameDisplay
+            :name="talk.activeCommunity?.metaName"
+            :colorful="true"
+            :text-class="'!text-sm'"
+          />
         </div>
 
         <!-- 描述 -->
@@ -90,6 +90,7 @@ import { leaveCommunity } from '@/utils/talk'
 
 import BaseModal from '../BaseModal.vue'
 import MetaNameTag from '@/components/MetaName/Tag.vue'
+import MetaNameDisplay from '@/components/MetaName/Display.vue'
 import LoadingItemSmall from '../../LoadingItemSmall.vue'
 
 const talk = useTalkStore()

@@ -5,7 +5,7 @@ type Solution = 'metacontract' | 'ens'
 
 const solutionChainMapping = {
   metacontract: 'mvc',
-  ens: 'eth',
+  ens: import.meta.env.VITE_ETH_CHAIN,
 }
 
 export async function getCommunityOwner({
@@ -26,6 +26,8 @@ export async function getCommunityOwner({
   if (!genesis) {
     return getCommunityOwnerByCommunityId(communityId)
   }
+
+  // 查询 MetaName NFT
   const chain = solutionChainMapping[solution]
   const {
     data: {
@@ -39,6 +41,7 @@ export async function getCommunityOwner({
     throw new Error('MetaName not found')
   }
 
+  // 通过NFT获取拥有者
   const { nftOwnerUserInfo } = metaNameNft
 
   if (!nftOwnerUserInfo) {
