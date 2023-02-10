@@ -382,7 +382,7 @@ export class SDK {
             )
             if (result) {
               // 确认支付
-
+              debugger
               // 打钱地址
               let receive = this.getNodeTransactionsFirstReceive(transactions, params)
               // 获取上链时的utxo
@@ -854,6 +854,7 @@ export class SDK {
     option?: { isBroadcast?: boolean; chain?: HdWalletChain }
   ) {
     return new Promise<CreateNodeRes>(async (resolve, reject) => {
+      debugger
       try {
         if (this.bfrcNodeList.some(item => item.nodeName === params.nodeName)) {
           resolve(this.bfrcNodeList.find(item => item.nodeName === params.nodeName)!.data)
@@ -878,6 +879,7 @@ export class SDK {
     transactions: NodeTransactions,
     params: createBrfcChildNodeParams
   ) {
+    debugger
     // 打钱地址
     let receive: {
       address: string
@@ -945,18 +947,8 @@ export class SDK {
     params: createBrfcChildNodeParams,
     lastChangeAddress: string
   ) {
-    return new Promise<{
-      metaFileBrfc?: CreateNodeRes
-      metaFiles?: CreateNodeRes[]
-      currentNodeBrfc?: CreateNodeRes
-      currentNode?: CreateNodeRes
-      issueNFT?: {
-        transaction: bsv.Transaction
-        txId?: string
-      }
-    }>(async (resolve, reject) => {
+    return new Promise<NodeTransactions>(async (resolve, reject) => {
       try {
-        debugger
         const chain = params.payType === SdkPayType.BSV ? HdWalletChain.BSV : HdWalletChain.MVC
         if (params.nodeName === NodeName.Name) {
           this.setTransferUtxoAndOutputAndSign(
@@ -1097,9 +1089,7 @@ export class SDK {
               params.nodeName === NodeName.NftGenesis ||
               params.nodeName === NodeName.NftTransfer
             ) {
-              utxo.wif = this.getPathPrivateKey(
-                `${utxo.addressType}/${utxo.addressIndex}`
-              )!.toString()
+              debugger
               const scriptPlayload = await this.getScriptPlayload(createCurrentNodeParams, chain)
               const nftManager = this.wallet!.getNftManager()
               const res = await nftManager![
@@ -1152,10 +1142,6 @@ export class SDK {
                   tx: transactions.currentNode!.transaction,
                   chain,
                 })
-
-                utxo.wif = this.getPathPrivateKey(
-                  `${utxo.addressType}/${utxo.addressIndex}`
-                )!.toString()
                 const data = JSON.parse(params.data!)
                 const nftManager = this.wallet!.getNftManager()
                 const res = await nftManager!.mint({
@@ -1190,6 +1176,7 @@ export class SDK {
             }
           }
         }
+        debugger
         resolve(transactions)
       } catch (error) {
         reject(error)
@@ -1343,8 +1330,7 @@ export class SDK {
       let payToRes: CreateNodeRes | undefined = undefined
       try {
         if (params.sdkPayType === SdkPayType.SPACE || params.sdkPayType === SdkPayType.BSV) {
-          const chain =
-            params.sdkPayType === SdkPayType.SPACE ? HdWalletChain.MVC : HdWalletChain.BSV
+          const chain = params.sdkPayType === SdkPayType.BSV ? HdWalletChain.BSV : HdWalletChain.MVC
           const allUtxos = await this.wallet?.provider.getUtxos(
             this.wallet.wallet.xpubkey.toString(),
             chain
@@ -1368,7 +1354,7 @@ export class SDK {
               const res = await this.wallet?.makeTx({
                 utxos: useUtxos,
                 opReturn: [],
-                change: this.wallet.wallet.rootAddress,
+                change: this.wallet.rootAddress,
                 payTo: [
                   {
                     amount: params.amount,
@@ -1415,10 +1401,13 @@ export class SDK {
               script: getMeUtxo.data.script,
               satoshis: getMeUtxo.data.amount,
               amount: getMeUtxo.data.amount / 1e8,
+              wif: this.getPathPrivateKey(
+                `${params.receive!.addressType}/${params.receive!.addressType}`
+              )!.toString(),
             }
           }
         }
-
+        debugger
         resolve({
           utxo: utxo!,
           payToRes: payToRes,

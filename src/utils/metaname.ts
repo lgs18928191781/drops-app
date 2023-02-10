@@ -49,6 +49,18 @@ export function getRegisterOrRenewMetaNameParams(params: {
             payType: SdkPayType.SPACE,
           }
         )
+
+        if (res?.payToAddress?.transaction) {
+          await userStore.showWallet.wallet!.provider!.broadcast(
+            res?.payToAddress?.transaction.toString()
+          )
+        }
+        if (res?.currentNodeBrfc.transaction) {
+          await userStore.showWallet.wallet!.provider!.broadcast(
+            res?.currentNodeBrfc?.transaction.toString()
+          )
+        }
+        debugger
         _params.nftRawTx = res!.nft!.transfer?.transaction.toString()
       }
       const registerMetaNameResp = JSON.stringify(_params)

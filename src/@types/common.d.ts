@@ -550,6 +550,8 @@ declare interface MetaNameInfo {
   reddit: string
   twitter: string
   telegram: string
+  desc: string
+  data: any
 }
 declare interface AnnouncementItem {
   address: string

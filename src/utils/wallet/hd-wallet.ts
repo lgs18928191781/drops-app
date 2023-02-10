@@ -1256,7 +1256,7 @@ export class HdWallet {
           const addressInfo = await this.provider.getPathWithNetWork({
             address: OutPut.script.toAddress(this.network).toString(),
             xpub: this.wallet.xpubkey.toString(),
-            chain,
+            chain: params.chain,
           })
           if (addressInfo) {
             params.addressInfo = {
@@ -1278,6 +1278,9 @@ export class HdWallet {
           addressType: params!.addressInfo?.addressType!,
           addressIndex: params!.addressInfo?.addressIndex!,
           xpub: this.wallet.xpubkey.toString(),
+          wif: this.getPathPrivateKey(
+            `${params!.addressInfo?.addressType!}/${params!.addressInfo?.addressIndex!}`
+          )!.toString(),
         })
       } catch (error) {
         reject(error)
@@ -1926,7 +1929,7 @@ export class HdWallet {
         const initParams = {
           payTo: [],
           isBroadcast: true,
-          opReturn: ['show3'],
+          opReturn: [import.meta.env.VITE_App_Key],
           utxos: [],
           chain: HdWalletChain.MVC,
         }
