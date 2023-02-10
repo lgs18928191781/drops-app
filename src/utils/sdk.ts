@@ -51,7 +51,6 @@ import detectEthereumProvider from '@metamask/detect-provider'
 import { v1 as UUID } from 'uuid'
 import { useLayoutStore } from '@/stores/layout'
 import { GetTx } from '@/api/metaid-base'
-import { MetaNameBeforeReqRes } from '@/api/index'
 import AllNodeName from './AllNodeName'
 import { tr } from 'element-plus/es/locale'
 enum AppMode {
@@ -1736,16 +1735,16 @@ export class SDK {
     return await this.wallet?.provider.broadcast(res.toString())
   }
 
-  MetaNameBeforeReq(params: {
-    name: string
-    op: number
-  }): Promise<{ code: number; data: Reqswapargs; msg: string }> {
-    const newParams = {
-      ...params,
-      address: this.wallet!.rootAddress,
-    }
-    return MetaNameBeforeReqRes(newParams)
-  }
+  // MetaNameBeforeReq(params: {
+  //   name: string
+  //   op: number
+  // }): Promise<{ code: number; data: Reqswapargs; msg: string }> {
+  //   const newParams = {
+  //     ...params,
+  //     address: this.wallet!.rootAddress,
+  //   }
+  //   return MetaNameBeforeReqRes(newParams)
+  // }
 
   sendMetaNameTransation(params: {
     op_code: number

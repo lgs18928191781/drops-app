@@ -89,9 +89,10 @@ import MetaNameLogo from '@/assets/metaname/logo_metaname.png'
 
 import { getBlockHeight, MetaNameUpdateInfo } from '@/api/index'
 import { useI18n } from 'vue-i18n'
-import { GetMetaNameInfo, UploadMetaNameCover } from '@/api/wxcore'
+import { GetMetaNameInfo, MetaNameBeforeReqRes, UploadMetaNameCover } from '@/api/wxcore'
 import { GetMetaNameCover } from '@/api/canvas-base'
 import Item from '@/views/talk/components/direct-contact/Item.vue'
+import { getRegisterOrRenewMetaNameParams, registerMetaName } from '@/utils/metaname'
 interface Props {
   price: number
   year: number
@@ -165,36 +166,7 @@ function setCurrencyAmount() {
 async function pay() {
   emit('update:loading', true)
   try {
-    if (props.type === MetaNameReqCode.register) {
-      const cover = await GetMetaNameCover(props.name)
-      // metaNameBgColorIndex.value = randomNumber(0, 9)
-      // await nextTick()
-      // const res = await html2canvas(MetaNameRef.value, {
-      //   scale: 2,
-      //   backgroundColor: null,
-      //   removeContainer: true,
-      // })
-      // if (res) {
-
-      // }
-
-      // const base64 = res.toDataURL('image/png')
-      // const file = dataURLtoFile(base64, `${props.name}.png`)
-      const formData = new FormData()
-      // @ts-ignore
-      formData.append('file', cover)
-      const response = await UploadMetaNameCover(formData)
-      if (response) {
-        metafile = response.image_tx_id
-      }
-      // const attachment = await FileToAttachmentItem(file)
-      // const result = await userStore.showWallet.createBrfcChildNode({
-      //   nodeName: NodeName.MetaFile,
-      //   attachments: [attachment],
-      // })
-      // metafile = result!.metaFiles![0].txId
-    }
-    const metaNameOpParams: {
+    let metaNameOpParams: {
       registerName: string
       op: MetaNameReqCode
       info?: Partial<MetaNameInfo>
@@ -202,68 +174,69 @@ async function pay() {
     } = {
       registerName: props.name,
       op: props.type,
-      info: {
-        mvc: userStore.user!.address,
-        icon: `metafile://${metafile}.png`,
-      },
       years: props.year,
     }
-    if (props.type == MetaNameReqCode.updataInfo) {
-      const metaNameInfo = await GetMetaNameInfo(props.name)
-      if (metaNameInfo) {
-        metaNameOpParams.info = {
-          ...metaNameOpParams.info,
-          ...metaNameInfo,
-        }
-        delete metaNameOpParams.years
-      } else {
-        emit('update:loading', false)
-        return ElMessage.error(`${i18n.t('getMetaNameInfoError')}`)
+    if (props.type === MetaNameReqCode.register) {
+      // 注册生成图片
+      const cover = await GetMetaNameCover(props.name)
+      const formData = new FormData()
+      // @ts-ignore
+      formData.append('file', cover)
+      const response = await UploadMetaNameCover(formData)
+      if (response) {
+        metafile = response.image_tx_id
+      }
+      metaNameOpParams.info = {
+        mvc: userStore.user!.address,
+        icon: `metafile://${metafile}.png`,
       }
     }
-    if (props.type == MetaNameReqCode.renew) {
-      delete metaNameOpParams.info
-    }
-    const res = await metanameOperation(metaNameOpParams)
-
-    const operateType = {
-      [MetaNameReqCode.register]: MetaNameOperateType.Register,
-      [MetaNameReqCode.renew]: MetaNameOperateType.Renew,
-      [MetaNameReqCode.updataInfo]: MetaNameOperateType.UpdateInfo,
-    }
-    if (props.type == MetaNameReqCode.updataInfo) {
-      const updateInfoTx = await MetaNameUpdateInfo(res!.registerMetaNameResp!)
-      if (updateInfoTx.code == 0) {
-        //更新成功,这里不能用
-        emit('update:loading', false)
-        return
-      }
-    }
-
-    const result = await CreatePayOrder({
-      platform: currentPayPlatform.value!,
-      fullPath: setPayQuitUrl({
-        payPlatform: currentPayPlatform.value!,
-        fullPath: route.fullPath,
-        isBlindbox: false,
-      }),
-      goods_name: props.name,
-      count: 1,
-      product_type: productType,
-      operate_type: operateType[props.type],
-      mvc_to_address: res?.MvcToAddress,
-      nft_to_address: res?.NftToAddress,
-      tx_fee: res.TxFee,
-      fee_per_year: res?.FeePerYear,
-      meta_name_len: bytesLength(props.name),
-      data: res?.registerMetaNameResp?.toString(),
-      meta_name_uts_ascii: props.name,
+    const response = await MetaNameBeforeReqRes({
+      name: metaNameOpParams.registerName,
+      op: metaNameOpParams.op,
+      years: metaNameOpParams.years,
+      address: userStore.showWallet.wallet!.rootAddress,
     })
-    if (result) {
-      payOrderInfo.amount = result.pay_amount!.toString()
-      payOrderInfo.orderId = result.outside_order_id
-      payOrderInfo.url = result.url
-      isStartPay.value = true
+    if (response.code == 0) {
+      const metaNameParams = {
+        op_code: response.data.op,
+        info: metaNameOpParams.info,
+        years: metaNameOpParams.years!,
+        reqswapargs: response.data,
+      }
+      const res = await getRegisterOrRenewMetaNameParams(metaNameParams)
+      if (res) {
+        const operateType = {
+          [MetaNameReqCode.register]: MetaNameOperateType.Register,
+          [MetaNameReqCode.renew]: MetaNameOperateType.Renew,
+          [MetaNameReqCode.updataInfo]: MetaNameOperateType.UpdateInfo,
+        }
+        const result = await CreatePayOrder({
+          platform: currentPayPlatform.value!,
+          fullPath: setPayQuitUrl({
+            payPlatform: currentPayPlatform.value!,
+            fullPath: route.fullPath,
+            isBlindbox: false,
+          }),
+          goods_name: props.name,
+          count: 1,
+          product_type: productType,
+          operate_type: operateType[props.type],
+          mvc_to_address: res?.MvcToAddress,
+          nft_to_address: res?.NftToAddress,
+          tx_fee: res.TxFee,
+          fee_per_year: res?.FeePerYear,
+          meta_name_len: bytesLength(props.name),
+          data: res?.registerMetaNameResp?.toString(),
+          meta_name_uts_ascii: props.name,
+        })
+        if (result) {
+          payOrderInfo.amount = result.pay_amount!.toString()
+          payOrderInfo.orderId = result.outside_order_id
+          payOrderInfo.url = result.url
+          isStartPay.value = true
+        }
+      }
     }
   } catch (error) {
     emit('update:loading', false)

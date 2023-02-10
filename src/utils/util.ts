@@ -25,7 +25,7 @@ import {
 } from '@/enum'
 import { CheckBlindboxOrderStatus } from '@/api/v3'
 import AllCardJson from '@/utils/card.json'
-import { GetOrderStatus, IsWtiteUser } from '@/api/wxcore'
+import { GetOrderStatus, IsWtiteUser, MetaNameBeforeReqRes } from '@/api/wxcore'
 import { classifyName } from '@/config'
 import { v1 as uuidv1 } from 'uuid'
 import { decode, encode } from 'js-base64'
@@ -1427,10 +1427,11 @@ export async function metanameOperation(params: {
   return new Promise<SendMetaNameTransationResult>(async (resolve, reject) => {
     try {
       const userStore = useUserStore()
-      const res = await userStore.showWallet.MetaNameBeforeReq({
+      const res = await MetaNameBeforeReqRes({
         name: `${params.registerName}`,
         op: params.op,
         years: params.years,
+        address: userStore.showWallet.wallet!.rootAddress,
       })
       if (res.code == 0) {
         const { data } = res

@@ -3,6 +3,7 @@ import HttpRequest from '@/utils/request'
 import { alertCatchError } from '@/utils/util'
 import { ElMessage } from 'element-plus'
 import { getToken, getUserName, useUserStore } from '@/stores/user'
+import { Reqswapargs } from '@/utils/wallet/hd-wallet'
 // @ts-ignore
 const Wxcore = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/wxcore`, {
   header: () => {
@@ -229,4 +230,16 @@ export const UploadMetaNameCover = (
 
 export const GetMetaNameInfo = (name: string): Promise<MetaNameIndexerInfo> => {
   return Wxcore.get(`/metaname/indexer/info`, { params: { name } })
+}
+
+export const MetaNameBeforeReqRes = (parmas: {
+  address: string
+  name: string
+  op: number
+  years?: number
+}): Promise<{ code: number; data: Reqswapargs; msg: string }> => {
+  return Wxcore.post(`/metaname/reqargs`, {
+    ...parmas,
+    source: 'Show',
+  })
 }
