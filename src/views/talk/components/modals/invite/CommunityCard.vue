@@ -140,7 +140,7 @@ import { isShortDevice } from '@/stores/root'
 import BaseModal from '../BaseModal.vue'
 import MetaNameDisplay from '@/components/MetaName/Display.vue'
 import StarRingImg from '@/assets/icons/star_ring.svg?url'
-import CardBgImg from '@/assets/images/card_blur_bg_2.png?url'
+import CardBgImg from '@/assets/images/card_blur_bg.png?url'
 import ShowIconImg from '@/assets/images/logo_show_2.png?url'
 
 const layout = useLayoutStore()
