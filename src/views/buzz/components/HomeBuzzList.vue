@@ -48,6 +48,7 @@ function getDatas(isCover = false) {
     const res = await GetBuzzs({
       tag: route.name === 'buzzIndex' ? 'timeline' : 'recommendline',
       ...pagination,
+      langId: localStorage.getItem('lang') === 'zh' ? 2 : 1,
       metaId: userStore.user?.metaId,
     })
     if (res.code === 0) {

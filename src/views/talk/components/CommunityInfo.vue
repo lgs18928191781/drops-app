@@ -50,15 +50,13 @@
               <div
                 class="w-full mt-2 flex items-center justify-between space-x-2 cursor-pointer"
                 :title="talk.activeCommunitySymbolInfo.name"
-                v-if="talk.activeCommunitySymbolInfo"
+                v-if="talk.activeCommunity?.metaName"
               >
-                <div class="flex items-center justify-start space-x-1 shrink overflow-x-hidden">
-                  <span class="text-sm meta-name truncate">{{
-                    talk.activeCommunitySymbolInfo.name
-                  }}</span>
-
-                  <MetaNameTag :type="talk.activeCommunitySymbolInfo.suffix" />
-                </div>
+                <MetaNameDisplay
+                  :name="talk.activeCommunity?.metaName"
+                  :colorful="true"
+                  :text-class="'!text-sm truncate'"
+                />
 
                 <Icon
                   name="chevron_right"
@@ -214,7 +212,7 @@ import CreateGeneralChannelModal from './modals/CreateGeneralChannelModal.vue'
 import CreateDaoModal from './modals/CreateDaoModal.vue'
 import CommunityInfoModal from './modals/community/Info.vue'
 import CommunityChannelItem from './CommunityChannelItem.vue'
-import MetaNameTag from '@/components/MetaName/Tag.vue'
+import MetaNameDisplay from '@/components/MetaName/Display.vue'
 
 const layout = useLayoutStore()
 const talk = useTalkStore()

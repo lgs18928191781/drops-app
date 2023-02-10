@@ -6,7 +6,7 @@
 
     <template #body>
       <div class="h-full w-full flex flex-col items-center justify-between text-dark-800">
-        <div class="relative card-height aspect-[3/4]" ref="cardContainer">
+        <div class="relative card-height aspect-[3/4] max-w-full" ref="cardContainer">
           <div
             class="w-full h-full card-border rounded-lg z-20 relative bg-white flex flex-col items-center justify-between p-7.5"
           >
@@ -63,16 +63,12 @@
                   </span>
                 </div>
 
-                <div
-                  class="flex items-baseline justify-start space-x-1 shrink overflow-x-hidden"
-                  v-else
-                >
-                  <span class="text-sm meta-name truncate">
-                    {{ talk.activeCommunitySymbolInfo.name }}
-                  </span>
-
-                  <MetaNameTag :type="talk.activeCommunitySymbolInfo.suffix" />
-                </div>
+                <MetaNameDisplay
+                  v-if="talk.activeCommunity?.metaName"
+                  :name="talk.activeCommunity?.metaName"
+                  :colorful="true"
+                  class=""
+                />
               </div>
             </div>
 
@@ -124,6 +120,7 @@ import { ShowControl } from '@/enum'
 
 import BaseModal from '../BaseModal.vue'
 import MetaNameTag from '@/components/MetaName/Tag.vue'
+import MetaNameDisplay from '@/components/MetaName/Display.vue'
 import StarRingImg from '@/assets/icons/star_ring.svg?url'
 import CardBgImg from '@/assets/images/card_blur_bg.png?url'
 import ShowIconImg from '@/assets/images/logo_show_2.png?url'

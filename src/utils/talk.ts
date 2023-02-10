@@ -56,7 +56,7 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
 
   const admins = [userStore.user?.metaId]
   const metaNameNft = metaName.genesis
-    ? `metacontract://${metaName.codeHash}/${metaName.genesis}/${metaName.tokenIndex}`
+    ? `${metaName.solution}://${metaName.codeHash}/${metaName.genesis}/${metaName.tokenIndex}`
     : ''
   const dataCarrier: CommunityData = {
     communityId,

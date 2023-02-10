@@ -1,5 +1,5 @@
 <template>
-  <TabPanel class="flex items-center justify-center h-full">
+  <TabPanel class="flex items-start justify-center h-full">
     <div v-if="isLoading" class="w-full h-full flex items-center justify-center flex-col gap-y-4">
       <img :src="DogWalkingImg" class="w-48 h-48" alt="" />
       <div class="flex items-center space-x-2">
@@ -41,7 +41,7 @@
       <template v-for="(group, index) in data!.pages" :key="index">
         <MetaNameItem
           v-for="metaName in validMetaNames(group)"
-          :key="metaName.name"
+          :key="metaName.name + '_' + metaName.tokenIndex"
           :meta-name="metaName"
           @select="emit('select', metaName)"
         />
@@ -53,7 +53,9 @@
       >
         <span v-if="isFetchingNextPage" class="py-2">...</span>
         <span v-else-if="hasNextPage" class="hover:underline py-2">{{ $t('clickmore') }}</span>
-        <span v-else-if="data!.pages.length >= 2" class="py-2">{{ $t('Nothing_more_to_load') }}</span>
+        <span v-else-if="data!.pages.length >= 2" class="py-2">{{
+          $t('Nothing_more_to_load')
+        }}</span>
       </button>
     </div>
   </TabPanel>

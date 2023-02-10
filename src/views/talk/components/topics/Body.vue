@@ -45,6 +45,7 @@ function getDatas(isCover = false) {
   return new Promise<void>(async resolve => {
     const res = await GetTopicBuzzs({
       tag: talk.activeCommunity!.metaName,
+      langId: localStorage.getItem('lang') === 'zh' ? 2 : 1,
       metaId: userStore.user?.metaId,
       ...pagination,
     }).catch(error => {

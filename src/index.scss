@@ -258,6 +258,10 @@ pre {
   letter-spacing: 0.05em;
   text-shadow: rgba(255, 192, 81, 0.3) 0 -1PX 1PX;
 
+  &.ens {
+    background-image: linear-gradient(to bottom right, #4F40F5, #7EDFFA);
+  }
+
   .dark & {
     text-shadow: rgba(255, 192, 81, 0.4) 0 -1PX 4PX;
 

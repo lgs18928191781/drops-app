@@ -1,13 +1,17 @@
 <template>
-  <div class="flex items-center gap-x-1.5">
+  <div class="flex items-center gap-x-1">
     <div
-      :class="[textClass, 'font-medium leading-loose text-lg max-w-[160PX] truncate']"
+      :class="[
+        textClass,
+        colorful && colors,
+        'font-medium leading-loose text-sm max-w-[160PX] truncate',
+      ]"
       :title="nameWithoutSuffix"
     >
       {{ nameWithoutSuffix }}
     </div>
 
-    <MetaNameTag :ns="ns" class="text-sm !rounded" />
+    <MetaNameTag v-if="!noTag" :ns="ns" class="text-sm !rounded" />
   </div>
 </template>
 
@@ -16,10 +20,10 @@ import { computed } from 'vue'
 
 import MetaNameTag from '@/components/MetaName/Tag.vue'
 
-const props = defineProps(['metaName', 'textClass'])
+const props = defineProps(['name', 'textClass', 'colorful', 'noTag'])
 
 const ns = computed(() => {
-  const suffix = props.metaName.name.split('.')[1]
+  const suffix = props.name.split('.')[1]
   if (suffix === 'eth') {
     return 'ENS'
   }
@@ -29,6 +33,15 @@ const ns = computed(() => {
 
 // 解析metaName，如果是ens，则截取后缀（.meta的数据不带后缀不用截取）
 const nameWithoutSuffix = computed(() => {
-  return props.metaName.name.split('.')[0]
+  return props.name.split('.')[0]
+})
+
+const colors = computed(() => {
+  switch (ns.value) {
+    case 'ENS':
+      return 'meta-name ens'
+    default:
+      return 'meta-name'
+  }
 })
 </script>
