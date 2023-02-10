@@ -40,7 +40,7 @@ app.component('UserAvatar', UserAvatar)
 app.component('Image', Image)
 app.component('UserName', UserName)
 app.component('Icon', Icon)
-app.component('Dialog', GlobalDialog)
+// app.component('Dialog', GlobalDialog)
 
 app
   .use(pinia)

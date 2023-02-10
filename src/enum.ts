@@ -388,6 +388,7 @@ export enum ShowControl {
   isShowRequireNativeModal = 'isShowRequireNativeModal',
   isShowCheckingPass = 'isShowCheckingPass',
   isShowUserInfo = 'isShowUserInfo',
+  isShowUserCard = 'isShowUserCard',
   never = 'never',
 }
 

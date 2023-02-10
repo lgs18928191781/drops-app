@@ -56,11 +56,12 @@
           >
             <div class="flex items-center gap-x-1.5">
               <template v-if="form.metaName">
-                <span class="text-sm meta-name">
+                <MetaNameDisplay :meta-name="form.metaName" :text-class="'!text-sm !font-bold'" />
+                <!-- <span class="text-sm font-bold">
                   {{ form.metaName.name }}
                 </span>
 
-                <Icon name="tag_nft" class="w-9.5 h-4" />
+                <Icon name="tag_nft" class="w-9.5 h-4" /> -->
               </template>
               <template v-else>
                 <span class="text-dark-250 select-none font-sm dark:text-gray-400">{{
@@ -118,12 +119,15 @@
 </template>
 
 <script lang="ts" setup>
-import { useCommunityFormStore } from '@/stores/forms'
+import { ref } from 'vue'
+
 import { useLayoutStore } from '@/stores/layout'
 import { useTalkStore } from '@/stores/talk'
-
+import { useCommunityFormStore } from '@/stores/forms'
 import { isFileTooLarge, isImage } from '@/utils/talk'
-import { ref } from 'vue'
+
+import MetaNameDisplay from '@/components/MetaName/Display.vue'
+
 const layout = useLayoutStore()
 const talkStore = useTalkStore()
 const form = useCommunityFormStore()

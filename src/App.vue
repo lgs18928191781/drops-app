@@ -25,9 +25,10 @@
       </RouterView>
     </div>
   </div>
-  <Drav cvbmgonBall />
+  <DragonBall />
   <SearchModal />
   <ConnectWalletModalVue />
+  <!-- <UserCardFloater /> -->
 </template>
 
 <script setup lang="ts">
@@ -40,8 +41,8 @@ import { useUserStore } from '@/stores/user'
 import ConnectWalletModalVue from './components/ConnectWalletModal/ConnectWalletModal.vue'
 import LeftNavigationVue from './components/LeftNavigation/LeftNavigation.vue'
 import DragonBall from './views/talk/components/DragonBall.vue'
-
 import SearchModal from './components/Search/Index.vue'
+import UserCardFloater from './components/UserCard/Floater.vue'
 
 const rootStore = useRootStore()
 const userStore = useUserStore()

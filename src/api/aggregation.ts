@@ -640,9 +640,9 @@ export const GetOneAnnouncement = (params: {
 
 export const GetUserMetaNames = (params: {
   address: string
-  page: number
-  pageSize: number
-  flag: string
+  page?: number
+  pageSize?: number
+  flag?: string
 }): Promise<{
   code: number
   data: {
@@ -655,6 +655,25 @@ export const GetUserMetaNames = (params: {
 }> => {
   const { address, ..._params } = params
   return aggregation.get(`/v2/app/metaname/${address}/list?`, { params: _params })
+}
+
+export const GetUserEnsNames = (params: {
+  address: string
+  page?: number
+  pageSize?: number
+  flag?: string
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    nextFlag: string
+    results: {
+      items: MetaNameItem[]
+    }
+  }
+}> => {
+  const { address, ..._params } = params
+  return aggregation.get(`/v2/app/ens/${address}/list?`, { params: _params })
 }
 
 export const GetCollectionNFTs = (params: {

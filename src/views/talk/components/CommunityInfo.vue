@@ -201,17 +201,19 @@
 </template>
 
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n'
+import { computed } from 'vue'
+
+import { useLayoutStore } from '@/stores/layout'
+import { useTalkStore } from '@/stores/talk'
+import { useCommunityUpdateFormStore } from '@/stores/forms'
+
 import CreatePublicChannelModal from './modals/CreatePublicChannelModal.vue'
 import CreateConsensualChannelModal from './modals/CreateConsensualChannelModal.vue'
 import CreateGeneralChannelModal from './modals/CreateGeneralChannelModal.vue'
 import CreateDaoModal from './modals/CreateDaoModal.vue'
 import CommunityInfoModal from './modals/community/Info.vue'
-import { useLayoutStore } from '@/stores/layout'
 import CommunityChannelItem from './CommunityChannelItem.vue'
-import { useTalkStore } from '@/stores/talk'
-import { useCommunityUpdateFormStore } from '@/stores/forms'
-import { useI18n } from 'vue-i18n'
-import { computed } from 'vue'
 import MetaNameTag from '@/components/MetaName/Tag.vue'
 
 const layout = useLayoutStore()

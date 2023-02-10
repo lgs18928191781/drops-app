@@ -1,5 +1,5 @@
 <template>
-  <div class="version-warp hidden lg:block">
+  <div class="version-warp">
     <VersionVue />
   </div>
   <a
@@ -11,14 +11,8 @@
   </a>
   <template v-if="userStore.isAuthorized">
     <div class="user-warp flex flex-align-center">
-      <UserAvatar
-        :image="userStore.user!.avatarImage"
-        :meta-id="userStore.user!.metaId"
-        :name="userStore.user!.name"
-        class="user-warp-item overflow-hidden"
-      />
-
       <template v-if="!isMobile">
+        <!-- MetaName -->
         <a
           @click="toMetaName"
           class="outsideMore flex flex-align-center flex-pack-center user-warp-item"
@@ -26,14 +20,8 @@
         >
           <img class="metanameLogo" :src="MetaNameLogo" alt="" />
         </a>
-        <!-- 钱包 -->
-        <a
-          class="flex flex-align-center flex-pack-center user-warp-item"
-          @click="layout.$patch({ isShowWallet: true })"
-        >
-          <Icon name="wallet_fill" />
-        </a>
-        <!-- 搜索 -->
+
+        <!-- 🔍 搜索 -->
         <a
           class="flex flex-align-center flex-pack-center user-warp-item"
           @click="layout.$patch({ isShowSearchModal: true })"
@@ -42,6 +30,22 @@
           <Icon name="search" />
         </a>
       </template>
+
+      <!-- 💰 钱包 -->
+      <a
+        class="flex flex-align-center flex-pack-center user-warp-item"
+        @click="layout.$patch({ isShowWallet: true })"
+      >
+        <Icon name="wallet_fill" />
+      </a>
+
+      <!-- 👤 头像 -->
+      <UserAvatar
+        :image="userStore.user!.avatarImage"
+        :meta-id="userStore.user!.metaId"
+        :name="userStore.user!.name"
+        class="user-warp-item overflow-hidden"
+      />
     </div>
   </template>
   <template v-else>
@@ -63,24 +67,10 @@
     <template #dropdown>
       <ElDropdownMenu>
         <template v-if="isMobile">
-          <ElDropdownItem @click="toMetaName">
-            <div class="flex flex-align-center user-operate-item">
-              <img class="icon" :src="MetaNameLogo" alt="" />
-              <span class="name">MetaName</span>
-            </div>
-          </ElDropdownItem>
-
-          <ElDropdownItem @click="layout.$patch({ isShowWallet: true })">
-            <div class="flex flex-align-center user-operate-item">
-              <Icon name="wallet_fill" />
-              <span class="name">Wallet</span>
-            </div>
-          </ElDropdownItem>
-
           <ElDropdownItem @click="layout.$patch({ isShowSearchModal: true })">
             <div class="flex flex-align-center user-operate-item">
               <Icon name="search" />
-              <span class="name">Search</span>
+              <span class="name">{{ $t('UserOperate.search') }}</span>
             </div>
           </ElDropdownItem>
         </template>
@@ -150,6 +140,11 @@ const userOperates = computed(() => {
       },
     },
     {
+      name: 'MetaName',
+      icon: 'meta_name',
+      func: toMetaName,
+    },
+    {
       name: i18n.t('UserOperate.help'),
       icon: 'question_circle',
       func: () => {
@@ -160,15 +155,6 @@ const userOperates = computed(() => {
     },
   ]
   if (userStore.isAuthorized) {
-    result.unshift({
-      name: i18n.t('UserOperate.createGropp'),
-      icon: 'plus_circle',
-      func: () => {
-        layout.$patch({
-          isShowCreateCommunityModal: true,
-        })
-      },
-    })
     result.push({
       name: i18n.t('UserOperate.logout'),
       icon: 'logout',
