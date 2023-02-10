@@ -151,6 +151,7 @@
       "loading": "操作中……",
       "choose_meta_name": "选择 MetaName",
       "no_meta_name_available": "您没有可用的 MetaName",
+      "no_ens_available": "您没有可用的 ENS",
       "share_invite_link_tip": "向好友发送邀请链接",
       "share_to_buzz_tip": "分享到 Buzz",
       "share_card_tip": "分享社区名片",
@@ -374,6 +375,7 @@
   },
   "back": "返回",
   "UserOperate": {
+    "search": "搜索",
     "settings": "设置",
     "aboutShow": "关于Show",
     "help": "帮助",
@@ -469,7 +471,8 @@
   "role": "角色",
   "time": "时间",
   "price": "价格",
-  "clickmore": "点击加载更多",
+  "clickmore": "加载更多",
+  "Nothing_more_to_load": "没有更多了",
   "seller": "卖家",
   "prices": "标价：",
   "notSupportBsvBuyLegal": "暂不支持BSV购买法币的上架NFT",
@@ -539,6 +542,7 @@
       "drsc": "MetaName 将优先作为用户名。"
     },
     "Select MetaName": "选择 MetaName...",
+    "MetaNameTips": "使用MetaName作为您的用户名，闪亮展示您的个性。✨✨",
     "Choose NFT Avatar": "选择NFT头像"
   },
   "UplinkSetting": {

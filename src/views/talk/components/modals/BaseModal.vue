@@ -30,7 +30,7 @@
             leave-to="opacity-0 scale-75"
           >
             <DialogPanel
-              class="flex w-full h-full lg:max-w-screen-sm lg:items-stretch justify-center lg:w-auto relative lg:static lg:h-auto"
+              class="flex w-full h-full lg:max-w-screen-sm lg:items-stretch justify-center lg:w-auto relative lg:static lg:h-fit"
               :style="mobileSize"
             >
               <div class="relative h-full w-full lg:w-fit lg:h-fit group">
@@ -38,7 +38,7 @@
                   class="hidden lg:dark:block absolute inset-0 bg-gradient-to-tr from-indigo-500 to-sky-500 rounded-3xl blur-xl opacity-25 translate-x-1 translate-y-1 lg:dark:group-hover:opacity-50 transition-all duration-1000 lg:dark:group-hover:duration-300"
                 ></div>
                 <div
-                  class="w-full lg:w-114 h-full bg-white dark:bg-gray-800 lg:h-auto lg:rounded-3xl relative lg:shadow-lg lg:dark:shadow-none p-8 flex flex-col shrink-0"
+                  class="w-full lg:w-114 h-full bg-white dark:bg-gray-800 lg:rounded-3xl relative lg:shadow-lg lg:dark:shadow-none p-8 flex flex-col shrink-0"
                   :class="[mobileSize ? 'rounded' : '']"
                 >
                   <button

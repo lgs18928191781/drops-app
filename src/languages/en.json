@@ -117,6 +117,7 @@
       "loading": "Loading...",
       "choose_meta_name": "Select Club Domain Name",
       "no_meta_name_available": "No MetaName available",
+      "no_ens_available": "No ENS available",
       "share_invite_link_tip": "Send a club invite link to a friend...",
       "share_to_buzz_tip": "You can also share it via a buzz!",
       "share_card_tip": "Or, make a club card and share it!",
@@ -335,6 +336,7 @@
     "No wallet": "No Wallet"
   },
   "UserOperate": {
+    "search": "Search",
     "settings": "Settings",
     "aboutShow": "About Show",
     "help": "Help",
@@ -466,12 +468,12 @@
       "drsc": "The system will use MetaName you chose as the username by default."
     },
     "Select MetaName": "Select MetaName...",
-    "MetaNameTips": "MetaNema can be preferred as your username and looks more shiny.",
+    "MetaNameTips": "MetaName is a unique name that can be used to identify you on the blockchain. You can use it to register your account, create NFTs, create a club and more.",
     "Choose NFT Avatar": "Choose NFT Avatar"
   },
   "UplinkSetting": {
     "Uplink Payment Confirmation": "ME Payment Confirmation",
-    "ConfirmationIntro": "Once turned on, you need to confirm every MetaEnery payment.",
+    "ConfirmationIntro": "Once turned on, you need to confirm every MetaEnergy payment.",
     "Alert value setting": "Alert Value",
     "AlertValueIntro": "Confirmation is required every time payment reaches the alert value for your ME assets' safety."
   },
@@ -507,7 +509,8 @@
   "bindMetaidOrAddress": "Bind MetaID or address to log in",
   "bindingMetaid": "Binding login, please wait",
   "checkEnvNoWallet": "It is detected that your browser environment is missing the wallet plug-in",
-  "clickmore": "Click to load more",
+  "clickmore": "Load More",
+  "Nothing_more_to_load": "Nothing more to load",
   "confirm": "confirm",
   "contractaddr": "Contract address",
   "createMetaId": "Create MetaID",

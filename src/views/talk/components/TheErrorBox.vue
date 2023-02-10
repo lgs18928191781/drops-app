@@ -2,7 +2,7 @@
   <div class="h-6">
     <div
       class="font-medium text-xs pt-0.5 transition-all duration-300 ease-out"
-      :class="[hasNewError ? 'text-rose-500' : 'text-transparent']"
+      :class="[hasNewError ? 'text-rose-500' : 'invisible']"
     >
       {{ $t('Talk.Errors.' + talkStore.error.type, $t('Talk.Errors.default')) }}
     </div>

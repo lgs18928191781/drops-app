@@ -51,6 +51,24 @@ export const getNewMetaNames = async (
   return TalkApi.get(`/community/metaname/${address}`, { params: _params })
 }
 
+export const getEnsNames = async (
+  params?: any
+): Promise<{
+  code: number
+  data: {
+    total: number
+    nextFlag: string
+    results: {
+      items: MetaNameItem[]
+    }
+  }
+}> => {
+  const { address, ..._params } = params
+  delete params.metaId
+
+  return TalkApi.get(`/community/ens/${address}`, { params: _params })
+}
+
 export const getOneCommunity = async (communityId: string): Promise<Community> => {
   return TalkApi.get(`/community/${communityId}`).then(res => {
     const community = res.data

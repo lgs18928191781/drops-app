@@ -1,5 +1,5 @@
 <template>
-  <ChooseMetaName @change="selectMetaName" :name="form.metaName?.name" />
+  <ChooseMetaName @change="selectMetaName" :selected="form.metaName" :use-case="'community'" />
 </template>
 
 <script lang="ts" setup>
