@@ -77,6 +77,7 @@ function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetTagBuzzs({
       tag: tag.value!.tag,
+      langId: localStorage.getItem('lang') === 'zh' ? 2 : 1,
       metaId: userStore.user?.metaId,
       subTag: tabActive.value ? tabActive.value : '',
       ...pagination,
