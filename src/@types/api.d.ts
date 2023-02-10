@@ -1148,16 +1148,16 @@ declare interface Pic {
   updated_at: number
 }
 
-declare interface Banners {
+declare interface HomeBanner {
   id: number
+  network: 'mainnet' | 'testnet'
   title: string
   url: string
-  startTime: null
+  index: number
   published_at: string
   created_at: string
   updated_at: string
-  index: number
-  pic: Pic
+  cover: Pic
 }
 
 declare interface HomeCollect {
@@ -1182,27 +1182,20 @@ declare interface HomeCollect {
   [key: string]: any
 }
 declare interface Collect {
-  avatarType: string
-  cover: Pic
-  created_at: string
-  genesis: string
   id: number
   index: number
-  issueMetaId: string
-  issueUsername: string
   name: string
+  topicType: string
+  creatorName: string
+  creatorMetaId: string
+  creatorAvatarImage: string
+  intro: string
+  network: string
   published_at: string
-  ruoxi_classifies: string[]
-  ruoxi_classify: null
-  startTime: string
-  tag: string
+  created_at: string
   updated_at: string
-  price: number
-  totalSupply: number
-  detail: string
-  ruoxi_classifies: MarketClassify[]
-  innerCover: Pic
-  [key: string]: any
+  banner: Pic
+  cover: Pic
 }
 
 declare interface HomeActivityItem {
@@ -1818,3 +1811,15 @@ declare interface MetaNameIndexerInfo {
 }
 
 declare type Ens = string
+
+declare interface TypeCollction {
+  id: number
+  name: string
+  topicType: string
+  index: number
+  network: string
+  published_at: string
+  created_at: string
+  updated_at: string
+  show_3_collection: Collect
+}

@@ -23,8 +23,10 @@ import Icon from '@/components/Icon/Icon.vue'
 import GlobalDialog from '@/components/GlobalDialog/index.vue'
 import { createPinia } from 'pinia'
 import { VueQueryPlugin } from '@tanstack/vue-query' // TanStack Query
+import { createHead } from '@vueuse/head'
 
 const app = createApp(App)
+const head = createHead()
 
 // 挂载全局过滤器
 // @ts-ignore
@@ -46,4 +48,5 @@ app
   .use(ElLoading)
   .use(i18n)
   .use(VueQueryPlugin)
+  .use(head)
   .mount('#app')
