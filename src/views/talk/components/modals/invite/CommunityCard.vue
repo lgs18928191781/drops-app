@@ -14,7 +14,7 @@
             <div class="absolute inset-0 w-full h-full flex items-start justify-center z-0">
               <img
                 :src="CardBgImg"
-                class="w-full aspect-[1.3] object-cover mt-[10%] saturate-[10] blur-2xl"
+                class="w-full aspect-[1.3] object-cover mt-[20%] lg:mt-[25%] saturate-[2] blur-xl"
               />
             </div>
 
@@ -26,15 +26,24 @@
             <!-- 主要信息 -->
             <div class="flex flex-col items-center">
               <!-- 标题 -->
-              <div class="gap-x-2 flex items-top ">
-                <!-- <img :src="ShowIconImg" class="w-[26PX] !h-5 object-contain bg-green-300" /> -->
-                <h3 class="text-lg font-bold lg:tracking-wide shrink-0  leading-none">
-                  {{ $t('Talk.Modals.nftize_title') }}
+              <div class="flex flex-col items-center">
+                <div class="gap-x-2 flex items-center">
+                  <img
+                    :src="ShowIconImg"
+                    class="w-[26PX] !h-5 object-contain"
+                    v-if="!isScreenShotting"
+                  />
+                  <h3 class="text-base lg:text-lg font-bold lg:tracking-wide shrink-0 text-center">
+                    {{ $t('Talk.Modals.nftize_title1') }}
+                  </h3>
+                </div>
+                <h3 class="text-base lg:text-lg font-bold lg:tracking-wide shrink-0 text-center">
+                  {{ $t('Talk.Modals.nftize_title2') }}
                 </h3>
               </div>
 
               <!-- 头像 -->
-              <div class="mt-10">
+              <div class="mt-6 lg:mt-10">
                 <Image
                   :src="inviting.community?.icon"
                   custom-class="w-22.5 h-22.5 rounded-[45%] border-2 border-dark-800 box-content"
@@ -49,7 +58,7 @@
               </div>
 
               <!-- MetaName -->
-              <div class=" relative mt-1">
+              <div class="relative mt-1">
                 <!-- 兼容canvas -->
                 <div
                   class="flex items-baseline justify-start space-x-1 shrink overflow-x-hidden text-dark-300"
@@ -64,11 +73,20 @@
                 </div>
 
                 <MetaNameDisplay
-                  v-if="talk.activeCommunity?.metaName"
+                  v-else-if="talk.activeCommunity?.metaName"
                   :name="talk.activeCommunity?.metaName"
                   :colorful="true"
                   class=""
                 />
+              </div>
+
+              <!-- 介绍语 -->
+              <div class="text-sm mt-3" v-if="!isShortDevice">
+                <p class="text-center">
+                  Hello, you have been invited to join
+                  <span class="font-bold">{{ inviting.community?.name }}</span>
+                  , scan the code to join the club.
+                </p>
               </div>
             </div>
 
@@ -117,12 +135,12 @@ import html2canvas from 'html2canvas'
 import { useLayoutStore } from '@/stores/layout'
 import { useTalkStore } from '@/stores/talk'
 import { ShowControl } from '@/enum'
+import { isShortDevice } from '@/stores/root'
 
 import BaseModal from '../BaseModal.vue'
-import MetaNameTag from '@/components/MetaName/Tag.vue'
 import MetaNameDisplay from '@/components/MetaName/Display.vue'
 import StarRingImg from '@/assets/icons/star_ring.svg?url'
-import CardBgImg from '@/assets/images/card_blur_bg.png?url'
+import CardBgImg from '@/assets/images/card_blur_bg_2.png?url'
 import ShowIconImg from '@/assets/images/logo_show_2.png?url'
 
 const layout = useLayoutStore()

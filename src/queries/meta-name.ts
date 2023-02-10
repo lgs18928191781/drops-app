@@ -74,6 +74,8 @@ export async function fetchMetaNames(
       return GetUserMetaNames({ address, ...pageParam }).then(dataTransformer)
 
     case 'ENS':
+      // return new Promise(resolve => resolve({ data: [], flag: '' }))
+
       if (useCase === 'community') {
         return getEnsNames({ address, ...pageParam }).then(dataTransformer)
       }
