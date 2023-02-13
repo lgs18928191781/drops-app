@@ -193,7 +193,9 @@
       "leave": "离开社区",
       "nftize_title1": "Show3，NFT化",
       "nftize_title2": "你的社交生活",
-      "scan_to_join": "扫码加入社区"
+      "scan_to_join": "扫码加入社区",
+      "no_evm_address": "你还没有创建或绑定EVM地址",
+      "no_mvc_address": "你还没有创建或绑定MVC地址"
     },
     "Channel": {
       "core_members": "核心成员",
@@ -857,7 +859,8 @@
     "RenewSuccessTips": "🎉 恭喜您已成功续费 ",
     "RenewSuccessTips2": " ",
     "Renewal Fee": "续期费用",
-    "ReadyExpire": "即将到期"
+    "ReadyExpire": "即将到期",
+    "Issueing": "MetaName正常铸造中，请稍后再试"
   },
   "Menu": "菜单",
   "metanameNotAllowOverLenght": "注册名称长度不能超过63位字符",
