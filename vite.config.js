@@ -17,6 +17,7 @@ import stdLibBrowser from 'node-stdlib-browser'
 import { viteExternalsPlugin } from 'vite-plugin-externals'
 import nodePolyfills from 'rollup-plugin-polyfill-node'
 import basicSsl from '@vitejs/plugin-basic-ssl'
+import { VitePWA } from 'vite-plugin-pwa'
 // import dns from 'dns'
 // dns.setDefaultResultOrder('verbatim')
 const pathSrc = path.resolve(__dirname, 'src')
@@ -101,6 +102,12 @@ export default ({ mode, command }) => {
         'mvc-lib/ecies': 'ECIES',
         'mvc-lib/mnemonic': 'Mnemonic',
         bip39: 'bip39',
+      }),
+      VitePWA({
+        registerType: 'autoUpdate',
+        devOptions: {
+          enabled: true,
+        },
       }),
       // basicSsl(),
     ],
