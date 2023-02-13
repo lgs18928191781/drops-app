@@ -159,7 +159,9 @@
       "leave": "Leave the club",
       "nftize_title1": "Show3, The World's First",
       "nftize_title2": "NFT-Universal Web3 Social Application",
-      "scan_to_join": "Scan to Join the Club"
+      "scan_to_join": "Scan to Join the Club",
+      "no_evm_address": "You don't have an EVM address yet. Please create or link one first.",
+      "no_mvc_address": "You don't have an MVC address yet. Please create or link one first."
     },
     "Channel": {
       "core_members": "core members",
