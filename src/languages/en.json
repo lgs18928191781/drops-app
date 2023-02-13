@@ -878,5 +878,6 @@
   "NotSupportCurrentChainNFTTransfer": "NFT transfer in the chain is not supported temporarily",
   "You need to pay": "You need to pay",
   "You canceled the payment": "You canceled the payment",
-  "Confirm Pay": "Confirm Payment"
+  "Confirm Pay": "Confirm Payment",
+  "metanameNotAllowEmoji": "Emoji registration is not currently supported"
 }

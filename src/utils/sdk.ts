@@ -37,7 +37,7 @@ import {
 } from '@/enum'
 import { GetMeUtxos, GetMyMEBalance, GetProtocolMeInfo } from '@/api/v3'
 import * as bsv from '@sensible-contract/bsv'
-import { getLocalAccount, openLoading, realRandomString } from './util'
+import { getLocalAccount, openLoading, realRandomString, sleep } from './util'
 import { Toast } from 'vant'
 import { Transaction } from 'dexie'
 import { useUserStore } from '@/stores/user'
@@ -575,6 +575,7 @@ export class SDK {
         totalAmount += this.getNodeTransactionsAmount(transactions, item.payTo)
         useSatoshis = totalAmount
       }
+      debugger
 
       // 使用MC 上链时，需要 把价格 换算成 ME
       if (option.payType === SdkPayType.ME) {
@@ -1030,7 +1031,7 @@ export class SDK {
                   : transactions.nft?.issue?.transaction || transactions.currentNode?.transaction
                   ? transactions.currentNodeBrfc!.address
                   : lastChangeAddress
-
+              console.log('metaFile', utxo)
               this.setTransferUtxoAndOutputAndSign(
                 item.transaction,
                 [utxo],
@@ -1156,6 +1157,7 @@ export class SDK {
                 [utxo],
                 params.nodeName === NodeName.NftIssue ? this.wallet!.rootAddress : lastChangeAddress
               )
+              console.log('currentNode', utxo)
               // 更新txId
               transactions.currentNode.txId = transactions.currentNode.transaction.id
 
@@ -1165,6 +1167,7 @@ export class SDK {
                   tx: transactions.currentNode!.transaction,
                   chain,
                 })
+                console.log('NftIssue', utxo)
                 const data = JSON.parse(params.data!)
                 const nftManager = this.wallet!.getNftManager()
                 const res = await nftManager!.mint({
