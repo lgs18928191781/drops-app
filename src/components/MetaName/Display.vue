@@ -4,7 +4,7 @@
       :class="[
         textClass,
         colorful && colors,
-        'font-medium leading-loose text-sm max-w-[160PX] truncate',
+        'font-medium leading-loose text-sm max-w-[140PX] truncate',
       ]"
       :title="nameWithoutSuffix"
     >

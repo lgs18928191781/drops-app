@@ -20,9 +20,11 @@
     />
     <div class="ml-2 lg:ml-4 grow pr-12">
       <div class="flex items-baseline space-x-2">
-        <div class="font-medium text-sm dark:text-gray-100">
-          {{ message.nickName }}
-        </div>
+        <UserName
+          :name="message.nickName"
+          :meta-name="message.userInfo.metaName"
+          :text-class="'text-sm font-medium dark:text-gray-100'"
+        />
         <div class="text-dark-300 dark:text-gray-400 text-xs">
           {{ formatTimestamp(message.timestamp, i18n) }}
         </div>

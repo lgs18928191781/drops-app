@@ -2,7 +2,7 @@
   <div
     class="fixed left-0 right-0 top-0 flex items-center px-4 h-12 border-b-2 border-solid border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-700 z-30 lg:h-15 lg:absolute"
   >
-    <div class="max-w-[60%] flex items-center">
+    <div class="max-w-[50%] flex items-center">
       <Icon
         name="bars"
         class="w-6 h-6 text-dark-800 dark:text-gray-100 mx-2 shrink-0 lg:hidden"

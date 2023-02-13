@@ -1,18 +1,28 @@
 <template>
   <span class="user-name space-x-1">
-    <span :class="{ 'meta-name': metaName }" class="truncate">{{
-      metaName ? metaName : name
-    }}</span>
-    <Icon name="tag_nft" v-if="metaName" />
+    <MetaNameDisplay
+      :name="metaName"
+      :colorful="true"
+      :text-class="textClass"
+      v-if="metaName"
+      :noTag="noTag"
+    />
+    <span :class="[textClass, 'truncate text-sm']" v-else>
+      {{ name }}
+    </span>
   </span>
 </template>
 
 <script setup lang="ts">
+import MetaNameDisplay from '@/components/MetaName/Display.vue'
+
 interface Props {
   name: string
   metaName?: string
+  textClass?: string
+  noTag?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {})
 </script>
 
-<style lang="scss" scoped src="./UserName.scss"></style>
+<!-- <style lang="scss" scoped src="./UserName.scss"></style> -->

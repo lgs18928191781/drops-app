@@ -21,9 +21,11 @@
     />
     <div class="ml-2 lg:ml-4 grow pr-12">
       <div class="flex items-baseline space-x-2">
-        <div class="font-medium text-sm text-dark-800 dark:text-gray-100">
-          {{ senderName }}
-        </div>
+        <UserName
+          :name="message.fromName"
+          :meta-name="message.fromUserInfo.metaName"
+          :text-class="'text-sm font-medium dark:text-gray-100'"
+        />
         <div class="text-dark-300 dark:text-gray-400 text-xs">
           {{ formatTimestamp(message.timestamp, i18n) }}
         </div>
@@ -278,6 +280,14 @@ const senderName = computed(() => {
   }
 
   return activeChannel.value?.name
+})
+
+const senderMetaName = computed(() => {
+  if (props.message.from === userStore.user?.metaId) {
+    return userStore.user?.metaName
+  }
+
+  return activeChannel.value?.metaName
 })
 
 const previewImage = () => {

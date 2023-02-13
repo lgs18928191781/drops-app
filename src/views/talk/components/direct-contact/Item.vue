@@ -20,9 +20,12 @@
 
     <div class="flex flex-col items-stretch grow space-y-1 overflow-x-hidden">
       <div class="flex items-baseline justify-between self-stretch">
-        <div class="text-base text-dark-800 dark:text-gray-100 truncate max-w-[96PX]">
-          {{ session.name }}
-        </div>
+        <UserName
+          :name="contact.name"
+          :meta-name="contact.metaName"
+          :no-tag="true"
+          :text-class="'font-medium dark:text-gray-100 max-w-[96PX]'"
+        />
 
         <div class="shrink-0 text-dark-250 dark:text-gray-400 text-xs">
           {{
@@ -69,6 +72,7 @@ const contact = computed<any>(() => {
 
   return {
     name: props.session.name || props.session[`${contactSide}Name`],
+    metaName: props.session[`${contactSide}UserInfo`].metaName,
     metaId: props.session.id,
     lastMessage: props.session.lastMessage,
     lastMessageTimestamp: props.session.lastMessageTimestamp,

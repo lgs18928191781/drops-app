@@ -139,6 +139,7 @@
       "amount_needed": "所需数额",
       "red_packet": "红包",
       "receive": "接收",
+      "opened": "已打开",
       "consensus_required": "凭证权限",
       "you_dont_have_nft": "你没有相关系列的NFT，不能进入本频道",
       "you_dont_have_ft": "你没有进入本频道所需数量的Token",

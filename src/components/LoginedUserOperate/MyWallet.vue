@@ -306,7 +306,6 @@ import { currentSupportChain } from '@/config'
 import MEIntroVue from '../MEIntro/MEIntro.vue'
 import Transfer from './Transfer.vue'
 import { Chains } from '@/enum'
-import { num2bin } from 'mvc-scrypt/dist'
 
 const props = defineProps<{
   modelValue: boolean
