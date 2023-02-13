@@ -22,6 +22,7 @@ import {
   MetaNameOperateType,
   ProductType,
   Chains,
+  EnvMode,
 } from '@/enum'
 import { CheckBlindboxOrderStatus } from '@/api/v3'
 import AllCardJson from '@/utils/card.json'
@@ -1539,7 +1540,7 @@ export const validateMetaName = (value: string) => {
     return ElMessage.error(`${i18n.global.t('metanameNotAllowSpace')}`)
   } else if (emojiReg.test(value)) {
     return ElMessage.error(`${i18n.global.t('metanameNotAllowEmoji')}`)
-  } else if (/[\u4e00-\u9fa5]/.test(value)) {
+  } else if (/[\u4e00-\u9fa5]/.test(value) && import.meta.env.MODE === EnvMode.Mainnet) {
     return ElMessage.error(`${i18n.global.t('metanameNotAllowCh')}`)
   } else {
     const testResult = bytesLength(value.trim())
