@@ -1539,7 +1539,7 @@ export const validateMetaName = (value: string) => {
     return ElMessage.error(`${i18n.global.t('metanameNotAllowSpace')}`)
   } else if (emojiReg.test(value)) {
     return ElMessage.error(`${i18n.global.t('metanameNotAllowEmoji')}`)
-  } else if (/[^x00-xff]/.test(value)) {
+  } else if (/[\u4e00-\u9fa5]/.test(value)) {
     return ElMessage.error(`${i18n.global.t('metanameNotAllowCh')}`)
   } else {
     const testResult = bytesLength(value.trim())
