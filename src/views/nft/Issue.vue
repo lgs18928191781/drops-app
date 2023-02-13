@@ -110,10 +110,10 @@
 </template>
 <script lang="ts">
 interface IssueItem {
-  genesis: GenesisItem | null
+  genesis: GenesisItem | undefined
   name: string
-  cover: AttachmentItem | null
-  sourceFile: AttachmentItem | null
+  cover: AttachmentItem | undefined
+  sourceFile: AttachmentItem | undefined
   acceptAddress: string
   desc: string
   index: number
@@ -162,15 +162,15 @@ function addIssueItem(option: IssueNFTOption) {
   let errorMsg
   for (let i = 0; i < option.count; i++) {
     try {
-      const genesis = i === 0 || option.isSameGenesis ? option.genesis : null
+      const genesis = i === 0 || option.isSameGenesis ? option.genesis : undefined
       const name = i === 0 || option.isSameName ? option.name : ''
-      const cover = i === 0 || option.isSameCover ? option.cover : null
+      const cover = i === 0 || option.isSameCover ? option.cover : undefined
       const sourceFile =
         i === 0 || option.isSoureFileSameCover
           ? option.cover
           : i === 0 || option.isSameSourceFile
           ? option.sourceFile
-          : null
+          : undefined
       const acceptAddress = i === 0 || option.isSameAcceptAddress ? option.acceptAddress : ''
       const desc = i === 0 || option.isSameDesc ? option.desc : ''
       const index = getCurrentGenesisIndex(genesis)

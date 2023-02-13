@@ -28,7 +28,7 @@
         v-if="metaNameInfo.val"
       >
         <div class="flex1 cont">
-          <div class="name">{{ metaNameInfo.val!.name }}</div>
+          <div class="name">{{ metaNameInfo.val!.name }}.metaid</div>
           <div class="msg flex flex-align-center">
             <span class="dot"></span>
             <span class="status">{{
@@ -66,7 +66,7 @@
   <ElDialog
     v-model="isShowRegister"
     class="metaname"
-    :title="metaNameInfo.val ? $t('MetaName.Register') + ':' + ' ' + metaNameInfo.val!.name : ''"
+    :title="metaNameInfo.val ? $t('MetaName.Register') + ':' + ' ' + metaNameInfo.val!.name + '.metaid' : ''"
     :destroy-on-close="true"
     :close-on-click-modal="false"
     :show-close="!submitLoading"

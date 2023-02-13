@@ -575,7 +575,6 @@ export class SDK {
         totalAmount += this.getNodeTransactionsAmount(transactions, item.payTo)
         useSatoshis = totalAmount
       }
-      debugger
 
       // 使用MC 上链时，需要 把价格 换算成 ME
       if (option.payType === SdkPayType.ME) {
@@ -1028,10 +1027,11 @@ export class SDK {
                   ? transactions.metaFileBrfc!.address
                   : transactions.currentNodeBrfc?.transaction
                   ? this.wallet!.protocolAddress
-                  : transactions.nft?.issue?.transaction || transactions.currentNode?.transaction
+                  : transactions.currentNode?.transaction ||
+                    transactions.nft?.genesis?.transaction ||
+                    transactions.nft?.transfer?.transaction
                   ? transactions.currentNodeBrfc!.address
                   : lastChangeAddress
-              console.log('metaFile', utxo)
               this.setTransferUtxoAndOutputAndSign(
                 item.transaction,
                 [utxo],
