@@ -79,7 +79,7 @@ export const useWsStore = defineStore('ws', {
           C: 0,
         }
         this.ws?.send(JSON.stringify(heartBeat))
-      }, 10000)
+      }, 4000)
     },
   },
 })

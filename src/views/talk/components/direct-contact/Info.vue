@@ -18,7 +18,12 @@
       />
 
       <div class="ml-2">
-        <div class="text-xl lg:text-sm font-bold lg:font-normal">{{ activeChannel.name }}</div>
+        <!-- <div class="text-xl lg:text-sm font-bold lg:font-normal">{{ activeChannel.name }}</div> -->
+        <UserName
+          :name="activeChannel.name"
+          :meta-name="activeChannel.metaName"
+          :text-class="'!text-xl lg:!text-sm font-bold lg:font-normal'"
+        />
         <div class="text-xs text-dark-300 dark:text-gray-400 whitespace-nowrap mt-1 lg:mt-0">
           <span>MetaID: </span>
           <span
