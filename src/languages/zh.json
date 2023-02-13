@@ -666,7 +666,8 @@
       "Price low to high": "价格由低到高",
       "Number: X to 1": "序号由大到小",
       "Number: 1 to X": "序号由小到大"
-    }
+    },
+    "IssueLoading": "正在铸造中，请勿做其他操作耐心等待..."
   },
   "My NFT": "我的NFT",
   "Done": "完成",

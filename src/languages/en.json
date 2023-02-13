@@ -676,7 +676,8 @@
       "Price low to high": "Price low to high",
       "Number: X to 1": "Number: X to 1",
       "Number: 1 to X": "Number: 1 to X"
-    }
+    },
+    "IssueLoading": "Casting is in progress, please do not do other operations and wait patiently..."
   },
   "My NFT": "My NFT",
   "Done": "Done",
