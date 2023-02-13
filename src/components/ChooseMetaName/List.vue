@@ -1,6 +1,15 @@
 <template>
   <TabPanel class="flex items-start justify-center h-full">
-    <div v-if="isLoading" class="w-full h-full flex items-center justify-center flex-col gap-y-4">
+    <div class="w-full h-full flex items-center justify-center flex-col gap-y-8" v-if="!address">
+      <img :src="CatImg" class="w-36 h-36" alt="" />
+      <div class="text-dark-400 dark:text-gray-200 text-base font-medium">
+        {{ ns === 'ENS' ? $t('Talk.Modals.no_evm_address') : $t('Talk.Modals.no_mvc_address') }}
+      </div>
+    </div>
+    <div
+      v-else-if="isLoading"
+      class="w-full h-full flex items-center justify-center flex-col gap-y-4"
+    >
       <img :src="DogWalkingImg" class="w-48 h-48" alt="" />
       <div class="flex items-center space-x-2">
         <Icon name="loading" class="w-4 h-4 animate-spin text-dark-400 dark:!text-gray-200" />
@@ -51,11 +60,9 @@
         :disabled="!hasNextPage || isFetchingNextPage"
         class="text-sm text-dark-300 dark:text-gray-400"
       >
-        <span v-if="isFetchingNextPage" class="py-2">...</span>
-        <span v-else-if="hasNextPage" class="hover:underline py-2">{{ $t('clickmore') }}</span>
-        <span v-else-if="data!.pages.length >= 2" class="py-2">{{
-          $t('Nothing_more_to_load')
-        }}</span>
+        <div v-if="isFetchingNextPage" class="py-2">...</div>
+        <div v-else-if="hasNextPage" class="hover:underline py-2">{{ $t('clickmore') }}</div>
+        <div v-else-if="data!.pages.length >= 2" class="py-2">{{ $t('Nothing_more_to_load') }}</div>
       </button>
     </div>
   </TabPanel>
@@ -68,6 +75,7 @@ import { useInfiniteQuery, useQuery } from '@tanstack/vue-query'
 
 import { fetchMetaNames } from '@/queries/meta-name'
 import { useUserStore } from '@/stores/user'
+import { initPagination } from '@/config'
 
 import MetaNameItem from './Item.vue'
 
@@ -112,6 +120,10 @@ const {
   queryFn: ({ pageParam = { flag: '' } }) =>
     fetchMetaNames(address.value!, props.ns, props.useCase, pageParam),
   getNextPageParam: lastPage => {
+    // 不满一页，说明没有更多了
+    console.log({ lastPage, initPagination })
+    if (lastPage.data.length < initPagination.pageSize) return undefined
+
     if (!lastPage.flag) return undefined
 
     return { flag: lastPage.flag }
