@@ -439,6 +439,7 @@ declare interface GenesisNFTItem {
     metaIdTimestamp: number
     name: string
     nameType: string
+    metaName: string
     nftNamePublicKey: string
     publicKey: string
   }

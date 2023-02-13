@@ -12,7 +12,7 @@
         :disabled="true"
       />
       <div class="flex flex-col gap-y-0.5 items-start">
-        <UserName :name="result.name" class="text-base truncate w-22 lg:w-36" />
+        <UserName :name="result.name" :meta-name="result.metaName" :text-class="'text-base truncate w-22 lg:w-36 font-bold'" />
         <div class="text-dark-300 dark:text-gray-400 text-xs">MetaID: {{ highlightedMetaId }}</div>
       </div>
     </div>

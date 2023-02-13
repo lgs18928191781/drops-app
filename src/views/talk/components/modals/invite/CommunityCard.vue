@@ -83,9 +83,9 @@
               <!-- 介绍语 -->
               <div class="text-sm mt-3" v-if="!isShortDevice">
                 <p class="text-center">
-                  Hello, you have been invited to join
+                  {{ $t('Talk.Modals.invite_tip_1') }}
                   <span class="font-bold">{{ inviting.community?.name }}</span>
-                  , scan the code to join the club.
+                  {{ $t('Talk.Modals.invite_tip_2') }}
                 </p>
               </div>
             </div>
@@ -170,33 +170,40 @@ const saveCard = async () => {
   const cardRect = card.getBoundingClientRect()
 
   // 设置画布大小
-  const canvas = cardDrawer.value as HTMLCanvasElement
-  canvas.width = cardRect.width
-  canvas.height = cardRect.height
-  canvas.style.width = `${cardRect.width}px`
-  canvas.style.height = `${cardRect.height}px`
-  // text align
+  // const canvas = cardDrawer.value as HTMLCanvasElement
+  const canvas = document.createElement('canvas')
+  const scaleBy = 5
+  canvas.width = cardRect.width * scaleBy
+  canvas.height = cardRect.height * scaleBy
+  canvas.style.width = `${cardRect.width * scaleBy}px`
+  canvas.style.height = `${cardRect.height * scaleBy}px`
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
-  ctx.textBaseline = 'bottom'
+  ctx.scale(scaleBy, scaleBy)
 
   // 绘制卡片
 
   // 生成图片，下载
+  // 使用3倍精度
   html2canvas(card, {
     canvas,
     scale: 1,
     useCORS: true,
     allowTaint: true,
     backgroundColor: null,
-  }).then(canvas => {
-    const a = document.createElement('a')
-    a.href = canvas.toDataURL('image/png')
-    a.download = 'show3.png'
-    a.click()
-    isScreenShotting.value = false
-    // 关闭弹窗
-    layout.isShowCommunityCardModal = false
   })
+    .then(canvas => {
+      const a = document.createElement('a')
+      a.href = canvas.toDataURL('image/png')
+      a.download = 'show3.png'
+      a.click()
+      isScreenShotting.value = false
+      // 关闭弹窗
+      layout.isShowCommunityCardModal = false
+    })
+    .catch(e => {
+      console.error(e)
+      isScreenShotting.value = false
+    })
 }
 </script>
 
