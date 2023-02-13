@@ -162,6 +162,11 @@ const AllNodeName: {
     path: '/Protocols/NftTransfer',
     version: '1.0.2',
   },
+  [NodeName.SendMoney]: {
+    brfcId: 'xxxxxxxxxxxx',
+    path: '/Protocols/SendMoney',
+    version: '1.0.0',
+  },
 }
 
 export default AllNodeName

@@ -47,7 +47,10 @@
     },
     "Search": {
       "placeholder": "Search MetaID...",
-      "searching": "Searching..."
+      "searching": "Searching...",
+      "users": "Users",
+      "home": "Home",
+      "no_results": "No results for "
     },
     "MetaName": {
       "resolving": "MetaName Resolving..."
@@ -102,6 +105,7 @@
       "amount_needed": "minimum holding",
       "red_packet": "Candy Bag",
       "receive": "Open",
+      "opened": "Opened",
       "consensus_required": "Consensus Required",
       "you_dont_have_nft": "Sorry, you need to be a holder of",
       "you_dont_have_ft": "You don't have the required Token to join this channel.",
@@ -114,10 +118,13 @@
       "loading": "Loading...",
       "choose_meta_name": "Select Club Domain Name",
       "no_meta_name_available": "No MetaName available",
+      "no_ens_available": "No ENS available",
       "share_invite_link_tip": "Send a club invite link to a friend...",
       "share_to_buzz_tip": "You can also share it via a buzz!",
       "share_card_tip": "Or, make a club card and share it!",
       "card": "Club Card",
+      "invite_tip_1": "Hello, you have been invited to join",
+      "invite_tip_2": ", scan the code to join the club.",
       "share_to_buzz_button": "Share to Buzz",
       "share_to_buzz_title": "Share to Buzz",
       "share_successfully": "Buzzed!",
@@ -150,7 +157,8 @@
       "owner": "Owner",
       "share": "Share",
       "leave": "Leave the club",
-      "nftize_title": "Show: NFTize Your Social Life",
+      "nftize_title1": "Show3, The World's First",
+      "nftize_title2": "NFT-Universal Web3 Social Application",
       "scan_to_join": "Scan to Join the Club"
     },
     "Channel": {
@@ -332,12 +340,14 @@
     "No wallet": "No Wallet"
   },
   "UserOperate": {
-    "createGropp": "Create Group",
+    "search": "Search",
     "settings": "Settings",
     "aboutShow": "About Show",
     "help": "Help",
     "logout": "Logout",
-    "About MetaSo": "About MetaSo"
+    "About MetaSo": "About MetaSo",
+    "wallet": "Wallet",
+    "metaName": "MetaName"
   },
   "Comming Soon": "Coming Soon",
   "Use MetaId Wallet": "Use MetaID Wallet",
@@ -462,12 +472,12 @@
       "drsc": "The system will use MetaName you chose as the username by default."
     },
     "Select MetaName": "Select MetaName...",
-    "MetaNameTips": "MetaNema can be preferred as your username and looks more shiny.",
+    "MetaNameTips": "MetaName is a unique name that can be used to identify you on the blockchain. You can use it to register your account, create NFTs, create a club and more.",
     "Choose NFT Avatar": "Choose NFT Avatar"
   },
   "UplinkSetting": {
     "Uplink Payment Confirmation": "ME Payment Confirmation",
-    "ConfirmationIntro": "Once turned on, you need to confirm every MetaEnery payment.",
+    "ConfirmationIntro": "Once turned on, you need to confirm every MetaEnergy payment.",
     "Alert value setting": "Alert Value",
     "AlertValueIntro": "Confirmation is required every time payment reaches the alert value for your ME assets' safety."
   },
@@ -503,7 +513,8 @@
   "bindMetaidOrAddress": "Bind MetaID or address to log in",
   "bindingMetaid": "Binding login, please wait",
   "checkEnvNoWallet": "It is detected that your browser environment is missing the wallet plug-in",
-  "clickmore": "Click to load more",
+  "clickmore": "Load More",
+  "Nothing_more_to_load": "Nothing more to load",
   "confirm": "confirm",
   "contractaddr": "Contract address",
   "createMetaId": "Create MetaID",
@@ -656,7 +667,14 @@
     "Blockchain": "Blockchain",
     "Collection works": "Collection works",
     "Price Trend": "Price Trend",
-    "Filter": "Filter"
+    "Filter": "Filter",
+    "Sort": {
+      "Default Ranking": "Default Ranking",
+      "Price high to low": "Price high to low",
+      "Price low to high": "Price low to high",
+      "Number: X to 1": "Number: X to 1",
+      "Number: 1 to X": "Number: 1 to X"
+    }
   },
   "My NFT": "My NFT",
   "Done": "Done",
@@ -859,5 +877,10 @@
   "FixAccountTips3": "to fix",
   "BSV Insufficient balance": "BSV Insufficient balance",
   "metanameNotAllowCh": "Registration in Chinese is not currently supported",
-  "metanameNotAllowSpace": "Registration name cannot have spaces"
+  "metanameNotAllowSpace": "Registration name cannot have spaces",
+  "NotSupportCurrentChainNFTTransfer": "NFT transfer in the chain is not supported temporarily",
+  "You need to pay": "You need to pay",
+  "You canceled the payment": "You canceled the payment",
+  "Confirm Pay": "Confirm Payment",
+  "metanameNotAllowEmoji": "Emoji registration is not currently supported"
 }

@@ -2,7 +2,7 @@
   <div
     class="fixed left-0 right-0 top-0 flex items-center px-4 h-12 border-b-2 border-solid border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-700 z-30 lg:h-15 lg:absolute"
   >
-    <div class="max-w-[60%] flex items-center">
+    <div class="max-w-[50%] flex items-center">
       <Icon
         name="bars"
         class="w-6 h-6 text-dark-800 dark:text-gray-100 mx-2 shrink-0 lg:hidden"
@@ -27,8 +27,8 @@
         <template v-else>
           <div
             :class="[
-              talkStore.isActiveChannelReserved ? 'meta-name' : 'text-dark-800 dark:text-white',
-              'text-base leading-tight no-wrap grow whitespace-nowrap truncate mr-2 max-w-[35vw] lg:max-w-[600PX]',
+              talkStore.isActiveChannelReserved ? metaNameClass : 'text-dark-800 dark:text-white',
+              'text-base leading-tight no-wrap grow whitespace-nowrap truncate mr-2 max-w-[40vw] lg:max-w-[600PX]',
             ]"
           >
             {{
@@ -130,17 +130,15 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
-import ScreenModal from './modals/ScreenModal.vue'
+import { ref, computed } from 'vue'
+
 import { useLayoutStore } from '@/stores/layout'
-import LoginedUserOperate from '@/components/LoginedUserOperate/LoginedUserOperate.vue'
 import { useTalkStore } from '@/stores/talk'
+
+import LoginedUserOperate from '@/components/LoginedUserOperate/LoginedUserOperate.vue'
 
 const talkStore = useTalkStore()
 const layout = useLayoutStore()
-const channel = talkStore.activeChannel
-
-const showDescModal = ref(false)
 
 const shortenMetaId = (id: string) => {
   return id.substring(0, 6) + '...' + id.substring(id.length - 6)
@@ -149,6 +147,10 @@ const shortenMetaId = (id: string) => {
 const createCommunity = () => {
   console.log('createCommunity')
 }
+
+const metaNameClass = computed(() => {
+  return talkStore.activeCommunitySymbolInfo.suffix === 'eth' ? 'meta-name ens' : 'meta-name'
+})
 
 const goCheckTxId = (txId: string) => {
   window.open(`https://mvcscan.com/tx/${txId}`, '_blank')

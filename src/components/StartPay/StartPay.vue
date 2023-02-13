@@ -177,7 +177,7 @@ import {
   getUserBsvBalance,
   openLoading,
 } from '@/utils/util'
-import { ElMessage, LoadingParentElement } from 'element-plus'
+import { ElMessage, ElMessageBox, LoadingParentElement } from 'element-plus'
 import { GetOrder, GetOrderStatus, PayETHByME, UpdatePay } from '@/api/wxcore'
 import { useUserStore } from '@/stores/user'
 import { BigNumber, ethers } from 'ethers'
@@ -316,7 +316,8 @@ function getPlatformSymbol(platform: PayPlatform) {
   if (nativePayPlatforms.includes(platform)) {
     return PayPlatformUnit[platform]
   } else {
-    return rootStore.currentPriceSymbol
+    // return rootStore.currentPriceSymbol
+    return '￥'
   }
 }
 
@@ -351,14 +352,37 @@ function drawePayCode() {
               throw new Error(i18n.t('BSV Insufficient balance'))
             }
             from_coin_address = userStore.showWallet.wallet!.rootAddress
-            const transaction = await userStore.showWallet.wallet!.sendMoney({
-              payTo: [{ address: props.url, amount: new Decimal(props.amount).toNumber() }],
-              isBroadcast: false,
-              chain: HdWalletChain.BSV,
-            })
-            transaction.version = WalletTxVersion.BSV
-            tx = transaction.id
-            raw_tx = transaction.toString()
+            const res = await ElMessageBox.confirm(
+              `${i18n.t('You need to pay')} BSV:  ${props.amount} Satoshi`,
+              i18n.t('Confirm Pay') + '?',
+              {
+                cancelButtonText: i18n.t('Cancel'),
+                confirmButtonText: i18n.t('Confirm'),
+                cancelButtonClass: 'main-border',
+                confirmButtonClass: 'main-border primary',
+              }
+            )
+            // .then(async () => {
+            //   const transaction = await userStore.showWallet.wallet!.sendMoney({
+            //     payTo: [{ address: props.url, amount: new Decimal(props.amount).toNumber() }],
+            //     isBroadcast: false,
+            //     chain: HdWalletChain.BSV,
+            //   })
+            //   tx = transaction.id
+            //   raw_tx = transaction.toString()
+            // })
+            // .catch(() => {
+            //   throw new Error(i18n.t('You canceled the payment'))
+            // })
+            if (res) {
+              const transaction = await userStore.showWallet.wallet!.sendMoney({
+                payTo: [{ address: props.url, amount: new Decimal(props.amount).toNumber() }],
+                isBroadcast: false,
+                chain: HdWalletChain.BSV,
+              })
+              tx = transaction.id
+              raw_tx = transaction.toString()
+            }
           }
 
           if (tx) {

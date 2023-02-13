@@ -11,34 +11,41 @@
   </a>
   <template v-if="userStore.isAuthorized">
     <div class="user-warp flex flex-align-center">
-      <UserAvatar
-        :image="userStore.user!.avatarImage"
-        :meta-id="userStore.user!.metaId"
-        :name="userStore.user!.name"
-        class="user-warp-item overflow-hidden"
-      />
+      <template v-if="!isMobile">
+        <!-- MetaName -->
+        <a
+          @click="toMetaName"
+          class="outsideMore flex flex-align-center flex-pack-center user-warp-item"
+          v-if="!isProduction"
+        >
+          <img class="metanameLogo" :src="MetaNameLogo" alt="" />
+        </a>
 
-      <a
-        @click="toMetaName"
-        class="outsideMore flex flex-align-center flex-pack-center user-warp-item"
-      >
-        <img class="metanameLogo" :src="MetaNameLogo" alt="" />
-      </a>
-      <!-- 钱包 -->
+        <!-- 🔍 搜索 -->
+        <a
+          class="flex flex-align-center flex-pack-center user-warp-item"
+          @click="layout.$patch({ isShowSearchModal: true })"
+          v-if="userStore.isAuthorized && !isProduction"
+        >
+          <Icon name="search" />
+        </a>
+      </template>
+
+      <!-- 💰 钱包 -->
       <a
         class="flex flex-align-center flex-pack-center user-warp-item"
         @click="layout.$patch({ isShowWallet: true })"
       >
         <Icon name="wallet_fill" />
       </a>
-      <!-- 搜索 -->
-      <a
-        class="flex flex-align-center flex-pack-center user-warp-item"
-        @click="layout.$patch({ isShowSearchModal: true })"
-        v-if="!isProduction"
-      >
-        <Icon name="search" />
-      </a>
+
+      <!-- 👤 头像 -->
+      <UserAvatar
+        :image="userStore.user!.avatarImage"
+        :meta-id="userStore.user!.metaId"
+        :name="userStore.user!.name"
+        class="user-warp-item overflow-hidden"
+      />
     </div>
   </template>
   <template v-else>
@@ -59,6 +66,15 @@
     </a>
     <template #dropdown>
       <ElDropdownMenu>
+        <template v-if="isMobile">
+          <ElDropdownItem @click="layout.$patch({ isShowSearchModal: true })">
+            <div class="flex flex-align-center user-operate-item">
+              <Icon name="search" />
+              <span class="name">{{ $t('UserOperate.search') }}</span>
+            </div>
+          </ElDropdownItem>
+        </template>
+
         <ElDropdownItem v-for="(item, index) in userOperates" :key="index" @click="item.func()">
           <div class="flex flex-align-center user-operate-item">
             <Icon :name="item.icon" />
@@ -78,7 +94,7 @@
 </template>
 
 <script setup lang="ts">
-import { useRootStore } from '@/stores/root'
+import { useRootStore, isMobile } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
 import { ElDropdown } from 'element-plus'
 import { computed, ref } from 'vue'
@@ -124,6 +140,11 @@ const userOperates = computed(() => {
       },
     },
     {
+      name: 'MetaName',
+      icon: 'meta_name',
+      func: toMetaName,
+    },
+    {
       name: i18n.t('UserOperate.help'),
       icon: 'question_circle',
       func: () => {
@@ -134,15 +155,6 @@ const userOperates = computed(() => {
     },
   ]
   if (userStore.isAuthorized) {
-    result.unshift({
-      name: i18n.t('UserOperate.createGropp'),
-      icon: 'plus_circle',
-      func: () => {
-        layout.$patch({
-          isShowCreateCommunityModal: true,
-        })
-      },
-    })
     result.push({
       name: i18n.t('UserOperate.logout'),
       icon: 'logout',

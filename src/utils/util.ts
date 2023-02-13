@@ -22,10 +22,11 @@ import {
   MetaNameOperateType,
   ProductType,
   Chains,
+  EnvMode,
 } from '@/enum'
 import { CheckBlindboxOrderStatus } from '@/api/v3'
 import AllCardJson from '@/utils/card.json'
-import { GetOrderStatus, IsWtiteUser } from '@/api/wxcore'
+import { GetOrderStatus, IsWtiteUser, MetaNameBeforeReqRes } from '@/api/wxcore'
 import { classifyName } from '@/config'
 import { v1 as uuidv1 } from 'uuid'
 import { decode, encode } from 'js-base64'
@@ -60,6 +61,8 @@ import { GetTxChainInfo } from '@/api/metaid-base'
 import { useMetaNameStore } from '@/stores/metaname'
 import { GetBalance } from '@/api/aggregation'
 import namehash from 'eth-ens-namehash'
+
+const emojiReg = /[\u{1F601}-\u{1F64F}\u{2702}-\u{27B0}\u{1F680}-\u{1F6C0}\u{1F170}-\u{1F251}\u{1F600}-\u{1F636}\u{1F681}-\u{1F6C5}\u{1F30D}-\u{1F567}]/gu
 
 export function randomString() {
   return Math.random()
@@ -1122,7 +1125,7 @@ export function CreatePayOrder(params: {
     try {
       const userStore = useUserStore()
       let from = !isApp ? 'web' : isAndroid ? 'android' : isIOS ? 'ios' : ''
-      from += `:${import.meta.env.VITE_AppName}`
+      from += `:${import.meta.env.VITE_App_Key}`
       // 支付回调地址
       const quitUrl = setPayQuitUrl({
         payPlatform: params.platform,
@@ -1149,7 +1152,10 @@ export function CreatePayOrder(params: {
         pay_type: params.platform,
         quit_url: quitUrl,
         types: type,
-        from_coin_address: userStore.user?.evmAddress,
+        from_coin_address:
+          params.platform === PayPlatform.ETH || params.platform === PayPlatform.POLYGON
+            ? userStore.user?.evmAddress
+            : userStore.user!.address,
         product_type: params.product_type,
         uuid: params.uuid,
         // metaname
@@ -1416,41 +1422,6 @@ export function remindExpired(expireTime: any) {
   )
 }
 
-export async function metanameOperation(params: {
-  //注册时mvc跟metaid,更新信息时不需要传入years,注册时必须要传入icon
-  registerName: string
-  op: MetaNameReqCode
-  //注册和更新操作info必填,续费info字段不需要
-  info?: Partial<MetaNameInfo>
-  years?: number
-}) {
-  return new Promise<SendMetaNameTransationResult>(async (resolve, reject) => {
-    try {
-      const userStore = useUserStore()
-      const res = await userStore.showWallet.MetaNameBeforeReq({
-        name: `${params.registerName}`,
-        op: params.op,
-        years: params.years,
-      })
-      if (res.code == 0) {
-        const { data } = res
-        const metaNameParams = {
-          op_code: data.op,
-          info: params.info,
-          years: params.years!,
-          reqswapargs: data,
-        }
-        const result = await userStore.showWallet.sendMetaNameTransation(metaNameParams)
-        if (result) {
-          resolve(result)
-        }
-      }
-    } catch (error) {
-      reject(error)
-    }
-  })
-}
-
 export function getLocalAccount() {
   const localPassword = window.localStorage.getItem(encode('password'))
   const localUserInfo = window.localStorage.getItem(encode('user'))
@@ -1567,10 +1538,11 @@ export const validateMetaName = (value: string) => {
     return ElMessage.error(i18n.global.t('MetaName.MetaName cannot be empty'))
   } else if (value.trim() !== value || /\s/.test(value)) {
     return ElMessage.error(`${i18n.global.t('metanameNotAllowSpace')}`)
-  } // else if (/[^x00-xff]/.test(value)) {
-  //   return ElMessage.error(`${i18n.global.t('metanameNotAllowCh')}`)
-  // }
-  else {
+  } else if (emojiReg.test(value)) {
+    return ElMessage.error(`${i18n.global.t('metanameNotAllowEmoji')}`)
+  } else if (/[\u4e00-\u9fa5]/.test(value) && import.meta.env.MODE === EnvMode.Mainnet) {
+    return ElMessage.error(`${i18n.global.t('metanameNotAllowCh')}`)
+  } else {
     const testResult = bytesLength(value.trim())
     if (testResult > 0 && testResult <= 2) {
       return ElMessage.error(`${i18n.global.t('metanameNotAllowMin')}`)

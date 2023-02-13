@@ -24,6 +24,8 @@ export async function resolveMetaName(metaName: string) {
     'MAN',
     'One World One Community',
     'MetaId Test',
+    'OurTesting',
+    'LOVE',
   ]
   if (!whiteList.includes(metaNameWithoutSuffix)) {
     metaNameWithoutSuffix = metaNameWithoutSuffix.toLowerCase()

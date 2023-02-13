@@ -145,22 +145,22 @@ const fees = [
   {
     name: () => i18n.t('MetaName.feeCharacter1'),
     price: () => i18n.t('MetaName.Not Yet Open'),
-    case: 'ab.meta',
+    case: 'ab.metaid',
   },
   {
     name: () => i18n.t('MetaName.feeCharacter2'),
     price: () => `$${metaNameStore.MetaNameFeePerYear.third}/${i18n.t('MetaName.Year')}`,
-    case: 'san.meta',
+    case: 'san.metaid',
   },
   {
     name: () => i18n.t('MetaName.feeCharacter3'),
     price: () => `$${metaNameStore.MetaNameFeePerYear.four}/${i18n.t('MetaName.Year')}`,
-    case: 'jack.meta',
+    case: 'jack.metaid',
   },
   {
     name: () => i18n.t('MetaName.feeCharacter4'),
     price: () => `$${metaNameStore.MetaNameFeePerYear.five}/${i18n.t('MetaName.Year')}`,
-    case: 'jonathan.meta',
+    case: 'jonathan.metaid',
   },
 ]
 const isShowRegister = ref(false)

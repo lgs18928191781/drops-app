@@ -561,26 +561,6 @@ export const MetaNameBeforeReqRes = (parmas: {
   })
 }
 
-export const MetaNameUpdateInfo = (
-  parmas: string | ArrayBuffer
-): Promise<{
-  code: number
-  data: {
-    expiredBlockTime: number
-    nftCodeHash: string
-    nftGenesisId: string
-    nftTokenIndex: string
-    txid: string
-  }
-  msg: string
-}> => {
-  const Http = new HttpRequests()
-  const url = baseApi + '/wxcore/metaname/updateinfo'
-  return Http.postFetch(url, {
-    data: parmas,
-  })
-}
-
 export const GetTx = (txId: string): Promise<any> => {
   return callMetasvApi(`/tx/${txId}`)
 }

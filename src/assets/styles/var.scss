@@ -87,7 +87,13 @@ html.dark {
 @media only screen and (max-width: 1024PX) {
 
     :root {
-        --header-height: 70px
+        --header-height: 70px;
     }
 
+}
+
+@media only screen and (max-width: 750PX) {
+    :root {
+        --nft-topbar-height: 138px;
+    }
 }

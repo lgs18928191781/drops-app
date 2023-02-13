@@ -109,6 +109,7 @@ header {
             .value {
                 border: var(--standard-border-width) solid #EDEFF2;
                 border-radius: 12px;
+                margin-top: 10px;
 
                 &.input {
                     padding: 12px 14px;
@@ -120,10 +121,12 @@ header {
                     outline: none;
                     text-align: right;
                     background: var(--themeBgSecondColor);
+                    flex: 1;
+                    min-height: 0;
                 }
 
                 .sufix {
-                    width: 40px;
+                    min-width: 40px;
                     text-align: center;
                 }
 

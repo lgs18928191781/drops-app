@@ -83,14 +83,14 @@
         />
       </template>
       <template v-else>
-        <div class="choose-meta-name-warp">
-          <div class="tips">
+        <div class="choose-meta-name-warp flex flex-col h-full">
+          <div class="tips mb-2">
             {{ $t('EditProfile.MetaNameTips') }}
           </div>
           <ChooseMetaNameVue
             @change="onChangeMetaName"
-            :name="currentMetaName.val.name"
-            :is-show-all-meta-name="true"
+            :use-case="'profile'"
+            :selected="currentMetaName.val"
           />
         </div>
       </template>
@@ -107,6 +107,7 @@ import { NodeName } from '@/enum'
 import { createBrfcChildNodeParams } from '@/@types/sdk'
 import { useI18n } from 'vue-i18n'
 import ChooseMetaNameVue from '@/components/ChooseMetaName/ChooseMetaName.vue'
+import { useLayoutStore } from '@/stores/layout'
 
 interface Props {
   modelValue: boolean
@@ -116,6 +117,7 @@ const emit = defineEmits(['update:modelValue'])
 const i18n = useI18n()
 
 const userStore = useUserStore()
+const layout = useLayoutStore()
 const isShowSecondModal = ref(false)
 const loading = ref(false)
 enum EditType {
@@ -240,7 +242,6 @@ function choose(type: EditType) {
 }
 
 function onChangeMetaName(metaName: MetaNameItem) {
-  debugger
   if (metaName.name === currentMetaName.val.name) {
     // @ts-ignore
     currentMetaName.val = {
@@ -249,6 +250,8 @@ function onChangeMetaName(metaName: MetaNameItem) {
   } else {
     currentMetaName.val = metaName
   }
+
+  isShowSecondModal.value = false
 }
 </script>
 

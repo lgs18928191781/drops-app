@@ -11,8 +11,8 @@
       :image-class="'w-9 h-9'"
       class="shrink-0"
     />
-    <div class="ml-2 flex flex-col">
-      <UserName :name="member.name" :meta-name="member?.userInfo?.metaName" />
+    <div class="ml-2 flex flex-col gap-y-px">
+      <UserName :name="member.name" :meta-name="member?.userInfo?.metaName" class="max-w-[160PX]" />
       <div class="text-xxs text-dark-300 dark:text-gray-400" v-if="member.metaId">
         MetaID: {{ member.metaId.substring(0, 6) }}
       </div>

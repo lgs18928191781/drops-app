@@ -6,6 +6,7 @@ declare module '@vue/runtime-core' {
       metafile: (metafile: string, width = 235) => string
       bsv: (stas: string | number) => number
       buzzTextContent: (content: string) => string
+      strapiImage: (url: string) => string
     }
   }
 }

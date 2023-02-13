@@ -18,10 +18,15 @@
           :disabled="true"
         />
         <div
-          class="text-base leading-tight no-wrap grow whitespace-nowrap truncate text-dark-800 dark:text-white pr-2 max-w-[35vw] lg:max-w-[600PX]"
+          class="leading-tight no-wrap grow whitespace-nowrap truncate pr-2 max-w-[35vw] lg:max-w-[600PX]"
           @click="layout.isShowUserInfo = !layout.isShowUserInfo"
         >
-          {{ activeChannel?.name }}
+          <UserName
+            :name="activeChannel?.name"
+            :meta-name="activeChannel?.metaName"
+            :text-class="'!text-base'"
+          />
+          <!-- {{ activeChannel?.name }} -->
         </div>
       </div>
     </div>

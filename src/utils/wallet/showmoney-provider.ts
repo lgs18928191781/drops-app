@@ -508,15 +508,19 @@ export default class ShowmoneyProvider {
     })
   }
 
-  getPathWithNetWork(params: { xpub: string; address: string }) {
+  getPathWithNetWork(params: { xpub: string; address: string; chain?: HdWalletChain }) {
     return new Promise<{
       address: string
       addressIndex: number
       addressType: number
       xpub: string
     }>(async (resolve, reject) => {
+      if (!params.chain) params.chain = HdWalletChain.MVC
       const res = await this.callMetasvApi(
-        `/xpubLite/${params.xpub}/address/${params.address}`
+        `/xpubLite/${params.xpub}/address/${params.address}`,
+        {},
+        'get',
+        params.chain
       ).catch(error => reject(error))
       if (res) {
         resolve(res)

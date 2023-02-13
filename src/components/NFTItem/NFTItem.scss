@@ -5,6 +5,7 @@
     padding: 18px;
     border-radius: var(--rounded);
     margin-bottom: 22px;
+    cursor: pointer;
 
     :deep(.nft-cover) {
         border: 2px solid var(--themeTextColor);
@@ -14,6 +15,7 @@
     .name {
         margin-top: 18px;
         font-size: 20px;
+        @extend %text-ellipsis;
     }
 
     .amount {

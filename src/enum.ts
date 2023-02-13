@@ -1,12 +1,12 @@
 const POLYGON_CHAIN = import.meta.env.VITE_POLYGON_CHAIN
-export const enum SortType {
-  Time = 0,
+export enum CollectionSortType {
   Price = 1,
-  Index = 2,
+  TokenIndex = 2,
   Default = 3,
+  Time = 0,
 }
 
-export const enum OrderType {
+export const enum CollectionOrderType {
   ASC = 1,
   DESC = -1,
 }
@@ -312,6 +312,7 @@ export enum NodeName {
   SimpleDAOCreate = 'SimpleDAOCreate',
   NftName = 'NftName',
   NftTransfer = 'NftTransfer',
+  SendMoney = 'SendMoney',
 }
 
 export const enum BindStatus {
@@ -388,6 +389,7 @@ export enum ShowControl {
   isShowRequireNativeModal = 'isShowRequireNativeModal',
   isShowCheckingPass = 'isShowCheckingPass',
   isShowUserInfo = 'isShowUserInfo',
+  isShowUserCard = 'isShowUserCard',
   never = 'never',
 }
 

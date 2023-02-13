@@ -637,7 +637,7 @@ async function connectWalletConnect() {
       description: 'My website description ',
       url: 'https://mywebsite.url',
       icons: ['../assets/svg/icon.svg'],
-      name: 'Show3',
+      name: import.meta.env.VITE_App_Key,
     },
   })
 

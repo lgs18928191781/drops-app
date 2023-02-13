@@ -8,6 +8,28 @@ const TalkApi = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/talkAggregation
   },
 }).request
 
+const seedFakeMetaName = (item: any) => {
+  // 以50%的几率随机塞进metaName
+  if (Math.random() > 0.5) {
+    // 生成随机metaName，要么不带后缀，要么带.eth后缀
+    const randomMetaName =
+      Math.random() > 0.5
+        ? `meta${(Math.random() * 100).toString().split('.')[0]}`
+        : `meta${(Math.random() * 100).toString().split('.')[0]}.eth`
+    if (item.fromUserInfo) {
+      item.fromUserInfo.metaName = randomMetaName
+    }
+    if (item.toUserInfo) {
+      item.toUserInfo.metaName = randomMetaName
+    }
+    if (item.userInfo) {
+      item.userInfo.metaName = randomMetaName
+    }
+  }
+
+  return item
+}
+
 export const getCommunities = async (params?: any): Promise<Community[]> => {
   params = params || {}
   const query = new URLSearchParams(params).toString()
@@ -49,6 +71,24 @@ export const getNewMetaNames = async (
   delete params.metaId
 
   return TalkApi.get(`/community/metaname/${address}`, { params: _params })
+}
+
+export const getEnsNames = async (
+  params?: any
+): Promise<{
+  code: number
+  data: {
+    total: number
+    nextFlag: string
+    results: {
+      items: MetaNameItem[]
+    }
+  }
+}> => {
+  const { address, ..._params } = params
+  delete params.metaId
+
+  return TalkApi.get(`/community/ens/${address}`, { params: _params })
 }
 
 export const getOneCommunity = async (communityId: string): Promise<Community> => {
@@ -96,6 +136,7 @@ export const getAtMeChannels = async (params?: any): Promise<any> => {
       const channelSide = channel.from === metaId ? 'to' : 'from'
 
       channel.name = channel[`${channelSide}Name`]
+      channel.metaName = channel[`${channelSide}UserInfo`]?.metaName
       channel.id = channel.metaId = channel[`${channelSide}`]
       channel.avatarImage = channel[`${channelSide}AvatarImage`]
       channel.publicKeyStr = channel[`${channelSide}PublicKey`]
@@ -159,9 +200,11 @@ export const getCommunityMembers = (communityId: string): Promise<any> => {
     page: '1',
   }
   const query = new URLSearchParams(params).toString()
-  return TalkApi.get(`/community/${communityId}/persons?${query}`).then(
-    res => res.data.results.items
-  )
+  return TalkApi.get(`/community/${communityId}/persons?${query}`).then(res => {
+    const data = res.data.results.items
+
+    return data
+  })
 }
 
 // 红包相关
@@ -196,9 +239,7 @@ export const grabRedPacket = async (params: any): Promise<any> => {
   const address = params.address
   const query = new URLSearchParams({ metaId, address }).toString()
 
-  return TalkApi.get(`/room/${channelId}/gift/${redPacketId}?${query}`).then(res => {
-    console.log(res)
-  })
+  return TalkApi.get(`/room/${channelId}/gift/${redPacketId}?${query}`).then(res => {})
 }
 
 // 获取某个频道的引用公告列表

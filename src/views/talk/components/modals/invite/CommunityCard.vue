@@ -6,7 +6,7 @@
 
     <template #body>
       <div class="h-full w-full flex flex-col items-center justify-between text-dark-800">
-        <div class="relative card-height aspect-[3/4]" ref="cardContainer">
+        <div class="relative card-height aspect-[3/4] max-w-full" ref="cardContainer">
           <div
             class="w-full h-full card-border rounded-lg z-20 relative bg-white flex flex-col items-center justify-between p-7.5"
           >
@@ -14,7 +14,7 @@
             <div class="absolute inset-0 w-full h-full flex items-start justify-center z-0">
               <img
                 :src="CardBgImg"
-                class="w-full aspect-[1.3] object-cover mt-[10%] saturate-[10] blur-2xl"
+                class="w-full aspect-[1.3] object-cover mt-[20%] lg:mt-[25%] saturate-[2] blur-xl"
               />
             </div>
 
@@ -26,15 +26,24 @@
             <!-- 主要信息 -->
             <div class="flex flex-col items-center">
               <!-- 标题 -->
-              <div class="gap-x-2 flex items-top ">
-                <!-- <img :src="ShowIconImg" class="w-[26PX] !h-5 object-contain bg-green-300" /> -->
-                <h3 class="text-lg font-bold lg:tracking-wide shrink-0  leading-none">
-                  {{ $t('Talk.Modals.nftize_title') }}
+              <div class="flex flex-col items-center">
+                <div class="gap-x-2 flex items-center">
+                  <img
+                    :src="ShowIconImg"
+                    class="w-[26PX] !h-5 object-contain"
+                    v-if="!isScreenShotting"
+                  />
+                  <h3 class="text-base lg:text-lg font-bold lg:tracking-wide shrink-0 text-center">
+                    {{ $t('Talk.Modals.nftize_title1') }}
+                  </h3>
+                </div>
+                <h3 class="text-base lg:text-lg font-bold lg:tracking-wide shrink-0 text-center">
+                  {{ $t('Talk.Modals.nftize_title2') }}
                 </h3>
               </div>
 
               <!-- 头像 -->
-              <div class="mt-10">
+              <div class="mt-6 lg:mt-10">
                 <Image
                   :src="inviting.community?.icon"
                   custom-class="w-22.5 h-22.5 rounded-[45%] border-2 border-dark-800 box-content"
@@ -49,7 +58,7 @@
               </div>
 
               <!-- MetaName -->
-              <div class=" relative mt-1">
+              <div class="relative mt-1">
                 <!-- 兼容canvas -->
                 <div
                   class="flex items-baseline justify-start space-x-1 shrink overflow-x-hidden text-dark-300"
@@ -63,16 +72,21 @@
                   </span>
                 </div>
 
-                <div
-                  class="flex items-baseline justify-start space-x-1 shrink overflow-x-hidden"
-                  v-else
-                >
-                  <span class="text-sm meta-name truncate">
-                    {{ talk.activeCommunitySymbolInfo.name }}
-                  </span>
+                <MetaNameDisplay
+                  v-else-if="talk.activeCommunity?.metaName"
+                  :name="talk.activeCommunity?.metaName"
+                  :colorful="true"
+                  class=""
+                />
+              </div>
 
-                  <MetaNameTag :type="talk.activeCommunitySymbolInfo.suffix" />
-                </div>
+              <!-- 介绍语 -->
+              <div class="text-sm mt-3" v-if="!isShortDevice">
+                <p class="text-center">
+                  {{ $t('Talk.Modals.invite_tip_1') }}
+                  <span class="font-bold">{{ inviting.community?.name }}</span>
+                  {{ $t('Talk.Modals.invite_tip_2') }}
+                </p>
               </div>
             </div>
 
@@ -121,9 +135,10 @@ import html2canvas from 'html2canvas'
 import { useLayoutStore } from '@/stores/layout'
 import { useTalkStore } from '@/stores/talk'
 import { ShowControl } from '@/enum'
+import { isShortDevice } from '@/stores/root'
 
 import BaseModal from '../BaseModal.vue'
-import MetaNameTag from '@/components/MetaName/Tag.vue'
+import MetaNameDisplay from '@/components/MetaName/Display.vue'
 import StarRingImg from '@/assets/icons/star_ring.svg?url'
 import CardBgImg from '@/assets/images/card_blur_bg.png?url'
 import ShowIconImg from '@/assets/images/logo_show_2.png?url'
@@ -155,33 +170,40 @@ const saveCard = async () => {
   const cardRect = card.getBoundingClientRect()
 
   // 设置画布大小
-  const canvas = cardDrawer.value as HTMLCanvasElement
-  canvas.width = cardRect.width
-  canvas.height = cardRect.height
-  canvas.style.width = `${cardRect.width}px`
-  canvas.style.height = `${cardRect.height}px`
-  // text align
+  // const canvas = cardDrawer.value as HTMLCanvasElement
+  const canvas = document.createElement('canvas')
+  const scaleBy = 5
+  canvas.width = cardRect.width * scaleBy
+  canvas.height = cardRect.height * scaleBy
+  canvas.style.width = `${cardRect.width * scaleBy}px`
+  canvas.style.height = `${cardRect.height * scaleBy}px`
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
-  ctx.textBaseline = 'bottom'
+  ctx.scale(scaleBy, scaleBy)
 
   // 绘制卡片
 
   // 生成图片，下载
+  // 使用3倍精度
   html2canvas(card, {
     canvas,
     scale: 1,
     useCORS: true,
     allowTaint: true,
     backgroundColor: null,
-  }).then(canvas => {
-    const a = document.createElement('a')
-    a.href = canvas.toDataURL('image/png')
-    a.download = 'show3.png'
-    a.click()
-    isScreenShotting.value = false
-    // 关闭弹窗
-    layout.isShowCommunityCardModal = false
   })
+    .then(canvas => {
+      const a = document.createElement('a')
+      a.href = canvas.toDataURL('image/png')
+      a.download = 'show3.png'
+      a.click()
+      isScreenShotting.value = false
+      // 关闭弹窗
+      layout.isShowCommunityCardModal = false
+    })
+    .catch(e => {
+      console.error(e)
+      isScreenShotting.value = false
+    })
 }
 </script>
 

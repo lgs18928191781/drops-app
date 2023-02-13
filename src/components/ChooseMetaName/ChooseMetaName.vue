@@ -1,102 +1,74 @@
 <template>
-  <div class="h-full overflow-y-auto">
-    <div v-if="fetching" class="w-full h-full flex items-center justify-center flex-col gap-y-4">
-      <img :src="DogWalking" class="w-48 h-48" alt="" />
-      <div class="flex items-center space-x-2">
-        <Icon name="loading" class="w-4 h-4 animate-spin text-dark-400 dark:!text-gray-200" />
-        <div class="text-dark-400 dark:text-gray-200 text-base font-medium">
-          {{ $t('Talk.Modals.loading') }}
-        </div>
-      </div>
-    </div>
-
-    <div class="flex flex-col overflow-y-auto slim-scrollbar" v-else-if="metaNames.length > 0">
-      <div
-        v-for="metaName in metaNames"
-        :key="metaName.name"
-        class="flex space-x-1.5 items-center cursor-pointer hover:bg-dark-100 dark:hover:bg-gray-900 rounded py-3 px-4"
-        @click="selectMetaName(metaName)"
+  <div class="h-full flex flex-col">
+    <TabGroup>
+      <TabList
+        class="grid grid-cols-2 text-sm font-bold m-1 gap-x-0.5 bg-gray-100 dark:bg-gray-950 rounded-xl mb-4"
       >
-        <div class="flex1 flex flex-align-center">
-          <div class="text-lg meta-name flex flex-align-center">
-            {{ metaName.name }}
-          </div>
-
-          <MetaNameTag class="ml-2" />
-        </div>
-        <span
-          class="check-warp flex flex-align-center flex-pack-center"
-          v-if="metaName.name === name"
+        <Tab
+          v-slot="{ selected }"
+          v-for="tabName in Object.keys(nsTabs)"
+          as="template"
+          :key="tabName"
         >
-          <Icon name="check" />
-        </span>
-      </div>
-    </div>
+          <button
+            :class="[
+              selected
+                ? ' bg-primary border-2 border-solid border-black text-black'
+                : 'border-2 border-transparent',
+              'py-3 rounded-xl',
+            ]"
+          >
+            {{ tabName }}
+          </button>
+        </Tab>
+      </TabList>
 
-    <div class="w-full h-full flex items-center justify-center flex-col gap-y-8" v-else>
-      <img :src="Cat" class="w-36 h-36" alt="" />
-      <div class="text-dark-400 dark:text-gray-200 text-base font-medium">
-        {{ $t('Talk.Modals.no_meta_name_available') }}
-      </div>
-    </div>
+      <TabPanels class="grow overflow-y-auto">
+        <MetaNameList
+          v-for="tabName in Object.keys(nsTabs)"
+          :key="tabName"
+          :ns="(tabName as nsType)"
+          :use-case="props.useCase"
+          @select="onSelect"
+        />
+      </TabPanels>
+    </TabGroup>
   </div>
 </template>
 
 <script lang="ts" setup>
-import Cat from '@/assets/images/cat.svg?url'
-import DogWalking from '@/assets/images/dog_walking.svg?url'
-import { reactive, Ref, ref, watchEffect } from 'vue'
-import { showLoading } from '@/utils/util'
-import { getMetaNames, getNewMetaNames } from '@/api/talk'
-import { useTalkStore } from '@/stores/talk'
-import { useCommunityFormStore } from '@/stores/forms'
-import { useLayoutStore } from '@/stores/layout'
-import MetaNameTag from '@/components/MetaName/Tag.vue'
-import { GetUserMetaNames } from '@/api/aggregation'
-import { initPagination } from '@/config'
+import { ref, provide } from 'vue'
+import { Tab, TabGroup, TabList, TabPanels } from '@headlessui/vue'
+
+import MetaNameList from './List.vue'
 
 interface Props {
-  name?: string
-  isShowAllMetaName?: boolean
+  useCase?: 'community' | 'profile'
+  selected?: any
 }
 const props = withDefaults(defineProps<Props>(), {})
 
 const emit = defineEmits(['change'])
-const talk = useTalkStore()
-const layout = useLayoutStore()
-const form = useCommunityFormStore()
 
-const fetching = ref(false)
-const metaNames: Ref<MetaNameItem[]> = ref([])
-const pagination = reactive({ ...initPagination, flag: '' })
-
-const fetchMetaNames = async () => {
-  // const _ = await getMetaNames({ metaId: talk.selfMetaId, page: 1, pageSize: 20 })
-  let res
-  if (props.isShowAllMetaName) {
-    res = await GetUserMetaNames({ address: talk.selfAddress, ...pagination })
-  } else {
-    res = await getNewMetaNames({ address: talk.selfAddress, ...pagination })
-  }
-  if (res.code === 0) {
-    if (res.data.results.items.length) {
-      metaNames.value.push(...res.data.results.items)
-    } else {
-      pagination.nothing = true
-    }
-    pagination.flag = res.data.nextFlag
-  }
+/** 标签 */
+const nsTabs = {
+  ENS: {
+    key: 'ens',
+  },
+  MetaName: {
+    key: 'metaname',
+  },
 }
+type nsType = keyof typeof nsTabs
+/** 标签 end */
 
-// watchEffect(async () => {
-//   await showLoading(fetchMetaNames, fetching)
-// })
+const selected: any = ref(props.selected)
+provide('selected', selected)
+const onSelect = (metaName: MetaNameItem) => {
+  selected.value = metaName
 
-const selectMetaName = (metaName: MetaNameItem) => {
   emit('change', metaName)
 }
-
-fetchMetaNames()
 </script>
 
 <style lang="scss" src="./ChooseMetaName.scss"></style>

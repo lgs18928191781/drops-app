@@ -22,9 +22,12 @@
             type === MetaNameOperateType.Register
               ? $t('MetaName.RegisterSuccessTips') +
                 name +
-                '.meta ' +
+                '.metaid ' +
                 $t('MetaName.RegisterSuccessTips2')
-              : $t('MetaName.RenewSuccessTips') + name + '.meta ' + $t('MetaName.RenewSuccessTips2')
+              : $t('MetaName.RenewSuccessTips') +
+                name +
+                '.metaid ' +
+                $t('MetaName.RenewSuccessTips2')
           }}
         </div>
 
@@ -196,8 +199,14 @@ function getMetaName() {
       ElMessage.error(error.message)
     })
     if (res) {
-      metaName.val = res
-      resolve()
+      if (res.registerState === 2) {
+        setTimeout(() => {
+          return getMetaName()
+        }, 1000)
+      } else {
+        metaName.val = res
+        resolve()
+      }
     }
   })
 }

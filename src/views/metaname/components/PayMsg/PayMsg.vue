@@ -58,40 +58,23 @@
 </template>
 
 <script setup lang="ts">
-import { SendMetaNameTransationResult } from '@/@types/sdk'
 import { PayPlatformItem, payPlatformList } from '@/config'
-import { MetaNameOperateType, NodeName, PayPlatform, ProductType, ToCurrency } from '@/enum'
+import { MetaNameOperateType, PayPlatform, ProductType, ToCurrency } from '@/enum'
 import { useUserStore } from '@/stores/user'
-import { useRootStore } from '@/stores/root'
 import {
   bytesLength,
   CreatePayOrder,
-  dataURLtoFile,
-  FileToAttachmentItem,
   getCurrencyAmount,
   mappingChainId,
-  metanameOperation,
-  randomNumber,
   setPayQuitUrl,
-  urlToBase64,
 } from '@/utils/util'
 import { MetaNameReqCode } from '@/utils/wallet/hd-wallet'
-import Decimal from 'decimal.js-light'
-import { BigNumber, ethers } from 'ethers'
-import { result } from 'lodash'
-import { nextTick, reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import StartPay from '@/components/StartPay/StartPay.vue'
-//@ts-ignore
-import html2canvas from 'html2canvas'
-import MetaTag from '@/assets/metaname/img_meta.png'
-import MetaNameLogo from '@/assets/metaname/logo_metaname.png'
-
-import { getBlockHeight, MetaNameUpdateInfo } from '@/api/index'
-import { useI18n } from 'vue-i18n'
-import { GetMetaNameInfo, UploadMetaNameCover } from '@/api/wxcore'
+import { MetaNameBeforeReqRes, UploadMetaNameCover } from '@/api/wxcore'
 import { GetMetaNameCover } from '@/api/canvas-base'
-import Item from '@/views/talk/components/direct-contact/Item.vue'
+import { getMetaNameOperateParams } from '@/utils/metaname'
 interface Props {
   price: number
   year: number
@@ -117,7 +100,6 @@ const currentPayPlatform = ref(
 
 onMounted(() => {})
 
-const i18n = useI18n()
 const currencyAmount = ref(0)
 const productType = ProductType.MetaName
 const isStartPay = ref(false)
@@ -126,22 +108,6 @@ const payOrderInfo = reactive({
   orderId: '',
   amount: '',
 })
-const metaNameBgColorIndex = ref(0)
-const metaNameBgColors = [
-  ['#5721A1', '#2DEBD8'],
-  ['#F68084', '#A6C0FE'],
-  ['#FA709A', '#FEE140'],
-  ['#009EFD', '#2AF598'],
-  ['#FA71CD', '#C471F5'],
-  ['#005BEA', '#00C6FB '],
-  ['#7028E4', '#E5B2CA'],
-  ['#FF758C', '#FF7EB3'],
-  ['#8BAAAA', '#AE8B9C'],
-  ['#E6B980', '#EACDA3'],
-]
-const MetaNameRef = ref()
-const metaTagString = ref('')
-const metaNameLogoString = ref('')
 let metafile = ''
 
 function changePayType(item: PayPlatformItem) {
@@ -165,36 +131,7 @@ function setCurrencyAmount() {
 async function pay() {
   emit('update:loading', true)
   try {
-    if (props.type === MetaNameReqCode.register) {
-      const cover = await GetMetaNameCover(props.name)
-      // metaNameBgColorIndex.value = randomNumber(0, 9)
-      // await nextTick()
-      // const res = await html2canvas(MetaNameRef.value, {
-      //   scale: 2,
-      //   backgroundColor: null,
-      //   removeContainer: true,
-      // })
-      // if (res) {
-
-      // }
-
-      // const base64 = res.toDataURL('image/png')
-      // const file = dataURLtoFile(base64, `${props.name}.png`)
-      const formData = new FormData()
-      // @ts-ignore
-      formData.append('file', cover)
-      const response = await UploadMetaNameCover(formData)
-      if (response) {
-        metafile = response.image_tx_id
-      }
-      // const attachment = await FileToAttachmentItem(file)
-      // const result = await userStore.showWallet.createBrfcChildNode({
-      //   nodeName: NodeName.MetaFile,
-      //   attachments: [attachment],
-      // })
-      // metafile = result!.metaFiles![0].txId
-    }
-    const metaNameOpParams: {
+    let metaNameOpParams: {
       registerName: string
       op: MetaNameReqCode
       info?: Partial<MetaNameInfo>
@@ -202,68 +139,77 @@ async function pay() {
     } = {
       registerName: props.name,
       op: props.type,
-      info: {
-        mvc: userStore.user!.address,
-        icon: `metafile://${metafile}.png`,
-      },
       years: props.year,
     }
-    if (props.type == MetaNameReqCode.updataInfo) {
-      const metaNameInfo = await GetMetaNameInfo(props.name)
-      if (metaNameInfo) {
-        metaNameOpParams.info = {
-          ...metaNameOpParams.info,
-          ...metaNameInfo,
+    if (props.type === MetaNameReqCode.register) {
+      // 注册生成图片
+      const cover = await GetMetaNameCover(props.name)
+      const formData = new FormData()
+      // @ts-ignore
+      formData.append('file', cover)
+      const response = await UploadMetaNameCover(formData)
+      if (response) {
+        metafile = response.image_tx_id
+      }
+      metaNameOpParams.info = {
+        mvc: userStore.user!.address,
+        icon: `metafile://${metafile}.png`,
+        desc: `MetaName, Web3 Naming Brings You Real Value
+
+MetaName is a Decentralized, Open-sourced and Cross-chain Name System Based on MetaID Protocol`,
+        data: {
+          classifyList: ['Name'],
+        },
+      }
+    }
+    const response = await MetaNameBeforeReqRes({
+      name: metaNameOpParams.registerName,
+      op: metaNameOpParams.op,
+      years: metaNameOpParams.years,
+      address: userStore.showWallet.wallet!.rootAddress,
+    })
+    if (response.code == 0) {
+      const metaNameParams = {
+        op_code: response.data.op,
+        info: metaNameOpParams.info,
+        years: metaNameOpParams.years!,
+        reqswapargs: response.data,
+      }
+      const res = await getMetaNameOperateParams(metaNameParams)
+      if (res) {
+        const operateType = {
+          [MetaNameReqCode.register]: MetaNameOperateType.Register,
+          [MetaNameReqCode.renew]: MetaNameOperateType.Renew,
+          [MetaNameReqCode.updataInfo]: MetaNameOperateType.UpdateInfo,
         }
-        delete metaNameOpParams.years
+        const result = await CreatePayOrder({
+          platform: currentPayPlatform.value!,
+          fullPath: setPayQuitUrl({
+            payPlatform: currentPayPlatform.value!,
+            fullPath: route.fullPath,
+            isBlindbox: false,
+          }),
+          goods_name: props.name,
+          count: 1,
+          product_type: productType,
+          operate_type: operateType[props.type],
+          mvc_to_address: res?.MvcToAddress,
+          nft_to_address: res?.NftToAddress,
+          tx_fee: res.TxFee,
+          fee_per_year: res?.FeePerYear,
+          meta_name_len: bytesLength(props.name),
+          data: res?.registerMetaNameResp?.toString(),
+          meta_name_uts_ascii: props.name,
+        })
+        if (result) {
+          payOrderInfo.amount = result.pay_amount!.toString()
+          payOrderInfo.orderId = result.outside_order_id
+          payOrderInfo.url = result.url
+          isStartPay.value = true
+        }
       } else {
         emit('update:loading', false)
-        return ElMessage.error(`${i18n.t('getMetaNameInfoError')}`)
       }
-    }
-    if (props.type == MetaNameReqCode.renew) {
-      delete metaNameOpParams.info
-    }
-    const res = await metanameOperation(metaNameOpParams)
-
-    const operateType = {
-      [MetaNameReqCode.register]: MetaNameOperateType.Register,
-      [MetaNameReqCode.renew]: MetaNameOperateType.Renew,
-      [MetaNameReqCode.updataInfo]: MetaNameOperateType.UpdateInfo,
-    }
-    if (props.type == MetaNameReqCode.updataInfo) {
-      const updateInfoTx = await MetaNameUpdateInfo(res!.registerMetaNameResp!)
-      if (updateInfoTx.code == 0) {
-        //更新成功,这里不能用
-        emit('update:loading', false)
-        return
-      }
-    }
-
-    const result = await CreatePayOrder({
-      platform: currentPayPlatform.value!,
-      fullPath: setPayQuitUrl({
-        payPlatform: currentPayPlatform.value!,
-        fullPath: route.fullPath,
-        isBlindbox: false,
-      }),
-      goods_name: props.name,
-      count: 1,
-      product_type: productType,
-      operate_type: operateType[props.type],
-      mvc_to_address: res?.MvcToAddress,
-      nft_to_address: res?.NftToAddress,
-      tx_fee: res.TxFee,
-      fee_per_year: res?.FeePerYear,
-      meta_name_len: bytesLength(props.name),
-      data: res?.registerMetaNameResp?.toString(),
-      meta_name_uts_ascii: props.name,
-    })
-    if (result) {
-      payOrderInfo.amount = result.pay_amount!.toString()
-      payOrderInfo.orderId = result.outside_order_id
-      payOrderInfo.url = result.url
-      isStartPay.value = true
     }
   } catch (error) {
     emit('update:loading', false)
@@ -287,12 +233,6 @@ function onPaySuccess(params: { orderId: string; platform: PayPlatform; productT
 }
 
 setCurrencyAmount()
-urlToBase64(MetaTag).then(val => {
-  metaTagString.value = val
-})
-urlToBase64(MetaNameLogo).then(val => {
-  metaNameLogoString.value = val
-})
 </script>
 
 <style lang="scss" scoped src="./PayMsg.scss"></style>

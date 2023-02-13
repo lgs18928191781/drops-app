@@ -28,15 +28,11 @@ import {
   CreateNodeRes,
   TransferTypes,
   UtxoItem,
-  SendMetaNameTransationResult,
   HdWalletCreateBrfcChildNodeParams,
 } from '@/@types/sdk'
 import { ElMessage } from 'element-plus'
 import { NftManager, FtManager, API_TARGET } from 'meta-contract'
 import { useUserStore } from '@/stores/user'
-
-import Decimal from 'decimal.js-light'
-import { GetMeUtxos } from '@/api/v3'
 import { GetTxChainInfo } from '@/api/metaid-base'
 import AllNodeName from '../AllNodeName'
 
@@ -1238,6 +1234,7 @@ export class HdWallet {
       addressIndex: number
     }
     outPutIndex?: number
+    chain?: HdWalletChain
   }) {
     return new Promise<UtxoItem>(async (resolve, reject) => {
       try {
@@ -1250,10 +1247,12 @@ export class HdWallet {
           }
         }
         const OutPut = params.tx.outputs[params.outPutIndex]
+        if (!params.chain) params.chain = HdWalletChain.MVC
         if (!params.addressInfo) {
           const addressInfo = await this.provider.getPathWithNetWork({
             address: OutPut.script.toAddress(this.network).toString(),
             xpub: this.wallet.xpubkey.toString(),
+            chain: params.chain,
           })
           if (addressInfo) {
             params.addressInfo = {
@@ -1275,6 +1274,9 @@ export class HdWallet {
           addressType: params!.addressInfo?.addressType!,
           addressIndex: params!.addressInfo?.addressIndex!,
           xpub: this.wallet.xpubkey.toString(),
+          wif: this.getPathPrivateKey(
+            `${params!.addressInfo?.addressType!}/${params!.addressInfo?.addressIndex!}`
+          )!.toString(),
         })
       } catch (error) {
         reject(error)
@@ -1923,7 +1925,7 @@ export class HdWallet {
         const initParams = {
           payTo: [],
           isBroadcast: true,
-          opReturn: ['show3'],
+          opReturn: [import.meta.env.VITE_App_Key],
           utxos: [],
           chain: HdWalletChain.MVC,
         }
@@ -1947,6 +1949,7 @@ export class HdWallet {
           payTo: params.payTo,
           opReturn: params.opReturn,
           utxos: params.utxos,
+          chain: params!.chain,
         })
         if (params.isBroadcast) {
           const res = await this.provider.broadcast(tx.toString(), params.chain)
@@ -2166,212 +2169,5 @@ export class HdWallet {
   //发起MetaName交易前请求
   public async MetaNameBeforeReq(params: { name: string; op: MetaNameOp }) {
     return this.provider.reqMetaNameArgs({ ...params, address: this.rootAddress })
-  }
-
-  //发起MetaName交易前参数构造
-  public sendMetaNameTransation(params: {
-    op_code: number
-    info?: {
-      [key: string]: any
-      metaid?: string
-      mvc?: string
-      icon?: string
-    }
-    years?: number
-    reqswapargs: Reqswapargs
-    payTo?: Array<{
-      address: string
-      amount: number
-    }>
-  }) {
-    return new Promise<SendMetaNameTransationResult>(async (resolve, reject) => {
-      try {
-        const userStore = useUserStore()
-        const { reqswapargs, years, op_code, info } = params
-        const mvcToAddress = reqswapargs.mvcToAddress
-        const nftToAddress = reqswapargs.nftToAddress
-        const txFee = reqswapargs.txFee
-        const requestIndex = new Decimal(reqswapargs.requestIndex).toString()
-        const metaNameOpFee =
-          params.op_code == MetaNameReqCode.register
-            ? new Decimal(reqswapargs.feePerYear).mul(years!).toNumber()
-            : 0
-        let MetaNameSuccTxid: string
-        let mvcReceivers: Array<{ address: string; amount: number }>
-        let transferNftResult,
-          transferResult,
-          transferAmount: number,
-          mvcUtxo,
-          nftUtxo,
-          registerMetaNameResp,
-          mvcRawTx
-        const mvcOutputIndex = 0
-        const nftOutputIndex = 0
-        transferAmount = metaNameOpFee + txFee
-        mvcReceivers = [
-          {
-            address: mvcToAddress,
-            amount: transferAmount,
-          },
-        ]
-        let utxos = []
-        if (op_code !== MetaNameReqCode.register) {
-          const toatlAmount = new Decimal(transferAmount)
-            .add(10000)
-            .add(100000)
-            .add(2000)
-            .toNumber()
-          const getMeUtxo = await GetMeUtxos({
-            address: this.rootAddress,
-            amount: toatlAmount,
-            meta_id: userStore.user!.metaId,
-            protocol: 'UpdateMetaNameINfo',
-            // 打钱地址： 如果需要创建brfc节点则打到 protocol 地址，否则打到 brfc 节点地址
-            receive_address: this.rootAddress,
-          })
-          if (getMeUtxo.code === 0) {
-            utxos[0] = {
-              address: getMeUtxo.data.address,
-              // utxo 所在的路径
-              addressIndex: 0,
-              addressType: 0,
-              outputIndex: 0,
-              txId: getMeUtxo.data.tx,
-              xpub: this.wallet.xpubkey.toString(),
-              script: getMeUtxo.data.script,
-              satoshis: getMeUtxo.data.amount,
-              amount: getMeUtxo.data.amount / 1e8,
-              wif: this.wallet!.deriveChild(0)
-                .deriveChild(0)
-                .privateKey.toString(),
-            }
-          }
-
-          if (utxos.length <= 0) {
-            throw new Error(`utxo is null`)
-          }
-        }
-        // let utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
-
-        //拆分UTXO交易
-        if (op_code == MetaNameReqCode.updataInfo) {
-          const devides = [
-            {
-              address: this.rootAddress!,
-              amount: transferAmount + 10000,
-            },
-            {
-              address: this.rootAddress!,
-              amount: 100000,
-            },
-          ]
-          const devTx = await this.devideUtxo(devides, utxos)
-          nftUtxo = await this.utxoFromTx({ tx: devTx, outPutIndex: 1 })
-          nftUtxo = {
-            ...nftUtxo,
-            wif: this.wallet!.deriveChild(0)
-              .deriveChild(0)
-              .privateKey.toString(),
-          }
-          mvcUtxo = await this.utxoFromTx({ tx: devTx, outPutIndex: 0 })
-          mvcUtxo = {
-            ...mvcUtxo,
-            wif: this.wallet!.deriveChild(0)
-              .deriveChild(0)
-              .privateKey.toString(),
-          }
-          // utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
-          // utxos.forEach(item => {
-          //   if (new Decimal(item.satoshis).toNumber() == transferAmount + 10000) {
-          //     mvcUtxo = item
-          //   }
-          //   if (item.satoshis == 100000) {
-          //     nftUtxo = {
-          //       ...item,
-          //       wif: this.wallet!.deriveChild(0)
-          //         .deriveChild(0)
-          //         .privateKey.toString(),
-          //     }
-          //   }
-          // })
-          transferResult = await this.makeTx({
-            utxos: [mvcUtxo],
-            opReturn: [],
-            change: this.rootAddress,
-            payTo: mvcReceivers,
-          })
-          mvcRawTx = transferResult.toString()
-        }
-        if (MetaNameReqCode.register == op_code) {
-          const params: MetaNameRequestDate = {
-            requestIndex,
-            // mvcRawTx,
-            // mvcOutputIndex,
-            years,
-            infos: info,
-          }
-          registerMetaNameResp = JSON.stringify(params)
-          // registerMetaNameResp = await this.provider.registerNewMetaName(
-          //   params,
-          //   MetaNameReqType.register
-          // )
-        } else if (MetaNameReqCode.renew == op_code) {
-          const nftRawTx = await this.transferNft(
-            {
-              receiverAddress: nftToAddress,
-              codehash: reqswapargs.nftCodeHash,
-              genesis: reqswapargs.nftGenesisID,
-              tokenIndex: reqswapargs.nftTokenIndex,
-              utxos: utxos,
-            },
-            {
-              isBroadcast: false,
-            }
-          )
-
-          const params: MetaNameRequestDate = {
-            requestIndex,
-            // mvcRawTx,
-            // mvcOutputIndex,
-            nftRawTx: nftRawTx.txHex,
-            nftOutputIndex,
-            years,
-          }
-          // registerMetaNameResp = await this.provider.registerNewMetaName(params, MetaNameReqType.renew)
-          registerMetaNameResp = JSON.stringify(params)
-        } else if (MetaNameReqCode.updataInfo) {
-          const nftRawTx = await this.transferNft(
-            {
-              receiverAddress: nftToAddress,
-              codehash: reqswapargs.nftCodeHash,
-              genesis: reqswapargs.nftGenesisID,
-              tokenIndex: reqswapargs.nftTokenIndex,
-              utxos: [nftUtxo],
-            },
-            {
-              isBroadcast: false,
-            }
-          )
-          const params: MetaNameRequestDate = {
-            requestIndex,
-            mvcRawTx,
-            mvcOutputIndex,
-            nftRawTx: nftRawTx.txHex,
-            nftOutputIndex,
-            infos: info,
-          }
-          registerMetaNameResp = await this.provider.gzip(JSON.stringify(params))
-        }
-        resolve({
-          registerMetaNameResp,
-          MvcToAddress: reqswapargs.mvcToAddress,
-          NftToAddress: reqswapargs.nftToAddress,
-          TxFee: reqswapargs.txFee,
-          FeePerYear: reqswapargs.feePerYear,
-        })
-      } catch (error) {
-        reject(error)
-      }
-    })
   }
 }

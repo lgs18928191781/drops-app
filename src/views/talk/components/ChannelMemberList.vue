@@ -52,6 +52,7 @@ watch(
         count,
         getScrollElement: () => membersContainer.value,
         estimateSize: () => 52,
+        overscan: 6,
       })
     }
   },

@@ -22,16 +22,59 @@ export const GetBalanceUser = (params: {
   return Strapi.get('/ruoxi-balance-pay-users', { params })
 }
 
-export const GetBanners = (): Promise<Banners[]> => {
-  return Strapi.get('/ruoxi-banners?_sort=index')
+export const GetBanners = (): Promise<HomeBanner[]> => {
+  return Strapi.get('/show-3-home-banners', {
+    params: {
+      _sort: 'index',
+      network: import.meta.env.VITE_NET_WORK,
+    },
+  })
 }
 
 export const GetCollects = (params: {
-  _sort: string
+  _sort?: string
   _limit: number
   _start: number
-}): Promise<HomeCollect[]> => {
-  return Strapi.get('/ruoxi-v-2-home-collects', { params })
+}): Promise<Collect[]> => {
+  return Strapi.get('/show-3-collections', {
+    params: {
+      _sort: 'index',
+      network: import.meta.env.VITE_NET_WORK,
+      ...params,
+    },
+  })
+}
+
+export const GetCollect = (id: number | string): Promise<Collect> => {
+  return Strapi.get(`/show-3-collections/${id}`)
+}
+
+export const GetHomeHotSeries = (params: {
+  _sort?: string
+  _limit: number
+  _start: number
+}): Promise<TypeCollction[]> => {
+  return Strapi.get('/show-3-home-hot-series', {
+    params: {
+      _sort: 'index',
+      'show_3_collection.network': import.meta.env.VITE_NET_WORK,
+      ...params,
+    },
+  })
+}
+
+export const GetHomeLatestSeries = (params: {
+  _sort?: string
+  _limit: number
+  _start: number
+}): Promise<TypeCollction[]> => {
+  return Strapi.get('/show-3-home-latest-series', {
+    params: {
+      _sort: 'index',
+      'show_3_collection.network': import.meta.env.VITE_NET_WORK,
+      ...params,
+    },
+  })
 }
 
 export const GetClassifyCollects = (params: { [key: string]: any }): Promise<Collect[]> => {

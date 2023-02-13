@@ -87,7 +87,10 @@
     },
     "Search": {
       "placeholder": "搜索MetaID……",
-      "searching": "搜索中……"
+      "searching": "搜索中……",
+      "users": "用户",
+      "no_results": "没有搜索结果：",
+      "home": "主页"
     },
     "MetaName": {
       "resolving": "MetaName 解析中…"
@@ -136,6 +139,7 @@
       "amount_needed": "所需数额",
       "red_packet": "红包",
       "receive": "接收",
+      "opened": "已打开",
       "consensus_required": "凭证权限",
       "you_dont_have_nft": "你没有相关系列的NFT，不能进入本频道",
       "you_dont_have_ft": "你没有进入本频道所需数量的Token",
@@ -148,10 +152,13 @@
       "loading": "操作中……",
       "choose_meta_name": "选择 MetaName",
       "no_meta_name_available": "您没有可用的 MetaName",
+      "no_ens_available": "您没有可用的 ENS",
       "share_invite_link_tip": "向好友发送邀请链接",
       "share_to_buzz_tip": "分享到 Buzz",
       "share_card_tip": "分享社区名片",
       "card": "社区名片",
+      "invite_tip_1": "您好，诚邀您加入社区",
+      "invite_tip_2": "，请扫码加入！",
       "share_to_buzz_button": "分享到 Buzz",
       "share_to_buzz_title": "分享到 Buzz",
       "share_successfully": "成功分享",
@@ -184,7 +191,8 @@
       "owner": "所有者",
       "share": "分享",
       "leave": "离开社区",
-      "nftize_title": "Show：NFT化你的社交生活",
+      "nftize_title1": "Show3，NFT化",
+      "nftize_title2": "你的社交生活",
       "scan_to_join": "扫码加入社区"
     },
     "Channel": {
@@ -371,12 +379,14 @@
   },
   "back": "返回",
   "UserOperate": {
-    "createGropp": "创建群组",
+    "search": "搜索",
     "settings": "设置",
     "aboutShow": "关于Show",
     "help": "帮助",
     "logout": "退出",
-    "About MetaSo": "关于 MetaSo"
+    "About MetaSo": "关于 MetaSo",
+    "wallet": "钱包",
+    "metaName": "MetaName"
   },
   "Buzz": {
     "Timeline": "时间轴",
@@ -465,7 +475,8 @@
   "role": "角色",
   "time": "时间",
   "price": "价格",
-  "clickmore": "点击加载更多",
+  "clickmore": "加载更多",
+  "Nothing_more_to_load": "没有更多了",
   "seller": "卖家",
   "prices": "标价：",
   "notSupportBsvBuyLegal": "暂不支持BSV购买法币的上架NFT",
@@ -535,6 +546,7 @@
       "drsc": "MetaName 将优先作为用户名。"
     },
     "Select MetaName": "选择 MetaName...",
+    "MetaNameTips": "使用MetaName作为您的用户名，闪亮展示您的个性。✨✨",
     "Choose NFT Avatar": "选择NFT头像"
   },
   "UplinkSetting": {
@@ -640,12 +652,19 @@
     "Initial Price": "初始价格",
     "Floor Price": "地板价",
     "Highest Price": "最高价",
-    "Owner": "拥有人数",
+    "Owner": "持有者",
     "Supply": "总发行量",
     "Blockchain": "所在链",
     "Price Trend": "价格趋势",
     "Collection works": "专辑作品",
-    "Filter": "筛选"
+    "Filter": "筛选",
+    "Sort": {
+      "Default Ranking": "默认排序",
+      "Price high to low": "价格由高到低",
+      "Price low to high": "价格由低到高",
+      "Number: X to 1": "序号由大到小",
+      "Number: 1 to X": "序号由小到大"
+    }
   },
   "My NFT": "我的NFT",
   "Done": "完成",
@@ -855,5 +874,10 @@
   "FixAccountTips3": "去修复",
   "BSV Insufficient balance": "BSV 余额不足",
   "metanameNotAllowCh": "暂不支持注册中文",
-  "metanameNotAllowSpace": "注册名称不可以有空格"
+  "metanameNotAllowSpace": "注册名称不可以有空格",
+  "NotSupportCurrentChainNFTTransfer": "暂不支持所在链NFT转赠",
+  "You need to pay": "你需要支付",
+  "You canceled the payment": "你取消了支付",
+  "Confirm Pay": "确认支付",
+  "metanameNotAllowEmoji": "暂不支持注册Emoji"
 }
