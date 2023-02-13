@@ -80,7 +80,11 @@
               </div>
             </div>
             <div class="name">
-              <UserName :name="userInfo.val!.name" :meta-name="userInfo.val!.metaName" />
+              <UserName
+                :name="userInfo.val!.name"
+                :meta-name="userInfo.val!.metaName"
+                :text-class="'!text-lg font-bold'"
+              />
             </div>
             <div class="metaid flex flex-align-center">
               <span class="id" @click="copy(userInfo.val!.metaId)"
