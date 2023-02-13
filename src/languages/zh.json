@@ -857,7 +857,8 @@
     "RenewSuccessTips": "🎉 恭喜您已成功续费 ",
     "RenewSuccessTips2": " ",
     "Renewal Fee": "续期费用",
-    "ReadyExpire": "即将到期"
+    "ReadyExpire": "即将到期",
+    "Issueing": "MetaName正常铸造中，请稍后再试"
   },
   "Menu": "菜单",
   "metanameNotAllowOverLenght": "注册名称长度不能超过63位字符",

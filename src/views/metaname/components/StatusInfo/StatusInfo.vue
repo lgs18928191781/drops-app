@@ -128,8 +128,9 @@ import PlainBtnVue from '../PlainBtn/PlainBtn.vue'
 import Navigation from '../Navigation/Navigation.vue'
 import { GetMetaNameInfo, GetOrder } from '@/api/wxcore'
 import { MetaNameOperateType } from '@/enum'
-import { GetExpiredUTC, loopExecution } from '@/utils/util'
+import { GetExpiredUTC, loopExecution, loopExecutionRun } from '@/utils/util'
 import { GetTx } from '@/api'
+import { error } from 'console'
 
 interface Props {
   orderId: string
@@ -193,30 +194,18 @@ const statusList = [
   },
 ]
 
-let timers = 1
 function getMetaName() {
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetMetaNameInfo(props.name).catch(error => {
-      ElMessage.error(error.message)
+      reject(error)
     })
     if (res) {
-      if (timers < 10) {
-        timers++
-        setTimeout(() => {
-          return getMetaName()
-        }, 1000)
+      if (res.registerState === 2) {
+        reject(new Error(i18n.t('MetaName.Issueing')))
       } else {
         metaName.val = res
         resolve()
       }
-      // if (res.registerState === 2) {
-      //   setTimeout(() => {
-      //     return getMetaName()
-      //   }, 1000)
-      // } else {
-      //   metaName.val = res
-      //   resolve()
-      // }
     }
   })
 }
@@ -278,7 +267,11 @@ if (props.name) {
       }
       if (order.val!.status === 3) {
         if (!metaName.val) {
-          await getMetaName()
+          await loopExecutionRun({
+            fun: getMetaName,
+          }).catch(error => {
+            ElMessage.error(error.message)
+          })
         }
         getTimeInfo()
       }

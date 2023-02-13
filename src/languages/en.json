@@ -865,7 +865,8 @@
     "RenewSuccessTips": "🎉 Congratulations!  ",
     "RenewSuccessTips2": "Successfully renew",
     "Look MetaName": "Check My MetaName",
-    "Renewal Fee": "Renewal Fees"
+    "Renewal Fee": "Renewal Fees",
+    "Issueing": "MetaName is casting normally, please try again later"
   },
   "Menu": "Menu",
   "metanameNotAllowMin": "Currently does not support 1-2 character registration",
