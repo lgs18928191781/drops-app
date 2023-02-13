@@ -46,7 +46,9 @@ interface Props {
   useCase?: 'community' | 'profile'
   selected?: any
 }
-const props = withDefaults(defineProps<Props>(), {})
+const props = withDefaults(defineProps<Props>(), {
+  useCase: 'community',
+})
 
 const emit = defineEmits(['change'])
 

@@ -1464,7 +1464,6 @@ export function loopExecution(
     const res = await loopExecutionRun({
       fun,
       funParams,
-      ...params!,
     }).catch(error => {
       reject(error)
     })
@@ -1474,36 +1473,35 @@ export function loopExecution(
   })
 }
 
-function loopExecutionRun(params: {
-  maxLoopCount: number
-  sleepTime: number
-  currentCount?: number
-  fun: (params: any) => Promise<any>
-  funParams: any
-  parentResolve?: () => any
-  parentReject?: (reason?: any) => void
+// 循环执行 递归 Promise 函数
+export function loopExecutionRun(params: {
+  fun: (params?: any) => Promise<any> // 需要递归的方法
+  funParams?: any // 方法的参数
+  maxLoopCount?: number // 最大循环次数
+  sleepTime?: number //
+  currentCount?: number // 当前循环次数
 }) {
   return new Promise<any>(async (resolve, reject) => {
-    if (!params.currentCount) params.currentCount = 1
-    const res = await params.fun(params.funParams).catch(error => {
-      debugger
-      if (params.currentCount! < params.maxLoopCount) {
-        setTimeout(() => {
-          loopExecutionRun({
-            ...params,
-            currentCount: params.currentCount! + 1,
-            parentResolve: params.parentResolve ? params.parentResolve : (resolve as () => any),
-            parentReject: params.parentReject ? params.parentReject : reject,
-          })
-        }, params.sleepTime)
-      } else {
-        if (params.parentReject) params.parentReject(error)
-        else reject(error)
+    const initParams = {
+      maxLoopCount: 10,
+      sleepTime: 1000,
+      currentCount: 1,
+    }
+    params = {
+      ...initParams,
+      ...params,
+    }
+    for (let i = 0; i < params.maxLoopCount!; i++) {
+      const res = await params.fun(params.funParams).catch(error => {
+        if (i == params.maxLoopCount! - 1) {
+          reject(error)
+        }
+      })
+      if (res || res === null) {
+        resolve(res)
+        break
       }
-    })
-    if (res) {
-      if (params.parentResolve) params.parentResolve(res)
-      else resolve(res)
+      await sleep(params.sleepTime)
     }
   })
 }
