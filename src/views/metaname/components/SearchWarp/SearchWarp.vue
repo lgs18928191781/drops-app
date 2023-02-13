@@ -34,9 +34,6 @@ const emit = defineEmits(['submit', 'error'])
 const metaNameStore = useMetaNameStore()
 
 function submit() {
-  if (import.meta.env.MODE === EnvMode.Mainnet) {
-    return ElMessage.info(i18n.t('Comming Soon'))
-  }
   const name = validateMetaName(value.value)
   if (name) {
     if (checkInputName(name)) {
