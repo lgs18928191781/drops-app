@@ -592,7 +592,6 @@ export class SDK {
 
       // 等待 确认支付
       const result = await this.awitSdkPayconfirm(option.payType!, totalAmount, balance!)
-      debugger
       if (result) {
         // 打钱地址
         let receive = this.getNodeTransactionsFirstReceive(transactionsList[0], params[0])
