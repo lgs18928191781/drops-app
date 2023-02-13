@@ -207,6 +207,8 @@ MetaName is a Decentralized, Open-sourced and Cross-chain Name System Based on M
           payOrderInfo.url = result.url
           isStartPay.value = true
         }
+      } else {
+        emit('update:loading', false)
       }
     }
   } catch (error) {

@@ -24,7 +24,10 @@
                 name +
                 '.meta ' +
                 $t('MetaName.RegisterSuccessTips2')
-              : $t('MetaName.RenewSuccessTips') + name + '.meta ' + $t('MetaName.RenewSuccessTips2')
+              : $t('MetaName.RenewSuccessTips') +
+                name +
+                '.metaid ' +
+                $t('MetaName.RenewSuccessTips2')
           }}
         </div>
 
@@ -196,8 +199,12 @@ function getMetaName() {
       ElMessage.error(error.message)
     })
     if (res) {
-      metaName.val = res
-      resolve()
+      if (res.registerState === 2) {
+        getMetaName()
+      } else {
+        metaName.val = res
+        resolve()
+      }
     }
   })
 }
