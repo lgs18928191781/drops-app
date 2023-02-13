@@ -215,9 +215,6 @@ const contactIcon = [
 ]
 
 async function toMine() {
-  if (import.meta.env.MODE === EnvMode.Mainnet) {
-    return ElMessage.info(i18n.t('Comming Soon'))
-  }
   await checkUserLogin()
   router.push({
     name: 'metaNameMine',
