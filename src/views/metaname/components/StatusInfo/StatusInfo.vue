@@ -200,7 +200,9 @@ function getMetaName() {
     })
     if (res) {
       if (res.registerState === 2) {
-        getMetaName()
+        setTimeout(() => {
+          return getMetaName()
+        }, 1000)
       } else {
         metaName.val = res
         resolve()
