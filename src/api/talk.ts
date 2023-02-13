@@ -132,23 +132,20 @@ export const getAtMeChannels = async (params?: any): Promise<any> => {
   // })
 
   return TalkApi.get(`/chat/homes/${metaId}`, { data: JSON.stringify(params) }).then(res => {
-    return (
-      res.data.data
-        .map((channel: any) => {
-          const channelSide = channel.from === metaId ? 'to' : 'from'
+    return res.data.data.map((channel: any) => {
+      const channelSide = channel.from === metaId ? 'to' : 'from'
 
-          channel.name = channel[`${channelSide}Name`]
-          channel.metaName = channel[`${channelSide}UserInfo`]?.metaName
-          channel.id = channel.metaId = channel[`${channelSide}`]
-          channel.avatarImage = channel[`${channelSide}AvatarImage`]
-          channel.publicKeyStr = channel[`${channelSide}PublicKey`]
-          channel.lastMessageTimestamp = channel.timestamp
-          channel.pastMessages = []
-          channel.newMessages = []
+      channel.name = channel[`${channelSide}Name`]
+      channel.metaName = channel[`${channelSide}UserInfo`]?.metaName
+      channel.id = channel.metaId = channel[`${channelSide}`]
+      channel.avatarImage = channel[`${channelSide}AvatarImage`]
+      channel.publicKeyStr = channel[`${channelSide}PublicKey`]
+      channel.lastMessageTimestamp = channel.timestamp
+      channel.pastMessages = []
+      channel.newMessages = []
 
-          return channel
-        })
-    )
+      return channel
+    })
   })
 }
 
@@ -184,7 +181,6 @@ export const getChannelMessages = async (
     const {
       data: { data: messages },
     } = await TalkApi.get(`/chat/${selfMetaId}/${channelId}?${query}`)
-    console.log({ messages })
 
     return messages
   }
@@ -243,9 +239,7 @@ export const grabRedPacket = async (params: any): Promise<any> => {
   const address = params.address
   const query = new URLSearchParams({ metaId, address }).toString()
 
-  return TalkApi.get(`/room/${channelId}/gift/${redPacketId}?${query}`).then(res => {
-    console.log(res)
-  })
+  return TalkApi.get(`/room/${channelId}/gift/${redPacketId}?${query}`).then(res => {})
 }
 
 // 获取某个频道的引用公告列表
