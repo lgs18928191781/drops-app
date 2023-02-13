@@ -22,7 +22,7 @@
             type === MetaNameOperateType.Register
               ? $t('MetaName.RegisterSuccessTips') +
                 name +
-                '.meta ' +
+                '.metaid ' +
                 $t('MetaName.RegisterSuccessTips2')
               : $t('MetaName.RenewSuccessTips') +
                 name +
