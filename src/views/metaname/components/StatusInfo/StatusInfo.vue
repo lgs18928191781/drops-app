@@ -193,13 +193,15 @@ const statusList = [
   },
 ]
 
+let timers = 1
 function getMetaName() {
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetMetaNameInfo(props.name).catch(error => {
       ElMessage.error(error.message)
     })
     if (res) {
-      if (res.registerState === 2) {
+      if (timers < 10) {
+        timers++
         setTimeout(() => {
           return getMetaName()
         }, 1000)
@@ -207,6 +209,14 @@ function getMetaName() {
         metaName.val = res
         resolve()
       }
+      // if (res.registerState === 2) {
+      //   setTimeout(() => {
+      //     return getMetaName()
+      //   }, 1000)
+      // } else {
+      //   metaName.val = res
+      //   resolve()
+      // }
     }
   })
 }
