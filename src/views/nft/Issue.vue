@@ -202,7 +202,6 @@ function addIssueItem(option: IssueNFTOption) {
 function getCurrentGenesisIndex(genesis?: GenesisItem | null) {
   if (!genesis) return 0
   else {
-    debugger
     const currentGenesisList = list.filter(
       item =>
         item.genesis &&
