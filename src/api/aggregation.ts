@@ -77,6 +77,7 @@ export const GetHotTopics = (params: {
 
 export const GetTopicbuzzs = (params: {
   page: number
+  langId?: number
   pageSize: number
   tag: string
 }): Promise<GetTopicbuzzsRes> => {
