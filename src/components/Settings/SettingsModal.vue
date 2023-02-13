@@ -22,7 +22,7 @@
     </header>
 
     <div class="list">
-      <div
+      <!-- <div
         class="item flex flex-align-center"
         @click="isShowEditProfile = true"
         v-if="userStore.isAuthorized"
@@ -36,7 +36,7 @@
         </span>
         <span class="flex1 name">{{ $t('Setting.Edit Profile') }}</span>
         <Icon class="right" name="down" />
-      </div>
+      </div> -->
       <div
         class="item flex flex-align-center"
         v-for="item in list"
