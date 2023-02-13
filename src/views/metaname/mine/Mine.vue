@@ -41,7 +41,10 @@
             >
               <Image class="cover" :src="item.icon" />
               <div class="cont flex1">
-                <div class="name">{{ item.name }}</div>
+                <div class="name flex flex-align-center">
+                  <span>{{ item.name }}</span
+                  >.metaid
+                </div>
                 <div :class="[remindExpired(item.expireDate) ? 'waringTime' : 'time']">
                   {{
                     remindExpired(item.expireDate)
