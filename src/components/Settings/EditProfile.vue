@@ -201,6 +201,7 @@ async function confirm() {
     }
 
     if (currentMetaName.val.name !== userStore.user!.metaName) {
+      console.log({ currentMetaName })
       paramsList.push({
         nodeName: NodeName.NftName,
         data: JSON.stringify({

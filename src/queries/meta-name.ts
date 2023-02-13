@@ -16,13 +16,15 @@ type MetaName = {
 
 const resolveSolution = (name: string) => {
   const suffix = name.split('.')[1]
-  let ns, solution
+  let ns, solution, chain
   if (suffix === 'eth') {
     ns = 'ENS'
     solution = 'ens'
+    chain = import.meta.env.VITE_ETH_CHAIN
   } else {
     ns = 'MetaName'
     solution = 'metacontract'
+    chain = 'mvc'
   }
 
   return { ns, solution }

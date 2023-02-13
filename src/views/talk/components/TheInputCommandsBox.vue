@@ -69,6 +69,8 @@ const handleImageChange = (e: Event) => {
   const target = e.target as HTMLInputElement
   const file = target.files?.[0]
 
+  // compress image
+
   if (file) {
     if (!isImage(file)) {
       console.log('not image')
