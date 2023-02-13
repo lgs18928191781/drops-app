@@ -22,7 +22,7 @@
       <div class="flex items-baseline space-x-2">
         <UserName
           :name="message.nickName"
-          :meta-name="message.userInfo.metaName"
+          :meta-name="message?.userInfo?.metaName"
           :text-class="'text-sm font-medium dark:text-gray-100'"
         />
         <div class="text-dark-300 dark:text-gray-400 text-xs">
