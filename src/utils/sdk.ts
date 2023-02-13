@@ -494,8 +494,8 @@ export class SDK {
       converting.push(transactions.currentNode.transaction)
     }
     // 6. NFT issue 交易
-    if (transactions.issueNFT?.transaction) {
-      converting.push(transactions.issueNFT.transaction)
+    if (transactions.nft?.issue?.transaction) {
+      converting.push(transactions.nft?.issue?.transaction)
     }
 
     // B. 将交易转换为step
@@ -567,12 +567,12 @@ export class SDK {
       // 构建tx 并机选总价
       let totalAmount = 0 // 总价
       let useSatoshis = 0
-      for (let [index, item] of params.entries()) {
-        const transactions = await this.createBrfcChildNodeTransactions(item)
+      for (let i = 0; i < params.length; i++) {
+        const transactions = await this.createBrfcChildNodeTransactions(params[i])
         transactionsList.push(transactions)
 
         //  + transactions 价格
-        totalAmount += this.getNodeTransactionsAmount(transactions, item.payTo)
+        totalAmount += this.getNodeTransactionsAmount(transactions, params[i].payTo)
         useSatoshis = totalAmount
       }
 
@@ -592,6 +592,7 @@ export class SDK {
 
       // 等待 确认支付
       const result = await this.awitSdkPayconfirm(option.payType!, totalAmount, balance!)
+      debugger
       if (result) {
         // 打钱地址
         let receive = this.getNodeTransactionsFirstReceive(transactionsList[0], params[0])
@@ -610,25 +611,24 @@ export class SDK {
         }
 
         // 使用utxo 组装 每個 新的transactions
-        for (let [index, transactions] of transactionsList.entries()) {
+        for (let i = 0; i < transactionsList.length; i++) {
           //  下一个请求开始的第一个地址
           const nextNodeReceiveAddress =
-            index < transactionsList.length - 1
-              ? this.getNodeTransactionsFirstReceive(transactionsList[index + 1], params[index + 1])
-                  .address
+            i < transactionsList.length - 1
+              ? this.getNodeTransactionsFirstReceive(transactionsList[i + 1], params[i + 1]).address
               : option.payType === SdkPayType.ME
               ? import.meta.env.VITE_CHANGE_ADDRESS
               : this.wallet!.rootAddress
-          transactions = await this.setUtxoForCreateChileNodeTransactions(
-            transactions,
+          transactionsList[i] = await this.setUtxoForCreateChileNodeTransactions(
+            transactionsList[i],
             currentUtxo!,
-            params[index],
+            params[i],
             nextNodeReceiveAddress
           )
-          if (index !== transactionsList.length - 1) {
+          if (i !== transactionsList.length - 1) {
             //  获取 下一个请求 要用的 utxo
             currentUtxo = await this.wallet!.utxoFromTx({
-              tx: this.getNodeTransactionsLastTx(transactions),
+              tx: this.getNodeTransactionsLastTx(transactionsList[i]),
             })
           }
         }
@@ -640,12 +640,12 @@ export class SDK {
           if (payToRes && payToRes.transaction) {
             await this.wallet?.provider.broadcast(payToRes.transaction.toString())
           }
-          for (let [index, transactions] of transactionsList.entries()) {
-            await this.broadcastNodeTransactions(transactions)
+          for (let i = 0; i < transactionsList.length; i++) {
+            await this.broadcastNodeTransactions(transactionsList[i])
             if (option.callback) {
               const result = await option.callback({
-                index,
-                transactions,
+                index: i,
+                transactions: transactionsList[i],
               })
               if (!result.isContinue) {
                 error = result.error
@@ -1176,7 +1176,7 @@ export class SDK {
                   noBroadcast: true,
                   metaOutputIndex: 0,
                   utxos: [utxo],
-                  changeAddres: lastChangeAddress,
+                  changeAddress: lastChangeAddress,
                 })
                 if (res) {
                   transactions.nft!.issue = {
@@ -1259,9 +1259,19 @@ export class SDK {
 
         // 广播 nft issue
         if (transactions.nft) {
-          for (let i in transactions.nft) {
-            // @ts-ignore
-            await this.wallet?.provider.broadcast(transactions.nft[i].transaction.toString())
+          // for (let i in transactions.nft) {
+          //   // @ts-ignore
+          //   await this.wallet?.provider.broadcast(transactions.nft[i].transaction.toString())
+          // }
+
+          if (transactions.nft.genesis?.transaction) {
+            await this.wallet?.provider.broadcast(transactions.nft.genesis.transaction.toString())
+          }
+          if (transactions.nft.issue?.transaction) {
+            await this.wallet?.provider.broadcast(transactions.nft.issue.transaction.toString())
+          }
+          if (transactions.nft.transfer?.transaction) {
+            await this.wallet?.provider.broadcast(transactions.nft.transfer.transaction.toString())
           }
         }
 

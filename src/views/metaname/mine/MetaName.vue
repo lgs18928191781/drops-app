@@ -314,6 +314,8 @@ function update(params: object) {
             ElMessage.success(i18n.t('MetaName.UpdateInfoSuccess'))
             resolve()
           }
+        } else {
+          resolve()
         }
       }
     } catch (error) {

@@ -19,7 +19,7 @@ export function getMetaNameOperateParams(params: {
     amount: number
   }>
 }) {
-  return new Promise<SendMetaNameTransationResult>(async (resolve, reject) => {
+  return new Promise<SendMetaNameTransationResult | null>(async (resolve, reject) => {
     try {
       const userStore = useUserStore()
       const { reqswapargs, years, op_code, info } = params
@@ -28,6 +28,7 @@ export function getMetaNameOperateParams(params: {
         requestIndex,
         years,
       }
+      let isConfirm = true
       if (op_code === MetaNameReqCode.register || op_code === MetaNameReqCode.updataInfo) {
         // register
         _params.infos = info
@@ -64,35 +65,42 @@ export function getMetaNameOperateParams(params: {
           isBroadcast: false,
           payType: SdkPayType.SPACE,
         })
-        if (res?.payToRes?.transaction) {
-          await userStore.showWallet.wallet!.provider!.broadcast(
-            res?.payToRes?.transaction.toString()
-          )
+        if (res) {
+          if (res?.payToRes?.transaction) {
+            await userStore.showWallet.wallet!.provider!.broadcast(
+              res?.payToRes?.transaction.toString()
+            )
+          }
+          if (op_code === MetaNameReqCode.updataInfo) {
+            _params.mvcOutputIndex = 0
+            _params.mvcRawTx = res!.transactionsList[0].sendMoney?.transaction.toString()
+          }
+          _params.nftRawTx = res!.transactionsList[
+            res!.transactionsList.length - 1
+          ].nft!.transfer?.transaction.toString()
+        } else {
+          isConfirm = false
+          resolve(null)
         }
-        if (op_code === MetaNameReqCode.updataInfo) {
-          _params.mvcOutputIndex = 0
-          _params.mvcRawTx = res!.transactionsList[0].sendMoney?.transaction.toString()
-        }
-        _params.nftRawTx = res!.transactionsList[
-          res!.transactionsList.length - 1
-        ].nft!.transfer?.transaction.toString()
       }
 
-      let registerMetaNameResp
-      if (op_code === MetaNameReqCode.updataInfo) {
-        registerMetaNameResp = await userStore.showWallet.wallet!.provider.gzip(
-          JSON.stringify(_params)
-        )
-      } else {
-        registerMetaNameResp = JSON.stringify(_params)
+      if (isConfirm) {
+        let registerMetaNameResp
+        if (op_code === MetaNameReqCode.updataInfo) {
+          registerMetaNameResp = await userStore.showWallet.wallet!.provider.gzip(
+            JSON.stringify(_params)
+          )
+        } else {
+          registerMetaNameResp = JSON.stringify(_params)
+        }
+        resolve({
+          registerMetaNameResp,
+          MvcToAddress: reqswapargs.mvcToAddress,
+          NftToAddress: reqswapargs.nftToAddress,
+          TxFee: reqswapargs.txFee,
+          FeePerYear: reqswapargs.feePerYear,
+        })
       }
-      resolve({
-        registerMetaNameResp,
-        MvcToAddress: reqswapargs.mvcToAddress,
-        NftToAddress: reqswapargs.nftToAddress,
-        TxFee: reqswapargs.txFee,
-        FeePerYear: reqswapargs.feePerYear,
-      })
     } catch (error) {
       reject(error)
     }
