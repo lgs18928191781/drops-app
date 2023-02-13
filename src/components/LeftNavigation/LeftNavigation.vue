@@ -91,7 +91,7 @@
         </router-link>
       </el-tooltip>
 
-      <div
+      <!-- <div
         class="border-dashed border-2 border-gray-200 dark:border-gray-600 w-13.5 h-13.5 flex items-center justify-center rounded-3xl text-dark-400 cursor-pointer hover:text-dark-800 hover:border-solid hover:border-dark-300 hover:bg-primary transition-all duration-300"
         v-if="userStore.isAuthorized"
         @click="
@@ -101,7 +101,7 @@
         "
       >
         <Icon name="plus" class="w-[24PX] h-[24PX]" />
-      </div>
+      </div> -->
     </div>
 
     <!-- modals -->
