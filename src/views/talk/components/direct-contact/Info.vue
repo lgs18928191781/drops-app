@@ -22,7 +22,7 @@
         <UserName
           :name="activeChannel.name"
           :meta-name="activeChannel.metaName"
-          :text-class="'!text-xl lg:!text-sm font-bold lg:font-normal'"
+          :text-class="'!text-xl lg:!text-sm font-bold lg:font-normal max-w-[120PX]'"
         />
         <div class="text-xs text-dark-300 dark:text-gray-400 whitespace-nowrap mt-1 lg:mt-0">
           <span>MetaID: </span>
