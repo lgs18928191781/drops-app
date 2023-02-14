@@ -525,6 +525,7 @@ declare interface GenesisItem {
   seriesName: string
   totalSupply: number
   sensibleId: string
+  metaId: string
 }
 
 declare interface Order {
