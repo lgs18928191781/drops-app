@@ -206,7 +206,7 @@ async function confirm() {
         nodeName: NodeName.NftName,
         data: JSON.stringify({
           type: currentMetaName.val.name === '' ? 'name' : 'nft', //string type 取值⻅下⽅
-          chain: 'mvc', //string type 链类型
+          chain: currentMetaName.val.chain, //string type 链类型
           name: currentMetaName.val.name, //string type, 图片路由
           codehash: currentMetaName.val.codeHash, //string type nft的codehash
           genesis: currentMetaName.val.genesis, //string type nft的genesis 或 nft的tokenAddress

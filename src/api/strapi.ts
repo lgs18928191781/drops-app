@@ -132,3 +132,14 @@ export const GetTemporaryUser = (params?: {
 export const GetMetaEggTask = (params?: { [key: string]: any }): Promise<MetaEggTaskItem[]> => {
   return Strapi.get('/meta-egg-tasks', { params })
 }
+
+export interface MetaNameConfig {
+  id: number
+  isOpen: boolean
+  published_at: string
+  created_at: string
+  updated_at: string
+}
+export const GetMetaNameConfig = (): Promise<MetaNameConfig> => {
+  return Strapi.get('/metaname-config')
+}

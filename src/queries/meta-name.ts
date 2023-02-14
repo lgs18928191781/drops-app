@@ -12,6 +12,7 @@ type MetaName = {
   communityId: string // 哈希值，创建社区时使用
   ns: NameSolution
   solution: ContractSolution
+  chain: 'mvc' | 'eth' | 'goerli'
 }
 
 const resolveSolution = (name: string) => {
@@ -27,12 +28,12 @@ const resolveSolution = (name: string) => {
     chain = 'mvc'
   }
 
-  return { ns, solution }
+  return { ns, solution, chain }
 }
 
 const dataTransformer = (res: any) => {
   const data: MetaName[] = res.data.results.items.map((item: any) => {
-    const { ns, solution } = resolveSolution(item.name)
+    const { ns, solution, chain } = resolveSolution(item.name)
 
     return {
       name: item.name,
@@ -42,6 +43,7 @@ const dataTransformer = (res: any) => {
       communityId: item.communityId,
       ns,
       solution,
+      chain,
     }
   })
 

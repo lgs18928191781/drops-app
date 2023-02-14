@@ -676,7 +676,8 @@
       "Price low to high": "Price low to high",
       "Number: X to 1": "Number: X to 1",
       "Number: 1 to X": "Number: 1 to X"
-    }
+    },
+    "IssueLoading": "Casting is in progress, please do not do other operations and wait patiently..."
   },
   "My NFT": "My NFT",
   "Done": "Done",
@@ -867,7 +868,8 @@
     "RenewSuccessTips": "🎉 Congratulations!  ",
     "RenewSuccessTips2": "Successfully renew",
     "Look MetaName": "Check My MetaName",
-    "Renewal Fee": "Renewal Fees"
+    "Renewal Fee": "Renewal Fees",
+    "Issueing": "MetaName is casting normally, please try again later"
   },
   "Menu": "Menu",
   "metanameNotAllowMin": "Currently does not support 1-2 character registration",

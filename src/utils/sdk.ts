@@ -563,6 +563,7 @@ export class SDK {
       const transactionsList: NodeTransactions[] = []
 
       let payToRes: CreateNodeRes | undefined = undefined
+      let payToResIsbBroadcast = false
 
       // 构建tx 并机选总价
       let totalAmount = 0 // 总价
@@ -609,53 +610,84 @@ export class SDK {
           payToRes = getUtxoRes.payToRes
         }
 
+        let err // 广播错误？
+
         // 使用utxo 组装 每個 新的transactions
         for (let i = 0; i < transactionsList.length; i++) {
-          //  下一个请求开始的第一个地址
-          const nextNodeReceiveAddress =
-            i < transactionsList.length - 1
-              ? this.getNodeTransactionsFirstReceive(transactionsList[i + 1], params[i + 1]).address
-              : option.payType === SdkPayType.ME
-              ? import.meta.env.VITE_CHANGE_ADDRESS
-              : this.wallet!.rootAddress
-          transactionsList[i] = await this.setUtxoForCreateChileNodeTransactions(
-            transactionsList[i],
-            currentUtxo!,
-            params[i],
-            nextNodeReceiveAddress
-          )
-          if (i !== transactionsList.length - 1) {
-            //  获取 下一个请求 要用的 utxo
-            currentUtxo = await this.wallet!.utxoFromTx({
-              tx: this.getNodeTransactionsLastTx(transactionsList[i]),
-            })
+          try {
+            //  下一个请求开始的第一个地址
+            const nextNodeReceiveAddress =
+              i < transactionsList.length - 1
+                ? this.getNodeTransactionsFirstReceive(transactionsList[i + 1], params[i + 1])
+                    .address
+                : option.payType === SdkPayType.ME
+                ? import.meta.env.VITE_CHANGE_ADDRESS
+                : this.wallet!.rootAddress
+            transactionsList[i] = await this.setUtxoForCreateChileNodeTransactions(
+              transactionsList[i],
+              currentUtxo!,
+              params[i],
+              nextNodeReceiveAddress
+            )
+
+            // 广播
+            if (option.isBroadcast) {
+              // 广播 打钱操作
+              if (payToRes && payToRes.transaction && !payToResIsbBroadcast) {
+                await this.wallet?.provider.broadcast(payToRes.transaction.toString())
+                payToResIsbBroadcast = true
+              }
+              await this.broadcastNodeTransactions(transactionsList[i])
+              if (option.callback) {
+                const result = await option.callback({
+                  index: i,
+                  transactions: transactionsList[i],
+                })
+                if (!result.isContinue) {
+                  err = new Error(result.error)
+                  break
+                }
+              }
+            }
+
+            if (i !== transactionsList.length - 1) {
+              //  获取 下一个请求 要用的 utxo
+              currentUtxo = await this.wallet!.utxoFromTx({
+                tx: this.getNodeTransactionsLastTx(transactionsList[i]),
+              })
+            }
+          } catch (error) {
+            err = error
+          }
+
+          if (err) {
+            break
           }
         }
 
         // 广播
-        let error
-        if (option.isBroadcast) {
-          // 广播 打钱操作
-          if (payToRes && payToRes.transaction) {
-            await this.wallet?.provider.broadcast(payToRes.transaction.toString())
-          }
-          for (let i = 0; i < transactionsList.length; i++) {
-            await this.broadcastNodeTransactions(transactionsList[i])
-            if (option.callback) {
-              const result = await option.callback({
-                index: i,
-                transactions: transactionsList[i],
-              })
-              if (!result.isContinue) {
-                error = result.error
-                break
-              }
-            }
-          }
-        }
+        // if (option.isBroadcast) {
+        //   // 广播 打钱操作
+        //   if (payToRes && payToRes.transaction) {
+        //     await this.wallet?.provider.broadcast(payToRes.transaction.toString())
+        //   }
+        //   for (let i = 0; i < transactionsList.length; i++) {
+        //     await this.broadcastNodeTransactions(transactionsList[i])
+        //     if (option.callback) {
+        //       const result = await option.callback({
+        //         index: i,
+        //         transactions: transactionsList[i],
+        //       })
+        //       if (!result.isContinue) {
+        //         error = result.error
+        //         break
+        //       }
+        //     }
+        //   }
+        // }
 
-        if (error) {
-          reject(new Error(error))
+        if (err) {
+          reject(err)
         } else {
           resolve({
             payToRes: payToRes,

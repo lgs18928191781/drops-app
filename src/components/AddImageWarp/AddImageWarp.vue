@@ -3,7 +3,7 @@
     <div class="add-image flex flex-align-center flex-pack-center">
       <div class="image-warp" v-if="attachment">
         <img :src="attachment.url" />
-        <div class="remove">
+        <div class="remove" @click="emit('update:attachment', undefined)">
           <div class="remove-bg"></div>
           <div class="name">{{ $t('NFT.Remove') }}</div>
         </div>
