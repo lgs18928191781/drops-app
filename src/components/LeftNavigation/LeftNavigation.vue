@@ -133,7 +133,7 @@ function getCommunityKey(community: Community) {
   if (!community.metaName) return community.id
 
   const originalMetaName = community.metaName
-  return originalMetaName.includes('.') ? originalMetaName : `${originalMetaName}.meta`
+  return originalMetaName.includes('.') ? originalMetaName : `${originalMetaName}.metaid`
 }
 
 const apps = reactive([

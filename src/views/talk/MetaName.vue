@@ -24,8 +24,9 @@ async function resolveMetaName() {
 
   const { metaName } = route.params as { metaName: string }
   // 带.meta后缀的常规名，则先裁掉后缀；否则直接解析
-  const metaNameWithoutSuffix = metaName.endsWith('.meta')
-    ? metaName.slice(0, metaName.length - 5)
+  const metaidSuffix = '.metaid'
+  const metaNameWithoutSuffix = metaName.endsWith(metaidSuffix)
+    ? metaName.slice(0, metaName.length - metaidSuffix.length)
     : metaName
 
   // 解析metaName：sha256一次
