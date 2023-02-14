@@ -73,7 +73,7 @@ export class SDK {
   isInitSdked = false
   network = Network.mainnet
   bfrcNodeList: { nodeName: NodeName; data: CreateNodeRes }[] = [] // 存储Brfc节点， 防止未广播时重复构建
-  metaFileSha256TxIdLIst: { sha256: string; txId: string }[] = [] // 存储metaFileSha256TxId， 防止未广播时重复构建
+  metaFileSha256TxIdList: { sha256: string; txId: string }[] = [] // 存储metaFileSha256TxId， 防止未广播时重复构建
 
   constructor(network: any) {
     this.network = network
@@ -1129,7 +1129,7 @@ export class SDK {
                 const fileSuffix = params.attachments![i].fileName.split('.')[
                   params.attachments![i].fileName.split('.').length - 1
                 ]
-                params.data = params.data!.replace(
+                params.data = params.data!.replaceAll(
                   `$[${i}]`,
                   transactions.metaFiles[i].transaction.id + `.${fileSuffix}`
                 )
