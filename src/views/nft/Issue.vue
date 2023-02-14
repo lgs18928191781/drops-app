@@ -1,7 +1,7 @@
 <template>
   <div class="nft-issue">
     <div class="nft-issue-header">
-      <header class="flex flex-align-center">
+      <header class="flex flex-align-center flex-pack-center">
         <div class="flex1">
           <span class="title">{{ $t('NFT.Issue NFT') }}</span>
         </div>
@@ -21,7 +21,11 @@
     </div>
 
     <div class="issue-list">
-      <div class="issue-item flex flex-align-center" v-for="item in list" :key="item.uuid">
+      <div
+        class="issue-item flex flex-align-center flex-pack-center"
+        v-for="item in list"
+        :key="item.uuid"
+      >
         <ElForm
           :model="item"
           :label-position="'top'"
@@ -131,9 +135,12 @@ import IssueModalVue, { IssueNFTOption } from './components/IssueModal.vue'
 import { v1 } from 'uuid'
 import { useGenesisStore } from '@/stores/genesis'
 import AddImageWarpVue from '@/components/AddImageWarp/AddImageWarp.vue'
+import { openLoading } from '@/utils/util'
+import { useI18n } from 'vue-i18n'
 
 const userStore = useUserStore()
 const genesisStore = useGenesisStore()
+const i18n = useI18n()
 
 const isShowOption = ref(false)
 
@@ -217,6 +224,9 @@ function getCurrentGenesisIndex(genesis?: GenesisItem | null) {
 }
 
 async function confirmIssue() {
+  const loading = openLoading({
+    text: i18n.t('NFT.IssueLoading'),
+  })
   const taskParams: any = []
   for (let i = 0; i < list.length; i++) {
     const params = {
@@ -240,18 +250,24 @@ async function confirmIssue() {
       attachments: [list[i].cover, list[i].sourceFile],
     })
   }
-  const response = await userStore.showWallet.batchCreateBrfcChildNode(taskParams, {
-    callback: params => {
-      return new Promise(resolve => {
-        console.log(params.transactions)
-        resolve({
-          isContinue: true,
+  try {
+    const response = await userStore.showWallet.batchCreateBrfcChildNode(taskParams, {
+      callback: params => {
+        return new Promise(resolve => {
+          console.log(params.transactions)
+          resolve({
+            isContinue: true,
+          })
         })
-      })
-    },
-  })
-  if (response) {
-    debugger
+      },
+    })
+    if (response) {
+      debugger
+    } else if (response === null) {
+      loading.close()
+    }
+  } catch (error) {
+    ElMessage.error((error as any).message)
   }
 }
 

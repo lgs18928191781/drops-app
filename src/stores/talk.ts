@@ -98,7 +98,7 @@ export const useTalkStore = defineStore('talk', {
         const metaName = this.activeCommunity.metaName
         // 如果不带后缀，就加上
         if (!metaName.includes('.')) {
-          communitySymbol = metaName + '.meta'
+          communitySymbol = metaName + '.metaid'
         } else {
           communitySymbol = metaName
         }

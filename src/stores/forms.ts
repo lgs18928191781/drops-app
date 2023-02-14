@@ -347,7 +347,7 @@ export const useRedPacketFormStore = defineStore('redPacketForm', {
     validateAmount() {
       // 每个人最少 1000 sat（0.00001 Space）
       const minAmount = 1000 * this.quantity
-      const maxAmount = 1_000_000
+      const maxAmount = 200_000_000 // 2 Space = 200_000_000 sat
       if (this.amount < minAmount) {
         this.amount = minAmount
       }
@@ -359,8 +359,8 @@ export const useRedPacketFormStore = defineStore('redPacketForm', {
       if (this.each < 1000) {
         this.each = 1000
       }
-      if (this.each > 1_000_000) {
-        this.each = 1_000_000
+      if (this.each > 200_000_000) {
+        this.each = 200_000_000
       }
     },
 

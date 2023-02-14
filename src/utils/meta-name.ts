@@ -8,8 +8,9 @@ export function isMetaName(name: string) {
 
 export async function resolveMetaName(metaName: string) {
   // 带.meta后缀的常规名，则先裁掉后缀；否则直接解析
-  let metaNameWithoutSuffix = metaName.endsWith('.meta')
-    ? metaName.slice(0, metaName.length - 5)
+  const metaidSuffix = '.metaid'
+  let metaNameWithoutSuffix = metaName.endsWith(metaidSuffix)
+    ? metaName.slice(0, metaName.length - metaidSuffix.length)
     : metaName
 
   // 转为小写（白名单的除外）

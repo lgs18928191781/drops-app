@@ -22,7 +22,7 @@
       <div class="flex items-baseline justify-between self-stretch">
         <UserName
           :name="contact.name"
-          :meta-name="contact.metaName"
+          :meta-name="contact?.metaName"
           :no-tag="true"
           :text-class="'font-medium dark:text-gray-100 max-w-[96PX]'"
         />
@@ -72,7 +72,7 @@ const contact = computed<any>(() => {
 
   return {
     name: props.session.name || props.session[`${contactSide}Name`],
-    metaName: props.session[`${contactSide}UserInfo`].metaName,
+    metaName: props.session[`${contactSide}UserInfo`]?.metaName || '',
     metaId: props.session.id,
     lastMessage: props.session.lastMessage,
     lastMessageTimestamp: props.session.lastMessageTimestamp,
