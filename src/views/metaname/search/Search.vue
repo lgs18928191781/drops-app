@@ -119,7 +119,7 @@ import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { payPlatformList } from '@/config'
 import { useUserStore } from '@/stores/user'
-import { PayPlatform } from '@/enum'
+import { EnvMode, PayPlatform } from '@/enum'
 import PayMsg from '../components/PayMsg/PayMsg.vue'
 import SearchWarp from '../components/SearchWarp/SearchWarp.vue'
 import { useRoute } from 'vue-router'
@@ -243,7 +243,11 @@ function toRegister() {
 
 GetMetaNameConfig()
   .then(res => {
-    isOpen.value = res.isOpen
+    if (import.meta.env.MODE === EnvMode.Mainnet) {
+      isOpen.value = res.isOpen
+    } else {
+      isOpen.value = true
+    }
     isSkeleton.value = false
     if (route.query.metaName) {
       const result = validateMetaName(route.query.metaName as string)

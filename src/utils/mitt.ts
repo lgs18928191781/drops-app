@@ -7,4 +7,5 @@ export enum MittEvent {
   RemoveBuzz = 'RemoveBuzz',
   FollowUser = 'FollowUser',
   SellNFT = 'SellNFT',
+  ChangeLoginUser = 'ChangeLoginUser',
 }

@@ -119,12 +119,19 @@ function changePayType(item: PayPlatformItem) {
 function setCurrencyAmount() {
   if (currentPayPlatform.value === PayPlatform.UnionPay) {
     currencyAmount.value = props.price
-  } else if (currentPayPlatform.value === PayPlatform.ETH) {
-    currencyAmount.value = getCurrencyAmount(props.price, ToCurrency.USD, ToCurrency.ETH)
-  } else if (currentPayPlatform.value === PayPlatform.BSV) {
-    currencyAmount.value = getCurrencyAmount(props.price, ToCurrency.USD, ToCurrency.BSV)
-  } else if (currentPayPlatform.value === PayPlatform.POLYGON) {
-    currencyAmount.value = getCurrencyAmount(props.price, ToCurrency.USD, ToCurrency.POLYGON)
+  } else {
+    const targes = {
+      [PayPlatform.ETH]: ToCurrency.ETH,
+      [PayPlatform.BSV]: ToCurrency.BSV,
+      [PayPlatform.POLYGON]: ToCurrency.POLYGON,
+      [PayPlatform.SPACE]: ToCurrency.MVC,
+    }
+    currencyAmount.value = getCurrencyAmount(
+      props.price,
+      ToCurrency.USD,
+      // @ts-ignore
+      targes[currentPayPlatform.value]
+    )
   }
 }
 

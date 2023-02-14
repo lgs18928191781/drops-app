@@ -483,6 +483,7 @@ declare interface NodeTransactions {
     issue?: {
       transaction: bsv.Transaction
       txId: string
+      tokenIndex: string
     }
     genesis?: {
       transaction: bsv.Transaction
@@ -525,6 +526,7 @@ declare interface GenesisItem {
   seriesName: string
   totalSupply: number
   sensibleId: string
+  metaId: string
 }
 
 declare interface Order {

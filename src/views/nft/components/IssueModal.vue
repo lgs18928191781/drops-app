@@ -182,15 +182,15 @@ export interface IssueNFTOption {
   isSameName: boolean
   desc: string
   isSameDesc: boolean
-  cover: null | AttachmentItem
+  cover?: AttachmentItem
   isSameCover: boolean
   isSoureFileSameCover: boolean
   count: number
   acceptAddress: string
   isSameAcceptAddress: boolean
-  sourceFile: null | AttachmentItem
+  sourceFile?: AttachmentItem
   isSameSourceFile: boolean
-  genesis: GenesisItem | null
+  genesis?: GenesisItem
   isSameGenesis: boolean
 }
 </script>
@@ -219,14 +219,14 @@ const form: IssueNFTOption = reactive({
   isSameName: false,
   desc: '',
   isSameDesc: false,
-  cover: null,
+  cover: undefined,
   isSameCover: false,
   count: 1,
   acceptAddress: userStore.user?.address || '',
   isSameAcceptAddress: false,
-  sourceFile: null,
+  sourceFile: undefined,
   isSameSourceFile: false,
-  genesis: null,
+  genesis: undefined,
   isSameGenesis: false,
   isSoureFileSameCover: false,
 })

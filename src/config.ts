@@ -159,6 +159,18 @@ export const payPlatformList: PayPlatformItem[] = [
     suffix: false,
   },
   {
+    icon: MVC,
+    name: () => {
+      // @ts-ignore
+      return `MVC${i18n.global.locale === Lang.ZH ? '' : ' '}${i18n.global.t('Pay')}`
+    },
+    platform: PayPlatform.SPACE,
+    background: '#108EE9',
+    key: 'MVC',
+    disabled: () => false,
+    suffix: false,
+  },
+  {
     icon: SandPayIcon,
     name: () => {
       // @ts-ignore

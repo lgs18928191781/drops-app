@@ -1,27 +1,23 @@
 import { defineStore } from 'pinia'
 import { useUserStore } from './user'
+import { DB } from '@/utils/db'
+import { Mitt, MittEvent } from '@/utils/mitt'
 
-const userStore = useUserStore()
-const key = `UserGenesis_${userStore.user?.metaId}`
-const genesis = !userStore.isAuthorized
-  ? []
-  : localStorage.getItem(key)
-  ? JSON.parse(localStorage.getItem(key)!)
-  : []
 export const useGenesisStore = defineStore('genesis', {
   state: () =>
     <
       {
         list: GenesisItem[]
+        currentMetaId?: string
       }
     >{
-      list: genesis,
+      list: [],
     },
   getters: {},
   actions: {
     add: function(genesis: GenesisItem) {
       this.list.unshift(genesis)
-      localStorage.setItem(key, JSON.stringify([...this.list]))
+      DB.genesis.add(genesis)
     },
     updateCurrentTotalSupply: function(params: {
       genesis: string
@@ -29,15 +25,27 @@ export const useGenesisStore = defineStore('genesis', {
       count?: number
     }) {
       const index = this.list.findIndex(
-        item => item.codehash === params.codehash && item.genesis === params.codehash
+        item => item.codehash === params.codehash && item.genesis === params.genesis
       )
       if (index !== -1) {
-        this.list[index].totalSupply = params.count
+        this.list[index].currentTotalSupply = params.count
           ? params.count
-          : this.list[index].totalSupply + 1
+          : this.list[index].currentTotalSupply + 1
 
         //  更新本地数据
-        localStorage.setItem(key, JSON.stringify([...this.list]))
+        DB.genesis.update(params.genesis, this.list[index])
+      }
+    },
+    initGenesis: async function() {
+      const userStore = useUserStore()
+      if (userStore.isAuthorized) {
+        const genesisLlist = await DB.genesis
+          .where('metaId')
+          .equals(userStore.user!.metaId)
+          .toArray()
+        this.list = genesisLlist
+      } else {
+        this.list = []
       }
     },
   },

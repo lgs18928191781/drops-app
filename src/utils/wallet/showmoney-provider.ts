@@ -213,24 +213,26 @@ export default class ShowmoneyProvider {
     const url = `${chain === HdWalletChain.MVC ? this.metaSvApi : this.bsvMetaSvApi}${path}`
     const Http = new HttpRequests()
     let res
-    try {
-      if (method === 'get') {
-        res = await Http.getFetch(url, params, { headers })
-      } else {
-        res = await Http.postFetch(url, params, { headers })
-      }
-    } catch (error) {
-      const mirrorUrl = this.metaSvMirror + path
-      if (method === 'get') {
-        res = await Http.getFetch(mirrorUrl, params, { headers: headers })
-      } else {
-        res = await Http.postFetch(mirrorUrl, params, { headers: headers })
-      }
+    // debugger
+    if (method === 'get') {
+      res = await Http.getFetch(url, params, { headers })
+    } else {
+      res = await Http.postFetch(url, params, { headers })
     }
-    if (!res) {
-      throw new Error('Request Error metasv -- ')
+    // try {
+
+    // } catch (error) {
+
+    // const mirrorUrl = this.metaSvMirror + path
+    // if (method === 'get') {
+    //   res = await Http.getFetch(mirrorUrl, params, { headers: headers })
+    // } else {
+    //   res = await Http.postFetch(mirrorUrl, params, { headers: headers })
+    // }
+    // }
+    if (res) {
+      return res
     }
-    return res
   }
 
   public async getMetaId(rootAddress: string): Promise<string | null> {
@@ -347,6 +349,7 @@ export default class ShowmoneyProvider {
     return new Promise(async (resolve, reject) => {
       const res = await this.callMetasvApi(`/xpubLite/${xpub}/balance`, {}, 'get', chain).catch(
         error => {
+          debugger
           reject(error)
         }
       )

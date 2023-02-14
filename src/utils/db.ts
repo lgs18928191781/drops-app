@@ -8,12 +8,15 @@ export interface MetafileSchems {
   thumbnail?: Blob
   normal?: Blob
 }
+
 export class DBClass extends Dexie {
   metafiles!: Table<MetafileSchems>
+  genesis!: Table<GenesisItem>
   constructor() {
     super('show3.0')
-    this.version(2).stores({
-      metafiles: 'txId, data, thumbnail, normal', // Primary key and indexed props
+    this.version(3).stores({
+      metafiles: 'txId', // Primary key and indexed props
+      genesis: 'genesis, metaId', // Primary key and indexed props
     })
   }
 
