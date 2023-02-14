@@ -25,12 +25,12 @@ export const useGenesisStore = defineStore('genesis', {
       count?: number
     }) {
       const index = this.list.findIndex(
-        item => item.codehash === params.codehash && item.genesis === params.codehash
+        item => item.codehash === params.codehash && item.genesis === params.genesis
       )
       if (index !== -1) {
-        this.list[index].totalSupply = params.count
+        this.list[index].currentTotalSupply = params.count
           ? params.count
-          : this.list[index].totalSupply + 1
+          : this.list[index].currentTotalSupply + 1
 
         //  更新本地数据
         DB.genesis.update(params.genesis, this.list[index])

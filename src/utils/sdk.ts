@@ -73,6 +73,7 @@ export class SDK {
   isInitSdked = false
   network = Network.mainnet
   bfrcNodeList: { nodeName: NodeName; data: CreateNodeRes }[] = [] // 存储Brfc节点， 防止未广播时重复构建
+  metaFileSha256TxIdLIst: { sha256: string; txId: string }[] = [] // 存储metaFileSha256TxId， 防止未广播时重复构建
 
   constructor(network: any) {
     this.network = network
