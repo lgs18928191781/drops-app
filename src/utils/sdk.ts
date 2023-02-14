@@ -879,6 +879,7 @@ export class SDK {
                         return response.fee
                       },
                     },
+                    tokenIndex: '0',
                   }
                 }
               }
@@ -1211,6 +1212,7 @@ export class SDK {
                 })
                 if (res) {
                   transactions.nft!.issue = {
+                    tokenIndex: res.tokenIndex!,
                     transaction: res.tx,
                     // @ts-ignore
                     txId: res!.txid!,

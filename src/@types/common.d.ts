@@ -483,6 +483,7 @@ declare interface NodeTransactions {
     issue?: {
       transaction: bsv.Transaction
       txId: string
+      tokenIndex: string
     }
     genesis?: {
       transaction: bsv.Transaction
