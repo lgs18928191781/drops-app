@@ -45,9 +45,11 @@
 </template>
 
 <script lang="ts" setup>
+import { computed, ref } from 'vue'
+import Compressor from 'compressorjs'
+
 import { isFileTooLarge, isImage, MessageType, sendMessage } from '@/utils/talk'
 import { FileToAttachmentItem } from '@/utils/util'
-import { computed, ref } from 'vue'
 import { useUserStore } from '@/stores/user'
 
 const props = defineProps(['currentChannel'])

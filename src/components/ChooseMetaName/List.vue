@@ -121,7 +121,6 @@ const {
     fetchMetaNames(address.value!, props.ns, props.useCase, pageParam),
   getNextPageParam: lastPage => {
     // 不满一页，说明没有更多了
-    console.log({ lastPage, initPagination })
     if (lastPage.data.length < initPagination.pageSize) return undefined
 
     if (!lastPage.flag) return undefined
