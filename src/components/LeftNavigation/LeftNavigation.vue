@@ -91,9 +91,9 @@
         </router-link>
       </el-tooltip>
 
-      <!-- <div
+      <div
         class="border-dashed border-2 border-gray-200 dark:border-gray-600 w-13.5 h-13.5 flex items-center justify-center rounded-3xl text-dark-400 cursor-pointer hover:text-dark-800 hover:border-solid hover:border-dark-300 hover:bg-primary transition-all duration-300"
-        v-if="userStore.isAuthorized && !isProduction"
+        v-if="userStore.isAuthorized && (!isProduction || isInWhitelist)"
         @click="
           userStore.isAuthorized
             ? (layout.isShowCreateCommunityModal = true)
@@ -101,7 +101,7 @@
         "
       >
         <Icon name="plus" class="w-[24PX] h-[24PX]" />
-      </div> -->
+      </div>
     </div>
 
     <!-- modals -->
@@ -129,6 +129,8 @@ const route = useRoute()
 const rootStore = useRootStore()
 const i18n = useI18n()
 const isProduction = import.meta.env.MODE === 'mainnet'
+const whiteList = ['7a7c301023d20f8dd3af3a4461f8e9726256286cc3c79b7fb0673a4a0d7d4625']
+const isInWhitelist = talk.selfMetaId && whiteList.includes(talk.selfMetaId)
 
 function getCommunityKey(community: Community) {
   if (!community.metaName) return community.id
