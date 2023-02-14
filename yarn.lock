@@ -287,7 +287,7 @@
 
 "@element-plus/icons-vue@^2.0.10", "@element-plus/icons-vue@^2.0.6":
   version "2.0.10"
-  resolved "https://registry.npmmirror.com/@element-plus/icons-vue/-/icons-vue-2.0.10.tgz#60808d613c3dbdad025577022be8a972739ade21"
+  resolved "https://registry.yarnpkg.com/@element-plus/icons-vue/-/icons-vue-2.0.10.tgz#60808d613c3dbdad025577022be8a972739ade21"
   integrity sha512-ygEZ1mwPjcPo/OulhzLE7mtDrQBWI8vZzEWSNB2W/RNCRjoQGwbaK4N8lV4rid7Ts4qvySU3njMN7YCiSlSaTQ==
 
 "@esbuild/android-arm@0.15.18":
@@ -2567,6 +2567,11 @@ bluebird@^3.5.0, bluebird@^3.7.2:
   resolved "https://registry.npmmirror.com/bluebird/-/bluebird-3.7.2.tgz#9f229c15be272454ffa973ace0dbee79a1b0c36f"
   integrity sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==
 
+blueimp-canvas-to-blob@^3.29.0:
+  version "3.29.0"
+  resolved "https://registry.yarnpkg.com/blueimp-canvas-to-blob/-/blueimp-canvas-to-blob-3.29.0.tgz#d965f06cb1a67fdae207a2be56683f55ef531466"
+  integrity sha512-0pcSSGxC0QxT+yVkivxIqW0Y4VlO2XSDPofBAqoJ1qJxgH9eiUDLv50Rixij2cDuEfx4M6DpD9UGZpRhT5Q8qg==
+
 bn.js@4.11.8:
   version "4.11.8"
   resolved "https://registry.npmmirror.com/bn.js/-/bn.js-4.11.8.tgz#2cde09eb5ee341f484746bb0309b3253b1b1442f"
@@ -3248,6 +3253,14 @@ component-emitter@^1.2.1:
   version "1.3.0"
   resolved "https://registry.npmmirror.com/component-emitter/-/component-emitter-1.3.0.tgz#16e4070fba8ae29b679f2215853ee181ab2eabc0"
   integrity sha512-Rd3se6QB+sO1TwqZjscQrurpEPIfO0/yYnSin6Q/rD3mOutHvUrCAhJub3r90uNb+SESBuE0QYoB90YdfatsRg==
+
+compressorjs@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/compressorjs/-/compressorjs-1.1.1.tgz#54c147cf37fb38828b08c48646d0258d52faf050"
+  integrity sha512-SysRuUPfmUNoq+RviE0iMFVUmoX2q/x+7PkEPUmk6NGkd85hDrmvujx0Qtp8UCGA6KMe5kuodsylPQcNaLf60w==
+  dependencies:
+    blueimp-canvas-to-blob "^3.29.0"
+    is-blob "^2.1.0"
 
 concat-map@0.0.1:
   version "0.0.1"
@@ -5533,6 +5546,11 @@ is-binary-path@~2.1.0:
   integrity sha512-ZMERYes6pDydyuGidse7OsHxtbI7WVeUEozgR/g7rd0xUimYNlvZRE/K2MgZTjWy725IfelLeVcEM97mmtRGXw==
   dependencies:
     binary-extensions "^2.0.0"
+
+is-blob@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/is-blob/-/is-blob-2.1.0.tgz#e36cd82c90653f1e1b930f11baf9c64216a05385"
+  integrity sha512-SZ/fTft5eUhQM6oF/ZaASFDEdbFVe89Imltn9uZr03wdKMcWNVYSMjQPFtg05QuNkt5l5c135ElvXEQG0rk4tw==
 
 is-buffer@^1.1.4, is-buffer@^1.1.5, is-buffer@~1.1.6:
   version "1.1.6"

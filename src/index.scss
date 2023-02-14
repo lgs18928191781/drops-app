@@ -260,6 +260,11 @@ pre {
 
   &.ens {
     background-image: linear-gradient(to bottom right, #4F40F5, #7EDFFA);
+    text-shadow: rgba(126, 223, 250, 0.3) 0 -1PX 1PX;
+
+    .dark & {
+      text-shadow: rgba(126, 223, 250, 0.4) 0 -1PX 4PX;
+    }
   }
 
   .dark & {

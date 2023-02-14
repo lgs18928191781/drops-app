@@ -551,6 +551,7 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
     avatarImage: userStore.user?.avatarImage || '',
     metaId: userStore.user?.metaId || 'undefined',
     nickName: userStore.user?.name || '',
+    userInfo: userStore.user?.metaName ? { metaName: userStore.user?.metaName } : {},
     timestamp: Date.now(), // 服务端返回的是毫秒，所以模拟需要乘以1000
     txId: '',
     encryption,
@@ -629,6 +630,9 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
     metaId: userStore.user?.metaId || 'undefined',
     from: userStore.user?.metaId,
     nickName: userStore.user?.name || '',
+    fromName: userStore.user?.name || '',
+    userInfo: userStore.user?.metaName ? { metaName: userStore.user?.metaName } : {},
+    fromUserInfo: userStore.user?.metaName ? { metaName: userStore.user?.metaName } : {},
     timestamp, // 服务端返回的是毫秒，所以模拟需要乘以1000
     txId: '',
     encryption: encrypt,
@@ -728,6 +732,7 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
     metaId: userStore.user?.metaId || 'undefined',
     from: userStore.user?.metaId,
     nickName: userStore.user?.name || '',
+    userInfo: userStore.user?.metaName ? { metaName: userStore.user?.metaName } : {},
     timestamp: timestamp * 1000, // 服务端返回的是毫秒，所以模拟需要乘以1000
     txId: '',
     encryption: encrypt,
