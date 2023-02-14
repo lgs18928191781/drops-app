@@ -1033,6 +1033,25 @@ export function getCurrencyAmount(
       // mvc -> eth
       return 0
     }
+  } else if (toCurrency === ToCurrency.MVC) {
+    if (currency === 'CNY') {
+      let result = new Decimal(
+        new Decimal(price)
+          .div(100)
+          .div(rate!.price.CNY)
+          .toFixed(5)
+      ).toNumber()
+      if (result < 0.00001) result = 0.00001
+      return result
+    } else if (currency === ToCurrency.USD) {
+      // usd -> eth
+      let result = new Decimal(new Decimal(price).div(rate!.price.USD).toFixed(5)).toNumber()
+      if (result < 0.00001) result = 0.00001
+      return result
+    } else {
+      // mvc -> eth
+      return 0
+    }
   } else {
     //  USD
 

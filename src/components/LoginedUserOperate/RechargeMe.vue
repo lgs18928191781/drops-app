@@ -28,6 +28,7 @@
                 <PayTypeDropdownVue
                   v-model="isShowPayTypes"
                   v-model:current-pay-platform="currentPayPlatform"
+                  :is-me="true"
                   @change="onPayPlatformChange"
                 />
               </div>

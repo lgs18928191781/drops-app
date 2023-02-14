@@ -151,7 +151,14 @@
 
 <script setup lang="ts">
 import { GetOrderAmout, PayOrderConfirm } from '@/api/pay'
-import { HdWalletChain, PayPlatform, PayPlatformUnit, PayStatus, WalletTxVersion } from '@/enum'
+import {
+  Chains,
+  HdWalletChain,
+  PayPlatform,
+  PayPlatformUnit,
+  PayStatus,
+  WalletTxVersion,
+} from '@/enum'
 import { isApp, isIOS, isIosApp, isWechat, useRootStore } from '@/stores/root'
 import Decimal from 'decimal.js-light'
 import {
@@ -184,6 +191,7 @@ import { BigNumber, ethers } from 'ethers'
 import { useI18n } from 'vue-i18n'
 import { Wallet } from 'meta-contract'
 import { bsv } from '@/utils/filters'
+import { payPlatformList } from '@/config'
 
 interface Props {
   modelValue: boolean
@@ -277,6 +285,7 @@ const payPlatformAmountRate = {
   [PayPlatform.ETH]: Math.pow(10, 9),
   [PayPlatform.POLYGON]: Math.pow(10, 9),
   [PayPlatform.BSV]: Math.pow(10, 8),
+  [PayPlatform.SPACE]: Math.pow(10, 8),
   [PayPlatform.AliPay]: 100,
   [PayPlatform.AliPaySelf]: 100,
   [PayPlatform.BalancePay]: 100,
@@ -288,6 +297,7 @@ const payPlatformAmountFix = {
   [PayPlatform.ETH]: 8,
   [PayPlatform.POLYGON]: 8,
   [PayPlatform.BSV]: 8,
+  [PayPlatform.SPACE]: 8,
   [PayPlatform.AliPay]: 2,
   [PayPlatform.AliPaySelf]: 2,
   [PayPlatform.BalancePay]: 2,
@@ -295,7 +305,12 @@ const payPlatformAmountFix = {
   [PayPlatform.UnionPay]: 2,
   [PayPlatform.WechatPay]: 2,
 }
-const nativePayPlatforms = [PayPlatform.ETH, PayPlatform.POLYGON, PayPlatform.BSV]
+const nativePayPlatforms = [
+  PayPlatform.ETH,
+  PayPlatform.POLYGON,
+  PayPlatform.BSV,
+  PayPlatform.SPACE,
+]
 
 const payResultMessage = computed(() => {
   let msg = ''
@@ -346,14 +361,24 @@ function drawePayCode() {
                 },
               ],
             })
-          } else if (props.payPlatform === PayPlatform.BSV) {
-            const bsvBalance = await getUserBsvBalance()
-            if (bsvBalance < new Decimal(props.amount).plus(560).toNumber()) {
+          } else if (
+            props.payPlatform === PayPlatform.BSV ||
+            props.payPlatform === PayPlatform.SPACE
+          ) {
+            const chain =
+              props.payPlatform === PayPlatform.BSV ? HdWalletChain.BSV : HdWalletChain.MVC
+            const balance = await userStore.showWallet.wallet!.provider.getXpubBalance(
+              userStore.showWallet.wallet!.wallet.xpubkey.toString(),
+              chain
+            )
+            if (balance < new Decimal(props.amount).plus(560).toNumber()) {
               throw new Error(i18n.t('BSV Insufficient balance'))
             }
             from_coin_address = userStore.showWallet.wallet!.rootAddress
             const res = await ElMessageBox.confirm(
-              `${i18n.t('You need to pay')} BSV:  ${props.amount} Satoshi`,
+              `${i18n.t('You need to pay')} ${payPlatformList
+                .find(item => item.platform === props.payPlatform)!
+                .key.toUpperCase()}:  ${props.amount} Satoshi`,
               i18n.t('Confirm Pay') + '?',
               {
                 cancelButtonText: i18n.t('Cancel'),
@@ -362,23 +387,11 @@ function drawePayCode() {
                 confirmButtonClass: 'main-border primary',
               }
             )
-            // .then(async () => {
-            //   const transaction = await userStore.showWallet.wallet!.sendMoney({
-            //     payTo: [{ address: props.url, amount: new Decimal(props.amount).toNumber() }],
-            //     isBroadcast: false,
-            //     chain: HdWalletChain.BSV,
-            //   })
-            //   tx = transaction.id
-            //   raw_tx = transaction.toString()
-            // })
-            // .catch(() => {
-            //   throw new Error(i18n.t('You canceled the payment'))
-            // })
             if (res) {
               const transaction = await userStore.showWallet.wallet!.sendMoney({
                 payTo: [{ address: props.url, amount: new Decimal(props.amount).toNumber() }],
                 isBroadcast: false,
-                chain: HdWalletChain.BSV,
+                chain,
               })
               tx = transaction.id
               raw_tx = transaction.toString()
@@ -392,7 +405,7 @@ function drawePayCode() {
               from_coin_address,
               product_type: props.product_type,
             }
-            if (props.payPlatform === PayPlatform.BSV) {
+            if (props.payPlatform === PayPlatform.BSV || props.payPlatform === PayPlatform.SPACE) {
               params.raw_tx = raw_tx
             } else {
               params.chain_id = (window as any).ethereum?.chainId
