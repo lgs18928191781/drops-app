@@ -116,9 +116,9 @@ const parsedContent = computed(() => {
   }
   text = text.replace(re, function(url) {
     if (HTTP.test(text)) {
-      return `<a href=${url} target="_blank" style="text-decoration: underline;cursor: pointer;" class="url"> ${url} </a>`
+      return `<a href=${url} target="_blank" style="text-decoration: underline;cursor: pointer; overflow-wrap: break-word;" class="url"> ${url} </a>`
     }
-    return `<a onClick="window.open('http://${text}','_blank')" style="text-decoration: underline;cursor: pointer;" target="_blank">${text}</a>`
+    return `<a onClick="window.open('http://${text}','_blank')" style="text-decoration: underline;cursor: pointer; overflow-wrap: break-word;" target="_blank">${text}</a>`
   })
   text = text.replace(/\\n/g, '\n')
 

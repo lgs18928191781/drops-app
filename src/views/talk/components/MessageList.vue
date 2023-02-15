@@ -211,6 +211,15 @@ const scrollToMessagesBottom = async (retryCount = 0) => {
 watch(
   () => talk.newMessages,
   async () => {
+    // 依据滚动状态，如果当前距离底部的距离超过一屏，则说明在阅读历史消息，不需要滚动到底部
+    if (messagesScroll.value) {
+      const mse: HTMLElement = messagesScroll.value as HTMLElement
+      const disFromBottom = mse.scrollHeight - mse.scrollTop - mse.clientHeight // 滚动元素的总高度 - 滚动元素的离顶部距离 - 滚动元素的可视高度
+      if (disFromBottom > mse.clientHeight) {
+        return
+      }
+    }
+
     await scrollToMessagesBottom()
   },
   { deep: true, immediate: true }
