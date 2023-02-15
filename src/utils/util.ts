@@ -22,6 +22,7 @@ import {
   MetaNameOperateType,
   ProductType,
   Chains,
+  EnvMode,
 } from '@/enum'
 import { CheckBlindboxOrderStatus } from '@/api/v3'
 import AllCardJson from '@/utils/card.json'
@@ -60,6 +61,7 @@ import { GetTxChainInfo } from '@/api/metaid-base'
 import { useMetaNameStore } from '@/stores/metaname'
 import { GetBalance } from '@/api/aggregation'
 import namehash from 'eth-ens-namehash'
+import Compressor from 'compressorjs'
 
 const emojiReg = /[\u{1F601}-\u{1F64F}\u{2702}-\u{27B0}\u{1F680}-\u{1F6C0}\u{1F170}-\u{1F251}\u{1F600}-\u{1F636}\u{1F681}-\u{1F6C5}\u{1F30D}-\u{1F567}]/gu
 
@@ -856,6 +858,17 @@ export function throttle(fn: any, delay = 500) {
   }
 }
 
+export async function compressImage(image: File): Promise<File> {
+  return new Promise((resolve, reject) => {
+    new Compressor(image, {
+      quality: 0.6,
+      convertSize: 100_000, // 100KB
+      success: resolve as () => File,
+      error: reject,
+    })
+  })
+}
+
 // 降文件转为 AttachmentItem， 便于操作/上链
 export function FileToAttachmentItem(file: File, encrypt: IsEncrypt = IsEncrypt.No) {
   return new Promise<AttachmentItem>(async (resolve, reject) => {
@@ -1556,7 +1569,7 @@ export const validateMetaName = (value: string) => {
     return ElMessage.error(`${i18n.global.t('metanameNotAllowSpace')}`)
   } else if (emojiReg.test(value)) {
     return ElMessage.error(`${i18n.global.t('metanameNotAllowEmoji')}`)
-  } else if (/[\u4e00-\u9fa5]/.test(value)) {
+  } else if (/[\u4e00-\u9fa5]/.test(value) && import.meta.env.MODE === EnvMode.Mainnet) {
     return ElMessage.error(`${i18n.global.t('metanameNotAllowCh')}`)
   } else {
     const testResult = bytesLength(value.trim())

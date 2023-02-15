@@ -16,7 +16,6 @@
         <a
           @click="toMetaName"
           class="outsideMore flex flex-align-center flex-pack-center user-warp-item"
-          v-if="!isProduction"
         >
           <img class="metanameLogo" :src="MetaNameLogo" alt="" />
         </a>
@@ -25,7 +24,7 @@
         <a
           class="flex flex-align-center flex-pack-center user-warp-item"
           @click="layout.$patch({ isShowSearchModal: true })"
-          v-if="userStore.isAuthorized && !isProduction"
+          v-if="userStore.isAuthorized"
         >
           <Icon name="search" />
         </a>

@@ -238,9 +238,7 @@
                     <div class="value flex1 nowrap">
                       {{ nft.val!.nftSellTxId }}
                       <a class="copy" @click="copy(nft.val!.nftSellTxId)">{{ $t('copy') }}</a>
-                      <a class="copy" @click="toWhatsonchain(nft.val!.nftSellTxId)">{{
-                        $t('look')
-                      }}</a>
+                      <a class="copy" @click="tx(nft.val!.nftSellTxId)">{{ $t('look') }}</a>
                     </div>
                   </div>
                   <div class="work-detail-item flex flex-align-center">
@@ -248,7 +246,7 @@
                     <div class="value flex1 nowrap">
                       {{ nft.val!.nftTokenId }}
                       <a class="copy" @click="copy(nft.val!.nftTokenId)">{{ $t('copy') }}</a>
-                      <!-- <a class="copy" @click="toWhatsonchain(NFT.val!.tokenId)">{{ $t('look') }}</a> -->
+                      <!-- <a class="copy" @click="tx(NFT.val!.tokenId)">{{ $t('look') }}</a> -->
                     </div>
                   </div>
                   <div class="work-detail-item flex flex-align-center">
@@ -259,7 +257,7 @@
                         <a class="copy" @click="copy(nft.val!.nftIssueMetaTxId)">{{
                           $t('copy')
                         }}</a>
-                        <a class="copy" @click="toWhatsonchain(nft.val!.nftIssueMetaTxId)">
+                        <a class="copy" @click="tx(nft.val!.nftIssueMetaTxId)">
                           {{ $t('look') }}
                         </a>
                       </template>
@@ -365,7 +363,7 @@
                         : $t('noPaid')
                     }}
                   </span>
-                  <a class="link" @click="toWhatsonchain(record.txId)"><img :src="LinkIcon"/></a>
+                  <a class="link" @click="tx(record.txId)"><img :src="LinkIcon"/></a>
                 </div>
 
                 <LoadMore
@@ -429,7 +427,7 @@ import PayConfirmVue from '@/components/PayConfirm/PayConfirm.vue'
 import { UnitName } from '@/config'
 import NFTSellVue from '@/components/NFTSell/NFTSell.vue'
 import NFTBuyVue from '@/components/NFTBuy/NFTBuy.vue'
-import { checkUserLogin, NFTOffSale } from '@/utils/util'
+import { checkUserLogin, NFTOffSale, tx } from '@/utils/util'
 import AmountVue from '@/components/Amount/Amount.vue'
 import NFTTransferVue from '@/components/NFTTransfer/NFTTransfer.vue'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
@@ -491,8 +489,8 @@ const nft: { val: GenesisNFTItem | null } = reactive({
   val: null,
 })
 const tabs = [
-  { name: i18n.t('workdetail'), key: 'workdetail' },
-  { name: i18n.t('possessionrecord'), key: 'possessionrecord' },
+  { name: () => i18n.t('workdetail'), key: 'workdetail' },
+  { name: () => i18n.t('possessionrecord'), key: 'possessionrecord' },
 ]
 const records: GetNftHolderListResItem[] = reactive([])
 
@@ -581,10 +579,6 @@ function copy(value: string) {
   //     .catch(() => {
   //       ElMessage.success(i18n.t('copyerror'))
   //     })
-}
-
-function toWhatsonchain(txId: string) {
-  window.open(`https://whatsonchain.com/tx/${txId}`)
 }
 
 function ToUser(metaId: string) {}

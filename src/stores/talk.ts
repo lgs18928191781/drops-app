@@ -111,13 +111,13 @@ export const useTalkStore = defineStore('talk', {
 
     activeCommunitySymbolInfo(): {
       name: string
-      suffix: 'meta' | 'eth' | 'bit'
+      suffix: 'metaid' | 'eth' | 'bit'
     } {
-      if (!this.activeCommunitySymbol) return { name: '', suffix: 'meta' }
+      if (!this.activeCommunitySymbol) return { name: '', suffix: 'metaid' }
 
       return {
         name: this.activeCommunitySymbol.split('.')[0],
-        suffix: this.activeCommunitySymbol.split('.')[1] as 'meta' | 'eth' | 'bit',
+        suffix: this.activeCommunitySymbol.split('.')[1] as 'metaid' | 'eth' | 'bit',
       }
     },
 

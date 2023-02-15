@@ -124,7 +124,7 @@ import { AttachmentItem } from '@/@types/hd-wallet'
 import { IsEncrypt, JobStatus, NodeName } from '@/enum'
 import { useLayoutStore } from '@/stores/layout'
 import { useUserStore } from '@/stores/user'
-import { FileToAttachmentItem, getAttachmentsMark } from '@/utils/util'
+import { compressImage, FileToAttachmentItem, getAttachmentsMark } from '@/utils/util'
 import { computed, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AttachmentVue from './Attachment.vue'
@@ -239,7 +239,9 @@ async function onChooseImage(e: any) {
   inputFileRef.value[0].value = ''
   for (let i = 0; i < files.length; i++) {
     if (attachments.length < 9) {
-      const result = await FileToAttachmentItem(files[i])
+      // 压缩图片
+      const compressed = await compressImage(files[i])
+      const result = await FileToAttachmentItem(compressed)
       if (result) attachments.push(result)
     } else {
       break

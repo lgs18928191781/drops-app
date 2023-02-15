@@ -302,7 +302,8 @@
       "amount_each": "每份金额",
       "amount_each_explain": "每份红包的金额应当超过1000聪。",
       "choose_nft": "选择 NFT……",
-      "dont_have_permission": "您没有权限在本频道中发送消息。"
+      "dont_have_permission": "您没有权限在本频道中发送消息。",
+      "compress": "压缩"
     },
     "Datetime": {
       "today": "今天",
@@ -313,7 +314,7 @@
     "Errors": {
       "default": "发生了一个错误",
       "image_only": "只能上传图片",
-      "image_too_large": "图片大小不能超过 2MB"
+      "image_too_large": "图片大小不能超过 10MB"
     }
   },
   "Not install MetaLet Wallet": "你还没安装MetaLet插件钱包",
@@ -887,5 +888,10 @@
   "You need to pay": "你需要支付",
   "You canceled the payment": "你取消了支付",
   "Confirm Pay": "确认支付",
-  "metanameNotAllowEmoji": "暂不支持注册Emoji"
+  "metanameNotAllowEmoji": "暂不支持注册Emoji",
+  "realName": "真实姓名",
+  "noMsg": "暂无信息",
+  "idNumber": "身份证号码",
+  "certBody": "认证主体",
+  "personCert": "个人认证"
 }

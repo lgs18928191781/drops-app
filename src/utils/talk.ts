@@ -777,7 +777,7 @@ export const formatTimestamp = (timestamp: number, i18n: any, showMinutesWhenOld
 }
 
 export const isFileTooLarge = (file: File) => {
-  return file.size > 2 * 1024 * 1024 // 2MB
+  return file.size > 10 * 1024 * 1024 // 10MB
 }
 
 export const isImage = (file: File) => {

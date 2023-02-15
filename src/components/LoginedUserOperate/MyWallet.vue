@@ -199,8 +199,11 @@
                         </div>
                         <span class="name">{{ item.name }}</span>
                       </div>
-                      <div class="check-warp flex flex-align-center flex-pack-center">
-                        <Icon name="check" v-if="currentChain === item.value" />
+                      <div
+                        class="check-warp flex flex-align-center flex-pack-center"
+                        v-if="currentChain === item.value"
+                      >
+                        <Icon name="check" />
                       </div>
                     </div>
                   </ElDropdownItem>

@@ -86,6 +86,7 @@
             :play-file="playFile"
             :isQuote="isQuote"
             @play="val => emit('play', val)"
+            @translate="(txId, callback) => emit('translate', txId, callback)"
           />
         </template>
 
@@ -171,6 +172,7 @@ const emit = defineEmits<{
   (e: 'follow', txId: string, params: { resolve: (txId?: string) => any; reject: () => any }): void
   (e: 'play', txId: any): void
   (e: 'replay', txId: any): void
+  (e: 'translate', txId: any, callback?: (result: boolean) => void): void
 }>()
 const props = withDefaults(defineProps<Props>(), {
   isInDetailPage: false,
