@@ -13,10 +13,28 @@
       class="border-b-2 border-solid border-dark-200 dark:border-gray-600 pb-2 px-3 pt-3"
     >
       <div class="p-2 w-50 h-50 main-border still relative">
-        <div class="absolute right-0 top-0 z-10 -my-2 -mx-3 flex space-x-2 items-center">
+        <div class="absolute right-0 top-0 z-10 -my-2 -mx-3 flex space-x-2.5 items-center">
+          <!-- 压缩按钮 -->
+          <div
+            class="main-border small bg-white dark:bg-gray-700 p-1.5 cursor-pointer !rounded-lg text-xs flex items-center justify-center gap-x-1"
+            @click="useCompression = !useCompression"
+          >
+            <div class="">{{ $t('Talk.Input.compress') }}</div>
+
+            <Icon
+              name="check_bold"
+              v-if="useCompression"
+              class="w-2.5 h-2.5 inline bg-primary rounded p-0.5 box-content"
+            />
+            <div
+              class="w-3.5 h-3.5 bg-gray-100 dark:bg-gray-950 rounded shadow-inner shadow-gray-200 dark:shadow-gray-950"
+              v-else
+            ></div>
+          </div>
+
           <!-- 删除按钮 -->
           <div
-            class="main-border bg-white dark:bg-gray-700 p-1 cursor-pointer"
+            class="main-border small bg-white dark:bg-gray-700 p-1.5 cursor-pointer !rounded-lg"
             @click="deleteImage"
           >
             <Icon name="x_mark" class="w-4 h-4 text-dark-800 dark:text-gray-100" />
@@ -24,12 +42,10 @@
 
           <!-- 发送按钮 -->
           <div
-            class="main-border bg-primary dark:bg-gray-700 flex items-center justify-center p-1 divide-x divide-solid divide-dark-800 dark:divide-gray-100 cursor-pointer"
+            class="main-border primary p-1.5 cursor-pointer small !rounded-lg"
             @click="trySendImage"
           >
-            <div class="">
-              <Icon name="send" class="w-4 h-4 text-dark-800 dark:text-gray-100 -rotate-6" />
-            </div>
+            <Icon name="send" class="w-4 h-4 text-dark-800 -rotate-6" />
           </div>
         </div>
         <img
@@ -252,16 +268,18 @@
 
 <script setup lang="ts">
 import { computed, ref, toRaw, Ref } from 'vue'
+import { Popover, PopoverButton, PopoverPanel, TransitionRoot } from '@headlessui/vue'
+
 import { sendMessage, validateTextMessage, isImage, isFileTooLarge } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
-import TalkImagePreview from './ImagePreview.vue'
-import { FileToAttachmentItem } from '@/utils/util'
+import { FileToAttachmentItem, compressImage } from '@/utils/util'
 import { encrypt, ecdhEncrypt } from '@/utils/crypto'
 import { useTalkStore } from '@/stores/talk'
-import StickerVue from '@/components/Sticker/Sticker.vue'
-import { Popover, PopoverButton, PopoverPanel, TransitionRoot } from '@headlessui/vue'
 import { ChannelType, MessageType } from '@/enum'
 import { useLayoutStore } from '@/stores/layout'
+
+import TalkImagePreview from './ImagePreview.vue'
+import StickerVue from '@/components/Sticker/Sticker.vue'
 
 const doNothing = () => {}
 
@@ -327,6 +345,7 @@ const talk = useTalkStore()
 const imageUploader = ref<HTMLInputElement | null>(null)
 const imageFile = ref<File | null>(null)
 const showImagePreview = ref(false)
+const useCompression = ref(true)
 
 const hasImage = computed(() => imageFile.value !== null)
 
@@ -380,17 +399,25 @@ const imagePreviewUrl = computed(() => {
 })
 
 const trySendImage = async () => {
-  const hexedFiles = await FileToAttachmentItem(imageFile.value!)
+  let image = imageFile.value as NonNullable<typeof imageFile.value>
+  // 压缩图片
+  if (useCompression.value) {
+    const compressedFile = await compressImage(imageFile.value!)
+    image = compressedFile
+  }
+  console.log('size', image.size / 1024, 'KB')
+
+  const hexedFiles = await FileToAttachmentItem(image)
   const attachments = [hexedFiles]
 
-  // clone
+  // clone，用于填充mock信息
   const originalFileUrl = imagePreviewUrl.value
   deleteImage()
 
   const messageDto = {
     type: MessageType.Image,
     channelId: talk.activeChannel.id,
-    userName: userStore.user?.name || 'Riverrun46',
+    userName: userStore.user?.name!,
     attachments,
     content: '',
     originalFileUrl,
@@ -441,7 +468,7 @@ const trySendText = async (e: any) => {
   if (talk.activeChannelType === 'group') {
     content = encrypt(chatInput.value, talk.activeChannel.id.substring(0, 16))
   } else {
-    const privateKey = toRaw(userStore?.wallet)!.getPathPrivateKey('0/0')
+    const privateKey = toRaw(userStore?.wallet)!.getPathPrivateKey('0/0')!
     const privateKeyStr = privateKey.toHex()
     const otherPublicKeyStr = talk.activeChannel.publicKeyStr
     console.log(chatInput.value, privateKeyStr, otherPublicKeyStr)
