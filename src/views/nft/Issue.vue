@@ -20,6 +20,7 @@
         <span class="w-20">{{ $t('NFT.Source File') }}</span>
         <span class="flex1">{{ $t('NFT.Name') }}</span>
         <span class="flex1">{{ $t('NFT.Drsc') }}</span>
+        <span class="flex1">{{ $t('NFT.Issue.Classify') }}</span>
         <span class="flex1">{{ $t('NFT.Accept Address') }}</span>
         <span class="w-30">{{ $t('NFT.issueToknIndex') }}</span>
       </div>
@@ -62,7 +63,7 @@
                     :key="genesis.codehash + genesis.genesis"
                     :label="genesis.seriesName"
                     :value="genesis.genesis + '/' + genesis.codehash"
-                    @click="item.genesis = genesis"
+                    @click="changeGenesis(index, genesis)"
                   ></ElOption>
                 </ElSelect>
               </div>
@@ -105,6 +106,23 @@
             </div>
           </ElFormItem>
 
+          <!-- classifyList -->
+          <ElFormItem prop="classifyList" class="flex1">
+            <div class="form-item flex flex-align-center flex1">
+              <div class="flex1">
+                <ElSelect multiple v-model="item.classifyList">
+                  <ElOption
+                    v-for="item in classifyList"
+                    :key="item.classify"
+                    :disabled="item.disabled"
+                    :label="item.name()"
+                    :value="item.classify"
+                  />
+                </ElSelect>
+              </div>
+            </div>
+          </ElFormItem>
+
           <!-- acceptAddress -->
           <ElFormItem prop="acceptAddress" class="flex1">
             <div class="form-item flex flex-align-center flex1">
@@ -137,6 +155,7 @@ interface IssueItem {
   desc: string
   index: number
   uuid: string
+  classifyList: string[]
   isSuccess?: boolean
 }
 </script>
@@ -154,6 +173,7 @@ import AddImageWarpVue from '@/components/AddImageWarp/AddImageWarp.vue'
 import { openLoading } from '@/utils/util'
 import { useI18n } from 'vue-i18n'
 import { router } from '@/router'
+import { classifyList } from '@/config'
 
 const userStore = useUserStore()
 const genesisStore = useGenesisStore()
@@ -164,8 +184,6 @@ const isShowOption = ref(false)
 const list: IssueItem[] = reactive([])
 
 const genesisList: GenesisItem[] = reactive([])
-const currentGenesis = ref('')
-const isShowCreateGenesis = ref(false)
 
 function getGenesisList() {
   return new Promise<void>(async (resolve, reject) => {
@@ -199,6 +217,7 @@ function addIssueItem(option: IssueNFTOption) {
       const desc = i === 0 || option.isSameDesc ? option.desc : ''
       const index = getCurrentGenesisIndex(genesis)
       const uuid = v1()
+      const classifyList = i === 0 || option.isSameClassifyList ? option.classifyList : []
       list.push({
         genesis,
         name,
@@ -208,6 +227,7 @@ function addIssueItem(option: IssueNFTOption) {
         desc,
         index,
         uuid,
+        classifyList,
       })
     } catch (error) {
       errorMsg = (error as any).message
@@ -292,6 +312,7 @@ async function confirmIssue() {
         issuerName: '',
         data: {
           originalFileTxid: 'metafile://$[1]',
+          classifyList: taskList[i].classifyList,
         },
       }
       taskParams.push({
@@ -341,6 +362,46 @@ async function confirmIssue() {
     } catch (error) {
       ElMessage.error((error as any).message)
       loading.close()
+    }
+  }
+}
+
+function changeGenesis(index: number, genesis: GenesisItem) {
+  if (list[index].genesis && list[index].genesis!.genesis === genesis.genesis) return
+  const oldGenesis = list[index].genesis
+    ? JSON.parse(JSON.stringify(list[index].genesis))
+    : undefined
+  list[index].genesis = genesis
+  let currentGenesisIndex = getGenesisMaxIndex(genesis, index) + 1
+  list[index].index = currentGenesisIndex
+
+  // 更新后面同一genesis的index
+  for (let i = index + 1; i < list.length; i++) {
+    if (list[i].genesis && list[i].genesis!.genesis === genesis.genesis) {
+      currentGenesisIndex++
+      list[i].index = currentGenesisIndex
+    }
+  }
+}
+
+function getGenesisMaxIndex(genesis: GenesisItem, stopIndex?: number) {
+  if (!stopIndex) stopIndex = list.length
+  let currentMaxIndex = 1
+  for (let i = 0; i < stopIndex; i++) {
+    if (list[i].genesis && list[i].genesis!.genesis === genesis.genesis) {
+      currentMaxIndex = list[i].index
+    }
+  }
+  return currentMaxIndex
+}
+
+function setGeneisAllIndex(genesis: GenesisItem, index: number = 0) {
+  const currentMaxIndex = getGenesisMaxIndex(genesis, index)
+
+  const genesisList = list.filter(item => item.genesis && item.genesis.genesis === genesis.genesis)
+  for (let i = startGenesisIndex; i < genesisList.length; i++) {
+    if (list[i].genesis && list[i].genesis!.genesis === genesis.genesis) {
+      list[i].index = getCurrentGenesisIndex(genesis)
     }
   }
 }

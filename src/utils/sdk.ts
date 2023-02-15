@@ -55,6 +55,7 @@ import { useLayoutStore } from '@/stores/layout'
 import { GetTx } from '@/api/metaid-base'
 import AllNodeName from './AllNodeName'
 import { tr } from 'element-plus/es/locale'
+import { GetMetafileBySha256 } from '@/api/aggregation'
 enum AppMode {
   PROD = 'prod',
   GRAY = 'gray',
@@ -1264,30 +1265,51 @@ export class SDK {
       for (const item of attachments!) {
         try {
           if (this.metaFileSha256TxIdList.some(_item => _item.sha256 === item.sha256)) {
+            // 本地有缓存
             transactions.push({
               txId: this.metaFileSha256TxIdList.find(_item => _item.sha256 === item.sha256)!.txId,
               sha256: item.sha256,
             })
           } else {
-            const res = await this.wallet?.createNode({
-              nodeName: item.fileName,
-              metaIdTag: import.meta.env.VITE_METAID_TAG,
-              encrypt: item.encrypt,
-              data: item.data,
-              dataType: item.fileType,
-              encoding: 'binary',
-              parentTxId: metaFileBrfcTxId,
-              chain,
-            })
-            if (res) {
+            // 本地没有缓存
+            const response = await GetMetafileBySha256({ sha256: item.sha256 })
+            if (
+              response.code === 0 &&
+              response.data.results.items &&
+              response.data.results.items.length
+            ) {
+              // 链上有
+              transactions.push({
+                txId: response.data.results.items[0].txId,
+                sha256: item.sha256,
+              })
+              // 缓存到本地
               this.metaFileSha256TxIdList.push({
                 sha256: item.sha256,
-                txId: res.txId,
+                txId: response.data.results.items[0].txId,
               })
-              transactions.push({
-                ...res,
-                sha256: item.sha256,
+            } else {
+              // 本地 和 链上 都没有
+              const res = await this.wallet?.createNode({
+                nodeName: item.fileName,
+                metaIdTag: import.meta.env.VITE_METAID_TAG,
+                encrypt: item.encrypt,
+                data: item.data,
+                dataType: item.fileType,
+                encoding: 'binary',
+                parentTxId: metaFileBrfcTxId,
+                chain,
               })
+              if (res) {
+                this.metaFileSha256TxIdList.push({
+                  sha256: item.sha256,
+                  txId: res.txId,
+                })
+                transactions.push({
+                  ...res,
+                  sha256: item.sha256,
+                })
+              }
             }
           }
         } catch (error) {

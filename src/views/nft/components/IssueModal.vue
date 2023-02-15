@@ -183,6 +183,7 @@
               <ElOption
                 v-for="item in classifyList"
                 :key="item.classify"
+                :disabled="item.disabled"
                 :label="item.name()"
                 :value="item.classify"
               />

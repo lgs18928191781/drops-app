@@ -632,3 +632,18 @@ declare interface UserProtocolBrfcNode extends ProtocolBrfcNode {
   nodeName: import('@/enum').NodeName
   brfcId: string
 }
+
+declare interface MetaFileSha256Info {
+  blockHeight: number
+  fileDataType: string
+  fileSize: number
+  fileSizeStr: string
+  fileType: number
+  hash: string
+  md5: string
+  metaId: string
+  metanetId: string
+  resUrl: string
+  timestamp: number
+  txId: string
+}
