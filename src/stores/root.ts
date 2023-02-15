@@ -2,6 +2,7 @@ import { SignUserType, ToCurrency } from '@/enum'
 import { defineStore } from 'pinia'
 import { GetCertMetaIdList } from '@/api/aggregation'
 import i18n from '@/utils/i18n'
+import { GetCertifiedMetaId } from '@/api/strapi'
 
 export interface SignBaseInfo {
   userType: SignUserType
@@ -121,9 +122,9 @@ export const useRootStore = defineStore('root', {
       }, 1000)
     },
     setSystemConfig() {
-      GetCertMetaIdList().then(res => {
-        if (res.code == 0) {
-          this.isCertedMetaIds = res.data
+      GetCertifiedMetaId().then(res => {
+        if (res) {
+          this.isCertedMetaIds = res.data.list
         }
       })
     },

@@ -117,7 +117,7 @@ export default ({ mode, command }) => {
       _APP_VERSION: JSON.stringify(pkg.version),
     },
     server: {
-      // host: '0.0.0.0',
+      host: true,
       // port: 8080,
 
       https: false,

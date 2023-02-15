@@ -1,10 +1,12 @@
 <template>
   <!-- text -->
-  <div
-    class="text content-item"
-    :class="{ quote: isQuote }"
-    v-html="displayItemData ? $filters.buzzTextContent(displayItemData.content) : ''"
-  ></div>
+  <div class="content-item" v-if="displayItemData?.content">
+    <BuzzItemText
+      :buzz="buzz"
+      :isQuote="isQuote"
+      @translate="(txId, callback) => emit('translate', txId, callback)"
+    />
+  </div>
 
   <!-- Attachment -->
   <div
@@ -17,6 +19,7 @@
       @play="params => emit('play', params)"
     />
   </div>
+
   <!-- 引用buzz -->
   <div class="content-item" v-if="isHasQuote">
     <QuoteVue :buzz="buzz.quoteItem" @play="val => emit('play', val)" :playFile="playFile" />
@@ -27,6 +30,7 @@
 import { computed, watch } from 'vue'
 import Attachment from './Attachment.vue'
 import QuoteVue from './Quote.vue'
+import BuzzItemText from './BuzzItemText.vue'
 
 interface Props {
   buzz: BuzzItem
@@ -37,6 +41,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits<{
   (e: 'play', txId: any): void
+  (e: 'translate', txId: any, callback?: (result: boolean) => void): void
 }>()
 
 const displayItemData = computed(() => {
@@ -70,6 +75,10 @@ const isHasQuote = computed(() => {
   }
   return result
 })
+
+function translate() {
+  console.log('translate')
+}
 </script>
 
 <style lang="scss" scoped src="./BuzzItemContentNormal.scss"></style>
