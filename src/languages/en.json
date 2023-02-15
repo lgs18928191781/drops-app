@@ -681,7 +681,22 @@
     "IssueLoading": "Casting is in progress, please do not do other operations and wait patiently...",
     "Issue": {
       "TokenIndexNoteMatch": "TokenIndex  Not Match",
-      "AllIssueSuccess": "All cast successfully"
+      "AllIssueSuccess": "All cast successfully",
+      "GenesisEmpty": "Series cannot be empty",
+      "NameEmpty": "NFT name cannot be empty",
+      "CoverEmpty": "NFT cover cannot be empty",
+      "SourceFileEmpty": "NFT source file is empty",
+      "AcceptAddressEmpty": "Receiving address cannot be empty",
+      "Classify": "Classify"
+    },
+    "ClassifyList": {
+      "art": "Art",
+      "game": "Game",
+      "card": "Commemorative Card",
+      "alias": "Domain",
+      "avatar": "Avatar",
+      "rights": "Right",
+      "music": "Music"
     }
   },
   "My NFT": "My NFT",

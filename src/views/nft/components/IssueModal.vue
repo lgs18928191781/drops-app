@@ -162,6 +162,35 @@
         </div>
       </ElFormItem>
 
+      <!-- classifyList -->
+      <ElFormItem prop="acceptAddress">
+        <template #label>
+          <div class="label-warp flex flex-align-center">
+            <div class="flex1">
+              {{ $t('NFT.Issue.Classify') }}
+            </div>
+            <div class="switch-list flex flex-align-center">
+              <div class="switch-item flex flex-align-center">
+                <span class="label">{{ $t('NFT.AllSame') }}</span>
+                <ElSwitch v-model="form.isSameClassifyList" />
+              </div>
+            </div>
+          </div>
+        </template>
+        <div class="form-item flex flex-align-center flex1">
+          <div class="flex1">
+            <ElSelect multiple v-model="form.classifyList">
+              <ElOption
+                v-for="item in classifyList"
+                :key="item.classify"
+                :label="item.name()"
+                :value="item.classify"
+              />
+            </ElSelect>
+          </div>
+        </div>
+      </ElFormItem>
+
       <ElFormItem>
         <a
           class="main-border primary flex1 flex flex-align-center flex-pack-center"
@@ -192,6 +221,8 @@ export interface IssueNFTOption {
   isSameSourceFile: boolean
   genesis?: GenesisItem
   isSameGenesis: boolean
+  isSameClassifyList: boolean
+  classifyList: string[]
 }
 </script>
 <script setup lang="ts">
@@ -203,6 +234,7 @@ import { reactive, ref } from 'vue'
 import AddImageWarpVue from '@/components/AddImageWarp/AddImageWarp.vue'
 import CreateGenesis from './CreateGenesis.vue'
 import { useGenesisStore } from '@/stores/genesis'
+import { classifyList } from '@/config'
 
 interface Props {
   modelValue: boolean
@@ -229,6 +261,8 @@ const form: IssueNFTOption = reactive({
   genesis: undefined,
   isSameGenesis: false,
   isSoureFileSameCover: false,
+  isSameClassifyList: false,
+  classifyList: [],
 })
 const isShowCreateGenesis = ref(false)
 

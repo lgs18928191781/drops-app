@@ -6,7 +6,12 @@
           <span class="title">{{ $t('NFT.Issue NFT') }}</span>
         </div>
         <a class="main-border primary" @click="isShowOption = true">{{ $t('NFT.Add Issue') }}</a>
-        <a class="main-border primary" @click="confirmIssue">{{ $t('NFT.Confirm Issue') }}</a>
+        <a
+          class="main-border"
+          :class="[list.filter(item => !item.isSuccess).length ? 'primary' : 'faded']"
+          @click="confirmIssue"
+          >{{ $t('NFT.Confirm Issue') }}</a
+        >
       </header>
 
       <div class="issue-th issue-item flex flex-align-center">
@@ -236,72 +241,107 @@ function getCurrentGenesisIndex(genesis?: GenesisItem | null) {
 }
 
 async function confirmIssue() {
-  const loading = openLoading({
-    text: i18n.t('NFT.IssueLoading'),
-  })
-  const taskParams: any = []
-  for (let i = 0; i < list.length; i++) {
-    const params = {
-      type: 'metacontract',
-      genesisId: list[i].genesis!.genesis,
-      sensibleId: list[i].genesis!.sensibleId,
-      receiverAddress: list[i].acceptAddress,
-      name: list[i].name,
-      desc: list[i].desc,
-      icon: `metafile://$[0]`,
-      backIcon: '',
-      website: '',
-      issuerName: '',
-      data: {
-        originalFileTxid: 'metafile://$[${1}]',
-      },
+  const taskList = list.filter(item => !item.isSuccess)
+  if (taskList.length === 0) return
+
+  let allCheckSuccess = true
+  for (let i = 0; i < taskList.length; i++) {
+    if (!taskList[i].genesis) {
+      allCheckSuccess = false
+      ElMessage.error(i18n.t('NFT.Issue.GenesisEmpty'))
+      break
     }
-    taskParams.push({
-      nodeName: NodeName.NftIssue,
-      data: JSON.stringify(params),
-      attachments: [list[i].cover, list[i].sourceFile],
-    })
+    if (!taskList[i].name) {
+      allCheckSuccess = false
+      ElMessage.error(i18n.t('NFT.Issue.NameEmpty'))
+      break
+    }
+    if (!taskList[i].cover) {
+      allCheckSuccess = false
+      ElMessage.error(i18n.t('NFT.Issue.CoverEmpty'))
+      break
+    }
+    if (!taskList[i].sourceFile) {
+      allCheckSuccess = false
+      ElMessage.error(i18n.t('NFT.Issue.SourceFileEmpty'))
+      break
+    }
+    if (!taskList[i].acceptAddress) {
+      allCheckSuccess = false
+      ElMessage.error(i18n.t('NFT.Issue.AcceptAddressEmpty'))
+      break
+    }
   }
-  try {
-    const response = await userStore.showWallet.batchCreateBrfcChildNode(taskParams, {
-      callback: params => {
-        return new Promise(resolve => {
-          list[params.index].isSuccess = true
-          if (
-            params.transactions.nft?.issue?.tokenIndex === (list[params.index].index - 1).toString()
-          ) {
-            genesisStore.updateCurrentTotalSupply({
-              genesis: list[params.index].genesis!.genesis,
-              codehash: list[params.index].genesis!.codehash,
-            })
-            resolve({
-              isContinue: true,
-            })
-          } else {
-            const count = parseInt(params.transactions.nft!.issue!.tokenIndex) + 1
-            genesisStore.updateCurrentTotalSupply({
-              genesis: list[params.index].genesis!.genesis,
-              codehash: list[params.index].genesis!.codehash,
-              count: count,
-            })
-            list[params.index].index = count
-            resolve({
-              isContinue: false,
-              error: i18n.t('NFT.Issue.TokenIndexNoteMatch'),
-            })
-          }
-        })
-      },
+
+  if (allCheckSuccess) {
+    const loading = openLoading({
+      text: i18n.t('NFT.IssueLoading'),
     })
-    if (response) {
-      ElMessage.success(i18n.t('NFT.Issue.AllIssueSuccess'))
-      loading.close()
-    } else if (response === null) {
+    const taskParams: any = []
+    for (let i = 0; i < taskList.length; i++) {
+      const params = {
+        type: 'metacontract',
+        genesisId: taskList[i].genesis!.genesis,
+        sensibleId: taskList[i].genesis!.sensibleId,
+        receiverAddress: taskList[i].acceptAddress,
+        name: taskList[i].name,
+        desc: taskList[i].desc,
+        icon: `metafile://$[0]`,
+        backIcon: '',
+        website: '',
+        issuerName: '',
+        data: {
+          originalFileTxid: 'metafile://$[1]',
+        },
+      }
+      taskParams.push({
+        nodeName: NodeName.NftIssue,
+        data: JSON.stringify(params),
+        attachments: [taskList[i].cover, taskList[i].sourceFile],
+      })
+    }
+    try {
+      const response = await userStore.showWallet.batchCreateBrfcChildNode(taskParams, {
+        callback: params => {
+          return new Promise(resolve => {
+            taskList[params.index].isSuccess = true
+            if (
+              params.transactions.nft?.issue?.tokenIndex ===
+              (taskList[params.index].index - 1).toString()
+            ) {
+              genesisStore.updateCurrentTotalSupply({
+                genesis: taskList[params.index].genesis!.genesis,
+                codehash: taskList[params.index].genesis!.codehash,
+              })
+              resolve({
+                isContinue: true,
+              })
+            } else {
+              const count = parseInt(params.transactions.nft!.issue!.tokenIndex) + 1
+              genesisStore.updateCurrentTotalSupply({
+                genesis: taskList[params.index].genesis!.genesis,
+                codehash: taskList[params.index].genesis!.codehash,
+                count: count,
+              })
+              taskList[params.index].index = count
+              resolve({
+                isContinue: false,
+                error: i18n.t('NFT.Issue.TokenIndexNoteMatch'),
+              })
+            }
+          })
+        },
+      })
+      if (response) {
+        ElMessage.success(i18n.t('NFT.Issue.AllIssueSuccess'))
+        loading.close()
+      } else if (response === null) {
+        loading.close()
+      }
+    } catch (error) {
+      ElMessage.error((error as any).message)
       loading.close()
     }
-  } catch (error) {
-    ElMessage.error((error as any).message)
-    loading.close()
   }
 }
 

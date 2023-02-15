@@ -470,6 +470,10 @@ export interface CreateNodeBaseRes {
   hex?: string
 }
 
+export interface CreateNodeMetaFileRes extends CreateNodeBaseRes {
+  sha256: string
+}
+
 export interface CreateNodeBrfcRes extends CreateNodeBaseRes {
   address: string
   addressType: number

@@ -474,7 +474,7 @@ declare interface GenesisNFTItem {
 declare interface NodeTransactions {
   payToAddress?: import('@/@types/sdk.d.ts').CreateNodeBaseRes
   metaFileBrfc?: import('@/@types/sdk.d.ts').CreateNodeBrfcRes
-  metaFiles?: import('@/@types/sdk.d.ts').CreateNodeBaseRes[]
+  metaFiles?: import('@/@types/sdk.d.ts').CreateNodeMetaFileRes[]
   currentNodeBrfc?: import('@/@types/sdk.d.ts').CreateNodeBrfcRes
   currentNode?: import('@/@types/sdk.d.ts').CreateNodeBaseRes
   sendMoney?: import('@/@types/sdk.d.ts').CreateNodeBaseRes

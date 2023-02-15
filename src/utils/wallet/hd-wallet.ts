@@ -25,10 +25,12 @@ import { Chains, HdWalletChain, IsEncrypt, NodeName, WalletTxVersion } from '@/e
 import { AttachmentItem, PayToItem } from '@/@types/hd-wallet'
 import {
   CreateNodeOptions,
-  CreateNodeRes,
   TransferTypes,
   UtxoItem,
   HdWalletCreateBrfcChildNodeParams,
+  CreateNodeBaseRes,
+  CreateNodeMetaFileRes,
+  CreateNodeBrfcRes,
 } from '@/@types/sdk'
 import { ElMessage } from 'element-plus'
 import { NftManager, FtManager, API_TARGET } from 'meta-contract'
@@ -191,11 +193,11 @@ declare interface UtxoWithWif extends SA_utxo {
 }
 
 export interface CreateBrfcChildNodeRes {
-  payTo: CreateNodeRes | null
-  metaFileBrfc: CreateNodeRes | null
-  metaFiles: CreateNodeRes[] | []
-  currentNodeBrfc: CreateNodeRes | null
-  currentNode: CreateNodeRes | null
+  payTo: CreateNodeBaseRes | null
+  metaFileBrfc: CreateNodeBrfcRes | null
+  metaFiles: CreateNodeMetaFileRes[] | []
+  currentNodeBrfc: CreateNodeBrfcRes | null
+  currentNode: CreateNodeBaseRes | null
 }
 
 export interface NodeOptions {
@@ -237,8 +239,8 @@ export interface ProtocolOptions extends NodeOptions {
   nodeKey?: string
   autoRename?: boolean
   useThird?: boolean
-  attachments?: AttachmentTypes[]
-  externalUtxos?: UtxoTypes[]
+  attachments?: AttachmentItem[]
+  externalUtxos?: UtxoItem[]
 }
 
 export const DEFAULTS = {
@@ -987,7 +989,7 @@ export class HdWallet {
     node,
     chain = HdWalletChain.MVC,
   }: CreateNodeOptions) {
-    return new Promise<CreateNodeRes>(async (resolve, reject) => {
+    return new Promise<CreateNodeBaseRes>(async (resolve, reject) => {
       try {
         if (!nodeName) {
           throw new Error('Parameter Error: NodeName can not empty')
@@ -1734,7 +1736,7 @@ export class HdWallet {
       chain?: HdWalletChain
     }
   ) {
-    return new Promise<CreateNodeRes>(async (resolve, reject) => {
+    return new Promise<CreateNodeBrfcRes>(async (resolve, reject) => {
       try {
         const initParams = {
           useFeeb: DEFAULTS.feeb,
@@ -1815,8 +1817,8 @@ export class HdWallet {
       isBroadcast: boolean // 是否广播
       chain?: HdWalletChain
     }
-  ): Promise<CreateNodeRes> {
-    return new Promise<CreateNodeRes>(async (resolve, reject) => {
+  ): Promise<CreateNodeBrfcRes> {
+    return new Promise<CreateNodeBrfcRes>(async (resolve, reject) => {
       const initParams = {
         autoRename: true,
         version: '0.0.9',

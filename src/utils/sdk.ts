@@ -3,6 +3,7 @@ import {
   createBrfcChildNodeParams,
   CreateNodeBaseRes,
   CreateNodeBrfcRes,
+  CreateNodeMetaFileRes,
   HdWalletCreateBrfcChildNodeParams,
   MetaIdJsRes,
   NftBuyParams,
@@ -985,6 +986,7 @@ export class SDK {
   ) {
     return new Promise<NodeTransactions>(async (resolve, reject) => {
       try {
+        debugger
         const chain = params.payType === SdkPayType.BSV ? HdWalletChain.BSV : HdWalletChain.MVC
         if (params.nodeName === NodeName.Name) {
           this.setTransferUtxoAndOutputAndSign(
@@ -1037,14 +1039,11 @@ export class SDK {
             )
           }
 
-          if (
-            transactions.metaFiles &&
-            transactions.metaFiles.filter(_item => _item.transaction).length
-          ) {
-            for (const item of transactions.metaFiles.filter(_item => _item.transaction)) {
-              const index = transactions.metaFiles.findIndex(_item => _item.txId === item.txId)
+          if (transactions.metaFiles && transactions.metaFiles.length) {
+            const metaFileTransactions = transactions.metaFiles.filter(item => item.transaction)
+            for (let i = 0; i < metaFileTransactions.length; i++) {
               const changeAddress =
-                index < transactions.metaFiles.filter(_item => _item.transaction).length - 1
+                i < metaFileTransactions.length - 1
                   ? transactions.metaFileBrfc!.address
                   : transactions.currentNodeBrfc?.transaction
                   ? this.wallet!.protocolAddress
@@ -1054,18 +1053,24 @@ export class SDK {
                   ? transactions.currentNodeBrfc!.address
                   : lastChangeAddress
               this.setTransferUtxoAndOutputAndSign(
-                item.transaction,
+                metaFileTransactions[i].transaction,
                 [utxo],
                 // 最后一个metafile 的找零地址 如果之后需要创建brfc节点 则打到 protocol 地址 否则 打到 bfr节点地址
                 changeAddress
               )
               // 更新txId
-              transactions.metaFiles[index].txId = transactions.metaFiles[index].transaction.id
+              metaFileTransactions[i].txId = metaFileTransactions[i].transaction.id
               // 更新 所有的metafile Txid 待完善
+              const metaFileSha256Index = this.metaFileSha256TxIdList.findIndex(
+                _item => _item.sha256 === metaFileTransactions[i].sha256
+              )
+              if (metaFileSha256Index > -1) {
+                this.metaFileSha256TxIdList[metaFileSha256Index].txId = metaFileTransactions[i].txId
+              }
 
               // 组装新 utxo
               const addressInfo: any = {}
-              if (index < transactions.metaFiles.length - 1) {
+              if (i < metaFileTransactions.length - 1) {
                 addressInfo.addressIndex = transactions.metaFileBrfc!.addressIndex
                 addressInfo.addressType = transactions.metaFileBrfc!.addressType
               } else if (transactions.currentNodeBrfc?.transaction) {
@@ -1083,7 +1088,7 @@ export class SDK {
                 addressInfo.addressType = transactions.currentNodeBrfc!.addressType
               }
               utxo = await this.wallet!.utxoFromTx({
-                tx: item.transaction,
+                tx: metaFileTransactions[i].transaction,
                 addressInfo,
                 chain,
                 // addressInfo: {
@@ -1091,6 +1096,18 @@ export class SDK {
                 //   addressType: transactions.metaFileBrfc!.addressType,
                 // },
               })
+            }
+
+            // 再循环一边， 把每个metafile txId 更新到最新的， 防止没有更新 ： batchCreateBrfcChildNode 的时候
+            for (let i = 0; i < transactions.metaFiles.length; i++) {
+              if (!transactions.metaFiles[i].transaction) {
+                const index = this.metaFileSha256TxIdList.findIndex(
+                  item => item.sha256 === transactions.metaFiles![i].sha256
+                )
+                if (index > -1) {
+                  transactions.metaFiles[i].txId = this.metaFileSha256TxIdList[index].txId
+                }
+              }
             }
           }
 
@@ -1121,7 +1138,7 @@ export class SDK {
                 ]
                 params.data = params.data!.replaceAll(
                   `$[${i}]`,
-                  transactions.metaFiles[i].transaction.id + `.${fileSuffix}`
+                  `${transactions.metaFiles[i].txId}.${fileSuffix}`
                 )
               }
             }
@@ -1241,14 +1258,15 @@ export class SDK {
     attachments: AttachmentItem[] = [],
     chain: HdWalletChain
   ) {
-    return new Promise<CreateNodeBaseRes[]>(async (resolve, reject) => {
-      const transactions: CreateNodeBaseRes[] = []
+    return new Promise<CreateNodeMetaFileRes[]>(async (resolve, reject) => {
+      const transactions: CreateNodeMetaFileRes[] = []
       let err
       for (const item of attachments!) {
         try {
           if (this.metaFileSha256TxIdList.some(_item => _item.sha256 === item.sha256)) {
             transactions.push({
               txId: this.metaFileSha256TxIdList.find(_item => _item.sha256 === item.sha256)!.txId,
+              sha256: item.sha256,
             })
           } else {
             const res = await this.wallet?.createNode({
@@ -1266,7 +1284,10 @@ export class SDK {
                 sha256: item.sha256,
                 txId: res.txId,
               })
-              transactions.push(res)
+              transactions.push({
+                ...res,
+                sha256: item.sha256,
+              })
             }
           }
         } catch (error) {
@@ -1311,7 +1332,7 @@ export class SDK {
         // 广播 Metafile
         if (transactions.metaFiles && transactions.metaFiles.length) {
           let catchError
-          for (let i = 0; i < transactions.metaFiles.length; i++) {
+          for (let i = 0; i < transactions.metaFiles.filter(item => item.transaction).length; i++) {
             try {
               await this.wallet?.provider.broadcast(
                 transactions.metaFiles[i].transaction.toString()
@@ -1370,7 +1391,7 @@ export class SDK {
       amount += transactions.metaFileBrfc.transaction.getNeedFee()
     // metafile 节点价格
     if (transactions.metaFiles && transactions.metaFiles.length > 0) {
-      for (const item of transactions.metaFiles) {
+      for (const item of transactions.metaFiles.filter(item => item.transaction)) {
         amount += item.transaction.getNeedFee()
       }
     }
