@@ -143,3 +143,7 @@ export interface MetaNameConfig {
 export const GetMetaNameConfig = (): Promise<MetaNameConfig> => {
   return Strapi.get('/metaname-config')
 }
+
+export const GetCertifiedMetaId = (): Promise<{ data: { list: string[] } }> => {
+  return Strapi.get('/certified-meta-id')
+}
