@@ -9,6 +9,7 @@ import { Network } from './wallet/hd-wallet'
 import { usePostTagStore } from '@/stores/buzz/tag'
 import { useMetaNameStore } from '@/stores/metaname'
 import { useHead } from '@vueuse/head'
+import { RouteLocationNormalized } from 'vue-router'
 
 let loading: any
 router.beforeEach(async (to, from, next) => {
@@ -16,50 +17,7 @@ router.beforeEach(async (to, from, next) => {
   const rootStore = useRootStore()
   const metaNameStore = useMetaNameStore()
 
-  if (to.path.indexOf('/metaname/') !== -1) {
-    useHead({
-      title: 'MetaName, Web3 Naming Brings You Real Value',
-      meta: [
-        {
-          name: 'description',
-          content:
-            'MetaName is a Decentralized, Open-sourced and Cross-chain Name System Based on MetaID Protocol',
-        },
-        {
-          name: 'keywords',
-          content: 'Name system, Web3 Naming, MetaName, Meta, MetaID',
-        },
-      ],
-      link: [
-        {
-          rel: 'icon',
-          key: 'favicon',
-          href: '/metaname.ico',
-        },
-      ],
-    })
-  } else {
-    useHead({
-      title: `Show3, the World's First NFT-Universal Web3 Social Application.`,
-      meta: [
-        {
-          name: 'description',
-          content: `Show3 is the World's First NFT-Universal Web3 Social Application. It is the first decentralized social platform based on the DID protocol with fully on-chain data.`,
-        },
-        {
-          name: 'keywords',
-          content: 'did,web3,social,NFT,decentralized,socail,metaid,social-fi,show3',
-        },
-      ],
-      link: [
-        {
-          rel: 'icon',
-          key: 'favicon',
-          href: '/favicon.ico',
-        },
-      ],
-    })
-  }
+  SetMeta(to)
 
   // talk之间的页面跳转不处理
   const isTalkRoutes = (route: any) => route.name?.startsWith('talk')
@@ -161,6 +119,53 @@ router.beforeEach(async (to, from, next) => {
 router.beforeResolve(() => {
   if (loading) loading.close()
 })
+
+function SetMeta(to: RouteLocationNormalized) {
+  if (to.path.indexOf('/metaname/') !== -1) {
+    useHead({
+      title: 'MetaName, Web3 Naming Brings You Real Value',
+      meta: [
+        {
+          name: 'description',
+          content:
+            'MetaName is a Decentralized, Open-sourced and Cross-chain Name System Based on MetaID Protocol',
+        },
+        {
+          name: 'keywords',
+          content: 'Name system, Web3 Naming, MetaName, Meta, MetaID',
+        },
+      ],
+      link: [
+        {
+          rel: 'icon',
+          key: 'favicon',
+          href: '/metaname.ico',
+        },
+      ],
+    })
+  } else {
+    useHead({
+      title: `Show3, the World's First NFT-Universal Web3 Social Application.`,
+      meta: [
+        {
+          name: 'description',
+          content: `Show3 is the World's First NFT-Universal Web3 Social Application. It is the first decentralized social platform based on the DID protocol with fully on-chain data.`,
+        },
+        {
+          name: 'keywords',
+          content: 'did,web3,social,NFT,decentralized,socail,metaid,social-fi,show3',
+        },
+      ],
+      link: [
+        {
+          rel: 'icon',
+          key: 'favicon',
+          href: '/favicon.ico',
+        },
+      ],
+    })
+  }
+}
 
 // router.afterEach((to, from, failure) => {
 //   console.log(window.history)

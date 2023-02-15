@@ -1,0 +1,21 @@
+@import '@/assets/styles/var.scss';
+
+.text {
+    font-size: 15PX;
+    line-height: 20PX;
+    white-space: pre-line;
+    word-break: break-word;
+
+    &.quote {
+        @include text-many-ellipsis(3);
+    }
+}
+
+.translate {
+    margin-top: 18px;
+
+    span {
+        color: var(--color-hover);
+        user-select: none;
+    }
+}
