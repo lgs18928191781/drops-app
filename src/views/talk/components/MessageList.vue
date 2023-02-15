@@ -215,7 +215,13 @@ watch(
     if (messagesScroll.value) {
       const mse: HTMLElement = messagesScroll.value as HTMLElement
       const disFromBottom = mse.scrollHeight - mse.scrollTop - mse.clientHeight // 滚动元素的总高度 - 滚动元素的离顶部距离 - 滚动元素的可视高度
-      if (disFromBottom > mse.clientHeight) {
+
+      // 还要判断是不是用户自己发的消息
+      const lastMessage =
+        talk.activeChannel?.newMessages[talk.activeChannel?.newMessages.length - 1]
+      const isMyMessage = lastMessage?.metaId === talk.selfMetaId
+
+      if (disFromBottom > mse.clientHeight && !isMyMessage) {
         return
       }
     }
