@@ -2,7 +2,7 @@
   "name": "show3.0",
   "version": "0.0.1",
   "scripts": {
-    "gray": "yarn vite --host --mode gray",
+    "gray": "yarn vite --mode gray",
     "mainnet": "yarn vite --mode mainnet",
     "mainnetgray": "yarn vite --mode mainnetgray",
     "build:gray": "node --max_old_space_size=10336 ./node_modules/vite/bin/vite.js build --mode gray",

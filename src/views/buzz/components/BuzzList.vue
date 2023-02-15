@@ -40,6 +40,7 @@
             @follow="onFollow"
             @play="onPlay"
             @replay="onReplay"
+            @translate="onTranslate"
           >
             <template #comment>
               <slot name="comment"></slot>
@@ -357,80 +358,7 @@ const operates: {
         translatedTx.some(item => item.txId === currentTxId.value)
           ? i18n.t('Buzz.repost.Show original text')
           : i18n.t('Buzz.repost.Translate'),
-      fun: async () => {
-        const translatedTxIndex = translatedTx.findIndex(item => item.txId === currentTxId.value)
-        const index = props.list.findIndex(item => item.txId === currentTxId.value)
-        if (translatedTxIndex !== -1) {
-          if (
-            props.list[index].protocol === 'SimpleRePost' &&
-            props.list[index].displayType === 'quickRePost'
-          ) {
-            props.list[index]!.quoteItem.content = translatedTx[translatedTxIndex].originalText
-          } else {
-            props.list[index]!.content = translatedTx[translatedTxIndex].originalText
-          }
-
-          if (translatedTx[translatedTxIndex].originalQuiteText) {
-            props.list[index]!.quoteItem.content = translatedTx[
-              translatedTxIndex
-            ].originalQuiteText!
-          }
-          translatedTx.splice(translatedTxIndex, 1)
-          isShowOperateModal.value = false
-        } else {
-          operateLoading.value = false
-          try {
-            let translated: any = {}
-            const originalText =
-              props.list[index].protocol === 'SimpleRePost' &&
-              props.list[index].displayType === 'quickRePost'
-                ? props.list[index].quoteItem.content
-                : props.list[index].content
-            const originalQuiteText =
-              props.list[index].displayType !== 'quickRePost' && props.list[index].quoteItem
-                ? props.list[index].quoteItem.content
-                : undefined
-            const res = await Translate({
-              query: originalText,
-              to: i18n.locale.value,
-            })
-            if (res.code === 0) {
-              translated.originalText = res.result.transResult
-              if (originalQuiteText) {
-                const res = await Translate({
-                  query: originalQuiteText,
-                  to: i18n.locale.value,
-                })
-                if (res.code === 0) {
-                  translated.originalQuiteText = res.result.transResult
-                }
-              }
-              if (
-                props.list[index].protocol === 'SimpleRePost' &&
-                props.list[index].displayType === 'quickRePost'
-              ) {
-                props.list[index].quoteItem.content = translated.originalText
-              } else {
-                props.list[index].content = translated.originalText
-              }
-
-              if (originalQuiteText) {
-                props.list[index].quoteItem.content = translated.originalQuiteText
-              }
-              translatedTx.push({
-                txId: currentTxId.value,
-                originalText,
-                originalQuiteText,
-              })
-              operateLoading.value = false
-              isShowOperateModal.value = false
-            }
-          } catch (error) {
-            ElMessage.error((error as any).message)
-            operateLoading.value = false
-          }
-        }
-      },
+      fun: async () => {},
     },
     {
       name: () => i18n.t('Buzz.repost.lookTx'),
@@ -750,8 +678,92 @@ function replay() {
   })
 }
 
+async function onTranslate(txId: string, callback?: (result: boolean) => void) {
+  currentTxId.value = txId
+  await translateItem()
+  if (callback) callback(translatedTx.some(item => item.txId === currentTxId.value))
+}
+
 function getMore() {
   emit('getMore')
+}
+
+function translateItem() {
+  return new Promise<void>(async resolve => {
+    const translatedTxIndex = translatedTx.findIndex(item => item.txId === currentTxId.value)
+    const index = props.list.findIndex(item => item.txId === currentTxId.value)
+    if (translatedTxIndex !== -1) {
+      if (
+        props.list[index].protocol === 'SimpleRePost' &&
+        props.list[index].displayType === 'quickRePost'
+      ) {
+        props.list[index]!.quoteItem.content = translatedTx[translatedTxIndex].originalText
+      } else {
+        props.list[index]!.content = translatedTx[translatedTxIndex].originalText
+      }
+
+      if (translatedTx[translatedTxIndex].originalQuiteText) {
+        props.list[index]!.quoteItem.content = translatedTx[translatedTxIndex].originalQuiteText!
+      }
+      translatedTx.splice(translatedTxIndex, 1)
+      isShowOperateModal.value = false
+      resolve()
+    } else {
+      operateLoading.value = false
+      try {
+        let translated: any = {}
+        const originalText =
+          props.list[index].protocol === 'SimpleRePost' &&
+          props.list[index].displayType === 'quickRePost'
+            ? props.list[index].quoteItem.content
+            : props.list[index].content
+        const originalQuiteText =
+          props.list[index].displayType !== 'quickRePost' && props.list[index].quoteItem
+            ? props.list[index].quoteItem.content
+            : undefined
+        const res = await Translate({
+          query: originalText,
+          to: i18n.locale.value,
+        })
+        if (res.code === 0) {
+          translated.originalText = res.result.transResult
+          if (originalQuiteText) {
+            const res = await Translate({
+              query: originalQuiteText,
+              to: i18n.locale.value,
+            })
+            if (res.code === 0) {
+              translated.originalQuiteText = res.result.transResult
+            }
+          }
+          if (
+            props.list[index].protocol === 'SimpleRePost' &&
+            props.list[index].displayType === 'quickRePost'
+          ) {
+            props.list[index].quoteItem.content = translated.originalText
+          } else {
+            props.list[index].content = translated.originalText
+          }
+
+          if (originalQuiteText) {
+            props.list[index].quoteItem.content = translated.originalQuiteText
+          }
+          translatedTx.push({
+            txId: currentTxId.value,
+            originalText,
+            originalQuiteText,
+          })
+          operateLoading.value = false
+          isShowOperateModal.value = false
+        }
+        resolve()
+      } catch (error) {
+        ElMessage.error((error as any).message)
+        operateLoading.value = false
+        resolve()
+      }
+    }
+  })
 }
 
 Mitt.on(MittEvent.FollowUser, async (params: { metaId: string; result: boolean }) => {
