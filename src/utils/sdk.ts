@@ -1,7 +1,8 @@
 import {
   AppMsg,
   createBrfcChildNodeParams,
-  CreateNodeRes,
+  CreateNodeBaseRes,
+  CreateNodeBrfcRes,
   HdWalletCreateBrfcChildNodeParams,
   MetaIdJsRes,
   NftBuyParams,
@@ -72,7 +73,7 @@ export class SDK {
   wallet: HdWallet | null = null
   isInitSdked = false
   network = Network.mainnet
-  bfrcNodeList: { nodeName: NodeName; data: CreateNodeRes }[] = [] // 存储Brfc节点， 防止未广播时重复构建
+  bfrcNodeList: { nodeName: NodeName; data: CreateNodeBrfcRes }[] = [] // 存储Brfc节点， 防止未广播时重复构建
   metaFileSha256TxIdList: { sha256: string; txId: string }[] = [] // 存储metaFileSha256TxId， 防止未广播时重复构建
 
   constructor(network: any) {
@@ -224,6 +225,7 @@ export class SDK {
           this.appMetaIdJs.transferNFT(accessToken, JSON.stringify(params), functionName)
         } else {
           const res = await this.wallet?.transferNft(params, option)
+          // @ts-ignore
           if (res) resolve(res)
         }
       } catch (error) {
@@ -355,7 +357,7 @@ export class SDK {
           // 构建没有utxo 的所有 transaction
           let transactions = await this.createBrfcChildNodeTransactions(params)
 
-          let payToRes: CreateNodeRes | undefined = undefined
+          let payToRes: CreateNodeBaseRes | undefined = undefined
           if (!params.utxos!.length) {
             // 计算总价
             let totalAmount = this.getNodeTransactionsAmount(transactions, params.payTo)
@@ -438,9 +440,9 @@ export class SDK {
             // 广播
             if (option.isBroadcast) {
               // 广播 打钱操作
-              if (payToRes && payToRes.transaction) {
-                await this.wallet?.provider.broadcast(payToRes.transaction.toString())
-              }
+              // if (payToRes && payToRes?.transaction) {
+              //   await this.wallet?.provider.broadcast(payToRes.transaction.toString())
+              // }
               // 广播 transactions 所有交易
               await this.broadcastNodeTransactions(transactions)
             }
@@ -459,7 +461,7 @@ export class SDK {
 
   private convertTransactionsIntoJob(
     transactions: NodeTransactions,
-    payToRes: CreateNodeRes | undefined,
+    payToRes: CreateNodeBaseRes | undefined,
     subscribeId: string
   ) {
     const jobsStore = useJobsStore()
@@ -527,7 +529,7 @@ export class SDK {
     }
   ) {
     return new Promise<null | {
-      payToRes?: CreateNodeRes
+      payToRes?: CreateNodeBaseRes
       transactionsList: NodeTransactions[]
     }>(async (resolve, reject) => {
       const initParams = {
@@ -563,7 +565,7 @@ export class SDK {
 
       const transactionsList: NodeTransactions[] = []
 
-      let payToRes: CreateNodeRes | undefined = undefined
+      let payToRes: CreateNodeBaseRes | undefined = undefined
       let payToResIsbBroadcast = false
 
       // 构建tx 并机选总价
@@ -733,7 +735,6 @@ export class SDK {
         } else {
           // 如果有附件
           if (params.attachments && params.attachments!.length > 0) {
-            const createAttachmentParams: any = []
             transactions.metaFileBrfc = await this.getBrfcNode(
               {
                 nodeName: NodeName.MetaFile,
@@ -746,25 +747,11 @@ export class SDK {
                 chain,
               }
             )
-
-            for (const item of params.attachments!) {
-              const index = params.attachments!.findIndex(_item => _item.sha256 === item.sha256)
-              createAttachmentParams.push({
-                nodeName: item.fileName,
-                metaIdTag: import.meta.env.VITE_METAID_TAG,
-                encrypt: item.encrypt,
-                data: item.data,
-                dataType: item.fileType,
-                encoding: 'binary',
-                parentTxId: transactions.metaFileBrfc!.txId,
-                chain,
-              })
-              const res = await this.wallet?.createNode(createAttachmentParams[index])
-              if (res) {
-                if (!transactions.metaFiles) transactions.metaFiles = []
-                transactions.metaFiles.push(res)
-              }
-            }
+            transactions.metaFiles = await this.createMetaFilesTransactions(
+              transactions.metaFileBrfc!.txId,
+              params.attachments,
+              chain
+            )
           }
 
           //  处理当前节点
@@ -898,7 +885,7 @@ export class SDK {
     params: CreateBrfcNodePrams,
     option?: { isBroadcast?: boolean; chain?: HdWalletChain }
   ) {
-    return new Promise<CreateNodeRes>(async (resolve, reject) => {
+    return new Promise<CreateNodeBrfcRes>(async (resolve, reject) => {
       try {
         if (this.bfrcNodeList.some(item => item.nodeName === params.nodeName)) {
           resolve(this.bfrcNodeList.find(item => item.nodeName === params.nodeName)!.data)
@@ -1034,29 +1021,30 @@ export class SDK {
 
             // 当有 metafile Brfc 改变时 metafile 节点也需要重新构建，因为父节点Brfc的txid 已改变
             transactions.metaFiles!.length = 0
+            // 移除 旧的 metafile metaFileSha256TxIdList
             for (const item of params.attachments!) {
-              const res = await this.wallet?.createNode({
-                nodeName: item.fileName,
-                metaIdTag: import.meta.env.VITE_METAID_TAG,
-                encrypt: item.encrypt,
-                data: item.data,
-                dataType: item.fileType,
-                encoding: 'binary',
-                parentTxId: transactions.metaFileBrfc!.txId,
-                chain,
-              })
-              if (res) {
-                if (!transactions.metaFiles) transactions.metaFiles = []
-                transactions.metaFiles.push(res)
+              const index = this.metaFileSha256TxIdList.findIndex(
+                _item => _item.sha256 === item.sha256
+              )
+              if (index > -1) {
+                this.metaFileSha256TxIdList.splice(index, 1)
               }
             }
+            transactions.metaFiles = await this.createMetaFilesTransactions(
+              transactions.metaFileBrfc!.txId,
+              params.attachments,
+              chain
+            )
           }
 
-          if (transactions.metaFiles && transactions.metaFiles.length) {
-            for (const item of transactions.metaFiles) {
+          if (
+            transactions.metaFiles &&
+            transactions.metaFiles.filter(_item => _item.transaction).length
+          ) {
+            for (const item of transactions.metaFiles.filter(_item => _item.transaction)) {
               const index = transactions.metaFiles.findIndex(_item => _item.txId === item.txId)
               const changeAddress =
-                index < transactions.metaFiles.length - 1
+                index < transactions.metaFiles.filter(_item => _item.transaction).length - 1
                   ? transactions.metaFileBrfc!.address
                   : transactions.currentNodeBrfc?.transaction
                   ? this.wallet!.protocolAddress
@@ -1073,6 +1061,8 @@ export class SDK {
               )
               // 更新txId
               transactions.metaFiles[index].txId = transactions.metaFiles[index].transaction.id
+              // 更新 所有的metafile Txid 待完善
+
               // 组装新 utxo
               const addressInfo: any = {}
               if (index < transactions.metaFiles.length - 1) {
@@ -1163,8 +1153,11 @@ export class SDK {
                   transactions.nft!.genesis = {
                     txId: res.txid!,
                     transaction: res.tx!,
+                    // @ts-ignore
                     codehash: res!.codehash!,
+                    // @ts-ignore
                     genesis: res!.genesis!,
+                    // @ts-ignore
                     sensibleId: res!.sensibleId!,
                   }
                 } else {
@@ -1243,8 +1236,58 @@ export class SDK {
     })
   }
 
+  private createMetaFilesTransactions(
+    metaFileBrfcTxId: string,
+    attachments: AttachmentItem[] = [],
+    chain: HdWalletChain
+  ) {
+    return new Promise<CreateNodeBaseRes[]>(async (resolve, reject) => {
+      const transactions: CreateNodeBaseRes[] = []
+      let err
+      for (const item of attachments!) {
+        try {
+          if (this.metaFileSha256TxIdList.some(_item => _item.sha256 === item.sha256)) {
+            transactions.push({
+              txId: this.metaFileSha256TxIdList.find(_item => _item.sha256 === item.sha256)!.txId,
+            })
+          } else {
+            const res = await this.wallet?.createNode({
+              nodeName: item.fileName,
+              metaIdTag: import.meta.env.VITE_METAID_TAG,
+              encrypt: item.encrypt,
+              data: item.data,
+              dataType: item.fileType,
+              encoding: 'binary',
+              parentTxId: metaFileBrfcTxId,
+              chain,
+            })
+            if (res) {
+              this.metaFileSha256TxIdList.push({
+                sha256: item.sha256,
+                txId: res.txId,
+              })
+              transactions.push(res)
+            }
+          }
+        } catch (error) {
+          err = error
+        }
+
+        if (err) {
+          break
+        }
+      }
+
+      if (err) {
+        reject(err)
+      } else {
+        resolve(transactions)
+      }
+    })
+  }
+
   // 更新本地存储的brfc节点信息
-  private updateBfrcNodeList(nodeName: NodeName, nodeInfo: CreateNodeRes) {
+  private updateBfrcNodeList(nodeName: NodeName, nodeInfo: CreateNodeBrfcRes) {
     const index = this.bfrcNodeList.findIndex(item => item.nodeName === nodeName)
     if (index !== -1) {
       this.bfrcNodeList[index].data = {
@@ -1399,11 +1442,11 @@ export class SDK {
   }) {
     return new Promise<{
       utxo: UtxoItem
-      payToRes?: CreateNodeRes
+      payToRes?: CreateNodeBaseRes
     }>(async (resolve, reject) => {
       const userStore = useUserStore()
       let utxo: UtxoItem
-      let payToRes: CreateNodeRes | undefined = undefined
+      let payToRes: CreateNodeBaseRes | undefined = undefined
       try {
         if (params.sdkPayType === SdkPayType.SPACE || params.sdkPayType === SdkPayType.BSV) {
           const chain = params.sdkPayType === SdkPayType.BSV ? HdWalletChain.BSV : HdWalletChain.MVC
@@ -1443,10 +1486,6 @@ export class SDK {
                 payToRes = {
                   transaction: res,
                   txId: res.id,
-                  address: params.receive.address,
-                  addressType: params.receive.addressType,
-                  addressIndex: params.receive.addressIndex,
-                  scriptPlayload: [],
                 }
                 utxo = await this.wallet!.utxoFromTx({
                   tx: payToRes.transaction,
@@ -1718,6 +1757,7 @@ export class SDK {
     //   )
     // }
     const privateKeys = this.wallet!.getUtxosPrivateKeys(utxos)
+    // @ts-ignore
     tx.sign(privateKeys)
   }
 
@@ -1726,7 +1766,7 @@ export class SDK {
    */
   eciesDecryptData(params: {
     data: string | Buffer
-    privateKey?: bsv.PrivateKey | string
+    privateKey?: mvc.PrivateKey | string
     publicKey?: string
   }) {
     return new Promise<string>(async (resolve, reject) => {
@@ -1747,6 +1787,7 @@ export class SDK {
       } else {
         const result = this.wallet!.eciesDecryptData(
           params.data,
+          // @ts-ignore
           params.privateKey,
           params.publicKey
         )
@@ -1794,10 +1835,10 @@ export class SDK {
     const res = await this.wallet?.makeTx({
       utxos: Utxos,
       opReturn: [],
-      change: this.wallet.wallet.rootAddress,
+      change: this.wallet.rootAddress,
       payTo: payTo,
     })
 
-    return await this.wallet?.provider.broadcast(res.toString())
+    return await this.wallet?.provider.broadcast(res!.toString())
   }
 }

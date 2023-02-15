@@ -463,16 +463,18 @@ export interface createBrfcChildNodeParams {
   txId?: string
 }
 
-export interface CreateNodeRes {
-  address: string
+export interface CreateNodeBaseRes {
   txId: string
-  addressType: number
-  addressIndex: number
   transaction?: bsv.Transaction
   scriptPlayload?: (string | Buffer)[]
   hex?: string
 }
 
+export interface CreateNodeBrfcRes extends CreateNodeBaseRes {
+  address: string
+  addressType: number
+  addressIndex: number
+}
 export interface SendMetaNameTransationResult {
   registerMetaNameResp: any
   MvcToAddress: string
