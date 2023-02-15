@@ -195,6 +195,7 @@ pre {
   border-radius: var(--rounded);
   transition-property: all;
   transition-duration: 200ms;
+  user-select: none;
 
   // hover时浮起（只在桌面端）
   @media (min-width: 1024PX) {
