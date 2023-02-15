@@ -1549,7 +1549,7 @@
 
 "@vue/reactivity@3.2.47":
   version "3.2.47"
-  resolved "https://registry.yarnpkg.com/@vue/reactivity/-/reactivity-3.2.47.tgz#1d6399074eadfc3ed35c727e2fd707d6881140b6"
+  resolved "https://registry.npmmirror.com/@vue/reactivity/-/reactivity-3.2.47.tgz#1d6399074eadfc3ed35c727e2fd707d6881140b6"
   integrity sha512-7khqQ/75oyyg+N/e+iwV6lpy1f5wq759NdlS1fpAhFXa8VeAIKGgk2E/C4VF59lx5b+Ezs5fpp/5WsRYXQiKxQ==
   dependencies:
     "@vue/shared" "3.2.47"
@@ -1564,7 +1564,7 @@
 
 "@vue/runtime-core@^3.2.47":
   version "3.2.47"
-  resolved "https://registry.yarnpkg.com/@vue/runtime-core/-/runtime-core-3.2.47.tgz#406ebade3d5551c00fc6409bbc1eeb10f32e121d"
+  resolved "https://registry.npmmirror.com/@vue/runtime-core/-/runtime-core-3.2.47.tgz#406ebade3d5551c00fc6409bbc1eeb10f32e121d"
   integrity sha512-RZxbLQIRB/K0ev0K9FXhNbBzT32H9iRtYbaXb0ZIz2usLms/D55dJR2t6cIEUn6vyhS3ALNvNthI+Q95C+NOpA==
   dependencies:
     "@vue/reactivity" "3.2.47"
@@ -1594,7 +1594,7 @@
 
 "@vue/shared@3.2.47":
   version "3.2.47"
-  resolved "https://registry.yarnpkg.com/@vue/shared/-/shared-3.2.47.tgz#e597ef75086c6e896ff5478a6bfc0a7aa4bbd14c"
+  resolved "https://registry.npmmirror.com/@vue/shared/-/shared-3.2.47.tgz#e597ef75086c6e896ff5478a6bfc0a7aa4bbd14c"
   integrity sha512-BHGyyGN3Q97EZx0taMQ+OLNuZcW3d37ZEVmEAyeoA9ERdGvm9Irc/0Fua8SNyOtV1w6BS4q25wbMzJujO9HIfQ==
 
 "@vuedx/compiler-sfc@0.7.2":
@@ -6644,12 +6644,12 @@ merge2@^1.3.0, merge2@^1.4.1:
   resolved "https://registry.npmmirror.com/merge2/-/merge2-1.4.1.tgz#4368892f885e907455a6fd7dc55c0c9d404990ae"
   integrity sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==
 
-meta-contract@0.1.48:
-  version "0.1.48"
-  resolved "https://registry.npmmirror.com/meta-contract/-/meta-contract-0.1.48.tgz#74ae5ab547e4cda465f5f997992e205c709d631c"
-  integrity sha512-3t/u0S0btKjw0WklX0BwoCQh/orA82THW8YDnyA+Vtvo2G9oHjE+Gn+cVvyxZAMpl2OWfMt/ZHit/uVQjKnt+g==
+meta-contract@0.2.0:
+  version "0.2.0"
+  resolved "https://registry.npmmirror.com/meta-contract/-/meta-contract-0.2.0.tgz#2096368149cd6d14259e0876f621d38e46bb1489"
+  integrity sha512-7XLTGHpNFkZdzHXHSp7WTp7lPM9i2dhnH/tCNNm6daj12vLki2pDizPKGAubvSVGscMOV1pIErnPvcLuCRekcw==
   dependencies:
-    mvc-scrypt "^0.1.0"
+    mvc-scrypt "0.1.1"
     mvc-scryptlib "^1.0.0"
     node-fetch "2"
 
@@ -6788,7 +6788,7 @@ mitt@1.1.2:
 
 mitt@^3.0.0:
   version "3.0.0"
-  resolved "https://registry.yarnpkg.com/mitt/-/mitt-3.0.0.tgz#69ef9bd5c80ff6f57473e8d89326d01c414be0bd"
+  resolved "https://registry.npmmirror.com/mitt/-/mitt-3.0.0.tgz#69ef9bd5c80ff6f57473e8d89326d01c414be0bd"
   integrity sha512-7dX2/10ITVyqh4aOSVI9gdape+t9l2/8QxHrFmUXu4EEUpdlxl6RudZUPZoc+zuY2hk1j7XxVroIVIan/pD/SQ==
 
 mixin-deep@^1.2.0:
@@ -6850,10 +6850,10 @@ mvc-lib@^1.0.5:
     inherits "2.0.3"
     unorm "1.4.1"
 
-mvc-scrypt@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.npmmirror.com/mvc-scrypt/-/mvc-scrypt-0.1.0.tgz#b517dd9e978cec8919faa23e14ab29faaf99ab6f"
-  integrity sha512-LAnLkOtz3bmmswD2Kt4ZDzEM18TuM8E+/TmfnES/L/+wM9l8iJ8q2F4EUPcLBFnvw0sX3yZ1cJueFXyIg1vNTw==
+mvc-scrypt@0.1.1:
+  version "0.1.1"
+  resolved "https://registry.npmmirror.com/mvc-scrypt/-/mvc-scrypt-0.1.1.tgz#841a8179be9cc6bdb0b60200ba5dbb716e5eb53f"
+  integrity sha512-csJ5QVontTNHTRKR/Mmh9r0JMg6vBFoEFa99Ey5D/9BwhoxFQ73/jtvzEC6WcG9xsWoLwisVh65WXN418sKsYw==
   dependencies:
     "@discoveryjs/json-ext" "^0.5.7"
     compare-versions "^3.6.0"

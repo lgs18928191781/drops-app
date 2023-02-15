@@ -17,6 +17,7 @@ import { router } from '@/router'
 import { useTalkStore } from './talk'
 import { useRootStore } from './root'
 import detectEthereumProvider from '@metamask/detect-provider'
+import { useGenesisStore } from './genesis'
 
 export interface KycInfoTypes {
   name: string
@@ -80,6 +81,13 @@ const sdkPayConfirm = {
   },
 }
 
+if (user && password) {
+  setTimeout(() => {
+    const genesisStore = useGenesisStore()
+    genesisStore.initGenesis()
+  })
+}
+
 export const useUserStore = defineStore('user', {
   state: () =>
     <UserState>{
@@ -118,6 +126,7 @@ export const useUserStore = defineStore('user', {
       return new Promise<void>(resolve => {
         const talkStore = useTalkStore()
         const rootStore = useRootStore()
+        const genesStore = useGenesisStore()
         localStorage.clear()
         if (rootStore.isShowLogin) rootStore.$patch({ isShowLogin: false })
         if (window.provider) window.provider = undefined
@@ -130,6 +139,7 @@ export const useUserStore = defineStore('user', {
         } catch {}
 
         talkStore.reset()
+        genesStore.initGenesis()
         if (route.meta.isAuth) router.push('/')
         // talk的路由跳buzz推荐页
         if (route.path.includes('talk')) router.push('/buzz/recommend')
@@ -163,6 +173,9 @@ export const useUserStore = defineStore('user', {
         try {
           this.user = data
         } catch {}
+
+        const genesisStore = useGenesisStore()
+        genesisStore.initGenesis()
         resolve()
       })
     },

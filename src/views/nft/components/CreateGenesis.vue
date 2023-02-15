@@ -94,11 +94,14 @@ async function genesis() {
       seriesName: form.name,
       totalSupply: form.count,
       sensibleId: res.nft!.genesis!.sensibleId,
+      metaId: userStore.user!.metaId,
     })
     FormRef.value.resetFields()
     loading.value = false
     ElMessage.success(i18n.t('NFT.Create genesis success'))
     emit('update:modelValue', false)
+  } else if (res === null) {
+    loading.value = false
   }
 }
 </script>

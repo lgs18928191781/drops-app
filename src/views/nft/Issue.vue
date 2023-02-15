@@ -23,9 +23,19 @@
     <div class="issue-list">
       <div
         class="issue-item flex flex-align-center flex-pack-center"
-        v-for="item in list"
+        v-for="(item, index) in list"
         :key="item.uuid"
       >
+        <span
+          class="status flex flex-align-center flex-pack-center"
+          :class="{ success: item.isSuccess }"
+          @click="operateItem(index)"
+        >
+          <Icon :name="item.isSuccess ? 'check' : 'x_mark'" />
+        </span>
+
+        <div class="success-cover" v-if="item.isSuccess"></div>
+
         <ElForm
           :model="item"
           :label-position="'top'"
@@ -122,12 +132,13 @@ interface IssueItem {
   desc: string
   index: number
   uuid: string
+  isSuccess?: boolean
 }
 </script>
 <script setup lang="ts">
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { GetUserGenesisList } from '@/api/aggregation'
-import { NodeName } from '@/enum'
+import { Chains, NodeName } from '@/enum'
 import { useUserStore } from '@/stores/user'
 import { ElOption, ElSelect } from 'element-plus'
 import { reactive, ref } from 'vue'
@@ -137,6 +148,7 @@ import { useGenesisStore } from '@/stores/genesis'
 import AddImageWarpVue from '@/components/AddImageWarp/AddImageWarp.vue'
 import { openLoading } from '@/utils/util'
 import { useI18n } from 'vue-i18n'
+import { router } from '@/router'
 
 const userStore = useUserStore()
 const genesisStore = useGenesisStore()
@@ -254,20 +266,59 @@ async function confirmIssue() {
     const response = await userStore.showWallet.batchCreateBrfcChildNode(taskParams, {
       callback: params => {
         return new Promise(resolve => {
-          console.log(params.transactions)
-          resolve({
-            isContinue: true,
-          })
+          list[params.index].isSuccess = true
+          if (
+            params.transactions.nft?.issue?.tokenIndex === (list[params.index].index - 1).toString()
+          ) {
+            genesisStore.updateCurrentTotalSupply({
+              genesis: list[params.index].genesis!.genesis,
+              codehash: list[params.index].genesis!.codehash,
+            })
+            resolve({
+              isContinue: true,
+            })
+          } else {
+            const count = parseInt(params.transactions.nft!.issue!.tokenIndex) + 1
+            genesisStore.updateCurrentTotalSupply({
+              genesis: list[params.index].genesis!.genesis,
+              codehash: list[params.index].genesis!.codehash,
+              count: count,
+            })
+            list[params.index].index = count
+            resolve({
+              isContinue: false,
+              error: i18n.t('NFT.Issue.TokenIndexNoteMatch'),
+            })
+          }
         })
       },
     })
     if (response) {
-      debugger
+      ElMessage.success(i18n.t('NFT.Issue.AllIssueSuccess'))
+      loading.close()
     } else if (response === null) {
       loading.close()
     }
   } catch (error) {
     ElMessage.error((error as any).message)
+    loading.close()
+  }
+}
+
+async function operateItem(index: number) {
+  if (list[index].isSuccess) {
+    const link = router.resolve({
+      name: 'nftDetail',
+      params: {
+        genesis: list[index].genesis!.genesis,
+        codehash: list[index].genesis!.codehash,
+        tokenIndex: list[index].index - 1,
+        chain: Chains.MVC,
+      },
+    })
+    window.open(`${location.origin}${link.href}`, '_blank')
+  } else {
+    list.splice(index, 1)
   }
 }
 

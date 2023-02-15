@@ -46,7 +46,7 @@
 
           <div class="lg:mt-12">
             <button
-              class="main-border w-full py-3 text-base outline-0 font-bold dark:bg-gray-600"
+              class="main-border w-full py-3 text-base outline-0 font-bold dark:bg-gray-700"
               @click="goBack"
             >
               {{ $t('Talk.Modals.confirm') }}

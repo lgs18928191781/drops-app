@@ -268,7 +268,8 @@
       "amount_each": "Amount Each",
       "amount_each_explain": "The amount in each Candy Bag should not be less than 1000 Sats.",
       "choose_nft": "Choose NFT...",
-      "dont_have_permission": "You do not have permission to send messages in this channel."
+      "dont_have_permission": "You do not have permission to send messages in this channel.",
+      "compress": "Compress?"
     },
     "Datetime": {
       "today": "Today at ",
@@ -279,7 +280,7 @@
     "Errors": {
       "default": "An error occurred.",
       "image_only": "You should upload an image.",
-      "image_too_large": "Image size should be less than 2MB."
+      "image_too_large": "Image size should be less than 10MB."
     }
   },
   "Not install MetaLet Wallet": "Not Install MetaLet Wallet",
@@ -677,7 +678,11 @@
       "Number: X to 1": "Number: X to 1",
       "Number: 1 to X": "Number: 1 to X"
     },
-    "IssueLoading": "Casting is in progress, please do not do other operations and wait patiently..."
+    "IssueLoading": "Casting is in progress, please do not do other operations and wait patiently...",
+    "Issue": {
+      "TokenIndexNoteMatch": "TokenIndex  Not Match",
+      "AllIssueSuccess": "All cast successfully"
+    }
   },
   "My NFT": "My NFT",
   "Done": "Done",

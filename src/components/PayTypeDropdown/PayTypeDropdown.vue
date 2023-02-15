@@ -12,7 +12,9 @@
     <template #dropdown>
       <ElDropdownMenu>
         <ElDropdownItem
-          v-for="(item, index) in payPlatformList"
+          v-for="(item, index) in payPlatformList.filter(
+            item => !isMe || (isMe && item.platform !== PayPlatform.SPACE)
+          )"
           :key="index"
           @click="choosePayPlatform(item)"
           :disabled="item.disabled()"
@@ -44,6 +46,7 @@ import { PayPlatform } from '@/enum'
 const props = defineProps<{
   modelValue: boolean
   currentPayPlatform: PayPlatform
+  isMe?: boolean
 }>()
 
 const emit = defineEmits(['update:modelValue', 'update:currentPayPlatform', 'change'])

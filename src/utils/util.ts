@@ -61,6 +61,7 @@ import { GetTxChainInfo } from '@/api/metaid-base'
 import { useMetaNameStore } from '@/stores/metaname'
 import { GetBalance } from '@/api/aggregation'
 import namehash from 'eth-ens-namehash'
+import Compressor from 'compressorjs'
 
 const emojiReg = /[\u{1F601}-\u{1F64F}\u{2702}-\u{27B0}\u{1F680}-\u{1F6C0}\u{1F170}-\u{1F251}\u{1F600}-\u{1F636}\u{1F681}-\u{1F6C5}\u{1F30D}-\u{1F567}]/gu
 
@@ -857,6 +858,17 @@ export function throttle(fn: any, delay = 500) {
   }
 }
 
+export async function compressImage(image: File): Promise<File> {
+  return new Promise((resolve, reject) => {
+    new Compressor(image, {
+      quality: 0.6,
+      convertSize: 100_000, // 100KB
+      success: resolve as () => File,
+      error: reject,
+    })
+  })
+}
+
 // 降文件转为 AttachmentItem， 便于操作/上链
 export function FileToAttachmentItem(file: File, encrypt: IsEncrypt = IsEncrypt.No) {
   return new Promise<AttachmentItem>(async (resolve, reject) => {
@@ -1016,6 +1028,25 @@ export function getCurrencyAmount(
       return 0
     }
   } else if (toCurrency === ToCurrency.POLYGON) {
+    if (currency === 'CNY') {
+      let result = new Decimal(
+        new Decimal(price)
+          .div(100)
+          .div(rate!.price.CNY)
+          .toFixed(5)
+      ).toNumber()
+      if (result < 0.00001) result = 0.00001
+      return result
+    } else if (currency === ToCurrency.USD) {
+      // usd -> eth
+      let result = new Decimal(new Decimal(price).div(rate!.price.USD).toFixed(5)).toNumber()
+      if (result < 0.00001) result = 0.00001
+      return result
+    } else {
+      // mvc -> eth
+      return 0
+    }
+  } else if (toCurrency === ToCurrency.MVC) {
     if (currency === 'CNY') {
       let result = new Decimal(
         new Decimal(price)

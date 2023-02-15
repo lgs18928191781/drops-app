@@ -73,6 +73,7 @@ export class SDK {
   isInitSdked = false
   network = Network.mainnet
   bfrcNodeList: { nodeName: NodeName; data: CreateNodeRes }[] = [] // 存储Brfc节点， 防止未广播时重复构建
+  metaFileSha256TxIdList: { sha256: string; txId: string }[] = [] // 存储metaFileSha256TxId， 防止未广播时重复构建
 
   constructor(network: any) {
     this.network = network
@@ -879,6 +880,7 @@ export class SDK {
                         return response.fee
                       },
                     },
+                    tokenIndex: '0',
                   }
                 }
               }
@@ -1127,7 +1129,7 @@ export class SDK {
                 const fileSuffix = params.attachments![i].fileName.split('.')[
                   params.attachments![i].fileName.split('.').length - 1
                 ]
-                params.data = params.data!.replace(
+                params.data = params.data!.replaceAll(
                   `$[${i}]`,
                   transactions.metaFiles[i].transaction.id + `.${fileSuffix}`
                 )
@@ -1211,6 +1213,7 @@ export class SDK {
                 })
                 if (res) {
                   transactions.nft!.issue = {
+                    tokenIndex: res.tokenIndex!,
                     transaction: res.tx,
                     // @ts-ignore
                     txId: res!.txid!,
