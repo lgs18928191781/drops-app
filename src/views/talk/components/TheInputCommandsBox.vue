@@ -46,7 +46,6 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
-import Compressor from 'compressorjs'
 
 import { isFileTooLarge, isImage, MessageType, sendMessage } from '@/utils/talk'
 import { FileToAttachmentItem } from '@/utils/util'
@@ -108,7 +107,7 @@ const trySendImage = async () => {
   const messageDto = {
     type: MessageType.Image,
     channelId: props.currentChannel.id,
-    userName: userStore.user?.name || 'Riverrun46',
+    userName: userStore.user?.name,
     attachments,
   }
   await sendMessage(messageDto)
