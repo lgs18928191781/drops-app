@@ -861,6 +861,7 @@ export async function compressImage(image: File): Promise<File> {
   return new Promise((resolve, reject) => {
     new Compressor(image, {
       quality: 0.6,
+      convertSize: 100_000, // 100KB
       success: resolve as () => File,
       error: reject,
     })
