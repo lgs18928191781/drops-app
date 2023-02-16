@@ -15,6 +15,35 @@
     .title {
         font-size: 16px;
         color: #606266;
+
+        a {
+            margin-right: 15px;
+            cursor: pointer;
+
+            &:last-child {
+                margin-right: 0;
+            }
+
+            &:hover {
+                color: var(--themeTextColor);
+            }
+
+            &.active {
+                color: var(--themeTextColor);
+                position: relative;
+
+                &::after {
+                    content: '';
+                    position: absolute;
+                    bottom: -6px;
+                    left: 50%;
+                    margin-left: -25px;
+                    width: 50px;
+                    height: 2px;
+                    background: var(--themeTextColor);
+                }
+            }
+        }
     }
 
     .content {
@@ -107,6 +136,29 @@
                     padding: 6px 12px;
                 }
             }
+        }
+    }
+}
+
+.order-list {
+    .order-item {
+        background: var(--themeBgSecondColor);
+        padding: 18px;
+        border-radius: var(--rounded);
+        margin-bottom: 15px;
+
+        .key {
+            opacity: 0.6;
+            margin-right: 10px;
+        }
+
+        .metaname {
+            font-size: 20px;
+        }
+
+        .order_id,
+        .status {
+            margin-top: 10px;
         }
     }
 }

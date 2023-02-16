@@ -10,3 +10,9 @@ declare interface CouponInfo {
 declare interface GetCouponInfoRes extends apiResponse {
   data: CouponInfo
 }
+
+declare interface MetaNameOder {
+  name: string
+  order_id: string
+  state: number
+}
