@@ -859,5 +859,8 @@
   "FixAccountTips3": "to fix",
   "BSV Insufficient balance": "BSV Insufficient balance",
   "metanameNotAllowCh": "Registration in Chinese is not currently supported",
-  "metanameNotAllowSpace": "Registration name cannot have spaces"
+  "metanameNotAllowSpace": "Registration name cannot have spaces",
+  "confirmUpdate": "Confirm upgrade",
+  "allowUpdate": "It has been detected that your account needs to be upgraded, canceling the upgrade may affect subsequent logins to other wallets, please confirm",
+  "updateRemind": "upgrade tips"
 }

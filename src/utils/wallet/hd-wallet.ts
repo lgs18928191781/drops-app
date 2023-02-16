@@ -296,6 +296,7 @@ export const hdWalletFromAccount = async (
   }
   // const mnemonic = new Mnemonic(Buffer.from(hex)).toString()
   const wallet = await hdWalletFromMnemonic(mnemonic, account.tag, network, path)
+
   const root = wallet.deriveChild(0).deriveChild(0).privateKey
 
   return {

@@ -855,5 +855,10 @@
   "FixAccountTips3": "去修复",
   "BSV Insufficient balance": "BSV 余额不足",
   "metanameNotAllowCh": "暂不支持注册中文",
-  "metanameNotAllowSpace": "注册名称不可以有空格"
+  "metanameNotAllowSpace": "注册名称不可以有空格",
+  "updateFail": "升级账户失败",
+  "updateSuccess": "账户升级成功!",
+  "updateRemind": "升级提示",
+  "allowUpdate": "检测到你的账号需要升级,取消升级可能会影响后续其他钱包登录,请确认",
+  "confirmUpdate": "确认升级"
 }

@@ -378,6 +378,7 @@ function drawePayCode() {
               params.chain_id = (window as any).ethereum?.chainId
             }
             const res = await UpdatePay(params)
+
             if (res.code === 0) {
               payResult.status = PayStatus.Success
               isShowPayStatusModal.value = true

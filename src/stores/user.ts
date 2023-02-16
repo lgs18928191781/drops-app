@@ -157,6 +157,7 @@ export const useUserStore = defineStore('user', {
         localStorage.setItem(encode('user'), encode(JSON.stringify(data)))
 
         if (password) {
+          debugger
           window.localStorage.setItem(encode('password'), encode(password))
         }
 

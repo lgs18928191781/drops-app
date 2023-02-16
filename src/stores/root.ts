@@ -21,6 +21,10 @@ interface RootState {
   currentPrice: ToCurrency
   theme: 'light' | 'dark'
   chainWhiteList: Array<string>
+  updatePlanRes: {
+    registerTime: number
+    signHash: string
+  } | null
 }
 
 const UA = window.navigator.userAgent.toLowerCase()
@@ -68,6 +72,7 @@ export const useRootStore = defineStore('root', {
       currentPrice: initCurrentPrice,
       theme,
       chainWhiteList: import.meta.env.MODE == 'gray' ? ['0x5', '0x13881'] : ['0x1', '0x89'],
+      updatePlanRes: null,
     },
   getters: {
     GetCurrentChain: state => {
@@ -88,6 +93,9 @@ export const useRootStore = defineStore('root', {
       state.exchangeRate.find(item => item.symbol === state.currentPrice),
   },
   actions: {
+    updateAccountPlan(payload: { registerTime: number; signHash: string }) {
+      this.updatePlanRes = payload
+    },
     getExchangeRate() {
       this.isGetedExchangeRate = true
       fetchExchangeRate().then((res: any) => {
