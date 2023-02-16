@@ -382,6 +382,17 @@ function changeGenesis(index: number, genesis: GenesisItem) {
       list[i].index = currentGenesisIndex
     }
   }
+
+  // 更新后面同一 旧 的 genesis的index
+  let oldGenesisIndex = getGenesisMaxIndex(genesis, index) + 1
+  if (oldGenesis) {
+    for (let i = index + 1; i < list.length; i++) {
+      if (list[i].genesis && list[i].genesis!.genesis === oldGenesis.genesis) {
+        list[i].index = oldGenesisIndex
+        oldGenesisIndex++
+      }
+    }
+  }
 }
 
 function getGenesisMaxIndex(genesis: GenesisItem, stopIndex?: number) {
