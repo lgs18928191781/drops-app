@@ -13,6 +13,7 @@ import axios, { AxiosInstance } from 'axios'
 import { UtxoItem } from '@/@types/sdk'
 import zlib from 'zlib'
 import { HdWalletChain } from '@/enum'
+import i18n from '../i18n'
 interface BaseApiResultTypes<T> {
   code: number
   msg?: string
@@ -77,6 +78,7 @@ export default class ShowmoneyProvider {
   public serviceHttp
   public metaNameApi = `http://47.242.27.95:35000`
   public newBrfcNodeBaseInfoList: NewBrfcNodeBaseInfo[] = []
+  public isUsedUtxos: { txId: string; address: string }[] = []
 
   constructor(params?: { baseApi?: string; mvcMetaSvApi?: string; bsvMetaSvApi?: string }) {
     if (params?.baseApi) this.apiPrefix = params.baseApi
@@ -287,7 +289,6 @@ export default class ShowmoneyProvider {
     token?: string
     userName?: string
   }): Promise<BaseUtxo> {
-    console.log('paramsparamsparams', params)
     let options = {
       headers: {
         'Content-Type': 'application/json',
@@ -322,6 +323,43 @@ export default class ShowmoneyProvider {
     } else {
       throw new Error(res.msg)
     }
+  }
+
+  public async getAmountUnUesedUtxos(
+    amount: number,
+    xpub: string,
+    chain: HdWalletChain = HdWalletChain.MVC
+  ) {
+    return new Promise<UtxoItem[]>(async (resolve, reject) => {
+      try {
+        let unUsedUtxos: UtxoItem[] = []
+        let leftAmount = amount
+        const utxos = await this.getUtxos(xpub, chain)
+        for (let i = 0; i < utxos.length; i++) {
+          if (leftAmount > 0) {
+            // utxo 未使用
+            if (
+              !this.isUsedUtxos.some(
+                item => item.txId === utxos[i].txId && item.address === utxos[i].address
+              )
+            ) {
+              unUsedUtxos.push(utxos[i])
+              leftAmount -= utxos[i].satoshis
+            }
+          } else {
+            break
+          }
+        }
+        if (leftAmount > 0) {
+          // @ts-ignore
+          throw new Error(chain.toUpperCase() + ' ' + i18n.global.t('Insufficient balance'))
+        } else {
+          resolve(unUsedUtxos)
+        }
+      } catch (error) {
+        reject(error)
+      }
+    })
   }
 
   public async getUtxos(

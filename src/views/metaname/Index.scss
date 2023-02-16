@@ -1,6 +1,7 @@
 .metaname-index {
     position: relative;
     overflow: hidden;
+
 }
 
 .module {
@@ -19,17 +20,33 @@
 
 
     .title {
-        font-size: 54px;
+        font-size: 42px;
         font-weight: bold;
         text-align: center;
         line-height: 80px;
+        white-space: pre-line;
     }
 
     .drsc {
         font-size: 18px;
-        margin-top: 24px;
+        margin-top: 30px;
         text-align: center;
-        line-height: 40px;
+        line-height: 30px;
+        opacity: 0.7;
+        white-space: pre-line;
+
+        a {
+            font-weight: bold;
+        }
+    }
+
+    .drsc2 {
+        font-size: 18px;
+        margin-top: 30px;
+        text-align: center;
+        line-height: 30px;
+        font-weight: bold;
+        opacity: 0.7;
     }
 
     .hover {
@@ -54,7 +71,10 @@
             margin-left: 10px;
 
             :deep(use) {
+                stroke: var(--color-hover);
+                ;
                 fill: var(--color-hover);
+                stroke-width: 2px;
             }
         }
     }
@@ -79,12 +99,23 @@
     }
 
     .title {
-        font-size: 72px;
-        line-height: 120px;
+        font-size: 70px;
+        line-height: 90px;
+        font-weight: bold;
+
+        :deep(a) {
+            background: linear-gradient(114deg, #5721A1 4%, #2DEBD8 98%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
     }
 
     .drsc {
         font-size: 24px;
+        font-weight: 500;
+        opacity: 0.6;
     }
 
     .tag {
@@ -104,6 +135,20 @@
         .icon {
             width: 80px;
             height: 18px;
+        }
+
+        &:hover {
+            .plain-btn {
+                :deep(.content) {
+                    background: transparent;
+                }
+            }
+
+            .icon {
+                :deep(use) {
+                    fill: #fff;
+                }
+            }
         }
     }
 
@@ -168,7 +213,7 @@
 
     .cover {
         width: 95%;
-        max-width: 580px;
+        max-width: 840px;
         display: block;
         margin: 60px auto 0 auto;
     }
@@ -295,11 +340,33 @@
 
 }
 
+.module7 {
+    height: auto;
+
+    .bg {
+        position: absolute;
+        width: 81px;
+        height: 81px;
+        left: 50%;
+        top: 150px;
+        margin-left: 280px;
+        margin-top: -50px;
+        animation: module3Anim 3s infinite ease-in-out;
+    }
+
+    .title {}
+
+    .imgs {
+        margin-top: 40px;
+    }
+}
+
 footer {
     width: 100%;
     position: absolute;
     left: 0;
     bottom: 0;
+    user-select: none;
 
     z-index: 2;
 

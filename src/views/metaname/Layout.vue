@@ -1,9 +1,11 @@
 <template>
-  <HeaderVue />
-  <RouterView />
+  <div class="metaname">
+    <HeaderVue />
+    <RouterView />
 
-  <!-- wallet -->
-  <MyWalletVue v-model="layout.isShowWallet" />
+    <!-- wallet -->
+    <MyWalletVue v-model="layout.isShowWallet" />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -13,5 +15,4 @@ import MyWalletVue from '@/components/LoginedUserOperate/MyWallet.vue'
 
 const layout = useLayoutStore()
 </script>
-<style lang="scss"></style>
 <style lang="scss" src="./Layout.scss"></style>
