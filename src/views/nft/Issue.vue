@@ -385,8 +385,8 @@ function changeGenesis(index: number, genesis: GenesisItem) {
 }
 
 function getGenesisMaxIndex(genesis: GenesisItem, stopIndex?: number) {
-  if (!stopIndex) stopIndex = list.length
-  let currentMaxIndex = 1
+  if (stopIndex === undefined) stopIndex = list.length
+  let currentMaxIndex = 0
   for (let i = 0; i < stopIndex; i++) {
     if (list[i].genesis && list[i].genesis!.genesis === genesis.genesis) {
       currentMaxIndex = list[i].index
