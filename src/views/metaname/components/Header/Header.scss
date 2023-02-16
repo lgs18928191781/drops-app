@@ -5,6 +5,7 @@ header {
     top: 0;
     z-index: 3;
     border-bottom: 1px solid var(--divid-color);
+    user-select: none;
 
     .phone-warp {
         margin-right: 10px;

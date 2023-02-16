@@ -2,12 +2,14 @@
   <div class="metaname-index">
     <div class="module1 flex flex-align-center flex-pack-center module">
       <div class="metaname-container">
-        <div class="title">{{ $t('MetaName.IndexTitle1') }}</div>
+        <div class="title" v-html="$t('MetaName.IndexTitle1')"></div>
         <div class="drsc">{{ $t('MetaName.IndexDrsc1') }}</div>
         <div class="tag">
-          <PlainBtn class="tag-warp">
-            <Icon name="meta" />
-          </PlainBtn>
+          <a href="https://www.metaid.io/" target="_blank">
+            <PlainBtn class="tag-warp">
+              <Icon name="meta" />
+            </PlainBtn>
+          </a>
         </div>
         <PlainBtn class="search">
           <SearchWarp
@@ -32,7 +34,8 @@
         <div class="content">
           <div class="title">{{ $t('MetaName.IndexTitle2') }}</div>
           <div class="drsc">{{ $t('MetaName.IndexDrsc2') }}</div>
-          <div class="wallets flex flex-align-center flex-pack-center">
+          <div class="drsc2">{{ $t('MetaName.IndexIntro2') }}</div>
+          <!-- <div class="wallets flex flex-align-center flex-pack-center">
             <div
               class="wallet flex flex-align-center"
               v-for="(item, index) in wallets"
@@ -41,26 +44,8 @@
               <img :src="item.icon" class="logo" />
               {{ item.name }}
             </div>
-          </div>
+          </div> -->
           <img class="cover" src="@/assets/metaname/module2.png" />
-        </div>
-      </div>
-    </div>
-
-    <div class="module3 flex flex-align-center flex-pack-center module">
-      <div class="metaname-container">
-        <img class="bg" src="@/assets/metaname/emb.png" />
-
-        <div class="title">{{ $t('MetaName.IndexTitle3') }}</div>
-        <div class="drsc">{{ $t('MetaName.IndexDrsc3') }}</div>
-        <div class="hover flex flex-align-center flex-pack-center">
-          <a href="https://www.show3.io/home" target="_blank" class="flex flex-align-center"
-            >{{ $t('MetaName.IndexHover3') }} <Icon name="down"
-          /></a>
-        </div>
-        <div class="imgs flex flex-align-center">
-          <img class="flex1" src="@/assets/metaname/module3_1.png" />
-          <img class="flex1" src="@/assets/metaname/module3_2.png" />
         </div>
       </div>
     </div>
@@ -71,15 +56,52 @@
         <div class="content">
           <div class="title">{{ $t('MetaName.IndexTitle4') }}</div>
           <div class="drsc">{{ $t('MetaName.IndexDrsc4') }}</div>
-          <div class="hover flex flex-align-center flex-pack-center">
+          <div class="drsc2">{{ $t('MetaName.IndexIntro4') }}</div>
+          <!-- <div class="hover flex flex-align-center flex-pack-center">
             <a
               href="https://metaid-1.gitbook.io/metaname/zhu-ce-he-shi-yong-metaname/guan-li-metaname"
               target="_blank"
               class="flex flex-align-center"
               >{{ $t('MetaName.IndexHover4') }} <Icon name="down"
             /></a>
-          </div>
+          </div> -->
           <img class="cover" src="@/assets/metaname/module4.png" />
+        </div>
+      </div>
+    </div>
+
+    <div class="module3 flex flex-align-center flex-pack-center module">
+      <div class="metaname-container">
+        <img class="bg" src="@/assets/metaname/emb.png" />
+
+        <div class="title">{{ $t('MetaName.IndexTitle3') }}</div>
+        <div class="drsc">{{ $t('MetaName.IndexDrsc3') }}</div>
+        <!-- <div class="hover flex flex-align-center flex-pack-center">
+          <a href="https://www.show3.io/home" target="_blank" class="flex flex-align-center"
+            >{{ $t('MetaName.IndexHover3') }} <Icon name="down"
+          /></a>
+        </div> -->
+        <div class="imgs flex flex-align-center">
+          <img class="flex1" src="@/assets/metaname/module3_1.png" />
+          <img class="flex1" src="@/assets/metaname/module3_2.png" />
+        </div>
+      </div>
+    </div>
+
+    <div class="module7 flex flex-align-center flex-pack-center module">
+      <div class="metaname-container">
+        <img class="bg" src="@/assets/metaname/emb.png" />
+        <div class="title">{{ $t('MetaName.IndexTitle7') }}</div>
+        <div class="drsc">
+          {{ $t('MetaName.IndexDrsc7') }} <a>{{ $t('MetaName.IndexDrsc7_2') }}</a>
+        </div>
+        <!-- <div class="hover flex flex-align-center flex-pack-center">
+          <a href="https://www.show3.io/home" target="_blank" class="flex flex-align-center"
+            >{{ $t('MetaName.IndexHover3') }} <Icon name="down"
+          /></a>
+        </div> -->
+        <div class="imgs flex flex-align-center">
+          <img class="flex1" src="@/assets/metaname/module7.png" />
         </div>
       </div>
     </div>
@@ -153,6 +175,7 @@ import { checkUserLogin } from '@/utils/util'
 import { useRouter } from 'vue-router'
 import { EnvMode } from '@/enum'
 import { useI18n } from 'vue-i18n'
+import MetaSo from '@/assets/images/logo_metaso.png'
 
 const router = useRouter()
 const i18n = useI18n()
@@ -174,28 +197,32 @@ const wallets = [
 
 const apps = [
   {
+    icon: Show,
+    name: 'Show3',
+  },
+  {
+    icon: MetaSo,
+    name: 'MetaSo',
+  },
+  {
     icon: ShowMoney,
     name: 'ShowMoney',
-  },
-  {
-    icon: WebBot,
-    name: 'Webot',
-  },
-  {
-    icon: Metalet,
-    name: 'Metalet',
-  },
-  {
-    icon: Show,
-    name: 'Show',
   },
   {
     icon: ShowBuzz,
     name: 'ShowBuzz',
   },
   {
+    icon: Metalet,
+    name: 'Metalet',
+  },
+  {
     icon: Buzzbit,
     name: 'Buzzbit',
+  },
+  {
+    icon: WebBot,
+    name: 'Webot',
   },
 ]
 
@@ -211,6 +238,10 @@ const contactIcon = [
   {
     icon: 'email',
     link: 'mailto:metanamedao@outlook.com',
+  },
+  {
+    icon: 'dito',
+    link: 'https://discord.gg/K2DMepgjhk',
   },
 ]
 
