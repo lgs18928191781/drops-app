@@ -121,10 +121,16 @@
           /></a>
         </div>
         <div class="apps flex flex-align-center flex-pack-center">
-          <div class="app" v-for="(item, index) in apps" :key="index">
+          <a
+            :href="item.link"
+            target="_blank"
+            class="app"
+            v-for="(item, index) in apps"
+            :key="index"
+          >
             <img :src="item.icon" class="logo" />
             <div class="name">{{ item.name }}</div>
-          </div>
+          </a>
         </div>
       </div>
     </div>
@@ -199,30 +205,38 @@ const apps = [
   {
     icon: Show,
     name: 'Show3',
+    link: 'https://www.show3.io',
   },
   {
     icon: MetaSo,
     name: 'MetaSo',
+    link: 'https://www.metaso.network/',
   },
   {
     icon: ShowMoney,
-    name: 'ShowMoney',
+    name: 'VisionMoney',
+    link: 'https://www.visionmoney.space/',
   },
   {
     icon: ShowBuzz,
     name: 'ShowBuzz',
+    link: 'https://www.showbuzz.app/',
   },
   {
     icon: Metalet,
     name: 'Metalet',
+    link:
+      'https://chrome.google.com/webstore/detail/metalet-mvc-wallet/lbjapbcmmceacocpimbpbidpgmlmoaao?hl=zh-CN',
   },
   {
     icon: Buzzbit,
     name: 'Buzzbit',
+    link: 'https://buzzbit.vercel.app',
   },
   {
     icon: WebBot,
-    name: 'Webot',
+    name: 'VisionBox',
+    link: 'https://www.visionbox.space/',
   },
 ]
 
