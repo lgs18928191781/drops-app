@@ -1262,6 +1262,11 @@ export class HdWallet {
           }
         }
 
+        // 把Utxo 标记为已使用， 防止被其他地方用了
+        this.provider.isUsedUtxos.push({
+          txId: params.tx.id,
+          address: OutPut.script.toAddress(this.network).toString(),
+        })
         resolve({
           address: OutPut.script.toAddress(this.network).toString(),
           satoshis: OutPut.satoshis,
@@ -1934,7 +1939,15 @@ export class HdWallet {
           ...params,
         }
         if (!params.utxos!.length) {
-          params.utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString(), params.chain)
+          let totalAmount = mvc.Transaction.DUST_AMOUNT
+          for (const item of params.payTo) {
+            totalAmount += item.amount
+          }
+          params.utxos = await this.provider.getAmountUnUesedUtxos(
+            totalAmount,
+            this.wallet.xpubkey.toString(),
+            params.chain
+          )
         }
         for (const item of params.payTo) {
           if (!item.address) {

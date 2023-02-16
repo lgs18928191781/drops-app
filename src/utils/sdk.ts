@@ -1146,6 +1146,7 @@ export class SDK {
               params.nodeName === NodeName.NftGenesis ||
               params.nodeName === NodeName.NftTransfer
             ) {
+              debugger
               const scriptPlayload = await this.getScriptPlayload(createCurrentNodeParams, chain)
               const nftManager = this.wallet!.getNftManager()
               const _params = {
