@@ -261,3 +261,12 @@ export const MetaNameUpdateInfo = (
 }> => {
   return Wxcore.post(`/metaname/updateinfo`, { data: parmas })
 }
+
+export const GetMetaNameOrders = (
+  metaId: string
+): Promise<{
+  data: MetaNameOder[]
+  total: 0
+}> => {
+  return Wxcore.get(`/metaname/orders`, { params: { meta_id: metaId } })
+}

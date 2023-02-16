@@ -25,54 +25,85 @@
     </div>
 
     <div class="mine-section">
-      <div class="title">{{ $t('MetaName.My MetaName') }}</div>
-      <div class="content">
-        <div
-          class="metaname-list"
-          v-infinite-scroll="load"
-          :infinite-scroll-immediate="false"
-          :infinite-scroll-distance="100"
+      <div class="title">
+        <a
+          v-for="(item, index) in tabs"
+          :key="index"
+          :class="{ active: item.value === tabActive }"
+          @click="changeTab(item.value)"
         >
-          <ElSkeleton :loading="isSkeleton" animated>
-            <div
-              class="metaname-item flex "
-              v-for="item in list"
-              :key="item.codeHash + item.genesis + item.tokenIndex"
-            >
-              <Image class="cover" :src="item.icon" />
-              <div class="cont flex1">
-                <div class="name flex flex-align-center">
-                  <span>{{ item.name }}</span
-                  >.metaid
-                </div>
-                <div :class="[remindExpired(item.expireDate) ? 'waringTime' : 'time']">
-                  {{
-                    remindExpired(item.expireDate)
-                      ? $t('MetaName.ReadyExpire')
-                      : $t('MetaName.Expire date')
-                  }}:&nbsp;{{ $t('MetaName.About') }}&nbsp;{{
-                    $filters.dateTimeFormat(item.expireDate, 'UTC')
-                  }}(UTC)
-                </div>
-                <div class="operate flex flex-align-center flex-pack-end">
-                  <a class="btn primary" @click="renewItem(item)">
-                    {{ $t('MetaName.Domain Renewal') }}</a
-                  >
-                  <RouterLink
-                    :to="{ name: 'mineMetaName', params: { metaName: item.name || '1' } }"
-                  >
-                    <PlainBtnVue>
-                      {{ $t('MetaName.Configure domain name') }}
-                    </PlainBtnVue>
-                  </RouterLink>
+          {{ item.name() }}
+        </a>
+      </div>
+      <div class="content">
+        <template v-if="tabActive === MetaNameMineTabvalue.MyMetaName">
+          <div
+            class="metaname-list"
+            v-infinite-scroll="load"
+            :infinite-scroll-immediate="false"
+            :infinite-scroll-distance="100"
+          >
+            <ElSkeleton :loading="isSkeleton" animated>
+              <div
+                class="metaname-item flex "
+                v-for="item in list"
+                :key="item.codeHash + item.genesis + item.tokenIndex"
+              >
+                <Image class="cover" :src="item.icon" />
+                <div class="cont flex1">
+                  <div class="name flex flex-align-center">
+                    <span>{{ item.name }}</span
+                    >.metaid
+                  </div>
+                  <div :class="[remindExpired(item.expireDate) ? 'waringTime' : 'time']">
+                    {{
+                      remindExpired(item.expireDate)
+                        ? $t('MetaName.ReadyExpire')
+                        : $t('MetaName.Expire date')
+                    }}:&nbsp;{{ $t('MetaName.About') }}&nbsp;{{
+                      $filters.dateTimeFormat(item.expireDate, 'UTC')
+                    }}(UTC)
+                  </div>
+                  <div class="operate flex flex-align-center flex-pack-end">
+                    <a class="btn primary" @click="renewItem(item)">
+                      {{ $t('MetaName.Domain Renewal') }}</a
+                    >
+                    <RouterLink
+                      :to="{ name: 'mineMetaName', params: { metaName: item.name || '1' } }"
+                    >
+                      <PlainBtnVue>
+                        {{ $t('MetaName.Configure domain name') }}
+                      </PlainBtnVue>
+                    </RouterLink>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <IsNull v-if="list.length === 0" />
-            <LoadMore v-else :pagination="pagination" />
-          </ElSkeleton>
-        </div>
+              <IsNull v-if="list.length === 0" />
+              <LoadMore v-else :pagination="pagination" />
+            </ElSkeleton>
+          </div>
+        </template>
+        <template v-else>
+          <div class="order-list">
+            <div class="order-item" v-for="(item, index) in orders" :key="index">
+              <div class="metaname">
+                <span class="key">MetName:</span><span class="value">{{ item.name }}</span>
+              </div>
+              <div class="order_id">
+                <span class="key">{{ $t('MetaName.OrderId') }}:</span
+                ><span class="value">{{ item.order_id }}</span>
+              </div>
+              <div class="status">
+                <span class="key">{{ $t('MetaName.OrderStatus') }}:</span
+                ><span class="value">{{
+                  item.state === 2 ? $t('MetaName.Registering') : $t('MetaName.RegisterFail')
+                }}</span>
+              </div>
+            </div>
+            <IsNull v-if="orders.length <= 0" />
+          </div>
+        </template>
       </div>
     </div>
   </div>
@@ -99,6 +130,8 @@ import RenewModal from '../components/RenewModal/RenewModal.vue'
 import { remindExpired } from '@/utils/util'
 import IsNull from '@/components/IsNull/IsNull.vue'
 import LoadMore from '@/components/LoadMore/LoadMore.vue'
+import { useI18n } from 'vue-i18n'
+import { GetMetaNameOrders } from '@/api/wxcore'
 
 const userStore = useUserStore()
 const isShowRenew = ref(false)
@@ -106,7 +139,25 @@ const list: MetaNameItem[] = reactive([])
 const pagination = reactive({ ...initPagination, flag: '' })
 const isSkeleton = ref(true)
 const currentMetaName: { val: null | MetaNameItem } = reactive({ val: null })
+const orders: MetaNameOder[] = reactive([])
 let blockHeight: any
+
+const i18n = useI18n()
+enum MetaNameMineTabvalue {
+  MyMetaName = 0,
+  Order = 1,
+}
+const tabs = [
+  {
+    name: () => i18n.t('MetaName.My MetaName'),
+    value: MetaNameMineTabvalue.MyMetaName,
+  },
+  {
+    name: () => i18n.t('MetaName.My Order'),
+    value: MetaNameMineTabvalue.Order,
+  },
+]
+const tabActive = ref(MetaNameMineTabvalue.MyMetaName)
 
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
@@ -166,6 +217,20 @@ function refreshDatas() {
 function renewItem(item: MetaNameItem) {
   currentMetaName.val = item
   isShowRenew.value = true
+}
+
+async function changeTab(value: MetaNameMineTabvalue) {
+  if (tabActive.value === value) return
+  tabActive.value = value
+  if (tabActive.value === MetaNameMineTabvalue.Order) {
+    const res = await GetMetaNameOrders(userStore.user!.metaId).catch(error => {
+      ElMessage.error(error.message)
+    })
+    if (res) {
+      orders.length = 0
+      orders.push(...res.data)
+    }
+  }
 }
 
 getBlock().then(() => {
