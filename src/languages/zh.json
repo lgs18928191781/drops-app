@@ -671,7 +671,22 @@
     "IssueLoading": "正在铸造中，请勿做其他操作耐心等待...",
     "Issue": {
       "TokenIndexNoteMatch": "序号不匹配，请检查后再试",
-      "AllIssueSuccess": "全部铸造成功"
+      "AllIssueSuccess": "全部铸造成功",
+      "GenesisEmpty": "系列不能为空",
+      "NameEmpty": "NFT名称不能为空",
+      "CoverEmpty": "NFT封面不能为空",
+      "SourceFileEmpty": "NFT源文件为空",
+      "AcceptAddressEmpty": "接收地址不能为空",
+      "Classify": "分类"
+    },
+    "ClassifyList": {
+      "art": "艺术",
+      "game": "游戏",
+      "music": "音乐",
+      "rights": "权益",
+      "avatar": "头像",
+      "alias": "别名",
+      "card": "纪念卡"
     }
   },
   "My NFT": "我的NFT",

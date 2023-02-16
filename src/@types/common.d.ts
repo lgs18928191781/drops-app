@@ -472,12 +472,12 @@ declare interface GenesisNFTItem {
 }
 
 declare interface NodeTransactions {
-  payToAddress?: import('@/@types/sdk.d.ts').CreateNodeRes
-  metaFileBrfc?: import('@/@types/sdk.d.ts').CreateNodeRes
-  metaFiles?: import('@/@types/sdk.d.ts').CreateNodeRes[]
-  currentNodeBrfc?: import('@/@types/sdk.d.ts').CreateNodeRes
-  currentNode?: import('@/@types/sdk.d.ts').CreateNodeRes
-  sendMoney?: import('@/@types/sdk.d.ts').CreateNodeRes
+  payToAddress?: import('@/@types/sdk.d.ts').CreateNodeBaseRes
+  metaFileBrfc?: import('@/@types/sdk.d.ts').CreateNodeBrfcRes
+  metaFiles?: import('@/@types/sdk.d.ts').CreateNodeMetaFileRes[]
+  currentNodeBrfc?: import('@/@types/sdk.d.ts').CreateNodeBrfcRes
+  currentNode?: import('@/@types/sdk.d.ts').CreateNodeBaseRes
+  sendMoney?: import('@/@types/sdk.d.ts').CreateNodeBaseRes
   subscribeId?: string
   nft?: {
     issue?: {
@@ -631,4 +631,19 @@ declare interface ProtocolBrfcNode {
 declare interface UserProtocolBrfcNode extends ProtocolBrfcNode {
   nodeName: import('@/enum').NodeName
   brfcId: string
+}
+
+declare interface MetaFileSha256Info {
+  blockHeight: number
+  fileDataType: string
+  fileSize: number
+  fileSizeStr: string
+  fileType: number
+  hash: string
+  md5: string
+  metaId: string
+  metanetId: string
+  resUrl: string
+  timestamp: number
+  txId: string
 }

@@ -101,6 +101,10 @@ html.dark {
 
 }
 
+.el-input__inner {
+    min-height: var(--el-input-inner-height);
+}
+
 .el-input {
     --el-input-hover-border: var(--normal-border-color);
     --el-input-focus-border-color: var(--normal-border-color);
