@@ -24,10 +24,10 @@
           :meta-name="activeChannel.metaName"
           :text-class="'!text-xl lg:!text-sm font-bold lg:font-normal max-w-[120PX]'"
         />
-        <div class="text-xs text-dark-300 dark:text-gray-400 whitespace-nowrap mt-1 lg:mt-0">
+        <div class="text-xs text-dark-300 dark:text-gray-400 whitespace-nowrap mt-1 lg:mt-0.5">
           <span>MetaID: </span>
           <span
-            class="p-1 rounded lg:hover:bg-dark-200 dark:lg:hover:bg-black lg:hover:underline cursor-pointer"
+            class="px-1 py-0.5 rounded lg:hover:bg-dark-200 dark:lg:hover:bg-black lg:hover:underline cursor-pointer"
             @click="copyMetaId"
           >
             {{ shortId }}
