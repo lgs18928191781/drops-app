@@ -23,7 +23,8 @@ export const useMetaNameStore = defineStore('metaname', {
   actions: {
     getMetaNameAllPrice: function() {
       return new Promise<void>(async resolve => {
-        const res = await MetaNameAllPrice().catch(error => {
+        const userStore = useUserStore()
+        const res = await MetaNameAllPrice(userStore.user?.metaId).catch(error => {
           ElMessage.error(error.message)
         })
         if (res) {

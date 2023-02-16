@@ -372,7 +372,7 @@ function drawePayCode() {
               chain
             )
             if (balance < new Decimal(props.amount).plus(560).toNumber()) {
-              throw new Error(i18n.t('BSV Insufficient balance'))
+              throw new Error(chain.toUpperCase() + ' ' + i18n.t('Insufficient balance'))
             }
             from_coin_address = userStore.showWallet.wallet!.rootAddress
             const res = await ElMessageBox.confirm(
