@@ -470,11 +470,37 @@ footer {
 
     .module {
         height: auto;
-        padding: 150px 0;
+        padding: 50px 0;
+
+        .title {
+            font-size: 26px;
+            line-height: 32px;
+        }
+
+        .drsc {
+            font-size: 16px;
+        }
+
+        .drsc2 {
+            font-size: 16px;
+        }
     }
 
     .module1 {
         background-size: contain;
+
+        .title {
+            font-size: 34px;
+            line-height: 60px;
+        }
+
+        .drsc {
+            font-size: 18px;
+        }
+
+        .search {
+            margin-top: 50px;
+        }
     }
 
     .module2 {
@@ -530,6 +556,8 @@ footer {
     }
 
     .module6 {
+        padding: 200px 0;
+
         .title {
             margin-top: 80px;
         }
@@ -541,6 +569,8 @@ footer {
             margin-bottom: -300px;
         }
     }
+
+    .module7 {}
 
     footer {}
 }
