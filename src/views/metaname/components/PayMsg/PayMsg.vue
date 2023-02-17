@@ -32,7 +32,7 @@
     <div class="result-amount">
       <div class="amount">
         {{ currencyAmount }}
-        {{ currentPayPlatform === PayPlatform.UnionPay ? 'USD' : payPlatformList.find(item => item.platform === currentPayPlatform)!.key.toUpperCase()}}
+        {{ getPlatformSymbol(currentPayPlatform, 'USD') }}
       </div>
       <div class="usd">{{ price }} USD</div>
     </div>
@@ -67,6 +67,7 @@ import {
   getCurrencyAmount,
   mappingChainId,
   setPayQuitUrl,
+  getPlatformSymbol,
 } from '@/utils/util'
 import { MetaNameReqCode } from '@/utils/wallet/hd-wallet'
 import { reactive, ref, onMounted, computed } from 'vue'
@@ -96,10 +97,10 @@ const emit = defineEmits(['back', 'success', 'update:loading'])
 const currentPayPlatform = ref(
   userStore.isAuthorized && userStore.user?.evmAddress && (window as any).ethereum
     ? mappingChainId((window as any).ethereum?.chainId)
-    : PayPlatform.UnionPay
+    : i18n.locale.value === Lang.ZH
+    ? PayPlatform.UnionPay
+    : PayPlatform.SPACE
 )
-
-onMounted(() => {})
 
 const currencyAmount = ref(0)
 const productType = ProductType.MetaName

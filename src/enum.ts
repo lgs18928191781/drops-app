@@ -100,7 +100,7 @@ export const PayPlatformUnit = {
   [PayPlatform.ETH]: import.meta.env.VITE_ETH_CHAIN.toUpperCase(),
   [PayPlatform.POLYGON]: import.meta.env.VITE_POLYGON_CHAIN.toUpperCase(),
   [PayPlatform.BSV]: 'BSV',
-  [PayPlatform.SPACE]: 'MVC',
+  [PayPlatform.SPACE]: 'SPACE',
 }
 
 export enum NFTSellState {

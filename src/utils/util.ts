@@ -23,6 +23,7 @@ import {
   ProductType,
   Chains,
   EnvMode,
+  PayPlatformUnit,
 } from '@/enum'
 import { CheckBlindboxOrderStatus } from '@/api/v3'
 import AllCardJson from '@/utils/card.json'
@@ -1595,5 +1596,22 @@ export const validateMetaName = (value: string) => {
       ElMessage.error(`${i18n.global.t('inputMetaNameIllgel')}`)
       return null
     }
+  }
+}
+
+export const nativePayPlatforms = [
+  PayPlatform.ETH,
+  PayPlatform.POLYGON,
+  PayPlatform.BSV,
+  PayPlatform.SPACE,
+]
+
+export function getPlatformSymbol(platform: PayPlatform, defaultValue = '') {
+  if (nativePayPlatforms.includes(platform)) {
+    return PayPlatformUnit[platform]
+  } else {
+    if (defaultValue) return defaultValue
+    else return '￥'
+    // return rootStore.currentPriceSymbol
   }
 }

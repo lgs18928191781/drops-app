@@ -181,7 +181,9 @@ import {
   checkAppHasMethod,
   CheckMetaMaskAccount,
   checkOrderStatus as CheckOrderStatus,
+  getPlatformSymbol,
   getUserBsvBalance,
+  nativePayPlatforms,
   openLoading,
 } from '@/utils/util'
 import { ElMessage, ElMessageBox, LoadingParentElement } from 'element-plus'
@@ -305,12 +307,6 @@ const payPlatformAmountFix = {
   [PayPlatform.UnionPay]: 2,
   [PayPlatform.WechatPay]: 2,
 }
-const nativePayPlatforms = [
-  PayPlatform.ETH,
-  PayPlatform.POLYGON,
-  PayPlatform.BSV,
-  PayPlatform.SPACE,
-]
 
 const payResultMessage = computed(() => {
   let msg = ''
@@ -326,15 +322,6 @@ const payResultMessage = computed(() => {
   }
   return msg
 })
-
-function getPlatformSymbol(platform: PayPlatform) {
-  if (nativePayPlatforms.includes(platform)) {
-    return PayPlatformUnit[platform]
-  } else {
-    // return rootStore.currentPriceSymbol
-    return '￥'
-  }
-}
 
 function drawePayCode() {
   return new Promise<void>(async (resolve, reject) => {
