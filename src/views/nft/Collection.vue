@@ -98,6 +98,7 @@
                       </div>
                     </div>
                   </template>
+                  <div class="fillter-item-content"></div>
                 </ElCollapseItem>
                 <ElCollapseItem class="filter-item">
                   <template #title>
