@@ -142,6 +142,10 @@
 
     .screen {
         margin-top: 18px;
+        position: sticky;
+        left: 0;
+        top: 300px;
+        z-index: 3;
 
         .main-border {
             display: inline-flex;
@@ -192,9 +196,12 @@
         }
     }
 
-    .nft-list {
-        margin-top: 18px;
-    }
+    .nft-list {}
+}
+
+
+.collection-nft-content {
+    margin-top: 18px;
 }
 
 .filter-warp {
@@ -222,6 +229,20 @@
         .icon {
             width: 10px;
             height: 10px;
+        }
+    }
+}
+
+.button-list {
+    a {
+        display: inline-block;
+        padding: 5px 10px;
+        margin-right: 10px;
+        margin-bottom: 13px;
+        cursor: pointer;
+
+        &:last-child {
+            margin-right: 0;
         }
     }
 }

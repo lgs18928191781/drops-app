@@ -1,6 +1,6 @@
 <template>
   <ElSkeleton :loading="isSkeleton" animated>
-    <div class="collection">
+    <div class="collection" id="collection">
       <!-- cover -->
       <Image class="cover" :src="$filters.strapiImage(collection.val!.banner.url)" />
 
@@ -60,31 +60,33 @@
         <!-- CollectionWorks -->
         <template v-if="tabActive === NFTCollectTab.CollectionWorks">
           <!-- screen -->
-          <div class="screen flex flex-align-center">
-            <div class="flex1">
-              <a class="main-border flex flex-align-center">
-                <Icon name="filter" /> {{ $t('NFT.Filter') }}
-              </a>
+          <el-affix :offset="120">
+            <div class="screen flex flex-align-center">
+              <div class="flex1">
+                <a class="main-border flex flex-align-center">
+                  <Icon name="filter" /> {{ $t('NFT.Filter') }}
+                </a>
+              </div>
+              <ElSelect v-model="sortIndex" @change="refreshDatas">
+                <ElOption
+                  v-for="(item, index) in sorts"
+                  :key="index"
+                  :label="item.name()"
+                  :value="index"
+                />
+              </ElSelect>
+              <div class="display flex flex-align-center">
+                <a
+                  @click="changeCell(item.value)"
+                  v-for="item in cells"
+                  :key="item.value"
+                  :class="{ active: item.value === cell.val.value }"
+                >
+                  <Icon :name="item.icon" />
+                </a>
+              </div>
             </div>
-            <ElSelect v-model="sortIndex" @change="refreshDatas">
-              <ElOption
-                v-for="(item, index) in sorts"
-                :key="index"
-                :label="item.name()"
-                :value="index"
-              />
-            </ElSelect>
-            <div class="display flex flex-align-center">
-              <a
-                @click="changeCell(item.value)"
-                v-for="item in cells"
-                :key="item.value"
-                :class="{ active: item.value === cell.val.value }"
-              >
-                <Icon :name="item.icon" />
-              </a>
-            </div>
-          </div>
+          </el-affix>
 
           <div class="collection-nft-content flex">
             <div class="filter-warp">
@@ -98,7 +100,17 @@
                       </div>
                     </div>
                   </template>
-                  <div class="fillter-item-content"></div>
+                  <div class="fillter-item-content">
+                    <div class="button-list">
+                      <a
+                        class="main-border"
+                        v-for="(item, index) in sellTypes"
+                        :key="index"
+                        :class="{ primary: sellType === item.value }"
+                        >{{ item.name() }}</a
+                      >
+                    </div>
+                  </div>
                 </ElCollapseItem>
                 <ElCollapseItem class="filter-item">
                   <template #title>
@@ -152,7 +164,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NFTItemVue from '@/components/NFTItem/NFTItem.vue'
 import { GetCollect } from '@/api/strapi'
@@ -170,6 +182,7 @@ enum NFTCollectTab {
   CollectionWorks = 0,
   PriceTrend = 1,
 }
+const scrrentWarpOffsetTop = ref(0)
 const tabs = [
   {
     name: () => i18n.t('NFT.Collection works'),
@@ -235,6 +248,7 @@ const cells = [
   },
 ]
 const cell = reactive({ val: cells[0] })
+const sellType = ref(NFTSellType.All)
 const sellTypes = [
   {
     name: () => i18n.t('NFT.SellType.All'),
@@ -351,6 +365,11 @@ getCollection().then(() => {
   getDatas(true).then(() => {
     isSkeleton.value = false
   })
+})
+
+onMounted(() => {
+  console.log(document.getElementById('collection'))
+  scrrentWarpOffsetTop.value = document.getElementById('collection')!.offsetTop
 })
 </script>
 
