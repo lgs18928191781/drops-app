@@ -677,7 +677,8 @@
       "CoverEmpty": "NFT封面不能为空",
       "SourceFileEmpty": "NFT源文件为空",
       "AcceptAddressEmpty": "接收地址不能为空",
-      "Classify": "分类"
+      "Classify": "分类",
+      "ClassifyEmpty": "分类不能为空"
     },
     "ClassifyList": {
       "art": "艺术",

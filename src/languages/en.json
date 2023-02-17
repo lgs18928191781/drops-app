@@ -687,7 +687,8 @@
       "CoverEmpty": "NFT cover cannot be empty",
       "SourceFileEmpty": "NFT source file is empty",
       "AcceptAddressEmpty": "Receiving address cannot be empty",
-      "Classify": "Classify"
+      "Classify": "Classify",
+      "ClassifyEmpty": "Classify Empty"
     },
     "ClassifyList": {
       "art": "Art",

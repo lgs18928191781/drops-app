@@ -286,6 +286,12 @@ async function confirmIssue() {
       ElMessage.error(i18n.t('NFT.Issue.SourceFileEmpty'))
       break
     }
+
+    if (taskList[i].classifyList.length === 0) {
+      allCheckSuccess = false
+      ElMessage.error(i18n.t('NFT.Issue.ClassifyEmpty'))
+      break
+    }
     if (!taskList[i].acceptAddress) {
       allCheckSuccess = false
       ElMessage.error(i18n.t('NFT.Issue.AcceptAddressEmpty'))
