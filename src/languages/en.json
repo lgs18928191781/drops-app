@@ -879,7 +879,8 @@
     "IndexIntro4": "A holistic you in Web3, in ONE data container.",
     "IndexTitle7": "The Multifunctional Web3 Name Defined By You",
     "IndexDrsc7": "1 MetaName = Multiple Crypto Wallets Address + a Web3 Twitter Account + Discord's Username + A Strong Web3 Club + A Name of A DAO + ...",
-    "IndexDrsc7_2": "You Decide!"
+    "IndexDrsc7_2": "You Decide!",
+    "RegisterNamesTips": "Names of English Alphabet & Numerical Digit are Open"
   },
   "Menu": "Menu",
   "metanameNotAllowMin": "Currently does not support 1-2 character registration",
