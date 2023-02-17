@@ -1,7 +1,7 @@
 <template>
   <ElSkeleton :loading="isSkeleton" animated>
     <template #template>
-      <!-- <CollectionSkeleton /> -->
+      <CollectionSkeleton />
     </template>
 
     <template #default>

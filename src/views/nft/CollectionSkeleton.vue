@@ -1,13 +1,12 @@
 <template>
   <div class="collection" id="collection" v-if="collection.val">
     <!-- cover -->
-    <ElSkeletonItem :variant="'image'" class="cover" />
-    <Image class="cover" :src="''" />
+    <Image class="cover" :src="$filters.strapiImage(collection.val!.banner.url)" />
 
     <div class="collection-content">
       <!-- collection-avatar -->
       <div class="collection-avatar">
-        <img :src="''" />
+        <img :src="$filters.strapiImage(collection.val!.icon.url)" />
       </div>
 
       <!-- collection-msg -->
@@ -131,6 +130,200 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { nextTick, onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import NFTItemVue from '@/components/NFTItem/NFTItem.vue'
+import { GetCollect, GetCollectByTopicType } from '@/api/strapi'
+import { useRoute } from 'vue-router'
+import ContentModal from '@/components/ContentModal/ContentModal.vue'
+import { GetCollectionNFTs } from '@/api/aggregation'
+import { initPagination } from '@/config'
+import LoadMore from '@/components/LoadMore/LoadMore.vue'
+import NFTBuy from '@/components/NFTBuy/NFTBuy.vue'
+import { CollectionOrderType, CollectionSortType, NFTSellType } from '@/enum'
+import CollectionFilterWarp from '@/views/nft/components/CollectionFilterWarp.vue'
+import CollectionSkeleton from '@/views/nft/CollectionSkeleton.vue'
+
+const i18n = useI18n()
+const route = useRoute()
+enum NFTCollectTab {
+  CollectionWorks = 0,
+  PriceTrend = 1,
+}
+const scrrentWarpOffsetTop = ref(0)
+const filterWarpOffsetTop = ref(0)
+const tabs = [
+  {
+    name: () => i18n.t('NFT.Collection works'),
+    value: NFTCollectTab.CollectionWorks,
+  },
+  {
+    name: () => i18n.t('NFT.Price Trend'),
+    value: NFTCollectTab.PriceTrend,
+  },
+]
+const tabActive = ref(NFTCollectTab.CollectionWorks)
+const statiscs = reactive([
+  {
+    name: () => i18n.t('NFT.Initial Price'),
+    value: () => '2.38 Space',
+  },
+  {
+    name: () => i18n.t('NFT.Floor Price'),
+    value: () => '2.38 Space',
+  },
+  {
+    name: () => i18n.t('NFT.Highest Price'),
+    value: () => '2.38 Space',
+  },
+  {
+    name: () => i18n.t('NFT.Supply'),
+    value: () => '2.38 Space',
+  },
+  {
+    name: () => i18n.t('NFT.Owner'),
+    value: () => '2.38 Space',
+  },
+  {
+    name: () => i18n.t('NFT.Blockchain'),
+    value: () => 'MVC',
+  },
+])
+const collection: { val: null | Collect } = reactive({ val: null })
+const isSkeleton = ref(true)
+const isShowContent = ref(false)
+const pagination = reactive({ ...initPagination, pageSize: 24 })
+const nfts: GenesisNFTItem[] = reactive([])
+const nft: { val: GenesisNFTItem | null } = reactive({ val: null })
+const isShowNftBuy = ref(false)
+const cells = [
+  {
+    value: 0,
+    xs: 12,
+    sm: 8,
+    md: 6,
+    lg: 6,
+    xl: 4,
+    icon: 'layout-grid-fill',
+  },
+  {
+    value: 1,
+    xs: 24,
+    sm: 12,
+    md: 8,
+    lg: 8,
+    xl: 6,
+    icon: 'grid-fill',
+  },
+]
+const cell = reactive({ val: cells[0] })
+const sellType = ref(NFTSellType.All)
+const priceRange: [string, string] = reactive(['', ''])
+const isShowFilterWarp = ref(true)
+
+const sorts = [
+  {
+    name: () => i18n.t('NFT.Sort.Default Ranking'),
+    sortType: CollectionSortType.Default,
+    orderType: CollectionOrderType.ASC,
+  },
+  {
+    name: () => i18n.t('NFT.Sort.Price high to low'),
+    sortType: CollectionSortType.Price,
+    orderType: CollectionOrderType.DESC,
+  },
+  {
+    name: () => i18n.t('NFT.Sort.Price low to high'),
+    sortType: CollectionSortType.Price,
+    orderType: CollectionOrderType.ASC,
+  },
+  {
+    name: () => i18n.t('NFT.Sort.Number: X to 1'),
+    sortType: CollectionSortType.TokenIndex,
+    orderType: CollectionOrderType.DESC,
+  },
+  {
+    name: () => i18n.t('NFT.Sort.Number: 1 to X'),
+    sortType: CollectionSortType.TokenIndex,
+    orderType: CollectionOrderType.ASC,
+  },
+]
+
+const sortIndex = ref(0)
+
+function getCollection() {
+  return new Promise<void>(async resolve => {
+    const res = await GetCollectByTopicType(route.params.topicType as string).catch(error => {
+      ElMessage.error(error.message)
+    })
+    if (res) {
+      collection.val = res
+      resolve()
+    }
+  })
+}
+
+function getDatas(isCover = false) {
+  return new Promise<void>(async (resolve, reject) => {
+    const sort = sorts[sortIndex.value]
+    const res = await GetCollectionNFTs({
+      topicType: collection.val!.topicType,
+      sortType: sort.sortType,
+      orderType: sort.orderType,
+      sellType: sellType.value,
+      startPrice: priceRange[0],
+      endPrice: priceRange[1],
+      ...pagination,
+    }).catch(error => {
+      ElMessage.error(error.message)
+    })
+    if (res?.code === 0) {
+      if (isCover) nfts.length = 0
+      if (res.data.results.items.length === 0) pagination.nothing = true
+      nfts.push(...res.data.results.items)
+      resolve()
+    }
+  })
+}
+
+function getMore() {
+  if (isSkeleton.value || pagination.loading || pagination.nothing) return
+  pagination.loading = true
+  pagination.page++
+  getDatas().then(() => {
+    pagination.loading = false
+  })
+}
+
+function changeCell(cellValue: number) {
+  if (cell.val.value === cellValue) return
+  cell.val = cells.find(item => item.value === cellValue)!
+}
+
+function buyNFT(item: GenesisNFTItem) {
+  nft.val = item
+  isShowNftBuy.value = true
+}
+
+function refreshDatas() {
+  pagination.page = 1
+  pagination.loading = false
+  pagination.nothing = false
+  getDatas(true)
+}
+
+getCollection().then(() => {
+  getDatas(true).then(() => {
+    isSkeleton.value = false
+    nextTick(() => {
+      scrrentWarpOffsetTop.value = document.getElementById('collection')!.offsetTop - 18
+      filterWarpOffsetTop.value =
+        document.getElementById('collection')!.offsetTop +
+        document.getElementById('screen')!.clientHeight
+    })
+  })
+})
+</script>
 
 <style lang="scss" scoped src="./CollectionSkeleton.scss"></style>
