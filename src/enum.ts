@@ -40,7 +40,8 @@ export enum legalSortType {
   DESC = 2, // 倒序
 }
 
-export enum legalSellType {
+export enum NFTSellType {
+  All = '', // 全部
   SALE = 1, // 可购买
   NONSALE = 2, // 非销售
   AUCTION = 3, // 拍卖

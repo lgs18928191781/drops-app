@@ -697,6 +697,17 @@
       "avatar": "Avatar",
       "rights": "Right",
       "music": "Music"
+    },
+    "FilterItem": {
+      "Status": "Status",
+      "Price": "Price"
+    },
+    "SellType": {
+      "All": "All Statuts",
+      "Sale": "On Sale",
+      "Off Sale": "Off Sale",
+      "New On Sale": "New On Sale",
+      "Auction": "Auction"
     }
   },
   "My NFT": "My NFT",

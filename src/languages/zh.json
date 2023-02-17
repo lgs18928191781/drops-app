@@ -687,6 +687,17 @@
       "avatar": "头像",
       "alias": "别名",
       "card": "纪念卡"
+    },
+    "FilterItem": {
+      "Status": "状态",
+      "Price": "价格"
+    },
+    "SellType": {
+      "All": "全部",
+      "Sale": "上架",
+      "Off Sale": "下架",
+      "New On Sale": "新上架",
+      "Auction": "拍卖"
     }
   },
   "My NFT": "我的NFT",

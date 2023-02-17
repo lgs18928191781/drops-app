@@ -498,7 +498,7 @@ html.dark {
 }
 
 .el-collapse {
-    border-color: #fff;
+    --el-collapse-border-color: var(--faded-border-color);
 }
 
 .el-carousel__arrow i {

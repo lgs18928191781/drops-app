@@ -86,25 +86,51 @@
             </div>
           </div>
 
-          <ElRow
-            :gutter="22"
-            class="nft-list"
-            v-infinite-scroll="getMore"
-            :infinite-scroll-immediate="false"
-            :infinite-scroll-distance="100"
-          >
-            <ElCol
-              :xs="cell.val.xs"
-              :sm="cell.val.sm"
-              :md="cell.val.md"
-              :lg="cell.val.lg"
-              :xl="cell.val.xl"
-              v-for="item in nfts"
-              :key="item.nftGenesis + item.nftCodehash + item.nftTokenIndex"
+          <div class="collection-nft-content flex">
+            <div class="filter-warp">
+              <ElCollapse accordion v-model="filterActiveName" class="filter-list">
+                <ElCollapseItem class="filter-item">
+                  <template #title>
+                    <div class="filter-item-header flex flex-align-center flex1">
+                      <div class="label flex1">{{ $t('NFT.FilterItem.Status') }}:</div>
+                      <div class="sufix flex flex-align-center flex-pack-center">
+                        <Icon name="down" />
+                      </div>
+                    </div>
+                  </template>
+                </ElCollapseItem>
+                <ElCollapseItem class="filter-item">
+                  <template #title>
+                    <div class="filter-item-header flex flex-align-center flex1">
+                      <div class="label flex1">{{ $t('NFT.FilterItem.Price') }}:</div>
+                      <div class="sufix flex flex-align-center flex-pack-center">
+                        <Icon name="down" />
+                      </div>
+                    </div>
+                  </template>
+                </ElCollapseItem>
+              </ElCollapse>
+            </div>
+            <ElRow
+              :gutter="22"
+              class="nft-list flex1"
+              v-infinite-scroll="getMore"
+              :infinite-scroll-immediate="false"
+              :infinite-scroll-distance="100"
             >
-              <NFTItemVue :nft="item" @buy="buyNFT" />
-            </ElCol>
-          </ElRow>
+              <ElCol
+                :xs="cell.val.xs"
+                :sm="cell.val.sm"
+                :md="cell.val.md"
+                :lg="cell.val.lg"
+                :xl="cell.val.xl"
+                v-for="item in nfts"
+                :key="item.nftGenesis + item.nftCodehash + item.nftTokenIndex"
+              >
+                <NFTItemVue :nft="item" @buy="buyNFT" />
+              </ElCol>
+            </ElRow>
+          </div>
 
           <LoadMore :pagination="pagination" />
         </template>
@@ -135,7 +161,7 @@ import { GetCollectionNFTs } from '@/api/aggregation'
 import { initPagination } from '@/config'
 import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import NFTBuy from '@/components/NFTBuy/NFTBuy.vue'
-import { CollectionOrderType, CollectionSortType } from '@/enum'
+import { CollectionOrderType, CollectionSortType, NFTSellType } from '@/enum'
 
 const i18n = useI18n()
 const route = useRoute()
@@ -208,6 +234,29 @@ const cells = [
   },
 ]
 const cell = reactive({ val: cells[0] })
+const sellTypes = [
+  {
+    name: () => i18n.t('NFT.SellType.All'),
+    value: NFTSellType.All,
+  },
+  {
+    name: () => i18n.t('NFT.SellType.Sale'),
+    value: NFTSellType.SALE,
+  },
+  {
+    name: () => i18n.t('NFT.SellType.New On Sale'),
+    value: NFTSellType.NEWSALE,
+  },
+  {
+    name: () => i18n.t('NFT.SellType.Off Sale'),
+    value: NFTSellType.NONSALE,
+  },
+  {
+    name: () => i18n.t('NFT.SellType.Auction'),
+    value: NFTSellType.NONSALE,
+  },
+]
+const filterActiveName = ref('')
 
 const sorts = [
   {

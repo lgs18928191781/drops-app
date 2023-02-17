@@ -197,6 +197,35 @@
     }
 }
 
+.filter-warp {
+    width: 282px;
+    margin-right: 22px;
+}
+
+.filter-list {
+    padding: 0 18px;
+    --el-collapse-header-bg-color: transparent;
+    --el-collapse-content-bg-color: transparent;
+
+    .filter-item {}
+}
+
+.filter-item-header {
+    .label {
+        font-size: 16px;
+    }
+
+    .sufix {
+        width: 24px;
+        height: 24px;
+
+        .icon {
+            width: 10px;
+            height: 10px;
+        }
+    }
+}
+
 @media only screen and (max-width: 750PX) {
     .collection {
         .collection-avatar {
