@@ -29,7 +29,7 @@
       <a class="top" @click="scrollTop">
         <Icon name="buzz_icon_top" />
       </a>
-      <a class="main-border primary" @click="isShowBuzzPublish = true">
+      <a class="main-border primary" @click="toPublish">
         <Icon name="buzz_icon_post" />
       </a>
     </div>
@@ -70,6 +70,7 @@ import { useLayoutStore } from '@/stores/layout'
 import PublishVue from '@/views/buzz/components/Publish.vue'
 import PhoneMenuBtnVue from '@/components/PhoneMenuBtn/PhoneMenuBtn.vue'
 import { useRouter } from 'vue-router'
+import { checkUserLogin } from '@/utils/util'
 
 interface Props {
   isHideHeader?: boolean
@@ -124,6 +125,11 @@ function setPosition() {
 
 function scrollTop() {
   window.document.documentElement.scrollTop = 0
+}
+
+async function toPublish() {
+  await checkUserLogin()
+  isShowBuzzPublish.value = true
 }
 
 onMounted(() => {

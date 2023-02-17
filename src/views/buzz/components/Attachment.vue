@@ -418,7 +418,7 @@ function getAttachmentInfo() {
             : array[1].split('/')[0],
         genesis: array[1].split('/')[1],
         codehash: array[0] === 'metacontract' ? array[1].split('/')[0] : array[1].split('/')[0],
-        tokenIndex: array[1].split('/')[2],
+        tokenIndex: array[1].split('/')[2].split('.')[0], // 兼容 安卓show 发buzz 带文件格式后缀： sensible://codeshash/genesis/tokenIndex.gif
       })
         .then(res => {
           if (res.code === 0) {

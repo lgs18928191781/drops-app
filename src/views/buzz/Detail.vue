@@ -47,7 +47,7 @@ import { useUserStore } from '@/stores/user'
 import { computed, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import BuzzCommentListVue from './components/BuzzCommentList.vue'
-import { checkSdkStatus } from '@/utils/util'
+import { checkSdkStatus, checkUserLogin } from '@/utils/util'
 import { useI18n } from 'vue-i18n'
 import { GetBuzz, GetBuzzInteractive } from '@/api/aggregation'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
@@ -126,6 +126,7 @@ async function fetchCommentList(buzzTxId: string, isCover = false) {
 }
 
 async function reply() {
+  await checkUserLogin()
   BuzzListRef.value.onReplay({
     txId: list[0].txId,
     username: list[0].userName,

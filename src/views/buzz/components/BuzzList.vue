@@ -109,7 +109,7 @@ import { computed, inject, reactive, Ref, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import IsNullVue from '@/components/IsNull/IsNull.vue'
 import LoadMoreVue from '@/components/LoadMore/LoadMore.vue'
-import { copy, randomRange, tx } from '@/utils/util'
+import { checkUserLogin, copy, randomRange, tx } from '@/utils/util'
 import { router } from '@/router'
 import { useUserStore } from '@/stores/user'
 import { JobStatus, NodeName } from '@/enum'
@@ -177,7 +177,7 @@ const operates: {
     {
       name: () => i18n.t('Buzz.repost.quick'),
       fun: async () => {
-        operateLoading.value = true
+        await checkUserLogin()
         try {
           let isQuoteItem = false
           const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
@@ -370,7 +370,8 @@ const operates: {
   ],
 }
 
-function onRepost(txId: string) {
+async function onRepost(txId: string) {
+  await checkUserLogin()
   operateType.value = 'repost'
   currentTxId.value = txId
   isShowOperateModal.value = true
@@ -395,6 +396,7 @@ function onReplay(params: {
 }
 
 async function onLike(params: { txId: string; address: string; done: () => void }) {
+  await checkUserLogin()
   let isQuote = false
   let index = props.list.findIndex(item => item.txId === params.txId)
   if (index === -1) {
@@ -475,6 +477,7 @@ async function onFollow(
   txId: string,
   params: { resolve: (txId?: string) => void; reject: (resan: any) => any }
 ) {
+  await checkUserLogin()
   let isQuoteItem = false
   let index = props.list.findIndex(item => item.txId === txId)
   if (index === -1) {
