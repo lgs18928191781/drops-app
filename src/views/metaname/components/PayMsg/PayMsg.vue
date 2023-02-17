@@ -8,7 +8,7 @@
     <div class="pay-type order-msg-item">
       <div class="title">{{ $t('MetaName.Choose Pay Type') }}</div>
       <div class="pay-type-list">
-        <template v-for="(item, index) in payPlatformList" :key="item.key">
+        <template v-for="(item, index) in payList" :key="item.key">
           <div
             class="pay-type-item flex flex-align-center"
             :class="{ disabled: item.disabled() }"
@@ -32,7 +32,7 @@
     <div class="result-amount">
       <div class="amount">
         {{ currencyAmount }}
-        {{ currentPayPlatform === PayPlatform.UnionPay ? 'USD' : payPlatformList.find(item => item.platform === currentPayPlatform)!.key.toUpperCase()}}
+        {{ getPlatformSymbol(currentPayPlatform, 'USD') }}
       </div>
       <div class="usd">{{ price }} USD</div>
     </div>
@@ -59,7 +59,7 @@
 
 <script setup lang="ts">
 import { PayPlatformItem, payPlatformList } from '@/config'
-import { MetaNameOperateType, PayPlatform, ProductType, ToCurrency } from '@/enum'
+import { MetaNameOperateType, PayPlatform, ProductType, ToCurrency, Lang } from '@/enum'
 import { useUserStore } from '@/stores/user'
 import {
   bytesLength,
@@ -67,14 +67,16 @@ import {
   getCurrencyAmount,
   mappingChainId,
   setPayQuitUrl,
+  getPlatformSymbol,
 } from '@/utils/util'
 import { MetaNameReqCode } from '@/utils/wallet/hd-wallet'
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import StartPay from '@/components/StartPay/StartPay.vue'
 import { MetaNameBeforeReqRes, UploadMetaNameCover } from '@/api/wxcore'
 import { GetMetaNameCover } from '@/api/canvas-base'
 import { getMetaNameOperateParams } from '@/utils/metaname'
+import { useI18n } from 'vue-i18n'
 interface Props {
   price: number
   year: number
@@ -87,7 +89,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {})
 
 const userStore = useUserStore()
-
+const i18n = useI18n()
 const route = useRoute()
 const router = useRouter()
 const emit = defineEmits(['back', 'success', 'update:loading'])
@@ -95,10 +97,10 @@ const emit = defineEmits(['back', 'success', 'update:loading'])
 const currentPayPlatform = ref(
   userStore.isAuthorized && userStore.user?.evmAddress && (window as any).ethereum
     ? mappingChainId((window as any).ethereum?.chainId)
-    : PayPlatform.UnionPay
+    : i18n.locale.value === Lang.ZH
+    ? PayPlatform.UnionPay
+    : PayPlatform.SPACE
 )
-
-onMounted(() => {})
 
 const currencyAmount = ref(0)
 const productType = ProductType.MetaName
@@ -109,6 +111,18 @@ const payOrderInfo = reactive({
   amount: '',
 })
 let metafile = ''
+
+const payList = computed(() => {
+  return payPlatformList.filter(_item => {
+    if (i18n.locale.value === Lang.EN) {
+      if (_item.platform !== PayPlatform.UnionPay) {
+        return _item
+      }
+    } else {
+      return _item
+    }
+  })
+})
 
 function changePayType(item: PayPlatformItem) {
   if (item.disabled() || currentPayPlatform.value === item.platform) return

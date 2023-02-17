@@ -910,7 +910,8 @@
     "My Order": "My Order",
     "OrderId": "Order Id",
     "OrderStatus": "Order Status",
-    "RegisterFail": "Register Fail"
+    "RegisterFail": "Register Fail",
+    "RegisterNamesTips": "Names of English Alphabet & Numerical Digit are Open"
   },
   "Menu": "Menu",
   "metanameNotAllowMin": "Currently does not support 1-2 character registration",

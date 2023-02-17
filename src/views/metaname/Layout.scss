@@ -8,13 +8,12 @@
 }
 
 @font-face {
-    font-family: 'SourceHanSansSC-Bold';
-    src: url('@/assets/fonts/SourceHanSansSC-Bold-2.otf');
+    font-family: 'NotoSansSC';
+    src: url('@/assets/fonts/NotoSansSC-Regular.otf');
 }
 
 .metaname {
-
-    font-family: 'Montserrat', 'SourceHanSansSC-Bold';
+    font-family: 'Montserrat', 'NotoSansSC';
 }
 
 .metaname-container {

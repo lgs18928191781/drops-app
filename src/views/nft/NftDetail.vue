@@ -144,7 +144,7 @@
                   </div>
                 </div>
                 <div
-                  class="main-border primary flex1 flex flex-align-center flex-pack-center"
+                  class="main-border primary faded flex1 flex flex-align-center flex-pack-center"
                   v-else
                   @click="toSale"
                 >
@@ -634,8 +634,8 @@ async function offSale() {
 }
 
 function toSale() {
-  // return ElMessage.info(i18n.t('Comming Soon'))
-  isShowSell.value = true
+  return ElMessage.info(i18n.t('Comming Soon'))
+  // isShowSell.value = true
 }
 
 // 分享
