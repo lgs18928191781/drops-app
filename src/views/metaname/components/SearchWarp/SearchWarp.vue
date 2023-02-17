@@ -5,7 +5,7 @@
       <input
         type="text"
         v-model="value"
-        :placeholder="$t('MetaName.Search your MetaName')"
+        :placeholder="$t('MetaName.RegisterNamesTips')"
         @keyup.enter="submit"
       />
     </div>
