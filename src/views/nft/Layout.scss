@@ -6,6 +6,7 @@ header {
     left: 0;
     top: 0;
     z-index: 3;
+    border-bottom: 1px solid var(--faded-border-color);
 
     .name {
         font-size: 18px;

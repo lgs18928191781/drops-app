@@ -8,7 +8,7 @@
   </header>
   <div class="nft-warp">
     <!-- topBar -->
-    <div class="top-bar-warp">
+    <!-- <div class="top-bar-warp">
       <div class="top-bar flex flex-align-center">
         <div class="flex1">
           <div class="search flex flex-align-center">
@@ -20,7 +20,7 @@
           <a v-for="(item, index) in navs" :key="index" @click="commonSoon">{{ item.name }}</a>
         </nav>
       </div>
-    </div>
+    </div> -->
 
     <div class="nft-router-view-warp">
       <RouterView />
@@ -36,7 +36,7 @@ import { useI18n } from 'vue-i18n'
 
 const i18n = useI18n()
 const navs = reactive([
-  { name: i18n.t('NFT.Explore') },
+  { name: i18n.t('NFT.Explore'), path: '/nft/index' },
   { name: i18n.t('NFT.Collection') },
   { name: i18n.t('NFT.Mystery Box') },
   { name: i18n.t('NFT.Market') },

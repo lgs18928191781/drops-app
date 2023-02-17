@@ -1,0 +1,59 @@
+.filter-warp {
+    width: 282px;
+    margin-right: 22px;
+}
+
+.filter-list {
+    padding: 0 18px;
+    --el-collapse-header-bg-color: transparent;
+    --el-collapse-content-bg-color: transparent;
+
+    .filter-item {}
+}
+
+.filter-item-header {
+    .label {
+        font-size: 16px;
+    }
+
+    .sufix {
+        width: 24px;
+        height: 24px;
+
+        .icon {
+            width: 10px;
+            height: 10px;
+
+            &.top {
+                transform: rotate(180deg);
+            }
+        }
+    }
+}
+
+.button-list {
+    a {
+        display: inline-block;
+        padding: 5px 10px;
+        margin-right: 10px;
+        margin-bottom: 13px;
+        cursor: pointer;
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+}
+
+.price-range {
+    span {
+        margin: 0 10px;
+    }
+}
+
+.main-border {
+    margin-top: 15px;
+    text-align: center;
+    padding: 5px 0;
+    font-size: 18px;
+}

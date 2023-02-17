@@ -1,3 +1,4 @@
+import i18n from '@/utils/i18n'
 import HttpRequest from '@/utils/request'
 
 // @ts-ignore
@@ -47,6 +48,20 @@ export const GetCollects = (params: {
 
 export const GetCollect = (id: number | string): Promise<Collect> => {
   return Strapi.get(`/show-3-collections/${id}`)
+}
+export const GetCollectByTopicType = async (topicType: string): Promise<Collect | undefined> => {
+  const res: Collect[] = await Strapi.get(`/show-3-collections`, {
+    params: {
+      _sort: 'index',
+      network: import.meta.env.VITE_NET_WORK,
+      topicType,
+    },
+  })
+  if (res.length) {
+    return res[0]
+  } else {
+    ElMessage.error(i18n.global.t('NOT_FOUND'))
+  }
 }
 
 export const GetHomeHotSeries = (params: {

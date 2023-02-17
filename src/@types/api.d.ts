@@ -1187,6 +1187,7 @@ declare interface Collect {
   name: string
   topicType: string
   creatorName: string
+  creatorMetaName: string
   creatorMetaId: string
   creatorAvatarImage: string
   intro: string

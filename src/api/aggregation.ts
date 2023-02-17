@@ -1,4 +1,4 @@
-import { CollectionOrderType, CollectionSortType } from '@/enum'
+import { CollectionOrderType, CollectionSortType, NFTSellType } from '@/enum'
 import { PostTag } from '@/stores/buzz/tag'
 import HttpRequest from '@/utils/request'
 
@@ -687,7 +687,7 @@ export const GetCollectionNFTs = (params: {
   certificationType?: number
   sortType?: CollectionSortType
   orderType?: CollectionOrderType
-  sellType?: string
+  sellType?: NFTSellType
   metaId?: string
   startPrice?: string
   endPrice?: string

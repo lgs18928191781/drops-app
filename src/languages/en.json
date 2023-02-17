@@ -701,7 +701,9 @@
     },
     "FilterItem": {
       "Status": "Status",
-      "Price": "Price"
+      "Price": "Price",
+      "MinPrice": "Min Price",
+      "MaxPrice": "Max Price"
     },
     "SellType": {
       "All": "All Statuts",
@@ -933,5 +935,6 @@
   "idNumber": "ID Number",
   "certBody": "Certificated Entity",
   "noMsg": "No Information",
-  "personCert": "Personal Certification"
+  "personCert": "Personal Certification",
+  "NOT_FOUND": "NOT_FOUND"
 }

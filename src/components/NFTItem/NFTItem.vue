@@ -18,7 +18,7 @@
           :name="nft.nftIssuer"
         />
         <div class="flex1 flex flex-align-center info">
-          <span class="user-name">{{ nft.nftIssuer }}</span>
+          <span class="user-name"><UserName :name="nft.nftIssuer" :meta-name="''"/></span>
           <span class="role">({{ $t('NFT.Creater') }})</span>
         </div>
       </div>
@@ -29,7 +29,7 @@
           :name="nft.nftOwnerName"
         />
         <div class="flex1 flex flex-align-center info">
-          <span class="user-name">{{ nft.nftOwnerName }}</span>
+          <span class="user-name"><UserName :name="nft.nftOwnerName" :meta-name="''"/></span>
           <span class="role">({{ $t('NFT.Owner') }})</span>
         </div>
       </div>

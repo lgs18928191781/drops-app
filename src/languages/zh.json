@@ -691,7 +691,9 @@
     },
     "FilterItem": {
       "Status": "状态",
-      "Price": "价格"
+      "Price": "价格",
+      "MinPrice": "最低价",
+      "MaxPrice": "最高价"
     },
     "SellType": {
       "All": "全部",
@@ -930,5 +932,6 @@
   "noMsg": "暂无信息",
   "idNumber": "身份证号码",
   "certBody": "认证主体",
-  "personCert": "个人认证"
+  "personCert": "个人认证",
+  "NOT_FOUND": "没找到信息"
 }

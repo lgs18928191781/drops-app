@@ -2,6 +2,7 @@
     border-radius: var(--rounded) var(--rounded) 0px 0px;
     overflow: hidden;
     background: var(--themeBgSecondColor);
+    margin-top: 18px;
 
     .cover {
         width: 100%;
@@ -141,11 +142,9 @@
     }
 
     .screen {
-        margin-top: 18px;
-        position: sticky;
-        left: 0;
-        top: 300px;
-        z-index: 3;
+        background: var(--themeBgSecondColor);
+        padding-top: 18px;
+        padding-bottom: 18px;
 
         .main-border {
             display: inline-flex;
@@ -200,52 +199,10 @@
 }
 
 
-.collection-nft-content {
-    margin-top: 18px;
-}
+.collection-nft-content {}
 
-.filter-warp {
-    width: 282px;
-    margin-right: 22px;
-}
 
-.filter-list {
-    padding: 0 18px;
-    --el-collapse-header-bg-color: transparent;
-    --el-collapse-content-bg-color: transparent;
 
-    .filter-item {}
-}
-
-.filter-item-header {
-    .label {
-        font-size: 16px;
-    }
-
-    .sufix {
-        width: 24px;
-        height: 24px;
-
-        .icon {
-            width: 10px;
-            height: 10px;
-        }
-    }
-}
-
-.button-list {
-    a {
-        display: inline-block;
-        padding: 5px 10px;
-        margin-right: 10px;
-        margin-bottom: 13px;
-        cursor: pointer;
-
-        &:last-child {
-            margin-right: 0;
-        }
-    }
-}
 
 @media only screen and (max-width: 750PX) {
     .collection {
