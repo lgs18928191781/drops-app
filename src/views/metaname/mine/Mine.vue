@@ -46,7 +46,7 @@
             <ElSkeleton :loading="isSkeleton" animated>
               <div
                 class="metaname-item flex "
-                v-for="item in list"
+                v-for="item in list.filter(_item => _item.name && _item.expiredBlockTime)"
                 :key="item.codeHash + item.genesis + item.tokenIndex"
               >
                 <Image class="cover" :src="item.icon" />
