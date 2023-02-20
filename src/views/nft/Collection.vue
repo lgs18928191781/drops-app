@@ -115,6 +115,7 @@
                 v-infinite-scroll="getMore"
                 :infinite-scroll-immediate="false"
                 :infinite-scroll-distance="100"
+                v-if="isShowNFTList"
               >
                 <ElCol
                   :xs="cell.val.xs"
@@ -122,15 +123,21 @@
                   :md="cell.val.md"
                   :lg="cell.val.lg"
                   :xl="cell.val.xl"
-                  v-for="item in nfts"
-                  :key="item.nftGenesis + item.nftCodehash + item.nftTokenIndex"
+                  v-for="(item, index) in list"
+                  :key="
+                    isListLoading ? index : item.nftGenesis + item.nftCodehash + item.nftTokenIndex
+                  "
                 >
-                  <NFTItemVue :nft="item" @buy="buyNFT" />
+                  <NFTItemVue :nft="item" @buy="buyNFT" :loading="isListLoading" />
+                </ElCol>
+
+                <ElCol v-if="!isListLoading && nfts.length === 0">
+                  <IsNull />
                 </ElCol>
               </ElRow>
             </div>
 
-            <LoadMore :pagination="pagination" />
+            <LoadMore :pagination="pagination" v-if="!isListLoading && nfts.length > 0" />
           </template>
           <!-- PriceTrend -->
           <template v-else></template>
@@ -150,7 +157,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, reactive, ref } from 'vue'
+import { nextTick, onMounted, reactive, ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NFTItemVue from '@/components/NFTItem/NFTItem.vue'
 import { GetCollect, GetCollectByTopicType } from '@/api/strapi'
@@ -163,6 +170,8 @@ import NFTBuy from '@/components/NFTBuy/NFTBuy.vue'
 import { CollectionOrderType, CollectionSortType, NFTSellType } from '@/enum'
 import CollectionFilterWarp from '@/views/nft/components/CollectionFilterWarp.vue'
 import CollectionSkeleton from '@/views/nft/CollectionSkeleton.vue'
+import IsNull from '@/components/IsNull/IsNull.vue'
+import { isMobile } from '@/stores/root'
 
 const i18n = useI18n()
 const route = useRoute()
@@ -239,7 +248,8 @@ const cells = [
 const cell = reactive({ val: cells[0] })
 const sellType = ref(NFTSellType.All)
 const priceRange: [string, string] = reactive(['', ''])
-const isShowFilterWarp = ref(true)
+const isShowFilterWarp = ref(isMobile ? false : true)
+const isListLoading = ref(false)
 
 const sorts = [
   {
@@ -270,6 +280,22 @@ const sorts = [
 ]
 
 const sortIndex = ref(0)
+
+const list = computed(() => {
+  if (isListLoading.value) {
+    return Array.from({ length: pagination.pageSize }) as GenesisNFTItem[]
+  } else {
+    return nfts
+  }
+})
+
+const isShowNFTList = computed(() => {
+  if (isMobile && isShowFilterWarp.value) {
+    return false
+  } else {
+    return true
+  }
+})
 
 function getCollection() {
   return new Promise<void>(async resolve => {
@@ -307,7 +333,7 @@ function getDatas(isCover = false) {
 }
 
 function getMore() {
-  if (isSkeleton.value || pagination.loading || pagination.nothing) return
+  if (isSkeleton.value || pagination.loading || pagination.nothing || isListLoading.value) return
   pagination.loading = true
   pagination.page++
   getDatas().then(() => {
@@ -326,10 +352,16 @@ function buyNFT(item: GenesisNFTItem) {
 }
 
 function refreshDatas() {
+  isListLoading.value = true
+  if (isMobile && isShowFilterWarp.value) {
+    isShowFilterWarp.value = false
+  }
   pagination.page = 1
   pagination.loading = false
   pagination.nothing = false
-  getDatas(true)
+  getDatas(true).then(() => {
+    isListLoading.value = false
+  })
 }
 
 getCollection().then(() => {

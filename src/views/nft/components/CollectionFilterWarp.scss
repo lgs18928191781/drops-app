@@ -57,3 +57,9 @@
     padding: 5px 0;
     font-size: 18px;
 }
+
+@media only screen and (max-width: 750PX) {
+    .filter-warp {
+        width: auto;
+    }
+}

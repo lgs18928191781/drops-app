@@ -16,16 +16,31 @@
         margin-top: 18px;
         font-size: 20px;
         @extend %text-ellipsis;
+
+        .el-skeleton__item {
+            height: 20px;
+            width: 80%;
+        }
     }
 
     .amount {
         font-size: 20px;
         line-height: 24px;
         margin-top: 18px;
+
+        .el-skeleton__item {
+            height: 20px;
+            width: 60px;
+        }
     }
 
     .user-list {
         margin-top: 18px;
+
+        .el-skeleton__item {
+            height: 24px;
+            width: 80%;
+        }
 
         .user-item {
             line-height: 24px;
@@ -57,11 +72,16 @@
         }
     }
 
-    .main-border {
+    .main-border,
+    .el-skeleton__button {
         margin-top: 18px;
         font-size: 16px;
         padding: 13px 0;
         text-align: center;
         cursor: pointer;
+    }
+
+    .el-skeleton__button {
+        width: 100%;
     }
 }
