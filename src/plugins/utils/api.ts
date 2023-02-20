@@ -35,6 +35,8 @@ export interface MetaMaskLoginUserInfo {
   registerType?: string
   tag: 'new' | 'old'
   token: string
+  userType?: string
+  evmAddress?: string
 }
 
 //已绑定签名

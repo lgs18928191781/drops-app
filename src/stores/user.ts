@@ -128,6 +128,7 @@ export const useUserStore = defineStore('user', {
         const rootStore = useRootStore()
         const genesStore = useGenesisStore()
         localStorage.clear()
+        if (rootStore.updatePlanRes) rootStore.updateAccountPlan(null)
         if (rootStore.isShowLogin) rootStore.$patch({ isShowLogin: false })
         if (window.provider) window.provider = undefined
         // localStorage.removeItem(encode('user'))

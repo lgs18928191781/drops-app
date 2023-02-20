@@ -63,7 +63,8 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits(['update:modelValue', 'success', 'logout'])
 defineExpose({
-    ethPersonalSignSign
+    ethPersonalSignSign,
+    startConnect
 })
 
 const userStore = useUserStore()
@@ -163,7 +164,7 @@ const dialogTitle = computed(() => {
     }
 })
 
-async function startConnect() {
+async function startConnect(isUpdatePlan:boolean=false) {
     try {
 
         const res = await Wallet.connect()
@@ -174,10 +175,13 @@ async function startConnect() {
             // })
             if (root.chainWhiteList.includes(res.provider.chainId)){
                 startProvider(res.provider)
+                //ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1)
                 const result = await ethPersonalSignSign({
                     address: res.ethAddress,
-                    message:import.meta.env.MODE == 'gray' ?  ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).split('0x')[1].toLocaleUpperCase() : ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1)
-                    // message: ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1),
+                    //message:ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1),
+                    //message:ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).split('0x')[1].toLocaleUpperCase()
+                    //ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).split('0x')[1].toLocaleUpperCase()
+                    message:!isUpdatePlan ? ethers.utils.hexValue(ethers.utils.toUtf8Bytes(ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)))) : ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1)
                 })
 
                 if (result) {
@@ -218,8 +222,7 @@ function ethPersonalSignSign(params: {
     message: string,
     address: string
 }) {
-    // console.log("messages",ethers.utils.hexValue(params.message) )
-    //  debugger
+
     return new Promise<string>(async (resolve, reject) => {
 
         (window as any).ethereum
@@ -308,6 +311,7 @@ function loginByMnemonic(mnemonic: string) {
                         .deriveChild(0)
                         .privateKey.toString()
                 )
+
                 const loginInfo = await mnemoicLogin({
                     xpub: hdWallet.xpubkey.toString(),
                     sign,

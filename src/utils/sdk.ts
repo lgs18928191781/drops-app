@@ -93,6 +93,7 @@ export class SDK {
     return new Promise<void>(async (resolve, reject) => {
       try {
         const account = getLocalAccount()
+        debugger
         const walletObj = await hdWalletFromAccount(
           {
             ...account.userInfo,
@@ -101,7 +102,9 @@ export class SDK {
           this.network,
           account.userInfo.path
         )
+        debugger
         const wallet = new HdWallet(walletObj.wallet)
+
         this.wallet = wallet
         this.isInitSdked = true
         resolve()

@@ -294,6 +294,7 @@ export const hdWalletFromAccount = async (
   }
   // const mnemonic = new Mnemonic(Buffer.from(hex)).toString()
   const wallet = await hdWalletFromMnemonic(mnemonic, account.tag, network, path)
+
   const root = wallet.deriveChild(0).deriveChild(0).privateKey
   console.log({
     mnemonic: mnemonic,
@@ -401,6 +402,7 @@ export function eciesDecryptData(
 export const signature = (message: string, privateKey: string) => {
   const hash = mvc.crypto.Hash.sha256(Buffer.from(message))
   const sign = mvc.crypto.ECDSA.sign(hash, new mvc.PrivateKey(privateKey))
+
   return sign.toBuffer().toString('base64')
 }
 

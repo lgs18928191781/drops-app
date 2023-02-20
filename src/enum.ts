@@ -502,3 +502,8 @@ export enum HdWalletChain {
   BSV = 'bsv',
   MVC = 'mvc',
 }
+
+export enum WalletOrigin {
+  WalletConnect = 'WalletConnect',
+  MetaMask = 'MetaMask',
+}
