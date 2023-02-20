@@ -181,7 +181,7 @@ async function startConnect(isUpdatePlan:boolean=false) {
                     //message:ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1),
                     //message:ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).split('0x')[1].toLocaleUpperCase()
                     //ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).split('0x')[1].toLocaleUpperCase()
-                    message:!isUpdatePlan ? ethers.utils.hexValue(ethers.utils.toUtf8Bytes(ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)))) : ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1)
+                    message:!isUpdatePlan ? ethers.utils.hexValue(ethers.utils.toUtf8Bytes(ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)))) : import.meta.env.MODE == 'gray' ? ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).split('0x')[1].toLocaleUpperCase() : ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1)
                 })
 
                 if (result) {
