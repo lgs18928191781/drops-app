@@ -491,3 +491,8 @@ export enum EnvMode {
   MainnetGray = 'mainnetgray',
   TestnetGray = 'gray',
 }
+
+export enum WalletOrigin {
+  WalletConnect = 'WalletConnect',
+  MetaMask = 'MetaMask',
+}

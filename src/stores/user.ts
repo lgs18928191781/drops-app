@@ -119,6 +119,7 @@ export const useUserStore = defineStore('user', {
         const talkStore = useTalkStore()
         const rootStore = useRootStore()
         localStorage.clear()
+        if (rootStore.updatePlanRes) rootStore.updateAccountPlan(null)
         if (rootStore.isShowLogin) rootStore.$patch({ isShowLogin: false })
         if (window.provider) window.provider = undefined
         // localStorage.removeItem(encode('user'))
@@ -157,7 +158,6 @@ export const useUserStore = defineStore('user', {
         localStorage.setItem(encode('user'), encode(JSON.stringify(data)))
 
         if (password) {
-          debugger
           window.localStorage.setItem(encode('password'), encode(password))
         }
 

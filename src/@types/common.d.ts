@@ -626,8 +626,3 @@ declare interface UserProtocolBrfcNode extends ProtocolBrfcNode {
   nodeName: import('@/enum').NodeName
   brfcId: string
 }
-
-declare enum WalletOrigin {
-  WalletConnect = 'WalletConnect',
-  MetaMask = 'MetaMask',
-}

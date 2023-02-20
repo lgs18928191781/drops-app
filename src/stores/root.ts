@@ -93,7 +93,7 @@ export const useRootStore = defineStore('root', {
       state.exchangeRate.find(item => item.symbol === state.currentPrice),
   },
   actions: {
-    updateAccountPlan(payload: { registerTime: number; signHash: string }) {
+    updateAccountPlan(payload: { registerTime: number; signHash: string } | null) {
       this.updatePlanRes = payload
     },
     getExchangeRate() {

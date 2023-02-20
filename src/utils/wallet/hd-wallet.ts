@@ -397,6 +397,7 @@ export function eciesDecryptData(
 export const signature = (message: string, privateKey: string) => {
   const hash = mvc.crypto.Hash.sha256(Buffer.from(message))
   const sign = mvc.crypto.ECDSA.sign(hash, new mvc.PrivateKey(privateKey))
+
   return sign.toBuffer().toString('base64')
 }
 

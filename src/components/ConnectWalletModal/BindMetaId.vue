@@ -461,23 +461,26 @@ function loginSuccess(params: BindMetaIdRes) {
         params.userInfo.evmAddress = params.userInfo.ethAddress
       }
 
-
       //更新用户信息前先升级账户,store签名不等于当前登录账户签名时需要升级
       if (rootStore.updatePlanRes?.signHash && MD5(rootStore.updatePlanRes!.signHash).toString() != decode(params.password)) {
 
         const updateSuccess = await updatePlan(params.userInfo, params.password)
+
         if (updateSuccess) {
-          params.userInfo.evmEnMnemonic = updateSuccess.evmEnMnemonic
+          params.userInfo.enCryptedMnemonic=updateSuccess.evmEnMnemonic
+          // params.userInfo.evmEnMnemonic = updateSuccess.evmEnMnemonic
           params.password = updateSuccess.newPw
           ElMessage.success(`${i18n.t('updateSuccess')}`)
         }
       }
+
       userStore.updateUserInfo({
         ...params.userInfo,
         ...metaIdInfo.data,
         password: params.password,
         loginType: 'MetaMask',
       })
+
 
       userStore.$patch({
         wallet: new SDK(import.meta.env.VITE_NET_WORK),
@@ -822,6 +825,7 @@ function loginByMnemonic(mnemonic: string, password: string, isInitMnemonic = fa
             .deriveChild(0)
             .privateKey.toString()
         )
+
         const loginInfo = await MnemoicLogin({
           xpub: hdWallet.xpubkey.toString(),
           sign,

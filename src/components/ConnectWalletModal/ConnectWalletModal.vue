@@ -149,7 +149,7 @@ import BackupMnemonicVue from './BackupMnemonic.vue'
 import BindMetaIdVue from './BindMetaId.vue'
 import { reactive, Ref, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { BindStatus, NodeName } from '@/enum'
+import { BindStatus, NodeName, WalletOrigin } from '@/enum'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { router } from '@/router'
 import { useRoute } from 'vue-router'
@@ -407,7 +407,8 @@ async function onThreePartLinkSuccess(params: {
         onModalClose()
       }
     } catch (error) {
-      if (getMnemonicRes?.data?.registerTime < +import.meta.env.VITE_UPDATEPLAN_TIMESTAMP) {
+      //+import.meta.env.VITE_UPDATEPLAN_TIMESTAMP
+      if (getMnemonicRes?.data?.registerTime < +Date.now()) {
         ElMessageBox.confirm(`${i18n.t('updateRemind')}`, `${i18n.t('allowUpdate')}`, {
           customClass: 'primary',
           confirmButtonText: `${i18n.t('confirmUpdate')}`,
@@ -711,15 +712,20 @@ async function connectWalletConnect(isUpdate: boolean = false) {
             //`${ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0])).slice(2, -1)}`
             res = await connector.signPersonalMessage([
               accounts[0],
+              // `${ethers.utils
+              //   .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+              //   .slice(2, -1)
+              //   .toLocaleUpperCase()}`,
               isUpdate
                 ? `${ethers.utils
                     .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
                     .slice(2, -1)
                     .toLocaleUpperCase()}`
-                : `0x${ethers.utils
-                    .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
-                    .split('0x')[1]
-                    .toLocaleUpperCase()}`,
+                : `${ethers.utils.hexValue(
+                    ethers.utils.toUtf8Bytes(
+                      ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+                    )
+                  )}`,
             ])
 
             if (res) {
@@ -744,15 +750,18 @@ async function connectWalletConnect(isUpdate: boolean = false) {
     try {
       res = await connector.signPersonalMessage([
         accounts[0],
+        // `${ethers.utils
+        //   .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+        //   .slice(2, -1)
+        //   .toLocaleUpperCase()}`,
         isUpdate
           ? `${ethers.utils
               .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
               .slice(2, -1)
               .toLocaleUpperCase()}`
-          : `0x${ethers.utils
-              .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
-              .split('0x')[1]
-              .toLocaleUpperCase()}`,
+          : `${ethers.utils.hexValue(
+              ethers.utils.toUtf8Bytes(ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0])))
+            )}`,
 
         // import.meta.env.MODE == 'gray'
         //   ? `0x${ethers.utils
@@ -764,6 +773,20 @@ async function connectWalletConnect(isUpdate: boolean = false) {
         //       .slice(2, -1)
         //       .toLocaleUpperCase()}`,
       ])
+      console.log(
+        '签名res',
+        res
+        // ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0])),
+        // ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0])).split('0x')[1],
+        // ethers.utils
+        //   .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+        //   .split('0x')[1]
+        //   .toLocaleUpperCase(),
+        // `0x${ethers.utils
+        //   .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+        //   .split('0x')[1]
+        //   .toLocaleUpperCase()}`
+      )
       if (res) {
         rootStore.$patch({ isShowLogin: false })
         await onThreePartLinkSuccess({
