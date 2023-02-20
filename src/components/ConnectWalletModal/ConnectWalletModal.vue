@@ -441,9 +441,8 @@ async function onThreePartLinkSuccess(params: {
 
     // return  emit('update:modelValue', false)
   } else if (
-    getMnemonicRes?.code === 0 &&
     getMnemonicRes.data.evmEnMnemonic &&
-    getMnemonicRes.data.registerSource == RegisterSource.showmoney
+    getMnemonicRes?.data?.registerSource == RegisterSource.showmoney
   ) {
     // 有密码直接登录， 没有密码就要用户输入
     const password = localStorage.getItem(encode('password'))
@@ -479,47 +478,51 @@ async function onThreePartLinkSuccess(params: {
       }
 
       // return  emit('update:modelValue', false)
-    }else if(
-      getMnemonicRes.data.evmEnMnemonic &&
-      getMnemonicRes?.data?.registerSource === RegisterSource.showmoney
-    ) {
-      // 有密码直接登录， 没有密码就要用户输入
-      const password = localStorage.getItem(encode('password'))
-      if (password) {
-        res = await BindMetaIdRef.value.loginByMnemonic(
-          getMnemonicRes.data.menmonic,
-          decode(password),
-          false,
-          getMnemonicRes.data.path
-        )
+    }
 
-        if (res) {
-          await BindMetaIdRef.value.loginSuccess(res)
-          onModalClose()
-        }
-      } else {
-        try {
-          res = await BindMetaIdRef.value.loginByMnemonic(
-            getMnemonicRes.data.evmEnMnemonic,
-            MD5(params.signAddressHash).toString(),
-            false,
-            getMnemonicRes.data.path
-          )
+    // else if (
+    //   getMnemonicRes.data.evmEnMnemonic &&
+    //   getMnemonicRes?.data?.registerSource === RegisterSource.showmoney
+    // ) {
+    //   // 有密码直接登录， 没有密码就要用户输入
+    //   const password = localStorage.getItem(encode('password'))
+    //   if (password) {
+    //     res = await BindMetaIdRef.value.loginByMnemonic(
+    //       getMnemonicRes.data.menmonic,
+    //       decode(password),
+    //       false,
+    //       getMnemonicRes.data.path
+    //     )
 
-          if (res) {
-            await BindMetaIdRef.value.loginSuccess(res)
-            rootStore.$patch({ isShowMetaMak: false })
-            onModalClose()
-          }
-        } catch (error) {
-          thirdPartyWallet.signAddressHash = params.signAddressHash
-          thirdPartyWallet.address = params.address
-          BindMetaIdRef.value.status = BindStatus.InputPassword
-          rootStore.$patch({ isShowMetaMak: false })
-          isShowBindModal.value = true
-        }
-      }
-    } else if (
+    //     if (res) {
+    //       await BindMetaIdRef.value.loginSuccess(res)
+    //       onModalClose()
+    //     }
+    //   } else {
+    //     try {
+    //       res = await BindMetaIdRef.value.loginByMnemonic(
+    //         getMnemonicRes.data.evmEnMnemonic,
+    //         MD5(params.signAddressHash).toString(),
+    //         false,
+    //         getMnemonicRes.data.path
+    //       )
+
+    //       if (res) {
+    //         await BindMetaIdRef.value.loginSuccess(res)
+    //         rootStore.$patch({ isShowMetaMak: false })
+    //         onModalClose()
+    //       }
+    //     } catch (error) {
+    //       thirdPartyWallet.signAddressHash = params.signAddressHash
+    //       thirdPartyWallet.address = params.address
+    //       BindMetaIdRef.value.status = BindStatus.InputPassword
+    //       rootStore.$patch({ isShowMetaMak: false })
+    //       isShowBindModal.value = true
+    //     }
+    //   }
+    // }
+
+  }  else if (
       !getMnemonicRes?.data.metaId &&
       getMnemonicRes?.data?.registerSource === RegisterSource.metamask
     ) {
@@ -536,7 +539,6 @@ async function onThreePartLinkSuccess(params: {
       // rootStore.$patch({ isShowMetaMak: false })
       // isShowBindModal.value = true
     }
-  }
 }
 
 async function OnMetaIdSuccess(type: 'register' | 'login') {
