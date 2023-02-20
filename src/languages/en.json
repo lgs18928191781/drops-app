@@ -711,7 +711,22 @@
       "Off Sale": "Off Sale",
       "New On Sale": "New On Sale",
       "Auction": "Auction"
-    }
+    },
+    "Current price": "Current price",
+    "Off Sale": "Off Sale",
+    "Sale": "Sale",
+    "NotCanBuy": "Has been purchased or removed",
+    "Description": "Description",
+    "Category": "Category",
+    "Introduction": "Introduction",
+    "Details": "Details",
+    "Issue TXID": "Issue TXID",
+    "Check": "Check",
+    "Creator": "Creator",
+    "Record": "Record",
+    "Role": "Role",
+    "Time": "Time",
+    "Price": "Price"
   },
   "My NFT": "My NFT",
   "Done": "Done",
@@ -936,5 +951,6 @@
   "certBody": "Certificated Entity",
   "noMsg": "No Information",
   "personCert": "Personal Certification",
-  "NOT_FOUND": "NOT_FOUND"
+  "NOT_FOUND": "NOT_FOUND",
+  "Copy": "Copy"
 }

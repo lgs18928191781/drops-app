@@ -92,7 +92,7 @@ export const router = createRouter({
         {
           path: 'detail/:chain/:genesis/:codehash/:tokenIndex',
           name: 'nftDetail',
-          component: () => import('@/views/nft/NftDetail.vue'),
+          component: () => import('@/views/nft/Detail.vue'),
         },
         {
           path: 'collection/:topicType',
@@ -162,11 +162,6 @@ export const router = createRouter({
         },
       ],
     },
-    // {
-    //   path: '/nftDetail/:genesisId/:codehash/:tokenIndex',
-    //   name: 'nftDetail',
-    //   component: () => import('@/views/nft/NftDetail.vue'),
-    // },
 
     // pay
     {
