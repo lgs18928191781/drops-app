@@ -199,47 +199,57 @@ async function submitForm() {
   }
   try {
     loading.value = true
-    const getAddressRes = await GetLegalRecevierAddress()
-    if (getAddressRes.code === 0) {
-      const transferNFTRes = await userStore.showWallet!.createBrfcChildNode({
-        nodeName: NodeName.NftTransfer,
-        data: JSON.stringify({
-          receiverAddress: getAddressRes.data.address,
-          tokenIndex: props.nft.nftTokenIndex,
-          codehash: props.nft.nftCodehash,
-          genesis: props.nft.nftGenesis,
-        }),
-      })
-      // const transferNFTRes = await userStore.showWallet!.transferNFT({
-      //   receiverAddress: getAddressRes.data.address,
-      //   tokenIndex: props.nft.nftTokenIndex,
-      //   codehash: props.nft.nftCodehash,
-      //   genesis: props.nft.nftGenesis,
-      // })
-      if (transferNFTRes && transferNFTRes.nft) {
-        const result = await LegalSaleNft({
-          price: new Decimal(form.actualincomePrice).mul(100).toString(),
-          sellDesc: 'ShowV3',
-          txid: transferNFTRes.nft.transfer!.txId,
-        })
-        if (result.code === 0) {
-          emit('success')
-          Mitt.emit(MittEvent.SellNFT, {
-            genesis: props.nft.nftGenesis,
-            codehash: props.nft.nftCodehash,
-            tokenIndex: props.nft.nftTokenIndex,
-            chain: props.nft.nftChain,
-          })
-          emit('update:modelValue', false)
-          loading.value = false
-          ElMessage.success('上架成功')
-        } else {
-          Error(result.error)
-        }
-      } else {
-        loading.value = false
-      }
-    }
+    // 法币上架
+    // const getAddressRes = await GetLegalRecevierAddress()
+    // if (getAddressRes.code === 0) {
+    //   const transferNFTRes = await userStore.showWallet!.createBrfcChildNode({
+    //     nodeName: NodeName.NftTransfer,
+    //     data: JSON.stringify({
+    //       receiverAddress: getAddressRes.data.address,
+    //       tokenIndex: props.nft.nftTokenIndex,
+    //       codehash: props.nft.nftCodehash,
+    //       genesis: props.nft.nftGenesis,
+    //     }),
+    //   })
+    //   if (transferNFTRes && transferNFTRes.nft) {
+    //     const result = await LegalSaleNft({
+    //       price: new Decimal(form.actualincomePrice).mul(100).toString(),
+    //       sellDesc: 'ShowV3',
+    //       txid: transferNFTRes.nft.transfer!.txId,
+    //     })
+    //     if (result.code === 0) {
+    //       emit('success')
+    //       Mitt.emit(MittEvent.SellNFT, {
+    //         genesis: props.nft.nftGenesis,
+    //         codehash: props.nft.nftCodehash,
+    //         tokenIndex: props.nft.nftTokenIndex,
+    //         chain: props.nft.nftChain,
+    //       })
+    //       emit('update:modelValue', false)
+    //       loading.value = false
+    //       ElMessage.success('上架成功')
+    //     } else {
+    //       Error(result.error)
+    //     }
+    //   } else {
+    //     loading.value = false
+    //   }
+    // }
+
+    // Space 上架
+    const res = await userStore.showWallet.createBrfcChildNode({
+      nodeName: NodeName.NftSell,
+      data: JSON.stringify({
+        codehash: props.nft.nftCodehash, // nft的codehash
+        genesis: props.nft.nftGenesis, // nft的genesisId
+        tokenIndex: props.nft.nftTokenIndex, // nft的tokenIndex
+        price: new Decimal(form.sellPrice).toInteger(), // nft的出售价格 单位聪
+        // "genesisTxid":string 必须 // nft的genesisTxid
+        sensibleId: props.nft.nftSensibleId, // nft的sensibleId
+        sellDesc: 'ShowV3',
+      }),
+    })
+    debugger
   } catch (error) {
     loading.value = false
     ElMessage.error((error as any).message)

@@ -77,6 +77,11 @@ export class SDK {
   network = Network.mainnet
   bfrcNodeList: { nodeName: NodeName; data: CreateNodeBrfcRes }[] = [] // 存储Brfc节点， 防止未广播时重复构建
   metaFileSha256TxIdList: { sha256: string; txId: string }[] = [] // 存储metaFileSha256TxId， 防止未广播时重复构建
+  transactionsNFTKey = {
+    [NodeName.NftGenesis]: 'genesis',
+    [NodeName.NftTransfer]: 'transfer',
+    [NodeName.NftSell]: 'sell',
+  }
 
   constructor(network: any) {
     this.network = network
@@ -412,6 +417,8 @@ export class SDK {
                   ? import.meta.env.VITE_CHANGE_ADDRESS
                   : this.wallet!.rootAddress
               )
+
+              debugger
 
               // 广播
               if (option.isBroadcast && !option.useQueue) {
@@ -798,7 +805,8 @@ export class SDK {
 
             if (
               params.nodeName === NodeName.NftGenesis ||
-              params.nodeName === NodeName.NftTransfer
+              params.nodeName === NodeName.NftTransfer ||
+              params.nodeName === NodeName.NftSell
             ) {
               // NFT genesis/transfer
               if (!transactions.nft) transactions.nft = {}
@@ -808,19 +816,24 @@ export class SDK {
                 opreturnData: scriptPlayload!,
                 utxoMaxCount: 1,
               }
-              if (params.nodeName === NodeName.NftTransfer) {
+              if (
+                params.nodeName === NodeName.NftTransfer ||
+                params.nodeName === NodeName.NftSell
+              ) {
                 _params = {
                   ..._params,
                   ...JSON.parse(params.data!),
                 }
               }
+              debugger
               const nftManager = this.wallet!.getNftManager()
-              const feeNumber = await nftManager[
-                params.nodeName === NodeName.NftGenesis
-                  ? 'getGenesisEstimateFee'
-                  : 'getTransferEstimateFee'
-                // @ts-ignore
-              ](_params)
+              const NFTGetFeeFunctionName = {
+                [NodeName.NftGenesis]: 'getGenesisEstimateFee',
+                [NodeName.NftTransfer]: 'getTransferEstimateFee',
+                [NodeName.NftSell]: 'getSellEstimateFee',
+              }
+              // @ts-ignore
+              const feeNumber = await nftManager[NFTGetFeeFunctionName[params.nodeName]](_params)
               // @ts-ignore
               const res = {
                 txId: '',
@@ -832,13 +845,8 @@ export class SDK {
                 scriptPlayload: [],
               }
 
-              if (params.nodeName === NodeName.NftGenesis) {
-                // @ts-ignore
-                transactions.nft!.genesis = res
-              } else if (params.nodeName === NodeName.NftTransfer) {
-                // @ts-ignore
-                transactions.nft!.transfer = res
-              }
+              // @ts-ignore
+              transactions.nft![this.transactionsNFTKey[params.nodeName]] = res
             } else {
               //  transactions.currentNode
               transactions.currentNode = await this.wallet?.createBrfcChildNode(
@@ -1152,7 +1160,8 @@ export class SDK {
 
             if (
               params.nodeName === NodeName.NftGenesis ||
-              params.nodeName === NodeName.NftTransfer
+              params.nodeName === NodeName.NftTransfer ||
+              params.nodeName === NodeName.NftSell
             ) {
               debugger
               const scriptPlayload = await this.getScriptPlayload(createCurrentNodeParams, chain)
@@ -1163,10 +1172,10 @@ export class SDK {
                 noBroadcast: true,
                 utxos: [utxo],
                 changeAddress: lastChangeAddress,
+                sellerWif: this.getPathPrivateKey('0/0')?.toString(),
               }
-              const res = await nftManager![
-                params.nodeName === NodeName.NftGenesis ? 'genesis' : 'transfer'
-              ](_params)
+              // @ts-ignore
+              const res = await nftManager![this.transactionsNFTKey[params.nodeName]](_params)
               if (res && typeof res !== 'number') {
                 if (params.nodeName === NodeName.NftGenesis) {
                   transactions.nft!.genesis = {
@@ -1180,7 +1189,8 @@ export class SDK {
                     sensibleId: res!.sensibleId!,
                   }
                 } else {
-                  transactions.nft!.transfer = {
+                  // @ts-ignore
+                  transactions.nft![this.transactionsNFTKey[params.nodeName]] = {
                     txId: res.txid!,
                     transaction: res.tx!,
                   }

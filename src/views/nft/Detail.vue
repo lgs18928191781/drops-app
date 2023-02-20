@@ -65,7 +65,11 @@
           </div>
         </div>
 
-        <div class="main-border flex flex-align-center flex-pack-center" :class="nftBtnClass">
+        <div
+          class="main-border flex flex-align-center flex-pack-center"
+          :class="nftBtnClass"
+          @click="nftBtnFunction"
+        >
           {{ nftBtnText }}
         </div>
       </div>
@@ -737,6 +741,22 @@ const nftBtnClass = computed(() => {
   }
 })
 
+const nftBtnFunction = computed(() => {
+  if (isMyNFT.value) {
+    if (isSale.value) {
+      return NFTOffSale
+    } else {
+      isShowSell.value = true
+    }
+  } else {
+    if (isSale.value) {
+      return ''
+    } else {
+      return () => {}
+    }
+  }
+})
+
 const cnyMode = computed(() => {
   return rootStore.currentPrice == UnitName.RMB
 })
@@ -919,7 +939,6 @@ function getMoreRecords() {
 }
 
 onMounted(() => {
-  console.log(userStore.user)
   if (route.params.genesis && route.params.codehash && route.params.tokenIndex) {
     getDetail().then(() => {
       isShowSkeleton.value = false
