@@ -81,6 +81,8 @@ export class SDK {
     [NodeName.NftGenesis]: 'genesis',
     [NodeName.NftTransfer]: 'transfer',
     [NodeName.NftSell]: 'sell',
+    [NodeName.NftCancel]: 'cancel',
+    [NodeName.nftBuy]: 'buy',
   }
 
   constructor(network: any) {
@@ -831,6 +833,7 @@ export class SDK {
                 [NodeName.NftGenesis]: 'getGenesisEstimateFee',
                 [NodeName.NftTransfer]: 'getTransferEstimateFee',
                 [NodeName.NftSell]: 'getSellEstimateFee',
+                [NodeName.NftCancel]: 'getCancelSellEstimateFee',
               }
               // @ts-ignore
               const feeNumber = await nftManager[NFTGetFeeFunctionName[params.nodeName]](_params)
