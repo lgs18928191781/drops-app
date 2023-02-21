@@ -249,7 +249,13 @@ async function submitForm() {
         sellDesc: 'ShowV3',
       }),
     })
-    debugger
+    if (res) {
+      loading.value = false
+      emit('success')
+      emit('update:modelValue', false)
+      ElMessage.success('上架成功')
+      console.log(res)
+    }
   } catch (error) {
     throw error
     loading.value = false

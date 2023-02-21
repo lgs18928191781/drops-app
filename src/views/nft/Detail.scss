@@ -28,9 +28,19 @@
                 height: 16px;
                 margin-left: 12px;
             }
+
+            .el-skeleton__item {
+                height: 16px;
+                width: 100px;
+            }
         }
 
         .operate-list {
+            .el-skeleton__item {
+                height: 16px;
+                width: 100px;
+            }
+
             .operate-item {
                 margin-right: 25px;
                 cursor: pointer;
@@ -43,6 +53,10 @@
                 .icon {
                     width: 20px;
                     height: 20px;
+
+                    &.like-ing {
+                        animation: sclae 1s infinite;
+                    }
                 }
 
                 .count {
@@ -59,6 +73,11 @@
     .name {
         margin-top: 18px;
         font-size: 30px;
+
+        .el-skeleton__item {
+            height: 30px;
+            width: 60%;
+        }
     }
 
     .owner {
@@ -78,6 +97,11 @@
                 margin-bottom: 0;
             }
 
+            .el-skeleton__item {
+                height: 16px;
+                width: 100px;
+            }
+
             .label {
                 font-size: 16px;
                 margin-right: 10px;
@@ -95,6 +119,11 @@
         .title {
             color: #909399;
             font-size: 18px;
+
+            .el-skeleton__item {
+                height: 18px;
+                width: 100px;
+            }
         }
 
         .price {
@@ -103,21 +132,42 @@
             .space {
                 font-size: 30px;
                 font-weight: bold;
+
+                .el-skeleton__item {
+                    height: 30px;
+                    width: 150px;
+                }
             }
 
             .curreny {
                 color: #909399;
                 font-size: 18px;
                 margin-left: 18px;
+
+                .el-skeleton__item {
+                    height: 18px;
+                    width: 100px;
+                }
             }
         }
     }
 
-    .main-border {
-        height: 56px;
-        font-size: 18px;
-        cursor: pointer;
+
+    .nft-operate {
+
+        .main-border,
+        .el-skeleton__item {
+            height: 56px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-right: 30px;
+
+            &:last-child {
+                margin-right: 0;
+            }
+        }
     }
+
 }
 
 .nft-other-msg {
@@ -138,6 +188,11 @@
                 padding: 0 18px;
                 border-bottom: 2px solid #EDEFF2;
                 user-select: none;
+
+                .el-skeleton__item {
+                    height: 18px;
+                    width: 100px;
+                }
 
                 &.hover {
                     cursor: pointer;
@@ -173,10 +228,20 @@
             color: #909399;
             margin-right: 12px;
             width: 100px;
+
+            .el-skeleton__item {
+                height: 14px;
+                width: 100px;
+            }
         }
 
         .value {
             word-break: break-word;
+
+            .el-skeleton__item {
+                height: 14px;
+                width: 200px;
+            }
 
             &.drsc {
                 min-height: 100px;
@@ -199,6 +264,10 @@
             .username {
                 color: var(--color-hover);
                 font-size: 16px;
+
+                a {
+                    margin-left: 0;
+                }
             }
 
             .meta-id {
@@ -206,5 +275,34 @@
                 font-size: 16px;
             }
         }
+    }
+}
+
+.more-nft {
+    margin-top: 60px;
+
+    .title {
+        text-align: center;
+        font-size: 24px;
+    }
+
+    .more-nft-list {
+        margin-top: 30px;
+    }
+}
+
+
+@keyframes sclae {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+        /*扩大到4倍*/
+    }
+
+    to {
+        transform: scale(1);
     }
 }

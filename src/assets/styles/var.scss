@@ -21,6 +21,7 @@ $themeTextColor: var(--themeTextColor);
     --color-success: #20a124;
     --themeBgColor: #fff;
     --themeBgSecondColor: #fff;
+    --themeBgSecondColorRgb: 255, 255, 255;
     --themeBgThreeColor: #F5F7F9;
     --themeTextColor: #303133;
     --themeBtnTextColor: #303133;
@@ -44,6 +45,7 @@ $themeTextColor: var(--themeTextColor);
 html.dark {
     --themeBgColor: #303133;
     --themeBgSecondColor: #1f2937;
+    --themeBgSecondColorRgb: 31, 41, 55;
     --themeBgThreeColor: #303133;
     --border-color: #d1d5db;
     --faded-border-color: #6b7280;

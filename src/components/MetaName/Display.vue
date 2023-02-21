@@ -1,17 +1,13 @@
 <template>
   <div class="flex items-center gap-x-1">
     <div
-      :class="[
-        textClass,
-        colorful && colors,
-        'font-medium leading-loose text-sm max-w-[140PX] truncate',
-      ]"
+      :class="[textClass, colorful && colors, 'font-medium leading-loose  max-w-[140PX] truncate']"
       :title="nameWithoutSuffix"
     >
       {{ nameWithoutSuffix }}
     </div>
 
-    <MetaNameTag v-if="!noTag" :ns="ns" class="text-sm !rounded" />
+    <MetaNameTag v-if="!noTag" :ns="ns" class="!rounded" />
   </div>
 </template>
 

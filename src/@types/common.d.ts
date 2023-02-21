@@ -421,6 +421,22 @@ declare interface GenesisNFTItem {
   nftIssueMetaTxId: string
   nftIssueVersion: string
   nftIssuer: string
+  nftIssueUserInfo: {
+    address: string
+    avatarImage: string
+    avatarTxId: string
+    avatarType: string
+    coverPublicKey: string
+    coverType: string
+    coverUrl: string
+    infoAvatarTxIdOssUrl: string
+    metaIdTimestamp: number
+    metaName: string
+    name: string
+    nameType: string
+    nftNamePublicKey: string
+    publicKey: string
+  }
   nftLegalPrice: number
   nftLegalSymbol: string
   nftLegalUuid: string

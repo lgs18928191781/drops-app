@@ -1,9 +1,16 @@
+.el-skeleton{
+    overflow: hidden;
+}
 .record {
     margin: -18px;
 
+
+
     .th {
-        background: var(--themeBgSecondColor);
+        background: var(--themeBgSecondColor) !important;
     }
+
+
 
     .record-list {
         overflow-y: auto;
@@ -12,6 +19,15 @@
     .record-item {
         padding: 18px;
         position: relative;
+
+        .el-skeleton__item {
+            height: 14px;
+            width: 60px;
+        }
+
+        &:hover {
+            background: rgba(var(--themeBgSecondColorRgb), 0.5);
+        }
 
         .top-icon {
             position: absolute;
@@ -42,7 +58,16 @@
             }
         }
 
-        .price {
+        .price {}
+
+        .link {
+            width: 20px;
+
+            .el-skeleton__item {
+
+                width: 10px;
+            }
+
             .icon {
                 width: 14px;
                 height: 14px;

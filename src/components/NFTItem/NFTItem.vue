@@ -89,7 +89,7 @@ function toNFT() {
   router.push({
     name: 'nftDetail',
     params: {
-      chain: props.nft.nftChain,
+      chain: 'mvc',
       genesis: props.nft.nftGenesis,
       tokenIndex: props.nft.nftTokenIndex,
       codehash: props.nft.nftCodehash ? props.nft.nftCodehash : props.nft.nftChain,

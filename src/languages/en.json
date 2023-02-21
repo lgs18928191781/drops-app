@@ -727,7 +727,9 @@
     "Role": "Role",
     "Time": "Time",
     "Price": "Price",
-    "History owner": "History owner"
+    "History owner": "History owner",
+    "More from this collection": "More from this collection",
+    "Like Success": "Like Success"
   },
   "My NFT": "My NFT",
   "Done": "Done",
