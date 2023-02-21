@@ -65,7 +65,7 @@
                   v-for="item in genesisList"
                   :key="item.nftGenesis + item.nftCodehash"
                 >
-                  <div class="top flex flex-align-center" v-if="item.nftSeriesName">
+                  <div class="top flex flex-align-center">
                     <div class="name flex1">
                       {{ item.nftSeriesName }}
                     </div>
