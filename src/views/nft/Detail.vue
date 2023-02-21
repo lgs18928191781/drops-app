@@ -166,7 +166,7 @@
             <div class="title">{{ $t('NFT.Record') }}</div>
             <div class="content">
               <div class="record">
-                <div class="record-item flex flex-align-center">
+                <div class="record-item th flex flex-align-center">
                   <span class="owner flex1">{{ $t('NFT.Owner') }}</span>
                   <span class="role flex1">{{ $t('NFT.Role') }}</span>
                   <span class="time flex1">{{ $t('NFT.Time') }}</span>
@@ -177,6 +177,7 @@
                   class="record-item flex flex-align-center"
                   v-for="item in Array.from({ length: 6 })"
                 >
+                  <Icon name="top" />
                   <span class="owner flex1">
                     <div class="flex flex-align-center">
                       <UserAvatar
@@ -189,7 +190,9 @@
                   </span>
                   <span class="role flex1">{{ $t('NFT.Role') }}</span>
                   <span class="time flex1">2021-09-09 22:00</span>
-                  <span class="price flex1">0.86 Space <Icon name="link" /> </span>
+                  <span class="price flex1 flex flex-align-center"
+                    >0.86 Space <Icon name="link" />
+                  </span>
                 </div>
               </div>
             </div>

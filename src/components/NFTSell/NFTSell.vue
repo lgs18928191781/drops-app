@@ -243,7 +243,7 @@ async function submitForm() {
         codehash: props.nft.nftCodehash, // nft的codehash
         genesis: props.nft.nftGenesis, // nft的genesisId
         tokenIndex: props.nft.nftTokenIndex, // nft的tokenIndex
-        price: new Decimal(form.sellPrice).toInteger(), // nft的出售价格 单位聪
+        price: new Decimal(form.sellPrice).toInteger().toNumber(), // nft的出售价格 单位聪
         // "genesisTxid":string 必须 // nft的genesisTxid
         sensibleId: props.nft.nftSensibleId, // nft的sensibleId
         sellDesc: 'ShowV3',
@@ -251,6 +251,7 @@ async function submitForm() {
     })
     debugger
   } catch (error) {
+    throw error
     loading.value = false
     ElMessage.error((error as any).message)
   }

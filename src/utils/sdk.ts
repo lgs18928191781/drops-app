@@ -1176,6 +1176,7 @@ export class SDK {
               }
               // @ts-ignore
               const res = await nftManager![this.transactionsNFTKey[params.nodeName]](_params)
+              debugger
               if (res && typeof res !== 'number') {
                 if (params.nodeName === NodeName.NftGenesis) {
                   transactions.nft!.genesis = {
@@ -1188,9 +1189,15 @@ export class SDK {
                     // @ts-ignore
                     sensibleId: res!.sensibleId!,
                   }
-                } else {
-                  // @ts-ignore
-                  transactions.nft![this.transactionsNFTKey[params.nodeName]] = {
+                } else if (params.nodeName === NodeName.NftTransfer) {
+                  transactions.nft!.transfer = {
+                    txId: res.txid!,
+                    transaction: res.tx!,
+                  }
+                } else if (params.nodeName === NodeName.NftSell) {
+                  transactions.nft!.sell = {
+                    sellTransaction: res.sellTx!,
+                    sellTxId: res.sellTxId!,
                     txId: res.txid!,
                     transaction: res.tx!,
                   }
@@ -1390,19 +1397,13 @@ export class SDK {
 
         // 广播 nft issue
         if (transactions.nft) {
-          // for (let i in transactions.nft) {
-          //   // @ts-ignore
-          //   await this.wallet?.provider.broadcast(transactions.nft[i].transaction.toString())
-          // }
+          for (let i in transactions.nft) {
+            if (i === 'sell') {
+              await this.wallet?.provider.broadcast(transactions.nft[i]?.sellTransaction.toString())
+            }
 
-          if (transactions.nft.genesis?.transaction) {
-            await this.wallet?.provider.broadcast(transactions.nft.genesis.transaction.toString())
-          }
-          if (transactions.nft.issue?.transaction) {
-            await this.wallet?.provider.broadcast(transactions.nft.issue.transaction.toString())
-          }
-          if (transactions.nft.transfer?.transaction) {
-            await this.wallet?.provider.broadcast(transactions.nft.transfer.transaction.toString())
+            // @ts-ignore
+            await this.wallet?.provider.broadcast(transactions.nft[i].transaction.toString())
           }
         }
 

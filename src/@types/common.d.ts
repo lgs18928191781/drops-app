@@ -481,19 +481,25 @@ declare interface NodeTransactions {
   subscribeId?: string
   nft?: {
     issue?: {
-      transaction: bsv.Transaction
+      transaction: mvc.Transaction
       txId: string
       tokenIndex: string
     }
     genesis?: {
-      transaction: bsv.Transaction
+      transaction: mvc.Transaction
       genesis: string
       codehash: string
       sensibleId: string
       txId: string
     }
     transfer?: {
-      transaction: bsv.Transaction
+      transaction: mvc.Transaction
+      txId: string
+    }
+    sell?: {
+      sellTransaction: mvc.Transaction
+      sellTxId: string
+      transaction: string
       txId: string
     }
   }

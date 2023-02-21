@@ -190,3 +190,45 @@
         }
     }
 }
+
+.record {
+    margin: -18px;
+
+    .th {
+        background: var(--themeBgSecondColor);
+    }
+
+    .record-item {
+        padding: 18px;
+        position: relative;
+
+        span {
+            color: #606266;
+        }
+
+        .owner {
+            .avatar {
+                width: 24px;
+                height: 24px;
+                margin-right: 6px;
+            }
+        }
+
+        .price {
+            .icon {
+                width: 14px;
+                height: 14px;
+                color: var(--color-hover);
+                margin-left: 6px;
+                cursor: pointer;
+
+                &:hover {
+                    :deep(use) {
+                        stroke: var(--color-hover);
+                        stroke-width: 2px;
+                    }
+                }
+            }
+        }
+    }
+}
