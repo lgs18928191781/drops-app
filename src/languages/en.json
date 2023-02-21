@@ -939,5 +939,5 @@
   "NOT_FOUND": "NOT_FOUND",
   "confirmUpdate": "Confirm upgrade",
   "allowUpdate": "It has been detected that your account needs to be upgraded, canceling the upgrade may affect subsequent logins to other wallets, please confirm",
-  "updateRemind": "upgrade tips"
+  "updateRemind": "Upgrade Tips"
 }
