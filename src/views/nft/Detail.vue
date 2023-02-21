@@ -77,7 +77,7 @@
 
     <div class="nft-other-msg flex">
       <div class="description-warp">
-        <div class="nft-other-msg-section">
+        <div class="nft-other-msg-section" ref="DescriptionWarpRef">
           <div class="nft-other-msg-item">
             <div class="title">{{ $t('NFT.Description') }}</div>
             <div class="content">
@@ -92,15 +92,18 @@
                 </div>
                 <div class="description-item flex">
                   <span class="label">{{ $t('NFT.Introduction') }}:</span>
-                  <span class="value flex1">{{ nft.val.nftDesc || '--' }}</span>
+                  <span class="value flex1 drsc">{{ nft.val.nftDesc || '--' }}</span>
                 </div>
               </div>
             </div>
           </div>
 
           <div class="nft-other-msg-item">
-            <div class="title">{{ $t('NFT.Details') }}</div>
-            <div class="content">
+            <div class="title hover flex flex-align-center" @click="onChangeDetails">
+              <div class="flex1">{{ $t('NFT.Details') }}</div>
+              <Icon name="down" :class="{ active: isShowDetails }" />
+            </div>
+            <div class="content" v-if="isShowDetails">
               <div class="description-list">
                 <div class="description-item flex">
                   <span class="label">TokenID:</span>
@@ -161,40 +164,15 @@
       </div>
 
       <div class="flex1">
-        <div class="nft-other-msg-section">
-          <div class="nft-other-msg-item">
+        <div class="nft-other-msg-section flex flex-v" :style="{ height: recordWarpHeight + 'px' }">
+          <div class="nft-other-msg-item flex1 flex flex-v">
             <div class="title">{{ $t('NFT.Record') }}</div>
-            <div class="content">
-              <div class="record">
-                <div class="record-item th flex flex-align-center">
-                  <span class="owner flex1">{{ $t('NFT.Owner') }}</span>
-                  <span class="role flex1">{{ $t('NFT.Role') }}</span>
-                  <span class="time flex1">{{ $t('NFT.Time') }}</span>
-                  <span class="price flex1">{{ $t('NFT.Price') }}</span>
-                </div>
-
-                <div
-                  class="record-item flex flex-align-center"
-                  v-for="item in Array.from({ length: 6 })"
-                >
-                  <Icon name="top" />
-                  <span class="owner flex1">
-                    <div class="flex flex-align-center">
-                      <UserAvatar
-                        :meta-id="nft.val.nftIssueMetaId"
-                        :image="nft.val.nftIssueAvatarImage"
-                        :name="nft.val.nftIssuer"
-                      />
-                      <span class="name">Sacred Sword</span>
-                    </div>
-                  </span>
-                  <span class="role flex1">{{ $t('NFT.Role') }}</span>
-                  <span class="time flex1">2021-09-09 22:00</span>
-                  <span class="price flex1 flex flex-align-center"
-                    >0.86 Space <Icon name="link" />
-                  </span>
-                </div>
-              </div>
+            <div class="content flex1 flex flex-v">
+              <NFTDetailRecord
+                :genesis="(route.params.genesis as string)"
+                :codehash="(route.params.codehash as string)"
+                :token-index="(route.params.tokenIndex as string)"
+              />
             </div>
           </div>
         </div>
@@ -607,7 +585,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed, watch } from 'vue'
+import { ref, reactive, onMounted, computed, watch, nextTick } from 'vue'
 import DetailSkeletonVue from './DetailSkeleton.vue'
 import NFTCover from '@/components/NFTCover/NFTCover.vue'
 import CertTemp from '@/components/Cert/Cert.vue'
@@ -634,6 +612,7 @@ import AmountVue from '@/components/Amount/Amount.vue'
 import NFTTransferVue from '@/components/NFTTransfer/NFTTransfer.vue'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
 import { Chains, ToCurrency } from '@/enum'
+import NFTDetailRecord from './components/NFTDetailRecord.vue'
 
 const isShowSkeleton = ref(true)
 const isShowDrscDetail = ref(false)
@@ -642,6 +621,9 @@ const route = useRoute()
 const i18n = useI18n()
 const tabIndex = ref(0)
 const rootStore = useRootStore()
+const isShowDetails = ref(false)
+const recordWarpHeight = ref(0)
+const DescriptionWarpRef = ref()
 
 const isSale = computed(() => {
   let result = false
@@ -941,10 +923,18 @@ function getMoreRecords() {
   })
 }
 
+function onChangeDetails() {
+  isShowDetails.value = !isShowDetails.value
+  nextTick(() => {
+    recordWarpHeight.value = DescriptionWarpRef.value?.clientHeight
+  })
+}
+
 onMounted(() => {
   if (route.params.genesis && route.params.codehash && route.params.tokenIndex) {
     getDetail().then(() => {
       isShowSkeleton.value = false
+      recordWarpHeight.value = DescriptionWarpRef.value?.clientHeight
     })
     getNftHolderList()
   }

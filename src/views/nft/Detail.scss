@@ -137,6 +137,20 @@
                 line-height: 53px;
                 padding: 0 18px;
                 border-bottom: 2px solid #EDEFF2;
+                user-select: none;
+
+                &.hover {
+                    cursor: pointer;
+
+                    .icon {
+                        width: 10px;
+                        height: 10px;
+
+                        &.active {
+                            transform: rotate(180deg);
+                        }
+                    }
+                }
             }
 
             .content {
@@ -164,6 +178,10 @@
         .value {
             word-break: break-word;
 
+            &.drsc {
+                min-height: 100px;
+            }
+
             a {
                 color: var(--color-hover);
                 cursor: pointer;
@@ -186,48 +204,6 @@
             .meta-id {
                 color: #606266;
                 font-size: 16px;
-            }
-        }
-    }
-}
-
-.record {
-    margin: -18px;
-
-    .th {
-        background: var(--themeBgSecondColor);
-    }
-
-    .record-item {
-        padding: 18px;
-        position: relative;
-
-        span {
-            color: #606266;
-        }
-
-        .owner {
-            .avatar {
-                width: 24px;
-                height: 24px;
-                margin-right: 6px;
-            }
-        }
-
-        .price {
-            .icon {
-                width: 14px;
-                height: 14px;
-                color: var(--color-hover);
-                margin-left: 6px;
-                cursor: pointer;
-
-                &:hover {
-                    :deep(use) {
-                        stroke: var(--color-hover);
-                        stroke-width: 2px;
-                    }
-                }
             }
         }
     }
