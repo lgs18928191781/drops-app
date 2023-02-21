@@ -137,6 +137,12 @@ export interface MetaNameConfig {
   id: number
   isOpen: boolean
   published_at: string
+  openText: {
+    en: string
+    zh: string
+    [key: string]: string
+  }
+  openTime: string
   created_at: string
   updated_at: string
 }
