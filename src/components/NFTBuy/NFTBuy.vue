@@ -5,9 +5,13 @@
     :close-on-click-modal="false"
     :title="$t('NFT.Order Information')"
     @close="emit('update:modelValue', false)"
+    center
   >
     <div class="nft-buy">
-      <NFTMsgVue :nft="nft" :to-currency="toCurrency" />
+      <div class="msg flex">
+        <NFTCover :cover="[]" />
+        <div class="content flex1"></div>
+      </div>
 
       <div class="nft-msg-list">
         <div class="nft-msg-item flex flex-align-center">
@@ -43,6 +47,7 @@
               v-model="isShowPayTypes"
               v-model:current-pay-platform="currentPayPlatform"
               @change="onPayPlatformChange"
+              :disabled="true"
             />
           </div>
         </div>
@@ -82,6 +87,8 @@ import { useRoute, useRouter } from 'vue-router'
 import StartPayVue from '../StartPay/StartPay.vue'
 import { ElMessage } from 'element-plus'
 import Decimal from 'decimal.js-light'
+import { GetNFTFee, NFTFeeInfo } from '@/api/strapi'
+import NFTCover from '../NFTCover/NFTCover.vue'
 
 const props = defineProps<{
   modelValue: boolean
@@ -96,9 +103,7 @@ const rootStore = useRootStore()
 const userStore = useUserStore()
 const i18n = useI18n()
 const isShowPayTypes = ref(false)
-const currentPayPlatform = ref(
-  userStore.isAuthorized && userStore.user?.evmAddress ? PayPlatform.ETH : PayPlatform.UnionPay
-)
+const currentPayPlatform = ref(PayPlatform.SPACE)
 const toCurrency: Ref<undefined | ToCurrency> = ref(
   currentPayPlatform.value === PayPlatform.ETH ? ToCurrency.ETH : undefined
 )
@@ -109,6 +114,7 @@ const payMsg = reactive({
   orderId: '',
   amount: '',
 })
+const nftFee: { val: NFTFeeInfo | null } = reactive({ val: null })
 
 function choosePayPlatform(item: PayPlatformItem) {
   if (item.disabled()) return
@@ -125,26 +131,29 @@ function onPayPlatformChange() {
 
 async function confirmBuy() {
   // return ElMessage.info(i18n.t('Comming Soon'))
-  const res = await CreatePayOrder({
-    platform: currentPayPlatform.value,
-    fullPath: setPayQuitUrl({
-      payPlatform: currentPayPlatform.value,
-      fullPath: route.fullPath,
-      isBlindbox: false,
-    }),
-    goods_name: props.nft.nftName,
-    count: 1,
-    product_type: product_type,
-    uuid: props.nft.nftLegalUuid,
-  }).catch(error => {
-    ElMessage.error(error.message)
-  })
-  if (res) {
-    payMsg.amount = res.pay_amount!.toString()
-    payMsg.orderId = res.wxCoreOrderId
-    payMsg.url = res.url
-    isShowPayModal.value = true
-  }
+  //  法币购买
+  // const res = await CreatePayOrder({
+  //   platform: currentPayPlatform.value,
+  //   fullPath: setPayQuitUrl({
+  //     payPlatform: currentPayPlatform.value,
+  //     fullPath: route.fullPath,
+  //     isBlindbox: false,
+  //   }),
+  //   goods_name: props.nft.nftName,
+  //   count: 1,
+  //   product_type: product_type,
+  //   uuid: props.nft.nftLegalUuid,
+  // }).catch(error => {
+  //   ElMessage.error(error.message)
+  // })
+  // if (res) {
+  //   payMsg.amount = res.pay_amount!.toString()
+  //   payMsg.orderId = res.wxCoreOrderId
+  //   payMsg.url = res.url
+  //   isShowPayModal.value = true
+  // }
+  // Space 购买
+  // const feeInfo = await
 }
 
 function toNFT() {
@@ -163,6 +172,12 @@ function onPaySuccess() {
   emit('update:modelValue', false)
   emit('success')
 }
+
+GetNFTFee().then(res => {
+  if (res) {
+    nftFee.val = res
+  }
+})
 </script>
 
 <style lang="scss" scoped src="./NFTBuy.scss"></style>

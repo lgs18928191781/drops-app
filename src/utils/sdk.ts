@@ -1164,9 +1164,9 @@ export class SDK {
             if (
               params.nodeName === NodeName.NftGenesis ||
               params.nodeName === NodeName.NftTransfer ||
-              params.nodeName === NodeName.NftSell
+              params.nodeName === NodeName.NftSell ||
+              params.nodeName === NodeName.NftCancel
             ) {
-              debugger
               const scriptPlayload = await this.getScriptPlayload(createCurrentNodeParams, chain)
               const nftManager = this.wallet!.getNftManager()
               const _params = {
@@ -1176,10 +1176,14 @@ export class SDK {
                 utxos: [utxo],
                 changeAddress: lastChangeAddress,
                 sellerWif: this.getPathPrivateKey('0/0')?.toString(),
+                buyerWif: this.getPathPrivateKey('0/0')?.toString(),
+              }
+              const NFTOperateFunName = {
+                ...this.transactionsNFTKey,
+                [NodeName.NftCancel]: 'cancelSell',
               }
               // @ts-ignore
-              const res = await nftManager![this.transactionsNFTKey[params.nodeName]](_params)
-              debugger
+              const res = await nftManager![NFTOperateFunName[params.nodeName]](_params)
               if (res && typeof res !== 'number') {
                 if (params.nodeName === NodeName.NftGenesis) {
                   transactions.nft!.genesis = {
@@ -1192,15 +1196,16 @@ export class SDK {
                     // @ts-ignore
                     sensibleId: res!.sensibleId!,
                   }
-                } else if (params.nodeName === NodeName.NftTransfer) {
-                  transactions.nft!.transfer = {
-                    txId: res.txid!,
-                    transaction: res.tx!,
-                  }
                 } else if (params.nodeName === NodeName.NftSell) {
                   transactions.nft!.sell = {
                     sellTransaction: res.sellTx!,
                     sellTxId: res.sellTxId!,
+                    txId: res.txid!,
+                    transaction: res.tx!,
+                  }
+                } else {
+                  // @ts-ignore
+                  transactions.nft![this.transactionsNFTKey[params.nodeName]] = {
                     txId: res.txid!,
                     transaction: res.tx!,
                   }

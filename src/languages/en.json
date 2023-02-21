@@ -602,7 +602,7 @@
     "Platform fee": "Platform fee",
     "Royalty fee": "Royalty fee",
     "Sell": "Sell",
-    "Order Information": "Order Information",
+    "Order Information": "Payment confirmation",
     "Create Time": "Create Time",
     "NFT Details": "NFT Details",
     "Payment Method": "Payment Method",
@@ -729,7 +729,8 @@
     "Price": "Price",
     "History owner": "History owner",
     "More from this collection": "More from this collection",
-    "Like Success": "Like Success"
+    "Like Success": "Like Success",
+    "Offsale Success": "Offsale Success"
   },
   "My NFT": "My NFT",
   "Done": "Done",

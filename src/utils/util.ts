@@ -1107,19 +1107,36 @@ export function NFTOffSale(nft: GenesisNFTItem) {
     )
       .then(async () => {
         const userStore = useUserStore()
-        const signRes: string = await userStore.showWallet!.sigMessage(
-          userStore.user!.metaId!,
-          '0/0'
-        )
-        if (signRes) {
-          const res = await LegalOffsale({ uuid: nft.nftLegalUuid, sig: signRes })
-          if (res.code === 0) {
-            ElMessage.success('下架成功')
-            resolve(true)
-          }
+        // 法币下架
+
+        // const signRes: string = await userStore.showWallet!.sigMessage(
+        //   userStore.user!.metaId!,
+        //   '0/0'
+        // )
+        // if (signRes) {
+        //   const res = await LegalOffsale({ uuid: nft.nftLegalUuid, sig: signRes })
+        //   if (res.code === 0) {
+        //     ElMessage.success('下架成功')
+        //     resolve(true)
+        //   }
+        // }
+
+        // Space 下架
+        const res = await userStore.showWallet.createBrfcChildNode({
+          nodeName: NodeName.NftCancel,
+          data: JSON.stringify({
+            genesis: nft.nftGenesis,
+            codehash: nft.nftCodehash,
+            tokenIndex: nft.nftTokenIndex,
+          }),
+        })
+        if (res) {
+          ElMessage.success(i18n.global.t('NFT.Offsale Success'))
+          resolve(true)
         }
       })
       .catch(error => {
+        ElMessage.error(error.message)
         resolve(false)
       })
   })

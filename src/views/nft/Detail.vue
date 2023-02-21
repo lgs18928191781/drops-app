@@ -339,7 +339,7 @@ const ownerRecord: { val: GetNftHolderListResItem | null } = reactive({
 const issueRecord: { val: GetNftHolderListResItem | null } = reactive({
   val: null,
 })
-const isShowBuy = ref(false)
+const isShowBuy = ref(true)
 const isShowTransfer = ref(false)
 
 const isLegal = computed(() => {
@@ -372,22 +372,6 @@ const nftBtnClass = computed(() => {
       return 'primary'
     } else {
       return 'faded'
-    }
-  }
-})
-
-const nftBtnFunction = computed(() => {
-  if (isMyNFT.value) {
-    if (isSale.value) {
-      return NFTOffSale
-    } else {
-      isShowSell.value = true
-    }
-  } else {
-    if (isSale.value) {
-      return ''
-    } else {
-      return () => {}
     }
   }
 })
@@ -430,6 +414,22 @@ function converterPrice(amount: number) {
     return new Decimal(amount).div(10 ** 8).toString() + ' ' + 'BSV'
   } else {
     return '--'
+  }
+}
+
+function nftBtnFunction() {
+  if (isMyNFT.value) {
+    if (isSale.value) {
+      return NFTOffSale
+    } else {
+      isShowSell.value = true
+    }
+  } else {
+    if (isSale.value) {
+      return ''
+    } else {
+      return () => {}
+    }
   }
 }
 

@@ -22,19 +22,30 @@
             v-model="form.sellPrice"
             :placeholder="$t('NFT.Set selling price')"
             @change="setPrice"
-          />
+          >
+            <template #append>
+              <ElSelect v-model="unit" @change="onChangeUnit">
+                <ElOption
+                  v-for="item in units"
+                  :key="item.rate"
+                  :label="item.value"
+                  :value="item.value"
+                />
+              </ElSelect>
+            </template>
+          </ElInput>
         </ElFormItem>
 
         <div class="price-info-list">
-          <div class="price-info-item flex flex-align-center">
+          <!-- <div class="price-info-item flex flex-align-center">
             <div class="label flex1">{{ $t('NFT.Set actual income') }}</div>
             <div class="value flex flex-align-center">
               <ElInput type="number" v-model="form.actualincomePrice" @change="setSellPrice" />
               {{ rootStore.currentPrice }}
             </div>
-          </div>
+          </div> -->
 
-          <div class="price-info-item flex flex-align-center">
+          <!-- <div class="price-info-item flex flex-align-center">
             <div class="label flex1">
               {{
                 $t('NFT.Platform fee')
@@ -44,9 +55,9 @@
               {{ platformFee }}
               {{ rootStore.currentPrice }}
             </div>
-          </div>
+          </div> -->
 
-          <div class="price-info-item flex flex-align-center">
+          <!-- <div class="price-info-item flex flex-align-center">
             <div class="label flex1">
               {{
                 $t('NFT.Royalty fee')
@@ -56,7 +67,7 @@
               {{ royaltyFee }}
               {{ rootStore.currentPrice }}
             </div>
-          </div>
+          </div> -->
         </div>
       </ElForm>
 
@@ -94,6 +105,16 @@ const emit = defineEmits(['update:modelValue', 'success'])
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const i18n = useI18n()
+
+enum Unit {
+  Space = 'SPACE',
+  Satoshi = 'Satoshi',
+}
+const units = [
+  { value: Unit.Space, rate: Math.pow(10, -8), toFixed: 8 },
+  { value: Unit.Satoshi, rate: Math.pow(10, 8), toFixed: 0 },
+]
+const unit = ref(Unit.Space)
 const form = reactive({
   sellPrice: '',
   actualincomePrice: '',
@@ -168,17 +189,9 @@ function getyExtraFee() {
 }
 
 function setPrice() {
-  let price = new Decimal(form.sellPrice).toNumber()
-  if (price < 0.01) price = 0.01
-  form.sellPrice = new Decimal(price).toFixed(2)
-  form.actualincomePrice = new Decimal(form.sellPrice)
-    .div(
-      new Decimal(extraFee.val!.platformPercentage)
-        .plus(extraFee.val!.royaltyPercentage)
-        .plus(1)
-        .toNumber()
-    )
-    .toFixed(2)
+  let price = new Decimal(form.sellPrice)
+  const uninItem = units.find(item => item.value === unit.value)
+  form.sellPrice = price.toFixed(uninItem!.toFixed)
 }
 
 function setSellPrice() {
@@ -189,6 +202,13 @@ function setSellPrice() {
     .plus(platformFee.value)
     .plus(royaltyFee.value)
     .toFixed(2)
+}
+
+function onChangeUnit() {
+  if (form.sellPrice) {
+    const uninItem = units.find(item => item.value === unit.value)
+    form.sellPrice = new Decimal(form.sellPrice).mul(uninItem!.rate).toFixed(uninItem!.toFixed)
+  }
 }
 
 async function submitForm() {
@@ -237,14 +257,16 @@ async function submitForm() {
     // }
 
     // Space 上架
+    const sellPriceSatoshi = new Decimal(form.sellPrice)
+      .mul(unit.value === Unit.Satoshi ? 1 : Math.pow(10, 8))
+      .toNumber()
     const res = await userStore.showWallet.createBrfcChildNode({
       nodeName: NodeName.NftSell,
       data: JSON.stringify({
         codehash: props.nft.nftCodehash, // nft的codehash
         genesis: props.nft.nftGenesis, // nft的genesisId
         tokenIndex: props.nft.nftTokenIndex, // nft的tokenIndex
-        price: new Decimal(form.sellPrice).toInteger().toNumber(), // nft的出售价格 单位聪
-        // "genesisTxid":string 必须 // nft的genesisTxid
+        price: sellPriceSatoshi, // nft的出售价格 单位聪
         sensibleId: props.nft.nftSensibleId, // nft的sensibleId
         sellDesc: 'ShowV3',
       }),
