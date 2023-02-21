@@ -252,7 +252,7 @@ function toRegister() {
 
 GetMetaNameConfig()
   .then(res => {
-    if (import.meta.env.MODE === EnvMode.MainnetGray) {
+    if (import.meta.env.MODE === EnvMode.Mainnet) {
       metaNameConfig.val = res
       if (!metaNameConfig.val!.isOpen && metaNameConfig.val!.openTime) {
         if (new Date(metaNameConfig.val!.openTime).getTime() <= new Date().getTime()) {
