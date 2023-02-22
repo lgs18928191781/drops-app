@@ -93,7 +93,7 @@ export class SDK {
     return new Promise<void>(async (resolve, reject) => {
       try {
         const account = getLocalAccount()
-        debugger
+
         const walletObj = await hdWalletFromAccount(
           {
             ...account.userInfo,
@@ -102,7 +102,7 @@ export class SDK {
           this.network,
           account.userInfo.path
         )
-        debugger
+
         const wallet = new HdWallet(walletObj.wallet)
 
         this.wallet = wallet
@@ -990,7 +990,6 @@ export class SDK {
   ) {
     return new Promise<NodeTransactions>(async (resolve, reject) => {
       try {
-        debugger
         const chain = params.payType === SdkPayType.BSV ? HdWalletChain.BSV : HdWalletChain.MVC
         if (params.nodeName === NodeName.Name) {
           this.setTransferUtxoAndOutputAndSign(
@@ -1157,7 +1156,6 @@ export class SDK {
               params.nodeName === NodeName.NftGenesis ||
               params.nodeName === NodeName.NftTransfer
             ) {
-              debugger
               const scriptPlayload = await this.getScriptPlayload(createCurrentNodeParams, chain)
               const nftManager = this.wallet!.getNftManager()
               const _params = {

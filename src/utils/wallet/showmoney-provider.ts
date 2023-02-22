@@ -387,7 +387,6 @@ export default class ShowmoneyProvider {
     return new Promise(async (resolve, reject) => {
       const res = await this.callMetasvApi(`/xpubLite/${xpub}/balance`, {}, 'get', chain).catch(
         error => {
-          debugger
           reject(error)
         }
       )
