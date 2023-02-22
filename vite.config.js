@@ -17,6 +17,7 @@ import stdLibBrowser from 'node-stdlib-browser'
 import { viteExternalsPlugin } from 'vite-plugin-externals'
 import nodePolyfills from 'rollup-plugin-polyfill-node'
 import basicSsl from '@vitejs/plugin-basic-ssl'
+import { VitePWA } from 'vite-plugin-pwa'
 // import dns from 'dns'
 // dns.setDefaultResultOrder('verbatim')
 const pathSrc = path.resolve(__dirname, 'src')
@@ -101,6 +102,39 @@ export default ({ mode, command }) => {
         'mvc-lib/ecies': 'ECIES',
         'mvc-lib/mnemonic': 'Mnemonic',
         bip39: 'bip39',
+      }),
+
+      VitePWA({
+        registerType: 'autoUpdate',
+        includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'show3.svg'],
+        devOptions: {
+          enabled: true,
+        },
+        manifest: {
+          name: 'Show3',
+          short_name: 'Show3',
+          description:
+            "Show3 is the World's First NFT-Universal Web3 Social Application. It is the first decentralized social platform based on the DID protocol with fully on-chain data.",
+          theme_color: '#ffffff',
+          icons: [
+            {
+              src: 'pwa-192x192.png',
+              sizes: '192x192',
+              type: 'image/png',
+            },
+            {
+              src: 'pwa-512x512.png',
+              sizes: '512x512',
+              type: 'image/png',
+            },
+            {
+              src: 'pwa-512x512.png',
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'any maskable',
+            },
+          ],
+        },
       }),
       // basicSsl(),
     ],

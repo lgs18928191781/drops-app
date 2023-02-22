@@ -36,7 +36,7 @@ import { getRandomWord, loginByHashData, loginByMetaidOrAddress, mnemoicLogin, s
 import type { MetaMaskLoginUserInfo } from './utils/api';
 import { encode, decode } from 'js-base64'
 import { aesEncrypt, createMnemonic, decryptMnemonic, encryptMnemonic, HdWallet, hdWalletFromMnemonic, Network, signature } from '@/utils/wallet/hd-wallet';
-import { bsv } from 'sensible-sdk';
+import { HDPrivateKey } from 'mvc-std-lib'
 import { useUserStore } from '@/stores/user';
 import { useRoute } from 'vue-router';
 import { useRootStore } from '@/stores/root';
@@ -44,7 +44,7 @@ import { currentSupportChain } from '@/config'
 
 export interface MetaMaskLoginRes {
     userInfo: MetaMaskLoginUserInfo
-    wallet: bsv.HDPrivateKey
+    wallet: HDPrivateKey
     password: string
     type: 'register' | 'login'
 }
