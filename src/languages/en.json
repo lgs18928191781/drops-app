@@ -735,7 +735,9 @@
     "Royalties": "Royalties",
     "Total": "Total Price",
     "Confirm Payment": "Confirm Payment",
-    "Buy Success": "Buy Success"
+    "Buy Success": "Buy Success",
+    "Transfer Account": "Transfer Account",
+    "Not Support Current Chain NFT Transfer": "Not Support Current Chain NFT Transfer"
   },
   "My NFT": "My NFT",
   "Done": "Done",

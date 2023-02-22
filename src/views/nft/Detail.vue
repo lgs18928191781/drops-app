@@ -30,7 +30,7 @@
                 <div class="operate-list flex flex-align-center">
                   <div class="operate-item flex flex-align-center" @click="payLike">
                     <Icon
-                      :name="nft.val.nftHasLike ? 'message_like' : 'like'"
+                      :name="nft.val!.nftHasLike ? 'message_like' : 'like'"
                       :class="{ 'like-ing': isLikeing }"
                     />
                     <span class="count">{{ nft.val!.nftLikeCount }}</span>
@@ -62,7 +62,7 @@
                   </div>
                   <div class="owner-msg-item">
                     <span class="label">MetaID:</span>
-                    <span class="value">{{ nft.val.nftOwnerMetaId.slice(0, 6) }}</span>
+                    <span class="value">{{ nft.val!.nftOwnerMetaId.slice(0, 6) }}</span>
                   </div>
                 </div>
               </div>
@@ -370,7 +370,7 @@ const nftBtnText = computed(() => {
 
 const nftBtnClass = computed(() => {
   if (isMyNFT.value) {
-    return 'primary'
+    return ''
   } else {
     if (isSale.value) {
       return 'primary'

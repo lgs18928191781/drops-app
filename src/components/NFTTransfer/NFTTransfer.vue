@@ -37,24 +37,9 @@
                   />
                 </div>
                 <div class="metaid">
-                  {{ transferUser.val!.metaId.slice(0,6)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                  }}...{{ transferUser.val!.metaId.slice(-6)  }}
+                  {{ transferUser.val!.metaId.slice(0,6)}}
+                  ...
+                  {{ transferUser.val!.metaId.slice(-6) }}
                 </div>
               </template>
             </div>
@@ -70,14 +55,12 @@
 
         <template v-else>
           <ElForm :label-position="'top'">
-            <ElFormItem
-              :label="
-                nft.nftChain === 'mvc'
-                  ? $t('NFT.Transfer MetaId')
-                  : nft.nftChain + '&nbsp;' + $t('Address')
-              "
-            >
-              <ElInput type="text" v-model="form.target" />
+            <ElFormItem :label="$t('NFT.Transfer Account')">
+              <ElInput
+                type="text"
+                v-model="form.target"
+                placeholder="MetaID/Address/Paymail/MetaName"
+              />
             </ElFormItem>
           </ElForm>
           <div class="operate  flex flex-align-center flex-pack-center" @click="transfer">
@@ -99,6 +82,7 @@ import NFTMsgVue from '../NFTMsg/NFTMsg.vue'
 import { PayPlatformItem, payPlatformList } from '@/config'
 import { GetMetaIdByAddress, GetUserAllInfo } from '@/api/aggregation'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
+import { email } from '@/utils/reg'
 
 const props = defineProps<{
   modelValue: boolean
@@ -135,10 +119,25 @@ async function transfer() {
 
   if (props.nft.nftChain === 'mvc' || props.nft.nftChain === 'bsv') {
     let metaId: string = ''
+    let address: string = ''
+    if (email.test(form.target)) {
+      const res = await userStore.showWallet.wallet?.provider.getPayMailAddress(form.target)
+      if (res) {
+        address = res
+      }
+    }
+
+    debugger
     if (form.target.length === 64) {
       // MetaId
       metaId = form.target
-    } else {
+    }
+
+    if (!email.test(form.target) && form.target.length !== 64) {
+      address = form.target
+    }
+    debugger
+    if (address) {
       const res = await GetMetaIdByAddress(form.target).catch(() => {
         metaId = ''
       })
@@ -146,12 +145,13 @@ async function transfer() {
         metaId = res.data
       }
     }
+    debugger
     if (metaId === '') {
       // @ts-ignore
       transferUser.val = {
         metaId: '',
-        address: form.target,
-        name: '',
+        address: address,
+        name: email.test(form.target) ? form.target : '',
         avatarImage: '',
       }
       form.target = ''
@@ -168,6 +168,7 @@ async function transfer() {
       }
     }
   } else {
+    return ElMessage.info(i18n.t('NFT.Not Support Current Chain NFT Transfer'))
   }
 }
 

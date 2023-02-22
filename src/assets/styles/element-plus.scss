@@ -135,6 +135,10 @@ html.dark {
         .el-input-group__append {
             box-shadow: 3px 3px 0 var(--faded-border-color);
             border: var(--el-border-width) solid var(--faded-border-color);
+
+            .el-input__wrapper {
+                border: none;
+            }
         }
     }
 
