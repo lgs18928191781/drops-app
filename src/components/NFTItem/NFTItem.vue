@@ -4,7 +4,7 @@
       <NFTItemSkeleton />
     </template>
     <template #default>
-      <div class="nft-item">
+      <div class="nft-item" @click="toNFT">
         <NFTCover :cover="[nft.nftIcon]" />
 
         <div class="name">{{ nft.nftName }}</div>

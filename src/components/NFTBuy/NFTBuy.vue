@@ -89,7 +89,7 @@
 import { NodeName, PayPlatform, PayType, ToCurrency } from '@/enum'
 import { isAndroid, isApp, isIOS, isIosApp, useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
-import { computed, reactive, Ref, ref } from 'vue'
+import { computed, reactive, Ref, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NFTMsgVue from '../NFTMsg/NFTMsg.vue'
 import { PayPlatformItem, payPlatformList } from '@/config'
@@ -250,12 +250,20 @@ function onPaySuccess() {
   emit('success')
 }
 
-GetNFTFee().then(res => {
-  if (res) {
-    nftFee.val = res
-    isSkeleton.value = false
+watch(
+  () => props.modelValue,
+  val => {
+    if (val) {
+      isSkeleton.value = true
+      GetNFTFee().then(res => {
+        if (res) {
+          nftFee.val = res
+          isSkeleton.value = false
+        }
+      })
+    }
   }
-})
+)
 </script>
 
 <style lang="scss" scoped src="./NFTBuy.scss"></style>

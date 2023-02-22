@@ -972,7 +972,7 @@ export function getCurrencyAmount(
   if (!toCurrency) {
     toCurrency = rootStore.currentPrice
   }
-  const rate = rootStore.exchangeRate.find(
+  let rate = rootStore.exchangeRate.find(
     item => item.symbol.toUpperCase() === toCurrency!.toUpperCase()
   )
   if (toCurrency === 'CNY') {
@@ -1081,6 +1081,7 @@ export function getCurrencyAmount(
           .toFixed(2)
       ).toNumber()
     } else {
+      rate = rootStore.exchangeRate.find(item => item.symbol.toUpperCase() === 'MVC')
       // mvc -> usd
       return new Decimal(
         new Decimal(price)
@@ -1136,7 +1137,6 @@ export function NFTOffSale(nft: GenesisNFTItem) {
         }
       })
       .catch(error => {
-        ElMessage.error(error.message)
         resolve(false)
       })
   })

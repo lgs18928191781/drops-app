@@ -112,13 +112,20 @@
                   <div class="description-list">
                     <div class="description-item flex">
                       <span class="label">{{ $t('NFT.Name') }}:</span>
-                      <span class="value flex1">{{ nft.val.nftName }}</span>
+                      <span class="value flex1">{{ nft.val!.nftName }}</span>
                     </div>
                     <div class="description-item flex">
                       <span class="label">{{ $t('NFT.Category') }}:</span>
-                      <span class="value flex1">{{
-                        nft.val.nftClassifyList.join(' ') || '--'
-                      }}</span>
+                      <span class="value flex1">
+                        <template
+                          v-if="nft.val!.nftClassifyList && nft.val!.nftClassifyList.length"
+                        >
+                          <span v-for="item in nft.val!.nftClassifyList" class="mr-1" :key="item">{{
+                            classifyList.find(_item => _item.classify === item)?.name()
+                          }}</span>
+                        </template>
+                        <template v-else>--</template>
+                      </span>
                     </div>
                     <div class="description-item flex">
                       <span class="label">{{ $t('NFT.Introduction') }}:</span>
@@ -215,7 +222,7 @@
           </div>
         </div>
 
-        <div class="more-nft">
+        <div class="more-nft" v-if="nft.val!.topicType">
           <div class="title">{{ $t('NFT.More from this collection') }}</div>
           <ElRow :gutter="22" class="more-nft-list">
             <ElCol
@@ -234,7 +241,12 @@
       </div>
 
       <NFTSellVue :nft="nft.val!" v-model="isShowSell" @success="getDetail" />
-      <NFTBuyVue :nft="nft.val!" v-model="isShowBuy" :is-hide-detail="true" @success="getDetail" />
+      <NFTBuyVue
+        :nft="buyNFT.val!"
+        v-model="isShowBuy"
+        :is-hide-detail="true"
+        @success="getDetail"
+      />
       <NFTTransferVue :nft="nft.val!" v-model="isShowTransfer" @success="getDetail" />
     </template>
   </ElSkeleton>
@@ -254,7 +266,7 @@ import { useI18n } from 'vue-i18n'
 import ListIcon from '@/assets/images/list_icon_ins.svg?url'
 import CastingIcon from '@/assets/images/icon_casting.svg?url'
 import { GetNFT, GetNftHolderList, GetCollectionNFTs } from '@/api/aggregation'
-import { pagination } from '@/config'
+import { pagination, classifyList } from '@/config'
 import Decimal from 'decimal.js-light'
 import LinkIcon from '@/assets/images/list_icon_link.svg?url'
 import { ArrowDown } from '@element-plus/icons-vue'
@@ -267,7 +279,7 @@ import { checkUserLogin, NFTOffSale, tx } from '@/utils/util'
 import AmountVue from '@/components/Amount/Amount.vue'
 import NFTTransferVue from '@/components/NFTTransfer/NFTTransfer.vue'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
-import { Chains, NodeName, ToCurrency } from '@/enum'
+import { Chains, NFTSellType, NodeName, ToCurrency } from '@/enum'
 import NFTDetailRecord from './components/NFTDetailRecord.vue'
 import NFTItem from '@/components/NFTItem/NFTItem.vue'
 import DetailSkeleton from './DetailSkeleton.vue'
@@ -286,6 +298,7 @@ const DescriptionWarpRef = ref()
 const nfts: GenesisNFTItem[] = reactive([])
 const isLikeing = ref(false)
 const collection: { val: null | Collect } = reactive({ val: null })
+const buyNFT: { val: null | GenesisNFTItem } = reactive({ val: null })
 
 const isSale = computed(() => {
   let result = false
@@ -319,25 +332,10 @@ const isMyNFT = computed(() => {
   return result
 })
 
-// setTimeout(() => {
-//   isShowSkeleton.value = false
-// }, 3000)
-
-const currentPrice = computed(() => {
-  return rootStore.currentPrice
-})
-
-const blindBoxPage = computed(() => {
-  return route.name === 'blindBoxDetail'
-})
-const price = ref('0')
 const nft: { val: GenesisNFTItem | null } = reactive({
   val: null,
 })
-const tabs = [
-  { name: () => i18n.t('workdetail'), key: 'workdetail' },
-  { name: () => i18n.t('possessionrecord'), key: 'possessionrecord' },
-]
+
 const records: GetNftHolderListResItem[] = reactive([])
 
 const ownerHistoryPagination = reactive({
@@ -353,12 +351,6 @@ const issueRecord: { val: GetNftHolderListResItem | null } = reactive({
 })
 const isShowBuy = ref(false)
 const isShowTransfer = ref(false)
-
-const isLegal = computed(() => {
-  return route.name === 'legaldetail'
-})
-
-const isShowConfirm = ref(false)
 
 const nftBtnText = computed(() => {
   if (isMyNFT.value) {
@@ -388,74 +380,23 @@ const nftBtnClass = computed(() => {
   }
 })
 
-const cnyMode = computed(() => {
-  return rootStore.currentPrice == UnitName.RMB
-})
-
-const prices = reactive([
-  {
-    name: 'BSV',
-    key: 'bsv',
-  },
-  {
-    name: 'CNY',
-    key: 'cny',
-  },
-])
-
 const isShowSell = ref(false)
-
-const NFTMainMsgDesc = computed(() => {
-  // 1. 是否拍卖 显示拍卖描述 2. 是否上架 显示上架描述 3.下架状态 显示 NFT 的描述
-  return nft.val!.nftCurrentAuctionCreateTxId
-    ? nft.val!.nftDesc
-    : nft.val!.nftSellState === 0 && nft.val!.nftIsReady
-    ? nft.val!.nftSellDesc
-    : nft.val!.nftDesc
-    ? nft.val!.nftDesc
-    : '--'
-})
-
-function handleCommand(command: string) {
-  rootStore.changePrices(command)
-  console.log('command', command)
-}
-
-function converterPrice(amount: number) {
-  if (amount) {
-    return new Decimal(amount).div(10 ** 8).toString() + ' ' + 'BSV'
-  } else {
-    return '--'
-  }
-}
 
 function nftBtnFunction() {
   if (isMyNFT.value) {
     if (isSale.value) {
-      return NFTOffSale
+      offSale()
     } else {
       isShowSell.value = true
     }
   } else {
     if (isSale.value) {
-      return ''
+      buyNFT.val = nft.val
+      isShowBuy.value = true
     } else {
-      return () => {}
+      return
     }
   }
-}
-
-function changeTabIndex(index: number) {
-  if (tabIndex.value === index) {
-    return
-  }
-  tabIndex.value = index
-}
-
-async function startBuy() {
-  if (!isSale.value) return
-  await checkUserLogin()
-  isShowBuy.value = true
 }
 
 function getDetail() {
@@ -471,36 +412,19 @@ function getDetail() {
     })
     if (res?.code === 0) {
       nft.val = res.data.results.items[0]
+      buyNFT.val = res.data.results.items[0]
       if (nft.val!.topicType) {
         GetCollectByTopicType(nft.val!.topicType).then(res => {
           if (res) collection.val = res
         })
+        getNFTs()
       }
       resolve()
     }
   })
 }
 
-// async function getNftFeePercent() {
-//   return new Promise<void>(async resolve => {
-//     const res = await GetFeeInfo({
-//       codehash: route.params.codehash,
-//       genesis: route.params.genesisId,
-//     })
-//     if (res.code === 0) {
-//       nftPlatformPercent.value = NFT.val!.nftIsFirstSell
-//         ? res.data.first_platform
-//         : res.data.other_platform
-//       nftRoyaltyPercent.value = NFT.val!.nftIsFirstSell
-//         ? res.data.first_royalty
-//         : res.data.other_royalty
-//     }
-//     resolve()
-//   })
-// }
-
 async function offSale() {
-  // return ElMessage.info(i18n.t('Comming Soon'))
   const result = await NFTOffSale(nft.val!)
   if (result) {
     nft.val!.nftSellState = 1
@@ -536,40 +460,6 @@ function transfer() {
   }
 }
 
-//  获取拥有记录
-async function getNftHolderList(isCover = false) {
-  return new Promise(async resolve => {
-    const res = await GetNftHolderList({
-      genesis: route.params.genesis as string,
-      codehash: route.params.codehash as string,
-      tokenIndex: route.params.tokenIndex as string,
-      page: ownerHistoryPagination.page.toString(),
-      pageSize: ownerHistoryPagination.pageSize.toString(),
-    })
-
-    if (res?.code === 0) {
-      if (isCover) {
-        records.length = 0
-      }
-      records.push(...res.data.results.items.holderList)
-      ownerRecord.val = res.data.results.items.owner
-      issueRecord.val = res.data.results.items.issuer
-      const totalPages = Math.ceil(res.data.total / ownerHistoryPagination.pageSize)
-      if (totalPages <= ownerHistoryPagination.page) {
-        ownerHistoryPagination.nothing = true
-      }
-    }
-  })
-}
-
-function getMoreRecords() {
-  ownerHistoryPagination.loading = true
-  ownerHistoryPagination.page++
-  getNftHolderList().then(() => {
-    ownerHistoryPagination.loading = false
-  })
-}
-
 function onChangeDetails() {
   isShowDetails.value = !isShowDetails.value
   nextTick(() => {
@@ -580,9 +470,10 @@ function onChangeDetails() {
 function getNFTs() {
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetCollectionNFTs({
-      topicType: 'MetaName',
+      topicType: nft.val!.topicType,
       page: 1,
       pageSize: 7,
+      sellType: NFTSellType.All,
     }).catch(error => {
       ElMessage.error(error.message)
     })
@@ -636,20 +527,9 @@ onMounted(() => {
       nextTick(() => {
         recordWarpHeight.value = DescriptionWarpRef.value?.clientHeight
       })
-      getNFTs()
     })
-    getNftHolderList()
   }
 })
-
-watch(
-  () => nft.val,
-  newVal => {
-    if (newVal) {
-      price.value = converterPrice(newVal.amount)
-    }
-  }
-)
 
 watch(
   () => userStore.isAuthorized,
