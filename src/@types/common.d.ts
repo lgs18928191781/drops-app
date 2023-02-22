@@ -444,7 +444,7 @@ declare interface GenesisNFTItem {
   nftMinBidIncrease: string
   nftMinBidIncreaseInt: number
   nftName: string
-  nftOwnerUserInfo?: {
+  nftOwnerUserInfo: {
     address: string
     avatarTxId: string
     avatarType: string

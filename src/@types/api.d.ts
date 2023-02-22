@@ -644,6 +644,7 @@ declare interface GetNftHolderListRes extends apiResponse {
 declare interface GetNftHolderListResItem {
   avatarTxId: string
   avatarType: string
+  avatarImage: string
   codehash: string
   genesis: string
   issuerMetaId: string

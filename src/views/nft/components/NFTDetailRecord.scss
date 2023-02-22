@@ -1,6 +1,9 @@
-.el-skeleton{
+@import '@/assets/styles/var.scss';
+
+.el-skeleton {
     overflow: hidden;
 }
+
 .record {
     margin: -18px;
 
@@ -54,7 +57,12 @@
             .avatar {
                 width: 24px;
                 height: 24px;
+                min-width: 24px;
                 margin-right: 6px;
+            }
+
+            .name {
+                @extend %text-ellipsis;
             }
         }
 

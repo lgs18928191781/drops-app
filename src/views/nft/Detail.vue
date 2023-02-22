@@ -19,12 +19,12 @@
               :is-remint="nft.val!.nftHasCompound"
             />
           </div>
-          <div class="flex1 flex flex-v">
+          <div class="flex1 nft-msg-right flex flex-v">
             <div class="flex1">
               <div class="top flex flex-align-center">
                 <div class="flex1">
-                  <div class="collection-name flex flex-align-center">
-                    MetaBot Avatar <Icon name="certed" />
+                  <div class="collection-name flex flex-align-center" v-if="collection.val">
+                    {{ collection.val!.name }} <Icon name="certed" />
                   </div>
                 </div>
                 <div class="operate-list flex flex-align-center">
@@ -41,22 +41,24 @@
                 </div>
               </div>
               <div class="name">
-                {{ nft.val.nftName }}
+                {{ nft.val!.nftName }}
               </div>
 
               <div class="owner flex flex-align-center">
                 <UserAvatar
-                  :meta-id="nft.val.nftOwnerMetaId"
-                  :image="nft.val.nftOwnerAvatarImage"
-                  :name="nft.val.nftOwnerName"
+                  :meta-id="nft.val!.nftOwnerMetaId"
+                  :image="nft.val!.nftOwnerAvatarImage"
+                  :name="nft.val!.nftOwnerName"
                 />
                 <div class="flex1">
-                  <div class="owner-msg-item">
+                  <div class="owner-msg-item flex flex-align-center">
                     <span class="label">{{ $t('NFT.Owner') }}:</span>
                     <span class="value"
-                      ><RouterLink :to="{}">
-                        <UserName :name="nft.val.nftOwnerName" :meta-name="''" /> </RouterLink
-                    ></span>
+                      ><UserName
+                        :name="nft.val!.nftOwnerName"
+                        :meta-name="nft.val!.nftOwnerUserInfo.metaName"
+                      />
+                    </span>
                   </div>
                   <div class="owner-msg-item">
                     <span class="label">MetaID:</span>
@@ -68,8 +70,15 @@
               <div class="current-price">
                 <div class="title">{{ $t('NFT.Current price') }}</div>
                 <div class="price flex flex-align-end">
-                  <span class="space">1.02 Space</span>
-                  <span class="curreny">$34.48</span>
+                  <template v-if="isSale">
+                    <span class="space">{{ $filters.space(nft.val!.nftPrice) }} Space</span>
+                    <span class="curreny"
+                      ><AmountVue
+                        :price="$filters.space(nft.val!.nftPrice)"
+                        :currency="ToCurrency.MVC"
+                    /></span>
+                  </template>
+                  <template v-else>--</template>
                 </div>
               </div>
             </div>
@@ -149,10 +158,10 @@
                     <div class="description-item flex">
                       <span class="label">{{ $t('NFT.Issue TXID') }}:</span>
                       <span class="value flex1">
-                        <template v-if="nft.val.nftIssueMetaTxId">
-                          {{ nft.val.nftIssueMetaTxId
-                          }}<a @click="copy(nft.val.nftIssueMetaTxId)">{{ $t('Copy') }}</a
-                          ><a @click="tx(nft.val.nftIssueMetaTxId)">{{ $t('NFT.Check') }}</a>
+                        <template v-if="nft.val!.nftIssueMetaTxId">
+                          {{ nft.val!.nftIssueMetaTxId}}
+                          <a @click="copy(nft.val!.nftIssueMetaTxId)">{{ $t('Copy') }}</a>
+                          <a @click="tx(nft.val!.nftIssueMetaTxId)">{{ $t('NFT.Check') }}</a>
                         </template>
                         <template v-else>--</template>
                       </span>
@@ -163,15 +172,16 @@
                       <span class="value flex1 flex flex-align-center">
                         <div class="creator flex flex-align-center">
                           <UserAvatar
-                            :meta-id="nft.val.nftIssueMetaId"
-                            :image="nft.val.nftIssueUserInfo.metaName"
-                            :name="nft.val.nftIssuer"
+                            :meta-id="nft.val!.nftIssueMetaId"
+                            :image="nft.val!.nftIssueAvatarImage"
+                            :name="nft.val!.nftIssuer"
                           />
                           <div class="flex1">
                             <div class="username">
-                              <RouterLink :to="{}">
-                                <UserName :name="nft.val.nftIssuer" :meta-name="''" />
-                              </RouterLink>
+                              <UserName
+                                :name="nft.val!.nftIssuer"
+                                :meta-name="nft.val!.nftIssueUserInfo.metaName"
+                              />
                             </div>
                             <div class="meta-id">
                               MetaID: {{ nft.val!.nftIssueMetaId.slice(0, 6) }}
@@ -261,6 +271,7 @@ import { Chains, NodeName, ToCurrency } from '@/enum'
 import NFTDetailRecord from './components/NFTDetailRecord.vue'
 import NFTItem from '@/components/NFTItem/NFTItem.vue'
 import DetailSkeleton from './DetailSkeleton.vue'
+import { GetCollectByTopicType } from '@/api/strapi'
 
 const isShowSkeleton = ref(true)
 const isShowDrscDetail = ref(false)
@@ -274,6 +285,7 @@ const recordWarpHeight = ref(0)
 const DescriptionWarpRef = ref()
 const nfts: GenesisNFTItem[] = reactive([])
 const isLikeing = ref(false)
+const collection: { val: null | Collect } = reactive({ val: null })
 
 const isSale = computed(() => {
   let result = false
@@ -339,7 +351,7 @@ const ownerRecord: { val: GetNftHolderListResItem | null } = reactive({
 const issueRecord: { val: GetNftHolderListResItem | null } = reactive({
   val: null,
 })
-const isShowBuy = ref(true)
+const isShowBuy = ref(false)
 const isShowTransfer = ref(false)
 
 const isLegal = computed(() => {
@@ -459,6 +471,11 @@ function getDetail() {
     })
     if (res?.code === 0) {
       nft.val = res.data.results.items[0]
+      if (nft.val!.topicType) {
+        GetCollectByTopicType(nft.val!.topicType).then(res => {
+          if (res) collection.val = res
+        })
+      }
       resolve()
     }
   })

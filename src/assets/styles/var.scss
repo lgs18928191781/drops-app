@@ -24,6 +24,7 @@ $themeTextColor: var(--themeTextColor);
     --themeBgSecondColorRgb: 255, 255, 255;
     --themeBgThreeColor: #F5F7F9;
     --themeTextColor: #303133;
+    --themeTextColorRgb: 48, 49, 51;
     --themeBtnTextColor: #303133;
     font-family: 'SF-Pro-Regular Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB,Microsoft YaHei', '微软雅黑', Arial, sans-serif;
     --border-color: #303133;
@@ -51,6 +52,7 @@ html.dark {
     --faded-border-color: #6b7280;
     --el-color-primary: #FFDC51;
     --themeTextColor: #fff;
+    --themeTextColorRgb: 255, 255, 255;
     --primary-border-color: #6b7280;
     --divid-color: #4a576c;
 }

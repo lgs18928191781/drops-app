@@ -91,7 +91,6 @@
 
         .owner-msg-item {
             color: #606266;
-            margin-bottom: 4px;
 
             &:last-child {
                 margin-bottom: 0;
@@ -304,5 +303,38 @@
 
     to {
         transform: scale(1);
+    }
+}
+
+@media only screen and (max-width: 750PX) {
+    .nft-detail {
+        padding: 18px;
+
+        .cover-warp {
+            margin-right: 0;
+            width: 100%;
+        }
+
+        .nft-msg {
+            flex-direction: column;
+
+            .nft-msg-right {
+                margin-top: 30px;
+            }
+        }
+
+        .nft-operate {
+            margin-top: 30px;
+        }
+
+        .nft-other-msg {
+            flex-direction: column;
+
+            .description-warp {
+                margin-right: 0;
+                width: 100%;
+                margin-bottom: 30px;
+            }
+        }
     }
 }

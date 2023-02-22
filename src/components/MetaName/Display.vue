@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center gap-x-1">
     <div
-      :class="[textClass, colorful && colors, 'font-medium leading-loose  max-w-[140PX] truncate']"
+      :class="[textClass, colorful && colors, 'font-medium  max-w-[140PX] truncate']"
       :title="nameWithoutSuffix"
     >
       {{ nameWithoutSuffix }}
