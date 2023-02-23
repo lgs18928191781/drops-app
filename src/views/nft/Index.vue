@@ -274,7 +274,7 @@ function getLatestSeries() {
 
 function toCollection(topicType: string) {
   router.push({
-    name: 'nftCollection',
+    name: 'nftCollectionDetail',
     params: {
       topicType,
     },

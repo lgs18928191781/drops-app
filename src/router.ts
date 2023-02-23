@@ -95,9 +95,16 @@ export const router = createRouter({
           component: () => import('@/views/nft/Detail.vue'),
         },
         {
-          path: 'collection/:topicType',
+          path: 'collection',
           name: 'nftCollection',
-          component: () => import('@/views/nft/Collection.vue'),
+          component: () => RouterView,
+          children: [
+            {
+              path: 'detail/:topicType',
+              name: 'nftCollectionDetail',
+              component: () => import('@/views/nft/collection/Collection.vue'),
+            },
+          ],
         },
       ],
     },
