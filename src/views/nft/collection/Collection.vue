@@ -169,7 +169,7 @@ import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import NFTBuy from '@/components/NFTBuy/NFTBuy.vue'
 import { CollectionOrderType, CollectionSortType, NFTSellType } from '@/enum'
 import CollectionFilterWarp from '@/views/nft/components/CollectionFilterWarp.vue'
-import CollectionSkeleton from '@/views/nft/CollectionSkeleton.vue'
+import CollectionSkeleton from '@/views/nft/collection/CollectionSkeleton.vue'
 import IsNull from '@/components/IsNull/IsNull.vue'
 import { isMobile } from '@/stores/root'
 
