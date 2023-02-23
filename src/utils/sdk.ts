@@ -420,8 +420,6 @@ export class SDK {
                   : this.wallet!.rootAddress
               )
 
-              debugger
-
               // 广播
               if (option.isBroadcast && !option.useQueue) {
                 // 广播 打钱操作
@@ -806,9 +804,10 @@ export class SDK {
             }
 
             if (
-              params.nodeName === NodeName.NftGenesis ||
               params.nodeName === NodeName.NftTransfer ||
-              params.nodeName === NodeName.NftSell
+              params.nodeName === NodeName.NftSell ||
+              params.nodeName === NodeName.NftCancel ||
+              params.nodeName === NodeName.nftBuy
             ) {
               // NFT genesis/transfer
               if (!transactions.nft) transactions.nft = {}
@@ -818,23 +817,19 @@ export class SDK {
                 opreturnData: scriptPlayload!,
                 utxoMaxCount: 1,
               }
-              if (
-                params.nodeName === NodeName.NftTransfer ||
-                params.nodeName === NodeName.NftSell
-              ) {
-                _params = {
-                  ..._params,
-                  ...JSON.parse(params.data!),
-                }
+              _params = {
+                ..._params,
+                ...JSON.parse(params.data!),
               }
-              debugger
               const nftManager = this.wallet!.getNftManager()
               const NFTGetFeeFunctionName = {
                 [NodeName.NftGenesis]: 'getGenesisEstimateFee',
                 [NodeName.NftTransfer]: 'getTransferEstimateFee',
                 [NodeName.NftSell]: 'getSellEstimateFee',
                 [NodeName.NftCancel]: 'getCancelSellEstimateFee',
+                [NodeName.nftBuy]: 'getBuyEstimateFee',
               }
+              debugger
               // @ts-ignore
               const feeNumber = await nftManager[NFTGetFeeFunctionName[params.nodeName]](_params)
               // @ts-ignore
@@ -998,7 +993,6 @@ export class SDK {
   ) {
     return new Promise<NodeTransactions>(async (resolve, reject) => {
       try {
-        debugger
         const chain = params.payType === SdkPayType.BSV ? HdWalletChain.BSV : HdWalletChain.MVC
         if (params.nodeName === NodeName.Name) {
           this.setTransferUtxoAndOutputAndSign(
@@ -1165,10 +1159,12 @@ export class SDK {
               params.nodeName === NodeName.NftGenesis ||
               params.nodeName === NodeName.NftTransfer ||
               params.nodeName === NodeName.NftSell ||
-              params.nodeName === NodeName.NftCancel
+              params.nodeName === NodeName.NftCancel ||
+              params.nodeName === NodeName.nftBuy
             ) {
               const scriptPlayload = await this.getScriptPlayload(createCurrentNodeParams, chain)
               const nftManager = this.wallet!.getNftManager()
+              console.log('nft utxo', utxo)
               const _params = {
                 ...JSON.parse(params.data!),
                 opreturnData: scriptPlayload,
@@ -1184,6 +1180,7 @@ export class SDK {
               }
               // @ts-ignore
               const res = await nftManager![NFTOperateFunName[params.nodeName]](_params)
+              debugger
               if (res && typeof res !== 'number') {
                 if (params.nodeName === NodeName.NftGenesis) {
                   transactions.nft!.genesis = {
@@ -1202,6 +1199,17 @@ export class SDK {
                     sellTxId: res.sellTxId!,
                     txId: res.txid!,
                     transaction: res.tx!,
+                  }
+                } else if (
+                  params.nodeName === NodeName.nftBuy ||
+                  params.nodeName === NodeName.NftCancel
+                ) {
+                  // @ts-ignore
+                  transactions.nft![this.transactionsNFTKey[params.nodeName]] = {
+                    txId: res.txid!,
+                    transaction: res.tx!,
+                    unlockCheckTxId: res.unlockCheckTxId!,
+                    unlockCheckTransaction: res.unlockCheckTx!,
                   }
                 } else {
                   // @ts-ignore
@@ -1403,11 +1411,17 @@ export class SDK {
           await this.wallet?.provider.broadcast(transactions.currentNode.transaction.toString())
         }
 
-        // 广播 nft issue
+        // 广播 nft
         if (transactions.nft) {
           for (let i in transactions.nft) {
             if (i === 'sell') {
+              // sell 先广播 sellTransaction
               await this.wallet?.provider.broadcast(transactions.nft[i]?.sellTransaction.toString())
+            } else if (i === 'buy' || i === 'cancel') {
+              //  buy / cancel 先广播 unlockCheckTransaction
+              await this.wallet?.provider.broadcast(
+                transactions.nft[i]!.unlockCheckTransaction.toString()
+              )
             }
 
             // @ts-ignore

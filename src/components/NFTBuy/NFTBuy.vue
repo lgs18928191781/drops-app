@@ -5,6 +5,7 @@
     :close-on-click-modal="false"
     :title="$t('NFT.Order Information')"
     @close="emit('update:modelValue', false)"
+    :show-close="buying ? false : true"
     center
   >
     <ElSkeleton :loading="isSkeleton" animated>
@@ -67,6 +68,7 @@
         <a
           class="operate main-border primary flex flex-align-center flex-pack-center"
           @click="confirmBuy"
+          v-loading="buying"
         >
           {{ $t('NFT.Confirm Payment') }}
         </a>
@@ -86,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-import { NodeName, PayPlatform, PayType, ToCurrency } from '@/enum'
+import { NodeName, PayPlatform, PayType, SdkPayType, ToCurrency } from '@/enum'
 import { isAndroid, isApp, isIOS, isIosApp, useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
 import { computed, reactive, Ref, ref, watch } from 'vue'
@@ -128,6 +130,7 @@ const payMsg = reactive({
 })
 const nftFee: { val: NFTFeeInfo | null } = reactive({ val: null })
 const isSkeleton = ref(true)
+const buying = ref(false)
 
 function choosePayPlatform(item: PayPlatformItem) {
   if (item.disabled()) return
@@ -166,23 +169,44 @@ async function confirmBuy() {
   //   isShowPayModal.value = true
   // }
 
+  buying.value = true
   // Space 购买
-  const res = await userStore.showWallet.createBrfcChildNode({
-    nodeName: NodeName.nftBuy,
-    data: JSON.stringify({
-      publisherAddress: nftFee.val!.platformAddress,
-      publisherFeeRate: platformFeeRate.value,
-      creatorAddress: props.nft.nftIssueAddress,
-      creatorFeeRate: royalyFeeRate.value,
+  try {
+    const params: any = {
       genesis: props.nft.nftGenesis,
       codehash: props.nft.nftCodehash,
       tokenIndex: props.nft.nftTokenIndex,
-    }),
-  })
-  if (res) {
-    ElMessage.success(i18n.t('NFT.Buy Success'))
-    emit('success')
-    emit('update:modelValue', false)
+    }
+    const publisherFeeRate = platformFeeRate.value / 100
+    const creatorFeeRate = royalyFeeRate.value / 100
+    if (publisherFeeRate) {
+      params.publisherFeeRate = publisherFeeRate
+      params.publisherAddress = nftFee.val!.platformAddress
+    }
+    if (creatorFeeRate) {
+      params.creatorFeeRate = creatorFeeRate
+      params.creatorAddress = props.nft.nftIssueAddress
+    }
+    const res = await userStore.showWallet.createBrfcChildNode(
+      {
+        nodeName: NodeName.nftBuy,
+        data: JSON.stringify(params),
+      },
+      {
+        payType: SdkPayType.SPACE,
+      }
+    )
+    if (res) {
+      ElMessage.success(i18n.t('NFT.Buy Success'))
+      emit('success')
+      emit('update:modelValue', false)
+      buying.value = false
+    } else if (res === null) {
+      buying.value = false
+    }
+  } catch (error) {
+    ElMessage.error((error as any).message)
+    buying.value = false
   }
 }
 

@@ -24,6 +24,7 @@ import {
   Chains,
   EnvMode,
   PayPlatformUnit,
+  SdkPayType,
 } from '@/enum'
 import { CheckBlindboxOrderStatus } from '@/api/v3'
 import AllCardJson from '@/utils/card.json'
@@ -1094,7 +1095,7 @@ export function getCurrencyAmount(
 }
 
 export function NFTOffSale(nft: GenesisNFTItem) {
-  return new Promise(async resolve => {
+  return new Promise(async (resolve, rject) => {
     ElMessageBox.confirm(
       `${i18n.global.t('offsaleConfirm')} ${nft.nftName} ?`,
       i18n.global.t('niceWarning'),
@@ -1108,6 +1109,8 @@ export function NFTOffSale(nft: GenesisNFTItem) {
     )
       .then(async () => {
         const userStore = useUserStore()
+        const loading = openLoading({ text: i18n.global.t('NFT.OffSaleing') })
+
         // 法币下架
 
         // const signRes: string = await userStore.showWallet!.sigMessage(
@@ -1123,15 +1126,26 @@ export function NFTOffSale(nft: GenesisNFTItem) {
         // }
 
         // Space 下架
-        const res = await userStore.showWallet.createBrfcChildNode({
-          nodeName: NodeName.NftCancel,
-          data: JSON.stringify({
-            genesis: nft.nftGenesis,
-            codehash: nft.nftCodehash,
-            tokenIndex: nft.nftTokenIndex,
-          }),
-        })
+        const res = await userStore.showWallet
+          .createBrfcChildNode(
+            {
+              nodeName: NodeName.NftCancel,
+              data: JSON.stringify({
+                genesis: nft.nftGenesis,
+                codehash: nft.nftCodehash,
+                tokenIndex: nft.nftTokenIndex,
+              }),
+            },
+            {
+              payType: SdkPayType.ME,
+            }
+          )
+          .catch(error => {
+            ElMessage.error(error.message)
+            loading.close()
+          })
         if (res) {
+          loading.close()
           ElMessage.success(i18n.global.t('NFT.Offsale Success'))
           resolve(true)
         }

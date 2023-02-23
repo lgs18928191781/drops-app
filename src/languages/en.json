@@ -737,7 +737,9 @@
     "Confirm Payment": "Confirm Payment",
     "Buy Success": "Buy Success",
     "Transfer Account": "Transfer Account",
-    "Not Support Current Chain NFT Transfer": "Not Support Current Chain NFT Transfer"
+    "Not Support Current Chain NFT Transfer": "Not Support Current Chain NFT Transfer",
+    "Selling price must be greater than ": "Selling price must be greater than",
+    "OffSaleing": "OffSaleing..."
   },
   "My NFT": "My NFT",
   "Done": "Done",

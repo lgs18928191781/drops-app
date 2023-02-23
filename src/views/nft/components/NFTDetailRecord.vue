@@ -58,7 +58,9 @@
               <span class="owner flex1">
                 <div class="flex flex-align-center">
                   <UserAvatar :meta-id="item.metaId" :image="item.avatarImage" :name="item.name" />
-                  <span class="name"><UserName :name="item.name" :meta-name="''"/></span>
+                  <span class="name"
+                    ><UserName :name="item.name" :meta-name="item.userInfo.metaName"
+                  /></span>
                 </div>
               </span>
               <span class="role flex1">{{

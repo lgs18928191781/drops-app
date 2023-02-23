@@ -6644,10 +6644,10 @@ merge2@^1.3.0, merge2@^1.4.1:
   resolved "https://registry.npmmirror.com/merge2/-/merge2-1.4.1.tgz#4368892f885e907455a6fd7dc55c0c9d404990ae"
   integrity sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==
 
-meta-contract@0.3.5:
-  version "0.3.5"
-  resolved "https://registry.yarnpkg.com/meta-contract/-/meta-contract-0.3.5.tgz#9569f511c03079bc97eff0691ae0e9472fa4d91d"
-  integrity sha512-Jfe31NYV4KAfDi/zE/ygT5TJ1B4IzoKCDZjRsvV85L8McYPcKWd91Be7LFL4ZBSJ4TLKrA6EnK4XkLuly9qguQ==
+meta-contract@0.3.10:
+  version "0.3.10"
+  resolved "https://registry.yarnpkg.com/meta-contract/-/meta-contract-0.3.10.tgz#64567b2c9e970a48d9b0eab1d7867382a3cb89ba"
+  integrity sha512-Ue4E9CvK9DxKxUaa0nDICNFXmiH1TTHJXZqzwBeyHay9RQpro0PmKwPPeiZZcD/WEoh7jdl+2B8yuZoFiGdKuA==
   dependencies:
     mvc-scrypt "0.1.1"
     mvc-scryptlib "^1.0.0"

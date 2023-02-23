@@ -727,7 +727,9 @@
     "Confirm Payment": "确认支付",
     "Buy Success": "购买成功",
     "Transfer Account": "转赠账户",
-    "Not Support Current Chain NFT Transfer": "暂不支持当前链的NFT转赠"
+    "Not Support Current Chain NFT Transfer": "暂不支持当前链的NFT转赠",
+    "Selling price must be greater than ": "售价必须大于",
+    "OffSaleing": "下架中..."
   },
   "My NFT": "我的NFT",
   "Done": "完成",

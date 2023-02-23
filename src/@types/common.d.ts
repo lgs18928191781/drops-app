@@ -519,10 +519,14 @@ declare interface NodeTransactions {
       txId: string
     }
     cancel?: {
+      unlockCheckTransaction: mvc.Transaction
+      unlockCheckTxId: string
       transaction: mvc.Transaction
       txId: string
     }
     buy?: {
+      unlockCheckTransaction: mvc.Transaction
+      unlockCheckTxId: string
       transaction: mvc.Transaction
       txId: string
     }

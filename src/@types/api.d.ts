@@ -655,9 +655,25 @@ declare interface GetNftHolderListResItem {
   nftHash: string
   protocol: string
   satoshisPrice: string
-  timestamp: 1634203995079
+  timestamp: number
   tokenIndex: string
   txId: string
+  userInfo: {
+    address: string
+    avatarImage: string
+    avatarTxId: string
+    avatarType: string
+    coverPublicKey: string
+    coverType: string
+    coverUrl: string
+    infoAvatarTxIdOssUrl: string
+    metaIdTimestamp: number
+    metaName: string
+    name: string
+    nameType: string
+    nftNamePublicKey: string
+    publicKey: string
+  }
 }
 
 declare interface GetLegalBuyNft extends apiResponse {
