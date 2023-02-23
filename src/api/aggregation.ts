@@ -725,3 +725,16 @@ export const GetMetafileBySha256 = (params: {
   const { sha256, ..._params } = params
   return aggregation.get(`/v2/app/metaFile/getMetaFileByHash/${sha256}`, { params: _params })
 }
+
+export const GetMetaNameInfo = (
+  name: string
+): Promise<{
+  code: number
+  data: {
+    name: string
+    resolveAddress: string
+    ownerAddress: string
+  }
+}> => {
+  return aggregation.get(`/v2/app/metaname/indexer/info`, { params: { name } })
+}
