@@ -515,7 +515,16 @@ export default class ShowmoneyProvider {
         .post('https://api.showmoney.app' + '/paymail/v2/paymail/address', {
           Email: email,
         })
-        .catch(error => reject(error))
+        .catch(error => {
+          if (error.response?.data?.data) {
+            reject({
+              code: error.response.data.code,
+              message: error.response.data.data,
+            })
+          } else {
+            reject(error)
+          }
+        })
       if (res?.code === 0) {
         resolve(res.data)
       }

@@ -272,9 +272,7 @@ html.dark {
 
     }
 
-    .el-loading-mask {
-        box-shadow: 3px 3px 0 var(--el-mask-color);
-    }
+    .el-loading-mask {}
 
     &.metaname {
         --el-dialog-border-radius: 12px;

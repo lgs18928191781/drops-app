@@ -7,12 +7,7 @@
     @close="emit('update:modelValue', false)"
     :show-close="!loading"
   >
-    <div
-      class="nft-buy"
-      v-loading="loading"
-      :element-loading-svg="LoadingTEXT"
-      :element-loading-text="$t('Loading')"
-    >
+    <div class="nft-buy">
       <NFTMsgVue :nft="nft" />
 
       <div class="cont-warp">
@@ -64,7 +59,13 @@
             </ElFormItem>
           </ElForm>
           <div class="operate  flex flex-align-center flex-pack-center" @click="transfer">
-            <a class="main-border primary flex1">{{ $t('NFT.Transfer') }}</a>
+            <a
+              class="main-border primary flex1"
+              v-loading="loading"
+              :element-loading-svg="LoadingTEXT"
+              :element-loading-text="$t('Loading')"
+              >{{ $t('NFT.Transfer') }}</a
+            >
           </div>
         </template>
       </div>
@@ -114,58 +115,61 @@ function choosePayPlatform(item: PayPlatformItem) {
 }
 
 async function transfer() {
-  if (form.target === '') return
-  loading.value = true
+  if (form.target === '' || loading.value) return
 
   if (props.nft.nftChain === 'mvc' || props.nft.nftChain === 'bsv') {
-    let metaId: string = ''
-    let address: string = ''
-    if (email.test(form.target)) {
-      const res = await userStore.showWallet.wallet?.provider.getPayMailAddress(form.target)
-      if (res) {
-        address = res
+    loading.value = true
+    try {
+      let metaId: string = ''
+      let address: string = ''
+      if (email.test(form.target)) {
+        const res = await userStore.showWallet.wallet?.provider.getPayMailAddress(form.target)
+        if (res) {
+          address = res
+        }
       }
-    }
 
-    debugger
-    if (form.target.length === 64) {
-      // MetaId
-      metaId = form.target
-    }
+      if (form.target.length === 64 && !email.test(form.target)) {
+        // MetaId
+        metaId = form.target
+      }
 
-    if (!email.test(form.target) && form.target.length !== 64) {
-      address = form.target
-    }
-    debugger
-    if (address) {
-      const res = await GetMetaIdByAddress(form.target).catch(() => {
-        metaId = ''
-      })
-      if (res?.code === 0) {
-        metaId = res.data
+      if (!email.test(form.target) && form.target.length !== 64) {
+        address = form.target
       }
-    }
-    debugger
-    if (metaId === '') {
-      // @ts-ignore
-      transferUser.val = {
-        metaId: '',
-        address: address,
-        name: email.test(form.target) ? form.target : '',
-        avatarImage: '',
+      if (address) {
+        const res = await GetMetaIdByAddress(form.target).catch(() => {
+          metaId = ''
+        })
+        if (res?.code === 0) {
+          metaId = res.data
+        }
       }
-      form.target = ''
-      loading.value = false
-    } else {
-      const res = await GetUserAllInfo(metaId!).catch(error => {
-        ElMessage.error(error.message)
-        loading.value = false
-      })
-      if (res?.code === 0) {
-        transferUser.val = res.data
+
+      if (metaId === '') {
+        // @ts-ignore
+        transferUser.val = {
+          metaId: '',
+          address: address,
+          name: email.test(form.target) ? form.target : '',
+          avatarImage: '',
+        }
         form.target = ''
         loading.value = false
+      } else {
+        const res = await GetUserAllInfo(metaId!).catch(error => {
+          ElMessage.error(error.message)
+          loading.value = false
+        })
+        if (res?.code === 0) {
+          transferUser.val = res.data
+          form.target = ''
+          loading.value = false
+        }
       }
+    } catch (error) {
+      ElMessage.error((error as any).message)
+      loading.value = false
     }
   } else {
     return ElMessage.info(i18n.t('NFT.Not Support Current Chain NFT Transfer'))
