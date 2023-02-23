@@ -1827,6 +1827,8 @@ declare interface MetaNameIndexerInfo {
   infos?: Partial<MetaNameInfo>
   txid: string
   registerState: import('@/enum').MetaNameRegisterState
+  resolveAddress: string
+  ownerAddress: string
 }
 
 declare type Ens = string

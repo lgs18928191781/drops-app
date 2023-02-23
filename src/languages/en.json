@@ -739,7 +739,8 @@
     "Transfer Account": "Transfer Account",
     "Not Support Current Chain NFT Transfer": "Not Support Current Chain NFT Transfer",
     "Selling price must be greater than ": "Selling price must be greater than",
-    "OffSaleing": "OffSaleing..."
+    "OffSaleing": "OffSaleing...",
+    "TransferToMetaNameNotMatch": "The MetaName resolution address is inconsistent with the owner address"
   },
   "My NFT": "My NFT",
   "Done": "Done",

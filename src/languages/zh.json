@@ -729,7 +729,8 @@
     "Transfer Account": "转赠账户",
     "Not Support Current Chain NFT Transfer": "暂不支持当前链的NFT转赠",
     "Selling price must be greater than ": "售价必须大于",
-    "OffSaleing": "下架中..."
+    "OffSaleing": "下架中...",
+    "TransferToMetaNameNotMatch": "MetaName解析地址与拥有者地址不一致"
   },
   "My NFT": "我的NFT",
   "Done": "完成",

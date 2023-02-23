@@ -81,9 +81,10 @@ import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NFTMsgVue from '../NFTMsg/NFTMsg.vue'
 import { PayPlatformItem, payPlatformList } from '@/config'
-import { GetMetaIdByAddress, GetUserAllInfo } from '@/api/aggregation'
+import { GetMetaIdByAddress, GetMetaNameInfo, GetUserAllInfo } from '@/api/aggregation'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
 import { email } from '@/utils/reg'
+import { mvc } from 'mvc-scrypt/dist'
 
 const props = defineProps<{
   modelValue: boolean
@@ -129,16 +130,36 @@ async function transfer() {
         }
       }
 
-      if (form.target.length === 64 && !email.test(form.target)) {
+      let isAddress: any = false
+
+      try {
+        // @ts-ignore
+        isAddress = mvc.Address._transformString(form.target)
+        if (isAddress) {
+          address = form.target
+        }
+      } catch (error) {
+        isAddress = false
+      }
+
+      if (form.target.length === 64 && !email.test(form.target) && !isAddress) {
         // MetaId
         metaId = form.target
       }
 
-      if (!email.test(form.target) && form.target.length !== 64) {
-        address = form.target
+      if (form.target.length !== 64 && !email.test(form.target) && !isAddress) {
+        const res = await GetMetaNameInfo(form.target.replace('.metaid', ''))
+        if (res.code === 0) {
+          if (res.data.resolveAddress && res.data.ownerAddress) {
+            address = res.data.resolveAddress
+          } else {
+            throw new Error(i18n.t('NFT.TransferToMetaNameNotMatch'))
+          }
+        }
       }
+
       if (address) {
-        const res = await GetMetaIdByAddress(form.target).catch(() => {
+        const res = await GetMetaIdByAddress(address).catch(() => {
           metaId = ''
         })
         if (res?.code === 0) {
