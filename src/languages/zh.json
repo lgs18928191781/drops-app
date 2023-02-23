@@ -962,5 +962,10 @@
   "certBody": "认证主体",
   "personCert": "个人认证",
   "NOT_FOUND": "没找到信息",
-  "Copy": "复制"
+  "Copy": "复制",
+  "updateFail": "升级账户失败",
+  "updateSuccess": "账户升级成功!",
+  "updateRemind": "升级提示",
+  "allowUpdate": "检测到你的账号需要升级,取消升级可能会影响后续其他钱包登录,请确认",
+  "confirmUpdate": "确认升级"
 }
