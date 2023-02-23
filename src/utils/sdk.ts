@@ -832,7 +832,6 @@ export class SDK {
                 [NodeName.NftCancel]: 'getCancelSellEstimateFee',
                 [NodeName.nftBuy]: 'getBuyEstimateFee',
               }
-              debugger
               // @ts-ignore
               const feeNumber = await nftManager[NFTGetFeeFunctionName[params.nodeName]](_params)
               // @ts-ignore
@@ -1183,7 +1182,6 @@ export class SDK {
               }
               // @ts-ignore
               const res = await nftManager![NFTOperateFunName[params.nodeName]](_params)
-              debugger
               if (res && typeof res !== 'number') {
                 if (params.nodeName === NodeName.NftGenesis) {
                   transactions.nft!.genesis = {
