@@ -417,7 +417,17 @@ const _getChannelTypeInfo = (form: any, selfMetaId: string) => {
       status = encrypt(selfMetaId.substring(0, 16), MD5Hash(form.ft.genesis).substring(0, 16))
       codehash = form.ft.codehash
       genesis = form.ft.genesis
-      type = '3'
+
+      if (form.chain === 'eth' || form.chain === 'goerli') {
+        type = '3001'
+      } else if (form.chain === 'polygon' || form.chain === 'mumbai') {
+        type = '3002'
+      } else if (form.chain === 'bsv') {
+        type = '3003'
+      } else {
+        type = '3000'
+      }
+
       limitAmount = form.amount.toString()
       break
 

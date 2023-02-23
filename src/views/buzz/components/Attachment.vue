@@ -188,7 +188,6 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue'
 import { metafile } from '@/utils/filters'
-import { ImagePreview } from 'vant'
 import { router } from '@/router'
 import { AttachmentItem } from '@/@types/hd-wallet'
 import ImagePreviewVue from '@/components/ImagePreview/ImagePreview.vue'
@@ -301,19 +300,6 @@ watch(
 //       return metafile(v.replace('sensible://', 'sensible/'), 680)
 //     })
 // })
-
-function handlePreviewImage(index: number, images: string[]) {
-  ImagePreview({
-    images: images.map(v => {
-      if (v.indexOf('/resize,m_lfit,w_') > -1) {
-        return v.split('/resize,m_lfit,w_')[0]
-      }
-      return v
-    }),
-    startPosition: index,
-    closeable: true,
-  })
-}
 
 function toNFT() {
   if (props.isEdit) return

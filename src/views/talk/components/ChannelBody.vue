@@ -198,8 +198,17 @@ const tryInitChannel = async (status: string) => {
         return
       }
 
-      case GroupChannelType.FT: {
-        const chain: string = 'mvc'
+      case GroupChannelType.FT:
+      case GroupChannelType.BSV_FT: {
+        let chain: string
+        switch (talk.activeGroupChannelType) {
+          case GroupChannelType.BSV_FT:
+            chain = 'bsv'
+            break
+          default:
+            chain = 'mvc'
+            break
+        }
         let selfAddress: string
         switch (chain) {
           case 'mvc':
@@ -250,7 +259,7 @@ const tryInitChannel = async (status: string) => {
 
         const {
           data: {
-            results: { items: userNfts },
+            results: { items: userFts },
           },
         } = await GetFTs({
           address: selfAddress,
@@ -261,7 +270,43 @@ const tryInitChannel = async (status: string) => {
           pageSize: 3,
         })
 
-        if (userNfts.length > 0) {
+        if (userFts.length > 0) {
+          // 所需数量
+          const needAmount = talk.activeChannel.roomLimitAmount
+          // 用户拥有数量
+          const userAmount = parseInt(userFts[0].balance.split('.')[0])
+          console.log({ needAmount, userAmount })
+          if (userAmount < needAmount) {
+            // const {
+            //   data: {
+            //     results: { items },
+            //   },
+            // } = await GetFT({
+            //   codehash: consensualCodehash,
+            //   genesis: consensualGenesis,
+            //   chain,
+            // })
+            // const ftInfo = {
+            //   codehash: consensualCodehash,
+            //   genesis: consensualGenesis,
+            //   icon: items[0].icon,
+            //   name: items[0].name,
+            //   chain,
+            // }
+            const ftInfo = {
+              codehash: '',
+              genesis: '',
+              icon: '',
+              name: '',
+              chain,
+            }
+            talk.consensualFt = ftInfo
+            await checkAtLeastMinDuration()
+            layout.isShowRequireFtModal = true
+            return
+          }
+
+          // 拥有指定数量的token，直接进入
           await checkAtLeastMinDuration()
           talk.hasActiveChannelConsent = true
         } else {
