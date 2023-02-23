@@ -148,7 +148,7 @@ async function transfer() {
       }
 
       if (form.target.length !== 64 && !email.test(form.target) && !isAddress) {
-        const res = await GetMetaNameInfo(form.target)
+        const res = await GetMetaNameInfo(form.target.replace('.metaid', ''))
         if (res.code === 0) {
           if (res.data.resolveAddress && res.data.ownerAddress) {
             address = res.data.resolveAddress
