@@ -1569,6 +1569,7 @@ export class HdWallet {
   public getNftManager = (): NftManager => {
     const nftManager = new NftManager({
       apiTarget: API_TARGET.MVC,
+      apiHost: process.env.VITE_META_SV_API,
       // @ts-ignore
       network: this.network,
       purse: this.wallet!.deriveChild(0)
