@@ -1241,6 +1241,7 @@ export class HdWallet {
     chain?: HdWalletChain
   }) {
     return new Promise<UtxoItem>(async (resolve, reject) => {
+      debugger
       try {
         // 默认  outPutIndex = changeIndex
         if (typeof params?.outPutIndex === 'undefined') {
@@ -1271,6 +1272,7 @@ export class HdWallet {
           txId: params.tx.id,
           address: OutPut.script.toAddress(this.network).toString(),
         })
+        debugger
         resolve({
           address: OutPut.script.toAddress(this.network).toString(),
           satoshis: OutPut.satoshis,

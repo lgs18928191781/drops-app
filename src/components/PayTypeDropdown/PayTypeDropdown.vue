@@ -1,5 +1,9 @@
 <template>
-  <ElDropdown trigger="click" @visible-change="value => emit('update:modelValue', value)">
+  <ElDropdown
+    trigger="click"
+    @visible-change="value => emit('update:modelValue', value)"
+    :disabled="disabled"
+  >
     <a class="flex flex-align-center pay-item" :class="{ active: modelValue }">
       <div class="icon-warp flex flex-align-center flex-pack-center">
         <img :src="payPlatformList.find(item => item.platform === currentPayPlatform)?.icon" />
@@ -7,7 +11,7 @@
       <div class="name">
         {{ payPlatformList.find(item => item.platform === currentPayPlatform)?.name() }}
       </div>
-      <Icon name="down" class="down" />
+      <Icon name="down" class="down" v-if="!disabled" />
     </a>
     <template #dropdown>
       <ElDropdownMenu>
@@ -47,6 +51,7 @@ const props = defineProps<{
   modelValue: boolean
   currentPayPlatform: PayPlatform
   isMe?: boolean
+  disabled?: boolean
 }>()
 
 const emit = defineEmits(['update:modelValue', 'update:currentPayPlatform', 'change'])

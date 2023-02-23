@@ -77,6 +77,13 @@ export class SDK {
   network = Network.mainnet
   bfrcNodeList: { nodeName: NodeName; data: CreateNodeBrfcRes }[] = [] // 存储Brfc节点， 防止未广播时重复构建
   metaFileSha256TxIdList: { sha256: string; txId: string }[] = [] // 存储metaFileSha256TxId， 防止未广播时重复构建
+  transactionsNFTKey = {
+    [NodeName.NftGenesis]: 'genesis',
+    [NodeName.NftTransfer]: 'transfer',
+    [NodeName.NftSell]: 'sell',
+    [NodeName.NftCancel]: 'cancel',
+    [NodeName.nftBuy]: 'buy',
+  }
 
   constructor(network: any) {
     this.network = network
@@ -800,8 +807,10 @@ export class SDK {
             }
 
             if (
-              params.nodeName === NodeName.NftGenesis ||
-              params.nodeName === NodeName.NftTransfer
+              params.nodeName === NodeName.NftTransfer ||
+              params.nodeName === NodeName.NftSell ||
+              params.nodeName === NodeName.NftCancel ||
+              params.nodeName === NodeName.nftBuy
             ) {
               // NFT genesis/transfer
               if (!transactions.nft) transactions.nft = {}
@@ -811,19 +820,20 @@ export class SDK {
                 opreturnData: scriptPlayload!,
                 utxoMaxCount: 1,
               }
-              if (params.nodeName === NodeName.NftTransfer) {
-                _params = {
-                  ..._params,
-                  ...JSON.parse(params.data!),
-                }
+              _params = {
+                ..._params,
+                ...JSON.parse(params.data!),
               }
               const nftManager = this.wallet!.getNftManager()
-              const feeNumber = await nftManager[
-                params.nodeName === NodeName.NftGenesis
-                  ? 'getGenesisEstimateFee'
-                  : 'getTransferEstimateFee'
-                // @ts-ignore
-              ](_params)
+              const NFTGetFeeFunctionName = {
+                [NodeName.NftGenesis]: 'getGenesisEstimateFee',
+                [NodeName.NftTransfer]: 'getTransferEstimateFee',
+                [NodeName.NftSell]: 'getSellEstimateFee',
+                [NodeName.NftCancel]: 'getCancelSellEstimateFee',
+                [NodeName.nftBuy]: 'getBuyEstimateFee',
+              }
+              // @ts-ignore
+              const feeNumber = await nftManager[NFTGetFeeFunctionName[params.nodeName]](_params)
               // @ts-ignore
               const res = {
                 txId: '',
@@ -835,13 +845,8 @@ export class SDK {
                 scriptPlayload: [],
               }
 
-              if (params.nodeName === NodeName.NftGenesis) {
-                // @ts-ignore
-                transactions.nft!.genesis = res
-              } else if (params.nodeName === NodeName.NftTransfer) {
-                // @ts-ignore
-                transactions.nft!.transfer = res
-              }
+              // @ts-ignore
+              transactions.nft![this.transactionsNFTKey[params.nodeName]] = res
             } else {
               //  transactions.currentNode
               transactions.currentNode = await this.wallet?.createBrfcChildNode(
@@ -1154,20 +1159,29 @@ export class SDK {
 
             if (
               params.nodeName === NodeName.NftGenesis ||
-              params.nodeName === NodeName.NftTransfer
+              params.nodeName === NodeName.NftTransfer ||
+              params.nodeName === NodeName.NftSell ||
+              params.nodeName === NodeName.NftCancel ||
+              params.nodeName === NodeName.nftBuy
             ) {
               const scriptPlayload = await this.getScriptPlayload(createCurrentNodeParams, chain)
               const nftManager = this.wallet!.getNftManager()
+              console.log('nft utxo', utxo)
               const _params = {
                 ...JSON.parse(params.data!),
                 opreturnData: scriptPlayload,
                 noBroadcast: true,
                 utxos: [utxo],
                 changeAddress: lastChangeAddress,
+                sellerWif: this.getPathPrivateKey('0/0')?.toString(),
+                buyerWif: this.getPathPrivateKey('0/0')?.toString(),
               }
-              const res = await nftManager![
-                params.nodeName === NodeName.NftGenesis ? 'genesis' : 'transfer'
-              ](_params)
+              const NFTOperateFunName = {
+                ...this.transactionsNFTKey,
+                [NodeName.NftCancel]: 'cancelSell',
+              }
+              // @ts-ignore
+              const res = await nftManager![NFTOperateFunName[params.nodeName]](_params)
               if (res && typeof res !== 'number') {
                 if (params.nodeName === NodeName.NftGenesis) {
                   transactions.nft!.genesis = {
@@ -1180,8 +1194,27 @@ export class SDK {
                     // @ts-ignore
                     sensibleId: res!.sensibleId!,
                   }
+                } else if (params.nodeName === NodeName.NftSell) {
+                  transactions.nft!.sell = {
+                    sellTransaction: res.sellTx!,
+                    sellTxId: res.sellTxId!,
+                    txId: res.txid!,
+                    transaction: res.tx!,
+                  }
+                } else if (
+                  params.nodeName === NodeName.nftBuy ||
+                  params.nodeName === NodeName.NftCancel
+                ) {
+                  // @ts-ignore
+                  transactions.nft![this.transactionsNFTKey[params.nodeName]] = {
+                    txId: res.txid!,
+                    transaction: res.tx!,
+                    unlockCheckTxId: res.unlockCheckTxId!,
+                    unlockCheckTransaction: res.unlockCheckTx!,
+                  }
                 } else {
-                  transactions.nft!.transfer = {
+                  // @ts-ignore
+                  transactions.nft![this.transactionsNFTKey[params.nodeName]] = {
                     txId: res.txid!,
                     transaction: res.tx!,
                   }
@@ -1379,21 +1412,21 @@ export class SDK {
           await this.wallet?.provider.broadcast(transactions.currentNode.transaction.toString())
         }
 
-        // 广播 nft issue
+        // 广播 nft
         if (transactions.nft) {
-          // for (let i in transactions.nft) {
-          //   // @ts-ignore
-          //   await this.wallet?.provider.broadcast(transactions.nft[i].transaction.toString())
-          // }
+          for (let i in transactions.nft) {
+            if (i === 'sell') {
+              // sell 先广播 sellTransaction
+              await this.wallet?.provider.broadcast(transactions.nft[i]?.sellTransaction.toString())
+            } else if (i === 'buy' || i === 'cancel') {
+              //  buy / cancel 先广播 unlockCheckTransaction
+              await this.wallet?.provider.broadcast(
+                transactions.nft[i]!.unlockCheckTransaction.toString()
+              )
+            }
 
-          if (transactions.nft.genesis?.transaction) {
-            await this.wallet?.provider.broadcast(transactions.nft.genesis.transaction.toString())
-          }
-          if (transactions.nft.issue?.transaction) {
-            await this.wallet?.provider.broadcast(transactions.nft.issue.transaction.toString())
-          }
-          if (transactions.nft.transfer?.transaction) {
-            await this.wallet?.provider.broadcast(transactions.nft.transfer.transaction.toString())
+            // @ts-ignore
+            await this.wallet?.provider.broadcast(transactions.nft[i].transaction.toString())
           }
         }
 

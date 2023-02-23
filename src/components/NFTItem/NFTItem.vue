@@ -4,7 +4,7 @@
       <NFTItemSkeleton />
     </template>
     <template #default>
-      <div class="nft-item">
+      <div class="nft-item" @click="toNFT">
         <NFTCover :cover="[nft.nftIcon]" />
 
         <div class="name">{{ nft.nftName }}</div>
@@ -89,7 +89,7 @@ function toNFT() {
   router.push({
     name: 'nftDetail',
     params: {
-      chain: props.nft.nftChain,
+      chain: 'mvc',
       genesis: props.nft.nftGenesis,
       tokenIndex: props.nft.nftTokenIndex,
       codehash: props.nft.nftCodehash ? props.nft.nftCodehash : props.nft.nftChain,
