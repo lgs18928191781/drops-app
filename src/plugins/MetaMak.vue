@@ -173,15 +173,23 @@ async function startConnect(isUpdatePlan:boolean=false) {
             // const chainWhiteList = currentSupportChain.filter((item) => {
             //   return parseInt(item.chainId, 10) === parseInt(res.provider.chainId)
             // })
+            let address,message
             if (root.chainWhiteList.includes(res.provider.chainId)){
                 startProvider(res.provider)
+                address = res.ethAddress.toLocaleLowerCase()
+                message=!isUpdatePlan ? ethers.utils.hexValue(ethers.utils.toUtf8Bytes(ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress.toLocaleLowerCase())))) : import.meta.env.MODE == 'gray' ? ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).split('0x')[1].toLocaleUpperCase() : ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1)
                 //ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1)
+                if (root.updatePlanWhiteList.includes(res.ethAddress)) {
+                    //这里处理白名单用户登录问题
+                    address =!isUpdatePlan ? res.ethAddress.toLocaleLowerCase() : root.updatePlanWhiteList[0]
+                    message=!isUpdatePlan ? ethers.utils.hexValue(ethers.utils.toUtf8Bytes(ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress.toLocaleLowerCase())))) : ethers.utils.sha256(ethers.utils.toUtf8Bytes(address)).slice(2, -1)
+                }
                 const result = await ethPersonalSignSign({
-                    address: res.ethAddress.toLocaleLowerCase(),
+                    address:address,
                     //message:ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1),
                     //message:ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).split('0x')[1].toLocaleUpperCase()
                     //ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).split('0x')[1].toLocaleUpperCase()
-                    message:!isUpdatePlan ? ethers.utils.hexValue(ethers.utils.toUtf8Bytes(ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress.toLocaleLowerCase())))) : import.meta.env.MODE == 'gray' ? ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).split('0x')[1].toLocaleUpperCase() : ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1)
+                    message:message
                 })
 
                 if (result) {

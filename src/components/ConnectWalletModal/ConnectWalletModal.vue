@@ -412,7 +412,7 @@ async function onThreePartLinkSuccess(params: {
       } catch (error) {
         //+import.meta.env.VITE_UPDATEPLAN_TIMESTAMP
         if (getMnemonicRes?.data?.registerTime < +Date.now()) {
-          ElMessageBox.confirm(`${i18n.t('updateRemind')}`, `${i18n.t('allowUpdate')}`, {
+          ElMessageBox.confirm(`${i18n.t('allowUpdate')}`, `${i18n.t('updateRemind')}`, {
             customClass: 'primary',
             confirmButtonText: `${i18n.t('confirmUpdate')}`,
             cancelButtonText: i18n.t('Cancel'),
@@ -471,7 +471,7 @@ async function onThreePartLinkSuccess(params: {
           }
         } catch (error) {
           if (getMnemonicRes?.data?.registerTime < +Date.now()) {
-            ElMessageBox.confirm(`${i18n.t('updateRemind')}`, `${i18n.t('allowUpdate')}`, {
+            ElMessageBox.confirm(`${i18n.t('allowUpdate')}`, `${i18n.t('updateRemind')}`, {
               customClass: 'primary',
               confirmButtonText: `${i18n.t('confirmUpdate')}`,
               cancelButtonText: i18n.t('Cancel'),
@@ -751,7 +751,7 @@ async function connectWalletConnect(isUpdate: boolean = false) {
   })
   ;(window as any).WallectConnect = connector
   const { accounts, chainId } = await connector.connect()
-  let res
+  let res, address, message
   const hexChainId = `0x${chainId.toString(16)}`
   // const chainWhiteList = currentSupportChain.filter(item => {
   //   return item.chainId == hexChainId
@@ -780,28 +780,42 @@ async function connectWalletConnect(isUpdate: boolean = false) {
             ],
           })
           .then(async () => {
-            //`${ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0])).slice(2, -1)}`
-            res = await connector.signPersonalMessage([
-              accounts[0].toLocaleLowerCase(),
-              // `${ethers.utils
-              //   .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
-              //   .slice(2, -1)
-              //   .toLocaleUpperCase()}`,
-              isUpdate
-                ? import.meta.env.MODE == 'gray'
-                  ? `0x${ethers.utils
-                      .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
-                      .split('0x')[1]
-                      .toLocaleUpperCase()}`
-                  : `${ethers.utils
-                      .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
-                      .slice(2, -1)
-                      .toLocaleUpperCase()}`
+            address = accounts[0].toLocaleLowerCase()
+            message = isUpdate
+              ? import.meta.env.MODE == 'gray'
+                ? `0x${ethers.utils
+                    .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+                    .split('0x')[1]
+                    .toLocaleUpperCase()}`
+                : `${ethers.utils
+                    .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+                    .slice(2, -1)
+                    .toLocaleUpperCase()}`
+              : `${ethers.utils.hexValue(
+                  ethers.utils.toUtf8Bytes(
+                    ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0].toLocaleLowerCase()))
+                  )
+                )}`
+            if (rootStore.updatePlanWhiteList.includes(accounts[0])) {
+              address = isUpdate ? accounts[0] : accounts[0].toLocaleLowerCase()
+              message = isUpdate
+                ? `${ethers.utils
+                    .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+                    .slice(2, -1)
+                    .toLocaleUpperCase()}`
                 : `${ethers.utils.hexValue(
                     ethers.utils.toUtf8Bytes(
                       ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0].toLocaleLowerCase()))
                     )
-                  )}`,
+                  )}`
+            }
+            res = await connector.signPersonalMessage([
+              address,
+              message,
+              // `${ethers.utils
+              //   .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+              //   .slice(2, -1)
+              //   .toLocaleUpperCase()}`,
             ])
 
             if (res) {
@@ -824,8 +838,38 @@ async function connectWalletConnect(isUpdate: boolean = false) {
       })
   } else {
     try {
+      address = accounts[0].toLocaleLowerCase()
+      message = isUpdate
+        ? import.meta.env.MODE == 'gray'
+          ? `0x${ethers.utils
+              .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+              .split('0x')[1]
+              .toLocaleUpperCase()}`
+          : `${ethers.utils
+              .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+              .slice(2, -1)
+              .toLocaleUpperCase()}`
+        : `${ethers.utils.hexValue(
+            ethers.utils.toUtf8Bytes(
+              ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0].toLocaleLowerCase()))
+            )
+          )}`
+      if (rootStore.updatePlanWhiteList.includes(accounts[0])) {
+        address = isUpdate ? accounts[0] : accounts[0].toLocaleLowerCase()
+        message = isUpdate
+          ? `${ethers.utils
+              .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+              .slice(2, -1)
+              .toLocaleUpperCase()}`
+          : `${ethers.utils.hexValue(
+              ethers.utils.toUtf8Bytes(
+                ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0].toLocaleLowerCase()))
+              )
+            )}`
+      }
       res = await connector.signPersonalMessage([
-        accounts[0].toLocaleLowerCase(),
+        address,
+        message,
         // `0x${ethers.utils
         //   .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
         //   .split('0x')[1]
@@ -834,21 +878,6 @@ async function connectWalletConnect(isUpdate: boolean = false) {
         //   .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
         //   .slice(2, -1)
         //   .toLocaleUpperCase()}`,
-        isUpdate
-          ? import.meta.env.MODE == 'gray'
-            ? `0x${ethers.utils
-                .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
-                .split('0x')[1]
-                .toLocaleUpperCase()}`
-            : `${ethers.utils
-                .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
-                .slice(2, -1)
-                .toLocaleUpperCase()}`
-          : `${ethers.utils.hexValue(
-              ethers.utils.toUtf8Bytes(
-                ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0].toLocaleLowerCase()))
-              )
-            )}`,
 
         // import.meta.env.MODE == 'gray'
         //   ? `0x${ethers.utils
