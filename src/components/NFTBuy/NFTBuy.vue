@@ -234,6 +234,7 @@ const platformFee = computed(() => {
     fee = new Decimal(props.nft.nftPrice)
       .mul(platformFeeRate.value / 100)
       .toInteger()
+      .div(Math.pow(10, 8))
       .toNumber()
   }
   return fee
@@ -245,6 +246,7 @@ const royalyFee = computed(() => {
     fee = new Decimal(props.nft.nftPrice)
       .mul(royalyFeeRate.value / 100)
       .toInteger()
+      .div(Math.pow(10, 8))
       .toNumber()
   }
   return fee
@@ -252,6 +254,7 @@ const royalyFee = computed(() => {
 
 const totalPrice = computed(() => {
   return new Decimal(props.nft.nftPrice)
+    .div(Math.pow(10, 8))
     .add(platformFee.value)
     .add(royalyFee.value)
     .toNumber()

@@ -21,8 +21,11 @@
               :name="nft.nftIssuer"
             />
             <div class="flex1 flex flex-align-center info">
-              <span class="user-name"
-                ><UserName :name="nft.nftIssuer" :meta-name="nft.nftIssueUserInfo.metaName"
+              <span class="user-name-warp"
+                ><UserName
+                  :name="nft.nftIssuer"
+                  :meta-name="nft.nftIssueUserInfo.metaName"
+                  :noTag="true"
               /></span>
               <span class="role">({{ $t('NFT.Creater') }})</span>
             </div>
@@ -34,8 +37,11 @@
               :name="nft.nftOwnerName"
             />
             <div class="flex1 flex flex-align-center info">
-              <span class="user-name"
-                ><UserName :name="nft.nftOwnerName" :meta-name="nft.nftOwnerUserInfo.metaName"
+              <span class="user-name-warp"
+                ><UserName
+                  :name="nft.nftOwnerName"
+                  :meta-name="nft.nftOwnerUserInfo.metaName"
+                  :noTag="true"
               /></span>
               <span class="role">({{ $t('NFT.Owner') }})</span>
             </div>

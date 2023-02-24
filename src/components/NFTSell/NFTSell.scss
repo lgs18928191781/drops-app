@@ -1,4 +1,8 @@
 .sell-nft {
+    :deep(.el-loading-mask) {
+        box-shadow: 3px 3px 0 var(--el-mask-color);
+    }
+
     .nft-msg {
         .cover-warp {
             width: 80px;
