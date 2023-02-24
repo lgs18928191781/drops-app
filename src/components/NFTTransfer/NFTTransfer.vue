@@ -152,7 +152,11 @@ async function transfer() {
       if (form.target.length !== 64 && !email.test(form.target) && !isAddress) {
         const res = await GetMetaNameInfo(form.target.replace('.metaid', ''))
         if (res.code === 0) {
-          if (res.data.resolveAddress && res.data.ownerAddress) {
+          if (
+            res.data.resolveAddress &&
+            res.data.ownerAddress &&
+            res.data.ownerAddress === res.data.resolveAddress
+          ) {
             address = res.data.resolveAddress
           } else {
             throw new Error(i18n.t('NFT.TransferToMetaNameNotMatch'))

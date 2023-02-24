@@ -970,6 +970,7 @@ export function getCurrencyAmount(
   toCurrency?: ToCurrency
 ) {
   const rootStore = useRootStore()
+  if (!price) return 0
   if (!toCurrency) {
     toCurrency = rootStore.currentPrice
   }
@@ -1086,7 +1087,8 @@ export function getCurrencyAmount(
         item => item.symbol.toUpperCase() === currency.toUpperCase()
       )
       // mvc -> usd
-      return new Decimal(new Decimal(price).mul(rate!.price.USD).toFixed(2)).toNumber()
+      const result = new Decimal(new Decimal(price).mul(rate!.price.USD).toFixed(2)).toNumber()
+      return result > 0.01 ? result : 0.01
     }
   }
 }
