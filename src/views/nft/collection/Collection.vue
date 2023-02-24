@@ -172,6 +172,7 @@ import CollectionFilterWarp from '@/views/nft/components/CollectionFilterWarp.vu
 import CollectionSkeleton from '@/views/nft/collection/CollectionSkeleton.vue'
 import IsNull from '@/components/IsNull/IsNull.vue'
 import { isMobile } from '@/stores/root'
+import { satoshi } from '@/utils/filters'
 
 const i18n = useI18n()
 const route = useRoute()
@@ -317,8 +318,8 @@ function getDatas(isCover = false) {
       sortType: sort.sortType,
       orderType: sort.orderType,
       sellType: sellType.value,
-      startPrice: priceRange[0],
-      endPrice: priceRange[1],
+      startPrice: priceRange[0] ? satoshi(priceRange[0]).toString() : '',
+      endPrice: priceRange[1] ? satoshi(priceRange[1]).toString() : '',
       ...pagination,
     }).catch(error => {
       ElMessage.error(error.message)
