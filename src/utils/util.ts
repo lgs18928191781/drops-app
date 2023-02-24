@@ -1082,14 +1082,11 @@ export function getCurrencyAmount(
           .toFixed(2)
       ).toNumber()
     } else {
-      rate = rootStore.exchangeRate.find(item => item.symbol.toUpperCase() === 'MVC')
+      rate = rootStore.exchangeRate.find(
+        item => item.symbol.toUpperCase() === currency.toUpperCase()
+      )
       // mvc -> usd
-      return new Decimal(
-        new Decimal(price)
-          .div(Math.pow(10, 8))
-          .mul(rate!.price.USD)
-          .toFixed(2)
-      ).toNumber()
+      return new Decimal(new Decimal(price).mul(rate!.price.USD).toFixed(2)).toNumber()
     }
   }
 }

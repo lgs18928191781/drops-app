@@ -81,6 +81,13 @@ export function bsv(stas: number | string) {
   return new Decimal(stas).div(Math.pow(10, 8)).toNumber()
 }
 
+export function satoshi(amount: number | string) {
+  return new Decimal(amount)
+    .div(Math.pow(10, 8))
+    .toInteger()
+    .toNumber()
+}
+
 export function space(stas: number | string) {
   return bsv(stas)
 }

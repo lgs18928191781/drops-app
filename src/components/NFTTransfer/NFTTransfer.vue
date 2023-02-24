@@ -41,8 +41,10 @@
           </div>
 
           <div class="operate flex flex-align-center flex-pack-center" @click="transfer">
-            <a class="main-border flex1" @click="transferUser.val = null"> {{ $t('Cancel') }}</a>
-            <a class="main-border primary flex1" @click="confirmTransfer">
+            <a class="main-border flex1" @click="cancelTransfer" :class="{ faded: loading }">
+              {{ $t('Cancel') }}</a
+            >
+            <a class="main-border primary flex1" @click="confirmTransfer" v-loading="loading">
               {{ $t('NFT.Confirm Transfer') }}</a
             >
           </div>
@@ -198,6 +200,7 @@ async function transfer() {
 }
 
 async function confirmTransfer() {
+  if (loading.value) return
   loading.value = true
   const res = await userStore.showWallet
     .createBrfcChildNode(
@@ -243,6 +246,11 @@ async function confirmTransfer() {
   //   emit('update:modelValue', false)
   //   loading.value = false
   // }
+}
+
+function cancelTransfer() {
+  if (loading.value) return
+  transferUser.val = null
 }
 </script>
 
