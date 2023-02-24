@@ -782,7 +782,7 @@ async function connectWalletConnect(isUpdate: boolean = false) {
           .then(async () => {
             //`${ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0])).slice(2, -1)}`
             res = await connector.signPersonalMessage([
-              accounts[0],
+              accounts[0].toLocaleLowerCase(),
               // `${ethers.utils
               //   .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
               //   .slice(2, -1)
@@ -799,7 +799,7 @@ async function connectWalletConnect(isUpdate: boolean = false) {
                       .toLocaleUpperCase()}`
                 : `${ethers.utils.hexValue(
                     ethers.utils.toUtf8Bytes(
-                      ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+                      ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0].toLocaleLowerCase()))
                     )
                   )}`,
             ])
@@ -825,7 +825,11 @@ async function connectWalletConnect(isUpdate: boolean = false) {
   } else {
     try {
       res = await connector.signPersonalMessage([
-        accounts[0],
+        accounts[0].toLocaleLowerCase(),
+        // `0x${ethers.utils
+        //   .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+        //   .split('0x')[1]
+        //   .toLocaleUpperCase()}`,
         // `${ethers.utils
         //   .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
         //   .slice(2, -1)
@@ -841,7 +845,9 @@ async function connectWalletConnect(isUpdate: boolean = false) {
                 .slice(2, -1)
                 .toLocaleUpperCase()}`
           : `${ethers.utils.hexValue(
-              ethers.utils.toUtf8Bytes(ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0])))
+              ethers.utils.toUtf8Bytes(
+                ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0].toLocaleLowerCase()))
+              )
             )}`,
 
         // import.meta.env.MODE == 'gray'
