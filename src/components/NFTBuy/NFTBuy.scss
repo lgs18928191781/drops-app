@@ -1,40 +1,85 @@
-.nft-buy {
-    padding: 0 30px 30px 30px;
+.el-skeleton {
+    padding: 30px;
 }
 
-.nft-msg-list {
-    .nft-msg-item {
-        padding: 15px 0;
-        border-bottom: 1px solid var(--divid-color);
+.nft-buy {
+    padding: 0 30px 30px 30px;
 
-        &.link{
-            cursor: pointer;
+    .msg {
+        .cover-warp {
+            width: 154px;
+            height: 154px;
+            border-radius: 8px;
+            border: 2px solid var(--themeTextColor);
+            margin-right: 18px;
         }
 
-        .key {
-            color: var(--themeTextColor);
-            opacity: 0.5;
+        .name {
+            font-size: 20px;
+            font-weight: normal;
+            line-height: 24px;
         }
 
-        .value {
-            .avatar {
-                width: 30px;
-                height: 30px;
-                margin-right: 12px;
-            }
+        .user-list {
+            margin-top: 18px;
 
-            .icon {
-                transform: rotate(-90deg);
-                width: 12px;
-                height: 12px;
+            .user-item {
+                color: #606266;
+                margin-bottom: 6px;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+
+                .avatar {
+                    width: 24px;
+                    height: 24px;
+                    margin-right: 6px;
+                }
             }
         }
     }
 }
 
+.price-list {
+    margin-top: 18px;
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(var(--themeTextColorRgb), 0.1);
+    border-top: 1px solid rgba(var(--themeTextColorRgb), 0.1);
+
+    .price-item {
+        line-height: 24px;
+        margin-bottom: 12px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        .label {
+            color: rgba(var(--themeTextColorRgb), 0.5);
+        }
+
+        .value {
+            font-size: 16px;
+        }
+    }
+}
+
+.total-price {
+    line-height: 24px;
+    margin-top: 20px;
+
+    .label {}
+
+    .value {
+        font-size: 20px;
+    }
+}
+
+
 .operate {
     width: 100%;
-    margin-top: 30px;
-    height: 50px;
+    margin-top: 32px;
+    height: 56px;
     cursor: pointer;
 }

@@ -252,6 +252,7 @@ import {
 } from '@/api/core'
 import { SDK } from '@/utils/sdk'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
+import { email } from '@/utils/reg'
 
 interface Props {
   type: 'register' | 'login'
@@ -262,7 +263,6 @@ const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits(['update:modelValue', 'update:type', 'success', 'back', 'update:loading'])
 const i18n = useI18n()
 const userStore = useUserStore()
-const emailReg = /^[A-Za-z0-9\u4e00-\u9fa5_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
 
 const tabs = [
   {
@@ -316,7 +316,7 @@ const rules = reactive({
       trigger: 'blur',
     },
     {
-      pattern: emailReg,
+      pattern: email,
       message: () => i18n.t('Email Address Error'),
       trigger: 'blur',
     },

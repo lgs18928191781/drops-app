@@ -81,6 +81,17 @@ export function bsv(stas: number | string) {
   return new Decimal(stas).div(Math.pow(10, 8)).toNumber()
 }
 
+export function satoshi(amount: number | string) {
+  return new Decimal(amount)
+    .div(Math.pow(10, 8))
+    .toInteger()
+    .toNumber()
+}
+
+export function space(stas: number | string) {
+  return bsv(stas)
+}
+
 export function metafile(metafile: string, width = 235, type: 'metafile' | 'metaId' = 'metafile') {
   if (typeof metafile !== 'string') return ''
   if (metafile.indexOf('http://') !== -1 || metafile.indexOf('https://') !== -1) return metafile

@@ -671,8 +671,66 @@
     "IssueLoading": "正在铸造中，请勿做其他操作耐心等待...",
     "Issue": {
       "TokenIndexNoteMatch": "序号不匹配，请检查后再试",
-      "AllIssueSuccess": "全部铸造成功"
-    }
+      "AllIssueSuccess": "全部铸造成功",
+      "GenesisEmpty": "系列不能为空",
+      "NameEmpty": "NFT名称不能为空",
+      "CoverEmpty": "NFT封面不能为空",
+      "SourceFileEmpty": "NFT源文件为空",
+      "AcceptAddressEmpty": "接收地址不能为空",
+      "Classify": "分类",
+      "ClassifyEmpty": "分类不能为空"
+    },
+    "ClassifyList": {
+      "art": "艺术",
+      "game": "游戏",
+      "music": "音乐",
+      "rights": "权益",
+      "avatar": "头像",
+      "alias": "别名",
+      "card": "纪念卡"
+    },
+    "FilterItem": {
+      "Status": "状态",
+      "Price": "价格",
+      "MinPrice": "最低价",
+      "MaxPrice": "最高价"
+    },
+    "SellType": {
+      "All": "全部",
+      "Sale": "上架",
+      "Off Sale": "下架",
+      "New On Sale": "新上架",
+      "Auction": "拍卖"
+    },
+    "Current price": "当前价格",
+    "Off Sale": "下架",
+    "Sale": "上架",
+    "NotCanBuy": "已被购买或下架",
+    "Description": "描述",
+    "Category": "分类",
+    "Introduction": "介绍",
+    "Details": "详细信息",
+    "Issue TXID": "铸造 TXID",
+    "Check": "查看",
+    "Creator": "铸造者",
+    "Record": "记录",
+    "Role": "角色",
+    "Time": "时间",
+    "Price": "价格",
+    "History owner": "历史拥有者",
+    "More from this collection": "同专辑NFT",
+    "Like Success": "点赞成功",
+    "Offsale Success": "下架成功",
+    "Platform Fee": "平台费用",
+    "Royalties": "版税",
+    "Total": "总价",
+    "Confirm Payment": "确认支付",
+    "Buy Success": "购买成功",
+    "Transfer Account": "转赠账户",
+    "Not Support Current Chain NFT Transfer": "暂不支持当前链的NFT转赠",
+    "Selling price must be greater than ": "售价必须大于",
+    "OffSaleing": "下架中...",
+    "TransferToMetaNameNotMatch": "MetaName解析地址与拥有者地址不一致"
   },
   "My NFT": "我的NFT",
   "Done": "完成",
@@ -903,5 +961,12 @@
   "noMsg": "暂无信息",
   "idNumber": "身份证号码",
   "certBody": "认证主体",
-  "personCert": "个人认证"
+  "personCert": "个人认证",
+  "NOT_FOUND": "没找到信息",
+  "Copy": "复制",
+  "updateFail": "升级账户失败",
+  "updateSuccess": "账户升级成功!",
+  "updateRemind": "升级提示",
+  "allowUpdate": "检测到你的账号需要升级,取消升级可能会影响后续其他钱包登录,请确认!(特别提醒：请勿使用‘iamtoken’钱包进行升级操作,否则会导致账户升级失败)",
+  "confirmUpdate": "确认升级"
 }

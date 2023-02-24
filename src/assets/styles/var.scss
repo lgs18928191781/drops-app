@@ -21,8 +21,10 @@ $themeTextColor: var(--themeTextColor);
     --color-success: #20a124;
     --themeBgColor: #fff;
     --themeBgSecondColor: #fff;
+    --themeBgSecondColorRgb: 255, 255, 255;
     --themeBgThreeColor: #F5F7F9;
     --themeTextColor: #303133;
+    --themeTextColorRgb: 48, 49, 51;
     --themeBtnTextColor: #303133;
     font-family: 'SF-Pro-Regular Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB,Microsoft YaHei', '微软雅黑', Arial, sans-serif;
     --border-color: #303133;
@@ -37,17 +39,20 @@ $themeTextColor: var(--themeTextColor);
     --divid-color: #F4F7F9;
     --input-height: 56px;
     --sm-conetnt-width: 600PX;
-    --nft-topbar-height: 108px
+    // --nft-topbar-height: 108px
+    --nft-topbar-height: 0px
 }
 
 html.dark {
     --themeBgColor: #303133;
     --themeBgSecondColor: #1f2937;
+    --themeBgSecondColorRgb: 31, 41, 55;
     --themeBgThreeColor: #303133;
     --border-color: #d1d5db;
     --faded-border-color: #6b7280;
     --el-color-primary: #FFDC51;
     --themeTextColor: #fff;
+    --themeTextColorRgb: 255, 255, 255;
     --primary-border-color: #6b7280;
     --divid-color: #4a576c;
 }

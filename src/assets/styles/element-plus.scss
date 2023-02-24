@@ -101,6 +101,10 @@ html.dark {
 
 }
 
+.el-input__inner {
+    min-height: var(--el-input-inner-height);
+}
+
 .el-input {
     --el-input-hover-border: var(--normal-border-color);
     --el-input-focus-border-color: var(--normal-border-color);
@@ -131,6 +135,10 @@ html.dark {
         .el-input-group__append {
             box-shadow: 3px 3px 0 var(--faded-border-color);
             border: var(--el-border-width) solid var(--faded-border-color);
+
+            .el-input__wrapper {
+                border: none;
+            }
         }
     }
 
@@ -162,7 +170,8 @@ html.dark {
 }
 
 .el-form-item__error {
-    display: none;
+    margin: 5px;
+    position: static;
 }
 
 .el-dialog {
@@ -263,9 +272,7 @@ html.dark {
 
     }
 
-    .el-loading-mask {
-        box-shadow: 3px 3px 0 var(--el-mask-color);
-    }
+    .el-loading-mask {}
 
     &.metaname {
         --el-dialog-border-radius: 12px;
@@ -494,7 +501,7 @@ html.dark {
 }
 
 .el-collapse {
-    border-color: #fff;
+    --el-collapse-border-color: var(--faded-border-color);
 }
 
 .el-carousel__arrow i {

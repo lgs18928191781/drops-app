@@ -7,6 +7,17 @@ header {
     top: 0;
     z-index: 3;
 
+    &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 1px;
+        background: var(--faded-border-color);
+        opacity: 0.3;
+    }
+
     .name {
         font-size: 18px;
     }

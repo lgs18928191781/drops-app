@@ -150,9 +150,11 @@ import {
   GetWordBeforeReg,
   MnemoicLogin,
   setHashData,
+  evmLoginAccountUpdate
 } from '@/api/core'
 import { BindStatus, NodeName, CurrentSupportChain } from '@/enum'
 import { useUserStore } from '@/stores/user'
+import { useRootStore } from '@/stores/root'
 import {  SDK } from '@/utils/sdk'
 import {
   createMnemonic,
@@ -164,8 +166,7 @@ import {
   Network,
   signature,
 } from '@/utils/wallet/hd-wallet'
-import { encode } from 'js-base64'
-import { bsv } from 'sensible-sdk'
+import { encode,decode } from 'js-base64'
 import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { openLoading } from '@/utils/util'
@@ -183,7 +184,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {})
 const i18n = useI18n()
 const userStore = useUserStore()
-
+const rootStore=useRootStore()
 const emit = defineEmits(['update:modelValue', 'register', 'finish'])
 
 const status = ref(BindStatus.ChooseType)
@@ -328,6 +329,7 @@ function ethPersonalSignSign(params: { message: string; address: string }) {
 }
 
 function submitForm() {
+
   formRef.value.validate(async (valid: boolean) => {
     if (valid) {
       loading.value = true
@@ -335,7 +337,7 @@ function submitForm() {
       try {
         if (status.value == BindStatus.BindHavedMetaId) {
           //绑定metaid用户
-          debugger
+
           res = await bindingMetaidOrAddressLogin()
           res.password = MD5(props.thirdPartyWallet.signAddressHash).toString()
         }
@@ -360,9 +362,11 @@ function submitForm() {
             )
           }
         } else if (status.value === BindStatus.BindSuccess) {
+
           emit('update:modelValue', false)
         }
         if (res!) {
+
           await loginSuccess(res)
         }
       } catch (error) {
@@ -373,10 +377,43 @@ function submitForm() {
   })
 }
 
+async function updatePlan(params: MetaMaskLoginUserInfo,pw:string) {
+  const Mnemonic = decryptMnemonic(params.enCryptedMnemonic, pw)
+
+  const evmEnMnemonic =encryptMnemonic(Mnemonic,MD5(rootStore.updatePlanRes!.signHash).toString())
+  try {
+    const result= await evmLoginAccountUpdate({
+    accessKey: params.token,
+    userName: params.userType == 'email' ? params.email : params.phone,
+    timestamp: +Date.now(),
+    metaId: params.metaId,
+    address: params.address,
+    evmAddress: params.evmAddress!,
+    evmEnMnemonic: evmEnMnemonic,
+    chainId:(window as any).ethereum.chainId
+    })
+    if (result.code == 0) {
+      return {
+      evmEnMnemonic,
+      newPw:MD5(rootStore.updatePlanRes!.signHash).toString()
+    }
+    } else {
+      throw new Error(`${i18n.t('updateFail')}`)
+    }
+
+  } catch (error) {
+    throw new Error(`${i18n.t('updateFail')}`)
+  }
+
+}
+
 function loginSuccess(params: BindMetaIdRes) {
+
   return new Promise<void>(async (resolve, reject) => {
     try {
       const metaIdInfo = await GetUserInfo(params.userInfo.metaId)
+      console.log('metaIdInfo', metaIdInfo)
+
       // console.log('metaIdInfo', metaIdInfo)
       // const bingdMetaidTypes = await GetBindMetaidAddressList(params.userInfo.metaId)
       // if (bingdMetaidTypes.code == 0 && bingdMetaidTypes.data.thirdPartyAddresses) {
@@ -422,12 +459,27 @@ function loginSuccess(params: BindMetaIdRes) {
       if (!params.userInfo.evmAddress) {
         params.userInfo.evmAddress = params.userInfo.ethAddress
       }
+
+      //更新用户信息前先升级账户,store签名不等于当前登录账户签名时需要升级
+      if (rootStore.updatePlanRes?.signHash && MD5(rootStore.updatePlanRes!.signHash).toString() != decode(params.password)) {
+
+        const updateSuccess = await updatePlan(params.userInfo, params.password)
+
+        if (updateSuccess) {
+          params.userInfo.enCryptedMnemonic=updateSuccess.evmEnMnemonic
+          // params.userInfo.evmEnMnemonic = updateSuccess.evmEnMnemonic
+          params.password = updateSuccess.newPw
+          ElMessage.success(`${i18n.t('updateSuccess')}`)
+        }
+      }
+
       userStore.updateUserInfo({
         ...params.userInfo,
         ...metaIdInfo.data,
         password: params.password,
         loginType: 'MetaMask',
       })
+
 
       userStore.$patch({
         wallet: new SDK(import.meta.env.VITE_NET_WORK),
@@ -778,6 +830,7 @@ function loginByMnemonic(mnemonic: string, password: string, isInitMnemonic = fa
             .deriveChild(0)
             .privateKey.toString()
         )
+
         const loginInfo = await MnemoicLogin({
           xpub: hdWallet.xpubkey.toString(),
           sign,
@@ -832,7 +885,6 @@ function bindingMetaidOrAddressLogin() {
             resp.result.enMnemonic,
             form.pass,
             true,
-
             resp.result.path
           )
 
@@ -841,13 +893,7 @@ function bindingMetaidOrAddressLogin() {
 
           await createETHBindingBrfcNode(res)
           res.userInfo.evmAddress = props.thirdPartyWallet.address
-
-
-          // res.userInfo.evmAddress = window.WallectConnect?.accounts[0]
-          //   ? window.WallectConnect?.accounts[0]
-          //   : window.ethereum.selectedAddress
           res.userInfo.chainId = props.thirdPartyWallet.chainId
-
           await sendHash(res.userInfo)
           resolve(res)
         }
@@ -891,7 +937,8 @@ defineExpose({
   loginByMnemonic,
   loginSuccess,
   status: status,
-  createMetaidAccount
+  createMetaidAccount,
+  emit
 })
 </script>
 

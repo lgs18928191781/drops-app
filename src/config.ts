@@ -45,12 +45,14 @@ export const units: Unit[] = [
 ]
 
 export const classifyList = [
-  { classify: 'art' },
-  { classify: 'card', disabled: true },
-  { classify: 'alias', disabled: true },
-  { classify: 'avatar', disabled: true },
-  { classify: 'rights', disabled: true },
-  { classify: 'game' },
+  // @ts-ignore
+  { classify: 'art', disabled: false, name: () => i18n.global.t('NFT.ClassifyList.art') },
+  { classify: 'game', disabled: false, name: () => i18n.global.t('NFT.ClassifyList.game') },
+  { classify: 'card', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.card') },
+  { classify: 'alias', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.alias') },
+  { classify: 'avatar', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.avatar') },
+  { classify: 'rights', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.rights') },
+  { classify: 'music', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.music') },
 ]
 
 export const initPagination: Pagination = {

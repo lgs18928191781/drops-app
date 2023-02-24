@@ -98,7 +98,6 @@ export class HttpRequests implements Http {
           if (response) {
             return response
           } else {
-            debugger
             // 非 200，错误处理
             return response
           }

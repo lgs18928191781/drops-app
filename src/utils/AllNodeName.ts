@@ -167,6 +167,16 @@ const AllNodeName: {
     path: '/Protocols/SendMoney',
     version: '1.0.0',
   },
+  [NodeName.NftCancel]: {
+    brfcId: '249044dac325',
+    path: '/Protocols/NftCancel',
+    version: '1.0.3',
+  },
+  [NodeName.nftBuy]: {
+    brfcId: '1847e7d33857',
+    path: '/Protocols/nftBuy',
+    version: '1.0.2',
+  },
 }
 
 export default AllNodeName

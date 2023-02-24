@@ -149,7 +149,7 @@ import BackupMnemonicVue from './BackupMnemonic.vue'
 import BindMetaIdVue from './BindMetaId.vue'
 import { reactive, Ref, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { BindStatus, NodeName } from '@/enum'
+import { BindStatus, NodeName, WalletOrigin } from '@/enum'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { router } from '@/router'
 import { useRoute } from 'vue-router'
@@ -166,6 +166,7 @@ import { LoadingTEXT } from '@/utils/LoadingSVGText'
 
 import { currentSupportChain } from '@/config'
 import AllNodeName from '@/utils/AllNodeName'
+import { computeStyles } from '@popperjs/core'
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const route = useRoute()
@@ -360,7 +361,11 @@ async function connectMetaLet() {
   // )
 }
 
-async function onThreePartLinkSuccess(params: { signAddressHash: string; address: string }) {
+async function onThreePartLinkSuccess(params: {
+  signAddressHash: string
+  address: string
+  walletOrigin?: string
+}) {
   //检查hash是否已绑定
 
   const getMnemonicRes = await LoginByEthAddress({
@@ -379,8 +384,11 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
       throw new Error(error.message)
     }
   })
+
   let res: BindMetaIdRes
   if (getMnemonicRes?.code === 0) {
+    //这里需要再判断一下用户注册来源，如果是metamask注册的用户要拿metaid来解
+
     if (
       getMnemonicRes?.data?.metaId &&
       getMnemonicRes?.data?.registerSource === RegisterSource.metamask
@@ -395,20 +403,43 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
           false,
           getMnemonicRes.data.path
         )
+
         if (res) {
           await BindMetaIdRef.value.loginSuccess(res)
           rootStore.$patch({ isShowMetaMak: false })
           onModalClose()
         }
       } catch (error) {
-        rootStore.$patch({ isShowMetaMak: false })
-        return ElMessage.error(`${i18n.t('walletError')}`)
+        //+import.meta.env.VITE_UPDATEPLAN_TIMESTAMP
+        if (getMnemonicRes?.data?.registerTime < +Date.now()) {
+          ElMessageBox.confirm(`${i18n.t('allowUpdate')}`, `${i18n.t('updateRemind')}`, {
+            customClass: 'primary',
+            confirmButtonText: `${i18n.t('confirmUpdate')}`,
+            cancelButtonText: i18n.t('Cancel'),
+          }).then(() => {
+            //把准备要升级的hash保存起来
+            rootStore.updateAccountPlan({
+              registerTime: getMnemonicRes?.data?.registerTime,
+              signHash: params.signAddressHash,
+            })
+            if (params.walletOrigin == WalletOrigin.WalletConnect) {
+              connectWalletConnect(true)
+            } else {
+              MetaMaskRef.value.startConnect(true)
+            }
+
+            rootStore.$patch({ isShowMetaMak: false })
+          })
+        } else {
+          rootStore.$patch({ isShowMetaMak: false })
+          return ElMessage.error(`${i18n.t('walletError')}`)
+        }
       }
 
       // return  emit('update:modelValue', false)
     } else if (
       getMnemonicRes.data.evmEnMnemonic &&
-      getMnemonicRes?.data?.registerSource === RegisterSource.showmoney
+      getMnemonicRes?.data?.registerSource == RegisterSource.showmoney
     ) {
       // 有密码直接登录， 没有密码就要用户输入
       const password = localStorage.getItem(encode('password'))
@@ -426,26 +457,88 @@ async function onThreePartLinkSuccess(params: { signAddressHash: string; address
         }
       } else {
         try {
+          let signHashForMnemonic
           res = await BindMetaIdRef.value.loginByMnemonic(
             getMnemonicRes.data.evmEnMnemonic,
             MD5(params.signAddressHash).toString(),
             false,
             getMnemonicRes.data.path
           )
-
           if (res) {
             await BindMetaIdRef.value.loginSuccess(res)
             rootStore.$patch({ isShowMetaMak: false })
             onModalClose()
           }
         } catch (error) {
-          thirdPartyWallet.signAddressHash = params.signAddressHash
-          thirdPartyWallet.address = params.address
-          BindMetaIdRef.value.status = BindStatus.InputPassword
-          rootStore.$patch({ isShowMetaMak: false })
-          isShowBindModal.value = true
+          if (getMnemonicRes?.data?.registerTime < +Date.now()) {
+            ElMessageBox.confirm(`${i18n.t('allowUpdate')}`, `${i18n.t('updateRemind')}`, {
+              customClass: 'primary',
+              confirmButtonText: `${i18n.t('confirmUpdate')}`,
+              cancelButtonText: i18n.t('Cancel'),
+            }).then(() => {
+              //把准备要升级的hash保存起来
+              rootStore.updateAccountPlan({
+                registerTime: getMnemonicRes?.data?.registerTime,
+                signHash: params.signAddressHash,
+              })
+              if (params.walletOrigin == WalletOrigin.WalletConnect) {
+                connectWalletConnect(true)
+              } else {
+                MetaMaskRef.value.startConnect(true)
+              }
+
+              rootStore.$patch({ isShowMetaMak: false })
+            })
+          } else {
+            rootStore.$patch({ isShowMetaMak: false })
+            return ElMessage.error(`${i18n.t('walletError')}`)
+          }
         }
+
+        // return  emit('update:modelValue', false)
       }
+
+      // else if (
+      //   getMnemonicRes.data.evmEnMnemonic &&
+      //   getMnemonicRes?.data?.registerSource === RegisterSource.showmoney
+      // ) {
+      //   // 有密码直接登录， 没有密码就要用户输入
+      //   const password = localStorage.getItem(encode('password'))
+      //   if (password) {
+      //     res = await BindMetaIdRef.value.loginByMnemonic(
+      //       getMnemonicRes.data.menmonic,
+      //       decode(password),
+      //       false,
+      //       getMnemonicRes.data.path
+      //     )
+
+      //     if (res) {
+      //       await BindMetaIdRef.value.loginSuccess(res)
+      //       onModalClose()
+      //     }
+      //   } else {
+      //     try {
+      //       res = await BindMetaIdRef.value.loginByMnemonic(
+      //         getMnemonicRes.data.evmEnMnemonic,
+      //         MD5(params.signAddressHash).toString(),
+      //         false,
+      //         getMnemonicRes.data.path
+      //       )
+
+      //       if (res) {
+      //         await BindMetaIdRef.value.loginSuccess(res)
+      //         rootStore.$patch({ isShowMetaMak: false })
+      //         onModalClose()
+      //       }
+      //     } catch (error) {
+      //       thirdPartyWallet.signAddressHash = params.signAddressHash
+      //       thirdPartyWallet.address = params.address
+      //       BindMetaIdRef.value.status = BindStatus.InputPassword
+      //       rootStore.$patch({ isShowMetaMak: false })
+      //       isShowBindModal.value = true
+      //     }
+      //   }
+      // }
     } else if (
       !getMnemonicRes?.data.metaId &&
       getMnemonicRes?.data?.registerSource === RegisterSource.metamask
@@ -478,7 +571,6 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
   loading.value = true
   try {
     const wallet = userStore.showWallet!.wallet
-    console.log('wallet', wallet)
     if (userStore.isAuthorized) {
       let utxos = await wallet?.provider.getUtxos(wallet.wallet.xpubkey.toString())
       const broadcasts: string[] = []
@@ -629,7 +721,7 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
   }
 }
 
-async function connectWalletConnect() {
+async function connectWalletConnect(isUpdate: boolean = false) {
   const connector = new WalletConnect({
     bridge: 'https://bridge.walletconnect.org', // Required
     qrcodeModal: QRCodeModal,
@@ -657,10 +749,9 @@ async function connectWalletConnect() {
 
     // Delete connector
   })
-
-  window.WallectConnect = connector
+  ;(window as any).WallectConnect = connector
   const { accounts, chainId } = await connector.connect()
-  let res
+  let res, address, message
   const hexChainId = `0x${chainId.toString(16)}`
   // const chainWhiteList = currentSupportChain.filter(item => {
   //   return item.chainId == hexChainId
@@ -689,20 +780,47 @@ async function connectWalletConnect() {
             ],
           })
           .then(async () => {
-            res = await connector.signPersonalMessage([
-              import.meta.env.MODE == 'gray'
-                ? `0x${ethers.utils
+            address = accounts[0].toLocaleLowerCase()
+            message = isUpdate
+              ? import.meta.env.MODE == 'gray'
+                ? `0x${ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0])).split('0x')[1]}`
+                : `${ethers.utils
                     .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
-                    .split('0x')[1]
+                    .slice(2, -1)
                     .toLocaleUpperCase()}`
-                : `${ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0])).slice(2, -1)}`,
-              accounts[0],
+              : `${ethers.utils.hexValue(
+                  ethers.utils.toUtf8Bytes(
+                    ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0].toLocaleLowerCase()))
+                  )
+                )}`
+            if (rootStore.updatePlanWhiteList.includes(accounts[0])) {
+              address = isUpdate ? accounts[0] : accounts[0].toLocaleLowerCase()
+              message = isUpdate
+                ? `${ethers.utils
+                    .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+                    .slice(2, -1)
+                    .toLocaleUpperCase()}`
+                : `${ethers.utils.hexValue(
+                    ethers.utils.toUtf8Bytes(
+                      ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0].toLocaleLowerCase()))
+                    )
+                  )}`
+            }
+            res = await connector.signPersonalMessage([
+              address,
+              message,
+              // `${ethers.utils
+              //   .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+              //   .slice(2, -1)
+              //   .toLocaleUpperCase()}`,
             ])
+
             if (res) {
               rootStore.$patch({ isShowLogin: false })
               await onThreePartLinkSuccess({
                 signAddressHash: res,
-                address: accounts[0],
+                address: address,
+                walletOrigin: WalletOrigin.WalletConnect,
               })
             }
           })
@@ -716,22 +834,67 @@ async function connectWalletConnect() {
         // emit('update:modelValue', false)
       })
   } else {
-    res = await connector.signPersonalMessage([
-      import.meta.env.MODE == 'gray'
-        ? `0x${ethers.utils
-            .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
-            .split('0x')[1]
-            .toLocaleUpperCase()}`
-        : `${ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0])).slice(2, -1)}`,
-      accounts[0],
-    ])
+    try {
+      address = accounts[0].toLocaleLowerCase()
+      message = isUpdate
+        ? import.meta.env.MODE == 'gray'
+          ? `0x${ethers.utils.sha256(ethers.utils.toUtf8Bytes(address)).split('0x')[1]}`
+          : `${ethers.utils
+              .sha256(ethers.utils.toUtf8Bytes(address))
+              .slice(2, -1)
+              .toLocaleUpperCase()}`
+        : `${ethers.utils.hexValue(
+            ethers.utils.toUtf8Bytes(
+              ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0].toLocaleLowerCase()))
+            )
+          )}`
 
-    if (res) {
-      rootStore.$patch({ isShowLogin: false })
-      await onThreePartLinkSuccess({
-        signAddressHash: res,
-        address: accounts[0],
-      })
+      if (rootStore.updatePlanWhiteList.includes(accounts[0])) {
+        address = isUpdate ? accounts[0] : accounts[0].toLocaleLowerCase()
+        message = isUpdate
+          ? `${ethers.utils
+              .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+              .slice(2, -1)
+              .toLocaleUpperCase()}`
+          : `${ethers.utils.hexValue(
+              ethers.utils.toUtf8Bytes(
+                ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0].toLocaleLowerCase()))
+              )
+            )}`
+      }
+      res = await connector.signPersonalMessage([
+        address,
+        message,
+        // `0x${ethers.utils
+        //   .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+        //   .split('0x')[1]
+        //   .toLocaleUpperCase()}`,
+        // `${ethers.utils
+        //   .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+        //   .slice(2, -1)
+        //   .toLocaleUpperCase()}`,
+
+        // import.meta.env.MODE == 'gray'
+        //   ? `0x${ethers.utils
+        //       .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+        //       .split('0x')[1]
+        //       .toLocaleUpperCase()}`
+        //   : `${ethers.utils
+        //       .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+        //       .slice(2, -1)
+        //       .toLocaleUpperCase()}`,
+      ])
+
+      if (res) {
+        rootStore.$patch({ isShowLogin: false })
+        await onThreePartLinkSuccess({
+          signAddressHash: res,
+          address: address,
+          walletOrigin: WalletOrigin.WalletConnect,
+        })
+      }
+    } catch (error) {
+      console.log('签名失败')
     }
   }
 
@@ -797,5 +960,4 @@ async function onModalClose() {
 //   }
 // })
 </script>
-
 <style lang="scss" scoped src="./ConnectWalletModal.scss"></style>

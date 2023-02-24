@@ -36,7 +36,7 @@ import { getRandomWord, loginByHashData, loginByMetaidOrAddress, mnemoicLogin, s
 import type { MetaMaskLoginUserInfo } from './utils/api';
 import { encode, decode } from 'js-base64'
 import { aesEncrypt, createMnemonic, decryptMnemonic, encryptMnemonic, HdWallet, hdWalletFromMnemonic, Network, signature } from '@/utils/wallet/hd-wallet';
-import { bsv } from 'sensible-sdk';
+import { HDPrivateKey } from 'mvc-std-lib'
 import { useUserStore } from '@/stores/user';
 import { useRoute } from 'vue-router';
 import { useRootStore } from '@/stores/root';
@@ -44,7 +44,7 @@ import { currentSupportChain } from '@/config'
 
 export interface MetaMaskLoginRes {
     userInfo: MetaMaskLoginUserInfo
-    wallet: bsv.HDPrivateKey
+    wallet: HDPrivateKey
     password: string
     type: 'register' | 'login'
 }
@@ -63,7 +63,8 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits(['update:modelValue', 'success', 'logout'])
 defineExpose({
-    ethPersonalSignSign
+    ethPersonalSignSign,
+    startConnect
 })
 
 const userStore = useUserStore()
@@ -163,7 +164,7 @@ const dialogTitle = computed(() => {
     }
 })
 
-async function startConnect() {
+async function startConnect(isUpdatePlan:boolean=false) {
     try {
 
         const res = await Wallet.connect()
@@ -172,16 +173,30 @@ async function startConnect() {
             // const chainWhiteList = currentSupportChain.filter((item) => {
             //   return parseInt(item.chainId, 10) === parseInt(res.provider.chainId)
             // })
+            let address,message
             if (root.chainWhiteList.includes(res.provider.chainId)){
                 startProvider(res.provider)
-                const result = await ethPersonalSignSign({
-                    address: res.ethAddress,
-                    message:import.meta.env.MODE == 'gray' ?  ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).split('0x')[1].toLocaleUpperCase() : ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1)
-                    // message: ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1),
-                })
+                address = res.ethAddress.toLocaleLowerCase()
 
+                message = ethers.utils.sha256(ethers.utils.toUtf8Bytes(address)).slice(2, -1).toLocaleUpperCase()
+                //message=ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).split('0x')[1]
+                //message=!isUpdatePlan ? ethers.utils.hexValue(ethers.utils.toUtf8Bytes(ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress.toLocaleLowerCase())))) : import.meta.env.MODE == 'gray' ? ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).split('0x')[1].toLocaleUpperCase() : ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1).toLocaleUpperCase()
+                //ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1)
+                if (root.updatePlanWhiteList.includes(res.ethAddress)) {
+                    //这里处理白名单用户登录问题
+                    address =!isUpdatePlan ? res.ethAddress.toLocaleLowerCase() : root.updatePlanWhiteList[0]
+                    message=!isUpdatePlan ? ethers.utils.hexValue(ethers.utils.toUtf8Bytes(ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress.toLocaleLowerCase())))) : ethers.utils.sha256(ethers.utils.toUtf8Bytes(address)).slice(2, -1).toLocaleUpperCase()
+                }
+                const result = await ethPersonalSignSign({
+                    address:address,
+                    //message:ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1),
+                    //message:ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).split('0x')[1].toLocaleUpperCase()
+                    //ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).split('0x')[1].toLocaleUpperCase()
+                    message:message
+                })
+                 console.log("1111",address,message,result)
                 if (result) {
-                    emit('success',{ signAddressHash:result, address: res.ethAddress});
+                    emit('success',{ signAddressHash:result, address: address});
                 }
             } else {
                 ElMessageBox.confirm(i18n.t('MetaMak.Chain Network Error Tips') + `${import.meta.env.VITE_ETH_CHAIN}`, i18n.t('MetaMak.Chain Network Error'), {
@@ -218,8 +233,7 @@ function ethPersonalSignSign(params: {
     message: string,
     address: string
 }) {
-    // console.log("messages",ethers.utils.hexValue(params.message) )
-    //  debugger
+
     return new Promise<string>(async (resolve, reject) => {
 
         (window as any).ethereum
@@ -308,6 +322,7 @@ function loginByMnemonic(mnemonic: string) {
                         .deriveChild(0)
                         .privateKey.toString()
                 )
+
                 const loginInfo = await mnemoicLogin({
                     xpub: hdWallet.xpubkey.toString(),
                     sign,

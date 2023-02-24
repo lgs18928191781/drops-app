@@ -24,6 +24,7 @@ import {
   Chains,
   EnvMode,
   PayPlatformUnit,
+  SdkPayType,
 } from '@/enum'
 import { CheckBlindboxOrderStatus } from '@/api/v3'
 import AllCardJson from '@/utils/card.json'
@@ -969,10 +970,11 @@ export function getCurrencyAmount(
   toCurrency?: ToCurrency
 ) {
   const rootStore = useRootStore()
+  if (!price) return 0
   if (!toCurrency) {
     toCurrency = rootStore.currentPrice
   }
-  const rate = rootStore.exchangeRate.find(
+  let rate = rootStore.exchangeRate.find(
     item => item.symbol.toUpperCase() === toCurrency!.toUpperCase()
   )
   if (toCurrency === 'CNY') {
@@ -1081,19 +1083,18 @@ export function getCurrencyAmount(
           .toFixed(2)
       ).toNumber()
     } else {
+      rate = rootStore.exchangeRate.find(
+        item => item.symbol.toUpperCase() === currency.toUpperCase()
+      )
       // mvc -> usd
-      return new Decimal(
-        new Decimal(price)
-          .div(Math.pow(10, 8))
-          .mul(rate!.price.USD)
-          .toFixed(2)
-      ).toNumber()
+      const result = new Decimal(new Decimal(price).mul(rate!.price.USD).toFixed(2)).toNumber()
+      return result > 0.01 ? result : 0.01
     }
   }
 }
 
 export function NFTOffSale(nft: GenesisNFTItem) {
-  return new Promise(async resolve => {
+  return new Promise(async (resolve, rject) => {
     ElMessageBox.confirm(
       `${i18n.global.t('offsaleConfirm')} ${nft.nftName} ?`,
       i18n.global.t('niceWarning'),
@@ -1107,16 +1108,45 @@ export function NFTOffSale(nft: GenesisNFTItem) {
     )
       .then(async () => {
         const userStore = useUserStore()
-        const signRes: string = await userStore.showWallet!.sigMessage(
-          userStore.user!.metaId!,
-          '0/0'
-        )
-        if (signRes) {
-          const res = await LegalOffsale({ uuid: nft.nftLegalUuid, sig: signRes })
-          if (res.code === 0) {
-            ElMessage.success('下架成功')
-            resolve(true)
-          }
+        const loading = openLoading({ text: i18n.global.t('NFT.OffSaleing') })
+
+        // 法币下架
+
+        // const signRes: string = await userStore.showWallet!.sigMessage(
+        //   userStore.user!.metaId!,
+        //   '0/0'
+        // )
+        // if (signRes) {
+        //   const res = await LegalOffsale({ uuid: nft.nftLegalUuid, sig: signRes })
+        //   if (res.code === 0) {
+        //     ElMessage.success('下架成功')
+        //     resolve(true)
+        //   }
+        // }
+
+        // Space 下架
+        const res = await userStore.showWallet
+          .createBrfcChildNode(
+            {
+              nodeName: NodeName.NftCancel,
+              data: JSON.stringify({
+                genesis: nft.nftGenesis,
+                codehash: nft.nftCodehash,
+                tokenIndex: nft.nftTokenIndex,
+              }),
+            },
+            {
+              payType: SdkPayType.ME,
+            }
+          )
+          .catch(error => {
+            ElMessage.error(error.message)
+            loading.close()
+          })
+        if (res) {
+          loading.close()
+          ElMessage.success(i18n.global.t('NFT.Offsale Success'))
+          resolve(true)
         }
       })
       .catch(error => {

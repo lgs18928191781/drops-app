@@ -256,9 +256,43 @@ export const LoginByEthAddress = (params: {
     metaId: string
     path: number
     registerSource: string
+    registerTime: number
   }
 }> => {
   return Core.post(`/api/v1/evm/wallet/mnemonic/check`, params)
+}
+
+//用户账户升级计划
+export const evmLoginAccountUpdate = (params: {
+  accessKey: string
+  userName: string
+  timestamp: number
+  metaId: string
+  address: string
+  evmAddress: string
+  evmEnMnemonic: string
+  chainId: string
+}): Promise<{
+  code: number
+  msg: string
+}> => {
+  return Core.post(
+    `/api/v1/evm/wallet/mnemonic/info/upgrade`,
+    {
+      metaId: params.metaId,
+      address: params.address,
+      evmAddress: params.evmAddress,
+      evmEnMnemonic: params.evmEnMnemonic,
+      chainId: params.chainId,
+    },
+    {
+      headers: {
+        accessKey: params.accessKey,
+        userName: params.userName,
+        timestamp: params.timestamp,
+      },
+    }
+  )
 }
 
 export const GetMetaIdByLoginName = (params: {

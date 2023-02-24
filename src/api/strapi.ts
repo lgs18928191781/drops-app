@@ -1,3 +1,4 @@
+import i18n from '@/utils/i18n'
 import HttpRequest from '@/utils/request'
 
 // @ts-ignore
@@ -47,6 +48,20 @@ export const GetCollects = (params: {
 
 export const GetCollect = (id: number | string): Promise<Collect> => {
   return Strapi.get(`/show-3-collections/${id}`)
+}
+export const GetCollectByTopicType = async (topicType: string): Promise<Collect | undefined> => {
+  const res: Collect[] = await Strapi.get(`/show-3-collections`, {
+    params: {
+      _sort: 'index',
+      network: import.meta.env.VITE_NET_WORK,
+      topicType,
+    },
+  })
+  if (res.length) {
+    return res[0]
+  } else {
+    ElMessage.error(i18n.global.t('NOT_FOUND'))
+  }
 }
 
 export const GetHomeHotSeries = (params: {
@@ -152,4 +167,31 @@ export const GetMetaNameConfig = (): Promise<MetaNameConfig> => {
 
 export const GetCertifiedMetaId = (): Promise<{ data: { list: string[] } }> => {
   return Strapi.get('/certified-meta-id')
+}
+
+export interface NFTFeeInfo {
+  reated_at: string
+  firstSellPlatformFeeRate: number
+  firstSellRoyaltyFeeRate: number
+  id: number
+  network: string
+  platformAddress: string
+  platformFeeRate: number
+  published_at: string
+  royaltyFeeRate: number
+  updated_at: string
+}
+export const GetNFTFee = (): Promise<NFTFeeInfo> => {
+  return new Promise(async (resolve, reject) => {
+    const res: any = await Strapi.get('/nft-fees', {
+      params: {
+        network: import.meta.env.VITE_NET_WORK,
+      },
+    }).catch(error => {
+      reject(error)
+    })
+    if (res) {
+      resolve(res[0])
+    }
+  })
 }

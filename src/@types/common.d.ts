@@ -421,6 +421,22 @@ declare interface GenesisNFTItem {
   nftIssueMetaTxId: string
   nftIssueVersion: string
   nftIssuer: string
+  nftIssueUserInfo: {
+    address: string
+    avatarImage: string
+    avatarTxId: string
+    avatarType: string
+    coverPublicKey: string
+    coverType: string
+    coverUrl: string
+    infoAvatarTxIdOssUrl: string
+    metaIdTimestamp: number
+    metaName: string
+    name: string
+    nameType: string
+    nftNamePublicKey: string
+    publicKey: string
+  }
   nftLegalPrice: number
   nftLegalSymbol: string
   nftLegalUuid: string
@@ -428,7 +444,7 @@ declare interface GenesisNFTItem {
   nftMinBidIncrease: string
   nftMinBidIncreaseInt: number
   nftName: string
-  nftOwnerUserInfo?: {
+  nftOwnerUserInfo: {
     address: string
     avatarTxId: string
     avatarType: string
@@ -472,28 +488,46 @@ declare interface GenesisNFTItem {
 }
 
 declare interface NodeTransactions {
-  payToAddress?: import('@/@types/sdk.d.ts').CreateNodeRes
-  metaFileBrfc?: import('@/@types/sdk.d.ts').CreateNodeRes
-  metaFiles?: import('@/@types/sdk.d.ts').CreateNodeRes[]
-  currentNodeBrfc?: import('@/@types/sdk.d.ts').CreateNodeRes
-  currentNode?: import('@/@types/sdk.d.ts').CreateNodeRes
-  sendMoney?: import('@/@types/sdk.d.ts').CreateNodeRes
+  payToAddress?: import('@/@types/sdk.d.ts').CreateNodeBaseRes
+  metaFileBrfc?: import('@/@types/sdk.d.ts').CreateNodeBrfcRes
+  metaFiles?: import('@/@types/sdk.d.ts').CreateNodeMetaFileRes[]
+  currentNodeBrfc?: import('@/@types/sdk.d.ts').CreateNodeBrfcRes
+  currentNode?: import('@/@types/sdk.d.ts').CreateNodeBaseRes
+  sendMoney?: import('@/@types/sdk.d.ts').CreateNodeBaseRes
   subscribeId?: string
   nft?: {
     issue?: {
-      transaction: bsv.Transaction
+      transaction: mvc.Transaction
       txId: string
       tokenIndex: string
     }
     genesis?: {
-      transaction: bsv.Transaction
+      transaction: mvc.Transaction
       genesis: string
       codehash: string
       sensibleId: string
       txId: string
     }
     transfer?: {
-      transaction: bsv.Transaction
+      transaction: mvc.Transaction
+      txId: string
+    }
+    sell?: {
+      sellTransaction: mvc.Transaction
+      sellTxId: string
+      transaction: string
+      txId: string
+    }
+    cancel?: {
+      unlockCheckTransaction: mvc.Transaction
+      unlockCheckTxId: string
+      transaction: mvc.Transaction
+      txId: string
+    }
+    buy?: {
+      unlockCheckTransaction: mvc.Transaction
+      unlockCheckTxId: string
+      transaction: mvc.Transaction
       txId: string
     }
   }
@@ -631,4 +665,19 @@ declare interface ProtocolBrfcNode {
 declare interface UserProtocolBrfcNode extends ProtocolBrfcNode {
   nodeName: import('@/enum').NodeName
   brfcId: string
+}
+
+declare interface MetaFileSha256Info {
+  blockHeight: number
+  fileDataType: string
+  fileSize: number
+  fileSizeStr: string
+  fileType: number
+  hash: string
+  md5: string
+  metaId: string
+  metanetId: string
+  resUrl: string
+  timestamp: number
+  txId: string
 }

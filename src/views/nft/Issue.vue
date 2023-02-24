@@ -6,7 +6,12 @@
           <span class="title">{{ $t('NFT.Issue NFT') }}</span>
         </div>
         <a class="main-border primary" @click="isShowOption = true">{{ $t('NFT.Add Issue') }}</a>
-        <a class="main-border primary" @click="confirmIssue">{{ $t('NFT.Confirm Issue') }}</a>
+        <a
+          class="main-border"
+          :class="[list.filter(item => !item.isSuccess).length ? 'primary' : 'faded']"
+          @click="confirmIssue"
+          >{{ $t('NFT.Confirm Issue') }}</a
+        >
       </header>
 
       <div class="issue-th issue-item flex flex-align-center">
@@ -15,6 +20,7 @@
         <span class="w-20">{{ $t('NFT.Source File') }}</span>
         <span class="flex1">{{ $t('NFT.Name') }}</span>
         <span class="flex1">{{ $t('NFT.Drsc') }}</span>
+        <span class="flex1">{{ $t('NFT.Issue.Classify') }}</span>
         <span class="flex1">{{ $t('NFT.Accept Address') }}</span>
         <span class="w-30">{{ $t('NFT.issueToknIndex') }}</span>
       </div>
@@ -57,7 +63,7 @@
                     :key="genesis.codehash + genesis.genesis"
                     :label="genesis.seriesName"
                     :value="genesis.genesis + '/' + genesis.codehash"
-                    @click="item.genesis = genesis"
+                    @click="changeGenesis(index, genesis)"
                   ></ElOption>
                 </ElSelect>
               </div>
@@ -100,6 +106,23 @@
             </div>
           </ElFormItem>
 
+          <!-- classifyList -->
+          <ElFormItem prop="classifyList" class="flex1">
+            <div class="form-item flex flex-align-center flex1">
+              <div class="flex1">
+                <ElSelect multiple v-model="item.classifyList">
+                  <ElOption
+                    v-for="item in classifyList"
+                    :key="item.classify"
+                    :disabled="item.disabled"
+                    :label="item.name()"
+                    :value="item.classify"
+                  />
+                </ElSelect>
+              </div>
+            </div>
+          </ElFormItem>
+
           <!-- acceptAddress -->
           <ElFormItem prop="acceptAddress" class="flex1">
             <div class="form-item flex flex-align-center flex1">
@@ -132,6 +155,7 @@ interface IssueItem {
   desc: string
   index: number
   uuid: string
+  classifyList: string[]
   isSuccess?: boolean
 }
 </script>
@@ -149,6 +173,7 @@ import AddImageWarpVue from '@/components/AddImageWarp/AddImageWarp.vue'
 import { openLoading } from '@/utils/util'
 import { useI18n } from 'vue-i18n'
 import { router } from '@/router'
+import { classifyList } from '@/config'
 
 const userStore = useUserStore()
 const genesisStore = useGenesisStore()
@@ -159,8 +184,6 @@ const isShowOption = ref(false)
 const list: IssueItem[] = reactive([])
 
 const genesisList: GenesisItem[] = reactive([])
-const currentGenesis = ref('')
-const isShowCreateGenesis = ref(false)
 
 function getGenesisList() {
   return new Promise<void>(async (resolve, reject) => {
@@ -194,6 +217,7 @@ function addIssueItem(option: IssueNFTOption) {
       const desc = i === 0 || option.isSameDesc ? option.desc : ''
       const index = getCurrentGenesisIndex(genesis)
       const uuid = v1()
+      const classifyList = i === 0 || option.isSameClassifyList ? option.classifyList : []
       list.push({
         genesis,
         name,
@@ -203,6 +227,7 @@ function addIssueItem(option: IssueNFTOption) {
         desc,
         index,
         uuid,
+        classifyList,
       })
     } catch (error) {
       errorMsg = (error as any).message
@@ -236,72 +261,165 @@ function getCurrentGenesisIndex(genesis?: GenesisItem | null) {
 }
 
 async function confirmIssue() {
-  const loading = openLoading({
-    text: i18n.t('NFT.IssueLoading'),
-  })
-  const taskParams: any = []
-  for (let i = 0; i < list.length; i++) {
-    const params = {
-      type: 'metacontract',
-      genesisId: list[i].genesis!.genesis,
-      sensibleId: list[i].genesis!.sensibleId,
-      receiverAddress: list[i].acceptAddress,
-      name: list[i].name,
-      desc: list[i].desc,
-      icon: `metafile://$[0]`,
-      backIcon: '',
-      website: '',
-      issuerName: '',
-      data: {
-        originalFileTxid: 'metafile://$[${1}]',
-      },
+  const taskList = list.filter(item => !item.isSuccess)
+  if (taskList.length === 0) return
+
+  let allCheckSuccess = true
+  for (let i = 0; i < taskList.length; i++) {
+    if (!taskList[i].genesis) {
+      allCheckSuccess = false
+      ElMessage.error(i18n.t('NFT.Issue.GenesisEmpty'))
+      break
     }
-    taskParams.push({
-      nodeName: NodeName.NftIssue,
-      data: JSON.stringify(params),
-      attachments: [list[i].cover, list[i].sourceFile],
-    })
+    if (!taskList[i].name) {
+      allCheckSuccess = false
+      ElMessage.error(i18n.t('NFT.Issue.NameEmpty'))
+      break
+    }
+    if (!taskList[i].cover) {
+      allCheckSuccess = false
+      ElMessage.error(i18n.t('NFT.Issue.CoverEmpty'))
+      break
+    }
+    if (!taskList[i].sourceFile) {
+      allCheckSuccess = false
+      ElMessage.error(i18n.t('NFT.Issue.SourceFileEmpty'))
+      break
+    }
+
+    if (taskList[i].classifyList.length === 0) {
+      allCheckSuccess = false
+      ElMessage.error(i18n.t('NFT.Issue.ClassifyEmpty'))
+      break
+    }
+    if (!taskList[i].acceptAddress) {
+      allCheckSuccess = false
+      ElMessage.error(i18n.t('NFT.Issue.AcceptAddressEmpty'))
+      break
+    }
   }
-  try {
-    const response = await userStore.showWallet.batchCreateBrfcChildNode(taskParams, {
-      callback: params => {
-        return new Promise(resolve => {
-          list[params.index].isSuccess = true
-          if (
-            params.transactions.nft?.issue?.tokenIndex === (list[params.index].index - 1).toString()
-          ) {
-            genesisStore.updateCurrentTotalSupply({
-              genesis: list[params.index].genesis!.genesis,
-              codehash: list[params.index].genesis!.codehash,
-            })
-            resolve({
-              isContinue: true,
-            })
-          } else {
-            const count = parseInt(params.transactions.nft!.issue!.tokenIndex) + 1
-            genesisStore.updateCurrentTotalSupply({
-              genesis: list[params.index].genesis!.genesis,
-              codehash: list[params.index].genesis!.codehash,
-              count: count,
-            })
-            list[params.index].index = count
-            resolve({
-              isContinue: false,
-              error: i18n.t('NFT.Issue.TokenIndexNoteMatch'),
-            })
-          }
-        })
-      },
+
+  if (allCheckSuccess) {
+    const loading = openLoading({
+      text: i18n.t('NFT.IssueLoading'),
     })
-    if (response) {
-      ElMessage.success(i18n.t('NFT.Issue.AllIssueSuccess'))
-      loading.close()
-    } else if (response === null) {
+    const taskParams: any = []
+    for (let i = 0; i < taskList.length; i++) {
+      const params = {
+        type: 'metacontract',
+        genesisId: taskList[i].genesis!.genesis,
+        sensibleId: taskList[i].genesis!.sensibleId,
+        receiverAddress: taskList[i].acceptAddress,
+        name: taskList[i].name,
+        desc: taskList[i].desc,
+        icon: `metafile://$[0]`,
+        backIcon: '',
+        website: '',
+        issuerName: '',
+        data: {
+          originalFileTxid: 'metafile://$[1]',
+          classifyList: taskList[i].classifyList,
+        },
+      }
+      taskParams.push({
+        nodeName: NodeName.NftIssue,
+        data: JSON.stringify(params),
+        attachments: [taskList[i].cover, taskList[i].sourceFile],
+      })
+    }
+    try {
+      const response = await userStore.showWallet.batchCreateBrfcChildNode(taskParams, {
+        callback: params => {
+          return new Promise(resolve => {
+            taskList[params.index].isSuccess = true
+            if (
+              params.transactions.nft?.issue?.tokenIndex ===
+              (taskList[params.index].index - 1).toString()
+            ) {
+              genesisStore.updateCurrentTotalSupply({
+                genesis: taskList[params.index].genesis!.genesis,
+                codehash: taskList[params.index].genesis!.codehash,
+              })
+              resolve({
+                isContinue: true,
+              })
+            } else {
+              const count = parseInt(params.transactions.nft!.issue!.tokenIndex) + 1
+              genesisStore.updateCurrentTotalSupply({
+                genesis: taskList[params.index].genesis!.genesis,
+                codehash: taskList[params.index].genesis!.codehash,
+                count: count,
+              })
+              taskList[params.index].index = count
+              resolve({
+                isContinue: false,
+                error: i18n.t('NFT.Issue.TokenIndexNoteMatch'),
+              })
+            }
+          })
+        },
+      })
+      if (response) {
+        ElMessage.success(i18n.t('NFT.Issue.AllIssueSuccess'))
+        loading.close()
+      } else if (response === null) {
+        loading.close()
+      }
+    } catch (error) {
+      ElMessage.error((error as any).message)
       loading.close()
     }
-  } catch (error) {
-    ElMessage.error((error as any).message)
-    loading.close()
+  }
+}
+
+function changeGenesis(index: number, genesis: GenesisItem) {
+  if (list[index].genesis && list[index].genesis!.genesis === genesis.genesis) return
+  const oldGenesis = list[index].genesis
+    ? JSON.parse(JSON.stringify(list[index].genesis))
+    : undefined
+  list[index].genesis = genesis
+  let currentGenesisIndex = getGenesisMaxIndex(genesis, index) + 1
+  list[index].index = currentGenesisIndex
+
+  // 更新后面同一genesis的index
+  for (let i = index + 1; i < list.length; i++) {
+    if (list[i].genesis && list[i].genesis!.genesis === genesis.genesis) {
+      currentGenesisIndex++
+      list[i].index = currentGenesisIndex
+    }
+  }
+
+  // 更新后面同一 旧 的 genesis的index
+  let oldGenesisIndex = getGenesisMaxIndex(genesis, index) + 1
+  if (oldGenesis) {
+    for (let i = index + 1; i < list.length; i++) {
+      if (list[i].genesis && list[i].genesis!.genesis === oldGenesis.genesis) {
+        list[i].index = oldGenesisIndex
+        oldGenesisIndex++
+      }
+    }
+  }
+}
+
+function getGenesisMaxIndex(genesis: GenesisItem, stopIndex?: number) {
+  if (stopIndex === undefined) stopIndex = list.length
+  let currentMaxIndex = 0
+  for (let i = 0; i < stopIndex; i++) {
+    if (list[i].genesis && list[i].genesis!.genesis === genesis.genesis) {
+      currentMaxIndex = list[i].index
+    }
+  }
+  return currentMaxIndex
+}
+
+function setGeneisAllIndex(genesis: GenesisItem, index: number = 0) {
+  const currentMaxIndex = getGenesisMaxIndex(genesis, index)
+
+  const genesisList = list.filter(item => item.genesis && item.genesis.genesis === genesis.genesis)
+  for (let i = startGenesisIndex; i < genesisList.length; i++) {
+    if (list[i].genesis && list[i].genesis!.genesis === genesis.genesis) {
+      list[i].index = getCurrentGenesisIndex(genesis)
+    }
   }
 }
 
