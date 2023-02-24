@@ -968,6 +968,6 @@
   "NOT_FOUND": "NOT_FOUND",
   "Copy": "Copy",
   "confirmUpdate": "Confirm upgrade",
-  "allowUpdate": "It has been detected that your account needs to be upgraded, canceling the upgrade may affect subsequent logins to other wallets, please confirm",
+  "allowUpdate": "It is detected that your account needs to be upgraded. Canceling the upgrade may affect subsequent logins with other wallets, please confirm! (Special reminder: Do not use the 'iamtoken' wallet for upgrade operations, otherwise the account upgrade will fail)",
   "updateRemind": "Upgrade Tips"
 }

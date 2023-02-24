@@ -783,10 +783,7 @@ async function connectWalletConnect(isUpdate: boolean = false) {
             address = accounts[0].toLocaleLowerCase()
             message = isUpdate
               ? import.meta.env.MODE == 'gray'
-                ? `0x${ethers.utils
-                    .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
-                    .split('0x')[1]
-                    .toLocaleUpperCase()}`
+                ? `0x${ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0])).split('0x')[1]}`
                 : `${ethers.utils
                     .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
                     .slice(2, -1)
@@ -841,12 +838,9 @@ async function connectWalletConnect(isUpdate: boolean = false) {
       address = accounts[0].toLocaleLowerCase()
       message = isUpdate
         ? import.meta.env.MODE == 'gray'
-          ? `0x${ethers.utils
-              .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
-              .split('0x')[1]
-              .toLocaleUpperCase()}`
+          ? `0x${ethers.utils.sha256(ethers.utils.toUtf8Bytes(address)).split('0x')[1]}`
           : `${ethers.utils
-              .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
+              .sha256(ethers.utils.toUtf8Bytes(address))
               .slice(2, -1)
               .toLocaleUpperCase()}`
         : `${ethers.utils.hexValue(
@@ -854,6 +848,7 @@ async function connectWalletConnect(isUpdate: boolean = false) {
               ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0].toLocaleLowerCase()))
             )
           )}`
+
       if (rootStore.updatePlanWhiteList.includes(accounts[0])) {
         address = isUpdate ? accounts[0] : accounts[0].toLocaleLowerCase()
         message = isUpdate
