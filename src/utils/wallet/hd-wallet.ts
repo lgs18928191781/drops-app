@@ -21,7 +21,7 @@ import * as ECIES from 'mvc-lib/ecies'
 import { englishWords } from './english'
 import { SA_utxo } from 'sensible-sdk/dist/sensible-api'
 import { isEmail, sleep } from '../util'
-import { Chains, HdWalletChain, IsEncrypt, NodeName, WalletTxVersion } from '@/enum'
+import { Chains, HdWalletChain, IsEncrypt, Network, NodeName, WalletTxVersion } from '@/enum'
 import { AttachmentItem, PayToItem } from '@/@types/hd-wallet'
 import {
   CreateNodeOptions,
@@ -37,11 +37,6 @@ import { NftManager, FtManager, API_TARGET } from 'meta-contract'
 import { useUserStore } from '@/stores/user'
 import { GetTxChainInfo } from '@/api/metaid-base'
 import AllNodeName from '../AllNodeName'
-
-export enum Network {
-  mainnet = 'mainnet',
-  testnet = 'testnet',
-}
 
 export enum MetaIdTag {
   mainnet = 'metaid',
@@ -521,7 +516,14 @@ export class HdWallet {
     this.wallet = wallet
     const root = wallet.deriveChild(0).deriveChild(0).privateKey
     this._root = root
-    this.provider = new ShowmoneyProvider()
+
+    if (!params) {
+      params = {}
+    }
+    this.provider = new ShowmoneyProvider({
+      ...params,
+      network: this.network,
+    })
   }
 
   get rootAddress(): string {
@@ -1573,6 +1575,7 @@ export class HdWallet {
         .deriveChild(0)
         .privateKey.toString(),
       feeb: DEFAULTS.feeb,
+      apiHost: import.meta.env.VITE_META_SV_API,
     })
     return nftManager
   }

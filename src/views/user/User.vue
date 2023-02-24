@@ -156,15 +156,15 @@ const tabs = [
       },
     },
   },
-  // {
-  //   name: i18n.t('Already on NFT'),
-  //   params: {
-  //     name: 'userNFT',
-  //     params: {
-  //       metaId: route.params.metaId as string,
-  //     },
-  //   },
-  // },
+  {
+    name: i18n.t('Already on NFT'),
+    params: {
+      name: 'userNFT',
+      params: {
+        metaId: route.params.metaId as string,
+      },
+    },
+  },
 ]
 
 const isSelf = computed(() => {

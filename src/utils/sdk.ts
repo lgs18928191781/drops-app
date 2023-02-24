@@ -17,7 +17,6 @@ import {
   HdWallet,
   hdWalletFromAccount,
   MetaIdTag,
-  Network,
   NftTransferResult,
   ProtocolOptions,
   Reqswapargs,
@@ -36,6 +35,7 @@ import {
   JobStatus,
   HdWalletChain,
   WalletTxVersion,
+  Network,
 } from '@/enum'
 import { GetMeUtxos, GetMyMEBalance, GetProtocolMeInfo } from '@/api/v3'
 import * as bsv from '@sensible-contract/bsv'

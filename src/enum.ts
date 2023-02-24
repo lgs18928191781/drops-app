@@ -504,3 +504,8 @@ export enum HdWalletChain {
   BSV = 'bsv',
   MVC = 'mvc',
 }
+
+export enum Network {
+  mainnet = 'mainnet',
+  testnet = 'testnet',
+}

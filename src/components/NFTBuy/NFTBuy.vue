@@ -22,7 +22,10 @@
                   :image="nft.nftIssueAvatarImage"
                 />
                 <span class="username"
-                  ><UserName :name="nft.nftIssuer" :meta-name="nft.nftIssueUserInfo.metaName"
+                  ><UserName
+                    :name="nft.nftIssuer"
+                    :meta-name="nft.nftIssueUserInfo.metaName"
+                    :no-tag="true"
                 /></span>
                 <span class="role">({{ $t('NFT.Creater') }})</span>
               </div>
@@ -33,7 +36,10 @@
                   :image="nft.nftOwnerAvatarImage"
                 />
                 <span class="username"
-                  ><UserName :name="nft.nftOwnerName" :meta-name="nft.nftOwnerUserInfo.metaName"
+                  ><UserName
+                    :name="nft.nftOwnerName"
+                    :meta-name="nft.nftOwnerUserInfo.metaName"
+                    :no-tag="true"
                 /></span>
                 <span class="role">({{ $t('NFT.Owner') }})</span>
               </div>
