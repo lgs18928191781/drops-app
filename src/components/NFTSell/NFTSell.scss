@@ -52,3 +52,9 @@
         }
     }
 }
+
+.el-input {
+    :deep(.el-input-group__append) {
+        width: 100px;
+    }
+}

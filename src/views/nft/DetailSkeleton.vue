@@ -1,116 +1,87 @@
 <template>
-  <div class="top flex container">
-    <!-- {{ nft.val.coverUrl }} -->
-    <div class="cover-warp">
-      <div class="skeleton-image-warp">
-        <ElSkeletonItem variant="image" />
+  <div class="nft-detail">
+    <div class="nft-msg flex">
+      <div class="cover-warp">
+        <NFTCover :cover="[]" :isSkeleton="true" />
+      </div>
+      <div class="flex1 flex flex-v">
+        <div class="flex1">
+          <div class="top flex flex-align-center">
+            <div class="flex1">
+              <div class="collection-name flex flex-align-center">
+                <ElSkeletonItem :variant="'text'" />
+              </div>
+            </div>
+            <div class="operate-list flex flex-align-center">
+              <ElSkeletonItem :variant="'text'" />
+            </div>
+          </div>
+          <div class="name"><ElSkeletonItem :variant="'text'" /></div>
+
+          <div class="owner flex flex-align-center">
+            <ElSkeletonItem :variant="'image'" class="avatar" />
+            <div class="flex1">
+              <div class="owner-msg-item">
+                <ElSkeletonItem :variant="'text'" />
+              </div>
+              <div class="owner-msg-item">
+                <ElSkeletonItem :variant="'text'" />
+              </div>
+            </div>
+          </div>
+
+          <div class="current-price">
+            <div class="title"><ElSkeletonItem :variant="'text'" /></div>
+            <div class="price flex flex-align-end">
+              <span class="space"><ElSkeletonItem :variant="'text'"/></span>
+              <span class="curreny"><ElSkeletonItem :variant="'text'"/></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="nft-operate flex flex-align-center">
+          <ElSkeletonItem :variant="'button'" class="flex1" />
+        </div>
       </div>
     </div>
 
-    <div class="cont flex1 flex flex-v">
-      <div class="name flex flex-align-center">
-        <ElSkeletonItem class="text" variant="text" style="width: 80%" />
-      </div>
-      <div class="creater-msg">
-        <div class="author flex flex-align-center">
-          <ElSkeletonItem variant="image" class="avatar" />
-          <div class="author-msg flex1">
-            <ElSkeletonItem class="creater" variant="text" />
-            <ElSkeletonItem class="metaid" variant="text" />
-          </div>
-        </div>
-        <div class="cert">
-          <ElSkeletonItem class="text " variant="text" style="width: 20%" />
-        </div>
-      </div>
-      <div class="drsc flex1 flex flex-v">
-        <ElSkeletonItem class="title" variant="h1" />
-        <div class="cont flex1">
-          <ElSkeletonItem variant="text" style="width: 80%" />
-          <ElSkeletonItem variant="text" style="width: 60%; margin-top: 15px;" />
-          <ElSkeletonItem variant="text" style="width: 40%; margin-top: 15px;" />
-        </div>
-      </div>
-
-      <div class="timeleft">
-        <ElSkeletonItem variant="text" />
-      </div>
-      <div class="operate-warp">
-        <ElSkeletonItem class="btn btn-block" variant="button" />
-      </div>
-    </div>
-  </div>
-  <div class="bottom">
-    <div class="bottom-warp">
-      <div class="tab">
-        <ElSkeletonItem variant="text" />
-        <ElSkeletonItem variant="text" />
-      </div>
-      <div class="tab-cont">
-        <!-- 作品细节 -->
-        <div class="work-deail" v-if="tabIndex === 0">
-          <div class="work-deail-section">
-            <div class="work-detail-item flex flex-align-center">
-              <ElSkeletonItem class="key" variant="text" />
-              <ElSkeletonItem class="value flex1" variant="text" />
-            </div>
-            <div class="work-detail-item flex flex-align-center">
-              <ElSkeletonItem class="key" variant="text" />
-              <ElSkeletonItem class="value flex1" variant="text" />
-            </div>
-            <div class="work-detail-item flex flex-align-baseline">
-              <ElSkeletonItem class="key" variant="text" />
-              <ElSkeletonItem class="value flex1" variant="text" />
-            </div>
-          </div>
-          <div class="work-deail-section">
-            <div class="work-detail-item flex flex-align-center">
-              <ElSkeletonItem class="key" variant="text" />
-              <ElSkeletonItem class="value flex1" variant="text" />
-            </div>
-            <div class="work-detail-item flex flex flex-align-baseline">
-              <ElSkeletonItem class="key" variant="text" />
-              <ElSkeletonItem class="value flex1" variant="text" />
-            </div>
-            <div class="work-detail-item flex flex-align-center">
-              <ElSkeletonItem class="key" variant="text" />
-              <ElSkeletonItem class="value flex1" variant="text" />
-            </div>
-          </div>
-          <div class="work-deail-section">
-            <div class="work-detail-item flex flex-align-center">
-              <ElSkeletonItem class="key" variant="text" />
-              <ElSkeletonItem class="value flex1" variant="text" />
-            </div>
-            <div class="work-detail-item flex flex-align-center">
-              <ElSkeletonItem class="key" variant="text" />
-              <ElSkeletonItem class="value flex1" variant="text" />
-            </div>
-          </div>
-          <div class="work-deail-section">
-            <div class="work-detail-item flex flex-align-center">
-              <ElSkeletonItem class="key" variant="text" />
-              <ElSkeletonItem class="value flex1" variant="text" />
-            </div>
-            <div class="work-detail-item flex flex-align-center" v-if="nft.val.type === '3'">
-              <ElSkeletonItem class="key" variant="text" />
-              <ElSkeletonItem class="value flex1" variant="text" />
-            </div>
-            <div class="work-detail-item flex flex-align-center" v-else>
-              <ElSkeletonItem class="key" variant="text" />
-              <ElSkeletonItem class="value flex1" variant="text" />
+    <div class="nft-other-msg flex">
+      <div class="description-warp">
+        <div class="nft-other-msg-section" ref="DescriptionWarpRef">
+          <div class="nft-other-msg-item">
+            <div class="title"><ElSkeletonItem :variant="'text'" /></div>
+            <div class="content">
+              <div class="description-list">
+                <div class="description-item flex">
+                  <span class="label"><ElSkeletonItem :variant="'text'"/></span>
+                  <span class="value flex1"><ElSkeletonItem :variant="'text'"/></span>
+                </div>
+                <div class="description-item flex">
+                  <span class="label"><ElSkeletonItem :variant="'text'"/></span>
+                  <span class="value flex1"><ElSkeletonItem :variant="'text'"/></span>
+                </div>
+                <div class="description-item flex">
+                  <span class="label"><ElSkeletonItem :variant="'text'"/></span>
+                  <span class="value flex1 drsc"><ElSkeletonItem :variant="'text'"/></span>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="remark">
-            <div class="remark-item">
-              <ElSkeletonItem variant="text" />
+          <div class="nft-other-msg-item">
+            <div class="title hover flex flex-align-center">
+              <div class="flex1"><ElSkeletonItem :variant="'text'" /></div>
             </div>
-            <div class="remark-item">
-              <ElSkeletonItem variant="text" />
-            </div>
-            <div class="remark-item">
-              <ElSkeletonItem variant="text" />
+          </div>
+        </div>
+      </div>
+
+      <div class="flex1">
+        <div class="nft-other-msg-section flex flex-v" :style="{ height: recordWarpHeight + 'px' }">
+          <div class="nft-other-msg-item flex1 flex flex-v">
+            <div class="title"><ElSkeletonItem :variant="'text'" /></div>
+            <div class="content flex1 flex flex-v">
+              <NFTDetailRecord genesis="" codehash="" token-index="" />
             </div>
           </div>
         </div>
@@ -118,5 +89,16 @@
     </div>
   </div>
 </template>
+<script lang="ts" setup>
+import NFTCover from '@/components/NFTCover/NFTCover.vue'
+import { onMounted, ref } from 'vue'
+import NFTDetailRecord from './components/NFTDetailRecord.vue'
 
+const DescriptionWarpRef = ref()
+const recordWarpHeight = ref(0)
+
+onMounted(() => {
+  recordWarpHeight.value = DescriptionWarpRef.value.offsetHeight
+})
+</script>
 <style lang="scss" scoped src="./DetailSkeleton.scss"></style>

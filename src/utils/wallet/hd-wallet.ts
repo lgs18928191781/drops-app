@@ -1241,6 +1241,7 @@ export class HdWallet {
     chain?: HdWalletChain
   }) {
     return new Promise<UtxoItem>(async (resolve, reject) => {
+      debugger
       try {
         // 默认  outPutIndex = changeIndex
         if (typeof params?.outPutIndex === 'undefined') {
@@ -1271,6 +1272,7 @@ export class HdWallet {
           txId: params.tx.id,
           address: OutPut.script.toAddress(this.network).toString(),
         })
+        debugger
         resolve({
           address: OutPut.script.toAddress(this.network).toString(),
           satoshis: OutPut.satoshis,
@@ -1569,6 +1571,7 @@ export class HdWallet {
   public getNftManager = (): NftManager => {
     const nftManager = new NftManager({
       apiTarget: API_TARGET.MVC,
+      apiHost: process.env.VITE_META_SV_API,
       // @ts-ignore
       network: this.network,
       purse: this.wallet!.deriveChild(0)

@@ -135,6 +135,10 @@ html.dark {
         .el-input-group__append {
             box-shadow: 3px 3px 0 var(--faded-border-color);
             border: var(--el-border-width) solid var(--faded-border-color);
+
+            .el-input__wrapper {
+                border: none;
+            }
         }
     }
 
@@ -166,7 +170,8 @@ html.dark {
 }
 
 .el-form-item__error {
-    display: none;
+    margin: 5px;
+    position: static;
 }
 
 .el-dialog {
@@ -267,9 +272,7 @@ html.dark {
 
     }
 
-    .el-loading-mask {
-        box-shadow: 3px 3px 0 var(--el-mask-color);
-    }
+    .el-loading-mask {}
 
     &.metaname {
         --el-dialog-border-radius: 12px;

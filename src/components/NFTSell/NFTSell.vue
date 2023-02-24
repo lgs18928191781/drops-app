@@ -15,17 +15,28 @@
     >
       <NFTMsgVue :nft="nft" />
 
-      <ElForm :model="form" :rules="rule">
+      <ElForm :model="form" :rules="rule" ref="FormRef">
         <ElFormItem prop="sellPrice">
           <ElInput
             type="number"
             v-model="form.sellPrice"
             :placeholder="$t('NFT.Set selling price')"
             @change="setPrice"
-          />
+          >
+            <template #append>
+              <ElSelect v-model="unit" @change="onChangeUnit">
+                <ElOption
+                  v-for="item in units"
+                  :key="item.rate"
+                  :label="item.value"
+                  :value="item.value"
+                />
+              </ElSelect>
+            </template>
+          </ElInput>
         </ElFormItem>
 
-        <div class="price-info-list">
+        <!-- <div class="price-info-list">
           <div class="price-info-item flex flex-align-center">
             <div class="label flex1">{{ $t('NFT.Set actual income') }}</div>
             <div class="value flex flex-align-center">
@@ -57,7 +68,7 @@
               {{ rootStore.currentPrice }}
             </div>
           </div>
-        </div>
+        </div> -->
       </ElForm>
 
       <div class="operate">
@@ -83,7 +94,8 @@ import { useI18n } from 'vue-i18n'
 import NFTCoverVue from '../NFTCover/NFTCover.vue'
 import NFTMsgVue from '../NFTMsg/NFTMsg.vue'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
-import { NodeName } from '@/enum'
+import { NodeName, SdkPayType } from '@/enum'
+import { FormInstance } from 'element-plus'
 
 const props = defineProps<{
   modelValue: boolean
@@ -94,6 +106,18 @@ const emit = defineEmits(['update:modelValue', 'success'])
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const i18n = useI18n()
+const minSatoshi = 22000
+const FormRef = ref<FormInstance>()
+
+enum Unit {
+  Space = 'SPACE',
+  Satoshi = 'Satoshi',
+}
+const units = [
+  { value: Unit.Space, rate: Math.pow(10, -8), toFixed: 8 },
+  { value: Unit.Satoshi, rate: Math.pow(10, 8), toFixed: 0 },
+]
+const unit = ref(Unit.Space)
 const form = reactive({
   sellPrice: '',
   actualincomePrice: '',
@@ -114,6 +138,20 @@ const rule = {
     {
       required: true,
       message: i18n.t('NFT.Set selling price'),
+      trigger: 'blur',
+    },
+    {
+      required: true,
+      validator: (rule: any, value: any, callback: any) => {
+        const minPrice = new Decimal(minSatoshi)
+          .div(unit.value === Unit.Satoshi ? 1 : Math.pow(10, 8))
+          .toNumber()
+        if (new Decimal(value).toNumber() < minPrice) {
+          callback(new Error(i18n.t('NFT.Selling price must be greater than ') + minPrice))
+        } else {
+          callback()
+        }
+      },
       trigger: 'blur',
     },
   ],
@@ -168,17 +206,9 @@ function getyExtraFee() {
 }
 
 function setPrice() {
-  let price = new Decimal(form.sellPrice).toNumber()
-  if (price < 0.01) price = 0.01
-  form.sellPrice = new Decimal(price).toFixed(2)
-  form.actualincomePrice = new Decimal(form.sellPrice)
-    .div(
-      new Decimal(extraFee.val!.platformPercentage)
-        .plus(extraFee.val!.royaltyPercentage)
-        .plus(1)
-        .toNumber()
-    )
-    .toFixed(2)
+  let price = new Decimal(form.sellPrice)
+  const uninItem = units.find(item => item.value === unit.value)
+  form.sellPrice = price.toFixed(uninItem!.toFixed)
 }
 
 function setSellPrice() {
@@ -191,59 +221,94 @@ function setSellPrice() {
     .toFixed(2)
 }
 
-async function submitForm() {
-  if (props.nft.nftCanSellTimestamp > new Date().getTime()) {
-    return ElMessage.error(
-      `此NFT冻结到 ${dateTimeFormat(props.nft.nftCanSellTimestamp)}, 才可上架销售`
-    )
+function onChangeUnit() {
+  if (form.sellPrice) {
+    const uninItem = units.find(item => item.value === unit.value)
+    form.sellPrice = new Decimal(form.sellPrice).mul(uninItem!.rate).toFixed(uninItem!.toFixed)
   }
-  try {
-    loading.value = true
-    const getAddressRes = await GetLegalRecevierAddress()
-    if (getAddressRes.code === 0) {
-      const transferNFTRes = await userStore.showWallet!.createBrfcChildNode({
-        nodeName: NodeName.NftTransfer,
-        data: JSON.stringify({
-          receiverAddress: getAddressRes.data.address,
-          tokenIndex: props.nft.nftTokenIndex,
-          codehash: props.nft.nftCodehash,
-          genesis: props.nft.nftGenesis,
-        }),
-      })
-      // const transferNFTRes = await userStore.showWallet!.transferNFT({
-      //   receiverAddress: getAddressRes.data.address,
-      //   tokenIndex: props.nft.nftTokenIndex,
-      //   codehash: props.nft.nftCodehash,
-      //   genesis: props.nft.nftGenesis,
-      // })
-      if (transferNFTRes && transferNFTRes.nft) {
-        const result = await LegalSaleNft({
-          price: new Decimal(form.actualincomePrice).mul(100).toString(),
-          sellDesc: 'ShowV3',
-          txid: transferNFTRes.nft.transfer!.txId,
-        })
-        if (result.code === 0) {
-          emit('success')
-          Mitt.emit(MittEvent.SellNFT, {
-            genesis: props.nft.nftGenesis,
-            codehash: props.nft.nftCodehash,
-            tokenIndex: props.nft.nftTokenIndex,
-            chain: props.nft.nftChain,
-          })
-          emit('update:modelValue', false)
+}
+
+function submitForm() {
+  FormRef.value?.validate(async (valid, fields) => {
+    if (valid) {
+      if (props.nft.nftCanSellTimestamp > new Date().getTime()) {
+        return ElMessage.error(
+          `此NFT冻结到 ${dateTimeFormat(props.nft.nftCanSellTimestamp)}, 才可上架销售`
+        )
+      }
+      try {
+        loading.value = true
+        // 法币上架
+        // const getAddressRes = await GetLegalRecevierAddress()
+        // if (getAddressRes.code === 0) {
+        //   const transferNFTRes = await userStore.showWallet!.createBrfcChildNode({
+        //     nodeName: NodeName.NftTransfer,
+        //     data: JSON.stringify({
+        //       receiverAddress: getAddressRes.data.address,
+        //       tokenIndex: props.nft.nftTokenIndex,
+        //       codehash: props.nft.nftCodehash,
+        //       genesis: props.nft.nftGenesis,
+        //     }),
+        //   })
+        //   if (transferNFTRes && transferNFTRes.nft) {
+        //     const result = await LegalSaleNft({
+        //       price: new Decimal(form.actualincomePrice).mul(100).toString(),
+        //       sellDesc: 'ShowV3',
+        //       txid: transferNFTRes.nft.transfer!.txId,
+        //     })
+        //     if (result.code === 0) {
+        //       emit('success')
+        //       Mitt.emit(MittEvent.SellNFT, {
+        //         genesis: props.nft.nftGenesis,
+        //         codehash: props.nft.nftCodehash,
+        //         tokenIndex: props.nft.nftTokenIndex,
+        //         chain: props.nft.nftChain,
+        //       })
+        //       emit('update:modelValue', false)
+        //       loading.value = false
+        //       ElMessage.success('上架成功')
+        //     } else {
+        //       Error(result.error)
+        //     }
+        //   } else {
+        //     loading.value = false
+        //   }
+        // }
+
+        // Space 上架
+        const sellPriceSatoshi = new Decimal(form.sellPrice)
+          .mul(unit.value === Unit.Satoshi ? 1 : Math.pow(10, 8))
+          .toNumber()
+        const res = await userStore.showWallet.createBrfcChildNode(
+          {
+            nodeName: NodeName.NftSell,
+            data: JSON.stringify({
+              codehash: props.nft.nftCodehash, // nft的codehash
+              genesis: props.nft.nftGenesis, // nft的genesisId
+              tokenIndex: props.nft.nftTokenIndex, // nft的tokenIndex
+              price: sellPriceSatoshi, // nft的出售价格 单位聪
+              sensibleId: props.nft.nftSensibleId, // nft的sensibleId
+              sellDesc: 'ShowV3',
+            }),
+          },
+          {
+            payType: SdkPayType.ME,
+          }
+        )
+        if (res) {
           loading.value = false
+          emit('success')
+          emit('update:modelValue', false)
           ElMessage.success('上架成功')
         } else {
-          Error(result.error)
+          loading.value = false
         }
-      } else {
+      } catch (error) {
         loading.value = false
+        ElMessage.error((error as any).message)
       }
     }
-  } catch (error) {
-    loading.value = false
-    ElMessage.error((error as any).message)
-  }
+  })
 }
 
 getyExtraFee()

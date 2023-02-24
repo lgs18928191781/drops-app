@@ -167,7 +167,6 @@ import {
   signature,
 } from '@/utils/wallet/hd-wallet'
 import { encode,decode } from 'js-base64'
-import { bsv } from 'sensible-sdk'
 import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { openLoading } from '@/utils/util'

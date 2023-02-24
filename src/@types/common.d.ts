@@ -421,6 +421,22 @@ declare interface GenesisNFTItem {
   nftIssueMetaTxId: string
   nftIssueVersion: string
   nftIssuer: string
+  nftIssueUserInfo: {
+    address: string
+    avatarImage: string
+    avatarTxId: string
+    avatarType: string
+    coverPublicKey: string
+    coverType: string
+    coverUrl: string
+    infoAvatarTxIdOssUrl: string
+    metaIdTimestamp: number
+    metaName: string
+    name: string
+    nameType: string
+    nftNamePublicKey: string
+    publicKey: string
+  }
   nftLegalPrice: number
   nftLegalSymbol: string
   nftLegalUuid: string
@@ -428,7 +444,7 @@ declare interface GenesisNFTItem {
   nftMinBidIncrease: string
   nftMinBidIncreaseInt: number
   nftName: string
-  nftOwnerUserInfo?: {
+  nftOwnerUserInfo: {
     address: string
     avatarTxId: string
     avatarType: string
@@ -481,19 +497,37 @@ declare interface NodeTransactions {
   subscribeId?: string
   nft?: {
     issue?: {
-      transaction: bsv.Transaction
+      transaction: mvc.Transaction
       txId: string
       tokenIndex: string
     }
     genesis?: {
-      transaction: bsv.Transaction
+      transaction: mvc.Transaction
       genesis: string
       codehash: string
       sensibleId: string
       txId: string
     }
     transfer?: {
-      transaction: bsv.Transaction
+      transaction: mvc.Transaction
+      txId: string
+    }
+    sell?: {
+      sellTransaction: mvc.Transaction
+      sellTxId: string
+      transaction: string
+      txId: string
+    }
+    cancel?: {
+      unlockCheckTransaction: mvc.Transaction
+      unlockCheckTxId: string
+      transaction: mvc.Transaction
+      txId: string
+    }
+    buy?: {
+      unlockCheckTransaction: mvc.Transaction
+      unlockCheckTxId: string
+      transaction: mvc.Transaction
       txId: string
     }
   }

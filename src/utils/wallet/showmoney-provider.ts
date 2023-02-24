@@ -510,8 +510,24 @@ export default class ShowmoneyProvider {
   }
 
   async getPayMailAddress(email: string) {
-    return axios.post('https://api.showmoney.app' + '/paymail/v2/paymail/address', {
-      data: JSON.stringify({ Email: email }),
+    return new Promise<string>(async (resolve, reject) => {
+      const res: any = axios
+        .post('https://api.showmoney.app' + '/paymail/v2/paymail/address', {
+          Email: email,
+        })
+        .catch(error => {
+          if (error.response?.data?.data) {
+            reject({
+              code: error.response.data.code,
+              message: error.response.data.data,
+            })
+          } else {
+            reject(error)
+          }
+        })
+      if (res?.code === 0) {
+        resolve(res.data)
+      }
     })
   }
 

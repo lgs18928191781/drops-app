@@ -7,12 +7,7 @@
     @close="emit('update:modelValue', false)"
     :show-close="!loading"
   >
-    <div
-      class="nft-buy"
-      v-loading="loading"
-      :element-loading-svg="LoadingTEXT"
-      :element-loading-text="$t('Loading')"
-    >
+    <div class="nft-buy">
       <NFTMsgVue :nft="nft" />
 
       <div class="cont-warp">
@@ -37,32 +32,19 @@
                   />
                 </div>
                 <div class="metaid">
-                  {{ transferUser.val!.metaId.slice(0,6)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                  }}...{{ transferUser.val!.metaId.slice(-6)  }}
+                  {{ transferUser.val!.metaId.slice(0,6)}}
+                  ...
+                  {{ transferUser.val!.metaId.slice(-6) }}
                 </div>
               </template>
             </div>
           </div>
 
           <div class="operate flex flex-align-center flex-pack-center" @click="transfer">
-            <a class="main-border flex1" @click="transferUser.val = null"> {{ $t('Cancel') }}</a>
-            <a class="main-border primary flex1" @click="confirmTransfer">
+            <a class="main-border flex1" @click="cancelTransfer" :class="{ faded: loading }">
+              {{ $t('Cancel') }}</a
+            >
+            <a class="main-border primary flex1" @click="confirmTransfer" v-loading="loading">
               {{ $t('NFT.Confirm Transfer') }}</a
             >
           </div>
@@ -70,18 +52,22 @@
 
         <template v-else>
           <ElForm :label-position="'top'">
-            <ElFormItem
-              :label="
-                nft.nftChain === 'mvc'
-                  ? $t('NFT.Transfer MetaId')
-                  : nft.nftChain + '&nbsp;' + $t('Address')
-              "
-            >
-              <ElInput type="text" v-model="form.target" />
+            <ElFormItem :label="$t('NFT.Transfer Account')">
+              <ElInput
+                type="text"
+                v-model="form.target"
+                placeholder="MetaID/Address/Paymail/MetaName"
+              />
             </ElFormItem>
           </ElForm>
           <div class="operate  flex flex-align-center flex-pack-center" @click="transfer">
-            <a class="main-border primary flex1">{{ $t('NFT.Transfer') }}</a>
+            <a
+              class="main-border primary flex1"
+              v-loading="loading"
+              :element-loading-svg="LoadingTEXT"
+              :element-loading-text="$t('Loading')"
+              >{{ $t('NFT.Transfer') }}</a
+            >
           </div>
         </template>
       </div>
@@ -97,8 +83,10 @@ import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NFTMsgVue from '../NFTMsg/NFTMsg.vue'
 import { PayPlatformItem, payPlatformList } from '@/config'
-import { GetMetaIdByAddress, GetUserAllInfo } from '@/api/aggregation'
+import { GetMetaIdByAddress, GetMetaNameInfo, GetUserAllInfo } from '@/api/aggregation'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
+import { email } from '@/utils/reg'
+import { mvc } from 'mvc-scrypt/dist'
 
 const props = defineProps<{
   modelValue: boolean
@@ -130,48 +118,89 @@ function choosePayPlatform(item: PayPlatformItem) {
 }
 
 async function transfer() {
-  if (form.target === '') return
-  loading.value = true
+  if (form.target === '' || loading.value) return
 
   if (props.nft.nftChain === 'mvc' || props.nft.nftChain === 'bsv') {
-    let metaId: string = ''
-    if (form.target.length === 64) {
-      // MetaId
-      metaId = form.target
-    } else {
-      const res = await GetMetaIdByAddress(form.target).catch(() => {
-        metaId = ''
-      })
-      if (res?.code === 0) {
-        metaId = res.data
+    loading.value = true
+    try {
+      let metaId: string = ''
+      let address: string = ''
+      if (email.test(form.target)) {
+        const res = await userStore.showWallet.wallet?.provider.getPayMailAddress(form.target)
+        if (res) {
+          address = res
+        }
       }
-    }
-    if (metaId === '') {
-      // @ts-ignore
-      transferUser.val = {
-        metaId: '',
-        address: form.target,
-        name: '',
-        avatarImage: '',
+
+      let isAddress: any = false
+
+      try {
+        // @ts-ignore
+        isAddress = mvc.Address._transformString(form.target)
+        if (isAddress) {
+          address = form.target
+        }
+      } catch (error) {
+        isAddress = false
       }
-      form.target = ''
-      loading.value = false
-    } else {
-      const res = await GetUserAllInfo(metaId!).catch(error => {
-        ElMessage.error(error.message)
-        loading.value = false
-      })
-      if (res?.code === 0) {
-        transferUser.val = res.data
+
+      if (form.target.length === 64 && !email.test(form.target) && !isAddress) {
+        // MetaId
+        metaId = form.target
+      }
+
+      if (form.target.length !== 64 && !email.test(form.target) && !isAddress) {
+        const res = await GetMetaNameInfo(form.target.replace('.metaid', ''))
+        if (res.code === 0) {
+          if (res.data.resolveAddress && res.data.ownerAddress) {
+            address = res.data.resolveAddress
+          } else {
+            throw new Error(i18n.t('NFT.TransferToMetaNameNotMatch'))
+          }
+        }
+      }
+
+      if (address) {
+        const res = await GetMetaIdByAddress(address).catch(() => {
+          metaId = ''
+        })
+        if (res?.code === 0) {
+          metaId = res.data
+        }
+      }
+
+      if (metaId === '') {
+        // @ts-ignore
+        transferUser.val = {
+          metaId: '',
+          address: address,
+          name: email.test(form.target) ? form.target : '',
+          avatarImage: '',
+        }
         form.target = ''
         loading.value = false
+      } else {
+        const res = await GetUserAllInfo(metaId!).catch(error => {
+          ElMessage.error(error.message)
+          loading.value = false
+        })
+        if (res?.code === 0) {
+          transferUser.val = res.data
+          form.target = ''
+          loading.value = false
+        }
       }
+    } catch (error) {
+      ElMessage.error((error as any).message)
+      loading.value = false
     }
   } else {
+    return ElMessage.info(i18n.t('NFT.Not Support Current Chain NFT Transfer'))
   }
 }
 
 async function confirmTransfer() {
+  if (loading.value) return
   loading.value = true
   const res = await userStore.showWallet
     .createBrfcChildNode(
@@ -217,6 +246,11 @@ async function confirmTransfer() {
   //   emit('update:modelValue', false)
   //   loading.value = false
   // }
+}
+
+function cancelTransfer() {
+  if (loading.value) return
+  transferUser.val = null
 }
 </script>
 

@@ -162,3 +162,30 @@ export const GetMetaNameConfig = (): Promise<MetaNameConfig> => {
 export const GetCertifiedMetaId = (): Promise<{ data: { list: string[] } }> => {
   return Strapi.get('/certified-meta-id')
 }
+
+export interface NFTFeeInfo {
+  reated_at: string
+  firstSellPlatformFeeRate: number
+  firstSellRoyaltyFeeRate: number
+  id: number
+  network: string
+  platformAddress: string
+  platformFeeRate: number
+  published_at: string
+  royaltyFeeRate: number
+  updated_at: string
+}
+export const GetNFTFee = (): Promise<NFTFeeInfo> => {
+  return new Promise(async (resolve, reject) => {
+    const res: any = await Strapi.get('/nft-fees', {
+      params: {
+        network: import.meta.env.VITE_NET_WORK,
+      },
+    }).catch(error => {
+      reject(error)
+    })
+    if (res) {
+      resolve(res[0])
+    }
+  })
+}

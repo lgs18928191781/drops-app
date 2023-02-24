@@ -158,7 +158,7 @@ const apps = reactive([
 if (import.meta.env.MODE !== 'mainnet') {
   apps.push({
     icon: 'market',
-    path: '/nft',
+    path: '/nft/collection/detail/MetaName',
     title: () => i18n.t('NFT.NFT Market'),
     symbol: 'nft',
   })

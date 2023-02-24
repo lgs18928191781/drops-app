@@ -41,7 +41,7 @@
             <div class="flex1">
               <div class="statiscs-list">
                 <div class="statiscs-item" v-for="(item, index) in statiscs" :key="index">
-                  <div class="flex flex-align-center flex-pack-end">
+                  <div class="flex flex-align-center flex-pack-center">
                     <div class="statiscs-item-warp">
                       <div class="value">{{ item.value() }}</div>
                       <div class="label">{{ item.name() }}</div>
@@ -169,9 +169,10 @@ import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import NFTBuy from '@/components/NFTBuy/NFTBuy.vue'
 import { CollectionOrderType, CollectionSortType, NFTSellType } from '@/enum'
 import CollectionFilterWarp from '@/views/nft/components/CollectionFilterWarp.vue'
-import CollectionSkeleton from '@/views/nft/CollectionSkeleton.vue'
+import CollectionSkeleton from '@/views/nft/collection/CollectionSkeleton.vue'
 import IsNull from '@/components/IsNull/IsNull.vue'
 import { isMobile } from '@/stores/root'
+import { satoshi } from '@/utils/filters'
 
 const i18n = useI18n()
 const route = useRoute()
@@ -195,23 +196,23 @@ const tabActive = ref(NFTCollectTab.CollectionWorks)
 const statiscs = reactive([
   {
     name: () => i18n.t('NFT.Initial Price'),
-    value: () => '2.38 Space',
+    value: () => '--',
   },
   {
     name: () => i18n.t('NFT.Floor Price'),
-    value: () => '2.38 Space',
+    value: () => '--',
   },
   {
     name: () => i18n.t('NFT.Highest Price'),
-    value: () => '2.38 Space',
+    value: () => '--',
   },
   {
     name: () => i18n.t('NFT.Supply'),
-    value: () => '2.38 Space',
+    value: () => '--',
   },
   {
     name: () => i18n.t('NFT.Owner'),
-    value: () => '2.38 Space',
+    value: () => '--',
   },
   {
     name: () => i18n.t('NFT.Blockchain'),
@@ -317,8 +318,8 @@ function getDatas(isCover = false) {
       sortType: sort.sortType,
       orderType: sort.orderType,
       sellType: sellType.value,
-      startPrice: priceRange[0],
-      endPrice: priceRange[1],
+      startPrice: priceRange[0] ? satoshi(priceRange[0]).toString() : '',
+      endPrice: priceRange[1] ? satoshi(priceRange[1]).toString() : '',
       ...pagination,
     }).catch(error => {
       ElMessage.error(error.message)
