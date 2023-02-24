@@ -822,7 +822,7 @@ async function connectWalletConnect(isUpdate: boolean = false) {
               rootStore.$patch({ isShowLogin: false })
               await onThreePartLinkSuccess({
                 signAddressHash: res,
-                address: accounts[0],
+                address: address,
                 walletOrigin: WalletOrigin.WalletConnect,
               })
             }
@@ -894,7 +894,7 @@ async function connectWalletConnect(isUpdate: boolean = false) {
         rootStore.$patch({ isShowLogin: false })
         await onThreePartLinkSuccess({
           signAddressHash: res,
-          address: accounts[0],
+          address: address,
           walletOrigin: WalletOrigin.WalletConnect,
         })
       }

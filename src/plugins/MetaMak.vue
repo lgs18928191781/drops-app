@@ -193,7 +193,7 @@ async function startConnect(isUpdatePlan:boolean=false) {
                 })
 
                 if (result) {
-                    emit('success',{ signAddressHash:result, address: res.ethAddress});
+                    emit('success',{ signAddressHash:result, address: address});
                 }
             } else {
                 ElMessageBox.confirm(i18n.t('MetaMak.Chain Network Error Tips') + `${import.meta.env.VITE_ETH_CHAIN}`, i18n.t('MetaMak.Chain Network Error'), {
