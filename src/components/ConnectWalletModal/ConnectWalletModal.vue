@@ -780,7 +780,7 @@ async function connectWalletConnect(isUpdate: boolean = false) {
             ],
           })
           .then(async () => {
-            address = accounts[0].toLocaleLowerCase()
+            address = isUpdate ? accounts[0] : accounts[0].toLocaleLowerCase()
             message = isUpdate
               ? import.meta.env.MODE == 'gray'
                 ? `0x${ethers.utils.sha256(ethers.utils.toUtf8Bytes(accounts[0])).split('0x')[1]}`
@@ -801,8 +801,8 @@ async function connectWalletConnect(isUpdate: boolean = false) {
                   )}`
             }
             res = await connector.signPersonalMessage([
-              address,
-              message,
+              isUpdate ? message : address,
+              isUpdate ? address : message,
               // `${ethers.utils
               //   .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
               //   .slice(2, -1)
@@ -829,7 +829,7 @@ async function connectWalletConnect(isUpdate: boolean = false) {
       })
   } else {
     try {
-      address = accounts[0].toLocaleLowerCase()
+      address = isUpdate ? accounts[0] : accounts[0].toLocaleLowerCase()
       message = isUpdate
         ? import.meta.env.MODE == 'gray'
           ? `0x${ethers.utils.sha256(ethers.utils.toUtf8Bytes(address)).split('0x')[1]}`
@@ -851,8 +851,8 @@ async function connectWalletConnect(isUpdate: boolean = false) {
             )}`
       }
       res = await connector.signPersonalMessage([
-        address,
-        message,
+        isUpdate ? message : address,
+        isUpdate ? address : message,
         // `0x${ethers.utils
         //   .sha256(ethers.utils.toUtf8Bytes(accounts[0]))
         //   .split('0x')[1]
