@@ -78,10 +78,7 @@ const userStore = useUserStore()
 const i18n = useI18n()
 
 const isMyNFT = computed(() => {
-  return IsMyNFT({
-    ...props.nft,
-    nftChain: 'mvc',
-  })
+  return IsMyNFT(props.nft)
 })
 
 const isSale = computed(() => {
@@ -138,7 +135,7 @@ function toNFT() {
   router.push({
     name: 'nftDetail',
     params: {
-      chain: 'mvc',
+      chain: props.nft.nftChain,
       genesis: props.nft.nftGenesis,
       tokenIndex: props.nft.nftTokenIndex,
       codehash: props.nft.nftCodehash ? props.nft.nftCodehash : props.nft.nftChain,

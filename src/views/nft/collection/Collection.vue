@@ -159,7 +159,7 @@
       <!-- NFTBuy -->
       <NFTBuy :nft="nft.val!" v-model="isShowNftBuy" @success="refreshDatas" />
       <!-- NFTSlae -->
-      <NFTSellVue :nft="nft.val!" v-model="isShowNftSale" @success="refreshDatas" />
+      <NFTSellVue :nft="nft.val!" v-model="isShowNftSale" @success="onSaleSuccess" />
     </template>
   </ElSkeleton>
 </template>
@@ -379,13 +379,34 @@ function refreshDatas() {
 async function onOffsale(item: GenesisNFTItem) {
   const result = await NFTOffSale(item)
   if (result) {
-    nft.val!.nftSellState = 1
+    const index = nfts.findIndex(
+      _item =>
+        _item.nftGenesis === item.nftGenesis &&
+        _item.nftCodehash === item.nftCodehash &&
+        _item.nftTokenIndex === item.nftTokenIndex
+    )
+    if (index !== -1) {
+      nfts[index].nftSellState = 1
+      nfts[index].nftPrice = 0
+    }
   }
 }
 
 function onSale(item: GenesisNFTItem) {
   nft.val = item
   isShowNftSale.value = true
+}
+
+function onSaleSuccess(item: GenesisNFTItem) {
+  const index = nfts.findIndex(
+    item =>
+      item.nftGenesis === nft.val!.nftGenesis &&
+      item.nftCodehash === nft.val!.nftCodehash &&
+      item.nftTokenIndex === nft.val!.nftTokenIndex
+  )
+  if (index !== -1) {
+    nfts[index] = item
+  }
 }
 
 getCollection().then(() => {
