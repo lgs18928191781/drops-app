@@ -739,9 +739,12 @@ export const GetMetaNameInfo = (
   return aggregation.get(`/v2/app/metaname/indexer/info`, { params: { name } })
 }
 
-export const GeUserSaleNFTs = (
-  name: string
-): Promise<{
+export const GeUserSaleNFTs = (params: {
+  metaId: string
+  page: number
+  pageSize: number
+  chain: string
+}): Promise<{
   code: number
   data: {
     name: string
@@ -749,7 +752,8 @@ export const GeUserSaleNFTs = (
     ownerAddress: string
   }
 }> => {
-  return aggregation.get(`/v2/app/metaname/indexer/info`, { params: { name } })
+  const { metaId, ..._params } = params
+  return aggregation.get(`/v2/app/show/market/user/${metaId}`, { params: { ..._params } })
 }
 
 export const Search = (kw: string): Promise<SearchRes> => {
