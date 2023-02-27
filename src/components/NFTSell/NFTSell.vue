@@ -316,8 +316,6 @@ function submitForm() {
     }
   })
 }
-
-getyExtraFee()
 </script>
 
 <style lang="scss" scoped src="./NFTSell.scss"></style>
