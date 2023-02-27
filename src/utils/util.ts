@@ -1147,6 +1147,8 @@ export function NFTOffSale(nft: GenesisNFTItem) {
           loading.close()
           ElMessage.success(i18n.global.t('NFT.Offsale Success'))
           resolve(true)
+        } else if (res === null) {
+          loading.close()
         }
       })
       .catch(error => {

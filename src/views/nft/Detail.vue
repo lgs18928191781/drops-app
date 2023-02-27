@@ -284,6 +284,7 @@ import NFTDetailRecord from './components/NFTDetailRecord.vue'
 import NFTItem from '@/components/NFTItem/NFTItem.vue'
 import DetailSkeleton from './DetailSkeleton.vue'
 import { GetCollectByTopicType } from '@/api/strapi'
+import { IsMyNFT, IsSale } from '@/utils/nft'
 
 const isShowSkeleton = ref(true)
 const isShowDrscDetail = ref(false)
@@ -301,35 +302,11 @@ const collection: { val: null | Collect } = reactive({ val: null })
 const buyNFT: { val: null | GenesisNFTItem } = reactive({ val: null })
 
 const isSale = computed(() => {
-  let result = false
-  if (nft.val!) {
-    if (nft.val.nftIsLegal) {
-      if (nft.val.nftSellState === 0) {
-        result = true
-      }
-    } else {
-      if (nft.val.nftSellState === 0 && nft.val.nftIsReady) {
-        result = true
-      }
-    }
-  }
-  return result
+  return IsSale(nft.val)
 })
 
 const isMyNFT = computed(() => {
-  let result = false
-  if (nft.val && userStore.isAuthorized) {
-    if (nft.val.nftChain === Chains.MVC || nft.val.nftChain === Chains.BSV) {
-      if (nft.val.nftOwnerMetaId === userStore.user?.metaId) {
-        result = true
-      }
-    } else {
-      if (nft.val.nftOwnerAddress === userStore.user?.evmAddress) {
-        result = true
-      }
-    }
-  }
-  return result
+  return IsMyNFT(nft.val)
 })
 
 const nft: { val: GenesisNFTItem | null } = reactive({

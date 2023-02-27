@@ -162,8 +162,6 @@ import {
   encryptMnemonic,
   HdWallet,
   hdWalletFromMnemonic,
-  MetaIdTag,
-  Network,
   signature,
 } from '@/utils/wallet/hd-wallet'
 import { encode,decode } from 'js-base64'

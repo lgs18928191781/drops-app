@@ -405,14 +405,14 @@ declare interface GenesisNFTItem {
   nftGenesisCertificationName: string
   nftGenesisCertificationType: number
   nftGenesisTxId: string
-  nftHasCompound: true
-  nftHasDonate: true
-  nftHasLike: true
+  nftHasCompound: boolean
+  nftHasDonate: boolean
+  nftHasLike: boolean
   nftIcon: string
-  nftIsFirstSell: true
-  nftIsLegal: true
-  nftIsOrderLock: true
-  nftIsReady: true
+  nftIsFirstSell: boolean
+  nftIsLegal: boolean
+  nftIsOrderLock: boolean
+  nftIsReady: boolean
   nftIssueAddress: string
   nftIssueAvatarTxId: string
   nftIssueAvatarType: string

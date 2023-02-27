@@ -32,6 +32,14 @@
             background: rgba(var(--themeBgSecondColorRgb), 0.5);
         }
 
+        .td {
+            margin-right: 5px;
+
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+
         .top-icon {
             position: absolute;
             color: #909399;

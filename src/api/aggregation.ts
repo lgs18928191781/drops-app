@@ -738,3 +738,16 @@ export const GetMetaNameInfo = (
 }> => {
   return aggregation.get(`/v2/app/metaname/indexer/info`, { params: { name } })
 }
+
+export const GeUserSaleNFTs = (
+  name: string
+): Promise<{
+  code: number
+  data: {
+    name: string
+    resolveAddress: string
+    ownerAddress: string
+  }
+}> => {
+  return aggregation.get(`/v2/app/metaname/indexer/info`, { params: { name } })
+}

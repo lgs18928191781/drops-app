@@ -49,7 +49,7 @@
         </div>
 
         <div class="main-border primary" @click.stop="btnFun">
-          {{ isCanBuy ? $t('NFT.Buy Now') : $t('NFT.Discover More') }}
+          {{ btnText }}
         </div>
       </div>
     </template>
@@ -59,18 +59,32 @@
 <script setup lang="ts">
 import NFTCover from '../NFTCover/NFTCover.vue'
 import Amount from '../Amount/Amount.vue'
-import { NFTSellState, ToCurrency } from '@/enum'
+import { Chains, NFTSellState, ToCurrency } from '@/enum'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import NFTItemSkeleton from './NFTItemSkeleton.vue'
+import { useUserStore } from '@/stores/user'
+import { IsMyNFT, IsSale } from '@/utils/nft'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   nft: GenesisNFTItem
   loading?: boolean
 }>()
 
-const emit = defineEmits(['buy'])
+const emit = defineEmits(['buy', 'offsale', 'sale'])
 const router = useRouter()
+const userStore = useUserStore()
+const i18n = useI18n()
+
+const isMyNFT = computed(() => {
+  return IsMyNFT(props.nft)
+})
+
+const isSale = computed(() => {
+  return IsSale(props.nft)
+})
+
 const isCanBuy = computed(() => {
   let result = false
   if (props.nft.nftSellState === NFTSellState.Sale) {
@@ -85,11 +99,35 @@ const isCanBuy = computed(() => {
   return result
 })
 
-function btnFun() {
-  if (isCanBuy.value) {
-    emit('buy', props.nft)
+const btnText = computed(() => {
+  if (isMyNFT.value) {
+    if (isSale.value) {
+      return i18n.t('NFT.Off Sale')
+    } else {
+      return i18n.t('NFT.Sale')
+    }
   } else {
-    toNFT()
+    if (isSale.value) {
+      return i18n.t('NFT.Buy Now')
+    } else {
+      return i18n.t('NFT.Discover More')
+    }
+  }
+})
+
+function btnFun() {
+  if (isMyNFT.value) {
+    if (isSale.value) {
+      emit('offsale', props.nft)
+    } else {
+      emit('sale', props.nft)
+    }
+  } else {
+    if (isSale.value) {
+      emit('buy', props.nft)
+    } else {
+      toNFT()
+    }
   }
 }
 
@@ -97,7 +135,7 @@ function toNFT() {
   router.push({
     name: 'nftDetail',
     params: {
-      chain: 'mvc',
+      chain: props.nft.nftChain,
       genesis: props.nft.nftGenesis,
       tokenIndex: props.nft.nftTokenIndex,
       codehash: props.nft.nftCodehash ? props.nft.nftCodehash : props.nft.nftChain,

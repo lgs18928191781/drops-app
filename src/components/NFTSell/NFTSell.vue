@@ -297,8 +297,14 @@ function submitForm() {
         )
         if (res) {
           loading.value = false
-          emit('success')
+          emit('success', {
+            ...props.nft,
+            nftPrice: sellPriceSatoshi,
+            nftSellState: 0,
+            nftIsReady: true,
+          })
           emit('update:modelValue', false)
+          form.sellPrice = ''
           ElMessage.success('上架成功')
         } else {
           loading.value = false
