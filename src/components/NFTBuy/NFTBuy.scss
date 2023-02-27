@@ -88,3 +88,73 @@
     height: 56px;
     cursor: pointer;
 }
+
+
+.success-result {
+    padding: 30px;
+
+    .success-icon {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: rgba(255, 220, 81, 0.1);
+        margin: 0 auto;
+
+
+        .success-icon-warp {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--color-primary);
+
+            .icon {
+                width: 46px;
+                height: 46px;
+                color: var(--themeBtnTextColor);
+
+                :deep(use) {
+                    stroke-width: 2px;
+                    stroke: var(--themeBtnTextColor);
+                }
+            }
+        }
+    }
+
+    .title {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 20px;
+    }
+
+    .tips {
+        text-align: center;
+        font-size: 16px;
+        opacity: 0.5;
+        margin-top: 18px;
+    }
+
+    .main-border {
+        margin-top: 30px;
+        font-size: 16px;
+        line-height: 24px;
+        padding: 13px 0;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .later {
+        margin-top: 20px;
+        font-size: 16px;
+        text-align: center;
+
+        a {
+            opacity: 0.5;
+            cursor: pointer;
+
+            &:hover {
+                opacity: 1;
+                color: var(--color-hover);
+            }
+        }
+    }
+}

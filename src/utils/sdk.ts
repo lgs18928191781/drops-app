@@ -807,7 +807,8 @@ export class SDK {
               params.nodeName === NodeName.NftTransfer ||
               params.nodeName === NodeName.NftSell ||
               params.nodeName === NodeName.NftCancel ||
-              params.nodeName === NodeName.nftBuy
+              params.nodeName === NodeName.nftBuy ||
+              params.nodeName === NodeName.NftGenesis
             ) {
               // NFT genesis/transfer
               if (!transactions.nft) transactions.nft = {}
