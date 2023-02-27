@@ -38,12 +38,17 @@ import { initPagination } from '@/config'
 import { computed, reactive, ref } from 'vue'
 import IsNull from '@/components/IsNull/IsNull.vue'
 import NFTBuyVue from '@/components/NFTBuy/NFTBuy.vue'
+import { GeUserSaleNFTs } from '@/api/aggregation'
+import { useRoute } from 'vue-router'
+import { Chains } from '@/enum'
+import NFTItemVue from '@/components/NFTItem/NFTItem.vue'
 
 const nfts: GenesisNFTItem[] = reactive([])
 const isSkeleton = ref(true)
-const pagination = reactive({ ...initPagination })
+const pagination = reactive({ ...initPagination, pageSize: 12 })
 const nft = reactive({ val: null as null | GenesisNFTItem })
 const isShowNftBuy = ref(false)
+const route = useRoute()
 
 const list = computed(() => {
   if (isSkeleton.value) {
@@ -55,6 +60,11 @@ const list = computed(() => {
 
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, rject) => {
+    const res = await GeUserSaleNFTs({
+      ...initPagination,
+      metaId: route.params.metaId as string,
+      chain: Chains.MVC,
+    })
     if (isCover) nfts.length = 0
     resolve()
   })
@@ -74,6 +84,19 @@ function buyNFT(item: GenesisNFTItem) {
   nft.val = item
   isShowNftBuy.value = true
 }
+
+function getMore() {
+  if (isSkeleton.value || pagination.loading || pagination.nothing) return
+  pagination.loading = true
+  pagination.page++
+  getDatas().then(() => {
+    pagination.loading = false
+  })
+}
+
+getDatas().then(() => {
+  isSkeleton.value = false
+})
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped src="./NFT.scss"></style>
