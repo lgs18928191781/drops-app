@@ -740,7 +740,11 @@
     "Not Support Current Chain NFT Transfer": "Not Support Current Chain NFT Transfer",
     "Selling price must be greater than ": "Selling price must be greater than",
     "OffSaleing": "OffSaleing...",
-    "TransferToMetaNameNotMatch": "The MetaName resolution address is inconsistent with the owner address"
+    "TransferToMetaNameNotMatch": "The MetaName resolution address is inconsistent with the owner address",
+    "Payment Succeeded": "Payment Succeeded!",
+    "Payment Succeeded Tips": "The NFT is in your wallet.",
+    "View Item": "View Item",
+    "Check later": "Check later"
   },
   "My NFT": "My NFT",
   "Done": "Done",

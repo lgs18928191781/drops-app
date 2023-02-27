@@ -7,13 +7,15 @@
       <div class="nft-item" @click="toNFT">
         <NFTCover :cover="[nft.nftIcon]" />
 
-        <div class="name">{{ nft.nftName }}</div>
-        <div class="amount">
-          <template v-if="isCanBuy"> {{ $filters.space(nft.nftPrice) }} Space </template>
+        <div class="name" :class="{ simple: isSimple }">{{ nft.nftName }}</div>
+
+        <div class="token-index">#{{ parseInt(nft.nftTokenIndex) + 1 }}</div>
+        <div class="amount" :class="{ simple: isSimple }">
+          <template v-if="isSale"> {{ $filters.space(nft.nftPrice) }} Space </template>
           <template v-else>--</template>
         </div>
 
-        <div class="user-list">
+        <div class="user-list" v-if="!isSimple">
           <div class="user-item flex flex-align-center">
             <UserAvatar
               :meta-id="nft.nftIssueMetaId"
@@ -24,7 +26,7 @@
               <span class="user-name-warp"
                 ><UserName
                   :name="nft.nftIssuer"
-                  :meta-name="nft.nftIssueUserInfo.metaName"
+                  :meta-name="nft.nftIssueUserInfo?.metaName"
                   :noTag="true"
               /></span>
               <span class="role">({{ $t('NFT.Creater') }})</span>
@@ -40,7 +42,7 @@
               <span class="user-name-warp"
                 ><UserName
                   :name="nft.nftOwnerName"
-                  :meta-name="nft.nftOwnerUserInfo.metaName"
+                  :meta-name="nft.nftOwnerUserInfo?.metaName"
                   :noTag="true"
               /></span>
               <span class="role">({{ $t('NFT.Owner') }})</span>
@@ -70,6 +72,7 @@ import { useI18n } from 'vue-i18n'
 const props = defineProps<{
   nft: GenesisNFTItem
   loading?: boolean
+  isSimple?: boolean
 }>()
 
 const emit = defineEmits(['buy', 'offsale', 'sale'])
@@ -83,20 +86,6 @@ const isMyNFT = computed(() => {
 
 const isSale = computed(() => {
   return IsSale(props.nft)
-})
-
-const isCanBuy = computed(() => {
-  let result = false
-  if (props.nft.nftSellState === NFTSellState.Sale) {
-    if (props.nft.nftIsLegal) {
-      result = true
-    } else {
-      if (props.nft.nftIsReady) {
-        result = true
-      }
-    }
-  }
-  return result
 })
 
 const btnText = computed(() => {

@@ -91,6 +91,37 @@
       />
     </ElSkeleton>
   </ElDialog>
+
+  <ElDialog
+    v-model="isShowSuccess"
+    class="sm none-padding"
+    :close-on-click-modal="false"
+    :title="''"
+    @close="emit('success')"
+    :show-close="true"
+    center
+  >
+    <div class="success-result">
+      <div class="success-icon flex flex-align-center flex-pack-center">
+        <div class="success-icon-warp flex flex-align-center flex-pack-center">
+          <Icon name="check" />
+        </div>
+      </div>
+      <div class="title">
+        {{ $t('NFT.Payment Succeeded') }}
+      </div>
+      <div class="tips">
+        {{ $t('NFT.Payment Succeeded Tips') }}
+      </div>
+
+      <div class="main-border primary" @click="toNFT">
+        {{ $t('NFT.View Item') }}
+      </div>
+      <div class="later">
+        <a @click="isShowSuccess = false">{{ $t('NFT.Check later') }}</a>
+      </div>
+    </div>
+  </ElDialog>
 </template>
 
 <script setup lang="ts">
@@ -137,6 +168,7 @@ const payMsg = reactive({
 const nftFee: { val: NFTFeeInfo | null } = reactive({ val: null })
 const isSkeleton = ref(true)
 const buying = ref(false)
+const isShowSuccess = ref(false)
 
 function choosePayPlatform(item: PayPlatformItem) {
   if (item.disabled()) return
@@ -204,9 +236,9 @@ async function confirmBuy() {
     )
     if (res) {
       ElMessage.success(i18n.t('NFT.Buy Success'))
-      emit('success')
       emit('update:modelValue', false)
       buying.value = false
+      isShowSuccess.value = true
     } else if (res === null) {
       buying.value = false
     }
@@ -267,6 +299,16 @@ const totalPrice = computed(() => {
 })
 
 function toNFT() {
+  if (
+    route.name === 'nftDetail' &&
+    route.params.chain === props.nft.nftChain &&
+    route.params.genesis === props.nft.nftGenesis &&
+    route.params.codehash === props.nft.nftCodehash &&
+    route.params.tokenIndex === props.nft.nftTokenIndex
+  ) {
+    isShowSuccess.value = false
+    return
+  }
   router.push({
     name: 'nftDetail',
     params: {
@@ -276,11 +318,12 @@ function toNFT() {
       codehash: props.nft.nftCodehash ? props.nft.nftCodehash : props.nft.nftChain,
     },
   })
+  isShowSuccess.value = false
 }
 
 function onPaySuccess() {
   emit('update:modelValue', false)
-  emit('success')
+  isShowSuccess.value = true
 }
 
 watch(

@@ -747,9 +747,9 @@ export const GeUserSaleNFTs = (params: {
 }): Promise<{
   code: number
   data: {
-    name: string
-    resolveAddress: string
-    ownerAddress: string
+    results: {
+      items: GenesisNFTItem[]
+    }
   }
 }> => {
   const { metaId, ..._params } = params

@@ -7,7 +7,7 @@
             <Icon name="down"></Icon>
           </a>
         </div>
-        <a class="edit flex flex-align-center flex-pack-center" v-if="isSelf">
+        <a class="edit flex flex-align-center flex-pack-center" v-if="isSelf" @click="editBg">
           <Icon name="edit" />
         </a>
       </div>
@@ -262,6 +262,10 @@ async function toMessage() {
       channelId: userInfo.val!.metaId,
     },
   })
+}
+
+function editBg() {
+  return ElMessage.info(i18n.t('Comming Soon'))
 }
 
 Promise.all([getUserInfo(), getUserFoller(), checkUserIsFollowed()]).then(() => {
