@@ -19,7 +19,7 @@
       class="w-10 h-10 lg:w-13.5 lg:h-13.5 shrink-0 select-none"
       :disabled="true"
     />
-    <div class="ml-2 lg:ml-4 grow pr-12">
+    <div class="ml-2 lg:ml-4 grow pr-8 lg:pr-12">
       <div class="flex items-baseline space-x-2">
         <UserName
           :name="message.fromName"

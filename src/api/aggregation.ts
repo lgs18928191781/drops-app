@@ -751,3 +751,7 @@ export const GeUserSaleNFTs = (
 }> => {
   return aggregation.get(`/v2/app/metaname/indexer/info`, { params: { name } })
 }
+
+export const Search = (kw: string): Promise<SearchRes> => {
+  return aggregation.get(`/v2/app/show/search/user`, { params: { kw } })
+}

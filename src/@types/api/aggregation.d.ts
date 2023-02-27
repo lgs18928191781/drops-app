@@ -257,3 +257,18 @@ declare interface MetaNameItem {
   txid: string
   expireDate: string
 }
+
+declare interface SearchRes extends apiResponse {
+  data: {
+    total: number
+    results: {
+      items: SearchItem[]
+    }
+  }
+}
+
+declare interface SearchItem {
+  metaId: string
+  address: string
+  userInfo: UserAllInfo
+}
