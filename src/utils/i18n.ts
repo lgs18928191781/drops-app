@@ -4,7 +4,7 @@ import zhLocale from 'element-plus/lib/locale/lang/zh-cn'
 import messages from '@intlify/vite-plugin-vue-i18n/messages'
 
 // const defaultLang = navigator?.language && navigator?.language?.indexOf('zh') !== -1 ? 'zh' : 'en'
-const defaultLang = 'en'
+const defaultLang = 'zh'
 const lang = localStorage.getItem('lang') || defaultLang
 // languages
 for (let i in messages) {
