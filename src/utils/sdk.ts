@@ -392,6 +392,7 @@ export class SDK {
               balance!,
               option.checkOnly
             )
+            debugger
             if (result) {
               // 确认支付
               // 打钱地址

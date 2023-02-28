@@ -19,11 +19,13 @@
       <div class="pay-count flex flex-align-end flex-pack-center">
         <div>
           <div class="msg flex flex-align-end flex-pack-center">
-            <div class="count">{{ useAmount }}</div>
-            <div class="lable">{{ payType === SdkPayType.ME ? payType : 'Satoshi' }}</div>
+            <div class="count">
+              {{ payType === SdkPayType.ME ? useAmount : space(useAmount) }}
+            </div>
+            <div class="lable">{{ payType }}</div>
           </div>
           <div class="text">{{ i18n.t('SDK.payconfirm.Payment required') }}</div>
-          <div class="me-tips">
+          <div class="me-tips" v-if="payType === SdkPayType.ME">
             {{ i18n.t('SDK.payconfirm.ME is used to pay for Gas Fee') }}
             <a @click="isShowMEIntro = true">{{ i18n.t('SDK.payconfirm.Learn More') }}</a>
           </div>
@@ -31,10 +33,8 @@
       </div>
 
       <div class="balance">
-        <span
-          >{{ i18n.t('SDK.payconfirm.My')
-          }}{{ payType === SdkPayType.ME ? i18n.t('SDK.payconfirm.ME') : 'Satoshi' }}：</span
-        >{{ balance }}
+        <span>{{ i18n.t('SDK.payconfirm.My') }}{{ payType }}：</span
+        >{{ payType === SdkPayType.ME ? balance : space(balance) }}
       </div>
 
       <div
@@ -48,7 +48,7 @@
         </span>
         <div class="flex1 cont">
           {{ i18n.t('SDK.payconfirm.tips') }} <a>{{ maxCount }}</a>
-          {{ payType === SdkPayType.ME ? i18n.t('SDK.payconfirm.ME') : 'Satoshi' }}
+          {{ payType }}
           {{ i18n.t('SDK.payconfirm.tips2') }}
         </div>
       </div>
@@ -79,6 +79,7 @@ import { ref } from 'vue'
 import { Router } from 'vue-router'
 import RechargeMeVue from '../LoginedUserOperate/RechargeMe.vue'
 import MEIntroVue from '../MEIntro/MEIntro.vue'
+import { space } from '@/utils/filters'
 
 interface Props {
   confirmVisible: boolean
