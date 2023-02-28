@@ -1,8 +1,14 @@
 import { SendMetaNameTransationResult } from '@/@types/sdk'
-import { NodeName, SdkPayType } from '@/enum'
+import { EnvMode, NodeName, SdkPayType } from '@/enum'
 import { useUserStore } from '@/stores/user'
 import Decimal from 'decimal.js-light'
+import { ElMessage } from 'element-plus'
+import i18n from './i18n'
+import { emoji } from './reg'
+import { bytesLength } from './util'
 import { MetaNameReqCode, MetaNameRequestDate, Reqswapargs } from './wallet/hd-wallet'
+// @ts-ignore
+import namehash from 'eth-ens-namehash'
 
 export function getMetaNameOperateParams(params: {
   op_code: number
@@ -105,4 +111,43 @@ export function getMetaNameOperateParams(params: {
       reject(error)
     }
   })
+}
+
+export const validateMetaName = (value: string) => {
+  if (value === '') {
+    // @ts-ignore
+    return ElMessage.error(i18n.global.t('MetaName.MetaName cannot be empty'))
+  } else if (value.trim() !== value || /\s/.test(value)) {
+    return ElMessage.error(`${i18n.global.t('metanameNotAllowSpace')}`)
+  }
+  // else if (emoji.test(value)) {
+  //   return ElMessage.error(`${i18n.global.t('metanameNotAllowEmoji')}`)
+  // }
+  else if (/[\u4e00-\u9fa5]/.test(value) && import.meta.env.MODE === EnvMode.Mainnet) {
+    return ElMessage.error(`${i18n.global.t('metanameNotAllowCh')}`)
+  } else {
+    const testResult = bytesLength(value.trim())
+    if (testResult > 0 && testResult <= 2) {
+      return ElMessage.error(`${i18n.global.t('metanameNotAllowMin')}`)
+    } else if (testResult > 63) {
+      return ElMessage.error(`${i18n.global.t('metanameNotAllowOverLenght')}`)
+    }
+  }
+  let illgelRes: any
+  const MetaNameReg = /\./g
+  try {
+    illgelRes = namehash.normalize(value)
+    if (MetaNameReg.test(illgelRes)) return false
+    return illgelRes
+  } catch {
+    try {
+      const { content } = JSON.parse(`{"content":"${value}"}`)
+      illgelRes = namehash.normalize(content)
+      if (MetaNameReg.test(illgelRes)) return false
+      return illgelRes
+    } catch (error) {
+      ElMessage.error(`${i18n.global.t('inputMetaNameIllgel')}`)
+      return null
+    }
+  }
 }

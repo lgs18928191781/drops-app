@@ -62,10 +62,7 @@ import { SendMetaNameTransationResult } from '@/@types/sdk'
 import { GetTxChainInfo } from '@/api/metaid-base'
 import { useMetaNameStore } from '@/stores/metaname'
 import { GetBalance } from '@/api/aggregation'
-import namehash from 'eth-ens-namehash'
 import Compressor from 'compressorjs'
-
-const emojiReg = /[\u{1F601}-\u{1F64F}\u{2702}-\u{27B0}\u{1F680}-\u{1F6C0}\u{1F170}-\u{1F251}\u{1F600}-\u{1F636}\u{1F681}-\u{1F6C5}\u{1F30D}-\u{1F567}]/gu
 
 export function randomString() {
   return Math.random()
@@ -1593,42 +1590,6 @@ export function getUserBsvBalance() {
       resolve(new Decimal(res.data.balance).toNumber())
     }
   })
-}
-
-export const validateMetaName = (value: string) => {
-  if (value === '') {
-    return ElMessage.error(i18n.global.t('MetaName.MetaName cannot be empty'))
-  } else if (value.trim() !== value || /\s/.test(value)) {
-    return ElMessage.error(`${i18n.global.t('metanameNotAllowSpace')}`)
-  } else if (emojiReg.test(value)) {
-    return ElMessage.error(`${i18n.global.t('metanameNotAllowEmoji')}`)
-  } else if (/[\u4e00-\u9fa5]/.test(value) && import.meta.env.MODE === EnvMode.Mainnet) {
-    return ElMessage.error(`${i18n.global.t('metanameNotAllowCh')}`)
-  } else {
-    const testResult = bytesLength(value.trim())
-    if (testResult > 0 && testResult <= 2) {
-      return ElMessage.error(`${i18n.global.t('metanameNotAllowMin')}`)
-    } else if (testResult > 63) {
-      return ElMessage.error(`${i18n.global.t('metanameNotAllowOverLenght')}`)
-    }
-  }
-  let illgelRes: any
-  const MetaNameReg = /\./g
-  try {
-    illgelRes = namehash.normalize(value)
-    if (MetaNameReg.test(illgelRes)) return false
-    return illgelRes
-  } catch {
-    try {
-      const { content } = JSON.parse(`{"content":"${value}"}`)
-      illgelRes = namehash.normalize(content)
-      if (MetaNameReg.test(illgelRes)) return false
-      return illgelRes
-    } catch (error) {
-      ElMessage.error(`${i18n.global.t('inputMetaNameIllgel')}`)
-      return null
-    }
-  }
 }
 
 export const nativePayPlatforms = [
