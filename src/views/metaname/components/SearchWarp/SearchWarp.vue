@@ -19,9 +19,10 @@ import { ref, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 //@ts-ignore
 import namehash from 'eth-ens-namehash'
-import { bytesLength, validateMetaName } from '@/utils/util'
+import { bytesLength } from '@/utils/util'
 import { useMetaNameStore } from '@/stores/metaname'
 import { EnvMode } from '@/enum'
+import { validateMetaName } from '@/utils/metaname'
 interface Props {
   metaName?: string
 }

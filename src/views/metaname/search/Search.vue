@@ -124,13 +124,7 @@ import PayMsg from '../components/PayMsg/PayMsg.vue'
 import SearchWarp from '../components/SearchWarp/SearchWarp.vue'
 import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import {
-  bytesLength,
-  GetExpiredUTC,
-  getMetaNamePrice,
-  urlToBase64,
-  validateMetaName,
-} from '@/utils/util'
+import { bytesLength, GetExpiredUTC, getMetaNamePrice, urlToBase64 } from '@/utils/util'
 import Decimal from 'decimal.js-light'
 import { MetaNameReqCode } from '@/utils/wallet/hd-wallet'
 import { Loading } from '@element-plus/icons-vue'
@@ -138,6 +132,7 @@ import { GetMetaNameInfo, MetaNameAllPrice } from '@/api/wxcore'
 import { useMetaNameStore } from '@/stores/metaname'
 import { MetaNameRegisterState } from '@/enum'
 import { GetMetaNameConfig } from '@/api/strapi'
+import { validateMetaName } from '@/utils/metaname'
 
 const i18n = useI18n()
 const userStore = useUserStore()
