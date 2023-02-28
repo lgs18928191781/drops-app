@@ -52,37 +52,11 @@ function openUserCard() {
     // @ts-ignore
     h(UserCard, {
       i18n: i18n,
-      confirmVisible: userStore.sdkPayConfirm[payType].visible,
-      useAmount,
-      maxCount: userStore.sdkPayConfirm[payType].value,
-      balance,
-      router,
-      payType,
-      onChangeConfirmVisible: (res: boolean) => {
-        userStore.changeSdkPayConfirm('visible', res, payType)
-      },
-      onConfirm: () => {
-        setTimeout(() => {
-          document.getElementById(divId)?.remove()
-        }, 500)
-        resolve(true)
-      },
-      onCancel: () => {
-        setTimeout(() => {
-          document.getElementById(divId)?.remove()
-        }, 500)
-        resolve(false)
-      },
-      onRecharge: () => {
-        setTimeout(() => {
-          document.getElementById(divId)?.remove()
-        }, 500)
-        resolve(false)
-        const layout = useLayoutStore()
-        layout.$patch({ isShowWallet: true })
-      },
+      modelValue: true,
+      metaId: props.metaId,
+      name: props.name,
     }),
-    document.getElementById(divId)!
+    document.getElementById(userCardWarpId)!
   )
 }
 </script>

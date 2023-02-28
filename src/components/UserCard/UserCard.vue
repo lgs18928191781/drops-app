@@ -7,7 +7,7 @@
       </div>
       <div class="h-full flex gap-x-2">
         <button class="main-border primary !rounded-full py-1 px-3 text-xs" @click="toUser">
-          {{ $t('User.Home') }}
+          {{ t('User.Home') }}
         </button>
         <button
           class="main-border primary !rounded-full py-1 px-3 text-xs"
@@ -21,7 +21,7 @@
             </ElIcon>
           </template>
           <template v-else>
-            {{ isMyFollowed ? $t('Cancel Follow') : $t('Follow') }}
+            {{ isMyFollowed ? t('Cancel Follow') : t('Follow') }}
           </template>
         </button>
       </div>
@@ -46,6 +46,7 @@ const props = defineProps<{
   modelValue: boolean
   metaId?: string
   name?: string
+  i18n?: any
 }>()
 
 const router = useRouter()
@@ -54,6 +55,7 @@ const isMyFollowed = ref(false)
 const loading = ref(true)
 const userInfo: { val: null | UserAllInfo } = reactive({ val: null })
 const i18n = useI18n()
+const t = props.i18n ? props.i18n.t : i18n.t
 
 function toUser(e: Event) {
   router.push({
