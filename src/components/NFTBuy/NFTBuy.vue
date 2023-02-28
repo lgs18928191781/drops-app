@@ -232,6 +232,7 @@ async function confirmBuy() {
       },
       {
         payType: SdkPayType.SPACE,
+        checkOnly: true,
       }
     )
     if (res) {
