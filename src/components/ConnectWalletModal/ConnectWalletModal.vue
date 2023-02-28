@@ -828,6 +828,7 @@ async function connectWalletConnect(isUpdate: boolean = false) {
       })
   } else {
     try {
+      console.log('accounts[0]', accounts[0])
       address = isUpdate ? accounts[0] : accounts[0].toLocaleLowerCase()
       message = isUpdate
         ? import.meta.env.MODE == 'gray'
@@ -885,7 +886,7 @@ async function connectWalletConnect(isUpdate: boolean = false) {
     }
   }
 
-  // connector.killSession()
+  connector.killSession()
 }
 
 async function onModalClose() {
