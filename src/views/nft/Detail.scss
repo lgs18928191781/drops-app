@@ -89,7 +89,7 @@
         }
 
         .owner-msg-item {
-            color: #606266;
+            color: var(--themeFadedTextColor);
 
             &:last-child {
                 margin-bottom: 0;
@@ -105,9 +105,14 @@
                 margin-right: 10px;
             }
 
+            .user-name {
+                color: var(--themeTextColor);
+            }
+
             a {
                 color: var(--color-hover);
             }
+
         }
     }
 
@@ -179,6 +184,7 @@
     .nft-other-msg-section {
         border: 2px solid #EDEFF2;
         border-radius: var(--rounded);
+        overflow: hidden;
 
         .nft-other-msg-item {
             .title {
@@ -207,7 +213,7 @@
             }
 
             .content {
-                background: rgba(245, 247, 250, 0.5);
+                background: var(--themeBgColor);
                 padding: 18px;
             }
         }
