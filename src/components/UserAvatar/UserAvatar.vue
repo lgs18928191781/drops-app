@@ -5,20 +5,22 @@
     :type="type"
     :default-image="DefaultAvatar"
     :custom-class="customClass"
-    @click="openUserCard"
+    @click="toUserPage"
+    ref="AvatarRef"
   />
 </template>
 <script lang="ts" setup>
-import { computed, render } from 'vue'
+import { computed, render, h, ref, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import DefaultAvatar from '@/assets/images/default_user.png'
 import UserCard from '../UserCard/UserCard.vue'
 import { v1 } from 'uuid'
-import { useI18n } from 'vue-i18n'
+import i18n from '@/utils/i18n'
+import { createPopper, VariationPlacement } from '@popperjs/core'
 
 const router = useRouter()
 const userCardWarpId = `user-card-warp-${v1()}`
-const i18n = useI18n()
+const AvatarRef = ref()
 
 interface Props {
   name?: string
@@ -47,6 +49,7 @@ const toUserPage = () => {
 function openUserCard() {
   const div = document.createElement('div')
   div.id = userCardWarpId
+  div.className = 'user-card-warp'
   document.body.append(div)
   render(
     // @ts-ignore
@@ -58,5 +61,10 @@ function openUserCard() {
     }),
     document.getElementById(userCardWarpId)!
   )
+  nextTick(() => {
+    createPopper(AvatarRef.value.imgRef, document.getElementById(userCardWarpId)!, {
+      placement: 'right-start',
+    })
+  })
 }
 </script>

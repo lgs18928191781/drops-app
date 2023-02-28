@@ -7,7 +7,7 @@
       </div>
       <div class="h-full flex gap-x-2">
         <button class="main-border primary !rounded-full py-1 px-3 text-xs" @click="toUser">
-          {{ t('User.Home') }}
+          {{ i18n.t('User.Home') }}
         </button>
         <button
           class="main-border primary !rounded-full py-1 px-3 text-xs"
@@ -21,13 +21,13 @@
             </ElIcon>
           </template>
           <template v-else>
-            {{ isMyFollowed ? t('Cancel Follow') : t('Follow') }}
+            {{ isMyFollowed ? i18n.t('Cancel Follow') : i18n.t('Follow') }}
           </template>
         </button>
       </div>
     </div>
 
-    <UserPersonaVue class="mt-4.5" />
+    <UserPersonaVue class="mt-4.5" :i18n="propsI18n" />
   </div>
 </template>
 
@@ -54,8 +54,8 @@ const userStore = useUserStore()
 const isMyFollowed = ref(false)
 const loading = ref(true)
 const userInfo: { val: null | UserAllInfo } = reactive({ val: null })
-const i18n = useI18n()
-const t = props.i18n ? props.i18n.t : i18n.t
+const propsI18n = props.i18n
+const i18n = props.i18n ? props.i18n.global : useI18n()
 
 function toUser(e: Event) {
   router.push({
@@ -117,9 +117,9 @@ async function follow() {
   })
   if (res) {
     isMyFollowed.value = !isMyFollowed.value
-    const message = `${!isMyFollowed.value ? i18n.t('Cancel Follow') : i18n.t('Follow')} ${i18n.t(
-      'Success'
-    )}`
+    const message = `${
+      !isMyFollowed.value ? i18n.i18n.t('Cancel Follow') : i18n.i18n.t('Follow')
+    } ${i18n.i18n.t('Success')}`
     ElMessage.success(message)
   } else {
     loading.value = false
