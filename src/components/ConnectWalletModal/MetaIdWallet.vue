@@ -409,7 +409,7 @@ const sendCodeBtnDisabled = computed(() => {
   if (sendCodeTimer.value === 0) {
     if (form.userType === SignUserType.Phone && form.phone !== '') {
       result = false
-    } else if (form.userType === SignUserType.Email && emailReg.test(form.email)) {
+    } else if (form.userType === SignUserType.Email && email.test(form.email)) {
       result = false
     }
   }
@@ -439,7 +439,7 @@ const isPolicyBtnFaded = computed(() => {
   if (props.type === 'login') {
     if (
       ((form.userType === 'phone' && form.phone !== '') ||
-        (form.userType === 'email' && emailReg.test(form.email))) &&
+        (form.userType === 'email' && email.test(form.email))) &&
       form.code !== '' &&
       form.password !== '' &&
       form.isAgreePolicy
@@ -450,7 +450,7 @@ const isPolicyBtnFaded = computed(() => {
     if (registerType.value === RegisterType.Check) {
       if (
         ((form.userType === 'phone' && form.phone !== '') ||
-          (form.userType === 'email' && emailReg.test(form.email))) &&
+          (form.userType === 'email' && email.test(form.email))) &&
         form.code !== '' &&
         form.isAgreePolicy
       ) {
