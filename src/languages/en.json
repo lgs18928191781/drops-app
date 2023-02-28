@@ -968,6 +968,6 @@
   "NOT_FOUND": "NOT_FOUND",
   "Copy": "Copy",
   "confirmUpdate": "Confirm upgrade",
-  "allowUpdate": "It is detected that your account needs to be upgraded, canceling the upgrade may affect other subsequent wallet logins, please confirm! (Special reminder: 1. If your previously registered account is registered and bound through WalletConnect, please use WalletConnect to upgrade; 2 If you \nThe account is registered and bound through the web client MetaMask, please use the web client 'MetaMask' wallet to perform the upgrade operation, otherwise the account upgrade will fail)",
+  "allowUpdate": "It is detected that your account needs to be upgraded, canceling the upgrade may affect other subsequent wallet logins, please confirm! \n (Special reminder: 1. If your previously registered account is registered and bound through 'WalletConnect', please use 'WalletConnect' to upgrade \n;2. If your account is registered and bound through the web client 'MetaMask', please use the web client 'MetaMask' wallet to perform the upgrade operation, otherwise the account upgrade will fail)",
   "updateRemind": "Upgrade Tips"
 }
