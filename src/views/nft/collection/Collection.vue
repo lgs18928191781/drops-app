@@ -128,7 +128,13 @@
                     isListLoading ? index : item.nftGenesis + item.nftCodehash + item.nftTokenIndex
                   "
                 >
-                  <NFTItemVue :nft="item" @buy="buyNFT" :loading="isListLoading" />
+                  <NFTItemVue
+                    :nft="item"
+                    @buy="buyNFT"
+                    @offsale="onOffsale"
+                    @sale="onSale"
+                    :loading="isListLoading"
+                  />
                 </ElCol>
 
                 <ElCol v-if="!isListLoading && nfts.length === 0">
@@ -151,7 +157,9 @@
       />
 
       <!-- NFTBuy -->
-      <NFTBuy :nft="nft.val!" v-model="isShowNftBuy" />
+      <NFTBuy :nft="nft.val!" v-model="isShowNftBuy" @success="refreshDatas" />
+      <!-- NFTSlae -->
+      <NFTSellVue :nft="nft.val!" v-model="isShowNftSale" @success="onSaleSuccess" />
     </template>
   </ElSkeleton>
 </template>
@@ -173,6 +181,8 @@ import CollectionSkeleton from '@/views/nft/collection/CollectionSkeleton.vue'
 import IsNull from '@/components/IsNull/IsNull.vue'
 import { isMobile } from '@/stores/root'
 import { satoshi } from '@/utils/filters'
+import NFTSellVue from '@/components/NFTSell/NFTSell.vue'
+import { NFTOffSale } from '@/utils/util'
 
 const i18n = useI18n()
 const route = useRoute()
@@ -226,16 +236,8 @@ const pagination = reactive({ ...initPagination, pageSize: 24 })
 const nfts: GenesisNFTItem[] = reactive([])
 const nft: { val: GenesisNFTItem | null } = reactive({ val: null })
 const isShowNftBuy = ref(false)
+const isShowNftSale = ref(false)
 const cells = [
-  {
-    value: 0,
-    xs: 12,
-    sm: 8,
-    md: 6,
-    lg: 6,
-    xl: 4,
-    icon: 'layout-grid-fill',
-  },
   {
     value: 1,
     xs: 24,
@@ -243,6 +245,15 @@ const cells = [
     md: 8,
     lg: 8,
     xl: 6,
+    icon: 'layout-grid-fill',
+  },
+  {
+    value: 0,
+    xs: 12,
+    sm: 8,
+    md: 6,
+    lg: 6,
+    xl: 4,
     icon: 'grid-fill',
   },
 ]
@@ -363,6 +374,39 @@ function refreshDatas() {
   getDatas(true).then(() => {
     isListLoading.value = false
   })
+}
+
+async function onOffsale(item: GenesisNFTItem) {
+  const result = await NFTOffSale(item)
+  if (result) {
+    const index = nfts.findIndex(
+      _item =>
+        _item.nftGenesis === item.nftGenesis &&
+        _item.nftCodehash === item.nftCodehash &&
+        _item.nftTokenIndex === item.nftTokenIndex
+    )
+    if (index !== -1) {
+      nfts[index].nftSellState = 1
+      nfts[index].nftPrice = 0
+    }
+  }
+}
+
+function onSale(item: GenesisNFTItem) {
+  nft.val = item
+  isShowNftSale.value = true
+}
+
+function onSaleSuccess(item: GenesisNFTItem) {
+  const index = nfts.findIndex(
+    item =>
+      item.nftGenesis === nft.val!.nftGenesis &&
+      item.nftCodehash === nft.val!.nftCodehash &&
+      item.nftTokenIndex === nft.val!.nftTokenIndex
+  )
+  if (index !== -1) {
+    nfts[index] = item
+  }
 }
 
 getCollection().then(() => {

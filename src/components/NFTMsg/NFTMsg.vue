@@ -9,13 +9,6 @@
         <div class="flex1">
           <div class="token-index">#{{ parseInt(nft.nftTokenIndex) + 1 }}</div>
         </div>
-        <div class="price" v-if="nft.nftPrice">
-          <AmountVue
-            :price="nft.nftIsLegal ? nft.nftLegalPrice : nft.nftPrice"
-            :currency="nft.nftIsLegal ? 'CNY' : 'SPACE'"
-            :toCurrency="toCurrency"
-          />
-        </div>
       </div>
     </div>
   </div>
@@ -30,7 +23,6 @@ import AmountVue from '../Amount/Amount.vue'
 const rootStore = useRootStore()
 const props = defineProps<{
   nft: GenesisNFTItem
-  toCurrency?: ToCurrency
 }>()
 </script>
 

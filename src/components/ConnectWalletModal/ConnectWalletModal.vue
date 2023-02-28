@@ -410,7 +410,6 @@ async function onThreePartLinkSuccess(params: {
           onModalClose()
         }
       } catch (error) {
-        //+import.meta.env.VITE_UPDATEPLAN_TIMESTAMP
         if (getMnemonicRes?.data?.registerTime < +Date.now()) {
           ElMessageBox.confirm(`${i18n.t('allowUpdate')}`, `${i18n.t('updateRemind')}`, {
             customClass: 'primary',

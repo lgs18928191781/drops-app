@@ -510,3 +510,8 @@ export enum WalletOrigin {
   WalletConnect = 'WalletConnect',
   MetaMask = 'MetaMask',
 }
+
+export enum Network {
+  mainnet = 'mainnet',
+  testnet = 'testnet',
+}

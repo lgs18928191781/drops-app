@@ -576,7 +576,7 @@
   "Message": "消息",
   "Following": "正在关注",
   "Followers": "关注者",
-  "Already on NFT": "NFT",
+  "Already on NFT": "上架的NFT",
   "Replay": "回复",
   "Cancel Follow": "取消关注",
   "cancelFollowTips": "你确定要取消关注用户",
@@ -730,7 +730,11 @@
     "Not Support Current Chain NFT Transfer": "暂不支持当前链的NFT转赠",
     "Selling price must be greater than ": "售价必须大于",
     "OffSaleing": "下架中...",
-    "TransferToMetaNameNotMatch": "MetaName解析地址与拥有者地址不一致"
+    "TransferToMetaNameNotMatch": "MetaName解析地址与拥有者地址不一致",
+    "Payment Succeeded": "支付成功！",
+    "Payment Succeeded Tips": "NFT 在你的钱包里。",
+    "View Item": "查看NFT",
+    "Check later": "稍后查看"
   },
   "My NFT": "我的NFT",
   "Done": "完成",

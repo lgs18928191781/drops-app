@@ -5,14 +5,19 @@
     <!-- 左侧 -->
     <div class="flex gap-x-3 items-center">
       <UserAvatar
-        :image="result.avatar"
+        :image="result.avatarImage"
         :meta-id="result.metaId"
         :name="result.name"
         class="w-12 h-12 shrink-0 select-none"
         :disabled="true"
       />
       <div class="flex flex-col gap-y-0.5 items-start">
-        <UserName :name="result.name" :meta-name="result.metaName" :text-class="'text-base truncate w-22 lg:w-36 font-bold'" />
+        <UserName
+          :name="result.name"
+          :meta-name="result.metaName"
+          :class="'max-w-[80PX] lg:max-w-[144PX] truncate text-base font-bold'"
+          :no-tag="true"
+        />
         <div class="text-dark-300 dark:text-gray-400 text-xs">MetaID: {{ highlightedMetaId }}</div>
       </div>
     </div>
@@ -61,7 +66,9 @@ const user = useUserStore()
 type SearchResult = {
   metaId: string
   name: string
-  avatar: string
+  avatarImage: string
+  metaName: string
+  address: string
 }
 
 const props = defineProps<{

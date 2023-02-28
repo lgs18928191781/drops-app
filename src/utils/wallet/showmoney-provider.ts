@@ -2,17 +2,11 @@
 import mvc from 'mvc-lib'
 import { HttpRequests, ApiRequestTypes } from '@/utils/wallet/request2'
 import HttpRequest from 'request-sdk'
-import {
-  BaseUtxo,
-  MetasvUtxoTypes,
-  Network,
-  MetaNameRequestDate,
-  MetaNameReqType,
-} from './hd-wallet'
+import { BaseUtxo, MetasvUtxoTypes, MetaNameRequestDate, MetaNameReqType } from './hd-wallet'
 import axios, { AxiosInstance } from 'axios'
 import { UtxoItem } from '@/@types/sdk'
 import zlib from 'zlib'
-import { HdWalletChain } from '@/enum'
+import { HdWalletChain, Network } from '@/enum'
 import i18n from '../i18n'
 interface BaseApiResultTypes<T> {
   code: number
@@ -68,22 +62,38 @@ interface GetBalanceData {
 
 // const metaSvPrivateKey = 'KxSQqTxhonc5i8sVGGhP1cMBGh5cetVDMfZjQdFursveABTGVbZD'
 
+const MVCMetaSvMirror = {
+  [Network.testnet]: 'https://api-mvc-testnet.metasv.com',
+  [Network.mainnet]: 'https://api-mvc.metasv.com',
+}
+
+const BSVMetaSvMirror = {
+  [Network.testnet]: 'https://apiv2.metasv.com',
+  [Network.mainnet]: 'https://apiv2.metasv.com',
+}
+
 export default class ShowmoneyProvider {
   public apiPrefix: string = import.meta.env.VITE_BASEAPI
   public metaSvApi: string = import.meta.env.VITE_META_SV_API
   public bsvMetaSvApi: string = import.meta.env.VITE_BSV_META_SV_API
-  public metaSvMirror = 'https://api.showmoney.app/metasv'
   public metaSvHttp
   public metasvSignatureHttp
   public serviceHttp
+  public network = Network.mainnet
   public metaNameApi = `http://47.242.27.95:35000`
   public newBrfcNodeBaseInfoList: NewBrfcNodeBaseInfo[] = []
   public isUsedUtxos: { txId: string; address: string }[] = []
 
-  constructor(params?: { baseApi?: string; mvcMetaSvApi?: string; bsvMetaSvApi?: string }) {
+  constructor(params?: {
+    baseApi?: string
+    mvcMetaSvApi?: string
+    bsvMetaSvApi?: string
+    network?: Network
+  }) {
     if (params?.baseApi) this.apiPrefix = params.baseApi
     if (params?.mvcMetaSvApi) this.metaSvApi = params.mvcMetaSvApi
     if (params?.bsvMetaSvApi) this.bsvMetaSvApi = params.bsvMetaSvApi
+    if (params?.network) this.network = params.network
 
     this.metaSvHttp = new HttpRequest(this.metaSvApi).request
     this.serviceHttp = new HttpRequest(this.apiPrefix + '/serviceapi').request
@@ -204,37 +214,46 @@ export default class ShowmoneyProvider {
     method = 'get',
     chain: HdWalletChain = HdWalletChain.MVC
   ): Promise<any> {
-    const signature = await this.getMetasvSig(path)
-    const headers = {
-      'Content-Type': 'application/json',
-      'MetaSV-Timestamp': signature.timestamp,
-      'MetaSV-Client-Pubkey': signature.publicKey,
-      'MetaSV-Nonce': signature.nonce,
-      'MetaSV-Signature': signature.signEncoded,
-    }
-    const url = `${chain === HdWalletChain.MVC ? this.metaSvApi : this.bsvMetaSvApi}${path}`
-    const Http = new HttpRequests()
-    let res
-    // debugger
-    if (method === 'get') {
-      res = await Http.getFetch(url, params, { headers })
-    } else {
-      res = await Http.postFetch(url, params, { headers })
-    }
-    // try {
-
-    // } catch (error) {
-
-    // const mirrorUrl = this.metaSvMirror + path
-    // if (method === 'get') {
-    //   res = await Http.getFetch(mirrorUrl, params, { headers: headers })
-    // } else {
-    //   res = await Http.postFetch(mirrorUrl, params, { headers: headers })
-    // }
-    // }
-    if (res) {
-      return res
-    }
+    return new Promise(async (resolve, reject) => {
+      try {
+        const signature = await this.getMetasvSig(path)
+        const headers = {
+          'Content-Type': 'application/json',
+          'MetaSV-Timestamp': signature.timestamp,
+          'MetaSV-Client-Pubkey': signature.publicKey,
+          'MetaSV-Nonce': signature.nonce,
+          'MetaSV-Signature': signature.signEncoded,
+        }
+        const origin = chain === HdWalletChain.MVC ? this.metaSvApi : this.bsvMetaSvApi
+        const url = `${origin}${path}`
+        const Http = new HttpRequests()
+        let res
+        try {
+          if (method === 'get') {
+            res = await Http.getFetch(url, params, { headers })
+          } else {
+            res = await Http.postFetch(url, params, { headers })
+          }
+        } catch (error) {
+          const mirror = chain === HdWalletChain.MVC ? MVCMetaSvMirror : BSVMetaSvMirror
+          if (mirror[this.network] === origin) {
+            throw error
+          } else {
+            const mirrorUrl = mirror[this.network] + path
+            if (method === 'get') {
+              res = await Http.getFetch(mirrorUrl, params, { headers })
+            } else {
+              res = await Http.postFetch(mirrorUrl, params, { headers })
+            }
+          }
+        }
+        if (res) {
+          resolve(res)
+        }
+      } catch (error) {
+        reject(error)
+      }
+    })
   }
 
   public async getMetaId(rootAddress: string): Promise<string | null> {
