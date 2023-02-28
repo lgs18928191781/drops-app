@@ -102,9 +102,10 @@ html {
 }
 
 .user-card-warp {
-  box-shadow: 0px 0px 6px 0px rgba(48, 49, 51, 0.15);
+  box-shadow: 0px 0px 6px 0px rgba(var(--themeTextColorRgb), 0.15);
   border-radius: var(--rounded);
-  left: 10px !important;
+  left: 15px !important;
+  z-index: 9;
 }
 
 

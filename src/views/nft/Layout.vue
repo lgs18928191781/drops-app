@@ -2,7 +2,9 @@
   <header class="flex flex-align-center">
     <div class="flex1 flex flex-align-center">
       <PhoneMenuBtnVue />
-      <div class="name">{{ $t('NFT.NFT Market') }}</div>
+      <div class="name flex flex-align-center">
+        <Icon name="market" /> {{ $t('NFT.NFT Market') }}
+      </div>
     </div>
     <LoginedUserOperateVue />
   </header>

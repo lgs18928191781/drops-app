@@ -35,12 +35,12 @@
 import { useUserStore } from '@/stores/user'
 import { checkUserLogin, followUser } from '@/utils/util'
 import { reactive, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
 import UserPersonaVue from '../UserPersona/UserPersona.vue'
 import { Loading } from '@element-plus/icons-vue'
 import { GetUserAllInfo, GetUserFollow } from '@/api/aggregation'
 import { useI18n } from 'vue-i18n'
 import { Mitt, MittEvent } from '@/utils/mitt'
+import { router } from '@/router'
 
 const props = defineProps<{
   modelValue: boolean
@@ -49,15 +49,16 @@ const props = defineProps<{
   i18n?: any
 }>()
 
-const router = useRouter()
 const userStore = useUserStore()
 const isMyFollowed = ref(false)
 const loading = ref(true)
 const userInfo: { val: null | UserAllInfo } = reactive({ val: null })
 const propsI18n = props.i18n
 const i18n = props.i18n ? props.i18n.global : useI18n()
+const emit = defineEmits(['hide'])
 
 function toUser(e: Event) {
+  emit('hide')
   router.push({
     name: 'user',
     params: {
