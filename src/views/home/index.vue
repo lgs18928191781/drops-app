@@ -193,7 +193,7 @@
         <img src="@/assets/images/logo_ga.png" />粤公网安备 44200002444919</a
       >
       <span>|</span>
-      <a href="https://beian.miit.gov.cn/#/Integrated/index" target="_blank">ICP 粤B2-20220576</a>
+      <a href="https://beian.miit.gov.cn/#/Integrated/index" target="_blank">粤ICP备19109852号</a>
     </div>
   </div>
 </template>
