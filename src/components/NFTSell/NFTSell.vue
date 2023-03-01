@@ -302,12 +302,12 @@ function submitForm() {
             nftPrice: sellPriceSatoshi,
             nftSellState: 0,
             nftIsReady: true,
-            nftSellTxId: res.nft!.sell!.sellTxId,
-            nftSellContractTxId: res.nft!.sell!.txId,
+            nftSellTxId: res.nft!.sell!.txId,
+            nftSellContractTxId: res.nft!.sell!.sellTxId,
           })
           emit('update:modelValue', false)
           form.sellPrice = ''
-          ElMessage.success('上架成功')
+          ElMessage.success(i18n.t('NFT.Sale Success'))
         } else {
           loading.value = false
         }
