@@ -47,7 +47,7 @@
     "keccak256": "^1.0.6",
     "lazysizes": "^5.3.2",
     "lodash": "^4.17.21",
-    "meta-contract": "0.3.17",
+    "meta-contract": "0.3.18",
     "mitt": "^3.0.0",
     "mvc-lib": "^1.0.5",
     "mvc-std-lib": "1.1.3",
