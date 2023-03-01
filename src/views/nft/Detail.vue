@@ -217,6 +217,7 @@
                     :genesis="(route.params.genesis as string)"
                     :codehash="(route.params.codehash as string)"
                     :token-index="(route.params.tokenIndex as string)"
+                    :chain="(route.params.chain as string)"
                   />
                 </div>
               </div>
