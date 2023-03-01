@@ -1,8 +1,8 @@
 <template>
   <div class="p-4.5 bg-white dark:bg-gray-700 rounded-xl">
     <div class="header flex flex-align-center pb-4.5">
-      <div class="flex1 cont">
-        <div class="text-base">{{ name }}</div>
+      <div class="flex1 cont mr-2">
+        <div class="text-base "><UserName :name="name" :meta-name="metaName" /></div>
         <div class="text-xs text-dark-300">MetaID:{{ metaId ? metaId.slice(0, 6) : '--' }}</div>
       </div>
       <div class="h-full flex gap-x-2">
@@ -44,8 +44,9 @@ import { router } from '@/router'
 
 const props = defineProps<{
   modelValue: boolean
-  metaId?: string
-  name?: string
+  metaId: string
+  name: string
+  metaName?: string
   i18n?: any
 }>()
 
@@ -135,6 +136,9 @@ watch(
       await Promise.all([checkUserIsFollowed(), getUserInfo()])
       loading.value = false
     }
+  },
+  {
+    immediate: true,
   }
 )
 </script>

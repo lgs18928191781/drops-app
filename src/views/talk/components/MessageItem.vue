@@ -16,6 +16,7 @@
       :image="props.message.avatarImage"
       :name="props.message.nickName"
       :meta-id="props.message.metaId"
+      :meta-name="props.message?.userInfo?.metaName"
       class="w-10 h-10 lg:w-13.5 lg:h-13.5 shrink-0 select-none cursor-pointer"
     />
     <div class="ml-2 lg:ml-4 grow pr-12">

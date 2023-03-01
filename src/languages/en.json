@@ -697,7 +697,8 @@
       "alias": "Domain",
       "avatar": "Avatar",
       "rights": "Right",
-      "music": "Music"
+      "music": "Music",
+      "Name": "Name"
     },
     "FilterItem": {
       "Status": "Status",
@@ -970,5 +971,6 @@
   "noMsg": "No Information",
   "personCert": "Personal Certification",
   "NOT_FOUND": "NOT_FOUND",
-  "Copy": "Copy"
+  "Copy": "Copy",
+  "inputMetaNameSensitiveWords": "Sensitive words are not supported"
 }

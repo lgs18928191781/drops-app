@@ -270,3 +270,7 @@ export const GetMetaNameOrders = (
 }> => {
   return Wxcore.get(`/metaname/orders`, { params: { meta_id: metaId } })
 }
+
+export const CheckMetaNameValid = (meta_name: string): Promise<boolean> => {
+  return Wxcore.get(`/metaname/sensitive/word`, { params: { meta_name } })
+}

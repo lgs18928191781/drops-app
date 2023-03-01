@@ -7,6 +7,7 @@
           :meta-id="userStore.user!.metaId"
           :image="userStore.user!.avatarImage"
           :name="userStore.user!.name"
+          :meta-name="userStore.user!.metaName"
           class="w-12 h-12 shrink-0"
         />
 

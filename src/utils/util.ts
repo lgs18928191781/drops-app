@@ -25,10 +25,11 @@ import {
   EnvMode,
   PayPlatformUnit,
   SdkPayType,
+  NFTSellState,
 } from '@/enum'
 import { CheckBlindboxOrderStatus } from '@/api/v3'
 import AllCardJson from '@/utils/card.json'
-import { GetOrderStatus, IsWtiteUser, MetaNameBeforeReqRes } from '@/api/wxcore'
+import { CheckMetaNameValid, GetOrderStatus, IsWtiteUser, MetaNameBeforeReqRes } from '@/api/wxcore'
 import { classifyName } from '@/config'
 import { v1 as uuidv1 } from 'uuid'
 import { decode, encode } from 'js-base64'
@@ -1094,11 +1095,12 @@ export function getCurrencyAmount(
 }
 
 export function NFTOffSale(nft: GenesisNFTItem) {
-  return new Promise(async (resolve, rject) => {
+  return new Promise<GenesisNFTItem | false>(async (resolve, rject) => {
     ElMessageBox.confirm(
       `${i18n.global.t('offsaleConfirm')} ${nft.nftName} ?`,
       i18n.global.t('niceWarning'),
       {
+        // @ts-ignore
         confirmButtonText: i18n.global.t('confirm'),
         cancelButtonText: i18n.global.t('Cancel'),
         closeOnClickModal: false,
@@ -1146,7 +1148,11 @@ export function NFTOffSale(nft: GenesisNFTItem) {
         if (res) {
           loading.close()
           ElMessage.success(i18n.global.t('NFT.Offsale Success'))
-          resolve(true)
+          resolve({
+            ...nft,
+            nftSellState: NFTSellState.OffSale,
+            nftPrice: 0,
+          })
         } else if (res === null) {
           loading.close()
         }
@@ -1596,39 +1602,66 @@ export function getUserBsvBalance() {
 }
 
 export const validateMetaName = (value: string) => {
-  if (value === '') {
-    return ElMessage.error(i18n.global.t('MetaName.MetaName cannot be empty'))
-  } else if (value.trim() !== value || /\s/.test(value)) {
-    return ElMessage.error(`${i18n.global.t('metanameNotAllowSpace')}`)
-  } else if (emojiReg.test(value)) {
-    return ElMessage.error(`${i18n.global.t('metanameNotAllowEmoji')}`)
-  } else if (/[\u4e00-\u9fa5]/.test(value) && import.meta.env.MODE === EnvMode.Mainnet) {
-    return ElMessage.error(`${i18n.global.t('metanameNotAllowCh')}`)
-  } else {
-    const testResult = bytesLength(value.trim())
-    if (testResult > 0 && testResult <= 2) {
-      return ElMessage.error(`${i18n.global.t('metanameNotAllowMin')}`)
-    } else if (testResult > 63) {
-      return ElMessage.error(`${i18n.global.t('metanameNotAllowOverLenght')}`)
+  return new Promise(async resolve => {
+    if (value === '') {
+      // @ts-ignore
+      return ElMessage.error(i18n.global.t('MetaName.MetaName cannot be empty'))
+    } else if (value.trim() !== value || /\s/.test(value)) {
+      ElMessage.error(`${i18n.global.t('metanameNotAllowSpace')}`)
+      resolve(false)
+    } else if (emojiReg.test(value)) {
+      ElMessage.error(`${i18n.global.t('metanameNotAllowEmoji')}`)
+      resolve(false)
+    } else if (/[\u4e00-\u9fa5]/.test(value) && import.meta.env.MODE === EnvMode.Mainnet) {
+      ElMessage.error(`${i18n.global.t('metanameNotAllowCh')}`)
+      resolve(false)
+    } else {
+      const testResult = bytesLength(value.trim())
+      if (testResult > 0 && testResult <= 2) {
+        ElMessage.error(`${i18n.global.t('metanameNotAllowMin')}`)
+        resolve(false)
+      } else if (testResult > 63) {
+        ElMessage.error(`${i18n.global.t('metanameNotAllowOverLenght')}`)
+        resolve(false)
+      } else {
+        let illgelRes: string
+        const MetaNameReg = /\./g
+        try {
+          illgelRes = namehash.normalize(value)
+          if (MetaNameReg.test(illgelRes)) {
+            resolve(false)
+          } else {
+            const result = await CheckMetaNameValid(illgelRes)
+            if (result) {
+              resolve(illgelRes)
+            } else {
+              ElMessage.error(`${i18n.global.t('inputMetaNameSensitiveWords')}`)
+              resolve(false)
+            }
+          }
+        } catch {
+          try {
+            const { content } = JSON.parse(`{"content":"${value}"}`)
+            illgelRes = namehash.normalize(content)
+            if (MetaNameReg.test(illgelRes)) {
+              resolve(false)
+            } else {
+              const result = await CheckMetaNameValid(value)
+              if (result) {
+                resolve(illgelRes)
+              } else {
+                ElMessage.error(`${i18n.global.t('inputMetaNameSensitiveWords')}`)
+                resolve(false)
+              }
+            }
+          } catch (error) {
+            ElMessage.error(`${i18n.global.t('inputMetaNameIllgel')}`)
+            resolve(false)
+          }
+        }
+      }
     }
-  }
-  let illgelRes: any
-  const MetaNameReg = /\./g
-  try {
-    illgelRes = namehash.normalize(value)
-    if (MetaNameReg.test(illgelRes)) return false
-    return illgelRes
-  } catch {
-    try {
-      const { content } = JSON.parse(`{"content":"${value}"}`)
-      illgelRes = namehash.normalize(content)
-      if (MetaNameReg.test(illgelRes)) return false
-      return illgelRes
-    } catch (error) {
-      ElMessage.error(`${i18n.global.t('inputMetaNameIllgel')}`)
-      return null
-    }
-  }
+  })
 }
 
 export const nativePayPlatforms = [

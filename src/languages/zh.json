@@ -687,7 +687,8 @@
       "rights": "权益",
       "avatar": "头像",
       "alias": "别名",
-      "card": "纪念卡"
+      "card": "纪念卡",
+      "Name": "姓名"
     },
     "FilterItem": {
       "Status": "状态",
@@ -967,5 +968,6 @@
   "certBody": "认证主体",
   "personCert": "个人认证",
   "NOT_FOUND": "没找到信息",
-  "Copy": "复制"
+  "Copy": "复制",
+  "inputMetaNameSensitiveWords": "不支持注册敏感词"
 }

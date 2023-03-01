@@ -42,6 +42,7 @@
               :meta-id="userStore.user!.metaId"
               :name="userStore.user!.name"
               :image="userStore.user!.avatarImage"
+              :meta-name="userStore.user!.metaName"
               :disabled="true"
             />
             <template #dropdown>

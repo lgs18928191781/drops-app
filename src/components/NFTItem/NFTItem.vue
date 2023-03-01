@@ -21,6 +21,8 @@
               :meta-id="nft.nftIssueMetaId"
               :image="nft.nftIssueAvatarImage"
               :name="nft.nftIssuer"
+              :disabled="true"
+              :meta-name="nft.nftIssueUserInfo?.metaName"
             />
             <div class="flex1 flex flex-align-center info">
               <span class="user-name-warp"
@@ -37,6 +39,8 @@
               :meta-id="nft.nftOwnerMetaId"
               :image="nft.nftOwnerAvatarImage"
               :name="nft.nftOwnerName"
+              :disabled="true"
+              :meta-name="nft.nftOwnerUserInfo?.metaName"
             />
             <div class="flex1 flex flex-align-center info">
               <span class="user-name-warp"

@@ -33,8 +33,9 @@ const i18n = useI18n()
 const emit = defineEmits(['submit', 'error'])
 const metaNameStore = useMetaNameStore()
 
-function submit() {
-  const name = validateMetaName(value.value)
+async function submit() {
+  const name = await validateMetaName(value.value)
+  debugger
   if (name) {
     if (checkInputName(name)) {
       emit('submit', name)

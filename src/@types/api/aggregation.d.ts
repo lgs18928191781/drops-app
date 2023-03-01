@@ -103,12 +103,29 @@ declare interface BuzzInteractiveItem {
   replyToAvatarTxId: string
   replyToAvatarType: string
   replyToUserName: string
+  replyToUserMetaName: string
   timestamp: number
   txId: string
   userName: string
   zeroAddress: string
   subInteractiveItem: BuzzInteractiveItem[]
   commentTo?: string
+  userInfo: {
+    address: string
+    avatarImage: string
+    avatarTxId: string
+    avatarType: string
+    coverPublicKey: string
+    coverType: string
+    coverUrl: string
+    infoAvatarTxIdOssUrl: string
+    metaIdTimestamp: number
+    metaName: string
+    name: string
+    nameType: string
+    nftNamePublicKey: string
+    publicKey: string
+  }
 }
 
 declare interface MetaNoteItem {

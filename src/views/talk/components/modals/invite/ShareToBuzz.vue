@@ -25,11 +25,7 @@
                 <span class="text-base meta-name truncate">{{
                   talk.invitingChannel.community?.name
                 }}</span>
-                <div
-                  class="p-1 bg-gradient-to-tr from-[#F700FB] to-[#FFC051] rounded-sm leading-none text-center flex items-center justify-center shrink-0"
-                >
-                  <Icon name="N" class="w-2 h-2" />
-                </div>
+                <MetaNameTag class="!rounded ml-1" />
               </div>
               <p
                 class="text-dark-400 dark:text-gray-200 text-xs"
@@ -68,6 +64,7 @@ import { sendInviteBuzz } from '@/utils/talk'
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import BaseModal from '../BaseModal.vue'
+import MetaNameTag from '@/components/MetaName/Tag.vue'
 
 const layout = useLayoutStore()
 const talk = useTalkStore()

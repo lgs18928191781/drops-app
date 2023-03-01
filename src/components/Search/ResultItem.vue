@@ -8,11 +8,16 @@
         :image="result.avatar"
         :meta-id="result.metaId"
         :name="result.name"
+        :meta-name="result.metaName"
         class="w-12 h-12 shrink-0 select-none"
         :disabled="true"
       />
       <div class="flex flex-col gap-y-0.5 items-start">
-        <UserName :name="result.name" :meta-name="result.metaName" :text-class="'text-base truncate w-22 lg:w-36 font-bold'" />
+        <UserName
+          :name="result.name"
+          :meta-name="result.metaName"
+          :text-class="'text-base truncate w-22 lg:w-36 font-bold'"
+        />
         <div class="text-dark-300 dark:text-gray-400 text-xs">MetaID: {{ highlightedMetaId }}</div>
       </div>
     </div>
