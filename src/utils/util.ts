@@ -63,7 +63,12 @@ import { SendMetaNameTransationResult } from '@/@types/sdk'
 import { GetTxChainInfo } from '@/api/metaid-base'
 import { useMetaNameStore } from '@/stores/metaname'
 import { GetBalance } from '@/api/aggregation'
+//@ts-ignore
+import namehash from 'eth-ens-namehash'
 import Compressor from 'compressorjs'
+//@ts-ignore
+import { toUnicode } from 'idna-uts46-hx'
+const emojiReg = /[\u{1F601}-\u{1F64F}\u{2702}-\u{27B0}\u{1F680}-\u{1F6C0}\u{1F170}-\u{1F251}\u{1F600}-\u{1F636}\u{1F681}-\u{1F6C5}\u{1F30D}-\u{1F567}]/gu
 
 export function randomString() {
   return Math.random()
@@ -1436,16 +1441,17 @@ export const setInitImg = (
 }
 
 export const bytesLength = (str: string) => {
-  let intLength = 0
-  for (let i = 0; i < str.length; i++) {
-    let a = str.charAt(i)
-    if (a.match(/[^\x00-\xff]/gi) != null) {
-      intLength += 2
-    } else {
-      intLength += 1
-    }
-  }
-  return intLength
+  return Buffer.from(toUnicode(str)).length
+  // let intLength = 0
+  // for (let i = 0; i < str.length; i++) {
+  //   let a = str.charAt(i)
+  //   if (a.match(/[^\x00-\xff]/gi) != null) {
+  //     intLength += 2
+  //   } else {
+  //     intLength += 1
+  //   }
+  // }
+  // return intLength
 }
 
 export const getMetaNamePrice = (metaName: string) => {
