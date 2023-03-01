@@ -2,6 +2,24 @@
     padding: 24px 0;
 }
 
+.close-tips {
+    border-radius: var(--rounded);
+    background: linear-gradient(270deg, #8DBBFF 0%, #2DEBD8 99%);
+    padding: 12px 28px;
+    margin-bottom: 24px;
+
+    .icon {
+        width: 24px;
+        height: 24px;
+        margin-right: 20px;
+    }
+
+    .content {
+        white-space: pre-line;
+        line-height: 22px;
+    }
+}
+
 .fee-warp {
     background: var(--themeBgSecondColor);
     border-radius: var(--rounded);

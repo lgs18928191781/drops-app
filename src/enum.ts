@@ -375,6 +375,7 @@ export enum GroupChannelType {
   ETH_NFT = 'ETH_NFT',
   POLYGON_NFT = 'POLYGON_NFT',
   BSV_NFT = 'BSV_NFT',
+  BSV_FT = 'BSV_FT',
 }
 
 export enum ShowControl {

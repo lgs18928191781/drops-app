@@ -2,6 +2,15 @@
   <div class="metaname-search-index">
     <div class="metaname-sm-container">
       <ElSkeleton :loading="isSkeleton" animated>
+        <div
+          class="close-tips flex flex-align-center"
+          v-if="!metaNameConfig.val?.isOpen && metaNameConfig.val!.openText.en && metaNameConfig.val!.openText.zh"
+        >
+          <Icon name="notice" />
+          <div class="content flex1">
+            {{ metaNameConfig.val!.openText[i18n.locale.value] }}
+          </div>
+        </div>
         <SearchWarp :meta-name="metaName" @submit="searchSubmit" v-loading="loading" />
 
         <div class="fee-warp">
@@ -26,7 +35,7 @@
             disabled:
               (metaNameInfo.val &&
                 metaNameInfo.val.registerState !== MetaNameRegisterState.UnRegister) ||
-              !isOpen,
+              !metaNameConfig.val!.isOpen,
           }"
           v-if="metaNameInfo.val"
         >
@@ -131,7 +140,7 @@ import { Loading } from '@element-plus/icons-vue'
 import { GetMetaNameInfo, MetaNameAllPrice } from '@/api/wxcore'
 import { useMetaNameStore } from '@/stores/metaname'
 import { MetaNameRegisterState } from '@/enum'
-import { GetMetaNameConfig } from '@/api/strapi'
+import { GetMetaNameConfig, MetaNameConfig } from '@/api/strapi'
 import { validateMetaName } from '@/utils/metaname'
 
 const i18n = useI18n()
@@ -170,8 +179,8 @@ const isNextStep = ref(false)
 const expireDate = ref('')
 const isGetExpireDateLoading = ref(false)
 const submitLoading = ref(false)
-const isOpen = ref(false)
 const isSkeleton = ref(true)
+const metaNameConfig: { val: null | MetaNameConfig } = reactive({ val: null })
 
 const currentPayPlatform = ref(
   userStore.isAuthorized && userStore.user?.evmAddress ? PayPlatform.ETH : PayPlatform.UnionPay
@@ -232,16 +241,32 @@ function getExporeDate() {
 }
 
 function toRegister() {
-  if (isOpen.value === false) return ElMessage.info(i18n.t('Comming Soon'))
+  if (metaNameConfig.val!.isOpen === false) return ElMessage.info(i18n.t('Comming Soon'))
   isShowRegister.value = true
 }
 
 GetMetaNameConfig()
   .then(res => {
     if (import.meta.env.MODE === EnvMode.Mainnet) {
-      isOpen.value = res.isOpen
+      metaNameConfig.val = res
+      if (!metaNameConfig.val!.isOpen && metaNameConfig.val!.openTime) {
+        if (new Date(metaNameConfig.val!.openTime).getTime() <= new Date().getTime()) {
+          metaNameConfig.val!.isOpen = true
+        }
+      }
     } else {
-      isOpen.value = true
+      metaNameConfig.val = {
+        id: 0,
+        isOpen: true,
+        published_at: '',
+        openText: {
+          en: '',
+          zh: '',
+        },
+        openTime: '',
+        created_at: '',
+        updated_at: '',
+      }
     }
     isSkeleton.value = false
     if (route.query.metaName) {
