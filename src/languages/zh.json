@@ -688,7 +688,7 @@
       "avatar": "头像",
       "alias": "别名",
       "card": "纪念卡",
-      "Name": "姓名"
+      "Name": "MetaName"
     },
     "FilterItem": {
       "Status": "状态",
