@@ -981,6 +981,9 @@ export function getCurrencyAmount(
       return new Decimal(price).div(100).toNumber()
     } else {
       // mvc -> cny
+      rate = rootStore.exchangeRate.find(
+        item => item.symbol.toUpperCase() === currency.toUpperCase()
+      )
       const rateUSD = new Decimal(rate!.price.CNY).div(rate!.price.USD).toNumber()
       return new Decimal(
         new Decimal(price)
@@ -1132,6 +1135,12 @@ export function NFTOffSale(nft: GenesisNFTItem) {
                 genesis: nft.nftGenesis,
                 codehash: nft.nftCodehash,
                 tokenIndex: nft.nftTokenIndex,
+                sellUtxo: {
+                  txId: nft.nftSellContractTxId,
+                  outputIndex: 0,
+                  sellerAddress: nft.nftOwnerAddress,
+                  price: nft.nftPrice,
+                },
               }),
             },
             {
