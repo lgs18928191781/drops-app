@@ -698,7 +698,7 @@
       "avatar": "Avatar",
       "rights": "Right",
       "music": "Music",
-      "Name": "Name"
+      "Name": "MetaName"
     },
     "FilterItem": {
       "Status": "Status",

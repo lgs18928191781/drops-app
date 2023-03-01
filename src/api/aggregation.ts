@@ -197,6 +197,7 @@ export const GetNftHolderList = (params: {
   codehash: string
   genesis: string
   tokenIndex: string
+  chain: string
   page: string
   pageSize: string
 }): Promise<GetNftHolderListRes> => {

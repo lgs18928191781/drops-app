@@ -110,6 +110,7 @@ interface Props {
   genesis: string
   codehash: string
   tokenIndex: string
+  chain: string
 }
 const props = withDefaults(defineProps<Props>(), {})
 
@@ -126,6 +127,7 @@ async function getDatas(isCover = false) {
       tokenIndex: props.tokenIndex,
       page: pagination.page.toString(),
       pageSize: pagination.pageSize.toString(),
+      chain: props.chain,
     }).catch(error => {
       ElMessage.error(error.message)
     })
