@@ -289,6 +289,12 @@ function submitForm() {
               price: sellPriceSatoshi, // nft的出售价格 单位聪
               sensibleId: props.nft.nftSensibleId, // nft的sensibleId
               sellDesc: 'ShowV3',
+              sellUtxo: {
+                txId: props.nft.nftSellContractTxId,
+                outputIndex: 0,
+                sellerAddress: props.nft.nftOwnerAddress,
+                price: props.nft.nftPrice,
+              },
             }),
           },
           {

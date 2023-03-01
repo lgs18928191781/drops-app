@@ -45,12 +45,17 @@
             :image="userStore.user!.avatarImage"
             :meta-id="userStore.user!.metaId"
             :name="userStore.user!.name"
-            :disabled="true"
             class="user-warp-item overflow-hidden"
             :meta-name="userStore.user!.metaName"
           />
         </template>
-        <UserPersonaVue />
+        <UserCardVue
+          :name="userStore.user!.name"
+          :meta-id="userStore.user!.metaId"
+          :meta-name="userStore.user!.metaName"
+          :model-value="true"
+        />
+        <!-- <UserPersonaVue /> -->
       </el-popover>
     </div>
   </template>
@@ -114,6 +119,7 @@ import UserPersonaVue from '../UserPersona/UserPersona.vue'
 import UserCardVue from '../UserCard/UserCard.vue'
 import { router } from '@/router'
 import MetaNameLogo from '@/assets/svg/meta_name.svg?url'
+
 const i18n = useI18n()
 const rootStore = useRootStore()
 const userStore = useUserStore()

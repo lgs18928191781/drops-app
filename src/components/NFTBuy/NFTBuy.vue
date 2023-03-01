@@ -218,6 +218,12 @@ async function confirmBuy() {
       tokenIndex: props.nft.nftTokenIndex,
       sellTxId: props.nft.nftSellTxId,
       sellContractTxId: props.nft.nftSellContractTxId,
+      sellUtxo: {
+        txId: props.nft.nftSellContractTxId,
+        outputIndex: 0,
+        sellerAddress: props.nft.nftOwnerAddress,
+        price: props.nft.nftPrice,
+      },
     }
     const publisherFeeRate = platformFeeRate.value / 100
     const creatorFeeRate = royalyFeeRate.value / 100
