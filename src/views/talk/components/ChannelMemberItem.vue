@@ -8,6 +8,7 @@
       :type="member.avatarType"
       :meta-id="member.metaId"
       :image="member.avatarImage"
+      :meta-name="member?.userInfo?.metaName"
       :image-class="'w-9 h-9'"
       class="shrink-0"
     />

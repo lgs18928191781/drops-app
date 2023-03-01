@@ -24,6 +24,7 @@
                 :image="userStore.user!.avatarImage"
                 :disabled="true"
                 :name="userStore.user!.name"
+                :meta-name="userStore.user!.metaName"
                 class="mr-1"
               />
               <div class="name">{{ $t('Wallet.My Wallet') }}</div>
@@ -435,7 +436,7 @@ const wallets = reactive([
           }
           return '--'
         },
-        loading: false,
+        loading: true,
       },
       {
         icon: MVC,
@@ -568,7 +569,13 @@ function chooseSeries(item: UserNFTItem) {
 }
 
 function getAllBalace() {
-  return Promise.all([getMEBalance(), getSpaceBalance(), getETHBalance(), getBsvBalance()])
+  return Promise.all([
+    getMEBalance(),
+    getSpaceBalance(),
+    getETHBalance(),
+    getPolygonBalance(),
+    getBsvBalance(),
+  ])
 }
 
 function getMEBalance() {
@@ -617,6 +624,37 @@ function getETHBalance() {
       if (userStore.user!.evmAddress) {
         const res = await GetBalance({
           chain: import.meta.env.VITE_ETH_CHAIN,
+          address: userStore.user!.evmAddress! || userStore.user?.ethAddress,
+        }).catch(error => {
+          ElMessage.error(error.message)
+          resolve()
+        })
+        if (res?.code === 0) {
+          item.value = new Decimal(
+            new Decimal(res.data.balance).div(Math.pow(10, 18)).toFixed(4)
+          ).toNumber()
+          item.loading = false
+          resolve()
+        }
+      } else {
+        item.value = 0
+        item.loading = false
+        resolve()
+      }
+    }
+  })
+}
+
+function getPolygonBalance() {
+  return new Promise<void>(async resolve => {
+    // 获取余额
+    const item = wallets[1].list.find(
+      item => item.name === import.meta.env.VITE_POLYGON_CHAIN.toUpperCase()
+    )
+    if (item) {
+      if (userStore.user!.evmAddress) {
+        const res = await GetBalance({
+          chain: import.meta.env.VITE_POLYGON_CHAIN,
           address: userStore.user!.evmAddress! || userStore.user?.ethAddress,
         }).catch(error => {
           ElMessage.error(error.message)

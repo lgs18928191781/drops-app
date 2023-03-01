@@ -4,6 +4,8 @@
       :meta-id="userStore.user!.metaId"
       :image="userStore.user!.avatarImage"
       :name="userStore.user!.name"
+      :meta-name="userStore.user!.metaName"
+      :disabled="true"
       class="mr-2"
     />
     <div class="cont flex1">

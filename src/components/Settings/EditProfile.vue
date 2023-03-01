@@ -19,6 +19,7 @@
             :meta-id="userStore.user!.metaId"
             :image="currentAvatar.val.avatarImage"
             :name="userStore.user!.name"
+            :meta-name="userStore.user!.metaName"
             :type="'metafile'"
             :disabled="true"
           />

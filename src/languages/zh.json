@@ -576,7 +576,7 @@
   "Message": "消息",
   "Following": "正在关注",
   "Followers": "关注者",
-  "Already on NFT": "NFT",
+  "Already on NFT": "上架的NFT",
   "Replay": "回复",
   "Cancel Follow": "取消关注",
   "cancelFollowTips": "你确定要取消关注用户",
@@ -687,7 +687,8 @@
       "rights": "权益",
       "avatar": "头像",
       "alias": "别名",
-      "card": "纪念卡"
+      "card": "纪念卡",
+      "Name": "MetaName"
     },
     "FilterItem": {
       "Status": "状态",
@@ -730,7 +731,11 @@
     "Not Support Current Chain NFT Transfer": "暂不支持当前链的NFT转赠",
     "Selling price must be greater than ": "售价必须大于",
     "OffSaleing": "下架中...",
-    "TransferToMetaNameNotMatch": "MetaName解析地址与拥有者地址不一致"
+    "TransferToMetaNameNotMatch": "MetaName解析地址与拥有者地址不一致",
+    "Payment Succeeded": "支付成功！",
+    "Payment Succeeded Tips": "NFT 在你的钱包里。",
+    "View Item": "查看NFT",
+    "Check later": "稍后查看"
   },
   "My NFT": "我的NFT",
   "Done": "完成",
@@ -968,5 +973,6 @@
   "updateSuccess": "账户升级成功!",
   "updateRemind": "升级提示",
   "allowUpdate": "检测到你的账号需要升级,取消升级可能会影响后续其他钱包登录,请确认! \n (特别提醒：1.如果您之前注册的账户是通过'WalletConnect'注册绑定的，请使用'WalletConnect'进行升级；2.如果您的账户是通过Web客户端'MetaMask'注册绑定的，请使用Web客户端‘MetaMask’钱包进行升级操作,否则会导致账户升级失败)",
-  "confirmUpdate": "确认升级"
+  "confirmUpdate": "确认升级",
+  "inputMetaNameSensitiveWords": "不支持注册敏感词"
 }

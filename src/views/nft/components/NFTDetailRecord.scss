@@ -15,7 +15,7 @@
 
 
 
-    .record-list {
+    .record-list-warp {
         overflow-y: auto;
     }
 
@@ -30,6 +30,14 @@
 
         &:hover {
             background: rgba(var(--themeBgSecondColorRgb), 0.5);
+        }
+
+        .td {
+            margin-right: 5px;
+
+            &:last-child {
+                margin-right: 0;
+            }
         }
 
         .top-icon {
@@ -49,9 +57,7 @@
             }
         }
 
-        span {
-            color: #606266;
-        }
+
 
         .owner {
             .avatar {

@@ -40,11 +40,11 @@
     <template #default>
       <div class="record flex1 flex flex-v">
         <div class="record-item th flex flex-align-center">
-          <span class="owner flex1">{{ $t('NFT.Owner') }}</span>
-          <span class="role flex1">{{ $t('NFT.Role') }}</span>
-          <span class="time flex1">{{ $t('NFT.Time') }}</span>
-          <span class="price flex1">{{ $t('NFT.Price') }}</span>
-          <span class="link"></span>
+          <span class="owner td flex1">{{ $t('NFT.Owner') }}</span>
+          <span class="role td flex1">{{ $t('NFT.Role') }}</span>
+          <span class="time td flex1">{{ $t('NFT.Time') }}</span>
+          <span class="price td flex1">{{ $t('NFT.Price') }}</span>
+          <span class="link td"></span>
         </div>
 
         <div class="record-list-warp flex1">
@@ -55,25 +55,30 @@
               :key="item.txId"
             >
               <Icon name="top" class="top-icon" />
-              <span class="owner flex1">
+              <span class="owner td flex1">
                 <div class="flex flex-align-center">
-                  <UserAvatar :meta-id="item.metaId" :image="item.avatarImage" :name="item.name" />
+                  <UserAvatar
+                    :meta-id="item.metaId"
+                    :image="item.avatarImage"
+                    :name="item.name"
+                    :meta-name="item.userInfo.metaName"
+                  />
                   <span class="name"
-                    ><UserName :name="item.name" :meta-name="item.userInfo.metaName"
+                    ><UserName :name="item.name" :meta-name="item.userInfo.metaName" :no-tag="true"
                   /></span>
                 </div>
               </span>
-              <span class="role flex1">{{
+              <span class="role td flex1">{{
                 pagination.nothing && index === records.length - 1
                   ? $t('NFT.Creator')
                   : index === 0
                   ? $t('NFT.Owner')
                   : $t('NFT.History owner')
               }}</span>
-              <span class="time flex1">{{
+              <span class="time td flex1">{{
                 item.timestamp ? $filters.dateTimeFormat(item.timestamp) : '--'
               }}</span>
-              <span class="price flex1 flex flex-align-center">
+              <span class="price td flex1 flex flex-align-center">
                 <template v-if="item.satoshisPrice && item.satoshisPrice !== '0'">
                   {{ new Decimal(item.satoshisPrice).div(Math.pow(10, 8)).toNumber() }} Space
                 </template>
@@ -81,7 +86,7 @@
                   --
                 </template>
               </span>
-              <span class="link">
+              <span class="link td">
                 <Icon name="link" @click="tx(item.txId)" />
               </span>
             </div>
@@ -105,6 +110,7 @@ interface Props {
   genesis: string
   codehash: string
   tokenIndex: string
+  chain: string
 }
 const props = withDefaults(defineProps<Props>(), {})
 
@@ -121,6 +127,7 @@ async function getDatas(isCover = false) {
       tokenIndex: props.tokenIndex,
       page: pagination.page.toString(),
       pageSize: pagination.pageSize.toString(),
+      chain: props.chain,
     }).catch(error => {
       ElMessage.error(error.message)
     })

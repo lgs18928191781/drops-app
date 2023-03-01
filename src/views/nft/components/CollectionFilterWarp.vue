@@ -95,18 +95,18 @@ const sellTypes = [
     name: () => i18n.t('NFT.SellType.Sale'),
     value: NFTSellType.SALE,
   },
-  {
-    name: () => i18n.t('NFT.SellType.New On Sale'),
-    value: NFTSellType.NEWSALE,
-  },
+  // {
+  //   name: () => i18n.t('NFT.SellType.New On Sale'),
+  //   value: NFTSellType.NEWSALE,
+  // },
   {
     name: () => i18n.t('NFT.SellType.Off Sale'),
     value: NFTSellType.NONSALE,
   },
-  {
-    name: () => i18n.t('NFT.SellType.Auction'),
-    value: NFTSellType.AUCTION,
-  },
+  // {
+  //   name: () => i18n.t('NFT.SellType.Auction'),
+  //   value: NFTSellType.AUCTION,
+  // },
 ]
 
 function changeSellType(type: NFTSellType) {

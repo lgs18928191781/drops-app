@@ -26,6 +26,7 @@ export default ({ mode, command }) => {
   // 加载环境配置文件
   const env = loadEnv(mode, process.cwd())
   const isProduction = productionEnvs.includes(mode) && command === 'build' ? true : false
+  // const isProduction = command === 'build'
   return defineConfig({
     plugins: [
       command === 'serve' &&

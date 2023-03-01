@@ -43,7 +43,12 @@
                 <div class="statiscs-item" v-for="(item, index) in statiscs" :key="index">
                   <div class="flex flex-align-center flex-pack-center">
                     <div class="statiscs-item-warp">
-                      <div class="value">{{ item.value() }}</div>
+                      <template v-if="item.value !== '0' && item.value !== ''">
+                        <div class="value">{{ item.value }} {{ item.unit }}</div>
+                      </template>
+                      <template v-else>
+                        <div class="value">--</div>
+                      </template>
                       <div class="label">{{ item.name() }}</div>
                     </div>
                   </div>
@@ -58,7 +63,7 @@
               v-for="(item, index) in tabs"
               :key="index"
               :class="{ active: item.value === tabActive }"
-              @click="tabActive = item.value"
+              @click="changeTab(item.value)"
               >{{ item.name() }}</a
             >
           </div>
@@ -128,7 +133,13 @@
                     isListLoading ? index : item.nftGenesis + item.nftCodehash + item.nftTokenIndex
                   "
                 >
-                  <NFTItemVue :nft="item" @buy="buyNFT" :loading="isListLoading" />
+                  <NFTItemVue
+                    :nft="item"
+                    @buy="buyNFT"
+                    @offsale="onOffsale"
+                    @sale="onSale"
+                    :loading="isListLoading"
+                  />
                 </ElCol>
 
                 <ElCol v-if="!isListLoading && nfts.length === 0">
@@ -151,7 +162,9 @@
       />
 
       <!-- NFTBuy -->
-      <NFTBuy :nft="nft.val!" v-model="isShowNftBuy" />
+      <NFTBuy :nft="nft.val!" v-model="isShowNftBuy" @success="onOperateSuccess" />
+      <!-- NFTSlae -->
+      <NFTSellVue :nft="nft.val!" v-model="isShowNftSale" @success="onOperateSuccess" />
     </template>
   </ElSkeleton>
 </template>
@@ -172,7 +185,10 @@ import CollectionFilterWarp from '@/views/nft/components/CollectionFilterWarp.vu
 import CollectionSkeleton from '@/views/nft/collection/CollectionSkeleton.vue'
 import IsNull from '@/components/IsNull/IsNull.vue'
 import { isMobile } from '@/stores/root'
-import { satoshi } from '@/utils/filters'
+import { satoshi, space } from '@/utils/filters'
+import NFTSellVue from '@/components/NFTSell/NFTSell.vue'
+import { NFTOffSale } from '@/utils/util'
+import { GetGenesisStatistics } from '@/api/broad'
 
 const i18n = useI18n()
 const route = useRoute()
@@ -196,27 +212,33 @@ const tabActive = ref(NFTCollectTab.CollectionWorks)
 const statiscs = reactive([
   {
     name: () => i18n.t('NFT.Initial Price'),
-    value: () => '--',
+    value: '--',
+    unit: 'Space',
   },
   {
     name: () => i18n.t('NFT.Floor Price'),
-    value: () => '--',
+    value: '--',
+    unit: 'Space',
   },
   {
     name: () => i18n.t('NFT.Highest Price'),
-    value: () => '--',
+    value: '--',
+    unit: 'Space',
   },
   {
     name: () => i18n.t('NFT.Supply'),
-    value: () => '--',
+    value: '--',
+    unit: '',
   },
   {
     name: () => i18n.t('NFT.Owner'),
-    value: () => '--',
+    value: '--',
+    unit: '',
   },
   {
     name: () => i18n.t('NFT.Blockchain'),
-    value: () => 'MVC',
+    value: 'MVC',
+    unit: '',
   },
 ])
 const collection: { val: null | Collect } = reactive({ val: null })
@@ -226,16 +248,8 @@ const pagination = reactive({ ...initPagination, pageSize: 24 })
 const nfts: GenesisNFTItem[] = reactive([])
 const nft: { val: GenesisNFTItem | null } = reactive({ val: null })
 const isShowNftBuy = ref(false)
+const isShowNftSale = ref(false)
 const cells = [
-  {
-    value: 0,
-    xs: 12,
-    sm: 8,
-    md: 6,
-    lg: 6,
-    xl: 4,
-    icon: 'layout-grid-fill',
-  },
   {
     value: 1,
     xs: 24,
@@ -243,6 +257,15 @@ const cells = [
     md: 8,
     lg: 8,
     xl: 6,
+    icon: 'layout-grid-fill',
+  },
+  {
+    value: 0,
+    xs: 12,
+    sm: 8,
+    md: 6,
+    lg: 6,
+    xl: 4,
     icon: 'grid-fill',
   },
 ]
@@ -365,6 +388,53 @@ function refreshDatas() {
   })
 }
 
+async function onOffsale(item: GenesisNFTItem) {
+  const result = await NFTOffSale(item)
+  if (result) {
+    onOperateSuccess(result)
+  }
+}
+
+function onSale(item: GenesisNFTItem) {
+  nft.val = item
+  isShowNftSale.value = true
+}
+
+function onOperateSuccess(item: GenesisNFTItem) {
+  const index = nfts.findIndex(
+    _item =>
+      _item.nftGenesis === item.nftGenesis &&
+      _item.nftCodehash === item.nftCodehash &&
+      _item.nftTokenIndex === item.nftTokenIndex
+  )
+  if (index > -1) {
+    nfts[index] = item
+  }
+}
+
+function getGenesisStatistics() {
+  return new Promise<void>(async resolve => {
+    const res = await GetGenesisStatistics(route.params.topicType as string).catch(error => {
+      ElMessage.error(error.message)
+    })
+    if (res?.code === 0) {
+      statiscs[0].value = space(res.data.panicPrice).toString()
+      statiscs[1].value = space(res.data.minPrice).toString()
+      statiscs[2].value = space(res.data.maxPrice).toString()
+      statiscs[3].value = res.data.totalSupply.toString()
+      statiscs[4].value = res.data.totalHolder.toString()
+      resolve()
+    }
+  })
+}
+
+function changeTab(value: NFTCollectTab) {
+  if (tabActive.value === value) return
+  if (value === NFTCollectTab.PriceTrend) {
+    return ElMessage.info(i18n.t('Comming Soon'))
+  }
+}
+
 getCollection().then(() => {
   getDatas(true).then(() => {
     isSkeleton.value = false
@@ -376,6 +446,7 @@ getCollection().then(() => {
     })
   })
 })
+getGenesisStatistics()
 </script>
 
 <style lang="scss" scoped src="./Collection.scss"></style>

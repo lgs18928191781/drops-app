@@ -25,6 +25,7 @@ $themeTextColor: var(--themeTextColor);
     --themeBgThreeColor: #F5F7F9;
     --themeTextColor: #303133;
     --themeTextColorRgb: 48, 49, 51;
+    --themeFadedTextColor: rgba(var(--themeTextColorRgb), 0.5);
     --themeBtnTextColor: #303133;
     font-family: 'SF-Pro-Regular Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB,Microsoft YaHei', '微软雅黑', Arial, sans-serif;
     --border-color: #303133;
@@ -39,8 +40,7 @@ $themeTextColor: var(--themeTextColor);
     --divid-color: #F4F7F9;
     --input-height: 56px;
     --sm-conetnt-width: 600PX;
-    // --nft-topbar-height: 108px
-    --nft-topbar-height: 0px
+    --nft-topbar-height: 108px // --nft-topbar-height: 0px
 }
 
 html.dark {

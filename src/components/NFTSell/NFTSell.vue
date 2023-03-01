@@ -289,6 +289,12 @@ function submitForm() {
               price: sellPriceSatoshi, // nft的出售价格 单位聪
               sensibleId: props.nft.nftSensibleId, // nft的sensibleId
               sellDesc: 'ShowV3',
+              sellUtxo: {
+                txId: props.nft.nftSellContractTxId,
+                outputIndex: 0,
+                sellerAddress: props.nft.nftOwnerAddress,
+                price: props.nft.nftPrice,
+              },
             }),
           },
           {
@@ -297,8 +303,16 @@ function submitForm() {
         )
         if (res) {
           loading.value = false
-          emit('success')
+          emit('success', {
+            ...props.nft,
+            nftPrice: sellPriceSatoshi,
+            nftSellState: 0,
+            nftIsReady: true,
+            nftSellTxId: res.nft!.sell!.sellTxId,
+            nftSellContractTxId: res.nft!.sell!.txId,
+          })
           emit('update:modelValue', false)
+          form.sellPrice = ''
           ElMessage.success('上架成功')
         } else {
           loading.value = false
@@ -310,8 +324,6 @@ function submitForm() {
     }
   })
 }
-
-getyExtraFee()
 </script>
 
 <style lang="scss" scoped src="./NFTSell.scss"></style>

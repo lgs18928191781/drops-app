@@ -30,22 +30,22 @@
     >
       <div class="flex flex-col items-center">
         <Icon name="part" class="w-12 h-12  rounded text-dark-250 dark:text-gray-600" />
-        <div class="mt-2 lg:mt-1">{{ $t('User.Backwall') }}</div>
+        <div class="mt-2 lg:mt-1">{{ i18n.t('User.Backwall') }}</div>
       </div>
 
       <div class="flex flex-col items-center">
         <Icon name="part" class="w-12 h-12 rounded text-dark-250 dark:text-gray-600" />
-        <div class="mt-2 lg:mt-1">{{ $t('User.Costume') }}</div>
+        <div class="mt-2 lg:mt-1">{{ i18n.t('User.Costume') }}</div>
       </div>
 
       <div class="flex flex-col items-center">
         <Icon name="part" class="w-12 h-12 rounded text-dark-250 dark:text-gray-600" />
-        <div class="mt-2 lg:mt-1">{{ $t('User.Artifacts') }}</div>
+        <div class="mt-2 lg:mt-1">{{ i18n.t('User.Artifacts') }}</div>
       </div>
 
       <div class="flex flex-col items-center">
         <Icon name="part" class="w-12 h-12  rounded text-dark-250 dark:text-gray-600" />
-        <div class="mt-2 lg:mt-1">{{ $t('User.Pet') }}</div>
+        <div class="mt-2 lg:mt-1">{{ i18n.t('User.Pet') }}</div>
       </div>
     </div>
   </div>
@@ -55,13 +55,16 @@
 import { useI18n } from 'vue-i18n'
 import { computed } from 'vue'
 
+const props = defineProps<{
+  i18n?: any
+}>()
+
+const i18n = props.i18n ? props.i18n.global : useI18n()
 const xpBarWidth = computed(() => {
   const xp = 0
   const xpMax = 100
   return (xp / xpMax) * 100
 })
-
-const i18n = useI18n()
 function comeSoon() {
   return ElMessage.info(i18n.t('Comming Soon'))
 }

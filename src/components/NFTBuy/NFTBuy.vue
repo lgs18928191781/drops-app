@@ -20,9 +20,13 @@
                   :meta-id="nft.nftIssueMetaId"
                   :name="nft.nftIssuer"
                   :image="nft.nftIssueAvatarImage"
+                  :meta-name="nft.nftIssueUserInfo.metaName"
                 />
                 <span class="username"
-                  ><UserName :name="nft.nftIssuer" :meta-name="nft.nftIssueUserInfo.metaName"
+                  ><UserName
+                    :name="nft.nftIssuer"
+                    :meta-name="nft.nftIssueUserInfo.metaName"
+                    :no-tag="true"
                 /></span>
                 <span class="role">({{ $t('NFT.Creater') }})</span>
               </div>
@@ -31,9 +35,13 @@
                   :meta-id="nft.nftOwnerMetaId"
                   :name="nft.nftOwnerName"
                   :image="nft.nftOwnerAvatarImage"
+                  :meta-name="nft.nftOwnerUserInfo.metaName"
                 />
                 <span class="username"
-                  ><UserName :name="nft.nftOwnerName" :meta-name="nft.nftOwnerUserInfo.metaName"
+                  ><UserName
+                    :name="nft.nftOwnerName"
+                    :meta-name="nft.nftOwnerUserInfo.metaName"
+                    :no-tag="true"
                 /></span>
                 <span class="role">({{ $t('NFT.Owner') }})</span>
               </div>
@@ -85,10 +93,41 @@
       />
     </ElSkeleton>
   </ElDialog>
+
+  <ElDialog
+    v-model="isShowSuccess"
+    class="sm none-padding"
+    :close-on-click-modal="false"
+    :title="''"
+    @close="emitSuccess"
+    :show-close="true"
+    center
+  >
+    <div class="success-result">
+      <div class="success-icon flex flex-align-center flex-pack-center">
+        <div class="success-icon-warp flex flex-align-center flex-pack-center">
+          <Icon name="check" />
+        </div>
+      </div>
+      <div class="title">
+        {{ $t('NFT.Payment Succeeded') }}
+      </div>
+      <div class="tips">
+        {{ $t('NFT.Payment Succeeded Tips') }}
+      </div>
+
+      <div class="main-border primary" @click="toNFT">
+        {{ $t('NFT.View Item') }}
+      </div>
+      <div class="later">
+        <a @click="isShowSuccess = false">{{ $t('NFT.Check later') }}</a>
+      </div>
+    </div>
+  </ElDialog>
 </template>
 
 <script setup lang="ts">
-import { NodeName, PayPlatform, PayType, SdkPayType, ToCurrency } from '@/enum'
+import { NodeName, PayPlatform, PayType, SdkPayType, ToCurrency, NFTSellState } from '@/enum'
 import { isAndroid, isApp, isIOS, isIosApp, useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
 import { computed, reactive, Ref, ref, watch } from 'vue'
@@ -131,6 +170,7 @@ const payMsg = reactive({
 const nftFee: { val: NFTFeeInfo | null } = reactive({ val: null })
 const isSkeleton = ref(true)
 const buying = ref(false)
+const isShowSuccess = ref(false)
 
 function choosePayPlatform(item: PayPlatformItem) {
   if (item.disabled()) return
@@ -176,6 +216,14 @@ async function confirmBuy() {
       genesis: props.nft.nftGenesis,
       codehash: props.nft.nftCodehash,
       tokenIndex: props.nft.nftTokenIndex,
+      sellTxId: props.nft.nftSellTxId,
+      sellContractTxId: props.nft.nftSellContractTxId,
+      sellUtxo: {
+        txId: props.nft.nftSellContractTxId,
+        outputIndex: 0,
+        sellerAddress: props.nft.nftOwnerAddress,
+        price: props.nft.nftPrice,
+      },
     }
     const publisherFeeRate = platformFeeRate.value / 100
     const creatorFeeRate = royalyFeeRate.value / 100
@@ -198,9 +246,9 @@ async function confirmBuy() {
     )
     if (res) {
       ElMessage.success(i18n.t('NFT.Buy Success'))
-      emit('success')
       emit('update:modelValue', false)
       buying.value = false
+      isShowSuccess.value = true
     } else if (res === null) {
       buying.value = false
     }
@@ -261,6 +309,16 @@ const totalPrice = computed(() => {
 })
 
 function toNFT() {
+  if (
+    route.name === 'nftDetail' &&
+    route.params.chain === props.nft.nftChain &&
+    route.params.genesis === props.nft.nftGenesis &&
+    route.params.codehash === props.nft.nftCodehash &&
+    route.params.tokenIndex === props.nft.nftTokenIndex
+  ) {
+    isShowSuccess.value = false
+    return
+  }
   router.push({
     name: 'nftDetail',
     params: {
@@ -270,11 +328,40 @@ function toNFT() {
       codehash: props.nft.nftCodehash ? props.nft.nftCodehash : props.nft.nftChain,
     },
   })
+  isShowSuccess.value = false
 }
 
 function onPaySuccess() {
   emit('update:modelValue', false)
-  emit('success')
+  isShowSuccess.value = true
+}
+
+function emitSuccess() {
+  emit('success', {
+    ...props.nft,
+    nftSellState: NFTSellState.OffSale,
+    nftOwnerUserInfo: {
+      address: userStore.user!.address,
+      avatarTxId: userStore.user!.avatarTxId,
+      avatarType: userStore.user!.avatarType,
+      avatarImage: userStore.user!.avatarImage,
+      coverPublicKey: '',
+      coverType: userStore.user!.avatarType,
+      coverUrl: '',
+      metaIdTimestamp: '',
+      name: userStore.user!.name,
+      nameType: '',
+      metaName: userStore.user!.metaName,
+      nftNamePublicKey: '',
+      publicKey: '',
+    },
+    nftOwnerAddress: userStore.user!.address,
+    nftOwnerAvatarTxId: userStore.user!.avatarTxId,
+    nftOwnerAvatarType: userStore.user!.avatarType,
+    nftOwnerAvatarImage: userStore.user!.avatarImage,
+    nftOwnerMetaId: userStore.user!.metaId,
+    nftOwnerName: userStore.user!.name,
+  })
 }
 
 watch(

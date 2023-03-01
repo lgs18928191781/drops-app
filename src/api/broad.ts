@@ -135,3 +135,12 @@ export const GetFeeInfo = (params: {
     params: _params,
   })
 }
+
+export const GetGenesisStatistics = (topicType: string): Promise<GetGenesisVolumeInfoRes> => {
+  return Broad.get(`/v1/nos/count/volume/info`, {
+    params: {
+      day: 7,
+      key: topicType,
+    },
+  })
+}

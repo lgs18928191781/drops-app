@@ -13,6 +13,7 @@
       <UserAvatar
         :image="activeChannel.avatarImage"
         :meta-id="activeChannel.id"
+        :meta-name="activeChannel.metaName"
         class="w-12 h-12 lg:w-10 lg:h-10 shrink-0 select-none mr-2 lg:mr-0"
         :disabled="true"
       />

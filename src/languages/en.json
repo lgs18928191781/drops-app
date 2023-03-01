@@ -586,7 +586,7 @@
   "Message": "Message",
   "Following": "Following",
   "Followers": "Followers",
-  "Already on NFT": "Already on NFT",
+  "Already on NFT": "NFT for sale",
   "Replay": "Replay",
   "Cancel Follow": "Followed",
   "cancelFollowTips": "Can you confirm cancel follow user",
@@ -697,7 +697,8 @@
       "alias": "Domain",
       "avatar": "Avatar",
       "rights": "Right",
-      "music": "Music"
+      "music": "Music",
+      "Name": "MetaName"
     },
     "FilterItem": {
       "Status": "Status",
@@ -740,7 +741,11 @@
     "Not Support Current Chain NFT Transfer": "Not Support Current Chain NFT Transfer",
     "Selling price must be greater than ": "Selling price must be greater than",
     "OffSaleing": "OffSaleing...",
-    "TransferToMetaNameNotMatch": "The MetaName resolution address is inconsistent with the owner address"
+    "TransferToMetaNameNotMatch": "The MetaName resolution address is inconsistent with the owner address",
+    "Payment Succeeded": "Payment Succeeded!",
+    "Payment Succeeded Tips": "The NFT is in your wallet.",
+    "View Item": "View Item",
+    "Check later": "Check later"
   },
   "My NFT": "My NFT",
   "Done": "Done",
@@ -969,5 +974,6 @@
   "Copy": "Copy",
   "confirmUpdate": "Confirm upgrade",
   "allowUpdate": "It is detected that your account needs to be upgraded, canceling the upgrade may affect other subsequent wallet logins, please confirm! \n (Special reminder: 1. If your previously registered account is registered and bound through 'WalletConnect', please use 'WalletConnect' to upgrade \n;2. If your account is registered and bound through the web client 'MetaMask', please use the web client 'MetaMask' wallet to perform the upgrade operation, otherwise the account upgrade will fail)",
-  "updateRemind": "Upgrade Tips"
+  "updateRemind": "Upgrade Tips",
+  "inputMetaNameSensitiveWords": "Sensitive words are not supported"
 }

@@ -43,6 +43,7 @@
                       <UserAvatar
                         :meta-id="message.metaId"
                         :image="message.avatarImage"
+                        :meta-name="message.metaName"
                         class="w-15 h-15 rounded-2xl bg-amber-200 mt-7.5"
                         :disabled="true"
                       />
@@ -74,6 +75,7 @@
                     <UserAvatar
                       :meta-id="message.metaId"
                       :image="message.avatarImage"
+                      :meta-name="message.metaName"
                       class="w-15 h-15 rounded-2xl bg-amber-200 mt-7.5"
                       :disabled="true"
                     />

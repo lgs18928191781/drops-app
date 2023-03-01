@@ -2,7 +2,6 @@
     border-radius: var(--rounded) var(--rounded) 0px 0px;
     overflow: hidden;
     background: var(--themeBgSecondColor);
-    margin-top: 18px;
 
     .cover {
         width: 100%;
@@ -193,6 +192,7 @@
         background: var(--themeBgSecondColor);
         padding-top: 18px;
         padding-bottom: 18px;
+        margin-top: 18px;
 
         .main-border {
             display: inline-flex;

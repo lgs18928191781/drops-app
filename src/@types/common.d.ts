@@ -357,6 +357,22 @@ declare interface UserNFTItem {
   nftTimestamp: number
   nftTotalSupply: number
   nftWebsite: string
+  nftIssueUserInfo: {
+    address: string
+    avatarImage: string
+    avatarTxId: string
+    avatarType: string
+    coverPublicKey: string
+    coverType: string
+    coverUrl: string
+    infoAvatarTxIdOssUrl: string
+    metaIdTimestamp: number
+    metaName: string
+    name: string
+    nameType: string
+    nftNamePublicKey: string
+    publicKey: string
+  }
 }
 
 declare interface FungibleToken {
@@ -405,14 +421,14 @@ declare interface GenesisNFTItem {
   nftGenesisCertificationName: string
   nftGenesisCertificationType: number
   nftGenesisTxId: string
-  nftHasCompound: true
-  nftHasDonate: true
-  nftHasLike: true
+  nftHasCompound: boolean
+  nftHasDonate: boolean
+  nftHasLike: boolean
   nftIcon: string
-  nftIsFirstSell: true
-  nftIsLegal: true
-  nftIsOrderLock: true
-  nftIsReady: true
+  nftIsFirstSell: boolean
+  nftIsLegal: boolean
+  nftIsOrderLock: boolean
+  nftIsReady: boolean
   nftIssueAddress: string
   nftIssueAvatarTxId: string
   nftIssueAvatarType: string
@@ -485,6 +501,7 @@ declare interface GenesisNFTItem {
   nftTotalSupply: number
   nftWebsite: string
   nftChain: string
+  nftTopicType: string
 }
 
 declare interface NodeTransactions {
