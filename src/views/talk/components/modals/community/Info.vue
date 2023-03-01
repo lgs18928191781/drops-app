@@ -44,16 +44,13 @@
               <UserAvatar
                 :image="owner!.avatarImage"
                 :meta-id="owner!.metaId"
+                :meta-name="owner!.metaName"
                 class="w-9 h-9 shrink-0 select-none"
                 :disabled="true"
               />
               <div class="">
                 <h4 class="text-sm font-bold truncate max-w-[120PX]" :title="owner!.name">
-                  <UserName
-                    :name="owner!.name"
-                    :meta-name="owner!.metaName"
-                    :no-tag="true"
-                  />
+                  <UserName :name="owner!.name" :meta-name="owner!.metaName" :no-tag="true" />
                 </h4>
                 <div class="text-xxs text-dark-300 dark:text-gray-400">
                   {{ `MetaID: ${owner!.metaId.slice(0, 6)}` }}

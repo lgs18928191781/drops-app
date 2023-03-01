@@ -53,6 +53,7 @@ export const classifyList = [
   { classify: 'avatar', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.avatar') },
   { classify: 'rights', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.rights') },
   { classify: 'music', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.music') },
+  { classify: 'Name', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.Name') },
 ]
 
 export const initPagination: Pagination = {

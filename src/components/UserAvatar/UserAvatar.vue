@@ -29,6 +29,7 @@ let popperTopRange = [0, 0]
 
 interface Props {
   name?: string
+  metaName: string
   metaId?: string
   image: string
   type?: 'metaId' | 'metafile'
@@ -68,6 +69,7 @@ function openUserCard(e: any) {
         modelValue: true,
         metaId: props.metaId,
         name: props.name,
+        metaName: props.metaName,
         onHide: () => {
           destroy()
         },

@@ -9,6 +9,7 @@
         :image="session?.avatarImage"
         :meta-id="session?.metaId"
         :name="session?.name"
+        :meta-name="session?.metaName"
         class="w-12 h-12 shrink-0 select-none"
         :disabled="true"
       />

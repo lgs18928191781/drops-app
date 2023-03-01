@@ -20,6 +20,7 @@
                   :meta-id="nft.nftIssueMetaId"
                   :name="nft.nftIssuer"
                   :image="nft.nftIssueAvatarImage"
+                  :meta-name="nft.nftIssueUserInfo.metaName"
                 />
                 <span class="username"
                   ><UserName
@@ -34,6 +35,7 @@
                   :meta-id="nft.nftOwnerMetaId"
                   :name="nft.nftOwnerName"
                   :image="nft.nftOwnerAvatarImage"
+                  :meta-name="nft.nftOwnerUserInfo.metaName"
                 />
                 <span class="username"
                   ><UserName
@@ -97,7 +99,7 @@
     class="sm none-padding"
     :close-on-click-modal="false"
     :title="''"
-    @close="emit('success')"
+    @close="emitSuccess"
     :show-close="true"
     center
   >
@@ -125,7 +127,7 @@
 </template>
 
 <script setup lang="ts">
-import { NodeName, PayPlatform, PayType, SdkPayType, ToCurrency } from '@/enum'
+import { NodeName, PayPlatform, PayType, SdkPayType, ToCurrency, NFTSellState } from '@/enum'
 import { isAndroid, isApp, isIOS, isIosApp, useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
 import { computed, reactive, Ref, ref, watch } from 'vue'
@@ -214,6 +216,8 @@ async function confirmBuy() {
       genesis: props.nft.nftGenesis,
       codehash: props.nft.nftCodehash,
       tokenIndex: props.nft.nftTokenIndex,
+      sellTxId: props.nft.nftSellTxId,
+      sellContractTxId: props.nft.nftSellContractTxId,
     }
     const publisherFeeRate = platformFeeRate.value / 100
     const creatorFeeRate = royalyFeeRate.value / 100
@@ -232,7 +236,6 @@ async function confirmBuy() {
       },
       {
         payType: SdkPayType.SPACE,
-        checkOnly: true,
       }
     )
     if (res) {
@@ -325,6 +328,34 @@ function toNFT() {
 function onPaySuccess() {
   emit('update:modelValue', false)
   isShowSuccess.value = true
+}
+
+function emitSuccess() {
+  emit('success', {
+    ...props.nft,
+    nftSellState: NFTSellState.OffSale,
+    nftOwnerUserInfo: {
+      address: userStore.user!.address,
+      avatarTxId: userStore.user!.avatarTxId,
+      avatarType: userStore.user!.avatarType,
+      avatarImage: userStore.user!.avatarImage,
+      coverPublicKey: '',
+      coverType: userStore.user!.avatarType,
+      coverUrl: '',
+      metaIdTimestamp: '',
+      name: userStore.user!.name,
+      nameType: '',
+      metaName: userStore.user!.metaName,
+      nftNamePublicKey: '',
+      publicKey: '',
+    },
+    nftOwnerAddress: userStore.user!.address,
+    nftOwnerAvatarTxId: userStore.user!.avatarTxId,
+    nftOwnerAvatarType: userStore.user!.avatarType,
+    nftOwnerAvatarImage: userStore.user!.avatarImage,
+    nftOwnerMetaId: userStore.user!.metaId,
+    nftOwnerName: userStore.user!.name,
+  })
 }
 
 watch(

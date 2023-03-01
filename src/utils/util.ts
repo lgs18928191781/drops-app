@@ -25,10 +25,11 @@ import {
   EnvMode,
   PayPlatformUnit,
   SdkPayType,
+  NFTSellState,
 } from '@/enum'
 import { CheckBlindboxOrderStatus } from '@/api/v3'
 import AllCardJson from '@/utils/card.json'
-import { GetOrderStatus, IsWtiteUser, MetaNameBeforeReqRes } from '@/api/wxcore'
+import { CheckMetaNameValid, GetOrderStatus, IsWtiteUser, MetaNameBeforeReqRes } from '@/api/wxcore'
 import { classifyName } from '@/config'
 import { v1 as uuidv1 } from 'uuid'
 import { decode, encode } from 'js-base64'
@@ -1091,11 +1092,12 @@ export function getCurrencyAmount(
 }
 
 export function NFTOffSale(nft: GenesisNFTItem) {
-  return new Promise(async (resolve, rject) => {
+  return new Promise<GenesisNFTItem | false>(async (resolve, rject) => {
     ElMessageBox.confirm(
       `${i18n.global.t('offsaleConfirm')} ${nft.nftName} ?`,
       i18n.global.t('niceWarning'),
       {
+        // @ts-ignore
         confirmButtonText: i18n.global.t('confirm'),
         cancelButtonText: i18n.global.t('Cancel'),
         closeOnClickModal: false,
@@ -1143,7 +1145,11 @@ export function NFTOffSale(nft: GenesisNFTItem) {
         if (res) {
           loading.close()
           ElMessage.success(i18n.global.t('NFT.Offsale Success'))
-          resolve(true)
+          resolve({
+            ...nft,
+            nftSellState: NFTSellState.OffSale,
+            nftPrice: 0,
+          })
         } else if (res === null) {
           loading.close()
         }

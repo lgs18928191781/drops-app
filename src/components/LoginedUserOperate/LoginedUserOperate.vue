@@ -39,12 +39,19 @@
       </a>
 
       <!-- 👤 头像 -->
-      <UserAvatar
-        :image="userStore.user!.avatarImage"
-        :meta-id="userStore.user!.metaId"
-        :name="userStore.user!.name"
-        class="user-warp-item overflow-hidden"
-      />
+      <el-popover placement="bottom" :width="'auto'" trigger="hover">
+        <template #reference>
+          <UserAvatar
+            :image="userStore.user!.avatarImage"
+            :meta-id="userStore.user!.metaId"
+            :name="userStore.user!.name"
+            :disabled="true"
+            class="user-warp-item overflow-hidden"
+            :meta-name="userStore.user!.metaName"
+          />
+        </template>
+        <UserPersonaVue />
+      </el-popover>
     </div>
   </template>
   <template v-else>
