@@ -687,7 +687,8 @@
       "rights": "权益",
       "avatar": "头像",
       "alias": "别名",
-      "card": "纪念卡"
+      "card": "纪念卡",
+      "Name": "姓名"
     },
     "FilterItem": {
       "Status": "状态",
@@ -972,5 +973,6 @@
   "updateSuccess": "账户升级成功!",
   "updateRemind": "升级提示",
   "allowUpdate": "检测到你的账号需要升级,取消升级可能会影响后续其他钱包登录,请确认!(特别提醒：请勿使用‘iamtoken’钱包进行升级操作,否则会导致账户升级失败)",
-  "confirmUpdate": "确认升级"
+  "confirmUpdate": "确认升级",
+  "inputMetaNameSensitiveWords": "不支持注册敏感词"
 }

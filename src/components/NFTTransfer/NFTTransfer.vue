@@ -17,6 +17,7 @@
               :meta-id="transferUser.val!.metaId"
               :image="transferUser.val!.avatarImage"
               :name="transferUser.val!.name"
+              :meta-name="transferUser.val!.metaName"
               :disabled="true"
             />
             <div class="flex1">
@@ -226,7 +227,30 @@ async function confirmTransfer() {
       loading.value = false
     })
   if (res) {
-    emit('success')
+    emit('success', {
+      ...props.nft,
+      nftOwnerUserInfo: {
+        address: transferUser.val!.address,
+        avatarTxId: transferUser.val!.avatarTxId,
+        avatarType: transferUser.val!.coverType,
+        avatarImage: transferUser.val!.avatarImage,
+        coverPublicKey: '',
+        coverType: transferUser.val!.coverType,
+        coverUrl: '',
+        metaIdTimestamp: '',
+        name: transferUser.val!.name,
+        nameType: '',
+        metaName: transferUser.val!.metaName,
+        nftNamePublicKey: '',
+        publicKey: '',
+      },
+      nftOwnerAddress: transferUser.val!.address,
+      nftOwnerAvatarTxId: transferUser.val!.avatarTxId,
+      nftOwnerAvatarType: transferUser.val!.coverType,
+      nftOwnerAvatarImage: transferUser.val!.avatarImage,
+      nftOwnerMetaId: transferUser.val!.metaId,
+      nftOwnerName: transferUser.val!.name,
+    })
     ElMessage.success(i18n.t('NFT.Transfer Success'))
     emit('update:modelValue', false)
     loading.value = false

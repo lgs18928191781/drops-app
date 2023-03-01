@@ -302,6 +302,8 @@ function submitForm() {
             nftPrice: sellPriceSatoshi,
             nftSellState: 0,
             nftIsReady: true,
+            nftSellTxId: res.nft!.sell!.sellTxId,
+            nftSellContractTxId: res.nft!.sell!.txId,
           })
           emit('update:modelValue', false)
           form.sellPrice = ''

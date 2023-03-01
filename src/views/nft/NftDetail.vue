@@ -52,6 +52,7 @@
                   :meta-id="nft.val!.nftIssueMetaId"
                   :image="nft.val!.nftIssueAvatarImage"
                   :name="nft.val!.nftIssuer"
+                  :meta-name="nft.val!.nftIssueUserInfo.metaName"
                 />
                 <div class="author-msg flex1">
                   <div class="creater">
@@ -275,6 +276,7 @@
                           :meta-id="nft.val!.nftIssueMetaId"
                           :image="nft.val!.nftIssueAvatarImage"
                           :name="nft.val!.nftIssuer"
+                          :meta-name="nft.val!.nftIssueUserInfo.metaName"
                         />
                         <div class="author-msg flex1">
                           <div class="creater">
@@ -296,6 +298,7 @@
                           :meta-id="nft.val!.nftOwnerMetaId"
                           :image="nft.val!.nftOwnerAvatarImage"
                           :name="nft.val!.nftOwnerName"
+                          :meta-name="nft.val!.nftOwnerUserInfo.metaName"
                         />
                         <div class="author-msg flex1">
                           <div class="creater">
@@ -341,8 +344,11 @@
                       :meta-id="record.metaId"
                       :image="record.avatarImage"
                       :name="record.name"
+                      :meta-name="record.userInfo.metaName"
                     />
-                    <span class="name">{{ record.name }}</span>
+                    <span class="name flex flex-align-center"
+                      ><UserName :name="record.name" :meta-name="record.userInfo.metaName" :no-tag="true"
+                    /></span>
                   </span>
                   <span class="td role flex1 flex flex-align-center">
                     <template v-if="index === records.length - 1">

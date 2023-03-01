@@ -697,7 +697,8 @@
       "alias": "Domain",
       "avatar": "Avatar",
       "rights": "Right",
-      "music": "Music"
+      "music": "Music",
+      "Name": "Name"
     },
     "FilterItem": {
       "Status": "Status",
@@ -973,5 +974,6 @@
   "Copy": "Copy",
   "confirmUpdate": "Confirm upgrade",
   "allowUpdate": "It is detected that your account needs to be upgraded. Canceling the upgrade may affect subsequent logins with other wallets, please confirm! (Special reminder: Do not use the 'iamtoken' wallet for upgrade operations, otherwise the account upgrade will fail)",
-  "updateRemind": "Upgrade Tips"
+  "updateRemind": "Upgrade Tips",
+  "inputMetaNameSensitiveWords": "Sensitive words are not supported"
 }
