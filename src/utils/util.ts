@@ -980,22 +980,26 @@ export function getCurrencyAmount(
   let rate = rootStore.exchangeRate.find(
     item => item.symbol.toUpperCase() === toCurrency!.toUpperCase()
   )
-  if (toCurrency === 'CNY') {
-    if (currency === 'CNY') {
+  if (toCurrency === ToCurrency.CNY) {
+    if (currency === ToCurrency.CNY) {
       //  cny -> cny
       return new Decimal(price).div(100).toNumber()
-    } else {
-      // mvc -> cny
-      rate = rootStore.exchangeRate.find(
-        item => item.symbol.toUpperCase() === currency.toUpperCase()
-      )
-      const rateUSD = new Decimal(rate!.price.CNY).div(rate!.price.USD).toNumber()
+    } else if (currency === ToCurrency.USD) {
+      // usd -> cny
+      const rateUSD = new Decimal(rootStore.exchangeRate[1]!.price.CNY)
+        .div(rate!.price.USD)
+        .toNumber()
       return new Decimal(
         new Decimal(price)
           .div(100)
           .div(rateUSD)
           .toFixed(2)
       ).toNumber()
+    } else {
+      rate = rootStore.exchangeRate.find(
+        item => item.symbol.toUpperCase() === currency.toUpperCase()
+      )
+      return new Decimal(new Decimal(price).mul(rate!.price.CNY).toFixed(2)).toNumber()
     }
   } else if (toCurrency === ToCurrency.ETH) {
     if (currency === 'CNY') {

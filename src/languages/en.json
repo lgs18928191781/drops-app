@@ -746,7 +746,9 @@
     "Payment Succeeded Tips": "The NFT is in your wallet.",
     "View Item": "View Item",
     "Check later": "Check later",
-    "Sale Success": "Sell Success"
+    "Sale Success": "Sell Success",
+    "Not support this chain for sell:": "The NFT of this chain is not currently supported:",
+    "Circulation": "Circulation"
   },
   "My NFT": "My NFT",
   "Done": "Done",

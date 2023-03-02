@@ -143,14 +143,11 @@ header {
 
     .top-bar-warp {
         .top-bar {
-            flex-direction: column;
+
 
             .flex1 {
-                width: 100%;
 
-                .search {
-                    width: 100%;
-                }
+                .search {}
             }
 
             nav {

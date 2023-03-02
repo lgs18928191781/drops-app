@@ -736,7 +736,9 @@
     "Payment Succeeded Tips": "NFT 在你的钱包里。",
     "View Item": "查看NFT",
     "Check later": "稍后查看",
-    "Sale Success": "上架成功"
+    "Sale Success": "上架成功",
+    "Not support this chain for sell:": "暂不支持此链NFT上架:",
+    "Circulation": "流通量"
   },
   "My NFT": "我的NFT",
   "Done": "完成",

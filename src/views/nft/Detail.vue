@@ -23,9 +23,13 @@
             <div class="flex1">
               <div class="top flex flex-align-center">
                 <div class="flex1">
-                  <div class="collection-name flex flex-align-center" v-if="collection.val">
+                  <RouterLink
+                    :to="{ name: 'nftCollectionDetail', params: { topicType: collection.val.topicType } }"
+                    class="collection-name flex flex-align-center"
+                    v-if="collection.val"
+                  >
                     {{ collection.val!.name }} <Icon name="certed" />
-                  </div>
+                  </RouterLink>
                 </div>
                 <div class="operate-list flex flex-align-center">
                   <div class="operate-item flex flex-align-center" @click="payLike">

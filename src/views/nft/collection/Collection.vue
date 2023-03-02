@@ -17,7 +17,7 @@
 
           <!-- collection-msg -->
           <div class="collection-msg flex">
-            <div class="flex3">
+            <div class="flex1">
               <div class="name flex flex-align-center">
                 {{ collection.val!.name }} <Icon name="certed" />
               </div>
@@ -38,13 +38,16 @@
                 <template v-else>{{ collection.val!.intro }}</template>
               </div>
             </div>
-            <div class="flex1">
+            <div class="">
               <div class="statiscs-list">
                 <div class="statiscs-item" v-for="(item, index) in statiscs" :key="index">
                   <div class="flex flex-align-center flex-pack-center">
                     <div class="statiscs-item-warp">
                       <template v-if="item.value !== '0' && item.value !== ''">
-                        <div class="value">{{ item.value }} {{ item.unit }}</div>
+                        <div class="value flex flex-align-center">
+                          <span class="amount">{{ item.value }} </span>
+                          <span class="unit">{{ item.unit }}</span>
+                        </div>
                       </template>
                       <template v-else>
                         <div class="value">--</div>
@@ -226,7 +229,7 @@ const statiscs = reactive([
     unit: 'Space',
   },
   {
-    name: () => i18n.t('NFT.Supply'),
+    name: () => i18n.t('NFT.Circulation'),
     value: '--',
     unit: '',
   },
