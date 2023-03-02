@@ -32,6 +32,11 @@ html.dark {
     --el-bg-color-overlay: var(--themeBgSecondColor);
 }
 
+.el-overlay {
+    left: 0;
+    top: 0;
+}
+
 .el-button {
     --el-button-text-color: var(--themeTextColor);
     --el-button-hover-text-color: var(--themeTextColor);
