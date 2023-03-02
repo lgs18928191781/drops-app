@@ -11,7 +11,8 @@ const V3 = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/v3`, {
     if (userStore.isAuthorized) {
       return {
         token: userStore.user!.token,
-        meta_id: userStore.user!.metaId,
+        // show3.space 用metaId, 其他用 meta_id
+        metaId: userStore.user!.metaId,
         userName: userStore.userName,
       }
     } else {
