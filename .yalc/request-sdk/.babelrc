@@ -1,11 +1,3 @@
 {
-    "presets": [
-      [
-        "@babel/preset-env",
-        {
-          "modules": false
-          // "useBuiltIns": "usage"
-        }
-      ]
-    ]
-  }
+  "presets": ["es2015"]
+}
