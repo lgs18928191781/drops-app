@@ -30,10 +30,15 @@
     </ElCol>
 
     <template v-if="nft.val">
-      <NFTBuyVue :nft="nft.val!" v-model="isShowNftBuy" :is-hide-detail="true" @success="remove" />
+      <NFTBuyVue
+        :nft="nft.val!"
+        v-model="isShowNftBuy"
+        :is-hide-detail="true"
+        @success="onOperateSuccess"
+      />
 
       <!-- NFTSellVue -->
-      <NFTSellVue :nft="nft.val!" v-model="isShowNftSale" @success="remove" />
+      <NFTSellVue :nft="nft.val!" v-model="isShowNftSale" @success="onOperateSuccess" />
     </template>
   </ElRow>
 
@@ -118,31 +123,22 @@ function getMore() {
   })
 }
 
-function onSaleSuccess(item: GenesisNFTItem) {
-  const index = nfts.findIndex(
-    item =>
-      item.nftGenesis === nft.val!.nftGenesis &&
-      item.nftCodehash === nft.val!.nftCodehash &&
-      item.nftTokenIndex === nft.val!.nftTokenIndex
-  )
-  if (index !== -1) {
-    nfts[index] = item
-  }
-}
-
 async function onOffsale(item: GenesisNFTItem) {
   const result = await NFTOffSale(item)
   if (result) {
-    const index = nfts.findIndex(
-      _item =>
-        _item.nftGenesis === item.nftGenesis &&
-        _item.nftCodehash === item.nftCodehash &&
-        _item.nftTokenIndex === item.nftTokenIndex
-    )
-    if (index !== -1) {
-      nfts[index].nftSellState = 1
-      nfts[index].nftPrice = 0
-    }
+    onOperateSuccess(result)
+  }
+}
+
+function onOperateSuccess(item: GenesisNFTItem) {
+  const index = nfts.findIndex(
+    _item =>
+      _item.nftGenesis === item.nftGenesis &&
+      _item.nftCodehash === item.nftCodehash &&
+      _item.nftTokenIndex === item.nftTokenIndex
+  )
+  if (index > -1) {
+    nfts[index] = item
   }
 }
 
