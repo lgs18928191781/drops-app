@@ -1,4 +1,5 @@
 <template>
+  <div class="text">{{ $t('NFT.Ueser Sell NFT Buzz Text') }}</div>
   <CardVue class="nft-card" :color="color">
     <div class="nft-warp" @click.stop="toNFT">
       <ElSkeleton :loading="isSkeleton" animated>
@@ -19,7 +20,6 @@
           </div>
         </template>
         <template #default>
-          <div class="text">{{ $t('NFT.Ueser Sell NFT Buzz Text') }}</div>
           <div class="msg flex">
             <div class="cover-warp">
               <NFTCoverVue :cover="[nftSellItem.val!.cover as string]" />

@@ -42,7 +42,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const customClass = computed(() => {
-  return props.imageClass ? props.imageClass + ' avatar-rounded' : 'avatar-rounded'
+  return props.imageClass ? props.imageClass + 'avatar-rounded' : 'avatar-rounded'
 })
 
 const toUserPage = () => {
@@ -132,3 +132,4 @@ function destroy() {
   document.getElementById(userCardWarpId)?.remove()
 }
 </script>
+<style lang="scss" scoped src="./UserAvatar.scss"></style>
