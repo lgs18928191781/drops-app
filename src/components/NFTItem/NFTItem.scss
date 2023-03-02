@@ -12,20 +12,51 @@
         border-radius: var(--rounded);
     }
 
+    .token-index {
+        opacity: 0.5;
+        font-size: 12px;
+        margin-top: 4px;
+    }
+
     .name {
         margin-top: 18px;
         font-size: 20px;
         @extend %text-ellipsis;
+
+        &.simple {
+            font-size: 14px;
+        }
+
+        .el-skeleton__item {
+            height: 20px;
+            width: 80%;
+        }
     }
 
     .amount {
         font-size: 20px;
         line-height: 24px;
         margin-top: 18px;
+
+        &.simple {
+            font-size: 12px;
+            color: var(--color-hover);
+            margin-top: 4px;
+        }
+
+        .el-skeleton__item {
+            height: 20px;
+            width: 60px;
+        }
     }
 
     .user-list {
         margin-top: 18px;
+
+        .el-skeleton__item {
+            height: 24px;
+            width: 80%;
+        }
 
         .user-item {
             line-height: 24px;
@@ -46,7 +77,7 @@
                 opacity: 0.6;
             }
 
-            .user-name {
+            .user-name-warp {
                 @extend %text-ellipsis;
                 margin: 0 5px;
             }
@@ -57,11 +88,16 @@
         }
     }
 
-    .main-border {
+    .main-border,
+    .el-skeleton__button {
         margin-top: 18px;
         font-size: 16px;
         padding: 13px 0;
         text-align: center;
         cursor: pointer;
+    }
+
+    .el-skeleton__button {
+        width: 100%;
     }
 }

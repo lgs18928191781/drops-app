@@ -24,3 +24,10 @@
     margin-right: 10px;
     color: var(--color-hover);
 }
+
+.form-item {
+    .el-select {
+        width: 100%;
+        padding: 10px 0;
+    }
+}

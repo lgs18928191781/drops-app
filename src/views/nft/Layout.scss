@@ -7,8 +7,25 @@ header {
     top: 0;
     z-index: 3;
 
+    &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 1px;
+        background: var(--faded-border-color);
+        opacity: 0.3;
+    }
+
     .name {
         font-size: 18px;
+
+        .icon {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+        }
     }
 }
 
@@ -33,6 +50,38 @@ header {
     background: var(--themeBgSecondColor);
     border-radius: var(--rounded);
     padding: 18px;
+
+    .back {
+        cursor: pointer;
+        margin-right: 30px;
+        display: inline-flex;
+
+        span {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--themeBgThreeColor);
+            margin-right: 8px;
+        }
+
+        .icon {
+            width: 10px;
+            height: 10px;
+            transform: rotate(90deg);
+        }
+
+        &:hover {
+            span {
+                background: var(--themeTextColor);
+
+                .icon {
+                    :deep(use) {
+                        fill: var(--themeBgColor);
+                    }
+                }
+            }
+        }
+    }
 
 
     .search {
@@ -94,14 +143,11 @@ header {
 
     .top-bar-warp {
         .top-bar {
-            flex-direction: column;
+
 
             .flex1 {
-                width: 100%;
 
-                .search {
-                    width: 100%;
-                }
+                .search {}
             }
 
             nav {

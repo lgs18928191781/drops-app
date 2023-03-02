@@ -21,6 +21,7 @@
             :meta-id="itemData.metaId"
             :image="itemData.avatarImage"
             :name="itemData.userName"
+            :meta-name="itemData.userInfo.metaName"
           />
           <div class="name">
             <UserName
@@ -37,6 +38,7 @@
               :meta-id="displayItemData.metaId"
               :image="displayItemData.avatarImage"
               :name="displayItemData.userName"
+              :meta-name="displayItemData.userInfo.metaName"
             />
           </div>
           <div class="info">
@@ -77,7 +79,12 @@
         <template v-else-if="displayItemData.protocol === NodeName.SimplePublicShare">
           <BuzzItemContentSimplePublicShareVue :buzz="displayItemData" />
         </template>
-        <template v-else-if="displayItemData.protocol === NodeName.LegalSellNft">
+        <template
+          v-else-if="
+            displayItemData.protocol === NodeName.LegalSellNft ||
+              displayItemData.protocol === NodeName.NftSell
+          "
+        >
           <BuzzItemContentSellNftVue :buzz="displayItemData" />
         </template>
         <template v-else>
@@ -110,7 +117,7 @@
           @more="params => emit('more', params)"
           @like="params => emit('like', params)"
           @replay="params => emit('replay', params)"
-          v-if="!isHideControl && !isQuote"
+          v-if="!isHideControl && !isQuote && !isNFTLegalBuzz"
         />
 
         <slot name="comment"></slot>
@@ -207,6 +214,10 @@ const displayItemData = computed(() => {
       return itemData.value
     }
   }
+})
+
+const isNFTLegalBuzz = computed(() => {
+  return displayItemData.value?.protocol === 'sell_nft'
 })
 
 async function handleAction(type: string) {

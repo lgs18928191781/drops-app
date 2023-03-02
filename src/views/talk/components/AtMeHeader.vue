@@ -14,6 +14,7 @@
           :image="activeChannel?.avatarImage"
           :meta-id="activeChannel?.id"
           :name="activeChannel?.name"
+          :meta-name="activeChannel?.metaName"
           class="w-8 h-8 shrink-0 select-none hidden lg:block mr-2"
           :disabled="true"
         />

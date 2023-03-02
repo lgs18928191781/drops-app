@@ -10,13 +10,15 @@
     :isInDetailPage="true"
   >
     <template #comment>
-      <div class="comment">
+      <!--  NFT 法币 Buzz 不给评论 -->
+      <div class="comment" v-if="!isNFTLegalBuzz">
         <div class="dived"></div>
         <div class="publish-comment flex flex-align-center">
           <UserAvatar
             :meta-id="userStore.user?.metaId || ''"
             :image="userStore.user?.avatarImage || ''"
             :name="userStore.user?.name || ''"
+            :meta-name="userStore.user?.metaName || ''"
             :disabled="true"
           />
           <div
@@ -68,6 +70,10 @@ const commentPagination = reactive({
 const commentListData: BuzzInteractiveItem[] = reactive([])
 
 const comment = ref('')
+
+const isNFTLegalBuzz = computed(() => {
+  return list[0]?.protocol === 'sell_nft'
+})
 
 function fetchData(count = 1, parentResolve?: () => void) {
   return new Promise<void>(async resolve => {

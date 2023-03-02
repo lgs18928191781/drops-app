@@ -1,3 +1,5 @@
+@import '@/assets/styles/var.scss';
+
 .collection {
     border-radius: var(--rounded) var(--rounded) 0px 0px;
     overflow: hidden;
@@ -6,7 +8,10 @@
     .cover {
         width: 100%;
         height: 240px;
-        object-fit: cover;
+
+        :deep(img) {
+            object-fit: cover;
+        }
     }
 
     .collection-content {
@@ -18,7 +23,8 @@
     .collection-avatar {
         margin-top: -140px;
 
-        img {
+        img,
+        .el-skeleton__item {
             box-sizing: border-box;
             border: 4px solid #FFFFFF;
             box-shadow: 0px 4px 6px 0px rgba(48, 49, 51, 0.2);
@@ -33,6 +39,11 @@
         margin-top: 30px;
 
         .name {
+            .el-skeleton__item {
+                height: 24px;
+                width: 150px;
+            }
+
             font-size: 24px;
 
             .icon {
@@ -45,6 +56,11 @@
         .creator {
             margin-top: 13px;
             font-size: 16px;
+
+            .el-skeleton__item {
+                height: 16px;
+                width: 100px;
+            }
 
             a {
                 color: var(--color-hover);
@@ -65,6 +81,24 @@
             margin-top: 13px;
             font-size: 16px;
             max-width: 480PX;
+
+            .el-skeleton__item {
+                height: 16px;
+                width: 100%;
+                margin-bottom: 5px;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+
+                &:nth-child(2) {
+                    width: 60%;
+                }
+
+                &:nth-child(3) {
+                    width: 80%;
+                }
+            }
 
             .text {
                 opacity: 0.6;
@@ -88,16 +122,34 @@
 
             .value,
             .label {
-                text-align: left;
+                text-align: center;
             }
 
             .value {
                 font-size: 20px;
+
+                .amount {
+                    @extend %text-ellipsis;
+                }
+
+                .unit {
+                    margin-left: 5px;
+                }
+
+                .el-skeleton__item {
+                    height: 20px;
+                    width: 100px;
+                }
             }
 
             .label {
                 opacity: 0.6;
                 margin-top: 4px;
+
+                .el-skeleton__item {
+                    height: 14px;
+                    width: 100%;
+                }
             }
 
             .statiscs-item-warp {
@@ -111,6 +163,12 @@
         margin-top: 60px;
         padding-bottom: 12px;
         border-bottom: 1px solid #BFC2CC;
+
+        .el-skeleton__item {
+            height: 16px;
+            width: 100px;
+            margin-right: 30px;
+        }
 
         a {
             opacity: 0.6;
@@ -141,6 +199,9 @@
     }
 
     .screen {
+        background: var(--themeBgSecondColor);
+        padding-top: 18px;
+        padding-bottom: 18px;
         margin-top: 18px;
 
         .main-border {
@@ -152,6 +213,11 @@
                 width: 20px;
                 height: 20px;
             }
+        }
+
+        .el-skeleton__item {
+            height: 50px;
+            width: 100px;
         }
 
         .display {
@@ -192,10 +258,14 @@
         }
     }
 
-    .nft-list {
-        margin-top: 18px;
-    }
+    .nft-list {}
 }
+
+
+.collection-nft-content {}
+
+
+
 
 @media only screen and (max-width: 750PX) {
     .collection {
@@ -205,6 +275,34 @@
 
         .collection-content {
             padding: 30px;
+        }
+
+        .collection-msg {
+            flex-direction: column;
+
+            .statiscs-list {
+                margin-top: 30px;
+
+                .statiscs-item {
+
+
+                    .flex {
+                        justify-content: center;
+                    }
+                }
+            }
+        }
+
+        .screen {
+            .el-select {
+                width: 120PX;
+            }
+        }
+
+        .collection-nft-content {
+            .el-affix {
+                flex: 1;
+            }
         }
     }
 }

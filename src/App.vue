@@ -49,53 +49,8 @@ const userStore = useUserStore()
 const route = useRoute()
 const blackRoute = reactive(['home'])
 
-// const tpUrl = computed(() => {
-//   const params = JSON.stringify({
-//     callbackUrl: route.fullPath,
-//     action: 'login',
-//     actionId: '1648522106711',
-//     blockchains: [
-//       {
-//         chainId: 1,
-//         network: 'ethereum',
-//       },
-//     ],
-//     dappIcon: '',
-//     dappName: 'show3',
-//     protocol: 'TokenPocket',
-//     version: '1.0',
-//   })
-//   console.log('params', params)
-//   // debugger
-//   return `tpoutside://pull.activity?param=${encodeURIComponent(params)}`
-// })
-
-// const signUrl = computed(() => {
-//   const params = JSON.stringify({
-//     hash: false,
-//     message: `hello world`,
-//     memo: 'demo',
-//     callbackUrl: `http://192.168.168.142:5173`,
-//     action: 'sign',
-//     actionId: 'web-db4c5466-1a03-438c-90c9-2172e8becea5',
-//     blockchains: [
-//       {
-//         chainId: 1,
-//         network: 'ethereum',
-//       },
-//     ],
-//     dappIcon: '',
-//     dappName: 'show3',
-//     protocol: 'TokenPocket',
-//     version: '1.0',
-//   })
-//   console.log('params', params)
-//   return `tpoutside://pull.activity?param=${encodeURIComponent(params)}`
-// })
-
 const routeKey = (route: any) => {
   if (route.params.communityId) return route.params.communityId
-
   return route.fullPath
 }
 </script>

@@ -37,7 +37,7 @@
           >
             <Icon
               :name="item.icon"
-              customClass="w-[22PX] h-[19PX] rounded-3xl lg:group-hover:scale-110 transition-all duration-200"
+              customClass="w-[22PX] h-[19PX]  lg:group-hover:scale-110 transition-all duration-200"
               color="#303133"
             />
           </span>
@@ -161,7 +161,7 @@ const apps = reactive([
 if (import.meta.env.MODE !== 'mainnet') {
   apps.push({
     icon: 'market',
-    path: '/nft',
+    path: '/nft/collection/detail/MetaName',
     title: () => i18n.t('NFT.NFT Market'),
     symbol: 'nft',
   })

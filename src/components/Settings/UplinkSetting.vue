@@ -17,12 +17,26 @@
     <div class="content">
       <img class="cover" src="@/assets/images/uplink_img.png" />
 
+      <div class="payment item">
+        <div class="cont flex1 flex flex-align-center">
+          <div class="lable flex1">{{ $t('UplinkSetting.Select Payment') }}</div>
+          <ElSelect :model-value="userStore.sdkPayment">
+            <ElOption
+              v-for="item in payTypes"
+              :label="item.name"
+              :value="item.value"
+              @click="userStore.changeSdkPayment(item.value)"
+            />
+          </ElSelect>
+        </div>
+      </div>
+
       <div class="list">
-        <div class="item ">
+        <div class="item">
           <div class="cont flex flex-align-center">
             <div class="lable flex1">{{ $t('UplinkSetting.Uplink Payment Confirmation') }}</div>
             <el-switch
-              :model-value="userStore.sdkPayConfirm[SdkPayType.ME]!.visible"
+              :model-value="userStore.sdkPayConfirm[userStore.sdkPayment]!.visible"
               @change="onConfirmChange"
             />
           </div>
@@ -31,14 +45,22 @@
           </div>
         </div>
 
-        <div class="item" :class="{disabled: userStore.sdkPayConfirm[SdkPayType.ME]!.visible}">
+        <div
+          class="item"
+          :class="{disabled: userStore.sdkPayConfirm[userStore.sdkPayment]!.visible}"
+        >
           <div class="cont flex flex-align-center" @click="setMeValue">
             <div class="lable flex1">{{ $t('UplinkSetting.Alert value setting') }}</div>
-            <span class="value">{{ userStore.sdkPayConfirm[SdkPayType.ME]!.value }} ME</span>
+            <span class="value"
+              >{{ userStore.sdkPayConfirm[userStore.sdkPayment]!.value }}
+              {{
+                userStore.sdkPayment === SdkPayType.SPACE ? 'Satoshi' : userStore.sdkPayment
+              }}</span
+            >
             <Icon name="down" class="right" />
           </div>
           <div class="intro">
-            {{ $t('UplinkSetting.AlertValueIntro') }}
+            {{ $t('UplinkSetting.AlertValueIntro').replaceAll('ME', userStore.sdkPayment) }}
           </div>
         </div>
       </div>
@@ -65,13 +87,23 @@ const emit = defineEmits(['update:modelValue'])
 const userStore = useUserStore()
 const rootStore = useRootStore()
 const i18n = useI18n()
+const payTypes = [
+  {
+    name: 'ME',
+    value: SdkPayType.ME,
+  },
+  {
+    name: 'SPACE',
+    value: SdkPayType.SPACE,
+  },
+]
 
 function onConfirmChange(value: boolean) {
-  userStore.changeSdkPayConfirm('visible', value, SdkPayType.ME)
+  userStore.changeSdkPayConfirm('visible', value, userStore.sdkPayment)
 }
 
 function setMeValue() {
-  if (userStore.sdkPayConfirm[SdkPayType.ME]!.visible) return
+  if (userStore.sdkPayConfirm[userStore.sdkPayment]!.visible) return
   ElMessageBox.prompt('', i18n.t('UplinkSetting.Alert value setting'), {
     confirmButtonText: i18n.t('Confirm'),
     cancelButtonText: i18n.t('Cancel'),
@@ -82,7 +114,7 @@ function setMeValue() {
   }).then(({ value }) => {
     const _value = parseInt(value)
     if (_value) {
-      userStore.changeSdkPayConfirm('value', _value, SdkPayType.ME)
+      userStore.changeSdkPayConfirm('value', _value, userStore.sdkPayment)
     }
   })
 }

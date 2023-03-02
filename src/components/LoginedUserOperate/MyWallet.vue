@@ -24,6 +24,7 @@
                 :image="userStore.user!.avatarImage"
                 :disabled="true"
                 :name="userStore.user!.name"
+                :meta-name="userStore.user!.metaName"
                 class="mr-1"
               />
               <div class="name">{{ $t('Wallet.My Wallet') }}</div>
@@ -129,7 +130,10 @@
                   <div class="wallet-item" v-for="wallet in item.list" :key="wallet.name">
                     <div class="header flex flex-align-center">
                       <div class="flex1 flex flex-align-center flex-pack-start">
-                        <div class="icon flex flex-align-center flex-pack-center">
+                        <div
+                          class="icon flex flex-align-center flex-pack-center"
+                          v-if="wallet.name !== 'ME'"
+                        >
                           <img :src="wallet.icon" />
                         </div>
                         <div>
@@ -435,7 +439,7 @@ const wallets = reactive([
           }
           return '--'
         },
-        loading: false,
+        loading: true,
       },
       {
         icon: MVC,
@@ -568,7 +572,13 @@ function chooseSeries(item: UserNFTItem) {
 }
 
 function getAllBalace() {
-  return Promise.all([getMEBalance(), getSpaceBalance(), getETHBalance(), getBsvBalance()])
+  return Promise.all([
+    getMEBalance(),
+    getSpaceBalance(),
+    getETHBalance(),
+    getPolygonBalance(),
+    getBsvBalance(),
+  ])
 }
 
 function getMEBalance() {
@@ -617,6 +627,37 @@ function getETHBalance() {
       if (userStore.user!.evmAddress) {
         const res = await GetBalance({
           chain: import.meta.env.VITE_ETH_CHAIN,
+          address: userStore.user!.evmAddress! || userStore.user?.ethAddress,
+        }).catch(error => {
+          ElMessage.error(error.message)
+          resolve()
+        })
+        if (res?.code === 0) {
+          item.value = new Decimal(
+            new Decimal(res.data.balance).div(Math.pow(10, 18)).toFixed(4)
+          ).toNumber()
+          item.loading = false
+          resolve()
+        }
+      } else {
+        item.value = 0
+        item.loading = false
+        resolve()
+      }
+    }
+  })
+}
+
+function getPolygonBalance() {
+  return new Promise<void>(async resolve => {
+    // 获取余额
+    const item = wallets[1].list.find(
+      item => item.name === import.meta.env.VITE_POLYGON_CHAIN.toUpperCase()
+    )
+    if (item) {
+      if (userStore.user!.evmAddress) {
+        const res = await GetBalance({
+          chain: import.meta.env.VITE_POLYGON_CHAIN,
           address: userStore.user!.evmAddress! || userStore.user?.ethAddress,
         }).catch(error => {
           ElMessage.error(error.message)

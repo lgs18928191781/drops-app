@@ -290,7 +290,7 @@ async function recharge() {
     fullPath: route.fullPath,
     isBlindbox: false,
   })
-  debugger
+
   const type = isIosApp
     ? PayType.H5
     : isApp
@@ -316,7 +316,7 @@ async function recharge() {
     ElMessage.error(error.message)
     loading.value = false
   })
-  debugger
+
   if (res?.code === 0) {
     payUrl.value = res.data.url
     orderId.value = res.data.outside_order_id

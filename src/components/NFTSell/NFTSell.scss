@@ -1,4 +1,8 @@
 .sell-nft {
+    :deep(.el-loading-mask) {
+        box-shadow: 3px 3px 0 var(--el-mask-color);
+    }
+
     .nft-msg {
         .cover-warp {
             width: 80px;
@@ -12,6 +16,7 @@
             .avatar {
                 width: 20px;
                 height: 20px;
+                min-width: 20px;
                 margin-right: 5px;
             }
         }
@@ -50,5 +55,11 @@
             text-align: center;
             cursor: pointer;
         }
+    }
+}
+
+.el-input {
+    :deep(.el-input-group__append) {
+        width: 100px;
     }
 }

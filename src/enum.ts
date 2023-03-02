@@ -40,7 +40,8 @@ export enum legalSortType {
   DESC = 2, // 倒序
 }
 
-export enum legalSellType {
+export enum NFTSellType {
+  All = '', // 全部
   SALE = 1, // 可购买
   NONSALE = 2, // 非销售
   AUCTION = 3, // 拍卖
@@ -114,6 +115,13 @@ export enum NFTSellState {
   Auctioning, // 拍卖进行中
   AuctionEndButNotSend, // 拍卖结束但未发送NFT
   AuctionEndAndSended, // 拍卖结束且已发送NFT
+}
+
+export enum NFTOperateType {
+  Buy,
+  Sale,
+  OffSale,
+  Transfer,
 }
 
 export enum withdrawStatus {
@@ -300,6 +308,8 @@ export enum NodeName {
   NftIssue = 'NftIssue',
   NftGenesis = 'NftGenesis',
   NftSell = 'NftSell',
+  NftCancel = 'NftCancel',
+  nftBuy = 'nftBuy',
   FtGenesis = 'FtGenesis',
   FtIssue = 'FtIssue',
   SimpleRedEnvelope = 'SimpleRedEnvelope',
@@ -501,4 +511,14 @@ export enum EnvMode {
 export enum HdWalletChain {
   BSV = 'bsv',
   MVC = 'mvc',
+}
+
+export enum WalletOrigin {
+  WalletConnect = 'WalletConnect',
+  MetaMask = 'MetaMask',
+}
+
+export enum Network {
+  mainnet = 'mainnet',
+  testnet = 'testnet',
 }
