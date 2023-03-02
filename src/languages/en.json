@@ -63,6 +63,9 @@
       "follow": "I followed you! Let's be friends!",
       "token_transfer": "Token Transfer",
       "nft_transfer": "NFT Transfer",
+      "nft_buy": "NFT Purchase",
+      "buy_tip": "I purchased your NFT!",
+      "price": "Price",
       "resend": "Resend",
       "translated": "Translated"
     },

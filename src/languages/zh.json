@@ -103,6 +103,9 @@
       "follow": "已关注，我们聊天吧。",
       "token_transfer": "代币转账",
       "nft_transfer": "NFT 转账",
+      "nft_buy": "NFT 购买",
+      "buy_tip": "购买了您的NFT",
+      "price": "价格",
       "resend": "重新发送",
       "translated": "已翻译"
     },
