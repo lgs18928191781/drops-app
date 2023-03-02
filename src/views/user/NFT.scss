@@ -1,3 +1,7 @@
 .nft-list {
     margin-top: 20px;
+
+    :deep(.nft-item) {
+        background: var(--themeBgSecondColor);
+    }
 }

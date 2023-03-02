@@ -57,7 +57,12 @@
               <Icon name="top" class="top-icon" />
               <span class="owner td flex1">
                 <div class="flex flex-align-center">
-                  <UserAvatar :meta-id="item.metaId" :image="item.avatarImage" :name="item.name" />
+                  <UserAvatar
+                    :meta-id="item.metaId"
+                    :image="item.avatarImage"
+                    :name="item.name"
+                    :meta-name="item.userInfo.metaName"
+                  />
                   <span class="name"
                     ><UserName :name="item.name" :meta-name="item.userInfo.metaName" :no-tag="true"
                   /></span>
@@ -105,6 +110,7 @@ interface Props {
   genesis: string
   codehash: string
   tokenIndex: string
+  chain: string
 }
 const props = withDefaults(defineProps<Props>(), {})
 
@@ -121,6 +127,7 @@ async function getDatas(isCover = false) {
       tokenIndex: props.tokenIndex,
       page: pagination.page.toString(),
       pageSize: pagination.pageSize.toString(),
+      chain: props.chain,
     }).catch(error => {
       ElMessage.error(error.message)
     })

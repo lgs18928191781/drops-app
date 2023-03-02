@@ -1,13 +1,13 @@
 <template>
   <div class="p-4.5 bg-white dark:bg-gray-700 rounded-xl">
     <div class="header flex flex-align-center pb-4.5">
-      <div class="flex1 cont">
-        <div class="text-base">{{ name }}</div>
+      <div class="flex1 cont mr-2">
+        <div class="text-base "><UserName :name="name" :meta-name="metaName" /></div>
         <div class="text-xs text-dark-300">MetaID:{{ metaId ? metaId.slice(0, 6) : '--' }}</div>
       </div>
       <div class="h-full flex gap-x-2">
         <button class="main-border primary !rounded-full py-1 px-3 text-xs" @click="toUser">
-          {{ $t('User.Home') }}
+          {{ i18n.t('User.Home') }}
         </button>
         <button
           class="main-border primary !rounded-full py-1 px-3 text-xs"
@@ -21,13 +21,13 @@
             </ElIcon>
           </template>
           <template v-else>
-            {{ isMyFollowed ? $t('Cancel Follow') : $t('Follow') }}
+            {{ isMyFollowed ? i18n.t('Cancel Follow') : i18n.t('Follow') }}
           </template>
         </button>
       </div>
     </div>
 
-    <UserPersonaVue class="mt-4.5" />
+    <UserPersonaVue class="mt-4.5" :i18n="propsI18n" />
   </div>
 </template>
 
@@ -35,27 +35,31 @@
 import { useUserStore } from '@/stores/user'
 import { checkUserLogin, followUser } from '@/utils/util'
 import { reactive, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
 import UserPersonaVue from '../UserPersona/UserPersona.vue'
 import { Loading } from '@element-plus/icons-vue'
 import { GetUserAllInfo, GetUserFollow } from '@/api/aggregation'
 import { useI18n } from 'vue-i18n'
 import { Mitt, MittEvent } from '@/utils/mitt'
+import { router } from '@/router'
 
 const props = defineProps<{
   modelValue: boolean
-  metaId?: string
-  name?: string
+  metaId: string
+  name: string
+  metaName?: string
+  i18n?: any
 }>()
 
-const router = useRouter()
 const userStore = useUserStore()
 const isMyFollowed = ref(false)
 const loading = ref(true)
 const userInfo: { val: null | UserAllInfo } = reactive({ val: null })
-const i18n = useI18n()
+const propsI18n = props.i18n
+const i18n = props.i18n ? props.i18n.global : useI18n()
+const emit = defineEmits(['hide'])
 
 function toUser(e: Event) {
+  emit('hide')
   router.push({
     name: 'user',
     params: {
@@ -115,9 +119,9 @@ async function follow() {
   })
   if (res) {
     isMyFollowed.value = !isMyFollowed.value
-    const message = `${!isMyFollowed.value ? i18n.t('Cancel Follow') : i18n.t('Follow')} ${i18n.t(
-      'Success'
-    )}`
+    const message = `${
+      !isMyFollowed.value ? i18n.i18n.t('Cancel Follow') : i18n.i18n.t('Follow')
+    } ${i18n.i18n.t('Success')}`
     ElMessage.success(message)
   } else {
     loading.value = false
@@ -132,6 +136,9 @@ watch(
       await Promise.all([checkUserIsFollowed(), getUserInfo()])
       loading.value = false
     }
+  },
+  {
+    immediate: true,
   }
 )
 </script>

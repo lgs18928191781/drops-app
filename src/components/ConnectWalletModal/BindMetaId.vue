@@ -43,6 +43,7 @@
               :meta-id="userStore.user!.metaId"
               :image="userStore.user!.avatarImage"
               :name="userStore.user!.name"
+              :meta-name="userStore.user!.metaName"
             />
             <div class="username">{{ userStore.user?.name }}</div>
             <div class="metaid">

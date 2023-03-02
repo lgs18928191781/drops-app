@@ -301,7 +301,6 @@ watch(
 //     })
 // })
 
-
 function toNFT() {
   if (props.isEdit) return
   router.push({

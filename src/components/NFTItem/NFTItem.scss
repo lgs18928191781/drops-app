@@ -12,10 +12,20 @@
         border-radius: var(--rounded);
     }
 
+    .token-index {
+        opacity: 0.5;
+        font-size: 12px;
+        margin-top: 4px;
+    }
+
     .name {
         margin-top: 18px;
         font-size: 20px;
         @extend %text-ellipsis;
+
+        &.simple {
+            font-size: 14px;
+        }
 
         .el-skeleton__item {
             height: 20px;
@@ -27,6 +37,12 @@
         font-size: 20px;
         line-height: 24px;
         margin-top: 18px;
+
+        &.simple {
+            font-size: 12px;
+            color: var(--color-hover);
+            margin-top: 4px;
+        }
 
         .el-skeleton__item {
             height: 20px;

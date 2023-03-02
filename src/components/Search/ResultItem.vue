@@ -8,6 +8,7 @@
         :image="result.avatarImage"
         :meta-id="result.metaId"
         :name="result.name"
+        :meta-name="result.metaName"
         class="w-12 h-12 shrink-0 select-none"
         :disabled="true"
       />

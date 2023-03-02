@@ -99,6 +99,7 @@
                   :metaId="item.show_3_collection.creatorMetaId"
                   :image="item.show_3_collection.creatorAvatarImage"
                   :name="item.show_3_collection.creatorName"
+                  :meta-name="item.show_3_collection.creatorMetaName"
                 />
                 <div class="flex1">
                   <div class="name flex flex-align-center">

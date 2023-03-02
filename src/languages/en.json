@@ -697,7 +697,8 @@
       "alias": "Domain",
       "avatar": "Avatar",
       "rights": "Right",
-      "music": "Music"
+      "music": "Music",
+      "Name": "MetaName"
     },
     "FilterItem": {
       "Status": "Status",
@@ -740,7 +741,14 @@
     "Not Support Current Chain NFT Transfer": "Not Support Current Chain NFT Transfer",
     "Selling price must be greater than ": "Selling price must be greater than",
     "OffSaleing": "OffSaleing...",
-    "TransferToMetaNameNotMatch": "The MetaName resolution address is inconsistent with the owner address"
+    "TransferToMetaNameNotMatch": "The MetaName resolution address is inconsistent with the owner address",
+    "Payment Succeeded": "Payment Succeeded!",
+    "Payment Succeeded Tips": "The NFT is in your wallet.",
+    "View Item": "View Item",
+    "Check later": "Check later",
+    "Sale Success": "Sell Success",
+    "Not support this chain for sell:": "The NFT of this chain is not currently supported:",
+    "Circulation": "Circulation"
   },
   "My NFT": "My NFT",
   "Done": "Done",
@@ -871,7 +879,7 @@
     "Pay": "Pay",
     "Total Fee": "Total Fee",
     "Choose Pay Type": "Payment Method",
-    "Registering": "Registrating",
+    "Registering": "Registering",
     "RegisteringTips": "It will take about 3 minutes, please wait patiently. You can check the registered MetaName on the \"My\" page.",
     "Confirm Collect Money": "Confirm Payment",
     "Locked": "Lock",
@@ -968,6 +976,7 @@
   "NOT_FOUND": "NOT_FOUND",
   "Copy": "Copy",
   "confirmUpdate": "Confirm upgrade",
-  "allowUpdate": "It is detected that your account needs to be upgraded. Canceling the upgrade may affect subsequent logins with other wallets, please confirm! (Special reminder: Do not use the 'iamtoken' wallet for upgrade operations, otherwise the account upgrade will fail)",
-  "updateRemind": "Upgrade Tips"
+  "allowUpdate": "It is detected that your account needs to be upgraded, canceling the upgrade may affect other subsequent wallet logins, please confirm! \n (Special reminder: 1. If your previously registered account is registered and bound through 'WalletConnect', please use 'WalletConnect' to upgrade \n;2. If your account is registered and bound through the web client 'MetaMask', please use the web client 'MetaMask' wallet to perform the upgrade operation, otherwise the account upgrade will fail)",
+  "updateRemind": "Upgrade Tips",
+  "inputMetaNameSensitiveWords": "Sensitive words are not supported"
 }

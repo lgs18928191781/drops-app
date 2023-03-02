@@ -5,10 +5,17 @@
         <div class="header flex flex-align-center">
           <div class="user-info flex1">
             <div class="head">
-              <UserAvatar :meta-id="item.metaId" :image="item.avatarImage" :name="item.userName" />
+              <UserAvatar
+                :meta-id="item.metaId"
+                :image="item.avatarImage"
+                :name="item.userName"
+                :meta-name="item.userInfo.metaName"
+              />
             </div>
             <div class="info">
-              <div class="name">{{ item.userName }}</div>
+              <div class="name">
+                <UserName :name="item.userName" :meta-name="item.userInfo.metaName" />
+              </div>
               <div class="desc">
                 <span>MetaID: {{ sliceStr(item.metaId) }}</span>
                 <span class="time">{{ $filters.dateTimeFormat(item.timestamp) }}</span>
@@ -63,12 +70,22 @@
                   :meta-id="child.metaId"
                   :image="child.avatarImage"
                   :name="child.userName"
+                  :metaName="child.userInfo.metaName"
                 ></UserAvatar>
                 <div class="name flex flex-align-center">
-                  <a>{{ child.userName }}</a>
+                  <a class="flex flex-align-center"
+                    ><UserName
+                      :name="child.userName"
+                      :meta-name="child.userInfo.metaName"
+                      :no-tag="true"
+                  /></a>
                   <template v-if="child.replyToUserName"
                     ><span>{{ $t('Replay') }}</span
-                    ><a>{{ child.replyToUserName }}</a></template
+                    ><a class="flex flex-align-center"
+                      ><UserName
+                        :name="child.replyToUserName"
+                        :meta-name="child.replyToUserMetaName"
+                        :no-tag="true"/></a></template
                   >：
                 </div>
                 <div class="flex1 content-child" v-html="child.content"></div>

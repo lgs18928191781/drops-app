@@ -197,6 +197,7 @@ export const GetNftHolderList = (params: {
   codehash: string
   genesis: string
   tokenIndex: string
+  chain: string
   page: string
   pageSize: string
 }): Promise<GetNftHolderListRes> => {
@@ -747,9 +748,9 @@ export const GeUserSaleNFTs = (params: {
 }): Promise<{
   code: number
   data: {
-    name: string
-    resolveAddress: string
-    ownerAddress: string
+    results: {
+      items: GenesisNFTItem[]
+    }
   }
 }> => {
   const { metaId, ..._params } = params

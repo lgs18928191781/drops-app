@@ -48,6 +48,7 @@
                   <UserAvatar
                     :meta-id="redPacketResult?.metaId"
                     :image="redPacketResult?.avatarImage"
+                    :meta-name="''"
                     class="w-15 h-15 rounded-2xl mt-4.5"
                     :disabled="true"
                   />
@@ -87,6 +88,7 @@
                         <UserAvatar
                           :meta-id="draw.metaId"
                           :image="draw.avatarImage"
+                          :meta-name="draw.metaName"
                           class="w-12 h-12"
                         />
                         <div class="flex flex-col space-y-0.5 items-start">

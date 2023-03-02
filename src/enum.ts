@@ -117,6 +117,13 @@ export enum NFTSellState {
   AuctionEndAndSended, // 拍卖结束且已发送NFT
 }
 
+export enum NFTOperateType {
+  Buy,
+  Sale,
+  OffSale,
+  Transfer,
+}
+
 export enum withdrawStatus {
   wait = '待审核',
   fail = '审核失败',
@@ -368,6 +375,7 @@ export enum GroupChannelType {
   ETH_NFT = 'ETH_NFT',
   POLYGON_NFT = 'POLYGON_NFT',
   BSV_NFT = 'BSV_NFT',
+  BSV_FT = 'BSV_FT',
 }
 
 export enum ShowControl {

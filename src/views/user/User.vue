@@ -7,7 +7,7 @@
             <Icon name="down"></Icon>
           </a>
         </div>
-        <a class="edit flex flex-align-center flex-pack-center" v-if="isSelf">
+        <a class="edit flex flex-align-center flex-pack-center" v-if="isSelf" @click="editBg">
           <Icon name="edit" />
         </a>
       </div>
@@ -23,7 +23,6 @@
               <div class="flex1">
                 <div class="avatar-warp flex flex-align-center flex-pack-center">
                   <ElSkeletonItem variant="circle" />
-                  <!-- <UserAvatar :meta-id="''" :image="''" :disabled="true" /> -->
                 </div>
               </div>
               <div class="opreate flex-self-end">
@@ -56,6 +55,8 @@
                   <UserAvatar
                     :meta-id="userInfo.val!.metaId"
                     :image="userInfo.val!.avatarImage"
+                    :name="userInfo.val!.name"
+                    :meta-name="userInfo.val!.metaName"
                     :disabled="true"
                   />
                 </div>
@@ -262,6 +263,10 @@ async function toMessage() {
       channelId: userInfo.val!.metaId,
     },
   })
+}
+
+function editBg() {
+  return ElMessage.info(i18n.t('Comming Soon'))
 }
 
 Promise.all([getUserInfo(), getUserFoller(), checkUserIsFollowed()]).then(() => {

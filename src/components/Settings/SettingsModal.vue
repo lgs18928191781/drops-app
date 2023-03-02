@@ -32,6 +32,7 @@
             :meta-id="userStore.user!.metaId"
             :image="userStore.user!.avatarImage"
             :name="userStore.user!.name"
+            :meta-name="userStore.user!.metaName"
           />
         </span>
         <span class="flex1 name">{{ $t('Setting.Edit Profile') }}</span>

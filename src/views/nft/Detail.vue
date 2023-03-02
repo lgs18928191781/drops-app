@@ -23,9 +23,13 @@
             <div class="flex1">
               <div class="top flex flex-align-center">
                 <div class="flex1">
-                  <div class="collection-name flex flex-align-center" v-if="collection.val">
+                  <RouterLink
+                    :to="{ name: 'nftCollectionDetail', params: { topicType: collection.val.topicType } }"
+                    class="collection-name flex flex-align-center"
+                    v-if="collection.val"
+                  >
                     {{ collection.val!.name }} <Icon name="certed" />
-                  </div>
+                  </RouterLink>
                 </div>
                 <div class="operate-list flex flex-align-center">
                   <div class="operate-item flex flex-align-center" @click="payLike">
@@ -49,6 +53,7 @@
                   :meta-id="nft.val!.nftOwnerMetaId"
                   :image="nft.val!.nftOwnerAvatarImage"
                   :name="nft.val!.nftOwnerName"
+                  :meta-name="nft.val!.nftOwnerUserInfo.metaName"
                 />
                 <div class="flex1">
                   <div class="owner-msg-item flex flex-align-center">
@@ -182,6 +187,7 @@
                             :meta-id="nft.val!.nftIssueMetaId"
                             :image="nft.val!.nftIssueAvatarImage"
                             :name="nft.val!.nftIssuer"
+                            :meta-name="nft.val!.nftIssueUserInfo.metaName"
                           />
                           <div class="flex1">
                             <div class="username">
@@ -215,6 +221,7 @@
                     :genesis="(route.params.genesis as string)"
                     :codehash="(route.params.codehash as string)"
                     :token-index="(route.params.tokenIndex as string)"
+                    :chain="(route.params.chain as string)"
                   />
                 </div>
               </div>
@@ -222,7 +229,7 @@
           </div>
         </div>
 
-        <div class="more-nft" v-if="nft.val!.topicType">
+        <div class="more-nft" v-if="nft.val!.nftTopicType">
           <div class="title">{{ $t('NFT.More from this collection') }}</div>
           <ElRow :gutter="22" class="more-nft-list">
             <ElCol
@@ -230,24 +237,24 @@
               :sm="12"
               :md="6"
               :lg="6"
-              :xl="4"
+              :xl="6"
               v-for="item in nfts"
               :key="item.nftTokenIndex"
             >
-              <NFTItem :nft="item" />
+              <NFTItem :nft="item" @buy="onBuy" @sale="onSale" @offsale="onOffSale" />
             </ElCol>
           </ElRow>
         </div>
       </div>
 
-      <NFTSellVue :nft="nft.val!" v-model="isShowSell" @success="getDetail" />
+      <NFTSellVue :nft="currentNFT.val!" v-model="isShowSell" @success="onOperateSuccess" />
       <NFTBuyVue
-        :nft="buyNFT.val!"
+        :nft="currentNFT.val!"
         v-model="isShowBuy"
         :is-hide-detail="true"
-        @success="getDetail"
+        @success="onOperateSuccess"
       />
-      <NFTTransferVue :nft="nft.val!" v-model="isShowTransfer" @success="getDetail" />
+      <NFTTransferVue :nft="nft.val!" v-model="isShowTransfer" @success="onOperateSuccess" />
     </template>
   </ElSkeleton>
 </template>
@@ -279,7 +286,7 @@ import { checkUserLogin, NFTOffSale, tx } from '@/utils/util'
 import AmountVue from '@/components/Amount/Amount.vue'
 import NFTTransferVue from '@/components/NFTTransfer/NFTTransfer.vue'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
-import { Chains, NFTSellType, NodeName, ToCurrency } from '@/enum'
+import { Chains, NFTOperateType, NFTSellType, NodeName, ToCurrency } from '@/enum'
 import NFTDetailRecord from './components/NFTDetailRecord.vue'
 import NFTItem from '@/components/NFTItem/NFTItem.vue'
 import DetailSkeleton from './DetailSkeleton.vue'
@@ -299,7 +306,7 @@ const DescriptionWarpRef = ref()
 const nfts: GenesisNFTItem[] = reactive([])
 const isLikeing = ref(false)
 const collection: { val: null | Collect } = reactive({ val: null })
-const buyNFT: { val: null | GenesisNFTItem } = reactive({ val: null })
+const currentNFT: { val: null | GenesisNFTItem } = reactive({ val: null })
 
 const isSale = computed(() => {
   return IsSale(nft.val)
@@ -362,13 +369,14 @@ const isShowSell = ref(false)
 function nftBtnFunction() {
   if (isMyNFT.value) {
     if (isSale.value) {
-      offSale()
+      offSale(nft.val!)
     } else {
+      currentNFT.val = nft.val
       isShowSell.value = true
     }
   } else {
     if (isSale.value) {
-      buyNFT.val = nft.val
+      currentNFT.val = nft.val
       isShowBuy.value = true
     } else {
       return
@@ -389,9 +397,9 @@ function getDetail() {
     })
     if (res?.code === 0) {
       nft.val = res.data.results.items[0]
-      buyNFT.val = res.data.results.items[0]
-      if (nft.val!.topicType) {
-        GetCollectByTopicType(nft.val!.topicType).then(res => {
+      currentNFT.val = res.data.results.items[0]
+      if (nft.val!.nftTopicType) {
+        GetCollectByTopicType(nft.val!.nftTopicType).then(res => {
           if (res) collection.val = res
         })
         getNFTs()
@@ -401,11 +409,10 @@ function getDetail() {
   })
 }
 
-async function offSale() {
-  const result = await NFTOffSale(nft.val!)
+async function offSale(item: GenesisNFTItem) {
+  const result = await NFTOffSale(item)
   if (result) {
-    nft.val!.nftSellState = 1
-    // getDetail()
+    onOperateSuccess(result)
   }
 }
 
@@ -447,19 +454,20 @@ function onChangeDetails() {
 function getNFTs() {
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetCollectionNFTs({
-      topicType: nft.val!.topicType,
+      topicType: nft.val!.nftTopicType,
       page: 1,
-      pageSize: 7,
+      pageSize: 5,
       sellType: NFTSellType.All,
     }).catch(error => {
       ElMessage.error(error.message)
     })
     if (res?.code === 0) {
+      nfts.length = 0
       res.data.results.items = res.data.results.items.filter(
         item => item.nftTokenIndex !== nft.val!.nftTokenIndex
       )
-      if (res.data.results.items.length === 7) {
-        res.data.results.items.splice(6, 1)
+      if (res.data.results.items.length === 5) {
+        res.data.results.items.splice(4, 1)
       }
       nfts.push(...res.data.results.items)
       resolve()
@@ -494,6 +502,39 @@ async function payLike() {
     nft.val!.nftHasLike = true
     nft.val!.nftLikeCount++
     isLikeing.value = false
+  }
+}
+
+function onBuy(item: GenesisNFTItem) {
+  currentNFT.val = item
+  isShowBuy.value = true
+}
+function onSale(item: GenesisNFTItem) {
+  currentNFT.val = item
+  isShowSell.value = true
+}
+
+function onOffSale(item: GenesisNFTItem) {
+  offSale(item)
+}
+
+function onOperateSuccess(item: GenesisNFTItem) {
+  if (
+    nft.val!.nftGenesis === item.nftGenesis &&
+    nft.val!.nftCodehash === item.nftCodehash &&
+    nft.val!.nftTokenIndex === item.nftTokenIndex
+  ) {
+    nft.val = item
+  } else {
+    const index = nfts.findIndex(
+      _item =>
+        _item.nftGenesis === item.nftGenesis &&
+        _item.nftCodehash === item.nftCodehash &&
+        _item.nftTokenIndex === item.nftTokenIndex
+    )
+    if (index > -1) {
+      nfts[index] = item
+    }
   }
 }
 

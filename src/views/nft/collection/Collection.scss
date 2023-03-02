@@ -1,8 +1,9 @@
+@import '@/assets/styles/var.scss';
+
 .collection {
     border-radius: var(--rounded) var(--rounded) 0px 0px;
     overflow: hidden;
     background: var(--themeBgSecondColor);
-    margin-top: 18px;
 
     .cover {
         width: 100%;
@@ -127,6 +128,14 @@
             .value {
                 font-size: 20px;
 
+                .amount {
+                    @extend %text-ellipsis;
+                }
+
+                .unit {
+                    margin-left: 5px;
+                }
+
                 .el-skeleton__item {
                     height: 20px;
                     width: 100px;
@@ -193,6 +202,7 @@
         background: var(--themeBgSecondColor);
         padding-top: 18px;
         padding-bottom: 18px;
+        margin-top: 18px;
 
         .main-border {
             display: inline-flex;
@@ -274,6 +284,8 @@
                 margin-top: 30px;
 
                 .statiscs-item {
+
+
                     .flex {
                         justify-content: center;
                     }

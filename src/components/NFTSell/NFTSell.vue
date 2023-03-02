@@ -94,7 +94,7 @@ import { useI18n } from 'vue-i18n'
 import NFTCoverVue from '../NFTCover/NFTCover.vue'
 import NFTMsgVue from '../NFTMsg/NFTMsg.vue'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
-import { NodeName, SdkPayType } from '@/enum'
+import { Chains, NodeName, SdkPayType } from '@/enum'
 import { FormInstance } from 'element-plus'
 
 const props = defineProps<{
@@ -229,6 +229,11 @@ function onChangeUnit() {
 }
 
 function submitForm() {
+  if (props.nft.nftChain !== Chains.MVC) {
+    return ElMessage.info(
+      i18n.t('NFT.Not support this chain for sell:' + ' ' + props.nft.nftChain.toUpperCase())
+    )
+  }
   FormRef.value?.validate(async (valid, fields) => {
     if (valid) {
       if (props.nft.nftCanSellTimestamp > new Date().getTime()) {
@@ -302,10 +307,12 @@ function submitForm() {
             nftPrice: sellPriceSatoshi,
             nftSellState: 0,
             nftIsReady: true,
+            nftSellTxId: res.nft!.sell!.txId,
+            nftSellContractTxId: res.nft!.sell!.sellTxId,
           })
           emit('update:modelValue', false)
           form.sellPrice = ''
-          ElMessage.success('上架成功')
+          ElMessage.success(i18n.t('NFT.Sale Success'))
         } else {
           loading.value = false
         }

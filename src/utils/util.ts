@@ -25,10 +25,11 @@ import {
   EnvMode,
   PayPlatformUnit,
   SdkPayType,
+  NFTSellState,
 } from '@/enum'
 import { CheckBlindboxOrderStatus } from '@/api/v3'
 import AllCardJson from '@/utils/card.json'
-import { GetOrderStatus, IsWtiteUser, MetaNameBeforeReqRes } from '@/api/wxcore'
+import { CheckMetaNameValid, GetOrderStatus, IsWtiteUser, MetaNameBeforeReqRes } from '@/api/wxcore'
 import { classifyName } from '@/config'
 import { v1 as uuidv1 } from 'uuid'
 import { decode, encode } from 'js-base64'
@@ -62,9 +63,11 @@ import { SendMetaNameTransationResult } from '@/@types/sdk'
 import { GetTxChainInfo } from '@/api/metaid-base'
 import { useMetaNameStore } from '@/stores/metaname'
 import { GetBalance } from '@/api/aggregation'
+//@ts-ignore
 import namehash from 'eth-ens-namehash'
 import Compressor from 'compressorjs'
-
+//@ts-ignore
+import { toUnicode } from 'idna-uts46-hx'
 const emojiReg = /[\u{1F601}-\u{1F64F}\u{2702}-\u{27B0}\u{1F680}-\u{1F6C0}\u{1F170}-\u{1F251}\u{1F600}-\u{1F636}\u{1F681}-\u{1F6C5}\u{1F30D}-\u{1F567}]/gu
 
 export function randomString() {
@@ -977,19 +980,26 @@ export function getCurrencyAmount(
   let rate = rootStore.exchangeRate.find(
     item => item.symbol.toUpperCase() === toCurrency!.toUpperCase()
   )
-  if (toCurrency === 'CNY') {
-    if (currency === 'CNY') {
+  if (toCurrency === ToCurrency.CNY) {
+    if (currency === ToCurrency.CNY) {
       //  cny -> cny
       return new Decimal(price).div(100).toNumber()
-    } else {
-      // mvc -> cny
-      const rateUSD = new Decimal(rate!.price.CNY).div(rate!.price.USD).toNumber()
+    } else if (currency === ToCurrency.USD) {
+      // usd -> cny
+      const rateUSD = new Decimal(rootStore.exchangeRate[1]!.price.CNY)
+        .div(rate!.price.USD)
+        .toNumber()
       return new Decimal(
         new Decimal(price)
           .div(100)
           .div(rateUSD)
           .toFixed(2)
       ).toNumber()
+    } else {
+      rate = rootStore.exchangeRate.find(
+        item => item.symbol.toUpperCase() === currency.toUpperCase()
+      )
+      return new Decimal(new Decimal(price).mul(rate!.price.CNY).toFixed(2)).toNumber()
     }
   } else if (toCurrency === ToCurrency.ETH) {
     if (currency === 'CNY') {
@@ -1094,11 +1104,12 @@ export function getCurrencyAmount(
 }
 
 export function NFTOffSale(nft: GenesisNFTItem) {
-  return new Promise(async (resolve, rject) => {
+  return new Promise<GenesisNFTItem | false>(async (resolve, rject) => {
     ElMessageBox.confirm(
       `${i18n.global.t('offsaleConfirm')} ${nft.nftName} ?`,
       i18n.global.t('niceWarning'),
       {
+        // @ts-ignore
         confirmButtonText: i18n.global.t('confirm'),
         cancelButtonText: i18n.global.t('Cancel'),
         closeOnClickModal: false,
@@ -1133,6 +1144,12 @@ export function NFTOffSale(nft: GenesisNFTItem) {
                 genesis: nft.nftGenesis,
                 codehash: nft.nftCodehash,
                 tokenIndex: nft.nftTokenIndex,
+                sellUtxo: {
+                  txId: nft.nftSellContractTxId,
+                  outputIndex: 0,
+                  sellerAddress: nft.nftOwnerAddress,
+                  price: nft.nftPrice,
+                },
               }),
             },
             {
@@ -1146,7 +1163,11 @@ export function NFTOffSale(nft: GenesisNFTItem) {
         if (res) {
           loading.close()
           ElMessage.success(i18n.global.t('NFT.Offsale Success'))
-          resolve(true)
+          resolve({
+            ...nft,
+            nftSellState: NFTSellState.OffSale,
+            nftPrice: 0,
+          })
         } else if (res === null) {
           loading.close()
         }
@@ -1424,16 +1445,17 @@ export const setInitImg = (
 }
 
 export const bytesLength = (str: string) => {
-  let intLength = 0
-  for (let i = 0; i < str.length; i++) {
-    let a = str.charAt(i)
-    if (a.match(/[^\x00-\xff]/gi) != null) {
-      intLength += 2
-    } else {
-      intLength += 1
-    }
-  }
-  return intLength
+  return Buffer.from(toUnicode(str)).length
+  // let intLength = 0
+  // for (let i = 0; i < str.length; i++) {
+  //   let a = str.charAt(i)
+  //   if (a.match(/[^\x00-\xff]/gi) != null) {
+  //     intLength += 2
+  //   } else {
+  //     intLength += 1
+  //   }
+  // }
+  // return intLength
 }
 
 export const getMetaNamePrice = (metaName: string) => {
@@ -1593,42 +1615,6 @@ export function getUserBsvBalance() {
       resolve(new Decimal(res.data.balance).toNumber())
     }
   })
-}
-
-export const validateMetaName = (value: string) => {
-  if (value === '') {
-    return ElMessage.error(i18n.global.t('MetaName.MetaName cannot be empty'))
-  } else if (value.trim() !== value || /\s/.test(value)) {
-    return ElMessage.error(`${i18n.global.t('metanameNotAllowSpace')}`)
-  } else if (emojiReg.test(value)) {
-    return ElMessage.error(`${i18n.global.t('metanameNotAllowEmoji')}`)
-  } else if (/[\u4e00-\u9fa5]/.test(value) && import.meta.env.MODE === EnvMode.Mainnet) {
-    return ElMessage.error(`${i18n.global.t('metanameNotAllowCh')}`)
-  } else {
-    const testResult = bytesLength(value.trim())
-    if (testResult > 0 && testResult <= 2) {
-      return ElMessage.error(`${i18n.global.t('metanameNotAllowMin')}`)
-    } else if (testResult > 63) {
-      return ElMessage.error(`${i18n.global.t('metanameNotAllowOverLenght')}`)
-    }
-  }
-  let illgelRes: any
-  const MetaNameReg = /\./g
-  try {
-    illgelRes = namehash.normalize(value)
-    if (MetaNameReg.test(illgelRes)) return false
-    return illgelRes
-  } catch {
-    try {
-      const { content } = JSON.parse(`{"content":"${value}"}`)
-      illgelRes = namehash.normalize(content)
-      if (MetaNameReg.test(illgelRes)) return false
-      return illgelRes
-    } catch (error) {
-      ElMessage.error(`${i18n.global.t('inputMetaNameIllgel')}`)
-      return null
-    }
-  }
 }
 
 export const nativePayPlatforms = [

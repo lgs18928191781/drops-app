@@ -172,6 +172,7 @@
                       :meta-id="nft.val!.nftIssueMetaId!"
                       :image="nft.val!.nftIssueAvatarImage"
                       :name="nft.val!.nftIssuer!"
+                      :meta-name="nft.val!.nftIssueUserInfo.metaName"
                     ></UserAvatar>
                     <span class="username">{{ nft.val?.nftIssuer }}</span>
                     <span class="label">({{ $t('creater') }})</span>
@@ -181,6 +182,7 @@
                       :meta-id="nft.val!.nftOwnerMetaId!"
                       :image="nft.val!.nftOwnerAvatarImage"
                       :name="nft.val!.nftOwnerName!"
+                      :meta-name="nft.val!.nftOwnerUserInfo.metaName"
                     ></UserAvatar>
                     <span class="username">{{ nft.val?.nftOwnerName }}</span>
                     <span class="label">({{ $t('owner') }})</span>
@@ -239,6 +241,9 @@
 
 
 
+
+
+
                 }}%)
               </div>
               <div class="amount">
@@ -249,6 +254,9 @@
               <div class="name flex1">
                 {{ $t('buyFeeTips2') }}({{
                   new Decimal(fee.val!.royaltyPercentage).mul(100).toNumber()
+
+
+
 
 
 
@@ -400,7 +408,7 @@ const envLimited = ref(`${import.meta.env.VITE_envCondition}`)
 const isOpenPayMode = ref(false)
 const wechatpayOverTime = ref(null)
 
-const nft: { val: Partial<NFTApiGetNFTDetailResDataItem> | null } = reactive({
+const nft: { val: GenesisNFTItem | null } = reactive({
   val: null,
 })
 

@@ -145,7 +145,9 @@ export const useTalkStore = defineStore('talk', {
         if (channel.roomJoinType === '2001') return GroupChannelType.ETH_NFT
         if (channel.roomJoinType === '2002') return GroupChannelType.POLYGON_NFT
         if (channel.roomJoinType === '2003') return GroupChannelType.BSV_NFT
-        if (channel.roomJoinType === '3') return GroupChannelType.FT
+        if (channel.roomJoinType === '3') return GroupChannelType.BSV_FT
+        if (channel.roomJoinType === '3003') return GroupChannelType.BSV_FT
+        if (channel.roomJoinType === '3000') return GroupChannelType.FT
 
         if (channel.roomJoinType === '4000') return GroupChannelType.Native
 

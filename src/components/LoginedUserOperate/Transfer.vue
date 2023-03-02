@@ -70,6 +70,7 @@ import { useI18n } from 'vue-i18n'
 import DrawerRightHeader from '../DrawerRightHeader/DrawerRightHeader.vue'
 import { useUserStore } from '@/stores/user'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { NodeName, SdkPayType } from '@/enum'
 
 const props = defineProps<{
   modelValue: boolean
@@ -146,12 +147,20 @@ function transfer() {
       ).then(async () => {
         loading.value = true
         const res = await userStore.showWallet
-          .sendMoney([
+          .createBrfcChildNode(
             {
-              amount: value,
-              address: form.address,
+              nodeName: NodeName.SendMoney,
+              payTo: [
+                {
+                  amount: value,
+                  address: form.address,
+                },
+              ],
             },
-          ])
+            {
+              payType: SdkPayType.SPACE,
+            }
+          )
           .catch(error => {
             ElMessage.error(error.message)
             loading.value = false
@@ -159,6 +168,8 @@ function transfer() {
         if (res) {
           FormRef.value.resetFields()
           ElMessage.success(i18n.t('Wallet.Transfer Success'))
+          loading.value = false
+        } else {
           loading.value = false
         }
       })
