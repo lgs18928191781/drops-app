@@ -156,16 +156,13 @@ const apps = reactive([
     title: () => i18n.t('Talk.Community.atme'),
     symbol: '@me',
   },
-])
-
-if (import.meta.env.MODE !== 'mainnet') {
-  apps.push({
+  {
     icon: 'market',
     path: '/nft/collection/detail/MetaName',
     title: () => i18n.t('NFT.NFT Market'),
     symbol: 'nft',
-  })
-}
+  },
+])
 
 if (userStore.isAuthorized) {
   talk.fetchCommunities()
