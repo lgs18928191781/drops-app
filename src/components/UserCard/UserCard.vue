@@ -59,13 +59,13 @@ const i18n = props.i18n ? props.i18n.global : useI18n()
 const emit = defineEmits(['hide'])
 
 function toUser(e: Event) {
-  emit('hide')
   router.push({
     name: 'user',
     params: {
       metaId: props.metaId,
     },
   })
+  emit('hide')
 }
 
 async function toMessage() {

@@ -310,9 +310,11 @@ export class SDK {
     }
   ) {
     return new Promise<NodeTransactions | null>(async (resolve, reject) => {
+      const userStore = useUserStore()
+
       const initOption = {
         isBroadcast: true,
-        payType: SdkPayType.ME,
+        payType: userStore.sdkPayment,
         useQueue: false,
         subscribeId: '',
       }
@@ -341,8 +343,6 @@ export class SDK {
       if (params.payTo && params.payTo.length) {
         params.payTo = params.payTo.filter(item => item.amount)
       }
-
-      const userStore = useUserStore()
       try {
         // App 端
         if (this.appMetaIdJs) {

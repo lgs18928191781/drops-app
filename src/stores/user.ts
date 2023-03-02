@@ -43,6 +43,7 @@ interface UserState {
       visible: boolean
     }
   }
+  sdkPayment: SdkPayType
 }
 
 const userkey = encode('user')
@@ -58,6 +59,7 @@ if (window.localStorage.getItem(passwordkey)) {
   password = decode(window.localStorage.getItem(passwordkey)!)
 }
 
+const sdkPayConfirmPaymentKey = 'SDK-PAYMENT'
 const sdkPayConfirmHideKey = {
   [SdkPayType.ME]: 'HIDE-ME-CONFIRM',
   [SdkPayType.SPACE]: 'HIDE-SPACE-CONFIRM',
@@ -76,7 +78,7 @@ const sdkPayConfirm = {
   [SdkPayType.SPACE]: {
     value: localStorage.getItem(sdkPayConfirmMaxKey[SdkPayType.SPACE])
       ? parseInt(localStorage.getItem(sdkPayConfirmMaxKey[SdkPayType.SPACE])!)
-      : 1,
+      : 3000,
     visible: localStorage.getItem(sdkPayConfirmHideKey[SdkPayType.SPACE]) ? false : true,
   },
 }
@@ -99,6 +101,7 @@ export const useUserStore = defineStore('user', {
       isSetedisTestUser: false,
       isTestUser: false,
       sdkPayConfirm: sdkPayConfirm,
+      sdkPayment: localStorage.getItem(sdkPayConfirmPaymentKey) || SdkPayType.ME,
     },
   getters: {
     isAuthorized: state => <boolean>!!(state.user && state.user.token),
@@ -239,7 +242,6 @@ export const useUserStore = defineStore('user', {
         }
       })
     },
-
     changeSdkPayConfirm(type: 'visible' | 'value', value: number | boolean, payType: SdkPayType) {
       if (type === 'visible') {
         if (value) {
@@ -252,6 +254,11 @@ export const useUserStore = defineStore('user', {
         localStorage.setItem(sdkPayConfirmMaxKey[payType], value.toString())
         this.sdkPayConfirm[payType].value = value as number
       }
+    },
+    changeSdkPayment(payType: SdkPayType) {
+      if (payType === this.sdkPayment) return
+      localStorage.setItem(sdkPayConfirmPaymentKey, payType)
+      this.sdkPayment = payType
     },
   },
 })

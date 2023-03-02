@@ -6,8 +6,9 @@ import { BaseUtxo, MetasvUtxoTypes, MetaNameRequestDate, MetaNameReqType } from 
 import axios, { AxiosInstance } from 'axios'
 import { UtxoItem } from '@/@types/sdk'
 import zlib from 'zlib'
-import { HdWalletChain, Network } from '@/enum'
+import { Chains, HdWalletChain, Network } from '@/enum'
 import i18n from '../i18n'
+import { GetTxChainInfo } from '@/api/metaid-base'
 interface BaseApiResultTypes<T> {
   code: number
   msg?: string
@@ -83,6 +84,7 @@ export default class ShowmoneyProvider {
   public metaNameApi = `http://47.242.27.95:35000`
   public newBrfcNodeBaseInfoList: NewBrfcNodeBaseInfo[] = []
   public isUsedUtxos: { txId: string; address: string }[] = []
+  public txChainInfos: { txId: string; chain: string }[] = [] // 存储txId所在链， 避免重复调接口查询
 
   constructor(params?: {
     baseApi?: string
@@ -599,6 +601,27 @@ export default class ShowmoneyProvider {
       ).catch(error => reject(error))
       if (res) {
         resolve(res)
+      }
+    })
+  }
+
+  getTxChainInfo(txId: string) {
+    return new Promise(async (resolve, reject) => {
+      const index = this.txChainInfos.findIndex(item => item.txId === txId)
+      if (index !== -1) {
+        resolve(this.txChainInfos[index].chain)
+        return
+      } else {
+        const chainInfoRes = await GetTxChainInfo(txId)
+        const chain =
+          chainInfoRes.code === 0 && chainInfoRes.data.chainFlag
+            ? chainInfoRes.data.chainFlag
+            : Chains.MVC
+        this.txChainInfos.push({
+          txId,
+          chain,
+        })
+        resolve(chain)
       }
     })
   }

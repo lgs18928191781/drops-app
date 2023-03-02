@@ -62,7 +62,9 @@
                 </div>
               </div>
               <div class="opreate flex-self-end">
-                <a class="main-border primary" v-if="!isSelf">{{ $t('User.Chat') }}</a>
+                <a class="main-border primary" v-if="!isSelf" @click="toChat">{{
+                  $t('User.Chat')
+                }}</a>
                 <a
                   class="main-border primary"
                   :class="[isMyFollowed ? 'faded' : 'primary']"
@@ -267,6 +269,10 @@ async function toMessage() {
 
 function editBg() {
   return ElMessage.info(i18n.t('Comming Soon'))
+}
+
+function toChat() {
+  router.push(`/talk/channels/@me/${route.params.metaId}`)
 }
 
 Promise.all([getUserInfo(), getUserFoller(), checkUserIsFollowed()]).then(() => {

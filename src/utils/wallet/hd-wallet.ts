@@ -1036,12 +1036,7 @@ export class HdWallet {
           }
         }
 
-        const chainInfoRes = await GetTxChainInfo(parentTxId)
-        const chain =
-          chainInfoRes.code === 0 && chainInfoRes.data.chainFlag
-            ? chainInfoRes.data.chainFlag
-            : Chains.MVC
-
+        const chain = await this.provider.getTxChainInfo(parentTxId)
         const scriptPlayload = [
           'mvc',
           node.publicKey.toString(),

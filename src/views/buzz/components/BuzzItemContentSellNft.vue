@@ -1,4 +1,5 @@
 <template>
+  <div class="text">{{ $t('NFT.Ueser Sell NFT Buzz Text') }}</div>
   <CardVue class="nft-card" :color="color">
     <div class="nft-warp" @click.stop="toNFT">
       <ElSkeleton :loading="isSkeleton" animated>
@@ -55,8 +56,9 @@ import { ToCurrency } from '@/enum'
 interface Props {
   buzz: BuzzItem
 }
-const nftSellItem: { val: SellNftItem | null } = reactive({ val: null })
 const props = withDefaults(defineProps<Props>(), {})
+
+const nftSellItem: { val: SellNftItem | null } = reactive({ val: null })
 const userStore = useUserStore()
 const isSkeleton = ref(true)
 const postTagStore = usePostTagStore()
