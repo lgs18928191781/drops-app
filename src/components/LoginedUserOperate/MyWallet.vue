@@ -130,7 +130,10 @@
                   <div class="wallet-item" v-for="wallet in item.list" :key="wallet.name">
                     <div class="header flex flex-align-center">
                       <div class="flex1 flex flex-align-center flex-pack-start">
-                        <div class="icon flex flex-align-center flex-pack-center">
+                        <div
+                          class="icon flex flex-align-center flex-pack-center"
+                          v-if="wallet.name !== 'ME'"
+                        >
                           <img :src="wallet.icon" />
                         </div>
                         <div>

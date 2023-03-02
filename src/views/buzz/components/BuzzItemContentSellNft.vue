@@ -19,6 +19,7 @@
           </div>
         </template>
         <template #default>
+          <div class="text">{{ $t('NFT.Ueser Sell NFT Buzz Text') }}</div>
           <div class="msg flex">
             <div class="cover-warp">
               <NFTCoverVue :cover="[nftSellItem.val!.cover as string]" />
@@ -55,8 +56,9 @@ import { ToCurrency } from '@/enum'
 interface Props {
   buzz: BuzzItem
 }
-const nftSellItem: { val: SellNftItem | null } = reactive({ val: null })
 const props = withDefaults(defineProps<Props>(), {})
+
+const nftSellItem: { val: SellNftItem | null } = reactive({ val: null })
 const userStore = useUserStore()
 const isSkeleton = ref(true)
 const postTagStore = usePostTagStore()

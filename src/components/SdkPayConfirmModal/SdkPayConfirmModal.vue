@@ -48,7 +48,7 @@
         </span>
         <div class="flex1 cont">
           {{ i18n.t('SDK.payconfirm.tips') }} <a>{{ maxCount }}</a>
-          {{ payType }}
+          {{ payType === SdkPayType.ME ? 'ME' : 'Satoshi' }}
           {{ i18n.t('SDK.payconfirm.tips2') }}
         </div>
       </div>

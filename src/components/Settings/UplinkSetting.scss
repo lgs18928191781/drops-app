@@ -5,11 +5,23 @@
         display: block;
     }
 
+    .payment {
+        margin-top: 18px;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--divid-color);
+
+        .el-select {
+            :deep(.el-input__wrapper) {
+                border-radius: 30px;
+                width: 100px;
+            }
+
+        }
+    }
+
     .list {
         .item {
             margin-bottom: 18px;
-
-
 
             .cont {
                 border-bottom: 1px solid var(--divid-color);

@@ -482,7 +482,8 @@
     "Uplink Payment Confirmation": "ME Payment Confirmation",
     "ConfirmationIntro": "Once turned on, you need to confirm every MetaEnergy payment.",
     "Alert value setting": "Alert Value",
-    "AlertValueIntro": "Confirmation is required every time payment reaches the alert value for your ME assets' safety."
+    "AlertValueIntro": "Confirmation is required every time payment reaches the alert value for your ME assets' safety.",
+    "Select Payment": "Select Payment"
   },
   "Invalid Value": "Invalid Value",
   "Theme": {
@@ -748,7 +749,8 @@
     "Check later": "Check later",
     "Sale Success": "Sell Success",
     "Not support this chain for sell:": "The NFT of this chain is not currently supported:",
-    "Circulation": "Circulation"
+    "Circulation": "Circulation",
+    "Ueser Sell NFT Buzz Text": "I listed an NFT. Check it out!"
   },
   "My NFT": "My NFT",
   "Done": "Done",

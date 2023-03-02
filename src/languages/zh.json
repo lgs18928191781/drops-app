@@ -556,7 +556,8 @@
     "Uplink Payment Confirmation": "上链支付确认",
     "ConfirmationIntro": "一旦开启，所有上链操作都需要您的确认。",
     "Alert value setting": "警报值设定",
-    "AlertValueIntro": "为了您ME资产的安全，超过警戒值的上行操作仍需要您的确认。"
+    "AlertValueIntro": "为了您ME资产的安全，超过警戒值的上行操作仍需要您的确认。",
+    "Select Payment": "选择支付方式"
   },
   "Invalid Value": "输入值有误",
   "Theme": {
@@ -738,7 +739,8 @@
     "Check later": "稍后查看",
     "Sale Success": "上架成功",
     "Not support this chain for sell:": "暂不支持此链NFT上架:",
-    "Circulation": "流通量"
+    "Circulation": "流通量",
+    "Ueser Sell NFT Buzz Text": "我上架了NFT，快来看看！"
   },
   "My NFT": "我的NFT",
   "Done": "完成",

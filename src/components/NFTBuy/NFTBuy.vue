@@ -56,7 +56,7 @@
           </div>
           <div class="price-item flex flex-alian-center">
             <div class="label flex1">
-              {{ $t('NFT.Platform Fee') }}<span class="rate">({{ platformFeeRate }}%)</span>:
+              {{ $t('NFT.Platform Fee') }}<span class="rate">({{ platformFeeRate }}%)</span>
             </div>
             <div class="value">{{ platformFee }} Space</div>
           </div>
