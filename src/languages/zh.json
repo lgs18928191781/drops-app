@@ -86,7 +86,7 @@
       "light": "明亮"
     },
     "Search": {
-      "placeholder": "搜索MetaID……",
+      "placeholder": "搜索MetaID/用户名/MetaName…",
       "searching": "搜索中……",
       "users": "用户",
       "no_results": "没有搜索结果：",

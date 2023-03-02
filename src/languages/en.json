@@ -46,7 +46,7 @@
       "light": "light"
     },
     "Search": {
-      "placeholder": "Search MetaID...",
+      "placeholder": "Search MetaID/Username/MetaName...",
       "searching": "Searching...",
       "users": "Users",
       "home": "Home",

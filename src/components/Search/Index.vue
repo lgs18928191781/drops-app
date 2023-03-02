@@ -31,7 +31,7 @@
                 <div class="relative grow">
                   <input
                     type="text"
-                    class="main-border field-input faded-switch still dark:!text-gray-100 placeholder:truncate !pr-8"
+                    class="main-border field-input faded-switch still dark:!text-gray-100 placeholder:truncate !pr-8 placeholder:text-xs lg:placeholder:text-base"
                     :placeholder="$t('Talk.Search.placeholder')"
                     v-model="searchKeyword"
                     @keyup.enter="search"
