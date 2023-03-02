@@ -252,6 +252,7 @@ import {
 } from '@/api/core'
 import { SDK } from '@/utils/sdk'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
+import { email } from '@/utils/reg'
 
 interface Props {
   type: 'register' | 'login'
@@ -262,7 +263,6 @@ const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits(['update:modelValue', 'update:type', 'success', 'back', 'update:loading'])
 const i18n = useI18n()
 const userStore = useUserStore()
-const emailReg = /^[A-Za-z0-9\u4e00-\u9fa5_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
 
 const tabs = [
   {
@@ -316,7 +316,7 @@ const rules = reactive({
       trigger: 'blur',
     },
     {
-      pattern: emailReg,
+      pattern: email,
       message: () => i18n.t('Email Address Error'),
       trigger: 'blur',
     },
@@ -409,7 +409,7 @@ const sendCodeBtnDisabled = computed(() => {
   if (sendCodeTimer.value === 0) {
     if (form.userType === SignUserType.Phone && form.phone !== '') {
       result = false
-    } else if (form.userType === SignUserType.Email && emailReg.test(form.email)) {
+    } else if (form.userType === SignUserType.Email && email.test(form.email)) {
       result = false
     }
   }
@@ -439,7 +439,7 @@ const isPolicyBtnFaded = computed(() => {
   if (props.type === 'login') {
     if (
       ((form.userType === 'phone' && form.phone !== '') ||
-        (form.userType === 'email' && emailReg.test(form.email))) &&
+        (form.userType === 'email' && email.test(form.email))) &&
       form.code !== '' &&
       form.password !== '' &&
       form.isAgreePolicy
@@ -450,7 +450,7 @@ const isPolicyBtnFaded = computed(() => {
     if (registerType.value === RegisterType.Check) {
       if (
         ((form.userType === 'phone' && form.phone !== '') ||
-          (form.userType === 'email' && emailReg.test(form.email))) &&
+          (form.userType === 'email' && email.test(form.email))) &&
         form.code !== '' &&
         form.isAgreePolicy
       ) {

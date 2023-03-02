@@ -7,7 +7,7 @@
       v-if="metaName"
       :noTag="noTag"
     />
-    <span :class="[textClass, 'truncate text-sm']" v-else>
+    <span :class="[textClass, 'truncate']" :title="name" v-else>
       {{ name }}
     </span>
   </span>

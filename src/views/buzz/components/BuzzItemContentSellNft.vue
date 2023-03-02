@@ -1,4 +1,5 @@
 <template>
+  <div class="text">{{ $t('NFT.Ueser Sell NFT Buzz Text') }}</div>
   <CardVue class="nft-card" :color="color">
     <div class="nft-warp" @click.stop="toNFT">
       <ElSkeleton :loading="isSkeleton" animated>
@@ -31,7 +32,8 @@
             </div>
           </div>
           <div class="price flex flex-align-center flex-pack-center">
-            <AmountVue :price="nftSellItem.val!.receivePrice" :currency="'CNY'" />
+            {{ $filters.space(nftSellItem.val!.price) }} Space
+            <!-- <AmountVue :price="$filters.space(nftSellItem.val!.price)" :currency="ToCurrency.MVC" /> -->
           </div>
         </template>
       </ElSkeleton>
@@ -49,12 +51,14 @@ import NFTCoverVue from '@/components/NFTCover/NFTCover.vue'
 import { useRouter } from 'vue-router'
 import { useRootStore } from '@/stores/root'
 import AmountVue from '@/components/Amount/Amount.vue'
+import { ToCurrency } from '@/enum'
 
 interface Props {
   buzz: BuzzItem
 }
-const nftSellItem: { val: SellNftItem | null } = reactive({ val: null })
 const props = withDefaults(defineProps<Props>(), {})
+
+const nftSellItem: { val: SellNftItem | null } = reactive({ val: null })
 const userStore = useUserStore()
 const isSkeleton = ref(true)
 const postTagStore = usePostTagStore()

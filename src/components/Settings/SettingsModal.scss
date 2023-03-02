@@ -64,6 +64,7 @@ header {
         &:hover {
             .icon-warp {
                 background: var(--themeTextColor);
+                color: var(--themeBgColor);
 
                 .icon {
                     :deep(use) {

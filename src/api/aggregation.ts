@@ -1,4 +1,4 @@
-import { CollectionOrderType, CollectionSortType } from '@/enum'
+import { CollectionOrderType, CollectionSortType, NFTSellType } from '@/enum'
 import { PostTag } from '@/stores/buzz/tag'
 import HttpRequest from '@/utils/request'
 
@@ -197,6 +197,7 @@ export const GetNftHolderList = (params: {
   codehash: string
   genesis: string
   tokenIndex: string
+  chain: string
   page: string
   pageSize: string
 }): Promise<GetNftHolderListRes> => {
@@ -687,7 +688,7 @@ export const GetCollectionNFTs = (params: {
   certificationType?: number
   sortType?: CollectionSortType
   orderType?: CollectionOrderType
-  sellType?: string
+  sellType?: NFTSellType
   metaId?: string
   startPrice?: string
   endPrice?: string
@@ -707,4 +708,55 @@ export const GetCollectionNFTs = (params: {
 }> => {
   const { topicType, ..._params } = params
   return aggregation.get(`/v2/app/show/market/topic/${topicType}`, { params: _params })
+}
+
+export const GetMetafileBySha256 = (params: {
+  sha256: string
+  metaId?: string
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    nextFlag: string
+    results: {
+      items: MetaFileSha256Info[] | null
+    }
+  }
+}> => {
+  const { sha256, ..._params } = params
+  return aggregation.get(`/v2/app/metaFile/getMetaFileByHash/${sha256}`, { params: _params })
+}
+
+export const GetMetaNameInfo = (
+  name: string
+): Promise<{
+  code: number
+  data: {
+    name: string
+    resolveAddress: string
+    ownerAddress: string
+  }
+}> => {
+  return aggregation.get(`/v2/app/metaname/indexer/info`, { params: { name } })
+}
+
+export const GeUserSaleNFTs = (params: {
+  metaId: string
+  page: number
+  pageSize: number
+  chain: string
+}): Promise<{
+  code: number
+  data: {
+    results: {
+      items: GenesisNFTItem[]
+    }
+  }
+}> => {
+  const { metaId, ..._params } = params
+  return aggregation.get(`/v2/app/show/market/user/${metaId}`, { params: { ..._params } })
+}
+
+export const Search = (kw: string): Promise<SearchRes> => {
+  return aggregation.get(`/v2/app/show/search/user`, { params: { kw } })
 }

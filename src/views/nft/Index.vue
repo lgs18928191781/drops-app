@@ -49,7 +49,7 @@
               v-for="(item, index) in hotCollections"
               :key="index"
               class="hot-collection-item"
-              @click="toCollection(item.show_3_collection.id)"
+              @click="toCollection(item.show_3_collection.topicType)"
             >
               <div class="cover"></div>
               <div class="image">
@@ -89,7 +89,7 @@
               v-for="(item, index) in latestCollections"
               :key="index"
               class="latest-collection-item"
-              @click="toCollection(item.show_3_collection.id)"
+              @click="toCollection(item.show_3_collection.topicType)"
             >
               <div class="cover">
                 <img :src="$filters.strapiImage(item.show_3_collection.cover.url)" />
@@ -99,6 +99,7 @@
                   :metaId="item.show_3_collection.creatorMetaId"
                   :image="item.show_3_collection.creatorAvatarImage"
                   :name="item.show_3_collection.creatorName"
+                  :meta-name="item.show_3_collection.creatorMetaName"
                 />
                 <div class="flex1">
                   <div class="name flex flex-align-center">
@@ -272,11 +273,11 @@ function getLatestSeries() {
   })
 }
 
-function toCollection(collectionId: number) {
+function toCollection(topicType: string) {
   router.push({
-    name: 'nftCollection',
+    name: 'nftCollectionDetail',
     params: {
-      collectionId,
+      topicType,
     },
   })
 }

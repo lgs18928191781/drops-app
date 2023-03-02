@@ -46,7 +46,7 @@
       "light": "light"
     },
     "Search": {
-      "placeholder": "Search MetaID...",
+      "placeholder": "Search MetaID/Username/MetaName...",
       "searching": "Searching...",
       "users": "Users",
       "home": "Home",
@@ -63,6 +63,9 @@
       "follow": "I followed you! Let's be friends!",
       "token_transfer": "Token Transfer",
       "nft_transfer": "NFT Transfer",
+      "nft_buy": "NFT Purchase",
+      "buy_tip": "I purchased your NFT!",
+      "price": "Price",
       "resend": "Resend",
       "translated": "Translated"
     },
@@ -482,7 +485,8 @@
     "Uplink Payment Confirmation": "ME Payment Confirmation",
     "ConfirmationIntro": "Once turned on, you need to confirm every MetaEnergy payment.",
     "Alert value setting": "Alert Value",
-    "AlertValueIntro": "Confirmation is required every time payment reaches the alert value for your ME assets' safety."
+    "AlertValueIntro": "Confirmation is required every time payment reaches the alert value for your ME assets' safety.",
+    "Select Payment": "Select Payment"
   },
   "Invalid Value": "Invalid Value",
   "Theme": {
@@ -586,7 +590,7 @@
   "Message": "Message",
   "Following": "Following",
   "Followers": "Followers",
-  "Already on NFT": "Already on NFT",
+  "Already on NFT": "NFT for sale",
   "Replay": "Replay",
   "Cancel Follow": "Followed",
   "cancelFollowTips": "Can you confirm cancel follow user",
@@ -602,7 +606,7 @@
     "Platform fee": "Platform fee",
     "Royalty fee": "Royalty fee",
     "Sell": "Sell",
-    "Order Information": "Order Information",
+    "Order Information": "Payment confirmation",
     "Create Time": "Create Time",
     "NFT Details": "NFT Details",
     "Payment Method": "Payment Method",
@@ -681,8 +685,75 @@
     "IssueLoading": "Casting is in progress, please do not do other operations and wait patiently...",
     "Issue": {
       "TokenIndexNoteMatch": "TokenIndex  Not Match",
-      "AllIssueSuccess": "All cast successfully"
-    }
+      "AllIssueSuccess": "All cast successfully",
+      "GenesisEmpty": "Series cannot be empty",
+      "NameEmpty": "NFT name cannot be empty",
+      "CoverEmpty": "NFT cover cannot be empty",
+      "SourceFileEmpty": "NFT source file is empty",
+      "AcceptAddressEmpty": "Receiving address cannot be empty",
+      "Classify": "Classify",
+      "ClassifyEmpty": "Classify Empty"
+    },
+    "ClassifyList": {
+      "art": "Art",
+      "game": "Game",
+      "card": "Commemorative Card",
+      "alias": "Domain",
+      "avatar": "Avatar",
+      "rights": "Right",
+      "music": "Music",
+      "Name": "MetaName"
+    },
+    "FilterItem": {
+      "Status": "Status",
+      "Price": "Price",
+      "MinPrice": "Min Price",
+      "MaxPrice": "Max Price"
+    },
+    "SellType": {
+      "All": "All Statuts",
+      "Sale": "On Sale",
+      "Off Sale": "Off Sale",
+      "New On Sale": "New On Sale",
+      "Auction": "Auction"
+    },
+    "Current price": "Current price",
+    "Off Sale": "Off Sale",
+    "Sale": "Sale",
+    "NotCanBuy": "Has been purchased or removed",
+    "Description": "Description",
+    "Category": "Category",
+    "Introduction": "Introduction",
+    "Details": "Details",
+    "Issue TXID": "Issue TXID",
+    "Check": "Check",
+    "Creator": "Creator",
+    "Record": "Record",
+    "Role": "Role",
+    "Time": "Time",
+    "Price": "Price",
+    "History owner": "History owner",
+    "More from this collection": "More from this collection",
+    "Like Success": "Like Success",
+    "Offsale Success": "Offsale Success",
+    "Platform Fee": "Platform Fee",
+    "Royalties": "Royalties",
+    "Total": "Total Price",
+    "Confirm Payment": "Confirm Payment",
+    "Buy Success": "Buy Success",
+    "Transfer Account": "Transfer Account",
+    "Not Support Current Chain NFT Transfer": "Not Support Current Chain NFT Transfer",
+    "Selling price must be greater than ": "Selling price must be greater than",
+    "OffSaleing": "OffSaleing...",
+    "TransferToMetaNameNotMatch": "The MetaName resolution address is inconsistent with the owner address",
+    "Payment Succeeded": "Payment Succeeded!",
+    "Payment Succeeded Tips": "The NFT is in your wallet.",
+    "View Item": "View Item",
+    "Check later": "Check later",
+    "Sale Success": "Sell Success",
+    "Not support this chain for sell:": "The NFT of this chain is not currently supported:",
+    "Circulation": "Circulation",
+    "Ueser Sell NFT Buzz Text": "I listed an NFT. Check it out!"
   },
   "My NFT": "My NFT",
   "Done": "Done",
@@ -906,5 +977,11 @@
   "idNumber": "ID Number",
   "certBody": "Certificated Entity",
   "noMsg": "No Information",
-  "personCert": "Personal Certification"
+  "personCert": "Personal Certification",
+  "NOT_FOUND": "NOT_FOUND",
+  "Copy": "Copy",
+  "confirmUpdate": "Confirm upgrade",
+  "allowUpdate": "It is detected that your account needs to be upgraded, canceling the upgrade may affect other subsequent wallet logins, please confirm! \n (Special reminder: 1. If your previously registered account is registered and bound through 'WalletConnect', please use 'WalletConnect' to upgrade \n;2. If your account is registered and bound through the web client 'MetaMask', please use the web client 'MetaMask' wallet to perform the upgrade operation, otherwise the account upgrade will fail)",
+  "updateRemind": "Upgrade Tips",
+  "inputMetaNameSensitiveWords": "Sensitive words are not supported"
 }

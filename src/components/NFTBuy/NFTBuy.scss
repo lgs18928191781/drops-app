@@ -1,40 +1,161 @@
-.nft-buy {
-    padding: 0 30px 30px 30px;
+.el-skeleton {
+    padding: 30px;
 }
 
-.nft-msg-list {
-    .nft-msg-item {
-        padding: 15px 0;
-        border-bottom: 1px solid var(--divid-color);
+.nft-buy {
+    padding: 0 30px 30px 30px;
 
-        &.link{
-            cursor: pointer;
+    .msg {
+        .cover-warp {
+            width: 154px;
+            height: 154px;
+            border-radius: 8px;
+            border: 2px solid var(--themeTextColor);
+            margin-right: 18px;
         }
 
-        .key {
-            color: var(--themeTextColor);
-            opacity: 0.5;
+        .name {
+            font-size: 20px;
+            font-weight: normal;
+            line-height: 24px;
         }
 
-        .value {
-            .avatar {
-                width: 30px;
-                height: 30px;
-                margin-right: 12px;
-            }
+        .user-list {
+            margin-top: 18px;
 
-            .icon {
-                transform: rotate(-90deg);
-                width: 12px;
-                height: 12px;
+            .user-item {
+                color: #606266;
+                margin-bottom: 6px;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+
+                .avatar {
+                    width: 24px;
+                    height: 24px;
+                    min-width: 24px;
+                    margin-right: 6px;
+                }
+
+                .role {
+                    margin-left: 5px;
+                    white-space: nowrap;
+                }
             }
         }
     }
 }
 
+.price-list {
+    margin-top: 18px;
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(var(--themeTextColorRgb), 0.1);
+    border-top: 1px solid rgba(var(--themeTextColorRgb), 0.1);
+
+    .price-item {
+        line-height: 24px;
+        margin-bottom: 12px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        .label {
+            color: rgba(var(--themeTextColorRgb), 0.5);
+        }
+
+        .value {
+            font-size: 16px;
+        }
+    }
+}
+
+.total-price {
+    line-height: 24px;
+    margin-top: 20px;
+
+    .label {}
+
+    .value {
+        font-size: 20px;
+    }
+}
+
+
 .operate {
     width: 100%;
-    margin-top: 30px;
-    height: 50px;
+    margin-top: 32px;
+    height: 56px;
     cursor: pointer;
+}
+
+
+.success-result {
+    padding: 30px;
+
+    .success-icon {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: rgba(255, 220, 81, 0.1);
+        margin: 0 auto;
+
+
+        .success-icon-warp {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--color-primary);
+
+            .icon {
+                width: 46px;
+                height: 46px;
+                color: var(--themeBtnTextColor);
+
+                :deep(use) {
+                    stroke-width: 2px;
+                    stroke: var(--themeBtnTextColor);
+                }
+            }
+        }
+    }
+
+    .title {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 20px;
+    }
+
+    .tips {
+        text-align: center;
+        font-size: 16px;
+        opacity: 0.5;
+        margin-top: 18px;
+    }
+
+    .main-border {
+        margin-top: 30px;
+        font-size: 16px;
+        line-height: 24px;
+        padding: 13px 0;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .later {
+        margin-top: 20px;
+        font-size: 16px;
+        text-align: center;
+
+        a {
+            opacity: 0.5;
+            cursor: pointer;
+
+            &:hover {
+                opacity: 1;
+                color: var(--color-hover);
+            }
+        }
+    }
 }

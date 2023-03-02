@@ -31,7 +31,7 @@
                 <div class="relative grow">
                   <input
                     type="text"
-                    class="main-border field-input faded-switch still dark:!text-gray-100 placeholder:truncate"
+                    class="main-border field-input faded-switch still dark:!text-gray-100 placeholder:truncate !pr-8 placeholder:text-xs lg:placeholder:text-base"
                     :placeholder="$t('Talk.Search.placeholder')"
                     v-model="searchKeyword"
                     @keyup.enter="search"
@@ -91,12 +91,12 @@
                   v-else-if="results.length === 0 && lastSearchKeyword.length > 0"
                 >
                   <img :src="EmptyImg" class="h-36 w-36 mx-auto" alt="" />
-                  <div class="flex gap-x-2">
+                  <div class="flex gap-x-2 mt-2">
                     <div class="">
                       <span class="text-dark-300 dark:text-gray-400">{{
                         $t('Talk.Search.no_results')
                       }}</span>
-                      <span class="font-bold ml-1">{{ `"${lastSearchKeyword}"` }}</span>
+                      <span class="font-bold ml-1 break-all">{{ `"${lastSearchKeyword}"` }}</span>
                     </div>
                   </div>
                 </div>

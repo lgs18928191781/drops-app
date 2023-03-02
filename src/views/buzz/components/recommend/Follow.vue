@@ -13,7 +13,12 @@
             v-for="(item, index) in users"
             :key="item.metaId"
           >
-            <UserAvatar :meta-id="item.metaId" :image="item.avatarImage" :name="item.name" />
+            <UserAvatar
+              :meta-id="item.metaId"
+              :image="item.avatarImage"
+              :name="item.name"
+              :meta-name="item.userInfo.metaName"
+            />
             <div class="flex1">
               <div class="name flex flex-align-center">
                 <UserName :name="item.name" :meta-name="item.userInfo.metaName" />

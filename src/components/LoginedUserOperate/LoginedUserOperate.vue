@@ -39,12 +39,25 @@
       </a>
 
       <!-- 👤 头像 -->
-      <UserAvatar
-        :image="userStore.user!.avatarImage"
-        :meta-id="userStore.user!.metaId"
-        :name="userStore.user!.name"
-        class="user-warp-item overflow-hidden"
-      />
+      <el-popover placement="bottom" :width="'auto'" trigger="hover">
+        <template #reference>
+          <UserAvatar
+            :image="userStore.user!.avatarImage"
+            :meta-id="userStore.user!.metaId"
+            :name="userStore.user!.name"
+            class="user-warp-item overflow-hidden"
+            :meta-name="userStore.user!.metaName"
+            :disabled="true"
+          />
+        </template>
+        <UserCardVue
+          :name="userStore.user!.name"
+          :meta-id="userStore.user!.metaId"
+          :meta-name="userStore.user!.metaName"
+          :model-value="true"
+        />
+        <!-- <UserPersonaVue /> -->
+      </el-popover>
     </div>
   </template>
   <template v-else>
@@ -107,6 +120,7 @@ import UserPersonaVue from '../UserPersona/UserPersona.vue'
 import UserCardVue from '../UserCard/UserCard.vue'
 import { router } from '@/router'
 import MetaNameLogo from '@/assets/svg/meta_name.svg?url'
+
 const i18n = useI18n()
 const rootStore = useRootStore()
 const userStore = useUserStore()

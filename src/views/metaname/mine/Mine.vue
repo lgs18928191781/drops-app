@@ -8,6 +8,7 @@
             :meta-id="userStore.user!.metaId"
             :image="userStore.user!.avatarImage"
             :name="userStore.user!.name"
+            :metaName="userStore.user!.metaName"
           />
           <div class="cont flex1">
             <div class="name">

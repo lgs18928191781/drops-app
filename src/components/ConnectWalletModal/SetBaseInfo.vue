@@ -28,6 +28,7 @@
                     :image="currentAvatar.val.avatarImage"
                     :name="userStore.user!.name"
                     class="main-border"
+                    :meta-name="userStore.user!.metaName"
                   />
                   <Icon name="down" />
                 </div>

@@ -7,7 +7,7 @@
             <Icon name="down"></Icon>
           </a>
         </div>
-        <a class="edit flex flex-align-center flex-pack-center" v-if="isSelf">
+        <a class="edit flex flex-align-center flex-pack-center" v-if="isSelf" @click="editBg">
           <Icon name="edit" />
         </a>
       </div>
@@ -23,7 +23,6 @@
               <div class="flex1">
                 <div class="avatar-warp flex flex-align-center flex-pack-center">
                   <ElSkeletonItem variant="circle" />
-                  <!-- <UserAvatar :meta-id="''" :image="''" :disabled="true" /> -->
                 </div>
               </div>
               <div class="opreate flex-self-end">
@@ -56,12 +55,16 @@
                   <UserAvatar
                     :meta-id="userInfo.val!.metaId"
                     :image="userInfo.val!.avatarImage"
+                    :name="userInfo.val!.name"
+                    :meta-name="userInfo.val!.metaName"
                     :disabled="true"
                   />
                 </div>
               </div>
               <div class="opreate flex-self-end">
-                <a class="main-border primary" v-if="!isSelf">{{ $t('User.Chat') }}</a>
+                <a class="main-border primary" v-if="!isSelf" @click="toChat">{{
+                  $t('User.Chat')
+                }}</a>
                 <a
                   class="main-border primary"
                   :class="[isMyFollowed ? 'faded' : 'primary']"
@@ -156,15 +159,15 @@ const tabs = [
       },
     },
   },
-  // {
-  //   name: i18n.t('Already on NFT'),
-  //   params: {
-  //     name: 'userNFT',
-  //     params: {
-  //       metaId: route.params.metaId as string,
-  //     },
-  //   },
-  // },
+  {
+    name: i18n.t('Already on NFT'),
+    params: {
+      name: 'userNFT',
+      params: {
+        metaId: route.params.metaId as string,
+      },
+    },
+  },
 ]
 
 const isSelf = computed(() => {
@@ -262,6 +265,14 @@ async function toMessage() {
       channelId: userInfo.val!.metaId,
     },
   })
+}
+
+function editBg() {
+  return ElMessage.info(i18n.t('Comming Soon'))
+}
+
+function toChat() {
+  router.push(`/talk/channels/@me/${route.params.metaId}`)
 }
 
 Promise.all([getUserInfo(), getUserFoller(), checkUserIsFollowed()]).then(() => {

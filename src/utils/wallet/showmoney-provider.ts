@@ -2,18 +2,13 @@
 import mvc from 'mvc-lib'
 import { HttpRequests, ApiRequestTypes } from '@/utils/wallet/request2'
 import HttpRequest from 'request-sdk'
-import {
-  BaseUtxo,
-  MetasvUtxoTypes,
-  Network,
-  MetaNameRequestDate,
-  MetaNameReqType,
-} from './hd-wallet'
+import { BaseUtxo, MetasvUtxoTypes, MetaNameRequestDate, MetaNameReqType } from './hd-wallet'
 import axios, { AxiosInstance } from 'axios'
 import { UtxoItem } from '@/@types/sdk'
 import zlib from 'zlib'
-import { HdWalletChain } from '@/enum'
+import { Chains, HdWalletChain, Network } from '@/enum'
 import i18n from '../i18n'
+import { GetTxChainInfo } from '@/api/metaid-base'
 interface BaseApiResultTypes<T> {
   code: number
   msg?: string
@@ -68,22 +63,39 @@ interface GetBalanceData {
 
 // const metaSvPrivateKey = 'KxSQqTxhonc5i8sVGGhP1cMBGh5cetVDMfZjQdFursveABTGVbZD'
 
+const MVCMetaSvMirror = {
+  [Network.testnet]: 'https://api-mvc-testnet.metasv.com',
+  [Network.mainnet]: 'https://api-mvc.metasv.com',
+}
+
+const BSVMetaSvMirror = {
+  [Network.testnet]: 'https://apiv2.metasv.com',
+  [Network.mainnet]: 'https://apiv2.metasv.com',
+}
+
 export default class ShowmoneyProvider {
   public apiPrefix: string = import.meta.env.VITE_BASEAPI
   public metaSvApi: string = import.meta.env.VITE_META_SV_API
   public bsvMetaSvApi: string = import.meta.env.VITE_BSV_META_SV_API
-  public metaSvMirror = 'https://api.showmoney.app/metasv'
   public metaSvHttp
   public metasvSignatureHttp
   public serviceHttp
+  public network = Network.mainnet
   public metaNameApi = `http://47.242.27.95:35000`
   public newBrfcNodeBaseInfoList: NewBrfcNodeBaseInfo[] = []
   public isUsedUtxos: { txId: string; address: string }[] = []
+  public txChainInfos: { txId: string; chain: string }[] = [] // 存储txId所在链， 避免重复调接口查询
 
-  constructor(params?: { baseApi?: string; mvcMetaSvApi?: string; bsvMetaSvApi?: string }) {
+  constructor(params?: {
+    baseApi?: string
+    mvcMetaSvApi?: string
+    bsvMetaSvApi?: string
+    network?: Network
+  }) {
     if (params?.baseApi) this.apiPrefix = params.baseApi
     if (params?.mvcMetaSvApi) this.metaSvApi = params.mvcMetaSvApi
     if (params?.bsvMetaSvApi) this.bsvMetaSvApi = params.bsvMetaSvApi
+    if (params?.network) this.network = params.network
 
     this.metaSvHttp = new HttpRequest(this.metaSvApi).request
     this.serviceHttp = new HttpRequest(this.apiPrefix + '/serviceapi').request
@@ -204,37 +216,46 @@ export default class ShowmoneyProvider {
     method = 'get',
     chain: HdWalletChain = HdWalletChain.MVC
   ): Promise<any> {
-    const signature = await this.getMetasvSig(path)
-    const headers = {
-      'Content-Type': 'application/json',
-      'MetaSV-Timestamp': signature.timestamp,
-      'MetaSV-Client-Pubkey': signature.publicKey,
-      'MetaSV-Nonce': signature.nonce,
-      'MetaSV-Signature': signature.signEncoded,
-    }
-    const url = `${chain === HdWalletChain.MVC ? this.metaSvApi : this.bsvMetaSvApi}${path}`
-    const Http = new HttpRequests()
-    let res
-    // debugger
-    if (method === 'get') {
-      res = await Http.getFetch(url, params, { headers })
-    } else {
-      res = await Http.postFetch(url, params, { headers })
-    }
-    // try {
-
-    // } catch (error) {
-
-    // const mirrorUrl = this.metaSvMirror + path
-    // if (method === 'get') {
-    //   res = await Http.getFetch(mirrorUrl, params, { headers: headers })
-    // } else {
-    //   res = await Http.postFetch(mirrorUrl, params, { headers: headers })
-    // }
-    // }
-    if (res) {
-      return res
-    }
+    return new Promise(async (resolve, reject) => {
+      try {
+        const signature = await this.getMetasvSig(path)
+        const headers = {
+          'Content-Type': 'application/json',
+          'MetaSV-Timestamp': signature.timestamp,
+          'MetaSV-Client-Pubkey': signature.publicKey,
+          'MetaSV-Nonce': signature.nonce,
+          'MetaSV-Signature': signature.signEncoded,
+        }
+        const origin = chain === HdWalletChain.MVC ? this.metaSvApi : this.bsvMetaSvApi
+        const url = `${origin}${path}`
+        const Http = new HttpRequests()
+        let res
+        try {
+          if (method === 'get') {
+            res = await Http.getFetch(url, params, { headers })
+          } else {
+            res = await Http.postFetch(url, params, { headers })
+          }
+        } catch (error) {
+          const mirror = chain === HdWalletChain.MVC ? MVCMetaSvMirror : BSVMetaSvMirror
+          if (mirror[this.network] === origin) {
+            throw error
+          } else {
+            const mirrorUrl = mirror[this.network] + path
+            if (method === 'get') {
+              res = await Http.getFetch(mirrorUrl, params, { headers })
+            } else {
+              res = await Http.postFetch(mirrorUrl, params, { headers })
+            }
+          }
+        }
+        if (res) {
+          resolve(res)
+        }
+      } catch (error) {
+        reject(error)
+      }
+    })
   }
 
   public async getMetaId(rootAddress: string): Promise<string | null> {
@@ -387,7 +408,6 @@ export default class ShowmoneyProvider {
     return new Promise(async (resolve, reject) => {
       const res = await this.callMetasvApi(`/xpubLite/${xpub}/balance`, {}, 'get', chain).catch(
         error => {
-          debugger
           reject(error)
         }
       )
@@ -511,8 +531,24 @@ export default class ShowmoneyProvider {
   }
 
   async getPayMailAddress(email: string) {
-    return axios.post('https://api.showmoney.app' + '/paymail/v2/paymail/address', {
-      data: JSON.stringify({ Email: email }),
+    return new Promise<string>(async (resolve, reject) => {
+      const res: any = await axios
+        .post('https://api.showmoney.app' + '/paymail/v2/paymail/address', {
+          Email: email,
+        })
+        .catch(error => {
+          if (error.response?.data?.data) {
+            reject({
+              code: error.response.data.code,
+              message: error.response.data.data,
+            })
+          } else {
+            reject(error)
+          }
+        })
+      if (res?.data?.code === 0) {
+        resolve(res.data.data)
+      }
     })
   }
 
@@ -565,6 +601,27 @@ export default class ShowmoneyProvider {
       ).catch(error => reject(error))
       if (res) {
         resolve(res)
+      }
+    })
+  }
+
+  getTxChainInfo(txId: string) {
+    return new Promise(async (resolve, reject) => {
+      const index = this.txChainInfos.findIndex(item => item.txId === txId)
+      if (index !== -1) {
+        resolve(this.txChainInfos[index].chain)
+        return
+      } else {
+        const chainInfoRes = await GetTxChainInfo(txId)
+        const chain =
+          chainInfoRes.code === 0 && chainInfoRes.data.chainFlag
+            ? chainInfoRes.data.chainFlag
+            : Chains.MVC
+        this.txChainInfos.push({
+          txId,
+          chain,
+        })
+        resolve(chain)
       }
     })
   }
