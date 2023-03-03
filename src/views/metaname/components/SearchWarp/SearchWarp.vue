@@ -36,7 +36,6 @@ const metaNameStore = useMetaNameStore()
 
 async function submit() {
   const name = await validateMetaName(value.value)
-  debugger
   if (name) {
     if (checkInputName(name)) {
       emit('submit', name)

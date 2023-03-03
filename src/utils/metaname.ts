@@ -115,7 +115,7 @@ export function getMetaNameOperateParams(params: {
 }
 
 export const validateMetaName = (value: string) => {
-  return new Promise(async resolve => {
+  return new Promise<string | false>(async resolve => {
     if (value === '') {
       // @ts-ignore
       return ElMessage.error(i18n.global.t('MetaName.MetaName cannot be empty'))

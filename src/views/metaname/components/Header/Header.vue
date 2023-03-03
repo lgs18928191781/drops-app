@@ -132,7 +132,10 @@ const navs = [
   {
     name: () => i18n.t('MetaName.Market'),
     route: {
-      name: 'metaNameMarket',
+      name: 'nftCollectionDetail',
+      params: {
+        topicType: 'MetaName',
+      },
     },
   },
 ]
