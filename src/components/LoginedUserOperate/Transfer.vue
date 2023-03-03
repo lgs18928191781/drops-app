@@ -9,54 +9,108 @@
     :close-on-click-modal="false"
     @close="emit('close')"
   >
-    <div
-      v-loading="loading"
-      :element-loading-svg="LoadingTEXT"
-      :element-loading-text="$t('Loading')"
-    >
+    <div>
       <DrawerRightHeader :title="$t('Wallet.Transfer')" @back="emit('update:modelValue', false)" />
-      <!-- <header class="flex flex-align-center">
-        <Icon name="down" @click="emit('update:modelValue', false)" />
-        <div class="title">{{ $t('Wallet.Transfer') }}</div>
-      </header> -->
 
       <div class="content">
-        <ElForm :model="form" :rules="rules" :label-position="'top'" ref="FormRef">
-          <ElFormItem prop="address" :label="$t('Wallet.Transfer Address')">
-            <ElInput
-              type="text"
-              v-model="form.address"
-              :placeholder="$t('Wallet.Enter Transfer Address')"
-            />
-          </ElFormItem>
-          <ElFormItem prop="amount" :label="$t('Wallet.Transfer Amount')">
-            <ElInput
-              type="number"
-              v-model="form.amount"
-              :placeholder="$t('Wallet.Enter Transfer Amount')"
-              @change="onAmountChange"
-            >
-              <template #append>
-                <el-select
-                  v-model="unit"
-                  placeholder="Select"
-                  style="width: 100px"
-                  @change="changeUnit"
-                >
-                  <el-option :label="item" :value="item" v-for="item in units" />
-                </el-select>
-              </template>
-            </ElInput>
-          </ElFormItem>
+        <template v-if="userInfo.val">
+          <div class="confirm-info">
+            <div class="confirm-info-item flex flex-align-center">
+              <div class="label flex1">{{ $t('NFT.Transfer Account') }}</div>
+              <div class="value">
+                <div class="user flex flex-align-center">
+                  <UserAvatar
+                    :meta-id="userInfo.val!.metaId"
+                    :image="userInfo.val!.avatarImage"
+                    :name="userInfo.val!.name"
+                    :meta-name="userInfo.val!.metaName"
+                    :disabled="true"
+                  />
+                  <div class="flex1">
+                    <template v-if="userInfo.val!.metaId === ''">
+                      Address:
+                      <div>{{ userInfo.val!.address }}</div>
+                    </template>
+                    <template v-else>
+                      <div class="name">
+                        <UserName :name="userInfo.val!.name" :meta-name="userInfo.val!.metaName" />
+                      </div>
+                      <div class="metaid">MetaID:{{ userInfo.val!.metaId.slice(0,6)}}</div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="confirm-info-item  flex flex-align-center">
+              <div class="label flex1">{{ $t('NFT.Amount') }}</div>
+              <div class="value">
+                <span class="amount">
+                  {{ unit === TransferUnit.Space ? form.amount : $filters.space(form.amount) }}
+                  {{ TransferUnit.Space }}
+                </span>
+              </div>
+            </div>
 
-          <ElFormItem>
-            <a
-              class="main-border flex1 primary flex flex-align-center flex-pack-center"
-              @click="transfer"
-              >{{ $t('Wallet.Transfer') }}</a
-            >
-          </ElFormItem>
-        </ElForm>
+            <div class="operate flex flex-align-center">
+              <a
+                class="main-border primary flex1 mr-3 text-center"
+                v-loading="loading"
+                :element-loading-svg="LoadingTEXT"
+                @click="confirmTransfer"
+                >{{ $t('NFT.Confirm Transfer Amount') }}</a
+              >
+              <a
+                class="main-border flex1 text-center"
+                :class="{ faded: loading }"
+                @click="cancel"
+                >{{ $t('Cancel') }}</a
+              >
+            </div>
+          </div>
+        </template>
+        <template v-else>
+          <ElForm :model="form" :rules="rules" :label-position="'top'" ref="FormRef">
+            <ElFormItem prop="address" :label="$t('Wallet.Transfer Accound')">
+              <ElInput
+                type="text"
+                v-model="form.target"
+                placeholder="MetaID/Address/Paymail/MetaName"
+                :disabled="loading"
+              />
+            </ElFormItem>
+            <ElFormItem prop="amount" :label="$t('Wallet.Transfer Amount')">
+              <ElInput
+                type="number"
+                v-model="form.amount"
+                :placeholder="$t('Wallet.Enter Transfer Amount')"
+                @change="onAmountChange"
+                :disabled="loading"
+              >
+                <template #append>
+                  <el-select
+                    v-model="unit"
+                    placeholder="Select"
+                    style="width: 100px"
+                    @change="changeUnit"
+                  >
+                    <el-option :label="item" :value="item" v-for="item in units" />
+                  </el-select>
+                </template>
+              </ElInput>
+            </ElFormItem>
+
+            <ElFormItem>
+              <a
+                class="main-border flex1 primary flex flex-align-center flex-pack-center"
+                v-loading="loading"
+                :element-loading-svg="LoadingTEXT"
+                :element-loading-text="$t('Loading')"
+                @click="transfer"
+                >{{ $t('Wallet.Transfer') }}</a
+              >
+            </ElFormItem>
+          </ElForm>
+        </template>
       </div>
     </div>
   </ElDrawer>
@@ -71,6 +125,7 @@ import DrawerRightHeader from '../DrawerRightHeader/DrawerRightHeader.vue'
 import { useUserStore } from '@/stores/user'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { NodeName, SdkPayType } from '@/enum'
+import { getAccountUserInfo } from '@/utils/util'
 
 const props = defineProps<{
   modelValue: boolean
@@ -81,15 +136,20 @@ const i18n = useI18n()
 const userStore = useUserStore()
 const loading = ref(false)
 const form = reactive({
-  address: '',
+  target: '',
   amount: '',
 })
 const FormRef = ref()
-const units = ['Satoshi', 'Space']
-const unit = ref('Satoshi')
+const enum TransferUnit {
+  Satoshi = 'Satoshi',
+  Space = 'Space',
+}
+const units = [TransferUnit.Satoshi, TransferUnit.Space]
+const unit = ref(TransferUnit.Space)
+const userInfo: { val: undefined | UserAllInfo } = reactive({ val: undefined })
 
 const rules = {
-  address: [{ required: true, message: i18n.t('Wallet.Enter Transfer Address'), trigger: 'blur' }],
+  target: [{ required: true, message: i18n.t('Wallet.Enter Transfer Address'), trigger: 'blur' }],
   amount: [
     { required: true, message: i18n.t('Wallet.Enter Transfer Amount'), trigger: 'blur' },
     // {
@@ -128,53 +188,59 @@ function onAmountChange() {
 function transfer() {
   FormRef.value.validate(async (valid: boolean) => {
     if (valid) {
-      const value =
-        unit.value === 'Satoshi'
-          ? new Decimal(form.amount).toNumber()
-          : new Decimal(form.amount).mul(Math.pow(10, 8)).toNumber()
-
-      ElMessageBox.confirm(
-        `${i18n.t('Wallet.Transfer')} ${value} Satoshi ${i18n.t('Wallet.Transfer To')}: ${
-          form.address
-        }`,
-        `${i18n.t('Wallet.Confirm Transfer')}?`,
-        {
-          confirmButtonText: i18n.t('Confirm'),
-          cancelButtonText: i18n.t('Cancel'),
-          cancelButtonClass: 'main-border',
-          confirmButtonClass: 'main-border primary',
-        }
-      ).then(async () => {
-        loading.value = true
-        const res = await userStore.showWallet
-          .createBrfcChildNode(
-            {
-              nodeName: NodeName.SendMoney,
-              payTo: [
-                {
-                  amount: value,
-                  address: form.address,
-                },
-              ],
-            },
-            {
-              payType: SdkPayType.SPACE,
-            }
-          )
-          .catch(error => {
-            ElMessage.error(error.message)
-            loading.value = false
-          })
-        if (res) {
-          FormRef.value.resetFields()
-          ElMessage.success(i18n.t('Wallet.Transfer Success'))
-          loading.value = false
-        } else {
-          loading.value = false
-        }
+      loading.value = true
+      const res = await getAccountUserInfo(form.target).catch(error => {
+        ElMessage.error(error.message)
+        loading.value = false
       })
+      if (res) {
+        userInfo.val = res
+        loading.value = false
+      }
     }
   })
+}
+
+async function confirmTransfer() {
+  if (loading.value) return
+  loading.value = true
+  const value =
+    unit.value === TransferUnit.Satoshi
+      ? new Decimal(form.amount).toNumber()
+      : new Decimal(form.amount).mul(Math.pow(10, 8)).toNumber()
+  const res = await userStore.showWallet
+    .createBrfcChildNode(
+      {
+        nodeName: NodeName.SendMoney,
+        payTo: [
+          {
+            amount: value,
+            address: userInfo.val!.address,
+          },
+        ],
+      },
+      {
+        payType: SdkPayType.SPACE,
+      }
+    )
+    .catch(error => {
+      ElMessage.error(error.message)
+      loading.value = false
+    })
+  if (res) {
+    form.amount = ''
+    form.target = ''
+    userInfo.val = undefined
+    ElMessage.success(i18n.t('Wallet.Transfer Success'))
+    loading.value = false
+  } else {
+    loading.value = false
+  }
+}
+
+function cancel() {
+  if (loading.value) return
+  userInfo.val = undefined
 }
 
 watch(

@@ -62,12 +62,13 @@ import dayjs from 'dayjs'
 import { SendMetaNameTransationResult } from '@/@types/sdk'
 import { GetTxChainInfo } from '@/api/metaid-base'
 import { useMetaNameStore } from '@/stores/metaname'
-import { GetBalance } from '@/api/aggregation'
+import { GetBalance, GetMetaIdByAddress, GetMetaNameInfo, GetUserAllInfo } from '@/api/aggregation'
 //@ts-ignore
 import namehash from 'eth-ens-namehash'
 import Compressor from 'compressorjs'
 //@ts-ignore
 import { toUnicode } from 'idna-uts46-hx'
+import { email } from './reg'
 const emojiReg = /[\u{1F601}-\u{1F64F}\u{2702}-\u{27B0}\u{1F680}-\u{1F6C0}\u{1F170}-\u{1F251}\u{1F600}-\u{1F636}\u{1F681}-\u{1F6C5}\u{1F30D}-\u{1F567}]/gu
 
 export function randomString() {
@@ -1632,4 +1633,79 @@ export function getPlatformSymbol(platform: PayPlatform, defaultValue = '') {
     else return '￥'
     // return rootStore.currentPriceSymbol
   }
+}
+
+export function getAccountUserInfo(account: string) {
+  return new Promise<UserAllInfo>(async (resolve, reject) => {
+    try {
+      let metaId: string = ''
+      let address: string = ''
+      const userStore = useUserStore()
+      if (email.test(account)) {
+        const res = await userStore.showWallet.wallet?.provider.getPayMailAddress(account)
+        if (res) {
+          address = res
+        }
+      }
+
+      let isAddress: any = false
+
+      try {
+        // @ts-ignore
+        isAddress = mvc.Address._transformString(account)
+        if (isAddress) {
+          address = account
+        }
+      } catch (error) {
+        isAddress = false
+      }
+
+      if (account.length === 64 && !email.test(account) && !isAddress) {
+        // MetaId
+        metaId = account
+      }
+
+      if (account.length !== 64 && !email.test(account) && !isAddress) {
+        const res = await GetMetaNameInfo(account.replace('.metaid', ''))
+        if (res.code === 0) {
+          if (
+            res.data.resolveAddress &&
+            res.data.ownerAddress &&
+            res.data.ownerAddress === res.data.resolveAddress
+          ) {
+            address = res.data.resolveAddress
+          } else {
+            throw new Error(i18n.global.t('NFT.TransferToMetaNameNotMatch'))
+          }
+        }
+      }
+
+      if (address) {
+        const res = await GetMetaIdByAddress(address).catch(() => {
+          metaId = ''
+        })
+        if (res?.code === 0) {
+          metaId = res.data
+        }
+      }
+
+      if (metaId === '') {
+        resolve({
+          metaId: '',
+          address: address,
+          name: email.test(account) ? account : '',
+          avatarImage: '',
+        } as UserAllInfo)
+      } else {
+        const res = await GetUserAllInfo(metaId!).catch(error => {
+          ElMessage.error(error.message)
+        })
+        if (res?.code === 0) {
+          resolve(res.data)
+        }
+      }
+    } catch (error) {
+      reject(error)
+    }
+  })
 }

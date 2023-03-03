@@ -526,11 +526,12 @@
     "Transfer": "转账",
     "Transfer Address": "转账地址",
     "Transfer Amount": "转账金额",
-    "Enter Transfer Address": "请填写转账地址",
+    "Enter Transfer Address": "请填写转账账户",
     "Enter Transfer Amount": "请填写转账金额",
     "Transfer Success": "转账成功",
     "Confirm Transfer": "确认转账",
-    "Transfer To": "给"
+    "Transfer To": "给",
+    "Transfer Accound": "转账账户"
   },
   "registing": "注册中",
   "sendVerifiyCodeError": "验证码填写不正确,请重新填写",
@@ -743,7 +744,9 @@
     "Sale Success": "上架成功",
     "Not support this chain for sell:": "暂不支持此链NFT上架:",
     "Circulation": "流通量",
-    "Ueser Sell NFT Buzz Text": "我上架了NFT，快来看看！"
+    "Ueser Sell NFT Buzz Text": "我上架了NFT，快来看看！",
+    "Amount": "金额",
+    "Confirm Transfer Amount": "确认转账"
   },
   "My NFT": "我的NFT",
   "Done": "完成",
