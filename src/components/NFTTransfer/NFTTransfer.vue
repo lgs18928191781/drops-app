@@ -33,7 +33,7 @@
                   />
                 </div>
                 <div class="metaid">
-                  {{ transferUser.val!.metaId.slice(0,6)}}
+                  MetaID:{{ transferUser.val!.metaId.slice(0,6)}}
                   ...
                   {{ transferUser.val!.metaId.slice(-6) }}
                 </div>
@@ -88,6 +88,7 @@ import { GetMetaIdByAddress, GetMetaNameInfo, GetUserAllInfo } from '@/api/aggre
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
 import { email } from '@/utils/reg'
 import { mvc } from 'mvc-scrypt/dist'
+import { getAccountUserInfo } from '@/utils/util'
 
 const props = defineProps<{
   modelValue: boolean
@@ -123,81 +124,14 @@ async function transfer() {
 
   if (props.nft.nftChain === 'mvc' || props.nft.nftChain === 'bsv') {
     loading.value = true
-    try {
-      let metaId: string = ''
-      let address: string = ''
-      if (email.test(form.target)) {
-        const res = await userStore.showWallet.wallet?.provider.getPayMailAddress(form.target)
-        if (res) {
-          address = res
-        }
-      }
-
-      let isAddress: any = false
-
-      try {
-        // @ts-ignore
-        isAddress = mvc.Address._transformString(form.target)
-        if (isAddress) {
-          address = form.target
-        }
-      } catch (error) {
-        isAddress = false
-      }
-
-      if (form.target.length === 64 && !email.test(form.target) && !isAddress) {
-        // MetaId
-        metaId = form.target
-      }
-
-      if (form.target.length !== 64 && !email.test(form.target) && !isAddress) {
-        const res = await GetMetaNameInfo(form.target.replace('.metaid', ''))
-        if (res.code === 0) {
-          if (
-            res.data.resolveAddress &&
-            res.data.ownerAddress &&
-            res.data.ownerAddress === res.data.resolveAddress
-          ) {
-            address = res.data.resolveAddress
-          } else {
-            throw new Error(i18n.t('NFT.TransferToMetaNameNotMatch'))
-          }
-        }
-      }
-
-      if (address) {
-        const res = await GetMetaIdByAddress(address).catch(() => {
-          metaId = ''
-        })
-        if (res?.code === 0) {
-          metaId = res.data
-        }
-      }
-
-      if (metaId === '') {
-        // @ts-ignore
-        transferUser.val = {
-          metaId: '',
-          address: address,
-          name: email.test(form.target) ? form.target : '',
-          avatarImage: '',
-        }
-        form.target = ''
-        loading.value = false
-      } else {
-        const res = await GetUserAllInfo(metaId!).catch(error => {
-          ElMessage.error(error.message)
-          loading.value = false
-        })
-        if (res?.code === 0) {
-          transferUser.val = res.data
-          form.target = ''
-          loading.value = false
-        }
-      }
-    } catch (error) {
-      ElMessage.error((error as any).message)
+    const res = await getAccountUserInfo(form.target).catch(error => {
+      ElMessage.error(error.message)
       loading.value = false
+    })
+    if (res) {
+      transferUser.val = res
+      loading.value = false
+      form.target = ''
     }
   } else {
     return ElMessage.info(i18n.t('NFT.Not Support Current Chain NFT Transfer'))

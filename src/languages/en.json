@@ -452,13 +452,14 @@
     "My Wallet": "My Wallet",
     "Recharge MetaEnergy": "Recharge MetaEnergy",
     "Transfer": "Transfer",
-    "Enter Transfer Address": "Enter Transfer Address",
+    "Enter Transfer Address": "Enter Transfer Account",
     "Transfer Address": "Transfer Address",
     "Transfer Amount": "Transfer Amount",
     "Enter Transfer Amount": "Enter Transfer Amount",
     "Transfer Success": "Transfer Success",
     "Confirm Transfer": "Confirm Transfer",
-    "Transfer To": "To"
+    "Transfer To": "To",
+    "Transfer Accound": "Transfer Accound"
   },
   "quickPay": "Credit Card",
   "aliPay": "Alipay",
@@ -753,7 +754,9 @@
     "Sale Success": "Sell Success",
     "Not support this chain for sell:": "The NFT of this chain is not currently supported:",
     "Circulation": "Circulation",
-    "Ueser Sell NFT Buzz Text": "I listed an NFT. Check it out!"
+    "Ueser Sell NFT Buzz Text": "I listed an NFT. Check it out!",
+    "Amount": "Amount",
+    "Confirm Transfer Amount": "Confirm Transfer"
   },
   "My NFT": "My NFT",
   "Done": "Done",
