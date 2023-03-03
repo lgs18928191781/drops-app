@@ -3,9 +3,8 @@
     <div
       :class="[textClass, colorful && colors, 'font-medium  max-w-[140PX] truncate']"
       :title="nameWithoutSuffix"
-    >
-      {{ nameWithoutSuffix }}
-    </div>
+      v-html="nameWithoutSuffix"
+    ></div>
 
     <MetaNameTag v-if="!noTag" :ns="ns" class="!rounded" />
   </div>
@@ -13,8 +12,10 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue'
+import { emoji } from '@/utils/reg'
 
 import MetaNameTag from '@/components/MetaName/Tag.vue'
+import { deepCopy } from '@ethersproject/properties'
 
 const props = defineProps(['name', 'textClass', 'colorful', 'noTag'])
 
@@ -29,7 +30,9 @@ const ns = computed(() => {
 
 // 解析metaName，如果是ens，则截取后缀（.meta的数据不带后缀不用截取）
 const nameWithoutSuffix = computed(() => {
-  return props.name.split('.')[0]
+  return props.name
+    .split('.')[0]
+    .replaceAll(emoji, (val: any) => `<span class="emoji">${val}</span>`)
 })
 
 const colors = computed(() => {
@@ -41,3 +44,10 @@ const colors = computed(() => {
   }
 })
 </script>
+
+<style lang="scss" scoped>
+:deep(.emoji) {
+  color: var(--themeBtnTextColor);
+  -webkit-text-fill-color: initial;
+}
+</style>
