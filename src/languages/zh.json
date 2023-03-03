@@ -985,5 +985,6 @@
   "updateRemind": "升级提示",
   "allowUpdate": "检测到你的账号需要升级,取消升级可能会影响后续其他钱包登录,请确认! \n (特别提醒：1.如果您之前注册的账户是通过'WalletConnect'注册绑定的，请使用'WalletConnect'进行升级；2.如果您的账户是通过Web客户端'MetaMask'注册绑定的，请使用Web客户端‘MetaMask’钱包进行升级操作,否则会导致账户升级失败)",
   "confirmUpdate": "确认升级",
-  "inputMetaNameSensitiveWords": "不支持注册敏感词"
+  "inputMetaNameSensitiveWords": "不支持注册敏感词",
+  "Contains unsupported characters": "包含不支持的字符"
 }
