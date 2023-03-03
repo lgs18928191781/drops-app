@@ -77,7 +77,7 @@ const list = computed(() => {
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, rject) => {
     const res = await GeUserSaleNFTs({
-      ...initPagination,
+      ...pagination,
       metaId: route.params.metaId as string,
       chain: Chains.MVC,
     })

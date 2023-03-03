@@ -214,6 +214,7 @@ header {
         .name {
             margin-top: 5px;
             @extend %text-ellipsis;
+            text-align: center;
         }
 
         &:hover {
