@@ -1,4 +1,6 @@
 .image {
+  border: 1px solid var(--divid-color);
+
   :deep(.el-skeleton__image) {
     border-radius: calc(100% / 2.5);
 
