@@ -746,7 +746,11 @@
     "Circulation": "流通量",
     "Ueser Sell NFT Buzz Text": "我上架了NFT，快来看看！",
     "Amount": "金额",
-    "Confirm Transfer Amount": "确认转账"
+    "Confirm Transfer Amount": "确认转账",
+    "CollectionChart": {
+      "title": "销售统计",
+      "yAxisTitle": "价格（Space）"
+    }
   },
   "My NFT": "我的NFT",
   "Done": "完成",

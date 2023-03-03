@@ -756,7 +756,11 @@
     "Circulation": "Circulation",
     "Ueser Sell NFT Buzz Text": "I listed an NFT. Check it out!",
     "Amount": "Amount",
-    "Confirm Transfer Amount": "Confirm Transfer"
+    "Confirm Transfer Amount": "Confirm Transfer",
+    "CollectionChart": {
+      "title": "Sales",
+      "yAxisTitle": "Price（Space）"
+    }
   },
   "My NFT": "My NFT",
   "Done": "Done",

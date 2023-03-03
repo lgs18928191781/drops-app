@@ -154,7 +154,9 @@
             <LoadMore :pagination="pagination" v-if="!isListLoading && nfts.length > 0" />
           </template>
           <!-- PriceTrend -->
-          <template v-else></template>
+          <template v-else>
+            <CollectionChart />
+          </template>
         </div>
       </div>
 
@@ -192,6 +194,7 @@ import { satoshi, space } from '@/utils/filters'
 import NFTSellVue from '@/components/NFTSell/NFTSell.vue'
 import { NFTOffSale } from '@/utils/util'
 import { GetGenesisStatistics } from '@/api/broad'
+import CollectionChart from '../components/CollectionChart.vue'
 
 const i18n = useI18n()
 const route = useRoute()
@@ -211,7 +214,7 @@ const tabs = [
     value: NFTCollectTab.PriceTrend,
   },
 ]
-const tabActive = ref(NFTCollectTab.CollectionWorks)
+const tabActive = ref(NFTCollectTab.PriceTrend)
 const statiscs = reactive([
   {
     name: () => i18n.t('NFT.Initial Price'),
@@ -433,9 +436,10 @@ function getGenesisStatistics() {
 
 function changeTab(value: NFTCollectTab) {
   if (tabActive.value === value) return
-  if (value === NFTCollectTab.PriceTrend) {
-    return ElMessage.info(i18n.t('Comming Soon'))
-  }
+  tabActive.value = value
+  // if (value === NFTCollectTab.PriceTrend) {
+  //   return ElMessage.info(i18n.t('Comming Soon'))
+  // }
 }
 
 getCollection().then(() => {
