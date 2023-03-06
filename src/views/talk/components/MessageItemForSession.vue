@@ -58,9 +58,9 @@
           <div
             class="rounded-xl p-4 flex space-x-4.5 bg-white dark:bg-gray-700 items-center rounded-tl border border-solid border-blue-400"
           >
-            <Image :src="message.icon" customClass="h-15 w-15 rounded-full" loading="lazy" />
+            <Image :src="message.icon" customClass="h-15 w-15 rounded-md shrink-0" loading="lazy" />
             <div class="flex flex-col space-y-1.5">
-              <div class="text-dark-800 dark:text-gray-100 text-base font-medium capitalize">
+              <div class="text-dark-800 dark:text-gray-100 text-base font-medium capitalize max-w-[160PX] truncate">
                 {{ message.memo }}
               </div>
               <div class="text-dark-400 dark:text-gray-200 text-xs">
@@ -81,9 +81,9 @@
           <div
             class="rounded-xl p-4 flex space-x-4.5 bg-white dark:bg-gray-700 items-center rounded-tl border border-solid border-blue-400"
           >
-            <Image :src="message.icon" customClass="h-15 w-15 rounded-md" loading="lazy" />
+            <Image :src="message.icon" customClass="h-15 w-15 rounded-md shrink-0" loading="lazy" />
             <div class="flex flex-col space-y-1">
-              <div class="text-dark-800 dark:text-gray-100 text-base font-medium capitalize">
+              <div class="text-dark-800 dark:text-gray-100 text-base font-medium capitalize max-w-[160PX] truncate">
                 {{ message.memo }}
               </div>
               <div class="text-dark-400 dark:text-gray-200 text-xs" v-if="message.data">
