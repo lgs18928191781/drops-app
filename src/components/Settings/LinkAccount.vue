@@ -79,10 +79,12 @@ const sections = [
       {
         icon: 'logo_metaid',
         value: () => {
-          return userStore.user!.metaId.slice(0, 6) + '...' + userStore.user!.metaId.slice(-3)
+          return userStore.isAuthorized
+            ? userStore.user!.metaId.slice(0, 6) + '...' + userStore.user!.metaId.slice(-3)
+            : ''
         },
         fun: () => {
-          copy(userStore.user!.metaId)
+          copy(userStore.user?.metaId)
         },
         isCopy: true,
       },
@@ -92,7 +94,7 @@ const sections = [
           return i18n.t('LinkAccount.Phone')
         },
         value: () => {
-          return userStore.user!.phone.slice(0, 3)
+          return userStore.isAuthorized
             ? userStore.user!.phone.slice(0, 3) + '****' + userStore.user!.phone.slice(-4)
             : ''
         },
@@ -106,12 +108,12 @@ const sections = [
           return i18n.t('LinkAccount.Email')
         },
         value: () => {
-          return userStore.user!.email
+          return userStore.user?.email
             ? userStore.user!.email.slice(0, 3) + '****@' + userStore.user!.email.split('@')[1]
             : ''
         },
         fun: () => {
-          copy(userStore.user!.metaId)
+          copy(userStore.user?.metaId)
         },
       },
     ],
@@ -126,12 +128,12 @@ const sections = [
           return 'MetaMask'
         },
         value: () => {
-          return userStore.user!.evmAddress
+          return userStore.user?.evmAddress
             ? userStore.user!.evmAddress.slice(0, 6) + '...' + userStore.user!.evmAddress.slice(-3)
             : ''
         },
         fun: () => {
-          copy(userStore.user!.metaId)
+          copy(userStore.user?.metaId)
         },
       },
     ],
