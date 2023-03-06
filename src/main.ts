@@ -24,9 +24,30 @@ import GlobalDialog from '@/components/GlobalDialog/index.vue'
 import { createPinia } from 'pinia'
 import { VueQueryPlugin } from '@tanstack/vue-query' // TanStack Query
 import { createHead } from '@vueuse/head'
+import * as Sentry from '@sentry/vue'
+import { BrowserTracing } from '@sentry/tracing'
 
 const app = createApp(App)
 const head = createHead()
+
+Sentry.init({
+  app,
+  dsn: 'https://199da935436147e6962bb99e203f711a@sentry.showpay.top/18',
+  integrations: [
+    new BrowserTracing({
+      routingInstrumentation: Sentry.vueRouterInstrumentation(router),
+      tracePropagationTargets: ['*'],
+      tracingOrigins: ['*'],
+    }),
+  ],
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0,
+  environment: 'production',
+  autoSessionTracking: false,
+  sendClientReports: false,
+})
 
 // 挂载全局过滤器
 // @ts-ignore
