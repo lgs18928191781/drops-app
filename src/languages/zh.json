@@ -1003,7 +1003,12 @@
     "Please enter your password": "请输入登录时的密码",
     "Password": "密码...",
     "Next": "下一步",
-    "PasswordError": "密码错误"
+    "PasswordError": "密码错误",
+    "Change Mobile Link": "更改绑定手机",
+    "Change the Link": "更改绑定",
+    "Change Email": "更改邮箱",
+    "EmailChangeTips": "您已将此邮箱关联到您的帐户。",
+    "Change Emial Link": "更改绑定邮箱"
   },
   "OK": "确定"
 }

@@ -5,7 +5,6 @@
     :confirm-btn-text="$t('LinkAccount.Next')"
     :confirm-btn-class="confirmBtnClass"
     :operate-warp-margin-top="12"
-    class="dialog"
     @confirm="confirm"
     @update:model-value="val => emit('update:modelValue', val)"
   >
@@ -44,6 +43,7 @@ function confirm() {
     return
   }
   if (userStore.password === pwd.value) {
+    pwd.value = ''
     emit('update:modelValue', false)
     emit('success')
   } else {

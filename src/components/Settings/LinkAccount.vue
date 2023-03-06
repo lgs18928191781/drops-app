@@ -45,7 +45,7 @@
     </div>
 
     <!-- ChangePhone -->
-    <ChangePhone v-model="isShowChangePhone" :phone="userStore.user?.phone" />
+    <ChangePhoneEmail v-model="isShowChangePhone" :value="userStore.user?.phone" />
   </ElDrawer>
 </template>
 
@@ -61,7 +61,7 @@ import { useI18n } from 'vue-i18n'
 import { copy } from '@/utils/util'
 import MetaMask from '@/assets/images/login_logo_matamask.png'
 import logo_metaid from '@/assets/icons/logo_metaid.svg?url'
-import ChangePhone from './ChangePhone.vue'
+import ChangePhoneEmail from './ChangePhoneEmail.vue'
 
 interface Props {
   modelValue: boolean

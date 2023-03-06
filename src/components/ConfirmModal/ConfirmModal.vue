@@ -24,7 +24,6 @@
         @click="
           () => {
             emit('confirm')
-            emit('update:modelValue', false)
           }
         "
         >{{ confirmBtnText || $t('OK') }}</a
