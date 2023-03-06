@@ -214,7 +214,7 @@ const tabs = [
     value: NFTCollectTab.PriceTrend,
   },
 ]
-const tabActive = ref(NFTCollectTab.PriceTrend)
+const tabActive = ref(NFTCollectTab.CollectionWorks)
 const statiscs = reactive([
   {
     name: () => i18n.t('NFT.Initial Price'),
@@ -436,20 +436,20 @@ function getGenesisStatistics() {
 
 function changeTab(value: NFTCollectTab) {
   if (tabActive.value === value) return
-  tabActive.value = value
-  // if (value === NFTCollectTab.PriceTrend) {
-  //   return ElMessage.info(i18n.t('Comming Soon'))
-  // }
+  // tabActive.value = value
+  if (value === NFTCollectTab.PriceTrend) {
+    return ElMessage.info(i18n.t('Comming Soon'))
+  }
 }
 
 getCollection().then(() => {
   getDatas(true).then(() => {
     isSkeleton.value = false
     nextTick(() => {
-      scrrentWarpOffsetTop.value = document.getElementById('collection')!.offsetTop - 18
-      filterWarpOffsetTop.value =
-        document.getElementById('collection')!.offsetTop +
-        document.getElementById('screen')!.clientHeight
+      // scrrentWarpOffsetTop.value = document.getElementById('collection')!.offsetTop - 18
+      // filterWarpOffsetTop.value =
+      //   document.getElementById('collection')!.offsetTop +
+      //   document.getElementById('screen')!.clientHeight
     })
   })
 })
