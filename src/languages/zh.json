@@ -544,7 +544,8 @@
     "Uplink settings": "上链设置",
     "Language": "语言",
     "Theme": "主题",
-    "Edit Profile": "编辑个人信息"
+    "Edit Profile": "编辑个人信息",
+    "Link Account": "账号绑定"
   },
   "EditProfile": {
     "intro": "选择 NFT 作为您的头像或用户名，展现您的个性",
@@ -746,7 +747,11 @@
     "Circulation": "流通量",
     "Ueser Sell NFT Buzz Text": "我上架了NFT，快来看看！",
     "Amount": "金额",
-    "Confirm Transfer Amount": "确认转账"
+    "Confirm Transfer Amount": "确认转账",
+    "CollectionChart": {
+      "title": "销售统计",
+      "yAxisTitle": "价格（Space）"
+    }
   },
   "My NFT": "我的NFT",
   "Done": "完成",
@@ -986,5 +991,24 @@
   "allowUpdate": "检测到你的账号需要升级,取消升级可能会影响后续其他钱包登录,请确认! \n (特别提醒：1.如果您之前注册的账户是通过'WalletConnect'注册绑定的，请使用'WalletConnect'进行升级；2.如果您的账户是通过Web客户端'MetaMask'注册绑定的，请使用Web客户端‘MetaMask’钱包进行升级操作,否则会导致账户升级失败)",
   "confirmUpdate": "确认升级",
   "inputMetaNameSensitiveWords": "不支持注册敏感词",
-  "Contains unsupported characters": "包含不支持的字符"
+  "Contains unsupported characters": "包含不支持的字符",
+  "LinkAccount": {
+    "Wallets": "钱包",
+    "Phone": "手机号码",
+    "None": "暂无绑定",
+    "Email": "邮箱",
+    "PhoneChangeTips": "您已将此手机号码关联到您的帐户。",
+    "Change Mobile": "更改手机号",
+    "Enter Password": "验证密码",
+    "Please enter your password": "请输入登录时的密码",
+    "Password": "密码...",
+    "Next": "下一步",
+    "PasswordError": "密码错误",
+    "Change Mobile Link": "更改绑定手机",
+    "Change the Link": "更改绑定",
+    "Change Email": "更改邮箱",
+    "EmailChangeTips": "您已将此邮箱关联到您的帐户。",
+    "Change Emial Link": "更改绑定邮箱"
+  },
+  "OK": "确定"
 }

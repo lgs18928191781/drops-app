@@ -1,0 +1,17 @@
+.tips {
+    color: var(--themeFadedTextColor);
+}
+
+.value {
+    font-size: 24px;
+    margin-top: 8px;
+}
+
+.send-code-btn {
+    cursor: pointer;
+    color: var(--color-hover);
+
+    &:hover {
+        font-weight: bold;
+    }
+}

@@ -1,0 +1,14 @@
+.operate {
+    margin-top: 60px;
+
+    a {
+        padding: 18px;
+        text-align: center;
+        margin-right: 10px;
+        cursor: pointer;
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+}
