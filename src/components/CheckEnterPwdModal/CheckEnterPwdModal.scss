@@ -1,0 +1,11 @@
+@import '../Settings/ChangePhone.scss';
+
+.input {
+    margin-top: 30px;
+}
+
+.dialog {
+    :deep(.operate) {
+        margin-top: 12px;
+    }
+}
