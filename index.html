@@ -48,8 +48,9 @@
           docEl.dataset.width = width
           docEl.dataset.percent = htmlFontSize * (width / designSize)
           var fontSize = htmlFontSize * (width / designSize)
-          if (fontSize < 66) {
-            fontSize = 66
+          const minFontSize = 62
+          if (fontSize < minFontSize) {
+            fontSize = minFontSize
           }
           docEl.style.fontSize = fontSize + 'px'
         }
