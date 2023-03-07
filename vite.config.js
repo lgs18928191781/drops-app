@@ -21,7 +21,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 // import dns from 'dns'
 // dns.setDefaultResultOrder('verbatim')
 const pathSrc = path.resolve(__dirname, 'src')
-const productionEnvs = ['mainnet', 'gray']
+const productionEnvs = ['mainnet']
 export default ({ mode, command }) => {
   // 加载环境配置文件
   const env = loadEnv(mode, process.cwd())

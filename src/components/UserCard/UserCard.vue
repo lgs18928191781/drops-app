@@ -154,7 +154,7 @@ watch(
     height: 70px;
     border-radius: 50%;
     background: var(--color-primary);
-    box-shadow: 0px 6px 0 rgba(var(--color-primaryRgb), 0.5);
+    box-shadow: 3px 3px 0 rgba(var(--color-primaryRgb), 0.5);
     position: absolute;
     margin-left: -35px;
     left: 50%;
