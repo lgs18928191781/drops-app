@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4.5 bg-white dark:bg-gray-700 rounded-xl">
+  <div class="p-4.5 bg-white dark:bg-gray-700 rounded-xl relative">
     <div class="header flex flex-align-center pb-4.5">
       <div class="flex1 cont mr-2">
         <div class="text-base "><UserName :name="name" :meta-name="metaName" /></div>
@@ -28,6 +28,10 @@
     </div>
 
     <UserPersonaVue class="mt-4.5" :i18n="propsI18n" />
+
+    <div class="close flex flex-align-center flex-pack-center" @click.stop="$emit('hide')">
+      <Icon name="x_mark" />
+    </div>
   </div>
 </template>
 
@@ -142,3 +146,39 @@ watch(
   }
 )
 </script>
+
+<style lang="scss" scoped>
+.relative {
+  .close {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    box-shadow: 0px 6px 0 rgba(var(--color-primaryRgb), 0.5);
+    position: absolute;
+    margin-left: -35px;
+    left: 50%;
+    bottom: 0;
+    margin-bottom: 60px;
+    display: none;
+
+    .icon {
+      width: 40px;
+      height: 40px;
+      color: var(--themeBtnTextColor);
+      :deep(use) {
+        fill: var(--themeBtnTextColor);
+        stroke: var(--themeBtnTextColor);
+        stroke-width: 2px;
+      }
+    }
+  }
+}
+@media screen and (max-width: 750px) {
+  .relative {
+    .close {
+      display: flex;
+    }
+  }
+}
+</style>
