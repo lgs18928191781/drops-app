@@ -325,6 +325,8 @@ export enum NodeName {
   NftName = 'NftName',
   NftTransfer = 'NftTransfer',
   SendMoney = 'SendMoney',
+  Phone = 'phone',
+  Email = 'email',
 }
 
 export const enum BindStatus {

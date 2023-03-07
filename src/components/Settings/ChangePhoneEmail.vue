@@ -32,7 +32,7 @@
 
   <ConfirmModal
     v-model="isShowInputPhone"
-    @confirm="emit('confirm')"
+    @confirm="submit"
     :is-hide-cancel-btn="true"
     :confirm-btn-text="$t('LinkAccount.Change the Link')"
     :operate-warp-margin-top="15"
@@ -117,7 +117,7 @@
 import ConfirmModal from '../ConfirmModal/ConfirmModal.vue'
 import CheckEnterPwdModal from '../CheckEnterPwdModal/CheckEnterPwdModal.vue'
 import { computed, reactive, ref } from 'vue'
-import { LoginGetCode, RegisterGetCode } from '@/api/core'
+import { BindPhoneOrEmail, LoginGetCode, RegisterGetCode } from '@/api/core'
 import { useI18n } from 'vue-i18n'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
 import { email } from '@/utils/reg'
@@ -126,6 +126,9 @@ import Vue3CountryIntl from 'vue3-country-intl'
 import 'vue3-country-intl/lib/vue3-country-intl.css'
 import 'vue3-country-intl/lib/vue3-country-flag.css'
 import 'vue3-country-intl/lib/flags-9980096a.png'
+import { FormInstance } from 'element-plus'
+import { useUserStore } from '@/stores/user'
+import { IsEncrypt, NodeName } from '@/enum'
 
 interface Props {
   modelValue: boolean
@@ -144,6 +147,8 @@ const loading = ref(false)
 const sendCodeTimer = ref(0)
 const isSendCodeLoading = ref(false)
 const i18n = useI18n()
+const FormRef = ref<FormInstance>()
+const userStore = useUserStore()
 
 const form = reactive({
   phone: '',
@@ -157,14 +162,13 @@ async function sendCode() {
   if (sendCodeTimer.value > 0) return
   isSendCodeLoading.value = true
   try {
-    const phoneNum = form.area !== '86' ? form.area + form.phone : form.phone
     const params = {
-      userType: form.userType || 'phone',
-      phone: (form.area !== '86' ? '+' : '') + phoneNum,
+      userType: type.value || 'phone',
+      phone: (form.area !== '86' ? '+' : '') + phoneFullNumber.value,
       email: form.email,
       platform: 0, // 1是若喜 0是showmoney
     }
-    const res = await LoginGetCode(params)
+    const res = await RegisterGetCode(params)
     if (res.code === 0) {
       sendCodeTimer.value = 60
       isSendCodeLoading.value = false
@@ -220,6 +224,10 @@ const type = computed(() => {
   }
 })
 
+const phoneFullNumber = computed(() => {
+  return form.area !== '86' ? form.area + form.phone : form.phone
+})
+
 const valueShowText = computed(() => {
   if (props.value) {
     if (type.value === Type.email) {
@@ -231,6 +239,26 @@ const valueShowText = computed(() => {
     return '--'
   }
 })
+
+function submit() {
+  FormRef.value?.validate(async (valid: boolean) => {
+    if (valid) {
+      loading.value = true
+      const res = await BindPhoneOrEmail({
+        userType: type.value,
+        email: form.email,
+        phone: phoneFullNumber.value,
+        code: form.code,
+      })
+      return
+      const response = await userStore.showWallet.createBrfcChildNode({
+        nodeName: type.value === Type.phone ? NodeName.Phone : NodeName.Email,
+        data: type.value === Type.phone ? phoneFullNumber.value : form.email,
+        encrypt: IsEncrypt.Yes,
+      })
+    }
+  })
+}
 </script>
 
 <style lang="scss" scoped src="./ChangePhoneEmail.scss"></style>

@@ -311,3 +311,12 @@ export const Translate = (params: {
 }): Promise<{ code: number; result: { transResult: string } }> => {
   return Core.post(`/api/v1/i18n/translate`, params)
 }
+
+export const BindPhoneOrEmail = (params: {
+  code: string
+  email: string
+  phone: string
+  userType: string
+}) => {
+  return Core.post(`/api/v1/user/bindPhoneOrEmail`, params)
+}
