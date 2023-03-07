@@ -41,16 +41,15 @@
           resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize'
         docEl.dataset.dpr = dpr
         var recalc = function() {
-          var width =
-            window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
+          var width = docEl.clientWidth
           if (width / dpr > designSize) {
             width = designSize * dpr
           }
           docEl.dataset.width = width
           docEl.dataset.percent = htmlFontSize * (width / designSize)
           var fontSize = htmlFontSize * (width / designSize)
-          if (fontSize < 70) {
-            fontSize = 70
+          if (fontSize < 66) {
+            fontSize = 66
           }
           docEl.style.fontSize = fontSize + 'px'
         }
@@ -58,32 +57,6 @@
         if (!doc.addEventListener) return
         win.addEventListener(resizeEvt, recalc, false)
       })(document, window, parseFloat('<% VITE_Design_Size />'), 100)
-
-      function handleFontSize() {
-        // 设置网页字体为默认大小
-        WeixinJSBridge.invoke('setFontSizeCallback', {
-          fontSize: 0,
-        })
-        // 重写设置网页字体大小的事件
-        WeixinJSBridge.on('menu:setfont', function() {
-          WeixinJSBridge.invoke('setFontSizeCallback', {
-            fontSize: 0,
-          })
-        })
-      }
-
-      ;(function() {
-        if (typeof WeixinJSBridge === 'object' && WeixinJSBridge.invoke === 'function') {
-          handleFontSize()
-        } else {
-          if (document.addEventListener) {
-            document.addEventListener('WeixinJSBridgeReady', handleFontSize, false)
-          } else if (document.attachEvent) {
-            document.attachEvent('WeixinJSBridgeReady', handleFontSize)
-            document.attachEvent('onWeixinJSBridgeReady', handleFontSize)
-          }
-        }
-      })()
     </script>
     <script>
       if (
