@@ -470,7 +470,8 @@
     "Uplink settings": "MetaEnergy Settings",
     "Language": "Language",
     "Theme": "Theme",
-    "Edit Profile": "Edit Profile"
+    "Edit Profile": "Edit Profile",
+    "Link Account": "Link Account"
   },
   "EditProfile": {
     "intro": "NFT can become your profile picture or user name!",
@@ -756,7 +757,11 @@
     "Circulation": "Circulation",
     "Ueser Sell NFT Buzz Text": "I listed an NFT. Check it out!",
     "Amount": "Amount",
-    "Confirm Transfer Amount": "Confirm Transfer"
+    "Confirm Transfer Amount": "Confirm Transfer",
+    "CollectionChart": {
+      "title": "Sales",
+      "yAxisTitle": "Price（Space）"
+    }
   },
   "My NFT": "My NFT",
   "Done": "Done",
@@ -987,5 +992,25 @@
   "allowUpdate": "It is detected that your account needs to be upgraded, canceling the upgrade may affect other subsequent wallet logins, please confirm! \n (Special reminder: 1. If your previously registered account is registered and bound through 'WalletConnect', please use 'WalletConnect' to upgrade \n;2. If your account is registered and bound through the web client 'MetaMask', please use the web client 'MetaMask' wallet to perform the upgrade operation, otherwise the account upgrade will fail)",
   "updateRemind": "Upgrade Tips",
   "inputMetaNameSensitiveWords": "Sensitive words are not supported",
-  "Contains unsupported characters": "Contains unsupported characters. "
+  "Contains unsupported characters": "Contains unsupported characters. ",
+  "LinkAccount": {
+    "Wallets": "Wallets",
+    "Phone": "Phone",
+    "Email": "Email",
+    "None": "Unbound",
+    "PhoneChangeTips": "You have linked this mobile number to your account.",
+    "Change Mobile": "Change Mobile",
+    "Enter Password": "Enter Password",
+    "Please enter your password": "Please enter your password",
+    "Password": "Password...",
+    "Next": "Next",
+    "PasswordError": "Password Error",
+    "Change Mobile Link": "Change Mobile Link",
+    "Change the Link": "Change the Link",
+    "Change Email": "Change Email",
+    "EmailChangeTips": "You have linked this email to your account.",
+    "Change Emial Link": "Change Emial Link"
+  },
+  "OK": "OK",
+  "Not Found Node Name": "Not Found Node Name"
 }
