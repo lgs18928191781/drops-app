@@ -57,6 +57,7 @@
               <Vue3CountryIntl
                 v-model="form.area"
                 schema="popover"
+                :searchInputPlaceholder="'Search your country name or code'"
                 v-model:visible="isShowCountry"
                 :listZIndex="99"
                 @onChange="res => (form.countryCode = res.iso2)"
