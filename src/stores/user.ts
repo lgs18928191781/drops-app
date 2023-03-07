@@ -176,6 +176,7 @@ export const useUserStore = defineStore('user', {
 
         try {
           this.user = data
+          console.log('this.uesr', this.user)
         } catch {}
 
         const genesisStore = useGenesisStore()

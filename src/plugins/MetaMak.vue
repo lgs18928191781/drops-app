@@ -61,7 +61,7 @@ interface Props {
     modelValue: boolean
 }
 const props = withDefaults(defineProps<Props>(), {})
-const emit = defineEmits(['update:modelValue', 'success', 'logout'])
+const emit = defineEmits(['update:modelValue', 'success', 'logout','bindEvmAccount'])
 defineExpose({
     ethPersonalSignSign,
     startConnect
@@ -164,7 +164,8 @@ const dialogTitle = computed(() => {
     }
 })
 
-async function startConnect(isUpdatePlan:boolean=false) {
+async function startConnect(isUpdatePlan=false,loginedButBind=false,bindEvmChain='') {
+
     try {
 
         const res = await Wallet.connect()
@@ -194,8 +195,10 @@ async function startConnect(isUpdatePlan:boolean=false) {
                     //ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).split('0x')[1].toLocaleUpperCase()
                     message:message
                 })
-
-                if (result) {
+                if (result && loginedButBind) {
+                     emit('bindEvmAccount',{ signAddressHash:result, address: address,chainId:bindEvmChain});
+                }
+                if (result && !loginedButBind) {
                     emit('success',{ signAddressHash:result, address: address});
                 }
             } else {

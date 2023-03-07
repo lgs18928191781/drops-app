@@ -161,9 +161,23 @@
                           </ElIcon>
                         </template>
                         <template v-else>
-                          <div class="value">{{ wallet.value }}</div>
-                          <div class="usd">
-                            {{ rootStore.currentPriceSymbol }} {{ wallet.price() }}
+                          <div v-if="!userStore.user?.evmAddress && wallet.showBindBtn">
+                            <a style="padding:4px 5px" @click="haha" class="main-border primary">{{
+                              i18n.t('binding')
+                            }}</a>
+                          </div>
+
+                          <div v-else-if="!wallet.showBindBtn">
+                            <div class="value">{{ wallet.value }}</div>
+                            <div class="usd">
+                              {{ rootStore.currentPriceSymbol }} {{ wallet.price() }}
+                            </div>
+                          </div>
+                          <div v-else-if="userStore.user?.evmAddress && wallet.showBindBtn">
+                            <div class="value">{{ wallet.value }}</div>
+                            <div class="usd">
+                              {{ rootStore.currentPriceSymbol }} {{ wallet.price() }}
+                            </div>
                           </div>
                         </template>
                       </div>
@@ -281,6 +295,14 @@
     <!-- Transfer -->
     <Transfer v-model="isShowTransfer" />
   </ElDrawer>
+
+  <!-- MetaMask -->
+  <MetaMask
+    v-model="rootStore.isShowMetaMak"
+    ref="MetaMaskRef"
+    id="metamask"
+    @bindEvmAccount="bindEthButLogin"
+  />
 </template>
 
 <script setup lang="ts">
@@ -313,7 +335,8 @@ import { currentSupportChain } from '@/config'
 import MEIntroVue from '../MEIntro/MEIntro.vue'
 import Transfer from './Transfer.vue'
 import { Chains } from '@/enum'
-
+import { decryptMnemonic, encryptMnemonic } from '@/utils/wallet/hd-wallet'
+import { decode, encode } from 'js-base64'
 const props = defineProps<{
   modelValue: boolean
 }>()
@@ -388,6 +411,7 @@ const wallets = reactive([
         icon: '',
         name: 'ME',
         value: 0,
+        showBindBtn: false,
         address: () => '',
         isCanTransfer: false,
         price: function() {
@@ -409,6 +433,7 @@ const wallets = reactive([
         icon: ETH,
         name: import.meta.env.VITE_ETH_CHAIN.toUpperCase(),
         value: 0,
+        showBindBtn: true,
         address: () => userStore.user?.evmAddress || '',
         isCanTransfer: false,
         price: function() {
@@ -427,6 +452,7 @@ const wallets = reactive([
         icon: Polygon,
         name: import.meta.env.VITE_POLYGON_CHAIN.toUpperCase(),
         value: 0,
+        showBindBtn: true,
         address: () => userStore.user?.evmAddress || '',
         isCanTransfer: false,
         price: function() {
@@ -445,6 +471,7 @@ const wallets = reactive([
         icon: MVC,
         name: 'SPACE',
         value: 0,
+        showBindBtn: false,
         address: () => userStore.user?.address || '',
         isCanTransfer: true,
         price: function() {
@@ -461,6 +488,7 @@ const wallets = reactive([
         icon: BSV,
         name: 'BSV',
         value: 0,
+        showBindBtn: false,
         address: () => userStore.user?.address || '',
         isCanTransfer: false,
         price: function() {
@@ -512,6 +540,23 @@ const totalBalanceLoading = computed(() => {
   }
   return value
 })
+
+async function bindEthButLogin(params: {
+  signAddressHash: string
+  address: string
+  chainId: string
+}) {
+  return
+  const originShowmoneyPassword = decode(localStorage.getItem(encode('password'))!)
+  const mnemonic = userStore!.user!.enCryptedMnemonic
+  const decodeMnemonic = decryptMnemonic(mnemonic, originShowmoneyPassword)
+  console.log('decodeMnemonic', decodeMnemonic)
+}
+
+function haha() {
+  rootStore.$patch({ isShowMetaMak: true })
+  console.log('zxczxczx', userStore.user)
+}
 
 function changeTab(value: number) {
   if (tabActive.value === value) return
