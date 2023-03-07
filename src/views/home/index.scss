@@ -284,6 +284,11 @@
                         .item {
                             width: 100%;
                             margin-top: 20px;
+                            align-items: center;
+
+                            .big {
+                                margin-left: 5px;
+                            }
 
                             &:nth-child(2) {
                                 margin-top: 20px
@@ -618,7 +623,8 @@
             }
 
             .page-five {
-                padding: 0 30px;
+                height: auto;
+                padding: 80px 30px;
             }
         }
 

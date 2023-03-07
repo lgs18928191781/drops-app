@@ -109,6 +109,32 @@ html {
   max-width: 280PX;
 }
 
+@media screen and (max-width: 750PX) {
+  .user-card-warp {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 100% !important;
+    height: 100%;
+    max-width: none !important;
+    transform: none !important;
+    background: var(--el-overlay-color-lighter);
+    z-index: 99;
+    padding: 30px;
+    display: flex;
+    border-radius: 0 !important;
+
+    .bg-white {
+      flex: 1;
+    }
+  }
+
+
+
+}
+
 
 
 pre {
