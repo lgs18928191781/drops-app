@@ -32,11 +32,13 @@ html.dark {
     --el-bg-color-overlay: var(--themeBgSecondColor);
 }
 
-.el-overlay {
+.el-overlay,
+.el-overlay-dialog {
     left: 0;
     top: 0;
     width: 100%;
 }
+
 
 .el-button {
     --el-button-text-color: var(--themeTextColor);
