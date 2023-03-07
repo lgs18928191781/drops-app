@@ -32,11 +32,16 @@ html.dark {
     --el-bg-color-overlay: var(--themeBgSecondColor);
 }
 
-.el-overlay {
+// 兼容旧手机浏览器 尤其是安卓微信内的兼容
+.el-overlay,
+.el-overlay-dialog,
+.el-loading-mask {
     left: 0;
     top: 0;
     width: 100%;
+    height: 100%;
 }
+
 
 .el-button {
     --el-button-text-color: var(--themeTextColor);
