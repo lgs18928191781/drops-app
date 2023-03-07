@@ -41,7 +41,8 @@
           resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize'
         docEl.dataset.dpr = dpr
         var recalc = function() {
-          var width = docEl.clientWidth
+          var width =
+            window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
           if (width / dpr > designSize) {
             width = designSize * dpr
           }
