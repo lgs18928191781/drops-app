@@ -44,7 +44,7 @@
       <div
         class="item flex flex-align-center"
         @click="isShowLinkAccount = true"
-        v-if="userStore.isAuthorized"
+        v-if="userStore.isAuthorized && !isMainnet"
       >
         <span class="icon-warp flex flex-align-center flex-pack-center">
           <Icon name="link_account" />
@@ -91,6 +91,7 @@ import UplinkSettingVue from './UplinkSetting.vue'
 import LanguageVue from './Language.vue'
 import ThemeVue from './Theme.vue'
 import LinkAccount from './LinkAccount.vue'
+import { EnvMode } from '@/enum'
 
 interface Props {
   modelValue: boolean
@@ -105,6 +106,7 @@ const isShowLangSet = ref(false)
 const isShowThemeSet = ref(false)
 const isShowUploadLinkSet = ref(false)
 const isShowLinkAccount = ref(false)
+const isMainnet = import.meta.env.MODE === EnvMode.Mainnet
 
 const switchLanguage = (lang: string) => {
   i18n.locale.value = lang
