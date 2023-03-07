@@ -37,16 +37,12 @@ Sentry.init({
     new BrowserTracing({
       routingInstrumentation: Sentry.vueRouterInstrumentation(router),
       tracePropagationTargets: ['*'],
-      tracingOrigins: ['*'],
     }),
   ],
   // Set tracesSampleRate to 1.0 to capture 100%
   // of transactions for performance monitoring.
   // We recommend adjusting this value in production
   tracesSampleRate: 1.0,
-  environment: 'production',
-  autoSessionTracking: false,
-  sendClientReports: false,
 })
 
 // 挂载全局过滤器
