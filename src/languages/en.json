@@ -1014,9 +1014,21 @@
   "OK": "OK",
   "Not Found Node Name": "Not Found Node Name",
   "PWA": {
-    "title": "Add Show3 to the desktop",
-    "tips": "For your convenience of access, please ask if Show3 is installed locally on the device?",
+    "title": "Add Show3 to Home Screen",
+    "tips": "Installing Show3 uses almost no storage and provides you a better experience.",
     "Install": "Install",
-    "InstallSuccess": "Install Success"
+    "InstallSuccess": "Install Success",
+    "Finished": "Finished",
+    "DontAsk": "Don't ask again",
+    "steps": {
+      "title": "How to install Show3:",
+      "safari": {
+        "step1": "1. Make sure you are using Safari",
+        "step2": "2. Click the",
+        "button": "button",
+        "step3": "3. Click \"Add to Home Screen\"",
+        "step4": "4. Click \"Add\""
+      }
+    }
   }
 }

@@ -1,29 +1,31 @@
+/* prettier-ignore-start */
 .pwa {
     position: fixed;
     width: var(--sm-conetnt-width);
     left: calc((100% - 90PX) / 2);
     margin-left: calc(90PX - (var(--sm-conetnt-width) / 2));
-    bottom: 30px;
+    bottom: 30PX;
     border-radius: var(--rounded);
-    padding: 18px;
+    padding: 18PX;
     z-index: 99;
 
     .header {
 
         .title {
-            font-size: 20px;
+            font-size: 18PX;
+            font-weight: 700;
         }
 
         .close {
-            width: 30px;
-            height: 30px;
+            width: 26PX;
+            height: 26PX;
             border-radius: 50%;
             background: var(--themeBgSecondColor);
             cursor: pointer;
 
             .icon {
-                width: 15px;
-                height: 15px;
+                width: 15PX;
+                height: 15PX;
 
                 :deep(use) {
                     fill: var(--themeTextColor);
@@ -34,43 +36,54 @@
     }
 
     .content {
-        margin-top: 18px;
+        margin-top: 18PX;
+
+
 
         .logo {
             background: #fff;
-            width: 50px;
-            height: 50px;
+            width: 50PX;
+            height: 50PX;
             border-radius: var(--rounded);
-            margin-right: 10px;
             cursor: auto;
 
             .icon {
-                width: 30px;
-                height: 30px;
+                width: 30PX;
+                height: 30PX;
             }
 
 
         }
 
         .tips {
-            line-height: 22px;
+            font-size: 12PX;
+            line-height: 1.5;
+
+            @media screen and (min-width:750PX) {
+                font-size: 14PX;
+
+            }
         }
     }
 
     .operate {
-        margin-top: 18px;
+        margin-top: 18PX;
 
         a {
-            padding: 5px 10px;
-            margin-right: 15px;
+            padding: 6PX 12PX;
             cursor: pointer;
+            border-radius: 99999PX;
+            font-size: 14PX;
+            font-weight: 700;
+            background: white;
+            min-width: 96PX;
+            text-align: center;
 
             &:first-child {
                 background: var(--themeFadedTextColor);
             }
 
             &:last-child {
-                margin-right: 0;
                 background: #fff;
             }
         }
@@ -85,3 +98,5 @@
     }
 
 }
+
+/* prettier-ignore-start */

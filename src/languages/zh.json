@@ -1013,9 +1013,21 @@
   "OK": "确定",
   "Not Found Node Name": "节点不存在",
   "PWA": {
-    "title": "添加Show3到桌面",
-    "tips": "为了方便您访问，请问是否将Show3安装到设备本地？",
+    "title": "添加 Show3 到桌面",
+    "tips": "安装 Show3 不占用空间，为您提供更好的使用体验。",
     "Install": "安装",
-    "InstallSuccess": "安装成功"
+    "InstallSuccess": "安装成功",
+    "Finished": "我已安装",
+    "DontAsk": "不再提示",
+    "steps": {
+      "title": "安装方法",
+      "safari": {
+        "step1": "1. 使用Safari浏览器打开本网站",
+        "step2": "2. 点击下方的",
+        "button": "按钮",
+        "step3": "3. 点击“添加到主屏幕”",
+        "step4": "4. 点击右上角的“添加”"
+      }
+    }
   }
 }
