@@ -27,7 +27,7 @@
           :meta-name="message?.fromUserInfo?.metaName"
           :text-class="'text-sm font-medium dark:text-gray-100'"
         />
-        <div class="text-dark-300 dark:text-gray-400 text-xs">
+        <div class="text-dark-300 dark:text-gray-400 text-xs shrink-0">
           {{ formatTimestamp(message.timestamp, i18n) }}
         </div>
       </div>
@@ -60,7 +60,9 @@
           >
             <Image :src="message.icon" customClass="h-15 w-15 rounded-md shrink-0" loading="lazy" />
             <div class="flex flex-col space-y-1.5">
-              <div class="text-dark-800 dark:text-gray-100 text-base font-medium capitalize max-w-[160PX] truncate">
+              <div
+                class="text-dark-800 dark:text-gray-100 text-base font-medium capitalize max-w-[160PX] truncate"
+              >
                 {{ message.memo }}
               </div>
               <div class="text-dark-400 dark:text-gray-200 text-xs">
@@ -83,7 +85,9 @@
           >
             <Image :src="message.icon" customClass="h-15 w-15 rounded-md shrink-0" loading="lazy" />
             <div class="flex flex-col space-y-1">
-              <div class="text-dark-800 dark:text-gray-100 text-base font-medium capitalize max-w-[160PX] truncate">
+              <div
+                class="text-dark-800 dark:text-gray-100 text-base font-medium capitalize max-w-[160PX] truncate"
+              >
                 {{ message.memo }}
               </div>
               <div class="text-dark-400 dark:text-gray-200 text-xs" v-if="message.data">
