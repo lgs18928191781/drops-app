@@ -258,7 +258,11 @@
         }
     }
 
-    .nft-list {}
+    .el-row {
+        .el-col {
+            margin-bottom: 22px;
+        }
+    }
 }
 
 
@@ -274,7 +278,7 @@
         }
 
         .collection-content {
-            padding: 30px;
+            padding: 18px;
         }
 
         .collection-msg {
@@ -316,6 +320,12 @@
         .collection-nft-content {
             .el-affix {
                 flex: 1;
+            }
+        }
+
+        .el-row {
+            .el-col {
+                margin-bottom: 10PX;
             }
         }
     }

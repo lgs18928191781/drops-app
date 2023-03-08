@@ -1,10 +1,10 @@
 .lang-item {
-    padding: 10px 30px;
+    padding: 10px var(--padding-lg);
 }
 
 
 .nav-item {
-    padding: 15px 30px;
+    padding: 15px var(--padding-lg);
 }
 
 .el-carousel {
@@ -91,8 +91,10 @@
                 margin-right: 60px;
             }
 
+
+
             .wallet-btn {
-                padding: 16px 33px;
+                padding: 10px var(--padding-normal);
                 font-size: 16px;
                 line-height: 24px;
                 cursor: pointer;
@@ -110,7 +112,7 @@
             .option-groud {
                 .lang-wrap {
                     margin-right: 15px;
-                    margin-left: 30px;
+                    margin-left: 15px;
                 }
             }
         }
@@ -678,12 +680,23 @@
                 }
 
             }
+
+            @media only screen and (max-width: 750px) {
+                .item {
+                    width: 40px;
+                    height: 40px;
+                    margin-right: 20px;
+                }
+            }
         }
     }
 
-    @media screen and (max-width:750px) {
-        .footer {}
+    @media only screen and (max-width: 750px) {
+        .footer {
+            height: 100px;
+        }
     }
+
 }
 
 
@@ -701,6 +714,6 @@
 
 @media only screen and (max-width: 1200px) {
     .container {
-        padding: 0 30px;
+        padding: 0 var(--padding-normal);
     }
 }

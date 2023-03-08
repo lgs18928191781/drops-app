@@ -4,5 +4,9 @@
 
     :deep(.buzz-item) {
         background: var(--divid-color);
+
+        .content {
+            padding-left: 0;
+        }
     }
 }
