@@ -26,7 +26,7 @@
           :meta-name="message?.userInfo?.metaName"
           :text-class="'text-sm font-medium dark:text-gray-100 max-w-[120PX]'"
         />
-        <div class="text-dark-300 dark:text-gray-400 text-xs">
+        <div class="text-dark-300 dark:text-gray-400 text-xs shrink-0 whitespace-nowrap">
           {{ formatTimestamp(message.timestamp, i18n) }}
         </div>
       </div>
