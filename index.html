@@ -48,7 +48,12 @@
           docEl.dataset.width = width
           docEl.dataset.percent = htmlFontSize * (width / designSize)
           var fontSize = htmlFontSize * (width / designSize)
-          const minFontSize = 90
+          let minFontSize = 90
+          var agent = navigator.userAgent.toLowerCase()
+          //  微信浏览器
+          if (agent.match(/MicroMessenger/i) == 'micromessenger') {
+            minFontSize = 62
+          }
           if (fontSize < minFontSize) {
             fontSize = minFontSize
           }
