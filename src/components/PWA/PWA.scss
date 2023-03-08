@@ -6,6 +6,7 @@
     bottom: 30px;
     border-radius: var(--rounded);
     padding: 18px;
+    z-index: 99;
 
     .header {
 
@@ -74,4 +75,13 @@
             }
         }
     }
+}
+
+@media screen and (max-width:750PX) {
+    .pwa {
+        width: 90%;
+        left: 0;
+        margin-left: 5%;
+    }
+
 }

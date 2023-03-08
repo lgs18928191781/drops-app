@@ -5,18 +5,19 @@
 }
 
 #phone-menu-btn {
-    width: 30px;
-    height: 30px;
-    min-width: 30px;
-    min-height: 30px;
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    min-height: 24px;
     cursor: pointer;
 }
 
 .dived {
     height: 20px;
-    width: 1px;
+    width: 1PX;
+    min-width: 1PX;
     background: var(--divid-color);
-    margin: 0 15px;
+    margin: 0 5px;
 }
 
 @media only screen and (max-width: 1110PX) {

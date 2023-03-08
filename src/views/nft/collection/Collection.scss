@@ -294,8 +294,22 @@
         }
 
         .screen {
+            --input-height: 50px;
+
             .el-select {
                 width: 120PX;
+            }
+
+            .display {
+                margin-left: 10px;
+
+                a {
+                    height: 50px;
+                    padding: 0 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
             }
         }
 
