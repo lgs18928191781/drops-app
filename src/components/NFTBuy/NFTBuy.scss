@@ -155,3 +155,39 @@
         }
     }
 }
+
+.pay-list {
+    .pay-item {
+        padding: 15px;
+        cursor: pointer;
+        border-radius: var(--rounded);
+
+        &:hover {
+            background: rgba(var(--color-primaryRgb), 0.3);
+        }
+
+        .logo {
+            width: 30px;
+            height: 30px;
+            margin-right: 12px;
+        }
+
+        .check {
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            background: var(--color-primary);
+
+            .icon {
+                width: 10px;
+                height: 10px;
+
+                :deep(use) {
+                    stroke-width: 2px;
+                    stroke: var(--themeBtnTextColor);
+                    fill: var(--themeBtnTextColor);
+                }
+            }
+        }
+    }
+}

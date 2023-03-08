@@ -761,7 +761,8 @@
     "CollectionChart": {
       "title": "Sales",
       "yAxisTitle": "Price（Space）"
-    }
+    },
+    "Select Payment Method": "Select Payment Method"
   },
   "My NFT": "My NFT",
   "Done": "Done",

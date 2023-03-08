@@ -1709,3 +1709,31 @@ export function getAccountUserInfo(account: string) {
     }
   })
 }
+
+export function getBalance(params: { chain: Chains }) {
+  return new Promise<number>(async (resolve, reject) => {
+    const userStore = useUserStore()
+    const isBtLink = params.chain === Chains.BSV || params.chain === Chains.MVC
+    const isETHChain = params.chain === Chains.ETH || params.chain === Chains.Goerli
+    const isPOLYGONChain = params.chain === Chains.POLYGON || params.chain === Chains.MUMBAI
+    const _params: any = {}
+    _params.address = isBtLink ? userStore.user!.address : userStore.user!.evmAddress
+    _params.chain = isBtLink
+      ? params.chain
+      : isETHChain
+      ? import.meta.env.VITE_ETH_CHAIN
+      : import.meta.env.VITE_POLYGON_CHAIN
+    if (isBtLink) {
+      _params.xpub = userStore.showWallet.wallet?.wallet.xpubkey.toString()
+    }
+
+    if (!isBtLink && !userStore.user?.evmAddress) {
+      resolve(0)
+    } else {
+      const res = await GetBalance(_params)
+      if (res?.code === 0) {
+        resolve(res.data.balance)
+      }
+    }
+  })
+}

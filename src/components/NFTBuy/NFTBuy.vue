@@ -1,5 +1,5 @@
 <template>
-  <Modal :model-value="modelValue">
+  <Modal :model-value="modelValue" v-model:show-second-control="isShowPayList">
     <template #title>
       {{ $t('NFT.Order Information') }}
     </template>
@@ -90,7 +90,29 @@
       </ElSkeleton>
     </template>
 
-    <template #secondBody> </template>
+    <template #secondTitle>
+      {{ $t('NFT.Select Payment Method') }}
+    </template>
+    <template #secondBody>
+      <div class="pay-list">
+        <div
+          class="pay-item flex flex-align-center"
+          v-for="(item, index) in payPlatformList"
+          :key="index"
+        >
+          <div class="flex1 flex flex-align-center">
+            <img class="logo" :src="item.icon" />
+            <span class="name">{{ item.name() }}</span>
+          </div>
+          <span
+            class="check flex flex-align-center flex-pack-center"
+            v-if="item.platform === currentPayPlatform"
+          >
+            <Icon name="check" />
+          </span>
+        </div>
+      </div>
+    </template>
   </Modal>
 
   <!-- <ElDialog
@@ -182,6 +204,8 @@ const nftFee: { val: NFTFeeInfo | null } = reactive({ val: null })
 const isSkeleton = ref(true)
 const buying = ref(false)
 const isShowSuccess = ref(false)
+const isShowPayList = ref(true)
+const isEnough = ref(true)
 
 function choosePayPlatform(item: PayPlatformItem) {
   if (item.disabled()) return
@@ -372,6 +396,12 @@ function emitSuccess() {
     nftOwnerAvatarImage: userStore.user!.avatarImage,
     nftOwnerMetaId: userStore.user!.metaId,
     nftOwnerName: userStore.user!.name,
+  })
+}
+
+function checkIsEnough() {
+  return new Promise(async (resolve, reject) => {
+    // const res = await()
   })
 }
 
