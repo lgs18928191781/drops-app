@@ -89,6 +89,8 @@
         />
       </ElSkeleton>
     </template>
+
+    <template #secondBody> </template>
   </Modal>
 
   <!-- <ElDialog
