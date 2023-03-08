@@ -50,7 +50,6 @@ const rootStore = useRootStore()
 const userStore = useUserStore()
 const route = useRoute()
 const blackRoute = reactive(['home'])
-alert('hi')
 
 const routeKey = (route: any) => {
   if (route.params.communityId) return route.params.communityId
