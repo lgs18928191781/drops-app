@@ -28,7 +28,7 @@
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 const promptEvent: { val: Event | null } = reactive({ val: null })
-const isShow = ref(false)
+const isShow = ref(true)
 
 const i18n = useI18n()
 onMounted(() => {
