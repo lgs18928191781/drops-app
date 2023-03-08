@@ -5,7 +5,7 @@
         <div class="title">{{ $t('PWA.title') }}</div>
       </div>
       <a class="close main-border flex flex-align-center flex-pack-center">
-        <Icon name="x_mark" @click="isShow = false" />
+        <Icon name="x_mark" @click="close" />
       </a>
     </div>
     <div class="content flex">
@@ -18,7 +18,7 @@
     </div>
 
     <div class="operate flex flex-pack-end">
-      <a class="main-border" @click="isShow = false">{{ $t('Cancel') }}</a>
+      <a class="main-border" @click="close">{{ $t('Cancel') }}</a>
       <a class="main-border" @click="install">{{ $t('PWA.Install') }}</a>
     </div>
   </div>
@@ -54,7 +54,24 @@ onMounted(() => {
 
 function install() {
   // @ts-ignore
+  promptEvent.val.userChoice
+    .then(
+      function() {
+        promptEvent.val = null
+      },
+      (error: any) => {
+        ElMessage.error(error.message)
+      }
+    )
+    .catch((error: any) => {
+      ElMessage.error(error.message)
+    })
+  // @ts-ignore
   promptEvent.val?.prompt()
+  isShow.value = false
+}
+
+function close() {
   isShow.value = false
   promptEvent.val = null
 }
