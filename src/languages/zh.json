@@ -1011,5 +1011,11 @@
     "Change Emial Link": "更改绑定邮箱"
   },
   "OK": "确定",
-  "Not Found Node Name": "节点不存在"
+  "Not Found Node Name": "节点不存在",
+  "PWA": {
+    "title": "添加Show3到桌面",
+    "tips": "为了方便您访问，请问是否将Show3安装到设备本地？",
+    "Install": "安装",
+    "InstallSuccess": "安装成功"
+  }
 }

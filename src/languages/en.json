@@ -1012,5 +1012,11 @@
     "Change Emial Link": "Change Emial Link"
   },
   "OK": "OK",
-  "Not Found Node Name": "Not Found Node Name"
+  "Not Found Node Name": "Not Found Node Name",
+  "PWA": {
+    "title": "Add Show3 to the desktop",
+    "tips": "For your convenience of access, please ask if Show3 is installed locally on the device?",
+    "Install": "Install",
+    "InstallSuccess": "Install Success"
+  }
 }
