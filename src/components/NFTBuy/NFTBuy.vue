@@ -1,5 +1,97 @@
 <template>
-  <ElDialog
+  <Modal :model-value="modelValue">
+    <template #title>
+      {{ $t('NFT.Order Information') }}
+    </template>
+    <template #body>
+      <ElSkeleton :loading="isSkeleton" animated>
+        <div class="nft-buy">
+          <div class="msg flex">
+            <div class="cover-warp"><NFTCover :cover="[nft.nftIcon]" /></div>
+            <div class="content flex1">
+              <div class="name">{{ nft.nftName }}</div>
+              <div class="user-list">
+                <div class="user-item flex flex-align-center">
+                  <UserAvatar
+                    :meta-id="nft.nftIssueMetaId"
+                    :name="nft.nftIssuer"
+                    :image="nft.nftIssueAvatarImage"
+                    :meta-name="nft.nftIssueUserInfo.metaName"
+                  />
+                  <span class="username"
+                    ><UserName
+                      :name="nft.nftIssuer"
+                      :meta-name="nft.nftIssueUserInfo.metaName"
+                      :no-tag="true"
+                  /></span>
+                  <span class="role">({{ $t('NFT.Creater') }})</span>
+                </div>
+                <div class="user-item flex flex-align-center">
+                  <UserAvatar
+                    :meta-id="nft.nftOwnerMetaId"
+                    :name="nft.nftOwnerName"
+                    :image="nft.nftOwnerAvatarImage"
+                    :meta-name="nft.nftOwnerUserInfo.metaName"
+                  />
+                  <span class="username"
+                    ><UserName
+                      :name="nft.nftOwnerName"
+                      :meta-name="nft.nftOwnerUserInfo.metaName"
+                      :no-tag="true"
+                  /></span>
+                  <span class="role">({{ $t('NFT.Owner') }})</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="price-list">
+            <div class="price-item flex flex-alian-center">
+              <div class="label flex1">{{ $t('NFT.Price') }}</div>
+              <div class="value">{{ $filters.space(nft.nftPrice) }} Space</div>
+            </div>
+            <div class="price-item flex flex-alian-center">
+              <div class="label flex1">
+                {{ $t('NFT.Platform Fee') }}<span class="rate">({{ platformFeeRate }}%)</span>
+              </div>
+              <div class="value">{{ platformFee }} Space</div>
+            </div>
+            <div class="price-item flex flex-alian-center">
+              <div class="label flex1">
+                {{ $t('NFT.Royalties') }}<span class="rate">({{ royalyFeeRate }}%)</span>
+              </div>
+              <div class="value">{{ royalyFee }} Space</div>
+            </div>
+          </div>
+
+          <div class="total-price flex flex-align-center">
+            <span class="label flex1">{{ $t('NFT.Total') }}</span>
+            <span class="value">{{ totalPrice }} Space</span>
+          </div>
+
+          <a
+            class="operate main-border primary flex flex-align-center flex-pack-center"
+            @click="confirmBuy"
+            v-loading="buying"
+          >
+            {{ $t('NFT.Confirm Payment') }}
+          </a>
+        </div>
+
+        <StartPayVue
+          v-model="isShowPayModal"
+          :payPlatform="currentPayPlatform"
+          :product_type="product_type"
+          :order-id="payMsg.orderId"
+          :amount="payMsg.amount"
+          :url="payMsg.url"
+          @success="onPaySuccess"
+        />
+      </ElSkeleton>
+    </template>
+  </Modal>
+
+  <!-- <ElDialog
     :model-value="modelValue"
     class="sm none-padding"
     :close-on-click-modal="false"
@@ -8,91 +100,7 @@
     :show-close="buying ? false : true"
     center
   >
-    <ElSkeleton :loading="isSkeleton" animated>
-      <div class="nft-buy">
-        <div class="msg flex">
-          <div class="cover-warp"><NFTCover :cover="[nft.nftIcon]" /></div>
-          <div class="content flex1">
-            <div class="name">{{ nft.nftName }}</div>
-            <div class="user-list">
-              <div class="user-item flex flex-align-center">
-                <UserAvatar
-                  :meta-id="nft.nftIssueMetaId"
-                  :name="nft.nftIssuer"
-                  :image="nft.nftIssueAvatarImage"
-                  :meta-name="nft.nftIssueUserInfo.metaName"
-                />
-                <span class="username"
-                  ><UserName
-                    :name="nft.nftIssuer"
-                    :meta-name="nft.nftIssueUserInfo.metaName"
-                    :no-tag="true"
-                /></span>
-                <span class="role">({{ $t('NFT.Creater') }})</span>
-              </div>
-              <div class="user-item flex flex-align-center">
-                <UserAvatar
-                  :meta-id="nft.nftOwnerMetaId"
-                  :name="nft.nftOwnerName"
-                  :image="nft.nftOwnerAvatarImage"
-                  :meta-name="nft.nftOwnerUserInfo.metaName"
-                />
-                <span class="username"
-                  ><UserName
-                    :name="nft.nftOwnerName"
-                    :meta-name="nft.nftOwnerUserInfo.metaName"
-                    :no-tag="true"
-                /></span>
-                <span class="role">({{ $t('NFT.Owner') }})</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="price-list">
-          <div class="price-item flex flex-alian-center">
-            <div class="label flex1">{{ $t('NFT.Price') }}</div>
-            <div class="value">{{ $filters.space(nft.nftPrice) }} Space</div>
-          </div>
-          <div class="price-item flex flex-alian-center">
-            <div class="label flex1">
-              {{ $t('NFT.Platform Fee') }}<span class="rate">({{ platformFeeRate }}%)</span>
-            </div>
-            <div class="value">{{ platformFee }} Space</div>
-          </div>
-          <div class="price-item flex flex-alian-center">
-            <div class="label flex1">
-              {{ $t('NFT.Royalties') }}<span class="rate">({{ royalyFeeRate }}%)</span>
-            </div>
-            <div class="value">{{ royalyFee }} Space</div>
-          </div>
-        </div>
-
-        <div class="total-price flex flex-align-center">
-          <span class="label flex1">{{ $t('NFT.Total') }}</span>
-          <span class="value">{{ totalPrice }} Space</span>
-        </div>
-
-        <a
-          class="operate main-border primary flex flex-align-center flex-pack-center"
-          @click="confirmBuy"
-          v-loading="buying"
-        >
-          {{ $t('NFT.Confirm Payment') }}
-        </a>
-      </div>
-
-      <StartPayVue
-        v-model="isShowPayModal"
-        :payPlatform="currentPayPlatform"
-        :product_type="product_type"
-        :order-id="payMsg.orderId"
-        :amount="payMsg.amount"
-        :url="payMsg.url"
-        @success="onPaySuccess"
-      />
-    </ElSkeleton>
-  </ElDialog>
+  </ElDialog> -->
 
   <ElDialog
     v-model="isShowSuccess"
@@ -142,6 +150,7 @@ import { ElMessage } from 'element-plus'
 import Decimal from 'decimal.js-light'
 import { GetGenesisFee, GetNFTFee, NFTFeeInfo } from '@/api/strapi'
 import NFTCover from '../NFTCover/NFTCover.vue'
+import Modal from '@/components/Modal/Modal.vue'
 
 const props = defineProps<{
   modelValue: boolean
