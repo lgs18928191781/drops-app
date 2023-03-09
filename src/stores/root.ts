@@ -42,6 +42,7 @@ export const isAndroid = !!(UA && UA.indexOf('android') > 0)
 export const isIOS = !!(UA && /iphone|ipad|ipod|ios/.test(UA))
 export const isWechat = !!(UA && /micromessenger/.test(UA))
 export const isApp = !!window.appMetaIdJsV2
+export const isSafari = !!(UA && /safari/.test(UA) && !/chrome/.test(UA))
 export const isIosApp = isIOS && isApp
 export const isAndroidApp = isApp && isAndroid
 export const emptySignBaseInfo = {
