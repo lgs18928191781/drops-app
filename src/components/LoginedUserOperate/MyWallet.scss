@@ -199,7 +199,7 @@
                 &:last-child {
                     margin-bottom: 0;
                 }
-
+               
 
                 .icon {
                     border-radius: 50%;
@@ -235,7 +235,14 @@
 
                 .value {
                     text-align: right;
-
+                     .bindBtn{
+                   
+                   a{
+                    display: inline-block;
+                    cursor: pointer;
+                    padding:4px 5px;
+                   }
+                }
                     .statosis {}
 
                     .usd {

@@ -992,6 +992,7 @@
   "allowUpdate": "It is detected that your account needs to be upgraded, canceling the upgrade may affect other subsequent wallet logins, please confirm! \n (Special reminder: 1. If your previously registered account is registered and bound through 'WalletConnect', please use 'WalletConnect' to upgrade \n;2. If your account is registered and bound through the web client 'MetaMask', please use the web client 'MetaMask' wallet to perform the upgrade operation, otherwise the account upgrade will fail)",
   "updateRemind": "Upgrade Tips",
   "inputMetaNameSensitiveWords": "Sensitive words are not supported",
+  "binding": "Binding",
   "Contains unsupported characters": "Contains unsupported characters. ",
   "LinkAccount": {
     "Wallets": "Wallets",
@@ -1012,5 +1013,33 @@
     "Change Emial Link": "Change Emial Link"
   },
   "OK": "OK",
-  "Not Found Node Name": "Not Found Node Name"
+  "bindingSuccess": "The binding is successful!",
+  "Not Found Node Name": "Not Found Node Name",
+  "PWA": {
+    "title": "Add Show3 to Home Screen",
+    "tips": "Installing Show3 uses almost no storage and provides you a better experience.",
+    "Install": "Install",
+    "InstallSuccess": "Install Success",
+    "Finished": "Finished",
+    "DontAsk": "Don't ask again",
+    "steps": {
+      "title": "How to install Show3:",
+      "safari": {
+        "step1": "1. Make sure you are using Safari.",
+        "step2": "2. Click the",
+        "button": "button.",
+        "step3": "3. Click \"Add to Home Screen\".",
+        "step4": "4. Click \"Add\"."
+      },
+      "others": {
+        "step1": "1. Make sure your are using default browser or Chrome.",
+        "click": "2. Click",
+        "button": "button.",
+        "or": "or",
+        "step3": "3. Click \"Add to Home Screen\"."
+      }
+    }
+  },
+  "wallethasBinding": "The wallet address has already been bound by other MetaID accounts and cannot be bound repeatedly",
+  "binding_now": "Binding..."
 }

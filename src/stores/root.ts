@@ -21,6 +21,11 @@ interface RootState {
   isCertedMetaIds: string[]
   currentPrice: ToCurrency
   theme: 'light' | 'dark'
+  showLoginBindEvmAccount: {
+    isUpdatePlan: boolean
+    loginedButBind: boolean
+    bindEvmChain: string
+  }
   chainWhiteList: Array<string>
   updatePlanRes: {
     registerTime: number
@@ -37,6 +42,7 @@ export const isAndroid = !!(UA && UA.indexOf('android') > 0)
 export const isIOS = !!(UA && /iphone|ipad|ipod|ios/.test(UA))
 export const isWechat = !!(UA && /micromessenger/.test(UA))
 export const isApp = !!window.appMetaIdJsV2
+export const isSafari = !!(UA && /safari/.test(UA) && !/chrome/.test(UA))
 export const isIosApp = isIOS && isApp
 export const isAndroidApp = isApp && isAndroid
 export const emptySignBaseInfo = {
@@ -72,6 +78,11 @@ export const useRootStore = defineStore('root', {
       isGetedExchangeRate: false,
       isShowLogin: false,
       isShowMetaMak: false,
+      showLoginBindEvmAccount: {
+        isUpdatePlan: false,
+        loginedButBind: false,
+        bindEvmChain: '',
+      },
       currentPrice: initCurrentPrice,
       theme,
       chainWhiteList: import.meta.env.MODE == 'gray' ? ['0x5', '0x13881'] : ['0x1', '0x89'],
@@ -97,6 +108,13 @@ export const useRootStore = defineStore('root', {
       state.exchangeRate.find(item => item.symbol === state.currentPrice),
   },
   actions: {
+    updateShowLoginBindEvmAccount(payload: {
+      isUpdatePlan: boolean
+      loginedButBind: boolean
+      bindEvmChain: string
+    }) {
+      this.showLoginBindEvmAccount = payload
+    },
     updateAccountPlan(payload: { registerTime: number; signHash: string } | null) {
       this.updatePlanRes = payload
     },

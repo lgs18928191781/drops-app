@@ -424,9 +424,13 @@ async function onThreePartLinkSuccess(params: {
             if (params.walletOrigin == WalletOrigin.WalletConnect) {
               connectWalletConnect(true)
             } else {
-              MetaMaskRef.value.startConnect(true)
+              rootStore.updateShowLoginBindEvmAccount({
+                isUpdatePlan: true,
+                loginedButBind: false,
+                bindEvmChain: '',
+              })
+              MetaMaskRef.value.startConnect()
             }
-
             rootStore.$patch({ isShowMetaMak: false })
           })
         } else {

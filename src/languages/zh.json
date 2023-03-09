@@ -332,12 +332,12 @@
     "notAnyWallet": "(我没任何钱包)",
     "havedAnyWallet": "(我已有MetaID钱包)",
     "connectMetaIdWallet": "连接MetaID钱包",
-    "changePhoneNumber": "切换手机号",
+    "changePhoneNumber": "使用手机号",
     "policy": "我已阅读并同意",
     "policy1": "《用户协议》",
     "policy2": "和",
     "policy3": "《隐私政策》",
-    "changeEmailAddress": "切换邮箱地址",
+    "changeEmailAddress": "使用邮箱",
     "pleaseAggrePolicy": "请先勾选",
     "registerMetaIdWallet": "注册MetaID钱包",
     "registerSetPassword": "设置账户密码",
@@ -991,6 +991,7 @@
   "allowUpdate": "检测到你的账号需要升级,取消升级可能会影响后续其他钱包登录,请确认! \n (特别提醒：1.如果您之前注册的账户是通过'WalletConnect'注册绑定的，请使用'WalletConnect'进行升级；2.如果您的账户是通过Web客户端'MetaMask'注册绑定的，请使用Web客户端‘MetaMask’钱包进行升级操作,否则会导致账户升级失败)",
   "confirmUpdate": "确认升级",
   "inputMetaNameSensitiveWords": "不支持注册敏感词",
+  "binding": "绑定",
   "Contains unsupported characters": "包含不支持的字符",
   "LinkAccount": {
     "Wallets": "钱包",
@@ -1011,5 +1012,33 @@
     "Change Emial Link": "更改绑定邮箱"
   },
   "OK": "确定",
-  "Not Found Node Name": "节点不存在"
+  "bindingSuccess": "绑定成功！",
+  "Not Found Node Name": "节点不存在",
+  "PWA": {
+    "title": "添加 Show3 到桌面",
+    "tips": "安装 Show3 不占用空间，为您提供更好的使用体验。",
+    "Install": "安装",
+    "InstallSuccess": "安装成功",
+    "Finished": "我已安装",
+    "DontAsk": "不再提示",
+    "steps": {
+      "title": "安装方法",
+      "safari": {
+        "step1": "1. 使用Safari浏览器打开本网站",
+        "step2": "2. 点击下方的",
+        "button": "按钮",
+        "step3": "3. 点击“添加到主屏幕”",
+        "step4": "4. 点击右上角的“添加”"
+      },
+      "others": {
+        "step1": "1. 使用系统默认浏览器或Chrome浏览器打开本网站",
+        "click": "2. 点击",
+        "button": "按钮",
+        "or": "或",
+        "step3": "3. 点击“添加到主屏幕”"
+      }
+    }
+  },
+  "wallethasBinding": "钱包地址已经被其他MetaID账号绑定,无法重复绑定",
+  "binding_now": "绑定中..."
 }

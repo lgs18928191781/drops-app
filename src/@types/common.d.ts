@@ -45,6 +45,7 @@ declare interface UserInfo {
 
 declare interface SetUserInfo extends UserInfo {
   password?: string
+  chainId?: string
 }
 
 declare interface TabItem {

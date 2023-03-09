@@ -1,7 +1,12 @@
 <template>
   <div class="flex items-center gap-x-1">
     <div
-      :class="[textClass, colorful && colors, 'font-medium  max-w-[140PX] truncate']"
+      :class="[
+        textClass,
+        colorful && colors,
+        'font-medium  max-w-[140PX] truncate',
+        isSafari && 'text-clip',
+      ]"
       :title="nameWithoutSuffix"
       v-html="nameWithoutSuffix"
     ></div>
@@ -15,7 +20,7 @@ import { computed } from 'vue'
 import { emoji } from '@/utils/reg'
 
 import MetaNameTag from '@/components/MetaName/Tag.vue'
-import { deepCopy } from '@ethersproject/properties'
+import { isSafari } from '@/stores/root'
 
 const props = defineProps(['name', 'textClass', 'colorful', 'noTag'])
 

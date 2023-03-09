@@ -29,6 +29,7 @@
   <SearchModal />
   <ConnectWalletModalVue />
   <!-- <UserCardFloater /> -->
+  <PWA />
 </template>
 
 <script setup lang="ts">
@@ -42,6 +43,7 @@ import ConnectWalletModalVue from './components/ConnectWalletModal/ConnectWallet
 import LeftNavigationVue from './components/LeftNavigation/LeftNavigation.vue'
 import DragonBall from './views/talk/components/DragonBall.vue'
 import SearchModal from './components/Search/Index.vue'
+import PWA from './components/PWA/PWA.vue'
 import UserCardFloater from './components/UserCard/Floater.vue'
 
 const rootStore = useRootStore()

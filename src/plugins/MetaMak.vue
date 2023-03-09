@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from 'vue';
+import { computed, reactive, ref, watch ,watchEffect} from 'vue';
 import { useI18n } from 'vue-i18n';
 // @ts-ignore
 import Wallet, { MetaMaskEthereumProvider } from './utils/wallet'
@@ -61,7 +61,7 @@ interface Props {
     modelValue: boolean
 }
 const props = withDefaults(defineProps<Props>(), {})
-const emit = defineEmits(['update:modelValue', 'success', 'logout'])
+const emit = defineEmits(['update:modelValue', 'success', 'logout','bindEvmAccount'])
 defineExpose({
     ethPersonalSignSign,
     startConnect
@@ -124,8 +124,6 @@ const ethAddressHash = ref('')
 const userInfo: { val: any } = reactive({ val: null })
 let provider: null | MetaMaskEthereumProvider = null
 const root = useRootStore()
-
-
 const password = computed(() => {
     let pw = ''
     if (props.password) {
@@ -136,8 +134,13 @@ const password = computed(() => {
     return pw
 })
 
-watch(() => props.modelValue, async () => {
+// watchEffect(() => {
+//     if (props.modelValue) {
+//           startConnect()
+//     }
+// })
 
+watch(() => props.modelValue, async () => {
     if (props.modelValue) {
         startConnect()
     }
@@ -164,10 +167,11 @@ const dialogTitle = computed(() => {
     }
 })
 
-async function startConnect(isUpdatePlan:boolean=false) {
-    try {
+async function startConnect() {
+    const { isUpdatePlan, loginedButBind, bindEvmChain } = root.showLoginBindEvmAccount
 
-        const res = await Wallet.connect()
+    try {
+        const res=await Wallet.connect()
         if (res) {
             // console.log("currentSupportChain", import.meta.env.VITE_ETH_CHAIN)
             // const chainWhiteList = currentSupportChain.filter((item) => {
@@ -194,8 +198,10 @@ async function startConnect(isUpdatePlan:boolean=false) {
                     //ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).split('0x')[1].toLocaleUpperCase()
                     message:message
                 })
-
-                if (result) {
+                if (result && loginedButBind) {
+                     emit('bindEvmAccount',{ signAddressHash:result, address: address,chainId:bindEvmChain});
+                }
+                if (result && !loginedButBind) {
                     emit('success',{ signAddressHash:result, address: address});
                 }
             } else {

@@ -19,3 +19,20 @@
         margin-top: -10px;
     }
 }
+
+@media screen and (max-width:750PX) {
+    .logo {
+        .logo-icon {
+            width: 30px;
+            height: 30px;
+        }
+
+        .logo-text {
+            width: 80px;
+        }
+
+        .version {
+            margin-top: -15px;
+        }
+    }
+}
