@@ -1,7 +1,13 @@
+@import '@/assets/styles/var.scss';
+
 .control {
     display: flex;
     justify-content: space-around;
     margin-top: 18px;
+
+    .flex1 {
+        margin-right: 10px;
+    }
 
     .more {
         cursor: pointer;
@@ -18,6 +24,7 @@
         color: #BFC2CC;
         font-size: 12px;
         margin-left: 18px;
+        @extend %text-ellipsis;
 
         &:hover {
             color: rgb(85, 134, 187);

@@ -130,7 +130,12 @@ export const useUserStore = defineStore('user', {
         const talkStore = useTalkStore()
         const rootStore = useRootStore()
         const genesStore = useGenesisStore()
+
+        // 只保存pwaInstall状态
+        const pwaInstall = localStorage.getItem('pwaInstall')
         localStorage.clear()
+        if (pwaInstall) localStorage.setItem('pwaInstall', pwaInstall)
+
         if (rootStore.updatePlanRes) rootStore.updateAccountPlan(null)
         if (rootStore.isShowLogin) rootStore.$patch({ isShowLogin: false })
         if (window.provider) window.provider = undefined
@@ -138,6 +143,11 @@ export const useUserStore = defineStore('user', {
         // localStorage.removeItem(encode('password'))
         // localStorage.removeItem('walletconnect')
         try {
+          rootStore.updateShowLoginBindEvmAccount({
+            isUpdatePlan: false,
+            loginedButBind: false,
+            bindEvmChain: '',
+          })
           this.user = null
           this.password = null
         } catch {}
@@ -176,6 +186,7 @@ export const useUserStore = defineStore('user', {
 
         try {
           this.user = data
+          console.log('this.uesr', this.user)
         } catch {}
 
         const genesisStore = useGenesisStore()

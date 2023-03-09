@@ -118,7 +118,7 @@
               </template>
 
               <ElRow
-                :gutter="22"
+                :gutter="gutter"
                 class="nft-list flex1"
                 v-infinite-scroll="getMore"
                 :infinite-scroll-immediate="false"
@@ -204,6 +204,7 @@ enum NFTCollectTab {
 }
 const scrrentWarpOffsetTop = ref(0)
 const filterWarpOffsetTop = ref(0)
+const gutter = window.innerWidth > 750 ? 22 : 10
 const tabs = [
   {
     name: () => i18n.t('NFT.Collection works'),

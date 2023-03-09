@@ -40,8 +40,10 @@ $themeTextColor: var(--themeTextColor);
     --header-height: 60PX;
     --divid-color: #F4F7F9;
     --input-height: 56px;
-    --sm-conetnt-width: 600PX;
-    --nft-topbar-height: 108px // --nft-topbar-height: 0px
+    --sm-content-width: 600PX;
+    --nft-topbar-height: 108px; // --nft-topbar-height: 0px
+    --padding-normal: 18px;
+    --padding-lg: 30px;
 }
 
 html.dark {

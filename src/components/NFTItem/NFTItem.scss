@@ -4,7 +4,6 @@
     border: 2px solid var(--themeTextColor);
     padding: 18px;
     border-radius: var(--rounded);
-    margin-bottom: 22px;
     cursor: pointer;
 
     :deep(.nft-cover) {
@@ -101,3 +100,5 @@
         width: 100%;
     }
 }
+
+@media screen and (max-width:750PX) {}

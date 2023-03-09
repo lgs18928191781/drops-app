@@ -1,10 +1,10 @@
 .lang-item {
-    padding: 10px 30px;
+    padding: 10px var(--padding-lg);
 }
 
 
 .nav-item {
-    padding: 15px 30px;
+    padding: 15px var(--padding-lg);
 }
 
 .el-carousel {
@@ -91,8 +91,10 @@
                 margin-right: 60px;
             }
 
+
+
             .wallet-btn {
-                padding: 16px 33px;
+                padding: 10px var(--padding-normal);
                 font-size: 16px;
                 line-height: 24px;
                 cursor: pointer;
@@ -110,7 +112,7 @@
             .option-groud {
                 .lang-wrap {
                     margin-right: 15px;
-                    margin-left: 30px;
+                    margin-left: 15px;
                 }
             }
         }
@@ -148,10 +150,18 @@
                     color: var(--themeBtnTextColor);
 
                     .title {
-                        font-size: 54px;
+                        /* prettier-ignore-start */
+                        font-size: 40PX;
                         font-weight: bold;
-                        line-height: 81px;
+                        line-height: 1.5;
                         white-space: pre-line;
+
+                        @media (min-width:768PX) {
+                            font-size: 54PX;
+                        }
+
+                        /* prettier-ignore-end */
+
                     }
 
                     .desc {
@@ -319,10 +329,14 @@
             overflow: hidden;
 
             .title {
-                font-size: 54px;
+                font-size: 40PX;
                 font-weight: bold;
                 text-align: center;
                 color: var(--themeBtnTextColor);
+
+                @media (min-width:768PX) {
+                    font-size: 54PX;
+                }
             }
 
             .drsc {
@@ -546,14 +560,19 @@
                 color: var(--themeBtnTextColor);
 
                 span:nth-child(1) {
-                    font-size: 54px;
+                    font-size: 40PX;
                     font-weight: bold;
+                    margin-bottom: 10PX;
                 }
 
                 span:nth-child(2) {
-                    font-size: 30px;
-                    line-height: 48px;
+                    font-size: 20PX;
+                    line-height: 1.6;
                     color: #606266;
+
+                    @media (min-width:768PX) {
+                        font-size: 30PX;
+                    }
                 }
             }
 
@@ -562,6 +581,11 @@
                 display: flex;
                 flex-direction: row;
                 align-items: center;
+
+                .metaso-img {
+                    width: 100%;
+                    object-fit: contain;
+                }
 
                 .right {
                     margin-left: 50px;
@@ -678,6 +702,14 @@
                 }
 
             }
+
+            @media only screen and (max-width: 750px) {
+                .item {
+                    width: 40px;
+                    height: 40px;
+                    margin-right: 20px;
+                }
+            }
         }
     }
 
@@ -702,6 +734,13 @@
     @media screen and (max-width:750px) {
         .footer {}
     }
+
+    @media only screen and (max-width: 750px) {
+        .footer {
+            height: 100px;
+        }
+    }
+
 }
 
 
@@ -719,6 +758,6 @@
 
 @media only screen and (max-width: 1200px) {
     .container {
-        padding: 0 30px;
+        padding: 0 var(--padding-normal);
     }
 }
