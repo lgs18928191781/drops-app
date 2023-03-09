@@ -48,7 +48,7 @@
           <div class="price-list">
             <div class="price-item flex flex-alian-center">
               <div class="label flex1">{{ $t('NFT.Price') }}</div>
-              <div class="value">{{ $filters.space(nft.nftPrice) }} Space</div>
+              <div class="value">{{ nftPrice }} Space</div>
             </div>
             <div class="price-item flex flex-alian-center">
               <div class="label flex1">
@@ -159,7 +159,15 @@
 </template>
 
 <script setup lang="ts">
-import { NodeName, PayPlatform, PayType, SdkPayType, ToCurrency, NFTSellState } from '@/enum'
+import {
+  NodeName,
+  PayPlatform,
+  PayType,
+  SdkPayType,
+  ToCurrency,
+  NFTSellState,
+  Chains,
+} from '@/enum'
 import { isAndroid, isApp, isIOS, isIosApp, useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
 import { computed, reactive, Ref, ref, watch } from 'vue'
@@ -167,7 +175,7 @@ import { useI18n } from 'vue-i18n'
 import NFTMsgVue from '../NFTMsg/NFTMsg.vue'
 import { PayPlatformItem, payPlatformList } from '@/config'
 import PayTypeDropdownVue from '../PayTypeDropdown/PayTypeDropdown.vue'
-import { CreatePayOrder, setPayQuitUrl } from '@/utils/util'
+import { CreatePayOrder, getBalance, getCurrencyAmount, setPayQuitUrl } from '@/utils/util'
 import { useRoute, useRouter } from 'vue-router'
 import StartPayVue from '../StartPay/StartPay.vue'
 import { ElMessage } from 'element-plus'
@@ -175,6 +183,7 @@ import Decimal from 'decimal.js-light'
 import { GetGenesisFee, GetNFTFee, NFTFeeInfo } from '@/api/strapi'
 import NFTCover from '../NFTCover/NFTCover.vue'
 import Modal from '@/components/Modal/Modal.vue'
+import { space } from '@/utils/filters'
 
 const props = defineProps<{
   modelValue: boolean
@@ -206,6 +215,23 @@ const buying = ref(false)
 const isShowSuccess = ref(false)
 const isShowPayList = ref(true)
 const isEnough = ref(true)
+const payPlatformChain = {
+  [PayPlatform.BSV]: Chains.BSV,
+  [PayPlatform.ETH]: Chains.ETH,
+  [PayPlatform.POLYGON]: Chains.ETH,
+}
+const payPlatformToCurrency = {
+  [PayPlatform.BSV]: ToCurrency.BSV,
+  [PayPlatform.ETH]: ToCurrency.ETH,
+  [PayPlatform.POLYGON]: ToCurrency.POLYGON,
+  [PayPlatform.AliPay]: ToCurrency.CNY,
+  [PayPlatform.AliPaySelf]: ToCurrency.CNY,
+  [PayPlatform.BalancePay]: ToCurrency.CNY,
+  [PayPlatform.QuickPay]: ToCurrency.CNY,
+  [PayPlatform.SPACE]: ToCurrency.MVC,
+  [PayPlatform.UnionPay]: ToCurrency.CNY,
+  [PayPlatform.WechatPay]: ToCurrency.CNY,
+}
 
 function choosePayPlatform(item: PayPlatformItem) {
   if (item.disabled()) return
@@ -293,6 +319,14 @@ async function confirmBuy() {
   }
 }
 
+const nftPrice = computed(() => {
+  return getCurrencyAmount(
+    space(props.nft.nftPrice),
+    ToCurrency.MVC,
+    payPlatformToCurrency[currentPayPlatform.value]
+  )
+})
+
 const platformFeeRate = computed(() => {
   let rate = 0
   if (nftFee.val) {
@@ -314,11 +348,16 @@ const royalyFeeRate = computed(() => {
 const platformFee = computed(() => {
   let fee = 0
   if (nftFee.val) {
-    fee = new Decimal(props.nft.nftPrice)
+    const spaceFee = new Decimal(space(props.nft.nftPrice))
       .mul(platformFeeRate.value / 100)
       .toInteger()
-      .div(Math.pow(10, 8))
       .toNumber()
+
+    fee = getCurrencyAmount(
+      spaceFee,
+      ToCurrency.MVC,
+      payPlatformToCurrency[currentPayPlatform.value]
+    )
   }
   return fee
 })
@@ -326,11 +365,16 @@ const platformFee = computed(() => {
 const royalyFee = computed(() => {
   let fee = 0
   if (nftFee.val) {
-    fee = new Decimal(props.nft.nftPrice)
+    const spaceFee = new Decimal(space(props.nft.nftPrice))
       .mul(royalyFeeRate.value / 100)
       .toInteger()
-      .div(Math.pow(10, 8))
       .toNumber()
+
+    fee = getCurrencyAmount(
+      spaceFee,
+      ToCurrency.MVC,
+      payPlatformToCurrency[currentPayPlatform.value]
+    )
   }
   return fee
 })
@@ -400,8 +444,23 @@ function emitSuccess() {
 }
 
 function checkIsEnough() {
-  return new Promise(async (resolve, reject) => {
-    // const res = await()
+  return new Promise<void>(async (resolve, reject) => {
+    // @ts-ignore
+    if (payPlatformChain[currentPayPlatform.value]) {
+      // @ts-ignore
+      const res = await getBalance({ chain: payPlatformChain[currentPayPlatform.value] })
+      if (res) {
+        if (res < totalPrice.value) {
+          ElMessage.error(i18n.t('NFT.Insufficient Balance'))
+          reject()
+        } else {
+          resolve()
+        }
+      }
+    } else {
+      isEnough.value = true
+      resolve()
+    }
   })
 }
 
