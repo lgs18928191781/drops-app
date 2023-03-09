@@ -130,7 +130,12 @@ export const useUserStore = defineStore('user', {
         const talkStore = useTalkStore()
         const rootStore = useRootStore()
         const genesStore = useGenesisStore()
+
+        // 只保存pwaInstall状态
+        const pwaInstall = localStorage.getItem('pwaInstall')
         localStorage.clear()
+        if (pwaInstall) localStorage.setItem('pwaInstall', pwaInstall)
+
         if (rootStore.updatePlanRes) rootStore.updateAccountPlan(null)
         if (rootStore.isShowLogin) rootStore.$patch({ isShowLogin: false })
         if (window.provider) window.provider = undefined
