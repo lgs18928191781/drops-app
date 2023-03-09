@@ -31,6 +31,18 @@
             <div>{{ $t('PWA.steps.safari.step3') }}</div>
             <div>{{ $t('PWA.steps.safari.step4') }}</div>
           </template>
+
+          <template v-else>
+            <div>{{ $t('PWA.steps.others.step1') }}</div>
+            <div class="flex items-center gap-x-1">
+              {{ $t('PWA.steps.others.click') }}
+              <Icon name="arrow_up_on_square" class="text-blue-600 w-5 h-5" />
+              {{ $t('PWA.steps.others.or') }}
+              <Icon name="bars_3" class="text-blue-600 w-5 h-5" />
+              {{ $t('PWA.steps.others.button') }}
+            </div>
+            <div>{{ $t('PWA.steps.others.step3') }}</div>
+          </template>
         </div>
       </div>
 
@@ -77,15 +89,16 @@ enum InstallStatus {
 console.log({ isIOS })
 
 const i18n = useI18n()
+const hasPwaEvent = ref(false)
 const needsManualInstall = computed(() => {
-  return isIOS
-  const supportPwa = 'onbeforeinstallprompt' in window
-  return isIOS || !supportPwa
+  // const supportPwa = 'onbeforeinstallprompt' in window
+
+  return isIOS || !hasPwaEvent.value
 })
 
 onMounted(() => {
   // 以下环境直接禁用：微信、app
-  if (isWechat || isApp) {
+  if (isApp) {
     // 保存禁用状态
     const pwaInstall = localStorage.getItem('pwaInstall')
     if (pwaInstall) {
@@ -137,6 +150,7 @@ onMounted(() => {
     function(event) {
       // 监听到可安装事件，进行触发提醒用户
       event.preventDefault()
+      hasPwaEvent.value = true
       promptEvent.val = event
       // isShow.value = true
     },

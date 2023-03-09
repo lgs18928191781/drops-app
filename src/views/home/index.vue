@@ -149,7 +149,7 @@
             <span>{{ i18n.t('metaso-content') }}</span>
           </div>
           <div class="foot flex flex-align-start">
-            <img :src="MetaSo" alt="" class="flex1" />
+            <img :src="MetaSo" alt="" class="flex1 metaso-img" />
             <div class="right flex1">
               <span>{{ i18n.t('metaso-desc') }}</span>
               <div class="operate">

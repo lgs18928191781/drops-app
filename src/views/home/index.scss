@@ -150,10 +150,18 @@
                     color: var(--themeBtnTextColor);
 
                     .title {
-                        font-size: 54px;
+                        /* prettier-ignore-start */
+                        font-size: 40PX;
                         font-weight: bold;
-                        line-height: 81px;
+                        line-height: 1.5;
                         white-space: pre-line;
+
+                        @media (min-width:768PX) {
+                            font-size: 54PX;
+                        }
+
+                        /* prettier-ignore-end */
+
                     }
 
                     .desc {
@@ -321,10 +329,14 @@
             overflow: hidden;
 
             .title {
-                font-size: 54px;
+                font-size: 40PX;
                 font-weight: bold;
                 text-align: center;
                 color: var(--themeBtnTextColor);
+
+                @media (min-width:768PX) {
+                    font-size: 54PX;
+                }
             }
 
             .drsc {
@@ -548,14 +560,19 @@
                 color: var(--themeBtnTextColor);
 
                 span:nth-child(1) {
-                    font-size: 54px;
+                    font-size: 40PX;
                     font-weight: bold;
+                    margin-bottom: 10PX;
                 }
 
                 span:nth-child(2) {
-                    font-size: 30px;
-                    line-height: 48px;
+                    font-size: 20PX;
+                    line-height: 1.6;
                     color: #606266;
+
+                    @media (min-width:768PX) {
+                        font-size: 30PX;
+                    }
                 }
             }
 
@@ -564,6 +581,11 @@
                 display: flex;
                 flex-direction: row;
                 align-items: center;
+
+                .metaso-img {
+                    width: 100%;
+                    object-fit: contain;
+                }
 
                 .right {
                     margin-left: 50px;

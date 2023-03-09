@@ -1,9 +1,9 @@
 /* prettier-ignore-start */
 .pwa {
     position: fixed;
-    width: var(--sm-conetnt-width);
+    width: var(--sm-content-width);
     left: calc((100% - 90PX) / 2);
-    margin-left: calc(90PX - (var(--sm-conetnt-width) / 2));
+    margin-left: calc(90PX - (var(--sm-content-width) / 2));
     bottom: 30PX;
     border-radius: var(--rounded);
     padding: 18PX;

@@ -110,6 +110,7 @@ export default ({ mode, command }) => {
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'show3.svg'],
         devOptions: {
           enabled: true,
+          navigateFallbackAllowlist: [/^index.html$/],
         },
         manifest: {
           name: 'Show3',
