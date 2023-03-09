@@ -969,142 +969,217 @@ export function randomRange(min: number, max: number) {
 }
 
 export function getCurrencyAmount(
-  price: string | number,
+  price: string | number, // 最小单位
   currency: ToCurrency,
   toCurrency?: ToCurrency
 ) {
   const rootStore = useRootStore()
   if (!price) return 0
+  const ToCurrencyAmountFix = {
+    [ToCurrency.BSV]: 8,
+    [ToCurrency.CNY]: 2,
+    [ToCurrency.ETH]: 9,
+    [ToCurrency.MVC]: 8,
+    [ToCurrency.POLYGON]: 9,
+    [ToCurrency.USD]: 2,
+  }
+  const ToCurrencyAmounRate = {
+    [ToCurrency.BSV]: Math.pow(10, 8),
+    [ToCurrency.CNY]: 100,
+    [ToCurrency.ETH]: Math.pow(10, 9),
+    [ToCurrency.MVC]: Math.pow(10, 8),
+    [ToCurrency.POLYGON]: Math.pow(10, 9),
+    [ToCurrency.USD]: 100,
+  }
   if (!toCurrency) {
     toCurrency = rootStore.currentPrice
   }
-  let rate = rootStore.exchangeRate.find(
-    item => item.symbol.toUpperCase() === toCurrency!.toUpperCase()
-  )
+  let amount
   if (currency === toCurrency) {
-    return price
-  }
-  if (toCurrency === ToCurrency.CNY) {
-    if (currency === ToCurrency.CNY) {
-      //  cny -> cny
-      return new Decimal(price).div(100).toNumber()
-    } else if (currency === ToCurrency.USD) {
+    amount = new Decimal(
+      new Decimal(price).div(ToCurrencyAmounRate[currency].toFixed(ToCurrencyAmountFix[currency]))
+    ).toNumber()
+  } else if (currency === ToCurrency.CNY || currency === ToCurrency.USD) {
+    if (currency === ToCurrency.CNY && toCurrency === ToCurrency.USD) {
+      //  cny -> usd
+      amount = new Decimal(
+        new Decimal(rootStore.exchangeRate[0].price.USD)
+          .div(rootStore.exchangeRate[0].price.CNY)
+          .mul(price)
+          .div(ToCurrencyAmounRate[currency])
+          .toFixed(ToCurrencyAmountFix[toCurrency])
+      ).toNumber()
+    } else if (currency === ToCurrency.USD && toCurrency === ToCurrency.CNY) {
       // usd -> cny
-      const rateUSD = new Decimal(rootStore.exchangeRate[1]!.price.CNY)
-        .div(rate!.price.USD)
-        .toNumber()
-      return new Decimal(
-        new Decimal(price)
-          .div(100)
-          .div(rateUSD)
-          .toFixed(2)
+      amount = new Decimal(
+        new Decimal(rootStore.exchangeRate[0].price.CNY)
+          .div(rootStore.exchangeRate[0].price.USD)
+          .mul(price)
+          .div(ToCurrencyAmounRate[currency])
+          .toFixed(ToCurrencyAmountFix[toCurrency])
       ).toNumber()
     } else {
-      rate = rootStore.exchangeRate.find(
-        item => item.symbol.toUpperCase() === currency.toUpperCase()
+      // * -> cny/ usd
+      const rate = rootStore.exchangeRate.find(
+        item => item.symbol.toUpperCase() === toCurrency!.toUpperCase()
       )
-      return new Decimal(new Decimal(price).mul(rate!.price.CNY).toFixed(2)).toNumber()
-    }
-  } else if (toCurrency === ToCurrency.ETH) {
-    if (currency === 'CNY') {
-      // cny -> eth
-      let result = new Decimal(
+      amount = new Decimal(
         new Decimal(price)
-          .div(100)
-          .div(rate!.price.CNY)
-          .toFixed(5)
+          .div(ToCurrencyAmounRate[currency])
+          .div(rate!.price[currency])
+          .toFixed(ToCurrencyAmountFix[toCurrency])
       ).toNumber()
-      if (result < 0.00001) result = 0.00001
-      return result
-    } else if (currency === ToCurrency.USD) {
-      // usd -> eth
-      let result = new Decimal(new Decimal(price).div(rate!.price.USD).toFixed(5)).toNumber()
-      if (result < 0.00001) result = 0.00001
-      return result
-    } else {
-      // mvc -> eth
-      return 0
     }
-  } else if (toCurrency === ToCurrency.BSV) {
-    if (currency === 'CNY') {
-      let result = new Decimal(
-        new Decimal(price)
-          .div(100)
-          .div(rate!.price.CNY)
-          .toFixed(5)
-      ).toNumber()
-      if (result < 0.00001) result = 0.00001
-      return result
-    } else if (currency === ToCurrency.USD) {
-      // usd -> eth
-      let result = new Decimal(new Decimal(price).div(rate!.price.USD).toFixed(5)).toNumber()
-      if (result < 0.00001) result = 0.00001
-      return result
-    } else {
-      // mvc -> eth
-      return 0
-    }
-  } else if (toCurrency === ToCurrency.POLYGON) {
-    if (currency === 'CNY') {
-      let result = new Decimal(
-        new Decimal(price)
-          .div(100)
-          .div(rate!.price.CNY)
-          .toFixed(5)
-      ).toNumber()
-      if (result < 0.00001) result = 0.00001
-      return result
-    } else if (currency === ToCurrency.USD) {
-      // usd -> eth
-      let result = new Decimal(new Decimal(price).div(rate!.price.USD).toFixed(5)).toNumber()
-      if (result < 0.00001) result = 0.00001
-      return result
-    } else {
-      // mvc -> eth
-      return 0
-    }
-  } else if (toCurrency === ToCurrency.MVC) {
-    if (currency === 'CNY') {
-      let result = new Decimal(
-        new Decimal(price)
-          .div(100)
-          .div(rate!.price.CNY)
-          .toFixed(5)
-      ).toNumber()
-      if (result < 0.00001) result = 0.00001
-      return result
-    } else if (currency === ToCurrency.USD) {
-      // usd -> eth
-      let result = new Decimal(new Decimal(price).div(rate!.price.USD).toFixed(5)).toNumber()
-      if (result < 0.00001) result = 0.00001
-      return result
-    } else {
-      // mvc -> eth
-      return 0
-    }
+  } else if (toCurrency === ToCurrency.CNY || toCurrency === ToCurrency.USD) {
+    const currenyRate = rootStore.exchangeRate.find(
+      item => item.symbol.toUpperCase() === currency!.toUpperCase()
+    )
+    amount = new Decimal(
+      new Decimal(currenyRate!.price[toCurrency])
+        .mul(price)
+        .div(ToCurrencyAmounRate[currency])
+        .toFixed(ToCurrencyAmountFix[toCurrency])
+    ).toNumber()
   } else {
-    //  USD
+    const currenyRate = rootStore.exchangeRate.find(
+      item => item.symbol.toUpperCase() === currency!.toUpperCase()
+    )
+    const toCurrencyRate = rootStore.exchangeRate.find(
+      item => item.symbol.toUpperCase() === toCurrency!.toUpperCase()
+    )
 
-    if (currency === 'CNY') {
-      // cny -> usd
-      const rateUSD = new Decimal(rootStore.exchangeRate[1]!.price.CNY)
-        .div(rootStore.exchangeRate[1]!.price.USD)
-        .toNumber()
-      return new Decimal(
-        new Decimal(price)
-          .div(100)
-          .div(rateUSD)
-          .toFixed(2)
-      ).toNumber()
-    } else {
-      rate = rootStore.exchangeRate.find(
-        item => item.symbol.toUpperCase() === currency.toUpperCase()
-      )
-      // mvc -> usd
-      const result = new Decimal(new Decimal(price).mul(rate!.price.USD).toFixed(2)).toNumber()
-      return result > 0.01 ? result : 0.01
-    }
+    amount = new Decimal(
+      new Decimal(currenyRate!.price.CNY)
+        .div(toCurrencyRate!.price.CNY)
+        .mul(price)
+        .div(ToCurrencyAmounRate[currency])
+        .toFixed(ToCurrencyAmountFix[toCurrency])
+    ).toNumber()
   }
+
+  return amount
+
+  // if (toCurrency === ToCurrency.CNY) {
+  //   if (currency === ToCurrency.CNY) {
+  //     //  cny -> cny
+  //     return new Decimal(price).div(100).toNumber()
+  //   } else if (currency === ToCurrency.USD) {
+  //     // usd -> cny
+  //     const rateUSD = new Decimal(rootStore.exchangeRate[1]!.price.CNY)
+  //       .div(rate!.price.USD)
+  //       .toNumber()
+  //     return new Decimal(
+  //       new Decimal(price)
+  //         .div(100)
+  //         .div(rateUSD)
+  //         .toFixed(2)
+  //     ).toNumber()
+  //   } else {
+  //     rate = rootStore.exchangeRate.find(
+  //       item => item.symbol.toUpperCase() === currency.toUpperCase()
+  //     )
+  //     return new Decimal(new Decimal(price).mul(rate!.price.CNY).toFixed(2)).toNumber()
+  //   }
+  // } else if (toCurrency === ToCurrency.ETH) {
+  //   if (currency === 'CNY') {
+  //     // cny -> eth
+  //     let result = new Decimal(
+  //       new Decimal(price)
+  //         .div(100)
+  //         .div(rate!.price.CNY)
+  //         .toFixed(5)
+  //     ).toNumber()
+  //     if (result < 0.00001) result = 0.00001
+  //     return result
+  //   } else if (currency === ToCurrency.USD) {
+  //     // usd -> eth
+  //     let result = new Decimal(new Decimal(price).div(rate!.price.USD).toFixed(5)).toNumber()
+  //     if (result < 0.00001) result = 0.00001
+  //     return result
+  //   } else {
+  //     // mvc -> eth
+  //     return 0
+  //   }
+  // } else if (toCurrency === ToCurrency.BSV) {
+  //   if (currency === 'CNY') {
+  //     let result = new Decimal(
+  //       new Decimal(price)
+  //         .div(100)
+  //         .div(rate!.price.CNY)
+  //         .toFixed(5)
+  //     ).toNumber()
+  //     if (result < 0.00001) result = 0.00001
+  //     return result
+  //   } else if (currency === ToCurrency.USD) {
+  //     // usd -> eth
+  //     let result = new Decimal(new Decimal(price).div(rate!.price.USD).toFixed(5)).toNumber()
+  //     if (result < 0.00001) result = 0.00001
+  //     return result
+  //   } else {
+  //     // mvc -> eth
+  //     return 0
+  //   }
+  // } else if (toCurrency === ToCurrency.POLYGON) {
+  //   if (currency === 'CNY') {
+  //     let result = new Decimal(
+  //       new Decimal(price)
+  //         .div(100)
+  //         .div(rate!.price.CNY)
+  //         .toFixed(5)
+  //     ).toNumber()
+  //     if (result < 0.00001) result = 0.00001
+  //     return result
+  //   } else if (currency === ToCurrency.USD) {
+  //     // usd -> eth
+  //     let result = new Decimal(new Decimal(price).div(rate!.price.USD).toFixed(5)).toNumber()
+  //     if (result < 0.00001) result = 0.00001
+  //     return result
+  //   } else {
+  //     // mvc -> eth
+  //     return 0
+  //   }
+  // } else if (toCurrency === ToCurrency.MVC) {
+  //   if (currency === 'CNY') {
+  //     let result = new Decimal(
+  //       new Decimal(price)
+  //         .div(100)
+  //         .div(rate!.price.CNY)
+  //         .toFixed(5)
+  //     ).toNumber()
+  //     if (result < 0.00001) result = 0.00001
+  //     return result
+  //   } else if (currency === ToCurrency.USD) {
+  //     // usd -> eth
+  //     let result = new Decimal(new Decimal(price).div(rate!.price.USD).toFixed(5)).toNumber()
+  //     if (result < 0.00001) result = 0.00001
+  //     return result
+  //   } else {
+  //     // mvc -> eth
+  //     return 0
+  //   }
+  // } else {
+  //   //  USD
+
+  //   if (currency === 'CNY') {
+  //     // cny -> usd
+  //     const rateUSD = new Decimal(rootStore.exchangeRate[1]!.price.CNY)
+  //       .div(rootStore.exchangeRate[1]!.price.USD)
+  //       .toNumber()
+  //     return new Decimal(
+  //       new Decimal(price)
+  //         .div(100)
+  //         .div(rateUSD)
+  //         .toFixed(2)
+  //     ).toNumber()
+  //   } else {
+  //     rate = rootStore.exchangeRate.find(
+  //       item => item.symbol.toUpperCase() === currency.toUpperCase()
+  //     )
+  //     // mvc -> usd
+  //     const result = new Decimal(new Decimal(price).mul(rate!.price.USD).toFixed(2)).toNumber()
+  //     return result > 0.01 ? result : 0.01
+  //   }
+  // }
 }
 
 export function NFTOffSale(nft: GenesisNFTItem) {
@@ -1200,6 +1275,12 @@ export function CreatePayOrder(params: {
   product_type: ProductType // 100-ME, 200-Legal_NFT,
   uuid?: string
 
+  // 购买合约 NFT
+  genesis?: string
+  codehash?: string
+  contract?: string
+  tokenIndex?: string
+
   // metanem
   data?: string
   operate_type?: MetaNameOperateType
@@ -1230,13 +1311,8 @@ export function CreatePayOrder(params: {
         : PayType.H5
       const res = await CreatOrder({
         address: userStore.user!.address!,
-        count:
-          params.product_type === 100
-            ? new Decimal(params.count).mul(100).toNumber()
-            : params.count,
         description: params.product_type === 100 ? 'Recharge ME' : 'Buy NFT',
         from,
-        goods_name: params.goods_name,
         metaid: userStore.user!.metaId,
         pay_type: params.platform,
         quit_url: quitUrl,
@@ -1245,17 +1321,11 @@ export function CreatePayOrder(params: {
           params.platform === PayPlatform.ETH || params.platform === PayPlatform.POLYGON
             ? userStore.user?.evmAddress
             : userStore.user!.address,
-        product_type: params.product_type,
-        uuid: params.uuid,
-        // metaname
-        data: params.data,
-        operate_type: params.operate_type,
-        mvc_to_address: params.mvc_to_address,
-        nft_to_address: params.nft_to_address,
-        tx_fee: params.tx_fee,
-        fee_per_year: params.fee_per_year,
-        meta_name_len: params.meta_name_len,
-        meta_name_uts_ascii: params.meta_name_uts_ascii,
+        ...params,
+        count:
+          params.product_type === ProductType.ME
+            ? new Decimal(params.count).mul(100).toNumber()
+            : params.count,
       })
       if (res?.code === 0) {
         resolve(res.data)
@@ -1733,7 +1803,7 @@ export function getBalance(params: { chain: Chains }) {
     if (!isBtLink && !userStore.user?.evmAddress) {
       resolve(0)
     } else {
-      const res = await GetBalance(_params)
+      const res = await GetBalance(_params).catch(error => reject(error))
       if (res?.code === 0) {
         resolve(res.data.balance)
       }

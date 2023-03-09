@@ -157,6 +157,7 @@ import {
   PayPlatform,
   PayPlatformUnit,
   PayStatus,
+  ToCurrency,
   WalletTxVersion,
 } from '@/enum'
 import { isApp, isIOS, isIosApp, isWechat, useRootStore } from '@/stores/root'
@@ -193,7 +194,7 @@ import { BigNumber, ethers } from 'ethers'
 import { useI18n } from 'vue-i18n'
 import { Wallet } from 'meta-contract'
 import { bsv } from '@/utils/filters'
-import { payPlatformList } from '@/config'
+import { payPlatformAmountFix, payPlatformAmountRate, payPlatformList } from '@/config'
 
 interface Props {
   modelValue: boolean
@@ -282,19 +283,6 @@ const qrcodeData = ref('')
 const iosPayHtml = ref('')
 const PayIframeRef = ref()
 const isQrcodeInTime = ref(true) // 付款码是否在有效时间
-
-const payPlatformAmountFix = {
-  [PayPlatform.ETH]: 8,
-  [PayPlatform.POLYGON]: 8,
-  [PayPlatform.BSV]: 8,
-  [PayPlatform.SPACE]: 8,
-  [PayPlatform.AliPay]: 2,
-  [PayPlatform.AliPaySelf]: 2,
-  [PayPlatform.BalancePay]: 2,
-  [PayPlatform.QuickPay]: 2,
-  [PayPlatform.UnionPay]: 2,
-  [PayPlatform.WechatPay]: 2,
-}
 
 const payResultMessage = computed(() => {
   let msg = ''

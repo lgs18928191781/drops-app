@@ -1,5 +1,10 @@
 <template>
-  <Modal :model-value="modelValue" v-model:show-second-control="isShowPayList">
+  <Modal
+    :model-value="modelValue"
+    v-model:show-second-control="isShowPayList"
+    :width="'456px'"
+    @update:model-value="val => emit('update:modelValue', val)"
+  >
     <template #title>
       {{ $t('NFT.Order Information') }}
     </template>
@@ -45,36 +50,61 @@
             </div>
           </div>
 
+          <div
+            class="choose-pay flex flex-align-center flex-pack-center"
+            @click="isShowPayList = !isShowPayList"
+          >
+            <Icon name="wallet_fill" class="wallet" />
+            <span>{{ $t('NFT.Chosse PayType') }}</span>
+            <Icon name="down" class="right" />
+          </div>
+
           <div class="price-list">
             <div class="price-item flex flex-alian-center">
               <div class="label flex1">{{ $t('NFT.Price') }}</div>
-              <div class="value">{{ nftPrice }} Space</div>
+              <div class="value">{{ nftPrice }} {{ amountSymbol }}</div>
             </div>
             <div class="price-item flex flex-alian-center">
               <div class="label flex1">
                 {{ $t('NFT.Platform Fee') }}<span class="rate">({{ platformFeeRate }}%)</span>
               </div>
-              <div class="value">{{ platformFee }} Space</div>
+              <div class="value">
+                {{ platformFee.toFixed(payPlatformAmountFix[currentPayPlatform]) }}
+                {{ amountSymbol }}
+              </div>
             </div>
             <div class="price-item flex flex-alian-center">
               <div class="label flex1">
                 {{ $t('NFT.Royalties') }}<span class="rate">({{ royalyFeeRate }}%)</span>
               </div>
-              <div class="value">{{ royalyFee }} Space</div>
+              <div class="value">
+                {{ royalyFee.toFixed(payPlatformAmountFix[currentPayPlatform]) }} {{ amountSymbol }}
+              </div>
             </div>
           </div>
 
           <div class="total-price flex flex-align-center">
             <span class="label flex1">{{ $t('NFT.Total') }}</span>
-            <span class="value">{{ totalPrice }} Space</span>
+            <span class="value">{{ totalPrice }} {{ amountSymbol }}</span>
           </div>
 
           <a
-            class="operate main-border primary flex flex-align-center flex-pack-center"
+            class="operate main-border  flex flex-align-center flex-pack-center"
             @click="confirmBuy"
             v-loading="buying"
+            :class="[isGetBalanceing || !isEnough ? 'faded' : 'primary']"
           >
-            {{ $t('NFT.Confirm Payment') }}
+            <template v-if="isGetBalanceing">
+              <ElIcon class="is-loading">
+                <Loading />
+              </ElIcon>
+            </template>
+            <template v-else-if="isEnough">
+              {{ $t('NFT.Confirm Payment') }}
+            </template>
+            <template v-else>
+              <span v-html="$t('NFT.BuyNFTNoteEnough')"></span>
+            </template>
           </a>
         </div>
 
@@ -99,6 +129,7 @@
           class="pay-item flex flex-align-center"
           v-for="(item, index) in payPlatformList"
           :key="index"
+          @click="changePlatform(item.platform)"
         >
           <div class="flex1 flex flex-align-center">
             <img class="logo" :src="item.icon" />
@@ -167,15 +198,27 @@ import {
   ToCurrency,
   NFTSellState,
   Chains,
+  ProductType,
 } from '@/enum'
 import { isAndroid, isApp, isIOS, isIosApp, useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
 import { computed, nextTick, reactive, Ref, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NFTMsgVue from '../NFTMsg/NFTMsg.vue'
-import { payPlatformAmountRate, PayPlatformItem, payPlatformList } from '@/config'
+import {
+  payPlatformAmountRate,
+  PayPlatformItem,
+  payPlatformList,
+  payPlatformAmountFix,
+} from '@/config'
 import PayTypeDropdownVue from '../PayTypeDropdown/PayTypeDropdown.vue'
-import { CreatePayOrder, getBalance, getCurrencyAmount, setPayQuitUrl } from '@/utils/util'
+import {
+  CreatePayOrder,
+  getBalance,
+  getCurrencyAmount,
+  setPayQuitUrl,
+  getPlatformSymbol,
+} from '@/utils/util'
 import { useRoute, useRouter } from 'vue-router'
 import StartPayVue from '../StartPay/StartPay.vue'
 import { ElMessage } from 'element-plus'
@@ -184,6 +227,8 @@ import { GetGenesisFee, GetNFTFee, NFTFeeInfo } from '@/api/strapi'
 import NFTCover from '../NFTCover/NFTCover.vue'
 import Modal from '@/components/Modal/Modal.vue'
 import { space } from '@/utils/filters'
+import { Loading } from '@element-plus/icons-vue'
+import { useLayoutStore } from '@/stores/layout'
 
 const props = defineProps<{
   modelValue: boolean
@@ -199,6 +244,7 @@ const userStore = useUserStore()
 const i18n = useI18n()
 const isShowPayTypes = ref(false)
 const currentPayPlatform = ref(PayPlatform.SPACE)
+const isGetBalanceing = ref(false)
 const toCurrency: Ref<undefined | ToCurrency> = ref(
   currentPayPlatform.value === PayPlatform.ETH ? ToCurrency.ETH : undefined
 )
@@ -213,7 +259,7 @@ const nftFee: { val: NFTFeeInfo | null } = reactive({ val: null })
 const isSkeleton = ref(true)
 const buying = ref(false)
 const isShowSuccess = ref(false)
-const isShowPayList = ref(true)
+const isShowPayList = ref(false)
 const isEnough = ref(true)
 const payPlatformChain = {
   [PayPlatform.BSV]: Chains.BSV,
@@ -232,6 +278,15 @@ const payPlatformToCurrency = {
   [PayPlatform.UnionPay]: ToCurrency.CNY,
   [PayPlatform.WechatPay]: ToCurrency.CNY,
 }
+const ToCurrencyAmounMin = {
+  [ToCurrency.BSV]: 0.00000001,
+  [ToCurrency.CNY]: 0.01,
+  [ToCurrency.ETH]: 0.000000001,
+  [ToCurrency.MVC]: 0.00000001,
+  [ToCurrency.POLYGON]: 0.000000001,
+  [ToCurrency.USD]: 0.01,
+}
+const layout = useLayoutStore()
 
 function choosePayPlatform(item: PayPlatformItem) {
   if (item.disabled()) return
@@ -247,84 +302,120 @@ function onPayPlatformChange() {
 }
 
 async function confirmBuy() {
-  // return ElMessage.info(i18n.t('Comming Soon'))
-  //  法币购买
-  // const res = await CreatePayOrder({
-  //   platform: currentPayPlatform.value,
-  //   fullPath: setPayQuitUrl({
-  //     payPlatform: currentPayPlatform.value,
-  //     fullPath: route.fullPath,
-  //     isBlindbox: false,
-  //   }),
-  //   goods_name: props.nft.nftName,
-  //   count: 1,
-  //   product_type: product_type,
-  //   uuid: props.nft.nftLegalUuid,
-  // }).catch(error => {
-  //   ElMessage.error(error.message)
-  // })
-  // if (res) {
-  //   payMsg.amount = res.pay_amount!.toString()
-  //   payMsg.orderId = res.wxCoreOrderId
-  //   payMsg.url = res.url
-  //   isShowPayModal.value = true
-  // }
+  if (isGetBalanceing.value) return
+  if (isEnough.value) {
+    // return ElMessage.info(i18n.t('Comming Soon'))
+    //  法币购买
+    // const res = await CreatePayOrder({
+    //   platform: currentPayPlatform.value,
+    //   fullPath: setPayQuitUrl({
+    //     payPlatform: currentPayPlatform.value,
+    //     fullPath: route.fullPath,
+    //     isBlindbox: false,
+    //   }),
+    //   goods_name: props.nft.nftName,
+    //   count: 1,
+    //   product_type: product_type,
+    //   uuid: props.nft.nftLegalUuid,
+    // }).catch(error => {
+    //   ElMessage.error(error.message)
+    // })
+    // if (res) {
+    //   payMsg.amount = res.pay_amount!.toString()
+    //   payMsg.orderId = res.wxCoreOrderId
+    //   payMsg.url = res.url
+    //   isShowPayModal.value = true
+    // }
 
-  buying.value = true
-  // Space 购买
-  try {
-    const params: any = {
-      genesis: props.nft.nftGenesis,
-      codehash: props.nft.nftCodehash,
-      tokenIndex: props.nft.nftTokenIndex,
-      sellTxId: props.nft.nftSellTxId,
-      sellContractTxId: props.nft.nftSellContractTxId,
-      sellUtxo: {
-        txId: props.nft.nftSellContractTxId,
-        outputIndex: 0,
-        sellerAddress: props.nft.nftOwnerAddress,
-        price: props.nft.nftPrice,
-      },
-    }
-    const publisherFeeRate = platformFeeRate.value / 100
-    const creatorFeeRate = royalyFeeRate.value / 100
-    if (publisherFeeRate) {
-      params.publisherFeeRate = publisherFeeRate
-      params.publisherAddress = nftFee.val!.platformAddress
-    }
-    if (creatorFeeRate) {
-      params.creatorFeeRate = creatorFeeRate
-      params.creatorAddress = props.nft.nftIssueAddress
-    }
-    const res = await userStore.showWallet.createBrfcChildNode(
-      {
-        nodeName: NodeName.nftBuy,
-        data: JSON.stringify(params),
-      },
-      {
-        payType: SdkPayType.SPACE,
+    buying.value = true
+    // Space 购买
+    try {
+      if (currentPayPlatform.value === PayPlatform.SPACE) {
+        const params: any = {
+          genesis: props.nft.nftGenesis,
+          codehash: props.nft.nftCodehash,
+          tokenIndex: props.nft.nftTokenIndex,
+          sellTxId: props.nft.nftSellTxId,
+          sellContractTxId: props.nft.nftSellContractTxId,
+          sellUtxo: {
+            txId: props.nft.nftSellContractTxId,
+            outputIndex: 0,
+            sellerAddress: props.nft.nftOwnerAddress,
+            price: props.nft.nftPrice,
+          },
+        }
+        const publisherFeeRate = platformFeeRate.value / 100
+        const creatorFeeRate = royalyFeeRate.value / 100
+        if (publisherFeeRate) {
+          params.publisherFeeRate = publisherFeeRate
+          params.publisherAddress = nftFee.val!.platformAddress
+        }
+        if (creatorFeeRate) {
+          params.creatorFeeRate = creatorFeeRate
+          params.creatorAddress = props.nft.nftIssueAddress
+        }
+        const res = await userStore.showWallet.createBrfcChildNode(
+          {
+            nodeName: NodeName.nftBuy,
+            data: JSON.stringify(params),
+          },
+          {
+            payType: SdkPayType.SPACE,
+          }
+        )
+        if (res) {
+          ElMessage.success(i18n.t('NFT.Buy Success'))
+          emit('update:modelValue', false)
+          buying.value = false
+          isShowSuccess.value = true
+        } else if (res === null) {
+          buying.value = false
+        }
+      } else {
+        const res = await CreatePayOrder({
+          platform: currentPayPlatform.value,
+          fullPath: setPayQuitUrl({
+            payPlatform: currentPayPlatform.value!,
+            fullPath: route.fullPath,
+            isBlindbox: false,
+          }),
+          goods_name: props.nft!.nftName,
+          count: 1,
+          product_type: ProductType.LegalNft, // 100-ME, 200-Legal_NFT,
+
+          // 购买合约 NFT
+          genesis: props.nft.nftGenesis,
+          codehash: props.nft.nftCodehash,
+          contract: props.nft.nftSellContractTxId,
+          tokenIndex: props.nft.nftTokenIndex,
+        })
+        if (res) {
+          payMsg.amount = res.pay_amount!.toString()
+          payMsg.orderId = res.wxCoreOrderId
+          payMsg.url = res.url
+          isShowPayModal.value = true
+        }
       }
-    )
-    if (res) {
-      ElMessage.success(i18n.t('NFT.Buy Success'))
-      emit('update:modelValue', false)
-      buying.value = false
-      isShowSuccess.value = true
-    } else if (res === null) {
+    } catch (error) {
+      ElMessage.error((error as any).message)
       buying.value = false
     }
-  } catch (error) {
-    ElMessage.error((error as any).message)
-    buying.value = false
+  } else {
+    emit('update:modelValue', false)
+    layout.isShowWallet = true
   }
 }
 
 const nftPrice = computed(() => {
   return getCurrencyAmount(
-    space(props.nft.nftPrice),
+    props.nft.nftPrice,
     ToCurrency.MVC,
     payPlatformToCurrency[currentPayPlatform.value]
   )
+})
+
+const amountSymbol = computed(() => {
+  return getPlatformSymbol(currentPayPlatform.value)
 })
 
 const platformFeeRate = computed(() => {
@@ -348,7 +439,7 @@ const royalyFeeRate = computed(() => {
 const platformFee = computed(() => {
   let fee = 0
   if (nftFee.val) {
-    const spaceFee = new Decimal(space(props.nft.nftPrice))
+    const spaceFee = new Decimal(props.nft.nftPrice)
       .mul(platformFeeRate.value / 100)
       .toInteger()
       .toNumber()
@@ -359,13 +450,17 @@ const platformFee = computed(() => {
       payPlatformToCurrency[currentPayPlatform.value]
     )
   }
+
+  if (fee !== 0 && fee < ToCurrencyAmounMin[payPlatformToCurrency[currentPayPlatform.value]]) {
+    fee = ToCurrencyAmounMin[payPlatformToCurrency[currentPayPlatform.value]]
+  }
   return fee
 })
 
 const royalyFee = computed(() => {
   let fee = 0
   if (nftFee.val) {
-    const spaceFee = new Decimal(space(props.nft.nftPrice))
+    const spaceFee = new Decimal(props.nft.nftPrice)
       .mul(royalyFeeRate.value / 100)
       .toInteger()
       .toNumber()
@@ -376,12 +471,15 @@ const royalyFee = computed(() => {
       payPlatformToCurrency[currentPayPlatform.value]
     )
   }
+
+  if (fee !== 0 && fee < ToCurrencyAmounMin[payPlatformToCurrency[currentPayPlatform.value]]) {
+    fee = ToCurrencyAmounMin[payPlatformToCurrency[currentPayPlatform.value]]
+  }
   return fee
 })
 
 const totalPrice = computed(() => {
-  return new Decimal(props.nft.nftPrice)
-    .div(Math.pow(10, 8))
+  return new Decimal(nftPrice.value)
     .add(platformFee.value)
     .add(royalyFee.value)
     .toNumber()
@@ -448,7 +546,11 @@ function checkIsEnough() {
     // @ts-ignore
     if (payPlatformChain[currentPayPlatform.value]) {
       // @ts-ignore
-      const res = await getBalance({ chain: payPlatformChain[currentPayPlatform.value] })
+      const res = await getBalance({ chain: payPlatformChain[currentPayPlatform.value] }).catch(
+        error => {
+          ElMessage.error(error.message)
+        }
+      )
       if (res) {
         if (
           res <
@@ -457,7 +559,7 @@ function checkIsEnough() {
             .toNumber()
         ) {
           isEnough.value = false
-          reject()
+          resolve()
         } else {
           isEnough.value = true
           resolve()
@@ -468,6 +570,18 @@ function checkIsEnough() {
       resolve()
     }
   })
+}
+
+function changePlatform(platform: PayPlatform) {
+  if (currentPayPlatform.value === platform) return
+  currentPayPlatform.value = platform
+  isGetBalanceing.value = true
+  nextTick(() => {
+    checkIsEnough().then(() => {
+      isGetBalanceing.value = false
+    })
+  })
+  isShowPayList.value = false
 }
 
 watch(
