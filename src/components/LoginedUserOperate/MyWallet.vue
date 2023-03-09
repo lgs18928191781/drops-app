@@ -301,7 +301,7 @@
   </ElDrawer>
 
   <!-- MetaMask -->
-  <MetaMask ref="MetaMaskRef" id="metamask" @bindEvmAccount="bindEthButLogin" />
+  <MetaMask ref="MetaMaskRef" id="metamask" @bindEvmAccount="startBinding" />
 </template>
 
 <script setup lang="ts">
@@ -311,9 +311,16 @@ import { computed, reactive, ref, watch, toRaw } from 'vue'
 import MetaMaskLogo from '@/assets/images/login_logo_matamask.png'
 import MetaIdLogo from '@/assets/images/iocn_showmoney.png'
 import { useI18n } from 'vue-i18n'
-import { copy, getUserBsvBalance, mappingChainName, currentConnectChain } from '@/utils/util'
+
+import {
+  copy,
+  getUserBsvBalance,
+  mappingChainName,
+  currentConnectChain,
+  openLoading,
+} from '@/utils/util'
 import { GetBalance, GetNFTs, GetBindMetaidAddressList } from '@/api/aggregation'
-import { setHashData } from '@/api/core'
+import { setHashData, LoginByEthAddress } from '@/api/core'
 import ETH from '@/assets/images/eth.png'
 import MVC from '@/assets/images/icon_mvc.png'
 import ME from '@/assets/images/me_logo.png'
@@ -340,6 +347,7 @@ import { decryptMnemonic, encryptMnemonic, HdWallet } from '@/utils/wallet/hd-wa
 import { decode, encode } from 'js-base64'
 import { MD5 } from 'crypto-js'
 import { MetaMaskLoginUserInfo } from '@/plugins/utils/api'
+import { ErrorDescription } from '@ethersproject/abi/lib/interface'
 const props = defineProps<{
   modelValue: boolean
 }>()
@@ -670,31 +678,39 @@ function sendHash(userInfo: MetaMaskLoginUserInfo, evmEnMnemonic: string) {
   })
 }
 
-async function bindEthButLogin(params: {
-  signAddressHash: string
-  address: string
-  chainId: string
-}) {
+async function startBinding(params: { signAddressHash: string; address: string; chainId: string }) {
   try {
-    const originShowmoneyPassword = decode(localStorage.getItem(encode('password'))!)
-    const mnemonic = userStore!.user!.enCryptedMnemonic
-    const decodeMnemonic = decryptMnemonic(mnemonic, originShowmoneyPassword)
-    const encodeMnemonic = encryptMnemonic(decodeMnemonic, MD5(params.signAddressHash).toString())
-    userStore.updateUserInfo({
-      ...userStore.user!,
+    const isBinded = await LoginByEthAddress({
       evmAddress: params.address,
       chainId: params.chainId,
     })
-    await createETHBindingBrfcNode({
-      userInfo: userStore.user,
-      wallet: userStore.wallet?.wallet,
-      password: originShowmoneyPassword,
-    })
-    await sendHash(userStore.user!, encodeMnemonic)
-
-    ElMessage.success(`${i18n.t('bindingSuccess')}`)
+    if (isBinded.code == 0 && isBinded.data) {
+      return ElMessage.error(`${i18n.t('wallethasBinding')}`)
+    }
   } catch (error) {
-    ElMessage.error(`${(error as any).toString()}`)
+    if ((error as any).code == -1) {
+      let loading
+      loading = openLoading({
+        text: i18n.t('binding_now'),
+      })
+      const originShowmoneyPassword = decode(localStorage.getItem(encode('password'))!)
+      const mnemonic = userStore!.user!.enCryptedMnemonic
+      const decodeMnemonic = decryptMnemonic(mnemonic, originShowmoneyPassword)
+      const encodeMnemonic = encryptMnemonic(decodeMnemonic, MD5(params.signAddressHash).toString())
+      userStore.updateUserInfo({
+        ...userStore.user!,
+        evmAddress: params.address,
+        chainId: params.chainId,
+      })
+      await createETHBindingBrfcNode({
+        userInfo: userStore.user,
+        wallet: userStore.wallet?.wallet,
+        password: originShowmoneyPassword,
+      })
+      await sendHash(userStore.user!, encodeMnemonic)
+      loading.close()
+      ElMessage.success(`${i18n.t('bindingSuccess')}`)
+    }
   }
 }
 
