@@ -161,8 +161,12 @@
                           </ElIcon>
                         </template>
                         <template v-else>
-                          <div v-if="!userStore.user?.evmAddress && wallet.showBindBtn">
-                            <a style="padding:4px 5px" @click="haha" class="main-border primary">{{
+                          <!--!userStore.user?.evmAddress-->
+                          <div
+                            class="bindBtn"
+                            v-if="!userStore.user?.evmAddress && wallet.showBindBtn"
+                          >
+                            <a @click="BindEvmAccount(wallet.name)" class="main-border primary">{{
                               i18n.t('binding')
                             }}</a>
                           </div>
@@ -297,28 +301,25 @@
   </ElDrawer>
 
   <!-- MetaMask -->
-  <MetaMask
-    v-model="rootStore.isShowMetaMak"
-    ref="MetaMaskRef"
-    id="metamask"
-    @bindEvmAccount="bindEthButLogin"
-  />
+  <MetaMask ref="MetaMaskRef" id="metamask" @bindEvmAccount="bindEthButLogin" />
 </template>
 
 <script setup lang="ts">
+import MetaMask from '@/plugins/MetaMak.vue'
 import { useUserStore } from '@/stores/user'
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watch, toRaw } from 'vue'
 import MetaMaskLogo from '@/assets/images/login_logo_matamask.png'
 import MetaIdLogo from '@/assets/images/iocn_showmoney.png'
 import { useI18n } from 'vue-i18n'
-import { copy, getUserBsvBalance } from '@/utils/util'
-import { GetBalance, GetNFTs } from '@/api/aggregation'
+import { copy, getUserBsvBalance, mappingChainName, currentConnectChain } from '@/utils/util'
+import { GetBalance, GetNFTs, GetBindMetaidAddressList } from '@/api/aggregation'
+import { setHashData } from '@/api/core'
 import ETH from '@/assets/images/eth.png'
 import MVC from '@/assets/images/icon_mvc.png'
 import ME from '@/assets/images/me_logo.png'
 import BSV from '@/assets/images/bsv.png'
 import Polygon from '@/assets/svg/polygon.svg?url'
-import { initPagination, chains } from '@/config'
+import { initPagination, chains, ethBindingData } from '@/config'
 import { useRootStore } from '@/stores/root'
 import Decimal from 'decimal.js-light'
 import { GetMyMEBalance } from '@/api/v3'
@@ -334,9 +335,11 @@ import ContentModalVue from '../ContentModal/ContentModal.vue'
 import { currentSupportChain } from '@/config'
 import MEIntroVue from '../MEIntro/MEIntro.vue'
 import Transfer from './Transfer.vue'
-import { Chains } from '@/enum'
-import { decryptMnemonic, encryptMnemonic } from '@/utils/wallet/hd-wallet'
+import { Chains, CurrentSupportChain, NodeName } from '@/enum'
+import { decryptMnemonic, encryptMnemonic, HdWallet } from '@/utils/wallet/hd-wallet'
 import { decode, encode } from 'js-base64'
+import { MD5 } from 'crypto-js'
+import { MetaMaskLoginUserInfo } from '@/plugins/utils/api'
 const props = defineProps<{
   modelValue: boolean
 }>()
@@ -348,6 +351,7 @@ const rootStore = useRootStore()
 const route = useRoute()
 const router = useRouter()
 const i18n = useI18n()
+const MetaMaskRef = ref()
 
 const loginTypeLogo = {
   MetaMask: MetaMaskLogo,
@@ -541,21 +545,166 @@ const totalBalanceLoading = computed(() => {
   return value
 })
 
+//创建 eht 绑定的brfc 节点
+function createETHBindingBrfcNode(MetaidRes: BindMetaIdRes) {
+  const { wallet, userInfo } = MetaidRes
+  const hdWallet = toRaw(wallet)
+  return new Promise<void>(async (resolve, reject) => {
+    try {
+      // 1. 先获取utxo
+      let utxos = await hdWallet.provider.getUtxos(hdWallet.wallet.xpubkey.toString())
+      if (!utxos.length) {
+        const initUtxo = await hdWallet.provider
+          .getInitAmount({
+            address: hdWallet.rootAddress,
+            xpub: hdWallet.wallet.xpubkey.toString(),
+            token: userInfo.token || '',
+            userName: userInfo.userType === 'phone' ? userInfo.phone : userInfo.email,
+          })
+          .catch(error => {
+            console.log(error)
+          })
+        if (initUtxo) {
+          utxos = [initUtxo]
+        }
+      }
+
+      if (utxos.length) {
+        // 2. 把钱打到protocols节点
+        // 先把钱打回到 protocolAddress
+        const transfer = await hdWallet.makeTx({
+          utxos: utxos,
+          // opReturn: [],
+          change: hdWallet.rootAddress,
+          payTo: [
+            {
+              amount: 2000,
+              address: hdWallet
+                ?.getPathPrivateKey(hdWallet.keyPathMap.Info.keyPath)
+                .publicKey.toAddress(hdWallet.network)
+                .toString(),
+            },
+          ],
+        })
+        if (transfer) {
+          const utxo = await hdWallet.utxoFromTx({
+            tx: transfer,
+            addressInfo: {
+              addressType: 0,
+              addressIndex: 1,
+            },
+            outPutIndex: 0,
+          })
+          if (utxo) {
+            utxos = [utxo]
+          }
+          // 创建 eht 绑定的brfc 节点
+
+          // const res = await GetUserInfo(userInfo.metaId)
+          let ethBindingData: Partial<ethBindingData> = {}
+          const bingdMetaidTypes = await GetBindMetaidAddressList(userInfo.metaId)
+
+          if (currentConnectChain(userInfo.chainId) == CurrentSupportChain.Eth) {
+            ethBindingData.eth = userInfo.evmAddress
+          } else if (currentConnectChain(userInfo.chainId) == CurrentSupportChain.Polygon) {
+            ethBindingData.polygon = userInfo.evmAddress
+          }
+          if (bingdMetaidTypes.code == 0 && bingdMetaidTypes.data.thirdPartyAddresses) {
+            ethBindingData = {
+              ...ethBindingData,
+              ...JSON.parse(bingdMetaidTypes.data.thirdPartyAddresses),
+            }
+          }
+          console.log('ethBindingData', ethBindingData)
+          const newBfrcNode = await hdWallet.provider.getNewBrfcNodeBaseInfo(
+            hdWallet.wallet.xpubkey.toString(),
+            userInfo.infoTxId
+          )
+          const ethBindBrfc = await hdWallet.createNode({
+            nodeName: NodeName.ETHBinding,
+            parentTxId: userInfo.infoTxId,
+            data: JSON.stringify(ethBindingData),
+            utxos: utxos,
+            change: hdWallet.rootAddress,
+          })
+
+          if (ethBindBrfc) {
+            await hdWallet.provider.broadcast(transfer.toString())
+            await hdWallet.provider.broadcast(ethBindBrfc.hex!)
+            resolve()
+          }
+        }
+      } else {
+        reject(new Error(i18n.t('spaceEnghout')))
+      }
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
+function sendHash(userInfo: MetaMaskLoginUserInfo, evmEnMnemonic: string) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const res = await setHashData({
+        address: userInfo?.ethAddress || userInfo.evmAddress,
+        accessKey: userInfo.token,
+        userName:
+          userInfo.register == 'email' || userInfo.registerType == 'email'
+            ? userInfo.email
+            : userInfo.phone,
+        timestamp: +new Date(),
+        metaId: userInfo.metaId,
+        evmEnMnemonic: evmEnMnemonic,
+        chainId: userInfo?.chainId,
+      })
+      // @ts-ignore
+
+      if (res.code == 0) {
+        // @ts-ignore
+        resolve(res.msg)
+      }
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
 async function bindEthButLogin(params: {
   signAddressHash: string
   address: string
   chainId: string
 }) {
-  return
-  const originShowmoneyPassword = decode(localStorage.getItem(encode('password'))!)
-  const mnemonic = userStore!.user!.enCryptedMnemonic
-  const decodeMnemonic = decryptMnemonic(mnemonic, originShowmoneyPassword)
-  console.log('decodeMnemonic', decodeMnemonic)
+  try {
+    const originShowmoneyPassword = decode(localStorage.getItem(encode('password'))!)
+    const mnemonic = userStore!.user!.enCryptedMnemonic
+    const decodeMnemonic = decryptMnemonic(mnemonic, originShowmoneyPassword)
+    const encodeMnemonic = encryptMnemonic(decodeMnemonic, MD5(params.signAddressHash).toString())
+    userStore.updateUserInfo({
+      ...userStore.user!,
+      evmAddress: params.address,
+      chainId: params.chainId,
+    })
+    await createETHBindingBrfcNode({
+      userInfo: userStore.user,
+      wallet: userStore.wallet?.wallet,
+      password: originShowmoneyPassword,
+    })
+    await sendHash(userStore.user!, encodeMnemonic)
+
+    ElMessage.success(`${i18n.t('bindingSuccess')}`)
+  } catch (error) {
+    ElMessage.error(`${(error as any).toString()}`)
+  }
 }
 
-function haha() {
-  rootStore.$patch({ isShowMetaMak: true })
-  console.log('zxczxczx', userStore.user)
+function BindEvmAccount(chain: string) {
+  rootStore.updateShowLoginBindEvmAccount({
+    isUpdatePlan: false,
+    loginedButBind: true,
+    bindEvmChain: mappingChainName(chain)!,
+  })
+  MetaMaskRef.value.startConnect()
 }
 
 function changeTab(value: number) {

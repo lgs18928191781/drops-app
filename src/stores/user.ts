@@ -138,6 +138,11 @@ export const useUserStore = defineStore('user', {
         // localStorage.removeItem(encode('password'))
         // localStorage.removeItem('walletconnect')
         try {
+          rootStore.updateShowLoginBindEvmAccount({
+            isUpdatePlan: false,
+            loginedButBind: false,
+            bindEvmChain: '',
+          })
           this.user = null
           this.password = null
         } catch {}

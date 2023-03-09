@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from 'vue';
+import { computed, reactive, ref, watch ,watchEffect} from 'vue';
 import { useI18n } from 'vue-i18n';
 // @ts-ignore
 import Wallet, { MetaMaskEthereumProvider } from './utils/wallet'
@@ -124,8 +124,6 @@ const ethAddressHash = ref('')
 const userInfo: { val: any } = reactive({ val: null })
 let provider: null | MetaMaskEthereumProvider = null
 const root = useRootStore()
-
-
 const password = computed(() => {
     let pw = ''
     if (props.password) {
@@ -136,8 +134,13 @@ const password = computed(() => {
     return pw
 })
 
-watch(() => props.modelValue, async () => {
+// watchEffect(() => {
+//     if (props.modelValue) {
+//           startConnect()
+//     }
+// })
 
+watch(() => props.modelValue, async () => {
     if (props.modelValue) {
         startConnect()
     }
@@ -164,11 +167,11 @@ const dialogTitle = computed(() => {
     }
 })
 
-async function startConnect(isUpdatePlan=false,loginedButBind=false,bindEvmChain='') {
+async function startConnect() {
+    const { isUpdatePlan, loginedButBind, bindEvmChain } = root.showLoginBindEvmAccount
 
     try {
-
-        const res = await Wallet.connect()
+        const res=await Wallet.connect()
         if (res) {
             // console.log("currentSupportChain", import.meta.env.VITE_ETH_CHAIN)
             // const chainWhiteList = currentSupportChain.filter((item) => {

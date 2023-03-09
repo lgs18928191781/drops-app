@@ -1593,6 +1593,30 @@ export function loopExecutionRun(params: {
   })
 }
 
+export function currentConnectChain(chainId: string) {
+  switch (chainId) {
+    case '0x1':
+    case '0xr':
+      return 'eth'
+    case '0x89':
+    case '0x13881':
+      return 'polygon'
+  }
+}
+
+export function mappingChainName(chainName: string) {
+  switch (chainName.toLocaleLowerCase()) {
+    case 'eth':
+      return '0x1'
+    case 'goerli':
+      return '0x5'
+    case 'polygon':
+      return '0x89'
+    case 'mumbai':
+      return '0x13881'
+  }
+}
+
 export function mappingChainId(chainId: string) {
   switch (chainId) {
     case '0x1':
