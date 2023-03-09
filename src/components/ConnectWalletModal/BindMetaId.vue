@@ -777,7 +777,7 @@ function createETHBindingBrfcNode(MetaidRes: BindMetaIdRes) {
             ...JSON.parse(bingdMetaidTypes.data.thirdPartyAddresses),
           }
         }
-
+        console.log("ethBindingData",ethBindingData)
         if (res.code === 0) {
           const newBfrcNode = await hdWallet.provider.getNewBrfcNodeBaseInfo(
             hdWallet.wallet.xpubkey.toString(),
@@ -858,6 +858,8 @@ function loginByMnemonic(mnemonic: string, password: string, isInitMnemonic = fa
   })
 }
 
+
+
 function bindingMetaidOrAddressLogin() {
   return new Promise<BindMetaIdRes>(async (resolve, reject) => {
     try {
@@ -937,7 +939,9 @@ defineExpose({
   loginSuccess,
   status: status,
   createMetaidAccount,
-  emit
+  emit,
+  createETHBindingBrfcNode,
+  sendHash
 })
 </script>
 
