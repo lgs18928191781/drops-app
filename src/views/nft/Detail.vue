@@ -24,7 +24,10 @@
               <div class="top flex flex-align-center">
                 <div class="flex1">
                   <RouterLink
-                    :to="{ name: 'nftCollectionDetail', params: { topicType: collection.val.topicType } }"
+                    :to="{
+                      name: 'nftCollectionDetail',
+                      params: { topicType: collection.val.topicType },
+                    }"
                     class="collection-name flex flex-align-center"
                     v-if="collection.val"
                   >
@@ -231,7 +234,7 @@
 
         <div class="more-nft" v-if="nft.val!.nftTopicType">
           <div class="title">{{ $t('NFT.More from this collection') }}</div>
-          <ElRow :gutter="22" class="more-nft-list">
+          <ElRow :gutter="gutter" class="more-nft-list">
             <ElCol
               :xs="12"
               :sm="12"
@@ -277,7 +280,7 @@ import { pagination, classifyList } from '@/config'
 import Decimal from 'decimal.js-light'
 import LinkIcon from '@/assets/images/list_icon_link.svg?url'
 import { ArrowDown } from '@element-plus/icons-vue'
-import { useRootStore } from '@/stores/root'
+import { isMobile, useRootStore } from '@/stores/root'
 import PayConfirmVue from '@/components/PayConfirm/PayConfirm.vue'
 import { UnitName } from '@/config'
 import NFTSellVue from '@/components/NFTSell/NFTSell.vue'
@@ -307,6 +310,7 @@ const nfts: GenesisNFTItem[] = reactive([])
 const isLikeing = ref(false)
 const collection: { val: null | Collect } = reactive({ val: null })
 const currentNFT: { val: null | GenesisNFTItem } = reactive({ val: null })
+const gutter = window.innerWidth > 750 ? 22 : 10
 
 const isSale = computed(() => {
   return IsSale(nft.val)
@@ -446,9 +450,11 @@ function transfer() {
 
 function onChangeDetails() {
   isShowDetails.value = !isShowDetails.value
-  nextTick(() => {
-    recordWarpHeight.value = DescriptionWarpRef.value?.clientHeight
-  })
+  if (!isMobile) {
+    nextTick(() => {
+      recordWarpHeight.value = DescriptionWarpRef.value?.clientHeight
+    })
+  }
 }
 
 function getNFTs() {

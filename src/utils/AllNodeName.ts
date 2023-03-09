@@ -7,16 +7,36 @@ const AllNodeName: {
     version: string
   }
 } = {
+  // NOT  Protocols Node
   [NodeName.LegalSellNft]: {
     brfcId: '--',
     path: '--',
     version: '1.0.0',
   },
-  [NodeName.Name]: {
+
+  // Info Node
+  [NodeName.ETHBinding]: {
     brfcId: '--',
-    path: '--',
+    path: 'info',
     version: '1.0.0',
   },
+  [NodeName.Name]: {
+    brfcId: '--',
+    path: 'info',
+    version: '1.0.0',
+  },
+  [NodeName.Phone]: {
+    brfcId: '--',
+    path: 'info',
+    version: '1.0.0',
+  },
+  [NodeName.Email]: {
+    brfcId: '--',
+    path: 'info',
+    version: '1.0.0',
+  },
+
+  // Protocols Node
   [NodeName.SimpleMicroblog]: {
     brfcId: 'b17e9e277bd7',
     path: '/Protocols/SimpleMicroblog',
@@ -37,11 +57,7 @@ const AllNodeName: {
     path: '/Protocols/SimpleFileGroupChat',
     version: '1.0.0',
   },
-  [NodeName.ETHBinding]: {
-    brfcId: '对应ETH钱包地址',
-    path: '/Info/EVMBinding',
-    version: '1.0.0',
-  },
+
   [NodeName.NFTAvatar]: {
     brfcId: 'b1e12b089e71',
     path: '/Protocols/NFTAvatar',
@@ -171,6 +187,11 @@ const AllNodeName: {
     brfcId: '249044dac325',
     path: '/Protocols/NftCancel',
     version: '1.0.3',
+  },
+  [NodeName.nftBuy]: {
+    brfcId: '1847e7d33857',
+    path: '/Protocols/nftBuy',
+    version: '1.0.2',
   },
   [NodeName.nftBuy]: {
     brfcId: '1847e7d33857',

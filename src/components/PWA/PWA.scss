@@ -1,0 +1,102 @@
+/* prettier-ignore-start */
+.pwa {
+    position: fixed;
+    width: var(--sm-conetnt-width);
+    left: calc((100% - 90PX) / 2);
+    margin-left: calc(90PX - (var(--sm-conetnt-width) / 2));
+    bottom: 30PX;
+    border-radius: var(--rounded);
+    padding: 18PX;
+    z-index: 99;
+
+    .header {
+
+        .title {
+            font-size: 18PX;
+            font-weight: 700;
+        }
+
+        .close {
+            width: 26PX;
+            height: 26PX;
+            border-radius: 50%;
+            background: var(--themeBgSecondColor);
+            cursor: pointer;
+
+            .icon {
+                width: 15PX;
+                height: 15PX;
+
+                :deep(use) {
+                    fill: var(--themeTextColor);
+                    ;
+                }
+            }
+        }
+    }
+
+    .content {
+        margin-top: 18PX;
+
+
+
+        .logo {
+            background: #fff;
+            width: 50PX;
+            height: 50PX;
+            border-radius: var(--rounded);
+            cursor: auto;
+
+            .icon {
+                width: 30PX;
+                height: 30PX;
+            }
+
+
+        }
+
+        .tips {
+            font-size: 12PX;
+            line-height: 1.5;
+
+            @media screen and (min-width:750PX) {
+                font-size: 14PX;
+
+            }
+        }
+    }
+
+    .operate {
+        margin-top: 18PX;
+
+        a {
+            padding: 6PX 12PX;
+            cursor: pointer;
+            border-radius: 99999PX;
+            font-size: 14PX;
+            font-weight: 700;
+            background: white;
+            min-width: 96PX;
+            text-align: center;
+
+            &:first-child {
+                background: var(--themeFadedTextColor);
+            }
+
+            &:last-child {
+                background: #fff;
+            }
+        }
+    }
+}
+
+@media screen and (max-width:750PX) {
+    .pwa {
+        width: 90%;
+        left: 0;
+        margin-left: 5%;
+    }
+
+}
+
+/* prettier-ignore-start */

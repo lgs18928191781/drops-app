@@ -25,7 +25,7 @@
       content="did,web3,social,NFT,decentralized,social,metaid,social-fi,show3"
     />
     <!-- 要动态更改 icon 所以不初始化设置 -->
-    <link rel="icon" key="favicon" href="/favicon.ico" />
+    <!-- <link rel="icon" key="favicon" href="/favicon.ico" /> -->
     <style>
       @font-face {
         font-family: 'SF-Pro-Regular';
@@ -48,8 +48,14 @@
           docEl.dataset.width = width
           docEl.dataset.percent = htmlFontSize * (width / designSize)
           var fontSize = htmlFontSize * (width / designSize)
-          if (fontSize < 70) {
-            fontSize = 70
+          let minFontSize = 90
+          var agent = navigator.userAgent.toLowerCase()
+          //  微信浏览器
+          if (agent.match(/MicroMessenger/i) == 'micromessenger') {
+            minFontSize = 62
+          }
+          if (fontSize < minFontSize) {
+            fontSize = minFontSize
           }
           docEl.style.fontSize = fontSize + 'px'
         }

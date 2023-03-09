@@ -721,14 +721,7 @@ export class SDK {
         const userStore = useUserStore()
         const chain = params.payType === SdkPayType.BSV ? HdWalletChain.BSV : HdWalletChain.MVC
         let transactions: NodeTransactions = {}
-        if (params.nodeName === NodeName.Name) {
-          const res = await this.wallet?.createNode({
-            ...params,
-            parentTxId: userStore.user!.infoTxId,
-            chain,
-          })
-          transactions.currentNode = res
-        } else if (params.nodeName === NodeName.SendMoney) {
+        if (params.nodeName === NodeName.SendMoney) {
           // 只转钱
           const scriptPlayload = [import.meta.env.VITE_App_Key]
           const tx = await this.wallet?.makeTx({
@@ -744,7 +737,17 @@ export class SDK {
               scriptPlayload: scriptPlayload,
             }
           }
+        } else if (this.isInfoNode(params.nodeName)) {
+          // 非 Protocols 节点
+          const res = await this.wallet?.createNode({
+            ...params,
+            parentTxId: userStore.user!.infoTxId,
+            chain,
+          })
+          transactions.currentNode = res
         } else {
+          // Protocols 节点
+
           // 如果有附件
           if (params.attachments && params.attachments!.length > 0) {
             transactions.metaFileBrfc = await this.getBrfcNode(
@@ -955,7 +958,7 @@ export class SDK {
         addressIndex: parseInt(this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[0]),
       }
     } else {
-      if (params.nodeName === NodeName.Name) {
+      if (this.isInfoNode(NodeName.Name)) {
         receive = {
           address: this.wallet!.infoAddress,
           addressType: parseInt(this.wallet!.keyPathMap['Info'].keyPath.split('/')[0]),
@@ -997,7 +1000,14 @@ export class SDK {
     return new Promise<NodeTransactions>(async (resolve, reject) => {
       try {
         const chain = params.payType === SdkPayType.BSV ? HdWalletChain.BSV : HdWalletChain.MVC
-        if (params.nodeName === NodeName.Name) {
+        if (params.nodeName === NodeName.SendMoney) {
+          this.setTransferUtxoAndOutputAndSign(
+            transactions.sendMoney!.transaction,
+            [utxo],
+            lastChangeAddress
+          )
+          transactions.sendMoney.txId = transactions.sendMoney.transaction.id
+        } else if (this.isInfoNode(params.nodeName)) {
           this.setTransferUtxoAndOutputAndSign(
             transactions.currentNode!.transaction,
             [utxo],
@@ -1005,13 +1015,6 @@ export class SDK {
           )
           // 更新txId
           transactions.currentNode!.txId = transactions.currentNode!.transaction.id
-        } else if (params.nodeName === NodeName.SendMoney) {
-          this.setTransferUtxoAndOutputAndSign(
-            transactions.sendMoney!.transaction,
-            [utxo],
-            lastChangeAddress
-          )
-          transactions.sendMoney.txId = transactions.sendMoney.transaction.id
         } else {
           if (transactions.metaFileBrfc?.transaction) {
             this.setTransferUtxoAndOutputAndSign(
@@ -1919,5 +1922,19 @@ export class SDK {
     })
 
     return await this.wallet?.provider.broadcast(res!.toString())
+  }
+
+  isInfoNode(nodeName: NodeName) {
+    const target = AllNodeName[nodeName]
+    if (target) {
+      if (target.path === 'info') {
+        return true
+      } else {
+        false
+      }
+    } else {
+      // @ts-ignore
+      throw new Error(i18n.global.t('Not Found Node Name') + ':' + nodeName)
+    }
   }
 }

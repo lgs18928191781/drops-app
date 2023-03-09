@@ -258,7 +258,11 @@
         }
     }
 
-    .nft-list {}
+    .el-row {
+        .el-col {
+            margin-bottom: 22px;
+        }
+    }
 }
 
 
@@ -274,7 +278,7 @@
         }
 
         .collection-content {
-            padding: 30px;
+            padding: 18px;
         }
 
         .collection-msg {
@@ -294,14 +298,34 @@
         }
 
         .screen {
+            --input-height: 50px;
+
             .el-select {
                 width: 120PX;
+            }
+
+            .display {
+                margin-left: 10px;
+
+                a {
+                    height: 50px;
+                    padding: 0 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
             }
         }
 
         .collection-nft-content {
             .el-affix {
                 flex: 1;
+            }
+        }
+
+        .el-row {
+            .el-col {
+                margin-bottom: 10PX;
             }
         }
     }

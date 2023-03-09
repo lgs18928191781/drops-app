@@ -368,27 +368,6 @@
 
 @media only screen and (max-width: 750PX) {
 
-    .top-bar-warp {
-        .top-bar {
-            flex-direction: column;
-
-            .flex1 {
-                width: 100%;
-
-                .search {
-                    width: 100%;
-                }
-            }
-
-            nav {
-                margin-top: 18px;
-                width: 100%;
-                text-align: center;
-            }
-        }
-
-    }
-
     .banner .banner-item .cover {
         border-radius: var(--rounded);
         overflow: hidden;
