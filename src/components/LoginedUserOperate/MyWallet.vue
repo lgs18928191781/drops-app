@@ -311,7 +311,14 @@ import { computed, reactive, ref, watch, toRaw } from 'vue'
 import MetaMaskLogo from '@/assets/images/login_logo_matamask.png'
 import MetaIdLogo from '@/assets/images/iocn_showmoney.png'
 import { useI18n } from 'vue-i18n'
-import { copy, getUserBsvBalance, mappingChainName, currentConnectChain } from '@/utils/util'
+
+import {
+  copy,
+  getUserBsvBalance,
+  mappingChainName,
+  currentConnectChain,
+  openLoading,
+} from '@/utils/util'
 import { GetBalance, GetNFTs, GetBindMetaidAddressList } from '@/api/aggregation'
 import { setHashData, LoginByEthAddress } from '@/api/core'
 import ETH from '@/assets/images/eth.png'
@@ -682,6 +689,10 @@ async function startBinding(params: { signAddressHash: string; address: string; 
     }
   } catch (error) {
     if ((error as any).code == -1) {
+      let loading
+      loading = openLoading({
+        text: i18n.t('binding_now'),
+      })
       const originShowmoneyPassword = decode(localStorage.getItem(encode('password'))!)
       const mnemonic = userStore!.user!.enCryptedMnemonic
       const decodeMnemonic = decryptMnemonic(mnemonic, originShowmoneyPassword)
@@ -697,6 +708,7 @@ async function startBinding(params: { signAddressHash: string; address: string; 
         password: originShowmoneyPassword,
       })
       await sendHash(userStore.user!, encodeMnemonic)
+      loading.close()
       ElMessage.success(`${i18n.t('bindingSuccess')}`)
     }
   }
