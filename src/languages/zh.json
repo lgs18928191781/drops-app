@@ -751,7 +751,10 @@
     "CollectionChart": {
       "title": "销售统计",
       "yAxisTitle": "价格（Space）"
-    }
+    },
+    "Select Payment Method": "选择支付方式",
+    "BuyNFTNoteEnough": "余额不足，请检查您的<a>钱包</a>",
+    "Chosse PayType": "选择其他付款方式"
   },
   "My NFT": "我的NFT",
   "Done": "完成",

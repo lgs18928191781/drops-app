@@ -81,9 +81,7 @@
                   <template v-if="isSale">
                     <span class="space">{{ $filters.space(nft.val!.nftPrice) }} Space</span>
                     <span class="curreny"
-                      ><AmountVue
-                        :price="$filters.space(nft.val!.nftPrice)"
-                        :currency="ToCurrency.MVC"
+                      ><AmountVue :price="nft.val!.nftPrice" :currency="ToCurrency.MVC"
                     /></span>
                   </template>
                   <template v-else>--</template>

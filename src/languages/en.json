@@ -761,7 +761,10 @@
     "CollectionChart": {
       "title": "Sales",
       "yAxisTitle": "Price（Space）"
-    }
+    },
+    "Select Payment Method": "Select Payment Method",
+    "BuyNFTNoteEnough": "Insufficient balance, please check<a>your wallet</a>",
+    "Chosse PayType": "Choose another payment method"
   },
   "My NFT": "My NFT",
   "Done": "Done",
