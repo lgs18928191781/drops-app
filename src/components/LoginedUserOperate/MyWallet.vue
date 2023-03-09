@@ -685,7 +685,7 @@ async function startBinding(params: { signAddressHash: string; address: string; 
       chainId: params.chainId,
     })
     if (isBinded.code == 0 && isBinded.data) {
-      ElMessage.error(`${i18n.t('wallethasBinding')}`)
+      return ElMessage.error(`${i18n.t('wallethasBinding')}`)
     }
   } catch (error) {
     if ((error as any).code == -1) {
