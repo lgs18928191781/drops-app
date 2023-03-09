@@ -22,6 +22,7 @@
     </header>
 
     <div class="list">
+      <!-- Edit Profile -->
       <div
         class="item flex flex-align-center"
         @click="isShowEditProfile = true"
@@ -38,6 +39,20 @@
         <span class="flex1 name">{{ $t('Setting.Edit Profile') }}</span>
         <Icon class="right" name="down" />
       </div>
+
+      <!-- Link Account -->
+      <div
+        class="item flex flex-align-center"
+        @click="isShowLinkAccount = true"
+        v-if="userStore.isAuthorized"
+      >
+        <span class="icon-warp flex flex-align-center flex-pack-center">
+          <Icon name="link_account" />
+        </span>
+        <span class="flex1 name">{{ $t('Setting.Link Account') }}</span>
+        <Icon class="right" name="down" />
+      </div>
+
       <div
         class="item flex flex-align-center"
         v-for="item in list"
@@ -61,6 +76,8 @@
     <LanguageVue v-model="isShowLangSet" />
     <!-- Theme -->
     <ThemeVue v-model="isShowThemeSet" />
+    <!-- LinkAccount -->
+    <LinkAccount v-model="isShowLinkAccount" />
   </ElDrawer>
 </template>
 <script lang="ts" setup>
@@ -73,6 +90,7 @@ import EditProfileVue from './EditProfile.vue'
 import UplinkSettingVue from './UplinkSetting.vue'
 import LanguageVue from './Language.vue'
 import ThemeVue from './Theme.vue'
+import LinkAccount from './LinkAccount.vue'
 
 interface Props {
   modelValue: boolean
@@ -86,6 +104,7 @@ const isShowEditProfile = ref(false)
 const isShowLangSet = ref(false)
 const isShowThemeSet = ref(false)
 const isShowUploadLinkSet = ref(false)
+const isShowLinkAccount = ref(false)
 
 const switchLanguage = (lang: string) => {
   i18n.locale.value = lang

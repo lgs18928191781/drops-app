@@ -181,11 +181,27 @@ export interface NFTFeeInfo {
   royaltyFeeRate: number
   updated_at: string
 }
+
 export const GetNFTFee = (): Promise<NFTFeeInfo> => {
   return new Promise(async (resolve, reject) => {
     const res: any = await Strapi.get('/nft-fees', {
       params: {
         network: import.meta.env.VITE_NET_WORK,
+      },
+    }).catch(error => {
+      reject(error)
+    })
+    if (res) {
+      resolve(res[0])
+    }
+  })
+}
+
+export const GetGenesisFee = (genesis: string): Promise<NFTFeeInfo> => {
+  return new Promise(async (resolve, reject) => {
+    const res: any = await Strapi.get('/genesis-fees', {
+      params: {
+        genesis,
       },
     }).catch(error => {
       reject(error)

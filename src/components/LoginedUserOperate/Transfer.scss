@@ -8,3 +8,38 @@
 .content {
     padding: 18px;
 }
+
+.confirm-info {
+    .confirm-info-item {
+        margin-bottom: 15px;
+    }
+
+    .user {
+        background: var(--divid-color);
+        padding: 10px 15px;
+        border-radius: var(--rounded);
+
+        .avatar {
+            width: 40px;
+            margin-right: 15px;
+        }
+
+        .metaid {
+            font-size: 12px;
+            margin-top: 4px;
+            color: var(--themeFadedTextColor);
+        }
+    }
+
+    .amount {
+        font-size: 20px;
+    }
+
+    .operate {
+        border-top: 1px solid var(--divid-color);
+
+        .faded {
+            cursor: not-allowed;
+        }
+    }
+}

@@ -1,0 +1,58 @@
+@import '@/assets/styles/var.scss';
+
+.chart-warp {
+    max-height: 500PX;
+    border: 2px solid #EDEFF2;
+    padding: 60px;
+    border-radius: 12px;
+    width: 80%;
+    margin: 60px auto 0 auto;
+
+    .title {
+        font-size: 20px;
+        margin-bottom: 24px;
+    }
+
+    :deep(#tooltip) {
+        background: var(--themeBgSecondColor);
+        border-radius: var(--rounded);
+        color: var(--thememTextColor);
+        pointerEvents: none;
+        position: absolute;
+        transform: translate(-50%, 0);
+        transition: all .1s ease;
+        box-shadow: 0px 4px 10px 0px rgba(var(--themeTextColorRgb), 0.3);
+        padding: 12px;
+        display: flex;
+        align-items: center;
+
+        &:hover {
+            opacity: 1;
+        }
+
+        .avatar {
+            width: 68px;
+            height: 68px;
+            border-radius: 8px;
+            margin-right: 12px;
+            border: 1px solid var(--divid-color);
+            object-fit: cover;
+        }
+
+        .amount {
+            font-size: 16px;
+        }
+
+        .name,
+        .time {
+            font-size: 16px;
+            color: var(--themeFadedTextColor);
+            margin-top: 4px;
+        }
+
+        .name {
+            @extend %text-ellipsis;
+            max-width: 200px;
+        }
+    }
+}

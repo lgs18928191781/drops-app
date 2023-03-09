@@ -6,9 +6,12 @@
     }
 
     .payment {
+        --input-height: 36px;
+
         margin-top: 18px;
         padding: 18px 0;
         border-bottom: 1px solid var(--divid-color);
+
 
         .el-select {
             :deep(.el-input__wrapper) {

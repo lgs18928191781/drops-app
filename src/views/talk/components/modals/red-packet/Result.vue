@@ -127,8 +127,14 @@
                       $t('Talk.Modals.red_packet_require_nft')
                     }}</span>
                     <div class="flex items-center text-sm ml-2">
+                      <img
+                        :src="requireNft.iconUrl"
+                        alt=""
+                        v-if="requireNft.iconUrl"
+                        class="w-10 h-10 rounded-md"
+                      />
                       <Image
-                        v-if="requireNft.icon"
+                        v-else-if="requireNft.icon"
                         :src="requireNft.icon"
                         custom-class="w-10 h-10 rounded-md"
                       />
@@ -161,6 +167,7 @@ import GiftRibbonImg from '@/assets/images/gift_ribbon.svg?url'
 import { formatTimestamp } from '@/utils/talk'
 import { useTalkStore } from '@/stores/talk'
 import { GetNFT } from '@/api/aggregation'
+import { nftSeries } from '@/utils/series'
 
 const layout = useLayoutStore()
 const modals = useModalsStore()
@@ -217,6 +224,16 @@ onMounted(async () => {
   const needsNft = requireType === '2' || requireType === '2001' || requireType === '2002'
 
   if (needsNft) {
+    // 先从本地速查表查询系列信息
+    type seriesKey = keyof typeof nftSeries
+    const series = nftSeries[redPacketResult?.requireGenesis as seriesKey]
+    console.log({ nftSeries, redPacketResult, series })
+    if (series) {
+      console.log('here')
+      requireNft.value = series
+      return
+    }
+
     let chain
     if (requireType === '2001') {
       chain = import.meta.env.VITE_ETH_CHAIN

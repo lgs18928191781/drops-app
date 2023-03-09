@@ -40,6 +40,8 @@
             <NFTCover :cover="[nft.nftIcon]" />
           </RouterLink>
         </ElSkeleton>
+
+        <LoadMore :pagination="pagination" v-if="!isSkeleton && nfts.length > 0" />
       </div>
     </div>
   </ElDrawer>
@@ -52,6 +54,7 @@ import { router } from '@/router'
 import { useUserStore } from '@/stores/user'
 import { reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import LoadMore from '../LoadMore/LoadMore.vue'
 
 const props = defineProps<{
   modelValue: boolean
@@ -62,7 +65,7 @@ const props = defineProps<{
 }>()
 
 const route = useRoute()
-const pagination = reactive({ ...initPagination })
+const pagination = reactive({ ...initPagination, pageSize: 27 })
 const userStore = useUserStore()
 const nfts: GenesisNFTItem[] = reactive([])
 const isSkeleton = ref(true)
@@ -85,7 +88,11 @@ function getDatas(isCover = false) {
     })
     if (res?.code === 0) {
       if (isCover) nfts.length = 0
-      nfts.push(...res.data.results.items)
+      if (res.data.results.items.length === 0) {
+        pagination.nothing = true
+      } else {
+        nfts.push(...res.data.results.items)
+      }
       resolve()
     }
   })

@@ -41,24 +41,29 @@
         >
           <div class="flex1 cont">
             <div class="name">{{ metaNameInfo.val!.name }}.metaid</div>
-            <div class="msg flex flex-align-center">
+            <div class="msg flex flex-align-baseline">
               <span class="dot"></span>
-              <span class="status">{{
-                metaNameInfo.val.registerState === MetaNameRegisterState.UnRegister
-                  ? $t('MetaName.UnRegistered')
-                  : $t('MetaName.Registered')
-              }}</span
-              ><span
-                class="time"
-                v-if="metaNameInfo.val.registerState !== MetaNameRegisterState.UnRegister"
-                >,&nbsp;{{ $t('MetaName.Expire date') }}:&nbsp;
-                <template v-if="isGetExpireDateLoading">
-                  <ElIcon class="is-loading">
-                    <Loading />
-                  </ElIcon>
-                </template>
-                <template v-else> {{ $t('MetaName.About') }}&nbsp;{{ expireDate }}(UTC) </template>
-              </span>
+
+              <div class="cont flex1">
+                <span class="status">{{
+                  metaNameInfo.val.registerState === MetaNameRegisterState.UnRegister
+                    ? $t('MetaName.UnRegistered')
+                    : $t('MetaName.Registered')
+                }}</span>
+                <span
+                  class="time"
+                  v-if="metaNameInfo.val.registerState !== MetaNameRegisterState.UnRegister"
+                  >,&nbsp;{{ $t('MetaName.Expire date') }}:&nbsp;
+                  <template v-if="isGetExpireDateLoading">
+                    <ElIcon class="is-loading">
+                      <Loading />
+                    </ElIcon>
+                  </template>
+                  <template v-else>
+                    {{ $t('MetaName.About') }}&nbsp;{{ expireDate }}(UTC)
+                  </template>
+                </span>
+              </div>
             </div>
           </div>
           <a
@@ -68,8 +73,8 @@
           >
             {{ $t('MetaName.Sign up now') }}</a
           >
-          <RouterLink :to="{ name: 'metaNameMarket' }" class="flex flex-align-center" v-else>
-            <Icon name="market" /> {{ $t('MetaName.To Market Check') }}</RouterLink
+          <a @click="toMetaNameDetail" class="flex flex-align-center" v-else>
+            <Icon name="market" /> {{ $t('MetaName.To Market Check') }}</a
           >
         </div>
       </ElSkeleton>
@@ -128,10 +133,10 @@ import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { payPlatformList } from '@/config'
 import { useUserStore } from '@/stores/user'
-import { EnvMode, PayPlatform } from '@/enum'
+import { Chains, EnvMode, PayPlatform } from '@/enum'
 import PayMsg from '../components/PayMsg/PayMsg.vue'
 import SearchWarp from '../components/SearchWarp/SearchWarp.vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { bytesLength, GetExpiredUTC, getMetaNamePrice, urlToBase64 } from '@/utils/util'
 import Decimal from 'decimal.js-light'
@@ -146,6 +151,7 @@ import { validateMetaName } from '@/utils/metaname'
 const i18n = useI18n()
 const userStore = useUserStore()
 const route = useRoute()
+const router = useRouter()
 const metaName = ref(route.query.metaName ? (route.query.metaName as string) : '')
 const metaNameInfo: { val: null | MetaNameIndexerInfo } = reactive({ val: null })
 const metaNameStore = useMetaNameStore()
@@ -243,6 +249,18 @@ function getExporeDate() {
 function toRegister() {
   if (metaNameConfig.val!.isOpen === false) return ElMessage.info(i18n.t('Comming Soon'))
   isShowRegister.value = true
+}
+
+function toMetaNameDetail() {
+  router.push({
+    name: 'nftDetail',
+    params: {
+      chain: Chains.MVC,
+      genesis: metaNameInfo.val!.genesisId,
+      codehash: metaNameInfo.val!.nftCodeHash,
+      tokenIndex: metaNameInfo.val!.tokenIndex,
+    },
+  })
 }
 
 GetMetaNameConfig()

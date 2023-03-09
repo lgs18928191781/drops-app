@@ -47,6 +47,7 @@
             :name="userStore.user!.name"
             class="user-warp-item overflow-hidden"
             :meta-name="userStore.user!.metaName"
+            :disabled="true"
           />
         </template>
         <UserCardVue

@@ -140,7 +140,7 @@ import { useRoute, useRouter } from 'vue-router'
 import StartPayVue from '../StartPay/StartPay.vue'
 import { ElMessage } from 'element-plus'
 import Decimal from 'decimal.js-light'
-import { GetNFTFee, NFTFeeInfo } from '@/api/strapi'
+import { GetGenesisFee, GetNFTFee, NFTFeeInfo } from '@/api/strapi'
 import NFTCover from '../NFTCover/NFTCover.vue'
 
 const props = defineProps<{
@@ -369,9 +369,13 @@ watch(
   val => {
     if (val) {
       isSkeleton.value = true
-      GetNFTFee().then(res => {
+      GetNFTFee().then(async res => {
         if (res) {
-          nftFee.val = res
+          const response = await GetGenesisFee(props.nft.nftGenesis)
+          nftFee.val = {
+            ...res,
+            ...response,
+          }
           isSkeleton.value = false
         }
       })

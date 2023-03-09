@@ -58,9 +58,9 @@
           <div
             class="rounded-xl p-4 flex space-x-4.5 bg-white dark:bg-gray-700 items-center rounded-tl border border-solid border-blue-400"
           >
-            <Image :src="message.icon" customClass="h-15 w-15 rounded-full" loading="lazy" />
+            <Image :src="message.icon" customClass="h-15 w-15 rounded-md shrink-0" loading="lazy" />
             <div class="flex flex-col space-y-1.5">
-              <div class="text-dark-800 dark:text-gray-100 text-base font-medium capitalize">
+              <div class="text-dark-800 dark:text-gray-100 text-base font-medium capitalize max-w-[160PX] truncate">
                 {{ message.memo }}
               </div>
               <div class="text-dark-400 dark:text-gray-200 text-xs">
@@ -81,9 +81,9 @@
           <div
             class="rounded-xl p-4 flex space-x-4.5 bg-white dark:bg-gray-700 items-center rounded-tl border border-solid border-blue-400"
           >
-            <Image :src="message.icon" customClass="h-15 w-15" loading="lazy" />
-            <div class="flex flex-col space-y-1.5">
-              <div class="text-dark-800 dark:text-gray-100 text-base font-medium capitalize">
+            <Image :src="message.icon" customClass="h-15 w-15 rounded-md shrink-0" loading="lazy" />
+            <div class="flex flex-col space-y-1">
+              <div class="text-dark-800 dark:text-gray-100 text-base font-medium capitalize max-w-[160PX] truncate">
                 {{ message.memo }}
               </div>
               <div class="text-dark-400 dark:text-gray-200 text-xs" v-if="message.data">
@@ -96,6 +96,50 @@
             <Icon name="message_token" class="w-4 h-4 text-white" />
             <div class="text-white text-xs">{{ $t('Talk.Messages.nft_transfer') }}</div>
           </div>
+        </div>
+      </div>
+
+      <div class="my-1.5 flex flex-col items-start" v-else-if="isNftBuy">
+        <div class="max-w-full min-w-[240PX] md:w-[300PX] shadow rounded-xl rounded-tl bg-blue-400">
+          <div
+            class="rounded-xl p-4 bg-white dark:bg-gray-700 rounded-tl border border-solid border-blue-400 divide-y divide-dark-200 dark:divide-gray-600"
+          >
+            <div class="flex items-center gap-x-4.5 mb-3">
+              <Image
+                :src="message.icon"
+                customClass="h-15 w-15 rounded-md shrink-0"
+                loading="lazy"
+              />
+              <div class="flex flex-col space-y-1">
+                <div
+                  class="text-dark-800 dark:text-gray-100 text-base font-medium capitalize max-w-[160PX] truncate"
+                >
+                  {{ message.memo }}
+                </div>
+                <div class="text-dark-400 dark:text-gray-200 text-xs" v-if="message.data">
+                  # {{ message.data.tokenIndex }}
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-3 flex justify-between items-center">
+              <div class="text-xs text-dark-300 dark:text-gray-400">
+                {{ $t('Talk.Messages.price') }}
+              </div>
+              <div class="text-sm">{{ nftPrice }}</div>
+            </div>
+          </div>
+
+          <div class="flex py-2.5 items-center space-x-1.5 px-4">
+            <Icon name="message_token" class="w-4 h-4 text-white" />
+            <div class="text-white text-xs">{{ $t('Talk.Messages.nft_buy') }}</div>
+          </div>
+        </div>
+
+        <div
+          class="mt-1.5 bg-dark-800/5 dark:bg-gray-800  text-sm text-dark-400 dark:text-gray-200 rounded-xl px-3 py-2"
+        >
+          {{ $t('Talk.Messages.buy_tip') }}
         </div>
       </div>
 
@@ -401,6 +445,21 @@ const messageAvatarImage = computed(() => {
   return activeChannel.value?.avatarImage
 })
 
+const nftPrice = computed(() => {
+  if (props.message.data?.sellUtxo?.price) {
+    const rawPrice = props.message.data?.sellUtxo?.price
+    let price = (rawPrice / 1e8).toFixed(8)
+    // 去掉末尾的0
+    price = price.replace(/0+$/, '')
+    // 添加单位 SPACE
+    price = price + ' SPACE'
+
+    return price
+  }
+
+  return '-'
+})
+
 const isNftEmoji = computed(() => props.message.protocol === 'SimpleEmojiGroupChat')
 const isImage = computed(() => props.message.protocol === 'SimpleFileMsg')
 const isGiveawayRedEnvelope = computed(() => props.message.protocol === 'SimpleRedEnvelope')
@@ -413,6 +472,7 @@ const isRepostWithComment = computed(() => props.message.nodeName === 'SimpleMic
 const isComment = computed(() => props.message.protocol === 'PayComment')
 const isFtTransfer = computed(() => props.message.protocol === 'FtTransfer')
 const isNftTransfer = computed(() => props.message.protocol === 'NftTransfer')
+const isNftBuy = computed(() => props.message.protocol === 'nftBuy')
 </script>
 
 <style lang="scss" scoped></style>

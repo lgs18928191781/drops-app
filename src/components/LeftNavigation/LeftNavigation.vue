@@ -129,7 +129,10 @@ const route = useRoute()
 const rootStore = useRootStore()
 const i18n = useI18n()
 const isProduction = import.meta.env.MODE === 'mainnet'
-const whiteList = ['7a7c301023d20f8dd3af3a4461f8e9726256286cc3c79b7fb0673a4a0d7d4625']
+const whiteList = [
+  '7a7c301023d20f8dd3af3a4461f8e9726256286cc3c79b7fb0673a4a0d7d4625',
+  'e9ab42667c5f5a6a1e7d45ed023f8961ee6950bba8a771d68732c8fb460a7aae',
+]
 const isInWhitelist = talk.selfMetaId && whiteList.includes(talk.selfMetaId)
 
 function getCommunityKey(community: Community) {
@@ -153,16 +156,13 @@ const apps = reactive([
     title: () => i18n.t('Talk.Community.atme'),
     symbol: '@me',
   },
-])
-
-if (import.meta.env.MODE !== 'mainnet') {
-  apps.push({
+  {
     icon: 'market',
     path: '/nft/collection/detail/MetaName',
     title: () => i18n.t('NFT.NFT Market'),
     symbol: 'nft',
-  })
-}
+  },
+])
 
 if (userStore.isAuthorized) {
   talk.fetchCommunities()

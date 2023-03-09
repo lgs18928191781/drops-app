@@ -115,20 +115,23 @@ export function getMetaNameOperateParams(params: {
 }
 
 export const validateMetaName = (value: string) => {
-  return new Promise(async resolve => {
+  return new Promise<string | false>(async resolve => {
     if (value === '') {
       // @ts-ignore
       return ElMessage.error(i18n.global.t('MetaName.MetaName cannot be empty'))
     } else if (value.trim() !== value || /\s/.test(value)) {
       ElMessage.error(`${i18n.global.t('metanameNotAllowSpace')}`)
       resolve(false)
-    } else if (emoji.test(value)) {
-      ElMessage.error(`${i18n.global.t('metanameNotAllowEmoji')}`)
-      resolve(false)
-    } else if (/[\u4e00-\u9fa5]/.test(value) && import.meta.env.MODE === EnvMode.Mainnet) {
-      ElMessage.error(`${i18n.global.t('metanameNotAllowCh')}`)
-      resolve(false)
-    } else {
+    }
+    // else if (emoji.test(value)) {
+    //   ElMessage.error(`${i18n.global.t('metanameNotAllowEmoji')}`)
+    //   resolve(false)
+    // }
+    // else if (/[\u4e00-\u9fa5]/.test(value) && import.meta.env.MODE === EnvMode.Mainnet) {
+    //   ElMessage.error(`${i18n.global.t('metanameNotAllowCh')}`)
+    //   resolve(false)
+    // }
+    else {
       const testResult = bytesLength(value.trim())
       if (testResult > 0 && testResult <= 2) {
         ElMessage.error(`${i18n.global.t('metanameNotAllowMin')}`)
