@@ -1039,5 +1039,7 @@
         "step3": "3. Click \"Add to Home Screen\"."
       }
     }
-  }
+  },
+  "wallethasBinding": "The wallet address has already been bound by other MetaID accounts and cannot be bound repeatedly",
+  "binding_now": "Binding..."
 }
