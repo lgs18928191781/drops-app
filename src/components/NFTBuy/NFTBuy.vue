@@ -107,16 +107,6 @@
             </template>
           </a>
         </div>
-
-        <StartPayVue
-          v-model="isShowPayModal"
-          :payPlatform="currentPayPlatform"
-          :product_type="product_type"
-          :order-id="payMsg.orderId"
-          :amount="payMsg.amount"
-          :url="payMsg.url"
-          @success="onPaySuccess"
-        />
       </ElSkeleton>
     </template>
 
@@ -187,6 +177,16 @@
       </div>
     </div>
   </ElDialog>
+
+  <StartPayVue
+    v-model="isShowPayModal"
+    :payPlatform="currentPayPlatform"
+    :product_type="product_type"
+    :order-id="payMsg.orderId"
+    :amount="payMsg.amount"
+    :url="payMsg.url"
+    @success="onPaySuccess"
+  />
 </template>
 
 <script setup lang="ts">
@@ -391,9 +391,13 @@ async function confirmBuy() {
         })
         if (res) {
           payMsg.amount = res.pay_amount!.toString()
-          payMsg.orderId = res.wxCoreOrderId
+          payMsg.orderId = res.order_id
           payMsg.url = res.url
-          isShowPayModal.value = true
+          buying.value = false
+          emit('update:modelValue', false)
+          nextTick(() => {
+            isShowPayModal.value = true
+          })
         }
       }
     } catch (error) {
