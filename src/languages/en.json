@@ -1032,5 +1032,6 @@
         "step4": "4. Click \"Add\""
       }
     }
-  }
+  },
+  "wallethasBinding": "The wallet address has already been bound by other MetaID accounts and cannot be bound repeatedly"
 }
