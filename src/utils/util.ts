@@ -981,6 +981,9 @@ export function getCurrencyAmount(
   let rate = rootStore.exchangeRate.find(
     item => item.symbol.toUpperCase() === toCurrency!.toUpperCase()
   )
+  if (currency === toCurrency) {
+    return price
+  }
   if (toCurrency === ToCurrency.CNY) {
     if (currency === ToCurrency.CNY) {
       //  cny -> cny

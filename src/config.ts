@@ -213,6 +213,19 @@ export const payPlatformList: PayPlatformItem[] = [
   // },
 ]
 
+export const payPlatformAmountRate = {
+  [PayPlatform.ETH]: Math.pow(10, 9),
+  [PayPlatform.POLYGON]: Math.pow(10, 9),
+  [PayPlatform.BSV]: Math.pow(10, 8),
+  [PayPlatform.SPACE]: Math.pow(10, 8),
+  [PayPlatform.AliPay]: 100,
+  [PayPlatform.AliPaySelf]: 100,
+  [PayPlatform.BalancePay]: 100,
+  [PayPlatform.QuickPay]: 100,
+  [PayPlatform.UnionPay]: 100,
+  [PayPlatform.WechatPay]: 100,
+}
+
 export const currentSupportChain: Array<{
   chainId: string
   chainName: string

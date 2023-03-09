@@ -170,10 +170,10 @@ import {
 } from '@/enum'
 import { isAndroid, isApp, isIOS, isIosApp, useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
-import { computed, reactive, Ref, ref, watch } from 'vue'
+import { computed, nextTick, reactive, Ref, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NFTMsgVue from '../NFTMsg/NFTMsg.vue'
-import { PayPlatformItem, payPlatformList } from '@/config'
+import { payPlatformAmountRate, PayPlatformItem, payPlatformList } from '@/config'
 import PayTypeDropdownVue from '../PayTypeDropdown/PayTypeDropdown.vue'
 import { CreatePayOrder, getBalance, getCurrencyAmount, setPayQuitUrl } from '@/utils/util'
 import { useRoute, useRouter } from 'vue-router'
@@ -450,10 +450,16 @@ function checkIsEnough() {
       // @ts-ignore
       const res = await getBalance({ chain: payPlatformChain[currentPayPlatform.value] })
       if (res) {
-        if (res < totalPrice.value) {
-          ElMessage.error(i18n.t('NFT.Insufficient Balance'))
+        if (
+          res <
+          new Decimal(totalPrice.value)
+            .mul(payPlatformAmountRate[currentPayPlatform.value])
+            .toNumber()
+        ) {
+          isEnough.value = false
           reject()
         } else {
+          isEnough.value = true
           resolve()
         }
       }
@@ -476,7 +482,10 @@ watch(
             ...res,
             ...response,
           }
-          isSkeleton.value = false
+          nextTick(async () => {
+            await checkIsEnough()
+            isSkeleton.value = false
+          })
         }
       })
     }

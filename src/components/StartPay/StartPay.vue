@@ -283,18 +283,6 @@ const iosPayHtml = ref('')
 const PayIframeRef = ref()
 const isQrcodeInTime = ref(true) // 付款码是否在有效时间
 
-const payPlatformAmountRate = {
-  [PayPlatform.ETH]: Math.pow(10, 9),
-  [PayPlatform.POLYGON]: Math.pow(10, 9),
-  [PayPlatform.BSV]: Math.pow(10, 8),
-  [PayPlatform.SPACE]: Math.pow(10, 8),
-  [PayPlatform.AliPay]: 100,
-  [PayPlatform.AliPaySelf]: 100,
-  [PayPlatform.BalancePay]: 100,
-  [PayPlatform.QuickPay]: 100,
-  [PayPlatform.UnionPay]: 100,
-  [PayPlatform.WechatPay]: 100,
-}
 const payPlatformAmountFix = {
   [PayPlatform.ETH]: 8,
   [PayPlatform.POLYGON]: 8,
