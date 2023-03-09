@@ -399,6 +399,7 @@ export class SDK {
               // 确认支付
               // 打钱地址
               let receive = this.getNodeTransactionsFirstReceive(transactions, params)
+              debugger
               // 获取上链时的utxo
               const getUtxoRes = await this.getAmountUxto({
                 sdkPayType: option.payType!,
@@ -930,8 +931,22 @@ export class SDK {
       addressIndex: number
       addressType: number
     }
-    // 需要创建 metafile brfc 节点 ，把钱打去 protocol 地址
-    if (transactions.metaFileBrfc?.transaction) {
+    debugger
+    if (this.isInfoNode(NodeName.Name)) {
+      receive = {
+        address: this.wallet!.infoAddress,
+        addressType: parseInt(this.wallet!.keyPathMap['Info'].keyPath.split('/')[0]),
+        addressIndex: parseInt(this.wallet!.keyPathMap['Info'].keyPath.split('/')[1]),
+      }
+    }
+    if (transactions.sendMoney?.transaction) {
+      receive = {
+        address: this.wallet!.rootAddress,
+        addressType: parseInt(this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[0]),
+        addressIndex: parseInt(this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[0]),
+      }
+    } else if (transactions.metaFileBrfc?.transaction) {
+      // 需要创建 metafile brfc 节点 ，把钱打去 protocol 地址
       receive = {
         address: this.wallet!.protocolAddress,
         addressType: parseInt(this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[0]),
@@ -951,25 +966,11 @@ export class SDK {
         addressType: parseInt(this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[0]),
         addressIndex: parseInt(this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[1]),
       }
-    } else if (transactions.sendMoney?.transaction) {
-      receive = {
-        address: this.wallet!.rootAddress,
-        addressType: parseInt(this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[0]),
-        addressIndex: parseInt(this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[0]),
-      }
     } else {
-      if (this.isInfoNode(NodeName.Name)) {
-        receive = {
-          address: this.wallet!.infoAddress,
-          addressType: parseInt(this.wallet!.keyPathMap['Info'].keyPath.split('/')[0]),
-          addressIndex: parseInt(this.wallet!.keyPathMap['Info'].keyPath.split('/')[1]),
-        }
-      } else {
-        receive = {
-          address: transactions.currentNodeBrfc!.address,
-          addressType: transactions.currentNodeBrfc!.addressType,
-          addressIndex: transactions.currentNodeBrfc!.addressIndex,
-        }
+      receive = {
+        address: transactions.currentNodeBrfc!.address,
+        addressType: transactions.currentNodeBrfc!.addressType,
+        addressIndex: transactions.currentNodeBrfc!.addressIndex,
       }
     }
     return receive
