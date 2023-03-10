@@ -531,7 +531,8 @@
     "Transfer Success": "转账成功",
     "Confirm Transfer": "确认转账",
     "Transfer To": "给",
-    "Transfer Accound": "转账账户"
+    "Transfer Accound": "转账账户",
+    "Link Wallet": "绑定"
   },
   "registing": "注册中",
   "sendVerifiyCodeError": "验证码填写不正确,请重新填写",

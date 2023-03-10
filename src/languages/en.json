@@ -1016,11 +1016,11 @@
   "bindingSuccess": "The binding is successful!",
   "Not Found Node Name": "Not Found Node Name",
   "PWA": {
-    "title": "Add Show3 to Home Screen",
-    "tips": "Installing Show3 uses almost no storage and provides you a better experience.",
+    "title": "Add Show3 to Your Computer",
+    "tips": "Installing Show3 to your system will occupy no space but provide a better experience.",
     "Install": "Install",
     "InstallSuccess": "Install Success",
-    "Finished": "Finished",
+    "Finished": "OK",
     "DontAsk": "Don't ask again",
     "steps": {
       "title": "How to install Show3:",
