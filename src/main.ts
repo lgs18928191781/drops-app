@@ -24,31 +24,12 @@ import GlobalDialog from '@/components/GlobalDialog/index.vue'
 import { createPinia } from 'pinia'
 import { VueQueryPlugin } from '@tanstack/vue-query' // TanStack Query
 import { createHead } from '@vueuse/head'
-import * as Sentry from '@sentry/vue'
-import { BrowserTracing } from '@sentry/tracing'
-import 'virtual:vite-plugin-sentry/sentry-config'
+import { StartSentry } from './utils/sentry'
 
 const app = createApp(App)
 const head = createHead()
 
-const dist = window.VITE_PLUGIN_SENTRY_CONFIG.dist
-const release = window.VITE_PLUGIN_SENTRY_CONFIG.release
-Sentry.init({
-  app,
-  dsn: 'https://93303d5ab3984aacac0e6e6382aaf3dd@sentry.show3.space/2',
-  integrations: [
-    new BrowserTracing({
-      routingInstrumentation: Sentry.vueRouterInstrumentation(router),
-      tracePropagationTargets: ['*'],
-    }),
-  ],
-  // Set tracesSampleRate to 1.0 to capture 100%
-  // of transactions for performance monitoring.
-  // We recommend adjusting this value in production
-  tracesSampleRate: 1.0,
-  dist,
-  release,
-})
+StartSentry({ app, router })
 
 // 挂载全局过滤器
 // @ts-ignore
@@ -56,6 +37,10 @@ app.config.globalProperties.$filters = {
   ...filters,
 }
 const pinia = createPinia()
+
+setTimeout(() => {
+  a = 1
+}, 5000)
 
 // 全局组件
 app.component('UserAvatar', UserAvatar)
