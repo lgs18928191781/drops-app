@@ -1,4 +1,3 @@
-/** @type {import('vite').UserConfig} */
 import * as path from 'path'
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -18,13 +17,35 @@ import { viteExternalsPlugin } from 'vite-plugin-externals'
 import nodePolyfills from 'rollup-plugin-polyfill-node'
 import basicSsl from '@vitejs/plugin-basic-ssl'
 import { VitePWA } from 'vite-plugin-pwa'
+// import { sentryVitePlugin } from '@sentry/vite-plugin'
+import type { ViteSentryPluginOptions } from 'vite-plugin-sentry'
+import viteSentry from 'vite-plugin-sentry'
 // import dns from 'dns'
 // dns.setDefaultResultOrder('verbatim')
 const pathSrc = path.resolve(__dirname, 'src')
 const productionEnvs = ['mainnet']
+
 export default ({ mode, command }) => {
   // 加载环境配置文件
   const env = loadEnv(mode, process.cwd())
+  const sentryConfig: ViteSentryPluginOptions = {
+    url: env.VITE_SENTRY_URL,
+    authToken: env.VITE_SENTRY_AUTH_TOKEN,
+    org: env.VITE_SENTRY_ORG,
+    project: env.VITE_SENTRY_PROJECT,
+    release: '1.0',
+    deploy: {
+      env: 'production'
+    },
+    setCommits: {
+      auto: true
+    },
+    sourceMaps: {
+      include: ['./dist/assets'],
+      ignore: ['node_modules'],
+      urlPrefix: '~/assets'
+    }
+  }
   const isProduction = productionEnvs.includes(mode) && command === 'build' ? true : false
   // const isProduction = command === 'build'
   return defineConfig({
@@ -138,6 +159,15 @@ export default ({ mode, command }) => {
         },
       }),
       // basicSsl(),
+
+      // sentryVitePlugin({
+      //   include: '.',
+      //   ignore: ['node_modules', 'vite.config.ts'],
+      //   org: env.VITE_SENTRY_ORG,
+      //   project: env.VITE_SENTRY_PROJECT,
+      //   authToken: env.VITE_SENTRY_AUTH_TOKEN,
+      // }),
+      viteSentry(sentryConfig)
     ],
     resolve: {
       alias: {
@@ -171,8 +201,10 @@ export default ({ mode, command }) => {
     build: {
       target: isProduction ? 'es2015' : 'modules',
       minify: isProduction,
-      sourcemap: isProduction ? false : 'inline',
+      // sourcemap: isProduction ? false : 'inline',
+      sourcemap: true,
       rollupOptions: {
+        // @ts-ignore
         plugins: [nodePolyfills()],
         output: {
           sourcemap: isProduction ? false : 'inline',
