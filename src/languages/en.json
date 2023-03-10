@@ -459,7 +459,8 @@
     "Transfer Success": "Transfer Success",
     "Confirm Transfer": "Confirm Transfer",
     "Transfer To": "To",
-    "Transfer Accound": "Transfer Accound"
+    "Transfer Accound": "Transfer Accound",
+    "Link Wallet": "Link Wallet"
   },
   "quickPay": "Credit Card",
   "aliPay": "Alipay",
@@ -1016,7 +1017,7 @@
   "bindingSuccess": "The binding is successful!",
   "Not Found Node Name": "Not Found Node Name",
   "PWA": {
-    "title": "Add Show3 to Your Computer",
+    "title": "Add Show3 to Your Home Page",
     "tips": "Installing Show3 to your system will occupy no space but provide a better experience.",
     "Install": "Install",
     "InstallSuccess": "Install Success",
@@ -1032,11 +1033,11 @@
         "step4": "4. Click \"Add\"."
       },
       "others": {
-        "step1": "1. Make sure your are using default browser or Chrome.",
-        "click": "2. Click",
-        "button": "button.",
-        "or": "or",
-        "step3": "3. Click \"Add to Home Screen\"."
+        "step1": "1.Open this page with the default or Chrome browser.",
+        "click": "2.Click Install/Confirm",
+        "button": " ",
+        "or": " ",
+        "step3": "3.Start using!"
       }
     }
   },
