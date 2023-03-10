@@ -11,7 +11,7 @@
     :destroy-on-close="isDestroyShowWallet"
     @close="emit('update:modelValue', false)"
   >
-    <div class="user-wallet flex flex-v">
+    <div class="user-wallet flex flex-v" v-if="userStore.user">
       <div class="user flex flex-align-center">
         <div class="flex1">
           <ElDropdown trigger="click" @visible-change="value => (isShowUserWalletOperates = value)">
@@ -34,7 +34,11 @@
               <ElDropdownMenu>
                 <ElDropdownItem>
                   <div class="flex flex-align-center user-wallet-operate-item">
-                    <img class="icon icon-img" :src="loginTypeLogo[userStore!.user!.loginType]" />
+                    <img
+                      class="icon icon-img"
+                      :src="loginTypeLogo[userStore!.user!.loginType]"
+                      v-if="userStore!.user!.loginType !== 'MetaID'"
+                    />
                     <span class="name">{{userStore!.user!.loginType}}</span>
                     <span class="check-warp flex flex-align-center flex-pack-center">
                       <Icon name="check" />
@@ -167,7 +171,7 @@
                             v-if="!userStore.user?.evmAddress && wallet.showBindBtn"
                           >
                             <a @click="BindEvmAccount(wallet.name)" class="main-border primary">{{
-                              i18n.t('binding')
+                              i18n.t('Wallet.Link Wallet')
                             }}</a>
                           </div>
 
