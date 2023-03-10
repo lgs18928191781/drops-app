@@ -312,6 +312,21 @@ const operates: {
               txId: res.currentNode!.txId,
               userName: userStore.user!.name,
               zeroAddress: userStore.user!.address,
+              userInfo: {
+                address: userStore.user!.address,
+                avatarImage: userStore.user!.avatarImage,
+                avatarTxId: userStore.user!.avatarTxId,
+                avatarType: userStore.user!.avatarType,
+                coverPublicKey: '',
+                coverType: userStore.user!.avatarType,
+                coverUrl: '',
+                metaIdTimestamp: '',
+                name: userStore.user!.name,
+                nameType: '',
+                nftNamePublicKey: '',
+                publicKey: '',
+                metaName: userStore.user!.metaName,
+              },
             })
             ElMessage.success(i18n.t('Buzz.repost.success'))
             operateLoading.value = false

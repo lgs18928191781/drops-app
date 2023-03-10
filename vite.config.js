@@ -25,8 +25,8 @@ const productionEnvs = ['mainnet', 'gray']
 export default ({ mode, command }) => {
   // 加载环境配置文件
   const env = loadEnv(mode, process.cwd())
-  const isProduction = productionEnvs.includes(mode) && command === 'build' ? true : false
-  // const isProduction = command === 'build'
+  // const isProduction = productionEnvs.includes(mode) && command === 'build' ? true : false
+  const isProduction = command === 'build'
   return defineConfig({
     plugins: [
       command === 'serve' &&
@@ -119,6 +119,31 @@ export default ({ mode, command }) => {
             "Show3 is the World's First NFT-Universal Web3 Social Application. It is the first decentralized social platform based on the DID protocol with fully on-chain data.",
           theme_color: '#ffffff',
           icons: [
+            {
+              src: 'pwa-48x48.png',
+              sizes: '48x48',
+              type: 'image/png',
+            },
+            {
+              src: 'pwa-72x72.png',
+              sizes: '72x72',
+              type: 'image/png',
+            },
+            {
+              src: 'pwa-96x96.png',
+              sizes: '96x96',
+              type: 'image/png',
+            },
+            {
+              src: 'pwa-144x144.png',
+              sizes: '144x144',
+              type: 'image/png',
+            },
+            {
+              src: 'pwa-168x168.png',
+              sizes: '168x168',
+              type: 'image/png',
+            },
             {
               src: 'pwa-192x192.png',
               sizes: '192x192',
