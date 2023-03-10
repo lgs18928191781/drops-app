@@ -39,6 +39,7 @@
               :image="displayItemData.avatarImage"
               :name="displayItemData.userName"
               :meta-name="displayItemData.userInfo.metaName"
+              :image-class="'w-12 h-12'"
             />
           </div>
           <div class="info">
