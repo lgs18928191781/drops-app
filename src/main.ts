@@ -38,10 +38,6 @@ app.config.globalProperties.$filters = {
 }
 const pinia = createPinia()
 
-setTimeout(() => {
-  a = 1
-}, 5000)
-
 // 全局组件
 app.component('UserAvatar', UserAvatar)
 app.component('Image', Image)
