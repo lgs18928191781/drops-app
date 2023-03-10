@@ -339,7 +339,9 @@ const isShowBuy = ref(false)
 const isShowTransfer = ref(false)
 
 const nftBtnText = computed(() => {
-  if (isMyNFT.value) {
+  if (nft.val?.nftIsOrderLock) {
+    return i18n.t('NFT.NFT Order Locked')
+  } else if (isMyNFT.value) {
     if (isSale.value) {
       return i18n.t('NFT.Off Sale')
     } else {
@@ -355,7 +357,9 @@ const nftBtnText = computed(() => {
 })
 
 const nftBtnClass = computed(() => {
-  if (isMyNFT.value) {
+  if (nft.val?.nftIsOrderLock) {
+    return 'faded'
+  } else if (isMyNFT.value) {
     return ''
   } else {
     if (isSale.value) {
@@ -369,7 +373,9 @@ const nftBtnClass = computed(() => {
 const isShowSell = ref(false)
 
 function nftBtnFunction() {
-  if (isMyNFT.value) {
+  if (nft.val?.nftIsOrderLock) {
+    return
+  } else if (isMyNFT.value) {
     if (isSale.value) {
       offSale(nft.val!)
     } else {

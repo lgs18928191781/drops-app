@@ -764,7 +764,8 @@
     },
     "Select Payment Method": "Select Payment Method",
     "BuyNFTNoteEnough": "Insufficient balance, please check<a>your wallet</a>",
-    "Chosse PayType": "Choose another payment method"
+    "Chosse PayType": "Choose another payment method",
+    "NFT Order Locked": "Locked"
   },
   "My NFT": "My NFT",
   "Done": "Done",

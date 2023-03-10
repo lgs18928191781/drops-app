@@ -755,7 +755,8 @@
     },
     "Select Payment Method": "选择支付方式",
     "BuyNFTNoteEnough": "余额不足，请检查您的<a>钱包</a>",
-    "Chosse PayType": "选择其他付款方式"
+    "Chosse PayType": "选择其他付款方式",
+    "NFT Order Locked": "订单锁定中"
   },
   "My NFT": "我的NFT",
   "Done": "完成",

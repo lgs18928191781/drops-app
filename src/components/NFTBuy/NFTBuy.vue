@@ -455,7 +455,7 @@ const platformFee = computed(() => {
     )
   }
 
-  if (fee !== 0 && fee < ToCurrencyAmounMin[payPlatformToCurrency[currentPayPlatform.value]]) {
+  if (fee < ToCurrencyAmounMin[payPlatformToCurrency[currentPayPlatform.value]]) {
     fee = ToCurrencyAmounMin[payPlatformToCurrency[currentPayPlatform.value]]
   }
   return fee
@@ -476,7 +476,7 @@ const royalyFee = computed(() => {
     )
   }
 
-  if (fee !== 0 && fee < ToCurrencyAmounMin[payPlatformToCurrency[currentPayPlatform.value]]) {
+  if (fee < ToCurrencyAmounMin[payPlatformToCurrency[currentPayPlatform.value]]) {
     fee = ToCurrencyAmounMin[payPlatformToCurrency[currentPayPlatform.value]]
   }
   return fee

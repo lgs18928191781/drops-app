@@ -33,7 +33,7 @@ export default ({ mode, command }) => {
     authToken: env.VITE_SENTRY_AUTH_TOKEN,
     org: env.VITE_SENTRY_ORG,
     project: env.VITE_SENTRY_PROJECT,
-    release: '1.0',
+    release: pkg.version,
     deploy: {
       env: 'production'
     },
@@ -227,8 +227,8 @@ export default ({ mode, command }) => {
     build: {
       target: isProduction ? 'es2015' : 'modules',
       minify: isProduction,
-      // sourcemap: isProduction ? false : 'inline',
-      sourcemap: true,
+      sourcemap: isProduction ? false : 'inline',
+      // sourcemap: true,
       rollupOptions: {
         // @ts-ignore
         plugins: [nodePolyfills()],
