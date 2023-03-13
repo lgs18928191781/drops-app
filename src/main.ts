@@ -24,9 +24,14 @@ import GlobalDialog from '@/components/GlobalDialog/index.vue'
 import { createPinia } from 'pinia'
 import { VueQueryPlugin } from '@tanstack/vue-query' // TanStack Query
 import { createHead } from '@vueuse/head'
+import { StartSentry } from './utils/sentry'
+import VueVirtualScroller from 'vue-virtual-scroller'
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
 const app = createApp(App)
 const head = createHead()
+
+StartSentry({ app, router })
 
 // 挂载全局过滤器
 // @ts-ignore
@@ -40,6 +45,7 @@ app.component('UserAvatar', UserAvatar)
 app.component('Image', Image)
 app.component('UserName', UserName)
 app.component('Icon', Icon)
+app.use(VueVirtualScroller)
 // app.component('Dialog', GlobalDialog)
 
 app

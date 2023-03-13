@@ -762,7 +762,11 @@
     "CollectionChart": {
       "title": "Sales",
       "yAxisTitle": "Price（Space）"
-    }
+    },
+    "Select Payment Method": "Select Payment Method",
+    "BuyNFTNoteEnough": "Insufficient balance, please check<a>your wallet</a>",
+    "Chosse PayType": "Choose another payment method",
+    "NFT Order Locked": "Locked"
   },
   "My NFT": "My NFT",
   "Done": "Done",
@@ -1042,5 +1046,9 @@
     }
   },
   "wallethasBinding": "The wallet address has already been bound by other MetaID accounts and cannot be bound repeatedly",
-  "binding_now": "Binding..."
+  "binding_now": "Binding...",
+  "PullDown": {
+    "Refreshing": "Refreshing...",
+    "Refresh succeeded": "Refresh succeeded"
+  }
 }

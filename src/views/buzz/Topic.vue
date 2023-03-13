@@ -15,6 +15,8 @@
     </a>
   </div>
 
+  <div ref="refreshBox"></div>
+
   <div class="buzz-list-warp">
     <BuzzListVue
       :list="list"
@@ -30,7 +32,7 @@
 <script setup lang="ts">
 import { initPagination } from '@/config'
 import { useLayoutStore } from '@/stores/layout'
-import { inject, onMounted, reactive, Ref, ref } from 'vue'
+import { inject, onActivated, onMounted, reactive, Ref, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import BuzzListVue from './components/BuzzList.vue'
 import { GetTopicBuzzs } from '@/api/aggregation'
@@ -46,6 +48,8 @@ const isSkeleton = ref(true)
 const isShowBuzzPublish: Ref<boolean> = inject('isShowBuzzPublish')!
 const topic: Ref<string> = inject('topic')!
 const publiseSuccessCallBack: Ref<() => void> = inject('publiseSuccessCallBack')!
+const pulldown: PullDownVal = inject('Pulldown')!
+const refreshBox = ref()
 publiseSuccessCallBack.value = () => {
   return
 }
@@ -90,8 +94,23 @@ getDatas(true).then(() => {
   isSkeleton.value = false
 })
 
-onMounted(() => {
+onMounted(() => {})
+
+onActivated(() => {
   topic.value = route.params.topic as string
+  pulldown.refreshSlot = refreshBox.value
+  pulldown.onRefresh = () => {
+    return new Promise<void>(async resolve => {
+      pagination.page = 1
+      await getDatas(true)
+        .then(() => {
+          resolve()
+        })
+        .catch(() => {
+          resolve()
+        })
+    })
+  }
 })
 </script>
 

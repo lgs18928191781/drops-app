@@ -27,7 +27,7 @@ export const router = createRouter({
       path: '/buzz',
       name: 'buzz',
       component: () => import('@/views/buzz/Layout.vue'),
-      // meta: { keepAlive: true },
+      meta: { keepAlive: true },
       redirect: () => {
         const userStroe = useUserStore()
         if (userStroe.isAuthorized) {
@@ -41,13 +41,13 @@ export const router = createRouter({
           path: 'index',
           name: 'buzzIndex',
           component: () => import('@/views/buzz/Index.vue'),
-          meta: { isAuth: true },
+          meta: { isAuth: true, keepAlive: true },
         },
         {
           path: 'recommend',
           name: 'buzzRecommend',
           component: () => import('@/views/buzz/Recomment.vue'),
-          // meta: { keepAlive: true },
+          meta: { keepAlive: true },
         },
         {
           path: 'tx/:txId',
@@ -57,12 +57,14 @@ export const router = createRouter({
         {
           path: 'tag/:tagId',
           name: 'buzzTag',
+          meta: { keepAlive: true },
           component: () => import('@/views/buzz/Tag.vue'),
         },
         {
           path: 'topic/:topic',
           name: 'buzzTopic',
           component: () => import('@/views/buzz/Topic.vue'),
+          meta: { keepAlive: true },
         },
       ],
     },
@@ -70,6 +72,7 @@ export const router = createRouter({
       path: '/nft',
       name: 'nft',
       component: () => import('@/views/nft/Layout.vue'),
+      meta: { keepAlive: true },
       redirect: {
         name: 'nftIndex',
       },
@@ -97,12 +100,13 @@ export const router = createRouter({
         {
           path: 'collection',
           name: 'nftCollection',
-          component: () => RouterView,
+          component: () => import('@/layout/BaseRouterView/BaseRouterView.vue'),
           children: [
             {
               path: 'detail/:topicType',
               name: 'nftCollectionDetail',
               component: () => import('@/views/nft/collection/Collection.vue'),
+              meta: { keepAlive: true },
             },
           ],
         },

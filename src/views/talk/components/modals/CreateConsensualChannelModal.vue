@@ -205,7 +205,7 @@
                   :type="isShowingPassword ? 'text' : 'password'"
                   autocomplete="new-password"
                   minlength="6"
-                  class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-700 still w-full py-3 px-4 text-base px-12 leading-[24PX]"
+                  class="outline-0 main-border faded-switch !bg-white dark:!bg-gray-700 still w-full py-3 text-base px-12 leading-[24PX]"
                   :placeholder="$t('Talk.Community.password') + '...'"
                   v-model="form.password"
                 />

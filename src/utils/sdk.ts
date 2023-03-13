@@ -399,7 +399,6 @@ export class SDK {
               // 确认支付
               // 打钱地址
               let receive = this.getNodeTransactionsFirstReceive(transactions, params)
-              debugger
               // 获取上链时的utxo
               const getUtxoRes = await this.getAmountUxto({
                 sdkPayType: option.payType!,
@@ -931,7 +930,6 @@ export class SDK {
       addressIndex: number
       addressType: number
     }
-    debugger
     if (this.isInfoNode(NodeName.Name)) {
       receive = {
         address: this.wallet!.infoAddress,

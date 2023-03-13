@@ -69,8 +69,10 @@ const menus = [
 
 function setPosition() {
   const BuzzContainer = document.getElementById('buzz-container')!
-  MenuRef.value.style.left = BuzzContainer.offsetLeft - MenuRef.value.clientWidth - 12 + 'px'
-  MenuRef.value.style.marginLeft = 0
+  if (BuzzContainer) {
+    MenuRef.value.style.left = BuzzContainer.offsetLeft - MenuRef.value.clientWidth - 12 + 'px'
+    MenuRef.value.style.marginLeft = 0
+  }
 }
 
 onMounted(() => {

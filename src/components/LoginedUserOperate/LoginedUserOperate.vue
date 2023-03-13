@@ -1,5 +1,5 @@
 <template>
-  <div class="version-warp">
+  <div class="version-warp hidden lg:block">
     <VersionVue />
   </div>
   <a

@@ -31,6 +31,8 @@
     </div>
   </div>
 
+  <div ref="refreshBox"></div>
+
   <div class="buzz-list-warp">
     <BuzzListVue
       :list="list"
@@ -56,7 +58,7 @@ import CommentIcon from '@/assets/svg/comment.svg'
 import { initPagination } from '@/config'
 import { usePostTagStore } from '@/stores/buzz/tag'
 import { useUserStore } from '@/stores/user'
-import { computed, reactive, ref } from 'vue'
+import { computed, inject, onActivated, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import BuzzListVue from './components/BuzzList.vue'
 
@@ -67,6 +69,8 @@ const userStore = useUserStore()
 const list: BuzzItem[] = reactive([])
 const pagination = reactive({ ...initPagination })
 const isSkeleton = ref(true)
+const pulldown: PullDownVal = inject('Pulldown')!
+const refreshBox = ref()
 
 const tag = computed(() =>
   postTagStore.list.find(item => item.id.toString() === route.params.tagId)
@@ -99,8 +103,6 @@ async function changeSubTag(tag: string) {
   isSkeleton.value = true
   tabActive.value = tag
   pagination.page = 1
-  pagination.nothing = false
-  pagination.loading = false
   await getDatas(true)
   isSkeleton.value = false
 }
@@ -120,6 +122,22 @@ function updateItem(buzz: BuzzItem) {
     list[index] = buzz
   }
 }
+
+onActivated(() => {
+  pulldown.refreshSlot = refreshBox.value
+  pulldown.onRefresh = () => {
+    return new Promise<void>(async resolve => {
+      pagination.page = 1
+      await getDatas(true)
+        .then(() => {
+          resolve()
+        })
+        .catch(() => {
+          resolve()
+        })
+    })
+  }
+})
 
 getDatas(true).then(() => {
   isSkeleton.value = false

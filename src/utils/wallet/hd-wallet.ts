@@ -467,6 +467,11 @@ export class HdWallet {
       keyPath: '0/1',
       parentKeyPath: '0/0',
     },
+    Protocols: {
+      keyPath: '0/2',
+      parentKeyPath: '0/0',
+    },
+
     name: {
       keyPath: '0/2',
       parentKeyPath: '0/1',
@@ -486,10 +491,6 @@ export class HdWallet {
     bio: {
       keyPath: '0/6',
       parentKeyPath: '0/1',
-    },
-    Protocols: {
-      keyPath: '0/2',
-      parentKeyPath: '0/0',
     },
   }
 

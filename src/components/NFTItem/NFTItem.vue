@@ -93,7 +93,9 @@ const isSale = computed(() => {
 })
 
 const btnText = computed(() => {
-  if (isMyNFT.value) {
+  if (props.nft.nftIsOrderLock) {
+    return i18n.t('NFT.NFT Order Locked')
+  } else if (isMyNFT.value) {
     if (isSale.value) {
       return i18n.t('NFT.Off Sale')
     } else {
@@ -109,7 +111,9 @@ const btnText = computed(() => {
 })
 
 function btnFun() {
-  if (isMyNFT.value) {
+  if (props.nft.nftIsOrderLock) {
+    toNFT()
+  } else if (isMyNFT.value) {
     if (isSale.value) {
       emit('offsale', props.nft)
     } else {
