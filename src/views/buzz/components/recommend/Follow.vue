@@ -140,6 +140,19 @@ function exchange() {
   getRecommendUsers()
 }
 
+function refreshDatas() {
+  return new Promise<void>(async resolve => {
+    pagination.page = 1
+    pagination.loading = false
+    pagination.nothing = false
+    await getRecommendUsers()
+    resolve()
+  })
+}
+
+defineExpose({
+  refreshDatas,
+})
 getRecommendUsers()
 </script>
 

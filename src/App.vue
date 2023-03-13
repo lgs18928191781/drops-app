@@ -8,22 +8,26 @@
   />
   <div class="flex main" v-else>
     <LeftNavigationVue v-if="!blackRoute.includes(route.name)" />
-    <div class="flex1 main-right">
-      <RouterView v-slot="{ Component, route }">
-        <KeepAlive>
-          <component
-            :is="Component"
-            :key="route.fullPath"
-            v-if="route.meta && route.meta.keepAlive"
-          />
-        </KeepAlive>
-        <component
-          :is="Component"
-          :key="routeKey(route)"
-          v-if="!route.meta || (route.meta && !route.meta.keepAlive)"
-        />
-      </RouterView>
-    </div>
+    <PullDownVue class="flex1">
+      <template #default>
+        <div class="flex1 main-right" ref="MainRightRef">
+          <RouterView v-slot="{ Component, route }">
+            <KeepAlive>
+              <component
+                :is="Component"
+                :key="route.fullPath"
+                v-if="route.meta && route.meta.keepAlive"
+              />
+            </KeepAlive>
+            <component
+              :is="Component"
+              :key="routeKey(route)"
+              v-if="!route.meta || (route.meta && !route.meta.keepAlive)"
+            />
+          </RouterView>
+        </div>
+      </template>
+    </PullDownVue>
   </div>
   <DragonBall />
   <SearchModal />
@@ -33,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref, onMounted, nextTick, watch, provide } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { useRootStore } from '@/stores/root'
@@ -45,6 +49,7 @@ import DragonBall from './views/talk/components/DragonBall.vue'
 import SearchModal from './components/Search/Index.vue'
 import PWA from './components/PWA/PWA.vue'
 import UserCardFloater from './components/UserCard/Floater.vue'
+import PullDownVue from './layout/PullDown/PullDown.vue'
 
 const rootStore = useRootStore()
 const userStore = useUserStore()
@@ -55,6 +60,8 @@ const routeKey = (route: any) => {
   if (route.params.communityId) return route.params.communityId
   return route.fullPath
 }
+
+onMounted(() => {})
 </script>
 <style lang="css" src="@/assets/styles/tailwind.css"></style>
 <style lang="scss" scoped>
