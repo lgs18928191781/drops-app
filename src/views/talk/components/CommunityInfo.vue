@@ -64,6 +64,10 @@
                 />
               </div>
 
+              <div v-else class="mt-2 w-full">
+                <EmptyPit />
+              </div>
+
               <div
                 class="mt-4.5 text-xs text-dark-400 dark:text-gray-200 leading-kinda-loose break-all font-normal max-h-36 overflow-y-scroll"
               >
@@ -213,6 +217,7 @@ import CreateDaoModal from './modals/CreateDaoModal.vue'
 import CommunityInfoModal from './modals/community/Info.vue'
 import CommunityChannelItem from './CommunityChannelItem.vue'
 import MetaNameDisplay from '@/components/MetaName/Display.vue'
+import EmptyPit from '@/components/MetaName/EmptyPit.vue'
 
 const layout = useLayoutStore()
 const talk = useTalkStore()

@@ -193,11 +193,6 @@ const AllNodeName: {
     path: '/Protocols/nftBuy',
     version: '1.0.2',
   },
-  [NodeName.nftBuy]: {
-    brfcId: '1847e7d33857',
-    path: '/Protocols/nftBuy',
-    version: '1.0.2',
-  },
 }
 
 export default AllNodeName

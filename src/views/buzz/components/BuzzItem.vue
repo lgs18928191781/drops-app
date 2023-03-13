@@ -59,7 +59,7 @@
         </div>
         <div class="operate" v-if="!isQuote">
           <div
-            class="follow main-border primary"
+            class="follow main-border primary small"
             :class="{ disabled: following }"
             @click.stop="follow"
             v-if="!displayItemData.isMyFollow && (!userStore.isAuthorized || (userStore.isAuthorized && displayItemData.metaId !== userStore.user!.metaId))"

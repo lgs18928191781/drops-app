@@ -290,7 +290,12 @@ pre {
   color: transparent;
   background-image: linear-gradient(to right, #F700FB, #FFC051);
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.025em;
+
+  // @media (min-width: 768PX) {
+  //   letter-spacing: 0.05em;
+  // }
+
   text-shadow: rgba(255, 192, 81, 0.3) 0 -1PX 1PX;
 
   &.ens {

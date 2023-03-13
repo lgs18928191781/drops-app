@@ -45,8 +45,11 @@
         </div>
 
         <!-- MetaName -->
-        <h4 class="text-sm capitalize mt-8">
+        <h4 class="text-sm mt-8">
           {{ $t('Talk.Community.community_name_tip') }}
+          <span class="text-xs text-dark-300 dark:text-gray-400">
+            {{ $t('Talk.Community.optional') }}
+          </span>
         </h4>
 
         <div class="mt-2">

@@ -101,7 +101,6 @@ const address = computed(() => {
 
 const validMetaNames = (group: any) => {
   if (props.ns === 'ENS') {
-    console.log({ group })
     return group.data.filter((item: any) => item.name !== '')
   }
 

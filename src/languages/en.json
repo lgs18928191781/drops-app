@@ -53,7 +53,8 @@
       "no_results": "No results for "
     },
     "MetaName": {
-      "resolving": "MetaName Resolving..."
+      "resolving": "MetaName Resolving...",
+      "not_linked": "No MetaName Linked"
     },
     "Messages": {
       "repost": "I reposted your buzz!",
@@ -198,6 +199,7 @@
       "followed": "Followed"
     },
     "Community": {
+      "optional": "(Optional)",
       "create": "Create Club",
       "create_fist_step_tip": "Please upload the club icon and set the club name. You can change them at any time.",
       "community_name": "Club Name",

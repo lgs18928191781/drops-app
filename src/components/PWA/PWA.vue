@@ -86,8 +86,6 @@ enum InstallStatus {
   Pending = 'pending',
 }
 
-console.log({ isIOS })
-
 const i18n = useI18n()
 const hasPwaEvent = ref(false)
 const needsManualInstall = computed(() => {
