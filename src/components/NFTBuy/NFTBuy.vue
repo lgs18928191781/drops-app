@@ -53,13 +53,14 @@
           <div
             class="choose-pay flex flex-align-center flex-pack-center"
             @click="isShowPayList = !isShowPayList"
+            v-if="mode !== EnvMode.Mainnet"
           >
             <Icon name="wallet_fill" class="wallet" />
             <span>{{ $t('NFT.Chosse PayType') }}</span>
             <Icon name="down" class="right" />
           </div>
 
-          <div class="price-list">
+          <div class="price-list" :class="{ 'mt-7': mode === EnvMode.Mainnet }">
             <div class="price-item flex flex-alian-center">
               <div class="label flex1">{{ $t('NFT.Price') }}</div>
               <div class="value">{{ nftPrice }} {{ amountSymbol }}</div>
@@ -199,6 +200,7 @@ import {
   NFTSellState,
   Chains,
   ProductType,
+  EnvMode,
 } from '@/enum'
 import { isAndroid, isApp, isIOS, isIosApp, useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
@@ -286,6 +288,7 @@ const ToCurrencyAmounMin = {
   [ToCurrency.POLYGON]: 0.000000001,
   [ToCurrency.USD]: 0.01,
 }
+const mode = import.meta.env.MODE
 const layout = useLayoutStore()
 
 function choosePayPlatform(item: PayPlatformItem) {
@@ -555,7 +558,7 @@ function checkIsEnough() {
           ElMessage.error(error.message)
         }
       )
-      if (res) {
+      if (typeof res === 'number') {
         if (
           res <
           new Decimal(totalPrice.value)

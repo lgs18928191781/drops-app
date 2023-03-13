@@ -699,3 +699,10 @@ declare interface MetaFileSha256Info {
   timestamp: number
   txId: string
 }
+
+declare interface PullDownVal {
+  onRefresh: false | (() => Promise<any>)
+  pageContentRef: HTMLElement
+  pullRef: HTMLElement
+  refreshSlot?: HTMLElement
+}

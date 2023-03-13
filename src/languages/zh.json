@@ -1047,5 +1047,9 @@
     }
   },
   "wallethasBinding": "钱包地址已经被其他MetaID账号绑定,无法重复绑定",
-  "binding_now": "绑定中..."
+  "binding_now": "绑定中...",
+  "PullDown": {
+    "Refreshing": "正在刷新...",
+    "Refresh succeeded": "刷新成功"
+  }
 }
