@@ -103,12 +103,15 @@ function getMore() {
 }
 
 async function refreshDatas() {
-  isSkeleton.value = true
-  pagination.page = 1
-  pagination.loading = false
-  pagination.nothing = false
-  await getDatas(true)
-  isSkeleton.value = false
+  return new Promise<void>(async resolve => {
+    isSkeleton.value = true
+    pagination.page = 1
+    pagination.loading = false
+    pagination.nothing = false
+    await getDatas(true)
+    isSkeleton.value = false
+    resolve()
+  })
 }
 
 function updateItem(buzz: BuzzItem) {
@@ -118,6 +121,9 @@ function updateItem(buzz: BuzzItem) {
   }
 }
 
+defineExpose({
+  refreshDatas,
+})
 getDatas(true).then(() => {
   isSkeleton.value = false
 })

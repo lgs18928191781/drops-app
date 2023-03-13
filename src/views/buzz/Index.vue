@@ -1,6 +1,6 @@
 <template>
+  <div ref="pulldownWarpRef"></div>
   <PublishBoxVue />
-
   <BuzzListVue
     :list="list"
     :loading="isSkeleton"
@@ -23,7 +23,7 @@ import { GetBuzz, GetBuzzs, GetUserFollow } from '@/api/aggregation'
 import { initPagination } from '@/config'
 import { useLayoutStore } from '@/stores/layout'
 import { useUserStore } from '@/stores/user'
-import { reactive, ref, watch } from 'vue'
+import { inject, onActivated, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import BuzzListVue from './components/BuzzList.vue'
 import { Mitt, MittEvent } from '@/utils/mitt'
@@ -35,9 +35,11 @@ const layout = useLayoutStore()
 const route = useRoute()
 
 const myFollowNum = ref(0)
+const pulldownWarpRef = ref()
 
 const list: BuzzItem[] = reactive([])
 const isSkeleton = ref(true)
+const pulldown: PullDownVal = inject('Pulldown')!
 
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
@@ -113,14 +115,18 @@ function getUserFollow() {
   })
 }
 
-async function refreshDatas() {
-  isSkeleton.value = true
-  pagination.page = 1
-  pagination.loading = false
-  pagination.nothing = false
-  await getUserFollow()
-  await getDatas(true)
-  isSkeleton.value = false
+function refreshDatas() {
+  return new Promise<void>(async resolve => {
+    isSkeleton.value = true
+    pagination.page = 1
+    pagination.timestamp = 0
+    pagination.loading = false
+    pagination.nothing = false
+    await getUserFollow()
+    await getDatas(true)
+    isSkeleton.value = false
+    resolve()
+  })
 }
 
 function updateItem(buzz: BuzzItem) {
@@ -134,6 +140,21 @@ getUserFollow().then(() => {
   getDatas(true).then(() => {
     isSkeleton.value = false
   })
+})
+
+onActivated(() => {
+  pulldown.refreshSlot = pulldownWarpRef.value
+  pulldown.onRefresh = () => {
+    return new Promise<void>(async resolve => {
+      await refreshDatas()
+        .then(() => {
+          resolve()
+        })
+        .catch(() => {
+          resolve()
+        })
+    })
+  }
 })
 </script>
 

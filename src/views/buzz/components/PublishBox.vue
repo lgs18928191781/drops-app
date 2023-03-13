@@ -6,7 +6,7 @@
       :name="userStore.user!.name"
       :meta-name="userStore.user!.metaName"
       :disabled="true"
-      class="mr-2"
+      class="mr-2 !border-0"
     />
     <div class="cont flex1">
       <div class="input">

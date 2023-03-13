@@ -18,6 +18,7 @@ import { useTalkStore } from './talk'
 import { useRootStore } from './root'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { useGenesisStore } from './genesis'
+import { setUser } from '@sentry/vue'
 
 export interface KycInfoTypes {
   name: string
@@ -52,6 +53,11 @@ let user: any = null
 if (window.localStorage.getItem(userkey)) {
   user = decode(window.localStorage.getItem(userkey)!)
   user = JSON.parse(user)
+  setUser({
+    id: user.metaId,
+    email: user.phone || user.email,
+    username: user.name,
+  })
 }
 const passwordkey = encode('password')
 let password = ''
