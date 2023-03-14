@@ -372,7 +372,7 @@ const nftBtnClass = computed(() => {
 
 const isShowSell = ref(false)
 
-function nftBtnFunction() {
+async function nftBtnFunction() {
   if (nft.val?.nftIsOrderLock) {
     return
   } else if (isMyNFT.value) {
@@ -384,6 +384,7 @@ function nftBtnFunction() {
     }
   } else {
     if (isSale.value) {
+      await checkUserLogin()
       currentNFT.val = nft.val
       isShowBuy.value = true
     } else {
