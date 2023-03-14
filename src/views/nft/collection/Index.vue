@@ -36,7 +36,10 @@
     <!-- collection-list -->
     <div class="collection-list">
       <div class="collection-item" v-for="item in collections" :key="item.id">
-        <img class="cover" :src="$filters.strapiImage(item.cover.url)" />
+        <div class="cover">
+          <img :src="$filters.strapiImage(item.cover.url)" />
+        </div>
+
         <div class="cont">
           <div class="author flex flex-align-center">
             <UserAvatar
@@ -120,7 +123,18 @@ function getDatas(isCover = false) {
         pagination.nothing = true
       } else {
         pagination.nothing = false
-        collections.push(...res)
+        collections.push(
+          ...res,
+          ...res,
+          ...res,
+          ...res,
+          ...res,
+          ...res,
+          ...res,
+          ...res,
+          ...res,
+          ...res
+        )
       }
       resolve()
     }
