@@ -1,0 +1,117 @@
+.collection-index {
+    border-radius: var(--rounded);
+    background: var(--themeBgSecondColor);
+    padding: 30px 18px;
+}
+
+.header {
+    .title {
+        font-size: 24px;
+    }
+
+    .drsc {
+        font-size: 16px;
+        color: var(--themeFadedTextColor);
+        margin-top: 6px;
+    }
+
+    .chain {
+        .label {
+            color: var(--themeFadedTextColor);
+            font-size: 18px;
+            margin-right: 12px;
+        }
+    }
+}
+
+
+.el-select {
+    --input-height: 46px;
+    width: 200px;
+
+    :deep(.el-select-dropdown__item) {
+        height: auto;
+        line-height: auto;
+    }
+}
+
+.chain-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+
+    &.all {
+        background: #fff;
+        padding: 8px;
+    }
+
+}
+
+.option-item {
+    font-size: 16px;
+    padding: 9px 0;
+
+
+
+    .check {
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+        background: var(--color-primary);
+
+        .icon {
+            width: 10px;
+            height: 10px;
+            color: var(--themeBtnTextColor);
+
+            :deep(use) {
+                stroke-width: 2px;
+                stroke: var(--themeBtnTextColor);
+            }
+        }
+    }
+}
+
+.collection-list {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 18px;
+
+    .collection-item {
+        border-radius: var(--rounded);
+        box-shadow: 2px 0px 10px 0px rgba(var(--themeTextColorRgb), 0.3);
+        background: var(--themeBgSecondColor);
+
+        .cover {
+            width: 100%;
+            height: 0;
+            padding-bottom: 50%;
+            position: relative;
+
+            img {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                border-radius: var(--rounded) var(--rounded) 0 0;
+                left: 0;
+                top: 0;
+                object-fit: cover;
+            }
+        }
+
+        .cont {
+            padding: 18px;
+
+
+            .author {
+                .avatar {
+                    width: 48px;
+                    height: 48px;
+                    margin-right: 12px;
+                }
+            }
+        }
+    }
+}
