@@ -203,6 +203,7 @@ interface Props {
   orderId: string
   product_type: number
   amount: string
+  pay_decimal_num: number
 }
 const props = withDefaults(defineProps<Props>(), {})
 const rootStore = useRootStore()
@@ -283,14 +284,19 @@ const qrcodeData = ref('')
 const iosPayHtml = ref('')
 const PayIframeRef = ref()
 const isQrcodeInTime = ref(true) // 付款码是否在有效时间
+const envChains = {
+  [PayPlatform.ETH]: import.meta.env.VITE_ETH_CHAINID,
+  [PayPlatform.POLYGON]: import.meta.env.VITE_POLYGON_CHAINID,
+}
 
 const payResultMessage = computed(() => {
   let msg = ''
   console.log('propsprops', payResult)
   if (payResult.status === PayStatus.Success) {
     const symbol = getPlatformSymbol(props.payPlatform)
+    debugger
     const amount = new Decimal(props.amount)
-      .div(payPlatformAmountRate[props.payPlatform])
+      .div(Math.pow(10, props.pay_decimal_num))
       .toFixed(payPlatformAmountFix[props.payPlatform])
     msg = `ShowPayLimited: ${symbol} ${amount}`
   } else if (payResult.status === PayStatus.Fail) {
@@ -310,7 +316,7 @@ function drawePayCode() {
           let tx
           let from_coin_address = ''
           if (props.payPlatform === PayPlatform.ETH || props.payPlatform === PayPlatform.POLYGON) {
-            await CheckMetaMaskAccount(userStore.user!.evmAddress!)
+            await CheckMetaMaskAccount({ chainId: envChains[props.payPlatform] })
             from_coin_address = userStore.user!.evmAddress!
             tx = await window.ethereum!.request!({
               method: 'eth_sendTransaction',

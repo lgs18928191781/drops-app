@@ -53,6 +53,7 @@
                 <UserName :name="item.creatorName" :meta-name="item.creatorMetaName" />
                 <Icon name="center_star" />
               </div>
+              <div class="metaid">MetaID：{{ item.creatorMetaId.slice(0, 6) }}</div>
             </div>
           </div>
 

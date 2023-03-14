@@ -1336,17 +1336,23 @@ export function CreatePayOrder(params: {
   })
 }
 
-export function CheckMetaMaskAccount(address: string) {
+export function CheckMetaMaskAccount(params: { chainId: string }) {
   return new Promise<void>(async (resolve, reject) => {
+    debugger
     const result = await (window as any).ethereum.enable()
     if (result && result.length) {
       const root = useRootStore()
       const chain = (window as any).ethereum?.chainId
       const chainId = parseInt(chain).toString()
 
-      if (root.chainWhiteList.includes(chain)) {
+      if (params.chainId === chainId) {
+        resolve()
       } else {
-        await ChangeMetaMaskChain().catch(error => reject(error))
+        ChangeMetaMaskChain(params)
+          .then(() => {
+            resolve()
+          })
+          .catch(error => reject(error))
       }
       // const request = await (window as any).ethereum.request({
       //   method: 'eth_requestAccounts',
@@ -1356,23 +1362,26 @@ export function CheckMetaMaskAccount(address: string) {
       //   method: 'wallet_requestPermissions',
       //   params: [{ eth_accounts: address }],
       // })
-
-      resolve()
     }
   })
 }
 
-export function ChangeMetaMaskChain() {
+export function ChangeMetaMaskChain(params: { chainId: string }) {
   return new Promise<void>(async (resolve, reject) => {
     // if ((window as any).ethereum?.chainId)
+    const evmChanName = {
+      [import.meta.env.VITE_ETH_CHAINID]: import.meta.env.VITE_ETH_CHAIN,
+      [import.meta.env.VITE_POLYGON_CHAINID]: import.meta.env.VITE_POLYGON_CHAIN,
+    }
 
     const res = await ElMessageBox.confirm(
       // @ts-ignore
-      i18n.global.t('MetaMak.Chain Network Error Tips') + `${import.meta.env.VITE_ETH_CHAIN}`,
+      i18n.global.t('MetaMak.Chain Network Error Tips') + `${evmChanName[params.chainId]}`,
       i18n.global.t('MetaMak.Chain Network Error'),
       {
         customClass: 'primary',
-        confirmButtonText: i18n.global.t('MetaMak.Change') + `${import.meta.env.VITE_ETH_CHAIN}`,
+        // @ts-ignore
+        confirmButtonText: i18n.global.t('MetaMak.Change') + `${evmChanName[params.chainId]}`,
         cancelButtonText: i18n.global.t('Cancel'),
       }
     )
@@ -1382,7 +1391,7 @@ export function ChangeMetaMaskChain() {
             method: 'wallet_switchEthereumChain',
             params: [
               {
-                chainId: ethers.utils.hexValue(parseInt(import.meta.env.VITE_ETH_CHAINID)),
+                chainId: ethers.utils.hexValue(parseInt(params.chainId)),
                 // chainId:
                 //   import.meta.env.VITE_ETH_CHAIN == 'eth'
                 //     ? currentSupportChain[0].chainId
@@ -1825,6 +1834,9 @@ export function getBalance(params: { chain: Chains }) {
     }
 
     if (!isBtLink && !userStore.user?.evmAddress) {
+      resolve(0)
+    } else if (params.chain === Chains.BSV && import.meta.env.MODE === EnvMode.TestnetGray) {
+      //  BSV 沒有測試網
       resolve(0)
     } else {
       const res = await GetBalance(_params).catch(error => reject(error))
