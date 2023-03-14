@@ -36,6 +36,7 @@ export const GetCollects = (params: {
   _sort?: string
   _limit: number
   _start: number
+  chain?: number
 }): Promise<Collect[]> => {
   return Strapi.get('/show-3-collections', {
     params: {
@@ -210,4 +211,17 @@ export const GetGenesisFee = (genesis: string): Promise<NFTFeeInfo> => {
       resolve(res[0])
     }
   })
+}
+
+export interface Chain {
+  created_at: string
+  icon: Pic
+  id: number
+  name: string
+  published_at: string
+  symbol: string
+  updated_at: string
+}
+export const GetChains = (): Promise<Chain[]> => {
+  return Strapi.get('/chains')
 }

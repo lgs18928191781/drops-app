@@ -1051,5 +1051,13 @@
   "PullDown": {
     "Refreshing": "正在刷新...",
     "Refresh succeeded": "刷新成功"
+  },
+  "Collection": {
+    "title": "专辑",
+    "drsc": "最新NFT系列不容错过",
+    "Blockchain": "区块链",
+    "AllChain": "所有链",
+    "Floor price": "地板价",
+    "Total volume": "发行量"
   }
 }

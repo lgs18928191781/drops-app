@@ -1051,5 +1051,13 @@
   "PullDown": {
     "Refreshing": "Refreshing...",
     "Refresh succeeded": "Refresh succeeded"
+  },
+  "Collection": {
+    "title": "Collection",
+    "drsc": "Latest NFT collections not to be missed",
+    "Blockchain": "Blockchain",
+    "AllChain": "All Chain",
+    "Floor price": "Floor price",
+    "Total volume": "Total volume"
   }
 }

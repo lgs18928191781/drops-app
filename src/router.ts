@@ -103,6 +103,12 @@ export const router = createRouter({
           component: () => import('@/layout/BaseRouterView/BaseRouterView.vue'),
           children: [
             {
+              path: 'index',
+              name: 'nftCollectionIndex',
+              component: () => import('@/views/nft/collection/Index.vue'),
+              meta: { keepAlive: true },
+            },
+            {
               path: 'detail/:topicType',
               name: 'nftCollectionDetail',
               component: () => import('@/views/nft/collection/Collection.vue'),

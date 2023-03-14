@@ -392,6 +392,13 @@ html.dark {
     color: var(--themeTextColor) !important;
 }
 
+.custom-select {
+    .el-select-dropdown__item {
+        height: auto;
+        line-height: auto;
+    }
+}
+
 
 .el-popper {
     --el-popper-border-radius: 12px;
