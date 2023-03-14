@@ -93,7 +93,8 @@
       "home": "主页"
     },
     "MetaName": {
-      "resolving": "MetaName 解析中…"
+      "resolving": "MetaName 解析中…",
+      "not_linked": "未绑定 MetaName"
     },
     "Messages": {
       "repost": "转发了您的buzz",
@@ -232,6 +233,7 @@
       "followed": "已关注"
     },
     "Community": {
+      "optional": "（可选）",
       "create": "创建社区",
       "create_fist_step_tip": "填写社区名称、上传社区图标。你可以在之后修改这些信息。",
       "community_name": "社区名",

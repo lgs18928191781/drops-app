@@ -22,7 +22,10 @@
             :name="talk.activeCommunity?.metaName"
             :colorful="true"
             :text-class="'!text-sm'"
+            v-if="talk.activeCommunity?.metaName"
           />
+
+          <MetaNameEmptyPit v-else class="mt-1 bg-gray-100" />
         </div>
 
         <!-- 描述 -->
@@ -90,8 +93,8 @@ import { getCommunityOwner } from '@/queries/community-owner'
 import { leaveCommunity } from '@/utils/talk'
 
 import BaseModal from '../BaseModal.vue'
-import MetaNameTag from '@/components/MetaName/Tag.vue'
 import MetaNameDisplay from '@/components/MetaName/Display.vue'
+import MetaNameEmptyPit from '@/components/MetaName/EmptyPit.vue'
 import LoadingItemSmall from '../../LoadingItemSmall.vue'
 
 const talk = useTalkStore()

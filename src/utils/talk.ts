@@ -24,6 +24,7 @@ import { DEFAULTS } from './wallet/hd-wallet'
 import { useJobsStore } from '@/stores/jobs'
 import { ElMessage } from 'element-plus'
 import { GetOneAnnouncement } from '@/api/aggregation'
+import { SHA256 } from 'crypto-js'
 
 type CommunityData = {
   communityId: string
@@ -40,8 +41,7 @@ type CommunityData = {
 
 export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   // communityId, name, description, cover, metaName, mateNameNft, admins, reserved, icon
-  const { icon, metaName, description, cover, name } = form
-  const communityId = metaName.communityId
+  let { icon, metaName, description, cover, name } = form
 
   const attachments = []
   attachments.push(await FileToAttachmentItem(icon))
@@ -55,13 +55,20 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   }
 
   const admins = [userStore.user?.metaId]
+
+  // metaname改为非必填
+  if (!metaName) metaName = {}
+
+  // 没有metaname的情况下，communityId生成方式为随机64位字符串，然后sha256一次
+  const communityId = metaName.communityId || SHA256(realRandomString(64))
   const metaNameNft = metaName.genesis
     ? `${metaName.solution}://${metaName.codeHash}/${metaName.genesis}/${metaName.tokenIndex}`
     : ''
+
   const dataCarrier: CommunityData = {
     communityId,
     name,
-    metaName: metaName.name,
+    metaName: metaName.name || '',
     metaNameNft,
     icon: iconPlaceholder,
     admins,
