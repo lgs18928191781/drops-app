@@ -1648,6 +1648,13 @@ export class HdWallet {
 
     return response
   }
+  
+
+
+  // getter
+  get userProtocols() {
+    return this.userBrfcNodeList
+  }
 
   async getProtocolInfo(
     nodeName: NodeName,
@@ -1704,7 +1711,7 @@ export class HdWallet {
   }
 
   // 获取协议类型数据
-  private async getProtocols({ protocolsTxId, protocolType }: GetProtocolsTypes) {
+  async getProtocols({ protocolsTxId, protocolType }: GetProtocolsTypes) {
     return new Promise((resolve, reject) => {
       fetch(import.meta.env.VITE_BASEAPI + '/serviceapi/api/v1/protocol/getProtocolDataList', {
         method: 'POST',
