@@ -422,7 +422,6 @@ export class SDK {
                   ? import.meta.env.VITE_CHANGE_ADDRESS
                   : this.wallet!.rootAddress
               )
-              debugger
               // 广播
               if (option.isBroadcast && !option.useQueue) {
                 // 广播 打钱操作
@@ -926,8 +925,6 @@ export class SDK {
     transactions: NodeTransactions,
     params: createBrfcChildNodeParams
   ) {
-    debugger
-    // 打钱地址
     let receive: {
       address: string
       addressIndex: number
@@ -1004,7 +1001,6 @@ export class SDK {
   ) {
     return new Promise<NodeTransactions>(async (resolve, reject) => {
       try {
-        debugger
         const chain = params.payType === SdkPayType.BSV ? HdWalletChain.BSV : HdWalletChain.MVC
         if (params.nodeName === NodeName.SendMoney) {
           this.setTransferUtxoAndOutputAndSign(
