@@ -1,6 +1,10 @@
 <template>
   <TransitionRoot :show="modelValue">
-    <Dialog @close="tryClose" class="relative z-[9999] text-dark-800 dark:text-gray-100">
+    <Dialog
+      @close="tryClose"
+      class="relative text-dark-800 dark:text-gray-100"
+      :style="{ zIndex: index }"
+    >
       <TransitionChild
         as="template"
         enter="duration-300 ease-out"
@@ -114,6 +118,7 @@ import { useLayoutStore } from '@/stores/layout'
 import { Dialog, DialogTitle, DialogPanel, TransitionRoot, TransitionChild } from '@headlessui/vue'
 import { computed } from 'vue'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
+import { useZIndex } from 'element-plus'
 
 const layout = useLayoutStore()
 
@@ -138,6 +143,9 @@ const tryClose = () => {
 
 const emit = defineEmits(['update:modelValue', 'update:showSecondControl'])
 
+const index = computed(() => {
+  return useZIndex().nextZIndex()
+})
 const mobileSize = computed(() => {
   const windowWidth = window.innerWidth
   if (windowWidth <= 1024) {

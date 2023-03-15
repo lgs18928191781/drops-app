@@ -225,7 +225,7 @@ import {
 } from '@/utils/util'
 import { useRoute, useRouter } from 'vue-router'
 import StartPayVue from '../StartPay/StartPay.vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, useZIndex } from 'element-plus'
 import Decimal from 'decimal.js-light'
 import { GetGenesisFee, GetNFTFee, NFTFeeInfo } from '@/api/strapi'
 import NFTCover from '../NFTCover/NFTCover.vue'
