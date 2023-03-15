@@ -5,21 +5,19 @@
     @confirm="emit('confirm')"
     @cancel="isShowCheckPwd = true"
     :cancel-btn-text="
-      type === Type.phone ? $t('LinkAccount.Change Mobile') : $t('LinkAccount.Change Email')
+      type === 'phone' ? $t('LinkAccount.Change Mobile') : $t('LinkAccount.Change Email')
     "
   >
     <template #title>
       <div class="title text-center flex1" :style="{ fontSize: '24px' }">
-        {{ $t('LinkAccount.Phone') }}
+        {{ type === 'phone' ? $t('LinkAccount.Phone') : $t('LinkAccount.Email') }}
       </div>
     </template>
 
     <template #content>
       <div class="tips text-center">
         {{
-          type === Type.phone
-            ? $t('LinkAccount.PhoneChangeTips')
-            : $t('LinkAccount.EmailChangeTips')
+          type === 'phone' ? $t('LinkAccount.PhoneChangeTips') : $t('LinkAccount.EmailChangeTips')
         }}
       </div>
       <div class="value text-center">
@@ -40,7 +38,7 @@
     <template #title>
       <div class="title text-center flex1" :style="{ fontSize: '24px' }">
         {{
-          type === Type.phone
+          type === 'phone'
             ? $t('LinkAccount.Change Mobile Link')
             : $t('LinkAccount.Change Emial Link')
         }}
@@ -50,7 +48,7 @@
     <template #content>
       <ElForm :model="form" :rules="rules" ref="FormRef">
         <!--  手机 -->
-        <ElFormItem prop="phone" v-if="type === Type.phone">
+        <ElFormItem prop="phone" v-if="type === 'phone'">
           <ElInput
             v-model="form.phone"
             type="number"
@@ -63,7 +61,7 @@
                 schema="popover"
                 v-model:visible="isShowCountry"
                 :listZIndex="99"
-                @onChange="res => (form.countryCode = res.iso2)"
+                @onChange="(res: any) => (form.countryCode = res.iso2)"
                 style="width: 100%;"
               >
                 <div
@@ -79,7 +77,7 @@
         </ElFormItem>
 
         <!-- 邮箱 -->
-        <ElFormItem prop="email" v-if="type === Type.email">
+        <ElFormItem prop="email" v-if="type === 'email'">
           <ElInput
             v-model="form.email"
             type="text"
@@ -129,16 +127,16 @@ import 'vue3-country-intl/lib/flags-9980096a.png'
 import { FormInstance } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { IsEncrypt, NodeName } from '@/enum'
+import { type } from 'os'
 
 interface Props {
   modelValue: boolean
   value?: string
+  type?: 'phone' | 'email'
 }
-const props = withDefaults(defineProps<Props>(), {})
-enum Type {
-  phone = 'phone',
-  email = 'email',
-}
+const props = withDefaults(defineProps<Props>(), {
+  type: 'phone',
+})
 
 const emit = defineEmits(['update:modelValue', 'confirm', 'cancel'])
 const isShowCheckPwd = ref(false)
@@ -149,6 +147,7 @@ const isSendCodeLoading = ref(false)
 const i18n = useI18n()
 const FormRef = ref<FormInstance>()
 const userStore = useUserStore()
+const isShowCountry = ref(true)
 
 const form = reactive({
   phone: '',
@@ -163,7 +162,7 @@ async function sendCode() {
   isSendCodeLoading.value = true
   try {
     const params = {
-      userType: type.value || 'phone',
+      userType: props.type || 'phone',
       phone: (form.area !== '86' ? '+' : '') + phoneFullNumber.value,
       email: form.email,
       platform: 0, // 1是若喜 0是showmoney
@@ -216,26 +215,18 @@ const rules = reactive({
   ],
 })
 
-const type = computed(() => {
-  if (email.test(props.value || '')) {
-    return Type.email
-  } else {
-    return Type.phone
-  }
-})
-
 const phoneFullNumber = computed(() => {
   return form.area !== '86' ? form.area + form.phone : form.phone
 })
 
 const valueShowText = computed(() => {
   if (props.value) {
-    if (type.value === Type.email) {
-      return props.value.slice(0, 3) + '****@' + props.value.split('@')[1]
-    } else if (type.value === Type.phone) {
+    if (props.type === 'email') {
+      return props.value.split('@')[0].slice(0, 3) + '****@' + props.value.split('@')[1]
+    } else if (props.type === 'phone') {
       return props.value.slice(0, 3) + '****' + props.value.slice(-4)
     }
-  } else if (form.email) {
+  } else {
     return '--'
   }
 })
@@ -245,15 +236,15 @@ function submit() {
     if (valid) {
       loading.value = true
       const res = await BindPhoneOrEmail({
-        userType: type.value,
+        userType: props.type,
         email: form.email,
         phone: phoneFullNumber.value,
         code: form.code,
       })
       return
       const response = await userStore.showWallet.createBrfcChildNode({
-        nodeName: type.value === Type.phone ? NodeName.Phone : NodeName.Email,
-        data: type.value === Type.phone ? phoneFullNumber.value : form.email,
+        nodeName: props.type === 'phone' ? NodeName.Phone : NodeName.Email,
+        data: props.type === 'phone' ? phoneFullNumber.value : form.email,
         encrypt: IsEncrypt.Yes,
       })
     }

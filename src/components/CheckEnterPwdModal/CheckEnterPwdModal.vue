@@ -24,6 +24,7 @@
 
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
+import { hdWalletFromAccount } from '@/utils/wallet/hd-wallet'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ConfirmModal from '../ConfirmModal/ConfirmModal.vue'
@@ -38,11 +39,20 @@ const pwd = ref('')
 const userStore = useUserStore()
 const i18n = useI18n()
 
-function confirm() {
+async function confirm() {
   if (!pwd.value) {
     return
   }
-  if (userStore.password === pwd.value) {
+  // 生成的钱包地址 = 当前钱包地址 为密码正确
+  const res = await hdWalletFromAccount(
+    {
+      ...userStore.user!,
+      password: pwd.value,
+    },
+    import.meta.env.VITE_NET_WORK,
+    userStore.user!.path
+  )
+  if (res.rootAddress === userStore.showWallet!.wallet!.rootAddress) {
     pwd.value = ''
     emit('update:modelValue', false)
     emit('success')

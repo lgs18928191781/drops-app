@@ -180,23 +180,19 @@
       </template>
     </div> -->
   </div>
-
-  <!-- ImagePreviewVue -->
-  <ImagePreviewVue v-model="isShowPreview" :images="previewImages" :index="previewIndex" />
 </template>
 
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue'
-import { metafile } from '@/utils/filters'
 import { router } from '@/router'
 import { AttachmentItem } from '@/@types/hd-wallet'
-import ImagePreviewVue from '@/components/ImagePreview/ImagePreview.vue'
 import MusicIcon from '@/assets/icons/music.svg?url'
 import { downloadFile } from '@/utils/util'
 import { GetMetaFile, GetNFT } from '@/api/aggregation'
 import CardVue from '@/components/Card/Card.vue'
 import NFTCoverVue from '@/components/NFTCover/NFTCover.vue'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
+import { useImagePreview } from '@/stores/imagePreview'
 
 interface Props {
   attachments: (AttachmentItem | string)[]
@@ -204,14 +200,13 @@ interface Props {
   isEdit?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {})
-const isShowPreview = ref(false)
-const previewIndex = ref(0)
 const loading = ref(true)
 
 const emit = defineEmits(['remove', 'play'])
 
 const metafileInfo: { val: null | MetaFileInfo } = reactive({ val: null })
 const nft: { val: null | GenesisNFTItem } = reactive({ val: null })
+const imagePreview = useImagePreview()
 
 const previewImages = computed(() => {
   let result: string[] = []
@@ -373,8 +368,9 @@ function getMetaFileInfo() {
 
 function preview(e: Event, index: number) {
   if (getAttachmentType(props.attachments[index]) !== 'image') return
-  previewIndex.value = index
-  isShowPreview.value = true
+  imagePreview.images = previewImages.value
+  imagePreview.index = index
+  imagePreview.visibale = true
   e.stopPropagation()
 }
 
