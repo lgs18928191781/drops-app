@@ -23,6 +23,7 @@ export const router = createRouter({
 
     // { path: '/', name: 'home', redirect: '/buzz' },
     { path: '/home', name: 'home', component: () => import('@/views/home/index.vue') },
+    { path: '/randomly-dev', name: 'dev', component: import('@/views/dev/Index.vue') },
     {
       path: '/buzz',
       name: 'buzz',

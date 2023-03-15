@@ -60,7 +60,7 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   if (!metaName) metaName = {}
 
   // 没有metaname的情况下，communityId生成方式为随机64位字符串，然后sha256一次
-  const communityId = metaName.communityId || SHA256(realRandomString(64))
+  const communityId = metaName.communityId || SHA256(realRandomString(64)).toString()
   const metaNameNft = metaName.genesis
     ? `${metaName.solution}://${metaName.codeHash}/${metaName.genesis}/${metaName.tokenIndex}`
     : ''
@@ -77,7 +77,7 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
     reserved: metaName.signature || '',
     disabled: 0,
   }
-  console.log('dataCarrier', dataCarrier)
+  console.log('dataCarrier', dataCarrier, attachments)
 
   // 2. 构建节点参数
   const node = {
@@ -330,8 +330,12 @@ export const createChannel = async (
   // 发言设置，0：所有人，1：管理员
   const chatSettingType = form.adminOnly ? 1 : 0
 
+  // 随机生成groupId，用于解耦与用户的关系
+  const groupId = SHA256(realRandomString(64)).toString()
+
   const dataCarrier = {
     communityId,
+    groupId,
     groupName,
     groupNote: '',
     groupType,
