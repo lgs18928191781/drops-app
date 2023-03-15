@@ -888,6 +888,7 @@ export class SDK {
             }
           }
         }
+        console.log('transactions', transactions)
         resolve(transactions)
       } catch (error) {
         reject(error)

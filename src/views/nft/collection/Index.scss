@@ -76,8 +76,9 @@
 .collection-list {
     margin-top: 24px;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 18px;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    row-gap: 18px;
+    column-gap: 10px;
 
     .collection-item {
         border-radius: var(--rounded);

@@ -77,7 +77,7 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
     reserved: metaName.signature || '',
     disabled: 0,
   }
-  console.log('dataCarrier', dataCarrier)
+  console.log('dataCarrier', dataCarrier, attachments)
 
   // 2. 构建节点参数
   const node = {
