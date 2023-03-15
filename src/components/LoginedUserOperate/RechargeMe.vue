@@ -132,6 +132,7 @@
       :product_type="product_type"
       :amount="orderAmount"
       @success="onPaySuceess"
+      :pay_decimal_num="pay_decimal_num"
     />
   </ElDrawer>
 </template>
@@ -180,6 +181,7 @@ const isShowCouponMsg = ref(false)
 const isStartPay = ref(false)
 const payUrl = ref('')
 const orderId = ref('')
+const pay_decimal_num = ref(0)
 const orderAmount = ref('')
 const product_type = 100
 const loading = ref(false)
@@ -320,6 +322,7 @@ async function recharge() {
   if (res?.code === 0) {
     payUrl.value = res.data.url
     orderId.value = res.data.outside_order_id
+    pay_decimal_num.value = res.data.pay_decimal_num
     orderAmount.value = res.data.amount
     loading.value = false
     isStartPay.value = true

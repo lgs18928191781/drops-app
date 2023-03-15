@@ -422,7 +422,7 @@ export class SDK {
                   ? import.meta.env.VITE_CHANGE_ADDRESS
                   : this.wallet!.rootAddress
               )
-
+              debugger
               // 广播
               if (option.isBroadcast && !option.useQueue) {
                 // 广播 打钱操作
@@ -433,16 +433,16 @@ export class SDK {
                 await this.broadcastNodeTransactions(transactions)
               }
 
+              // 如果使用队列，则不进行广播，而是收集当次Job的所有交易作为step，推进队列
+              if (option.useQueue) {
+                this.convertTransactionsIntoJob(transactions, payToRes, option!.subscribeId!)
+              }
+
               resolve({
                 payToAddress: payToRes,
                 ...transactions,
                 subscribeId: option!.subscribeId,
               })
-
-              // 如果使用队列，则不进行广播，而是收集当次Job的所有交易作为step，推进队列
-              if (option.useQueue) {
-                this.convertTransactionsIntoJob(transactions, payToRes, option!.subscribeId!)
-              }
             } else {
               resolve(null)
             }
@@ -495,9 +495,10 @@ export class SDK {
       converting.push(transactions.metaFileBrfc.transaction)
     }
     // 3. Metafile 交易
-    if (transactions.metaFiles && transactions.metaFiles.length) {
-      for (let i = 0; i < transactions.metaFiles.length; i++) {
-        converting.push(transactions.metaFiles[i].transaction)
+    if (transactions.metaFiles && transactions.metaFiles.filter(item => item.transaction).length) {
+      const metafileTransactionList = transactions.metaFiles.filter(item => item.transaction)
+      for (let i = 0; i < metafileTransactionList.length; i++) {
+        converting.push(metafileTransactionList[i].transaction)
       }
     }
     // 4. 当前节点 Brfc 交易
@@ -925,6 +926,7 @@ export class SDK {
     transactions: NodeTransactions,
     params: createBrfcChildNodeParams
   ) {
+    debugger
     // 打钱地址
     let receive: {
       address: string
@@ -951,7 +953,10 @@ export class SDK {
         addressType: parseInt(this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[0]),
         addressIndex: parseInt(this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[1]),
       }
-    } else if (transactions.metaFiles && transactions.metaFiles.length) {
+    } else if (
+      transactions.metaFiles &&
+      transactions.metaFiles.filter(item => item.transaction).length
+    ) {
       // 需要创建 metafile 节点 ，把钱打去 metafile brfc 地址
       receive = {
         address: transactions.metaFileBrfc!.address,
@@ -999,6 +1004,7 @@ export class SDK {
   ) {
     return new Promise<NodeTransactions>(async (resolve, reject) => {
       try {
+        debugger
         const chain = params.payType === SdkPayType.BSV ? HdWalletChain.BSV : HdWalletChain.MVC
         if (params.nodeName === NodeName.SendMoney) {
           this.setTransferUtxoAndOutputAndSign(
@@ -1051,7 +1057,10 @@ export class SDK {
             )
           }
 
-          if (transactions.metaFiles && transactions.metaFiles.length) {
+          if (
+            transactions.metaFiles &&
+            transactions.metaFiles.filter(item => item.transaction).length
+          ) {
             const metaFileTransactions = transactions.metaFiles.filter(item => item.transaction)
             for (let i = 0; i < metaFileTransactions.length; i++) {
               const changeAddress =

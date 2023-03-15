@@ -52,6 +52,7 @@
     :url="payOrderInfo.url"
     :amount="payOrderInfo.amount"
     :order-id="payOrderInfo.orderId"
+    :pay_decimal_num="payOrderInfo.pay_decimal_num"
     @fail="emit('update:loading', false)"
     @success="onPaySuccess"
   />
@@ -109,6 +110,7 @@ const payOrderInfo = reactive({
   url: '',
   orderId: '',
   amount: '',
+  pay_decimal_num: 0,
 })
 let metafile = ''
 
@@ -225,6 +227,7 @@ MetaName is a Decentralized, Open-sourced and Cross-chain Name System Based on M
         if (result) {
           payOrderInfo.amount = result.pay_amount!.toString()
           payOrderInfo.orderId = result.outside_order_id
+          payOrderInfo.pay_decimal_num = result.pay_decimal_num
           payOrderInfo.url = result.url
           isStartPay.value = true
         }

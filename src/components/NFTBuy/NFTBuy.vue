@@ -185,6 +185,7 @@
     :product_type="product_type"
     :order-id="payMsg.orderId"
     :amount="payMsg.amount"
+    :pay_decimal_num="payMsg.pay_decimal_num"
     :url="payMsg.url"
     @success="onPaySuccess"
   />
@@ -256,6 +257,7 @@ const payMsg = reactive({
   url: '',
   orderId: '',
   amount: '',
+  pay_decimal_num: 0,
 })
 const nftFee: { val: NFTFeeInfo | null } = reactive({ val: null })
 const isSkeleton = ref(true)
@@ -266,7 +268,7 @@ const isEnough = ref(true)
 const payPlatformChain = {
   [PayPlatform.BSV]: Chains.BSV,
   [PayPlatform.ETH]: Chains.ETH,
-  [PayPlatform.POLYGON]: Chains.ETH,
+  [PayPlatform.POLYGON]: Chains.POLYGON,
 }
 const payPlatformToCurrency = {
   [PayPlatform.BSV]: ToCurrency.BSV,
@@ -395,6 +397,8 @@ async function confirmBuy() {
         if (res) {
           payMsg.amount = res.pay_amount!.toString()
           payMsg.orderId = res.order_id
+          debugger
+          payMsg.pay_decimal_num = res.pay_decimal_num
           payMsg.url = res.url
           buying.value = false
           emit('update:modelValue', false)
