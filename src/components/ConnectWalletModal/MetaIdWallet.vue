@@ -653,12 +653,11 @@ function submitForm() {
               let userInfo = {
                 ...registerInfo.val!,
                 userType: registerInfo.val!.registerType,
-                password: form.password,
                 path: parseInt(import.meta.env.VITE_WALLET_PATH),
               }
               const walletInfo = await hdWalletFromAccount(
                 // @ts-ignore
-                userInfo,
+                { ...userInfo, password: form.password },
                 import.meta.env.VITE_NET_WORK,
                 import.meta.env.VITE_WALLET_PATH
               )
@@ -733,6 +732,7 @@ function submitForm() {
               await userStore.updateUserInfo({
                 ...userInfo,
                 loginType: 'MetaID',
+                password: form.password,
               })
               userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
               userStore.showWallet.initWallet()

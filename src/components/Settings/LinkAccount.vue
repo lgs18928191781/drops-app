@@ -45,7 +45,11 @@
     </div>
 
     <!-- ChangePhone -->
-    <ChangePhoneEmail v-model="isShowChangePhone" :value="userStore.user?.phone" />
+    <ChangePhoneEmail
+      v-model="isShowChangePhone"
+      :value="AccountType === 'phone' ? userStore.user?.phone : userStore.user?.email"
+      :type="AccountType"
+    />
   </ElDrawer>
 </template>
 
@@ -62,6 +66,7 @@ import { copy } from '@/utils/util'
 import MetaMask from '@/assets/images/login_logo_matamask.png'
 import logo_metaid from '@/assets/icons/logo_metaid.svg?url'
 import ChangePhoneEmail from './ChangePhoneEmail.vue'
+import { userInfo } from 'os'
 
 interface Props {
   modelValue: boolean
@@ -72,6 +77,7 @@ const userStore = useUserStore()
 const rootStore = useRootStore()
 const i18n = useI18n()
 const isShowChangePhone = ref(false)
+const AccountType = ref<'phone' | 'email'>('phone')
 
 const sections = [
   {
@@ -99,6 +105,7 @@ const sections = [
             : ''
         },
         fun: () => {
+          AccountType.value = 'phone'
           isShowChangePhone.value = true
         },
       },
@@ -113,7 +120,8 @@ const sections = [
             : ''
         },
         fun: () => {
-          copy(userStore.user?.metaId)
+          AccountType.value = 'email'
+          isShowChangePhone.value = true
         },
       },
     ],

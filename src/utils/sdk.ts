@@ -40,7 +40,6 @@ import {
 import { GetMeUtxos, GetMyMEBalance, GetProtocolMeInfo } from '@/api/v3'
 import * as bsv from '@sensible-contract/bsv'
 import { getLocalAccount, openLoading, realRandomString, sleep } from './util'
-import { Toast } from 'vant'
 import { Transaction } from 'dexie'
 import { useUserStore } from '@/stores/user'
 import { useJobsStore } from '@/stores/jobs'
@@ -100,7 +99,6 @@ export class SDK {
     return new Promise<void>(async (resolve, reject) => {
       try {
         const account = getLocalAccount()
-
         const walletObj = await hdWalletFromAccount(
           {
             ...account.userInfo,
