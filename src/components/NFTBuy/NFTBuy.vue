@@ -412,7 +412,6 @@ async function confirmBuy() {
             if (res) {
               payMsg.amount = res.pay_amount!.toString()
               payMsg.orderId = res.order_id
-              debugger
               payMsg.pay_decimal_num = res.pay_decimal_num
               payMsg.url = res.url
               buying.value = false

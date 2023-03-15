@@ -102,6 +102,7 @@ export const router = createRouter({
           path: 'collection',
           name: 'nftCollection',
           component: () => import('@/layout/BaseRouterView/BaseRouterView.vue'),
+          meta: { keepAlive: true },
           children: [
             {
               path: 'index',
