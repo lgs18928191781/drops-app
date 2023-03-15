@@ -23,7 +23,10 @@
               {{ $t('Talk.Modals.you_dont_have_nft') }}
             </p>
             <div class="mt-4.5 flex space-x-4 items-center">
-              <Image :src="talk.consensualNft?.icon" customClass="!w-14 !h-14 rounded" />
+              <Image
+                :src="talk.consensualNft?.icon"
+                customClass="!w-14 !h-14 rounded !object-cover !object-center"
+              />
               <div class="flex flex-col items-start">
                 <h4 class="text-2xl text-dark-800 dark:text-white font-bold">
                   {{ talk.consensualNft?.seriesName }}

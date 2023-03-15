@@ -923,7 +923,6 @@ export class SDK {
     transactions: NodeTransactions,
     params: createBrfcChildNodeParams
   ) {
-    // 打钱地址
     let receive: {
       address: string
       addressIndex: number

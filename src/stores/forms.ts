@@ -156,6 +156,7 @@ export interface ChannelFormState {
   uuid?: string
   // 修改
   publicKey?: string
+  groupId?: string
   txId?: string
   nativeAmount?: number
 }
@@ -171,6 +172,7 @@ export const useChannelFormStore = defineStore('channelForm', {
       amount: 1,
       adminOnly: false, // 发言设置，0：所有人，1：管理员
       publicKey: undefined,
+      groupId: undefined,
       uuid: undefined, // 用于 订阅和 key， 不可修改
       txId: undefined,
       chainInfo: null as any,
@@ -254,6 +256,7 @@ export const useChannelFormStore = defineStore('channelForm', {
       this.name = channel.name
       this.adminOnly = channel.chatSettingType === 1
       this.publicKey = channel.roomPublicKey
+      this.groupId = channel.groupId
       this.uuid = channel.uuid
       this.txId = channel.txId
     },
@@ -268,6 +271,7 @@ export const useChannelFormStore = defineStore('channelForm', {
       this.amount = 1
       this.adminOnly = false
       this.publicKey = undefined
+      this.groupId = undefined
       this.uuid = undefined
       this.txId = undefined
     },

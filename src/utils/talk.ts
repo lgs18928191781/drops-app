@@ -331,7 +331,7 @@ export const createChannel = async (
   const chatSettingType = form.adminOnly ? 1 : 0
 
   // 随机生成groupId，用于解耦与用户的关系
-  const groupId = SHA256(realRandomString(64)).toString()
+  const groupId = form.groupId || SHA256(realRandomString(64)).toString()
 
   const dataCarrier = {
     communityId,
