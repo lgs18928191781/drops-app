@@ -244,6 +244,7 @@
 
 
 
+
                 }}%)
               </div>
               <div class="amount">
@@ -254,6 +255,7 @@
               <div class="name flex1">
                 {{ $t('buyFeeTips2') }}({{
                   new Decimal(fee.val!.royaltyPercentage).mul(100).toNumber()
+
 
 
 
@@ -580,7 +582,6 @@ function toWallet() {}
 
 function wechatpay(res: any) {
   if (typeof res === 'string') {
-    // debugger
     const { errCode, errStr, transaction, openId } = JSON.parse(res)
     if (errCode === 0) {
       ElMessage.success(`${i18n.t('alipaySuceess')}`)

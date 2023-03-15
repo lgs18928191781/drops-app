@@ -294,7 +294,6 @@ const payResultMessage = computed(() => {
   console.log('propsprops', payResult)
   if (payResult.status === PayStatus.Success) {
     const symbol = getPlatformSymbol(props.payPlatform)
-    debugger
     const amount = new Decimal(props.amount)
       .div(Math.pow(10, props.pay_decimal_num))
       .toFixed(payPlatformAmountFix[props.payPlatform])

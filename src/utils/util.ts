@@ -1338,7 +1338,6 @@ export function CreatePayOrder(params: {
 
 export function CheckMetaMaskAccount(params: { chainId: string }) {
   return new Promise<void>(async (resolve, reject) => {
-    debugger
     const result = await (window as any).ethereum.enable()
     if (result && result.length) {
       const root = useRootStore()
@@ -1832,7 +1831,6 @@ export function getBalance(params: { chain: Chains }) {
     if (isBtLink) {
       _params.xpub = userStore.showWallet.wallet?.wallet.xpubkey.toString()
     }
-
     if (!isBtLink && !userStore.user?.evmAddress) {
       resolve(0)
     } else if (params.chain === Chains.BSV && import.meta.env.MODE === EnvMode.TestnetGray) {
