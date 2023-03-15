@@ -222,7 +222,7 @@ const phoneFullNumber = computed(() => {
 const valueShowText = computed(() => {
   if (props.value) {
     if (props.type === 'email') {
-      return props.value.slice(0, 3) + '****@' + props.value.split('@')[1]
+      return props.value.split('@')[0].slice(0, 3) + '****@' + props.value.split('@')[1]
     } else if (props.type === 'phone') {
       return props.value.slice(0, 3) + '****' + props.value.slice(-4)
     }

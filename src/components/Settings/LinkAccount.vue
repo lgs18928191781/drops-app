@@ -100,7 +100,7 @@ const sections = [
           return i18n.t('LinkAccount.Phone')
         },
         value: () => {
-          return userStore.isAuthorized
+          return userStore.isAuthorized && userStore.user!.phone
             ? userStore.user!.phone.slice(0, 3) + '****' + userStore.user!.phone.slice(-4)
             : ''
         },
@@ -115,7 +115,7 @@ const sections = [
           return i18n.t('LinkAccount.Email')
         },
         value: () => {
-          return userStore.user?.email
+          return userStore.isAuthorized && userStore.user?.email
             ? userStore.user!.email.slice(0, 3) + '****@' + userStore.user!.email.split('@')[1]
             : ''
         },

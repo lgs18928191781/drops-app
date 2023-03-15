@@ -261,7 +261,13 @@ export const hdWalletFromAccount = async (
   account: BaseUserInfoTypes,
   network: Network = Network.mainnet,
   path: string | number
-): Promise<any> => {
+): Promise<{
+  mnemonic: string
+  wallet: mvc.HDPrivateKey
+  rootAddress: string
+  rootWif: string
+  network: Network
+}> => {
   // console.log(account)
   const loginName = account.userType === 'phone' ? account.phone : account.email
   const password = account.password
@@ -1648,8 +1654,6 @@ export class HdWallet {
 
     return response
   }
-  
-
 
   // getter
   get userProtocols() {
