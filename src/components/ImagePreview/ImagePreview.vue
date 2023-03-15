@@ -1,45 +1,46 @@
 <template>
-  <div class="image-preview" v-if="modelValue" @click.stop="() => {}">
-    <a class="close-btn flex flex-align-center flex-pack-center" @click="close"
-      ><Icon name="x_mark"
-    /></a>
-    <div id="images" style="display: none;">
-      <img :src="$filters.metafile(item, -1)" v-for="item in images" />
+  <Teleport to="body">
+    <div class="image-preview" v-if="imagePreview.visibale" @click.stop="() => {}">
+      <a class="close-btn flex flex-align-center flex-pack-center" @click="close"
+        ><Icon name="x_mark"
+      /></a>
+      <div id="images" style="display: none;">
+        <img :src="$filters.metafile(item, -1)" v-for="item in imagePreview.images" />
+      </div>
     </div>
-  </div>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
 import Viewer from 'viewerjs'
 import 'viewerjs/dist/viewer.min.css'
 import { nextTick, onMounted, ref, watch } from 'vue'
-// import CloseIcon from '@/assets/images/tab_icon_close.svg'
-import { DB } from '@/utils/db'
 import { isApp } from '@/stores/root'
 import { checkAppHasMethod, downloadFile, urlToBase64 } from '@/utils/util'
+import { NavigationGuardNext, onBeforeRouteLeave, RouteLocationNormalized } from 'vue-router'
+import { useImagePreview } from '@/stores/imagePreview'
 
-interface Props {
-  modelValue: boolean
-  images: string[]
-  index: number
-}
 let viewer: Viewer
-
-const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits(['update:modelValue'])
+const imagePreview = useImagePreview()
 
 watch(
-  () => props.modelValue,
+  () => imagePreview.visibale,
   async () => {
-    if (props.modelValue) {
+    if (imagePreview.visibale) {
       nextTick(() => {
         viewer = new Viewer(document.getElementById('images')!, {
           button: false,
           navbar: true,
           title: false,
           inline: true,
-          movable: false,
-          initialViewIndex: props.index,
+          movable: true,
+          rotatable: true,
+          scalable: true,
+          zoomable: true,
+          zoomOnTouch: true,
+          zoomOnWheel: true,
+          initialViewIndex: imagePreview.index,
           toolbar: {
             oneToOne: true,
             prev: true,
@@ -67,7 +68,7 @@ watch(
 )
 
 function close() {
-  emit('update:modelValue', !props.modelValue)
+  imagePreview.visibale = false
 }
 </script>
 

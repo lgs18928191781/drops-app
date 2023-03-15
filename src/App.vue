@@ -34,6 +34,9 @@
   <ConnectWalletModalVue />
   <!-- <UserCardFloater /> -->
   <PWA />
+
+  <!-- 图片预览 -->
+  <ImagePreviewVue />
 </template>
 
 <script setup lang="ts">
@@ -50,6 +53,7 @@ import SearchModal from './components/Search/Index.vue'
 import PWA from './components/PWA/PWA.vue'
 import UserCardFloater from './components/UserCard/Floater.vue'
 import PullDownVue from './layout/PullDown/PullDown.vue'
+import ImagePreviewVue from '@/components/ImagePreview/ImagePreview.vue'
 
 const rootStore = useRootStore()
 const userStore = useUserStore()

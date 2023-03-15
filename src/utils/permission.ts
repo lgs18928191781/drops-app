@@ -9,12 +9,20 @@ import { usePostTagStore } from '@/stores/buzz/tag'
 import { useMetaNameStore } from '@/stores/metaname'
 import { useHead } from '@vueuse/head'
 import { RouteLocationNormalized } from 'vue-router'
+import { useImagePreview } from '@/stores/imagePreview'
 
 let loading: any
 router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore()
   const rootStore = useRootStore()
   const metaNameStore = useMetaNameStore()
+  const imagePreview = useImagePreview()
+
+  // 当正在全屏预览图片时， 后退操作会变成关闭预览不后退
+  if (imagePreview.visibale) {
+    imagePreview.visibale = false
+    return
+  }
 
   SetMeta(to)
 
