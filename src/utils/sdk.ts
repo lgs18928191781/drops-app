@@ -1881,10 +1881,6 @@ export class SDK {
     })
   }
 
-  getPathWithNetWork(params: { xpub: string; address: string }) {
-    return this.wallet?.provider.getPathWithNetWork(params)
-  }
-
   getPathPrivateKey(path: string) {
     return this.wallet?.getPathPrivateKey(path)
   }

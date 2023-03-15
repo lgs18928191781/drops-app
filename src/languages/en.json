@@ -1060,5 +1060,6 @@
     "AllChain": "All Chain",
     "Floor price": "Floor price",
     "Total volume": "Total volume"
-  }
+  },
+  "PathMoreThan150": "Path>150, please contact customer service for repair"
 }
