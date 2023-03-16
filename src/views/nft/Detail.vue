@@ -230,7 +230,7 @@
           </div>
         </div>
 
-        <div class="more-nft" v-if="nft.val!.nftTopicType">
+        <div class="more-nft" v-if="nft.val!.nftTopicType && nfts.length">
           <div class="title">{{ $t('NFT.More from this collection') }}</div>
           <ElRow :gutter="gutter" class="more-nft-list">
             <ElCol

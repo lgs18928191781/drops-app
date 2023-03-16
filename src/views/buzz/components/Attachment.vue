@@ -137,6 +137,7 @@
               </ElSkeleton>
             </div>
           </CardVue>
+          <div class="msg-error" v-if="isFail">{{ $t('NFT.Get Msg Error') }}</div>
         </template>
 
         <template v-else-if="getAttachmentType(item) === 'video'">
@@ -207,6 +208,7 @@ const emit = defineEmits(['remove', 'play'])
 const metafileInfo: { val: null | MetaFileInfo } = reactive({ val: null })
 const nft: { val: null | GenesisNFTItem } = reactive({ val: null })
 const imagePreview = useImagePreview()
+const isFail = ref(false)
 
 const previewImages = computed(() => {
   let result: string[] = []
@@ -409,7 +411,7 @@ function getAttachmentInfo() {
           }
         })
         .catch(error => {
-          ElMessage.error(error.message)
+          isFail.value = true
         })
     }
   }

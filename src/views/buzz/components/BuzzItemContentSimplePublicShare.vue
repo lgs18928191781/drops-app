@@ -37,6 +37,7 @@
           <Icon name="down" class="right" />
         </div>
       </CardVue>
+      <div class="msg-error" v-if="isFail">{{ $t('NFT.Get Msg Error') }}</div>
     </template>
   </ElSkeleton>
 </template>
@@ -60,11 +61,12 @@ const isSkeleton = ref(true)
 const postTagStore = usePostTagStore()
 const router = useRouter()
 const isMetaName = ref(false)
+const isFail = ref(false)
 
 function getShareInfo() {
   return new Promise<void>(async resolve => {
     const res = await GetPublishShare(props.buzz.txId).catch(error => {
-      ElMessage.error(error.message)
+      isFail.value = true
     })
     if (res?.code === 0) {
       shareInfo.val = res.data

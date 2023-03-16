@@ -768,7 +768,8 @@
     "BuyNFTNoteEnough": "Insufficient balance, please check<a>your wallet</a>",
     "Chosse PayType": "Choose another payment method",
     "NFT Order Locked": "Locked",
-    "NFT Has been purchased": "NFT Has been purchased"
+    "NFT Has been purchased": "NFT Has been purchased",
+    "Get Msg Error": "Get Msg Error"
   },
   "My NFT": "My NFT",
   "Done": "Done",

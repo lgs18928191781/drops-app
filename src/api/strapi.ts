@@ -60,8 +60,6 @@ export const GetCollectByTopicType = async (topicType: string): Promise<Collect 
   })
   if (res.length) {
     return res[0]
-  } else {
-    ElMessage.error(i18n.global.t('NOT_FOUND'))
   }
 }
 

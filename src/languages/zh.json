@@ -759,7 +759,8 @@
     "BuyNFTNoteEnough": "余额不足，请检查您的<a>钱包</a>",
     "Chosse PayType": "选择其他付款方式",
     "NFT Order Locked": "订单锁定中",
-    "NFT Has been purchased": "NFT已被购买"
+    "NFT Has been purchased": "NFT已被购买",
+    "Get Msg Error": "获取信息失败"
   },
   "My NFT": "我的NFT",
   "Done": "完成",

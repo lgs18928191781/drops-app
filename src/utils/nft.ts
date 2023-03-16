@@ -10,7 +10,6 @@ export function IsMyNFT(nft: GenesisNFTItem | null) {
   const userStore = useUserStore()
   if (nft && userStore.isAuthorized) {
     if (nft.nftChain === Chains.MVC || nft.nftChain === Chains.BSV) {
-      console.log(nft.nftOwnerMetaId === userStore.user?.metaId)
       if (nft.nftOwnerMetaId === userStore.user?.metaId) {
         result = true
       }
