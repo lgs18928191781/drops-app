@@ -419,7 +419,9 @@ function getDetail() {
 }
 
 async function offSale(item: GenesisNFTItem) {
-  const result = await NFTOffSale(item)
+  const result = await NFTOffSale(item).catch(error => {
+    ElMessage.error(error.message)
+  })
   if (result) {
     onOperateSuccess(result)
   }

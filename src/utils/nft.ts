@@ -50,6 +50,7 @@ export function isNFTCanOperate(params: {
     const result = await CheckNFTStatus(params)
     if (result?.code === 0) {
       if (result.data.status === BuyNFTStatus.Purchased) {
+        // @ts-ignore
         reject(new Error(i18n.global.t('NFT.NFT Has been purchased')))
       } else if (result.data.status === BuyNFTStatus.NotCanBuy) {
         reject(new Error(i18n.global.t('NFT.NotCanBuy')))
@@ -69,7 +70,9 @@ export function NFTOffSale(nft: GenesisNFTItem) {
       tokenIndex: nft.nftTokenIndex,
       contract: nft.nftSellContractTxId,
       metaId: userStore.user!.metaId,
-    }).catch(error => reject(error))
+    }).catch(error => {
+      reject(error)
+    })
     if (result) {
       ElMessageBox.confirm(
         // @ts-ignore

@@ -280,7 +280,7 @@ export const CheckNFTStatus = (params: {
   contract: string
   genesis: string
   tokenIndex: string
-  metaid: string
+  metaId: string
 }): Promise<{
   code: number
   data: {
