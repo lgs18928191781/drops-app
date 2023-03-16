@@ -56,7 +56,7 @@ import { Chains } from '@/enum'
 import NFTItemVue from '@/components/NFTItem/NFTItem.vue'
 import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import NFTSellVue from '@/components/NFTSell/NFTSell.vue'
-import { NFTOffSale } from '@/utils/util'
+import { NFTOffSale } from '@/utils/nft'
 
 const nfts: GenesisNFTItem[] = reactive([])
 const isSkeleton = ref(true)
