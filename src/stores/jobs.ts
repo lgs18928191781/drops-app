@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { reportTask } from '@/api/metaid-base'
 import { JobStatus, JobStepStatus } from '@/enum'
 import { sleep } from '@/utils/util'
+import NoticeAudio from '@/assets/audio/noctice.mp3'
 
 export const useJobsStore = defineStore('jobs', {
   state: () => {
@@ -15,6 +16,8 @@ export const useJobsStore = defineStore('jobs', {
       // nodes: [] as any,
 
       isRunning: false,
+
+      isPlayingNotice: false,
     }
   },
 
@@ -117,6 +120,20 @@ export const useJobsStore = defineStore('jobs', {
           })
         }
       }
+    },
+
+    playNotice() {
+      if (this.isPlayingNotice) return
+      this.isPlayingNotice = true
+      const audio = new Audio()
+      audio.volume = 0.7
+      audio.onended = () => {
+        setTimeout(() => {
+          this.isPlayingNotice = false
+        }, 5000)
+      }
+      audio.src = NoticeAudio
+      audio.play()
     },
   },
 })

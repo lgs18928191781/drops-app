@@ -54,9 +54,11 @@ export const useWsStore = defineStore('ws', {
       switch (messageWrapper.M) {
         case 'WS_SERVER_NOTIFY_ROOM':
           await talk.handleNewGroupMessage(messageWrapper.D)
+          jobsStore.playNotice()
           return
         case 'WS_SERVER_NOTIFY_CHAT':
           await talk.handleNewSessionMessage(messageWrapper.D)
+          jobsStore.playNotice()
           return
         case 'WS_SERVER_NOTIFY_TX_TASK':
           await jobsStore.handleWsMessage(messageWrapper.D)
