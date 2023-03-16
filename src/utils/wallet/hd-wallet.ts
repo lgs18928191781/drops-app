@@ -508,6 +508,7 @@ export class HdWallet {
     this.provider = new ShowmoneyProvider({
       ...params,
       network: this.network,
+      session: this.session,
     })
   }
 

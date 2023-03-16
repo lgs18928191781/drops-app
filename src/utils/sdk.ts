@@ -6,22 +6,14 @@ import {
   CreateNodeMetaFileRes,
   HdWalletCreateBrfcChildNodeParams,
   MetaIdJsRes,
-  NftBuyParams,
-  NftCancelParams,
-  NftSellParams,
   UtxoItem,
 } from '@/@types/sdk'
 import {
-  BaseUtxo,
   DEFAULTS,
   HdWallet,
   hdWalletFromAccount,
-  MetaIdTag,
   NftTransferResult,
-  ProtocolOptions,
-  Reqswapargs,
 } from '@/utils/wallet/hd-wallet'
-import { decode, encode } from 'js-base64'
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { router } from '@/router'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
@@ -29,7 +21,6 @@ import { isAndroid, isAndroidApp, isIOS, isIosApp } from '@/stores/root'
 import { PayToItem } from '@/@types/hd-wallet'
 import {
   SdkPayType,
-  IsEncrypt,
   NodeName,
   JobStepStatus,
   JobStatus,
@@ -39,22 +30,20 @@ import {
 } from '@/enum'
 import { GetMeUtxos, GetMyMEBalance, GetProtocolMeInfo } from '@/api/v3'
 import * as bsv from '@sensible-contract/bsv'
-import { getLocalAccount, openLoading, realRandomString, sleep } from './util'
+import { getLocalAccount } from './util'
 import { Transaction } from 'dexie'
 import { useUserStore } from '@/stores/user'
 import { useJobsStore } from '@/stores/jobs'
 import i18n from './i18n'
 import SdkPayConfirmModalVue from '@/components/SdkPayConfirmModal/SdkPayConfirmModal.vue'
 import { h, render } from 'vue'
-import { NftManager, FtManager, API_NET, API_TARGET, TxComposer, mvc } from 'meta-contract'
-import { resolve } from 'path'
-import detectEthereumProvider from '@metamask/detect-provider'
+import { mvc } from 'meta-contract'
 import { v1 as UUID } from 'uuid'
 import { useLayoutStore } from '@/stores/layout'
 import { GetTx } from '@/api/metaid-base'
 import AllNodeName from './AllNodeName'
-import { tr } from 'element-plus/es/locale'
 import { GetMetafileBySha256 } from '@/api/aggregation'
+
 enum AppMode {
   PROD = 'prod',
   GRAY = 'gray',
