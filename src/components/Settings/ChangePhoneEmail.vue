@@ -127,7 +127,6 @@ import 'vue3-country-intl/lib/flags-9980096a.png'
 import { FormInstance } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { IsEncrypt, NodeName } from '@/enum'
-import { type } from 'os'
 
 interface Props {
   modelValue: boolean
@@ -147,7 +146,7 @@ const isSendCodeLoading = ref(false)
 const i18n = useI18n()
 const FormRef = ref<FormInstance>()
 const userStore = useUserStore()
-const isShowCountry = ref(true)
+const isShowCountry = ref(false)
 
 const form = reactive({
   phone: '',

@@ -1,5 +1,10 @@
 <template>
-  <ElDialog :modelValue="modelValue" class="sm" @close="emit('update:modelValue', false)">
+  <ElDialog
+    :modelValue="modelValue"
+    class="sm"
+    @close="emit('update:modelValue', false)"
+    :closeOnClickModal="false"
+  >
     <template #title>
       <slot name="title"></slot>
     </template>

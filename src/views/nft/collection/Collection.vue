@@ -192,9 +192,9 @@ import IsNull from '@/components/IsNull/IsNull.vue'
 import { isMobile } from '@/stores/root'
 import { satoshi, space } from '@/utils/filters'
 import NFTSellVue from '@/components/NFTSell/NFTSell.vue'
-import { NFTOffSale } from '@/utils/util'
 import { GetGenesisStatistics } from '@/api/broad'
 import CollectionChart from '../components/CollectionChart.vue'
+import { NFTOffSale } from '@/utils/nft'
 
 const i18n = useI18n()
 const route = useRoute()
@@ -396,7 +396,9 @@ function refreshDatas() {
 }
 
 async function onOffsale(item: GenesisNFTItem) {
-  const result = await NFTOffSale(item)
+  const result = await NFTOffSale(item).catch(error => {
+    ElMessage.error(error.message)
+  })
   if (result) {
     onOperateSuccess(result)
   }

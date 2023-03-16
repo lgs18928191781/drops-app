@@ -1060,5 +1060,6 @@
     "AllChain": "所有链",
     "Floor price": "地板价",
     "Total volume": "发行量"
-  }
+  },
+  "PathMoreThan150": "Path > 150,请联系客服修复"
 }
