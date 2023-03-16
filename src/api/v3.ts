@@ -2,7 +2,7 @@ import { PayPlatform, PayType } from '@/enum'
 import HttpRequest from '@/utils/request'
 import { alertCatchError } from '@/utils/util'
 import { ElMessage } from 'element-plus'
-import { getToken, getUserName, useUserStore } from '@/stores/user'
+import { useUserStore } from '@/stores/user'
 
 // @ts-ignore
 const V3 = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/v3`, {
