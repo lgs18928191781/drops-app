@@ -31,7 +31,6 @@
           <div class="cont flex1">
             <div class="name flex flex-align-center" :class="{ metaName: isMetaName }">
               <span class="text">{{ shareInfo.val!.title }}</span>
-              <MetaNameTag v-if="isMetaName" class="!rounded ml-1" />
             </div>
             <div class="drsc">{{ shareInfo.val!.detail }}</div>
           </div>
@@ -90,7 +89,7 @@ function toItem() {
       },
     })
   } else if (shareInfo.val!.shareIdType === 'communityId') {
-    router.push(`/talk/channels/${shareInfo.val!.shareId}`)
+    router.push(`/talk/channels/${shareInfo.val!.shareId}/welcome`)
   }
 }
 

@@ -42,7 +42,7 @@
           </div>
 
           <div class="flex items-center space-x-2">
-            <LoadingItemSmall class="h-10" v-if="isLoading"></LoadingItemSmall>
+            <LoadingItemSmall class="!h-10" v-if="isFetching" />
             <div class="flex gap-x-2" v-else>
               <UserAvatar
                 :image="owner!.avatarImage"
@@ -106,7 +106,7 @@ const queryParams = {
   communityId: talk.activeCommunity?.id as string,
   metaName: talk.activeCommunity?.metaNameNft as string,
 }
-const { isLoading, isError, data: owner } = useQuery({
+const { isLoading, isFetching, isError, data: owner } = useQuery({
   queryKey: ['community-owner', queryParams],
   queryFn: () => getCommunityOwner(queryParams),
   enabled: !!talk.activeCommunity?.id,

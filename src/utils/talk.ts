@@ -60,7 +60,9 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   if (!metaName) metaName = {}
 
   // 没有metaname的情况下，communityId生成方式为随机64位字符串，然后sha256一次
-  const communityId = metaName.communityId || SHA256(realRandomString(64)).toString()
+  // const communityId = metaName.communityId || SHA256(realRandomString(64)).toString()
+  const communityId = SHA256(realRandomString(64)).toString()
+  
   const metaNameNft = metaName.genesis
     ? `${metaName.solution}://${metaName.codeHash}/${metaName.genesis}/${metaName.tokenIndex}`
     : ''

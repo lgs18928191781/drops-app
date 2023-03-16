@@ -93,7 +93,7 @@
 
       <div
         class="border-dashed border-2 border-gray-200 dark:border-gray-600 w-13.5 h-13.5 flex items-center justify-center rounded-3xl text-dark-400 cursor-pointer hover:text-dark-800 hover:border-solid hover:border-dark-300 hover:bg-primary transition-all duration-300"
-        v-if="userStore.isAuthorized && (!isProduction || isInWhitelist)"
+        v-if="userStore.isAuthorized"
         @click="
           userStore.isAuthorized
             ? (layout.isShowCreateCommunityModal = true)
@@ -110,7 +110,6 @@
 </template>
 
 <script setup lang="ts">
-import { getCommunities } from '@/api/talk'
 import { useLayoutStore } from '@/stores/layout'
 import { useTalkStore } from '@/stores/talk'
 import { useUserStore } from '@/stores/user'

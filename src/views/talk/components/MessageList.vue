@@ -201,7 +201,6 @@ const scrollToMessagesBottom = async (retryCount = 0) => {
     mse.scrollTop = mse.scrollHeight
   } else {
     if (retryCount < 5) {
-      console.log({ retryCount })
       await nextTick()
       await scrollToMessagesBottom(retryCount + 1)
     }

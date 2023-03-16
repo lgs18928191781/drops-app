@@ -32,6 +32,8 @@ const seedFakeMetaName = (item: any) => {
 
 export const getCommunities = async (params?: any): Promise<Community[]> => {
   params = params || {}
+  params.page = params.page || 1
+  params.pageSize = params.pageSize || 100
   const query = new URLSearchParams(params).toString()
 
   return TalkApi.get(`/community/list?${query}`).then(res => {

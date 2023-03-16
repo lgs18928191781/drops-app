@@ -138,7 +138,7 @@ export const useCommunityUpdateFormStore = defineStore('communityUpdateForm', {
       layout.isShowLoading = false
 
       // 跳转刷新
-      // window.location.reload()
+      window.location.reload()
     },
   },
 })
