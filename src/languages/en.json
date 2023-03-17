@@ -1087,6 +1087,8 @@
     "Custom Multiple Choice Voting": "Custom Multiple Choice Voting",
     "Vote Options": "Vote Options",
     "Vote Time": "Vote Time",
-    "Vote Content": "Content"
+    "Vote Content": "Content",
+    "Publish": "Publish",
+    "proposalDrscPlac": "Tell us more about your proposal (optional)"
   }
 }

@@ -1087,6 +1087,8 @@
     "Custom Multiple Choice Voting": "自定义多选投票",
     "Vote Options": "投票选项",
     "Vote Time": "投票时间",
-    "Vote Content": "详情"
+    "Vote Content": "详情",
+    "Publish": "发布",
+    "proposalDrscPlac": "告诉我们更多关于您的提案(可选)"
   }
 }

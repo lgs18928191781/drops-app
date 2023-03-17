@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full overflow-y-auto">
+  <div class="h-full overflow-y-auto overflow-x-hidden">
     <div class="header flex flex-align-center">
       <div class="flex1 flex flex-align-center">
         <a class="back">
@@ -9,6 +9,7 @@
           {{ $t('DAO.New Proposal') }}
         </span>
       </div>
+      <a class="main-border primary"> {{ $t('DAO.Publish') }}</a>
     </div>
 
     <ElForm :label-position="'top'">
@@ -74,7 +75,7 @@ function initMarkDown() {
     cache: {
       enable: false,
     },
-    placeholder: i18n.t('proposalDrscPlac'),
+    placeholder: i18n.t('DAO.proposalDrscPlac'),
     minHeight: 500,
     toolbar: [
       'emoji',
