@@ -33,7 +33,7 @@ export default ({ mode, command }) => {
     authToken: env.VITE_SENTRY_AUTH_TOKEN,
     org: env.VITE_SENTRY_ORG,
     project: env.VITE_SENTRY_PROJECT,
-    release: pkg.version,
+    release: env.VITE_COMMIT_ID,
     deploy: {
       env: 'production'
     },

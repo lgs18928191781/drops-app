@@ -549,7 +549,12 @@ function submitForm() {
       if (form.isAgreePolicy) {
         emit('update:loading', true)
         try {
-          const phoneNum = form.area !== '86' ? form.area + form.phone : form.phone
+          const phoneNum =
+            form.userType === 'email'
+              ? ''
+              : form.area !== '86'
+              ? form.area + form.phone
+              : form.phone
           // 登录
           if (props.type === 'login') {
             //  登录
@@ -625,7 +630,7 @@ function submitForm() {
                 type: 1, // 注册时必须加上图片验证码验证， 1 是给App用的的，App没有图片验证码
                 userType: form.userType || 'phone',
                 phone: phoneNum,
-                email: form.email,
+                email: form.userType === 'email' ? form.email : '',
                 code: form.code,
                 name: `User_${new Date().getTime()}`,
                 promotion: '',
@@ -637,7 +642,7 @@ function submitForm() {
                 registerInfo.val = {
                   ...registerRes.result,
                   phone: phoneNum,
-                  email: form.email,
+                  email: form.userType === 'email' ? form.email : '',
                   userType: registerRes.result.registerType,
                 }
                 FormRef.value.resetFields()
@@ -653,12 +658,11 @@ function submitForm() {
               let userInfo = {
                 ...registerInfo.val!,
                 userType: registerInfo.val!.registerType,
-                password: form.password,
                 path: parseInt(import.meta.env.VITE_WALLET_PATH),
               }
               const walletInfo = await hdWalletFromAccount(
                 // @ts-ignore
-                userInfo,
+                { ...userInfo, password: form.password },
                 import.meta.env.VITE_NET_WORK,
                 import.meta.env.VITE_WALLET_PATH
               )
@@ -733,6 +737,7 @@ function submitForm() {
               await userStore.updateUserInfo({
                 ...userInfo,
                 loginType: 'MetaID',
+                password: form.password,
               })
               userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
               userStore.showWallet.initWallet()

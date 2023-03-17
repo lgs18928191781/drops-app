@@ -1182,81 +1182,6 @@ export function getCurrencyAmount(
   // }
 }
 
-export function NFTOffSale(nft: GenesisNFTItem) {
-  return new Promise<GenesisNFTItem | false>(async (resolve, rject) => {
-    ElMessageBox.confirm(
-      `${i18n.global.t('offsaleConfirm')} ${nft.nftName} ?`,
-      i18n.global.t('niceWarning'),
-      {
-        // @ts-ignore
-        confirmButtonText: i18n.global.t('confirm'),
-        cancelButtonText: i18n.global.t('Cancel'),
-        closeOnClickModal: false,
-        cancelButtonClass: 'main-border',
-        confirmButtonClass: 'main-border primary',
-      }
-    )
-      .then(async () => {
-        const userStore = useUserStore()
-        const loading = openLoading({ text: i18n.global.t('NFT.OffSaleing') })
-
-        // 法币下架
-
-        // const signRes: string = await userStore.showWallet!.sigMessage(
-        //   userStore.user!.metaId!,
-        //   '0/0'
-        // )
-        // if (signRes) {
-        //   const res = await LegalOffsale({ uuid: nft.nftLegalUuid, sig: signRes })
-        //   if (res.code === 0) {
-        //     ElMessage.success('下架成功')
-        //     resolve(true)
-        //   }
-        // }
-
-        // Space 下架
-        const res = await userStore.showWallet
-          .createBrfcChildNode(
-            {
-              nodeName: NodeName.NftCancel,
-              data: JSON.stringify({
-                genesis: nft.nftGenesis,
-                codehash: nft.nftCodehash,
-                tokenIndex: nft.nftTokenIndex,
-                sellUtxo: {
-                  txId: nft.nftSellContractTxId,
-                  outputIndex: 0,
-                  sellerAddress: nft.nftOwnerAddress,
-                  price: nft.nftPrice,
-                },
-              }),
-            },
-            {
-              payType: SdkPayType.ME,
-            }
-          )
-          .catch(error => {
-            ElMessage.error(error.message)
-            loading.close()
-          })
-        if (res) {
-          loading.close()
-          ElMessage.success(i18n.global.t('NFT.Offsale Success'))
-          resolve({
-            ...nft,
-            nftSellState: NFTSellState.OffSale,
-            nftPrice: 0,
-          })
-        } else if (res === null) {
-          loading.close()
-        }
-      })
-      .catch(error => {
-        resolve(false)
-      })
-  })
-}
-
 export function SetLang(lang: string) {
   if (i18n.global.locale.value === lang) return
   i18n.global.locale.value = lang
@@ -1336,7 +1261,7 @@ export function CreatePayOrder(params: {
   })
 }
 
-export function CheckMetaMaskAccount(address: string) {
+export function CheckMetaMaskAccount(params: { chainId: string }) {
   return new Promise<void>(async (resolve, reject) => {
     const result = await (window as any).ethereum.enable()
     if (result && result.length) {
@@ -1344,9 +1269,14 @@ export function CheckMetaMaskAccount(address: string) {
       const chain = (window as any).ethereum?.chainId
       const chainId = parseInt(chain).toString()
 
-      if (root.chainWhiteList.includes(chain)) {
+      if (params.chainId === chainId) {
+        resolve()
       } else {
-        await ChangeMetaMaskChain().catch(error => reject(error))
+        ChangeMetaMaskChain(params)
+          .then(() => {
+            resolve()
+          })
+          .catch(error => reject(error))
       }
       // const request = await (window as any).ethereum.request({
       //   method: 'eth_requestAccounts',
@@ -1356,23 +1286,26 @@ export function CheckMetaMaskAccount(address: string) {
       //   method: 'wallet_requestPermissions',
       //   params: [{ eth_accounts: address }],
       // })
-
-      resolve()
     }
   })
 }
 
-export function ChangeMetaMaskChain() {
+export function ChangeMetaMaskChain(params: { chainId: string }) {
   return new Promise<void>(async (resolve, reject) => {
     // if ((window as any).ethereum?.chainId)
+    const evmChanName = {
+      [import.meta.env.VITE_ETH_CHAINID]: import.meta.env.VITE_ETH_CHAIN,
+      [import.meta.env.VITE_POLYGON_CHAINID]: import.meta.env.VITE_POLYGON_CHAIN,
+    }
 
     const res = await ElMessageBox.confirm(
       // @ts-ignore
-      i18n.global.t('MetaMak.Chain Network Error Tips') + `${import.meta.env.VITE_ETH_CHAIN}`,
+      i18n.global.t('MetaMak.Chain Network Error Tips') + `${evmChanName[params.chainId]}`,
       i18n.global.t('MetaMak.Chain Network Error'),
       {
         customClass: 'primary',
-        confirmButtonText: i18n.global.t('MetaMak.Change') + `${import.meta.env.VITE_ETH_CHAIN}`,
+        // @ts-ignore
+        confirmButtonText: i18n.global.t('MetaMak.Change') + `${evmChanName[params.chainId]}`,
         cancelButtonText: i18n.global.t('Cancel'),
       }
     )
@@ -1382,7 +1315,7 @@ export function ChangeMetaMaskChain() {
             method: 'wallet_switchEthereumChain',
             params: [
               {
-                chainId: ethers.utils.hexValue(parseInt(import.meta.env.VITE_ETH_CHAINID)),
+                chainId: ethers.utils.hexValue(parseInt(params.chainId)),
                 // chainId:
                 //   import.meta.env.VITE_ETH_CHAIN == 'eth'
                 //     ? currentSupportChain[0].chainId
@@ -1823,8 +1756,10 @@ export function getBalance(params: { chain: Chains }) {
     if (isBtLink) {
       _params.xpub = userStore.showWallet.wallet?.wallet.xpubkey.toString()
     }
-
     if (!isBtLink && !userStore.user?.evmAddress) {
+      resolve(0)
+    } else if (params.chain === Chains.BSV && import.meta.env.MODE === EnvMode.TestnetGray) {
+      //  BSV 沒有測試網
       resolve(0)
     } else {
       const res = await GetBalance(_params).catch(error => reject(error))

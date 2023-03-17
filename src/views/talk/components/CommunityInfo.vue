@@ -51,6 +51,7 @@
                 class="w-full mt-2 flex items-center justify-between space-x-2 cursor-pointer"
                 :title="talk.activeCommunitySymbolInfo.name"
                 v-if="talk.activeCommunity?.metaName"
+                @click="checkoutMetaName()"
               >
                 <MetaNameDisplay
                   :name="talk.activeCommunity?.metaName"
@@ -62,6 +63,10 @@
                   name="chevron_right"
                   class="w-3 h-3 text-dark-800 dark:text-gray-100 shrink-0"
                 />
+              </div>
+
+              <div v-else class="mt-2 w-full">
+                <EmptyPit />
               </div>
 
               <div
@@ -201,6 +206,7 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 
 import { useLayoutStore } from '@/stores/layout'
 import { useTalkStore } from '@/stores/talk'
@@ -213,10 +219,12 @@ import CreateDaoModal from './modals/CreateDaoModal.vue'
 import CommunityInfoModal from './modals/community/Info.vue'
 import CommunityChannelItem from './CommunityChannelItem.vue'
 import MetaNameDisplay from '@/components/MetaName/Display.vue'
+import EmptyPit from '@/components/MetaName/EmptyPit.vue'
 
 const layout = useLayoutStore()
 const talk = useTalkStore()
 const i18n = useI18n()
+const router = useRouter()
 
 const popSettingsModal = () => {
   const form = useCommunityUpdateFormStore()
@@ -228,13 +236,44 @@ const popSettingsModal = () => {
 
 // 功能频道列表
 const generalChannels = computed(() => {
-  return talk.generalChannels.map(channel => {
-    return {
-      id: channel.id,
-      name: i18n.t(channel.nameKey),
-    }
-  })
+  return talk.generalChannels
+    .filter(channel => {
+      // 如果社区没有metaname，不显示topics频道
+      if (channel.id === 'topics' && !talk.activeCommunity?.metaName) {
+        return false
+      }
+
+      return true
+    })
+    .map(channel => {
+      return {
+        id: channel.id,
+        name: i18n.t(channel.nameKey),
+      }
+    })
 })
+
+function checkoutMetaName() {
+  if (!talk.activeCommunity?.metaName) return
+
+  // 如果不是.metaid方案，则不处理
+  if (!talk.activeCommunity?.metaNameNft?.startsWith('metacontract://')) return
+
+  // 路由跳转
+  const metaNameNft = talk.activeCommunity?.metaNameNft
+  // 解析出三元组:先去掉开头的metacontract://, 再用/分割
+  const [codehash, genesis, tokenIndex] = metaNameNft.replace('metacontract://', '').split('/')
+
+  router.push({
+    name: 'nftDetail',
+    params: {
+      chain: 'mvc',
+      genesis,
+      codehash,
+      tokenIndex,
+    },
+  })
+}
 </script>
 
 <style lang="scss" scoped>

@@ -72,6 +72,7 @@ import NFTItemSkeleton from './NFTItemSkeleton.vue'
 import { useUserStore } from '@/stores/user'
 import { IsMyNFT, IsSale } from '@/utils/nft'
 import { useI18n } from 'vue-i18n'
+import { checkUserLogin } from '@/utils/util'
 
 const props = defineProps<{
   nft: GenesisNFTItem
@@ -110,7 +111,7 @@ const btnText = computed(() => {
   }
 })
 
-function btnFun() {
+async function btnFun() {
   if (props.nft.nftIsOrderLock) {
     toNFT()
   } else if (isMyNFT.value) {
@@ -121,6 +122,7 @@ function btnFun() {
     }
   } else {
     if (isSale.value) {
+      await checkUserLogin()
       emit('buy', props.nft)
     } else {
       toNFT()

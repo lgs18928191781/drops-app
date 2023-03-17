@@ -7,6 +7,7 @@ export interface MetafileSchems {
   data?: Blob
   thumbnail?: Blob
   normal?: Blob
+  latestTime?: number
 }
 
 export class DBClass extends Dexie {
@@ -14,10 +15,11 @@ export class DBClass extends Dexie {
   genesis!: Table<GenesisItem>
   constructor() {
     super('show3.0')
-    this.version(3).stores({
+    this.version(4).stores({
       metafiles: 'txId', // Primary key and indexed props
       genesis: 'genesis, metaId', // Primary key and indexed props
     })
+    this.maintenanceData()
   }
 
   getMetaFileTxId(metafile: string) {
@@ -91,6 +93,7 @@ export class DBClass extends Dexie {
         const txId = this.getMetaFileTxId(metafileTxId)
         const file = await this.metafiles.get(txId)
         if (file) {
+          this.metafiles.update(txId, { latestTime: new Date().getTime() })
           // 存在数据库
 
           // 原图
@@ -160,6 +163,18 @@ export class DBClass extends Dexie {
       this.metafiles.update(result.txId, params)
       resolve(URL.createObjectURL(result.data))
     })
+  }
+
+  //  维护数据， 删除太久没用的数据
+  maintenanceData() {
+    setTimeout(async () => {
+      const expireTime = 1000 * 60 * 60 * 24 * 30 // 一个月
+      const now = new Date().getTime()
+      const list = await this.metafiles
+        // @ts-ignore
+        .filter(item => item.latestTime && now - item.latestTime >= expireTime)
+        .delete()
+    }, 4000)
   }
 }
 

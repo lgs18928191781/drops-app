@@ -9,7 +9,9 @@
             v-for="(item, index) in menus"
             :key="index"
           >
-            <span class="icon-warp flex flex-align-center flex-pack-center">
+            <span
+              class="icon-warp flex flex-align-center flex-pack-center main-border small still !rounded-lg"
+            >
               <Icon :name="item.icon" />
             </span>
             <span class="name">{{ item.name }}</span>

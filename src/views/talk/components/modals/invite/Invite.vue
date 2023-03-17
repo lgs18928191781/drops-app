@@ -10,9 +10,8 @@
           <p class="text-base">{{ $t('Talk.Modals.share_invite_link_tip') }}</p>
           <div class="grid space-x-4 items-center grid-cols-4">
             <div
-              class="main-border p-3 text-base text-dark-800 dark:text-gray-100 still cursor-text col-span-3 select-text truncate"
+              class="main-border p-3 text-base text-dark-800 dark:text-gray-100 still cursor-text col-span-3 !select-all  truncate"
               id="inviteLink"
-              @click="selectLink"
             >
               {{ talk.inviteLink }}
             </div>
@@ -74,6 +73,7 @@ const reset = () => {
 }
 
 const selectLink = () => {
+  return
   const range = document.createRange()
   const selection = window.getSelection()
   const link = document.getElementById('inviteLink') as HTMLElement

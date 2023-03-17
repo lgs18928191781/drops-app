@@ -1,10 +1,28 @@
 .buzz-list {
-    .buzz-item-warp {
-        margin-bottom: 6PX;
+    :deep(.vue-recycle-scroller__item-view) {
+        .buzz-item-warp {
+            padding-bottom: 6PX;
+        }
 
         &:last-child {
-            margin-bottom: 0;
+            .buzz-item-warp {
+                padding-bottom: 0;
+            }
         }
+    }
+
+}
+
+.el-skeleton {
+    .buzz-list {
+        .buzz-item-warp {
+            padding-bottom: 6PX;
+        }
+
+        &:last-child {
+            padding-bottom: 0;
+        }
+
     }
 }
 

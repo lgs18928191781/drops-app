@@ -230,7 +230,7 @@
           </div>
         </div>
 
-        <div class="more-nft" v-if="nft.val!.nftTopicType">
+        <div class="more-nft" v-if="nft.val!.nftTopicType && nfts.length">
           <div class="title">{{ $t('NFT.More from this collection') }}</div>
           <ElRow :gutter="gutter" class="more-nft-list">
             <ElCol
@@ -283,7 +283,7 @@ import PayConfirmVue from '@/components/PayConfirm/PayConfirm.vue'
 import { UnitName } from '@/config'
 import NFTSellVue from '@/components/NFTSell/NFTSell.vue'
 import NFTBuyVue from '@/components/NFTBuy/NFTBuy.vue'
-import { checkUserLogin, NFTOffSale, tx } from '@/utils/util'
+import { checkUserLogin, tx } from '@/utils/util'
 import AmountVue from '@/components/Amount/Amount.vue'
 import NFTTransferVue from '@/components/NFTTransfer/NFTTransfer.vue'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
@@ -292,7 +292,7 @@ import NFTDetailRecord from './components/NFTDetailRecord.vue'
 import NFTItem from '@/components/NFTItem/NFTItem.vue'
 import DetailSkeleton from './DetailSkeleton.vue'
 import { GetCollectByTopicType } from '@/api/strapi'
-import { IsMyNFT, IsSale } from '@/utils/nft'
+import { IsMyNFT, IsSale, NFTOffSale } from '@/utils/nft'
 
 const isShowSkeleton = ref(true)
 const isShowDrscDetail = ref(false)
@@ -372,7 +372,7 @@ const nftBtnClass = computed(() => {
 
 const isShowSell = ref(false)
 
-function nftBtnFunction() {
+async function nftBtnFunction() {
   if (nft.val?.nftIsOrderLock) {
     return
   } else if (isMyNFT.value) {
@@ -384,6 +384,7 @@ function nftBtnFunction() {
     }
   } else {
     if (isSale.value) {
+      await checkUserLogin()
       currentNFT.val = nft.val
       isShowBuy.value = true
     } else {
@@ -418,7 +419,9 @@ function getDetail() {
 }
 
 async function offSale(item: GenesisNFTItem) {
-  const result = await NFTOffSale(item)
+  const result = await NFTOffSale(item).catch(error => {
+    ElMessage.error(error.message)
+  })
   if (result) {
     onOperateSuccess(result)
   }

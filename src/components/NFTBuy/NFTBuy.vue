@@ -185,6 +185,7 @@
     :product_type="product_type"
     :order-id="payMsg.orderId"
     :amount="payMsg.amount"
+    :pay_decimal_num="payMsg.pay_decimal_num"
     :url="payMsg.url"
     @success="onPaySuccess"
   />
@@ -201,6 +202,7 @@ import {
   Chains,
   ProductType,
   EnvMode,
+  BuyNFTStatus,
 } from '@/enum'
 import { isAndroid, isApp, isIOS, isIosApp, useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
@@ -223,7 +225,7 @@ import {
 } from '@/utils/util'
 import { useRoute, useRouter } from 'vue-router'
 import StartPayVue from '../StartPay/StartPay.vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, useZIndex } from 'element-plus'
 import Decimal from 'decimal.js-light'
 import { GetGenesisFee, GetNFTFee, NFTFeeInfo } from '@/api/strapi'
 import NFTCover from '../NFTCover/NFTCover.vue'
@@ -231,6 +233,8 @@ import Modal from '@/components/Modal/Modal.vue'
 import { space } from '@/utils/filters'
 import { Loading } from '@element-plus/icons-vue'
 import { useLayoutStore } from '@/stores/layout'
+import { CheckNFTStatus } from '@/api/wxcore'
+import { isNFTCanOperate } from '@/utils/nft'
 
 const props = defineProps<{
   modelValue: boolean
@@ -256,6 +260,7 @@ const payMsg = reactive({
   url: '',
   orderId: '',
   amount: '',
+  pay_decimal_num: 0,
 })
 const nftFee: { val: NFTFeeInfo | null } = reactive({ val: null })
 const isSkeleton = ref(true)
@@ -266,7 +271,7 @@ const isEnough = ref(true)
 const payPlatformChain = {
   [PayPlatform.BSV]: Chains.BSV,
   [PayPlatform.ETH]: Chains.ETH,
-  [PayPlatform.POLYGON]: Chains.ETH,
+  [PayPlatform.POLYGON]: Chains.POLYGON,
 }
 const payPlatformToCurrency = {
   [PayPlatform.BSV]: ToCurrency.BSV,
@@ -331,76 +336,86 @@ async function confirmBuy() {
     // }
 
     buying.value = true
-    // Space 购买
-    try {
-      if (currentPayPlatform.value === PayPlatform.SPACE) {
-        const params: any = {
-          genesis: props.nft.nftGenesis,
-          codehash: props.nft.nftCodehash,
-          tokenIndex: props.nft.nftTokenIndex,
-          sellTxId: props.nft.nftSellTxId,
-          sellContractTxId: props.nft.nftSellContractTxId,
-          sellUtxo: {
-            txId: props.nft.nftSellContractTxId,
-            outputIndex: 0,
-            sellerAddress: props.nft.nftOwnerAddress,
-            price: props.nft.nftPrice,
-          },
-        }
-        const publisherFeeRate = platformFeeRate.value / 100
-        const creatorFeeRate = royalyFeeRate.value / 100
-        if (publisherFeeRate) {
-          params.publisherFeeRate = publisherFeeRate
-          params.publisherAddress = nftFee.val!.platformAddress
-        }
-        if (creatorFeeRate) {
-          params.creatorFeeRate = creatorFeeRate
-          params.creatorAddress = props.nft.nftIssueAddress
-        }
-        const res = await userStore.showWallet.createBrfcChildNode(
-          {
-            nodeName: NodeName.nftBuy,
-            data: JSON.stringify(params),
-          },
-          {
-            payType: SdkPayType.SPACE,
-          }
-        )
-        if (res) {
-          ElMessage.success(i18n.t('NFT.Buy Success'))
-          emit('update:modelValue', false)
-          buying.value = false
-          isShowSuccess.value = true
-        } else if (res === null) {
-          buying.value = false
-        }
-      } else {
-        const res = await CreatePayOrder({
-          platform: currentPayPlatform.value,
-          fullPath: setPayQuitUrl({
-            payPlatform: currentPayPlatform.value!,
-            fullPath: route.fullPath,
-            isBlindbox: false,
-          }),
-          goods_name: props.nft!.nftName,
-          count: 1,
-          product_type: ProductType.LegalNft, // 100-ME, 200-Legal_NFT,
 
-          // 购买合约 NFT
-          genesis: props.nft.nftGenesis,
-          codehash: props.nft.nftCodehash,
-          contract: props.nft.nftSellContractTxId,
-          tokenIndex: props.nft.nftTokenIndex,
-        })
-        if (res) {
-          payMsg.amount = res.pay_amount!.toString()
-          payMsg.orderId = res.order_id
-          payMsg.url = res.url
-          buying.value = false
-          emit('update:modelValue', false)
-          nextTick(() => {
-            isShowPayModal.value = true
+    try {
+      const result = await isNFTCanOperate({
+        codehash: props.nft.nftCodehash,
+        genesis: props.nft.nftGenesis,
+        tokenIndex: props.nft.nftTokenIndex,
+        contract: props.nft.nftSellContractTxId,
+        metaId: userStore.user!.metaId,
+      })
+      if (result) {
+        if (currentPayPlatform.value === PayPlatform.SPACE) {
+          const params: any = {
+            genesis: props.nft.nftGenesis,
+            codehash: props.nft.nftCodehash,
+            tokenIndex: props.nft.nftTokenIndex,
+            sellTxId: props.nft.nftSellTxId,
+            sellContractTxId: props.nft.nftSellContractTxId,
+            sellUtxo: {
+              txId: props.nft.nftSellContractTxId,
+              outputIndex: 0,
+              sellerAddress: props.nft.nftOwnerAddress,
+              price: props.nft.nftPrice,
+            },
+          }
+          const publisherFeeRate = platformFeeRate.value / 100
+          const creatorFeeRate = royalyFeeRate.value / 100
+          if (publisherFeeRate) {
+            params.publisherFeeRate = publisherFeeRate
+            params.publisherAddress = nftFee.val!.platformAddress
+          }
+          if (creatorFeeRate) {
+            params.creatorFeeRate = creatorFeeRate
+            params.creatorAddress = props.nft.nftIssueAddress
+          }
+          const res = await userStore.showWallet.createBrfcChildNode(
+            {
+              nodeName: NodeName.nftBuy,
+              data: JSON.stringify(params),
+            },
+            {
+              payType: SdkPayType.SPACE,
+            }
+          )
+          if (res) {
+            ElMessage.success(i18n.t('NFT.Buy Success'))
+            emit('update:modelValue', false)
+            buying.value = false
+            isShowSuccess.value = true
+          } else if (res === null) {
+            buying.value = false
+          }
+        } else {
+          const res = await CreatePayOrder({
+            platform: currentPayPlatform.value,
+            fullPath: setPayQuitUrl({
+              payPlatform: currentPayPlatform.value!,
+              fullPath: route.fullPath,
+              isBlindbox: false,
+            }),
+            goods_name: props.nft!.nftName,
+            count: 1,
+            product_type: ProductType.LegalNft, // 100-ME, 200-Legal_NFT,
+
+            // 购买合约 NFT
+            genesis: props.nft.nftGenesis,
+            codehash: props.nft.nftCodehash,
+            contract: props.nft.nftSellContractTxId,
+            tokenIndex: props.nft.nftTokenIndex,
           })
+          if (res) {
+            payMsg.amount = res.pay_amount!.toString()
+            payMsg.orderId = res.order_id
+            payMsg.pay_decimal_num = res.pay_decimal_num
+            payMsg.url = res.url
+            buying.value = false
+            emit('update:modelValue', false)
+            nextTick(() => {
+              isShowPayModal.value = true
+            })
+          }
         }
       }
     } catch (error) {
@@ -521,30 +536,37 @@ function onPaySuccess() {
 }
 
 function emitSuccess() {
+  const params =
+    currentPayPlatform.value === PayPlatform.SPACE
+      ? {
+          nftOwnerUserInfo: {
+            address: userStore.user!.address,
+            avatarTxId: userStore.user!.avatarTxId,
+            avatarType: userStore.user!.avatarType,
+            avatarImage: userStore.user!.avatarImage,
+            coverPublicKey: '',
+            coverType: userStore.user!.avatarType,
+            coverUrl: '',
+            metaIdTimestamp: '',
+            name: userStore.user!.name,
+            nameType: '',
+            metaName: userStore.user!.metaName,
+            nftNamePublicKey: '',
+            publicKey: '',
+          },
+          nftOwnerAddress: userStore.user!.address,
+          nftOwnerAvatarTxId: userStore.user!.avatarTxId,
+          nftOwnerAvatarType: userStore.user!.avatarType,
+          nftOwnerAvatarImage: userStore.user!.avatarImage,
+          nftOwnerMetaId: userStore.user!.metaId,
+          nftOwnerName: userStore.user!.name,
+        }
+      : {
+          nftIsOrderLock: true,
+        }
   emit('success', {
     ...props.nft,
-    nftSellState: NFTSellState.OffSale,
-    nftOwnerUserInfo: {
-      address: userStore.user!.address,
-      avatarTxId: userStore.user!.avatarTxId,
-      avatarType: userStore.user!.avatarType,
-      avatarImage: userStore.user!.avatarImage,
-      coverPublicKey: '',
-      coverType: userStore.user!.avatarType,
-      coverUrl: '',
-      metaIdTimestamp: '',
-      name: userStore.user!.name,
-      nameType: '',
-      metaName: userStore.user!.metaName,
-      nftNamePublicKey: '',
-      publicKey: '',
-    },
-    nftOwnerAddress: userStore.user!.address,
-    nftOwnerAvatarTxId: userStore.user!.avatarTxId,
-    nftOwnerAvatarType: userStore.user!.avatarType,
-    nftOwnerAvatarImage: userStore.user!.avatarImage,
-    nftOwnerMetaId: userStore.user!.metaId,
-    nftOwnerName: userStore.user!.name,
+    ...params,
   })
 }
 

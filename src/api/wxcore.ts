@@ -1,4 +1,4 @@
-import { PayPlatform } from '@/enum'
+import { BuyNFTStatus, PayPlatform } from '@/enum'
 import HttpRequest from '@/utils/request'
 import { alertCatchError } from '@/utils/util'
 import { ElMessage } from 'element-plus'
@@ -273,4 +273,20 @@ export const GetMetaNameOrders = (
 
 export const CheckMetaNameValid = (meta_name: string): Promise<boolean> => {
   return Wxcore.get(`/metaname/sensitive/word`, { params: { meta_name } })
+}
+
+export const CheckNFTStatus = (params: {
+  codehash: string
+  contract: string
+  genesis: string
+  tokenIndex: string
+  metaId: string
+}): Promise<{
+  code: number
+  data: {
+    status: BuyNFTStatus
+    msg: string
+  }
+}> => {
+  return Wxcore.post(`/common/coin/nft/status`, params)
 }

@@ -23,6 +23,7 @@ export const router = createRouter({
 
     // { path: '/', name: 'home', redirect: '/buzz' },
     { path: '/home', name: 'home', component: () => import('@/views/home/index.vue') },
+    { path: '/randomly-dev', name: 'dev', component: import('@/views/dev/Index.vue') },
     {
       path: '/buzz',
       name: 'buzz',
@@ -101,7 +102,14 @@ export const router = createRouter({
           path: 'collection',
           name: 'nftCollection',
           component: () => import('@/layout/BaseRouterView/BaseRouterView.vue'),
+          meta: { keepAlive: true },
           children: [
+            {
+              path: 'index',
+              name: 'nftCollectionIndex',
+              component: () => import('@/views/nft/collection/Index.vue'),
+              meta: { keepAlive: true },
+            },
             {
               path: 'detail/:topicType',
               name: 'nftCollectionDetail',

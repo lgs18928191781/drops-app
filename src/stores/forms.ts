@@ -28,7 +28,8 @@ export const useCommunityFormStore = defineStore('communityForm', {
 
   getters: {
     isStep1Finished(state) {
-      return !!state.icon && !!state.metaName && state.name.length > 0
+      // return !!state.icon && !!state.metaName && state.name.length > 0 // Metaname 不再为必填
+      return !!state.icon && state.name.length > 0
     },
 
     isStep2Finished(state) {
@@ -36,7 +37,8 @@ export const useCommunityFormStore = defineStore('communityForm', {
     },
 
     isFinished(state) {
-      return !!state.icon && !!state.metaName && !!state.name
+      return !!state.icon && !!state.name
+      // return !!state.icon && !!state.metaName && !!state.name
     },
 
     isAllFinished(state) {
@@ -136,7 +138,7 @@ export const useCommunityUpdateFormStore = defineStore('communityUpdateForm', {
       layout.isShowLoading = false
 
       // 跳转刷新
-      // window.location.reload()
+      window.location.reload()
     },
   },
 })
@@ -154,6 +156,7 @@ export interface ChannelFormState {
   uuid?: string
   // 修改
   publicKey?: string
+  groupId?: string
   txId?: string
   nativeAmount?: number
 }
@@ -169,6 +172,7 @@ export const useChannelFormStore = defineStore('channelForm', {
       amount: 1,
       adminOnly: false, // 发言设置，0：所有人，1：管理员
       publicKey: undefined,
+      groupId: undefined,
       uuid: undefined, // 用于 订阅和 key， 不可修改
       txId: undefined,
       chainInfo: null as any,
@@ -252,6 +256,7 @@ export const useChannelFormStore = defineStore('channelForm', {
       this.name = channel.name
       this.adminOnly = channel.chatSettingType === 1
       this.publicKey = channel.roomPublicKey
+      this.groupId = channel.groupId
       this.uuid = channel.uuid
       this.txId = channel.txId
     },
@@ -266,6 +271,7 @@ export const useChannelFormStore = defineStore('channelForm', {
       this.amount = 1
       this.adminOnly = false
       this.publicKey = undefined
+      this.groupId = undefined
       this.uuid = undefined
       this.txId = undefined
     },

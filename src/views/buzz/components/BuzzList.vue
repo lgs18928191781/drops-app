@@ -1,60 +1,67 @@
 <template>
-  <div
-    class="buzz-list"
-    v-infinite-scroll="getMore"
-    :infinite-scroll-immediate="false"
-    :infinite-scroll-distance="100"
-  >
-    <template v-if="loading">
-      <ElSkeleton :loading="true" animated>
-        <template #template>
-          <div
-            class="buzz-item-warp"
-            v-for="(item, index) in Array.from({ length: pagination?.pageSize || 1 })"
-          >
-            <BuzzItemSkeletonVue />
-          </div>
-        </template>
-      </ElSkeleton>
-    </template>
-    <template v-else>
-      <template v-for="(item, index) in list" :key="item.txId">
-        <template v-if="index === recommendCommunityIndex && pagination">
-          <slot name="recommendCommunity"></slot>
-        </template>
-        <template v-if="index === recommendFollowIndex && pagination">
-          <slot name="recommendFollow"></slot>
-        </template>
-        <template v-if="index === recommendGuideIndex && pagination">
-          <slot name="recommendGuide"></slot>
-        </template>
-        <div class="buzz-item-warp">
-          <BuzzItemVue
-            :data="item"
-            :loading="loading"
-            :play-file="playFile"
-            :isInDetailPage="isInDetailPage"
-            @repost="onRepost"
-            @more="onMore"
-            @like="onLike"
-            @follow="onFollow"
-            @play="onPlay"
-            @replay="onReplay"
-            @translate="onTranslate"
-          >
-            <template #comment>
-              <slot name="comment"></slot>
-            </template>
-          </BuzzItemVue>
+  <ElSkeleton :loading="loading" animated>
+    <template #template>
+      <div class="buzz-list">
+        <div
+          class="buzz-item-warp"
+          v-for="(item, index) in Array.from({ length: pagination?.pageSize || 1 })"
+        >
+          <BuzzItemSkeletonVue />
         </div>
-      </template>
+      </div>
     </template>
-    <!-- pagination -->
-    <LoadMoreVue :pagination="pagination" v-if="pagination && !loading && list.length > 0" />
 
-    <!-- null -->
-    <IsNullVue v-if="!loading && list.length <= 0" />
-  </div>
+    <template #default>
+      <div
+        v-infinite-scroll="getMore"
+        :infinite-scroll-immediate="false"
+        :infinite-scroll-distance="100"
+        class="buzz-list"
+      >
+        <DynamicScroller :items="list" :min-item-size="1" key-field="txId" :pageMode="true">
+          <template v-slot="{ item, index, active }">
+            <template v-if="index === recommendCommunityIndex && pagination">
+              <slot name="recommendCommunity"></slot>
+            </template>
+            <template v-if="index === recommendFollowIndex && pagination">
+              <slot name="recommendFollow"></slot>
+            </template>
+            <template v-if="index === recommendGuideIndex && pagination">
+              <slot name="recommendGuide"></slot>
+            </template>
+            <DynamicScrollerItem
+              class="buzz-item-warp"
+              :item="item"
+              :active="active"
+              :data-index="index"
+            >
+              <BuzzItemVue
+                :data="item"
+                :loading="loading"
+                :play-file="playFile"
+                :isInDetailPage="isInDetailPage"
+                @repost="onRepost"
+                @more="onMore"
+                @like="onLike"
+                @follow="onFollow"
+                @play="onPlay"
+                @replay="onReplay"
+                @translate="onTranslate"
+              >
+                <template #comment>
+                  <slot name="comment"></slot>
+                </template>
+              </BuzzItemVue>
+            </DynamicScrollerItem>
+          </template>
+        </DynamicScroller>
+        <LoadMoreVue :pagination="pagination" v-if="pagination && !loading && list.length > 0" />
+
+        <!-- null -->
+        <IsNullVue v-if="!loading && list.length <= 0" />
+      </div>
+    </template>
+  </ElSkeleton>
 
   <ElDrawer
     v-model="isShowOperateModal"
@@ -123,6 +130,8 @@ import { useJobsStore } from '@/stores/jobs'
 import { GetBuzz } from '@/api/aggregation'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
 import { Translate } from '@/api/core'
+import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
 interface Props {
   list: BuzzItem[]

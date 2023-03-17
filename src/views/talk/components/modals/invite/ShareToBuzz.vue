@@ -22,10 +22,9 @@
 
             <div class="flex flex-col justify-center space-y-1">
               <div class="flex space-x-1 items-center">
-                <span class="text-base meta-name truncate">{{
-                  talk.invitingChannel.community?.name
-                }}</span>
-                <MetaNameTag class="!rounded ml-1" />
+                <span class="text-base meta-name truncate">
+                  {{ talk.invitingChannel.community?.name }}
+                </span>
               </div>
               <p
                 class="text-dark-400 dark:text-gray-200 text-xs"

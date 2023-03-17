@@ -1,3 +1,4 @@
+import { GetMetaNameResolver } from '@/api/aggregation'
 import sha256 from 'crypto-js/sha256'
 
 const metaNameRegex = /[\s\S]+[.][a-zA-Z0-9_-]+/
@@ -9,7 +10,8 @@ export function isMetaName(name: string) {
 export async function resolveMetaName(metaName: string) {
   // 带.meta后缀的常规名，则先裁掉后缀；否则直接解析
   const metaidSuffix = '.metaid'
-  let metaNameWithoutSuffix = metaName.endsWith(metaidSuffix)
+  const isMetaIdSolution = metaName.endsWith(metaidSuffix)
+  let metaNameWithoutSuffix = isMetaIdSolution
     ? metaName.slice(0, metaName.length - metaidSuffix.length)
     : metaName
 
@@ -27,8 +29,12 @@ export async function resolveMetaName(metaName: string) {
     'MetaId Test',
     'OurTesting',
     'LOVE',
+    'onlyyou',
+    '666666',
+    '可乐记得加冰',
   ]
-  if (!whiteList.includes(metaNameWithoutSuffix)) {
+  const inWhiteList = whiteList.includes(metaNameWithoutSuffix)
+  if (!inWhiteList) {
     metaNameWithoutSuffix = metaNameWithoutSuffix.toLowerCase()
   }
 
@@ -45,14 +51,36 @@ export async function resolveMetaName(metaName: string) {
   }
 
   // 本地没有缓存，则计算sha256
-  const hashHex = sha256(metaNameWithoutSuffix).toString()
+  let communityId
+  if (inWhiteList || !isMetaIdSolution) {
+    communityId = sha256(metaNameWithoutSuffix).toString()
+  } else {
+    communityId = await GetMetaNameResolver({ name: metaNameWithoutSuffix })
+      .then((res: any) => {
+        let communityId = res.data.communityId
+
+        if (!communityId) {
+          console.log('metaname接口无社区id，尝试本地解析')
+          communityId = sha256(metaNameWithoutSuffix).toString()
+        }
+        return communityId
+      })
+
+      .catch((err: any) => {
+        console.log('metaname接口无法解析，尝试本地解析')
+        communityId = sha256(metaNameWithoutSuffix).toString()
+        console.log('本地解析结果：', communityId)
+
+        return communityId
+      })
+  }
 
   // 缓存到本地
-  metaNameLookupObj[metaNameWithoutSuffix] = hashHex
+  metaNameLookupObj[metaNameWithoutSuffix] = communityId
   localStorage.setItem('metaNameLookup', JSON.stringify(metaNameLookupObj))
 
   return {
-    communityId: hashHex,
+    communityId,
     metaName,
   }
 }

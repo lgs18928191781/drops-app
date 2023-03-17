@@ -26,8 +26,9 @@
             v-loading="loading"
             :element-loading-svg="LoadingTEXT"
             :element-loading-text="$t('Loading')"
+            @click.stop="reply"
           >
-            <input @focus="reply" :placeholder="$t('Buzz.Your reply')" />
+            <input :placeholder="$t('Buzz.Your reply')" :readonly="true" />
           </div>
         </div>
         <BuzzCommentListVue

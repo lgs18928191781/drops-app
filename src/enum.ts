@@ -524,3 +524,9 @@ export enum Network {
   mainnet = 'mainnet',
   testnet = 'testnet',
 }
+
+export enum BuyNFTStatus {
+  CanBuy = 0,
+  Purchased = 1,
+  NotCanBuy = 2,
+}
