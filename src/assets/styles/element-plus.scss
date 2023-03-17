@@ -116,7 +116,8 @@ html.dark {
     min-height: var(--el-input-inner-height);
 }
 
-.el-input {
+.el-input,
+.el-date-editor {
     --el-input-hover-border: var(--normal-border-color);
     --el-input-focus-border-color: var(--normal-border-color);
     --el-input-height: var(--input-height);
@@ -125,17 +126,7 @@ html.dark {
 
 
 
-    .el-input__wrapper {
-        transition: all 0.5;
-        border: var(--el-border-width) solid var(--faded-border-color);
-        box-shadow: 3px 3px 0 var(--faded-border-color);
-        padding: 0 12px;
 
-        &.is-focus {
-            border-color: var(--themeTextColor) !important;
-            box-shadow: 3px 3px 0 var(--themeTextColor) !important;
-        }
-    }
 
 
     &.el-input-group--append {
@@ -152,9 +143,20 @@ html.dark {
             }
         }
     }
-
-
 }
+
+.el-input__wrapper {
+    transition: all 0.5;
+    border: var(--el-border-width) solid var(--faded-border-color) !important;
+    box-shadow: 3px 3px 0 var(--faded-border-color) !important;
+    padding: 0 12px !important;
+
+    &.is-focus {
+        border-color: var(--themeTextColor) !important;
+        box-shadow: 3px 3px 0 var(--themeTextColor) !important;
+    }
+}
+
 
 .el-form-item {
     &.is-success {

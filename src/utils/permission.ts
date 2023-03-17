@@ -17,6 +17,7 @@ router.beforeEach(async (to, from, next) => {
   const rootStore = useRootStore()
   const metaNameStore = useMetaNameStore()
   const imagePreview = useImagePreview()
+  const postTagStroe = usePostTagStore()
 
   // 当正在全屏预览图片时， 后退操作会变成关闭预览不后退
   if (imagePreview.visibale) {
@@ -93,11 +94,8 @@ router.beforeEach(async (to, from, next) => {
   }
 
   //  buzz 页面先获取一次 postTag 信息
-  if (to.path.indexOf('/buzz') !== -1) {
-    const postTagStroe = usePostTagStore()
-    if (postTagStroe.list.length <= 0) {
-      await postTagStroe.getPostTags()
-    }
+  if (postTagStroe.list.length <= 0) {
+    await postTagStroe.getPostTags()
   }
 
   // 检查跳转 路由是否有权限

@@ -4,7 +4,7 @@
       <div class="flex1">
         <span class="title">{{ $t('DAO.Proposal') }}</span>
       </div>
-      <a class="main-border primary">{{ $t('DAO.New Proposal') }}</a>
+      <a class="main-border primary" @click="toCreate">{{ $t('DAO.New Proposal') }}</a>
     </div>
 
     <ElSkeleton :loading="isSkeleton" animated>
@@ -51,10 +51,13 @@ import { initPagination } from '@/config'
 import { reactive, ref } from 'vue'
 import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import IsNull from '@/components/IsNull/IsNull.vue'
+import { checkUserLogin } from '@/utils/util'
+import { useRouter } from 'vue-router'
 
 const pagination = reactive({ ...initPagination })
 const proposal: any[] = reactive([])
 const isSkeleton = ref(true)
+const router = useRouter()
 
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
@@ -85,6 +88,13 @@ function getMore() {
   pagination.page++
   getDatas().then(() => {
     pagination.loading = false
+  })
+}
+
+async function toCreate() {
+  await checkUserLogin()
+  router.push({
+    name: 'talkDAOProposalCreate',
   })
 }
 

@@ -185,7 +185,25 @@ export const router = createRouter({
             {
               path: 'proposal',
               name: 'talkDAOProposal',
-              component: () => import('@/views/talk/DAO/proposal/Index.vue'),
+              component: () => RouterView,
+              redirect: { name: 'talkDAOProposalIndex' },
+              children: [
+                {
+                  path: 'index',
+                  name: 'talkDAOProposalIndex',
+                  component: () => import('@/views/talk/DAO/proposal/Index.vue'),
+                },
+                {
+                  path: 'detail/:txId',
+                  name: 'talkDAOProposalDetail',
+                  component: () => import('@/views/talk/DAO/proposal/Detail.vue'),
+                },
+                {
+                  path: 'create',
+                  name: 'talkDAOProposalCreate',
+                  component: () => import('@/views/talk/DAO/proposal/Create.vue'),
+                },
+              ],
             },
             {
               path: 'proposal/:txId',

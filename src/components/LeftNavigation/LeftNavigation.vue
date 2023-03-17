@@ -19,6 +19,7 @@
           class="flex items-center justify-center group relative"
           :class="item.extraClass"
           :key="index"
+          @click="item.symbol !== '@me' ? (layout.isShowLeftNav = false) : ''"
         >
           <div
             class="absolute left-0 h-full flex items-center top-0"

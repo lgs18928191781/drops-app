@@ -1068,6 +1068,25 @@
     "Proposal": "提案",
     "Entrust": "委托",
     "About": "关于",
-    "New Proposal": "新提案"
+    "New Proposal": "新提案",
+    "Share": "分享",
+    "Vote Title": "投出你的一票",
+    "Abstain": "弃权",
+    "Approve": "赞成",
+    "Opposition": "反对",
+    "Vote Records": "投票记录",
+    "Information": "信息",
+    "Proposal Type": "提案类型",
+    "Start Time": "开始时间",
+    "End Time": "结束时间",
+    "Result": "结果",
+    "Vote Number": "票数",
+    "Proposal Title": "提案标题",
+    "Basic Type Voting": "基本类型投票",
+    "Custom Single Choice Voting": "自定义单选投票",
+    "Custom Multiple Choice Voting": "自定义多选投票",
+    "Vote Options": "投票选项",
+    "Vote Time": "投票时间",
+    "Vote Content": "详情"
   }
 }
