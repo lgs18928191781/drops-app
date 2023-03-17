@@ -22,7 +22,10 @@
             :name="talk.activeCommunity?.metaName"
             :colorful="true"
             :text-class="'!text-sm'"
+            v-if="talk.activeCommunity?.metaName"
           />
+
+          <MetaNameEmptyPit v-else class="mt-1 bg-gray-100" />
         </div>
 
         <!-- 描述 -->
@@ -39,7 +42,7 @@
           </div>
 
           <div class="flex items-center space-x-2">
-            <LoadingItemSmall class="h-10" v-if="isLoading"></LoadingItemSmall>
+            <LoadingItemSmall class="!h-10" v-if="isFetching" />
             <div class="flex gap-x-2" v-else>
               <UserAvatar
                 :image="owner!.avatarImage"
@@ -90,8 +93,8 @@ import { getCommunityOwner } from '@/queries/community-owner'
 import { leaveCommunity } from '@/utils/talk'
 
 import BaseModal from '../BaseModal.vue'
-import MetaNameTag from '@/components/MetaName/Tag.vue'
 import MetaNameDisplay from '@/components/MetaName/Display.vue'
+import MetaNameEmptyPit from '@/components/MetaName/EmptyPit.vue'
 import LoadingItemSmall from '../../LoadingItemSmall.vue'
 
 const talk = useTalkStore()
@@ -103,7 +106,7 @@ const queryParams = {
   communityId: talk.activeCommunity?.id as string,
   metaName: talk.activeCommunity?.metaNameNft as string,
 }
-const { isLoading, isError, data: owner } = useQuery({
+const { isLoading, isFetching, isError, data: owner } = useQuery({
   queryKey: ['community-owner', queryParams],
   queryFn: () => getCommunityOwner(queryParams),
   enabled: !!talk.activeCommunity?.id,

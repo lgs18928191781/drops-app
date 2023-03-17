@@ -94,9 +94,9 @@ const AllNodeName: {
     version: '1.0.1',
   },
   [NodeName.SimpleGroupCreate]: {
-    brfcId: '16cdf1737815',
+    brfcId: '7b2b19ddf267',
     path: '/Protocols/SimpleGroupCreate',
-    version: '1.0.2',
+    version: '1.0.3',
   },
   [NodeName.PayFollow]: {
     brfcId: '203ee2c8b732',
@@ -187,11 +187,6 @@ const AllNodeName: {
     brfcId: '249044dac325',
     path: '/Protocols/NftCancel',
     version: '1.0.3',
-  },
-  [NodeName.nftBuy]: {
-    brfcId: '1847e7d33857',
-    path: '/Protocols/nftBuy',
-    version: '1.0.2',
   },
   [NodeName.nftBuy]: {
     brfcId: '1847e7d33857',

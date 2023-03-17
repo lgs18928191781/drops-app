@@ -347,7 +347,10 @@
                       :meta-name="record.userInfo.metaName"
                     />
                     <span class="name flex flex-align-center"
-                      ><UserName :name="record.name" :meta-name="record.userInfo.metaName" :no-tag="true"
+                      ><UserName
+                        :name="record.name"
+                        :meta-name="record.userInfo.metaName"
+                        :no-tag="true"
                     /></span>
                   </span>
                   <span class="td role flex1 flex flex-align-center">
@@ -433,11 +436,12 @@ import PayConfirmVue from '@/components/PayConfirm/PayConfirm.vue'
 import { UnitName } from '@/config'
 import NFTSellVue from '@/components/NFTSell/NFTSell.vue'
 import NFTBuyVue from '@/components/NFTBuy/NFTBuy.vue'
-import { checkUserLogin, NFTOffSale, tx } from '@/utils/util'
+import { checkUserLogin, tx } from '@/utils/util'
 import AmountVue from '@/components/Amount/Amount.vue'
 import NFTTransferVue from '@/components/NFTTransfer/NFTTransfer.vue'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
 import { Chains, ToCurrency } from '@/enum'
+import { NFTOffSale } from '@/utils/nft'
 
 const isShowSkeleton = ref(true)
 const isShowDrscDetail = ref(false)

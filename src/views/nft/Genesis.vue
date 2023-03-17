@@ -68,7 +68,6 @@ async function genesis() {
       ...form.genesis,
     }),
   })
-  // debugger
   if (res) {
     for (let i = 0; i < form.count; i++) {
       const response = await userStore.showWallet.createBrfcChildNode({

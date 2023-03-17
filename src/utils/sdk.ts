@@ -6,22 +6,14 @@ import {
   CreateNodeMetaFileRes,
   HdWalletCreateBrfcChildNodeParams,
   MetaIdJsRes,
-  NftBuyParams,
-  NftCancelParams,
-  NftSellParams,
   UtxoItem,
 } from '@/@types/sdk'
 import {
-  BaseUtxo,
   DEFAULTS,
   HdWallet,
   hdWalletFromAccount,
-  MetaIdTag,
   NftTransferResult,
-  ProtocolOptions,
-  Reqswapargs,
 } from '@/utils/wallet/hd-wallet'
-import { decode, encode } from 'js-base64'
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { router } from '@/router'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
@@ -29,7 +21,6 @@ import { isAndroid, isAndroidApp, isIOS, isIosApp } from '@/stores/root'
 import { PayToItem } from '@/@types/hd-wallet'
 import {
   SdkPayType,
-  IsEncrypt,
   NodeName,
   JobStepStatus,
   JobStatus,
@@ -39,23 +30,20 @@ import {
 } from '@/enum'
 import { GetMeUtxos, GetMyMEBalance, GetProtocolMeInfo } from '@/api/v3'
 import * as bsv from '@sensible-contract/bsv'
-import { getLocalAccount, openLoading, realRandomString, sleep } from './util'
-import { Toast } from 'vant'
+import { getLocalAccount } from './util'
 import { Transaction } from 'dexie'
 import { useUserStore } from '@/stores/user'
 import { useJobsStore } from '@/stores/jobs'
 import i18n from './i18n'
 import SdkPayConfirmModalVue from '@/components/SdkPayConfirmModal/SdkPayConfirmModal.vue'
 import { h, render } from 'vue'
-import { NftManager, FtManager, API_NET, API_TARGET, TxComposer, mvc } from 'meta-contract'
-import { resolve } from 'path'
-import detectEthereumProvider from '@metamask/detect-provider'
+import { mvc } from 'meta-contract'
 import { v1 as UUID } from 'uuid'
 import { useLayoutStore } from '@/stores/layout'
 import { GetTx } from '@/api/metaid-base'
 import AllNodeName from './AllNodeName'
-import { tr } from 'element-plus/es/locale'
 import { GetMetafileBySha256 } from '@/api/aggregation'
+
 enum AppMode {
   PROD = 'prod',
   GRAY = 'gray',
@@ -100,7 +88,6 @@ export class SDK {
     return new Promise<void>(async (resolve, reject) => {
       try {
         const account = getLocalAccount()
-
         const walletObj = await hdWalletFromAccount(
           {
             ...account.userInfo,
@@ -422,7 +409,6 @@ export class SDK {
                   ? import.meta.env.VITE_CHANGE_ADDRESS
                   : this.wallet!.rootAddress
               )
-
               // 广播
               if (option.isBroadcast && !option.useQueue) {
                 // 广播 打钱操作
@@ -433,16 +419,16 @@ export class SDK {
                 await this.broadcastNodeTransactions(transactions)
               }
 
+              // 如果使用队列，则不进行广播，而是收集当次Job的所有交易作为step，推进队列
+              if (option.useQueue) {
+                this.convertTransactionsIntoJob(transactions, payToRes, option!.subscribeId!)
+              }
+
               resolve({
                 payToAddress: payToRes,
                 ...transactions,
                 subscribeId: option!.subscribeId,
               })
-
-              // 如果使用队列，则不进行广播，而是收集当次Job的所有交易作为step，推进队列
-              if (option.useQueue) {
-                this.convertTransactionsIntoJob(transactions, payToRes, option!.subscribeId!)
-              }
             } else {
               resolve(null)
             }
@@ -495,9 +481,10 @@ export class SDK {
       converting.push(transactions.metaFileBrfc.transaction)
     }
     // 3. Metafile 交易
-    if (transactions.metaFiles && transactions.metaFiles.length) {
-      for (let i = 0; i < transactions.metaFiles.length; i++) {
-        converting.push(transactions.metaFiles[i].transaction)
+    if (transactions.metaFiles && transactions.metaFiles.filter(item => item.transaction).length) {
+      const metafileTransactionList = transactions.metaFiles.filter(item => item.transaction)
+      for (let i = 0; i < metafileTransactionList.length; i++) {
+        converting.push(metafileTransactionList[i].transaction)
       }
     }
     // 4. 当前节点 Brfc 交易
@@ -888,6 +875,7 @@ export class SDK {
             }
           }
         }
+        console.log('transactions', transactions)
         resolve(transactions)
       } catch (error) {
         reject(error)
@@ -924,7 +912,6 @@ export class SDK {
     transactions: NodeTransactions,
     params: createBrfcChildNodeParams
   ) {
-    // 打钱地址
     let receive: {
       address: string
       addressIndex: number
@@ -950,7 +937,10 @@ export class SDK {
         addressType: parseInt(this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[0]),
         addressIndex: parseInt(this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[1]),
       }
-    } else if (transactions.metaFiles && transactions.metaFiles.length) {
+    } else if (
+      transactions.metaFiles &&
+      transactions.metaFiles.filter(item => item.transaction).length
+    ) {
       // 需要创建 metafile 节点 ，把钱打去 metafile brfc 地址
       receive = {
         address: transactions.metaFileBrfc!.address,
@@ -1050,7 +1040,10 @@ export class SDK {
             )
           }
 
-          if (transactions.metaFiles && transactions.metaFiles.length) {
+          if (
+            transactions.metaFiles &&
+            transactions.metaFiles.filter(item => item.transaction).length
+          ) {
             const metaFileTransactions = transactions.metaFiles.filter(item => item.transaction)
             for (let i = 0; i < metaFileTransactions.length; i++) {
               const changeAddress =
@@ -1875,10 +1868,6 @@ export class SDK {
         resolve(result)
       }
     })
-  }
-
-  getPathWithNetWork(params: { xpub: string; address: string }) {
-    return this.wallet?.provider.getPathWithNetWork(params)
   }
 
   getPathPrivateKey(path: string) {

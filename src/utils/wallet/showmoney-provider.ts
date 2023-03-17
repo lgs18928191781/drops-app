@@ -9,6 +9,7 @@ import zlib from 'zlib'
 import { Chains, HdWalletChain, Network } from '@/enum'
 import i18n from '../i18n'
 import { GetTxChainInfo } from '@/api/metaid-base'
+import { Session } from './session'
 interface BaseApiResultTypes<T> {
   code: number
   msg?: string
@@ -84,14 +85,16 @@ export default class ShowmoneyProvider {
   public metaNameApi = `http://47.242.27.95:35000`
   public newBrfcNodeBaseInfoList: NewBrfcNodeBaseInfo[] = []
   public isUsedUtxos: { txId: string; address: string }[] = []
-  public txChainInfos: { txId: string; chain: string }[] = [] // 存储txId所在链， 避免重复调接口查询
+  public session: Session
 
-  constructor(params?: {
+  constructor(params: {
     baseApi?: string
     mvcMetaSvApi?: string
     bsvMetaSvApi?: string
     network?: Network
+    session: Session
   }) {
+    this.session = params.session
     if (params?.baseApi) this.apiPrefix = params.baseApi
     if (params?.mvcMetaSvApi) this.metaSvApi = params.mvcMetaSvApi
     if (params?.bsvMetaSvApi) this.bsvMetaSvApi = params.bsvMetaSvApi
@@ -607,9 +610,9 @@ export default class ShowmoneyProvider {
 
   getTxChainInfo(txId: string) {
     return new Promise(async (resolve, reject) => {
-      const index = this.txChainInfos.findIndex(item => item.txId === txId)
-      if (index !== -1) {
-        resolve(this.txChainInfos[index].chain)
+      const item = this.session.txChainInfos.find(item => item.txId === txId)
+      if (item) {
+        resolve(item.chain)
         return
       } else {
         const chainInfoRes = await GetTxChainInfo(txId)
@@ -617,7 +620,7 @@ export default class ShowmoneyProvider {
           chainInfoRes.code === 0 && chainInfoRes.data.chainFlag
             ? chainInfoRes.data.chainFlag
             : Chains.MVC
-        this.txChainInfos.push({
+        this.session.addTxChainInfo({
           txId,
           chain,
         })

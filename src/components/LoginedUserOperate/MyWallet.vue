@@ -322,6 +322,7 @@ import {
   mappingChainName,
   currentConnectChain,
   openLoading,
+  getBalance,
 } from '@/utils/util'
 import { GetBalance, GetNFTs, GetBindMetaidAddressList } from '@/api/aggregation'
 import { setHashData, LoginByEthAddress } from '@/api/core'
@@ -838,26 +839,12 @@ function getETHBalance() {
       item => item.name === import.meta.env.VITE_ETH_CHAIN.toUpperCase()
     )
     if (item) {
-      if (userStore.user!.evmAddress) {
-        const res = await GetBalance({
-          chain: import.meta.env.VITE_ETH_CHAIN,
-          address: userStore.user!.evmAddress! || userStore.user?.ethAddress,
-        }).catch(error => {
-          ElMessage.error(error.message)
-          resolve()
-        })
-        if (res?.code === 0) {
-          item.value = new Decimal(
-            new Decimal(res.data.balance).div(Math.pow(10, 18)).toFixed(4)
-          ).toNumber()
-          item.loading = false
-          resolve()
-        }
-      } else {
-        item.value = 0
-        item.loading = false
-        resolve()
-      }
+      const res = await getBalance({
+        chain: Chains.ETH,
+      })
+      item.value = new Decimal(new Decimal(res).div(Math.pow(10, 18)).toFixed(4)).toNumber()
+      item.loading = false
+      resolve()
     }
   })
 }
@@ -869,36 +856,19 @@ function getPolygonBalance() {
       item => item.name === import.meta.env.VITE_POLYGON_CHAIN.toUpperCase()
     )
     if (item) {
-      if (userStore.user!.evmAddress) {
-        const res = await GetBalance({
-          chain: import.meta.env.VITE_POLYGON_CHAIN,
-          address: userStore.user!.evmAddress! || userStore.user?.ethAddress,
-        }).catch(error => {
-          ElMessage.error(error.message)
-          resolve()
-        })
-        if (res?.code === 0) {
-          item.value = new Decimal(
-            new Decimal(res.data.balance).div(Math.pow(10, 18)).toFixed(4)
-          ).toNumber()
-          item.loading = false
-          resolve()
-        }
-      } else {
-        item.value = 0
-        item.loading = false
-        resolve()
-      }
+      const res = await getBalance({
+        chain: Chains.POLYGON,
+      })
+      item.value = new Decimal(new Decimal(res).div(Math.pow(10, 18)).toFixed(8)).toNumber()
+      item.loading = false
+      resolve()
     }
   })
 }
 
 function getBsvBalance() {
   return new Promise<void>(async (resolve, reject) => {
-    const res = await getUserBsvBalance().catch(error => {
-      ElMessage.error(error.message)
-      resolve()
-    })
+    const res = await getBalance({ chain: Chains.BSV })
     if (typeof res === 'number') {
       wallets[1].list[3].value = new Decimal(
         new Decimal(res).div(Math.pow(10, 8)).toFixed(8)

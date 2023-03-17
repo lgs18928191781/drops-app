@@ -53,7 +53,8 @@
       "no_results": "No results for "
     },
     "MetaName": {
-      "resolving": "MetaName Resolving..."
+      "resolving": "MetaName Resolving...",
+      "not_linked": "No MetaName Linked"
     },
     "Messages": {
       "repost": "I reposted your buzz!",
@@ -198,6 +199,7 @@
       "followed": "Followed"
     },
     "Community": {
+      "optional": "(Optional)",
       "create": "Create Club",
       "create_fist_step_tip": "Please upload the club icon and set the club name. You can change them at any time.",
       "community_name": "Club Name",
@@ -766,7 +768,9 @@
     "Select Payment Method": "Select Payment Method",
     "BuyNFTNoteEnough": "Insufficient balance, please check<a>your wallet</a>",
     "Chosse PayType": "Choose another payment method",
-    "NFT Order Locked": "Locked"
+    "NFT Order Locked": "Locked",
+    "NFT Has been purchased": "NFT Has been purchased",
+    "Get Msg Error": "Get Msg Error"
   },
   "My NFT": "My NFT",
   "Done": "Done",
@@ -1050,5 +1054,14 @@
   "PullDown": {
     "Refreshing": "Refreshing...",
     "Refresh succeeded": "Refresh succeeded"
-  }
+  },
+  "Collection": {
+    "title": "Collection",
+    "drsc": "Latest NFT collections not to be missed",
+    "Blockchain": "Blockchain",
+    "AllChain": "All Chain",
+    "Floor price": "Floor price",
+    "Total volume": "Total volume"
+  },
+  "PathMoreThan150": "Path>150, please contact customer service for repair"
 }

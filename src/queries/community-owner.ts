@@ -59,6 +59,9 @@ export async function getCommunityOwner({
 export async function getCommunityOwnerByCommunityId(communityId: string) {
   // 获取拥有者metaId
   const { ownerMetaId } = await getCommunityAuth(communityId)
+  if (!ownerMetaId) {
+    throw new Error('Community owner not found')
+  }
 
   // 获取拥有者信息
   const res = await GetUserAllInfo(ownerMetaId)

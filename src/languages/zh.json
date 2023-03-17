@@ -93,7 +93,8 @@
       "home": "主页"
     },
     "MetaName": {
-      "resolving": "MetaName 解析中…"
+      "resolving": "MetaName 解析中…",
+      "not_linked": "未绑定 MetaName"
     },
     "Messages": {
       "repost": "转发了您的buzz",
@@ -232,6 +233,7 @@
       "followed": "已关注"
     },
     "Community": {
+      "optional": "（可选）",
       "create": "创建社区",
       "create_fist_step_tip": "填写社区名称、上传社区图标。你可以在之后修改这些信息。",
       "community_name": "社区名",
@@ -756,7 +758,9 @@
     "Select Payment Method": "选择支付方式",
     "BuyNFTNoteEnough": "余额不足，请检查您的<a>钱包</a>",
     "Chosse PayType": "选择其他付款方式",
-    "NFT Order Locked": "订单锁定中"
+    "NFT Order Locked": "订单锁定中",
+    "NFT Has been purchased": "NFT已被购买",
+    "Get Msg Error": "获取信息失败"
   },
   "My NFT": "我的NFT",
   "Done": "完成",
@@ -1049,5 +1053,14 @@
   "PullDown": {
     "Refreshing": "正在刷新...",
     "Refresh succeeded": "刷新成功"
-  }
+  },
+  "Collection": {
+    "title": "专辑",
+    "drsc": "最新NFT系列不容错过",
+    "Blockchain": "区块链",
+    "AllChain": "所有链",
+    "Floor price": "地板价",
+    "Total volume": "发行量"
+  },
+  "PathMoreThan150": "Path > 150,请联系客服修复"
 }

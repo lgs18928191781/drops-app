@@ -275,7 +275,6 @@ const tryInitChannel = async (status: string) => {
           const needAmount = talk.activeChannel.roomLimitAmount
           // 用户拥有数量
           const userAmount = parseInt(userFts[0].balance.split('.')[0])
-          console.log({ needAmount, userAmount })
           if (userAmount < needAmount) {
             // const {
             //   data: {

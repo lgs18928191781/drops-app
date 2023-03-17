@@ -678,6 +678,26 @@ export const GetUserMetaNames = (params: {
   return aggregation.get(`/v2/app/metaname/${address}/list?`, { params: _params })
 }
 
+export const GetMetaNameResolver = (params: {
+  name: string
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    nextFlag: string
+    results: {
+      items: {
+        codeHash: string
+        genesis: string
+        communityId: string
+        ownerAddress: string
+      }
+    }
+  }
+}> => {
+  return aggregation.get(`/v2/app/metaname/indexer/info?`, { params })
+}
+
 export const GetUserEnsNames = (params: {
   address: string
   page?: number
