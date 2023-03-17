@@ -35,6 +35,10 @@ export const useTalkStore = defineStore('talk', {
           id: 'topics',
           nameKey: 'Talk.Community.topics',
         },
+        {
+          id: 'DAO',
+          nameKey: 'Talk.Community.DAO',
+        },
       ] as {
         id: string
         nameKey: string

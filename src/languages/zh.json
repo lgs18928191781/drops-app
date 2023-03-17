@@ -280,7 +280,8 @@
       "edit_consensual_channel": "修改凭证频道",
       "general_channels": "功能频道",
       "announcements": "公告",
-      "topics": "话题"
+      "topics": "话题",
+      "DAO": "DAO"
     },
     "Input": {
       "nft_stickers": "NFT表情",
@@ -1062,5 +1063,11 @@
     "Floor price": "地板价",
     "Total volume": "发行量"
   },
-  "PathMoreThan150": "Path > 150,请联系客服修复"
+  "PathMoreThan150": "Path > 150,请联系客服修复",
+  "DAO": {
+    "Proposal": "提案",
+    "Entrust": "委托",
+    "About": "关于",
+    "New Proposal": "新提案"
+  }
 }

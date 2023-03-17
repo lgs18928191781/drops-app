@@ -1,0 +1,51 @@
+.header {
+    .back {
+        display: inline-flex;
+        cursor: pointer;
+
+        .icon-warp {
+            width: 30px;
+            height: 30px;
+            background: var(--themeBgSecondColor);
+            border-radius: 50%;
+            margin-right: 10px;
+
+            .icon {
+                width: 12px;
+                height: 12px;
+                transform: rotate(90deg);
+            }
+        }
+
+        &:hover {
+            color: var(--color-hover);
+
+            .icon {
+                :deep(use) {
+                    fill: var(--color-hover);
+                }
+            }
+        }
+    }
+}
+
+
+.content-warp {
+    margin-top: 20px;
+}
+
+.content {
+    background: var(--themeBgSecondColor);
+    border-radius: var(--rounded);
+    overflow-y: auto;
+    padding: 24px;
+
+    .title {
+        font-size: 24px;
+        font-weight: bold;
+    }
+}
+
+.right {
+    width: 300px;
+}
