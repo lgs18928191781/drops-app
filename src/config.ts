@@ -1,5 +1,5 @@
 import i18n from '@/utils/i18n'
-import { Chains, Lang, PayPlatform } from './enum'
+import { Chains, Lang, PayPlatform, ToCurrency } from './enum'
 import WechatPayIcon from '@/assets/images/wechatTitle.svg?url'
 import AliPayIcon from '@/assets/images/alipay-circle.svg?url'
 import SandPayIcon from '@/assets/images/sandPay_title.svg?url'
@@ -237,6 +237,19 @@ export const payPlatformAmountFix = {
   [PayPlatform.QuickPay]: 2,
   [PayPlatform.UnionPay]: 2,
   [PayPlatform.WechatPay]: 2,
+}
+
+export const payPlatformToCurrency = {
+  [PayPlatform.BSV]: ToCurrency.BSV,
+  [PayPlatform.ETH]: ToCurrency.ETH,
+  [PayPlatform.POLYGON]: ToCurrency.POLYGON,
+  [PayPlatform.AliPay]: ToCurrency.CNY,
+  [PayPlatform.AliPaySelf]: ToCurrency.CNY,
+  [PayPlatform.BalancePay]: ToCurrency.CNY,
+  [PayPlatform.QuickPay]: ToCurrency.CNY,
+  [PayPlatform.SPACE]: ToCurrency.MVC,
+  [PayPlatform.UnionPay]: ToCurrency.CNY,
+  [PayPlatform.WechatPay]: ToCurrency.CNY,
 }
 
 export const currentSupportChain: Array<{
