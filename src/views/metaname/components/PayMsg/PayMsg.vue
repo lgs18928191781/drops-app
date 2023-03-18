@@ -59,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { PayPlatformItem, payPlatformList } from '@/config'
+import { PayPlatformItem, payPlatformList, payPlatformToCurrency } from '@/config'
 import { MetaNameOperateType, PayPlatform, ProductType, ToCurrency, Lang } from '@/enum'
 import { useUserStore } from '@/stores/user'
 import {
@@ -78,6 +78,9 @@ import { MetaNameBeforeReqRes, UploadMetaNameCover } from '@/api/wxcore'
 import { GetMetaNameCover } from '@/api/canvas-base'
 import { getMetaNameOperateParams } from '@/utils/metaname'
 import { useI18n } from 'vue-i18n'
+import Amount from '@/components/Amount/Amount.vue'
+import { PriceTag } from '@element-plus/icons-vue'
+
 interface Props {
   price: number
   year: number
@@ -103,7 +106,19 @@ const currentPayPlatform = ref(
     : PayPlatform.SPACE
 )
 
-const currencyAmount = ref(0)
+const currencyAmount = computed(() => {
+  let amount = 0
+  if (props.price) {
+    amount = getCurrencyAmount(
+      props.price * 100,
+      ToCurrency.USD,
+      payPlatformToCurrency[currentPayPlatform.value]
+    )
+  }
+
+  return amount
+})
+
 const productType = ProductType.MetaName
 const isStartPay = ref(false)
 const payOrderInfo = reactive({
@@ -129,7 +144,6 @@ const payList = computed(() => {
 function changePayType(item: PayPlatformItem) {
   if (item.disabled() || currentPayPlatform.value === item.platform) return
   currentPayPlatform.value = item.platform
-  setCurrencyAmount()
 }
 
 function setCurrencyAmount() {
@@ -256,7 +270,7 @@ function onPaySuccess(params: { orderId: string; platform: PayPlatform; productT
   emit('success')
 }
 
-setCurrencyAmount()
+// setCurrencyAmount()
 </script>
 
 <style lang="scss" scoped src="./PayMsg.scss"></style>

@@ -214,6 +214,7 @@ import {
   PayPlatformItem,
   payPlatformList,
   payPlatformAmountFix,
+  payPlatformToCurrency,
 } from '@/config'
 import PayTypeDropdownVue from '../PayTypeDropdown/PayTypeDropdown.vue'
 import {
@@ -272,18 +273,6 @@ const payPlatformChain = {
   [PayPlatform.BSV]: Chains.BSV,
   [PayPlatform.ETH]: Chains.ETH,
   [PayPlatform.POLYGON]: Chains.POLYGON,
-}
-const payPlatformToCurrency = {
-  [PayPlatform.BSV]: ToCurrency.BSV,
-  [PayPlatform.ETH]: ToCurrency.ETH,
-  [PayPlatform.POLYGON]: ToCurrency.POLYGON,
-  [PayPlatform.AliPay]: ToCurrency.CNY,
-  [PayPlatform.AliPaySelf]: ToCurrency.CNY,
-  [PayPlatform.BalancePay]: ToCurrency.CNY,
-  [PayPlatform.QuickPay]: ToCurrency.CNY,
-  [PayPlatform.SPACE]: ToCurrency.MVC,
-  [PayPlatform.UnionPay]: ToCurrency.CNY,
-  [PayPlatform.WechatPay]: ToCurrency.CNY,
 }
 const ToCurrencyAmounMin = {
   [ToCurrency.BSV]: 0.00000001,
