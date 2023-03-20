@@ -30,6 +30,9 @@
     </div>
 
     <div class="result-amount">
+      <div class="tips" v-if="currentPayPlatform === PayPlatform.SPACE">
+        {{ $t('MetaName.registerBySpaceTips') }}
+      </div>
       <div class="amount">
         {{ currencyAmount }}
         {{ getPlatformSymbol(currentPayPlatform, 'USD') }}

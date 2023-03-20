@@ -972,7 +972,8 @@
     "OrderId": "Order Id",
     "OrderStatus": "Order Status",
     "RegisterFail": "Register Fail",
-    "RegisterNamesTips": "Names of English Alphabet & Numerical Digit are Open"
+    "RegisterNamesTips": "Names of English Alphabet & Numerical Digit are Open",
+    "registerBySpaceTips": "Due to the current volatility of the SPACE price, we accept the price of SPACE at 80% of the latest market price on the exchange."
   },
   "Menu": "Menu",
   "metanameNotAllowMin": "Currently does not support 1-2 character registration",
