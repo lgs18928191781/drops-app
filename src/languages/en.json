@@ -294,7 +294,7 @@
     "bindMetaId": {
       "title1": "🌍 Wallet Connected! Link to a MetaID Now.",
       "title2": "Link MetaID",
-      "bindHavedMetaId": "I Already Have a MetaID",
+      "bindHavedMetaId": "I already have a MetaID",
       "bindHavedMetaIdIntro": "🔗️ Manage your assets and data easily by linking your wallet to a MetaID.",
       "bindRegisterMetaId": "Bind the newly registered MetaID",
       "bindSuccessTitle": "🎉 Your Wallet is Linked to a MetaID. Let's Get Your Web3 Social Life Started!",
