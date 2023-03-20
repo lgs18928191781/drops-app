@@ -16,6 +16,7 @@
           v-infinite-scroll="getMore"
           :infinite-scroll-immediate="false"
           :infinite-scroll-distance="100"
+          :infinite-scroll-disabled="isMobile"
         >
           <div class="title">你是否赞成MetaCoin的分发机制改为体积占比+最低费率</div>
 
@@ -52,7 +53,13 @@
           <div class="vote-record">
             <div class="title">{{ $t('DAO.Vote Records') }}</div>
 
-            <div class="vote-record-list">
+            <div
+              class="vote-record-list"
+              v-infinite-scroll="getMore"
+              :infinite-scroll-immediate="false"
+              :infinite-scroll-distance="100"
+              :infinite-scroll-disabled="!isMobile"
+            >
               <div
                 class="vote-record-item flex flex-align-center"
                 v-for="(item, index) in records"
@@ -159,6 +166,7 @@ import { reactive, ref } from 'vue'
 import IsNull from '@/components/IsNull/IsNull.vue'
 import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import { initPagination } from '@/config'
+import { isMobile } from '@/stores/root'
 
 const i18n = useI18n()
 const records: any = reactive([])

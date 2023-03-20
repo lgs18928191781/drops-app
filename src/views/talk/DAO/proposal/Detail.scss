@@ -29,6 +29,10 @@
     }
 }
 
+.el-skeleton {
+    margin-top: 30px;
+}
+
 .result-list {
     .result-item {
         padding: 5px 0;
@@ -54,6 +58,7 @@
     .title {
         font-size: 24px;
         font-weight: bold;
+        line-height: 36px;
     }
 
     .msg {
@@ -93,7 +98,7 @@
 
     .cont {
         margin-top: 30px;
-        line-height: 24px;
+        line-height: 28px;
     }
 
     .card {
@@ -203,5 +208,33 @@
                 margin-bottom: 0;
             }
         }
+    }
+}
+
+@media only screen and (max-width: 750PX) {
+    .h-full {
+        height: auto;
+    }
+
+    .content-warp {
+        flex-direction: column;
+    }
+
+    .content {
+        overflow: hidden;
+
+        .vote-record {
+            .vote-record-list {
+                max-height: 500px;
+                overflow-y: auto;
+            }
+        }
+    }
+
+    .right {
+        margin-left: 0;
+        margin-top: 15px;
+        width: 100%;
+        padding-bottom: 15px;
     }
 }

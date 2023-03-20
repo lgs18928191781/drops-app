@@ -2,7 +2,7 @@
   <div class="h-full overflow-y-auto overflow-x-hidden">
     <div class="header flex flex-align-center">
       <div class="flex1 flex flex-align-center">
-        <a class="back">
+        <a class="back" @click="$router.back()">
           <Icon name="right" />
         </a>
         <span class="title">

@@ -20,6 +20,9 @@
 .proposal-list {
     margin-top: 20px;
     overflow-y: auto;
+    margin-left: -18px;
+    margin-right: -18px;
+    padding: 0 18px;
 
     .proposal-item {
         background: var(--themeBgSecondColor);
@@ -90,5 +93,12 @@
         &:hover {
             background: rgba(var(--themeBgSecondColorRgb), 0.7);
         }
+    }
+}
+
+
+@media only screen and (max-width: 750PX) {
+    .proposal-list .proposal-item .top .txid {
+        display: none;
     }
 }

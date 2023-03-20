@@ -27,7 +27,7 @@
                 <span>proposal</span>
               </span>
               <span class="txid flex flex-align-center"><Icon name="link" /> asd4456</span>
-              <spoan class="time">2019-02-45 12:45:12</spoan>
+              <span class="time">2019-02-45 12:45:12</span>
             </div>
             <span class="status">已结束</span>
           </div>
