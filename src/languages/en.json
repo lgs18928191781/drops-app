@@ -1090,6 +1090,25 @@
     "Vote Time": "Vote Time",
     "Vote Content": "Content",
     "Publish": "Publish",
-    "proposalDrscPlac": "Tell us more about your proposal (optional)"
+    "proposalDrscPlac": "Tell us more about your proposal (optional)",
+    "Enter Proposal Title": "Enter Proposal Title",
+    "Enter Vote Options": "Enter Vote Options",
+    "Start date": "Start date",
+    "End date": "End date",
+    "Enter Vote Time": "Enter Vote Time",
+    "Enter Proposal Type": "Enter Proposal Type",
+    "Choose Entrust": "Choose Entrust",
+    "Entrust Records": "Entrust Records",
+    "Confirm Entrust": "Confirm Entrust",
+    "Information Website": "Website",
+    "Information Introduction": "Introduction",
+    "Mission Introduction": "Mission Introduction",
+    "Information Type": "Type",
+    "Information Clause": "Clause",
+    "Information Need Token Min": "Minimum number of governance tokens required to join Dao",
+    "Information Proposal Need Token Min": "Minimum number of Tokens required to create a proposal",
+    "Administrators": "Administrators",
+    "Core Members": "Core Members",
+    "Members": "Members"
   }
 }

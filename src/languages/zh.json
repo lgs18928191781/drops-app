@@ -1089,6 +1089,25 @@
     "Vote Time": "投票时间",
     "Vote Content": "详情",
     "Publish": "发布",
-    "proposalDrscPlac": "告诉我们更多关于您的提案(可选)"
+    "proposalDrscPlac": "告诉我们更多关于您的提案(可选)",
+    "Enter Proposal Title": "请填写提案标题",
+    "Enter Vote Options": "请填写投票选项",
+    "Start date": "开始时间",
+    "End date": "结束时间",
+    "Enter Vote Time": "请填写投票时间",
+    "Enter Proposal Type": "请选择投票类型",
+    "Choose Entrust": "选择委托",
+    "Entrust Records": "委托记录",
+    "Confirm Entrust": "确认委托",
+    "Information Website": "网络",
+    "Information Introduction": "简介",
+    "Mission Introduction": "使命介绍",
+    "Information Type": "类型",
+    "Information Clause": "条款",
+    "Information Need Token Min": "加入Dao需最少治理token数量",
+    "Information Proposal Need Token Min": "创建提案需要的最少Token数量",
+    "Administrators": "管理员",
+    "Core Members": "核心成员",
+    "Members": "成员"
   }
 }
