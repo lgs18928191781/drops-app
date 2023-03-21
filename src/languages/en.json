@@ -199,7 +199,7 @@
       "followed": "Followed"
     },
     "Community": {
-      "optional": "(Optional)",
+      "optional": "",
       "create": "Create Club",
       "create_fist_step_tip": "Please upload the club icon and set the club name. You can change them at any time.",
       "community_name": "Club Name",
