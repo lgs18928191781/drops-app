@@ -175,6 +175,54 @@ export const router = createRouter({
           component: () => import('@/views/talk/components/topics/Body.vue'),
         },
         {
+          path: 'DAO',
+          name: 'talkDAO',
+          component: () => import('@/views/talk/DAO/Layout.vue'),
+          redirect: {
+            name: 'talkDAOProposal',
+          },
+          children: [
+            {
+              path: 'proposal',
+              name: 'talkDAOProposal',
+              component: () => RouterView,
+              redirect: { name: 'talkDAOProposalIndex' },
+              children: [
+                {
+                  path: 'index',
+                  name: 'talkDAOProposalIndex',
+                  component: () => import('@/views/talk/DAO/proposal/Index.vue'),
+                },
+                {
+                  path: 'detail/:txId',
+                  name: 'talkDAOProposalDetail',
+                  component: () => import('@/views/talk/DAO/proposal/Detail.vue'),
+                },
+                {
+                  path: 'create',
+                  name: 'talkDAOProposalCreate',
+                  component: () => import('@/views/talk/DAO/proposal/Create.vue'),
+                },
+              ],
+            },
+            {
+              path: 'proposal/:txId',
+              name: 'talkDAOProposalDetail',
+              component: () => import('@/views/talk/DAO/proposal/Detail.vue'),
+            },
+            {
+              path: 'entrust',
+              name: 'talkDAOEntrust',
+              component: () => import('@/views/talk/DAO/Entrust.vue'),
+            },
+            {
+              path: 'about',
+              name: 'talkDAOAbout',
+              component: () => import('@/views/talk/DAO/About.vue'),
+            },
+          ],
+        },
+        {
           path: ':channelId',
           name: 'talkChannel',
           component: () => import('@/views/talk/components/ChannelBody.vue'),

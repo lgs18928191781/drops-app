@@ -530,3 +530,16 @@ export enum BuyNFTStatus {
   Purchased = 1,
   NotCanBuy = 2,
 }
+
+export enum DAOVoteDefaultOption {
+  Opposition = 0,
+  Approve = 1,
+  Abstain = 2,
+}
+
+export enum DAOProposalType {
+  Base = '0',
+  DiySingleChoose = '1',
+  DiyMultipleChoose = '2',
+  Approve = '3',
+}

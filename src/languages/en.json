@@ -246,7 +246,8 @@
       "edit_public_channel": "Edit Public Channel",
       "edit_consensual_channel": "Edit Pass Channel",
       "announcements": "Announcements",
-      "topics": "Topics"
+      "topics": "Topics",
+      "DAO": "DAO"
     },
     "Input": {
       "nft_stickers": "NFT Emoji",
@@ -294,7 +295,7 @@
     "bindMetaId": {
       "title1": "🌍 Wallet Connected! Link to a MetaID Now.",
       "title2": "Link MetaID",
-      "bindHavedMetaId": "I Already Have a MetaID",
+      "bindHavedMetaId": "I already have a MetaID",
       "bindHavedMetaIdIntro": "🔗️ Manage your assets and data easily by linking your wallet to a MetaID.",
       "bindRegisterMetaId": "Bind the newly registered MetaID",
       "bindSuccessTitle": "🎉 Your Wallet is Linked to a MetaID. Let's Get Your Web3 Social Life Started!",
@@ -461,7 +462,8 @@
     "Transfer Success": "Transfer Success",
     "Confirm Transfer": "Confirm Transfer",
     "Transfer To": "To",
-    "Transfer Accound": "Transfer Accound"
+    "Transfer Accound": "Transfer Accound",
+    "Link Wallet": "Link Wallet"
   },
   "quickPay": "Credit Card",
   "aliPay": "Alipay",
@@ -971,7 +973,8 @@
     "OrderId": "Order Id",
     "OrderStatus": "Order Status",
     "RegisterFail": "Register Fail",
-    "RegisterNamesTips": "Names of English Alphabet & Numerical Digit are Open"
+    "RegisterNamesTips": "Names of English Alphabet & Numerical Digit are Open",
+    "registerBySpaceTips": "Due to the current volatility of the SPACE price, we accept the price of SPACE at 80% of the latest market price on the exchange."
   },
   "Menu": "Menu",
   "metanameNotAllowMin": "Currently does not support 1-2 character registration",
@@ -1024,7 +1027,7 @@
   "bindingSuccess": "The binding is successful!",
   "Not Found Node Name": "Not Found Node Name",
   "PWA": {
-    "title": "Add Show3 to Your Computer",
+    "title": "Add Show3 to Your Home Page",
     "tips": "Installing Show3 to your system will occupy no space but provide a better experience.",
     "Install": "Install",
     "InstallSuccess": "Install Success",
@@ -1040,11 +1043,11 @@
         "step4": "4. Click \"Add\"."
       },
       "others": {
-        "step1": "1. Make sure your are using default browser or Chrome.",
-        "click": "2. Click",
-        "button": "button.",
-        "or": "or",
-        "step3": "3. Click \"Add to Home Screen\"."
+        "step1": "1.Open this page with the default or Chrome browser.",
+        "click": "2.Click Install/Confirm",
+        "button": " ",
+        "or": " ",
+        "step3": "3.Start using!"
       }
     }
   },
@@ -1062,5 +1065,51 @@
     "Floor price": "Floor price",
     "Total volume": "Total volume"
   },
-  "PathMoreThan150": "Path>150, please contact customer service for repair"
+  "PathMoreThan150": "Path>150, please contact customer service for repair",
+  "DAO": {
+    "Proposal": "Proposal",
+    "Entrust": "Entrust",
+    "About": "About",
+    "New Proposal": "New Proposal",
+    "Share": "Share",
+    "Vote Title": "Cast Your Vote",
+    "Abstain": "Abstain",
+    "Approve": "Approve",
+    "Opposition": "Opposition",
+    "Vote Records": "Vote Records",
+    "Information": "Information",
+    "Proposal Type": "DAO.Proposal Type",
+    "Start Time": "Start Time",
+    "End Time": "End Time",
+    "Result": "Result",
+    "Vote Number": "Vote Number",
+    "Proposal Title": "Proposal Title",
+    "Basic Type Voting": "Basic Type Voting",
+    "Custom Single Choice Voting": "Custom Single Choice Voting",
+    "Custom Multiple Choice Voting": "Custom Multiple Choice Voting",
+    "Vote Options": "Vote Options",
+    "Vote Time": "Vote Time",
+    "Vote Content": "Content",
+    "Publish": "Publish",
+    "proposalDrscPlac": "Tell us more about your proposal (optional)",
+    "Enter Proposal Title": "Enter Proposal Title",
+    "Enter Vote Options": "Enter Vote Options",
+    "Start date": "Start date",
+    "End date": "End date",
+    "Enter Vote Time": "Enter Vote Time",
+    "Enter Proposal Type": "Enter Proposal Type",
+    "Choose Entrust": "Choose Entrust",
+    "Entrust Records": "Entrust Records",
+    "Confirm Entrust": "Confirm Entrust",
+    "Information Website": "Website",
+    "Information Introduction": "Introduction",
+    "Mission Introduction": "Mission Introduction",
+    "Information Type": "Type",
+    "Information Clause": "Clause",
+    "Information Need Token Min": "Minimum number of governance tokens required to join Dao",
+    "Information Proposal Need Token Min": "Minimum number of Tokens required to create a proposal",
+    "Administrators": "Administrators",
+    "Core Members": "Core Members",
+    "Members": "Members"
+  }
 }

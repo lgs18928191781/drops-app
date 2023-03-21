@@ -19,6 +19,7 @@
           class="flex items-center justify-center group relative"
           :class="item.extraClass"
           :key="index"
+          @click="item.symbol !== '@me' ? (layout.isShowLeftNav = false) : ''"
         >
           <div
             class="absolute left-0 h-full flex items-center top-0"
@@ -93,7 +94,7 @@
 
       <div
         class="border-dashed border-2 border-gray-200 dark:border-gray-600 w-13.5 h-13.5 flex items-center justify-center rounded-3xl text-dark-400 cursor-pointer hover:text-dark-800 hover:border-solid hover:border-dark-300 hover:bg-primary transition-all duration-300"
-        v-if="userStore.isAuthorized"
+        v-if="userStore.isAuthorized && !isProduction"
         @click="
           userStore.isAuthorized
             ? (layout.isShowCreateCommunityModal = true)

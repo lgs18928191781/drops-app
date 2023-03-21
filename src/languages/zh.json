@@ -280,7 +280,8 @@
       "edit_consensual_channel": "修改凭证频道",
       "general_channels": "功能频道",
       "announcements": "公告",
-      "topics": "话题"
+      "topics": "话题",
+      "DAO": "DAO"
     },
     "Input": {
       "nft_stickers": "NFT表情",
@@ -964,7 +965,8 @@
     "OrderId": "订单号",
     "OrderStatus": "订单状态",
     "RegisterFail": "注册失败",
-    "RegisterNamesTips": "暂时只支持英文字母与数字"
+    "RegisterNamesTips": "暂时只支持英文字母与数字",
+    "registerBySpaceTips": "由于当前SPACE价格波动过大，所以我们接受SPACE的价格为交易所最新价格的80%"
   },
   "Menu": "菜单",
   "metanameNotAllowOverLenght": "注册名称长度不能超过63位字符",
@@ -1062,5 +1064,51 @@
     "Floor price": "地板价",
     "Total volume": "发行量"
   },
-  "PathMoreThan150": "Path > 150,请联系客服修复"
+  "PathMoreThan150": "Path > 150,请联系客服修复",
+  "DAO": {
+    "Proposal": "提案",
+    "Entrust": "委托",
+    "About": "关于",
+    "New Proposal": "新提案",
+    "Share": "分享",
+    "Vote Title": "投出你的一票",
+    "Abstain": "弃权",
+    "Approve": "赞成",
+    "Opposition": "反对",
+    "Vote Records": "投票记录",
+    "Information": "信息",
+    "Proposal Type": "提案类型",
+    "Start Time": "开始时间",
+    "End Time": "结束时间",
+    "Result": "结果",
+    "Vote Number": "票数",
+    "Proposal Title": "提案标题",
+    "Basic Type Voting": "基本类型投票",
+    "Custom Single Choice Voting": "自定义单选投票",
+    "Custom Multiple Choice Voting": "自定义多选投票",
+    "Vote Options": "投票选项",
+    "Vote Time": "投票时间",
+    "Vote Content": "详情",
+    "Publish": "发布",
+    "proposalDrscPlac": "告诉我们更多关于您的提案(可选)",
+    "Enter Proposal Title": "请填写提案标题",
+    "Enter Vote Options": "请填写投票选项",
+    "Start date": "开始时间",
+    "End date": "结束时间",
+    "Enter Vote Time": "请填写投票时间",
+    "Enter Proposal Type": "请选择投票类型",
+    "Choose Entrust": "选择委托",
+    "Entrust Records": "委托记录",
+    "Confirm Entrust": "确认委托",
+    "Information Website": "网络",
+    "Information Introduction": "简介",
+    "Mission Introduction": "使命介绍",
+    "Information Type": "类型",
+    "Information Clause": "条款",
+    "Information Need Token Min": "加入Dao需最少治理token数量",
+    "Information Proposal Need Token Min": "创建提案需要的最少Token数量",
+    "Administrators": "管理员",
+    "Core Members": "核心成员",
+    "Members": "成员"
+  }
 }
