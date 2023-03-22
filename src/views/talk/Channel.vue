@@ -73,6 +73,8 @@ const layout = useLayoutStore()
 function init(communityId: string) {
   // 先检查社区是否还佩戴有效的metaname
   talk.checkCommunityMetaName(communityId).then((isValid: boolean) => {
+    layout.isShowNoMetaNameModal = false
+
     if (!isValid) {
       // 显示社区没有metaname modal
       talk.activeCommunityId = communityId

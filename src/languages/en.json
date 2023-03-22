@@ -169,7 +169,11 @@
       "no_meta_name_title": "No MetaName",
       "no_meta_name": "This club doesn't equip a MetaName yet, therefore you can't access it.",
       "go_equip": "Equip",
-      "metaname": "MetaName"
+      "metaname": "MetaName",
+      "equipped": "Equipped",
+      "switch_to": "Change to",
+      "choose": "Choose",
+      "unchanged": "Unchanged"
     },
     "Channel": {
       "core_members": "core members",

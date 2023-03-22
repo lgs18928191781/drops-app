@@ -93,7 +93,7 @@
         <div class="grid grid-cols-9 items-center justify-between">
           <div class="space-y-2 col-span-4">
             <div class="text-dark-300 dark:text-gray-400 text-xs h-8 flex items-center">
-              Equipped
+              {{ $t('Talk.Modals.equipped') }}
             </div>
             <MetaNameDisplay
               :name="form.original.metaName"
@@ -117,12 +117,14 @@
           <!-- change -->
           <div class="col-span-4 space-y-2">
             <div class="flex items-center gap-x-2 h-8">
-              <div class="text-dark-300 dark:text-gray-400 text-xs">Switch to</div>
+              <div class="text-dark-300 dark:text-gray-400 text-xs">
+                {{ $t('Talk.Modals.switch_to') }}
+              </div>
               <button
                 class="main-border primary px-2 py-1 small rounded-full text-xs font-bold"
                 @click="layout.isShowChooseMetaNameModal2 = true"
               >
-                Choose
+                {{ $t('Talk.Modals.choose') }}
               </button>
             </div>
 
@@ -144,7 +146,9 @@
                 class="lg:!hidden"
               />
             </template>
-            <div class="text-dark-300 dark:text-gray-400" v-else>Unchanged</div>
+            <div class="text-dark-300 dark:text-gray-400" v-else>
+              {{ $t('Talk.Modals.unchanged') }}
+            </div>
           </div>
         </div>
       </div>
@@ -175,7 +179,7 @@
 
           <Image
             :src="form.original.cover"
-            customClass="!w-full lg:w-60 h-45 rounded-xl"
+            customClass="!w-full lg:w-60 h-45 rounded-xl object-contain object-center"
             v-else-if="form.original.cover"
           />
 

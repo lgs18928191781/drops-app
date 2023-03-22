@@ -199,7 +199,15 @@
       "nftize_title2": "你的社交生活",
       "scan_to_join": "扫码加入社区",
       "no_evm_address": "你还没有创建或绑定EVM地址",
-      "no_mvc_address": "你还没有创建或绑定MVC地址"
+      "no_mvc_address": "你还没有创建或绑定MVC地址",
+      "no_meta_name_title": "社区未装备 MetaName",
+      "no_meta_name": "社区未装备 MetaName，暂时无法访问",
+      "go_equip": "去装备",
+      "metaname": "MetaName",
+      "equipped": "装备中",
+      "switch_to": "更换为",
+      "choose": "选择",
+      "unchanged": "未更改"
     },
     "Channel": {
       "core_members": "核心成员",

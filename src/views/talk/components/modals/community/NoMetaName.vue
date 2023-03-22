@@ -21,6 +21,7 @@
           <div class="lg:mt-12 flex gap-x-4">
             <button
               class="main-border primary w-full py-3 text-base outline-0 font-bold dark:bg-gray-700 uppercase"
+              v-if="talk.isAdmin()"
               @click="goSetting"
             >
               {{ $t('Talk.Modals.go_equip') }}
