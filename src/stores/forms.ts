@@ -28,8 +28,8 @@ export const useCommunityFormStore = defineStore('communityForm', {
 
   getters: {
     isStep1Finished(state) {
-      // return !!state.icon && !!state.metaName && state.name.length > 0 // Metaname 不再为必填
-      return !!state.icon && state.name.length > 0
+      return !!state.icon && !!state.metaName && state.name.length > 0
+      // return !!state.icon && state.name.length > 0
     },
 
     isStep2Finished(state) {
@@ -37,8 +37,8 @@ export const useCommunityFormStore = defineStore('communityForm', {
     },
 
     isFinished(state) {
-      return !!state.icon && !!state.name
-      // return !!state.icon && !!state.metaName && !!state.name
+      // return !!state.icon && !!state.name
+      return !!state.icon && !!state.metaName && !!state.name
     },
 
     isAllFinished(state) {
@@ -74,6 +74,7 @@ export const useCommunityUpdateFormStore = defineStore('communityUpdateForm', {
       description: '',
       cover: null as File | null,
       original: null as any,
+      metaName: null as MetaNameItem | null,
       name: '',
     }
   },
@@ -82,7 +83,7 @@ export const useCommunityUpdateFormStore = defineStore('communityUpdateForm', {
     isChanged(state) {
       const descriptionChanged = state.description !== state.original.description
       const nameChanged = state.name !== state.original.name
-      return state.icon || state.cover || descriptionChanged || nameChanged
+      return state.icon || state.cover || descriptionChanged || nameChanged || !!state.metaName
     },
 
     isFinished(state): boolean {
@@ -103,12 +104,14 @@ export const useCommunityUpdateFormStore = defineStore('communityUpdateForm', {
       this.icon = null
       this.description = ''
       this.cover = null
+      this.metaName = null
       this.name = ''
     },
 
     resetInForm() {
       this.icon = null
       this.cover = null
+      this.metaName = null
       this.description = this.original.description
       this.name = this.original.name
     },
@@ -117,6 +120,7 @@ export const useCommunityUpdateFormStore = defineStore('communityUpdateForm', {
       if (!this.isFinished) return
 
       const metaName = await getCommunityAuth(this.original.communityId)
+      const replacingMetaName = this.metaName
 
       const layout = useLayoutStore()
       const user = useUserStore()
@@ -128,6 +132,7 @@ export const useCommunityUpdateFormStore = defineStore('communityUpdateForm', {
         cover: this.cover,
         original: this.original,
         metaName,
+        replacingMetaName,
         name: this.name,
       }
       await updateCommunity(form, user.showWallet)

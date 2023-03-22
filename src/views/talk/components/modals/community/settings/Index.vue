@@ -39,7 +39,7 @@
         </TabList>
 
         <!-- 内容 -->
-        <TabPanels>
+        <TabPanels class="grow">
           <TabPanel
             :class="[
               isShowingTabs ? 'hidden' : 'block',

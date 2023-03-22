@@ -318,6 +318,24 @@ export const useTalkStore = defineStore('talk', {
       })
     },
 
+    async checkCommunityMetaName(communityId: string) {
+      // 检查metaname字段是否为空，以及metaname所属地址是否是自己
+
+      const community = await getOneCommunity(communityId)
+      if (!community) return false
+
+      if (!community.metaNameNft) return false
+
+      console.log({ community })
+
+      return true
+
+      // const { metaName } = community
+      // if (metaName === this.selfMetaId) {
+      //   this.isCommunityOwner = true
+      // }
+    },
+
     async checkMembership(routeCommunityId: string) {
       const selfMetaId = this.selfMetaId
 

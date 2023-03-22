@@ -242,7 +242,7 @@ const generalChannels = computed(() => {
       // 如果社区没有metaname，不显示topics频道
       if (channel.id === 'topics' && !talk.activeCommunity?.metaName) {
         return false
-      } else if (channel.id === 'DAO' && import.meta.env.MODE === EnvMode.Mainnet) {
+      } else if (channel.id === 'dao' && import.meta.env.MODE === EnvMode.Mainnet) {
         return false
       }
 

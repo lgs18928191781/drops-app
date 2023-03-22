@@ -11,8 +11,8 @@ export const router = createRouter({
     {
       path: '/',
       redirect: () => {
-        const userStroe = useUserStore()
-        if (userStroe.isAuthorized) {
+        const userStore = useUserStore()
+        if (userStore.isAuthorized) {
           return { name: 'buzzIndex' }
         } else {
           return { name: 'home' }
@@ -30,8 +30,8 @@ export const router = createRouter({
       component: () => import('@/views/buzz/Layout.vue'),
       meta: { keepAlive: true },
       redirect: () => {
-        const userStroe = useUserStore()
-        if (userStroe.isAuthorized) {
+        const userStore = useUserStore()
+        if (userStore.isAuthorized) {
           return { name: 'buzzIndex' }
         } else {
           return { name: 'buzzRecommend' }
@@ -175,7 +175,7 @@ export const router = createRouter({
           component: () => import('@/views/talk/components/topics/Body.vue'),
         },
         {
-          path: 'DAO',
+          path: 'dao',
           name: 'talkDAO',
           component: () => import('@/views/talk/DAO/Layout.vue'),
           redirect: {

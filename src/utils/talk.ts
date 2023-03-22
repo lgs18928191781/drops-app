@@ -57,7 +57,7 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   const admins = [userStore.user?.metaId]
 
   // metaname改为非必填
-  if (!metaName) metaName = {}
+  // if (!metaName) metaName = {}
 
   // 没有metaname的情况下，communityId生成方式为随机64位字符串，然后sha256一次
   // const communityId = metaName.communityId || SHA256(realRandomString(64)).toString()
@@ -96,7 +96,7 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
 
 export const updateCommunity = async (form: any, sdk: SDK) => {
   // communityId, name, description, cover, metaName, mateNameNft, admins, reserved, icon
-  let { icon, description, cover, original, metaName, name } = form
+  let { icon, description, cover, original, metaName, replacingMetaName, name } = form
 
   const attachments = []
   let replaceIndex = 0
@@ -116,20 +116,29 @@ export const updateCommunity = async (form: any, sdk: SDK) => {
 
   const admins = original.admins
 
+  let metaNameNft: string
+  if (replacingMetaName) {
+    metaNameNft = replacingMetaName.genesis
+      ? `${replacingMetaName.solution}://${replacingMetaName.codeHash}/${replacingMetaName.genesis}/${replacingMetaName.tokenIndex}`
+      : ''
+  } else {
+    metaNameNft = original.metaNameNft
+  }
+
   const dataCarrier: CommunityData = {
     communityId: original.communityId,
     name,
-    metaName: original.metaName,
-    metaNameNft: original.metaNameNft,
+    metaName: replacingMetaName ? replacingMetaName.name : original.metaName,
+    metaNameNft,
     icon: iconPlaceholder,
     admins,
     description,
     cover: coverPlaceholder || '',
-    reserved: original.reserved,
+    reserved: replacingMetaName ? '' : original.reserved,
     disabled: 0,
   }
 
-  if (metaName.signature) {
+  if (metaName.signature && !replacingMetaName) {
     dataCarrier.reserved = metaName.signature
   }
   console.log({ dataCarrier, form, original })

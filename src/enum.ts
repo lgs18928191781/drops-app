@@ -405,6 +405,8 @@ export enum ShowControl {
   isShowCheckingPass = 'isShowCheckingPass',
   isShowUserInfo = 'isShowUserInfo',
   isShowUserCard = 'isShowUserCard',
+  isShowNoMetaNameModal = 'isShowNoMetaNameModal',
+  isShowChooseMetaNameModal2 = 'isShowChooseMetaNameModal2',
   never = 'never',
 }
 

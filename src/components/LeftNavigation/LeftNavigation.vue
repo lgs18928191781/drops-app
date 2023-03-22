@@ -136,6 +136,7 @@ const whiteList = [
 const isInWhitelist = talk.selfMetaId && whiteList.includes(talk.selfMetaId)
 
 function getCommunityKey(community: Community) {
+  // return community.id
   if (!community.metaName) return community.id
 
   const originalMetaName = community.metaName
