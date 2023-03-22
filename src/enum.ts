@@ -327,6 +327,7 @@ export enum NodeName {
   SendMoney = 'SendMoney',
   Phone = 'phone',
   Email = 'email',
+  ShareChatMessage = 'ShareChatMessage',
 }
 
 export const enum BindStatus {

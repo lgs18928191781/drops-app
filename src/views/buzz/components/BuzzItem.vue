@@ -88,6 +88,9 @@
         >
           <BuzzItemContentSellNftVue :buzz="displayItemData" />
         </template>
+        <template v-else-if="displayItemData.protocol === NodeName.ShareChatMessage">
+          <BuzzItemContentSellNftVue :buzz="displayItemData" />
+        </template>
         <template v-else>
           <BuzzItemContentNormalVue
             :buzz="data!"
