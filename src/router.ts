@@ -175,7 +175,7 @@ export const router = createRouter({
           component: () => import('@/views/talk/components/topics/Body.vue'),
         },
         {
-          path: 'DAO',
+          path: 'dao',
           name: 'talkDAO',
           component: () => import('@/views/talk/DAO/Layout.vue'),
           redirect: {
