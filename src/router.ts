@@ -11,8 +11,8 @@ export const router = createRouter({
     {
       path: '/',
       redirect: () => {
-        const userStroe = useUserStore()
-        if (userStroe.isAuthorized) {
+        const userStore = useUserStore()
+        if (userStore.isAuthorized) {
           return { name: 'buzzIndex' }
         } else {
           return { name: 'home' }
@@ -30,8 +30,8 @@ export const router = createRouter({
       component: () => import('@/views/buzz/Layout.vue'),
       meta: { keepAlive: true },
       redirect: () => {
-        const userStroe = useUserStore()
-        if (userStroe.isAuthorized) {
+        const userStore = useUserStore()
+        if (userStore.isAuthorized) {
           return { name: 'buzzIndex' }
         } else {
           return { name: 'buzzRecommend' }
