@@ -1,0 +1,34 @@
+.quote {
+    position: relative;
+    margin-left: calc(54PX + 16PX);
+
+    .line-warp {
+        width: 30px;
+        height: 20px;
+        margin-left: calc(0px - (16PX + (54PX / 2)));
+        position: absolute;
+        left: 0;
+        top: 12px;
+
+    }
+
+    .quote-warp {
+        padding: 3px 6px;
+        border-radius: 6px;
+        background: rgba(var(--themeTextColorRgb), 0.1);
+        display: inline-flex;
+    }
+
+    .avatar {
+        width: 20px;
+        height: 20px;
+        margin-right: 5px;
+        position: relative;
+
+        @media only screen and (max-width: 750px) {
+            margin-left: calc(40px / 2 - 10px);
+        }
+
+
+    }
+}

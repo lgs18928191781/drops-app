@@ -62,7 +62,7 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   // 没有metaname的情况下，communityId生成方式为随机64位字符串，然后sha256一次
   // const communityId = metaName.communityId || SHA256(realRandomString(64)).toString()
   const communityId = SHA256(realRandomString(64)).toString()
-  
+
   const metaNameNft = metaName.genesis
     ? `${metaName.solution}://${metaName.codeHash}/${metaName.genesis}/${metaName.tokenIndex}`
     : ''
@@ -540,7 +540,7 @@ export const validateTextMessage = (message: string) => {
 const _sendTextMessage = async (messageDto: MessageDto) => {
   const userStore = useUserStore()
   const talkStore = useTalkStore()
-  const { content, channelId: groupID, userName: nickName } = messageDto
+  const { content, channelId: groupID, userName: nickName, quoteTxId } = messageDto
 
   // 1. 构建协议数据
   const timestamp = getTimestampInSeconds()
@@ -553,6 +553,7 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
     content,
     contentType,
     encryption,
+    quoteTxId,
   }
 
   // 2. 构建节点参数
@@ -613,7 +614,7 @@ export const tryCreateNode = async (node: any, sdk: SDK, mockId: string) => {
 const _sendTextMessageForSession = async (messageDto: MessageDto) => {
   const userStore = useUserStore()
   const talkStore = useTalkStore()
-  const { content, channelId: to } = messageDto
+  const { content, channelId: to, quoteTxId } = messageDto
 
   // 1. 构建协议数据
   // 1.1 to: done
@@ -630,6 +631,7 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
     content,
     contentType,
     encrypt,
+    quoteTxId,
   }
 
   // 2. 构建节点参数
@@ -700,6 +702,7 @@ const _uploadImage = async (file: File, sdk: SDK) => {
 }
 
 const _sendImageMessage = async (messageDto: MessageDto) => {
+  debugger
   const userStore = useUserStore()
   const talkStore = useTalkStore()
   const { channelId: groupId, userName: nickName, attachments, originalFileUrl } = messageDto
@@ -720,6 +723,8 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
     encrypt,
     fileType,
     attachment,
+    quoteTxId: messageDto.quoteTxId,
+    quoteProtocol: messageDto.quoteProtocol,
   }
   if (messageDto.channelType === ChannelType.Group) {
     dataCarrier.groupId = groupId

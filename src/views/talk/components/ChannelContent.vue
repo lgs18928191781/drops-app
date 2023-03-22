@@ -1,20 +1,26 @@
 <template>
   <div class="h-full pb-17.5 lg:pb-20">
-    <MessageList />
+    <MessageList @quote="val => (quote.val = val)" ref="MessageListRef" />
   </div>
 
   <div class="fixed bottom-0 left-0 right-0 px-4 lg:absolute">
-    <TheInput />
+    <TheInput v-model:quote="quote.val" @to-quote="toQuote" />
     <TheErrorBox />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent } from 'vue'
+import { defineAsyncComponent, reactive, ref } from 'vue'
 import TheInput from './TheInput.vue'
 import TheErrorBox from './TheErrorBox.vue'
 
+const quote: { val: any } = reactive({ val: undefined })
 const MessageList = defineAsyncComponent({
   loader: () => import('./MessageList.vue'),
 })
+const MessageListRef = ref()
+
+function toQuote() {
+  MessageListRef.value.scrollToTimeStamp(quote.val!.timestamp)
+}
 </script>

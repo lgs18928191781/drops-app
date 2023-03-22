@@ -16,6 +16,8 @@
             v-for="message in talk.activeChannel?.pastMessages"
             :message="message"
             :id="message.timestamp"
+            v-bind="$attrs"
+            @toBuzz="onToBuzz"
           />
           <div
             class="border-b border-solid border-gray-300 dark:border-gray-600 mb-6 pb-6 pt-2 mx-4"
@@ -64,6 +66,8 @@
             v-for="message in talk.activeChannel?.newMessages"
             :message="message"
             :id="message.timestamp"
+            v-bind="$attrs"
+            @toBuzz="onToBuzz"
           />
         </template>
         <template v-else>
@@ -76,6 +80,8 @@
       </div>
     </div>
   </div>
+
+  <Publish v-model="isShowPublish" :repostTxId="repostBuzzTxId" ref="PublishRef" />
 </template>
 
 <script setup lang="ts">
@@ -89,6 +95,9 @@ import MessageItem from './MessageItem.vue'
 import MessageItemForSession from './MessageItemForSession.vue'
 import { sleep } from '@/utils/util'
 import { useUserStore } from '@/stores/user'
+import Publish from '@/views/buzz/components/Publish.vue'
+import { IsEncrypt } from '@/enum'
+import { decrypt } from '@/utils/crypto'
 
 const user = useUserStore()
 const talk = useTalkStore()
@@ -96,6 +105,9 @@ const layout = useLayoutStore()
 
 const loadingMore = ref(false)
 const isAtTop = ref(false)
+const isShowPublish = ref(false)
+const repostBuzzTxId = ref('')
+const PublishRef = ref()
 
 const messagesScroll = ref<HTMLElement>()
 
@@ -207,6 +219,35 @@ const scrollToMessagesBottom = async (retryCount = 0) => {
   }
 }
 
+function scrollToTimeStamp(time: number) {
+  const target = document.getElementById(time.toString())
+  if (target) {
+    const top = target.scrollTop
+    messagesScroll.value?.scrollTo({ top })
+  }
+}
+
+function onToBuzz(message: ChatMessageItem) {
+  PublishRef.value.respostBuzz.val = isShowPublish.value = true
+}
+
+function decryptedMessage(message: ChatMessageItem) {
+  if (message.encryption === '0') {
+    return message.content
+  }
+
+  if (message.protocol !== 'simpleGroupChat' && message.protocol !== 'SimpleFileGroupChat') {
+    return message.content
+  }
+
+  // 处理mock的图片消息
+  if (message.isMock && message.protocol === 'SimpleFileGroupChat') {
+    return message.content
+  }
+
+  return decrypt(message.content, talk.activeChannelId.substring(0, 16))
+}
+
 watch(
   () => talk.newMessages,
   async () => {
@@ -229,6 +270,10 @@ watch(
   },
   { deep: true, immediate: true }
 )
+
+defineExpose({
+  scrollToTimeStamp,
+})
 
 onBeforeUnmount(() => {
   messagesScroll.value?.removeEventListener('scroll', handleScroll)

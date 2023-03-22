@@ -144,7 +144,7 @@ declare interface BuzzItem {
   data: string
   displayType: string
   donate: string[]
-  encrypt: 'number' | '1'
+  encrypt: import('@/enum').IsEncrypt
   history: {
     timestamp: number
     txId: string
@@ -189,7 +189,7 @@ declare interface BuzzItem {
   metanetId: string
   protocol: string
   publicKey: string
-  quoteItem: BuzzItem
+  quoteItem: BuzzItem | null
   rePost: {
     metaId: string
     timestamp: number
@@ -705,4 +705,43 @@ declare interface PullDownVal {
   pageContentRef: HTMLElement
   pullRef: HTMLElement
   refreshSlot?: HTMLElement
+}
+
+declare interface DataUserInfo {
+  address: string
+  avatarImage: string
+  avatarTxId: string
+  avatarType: string
+  coverPublicKey: string
+  coverType: string
+  coverUrl: string
+  metaId: string
+  metaIdTimestamp: number
+  metaName: string
+  name: string
+  nameType: string
+  nftNamePublicKey: string
+  publicKey: string
+}
+
+declare interface ChatMessageItem {
+  avatarImage: string
+  avatarTxId: string
+  avatarType: string
+  chatType: number
+  content: string
+  contentType: string
+  data: string
+  encryption: string
+  groupId: string
+  metaId: string
+  metanetId: string
+  nickName: string
+  params: string
+  protocol: string
+  redMetaId: string
+  timestamp: number
+  txId: '80469d3b7b101aadc19b33f621bf52e3b5ab1aa9287bfa3c69ee65e0643019c3'
+  userInfo: DataUserInfo
+  isMock?: boolean
 }
