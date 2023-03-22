@@ -165,7 +165,11 @@
       "nftize_title2": "NFT-Universal Web3 Social Application",
       "scan_to_join": "Scan to Join the Club",
       "no_evm_address": "You don't have an EVM address yet. Please create or link one first.",
-      "no_mvc_address": "You don't have an MVC address yet. Please create or link one first."
+      "no_mvc_address": "You don't have an MVC address yet. Please create or link one first.",
+      "no_meta_name_title": "No MetaName",
+      "no_meta_name": "This club doesn't equip a MetaName yet, therefore you can't access it.",
+      "go_equip": "Equip",
+      "metaname": "MetaName"
     },
     "Channel": {
       "core_members": "core members",

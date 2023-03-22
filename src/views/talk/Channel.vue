@@ -30,6 +30,7 @@
     <ShareToBuzzModal v-if="layout.isShowShareToBuzzModal" />
     <ShareSuccessModal v-if="layout.isShowShareSuccessModal" />
     <CommunitySettingsModal v-if="layout.isShowCommunitySettingsModal" />
+    <NoMetaNameModal v-if="layout.isShowNoMetaNameModal" />
   </div>
 </template>
 
@@ -58,6 +59,8 @@ import InviteModal from './components/modals/invite/Invite.vue'
 import CommunityCardModal from './components/modals/invite/CommunityCard.vue'
 import ShareToBuzzModal from './components/modals/invite/ShareToBuzz.vue'
 import ShareSuccessModal from './components/modals/invite/ShareSuccess.vue'
+import NoMetaNameModal from './components/modals/community/NoMetaName.vue'
+
 import LoadingCover from './components/modals/LoadingCover.vue'
 import { useUserStore } from '@/stores/user'
 
@@ -68,24 +71,33 @@ const layout = useLayoutStore()
 
 // 初始化频道
 function init(communityId: string) {
-  // 如果是游客，则返回游客模式
-  if (!user.isAuthorized) {
-    return initGuestMode(communityId)
-  }
-
-  talk.checkMembership(communityId).then(async (isMember: boolean) => {
-    if (!isMember) {
-      await talk.invite(communityId)
+  // 先检查社区是否还佩戴有效的metaname
+  talk.checkCommunityMetaName(communityId).then((isValid: boolean) => {
+    if (!isValid) {
+      // 显示社区没有metaname modal
+      talk.activeCommunityId = communityId
+      layout.isShowNoMetaNameModal = true
       return
     }
 
-    talk.initCommunity(communityId)
+    // 如果是游客，则返回游客模式
+    if (!user.isAuthorized) {
+      return initGuestMode(communityId)
+    }
+
+    talk.checkMembership(communityId).then(async (isMember: boolean) => {
+      if (!isMember) {
+        await talk.invite(communityId)
+        return
+      }
+
+      talk.initCommunity(communityId)
+    })
   })
 }
 
 // 初始化游客模式
 async function initGuestMode(communityId: string) {
-  console.log('guest')
   // 1. 将当前社区推入社区列表
   await talk.addTempCommunity(communityId)
 

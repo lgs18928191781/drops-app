@@ -82,6 +82,74 @@
       </div>
     </div>
 
+    <!-- metaName -->
+    <div class="py-6">
+      <h4 class="text-dark-400 dark:text-gray-200 text-sm mb-6">
+        {{ $t('Talk.Modals.metaname') }}
+      </h4>
+
+      <div class="mt-2">
+        <!-- equipped => changed -->
+        <div class="grid grid-cols-9 items-center justify-between">
+          <div class="space-y-2 col-span-4">
+            <div class="text-dark-300 dark:text-gray-400 text-xs h-8 flex items-center">
+              Equipped
+            </div>
+            <MetaNameDisplay
+              :name="form.original.metaName"
+              :colorful="true"
+              class="!hidden lg:!flex"
+            />
+            <MetaNameDisplay
+              :name="form.original.metaName"
+              :colorful="true"
+              :no-tag="true"
+              class="lg:!hidden"
+            />
+          </div>
+
+          <!-- arrow -->
+          <Icon
+            name="chevron_double_right"
+            class="w-4 h-4 lg:w-5 lg:h-5 text-dark-300 dark:text-gray-400 col-span-1 mx-1 lg:mx-0 place-self-center"
+          />
+
+          <!-- change -->
+          <div class="col-span-4 space-y-2">
+            <div class="flex items-center gap-x-2 h-8">
+              <div class="text-dark-300 dark:text-gray-400 text-xs">Switch to</div>
+              <button
+                class="main-border primary px-2 py-1 small rounded-full text-xs font-bold"
+                @click="layout.isShowChooseMetaNameModal2 = true"
+              >
+                Choose
+              </button>
+            </div>
+
+            <ChooseMetaNameModal
+              v-if="layout.isShowChooseMetaNameModal2"
+              @choose="onChooseMetaName"
+            />
+
+            <template v-if="form.metaName">
+              <MetaNameDisplay
+                :name="form.metaName.name"
+                :colorful="true"
+                class="!hidden lg:!flex"
+              />
+              <MetaNameDisplay
+                :name="form.metaName.name"
+                :colorful="true"
+                :no-tag="true"
+                class="lg:!hidden"
+              />
+            </template>
+            <div class="text-dark-300 dark:text-gray-400" v-else>Unchanged</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 封面 -->
     <div class="py-6">
       <h4 class="text-dark-400 dark:text-gray-200 text-sm mb-6">
@@ -159,12 +227,17 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, toRaw } from 'vue'
 
 import { useCommunityUpdateFormStore } from '@/stores/forms'
 import { isFileTooLarge, isImage } from '@/utils/talk'
+import ChooseMetaNameModal from '@/components/ChooseMetaName/Wrapper.vue'
+
+import MetaNameDisplay from '@/components/MetaName/Display.vue'
+import { useLayoutStore } from '@/stores/layout'
 
 const form = useCommunityUpdateFormStore()
+const layout = useLayoutStore()
 
 const iconUploader = ref<HTMLInputElement | null>(null)
 const coverUploader = ref<HTMLInputElement | null>(null)
@@ -180,6 +253,11 @@ const handleIconChange = (e: Event) => {
 
     form.icon = file
   }
+}
+
+const onChooseMetaName = (metaName: any) => {
+  console.log('here')
+  form.metaName = toRaw(metaName)
 }
 
 const handleCoverChange = (e: Event) => {
