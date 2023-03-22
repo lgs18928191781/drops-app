@@ -40,15 +40,15 @@ export async function resolveMetaName(metaName: string) {
 
   // 解析metaName：sha256一次
   // 查看本地是否有缓存
-  const metaNameLookup = localStorage.getItem('metaNameLookup') || '{}'
-  let metaNameLookupObj = JSON.parse(metaNameLookup)
-  if (metaNameLookupObj[metaNameWithoutSuffix]) {
-    const communityId = metaNameLookupObj[metaNameWithoutSuffix]
-    return {
-      communityId,
-      metaName,
-    }
-  }
+  // const metaNameLookup = localStorage.getItem('metaNameLookup') || '{}'
+  // let metaNameLookupObj = JSON.parse(metaNameLookup)
+  // if (metaNameLookupObj[metaNameWithoutSuffix]) {
+  //   const communityId = metaNameLookupObj[metaNameWithoutSuffix]
+  //   return {
+  //     communityId,
+  //     metaName,
+  //   }
+  // }
 
   // 本地没有缓存，则计算sha256
   let communityId
@@ -76,8 +76,8 @@ export async function resolveMetaName(metaName: string) {
   }
 
   // 缓存到本地
-  metaNameLookupObj[metaNameWithoutSuffix] = communityId
-  localStorage.setItem('metaNameLookup', JSON.stringify(metaNameLookupObj))
+  // metaNameLookupObj[metaNameWithoutSuffix] = communityId
+  // localStorage.setItem('metaNameLookup', JSON.stringify(metaNameLookupObj))
 
   return {
     communityId,
