@@ -479,19 +479,17 @@ export function isTabarPage(routeName: any) {
 
 export function toUrl(url: string | undefined) {
   if (!url) return
-  if (url.indexOf('https://') !== -1 || url.indexOf('http://') !== -1) {
-    // router.push({
-    //   path: '/iframe',
-    //   query: {
-    //     url: encodeURIComponent(url),
-    //   },
-    // })
-    if (isApp) {
-      window.location.href = url
+  try {
+    const Url = new URL(url!)
+    let target
+    if (isIOS) {
+      target = '_selft'
     } else {
-      window.open(url, '_blank')
+      target = '_blank'
     }
-  } else {
+    window.open(url, target)
+  } catch (error) {
+    // 站内链接
     router.push(url)
   }
 }
@@ -732,13 +730,7 @@ export function getNFTClassify(classifyList: string[] | undefined) {
 }
 
 export function toWhatsonchain(txId: string) {
-  let target
-  if (isIOS) {
-    target = '_selft'
-  } else {
-    target = '_blank'
-  }
-  window.open(`https://whatsonchain.com/tx/${txId}`, target)
+  toUrl(`https://whatsonchain.com/tx/${txId}`)
 }
 
 export function toMvcScan(txId: string) {

@@ -81,10 +81,10 @@
                 <div
                   class="item main-border primary"
                   v-for="item in downloadGroup"
-                  @click="comming"
+                  @click="download(item)"
                 >
                   <img :src="item.icon" alt="" />
-                  <div class="right">
+                  <div class="right flex1">
                     <span class="sm">{{ item.topText }}</span>
                     <span class="big">{{ item.footText }}</span>
                   </div>
@@ -209,10 +209,11 @@ import footIcon1 from '@/assets/show/show.png'
 import footIcon2 from '@/assets/show/foot-icon2.png'
 import footIcon3 from '@/assets/show/foot-icon3.png'
 import footIcon4 from '@/assets/show/foot-icon4.png'
+import TestflightIcon from '@/assets/images/testflight.png'
 import { useRouter } from 'vue-router'
 import LogoVue from './Logo.vue'
 import { useRootStore } from '@/stores/root'
-import { checkUserLogin, SetLang } from '@/utils/util'
+import { checkUserLogin, SetLang, toUrl } from '@/utils/util'
 import { ElMessage } from 'element-plus'
 
 const i18n = useI18n()
@@ -318,8 +319,14 @@ const records = reactive([
 const downloadGroup = reactive([
   {
     icon: APPLE,
-    topText: 'Download on the',
+    topText: 'GET IT on',
     footText: 'App Store',
+  },
+  {
+    icon: TestflightIcon,
+    topText: 'GET IT ON ',
+    footText: 'TestFlight',
+    link: 'https://testflight.apple.com/join/BxwyvuIf',
   },
   {
     icon: googlePlay,
@@ -330,6 +337,7 @@ const downloadGroup = reactive([
     icon: APK,
     topText: 'Download on the',
     footText: 'Android APK',
+    link: 'https://api.show3.io/install/show3.apk',
   },
 ])
 
@@ -344,6 +352,14 @@ function toLink(link: string) {
 
 function comming() {
   ElMessage.info(i18n.t('Comming Soon'))
+}
+
+function download(item: any) {
+  if (item.link) {
+    toUrl(item.link)
+  } else {
+    comming()
+  }
 }
 </script>
 
