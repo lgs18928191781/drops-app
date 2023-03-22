@@ -950,7 +950,7 @@ export async function tx(txId: string | undefined) {
       : Chains.MVC
   const url =
     chain === Chains.MVC ? `https://mvcscan.com/tx/${txId}` : `https://whatsonchain.com/tx/${txId}`
-  window.open(url, '_blank')
+  toUrl(url)
 }
 
 // 随机数
