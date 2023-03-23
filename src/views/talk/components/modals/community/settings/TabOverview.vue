@@ -269,9 +269,17 @@ const handleIconChange = (e: Event) => {
 
 const isAtMyAddress = ref(false)
 const getMetaNameAtMyAddress = async () => {
-  const nft = form.original.metaNameNft
+  const nft = form?.original?.metaNameNft
+  if (!nft) {
+    isAtMyAddress.value = false
+    return
+  }
+
   // 不判断ens协议
-  if (nft.startsWith('ens://')) return (isAtMyAddress.value = true)
+  if (nft.startsWith('ens://')) {
+    isAtMyAddress.value = false
+    return
+  }
 
   const { address } = await getMetaNameAddress(nft)
   if (!address) {
@@ -279,7 +287,7 @@ const getMetaNameAtMyAddress = async () => {
     return
   }
 
-  return (isAtMyAddress.value = address === talk.selfAddress)
+  isAtMyAddress.value = address === talk.selfAddress
 }
 getMetaNameAtMyAddress()
 
