@@ -295,6 +295,9 @@
       "default": "An error occurred.",
       "image_only": "You should upload an image.",
       "image_too_large": "Image size should be less than 10MB."
+    },
+    "Quote": {
+      "tips": "Replying to"
     }
   },
   "Not install MetaLet Wallet": "Not Install MetaLet Wallet",

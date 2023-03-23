@@ -329,6 +329,9 @@
       "default": "发生了一个错误",
       "image_only": "只能上传图片",
       "image_too_large": "图片大小不能超过 10MB"
+    },
+    "Quote": {
+      "tips": "正在回复至"
     }
   },
   "Not install MetaLet Wallet": "你还没安装MetaLet插件钱包",

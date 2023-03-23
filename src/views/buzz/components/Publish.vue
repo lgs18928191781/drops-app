@@ -460,6 +460,12 @@ function onPlay(params: { file: string; type: 'audio' | 'video' }) {
   }
 }
 
+defineExpose({
+  respostBuzz,
+  attachments,
+  content,
+})
+
 watch(
   () => props.repostTxId,
   repostTxId => {
