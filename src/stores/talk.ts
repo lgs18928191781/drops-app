@@ -16,6 +16,7 @@ import { sleep } from '@/utils/util'
 import { useUserStore } from './user'
 import { GetUserInfo } from '@/api/aggregation'
 import { useWsStore } from './ws'
+import { getMetaNameAddress } from '@/utils/meta-name'
 
 export const useTalkStore = defineStore('talk', {
   state: () => {
@@ -326,14 +327,16 @@ export const useTalkStore = defineStore('talk', {
 
       if (!community.metaNameNft) return false
 
-      console.log({ community })
+      // 判断metaname地址
+      const { metaNameNft } = community
 
-      return true
+      // 不判断ens协议
+      if (metaNameNft.startsWith('ens://')) return true
 
-      // const { metaName } = community
-      // if (metaName === this.selfMetaId) {
-      //   this.isCommunityOwner = true
-      // }
+      const { address } = await getMetaNameAddress(metaNameNft)
+      if (!address) return false
+
+      return address === this.selfAddress
     },
 
     async checkMembership(routeCommunityId: string) {

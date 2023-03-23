@@ -95,17 +95,22 @@
             <div class="text-dark-300 dark:text-gray-400 text-xs h-8 flex items-center">
               {{ $t('Talk.Modals.equipped') }}
             </div>
-            <MetaNameDisplay
-              :name="form.original.metaName"
-              :colorful="true"
-              class="!hidden lg:!flex"
-            />
-            <MetaNameDisplay
-              :name="form.original.metaName"
-              :colorful="true"
-              :no-tag="true"
-              class="lg:!hidden"
-            />
+            <template v-if="form.original.metaName && isAtMyAddress">
+              <MetaNameDisplay
+                :name="form.original.metaName"
+                :colorful="true"
+                class="!hidden lg:!flex"
+              />
+              <MetaNameDisplay
+                :name="form.original.metaName"
+                :colorful="true"
+                :no-tag="true"
+                class="lg:!hidden"
+              />
+            </template>
+            <div v-else class="text-dark-300 dark:text-gray-400 text-xs h-8 flex items-center">
+              --
+            </div>
           </div>
 
           <!-- arrow -->
@@ -239,9 +244,12 @@ import ChooseMetaNameModal from '@/components/ChooseMetaName/Wrapper.vue'
 
 import MetaNameDisplay from '@/components/MetaName/Display.vue'
 import { useLayoutStore } from '@/stores/layout'
+import { getMetaNameAddress } from '@/utils/meta-name'
+import { useTalkStore } from '@/stores/talk'
 
 const form = useCommunityUpdateFormStore()
 const layout = useLayoutStore()
+const talk = useTalkStore()
 
 const iconUploader = ref<HTMLInputElement | null>(null)
 const coverUploader = ref<HTMLInputElement | null>(null)
@@ -258,6 +266,30 @@ const handleIconChange = (e: Event) => {
     form.icon = file
   }
 }
+
+const isAtMyAddress = ref(false)
+const getMetaNameAtMyAddress = async () => {
+  const nft = form?.original?.metaNameNft
+  if (!nft) {
+    isAtMyAddress.value = false
+    return
+  }
+
+  // 不判断ens协议
+  if (nft.startsWith('ens://')) {
+    isAtMyAddress.value = false
+    return
+  }
+
+  const { address } = await getMetaNameAddress(nft)
+  if (!address) {
+    isAtMyAddress.value = false
+    return
+  }
+
+  isAtMyAddress.value = address === talk.selfAddress
+}
+getMetaNameAtMyAddress()
 
 const onChooseMetaName = (metaName: any) => {
   console.log('here')

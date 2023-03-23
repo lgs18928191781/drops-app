@@ -90,7 +90,7 @@ const getMetasvSig = async (path: string): Promise<MetasvSigTypes> => {
   })
 }
 
-const callMetasvApi = async (
+export const callMetasvApi = async (
   path: string,
   params: ObjTypes<string | number> = {},
   method = 'get'
