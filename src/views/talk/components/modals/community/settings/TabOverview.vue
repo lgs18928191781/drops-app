@@ -268,8 +268,9 @@ const handleIconChange = (e: Event) => {
 }
 
 const isAtMyAddress = ref(false)
-const getMetaNameAtMyAddress = async () => {
+const getMetaNameAtOwnerAddress = async () => {
   const nft = form?.original?.metaNameNft
+
   if (!nft) {
     isAtMyAddress.value = false
     return
@@ -287,9 +288,9 @@ const getMetaNameAtMyAddress = async () => {
     return
   }
 
-  isAtMyAddress.value = address === talk.selfAddress
+  isAtMyAddress.value = address === form?.original?.ownerInfo?.address
 }
-getMetaNameAtMyAddress()
+getMetaNameAtOwnerAddress()
 
 const onChooseMetaName = (metaName: any) => {
   console.log('here')

@@ -10,7 +10,6 @@ export function isMetaName(name: string) {
 
 export async function getMetaNameAddress(metaNameNft: string): Promise<{ address: string }> {
   // 去掉开头的协议名，如：metaid://
-  console.log(metaNameNft)
   const [codehash, genesis, tokenIndex] = metaNameNft.split('://')[1]?.split('/')
   if (!codehash || !genesis || !tokenIndex) {
     return { address: '' }

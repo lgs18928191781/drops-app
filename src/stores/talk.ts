@@ -336,7 +336,7 @@ export const useTalkStore = defineStore('talk', {
       const { address } = await getMetaNameAddress(metaNameNft)
       if (!address) return false
 
-      return address === this.selfAddress
+      return address === community.ownerInfo.address
     },
 
     async checkMembership(routeCommunityId: string) {

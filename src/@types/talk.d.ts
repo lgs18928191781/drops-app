@@ -58,6 +58,10 @@ declare interface Community {
   icon: string
   channels: Channel[]
   memberTotal?: number
+  ownerMetaId: string
+  ownerInfo: {
+    address: string
+  }
 }
 
 declare interface CommunityAuth {
