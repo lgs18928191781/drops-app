@@ -58,6 +58,10 @@ declare interface Community {
   icon: string
   channels: Channel[]
   memberTotal?: number
+  ownerMetaId: string
+  ownerInfo: {
+    address: string
+  }
 }
 
 declare interface CommunityAuth {
@@ -108,6 +112,7 @@ declare interface MessageDto {
   attachments?: AttachmentItem[]
   originalFileUrl?: any
   channelType?: ChannelType
+  replyTx?: string
 }
 
 declare interface CryptoInfo {

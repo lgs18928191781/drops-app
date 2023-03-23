@@ -19,6 +19,7 @@
           class="flex items-center justify-center group relative"
           :class="item.extraClass"
           :key="index"
+          @click="item.symbol !== '@me' ? (layout.isShowLeftNav = false) : ''"
         >
           <div
             class="absolute left-0 h-full flex items-center top-0"
@@ -135,10 +136,14 @@ const whiteList = [
 const isInWhitelist = talk.selfMetaId && whiteList.includes(talk.selfMetaId)
 
 function getCommunityKey(community: Community) {
+  // return community.id
   if (!community.metaName) return community.id
 
   const originalMetaName = community.metaName
-  return originalMetaName.includes('.') ? originalMetaName : `${originalMetaName}.metaid`
+  // return originalMetaName.includes('.') ? originalMetaName : `${originalMetaName}.metaid`
+
+  // 目前不解析.eth
+  return originalMetaName.includes('.') ? community.id : `${originalMetaName}.metaid`
 }
 
 const apps = reactive([

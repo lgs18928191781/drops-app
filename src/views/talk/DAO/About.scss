@@ -1,0 +1,24 @@
+@import './Entrust.scss';
+
+.h-full {
+    margin: 0 -18px;
+    padding: 0 18px;
+}
+
+.information-list {
+    .information-item {
+        margin-bottom: 30px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        .lable {
+            font-weight: bold;
+        }
+
+        .cont {
+            margin-top: 10px;
+        }
+    }
+}

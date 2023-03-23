@@ -176,7 +176,24 @@
 }
 
 @media only screen and (max-width: 750PX) {
+    .collection-index {
+        .header {
+            flex-direction: column;
+
+            .flex1,
+            .chain {
+                width: 100%;
+            }
+
+            .chain {
+                margin-top: 15px;
+            }
+        }
+    }
+
     .collection-list {
         grid-template-columns: 100%;
+
+
     }
 }

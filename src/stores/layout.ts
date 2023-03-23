@@ -14,11 +14,13 @@ export const useLayoutStore = defineStore('layout', {
       isShowCreateDaoModal: false,
       isShowCommunityInfoModal: false,
       isShowCommunityCardModal: false,
+      isShowNoMetaNameModal: false,
       isShowSearchModal: false,
 
       isShowSettingsModal: false,
       isShowChooseTokenModal: false,
       isShowChooseMetaNameModal: false,
+      isShowChooseMetaNameModal2: false,
       isShowRedPacketModal: false,
       isShowRedPacketOpenModal: false,
       isShowRedPacketResultModal: false,
