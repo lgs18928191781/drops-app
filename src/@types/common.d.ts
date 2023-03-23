@@ -724,6 +724,74 @@ declare interface DataUserInfo {
   publicKey: string
 }
 
+declare interface ChatSessionMessageItem {
+  amount: number
+  amountStr: string
+  content: string
+  contentType: string
+  data: {
+    content: string
+    contentType: string
+    encrypt: import('@/enum').IsEncrypt
+    timestamp: number
+    to: string
+  }
+  dataType: string
+  encoding: string
+  encrypt: string
+  encryption: string
+  from: string
+  fromAvatarImage: string
+  fromName: string
+  fromUserInfo: {
+    metaId: string
+    address: string
+    avatarImage: string
+    avatarTxId: string
+    avatarType: string
+    coverPublicKey: string
+    coverType: string
+    coverUrl: string
+    metaId: string
+    metaIdTimestamp: number
+    metaName: string
+    name: string
+    nameType: string
+    nftNamePublicKey: string
+    publicKey: string
+  }
+  icon: string
+  iconUrl: string
+  memo: string
+  nodeName: string
+  protocol: string
+  protocolTxId: string
+  subProtocolTxId: string
+  symbol: string
+  timestamp: number
+  to: string
+  toAvatarImage: string
+  toName: string
+  toUserInfo: {
+    address: string
+    avatarImage: string
+    avatarTxId: string
+    avatarType: string
+    coverPublicKey: string
+    coverType: string
+    coverUrl: string
+    metaId: string
+    metaIdTimestamp: number
+    metaName: string
+    name: string
+    nameType: string
+    nftNamePublicKey: string
+    publicKey: string
+  }
+  txId: string
+  type: number
+}
+
 declare interface ChatMessageItem {
   avatarImage: string
   avatarTxId: string
@@ -741,7 +809,21 @@ declare interface ChatMessageItem {
   protocol: string
   redMetaId: string
   timestamp: number
-  txId: '80469d3b7b101aadc19b33f621bf52e3b5ab1aa9287bfa3c69ee65e0643019c3'
+  txId: string
   userInfo: DataUserInfo
   isMock?: boolean
+}
+
+declare interface ShareChatMessageData {
+  communityId: string
+  channelId: string
+  userMetaId: string
+  message: {
+    content: string
+    contentType: string
+    metanetId: string
+    protocol: string
+    timestamp: number
+    txId: string
+  }
 }

@@ -108,8 +108,7 @@ declare interface MessageDto {
   attachments?: AttachmentItem[]
   originalFileUrl?: any
   channelType?: ChannelType
-  quoteTxId?: string
-  quoteProtocol?: string
+  replyTx?: string
 }
 
 declare interface CryptoInfo {

@@ -32,3 +32,18 @@
 
     }
 }
+
+.replying {
+    background: rgba(var(--themeTextColorRgb), 0.1);
+
+    &::before {
+        content: '';
+        display: block;
+        position: absolute;
+        width: 2PX;
+        height: 100%;
+        left: 0;
+        top: 0;
+        background: var(--color-primary);
+    }
+}

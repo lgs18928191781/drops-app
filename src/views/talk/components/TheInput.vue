@@ -12,7 +12,10 @@
       <div class="flex1 flex flex-align-center">
         {{ $t('Talk.Quote.tips') }}
         <a @click="emit('toQuote')" class="user"
-          ><UserName :name="quote.userInfo.name" :meta-name="quote.userInfo.metaName" :no-tag="true"
+          ><UserName
+            :name="quote.userInfo ? quote.userInfo.name : quote.fromUserInfo.name"
+            :meta-name="quote.userInfo ? quote.userInfo.metaName : quote.fromUserInfo.metaName"
+            :no-tag="true"
         /></a>
       </div>
       <Icon name="x_circle" class="close" @click="emit('update:quote', undefined)" />
@@ -439,7 +442,7 @@ const trySendImage = async () => {
     content: '',
     originalFileUrl,
     channelType: talk.activeChannelType as ChannelType,
-    quoteTxId: props.quote?.txId,
+    replyTx: props.quote?.txId,
   }
   emit('update:quote', undefined)
   await sendMessage(messageDto)
@@ -503,7 +506,7 @@ const trySendText = async (e: any) => {
     channelId: talk.activeChannel.id,
     userName: userStore.user?.name || '',
     channelType: talk.activeChannelType as ChannelType,
-    quoteTxId: props.quote?.txId,
+    replyTx: props.quote?.txId,
   }
   emit('update:quote', undefined)
   await sendMessage(messageDto)

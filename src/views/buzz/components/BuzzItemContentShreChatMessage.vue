@@ -14,9 +14,19 @@
       @click.stop="toCommity"
     >
       <div class="chat">
-        <div class="comminty flex flex-align-center">
-          <Image :src="''" v-if="''" />
-          <div class="cont flex1"></div>
+        <div class="community flex flex-align-center">
+          <div class="flex1 flex flex-align-center">
+            <Image :src="''" />
+            <div class="cont flex1">
+              <div class="community-name meta-name">社区名</div>
+              <div class="channel-name">频道名</div>
+            </div>
+          </div>
+          <Icon name="down" class="right" />
+        </div>
+        <div class="message-warp bg-gray-200 dark:bg-gray-950">
+          <MessageItem :message="{}" :isShare="true" />
+          <div class="quote-message"></div>
         </div>
       </div>
     </CardVue>
@@ -27,6 +37,8 @@
 import { usePostTagStore } from '@/stores/buzz/tag'
 import { computed } from 'vue'
 import BuzzItemText from './BuzzItemText.vue'
+import CardVue from '@/components/Card/Card.vue'
+import MessageItem from '@/views/talk/components/MessageItem.vue'
 
 interface Props {
   buzz: BuzzItem

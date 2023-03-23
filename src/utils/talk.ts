@@ -549,7 +549,7 @@ export const validateTextMessage = (message: string) => {
 const _sendTextMessage = async (messageDto: MessageDto) => {
   const userStore = useUserStore()
   const talkStore = useTalkStore()
-  const { content, channelId: groupID, userName: nickName, quoteTxId } = messageDto
+  const { content, channelId: groupID, userName: nickName, replyTx } = messageDto
 
   // 1. 构建协议数据
   const timestamp = getTimestampInSeconds()
@@ -562,7 +562,7 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
     content,
     contentType,
     encryption,
-    quoteTxId,
+    replyTx,
   }
 
   // 2. 构建节点参数
@@ -623,7 +623,7 @@ export const tryCreateNode = async (node: any, sdk: SDK, mockId: string) => {
 const _sendTextMessageForSession = async (messageDto: MessageDto) => {
   const userStore = useUserStore()
   const talkStore = useTalkStore()
-  const { content, channelId: to, quoteTxId } = messageDto
+  const { content, channelId: to, replyTx } = messageDto
 
   // 1. 构建协议数据
   // 1.1 to: done
@@ -640,7 +640,7 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
     content,
     contentType,
     encrypt,
-    quoteTxId,
+    replyTx,
   }
 
   // 2. 构建节点参数
@@ -711,7 +711,6 @@ const _uploadImage = async (file: File, sdk: SDK) => {
 }
 
 const _sendImageMessage = async (messageDto: MessageDto) => {
-  debugger
   const userStore = useUserStore()
   const talkStore = useTalkStore()
   const { channelId: groupId, userName: nickName, attachments, originalFileUrl } = messageDto
@@ -732,8 +731,7 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
     encrypt,
     fileType,
     attachment,
-    quoteTxId: messageDto.quoteTxId,
-    quoteProtocol: messageDto.quoteProtocol,
+    replyTx: messageDto.replyTx,
   }
   if (messageDto.channelType === ChannelType.Group) {
     dataCarrier.groupId = groupId
@@ -1004,4 +1002,22 @@ export async function deleteAnnouncement(
   await sdk.createBrfcChildNode(quoteNode)
 
   return 'success'
+}
+
+export function decryptedMessage(message: ChatMessageItem) {
+  const talk = useTalkStore()
+  if (message.encryption === '0') {
+    return message.content
+  }
+
+  if (message.protocol !== 'simpleGroupChat' && message.protocol !== 'SimpleFileGroupChat') {
+    return message.content
+  }
+
+  // 处理mock的图片消息
+  if (message.isMock && message.protocol === 'SimpleFileGroupChat') {
+    return message.content
+  }
+
+  return decrypt(message.content, talk.activeChannelId.substring(0, 16))
 }

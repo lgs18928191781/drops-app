@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, reactive, ref } from 'vue'
+import { defineAsyncComponent, provide, reactive, ref } from 'vue'
 import TheInput from './TheInput.vue'
 import TheErrorBox from './TheErrorBox.vue'
 
@@ -23,4 +23,6 @@ const MessageListRef = ref()
 function toQuote() {
   MessageListRef.value.scrollToTimeStamp(quote.val!.timestamp)
 }
+
+provide('Reply', quote)
 </script>

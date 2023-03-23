@@ -14,16 +14,24 @@
 
 <script lang="ts" setup>
 import { Translate } from '@/api/core'
-import { EnvMode } from '@/enum'
+import { EnvMode, NodeName } from '@/enum'
+import { useTalkStore } from '@/stores/talk'
+import { decryptedMessage } from '@/utils/talk'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const i18n = useI18n()
 
 const props = defineProps(['message', 'parsed', 'translateStatus', 'translatedContent'])
-const emit = defineEmits(['update:translateStatus', 'update:translatedContent', 'quote', 'toBuzz'])
+const emit = defineEmits<{
+  (e: 'update:translateStatus', status: string): void
+  (e: 'update:translatedContent', content: string): void
+  (e: 'quote', message: any): void
+  (e: 'toBuzz', data: ShareChatMessageData): void
+}>()
 
 const isText = computed(() => ['ShowMsg', 'simpleGroupChat'].includes(props.message.protocol))
+const talk = useTalkStore()
 
 const actions = computed(() => {
   const actions = []
@@ -89,13 +97,45 @@ const actions = computed(() => {
       name: 'Talk.MessageMenu.toBuzz',
       icon: 'share_arrow',
       action: () => {
+        let data: ShareChatMessageData
+        if (props.message.protocol === NodeName.ShowMsg) {
+          const message: ChatSessionMessageItem = props.message
+          data = {
+            communityId: talk.activeCommunityId,
+            channelId: talk.activeChannelId,
+            userMetaId: message.fromUserInfo.metaId,
+            message: {
+              content: message.data.content,
+              contentType: message.data.contentType,
+              protocol: message.protocol,
+              txId: message.txId,
+              timestamp: message.data.timestamp,
+              metanetId: '',
+            },
+          }
+        } else {
+          const message: ChatMessageItem = props.message
+          data = {
+            communityId: talk.activeCommunityId,
+            channelId: talk.activeChannelId,
+            userMetaId: message.userInfo.metaId,
+            message: {
+              content: decryptedMessage(message),
+              contentType: message.contentType,
+              protocol: message.protocol,
+              txId: message.txId,
+              timestamp: message.timestamp,
+              metanetId: message.metanetId,
+            },
+          }
+        }
         // 复制该消息内容到剪贴板
-        emit('toBuzz', props.message)
+        emit('toBuzz', data)
       },
     })
 
     // 回復
-    const quoteProtocols = ['SimpleFileGroupChat', 'simpleGroupChat']
+    const quoteProtocols = ['SimpleFileGroupChat', 'simpleGroupChat', NodeName.ShowMsg]
     if (quoteProtocols.includes(props.message.protocol)) {
       actions.push({
         name: 'Talk.MessageMenu.quote',

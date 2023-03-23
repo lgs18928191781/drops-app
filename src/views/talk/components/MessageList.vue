@@ -11,6 +11,7 @@
   >
     <div class="">
       <div class="flex flex-col-reverse space-y-2 space-y-reverse">
+        <!-- 群聊 -->
         <template v-if="talk.activeChannelType === 'group'">
           <MessageItem
             v-for="message in talk.activeChannel?.pastMessages"
@@ -48,11 +49,14 @@
           </div>
         </template>
 
+        <!-- 私聊 -->
         <template v-else>
           <MessageItemForSession
             v-for="message in talk.activeChannel?.pastMessages"
             :message="message"
+            v-bind="$attrs"
             :id="message.timestamp"
+            @toBuzz="onToBuzz"
           />
         </template>
 
@@ -74,7 +78,9 @@
           <MessageItemForSession
             v-for="message in talk.activeChannel?.newMessages"
             :message="message"
+            v-bind="$attrs"
             :id="message.timestamp"
+            @toBuzz="onToBuzz"
           />
         </template>
       </div>
@@ -88,15 +94,15 @@
 import { getChannelMessages } from '@/api/talk'
 import { useTalkStore } from '@/stores/talk'
 import { useLayoutStore } from '@/stores/layout'
-import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, watch, inject } from 'vue'
 import LoadingItem from './LoadingItem.vue'
 import LoadingList from './LoadingList.vue'
 import MessageItem from './MessageItem.vue'
 import MessageItemForSession from './MessageItemForSession.vue'
-import { sleep } from '@/utils/util'
+import { openLoading, sleep } from '@/utils/util'
 import { useUserStore } from '@/stores/user'
 import Publish from '@/views/buzz/components/Publish.vue'
-import { IsEncrypt } from '@/enum'
+import { IsEncrypt, NodeName } from '@/enum'
 import { decrypt } from '@/utils/crypto'
 
 const user = useUserStore()
@@ -227,8 +233,24 @@ function scrollToTimeStamp(time: number) {
   }
 }
 
-function onToBuzz(message: ChatMessageItem) {
-  PublishRef.value.respostBuzz.val = isShowPublish.value = true
+async function onToBuzz(data: ShareChatMessageData) {
+  const loading = openLoading()
+  const res = await user.showWallet
+    .createBrfcChildNode({
+      nodeName: NodeName.ShareChatMessage,
+      data: JSON.stringify(data),
+    })
+    .catch(error => {
+      loading.close()
+      ElMessage.error(error.message)
+    })
+  if (res) {
+    loading.close()
+    talk.shareToBuzzTxId = res.currentNode.txId
+    layout.isShowShareSuccessModal = true
+  } else if (res === null) {
+    loading.close()
+  }
 }
 
 function decryptedMessage(message: ChatMessageItem) {

@@ -1,17 +1,20 @@
 <template>
   <div
     class="relative py-1 px-4 lg:hover:bg-gray-200 dark:lg:hover:bg-gray-950 transition-all duration-150  group"
+    :class="{ replying: reply.val?.timestamp === message.timestamp }"
   >
     <!-- 消息菜单 -->
-    <MessageMenu
-      :message="props.message"
-      :parsed="parseTextMessage(decryptedMessage)"
-      v-model:translateStatus="translateStatus"
-      v-model:translatedContent="translatedContent"
-      v-bind="$attrs"
-      v-if="isText"
-    />
-    <MessageMenu :message="props.message" v-bind="$attrs" v-else />
+    <template v-if="!isShare">
+      <MessageMenu
+        :message="props.message"
+        :parsed="parseTextMessage(decryptedMessage)"
+        v-model:translateStatus="translateStatus"
+        v-model:translatedContent="translatedContent"
+        v-bind="$attrs"
+        v-if="isText"
+      />
+      <MessageMenu :message="props.message" v-bind="$attrs" v-else />
+    </template>
 
     <!-- quote -->
     <div class="quote mb-2" v-if="message.quote">
@@ -168,7 +171,7 @@ import { decrypt } from '@/utils/crypto'
 import NftLabel from './NftLabel.vue'
 import MessageMenu from './MessageMenu.vue'
 import TalkImagePreview from './ImagePreview.vue'
-import { computed, ref, Ref } from 'vue'
+import { computed, inject, ref, Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { formatTimestamp } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
@@ -187,8 +190,9 @@ const userStore = useUserStore()
 const talk = useTalkStore()
 const layout = useLayoutStore()
 const jobs = useJobsStore()
+const reply: any = inject('Reply')
 
-const props = defineProps(['message'])
+const props = defineProps(['message', 'isShare'])
 
 /** 翻译 */
 type TranslateStatus = 'hidden' | 'showing' | 'processing'
