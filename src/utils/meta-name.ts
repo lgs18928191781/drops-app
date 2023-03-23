@@ -1,10 +1,26 @@
 import { GetMetaNameResolver } from '@/api/aggregation'
+import { getOneNft } from '@/api/metasv-proxy'
 import sha256 from 'crypto-js/sha256'
 
 const metaNameRegex = /[\s\S]+[.][a-zA-Z0-9_-]+/
 
 export function isMetaName(name: string) {
   return metaNameRegex.test(name)
+}
+
+export async function getMetaNameAddress(metaNameNft: string): Promise<{ address: string }> {
+  // 去掉开头的协议名，如：metaid://
+  console.log(metaNameNft)
+  const [codehash, genesis, tokenIndex] = metaNameNft.split('://')[1]?.split('/')
+  if (!codehash || !genesis || !tokenIndex) {
+    return { address: '' }
+  }
+
+  // 查询nft地址
+  const nftInfo = await getOneNft({ codehash, genesis, tokenIndex })
+  const address = nftInfo?.address
+
+  return { address: address || '' }
 }
 
 export async function resolveMetaName(metaName: string) {
