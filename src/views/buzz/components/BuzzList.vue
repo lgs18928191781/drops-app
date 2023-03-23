@@ -23,7 +23,7 @@
           :min-item-size="1"
           key-field="txId"
           :pageMode="true"
-          :buffer="400"
+          :buffer="1000"
         >
           <template v-slot="{ item, index, active }">
             <template v-if="index === recommendCommunityIndex && pagination">
