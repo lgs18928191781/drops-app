@@ -18,7 +18,13 @@
         :infinite-scroll-distance="100"
         class="buzz-list"
       >
-        <DynamicScroller :items="list" :min-item-size="1" key-field="txId" :pageMode="true">
+        <DynamicScroller
+          :items="list"
+          :min-item-size="1"
+          key-field="txId"
+          :pageMode="true"
+          :buffer="400"
+        >
           <template v-slot="{ item, index, active }">
             <template v-if="index === recommendCommunityIndex && pagination">
               <slot name="recommendCommunity"></slot>
