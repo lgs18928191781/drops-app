@@ -19,6 +19,7 @@
           class="flex items-center justify-center group relative"
           :class="item.extraClass"
           :key="index"
+          @click="item.symbol !== '@me' ? (layout.isShowLeftNav = false) : ''"
         >
           <div
             class="absolute left-0 h-full flex items-center top-0"
@@ -93,7 +94,7 @@
 
       <div
         class="border-dashed border-2 border-gray-200 dark:border-gray-600 w-13.5 h-13.5 flex items-center justify-center rounded-3xl text-dark-400 cursor-pointer hover:text-dark-800 hover:border-solid hover:border-dark-300 hover:bg-primary transition-all duration-300"
-        v-if="userStore.isAuthorized && !isProduction"
+        v-if="userStore.isAuthorized"
         @click="
           userStore.isAuthorized
             ? (layout.isShowCreateCommunityModal = true)
@@ -135,10 +136,14 @@ const whiteList = [
 const isInWhitelist = talk.selfMetaId && whiteList.includes(talk.selfMetaId)
 
 function getCommunityKey(community: Community) {
+  // return community.id
   if (!community.metaName) return community.id
 
   const originalMetaName = community.metaName
-  return originalMetaName.includes('.') ? originalMetaName : `${originalMetaName}.metaid`
+  // return originalMetaName.includes('.') ? originalMetaName : `${originalMetaName}.metaid`
+
+  // 目前不解析.eth
+  return originalMetaName.includes('.') ? community.id : `${originalMetaName}.metaid`
 }
 
 const apps = reactive([

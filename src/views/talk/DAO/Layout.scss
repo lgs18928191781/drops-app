@@ -1,0 +1,39 @@
+header {
+    background: var(--themeBgSecondColor);
+    padding: 18px;
+
+    nav {
+        a {
+            font-size: 20px;
+            margin-right: 30px;
+            color: var(--themeFadedTextColor);
+
+            &:hover {
+                color: var(--themeTextColor);
+            }
+
+            &.router-link-active {
+                color: var(--themeTextColor);
+                position: relative;
+
+                &::after {
+                    content: '';
+                    position: absolute;
+                    left: 50%;
+                    bottom: 0;
+                    display: block;
+                    width: 30px;
+                    height: 2px;
+                    background: var(--themeTextColor);
+                    border-radius: 2px;
+                    margin-bottom: -20px;
+                    margin-left: -15px;
+                }
+            }
+        }
+    }
+}
+
+.content {
+    padding: 18px;
+}

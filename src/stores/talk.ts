@@ -16,6 +16,7 @@ import { sleep } from '@/utils/util'
 import { useUserStore } from './user'
 import { GetUserInfo } from '@/api/aggregation'
 import { useWsStore } from './ws'
+import { getMetaNameAddress } from '@/utils/meta-name'
 
 export const useTalkStore = defineStore('talk', {
   state: () => {
@@ -34,6 +35,10 @@ export const useTalkStore = defineStore('talk', {
         {
           id: 'topics',
           nameKey: 'Talk.Community.topics',
+        },
+        {
+          id: 'DAO',
+          nameKey: 'Talk.Community.DAO',
         },
       ] as {
         id: string
@@ -312,6 +317,26 @@ export const useTalkStore = defineStore('talk', {
           this.activeCommunityChannels.push(channel)
         }
       })
+    },
+
+    async checkCommunityMetaName(communityId: string) {
+      // 检查metaname字段是否为空，以及metaname所属地址是否是自己
+
+      const community = await getOneCommunity(communityId)
+      if (!community) return false
+
+      if (!community.metaNameNft) return false
+
+      // 判断metaname地址
+      const { metaNameNft } = community
+
+      // 不判断ens协议
+      if (metaNameNft.startsWith('ens://')) return true
+
+      const { address } = await getMetaNameAddress(metaNameNft)
+      if (!address) return false
+
+      return address === community.ownerInfo.address
     },
 
     async checkMembership(routeCommunityId: string) {

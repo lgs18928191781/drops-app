@@ -165,7 +165,15 @@
       "nftize_title2": "NFT-Universal Web3 Social Application",
       "scan_to_join": "Scan to Join the Club",
       "no_evm_address": "You don't have an EVM address yet. Please create or link one first.",
-      "no_mvc_address": "You don't have an MVC address yet. Please create or link one first."
+      "no_mvc_address": "You don't have an MVC address yet. Please create or link one first.",
+      "no_meta_name_title": "No MetaName",
+      "no_meta_name": "This club doesn't equip a MetaName yet, therefore you can't access it.",
+      "go_equip": "Equip",
+      "metaname": "MetaName",
+      "equipped": "Equipped",
+      "switch_to": "Change to",
+      "choose": "Choose",
+      "unchanged": "Unchanged"
     },
     "Channel": {
       "core_members": "core members",
@@ -199,7 +207,7 @@
       "followed": "Followed"
     },
     "Community": {
-      "optional": "(Optional)",
+      "optional": "",
       "create": "Create Club",
       "create_fist_step_tip": "Please upload the club icon and set the club name. You can change them at any time.",
       "community_name": "Club Name",
@@ -246,7 +254,8 @@
       "edit_public_channel": "Edit Public Channel",
       "edit_consensual_channel": "Edit Pass Channel",
       "announcements": "Announcements",
-      "topics": "Topics"
+      "topics": "Topics",
+      "DAO": "DAO"
     },
     "Input": {
       "nft_stickers": "NFT Emoji",
@@ -286,6 +295,9 @@
       "default": "An error occurred.",
       "image_only": "You should upload an image.",
       "image_too_large": "Image size should be less than 10MB."
+    },
+    "Quote": {
+      "tips": "Replying to"
     }
   },
   "Not install MetaLet Wallet": "Not Install MetaLet Wallet",
@@ -1064,5 +1076,51 @@
     "Floor price": "Floor price",
     "Total volume": "Total volume"
   },
-  "PathMoreThan150": "Path>150, please contact customer service for repair"
+  "PathMoreThan150": "Path>150, please contact customer service for repair",
+  "DAO": {
+    "Proposal": "Proposal",
+    "Entrust": "Entrust",
+    "About": "About",
+    "New Proposal": "New Proposal",
+    "Share": "Share",
+    "Vote Title": "Cast Your Vote",
+    "Abstain": "Abstain",
+    "Approve": "Approve",
+    "Opposition": "Opposition",
+    "Vote Records": "Vote Records",
+    "Information": "Information",
+    "Proposal Type": "DAO.Proposal Type",
+    "Start Time": "Start Time",
+    "End Time": "End Time",
+    "Result": "Result",
+    "Vote Number": "Vote Number",
+    "Proposal Title": "Proposal Title",
+    "Basic Type Voting": "Basic Type Voting",
+    "Custom Single Choice Voting": "Custom Single Choice Voting",
+    "Custom Multiple Choice Voting": "Custom Multiple Choice Voting",
+    "Vote Options": "Vote Options",
+    "Vote Time": "Vote Time",
+    "Vote Content": "Content",
+    "Publish": "Publish",
+    "proposalDrscPlac": "Tell us more about your proposal (optional)",
+    "Enter Proposal Title": "Enter Proposal Title",
+    "Enter Vote Options": "Enter Vote Options",
+    "Start date": "Start date",
+    "End date": "End date",
+    "Enter Vote Time": "Enter Vote Time",
+    "Enter Proposal Type": "Enter Proposal Type",
+    "Choose Entrust": "Choose Entrust",
+    "Entrust Records": "Entrust Records",
+    "Confirm Entrust": "Confirm Entrust",
+    "Information Website": "Website",
+    "Information Introduction": "Introduction",
+    "Mission Introduction": "Mission Introduction",
+    "Information Type": "Type",
+    "Information Clause": "Clause",
+    "Information Need Token Min": "Minimum number of governance tokens required to join Dao",
+    "Information Proposal Need Token Min": "Minimum number of Tokens required to create a proposal",
+    "Administrators": "Administrators",
+    "Core Members": "Core Members",
+    "Members": "Members"
+  }
 }

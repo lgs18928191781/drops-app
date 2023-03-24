@@ -213,7 +213,7 @@ export default class ShowmoneyProvider {
     })
   }
 
-  private async callMetasvApi(
+  async callMetasvApi(
     path: string,
     params: ObjTypes<string | number> = {},
     method = 'get',

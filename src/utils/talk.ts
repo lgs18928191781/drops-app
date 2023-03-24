@@ -57,12 +57,12 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   const admins = [userStore.user?.metaId]
 
   // metaname改为非必填
-  if (!metaName) metaName = {}
+  // if (!metaName) metaName = {}
 
   // 没有metaname的情况下，communityId生成方式为随机64位字符串，然后sha256一次
   // const communityId = metaName.communityId || SHA256(realRandomString(64)).toString()
   const communityId = SHA256(realRandomString(64)).toString()
-  
+
   const metaNameNft = metaName.genesis
     ? `${metaName.solution}://${metaName.codeHash}/${metaName.genesis}/${metaName.tokenIndex}`
     : ''
@@ -96,7 +96,7 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
 
 export const updateCommunity = async (form: any, sdk: SDK) => {
   // communityId, name, description, cover, metaName, mateNameNft, admins, reserved, icon
-  let { icon, description, cover, original, metaName, name } = form
+  let { icon, description, cover, original, metaName, replacingMetaName, name } = form
 
   const attachments = []
   let replaceIndex = 0
@@ -116,20 +116,29 @@ export const updateCommunity = async (form: any, sdk: SDK) => {
 
   const admins = original.admins
 
+  let metaNameNft: string
+  if (replacingMetaName) {
+    metaNameNft = replacingMetaName.genesis
+      ? `${replacingMetaName.solution}://${replacingMetaName.codeHash}/${replacingMetaName.genesis}/${replacingMetaName.tokenIndex}`
+      : ''
+  } else {
+    metaNameNft = original.metaNameNft
+  }
+
   const dataCarrier: CommunityData = {
     communityId: original.communityId,
     name,
-    metaName: original.metaName,
-    metaNameNft: original.metaNameNft,
+    metaName: replacingMetaName ? replacingMetaName.name : original.metaName,
+    metaNameNft,
     icon: iconPlaceholder,
     admins,
     description,
     cover: coverPlaceholder || '',
-    reserved: original.reserved,
+    reserved: replacingMetaName ? '' : original.reserved,
     disabled: 0,
   }
 
-  if (metaName.signature) {
+  if (metaName.signature && !replacingMetaName) {
     dataCarrier.reserved = metaName.signature
   }
   console.log({ dataCarrier, form, original })
@@ -540,7 +549,7 @@ export const validateTextMessage = (message: string) => {
 const _sendTextMessage = async (messageDto: MessageDto) => {
   const userStore = useUserStore()
   const talkStore = useTalkStore()
-  const { content, channelId: groupID, userName: nickName } = messageDto
+  const { content, channelId: groupID, userName: nickName, replyTx } = messageDto
 
   // 1. 构建协议数据
   const timestamp = getTimestampInSeconds()
@@ -553,6 +562,7 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
     content,
     contentType,
     encryption,
+    replyTx,
   }
 
   // 2. 构建节点参数
@@ -613,7 +623,7 @@ export const tryCreateNode = async (node: any, sdk: SDK, mockId: string) => {
 const _sendTextMessageForSession = async (messageDto: MessageDto) => {
   const userStore = useUserStore()
   const talkStore = useTalkStore()
-  const { content, channelId: to } = messageDto
+  const { content, channelId: to, replyTx } = messageDto
 
   // 1. 构建协议数据
   // 1.1 to: done
@@ -630,6 +640,7 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
     content,
     contentType,
     encrypt,
+    replyTx,
   }
 
   // 2. 构建节点参数
@@ -720,6 +731,7 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
     encrypt,
     fileType,
     attachment,
+    replyTx: messageDto.replyTx,
   }
   if (messageDto.channelType === ChannelType.Group) {
     dataCarrier.groupId = groupId
@@ -990,4 +1002,22 @@ export async function deleteAnnouncement(
   await sdk.createBrfcChildNode(quoteNode)
 
   return 'success'
+}
+
+export function decryptedMessage(message: ChatMessageItem) {
+  const talk = useTalkStore()
+  if (message.encryption === '0') {
+    return message.content
+  }
+
+  if (message.protocol !== 'simpleGroupChat' && message.protocol !== 'SimpleFileGroupChat') {
+    return message.content
+  }
+
+  // 处理mock的图片消息
+  if (message.isMock && message.protocol === 'SimpleFileGroupChat') {
+    return message.content
+  }
+
+  return decrypt(message.content, talk.activeChannelId.substring(0, 16))
 }

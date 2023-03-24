@@ -144,7 +144,7 @@ declare interface BuzzItem {
   data: string
   displayType: string
   donate: string[]
-  encrypt: 'number' | '1'
+  encrypt: import('@/enum').IsEncrypt
   history: {
     timestamp: number
     txId: string
@@ -189,7 +189,7 @@ declare interface BuzzItem {
   metanetId: string
   protocol: string
   publicKey: string
-  quoteItem: BuzzItem
+  quoteItem: BuzzItem | null
   rePost: {
     metaId: string
     timestamp: number
@@ -705,4 +705,125 @@ declare interface PullDownVal {
   pageContentRef: HTMLElement
   pullRef: HTMLElement
   refreshSlot?: HTMLElement
+}
+
+declare interface DataUserInfo {
+  address: string
+  avatarImage: string
+  avatarTxId: string
+  avatarType: string
+  coverPublicKey: string
+  coverType: string
+  coverUrl: string
+  metaId: string
+  metaIdTimestamp: number
+  metaName: string
+  name: string
+  nameType: string
+  nftNamePublicKey: string
+  publicKey: string
+}
+
+declare interface ChatSessionMessageItem {
+  amount: number
+  amountStr: string
+  content: string
+  contentType: string
+  data: {
+    content: string
+    contentType: string
+    encrypt: import('@/enum').IsEncrypt
+    timestamp: number
+    to: string
+  }
+  dataType: string
+  encoding: string
+  encrypt: string
+  encryption: string
+  from: string
+  fromAvatarImage: string
+  fromName: string
+  fromUserInfo: {
+    metaId: string
+    address: string
+    avatarImage: string
+    avatarTxId: string
+    avatarType: string
+    coverPublicKey: string
+    coverType: string
+    coverUrl: string
+    metaId: string
+    metaIdTimestamp: number
+    metaName: string
+    name: string
+    nameType: string
+    nftNamePublicKey: string
+    publicKey: string
+  }
+  icon: string
+  iconUrl: string
+  memo: string
+  nodeName: string
+  protocol: string
+  protocolTxId: string
+  subProtocolTxId: string
+  symbol: string
+  timestamp: number
+  to: string
+  toAvatarImage: string
+  toName: string
+  toUserInfo: {
+    address: string
+    avatarImage: string
+    avatarTxId: string
+    avatarType: string
+    coverPublicKey: string
+    coverType: string
+    coverUrl: string
+    metaId: string
+    metaIdTimestamp: number
+    metaName: string
+    name: string
+    nameType: string
+    nftNamePublicKey: string
+    publicKey: string
+  }
+  txId: string
+  type: number
+}
+
+declare interface ChatMessageItem {
+  avatarImage: string
+  avatarTxId: string
+  avatarType: string
+  chatType: number
+  content: string
+  contentType: string
+  data: string
+  encryption: string
+  groupId: string
+  metaId: string
+  metanetId: string
+  nickName: string
+  params: string
+  protocol: string
+  redMetaId: string
+  timestamp: number
+  txId: string
+  userInfo: DataUserInfo
+  isMock?: boolean
+}
+
+declare interface ShareChatMessageData {
+  communityId: string
+  channelId: string
+  userMetaId: string
+  message: {
+    content: string
+    contentType: string
+    metanetId: string
+    protocol: string
+    timestamp: number
+    txId: string
+  }
 }
