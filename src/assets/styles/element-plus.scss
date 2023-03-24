@@ -16,6 +16,7 @@
     --el-border-radius-big: 12px;
     --el-fill-color-blank: var(--themeBgColor);
     --el-bg-color-overlay: var(--themeBgSecondColor);
+    --el-input-border-radius: var(--el-border-radius-big);
 
 }
 
@@ -113,25 +114,34 @@ html.dark {
 }
 
 .el-input__inner {
-    min-height: var(--el-input-inner-height);
-}
-
-.el-input,
-.el-date-editor {
     --el-input-hover-border: var(--normal-border-color);
     --el-input-focus-border-color: var(--normal-border-color);
     --el-input-height: var(--input-height);
     --el-input-border-radius: var(--el-border-radius-big);
 
+    padding: 0 12px;
+    border-radius: var(--el-input-border-radius);
+    min-height: var(--el-input-inner-height);
+    transition: all 0.5;
+    border: var(--el-border-width) solid var(--faded-border-color);
+    box-shadow: 3px 3px 0 var(--faded-border-color);
+    outline: none;
 
+    &:focus,
+    &:not(:placeholder-shown) {
+        border-color: var(--themeTextColor);
+        box-shadow: 3px 3px 0 var(--themeTextColor);
+    }
+}
 
-
-
+.el-input,
+.el-date-editor {
 
 
     &.el-input-group--append {
         .el-input__wrapper {
             border-right: none;
+            border-radius: var(--el-input-border-radius);
         }
 
         .el-input-group__append {
@@ -146,48 +156,68 @@ html.dark {
 }
 
 .el-input__wrapper {
-    transition: all 0.5;
-    border: var(--el-border-width) solid var(--faded-border-color) !important;
-    box-shadow: 3px 3px 0 var(--faded-border-color) !important;
-    padding: 0 12px !important;
+    padding: 0;
+    border: none;
+    box-shadow: none;
 
     &.is-focus {
-        border-color: var(--themeTextColor) !important;
-        box-shadow: 3px 3px 0 var(--themeTextColor) !important;
+        box-shadow: none;
     }
+
 }
+
+
+
+
+.el-textarea {
+    .el-textarea__inner {
+        border-radius: var(--el-input-border-radius);
+        transition: all 0.5;
+        border: var(--el-border-width) solid var(--faded-border-color) !important;
+        box-shadow: 3px 3px 0 var(--faded-border-color) !important;
+
+        &:focus,
+        &:not(:placeholder-shown) {
+            border-color: var(--themeTextColor) !important;
+            box-shadow: 3px 3px 0 var(--themeTextColor) !important;
+        }
+    }
+
+}
+
 
 
 .el-form-item {
-    &.is-success {
-        .el-input {
 
-            .el-input__wrapper,
-            .el-input-group__append {
-                border-color: var(--themeTextColor);
-                box-shadow: 3px 3px 0 var(--themeTextColor);
-            }
-        }
-    }
 
     &.is-error {
         .el-input {
+            .el-input__wrapper {
+                box-shadow: none !important;
 
-            .el-input__wrapper,
-            .el-input-group__append {
-                border-color: var(--el-color-danger);
-                box-shadow: 3px 3px 0 var(--el-color-danger);
+                .el-input__inner {
+                    border-color: var(--el-color-danger) !important;
+                    box-shadow: 3px 3px 0 var(--el-color-danger) !important;
+                }
             }
         }
+
     }
 }
 
-.el-form-item__content {}
+.el-form-item__content {
+    display: block;
+}
 
 .el-form-item__error {
     margin: 5px;
     position: static;
 }
+
+
+
+
+
 
 .el-dialog {
     --el-dialog-width: 912px;
@@ -404,6 +434,37 @@ html.dark {
 }
 
 
+.el-select {
+    border: var(--el-border-width) solid var(--faded-border-color) !important;
+    box-shadow: 3px 3px 0 var(--faded-border-color) !important;
+    border-radius: var(--el-input-border-radius);
+    padding-right: 12;
+    border-radius: var(--el-input-border-radius);
+
+    .el-input {
+        .el-input__wrapper {
+            padding-right: 8px;
+            box-shadow: none;
+
+            .el-input__inner {
+                border: none;
+                box-shadow: none;
+            }
+        }
+
+        &.is-focus {
+            .el-input__wrapper {
+                box-shadow: none !important;
+            }
+        }
+
+    }
+
+
+
+
+}
+
 .el-popper {
     --el-popper-border-radius: 12px;
     background: #fff;
@@ -567,7 +628,7 @@ html.dark {
 
     border: var(--standard-border-width) solid var(--border-color);
     box-shadow: var(--right-offset) var(--standard-offset) 0 var(--border-color);
-    border-radius: var(--rounded);
+    border-radius: var(--el-input-border-radius);
     transition-property: all;
     transition-duration: 150ms;
 
@@ -623,7 +684,7 @@ html.dark {
 
         border: var(--standard-border-width) solid var(--border-color);
         box-shadow: var(--right-offset) var(--standard-offset) 0 var(--border-color);
-        border-radius: var(--rounded);
+        border-radius: var(--el-input-border-radius);
         transition-property: all;
         transition-duration: 150ms;
 
@@ -670,7 +731,7 @@ html.dark {
 }
 
 .el-popover {
-    --el-popover-border-radius: var(--rounded) !important;
+    --el-popover-border-radius: var(--el-input-border-radius) !important;
 }
 
 

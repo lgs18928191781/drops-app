@@ -1121,6 +1121,47 @@
     "Information Proposal Need Token Min": "Minimum number of Tokens required to create a proposal",
     "Administrators": "Administrators",
     "Core Members": "Core Members",
-    "Members": "Members"
+    "Members": "Members",
+    "Create DAO": "Create DAO",
+    "Governance": "Governance",
+    "Governance Type": "Type",
+    "TYPE": {
+      "Protocol": "Protocol",
+      "Service": "Serve",
+      "Social": "social media",
+      "Investment": "Invest",
+      "Grant": "Grant Program",
+      "Collector": "Collector",
+      "Culture": "Culture Media"
+    },
+    "Profile": "Profile",
+    "Icon": "Icon",
+    "Name": "Name",
+    "Description": "Description",
+    "Description placeholder": "Describe what your DAO is about?",
+    "Mission": "Mission",
+    "Mission placeholder": "What's the goal of your DAO?",
+    "Categories": "Categories",
+    "Website": "Website",
+    "Admins": "Administrator",
+    "Social": "social media information",
+    "Terms": "Terms",
+    "Terms placeholder": "Dao service related terms",
+    "Create DAO Title": "Create the club's DAO",
+    "Create": "Create",
+    "Proposal Status": {
+      "UnStarted": "UnStarted",
+      "Voting": "Voting",
+      "Ended": "Ended"
+    },
+    "Edit": "Edit",
+    "Name placeholder": "Enter DAO Name",
+    "GovernanceType placeholder": "Select Governance Type",
+    "JoinDaoRequireTokenNumber placeholder": "Enter Join Dao Require Token Number",
+    "Choose DAO Icon": "Choose DAO Icon",
+    "Edit DAO Title": "Edit the club's DAO",
+    "Add": "Add",
+    "Not Found User": "Not Found User",
+    "User Is Existed": "User Is Existed"
   }
 }

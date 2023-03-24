@@ -15,9 +15,10 @@
         :infinite-scroll-distance="100"
       >
         <RouterLink
-          :to="{ name: 'talkDAOProposalDetail', params: { txId: '1' } }"
+          :to="{ name: 'talkDAOProposalDetail', params: { id: item.id } }"
           class="proposal-item"
-          v-for="item in proposal"
+          v-for="item in proposals"
+          :key="item.id"
         >
           <!-- top -->
           <div class="top flex flex-align-center">
@@ -29,17 +30,19 @@
               <span class="txid flex flex-align-center"><Icon name="link" /> asd4456</span>
               <span class="time">2019-02-45 12:45:12</span>
             </div>
-            <span class="status">已结束</span>
+            <span class="status" :class="getStatusClass(item.beginBlockTime, item.endBlockTime)">{{
+              getStatusText(item.beginBlockTime, item.endBlockTime)
+            }}</span>
           </div>
 
-          <div class="title">你是否赞成MetaCoin的分发机制改为体积占比+最低费率</div>
+          <div class="title">{{ item.title }}</div>
 
           <div class="content">
-            Metacoin的初衷是作为Metaid应用的数据上链补贴，以激励用户通过Metaid协议上链数据，其基本计算依据是以当日上链数据的体积占比分配恒定的MC。如果用户通过每个Metaid应用的上链费率是相同的，则体积占比是竞争公平的。但随着BSV网络的降费进展，不同矿池出现了不同的费率，此时如果仅以体积占比计算，则在体积占比相同情形下，较低费率者恒能取得超额利润，而如果较低费率是不公开的且仅限于少数人，则此种费率恒定损害通过较高的公开费率上链者，这是不公平的竞争。长远来看，将持续破坏MC的激励机制。且考虑到BSV网络的费率调整进程将始终处于动态变化中，如果MC协议始终不考虑费率差异对竞争公平的影响，则MC的激励机制将大打折扣甚至倒塌，也会影响MetaId作为数据协议的成功。故本提案建议，在以体积占比作为MC的基础分配原则时，应当考虑费率因素，即只有不低于Metaid协议各应用公开采用的最低费率者才能纳入MC的体积占比，具体计算时可用实际费率/Metaid公开最低费率*体积计算。
+            {{ item.desc }}
           </div>
         </RouterLink>
 
-        <LoadMore :pagination="pagination" v-if="proposal.length" />
+        <LoadMore :pagination="pagination" v-if="proposals.length" />
         <IsNull v-else />
       </div>
     </ElSkeleton>
@@ -53,32 +56,37 @@ import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import IsNull from '@/components/IsNull/IsNull.vue'
 import { checkUserLogin } from '@/utils/util'
 import { useRouter } from 'vue-router'
+import { Proposals } from '@/api/dao'
+import { useTalkStore } from '@/stores/talk'
+import { ProposalItem } from '@/@types/api/dao'
+import { useI18n } from 'vue-i18n'
 
 const pagination = reactive({ ...initPagination })
-const proposal: any[] = reactive([])
+const proposals: ProposalItem[] = reactive([])
 const isSkeleton = ref(true)
 const router = useRouter()
+const talk = useTalkStore()
+const i18n = useI18n()
+const now = new Date().getTime()
 
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
-    setTimeout(() => {
-      const res = {
-        code: 0,
-        data: {
-          list: Array.from({ length: 12 }),
-        },
+    const res = await Proposals({
+      symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${talk.activeCommunity!.dao!.daoId}`,
+      // symbol: `${talk.activeCommunity!.dao!.governanceSymbol}`,
+    }).catch(error => {
+      ElMessage.error(error.message)
+    })
+    if (res) {
+      if (isCover) proposals.length = 0
+      if (res.length) {
+        proposals.push(...res)
+        pagination.nothing = false
+      } else {
+        pagination.nothing = true
       }
-      if (res.code === 0) {
-        if (isCover) proposal.length = 0
-        if (res.data.list) {
-          proposal.push(...res.data.list)
-          pagination.nothing = false
-        } else {
-          pagination.nothing = true
-        }
-        resolve()
-      }
-    }, 1000)
+      resolve()
+    }
   })
 }
 
@@ -96,6 +104,18 @@ async function toCreate() {
   router.push({
     name: 'talkDAOProposalCreate',
   })
+}
+
+function getStatusText(startTime: number, endTime: number) {
+  if (startTime * 1000 < now) return i18n.t('DAO.Proposal Status.UnStarted')
+  else if (startTime * 1000 >= startTime && endTime * 1000 <= now)
+    return i18n.t('DAO.Proposal Status.Voting')
+  else return i18n.t('DAO.Proposal Status.Ended')
+}
+function getStatusClass(startTime: number, endTime: number) {
+  if (startTime * 1000 < now) return 'faded'
+  else if (startTime * 1000 >= startTime && endTime * 1000 <= now) return 'active'
+  else return 'faded'
 }
 
 getDatas(true).then(() => {

@@ -3,6 +3,7 @@ const NotFoundPage = () => import('@/views/404.vue')
 import { ElMessage } from 'element-plus'
 import i18n from '@/utils/i18n'
 import { useUserStore } from './stores/user'
+import { useTalkStore } from './stores/talk'
 export const routerHistory = createWebHistory()
 export const router = createRouter({
   history: routerHistory,
@@ -178,9 +179,6 @@ export const router = createRouter({
           path: 'dao',
           name: 'talkDAO',
           component: () => import('@/views/talk/DAO/Layout.vue'),
-          redirect: {
-            name: 'talkDAOProposal',
-          },
           children: [
             {
               path: 'proposal',
@@ -194,7 +192,7 @@ export const router = createRouter({
                   component: () => import('@/views/talk/DAO/proposal/Index.vue'),
                 },
                 {
-                  path: 'detail/:txId',
+                  path: 'detail/:id',
                   name: 'talkDAOProposalDetail',
                   component: () => import('@/views/talk/DAO/proposal/Detail.vue'),
                 },
@@ -204,11 +202,6 @@ export const router = createRouter({
                   component: () => import('@/views/talk/DAO/proposal/Create.vue'),
                 },
               ],
-            },
-            {
-              path: 'proposal/:txId',
-              name: 'talkDAOProposalDetail',
-              component: () => import('@/views/talk/DAO/proposal/Detail.vue'),
             },
             {
               path: 'entrust',

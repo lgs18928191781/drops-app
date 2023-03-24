@@ -328,6 +328,7 @@ export enum NodeName {
   Phone = 'phone',
   Email = 'email',
   ShareChatMessage = 'ShareChatMessage',
+  // DAO
 }
 
 export const enum BindStatus {

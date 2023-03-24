@@ -6,7 +6,7 @@ import {
   giveRedPacket,
   updateCommunity,
 } from '@/utils/talk'
-import { sleep } from '@/utils/util'
+import { realRandomString, sleep } from '@/utils/util'
 import { defineStore } from 'pinia'
 import { useLayoutStore } from './layout'
 import { getCommunityAuth } from '@/api/talk'
@@ -14,6 +14,8 @@ import { useTalkStore } from './talk'
 import { useUserStore } from './user'
 import { Channel } from '@/@types/talk'
 import { GetFT, GetGenesis } from '@/api/aggregation'
+// @ts-ignore
+import { SHA256 } from 'crypto-es/lib/sha256.js'
 
 export const useCommunityFormStore = defineStore('communityForm', {
   state: () => {
@@ -536,37 +538,60 @@ export const useDeleteAnnouncementFormStore = defineStore('deleteAnnouncementFor
 // 创建、编辑DAO
 export const useMutateDaoFormStore = defineStore('mutateDaoForm', {
   state: () => {
+    const userStroe = useUserStore()
     return {
-      name: '',
-      description: '',
-      communityId: '',
-      type: 'create' as 'create' | 'edit',
-      txId: null as null | string,
-      publickey: null as null | string,
-      original: null as any,
-
-      // 创建DAO时的参数
-      categories: [] as string[],
+      communityId: '', //string
+      daoName: '', //string
+      daoID: SHA256(realRandomString(64)).toString(), //string, 生成方法hash(随机64位)，必须确保是唯一。Sha256 once after generating a 64-bit random string.
+      daoAdmins: [userStroe.user!.metaId], //array, 管理员metaId数组
+      daoIntro: '', //string
+      daoMission: '', //string
+      daoTypes: [], //array, 值: "protocol/service/social/investment/grant/collector/culture",
+      daoLogo: '', //string, logo所在的metafile
+      governanceType: 'space', //string, 治理类型：ft/nft/bsv/space/none
+      governanceSymbol: 'space', // {space/ft-symbol} string, Symbol of Governance Token.治理代币的Symbol。
+      governanceToken: 'space', //string, 治理tokenId,若为源生币为"space", 如没有则为"none",
+      daoWebsite: '', //string, DAO官网
+      daoTwitter: '', //string, 推特账号
+      daoDiscord: '', //string, discord地址
+      daoTelegram: '', //string, telegrame地址
+      daoTerms: '', //string,
+      daoTermsContentType: 'text/markdwon', //string, 进入条款的内容格式
+      joinDaoRequireTokenNumber: 1, //number, 加入该DAO的时候，需要最少治理token数量，如果治理Token为none，则忽略此值
+      createProposalRequireTokenNumber: 10000, //number, 创建议题需要的治理Token数量，如果治理Token为none，则忽略此值
+      publiceKey: '',
     }
   },
 
   actions: {
-    switchCategory(category: string) {
-      if (this.categories.includes(category)) {
-        this.categories = this.categories.filter(c => c !== category)
+    switchCategory(val: string) {
+      if (this.daoTypes.some(item => item === val)) {
+        this.daoTypes = this.daoTypes.filter(c => c !== val)
       } else {
-        this.categories.push(category)
+        this.daoTypes.push(val)
       }
     },
 
     reset() {
-      this.name = ''
-      this.description = ''
-      this.communityId = ''
-      this.type = 'create'
-      this.txId = null
-      this.publickey = null
-      this.original = null
+      this.communityId = '' //string
+      this.daoName = '' //string
+      this.daoID = SHA256(realRandomString(64)).toString() //string, 生成方法hash(随机64位)，必须确保是唯一。Sha256 once after generating a 64-bit random string.
+      this.daoAdmins = [] //array, 管理员metaId数组
+      this.daoIntro = '' //string
+      this.daoMission = '' //string
+      this.daoTypes = [] //array, 值: "protocol/service/social/investment/grant/collector/culture",
+      this.daoLogo = '' //string, logo所在的metafile
+      this.governanceType = 'space' //string, 治理类型：ft/nft/bsv/space/none
+      this.governanceSymbol = 'space' // {space/ft-symbol} string, Symbol of Governance Token.治理代币的Symbol。
+      this.governanceToken = 'space' //string, 治理tokenId,若为源生币为"space", 如没有则为"none",
+      this.daoWebsite = '' //string, DAO官网
+      this.daoTwitter = '' //string, 推特账号
+      this.daoDiscord = '' //string, discord地址
+      this.daoTelegram = '' //string, telegrame地址
+      this.daoTerms = '' //string,
+      this.daoTermsContentType = 'text/markdwon' //string, 进入条款的内容格式
+      this.joinDaoRequireTokenNumber = 1 //number, 加入该DAO的时候，需要最少治理token数量，如果治理Token为none，则忽略此值
+      this.createProposalRequireTokenNumber = 10000 //number, 创建议题需要的治理Token数量，如果治理Token为none，则忽略此值
     },
   },
 })

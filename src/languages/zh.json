@@ -1120,6 +1120,46 @@
     "Information Proposal Need Token Min": "创建提案需要的最少Token数量",
     "Administrators": "管理员",
     "Core Members": "核心成员",
-    "Members": "成员"
+    "Members": "成员",
+    "Create DAO": "创建DAO",
+    "Governance": "治理",
+    "Governance Type": "类型",
+    "TYPE": {
+      "Protocol": "协议",
+      "Service": "服务",
+      "Social": "社群媒体",
+      "Investment": "投资",
+      "Grant": "拨款项目",
+      "Collector": "收藏家",
+      "Culture": "文化传媒"
+    },
+    "Profile": "简介",
+    "Icon": "图标",
+    "Name": "名称",
+    "Description": "描述",
+    "Description placeholder": "描述一下你的 DAO 是关于什么的？",
+    "Mission": "使命介绍",
+    "Mission placeholder": "你的 DAO 的目标是什么？",
+    "Categories": "分类",
+    "Website": "网站",
+    "Admins": "管理员",
+    "Social": "社交媒体信息",
+    "Terms": "条款",
+    "Terms placeholder": "Dao服务相关条款",
+    "Create DAO Title": "创建社区的 DAO",
+    "Create": "创建",
+    "Proposal Status": {
+      "UnStarted": "未开始",
+      "Voting": "投票中",
+      "Ended": "已结束"
+    },
+    "Edit": "编辑",
+    "Name placeholder": "请填写DAO名称",
+    "GovernanceType placeholder": "请选择治理的类型",
+    "Choose DAO Icon": "选择图标",
+    "Edit DAO Title": "编辑社区的 DAO",
+    "Add": "添加",
+    "Not Found User": "查找不到此用户",
+    "User Is Existed": "用户已存在"
   }
 }

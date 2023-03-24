@@ -62,6 +62,57 @@ declare interface Community {
   ownerInfo: {
     address: string
   }
+  dao?: {
+    address: string
+    avatarImage: string
+    avatarTxId: string
+    avatarType: string
+    communityId: string
+    createProposalRequireTokenNumber: number
+    createProposalRequireTokenNumberStr: string
+    daoAdmins: string[]
+    daoDiscord: string
+    daoId: string
+    daoIntro: string
+    daoLogo: string
+    daoMission: string
+    daoName: string
+    daoTelegram: string
+    daoTerms: string
+    daoTermsContentType: string
+    daoTwitter: string
+    daoTypes: string[]
+    daoWebsite: string
+    governanceSymbol: string
+    governanceToken: string
+    governanceType: string
+    joinDaoRequireTokenNumber: number
+    joinDaoRequireTokenNumberStr: string
+    memberTotal: number
+    metaId: string
+    metanetId: string
+    parentTxId: string
+    publicKey: string
+    realDaoId: string
+    txId: string
+    userInfo: {
+      metaId: string
+      address: string
+      publicKey: string
+      name: string
+      metaName: string
+      nameType: string
+      nftNamePublicKey: string
+      avatarTxId: string
+      avatarImage: string
+      avatarType: string
+      coverUrl: string
+      coverType: string
+      coverPublicKey: string
+      metaIdTimestamp: string
+    }
+    userName: string
+  }
 }
 
 declare interface CommunityAuth {

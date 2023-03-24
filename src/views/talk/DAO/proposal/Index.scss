@@ -68,9 +68,19 @@
 
             .status {
                 font-size: 14px;
-                padding: 4px;
+                padding: 4px 8px;
                 border-radius: 4px;
+                background: var(--divid-color);
 
+                &.faded {
+                    color: var(--themeFadedTextColor);
+                    background: var(--divid-color);
+                }
+
+                &.active {
+                    color: var(--color-success);
+                    opacity: 0.5;
+                }
             }
         }
 

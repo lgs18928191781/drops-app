@@ -164,9 +164,9 @@ const AllNodeName: {
     version: '1.0.5',
   },
   [NodeName.SimpleDAOCreate]: {
-    brfcId: '7dac362b04b7',
+    brfcId: 'c35433ced842',
     path: '/Protocols/SimpleDAOCreate',
-    version: '1.0.4',
+    version: '1.0.5',
   },
   [NodeName.NftName]: {
     brfcId: '6ed1b1d1119d',
