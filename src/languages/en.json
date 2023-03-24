@@ -1076,7 +1076,7 @@
     "Floor price": "Floor price",
     "Total volume": "Total volume"
   },
-  "PathMoreThan150": "Path>150, please contact customer service for repair",
+  "PathMoreThan10000": "Path>10000, please contact customer service for repair",
   "DAO": {
     "Proposal": "Proposal",
     "Entrust": "Entrust",

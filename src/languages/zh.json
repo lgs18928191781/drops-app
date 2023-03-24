@@ -1075,7 +1075,7 @@
     "Floor price": "地板价",
     "Total volume": "发行量"
   },
-  "PathMoreThan150": "Path > 150,请联系客服修复",
+  "PathMoreThan10000": "Path > 10000,请联系客服修复",
   "DAO": {
     "Proposal": "提案",
     "Entrust": "委托",
