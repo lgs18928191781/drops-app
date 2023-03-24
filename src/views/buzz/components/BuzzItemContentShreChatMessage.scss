@@ -1,0 +1,30 @@
+.chat {
+    padding: var(--padding-normal);
+
+    .community {
+        .image {
+            width: 50px;
+            height: 50px;
+            background: var(--divid-color);
+            border-radius: var(--rounded-lg);
+            margin-right: 10px;
+        }
+
+        .channel-name {
+            margin-top: 5px;
+        }
+
+        .right {
+            width: 14px;
+            height: 14px;
+            transform: rotate(-90deg);
+            margin-left: 15px;
+        }
+    }
+
+    .message-warp {
+        margin-top: 10px;
+        border-radius: var(--rounded-lg);
+        padding: var(--padding-normal) 0;
+    }
+}

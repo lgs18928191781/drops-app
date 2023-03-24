@@ -7,6 +7,20 @@
         talk.isAdmin()
     "
   >
+    <!-- 回复/引用 -->
+    <div class="quote flex flex-align-center rounded-lg" v-if="quote">
+      <div class="flex1 flex flex-align-center">
+        {{ $t('Talk.Quote.tips') }}
+        <a @click="emit('toQuote')" class="user"
+          ><UserName
+            :name="quote.userInfo ? quote.userInfo.name : quote.fromUserInfo.name"
+            :meta-name="quote.userInfo ? quote.userInfo.metaName : quote.fromUserInfo.metaName"
+            :no-tag="true"
+        /></a>
+      </div>
+      <Icon name="x_circle" class="close" @click="emit('update:quote', undefined)" />
+    </div>
+
     <!-- 上传图预览 -->
     <div
       v-if="hasImage"
@@ -281,6 +295,12 @@ import { useLayoutStore } from '@/stores/layout'
 import TalkImagePreview from './ImagePreview.vue'
 import StickerVue from '@/components/Sticker/Sticker.vue'
 
+interface Props {
+  quote?: any
+}
+const props = withDefaults(defineProps<Props>(), {})
+const emit = defineEmits(['update:quote', 'toQuote'])
+
 const doNothing = () => {}
 
 const showMoreCommandsBox = ref(false)
@@ -422,7 +442,9 @@ const trySendImage = async () => {
     content: '',
     originalFileUrl,
     channelType: talk.activeChannelType as ChannelType,
+    replyTx: props.quote?.txId,
   }
+  emit('update:quote', undefined)
   await sendMessage(messageDto)
 
   return
@@ -484,12 +506,36 @@ const trySendText = async (e: any) => {
     channelId: talk.activeChannel.id,
     userName: userStore.user?.name || '',
     channelType: talk.activeChannelType as ChannelType,
+    replyTx: props.quote?.txId,
   }
+  emit('update:quote', undefined)
   await sendMessage(messageDto)
-
   isSending.value = false
 }
 /** ------ */
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.quote {
+  border-radius: var(--rounded-lg) var(--rounded-lg) 0 0;
+  background: rgba(var(--themeTextColorRgb), 0.2);
+  padding: 5px var(--padding-normal);
+
+  .user {
+    margin-left: 5px;
+    cursor: pointer;
+    color: var(--color-primary);
+    font-weight: bold;
+  }
+
+  .close {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    opacity: 0.9;
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+</style>

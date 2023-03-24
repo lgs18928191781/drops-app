@@ -83,7 +83,7 @@ const router = useRouter()
 
 const goBack = () => {
   // 去 index
-  const theVoid = `/talk/channels/${talk.activeCommunityId}/index`
+  const theVoid = `/talk/channels/${talk.activeCommunityId}/welcome`
   router.push(theVoid)
 }
 

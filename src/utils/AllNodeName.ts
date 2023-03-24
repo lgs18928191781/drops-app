@@ -193,6 +193,11 @@ const AllNodeName: {
     path: '/Protocols/nftBuy',
     version: '1.0.2',
   },
+  [NodeName.ShareChatMessage]: {
+    brfcId: '11111111111',
+    path: '/Protocols/ShareChatMessage',
+    version: '1.0.0',
+  },
 }
 
 export default AllNodeName

@@ -220,6 +220,7 @@ import CommunityInfoModal from './modals/community/Info.vue'
 import CommunityChannelItem from './CommunityChannelItem.vue'
 import MetaNameDisplay from '@/components/MetaName/Display.vue'
 import EmptyPit from '@/components/MetaName/EmptyPit.vue'
+import { EnvMode } from '@/enum'
 
 const layout = useLayoutStore()
 const talk = useTalkStore()
@@ -240,6 +241,8 @@ const generalChannels = computed(() => {
     .filter(channel => {
       // 如果社区没有metaname，不显示topics频道
       if (channel.id === 'topics' && !talk.activeCommunity?.metaName) {
+        return false
+      } else if (channel.id === 'dao' && import.meta.env.MODE === EnvMode.Mainnet) {
         return false
       }
 

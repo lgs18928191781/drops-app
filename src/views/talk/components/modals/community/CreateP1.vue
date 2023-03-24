@@ -47,9 +47,9 @@
         <!-- MetaName -->
         <h4 class="text-sm mt-8">
           {{ $t('Talk.Community.community_name_tip') }}
-          <span class="text-xs text-dark-300 dark:text-gray-400">
+          <!-- <span class="text-xs text-dark-300 dark:text-gray-400">
             {{ $t('Talk.Community.optional') }}
-          </span>
+          </span> -->
         </h4>
 
         <div class="mt-2">

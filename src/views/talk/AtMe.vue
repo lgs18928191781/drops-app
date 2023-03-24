@@ -9,11 +9,11 @@
         class="pt-12 pb-17.5 fullscreen lg:relative w-full bg-dark-200 dark:bg-gray-900 lg:pt-15 lg:pb-20"
       >
         <div class="h-full">
-          <MessageList />
+          <MessageList @quote="val => (quote.val = val)" ref="MessageListRef" />
         </div>
 
         <div class="fixed bottom-0 left-0 right-0 px-4 lg:absolute">
-          <TheInput />
+          <TheInput v-model:quote="quote.val" @to-quote="toQuote" />
           <TheErrorBox />
         </div>
       </div>
@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import { useTalkStore } from '@/stores/talk'
-import { defineAsyncComponent, onBeforeUnmount, onMounted } from 'vue'
+import { defineAsyncComponent, onBeforeUnmount, onMounted, provide, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import DirectContactList from './components/direct-contact/List.vue'
 import DirectContactInfo from './components/direct-contact/Info.vue'
@@ -42,9 +42,16 @@ const route = useRoute()
 const talk = useTalkStore()
 const router = useRouter()
 const layout = useLayoutStore()
+const MessageListRef = ref()
 
 const { channelId } = route.params
+const quote: { val: any } = reactive({ val: undefined })
 
+function toQuote() {
+  MessageListRef.value.scrollToTimeStamp(quote.val!.timestamp)
+}
+
+provide('Reply', quote)
 onMounted(async () => {
   layout.isShowUserInfo = false
   await talk.initCommunity('@me')

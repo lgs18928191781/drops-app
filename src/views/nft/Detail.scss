@@ -213,7 +213,7 @@
             }
 
             .content {
-                background: var(--themeBgColor);
+                background: rgba(var(--themeTextColorRgb), 0.1);
                 padding: 18px;
             }
         }

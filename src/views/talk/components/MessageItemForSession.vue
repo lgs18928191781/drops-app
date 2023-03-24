@@ -1,6 +1,7 @@
 <template>
   <div
     class="flex lg:hover:bg-gray-200 lg:dark:hover:bg-gray-950 px-4 py-1.5 relative group transition-all duration-150"
+    :class="{ replying: reply.val?.timestamp === message.timestamp }"
   >
     <!-- 消息菜单 -->
     <MessageMenu
@@ -8,9 +9,10 @@
       :parsed="parseTextMessage(decryptedMessage)"
       v-model:translateStatus="translateStatus"
       v-model:translatedContent="translatedContent"
+      v-bind="$attrs"
       v-if="isText"
     />
-    <MessageMenu :message="props.message" v-else />
+    <MessageMenu :message="props.message" v-bind="$attrs" v-else />
 
     <UserAvatar
       :image="messageAvatarImage"
@@ -300,7 +302,7 @@ import NftLabel from './NftLabel.vue'
 import MessageMenu from './MessageMenu.vue'
 import redEnvelopeImg from '@/assets/images/red-envelope.svg?url'
 import TalkImagePreview from './ImagePreview.vue'
-import { computed, ref, toRaw, Ref } from 'vue'
+import { computed, ref, toRaw, Ref, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { formatTimestamp } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
@@ -308,6 +310,7 @@ import { useTalkStore } from '@/stores/talk'
 import { useJobsStore } from '@/stores/jobs'
 import { NodeName } from '@/enum'
 
+const reply: any = inject('Reply')
 const i18n = useI18n()
 
 const showImagePreview = ref(false)
@@ -479,4 +482,19 @@ const isNftTransfer = computed(() => props.message.protocol === 'NftTransfer')
 const isNftBuy = computed(() => props.message.protocol === 'nftBuy')
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.replying {
+  background: rgba(var(--themeTextColorRgb), 0.1);
+
+  &::before {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 2px;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background: var(--color-primary);
+  }
+}
+</style>
