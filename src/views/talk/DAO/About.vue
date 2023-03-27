@@ -22,11 +22,15 @@
         <div class="information-list">
           <div class="information-item">
             <div class="lable">{{ $t('DAO.Information Website') }}</div>
-            <div class="cont">
-              <a :href="talk.activeCommunity?.dao?.daoWebsite">{{
-                talk.activeCommunity?.dao?.daoWebsite || $t('noDatas')
-              }}</a>
-            </div>
+            <div
+              class="cont"
+              v-html="
+                $filters.repalceHref(
+                  talk.activeCommunity?.dao?.daoWebsite || $t('noDatas'),
+                  '#5586BB'
+                )
+              "
+            ></div>
           </div>
 
           <div class="information-item">

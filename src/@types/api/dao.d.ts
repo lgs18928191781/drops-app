@@ -1,10 +1,34 @@
 export interface ProposalItem {
-  id: string
-  title: string
-  desc: string
-  options: string[]
-  voteSumData: string[]
+  _id: string
   beginBlockTime: number
+  desc: string
   endBlockTime: number
+  genesisTxid: string
   minVoteAmount: string
+  options: string[]
+  title: string
+  voteID: string
+  voteMainCodeHash: string
+  voteSumData: string[]
+}
+
+export interface DAOStakeReqstakeArgs {
+  mvcMode: boolean
+  mvcToAddress: string
+  op: number
+  requestIndex: string
+  tokenToAddress: string
+  txFee: number
+}
+
+export interface DAOUserStakeInfo {
+  lockedTokenAmount: string
+  rewardTokenAmount: string
+  unlockingTokens: { expired: number; amount: string }[]
+  voteInfo: {
+    [key: string]: {
+      voteOption: number
+      voteAmount: string
+    }
+  }
 }

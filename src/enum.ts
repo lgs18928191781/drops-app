@@ -547,3 +547,12 @@ export enum DAOProposalType {
   DiyMultipleChoose = '2',
   Approve = '3',
 }
+
+export enum DAOStakeOperate {
+  Pledge = 1,
+  Unlock = 3,
+  Extract = 4,
+  Reward = 5,
+  Vote = 7,
+  CreateVote = 5000,
+}

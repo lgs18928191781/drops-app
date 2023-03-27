@@ -59,22 +59,32 @@
 </template>
 
 <script setup lang="ts">
-import { DAOProposalType } from '@/enum'
+import { DAOProposalType, DAOStakeOperate, NodeName, SdkPayType } from '@/enum'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 import { ElAffix, FormInstance, FormRules } from 'element-plus'
+import { CreateVote, GetStake } from '@/api/dao'
+import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
+import { openLoading } from '@/utils/util'
+import { useTalkStore } from '@/stores/talk'
 
 const vditor = ref<Vditor | null>(null)
 const headeroffSetTop = ref(0)
 const WarpRef = ref()
 const i18n = useI18n()
+const userStore = useUserStore()
+const router = useRouter()
+const talk = useTalkStore()
+
 const form = reactive({
   title: '',
   type: DAOProposalType.Base,
   options: ['For', 'Against', 'Abstain'],
   time: ['', ''],
+  content: '',
 })
 const FormRef = ref<FormInstance>()
 const rules = reactive<FormRules>({
@@ -188,6 +198,59 @@ function onTypeChange() {
 function submit() {
   FormRef.value?.validate(async result => {
     if (result) {
+      const loading = openLoading()
+      try {
+        const res = await GetStake({
+          symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${
+            talk.activeCommunity!.dao!.daoId
+          }`,
+          address: userStore.user!.address!,
+          op: DAOStakeOperate.CreateVote,
+        })
+        if (res.code === 0) {
+          const transfer = await userStore.showWallet.createBrfcChildNode(
+            {
+              nodeName: NodeName.SendMoney,
+              payTo: [{ address: res.data.mvcToAddress, amount: res.data.txFee }],
+            },
+            {
+              payType: SdkPayType.SPACE,
+              isBroadcast: false,
+            }
+          )
+          if (transfer) {
+            const response = await CreateVote({
+              symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${
+                talk.activeCommunity!.dao!.daoId
+              }`,
+              requestIndex: res.data.requestIndex,
+              mvcRawTx: transfer.sendMoney!.transaction!.toString(),
+              mvcOutputIndex: 0,
+              title: form.title,
+              desc: form.content,
+              options: form.options,
+              minVoteAmount: '1',
+              beginBlockTime: new Date(form.time[0]).getTime(),
+              endBlockTime: new Date(form.time[1]).getTime(),
+            })
+            if (response.code === 0) {
+              loading.close()
+              ElMessage.success(i18n.t('DAO.Create Proposal Successful'))
+              router.push({
+                name: 'talkDAOProposalDetail',
+                params: {
+                  id: response.data.voteID,
+                },
+              })
+            }
+          } else if (transfer === null) {
+            loading.close()
+          }
+        }
+      } catch (error) {
+        ElMessage.error((error as any).message)
+        loading.close()
+      }
     }
   })
 }

@@ -177,7 +177,7 @@
                 <div class="col-span-4">
                   <div class="lg:grid lg:grid-cols-3 gap-2">
                     <div
-                      class="flex flex-align-center px-2 py-2 rounded-lg bg-dark-100 dark:bg-gray-100 relative"
+                      class="flex flex-align-center px-2 py-2 rounded-lg bg-dark-100 dark:bg-gray-500 relative"
                       v-for="user in admins"
                       :key="user.metaId"
                     >
@@ -196,9 +196,7 @@
                         :disabled="true"
                       />
                       <div class="cont flex1">
-                        <div class="">
-                          <UserName :name="user.name" :meta-name="user.metaName" :no-tag="true" />
-                        </div>
+                        <UserName :name="user.name" :meta-name="user.metaName" :no-tag="true" />
                         <div class="text-xs text-dark-250 dark:text-gray-200">
                           MetaID:{{ user.metaId.slice(0, 6) }}
                         </div>

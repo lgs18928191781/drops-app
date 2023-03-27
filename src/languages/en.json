@@ -1162,6 +1162,14 @@
     "Edit DAO Title": "Edit the club's DAO",
     "Add": "Add",
     "Not Found User": "Not Found User",
-    "User Is Existed": "User Is Existed"
+    "User Is Existed": "User Is Existed",
+    "Stake SPACE to obtain voting power": "Stake SPACE to obtain voting power",
+    "Stake": "Stake",
+    "Your staked SPACE": "Your staked SPACE",
+    "Total Staked": "Total Staked",
+    "Unlock Token": "Unlock Token",
+    "Stake amount": "Stake amount",
+    "Pledge successful": "Pledge successful",
+    "Create Proposal Successful": "Create Proposal Successful"
   }
 }

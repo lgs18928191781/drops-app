@@ -167,6 +167,7 @@ import IsNull from '@/components/IsNull/IsNull.vue'
 import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import { initPagination } from '@/config'
 import { isMobile } from '@/stores/root'
+import { getStatusClass, getStatusText } from '@/utils/DAO'
 
 const i18n = useI18n()
 const records: any = reactive([])

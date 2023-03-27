@@ -154,23 +154,26 @@ export function toUserHome(metaId: string) {
 }
 
 export function buzzTextContent(content: string) {
-  return (
-    content
-      // 替换换行
-      .replace(/\\n/g, '\n')
-      // 话题处理
-      .replace(
-        /#.*?[\s\n\r#]{1}|#.*?$/g,
-        val =>
-          `<a href='/buzz/topic/${val
-            .replace('#', '')
-            .replace(/(^\s*)|(\s*$)/g, '')}' style='color:#fc6d5e' >${val}</a>&nbsp;`
-      )
-      // 超链接处理
-      .replace(
-        /(http:\/\/|https:\/\/)((\w|=|\?|\.|\/|&|-|%|~|@|:)+)/g,
-        val => `<a href='${val}' target="_blank" style='color:#fc6d5e'>${val}</a>&nbsp;`
-      )
+  const result = content
+    // 替换换行
+    .replace(/\\n/g, '\n')
+    // 话题处理
+    .replace(
+      /#.*?[\s\n\r#]{1}|#.*?$/g,
+      val =>
+        `<a href='/buzz/topic/${val
+          .replace('#', '')
+          .replace(/(^\s*)|(\s*$)/g, '')}' style='color:#fc6d5e' >${val}</a>&nbsp;`
+    )
+  // 超链接处理
+  return repalceHref(result)
+}
+
+// 超链接处理
+export function repalceHref(content: string, color: string = '#fc6d5e') {
+  return content.replace(
+    /(http:\/\/|https:\/\/)((\w|=|\?|\.|\/|&|-|%|~|@|:)+)/g,
+    val => `<a href='${val}' target="_blank" style='color:${color}'>${val}</a>&nbsp;`
   )
 }
 

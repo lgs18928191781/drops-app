@@ -134,8 +134,7 @@ html.dark {
     }
 }
 
-.el-input,
-.el-date-editor {
+.el-input {
 
 
     &.el-input-group--append {
@@ -166,6 +165,20 @@ html.dark {
 
 }
 
+
+.el-date-editor {
+    --el-input-height: var(--input-height);
+    border-radius: var(--el-input-border-radius);
+    transition: all 0.5;
+    border: var(--el-border-width) solid var(--faded-border-color) !important;
+    box-shadow: 3px 3px 0 var(--faded-border-color) !important;
+
+    &.is-active {
+        border-color: var(--themeTextColor) !important;
+        box-shadow: 3px 3px 0 var(--themeTextColor) !important;
+    }
+
+}
 
 
 
