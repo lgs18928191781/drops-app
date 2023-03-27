@@ -173,7 +173,12 @@
       "equipped": "Equipped",
       "switch_to": "Change to",
       "choose": "Choose",
-      "unchanged": "Unchanged"
+      "unchanged": "Unchanged",
+      "leave_this_club": "Leave this club",
+      "leave_club": "Leave Club",
+      "leave_tip": "Are you sure you want to leave this club?",
+      "leave_confirm": "Leave",
+      "cancel": "Cancel"
     },
     "Channel": {
       "core_members": "core members",

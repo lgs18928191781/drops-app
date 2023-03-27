@@ -207,7 +207,12 @@
       "equipped": "装备中",
       "switch_to": "更换为",
       "choose": "选择",
-      "unchanged": "未更改"
+      "unchanged": "未更改",
+      "leave_this_club": "离开社区",
+      "leave_club": "离开社区",
+      "leave_tip": "你确定要离开社区吗？",
+      "leave_confirm": "离开",
+      "cancel": "取消"
     },
     "Channel": {
       "core_members": "核心成员",
