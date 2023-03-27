@@ -36,7 +36,7 @@
               </button>
             </div>
 
-            <div class="mt-6 flex items-center justify-center" v-if="true">
+            <div class="mt-6 flex items-center justify-center" v-if="!talk.isAdmin()">
               <button class="text-red-500 hover:underline text-sm" @click="popLeaveModal">
                 {{ $t('Talk.Modals.leave_this_club') }}
               </button>
