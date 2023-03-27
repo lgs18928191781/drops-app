@@ -409,6 +409,7 @@ export enum ShowControl {
   isShowUserCard = 'isShowUserCard',
   isShowNoMetaNameModal = 'isShowNoMetaNameModal',
   isShowChooseMetaNameModal2 = 'isShowChooseMetaNameModal2',
+  isShowLeaveCommunityModal = 'isShowLeaveCommunityModal',
   never = 'never',
 }
 

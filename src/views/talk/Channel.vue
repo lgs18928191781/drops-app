@@ -31,6 +31,7 @@
     <ShareSuccessModal v-if="layout.isShowShareSuccessModal" />
     <CommunitySettingsModal v-if="layout.isShowCommunitySettingsModal" />
     <NoMetaNameModal v-if="layout.isShowNoMetaNameModal" />
+    <leaveCommunityModal v-if="layout.isShowLeaveCommunityModal" />
   </div>
 </template>
 
@@ -60,6 +61,7 @@ import CommunityCardModal from './components/modals/invite/CommunityCard.vue'
 import ShareToBuzzModal from './components/modals/invite/ShareToBuzz.vue'
 import ShareSuccessModal from './components/modals/invite/ShareSuccess.vue'
 import NoMetaNameModal from './components/modals/community/NoMetaName.vue'
+import leaveCommunityModal from './components/modals/community/Leave.vue'
 
 import LoadingCover from './components/modals/LoadingCover.vue'
 import { useUserStore } from '@/stores/user'

@@ -73,7 +73,11 @@
             <span>{{ $t('Talk.Modals.share') }}</span>
           </button>
 
-          <button class="text-red-500 hover:underline" @click="tryLeaveCommunity">
+          <button
+            class="text-red-500 hover:underline"
+            v-if="!talk.isAdmin()"
+            @click="tryLeaveCommunity"
+          >
             {{ $t('Talk.Modals.leave') }}
           </button>
         </div>
