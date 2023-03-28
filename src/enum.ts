@@ -557,3 +557,8 @@ export enum DAOStakeOperate {
   Vote = 7,
   CreateVote = 5000,
 }
+
+export const enum StakeType {
+  Pledge = 0,
+  Unlock = 1,
+}

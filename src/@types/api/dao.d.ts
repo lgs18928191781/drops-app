@@ -10,6 +10,9 @@ export interface ProposalItem {
   voteID: string
   voteMainCodeHash: string
   voteSumData: string[]
+  createTime: number
+  txid: string
+  creator: any
 }
 
 export interface DAOStakeReqstakeArgs {
@@ -31,4 +34,11 @@ export interface DAOUserStakeInfo {
       voteAmount: string
     }
   }
+}
+
+export interface VoterItem {
+  _id: string
+  address: string
+  voteAmount: string
+  voteOption: number
 }

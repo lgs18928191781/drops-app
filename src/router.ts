@@ -179,7 +179,24 @@ export const router = createRouter({
           path: 'dao',
           name: 'talkDAO',
           component: () => import('@/views/talk/DAO/Layout.vue'),
+          redirect: () => {
+            const talk = useTalkStore()
+            if (talk.activeCommunity?.dao) {
+              return {
+                name: 'talkDAOProposal',
+              }
+            } else {
+              return {
+                name: 'talkDAOCreate',
+              }
+            }
+          },
           children: [
+            {
+              path: 'create',
+              name: 'talkDAOCreate',
+              component: () => import('@/views/talk/DAO/Null.vue'),
+            },
             {
               path: 'proposal',
               name: 'talkDAOProposal',

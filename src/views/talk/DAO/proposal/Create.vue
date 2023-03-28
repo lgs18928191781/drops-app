@@ -70,6 +70,7 @@ import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import { openLoading } from '@/utils/util'
 import { useTalkStore } from '@/stores/talk'
+import Decimal from 'decimal.js-light'
 
 const vditor = ref<Vditor | null>(null)
 const headeroffSetTop = ref(0)
@@ -219,6 +220,11 @@ function submit() {
             }
           )
           if (transfer) {
+            if (transfer.payToAddress?.transaction) {
+              await userStore.showWallet.wallet?.provider.broadcast(
+                transfer.payToAddress?.transaction.toString()
+              )
+            }
             const response = await CreateVote({
               symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${
                 talk.activeCommunity!.dao!.daoId
@@ -227,11 +233,17 @@ function submit() {
               mvcRawTx: transfer.sendMoney!.transaction!.toString(),
               mvcOutputIndex: 0,
               title: form.title,
-              desc: form.content,
+              desc: 'vote description',
               options: form.options,
               minVoteAmount: '1',
-              beginBlockTime: new Date(form.time[0]).getTime(),
-              endBlockTime: new Date(form.time[1]).getTime(),
+              beginBlockTime: new Decimal(new Date(form.time[0]).getTime())
+                .div(1000)
+                .toInteger()
+                .toNumber(),
+              endBlockTime: new Decimal(new Date(form.time[1]).getTime())
+                .div(1000)
+                .toInteger()
+                .toNumber(),
             })
             if (response.code === 0) {
               loading.close()

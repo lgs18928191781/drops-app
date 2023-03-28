@@ -8,13 +8,47 @@
         </div>
         <div class="pool-msg-item flex1">
           <div class="lable">{{ $t('DAO.Your staked SPACE') }}</div>
-          <div class="value">{{ userStake.val!.lockedTokenAmount || '--' }}</div>
+          <div class="value flex flex-align-center">
+            {{ userStake.val!.lockedTokenAmount || '--' }}
+            <a
+              class="main-border primary"
+              @click="
+                () => {
+                  stakeType = StakeType.Unlock
+                  isShowStake = true
+                }
+              "
+              v-if="userStake.val!.lockedTokenAmount && userStake.val!.lockedTokenAmount !== '0'"
+              >{{ $t('DAO.UnLock') }}</a
+            >
+          </div>
         </div>
         <div class="pool-msg-item flex1">
           <div class="lable ">{{ $t('DAO.Unlock Token') }}</div>
-          <div class="value">{{ unlockTokenAmount || '--' }}</div>
+          <div class="value flex flex-align-center">
+            {{ unlockTokenAmount || '--' }}
+            <a
+              class="main-border primary"
+              @click="
+                () => {
+                  stakeType = StakeType.Unlock
+                  isShowStake = true
+                }
+              "
+              v-if="userStake.val!.unlockingTokens.length"
+              >{{ $t('DAO.Extract') }}</a
+            >
+          </div>
         </div>
-        <div class="main-border primary" @click="isShowStake = true">
+        <div
+          class="main-border primary"
+          @click="
+            () => {
+              stakeType = StakeType.Pledge
+              isShowStake = true
+            }
+          "
+        >
           {{ $t('DAO.Stake') }}
         </div>
       </div>
@@ -36,7 +70,7 @@
           :to="{ name: 'talkDAOProposalDetail', params: { id: item._id } }"
           class="proposal-item"
           v-for="item in proposals"
-          :key="item.id"
+          :key="item._id"
         >
           <!-- top -->
           <div class="top flex flex-align-center">
@@ -45,8 +79,10 @@
                 <UserAvatar :meta-id="''" :image="''" :meta-name="''" :name="''" />
                 <span>proposal</span>
               </span>
-              <span class="txid flex flex-align-center"><Icon name="link" /> asd4456</span>
-              <span class="time">2019-02-45 12:45:12</span>
+              <span class="txid flex flex-align-center" @click.stop="tx(item.txid)"
+                ><Icon name="link" /> {{ item.txid?.slice(0, 6) }}</span
+              >
+              <span class="time">{{ $filters.dateTimeFormat(item.createTime * 1000) }}</span>
             </div>
             <span class="status" :class="getStatusClass(item.beginBlockTime, item.endBlockTime)">{{
               getStatusText(item.beginBlockTime, item.endBlockTime)
@@ -64,14 +100,14 @@
         <IsNull v-else />
       </div>
 
-      <StakeModal v-model="isShowStake" />
+      <StakeModal v-model="isShowStake" :type="stakeType" @success="getUserStakeInfo" />
     </ElSkeleton>
   </div>
 </template>
 
 <script setup lang="ts">
 import { initPagination } from '@/config'
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import IsNull from '@/components/IsNull/IsNull.vue'
 import { checkUserLogin } from '@/utils/util'
@@ -85,6 +121,9 @@ import { useUserStore } from '@/stores/user'
 import  type { DAOUserStakeInfo } from '@/@types/api/dao.d'
 import Decimal from 'decimal.js-light'
 import StakeModal from '../components/StakeModal.vue'
+import { tx } from '@/utils/util'
+import { StakeType } from '@/enum'
+import { type } from 'os'
 
 const pagination = reactive({ ...initPagination })
 const proposals: ProposalItem[] = reactive([])
@@ -94,6 +133,7 @@ const talk = useTalkStore()
 const i18n = useI18n()
 const now = new Date().getTime()
 const userStore = useUserStore()
+const stakeType = ref(StakeType.Pledge)
 
 const userStake: { val: DAOUserStakeInfo | null } = reactive({ val: null })
 const isShowStake = ref(false)
@@ -160,8 +200,15 @@ const unlockTokenAmount = computed(() => {
 })
 
 
-Promise.all([getDatas(true), getUserStakeInfo()]).then(() => {
-  isSkeleton.value = false
+const watchFun = watch(() => talk.activeCommunity, (result) => {
+  if (result) {
+    // watchFun()
+    Promise.all([getDatas(true), getUserStakeInfo()]).then(() => {
+      isSkeleton.value = false
+    })
+  }
+}, {
+ immediate: true
 })
 </script>
 

@@ -1,18 +1,26 @@
 <template>
   <Modal
     :modelValue="modelValue"
-    :extraCloseEvent="() => (isSkeleton = true)"
+    :extraCloseEvent="
+      () => {
+        isSkeleton = true
+        amountNumber = 0
+        percentage = 0
+      }
+    "
     @update:modelValue="val => emit('update:modelValue', val)"
     :loading="loading"
   >
-    <template #title>{{ $t('DAO.Stake') }}</template>
+    <template #title>{{ type === StakeType.Pledge ? $t('DAO.Stake') : $t('DAO.UnLock') }}</template>
     <template #body>
       <ElSkeleton :loading="isSkeleton" animated>
         <div class="stake">
           <div class="stake-amount">
             <div class="title flex flex-align-center">
               <div class="flex1">
-                <span class="label">{{ $t('DAO.Stake amount') }}</span>
+                <span class="label">{{
+                  type === StakeType.Pledge ? $t('DAO.Stake amount') : $t('DAO.Unlock amount')
+                }}</span>
               </div>
               <a class="balance" @click="percentage = 100"
                 >{{ balance }} {{ talk.activeCommunity!.dao!.governanceSymbol.toUpperCase() }}</a
@@ -41,8 +49,9 @@
             </div>
 
             <div class="amount-number flex flex-align-center">
-              <div class="label">
-                {{ talk.activeCommunity?.dao?.governanceSymbol }}
+              <div class="label flex flex-align-center">
+                <img :src="icons[talk.activeCommunity!.dao!.governanceSymbol]" />
+                {{ talk.activeCommunity?.dao?.governanceSymbol.toUpperCase() }}
               </div>
               <ElInput v-model="amountNumber" type="number" @change="onAmountChange" />
             </div>
@@ -52,7 +61,7 @@
               :class="[amountNumber > 0 ? 'primary' : 'faded']"
               @click="stake"
             >
-              {{ $t('DAO.Stake') }}
+              {{ type === StakeType.Pledge ? $t('DAO.Stake') : $t('DAO.UnLock') }}
             </div>
           </div>
         </div>
@@ -62,9 +71,9 @@
 </template>
 
 <script setup lang="ts">
-import { GetStake, Pledge } from '@/api/dao'
+import { GetStake, Pledge, GetUserStakeInfo, Unlock, Unlock2 } from '@/api/dao'
 import Modal from '@/components/Modal/Modal.vue'
-import { Chains, DAOStakeOperate, NodeName, SdkPayType } from '@/enum'
+import { Chains, DAOStakeOperate, NodeName, SdkPayType, StakeType } from '@/enum'
 import { useTalkStore } from '@/stores/talk'
 import { useUserStore } from '@/stores/user'
 import { getBalance } from '@/utils/util'
@@ -72,12 +81,15 @@ import Decimal from 'decimal.js-light'
 import { val } from 'dom7'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import SPACEIcon from '@/assets/images/icon_mvc.png'
+import { signTx, toHex, mvc } from 'mvc-scrypt/dist'
 
 interface Props {
   modelValue: boolean
+  type: StakeType
 }
 const props = withDefaults(defineProps<Props>(), {})
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'success'])
 
 const talk = useTalkStore()
 const userStore = useUserStore()
@@ -97,6 +109,9 @@ const symbols = [
     toFixed: 8,
   },
 ]
+const icons: { [key: string]: string } = {
+  space: SPACEIcon,
+}
 
 const amountNumber = ref(0)
 const percentage = ref(0)
@@ -109,22 +124,37 @@ const currentSymbol = computed(() => {
 
 function getBlance() {
   return new Promise<void>(async (resolve, reject) => {
-    const chains: any = {
-      space: Chains.MVC,
-    }
-    // @ts-ignore
-    const res = await getBalance({ chain: chains[talk.activeCommunity!.dao!.governanceSymbol] })
-    if (typeof res === 'number') {
-      if (res) {
-        const item = symbols.find(
-          _item => _item.symbol === talk.activeCommunity!.dao!.governanceSymbol
-        )
-        balance.value = new Decimal(
-          new Decimal(res).div(item!.rate).toFixed(item?.toFixed)
-        ).toNumber()
+    const item = symbols.find(_item => _item.symbol === talk.activeCommunity!.dao!.governanceSymbol)
+    if (props.type === StakeType.Pledge) {
+      // 质押
+      const chains: any = {
+        space: Chains.MVC,
       }
+      // @ts-ignore
+      const res = await getBalance({ chain: chains[talk.activeCommunity!.dao!.governanceSymbol] })
+      if (typeof res === 'number') {
+        if (res) {
+          balance.value = new Decimal(
+            new Decimal(res).div(item!.rate).toFixed(item?.toFixed)
+          ).toNumber()
+        }
 
-      resolve()
+        resolve()
+      }
+    } else {
+      // 解锁
+      const res = await GetUserStakeInfo({
+        symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${
+          talk.activeCommunity!.dao!.daoId
+        }`,
+        address: userStore.user!.address!,
+      })
+      if (res.code === 0) {
+        balance.value = new Decimal(
+          new Decimal(res.data.lockedTokenAmount).div(item!.rate).toFixed(item?.toFixed)
+        ).toNumber()
+        resolve()
+      }
     }
   })
 }
@@ -141,9 +171,12 @@ function onPercentChange() {
 }
 
 function onAmountChange() {
+  if (amountNumber.value > balance.value) {
+    amountNumber.value = balance.value
+  }
   if (balance.value) {
-    percentage.value = new Decimal(balance.value)
-      .div(amountNumber.value)
+    percentage.value = new Decimal(amountNumber.value)
+      .div(balance.value)
       .mul(100)
       .toInteger()
       .toNumber()
@@ -156,59 +189,133 @@ async function stake() {
   if (!amountNumber.value) return
   loading.value = true
   try {
-    const stakeRes = await GetStake({
-      symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${talk.activeCommunity!.dao!.daoId}`,
-      address: userStore.user!.address!,
-      op: DAOStakeOperate.Pledge,
-    })
-    if (stakeRes.code === 0) {
-      const amount = new Decimal(amountNumber.value)
-        .mul(currentSymbol.value!.rate)
-        .toInteger()
-        .toNumber()
-      const result = await userStore.showWallet.createBrfcChildNode(
-        {
-          nodeName: NodeName.SendMoney,
-          payTo: [
-            {
-              address: stakeRes.data.mvcToAddress,
-              amount: new Decimal(amount)
-                .add(stakeRes.data.txFee)
-                .toInteger()
-                .toNumber(),
-            },
-          ],
-        },
-        {
-          payType: SdkPayType.SPACE,
-          isBroadcast: false,
-        }
-      )
-      if (result) {
-        if (result.payToAddress?.transaction) {
-          await userStore.showWallet.wallet?.provider.broadcast(
-            result.payToAddress?.transaction.toString()
-          )
-        }
-        const res = await Pledge({
-          symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${
-            talk.activeCommunity!.dao!.daoId
-          }`,
-          requestIndex: stakeRes.data.requestIndex,
-          mvcRawTx: result.sendMoney.transaction.toString(),
-          mvcOutputIndex: 0,
-          mvcAddAmount: amount,
-        })
+    const amount = new Decimal(amountNumber.value)
+      .mul(currentSymbol.value!.rate)
+      .toInteger()
+      .toNumber()
+    const symbol = `${talk.activeCommunity!.dao!.governanceSymbol}_${
+      talk.activeCommunity!.dao!.daoId
+    }`
+    if (props.type === StakeType.Pledge) {
+      // 质押
+      const stakeRes = await GetStake({
+        symbol,
+        address: userStore.user!.address!,
+        op: DAOStakeOperate.Pledge,
+      })
+      if (stakeRes.code === 0) {
+        const amount = new Decimal(amountNumber.value)
+          .mul(currentSymbol.value!.rate)
+          .toInteger()
+          .toNumber()
+        const result = await userStore.showWallet.createBrfcChildNode(
+          {
+            nodeName: NodeName.SendMoney,
+            payTo: [
+              {
+                address: stakeRes.data.mvcToAddress,
+                amount: new Decimal(amount)
+                  .add(stakeRes.data.txFee)
+                  .toInteger()
+                  .toNumber(),
+              },
+            ],
+          },
+          {
+            payType: SdkPayType.SPACE,
+            isBroadcast: false,
+          }
+        )
+        if (result) {
+          if (result.payToAddress?.transaction) {
+            await userStore.showWallet.wallet?.provider.broadcast(
+              result.payToAddress?.transaction.toString()
+            )
+          }
+          const res = await Pledge({
+            symbol,
+            requestIndex: stakeRes.data.requestIndex,
+            mvcRawTx: result.sendMoney.transaction.toString(),
+            mvcOutputIndex: 0,
+            mvcAddAmount: amount,
+          })
 
-        if (res.code === 0) {
-          ElMessage.success(i18n.t('DAO.Pledge successful'))
-          emit('update:modelValue', false)
-          percentage.value = 0
-          amountNumber.value = 0
+          if (res.code === 0) {
+            emit('success')
+            ElMessage.success(i18n.t('DAO.Pledge successful'))
+            emit('update:modelValue', false)
+            percentage.value = 0
+            amountNumber.value = 0
+            loading.value = false
+          }
+        } else if (result === null) {
           loading.value = false
         }
-      } else if (result === null) {
-        loading.value = false
+      }
+    } else {
+      // 解锁
+      const stakeRes = await GetStake({
+        symbol,
+        address: userStore.user!.address,
+        op: DAOStakeOperate.Unlock,
+      })
+      if (stakeRes.code === 0) {
+        const transfer = await userStore.showWallet.createBrfcChildNode(
+          {
+            nodeName: NodeName.SendMoney,
+            payTo: [{ address: stakeRes.data.mvcToAddress, amount: stakeRes.data.txFee }],
+          },
+          {
+            isBroadcast: false,
+            payType: SdkPayType.SPACE,
+          }
+        )
+        if (transfer) {
+          if (transfer.payToAddress?.transaction) {
+            await userStore.showWallet.wallet?.provider.broadcast(
+              transfer.payToAddress?.transaction.toString()
+            )
+          }
+          const unlockRes = await Unlock({
+            symbol,
+            tokenRemoveAmount: amount.toString(),
+            mvcRawTx: transfer.sendMoney.transaction.toString(),
+            mvcOutputIndex: 0,
+            requestIndex: stakeRes.data.requestIndex,
+          })
+          if (unlockRes.code === 0) {
+            const tx = new mvc.Transaction(unlockRes.data.txHex)
+            // @ts-ignore
+            const script = mvc.Script.fromBuffer(Buffer.from(unlockRes.data.scriptHex, 'hex'))
+            const pubKey = userStore.showWallet.wallet!.getPathPubliceKey('0/0').toHex()
+            const sig = toHex(
+              signTx(
+                // @ts-ignore
+                tx,
+                userStore.showWallet.wallet!.getPathPrivateKey('0/0'),
+                script,
+                Number(unlockRes.data.satoshis),
+                unlockRes.data.inputIndex
+              )
+            )
+            const unlock2Res = await Unlock2({
+              symbol,
+              requestIndex: stakeRes.data.requestIndex,
+              pubKey,
+              sig,
+            })
+            if (unlock2Res.code === 0) {
+              emit('success')
+              ElMessage.success(i18n.t('DAO.UnLock Successful'))
+              emit('update:modelValue', false)
+              percentage.value = 0
+              amountNumber.value = 0
+              loading.value = false
+            }
+          }
+        } else if (transfer === null) {
+          loading.value = false
+        }
       }
     }
   } catch (error) {

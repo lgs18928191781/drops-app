@@ -1173,6 +1173,16 @@
     "Unlock Token": "正在解锁的Token",
     "Stake amount": "质押金额",
     "Pledge successful": "质押成功",
-    "Create Proposal Successful": "创建提案成功"
+    "Create Proposal Successful": "创建提案成功",
+    "Vote": "投票",
+    "Confirm Vote": "确认投票",
+    "You Will Vote": "你将投票",
+    "Vote Successful": "投票成功",
+    "Information About Your Vote": "你投票的信息",
+    "NOt Have Voting Quota": "你沒有投票额度，请质押后再投票",
+    "UnLock": "解锁",
+    "Unlock amount": "解压金额",
+    "UnLock Successful": "解锁成功",
+    "Extract": "提取"
   }
 }

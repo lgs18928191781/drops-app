@@ -86,6 +86,11 @@
             color: var(--themeFadedTextColor);
         }
 
+        .time {
+            color: var(--themeFadedTextColor);
+            margin-left: 10px;
+        }
+
         .share {
             cursor: pointer;
 
@@ -123,6 +128,10 @@
                     background: var(--divid-color);
                 }
 
+                .el-skeleton {
+                    margin-top: 0;
+                }
+
                 .user {
                     .avatar {
                         width: 50px;
@@ -130,8 +139,21 @@
                         margin-right: 5px;
                     }
 
+                    .username {
+                        .el-skeleton__item {
+                            width: 100px;
+                            height: 14px;
+                        }
+
+                    }
+
                     .metaid {
                         color: var(--themeFadedTextColor);
+
+                        .el-skeleton__item {
+                            width: 80px;
+                            height: 14px;
+                        }
                     }
                 }
 
@@ -203,11 +225,55 @@
             padding: 15px 0;
             cursor: pointer;
 
-
             &:last-child {
                 margin-bottom: 0;
             }
+
+            &.voted {
+                cursor: not-allowed;
+            }
+
+            .value {
+                color: var(--themeFadedTextColor);
+            }
         }
+    }
+}
+
+.confirm-model {
+    .lable {
+        text-align: center;
+        font-size: 20px;
+    }
+
+    .option {
+        margin-top: 15px;
+        text-align: center;
+        padding: 15px;
+        font-weight: bold;
+        cursor: not-allowed;
+
+        &:not(.still):hover:not(:active) {
+            transform: none;
+        }
+    }
+
+    .value {
+        margin-top: 10px;
+        text-align: center;
+
+        span {
+            font-weight: bold;
+            margin-left: 10px;
+        }
+    }
+
+    .primary {
+        margin-top: 30px;
+        text-align: center;
+        padding: 20px;
+        font-weight: bold;
+        cursor: pointer;
     }
 }
 

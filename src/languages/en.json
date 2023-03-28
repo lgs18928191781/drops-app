@@ -1156,7 +1156,7 @@
     "Create": "Create",
     "Proposal Status": {
       "UnStarted": "UnStarted",
-      "Voting": "Voting",
+      "Voting": "Active",
       "Ended": "Ended"
     },
     "Edit": "Edit",
@@ -1175,6 +1175,16 @@
     "Unlock Token": "Unlock Token",
     "Stake amount": "Stake amount",
     "Pledge successful": "Pledge successful",
-    "Create Proposal Successful": "Create Proposal Successful"
+    "Create Proposal Successful": "Create Proposal Successful",
+    "Vote": "Vote",
+    "Confirm Vote": "Confirm Vote",
+    "You Will Vote": "DAO.You Will Vote",
+    "Vote Successful": "Vote Successful",
+    "Information About Your Vote": "DAO.Information About Your Vote",
+    "NOt Have Voting Quota": "You have no voting quota, please pledge before voting",
+    "UnLock": "UnLock",
+    "Unlock amount": "Unlock amount",
+    "UnLock Successful": "UnLock Successful",
+    "Extract": "Extract"
   }
 }

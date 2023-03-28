@@ -16,6 +16,12 @@
         .value {
             margin-top: 12px;
             font-size: 20px;
+
+            .main-border {
+                font-size: 14px;
+                padding: 2px 8px;
+                margin-left: 10px;
+            }
         }
     }
 
@@ -104,8 +110,8 @@
                 }
 
                 &.active {
-                    color: var(--color-success);
-                    opacity: 0.5;
+                    background: var(--color-primary);
+                    color: var(--themeBtnTextColor);
                 }
             }
         }
