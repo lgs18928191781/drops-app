@@ -332,13 +332,14 @@ const downloadGroup = reactive([
     icon: APPLE,
     topText: 'GET IT on',
     footText: 'App Store',
+    link: `https://apps.apple.com/us/app/show3/id1668636617?l=${i18n.locale.value}`,
   },
-  {
-    icon: TestflightIcon,
-    topText: 'GET IT ON ',
-    footText: 'TestFlight',
-    link: 'https://testflight.apple.com/join/BxwyvuIf',
-  },
+  // {
+  //   icon: TestflightIcon,
+  //   topText: 'GET IT ON ',
+  //   footText: 'TestFlight',
+  //   link: 'https://testflight.apple.com/join/BxwyvuIf',
+  // },
   {
     icon: googlePlay,
     topText: 'GET IT ON',
