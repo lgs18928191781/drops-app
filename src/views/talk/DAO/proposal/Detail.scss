@@ -245,6 +245,20 @@
 
 .vote {
     padding: 18px;
+    position: relative;
+
+    .cover {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(var(--themeBgThreeColor-rgb), 0.8);
+        z-index: 2;
+        font-weight: bold;
+        font-size: 20px;
+        border-radius: var(--rounded);
+    }
 
     .vote-list {
         margin-top: 15px;

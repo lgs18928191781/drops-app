@@ -58,6 +58,12 @@
           <Card>
             <template #default>
               <div class="vote">
+                <div
+                  class="cover flex flex-align-center flex-pack-center"
+                  v-if="!isVoteing && !votedInfo"
+                >
+                  {{ statusText }}
+                </div>
                 <div class="title">
                   {{ votedInfo ? $t('DAO.Information About Your Vote') : $t('DAO.Vote Title') }}
                 </div>
@@ -237,6 +243,14 @@
 
 
 
+
+
+
+
+
+
+
+
                       }}%
                     </div>
                   </div>
@@ -338,6 +352,17 @@ const statusText = computed(() => {
     proposal.val!.endBlockTime,
     blockTimeStamp.value
   )
+})
+
+const isVoteing = computed(() => {
+  if (
+    proposal.val!.beginBlockTime * 1000 <= blockTimeStamp.value &&
+    proposal.val!.endBlockTime * 1000 > blockTimeStamp.value
+  ) {
+    return true
+  } else {
+    return false
+  }
 })
 
 const statusClass = computed(() => {
