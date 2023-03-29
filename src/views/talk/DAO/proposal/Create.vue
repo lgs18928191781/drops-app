@@ -51,7 +51,12 @@
           />
         </ElFormItem>
         <ElFormItem :label="$t('DAO.Vote Content')" prop="content">
-          <div class="el-input__wrapper" id="vditor" ref="MarkDownRef"></div>
+          <div
+            class="el-input__wrapper"
+            id="vditor"
+            ref="MarkDownRef"
+            :class="{ active: vditor && vditor.getValue() }"
+          ></div>
         </ElFormItem>
       </ElForm>
     </div>
