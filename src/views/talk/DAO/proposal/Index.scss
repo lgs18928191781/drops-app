@@ -65,38 +65,25 @@
         display: block;
 
         .top {
+            .el-skeleton {
+                margin-top: 0;
+            }
+
             .user {
                 .avatar {
                     width: 34px;
                     height: 34px;
                     margin-right: 5px;
                 }
-            }
 
-            .txid {
-                font-size: 12px;
-                margin-left: 20px;
-                padding: 0px 4px;
-                background: var(--divid-color);
-                border-radius: 8px;
-                cursor: pointer;
-
-                .icon {
-                    width: 10px;
-                    height: 10px;
-                    margin-right: 5px;
-                }
-
-                &:hover {
-                    color: var(--color-hover);
+                span {
+                    .el-skeleton__item {
+                        width: 80px;
+                        height: 16px;
+                    }
                 }
             }
 
-            .time {
-                font-size: 12px;
-                margin-left: 10px;
-                color: var(--themeFadedTextColor);
-            }
 
             .status {
                 font-size: 14px;
@@ -117,7 +104,7 @@
         }
 
         .title {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
             margin-top: 15px;
             @extend %text-ellipsis;
@@ -127,8 +114,42 @@
             margin-top: 10px;
             @include text-many-ellipsis(3);
             font-size: 14px;
-            line-height: 24px;
+            line-height: 22px;
+            color: rgba(var(--themeTextColorRgb), 0.8)
+        }
+
+        .bottom {
+            font-size: 14px;
             color: var(--themeFadedTextColor);
+            margin-top: 18px;
+
+            .txid {
+                margin-left: 20px;
+                padding: 0px 4px;
+                background: var(--divid-color);
+                border-radius: 8px;
+                cursor: pointer;
+
+                .icon {
+                    width: 10px;
+                    height: 10px;
+                    margin-right: 5px;
+                }
+
+                &:hover {
+                    color: var(--color-hover);
+                }
+            }
+
+            .time {
+
+
+                .icon {
+                    width: 20px;
+                    height: 20px;
+                    margin-right: 5px;
+                }
+            }
         }
 
 
@@ -140,6 +161,52 @@
 
 
 @media only screen and (max-width: 750PX) {
+    .proposal-index {
+        height: auto;
+    }
+
+    .pool-msg {
+        display: block;
+
+        .pool-msg-item {
+            margin-bottom: 30px;
+
+            &:first-child {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--divid-color);
+                padding-bottom: 30px;
+            }
+
+            &:nth-child(2),
+            &:nth-child(3) {
+                width: calc((100% - 10px) / 2);
+                display: inline-block;
+                box-sizing: border-box;
+                margin-right: 0;
+                text-align: center;
+
+                .value {
+                    justify-content: center;
+                }
+            }
+
+            &:nth-child(3) {
+                border-right: none;
+                margin-left: 10px;
+            }
+
+
+        }
+
+        .stake {
+            text-align: center;
+            padding: 10px;
+        }
+
+
+    }
+
     .proposal-list .proposal-item .top .txid {
         display: none;
     }

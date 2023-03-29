@@ -215,6 +215,25 @@ html.dark {
             }
         }
 
+        .el-date-editor {
+            border: var(--el-border-width) solid var(--color-error) !important;
+            box-shadow: 3px 3px 0 var(--color-error) !important;
+        }
+
+        .el-select {
+            border: var(--el-border-width) solid var(--color-error) !important;
+            box-shadow: 3px 3px 0 var(--color-error) !important;
+
+            .el-input {
+                .el-input__wrapper {
+                    .el-input__inner {
+                        box-shadow: none !important;
+                    }
+                }
+            }
+
+        }
+
     }
 }
 

@@ -1094,7 +1094,7 @@
     "Opposition": "Opposition",
     "Vote Records": "Vote Records",
     "Information": "Information",
-    "Proposal Type": "DAO.Proposal Type",
+    "Proposal Type": "Proposals Type",
     "Start Time": "Start Time",
     "End Time": "End Time",
     "Result": "Result",
@@ -1105,7 +1105,7 @@
     "Custom Multiple Choice Voting": "Custom Multiple Choice Voting",
     "Vote Options": "Vote Options",
     "Vote Time": "Vote Time",
-    "Vote Content": "Content",
+    "Vote Content": "Description (optional)",
     "Publish": "Publish",
     "proposalDrscPlac": "Tell us more about your proposal (optional)",
     "Enter Proposal Title": "Enter Proposal Title",
@@ -1185,6 +1185,15 @@
     "UnLock": "UnLock",
     "Unlock amount": "Unlock amount",
     "UnLock Successful": "UnLock Successful",
-    "Extract": "Extract"
+    "Extract": "Extract",
+    "Extractable": "Extractable",
+    "Not Extractable": "Not Extractable",
+    "Extract Successful": "Extract Successful",
+    "Vote End Time Error": "The voting end time is at least one day greater than the current time",
+    "Not Extractable Time Tips": "Based on the latest block time",
+    "Confirm Publish": "Confirm Publish",
+    "Confirm Publish Tips": "Once published, the proposal cannot be <a>modified</a> and <a>deleted</a>, please confirm that it is correct before publishing!",
+    "Single Vote Type": "Single Choice Voting",
+    "Max five Vote Options": "Up to 5 options can be set"
   }
 }

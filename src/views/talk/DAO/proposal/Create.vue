@@ -22,7 +22,7 @@
         <ElFormItem :label="$t('DAO.Proposal Type')" prop="type">
           <ElSelect v-model="form.type" @change="onTypeChange">
             <ElOption
-              v-for="item in typeOptions"
+              v-for="item in DAOtypeOptions"
               :key="item.value"
               :label="item.name()"
               :value="item.value"
@@ -56,6 +56,19 @@
       </ElForm>
     </div>
   </div>
+
+  <Modal v-model="isShowConfirmModal" :width="'456px'">
+    <template #title>{{ $t('DAO.Confirm Publish') }}</template>
+    <template #body>
+      <div class="confirm-tips" v-html="$t('DAO.Confirm Publish Tips')"></div>
+      <div class="confirm-operate flex flex-align-center">
+        <a class="main-border flex1" @click="isShowConfirmModal = false">{{ $t('Cancel') }}</a>
+        <a class="main-border primary flex1" @click="confirmPublish">{{
+          $t('DAO.Confirm Publish')
+        }}</a>
+      </div>
+    </template>
+  </Modal>
 </template>
 
 <script setup lang="ts">
@@ -71,6 +84,8 @@ import { useRouter } from 'vue-router'
 import { openLoading } from '@/utils/util'
 import { useTalkStore } from '@/stores/talk'
 import Decimal from 'decimal.js-light'
+import Modal from '@/components/Modal/Modal.vue'
+import { DAOtypeOptions } from '@/utils/DAO'
 
 const vditor = ref<Vditor | null>(null)
 const headeroffSetTop = ref(0)
@@ -79,6 +94,7 @@ const i18n = useI18n()
 const userStore = useUserStore()
 const router = useRouter()
 const talk = useTalkStore()
+const isShowConfirmModal = ref(false)
 
 const form = reactive({
   title: '',
@@ -100,7 +116,11 @@ const rules = reactive<FormRules>({
     {
       validator: (rule: any, value: any, callback: any) => {
         if (form.options && form.options.length) {
-          callback()
+          if (form.options.length > 5) {
+            callback(new Error(i18n.t('DAO.Max five Vote Options')))
+          } else {
+            callback()
+          }
         } else {
           callback(new Error(i18n.t('DAO.Enter Vote Options')))
         }
@@ -120,17 +140,20 @@ const rules = reactive<FormRules>({
       },
       trigger: 'blur',
     },
+    {
+      validator: (rule: any, value: any, callback: any) => {
+        const least = new Date().getTime() + 1000 * 60 * 60 * 24
+        if (new Date(form.time[1]).getTime() < least) {
+          callback(new Error(i18n.t('DAO.Vote End Time Error')))
+        } else {
+          callback()
+        }
+      },
+      trigger: 'blur',
+    },
   ],
 })
 
-const typeOptions = [
-  { name: () => i18n.t('DAO.Basic Type Voting'), value: DAOProposalType.Base },
-  { name: () => i18n.t('DAO.Custom Single Choice Voting'), value: DAOProposalType.DiySingleChoose },
-  {
-    name: () => i18n.t('DAO.Custom Multiple Choice Voting'),
-    value: DAOProposalType.DiyMultipleChoose,
-  },
-]
 const MarkDownRef = ref()
 
 function initMarkDown() {
@@ -199,72 +222,75 @@ function onTypeChange() {
 function submit() {
   FormRef.value?.validate(async result => {
     if (result) {
-      const loading = openLoading()
-      try {
-        const res = await GetStake({
+      isShowConfirmModal.value = true
+    }
+  })
+}
+
+async function confirmPublish() {
+  isShowConfirmModal.value = false
+  const loading = openLoading()
+  try {
+    const res = await GetStake({
+      symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${talk.activeCommunity!.dao!.daoId}`,
+      address: userStore.user!.address!,
+      op: DAOStakeOperate.CreateVote,
+    })
+    if (res.code === 0) {
+      const transfer = await userStore.showWallet.createBrfcChildNode(
+        {
+          nodeName: NodeName.SendMoney,
+          payTo: [{ address: res.data.mvcToAddress, amount: res.data.txFee }],
+        },
+        {
+          payType: SdkPayType.SPACE,
+          isBroadcast: false,
+        }
+      )
+      if (transfer) {
+        if (transfer.payToAddress?.transaction) {
+          await userStore.showWallet.wallet?.provider.broadcast(
+            transfer.payToAddress?.transaction.toString()
+          )
+        }
+        const response = await CreateVote({
           symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${
             talk.activeCommunity!.dao!.daoId
           }`,
-          address: userStore.user!.address!,
-          op: DAOStakeOperate.CreateVote,
+          requestIndex: res.data.requestIndex,
+          mvcRawTx: transfer.sendMoney!.transaction!.toString(),
+          mvcOutputIndex: 0,
+          title: form.title,
+          desc: vditor.value!.getValue(),
+          options: form.options,
+          minVoteAmount: '1',
+          beginBlockTime: new Decimal(new Date(form.time[0]).getTime())
+            .div(1000)
+            .toInteger()
+            .toNumber(),
+          endBlockTime: new Decimal(new Date(form.time[1]).getTime())
+            .div(1000)
+            .toInteger()
+            .toNumber(),
         })
-        if (res.code === 0) {
-          const transfer = await userStore.showWallet.createBrfcChildNode(
-            {
-              nodeName: NodeName.SendMoney,
-              payTo: [{ address: res.data.mvcToAddress, amount: res.data.txFee }],
+        if (response.code === 0) {
+          loading.close()
+          ElMessage.success(i18n.t('DAO.Create Proposal Successful'))
+          router.replace({
+            name: 'talkDAOProposalDetail',
+            params: {
+              id: response.data.voteID,
             },
-            {
-              payType: SdkPayType.SPACE,
-              isBroadcast: false,
-            }
-          )
-          if (transfer) {
-            if (transfer.payToAddress?.transaction) {
-              await userStore.showWallet.wallet?.provider.broadcast(
-                transfer.payToAddress?.transaction.toString()
-              )
-            }
-            const response = await CreateVote({
-              symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${
-                talk.activeCommunity!.dao!.daoId
-              }`,
-              requestIndex: res.data.requestIndex,
-              mvcRawTx: transfer.sendMoney!.transaction!.toString(),
-              mvcOutputIndex: 0,
-              title: form.title,
-              desc: 'vote description',
-              options: form.options,
-              minVoteAmount: '1',
-              beginBlockTime: new Decimal(new Date(form.time[0]).getTime())
-                .div(1000)
-                .toInteger()
-                .toNumber(),
-              endBlockTime: new Decimal(new Date(form.time[1]).getTime())
-                .div(1000)
-                .toInteger()
-                .toNumber(),
-            })
-            if (response.code === 0) {
-              loading.close()
-              ElMessage.success(i18n.t('DAO.Create Proposal Successful'))
-              router.push({
-                name: 'talkDAOProposalDetail',
-                params: {
-                  id: response.data.voteID,
-                },
-              })
-            }
-          } else if (transfer === null) {
-            loading.close()
-          }
+          })
         }
-      } catch (error) {
-        ElMessage.error((error as any).message)
+      } else if (transfer === null) {
         loading.close()
       }
     }
-  })
+  } catch (error) {
+    ElMessage.error((error as any).message)
+    loading.close()
+  }
 }
 
 onMounted(() => {

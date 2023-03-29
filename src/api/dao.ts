@@ -134,6 +134,10 @@ export const GetUserStakeInfo = async (params: {
   return DAO.get('/userinfo', { params })
 }
 
+export const GetBlockTime = async (): Promise<{ code: number; data: number }> => {
+  return DAO.get('/blocktime')
+}
+
 export const Unlock = async (params: {
   symbol: string
   requestIndex: string
@@ -194,4 +198,39 @@ export const Pledge = async (params: {
       },
     }
   )
+}
+
+export const Withdraw = async (params: {
+  symbol: string
+  requestIndex: string
+  mvcRawTx: string
+  mvcOutputIndex: number
+}): Promise<{
+  code: number
+  data: {
+    txHex: string
+    scriptHex: string
+    satoshis: string
+    inputIndex: number
+  }
+  msg: string
+}> => {
+  const compressData = await gzip(JSON.stringify(params))
+  return DAO.post('/withdraw', { data: compressData })
+}
+
+export const Withdraw2 = async (params: {
+  symbol: string
+  requestIndex: string
+  pubKey: string
+  sig: string
+}): Promise<{
+  code: number
+  data: {
+    txid: string
+    blockTime: number
+  }
+  msg: string
+}> => {
+  return DAO.post('/withdraw2', params)
 }

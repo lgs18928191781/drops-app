@@ -59,11 +59,18 @@
         font-size: 24px;
         font-weight: bold;
         line-height: 36px;
+        margin-top: 18px;
     }
 
     .msg {
-        margin-top: 18px;
+
         font-size: 14px;
+
+        .el-skeleton {
+            margin-top: 0;
+            display: inline-block;
+            width: auto;
+        }
 
         .user {
             margin-right: 15px;
@@ -72,6 +79,13 @@
                 width: 30px;
                 height: 30px;
                 margin-right: 5px;
+            }
+
+            span {
+                .el-skeleton__item {
+                    width: 80px;
+                    height: 14px;
+                }
             }
         }
 
@@ -84,6 +98,16 @@
 
         .status {
             color: var(--themeFadedTextColor);
+
+            &.faded {
+                color: var(--themeFadedTextColor);
+                background: var(--divid-color);
+            }
+
+            &.active {
+                background: var(--color-primary);
+                color: var(--themeBtnTextColor);
+            }
         }
 
         .time {
@@ -102,7 +126,7 @@
     }
 
     .cont {
-        margin-top: 30px;
+        margin-top: 18px;
         line-height: 28px;
     }
 
@@ -130,6 +154,8 @@
 
                 .el-skeleton {
                     margin-top: 0;
+                    display: inline-block;
+                    width: auto;
                 }
 
                 .user {

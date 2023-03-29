@@ -495,10 +495,10 @@ export default class ShowmoneyProvider {
         await this.sendRawTx(txHex)
         resolve(res)
       } else {
-        const response = JSON.parse(res.message)
+        let message =
+          typeof res.message === 'string' ? res.message : JSON.parse(res.message).message
         reject({
-          code: response.code,
-          message: response.message,
+          message: message,
         })
       }
     })

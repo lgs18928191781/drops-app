@@ -1,5 +1,11 @@
 <template>
-  <div class="h-full flex flex-v">
+  <div
+    class="h-full flex flex-v proposal-index"
+    v-infinite-scroll="getMore"
+    :infinite-scroll-immediate="false"
+    :infinite-scroll-distance="100"
+    :infinite-scroll-disabled="!isMobile"
+  >
     <ElSkeleton :loading="isSkeleton" animated>
       <div class="pool-msg flex flex-align-center">
         <div class="pool-msg-item flex1">
@@ -31,8 +37,7 @@
               class="main-border primary"
               @click="
                 () => {
-                  stakeType = StakeType.Unlock
-                  isShowStake = true
+                  isShowExtractModal = true
                 }
               "
               v-if="userStake.val!.unlockingTokens.length"
@@ -41,7 +46,7 @@
           </div>
         </div>
         <div
-          class="main-border primary"
+          class="main-border primary stake"
           @click="
             () => {
               stakeType = StakeType.Pledge
@@ -65,6 +70,7 @@
         v-infinite-scroll="getMore"
         :infinite-scroll-immediate="false"
         :infinite-scroll-distance="100"
+        :infinite-scroll-disabled="isMobile"
       >
         <RouterLink
           :to="{ name: 'talkDAOProposalDetail', params: { id: item._id } }"
@@ -75,14 +81,27 @@
           <!-- top -->
           <div class="top flex flex-align-center">
             <div class="flex1 flex flex-align-center">
-              <span class="user flex flex-align-center">
-                <UserAvatar :meta-id="''" :image="''" :meta-name="''" :name="''" />
-                <span>proposal</span>
-              </span>
-              <span class="txid flex flex-align-center" @click.stop="tx(item.txid)"
-                ><Icon name="link" /> {{ item.txid?.slice(0, 6) }}</span
-              >
-              <span class="time">{{ $filters.dateTimeFormat(item.createTime * 1000) }}</span>
+              <ElSkeleton :loading="!users.some(_item => _item.address === item.creator)">
+                <template #template>
+                  <span class="user flex flex-align-center">
+                    <ElSkeletonItem :variant="'image'" class="avatar" />
+                    <span><ElSkeletonItem :variant="'text'" class="avatar"/></span>
+                  </span>
+                </template>
+                <span class="user flex flex-align-center">
+                  <UserAvatar
+                    :meta-id="users.find(_item => _item.address === item.creator)!.metaId"
+                    :image="users.find(_item => _item.address === item.creator)!.avatarImage"
+                    :meta-name="users.find(_item => _item.address === item.creator)!.metaName"
+                    :name="users.find(_item => _item.address === item.creator)!.name"
+                  />
+                  <span
+                    ><UserName
+                      :name="users.find(_item => _item.address === item.creator)!.name"
+                      :meta-name="users.find(_item => _item.address === item.creator)!.metaName"
+                  /></span>
+                </span>
+              </ElSkeleton>
             </div>
             <span class="status" :class="getStatusClass(item.beginBlockTime, item.endBlockTime)">{{
               getStatusText(item.beginBlockTime, item.endBlockTime)
@@ -92,7 +111,17 @@
           <div class="title">{{ item.title }}</div>
 
           <div class="content">
-            {{ item.desc }}
+            {{ replaceMarkdownTag(item.desc) }}
+          </div>
+
+          <div class="bottom flex flex-align-center">
+            <span class="time flex1 flex flex-align-center"
+              ><Icon name="calendar_days" />
+              {{ $filters.dateTimeFormat(item.createTime * 1000) }}</span
+            >
+            <span class="txid flex flex-align-center" @click.stop="tx(item.txid)"
+              ><Icon name="link" /> {{ item.txid?.slice(0, 6) }}</span
+            >
           </div>
         </RouterLink>
 
@@ -101,6 +130,8 @@
       </div>
 
       <StakeModal v-model="isShowStake" :type="stakeType" @success="getUserStakeInfo" />
+
+      <ExtractModal v-model="isShowExtractModal" @success="getUserStakeInfo" />
     </ElSkeleton>
   </div>
 </template>
@@ -110,7 +141,7 @@ import { initPagination } from '@/config'
 import { computed, reactive, ref, watch } from 'vue'
 import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import IsNull from '@/components/IsNull/IsNull.vue'
-import { checkUserLogin } from '@/utils/util'
+import { checkUserLogin, getUserInfoByAddress } from '@/utils/util'
 import { useRouter } from 'vue-router'
 import { GetUserStakeInfo, Proposals } from '@/api/dao'
 import { useTalkStore } from '@/stores/talk'
@@ -123,7 +154,9 @@ import Decimal from 'decimal.js-light'
 import StakeModal from '../components/StakeModal.vue'
 import { tx } from '@/utils/util'
 import { StakeType } from '@/enum'
-import { type } from 'os'
+import ExtractModal from '../components/ExtractModal.vue'
+import { isMobile } from '@/stores/root'
+import { replaceMarkdownTag } from '@/utils/util'
 
 const pagination = reactive({ ...initPagination })
 const proposals: ProposalItem[] = reactive([])
@@ -134,9 +167,11 @@ const i18n = useI18n()
 const now = new Date().getTime()
 const userStore = useUserStore()
 const stakeType = ref(StakeType.Pledge)
+const users: UserAllInfo[] = reactive([])
 
 const userStake: { val: DAOUserStakeInfo | null } = reactive({ val: null })
 const isShowStake = ref(false)
+const isShowExtractModal = ref(false)
 
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
@@ -152,6 +187,15 @@ function getDatas(isCover = false) {
       if (res.length) {
         proposals.push(...res)
         pagination.nothing = false
+        setTimeout(() => {
+          for (let i = 0; i < res.length; i++) {
+            if (typeof res[i].creator === 'string' && !users.some(item => item.address === res[i].creator)){
+              getUserInfoByAddress(res[i].creator).then(user => {
+                users.push(user)
+              })
+            }
+          }
+        }, 0)
       } else {
         pagination.nothing = true
       }

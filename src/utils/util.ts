@@ -1780,3 +1780,12 @@ export function getUserInfoByAddress(address: string) {
     }
   })
 }
+
+export function replaceMarkdownTag(markdown: string) {
+  return markdown
+    .replace(/```+/g, '')
+    .replace(/#+/g, '')
+    .replace(/-+/g, '')
+    .replace(/\n(&gt;|\\>)/g, '')
+    .replace(/^>{1}/g, '')
+}

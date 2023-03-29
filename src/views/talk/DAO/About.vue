@@ -68,21 +68,23 @@
             </div>
           </div>
 
-          <div class="information-item">
+          <!-- 加入Dao需最少治理token数量 -->
+          <!-- <div class="information-item">
             <div class="lable">{{ $t('DAO.Information Need Token Min') }}</div>
             <div class="cont">
               <ElTag type="info">{{ talk.activeCommunity?.dao?.joinDaoRequireTokenNumber }}</ElTag>
             </div>
-          </div>
+          </div> -->
 
-          <div class="information-item">
+          <!-- 创建提案需要的最少Token数量  -->
+          <!-- <div class="information-item">
             <div class="lable">{{ $t('DAO.Information Proposal Need Token Min') }}</div>
             <div class="cont">
               <ElTag type="info">{{
                 talk.activeCommunity?.dao?.createProposalRequireTokenNumber
               }}</ElTag>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -153,7 +155,7 @@
 import { GetUserAllInfo } from '@/api/aggregation'
 import { useTalkStore } from '@/stores/talk'
 import { ElTag } from 'element-plus'
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { DAOTypes } from '@/utils/DAO'
 import { useUserStore } from '@/stores/user'
 import CreateDaoModal from '../components/modals/CreateDaoModal.vue'
@@ -217,7 +219,16 @@ async function edit() {
   form.isSkeleton = false
 }
 
-getAdminUserInfo()
+let watchFun: any
+watchFun = watch(
+  () => talk.activeCommunity,
+  result => {
+    if (result) {
+      if (watchFun) watchFun()
+      getAdminUserInfo()
+    }
+  }
+)
 </script>
 
 <style lang="scss" scoped src="./About.scss"></style>

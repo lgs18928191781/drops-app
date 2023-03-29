@@ -1104,7 +1104,7 @@
     "Custom Multiple Choice Voting": "自定义多选投票",
     "Vote Options": "投票选项",
     "Vote Time": "投票时间",
-    "Vote Content": "详情",
+    "Vote Content": "详情(可选)",
     "Publish": "发布",
     "proposalDrscPlac": "告诉我们更多关于您的提案(可选)",
     "Enter Proposal Title": "请填写提案标题",
@@ -1183,6 +1183,15 @@
     "UnLock": "解锁",
     "Unlock amount": "解压金额",
     "UnLock Successful": "解锁成功",
-    "Extract": "提取"
+    "Extract": "提取",
+    "Extractable": "可提取",
+    "Not Extractable": "不可提取",
+    "Extract Successful": "提取成功",
+    "Vote End Time Error": "投票结束时间至少大于当前时间一天",
+    "Not Extractable Time Tips": "以最新出块时间为准",
+    "Confirm Publish": "确认发布",
+    "Confirm Publish Tips": "一旦发布后，提案将不可<a>修改</a>和<a>删除</a>，请确认无误后再发布！",
+    "Single Vote Type": "单项选择投票",
+    "Max five Vote Options": "最多只可以设置5个选项"
   }
 }

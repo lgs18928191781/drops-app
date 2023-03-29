@@ -141,6 +141,19 @@ export const getBlockHeight = (): Promise<any> => {
   return callMetasvApi('/block/info')
 }
 
+export const getBlocks = (): Promise<{
+  height: number
+  blockHash: string
+  timestamp: number
+  medianTime: number
+  reward: number
+  miner: string
+  txCount: number
+  size: number
+}[]> => {
+  return callMetasvApi('/block') as any
+}
+
 // 从 metasv 订阅 xpub
 export const registerXpub = async (params: ObjTypes<any>): Promise<any> => {
   const blockInfo = await getBlockHeight()

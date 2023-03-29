@@ -18,32 +18,46 @@
           :infinite-scroll-distance="100"
           :infinite-scroll-disabled="isMobile"
         >
-          <div class="title">{{ proposal.val!.title }}</div>
-
           <div class="msg flex flex-align-center">
             <div class="flex1 flex flex-align-center">
-              <div class="user flex flex-align-center">
-                <UserAvatar :meta-id="''" :name="''" :meta-name="''" :image="''" />
-                <span>缺角居士</span>
-              </div>
-              <span
-                class="status"
-                :class="getStatusClass(proposal.val!.beginBlockTime, proposal.val!.endBlockTime)"
-                >{{  getStatusText(proposal.val!.beginBlockTime, proposal.val!.endBlockTime) }}</span
-              >
-              <span
+              <ElSkeleton :loading="!createUser.val" animated>
+                <template #template>
+                  <div class="user flex flex-align-center">
+                    <ElSkeletonItem :variant="'image'" class="avatar" />
+                    <span><ElSkeletonItem :variant="'text'"/></span>
+                  </div>
+                </template>
+                <div class="user flex flex-align-center">
+                  <UserAvatar
+                    :meta-id="createUser.val!.metaId"
+                    :name="createUser.val!.name"
+                    :meta-name="createUser.val!.metaName"
+                    :image="createUser.val!.avatarImage"
+                  />
+                  <span
+                    ><UserName :name="createUser.val!.name" :meta-name="createUser.val!.metaName"
+                  /></span>
+                </div>
+              </ElSkeleton>
+
+              <!-- <span
                 class="time"
                 >{{ $filters.dateTimeFormat(proposal.val!.createTime * 1000) }}</span
-              >
+              > -->
             </div>
-            <div class="share">
+            <span
+              class="status"
+              :class="getStatusClass(proposal.val!.beginBlockTime, proposal.val!.endBlockTime)"
+              >{{  getStatusText(proposal.val!.beginBlockTime, proposal.val!.endBlockTime) }}</span
+            >
+            <!-- <div class="share">
               {{ $t('DAO.Share') }}
-            </div>
+            </div> -->
           </div>
 
-          <div class="cont">
-            {{ proposal.val!.desc }}
-          </div>
+          <div class="title">{{ proposal.val!.title }}</div>
+
+          <div class="cont" ref="ContentRef"></div>
 
           <Card>
             <template #default>
@@ -87,7 +101,6 @@
                 :key="index"
               >
                 <ElSkeleton
-                  class="flex1"
                   :loading="!recordsUserInfo.some(_item => _item.address === item.address)"
                   animated
                 >
@@ -100,13 +113,39 @@
                       </div>
                     </div>
                   </template>
+                  <div class="user flex flex-align-center">
+                    <UserAvatar
+                      :meta-id="
+                        recordsUserInfo.find(_item => _item.address === item.address)?.metaId
+                      "
+                      :image="
+                          recordsUserInfo.find(_item => _item.address === item.address)!.avatarImage
+                        "
+                      :name="recordsUserInfo.find(_item => _item.address === item.address)?.name"
+                      :meta-name="
+                          recordsUserInfo.find(_item => _item.address === item.address)!.metaName
+                        "
+                    />
+                    <div class="flex1">
+                      <div class="username">
+                        <UserName
+                          :name="recordsUserInfo.find(_item => _item.address === item.address)!.name"
+                          :meta-name="recordsUserInfo.find(_item => _item.address === item.address)!.metaName"
+                        />
+                      </div>
+                      <div class="metaid">
+                        MetaID:
+                        {{ recordsUserInfo.find(_item => _item.address === item.address)!.metaId.slice(0,6) }}
+                      </div>
+                    </div>
+                  </div>
                 </ElSkeleton>
 
                 <div class="value flex1">
                   {{ $t(proposal.val!.options[item.voteOption]) }}
                 </div>
-                <div class="time">2020-04-26 11:30:12</div>
-                <Icon name="link" class="link"></Icon>
+                <div class="time">{{ $filters.dateTimeFormat(item.time * 1000) }}</div>
+                <Icon name="link" class="link" @click="tx(item.txid)"></Icon>
               </div>
 
               <LoadMore :pagination="pagination" v-if="records.length" />
@@ -115,7 +154,7 @@
           </div>
         </div>
 
-        <div class="right">
+        <div class="right flex flex-v">
           <!-- Information -->
           <div class="section">
             <div class="title">{{ $t('DAO.Information') }}</div>
@@ -125,7 +164,7 @@
                 <div class="information-item ">
                   <div class="information-item-warp flex flex-align-center">
                     <div class="flex1 lable">{{ $t('DAO.Proposal Type') }}</div>
-                    <div class="value">基本类型投票</div>
+                    <div class="value">{{ $t('DAO.Single Vote Type') }}</div>
                   </div>
                 </div>
 
@@ -161,10 +200,10 @@
           </div>
 
           <!-- Result -->
-          <div class="section">
+          <div class="section flex1 flex flex-v">
             <div class="title">{{ $t('DAO.Result') }}</div>
-            <div class="cont">
-              <div class="result-list">
+            <div class="cont flex1">
+              <div class="result-list h-full overflow-y-auto">
                 <div
                   class="result-item "
                   v-for="(item, index) in proposal.val!.options"
@@ -179,17 +218,6 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
-
-
-
-
-
-
-
-
-
-
-
 
                       }}%
                     </div>
@@ -232,12 +260,12 @@
 import { useI18n } from 'vue-i18n'
 import { DAOStakeOperate, DAOVoteDefaultOption, NodeName, SdkPayType } from '@/enum'
 import Card from '@/components/Card/Card.vue'
-import { computed, reactive, ref } from 'vue'
+import { computed, nextTick, reactive, ref, watch } from 'vue'
 import IsNull from '@/components/IsNull/IsNull.vue'
 import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import { initPagination } from '@/config'
 import { isMobile } from '@/stores/root'
-import { getStatusClass, getStatusText } from '@/utils/DAO'
+import { getStatusClass, getStatusText, DAOtypeOptions } from '@/utils/DAO'
 import { GetStake, GetUserStakeInfo, Proposal, Vote, Vote2, Voters } from '@/api/dao'
 import { useTalkStore } from '@/stores/talk'
 import { useRoute } from 'vue-router'
@@ -245,8 +273,9 @@ import { ProposalItem, VoterItem, DAOUserStakeInfo } from '@/@types/api/dao'
 import Decimal from 'decimal.js-light'
 import Modal from '@/components/Modal/Modal.vue'
 import { useUserStore } from '@/stores/user'
-import { checkUserLogin, getUserInfoByAddress } from '@/utils/util'
+import { checkUserLogin, getUserInfoByAddress, tx } from '@/utils/util'
 import { signTx, toHex, mvc } from 'mvc-scrypt/dist'
+import { marked } from 'marked'
 
 const i18n = useI18n()
 const records: VoterItem[] = reactive([])
@@ -262,13 +291,12 @@ const userStore = useUserStore()
 const loading = ref(false)
 const userStake: { val: null | DAOUserStakeInfo } = reactive({ val: null })
 const createUser: {
-  loading: boolean
-  info: UserAllInfo | null
+  val: UserAllInfo | null
 } = reactive({
-  loading: true,
-  info: null,
+  val: null,
 })
 const recordsUserInfo: UserAllInfo[] = reactive([])
+const ContentRef = ref()
 
 const dafaultVoteOptions = [
   {
@@ -316,13 +344,10 @@ function getDetail() {
     })
     if (res) {
       proposal.val = res
-      if (createUser.loading) {
-        // getUserInfoByAddress(mvc.Address.fromObject(proposal.val!.creator).toString()).then(
-        //   user => {
-        //     createUser.info = user
-        //     createUser.loading = false
-        //   }
-        // )
+      if (!createUser.val && typeof proposal.val!.creator === 'string') {
+        getUserInfoByAddress(proposal.val!.creator).then(user => {
+          createUser.val = user
+        })
       }
       resolve()
     }
@@ -476,9 +501,24 @@ async function confirmVote() {
   }
 }
 
-Promise.all([getDetail(), getDatas(true), getUserStake()]).then(() => {
-  isSkeleton.value = false
-})
+let watchFun: any
+watchFun = watch(
+  () => talk.activeCommunity,
+  result => {
+    if (result) {
+      if (watchFun) {
+        watchFun()
+      }
+      Promise.all([getDetail(), getDatas(true), getUserStake()]).then(() => {
+        isSkeleton.value = false
+        nextTick(() => {
+          ContentRef.value.innerHTML = marked.parse(proposal.val!.desc)
+        })
+      })
+    }
+  },
+  { immediate: true }
+)
 </script>
 
 <style lang="scss" scoped src="./Detail.scss"></style>

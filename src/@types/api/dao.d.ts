@@ -41,4 +41,6 @@ export interface VoterItem {
   address: string
   voteAmount: string
   voteOption: number
+  txid: string
+  time: number
 }

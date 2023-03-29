@@ -1,3 +1,4 @@
+import { DAOProposalType } from '@/enum'
 import i18n from './i18n'
 
 export const DAOTypes = [
@@ -45,3 +46,16 @@ export function getStatusClass(startTime: number, endTime: number) {
   else if (startTime * 1000 <= now && endTime * 1000 > now) return 'active'
   else return 'faded'
 }
+
+export const DAOtypeOptions = [
+  // @ts-ignore
+  { name: () => i18n.global.t('DAO.Basic Type Voting'), value: DAOProposalType.Base },
+  {
+    name: () => i18n.global.t('DAO.Custom Single Choice Voting'),
+    value: DAOProposalType.DiySingleChoose,
+  },
+  // {
+  //   name: () => i18n.global.t('DAO.Custom Multiple Choice Voting'),
+  //   value: DAOProposalType.DiyMultipleChoose,
+  // },
+]
