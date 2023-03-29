@@ -32,18 +32,18 @@ export const DAOTypes = [
   },
 ]
 
-export function getStatusText(startTime: number, endTime: number) {
-  const now = new Date().getTime()
-  if (startTime * 1000 > now) return i18n.global.t('DAO.Proposal Status.UnStarted')
-  else if (startTime * 1000 <= now && endTime * 1000 > now)
+export function getStatusText(startTime: number, endTime: number, currentblockTime: number) {
+  //@ts-ignore
+  if (startTime * 1000 > currentblockTime) return i18n.global.t('DAO.Proposal Status.UnStarted')
+  else if (startTime * 1000 <= currentblockTime && endTime * 1000 > currentblockTime)
     return i18n.global.t('DAO.Proposal Status.Voting')
   else return i18n.global.t('DAO.Proposal Status.Ended')
 }
 
-export function getStatusClass(startTime: number, endTime: number) {
-  const now = new Date().getTime()
-  if (startTime * 1000 > now) return 'faded'
-  else if (startTime * 1000 <= now && endTime * 1000 > now) return 'active'
+export function getStatusClass(startTime: number, endTime: number, currentblockTime: number) {
+  if (startTime * 1000 > currentblockTime) return 'faded'
+  else if (startTime * 1000 <= currentblockTime && endTime * 1000 > currentblockTime)
+    return 'active'
   else return 'faded'
 }
 

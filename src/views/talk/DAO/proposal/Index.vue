@@ -103,9 +103,11 @@
                 </span>
               </ElSkeleton>
             </div>
-            <span class="status" :class="getStatusClass(item.beginBlockTime, item.endBlockTime)">{{
-              getStatusText(item.beginBlockTime, item.endBlockTime)
-            }}</span>
+            <span
+              class="status"
+              :class="getStatusClass(item.beginBlockTime, item.endBlockTime, blockTimeStamp)"
+              >{{ getStatusText(item.beginBlockTime, item.endBlockTime, blockTimeStamp) }}</span
+            >
           </div>
 
           <div class="title">{{ item.title }}</div>
@@ -143,7 +145,7 @@ import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import IsNull from '@/components/IsNull/IsNull.vue'
 import { checkUserLogin, getUserInfoByAddress } from '@/utils/util'
 import { useRouter } from 'vue-router'
-import { GetUserStakeInfo, Proposals } from '@/api/dao'
+import { GetBlockTime, GetUserStakeInfo, Proposals } from '@/api/dao'
 import { useTalkStore } from '@/stores/talk'
 import { ProposalItem } from '@/@types/api/dao'
 import { useI18n } from 'vue-i18n'
@@ -172,6 +174,8 @@ const users: UserAllInfo[] = reactive([])
 const userStake: { val: DAOUserStakeInfo | null } = reactive({ val: null })
 const isShowStake = ref(false)
 const isShowExtractModal = ref(false)
+const blockTimeStamp = ref(0)
+
 
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
@@ -243,12 +247,26 @@ const unlockTokenAmount = computed(() => {
   return amount
 })
 
+function getLeastBlockTimestamp() {
+  return new Promise<void>(async (resolve, reject) => {
+    const res = await GetBlockTime().catch(error => {
+      ElMessage.error(error.message)
+    })
+    if (res?.code === 0) {
+      blockTimeStamp.value = res.data * 1000
+      resolve()
+    }
+  })
+}
 
-const watchFun = watch(() => talk.activeCommunity, (result) => {
+let watchFun: any
+watchFun = watch(() => talk.activeCommunity, (result) => {
   if (result) {
-    // watchFun()
-    Promise.all([getDatas(true), getUserStakeInfo()]).then(() => {
-      isSkeleton.value = false
+    if (watchFun) watchFun()
+    getLeastBlockTimestamp().then(() => {
+      Promise.all([getDatas(true), getUserStakeInfo()]).then(() => {
+        isSkeleton.value = false
+      })
     })
   }
 }, {

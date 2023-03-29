@@ -194,7 +194,7 @@ function getLeastBlockTimestamp() {
       ElMessage.error(error.message)
     })
     if (res?.code === 0) {
-      blockTimeStamp.value = res.data
+      blockTimeStamp.value = res.data * 1000
       resolve()
     }
   })

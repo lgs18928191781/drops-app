@@ -45,11 +45,7 @@
                 >{{ $filters.dateTimeFormat(proposal.val!.createTime * 1000) }}</span
               > -->
             </div>
-            <span
-              class="status"
-              :class="getStatusClass(proposal.val!.beginBlockTime, proposal.val!.endBlockTime)"
-              >{{  getStatusText(proposal.val!.beginBlockTime, proposal.val!.endBlockTime) }}</span
-            >
+            <span class="status" :class="statusClass">{{ statusText }}</span>
             <!-- <div class="share">
               {{ $t('DAO.Share') }}
             </div> -->
@@ -188,13 +184,18 @@
                   </div>
                 </div>
 
+                <div class="time-tips">
+                  {{ $t('DAO.Not Extractable Time Tips') }} <br />
+                  {{ $t('DAO.New Block Time') }}: {{ $filters.dateTimeFormat(blockTimeStamp) }}
+                </div>
+
                 <!-- MetaDao -->
-                <div class="information-item ">
+                <!-- <div class="information-item ">
                   <div class="information-item-warp flex flex-align-center">
                     <div class="flex1 lable">MetaDao</div>
                     <div class="value">67</div>
                   </div>
-                </div>
+                </div> -->
               </div>
             </div>
           </div>
@@ -218,6 +219,23 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                       }}%
                     </div>
@@ -266,7 +284,7 @@ import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import { initPagination } from '@/config'
 import { isMobile } from '@/stores/root'
 import { getStatusClass, getStatusText, DAOtypeOptions } from '@/utils/DAO'
-import { GetStake, GetUserStakeInfo, Proposal, Vote, Vote2, Voters } from '@/api/dao'
+import { GetBlockTime, GetStake, GetUserStakeInfo, Proposal, Vote, Vote2, Voters } from '@/api/dao'
 import { useTalkStore } from '@/stores/talk'
 import { useRoute } from 'vue-router'
 import { ProposalItem, VoterItem, DAOUserStakeInfo } from '@/@types/api/dao'
@@ -297,6 +315,7 @@ const createUser: {
 })
 const recordsUserInfo: UserAllInfo[] = reactive([])
 const ContentRef = ref()
+const blockTimeStamp = ref(0)
 
 const dafaultVoteOptions = [
   {
@@ -312,6 +331,22 @@ const dafaultVoteOptions = [
     value: DAOVoteDefaultOption.Abstain,
   },
 ]
+
+const statusText = computed(() => {
+  return getStatusText(
+    proposal.val!.beginBlockTime,
+    proposal.val!.endBlockTime,
+    blockTimeStamp.value
+  )
+})
+
+const statusClass = computed(() => {
+  return getStatusClass(
+    proposal.val!.beginBlockTime,
+    proposal.val!.endBlockTime,
+    blockTimeStamp.value
+  )
+})
 
 const totalVoteValue = computed(() => {
   let value = 0
@@ -501,6 +536,18 @@ async function confirmVote() {
   }
 }
 
+function getLeastBlockTimestamp() {
+  return new Promise<void>(async (resolve, reject) => {
+    const res = await GetBlockTime().catch(error => {
+      ElMessage.error(error.message)
+    })
+    if (res?.code === 0) {
+      blockTimeStamp.value = res.data * 1000
+      resolve()
+    }
+  })
+}
+
 let watchFun: any
 watchFun = watch(
   () => talk.activeCommunity,
@@ -509,12 +556,14 @@ watchFun = watch(
       if (watchFun) {
         watchFun()
       }
-      Promise.all([getDetail(), getDatas(true), getUserStake()]).then(() => {
-        isSkeleton.value = false
-        nextTick(() => {
-          ContentRef.value.innerHTML = marked.parse(proposal.val!.desc)
-        })
-      })
+      Promise.all([getLeastBlockTimestamp(), getDetail(), getDatas(true), getUserStake()]).then(
+        () => {
+          isSkeleton.value = false
+          nextTick(() => {
+            ContentRef.value.innerHTML = marked.parse(proposal.val!.desc)
+          })
+        }
+      )
     }
   },
   { immediate: true }
