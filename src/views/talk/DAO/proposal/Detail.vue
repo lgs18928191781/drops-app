@@ -35,7 +35,10 @@
                     :image="createUser.val!.avatarImage"
                   />
                   <span
-                    ><UserName :name="createUser.val!.name" :meta-name="createUser.val!.metaName"
+                    ><UserName
+                      :name="createUser.val!.name"
+                      :meta-name="createUser.val!.metaName"
+                      :no-tag="true"
                   /></span>
                 </div>
               </ElSkeleton>
@@ -133,6 +136,7 @@
                         <UserName
                           :name="recordsUserInfo.find(_item => _item.address === item.address)!.name"
                           :meta-name="recordsUserInfo.find(_item => _item.address === item.address)!.metaName"
+                          :no-tag="true"
                         />
                       </div>
                       <div class="metaid">
@@ -225,31 +229,6 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
                       }}%
                     </div>

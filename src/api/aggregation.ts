@@ -587,7 +587,7 @@ export const GetMetaIdByAddress = (
   code: number
   data: string
 }> => {
-  return aggregation.get(`/v2/app/user/metaId/${address}/address/absolute`)
+  return aggregation.get(`/v2/app/user/metaId/${address}/address`)
 }
 
 export const GetBindMetaidAddressList = (

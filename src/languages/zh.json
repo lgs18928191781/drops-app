@@ -1193,6 +1193,8 @@
     "Confirm Publish Tips": "一旦发布后，提案将不可<a>修改</a>和<a>删除</a>，请确认无误后再发布！",
     "Single Vote Type": "单项选择投票",
     "Max five Vote Options": "最多只可以设置5个选项",
-    "New Block Time": "最新出块时间"
+    "New Block Time": "最新出块时间",
+    "Edit Successful": "编辑成功",
+    "Create Successful": "创建成功"
   }
 }

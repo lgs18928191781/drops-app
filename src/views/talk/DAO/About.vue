@@ -147,7 +147,7 @@
         </div>
       </div>
     </div> -->
-    <CreateDaoModal v-model="isShowEditModal" ref="DAORef" />
+    <CreateDaoModal v-model="isShowEditModal" ref="DAORef" @success="onEditSuccess" />
   </div>
 </template>
 
@@ -172,8 +172,10 @@ function getAdminUserInfo() {
   return new Promise<void>(async (resolve, reject) => {
     const daoAdmins = talk.activeCommunity!.dao!.daoAdmins
     for (let i = 0; i < talk.activeCommunity!.dao!.daoAdmins.length; i++) {
-      const res = await GetUserAllInfo(daoAdmins[i])
-      if (res.code === 0) admins.push(res.data)
+      if (!admins.some(item => item.metaId === daoAdmins[i])) {
+        const res = await GetUserAllInfo(daoAdmins[i])
+        if (res.code === 0) admins.push(res.data)
+      }
     }
     resolve()
   })
@@ -205,18 +207,27 @@ async function edit() {
   form.publiceKey = dao.publicKey
   form.txId = dao.txId
   isShowEditModal.value = true
-  for (let i = 0; i < dao.daoAdmins.length; i++) {
-    const res = await GetUserAllInfo(dao.daoAdmins[i])
-    if (res.code === 0) {
-      form.admins.push({
-        avatarImage: res.data.avatarImage,
-        name: res.data.name,
-        metaName: res.data.metaName,
-        metaId: res.data.metaId,
-      })
-    }
-  }
+  form.daoAdmins = dao.daoAdmins
+  // for (let i = 0; i < dao.daoAdmins.length; i++) {
+  //   const res = await GetUserAllInfo(dao.daoAdmins[i])
+  //   if (res.code === 0) {
+  //     form.admins.push({
+  //       avatarImage: res.data.avatarImage,
+  //       name: res.data.name,
+  //       metaName: res.data.metaName,
+  //       metaId: res.data.metaId,
+  //     })
+  //   }
+  // }
   form.isSkeleton = false
+}
+
+function onEditSuccess(data: any) {
+  talk.activeCommunity!.dao! = {
+    ...talk.activeCommunity!.dao!,
+    ...data,
+  }
+  getAdminUserInfo()
 }
 
 let watchFun: any
@@ -227,7 +238,8 @@ watchFun = watch(
       if (watchFun) watchFun()
       getAdminUserInfo()
     }
-  }
+  },
+  { immediate: true }
 )
 </script>
 

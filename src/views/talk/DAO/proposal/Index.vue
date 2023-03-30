@@ -99,6 +99,7 @@
                     ><UserName
                       :name="users.find(_item => _item.address === item.creator)!.name"
                       :meta-name="users.find(_item => _item.address === item.creator)!.metaName"
+                      :no-tag="true"
                   /></span>
                 </span>
               </ElSkeleton>

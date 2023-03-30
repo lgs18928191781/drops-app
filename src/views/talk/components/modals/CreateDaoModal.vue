@@ -169,7 +169,7 @@
             </ElFormItem>
 
             <!-- admin -->
-            <ElFormItem prop="daoAdmins">
+            <!-- <ElFormItem prop="daoAdmins">
               <template #label>
                 <h4 class="field-label col-span-1">{{ $t('DAO.Admins') }}</h4>
               </template>
@@ -219,7 +219,7 @@
                   </div>
                 </div>
               </div>
-            </ElFormItem>
+            </ElFormItem> -->
 
             <!-- governance Header -->
             <h3
@@ -339,7 +339,7 @@ const layout = useLayoutStore()
 const talk = useTalkStore()
 const i18n = useI18n()
 const userStore = useUserStore()
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'success'])
 let iconAttachment: AttachmentItem | undefined = undefined
 const newAdmin = ref('')
 const GetUserWarpRef = ref()
@@ -413,7 +413,8 @@ function rest() {
   form.communityId = '' //string
   form.daoName = '' //string
   form.daoID = '' //string, 生成方法hash(随机64位)，必须确保是唯一。Sha256 once after generating a 64-bit random string.
-  form.daoAdmins = [] //array, 管理员metaId数组
+  // @ts-ignore
+  form.daoAdmins = [userStore!.user!.metaId] //array, 管理员metaId数组
   form.daoIntro = '' //string
   form.daoMission = '' //string
   form.daoTypes = [] //array, 值: "protocol/service/social/investment/grant/collector/culture",
@@ -431,13 +432,13 @@ function rest() {
   form.createProposalRequireTokenNumber = 10000 //number, 创建议题需要的治理Token数量，如果治理Token为none，则忽略此值
   form.publiceKey = ''
   form.txId = ''
-  admins.length = 0
-  admins.push({
-    avatarImage: userStore.user!.avatarImage,
-    name: userStore.user!.name,
-    metaName: userStore.user!.metaName,
-    metaId: userStore.user!.metaId,
-  })
+  // admins.length = 0
+  // admins.push({
+  //   avatarImage: userStore.user!.avatarImage,
+  //   name: userStore.user!.name,
+  //   metaName: userStore.user!.metaName,
+  //   metaId: userStore.user!.metaId,
+  // })
 }
 
 function changeCategory(val: string) {
@@ -461,16 +462,16 @@ async function create() {
     attachments.push(iconAttachment)
   }
 
-  const adminMetaIds = []
-  for (let i = 0; i < admins.length; i++) {
-    adminMetaIds.push(admins[i].metaId)
-  }
+  // const adminMetaIds = []
+  // for (let i = 0; i < admins.length; i++) {
+  //   adminMetaIds.push(admins[i].metaId)
+  // }
   const res = await userStore.showWallet
     .createBrfcChildNode({
       nodeName: NodeName.SimpleDAOCreate,
       data: JSON.stringify({
         ...params,
-        daoAdmins: adminMetaIds,
+        // daoAdmins: adminMetaIds,
       }),
       publickey: publiceKey,
       txId,
@@ -481,8 +482,13 @@ async function create() {
       ElMessage.error(error.message)
     })
   if (res) {
+    emit('success', {
+      ...params,
+      // daoAdmins: adminMetaIds,
+    })
+    emit('update:modelValue', false)
+    ElMessage.success(publiceKey ? i18n.t('DAO.Edit Successful') : i18n.t('DAO.Create Successful'))
     loading.close()
-    console.log(res)
   } else if (res === null) {
     loading.close()
   }
