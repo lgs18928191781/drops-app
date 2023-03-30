@@ -67,7 +67,7 @@ const postTagStore = usePostTagStore()
 const userStore = useUserStore()
 
 const list: BuzzItem[] = reactive([])
-const pagination = reactive({ ...initPagination })
+const pagination = reactive({ ...initPagination, timestamp: 0 })
 const isSkeleton = ref(true)
 const pulldown: PullDownVal = inject('Pulldown')!
 const refreshBox = ref()
@@ -91,8 +91,14 @@ function getDatas(isCover = false) {
     })
     if (res?.code === 0) {
       if (isCover) list.length = 0
-      if (res.data.results.items.length <= 0) pagination.nothing = true
-      list.push(...res.data.results.items)
+      if (res.data.results.items.length) {
+        list.push(...res.data.results.items)
+        pagination.nothing = false
+        pagination.timestamp = res.data.results.items[res.data.results.items.length - 1].timestamp
+      } else {
+        pagination.nothing = true
+      }
+
       resolve()
     }
   })
@@ -103,6 +109,7 @@ async function changeSubTag(tag: string) {
   isSkeleton.value = true
   tabActive.value = tag
   pagination.page = 1
+  pagination.timestamp = 0
   await getDatas(true)
   isSkeleton.value = false
 }
