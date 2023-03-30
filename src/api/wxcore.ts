@@ -4,6 +4,7 @@ import { alertCatchError } from '@/utils/util'
 import { ElMessage } from 'element-plus'
 import { getToken, getUserName, useUserStore } from '@/stores/user'
 import { Reqswapargs } from '@/utils/wallet/hd-wallet'
+import { gzip } from 'node-gzip'
 // @ts-ignore
 const Wxcore = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/wxcore`, {
   header: () => {
@@ -289,4 +290,29 @@ export const CheckNFTStatus = (params: {
   }
 }> => {
   return Wxcore.post(`/common/coin/nft/status`, params)
+}
+
+export const CreateVote = async (params: {
+  symbol: string
+  requestIndex: string
+  mvcRawTx: string
+  mvcOutputIndex: number
+  title: string
+  desc: string
+  options: string[]
+  minVoteAmount: string
+  beginBlockTime: number
+  endBlockTime: number
+}): Promise<{ code: number; data: { txid: string; voteID: string }; msg: string }> => {
+  // return DAO.post('/createvote', params)
+  const compressData = await gzip(JSON.stringify(params))
+  return Wxcore.post(
+    '/dao/createvote',
+    { data: compressData },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  )
 }

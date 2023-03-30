@@ -51,12 +51,7 @@
           />
         </ElFormItem>
         <ElFormItem :label="$t('DAO.Vote Content')" prop="content">
-          <div
-            class="el-input__wrapper"
-            id="vditor"
-            ref="MarkDownRef"
-            :class="{ active: vditor && vditor.getValue() }"
-          ></div>
+          <div class="el-input__wrapper" id="vditor" ref="MarkDownRef"></div>
         </ElFormItem>
       </ElForm>
     </div>
@@ -83,7 +78,7 @@ import { useI18n } from 'vue-i18n'
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 import { ElAffix, FormInstance, FormRules } from 'element-plus'
-import { CreateVote, GetStake } from '@/api/dao'
+import { GetStake } from '@/api/dao'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import { openLoading } from '@/utils/util'
@@ -91,6 +86,7 @@ import { useTalkStore } from '@/stores/talk'
 import Decimal from 'decimal.js-light'
 import Modal from '@/components/Modal/Modal.vue'
 import { DAOtypeOptions } from '@/utils/DAO'
+import { CreateVote } from '@/api/wxcore'
 
 const vditor = ref<Vditor | null>(null)
 const headeroffSetTop = ref(0)

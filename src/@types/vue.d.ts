@@ -8,6 +8,7 @@ declare module '@vue/runtime-core' {
       buzzTextContent: (content: string) => string
       repalceHref: (content: string, color?: string) => string
       strapiImage: (url: string) => string
+      space: (satoshi: string | number) => number
     }
   }
 }

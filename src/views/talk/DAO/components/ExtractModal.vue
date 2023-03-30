@@ -19,7 +19,7 @@
             <div class="title">{{ $t('DAO.Extractable') }}</div>
             <div class="cont">
               <div class="extractable flex flex-align-center">
-                <div class="amount flex1">{{ tokens.active.amount }}</div>
+                <div class="amount flex1">{{ $filters.space(tokens.active.amount) }}</div>
                 <a class="main-border primary" @click="extract">{{ $t('DAO.Extract') }}</a>
               </div>
             </div>
@@ -40,7 +40,7 @@
                   v-for="item in tokens.disableds"
                   :key="item.expired"
                 >
-                  <div class="amount flex1">{{ item.amount }}</div>
+                  <div class="amount flex1">{{ $filters.space(item.amount) }}</div>
                   <div class="time">{{ $filters.dateTimeFormat(item.expired * 1000) }}</div>
                 </div>
 

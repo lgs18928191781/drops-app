@@ -239,49 +239,6 @@
                       :
                       0
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                       }}%
                     </div>
                   </div>
@@ -293,7 +250,8 @@
                   </div>
                   <div class="vote-number">
                     {{ $t('DAO.Vote Number') }}: <br />
-                    {{proposal.val!.voteSumData[index]}} / {{ totalVoteValue }}
+                    {{ $filters.space(proposal.val!.voteSumData[index]) }} /
+                    {{ $filters.space(totalVoteValue) }}
                   </div>
                 </div>
               </div>

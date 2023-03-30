@@ -15,7 +15,7 @@
         <div class="pool-msg-item flex1">
           <div class="lable">{{ $t('DAO.Your staked SPACE') }}</div>
           <div class="value flex flex-align-center">
-            {{ userStake.val!.lockedTokenAmount || '--' }}
+            {{ userStake.val!.lockedTokenAmount ?  $filters.space(userStake.val!.lockedTokenAmount) : '--' }}
             <a
               class="main-border primary"
               @click="
@@ -32,7 +32,7 @@
         <div class="pool-msg-item flex1">
           <div class="lable ">{{ $t('DAO.Unlock Token') }}</div>
           <div class="value flex flex-align-center">
-            {{ unlockTokenAmount || '--' }}
+            {{ unlockTokenAmount ? $filters.space(unlockTokenAmount) : '--' }}
             <a
               class="main-border primary"
               @click="
