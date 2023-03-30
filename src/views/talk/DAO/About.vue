@@ -90,7 +90,7 @@
     </div>
 
     <!-- Administrators -->
-    <div class="section">
+    <!-- <div class="section">
       <div class="title">{{ $t('DAO.Administrators') }}</div>
       <div class="content">
         <div class="list">
@@ -110,7 +110,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- Core Members -->
     <!-- <div class="section">

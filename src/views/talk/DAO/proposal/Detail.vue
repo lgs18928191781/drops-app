@@ -63,7 +63,9 @@
 
           <div class="title">{{ proposal.val!.title }}</div>
 
-          <div class="cont" ref="ContentRef"></div>
+          <div class="cont" :class="{ rendering: markdownRendering }" ref="ConetenWarpRef">
+            <article ref="ContentRef"></article>
+          </div>
 
           <Card>
             <template #default>
@@ -253,6 +255,33 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                       }}%
                     </div>
                   </div>
@@ -300,7 +329,7 @@ import {
   SdkPayType,
 } from '@/enum'
 import Card from '@/components/Card/Card.vue'
-import { computed, nextTick, reactive, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import IsNull from '@/components/IsNull/IsNull.vue'
 import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import { initPagination } from '@/config'
@@ -313,9 +342,11 @@ import { ProposalItem, VoterItem, DAOUserStakeInfo } from '@/@types/api/dao'
 import Decimal from 'decimal.js-light'
 import Modal from '@/components/Modal/Modal.vue'
 import { useUserStore } from '@/stores/user'
-import { checkUserLogin, getUserInfoByAddress, tx } from '@/utils/util'
+import { checkUserLogin, getUserInfoByAddress, openLoading, tx } from '@/utils/util'
 import { signTx, toHex, mvc } from 'mvc-scrypt/dist'
 import { marked } from 'marked'
+import Vditor from 'vditor'
+import 'vditor/dist/index.css'
 
 const i18n = useI18n()
 const records: VoterItem[] = reactive([])
@@ -338,6 +369,10 @@ const createUser: {
 const recordsUserInfo: UserAllInfo[] = reactive([])
 const ContentRef = ref()
 const blockTimeStamp = ref(0)
+const vditor = ref<Vditor | null>(null)
+const markdownRendering = ref(true)
+const ConetenWarpRef = ref()
+let markdownLoading: any
 
 const dafaultVoteOptions = [
   {
@@ -623,7 +658,32 @@ watchFun = watch(
         () => {
           isSkeleton.value = false
           nextTick(() => {
-            ContentRef.value.innerHTML = marked.parse(proposal.val!.desc)
+            markdownLoading = openLoading({
+              target: ConetenWarpRef.value,
+            })
+            vditor.value = new Vditor(ContentRef.value, {
+              cache: {
+                enable: false,
+              },
+              toolbarConfig: {
+                hide: true,
+              },
+              mode: 'sv',
+              preview: {
+                theme: {
+                  current: 'ant-design',
+                },
+              },
+              value: proposal.val!.desc,
+              after: () => {
+                vditor.value!.disabled()
+                markdownRendering.value = false
+                if (markdownLoading) {
+                  markdownLoading.close()
+                }
+              },
+            })
+            // ContentRef.value.innerHTML = marked.parse(proposal.val!.desc)
           })
         }
       )

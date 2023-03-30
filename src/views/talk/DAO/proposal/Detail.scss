@@ -128,6 +128,10 @@
     .cont {
         margin-top: 18px;
         line-height: 28px;
+
+        &.rendering {
+            min-height: 300px;
+        }
     }
 
     .card {
@@ -342,6 +346,28 @@
     margin-left: -150px;
     opacity: 0.6;
     z-index: 9;
+}
+
+.vditor {
+    border: none;
+
+
+    :deep(.vditor-toolbar),
+    :deep(.vditor-sv),
+    :deep(.vditor-preview__action) {
+        display: none !important;
+    }
+
+    :deep(.vditor-preview) {
+        background: transparent;
+        border-left: none;
+    }
+
+    :deep(.vditor-reset) {
+        color: var(--themeTextColor);
+        padding: 0;
+        max-width: none !important;
+    }
 }
 
 @media only screen and (max-width: 750PX) {
