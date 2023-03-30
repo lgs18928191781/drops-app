@@ -180,7 +180,7 @@ export const GetBuzzs = (params: {
   tag: 'timeline' | 'recommendline'
   langId?: number
   metaId?: string
-  page: string | number
+  page?: string | number
   pageSize: string | number
   timestamp: number
   timeType?: 'today' | 'week' | 'month'
