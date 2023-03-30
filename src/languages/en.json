@@ -1157,7 +1157,7 @@
     "Proposal Status": {
       "UnStarted": "UnStarted",
       "Voting": "Active",
-      "Ended": "Ended"
+      "Ended": "Closed"
     },
     "Edit": "Edit",
     "Name placeholder": "Enter DAO Name",
