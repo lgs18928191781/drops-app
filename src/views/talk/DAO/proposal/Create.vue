@@ -72,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import { DAOProposalType, DAOStakeOperate, NodeName, SdkPayType } from '@/enum'
+import { Chains, DAOProposalType, DAOStakeOperate, NodeName, SdkPayType } from '@/enum'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Vditor from 'vditor'
@@ -81,12 +81,13 @@ import { ElAffix, FormInstance, FormRules } from 'element-plus'
 import { GetStake } from '@/api/dao'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
-import { openLoading } from '@/utils/util'
+import { getBalance, openLoading } from '@/utils/util'
 import { useTalkStore } from '@/stores/talk'
 import Decimal from 'decimal.js-light'
 import Modal from '@/components/Modal/Modal.vue'
 import { DAOtypeOptions } from '@/utils/DAO'
 import { CreateVote } from '@/api/wxcore'
+import { space } from '@/utils/filters'
 
 const vditor = ref<Vditor | null>(null)
 const headeroffSetTop = ref(0)
@@ -223,7 +224,22 @@ function onTypeChange() {
 function submit() {
   FormRef.value?.validate(async result => {
     if (result) {
-      isShowConfirmModal.value = true
+      const res = await getBalance({
+        chain: Chains.MVC,
+      }).catch(error => {
+        ElMessage.error(error.message)
+      })
+      if (typeof res === 'number') {
+        if (res >= talk.activeCommunity!.dao!.createProposalRequireTokenNumber) {
+          isShowConfirmModal.value = true
+        } else {
+          ElMessage.error(
+            `${i18n.t('DAO.createProposalRequireTokenNumber tips1')} ${space(
+              talk.activeCommunity!.dao!.createProposalRequireTokenNumber
+            )} ${talk.activeCommunity!.dao!.governanceSymbol!.toUpperCase()}`
+          )
+        }
+      }
     }
   })
 }

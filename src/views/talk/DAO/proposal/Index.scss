@@ -115,7 +115,8 @@
             @include text-many-ellipsis(3);
             font-size: 14px;
             line-height: 22px;
-            color: rgba(var(--themeTextColorRgb), 0.8)
+            color: rgba(var(--themeTextColorRgb), 0.8);
+            word-break: break-all;
         }
 
         .bottom {

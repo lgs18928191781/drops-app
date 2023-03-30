@@ -21,7 +21,7 @@
           :model="form"
           :rules="rules"
           class="h-full w-full overflow-y-auto p-6"
-          :label-width="100"
+          :label-width="200"
         >
           <div class="lg:flex flex-col space-y-6 lg:space-y-8 w-full place-items-stretch pb-12">
             <h3 class="w-full text-lg font-bold">{{ $t('DAO.Profile') }}</h3>
@@ -251,6 +251,19 @@
               </div>
             </ElFormItem>
 
+            <ElFormItem prop="createProposalRequireTokenNumber">
+              <template #label>
+                <h4 class="field-label col-span-1">
+                  {{ $t('DAO.Create Proposal Require Token Number') }}
+                </h4>
+              </template>
+              <div class="lg:grid lg:grid-cols-5 lg:gap-x-4 c-y-2 lg:space-y-0 flex1">
+                <div class="col-span-4">
+                  <ElInput type="number" v-model="form.createProposalRequireTokenNumber" />
+                </div>
+              </div>
+            </ElFormItem>
+
             <!-- Social Header -->
             <h3
               class="w-full text-lg font-bold pt-12 !mt-12 border-t-2 border-solid border-dark-200 dark:border-gray-700"
@@ -387,7 +400,13 @@ const rules = reactive<FormRules>({
   daoTelegram: [], //string, telegrame地址
   daoTerms: [], //string,
   // joinDaoRequireTokenNumber: [{ required: true, message: i18n.t('DAO.JoinDaoRequireTokenNumber placeholder'), trigger: 'blur' }], //number, 加入该DAO的时候，需要最少治理token数量，如果治理Token为none，则忽略此值
-  // createProposalRequireTokenNumber: [{ required: true, message: i18n.t('DAO.GovernanceType placeholder'), trigger: 'blur' }], //number, 创建议题需要的治理Token数量，如果治理Token为none，则忽略此值
+  createProposalRequireTokenNumber: [
+    {
+      required: true,
+      message: i18n.t('DAO.Create Proposal Require Token Number'),
+      trigger: 'blur',
+    },
+  ], //number, 创建议题需要的治理Token数量，如果治理Token为none，则忽略此值
 })
 const governanceTypes = [
   'space',

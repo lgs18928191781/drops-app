@@ -1094,9 +1094,9 @@
     "Opposition": "Opposition",
     "Vote Records": "Vote Records",
     "Information": "Information",
-    "Proposal Type": "Proposals Type",
-    "Start Time": "Start Time",
-    "End Time": "End Time",
+    "Proposal Type": "Type",
+    "Start Time": "Start",
+    "End Time": "End",
     "Result": "Result",
     "Vote Number": "Vote Number",
     "Proposal Title": "Proposal Title",
@@ -1197,6 +1197,10 @@
     "Max five Vote Options": "Up to 5 options can be set",
     "New Block Time": "Latest block time",
     "Edit Successful": "Edit Successful",
-    "Create Successful": "Create Successful"
+    "Create Successful": "Create Successful",
+    "createProposalRequireTokenNumber tips1": "Need to hold greater than or equal to",
+    "Create Proposal Require Token Number": "Create Proposal Require Token Number(Satoshi)",
+    "Total Staking": "Total Staking",
+    "My Stakeding": "My Stakeding"
   }
 }

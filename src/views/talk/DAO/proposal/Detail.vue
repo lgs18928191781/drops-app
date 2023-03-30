@@ -89,10 +89,7 @@
                     v-for="(item, index) in proposal.val!.options"
                     :key="item"
                     @click="vote(item)"
-                    >{{ $t(item)
-                    }}<span class="value" v-if="votedInfo && index === votedInfo.voteOption"
-                      >({{ votedInfo.voteAmount }})</span
-                    ></a
+                    >{{ $t(item) }}</a
                   >
                 </div>
               </div>
@@ -203,6 +200,26 @@
                   </div>
                 </div>
 
+                <!-- Total Staking -->
+                <div class="information-item ">
+                  <div class="information-item-warp flex flex-align-center">
+                    <div class="flex1 lable">{{ $t('DAO.Total Staking') }}</div>
+                    <div class="value">
+                      {{ $filters.space(totalVoteValue) }}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- My Stakeding -->
+                <div class="information-item" v-if="votedInfo">
+                  <div class="information-item-warp flex flex-align-center">
+                    <div class="flex1 lable">{{ $t('DAO.My Stakeding') }}</div>
+                    <div class="value">
+                      {{ $filters.space(votedInfo!.voteAmount) }}
+                    </div>
+                  </div>
+                </div>
+
                 <div class="time-tips">
                   {{ $t('DAO.Not Extractable Time Tips') }} <br />
                   {{ $t('DAO.New Block Time') }}: {{ $filters.dateTimeFormat(blockTimeStamp) }}
@@ -238,6 +255,8 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
+
+
 
                       }}%
                     </div>

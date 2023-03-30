@@ -144,7 +144,7 @@ import { initPagination } from '@/config'
 import { computed, reactive, ref, watch } from 'vue'
 import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import IsNull from '@/components/IsNull/IsNull.vue'
-import { checkUserLogin, getUserInfoByAddress } from '@/utils/util'
+import { checkUserLogin, getBalance, getUserInfoByAddress } from '@/utils/util'
 import { useRouter } from 'vue-router'
 import { GetBlockTime, GetUserStakeInfo, Proposals } from '@/api/dao'
 import { useTalkStore } from '@/stores/talk'
@@ -156,10 +156,11 @@ import  type { DAOUserStakeInfo } from '@/@types/api/dao.d'
 import Decimal from 'decimal.js-light'
 import StakeModal from '../components/StakeModal.vue'
 import { tx } from '@/utils/util'
-import { StakeType } from '@/enum'
+import { Chains, StakeType } from '@/enum'
 import ExtractModal from '../components/ExtractModal.vue'
 import { isMobile } from '@/stores/root'
 import { replaceMarkdownTag } from '@/utils/util'
+import { space } from '@/utils/filters'
 
 const pagination = reactive({ ...initPagination })
 const proposals: ProposalItem[] = reactive([])
@@ -220,9 +221,21 @@ function getMore() {
 
 async function toCreate() {
   await checkUserLogin()
-  router.push({
-    name: 'talkDAOProposalCreate',
-  })
+  const res = await getBalance({
+    chain: Chains.MVC
+  }).catch(error => {
+        ElMessage.error(error.message)
+      })
+  if (typeof res === 'number') {
+    if (res >= talk.activeCommunity!.dao!.createProposalRequireTokenNumber) {
+      router.push({
+        name: 'talkDAOProposalCreate',
+      })
+    } else {
+      ElMessage.error(`${i18n.t('DAO.createProposalRequireTokenNumber tips1')} ${space(talk.activeCommunity!.dao!.createProposalRequireTokenNumber)} ${talk.activeCommunity!.dao!.governanceSymbol!.toUpperCase()}`)
+    }
+  }
+
 }
 
 function getUserStakeInfo() {

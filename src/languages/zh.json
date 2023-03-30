@@ -1195,6 +1195,10 @@
     "Max five Vote Options": "最多只可以设置5个选项",
     "New Block Time": "最新出块时间",
     "Edit Successful": "编辑成功",
-    "Create Successful": "创建成功"
+    "Create Successful": "创建成功",
+    "createProposalRequireTokenNumber tips1": "需持有大于等于",
+    "Create Proposal Require Token Number": "创建提案所需Token数量(Satoshi)",
+    "Total Staking": "总投票数",
+    "My Stakeding": "我的投票数"
   }
 }
