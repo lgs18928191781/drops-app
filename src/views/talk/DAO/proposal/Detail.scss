@@ -322,6 +322,28 @@
     }
 }
 
+.result {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border: 20px solid var(--color-primary);
+    border-radius: 50%;
+    top: 0;
+    left: 50%;
+    padding: 30px;
+    color: var(--color-primary);
+    font-weight: bold;
+    font-size: 40px;
+    line-height: 36px;
+    // transform: rotate(45deg);
+    box-shadow: 0 0 5px var(--themeTextColor);
+    text-shadow: 0 0 5px var(--themeTextColor);
+    margin-top: 150px;
+    margin-left: -150px;
+    opacity: 0.6;
+    z-index: 9;
+}
+
 @media only screen and (max-width: 750PX) {
     .h-full {
         height: auto;

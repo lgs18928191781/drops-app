@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full flex flex-v">
+  <div class="h-full flex flex-v ">
     <div class="header">
       <a class="back flex flex-align-center" @click="$router.back()">
         <span class="icon-warp flex flex-align-center flex-pack-center">
@@ -12,12 +12,19 @@
     <ElSkeleton :loading="isSkeleton" animated>
       <div class="flex1 flex content-warp">
         <div
-          class="content flex1"
+          class="content flex1 relative"
           v-infinite-scroll="getMore"
           :infinite-scroll-immediate="false"
           :infinite-scroll-distance="100"
           :infinite-scroll-disabled="isMobile"
         >
+          <!-- 结果 -->
+          <div
+            class="result flex flex-align-center flex-pack-center"
+            v-if="status === DAOProposalStatus.Ended"
+          >
+            {{ resultText }}
+          </div>
           <div class="msg flex flex-align-center">
             <div class="flex1 flex flex-align-center">
               <ElSkeleton :loading="!createUser.val" animated>
@@ -63,7 +70,7 @@
               <div class="vote">
                 <div
                   class="cover flex flex-align-center flex-pack-center"
-                  v-if="!isVoteing && !votedInfo"
+                  v-if="status !== DAOProposalStatus.Active && !votedInfo"
                 >
                   {{ statusText }}
                 </div>
@@ -230,6 +237,22 @@
                       :
                       0
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                       }}%
                     </div>
                   </div>
@@ -269,7 +292,13 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { DAOStakeOperate, DAOVoteDefaultOption, NodeName, SdkPayType } from '@/enum'
+import {
+  DAOProposalStatus,
+  DAOStakeOperate,
+  DAOVoteDefaultOption,
+  NodeName,
+  SdkPayType,
+} from '@/enum'
 import Card from '@/components/Card/Card.vue'
 import { computed, nextTick, reactive, ref, watch } from 'vue'
 import IsNull from '@/components/IsNull/IsNull.vue'
@@ -331,6 +360,36 @@ const statusText = computed(() => {
     proposal.val!.endBlockTime,
     blockTimeStamp.value
   )
+})
+
+const resultText = computed(() => {
+  let text = ''
+  if (proposal.val!) {
+    let max = new Decimal(proposal.val!.voteSumData[0]).toNumber()
+    let maxIndex = 0
+    for (let i = 1; i < proposal.val!.voteSumData.length; i++) {
+      const value = new Decimal(proposal.val!.voteSumData[i]).toNumber()
+      if (value > max) {
+        max = value
+        maxIndex = i
+      }
+    }
+    text = proposal.val!.options[maxIndex]
+  }
+  return text
+})
+
+const status = computed(() => {
+  if (proposal.val!.beginBlockTime * 1000 > blockTimeStamp.value) {
+    return DAOProposalStatus.UnStart
+  } else if (
+    proposal.val!.beginBlockTime * 1000 <= blockTimeStamp.value &&
+    proposal.val!.endBlockTime * 1000 > blockTimeStamp.value
+  ) {
+    return DAOProposalStatus.Active
+  } else {
+    return DAOProposalStatus.Ended
+  }
 })
 
 const isVoteing = computed(() => {

@@ -562,3 +562,9 @@ export const enum StakeType {
   Pledge = 0,
   Unlock = 1,
 }
+
+export const enum DAOProposalStatus {
+  UnStart = 0,
+  Active = 1,
+  Ended = 2,
+}
