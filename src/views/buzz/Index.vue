@@ -29,7 +29,7 @@ import BuzzListVue from './components/BuzzList.vue'
 import { Mitt, MittEvent } from '@/utils/mitt'
 import PublishBoxVue from './components/PublishBox.vue'
 
-const pagination = reactive({ ...initPagination, timestamp: 0 })
+const pagination = reactive({ ...initPagination, timestamp: 0, page: undefined })
 const userStore = useUserStore()
 const layout = useLayoutStore()
 const route = useRoute()
@@ -96,7 +96,6 @@ const publishOperates = [
 function getMore() {
   if (isSkeleton.value || pagination.loading || pagination.nothing) return
   pagination.loading = true
-  pagination.page++
   getDatas().then(() => {
     pagination.loading = false
   })
@@ -118,7 +117,6 @@ function getUserFollow() {
 function refreshDatas() {
   return new Promise<void>(async resolve => {
     isSkeleton.value = true
-    pagination.page = 1
     pagination.timestamp = 0
     pagination.loading = false
     pagination.nothing = false
