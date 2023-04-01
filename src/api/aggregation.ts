@@ -302,7 +302,10 @@ export const GetRecommendCommunitys = (params: {
   }
 }> => {
   return aggregation.get(`/v2/app/show/recommend/community`, {
-    params,
+    params: {
+      ...params,
+      langId: localStorage.getItem('lang') === 'zh' ? 2 : 1,
+    },
   })
 }
 
@@ -320,7 +323,10 @@ export const GetRecommendUsers = (params: {
   }
 }> => {
   return aggregation.get(`/v2/app/show/recommend/metaId`, {
-    params,
+    params: {
+      ...params,
+      langId: localStorage.getItem('lang') === 'zh' ? 2 : 1,
+    },
   })
 }
 
