@@ -69,6 +69,9 @@ import Compressor from 'compressorjs'
 //@ts-ignore
 import { toUnicode } from 'idna-uts46-hx'
 import { email } from './reg'
+import zlib from 'zlib'
+import { string } from 'yup'
+
 const emojiReg = /[\u{1F601}-\u{1F64F}\u{2702}-\u{27B0}\u{1F680}-\u{1F6C0}\u{1F170}-\u{1F251}\u{1F600}-\u{1F636}\u{1F681}-\u{1F6C5}\u{1F30D}-\u{1F567}]/gu
 
 export function randomString() {
@@ -1760,4 +1763,29 @@ export function getBalance(params: { chain: Chains }) {
       }
     }
   })
+}
+
+export function getUserInfoByAddress(address: string) {
+  return new Promise<UserAllInfo>(async (resolve, reject) => {
+    try {
+      const res = await GetMetaIdByAddress(address)
+      if (res.code === 0) {
+        const response = await GetUserAllInfo(res.data)
+        if (response.code === 0) {
+          resolve(response.data)
+        }
+      }
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
+export function replaceMarkdownTag(markdown: string) {
+  return markdown
+    .replace(/```+/g, '')
+    .replace(/#+/g, '')
+    .replace(/-+/g, '')
+    .replace(/\n(&gt;|\\>)/g, '')
+    .replace(/^>{1}/g, '')
 }

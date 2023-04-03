@@ -961,6 +961,13 @@ export class HdWallet {
     return privateKey
   }
 
+  public getPathPubliceKey(keyPath: string) {
+    const privateKey = this.wallet
+      .deriveChild(+keyPath.split('/')[0])
+      .deriveChild(+keyPath.split('/')[1]).publicKey
+    return privateKey
+  }
+
   public async createNode({
     nodeName,
     payTo = [],

@@ -16,6 +16,7 @@ export const useLayoutStore = defineStore('layout', {
       isShowCommunityCardModal: false,
       isShowNoMetaNameModal: false,
       isShowSearchModal: false,
+      isShowLeaveCommunityModal: false,
 
       isShowSettingsModal: false,
       isShowChooseTokenModal: false,

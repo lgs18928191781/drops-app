@@ -70,6 +70,15 @@
     padding: 0 !important;
     width: 100% !important;
 
+    transition: all 0.5;
+    border: var(--el-border-width) solid var(--faded-border-color) !important;
+    box-shadow: 3px 3px 0 var(--faded-border-color) !important;
+
+    &.active {
+        border-color: var(--themeTextColor) !important;
+        box-shadow: 3px 3px 0 var(--themeTextColor) !important
+    }
+
     :deep(.vditor-toolbar) {
         padding: 0 !important;
         border-radius: var(--el-border-radius-base) var(--el-border-radius-base) 0 0;
@@ -88,6 +97,30 @@
     :deep(.vditor-ir__node) {
         &::before {
             display: none;
+        }
+    }
+}
+
+.confirm-tips {
+    font-size: 20px;
+
+    :deep(a) {
+        color: var(--color-error);
+    }
+}
+
+.confirm-operate {
+    margin-top: 30px;
+
+    a {
+        padding: 15px 0;
+        text-align: center;
+        font-weight: bold;
+        margin-right: 15px;
+        cursor: pointer;
+
+        &:last-child {
+            margin-right: 0;
         }
     }
 }

@@ -1,0 +1,65 @@
+.extract {
+    .section {
+        margin-bottom: 30px;
+        padding-bottom: 30px;
+        border-bottom: 1px solid var(--divid-color);
+
+        &:last-child {
+            margin-top: 0;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+
+            span {
+                font-size: 12px;
+                color: var(--themeFadedTextColor);
+            }
+        }
+
+        .tips {
+            font-size: 12px;
+            color: var(--themeFadedTextColor);
+            margin: 10px 0;
+        }
+
+        .cont {
+            margin-top: 15px;
+        }
+    }
+
+    .extractable {
+        .amount {
+            font-size: 30px;
+        }
+
+        .main-border {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    }
+
+    .list {
+        max-height: 200px;
+        overflow-y: auto;
+
+        .item {
+            margin-bottom: 15px;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+
+            .aomout {
+                font-size: 30px;
+            }
+
+            .time {
+                font-size: 14px;
+            }
+        }
+    }
+}

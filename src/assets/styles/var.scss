@@ -24,6 +24,7 @@ $themeTextColor: var(--themeTextColor);
     --themeBgSecondColor: #fff;
     --themeBgSecondColorRgb: 255, 255, 255;
     --themeBgThreeColor: #F5F7F9;
+    --themeBgThreeColor-rgb: 245, 247, 249;
     --themeTextColor: #303133;
     --themeTextColorRgb: 48, 49, 51;
     --themeFadedTextColor: rgba(var(--themeTextColorRgb), 0.5);
@@ -51,7 +52,8 @@ html.dark {
     --themeBgColor: #142030;
     --themeBgSecondColor: #1f2937;
     --themeBgSecondColorRgb: 31, 41, 55;
-    --themeBgThreeColor: #0B1323;
+    --themeBgThreeColor: #0b1323;
+    --themeBgThreeColor-rgb: 11, 19, 35;
     --border-color: #d1d5db;
     --faded-border-color: #6b7280;
     --el-color-primary: #FFDC51;

@@ -25,7 +25,7 @@
         >
           <DialogPanel class="flex flex-col w-full h-full lg:w-210 py-7.5">
             <div class=" flex items-center justify-between px-7.5">
-              <DialogTitle as="h3" class="text-xl text-center font-bold">
+              <DialogTitle as="h3" class="text-xl text-center font-bold flex1 flex-pack-start">
                 <slot name="title"></slot>
               </DialogTitle>
 

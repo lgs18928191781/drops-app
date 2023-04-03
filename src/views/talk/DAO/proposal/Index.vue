@@ -1,84 +1,222 @@
 <template>
-  <div class="h-full flex flex-v ">
-    <div class="header flex flex-align-center">
-      <div class="flex1">
-        <span class="title">{{ $t('DAO.Proposal') }}</span>
-      </div>
-      <a class="main-border primary" @click="toCreate">{{ $t('DAO.New Proposal') }}</a>
-    </div>
-
+  <div
+    class="h-full flex flex-v proposal-index"
+    v-infinite-scroll="getMore"
+    :infinite-scroll-immediate="false"
+    :infinite-scroll-distance="100"
+    :infinite-scroll-disabled="!isMobile"
+  >
     <ElSkeleton :loading="isSkeleton" animated>
+      <div class="pool-msg">
+        <div class="title">
+          {{ $t('DAO.Stake Title1') }} ${{
+            talk.activeCommunity?.dao?.governanceSymbol.toUpperCase()
+          }}
+          {{ $t('DAO.Stake Title2') }}
+        </div>
+        <div class="list flex flex-align-center">
+          <div class="pool-msg-item flex1">
+            <div class="lable">
+              {{ $t('DAO.Your staked SPACE') }}
+              ${{ talk.activeCommunity?.dao?.governanceSymbol.toUpperCase() }}
+            </div>
+            <div class="value flex flex-align-center">
+              {{ userStake.val!.lockedTokenAmount ?  $filters.space(userStake.val!.lockedTokenAmount) : '--' }}
+              <a
+                class="main-border primary"
+                @click="
+                  () => {
+                    stakeType = StakeType.Unlock
+                    isShowStake = true
+                  }
+                "
+                v-if="userStake.val!.lockedTokenAmount && userStake.val!.lockedTokenAmount !== '0'"
+                >{{ $t('DAO.UnLock') }}</a
+              >
+            </div>
+          </div>
+          <div class="pool-msg-item flex1">
+            <div class="lable ">
+              {{ $t('DAO.Unlock Token') }}
+              ${{ talk.activeCommunity?.dao?.governanceSymbol.toUpperCase() }}
+            </div>
+            <div class="value flex flex-align-center">
+              {{ unlockTokenAmount ? $filters.space(unlockTokenAmount) : '--' }}
+              <a
+                class="main-border primary"
+                @click="
+                  () => {
+                    isShowExtractModal = true
+                  }
+                "
+                v-if="userStake.val!.unlockingTokens.length"
+                >{{ $t('DAO.Extract') }}</a
+              >
+            </div>
+          </div>
+          <div
+            class="main-border primary stake"
+            @click="
+              () => {
+                stakeType = StakeType.Pledge
+                isShowStake = true
+              }
+            "
+          >
+            {{ $t('DAO.Stake') }}
+          </div>
+        </div>
+      </div>
+
+      <div class="header flex flex-align-center">
+        <div class="flex1">
+          <span class="title">{{ $t('DAO.Proposal') }}</span>
+        </div>
+        <a class="main-border primary" @click="toCreate">{{ $t('DAO.New Proposal') }}</a>
+      </div>
+
       <div
         class="proposal-list flex1"
         v-infinite-scroll="getMore"
         :infinite-scroll-immediate="false"
         :infinite-scroll-distance="100"
+        :infinite-scroll-disabled="isMobile"
       >
         <RouterLink
-          :to="{ name: 'talkDAOProposalDetail', params: { txId: '1' } }"
+          :to="{ name: 'talkDAOProposalDetail', params: { id: item._id } }"
           class="proposal-item"
-          v-for="item in proposal"
+          v-for="item in proposals"
+          :key="item._id"
         >
           <!-- top -->
           <div class="top flex flex-align-center">
             <div class="flex1 flex flex-align-center">
-              <span class="user flex flex-align-center">
-                <UserAvatar :meta-id="''" :image="''" :meta-name="''" :name="''" />
-                <span>proposal</span>
-              </span>
-              <span class="txid flex flex-align-center"><Icon name="link" /> asd4456</span>
-              <span class="time">2019-02-45 12:45:12</span>
+              <ElSkeleton :loading="!users.some(_item => _item.address === item.creator)">
+                <template #template>
+                  <span class="user flex flex-align-center">
+                    <ElSkeletonItem :variant="'image'" class="avatar" />
+                    <span><ElSkeletonItem :variant="'text'" class="avatar"/></span>
+                  </span>
+                </template>
+                <span class="user flex flex-align-center">
+                  <UserAvatar
+                    :meta-id="users.find(_item => _item.address === item.creator)!.metaId"
+                    :image="users.find(_item => _item.address === item.creator)!.avatarImage"
+                    :meta-name="users.find(_item => _item.address === item.creator)!.metaName"
+                    :name="users.find(_item => _item.address === item.creator)!.name"
+                  />
+                  <span
+                    ><UserName
+                      :name="users.find(_item => _item.address === item.creator)!.name"
+                      :meta-name="users.find(_item => _item.address === item.creator)!.metaName"
+                      :no-tag="true"
+                  /></span>
+                </span>
+              </ElSkeleton>
             </div>
-            <span class="status">已结束</span>
+            <span
+              class="status"
+              :class="getStatusClass(item.beginBlockTime, item.endBlockTime, blockTimeStamp)"
+              >{{ getStatusText(item.beginBlockTime, item.endBlockTime, blockTimeStamp) }}</span
+            >
           </div>
 
-          <div class="title">你是否赞成MetaCoin的分发机制改为体积占比+最低费率</div>
+          <div class="title">{{ item.title }}</div>
 
           <div class="content">
-            Metacoin的初衷是作为Metaid应用的数据上链补贴，以激励用户通过Metaid协议上链数据，其基本计算依据是以当日上链数据的体积占比分配恒定的MC。如果用户通过每个Metaid应用的上链费率是相同的，则体积占比是竞争公平的。但随着BSV网络的降费进展，不同矿池出现了不同的费率，此时如果仅以体积占比计算，则在体积占比相同情形下，较低费率者恒能取得超额利润，而如果较低费率是不公开的且仅限于少数人，则此种费率恒定损害通过较高的公开费率上链者，这是不公平的竞争。长远来看，将持续破坏MC的激励机制。且考虑到BSV网络的费率调整进程将始终处于动态变化中，如果MC协议始终不考虑费率差异对竞争公平的影响，则MC的激励机制将大打折扣甚至倒塌，也会影响MetaId作为数据协议的成功。故本提案建议，在以体积占比作为MC的基础分配原则时，应当考虑费率因素，即只有不低于Metaid协议各应用公开采用的最低费率者才能纳入MC的体积占比，具体计算时可用实际费率/Metaid公开最低费率*体积计算。
+            {{ replaceMarkdownTag(item.desc) }}
+          </div>
+
+          <div class="bottom flex flex-align-center">
+            <span class="time flex1 flex flex-align-center"
+              ><Icon name="calendar_days" />
+              {{ $filters.dateTimeFormat(item.createTime * 1000) }}</span
+            >
+            <span class="txid flex flex-align-center" @click.stop="tx(item.txid)"
+              ><Icon name="link" /> {{ item.txid?.slice(0, 6) }}</span
+            >
           </div>
         </RouterLink>
 
-        <LoadMore :pagination="pagination" v-if="proposal.length" />
+        <LoadMore :pagination="pagination" v-if="proposals.length" />
         <IsNull v-else />
       </div>
+
+      <StakeModal v-model="isShowStake" :type="stakeType" @success="getUserStakeInfo" />
+
+      <ExtractModal v-model="isShowExtractModal" @success="getUserStakeInfo" />
     </ElSkeleton>
   </div>
 </template>
 
 <script setup lang="ts">
 import { initPagination } from '@/config'
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import IsNull from '@/components/IsNull/IsNull.vue'
-import { checkUserLogin } from '@/utils/util'
+import { checkUserLogin, getBalance, getUserInfoByAddress } from '@/utils/util'
 import { useRouter } from 'vue-router'
+import { GetBlockTime, GetUserStakeInfo, Proposals } from '@/api/dao'
+import { useTalkStore } from '@/stores/talk'
+import { ProposalItem } from '@/@types/api/dao'
+import { useI18n } from 'vue-i18n'
+import { getStatusClass, getStatusText } from '@/utils/DAO'
+import { useUserStore } from '@/stores/user'
+import  type { DAOUserStakeInfo } from '@/@types/api/dao.d'
+import Decimal from 'decimal.js-light'
+import StakeModal from '../components/StakeModal.vue'
+import { tx } from '@/utils/util'
+import { Chains, StakeType } from '@/enum'
+import ExtractModal from '../components/ExtractModal.vue'
+import { isMobile } from '@/stores/root'
+import { replaceMarkdownTag } from '@/utils/util'
+import { space } from '@/utils/filters'
 
 const pagination = reactive({ ...initPagination })
-const proposal: any[] = reactive([])
+const proposals: ProposalItem[] = reactive([])
 const isSkeleton = ref(true)
 const router = useRouter()
+const talk = useTalkStore()
+const i18n = useI18n()
+const now = new Date().getTime()
+const userStore = useUserStore()
+const stakeType = ref(StakeType.Pledge)
+const users: UserAllInfo[] = reactive([])
+
+const userStake: { val: DAOUserStakeInfo | null } = reactive({ val: null })
+const isShowStake = ref(false)
+const isShowExtractModal = ref(false)
+const blockTimeStamp = ref(0)
+
 
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
-    setTimeout(() => {
-      const res = {
-        code: 0,
-        data: {
-          list: Array.from({ length: 12 }),
-        },
+    const res = await Proposals({
+      symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${talk.activeCommunity!.dao!.daoId}`,
+      limit: pagination.pageSize,
+      offset: (pagination.page - 1) * pagination.pageSize
+    }).catch(error => {
+      ElMessage.error(error.message)
+    })
+    if (res) {
+      if (isCover) proposals.length = 0
+      if (res.length) {
+        proposals.push(...res)
+        pagination.nothing = false
+        setTimeout(() => {
+          for (let i = 0; i < res.length; i++) {
+            if (typeof res[i].creator === 'string' && !users.some(item => item.address === res[i].creator)){
+              getUserInfoByAddress(res[i].creator).then(user => {
+                users.push(user)
+              })
+            }
+          }
+        }, 0)
+      } else {
+        pagination.nothing = true
       }
-      if (res.code === 0) {
-        if (isCover) proposal.length = 0
-        if (res.data.list) {
-          proposal.push(...res.data.list)
-          pagination.nothing = false
-        } else {
-          pagination.nothing = true
-        }
-        resolve()
-      }
-    }, 1000)
+      resolve()
+    }
   })
 }
 
@@ -93,13 +231,70 @@ function getMore() {
 
 async function toCreate() {
   await checkUserLogin()
-  router.push({
-    name: 'talkDAOProposalCreate',
+  const res = await getBalance({
+    chain: Chains.MVC
+  }).catch(error => {
+        ElMessage.error(error.message)
+      })
+  if (typeof res === 'number') {
+    if (res >= talk.activeCommunity!.dao!.createProposalRequireTokenNumber) {
+      router.push({
+        name: 'talkDAOProposalCreate',
+      })
+    } else {
+      ElMessage.error(`${i18n.t('DAO.createProposalRequireTokenNumber tips1')} ${space(talk.activeCommunity!.dao!.createProposalRequireTokenNumber)} ${talk.activeCommunity!.dao!.governanceSymbol!.toUpperCase()}`)
+    }
+  }
+
+}
+
+function getUserStakeInfo() {
+  return new Promise<void>(async (resolve, reject) => {
+    const res = await GetUserStakeInfo({
+      symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${talk.activeCommunity!.dao!.daoId}`,
+      address: userStore.user!.address!,
+    })
+    if (res.code === 0) {
+      userStake.val = res.data
+      resolve()
+    }
   })
 }
 
-getDatas(true).then(() => {
-  isSkeleton.value = false
+const unlockTokenAmount = computed(() => {
+  let amount = 0
+  if (userStake.val) {
+    for (let i = 0; i < userStake.val!.unlockingTokens.length; i++) {
+      amount = new Decimal(amount).plus(userStake.val!.unlockingTokens[i].amount).toNumber()
+    }
+  }
+  return amount
+})
+
+function getLeastBlockTimestamp() {
+  return new Promise<void>(async (resolve, reject) => {
+    const res = await GetBlockTime().catch(error => {
+      ElMessage.error(error.message)
+    })
+    if (res?.code === 0) {
+      blockTimeStamp.value = res.data * 1000
+      resolve()
+    }
+  })
+}
+
+let watchFun: any
+watchFun = watch(() => talk.activeCommunity, (result) => {
+  if (result) {
+    if (watchFun) watchFun()
+    getLeastBlockTimestamp().then(() => {
+      Promise.all([getDatas(true), getUserStakeInfo()]).then(() => {
+        isSkeleton.value = false
+      })
+    })
+  }
+}, {
+ immediate: true
 })
 </script>
 

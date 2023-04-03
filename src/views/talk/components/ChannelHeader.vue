@@ -21,7 +21,11 @@
 
         <!-- 功能频道头 -->
         <div class="" v-if="talkStore.isActiveChannelGeneral && talkStore.activeChannel?.nameKey">
-          {{ $t(talkStore.activeChannel.nameKey) }}
+          {{
+            talkStore.activeChannel.id === 'DAO' && talkStore.activeCommunity?.dao
+              ? talkStore.activeCommunity?.dao.daoName
+              : $t(talkStore.activeChannel.nameKey)
+          }}
         </div>
 
         <template v-else>

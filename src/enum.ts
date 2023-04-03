@@ -328,6 +328,7 @@ export enum NodeName {
   Phone = 'phone',
   Email = 'email',
   ShareChatMessage = 'ShareChatMessage',
+  // DAO
 }
 
 export const enum BindStatus {
@@ -408,6 +409,7 @@ export enum ShowControl {
   isShowUserCard = 'isShowUserCard',
   isShowNoMetaNameModal = 'isShowNoMetaNameModal',
   isShowChooseMetaNameModal2 = 'isShowChooseMetaNameModal2',
+  isShowLeaveCommunityModal = 'isShowLeaveCommunityModal',
   never = 'never',
 }
 
@@ -545,4 +547,24 @@ export enum DAOProposalType {
   DiySingleChoose = '1',
   DiyMultipleChoose = '2',
   Approve = '3',
+}
+
+export enum DAOStakeOperate {
+  Pledge = 1,
+  Unlock = 3,
+  Extract = 4,
+  Reward = 5,
+  Vote = 7,
+  CreateVote = 5000,
+}
+
+export const enum StakeType {
+  Pledge = 0,
+  Unlock = 1,
+}
+
+export const enum DAOProposalStatus {
+  UnStart = 0,
+  Active = 1,
+  Ended = 2,
 }

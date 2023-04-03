@@ -32,12 +32,13 @@ export class Session {
     if (item) {
       return item
     } else {
-      for (let i = 0; i <= 150; i++) {
+      for (let i = 0; i <= 10000; i++) {
         const _address = userStore
           .showWallet!.wallet!.wallet.deriveChild(`m/0/${i}`)
           .privateKey.toAddress()
           .toString()
         if (_address === address) {
+          console.log('path', i)
           item = {
             address: address,
             path: i,
@@ -51,7 +52,7 @@ export class Session {
         return item
       } else {
         // @ts-ignore
-        throw new Error(i18n.global.t('PathMoreThan150'))
+        throw new Error(i18n.global.t('PathMoreThan10000'))
       }
     }
   }

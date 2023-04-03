@@ -1,0 +1,85 @@
+.stake {
+    .stake-amount {
+        .title {
+            .label {
+                font-size: 20px;
+            }
+
+            .balance {
+                color: var(--color-hover);
+                cursor: pointer;
+
+                &:hover {
+                    font-weight: bold;
+                }
+            }
+        }
+    }
+
+    .amount-percent {
+        margin-top: 18px;
+
+        .percent-numer {
+            font-size: 32px;
+        }
+
+        .percent-line {
+            margin-top: 18px;
+        }
+
+        .percent-options {
+            margin-top: 18px;
+
+            a {
+                padding: 6px 18px;
+                border-radius: 17px;
+                border: 1px solid var(--divid-color);
+                cursor: pointer;
+                text-align: center;
+                margin-right: 12px;
+
+                &:last-child {
+                    margin-right: 0;
+                }
+
+                &:hover {
+                    background: rgba(var(--color-primaryRgb), 0.3);
+                }
+
+                &.active {
+                    background: var(--color-primary);
+                }
+            }
+        }
+    }
+
+    .amount-number {
+        margin-top: 48px;
+
+        .label {
+            img {
+                width: 40px;
+                height: 40px;
+                margin-right: 5px;
+                border-radius: 50%;
+                border: 1px solid var(--divid-color);
+                padding: 5px;
+            }
+
+            font-size: 16px;
+            margin-right: 30px;
+        }
+    }
+
+    .main-border {
+        text-align: center;
+        margin-top: 50px;
+        padding: 18px 0;
+        font-weight: bold;
+        cursor: pointer;
+
+        &.faded {
+            cursor: not-allowed;
+        }
+    }
+}

@@ -16,6 +16,7 @@
     --el-border-radius-big: 12px;
     --el-fill-color-blank: var(--themeBgColor);
     --el-bg-color-overlay: var(--themeBgSecondColor);
+    --el-input-border-radius: var(--el-border-radius-big);
 
 }
 
@@ -112,82 +113,164 @@ html.dark {
 
 }
 
-.el-input__inner {
-    min-height: var(--el-input-inner-height);
-}
 
-.el-input,
-.el-date-editor {
-    --el-input-hover-border: var(--normal-border-color);
-    --el-input-focus-border-color: var(--normal-border-color);
-    --el-input-height: var(--input-height);
-    --el-input-border-radius: var(--el-border-radius-big);
+.el-select {}
 
-
-
+.el-input {
+    --el-input-focus-border: transparent;
+    --el-input-focus-border-color: transparent;
+    padding: 0;
+    transition: all 0.5;
+    box-shadow: 3px 3px 0 var(--faded-border-color);
+    border: var(--el-border-width) solid var(--faded-border-color);
+    border-radius: var(--el-input-border-radius);
 
 
+    .el-input__wrapper {
+        box-shadow: none;
+        border: none;
+
+        .el-input__inner {
+            --el-input-hover-border: var(--normal-border-color);
+            --el-input-focus-border-color: var(--normal-border-color);
+            --el-input-height: var(--input-height);
+            --el-input-border-radius: var(--el-border-radius-big);
+            min-height: var(--el-input-inner-height);
+            outline: none;
+        }
+    }
+
+    .el-input-group__append {
+        box-shadow: none;
+        border: none;
 
 
-    &.el-input-group--append {
-        .el-input__wrapper {
-            border-right: none;
+        .el-select,
+        .el-input {
+            box-shadow: none;
+            border: none;
         }
 
-        .el-input-group__append {
-            box-shadow: 3px 3px 0 var(--faded-border-color);
-            border: var(--el-border-width) solid var(--faded-border-color);
-
-            .el-input__wrapper {
-                border: none;
-            }
-        }
     }
 }
 
-.el-input__wrapper {
+
+
+
+
+.el-date-editor {
+    --el-input-height: var(--input-height);
+    border-radius: var(--el-input-border-radius);
     transition: all 0.5;
     border: var(--el-border-width) solid var(--faded-border-color) !important;
     box-shadow: 3px 3px 0 var(--faded-border-color) !important;
-    padding: 0 12px !important;
 
-    &.is-focus {
+    &.is-active {
         border-color: var(--themeTextColor) !important;
         box-shadow: 3px 3px 0 var(--themeTextColor) !important;
     }
+
 }
+
+
+
+.el-textarea {
+    .el-textarea__inner {
+        border-radius: var(--el-input-border-radius);
+        transition: all 0.5;
+        border: var(--el-border-width) solid var(--faded-border-color) !important;
+        box-shadow: 3px 3px 0 var(--faded-border-color) !important;
+
+        &:focus,
+        &:not(:placeholder-shown) {
+            border-color: var(--themeTextColor) !important;
+            box-shadow: 3px 3px 0 var(--themeTextColor) !important;
+        }
+    }
+
+}
+
 
 
 .el-form-item {
-    &.is-success {
-        .el-input {
 
-            .el-input__wrapper,
-            .el-input-group__append {
-                border-color: var(--themeTextColor);
-                box-shadow: 3px 3px 0 var(--themeTextColor);
-            }
-        }
-    }
 
     &.is-error {
         .el-input {
+            box-shadow: 3px 3px 0 var(--color-error);
+            border-color: var(--color-error);
 
-            .el-input__wrapper,
-            .el-input-group__append {
-                border-color: var(--el-color-danger);
-                box-shadow: 3px 3px 0 var(--el-color-danger);
+            .el-input__wrapper {
+                border: none;
+                box-shadow: none;
             }
+
+            .el-input-group__append {
+
+                .el-select,
+                .el-input {
+                    box-shadow: none;
+                    border: none;
+                }
+
+            }
+
+        }
+
+        .el-date-editor {
+            box-shadow: 3px 3px 0 var(--color-error) !important;
+            border-color: var(--color-error) !important;
+        }
+
+    }
+
+    &.is-success {
+        .el-input {
+            box-shadow: 3px 3px 0 var(--themeTextColor);
+            border-color: var(--themeTextColor);
+
+            .el-input__wrapper {
+                box-shadow: none;
+                border-color: none;
+            }
+
+            .el-input-group__append {
+                box-shadow: none;
+                border-color: none;
+
+                .el-select {
+                    box-shadow: none;
+                    border: none;
+                }
+
+                .el-input {
+                    box-shadow: none;
+                    border: none;
+                }
+
+            }
+        }
+
+        .el-date-editor {
+            box-shadow: 3px 3px 0 var(--themeTextColor) !important;
+            border-color: var(--themeTextColor) !important;
         }
     }
 }
 
-.el-form-item__content {}
+.el-form-item__content {
+    display: block;
+}
 
 .el-form-item__error {
     margin: 5px;
     position: static;
 }
+
+
+
+
+
 
 .el-dialog {
     --el-dialog-width: 912px;
@@ -404,6 +487,9 @@ html.dark {
 }
 
 
+
+
+
 .el-popper {
     --el-popper-border-radius: 12px;
     background: #fff;
@@ -567,7 +653,7 @@ html.dark {
 
     border: var(--standard-border-width) solid var(--border-color);
     box-shadow: var(--right-offset) var(--standard-offset) 0 var(--border-color);
-    border-radius: var(--rounded);
+    border-radius: var(--el-input-border-radius);
     transition-property: all;
     transition-duration: 150ms;
 
@@ -623,7 +709,7 @@ html.dark {
 
         border: var(--standard-border-width) solid var(--border-color);
         box-shadow: var(--right-offset) var(--standard-offset) 0 var(--border-color);
-        border-radius: var(--rounded);
+        border-radius: var(--el-input-border-radius);
         transition-property: all;
         transition-duration: 150ms;
 
@@ -670,7 +756,7 @@ html.dark {
 }
 
 .el-popover {
-    --el-popover-border-radius: var(--rounded) !important;
+    --el-popover-border-radius: var(--el-input-border-radius) !important;
 }
 
 

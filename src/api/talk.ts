@@ -97,7 +97,6 @@ export const getOneCommunity = async (communityId: string): Promise<Community> =
   return TalkApi.get(`/community/${communityId}`).then(res => {
     const community = res.data
     community.id = community.communityId
-
     return community
   })
 }

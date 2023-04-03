@@ -18,21 +18,29 @@
               {{ $t('Talk.Modals.no_meta_name') }}
             </p>
           </div>
-          <div class="lg:mt-12 flex gap-x-4">
-            <button
-              class="main-border primary w-full py-3 text-base outline-0 font-bold dark:bg-gray-700 uppercase"
-              v-if="talk.isAdmin()"
-              @click="goSetting"
-            >
-              {{ $t('Talk.Modals.go_equip') }}
-            </button>
+          <div class="lg:mt-12 flex-col">
+            <div class="flex gap-x-4">
+              <button
+                class="main-border primary w-full py-3 text-base outline-0 font-bold dark:bg-gray-700 uppercase"
+                v-if="talk.isAdmin()"
+                @click="goSetting"
+              >
+                {{ $t('Talk.Modals.go_equip') }}
+              </button>
 
-            <button
-              class="main-border w-full py-3 text-base outline-0 font-bold dark:bg-gray-700"
-              @click="goBack"
-            >
-              {{ $t('Talk.Modals.confirm') }}
-            </button>
+              <button
+                class="main-border w-full py-3 text-base outline-0 font-bold dark:bg-gray-700"
+                @click="goBack"
+              >
+                {{ $t('Talk.Modals.confirm') }}
+              </button>
+            </div>
+
+            <div class="mt-6 flex items-center justify-center" v-if="!talk.isAdmin()">
+              <button class="text-red-500 hover:underline text-sm" @click="popLeaveModal">
+                {{ $t('Talk.Modals.leave_this_club') }}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -69,5 +77,10 @@ const goSetting = () => {
   form.name = talk.activeCommunity?.name || ''
   form.description = talk.activeCommunity?.description || ''
   layout.isShowCommunitySettingsModal = true
+}
+
+const popLeaveModal = () => {
+  // 关掉当前modal，打开离开modal
+  layout.isShowLeaveCommunityModal = true
 }
 </script>
