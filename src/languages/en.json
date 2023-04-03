@@ -1198,12 +1198,13 @@
     "New Block Time": "Latest block time",
     "Edit Successful": "Edit Successful",
     "Create Successful": "Create Successful",
-    "createProposalRequireTokenNumber tips1": "Need to hold greater than or equal to",
+    "createProposalRequireTokenNumber tips1": "You need to hold at least",
     "Create Proposal Require Token Number": "Create Proposal Require Token Number(Satoshi)",
     "Total Staking": "Total Staking",
     "My Stakeding": "My Stakeding",
     "The community has not opened a DAO": "The community has not opened a DAO",
     "Stake Title1": "Stake",
-    "Stake Title2": "to Vote"
+    "Stake Title2": "to Vote",
+    "createProposalRequireTokenNumber tips2": "to propose."
   }
 }

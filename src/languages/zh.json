@@ -1202,6 +1202,7 @@
     "My Stakeding": "我的投票数",
     "The community has not opened a DAO": "该社区并未开通DAO",
     "Stake Title2": "去投票",
-    "Stake Title1": "质押"
+    "Stake Title1": "质押",
+    "createProposalRequireTokenNumber tips2": "才可以创建提案"
   }
 }

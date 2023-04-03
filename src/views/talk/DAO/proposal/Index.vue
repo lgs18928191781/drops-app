@@ -242,7 +242,7 @@ async function toCreate() {
         name: 'talkDAOProposalCreate',
       })
     } else {
-      ElMessage.error(`${i18n.t('DAO.createProposalRequireTokenNumber tips1')} ${space(talk.activeCommunity!.dao!.createProposalRequireTokenNumber)} ${talk.activeCommunity!.dao!.governanceSymbol!.toUpperCase()}`)
+      ElMessage.error(`${i18n.t('DAO.createProposalRequireTokenNumber tips1')} ${space(talk.activeCommunity!.dao!.createProposalRequireTokenNumber)} ${talk.activeCommunity!.dao!.governanceSymbol!.toUpperCase()} ${i18n.t('DAO.createProposalRequireTokenNumber tips2')}`)
     }
   }
 

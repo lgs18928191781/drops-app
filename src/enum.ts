@@ -554,8 +554,8 @@ export enum DAOStakeOperate {
   Unlock = 3,
   Extract = 4,
   Reward = 5,
-  Vote = 7,
-  CreateVote = 5000,
+  Vote = 5000,
+  CreateVote = 7,
 }
 
 export const enum StakeType {
