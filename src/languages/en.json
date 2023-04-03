@@ -1155,9 +1155,9 @@
     "Create DAO Title": "Create the club's DAO",
     "Create": "Create",
     "Proposal Status": {
-      "UnStarted": "UnStarted",
-      "Voting": "Active",
-      "Ended": "Closed"
+      "UnStarted": "Upcoming",
+      "Voting": "Ongoing",
+      "Ended": "Finished"
     },
     "Edit": "Edit",
     "Name placeholder": "Enter DAO Name",
