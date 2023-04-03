@@ -7,6 +7,12 @@
     border-radius: var(--rounded);
     margin-bottom: 36px;
 
+    .title {
+        font-weight: bold;
+        font-size: 20px;
+        margin-bottom: 30px;
+    }
+
     .pool-msg-item {
         border-right: 2px solid var(--divid-color);
         margin-right: 30px;
@@ -169,41 +175,55 @@
     .pool-msg {
         display: block;
 
-        .pool-msg-item {
-            margin-bottom: 30px;
+        .list {
+            display: block;
 
-            &:first-child {
-                width: 100%;
-                border-right: none;
-                border-bottom: 1px solid var(--divid-color);
-                padding-bottom: 30px;
-            }
+            .pool-msg-item {
+                margin-bottom: 30px;
 
-            &:nth-child(2),
-            &:nth-child(3) {
-                width: calc((100% - 10px) / 2);
-                display: inline-block;
-                box-sizing: border-box;
-                margin-right: 0;
-                text-align: center;
+                &:nth-child(1),
+                &:nth-child(2) {
+                    width: calc((100% - 10px) / 2);
+                    display: inline-block;
+                    box-sizing: border-box;
+                    margin-right: 0;
+                    text-align: center;
+                    vertical-align: text-top;
 
-                .value {
-                    justify-content: center;
+                    .value {
+                        justify-content: center;
+                        display: block;
+
+                        a {
+                            display: block;
+                            margin-top: 15px;
+                        }
+                    }
                 }
+
+                &:nth-child(1) {
+                    padding-right: 15px;
+                }
+
+                &:nth-child(2) {
+                    border-right: none;
+                }
+
+                &:nth-child(3) {
+                    width: 100%;
+                    border-right: none;
+                    margin-left: 10px;
+                }
+
+
             }
 
-            &:nth-child(3) {
-                border-right: none;
-                margin-left: 10px;
+            .stake {
+                text-align: center;
+                padding: 10px;
             }
-
-
         }
 
-        .stake {
-            text-align: center;
-            padding: 10px;
-        }
 
 
     }

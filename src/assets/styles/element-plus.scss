@@ -113,63 +113,49 @@ html.dark {
 
 }
 
-.el-input__inner {
-    --el-input-hover-border: var(--normal-border-color);
-    --el-input-focus-border-color: var(--normal-border-color);
-    --el-input-height: var(--input-height);
-    --el-input-border-radius: var(--el-border-radius-big);
 
-    padding: 0 12px;
-    border-radius: var(--el-input-border-radius);
-    min-height: var(--el-input-inner-height);
-    transition: all 0.5;
-    border: var(--el-border-width) solid var(--faded-border-color);
-    box-shadow: 3px 3px 0 var(--faded-border-color);
-    outline: none;
-
-    &:focus,
-    &:not(:placeholder-shown) {
-        border-color: var(--themeTextColor);
-        box-shadow: 3px 3px 0 var(--themeTextColor);
-    }
-}
-
-.el-input-group--append {
-    .el-input__inner {
-        border-radius: var(--el-input-border-radius) 0 0 var(--el-input-border-radius);
-    }
-}
+.el-select {}
 
 .el-input {
     --el-input-focus-border: transparent;
     --el-input-focus-border-color: transparent;
-
-    &.el-input-group--append {
-        .el-input__wrapper {
-            border-right: none;
-            border-radius: var(--el-input-border-radius);
-        }
-
-        .el-input-group__append {
-            box-shadow: none;
-
-            .el-input__wrapper {
-                border: none;
-            }
-        }
-    }
-}
-
-.el-input__wrapper {
     padding: 0;
-    border: none;
-    box-shadow: none;
+    transition: all 0.5;
+    box-shadow: 3px 3px 0 var(--faded-border-color);
+    border: var(--el-border-width) solid var(--faded-border-color);
+    border-radius: var(--el-input-border-radius);
 
-    &.is-focus {
+
+    .el-input__wrapper {
         box-shadow: none;
+        border: none;
+
+        .el-input__inner {
+            --el-input-hover-border: var(--normal-border-color);
+            --el-input-focus-border-color: var(--normal-border-color);
+            --el-input-height: var(--input-height);
+            --el-input-border-radius: var(--el-border-radius-big);
+            min-height: var(--el-input-inner-height);
+            outline: none;
+        }
     }
 
+    .el-input-group__append {
+        box-shadow: none;
+        border: none;
+
+
+        .el-select,
+        .el-input {
+            box-shadow: none;
+            border: none;
+        }
+
+    }
 }
+
+
+
 
 
 .el-date-editor {
@@ -211,35 +197,64 @@ html.dark {
 
     &.is-error {
         .el-input {
-            .el-input__wrapper {
-                box-shadow: none !important;
+            box-shadow: 3px 3px 0 var(--color-error);
+            border-color: var(--color-error);
 
-                .el-input__inner {
-                    border-color: var(--el-color-danger) !important;
-                    box-shadow: 3px 3px 0 var(--el-color-danger) !important;
+            .el-input__wrapper {
+                border: none;
+                box-shadow: none;
+            }
+
+            .el-input-group__append {
+
+                .el-select,
+                .el-input {
+                    box-shadow: none;
+                    border: none;
                 }
+
+            }
+
+        }
+
+        .el-date-editor {
+            box-shadow: 3px 3px 0 var(--color-error) !important;
+            border-color: var(--color-error) !important;
+        }
+
+    }
+
+    &.is-success {
+        .el-input {
+            box-shadow: 3px 3px 0 var(--themeTextColor);
+            border-color: var(--themeTextColor);
+
+            .el-input__wrapper {
+                box-shadow: none;
+                border-color: none;
+            }
+
+            .el-input-group__append {
+                box-shadow: none;
+                border-color: none;
+
+                .el-select {
+                    box-shadow: none;
+                    border: none;
+                }
+
+                .el-input {
+                    box-shadow: none;
+                    border: none;
+                }
+
             }
         }
 
         .el-date-editor {
-            border: var(--el-border-width) solid var(--color-error) !important;
-            box-shadow: 3px 3px 0 var(--color-error) !important;
+            box-shadow: 3px 3px 0 var(--themeTextColor) !important;
+            border-color: var(--themeTextColor) !important;
         }
-
-        .el-select {
-            border: var(--el-border-width) solid var(--color-error) !important;
-            box-shadow: 3px 3px 0 var(--color-error) !important;
-
-            .el-input {
-                .el-input__wrapper {
-                    .el-input__inner {
-                        box-shadow: none !important;
-                    }
-                }
-            }
-
-        }
-
     }
 }
 
@@ -472,50 +487,8 @@ html.dark {
 }
 
 
-.el-select {
-    border: var(--el-border-width) solid var(--faded-border-color) !important;
-    box-shadow: 3px 3px 0 var(--faded-border-color) !important;
-    border-radius: var(--el-input-border-radius);
-    padding-right: 12;
-    border-radius: var(--el-input-border-radius);
-
-    .el-input {
-        .el-input__wrapper {
-            padding-right: 8px;
-            box-shadow: none;
-
-            .el-input__inner {
-                border: none;
-                box-shadow: none;
-            }
-        }
-
-        &.is-focus {
-            .el-input__wrapper {
-                box-shadow: none !important;
-            }
-        }
-
-    }
 
 
-
-
-}
-
-.el-input-group--append {
-    .el-input-group__append .el-select {
-        border-radius: 0 var(--el-input-border-radius) var(--el-input-border-radius) 0;
-
-        .el-input {
-
-
-            .el-input__inner {
-                --el-input-inner-height: calc(var(--input-height) - 6px);
-            }
-        }
-    }
-}
 
 .el-popper {
     --el-popper-border-radius: 12px;

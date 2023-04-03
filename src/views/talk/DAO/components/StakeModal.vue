@@ -235,7 +235,7 @@ async function stake() {
           const res = await Pledge({
             symbol,
             requestIndex: stakeRes.data.requestIndex,
-            mvcRawTx: result.sendMoney.transaction.toString(),
+            mvcRawTx: result.sendMoney!.transaction.toString(),
             mvcOutputIndex: 0,
             mvcAddAmount: amount,
           })

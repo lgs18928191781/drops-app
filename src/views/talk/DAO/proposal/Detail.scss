@@ -163,6 +163,8 @@
                 }
 
                 .user {
+                    width: 180px;
+
                     .avatar {
                         width: 50px;
                         height: 50px;
@@ -386,6 +388,23 @@
             .vote-record-list {
                 max-height: 500px;
                 overflow-y: auto;
+
+                .vote-record-item {
+
+
+                    .user {
+                        width: 100px;
+
+                        .avatar {
+                            width: 26px;
+                            height: 26px;
+                        }
+
+                        .metaid {
+                            display: none;
+                        }
+                    }
+                }
             }
         }
     }

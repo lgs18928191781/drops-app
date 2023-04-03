@@ -156,7 +156,9 @@
                 <div class="value flex1">
                   {{ $t(proposal.val!.options[item.voteOption]) }}
                 </div>
-                <div class="time">{{ $filters.dateTimeFormat(item.time * 1000) }}</div>
+                <div class="time">
+                  {{ $filters.dateTimeFormat(item.time * 1000, $i18n.locale, 'YY-MM-DD HH:mm:ss') }}
+                </div>
                 <Icon name="link" class="link" @click="tx(item.txid)"></Icon>
               </div>
 
@@ -255,7 +257,6 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
-
 
 
                       }}%
@@ -603,6 +604,8 @@ async function confirmVote() {
             loading.value = false
           }
         }
+      } else if (transfer === null) {
+        loading.value = false
       }
     }
   } catch (error) {

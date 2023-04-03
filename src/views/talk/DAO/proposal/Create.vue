@@ -19,7 +19,11 @@
         <ElFormItem :label="$t('DAO.Proposal Title')" prop="title">
           <ElInput v-model="form.title" type="text" :placeholder="$t('DAO.Enter Proposal Title')" />
         </ElFormItem>
-        <ElFormItem :label="$t('DAO.Proposal Type')" prop="type">
+        <ElFormItem
+          :label="$t('DAO.Proposal Type')"
+          prop="type"
+          :class="[form.type ? 'is-success' : 'is-error']"
+        >
           <ElSelect v-model="form.type" @change="onTypeChange">
             <ElOption
               v-for="item in DAOtypeOptions"
@@ -29,7 +33,11 @@
             />
           </ElSelect>
         </ElFormItem>
-        <ElFormItem :label="$t('DAO.Vote Options')" prop="options">
+        <ElFormItem
+          :label="$t('DAO.Vote Options')"
+          prop="options"
+          :class="[form.options.length ? 'is-success' : 'is-error']"
+        >
           <ElSelect
             multiple
             allow-create
@@ -101,7 +109,7 @@ const isShowConfirmModal = ref(false)
 const form = reactive({
   title: '',
   type: DAOProposalType.Base,
-  options: ['For', 'Against', 'Abstain'],
+  options: ['Yes', 'No'],
   time: ['', ''],
   content: '',
 })
@@ -215,7 +223,7 @@ function initMarkDown() {
 
 function onTypeChange() {
   if (form.type === DAOProposalType.Base) {
-    form.options = ['For', 'Against', 'Abstain']
+    form.options = ['Yes', 'No']
   } else {
     form.options = []
   }

@@ -20,7 +20,12 @@
             <div class="cont">
               <div class="extractable flex flex-align-center">
                 <div class="amount flex1">{{ $filters.space(tokens.active.amount) }}</div>
-                <a class="main-border primary" @click="extract">{{ $t('DAO.Extract') }}</a>
+                <a
+                  class="main-border"
+                  @click="extract"
+                  :class="[tokens.active.amount ? 'primary' : 'faded']"
+                  >{{ $t('DAO.Extract') }}</a
+                >
               </div>
             </div>
           </div>
@@ -122,6 +127,7 @@ function getUserStakeInfo() {
 }
 
 async function extract() {
+  if (!tokens.active.amount) return
   loading.value = true
   try {
     const symbol = `${talk.activeCommunity!.dao!.governanceSymbol}_${

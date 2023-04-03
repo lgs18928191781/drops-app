@@ -1168,9 +1168,9 @@
     "User Is Existed": "用户已存在",
     "Stake SPACE to obtain voting power": "质押 SPACE 以获得投票权",
     "Stake": "质押",
-    "Your staked SPACE": "您质押的SPACE",
+    "Your staked SPACE": "您质押的",
     "Total Staked": "累计质押",
-    "Unlock Token": "正在解锁的Token",
+    "Unlock Token": "正在解锁的",
     "Stake amount": "质押金额",
     "Pledge successful": "质押成功",
     "Create Proposal Successful": "创建提案成功",
@@ -1200,6 +1200,8 @@
     "Create Proposal Require Token Number": "创建提案所需Token数量(Satoshi)",
     "Total Staking": "总投票数",
     "My Stakeding": "我的投票数",
-    "The community has not opened a DAO": "该社区并未开通DAO"
+    "The community has not opened a DAO": "该社区并未开通DAO",
+    "Stake Title2": "去投票",
+    "Stake Title1": "质押"
   }
 }
