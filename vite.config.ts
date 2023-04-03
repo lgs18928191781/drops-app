@@ -238,6 +238,7 @@ export default ({ mode, command }) => {
       },
       commonjsOptions: {
         transformMixedEsModules: true,
+        defaultIsModuleExports: true
       },
     },
     sourcemap: isProduction ? false : 'inline',
