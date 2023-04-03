@@ -1,6 +1,7 @@
 import { CollectionOrderType, CollectionSortType, NFTSellType } from '@/enum'
 import { PostTag } from '@/stores/buzz/tag'
 import HttpRequest from '@/utils/request'
+import { error } from 'console'
 
 const aggregation = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation`, {
   header: {
@@ -128,34 +129,54 @@ export const GetUserSimpleInfo = (
   return aggregation.get(`/v2/app/user/getUserSimpleInfo/${metaId}`)
 }
 
-export const GetUserInfo = (
+export const GetUserInfo = async (
   metaId: string
-): Promise<{
-  code: number
-  data: {
-    metaId: string
-    metaIdTag: string
-    address: string
-    pubKey: string
-    infoTxId: string
-    infoPublicKey: string
-    protocolTxId: string
-    protocolPublicKey: string
-    name: string
-    nameEncrypt: string
-    phone: string
-    phoneEncrypt: string
-    email: string
-    emailEncrypt: string
-    avatarTxId: string
-    avatarEncrypt: string
-    coverUrl: string
-    coverType: string
-    coverPublicKey: string
-    timestamp: number
+): Promise<
+  | {
+      code: number
+      data: {
+        metaId: string
+        metaIdTag: string
+        address: string
+        pubKey: string
+        infoTxId: string
+        infoPublicKey: string
+        protocolTxId: string
+        protocolPublicKey: string
+        name: string
+        nameEncrypt: string
+        phone: string
+        phoneEncrypt: string
+        email: string
+        emailEncrypt: string
+        avatarTxId: string
+        avatarEncrypt: string
+        coverUrl: string
+        coverType: string
+        coverPublicKey: string
+        timestamp: number
+      }
+    }
+  | undefined
+> => {
+  const res: any = await aggregation.get(`/v2/app/user/getUserInfo/${metaId}`)
+  let response: any = {}
+  if (res?.code === 0) {
+    response.code = res.code
+    let evmAddress = ''
+    const object = JSON.parse(res.data.evmAddress)
+    if (object?.eth || object.evmAddress) {
+      evmAddress = object.eth || object.evmAddress
+    }
+    response.data = {
+      ...res.data,
+      evmAddress,
+    }
   }
-}> => {
-  return aggregation.get(`/v2/app/user/getUserInfo/${metaId}`)
+
+  if (res) {
+    return response
+  }
 }
 
 export const GetHomeBuzzs = (params: {
