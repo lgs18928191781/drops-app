@@ -155,6 +155,7 @@ export const GetUserInfo = async (
         coverType: string
         coverPublicKey: string
         timestamp: number
+        evmAddress: string
       }
     }
   | undefined
