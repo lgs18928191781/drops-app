@@ -6,7 +6,9 @@
       </div>
       <a
         class="main-border primary px-2 py-1 cursor-pointer text-base"
-        v-if="userStore.isAuthorized && talk.activeCommunity?.dao?.daoAdmins.includes(userStore.user!.metaId)"
+        v-if="
+          userStore.isAuthorized && talk.activeCommunity?.ownerMetaId === userStore.user?.metaId
+        "
         @click="edit"
       >
         {{ $t('DAO.Edit') }}

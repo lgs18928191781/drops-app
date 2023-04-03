@@ -1199,6 +1199,7 @@
     "createProposalRequireTokenNumber tips1": "需持有大于等于",
     "Create Proposal Require Token Number": "创建提案所需Token数量(Satoshi)",
     "Total Staking": "总投票数",
-    "My Stakeding": "我的投票数"
+    "My Stakeding": "我的投票数",
+    "The community has not opened a DAO": "该社区并未开通DAO"
   }
 }

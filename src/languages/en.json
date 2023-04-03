@@ -1201,6 +1201,7 @@
     "createProposalRequireTokenNumber tips1": "Need to hold greater than or equal to",
     "Create Proposal Require Token Number": "Create Proposal Require Token Number(Satoshi)",
     "Total Staking": "Total Staking",
-    "My Stakeding": "My Stakeding"
+    "My Stakeding": "My Stakeding",
+    "The community has not opened a DAO": "The community has not opened a DAO"
   }
 }
