@@ -44,6 +44,7 @@
     .attachment {
         color: var(--color-hover);
         cursor: pointer;
+        white-space: nowrap;
     }
 
     .content {
@@ -51,6 +52,16 @@
         @include text-many-ellipsis(1);
         min-width: 0;
     }
+
+    @media only screen and (max-width: 750px) {
+        margin-left: calc(40PX + 8PX);
+        width: calc(100% - 40PX - 8PX);
+
+        .line-warp {
+            margin-left: calc(0px - (8PX + (40PX / 2)));
+        }
+    }
+
 }
 
 .replying {
