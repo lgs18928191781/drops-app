@@ -120,7 +120,12 @@ const actions = computed(() => {
             channelId: talk.activeChannelId,
             userMetaId: message.userInfo.metaId,
             message: {
-              content: decryptedMessage(message),
+              content: decryptedMessage(
+                message.content,
+                message.encryption,
+                message.protocol,
+                message.isMock
+              ),
               contentType: message.contentType,
               protocol: message.protocol,
               txId: message.txId,

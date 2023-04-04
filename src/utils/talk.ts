@@ -600,6 +600,7 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
           protocol: reply.protocol,
           timestamp: reply.timestamp,
           txId: reply.txId,
+          userInfo: reply.userInfo,
         }
       : undefined,
   }
@@ -636,7 +637,7 @@ export const tryCreateNode = async (node: any, sdk: SDK, mockId: string) => {
 const _sendTextMessageForSession = async (messageDto: MessageDto) => {
   const userStore = useUserStore()
   const talkStore = useTalkStore()
-  const { content, channelId: to, replyTx } = messageDto
+  const { content, channelId: to, reply } = messageDto
 
   // 1. 构建协议数据
   // 1.1 to: done
@@ -653,7 +654,7 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
     content,
     contentType,
     encrypt,
-    replyTx,
+    replyTx: reply ? reply.txId : '',
   }
 
   // 2. 构建节点参数

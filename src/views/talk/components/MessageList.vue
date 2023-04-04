@@ -58,6 +58,7 @@
             v-bind="$attrs"
             :id="message.timestamp"
             @toBuzz="onToBuzz"
+            @to-time-stamp="time => scrollToTimeStamp(time)"
           />
         </template>
 
