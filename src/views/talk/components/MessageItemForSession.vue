@@ -107,8 +107,17 @@
 
       <div class="my-1.5 flex flex-col items-start" v-else-if="isNftBuy">
         <div class="max-w-full min-w-[240PX] md:w-[300PX] shadow rounded-xl rounded-tl bg-blue-400">
-          <div
-            class="rounded-xl p-4 bg-white dark:bg-gray-700 rounded-tl border border-solid border-blue-400 divide-y divide-dark-200 dark:divide-gray-600"
+          <RouterLink
+            :to="{
+              name: 'nftDetail',
+              params: {
+                tokenIndex: message.data.tokenIndex,
+                genesis: message.data?.genesis,
+                codehash: message.data?.codehash,
+                chain: 'mvc',
+              },
+            }"
+            class="block rounded-xl p-4 bg-white dark:bg-gray-700 rounded-tl border border-solid border-blue-400 divide-y divide-dark-200 dark:divide-gray-600"
           >
             <div class="flex items-center gap-x-4.5 mb-3">
               <Image
@@ -134,7 +143,7 @@
               </div>
               <div class="text-sm">{{ nftPrice }}</div>
             </div>
-          </div>
+          </RouterLink>
 
           <div class="flex py-2.5 items-center space-x-1.5 px-4">
             <Icon name="message_token" class="w-4 h-4 text-white" />

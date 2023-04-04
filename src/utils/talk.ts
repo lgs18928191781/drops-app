@@ -727,7 +727,7 @@ const _uploadImage = async (file: File, sdk: SDK) => {
 const _sendImageMessage = async (messageDto: MessageDto) => {
   const userStore = useUserStore()
   const talkStore = useTalkStore()
-  const { channelId: groupId, userName: nickName, attachments, originalFileUrl } = messageDto
+  const { channelId: groupId, userName: nickName, attachments, originalFileUrl, reply } = messageDto
 
   // 1. 构建协议数据
   // 1.1 groupId: done
@@ -745,7 +745,7 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
     encrypt,
     fileType,
     attachment,
-    replyTx: messageDto.replyTx,
+    replyTx: reply ? reply.txId : '',
   }
   if (messageDto.channelType === ChannelType.Group) {
     dataCarrier.groupId = groupId
@@ -786,6 +786,20 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
     txId: '',
     encryption: encrypt,
     isMock: true,
+    replyInfo: reply
+      ? {
+          chatType: reply.chatType,
+          content: reply.content,
+          contentType: reply.contentType,
+          encryption: reply.encryption,
+          metaId: reply.metaId,
+          nickName: reply.nickName,
+          protocol: reply.protocol,
+          timestamp: reply.timestamp,
+          txId: reply.txId,
+          userInfo: reply.userInfo,
+        }
+      : undefined,
   }
   talkStore.addMessage(mockMessage)
 
