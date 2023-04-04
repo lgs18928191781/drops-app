@@ -337,7 +337,8 @@
     },
     "Quote": {
       "tips": "正在回复至"
-    }
+    },
+    "Go to the original position": "Go to the original position"
   },
   "Not install MetaLet Wallet": "你还没安装MetaLet插件钱包",
   "Comming Soon": "敬请期待",
@@ -1203,6 +1204,7 @@
     "The community has not opened a DAO": "该社区并未开通DAO",
     "Stake Title2": "去投票",
     "Stake Title1": "质押",
-    "createProposalRequireTokenNumber tips2": "才可以创建提案"
+    "createProposalRequireTokenNumber tips2": "才可以创建提案",
+    "Prevew Attachment": "查看附件"
   }
 }

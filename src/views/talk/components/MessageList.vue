@@ -19,6 +19,7 @@
             :id="message.timestamp"
             v-bind="$attrs"
             @toBuzz="onToBuzz"
+            @to-time-stamp="time => scrollToTimeStamp(time)"
           />
           <div
             class="border-b border-solid border-gray-300 dark:border-gray-600 mb-6 pb-6 pt-2 mx-4"
@@ -72,6 +73,7 @@
             :id="message.timestamp"
             v-bind="$attrs"
             @toBuzz="onToBuzz"
+            @to-time-stamp="time => scrollToTimeStamp(time)"
           />
         </template>
         <template v-else>

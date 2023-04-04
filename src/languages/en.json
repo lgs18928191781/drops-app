@@ -303,7 +303,8 @@
     },
     "Quote": {
       "tips": "Replying to"
-    }
+    },
+    "Go to the original position": "Go to the original position"
   },
   "Not install MetaLet Wallet": "Not Install MetaLet Wallet",
   "Login": {
@@ -1205,6 +1206,7 @@
     "The community has not opened a DAO": "The community has not opened a DAO",
     "Stake Title1": "Stake",
     "Stake Title2": "to Vote",
-    "createProposalRequireTokenNumber tips2": "to propose."
+    "createProposalRequireTokenNumber tips2": "to propose.",
+    "Prevew Attachment": "Prevew Attachment"
   }
 }

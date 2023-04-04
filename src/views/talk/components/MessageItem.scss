@@ -1,6 +1,10 @@
+@import '@/assets/styles/var.scss';
+
 .quote {
     position: relative;
     margin-left: calc(54PX + 16PX);
+    width: calc(100% - 54PX - 16PX);
+    font-size: 14px;
 
     .line-warp {
         width: 30px;
@@ -12,16 +16,21 @@
 
     }
 
-    .quote-warp {
+    .quote-warp {}
+
+    .quote-content {
+        max-width: 100%;
         padding: 3px 6px;
         border-radius: 6px;
         background: rgba(var(--themeTextColorRgb), 0.1);
+        box-sizing: border-box;
         display: inline-flex;
     }
 
     .avatar {
         width: 20px;
         height: 20px;
+        min-width: 20px;
         margin-right: 5px;
         position: relative;
 
@@ -30,6 +39,17 @@
         }
 
 
+    }
+
+    .attachment {
+        color: var(--color-hover);
+        cursor: pointer;
+    }
+
+    .content {
+        color: var(--themeFadedTextColor);
+        @include text-many-ellipsis(1);
+        min-width: 0;
     }
 }
 

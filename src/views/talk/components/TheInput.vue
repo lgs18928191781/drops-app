@@ -506,7 +506,7 @@ const trySendText = async (e: any) => {
     channelId: talk.activeChannel.id,
     userName: userStore.user?.name || '',
     channelType: talk.activeChannelType as ChannelType,
-    replyTx: props.quote?.txId,
+    reply: props.quote,
   }
   emit('update:quote', undefined)
   await sendMessage(messageDto)

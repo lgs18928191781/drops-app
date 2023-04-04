@@ -549,7 +549,7 @@ export const validateTextMessage = (message: string) => {
 const _sendTextMessage = async (messageDto: MessageDto) => {
   const userStore = useUserStore()
   const talkStore = useTalkStore()
-  const { content, channelId: groupID, userName: nickName, replyTx } = messageDto
+  const { content, channelId: groupID, userName: nickName, reply } = messageDto
 
   // 1. 构建协议数据
   const timestamp = getTimestampInSeconds()
@@ -562,7 +562,7 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
     content,
     contentType,
     encryption,
-    replyTx,
+    replyTx: reply ? reply.txId : '',
   }
 
   // 2. 构建节点参数
@@ -589,6 +589,19 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
     txId: '',
     encryption,
     isMock: true,
+    replyInfo: reply
+      ? {
+          chatType: reply.chatType,
+          content: reply.content,
+          contentType: reply.contentType,
+          encryption: reply.encryption,
+          metaId: reply.metaId,
+          nickName: reply.nickName,
+          protocol: reply.protocol,
+          timestamp: reply.timestamp,
+          txId: reply.txId,
+        }
+      : undefined,
   }
   talkStore.addMessage(mockMessage)
 
@@ -1004,20 +1017,25 @@ export async function deleteAnnouncement(
   return 'success'
 }
 
-export function decryptedMessage(message: ChatMessageItem) {
+export function decryptedMessage(
+  content: string,
+  encryption: string,
+  protocol: string,
+  isMock: boolean = false
+) {
   const talk = useTalkStore()
-  if (message.encryption === '0') {
-    return message.content
+  if (encryption === '0') {
+    return content
   }
 
-  if (message.protocol !== 'simpleGroupChat' && message.protocol !== 'SimpleFileGroupChat') {
-    return message.content
+  if (protocol !== 'simpleGroupChat' && protocol !== 'SimpleFileGroupChat') {
+    return content
   }
 
   // 处理mock的图片消息
-  if (message.isMock && message.protocol === 'SimpleFileGroupChat') {
-    return message.content
+  if (isMock && protocol === 'SimpleFileGroupChat') {
+    return content
   }
 
-  return decrypt(message.content, talk.activeChannelId.substring(0, 16))
+  return decrypt(content, talk.activeChannelId.substring(0, 16))
 }
