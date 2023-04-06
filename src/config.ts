@@ -149,18 +149,18 @@ export const payPlatformList: PayPlatformItem[] = [
     },
     suffix: false,
   },
-  {
-    icon: BSV,
-    name: () => {
-      // @ts-ignore
-      return `BSV${i18n.global.locale === Lang.ZH ? '' : ' '}${i18n.global.t('Pay')}`
-    },
-    platform: PayPlatform.BSV,
-    background: '#108EE9',
-    key: 'BSV',
-    disabled: () => false,
-    suffix: false,
-  },
+  // {
+  //   icon: BSV,
+  //   name: () => {
+  //     // @ts-ignore
+  //     return `BSV${i18n.global.locale === Lang.ZH ? '' : ' '}${i18n.global.t('Pay')}`
+  //   },
+  //   platform: PayPlatform.BSV,
+  //   background: '#108EE9',
+  //   key: 'BSV',
+  //   disabled: () => false,
+  //   suffix: false,
+  // },
   {
     icon: MVC,
     name: () => {

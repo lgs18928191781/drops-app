@@ -501,23 +501,23 @@ const wallets = reactive([
         },
         loading: true,
       },
-      {
-        icon: BSV,
-        name: 'BSV',
-        value: 0,
-        showBindBtn: false,
-        address: () => userStore.user?.address || '',
-        isCanTransfer: false,
-        price: function() {
-          const rate = rootStore.exchangeRate.find(item => item.symbol === Chains.BSV)
-          if (rate) {
-            // @ts-ignore
-            return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
-          }
-          return '--'
-        },
-        loading: true,
-      },
+      // {
+      //   icon: BSV,
+      //   name: 'BSV',
+      //   value: 0,
+      //   showBindBtn: false,
+      //   address: () => userStore.user?.address || '',
+      //   isCanTransfer: false,
+      //   price: function() {
+      //     const rate = rootStore.exchangeRate.find(item => item.symbol === Chains.BSV)
+      //     if (rate) {
+      //       // @ts-ignore
+      //       return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
+      //     }
+      //     return '--'
+      //   },
+      //   loading: true,
+      // },
     ],
   },
 ])
