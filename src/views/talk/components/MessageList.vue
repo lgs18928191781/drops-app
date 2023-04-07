@@ -232,7 +232,7 @@ const scrollToMessagesBottom = async (retryCount = 0) => {
 function scrollToTimeStamp(time: number) {
   const target = document.getElementById(time.toString())
   if (target) {
-    const top = target.scrollTop
+    const top = target.offsetTop - target.clientHeight
     messagesScroll.value?.scrollTo({ top })
   }
 }
