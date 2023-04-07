@@ -6,7 +6,17 @@
     <!-- 消息菜单 -->
     <MessageMenu
       :message="props.message"
-      :parsed="parseTextMessage(decryptedMessage)"
+      :parsed="
+        parseTextMessage(
+          decryptedMessage(
+            message.content,
+            (message.data.encrypt) as any,
+            message.protocol,
+            message.isMock,
+            true
+          )
+        )
+      "
       v-model:translateStatus="translateStatus"
       v-model:translatedContent="translatedContent"
       v-bind="$attrs"
@@ -29,7 +39,9 @@
             : message.replyInfo.content,
         encryption: message.replyInfo.encoding,
         timestamp: message.replyInfo.timestamp,
+        isMock: message.isMock,
       }"
+      :isSession="true"
       v-bind="$attrs"
     />
 
@@ -56,7 +68,13 @@
 
         <div class="w-full" v-if="isNftEmoji">
           <Image
-            :src="decryptedMessage"
+            :src="decryptedMessage(
+            message.content,
+            (message.data.encrypt) as any,
+            message.protocol,
+            message.isMock,
+            true
+          )"
             customClass="max-w-[80%] md:max-w-[50%] lg:max-w-[320px] py-0.5 object-scale-down"
           />
 
@@ -274,7 +292,13 @@
           <Teleport to="body" v-if="isImage && showImagePreview">
             <TalkImagePreview
               v-if="showImagePreview"
-              :src="(decryptedMessage as string)"
+              :src="decryptedMessage(
+            message.content,
+            (message.data.encrypt) as any,
+            message.protocol,
+            message.isMock,
+            true
+          )"
               @close="showImagePreview = false"
             />
           </Teleport>
@@ -326,7 +350,13 @@
               message.error && 'bg-red-200 dark:bg-red-700 opacity-50',
             ]"
             v-else
-            v-html="parseTextMessage(decryptedMessage)"
+            v-html="parseTextMessage(decryptedMessage(
+            message.content,
+            (message.data.encrypt) as any,
+            message.protocol,
+            message.isMock,
+            true
+          ))"
           ></div>
           <button v-if="message.error" class="ml-3" :title="resendTitle" @click="tryResend">
             <Icon
@@ -348,7 +378,7 @@ import redEnvelopeImg from '@/assets/images/red-envelope.svg?url'
 import TalkImagePreview from './ImagePreview.vue'
 import { computed, ref, toRaw, Ref, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { formatTimestamp } from '@/utils/talk'
+import { formatTimestamp, decryptedMessage } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
 import { useJobsStore } from '@/stores/jobs'
@@ -413,35 +443,35 @@ const decryptedImageMessage = computed(() => {
   }
 })
 
-const decryptedMessage = computed(() => {
-  // 处理mock的图片消息
-  if (
-    props.message.isMock &&
-    (props.message.protocol === NodeName.SimpleFileGroupChat ||
-      props.message.protocol === NodeName.SimpleFileMsg)
-  ) {
-    return props.message.content
-  }
+// const decryptedMessage = computed(() => {
+//   // 处理mock的图片消息
+//   if (
+//     props.message.isMock &&
+//     (props.message.protocol === NodeName.SimpleFileGroupChat ||
+//       props.message.protocol === NodeName.SimpleFileMsg)
+//   ) {
+//     return props.message.content
+//   }
 
-  if (props.message.data?.encrypt !== '1') {
-    return props.message.data?.attachment || props.message.data?.content
-  }
+//   if (props.message.data?.encrypt !== '1') {
+//     return props.message.data?.attachment || props.message.data?.content
+//   }
 
-  // if (
-  //   props.message.protocol !== 'simpleGroupChat' &&
-  //   props.message.protocol !== 'SimpleFileGroupChat'
-  // ) {
-  //   return props.message.data.content
-  // }
+//   // if (
+//   //   props.message.protocol !== 'simpleGroupChat' &&
+//   //   props.message.protocol !== 'SimpleFileGroupChat'
+//   // ) {
+//   //   return props.message.data.content
+//   // }
 
-  if (!talkStore.activeChannel) return ''
+//   if (!talkStore.activeChannel) return ''
 
-  const privateKey = toRaw(userStore?.wallet)!.getPathPrivateKey('0/0')
-  const privateKeyStr = privateKey.toHex()
-  const otherPublicKeyStr = talkStore.activeChannel.publicKeyStr
+//   const privateKey = toRaw(userStore?.wallet)!.getPathPrivateKey('0/0')
+//   const privateKeyStr = privateKey.toHex()
+//   const otherPublicKeyStr = talkStore.activeChannel.publicKeyStr
 
-  return ecdhDecrypt(props.message.data.content, privateKeyStr, otherPublicKeyStr)
-})
+//   return ecdhDecrypt(props.message.data.content, privateKeyStr, otherPublicKeyStr)
+// })
 
 const parseTextMessage = (text: string) => {
   if (typeof text == 'undefined') {

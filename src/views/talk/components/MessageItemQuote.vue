@@ -26,7 +26,15 @@
               >
             </template>
             <div class="content">
-              {{ decryptedMessage(quote.content, quote.encryption, quote.protocol) }}
+              {{
+                decryptedMessage(
+                  quote.content,
+                  quote.encryption,
+                  quote.protocol,
+                  quote.isMock,
+                  isSession
+                )
+              }}
             </div>
           </div>
         </template>
@@ -56,7 +64,9 @@ interface Props {
     content: string
     encryption: string
     timestamp: number
+    isMock?: boolean
   }
+  isSession?: boolean // 是否私聊
 }
 const props = withDefaults(defineProps<Props>(), {})
 

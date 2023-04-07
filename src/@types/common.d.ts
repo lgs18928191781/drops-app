@@ -792,6 +792,7 @@ declare interface ChatSessionMessageItem {
   type: number
   replyInfo: ChatSessionMessageItem
   replyTx: string
+  isMock?: boolean
 }
 
 declare interface ChatMessageItem {

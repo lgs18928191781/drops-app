@@ -16,7 +16,7 @@ import { useTalkStore } from '@/stores/talk'
 import { SDK } from './sdk'
 import { FileToAttachmentItem, getTimestampInSeconds, realRandomString, sleep } from './util'
 import { Message, MessageDto } from '@/@types/talk'
-import { buildCryptoInfo, decrypt, encrypt, MD5Hash } from './crypto'
+import { buildCryptoInfo, decrypt, ecdhDecrypt, encrypt, MD5Hash } from './crypto'
 import Decimal from 'decimal.js-light'
 import { TxComposer } from 'meta-contract/dist/tx-composer'
 import { Address } from 'meta-contract/dist/mvc'
@@ -25,6 +25,7 @@ import { useJobsStore } from '@/stores/jobs'
 import { ElMessage } from 'element-plus'
 import { GetOneAnnouncement } from '@/api/aggregation'
 import { SHA256 } from 'crypto-js'
+import { toRaw } from 'vue'
 
 type CommunityData = {
   communityId: string
@@ -667,6 +668,7 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
   // 2.5. mock发送
   const mockId = realRandomString(12)
   const mockMessage = {
+    content,
     mockId,
     nodeName: NodeName.ShowMsg,
     dataType: 'application/json',
@@ -687,6 +689,7 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
     isMock: true,
     to,
     replyInfo: reply,
+    protocol: NodeName.ShowMsg,
   }
 
   // 查找store中的位置
@@ -1024,21 +1027,27 @@ export function decryptedMessage(
   content: string,
   encryption: string,
   protocol: string,
-  isMock: boolean = false
+  isMock: boolean = false,
+  isSession: boolean = false // 是否私聊
 ) {
   const talk = useTalkStore()
   if (encryption === '0') {
     return content
   }
 
-  if (protocol !== 'simpleGroupChat' && protocol !== 'SimpleFileGroupChat') {
+  if (protocol === NodeName.SimpleFileGroupChat || protocol === NodeName.SimpleFileMsg) {
     return content
   }
 
-  // 处理mock的图片消息
-  if (isMock && protocol === 'SimpleFileGroupChat') {
-    return content
+  if (isSession) {
+    if (!talk.activeChannel) return ''
+    const userStore = useUserStore()
+    const privateKey = toRaw(userStore?.wallet)!.getPathPrivateKey('0/0')
+    // @ts-ignore
+    const privateKeyStr = privateKey.toHex()
+    const otherPublicKeyStr = talk.activeChannel.publicKeyStr
+    return ecdhDecrypt(content, privateKeyStr, otherPublicKeyStr)
+  } else {
+    return decrypt(content, talk.activeChannelId.substring(0, 16))
   }
-
-  return decrypt(content, talk.activeChannelId.substring(0, 16))
 }
