@@ -140,7 +140,12 @@ const actions = computed(() => {
     })
 
     // 回復
-    const quoteProtocols = ['SimpleFileGroupChat', 'simpleGroupChat', NodeName.ShowMsg]
+    const quoteProtocols = [
+      'SimpleFileGroupChat',
+      'simpleGroupChat',
+      NodeName.ShowMsg,
+      NodeName.SimpleFileMsg,
+    ]
     if (quoteProtocols.includes(props.message.protocol)) {
       actions.push({
         name: 'Talk.MessageMenu.quote',

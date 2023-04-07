@@ -686,6 +686,7 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
     encryption: encrypt,
     isMock: true,
     to,
+    replyInfo: reply,
   }
 
   // 查找store中的位置
@@ -786,20 +787,7 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
     txId: '',
     encryption: encrypt,
     isMock: true,
-    replyInfo: reply
-      ? {
-          chatType: reply.chatType,
-          content: reply.content,
-          contentType: reply.contentType,
-          encryption: reply.encryption,
-          metaId: reply.metaId,
-          nickName: reply.nickName,
-          protocol: reply.protocol,
-          timestamp: reply.timestamp,
-          txId: reply.txId,
-          userInfo: reply.userInfo,
-        }
-      : undefined,
+    replyInfo: reply,
   }
   talkStore.addMessage(mockMessage)
 

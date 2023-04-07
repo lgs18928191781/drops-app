@@ -790,6 +790,8 @@ declare interface ChatSessionMessageItem {
   }
   txId: string
   type: number
+  replyInfo: ChatSessionMessageItem
+  replyTx: string
 }
 
 declare interface ChatMessageItem {

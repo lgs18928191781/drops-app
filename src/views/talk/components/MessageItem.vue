@@ -21,47 +21,18 @@
     </template>
 
     <!-- quote -->
-    <div class="quote mb-2 pr-8 lg:pr-12" v-if="message.replyInfo">
-      <Icon name="quote_line" class="line-warp"></Icon>
-      <div class="quote-warp">
-        <ElPopover :width="'auto'">
-          <template #reference>
-            <div class="quote-content flex flex-align-center">
-              <UserAvatar
-                :image="message.replyInfo.userInfo.avatarImage"
-                :meta-name="message.replyInfo.userInfo.metaName"
-                :meta-id="message.replyInfo.metaId"
-              />
-              <UserName
-                :name="message.replyInfo.nickName"
-                :meta-name="message.replyInfo.userInfo.metaName"
-                :no-tag="true"
-              />:&nbsp;&nbsp;
-              <template v-if="message.replyInfo.protocol === 'SimpleFileGroupChat'">
-                <a class="attachment" @click="previewImage(message.replyInfo!.content)"
-                  >[{{ $t('DAO.Prevew Attachment') }}]</a
-                >
-              </template>
-              <div class="content">
-                {{
-                  decryptedMessage(
-                    message.replyInfo.content,
-                    message.replyInfo.encryption,
-                    message.replyInfo.protocol
-                  )
-                }}
-              </div>
-            </div>
-          </template>
-          <div
-            class="whitespace-nowrap cursor-pointer select-none"
-            @click="emit('toTimeStamp', message.replyInfo!.timestamp)"
-          >
-            {{ $t('Talk.Go to the original position') }}
-          </div>
-        </ElPopover>
-      </div>
-    </div>
+    <MessageItemQuote
+      v-if="message.replyInfo"
+      :quote="{ avatarImage: message.replyInfo.userInfo.avatarImage,
+    metaName: message.replyInfo.userInfo.metaName,
+    metaId: message.replyInfo.metaId,
+    nickName: message.replyInfo.nickName,
+    protocol: message.replyInfo.protocol,
+    content: message.replyInfo.content,
+    encryption: message.replyInfo.encryption,
+    timestamp: message.replyInfo!.timestamp}"
+      v-bind="$attrs"
+    />
 
     <!-- 消息主体 -->
     <div class="flex">
@@ -237,6 +208,7 @@ import { useModalsStore } from '@/stores/modals'
 import { useJobsStore } from '@/stores/jobs'
 import { getOneRedPacket } from '@/api/talk'
 import { useImagePreview } from '@/stores/imagePreview'
+import MessageItemQuote from './MessageItemQuote.vue'
 
 const i18n = useI18n()
 
@@ -255,9 +227,7 @@ interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {})
 
-const emit = defineEmits<{
-  (e: 'toTimeStamp', timestamp: number): void
-}>()
+const emit = defineEmits<{}>()
 
 /** 翻译 */
 type TranslateStatus = 'hidden' | 'showing' | 'processing'
