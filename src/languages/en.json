@@ -424,7 +424,10 @@
     },
     "Your reply": "Write a comment...",
     "Show3 Faq": "Show3 FAQ",
-    "New User Onboarding How to Use Show3": "New User Onboarding How to Use Show3"
+    "New User Onboarding How to Use Show3": "New User Onboarding How to Use Show3",
+    "Schedule": "Schedule",
+    "Schedule Clear": "Clear",
+    "The scheduled release time must be greater than the current time": "The scheduled release time must be greater than the current time"
   },
   "Follow": "Follow",
   "walletError": "Signing failed, unable to log in to wallet",
@@ -1208,5 +1211,6 @@
     "Stake Title2": "to Vote",
     "createProposalRequireTokenNumber tips2": "to propose.",
     "Prevew Attachment": "Prevew Attachment"
-  }
+  },
+  "Will send": "Will send on"
 }

@@ -1,5 +1,9 @@
-import { DAOProposalType } from '@/enum'
+import { Chains, DAOProposalType } from '@/enum'
 import i18n from './i18n'
+import { getOneCommunity } from '@/api/talk'
+import { getBalance } from './util'
+import { useTalkStore } from '@/stores/talk'
+import { space } from './filters'
 
 export const DAOTypes = [
   {
@@ -59,3 +63,33 @@ export const DAOtypeOptions = [
   //   value: DAOProposalType.DiyMultipleChoose,
   // },
 ]
+
+export function checkUserCanCreateProposal() {
+  return new Promise<boolean>(async (resolve, reject) => {
+    const talk = useTalkStore()
+    Promise.all([
+      getOneCommunity(talk.activeCommunityId),
+      getBalance({
+        chain: Chains.MVC,
+      }),
+    ])
+      .then(([community, balance]) => {
+        if (typeof balance === 'number') {
+          if (balance >= community.dao!.createProposalRequireTokenNumber) {
+            resolve(true)
+          } else {
+            ElMessage.error(
+              `${i18n.global.t('DAO.createProposalRequireTokenNumber tips1')} ${space(
+                community.dao!.createProposalRequireTokenNumber
+              )} ${community.dao!.governanceSymbol!.toUpperCase()}`
+            )
+            reject(false)
+          }
+        }
+      })
+      .catch(error => {
+        ElMessage.error(error.message)
+        reject(false)
+      })
+  })
+}

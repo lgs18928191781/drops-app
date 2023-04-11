@@ -165,6 +165,10 @@ html.dark {
     border: var(--el-border-width) solid var(--faded-border-color) !important;
     box-shadow: 3px 3px 0 var(--faded-border-color) !important;
 
+    .el-input__wrapper {
+        width: 100%;
+    }
+
     &.is-active {
         border-color: var(--themeTextColor) !important;
         box-shadow: 3px 3px 0 var(--themeTextColor) !important;

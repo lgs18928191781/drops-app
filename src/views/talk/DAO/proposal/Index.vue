@@ -72,7 +72,9 @@
         <div class="flex1">
           <span class="title">{{ $t('DAO.Proposal') }}</span>
         </div>
-        <a class="main-border primary" @click="toCreate">{{ $t('DAO.New Proposal') }}</a>
+        <a class="main-border primary" @click="toCreate" v-loading="loading">{{
+          $t('DAO.New Proposal')
+        }}</a>
       </div>
 
       <div
@@ -160,7 +162,7 @@ import { GetBlockTime, GetUserStakeInfo, Proposals } from '@/api/dao'
 import { useTalkStore } from '@/stores/talk'
 import { ProposalItem } from '@/@types/api/dao'
 import { useI18n } from 'vue-i18n'
-import { getStatusClass, getStatusText } from '@/utils/DAO'
+import { checkUserCanCreateProposal, getStatusClass, getStatusText } from '@/utils/DAO'
 import { useUserStore } from '@/stores/user'
 import  type { DAOUserStakeInfo } from '@/@types/api/dao.d'
 import Decimal from 'decimal.js-light'
@@ -187,6 +189,8 @@ const userStake: { val: DAOUserStakeInfo | null } = reactive({ val: null })
 const isShowStake = ref(false)
 const isShowExtractModal = ref(false)
 const blockTimeStamp = ref(0)
+
+const loading = ref(false)
 
 
 function getDatas(isCover = false) {
@@ -230,22 +234,16 @@ function getMore() {
 }
 
 async function toCreate() {
+  if (loading.value) return
   await checkUserLogin()
-  const res = await getBalance({
-    chain: Chains.MVC
-  }).catch(error => {
-        ElMessage.error(error.message)
-      })
-  if (typeof res === 'number') {
-    if (res >= talk.activeCommunity!.dao!.createProposalRequireTokenNumber) {
-      router.push({
-        name: 'talkDAOProposalCreate',
-      })
-    } else {
-      ElMessage.error(`${i18n.t('DAO.createProposalRequireTokenNumber tips1')} ${space(talk.activeCommunity!.dao!.createProposalRequireTokenNumber)} ${talk.activeCommunity!.dao!.governanceSymbol!.toUpperCase()} ${i18n.t('DAO.createProposalRequireTokenNumber tips2')}`)
-    }
+  loading.value = true
+  const result = await checkUserCanCreateProposal().catch(() => {loading.value = false})
+  if (result) {
+    loading.value = false
+    router.push({
+      name: 'talkDAOProposalCreate',
+    })
   }
-
 }
 
 function getUserStakeInfo() {

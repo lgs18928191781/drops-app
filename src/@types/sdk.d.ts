@@ -455,9 +455,6 @@ export interface createBrfcChildNodeParams {
   utxos?: any[] // 传入的utxos
   ecdh?: { type: string; publickey: string } // ecdh
   useFeeb?: number // 费率
-  meConvertSatoshi?: number // 1Me 等于多少聪
-  loading?: { close: () => void }
-  payType?: SdkPayType
   // 修改
   publickey?: string // 修改时 用的publicekey
   txId?: string
@@ -468,6 +465,7 @@ export interface CreateNodeBaseRes {
   transaction?: bsv.Transaction
   scriptPlayload?: (string | Buffer)[]
   hex?: string
+  utxo?: UtxoItem
 }
 
 export interface CreateNodeMetaFileRes extends CreateNodeBaseRes {

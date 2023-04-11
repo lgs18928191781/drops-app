@@ -3,7 +3,7 @@
     <Dialog
       @close="tryClose"
       class="relative text-dark-800 dark:text-gray-100"
-      :style="{ zIndex: index }"
+      :style="{ zIndex: useZIndex().nextZIndex() }"
     >
       <TransitionChild
         as="template"
@@ -143,9 +143,6 @@ const tryClose = () => {
 
 const emit = defineEmits(['update:modelValue', 'update:showSecondControl'])
 
-const index = computed(() => {
-  return useZIndex().nextZIndex()
-})
 const mobileSize = computed(() => {
   const windowWidth = window.innerWidth
   if (windowWidth <= 1024) {

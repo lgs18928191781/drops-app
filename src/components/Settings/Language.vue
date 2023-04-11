@@ -54,7 +54,7 @@ const rootStore = useRootStore()
 
 const langs = [
   { icon: EnglishIcon, name: 'English', value: 'en' },
-  { icon: ChineseIcon, name: '中文（简体）', value: 'zh' },
+  { icon: ChineseIcon, name: '中文（繁体）', value: 'zh' },
 ]
 </script>
 
