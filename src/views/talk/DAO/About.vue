@@ -79,14 +79,14 @@
           </div> -->
 
           <!-- 创建提案需要的最少Token数量  -->
-          <!-- <div class="information-item">
+          <div class="information-item">
             <div class="lable">{{ $t('DAO.Information Proposal Need Token Min') }}</div>
             <div class="cont">
               <ElTag type="info">{{
                 talk.activeCommunity?.dao?.createProposalRequireTokenNumber
               }}</ElTag>
             </div>
-          </div> -->
+          </div>
         </div>
       </div>
     </div>

@@ -342,14 +342,14 @@ async function submit() {
       },
       {
         useQueue: broadcastAt.value ? false : true,
-        isBroadcast: broadcastAt.value ? true : false,
+        isBroadcast: false,
       }
     )
     .catch(error => {
       ElMessage.error(error.message)
       loading.value = false
     })
-
+  debugger
   if (res) {
     if (broadcastAt.value) {
       await userStore.showWallet.broadcastNodeTransactions(res, {
