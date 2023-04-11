@@ -163,7 +163,7 @@ declare interface MessageDto {
   attachments?: AttachmentItem[]
   originalFileUrl?: any
   channelType?: ChannelType
-  replyTx?: string
+  reply?: ChatMessageItem
 }
 
 declare interface CryptoInfo {

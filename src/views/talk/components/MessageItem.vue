@@ -7,7 +7,11 @@
     <template v-if="!isShare">
       <MessageMenu
         :message="props.message"
-        :parsed="parseTextMessage(decryptedMessage)"
+        :parsed="
+          parseTextMessage(
+            decryptedMessage(message.content, message.encryption, message.protocol, message.isMock)
+          )
+        "
         v-model:translateStatus="translateStatus"
         v-model:translatedContent="translatedContent"
         v-bind="$attrs"
@@ -17,13 +21,18 @@
     </template>
 
     <!-- quote -->
-    <div class="quote mb-2" v-if="message.quote">
-      <Icon name="quote_line" class="line-warp"></Icon>
-      <div class="quote-warp flex flex-align-center">
-        <UserAvatar :image="''" :meta-name="''" />
-        <UserName :name="'asdasd'" :meta-name="''" />
-      </div>
-    </div>
+    <MessageItemQuote
+      v-if="message.replyInfo"
+      :quote="{ avatarImage: message.replyInfo.userInfo.avatarImage,
+    metaName: message.replyInfo.userInfo.metaName,
+    metaId: message.replyInfo.metaId,
+    nickName: message.replyInfo.nickName,
+    protocol: message.replyInfo.protocol,
+    content: message.replyInfo.content,
+    encryption: message.replyInfo.encryption,
+    timestamp: message.replyInfo!.timestamp}"
+      v-bind="$attrs"
+    />
 
     <!-- 消息主体 -->
     <div class="flex">
@@ -61,7 +70,14 @@
 
         <div class="w-full" v-else-if="isNftEmoji">
           <Image
-            :src="decryptedMessage"
+            :src="
+              decryptedMessage(
+                message.content,
+                message.encryption,
+                message.protocol,
+                message.isMock
+              )
+            "
             customClass="max-w-[80%] md:max-w-[50%] lg:max-w-[320px] py-0.5 object-scale-down"
           />
 
@@ -72,9 +88,19 @@
           <div
             class="w-fit max-w-[90%] md:max-w-[50%] lg:max-w-[235PX] max-h-[600PX] overflow-y-hidden rounded bg-transparent cursor-pointer transition-all duration-200"
             :class="[message.error && 'opacity-50']"
-            @click="previewImage"
+            @click="previewImage(message.content)"
           >
-            <Image :src="decryptedMessage" customClass="rounded-xl py-0.5 object-scale-down" />
+            <Image
+              :src="
+                decryptedMessage(
+                  message.content,
+                  message.encryption,
+                  message.protocol,
+                  message.isMock
+                )
+              "
+              customClass="rounded-xl py-0.5 object-scale-down"
+            />
           </div>
           <button v-if="message.error" class="ml-3" :title="resendTitle" @click="tryResend">
             <Icon
@@ -82,13 +108,6 @@
               class="w-4 h-4 text-dark-400 dark:text-gray-200 hover:animate-spin-once"
             />
           </button>
-          <Teleport to="body" v-if="isImage && showImagePreview">
-            <TalkImagePreview
-              v-if="showImagePreview"
-              :src="decryptedMessage"
-              @close="showImagePreview = false"
-            />
-          </Teleport>
         </div>
 
         <div
@@ -152,7 +171,16 @@
               message.error && 'bg-red-200 dark:bg-red-700 opacity-50',
             ]"
             v-else
-            v-html="parseTextMessage(decryptedMessage)"
+            v-html="
+              parseTextMessage(
+                decryptedMessage(
+                  message.content,
+                  message.encryption,
+                  message.protocol,
+                  message.isMock
+                )
+              )
+            "
           ></div>
           <button v-if="message.error" class="ml-3" :title="resendTitle" @click="tryResend">
             <Icon
@@ -167,13 +195,11 @@
 </template>
 
 <script setup lang="ts">
-import { decrypt } from '@/utils/crypto'
 import NftLabel from './NftLabel.vue'
 import MessageMenu from './MessageMenu.vue'
-import TalkImagePreview from './ImagePreview.vue'
 import { computed, inject, ref, Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { formatTimestamp } from '@/utils/talk'
+import { formatTimestamp, decryptedMessage } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
 import giftImage from '@/assets/images/gift.svg?url'
@@ -181,10 +207,11 @@ import { useLayoutStore } from '@/stores/layout'
 import { useModalsStore } from '@/stores/modals'
 import { useJobsStore } from '@/stores/jobs'
 import { getOneRedPacket } from '@/api/talk'
+import { useImagePreview } from '@/stores/imagePreview'
+import MessageItemQuote from './MessageItemQuote.vue'
 
 const i18n = useI18n()
 
-const showImagePreview = ref(false)
 const modals = useModalsStore()
 const userStore = useUserStore()
 const talk = useTalkStore()
@@ -192,7 +219,15 @@ const layout = useLayoutStore()
 const jobs = useJobsStore()
 const reply: any = inject('Reply')
 
-const props = defineProps(['message', 'isShare'])
+const imagePreview = useImagePreview()
+
+interface Props {
+  message: ChatMessageItem
+  isShare?: boolean
+}
+const props = withDefaults(defineProps<Props>(), {})
+
+const emit = defineEmits<{}>()
 
 /** 翻译 */
 type TranslateStatus = 'hidden' | 'showing' | 'processing'
@@ -200,32 +235,14 @@ const translateStatus: Ref<TranslateStatus> = ref('hidden')
 const translatedContent = ref('')
 /** 翻译 end */
 
-const previewImage = () => {
-  showImagePreview.value = true
+const previewImage = (image: string) => {
+  imagePreview.images = [image]
+  imagePreview.index = 0
+  imagePreview.visibale = true
 }
 
 const resendTitle = computed(() => {
   return i18n.t('Talk.Messages.resend')
-})
-
-const decryptedMessage = computed(() => {
-  if (props.message.encryption === '0') {
-    return props.message.content
-  }
-
-  if (
-    props.message.protocol !== 'simpleGroupChat' &&
-    props.message.protocol !== 'SimpleFileGroupChat'
-  ) {
-    return props.message.content
-  }
-
-  // 处理mock的图片消息
-  if (props.message.isMock && props.message.protocol === 'SimpleFileGroupChat') {
-    return props.message.content
-  }
-
-  return decrypt(props.message.content, talk.activeChannelId.substring(0, 16))
 })
 
 const parseTextMessage = (text: string) => {

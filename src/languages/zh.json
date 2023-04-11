@@ -337,7 +337,8 @@
     },
     "Quote": {
       "tips": "正在回復至"
-    }
+    },
+    "Go to the original position": "Go to the original position"
   },
   "Not install MetaLet Wallet": "你還沒安裝MetaLet插件錢包",
   "Comming Soon": "敬請期待",
@@ -459,7 +460,10 @@
     },
     "Your reply": "你的評論~",
     "Show3 Faq": "Show3 常見問題",
-    "New User Onboarding How to Use Show3": "新手攻略：如何玩轉Show3"
+    "New User Onboarding How to Use Show3": "新手攻略：如何玩轉Show3",
+    "Schedule": "定時發佈",
+    "Schedule Clear": "清除",
+    "The scheduled release time must be greater than the current time": "定時發佈時間必須大於當前時間"
   },
   "Follow": "關註",
   "walletError": "簽名失敗,無法登錄錢包",
@@ -1202,6 +1206,9 @@
     "My Stakeding": "我的投票數",
     "The community has not opened a DAO": "該社區並未開通DAO",
     "Stake Title2": "去投票",
+    "createProposalRequireTokenNumber tips2": "才可以创建提案",
+    "Prevew Attachment": "查看附件",
     "Stake Title1": "質押"
-  }
+  },
+  "Will send": "將發佈于"
 }

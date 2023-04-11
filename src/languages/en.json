@@ -303,7 +303,8 @@
     },
     "Quote": {
       "tips": "Replying to"
-    }
+    },
+    "Go to the original position": "Go to the original position"
   },
   "Not install MetaLet Wallet": "Not Install MetaLet Wallet",
   "Login": {
@@ -423,7 +424,10 @@
     },
     "Your reply": "Write a comment...",
     "Show3 Faq": "Show3 FAQ",
-    "New User Onboarding How to Use Show3": "New User Onboarding How to Use Show3"
+    "New User Onboarding How to Use Show3": "New User Onboarding How to Use Show3",
+    "Schedule": "Schedule",
+    "Schedule Clear": "Clear",
+    "The scheduled release time must be greater than the current time": "The scheduled release time must be greater than the current time"
   },
   "Follow": "Follow",
   "walletError": "Signing failed, unable to log in to wallet",
@@ -1155,9 +1159,9 @@
     "Create DAO Title": "Create the club's DAO",
     "Create": "Create",
     "Proposal Status": {
-      "UnStarted": "UnStarted",
-      "Voting": "Active",
-      "Ended": "Closed"
+      "UnStarted": "Upcoming",
+      "Voting": "Ongoing",
+      "Ended": "Finished"
     },
     "Edit": "Edit",
     "Name placeholder": "Enter DAO Name",
@@ -1181,7 +1185,7 @@
     "You Will Vote": "DAO.You Will Vote",
     "Vote Successful": "Vote Successful",
     "Information About Your Vote": "DAO.Information About Your Vote",
-    "NOt Have Voting Quota": "You have no voting quota, please pledge before voting",
+    "NOt Have Voting Quota": "Please stake your token before voting.",
     "UnLock": "UnLock",
     "Unlock amount": "Unlock amount",
     "UnLock Successful": "UnLock Successful",
@@ -1198,12 +1202,15 @@
     "New Block Time": "Latest block time",
     "Edit Successful": "Edit Successful",
     "Create Successful": "Create Successful",
-    "createProposalRequireTokenNumber tips1": "Need to hold greater than or equal to",
+    "createProposalRequireTokenNumber tips1": "You need to hold at least",
     "Create Proposal Require Token Number": "Create Proposal Require Token Number(Satoshi)",
     "Total Staking": "Total Staking",
     "My Stakeding": "My Stakeding",
     "The community has not opened a DAO": "The community has not opened a DAO",
     "Stake Title1": "Stake",
-    "Stake Title2": "to Vote"
-  }
+    "Stake Title2": "to Vote",
+    "createProposalRequireTokenNumber tips2": "to propose.",
+    "Prevew Attachment": "Prevew Attachment"
+  },
+  "Will send": "Will send on"
 }

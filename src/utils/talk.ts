@@ -16,7 +16,7 @@ import { useTalkStore } from '@/stores/talk'
 import { SDK } from './sdk'
 import { FileToAttachmentItem, getTimestampInSeconds, realRandomString, sleep } from './util'
 import { Message, MessageDto } from '@/@types/talk'
-import { buildCryptoInfo, decrypt, encrypt, MD5Hash } from './crypto'
+import { buildCryptoInfo, decrypt, ecdhDecrypt, encrypt, MD5Hash } from './crypto'
 import Decimal from 'decimal.js-light'
 import { TxComposer } from 'meta-contract/dist/tx-composer'
 import { Address } from 'meta-contract/dist/mvc'
@@ -25,6 +25,7 @@ import { useJobsStore } from '@/stores/jobs'
 import { ElMessage } from 'element-plus'
 import { GetOneAnnouncement } from '@/api/aggregation'
 import { SHA256 } from 'crypto-js'
+import { toRaw } from 'vue'
 
 type CommunityData = {
   communityId: string
@@ -549,7 +550,7 @@ export const validateTextMessage = (message: string) => {
 const _sendTextMessage = async (messageDto: MessageDto) => {
   const userStore = useUserStore()
   const talkStore = useTalkStore()
-  const { content, channelId: groupID, userName: nickName, replyTx } = messageDto
+  const { content, channelId: groupID, userName: nickName, reply } = messageDto
 
   // 1. 构建协议数据
   const timestamp = getTimestampInSeconds()
@@ -562,7 +563,7 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
     content,
     contentType,
     encryption,
-    replyTx,
+    replyTx: reply ? reply.txId : '',
   }
 
   // 2. 构建节点参数
@@ -589,6 +590,20 @@ const _sendTextMessage = async (messageDto: MessageDto) => {
     txId: '',
     encryption,
     isMock: true,
+    replyInfo: reply
+      ? {
+          chatType: reply.chatType,
+          content: reply.content,
+          contentType: reply.contentType,
+          encryption: reply.encryption,
+          metaId: reply.metaId,
+          nickName: reply.nickName,
+          protocol: reply.protocol,
+          timestamp: reply.timestamp,
+          txId: reply.txId,
+          userInfo: reply.userInfo,
+        }
+      : undefined,
   }
   talkStore.addMessage(mockMessage)
 
@@ -623,7 +638,7 @@ export const tryCreateNode = async (node: any, sdk: SDK, mockId: string) => {
 const _sendTextMessageForSession = async (messageDto: MessageDto) => {
   const userStore = useUserStore()
   const talkStore = useTalkStore()
-  const { content, channelId: to, replyTx } = messageDto
+  const { content, channelId: to, reply } = messageDto
 
   // 1. 构建协议数据
   // 1.1 to: done
@@ -640,7 +655,7 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
     content,
     contentType,
     encrypt,
-    replyTx,
+    replyTx: reply ? reply.txId : '',
   }
 
   // 2. 构建节点参数
@@ -653,6 +668,7 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
   // 2.5. mock发送
   const mockId = realRandomString(12)
   const mockMessage = {
+    content,
     mockId,
     nodeName: NodeName.ShowMsg,
     dataType: 'application/json',
@@ -672,6 +688,8 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
     encryption: encrypt,
     isMock: true,
     to,
+    replyInfo: reply,
+    protocol: NodeName.ShowMsg,
   }
 
   // 查找store中的位置
@@ -713,7 +731,7 @@ const _uploadImage = async (file: File, sdk: SDK) => {
 const _sendImageMessage = async (messageDto: MessageDto) => {
   const userStore = useUserStore()
   const talkStore = useTalkStore()
-  const { channelId: groupId, userName: nickName, attachments, originalFileUrl } = messageDto
+  const { channelId: groupId, userName: nickName, attachments, originalFileUrl, reply } = messageDto
 
   // 1. 构建协议数据
   // 1.1 groupId: done
@@ -731,7 +749,7 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
     encrypt,
     fileType,
     attachment,
-    replyTx: messageDto.replyTx,
+    replyTx: reply ? reply.txId : '',
   }
   if (messageDto.channelType === ChannelType.Group) {
     dataCarrier.groupId = groupId
@@ -772,6 +790,7 @@ const _sendImageMessage = async (messageDto: MessageDto) => {
     txId: '',
     encryption: encrypt,
     isMock: true,
+    replyInfo: reply,
   }
   talkStore.addMessage(mockMessage)
 
@@ -1004,20 +1023,31 @@ export async function deleteAnnouncement(
   return 'success'
 }
 
-export function decryptedMessage(message: ChatMessageItem) {
+export function decryptedMessage(
+  content: string,
+  encryption: string,
+  protocol: string,
+  isMock: boolean = false,
+  isSession: boolean = false // 是否私聊
+) {
   const talk = useTalkStore()
-  if (message.encryption === '0') {
-    return message.content
+  if (encryption === '0') {
+    return content
   }
 
-  if (message.protocol !== 'simpleGroupChat' && message.protocol !== 'SimpleFileGroupChat') {
-    return message.content
+  if (protocol === NodeName.SimpleFileGroupChat || protocol === NodeName.SimpleFileMsg) {
+    return content
   }
 
-  // 处理mock的图片消息
-  if (message.isMock && message.protocol === 'SimpleFileGroupChat') {
-    return message.content
+  if (isSession) {
+    if (!talk.activeChannel) return ''
+    const userStore = useUserStore()
+    const privateKey = toRaw(userStore?.wallet)!.getPathPrivateKey('0/0')
+    // @ts-ignore
+    const privateKeyStr = privateKey.toHex()
+    const otherPublicKeyStr = talk.activeChannel.publicKeyStr
+    return ecdhDecrypt(content, privateKeyStr, otherPublicKeyStr)
+  } else {
+    return decrypt(content, talk.activeChannelId.substring(0, 16))
   }
-
-  return decrypt(message.content, talk.activeChannelId.substring(0, 16))
 }

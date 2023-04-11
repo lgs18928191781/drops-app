@@ -32,8 +32,13 @@
         />
       </div>
 
+      <div class="schedule flex flex-align-center mt-3" v-if="broadcastAt">
+        <Icon name="calendar_days" class="w-6 h-6 mr-2" />{{ $t('Will send') }}
+        {{ $filters.dateTimeFormat(broadcastAt, $i18n.locale) }}
+      </div>
+
       <div class="footer flex flex-align-center">
-        <div class="operate flex flex-align-center flex1">
+        <div class="operate flex flex-align-center flex1 mr-3">
           <template v-for="(item, index) in publishOperates" :key="index">
             <template v-if="item.icon === 'buzzn_emoji'">
               <ElPopover placement="bottom-start" width="300px" trigger="click">
@@ -115,13 +120,15 @@
 
       <!-- nft -->
       <NFTModalVue v-model="isShowNFTList" @change="chooseNFT" />
+      <!-- PublishSchedule -->
+      <PublishSchedule v-model="isShowSchedule" @confirm="val => (broadcastAt = val)" />
     </template>
   </PublishBaseTemplateVue>
 </template>
 
 <script setup lang="ts">
 import { AttachmentItem } from '@/@types/hd-wallet'
-import { IsEncrypt, JobStatus, NodeName } from '@/enum'
+import { EnvMode, IsEncrypt, JobStatus, NodeName } from '@/enum'
 import { useLayoutStore } from '@/stores/layout'
 import { useUserStore } from '@/stores/user'
 import { compressImage, FileToAttachmentItem, getAttachmentsMark } from '@/utils/util'
@@ -137,6 +144,7 @@ import NFTModalVue from '@/components/NFTModal/NFTModal.vue'
 import PublishBaseTemplateVue from '@/components/PublishBaseTemplate/PublishBaseTemplate.vue'
 import { useJobsStore } from '@/stores/jobs'
 import { metafile } from '@/utils/filters'
+import PublishSchedule from './PublishSchedule.vue'
 
 interface Props {
   modelValue: boolean
@@ -158,7 +166,8 @@ const router = useRouter()
 
 const loading = ref(false)
 const inputFileRef = ref()
-const publishOperates = [
+const isShowSchedule = ref(false)
+const publishOperates = reactive([
   {
     icon: 'buzzn_emoji',
     fun: () => {},
@@ -206,13 +215,25 @@ const publishOperates = [
       return false
     },
   },
-]
+])
+if (import.meta.env.MODE !== EnvMode.Mainnet) {
+  publishOperates.push({
+    icon: 'calendar_days',
+    fun: () => {
+      isShowSchedule.value = true
+    },
+    disabled: () => {
+      return false
+    },
+  })
+}
 const playFile = ref('')
 let audio: HTMLAudioElement | null
 const isShowTopic = ref(false)
 const topics: GetHotTopicsResItem[] = reactive([])
 const topic = ref('')
 const isShowNFTList = ref(false)
+const broadcastAt = ref<any>('')
 
 const attachmentType = computed(() => {
   if (attachments && attachments.length) {
@@ -320,119 +341,126 @@ async function submit() {
           : [],
       },
       {
-        useQueue: true,
+        useQueue: broadcastAt.value ? false : true,
+        isBroadcast: false,
       }
     )
     .catch(error => {
       ElMessage.error(error.message)
       loading.value = false
     })
-
+  debugger
   if (res) {
-    const watchJobStatus = watch(
-      () => jobsStore.waitingNotify.find(job => job.id === res.subscribeId)?.status,
-      status => {
-        if (status === JobStatus.Success) {
-          watchJobStatus()
-          GetBuzz({
-            txId: res.currentNode!.txId,
-            metaId: userStore.user!.metaId,
-          }).then(respones => {
-            if (respones.data.results.items.length) {
-              Mitt.emit(MittEvent.UpdateBuzz, respones.data.results.items[0])
-            }
-          })
-        } else if (status === JobStatus.Failed) {
-          watchJobStatus()
-          Mitt.emit(MittEvent.RemoveBuzz, { txId: res.currentNode!.txId })
+    if (broadcastAt.value) {
+      await userStore.showWallet.broadcastNodeTransactions(res, {
+        notBroadcastKeys: ['currentNode'],
+      })
+    } else {
+      const watchJobStatus = watch(
+        () => jobsStore.waitingNotify.find(job => job.id === res.subscribeId)?.status,
+        status => {
+          if (status === JobStatus.Success) {
+            watchJobStatus()
+            GetBuzz({
+              txId: res.currentNode!.txId,
+              metaId: userStore.user!.metaId,
+            }).then(respones => {
+              if (respones.data.results.items.length) {
+                Mitt.emit(MittEvent.UpdateBuzz, respones.data.results.items[0])
+              }
+            })
+          } else if (status === JobStatus.Failed) {
+            watchJobStatus()
+            Mitt.emit(MittEvent.RemoveBuzz, { txId: res.currentNode!.txId })
+          }
         }
-      }
-    )
-    Mitt.emit(MittEvent.AddBuzz, {
-      applauseCount: 0,
-      attachments: [...attachments],
-      avatarTxId: userStore.user!.avatarTxId,
-      avatarType: userStore.user!.avatarType,
-      avatarImage: userStore.user!.avatarImage,
-      blockHeight: -1,
-      comment: [],
-      commentCount: 0,
-      confirmState: 0,
-      content: content.value,
-      contentType: contentType,
-      data: '',
-      displayType: 'SimpleMicroblog',
-      donate: [],
-      encrypt: IsEncrypt.No,
-      history: [],
-      isEdit: false,
-      isFull: false,
-      isNew: true,
-      isSelling: false,
-      isMyFollow: true,
-      isValid: false,
-      like: [],
-      likeCount: 0,
-      metaAccessCodeHash: '',
-      metaAccessContentAmount: '',
-      metaAccessContentEncryptContent: '',
-      metaAccessContentOwnerAvatarTxId: '',
-      metaAccessContentOwnerAvatarType: '',
-      metaAccessContentOwnerMetaId: '',
-      metaAccessContentOwnerName: '',
-      metaAccessContentRevenueAmount: 0,
-      metaAccessGenesisId: '',
-      metaAccessHasPay: '',
-      metaAccessMetanetId: '',
-      metaAccessPayTx: '',
-      metaAccessPutAway: false,
-      metaAccessSellTx: '',
-      metaAccessServiceConfigMetanetId: '',
-      metaAccessServiceConfigTxId: '',
-      metaAccessServiceFee: '',
-      metaAccessServiceMetaId: '',
-      metaAccessServiceName: '',
-      metaAccessServiceUrl: '',
-      metaAccessTokenIndex: '',
-      metaAccessTxId: '',
-      metaId: '',
-      metanetId: '',
-      protocol: 'SimpleMicroblog',
-      publicKey: '',
-      quoteItem: null,
-      rePost: [],
-      rePostCount: 0,
-      serverCode: '',
-      serverPublicKey: '',
-      timestamp: new Date().getTime(),
-      totalValue: 0,
-      txId: res.currentNode!.txId,
-      userName: userStore!.user!.name,
-      zeroAddress: userStore!.user!.address,
-      userInfo: {
-        address: userStore!.user!.address,
-        avatarImage: userStore!.user!.avatarImage,
-        avatarTxId: userStore!.user!.avatarTxId,
-        avatarType: userStore!.user!.avatarType,
-        coverPublicKey: '',
-        coverType: '',
-        coverUrl: '',
-        metaIdTimestamp: 0,
-        name: userStore!.user!.name,
-        nameType: '',
-        nftNamePublicKey: '',
+      )
+      Mitt.emit(MittEvent.AddBuzz, {
+        applauseCount: 0,
+        attachments: [...attachments],
+        avatarTxId: userStore.user!.avatarTxId,
+        avatarType: userStore.user!.avatarType,
+        avatarImage: userStore.user!.avatarImage,
+        blockHeight: -1,
+        comment: [],
+        commentCount: 0,
+        confirmState: 0,
+        content: content.value,
+        contentType: contentType,
+        data: '',
+        displayType: 'SimpleMicroblog',
+        donate: [],
+        encrypt: IsEncrypt.No,
+        history: [],
+        isEdit: false,
+        isFull: false,
+        isNew: true,
+        isSelling: false,
+        isMyFollow: true,
+        isValid: false,
+        like: [],
+        likeCount: 0,
+        metaAccessCodeHash: '',
+        metaAccessContentAmount: '',
+        metaAccessContentEncryptContent: '',
+        metaAccessContentOwnerAvatarTxId: '',
+        metaAccessContentOwnerAvatarType: '',
+        metaAccessContentOwnerMetaId: '',
+        metaAccessContentOwnerName: '',
+        metaAccessContentRevenueAmount: 0,
+        metaAccessGenesisId: '',
+        metaAccessHasPay: '',
+        metaAccessMetanetId: '',
+        metaAccessPayTx: '',
+        metaAccessPutAway: false,
+        metaAccessSellTx: '',
+        metaAccessServiceConfigMetanetId: '',
+        metaAccessServiceConfigTxId: '',
+        metaAccessServiceFee: '',
+        metaAccessServiceMetaId: '',
+        metaAccessServiceName: '',
+        metaAccessServiceUrl: '',
+        metaAccessTokenIndex: '',
+        metaAccessTxId: '',
+        metaId: '',
+        metanetId: '',
+        protocol: 'SimpleMicroblog',
         publicKey: '',
-        metaName: userStore!.user!.metaName,
-      },
-      postTag: 'buzz',
-      postTagId: '',
-    })
-    content.value = ''
-    attachments.length = 0
-    loading.value = false
-    emit('update:modelValue', false)
-    ElMessage.success(i18n.t('Buzz.publish.success'))
-    emit('success')
+        quoteItem: null,
+        rePost: [],
+        rePostCount: 0,
+        serverCode: '',
+        serverPublicKey: '',
+        timestamp: new Date().getTime(),
+        totalValue: 0,
+        txId: res.currentNode!.txId,
+        userName: userStore!.user!.name,
+        zeroAddress: userStore!.user!.address,
+        userInfo: {
+          address: userStore!.user!.address,
+          avatarImage: userStore!.user!.avatarImage,
+          avatarTxId: userStore!.user!.avatarTxId,
+          avatarType: userStore!.user!.avatarType,
+          coverPublicKey: '',
+          coverType: '',
+          coverUrl: '',
+          metaIdTimestamp: 0,
+          name: userStore!.user!.name,
+          nameType: '',
+          nftNamePublicKey: '',
+          publicKey: '',
+          metaName: userStore!.user!.metaName,
+        },
+        postTag: 'buzz',
+        postTagId: '',
+      })
+      content.value = ''
+      attachments.length = 0
+      loading.value = false
+      emit('update:modelValue', false)
+      ElMessage.success(i18n.t('Buzz.publish.success'))
+      emit('success')
+    }
   } else {
     // 取消
     loading.value = false

@@ -93,9 +93,10 @@ import { getBalance, openLoading } from '@/utils/util'
 import { useTalkStore } from '@/stores/talk'
 import Decimal from 'decimal.js-light'
 import Modal from '@/components/Modal/Modal.vue'
-import { DAOtypeOptions } from '@/utils/DAO'
+import { DAOtypeOptions, checkUserCanCreateProposal } from '@/utils/DAO'
 import { CreateVote } from '@/api/wxcore'
 import { space } from '@/utils/filters'
+import { getOneCommunity } from '@/api/talk'
 
 const vditor = ref<Vditor | null>(null)
 const headeroffSetTop = ref(0)
@@ -232,21 +233,9 @@ function onTypeChange() {
 function submit() {
   FormRef.value?.validate(async result => {
     if (result) {
-      const res = await getBalance({
-        chain: Chains.MVC,
-      }).catch(error => {
-        ElMessage.error(error.message)
-      })
-      if (typeof res === 'number') {
-        if (res >= talk.activeCommunity!.dao!.createProposalRequireTokenNumber) {
-          isShowConfirmModal.value = true
-        } else {
-          ElMessage.error(
-            `${i18n.t('DAO.createProposalRequireTokenNumber tips1')} ${space(
-              talk.activeCommunity!.dao!.createProposalRequireTokenNumber
-            )} ${talk.activeCommunity!.dao!.governanceSymbol!.toUpperCase()}`
-          )
-        }
+      const result = await checkUserCanCreateProposal()
+      if (result) {
+        isShowConfirmModal.value = true
       }
     }
   })

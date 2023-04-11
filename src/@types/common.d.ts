@@ -790,6 +790,9 @@ declare interface ChatSessionMessageItem {
   }
   txId: string
   type: number
+  replyInfo: ChatSessionMessageItem
+  replyTx: string
+  isMock?: boolean
 }
 
 declare interface ChatMessageItem {
@@ -812,6 +815,33 @@ declare interface ChatMessageItem {
   txId: string
   userInfo: DataUserInfo
   isMock?: boolean
+  replyInfo?: {
+    chatType: number
+    content: string
+    contentType: string
+    encryption: string
+    metaId: string
+    nickName: string
+    protocol: string
+    timestamp: number
+    txId: string
+    userInfo: {
+      address: string
+      avatarImage: string
+      avatarTxId: string
+      avatarType: string
+      coverPublicKey: string
+      coverType: string
+      coverUrl: string
+      metaId: string
+      metaIdTimestamp: number
+      metaName: string
+      name: string
+      nameType: string
+      nftNamePublicKey: string
+      publicKey: string
+    }
+  }
 }
 
 declare interface ShareChatMessageData {

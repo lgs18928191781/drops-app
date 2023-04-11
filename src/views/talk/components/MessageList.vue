@@ -19,6 +19,7 @@
             :id="message.timestamp"
             v-bind="$attrs"
             @toBuzz="onToBuzz"
+            @to-time-stamp="time => scrollToTimeStamp(time)"
           />
           <div
             class="border-b border-solid border-gray-300 dark:border-gray-600 mb-6 pb-6 pt-2 mx-4"
@@ -57,6 +58,7 @@
             v-bind="$attrs"
             :id="message.timestamp"
             @toBuzz="onToBuzz"
+            @to-time-stamp="time => scrollToTimeStamp(time)"
           />
         </template>
 
@@ -72,6 +74,7 @@
             :id="message.timestamp"
             v-bind="$attrs"
             @toBuzz="onToBuzz"
+            @to-time-stamp="time => scrollToTimeStamp(time)"
           />
         </template>
         <template v-else>
@@ -81,6 +84,7 @@
             v-bind="$attrs"
             :id="message.timestamp"
             @toBuzz="onToBuzz"
+            @to-time-stamp="time => scrollToTimeStamp(time)"
           />
         </template>
       </div>
@@ -228,7 +232,7 @@ const scrollToMessagesBottom = async (retryCount = 0) => {
 function scrollToTimeStamp(time: number) {
   const target = document.getElementById(time.toString())
   if (target) {
-    const top = target.scrollTop
+    const top = target.offsetTop - target.clientHeight
     messagesScroll.value?.scrollTo({ top })
   }
 }

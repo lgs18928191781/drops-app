@@ -178,7 +178,7 @@
         <div :class="[hasInput ? 'hidden lg:flex' : 'flex', 'items-center px-1 mr-2']">
           <div
             class="p-2 w-9 h-9 transition-all lg:hover:animate-wiggle cursor-pointer"
-            v-if="talk.activeChannelType === ChannelType.Group"
+            v-if="talk.activeChannelType === ChannelType.Group && !quote"
             @click="layout.isShowRedPacketModal = true"
           >
             <Icon name="red_envelope" class="w-full h-full text-dark-800 dark:text-gray-100" />
@@ -442,7 +442,7 @@ const trySendImage = async () => {
     content: '',
     originalFileUrl,
     channelType: talk.activeChannelType as ChannelType,
-    replyTx: props.quote?.txId,
+    reply: props.quote,
   }
   emit('update:quote', undefined)
   await sendMessage(messageDto)
@@ -506,7 +506,7 @@ const trySendText = async (e: any) => {
     channelId: talk.activeChannel.id,
     userName: userStore.user?.name || '',
     channelType: talk.activeChannelType as ChannelType,
-    replyTx: props.quote?.txId,
+    reply: props.quote,
   }
   emit('update:quote', undefined)
   await sendMessage(messageDto)

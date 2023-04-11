@@ -120,7 +120,12 @@ const actions = computed(() => {
             channelId: talk.activeChannelId,
             userMetaId: message.userInfo.metaId,
             message: {
-              content: decryptedMessage(message),
+              content: decryptedMessage(
+                message.content,
+                message.encryption,
+                message.protocol,
+                message.isMock
+              ),
               contentType: message.contentType,
               protocol: message.protocol,
               txId: message.txId,
@@ -133,18 +138,23 @@ const actions = computed(() => {
         emit('toBuzz', data)
       },
     })
+  }
 
-    // 回復
-    const quoteProtocols = ['SimpleFileGroupChat', 'simpleGroupChat', NodeName.ShowMsg]
-    if (quoteProtocols.includes(props.message.protocol)) {
-      actions.push({
-        name: 'Talk.MessageMenu.quote',
-        icon: 'quote',
-        action: () => {
-          emit('quote', props.message)
-        },
-      })
-    }
+  // 回復
+  const quoteProtocols = [
+    'SimpleFileGroupChat',
+    'simpleGroupChat',
+    NodeName.ShowMsg,
+    NodeName.SimpleFileMsg,
+  ]
+  if (quoteProtocols.includes(props.message.protocol)) {
+    actions.push({
+      name: 'Talk.MessageMenu.quote',
+      icon: 'quote',
+      action: () => {
+        emit('quote', props.message)
+      },
+    })
   }
 
   if (props.message.txId) {

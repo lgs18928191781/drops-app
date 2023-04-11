@@ -1,12 +1,22 @@
 <template>
   <div
-    class="flex lg:hover:bg-gray-200 lg:dark:hover:bg-gray-950 px-4 py-1.5 relative group transition-all duration-150"
+    class=" lg:hover:bg-gray-200 lg:dark:hover:bg-gray-950 px-4 py-1.5 relative group transition-all duration-150"
     :class="{ replying: reply.val?.timestamp === message.timestamp }"
   >
     <!-- 消息菜单 -->
     <MessageMenu
       :message="props.message"
-      :parsed="parseTextMessage(decryptedMessage)"
+      :parsed="
+        parseTextMessage(
+          decryptedMessage(
+            message.content,
+            (message.data.encrypt) as any,
+            message.protocol,
+            message.isMock,
+            true
+          )
+        )
+      "
       v-model:translateStatus="translateStatus"
       v-model:translatedContent="translatedContent"
       v-bind="$attrs"
@@ -14,103 +24,113 @@
     />
     <MessageMenu :message="props.message" v-bind="$attrs" v-else />
 
-    <UserAvatar
-      :image="messageAvatarImage"
-      :meta-id="'undefined'"
-      :name="message.fromName"
-      :meta-name="message?.fromUserInfo?.metaName"
-      class="w-10 h-10 lg:w-13.5 lg:h-13.5 shrink-0 select-none"
-      :disabled="true"
+    <!-- Quout -->
+    <MessageItemQuote
+      v-if="message.replyInfo"
+      :quote="{
+        avatarImage: message.replyInfo.fromUserInfo.avatarImage,
+        metaName: message.replyInfo.fromUserInfo.metaName,
+        metaId: message.replyInfo.fromUserInfo.metaId,
+        nickName: message.replyInfo.fromUserInfo.name,
+        protocol: message.replyInfo.protocol,
+        content:
+          message.replyInfo.protocol === NodeName.SimpleFileMsg
+            ? message.replyInfo.icon
+            : message.replyInfo.content,
+        encryption: message.replyInfo.encoding,
+        timestamp: message.replyInfo.timestamp,
+        isMock: message.isMock,
+      }"
+      :isSession="true"
+      v-bind="$attrs"
     />
-    <div class="ml-2 lg:ml-4 grow pr-8 lg:pr-12">
-      <div class="flex items-baseline space-x-2">
-        <UserName
-          :name="message.fromName"
-          :meta-name="message?.fromUserInfo?.metaName"
-          :text-class="'text-sm font-medium dark:text-gray-100'"
-        />
-        <div class="text-dark-300 dark:text-gray-400 text-xs shrink-0 whitespace-nowrap">
-          {{ formatTimestamp(message.timestamp, i18n) }}
+
+    <div class="flex">
+      <UserAvatar
+        :image="messageAvatarImage"
+        :meta-id="'undefined'"
+        :name="message.fromName"
+        :meta-name="message?.fromUserInfo?.metaName"
+        class="w-10 h-10 lg:w-13.5 lg:h-13.5 shrink-0 select-none"
+        :disabled="true"
+      />
+      <div class="ml-2 lg:ml-4 grow pr-8 lg:pr-12">
+        <div class="flex items-baseline space-x-2">
+          <UserName
+            :name="message.fromName"
+            :meta-name="message?.fromUserInfo?.metaName"
+            :text-class="'text-sm font-medium dark:text-gray-100'"
+          />
+          <div class="text-dark-300 dark:text-gray-400 text-xs shrink-0 whitespace-nowrap">
+            {{ formatTimestamp(message.timestamp, i18n) }}
+          </div>
         </div>
-      </div>
 
-      <div class="w-full" v-if="isNftEmoji">
-        <Image
-          :src="decryptedMessage"
-          customClass="max-w-[80%] md:max-w-[50%] lg:max-w-[320px] py-0.5 object-scale-down"
-        />
+        <div class="w-full" v-if="isNftEmoji">
+          <Image
+            :src="decryptedMessage(
+            message.content,
+            (message.data.encrypt) as any,
+            message.protocol,
+            message.isMock,
+            true
+          )"
+            customClass="max-w-[80%] md:max-w-[50%] lg:max-w-[320px] py-0.5 object-scale-down"
+          />
 
-        <NftLabel class="w-8 mt-1" />
-      </div>
-
-      <div class="my-1.5 flex" v-else-if="isFollow">
-        <div
-          class="text-sm text-dark-800 dark:text-gray-100 font-normal break-all p-3 rounded-xl rounded-tl flex items-center"
-          :class="isMyMessage ? 'bg-primary dark:text-gray-800' : 'bg-white dark:bg-gray-700'"
-        >
-          <Icon name="message_follow" class="w-4 h-4 mr-1.5" />
-          <span>
-            {{ $t('Talk.Messages.follow') }}
-          </span>
+          <NftLabel class="w-8 mt-1" />
         </div>
-      </div>
 
-      <div class="my-1.5 flex" v-else-if="isFtTransfer">
-        <div class="max-w-full min-w-[240PX] md:w-[300PX] shadow rounded-xl rounded-tl bg-blue-400">
+        <div class="my-1.5 flex" v-else-if="isFollow">
           <div
-            class="rounded-xl p-4 flex space-x-4.5 bg-white dark:bg-gray-700 items-center rounded-tl border border-solid border-blue-400"
+            class="text-sm text-dark-800 dark:text-gray-100 font-normal break-all p-3 rounded-xl rounded-tl flex items-center"
+            :class="isMyMessage ? 'bg-primary dark:text-gray-800' : 'bg-white dark:bg-gray-700'"
           >
-            <Image :src="message.icon" customClass="h-15 w-15 rounded-md shrink-0" loading="lazy" />
-            <div class="flex flex-col space-y-1.5">
-              <div
-                class="text-dark-800 dark:text-gray-100 text-base font-medium capitalize max-w-[160PX] truncate"
-              >
-                {{ message.memo }}
-              </div>
-              <div class="text-dark-400 dark:text-gray-200 text-xs">
-                {{ message.amountStr.split('.')[0] + ' ' + message.symbol }}
+            <Icon name="message_follow" class="w-4 h-4 mr-1.5" />
+            <span>
+              {{ $t('Talk.Messages.follow') }}
+            </span>
+          </div>
+        </div>
+
+        <div class="my-1.5 flex" v-else-if="isFtTransfer">
+          <div
+            class="max-w-full min-w-[240PX] md:w-[300PX] shadow rounded-xl rounded-tl bg-blue-400"
+          >
+            <div
+              class="rounded-xl p-4 flex space-x-4.5 bg-white dark:bg-gray-700 items-center rounded-tl border border-solid border-blue-400"
+            >
+              <Image
+                :src="message.icon"
+                customClass="h-15 w-15 rounded-md shrink-0"
+                loading="lazy"
+              />
+              <div class="flex flex-col space-y-1.5">
+                <div
+                  class="text-dark-800 dark:text-gray-100 text-base font-medium capitalize max-w-[160PX] truncate"
+                >
+                  {{ message.memo }}
+                </div>
+                <div class="text-dark-400 dark:text-gray-200 text-xs">
+                  {{ message.amountStr.split('.')[0] + ' ' + message.symbol }}
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="flex py-2.5 items-center space-x-1.5 px-4">
-            <Icon name="message_token" class="w-4 h-4 text-white" />
-            <div class="text-white text-xs">{{ $t('Talk.Messages.token_transfer') }}</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="my-1.5 flex" v-else-if="isNftTransfer">
-        <div class="max-w-full min-w-[240PX] md:w-[300PX] shadow rounded-xl rounded-tl bg-blue-400">
-          <div
-            class="rounded-xl p-4 flex space-x-4.5 bg-white dark:bg-gray-700 items-center rounded-tl border border-solid border-blue-400"
-          >
-            <Image :src="message.icon" customClass="h-15 w-15 rounded-md shrink-0" loading="lazy" />
-            <div class="flex flex-col space-y-1">
-              <div
-                class="text-dark-800 dark:text-gray-100 text-base font-medium capitalize max-w-[160PX] truncate"
-              >
-                {{ message.memo }}
-              </div>
-              <div class="text-dark-400 dark:text-gray-200 text-xs" v-if="message.data">
-                # {{ message.data.tokenIndex }}
-              </div>
+            <div class="flex py-2.5 items-center space-x-1.5 px-4">
+              <Icon name="message_token" class="w-4 h-4 text-white" />
+              <div class="text-white text-xs">{{ $t('Talk.Messages.token_transfer') }}</div>
             </div>
           </div>
-
-          <div class="flex py-2.5 items-center space-x-1.5 px-4">
-            <Icon name="message_token" class="w-4 h-4 text-white" />
-            <div class="text-white text-xs">{{ $t('Talk.Messages.nft_transfer') }}</div>
-          </div>
         </div>
-      </div>
 
-      <div class="my-1.5 flex flex-col items-start" v-else-if="isNftBuy">
-        <div class="max-w-full min-w-[240PX] md:w-[300PX] shadow rounded-xl rounded-tl bg-blue-400">
+        <div class="my-1.5 flex" v-else-if="isNftTransfer">
           <div
-            class="rounded-xl p-4 bg-white dark:bg-gray-700 rounded-tl border border-solid border-blue-400 divide-y divide-dark-200 dark:divide-gray-600"
+            class="max-w-full min-w-[240PX] md:w-[300PX] shadow rounded-xl rounded-tl bg-blue-400"
           >
-            <div class="flex items-center gap-x-4.5 mb-3">
+            <div
+              class="rounded-xl p-4 flex space-x-4.5 bg-white dark:bg-gray-700 items-center rounded-tl border border-solid border-blue-400"
+            >
               <Image
                 :src="message.icon"
                 customClass="h-15 w-15 rounded-md shrink-0"
@@ -128,169 +148,223 @@
               </div>
             </div>
 
-            <div class="pt-3 flex justify-between items-center">
-              <div class="text-xs text-dark-300 dark:text-gray-400">
-                {{ $t('Talk.Messages.price') }}
+            <div class="flex py-2.5 items-center space-x-1.5 px-4">
+              <Icon name="message_token" class="w-4 h-4 text-white" />
+              <div class="text-white text-xs">{{ $t('Talk.Messages.nft_transfer') }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="my-1.5 flex flex-col items-start" v-else-if="isNftBuy">
+          <div
+            class="max-w-full min-w-[240PX] md:w-[300PX] shadow rounded-xl rounded-tl bg-blue-400"
+          >
+            <RouterLink
+              :to="{
+                name: 'nftDetail',
+                params: {
+                  tokenIndex: message.data.tokenIndex,
+                  genesis: message.data?.genesis,
+                  codehash: message.data?.codehash,
+                  chain: 'mvc',
+                },
+              }"
+              class="block rounded-xl p-4 bg-white dark:bg-gray-700 rounded-tl border border-solid border-blue-400 divide-y divide-dark-200 dark:divide-gray-600"
+            >
+              <div class="flex items-center gap-x-4.5 mb-3">
+                <Image
+                  :src="message.icon"
+                  customClass="h-15 w-15 rounded-md shrink-0"
+                  loading="lazy"
+                />
+                <div class="flex flex-col space-y-1">
+                  <div
+                    class="text-dark-800 dark:text-gray-100 text-base font-medium capitalize max-w-[160PX] truncate"
+                  >
+                    {{ message.memo }}
+                  </div>
+                  <div class="text-dark-400 dark:text-gray-200 text-xs" v-if="message.data">
+                    # {{ message.data.tokenIndex }}
+                  </div>
+                </div>
               </div>
-              <div class="text-sm">{{ nftPrice }}</div>
+
+              <div class="pt-3 flex justify-between items-center">
+                <div class="text-xs text-dark-300 dark:text-gray-400">
+                  {{ $t('Talk.Messages.price') }}
+                </div>
+                <div class="text-sm">{{ nftPrice }}</div>
+              </div>
+            </RouterLink>
+
+            <div class="flex py-2.5 items-center space-x-1.5 px-4">
+              <Icon name="message_token" class="w-4 h-4 text-white" />
+              <div class="text-white text-xs">{{ $t('Talk.Messages.nft_buy') }}</div>
             </div>
           </div>
 
-          <div class="flex py-2.5 items-center space-x-1.5 px-4">
-            <Icon name="message_token" class="w-4 h-4 text-white" />
-            <div class="text-white text-xs">{{ $t('Talk.Messages.nft_buy') }}</div>
+          <div
+            class="mt-1.5 bg-dark-800/5 dark:bg-gray-800  text-sm text-dark-400 dark:text-gray-200 rounded-xl px-3 py-2"
+          >
+            {{ $t('Talk.Messages.buy_tip') }}
           </div>
         </div>
 
-        <div
-          class="mt-1.5 bg-dark-800/5 dark:bg-gray-800  text-sm text-dark-400 dark:text-gray-200 rounded-xl px-3 py-2"
-        >
-          {{ $t('Talk.Messages.buy_tip') }}
+        <div class="my-1.5 flex flex-col items-start" v-else-if="isRepost">
+          <div
+            class="text-sm text-dark-800 dark:text-gray-100 font-normal break-all p-3 rounded-xl rounded-tl flex items-center"
+            :class="isMyMessage ? 'bg-primary dark:text-gray-800' : 'bg-white dark:bg-gray-700'"
+          >
+            <Icon name="message_repost" class="w-4 h-4 mr-1.5" />
+            <span>
+              {{ $t('Talk.Messages.repost') }}
+            </span>
+          </div>
+          <div
+            class="mt-1.5 bg-dark-800/5 dark:bg-gray-800  text-sm text-dark-400 dark:text-gray-200 rounded-xl px-3 py-2"
+            v-if="message.data.rePostComment"
+          >
+            {{ message.data.rePostComment }}
+          </div>
         </div>
-      </div>
 
-      <div class="my-1.5 flex flex-col items-start" v-else-if="isRepost">
-        <div
-          class="text-sm text-dark-800 dark:text-gray-100 font-normal break-all p-3 rounded-xl rounded-tl flex items-center"
-          :class="isMyMessage ? 'bg-primary dark:text-gray-800' : 'bg-white dark:bg-gray-700'"
-        >
-          <Icon name="message_repost" class="w-4 h-4 mr-1.5" />
-          <span>
-            {{ $t('Talk.Messages.repost') }}
-          </span>
+        <div class="my-1.5 flex flex-col items-start" v-else-if="isRepostWithComment">
+          <div
+            class="text-sm text-dark-800 dark:text-gray-100 font-normal break-all p-3 rounded-xl rounded-tl flex items-center"
+            :class="isMyMessage ? 'bg-primary dark:text-gray-800' : 'bg-white dark:bg-gray-700'"
+          >
+            <Icon name="message_repost" class="w-4 h-4 mr-1.5" />
+            <span>
+              {{ $t('Talk.Messages.repost_with_comment') }}
+            </span>
+          </div>
+          <div
+            class="mt-1.5 bg-dark-800/5 dark:bg-gray-800 break-all text-sm text-dark-400 dark:text-gray-200 rounded-xl px-3 py-2"
+            v-if="message.data.content"
+          >
+            {{ message.data.content }}
+          </div>
         </div>
-        <div
-          class="mt-1.5 bg-dark-800/5 dark:bg-gray-800  text-sm text-dark-400 dark:text-gray-200 rounded-xl px-3 py-2"
-          v-if="message.data.rePostComment"
-        >
-          {{ message.data.rePostComment }}
-        </div>
-      </div>
 
-      <div class="my-1.5 flex flex-col items-start" v-else-if="isRepostWithComment">
-        <div
-          class="text-sm text-dark-800 dark:text-gray-100 font-normal break-all p-3 rounded-xl rounded-tl flex items-center"
-          :class="isMyMessage ? 'bg-primary dark:text-gray-800' : 'bg-white dark:bg-gray-700'"
-        >
-          <Icon name="message_repost" class="w-4 h-4 mr-1.5" />
-          <span>
-            {{ $t('Talk.Messages.repost_with_comment') }}
-          </span>
+        <div class="my-1.5 flex flex-col items-start" v-else-if="isLike">
+          <div
+            class="text-sm text-dark-800 dark:text-gray-100 font-normal break-all p-3 rounded-xl rounded-tl flex items-center"
+            :class="isMyMessage ? 'bg-primary dark:text-gray-800' : 'bg-white dark:bg-gray-700'"
+          >
+            <Icon name="message_like" class="w-4 h-4 mr-1.5" />
+            <span>
+              {{ $t('Talk.Messages.like') }}
+            </span>
+          </div>
         </div>
-        <div
-          class="mt-1.5 bg-dark-800/5 dark:bg-gray-800 break-all text-sm text-dark-400 dark:text-gray-200 rounded-xl px-3 py-2"
-          v-if="message.data.content"
-        >
-          {{ message.data.content }}
-        </div>
-      </div>
 
-      <div class="my-1.5 flex flex-col items-start" v-else-if="isLike">
-        <div
-          class="text-sm text-dark-800 dark:text-gray-100 font-normal break-all p-3 rounded-xl rounded-tl flex items-center"
-          :class="isMyMessage ? 'bg-primary dark:text-gray-800' : 'bg-white dark:bg-gray-700'"
-        >
-          <Icon name="message_like" class="w-4 h-4 mr-1.5" />
-          <span>
-            {{ $t('Talk.Messages.like') }}
-          </span>
+        <div class="my-1.5 flex flex-col items-start" v-else-if="isComment">
+          <div
+            class="text-sm text-dark-800 dark:text-gray-100 font-normal break-all p-3 rounded-xl rounded-tl flex items-center"
+            :class="isMyMessage ? 'bg-primary dark:text-gray-800' : 'bg-white dark:bg-gray-700'"
+          >
+            <Icon name="message_comment" class="w-4 h-4 mr-1.5" />
+            <span>
+              {{ $t('Talk.Messages.comment') }}
+            </span>
+          </div>
+          <div
+            class="mt-1.5 bg-dark-800/5 dark:bg-gray-800 break-all text-sm text-dark-400 dark:text-gray-200 rounded-xl px-3 py-2"
+          >
+            {{ message.data.content }}
+          </div>
         </div>
-      </div>
 
-      <div class="my-1.5 flex flex-col items-start" v-else-if="isComment">
-        <div
-          class="text-sm text-dark-800 dark:text-gray-100 font-normal break-all p-3 rounded-xl rounded-tl flex items-center"
-          :class="isMyMessage ? 'bg-primary dark:text-gray-800' : 'bg-white dark:bg-gray-700'"
-        >
-          <Icon name="message_comment" class="w-4 h-4 mr-1.5" />
-          <span>
-            {{ $t('Talk.Messages.comment') }}
-          </span>
+        <div class="w-full py-0.5 flex items-center" v-else-if="isImage">
+          <div
+            class="w-fit max-w-[90%] md:max-w-[50%] lg:max-w-[235PX] max-h-[600PX] overflow-y-hidden rounded bg-transparent cursor-pointer transition-all duration-200"
+            :class="[message.error && 'opacity-50']"
+            @click="previewImage"
+          >
+            <Image :src="decryptedImageMessage" customClass="rounded py-0.5 object-scale-down" />
+          </div>
+          <button v-if="message.error" class="ml-3" :title="resendTitle" @click="tryResend">
+            <Icon
+              name="arrow_path"
+              class="w-4 h-4 text-dark-400 dark:text-gray-200 hover:animate-spin-once"
+            />
+          </button>
+          <Teleport to="body" v-if="isImage && showImagePreview">
+            <TalkImagePreview
+              v-if="showImagePreview"
+              :src="decryptedMessage(
+            message.content,
+            (message.data.encrypt) as any,
+            message.protocol,
+            message.isMock,
+            true
+          )"
+              @close="showImagePreview = false"
+            />
+          </Teleport>
         </div>
+
         <div
-          class="mt-1.5 bg-dark-800/5 dark:bg-gray-800 break-all text-sm text-dark-400 dark:text-gray-200 rounded-xl px-3 py-2"
+          class="text-xs text-dark-400 dark:text-gray-200 my-0.5 capitalize"
+          v-else-if="isReceiveRedEnvelope"
         >
-          {{ message.data.content }}
+          {{ redEnvelopeReceiveInfo }}
         </div>
-      </div>
 
-      <div class="w-full py-0.5 flex items-center" v-else-if="isImage">
-        <div
-          class="w-fit max-w-[90%] md:max-w-[50%] lg:max-w-[235PX] max-h-[600PX] overflow-y-hidden rounded bg-transparent cursor-pointer transition-all duration-200"
-          :class="[message.error && 'opacity-50']"
-          @click="previewImage"
-        >
-          <Image :src="decryptedImageMessage" customClass="rounded py-0.5 object-scale-down" />
-        </div>
-        <button v-if="message.error" class="ml-3" :title="resendTitle" @click="tryResend">
-          <Icon
-            name="arrow_path"
-            class="w-4 h-4 text-dark-400 dark:text-gray-200 hover:animate-spin-once"
-          />
-        </button>
-        <Teleport to="body" v-if="isImage && showImagePreview">
-          <TalkImagePreview
-            v-if="showImagePreview"
-            :src="(decryptedMessage as string)"
-            @close="showImagePreview = false"
-          />
-        </Teleport>
-      </div>
-
-      <div
-        class="text-xs text-dark-400 dark:text-gray-200 my-0.5 capitalize"
-        v-else-if="isReceiveRedEnvelope"
-      >
-        {{ redEnvelopeReceiveInfo }}
-      </div>
-
-      <div class="w-full py-0.5" v-else-if="isGiveawayRedEnvelope">
-        <div
-          class="max-w-full md:max-w-[50%] lg:max-w-[400px] shadow-lg rounded-xl cursor-pointer origin-top-left hover:shadow-xl hover:scale-105  transition-all duration-300"
-        >
-          <div class="rounded-xl bg-red-400 p-6 flex space-x-2">
-            <img :src="redEnvelopeImg" class="h-12" loading="lazy" />
-            <div class="">
-              <div class="text-white text-lg font-medium capitalize">
-                {{ $t('Talk.Channel.come_get_red_envelope') }}
+        <div class="w-full py-0.5" v-else-if="isGiveawayRedEnvelope">
+          <div
+            class="max-w-full md:max-w-[50%] lg:max-w-[400px] shadow-lg rounded-xl cursor-pointer origin-top-left hover:shadow-xl hover:scale-105  transition-all duration-300"
+          >
+            <div class="rounded-xl bg-red-400 p-6 flex space-x-2">
+              <img :src="redEnvelopeImg" class="h-12" loading="lazy" />
+              <div class="">
+                <div class="text-white text-lg font-medium capitalize">
+                  {{ $t('Talk.Channel.come_get_red_envelope') }}
+                </div>
+                <div class="text-red-50 text-xs mt-0.5">{{ redEnvelopeMessage }}</div>
               </div>
-              <div class="text-red-50 text-xs mt-0.5">{{ redEnvelopeMessage }}</div>
+            </div>
+            <div class=" py-2 px-6 text-dark-400 dark:text-gray-200 text-xs">Show红包</div>
+          </div>
+        </div>
+
+        <div class="my-1.5 max-w-full flex" v-else>
+          <div
+            class="text-sm text-dark-800 dark:text-gray-100 font-normal break-all p-3 rounded-xl rounded-tl transition-all duration-200"
+            :class="[
+              isMyMessage ? 'bg-primary dark:text-gray-800' : 'bg-white dark:bg-gray-700',
+              message.error && 'bg-red-200 dark:bg-red-700 opacity-50',
+            ]"
+            v-if="translateStatus === 'showing'"
+          >
+            <div class="" v-html="translatedContent"></div>
+            <div class="text-xxs text-dark-300 dark:text-gray-400 mt-1 underline">
+              {{ $t('Talk.Messages.translated') }}
             </div>
           </div>
-          <div class=" py-2 px-6 text-dark-400 dark:text-gray-200 text-xs">Show红包</div>
-        </div>
-      </div>
 
-      <div class="my-1.5 max-w-full flex" v-else>
-        <div
-          class="text-sm text-dark-800 dark:text-gray-100 font-normal break-all p-3 rounded-xl rounded-tl transition-all duration-200"
-          :class="[
-            isMyMessage ? 'bg-primary dark:text-gray-800' : 'bg-white dark:bg-gray-700',
-            message.error && 'bg-red-200 dark:bg-red-700 opacity-50',
-          ]"
-          v-if="translateStatus === 'showing'"
-        >
-          <div class="" v-html="translatedContent"></div>
-          <div class="text-xxs text-dark-300 dark:text-gray-400 mt-1 underline">
-            {{ $t('Talk.Messages.translated') }}
-          </div>
+          <div
+            class="text-sm text-dark-800 dark:text-gray-100 font-normal break-all p-3 rounded-xl rounded-tl transition-all duration-200"
+            :class="[
+              isMyMessage ? 'bg-primary dark:text-gray-800' : 'bg-white dark:bg-gray-700',
+              message.error && 'bg-red-200 dark:bg-red-700 opacity-50',
+            ]"
+            v-else
+            v-html="parseTextMessage(decryptedMessage(
+            message.content,
+            (message.data.encrypt) as any,
+            message.protocol,
+            message.isMock,
+            true
+          ))"
+          ></div>
+          <button v-if="message.error" class="ml-3" :title="resendTitle" @click="tryResend">
+            <Icon
+              name="arrow_path"
+              class="w-4 h-4 text-dark-400 dark:text-gray-200 hover:animate-spin-once"
+            />
+          </button>
         </div>
-
-        <div
-          class="text-sm text-dark-800 dark:text-gray-100 font-normal break-all p-3 rounded-xl rounded-tl transition-all duration-200"
-          :class="[
-            isMyMessage ? 'bg-primary dark:text-gray-800' : 'bg-white dark:bg-gray-700',
-            message.error && 'bg-red-200 dark:bg-red-700 opacity-50',
-          ]"
-          v-else
-          v-html="parseTextMessage(decryptedMessage)"
-        ></div>
-        <button v-if="message.error" class="ml-3" :title="resendTitle" @click="tryResend">
-          <Icon
-            name="arrow_path"
-            class="w-4 h-4 text-dark-400 dark:text-gray-200 hover:animate-spin-once"
-          />
-        </button>
       </div>
     </div>
   </div>
@@ -304,17 +378,21 @@ import redEnvelopeImg from '@/assets/images/red-envelope.svg?url'
 import TalkImagePreview from './ImagePreview.vue'
 import { computed, ref, toRaw, Ref, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { formatTimestamp } from '@/utils/talk'
+import { formatTimestamp, decryptedMessage } from '@/utils/talk'
 import { useUserStore } from '@/stores/user'
 import { useTalkStore } from '@/stores/talk'
 import { useJobsStore } from '@/stores/jobs'
 import { NodeName } from '@/enum'
+import MessageItemQuote from './MessageItemQuote.vue'
 
 const reply: any = inject('Reply')
 const i18n = useI18n()
 
 const showImagePreview = ref(false)
-const props = defineProps(['message'])
+interface Props {
+  message: ChatSessionMessageItem
+}
+const props = withDefaults(defineProps<Props>(), {})
 const userStore = useUserStore()
 const talkStore = useTalkStore()
 const activeChannel = computed(() => talkStore.activeChannel)
@@ -365,35 +443,35 @@ const decryptedImageMessage = computed(() => {
   }
 })
 
-const decryptedMessage = computed(() => {
-  // 处理mock的图片消息
-  if (
-    props.message.isMock &&
-    (props.message.protocol === NodeName.SimpleFileGroupChat ||
-      props.message.protocol === NodeName.SimpleFileMsg)
-  ) {
-    return props.message.content
-  }
+// const decryptedMessage = computed(() => {
+//   // 处理mock的图片消息
+//   if (
+//     props.message.isMock &&
+//     (props.message.protocol === NodeName.SimpleFileGroupChat ||
+//       props.message.protocol === NodeName.SimpleFileMsg)
+//   ) {
+//     return props.message.content
+//   }
 
-  if (props.message.data?.encrypt !== '1') {
-    return props.message.data?.attachment || props.message.data?.content
-  }
+//   if (props.message.data?.encrypt !== '1') {
+//     return props.message.data?.attachment || props.message.data?.content
+//   }
 
-  // if (
-  //   props.message.protocol !== 'simpleGroupChat' &&
-  //   props.message.protocol !== 'SimpleFileGroupChat'
-  // ) {
-  //   return props.message.data.content
-  // }
+//   // if (
+//   //   props.message.protocol !== 'simpleGroupChat' &&
+//   //   props.message.protocol !== 'SimpleFileGroupChat'
+//   // ) {
+//   //   return props.message.data.content
+//   // }
 
-  if (!talkStore.activeChannel) return ''
+//   if (!talkStore.activeChannel) return ''
 
-  const privateKey = toRaw(userStore?.wallet)!.getPathPrivateKey('0/0')
-  const privateKeyStr = privateKey.toHex()
-  const otherPublicKeyStr = talkStore.activeChannel.publicKeyStr
+//   const privateKey = toRaw(userStore?.wallet)!.getPathPrivateKey('0/0')
+//   const privateKeyStr = privateKey.toHex()
+//   const otherPublicKeyStr = talkStore.activeChannel.publicKeyStr
 
-  return ecdhDecrypt(props.message.data.content, privateKeyStr, otherPublicKeyStr)
-})
+//   return ecdhDecrypt(props.message.data.content, privateKeyStr, otherPublicKeyStr)
+// })
 
 const parseTextMessage = (text: string) => {
   if (typeof text == 'undefined') {

@@ -995,7 +995,8 @@ export class SDK {
             [utxo],
             lastChangeAddress
           )
-          transactions.sendMoney.txId = transactions.sendMoney.transaction.id
+          transactions.sendMoney!.txId = transactions.sendMoney!.transaction.id
+          transactions.sendMoney!.utxo = utxo
         } else if (this.isInfoNode(params.nodeName)) {
           this.setTransferUtxoAndOutputAndSign(
             transactions.currentNode!.transaction,
@@ -1004,6 +1005,7 @@ export class SDK {
           )
           // 更新txId
           transactions.currentNode!.txId = transactions.currentNode!.transaction.id
+          transactions.currentNode!.utxo = utxo
         } else {
           if (transactions.metaFileBrfc?.transaction) {
             this.setTransferUtxoAndOutputAndSign(
@@ -1013,6 +1015,7 @@ export class SDK {
             )
             // 更新txId
             transactions.metaFileBrfc.txId = transactions.metaFileBrfc.transaction.id
+            transactions.metaFileBrfc.utxo = utxo
             // 更新本地bfrcNodeList
             this.updateBfrcNodeList(NodeName.MetaFile, transactions.metaFileBrfc)
 
@@ -1064,6 +1067,7 @@ export class SDK {
               )
               // 更新txId
               metaFileTransactions[i].txId = metaFileTransactions[i].transaction.id
+              metaFileTransactions[i].utxo = utxo
               // 更新 所有的metafile Txid 待完善
               const metaFileSha256Index = this.metaFileSha256TxIdList.findIndex(
                 _item => _item.sha256 === metaFileTransactions[i].sha256
@@ -1124,6 +1128,7 @@ export class SDK {
               )
               // 更新txId
               transactions.currentNodeBrfc.txId = transactions.currentNodeBrfc.transaction.id
+              transactions.currentNodeBrfc.utxo = utxo
               // 更新本地bfrcNodeList
               this.updateBfrcNodeList(params.nodeName, transactions.currentNodeBrfc)
 
@@ -1162,7 +1167,6 @@ export class SDK {
             ) {
               const scriptPlayload = await this.getScriptPlayload(createCurrentNodeParams, chain)
               const nftManager = this.wallet!.getNftManager()
-              console.log('nft utxo', utxo)
               const _params = {
                 ...JSON.parse(params.data!),
                 opreturnData: scriptPlayload,
@@ -1228,13 +1232,14 @@ export class SDK {
               if (res) transactions.currentNode = res
 
               this.setTransferUtxoAndOutputAndSign(
-                transactions.currentNode.transaction,
+                transactions.currentNode!.transaction,
                 [utxo],
                 params.nodeName === NodeName.NftIssue ? this.wallet!.rootAddress : lastChangeAddress
               )
               console.log('currentNode', utxo)
               // 更新txId
-              transactions.currentNode.txId = transactions.currentNode.transaction.id
+              transactions.currentNode!.txId = transactions.currentNode!.transaction.id
+              transactions.currentNode!.utxo = utxo
 
               if (params.nodeName === NodeName.NftIssue) {
                 // 组装新 utxo
@@ -1247,7 +1252,7 @@ export class SDK {
                 const nftManager = this.wallet!.getNftManager()
                 const res = await nftManager!.mint({
                   sensibleId: data.sensibleId,
-                  metaTxId: transactions.currentNode.txId,
+                  metaTxId: transactions.currentNode!.txId,
                   noBroadcast: true,
                   metaOutputIndex: 0,
                   utxos: [utxo],
@@ -1371,19 +1376,34 @@ export class SDK {
     }
   }
 
-  private broadcastNodeTransactions(transactions: NodeTransactions) {
+  public broadcastNodeTransactions(
+    transactions: NodeTransactions,
+    option?: {
+      notBroadcastKeys?: string[]
+    }
+  ) {
     return new Promise<void>(async (resolve, reject) => {
       try {
         // 广播 SendMoney
-        if (transactions.sendMoney?.transaction) {
+        if (
+          !option?.notBroadcastKeys?.includes('sendMoney') &&
+          transactions.sendMoney?.transaction
+        ) {
           await this.wallet?.provider.broadcast(transactions.sendMoney.transaction.toString())
         }
         // 广播 Metafile Brfc
-        if (transactions.metaFileBrfc?.transaction) {
+        if (
+          !option?.notBroadcastKeys?.includes('metaFileBrfc') &&
+          transactions.metaFileBrfc?.transaction
+        ) {
           await this.wallet?.provider.broadcast(transactions.metaFileBrfc.transaction.toString())
         }
         // 广播 Metafile
-        if (transactions.metaFiles && transactions.metaFiles.length) {
+        if (
+          !option?.notBroadcastKeys?.includes('metaFiles') &&
+          transactions.metaFiles &&
+          transactions.metaFiles.length
+        ) {
           let catchError
           for (let i = 0; i < transactions.metaFiles.filter(item => item.transaction).length; i++) {
             try {
@@ -1400,29 +1420,37 @@ export class SDK {
           }
         }
         // 广播当前节点的Brfc节点
-        if (transactions.currentNodeBrfc?.transaction) {
+        if (
+          !option?.notBroadcastKeys?.includes('currentNodeBrfc') &&
+          transactions.currentNodeBrfc?.transaction
+        ) {
           await this.wallet?.provider.broadcast(transactions.currentNodeBrfc.transaction.toString())
         }
         // 广播当前节点
-        if (transactions.currentNode?.transaction) {
+        if (
+          !option?.notBroadcastKeys?.includes('currentNode') &&
+          transactions.currentNode?.transaction
+        ) {
           await this.wallet?.provider.broadcast(transactions.currentNode.transaction.toString())
         }
 
         // 广播 nft
-        if (transactions.nft) {
+        if (!option?.notBroadcastKeys?.includes('nft') && transactions.nft) {
           for (let i in transactions.nft) {
-            if (i === 'sell') {
+            if (i === 'sell' && !option?.notBroadcastKeys?.includes('sell')) {
               // sell 先广播 sellTransaction
               await this.wallet?.provider.broadcast(transactions.nft[i]?.sellTransaction.toString())
-            } else if (i === 'buy' || i === 'cancel') {
+            } else if (i === 'buy' || (i === 'cancel' && !option?.notBroadcastKeys?.includes(i))) {
               //  buy / cancel 先广播 unlockCheckTransaction
               await this.wallet?.provider.broadcast(
                 transactions.nft[i]!.unlockCheckTransaction.toString()
               )
             }
 
-            // @ts-ignore
-            await this.wallet?.provider.broadcast(transactions.nft[i].transaction.toString())
+            if (!option?.notBroadcastKeys?.includes(i)) {
+              // @ts-ignore
+              await this.wallet?.provider.broadcast(transactions.nft[i].transaction.toString())
+            }
           }
         }
 
