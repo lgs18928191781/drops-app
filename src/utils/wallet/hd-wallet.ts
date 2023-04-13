@@ -1255,11 +1255,9 @@ export class HdWallet {
         resolve({
           address: OutPut.script.toAddress(this.network).toString(),
           satoshis: OutPut.satoshis,
-          value: OutPut.satoshis,
           amount: OutPut.satoshis * 1e-8,
           script: OutPut.script.toHex(),
           outputIndex: params.outPutIndex!,
-          txIndex: params.outPutIndex!,
           txId: params.tx.id,
           addressType: params!.addressInfo?.addressType!,
           addressIndex: params!.addressInfo?.addressIndex!,

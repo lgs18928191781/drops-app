@@ -145,6 +145,7 @@ import PublishBaseTemplateVue from '@/components/PublishBaseTemplate/PublishBase
 import { useJobsStore } from '@/stores/jobs'
 import { metafile } from '@/utils/filters'
 import PublishSchedule from './PublishSchedule.vue'
+import { CreateBroadcastTask } from '@/api/dashbroad'
 
 interface Props {
   modelValue: boolean
@@ -349,12 +350,34 @@ async function submit() {
       ElMessage.error(error.message)
       loading.value = false
     })
-  debugger
   if (res) {
     if (broadcastAt.value) {
       await userStore.showWallet.broadcastNodeTransactions(res, {
         notBroadcastKeys: ['currentNode'],
       })
+      const response = await CreateBroadcastTask({
+        txId: res.currentNode!.txId,
+        metaId: userStore.user!.metaId,
+        hex: res.currentNode!.transaction!.toString(),
+        protocol: NodeName.SimpleMicroblog,
+        broadcastAt: broadcastAt.value,
+        utxo: {
+          ...res.currentNode!.utxo!,
+          metaId: userStore.user!.metaId,
+        },
+      }).catch(error => {
+        ElMessage.error(error.message)
+        loading.value = false
+      })
+      if (response) {
+        ElMessage.success(i18n.t('Buzz.Publish Schedule Success'))
+        content.value = ''
+        attachments.length = 0
+        broadcastAt.value = ''
+        loading.value = false
+        isShowSchedule.value = false
+        emit('update:modelValue', false)
+      }
     } else {
       const watchJobStatus = watch(
         () => jobsStore.waitingNotify.find(job => job.id === res.subscribeId)?.status,
