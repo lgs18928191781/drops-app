@@ -464,7 +464,9 @@
     "Schedule": "定時發佈",
     "Schedule Clear": "清除",
     "The scheduled release time must be greater than the current time": "定時發佈時間必須大於當前時間",
-    "Publish Schedule Success": "發佈定時任務成功"
+    "Publish Schedule Success": "發佈定時任務成功",
+    "Schedule Date": "发布日期",
+    "Schedule Time": "发布时间"
   },
   "Follow": "關註",
   "walletError": "簽名失敗,無法登錄錢包",

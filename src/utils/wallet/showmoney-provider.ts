@@ -10,6 +10,7 @@ import { Chains, HdWalletChain, Network } from '@/enum'
 import i18n from '../i18n'
 import { GetTxChainInfo } from '@/api/metaid-base'
 import { Session } from './session'
+import { Utxos } from '@/api/dashbroad'
 interface BaseApiResultTypes<T> {
   code: number
   msg?: string
@@ -390,20 +391,32 @@ export default class ShowmoneyProvider {
     xpub: string,
     chain: HdWalletChain = HdWalletChain.MVC
   ): Promise<UtxoItem[]> {
-    const res = await this.callMetasvApi(`/xpubLite/${xpub}/utxo`, {}, 'get', chain)
-    const utxos: UtxoItem[] = []
-    if (Array.isArray(res)) {
-      res.forEach(item => {
-        item.script = mvc.Script.fromAddress(item.address).toHex()
-        item.amount = +item.value / 1e8
-        item.vout = item.txIndex
-        // sensible need satoshis,outputIndex,txId
-        item.satoshis = item.value
-        item.outputIndex = item.txIndex
-        item.txId = item.txid
-        utxos.push(item)
+    let res = await this.callMetasvApi(`/xpubLite/${xpub}/utxo`, {}, 'get', chain)
+    const getUseReadyUtxoRes = await Utxos({ pageSize: 50 })
+    if (getUseReadyUtxoRes[0].length) {
+      res = res.filter((item: any) => {
+        if (
+          getUseReadyUtxoRes[0].some(
+            _item => _item.txId === item.txid || _item.address === item.address
+          )
+        ) {
+          return false
+        } else {
+          return item
+        }
       })
     }
+    const utxos: UtxoItem[] = []
+    res.forEach((item: any) => {
+      item.script = mvc.Script.fromAddress(item.address).toHex()
+      item.amount = +item.value / 1e8
+      item.vout = item.txIndex
+      // sensible need satoshis,outputIndex,txId
+      item.satoshis = item.value
+      item.outputIndex = item.txIndex
+      item.txId = item.txid
+      utxos.push(item)
+    })
     return utxos
   }
 

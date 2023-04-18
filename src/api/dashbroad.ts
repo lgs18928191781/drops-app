@@ -1,6 +1,20 @@
+import { UtxoItem } from '@/@types/sdk'
+import { useUserStore } from '@/stores/user'
 import HttpRequest from '@/utils/request'
 
-const Dashbroad = new HttpRequest(`http://localhost:3099/api`, {
+const Dashbroad = new HttpRequest(import.meta.env.VITE_Dashbroad_API, {
+  header: () => {
+    const userStore = useUserStore()
+    if (userStore.isAuthorized) {
+      return {
+        accessKey: userStore.user?.token,
+        userName: userStore.userName,
+        timestamp: new Date().getTime(),
+      }
+    } else {
+      return {}
+    }
+  },
   errorHandel: (error: any) => {
     if (error.response && error.response.data && error.response.data.message !== '') {
       return Promise.reject({
@@ -33,4 +47,12 @@ export const CreateBroadcastTask = (params: {
   }
 }): Promise<apiResponse> => {
   return Dashbroad.post('/broadcast-tasks', params)
+}
+
+export const Utxos = (params?: {
+  page?: number
+  pageSize?: number
+  order?: string
+}): Promise<[UtxoItem[], number]> => {
+  return Dashbroad.get('/utxos', { params })
 }

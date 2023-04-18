@@ -428,7 +428,9 @@
     "Schedule": "Schedule",
     "Schedule Clear": "Clear",
     "The scheduled release time must be greater than the current time": "The scheduled release time must be greater than the current time",
-    "Publish Schedule Success": "Publish the scheduled task successfully"
+    "Publish Schedule Success": "Publish the scheduled task successfully",
+    "Schedule Date": "Schedule Date",
+    "Schedule Time": "Schedule Time"
   },
   "Follow": "Follow",
   "walletError": "Signing failed, unable to log in to wallet",

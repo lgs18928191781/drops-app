@@ -34,7 +34,7 @@
 
       <div class="schedule flex flex-align-center mt-3" v-if="broadcastAt">
         <Icon name="calendar_days" class="w-6 h-6 mr-2" />{{ $t('Will send') }}
-        {{ $filters.dateTimeFormat(broadcastAt, $i18n.locale) }}
+        {{ $filters.dateTimeFormat(broadcastAt, $i18n.locale, 'YYYY-MM-DD HH:mm') }}
       </div>
 
       <div class="footer flex flex-align-center">
@@ -128,7 +128,7 @@
 
 <script setup lang="ts">
 import { AttachmentItem } from '@/@types/hd-wallet'
-import { EnvMode, IsEncrypt, JobStatus, NodeName } from '@/enum'
+import { EnvMode, IsEncrypt, JobStatus, NodeName, SdkPayType } from '@/enum'
 import { useLayoutStore } from '@/stores/layout'
 import { useUserStore } from '@/stores/user'
 import { compressImage, FileToAttachmentItem, getAttachmentsMark } from '@/utils/util'
