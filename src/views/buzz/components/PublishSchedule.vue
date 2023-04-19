@@ -34,6 +34,10 @@
         </ElForm>
       </div>
 
+      <div class="my">
+        <a @click="isShowList = true">{{ $t('Buzz.My Schedule Buzzs') }}</a>
+      </div>
+
       <div class="flex flex-align-center mt-7">
         <div class="main-border flex1 mr-4 text-center py-3 cursor-pointer" @click="clear">
           {{ $t('Buzz.Schedule Clear') }}
@@ -42,6 +46,8 @@
           {{ $t('Confirm') }}
         </div>
       </div>
+
+      <PublishScheduleList v-model="isShowList" />
     </template>
   </Modal>
 </template>
@@ -54,6 +60,7 @@ import { watch } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import dayjs from 'dayjs'
+import PublishScheduleList from './PublishScheduleList.vue'
 
 interface Props {
   modelValue: boolean
@@ -72,6 +79,7 @@ const form = reactive({
   date: dayjs().format('YYYY-MM-DD'),
   time: dayjs().format('HH:mm'),
 })
+const isShowList = ref(false)
 
 function clear() {
   emit('confirm', '')

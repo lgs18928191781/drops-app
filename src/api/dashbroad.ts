@@ -48,6 +48,21 @@ export const CreateBroadcastTask = (params: {
 }): Promise<apiResponse> => {
   return Dashbroad.post('/broadcast-tasks', params)
 }
+export const BroadcastTasks = (params: {
+  page: number
+  pageSize: number
+  protocol: string
+}): Promise<[BroadcastTaskItem[], number]> => {
+  return Dashbroad.get('/broadcast-tasks', {
+    params: {
+      page: params.page,
+      pageSize: params.pageSize,
+      where: {
+        protocol: params.protocol,
+      },
+    },
+  })
+}
 
 export const Utxos = (params?: {
   page?: number
