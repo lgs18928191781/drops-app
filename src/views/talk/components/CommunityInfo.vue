@@ -245,7 +245,9 @@ const generalChannels = computed(() => {
       } else if (
         channel.id === 'DAO' &&
         talk.activeCommunityId !==
-          'f28bebcaabde3f60b5241324c206443123f59ed3432c2960cd59baa8b27081fa'
+          'f28bebcaabde3f60b5241324c206443123f59ed3432c2960cd59baa8b27081fa' &&
+        talk.activeCommunityId !==
+          'd0b8c48101e13739ab71458e0d3de4b683b21142e359d06e0f43ca85bb64a1b6'
       ) {
         return false
       }
