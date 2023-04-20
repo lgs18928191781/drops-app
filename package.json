@@ -46,7 +46,7 @@
     "dayjs": "^1.11.6",
     "decimal.js-light": "^2.5.1",
     "dexie": "^3.2.2",
-    "dotenv": "^10.0.0",
+    "dotenv": "^16.0.3",
     "element-plus": "2.3.0",
     "eth-ens-namehash": "^2.0.8",
     "ethers": "^5.7.2",
