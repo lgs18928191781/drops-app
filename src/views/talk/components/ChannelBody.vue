@@ -33,7 +33,7 @@ const tryInitChannel = async (status: string) => {
   if (['redirect'].includes(initChannelStatus)) return
 
   const selfMetaId = talk.selfMetaId
-  // 重置频道凭证
+  // 重置頻道凭证
   talk.hasActiveChannelConsent = false
   await nextTick()
   if (!talk.canAccessActiveChannel) {
@@ -53,7 +53,7 @@ const tryInitChannel = async (status: string) => {
     let chain: string
     switch (talk.activeGroupChannelType) {
       case GroupChannelType.Password:
-        // 先检查是否本地有存储该频道密码
+        // 先检查是否本地有存储该頻道密码
         const _passwordLookup = localStorage.getItem(`channelPasswords-${selfMetaId}`)
         const passwordLookup = _passwordLookup ? JSON.parse(_passwordLookup) : {}
         const hashedPassword = passwordLookup[talk.activeChannelId]
@@ -363,7 +363,7 @@ const tryInitChannel = async (status: string) => {
         }
 
         // 检查币数量
-        // 获取余额
+        // 获取餘额
         const balance = await user
           .showWallet!.wallet!.provider.getXpubBalance(
             user.showWallet!.wallet!.wallet.xpubkey.toString()

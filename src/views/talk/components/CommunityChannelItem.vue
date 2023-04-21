@@ -116,7 +116,7 @@ const goChannel = () => {
 }
 
 const channelSymbol = (channel: any) => {
-  // 功能频道
+  // 功能頻道
   switch (channel.id) {
     case 'announcements':
       return 'megaphone'

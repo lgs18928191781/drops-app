@@ -36,7 +36,7 @@ declare interface GetWalletBalanceRes extends PayApi {
     responseTime: string
     accountList: {
       accountStatus: string
-      availableBal: string // 余额
+      availableBal: string // 餘额
       frozenBal: string
       accountName: string
       accountType: string

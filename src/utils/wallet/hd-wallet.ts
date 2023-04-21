@@ -1395,7 +1395,7 @@ export class HdWallet {
         if (!utxos) {
           utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
         }
-        let balance = 0 // utxo 余额
+        let balance = 0 // utxo 餘额
         let useAmount = 50 * (devides.length - 1) // 需要花费 ： 初始转账费用50 * （n-1）
         for (const item of devides) {
           useAmount += item.amount
@@ -1404,7 +1404,7 @@ export class HdWallet {
           balance += item.value
         }
         if (balance < useAmount) {
-          throw new Error('拆分失败，余额不足')
+          throw new Error('拆分失败，餘额不足')
         }
         // 开始拆分
         const tx = await this.sendMoney({
@@ -1505,11 +1505,11 @@ export class HdWallet {
       .then(res => res.balance + res.pendingBalance)
 
     if (balance < usefulThreshold * neededUtxosCount) {
-      throw new Error('Space余额不足，不能进行NFT传输')
+      throw new Error('Space餘额不足，不能进行NFT传输')
     }
 
     // 开始拆分
-    const satsPerUtxo = Math.floor((balance / neededUtxosCount) * 0.9) // 留点剩余金额，不取那么极限
+    const satsPerUtxo = Math.floor((balance / neededUtxosCount) * 0.9) // 留点剩餘金额，不取那么极限
 
     const receivers = []
     for (let i = 0; i < neededUtxosCount; i++) {

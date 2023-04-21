@@ -11,7 +11,7 @@
 
       <div class="flex shrink-0 items-center">
         <div class=" hidden lg:block" v-if="talkStore.isActiveChannelReserved">
-          <!-- 图标：仅保留频道拥有 -->
+          <!-- 图标：仅保留頻道拥有 -->
           <Image
             v-if="talkStore.activeCommunity?.icon"
             :src="talkStore.activeCommunity.icon"
@@ -19,7 +19,7 @@
           />
         </div>
 
-        <!-- 功能频道头 -->
+        <!-- 功能頻道头 -->
         <div class="" v-if="talkStore.isActiveChannelGeneral && talkStore.activeChannel?.nameKey">
           {{
             talkStore.activeChannel.id === 'DAO' && talkStore.activeCommunity?.dao

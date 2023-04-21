@@ -114,7 +114,7 @@
       </div>
     </ElDrawer>
 
-    <!-- 余额支付确认框 -->
+    <!-- 餘额支付确认框 -->
     <ElDialog
       v-model="balancePay.visible"
       center
@@ -386,7 +386,7 @@ function drawePayCode() {
             }
           }
         }
-        // 余额支付
+        // 餘额支付
         else if (props.payPlatform === PayPlatform.BalancePay) {
           const getOrdetAmount = await GetOrderAmout({
             address: userStore.user!.address!,

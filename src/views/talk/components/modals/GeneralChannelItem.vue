@@ -97,7 +97,7 @@ const addBtnClass = computed(() => {
 })
 /** 加入状态相关 - end */
 
-/** 加入频道 */
+/** 加入頻道 */
 const layout = useLayoutStore()
 const isError = ref(false)
 const errorMsg = ref('')

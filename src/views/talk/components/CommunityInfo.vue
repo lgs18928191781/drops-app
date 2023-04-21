@@ -97,7 +97,7 @@
               <div
                 class="py-8 flex flex-col gap-y-3  border-t border-solid border-dark-200 dark:border-gray-600 pt-4.5 mt-4.5"
               >
-                <!-- 管理频道 -->
+                <!-- 管理頻道 -->
                 <template v-if="talk.isAdmin()">
                   <div class="uppercase text-dark-400 dark:text-gray-200 text-xs">
                     {{ $t('Talk.Community.settings') }}
@@ -124,7 +124,7 @@
                   </div>
                 </template>
 
-                <!-- 功能频道 -->
+                <!-- 功能頻道 -->
                 <div class="flex justify-between">
                   <div class="uppercase text-dark-400 dark:text-gray-200 text-xs">
                     {{ $t('Talk.Community.general_channels') }}
@@ -144,7 +144,7 @@
                   :has-buttons="false"
                 />
 
-                <!-- 公共频道 -->
+                <!-- 公共頻道 -->
                 <div
                   class="flex justify-between mt-4"
                   v-if="talk.activeCommunityPublicChannels.length || talk.isAdmin()"
@@ -168,7 +168,7 @@
                   />
                 </TransitionGroup>
 
-                <!-- 凭证频道 -->
+                <!-- 凭证頻道 -->
                 <div
                   class="flex justify-between mt-4"
                   v-if="talk.activeCommunityConsensualChannels.length || talk.isAdmin()"
@@ -235,11 +235,11 @@ const popSettingsModal = () => {
   layout.isShowCommunitySettingsModal = true
 }
 
-// 功能频道列表
+// 功能頻道列表
 const generalChannels = computed(() => {
   return talk.generalChannels
     .filter(channel => {
-      // 如果社区没有metaname，不显示topics频道
+      // 如果社区没有metaname，不显示topics頻道
       if (channel.id === 'topics' && !talk.activeCommunity?.metaName) {
         return false
       } else if (
