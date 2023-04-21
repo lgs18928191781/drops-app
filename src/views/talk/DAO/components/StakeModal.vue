@@ -117,6 +117,7 @@ const amountNumber = ref(0)
 const percentage = ref(0)
 const isSkeleton = ref(true)
 const loading = ref(false)
+const txFee = new Decimal(40000).div(Math.pow(10, 8)).toNumber()
 
 const currentSymbol = computed(() => {
   return symbols.find(item => item.symbol === talk.activeCommunity?.dao?.governanceSymbol)
@@ -161,10 +162,15 @@ function getBlance() {
 
 function onPercentChange() {
   if (balance.value) {
-    amountNumber.value = new Decimal(balance.value)
+    let result = new Decimal(balance.value)
       .mul(percentage.value)
       .div(100)
       .toNumber()
+
+    if (result + txFee > balance.value) {
+      result -= txFee
+    }
+    amountNumber.value = result
   } else {
     amountNumber.value = 0
   }
@@ -173,6 +179,9 @@ function onPercentChange() {
 function onAmountChange() {
   if (amountNumber.value > balance.value) {
     amountNumber.value = balance.value
+  }
+  if (amountNumber.value + txFee > balance.value) {
+    amountNumber.value = amountNumber.value - txFee
   }
   if (balance.value) {
     percentage.value = new Decimal(amountNumber.value)
