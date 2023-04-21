@@ -102,7 +102,7 @@ const tryVerifyPassword = () => {
 
   const md5Password = MD5Hash(passwordForm.password).substring(0, 16)
   if (verifyPassword(channelKey, md5Password, creatorMetaId)) {
-    // 将本频道密码存入本地
+    // 将本頻道密码存入本地
     const _passwordLookup = localStorage.getItem(`channelPasswords-${talk.selfMetaId}`)
     const passwordLookup = _passwordLookup ? JSON.parse(_passwordLookup) : {}
     passwordLookup[talk.activeChannelId] = md5Password

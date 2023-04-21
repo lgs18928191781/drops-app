@@ -373,7 +373,7 @@ export class SDK {
               totalAmount = useMe
             }
 
-            //  获取余额
+            //  获取餘额
             const balance = await this.getBalance(option.payType!)
             // 等待 确认支付
             const result = await this.awitSdkPayconfirm(
@@ -590,7 +590,7 @@ export class SDK {
         totalAmount = useMe
       }
 
-      // 获取余额
+      // 获取餘额
       const balance = await this.getBalance(option.payType!)
 
       // 等待 确认支付
@@ -1513,7 +1513,7 @@ export class SDK {
         const userStore = useUserStore()
         if (type === SdkPayType.SPACE) {
           // 使用bsv 上链时，不需要检查权限
-          // 获取余额
+          // 获取餘额
           const res = await this.wallet?.provider.getXpubBalance(
             this.wallet.wallet.xpubkey.toString()
           )

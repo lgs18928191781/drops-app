@@ -49,7 +49,7 @@ export const GetLegalBuyNftInfo = (params: {
   return Legal.post('/api/v1/nos/legal/buy', params)
 }
 
-// 获取我的法币余额(欧阳)
+// 获取我的法币餘额(欧阳)
 export const GetMyLegalAmount = (params: {
   currency: string
   metaid: string

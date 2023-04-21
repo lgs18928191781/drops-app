@@ -493,7 +493,7 @@ const tryCreateChannel = async () => {
     userStore.user!.metaId
   )
 
-  // 添加占位频道
+  // 添加占位頻道
   if (res.status === 'success') {
     let roomJoinType = ''
     if (form.type === GroupChannelType.PublicText) {
@@ -521,7 +521,7 @@ const tryCreateChannel = async () => {
       chatSettingType: form.adminOnly ? 1 : 0,
       txId: form.txId,
     }
-    // 将占位频道添加到频道列表最前面
+    // 将占位頻道添加到頻道列表最前面
     if (form.publicKey && form.txId) {
       const index = talk.activeCommunityChannels.findIndex(
         item => item.roomPublicKey === form.publicKey
@@ -607,7 +607,7 @@ const fetchFtSeries = async () => {
 const fetchingNative = ref(false)
 const nativeAmount = ref(0)
 const updateNativeAmount = async (event: any) => {
-  // 输入的额度不能超过余额
+  // 输入的额度不能超过餘额
   const rawAmount = Number(event.target.value)
   let amountInMinUnit = rawAmount * 10 ** selectedChainForNative.value.precision
 

@@ -70,7 +70,7 @@
   "firstBuzzText": "Hello！Web3社交元宇宙，我來了！！！",
   "sendFirstBuzz3": "*以上數據永久保存",
   "Send": "發送",
-  "Insufficient balance": "余額不足",
+  "Insufficient balance": "餘額不足",
   "sendBuzzSuccessTitle": "已成功在鏈上打招呼",
   "Time": "時間",
   "To Showbuzz": "進入Showbuzz",
@@ -101,7 +101,7 @@
       "repost_with_comment": "轉發並評論了您的buzz",
       "comment": "評論了您的buzz",
       "like": "給您的buzz點了個贊！",
-      "follow": "已關註，我們聊天吧。",
+      "follow": "已關注，我們聊天吧。",
       "token_transfer": "代幣轉賬",
       "nft_transfer": "NFT 轉賬",
       "nft_buy": "NFT 購買",
@@ -242,8 +242,8 @@
       "you_received_a_new_message": "您收到了一條新消息",
       "no_contacts_yet": "還沒有添加任何聯系人",
       "back_to_buzz": "返回 Buzz",
-      "follow": "關註",
-      "followed": "已關註"
+      "follow": "關注",
+      "followed": "已關注"
     },
     "Community": {
       "optional": "（可選）",
@@ -317,7 +317,7 @@
       "sell_nft_tip": "出售 NFT",
       "required_nft": "所需 NFT",
       "choose_nft_red_packet_tip": "只有持有特定系列 NFT 的成員才能領取此紅包",
-      "total_explain": "紅包總金額應當滿足超過每份1000聰，且總金額不超過1000萬聰，也不超過您的錢包余額。",
+      "total_explain": "紅包總金額應當滿足超過每份1000聰，且總金額不超過1000萬聰，也不超過您的錢包餘額。",
       "amount_each": "每份金額",
       "amount_each_explain": "每份紅包的金額應當超過1000聰。",
       "choose_nft": "選擇 NFT……",
@@ -363,7 +363,7 @@
     "registerSetPassword": "設置賬戶密碼",
     "account": "賬號",
     "setBaseInfo": {
-      "title": "🎉 歡迎來到SHOW！稍微完善下您的信息可以讓更多的人關註到您。",
+      "title": "🎉 歡迎來到SHOW！稍微完善下您的信息可以讓更多的人關注到您。",
       "setNFTAvatar": "設置NFT頭像",
       "setUserName": "設置昵稱",
       "setUserNamePlac": "請輸入你的昵稱",
@@ -371,8 +371,8 @@
       "Choose NFT Profile Picture": "選擇NFT頭像"
     },
     "recomment": {
-      "title": "👋 這裏有一些<a>「Doodles」</a>相關的社區，您可以關註並跟大家打聲招呼！",
-      "followAll": "關註全部"
+      "title": "👋 這裏有一些<a>「Doodles」</a>相關的社區，您可以關注並跟大家打聲招呼！",
+      "followAll": "關注全部"
     },
     "BackupMnemonic": {
       "title": "最後一步",
@@ -446,13 +446,13 @@
       "Create Community": "創建話題"
     },
     "follow": {
-      "success": "關註成功"
+      "success": "關注成功"
     },
     "Referral Community": "推薦社區",
     "Web3 Gathering Place": "Web3聚會場所",
     "RecommendContent": {
       "Change batch": "換一批",
-      "Recommend To Follow": "推薦關註",
+      "Recommend To Follow": "推薦關注",
       "View More": "查看更多",
       "Introduction to Guiding": "使用教程",
       "Learn the show function": "學習 Show 功能",
@@ -470,7 +470,7 @@
     "Schedule Buzzs": "定时发布Buzzs",
     "My Schedule Buzzs": "我的定時發佈Buzzs"
   },
-  "Follow": "關註",
+  "Follow": "關注",
   "walletError": "簽名失敗,無法登錄錢包",
   "Pagination": {
     "loading": "正在加載中",
@@ -535,14 +535,14 @@
   "Join Success": "加入成功",
   "Joined": "已加入",
   "None More": "沒有更多了",
-  "Followed": "已關註",
+  "Followed": "已關注",
   "Number": "數量",
   "Wallet": {
-    "Balance": "余額",
-    "Total balance": "總余額",
+    "Balance": "餘額",
+    "Total balance": "總餘額",
     "Action Points": "能量點",
     "Add Funds": "充值能量點",
-    "Balance Details": "余額詳情",
+    "Balance Details": "餘額詳情",
     "Blockchain": "區塊鏈",
     "Refresh funds": "刷新",
     "Payment": "支付方式",
@@ -609,12 +609,12 @@
   "Reply": "回復",
   "PayLike": "點贊",
   "Message": "消息",
-  "Following": "正在關註",
-  "Followers": "關註者",
+  "Following": "正在關注",
+  "Followers": "關注者",
   "Already on NFT": "上架的NFT",
   "Replay": "回復",
-  "Cancel Follow": "取消關註",
-  "cancelFollowTips": "你確定要取消關註用戶",
+  "Cancel Follow": "取消關注",
+  "cancelFollowTips": "你確定要取消關注用戶",
   "Warning": "溫馨提示",
   "Forward": "轉發",
   "Comment": "評論",
@@ -782,7 +782,7 @@
       "yAxisTitle": "價格（Space）"
     },
     "Select Payment Method": "選擇支付方式",
-    "BuyNFTNoteEnough": "余額不足，請檢查您的<a>錢包</a>",
+    "BuyNFTNoteEnough": "餘額不足，請檢查您的<a>錢包</a>",
     "Chosse PayType": "選擇其他付款方式",
     "NFT Order Locked": "訂單鎖定中",
     "NFT Has been purchased": "NFT已被購買",
@@ -873,7 +873,7 @@
     "PayTips6": "我已支付成功，繼續瀏覽其他NFT",
     "PayTips7": "（可約1分鐘後前往我的NFT查看）",
     "PayTips8": " 二維碼有效期為1分鐘，請盡快掃碼支付(如二維碼超過有效期後需等待3分鐘方可重新發起訂單)",
-    "Balance Pay": "余額支付",
+    "Balance Pay": "餘額支付",
     "Enter Code ": "請填寫短信驗證碼",
     "Pay Fail": "支付失敗",
     "Pay Success": "支付成功",
@@ -1001,12 +1001,12 @@
   "registerNameIllgel": "提交註冊的MetaName字符存在不合法",
   "inputMetaNameIllgel": "輸入的MetaName不符合規範",
   "getExpiredTimeFail": "獲取到期時間失敗",
-  "spaceEnghout": "賬戶Space余額不足，請充值後再進行綁定操作！",
+  "spaceEnghout": "賬戶Space餘額不足，請充值後再進行綁定操作！",
   "MetaidIsNull": "綁定賬號的Metaid為空，請聯系客服人員",
   "FixAccountTips1": "抱歉，此賬號有問題，請到",
   "FixAccountTips2": "上修復",
   "FixAccountTips3": "去修復",
-  "BSV Insufficient balance": "BSV 余額不足",
+  "BSV Insufficient balance": "BSV 餘額不足",
   "metanameNotAllowCh": "暫不支持註冊中文",
   "metanameNotAllowSpace": "註冊名稱不可以有空格",
   "NotSupportCurrentChainNFTTransfer": "暫不支持所在鏈NFT轉贈",

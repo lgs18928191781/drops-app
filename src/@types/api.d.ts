@@ -1037,7 +1037,7 @@ declare interface LegalGetUserOnSaleRes extends apiResponse {
 
 declare interface BlindBoxMsg {
   total: number // 轮次总量
-  remain: number // 剩余数
+  remain: number // 剩餘数
   round: number // 轮次
   bsvPrice: number // bsv价格
   rmbPrice: number // 人民币价格

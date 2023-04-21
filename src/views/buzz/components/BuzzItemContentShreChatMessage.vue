@@ -19,7 +19,7 @@
             <Image :src="''" />
             <div class="cont flex1">
               <div class="community-name meta-name">社区名</div>
-              <div class="channel-name">频道名</div>
+              <div class="channel-name">頻道名</div>
             </div>
           </div>
           <Icon name="down" class="right" />

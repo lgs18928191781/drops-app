@@ -616,7 +616,7 @@ export function getWalletBalance() {
 
 export async function toCreateWallet(status: CloudWalletStatus, fullPath: string) {
   const userStore = useUserStore()
-  // 控制是否有权限使用余额支付
+  // 控制是否有权限使用餘额支付
   const result = await IsWtiteUser(userStore.user!.metaId!)
   if (!result) {
     return ElMessage.error('抱歉，您暂无权限使用此功能')
@@ -1388,7 +1388,7 @@ export async function confirmFollow(params: { address: string; metaId: string; v
   })
 }
 function getBase64(url: string, callback: Function) {
-  //通过构造函数来创建的 img 实例，在赋予 src 值后就会立刻下载图片，相比 createElement() 创建 <img> 省去了 append()，也就避免了文档冗余和污染
+  //通过构造函数来创建的 img 实例，在赋予 src 值后就会立刻下载图片，相比 createElement() 创建 <img> 省去了 append()，也就避免了文档冗餘和污染
   let Img = new Image()
   let dataURL = ''
   Img.src = url + '?v=' + Math.random() // 处理缓存,fix缓存bug,有缓存，浏览器会报错;

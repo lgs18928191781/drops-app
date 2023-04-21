@@ -259,7 +259,7 @@ const _putIntoRedPackets = (form: any, address: string): any[] => {
     amount: Math.max(Math.floor(remainsAmount), minSats),
     address,
     index: quantity - 1,
-  }) // 最后一个红包，使用剩余金额
+  }) // 最后一个红包，使用剩餘金额
 
   return redPackets
 }

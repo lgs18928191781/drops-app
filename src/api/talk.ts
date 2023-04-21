@@ -243,7 +243,7 @@ export const grabRedPacket = async (params: any): Promise<any> => {
   return TalkApi.get(`/room/${channelId}/gift/${redPacketId}?${query}`).then(res => {})
 }
 
-// 获取某个频道的引用公告列表
+// 获取某个頻道的引用公告列表
 export const GetCommunityAnnouncements = (params: {
   communityId: string
 }): Promise<{

@@ -88,7 +88,7 @@
           >
         </div>
 
-        <!-- 余额 -->
+        <!-- 餘额 -->
         <template v-if="tabActive === 0">
           <div class="balance">
             <!-- total balance -->
@@ -812,7 +812,7 @@ function getMEBalance() {
 
 function getSpaceBalance() {
   return new Promise<void>(async resolve => {
-    // 获取余额
+    // 获取餘额
     const res = await userStore
       .showWallet!.wallet!.provider.getXpubBalance(
         userStore.showWallet!.wallet!.wallet.xpubkey.toString()
@@ -834,7 +834,7 @@ function getSpaceBalance() {
 
 function getETHBalance() {
   return new Promise<void>(async resolve => {
-    // 获取余额
+    // 获取餘额
     const item = wallets[1].list.find(
       item => item.name === import.meta.env.VITE_ETH_CHAIN.toUpperCase()
     )
@@ -851,7 +851,7 @@ function getETHBalance() {
 
 function getPolygonBalance() {
   return new Promise<void>(async resolve => {
-    // 获取余额
+    // 获取餘额
     const item = wallets[1].list.find(
       item => item.name === import.meta.env.VITE_POLYGON_CHAIN.toUpperCase()
     )

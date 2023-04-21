@@ -485,7 +485,7 @@ const trySendText = async (e: any) => {
   chatInput.value = chatInput.value.trim()
   if (!validateTextMessage(chatInput.value)) return
 
-  // 私聊会话和频道群聊的加密方式不同
+  // 私聊会话和頻道群聊的加密方式不同
   let content = ''
   if (talk.activeChannelType === 'group') {
     content = encrypt(chatInput.value, talk.activeChannel.id.substring(0, 16))

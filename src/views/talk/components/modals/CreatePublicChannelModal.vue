@@ -102,7 +102,7 @@ const tryCreateChannel = async () => {
   const subscribeId = form.uuid || realRandomString(32)
   const res = await createChannel(form, talk.activeCommunityId, userStore.showWallet, subscribeId)
 
-  // 添加占位频道
+  // 添加占位頻道
   if (res.status === 'success') {
     const newChannel = {
       id: 'placeholder_' + realRandomString(8),
@@ -114,7 +114,7 @@ const tryCreateChannel = async () => {
       chatSettingType: form.adminOnly ? 1 : 0,
       txId: form.txId,
     }
-    // 将占位频道添加到频道列表最前面
+    // 将占位頻道添加到頻道列表最前面
     if (form.publicKey && form.txId) {
       const index = talk.activeCommunityChannels.findIndex(item => item.txId === form.txId)
       if (index !== -1) {

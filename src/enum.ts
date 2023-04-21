@@ -131,7 +131,7 @@ export enum withdrawStatus {
   thirdWithdrawFail = '提现失败',
   thirdWithdrawSucc = '提现成功',
   adminClose = '提现关闭',
-  rebackBalance = '回退余额',
+  rebackBalance = '回退餘额',
 }
 
 export enum withdrawStatusId {
@@ -211,8 +211,8 @@ export enum CloudWalletOrderStatus {
 }
 
 export enum WalletRecordType {
-  Pay = '00', // 余额支付
-  Transfer = '01', // 若喜余额转帐
+  Pay = '00', // 餘额支付
+  Transfer = '01', // 若喜餘额转帐
   Withdraw = '02', // 提现
   Recharge = '03', // 充值
   Refund = '04', // 退款

@@ -47,18 +47,18 @@ export const useTalkStore = defineStore('talk', {
 
       error: {} as TalkError,
 
-      channelsReadPointers: null as any, // 频道已读指针
+      channelsReadPointers: null as any, // 頻道已读指针
       saveReadPointerTimer: null as NodeJS.Timeout | null,
 
-      communityChannelIds: null as any, // 社区频道列表
+      communityChannelIds: null as any, // 社区頻道列表
       receivedRedPacketIds: null as any, // 已领取红包列表
 
-      hasActiveChannelConsent: false, // 是否持有当前频道的共识
+      hasActiveChannelConsent: false, // 是否持有当前頻道的共识
 
       communityStatus: 'loading', // loading, inviting, invited, ready
 
       inviteLink: '', // 邀请链接
-      invitingChannel: null as any, // 邀请的频道
+      invitingChannel: null as any, // 邀请的頻道
       invitedCommunity: null as any, // 受邀请的社区
       shareToBuzzTxId: '', // 分享到Buzz的TxId
 
@@ -129,7 +129,7 @@ export const useTalkStore = defineStore('talk', {
     activeChannel(state): any {
       if (!this.activeCommunity) return null
 
-      // 功能频道
+      // 功能頻道
       if (this.isActiveChannelGeneral) {
         return this.generalChannels.find(channel => channel.id === state.activeChannelId)
       }
@@ -163,7 +163,7 @@ export const useTalkStore = defineStore('talk', {
     canAccessActiveChannel(): boolean {
       if (!this.activeChannel) return true
 
-      // 判定：是公开频道，或者持有共识，或者是管理员
+      // 判定：是公开頻道，或者持有共识，或者是管理员
       return this.isActiveChannelPublic || this.hasActiveChannelConsent || this.isAdmin()
     },
 
@@ -205,10 +205,10 @@ export const useTalkStore = defineStore('talk', {
       return (channelId: string) => {
         if (channelId === this.activeChannelId) return false
 
-        // 如果频道已读指针不存在，则说明没有未读消息
+        // 如果頻道已读指针不存在，则说明没有未读消息
         if (!this.channelsReadPointers || !this.channelsReadPointers[channelId]) return false
 
-        // 如果频道已读指针存在，则判断lastRead和latest
+        // 如果頻道已读指针存在，则判断lastRead和latest
         const pointer = this.channelsReadPointers[channelId]
         return pointer.lastRead < pointer.latest
       }
@@ -216,7 +216,7 @@ export const useTalkStore = defineStore('talk', {
 
     hasUnreadMessagesOfCommunity(): (communityId: string) => boolean {
       return (communityId: string) => {
-        // 从本地存储中获取社区频道列表和已读指针
+        // 从本地存储中获取社区頻道列表和已读指针
         if (!this.communityChannelIds) return false
 
         const channels = this.communityChannelIds[communityId] || []
@@ -299,7 +299,7 @@ export const useTalkStore = defineStore('talk', {
       if (!isGuest) {
         // 写入存储
         this.initCommunityChannelIds()
-        // 只保存频道id
+        // 只保存頻道id
         const channelIds = channels.map((channel: any) => channel.id)
         this.communityChannelIds[communityId] = channelIds
         localStorage.setItem(
@@ -312,7 +312,7 @@ export const useTalkStore = defineStore('talk', {
     async refetchChannels() {
       const channels = await getChannels({ communityId: this.activeCommunityId })
       channels.forEach((channel: any) => {
-        // 如果是新频道，则添加到频道列表
+        // 如果是新頻道，则添加到頻道列表
         if (!this.activeCommunityChannels.find((c: any) => c.id === channel.id)) {
           this.activeCommunityChannels.push(channel)
         }
@@ -406,7 +406,7 @@ export const useTalkStore = defineStore('talk', {
     },
 
     async initChannel(routeCommunityId: string, routeChannelId: string) {
-      // 如果是私聊，而且路由中的频道 ID 不存在，则新建会话
+      // 如果是私聊，而且路由中的頻道 ID 不存在，则新建会话
       if (
         routeCommunityId === '@me' &&
         routeChannelId &&
@@ -425,7 +425,7 @@ export const useTalkStore = defineStore('talk', {
         this.activeCommunityChannels.unshift(newSession)
       }
 
-      // 如果没有指定频道，则先从存储中尝试读取该社区的最后阅读频道
+      // 如果没有指定頻道，则先从存储中尝试读取该社区的最后阅读頻道
       const latestChannelsRecords =
         localStorage.getItem('latestChannels-' + this.selfMetaId) || JSON.stringify({})
       const latestChannels = JSON.parse(latestChannelsRecords)
@@ -444,7 +444,7 @@ export const useTalkStore = defineStore('talk', {
         // return 'redirect'
       }
 
-      // 将最后阅读频道存储到本地
+      // 将最后阅读頻道存储到本地
       latestChannels[routeCommunityId] = routeChannelId
       localStorage.setItem('latestChannels-' + this.selfMetaId, JSON.stringify(latestChannels))
 
@@ -480,13 +480,13 @@ export const useTalkStore = defineStore('talk', {
       const messageMetaId = message.groupId
       const isFromActiveChannel = messageMetaId === this.activeChannelId
 
-      // 如果不是当前频道的消息，则更新未读指针
+      // 如果不是当前頻道的消息，则更新未读指针
       if (!isFromActiveChannel) {
         this._updateReadPointers(message.timestamp, messageMetaId)
         return
       }
 
-      // 当前频道，插入新消息
+      // 当前頻道，插入新消息
       // 先去重
       const isDuplicate =
         this.activeChannel.newMessages?.some((item: Message) => item.txId === message.txId) ||
@@ -494,7 +494,7 @@ export const useTalkStore = defineStore('talk', {
 
       if (isDuplicate) return
 
-      // 更新当前频道的已读指针
+      // 更新当前頻道的已读指针
       this._updateCurrentChannelReadPointers(message.timestamp)
 
       // 优先查找替代mock数据
@@ -548,7 +548,7 @@ export const useTalkStore = defineStore('talk', {
       const messageMetaId = message.from === this.selfMetaId ? message.to : message.from
       const isFromActiveChannel = messageMetaId === this.activeChannelId
 
-      // 如果不是当前频道的消息，则更新未读指针
+      // 如果不是当前頻道的消息，则更新未读指针
       if (!isFromActiveChannel) {
         this._updateReadPointers(message.timestamp, messageMetaId)
         return
@@ -561,7 +561,7 @@ export const useTalkStore = defineStore('talk', {
 
       if (isDuplicate) return
 
-      // 更新当前频道的已读指针
+      // 更新当前頻道的已读指针
       this._updateCurrentChannelReadPointers(message.timestamp)
 
       // 优先查找替代mock数据
@@ -600,7 +600,7 @@ export const useTalkStore = defineStore('talk', {
       const selfMetaId = this.selfMetaId
       if (this.communityChannelIds || !selfMetaId) return
 
-      // 从本地存储中读取社区频道id
+      // 从本地存储中读取社区頻道id
       const communityChannels =
         localStorage.getItem('communityChannels-' + selfMetaId) || JSON.stringify({})
       const parsedCommunityChannels = JSON.parse(communityChannels)
