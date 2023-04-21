@@ -463,7 +463,12 @@
     "New User Onboarding How to Use Show3": "新手攻略：如何玩轉Show3",
     "Schedule": "定時發佈",
     "Schedule Clear": "清除",
-    "The scheduled release time must be greater than the current time": "定時發佈時間必須大於當前時間"
+    "The scheduled release time must be greater than the current time": "定時發佈時間必須大於當前時間",
+    "Publish Schedule Success": "發佈定時任務成功",
+    "Schedule Date": "发布日期",
+    "Schedule Time": "发布时间",
+    "Schedule Buzzs": "定时发布Buzzs",
+    "My Schedule Buzzs": "我的定時發佈Buzzs"
   },
   "Follow": "關註",
   "walletError": "簽名失敗,無法登錄錢包",

@@ -1384,6 +1384,13 @@ export class SDK {
   ) {
     return new Promise<void>(async (resolve, reject) => {
       try {
+        //  廣播  payToAddress
+        if (
+          !option?.notBroadcastKeys?.includes('payToAddress') &&
+          transactions.payToAddress?.transaction
+        ) {
+          await this.wallet?.provider.broadcast(transactions.payToAddress.transaction.toString())
+        }
         // 广播 SendMoney
         if (
           !option?.notBroadcastKeys?.includes('sendMoney') &&

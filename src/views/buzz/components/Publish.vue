@@ -34,7 +34,7 @@
 
       <div class="schedule flex flex-align-center mt-3" v-if="broadcastAt">
         <Icon name="calendar_days" class="w-6 h-6 mr-2" />{{ $t('Will send') }}
-        {{ $filters.dateTimeFormat(broadcastAt, $i18n.locale) }}
+        {{ $filters.dateTimeFormat(broadcastAt, $i18n.locale, 'YYYY-MM-DD HH:mm') }}
       </div>
 
       <div class="footer flex flex-align-center">
@@ -128,7 +128,7 @@
 
 <script setup lang="ts">
 import { AttachmentItem } from '@/@types/hd-wallet'
-import { EnvMode, IsEncrypt, JobStatus, NodeName } from '@/enum'
+import { EnvMode, IsEncrypt, JobStatus, NodeName, SdkPayType } from '@/enum'
 import { useLayoutStore } from '@/stores/layout'
 import { useUserStore } from '@/stores/user'
 import { compressImage, FileToAttachmentItem, getAttachmentsMark } from '@/utils/util'
@@ -145,6 +145,7 @@ import PublishBaseTemplateVue from '@/components/PublishBaseTemplate/PublishBase
 import { useJobsStore } from '@/stores/jobs'
 import { metafile } from '@/utils/filters'
 import PublishSchedule from './PublishSchedule.vue'
+import { CreateBroadcastTask } from '@/api/dashbroad'
 
 interface Props {
   modelValue: boolean
@@ -349,12 +350,34 @@ async function submit() {
       ElMessage.error(error.message)
       loading.value = false
     })
-  debugger
   if (res) {
     if (broadcastAt.value) {
       await userStore.showWallet.broadcastNodeTransactions(res, {
         notBroadcastKeys: ['currentNode'],
       })
+      const response = await CreateBroadcastTask({
+        txId: res.currentNode!.txId,
+        metaId: userStore.user!.metaId,
+        hex: res.currentNode!.transaction!.toString(),
+        protocol: NodeName.SimpleMicroblog,
+        broadcastAt: broadcastAt.value,
+        utxo: {
+          ...res.currentNode!.utxo!,
+          metaId: userStore.user!.metaId,
+        },
+      }).catch(error => {
+        ElMessage.error(error.message)
+        loading.value = false
+      })
+      if (response) {
+        ElMessage.success(i18n.t('Buzz.Publish Schedule Success'))
+        content.value = ''
+        attachments.length = 0
+        broadcastAt.value = ''
+        loading.value = false
+        isShowSchedule.value = false
+        emit('update:modelValue', false)
+      }
     } else {
       const watchJobStatus = watch(
         () => jobsStore.waitingNotify.find(job => job.id === res.subscribeId)?.status,

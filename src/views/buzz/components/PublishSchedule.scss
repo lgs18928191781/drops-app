@@ -10,3 +10,13 @@
     width: 100%;
     display: block;
 }
+
+.my {
+    margin-top: 30px;
+    text-align: center;
+
+    a {
+        color: var(--color-hover);
+        cursor: pointer;
+    }
+}

@@ -4,17 +4,38 @@
     <template #body>
       <div class="tips flex flex-align-center">
         <Icon name="calendar_days" />{{ $t('Will send') }}
-        {{ $filters.dateTimeFormat(datetime, $i18n.locale) }}
+        {{ $filters.dateTimeFormat(form.date + ' ' + form.time, $i18n.locale, 'YYYY-MM-DD HH:mm') }}
       </div>
       <div class="flex mt-3">
-        <ElDatePicker
-          v-model="datetime"
-          type="datetime"
-          placeholder="Select date and time"
-          class="flex1"
-          :teleported="false"
-          :clearable="false"
-        />
+        <ElForm :label-position="'top'">
+          <ElFormItem :label="$t('Buzz.Schedule Date')">
+            <ElDatePicker
+              v-model="form.date"
+              type="date"
+              placeholder="Select Date"
+              class="flex1"
+              :teleported="false"
+              :clearable="false"
+            />
+          </ElFormItem>
+
+          <ElFormItem :label="$t('Buzz.Schedule Time')">
+            <ElTimeSelect
+              v-model="form.time"
+              start="00:00"
+              step="00:05"
+              end="23:59"
+              placeholder="Select time"
+              class="flex1"
+              :teleported="false"
+              :clearable="false"
+            />
+          </ElFormItem>
+        </ElForm>
+      </div>
+
+      <div class="my">
+        <a @click="isShowList = true">{{ $t('Buzz.My Schedule Buzzs') }}</a>
       </div>
 
       <div class="flex flex-align-center mt-7">
@@ -25,27 +46,40 @@
           {{ $t('Confirm') }}
         </div>
       </div>
+
+      <PublishScheduleList v-model="isShowList" />
     </template>
   </Modal>
 </template>
 
 <script setup lang="ts">
 import Modal from '@/components/Modal/Modal.vue'
+import { ElTimeSelect } from 'element-plus'
+import { reactive } from 'vue'
 import { watch } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import dayjs from 'dayjs'
+import PublishScheduleList from './PublishScheduleList.vue'
 
 interface Props {
   modelValue: boolean
 }
+const now = dayjs()
+  .add(1, 'minute')
+  .format('HH:mm')
 const props = withDefaults(defineProps<Props>(), {})
-
-const datetime = ref(new Date())
 const i18n = useI18n()
 const emit = defineEmits<{
   (e: 'confirm', time: any): void
   (e: 'update:modelValue', value: boolean): void
 }>()
+
+const form = reactive({
+  date: dayjs().format('YYYY-MM-DD'),
+  time: dayjs().format('HH:mm'),
+})
+const isShowList = ref(false)
 
 function clear() {
   emit('confirm', '')
@@ -53,12 +87,14 @@ function clear() {
 }
 
 function confirm() {
-  if (new Date(datetime.value).getTime() < new Date().getTime()) {
+  console.log(form)
+  const time = `${form.date} ${form.time}`
+  if (new Date(time).getTime() < new Date().getTime()) {
     return ElMessage.error(
       i18n.t('Buzz.The scheduled release time must be greater than the current time')
     )
   }
-  emit('confirm', datetime.value)
+  emit('confirm', time)
   emit('update:modelValue', false)
 }
 
@@ -66,7 +102,8 @@ watch(
   () => props.modelValue,
   value => {
     if (value) {
-      datetime.value = new Date()
+      form.date = dayjs().format('YYYY-MM-DD')
+      form.time = dayjs().format('HH:mm')
     }
   }
 )

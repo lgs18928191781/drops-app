@@ -80,7 +80,7 @@ export interface UtxoItem {
   script: string
   amount: number
   satoshis: number
-  wif?: string // nft需要
+  wif: string // nft需要
 }
 
 export interface PayMeParams {
