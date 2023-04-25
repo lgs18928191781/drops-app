@@ -14,6 +14,7 @@
               type="date"
               placeholder="Select Date"
               class="flex1"
+              :value-format="'YYYY-MM-DD'"
               :teleported="false"
               :clearable="false"
             />
