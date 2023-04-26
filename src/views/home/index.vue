@@ -344,6 +344,7 @@ const downloadGroup = reactive([
     icon: googlePlay,
     topText: 'GET IT ON',
     footText: 'Google Play',
+    link: 'https://play.google.com/store/apps/details?id=app.showpay.showmoney',
   },
   {
     icon: APK,
