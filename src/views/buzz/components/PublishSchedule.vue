@@ -24,7 +24,7 @@
             <ElTimeSelect
               v-model="form.time"
               start="00:00"
-              step="00:05"
+              step="00:01"
               end="23:59"
               placeholder="Select time"
               class="flex1"

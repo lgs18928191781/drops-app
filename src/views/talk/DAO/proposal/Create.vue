@@ -58,6 +58,36 @@
             :end-placeholder="$t('DAO.End date')"
           />
         </ElFormItem>
+
+        <div class="result-option flex flex-align-center">
+          <ElFormItem
+            :label="$t('DAO.Result Pass Min User Number')"
+            prop="result.minUser"
+            class="flex1"
+          >
+            <ElInput v-model="form.result.minUser" type="number">
+              <template #append>People</template>
+            </ElInput>
+          </ElFormItem>
+          <ElFormItem
+            :label="$t('DAO.Result Pass Min Vote Amount')"
+            prop="result.minAmount"
+            class="flex1"
+          >
+            <ElInput v-model="form.result.minAmount" type="number">
+              <template #append>Space</template>
+            </ElInput>
+          </ElFormItem>
+          <ElFormItem
+            :label="$t('DAO.DAO.Result Pass Min Percent')"
+            prop="result.minPercent"
+            class="flex1"
+          >
+            <ElInput v-model="form.result.minPercent" type="number">
+              <template #append>%</template>
+            </ElInput>
+          </ElFormItem>
+        </div>
         <ElFormItem :label="$t('DAO.Vote Content')" prop="content">
           <div class="el-input__wrapper" id="vditor" ref="MarkDownRef"></div>
         </ElFormItem>
@@ -113,6 +143,12 @@ const form = reactive({
   options: ['Yes', 'No'],
   time: ['', ''],
   content: '',
+  minVoteUser: 1,
+  result: {
+    minUser: 1,
+    minAmount: 1,
+    minPercent: 60,
+  },
 })
 const FormRef = ref<FormInstance>()
 const rules = reactive<FormRules>({
@@ -162,6 +198,15 @@ const rules = reactive<FormRules>({
       },
       trigger: 'blur',
     },
+  ],
+  ['result.minUser']: [
+    { required: true, message: i18n.t('DAO.Result Pass Min User Number'), trigger: 'blur' },
+  ],
+  ['result.minAmount']: [
+    { required: true, message: i18n.t('DAO.Result Pass Min Vote Amount'), trigger: 'blur' },
+  ],
+  ['result.minPercent']: [
+    { required: true, message: i18n.t('DAO.DAO.Result Pass Min Percent'), trigger: 'blur' },
   ],
 })
 
@@ -286,6 +331,15 @@ async function confirmPublish() {
             .div(1000)
             .toInteger()
             .toNumber(),
+          infos: {
+            resultOption: {
+              ...form.result,
+              minAmount: new Decimal(form.result.minAmount)
+                .mul(Math.pow(10, 8))
+                .toInteger()
+                .toNumber(),
+            },
+          },
         })
         if (response.code === 0) {
           loading.close()

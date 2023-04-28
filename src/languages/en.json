@@ -1215,7 +1215,15 @@
     "Stake Title1": "Stake",
     "Stake Title2": "to Vote",
     "createProposalRequireTokenNumber tips2": "to propose.",
-    "Prevew Attachment": "Prevew Attachment"
+    "Prevew Attachment": "Prevew Attachment",
+    "Min vote user": "Min vote user",
+    "Result Pass Min User Number": "Minimum number of votes required for the result to pass",
+    "Result Pass Min Vote Amount": "The minimum amount of votes required to pass the result(Space)",
+    "DAO": {
+      "Result Pass Min Percent": "Minimum percentage required to pass result"
+    },
+    "People": "People",
+    "Invalid": "Invalid"
   },
   "Will send": "Will send on"
 }
