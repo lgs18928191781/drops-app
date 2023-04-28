@@ -296,6 +296,8 @@
 
 
 
+
+
                       }}%
                     </div>
                   </div>
@@ -736,7 +738,10 @@ watchFun = watch(
                   current: 'ant-design',
                 },
               },
-              value: proposal.val!.desc,
+              value: proposal.val!.desc.replace(
+                '](https://www.msn.cn/zh-cn/news/other/8%E6%A0%B9%E7%82%B8%E4%B8%B2%E8%A6%81115%E5%85%83-%E6%B8%B8%E5%AE%A2%E4%B8%8E%E5%95%86%E5%AE%B6%E4%BA%89%E6%89%A7%E8%A2%AB%E9%AA%82%E7%A9%B7-%E5%9B%9E%E5%BA%94%E6%9D%A5%E4%BA%86/ar-AA1ar2zt?ocid=msedgntp&cvid=08a19c58ad61421e812b51a6b11701b3&ei=6&fullscreen=true#image=3)',
+                ''
+              ),
               after: () => {
                 vditor.value!.disabled()
                 markdownRendering.value = false
