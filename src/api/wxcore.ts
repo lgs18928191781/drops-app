@@ -303,6 +303,13 @@ export const CreateVote = async (params: {
   minVoteAmount: string
   beginBlockTime: number
   endBlockTime: number
+  infos: {
+    resultOption: {
+      minUser: number
+      minAmount: number
+      minPercent: number
+    }
+  }
 }): Promise<{ code: number; data: { txid: string; voteID: string }; msg: string }> => {
   // return DAO.post('/createvote', params)
   const compressData = await gzip(JSON.stringify(params))

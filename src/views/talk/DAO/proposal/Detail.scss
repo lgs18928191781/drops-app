@@ -221,6 +221,7 @@
 .right {
     width: 300px;
     margin-left: 15px;
+    overflow-y: auto;
 }
 
 .section {
@@ -245,7 +246,12 @@
 
 .information-list {
     .information-item {
-        padding: 5px 0;
+        padding: 10px 0;
+
+        .lable {
+            line-height: 16px;
+            margin-right: 30px;
+        }
     }
 }
 
@@ -348,6 +354,11 @@
     margin-left: -150px;
     opacity: 0.6;
     z-index: 9;
+
+    &.faded {
+        border-color: var(--themeFadedTextColor);
+        color: var(--themeFadedTextColor);
+    }
 }
 
 .vditor {

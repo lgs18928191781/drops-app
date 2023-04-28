@@ -13,6 +13,13 @@ export interface ProposalItem {
   createTime: number
   txid: string
   creator: any
+  infos: {
+    resultOption: {
+      minAmount: number
+      minPercent: number
+      minUser: number
+    }
+  }
 }
 
 export interface DAOStakeReqstakeArgs {

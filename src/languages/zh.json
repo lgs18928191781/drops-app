@@ -1213,7 +1213,15 @@
     "Stake Title2": "去投票",
     "createProposalRequireTokenNumber tips2": "才可以创建提案",
     "Prevew Attachment": "查看附件",
-    "Stake Title1": "質押"
+    "Stake Title1": "質押",
+    "Min vote user": "最少投票人数",
+    "Result Pass Min User Number": "结果通过需最少投票人数",
+    "Result Pass Min Vote Amount": "结果通过需最少投票金额(Space)",
+    "DAO": {
+      "Result Pass Min Percent": "结果通过需占最低百分比"
+    },
+    "People": "人",
+    "Invalid": "无效"
   },
   "Will send": "將發佈于"
 }

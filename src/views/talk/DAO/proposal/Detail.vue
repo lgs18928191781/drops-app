@@ -21,6 +21,7 @@
           <!-- 结果 -->
           <div
             class="result flex flex-align-center flex-pack-center"
+            :class="resultClass"
             v-if="status === DAOProposalStatus.Ended"
           >
             {{ resultText }}
@@ -212,6 +213,34 @@
                   </div>
                 </div>
 
+                <!-- Result Pass Min User Number -->
+                <div class="information-item ">
+                  <div class="information-item-warp flex flex-align-center">
+                    <div class="flex1 lable">{{ $t('DAO.Result Pass Min User Number') }}</div>
+                    <div class="value">
+                      {{ proposal!.val!.infos.resultOption.minUser }} {{ $t('DAO.People') }}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Result Pass Min User Number -->
+                <div class="information-item ">
+                  <div class="information-item-warp flex flex-align-center">
+                    <div class="flex1 lable">{{ $t('DAO.Result Pass Min Vote Amount') }}</div>
+                    <div class="value">
+                      {{ $filters.space(proposal!.val!.infos.resultOption.minAmount) }} Space
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Result Pass Min User Number -->
+                <div class="information-item ">
+                  <div class="information-item-warp flex flex-align-center">
+                    <div class="flex1 lable">{{ $t('DAO.DAO.Result Pass Min Percent') }}</div>
+                    <div class="value">{{ proposal!.val!.infos.resultOption.minPercent }} %</div>
+                  </div>
+                </div>
+
                 <!-- My Stakeding -->
                 <div class="information-item" v-if="votedInfo">
                   <div class="information-item-warp flex flex-align-center">
@@ -239,9 +268,9 @@
           </div>
 
           <!-- Result -->
-          <div class="section flex1 flex flex-v">
+          <div class="section">
             <div class="title">{{ $t('DAO.Result') }}</div>
-            <div class="cont flex1">
+            <div class="cont">
               <div class="result-list h-full overflow-y-auto">
                 <div
                   class="result-item "
@@ -257,6 +286,13 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
+
+
+
+
+
+
+
 
 
 
@@ -388,7 +424,42 @@ const resultText = computed(() => {
         maxIndex = i
       }
     }
-    text = proposal.val!.options[maxIndex]
+    if (
+      max < proposal.val.infos.resultOption.minAmount ||
+      new Decimal(max)
+        .div(totalVoteValue.value)
+        .mul(100)
+        .toNumber() < proposal.val.infos.resultOption.minPercent
+    ) {
+      text = i18n.t('DAO.Invalid')
+    } else {
+      text = proposal.val!.options[maxIndex]
+    }
+  }
+  return text
+})
+
+const resultClass = computed(() => {
+  let text = ''
+  if (proposal.val!) {
+    let max = new Decimal(proposal.val!.voteSumData[0]).toNumber()
+    let maxIndex = 0
+    for (let i = 1; i < proposal.val!.voteSumData.length; i++) {
+      const value = new Decimal(proposal.val!.voteSumData[i]).toNumber()
+      if (value > max) {
+        max = value
+        maxIndex = i
+      }
+    }
+    if (
+      max < proposal.val.infos.resultOption.minAmount ||
+      new Decimal(max)
+        .div(totalVoteValue.value)
+        .mul(100)
+        .toNumber() < proposal.val.infos.resultOption.minPercent
+    ) {
+      text = 'faded'
+    }
   }
   return text
 })
@@ -455,6 +526,16 @@ function getDetail() {
       voteID: route.params.id as string,
     })
     if (res) {
+      // @ts-ignore
+      if (!res.infos) res.infos = {}
+      if (!res.infos?.resultOption) {
+        res.infos.resultOption = {
+          minAmount: 100000000,
+          minUser: 1,
+          minPercent: 60,
+        }
+      }
+
       proposal.val = res
       if (!createUser.val && typeof proposal.val!.creator === 'string') {
         getUserInfoByAddress(proposal.val!.creator).then(user => {
