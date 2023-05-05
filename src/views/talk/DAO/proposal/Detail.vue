@@ -188,7 +188,7 @@
                   <div class="information-item-warp flex flex-align-center">
                     <div class="flex1 lable">{{ $t('DAO.Start Time') }}</div>
                     <div class="value">
-                      {{ $filters.dateTimeFormat(proposal!.val!.beginBlockTime * 1000, 'local', 'YY-MM-DD HH:mm') }}
+                      {{ $filters.dateTimeFormat(proposal!.val!.beginBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm') }}
                     </div>
                   </div>
                 </div>
@@ -198,7 +198,7 @@
                   <div class="information-item-warp flex flex-align-center">
                     <div class="flex1 lable">{{ $t('DAO.End Time') }}</div>
                     <div class="value">
-                      {{ $filters.dateTimeFormat(proposal!.val!.endBlockTime * 1000, 'local', 'YY-MM-DD HH:mm') }}
+                      {{ $filters.dateTimeFormat(proposal!.val!.endBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm') }}
                     </div>
                   </div>
                 </div>
@@ -253,7 +253,8 @@
 
                 <div class="time-tips">
                   {{ $t('DAO.Not Extractable Time Tips') }} <br />
-                  {{ $t('DAO.New Block Time') }}: {{ $filters.dateTimeFormat(blockTimeStamp) }}
+                  {{ $t('DAO.New Block Time') }}:
+                  {{ $filters.dateTimeFormat(blockTimeStamp, 'UTC') }}
                 </div>
 
                 <!-- MetaDao -->
@@ -286,6 +287,13 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
+
+
+
+
+
+
+
 
 
 
