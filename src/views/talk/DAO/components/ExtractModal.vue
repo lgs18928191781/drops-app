@@ -36,7 +36,7 @@
               <span>({{ $t('DAO.Not Extractable Time Tips') }})</span>
             </div>
             <div class="tips">
-              {{ $t('DAO.New Block Time') }}: {{ $filters.dateTimeFormat(blockTimeStamp) }}
+              {{ $t('DAO.New Block Time') }}: {{ $filters.dateTimeFormat(blockTimeStamp, 'UTC') }}
             </div>
             <div class="cont">
               <div class="list">
