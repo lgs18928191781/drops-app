@@ -36,7 +36,8 @@
               <span>({{ $t('DAO.Not Extractable Time Tips') }})</span>
             </div>
             <div class="tips">
-              {{ $t('DAO.New Block Time') }}: {{ $filters.dateTimeFormat(blockTimeStamp, 'UTC') }}
+              {{ $t('DAO.New Block Time') }}:
+              {{ $filters.dateTimeFormat(blockTimeStamp, 'UTC') }}(UTC)
             </div>
             <div class="cont">
               <div class="list">
@@ -46,7 +47,9 @@
                   :key="item.expired"
                 >
                   <div class="amount flex1">{{ $filters.space(item.amount) }}</div>
-                  <div class="time">{{ $filters.dateTimeFormat(item.expired * 1000, 'UTC') }}</div>
+                  <div class="time">
+                    {{ $filters.dateTimeFormat(item.expired * 1000, 'UTC') }}(UTC)
+                  </div>
                 </div>
 
                 <IsNull v-if="tokens.disableds.length === 0" />

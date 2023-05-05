@@ -158,7 +158,7 @@
                   {{ $t(proposal.val!.options[item.voteOption]) }}
                 </div>
                 <div class="time">
-                  {{ $filters.dateTimeFormat(item.time * 1000, $i18n.locale, 'YY-MM-DD HH:mm:ss') }}
+                  {{ $filters.dateTimeFormat(item.time * 1000, 'UTC', 'YY-MM-DD HH:mm:ss') }}(UTC)
                 </div>
                 <Icon name="link" class="link" @click="tx(item.txid)"></Icon>
               </div>
@@ -188,7 +188,12 @@
                   <div class="information-item-warp flex flex-align-center">
                     <div class="flex1 lable">{{ $t('DAO.Start Time') }}</div>
                     <div class="value">
-                      {{ $filters.dateTimeFormat(proposal!.val!.beginBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm') }}
+                      {{ $filters.dateTimeFormat(proposal!.val!.beginBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm')
+
+
+
+
+                      }}(UTC)
                     </div>
                   </div>
                 </div>
@@ -198,7 +203,10 @@
                   <div class="information-item-warp flex flex-align-center">
                     <div class="flex1 lable">{{ $t('DAO.End Time') }}</div>
                     <div class="value">
-                      {{ $filters.dateTimeFormat(proposal!.val!.endBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm') }}
+                      {{ $filters.dateTimeFormat(proposal!.val!.endBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm')
+
+
+                      }}(UTC)
                     </div>
                   </div>
                 </div>
@@ -254,7 +262,7 @@
                 <div class="time-tips">
                   {{ $t('DAO.Not Extractable Time Tips') }} <br />
                   {{ $t('DAO.New Block Time') }}:
-                  {{ $filters.dateTimeFormat(blockTimeStamp, 'UTC') }}
+                  {{ $filters.dateTimeFormat(blockTimeStamp, 'UTC') }}(UTC)
                 </div>
 
                 <!-- MetaDao -->
@@ -287,6 +295,12 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
+
+
+
+
+
+
 
 
 
