@@ -627,7 +627,11 @@ export class HdWallet {
           let utxos: UtxoItem[] = []
           const hexTxs = []
           const infoAddress = this.getPathPrivateKey(this.keyPathMap.Info.keyPath)
-          utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
+          utxos = await this.provider.getUtxos(
+            this.wallet.xpubkey.toString(),
+            HdWalletChain.MVC,
+            false
+          )
           // 初始化 metaId
           if (!metaIdInfo.metaId) {
             // TODO: 尝试获始资金

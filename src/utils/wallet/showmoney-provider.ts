@@ -389,23 +389,27 @@ export default class ShowmoneyProvider {
 
   public async getUtxos(
     xpub: string,
-    chain: HdWalletChain = HdWalletChain.MVC
+    chain: HdWalletChain = HdWalletChain.MVC,
+    needUseReadyUtxo: boolean = true
   ): Promise<UtxoItem[]> {
     let res = await this.callMetasvApi(`/xpubLite/${xpub}/utxo`, {}, 'get', chain)
-    const getUseReadyUtxoRes = await Utxos({ pageSize: 50 })
-    if (getUseReadyUtxoRes[0].length) {
-      res = res.filter((item: any) => {
-        if (
-          getUseReadyUtxoRes[0].some(
-            _item => _item.txId === item.txid || _item.address === item.address
-          )
-        ) {
-          return false
-        } else {
-          return item
-        }
-      })
+    if (needUseReadyUtxo) {
+      const getUseReadyUtxoRes = await Utxos({ pageSize: 50 })
+      if (getUseReadyUtxoRes[0].length) {
+        res = res.filter((item: any) => {
+          if (
+            getUseReadyUtxoRes[0].some(
+              _item => _item.txId === item.txid || _item.address === item.address
+            )
+          ) {
+            return false
+          } else {
+            return item
+          }
+        })
+      }
     }
+
     const utxos: UtxoItem[] = []
     res.forEach((item: any) => {
       item.script = mvc.Script.fromAddress(item.address).toHex()
