@@ -1646,6 +1646,7 @@ export class HdWallet {
         let brfcNode = this.userBrfcNodeList.find(
           item => item.nodeName == nodeName && item.brfcId === brfcId
         )
+
         if (brfcNode) {
           resolve(brfcNode)
         } else {
