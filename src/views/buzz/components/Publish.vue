@@ -322,6 +322,7 @@ async function submit() {
   if (content.value === '' && attachments.length <= 0) {
     return ElMessage.error(i18n.t('Buzz.publish.empty'))
   }
+
   loading.value = true
   const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
   const contentType = 'text/plain'

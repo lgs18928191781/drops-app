@@ -409,6 +409,7 @@ export default class ShowmoneyProvider {
         })
       }
     }
+
     const utxos: UtxoItem[] = []
     res.forEach((item: any) => {
       item.script = mvc.Script.fromAddress(item.address).toHex()

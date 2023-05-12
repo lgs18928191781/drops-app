@@ -893,6 +893,7 @@ export class SDK {
           resolve(this.bfrcNodeList.find(item => item.nodeName === params.nodeName)!.data)
         } else {
           const currentNodeBrfc = await this.wallet?.createBrfcNode(params, option)
+
           this.bfrcNodeList.push({
             nodeName: params.nodeName,
             data: {
@@ -1126,6 +1127,7 @@ export class SDK {
                 [utxo],
                 transactions.currentNodeBrfc.address
               )
+
               // 更新txId
               transactions.currentNodeBrfc.txId = transactions.currentNodeBrfc.transaction.id
               transactions.currentNodeBrfc.utxo = utxo
@@ -1229,6 +1231,7 @@ export class SDK {
                   chain,
                 }
               )
+
               if (res) transactions.currentNode = res
 
               this.setTransferUtxoAndOutputAndSign(

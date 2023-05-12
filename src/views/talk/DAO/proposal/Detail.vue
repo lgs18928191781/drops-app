@@ -192,7 +192,6 @@
 
 
 
-
                       }}(UTC)
                     </div>
                   </div>
@@ -204,6 +203,7 @@
                     <div class="flex1 lable">{{ $t('DAO.End Time') }}</div>
                     <div class="value">
                       {{ $filters.dateTimeFormat(proposal!.val!.endBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm')
+
 
 
                       }}(UTC)
@@ -295,10 +295,6 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
-
-
-
-
 
 
 
