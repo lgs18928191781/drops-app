@@ -803,7 +803,7 @@
   "sale": "Sell",
   "offsale": "Off Sell",
   "group1": "Show: NFTize  \n Your Social Life",
-  "group1-desc": "The Ultimate Decentralized Social Platform Centered in NFT",
+  "group1-desc": "Based on All-Chain DID ",
   "group1-foot-title": "The First Web3 Social Platform for Everyone with no Barriers.",
   "page-two-title": "Join the Social & Mint Revolution",
   "learnMetaSo": "Run My Own MetaSo Node",
@@ -1225,5 +1225,6 @@
     "People": "People",
     "Invalid": "Invalid"
   },
-  "Will send": "Will send on"
+  "Will send": "Will send on",
+  "MoblePhone Not Support": "Mobile phone number registration is not currently supported"
 }

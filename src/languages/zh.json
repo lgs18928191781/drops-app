@@ -797,7 +797,7 @@
   "niceWarning": "溫馨提示",
   "offsaleConfirm": "你確認要就下架",
   "group1": "Show：NFT化你的社交生活",
-  "group1-desc": "首個完全去中心化的以NFT為核心的Web3 \n 社交平臺",
+  "group1-desc": "基于全链DID ",
   "group1-foot-title": "第一個面向所有人的無門檻Web3社交平臺",
   "page-two-title": "參與 Social & Mint 革命",
   "Home": {
@@ -1223,5 +1223,6 @@
     "People": "人",
     "Invalid": "无效"
   },
-  "Will send": "將發佈于"
+  "Will send": "將發佈于",
+  "MoblePhone Not Support": "暂不支持手机号注册"
 }

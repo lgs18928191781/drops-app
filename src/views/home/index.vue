@@ -69,7 +69,10 @@
             <img :src="Grounp1" alt="" />
             <div class="content">
               <span class="title">{{ i18n.t('group1') }}</span>
-              <span class="desc">{{ i18n.t('group1-desc') }}</span>
+              <span class="desc" @click="toMetaId">
+                {{ i18n.t('group1-desc') }}
+                <img :src="Metaid" alt="" />
+              </span>
             </div>
           </div>
           <div class="foot-warp">
@@ -209,6 +212,7 @@ import footIcon1 from '@/assets/show/show.png'
 import footIcon2 from '@/assets/show/foot-icon2.png'
 import footIcon3 from '@/assets/show/foot-icon3.png'
 import footIcon4 from '@/assets/show/foot-icon4.png'
+import Metaid from '@/assets/show/metaid.svg?url'
 import TestflightIcon from '@/assets/images/testflight.png'
 import { useRouter } from 'vue-router'
 import LogoVue from './Logo.vue'
@@ -363,6 +367,11 @@ function download(item: any) {
     comming()
   }
 }
+
+function toMetaId() {
+  window.open(`https://www.metaid.io/`,'_blank')
+}
+
 </script>
 
 <style lang="scss" scoped src="./index.scss">

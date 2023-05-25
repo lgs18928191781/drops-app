@@ -27,12 +27,13 @@
           class="flex flex-align-center"
           @click="changeUserType"
           v-if="registerType !== RegisterType.SetPassword"
-          ><Icon name="exchange" />{{
+          ><Icon name="exchange" />
+          {{
             form.userType === 'email'
               ? $t('Login.changePhoneNumber')
               : $t('Login.changeEmailAddress')
-          }}</a
-        >
+          }}
+        </a>
       </div>
 
       <div class="account" v-if="registerType === RegisterType.SetPassword">
@@ -504,8 +505,12 @@ function changeType() {
 }
 
 function changeUserType() {
-  if (props.loading) return
-  form.userType = form.userType === 'phone' ? 'email' : 'phone'
+  if (props.type === 'register') {
+    return ElMessage.warning(`${i18n.t('MoblePhone Not Support')}`)
+  } else {
+    if (props.loading) return
+    form.userType = form.userType === 'phone' ? 'email' : 'phone'
+  }
 }
 
 async function sendCode() {
