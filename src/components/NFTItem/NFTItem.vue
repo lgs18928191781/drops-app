@@ -7,7 +7,9 @@
       <div class="nft-item" @click="toNFT">
         <NFTCover :cover="[nft.nftIcon]" />
 
-        <div class="name" :class="{ simple: isSimple }">{{ nft.nftName }}</div>
+        <div class="name" :class="{ simple: isSimple }">
+          {{ $filters.handleWhiteSpace(nft.nftName) }}
+        </div>
 
         <div class="token-index">#{{ parseInt(nft.nftTokenIndex) + 1 }}</div>
         <div class="amount" :class="{ simple: isSimple }">
