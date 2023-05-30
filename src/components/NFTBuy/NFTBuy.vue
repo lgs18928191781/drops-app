@@ -14,7 +14,7 @@
           <div class="msg flex">
             <div class="cover-warp"><NFTCover :cover="[nft.nftIcon]" /></div>
             <div class="content flex1">
-              <div class="name">{{ nft.nftName }}</div>
+              <div class="name">{{ $filters.handleWhiteSpace(nft.nftName) }}</div>
               <div class="user-list">
                 <div class="user-item flex flex-align-center">
                   <UserAvatar

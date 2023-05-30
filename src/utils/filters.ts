@@ -5,6 +5,18 @@ import { useRootStore } from '@/stores/root'
 import { router } from '@/router'
 import utc from 'dayjs/plugin/utc'
 dayjs.extend(utc)
+
+export function handleWhiteSpace(str: string) {
+  if (!str) return
+  const matchReg = ' '
+  const whiteSpaceCount = str.split(matchReg).length - 1
+  let repalceContent: string = ''
+  for (let i = 0; i <= whiteSpaceCount; i++) {
+    repalceContent += '%20'
+  }
+  return str.replaceAll(/\s+/g, repalceContent)
+}
+
 export function dateTimeFormat(
   timestamp: Date | number | string,
   type: string = 'local',

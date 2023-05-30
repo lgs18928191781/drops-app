@@ -48,7 +48,7 @@
                 </div>
               </div>
               <div class="name">
-                {{ nft.val!.nftName }}
+                {{$filters.handleWhiteSpace(nft.val!.nftName) }}
               </div>
 
               <div class="owner flex flex-align-center">
@@ -118,7 +118,10 @@
                   <div class="description-list">
                     <div class="description-item flex">
                       <span class="label">{{ $t('NFT.Name') }}:</span>
-                      <span class="value flex1">{{ nft.val!.nftName }}</span>
+                      <span
+                        class="value flex1"
+                        >{{$filters.handleWhiteSpace(nft.val!.nftName)  }}</span
+                      >
                     </div>
                     <div class="description-item flex">
                       <span class="label">{{ $t('NFT.Category') }}:</span>
