@@ -505,12 +505,14 @@ function changeType() {
 }
 
 function changeUserType() {
-  if (props.type === 'register') {
-    return ElMessage.warning(`${i18n.t('MoblePhone Not Support')}`)
-  } else {
-    if (props.loading) return
-    form.userType = form.userType === 'phone' ? 'email' : 'phone'
-  }
+  if (props.loading) return
+  form.userType = form.userType === 'phone' ? 'email' : 'phone'
+  // if (props.type === 'register') {
+  //   return ElMessage.warning(`${i18n.t('MoblePhone Not Support')}`)
+  // } else {
+  //   if (props.loading) return
+  //   form.userType = form.userType === 'phone' ? 'email' : 'phone'
+  // }
 }
 
 async function sendCode() {
