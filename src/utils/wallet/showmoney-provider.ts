@@ -359,7 +359,10 @@ export default class ShowmoneyProvider {
       try {
         let unUsedUtxos: UtxoItem[] = []
         let leftAmount = amount
-        const utxos = await this.getUtxos(xpub, chain)
+        const utxos = await this.getUtxos(xpub, chain).catch(e => console.log(`${e.toString()}`))
+        if (!utxos.length) {
+          resolve([])
+        }
         for (let i = 0; i < utxos.length; i++) {
           if (leftAmount > 0) {
             // utxo 未使用
@@ -394,7 +397,9 @@ export default class ShowmoneyProvider {
   ): Promise<UtxoItem[]> {
     let res = await this.callMetasvApi(`/xpubLite/${xpub}/utxo`, {}, 'get', chain)
     if (needUseReadyUtxo) {
-      const getUseReadyUtxoRes = await Utxos({ pageSize: 50 })
+      const getUseReadyUtxoRes = await Utxos({ pageSize: 50 }).catch(e => {
+        throw new Error(`${e.toString()}`)
+      })
       if (getUseReadyUtxoRes[0].length) {
         res = res.filter((item: any) => {
           if (
