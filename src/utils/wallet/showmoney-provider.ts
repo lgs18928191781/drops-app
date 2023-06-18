@@ -359,9 +359,9 @@ export default class ShowmoneyProvider {
       try {
         let unUsedUtxos: UtxoItem[] = []
         let leftAmount = amount
-        const utxos = await this.getUtxos(xpub, chain).catch(e => console.log(`${e.toString()}`))
+        const utxos = await this.getUtxos(xpub, chain)
         if (!utxos.length) {
-          resolve([])
+          resolve(unUsedUtxos)
         }
         for (let i = 0; i < utxos.length; i++) {
           if (leftAmount > 0) {
@@ -393,7 +393,7 @@ export default class ShowmoneyProvider {
   public async getUtxos(
     xpub: string,
     chain: HdWalletChain = HdWalletChain.MVC,
-    needUseReadyUtxo: boolean = true
+    needUseReadyUtxo: boolean = false
   ): Promise<UtxoItem[]> {
     let res = await this.callMetasvApi(`/xpubLite/${xpub}/utxo`, {}, 'get', chain)
     if (needUseReadyUtxo) {
