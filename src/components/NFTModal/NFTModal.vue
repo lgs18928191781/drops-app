@@ -77,25 +77,25 @@
                     <div class="msg flex1 flex flex-align-center">
                       <UserAvatar
                         :meta-id="item.nftIssueMetaId"
-                        :image="item.nftIssueUserInfo.avatarImage"
-                        :meta-name="item.nftIssueUserInfo.metaName"
+                        :image="item.nftIssueUserInfo?.avatarImage"
+                        :meta-name="item.nftIssueUserInfo?.metaName"
                         :disabled="true"
                         :name="item.nftIssuer"
                       />
                       <span class="name">
                         <UserName
-                          :name="item.nftIssuer"
-                          :meta-name="item.nftIssueUserInfo.metaName"
+                          :name="item?.nftIssuer"
+                          :meta-name="item?.nftIssueUserInfo?.metaName"
                         />
                       </span>
                     </div>
-                    <div class=" ">{{ $t('Number') }}: {{ item.nftMyCount }}</div>
+                    <div class=" ">{{ $t('Number') }}: {{ item?.nftMyCount }}</div>
                   </div>
                   <div class="nft-list">
                     <div
                       class="nft-item"
-                      v-for="nft in item.nftDetailItemList"
-                      :key="nft.nftIssueMetaTxId"
+                      v-for="(nft, index) in item.nftDetailItemList"
+                      :key="nft.nftIssueMetaTxId + index"
                       :title="nft.nftName"
                       @click="chooseNFT(nft)"
                     >
@@ -165,6 +165,8 @@ function getDatas(isCover = false) {
       if (isCover) genesisList.length = 0
       if (res.data.results.items.length === 0) pagination.nothing = true
       genesisList.push(...res.data.results.items)
+      console.log('genesisList', genesisList)
+
       resolve()
     }
   })
