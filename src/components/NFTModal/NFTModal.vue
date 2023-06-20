@@ -76,26 +76,26 @@
                   <div class="author flex flex-align-center">
                     <div class="msg flex1 flex flex-align-center">
                       <UserAvatar
-                        :meta-id="item.nftIssueMetaId"
-                        :image="item.nftIssueUserInfo.avatarImage"
-                        :meta-name="item.nftIssueUserInfo.metaName"
+                        :meta-id="item?.nftIssueMetaId"
+                        :image="item?.nftIssueUserInfo?.avatarImage"
+                        :meta-name="item?.nftIssueUserInfo?.metaName"
                         :disabled="true"
-                        :name="item.nftIssuer"
+                        :name="item?.nftIssuer"
                       />
                       <span class="name">
                         <UserName
-                          :name="item.nftIssuer"
-                          :meta-name="item.nftIssueUserInfo.metaName"
+                          :name="item?.nftIssuer"
+                          :meta-name="item?.nftIssueUserInfo?.metaName"
                         />
                       </span>
                     </div>
-                    <div class=" ">{{ $t('Number') }}: {{ item.nftMyCount }}</div>
+                    <div class=" ">{{ $t('Number') }}: {{ item?.nftMyCount }}</div>
                   </div>
                   <div class="nft-list">
                     <div
                       class="nft-item"
                       v-for="nft in item.nftDetailItemList"
-                      :key="nft.nftIssueMetaTxId"
+                      :key="nft?.nftIssueMetaTxId"
                       :title="nft.nftName"
                       @click="chooseNFT(nft)"
                     >
