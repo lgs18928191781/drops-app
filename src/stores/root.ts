@@ -87,7 +87,10 @@ export const useRootStore = defineStore('root', {
       theme,
       chainWhiteList: import.meta.env.MODE == 'gray' ? ['0x5', '0x13881'] : ['0x1', '0x89'],
       updatePlanRes: null,
-      updatePlanWhiteList: ['0x0c45B536C69AB0B8806a65C94BA8C8e6e71Ba7c'],
+      updatePlanWhiteList: [
+        '0x0c45B536C69AB0B8806a65C94BA8C8e6e71Ba7c',
+        '0x4E5e9F98089De7f953FD099a54b04d218B3f08eb',
+      ],
     },
   getters: {
     GetCurrentChain: state => {
