@@ -188,7 +188,10 @@ async function startConnect() {
                 //ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress)).slice(2, -1)
                 if (root.updatePlanWhiteList.includes(res.ethAddress)) {
                     //这里处理白名单用户登录问题
-                    address =!isUpdatePlan ? res.ethAddress.toLocaleLowerCase() : root.updatePlanWhiteList[0]
+                       const selectAddress = root.updatePlanWhiteList.filter((item) => {
+                        return item == res.ethAddress
+                    })
+                    address =!isUpdatePlan ? res.ethAddress.toLocaleLowerCase() : selectAddress[0]
                     message=!isUpdatePlan ? ethers.utils.hexValue(ethers.utils.toUtf8Bytes(ethers.utils.sha256(ethers.utils.toUtf8Bytes(res.ethAddress.toLocaleLowerCase())))) : ethers.utils.sha256(ethers.utils.toUtf8Bytes(address)).slice(2, -1)
                 }
                 const result = await ethPersonalSignSign({
