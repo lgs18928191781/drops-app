@@ -47,8 +47,9 @@
                   </div>
                 </div>
               </div>
+
               <div class="name">
-                {{ nft.val!.nftName }}
+                {{$filters.handleWhiteSpace(nft.val!.nftName,nft.val!.nftGenesis) }}
               </div>
 
               <div class="owner flex flex-align-center">
