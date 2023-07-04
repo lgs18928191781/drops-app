@@ -120,7 +120,7 @@
                       <span class="label">{{ $t('NFT.Name') }}:</span>
                       <span
                         class="value flex1"
-                        >{{$filters.handleWhiteSpace(nft.val!.nftName)}}</span
+                        >{{$filters.handleWhiteSpace(nft.val!.nftName,nft.val!.nftGenesis)}}</span
                       >
                     </div>
                     <div class="description-item flex">

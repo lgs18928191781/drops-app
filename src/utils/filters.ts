@@ -6,8 +6,11 @@ import { router } from '@/router'
 import utc from 'dayjs/plugin/utc'
 dayjs.extend(utc)
 
-export function handleWhiteSpace(str: string) {
+export function handleWhiteSpace(str: string, genesis: string) {
   if (!str) return
+  if (genesis !== 'af265d1a1bb482daf8189861b31b166a6848e499') {
+    return str
+  }
   const matchReg = ' '
   const whiteSpaceCount = str.split(matchReg).length - 1
   let repalceContent: string = ''
