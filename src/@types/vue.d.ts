@@ -9,7 +9,7 @@ declare module '@vue/runtime-core' {
       repalceHref: (content: string, color?: string) => string
       strapiImage: (url: string) => string
       space: (satoshi: string | number) => number
-      handleWhiteSpace: (str: string) => string
+      handleWhiteSpace: (str: string, genesis: string) => string
     }
   }
 }

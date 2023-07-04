@@ -8,7 +8,7 @@
         <NFTCover :cover="[nft.nftIcon]" />
 
         <div class="name" :class="{ simple: isSimple }">
-          {{ $filters.handleWhiteSpace(nft.nftName) }}
+          {{ $filters.handleWhiteSpace(nft.nftName, nft.nftGenesis) }}
         </div>
 
         <div class="token-index">#{{ parseInt(nft.nftTokenIndex) + 1 }}</div>
