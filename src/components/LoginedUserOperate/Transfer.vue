@@ -43,7 +43,13 @@
             </div>
             <div class="confirm-info-item  flex flex-align-center">
               <div class="label flex1">{{ $t('NFT.Amount') }}</div>
-              <div class="value">
+              <div class="value" v-if="props.ftInfo?.genesis">
+                <span class="amount">
+                  {{ form.amount }}
+                  {{ props.ftInfo?.ftSymbol }}
+                </span>
+              </div>
+              <div class="value" v-else>
                 <span class="amount">
                   {{ unit === TransferUnit.Space ? form.amount : $filters.space(form.amount) }}
                   {{ TransferUnit.Space }}
@@ -86,7 +92,7 @@
                 @change="onAmountChange"
                 :disabled="loading"
               >
-                <template #append>
+                <template #append v-if="!props.ftInfo?.codehash || !props.ftInfo?.genesis">
                   <el-select
                     v-model="unit"
                     placeholder="Select"
@@ -129,6 +135,7 @@ import { getAccountUserInfo } from '@/utils/util'
 
 const props = defineProps<{
   modelValue: boolean
+  ftInfo: ftListType | null
 }>()
 
 const emit = defineEmits(['close', 'update:modelValue'])
@@ -178,7 +185,11 @@ function changeUnit() {
 }
 
 function onAmountChange() {
-  if (unit.value === 'Satoshi') {
+  if (props.ftInfo?.genesis) {
+    let ftValue = new Decimal(form.amount).toString()
+    if (+ftValue <= 0) ftValue = new Decimal(100).toString()
+    form.amount = ftValue
+  } else if (unit.value === 'Satoshi') {
     let value = new Decimal(form.amount).toInteger().toNumber()
     if (value <= 0) value = 1
     form.amount = value.toString()
@@ -204,29 +215,54 @@ function transfer() {
 async function confirmTransfer() {
   if (loading.value) return
   loading.value = true
-  const value =
-    unit.value === TransferUnit.Satoshi
-      ? new Decimal(form.amount).toNumber()
-      : new Decimal(form.amount).mul(Math.pow(10, 8)).toNumber()
-  const res = await userStore.showWallet
-    .createBrfcChildNode(
+  let value
+  let res
+  if (props.ftInfo?.genesis) {
+    value = new Decimal(form.amount).mul(Math.pow(10, props.ftInfo.decimalNum!)).toString()
+    res = await userStore.showWallet.createBrfcChildNode(
       {
-        nodeName: NodeName.SendMoney,
-        payTo: [
-          {
-            amount: value,
-            address: userInfo.val!.address,
-          },
-        ],
+        nodeName: NodeName.FtTransfer,
+        data: JSON.stringify({
+          codehash: props.ftInfo.codehash,
+          genesis: props.ftInfo.genesis,
+          receivers: [
+            {
+              address: userInfo.val!.address,
+              amount: value,
+            },
+          ],
+        }),
       },
       {
         payType: SdkPayType.SPACE,
       }
     )
-    .catch(error => {
-      ElMessage.error(error.message)
-      loading.value = false
-    })
+  } else {
+    value =
+      unit.value === TransferUnit.Satoshi
+        ? new Decimal(form.amount).toNumber()
+        : new Decimal(form.amount).mul(Math.pow(10, 8)).toNumber()
+    res = await userStore.showWallet
+      .createBrfcChildNode(
+        {
+          nodeName: NodeName.SendMoney,
+          payTo: [
+            {
+              amount: value,
+              address: userInfo.val!.address,
+            },
+          ],
+        },
+        {
+          payType: SdkPayType.SPACE,
+        }
+      )
+      .catch(error => {
+        ElMessage.error(error.message)
+        loading.value = false
+      })
+  }
+
   if (res) {
     form.amount = ''
     form.target = ''

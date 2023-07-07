@@ -488,7 +488,8 @@
     "Confirm Transfer": "Confirm Transfer",
     "Transfer To": "To",
     "Transfer Accound": "Transfer Accound",
-    "Link Wallet": "Link Wallet"
+    "Link Wallet": "Link Wallet",
+    "MvcFt": "FT (MVC)"
   },
   "quickPay": "Credit Card",
   "aliPay": "Alipay",

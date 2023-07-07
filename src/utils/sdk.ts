@@ -72,6 +72,9 @@ export class SDK {
     [NodeName.NftCancel]: 'cancel',
     [NodeName.nftBuy]: 'buy',
   }
+  transactionsFTKey = {
+    [NodeName.FtTransfer]: 'transfer',
+  }
 
   constructor(network: any) {
     this.network = network
@@ -360,7 +363,9 @@ export class SDK {
           if (!params.utxos!.length) {
             // 计算总价
             let totalAmount = this.getNodeTransactionsAmount(transactions, params.payTo)
-
+            if (params.nodeName == NodeName.FtTransfer) {
+              totalAmount += 50000
+            }
             const useSatoshis = totalAmount
             // 当时用Me支付时，总价 space 要转换为 ME 值
             if (option.payType === SdkPayType.ME) {
@@ -778,6 +783,7 @@ export class SDK {
               }
             } else {
               // 新增
+
               transactions.currentNodeBrfc = await this.getBrfcNode(
                 {
                   nodeName: params.nodeName,
@@ -838,6 +844,40 @@ export class SDK {
 
               // @ts-ignore
               transactions.nft![this.transactionsNFTKey[params.nodeName]] = res
+            } else if (params.nodeName === NodeName.FtTransfer) {
+              // NFT genesis/transfer
+              if (!transactions.ft) transactions.ft = {}
+
+              const scriptPlayload: any[] = [] //await this.getScriptPlayload(createCurrentNodeParams, chain)
+              let _params = {
+                opreturnData: scriptPlayload!,
+                utxoMaxCount: 3,
+              }
+              _params = {
+                ..._params,
+                ...JSON.parse(params.data!),
+              }
+              // const ftManager = this.wallet!.getFtManager()
+
+              // const FTGetFeeFunctionName = {
+              //   [NodeName.FtTransfer]: 'getTransferEstimateFee',
+              // }
+              // debugger
+              // @ts-ignore
+              const feeNumber = 20000 //await ftManager[FTGetFeeFunctionName[params.nodeName]](_params)
+              // @ts-ignore
+              const res = {
+                txId: '',
+                transaction: {
+                  getNeedFee: () => {
+                    return feeNumber
+                  },
+                },
+                scriptPlayload: [],
+              }
+
+              // @ts-ignore
+              transactions.ft![this.transactionsFTKey[params.nodeName]] = res
             } else {
               //  transactions.currentNode
               transactions.currentNode = await this.wallet?.createBrfcChildNode(
@@ -1222,6 +1262,31 @@ export class SDK {
                   }
                 }
               }
+            } else if (params.nodeName === NodeName.FtTransfer) {
+              const scriptPlayload: any[] = [] //await this.getScriptPlayload(createCurrentNodeParams, chain)
+              const ftManager = this.wallet!.getFtManager()
+              const _params = {
+                ...JSON.parse(params.data!),
+                opreturnData: scriptPlayload,
+                noBroadcast: true,
+                utxos: [utxo],
+                senderWif: this.getPathPrivateKey('0/0')?.toString(),
+                changeAddress: lastChangeAddress,
+              }
+              const FTOperateFunName = this.transactionsFTKey
+              // @ts-ignore
+              const res = await ftManager![FTOperateFunName[params.nodeName]](_params)
+              if (res && typeof res !== 'number') {
+                console.log('res', res)
+
+                // @ts-ignore
+                transactions.ft![this.transactionsFTKey[params.nodeName]] = {
+                  txId: res.txid!,
+                  transaction: res.tx!,
+                  checkTransaction: res.routeCheckTx,
+                  checkTxId: res.routeCheckTx.id,
+                }
+              }
             } else {
               const res = await this.wallet?.createBrfcChildNode(
                 // @ts-ignore
@@ -1461,6 +1526,20 @@ export class SDK {
               // @ts-ignore
               await this.wallet?.provider.broadcast(transactions.nft[i].transaction.toString())
             }
+          }
+        }
+
+        //ft
+        if (!option?.notBroadcastKeys?.includes('ft') && transactions.ft) {
+          for (let i in transactions.ft) {
+            if (i === 'transfer') {
+              await this.wallet?.provider.broadcast(
+                transactions.ft.transfer?.checkTransaction.toString()
+              )
+            }
+
+            // @ts-ignore
+            await this.wallet?.provider.broadcast(transactions.ft[i].transaction.toString())
           }
         }
 

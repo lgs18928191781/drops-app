@@ -397,6 +397,44 @@ declare interface FungibleToken {
   website: string
 }
 
+declare interface ftListType {
+  icon: string
+  name: string
+  value: number
+  showBindBtn: boolean
+  address: () => string
+  isCanTransfer: boolean
+  price: () => string
+  loading: boolean
+  tokenType: string
+  codehash?: string
+  genesis?: string
+  decimalNum?: number
+  ftSymbol?: string
+  ftName?: string
+}
+
+declare interface FTinfo {
+  ftCodehash: string
+  ftGenesis: string
+  ftGenesisTxId: string
+  ftIssueList: Array<{ issueTxId: string }>
+  ftSensibleId: string
+  ftSymbol: string
+  ftTotalSupply: string
+  ftTotalSupplyStr: string
+  ftBalance: any[]
+  ftDecimalNum: string
+  ftName: string
+  ftDesc: string
+  ftIcon: string
+  ftIconUrl: string
+  ftWebsite: number
+  ftIssuer: number
+  ftTimestamp: string
+  ftIssueVersion: string
+}
+
 declare interface GenesisNFTItem {
   flag: string
   nftAttachment: string
@@ -513,6 +551,14 @@ declare interface NodeTransactions {
   currentNode?: import('@/@types/sdk.d.ts').CreateNodeBaseRes
   sendMoney?: import('@/@types/sdk.d.ts').CreateNodeBaseRes
   subscribeId?: string
+  ft?: {
+    transfer?: {
+      transaction: mvc.Transaction
+      txId: string
+      checkTransaction: mvc.Transaction
+      checkTxId: string
+    }
+  }
   nft?: {
     issue?: {
       transaction: mvc.Transaction

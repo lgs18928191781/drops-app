@@ -312,6 +312,7 @@ export enum NodeName {
   nftBuy = 'nftBuy',
   FtGenesis = 'FtGenesis',
   FtIssue = 'FtIssue',
+  FtTransfer = 'FtTransfer',
   SimpleRedEnvelope = 'SimpleRedEnvelope',
   OpenRedenvelope = 'OpenRedenvelope',
   SimplePublicShare = 'SimplePublicShare',

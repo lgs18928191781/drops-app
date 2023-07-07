@@ -560,7 +560,8 @@
     "Confirm Transfer": "確認轉賬",
     "Transfer To": "給",
     "Transfer Accound": "轉賬賬戶",
-    "Link Wallet": "綁定"
+    "Link Wallet": "綁定",
+    "MvcFt": "FT (MVC)"
   },
   "registing": "註冊中",
   "sendVerifiyCodeError": "驗證碼填寫不正確,請重新填寫",

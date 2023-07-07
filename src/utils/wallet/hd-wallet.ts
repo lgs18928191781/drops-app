@@ -1563,6 +1563,20 @@ export class HdWallet {
     return nftManager
   }
 
+  public getFtManager = (): FtManager => {
+    const ftManager = new FtManager({
+      apiTarget: API_TARGET.MVC,
+      // @ts-ignore
+      network: this.network,
+      purse: this.wallet!.deriveChild(0)
+        .deriveChild(0)
+        .privateKey.toString(),
+      feeb: DEFAULTS.feeb,
+      apiHost: import.meta.env.VITE_META_SV_API,
+    })
+    return ftManager
+  }
+
   private async gatherAllUtxos() {
     const utxosFromAll = await this.getAllAddressUtxos()
     if (

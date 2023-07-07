@@ -123,6 +123,11 @@ const AllNodeName: {
     path: '/Protocols/FtGenesis',
     version: '1.0.0',
   },
+  [NodeName.FtTransfer]: {
+    brfcId: '2553796e8ff3',
+    path: '/Protocols/FtTransfer',
+    version: '1.0.2',
+  },
   [NodeName.SimpleRedEnvelope]: {
     brfcId: '695e19ddf852',
     path: '/Protocols/SimpleRedEnvelope',

@@ -135,7 +135,10 @@
                     <div class="header flex flex-align-center">
                       <div class="flex1 flex flex-align-center flex-pack-start">
                         <div
-                          class="icon flex flex-align-center flex-pack-center"
+                          :class="[
+                            'flex flex-align-center flex-pack-center',
+                            wallet?.tokenType ? 'ftIcon' : 'icon',
+                          ]"
                           v-if="wallet.name !== 'ME'"
                         >
                           <img :src="wallet.icon" />
@@ -155,7 +158,7 @@
                       <a
                         class="transfer main-border"
                         v-if="wallet.isCanTransfer"
-                        @click="isShowTransfer = true"
+                        @click="openTransferMenu(wallet)"
                         >{{ $t('Wallet.Transfer') }}</a
                       >
                       <div class="value">
@@ -301,7 +304,7 @@
     <MEIntroVue v-model="isShowMeIntro" />
 
     <!-- Transfer -->
-    <Transfer v-model="isShowTransfer" />
+    <Transfer v-model="isShowTransfer" :ftInfo="currentFtInfo.val" />
   </ElDrawer>
 
   <!-- MetaMask -->
@@ -324,7 +327,7 @@ import {
   openLoading,
   getBalance,
 } from '@/utils/util'
-import { GetBalance, GetNFTs, GetBindMetaidAddressList } from '@/api/aggregation'
+import { GetBalance, GetNFTs, GetBindMetaidAddressList, GetFTs } from '@/api/aggregation'
 import { setHashData, LoginByEthAddress } from '@/api/core'
 import ETH from '@/assets/images/eth.png'
 import MVC from '@/assets/images/icon_mvc.png'
@@ -353,6 +356,7 @@ import { decode, encode } from 'js-base64'
 import { MD5 } from 'crypto-js'
 import { MetaMaskLoginUserInfo } from '@/plugins/utils/api'
 import { ErrorDescription } from '@ethersproject/abi/lib/interface'
+import { metafile } from '@/utils/filters'
 const props = defineProps<{
   modelValue: boolean
 }>()
@@ -371,6 +375,25 @@ const loginTypeLogo = {
   MetaId: MetaIdLogo,
 }
 
+const FtList: ftListType[] = reactive([
+  {
+    icon: '',
+    name: '',
+    value: 0,
+    showBindBtn: false,
+    address: () => '',
+    isCanTransfer: true,
+    price: () => '--',
+    loading: true,
+    tokenType: 'FT',
+    codehash: '',
+    genesis: '',
+    decimalNum: 0,
+    ftSymbol: '',
+    ftName: '',
+  },
+])
+
 const userWalletOperates = [
   {
     name: i18n.t('Wallet.Refresh funds'),
@@ -383,6 +406,7 @@ const userWalletOperates = [
           }
         }
         getAllBalace()
+        getFts(true)
       } else {
         isSkeleton.value = true
         pagination.page = 1
@@ -416,7 +440,7 @@ const tabs = [
 const isSkeleton = ref(true)
 const currentChain = ref(import.meta.env.VITE_ETH_CHAIN)
 const genesisList: UserNFTItem[] = reactive([])
-
+const userFtList: FungibleToken[] = reactive([])
 const pagination = reactive({ ...initPagination })
 const isShowMERecharge = ref(false)
 const isShowTransfer = ref(false)
@@ -520,6 +544,10 @@ const wallets = reactive([
       // },
     ],
   },
+  {
+    title: i18n.t('Wallet.MvcFt'),
+    list: FtList,
+  },
 ])
 const isShowChains = ref(false)
 const seriesNFTList = reactive({
@@ -527,6 +555,9 @@ const seriesNFTList = reactive({
   codehash: '',
   genesis: '',
   seriesName: '',
+})
+const currentFtInfo: { val: ftListType | null } = reactive({
+  val: null,
 })
 const isShowMeIntro = ref(false)
 
@@ -557,6 +588,15 @@ const totalBalanceLoading = computed(() => {
   }
   return value
 })
+
+function openTransferMenu(ftInfo: ftListType) {
+  isShowTransfer.value = true
+  if (ftInfo?.codehash && ftInfo?.genesis) {
+    currentFtInfo.val = ftInfo
+  } else {
+    currentFtInfo.val = null
+  }
+}
 
 //创建 eht 绑定的brfc 节点
 function createETHBindingBrfcNode(MetaidRes: BindMetaIdRes) {
@@ -738,6 +778,52 @@ function changeTab(value: number) {
   }
 }
 
+function getFts(isCover = false) {
+  return new Promise<void>(async resolve => {
+    if (
+      currentChain.value !== Chains.MVC &&
+      currentChain.value !== Chains.BSV &&
+      !userStore.user!.address
+    ) {
+      FtList.length = 0
+      userFtList.length = 0
+      resolve()
+    } else {
+      const res = await GetFTs({
+        address: userStore.user!.address!,
+        chain: Chains.MVC,
+        page: 1,
+        pageSize: 30,
+      })
+      if (res.code === 0) {
+        if (isCover) FtList.length = 0
+        if (res.data.results.items.length === 0) pagination.nothing = true
+        res.data.results.items.map(ft => {
+          FtList.push({
+            icon: metafile(ft.icon),
+            name: ft.name,
+            value: +ft.balance,
+            showBindBtn: false,
+            address: () => '',
+            isCanTransfer: true,
+            price: function() {
+              return '--'
+            },
+            loading: false,
+            tokenType: 'FT',
+            codehash: ft.codehash,
+            genesis: ft.genesis,
+            decimalNum: ft.decimalNum,
+            ftSymbol: ft.symbol,
+            ftName: ft.name,
+          })
+        })
+        resolve()
+      }
+    }
+  })
+}
+
 function getNFTs(isCover = false) {
   return new Promise<void>(async resolve => {
     if (
@@ -910,6 +996,7 @@ watch(
   () => {
     if (props.modelValue) {
       getAllBalace()
+      getFts(true)
     }
   }
 )
