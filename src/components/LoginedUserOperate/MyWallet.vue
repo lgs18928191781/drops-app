@@ -804,7 +804,7 @@ function getFts(isCover = false) {
             name: ft.name,
             value: +ft.balance,
             showBindBtn: false,
-            address: () => '',
+            address: () => userStore.user?.address || '',
             isCanTransfer: true,
             price: function() {
               return '--'
