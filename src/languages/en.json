@@ -1227,5 +1227,6 @@
     "Invalid": "Invalid"
   },
   "Will send": "Will send on",
-  "MoblePhone Not Support": "Mobile phone number registration is not currently supported"
+  "MoblePhone Not Support": "Mobile phone number registration is not currently supported",
+  "installMetamaskTip": " Please click the following official link to install MetaMask and then login"
 }

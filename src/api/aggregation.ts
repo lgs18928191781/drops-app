@@ -2,6 +2,7 @@ import { CollectionOrderType, CollectionSortType, NFTSellType } from '@/enum'
 import { PostTag } from '@/stores/buzz/tag'
 import HttpRequest from '@/utils/request'
 import { error } from 'console'
+import { ethers } from 'ethers'
 
 const aggregation = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation`, {
   header: {
@@ -165,9 +166,9 @@ export const GetUserInfo = async (
   if (res?.code === 0) {
     response.code = res.code
     let evmAddress = ''
-    const object = JSON.parse(res.data.evmAddress)
-    if (object?.eth || object.evmAddress) {
-      evmAddress = object.eth || object.evmAddress
+    const object = res.data.evmAddress ? JSON.parse(res.data.evmAddress) : {}
+    if (object?.eth || object.evmAddress || (window.ethereum as any).selectedAddress) {
+      evmAddress = object.eth || object.evmAddress || (window.ethereum as any).selectedAddress
     }
     response.data = {
       ...res.data,

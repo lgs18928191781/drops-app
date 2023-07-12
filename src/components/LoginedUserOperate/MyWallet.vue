@@ -878,7 +878,7 @@ function getAllBalace() {
     getSpaceBalance(),
     getETHBalance(),
     getPolygonBalance(),
-    getBsvBalance(),
+    //getBsvBalance(),
   ])
 }
 

@@ -306,10 +306,10 @@ export const chains = [
     value: 'mvc',
     disabled: () => false,
   },
-  {
-    name: 'BSV',
-    icon: BSV,
-    value: 'bsv',
-    disabled: () => false,
-  },
+  // {
+  //   name: 'BSV',
+  //   icon: BSV,
+  //   value: 'bsv',
+  //   disabled: () => false,
+  // },
 ]

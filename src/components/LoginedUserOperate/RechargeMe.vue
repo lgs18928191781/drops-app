@@ -196,7 +196,7 @@ const priceSymbol = {
 const platformCionName = reactive({
   [PayPlatform.ETH]: import.meta.env.VITE_ETH_CHAIN,
   [PayPlatform.POLYGON]: import.meta.env.VITE_POLYGON_CHAIN,
-  [PayPlatform.BSV]: Chains.BSV,
+  //[PayPlatform.BSV]: Chains.BSV,
 })
 
 const isDisabled = computed(() => {
