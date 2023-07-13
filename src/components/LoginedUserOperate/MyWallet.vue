@@ -438,7 +438,7 @@ const tabs = [
   { name: 'NFT', value: 1 },
 ]
 const isSkeleton = ref(true)
-const currentChain = ref(import.meta.env.VITE_ETH_CHAIN)
+const currentChain = ref(Chains.MVC)
 const genesisList: UserNFTItem[] = reactive([])
 const userFtList: FungibleToken[] = reactive([])
 const pagination = reactive({ ...initPagination })

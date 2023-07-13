@@ -88,7 +88,7 @@ const ruleForm = reactive({
     ShowAccount: '49856d813daa21dcffc6aafa94bc4630c93de9ebd209e723e64266ce55fba64b',
 })
 const isInstallMetamask = computed(() => {
-    return (window.ethereum as any).isMetaMask
+    return window?.ethereum && (window.ethereum as any).isMetaMask
 })
 const rules = {
     name: [

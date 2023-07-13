@@ -276,6 +276,12 @@ export const currentSupportChain: Array<{
 
 export const chains = [
   {
+    name: 'MVC',
+    icon: MVC,
+    value: 'mvc',
+    disabled: () => false,
+  },
+  {
     name: import.meta.env.VITE_ETH_CHAIN.toUpperCase(),
     icon: ETHIcon,
     value: import.meta.env.VITE_ETH_CHAIN,
@@ -300,12 +306,7 @@ export const chains = [
       return ''
     },
   },
-  {
-    name: 'MVC',
-    icon: MVC,
-    value: 'mvc',
-    disabled: () => false,
-  },
+
   // {
   //   name: 'BSV',
   //   icon: BSV,
