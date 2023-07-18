@@ -334,6 +334,29 @@
 
 }
 
+
+.nft-tab-wrap{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+     justify-content: space-between;
+     position: relative;
+    margin-bottom: 30px;
+     .demo-tabs{
+        width: 100%;
+     }
+      
+     .el-icon{
+        position: absolute;
+        right: 2px;
+        cursor: pointer;
+        margin-bottom: 18px;
+        &:hover{
+            color: var(--el-color-primary);
+        }
+     }
+    
+}
 .nft-genesis-list {
     .nft-genesis-item {
         margin-bottom: 18px;
@@ -355,18 +378,29 @@
 
         .list {
             margin-top: 12px;
-
+           
             .item {
                 width: calc((100% - 24px) / 3);
                 margin-right: 12px;
                 display: inline-block;
-
+                
                 :deep(.cover) {
                     border-radius: 12px;
 
                     img {
                         transition: 0.5 all;
                     }
+                }
+                .saleNftName{
+                    text-align: left;
+                    line-height: 1.3em;
+                    display: flex;
+                    margin-top: 5px;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+                    word-break: break-all;
+                    width: 100%;
                 }
 
                 &:nth-child(3n) {

@@ -247,7 +247,14 @@
             :infinite-scroll-distance="100"
           >
             <ElSkeleton :loading="isSkeleton" animated>
-              <div class="nft-genesis-list">
+              <div class="nft-tab-wrap">
+                <el-tabs v-model="nftTab" class="demo-tabs" @tab-click="triggleNftTab">
+                  <el-tab-pane label="My NFT" :name="1"></el-tab-pane>
+                  <el-tab-pane label="On Sale" :name="2"></el-tab-pane>
+                </el-tabs>
+                <el-icon :size="16" color="#303133"><Refresh /></el-icon>
+              </div>
+              <div class="nft-genesis-list" v-if="nftTab === 1">
                 <div class="nft-genesis-item" v-for="item in genesisList" :key="item.nftTimestamp">
                   <div class="top flex flex-align-center" @click="chooseSeries(item)">
                     <div class="name flex1">
@@ -275,6 +282,30 @@
                       @click.stop="toNFT(nft)"
                     >
                       <NFTCoverVue :cover="[nft.nftIcon]" />
+                    </RouterLink>
+                  </div>
+                </div>
+                <IsNullVue v-if="genesisList.length <= 0" />
+              </div>
+
+              <div class="nft-genesis-list" v-if="nftTab === 2">
+                <div class="nft-genesis-item" v-for="item in MyNftOnSaleList">
+                  <div class="list">
+                    <RouterLink
+                      :to="{
+                        name: 'nftDetail',
+                        params: {
+                          chain: currentChain,
+                          genesis: item.nftGenesis,
+                          codehash: item.nftCodehash ? item.nftCodehash : currentChain,
+                          tokenIndex: item.nftTokenIndex,
+                        },
+                      }"
+                      class="item"
+                      @click.stop="toNFT(item)"
+                    >
+                      <NFTCoverVue :cover="[item.nftIcon]" />
+                      <span class="saleNftName">{{ item.nftName }}</span>
                     </RouterLink>
                   </div>
                 </div>
@@ -318,7 +349,7 @@ import { computed, reactive, ref, watch, toRaw } from 'vue'
 import MetaMaskLogo from '@/assets/images/login_logo_matamask.png'
 import MetaIdLogo from '@/assets/images/iocn_showmoney.png'
 import { useI18n } from 'vue-i18n'
-
+import { Refresh } from '@element-plus/icons-vue'
 import {
   copy,
   getUserBsvBalance,
@@ -327,7 +358,7 @@ import {
   openLoading,
   getBalance,
 } from '@/utils/util'
-import { GetBalance, GetNFTs, GetBindMetaidAddressList, GetFTs } from '@/api/aggregation'
+import { GetBalance, GetNFTs, GetBindMetaidAddressList, GetFTs,GetMyNftOnSale } from '@/api/aggregation'
 import { setHashData, LoginByEthAddress } from '@/api/core'
 import ETH from '@/assets/images/eth.png'
 import MVC from '@/assets/images/icon_mvc.png'
@@ -357,6 +388,7 @@ import { MD5 } from 'crypto-js'
 import { MetaMaskLoginUserInfo } from '@/plugins/utils/api'
 import { ErrorDescription } from '@ethersproject/abi/lib/interface'
 import { metafile } from '@/utils/filters'
+import type { TabsPaneContext } from 'element-plus'
 const props = defineProps<{
   modelValue: boolean
 }>()
@@ -369,11 +401,13 @@ const route = useRoute()
 const router = useRouter()
 const i18n = useI18n()
 const MetaMaskRef = ref()
-
+const nftTab= ref(1)
 const loginTypeLogo = {
   MetaMask: MetaMaskLogo,
   MetaId: MetaIdLogo,
 }
+
+
 
 const FtList: ftListType[] = reactive([
   {
@@ -444,6 +478,7 @@ const userFtList: FungibleToken[] = reactive([])
 const pagination = reactive({ ...initPagination })
 const isShowMERecharge = ref(false)
 const isShowTransfer = ref(false)
+const MyNftOnSaleList:GenesisNFTItem[]=reactive([])
 const wallets = reactive([
   {
     title: i18n.t('Wallet.Action Points'),
@@ -588,6 +623,33 @@ const totalBalanceLoading = computed(() => {
   }
   return value
 })
+
+function MyNftOnSale() {
+  return new Promise<void>((resolve, reject) => {
+    GetMyNftOnSale({
+      chain:Chains.MVC,
+      address:userStore.user?.address!
+    }).then((res) => {
+      if (res.code == 0) {
+        MyNftOnSaleList.push(...res.data.results.items)
+        resolve()
+     }
+    })
+  })
+}
+
+const triggleNftTab = async(tab: TabsPaneContext, event: Event) => {
+  if (nftTab.value == tab.props.name) return
+  nftTab.value=tab.props.name as number
+  if (nftTab.value == 1) {
+
+  } else if (nftTab.value == 2) {
+    MyNftOnSaleList.length=0
+    MyNftOnSale()
+  }
+
+
+}
 
 function openTransferMenu(ftInfo: ftListType) {
   isShowTransfer.value = true

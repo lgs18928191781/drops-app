@@ -4,6 +4,7 @@ import Decimal from 'decimal.js-light'
 import { useRootStore } from '@/stores/root'
 import { router } from '@/router'
 import utc from 'dayjs/plugin/utc'
+import { Chains } from '@/enum'
 dayjs.extend(utc)
 
 export function handleWhiteSpace(str: string, genesis: string) {
@@ -194,4 +195,15 @@ export function repalceHref(content: string, color: string = '#fc6d5e') {
 
 export function strapiImage(url: string) {
   return `${import.meta.env.VITE_AdminBaseApi}${url}`
+}
+
+export function Currency(amount: number, unit: string) {
+  switch (unit) {
+    case 'SPACE':
+      return new Decimal(amount).div(Math.pow(10, 8)).toString()
+    case Chains.ETH:
+      return new Decimal(amount).div(Math.pow(10, 18)).toString()
+    case Chains.POLYGON:
+      return new Decimal(amount).div(Math.pow(10, 18)).toString()
+  }
 }

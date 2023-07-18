@@ -10,6 +10,7 @@ declare module '@vue/runtime-core' {
       strapiImage: (url: string) => string
       space: (satoshi: string | number) => number
       handleWhiteSpace: (str: string, genesis: string) => string
+      Currency: (amount: number, unit: string) => string
     }
   }
 }

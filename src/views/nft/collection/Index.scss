@@ -41,11 +41,12 @@
     border-radius: 50%;
     margin-right: 10px;
     border: 1px solid var(--divid-color);
-
-    &.all {
-        background: #fff;
-        padding: 8px;
-    }
+   
+    // &.all {
+    //     background: #fff;
+    //     padding: 8px;
+        
+    // }
 
 }
 
@@ -81,7 +82,7 @@
 .collection-list {
     margin-top: 24px;
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 18px;
 
     .collection-item {

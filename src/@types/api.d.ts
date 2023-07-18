@@ -1216,6 +1216,8 @@ declare interface Collect {
   icon: Pic
   banner: Pic
   cover: Pic
+  circulatingSupply?: number
+  floorPrice?: number
 }
 
 declare interface HomeActivityItem {

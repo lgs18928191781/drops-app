@@ -543,6 +543,17 @@ declare interface GenesisNFTItem {
   nftTopicType: string
 }
 
+declare interface TopicTypeInfo {
+  chain: string
+  topicKey: string
+  initialPrice: number
+  floorPrice: number
+  highestPrice: number
+  tradingVolume: number
+  circulatingSupply: number
+  ownerCount: number
+}
+
 declare interface NodeTransactions {
   payToAddress?: import('@/@types/sdk.d.ts').CreateNodeBaseRes
   metaFileBrfc?: import('@/@types/sdk.d.ts').CreateNodeBrfcRes
