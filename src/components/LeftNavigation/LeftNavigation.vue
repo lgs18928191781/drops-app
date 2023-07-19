@@ -162,7 +162,7 @@ const apps = reactive([
   },
   {
     icon: 'market',
-    path: '/nft/collection/detail/MetaName',
+    path: '/nft/collection/index',
     title: () => i18n.t('NFT.NFT Market'),
     symbol: 'nft',
   },

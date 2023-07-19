@@ -1,4 +1,4 @@
-import { CollectionOrderType, CollectionSortType, NFTSellType } from '@/enum'
+import { Chains, CollectionOrderType, CollectionSortType, NFTSellType } from '@/enum'
 import { PostTag } from '@/stores/buzz/tag'
 import HttpRequest from '@/utils/request'
 import { error } from 'console'
@@ -824,4 +824,39 @@ export const GeUserSaleNFTs = (params: {
 
 export const Search = (kw: string): Promise<SearchRes> => {
   return aggregation.get(`/v2/app/show/search/user`, { params: { kw } })
+}
+
+export const GetTopicTypesInfo = (params: {
+  chain: string
+  page: number
+  pageSize: number
+}): Promise<{
+  code: number
+  data: {
+    results: {
+      items: TopicTypeInfo[]
+    }
+  }
+}> => {
+  return aggregation.get(`v3/app/show/market/topic/volumes`, { params })
+}
+
+export const GetMyNftOnSale = (params: {
+  chain: string
+  codehash?: string
+  genesis?: string
+  pageSize?: string
+  flag?: string
+  address: string
+}): Promise<{
+  code: number
+  data: {
+    results: {
+      items: GenesisNFTItem[]
+    }
+    flag?: string
+  }
+}> => {
+  const { address, ..._params } = params
+  return aggregation.get(`v2/app/show/nft/${address}/details/sell`, { params: { ..._params } })
 }
