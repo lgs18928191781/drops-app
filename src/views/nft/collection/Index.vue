@@ -187,17 +187,10 @@ function getDatas(isCover = false) {
         for (let i = 0; i < res.length; i++) {
           const TopicRes = await GetGenesisStatistics(res[i].topicType)
           if (TopicRes.code == 0) {
-            if (res[i].topicType == res[i].name) {
-              res[i] = Object.assign(res[i], {
-                floorPrice: TopicRes.data.minPrice ? TopicRes.data.minPrice : 0,
-                circulatingSupply: TopicRes.data.totalSupply ? TopicRes.data.totalSupply : 0,
-              })
-            } else {
-              res[i] = Object.assign(res[i], {
-                floorPrice: 0,
-                circulatingSupply: 0,
-              })
-            }
+            res[i] = Object.assign(res[i], {
+              floorPrice: TopicRes.data.minPrice ? TopicRes.data.minPrice : 0,
+              circulatingSupply: TopicRes.data.totalSupply ? TopicRes.data.totalSupply : 0,
+            })
             newRes.push(res[i])
           }
         }

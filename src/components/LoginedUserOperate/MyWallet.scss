@@ -380,15 +380,19 @@
             margin-top: 12px;
            
             .item {
+                 
                 width: calc((100% - 24px) / 3);
                 margin-right: 12px;
                 display: inline-block;
-                
+              
                 :deep(.cover) {
                     border-radius: 12px;
 
                     img {
+                       
+                        
                         transition: 0.5 all;
+                      
                     }
                 }
                 .saleNftName{
