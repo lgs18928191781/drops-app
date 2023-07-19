@@ -306,7 +306,9 @@
                       @click.stop="toNFT(item)"
                     >
                       <NFTCoverVue :cover="[item.nftIcon]" />
-                      <span class="saleNftName">{{ item.nftName }}</span>
+                      <div class="saleNftName">
+                        <span>{{ item.nftName }}</span>
+                      </div>
                     </RouterLink>
                   </div>
                 </div>

@@ -398,13 +398,22 @@
                 .saleNftName{
                     text-align: left;
                     line-height: 1.3em;
-                    display: flex;
+                     display: flex;
                     margin-top: 5px;
                     flex-direction: row;
                     align-items: center;
                     justify-content: center;
                     word-break: break-all;
                     width: 100%;
+                   span{
+                    overflow : hidden;
+                    text-overflow: ellipsis;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                   }
+
+
                 }
 
                 &:nth-child(3n) {
