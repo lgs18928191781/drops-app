@@ -119,7 +119,8 @@
       </ElDialog>
 
       <!-- nft -->
-      <NFTModalVue v-model="isShowNFTList" @change="chooseNFT" />
+      <NFTModalVue v-model="isShowNFTList" @change="throttleChooseNFT" />
+
       <!-- PublishSchedule -->
       <PublishSchedule v-model="isShowSchedule" @confirm="val => (broadcastAt = val)" />
     </template>
@@ -131,7 +132,7 @@ import { AttachmentItem } from '@/@types/hd-wallet'
 import { EnvMode, IsEncrypt, JobStatus, NodeName, SdkPayType } from '@/enum'
 import { useLayoutStore } from '@/stores/layout'
 import { useUserStore } from '@/stores/user'
-import { compressImage, FileToAttachmentItem, getAttachmentsMark } from '@/utils/util'
+import { compressImage, throttle, FileToAttachmentItem, getAttachmentsMark } from '@/utils/util'
 import { computed, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AttachmentVue from './Attachment.vue'
@@ -307,16 +308,18 @@ function confirmTopic() {
 }
 
 function chooseNFT(nft: BaseNFT) {
-  const sufix = <{ [key: string]: string }>{
+  const suffix = <{ [key: string]: string }>{
     mvc: 'metacontract:/',
     goerli: `evm/${nft.chain}`,
     eth: `evm/${nft.chain}`,
     bsv: 'sensible:/',
   }
   attachments.push(
-    `${sufix[nft.chain]}/${nft.codehash}${nft.codehash ? '/' : ''}${nft.genesis}/${nft.tokenIndex}`
+    `${suffix[nft.chain]}/${nft.codehash}${nft.codehash ? '/' : ''}${nft.genesis}/${nft.tokenIndex}`
   )
 }
+
+const throttleChooseNFT = throttle(chooseNFT, 500)
 
 async function submit() {
   if (content.value === '' && attachments.length <= 0) {
