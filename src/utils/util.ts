@@ -837,25 +837,28 @@ export function randomNumber(minNum: number, maxNum: number) {
 export function debounce(fn: any, delay = 1000) {
   let timer: any
   return function() {
-    if (timer) {
-      clearTimeout(timer)
-    }
+    clearTimeout(timer)
+
     timer = setTimeout(() => {
-      fn()
+      console.log('debounce')
+      fn.apply(this, arguments)
     }, delay)
   }
 }
 
 // 节流
-export function throttle(fn: any, delay = 500) {
-  let isThrottle = true
-  return () => {
-    if (!isThrottle) return
-    isThrottle = false
-    setTimeout(() => {
-      fn()
-      isThrottle = true
-    }, delay)
+export function throttle(func, delay = 500) {
+  let timer: any
+  let throttled = false
+
+  return function() {
+    if (!throttled) {
+      func.apply(this, arguments)
+      throttled = true
+      timer = setTimeout(() => {
+        throttled = false
+      }, delay)
+    }
   }
 }
 
