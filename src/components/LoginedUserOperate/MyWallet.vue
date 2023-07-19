@@ -644,6 +644,9 @@ function MyNftOnSale(flag = "") {
         MyNftOnSaleList.push(...res.data.results.items)
         resolve()
      }
+    }).catch(() => {
+      MyNftOnSaleList.length=0
+      reject()
     })
   })
 }
@@ -946,6 +949,8 @@ function changeChain(item: { name: string; value: string }) {
   getNFTs(true).then(() => {
     isSkeleton.value = false
   })
+  MyNftOnSale()
+
 }
 
 function chooseSeries(item: UserNFTItem) {
