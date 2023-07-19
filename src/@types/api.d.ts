@@ -800,6 +800,7 @@ declare interface GetAirdropResultsRes extends apiResponse {
 }
 
 declare interface GenesisVolumeInfo {
+  topicKey?: string
   averagePricePercentageIncrease: string
   latestPercentageIncrease: string
   maxPrice: number

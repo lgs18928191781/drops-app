@@ -112,14 +112,14 @@ import { initPagination } from '@/config'
 import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import IsNull from '@/components/IsNull/IsNull.vue'
 import { Chains } from '@/enum'
-import { GetTopicTypesInfo } from '@/api/aggregation'
+import { GetGenesisStatistics } from '@/api/broad'
 const chains: Chain[] = reactive([])
 const currentChain = ref(-1)
 const i18n = useI18n()
 const pagination = reactive({ ...initPagination })
 const collections: Collect[] = reactive([])
 const isSkeleton = ref(true)
-const topicTypeListInfo: TopicTypeInfo[] = reactive([])
+const topicTypeListInfo: GenesisVolumeInfo[] = reactive([])
 const mvcIcon = computed(() => {
   return `${import.meta.env.VITE_AdminBaseApi}/uploads/icon_1_ff2def8e32.png`
 })
@@ -176,14 +176,6 @@ function getDatas(isCover = false) {
       _sort: 'index:ASC',
       chain: currentChain.value === -1 ? undefined : currentChain.value,
     })
-    const TopicRes = await GetTopicTypesInfo({
-      chain: currentChainById.value,
-      page: pagination.page,
-      pageSize: pagination.pageSize,
-    })
-    if (TopicRes.code == 0) {
-      topicTypeListInfo.push(...TopicRes.data.results.items)
-    }
 
     if (res) {
       let newRes: Collect[] = []
@@ -192,22 +184,23 @@ function getDatas(isCover = false) {
         pagination.nothing = true
       } else {
         pagination.nothing = false
-        topicTypeListInfo.map(item => {
-          res.map(data => {
-            if (item.topicKey == data.name) {
-              data = Object.assign(data, {
-                floorPrice: item.floorPrice ? item?.floorPrice : 0,
-                circulatingSupply: item.circulatingSupply ? item?.circulatingSupply : 0,
+        for (let i = 0; i < res.length; i++) {
+          const TopicRes = await GetGenesisStatistics(res[i].topicType)
+          if (TopicRes.code == 0) {
+            if (res[i].topicType == res[i].name) {
+              res[i] = Object.assign(res[i], {
+                floorPrice: TopicRes.data.minPrice ? TopicRes.data.minPrice : 0,
+                circulatingSupply: TopicRes.data.totalSupply ? TopicRes.data.totalSupply : 0,
               })
             } else {
-              data = Object.assign(data, {
+              res[i] = Object.assign(res[i], {
                 floorPrice: 0,
                 circulatingSupply: 0,
               })
             }
-            newRes.push(data)
-          })
-        })
+            newRes.push(res[i])
+          }
+        }
         collections.push(...newRes)
       }
       resolve()
