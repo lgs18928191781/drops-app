@@ -198,6 +198,9 @@ export function strapiImage(url: string) {
 }
 
 export function Currency(amount: number, unit: string) {
+  if (!amount) {
+    return '--'
+  }
   switch (unit) {
     case 'SPACE':
       return new Decimal(amount).div(Math.pow(10, 8)).toString()

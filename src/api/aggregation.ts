@@ -854,6 +854,7 @@ export const GetMyNftOnSale = (params: {
     results: {
       items: GenesisNFTItem[]
     }
+    flag?: string
   }
 }> => {
   const { address, ..._params } = params

@@ -86,7 +86,9 @@
               </div>
               <div class="flex1 msg-item">
                 <div class="label">{{ $t('Collection.Total volume') }}</div>
-                <div class="value">{{ item.circulatingSupply }}</div>
+                <div class="value">
+                  {{ item.circulatingSupply ? item.circulatingSupply : '--' }}
+                </div>
               </div>
             </div>
           </div>
@@ -194,8 +196,13 @@ function getDatas(isCover = false) {
           res.map(data => {
             if (item.topicKey == data.name) {
               data = Object.assign(data, {
-                floorPrice: item.floorPrice,
-                circulatingSupply: item.circulatingSupply,
+                floorPrice: item.floorPrice ? item?.floorPrice : 0,
+                circulatingSupply: item.circulatingSupply ? item?.circulatingSupply : 0,
+              })
+            } else {
+              data = Object.assign(data, {
+                floorPrice: 0,
+                circulatingSupply: 0,
               })
             }
             newRes.push(data)
