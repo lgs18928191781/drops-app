@@ -859,15 +859,38 @@ export function throttle(fn: any, delay = 500) {
   }
 }
 
-export async function compressImage(image: File): Promise<File> {
-  return new Promise((resolve, reject) => {
-    new Compressor(image, {
-      quality: 0.6,
-      convertSize: 100_000, // 100KB
-      success: resolve as () => File,
-      error: reject,
+// export async function compressImage(image: File): Promise<File> {
+//   return new Promise((resolve, reject) => {
+//     new Compressor(image, {
+//       quality: 0.6,
+//       convertSize: 100_000, // 100KB
+//       success: resolve as () => File,
+//       error: reject,
+//     })
+//   })
+// }
+export async function compressImage(image: File) {
+  const compress = (quality: number): Promise<File> =>
+    new Promise((resolve, reject) => {
+      new Compressor(image, {
+        quality,
+        convertSize: 100_000, // 100KB
+        success: resolve as () => File,
+        error: reject,
+      })
     })
-  })
+
+  // Use 0.6 compression ratio first; If the result is still larger than 1MB, use half of the compression ratio; Repeat 5 times until the result is less than 1MB, otherwise raise an error
+  let useQuality = 0.6
+  for (let i = 0; i < 5; i++) {
+    const compressed = await compress(useQuality)
+    if (compressed.size < 1_000_000) {
+      return compressed
+    }
+    useQuality /= 2
+  }
+
+  throw new Error('Image is too large')
 }
 
 // 降文件转为 AttachmentItem， 便于操作/上链

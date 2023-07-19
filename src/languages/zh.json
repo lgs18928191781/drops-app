@@ -1225,5 +1225,6 @@
     "Invalid": "无效"
   },
   "Will send": "將發佈于",
-  "MoblePhone Not Support": "暂不支持手机号注册"
+  "MoblePhone Not Support": "暂不支持手机号注册",
+  "installMetamaskTip": "请点击以下官方链接安装MetaMask再登录"
 }

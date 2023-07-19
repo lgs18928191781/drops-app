@@ -270,12 +270,12 @@ const isShowSuccess = ref(false)
 const isShowPayList = ref(false)
 const isEnough = ref(true)
 const payPlatformChain = {
-  [PayPlatform.BSV]: Chains.BSV,
+  //[PayPlatform.BSV]: Chains.BSV,
   [PayPlatform.ETH]: Chains.ETH,
   [PayPlatform.POLYGON]: Chains.POLYGON,
 }
 const ToCurrencyAmounMin = {
-  [ToCurrency.BSV]: 0.00000001,
+  //[ToCurrency.BSV]: 0.00000001,
   [ToCurrency.CNY]: 0.01,
   [ToCurrency.ETH]: 0.000000001,
   [ToCurrency.MVC]: 0.00000001,

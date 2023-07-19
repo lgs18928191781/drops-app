@@ -153,7 +153,7 @@ async function confirmTransfer() {
         }),
       },
       {
-        payType: props.nft.nftChain === 'bsv' ? SdkPayType.BSV : SdkPayType.ME,
+        payType: SdkPayType.ME, //props.nft.nftChain === 'bsv' ? SdkPayType.BSV : SdkPayType.ME,
       }
     )
     .catch(error => {

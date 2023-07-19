@@ -44,6 +44,25 @@ html.dark {
 }
 
 
+.nft-tab-wrap{
+            .el-tabs__item{
+            color: #303133 !important;
+            font-size: 16px !important;
+            font-weight: 400 !important;
+            width: 80%;
+            text-align: center;
+            margin-bottom: 10px;
+            }
+            .el-tabs__active-bar{
+                height: 3px;
+            }
+            .el-tabs__nav-wrap::after{
+                height: 3px;
+            }
+}
+
+
+
 .el-button {
     --el-button-text-color: var(--themeTextColor);
     --el-button-hover-text-color: var(--themeTextColor);

@@ -10,7 +10,13 @@
       <div class="logoWrap">
         <img src="@/assets/images/MetaMask_Fox.svg.png" alt="" />
       </div>
-      <div class="tips" v-if="signType == 1">
+      <div class="tips" v-if="signType == 1 && !isInstallMetamask">
+        <span class="metamaskTip">{{ $t('installMetamaskTip') }}</span>
+        <a href="https://metamask.io/download/" target="_blank">
+          https://metamask.io/download/
+        </a>
+      </div>
+      <div class="tips" v-if="signType == 1 && isInstallMetamask">
         <span>{{ $t('useMetaMaskSign') }}</span>
       </div>
       <div class="tips" v-else-if="signType == 4">
@@ -80,6 +86,9 @@ const ruleForm = reactive({
     pass: '123456',
     checkPass: '',
     ShowAccount: '49856d813daa21dcffc6aafa94bc4630c93de9ebd209e723e64266ce55fba64b',
+})
+const isInstallMetamask = computed(() => {
+    return window?.ethereum && (window.ethereum as any).isMetaMask
 })
 const rules = {
     name: [

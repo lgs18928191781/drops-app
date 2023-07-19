@@ -155,7 +155,7 @@ function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetNFTs({
       address:
-        tabActive.value === Chains.MVC || tabActive.value === Chains.BSV
+        tabActive.value === Chains.MVC
           ? userStore.user!.address
           : userStore.user!.evmAddress! || userStore.user!.ethAddress,
       chain: tabActive.value,

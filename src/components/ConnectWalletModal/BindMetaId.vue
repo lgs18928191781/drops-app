@@ -861,6 +861,7 @@ function loginByMnemonic(mnemonic: string, password: string, isInitMnemonic = fa
 
 
 function bindingMetaidOrAddressLogin() {
+
   return new Promise<BindMetaIdRes>(async (resolve, reject) => {
     try {
       // get metaId
@@ -910,6 +911,8 @@ function sendHash(userInfo: BindUserInfo) {
 
   return new Promise(async (resolve, reject) => {
     try {
+      console.log('userInfo',userInfo)
+
       const res = await setHashData({
         address: userInfo.ethAddress || userInfo.evmAddress,
         accessKey: userInfo.token,

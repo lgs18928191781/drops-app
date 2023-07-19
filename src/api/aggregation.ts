@@ -1,7 +1,8 @@
-import { CollectionOrderType, CollectionSortType, NFTSellType } from '@/enum'
+import { Chains, CollectionOrderType, CollectionSortType, NFTSellType } from '@/enum'
 import { PostTag } from '@/stores/buzz/tag'
 import HttpRequest from '@/utils/request'
 import { error } from 'console'
+import { ethers } from 'ethers'
 
 const aggregation = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation`, {
   header: {
@@ -165,9 +166,9 @@ export const GetUserInfo = async (
   if (res?.code === 0) {
     response.code = res.code
     let evmAddress = ''
-    const object = JSON.parse(res.data.evmAddress)
-    if (object?.eth || object.evmAddress) {
-      evmAddress = object.eth || object.evmAddress
+    const object = res.data.evmAddress ? JSON.parse(res.data.evmAddress) : {}
+    if (object?.eth || object.evmAddress || (window.ethereum as any).selectedAddress) {
+      evmAddress = object.eth || object.evmAddress || (window.ethereum as any).selectedAddress
     }
     response.data = {
       ...res.data,
@@ -823,4 +824,39 @@ export const GeUserSaleNFTs = (params: {
 
 export const Search = (kw: string): Promise<SearchRes> => {
   return aggregation.get(`/v2/app/show/search/user`, { params: { kw } })
+}
+
+export const GetTopicTypesInfo = (params: {
+  chain: string
+  page: number
+  pageSize: number
+}): Promise<{
+  code: number
+  data: {
+    results: {
+      items: TopicTypeInfo[]
+    }
+  }
+}> => {
+  return aggregation.get(`v3/app/show/market/topic/volumes`, { params })
+}
+
+export const GetMyNftOnSale = (params: {
+  chain: string
+  codehash?: string
+  genesis?: string
+  pageSize?: string
+  flag?: string
+  address: string
+}): Promise<{
+  code: number
+  data: {
+    results: {
+      items: GenesisNFTItem[]
+    }
+    flag?: string
+  }
+}> => {
+  const { address, ..._params } = params
+  return aggregation.get(`v2/app/show/nft/${address}/details/sell`, { params: { ..._params } })
 }
