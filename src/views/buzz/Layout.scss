@@ -8,17 +8,23 @@
 }
 
 .menu-select-wrap{
-   
-    .menu-select{
-         position: fixed;
+  
+       position: fixed;
     left: 50%;
-    margin-left: -405px;
+    margin-left: -500px;
     z-index: 2;
     top: calc(var(--header-height) + 180px);
-    font-size: 12PX;
+   
+    .menu-select{
+         width: 180PX;
+    
+        font-size: 12PX;
         //  width: 96PX;
         box-sizing: border-box;
-      
+         display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        
        
         .menu-select-item{
             width: 96PX;

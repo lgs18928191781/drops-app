@@ -49,7 +49,7 @@ watch(
   () => rootStore.showDiffLang,
   (newVal, oldVal) => {
     if (newVal !== oldVal) {
-      debounce(refreshDatas(), 3000)
+      refreshDatas()
     }
   }
 )
