@@ -9,13 +9,14 @@
 
 .menu-select-wrap{
   
-       position: fixed;
-    left: 50%;
-    margin-left: -500px;
-    z-index: 2;
-    top: calc(var(--header-height) + 180px);
+     
    
     .menu-select{
+    position: fixed;
+    left: 50%;
+    margin-left: -505px;
+    z-index: 2;
+    top: calc(var(--header-height) + 180px);
          width: 180PX;
     
         font-size: 12PX;
@@ -47,6 +48,11 @@
                 // background: var(--el-color-primary);
                 color: var(--themeBtnTextColor);
             }
+    }
+    @media screen and (min-width:1700PX) {
+        .menu-select{
+            margin-left: -445px;
+        }
     }
 }
 

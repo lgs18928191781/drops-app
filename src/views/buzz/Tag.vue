@@ -113,7 +113,9 @@ const newMenu = [
 const tag = computed(() =>
   postTagStore.list.find(item => item.id.toString() === route.params.tagId)
 )
-const tabActive = ref(tag.value?.subTag && tag.value?.subTag.length ? tag.value?.subTag[0].tag : '')
+const tabActive = computed(() =>
+  tag.value?.subTag && tag.value?.subTag.length ? tag.value?.subTag[0].tag : ''
+)
 
 function toBuzzTag(path: string) {
   if (!path) return

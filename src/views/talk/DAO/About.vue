@@ -82,9 +82,14 @@
           <div class="information-item">
             <div class="lable">{{ $t('DAO.Information Proposal Need Token Min') }}</div>
             <div class="cont">
-              <ElTag type="info">{{
+              <ElTag type="info"
+                >{{
                $filters.space(talk.activeCommunity?.dao?.createProposalRequireTokenNumber!)
-              }}</ElTag>
+
+
+
+                }}&nbsp;&nbsp;SPACE</ElTag
+              >
             </div>
           </div>
         </div>
