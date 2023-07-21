@@ -17,6 +17,24 @@
       </div>
     </div>
 
+    <div class="menu-select-wrap">
+      <div class="menu-select">
+        <div
+          :class="[
+            'menu-select-item',
+            'flex',
+            'flex-align-center',
+            route.path == item.path ? 'isActive' : '',
+          ]"
+          v-for="(item, index) in newMenu"
+          :key="index"
+          @click="toBuzzTag(item.path)"
+        >
+          <span class="name">{{ item.name() }}</span>
+        </div>
+      </div>
+    </div>
+
     <!-- router view -->
     <RouterView v-slot="{ Component, route }">
       <KeepAlive>
@@ -36,6 +54,7 @@
 </template>
 
 <script setup lang="ts">
+import { router } from '@/router'
 import { debug } from 'console'
 import {
   inject,
@@ -46,14 +65,20 @@ import {
   reactive,
   ref,
   watch,
+  computed,
 } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter, useRoute } from 'vue-router'
 import BuzzWarpVue from './components/BuzzWarp.vue'
 
 const MenuRef = ref()
 const i18n = useI18n()
 let resizeObserver: ResizeObserver
-
+const route = useRoute()
+console.log('route.fullPath', route, route.name === 'buzzTopic')
+const allowToLink = computed(() => {
+  return route.name === 'buzzTag'
+})
 const menus = [
   {
     name: () => i18n.t('Buzz.Timeline'),
@@ -66,6 +91,26 @@ const menus = [
     path: '/buzz/recommend',
   },
 ]
+
+const newMenu = [
+  {
+    name: () => i18n.t('Buzz.newbuzz'),
+    path: allowToLink.value ? '/buzz/tag/1' : '',
+  },
+  {
+    name: () => i18n.t('Buzz.newnft'),
+    path: allowToLink.value ? '/buzz/tag/2' : '',
+  },
+  {
+    name: () => i18n.t('Buzz.newtalk'),
+    path: allowToLink.value ? '/buzz/tag/3' : '',
+  },
+]
+
+function toBuzzTag(path: string) {
+  if (!path) return
+  router.push(path)
+}
 
 function setPosition() {
   const BuzzContainer = document.getElementById('buzz-container')!

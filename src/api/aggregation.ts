@@ -201,7 +201,7 @@ export const GetHomeBuzzs = (params: {
 
 export const GetBuzzs = (params: {
   tag: 'timeline' | 'recommendline'
-  langId?: number
+  langId?: number | string
   metaId?: string
   page?: string | number
   pageSize: string | number

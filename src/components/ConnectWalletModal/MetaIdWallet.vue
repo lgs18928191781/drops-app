@@ -293,7 +293,7 @@ const form = reactive({
   imageCode: '',
   confirmPassword: '',
   remark: '',
-  isAgreePolicy: false,
+  isAgreePolicy: true,
 })
 // 从存储读取最近选择的地区码
 // const lastAreaCode = localStorage.getItem('lastAreaCode')

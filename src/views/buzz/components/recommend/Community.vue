@@ -2,7 +2,11 @@
   <!-- 推荐社区 -->
   <div class="recommend-section" v-if="communitys.length">
     <div class="title flex">
-      {{ $t('Buzz.Referral Community') }}
+      <span>{{ $t('Buzz.Referral Community') }}</span>
+      <div class="switch-wrap">
+        <span>{{ $t('Buzz.showDiffLang') }}</span>
+        <el-switch v-model="showDifferentLang" @change="changeDifflang" />
+      </div>
     </div>
 
     <div class="cont">
@@ -58,7 +62,7 @@
 import { GetRecommendCommunitys } from '@/api/aggregation'
 import { initPagination } from '@/config'
 import { useUserStore } from '@/stores/user'
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch, computed } from 'vue'
 import CardVue from '@/components/Card/Card.vue'
 import { Loading } from '@element-plus/icons-vue'
 import { NodeName } from '@/enum'
@@ -67,11 +71,23 @@ import { useTalkStore } from '@/stores/talk'
 import { sleep } from '@/utils/util'
 import DefaultImage from '@/assets/icons/photo_3.svg?url'
 import { ElMessage } from 'element-plus'
+import { useRootStore } from '@/stores/root'
 
 const pagination = reactive({ ...initPagination, pageSize: 4, totalPages: 1 })
 const userStore = useUserStore()
 const talkStore = useTalkStore()
+const rootStore = useRootStore()
 const i18n = useI18n()
+const showDifferentLang = ref(Boolean(Number(localStorage.getItem('showDiffLang'))))
+function changeDifflang(val: boolean | string | number) {
+  if (val) {
+    showDifferentLang.value = Boolean(1)
+    rootStore.updateShowDiffLang(1)
+  } else {
+    showDifferentLang.value = Boolean(0)
+    rootStore.updateShowDiffLang(0)
+  }
+}
 
 const communitys: recommnedCommunity[] = reactive([])
 

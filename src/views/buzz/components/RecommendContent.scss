@@ -7,6 +7,17 @@
 
     .title {
         font-size: 18px;
+        align-items: center;
+        justify-content: space-between;
+        .switch-wrap{
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            span{
+                margin-right: 5px;
+                color: var(--color-switch);
+            }
+        }
     }
 
     .cont {

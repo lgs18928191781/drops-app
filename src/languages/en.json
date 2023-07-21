@@ -432,7 +432,11 @@
     "Schedule Date": "Schedule Date",
     "Schedule Time": "Schedule Time",
     "Schedule Buzzs": "Schedule Buzzs",
-    "My Schedule Buzzs": "My Schedule Buzzs"
+    "My Schedule Buzzs": "My Schedule Buzzs",
+    "newbuzz": "New Buzz",
+    "newnft": "New NFT",
+    "newtalk": "New Talk",
+    "showDiffLang": "Show Different Languages"
   },
   "Follow": "Follow",
   "walletError": "Signing failed, unable to log in to wallet",
