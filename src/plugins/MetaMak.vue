@@ -4,6 +4,7 @@
     :title="dialogTitle"
     :model-value="modelValue"
     :close-on-click-modal="false"
+    :before-close="handleClose"
     center
   >
     <div class="signWrap" v-if="signType == 1 || signType == 4">
@@ -41,12 +42,13 @@ import {ethers} from 'ethers'
 import { getRandomWord, loginByHashData, loginByMetaidOrAddress, mnemoicLogin, setHashData, loginByNewUser } from './utils/api';
 import type { MetaMaskLoginUserInfo } from './utils/api';
 import { encode, decode } from 'js-base64'
-import { aesEncrypt, createMnemonic, decryptMnemonic, encryptMnemonic, HdWallet, hdWalletFromMnemonic, Network, signature } from '@/utils/wallet/hd-wallet';
+import { aesEncrypt, createMnemonic, decryptMnemonic, encryptMnemonic, HdWallet, hdWalletFromMnemonic, signature } from '@/utils/wallet/hd-wallet';
 import { HDPrivateKey } from 'mvc-std-lib'
 import { useUserStore } from '@/stores/user';
 import { useRoute } from 'vue-router';
 import { useRootStore } from '@/stores/root';
 import { currentSupportChain } from '@/config'
+const rootStore = useRootStore()
 
 export interface MetaMaskLoginRes {
     userInfo: MetaMaskLoginUserInfo
@@ -72,6 +74,11 @@ defineExpose({
     ethPersonalSignSign,
     startConnect
 })
+
+const handleClose = (done: () => void) => {
+    rootStore.$patch({ isShowMetaMak: false })
+    done()
+}
 
 const userStore = useUserStore()
 const route = useRoute()
@@ -236,13 +243,18 @@ async function startConnect() {
                         emit('update:modelValue', false)
                     })
                 })
-                .catch(() => {
+                .catch((error: any) => {
                     emit('update:modelValue', false)
                 })
             }
         }
-    } catch (error) {
+    } catch (error: any) {
 
+            if (error.message.includes('Already processing eth_requestAccounts')) {
+        ElMessage.error(i18n.t('MetaMak.Unlock Tips'))
+    } else {
+        ElMessage.error(error.message)
+    }
         emit('update:modelValue', false)
     }
 }
