@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <div class="menu-select-wrap">
+    <div class="menu-select-wrap" ref="SelectRef">
       <div class="menu-select">
         <div
           :class="[
@@ -72,13 +72,11 @@ import { useRouter, useRoute } from 'vue-router'
 import BuzzWarpVue from './components/BuzzWarp.vue'
 
 const MenuRef = ref()
+const SelectRef = ref()
 const i18n = useI18n()
 let resizeObserver: ResizeObserver
 const route = useRoute()
-console.log('route.fullPath', route, route.name === 'buzzTopic')
-const allowToLink = computed(() => {
-  return route.name === 'buzzTag'
-})
+
 const menus = [
   {
     name: () => i18n.t('Buzz.Timeline'),
@@ -95,15 +93,15 @@ const menus = [
 const newMenu = [
   {
     name: () => i18n.t('Buzz.newbuzz'),
-    path: allowToLink.value ? '/buzz/tag/1' : '',
+    path: '/buzz/tag/1',
   },
   {
     name: () => i18n.t('Buzz.newnft'),
-    path: allowToLink.value ? '/buzz/tag/2' : '',
+    path: '/buzz/tag/2',
   },
   {
     name: () => i18n.t('Buzz.newtalk'),
-    path: allowToLink.value ? '/buzz/tag/3' : '',
+    path: '/buzz/tag/3',
   },
 ]
 
@@ -114,9 +112,12 @@ function toBuzzTag(path: string) {
 
 function setPosition() {
   const BuzzContainer = document.getElementById('buzz-container')!
+
   if (BuzzContainer) {
     MenuRef.value.style.left = BuzzContainer.offsetLeft - MenuRef.value.clientWidth - 12 + 'px'
     MenuRef.value.style.marginLeft = 0
+    SelectRef.value.style.left = BuzzContainer.offsetLeft - SelectRef.value.clientWidth - 12 + 'px'
+    SelectRef.value.style.marginLeft = 0
   }
 }
 

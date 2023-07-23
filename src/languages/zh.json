@@ -711,7 +711,8 @@
       "Price high to low": "價格由高到低",
       "Price low to high": "價格由低到高",
       "Number: X to 1": "序號由大到小",
-      "Number: 1 to X": "序號由小到大"
+      "Number: 1 to X": "序號由小到大",
+      "realease_time": "按上架销售时间"
     },
     "IssueLoading": "正在鑄造中，請勿做其他操作耐心等待...",
     "Issue": {
