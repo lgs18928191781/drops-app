@@ -459,7 +459,12 @@
       "Recharge": "Recharge",
       "Confirm": "Pay Now",
       "ME is used to pay for Gas Fee": "ME is used to pay for Gas Fee, ",
-      "Learn More": "Learn More"
+      "Learn More": "Learn More",
+      "stake": "Staking amount",
+      "Stakement required": "Staking required"
+    },
+    "Stakeconfirm": {
+      "Confirm": "Stake"
     }
   },
   "Please Login First": "Please Login First",

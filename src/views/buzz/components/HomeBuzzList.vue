@@ -16,7 +16,6 @@
         )
     "
   />
-
   <RecommendContentVue />
 </template>
 
@@ -45,20 +44,11 @@ const rootStore = useRootStore()
 const list: BuzzItem[] = reactive([])
 const isSkeleton = ref(true)
 
-watch(
-  () => rootStore.showDiffLang,
-  (newVal, oldVal) => {
-    if (newVal !== oldVal) {
-      refreshDatas()
-    }
-  }
-)
-
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetBuzzs({
       tag: route.name === 'buzzIndex' ? 'timeline' : 'recommendline',
-      langId: rootStore.showDiffLang == 1 ? '' : localStorage.getItem('lang') === 'zh' ? 2 : 1,
+      langId: localStorage.getItem('lang') === 'zh' ? 2 : 1, //rootStore.showDiffLang == 1 ? '' :
       ...pagination,
       metaId: userStore.user?.metaId,
     })

@@ -65,9 +65,9 @@ const routeKey = (route: any) => {
   return route.fullPath
 }
 
-if (!localStorage.getItem('showDiffLang')) {
-  localStorage.setItem('showDiffLang', String(1))
-}
+// if (!localStorage.getItem('showDiffLang')) {
+//   localStorage.setItem('showDiffLang', String(1))
+// }
 
 onMounted(() => {})
 </script>

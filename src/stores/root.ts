@@ -92,8 +92,8 @@ export const useRootStore = defineStore('root', {
         '0x0c45B536C69AB0B8806a65C94BA8C8e6e71Ba7c',
         '0x4E5e9F98089De7f953FD099a54b04d218B3f08eb',
       ],
-      showDiffLang:
-        localStorage.getItem('showDiffLang') && Number(localStorage.getItem('showDiffLang')),
+      // showDiffLang:
+      //   localStorage.getItem('showDiffLang') && Number(localStorage.getItem('showDiffLang')),
     },
   getters: {
     GetCurrentChain: state => {
@@ -114,10 +114,10 @@ export const useRootStore = defineStore('root', {
       state.exchangeRate.find(item => item.symbol === state.currentPrice),
   },
   actions: {
-    updateShowDiffLang(payload: number) {
-      this.showDiffLang = payload
-      localStorage.setItem('showDiffLang', String(payload))
-    },
+    // updateShowDiffLang(payload: number) {
+    //   this.showDiffLang = payload
+    //   localStorage.setItem('showDiffLang', String(payload))
+    // },
     updateShowLoginBindEvmAccount(payload: {
       isUpdatePlan: boolean
       loginedButBind: boolean

@@ -3,10 +3,10 @@
   <div class="recommend-section" v-if="communitys.length">
     <div class="title flex">
       <span>{{ $t('Buzz.Referral Community') }}</span>
-      <div class="switch-wrap">
+      <!-- <div class="switch-wrap">
         <span>{{ $t('Buzz.showDiffLang') }}</span>
         <el-switch v-model="showDifferentLang" @change="changeDifflang" />
-      </div>
+      </div> -->
     </div>
 
     <div class="cont">
@@ -79,15 +79,15 @@ const talkStore = useTalkStore()
 const rootStore = useRootStore()
 const i18n = useI18n()
 const showDifferentLang = ref(Boolean(Number(localStorage.getItem('showDiffLang'))))
-function changeDifflang(val: boolean | string | number) {
-  if (val) {
-    showDifferentLang.value = Boolean(1)
-    rootStore.updateShowDiffLang(1)
-  } else {
-    showDifferentLang.value = Boolean(0)
-    rootStore.updateShowDiffLang(0)
-  }
-}
+// function changeDifflang(val: boolean | string | number) {
+//   if (val) {
+//     showDifferentLang.value = Boolean(1)
+//     rootStore.updateShowDiffLang(1)
+//   } else {
+//     showDifferentLang.value = Boolean(0)
+//     rootStore.updateShowDiffLang(0)
+//   }
+// }
 
 const communitys: recommnedCommunity[] = reactive([])
 
