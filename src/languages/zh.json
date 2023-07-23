@@ -468,7 +468,11 @@
     "Schedule Date": "发布日期",
     "Schedule Time": "发布时间",
     "Schedule Buzzs": "定时发布Buzzs",
-    "My Schedule Buzzs": "我的定時發佈Buzzs"
+    "My Schedule Buzzs": "我的定時發佈Buzzs",
+    "newbuzz": "New Buzz",
+    "newnft": "New NFT",
+    "newtalk": "New Talk",
+    "showDiffLang": "Show Different Languages"
   },
   "Follow": "關注",
   "walletError": "簽名失敗,無法登錄錢包",
@@ -527,7 +531,12 @@
       "Recharge": "充值",
       "Confirm": "支付",
       "ME is used to pay for Gas Fee": "ME是用於支付Gas Fee的積分，",
-      "Learn More": "了解更多"
+      "Learn More": "了解更多",
+      "stake": " 质押数量",
+      "Stakement required": "需要质押"
+    },
+    "Stakeconfirm": {
+      "Confirm": "质押"
     }
   },
   "Please Login First": "請先登錄",

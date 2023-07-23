@@ -82,9 +82,14 @@
           <div class="information-item">
             <div class="lable">{{ $t('DAO.Information Proposal Need Token Min') }}</div>
             <div class="cont">
-              <ElTag type="info">{{
-                talk.activeCommunity?.dao?.createProposalRequireTokenNumber
-              }}</ElTag>
+              <ElTag type="info"
+                >{{
+               $filters.space(talk.activeCommunity?.dao?.createProposalRequireTokenNumber!)
+
+
+
+                }}&nbsp;&nbsp;SPACE</ElTag
+              >
             </div>
           </div>
         </div>
@@ -162,6 +167,7 @@ import { DAOTypes } from '@/utils/DAO'
 import { useUserStore } from '@/stores/user'
 import CreateDaoModal from '../components/modals/CreateDaoModal.vue'
 import { Form } from 'vee-validate'
+import Decimal from 'decimal.js-light'
 
 const talk = useTalkStore()
 const admins: UserAllInfo[] = reactive([])

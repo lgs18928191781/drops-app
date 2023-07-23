@@ -16,7 +16,6 @@
         )
     "
   />
-
   <RecommendContentVue />
 </template>
 
@@ -31,6 +30,8 @@ import BuzzListVue from './BuzzList.vue'
 import { Mitt, MittEvent } from '@/utils/mitt'
 import RecommendContentVue from './RecommendContent.vue'
 import PublishBox from './PublishBox.vue'
+import { useRootStore } from '@/stores/root'
+import { debounce } from '@/utils/util'
 
 // interface Props {}
 // const props = withDefaults(defineProps<Props>(), {})
@@ -39,7 +40,7 @@ const pagination = reactive({ ...initPagination, timestamp: 0 })
 const userStore = useUserStore()
 const layout = useLayoutStore()
 const route = useRoute()
-
+const rootStore = useRootStore()
 const list: BuzzItem[] = reactive([])
 const isSkeleton = ref(true)
 
@@ -47,7 +48,7 @@ function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetBuzzs({
       tag: route.name === 'buzzIndex' ? 'timeline' : 'recommendline',
-      langId: localStorage.getItem('lang') === 'zh' ? 2 : 1,
+      langId: localStorage.getItem('lang') === 'zh' ? 2 : 1, //rootStore.showDiffLang == 1 ? '' :
       ...pagination,
       metaId: userStore.user?.metaId,
     })

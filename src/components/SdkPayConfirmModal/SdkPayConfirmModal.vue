@@ -7,11 +7,17 @@
   >
     <div class="sdk-pay-confirm">
       <div class="header">
-        <span class="title">
+        <span class="title" v-if="isStake">
+          {{
+            balance >= useAmount ? i18n.t('SDK.payconfirm.stake') : i18n.t('Insufficient balance')
+          }}</span
+        >
+        <span class="title" v-else>
           {{
             balance >= useAmount ? i18n.t('SDK.payconfirm.Payment') : i18n.t('Insufficient balance')
           }}</span
         >
+
         <a class="close flex flex-align-center flex-pack-center" @click="cancel">
           <Icon name="x_mark" />
         </a>
@@ -24,7 +30,13 @@
             </div>
             <div class="lable">{{ payType }}</div>
           </div>
-          <div class="text">{{ i18n.t('SDK.payconfirm.Payment required') }}</div>
+          <div class="text">
+            {{
+              isStake
+                ? i18n.t('SDK.payconfirm.Stakement required')
+                : i18n.t('SDK.payconfirm.Payment required')
+            }}
+          </div>
           <div class="me-tips" v-if="payType === SdkPayType.ME">
             {{ i18n.t('SDK.payconfirm.ME is used to pay for Gas Fee') }}
             <a @click="isShowMEIntro = true">{{ i18n.t('SDK.payconfirm.Learn More') }}</a>
@@ -58,7 +70,7 @@
           {{ i18n.t('Cancel') }}
         </a>
         <a class="main-border flex1 primary" v-if="balance >= useAmount" @click="confirm">
-          {{ i18n.t('SDK.payconfirm.Confirm') }}
+          {{ isStake ? i18n.t('SDK.Stakeconfirm.Confirm') : i18n.t('SDK.payconfirm.Confirm') }}
         </a>
         <a class="main-border flex1 primary" v-else @click="toRecharge">
           {{ i18n.t('SDK.payconfirm.Recharge') }}
@@ -89,10 +101,14 @@ interface Props {
   balance: number
   router: Router
   payType: SdkPayType
+  isStake?: boolean
 }
+
 const props = withDefaults(defineProps<Props>(), {
   payType: SdkPayType.ME,
 })
+
+console.log('isStake', props.isStake)
 const isShow = ref(true)
 const isShowConformCheck = ref(props.confirmVisible)
 const emit = defineEmits(['changeConfirmVisible', 'confirm', 'cancel', 'recharge'])

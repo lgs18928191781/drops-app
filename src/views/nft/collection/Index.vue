@@ -57,6 +57,9 @@
         >
           <div class="cover">
             <img :src="$filters.strapiImage(item.cover.url)" />
+            <div class="seriesName">
+              <span>{{ item.name }}</span>
+            </div>
           </div>
 
           <div class="cont">
@@ -188,7 +191,7 @@ function getDatas(isCover = false) {
           const TopicRes = await GetGenesisStatistics(res[i].topicType)
           if (TopicRes.code == 0) {
             res[i] = Object.assign(res[i], {
-              floorPrice: TopicRes.data.minPrice ? TopicRes.data.minPrice : 0,
+              floorPrice: TopicRes.data.minPriceOnSell ? TopicRes.data.minPriceOnSell : 0,
               circulatingSupply: TopicRes.data.totalSupply ? TopicRes.data.totalSupply : 0,
             })
             newRes.push(res[i])

@@ -297,6 +297,7 @@ export class SDK {
       useQueue?: boolean
       subscribeId?: string
       checkOnly?: boolean //false弹窗，true不弹窗
+      isStake?: boolean
     }
   ) {
     return new Promise<NodeTransactions | null>(async (resolve, reject) => {
@@ -307,6 +308,7 @@ export class SDK {
         payType: userStore.sdkPayment,
         useQueue: false,
         subscribeId: '',
+        isStake: false,
       }
       const initParams = {
         appId: ['ShowV3', this.getOnLinkAppUrl(), this.getPlatform()],
@@ -385,7 +387,8 @@ export class SDK {
               option.payType!,
               totalAmount,
               balance!,
-              option.checkOnly
+              option.checkOnly,
+              option.isStake
             )
             if (result) {
               // 确认支付
@@ -1727,7 +1730,8 @@ export class SDK {
     payType: SdkPayType,
     useAmount: number,
     balance: number,
-    checkOnly: boolean = false
+    checkOnly: boolean = false,
+    isStake: boolean = false
   ) {
     return new Promise<boolean>((resolve, reject) => {
       const userStore = useUserStore()
@@ -1752,6 +1756,7 @@ export class SDK {
             balance,
             router,
             payType,
+            isStake,
             onChangeConfirmVisible: (res: boolean) => {
               userStore.changeSdkPayConfirm('visible', res, payType)
             },

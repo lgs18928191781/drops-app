@@ -65,6 +65,10 @@ const routeKey = (route: any) => {
   return route.fullPath
 }
 
+// if (!localStorage.getItem('showDiffLang')) {
+//   localStorage.setItem('showDiffLang', String(1))
+// }
+
 onMounted(() => {})
 </script>
 <style lang="css" src="@/assets/styles/tailwind.css"></style>

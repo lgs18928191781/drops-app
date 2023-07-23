@@ -5,7 +5,26 @@
     <div class="content">
       <div class="back">
         <a @click="$router.back()"><Icon name="down"/></a>
+        <div class="menu-select-wrap">
+          <div class="menu-select">
+            <div
+              :class="[
+                'menu-select-item',
+                'flex',
+                'flex-align-center',
+
+                route.path == item.path ? 'isActive' : '',
+              ]"
+              v-for="(item, index) in newMenu"
+              :key="index"
+              @click="toBuzzTag(item.path)"
+            >
+              <span class="name">{{ item.name() }}</span>
+            </div>
+          </div>
+        </div>
       </div>
+
       <div class="msg flex">
         <div class="icon-warp">
           <div class="box-shadow" :style="{ background: tag?.color }"></div>
@@ -61,22 +80,47 @@ import { useUserStore } from '@/stores/user'
 import { computed, inject, onActivated, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import BuzzListVue from './components/BuzzList.vue'
-
+import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 const route = useRoute()
 const postTagStore = usePostTagStore()
 const userStore = useUserStore()
-
+const i18n = useI18n()
 const list: BuzzItem[] = reactive([])
 const pagination = reactive({ ...initPagination, timestamp: 0 })
 const isSkeleton = ref(true)
 const pulldown: PullDownVal = inject('Pulldown')!
 const refreshBox = ref()
+const router = useRouter()
+const allowToLink = computed(() => {
+  return route.name === 'buzzTag'
+})
+const newMenu = [
+  {
+    name: () => i18n.t('Buzz.newbuzz'),
+    path: allowToLink.value ? '/buzz/tag/1' : '',
+  },
+  {
+    name: () => i18n.t('Buzz.newnft'),
+    path: allowToLink.value ? '/buzz/tag/2' : '',
+  },
+  {
+    name: () => i18n.t('Buzz.newtalk'),
+    path: allowToLink.value ? '/buzz/tag/3' : '',
+  },
+]
 
 const tag = computed(() =>
   postTagStore.list.find(item => item.id.toString() === route.params.tagId)
 )
-const tabActive = ref(tag.value?.subTag && tag.value?.subTag.length ? tag.value?.subTag[0].tag : '')
+const tabActive = computed(() =>
+  tag.value?.subTag && tag.value?.subTag.length ? tag.value?.subTag[0].tag : ''
+)
 
+function toBuzzTag(path: string) {
+  if (!path) return
+  router.push(path)
+}
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetTagBuzzs({

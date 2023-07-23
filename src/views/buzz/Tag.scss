@@ -33,9 +33,53 @@
         z-index: 3;
         padding: 18px;
 
-        .back {
+.back {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+            .menu-select-wrap{
+                
+    font-size: 12PX;
+    .menu-select{
+        display: none;
+    }
+    @media only screen and (max-width: 1110PX) {
+    .menu-select{
+        display: flex;
+        box-sizing: border-box;
+        flex-direction: row;
+        align-items: center;
+       
+        .menu-select-item{
+            width: 96PX;
+            height: 33PX;
 
-
+            //margin-bottom: 10PX;
+            margin-right: 10px;
+            color: var(--themeTextColor2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: url('@/assets/images/buzz_select.png');
+            background-repeat: no-repeat;
+            cursor: pointer;
+            &:last-child {
+                margin-bottom: 0;
+            }
+            &:hover{
+                 background-image: url('@/assets/images/buzz_select_active.png');
+                background-repeat: no-repeat;
+            }
+        }
+         .isActive {
+                background-image: url('@/assets/images/buzz_select_active.png');
+                background-repeat: no-repeat;
+                // background: var(--el-color-primary);
+                color: var(--themeBtnTextColor);
+            }
+    }
+}
+}
 
             a {
                 cursor: pointer;

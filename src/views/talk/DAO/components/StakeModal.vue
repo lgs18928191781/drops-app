@@ -233,6 +233,7 @@ async function stake() {
           {
             payType: SdkPayType.SPACE,
             isBroadcast: false,
+            isStake: true,
           }
         )
         if (result) {
