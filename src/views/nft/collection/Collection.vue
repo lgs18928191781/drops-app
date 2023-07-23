@@ -284,8 +284,8 @@ const isListLoading = ref(false)
 
 const sorts = [
   {
-    name: () => i18n.t('NFT.Sort.Default Ranking'),
-    sortType: CollectionSortType.Default,
+    name: () => i18n.t('NFT.Sort.Price low to high'),
+    sortType: CollectionSortType.Price,
     orderType: CollectionOrderType.ASC,
   },
   {
@@ -294,10 +294,11 @@ const sorts = [
     orderType: CollectionOrderType.DESC,
   },
   {
-    name: () => i18n.t('NFT.Sort.Price low to high'),
-    sortType: CollectionSortType.Price,
+    name: () => i18n.t('NFT.Sort.realease_time'), //i18n.t('NFT.Sort.Default Ranking'),
+    sortType: CollectionSortType.Default,
     orderType: CollectionOrderType.ASC,
   },
+
   {
     name: () => i18n.t('NFT.Sort.Number: X to 1'),
     sortType: CollectionSortType.TokenIndex,

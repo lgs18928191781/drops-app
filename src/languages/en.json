@@ -722,7 +722,8 @@
       "Price high to low": "Price high to low",
       "Price low to high": "Price low to high",
       "Number: X to 1": "Number: X to 1",
-      "Number: 1 to X": "Number: 1 to X"
+      "Number: 1 to X": "Number: 1 to X",
+      "realease_time": "According to the sale time"
     },
     "IssueLoading": "Casting is in progress, please do not do other operations and wait patiently...",
     "Issue": {

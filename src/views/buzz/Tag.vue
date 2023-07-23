@@ -92,21 +92,19 @@ const isSkeleton = ref(true)
 const pulldown: PullDownVal = inject('Pulldown')!
 const refreshBox = ref()
 const router = useRouter()
-const allowToLink = computed(() => {
-  return route.name === 'buzzTag'
-})
+
 const newMenu = [
   {
     name: () => i18n.t('Buzz.newbuzz'),
-    path: allowToLink.value ? '/buzz/tag/1' : '',
+    path: '/buzz/tag/1',
   },
   {
     name: () => i18n.t('Buzz.newnft'),
-    path: allowToLink.value ? '/buzz/tag/2' : '',
+    path: '/buzz/tag/2',
   },
   {
     name: () => i18n.t('Buzz.newtalk'),
-    path: allowToLink.value ? '/buzz/tag/3' : '',
+    path: '/buzz/tag/3',
   },
 ]
 
