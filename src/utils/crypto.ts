@@ -39,6 +39,22 @@ export function encrypt(message: string, secretKeyStr: string): string {
   return _encryptedBuf.toString('hex')
 }
 
+export function aesEncrypt(message: string, secretKeyStr: string) {
+  // 密码长度不足 16/32 位用 0 补够位数
+  const paddedKey =
+    secretKeyStr.length > 16 ? secretKeyStr.padEnd(32, '0') : secretKeyStr.padEnd(16, '0')
+  const iv = '0000000000000000',
+    utf8Str = Utf8.parse(message),
+    utf8Key = Utf8.parse(paddedKey),
+    utf8Iv = Utf8.parse(iv)
+
+  return AES.encrypt(utf8Str, utf8Key, {
+    iv: utf8Iv,
+    mode: mode.CBC,
+    padding: pad.Pkcs7,
+  }).toString()
+}
+
 export function ecdhDecrypt(message: string, privateKeyStr: string, publicKeyStr: string): string {
   const secretKey = _createEcdhSecret(privateKeyStr, publicKeyStr)
   const messageBytes = AES.decrypt(message, secretKey)

@@ -32,6 +32,20 @@ function connect() {
             })
           })
           .catch((error: any) => {
+            if (error.message.includes('Already processing eth_requestAccounts')) {
+              ;(window as any).ethereum
+                .request({
+                  method: 'wallet_requestPermissions',
+                  params: [
+                    {
+                      eth_accounts: {},
+                    },
+                  ],
+                })
+                .catch((error: any) => {
+                  reject(error)
+                })
+            }
             reject(error)
           })
         // From now on, this should always be true:

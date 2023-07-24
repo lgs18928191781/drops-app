@@ -542,6 +542,7 @@
     "Chain Eroor": "Chain Eroor",
     "Chain Error": "Chain Error",
     "Chain Network Error": "Chain Network Error",
+    "Unlock Tips": "Please unlock your Metamask wallet first",
     "Chain Network Error Tips": "You need to switch the network to:",
     "Change": "Change To "
   },

@@ -614,6 +614,7 @@
   "MetaMak": {
     "Chain Network Error": "鏈所在網絡錯誤",
     "Chain Network Error Tips": "你需要把網絡切換到:",
+    "Unlock Tips": "請先解鎖你的MetaMask錢包",
     "Change": "切換到"
   },
   "Success": "成功",
