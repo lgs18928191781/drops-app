@@ -248,6 +248,8 @@ async function toCreate() {
 
 function getUserStakeInfo() {
   return new Promise<void>(async (resolve, reject) => {
+    console.log("15465143213",`${talk.activeCommunity!.dao!.governanceSymbol}_${talk.activeCommunity!.dao!.daoId}`)
+    debugger
     const res = await GetUserStakeInfo({
       symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${talk.activeCommunity!.dao!.daoId}`,
       address: userStore.user!.address!,

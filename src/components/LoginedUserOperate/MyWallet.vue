@@ -393,6 +393,7 @@ import { ErrorDescription } from '@ethersproject/abi/lib/interface'
 import { metafile } from '@/utils/filters'
 import type { TabsPaneContext } from 'element-plus'
 import { debounce } from '@/utils/util'
+import VSAPCE from '@/assets/images/v-space.jpg?url'
 const props = defineProps<{
   modelValue: boolean
 }>()
@@ -431,6 +432,8 @@ const FtList: ftListType[] = reactive([
     ftName: '',
   },
 ])
+
+
 
 const userWalletOperates = [
   {
@@ -904,6 +907,8 @@ function getFts(isCover = false) {
             ftName: ft.name,
           })
         })
+
+
         resolve()
       }
     }

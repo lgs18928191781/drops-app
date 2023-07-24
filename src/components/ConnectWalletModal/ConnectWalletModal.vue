@@ -47,6 +47,16 @@
           @back="status = ConnectWalletStatus.Watting"
           @success="OnMetaIdSuccess"
         />
+
+        <!--使用助记词登录-->
+        <MnemonicVue
+          ref="MnemonicRef"
+          v-model:type="type"
+          v-model:loading="loading"
+          v-else-if="status === ConnectWalletStatus.Mnemonic"
+          @back="status = ConnectWalletStatus.Watting"
+          @success="OnMetaIdSuccess"
+        ></MnemonicVue>
       </div>
     </div>
   </ElDialog>
@@ -137,6 +147,7 @@ import IconMetaMask from '@/assets/images/login_logo_matamask.png'
 import IconWallteConnect from '@/assets/images/login_logo_wallteconnect.png'
 import IconAdd from '@/assets/images/wallte_icon_add.png'
 import IconLine from '@/assets/images/wallte_icon_line.png'
+import Iconmnemonic from '@/assets/images/mnemonic.svg?url'
 import MetaMask, { MetaMaskLoginRes } from '@/plugins/MetaMak.vue'
 import { useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
@@ -144,6 +155,7 @@ import { SDK } from '@/utils/sdk'
 import FirstBuzzImg from '@/assets/images/first_buzz.svg?url'
 import { toMvcScan } from '@/utils/util'
 import MetaIdWalletVue, { MetaIdWalletRegisterBaseInfo } from './MetaIdWallet.vue'
+import MnemonicVue from './MnemonicLogin.vue'
 import SetBaseInfoVue from './SetBaseInfo.vue'
 import BackupMnemonicVue from './BackupMnemonic.vue'
 import BindMetaIdVue from './BindMetaId.vue'
@@ -187,10 +199,12 @@ const buzzResult = reactive({
 })
 const setBaseInfoRef = ref()
 const MetaidWalletRef = ref()
+const MnemonicRef = ref()
 const enum ConnectWalletStatus {
   Watting,
   WallteConnect,
   UseMetaId,
+  Mnemonic,
 }
 
 const status: Ref<ConnectWalletStatus> = ref(ConnectWalletStatus.Watting)
@@ -255,6 +269,26 @@ const wallets = [
           // rootStore.$patch({ isShowLogin: false })
           // isShowLoginAndRegister.value = true
           status.value = ConnectWalletStatus.UseMetaId
+        },
+      },
+    ],
+  },
+  {
+    title: () => {
+      return `${i18n.t('Login.mnemonic')} (MVC)`
+    },
+    list: [
+      {
+        name: () => {
+          return i18n.t('Login.Mnemonic')
+        },
+        desc: () => {
+          return ''
+        },
+        icon: Iconmnemonic,
+        fun: () => {
+          type.value = 'login'
+          status.value = ConnectWalletStatus.Mnemonic
         },
       },
     ],

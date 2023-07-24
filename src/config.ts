@@ -173,20 +173,20 @@ export const payPlatformList: PayPlatformItem[] = [
     disabled: () => false,
     suffix: false,
   },
-  {
-    icon: SandPayIcon,
-    name: () => {
-      // @ts-ignore
-      return i18n.global.t('quickPay')
-    },
-    key: 'UnionPay',
-    platform: PayPlatform.UnionPay,
-    background: '#FCA63D',
-    disabled: () => {
-      return false
-    },
-    suffix: true,
-  },
+  // {
+  //   icon: SandPayIcon,
+  //   name: () => {
+  //     // @ts-ignore
+  //     return i18n.global.t('quickPay')
+  //   },
+  //   key: 'UnionPay',
+  //   platform: PayPlatform.UnionPay,
+  //   background: '#FCA63D',
+  //   disabled: () => {
+  //     return false
+  //   },
+  //   suffix: true,
+  // },
   // {
   //   icon: WechatPayIcon,
   //   name: () => {

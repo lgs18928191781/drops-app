@@ -995,6 +995,7 @@ export function getCurrencyAmount(
   toCurrency?: ToCurrency
 ) {
   const rootStore = useRootStore()
+  console.log('rootStore.exchangeRate', rootStore.exchangeRate)
   if (!price) return 0
   const ToCurrencyAmountFix = {
     [ToCurrency.BSV]: 8,
@@ -1032,6 +1033,7 @@ export function getCurrencyAmount(
       ).toNumber()
     } else if (currency === ToCurrency.USD && toCurrency === ToCurrency.CNY) {
       // usd -> cny
+
       amount = new Decimal(
         new Decimal(rootStore.exchangeRate[0].price.CNY)
           .div(rootStore.exchangeRate[0].price.USD)
