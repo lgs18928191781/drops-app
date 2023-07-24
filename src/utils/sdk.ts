@@ -12,6 +12,7 @@ import {
   DEFAULTS,
   HdWallet,
   hdWalletFromAccount,
+  hdWalletFromMnemonic,
   NftTransferResult,
 } from '@/utils/wallet/hd-wallet'
 import { AttachmentItem } from '@/@types/hd-wallet'
@@ -101,6 +102,30 @@ export class SDK {
         )
 
         const wallet = new HdWallet(walletObj.wallet)
+
+        this.wallet = wallet
+        this.isInitSdked = true
+        resolve()
+      } catch (error) {
+        console.error(error)
+        reject(new Error('生成钱包失败' + (error as any).message))
+      }
+    })
+  }
+
+  initWalletFromMnemonic() {
+    return new Promise<void>(async (resolve, reject) => {
+      const userStore = useUserStore()
+      try {
+        const account = getLocalAccount()
+        const walletObj = await hdWalletFromMnemonic(
+          account.password,
+          'new',
+          import.meta.env.VITE_NET_WORK,
+          userStore.user?.path
+        )
+
+        const wallet = new HdWallet(walletObj)
 
         this.wallet = wallet
         this.isInitSdked = true

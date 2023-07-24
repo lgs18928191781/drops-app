@@ -74,7 +74,11 @@ router.beforeEach(async (to, from, next) => {
   if (userStore.isAuthorized) {
     // 用户已登录但未初始化sdk 里面钱包， 则去 初始化 sdk 里面的钱包
     if (!userStore.showWallet.isInitSdked) {
-      await userStore.showWallet.initWallet()
+      if (rootStore.GetIsImportMnemonicLogin) {
+        await userStore.showWallet.initWalletFromMnemonic()
+      } else {
+        await userStore.showWallet.initWallet()
+      }
     }
 
     // 没有拿用户实名信息时， 先要去拿用户实名信息

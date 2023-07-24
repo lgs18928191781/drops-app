@@ -401,7 +401,9 @@
     "MetaIdWallet": {
       "accountAlreadyRegistered": "該賬號已被註冊"
     },
-    "No wallet": "沒有錢包"
+    "No wallet": "沒有錢包",
+    "mnemonic": "助记词",
+    "Mnemonic": "助记词登录"
   },
   "back": "返回",
   "UserOperate": {
@@ -843,7 +845,7 @@
   "learnMetaSo": "運行我自己的 MetaSo Node",
   "ME": {
     "What is MetaEnergy": "什麽是ME",
-    "intro1": "ME是全稱是MetaEnergy，ME是Show3體系內的積分系統，它不是一般意義上的數字貨幣，不能出售也不計劃上任何交易所，僅用於Show3體系內使用和流通，不會支持任何跨平臺的使用。Show團隊不會保留ME，也不會出售任何ME，也不鼓勵用戶囤積ME。Show平臺測試期間每個新賬號將可免費獲得10000ME。",
+    "intro1": "ME是全稱是MetaEnergy，ME是Show3體系內的積分系統，它不是一般意義上的數字貨幣，不能出售也不計劃上任何交易所，僅用於Show3體系內使用和流通，不會支持任何跨平臺的使用。Show團隊不會保留ME，也不會出售任何ME，也不鼓勵用戶囤積ME。Show平臺測試期間每個新賬號將可免費獲得1000 ME。",
     "How MetaEnergy is Generated": "ME的產出",
     "intro2": "供應量：無上限，由用戶行為產出",
     "How to get ME": "ME的獲取",
@@ -1237,5 +1239,10 @@
   },
   "Will send": "將發佈于",
   "MoblePhone Not Support": "暂不支持手机号注册",
-  "installMetamaskTip": "请点击以下官方链接安装MetaMask再登录"
+  "installMetamaskTip": "请点击以下官方链接安装MetaMask再登录",
+  "Enter Mnemonic": "请按正确次序输入助记词，单次之间以空格分隔",
+  "Enter Dervice path": "请输入钱包衍生路径",
+  "pathTip3": "Show3 使用的默认路径是",
+  "pathTip1": "什么是推导路径？",
+  "pathTip2": "派生路径用于生成您的钱包地址。您可以使用默认路径或自定义它。"
 }

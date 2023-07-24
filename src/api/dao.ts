@@ -131,6 +131,7 @@ export const GetUserStakeInfo = async (params: {
   symbol: string
   address: string
 }): Promise<{ code: number; data: DAOUserStakeInfo; msg: string }> => {
+  debugger
   return DAO.get('/userinfo', { params })
 }
 

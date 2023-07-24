@@ -260,7 +260,9 @@ declare interface BindUserInfo {
 declare interface BindMetaIdRes {
   userInfo: MetaMaskLoginUserInfo
   wallet: bsv.HDPrivateKey
-  password: string
+  password?: string
+  userType?: string
+  path?: string
   // type: 'register' | 'login'
 }
 

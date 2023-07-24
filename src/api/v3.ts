@@ -1,8 +1,10 @@
 import { PayPlatform, PayType } from '@/enum'
 import HttpRequest from '@/utils/request'
-import { alertCatchError } from '@/utils/util'
+import { alertCatchError, realRandomString } from '@/utils/util'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
+import { crypto } from 'mvc-lib'
+import { aesEncrypt } from '@/utils/crypto'
 
 // @ts-ignore
 const V3 = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/v3`, {
@@ -156,7 +158,35 @@ export const GetMeUtxos = (params: {
   protocol: string
   receive_address: string
 }): Promise<GetMeUtxosRes> => {
-  return V3.post('/api/me/user/getOperateFee', params)
+  const { address, amount, meta_id, protocol, receive_address } = params
+
+  // params 添加 sign， nonce, timestamp，然后用key用aes算法加密
+  const timestamp = new Date().getTime()
+  // nonce为6位随机字符串
+  const nonce = realRandomString(6)
+
+  // 生成sign：将参数按照key的字母顺序排序，然后拼接成字符串，最后用sha256加密两次
+  const concatenated =
+    nonce +
+    address +
+    meta_id +
+    receive_address +
+    amount.toString() +
+    timestamp.toString() +
+    protocol
+  const sign = crypto.Hash.sha256sha256(Buffer.from(concatenated)).toString('hex')
+
+  // aesEncrypt成encodeData
+  const encryptingParams = JSON.stringify({
+    sign,
+    nonce,
+    timestamp,
+    ...params,
+  })
+  const secretKey = 'fF3nMXzGPQMw10Kc'
+  const encodeData = aesEncrypt(encryptingParams, secretKey)
+
+  return V3.post('/api/me/user/getOperateFee', { encode_data: encodeData })
 }
 
 export const GetMetaEggs = (params: {

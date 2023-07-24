@@ -205,6 +205,7 @@ export const MnemoicLogin = (params: {
 }): Promise<{
   code: number
   data: BindUserInfo
+  msg: string
 }> => {
   return Core.post(`/api/v1/mnemonic/verification`, params)
 }

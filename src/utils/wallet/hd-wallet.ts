@@ -98,7 +98,6 @@ export interface BaseUserInfoTypes {
   password?: string
   pk2: string
   token?: string
-  accessKey?: string
   enCryptedMnemonic?: string
   tag?: 'new' | 'old'
   referrerId?: string
@@ -106,6 +105,7 @@ export interface BaseUserInfoTypes {
   ethAddress?: string
   evmAddress?: string
   path: number
+  register?: string
 }
 interface TransferNftParams {
   network?: string

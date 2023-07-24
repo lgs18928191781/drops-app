@@ -34,8 +34,17 @@
         {{ $t('MetaName.registerBySpaceTips') }}
       </div>
       <div class="amount">
+        {{
+          currentPayPlatform == PayPlatform.UnionPay
+            ? getPlatformSymbol(currentPayPlatform, '')
+            : ''
+        }}
         {{ currencyAmount }}
-        {{ getPlatformSymbol(currentPayPlatform, 'USD') }}
+        {{
+          currentPayPlatform == PayPlatform.UnionPay
+            ? ''
+            : getPlatformSymbol(currentPayPlatform, 'USD')
+        }}
       </div>
       <div class="usd">{{ price }} USD</div>
     </div>

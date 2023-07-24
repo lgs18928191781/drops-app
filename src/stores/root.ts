@@ -33,6 +33,7 @@ interface RootState {
   } | null
   updatePlanWhiteList: string[]
   showDiffLang?: number
+  isImportMnemonicLogin?: boolean
 }
 
 const UA = window.navigator.userAgent.toLowerCase()
@@ -92,10 +93,14 @@ export const useRootStore = defineStore('root', {
         '0x0c45B536C69AB0B8806a65C94BA8C8e6e71Ba7c',
         '0x4E5e9F98089De7f953FD099a54b04d218B3f08eb',
       ],
+      isImportMnemonicLogin: localStorage.getItem('isImportMnemonicLogin') || false,
       // showDiffLang:
       //   localStorage.getItem('showDiffLang') && Number(localStorage.getItem('showDiffLang')),
     },
   getters: {
+    GetIsImportMnemonicLogin: state => {
+      return state.isImportMnemonicLogin || localStorage.getItem('isImportMnemonicLogin')
+    },
     GetCurrentChain: state => {
       window.ethereum && polygonChian.includes(window.ethereum?.chainId)
         ? (state.currentChain = 'polygon')
@@ -118,6 +123,10 @@ export const useRootStore = defineStore('root', {
     //   this.showDiffLang = payload
     //   localStorage.setItem('showDiffLang', String(payload))
     // },
+    updateLoginFromMnemonic(payload: boolean) {
+      this.isImportMnemonicLogin = payload
+      localStorage.setItem('isImportMnemonicLogin', String(payload))
+    },
     updateShowLoginBindEvmAccount(payload: {
       isUpdatePlan: boolean
       loginedButBind: boolean
