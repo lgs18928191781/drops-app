@@ -400,7 +400,9 @@ export class SDK {
                 protocol: params.nodeName,
                 address: userStore.user?.address!,
               })
+
               let useMe = Math.ceil(totalAmount / meInfo.me_rate_amount)
+
               if (useMe * 100 < meInfo.me_amount_min) useMe = meInfo.me_amount_min / 100
               totalAmount = useMe
             }

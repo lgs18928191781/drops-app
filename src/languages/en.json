@@ -500,7 +500,8 @@
     "Transfer To": "To",
     "Transfer Accound": "Transfer Account",
     "Link Wallet": "Link Wallet",
-    "MvcFt": "FT (MVC)"
+    "MvcFt": "FT (MVC)",
+    "unStake": "unstaked"
   },
   "quickPay": "Credit Card",
   "aliPay": "Alipay",

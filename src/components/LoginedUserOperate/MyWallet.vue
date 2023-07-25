@@ -156,10 +156,16 @@
                         </div>
                       </div>
                       <a
-                        class="transfer main-border"
+                        :class="[
+                          'transfer',
+                          'main-border',
+                          wallet.name == 'vSpace' ? 'notAllow' : '',
+                        ]"
                         v-if="wallet.isCanTransfer"
                         @click="openTransferMenu(wallet)"
-                        >{{ $t('Wallet.Transfer') }}</a
+                        >{{
+                          wallet.name == 'vSpace' ? $t('Wallet.unStake') : $t('Wallet.Transfer')
+                        }}</a
                       >
                       <div class="value">
                         <template v-if="wallet.loading">
@@ -393,7 +399,8 @@ import { ErrorDescription } from '@ethersproject/abi/lib/interface'
 import { metafile } from '@/utils/filters'
 import type { TabsPaneContext } from 'element-plus'
 import { debounce } from '@/utils/util'
-import VSAPCE from '@/assets/images/v-space.jpg?url'
+
+import { GetUserStakeInfo,GetBlockTime } from '@/api/dao'
 const props = defineProps<{
   modelValue: boolean
 }>()
@@ -432,6 +439,23 @@ const FtList: ftListType[] = reactive([
     ftName: '',
   },
 ])
+
+const vSpaceCoin = reactive({
+    icon: MVC,
+    name: 'vSpace',
+    value: 0,
+    showBindBtn: false,
+    address: () => userStore.user?.address || '',
+    isCanTransfer: true,
+    price: () => '--',
+    loading: false,
+    tokenType: 'ftIcon',
+    codehash: '',
+    genesis: '',
+    decimalNum: 8,
+    ftSymbol: 'vSpace',
+    ftName: 'vSpace',
+  })
 
 
 
@@ -478,6 +502,7 @@ const tabs = [
   { name: i18n.t('Wallet.Balance'), value: 0 },
   { name: 'NFT', value: 1 },
 ]
+const blockTimeStamp = ref(0)
 const isSkeleton = ref(true)
 const currentChain = ref(Chains.MVC)
 const genesisList: UserNFTItem[] = reactive([])
@@ -634,6 +659,38 @@ const totalBalanceLoading = computed(() => {
   return value
 })
 
+function getLeastBlockTimestamp() {
+  return new Promise<void>(async (resolve, reject) => {
+    const res = await GetBlockTime().catch(error => {
+      console.log("error",error)
+    })
+    if (res?.code === 0) {
+      blockTimeStamp.value = res.data * 1000
+      resolve()
+    }
+  })
+}
+
+function getUserStakeInfo() {
+  return new Promise<void>(async (resolve, reject) => {
+    await getLeastBlockTimestamp()
+    const res = await GetUserStakeInfo({
+      symbol: import.meta.env.VITE_MY_STAKE_SYMBOL,
+      address:userStore.user!.address!,
+    })
+    if (res?.code === 0) {
+      console.log("res", res)
+
+      if (+res.data.lockedTokenAmount <= 0) {
+        resolve()
+       }
+
+      vSpaceCoin.value=new Decimal(res.data.lockedTokenAmount).div(10**vSpaceCoin.decimalNum).toNumber()
+      resolve()
+    }
+  })
+}
+
 function MyNftOnSale(flag = "") {
   return new Promise<void>((resolve, reject) => {
     GetMyNftOnSale({
@@ -679,6 +736,9 @@ function refreshList() {
 }
 
 function openTransferMenu(ftInfo: ftListType) {
+  if (ftInfo.name == 'vSpace') {
+    return
+  }
   isShowTransfer.value = true
   if (ftInfo?.codehash && ftInfo?.genesis) {
     currentFtInfo.val = ftInfo
@@ -907,6 +967,9 @@ function getFts(isCover = false) {
             ftName: ft.name,
           })
         })
+        await getUserStakeInfo().catch((e)=>console.log("e",e))
+
+        FtList.push(vSpaceCoin)
 
 
         resolve()

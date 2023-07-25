@@ -251,7 +251,7 @@ function getUserStakeInfo() {
 
     const res = await GetUserStakeInfo({
       symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${talk.activeCommunity!.dao!.daoId}`,
-      address: userStore.user!.address!,
+      address:userStore.user!.address!,
     })
     if (res.code === 0) {
       userStake.val = res.data
