@@ -159,12 +159,12 @@
                         :class="[
                           'transfer',
                           'main-border',
-                          wallet.name == 'vSpace' ? 'notAllow' : '',
+                          wallet.name == 'vSPACE' ? 'notAllow' : '',
                         ]"
                         v-if="wallet.isCanTransfer"
                         @click="openTransferMenu(wallet)"
                         >{{
-                          wallet.name == 'vSpace' ? $t('Wallet.unStake') : $t('Wallet.Transfer')
+                          wallet.name == 'vSPACE' ? $t('Wallet.unStake') : $t('Wallet.Transfer')
                         }}</a
                       >
                       <div class="value">
@@ -442,7 +442,7 @@ const FtList: ftListType[] = reactive([
 
 const vSpaceCoin = reactive({
     icon: MVC,
-    name: 'vSpace',
+    name: 'vSPACE',
     value: 0,
     showBindBtn: false,
     address: () => userStore.user?.address || '',
@@ -453,8 +453,8 @@ const vSpaceCoin = reactive({
     codehash: '',
     genesis: '',
     decimalNum: 8,
-    ftSymbol: 'vSpace',
-    ftName: 'vSpace',
+    ftSymbol: 'vSPACE',
+    ftName: 'vSPACE',
   })
 
 
@@ -736,7 +736,7 @@ function refreshList() {
 }
 
 function openTransferMenu(ftInfo: ftListType) {
-  if (ftInfo.name == 'vSpace') {
+  if (ftInfo.name == 'vSPACE') {
     return
   }
   isShowTransfer.value = true
