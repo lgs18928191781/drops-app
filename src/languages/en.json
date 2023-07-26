@@ -501,7 +501,8 @@
     "Transfer Accound": "Transfer Account",
     "Link Wallet": "Link Wallet",
     "MvcFt": "FT (MVC)",
-    "unStake": "unstaked"
+    "unStake": "staked",
+    "Stake": "Stake (MVC)"
   },
   "quickPay": "Credit Card",
   "aliPay": "Alipay",
@@ -1238,7 +1239,9 @@
       "Result Pass Min Percent": "Minimum percentage required to pass result"
     },
     "People": "People",
-    "Invalid": "Invalid"
+    "Invalid": "Invalid",
+    "pool_total_amout SPACE": "Total Staked Amount",
+    "Selft_stake_rate SPACE": "Your Staked Ratio"
   },
   "Will send": "Will send on",
   "MoblePhone Not Support": "Mobile phone number registration is not currently supported",

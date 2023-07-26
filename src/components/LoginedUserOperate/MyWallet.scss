@@ -277,6 +277,24 @@
                         font-size: 12px;
                     }
                 }
+
+                .stake-total-wrap{
+                    margin-top: 10px;
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: space-between;
+                    .stake-item{
+                        display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    line-height: 1.5em;
+                    span:nth-child(1){
+                        color: var(--themeTextColor);
+                        opacity: .7;
+                    }
+                    }
+                }
             }
         }
     }

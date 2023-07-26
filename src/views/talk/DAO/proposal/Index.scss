@@ -12,8 +12,12 @@
         font-size: 20px;
         margin-bottom: 30px;
     }
-
-    .pool-msg-item {
+    .pool-msg-item-wrap{
+        display: grid;
+        grid-template-columns: repeat(2,1fr);
+      grid-row-gap: 30px;
+       
+.pool-msg-item {
         border-right: 2px solid var(--divid-color);
         margin-right: 30px;
 
@@ -30,6 +34,8 @@
             }
         }
     }
+    }
+    
 
 
     .main-border {

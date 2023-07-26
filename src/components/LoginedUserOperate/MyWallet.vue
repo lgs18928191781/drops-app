@@ -167,6 +167,7 @@
                           wallet.name == 'vSPACE' ? $t('Wallet.unStake') : $t('Wallet.Transfer')
                         }}</a
                       >
+
                       <div class="value">
                         <template v-if="wallet.loading">
                           <ElIcon class="is-loading">
@@ -197,6 +198,18 @@
                             </div>
                           </div>
                         </template>
+                      </div>
+                    </div>
+                    <div class="stake-total-wrap" v-if="wallet.name == 'vSPACE'">
+                      <div class="stake-item">
+                        <span>
+                          {{ $t('DAO.pool_total_amout SPACE') }}&nbsp;({{ wallet.name }})</span
+                        >
+                        <span> {{ wallet?.totalStakeAmount }}</span>
+                      </div>
+                      <div class="stake-item">
+                        <span>{{ $t('DAO.Selft_stake_rate SPACE') }}</span>
+                        <span>{{ wallet?.selfStakeRate }}&nbsp;%</span>
                       </div>
                     </div>
                   </div>
@@ -440,21 +453,29 @@ const FtList: ftListType[] = reactive([
   },
 ])
 
-const vSpaceCoin = reactive({
+const StakeList: stakeListType[] = reactive([
+  {
     icon: MVC,
     name: 'vSPACE',
     value: 0,
+    totalStakeAmount: 0,
+    selfStakeRate:0,
     showBindBtn: false,
     address: () => userStore.user?.address || '',
     isCanTransfer: true,
     price: () => '--',
     loading: false,
-    tokenType: 'ftIcon',
+    tokenType: '',
     codehash: '',
     genesis: '',
     decimalNum: 8,
     ftSymbol: 'vSPACE',
     ftName: 'vSPACE',
+   }
+])
+
+const vSpaceCoin = reactive({
+
   })
 
 
@@ -472,6 +493,7 @@ const userWalletOperates = [
         }
         getAllBalace()
         getFts(true)
+        getUserStakeInfo()
       } else {
         isSkeleton.value = true
         pagination.page = 1
@@ -618,6 +640,10 @@ const wallets = reactive([
     title: i18n.t('Wallet.MvcFt'),
     list: FtList,
   },
+   {
+    title: i18n.t('Wallet.Stake'),
+    list: StakeList,
+  },
 ])
 const isShowChains = ref(false)
 const seriesNFTList = reactive({
@@ -681,11 +707,13 @@ function getUserStakeInfo() {
     if (res?.code === 0) {
       console.log("res", res)
 
-      if (+res.data.lockedTokenAmount <= 0) {
-        resolve()
+      if (+res.data.lockedTokenAmount <= 0 || !res.data.lockedTokenAmount) {
+        StakeList[0].totalStakeAmount=new Decimal(res.data.poolTokenAmount).div(10 ** StakeList[0].decimalNum!).toNumber()
+        StakeList[0].selfStakeRate=new Decimal(StakeList[0].value).div(StakeList[0].totalStakeAmount).toNumber().toFixed(2)
        }
 
-      vSpaceCoin.value=new Decimal(res.data.lockedTokenAmount).div(10**vSpaceCoin.decimalNum).toNumber()
+      StakeList[0].value = new Decimal(res.data.lockedTokenAmount).div(10 ** StakeList[0].decimalNum!).toNumber()
+
       resolve()
     }
   })
@@ -967,11 +995,6 @@ function getFts(isCover = false) {
             ftName: ft.name,
           })
         })
-        await getUserStakeInfo().catch((e)=>console.log("e",e))
-
-        FtList.push(vSpaceCoin)
-
-
         resolve()
       }
     }
@@ -1157,6 +1180,7 @@ watch(
     if (props.modelValue) {
       getAllBalace()
       getFts(true)
+      getUserStakeInfo()
     }
   }
 )
