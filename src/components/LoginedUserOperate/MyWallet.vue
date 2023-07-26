@@ -201,13 +201,11 @@
                       </div>
                     </div>
                     <div class="stake-total-wrap" v-if="wallet.name == 'vSPACE'">
-                      <div class="stake-item">
-                        <span>
-                          {{ $t('DAO.pool_total_amout SPACE') }}&nbsp;({{ wallet.name }})</span
-                        >
+                      <div class="stake-item ">
+                        <span> {{ $t('DAO.pool_total_amout SPACE') }}</span>
                         <span> {{ wallet?.totalStakeAmount }}</span>
                       </div>
-                      <div class="stake-item">
+                      <div class="stake-item ">
                         <span>{{ $t('DAO.Selft_stake_rate SPACE') }}</span>
                         <span>{{ wallet?.selfStakeRate }}&nbsp;%</span>
                       </div>

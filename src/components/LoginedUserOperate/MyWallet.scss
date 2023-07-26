@@ -279,15 +279,18 @@
                 }
 
                 .stake-total-wrap{
-                    margin-top: 10px;
+                    border-top: 1px solid var(--divid-color);
+                    padding-top:15px ;
+                    margin-top: 20px;
                     display: flex;
                     flex-direction: row;
-                    align-items: center;
-                    justify-content: space-between;
+                    // align-items: center;
+                  justify-content: space-between;
                     .stake-item{
+                        
                         display: flex;
                     flex-direction: column;
-                    align-items: center;
+                    // align-items: center;
                     line-height: 1.5em;
                     span:nth-child(1){
                         color: var(--themeTextColor);
