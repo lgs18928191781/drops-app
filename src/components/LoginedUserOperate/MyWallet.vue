@@ -636,6 +636,11 @@ const wallets = reactive([
     title: i18n.t('Wallet.MvcFt'),
     list: FtList,
   },
+  {
+      title: i18n.t('Wallet.Stake'),
+      list: StakeList,
+
+  }
 
 ])
 const isShowChains = ref(false)
@@ -691,11 +696,13 @@ function getLeastBlockTimestamp() {
 }
 
 function getUserStakeInfo() {
+
   return new Promise<void>(async (resolve, reject) => {
+
     await getLeastBlockTimestamp()
     const res = await GetUserStakeInfo({
       symbol: import.meta.env.VITE_MY_STAKE_SYMBOL,
-      address: userStore.user!.address!,
+      address:userStore.user!.address!,
     })
     if (res?.code === 0) {
       console.log("res", res)
@@ -704,11 +711,9 @@ function getUserStakeInfo() {
         StakeList.length = 0
 
       } else {
-      StakeList[0].value = new Decimal(res.data.lockedTokenAmount).div(10 ** StakeList[0].decimalNum!).toNumber()
-      wallets.push({
-      title: i18n.t('Wallet.Stake'),
-      list: StakeList,
-      })
+
+        StakeList[0].value = new Decimal(res.data.lockedTokenAmount).div(10 ** StakeList[0].decimalNum!).toNumber()
+
        }
 
 
