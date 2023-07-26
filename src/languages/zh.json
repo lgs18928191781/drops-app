@@ -572,7 +572,9 @@
     "Transfer To": "給",
     "Transfer Accound": "轉賬賬戶",
     "Link Wallet": "綁定",
-    "MvcFt": "FT (MVC)"
+    "MvcFt": "FT (MVC)",
+    "unStake": "已质押",
+    "Stake": "质押"
   },
   "registing": "註冊中",
   "sendVerifiyCodeError": "驗證碼填寫不正確,請重新填寫",
@@ -1235,7 +1237,9 @@
       "Result Pass Min Percent": "结果通过需占最低百分比"
     },
     "People": "人",
-    "Invalid": "无效"
+    "Invalid": "无效",
+    "pool_total_amout SPACE": "总质押数量",
+    "Selft_stake_rate SPACE": "你的质押占比"
   },
   "Will send": "將發佈于",
   "MoblePhone Not Support": "暂不支持手机号注册",

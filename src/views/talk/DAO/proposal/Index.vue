@@ -15,45 +15,65 @@
           {{ $t('DAO.Stake Title2') }}
         </div>
         <div class="list flex flex-align-center">
-          <div class="pool-msg-item flex1">
-            <div class="lable">
-              {{ $t('DAO.Your staked SPACE') }}
-              ${{ talk.activeCommunity?.dao?.governanceSymbol.toUpperCase() }}
+          <div class="pool-msg-item-wrap flex1">
+            <div class="pool-msg-item flex1">
+              <div class="lable">
+                {{ $t('DAO.Your staked SPACE') }}
+                ${{ talk.activeCommunity?.dao?.governanceSymbol.toUpperCase() }}
+              </div>
+              <div class="value flex flex-align-center">
+                {{ userStake.val!.lockedTokenAmount ?  $filters.space(userStake.val!.lockedTokenAmount) : '--' }}
+                <a
+                  class="main-border primary"
+                  @click="
+                    () => {
+                      stakeType = StakeType.Unlock
+                      isShowStake = true
+                    }
+                  "
+                  v-if="userStake.val!.lockedTokenAmount && userStake.val!.lockedTokenAmount !== '0'"
+                  >{{ $t('DAO.UnLock') }}</a
+                >
+              </div>
             </div>
-            <div class="value flex flex-align-center">
-              {{ userStake.val!.lockedTokenAmount ?  $filters.space(userStake.val!.lockedTokenAmount) : '--' }}
-              <a
-                class="main-border primary"
-                @click="
-                  () => {
-                    stakeType = StakeType.Unlock
-                    isShowStake = true
-                  }
-                "
-                v-if="userStake.val!.lockedTokenAmount && userStake.val!.lockedTokenAmount !== '0'"
-                >{{ $t('DAO.UnLock') }}</a
-              >
+            <div class="pool-msg-item flex1">
+              <div class="lable ">
+                {{ $t('DAO.Unlock Token') }}
+                ${{ talk.activeCommunity?.dao?.governanceSymbol.toUpperCase() }}
+              </div>
+              <div class="value flex flex-align-center">
+                {{ unlockTokenAmount ? $filters.space(unlockTokenAmount) : '--' }}
+                <a
+                  class="main-border primary"
+                  @click="
+                    () => {
+                      isShowExtractModal = true
+                    }
+                  "
+                  v-if="userStake.val!.unlockingTokens.length"
+                  >{{ $t('DAO.Extract') }}</a
+                >
+              </div>
+            </div>
+
+            <div class="pool-msg-item flex1">
+              <div class="lable">
+                {{ $t('DAO.pool_total_amout SPACE') }}
+                ${{ talk.activeCommunity?.dao?.governanceSymbol.toUpperCase() }}
+              </div>
+              <div class="value flex flex-align-center">
+                {{ userStake.val!.poolTokenAmount ?  $filters.space(userStake.val!.poolTokenAmount) : '--' }}
+              </div>
+            </div>
+
+            <div class="pool-msg-item flex1">
+              <div class="lable">
+                {{ $t('DAO.Selft_stake_rate SPACE') }}
+              </div>
+              <div class="value flex flex-align-center">{{ selfStakeRate }}&nbsp;%</div>
             </div>
           </div>
-          <div class="pool-msg-item flex1">
-            <div class="lable ">
-              {{ $t('DAO.Unlock Token') }}
-              ${{ talk.activeCommunity?.dao?.governanceSymbol.toUpperCase() }}
-            </div>
-            <div class="value flex flex-align-center">
-              {{ unlockTokenAmount ? $filters.space(unlockTokenAmount) : '--' }}
-              <a
-                class="main-border primary"
-                @click="
-                  () => {
-                    isShowExtractModal = true
-                  }
-                "
-                v-if="userStake.val!.unlockingTokens.length"
-                >{{ $t('DAO.Extract') }}</a
-              >
-            </div>
-          </div>
+
           <div
             class="main-border primary stake"
             @click="
@@ -251,7 +271,7 @@ function getUserStakeInfo() {
 
     const res = await GetUserStakeInfo({
       symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${talk.activeCommunity!.dao!.daoId}`,
-      address: userStore.user!.address!,
+      address:userStore.user!.address!,
     })
     if (res.code === 0) {
       userStake.val = res.data
@@ -259,6 +279,14 @@ function getUserStakeInfo() {
     }
   })
 }
+
+const selfStakeRate = computed(() => {
+  if (userStake.val!.lockedTokenAmount) {
+     return new Decimal(userStake.val!.lockedTokenAmount).div(userStake.val!.poolTokenAmount).toNumber().toFixed(2)
+  } else {
+    return '0'
+  }
+})
 
 const unlockTokenAmount = computed(() => {
   let amount = 0

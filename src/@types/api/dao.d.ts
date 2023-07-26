@@ -34,6 +34,8 @@ export interface DAOStakeReqstakeArgs {
 export interface DAOUserStakeInfo {
   lockedTokenAmount: string
   rewardTokenAmount: string
+  poolTokenAmount: string
+  selfStakeRate: string
   unlockingTokens: { expired: number; amount: string }[]
   voteInfo: {
     [key: string]: {

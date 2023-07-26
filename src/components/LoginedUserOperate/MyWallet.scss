@@ -215,6 +215,7 @@
                         max-width: 26px;
                         max-height: 26px;
                     }
+                    
                   
                 }
 
@@ -228,7 +229,10 @@
                     img {
                         max-width: 26px;
                         max-height: 26px;
+                         
                     }
+                  
+                 
                     
                 }
 
@@ -250,6 +254,10 @@
                     cursor: pointer;
                     margin-right: 10px;
                 }
+                .notAllow{
+                    cursor: not-allowed;
+                    
+                }
 
                 .value {
                     text-align: right;
@@ -269,6 +277,27 @@
                         font-size: 12px;
                     }
                 }
+
+                // .stake-total-wrap{
+                //     border-top: 1px solid var(--divid-color);
+                //     padding-top:15px ;
+                //     margin-top: 20px;
+                //     display: flex;
+                //     flex-direction: row;
+                //     // align-items: center;
+                //   justify-content: space-between;
+                //     .stake-item{
+                        
+                //         display: flex;
+                //     flex-direction: column;
+                //     // align-items: center;
+                //     line-height: 1.5em;
+                //     span:nth-child(1){
+                //         color: var(--themeTextColor);
+                //         opacity: .7;
+                //     }
+                //     }
+                // }
             }
         }
     }

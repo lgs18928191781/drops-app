@@ -156,11 +156,18 @@
                         </div>
                       </div>
                       <a
-                        class="transfer main-border"
+                        :class="[
+                          'transfer',
+                          'main-border',
+                          wallet.name == 'vSPACE' ? 'notAllow' : '',
+                        ]"
                         v-if="wallet.isCanTransfer"
                         @click="openTransferMenu(wallet)"
-                        >{{ $t('Wallet.Transfer') }}</a
+                        >{{
+                          wallet.name == 'vSPACE' ? $t('Wallet.unStake') : $t('Wallet.Transfer')
+                        }}</a
                       >
+
                       <div class="value">
                         <template v-if="wallet.loading">
                           <ElIcon class="is-loading">
@@ -193,6 +200,16 @@
                         </template>
                       </div>
                     </div>
+                    <!-- <div class="stake-total-wrap" v-if="wallet.name == 'vSPACE'">
+                      <div class="stake-item ">
+                        <span> {{ $t('DAO.pool_total_amout SPACE') }}</span>
+                        <span> {{ wallet?.totalStakeAmount }}</span>
+                      </div>
+                      <div class="stake-item ">
+                        <span>{{ $t('DAO.Selft_stake_rate SPACE') }}</span>
+                        <span>{{ wallet?.selfStakeRate }}&nbsp;%</span>
+                      </div>
+                    </div> -->
                   </div>
                 </div>
               </div>
@@ -393,7 +410,8 @@ import { ErrorDescription } from '@ethersproject/abi/lib/interface'
 import { metafile } from '@/utils/filters'
 import type { TabsPaneContext } from 'element-plus'
 import { debounce } from '@/utils/util'
-import VSAPCE from '@/assets/images/v-space.jpg?url'
+
+import { GetUserStakeInfo,GetBlockTime } from '@/api/dao'
 const props = defineProps<{
   modelValue: boolean
 }>()
@@ -433,6 +451,29 @@ const FtList: ftListType[] = reactive([
   },
 ])
 
+const StakeList: stakeListType[] = reactive([
+  {
+    icon: MVC,
+    name: 'vSPACE',
+    value: 0,
+    showBindBtn: false,
+    address: () => userStore.user?.address || '',
+    isCanTransfer: true,
+    price: () => '--',
+    loading: false,
+    tokenType: '',
+    codehash: '',
+    genesis: '',
+    decimalNum: 8,
+    ftSymbol: 'vSPACE',
+    ftName: 'vSPACE',
+   }
+])
+
+const vSpaceCoin = reactive({
+
+  })
+
 
 
 const userWalletOperates = [
@@ -448,6 +489,7 @@ const userWalletOperates = [
         }
         getAllBalace()
         getFts(true)
+        getUserStakeInfo()
       } else {
         isSkeleton.value = true
         pagination.page = 1
@@ -478,6 +520,7 @@ const tabs = [
   { name: i18n.t('Wallet.Balance'), value: 0 },
   { name: 'NFT', value: 1 },
 ]
+const blockTimeStamp = ref(0)
 const isSkeleton = ref(true)
 const currentChain = ref(Chains.MVC)
 const genesisList: UserNFTItem[] = reactive([])
@@ -593,6 +636,7 @@ const wallets = reactive([
     title: i18n.t('Wallet.MvcFt'),
     list: FtList,
   },
+
 ])
 const isShowChains = ref(false)
 const seriesNFTList = reactive({
@@ -633,6 +677,45 @@ const totalBalanceLoading = computed(() => {
   }
   return value
 })
+
+function getLeastBlockTimestamp() {
+  return new Promise<void>(async (resolve, reject) => {
+    const res = await GetBlockTime().catch(error => {
+      console.log("error",error)
+    })
+    if (res?.code === 0) {
+      blockTimeStamp.value = res.data * 1000
+      resolve()
+    }
+  })
+}
+
+function getUserStakeInfo() {
+  return new Promise<void>(async (resolve, reject) => {
+    await getLeastBlockTimestamp()
+    const res = await GetUserStakeInfo({
+      symbol: import.meta.env.VITE_MY_STAKE_SYMBOL,
+      address: userStore.user!.address!,
+    })
+    if (res?.code === 0) {
+      console.log("res", res)
+
+      if (+res.data.lockedTokenAmount <= 0 ) {
+        StakeList.length = 0
+
+      } else {
+      StakeList[0].value = new Decimal(res.data.lockedTokenAmount).div(10 ** StakeList[0].decimalNum!).toNumber()
+      wallets.push({
+      title: i18n.t('Wallet.Stake'),
+      list: StakeList,
+      })
+       }
+
+
+      resolve()
+    }
+  })
+}
 
 function MyNftOnSale(flag = "") {
   return new Promise<void>((resolve, reject) => {
@@ -679,6 +762,9 @@ function refreshList() {
 }
 
 function openTransferMenu(ftInfo: ftListType) {
+  if (ftInfo.name == 'vSPACE') {
+    return
+  }
   isShowTransfer.value = true
   if (ftInfo?.codehash && ftInfo?.genesis) {
     currentFtInfo.val = ftInfo
@@ -907,8 +993,6 @@ function getFts(isCover = false) {
             ftName: ft.name,
           })
         })
-
-
         resolve()
       }
     }
@@ -1094,6 +1178,7 @@ watch(
     if (props.modelValue) {
       getAllBalace()
       getFts(true)
+      getUserStakeInfo()
     }
   }
 )

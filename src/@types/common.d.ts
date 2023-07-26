@@ -416,6 +416,8 @@ declare interface ftListType {
   ftName?: string
 }
 
+declare interface stakeListType extends ftListType {}
+
 declare interface FTinfo {
   ftCodehash: string
   ftGenesis: string
