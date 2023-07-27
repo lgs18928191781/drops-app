@@ -1398,7 +1398,8 @@ export class SDK {
       let err
       for (const item of attachments!) {
         try {
-          if (this.metaFileSha256TxIdList.some(_item => _item.sha256 === item.sha256)) {
+          //this.metaFileSha256TxIdList.some(_item => _item.sha256 == item.sha256)
+          if (false) {
             // 本地有缓存
             transactions.push({
               txId: this.metaFileSha256TxIdList.find(_item => _item.sha256 === item.sha256)!.txId,
@@ -1407,6 +1408,7 @@ export class SDK {
           } else {
             // 本地没有缓存
             const response = await GetMetafileBySha256({ sha256: item.sha256 })
+
             if (
               response.code === 0 &&
               response.data.results.items &&
@@ -1584,12 +1586,14 @@ export class SDK {
     let amount = 0
     // 计算总价
     // metafile brfc 节点价格
+
     if (transactions.sendMoney?.transaction) {
       amount += mvc.Transaction.DUST_AMOUNT + mvc.Transaction.DUST_AMOUNT
     }
     if (transactions.metaFileBrfc?.transaction)
       amount += transactions.metaFileBrfc.transaction.getNeedFee()
     // metafile 节点价格
+
     if (transactions.metaFiles && transactions.metaFiles.length > 0) {
       for (const item of transactions.metaFiles.filter(item => item.transaction)) {
         amount += item.transaction.getNeedFee()

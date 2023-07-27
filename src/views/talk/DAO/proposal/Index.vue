@@ -271,7 +271,7 @@ function getUserStakeInfo() {
 
     const res = await GetUserStakeInfo({
       symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${talk.activeCommunity!.dao!.daoId}`,
-      address:userStore.user!.address!,
+      address:"1M9uy3uiK6rhHVmsguzVdL7GoKP64Ff43V"//userStore.user!.address!,
     })
     if (res.code === 0) {
       userStake.val = res.data
@@ -282,7 +282,12 @@ function getUserStakeInfo() {
 
 const selfStakeRate = computed(() => {
   if (userStake.val!.lockedTokenAmount) {
-     return new Decimal(userStake.val!.lockedTokenAmount).div(userStake.val!.poolTokenAmount).toNumber().toFixed(2)
+    const rate=new Decimal(userStake.val!.lockedTokenAmount).div(userStake.val!.poolTokenAmount).div(100).toNumber()
+    if (rate < 0.01) {
+      return `< 0.01`
+    } else {
+      rate.toFixed(2)
+     }
   } else {
     return '0'
   }
