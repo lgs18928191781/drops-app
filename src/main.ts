@@ -45,6 +45,7 @@ app.component('UserAvatar', UserAvatar)
 app.component('Image', Image)
 app.component('UserName', UserName)
 app.component('Icon', Icon)
+
 app.use(VueVirtualScroller)
 // app.component('Dialog', GlobalDialog)
 

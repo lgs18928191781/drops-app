@@ -119,11 +119,24 @@
                 <div class="top flex flex-align-center">
                   <div class="title flex1 flex flex-align-center">
                     {{ item.title }}
-                    <Icon v-if="index === 0" name="question_circle" @click="isShowMeIntro = true" />
+                    <img v-if="index === 0" :src="walletBackup" />
+                    <Icon
+                      v-else-if="index === 1"
+                      name="question_circle"
+                      @click="isShowMeIntro = true"
+                    />
                   </div>
                   <a
                     class="add flex flex-align-center"
                     v-if="index === 0"
+                    @click="isShowBackUp = true"
+                  >
+                    {{ $t('Wallet.to backup') }}
+                    <Icon name="down" />
+                  </a>
+                  <a
+                    class="add flex flex-align-center"
+                    v-if="index === 1"
                     @click="isShowMERecharge = true"
                   >
                     {{ $t('Wallet.Add Funds') }}
@@ -353,7 +366,8 @@
 
     <!-- ME Intro -->
     <MEIntroVue v-model="isShowMeIntro" />
-
+    <!-- Wallet backup-->
+    <WalletBackupVue v-model="isShowBackUp" />
     <!-- Transfer -->
     <Transfer v-model="isShowTransfer" :ftInfo="currentFtInfo.val" />
   </ElDrawer>
@@ -400,6 +414,7 @@ import { Loading } from '@element-plus/icons-vue'
 import ContentModalVue from '../ContentModal/ContentModal.vue'
 import { currentSupportChain } from '@/config'
 import MEIntroVue from '../MEIntro/MEIntro.vue'
+import WalletBackupVue from '../WalletBackup/index.vue'
 import Transfer from './Transfer.vue'
 import { Chains, CurrentSupportChain, NodeName } from '@/enum'
 import { decryptMnemonic, encryptMnemonic, HdWallet } from '@/utils/wallet/hd-wallet'
@@ -410,7 +425,7 @@ import { ErrorDescription } from '@ethersproject/abi/lib/interface'
 import { metafile } from '@/utils/filters'
 import type { TabsPaneContext } from 'element-plus'
 import { debounce } from '@/utils/util'
-
+import walletBackup from '@/assets/images/wallet_backup.svg?url'
 import { GetUserStakeInfo,GetBlockTime } from '@/api/dao'
 const props = defineProps<{
   modelValue: boolean
@@ -534,6 +549,10 @@ const isShowTransfer = ref(false)
 const MyNftOnSaleList:GenesisNFTItem[]=reactive([])
 const wallets = reactive([
   {
+    title: i18n.t('Wallet.backup'),
+    list:[]
+  },
+  {
     title: i18n.t('Wallet.Action Points'),
     list: [
       {
@@ -654,7 +673,7 @@ const currentFtInfo: { val: ftListType | null } = reactive({
   val: null,
 })
 const isShowMeIntro = ref(false)
-
+const isShowBackUp=ref(false)
 const totalBalance = computed(() => {
   let value = 0
   for (let list of wallets) {

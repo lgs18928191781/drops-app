@@ -19,6 +19,7 @@
 
     <div class="menu-select-wrap" ref="SelectRef">
       <div class="menu-select">
+        <div class="spilt-line"></div>
         <div
           :class="[
             'menu-select-item',

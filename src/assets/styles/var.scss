@@ -112,6 +112,17 @@ html.dark {
 
 }
 
+
+.country-select .iti-flag{
+    display: none !important;
+}
+
+.vue-country-item{
+    .iti-flag{
+         display: none !important;
+    }
+}
+
 // @media only screen and (max-width: 750PX) {
 //     :root {
 //         --nft-topbar-height: 138px;
