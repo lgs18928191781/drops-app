@@ -502,7 +502,9 @@
     "Link Wallet": "Link Wallet",
     "MvcFt": "FT (MVC)",
     "unStake": "staked",
-    "Stake": "Stake (MVC)"
+    "Stake": "Stake (MVC)",
+    "backup": "Wallet Backup",
+    "to backup": "Backup"
   },
   "quickPay": "Credit Card",
   "aliPay": "Alipay",
@@ -1251,5 +1253,18 @@
   "pathTip1": "What is a derivation path?",
   "pathTip2": "A derivation path is used to generate yourwallet address. You can use the defaultpath or customize it.",
   "pathTip3": "The default path used by Show3 is",
-  "mnemonicTip": "Please enter the mnemonic words in the correct order, separated by spaces"
+  "mnemonicTip": "Please enter the mnemonic words in the correct order, separated by spaces",
+  "wallet": {
+    "generateMnemonic": "Generate Mnemonic",
+    "backupMnemonic": " Mnemonic Backup"
+  },
+  "wallet_backup_tips1": "Please keep your mnemonics in a safe place.The following words will allow you to access your funds if you lose your password.",
+  "wallet_backup_tips2": "Please make sure that no one is around, and record them with paper, do not disclose them to anyone and keep them safely.",
+  "wallet_backup_tips3": "To ensure the security of your assets, please refrain from saving your mnemonic phrase in any form, such as taking a photo or screenshot, and storing it on the internet or local multimedia files.",
+  "cancel": "Cancel",
+  "Generate": "Generate",
+  "wallet_backup_tips4": "Please keep the following words in a safe place.",
+  "wallet_backup_tips5": "Once lost, it will no longer be retrieved.",
+  "backup_later": "Backup Later",
+  "already_backup": "Already Backup"
 }

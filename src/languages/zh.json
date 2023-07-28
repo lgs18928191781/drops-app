@@ -574,7 +574,9 @@
     "Link Wallet": "綁定",
     "MvcFt": "FT (MVC)",
     "unStake": "已质押",
-    "Stake": "质押"
+    "Stake": "质押",
+    "backup": "备份钱包",
+    "to backup": "备份"
   },
   "registing": "註冊中",
   "sendVerifiyCodeError": "驗證碼填寫不正確,請重新填寫",
@@ -1248,5 +1250,16 @@
   "Enter Dervice path": "请输入钱包衍生路径",
   "pathTip3": "Show3 使用的默认路径是",
   "pathTip1": "什么是推导路径？",
-  "pathTip2": "派生路径用于生成您的钱包地址。您可以使用默认路径或自定义它。"
+  "pathTip2": "派生路径用于生成您的钱包地址。您可以使用默认路径或自定义它。",
+  "wallet": {
+    "generateMnemonic": "生成助记词",
+    "backupMnemonic": "助记词备份"
+  },
+  "wallet_backup_tips3": "为了您的财产安全，请勿将助记词通过拍照/屏幕截图等形式保存到网络或本地多媒体文件中",
+  "wallet_backup_tips1": "请将助记词保存在安全的地方。以下的单词将帮助您在忘记密码时恢复对资金的访问。",
+  "wallet_backup_tips2": "请确保周围没有其他人，并使用纸张记录它们，请不要向任何人透露或泄露，并将它们安全地保存。",
+  "Generate": "生成",
+  "cancel": "取消",
+  "already_backup": "我已备份",
+  "backup_later": "暂不备份"
 }

@@ -114,10 +114,11 @@
     .total-balance-warp {
         margin-top: 18px;
         padding-bottom: 18px;
+        
     }
 
     .total-balance {
-        height: 110px;
+        height: 100px;
 
         .label {
             text-align: center;
@@ -150,6 +151,11 @@
                         height: 18px;
                         margin-left: 15px;
                         cursor: pointer;
+                    }
+                    img{
+                       width: 18px;
+                        height: 18px;
+                        margin-left: 5px;
                     }
                 }
 

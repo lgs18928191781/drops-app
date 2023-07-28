@@ -59,7 +59,7 @@ export const router = createRouter({
         {
           path: 'tag/:tagId',
           name: 'buzzTag',
-          meta: { keepAlive: true },
+          meta: { keepAlive: false },
           component: () => import('@/views/buzz/Tag.vue'),
         },
         {

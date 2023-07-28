@@ -329,6 +329,8 @@ async function submit() {
   loading.value = true
   const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
   const contentType = 'text/plain'
+  console.log('attachments', attachments)
+
   const res = await userStore.showWallet
     .createBrfcChildNode(
       {

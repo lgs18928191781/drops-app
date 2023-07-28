@@ -227,7 +227,7 @@ import { useI18n } from 'vue-i18n'
 import Vue3CountryIntl from 'vue3-country-intl'
 import 'vue3-country-intl/lib/vue3-country-intl.css'
 import 'vue3-country-intl/lib/vue3-country-flag.css'
-import 'vue3-country-intl/lib/flags-9980096a.png'
+//import 'vue3-country-intl/lib/flags-9980096a.png'
 import { InviteActivityTag, SignUserType, loginOrRegisterProtocolType } from '@/enum'
 import { isApp } from '@/stores/root'
 import {
