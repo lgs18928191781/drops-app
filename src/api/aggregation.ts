@@ -273,6 +273,7 @@ export const GetTagBuzzs = (params: {
   metaId?: string
   subTag?: string
   timeType?: string
+  buzzType?: string
 }): Promise<{
   code: number
   data: {

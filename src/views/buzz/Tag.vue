@@ -77,7 +77,7 @@ import CommentIcon from '@/assets/svg/comment.svg'
 import { initPagination } from '@/config'
 import { usePostTagStore } from '@/stores/buzz/tag'
 import { useUserStore } from '@/stores/user'
-import { computed, inject, onActivated, reactive, ref } from 'vue'
+import { computed, inject, onActivated, reactive, ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import BuzzListVue from './components/BuzzList.vue'
 import { useI18n } from 'vue-i18n'
@@ -91,6 +91,7 @@ const pagination = reactive({ ...initPagination, timestamp: 0 })
 const isSkeleton = ref(true)
 const pulldown: PullDownVal = inject('Pulldown')!
 const refreshBox = ref()
+const isChangeTag = ref(false)
 const router = useRouter()
 
 const newMenu = [
@@ -108,8 +109,10 @@ const newMenu = [
   },
 ]
 
-const tag = computed(() =>
-  postTagStore.list.find(item => item.id.toString() === route.params.tagId)
+const tag = computed(
+  () =>
+    postTagStore.list.length &&
+    postTagStore.list.find(item => item.id.toString() === route.params.tagId)
 )
 const tabActive = computed(() =>
   tag.value?.subTag && tag.value?.subTag.length ? tag.value?.subTag[0].tag : ''
@@ -131,8 +134,10 @@ function getDatas(isCover = false) {
       ElMessage.error(error.message)
       resolve()
     })
+
     if (res?.code === 0) {
       if (isCover) list.length = 0
+
       if (res.data.results.items.length) {
         list.push(...res.data.results.items)
         pagination.nothing = false
@@ -174,6 +179,7 @@ function updateItem(buzz: BuzzItem) {
 
 onActivated(() => {
   pulldown.refreshSlot = refreshBox.value
+
   pulldown.onRefresh = () => {
     return new Promise<void>(async resolve => {
       pagination.page = 1
