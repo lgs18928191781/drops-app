@@ -675,6 +675,7 @@ const currentFtInfo: { val: ftListType | null } = reactive({
 const isShowMeIntro = ref(false)
 const isShowBackUp=ref(false)
 const totalBalance = computed(() => {
+
   let value = 0
   for (let list of wallets) {
     for (let item of list.list) {
@@ -1090,8 +1091,8 @@ function getMEBalance() {
       resolve()
     })
     if (userMeRes?.code === 0) {
-      wallets[0].list[0].value = userMeRes.data.count / 100
-      wallets[0].list[0].loading = false
+      wallets[1].list[0].value = userMeRes.data.count / 100
+      wallets[1].list[0].loading = false
       resolve()
     }
   })
@@ -1109,7 +1110,7 @@ function getSpaceBalance() {
         resolve()
       })
     if (typeof res === 'number') {
-      const item = wallets[1].list.find(item => item.name === 'SPACE')
+      const item = wallets[2].list.find(item => item.name === 'SPACE')
       if (item) {
         item.value = new Decimal(new Decimal(res).div(Math.pow(10, 8)).toFixed(8)).toNumber()
         item.loading = false
@@ -1122,7 +1123,7 @@ function getSpaceBalance() {
 function getETHBalance() {
   return new Promise<void>(async resolve => {
     // 获取餘额
-    const item = wallets[1].list.find(
+    const item = wallets[2].list.find(
       item => item.name === import.meta.env.VITE_ETH_CHAIN.toUpperCase()
     )
     if (item) {
@@ -1139,7 +1140,7 @@ function getETHBalance() {
 function getPolygonBalance() {
   return new Promise<void>(async resolve => {
     // 获取餘额
-    const item = wallets[1].list.find(
+    const item = wallets[2].list.find(
       item => item.name === import.meta.env.VITE_POLYGON_CHAIN.toUpperCase()
     )
     if (item) {
