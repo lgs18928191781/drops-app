@@ -280,7 +280,7 @@
               <div class="nft-tab-wrap">
                 <el-tabs v-model="nftTab" class="demo-tabs" @tab-click="triggleNftTab">
                   <el-tab-pane label="My NFT" :name="1"></el-tab-pane>
-                  <el-tab-pane label="On Sale" :name="2"></el-tab-pane>
+                  <el-tab-pane label="On Sale" :name="2" :disabled="disableSaleTab"></el-tab-pane>
                 </el-tabs>
                 <el-icon :size="16" color="#303133" @click="refreshList"><Refresh /></el-icon>
               </div>
@@ -546,7 +546,10 @@ const onSalePagenation = reactive({
 })
 const isShowMERecharge = ref(false)
 const isShowTransfer = ref(false)
-const MyNftOnSaleList:GenesisNFTItem[]=reactive([])
+const MyNftOnSaleList: GenesisNFTItem[] = reactive([])
+const disableSaleTab = computed(() => {
+  return currentChain.value !== Chains.MVC
+})
 const wallets = reactive([
   {
     title: i18n.t('Wallet.backup'),
@@ -762,9 +765,10 @@ function MyNftOnSale(flag = "") {
   })
 }
 
-const triggleNftTab = async(tab: TabsPaneContext, event: Event) => {
+const triggleNftTab = async (tab: TabsPaneContext, event: Event) => {
   if (nftTab.value == tab.props.name) return
-  nftTab.value=tab.props.name as number
+  nftTab.value = tab.props.name as number
+
   if (nftTab.value == 1) {
     if (genesisList.length) return
     getNFTs(true)
@@ -1025,11 +1029,14 @@ function getFts(isCover = false) {
 }
 
 function getNFTs(isCover = false) {
+  if (isCover) {
+    pagination.flag=''
+  }
   return new Promise<void>(async resolve => {
     if (
       currentChain.value !== Chains.MVC &&
       currentChain.value !== Chains.BSV &&
-      (!userStore.user!.evmAddress || !userStore.user?.ethAddress)
+      (!userStore.user!.evmAddress)
     ) {
       genesisList.length = 0
       resolve()
@@ -1045,6 +1052,7 @@ function getNFTs(isCover = false) {
       if (res.code === 0) {
         if (isCover) genesisList.length = 0
         if (res.data.results.items.length === 0) pagination.nothing = true
+        pagination.flag=res.data.cursor ? res.data.cursor : ''
         genesisList.push(...res.data.results.items)
         resolve()
       }
@@ -1054,6 +1062,7 @@ function getNFTs(isCover = false) {
 
 function changeChain(item: { name: string; value: string }) {
   if (currentChain.value === item.value) return
+  nftTab.value=1
   currentChain.value = item.value
 
   isSkeleton.value = true
@@ -1063,7 +1072,13 @@ function changeChain(item: { name: string; value: string }) {
   getNFTs(true).then(() => {
     isSkeleton.value = false
   })
-  MyNftOnSale()
+
+  if (currentChain.value == Chains.MVC && userStore.user!.address) {
+      MyNftOnSale()
+  }
+
+
+
 
 }
 
@@ -1176,7 +1191,9 @@ function load() {
     pagination.loading = false
     })
   }else if (nftTab.value == 2) {
-    MyNftOnSale(onSalePagenation.flag)
+    if (currentChain.value == Chains.MVC && userStore.user!.address) {
+      MyNftOnSale(onSalePagenation.flag)
+    }
   }
 }
 

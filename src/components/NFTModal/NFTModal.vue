@@ -163,6 +163,7 @@ function getDatas(isCover = false) {
     })
     if (res.code === 0) {
       if (isCover) genesisList.length = 0
+      pagination.flag = res.data?.cursor ? res.data.cursor : ''
       if (res.data.results.items.length === 0) pagination.nothing = true
       genesisList.push(...res.data.results.items)
       console.log('genesisList', genesisList)
@@ -173,6 +174,9 @@ function getDatas(isCover = false) {
 }
 
 function getGenesisNTFs(isCover = false) {
+  if (isCover) {
+    nftPagination.flag = ''
+  }
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetGenesisNFTs({
       address:
@@ -187,6 +191,7 @@ function getGenesisNTFs(isCover = false) {
     if (res.code === 0) {
       if (isCover) nfts.length = 0
       if (res.data.results.items.length === 0) nftPagination.nothing = true
+      nftPagination.flag = res.data?.cursor ? res.data.cursor : ''
       nfts.push(...res.data.results.items)
       resolve()
     }
@@ -216,6 +221,9 @@ function load() {
     })
   } else {
     if (isSkeleton.value || pagination.loading || pagination.nothing) return
+    if (!pagination.flag && tabActive.value !== Chains.MVC) {
+      return
+    }
     pagination.loading = true
     pagination.page++
     getDatas().then(() => {

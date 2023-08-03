@@ -402,6 +402,7 @@ export const GetNFTs = (params: {
   code: number
   data: {
     total: number
+    cursor?: string
     results: {
       items: UserNFTItem[]
     }
@@ -451,10 +452,12 @@ export const GetGenesisNFTs = (params: {
   chain?: string
   page: number | string
   pageSize: number | string
+  flag?: string
 }): Promise<{
   code: number
   data: {
     total: number
+    cursor?: string
     results: {
       items: GenesisNFTItem[]
     }
