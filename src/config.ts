@@ -292,7 +292,7 @@ export const chains = [
     },
     disabled: () => {
       const userStore = useUserStore()
-      return !(userStore.isAuthorized && userStore.user!.evmAddress)
+      return !(userStore.isAuthorized && (userStore.user!.evmAddress || userStore.user!.ethAddress))
     },
   },
   {
