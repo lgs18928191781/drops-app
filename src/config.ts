@@ -62,6 +62,7 @@ export const initPagination: Pagination = {
   loading: false,
   nothing: false,
   totalPages: 0,
+  flag: '',
 }
 
 export const classifyName: { [key: string]: string } = {
@@ -291,7 +292,7 @@ export const chains = [
     },
     disabled: () => {
       const userStore = useUserStore()
-      return !(userStore.isAuthorized && userStore.user!.evmAddress)
+      return !(userStore.isAuthorized && (userStore.user!.evmAddress || userStore.user!.ethAddress))
     },
   },
   {
@@ -300,7 +301,7 @@ export const chains = [
     value: import.meta.env.VITE_POLYGON_CHAIN,
     disabled: () => {
       const userStore = useUserStore()
-      return !(userStore.isAuthorized && userStore.user!.evmAddress)
+      return !(userStore.isAuthorized && (userStore.user!.evmAddress || userStore.user!.ethAddress))
     },
     address: () => {
       return ''

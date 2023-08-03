@@ -65,7 +65,7 @@ const props = defineProps<{
 }>()
 
 const route = useRoute()
-const pagination = reactive({ ...initPagination, pageSize: 27 })
+const pagination = reactive({ ...initPagination, pageSize: 27, flag: '' })
 const userStore = useUserStore()
 const nfts: GenesisNFTItem[] = reactive([])
 const isSkeleton = ref(true)
@@ -73,6 +73,9 @@ const isSkeleton = ref(true)
 const emit = defineEmits(['update:modelValue', 'close', 'link'])
 
 function getDatas(isCover = false) {
+  if (isCover) {
+    pagination.flag = ''
+  }
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetGenesisNFTs({
       ...pagination,
@@ -91,6 +94,7 @@ function getDatas(isCover = false) {
       if (res.data.results.items.length === 0) {
         pagination.nothing = true
       } else {
+        pagination.flag = res.data.cursor ? res.data.cursor : ''
         nfts.push(...res.data.results.items)
       }
       resolve()
