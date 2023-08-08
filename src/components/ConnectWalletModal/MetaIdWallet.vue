@@ -766,6 +766,7 @@ function submitForm() {
               userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
               userStore.showWallet.initWallet()
               // 处理活动邀请信息
+              //
               if (activityId && referrerId) {
                 const result = await CommitActivity({
                   actionIndex: 5,
