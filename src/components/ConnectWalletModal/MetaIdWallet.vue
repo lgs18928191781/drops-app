@@ -595,7 +595,7 @@ function submitForm() {
               const hdWallet = new HdWallet(walletInfo.wallet)
               let metaIdInfo = await hdWallet.getMetaIdInfo(walletInfo.rootAddress)
 
-              if (!metaIdInfo.metaId) {
+              if (!metaIdInfo.metaId || !metaIdInfo.infoTxId || !metaIdInfo.protocolTxId) {
                 // @ts-ignore
                 let userInfo = {
                   ...account,
