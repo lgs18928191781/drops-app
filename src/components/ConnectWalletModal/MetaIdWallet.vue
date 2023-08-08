@@ -733,13 +733,8 @@ function submitForm() {
               }
 
               const hdWallet = new HdWallet(walletInfo.wallet)
-              FormRef.value.resetFields()
-              registerInfo.val = null
-              emit('update:loading', false)
-              emit('update:modelValue', false)
-              emit('success', props.type)
+
               // @ts-ignore
-              return
               const metaIdInfo = await hdWallet.initMetaIdNode(userInfo)
 
               if (!metaIdInfo) {
