@@ -294,6 +294,8 @@ import { useLayoutStore } from '@/stores/layout'
 
 import TalkImagePreview from './ImagePreview.vue'
 import StickerVue from '@/components/Sticker/Sticker.vue'
+import Decimal from 'decimal.js-light'
+import { router } from '@/router'
 
 interface Props {
   quote?: any
@@ -305,7 +307,7 @@ const doNothing = () => {}
 
 const showMoreCommandsBox = ref(false)
 const showStickersBox = ref(false)
-
+const spaceNotEnoughFlag = ref(false)
 const layout = useLayoutStore()
 
 const hasInput = computed(() => chatInput.value.length > 0)
@@ -479,14 +481,62 @@ const rows = computed(() => {
   return Math.min(Math.max(rowsCount, 1), 10)
 })
 
+const checkSpaceBalance = () => {
+  return new Promise<void>(async (resolve, reject) => {
+    // 获取餘额
+    const res = await userStore
+      .showWallet!.wallet!.provider.getXpubBalance(
+        userStore.showWallet!.wallet!.wallet.xpubkey.toString()
+      )
+      .catch(error => {
+        ElMessage.error(error.message)
+        resolve()
+      })
+    if (typeof res === 'number') {
+      if (res >= talk.activeChannel.roomLimitAmount) {
+        resolve()
+      } else {
+        ElMessage.error(
+          `Insufficient channel permissions,You need to have at least ${new Decimal(
+            talk.activeChannel.roomLimitAmount
+          )
+            .div(10 ** 8)
+            .toString()} space to proceed with the operation.`
+        )
+        reject()
+      }
+    } else {
+      ElMessage.error(`Network error.`)
+      reject()
+    }
+  })
+}
+
 const trySendText = async (e: any) => {
   isSending.value = true
+
   // 去除首尾空格
   chatInput.value = chatInput.value.trim()
   if (!validateTextMessage(chatInput.value)) return
 
   // 私聊会话和頻道群聊的加密方式不同
   let content = ''
+  if (talk.activeChannel.roomLimitAmount > 0) {
+    checkSpaceBalance()
+      .then(() => {
+        spaceNotEnoughFlag.value = false
+      })
+      .catch(() => {
+        isSending.value = false
+        spaceNotEnoughFlag.value = true
+        return
+      })
+  }
+
+  if (spaceNotEnoughFlag.value) {
+    return
+  }
+
   if (talk.activeChannelType === 'group') {
     content = encrypt(chatInput.value, talk.activeChannel.id.substring(0, 16))
   } else {

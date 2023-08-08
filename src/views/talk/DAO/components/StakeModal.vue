@@ -261,6 +261,8 @@ async function stake() {
         } else if (result === null) {
           loading.value = false
         }
+      } else {
+        throw new Error(stakeRes.msg)
       }
     } else {
       // 解锁

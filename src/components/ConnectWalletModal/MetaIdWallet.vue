@@ -576,6 +576,7 @@ function submitForm() {
             const loginRes = await LoginCheck(params)
             if (loginRes.code === 0 || loginRes.code === 601) {
               const loginInfo = loginRes.data as BaseUserInfoTypes
+
               const account = {
                 ...loginInfo,
                 userType: params.userType,
@@ -592,21 +593,36 @@ function submitForm() {
                 loginInfo.path.toString() || 10001
               )
               const hdWallet = new HdWallet(walletInfo.wallet)
-              const metaIdInfo = await hdWallet.getMetaIdInfo(walletInfo.rootAddress)
+              let metaIdInfo = await hdWallet.getMetaIdInfo(walletInfo.rootAddress)
 
               if (!metaIdInfo.metaId) {
-                return ElMessageBox.alert(
-                  `${i18n.t('FixAccountTips1')} ${import.meta.env.VITE_SHOW_MONEY_APP} ${i18n.t(
-                    'FixAccountTips2'
-                  )}`,
-                  i18n.t('niceWarning'),
-                  {
-                    showClose: false,
-                    confirmButtonText: `${i18n.t('FixAccountTips3')}`,
-                  }
-                ).then(() => {
-                  location.href = `${import.meta.env.VITE_SHOW_MONEY_APP}`
+                // @ts-ignore
+                let userInfo = {
+                  ...account,
+                  role: 'BASIC',
+                  path: parseInt(import.meta.env.VITE_WALLET_PATH),
+                }
+
+                metaIdInfo = await hdWallet.initMetaIdNode(userInfo)
+                await SetUserInfo({
+                  ...userInfo,
+                  // @ts-ignore
+                  metaid: metaIdInfo.metaId,
+                  // @ts-ignore
+                  accessKey: userInfo.token,
                 })
+                // return ElMessageBox.alert(
+                //   `${i18n.t('FixAccountTips1')} ${import.meta.env.VITE_SHOW_MONEY_APP} ${i18n.t(
+                //     'FixAccountTips2'
+                //   )}`,
+                //   i18n.t('niceWarning'),
+                //   {
+                //     showClose: false,
+                //     confirmButtonText: `${i18n.t('FixAccountTips3')}`,
+                //   }
+                // ).then(() => {
+                //   location.href = `${import.meta.env.VITE_SHOW_MONEY_APP}`
+                // })
               }
 
               // @ts-ignore
@@ -720,6 +736,7 @@ function submitForm() {
 
               // @ts-ignore
               const metaIdInfo = await hdWallet.initMetaIdNode(userInfo)
+
               if (!metaIdInfo) {
                 throw new Error('Create MetaID Error')
               }
@@ -749,6 +766,7 @@ function submitForm() {
               userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
               userStore.showWallet.initWallet()
               // 处理活动邀请信息
+              //
               if (activityId && referrerId) {
                 const result = await CommitActivity({
                   actionIndex: 5,

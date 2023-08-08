@@ -56,7 +56,7 @@
                   :meta-id="nft.val!.nftOwnerMetaId"
                   :image="nft.val!.nftOwnerAvatarImage"
                   :name="nft.val!.nftOwnerName"
-                  :meta-name="nft.val!.nftOwnerUserInfo.metaName"
+                  :meta-name="nft.val!.nftOwnerUserInfo?.metaName || ''"
                 />
                 <div class="flex1">
                   <div class="owner-msg-item flex flex-align-center">
@@ -64,7 +64,7 @@
                     <span class="value"
                       ><UserName
                         :name="nft.val!.nftOwnerName"
-                        :meta-name="nft.val!.nftOwnerUserInfo.metaName"
+                        :meta-name="nft.val!.nftOwnerUserInfo?.metaName || ''"
                       />
                     </span>
                   </div>
@@ -191,13 +191,13 @@
                             :meta-id="nft.val!.nftIssueMetaId"
                             :image="nft.val!.nftIssueAvatarImage"
                             :name="nft.val!.nftIssuer"
-                            :meta-name="nft.val!.nftIssueUserInfo.metaName"
+                            :meta-name="nft.val!.nftIssueUserInfo?.metaName || ''"
                           />
                           <div class="flex1">
                             <div class="username">
                               <UserName
                                 :name="nft.val!.nftIssuer"
-                                :meta-name="nft.val!.nftIssueUserInfo.metaName"
+                                :meta-name="nft.val!.nftIssueUserInfo?.metaName || ''"
                               />
                             </div>
                             <div class="meta-id">

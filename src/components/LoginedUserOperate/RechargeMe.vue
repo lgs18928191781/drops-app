@@ -353,7 +353,7 @@ watch(
   async () => {
     if (props.modelValue) {
       await getRate()
-      await getCouponInfo()
+      //await getCouponInfo()
     }
   }
 )

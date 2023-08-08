@@ -700,9 +700,12 @@ async function getNftHolderList(isCover = false) {
 function getMoreRecords() {
   ownerHistoryPagination.loading = true
   ownerHistoryPagination.page++
-  getNftHolderList().then(() => {
-    ownerHistoryPagination.loading = false
-  })
+  if (route.params.chain == Chains.MVC) {
+    getNftHolderList().then(() => {
+      ownerHistoryPagination.loading = false
+    })
+  }
+  ownerHistoryPagination.loading = false
 }
 
 onMounted(() => {
@@ -711,7 +714,9 @@ onMounted(() => {
     getDetail().then(() => {
       isShowSkeleton.value = false
     })
-    getNftHolderList()
+    if (route.params.chain == Chains.MVC) {
+      getNftHolderList()
+    }
   }
 })
 
