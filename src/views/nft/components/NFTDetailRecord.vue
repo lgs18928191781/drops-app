@@ -105,6 +105,7 @@ import Decimal from 'decimal.js-light'
 import { reactive, ref } from 'vue'
 import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import { tx } from '@/utils/util'
+import { Chains } from '@/enum'
 
 interface Props {
   genesis: string
@@ -121,6 +122,10 @@ const loading = ref(true)
 //  获取拥有记录
 async function getDatas(isCover = false) {
   return new Promise<void>(async resolve => {
+    if (props.chain !== Chains.MVC) {
+      resolve()
+      return
+    }
     const res = await GetNftHolderList({
       genesis: props.genesis,
       codehash: props.codehash,

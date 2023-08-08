@@ -614,7 +614,7 @@ export class HdWallet {
   }
 
   // 初始化 metaId
-  public initMetaIdNode(account: BaseUserInfoTypes) {
+  public initMetaIdNode(account: BaseUserInfoTypes, retry: number = 10) {
     return new Promise<MetaIdInfoTypes>(async (resolve, reject) => {
       try {
         const metaIdInfo: any = await this.getMetaIdInfo(this.rootAddress)
@@ -632,9 +632,11 @@ export class HdWallet {
             HdWalletChain.MVC,
             false
           )
+
           // 初始化 metaId
           if (!metaIdInfo.metaId) {
             // TODO: 尝试获始资金
+
             if (!utxos.length) {
               const initUtxo = await this.provider.getInitAmount({
                 address: this.rootAddress,
@@ -845,7 +847,12 @@ export class HdWallet {
           }
         }
       } catch (error) {
-        reject(error)
+        retry--
+        if (retry <= 0) {
+          reject(error)
+        } else {
+          this.initMetaIdNode(account, retry)
+        }
       }
     })
   }

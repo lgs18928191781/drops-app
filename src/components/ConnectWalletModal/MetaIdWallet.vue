@@ -720,6 +720,7 @@ function submitForm() {
 
               // @ts-ignore
               const metaIdInfo = await hdWallet.initMetaIdNode(userInfo)
+
               if (!metaIdInfo) {
                 throw new Error('Create MetaID Error')
               }
