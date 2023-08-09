@@ -345,7 +345,6 @@ export const router = createRouter({
 
     // 404
     { path: '/404', name: '404', component: NotFoundPage },
-
     {
       path: '/:pathMatch(.*)',
       redirect: '/404',
@@ -446,9 +445,7 @@ window._go = go
 
 router.beforeEach((to, from, next) => {
   if (to.query.to) next(to.query.to as string)
-  else if (to.fullPath.startsWith('/public/')) {
-    next(false)
-  } else next()
+  else next()
 })
 
 const dirLog = {

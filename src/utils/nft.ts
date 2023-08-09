@@ -120,10 +120,10 @@ export function NFTOffSale(nft: GenesisNFTItem) {
                     price: nft.nftPrice,
                   },
                 }),
-              },
-              {
-                payType: SdkPayType.ME,
               }
+              // {
+              //   payType: SdkPayType.ME,
+              // }
             )
             .catch(error => {
               ElMessage.error(error.message)
