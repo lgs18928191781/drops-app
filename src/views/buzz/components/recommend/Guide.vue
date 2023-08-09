@@ -64,6 +64,7 @@ const guides = [
           : `/public/pdf/How_to_Use_En.pdf`,
         '_blank'
       )
+
       // window.open(
       //   i18n.locale.value === 'zh'
       //     ? 'https://www.show3.io/新手攻略：如何玩转Show3.pdf'
