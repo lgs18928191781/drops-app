@@ -345,12 +345,9 @@ export const router = createRouter({
 
     // 404
     { path: '/404', name: '404', component: NotFoundPage },
+
     {
-      path: '/public:pathMatch(.*)',
-      redirect: '/',
-    },
-    {
-      path: '/:pathMatch(.*)',
+      path: '/:pathMatch(^(?!.*(?:public)).*)',
       redirect: '/404',
     },
   ],
