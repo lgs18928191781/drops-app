@@ -43,56 +43,59 @@ type CommunityData = {
 export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
   // communityId, name, description, cover, metaName, mateNameNft, admins, reserved, icon
   let { icon, metaName, description, cover, name } = form
+  try {
+    const attachments = []
+    attachments.push(await FileToAttachmentItem(icon))
+    const iconPlaceholder = 'metafile://$[0]'
 
-  const attachments = []
-  attachments.push(await FileToAttachmentItem(icon))
-  const iconPlaceholder = 'metafile://$[0]'
+    let coverPlaceholder = null
 
-  let coverPlaceholder = null
+    if (cover) {
+      coverPlaceholder = 'metafile://$[1]'
+      attachments.push(await FileToAttachmentItem(cover))
+    }
 
-  if (cover) {
-    coverPlaceholder = 'metafile://$[1]'
-    attachments.push(await FileToAttachmentItem(cover))
+    const admins = [userStore.user?.metaId]
+
+    // metaname改为非必填
+    // if (!metaName) metaName = {}
+
+    // 没有metaname的情况下，communityId生成方式为随机64位字符串，然后sha256一次
+    // const communityId = metaName.communityId || SHA256(realRandomString(64)).toString()
+    const communityId = SHA256(realRandomString(64)).toString()
+
+    const metaNameNft = metaName.genesis
+      ? `${metaName.solution}://${metaName.codeHash}/${metaName.genesis}/${metaName.tokenIndex}`
+      : ''
+
+    const dataCarrier: CommunityData = {
+      communityId,
+      name,
+      metaName: metaName.name || '',
+      metaNameNft,
+      icon: iconPlaceholder,
+      admins,
+      description,
+      cover: coverPlaceholder || '',
+      reserved: metaName.signature || '',
+      disabled: 0,
+    }
+    console.log('dataCarrier', dataCarrier, attachments)
+
+    // 2. 构建节点参数
+    const node = {
+      nodeName: NodeName.SimpleCommunity,
+      data: JSON.stringify(dataCarrier),
+      attachments,
+    }
+
+    // 3. 发送节点
+    await sdk.createBrfcChildNode(node)
+
+    return { communityId }
+  } catch (error) {
+    throw new Error((error as any).toString())
   }
-
-  const admins = [userStore.user?.metaId]
-
-  // metaname改为非必填
-  // if (!metaName) metaName = {}
-
-  // 没有metaname的情况下，communityId生成方式为随机64位字符串，然后sha256一次
-  // const communityId = metaName.communityId || SHA256(realRandomString(64)).toString()
-  const communityId = SHA256(realRandomString(64)).toString()
-
-  const metaNameNft = metaName.genesis
-    ? `${metaName.solution}://${metaName.codeHash}/${metaName.genesis}/${metaName.tokenIndex}`
-    : ''
-
-  const dataCarrier: CommunityData = {
-    communityId,
-    name,
-    metaName: metaName.name || '',
-    metaNameNft,
-    icon: iconPlaceholder,
-    admins,
-    description,
-    cover: coverPlaceholder || '',
-    reserved: metaName.signature || '',
-    disabled: 0,
-  }
-  console.log('dataCarrier', dataCarrier, attachments)
-
-  // 2. 构建节点参数
-  const node = {
-    nodeName: NodeName.SimpleCommunity,
-    data: JSON.stringify(dataCarrier),
-    attachments,
-  }
-
-  // 3. 发送节点
-  await sdk.createBrfcChildNode(node)
-
-  return { communityId }
 }
 
 export const updateCommunity = async (form: any, sdk: SDK) => {

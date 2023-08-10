@@ -64,7 +64,6 @@ const fetchCommunities = async () => {
 }
 
 const tryCreateCommunity = async () => {
-  debugger
   if (!form.isFinished) return
 
   // function* createCommunityJob() {
@@ -78,14 +77,20 @@ const tryCreateCommunity = async () => {
 
   layout.isShowCreateCommunityModal = false
   layout.isShowLoading = true
-  const { communityId } = await createCommunity(form, userStore, userStore.showWallet)
-  await sleep(2000)
-  await fetchCommunities()
-  layout.isShowLoading = false
-  form.reset()
+  try {
+    const { communityId } = await createCommunity(form, userStore, userStore.showWallet)
+    await sleep(2000)
+    await fetchCommunities()
+    layout.isShowLoading = false
+    form.reset()
 
-  router.push(`/talk/channels/${communityId}/index`)
+    router.push(`/talk/channels/${communityId}/index`)
 
-  return
+    return
+  } catch (error) {
+    ElMessage.error(error as any)
+    layout.isShowCreateCommunityModal = true
+    layout.isShowLoading = false
+  }
 }
 </script>
