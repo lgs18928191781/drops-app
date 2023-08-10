@@ -151,10 +151,10 @@ async function confirmTransfer() {
           genesis: props.nft.nftGenesis,
           tokenIndex: props.nft.nftTokenIndex,
         }),
-      },
-      {
-        payType: SdkPayType.ME, //props.nft.nftChain === 'bsv' ? SdkPayType.BSV : SdkPayType.ME,
       }
+      // {
+      //   payType: SdkPayType.ME, //props.nft.nftChain === 'bsv' ? SdkPayType.BSV : SdkPayType.ME,
+      // }
     )
     .catch(error => {
       ElMessage.error(error.message)

@@ -327,7 +327,6 @@ export class SDK {
   ) {
     return new Promise<NodeTransactions | null>(async (resolve, reject) => {
       const userStore = useUserStore()
-
       const initOption = {
         isBroadcast: true,
         payType: userStore.sdkPayment,
@@ -1025,7 +1024,7 @@ export class SDK {
         addressType: parseInt(this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[0]),
         addressIndex: parseInt(this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[1]),
       }
-    } else {
+    } else if (transactions?.currentNodeBrfc) {
       receive = {
         address: transactions.currentNodeBrfc!.address,
         addressType: transactions.currentNodeBrfc!.addressType,

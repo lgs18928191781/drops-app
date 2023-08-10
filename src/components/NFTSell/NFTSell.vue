@@ -295,10 +295,10 @@ function submitForm() {
               sensibleId: props.nft.nftSensibleId, // nft的sensibleId
               sellDesc: 'ShowV3',
             }),
-          },
-          {
-            payType: SdkPayType.ME,
           }
+          // {
+          //   payType: SdkPayType.ME,
+          // }
         )
         if (res) {
           loading.value = false

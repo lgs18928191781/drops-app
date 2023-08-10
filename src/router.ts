@@ -444,7 +444,6 @@ export function go(delta: number) {
 window._go = go
 
 router.beforeEach((to, from, next) => {
-  // console.log('second guard')
   if (to.query.to) next(to.query.to as string)
   else next()
 })

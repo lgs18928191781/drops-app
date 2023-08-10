@@ -232,10 +232,10 @@ async function confirmTransfer() {
             },
           ],
         }),
-      },
-      {
-        payType: SdkPayType.SPACE,
       }
+      // {
+      //   payType: SdkPayType.SPACE,
+      // }
     )
   } else {
     value =

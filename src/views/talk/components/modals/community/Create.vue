@@ -64,6 +64,7 @@ const fetchCommunities = async () => {
 }
 
 const tryCreateCommunity = async () => {
+  debugger
   if (!form.isFinished) return
 
   // function* createCommunityJob() {
