@@ -410,8 +410,10 @@ function loginSuccess(params: BindMetaIdRes) {
 
   return new Promise<void>(async (resolve, reject) => {
     try {
+
+
       const metaIdInfo = await GetUserInfo(params.userInfo.metaId)
-      console.log('metaIdInfo', metaIdInfo)
+
 
       // console.log('metaIdInfo', metaIdInfo)
       // const bingdMetaidTypes = await GetBindMetaidAddressList(params.userInfo.metaId)
