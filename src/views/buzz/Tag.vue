@@ -77,11 +77,13 @@ import CommentIcon from '@/assets/svg/comment.svg'
 import { initPagination } from '@/config'
 import { usePostTagStore } from '@/stores/buzz/tag'
 import { useUserStore } from '@/stores/user'
+import { useRootStore } from '@/stores/root'
 import { computed, inject, onActivated, reactive, ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import BuzzListVue from './components/BuzzList.vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+
 const route = useRoute()
 const postTagStore = usePostTagStore()
 const userStore = useUserStore()
@@ -93,7 +95,7 @@ const pulldown: PullDownVal = inject('Pulldown')!
 const refreshBox = ref()
 const isChangeTag = ref(false)
 const router = useRouter()
-
+const rootStore = useRootStore()
 const newMenu = [
   {
     name: () => i18n.t('Buzz.newbuzz'),
@@ -139,6 +141,18 @@ function getDatas(isCover = false) {
       if (isCover) list.length = 0
 
       if (res.data.results.items.length) {
+        res.data.results.items.forEach(buzz => {
+          if (rootStore.myBlackList?.includes(buzz.metaId)) {
+            //此内容用户被屏蔽
+            buzz.content = `${i18n.t('buzz.blacktips')}`
+            buzz.attachments = []
+          }
+          if (buzz.quoteItem && rootStore.myBlackList?.includes(buzz.quoteItem.metaId)) {
+            buzz.quoteItem.content = `${i18n.t('buzz.blacktips')}`
+            buzz.quoteItem.attachments = []
+          }
+        })
+
         list.push(...res.data.results.items)
         pagination.nothing = false
         pagination.timestamp = res.data.results.items[res.data.results.items.length - 1].timestamp

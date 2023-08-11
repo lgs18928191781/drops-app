@@ -147,7 +147,7 @@ interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits(['getMore', 'comment', 'like', 'updateItem', 'removeItem', 'addItem'])
-
+console.log('props.list', props.list)
 const i18n = useI18n()
 const userStore = useUserStore()
 const layout = useLayoutStore()

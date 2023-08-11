@@ -116,11 +116,11 @@
 
         <BuzzItemControlVue
           :buzz="displayItemData"
-          @repost="params => emit('repost', params)"
+          @repost="params => (blacklistOperation ? bandUser() : emit('repost', params))"
           @update="params => emit('update', params)"
           @more="params => emit('more', params)"
-          @like="params => emit('like', params)"
-          @replay="params => emit('replay', params)"
+          @like="params => (blacklistOperation ? bandUser() : emit('like', params))"
+          @replay="params => (blacklistOperation ? bandUser() : emit('replay', params))"
           v-if="!isHideControl && !isQuote && !isNFTLegalBuzz"
         />
 
@@ -153,6 +153,7 @@ import BuzzItemControlVue from './BuzzItemControl.vue'
 import BuzzItemSkeletonVue from './BuzzItemSkeleton.vue'
 import ShareIcon from '@/assets/svg/share.svg'
 import { useUserStore } from '@/stores/user'
+import { useRootStore } from '@/stores/root'
 import { Loading } from '@element-plus/icons-vue'
 import { useI18n } from 'vue-i18n'
 import BuzzItemContentNormalVue from './BuzzItemContentNormal.vue'
@@ -175,6 +176,7 @@ const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
 const i18n = useI18n()
+const rootStore = useRootStore()
 // const emit = defineEmits(['update', 'repost', 'more', 'like', 'follow'])
 const emit = defineEmits<{
   (e: 'update', txId: string): void
@@ -199,10 +201,13 @@ const payMe: PayMeParams = reactive({
 })
 const isSkeleton = ref(true)
 const following = ref(false)
-
+const blacklistOperation = computed(() => {
+  return rootStore.myBlackList?.includes(props.data!.metaId)
+})
 const itemData = computed(() => {
   return props.data
 })
+
 const displayItemData = computed(() => {
   if (!itemData.value) {
     return null
@@ -224,6 +229,10 @@ const displayItemData = computed(() => {
 const isNFTLegalBuzz = computed(() => {
   return displayItemData.value?.protocol === 'sell_nft'
 })
+
+function bandUser() {
+  return ElMessage.error(`${i18n.t(`buzz.bandUser`)}`)
+}
 
 async function handleAction(type: string) {
   await checkSdkStatus(route.fullPath)

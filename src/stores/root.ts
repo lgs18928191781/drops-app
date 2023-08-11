@@ -34,6 +34,8 @@ interface RootState {
   updatePlanWhiteList: string[]
   showDiffLang?: number
   isImportMnemonicLogin?: boolean
+  isRereshData?: boolean
+  myBlackList?: string[]
 }
 
 const UA = window.navigator.userAgent.toLowerCase()
@@ -94,6 +96,8 @@ export const useRootStore = defineStore('root', {
         '0x4E5e9F98089De7f953FD099a54b04d218B3f08eb',
       ],
       isImportMnemonicLogin: localStorage.getItem('isImportMnemonicLogin') || false,
+      isRereshData: false,
+      myBlackList: ['352e92d8cfa3bbf04d0976b8130624b4e7c01cc02e53a54095cbb7e373828626'],
       // showDiffLang:
       //   localStorage.getItem('showDiffLang') && Number(localStorage.getItem('showDiffLang')),
     },
@@ -123,6 +127,9 @@ export const useRootStore = defineStore('root', {
     //   this.showDiffLang = payload
     //   localStorage.setItem('showDiffLang', String(payload))
     // },
+    refreshData(payload: boolean) {
+      this.isRereshData = payload
+    },
     updateLoginFromMnemonic(payload: boolean) {
       this.isImportMnemonicLogin = payload
       localStorage.setItem('isImportMnemonicLogin', String(payload))

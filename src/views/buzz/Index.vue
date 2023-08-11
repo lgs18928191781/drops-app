@@ -23,20 +23,21 @@ import { GetBuzz, GetBuzzs, GetUserFollow } from '@/api/aggregation'
 import { initPagination } from '@/config'
 import { useLayoutStore } from '@/stores/layout'
 import { useUserStore } from '@/stores/user'
-import { inject, onActivated, onMounted, reactive, ref, watch } from 'vue'
+import { inject, onActivated, onMounted, reactive, ref, watch, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import BuzzListVue from './components/BuzzList.vue'
 import { Mitt, MittEvent } from '@/utils/mitt'
 import PublishBoxVue from './components/PublishBox.vue'
-
+import { useRootStore } from '@/stores/root'
+import { useI18n } from 'vue-i18n'
 const pagination = reactive({ ...initPagination, timestamp: 0, page: undefined })
 const userStore = useUserStore()
 const layout = useLayoutStore()
 const route = useRoute()
-
+const rootStore = useRootStore()
 const myFollowNum = ref(0)
 const pulldownWarpRef = ref()
-
+const i18n = useI18n()
 const list: BuzzItem[] = reactive([])
 const isSkeleton = ref(true)
 const pulldown: PullDownVal = inject('Pulldown')!
@@ -51,6 +52,19 @@ function getDatas(isCover = false) {
     })
     if (res.code === 0) {
       if (isCover) list.length = 0
+      if (res.data.results.items.length) {
+        res.data.results.items.forEach(buzz => {
+          if (rootStore.myBlackList?.includes(buzz.metaId)) {
+            //此内容用户被屏蔽
+            buzz.content = `${i18n.t('buzz.blacktips')}`
+            buzz.attachments = []
+          }
+          if (buzz.quoteItem && rootStore.myBlackList?.includes(buzz.quoteItem.metaId)) {
+            buzz.quoteItem.content = `${i18n.t('buzz.blacktips')}`
+            buzz.quoteItem.attachments = []
+          }
+        })
+      }
       list.push(...res.data.results.items)
 
       if (res.data.results.items.length === 0) {
@@ -133,6 +147,15 @@ function updateItem(buzz: BuzzItem) {
     list[index] = buzz
   }
 }
+
+rootStore.$subscribe(
+  async (mutation, state) => {
+    if (mutation.type == 'patch function' && state.isRereshData) {
+      await refreshDatas()
+    }
+  },
+  { detached: true }
+)
 
 getUserFollow().then(() => {
   getDatas(true).then(() => {

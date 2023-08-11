@@ -1266,5 +1266,9 @@
   "wallet_backup_tips4": "Please keep the following words in a safe place.",
   "wallet_backup_tips5": "Once lost, it will no longer be retrieved.",
   "backup_later": "Backup Later",
-  "already_backup": "Already Backup"
+  "already_backup": "Already Backup",
+  "buzz": {
+    "blacktips": "This content is blocked for the user.",
+    "bandUser": "Actions cannot be initiated against blocked users."
+  }
 }
