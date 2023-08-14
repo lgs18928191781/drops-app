@@ -179,6 +179,7 @@ function setCurrencyAmount() {
 
 async function pay() {
   emit('update:loading', true)
+
   try {
     let metaNameOpParams: {
       registerName: string
@@ -250,6 +251,7 @@ MetaName is a Decentralized, Open-sourced and Cross-chain Name System Based on M
           data: res?.registerMetaNameResp?.toString(),
           meta_name_uts_ascii: props.name,
         })
+
         if (result) {
           payOrderInfo.amount = result.pay_amount!.toString()
           payOrderInfo.orderId = result.outside_order_id
@@ -262,6 +264,7 @@ MetaName is a Decentralized, Open-sourced and Cross-chain Name System Based on M
       }
     }
   } catch (error) {
+    debugger
     emit('update:loading', false)
     ElMessage.error((error as any).message)
   }

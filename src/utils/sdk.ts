@@ -393,6 +393,7 @@ export class SDK {
               totalAmount += 50000
             }
             const useSatoshis = totalAmount
+
             // 当时用Me支付时，总价 space 要转换为 ME 值
             if (option.payType === SdkPayType.ME) {
               const meInfo = await GetProtocolMeInfo({
@@ -407,7 +408,12 @@ export class SDK {
             }
 
             //  获取餘额
-            const balance = await this.getBalance(option.payType!)
+            let balance = await this.getBalance(option.payType!)
+            if (balance < totalAmount + 500) {
+              option.payType = SdkPayType.SPACE
+              totalAmount = useSatoshis
+              balance = await this.getBalance(option.payType!)
+            }
             // 等待 确认支付
             const result = await this.awitSdkPayconfirm(
               option.payType!,
@@ -416,6 +422,7 @@ export class SDK {
               option.checkOnly,
               option.isStake
             )
+
             if (result) {
               // 确认支付
               // 打钱地址
