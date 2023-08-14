@@ -202,10 +202,7 @@ function getUserFoller() {
       userFollow.following = res.data.followingList ? res.data.followingList : []
       userFollow.follers = res.data.followedList ? res.data.followedList : []
       rootStore.$patch(state => {
-        state.myBlackList = [
-          ...res.data.blackList,
-          'c90c06b66c4c155b0ee0ba18c5d075df53d4fd5ad37c1cd2c05ef03f18c57af2',
-        ]
+        state.myBlackList = res.data.blackList
       })
       resolve()
     }

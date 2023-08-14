@@ -97,7 +97,7 @@ export const useRootStore = defineStore('root', {
       ],
       isImportMnemonicLogin: localStorage.getItem('isImportMnemonicLogin') || false,
       isRereshData: false,
-      myBlackList: ['c90c06b66c4c155b0ee0ba18c5d075df53d4fd5ad37c1cd2c05ef03f18c57af2'],
+      myBlackList: [],
       // showDiffLang:
       //   localStorage.getItem('showDiffLang') && Number(localStorage.getItem('showDiffLang')),
     },
