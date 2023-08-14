@@ -116,7 +116,7 @@ watch(
       rootStore.$patch(state => {
         state.myBlackList = [
           ...res.data.blackList,
-          '352e92d8cfa3bbf04d0976b8130624b4e7c01cc02e53a54095cbb7e373828626',
+          'c90c06b66c4c155b0ee0ba18c5d075df53d4fd5ad37c1cd2c05ef03f18c57af2',
         ]
       })
       gotFollowStatus.value = true
