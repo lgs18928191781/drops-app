@@ -59,7 +59,9 @@ import { ToCurrency } from '@/enum'
 interface Props {
   buzz: BuzzItem
 }
+
 const props = withDefaults(defineProps<Props>(), {})
+console.log('propspropsprops', props.buzz)
 const nftSellItem: { val: SellNftItem | null } = reactive({ val: null })
 const userStore = useUserStore()
 const isSkeleton = ref(true)
@@ -72,7 +74,10 @@ const color = computed(() => {
 })
 
 const isBandNFTBuzz = computed(() => {
-  return rootStore.myBlackList?.includes(props.buzz.metaId)
+  return (
+    rootStore.myBlackList?.includes(props.buzz.metaId) ||
+    rootStore.myBlackList?.includes(props.buzz.rePost[0].metaId)
+  )
 })
 
 function getSellNftInfo() {
