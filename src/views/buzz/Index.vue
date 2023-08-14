@@ -59,6 +59,10 @@ function getDatas(isCover = false) {
             buzz.content = `${i18n.t('buzz.blacktips')}`
             buzz.attachments = []
           }
+          if (buzz.quoteItem && rootStore.myBlackList?.includes(buzz.metaId)) {
+            buzz.quoteItem.content = `${i18n.t('buzz.blacktipsRepost')}`
+            buzz.quoteItem.attachments = []
+          }
           if (buzz.quoteItem && rootStore.myBlackList?.includes(buzz.quoteItem.metaId)) {
             buzz.quoteItem.content = `${i18n.t('buzz.blacktips')}`
             buzz.quoteItem.attachments = []

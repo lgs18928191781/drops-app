@@ -1269,6 +1269,7 @@
   "already_backup": "Already Backup",
   "buzz": {
     "blacktips": "This content is blocked for the user.",
-    "bandUser": "Actions cannot be initiated against blocked users."
+    "bandUser": "Actions cannot be initiated against blocked users.",
+    "blacktipsRepost": "This content has been blocked by the forwarder, and the forwarded content is not visible."
   }
 }

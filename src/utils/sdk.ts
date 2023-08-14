@@ -409,7 +409,7 @@ export class SDK {
 
             //  获取餘额
             let balance = await this.getBalance(option.payType!)
-            if (balance < totalAmount + 500) {
+            if (balance < totalAmount && option.payType === SdkPayType.ME) {
               option.payType = SdkPayType.SPACE
               totalAmount = useSatoshis
               balance = await this.getBalance(option.payType!)

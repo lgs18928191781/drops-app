@@ -264,7 +264,6 @@ MetaName is a Decentralized, Open-sourced and Cross-chain Name System Based on M
       }
     }
   } catch (error) {
-    debugger
     emit('update:loading', false)
     ElMessage.error((error as any).message)
   }

@@ -1264,6 +1264,7 @@
   "backup_later": "暂不备份",
   "buzz": {
     "blacktips": "此内容用户被屏蔽",
-    "bandUser": "对屏蔽用户不可发起操作"
+    "bandUser": "对屏蔽用户不可发起操作",
+    "blacktipsRepost": "此内容的转发者已屏蔽,转发内容不可见"
   }
 }

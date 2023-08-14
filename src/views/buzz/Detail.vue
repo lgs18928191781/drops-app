@@ -92,6 +92,10 @@ function fetchData(count = 1, parentResolve?: () => void) {
           buzzRes.content = `${i18n.t('buzz.blacktips')}`
           buzzRes.attachments = []
         }
+        if (buzzRes.quoteItem && rootStore.myBlackList?.includes(buzzRes.metaId)) {
+          buzzRes.quoteItem.content = `${i18n.t('buzz.blacktipsRepost')}`
+          buzzRes.quoteItem.attachments = []
+        }
         if (buzzRes.quoteItem && rootStore.myBlackList?.includes(buzzRes.quoteItem.metaId)) {
           buzzRes.quoteItem.content = `${i18n.t('buzz.blacktips')}`
           buzzRes.quoteItem.attachments = []
