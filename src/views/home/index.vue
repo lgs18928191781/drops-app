@@ -369,9 +369,8 @@ function download(item: any) {
 }
 
 function toMetaId() {
-  window.open(`https://www.metaid.io/`,'_blank')
+  window.open(`https://www.metaid.io/`, '_blank')
 }
-
 </script>
 
 <style lang="scss" scoped src="./index.scss">

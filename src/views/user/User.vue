@@ -130,6 +130,7 @@ import { useUserStore } from '@/stores/user'
 import { checkUserLogin, copy, followUser, tx } from '@/utils/util'
 import { Loading } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { useRootStore } from '@/stores/root'
 import { NodeName } from '@/enum'
 import { Mitt, MittEvent } from '@/utils/mitt'
 
@@ -141,6 +142,7 @@ const isSkeleton = ref(true)
 const userStore = useUserStore()
 const isMyFollowed = ref(false)
 const loading = ref(false)
+const rootStore = useRootStore()
 const userFollow: {
   following: string[]
   follers: string[]
@@ -199,6 +201,9 @@ function getUserFoller() {
     if (res?.code === 0) {
       userFollow.following = res.data.followingList ? res.data.followingList : []
       userFollow.follers = res.data.followedList ? res.data.followedList : []
+      rootStore.$patch(state => {
+        state.myBlackList = res.data.blackList
+      })
       resolve()
     }
   })

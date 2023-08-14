@@ -6,7 +6,7 @@
       v-model="isShowPayIframe"
       direction="btt"
       @close="onPayIframeClose"
-      custom-class="el-drawer__body_no_padding"
+      class="el-drawer__body_no_padding"
       :append-to-body="true"
       :close-on-click-modal="false"
     >
@@ -206,6 +206,7 @@ interface Props {
   pay_decimal_num: number
 }
 const props = withDefaults(defineProps<Props>(), {})
+
 const rootStore = useRootStore()
 
 const emit = defineEmits(['success', 'fail', 'update:modelValue'])

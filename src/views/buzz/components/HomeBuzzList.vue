@@ -32,6 +32,7 @@ import RecommendContentVue from './RecommendContent.vue'
 import PublishBox from './PublishBox.vue'
 import { useRootStore } from '@/stores/root'
 import { debounce } from '@/utils/util'
+import { useI18n } from 'vue-i18n'
 
 // interface Props {}
 // const props = withDefaults(defineProps<Props>(), {})
@@ -43,8 +44,9 @@ const route = useRoute()
 const rootStore = useRootStore()
 const list: BuzzItem[] = reactive([])
 const isSkeleton = ref(true)
-
+const i18n = useI18n()
 function getDatas(isCover = false) {
+  console.log('rootStore.myBlackList', rootStore.myBlackList)
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetBuzzs({
       tag: route.name === 'buzzIndex' ? 'timeline' : 'recommendline',
@@ -54,6 +56,23 @@ function getDatas(isCover = false) {
     })
     if (res.code === 0) {
       if (isCover) list.length = 0
+      if (res.data.results.items.length) {
+        res.data.results.items.forEach(buzz => {
+          if (rootStore.myBlackList?.includes(buzz.metaId)) {
+            //此内容用户被屏蔽
+            buzz.content = `${i18n.t('buzz.blacktips')}`
+            buzz.attachments = []
+          }
+          if (buzz.quoteItem && rootStore.myBlackList?.includes(buzz.metaId)) {
+            buzz.quoteItem.content = `${i18n.t('buzz.blacktipsRepost')}`
+            buzz.quoteItem.attachments = []
+          }
+          if (buzz.quoteItem && rootStore.myBlackList?.includes(buzz.quoteItem.metaId)) {
+            buzz.quoteItem.content = `${i18n.t('buzz.blacktips')}`
+            buzz.quoteItem.attachments = []
+          }
+        })
+      }
       list.push(...res.data.results.items)
 
       if (res.data.results.items.length === 0 || pagination.page >= 3) {

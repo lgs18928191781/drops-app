@@ -83,7 +83,7 @@ import { useUserStore } from '@/stores/user'
 import { useLayoutStore } from '@/stores/layout'
 import { switchFollowUser } from '@/utils/talk'
 import { showLoading, sleep } from '@/utils/util'
-
+import { useRootStore } from '@/stores/root'
 import UserPersona from '@/components/UserPersona/UserPersona.vue'
 
 const talk = useTalkStore()
@@ -91,7 +91,7 @@ const user = useUserStore()
 const layout = useLayoutStore()
 const i18n = useI18n()
 const activeChannel = computed(() => talk.activeChannel)
-
+const rootStore = useRootStore()
 const shortId = computed(() => {
   if (!activeChannel.value) return ''
   return activeChannel.value.id.slice(0, 6)
@@ -113,7 +113,9 @@ watch(
     if (res.code === 0) {
       const followings: string[] = res.data?.followingList
       isFollowed.value = followings?.includes(activeChannel.value?.id)
-
+      rootStore.$patch(state => {
+        state.myBlackList = res.data.blackList
+      })
       gotFollowStatus.value = true
     }
   },

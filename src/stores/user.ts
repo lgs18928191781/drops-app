@@ -29,7 +29,7 @@ export interface KycInfoTypes {
 interface UserState {
   user: null | UserInfo
   password: string | null
-  isNeedConfirm: {
+  isNeedConfirm?: {
     me: boolean
     bsv: boolean
   }
@@ -222,12 +222,13 @@ export const useUserStore = defineStore('user', {
     setIsTestUser() {
       return new Promise<void>(async resolve => {
         this.isSetedisTestUser = true
-        const res = await GetProdTestMetaIds({ metaId: this.user!.metaId!, _limit: 1 }).catch(
-          () => {
-            this.isSetedisTestUser = false
-            resolve()
-          }
-        )
+        const res = await GetProdTestMetaIds({
+          metaId: this.user!.metaId!,
+          _limit: 1,
+        }).catch(() => {
+          this.isSetedisTestUser = false
+          resolve()
+        })
         if (res) {
           if (res.length > 0) {
             this.isTestUser = true

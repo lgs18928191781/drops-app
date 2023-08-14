@@ -5,6 +5,7 @@
       <div class="buzz-menu">
         <router-link
           :to="item.path"
+          @click.native="refreshData(item.path)"
           class="buzz-menu-item flex flex-align-center"
           v-for="(item, index) in menus"
           :key="index"
@@ -56,6 +57,7 @@
 
 <script setup lang="ts">
 import { router } from '@/router'
+import { useRootStore } from '@/stores/root'
 import { debug } from 'console'
 import {
   inject,
@@ -77,7 +79,7 @@ const SelectRef = ref()
 const i18n = useI18n()
 let resizeObserver: ResizeObserver
 const route = useRoute()
-
+const rootStore = useRootStore()
 const menus = [
   {
     name: () => i18n.t('Buzz.Timeline'),
@@ -119,6 +121,18 @@ function setPosition() {
     MenuRef.value.style.marginLeft = 0
     SelectRef.value.style.left = BuzzContainer.offsetLeft - SelectRef.value.clientWidth - 12 + 'px'
     SelectRef.value.style.marginLeft = 0
+  }
+}
+
+function refreshData(path: string) {
+  if (path == route.path) {
+    rootStore.$patch(state => {
+      state.isRereshData = true
+    })
+  } else {
+    rootStore.$patch(state => {
+      state.isRereshData = false
+    })
   }
 }
 

@@ -54,13 +54,13 @@ import { checkSdkStatus, checkUserLogin } from '@/utils/util'
 import { useI18n } from 'vue-i18n'
 import { GetBuzz, GetBuzzInteractive } from '@/api/aggregation'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
-
+import { useRootStore } from '@/stores/root'
 const route = useRoute()
 const userStore = useUserStore()
 const loading = ref(false)
 const i18n = useI18n()
 const BuzzListRef = ref()
-
+const rootStore = useRootStore()
 const list: BuzzItem[] = reactive([])
 const isSkeleton = ref(true)
 
@@ -86,7 +86,22 @@ function fetchData(count = 1, parentResolve?: () => void) {
     })
     if (res?.code === 0) {
       if (res.data.results.items.length > 0) {
-        let detailRes: BuzzItem = res.data.results.items[0] || null
+        const buzzRes = res.data.results.items[0]
+        if (rootStore.myBlackList?.includes(buzzRes.metaId)) {
+          //此内容用户被屏蔽
+          buzzRes.content = `${i18n.t('buzz.blacktips')}`
+          buzzRes.attachments = []
+        }
+        if (buzzRes.quoteItem && rootStore.myBlackList?.includes(buzzRes.metaId)) {
+          buzzRes.quoteItem.content = `${i18n.t('buzz.blacktipsRepost')}`
+          buzzRes.quoteItem.attachments = []
+        }
+        if (buzzRes.quoteItem && rootStore.myBlackList?.includes(buzzRes.quoteItem.metaId)) {
+          buzzRes.quoteItem.content = `${i18n.t('buzz.blacktips')}`
+          buzzRes.quoteItem.attachments = []
+        }
+
+        let detailRes: BuzzItem = buzzRes || null
         if (detailRes.encrypt === IsEncrypt.Yes.toString()) {
           const result = await userStore.showWallet?.eciesDecryptData({
             data: detailRes.data,

@@ -17,26 +17,32 @@
       </CardVue>
     </template>
     <template #default>
-      <div class="text" v-html="$filters.buzzTextContent(shareInfo.val!.shareContent)"></div>
+      <div class="text" v-if="isBandTalkBuzz">
+        {{ $t('buzz.blacktips') }}
+      </div>
+      <div v-else>
+        <div class="text" v-html="$filters.buzzTextContent(shareInfo.val!.shareContent)"></div>
 
-      <CardVue
-        :color="postTagStore.list.find(item => item.tag === buzz.postTag)?.color"
-        @click.stop="toItem"
-      >
-        <div class="simple-publish-share flex">
-          <Image :src="shareInfo.val!.cover" v-if="shareInfo.val!.cover" />
-          <div class="image flex flex-align-center flex-pack-center" v-else>
-            <Icon name="link" />
-          </div>
-          <div class="cont flex1">
-            <div class="name flex flex-align-center" :class="{ metaName: isMetaName }">
-              <span class="text">{{ shareInfo.val!.title }}</span>
+        <CardVue
+          :color="postTagStore.list.find(item => item.tag === buzz.postTag)?.color"
+          @click.stop="toItem"
+        >
+          <div class="simple-publish-share flex">
+            <Image :src="shareInfo.val!.cover" v-if="shareInfo.val!.cover" />
+            <div class="image flex flex-align-center flex-pack-center" v-else>
+              <Icon name="link" />
             </div>
-            <div class="drsc">{{ shareInfo.val!.detail }}</div>
+            <div class="cont flex1">
+              <div class="name flex flex-align-center" :class="{ metaName: isMetaName }">
+                <span class="text">{{ shareInfo.val!.title }}</span>
+              </div>
+              <div class="drsc">{{ shareInfo.val!.detail }}</div>
+            </div>
+            <Icon name="down" class="right" />
           </div>
-          <Icon name="down" class="right" />
-        </div>
-      </CardVue>
+        </CardVue>
+      </div>
+
       <div class="msg-error" v-if="isFail">{{ $t('NFT.Get Msg Error') }}</div>
     </template>
   </ElSkeleton>
@@ -45,12 +51,12 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
 import CardVue from '@/components/Card/Card.vue'
-import { reactive, ref } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import { GetPublishShare } from '@/api/aggregation'
 import { usePostTagStore } from '@/stores/buzz/tag'
 import { useRouter } from 'vue-router'
 import MetaNameTag from '@/components/MetaName/Tag.vue'
-
+import { useRootStore } from '@/stores/root'
 interface Props {
   buzz: BuzzItem
 }
@@ -63,6 +69,13 @@ const router = useRouter()
 const isMetaName = ref(false)
 const isFail = ref(false)
 
+const rootStore = useRootStore()
+const isBandTalkBuzz = computed(() => {
+  return (
+    rootStore.myBlackList?.includes(props.buzz.metaId) ||
+    rootStore.myBlackList?.includes(props.buzz.rePost[0].metaId)
+  )
+})
 function getShareInfo() {
   return new Promise<void>(async resolve => {
     const res = await GetPublishShare(props.buzz.txId).catch(error => {
