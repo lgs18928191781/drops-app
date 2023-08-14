@@ -206,8 +206,7 @@ interface Props {
   pay_decimal_num: number
 }
 const props = withDefaults(defineProps<Props>(), {})
-console.log('props', props)
-debugger
+
 const rootStore = useRootStore()
 
 const emit = defineEmits(['success', 'fail', 'update:modelValue'])

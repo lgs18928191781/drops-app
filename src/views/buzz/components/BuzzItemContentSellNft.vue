@@ -1,44 +1,47 @@
 <template>
-  <div class="text">{{ $t('NFT.Ueser Sell NFT Buzz Text') }}</div>
-  <CardVue class="nft-card" :color="color">
-    <div class="nft-warp" @click.stop="toNFT">
-      <ElSkeleton :loading="isSkeleton" animated>
-        <template #template>
-          <div class="msg flex">
-            <div class="cover-warp">
-              <ElSkeletonItem variant="rect" />
-            </div>
-            <div class="cont flex1">
-              <div class="name">
-                <ElSkeletonItem variant="p" />
-                <ElSkeletonItem variant="p" />
+  <div class="text" v-if="isBandNFTBuzz">{{ $t('buzz.blacktips') }}</div>
+  <div v-else>
+    <div class="text">{{ $t('NFT.Ueser Sell NFT Buzz Text') }}</div>
+    <CardVue class="nft-card" :color="color">
+      <div class="nft-warp" @click.stop="toNFT">
+        <ElSkeleton :loading="isSkeleton" animated>
+          <template #template>
+            <div class="msg flex">
+              <div class="cover-warp">
+                <ElSkeletonItem variant="rect" />
               </div>
-              <div class="token-index">
-                <ElSkeletonItem variant="p" />
+              <div class="cont flex1">
+                <div class="name">
+                  <ElSkeletonItem variant="p" />
+                  <ElSkeletonItem variant="p" />
+                </div>
+                <div class="token-index">
+                  <ElSkeletonItem variant="p" />
+                </div>
               </div>
             </div>
-          </div>
-        </template>
-        <template #default>
-          <div class="msg flex">
-            <div class="cover-warp">
-              <NFTCoverVue :cover="[nftSellItem.val!.cover as string]" />
-            </div>
-            <div class="cont flex1">
-              <div class="name">
-                {{nftSellItem.val!.name}}
+          </template>
+          <template #default>
+            <div class="msg flex">
+              <div class="cover-warp">
+                <NFTCoverVue :cover="[nftSellItem.val!.cover as string]" />
               </div>
-              <div class="token-index">#{{parseInt(nftSellItem.val!.tokenIndex) + 1}}</div>
+              <div class="cont flex1">
+                <div class="name">
+                  {{nftSellItem.val!.name}}
+                </div>
+                <div class="token-index">#{{parseInt(nftSellItem.val!.tokenIndex) + 1}}</div>
+              </div>
             </div>
-          </div>
-          <div class="price flex flex-align-center flex-pack-center">
-            {{ $filters.space(nftSellItem.val!.price) }} Space
-            <!-- <AmountVue :price="$filters.space(nftSellItem.val!.price)" :currency="ToCurrency.MVC" /> -->
-          </div>
-        </template>
-      </ElSkeleton>
-    </div>
-  </CardVue>
+            <div class="price flex flex-align-center flex-pack-center">
+              {{ $filters.space(nftSellItem.val!.price) }} Space
+              <!-- <AmountVue :price="$filters.space(nftSellItem.val!.price)" :currency="ToCurrency.MVC" /> -->
+            </div>
+          </template>
+        </ElSkeleton>
+      </div>
+    </CardVue>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -57,7 +60,6 @@ interface Props {
   buzz: BuzzItem
 }
 const props = withDefaults(defineProps<Props>(), {})
-
 const nftSellItem: { val: SellNftItem | null } = reactive({ val: null })
 const userStore = useUserStore()
 const isSkeleton = ref(true)
@@ -69,11 +71,16 @@ const color = computed(() => {
   return postTagStore.list.find(item => item.id === props.buzz.postTagId)?.color
 })
 
+const isBandNFTBuzz = computed(() => {
+  return rootStore.myBlackList?.includes(props.buzz.metaId)
+})
+
 function getSellNftInfo() {
   return new Promise<void>(async resolve => {
     const res = await GetSellNft(props.buzz.txId).catch(error => {
       ElMessage.error(error.message)
     })
+
     if (res?.code === 0) {
       nftSellItem.val = res.data
       resolve()
