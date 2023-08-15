@@ -79,7 +79,7 @@ import { useUserStore } from '@/stores/user'
 import { useRootStore } from '@/stores/root'
 
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { GetRandomWord, MnemoicLogin } from '@/api/core'
+import { GetRandomWord, MnemoicLogin, SetUserInfo } from '@/api/core'
 import { SDK } from '@/utils/sdk'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
 
@@ -161,22 +161,40 @@ function submitForm() {
 
             const hdWallet = new HdWallet(hdWalletMnemonic)
 
-            const metaIdInfo = await hdWallet.getMetaIdInfo(hdWallet.rootAddress)
+            let metaIdInfo = await hdWallet.getMetaIdInfo(hdWallet.rootAddress)
 
-            if (!metaIdInfo.metaId) {
-              return ElMessageBox.alert(
-                `${i18n.t('FixAccountTips1')} ${import.meta.env.VITE_SHOW_MONEY_APP} ${i18n.t(
-                  'FixAccountTips2'
-                )}`,
-                i18n.t('niceWarning'),
-                {
-                  showClose: false,
-                  confirmButtonText: `${i18n.t('FixAccountTips3')}`,
-                }
-              ).then(() => {
-                location.href = `${import.meta.env.VITE_SHOW_MONEY_APP}`
+            if (!metaIdInfo.metaId || !metaIdInfo.infoTxId || !metaIdInfo.protocolTxId) {
+              // @ts-ignore
+              let userInfo = {
+                ...account,
+                role: 'BASIC',
+                path: parseInt(import.meta.env.VITE_WALLET_PATH),
+              }
+
+              metaIdInfo = await hdWallet.initMetaIdNode(userInfo)
+
+              await SetUserInfo({
+                ...userInfo,
+                // @ts-ignore
+                metaid: metaIdInfo.metaId,
+                // @ts-ignore
+                accessKey: userInfo.token,
               })
             }
+            // if (!metaIdInfo.metaId) {
+            //   return ElMessageBox.alert(
+            //     `${i18n.t('FixAccountTips1')} ${import.meta.env.VITE_SHOW_MONEY_APP} ${i18n.t(
+            //       'FixAccountTips2'
+            //     )}`,
+            //     i18n.t('niceWarning'),
+            //     {
+            //       showClose: false,
+            //       confirmButtonText: `${i18n.t('FixAccountTips3')}`,
+            //     }
+            //   ).then(() => {
+            //     location.href = `${import.meta.env.VITE_SHOW_MONEY_APP}`
+            //   })
+            // }
             // @ts-ignore
             //这里的参数account跟metaidInfo位置不能改变，否则新数据会被覆盖
             userStore.updateUserInfo({

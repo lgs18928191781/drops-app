@@ -414,21 +414,39 @@ function submitForm() {
             // @ts-ignore
             const walletInfo = await hdWalletFromAccount(account, import.meta.env.VITE_NET_WORK)
             const hdWallet = new HdWallet(walletInfo.wallet)
-            const metaIdInfo = await hdWallet.getMetaIdInfo(walletInfo.rootAddress)
-            if (!metaIdInfo.metaId) {
-              return ElMessageBox.alert(
-                `${i18n.t('FixAccountTips1')} ${import.meta.env.VITE_SHOW_MONEY_APP} ${i18n.t(
-                  'FixAccountTips2'
-                )}`,
-                i18n.t('niceWarning'),
-                {
-                  showClose: false,
-                  confirmButtonText: `${i18n.t('FixAccountTips3')}`,
-                }
-              ).then(() => {
-                location.href = `${import.meta.env.VITE_SHOW_MONEY_APP}`
+            let metaIdInfo = await hdWallet.getMetaIdInfo(walletInfo.rootAddress)
+            if (!metaIdInfo.metaId || !metaIdInfo.infoTxId || !metaIdInfo.protocolTxId) {
+              // @ts-ignore
+              let userInfo = {
+                ...account,
+                role: 'BASIC',
+                path: parseInt(import.meta.env.VITE_WALLET_PATH),
+              }
+
+              metaIdInfo = await hdWallet.initMetaIdNode(userInfo)
+
+              await SetUserInfo({
+                ...userInfo,
+                // @ts-ignore
+                metaid: metaIdInfo.metaId,
+                // @ts-ignore
+                accessKey: userInfo.token,
               })
             }
+            // if (!metaIdInfo.metaId) {
+            //   return ElMessageBox.alert(
+            //     `${i18n.t('FixAccountTips1')} ${import.meta.env.VITE_SHOW_MONEY_APP} ${i18n.t(
+            //       'FixAccountTips2'
+            //     )}`,
+            //     i18n.t('niceWarning'),
+            //     {
+            //       showClose: false,
+            //       confirmButtonText: `${i18n.t('FixAccountTips3')}`,
+            //     }
+            //   ).then(() => {
+            //     location.href = `${import.meta.env.VITE_SHOW_MONEY_APP}`
+            //   })
+            // }
 
             // @ts-ignore
             userStore.updateUserInfo({

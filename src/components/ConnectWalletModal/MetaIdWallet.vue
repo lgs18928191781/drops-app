@@ -697,10 +697,10 @@ function submitForm() {
               const setWalletRes = await SetUserWalletInfo({
                 ...userInfoParams,
                 type: 2,
-                xpub: walletInfo.wallet.xpubkey,
+                xpub: walletInfo.wallet.xpubkey.toString(),
                 pubkey: walletInfo.wallet.publicKey.toString(),
                 headers: {
-                  accessKey: userInfo.token,
+                  accessKey: userInfo.token || '',
                   timestamp: Date.now(),
                   userName: loginName,
                 },
@@ -718,7 +718,7 @@ function submitForm() {
                   affirmPassword: ePassword,
                   enCryptedMnemonic: eMnemonic,
                 },
-                userInfo.token,
+                userInfo.token || '',
                 loginName
               )
               if (setPasswordRes.code !== 0) {
