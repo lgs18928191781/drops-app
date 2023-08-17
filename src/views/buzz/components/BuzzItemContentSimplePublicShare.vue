@@ -73,7 +73,7 @@ const rootStore = useRootStore()
 const isBandTalkBuzz = computed(() => {
   return (
     rootStore.myBlackList?.includes(props.buzz.metaId) ||
-    rootStore.myBlackList?.includes(props.buzz.rePost[0].metaId)
+    rootStore.myBlackList?.includes(props.buzz?.rePost[0]?.metaId)
   )
 })
 function getShareInfo() {

@@ -76,7 +76,7 @@ const color = computed(() => {
 const isBandNFTBuzz = computed(() => {
   return (
     rootStore.myBlackList?.includes(props.buzz.metaId) ||
-    rootStore.myBlackList?.includes(props.buzz.rePost[0].metaId)
+    rootStore.myBlackList?.includes(props.buzz?.rePost[0]?.metaId)
   )
 })
 
