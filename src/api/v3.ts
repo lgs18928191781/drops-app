@@ -183,7 +183,7 @@ export const GetMeUtxos = (params: {
     timestamp,
     ...params,
   })
-  const secretKey = 'fF3nMXzGPQMw10Kc'
+  const secretKey = import.meta.env.VITE_SECRECT_KEY
   const encodeData = aesEncrypt(encryptingParams, secretKey)
 
   return V3.post('/api/me/user/getOperateFee', { encode_data: encodeData })

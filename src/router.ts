@@ -213,6 +213,13 @@ export const router = createRouter({
                   path: 'detail/:id',
                   name: 'talkDAOProposalDetail',
                   component: () => import('@/views/talk/DAO/proposal/Detail.vue'),
+                  beforeEnter: (to, from, next) => {
+                    if (to.params.id === import.meta.env.VITE_BAND_PROPOSAL_ID) {
+                      next('/404')
+                    } else {
+                      next()
+                    }
+                  },
                 },
                 {
                   path: 'create',
