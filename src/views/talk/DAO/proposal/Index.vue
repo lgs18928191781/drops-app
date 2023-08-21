@@ -215,22 +215,26 @@ const loading = ref(false)
 
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
-    const res = await Proposals({
+
+
+    let res = await Proposals({
       symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${talk.activeCommunity!.dao!.daoId}`,
       limit: pagination.pageSize,
       offset: (pagination.page - 1) * pagination.pageSize
     }).catch(error => {
       ElMessage.error(error.message)
     })
+
     if (res) {
       if (isCover) proposals.length = 0
       if (res.length) {
+        res=res.filter((item)=>item.voteID !== import.meta.env.VITE_BAND_PROPOSAL_ID)
         proposals.push(...res)
         pagination.nothing = false
         setTimeout(() => {
-          for (let i = 0; i < res.length; i++) {
-            if (typeof res[i].creator === 'string' && !users.some(item => item.address === res[i].creator)){
-              getUserInfoByAddress(res[i].creator).then(user => {
+          for (let i = 0; i < res!.length; i++) {
+            if (typeof res[i].creator === 'string' && !users.some(item => item.address === res[i]!.creator)){
+              getUserInfoByAddress(res[i]!.creator).then(user => {
                 users.push(user)
               })
             }
