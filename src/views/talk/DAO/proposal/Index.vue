@@ -74,15 +74,7 @@
             </div>
           </div>
 
-          <div
-            class="main-border primary stake"
-            @click="
-              () => {
-                stakeType = StakeType.Pledge
-                isShowStake = true
-              }
-            "
-          >
+          <div class="main-border primary stake" @click="showStakeDialog">
             {{ $t('DAO.Stake') }}
           </div>
         </div>
@@ -212,6 +204,11 @@ const blockTimeStamp = ref(0)
 
 const loading = ref(false)
 
+function showStakeDialog() {
+
+  stakeType.value = StakeType.Pledge
+  isShowStake.value = true
+}
 
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {

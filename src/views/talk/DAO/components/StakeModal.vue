@@ -117,7 +117,7 @@ const amountNumber = ref(0)
 const percentage = ref(0)
 const isSkeleton = ref(true)
 const loading = ref(false)
-const txFee = new Decimal(40000).div(Math.pow(10, 8)).toNumber()
+const txFee = new Decimal(100000).div(Math.pow(10, 8)).toNumber()
 
 const currentSymbol = computed(() => {
   return symbols.find(item => item.symbol === talk.activeCommunity?.dao?.governanceSymbol)
@@ -167,20 +167,21 @@ function onPercentChange() {
       .div(100)
       .toNumber()
 
-    if (result + txFee > balance.value) {
+    if (result + txFee >= balance.value) {
       result -= txFee
     }
     amountNumber.value = result
   } else {
     amountNumber.value = 0
   }
+  console.log('amountNumber.value', amountNumber.value, txFee, balance.value)
 }
 
 function onAmountChange() {
   if (amountNumber.value > balance.value) {
     amountNumber.value = balance.value
   }
-  if (amountNumber.value + txFee > balance.value) {
+  if (amountNumber.value + txFee >= balance.value) {
     amountNumber.value = amountNumber.value - txFee
   }
   if (balance.value) {
@@ -192,11 +193,16 @@ function onAmountChange() {
   } else {
     percentage.value = 0
   }
+  console.log('amountNumber.value', amountNumber.value, txFee, balance.value)
 }
 
 async function stake() {
   if (!amountNumber.value) return
+  if (amountNumber.value <= txFee) {
+    return ElMessage.error(`${i18n.t('stakeAmountLimit')}`)
+  }
   loading.value = true
+
   try {
     const amount = new Decimal(amountNumber.value)
       .mul(currentSymbol.value!.rate)
