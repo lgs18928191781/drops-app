@@ -426,7 +426,8 @@ import { metafile } from '@/utils/filters'
 import type { TabsPaneContext } from 'element-plus'
 import { debounce } from '@/utils/util'
 import walletBackup from '@/assets/images/wallet_backup.svg?url'
-import { GetUserStakeInfo,GetBlockTime } from '@/api/dao'
+import { GetUserStakeInfo, GetBlockTime } from '@/api/dao'
+import MSP from '@/assets/images/ms.png'
 const props = defineProps<{
   modelValue: boolean
 }>()
@@ -1002,9 +1003,10 @@ function getFts(isCover = false) {
       if (res.code === 0) {
         if (isCover) FtList.length = 0
         if (res.data.results.items.length === 0) pagination.nothing = true
+        const mspGenesis=`b2d75931958114e48c9927160f80363eae78e2dc`
         res.data.results.items.map(ft => {
           FtList.push({
-            icon: metafile(ft.icon),
+            icon:ft.genesis == mspGenesis ? MSP: metafile(ft.icon),
             name: ft.name,
             value: +ft.balance,
             showBindBtn: false,
