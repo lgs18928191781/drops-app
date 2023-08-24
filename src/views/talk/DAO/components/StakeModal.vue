@@ -170,10 +170,6 @@ function onPercentChange() {
       if (result + txFee + extractTxFee >= balance.value) {
         result = result - (txFee + extractTxFee)
       }
-    } else {
-      if (result + txFee >= balance.value) {
-        result -= txFee
-      }
     }
 
     amountNumber.value = new Decimal(new Decimal(result).toFixed(8)).toNumber()
@@ -198,9 +194,7 @@ function onAmountChange() {
     }
   } else {
     if (amountNumber.value + txFee >= balance.value) {
-      amountNumber.value = new Decimal(
-        new Decimal(amountNumber.value).sub(txFee).toFixed(8)
-      ).toNumber()
+      amountNumber.value = new Decimal(new Decimal(amountNumber.value).toFixed(8)).toNumber()
     }
   }
 
