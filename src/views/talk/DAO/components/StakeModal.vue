@@ -218,7 +218,7 @@ function onAmountChange() {
 
 async function stake() {
   if (!amountNumber.value) return
-  if (amountNumber.value <= txFee) {
+  if (props.type === StakeType.Pledge && amountNumber.value <= txFee + extractTxFee) {
     return ElMessage.error(`${i18n.t('stakeAmountLimit')}`)
   }
   loading.value = true
