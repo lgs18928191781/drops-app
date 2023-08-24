@@ -117,8 +117,8 @@ const amountNumber = ref(0)
 const percentage = ref(0)
 const isSkeleton = ref(true)
 const loading = ref(false)
-const txFee = new Decimal(100000).div(Math.pow(10, 8)).toNumber()
-
+const txFee = new Decimal(40000).div(Math.pow(10, 8)).toNumber()
+const extractTxFee = new Decimal(60000).div(Math.pow(10, 8)).toNumber()
 const currentSymbol = computed(() => {
   return symbols.find(item => item.symbol === talk.activeCommunity?.dao?.governanceSymbol)
 })
@@ -166,10 +166,16 @@ function onPercentChange() {
       .mul(percentage.value)
       .div(100)
       .toNumber()
-
-    if (result + txFee >= balance.value) {
-      result -= txFee
+    if (props.type === StakeType.Pledge) {
+      if (result + txFee + extractTxFee >= balance.value) {
+        result = result - (txFee + extractTxFee)
+      }
+    } else {
+      if (result + txFee >= balance.value) {
+        result -= txFee
+      }
     }
+
     amountNumber.value = new Decimal(new Decimal(result).toFixed(8)).toNumber()
   } else {
     amountNumber.value = 0
@@ -181,11 +187,23 @@ function onAmountChange() {
   if (amountNumber.value > balance.value) {
     amountNumber.value = balance.value
   }
-  if (amountNumber.value + txFee >= balance.value) {
-    amountNumber.value = new Decimal(
-      new Decimal(amountNumber.value).sub(txFee).toFixed(8)
-    ).toNumber()
+  if (props.type === StakeType.Pledge) {
+    if (amountNumber.value + txFee + extractTxFee >= balance.value) {
+      amountNumber.value = new Decimal(
+        new Decimal(amountNumber.value)
+          .sub(txFee)
+          .sub(extractTxFee)
+          .toFixed(8)
+      ).toNumber()
+    }
+  } else {
+    if (amountNumber.value + txFee >= balance.value) {
+      amountNumber.value = new Decimal(
+        new Decimal(amountNumber.value).sub(txFee).toFixed(8)
+      ).toNumber()
+    }
   }
+
   if (balance.value) {
     percentage.value = new Decimal(amountNumber.value)
       .div(balance.value)
