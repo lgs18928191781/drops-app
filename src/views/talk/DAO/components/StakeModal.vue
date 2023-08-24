@@ -170,7 +170,7 @@ function onPercentChange() {
     if (result + txFee >= balance.value) {
       result -= txFee
     }
-    amountNumber.value = result
+    amountNumber.value = new Decimal(new Decimal(result).toFixed(8)).toNumber()
   } else {
     amountNumber.value = 0
   }
@@ -182,7 +182,9 @@ function onAmountChange() {
     amountNumber.value = balance.value
   }
   if (amountNumber.value + txFee >= balance.value) {
-    amountNumber.value = amountNumber.value - txFee
+    amountNumber.value = new Decimal(
+      new Decimal(amountNumber.value).sub(txFee).toFixed(8)
+    ).toNumber()
   }
   if (balance.value) {
     percentage.value = new Decimal(amountNumber.value)

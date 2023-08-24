@@ -283,7 +283,7 @@ function getUserStakeInfo() {
 
 const selfStakeRate = computed(() => {
   if (userStake.val!.lockedTokenAmount) {
-    const rate=new Decimal(userStake.val!.lockedTokenAmount).div(userStake.val!.poolTokenAmount).div(100).toNumber()
+    const rate=new Decimal(userStake.val!.lockedTokenAmount).div(userStake.val!.poolTokenAmount).mul(100).toNumber()
     if (rate < 0.01) {
       return `< 0.01`
     } else {
