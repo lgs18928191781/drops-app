@@ -427,7 +427,7 @@ import type { TabsPaneContext } from 'element-plus'
 import { debounce } from '@/utils/util'
 import walletBackup from '@/assets/images/wallet_backup.svg?url'
 import { GetUserStakeInfo, GetBlockTime } from '@/api/dao'
-import MSP from '@/assets/images/ms.png'
+import MSP from '@/assets/images/msp.png'
 const props = defineProps<{
   modelValue: boolean
 }>()
