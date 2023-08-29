@@ -214,7 +214,7 @@ export const router = createRouter({
                   name: 'talkDAOProposalDetail',
                   component: () => import('@/views/talk/DAO/proposal/Detail.vue'),
                   beforeEnter: (to, from, next) => {
-                    if (to.params.id === import.meta.env.VITE_BAND_PROPOSAL_ID) {
+                    if (import.meta.env.VITE_BAND_PROPOSAL_ID.includes(to.params.id)) {
                       next('/404')
                     } else {
                       next()
