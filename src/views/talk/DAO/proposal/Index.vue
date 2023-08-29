@@ -225,7 +225,7 @@ function getDatas(isCover = false) {
     if (res) {
       if (isCover) proposals.length = 0
       if (res.length) {
-        res=res.filter((item)=>item.voteID !== import.meta.env.VITE_BAND_PROPOSAL_ID)
+        res=res.filter((item)=> !import.meta.env.VITE_BAND_PROPOSAL_ID.includes(item.voteID))
         proposals.push(...res)
         pagination.nothing = false
         setTimeout(() => {
