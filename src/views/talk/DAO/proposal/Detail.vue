@@ -191,6 +191,10 @@
                       {{ $filters.dateTimeFormat(proposal!.val!.beginBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm')
 
 
+
+
+
+
                       }}(UTC)
                     </div>
                   </div>
@@ -202,6 +206,10 @@
                     <div class="flex1 lable">{{ $t('DAO.End Time') }}</div>
                     <div class="value">
                       {{ $filters.dateTimeFormat(proposal!.val!.endBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm')
+
+
+
+
 
 
                       }}(UTC)
@@ -312,6 +320,10 @@
 
 
 
+
+
+
+
                       }}%
                     </div>
                   </div>
@@ -340,7 +352,13 @@
             <div class="lable">{{ $t('DAO.You Will Vote') }}</div>
             <div class="main-border option">{{ $t(currentOption) }}</div>
             <div class="value">
-              {{ $t('DAO.Vote Number') }}:<span>{{ userStake.val!.lockedTokenAmount }}</span>
+              {{ $t('DAO.Vote Number') }}:<span
+                >{{ new Decimal(userStake.val!.lockedTokenAmount).div(10**8).toNumber()
+
+
+
+                }}&nbsp;SPACEs</span
+              >
             </div>
             <div class="main-border primary" @click="confirmVote">{{ $t('DAO.Confirm Vote') }}</div>
           </div>
