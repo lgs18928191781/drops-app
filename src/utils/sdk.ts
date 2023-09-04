@@ -390,7 +390,7 @@ export class SDK {
             // 计算总价
             let totalAmount = this.getNodeTransactionsAmount(transactions, params.payTo)
             if (params.nodeName == NodeName.FtTransfer) {
-              totalAmount += 50000
+              totalAmount += 80000
             }
             const useSatoshis = totalAmount
 
