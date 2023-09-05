@@ -300,6 +300,7 @@ async function stake() {
           {
             isBroadcast: false,
             payType: SdkPayType.SPACE,
+            isTransfer: true,
           }
         )
         if (transfer) {

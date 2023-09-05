@@ -304,6 +304,7 @@ async function confirmPublish() {
         {
           payType: SdkPayType.SPACE,
           isBroadcast: false,
+          isTransfer: true,
         }
       )
       if (transfer) {

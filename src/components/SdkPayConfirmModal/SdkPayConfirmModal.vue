@@ -12,6 +12,13 @@
             balance >= useAmount ? i18n.t('SDK.payconfirm.stake') : i18n.t('Insufficient balance')
           }}</span
         >
+        <span class="title" v-else-if="isTransfer">
+          {{
+            balance >= useAmount
+              ? i18n.t('SDK.payconfirm.isTransfer')
+              : i18n.t('Insufficient balance')
+          }}</span
+        >
         <span class="title" v-else>
           {{
             balance >= useAmount ? i18n.t('SDK.payconfirm.Payment') : i18n.t('Insufficient balance')
@@ -102,6 +109,7 @@ interface Props {
   router: Router
   payType: SdkPayType
   isStake?: boolean
+  isTransfer?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {

@@ -535,7 +535,8 @@
       "ME is used to pay for Gas Fee": "ME是用於支付Gas Fee的積分，",
       "Learn More": "了解更多",
       "stake": " 质押数量",
-      "Stakement required": "需要质押"
+      "Stakement required": "需要质押",
+      "isTransfer": "转账金额"
     },
     "Stakeconfirm": {
       "Confirm": "质押"

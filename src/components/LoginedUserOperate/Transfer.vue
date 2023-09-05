@@ -255,6 +255,7 @@ async function confirmTransfer() {
         },
         {
           payType: SdkPayType.SPACE,
+          isTransfer: true,
         }
       )
       .catch(error => {
