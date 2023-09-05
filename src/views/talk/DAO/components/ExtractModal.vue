@@ -147,7 +147,7 @@ async function extract() {
           nodeName: NodeName.SendMoney,
           payTo: [{ address: stakeRes.data.mvcToAddress, amount: stakeRes.data.txFee }],
         },
-        { isBroadcast: false, payType: SdkPayType.SPACE }
+        { isBroadcast: false, payType: SdkPayType.SPACE, isTransfer: true }
       )
       if (transfer) {
         if (transfer.payToAddress?.transaction) {

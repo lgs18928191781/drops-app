@@ -323,6 +323,7 @@ export class SDK {
       subscribeId?: string
       checkOnly?: boolean //false弹窗，true不弹窗
       isStake?: boolean
+      isTransfer?: boolean
     }
   ) {
     return new Promise<NodeTransactions | null>(async (resolve, reject) => {
@@ -333,6 +334,7 @@ export class SDK {
         useQueue: false,
         subscribeId: '',
         isStake: false,
+        isTransfer: false,
       }
       const initParams = {
         appId: ['ShowV3', this.getOnLinkAppUrl(), this.getPlatform()],
@@ -420,7 +422,8 @@ export class SDK {
               totalAmount,
               balance!,
               option.checkOnly,
-              option.isStake
+              option.isStake,
+              option.isTransfer
             )
 
             if (result) {
@@ -1768,7 +1771,8 @@ export class SDK {
     useAmount: number,
     balance: number,
     checkOnly: boolean = false,
-    isStake: boolean = false
+    isStake: boolean = false,
+    isTransfer: boolean = false
   ) {
     return new Promise<boolean>((resolve, reject) => {
       const userStore = useUserStore()
@@ -1794,6 +1798,7 @@ export class SDK {
             router,
             payType,
             isStake,
+            isTransfer,
             onChangeConfirmVisible: (res: boolean) => {
               userStore.changeSdkPayConfirm('visible', res, payType)
             },
