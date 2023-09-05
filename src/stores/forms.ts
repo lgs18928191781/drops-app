@@ -254,7 +254,12 @@ export const useChannelFormStore = defineStore('channelForm', {
           codehash: channel.roomCodeHash,
           genesis: channel.roomGenesis,
         })
-        if (ftSeriesRes.code === 0) {
+          .then((res: any) => res)
+          .catch((e: any) => {
+            this.ft = null
+            this.amount = channel.roomLimitAmount
+          })
+        if (ftSeriesRes?.code === 0) {
           this.ft = ftSeriesRes.data.results.items[0]
           this.amount = channel.roomLimitAmount
         }
