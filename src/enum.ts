@@ -313,6 +313,7 @@ export enum NodeName {
   FtGenesis = 'FtGenesis',
   FtIssue = 'FtIssue',
   FtTransfer = 'FtTransfer',
+  FtMerge = 'merge',
   SimpleRedEnvelope = 'SimpleRedEnvelope',
   OpenRedenvelope = 'OpenRedenvelope',
   SimplePublicShare = 'SimplePublicShare',
