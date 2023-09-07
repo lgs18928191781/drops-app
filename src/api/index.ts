@@ -141,6 +141,22 @@ export const getBlockHeight = (): Promise<any> => {
   return callMetasvApi('/block/info')
 }
 
+export const getFtUtxo = (params: {
+  address: string
+  codehash: string
+  genesis: string
+}): Promise<any> => {
+  const { address, ..._params } = params
+
+  return callMetasvApi(
+    `/contract/ft/address/${address}/utxo`,
+    {
+      ..._params,
+    },
+    'get'
+  )
+}
+
 export const getBlocks = (): Promise<{
   height: number
   blockHash: string
