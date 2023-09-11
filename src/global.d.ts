@@ -8,4 +8,5 @@ declare interface Window {
   appMetaIdJsV2?: any
   ethereum: import('ethers').providers.ExternalProvider
   provider?: MetaMaskEthereumProvider
+  metaidwallet?: any
 }

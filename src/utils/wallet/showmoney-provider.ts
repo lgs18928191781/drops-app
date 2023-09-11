@@ -93,7 +93,7 @@ export default class ShowmoneyProvider {
     mvcMetaSvApi?: string
     bsvMetaSvApi?: string
     network?: Network
-    session: Session
+    session?: Session
   }) {
     this.session = params.session
     if (params?.baseApi) this.apiPrefix = params.baseApi

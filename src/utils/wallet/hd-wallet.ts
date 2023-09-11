@@ -139,6 +139,7 @@ export interface BaseUtxo {
   script: string
   addressType?: number
   addressIndex?: number
+  wif?: string
 }
 export interface MetasvUtxoTypes extends BaseUtxo {
   xpub: string
@@ -151,16 +152,18 @@ export interface MetasvUtxoTypes extends BaseUtxo {
   spentTxId?: string | null
   flag?: string | null
 }
-interface OutputTypes {
+export interface OutputTypes {
   script: mvc.Script
   satoshis: number
+  amount: number
+  address: string
 }
 
 interface PickUtxosResultTypes {
   isEnoughBalance: boolean
   newPickedUtxos: MetasvUtxoTypes[]
 }
-interface KeyPathRelationType {
+export interface KeyPathRelationType {
   keyPath: string
   parentKeyPath: string
 }
@@ -173,7 +176,7 @@ interface MakeTxResultTypes {
   tx: mvc.Transaction
   changeUtxo: MetasvUtxoTypes
 }
-interface MetaIdInfoTypes {
+export interface MetaIdInfoTypes {
   metaId: string
   metaIdTag: string
   infoTxId: string
@@ -1157,6 +1160,7 @@ export class HdWallet {
         tx.fee(Math.ceil(tx._estimateSize() * useFeeb))
         const privateKeys = this.getUtxosPrivateKeys(utxos)
         tx.sign(privateKeys)
+
         resolve(tx)
       } catch (error) {
         reject(error)
