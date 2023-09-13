@@ -161,7 +161,7 @@ import BackupMnemonicVue from './BackupMnemonic.vue'
 import BindMetaIdVue from './BindMetaId.vue'
 import { reactive, Ref, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { BindStatus, NodeName, WalletOrigin } from '@/enum'
+import { BindStatus, Network, NodeName, WalletOrigin } from '@/enum'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { router } from '@/router'
 import { useRoute } from 'vue-router'
@@ -773,16 +773,34 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
 
 async function connectMetalet() {
   const { address } = await window.metaidwallet.connect()
-  if (address) {
-    rootStore.$patch({ isShowLogin: false })
+  if (!address) {
+    return ElMessage.error(`${i18n.t('wallet_addres_empty')}`)
   }
-  const res = window.metaidwallet
-  const keyAddress = await res.getPublicKey('0/3')
-  console.log('xpub', keyAddress)
-  return
-  const metaletWallet = new MetaletWallet({ address })
-  const metaIdInfo = await metaletWallet.getMetaIdInfo(address)
+  let metaIdInfo
+  const { network } = await window.metaidwallet.getNetwork()
+
+  const metaidWallet = new MetaletWallet({
+    address: address,
+    metaIDJsWallet: window.metaidwallet,
+    network: network,
+  })
+  metaIdInfo = await metaidWallet.getMetaIdInfo(address)
+  if (!metaIdInfo.metaId && !metaIdInfo.infoTxId && !metaIdInfo.protocolTxId) {
+    metaIdInfo = await metaidWallet.initMetaIdNode()
+  }
+
   console.log('metaletWallet', metaIdInfo)
+
+  userStore.updateUserInfo({
+    ...metaIdInfo,
+    metaId: metaIdInfo.metaId, // account 有时拿回来的metaId为空
+    name: metaIdInfo.name!, // account 有时拿回来的name 是旧 name
+    //password: form.password,
+    address: metaidWallet.rootAddress,
+    loginType: 'MetaID',
+  })
+  userStore.updateMetaletLoginState(true)
+  rootStore.$patch({ isShowLogin: false })
 }
 
 async function connectWalletConnect(isUpdate: boolean = false) {

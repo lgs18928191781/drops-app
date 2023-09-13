@@ -1273,5 +1273,6 @@
     "bandUser": "Actions cannot be initiated against blocked users.",
     "blacktipsRepost": "This content has been blocked by the forwarder, and the forwarded content is not visible."
   },
-  "stakeAmountLimit": "The pledge amount cannot be less than 100,000 Satoshi"
+  "stakeAmountLimit": "The pledge amount cannot be less than 100,000 Satoshi",
+  "wallet_addres_empty": "Wallet address is empty"
 }

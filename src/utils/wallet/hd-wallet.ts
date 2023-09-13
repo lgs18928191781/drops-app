@@ -1158,6 +1158,8 @@ export class HdWallet {
         }
 
         tx.fee(Math.ceil(tx._estimateSize() * useFeeb))
+        console.log('tx', tx)
+        debugger
         const privateKeys = this.getUtxosPrivateKeys(utxos)
         tx.sign(privateKeys)
 
