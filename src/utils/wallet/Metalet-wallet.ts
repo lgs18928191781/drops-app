@@ -424,8 +424,6 @@ export class MetaletWallet {
             try {
               const tx = hexTxs[i]
               return
-              debugger
-              await this.provider.broadcast(tx)
             } catch (error) {
               errorMsg = error
             }
@@ -629,7 +627,7 @@ export class MetaletWallet {
         // const privateKeys = this.getUtxosPrivateKeys(utxos)
         // tx.sign(privateKeys)
         console.log('tx', tx)
-        // debugger
+        debugger
         // await this.metaIDJsWallet.signTransaction()
         resolve(tx)
       } catch (error) {

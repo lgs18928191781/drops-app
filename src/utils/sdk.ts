@@ -944,7 +944,7 @@ export class SDK {
               // const FTGetFeeFunctionName = {
               //   [NodeName.FtTransfer]: 'getTransferEstimateFee',
               // }
-              // debugger
+              debugger
               // @ts-ignore
               const feeNumber = 20000 //await ftManager[FTGetFeeFunctionName[params.nodeName]](_params)
               // @ts-ignore
@@ -1452,11 +1452,6 @@ export class SDK {
         try {
           //this.metaFileSha256TxIdList.some(_item => _item.sha256 == item.sha256)
           if (false) {
-            // 本地有缓存
-            transactions.push({
-              txId: this.metaFileSha256TxIdList.find(_item => _item.sha256 === item.sha256)!.txId,
-              sha256: item.sha256,
-            })
           } else {
             // 本地没有缓存
             const response = await GetMetafileBySha256({ sha256: item.sha256 })
