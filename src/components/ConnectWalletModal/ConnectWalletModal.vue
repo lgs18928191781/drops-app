@@ -161,7 +161,7 @@ import BackupMnemonicVue from './BackupMnemonic.vue'
 import BindMetaIdVue from './BindMetaId.vue'
 import { reactive, Ref, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { BindStatus, NodeName, WalletOrigin } from '@/enum'
+import { BindStatus, Network, NodeName, WalletOrigin } from '@/enum'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { router } from '@/router'
 import { useRoute } from 'vue-router'
@@ -180,6 +180,8 @@ import { currentSupportChain } from '@/config'
 import AllNodeName from '@/utils/AllNodeName'
 import { computeStyles } from '@popperjs/core'
 import { setUser } from '@sentry/vue'
+import SPACEIcon from '@/assets/images/icon_mvc.png'
+import { MetaletWallet } from '@/utils/wallet/Metalet-wallet'
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const route = useRoute()
@@ -227,6 +229,16 @@ const wallets = [
       return i18n.t('Login.connectWallet')
     },
     list: [
+      {
+        name: () => {
+          return 'Metalet'
+        },
+        desc: () => {
+          return ``
+        },
+        icon: SPACEIcon,
+        fun: connectMetalet,
+      },
       {
         name: () => {
           return 'MetaMask'
@@ -380,21 +392,21 @@ function onLoginAndRegisterSuccess(type: 'register' | 'login') {
   }
 }
 
-async function connectMetaLet() {
-  return ElMessage.info(i18n.t('Comming Soon'))
-  if (typeof (window as any).Metalet === 'undefined') {
-    return ElMessage.error(i18n.t('Not install MetaLet Wallet'))
-  }
-  // const result = await (window as any).metalet.getAccount()
-  // console.log(result)
-  // const metaId = result.userMetaIdInfo.metaId
-  // const res = await GetUserAllInfo(metaId)
-  // const hDPrivateKey = new mvc.HDPrivateKey(result.xprv)
-  // const phone = eciesDecryptData(
-  //   res.data.phone,
-  //   hDPrivateKey.deriveChild(0).deriveChild(4).privateKey
-  // )
-}
+// async function connectMetaLet() {
+//   return ElMessage.info(i18n.t('Comming Soon'))
+//   if (typeof (window as any).Metalet === 'undefined') {
+//     return ElMessage.error(i18n.t('Not install MetaLet Wallet'))
+//   }
+//   // const result = await (window as any).metalet.getAccount()
+//   // console.log(result)
+//   // const metaId = result.userMetaIdInfo.metaId
+//   // const res = await GetUserAllInfo(metaId)
+//   // const hDPrivateKey = new mvc.HDPrivateKey(result.xprv)
+//   // const phone = eciesDecryptData(
+//   //   res.data.phone,
+//   //   hDPrivateKey.deriveChild(0).deriveChild(4).privateKey
+//   // )
+// }
 
 async function onThreePartLinkSuccess(params: {
   signAddressHash: string
@@ -757,6 +769,38 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
     // ElMessage.error((error as any).message)
     throw new Error(error as any)
   }
+}
+
+async function connectMetalet() {
+  const { address } = await window.metaidwallet.connect()
+  if (!address) {
+    return ElMessage.error(`${i18n.t('wallet_addres_empty')}`)
+  }
+  let metaIdInfo
+  const { network } = await window.metaidwallet.getNetwork()
+
+  const metaidWallet = new MetaletWallet({
+    address: address,
+    metaIDJsWallet: window.metaidwallet,
+    network: network,
+  })
+  metaIdInfo = await metaidWallet.getMetaIdInfo(address)
+  if (!metaIdInfo.metaId && !metaIdInfo.infoTxId && !metaIdInfo.protocolTxId) {
+    metaIdInfo = await metaidWallet.initMetaIdNode()
+  }
+
+  console.log('metaletWallet', metaIdInfo)
+
+  userStore.updateUserInfo({
+    ...metaIdInfo,
+    metaId: metaIdInfo.metaId, // account 有时拿回来的metaId为空
+    name: metaIdInfo.name!, // account 有时拿回来的name 是旧 name
+    //password: form.password,
+    address: metaidWallet.rootAddress,
+    loginType: 'MetaID',
+  })
+  userStore.updateMetaletLoginState(true)
+  rootStore.$patch({ isShowLogin: false })
 }
 
 async function connectWalletConnect(isUpdate: boolean = false) {

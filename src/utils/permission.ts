@@ -71,7 +71,7 @@ router.beforeEach(async (to, from, next) => {
     await metaNameStore.getMetaNameAllPrice()
   }
 
-  if (userStore.isAuthorized) {
+  if (userStore.isAuthorized && !userStore.metaletLogin) {
     // 用户已登录但未初始化sdk 里面钱包， 则去 初始化 sdk 里面的钱包
     if (!userStore.showWallet.isInitSdked) {
       if (rootStore.GetIsImportMnemonicLogin) {

@@ -28,6 +28,7 @@ export interface KycInfoTypes {
 }
 interface UserState {
   user: null | UserInfo
+  metaletLogin: boolean
   password: string | null
   isNeedConfirm?: {
     me: boolean
@@ -108,9 +109,10 @@ export const useUserStore = defineStore('user', {
       isTestUser: false,
       sdkPayConfirm: sdkPayConfirm,
       sdkPayment: localStorage.getItem(sdkPayConfirmPaymentKey) || SdkPayType.ME,
+      metaletLogin: localStorage.getItem('useMetaletLogin') || false,
     },
   getters: {
-    isAuthorized: state => <boolean>!!(state.user && state.user.token),
+    isAuthorized: state => <boolean>!!(state.user && state.user.token) || state.metaletLogin,
     userName: state => {
       if (state.user && state.user.token) {
         // @ts-ignore
@@ -144,6 +146,9 @@ export const useUserStore = defineStore('user', {
 
         if (rootStore.updatePlanRes) rootStore.updateAccountPlan(null)
         if (rootStore.isShowLogin) rootStore.$patch({ isShowLogin: false })
+        if (this.metaletLogin) {
+          this.updateMetaletLoginState(false)
+        }
         if (window.provider) window.provider = undefined
         // localStorage.removeItem(encode('user'))
         // localStorage.removeItem(encode('password'))
@@ -166,7 +171,8 @@ export const useUserStore = defineStore('user', {
         resolve()
       })
     },
-    updateUserInfo(userInfo: SetUserInfo) {
+
+    updateUserInfo(userInfo: Partial<SetUserInfo>) {
       return new Promise<void>(async resolve => {
         const { password, ...data } = userInfo
 
@@ -200,6 +206,12 @@ export const useUserStore = defineStore('user', {
         resolve()
       })
     },
+
+    updateMetaletLoginState(isUseMetalet: boolean) {
+      this.metaletLogin = isUseMetalet
+      localStorage.setItem('useMetaletLogin', isUseMetalet)
+    },
+
     setKycInfo() {
       return new Promise<void>(async resolve => {
         try {
@@ -239,6 +251,10 @@ export const useUserStore = defineStore('user', {
     },
     checkUserToken(route: RouteLocationNormalized) {
       return new Promise<void>(async (resolve, reject) => {
+        if (this.metaletLogin) {
+          resolve()
+          return
+        }
         const res = await axios
           .get(
             `${import.meta.env.VITE_BASEAPI}/showpaycore/api/v1/user/checkUserToken?user_ctoken=${

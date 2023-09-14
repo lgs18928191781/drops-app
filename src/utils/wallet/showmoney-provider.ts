@@ -93,7 +93,7 @@ export default class ShowmoneyProvider {
     mvcMetaSvApi?: string
     bsvMetaSvApi?: string
     network?: Network
-    session: Session
+    session?: Session
   }) {
     this.session = params.session
     if (params?.baseApi) this.apiPrefix = params.baseApi
@@ -330,6 +330,7 @@ export default class ShowmoneyProvider {
       },
       options: params?.token ? options : {},
     })
+    debugger
     if (res.code === 0) {
       const initUtxo = res.result || {}
       let result = {

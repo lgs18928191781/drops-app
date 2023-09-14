@@ -21,6 +21,7 @@ interface RootState {
   isCertedMetaIds: string[]
   currentPrice: ToCurrency
   theme: 'light' | 'dark'
+
   showLoginBindEvmAccount: {
     isUpdatePlan: boolean
     loginedButBind: boolean

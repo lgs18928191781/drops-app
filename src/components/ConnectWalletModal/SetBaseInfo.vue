@@ -118,7 +118,7 @@ const currentAvatar: { val: NFTAvatarItem } = reactive({
 watch(
   () => userStore.isAuthorized,
   () => {
-    if (userStore.isAuthorized) {
+    if (userStore.isAuthorized && !userStore.metaletLogin) {
       currentAvatar.val.avatarImage = userStore.user!.avatarImage
     }
   }

@@ -18,7 +18,7 @@ import {
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { router } from '@/router'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
-import { isAndroid, isAndroidApp, isIOS, isIosApp } from '@/stores/root'
+import { isAndroid, isAndroidApp, isIOS, isIosApp, useRootStore } from '@/stores/root'
 import { PayToItem } from '@/@types/hd-wallet'
 import {
   SdkPayType,
@@ -91,6 +91,11 @@ export class SDK {
 
   initWallet() {
     return new Promise<void>(async (resolve, reject) => {
+      const userStore = useUserStore()
+      if (userStore.metaletLogin) {
+        resolve()
+        return
+      }
       try {
         const account = getLocalAccount()
         const walletObj = await hdWalletFromAccount(
