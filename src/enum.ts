@@ -333,6 +333,11 @@ export enum NodeName {
   // DAO
 }
 
+export const enum GetInitAmountType {
+  metasv = 'metasv',
+  metalet = 'metalet',
+}
+
 export const enum BindStatus {
   ChooseType,
   BindHavedMetaId,
