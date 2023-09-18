@@ -175,7 +175,7 @@ import { ethers } from 'ethers'
 import { RegisterSource } from '@/enum'
 import { MD5 } from 'crypto-js'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
-
+import mvc from 'mvc-lib'
 import { currentSupportChain } from '@/config'
 import AllNodeName from '@/utils/AllNodeName'
 import { computeStyles } from '@popperjs/core'
@@ -776,6 +776,8 @@ async function connectMetalet() {
   if (!address) {
     return ElMessage.error(`${i18n.t('wallet_addres_empty')}`)
   }
+  const xupb = await window.metaidwallet.getXPublicKey()
+
   let metaIdInfo
   const { network } = await window.metaidwallet.getNetwork()
 
@@ -784,6 +786,8 @@ async function connectMetalet() {
     metaIDJsWallet: window.metaidwallet,
     network: network,
   })
+  //304402204f83bd2372d09a99bbec51f1f7e3a1f647c132009d4cfc869df18ee0f7dbaf09022009cbc788ad026f3a9641c7b0c211849959a71b5013349d1
+
   metaIdInfo = await metaidWallet.getMetaIdInfo(address)
   if (!metaIdInfo.metaId && !metaIdInfo.infoTxId && !metaIdInfo.protocolTxId) {
     metaIdInfo = await metaidWallet.initMetaIdNode()

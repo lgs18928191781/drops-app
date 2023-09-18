@@ -1153,7 +1153,8 @@ export class HdWallet {
           // @ts-ignore
           return (this._getUnspentValue() - this.getNeedFee()) as number
         }
-
+        console.log('utxos', utxos)
+        debugger
         if (utxos) {
           tx.from(utxos)
         }
@@ -1213,7 +1214,8 @@ export class HdWallet {
         tx.addOutput(new mvc.Transaction.Output(output))
       })
     }
-
+    console.log('utxos', utxos)
+    debugger
     if (utxos.length > 0) {
       tx.from(utxos)
     }
@@ -1251,6 +1253,7 @@ export class HdWallet {
   }) {
     return new Promise<UtxoItem>(async (resolve, reject) => {
       try {
+        debugger
         // 默认  outPutIndex = changeIndex
         if (typeof params?.outPutIndex === 'undefined') {
           if (params.tx._changeIndex) {
@@ -1273,6 +1276,7 @@ export class HdWallet {
           txId: params.tx.id,
           address: OutPut.script.toAddress(this.network).toString(),
         })
+        debugger
         resolve({
           address: OutPut.script.toAddress(this.network).toString(),
           satoshis: OutPut.satoshis,

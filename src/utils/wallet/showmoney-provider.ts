@@ -6,7 +6,7 @@ import { BaseUtxo, MetasvUtxoTypes, MetaNameRequestDate, MetaNameReqType } from 
 import axios, { AxiosInstance } from 'axios'
 import { UtxoItem } from '@/@types/sdk'
 import zlib from 'zlib'
-import { Chains, HdWalletChain, Network } from '@/enum'
+import { Chains, HdWalletChain, Network, GetInitAmountType } from '@/enum'
 import i18n from '../i18n'
 import { GetTxChainInfo } from '@/api/metaid-base'
 import { Session } from './session'
@@ -311,19 +311,28 @@ export default class ShowmoneyProvider {
   public async getInitAmount(params: {
     address: string
     xpub: string
+    reqSource?: GetInitAmountType
     token?: string
     userName?: string
   }): Promise<BaseUtxo> {
+    let url
     let options = {
       headers: {
         'Content-Type': 'application/json',
-        accessKey: params?.token,
+        accessKey: params?.token ? params?.token : '',
         timestamp: new Date().getTime() + '',
-        userName: params?.userName,
+        userName: params?.userName ? params?.userName : '',
       },
     }
+    if (!params.reqSource) {
+      params.reqSource = GetInitAmountType.metasv
+      url = '/nodemvc/api/v1/pri/wallet/sendInitSatsForMetaSV'
+    } else {
+      url = '/nodemvc/api/v1/pri/wallet/sendInitSatsForMetalet'
+    }
+
     const res = await this.callApi({
-      url: '/nodemvc/api/v1/pri/wallet/sendInitSatsForMetaSV',
+      url: url,
       params: {
         address: params.address,
         xpub: params.xpub,
