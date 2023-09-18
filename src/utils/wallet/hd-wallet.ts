@@ -1070,6 +1070,7 @@ export class HdWallet {
         // } else {
         //   throw new Error("Cant't get parent address")
         // }
+        // metalet-change
         const nodeTx = await this.makeTx(makeTxOptions)
 
         if (nodeTx) {
@@ -1158,9 +1159,13 @@ export class HdWallet {
         }
 
         tx.fee(Math.ceil(tx._estimateSize() * useFeeb))
-
-        const privateKeys = this.getUtxosPrivateKeys(utxos)
-        tx.sign(privateKeys)
+        console.log('tx', tx)
+        debugger
+        /**
+         * metalet-change  以下步骤涉及签名 交给metalet处理
+         */
+        // const privateKeys = this.getUtxosPrivateKeys(utxos)
+        // tx.sign(privateKeys)
 
         resolve(tx)
       } catch (error) {

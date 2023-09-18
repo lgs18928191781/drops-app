@@ -1038,7 +1038,7 @@ async function onModalClose() {
 //     chainId: 'eip155:1',
 //     nonce: generateNonce(),
 //   })
-//   debugger
+//   // debugger
 //   if (uri) {
 //     await authClient.core.pairing.pair({ uri })
 //     QRCodeModal.open(uri, res => {

@@ -78,7 +78,7 @@ export interface UtxoItem {
   // value: number
   xpub?: string
   script: string
-  amount: number
+  amount: number // value * 1e-8
   satoshis: number
   wif: string // nft需要
 }

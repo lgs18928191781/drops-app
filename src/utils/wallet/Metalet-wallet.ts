@@ -21,6 +21,7 @@ import {
   CreateNodeBrfcRes,
 } from '@/@types/sdk'
 import { Session } from '@/utils/wallet/session'
+import { NftManager, FtManager, API_TARGET } from 'meta-contract'
 interface KeyPathObjTypes {
   [key: string]: KeyPathRelationType
 }
@@ -91,12 +92,18 @@ interface metaIDJsWallet {
   getXPublicKey: () => Promise<string>
   eciesDecrypt: (params: any) => Promise<any>
   eciesEncrypt: (params: any) => Promise<any>
+  /**
+   *
+   * @param path 为路径 example “0/0、0/1 默认0/0”
+   *  对应参数 parse
+   */
   getUtxos: (params: { path: string }) => Promise<UtxoItem[]>
   transfer: (parmas: {
     task: TransferOutput[]
     broadcast?: boolean
   }) => Promise<{ res: TaskResponse[]; txids: string[]; broadcasted: boolean }>
   signTransaction: (params: { transaction: TransactionInfo }) => Promise<SigInfo>
+  merge: () => Promise<any>
   signMessage: (params: {
     message: string
     encoding?: encodingType
@@ -146,6 +153,10 @@ export class MetaletWallet {
       parentKeyPath: '0/1',
     },
   }
+
+  // 当查询是有某个节点时， 查询完存到这里， 反之重复调接口查询
+  private userBrfcNodeList: UserProtocolBrfcNode[] = []
+
   constructor(params: { address: string; metaIDJsWallet: metaIDJsWallet; network?: Network }) {
     this.network = params.network || Network.mainnet
     this.rootAddress = params.address
@@ -753,5 +764,190 @@ export class MetaletWallet {
       +output.amount >= DEFAULTS.minAmount &&
       isBtcAddress(output.address)
     )
+  }
+
+  public async createBrfcChildNode(
+    params: HdWalletCreateBrfcChildNodeParams,
+    option?: {
+      isBroadcast: boolean // 是否广播
+      chain?: HdWalletChain
+    }
+  ): Promise<CreateNodeBrfcRes> {
+    return new Promise<CreateNodeBrfcRes>(async (resolve, reject) => {
+      const initParams = {
+        autoRename: true,
+        version: '0.0.9',
+        data: 'NULL',
+        dataType: 'application/json',
+        encoding: 'UTF-8',
+        payCurrency: 'Space',
+        payTo: [],
+        attachments: [],
+        utxos: [],
+        useFeeb: DEFAULTS.feeb,
+      }
+      const initOption = {
+        isBroadcast: true,
+        chain: HdWalletChain.MVC,
+      }
+      params = {
+        ...initParams,
+        ...params,
+      }
+      option = {
+        ...initOption,
+        ...option,
+      }
+      try {
+        // 是否指定地址
+        let address
+        let publickey
+        const addressType = -1 // 叶子节点都用 -1
+        const addressIndex = -1 // 叶子节点都用 -1
+        if (params.publickey) {
+          publickey = params.publickey
+          address = mvc.PublicKey.fromHex(params.publickey)
+            .toAddress(this.network)
+            .toString()
+        } else {
+          // 随机生生产 私钥
+          // @ts-ignore
+          const privateKey = new mvc.PrivateKey(undefined, this.network)
+          publickey = privateKey.toPublicKey().toString()
+          address = privateKey.toAddress().toString()
+        }
+        const node: NewNodeBaseInfo = {
+          address,
+          publicKey: publickey,
+          path: `${addressType}/${addressIndex}`,
+        }
+
+        if (params.ecdh) {
+          // 付费Buzz 待完善
+          // if (params.data !== 'NULL' && typeof params.data === 'string') {
+          //   let r: any
+          //   r = JSON.parse(params.data)
+          //   r[params.ecdh.type] = this.ecdhEncryptData(
+          //     r[params.ecdh.type],
+          //     params.ecdh.publickey,
+          //     keyPath.join('/')
+          //   )
+          //   params.data = JSON.stringify(r)
+          // }
+        }
+        const res = await this.createNode({
+          nodeName: params.autoRename
+            ? [params.nodeName, publickey.toString().slice(0, 11)].join('-')
+            : params.nodeName,
+          metaIdTag: import.meta.env.VITE_METAID_TAG,
+          parentTxId: params.brfcTxId,
+          encrypt: params.encrypt,
+          data: params.data,
+          payTo: params.payTo,
+          dataType: params.dataType,
+          version: params.version,
+          encoding: params.encoding,
+          utxos: params.utxos,
+          node,
+          chain: option.chain,
+        })
+        if (res) {
+          if (option.isBroadcast) {
+            const response = await this.provider.broadcast(res.transaction!.toString())
+            if (response?.txid) {
+              resolve(res)
+            }
+          } else {
+            resolve(res)
+          }
+        }
+      } catch (error) {
+        reject(error)
+      }
+    })
+  }
+
+  async getProtocolInfo(
+    nodeName: NodeName,
+    protocolsTxId: string,
+    brfcId: string,
+    chain = HdWalletChain.MVC
+  ) {
+    return new Promise<ProtocolBrfcNode | null>(async (resolve, reject) => {
+      try {
+        let brfcNode = this.userBrfcNodeList.find(
+          item => item.nodeName == nodeName && item.brfcId === brfcId
+        )
+
+        if (brfcNode) {
+          resolve(brfcNode)
+        } else {
+          const protocols: any = await this.getProtocols({
+            protocolsTxId: protocolsTxId,
+            protocolType: nodeName,
+          })
+
+          const protocol = protocols.filter((item: any) => {
+            return item?.nodeName === nodeName && item?.data === brfcId
+          })[0]
+          if (protocol) {
+            const res = await this.session.getAddressPath(protocol.address)
+            const protocolInfo = {
+              xpub: this.wallet.xpubkey.toString(),
+              address: protocol.address,
+              addressType: 0,
+              addressIndex: res.path,
+            }
+            if (protocolInfo) {
+              this.userBrfcNodeList.push({
+                ...protocol,
+                ...protocolInfo,
+                nodeName,
+                brfcId,
+              })
+              resolve({
+                ...protocol,
+                ...protocolInfo,
+              })
+            }
+          } else {
+            resolve(null)
+          }
+        }
+      } catch (error) {
+        reject(error)
+      }
+    })
+  }
+
+  // 获取协议类型数据
+  async getProtocols({ protocolsTxId, protocolType }: GetProtocolsTypes) {
+    return new Promise((resolve, reject) => {
+      fetch(import.meta.env.VITE_BASEAPI + '/serviceapi/api/v1/protocol/getProtocolDataList', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          data: JSON.stringify({
+            protocolTxId: protocolsTxId,
+            nodeName: protocolType,
+          }),
+        }),
+      })
+        .then((response: Response) => {
+          return response.json()
+        })
+        .then(json => {
+          if (json && json.code === 200 && json.result.data) {
+            resolve(json.result.data)
+          } else {
+            resolve([])
+          }
+        })
+        .catch(error => {
+          reject(error)
+        })
+    })
   }
 }

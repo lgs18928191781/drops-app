@@ -15,6 +15,7 @@ import {
   hdWalletFromMnemonic,
   NftTransferResult,
 } from '@/utils/wallet/hd-wallet'
+import { MetaletWallet } from '@/utils/wallet/Metalet-wallet'
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { router } from '@/router'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
@@ -52,7 +53,7 @@ enum AppMode {
   DEV2 = 'dev2',
 }
 
-export class SDK {
+export class MetaletSDK {
   // Nft收手续费的地址
   appAddress = {
     [AppMode.PROD]: '19NeJJM6eEa3bruYnqkTA4Cp6VvdFGSepd',
@@ -62,6 +63,7 @@ export class SDK {
   appMsg: AppMsg | null = null
   appMetaIdJs = (window as any).appMetaIdJsV2
   wallet: HdWallet | null = null
+  metaletWallet: MetaletWallet | null = null
   isInitSdked = false
   network = Network.mainnet
   bfrcNodeList: { nodeName: NodeName; data: CreateNodeBrfcRes }[] = [] // 存储Brfc节点， 防止未广播时重复构建
@@ -78,8 +80,9 @@ export class SDK {
     [NodeName.FtMerge]: 'merge',
   }
 
-  constructor(network: any) {
-    this.network = network
+  constructor(params: { network: any; wallet: MetaletWallet }) {
+    this.network = params.network
+    //this.wallet =
     if (this.appMetaIdJs) this.isInitSdked = true
   }
 
@@ -89,35 +92,35 @@ export class SDK {
       .replace('.', '')
   }
 
-  initWallet() {
-    return new Promise<void>(async (resolve, reject) => {
-      const userStore = useUserStore()
-      if (userStore.metaletLogin) {
-        resolve()
-        return
-      }
-      try {
-        const account = getLocalAccount()
-        const walletObj = await hdWalletFromAccount(
-          {
-            ...account.userInfo,
-            password: account.password,
-          },
-          this.network,
-          account.userInfo.path
-        )
+  // initWallet() {
+  //   return new Promise<void>(async (resolve, reject) => {
+  //     const userStore = useUserStore()
+  //     if (userStore.metaletLogin) {
+  //       resolve()
+  //       return
+  //     }
+  //     try {
+  //       const account = getLocalAccount()
+  //       const walletObj = await hdWalletFromAccount(
+  //         {
+  //           ...account.userInfo,
+  //           password: account.password,
+  //         },
+  //         this.network,
+  //         account.userInfo.path
+  //       )
 
-        const wallet = new HdWallet(walletObj.wallet)
+  //       const wallet = new HdWallet(walletObj.wallet)
 
-        this.wallet = wallet
-        this.isInitSdked = true
-        resolve()
-      } catch (error) {
-        console.error(error)
-        reject(new Error('生成钱包失败' + (error as any).message))
-      }
-    })
-  }
+  //       this.wallet = wallet
+  //       this.isInitSdked = true
+  //       resolve()
+  //     } catch (error) {
+  //       console.error(error)
+  //       reject(new Error('生成钱包失败' + (error as any).message))
+  //     }
+  //   })
+  // }
 
   initWalletFromMnemonic() {
     return new Promise<void>(async (resolve, reject) => {
@@ -390,37 +393,39 @@ export class SDK {
             functionName
           )
         } else {
-          // 构建没有utxo 的所有 transactio
+          // 构建没有utxo 的所有 transactio metalet-change
           let transactions = await this.createBrfcChildNodeTransactions(params)
 
           let payToRes: CreateNodeBaseRes | undefined = undefined
           if (!params.utxos!.length) {
-            // 计算总价
+            // 计算总价 预估
             let totalAmount = this.getNodeTransactionsAmount(transactions, params.payTo)
             if (params.nodeName == NodeName.FtTransfer) {
               totalAmount += 50000
             }
             const useSatoshis = totalAmount
 
-            // 当时用Me支付时，总价 space 要转换为 ME 值
-            if (option.payType === SdkPayType.ME) {
-              const meInfo = await GetProtocolMeInfo({
-                protocol: params.nodeName,
-                address: userStore.user?.address!,
-              })
+            // 当时用Me支付时，总价 space 要转换为 ME 值 以下if判断不需要
+            // if (option.payType === SdkPayType.ME) {
+            //   const meInfo = await GetProtocolMeInfo({
+            //     protocol: params.nodeName,
+            //     address: userStore.user?.address!,
+            //   })
 
-              let useMe = Math.ceil(totalAmount / meInfo.me_rate_amount)
+            //   let useMe = Math.ceil(totalAmount / meInfo.me_rate_amount)
 
-              if (useMe * 100 < meInfo.me_amount_min) useMe = meInfo.me_amount_min / 100
-              totalAmount = useMe
-            }
+            //   if (useMe * 100 < meInfo.me_amount_min) useMe = meInfo.me_amount_min / 100
+            //   totalAmount = useMe
+            // }
 
-            //  获取餘额
+            //  获取实际餘额
             let balance = await this.getBalance(option.payType!)
-            if (balance < totalAmount && option.payType === SdkPayType.ME) {
-              option.payType = SdkPayType.SPACE
-              totalAmount = useSatoshis
-              balance = await this.getBalance(option.payType!)
+            if (balance < totalAmount) {
+              throw new Error(i18n.global.t('Insufficient balance'))
+              // metalet-change 报错余额不足
+              // option.payType = SdkPayType.SPACE
+              // totalAmount = useSatoshis
+              // balance = await this.getBalance(option.payType!)
             }
             // 等待 确认支付
             const result = await this.awitSdkPayconfirm(
@@ -440,7 +445,7 @@ export class SDK {
               if (params.nodeName == NodeName.FtTransfer) {
                 const ftParams = JSON.parse(params.data!)
                 const ftUtxo = await getFtUtxo({
-                  address: this.wallet!.rootAddress,
+                  address: this.metaletWallet!.rootAddress,
                   codehash: ftParams.codehash,
                   genesis: ftParams.genesis,
                 })
@@ -451,7 +456,7 @@ export class SDK {
                     amount: 50000,
                     nodeName: params.nodeName,
                     receive: {
-                      address: this.wallet!.rootAddress,
+                      address: this.metaletWallet!.rootAddress,
                       addressIndex: 0,
                       addressType: 0,
                     },
@@ -462,10 +467,10 @@ export class SDK {
                     utxos: [getUtxoForMerge.utxo],
                     noBroadcast: false,
                     ownerWif: this.getPathPrivateKey('0/0')?.toString(),
-                    changeAddress: this.wallet!.rootAddress,
+                    changeAddress: this.metaletWallet!.rootAddress,
                   }
-                  const ftManager = this.wallet!.getFtManager()
-                  const mergeRes = await ftManager.merge(mergeFtUtxoParams)
+                  // const ftManager = this.wallet!.getFtManager()
+                  const mergeRes = await this.metaletWallet?.metaIDJsWallet.merge(mergeFtUtxoParams)
                   if (!mergeRes) {
                     throw new Error('merge FtUtxo failed')
                   }
@@ -473,7 +478,7 @@ export class SDK {
               }
 
               let receive = this.getNodeTransactionsFirstReceive(transactions, params)
-              // 获取上链时的utxo
+              // 获取上链时的utxo metalet-change 以下getAmountUtxo 换成metalet相关
               const getUtxoRes = await this.getAmountUxto({
                 sdkPayType: option.payType!,
                 amount: useSatoshis,
@@ -494,13 +499,29 @@ export class SDK {
                 // 支付方式为Me时， 最后的找回地址是官方的地址， 不是就找回用户地址
                 option.payType === SdkPayType.ME
                   ? import.meta.env.VITE_CHANGE_ADDRESS
-                  : this.wallet!.rootAddress
+                  : this.metaletWallet!.rootAddress
               )
+
+              /**
+               * metalet-change setUtxoForCreateChileNodeTransactions 结束后进行签名 用metalet提供的方法
+               */
+
+              // await this.metaletWallet?.metaIDJsWallet.signTransaction({
+              //   transaction: {
+              //     txHex: 1,
+              //     address: 1,
+              //     inputIndex: 1,
+              //     scriptHex: 1,
+              //     satoshis: 1,
+              //     sigtype: 1,
+              //   },
+              // })
+
               // 广播
               if (option.isBroadcast && !option.useQueue) {
                 // 广播 打钱操作
                 if (payToRes && payToRes.transaction) {
-                  await this.wallet?.provider.broadcast(payToRes.transaction.toString())
+                  await this.metaletWallet?.provider.broadcast(payToRes.transaction.toString())
                 }
                 // 广播 transactions 所有交易
                 await this.broadcastNodeTransactions(transactions)
@@ -711,7 +732,7 @@ export class SDK {
                     .address
                 : option.payType === SdkPayType.ME
                 ? import.meta.env.VITE_CHANGE_ADDRESS
-                : this.wallet!.rootAddress
+                : this.metaletWallet!.rootAddress
             transactionsList[i] = await this.setUtxoForCreateChileNodeTransactions(
               transactionsList[i],
               currentUtxo!,
@@ -793,12 +814,13 @@ export class SDK {
     return new Promise<NodeTransactions>(async (resolve, reject) => {
       try {
         const userStore = useUserStore()
+        // 以下chain参数后续不需要了
         const chain = params.payType === SdkPayType.BSV ? HdWalletChain.BSV : HdWalletChain.MVC
         let transactions: NodeTransactions = {}
         if (params.nodeName === NodeName.SendMoney) {
           // 只转钱
           const scriptPlayload = [import.meta.env.VITE_App_Key]
-          const tx = await this.wallet?.makeTx({
+          const tx = await this.metaletWallet?.makeTx({
             payTo: params.payTo,
             opReturn: [import.meta.env.VITE_App_Key],
             utxos: params.utxos,
@@ -812,8 +834,8 @@ export class SDK {
             }
           }
         } else if (this.isInfoNode(params.nodeName)) {
-          // 非 Protocols 节点
-          const res = await this.wallet?.createNode({
+          // 非 Protocols节点    metalet-change
+          const res = await this.metaletWallet?.createNode({
             ...params,
             parentTxId: userStore.user!.infoTxId,
             chain,
@@ -850,7 +872,7 @@ export class SDK {
               // 修改
               const res = await GetTx(params.txId)
               if (res.code === 0) {
-                const protocol = await this.wallet!.getProtocolInfo(
+                const protocol = await this.metaletWallet!.getProtocolInfo(
                   params.nodeName,
                   res.data.parentTxId,
                   res.data.parentData,
@@ -1049,7 +1071,7 @@ export class SDK {
     }
     if (transactions.sendMoney?.transaction) {
       receive = {
-        address: this.wallet!.rootAddress,
+        address: this.metaletWallet!.rootAddress,
         addressType: parseInt(this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[0]),
         addressIndex: parseInt(this.wallet!.keyPathMap['Protocols'].keyPath.split('/')[0]),
       }
@@ -1384,7 +1406,9 @@ export class SDK {
               this.setTransferUtxoAndOutputAndSign(
                 transactions.currentNode!.transaction,
                 [utxo],
-                params.nodeName === NodeName.NftIssue ? this.wallet!.rootAddress : lastChangeAddress
+                params.nodeName === NodeName.NftIssue
+                  ? this.metaletWallet!.rootAddress
+                  : lastChangeAddress
               )
               console.log('currentNode', utxo)
               // 更新txId
@@ -1473,7 +1497,7 @@ export class SDK {
               })
             } else {
               // 本地 和 链上 都没有
-              const res = await this.wallet?.createNode({
+              const res = await this.metaletWallet?.createNode({
                 nodeName: item.fileName,
                 metaIdTag: import.meta.env.VITE_METAID_TAG,
                 encrypt: item.encrypt,
@@ -1722,10 +1746,7 @@ export class SDK {
       try {
         if (params.sdkPayType === SdkPayType.SPACE || params.sdkPayType === SdkPayType.BSV) {
           const chain = params.sdkPayType === SdkPayType.BSV ? HdWalletChain.BSV : HdWalletChain.MVC
-          const allUtxos = await this.wallet?.provider.getUtxos(
-            this.wallet.wallet.xpubkey.toString(),
-            chain
-          )
+          const allUtxos = await this.metaletWallet?.metaIDJsWallet.getUtxos({ path: '0/0' })
           const useUtxos = []
           if (allUtxos && allUtxos?.length > 0) {
             // 总价加个 最小金额  给转账费用
@@ -1733,7 +1754,7 @@ export class SDK {
             for (let i = 0; i < allUtxos.length; i++) {
               if (leftAmount > 0) {
                 useUtxos.push(allUtxos[i])
-                leftAmount -= allUtxos[i].satoshis
+                leftAmount -= allUtxos[i].value
               } else {
                 break
               }
@@ -1742,10 +1763,10 @@ export class SDK {
               // @ts-ignore
               throw new Error(i18n.global.t('Insufficient balance'))
             } else {
-              const res = await this.wallet?.makeTx({
+              const res = await this.metaletWallet?.makeTx({
                 utxos: useUtxos,
                 opReturn: [],
-                change: this.wallet.rootAddress,
+                change: this.metaletWallet.rootAddress,
                 payTo: [
                   {
                     amount: params.amount,
@@ -1784,7 +1805,7 @@ export class SDK {
               addressType: params.receive!.addressType,
               outputIndex: 0,
               txId: getMeUtxo.data.tx,
-              xpub: this.wallet!.wallet.xpubkey.toString(),
+              xpub: this.metaletWallet?.xpubkey,
               script: getMeUtxo.data.script,
               satoshis: getMeUtxo.data.amount,
               amount: getMeUtxo.data.amount / 1e8,
@@ -2032,9 +2053,12 @@ export class SDK {
     //     })
     //   )
     // }
-    const privateKeys = this.wallet!.getUtxosPrivateKeys(utxos)
-    // @ts-ignore
-    tx.sign(privateKeys)
+    // const privateKeys = this.wallet!.getUtxosPrivateKeys(utxos)
+    // // @ts-ignore
+    // tx.sign(privateKeys)
+    // return {
+    //   transation: tx,
+    // }
   }
 
   /**
@@ -2104,7 +2128,7 @@ export class SDK {
   async sendMoney(payTo: Array<{ amount: number; address: string }>) {
     const Utxos = await this.wallet?.provider.getUtxos(this.wallet.wallet.xpubkey.toString())
 
-    const res = await this.wallet?.makeTx({
+    const res = await this.metaletWallet?.makeTx({
       utxos: Utxos,
       opReturn: [],
       change: this.wallet.rootAddress,
