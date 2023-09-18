@@ -106,6 +106,7 @@ interface metaIDJsWallet {
 export class MetaletWallet {
   public network = Network.mainnet
   public rootAddress = ''
+
   public provider: ShowmoneyProvider
   public metaIDJsWallet: metaIDJsWallet
   public xpubkey: string = ''
@@ -149,6 +150,7 @@ export class MetaletWallet {
     this.network = params.network || Network.mainnet
     this.rootAddress = params.address
     this.metaIDJsWallet = params.metaIDJsWallet
+
     this.provider = new ShowmoneyProvider({
       ...params,
       network: this.network,
@@ -265,6 +267,7 @@ export class MetaletWallet {
                 reqSource: GetInitAmountType.metalet,
               })
               utxos = [initUtxo]
+            } else {
             }
 
             let outputs: any[] = []
@@ -461,7 +464,6 @@ export class MetaletWallet {
               // return
 
               await this.provider.broadcast(tx.hex)
-              debugger
             } catch (error) {
               errorMsg = error
             }
@@ -625,15 +627,12 @@ export class MetaletWallet {
           utxos,
           chain,
         })
-        debugger
+
         tx.change(change)
+
         // @ts-ignore
         tx.getNeedFee = function() {
-          // @ts-ignore
-          const amount = Math.ceil(
-            // @ts-ignore
-            (30 + this._estimateSize() + 182) * useFeeb
-          )
+          const amount = Math.ceil(30 + this._estimateSize() + 182) * useFeeb
           // @ts-ignore
           const offerFed = Math.ceil(amount * useFeeb)
           // if (amount < minAmount) amount = minAmount
@@ -656,18 +655,12 @@ export class MetaletWallet {
           // @ts-ignore
           return (this._getUnspentValue() - this.getNeedFee()) as number
         }
-        debugger
+
         if (utxos) {
           tx.from(utxos)
         }
-
-        tx.fee(Math.ceil(tx._estimateSize() * useFeeb))
-        // const privateKeys = this.getUtxosPrivateKeys(utxos)
-        //tx.sign(privateKeys)
-
-        console.log('tx', tx)
-        // debugger
-        debugger
+        //30是签名后交易字节数
+        tx.fee(Math.ceil(tx._estimateSize() + 30 * useFeeb))
         const unSignTransation = {
           txHex: tx.toString(),
           address: tx.inputs[0].output!.script.toAddress(this.network).toString(),
@@ -675,33 +668,25 @@ export class MetaletWallet {
           scriptHex: tx.inputs[0].output!.script.toHex(),
           satoshis: tx.inputs[0].output!.satoshis,
         }
-        console.log('unSignTransation', unSignTransation)
-        debugger
+
         const { signature } = await this.metaIDJsWallet.signTransaction({
           transaction: unSignTransation,
         })
-        console.log('signature', signature)
-        debugger
-        // const pureSig = mvc.crypto.Signature.fromDER(
 
-        // )
-        // const txSignature = mvc.Transaction.Signature.fromObject({
-        //   publicKey: signature.publicKey,
-        //   preTxId: tx.inputs[0].prevTxId,
-        //   outputIndex: tx.inputs[0].outputIndex,
-        //   inputIndex: 0,
-        //   signature: Buffer.from(signature.sig),
-        //   sigtype: signature.sigtype,
-        // })
-
+        //@ts-ignore
+        const pureSig = mvc.crypto.Signature.fromTxFormat(Buffer.from(signature.sig, 'hex')).toDER()
         const signedscript = mvc.Script.buildPublicKeyHashIn(
           signature.publicKey,
-          Buffer.from(signature.sig),
+          pureSig,
           signature.sigtype
         )
 
-        tx.inputs[0].(signedscript)
-        console.log('tx', tx)
+        //@ts-ignore
+        tx.inputs[0].setScript(signedscript)
+        console.log(
+          'signedscript',
+          tx.inputs.reduce((pre, cur) => pre + cur.output!.script.toBuffer().length, 0)
+        )
         debugger
         resolve(tx)
       } catch (error) {

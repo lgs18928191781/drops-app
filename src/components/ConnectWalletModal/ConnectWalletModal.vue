@@ -776,7 +776,6 @@ async function connectMetalet() {
   if (!address) {
     return ElMessage.error(`${i18n.t('wallet_addres_empty')}`)
   }
-  const xupb = await window.metaidwallet.getXPublicKey()
 
   let metaIdInfo
   const { network } = await window.metaidwallet.getNetwork()
@@ -804,7 +803,10 @@ async function connectMetalet() {
     loginType: 'MetaID',
   })
   userStore.updateMetaletLoginState(true)
+  status.value = ConnectWalletStatus.Watting
   rootStore.$patch({ isShowLogin: false })
+  isShowSetBaseInfo.value = true
+  //metalet-SDK实例化
 }
 
 async function connectWalletConnect(isUpdate: boolean = false) {
