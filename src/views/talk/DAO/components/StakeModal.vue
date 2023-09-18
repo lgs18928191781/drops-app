@@ -133,6 +133,7 @@ function getBlance() {
       }
       // @ts-ignore
       const res = await getBalance({ chain: chains[talk.activeCommunity!.dao!.governanceSymbol] })
+
       if (typeof res === 'number') {
         if (res) {
           balance.value = new Decimal(
@@ -150,6 +151,7 @@ function getBlance() {
         }`,
         address: userStore.user!.address!,
       })
+
       if (res.code === 0) {
         balance.value = new Decimal(
           new Decimal(res.data.lockedTokenAmount).div(item!.rate).toFixed(item?.toFixed)
