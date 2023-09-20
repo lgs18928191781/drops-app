@@ -460,9 +460,12 @@ export interface createBrfcChildNodeParams {
   txId?: string
 }
 
+interface PreviewTransaction extends bsv.Transaction {}
+
 export interface CreateNodeBaseRes {
   txId: string
   transaction?: bsv.Transaction
+  previewTransaction?: PreviewTransaction
   scriptPlayload?: (string | Buffer)[]
   hex?: string
   utxo?: UtxoItem

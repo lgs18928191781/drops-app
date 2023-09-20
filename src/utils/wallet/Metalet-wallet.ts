@@ -50,14 +50,12 @@ type TransactionInfo = {
 }
 
 interface SigInfo {
-  signatrue: {
-    publicKey: string
-    r: string
-    s: string
-    sig: string
-    sigDER: string
-    sigtype: number
-  }
+  publicKey: string
+  r: string
+  s: string
+  sig: string
+
+  sigtype: number
 }
 
 type UtxoItem = {
@@ -102,12 +100,21 @@ interface metaIDJsWallet {
     task: TransferOutput[]
     broadcast?: boolean
   }) => Promise<{ res: TaskResponse[]; txids: string[]; broadcasted: boolean }>
-  signTransaction: (params: { transaction: TransactionInfo }) => Promise<SigInfo>
+  signTransaction: (params: { transaction: TransactionInfo }) => Promise<{ signature: SigInfo }>
   merge: () => Promise<any>
   signMessage: (params: {
     message: string
     encoding?: encodingType
   }) => Promise<{ signature: string }>
+  signTransactions: (params: {
+    transactions: TransactionInfo[]
+  }) => Promise<{
+    signedTransactions: Array<{
+      txid: string
+      txHex: string
+    }>
+  }>
+  previewTransaction: (params: { transaction: TransactionInfo }) => Promise<{ txid: string }>
 }
 
 export class MetaletWallet {
@@ -299,6 +306,7 @@ export class MetaletWallet {
               transation: root.transaction,
             })
             metaIdInfo.metaId = root.txId
+
             const newUtxo = await this.utxoFromTx({
               tx: root.transaction,
               addressInfo: {
@@ -306,6 +314,7 @@ export class MetaletWallet {
                 addressIndex: 0,
               },
             })
+
             if (newUtxo) {
               utxos = [newUtxo]
             }
@@ -321,6 +330,7 @@ export class MetaletWallet {
               version: 'NULL',
               utxos: utxos,
             })
+
             hexTxs.push({
               hex: protocol.transaction.toString(),
               transation: protocol.transaction,
@@ -333,6 +343,7 @@ export class MetaletWallet {
                 addressIndex: 0,
               },
             })
+
             if (newUtxo) utxos = [newUtxo]
           }
 
@@ -429,52 +440,30 @@ export class MetaletWallet {
           //       },
           //     ],
           //   })
-
-          //   if (transfer) {
-          //     hexTxs.push(transfer.toString())
-          //     const newUtxo = await this.utxoFromTx({
-          //       tx: transfer,
-          //       addressInfo: {
-          //         addressType: 0,
-          //         addressIndex: 1,
-          //       },
-          //       outPutIndex: 0,
-          //     })
-          //     if (newUtxo) utxos = [newUtxo]
-
-          //     // 创建 eth brfc节点 brfcId = ehtAddress
-          //     const privateKey = this.getPathPrivateKey('0/6')
-          //     const node: NewNodeBaseInfo = {
-          //       address: privateKey.toAddress().toString(),
-          //       publicKey: privateKey.toPublicKey().toString(),
-          //       path: '0/6',
-          //     }
-          //     const ethBindBrfc = await this.createNode({
-          //       nodeName: NodeName.ETHBinding,
-          //       parentTxId: metaIdInfo.infoTxId,
-          //       metaIdTag: import.meta.env.VITE_METAID_TAG,
-          //       data: JSON.stringify({ evmAddress: account.ethAddress! }),
-          //       utxos: utxos,
-          //       change: this.rootAddress,
-          //       node,
-          //     })
-          //     if (ethBindBrfc) {
-          //       hexTxs.push(ethBindBrfc.transaction.toString())
-          //     }
-          //   }
-          // }
-
           let errorMsg: any
+          //统一签名
+          const unSignTransations: TransactionInfo[] = []
+          hexTxs.forEach(tx => {
+            const { transation } = tx
+            unSignTransations.push({
+              txHex: transation.toString(),
+              address: transation.inputs[0].output!.script.toAddress(this.network).toString(),
+              inputIndex: 0,
+              scriptHex: transation.inputs[0].output!.script.toHex(),
+              satoshis: transation.inputs[0].output!.satoshis,
+            })
+          })
+
+          const { signedTransactions } = await this.metaIDJsWallet.signTransactions({
+            transactions: unSignTransations,
+          })
+
           // 广播
-          for (let i = 0; i < hexTxs.length; i++) {
+          for (let i = 0; i < signedTransactions.length; i++) {
             try {
-              const tx = hexTxs[i]
+              const tx = signedTransactions[i]
               console.log('tx', tx)
-
-              // debugger
-              // return
-
-              await this.provider.broadcast(tx.hex)
+              await this.provider.broadcast(tx.txHex)
             } catch (error) {
               errorMsg = error
             }
@@ -600,7 +589,7 @@ export class MetaletWallet {
         //   throw new Error("Cant't get parent address")
         // }
 
-        const nodeTx = await this.makeTx(makeTxOptions)
+        let nodeTx = await this.makeTx(makeTxOptions)
 
         if (nodeTx) {
           resolve({
@@ -611,6 +600,7 @@ export class MetaletWallet {
             addressType: parseInt(node.path.split('/')[0]),
             addressIndex: parseInt(node.path.split('/')[1]),
             scriptPlayload: scriptPlayload,
+            //previewTransaction: newTransaction,
           })
         }
       } catch (error) {
@@ -672,33 +662,30 @@ export class MetaletWallet {
         }
         //30是签名后交易字节数
         tx.fee(Math.ceil(tx._estimateSize() + 30 * useFeeb))
-        const unSignTransation = {
-          txHex: tx.toString(),
-          address: tx.inputs[0].output!.script.toAddress(this.network).toString(),
-          inputIndex: 0,
-          scriptHex: tx.inputs[0].output!.script.toHex(),
-          satoshis: tx.inputs[0].output!.satoshis,
-        }
 
-        const { signature } = await this.metaIDJsWallet.signTransaction({
-          transaction: unSignTransation,
-        })
+        // const unSignTransation = {
+        //   txHex: tx.toString(),
+        //   address: tx.inputs[0].output!.script.toAddress(this.network).toString(),
+        //   inputIndex: 0,
+        //   scriptHex: tx.inputs[0].output!.script.toHex(),
+        //   satoshis: tx.inputs[0].output!.satoshis,
+        // }
 
-        //@ts-ignore
-        const pureSig = mvc.crypto.Signature.fromTxFormat(Buffer.from(signature.sig, 'hex')).toDER()
-        const signedscript = mvc.Script.buildPublicKeyHashIn(
-          signature.publicKey,
-          pureSig,
-          signature.sigtype
-        )
+        // const { signature } = await this.metaIDJsWallet.signTransaction({
+        //   transaction: unSignTransation,
+        // })
+        // console.log('signatrue')
+        // debugger
+        // //@ts-ignore
+        // const pureSig = mvc.crypto.Signature.fromTxFormat(Buffer.from(signature.sig, 'hex')).toDER()
+        // const signedscript = mvc.Script.buildPublicKeyHashIn(
+        //   signature.publicKey,
+        //   pureSig,
+        //   signature.sigtype
+        // )
+        // //@ts-ignore
+        // tx.inputs[0].setScript(signedscript)
 
-        //@ts-ignore
-        tx.inputs[0].setScript(signedscript)
-        console.log(
-          'signedscript',
-          tx.inputs.reduce((pre, cur) => pre + cur.output!.script.toBuffer().length, 0)
-        )
-        debugger
         resolve(tx)
       } catch (error) {
         reject(error)

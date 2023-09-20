@@ -1160,7 +1160,7 @@ export class HdWallet {
 
         tx.fee(Math.ceil(tx._estimateSize() * useFeeb))
         console.log('tx', tx)
-        debugger
+
         /**
          * metalet-change  以下步骤涉及签名 交给metalet处理
          */
