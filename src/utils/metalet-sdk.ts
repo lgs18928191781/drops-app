@@ -15,7 +15,7 @@ import {
   hdWalletFromMnemonic,
   NftTransferResult,
 } from '@/utils/wallet/hd-wallet'
-import { MetaletWallet } from '@/utils/wallet/Metalet-wallet'
+import { MetaletWallet, TransactionInfo } from '@/utils/wallet/Metalet-wallet'
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { router } from '@/router'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
@@ -509,38 +509,63 @@ export class MetaletSDK {
               /**
                * metalet-change setUtxoForCreateChileNodeTransactions 结束后进行签名 用metalet提供的方法
                */
+              const hexTxs = this.getHexTxs(transactions)
+              const unSignTransations: TransactionInfo[] = []
+              hexTxs.forEach(tx => {
+                const { transation } = tx
+                unSignTransations.push({
+                  txHex: transation.toString(),
+                  address: transation.inputs[0].output!.script.toAddress(this.network).toString(),
+                  inputIndex: 0,
+                  scriptHex: transation.inputs[0].output!.script.toHex(),
+                  satoshis: transation.inputs[0].output!.satoshis,
+                })
+              })
 
-              // await this.metaletWallet?.metaIDJsWallet.signTransaction({
-              //   transaction: {
-              //     txHex: 1,
-              //     address: 1,
-              //     inputIndex: 1,
-              //     scriptHex: 1,
-              //     satoshis: 1,
-              //     sigtype: 1,
-              //   },
-              // })
-
+              const {
+                signedTransactions,
+              } = await this.metaletWallet!.metaIDJsWallet.signTransactions({
+                transactions: unSignTransations,
+              })
               // 广播
-              if (option.isBroadcast && !option.useQueue) {
-                // 广播 打钱操作
-                if (payToRes && payToRes.transaction) {
-                  await this.metaletWallet?.provider.broadcast(payToRes.transaction.toString())
+              let errorMsg: any
+              for (let i = 0; i < signedTransactions.length; i++) {
+                try {
+                  const tx = signedTransactions[i]
+                  console.log('tx', tx)
+                  await this.metaletWallet!.provider.broadcast(tx.txHex)
+                } catch (error) {
+                  errorMsg = error
                 }
-                // 广播 transactions 所有交易
-                await this.broadcastNodeTransactions(transactions)
+                if (errorMsg) {
+                  break
+                }
               }
-
-              // 如果使用队列，则不进行广播，而是收集当次Job的所有交易作为step，推进队列
-              if (option.useQueue) {
-                this.convertTransactionsIntoJob(transactions, payToRes, option!.subscribeId!)
-              }
-
+              // resolve
               resolve({
                 payToAddress: payToRes,
                 ...transactions,
                 subscribeId: option!.subscribeId,
               })
+              // if (option.isBroadcast && !option.useQueue) {
+              //   // 广播 打钱操作
+              //   if (payToRes && payToRes.transaction) {
+              //     await this.metaletWallet?.provider.broadcast(payToRes.transaction.toString())
+              //   }
+              //   // 广播 transactions 所有交易
+              //   await this.broadcastNodeTransactions(transactions)
+              // }
+
+              // // 如果使用队列，则不进行广播，而是收集当次Job的所有交易作为step，推进队列
+              // if (option.useQueue) {
+              //   this.convertTransactionsIntoJob(transactions, payToRes, option!.subscribeId!)
+              // }
+
+              // resolve({
+              //   payToAddress: payToRes,
+              //   ...transactions,
+              //   subscribeId: option!.subscribeId,
+              // })
             } else {
               resolve(null)
             }
@@ -1655,6 +1680,123 @@ export class MetaletSDK {
         reject(error)
       }
     })
+  }
+  public getHexTxs(
+    transactions: NodeTransactions,
+    option?: {
+      notBroadcastKeys?: string[]
+    }
+  ) {
+    const hexTxs = []
+    // PayToAddress
+    if (
+      !option?.notBroadcastKeys?.includes('payToAddress') &&
+      transactions.payToAddress?.transaction
+    ) {
+      hexTxs.push({
+        hex: transactions.payToAddress.transaction.toString(),
+        transation: transactions.payToAddress.transaction,
+      })
+    }
+    //  SendMoney
+    if (!option?.notBroadcastKeys?.includes('sendMoney') && transactions.sendMoney?.transaction) {
+      hexTxs.push({
+        hex: transactions.sendMoney.transaction.toString(),
+        transation: transactions.sendMoney.transaction,
+      })
+    }
+    //  Metafile Brfc
+    if (
+      !option?.notBroadcastKeys?.includes('metaFileBrfc') &&
+      transactions.metaFileBrfc?.transaction
+    ) {
+      hexTxs.push({
+        hex: transactions.metaFileBrfc.transaction.toString(),
+        transation: transactions.metaFileBrfc.transaction,
+      })
+    }
+    //  Metafile
+    if (
+      !option?.notBroadcastKeys?.includes('metaFiles') &&
+      transactions.metaFiles &&
+      transactions.metaFiles.length
+    ) {
+      for (let i = 0; i < transactions.metaFiles.filter(item => item.transaction).length; i++) {
+        hexTxs.push({
+          hex: transactions.metaFiles[i].transaction.toString(),
+          transation: transactions.metaFiles[i].transaction,
+        })
+      }
+    }
+    // 广播当前节点的Brfc节点
+    if (
+      !option?.notBroadcastKeys?.includes('currentNodeBrfc') &&
+      transactions.currentNodeBrfc?.transaction
+    ) {
+      hexTxs.push({
+        hex: transactions.currentNodeBrfc.transaction.toString(),
+        transation: transactions.currentNodeBrfc.transaction,
+      })
+    }
+    // 广播当前节点
+    if (
+      !option?.notBroadcastKeys?.includes('currentNode') &&
+      transactions.currentNode?.transaction
+    ) {
+      hexTxs.push({
+        hex: transactions.currentNode.transaction.toString(),
+        transation: transactions.currentNode.transaction,
+      })
+    }
+
+    // 广播 nft
+    if (!option?.notBroadcastKeys?.includes('nft') && transactions.nft) {
+      for (let i in transactions.nft) {
+        if (i === 'sell' && !option?.notBroadcastKeys?.includes('sell')) {
+          // sell 先广播 sellTransaction
+          hexTxs.push({
+            hex: transactions.nft[i]?.sellTransaction.toString(),
+            transation: transactions.nft[i]?.sellTransaction,
+          })
+        } else if (i === 'buy' || (i === 'cancel' && !option?.notBroadcastKeys?.includes(i))) {
+          //  buy / cancel 先广播 unlockCheckTransaction
+          hexTxs.push({
+            hex: transactions.nft[i]!.unlockCheckTransaction.toString(),
+            transation: transactions.nft[i]!.unlockCheckTransaction,
+          })
+        }
+
+        if (!option?.notBroadcastKeys?.includes(i)) {
+          // @ts-ignore
+          hexTxs.push({
+            // @ts-ignore
+            hex: transactions.nft[i]!.transaction.toString(),
+            // @ts-ignore
+            transation: transactions.nft[i]!.transaction,
+          })
+        }
+      }
+    }
+
+    //ft
+    if (!option?.notBroadcastKeys?.includes('ft') && transactions.ft) {
+      for (let i in transactions.ft) {
+        if (i === 'transfer') {
+          hexTxs.push({
+            hex: transactions.ft.transfer?.checkTransaction.toString(),
+            transation: transactions.ft.transfer?.checkTransaction,
+          })
+        }
+        hexTxs.push({
+          // @ts-ignore
+          hex: transactions.ft[i].transaction.toString(),
+          // @ts-ignore
+          transation: transactions.ft[i].transaction,
+        })
+      }
+    }
+
+    return hexTxs
   }
 
   private getNodeTransactionsAmount(transactions: NodeTransactions, payTo: PayToItem[] = []) {
