@@ -19,6 +19,7 @@ import { useRootStore } from './root'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { useGenesisStore } from './genesis'
 import { setUser } from '@sentry/vue'
+import { MetaletSDK } from '@/utils/metalet-sdk'
 
 export interface KycInfoTypes {
   name: string
@@ -35,6 +36,7 @@ interface UserState {
     bsv: boolean
   }
   wallet: SDK | null
+  metaletWallet: MetaletSDK | null
   kycInfo: null | KycInfoTypes
   isGetedKycInfo: boolean
   isSetedisTestUser: boolean
@@ -103,6 +105,7 @@ export const useUserStore = defineStore('user', {
       user: user,
       password,
       wallet: null,
+      metaletWallet: null,
       kycInfo: null,
       isGetedKycInfo: false,
       isSetedisTestUser: false,
@@ -130,7 +133,12 @@ export const useUserStore = defineStore('user', {
         return undefined
       }
     },
-    showWallet: state => <SDK>(state.wallet ? toRaw(state.wallet) : state.wallet),
+    showWallet: state => {
+      if (state.metaletLogin) {
+        return <MetaletSDK>state.metaletWallet
+      }
+      return <SDK>(state.wallet ? toRaw(state.wallet) : state.wallet)
+    },
   },
   actions: {
     logout(route: RouteLocationNormalizedLoaded) {
