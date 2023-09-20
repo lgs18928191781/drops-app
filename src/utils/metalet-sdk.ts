@@ -62,8 +62,8 @@ export class MetaletSDK {
 
   appMsg: AppMsg | null = null
   appMetaIdJs = (window as any).appMetaIdJsV2
-  wallet: HdWallet | null = null
-  metaletWallet: MetaletWallet | null = null
+  wallet: MetaletWallet | null = null
+  //metaletWallet: MetaletWallet | null = null
   isInitSdked = false
   network = Network.mainnet
   bfrcNodeList: { nodeName: NodeName; data: CreateNodeBrfcRes }[] = [] // 存储Brfc节点， 防止未广播时重复构建
@@ -82,6 +82,7 @@ export class MetaletSDK {
 
   constructor(params: { network: any; wallet: MetaletWallet }) {
     this.network = params.network
+    this.wallet = params.wallet
     //this.wallet =
     if (this.appMetaIdJs) this.isInitSdked = true
   }
@@ -92,35 +93,38 @@ export class MetaletSDK {
       .replace('.', '')
   }
 
-  // initWallet() {
-  //   return new Promise<void>(async (resolve, reject) => {
-  //     const userStore = useUserStore()
-  //     if (userStore.metaletLogin) {
-  //       resolve()
-  //       return
-  //     }
-  //     try {
-  //       const account = getLocalAccount()
-  //       const walletObj = await hdWalletFromAccount(
-  //         {
-  //           ...account.userInfo,
-  //           password: account.password,
-  //         },
-  //         this.network,
-  //         account.userInfo.path
-  //       )
+  initWallet() {
+    return new Promise<void>(async (resolve, reject) => {
+      try {
+        this.isInitSdked = true
+        resolve()
+      } catch (error) {
+        console.error(error)
+        reject(new Error('生成钱包失败' + (error as any).message))
+      }
+      // const userStore = useUserStore()
+      // // if (userStore.metaletLogin) {
+      // //   resolve()
+      // //   return
+      // // }
+      // try {
+      //   const account = getLocalAccount()
+      //   const walletObj = await hdWalletFromAccount(
+      //     {
+      //       ...account.userInfo,
+      //       password: account.password,
+      //     },
+      //     this.network,
+      //     account.userInfo.path
+      //   )
 
-  //       const wallet = new HdWallet(walletObj.wallet)
+      //   const wallet = new HdWallet(walletObj.wallet)
 
-  //       this.wallet = wallet
-  //       this.isInitSdked = true
-  //       resolve()
-  //     } catch (error) {
-  //       console.error(error)
-  //       reject(new Error('生成钱包失败' + (error as any).message))
-  //     }
-  //   })
-  // }
+      //   this.wallet = wallet
+      //   this.isInitSdked = true
+      //   resolve()
+    })
+  }
 
   initWalletFromMnemonic() {
     return new Promise<void>(async (resolve, reject) => {

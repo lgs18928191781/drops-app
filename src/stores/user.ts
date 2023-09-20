@@ -35,8 +35,8 @@ interface UserState {
     me: boolean
     bsv: boolean
   }
-  wallet: SDK | null
-  metaletWallet: MetaletSDK | null
+  wallet: SDK | MetaletSDK | null
+  //metaletWallet?: MetaletSDK | null
   kycInfo: null | KycInfoTypes
   isGetedKycInfo: boolean
   isSetedisTestUser: boolean
@@ -105,7 +105,7 @@ export const useUserStore = defineStore('user', {
       user: user,
       password,
       wallet: null,
-      metaletWallet: null,
+      //metaletWallet: null,
       kycInfo: null,
       isGetedKycInfo: false,
       isSetedisTestUser: false,
@@ -135,7 +135,7 @@ export const useUserStore = defineStore('user', {
     },
     showWallet: state => {
       if (state.metaletLogin) {
-        return <MetaletSDK>state.metaletWallet
+        return <MetaletSDK>(state.wallet ? toRaw(state.wallet) : state.wallet)
       }
       return <SDK>(state.wallet ? toRaw(state.wallet) : state.wallet)
     },

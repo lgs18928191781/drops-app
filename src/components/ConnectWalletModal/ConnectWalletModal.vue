@@ -152,6 +152,7 @@ import MetaMask, { MetaMaskLoginRes } from '@/plugins/MetaMak.vue'
 import { useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
 import { SDK } from '@/utils/sdk'
+import { MetaletSDK } from '@/utils/metalet-sdk'
 import FirstBuzzImg from '@/assets/images/first_buzz.svg?url'
 import { toMvcScan } from '@/utils/util'
 import MetaIdWalletVue, { MetaIdWalletRegisterBaseInfo } from './MetaIdWallet.vue'
@@ -621,6 +622,8 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
   loading.value = true
   try {
     const wallet = userStore.showWallet!.wallet
+    console.log('wallet', wallet)
+    debugger
     if (userStore.isAuthorized) {
       let utxos = await wallet?.provider.getUtxos(wallet.wallet.xpubkey.toString())
       const broadcasts: string[] = []
@@ -803,6 +806,13 @@ async function connectMetalet() {
     loginType: 'MetaID',
   })
   userStore.updateMetaletLoginState(true)
+  userStore.$patch({
+    wallet: new MetaletSDK({
+      network: import.meta.env.VITE_NET_WORK,
+      wallet: metaidWallet,
+    }),
+  })
+  userStore.showWallet.initWallet()
   status.value = ConnectWalletStatus.Watting
   rootStore.$patch({ isShowLogin: false })
   isShowSetBaseInfo.value = true
