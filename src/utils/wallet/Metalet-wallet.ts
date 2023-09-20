@@ -40,7 +40,7 @@ type TaskResponse = {
   routeCheckTxHex?: string
 }
 
-type TransactionInfo = {
+export type TransactionInfo = {
   txHex: string
   address: string
   inputIndex: number
