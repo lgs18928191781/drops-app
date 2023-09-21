@@ -1929,9 +1929,7 @@ export class MetaletSDK {
         if (type === SdkPayType.SPACE) {
           // 使用bsv 上链时，不需要检查权限
           // 获取餘额
-          const res = await this.wallet?.provider.getXpubBalance(
-            this.wallet.wallet.xpubkey.toString()
-          )
+          const res = await this.wallet?.provider.getXpubBalance(this.wallet.xpubkey)
           if (typeof res === 'number') balance = res
         } else if (type === SdkPayType.ME) {
           const userMeRes = await GetMyMEBalance({
@@ -1942,7 +1940,7 @@ export class MetaletSDK {
           }
         } else if (type === SdkPayType.BSV) {
           const res = await this.wallet?.provider.getXpubBalance(
-            this.wallet.wallet.xpubkey.toString(),
+            this.wallet.xpubkey,
             HdWalletChain.BSV
           )
           if (typeof res === 'number') balance = res
@@ -2354,7 +2352,7 @@ export class MetaletSDK {
   }
 
   async sendMoney(payTo: Array<{ amount: number; address: string }>) {
-    const Utxos = await this.wallet?.provider.getUtxos(this.wallet.wallet.xpubkey.toString())
+    const Utxos = await this.wallet?.provider.getUtxos(this.wallet.xpubkey.toString())
 
     const res = await this.wallet?.makeTx({
       utxos: Utxos,

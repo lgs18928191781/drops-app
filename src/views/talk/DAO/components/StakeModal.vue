@@ -240,7 +240,8 @@ async function stake() {
           .mul(currentSymbol.value!.rate)
           .toInteger()
           .toNumber()
-        const result = await userStore.showWallet.createBrfcChildNode(
+        console.log('show wallet', userStore.wallet)
+        const result = await userStore.wallet?.createBrfcChildNode(
           {
             nodeName: NodeName.SendMoney,
             payTo: [
@@ -259,6 +260,7 @@ async function stake() {
             isStake: true,
           }
         )
+
         if (result) {
           if (result.payToAddress?.transaction) {
             await userStore.showWallet.wallet?.provider.broadcast(
@@ -272,7 +274,6 @@ async function stake() {
             mvcOutputIndex: 0,
             mvcAddAmount: amount,
           })
-
           if (res.code === 0) {
             emit('success')
             ElMessage.success(i18n.t('DAO.Pledge successful'))
@@ -355,6 +356,7 @@ async function stake() {
       }
     }
   } catch (error) {
+    console.log('error', error)
     ElMessage.error((error as any).message)
     loading.value = false
   }

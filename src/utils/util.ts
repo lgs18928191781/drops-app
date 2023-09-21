@@ -1774,13 +1774,14 @@ export function getBalance(params: { chain: Chains }) {
       : isETHChain
       ? import.meta.env.VITE_ETH_CHAIN
       : import.meta.env.VITE_POLYGON_CHAIN
-    // if (isBtLink) {
-    //   _params.xpub = userStore.showWallet.wallet?.wallet.xpubkey.toString()
-    // }
     if (userStore.metaletLogin) {
       console.log(userStore)
       const metaWallet = userStore.showWallet.wallet as MetaletWallet
       _params.xpub = await metaWallet.metaIDJsWallet.getXPublicKey()
+    }
+    if (isBtLink && !userStore.metaletLogin) {
+      //@ts-ignore
+      _params.xpub = userStore.showWallet.wallet?.wallet.xpubkey.toString()
     }
     if (!isBtLink && !userStore.user?.evmAddress) {
       resolve(0)
