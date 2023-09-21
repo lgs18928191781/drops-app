@@ -571,6 +571,14 @@ export class MetaletSDK {
                 ) {
                   transactions[hexTx.txkey][hexTx.operateKey].txHex =
                     signedTransactions[index].txHex
+                } else if (
+                  (hexTx.operateKey &&
+                    hexTx.operateKey == this.transactionsNFTKey[NodeName.NftSell]) ||
+                  hexTx.operateKey == this.transactionsNFTKey[NodeName.NftCancel] ||
+                  hexTx.operateKey == this.transactionsNFTKey[NodeName.nftBuy]
+                ) {
+                  transactions[hexTx.txkey][hexTx.operateKey].txHex =
+                    signedTransactions[index].txHex
                 } else {
                   transactions[hexTx.txkey].txHex = signedTransactions[index].txHex
                 }
@@ -1689,17 +1697,20 @@ export class MetaletSDK {
           for (let i in transactions.nft) {
             if (i === 'sell' && !option?.notBroadcastKeys?.includes('sell')) {
               // sell 先广播 sellTransaction
-              await this.wallet?.provider.broadcast(transactions.nft[i]?.sellTransaction.toString())
+              await this.wallet?.provider.broadcast(transactions.nft[i]!.txHex!)
+              //await this.wallet?.provider.broadcast(transactions.nft[i]?.sellTransaction.toString())
             } else if (i === 'buy' || (i === 'cancel' && !option?.notBroadcastKeys?.includes(i))) {
               //  buy / cancel 先广播 unlockCheckTransaction
-              await this.wallet?.provider.broadcast(
-                transactions.nft[i]!.unlockCheckTransaction.toString()
-              )
+              // await this.wallet?.provider.broadcast(
+              //   transactions.nft[i]!.unlockCheckTransaction.toString()
+              // )
+              await this.wallet?.provider.broadcast(transactions.nft[i]!.txHex!)
             }
 
             if (!option?.notBroadcastKeys?.includes(i)) {
               // @ts-ignore
-              await this.wallet?.provider.broadcast(transactions.nft[i].transaction.toString())
+              await this.wallet?.provider.broadcast(transactions.nft[i].txHex)
+              //await this.wallet?.provider.broadcast(transactions.nft[i].transaction.toString())
             }
           }
         }
@@ -1812,6 +1823,7 @@ export class MetaletSDK {
     }
 
     // 广播 nft
+
     if (!option?.notBroadcastKeys?.includes('nft') && transactions.nft) {
       for (let i in transactions.nft) {
         if (i === 'sell' && !option?.notBroadcastKeys?.includes('sell')) {
@@ -1820,6 +1832,7 @@ export class MetaletSDK {
             hex: transactions.nft[i]?.sellTransaction.toString(),
             transation: transactions.nft[i]?.sellTransaction,
             txkey: Txkey.nft,
+            operateKey: this.transactionsNFTKey[NodeName.NftSell],
           })
         } else if (i === 'buy' || (i === 'cancel' && !option?.notBroadcastKeys?.includes(i))) {
           //  buy / cancel 先广播 unlockCheckTransaction
@@ -1827,6 +1840,7 @@ export class MetaletSDK {
             hex: transactions.nft[i]!.unlockCheckTransaction.toString(),
             transation: transactions.nft[i]!.unlockCheckTransaction,
             txkey: Txkey.nft,
+            operateKey: i,
           })
         }
 
