@@ -559,6 +559,7 @@ declare interface TopicTypeInfo {
 }
 
 declare interface NodeTransactions {
+  payToRes?: import('@/@types/sdk.d.ts').CreateNodeBaseRes
   payToAddress?: import('@/@types/sdk.d.ts').CreateNodeBaseRes
   metaFileBrfc?: import('@/@types/sdk.d.ts').CreateNodeBrfcRes
   metaFiles?: import('@/@types/sdk.d.ts').CreateNodeMetaFileRes[]

@@ -469,6 +469,7 @@ export interface CreateNodeBaseRes {
   scriptPlayload?: (string | Buffer)[]
   hex?: string
   utxo?: UtxoItem
+  txHex?: string
 }
 
 export interface CreateNodeMetaFileRes extends CreateNodeBaseRes {
