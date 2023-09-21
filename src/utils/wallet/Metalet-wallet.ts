@@ -123,7 +123,7 @@ export class MetaletWallet {
 
   public provider: ShowmoneyProvider
   public metaIDJsWallet: metaIDJsWallet
-  public xpubkey: string = ''
+  public xpub: string = ''
   public session = new Session()
   public keyPathMap: KeyPathObjTypes = {
     Root: {
@@ -164,21 +164,23 @@ export class MetaletWallet {
   // 当查询是有某个节点时， 查询完存到这里， 反之重复调接口查询
   private userBrfcNodeList: UserProtocolBrfcNode[] = []
 
-  constructor(params: { address: string; metaIDJsWallet: metaIDJsWallet; network?: Network }) {
+  constructor(params: {
+    xpub: string
+    address: string
+    metaIDJsWallet: metaIDJsWallet
+    network?: Network
+  }) {
     this.network = params.network || Network.mainnet
     this.rootAddress = params.address
     this.metaIDJsWallet = params.metaIDJsWallet
-
+    this.xpub = params.xpub
     this.provider = new ShowmoneyProvider({
       ...params,
       network: this.network,
       session: this.session,
     })
-    this.metaIDJsWallet.getXPublicKey().then((xpub: string) => (this.xpubkey = xpub))
-  }
 
-  get xpub() {
-    return this.xpubkey
+    //this.metaIDJsWallet.getXPublicKey().then((xpub: string) => (this.xpubkey = xpub))
   }
 
   public async getMetaIdInfo(rootAddress: string): Promise<MetaIdInfoTypes> {

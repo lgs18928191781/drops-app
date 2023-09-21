@@ -622,15 +622,28 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
   loading.value = true
   try {
     const wallet = userStore.showWallet!.wallet
-    console.log('wallet', wallet)
-    debugger
+
     if (userStore.isAuthorized) {
-      let utxos = await wallet?.provider.getUtxos(wallet.wallet.xpubkey.toString())
-      const broadcasts: string[] = []
-      const infoAddress = wallet
-        ?.getPathPrivateKey(wallet.keyPathMap.Info.keyPath)
-        .publicKey.toAddress(wallet.network)
-        .toString()
+      let utxos, infoAddress, protocolAddress
+      if (userStore.metaletLogin) {
+        utxos = await wallet?.metaIDJsWallet.getUtxos({ path: '0/0' })
+        infoAddress = await wallet?.metaIDJsWallet.getAddress({
+          path: wallet.keyPathMap.Info.keyPath,
+        })
+        protocolAddress = await wallet?.metaIDJsWallet.getAddress({
+          path: wallet.keyPathMap.Protocols.keyPath,
+        })
+      } else {
+        utxos = await wallet?.provider.getUtxos(wallet.wallet.xpubkey.toString())
+        infoAddress = wallet
+          ?.getPathPrivateKey(wallet.keyPathMap.Info.keyPath)
+          .publicKey.toAddress(wallet.network)
+          .toString()
+        protocolAddress = wallet!.protocolAddress
+      }
+
+      const broadcasts: string[] | mvc.Transaction[] = []
+
       // 把钱打到 info, protocol 节点
       const payTo = [
         {
@@ -641,7 +654,7 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
       if (params.nft.avatarImage !== userStore.user!.avatarImage) {
         payTo.push({
           amount: 2000,
-          address: wallet!.protocolAddress,
+          address: protocolAddress,
         })
       }
       const transfer = await wallet?.makeTx({
@@ -650,7 +663,13 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
         change: wallet.rootAddress,
         payTo,
       })
-      broadcasts.push(transfer.toString())
+
+      if (userStore.metaletLogin) {
+        broadcasts.push(transfer!)
+      } else {
+        broadcasts.push(transfer.toString())
+      }
+
       let utxo = await wallet?.utxoFromTx({
         tx: transfer,
         addressInfo: {
@@ -671,7 +690,11 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
               ? infoAddress
               : wallet!.rootAddress,
         })
-        broadcasts.push(createNameNode!.transaction.toString())
+        if (userStore.metaletLogin) {
+          broadcasts.push(createNameNode!.txHex)
+        } else {
+          broadcasts.push(createNameNode!.transaction.toString())
+        }
       }
 
       if (params.nft.avatarImage !== userStore.user!.avatarImage) {
@@ -731,6 +754,25 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
       }
       //  广播
       let errorMsg: any
+
+      // if () {
+      //       const unSignTransations: TransactionInfo[] = []
+      //     hexTxs.forEach(tx => {
+      //       const { transation } = tx
+      //       unSignTransations.push({
+      //         txHex: transation.toString(),
+      //         address: transation.inputs[0].output!.script.toAddress(this.network).toString(),
+      //         inputIndex: 0,
+      //         scriptHex: transation.inputs[0].output!.script.toHex(),
+      //         satoshis: transation.inputs[0].output!.satoshis,
+      //       })
+      //     })
+
+      //     const { signedTransactions } = await this.metaIDJsWallet.signTransactions({
+      //       transactions: unSignTransations,
+      //     })
+      // }
+
       for (let i = 0; i < broadcasts.length; i++) {
         try {
           await wallet?.provider.broadcast(broadcasts[i])
@@ -782,8 +824,10 @@ async function connectMetalet() {
 
   let metaIdInfo
   const { network } = await window.metaidwallet.getNetwork()
+  const xpub = await window.metaidwallet.getXPublicKey()
 
   const metaidWallet = new MetaletWallet({
+    xpub,
     address: address,
     metaIDJsWallet: window.metaidwallet,
     network: network,
@@ -814,6 +858,7 @@ async function connectMetalet() {
     }),
   })
   userStore.showWallet.initWallet()
+
   status.value = ConnectWalletStatus.Watting
   rootStore.$patch({ isShowLogin: false })
   // isShowSetBaseInfo.value = true
