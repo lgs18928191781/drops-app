@@ -795,7 +795,7 @@ async function connectMetalet() {
     metaIdInfo = await metaidWallet.initMetaIdNode()
   }
 
-  console.log('metaletWallet', metaIdInfo)
+  // console.log('metaletWallet', metaIdInfo)
 
   userStore.updateUserInfo({
     ...metaIdInfo,
@@ -805,6 +805,7 @@ async function connectMetalet() {
     address: metaidWallet.rootAddress,
     loginType: 'MetaID',
   })
+  console.log('metaidwallet', metaidWallet)
   userStore.updateMetaletLoginState(true)
   userStore.$patch({
     wallet: new MetaletSDK({
@@ -815,7 +816,7 @@ async function connectMetalet() {
   userStore.showWallet.initWallet()
   status.value = ConnectWalletStatus.Watting
   rootStore.$patch({ isShowLogin: false })
-  isShowSetBaseInfo.value = true
+  // isShowSetBaseInfo.value = true
   //metalet-SDK实例化
 }
 

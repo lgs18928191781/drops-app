@@ -132,6 +132,7 @@ function getBlance() {
         space: Chains.MVC,
       }
       // @ts-ignore
+      console.log('start get balance')
       const res = await getBalance({ chain: chains[talk.activeCommunity!.dao!.governanceSymbol] })
 
       if (typeof res === 'number') {
