@@ -10,8 +10,19 @@ import { useMetaNameStore } from '@/stores/metaname'
 import { useHead } from '@vueuse/head'
 import { RouteLocationNormalized } from 'vue-router'
 import { useImagePreview } from '@/stores/imagePreview'
-
+import { MetaletWallet } from '@/utils/wallet/Metalet-wallet'
+import { MetaletSDK } from '@/utils/metalet-sdk'
+import { resolve } from 'path'
 let loading: any
+
+function sleep(time: number) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve()
+    }, time * 1000)
+  })
+}
+
 router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore()
   const rootStore = useRootStore()
@@ -58,7 +69,28 @@ router.beforeEach(async (to, from, next) => {
   }
 
   if (!userStore.showWallet) {
-    userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
+    if (userStore.metaletLogin) {
+      await sleep(2)
+      const { address } = await window.metaidwallet.getAddress()
+      const { network } = await window.metaidwallet.getNetwork()
+      const xpub = await window.metaidwallet.getXPublicKey()
+
+      const metaidWallet = new MetaletWallet({
+        xpub,
+        address: address,
+        metaIDJsWallet: window.metaidwallet,
+        network: network,
+      })
+
+      userStore.$patch({
+        wallet: new MetaletSDK({
+          network: import.meta.env.VITE_NET_WORK,
+          wallet: metaidWallet,
+        }),
+      })
+    } else {
+      userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
+    }
   }
 
   // MetaName
