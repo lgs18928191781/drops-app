@@ -573,6 +573,7 @@ declare interface NodeTransactions {
       txId: string
       checkTransaction: mvc.Transaction
       checkTxId: string
+      txHex?: string
     }
   }
   nft?: {
@@ -580,6 +581,7 @@ declare interface NodeTransactions {
       transaction: mvc.Transaction
       txId: string
       tokenIndex: string
+      txHex?: string
     }
     genesis?: {
       transaction: mvc.Transaction
@@ -587,28 +589,33 @@ declare interface NodeTransactions {
       codehash: string
       sensibleId: string
       txId: string
+      txHex?: string
     }
     transfer?: {
       transaction: mvc.Transaction
       txId: string
+      txHex?: string
     }
     sell?: {
       sellTransaction: mvc.Transaction
       sellTxId: string
       transaction: string
       txId: string
+      txHex?: string
     }
     cancel?: {
       unlockCheckTransaction: mvc.Transaction
       unlockCheckTxId: string
       transaction: mvc.Transaction
       txId: string
+      txHex?: string
     }
     buy?: {
       unlockCheckTransaction: mvc.Transaction
       unlockCheckTxId: string
       transaction: mvc.Transaction
       txId: string
+      txHex?: string
     }
   }
 }
