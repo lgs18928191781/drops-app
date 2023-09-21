@@ -565,6 +565,12 @@ export class MetaletSDK {
                     //@ts-ignore
                     transactions[hexTxItem.txkey][i].txHex = signedTransactions[index].txHex
                   })
+                } else if (
+                  hexTx.operateKey &&
+                  hexTx.operateKey == this.transactionsFTKey[NodeName.FtTransfer]
+                ) {
+                  transactions[hexTx.txkey][hexTx.operateKey].txHex =
+                    signedTransactions[index].txHex
                 } else {
                   transactions[hexTx.txkey].txHex = signedTransactions[index].txHex
                 }
@@ -1653,9 +1659,7 @@ export class MetaletSDK {
           let catchError
           for (let i = 0; i < transactions.metaFiles.filter(item => item.transaction).length; i++) {
             try {
-              await this.wallet?.provider.broadcast(
-                transactions.metaFiles[i].transaction.toString()
-              )
+              await this.wallet?.provider.broadcast(transactions.metaFiles[i].txHex)
             } catch (error) {
               catchError = (error as any).message
               break
@@ -1705,12 +1709,13 @@ export class MetaletSDK {
           for (let i in transactions.ft) {
             if (i === 'transfer') {
               await this.wallet?.provider.broadcast(
-                transactions.ft.transfer?.checkTransaction.toString()
+                //transactions.ft.transfer?.checkTransaction.toString()
+                transactions.ft.transfer!.txHex!
               )
             }
 
             // @ts-ignore
-            await this.wallet?.provider.broadcast(transactions.ft[i].transaction.toString())
+            await this.wallet?.provider.broadcast(transactions.ft[i].txHex)
           }
         }
 
@@ -1846,6 +1851,7 @@ export class MetaletSDK {
             hex: transactions.ft.transfer?.checkTransaction.toString(),
             transation: transactions.ft.transfer?.checkTransaction,
             txkey: Txkey.ft,
+            operateKey: this.transactionsFTKey[NodeName.FtTransfer],
           })
         }
         hexTxs.push({

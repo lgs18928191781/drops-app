@@ -573,6 +573,7 @@ declare interface NodeTransactions {
       txId: string
       checkTransaction: mvc.Transaction
       checkTxId: string
+      txHex?: string
     }
   }
   nft?: {
