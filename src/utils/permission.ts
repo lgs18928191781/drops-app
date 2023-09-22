@@ -71,8 +71,10 @@ router.beforeEach(async (to, from, next) => {
   if (!userStore.showWallet) {
     if (userStore.metaletLogin) {
       await sleep(2)
-      const { address } = await window.metaidwallet.getAddress()
+      const address = await window.metaidwallet.getAddress()
+
       const { network } = await window.metaidwallet.getNetwork()
+
       const xpub = await window.metaidwallet.getXPublicKey()
 
       const metaidWallet = new MetaletWallet({

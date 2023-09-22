@@ -1262,7 +1262,9 @@ export class HdWallet {
         const OutPut = params.tx.outputs[params.outPutIndex]
         if (!params.chain) params.chain = HdWalletChain.MVC
         if (!params.addressInfo) {
-          const res = this.session.getAddressPath(OutPut.script.toAddress(this.network).toString())
+          const res = await this.session.getAddressPath(
+            OutPut.script.toAddress(this.network).toString()
+          )
           params.addressInfo = {
             addressType: 0,
             addressIndex: res.path,

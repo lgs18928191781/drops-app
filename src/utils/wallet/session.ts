@@ -36,28 +36,49 @@ export class Session {
 
   constructor() {}
 
-  getAddressPath(address: string) {
+  async getAddressPath(address: string) {
     const userStore = useUserStore()
     let item = this.addressPaths.find(item => item.address === address)
     if (item) {
       return item
     } else {
-      for (let i = 0; i <= 10000; i++) {
-        const _address = userStore
-          .showWallet!.wallet!.wallet.deriveChild(`m/0/${i}`)
-          .privateKey.toAddress()
-          .toString()
-        if (_address === address) {
-          console.log('path', i)
-          item = {
-            address: address,
-            path: i,
+      if (userStore.metaletLogin) {
+        for (let i = 0; i <= 10000; i++) {
+          const _address = await userStore.showWallet!.wallet!.metaIDJsWallet.getAddress({
+            path: `0/${i}`,
+          })
+          debugger
+          console.log('_address', _address)
+          if (_address === address) {
+            console.log('path', i)
+            item = {
+              address: address,
+              path: i,
+            }
+            this.addressPaths.push(item)
+            window.sessionStorage.setItem(this.addressSessionKey, JSON.stringify(this.addressPaths))
+            break
           }
-          this.addressPaths.push(item)
-          window.sessionStorage.setItem(this.addressSessionKey, JSON.stringify(this.addressPaths))
-          break
+        }
+      } else {
+        for (let i = 0; i <= 10000; i++) {
+          const _address = userStore
+            .showWallet!.wallet!.wallet.deriveChild(`m/0/${i}`)
+            .privateKey.toAddress()
+            .toString()
+          if (_address === address) {
+            console.log('path', i)
+            item = {
+              address: address,
+              path: i,
+            }
+            this.addressPaths.push(item)
+            window.sessionStorage.setItem(this.addressSessionKey, JSON.stringify(this.addressPaths))
+            break
+          }
         }
       }
+
       if (item) {
         return item
       } else {

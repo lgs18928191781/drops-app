@@ -1,5 +1,6 @@
 import mvc from 'mvc-lib'
 import { isBtcAddress, isNaturalNumber } from '@/utils/wallet/is'
+import AllNodeName from '../AllNodeName'
 import {
   Chains,
   HdWalletChain,
@@ -120,7 +121,8 @@ interface metaIDJsWallet {
 export class MetaletWallet {
   public network = Network.mainnet
   public rootAddress = ''
-
+  public protocolAddress = ''
+  public infoAddress = ''
   public provider: ShowmoneyProvider
   public metaIDJsWallet: metaIDJsWallet
   public xpub: string = ''
@@ -180,6 +182,13 @@ export class MetaletWallet {
       session: this.session,
     })
 
+    this.metaIDJsWallet.getAddress({ path: this.keyPathMap.Protocols.keyPath }).then(address => {
+      this.protocolAddress = address
+    })
+    this.metaIDJsWallet.getAddress({ path: this.keyPathMap.Info.keyPath }).then(address => {
+      this.infoAddress = address
+    })
+
     //this.metaIDJsWallet.getXPublicKey().then((xpub: string) => (this.xpubkey = xpub))
   }
 
@@ -227,7 +236,9 @@ export class MetaletWallet {
         const OutPut = params.tx.outputs[params.outPutIndex]
         if (!params.chain) params.chain = HdWalletChain.MVC
         if (!params.addressInfo) {
-          const res = this.session.getAddressPath(OutPut.script.toAddress(this.network).toString())
+          const res = await this.session.getAddressPath(
+            OutPut.script.toAddress(this.network).toString()
+          )
           params.addressInfo = {
             addressType: 0,
             addressIndex: res.path,
@@ -521,6 +532,7 @@ export class MetaletWallet {
         if (!nodeName) {
           throw new Error('Parameter Error: NodeName can not empty')
         }
+        debugger
         //let privateKey = this.getPathPrivateKey('0/0')
         // TODO: 自定义节点支持
         if (this.keyPathMap[nodeName]) {
@@ -583,7 +595,7 @@ export class MetaletWallet {
           payTo,
           chain,
         }
-
+        debugger
         // TODO: 父节点 utxo 管理
         // if (parentTxId !== 'NULL' && !parentAddress) {
         //   console.log('get parent utxos')
@@ -621,6 +633,7 @@ export class MetaletWallet {
     chain = HdWalletChain.MVC,
   }: TransferTypes): Promise<mvc.Transaction> {
     return new Promise(async (resolve, reject) => {
+      debugger
       try {
         const { tx } = await this.makeTxNotUtxos({
           payTo,
@@ -658,9 +671,48 @@ export class MetaletWallet {
           // @ts-ignore
           return (this._getUnspentValue() - this.getNeedFee()) as number
         }
-
+        console.log('tx', tx)
+        debugger
         if (utxos) {
-          tx.from(utxos)
+          const utxoHashScript = utxos.some(utxo => utxo.script)
+          console.log('utxoHashScript', utxoHashScript)
+          debugger
+          if (utxoHashScript) {
+            tx.from(utxos)
+          } else {
+            const newUtxos = utxos.map(utxo => {
+              const script = new mvc.Script(new mvc.Address(utxo.address, this.network))
+              console.log('utxo', utxo)
+              debugger
+              utxo = {
+                address: utxo.address,
+                // utxo 所在的路径
+                addressIndex: utxo.addressIndex,
+                addressType: utxo.addressType,
+                outputIndex: utxo.outIndex,
+                txId: utxo.txid,
+                xpub: this.xpub,
+                script: script,
+                satoshis: utxo.value,
+                amount: utxo.value / 1e8,
+              }
+              return utxo
+            })
+            tx.from(newUtxos)
+            // utxos.forEach(utxo => {
+            //   console.log('utxo', utxo)
+            //   debugger
+            //   tx.addInput(
+            //     //@ts-ignore
+            //     new mvc.Transaction.Input({
+            //       prevTxId: tx.id,
+            //       outputIndex: 0,
+            //       script: mvc.Script.empty(),
+            //       output: tx.inputs[0].output,
+            //     })
+            //   )
+            // })
+          }
         }
         //30是签名后交易字节数
         tx.fee(Math.ceil(tx._estimateSize() + 30 * useFeeb))
@@ -706,13 +758,16 @@ export class MetaletWallet {
     if (!this.metaIDJsWallet) {
       throw new Error('Wallet uninitialized! (core-makeTx)')
     }
-
+    debugger
     const tx = new mvc.Transaction()
     // 更改 Transaction 为 Bsv  Transaction
     //if (chain === HdWalletChain.BSV) tx.version = WalletTxVersion.BSV
     // 添加 payto
     if (Array.isArray(payTo) && payTo.length) {
+      debugger
       payTo.forEach(item => {
+        console.log('item', item)
+        debugger
         if (!this.isValidOutput(item)) {
           throw new Error('Output format error.')
         }
@@ -729,15 +784,43 @@ export class MetaletWallet {
         })
       )
     }
-
+    debugger
     if (Array.isArray(outputs) && outputs.length) {
+      console.log('outputs', outputs)
+      debugger
       outputs.forEach(output => {
         tx.addOutput(new mvc.Transaction.Output(output))
       })
     }
 
     if (utxos.length > 0) {
-      tx.from(utxos)
+      debugger
+      const utxoHashScript = utxos.some(utxo => utxo.script)
+      console.log('utxoHashScript', utxoHashScript)
+      debugger
+      if (utxoHashScript) {
+        tx.from(utxos)
+      } else {
+        // utxos = utxos.map(utxo => {
+        //   const script = mvc.Script.buildPublicKeyHashOut(utxo.address)
+        //   console.log('utxo', utxo)
+        //   debugger
+        //   utxo = {
+        //     address: utxo.address,
+        //     // utxo 所在的路径
+        //     addressIndex: utxo.addressIndex,
+        //     addressType: utxo.addressType,
+        //     outputIndex: utxo.outIndex,
+        //     txId: utxo.txid,
+        //     xpub: this.xpub,
+        //     script: script,
+        //     satoshis: utxo.value,
+        //     amount: utxo.value / 1e8,
+        //   }
+        //   return utxo
+        // })
+        // tx.from(utxos)
+      }
     }
     console.log('tx', tx)
 
@@ -753,6 +836,90 @@ export class MetaletWallet {
       +output.amount >= DEFAULTS.minAmount &&
       isBtcAddress(output.address)
     )
+  }
+
+  // 创建协议节点
+  public createBrfcNode(
+    params: CreateBrfcNodePrams,
+    option?: {
+      isBroadcast?: boolean
+      chain?: HdWalletChain
+    }
+  ) {
+    return new Promise<CreateNodeBrfcRes>(async (resolve, reject) => {
+      try {
+        const initParams = {
+          useFeeb: DEFAULTS.feeb,
+          payTo: [],
+          utxos: [],
+        }
+        const initOption = {
+          isBroadcast: true,
+          chain: HdWalletChain.MVC,
+        }
+        params = {
+          ...initParams,
+          ...params,
+        }
+        option = {
+          ...initOption,
+          ...option,
+        }
+        if (!params.useFeeb) params.useFeeb = DEFAULTS.feeb
+        if (!params.payTo) params.payTo = []
+
+        const nodeName = AllNodeName[params.nodeName]
+
+        let protocol = await this.getProtocolInfo(
+          params.nodeName,
+          params.parentTxId,
+          nodeName.brfcId,
+          option!.chain!
+        )
+
+        //  处理根节点
+        if (protocol) {
+          resolve({
+            address: protocol.address,
+            txId: protocol.txId,
+            addressType: protocol.addressType,
+            addressIndex: protocol.addressIndex,
+          })
+          // 已存在根节点
+        } else {
+          // 不存在根节点
+          const newBrfcNodeBaseInfo = await this.provider.getNewBrfcNodeBaseInfo(
+            this.xpub,
+            params.parentTxId
+          )
+          debugger
+          const protocolRoot = await this.createNode({
+            ...params,
+            metaIdTag: import.meta.env.VITE_METAID_TAG,
+            data: nodeName.brfcId,
+            utxos: params.utxos,
+            node: newBrfcNodeBaseInfo,
+            chain: option!.chain!,
+          })
+          debugger
+          if (protocolRoot) {
+            if (option.isBroadcast) {
+              await this.provider.broadcast(protocolRoot.transaction.toString(), option!.chain)
+            }
+
+            resolve({
+              address: protocolRoot.address,
+              txId: protocolRoot.txId,
+              addressType: parseInt(newBrfcNodeBaseInfo.path!.split('/')[0]),
+              addressIndex: parseInt(newBrfcNodeBaseInfo.path!.split('/')[1]),
+              transaction: protocolRoot.transaction,
+            })
+          }
+        }
+      } catch (error) {
+        reject(error)
+      }
+    })
   }
 
   public async createBrfcChildNode(
@@ -787,6 +954,7 @@ export class MetaletWallet {
         ...initOption,
         ...option,
       }
+      debugger
       try {
         // 是否指定地址
         let address
