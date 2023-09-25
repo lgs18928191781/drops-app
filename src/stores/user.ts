@@ -111,10 +111,17 @@ export const useUserStore = defineStore('user', {
       isSetedisTestUser: false,
       isTestUser: false,
       sdkPayConfirm: sdkPayConfirm,
-      sdkPayment: localStorage.getItem(sdkPayConfirmPaymentKey) || SdkPayType.ME,
       metaletLogin: localStorage.getItem('useMetaletLogin') || false,
+      sdkPayment: localStorage.getItem(sdkPayConfirmPaymentKey) || SdkPayType.ME,
     },
   getters: {
+    getSdkPayment: state => {
+      if (state.metaletLogin) {
+        return SdkPayType.SPACE
+      } else {
+        return state.sdkPayment
+      }
+    },
     isAuthorized: state => <boolean>!!(state.user && state.user.token) || state.metaletLogin,
     userName: state => {
       if (state.user && state.user.token) {
@@ -146,7 +153,7 @@ export const useUserStore = defineStore('user', {
         const talkStore = useTalkStore()
         const rootStore = useRootStore()
         const genesStore = useGenesisStore()
-
+        debugger
         // 只保存pwaInstall状态
         const pwaInstall = localStorage.getItem('pwaInstall')
         localStorage.clear()
@@ -173,6 +180,7 @@ export const useUserStore = defineStore('user', {
 
         talkStore.reset()
         genesStore.initGenesis()
+        debugger
         if (route.meta.isAuth) router.push('/')
         // talk的路由跳buzz推荐页
         if (route.path.includes('talk')) router.push('/buzz/recommend')
@@ -182,6 +190,8 @@ export const useUserStore = defineStore('user', {
 
     updateUserInfo(userInfo: Partial<SetUserInfo>) {
       return new Promise<void>(async resolve => {
+        console.log('userInfo', userInfo)
+        debugger
         const { password, ...data } = userInfo
 
         // 兼容处理
@@ -207,6 +217,7 @@ export const useUserStore = defineStore('user', {
         try {
           this.user = data
           console.log('this.uesr', this.user)
+          debugger
         } catch {}
 
         const genesisStore = useGenesisStore()

@@ -512,6 +512,8 @@ export class MetaletSDK {
               }
 
               // 使用utxo 组装 新的transactions
+              console.log('transactions', transactions)
+              debugger
               transactions = await this.setUtxoForCreateChileNodeTransactions(
                 transactions,
                 currentUtxo!,
@@ -531,10 +533,13 @@ export class MetaletSDK {
               const hexTxs = this.getHexTxs(transactions)
 
               const unSignTransations: TransactionInfo[] = []
-              hexTxs.forEach(tx => {
-                if (Array.isArray(tx)) {
-                  tx.forEach(txItem => {
-                    const { transation } = txItem
+              for (let i = 0; i < hexTxs.length; i++) {
+                if (Array.isArray(hexTxs[i])) {
+                  for (let j = 0; j < (hexTxs[i] as Array<any>).length; j++) {
+                    const { transation } = hexTxs[i][j]
+                    const { path } = await this.wallet.session.getAddressPath(
+                      transation.inputs[0].output!.script.toAddress(this.network).toString()
+                    )
                     unSignTransations.push({
                       txHex: transation.toString(),
                       address: transation.inputs[0]
@@ -543,20 +548,35 @@ export class MetaletSDK {
                       inputIndex: 0,
                       scriptHex: transation.inputs[0].output!.script.toHex(),
                       satoshis: transation.inputs[0].output!.satoshis,
+                      path: `0/${path}`,
                     })
-                  })
+                  }
+
+                  // tx.forEach(txItem => {
+
+                  // })
                 } else {
                   debugger
-                  const { transation } = tx
+                  const { transation } = hexTxs[i]
+
+                  const { path } = await this.wallet.session.getAddressPath(
+                    transation.inputs[0].output!.script.toAddress(this.network).toString()
+                  )
+
+                  debugger
                   unSignTransations.push({
                     txHex: transation.toString(),
                     address: transation.inputs[0].output!.script.toAddress(this.network).toString(),
                     inputIndex: 0,
                     scriptHex: transation.inputs[0].output!.script.toHex(),
                     satoshis: transation.inputs[0].output!.satoshis,
+                    path: `0/${path}`,
                   })
                 }
-              })
+              }
+              // hexTxs.forEach(async tx => {
+
+              // })
 
               const { signedTransactions } = await this.wallet!.metaIDJsWallet.signTransactions({
                 transactions: unSignTransations,
@@ -920,7 +940,7 @@ export class MetaletSDK {
         if (params.nodeName === NodeName.SendMoney) {
           // 只转钱
           const scriptPlayload = [import.meta.env.VITE_App_Key]
-          const tx = await this.wallet?.makeTx({
+          const { tx, path } = await this.wallet?.makeTx({
             payTo: params.payTo,
             opReturn: [import.meta.env.VITE_App_Key],
             utxos: params.utxos,
@@ -986,8 +1006,9 @@ export class MetaletSDK {
                 }
               }
             } else {
+              console.log('userStore.user', userStore.user)
               // 新增
-
+              debugger
               transactions.currentNodeBrfc = await this.getBrfcNode(
                 {
                   nodeName: params.nodeName,
@@ -1137,8 +1158,11 @@ export class MetaletSDK {
         if (this.bfrcNodeList.some(item => item.nodeName === params.nodeName)) {
           resolve(this.bfrcNodeList.find(item => item.nodeName === params.nodeName)!.data)
         } else {
-          const currentNodeBrfc = await this.wallet?.createBrfcNode(params, option)
+          console.log('params', params)
 
+          const currentNodeBrfc = await this.wallet?.createBrfcNode(params, option)
+          console.log('currentNodeBrfc', currentNodeBrfc)
+          debugger
           this.bfrcNodeList.push({
             nodeName: params.nodeName,
             data: {
@@ -1239,6 +1263,7 @@ export class MetaletSDK {
         debugger
         const chain = HdWalletChain.MVC
         if (params.nodeName === NodeName.SendMoney) {
+          debugger
           this.setTransferUtxoAndOutputAndSign(
             transactions.sendMoney!.transaction,
             [utxo],
@@ -1381,12 +1406,14 @@ export class MetaletSDK {
               transactions.currentNodeBrfc.utxo = utxo
               // 更新本地bfrcNodeList
               this.updateBfrcNodeList(params.nodeName, transactions.currentNodeBrfc)
-
+              console.log('transactions', transactions)
+              debugger
               // 组装新 utxo
               utxo = await this.wallet!.utxoFromTx({
                 tx: transactions.currentNodeBrfc!.transaction,
                 chain,
               })
+
               console.log('utxo', utxo)
               debugger
             }
@@ -2007,8 +2034,8 @@ export class MetaletSDK {
           allUtxos = allUtxos?.map(utxo => {
             return {
               ...utxo,
-              addressType: '0',
-              addressIndex: '0',
+              addressType: 0,
+              addressIndex: 0,
             }
           })
           const useUtxos = []
@@ -2027,7 +2054,7 @@ export class MetaletSDK {
               // @ts-ignore
               throw new Error(i18n.global.t('Insufficient balance'))
             } else {
-              const res = await this.wallet?.makeTx({
+              const { tx, path } = await this.wallet?.makeTx({
                 utxos: useUtxos,
                 opReturn: [],
                 change: this.wallet.rootAddress,
@@ -2039,10 +2066,10 @@ export class MetaletSDK {
                 ],
                 chain,
               })
-              if (res) {
+              if (tx) {
                 payToRes = {
-                  transaction: res,
-                  txId: res.id,
+                  transaction: tx,
+                  txId: tx.id,
                 }
                 debugger
                 utxo = await this.wallet!.utxoFromTx({

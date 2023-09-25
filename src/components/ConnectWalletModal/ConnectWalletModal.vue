@@ -618,7 +618,7 @@ async function OnMetaIdSuccess(type: 'register' | 'login') {
   }
 }
 
-async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }) {
+async function onSetBaseInfoSuccessForMetalet(params: { name: string; nft: NFTAvatarItem }) {
   loading.value = true
   try {
     const wallet = userStore.showWallet!.wallet
@@ -657,27 +657,42 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
           address: protocolAddress,
         })
       }
-      const transfer = await wallet?.makeTx({
-        utxos: utxos,
-        opReturn: [],
-        change: wallet.rootAddress,
-        payTo,
-      })
-
+      let transfer, utxo
       if (userStore.metaletLogin) {
-        broadcasts.push(transfer!)
+        const { tx, path } = await wallet?.makeTx({
+          utxos: utxos,
+          opReturn: [],
+          change: wallet.rootAddress,
+          payTo,
+        })
+        broadcasts.push(tx!)
+        utxo = await wallet?.utxoFromTx({
+          tx: tx,
+          addressInfo: {
+            addressType: parseInt(wallet.keyPathMap.Info.keyPath.split('/')[0]),
+            addressIndex: parseInt(wallet.keyPathMap.Info.keyPath.split('/')[1]),
+          },
+          outPutIndex: 0,
+        })
       } else {
+        const { tx } = await wallet?.makeTx({
+          utxos: utxos,
+          opReturn: [],
+          change: wallet.rootAddress,
+          payTo,
+        })
         broadcasts.push(transfer.toString())
+        utxo = await wallet?.utxoFromTx({
+          tx: tx,
+          addressInfo: {
+            addressType: parseInt(wallet.keyPathMap.Info.keyPath.split('/')[0]),
+            addressIndex: parseInt(wallet.keyPathMap.Info.keyPath.split('/')[1]),
+          },
+          outPutIndex: 0,
+        })
       }
+      debugger
 
-      let utxo = await wallet?.utxoFromTx({
-        tx: transfer,
-        addressInfo: {
-          addressType: parseInt(wallet.keyPathMap.Info.keyPath.split('/')[0]),
-          addressIndex: parseInt(wallet.keyPathMap.Info.keyPath.split('/')[1]),
-        },
-        outPutIndex: 0,
-      })
       if (utxo) {
         utxos = [utxo]
         const createNameNode = await userStore.showWallet!.wallet!.createNode({
@@ -816,8 +831,190 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
   }
 }
 
+async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }) {
+  loading.value = true
+  try {
+    const wallet = userStore.showWallet!.wallet
+
+    if (userStore.isAuthorized) {
+      let utxos, infoAddress, protocolAddress
+      utxos = await wallet?.provider.getUtxos(wallet.wallet.xpubkey.toString())
+      infoAddress = wallet
+        ?.getPathPrivateKey(wallet.keyPathMap.Info.keyPath)
+        .publicKey.toAddress(wallet.network)
+        .toString()
+      protocolAddress = wallet!.protocolAddress
+
+      const broadcasts: string[] | mvc.Transaction[] = []
+
+      // 把钱打到 info, protocol 节点
+      const payTo = [
+        {
+          amount: 1000,
+          address: infoAddress,
+        },
+      ]
+      if (params.nft.avatarImage !== userStore.user!.avatarImage) {
+        payTo.push({
+          amount: 2000,
+          address: protocolAddress,
+        })
+      }
+
+      const transfer = await wallet?.makeTx({
+        utxos: utxos,
+        opReturn: [],
+        change: wallet.rootAddress,
+        payTo,
+      })
+      broadcasts.push(transfer.toString())
+      let utxo = await wallet?.utxoFromTx({
+        tx: transfer,
+        addressInfo: {
+          addressType: parseInt(wallet.keyPathMap.Info.keyPath.split('/')[0]),
+          addressIndex: parseInt(wallet.keyPathMap.Info.keyPath.split('/')[1]),
+        },
+        outPutIndex: 0,
+      })
+      debugger
+
+      if (utxo) {
+        utxos = [utxo]
+        const createNameNode = await userStore.showWallet!.wallet!.createNode({
+          nodeName: 'name',
+          parentTxId: userStore.user!.infoTxId,
+          data: params.name ? params.name : `${import.meta.env.VITE_DefaultName}`,
+          utxos: utxos,
+          change:
+            params.nft.avatarImage !== userStore.user!.avatarImage
+              ? infoAddress
+              : wallet!.rootAddress,
+        })
+        broadcasts.push(createNameNode!.transaction.toString())
+      }
+
+      if (params.nft.avatarImage !== userStore.user!.avatarImage) {
+        // 创建 NFTAvatar brfc 节点
+        utxo = await wallet?.utxoFromTx({
+          tx: transfer,
+          addressInfo: {
+            addressType: parseInt(wallet.keyPathMap.Protocols.keyPath.split('/')[0]),
+            addressIndex: parseInt(wallet.keyPathMap.Protocols.keyPath.split('/')[1]),
+          },
+          outPutIndex: 1,
+        })
+        if (utxo) utxos = [utxo]
+        const NFTAvatarBrfcNodeBaseInfo = await wallet?.provider.getNewBrfcNodeBaseInfo(
+          wallet.wallet.xpubkey.toString(),
+          userStore.user!.infoTxId
+        )
+        const createNFTAvatarBrfcNode = await wallet!.createNode({
+          nodeName: NodeName.NFTAvatar,
+          parentTxId: userStore.user!.infoTxId,
+          data: AllNodeName[NodeName.NFTAvatar].brfcId,
+          utxos: utxos,
+          change: wallet!.createAddress('0/0').address,
+          node: NFTAvatarBrfcNodeBaseInfo,
+        })
+        broadcasts.push(createNFTAvatarBrfcNode!.hex!)
+
+        // 创建 NFTAvatar 子节点
+        utxo = await wallet?.utxoFromTx({
+          tx: createNFTAvatarBrfcNode!.transaction!,
+          addressInfo: {
+            addressType: 0,
+            addressIndex: 0,
+          },
+        })
+        if (utxo) utxos = [utxo]
+        const createNFTAvatarBrfcChildNode = await wallet!.createBrfcChildNode(
+          {
+            nodeName: NodeName.NFTAvatar,
+            brfcTxId: createNFTAvatarBrfcNode!.txId,
+            data: JSON.stringify({
+              type: 'nft',
+              tx: params.nft.txId,
+              codehash: params.nft.codehash,
+              genesis: params.nft.genesis,
+              tokenIndex: params.nft.tokenIndex,
+              updateTime: new Date().getTime(),
+              memo: params.nft.desc,
+              image: params.nft.avatarImage,
+              chain: params.nft.avatarImage.split('://')[0],
+            }),
+            utxos: utxos,
+          },
+          { isBroadcast: false }
+        )
+        broadcasts.push(createNFTAvatarBrfcChildNode!.transaction.toString())
+      }
+      //  广播
+      let errorMsg: any
+
+      // if () {
+      //       const unSignTransations: TransactionInfo[] = []
+      //     hexTxs.forEach(tx => {
+      //       const { transation } = tx
+      //       unSignTransations.push({
+      //         txHex: transation.toString(),
+      //         address: transation.inputs[0].output!.script.toAddress(this.network).toString(),
+      //         inputIndex: 0,
+      //         scriptHex: transation.inputs[0].output!.script.toHex(),
+      //         satoshis: transation.inputs[0].output!.satoshis,
+      //       })
+      //     })
+
+      //     const { signedTransactions } = await this.metaIDJsWallet.signTransactions({
+      //       transactions: unSignTransations,
+      //     })
+      // }
+
+      for (let i = 0; i < broadcasts.length; i++) {
+        try {
+          await wallet?.provider.broadcast(broadcasts[i])
+        } catch (error) {
+          errorMsg = error
+          break
+        }
+      }
+      if (errorMsg) throw new Error(errorMsg.message)
+
+      const userInfo = {
+        ...userStore.user!,
+        name: params.name ? params.name : userStore.user!.name,
+      }
+      // @ts-ignore
+      userInfo.userType = userInfo.userType ? userInfo.userType : userInfo?.registerType
+      // 上报修改的用户信息
+      await SetUserInfo({
+        metaid: userStore.user!.metaId,
+        accessKey: userStore.user!.token,
+        ...userInfo,
+        userName: params.name ? params.name : userStore.user!.name,
+      })
+      // 更新本地用户信息
+      userStore.updateUserInfo({
+        ...userStore.user!,
+        name: params.name ? params.name : userStore.user!.name,
+      })
+    }
+
+    if (params.name) {
+      setBaseInfoRef.value.FormRef.resetFields()
+    }
+    loading.value = false
+    isShowSetBaseInfo.value = false
+    isSHowBackupMnemonic.value = true
+  } catch (error) {
+    loading.value = false
+    // ElMessage.error((error as any).message)
+    throw new Error(error as any)
+  }
+}
+
 async function connectMetalet() {
   const { address } = await window.metaidwallet.connect()
+  debugger
   if (!address) {
     return ElMessage.error(`${i18n.t('wallet_addres_empty')}`)
   }
@@ -840,7 +1037,7 @@ async function connectMetalet() {
   }
 
   console.log('metaletWallet', metaIdInfo)
-
+  debugger
   userStore.updateUserInfo({
     ...metaIdInfo,
     metaId: metaIdInfo.metaId, // account 有时拿回来的metaId为空

@@ -43,11 +43,14 @@ type TaskResponse = {
 
 export type TransactionInfo = {
   txHex: string
-  address: string
+  address?: string
   inputIndex: number
   scriptHex: string
   satoshis: number
   sigtype?: number
+  path?: string
+  hasMetaId?: boolean
+  dataDependsOn?: number
 }
 
 interface SigInfo {
@@ -233,6 +236,8 @@ export class MetaletWallet {
             params.outPutIndex = params.tx.outputs.length - 1
           }
         }
+        console.log('params', params, params.tx)
+        debugger
         const OutPut = params.tx.outputs[params.outPutIndex]
         if (!params.chain) params.chain = HdWalletChain.MVC
         if (!params.addressInfo) {
@@ -274,7 +279,9 @@ export class MetaletWallet {
   public initMetaIdNode(retry: number = 10) {
     return new Promise<MetaIdInfoTypes>(async (resolve, reject) => {
       try {
-        const metaIdInfo: any = await this.getMetaIdInfo(this.rootAddress)
+        console.log('this.rootAddress', this.rootAddress)
+        debugger
+        let metaIdInfo: any = await this.getMetaIdInfo(this.rootAddress)
         metaIdInfo.pubKey = await this.metaIDJsWallet.getPublicKey({ path: '0/0' }) //this._root.toPublicKey().toString()
         //  检查 metaidinfo 是否完整
         if (metaIdInfo.metaId && metaIdInfo.infoTxId && metaIdInfo.protocolTxId) {
@@ -312,14 +319,17 @@ export class MetaletWallet {
               utxos: utxos,
               outputs: outputs,
             })
-            console.log('root', root)
 
+            debugger
             hexTxs.push({
               hex: root.transaction.toString(),
               transation: root.transaction,
+              path: root.path,
             })
-            metaIdInfo.metaId = root.txId
 
+            metaIdInfo.metaId = root.txId
+            console.log('root', metaIdInfo)
+            debugger
             const newUtxo = await this.utxoFromTx({
               tx: root.transaction,
               addressInfo: {
@@ -347,8 +357,13 @@ export class MetaletWallet {
             hexTxs.push({
               hex: protocol.transaction.toString(),
               transation: protocol.transaction,
+              path: protocol.path,
+              hasMetaId: true,
+              dataDependsOn: 0,
             })
             metaIdInfo.protocolTxId = protocol.txId
+            console.log('protocolTxId', metaIdInfo)
+            debugger
             const newUtxo = await this.utxoFromTx({
               tx: protocol.transaction,
               addressInfo: {
@@ -374,8 +389,13 @@ export class MetaletWallet {
             hexTxs.push({
               hex: info.transaction.toString(),
               transation: info.transaction,
+              path: info.path,
+              hasMetaId: true,
+              dataDependsOn: 0,
             })
             metaIdInfo.infoTxId = info.txId
+            console.log('protocolTxId', metaIdInfo)
+            debugger
             const newUtxo = await this.utxoFromTx({
               tx: info.transaction,
               addressInfo: {
@@ -458,25 +478,52 @@ export class MetaletWallet {
           const unSignTransations: TransactionInfo[] = []
           hexTxs.forEach(tx => {
             const { transation } = tx
-            unSignTransations.push({
-              txHex: transation.toString(),
-              address: transation.inputs[0].output!.script.toAddress(this.network).toString(),
-              inputIndex: 0,
-              scriptHex: transation.inputs[0].output!.script.toHex(),
-              satoshis: transation.inputs[0].output!.satoshis,
-            })
+            console.log('tx', tx)
+            debugger
+            if (tx.hasMetaId) {
+              unSignTransations.push({
+                txHex: transation.toString(),
+                address: transation.inputs[0].output!.script.toAddress(this.network).toString(),
+                inputIndex: 0,
+                scriptHex: transation.inputs[0].output!.script.toHex(),
+                satoshis: transation.inputs[0].output!.satoshis,
+                path: tx.path,
+                hasMetaId: tx.hasMetaId,
+                dataDependsOn: tx.dataDependsOn,
+              })
+            } else {
+              unSignTransations.push({
+                txHex: transation.toString(),
+                address: transation.inputs[0].output!.script.toAddress(this.network).toString(),
+                inputIndex: 0,
+                scriptHex: transation.inputs[0].output!.script.toHex(),
+                satoshis: transation.inputs[0].output!.satoshis,
+                path: tx.path,
+              })
+            }
           })
+
+          // for (let i = 0; i < unSignTransations.length; i++) {
+          //   const pretx = await this.metaIDJsWallet.previewTransaction({
+          //     transaction: unSignTransations[i],
+          //   })
+          //   console.log('i', pretx)
+          //   debugger
+          // }
 
           const { signedTransactions } = await this.metaIDJsWallet.signTransactions({
             transactions: unSignTransations,
           })
 
           // 广播
-          for (let i = 0; i < signedTransactions.length; i++) {
+          const metaidInfoList = []
+          for (let i = 0; i < unSignTransations.length; i++) {
             try {
-              const tx = signedTransactions[i]
-              console.log('tx', tx)
-              await this.provider.broadcast(tx.txHex)
+              const { txid } = await this.metaIDJsWallet.previewTransaction({
+                transaction: unSignTransations[i],
+              })
+              console.log('txid', i, txid)
+              debugger
             } catch (error) {
               errorMsg = error
             }
@@ -484,6 +531,29 @@ export class MetaletWallet {
               break
             }
           }
+
+          for (let i = 0; i < signedTransactions.length; i++) {
+            try {
+              const tx = signedTransactions[i]
+
+              const { txid } = await this.provider.broadcast(tx.txHex)
+              console.log('tx', tx.txid, txid)
+              debugger
+              metaidInfoList.push(txid)
+              // console.log('metaidInfoList', metaidInfoList)
+            } catch (error) {
+              errorMsg = error
+            }
+            if (errorMsg) {
+              break
+            }
+          }
+          const newMetaidNodeInfo = {
+            metaId: metaidInfoList[0],
+            protocolTxId: metaidInfoList[1],
+            infoTxId: metaidInfoList[2],
+          }
+          metaIdInfo = { ...metaIdInfo, ...newMetaidNodeInfo }
 
           if (errorMsg) {
             throw new Error(errorMsg.message)
@@ -586,6 +656,8 @@ export class MetaletWallet {
           dataType,
           encoding,
         ]
+        console.log('nodeName', nodeName, parentTxId)
+        debugger
         const makeTxOptions = {
           from: [],
           utxos: utxos,
@@ -594,8 +666,9 @@ export class MetaletWallet {
           outputs,
           payTo,
           chain,
+          node,
         }
-        debugger
+
         // TODO: 父节点 utxo 管理
         // if (parentTxId !== 'NULL' && !parentAddress) {
         //   console.log('get parent utxos')
@@ -603,17 +676,18 @@ export class MetaletWallet {
         //   throw new Error("Cant't get parent address")
         // }
 
-        let nodeTx = await this.makeTx(makeTxOptions)
+        let { tx, path } = await this.makeTx(makeTxOptions)
 
-        if (nodeTx) {
+        if (tx) {
           resolve({
-            hex: nodeTx.toString(),
-            transaction: nodeTx,
-            txId: nodeTx.id,
+            hex: tx.toString(),
+            transaction: tx,
+            txId: tx.id,
             address: node.address,
             addressType: parseInt(node.path.split('/')[0]),
             addressIndex: parseInt(node.path.split('/')[1]),
             scriptPlayload: scriptPlayload,
+            path: path,
             //previewTransaction: newTransaction,
           })
         }
@@ -631,9 +705,8 @@ export class MetaletWallet {
     utxos,
     useFeeb = DEFAULTS.feeb,
     chain = HdWalletChain.MVC,
-  }: TransferTypes): Promise<mvc.Transaction> {
+  }: TransferTypes): Promise<{ tx: mvc.Transaction; path?: string }> {
     return new Promise(async (resolve, reject) => {
-      debugger
       try {
         const { tx } = await this.makeTxNotUtxos({
           payTo,
@@ -671,24 +744,27 @@ export class MetaletWallet {
           // @ts-ignore
           return (this._getUnspentValue() - this.getNeedFee()) as number
         }
-        console.log('tx', tx)
-        debugger
-        if (utxos) {
+
+        let path = ``
+
+        if (utxos?.length) {
           const utxoHashScript = utxos.some(utxo => utxo.script)
           console.log('utxoHashScript', utxoHashScript)
           debugger
+
           if (utxoHashScript) {
+            path = `${utxos[0].addressType}/${utxos[0].addressIndex}`
             tx.from(utxos)
           } else {
-            const newUtxos = utxos.map(utxo => {
+            utxos = utxos.map(utxo => {
               const script = new mvc.Script(new mvc.Address(utxo.address, this.network))
               console.log('utxo', utxo)
               debugger
               utxo = {
                 address: utxo.address,
                 // utxo 所在的路径
-                addressIndex: utxo.addressIndex,
-                addressType: utxo.addressType,
+                addressIndex: utxo.addressIndex || 0,
+                addressType: utxo.addressType || 0,
                 outputIndex: utxo.outIndex,
                 txId: utxo.txid,
                 xpub: this.xpub,
@@ -698,7 +774,8 @@ export class MetaletWallet {
               }
               return utxo
             })
-            tx.from(newUtxos)
+            path = `${utxos[0].addressType}/${utxos[0].addressIndex}`
+            tx.from(utxos)
             // utxos.forEach(utxo => {
             //   console.log('utxo', utxo)
             //   debugger
@@ -713,9 +790,25 @@ export class MetaletWallet {
             //   )
             // })
           }
+
+          //30是签名后交易字节数
+          tx.fee(Math.ceil(tx._estimateSize() + 30 * useFeeb))
+
+          // const unsignTransation = {
+          //   txHex: tx.toString(),
+          //   address: utxos[0].address,
+          //   inputIndex: 0,
+          //   scriptHex: utxos[0].script,
+          //   satoshis: utxos[0].satoshis,
+          //   path: `${utxos[0].addressType}/${utxos[0].addressIndex}`,
+          // }
+          // const { txid } = await this.metaIDJsWallet.previewTransaction({
+          //   transaction: unsignTransation,
+          // })
+          // prevTxid = txid
+          // console.log('txid', tx, prevTxid)
+          // debugger
         }
-        //30是签名后交易字节数
-        tx.fee(Math.ceil(tx._estimateSize() + 30 * useFeeb))
 
         // const unSignTransation = {
         //   txHex: tx.toString(),
@@ -740,7 +833,10 @@ export class MetaletWallet {
         // //@ts-ignore
         // tx.inputs[0].setScript(signedscript)
 
-        resolve(tx)
+        resolve({
+          tx,
+          path,
+        })
       } catch (error) {
         reject(error)
       }
@@ -758,16 +854,13 @@ export class MetaletWallet {
     if (!this.metaIDJsWallet) {
       throw new Error('Wallet uninitialized! (core-makeTx)')
     }
-    debugger
+
     const tx = new mvc.Transaction()
     // 更改 Transaction 为 Bsv  Transaction
     //if (chain === HdWalletChain.BSV) tx.version = WalletTxVersion.BSV
     // 添加 payto
     if (Array.isArray(payTo) && payTo.length) {
-      debugger
       payTo.forEach(item => {
-        console.log('item', item)
-        debugger
         if (!this.isValidOutput(item)) {
           throw new Error('Output format error.')
         }
@@ -784,20 +877,16 @@ export class MetaletWallet {
         })
       )
     }
-    debugger
+
     if (Array.isArray(outputs) && outputs.length) {
-      console.log('outputs', outputs)
-      debugger
       outputs.forEach(output => {
         tx.addOutput(new mvc.Transaction.Output(output))
       })
     }
 
     if (utxos.length > 0) {
-      debugger
       const utxoHashScript = utxos.some(utxo => utxo.script)
-      console.log('utxoHashScript', utxoHashScript)
-      debugger
+
       if (utxoHashScript) {
         tx.from(utxos)
       } else {
@@ -822,10 +911,12 @@ export class MetaletWallet {
         // tx.from(utxos)
       }
     }
+
     console.log('tx', tx)
 
     return {
       tx,
+      // prevTxid: txid,
     }
   }
 
@@ -887,6 +978,8 @@ export class MetaletWallet {
           })
           // 已存在根节点
         } else {
+          console.log('params.parentTxId', params)
+          debugger
           // 不存在根节点
           const newBrfcNodeBaseInfo = await this.provider.getNewBrfcNodeBaseInfo(
             this.xpub,

@@ -128,8 +128,8 @@
                   </div>
                   <a
                     class="add flex flex-align-center"
-                    v-if="index === 0"
-                    @click="isShowBackUp = true"
+                    v-if="index === 0 && !item?.disabled"
+                    @click="item?.disabled ? false : (isShowBackUp = true)"
                   >
                     {{ $t('Wallet.to backup') }}
                     <Icon name="down" />
@@ -554,7 +554,8 @@ const disableSaleTab = computed(() => {
 const wallets = reactive([
   {
     title: i18n.t('Wallet.backup'),
-    list:[]
+    list: [],
+    disabled: userStore.metaletLogin ? true :  false
   },
   {
     title: i18n.t('Wallet.Action Points'),
@@ -1118,7 +1119,13 @@ function getMEBalance() {
 function getSpaceBalance() {
   return new Promise<void>(async resolve => {
     // 获取餘额
-    const res = await userStore
+    let res
+    if (userStore.metaletLogin) {
+      const {total}=await userStore.showWallet.wallet!.metaIDJsWallet.getBalance()
+      res=total
+      //res=await .metaidWa
+    } else {
+     res=await userStore
       .showWallet!.wallet!.provider.getXpubBalance(
         userStore.showWallet!.wallet!.wallet.xpubkey.toString()
       )
@@ -1126,6 +1133,9 @@ function getSpaceBalance() {
         ElMessage.error(error.message)
         resolve()
       })
+    }
+
+      debugger
     if (typeof res === 'number') {
       const item = wallets[2].list.find(item => item.name === 'SPACE')
       if (item) {
