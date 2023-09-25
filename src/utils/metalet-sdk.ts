@@ -632,9 +632,9 @@ export class MetaletSDK {
               //   subscribeId: option!.subscribeId,
               // })
 
-              if (userStore.metaletLogin) {
-                option.isBroadcast = true
-              }
+              // if (userStore.metaletLogin) {
+              //   option.isBroadcast = true
+              // }
               if (option.isBroadcast && !option.useQueue) {
                 // 广播 打钱操作
                 debugger
