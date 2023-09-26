@@ -331,25 +331,25 @@ const wallets = [
 // setbaseinfo
 const isShowSetBaseInfo = ref(false)
 
-async function metaMaskLoginSuccess(res: MetaMaskLoginRes) {
-  const response = await GetUserAllInfo(res.userInfo.metaId).catch(error => {
-    ElMessage.error(error.message)
-  })
-  if (response?.code === 0) {
-    // @ts-ignore
-    await userStore.updateUserInfo({
-      ...response.data,
-      ...res.userInfo,
-      password: res.password,
-      userType: 'email',
-    })
-    userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
-    userStore.showWallet.initWallet()
-    if (res.type === 'register') {
-      isShowSendBuzz.value = true
-    }
-  }
-}
+// async function metaMaskLoginSuccess(res: MetaMaskLoginRes) {
+//   const response = await GetUserAllInfo(res.userInfo.metaId).catch(error => {
+//     ElMessage.error(error.message)
+//   })
+//   if (response?.code === 0) {
+//     // @ts-ignore
+//     await userStore.updateUserInfo({
+//       ...response.data,
+//       ...res.userInfo,
+//       password: res.password,
+//       userType: 'email',
+//     })
+//     userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
+//     userStore.showWallet.initWallet()
+//     if (res.type === 'register') {
+//       isShowSendBuzz.value = true
+//     }
+//   }
+// }
 
 function register() {
   rootStore.$patch({ isShowLogin: false })
@@ -876,7 +876,7 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
         },
         outPutIndex: 0,
       })
-      debugger
+      // debugger
 
       if (utxo) {
         utxos = [utxo]
@@ -1014,7 +1014,7 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
 
 async function connectMetalet() {
   const { address } = await window.metaidwallet.connect()
-  debugger
+  // debugger
   if (!address) {
     return ElMessage.error(`${i18n.t('wallet_addres_empty')}`)
   }

@@ -261,13 +261,16 @@ async function stake() {
             isStake: true,
           }
         )
-
+        debugger
+        console.log('result stake create brfc', result)
         if (result) {
-          if (result.payToAddress?.transaction) {
-            await userStore.showWallet.wallet?.provider.broadcast(
-              result.payToAddress?.transaction.toString()
-            )
+          if (result.payToRes?.transaction) {
+            await userStore.showWallet.wallet?.provider.broadcast(result.payToRes?.txHex as string)
           }
+          if (result.sendMoney?.transaction) {
+            await userStore.showWallet.wallet?.provider.broadcast(result.sendMoney?.txHex as string)
+          }
+          debugger
           const res = await Pledge({
             symbol,
             requestIndex: stakeRes.data.requestIndex,

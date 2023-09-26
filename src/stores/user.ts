@@ -153,7 +153,7 @@ export const useUserStore = defineStore('user', {
         const talkStore = useTalkStore()
         const rootStore = useRootStore()
         const genesStore = useGenesisStore()
-        debugger
+        // debugger
         // 只保存pwaInstall状态
         const pwaInstall = localStorage.getItem('pwaInstall')
         localStorage.clear()
@@ -180,7 +180,7 @@ export const useUserStore = defineStore('user', {
 
         talkStore.reset()
         genesStore.initGenesis()
-        debugger
+        // debugger
         if (route.meta.isAuth) router.push('/')
         // talk的路由跳buzz推荐页
         if (route.path.includes('talk')) router.push('/buzz/recommend')
@@ -191,7 +191,7 @@ export const useUserStore = defineStore('user', {
     updateUserInfo(userInfo: Partial<SetUserInfo>) {
       return new Promise<void>(async resolve => {
         console.log('userInfo', userInfo)
-        debugger
+        // debugger
         const { password, ...data } = userInfo
 
         // 兼容处理
@@ -217,7 +217,7 @@ export const useUserStore = defineStore('user', {
         try {
           this.user = data
           console.log('this.uesr', this.user)
-          debugger
+          // debugger
         } catch {}
 
         const genesisStore = useGenesisStore()

@@ -530,7 +530,7 @@ export default class ShowmoneyProvider {
         resolve(res)
       } else {
         let message =
-          typeof res.message === 'string' ? res.message : JSON.parse(res.message).message
+          typeof res?.message === 'string' ? res.message : JSON.parse(res.message).message
         reject({
           message: message,
         })
