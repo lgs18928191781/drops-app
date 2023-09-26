@@ -106,7 +106,7 @@ export const SetUserInfo = (params: {
       'Content-Type': 'application/json',
       accessKey: params.accessKey,
       timestamp: Date.now(),
-      userName: params.userType == 'email' ? params!.email : params!.phone,
+      userName: params.userType ? (params.userType == 'email' ? params!.email : params!.phone) : '',
     },
   })
 }

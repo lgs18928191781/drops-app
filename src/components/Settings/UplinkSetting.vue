@@ -20,7 +20,7 @@
       <div class="payment item">
         <div class="cont flex1 flex flex-align-center">
           <div class="lable flex1">{{ $t('UplinkSetting.Select Payment') }}</div>
-          <ElSelect :model-value="userStore.sdkPayment">
+          <ElSelect :model-value="userStore.getSdkPayment">
             <ElOption
               v-for="item in payTypes"
               :label="item.name"
@@ -73,7 +73,7 @@ import DrawerRightHeaderVue from '@/components/DrawerRightHeader/DrawerRightHead
 import { useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
 import { ElSwitch } from 'element-plus'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { SdkPayType } from '@/enum'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
@@ -87,16 +87,27 @@ const emit = defineEmits(['update:modelValue'])
 const userStore = useUserStore()
 const rootStore = useRootStore()
 const i18n = useI18n()
-const payTypes = [
-  {
-    name: 'ME',
-    value: SdkPayType.ME,
-  },
-  {
-    name: 'SPACE',
-    value: SdkPayType.SPACE,
-  },
-]
+const payTypes = computed(() => {
+  if (!userStore.metaletLogin) {
+    return [
+      {
+        name: 'ME',
+        value: SdkPayType.ME,
+      },
+      {
+        name: 'SPACE',
+        value: SdkPayType.SPACE,
+      },
+    ]
+  } else {
+    return [
+      {
+        name: 'SPACE',
+        value: SdkPayType.SPACE,
+      },
+    ]
+  }
+})
 
 function onConfirmChange(value: boolean) {
   userStore.changeSdkPayConfirm('visible', value, userStore.sdkPayment)

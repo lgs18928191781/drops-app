@@ -124,6 +124,7 @@ export interface TransferTypes {
   needConfirm?: boolean
   useFeeb?: number
   chain?: HdWalletChain
+  node?: any
 }
 
 export interface ConstructorOptionsTypes {
@@ -470,6 +471,8 @@ export interface CreateNodeBaseRes {
   hex?: string
   utxo?: UtxoItem
   txHex?: string
+
+  path?: string
 }
 
 export interface CreateNodeMetaFileRes extends CreateNodeBaseRes {

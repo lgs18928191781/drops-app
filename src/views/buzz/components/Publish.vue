@@ -329,8 +329,8 @@ async function submit() {
   loading.value = true
   const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
   const contentType = 'text/plain'
-  console.log('attachments', attachments)
-
+  console.log('attachments', userStore.showWallet)
+  debugger
   const res = await userStore.showWallet
     .createBrfcChildNode(
       {
@@ -348,7 +348,7 @@ async function submit() {
           : [],
       },
       {
-        useQueue: broadcastAt.value ? false : true,
+        useQueue: broadcastAt.value ? false : userStore.metaletLogin ? false : true,
         isBroadcast: false,
       }
     )
