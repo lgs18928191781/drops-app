@@ -241,6 +241,7 @@ async function stake() {
           .toInteger()
           .toNumber()
         console.log('show wallet', userStore.wallet)
+        debugger
         const result = await userStore.wallet?.createBrfcChildNode(
           {
             nodeName: NodeName.SendMoney,
