@@ -1005,6 +1005,7 @@ export class HdWallet {
         }
         let privateKey = this.getPathPrivateKey('0/0')
         // TODO: 自定义节点支持
+
         if (this.keyPathMap[nodeName]) {
           const nodeInfo = this.keyPathMap[nodeName]
           node = {

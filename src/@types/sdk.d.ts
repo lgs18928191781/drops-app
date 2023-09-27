@@ -125,6 +125,7 @@ export interface TransferTypes {
   useFeeb?: number
   chain?: HdWalletChain
   node?: any
+  namePath?: string
 }
 
 export interface ConstructorOptionsTypes {

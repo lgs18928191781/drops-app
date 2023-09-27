@@ -293,7 +293,7 @@ export class MetaletWallet {
             path: this.keyPathMap.Info.keyPath,
           }) //this.getPathPrivateKey(this.keyPathMap.Info.keyPath)
 
-          //utxos = await this.metaIDJsWallet.getUtxos({ path: '0/0' })
+          utxos = await this.metaIDJsWallet.getUtxos({ path: '0/0' })
 
           // 初始化 metaId
           if (!metaIdInfo.metaId) {
@@ -384,7 +384,7 @@ export class MetaletWallet {
               data: 'NULL',
               version: 'NULL',
               utxos: utxos,
-              change: infoAddress,
+              change: this.rootAddress, //infoAddress,
             })
             hexTxs.push({
               hex: info.transaction.toString(),
@@ -573,8 +573,9 @@ export class MetaletWallet {
   }
 
   public async createAddress(keyPath: string): Promise<{ address: string; publicKey: string }> {
-    const publicKey = await this.metaIDJsWallet.getPublicKey(keyPath)
-    const address = await this.metaIDJsWallet.getAddress(keyPath)
+    debugger
+    const publicKey = await this.metaIDJsWallet.getPublicKey({ path: keyPath })
+    const address = await this.metaIDJsWallet.getAddress({ path: keyPath })
     return {
       address,
       publicKey,
@@ -602,12 +603,23 @@ export class MetaletWallet {
         if (!nodeName) {
           throw new Error('Parameter Error: NodeName can not empty')
         }
+        console.log('nodeName', nodeName)
         debugger
         //let privateKey = this.getPathPrivateKey('0/0')
         // TODO: 自定义节点支持
+
         if (this.keyPathMap[nodeName]) {
           const nodeInfo = this.keyPathMap[nodeName]
           const { address, publicKey } = await this.createAddress(nodeInfo.keyPath)
+          debugger
+          if (nodeName == 'Info') {
+            payTo = [
+              {
+                address: address,
+                amount: 1000,
+              },
+            ]
+          }
           node = {
             path: nodeInfo.keyPath,
             publicKey,
@@ -669,6 +681,10 @@ export class MetaletWallet {
           node,
         }
 
+        if (nodeName == 'name') {
+          makeTxOptions.namePath = '0/1'
+        }
+
         // TODO: 父节点 utxo 管理
         // if (parentTxId !== 'NULL' && !parentAddress) {
         //   console.log('get parent utxos')
@@ -705,6 +721,7 @@ export class MetaletWallet {
     utxos,
     useFeeb = DEFAULTS.feeb,
     chain = HdWalletChain.MVC,
+    namePath,
   }: TransferTypes): Promise<{ tx: mvc.Transaction; path?: string }> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -763,8 +780,8 @@ export class MetaletWallet {
               utxo = {
                 address: utxo.address,
                 // utxo 所在的路径
-                addressIndex: utxo.addressIndex || 0,
-                addressType: utxo.addressType || 0,
+                addressIndex: namePath ? namePath.split('/')[1] : utxo.addressIndex || 0,
+                addressType: namePath ? namePath.split('/')[0] : utxo.addressType || 0,
                 outputIndex: utxo.outIndex,
                 txId: utxo.txid,
                 xpub: this.xpub,
@@ -850,6 +867,7 @@ export class MetaletWallet {
     opReturn,
     useFeeb = DEFAULTS.feeb,
     chain = HdWalletChain.MVC,
+    namePath,
   }: TransferTypes) {
     if (!this.metaIDJsWallet) {
       throw new Error('Wallet uninitialized! (core-makeTx)')
@@ -860,6 +878,7 @@ export class MetaletWallet {
     //if (chain === HdWalletChain.BSV) tx.version = WalletTxVersion.BSV
     // 添加 payto
     if (Array.isArray(payTo) && payTo.length) {
+      debugger
       payTo.forEach(item => {
         if (!this.isValidOutput(item)) {
           throw new Error('Output format error.')

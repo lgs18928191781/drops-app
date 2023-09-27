@@ -73,7 +73,7 @@
   <SetBaseInfoVue
     v-model="isShowSetBaseInfo"
     :loading="loading"
-    @success="onSetBaseInfoSuccess"
+    @success="onSetBaseInfoSuccessType"
     ref="setBaseInfoRef"
   />
 
@@ -182,7 +182,8 @@ import AllNodeName from '@/utils/AllNodeName'
 import { computeStyles } from '@popperjs/core'
 import { setUser } from '@sentry/vue'
 import SPACEIcon from '@/assets/images/icon_mvc.png'
-import { MetaletWallet } from '@/utils/wallet/Metalet-wallet'
+import { MetaletWallet, TransactionInfo } from '@/utils/wallet/Metalet-wallet'
+
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const route = useRoute()
@@ -618,155 +619,152 @@ async function OnMetaIdSuccess(type: 'register' | 'login') {
   }
 }
 
+async function onSetBaseInfoSuccessType(params: { name: string; nft: NFTAvatarItem }) {
+  debugger
+  if (userStore.metaletLogin) {
+    await onSetBaseInfoSuccessForMetalet(params)
+  } else {
+    await onSetBaseInfoSuccess(params)
+  }
+}
+
 async function onSetBaseInfoSuccessForMetalet(params: { name: string; nft: NFTAvatarItem }) {
+  debugger
   loading.value = true
   try {
     const wallet = userStore.showWallet!.wallet
 
     if (userStore.isAuthorized) {
       let utxos, infoAddress, protocolAddress
-      if (userStore.metaletLogin) {
-        utxos = await wallet?.metaIDJsWallet.getUtxos({ path: '0/0' })
-        infoAddress = await wallet?.metaIDJsWallet.getAddress({
-          path: wallet.keyPathMap.Info.keyPath,
-        })
-        protocolAddress = await wallet?.metaIDJsWallet.getAddress({
-          path: wallet.keyPathMap.Protocols.keyPath,
-        })
-      } else {
-        utxos = await wallet?.provider.getUtxos(wallet.wallet.xpubkey.toString())
-        infoAddress = wallet
-          ?.getPathPrivateKey(wallet.keyPathMap.Info.keyPath)
-          .publicKey.toAddress(wallet.network)
-          .toString()
-        protocolAddress = wallet!.protocolAddress
-      }
+      utxos = await wallet?.metaIDJsWallet.getUtxos({ path: '0/1' })
+      debugger
+      infoAddress = await wallet?.metaIDJsWallet.getAddress({
+        path: wallet.keyPathMap.Info.keyPath,
+      })
+      protocolAddress = await wallet?.metaIDJsWallet.getAddress({
+        path: wallet.keyPathMap.Protocols.keyPath,
+      })
 
-      const broadcasts: string[] | mvc.Transaction[] = []
+      const broadcasts: Array<{
+        hex: string
+        transation: mvc.Transaction
+        path: string
+        hasMetaId?: boolean
+        dataDependsOn?: number
+      }> = []
 
       // 把钱打到 info, protocol 节点
-      const payTo = [
-        {
-          amount: 1000,
-          address: infoAddress,
-        },
-      ]
-      if (params.nft.avatarImage !== userStore.user!.avatarImage) {
-        payTo.push({
-          amount: 2000,
-          address: protocolAddress,
-        })
-      }
-      let transfer, utxo
-      if (userStore.metaletLogin) {
-        const { tx, path } = await wallet?.makeTx({
-          utxos: utxos,
-          opReturn: [],
-          change: wallet.rootAddress,
-          payTo,
-        })
-        broadcasts.push(tx!)
-        utxo = await wallet?.utxoFromTx({
-          tx: tx,
-          addressInfo: {
-            addressType: parseInt(wallet.keyPathMap.Info.keyPath.split('/')[0]),
-            addressIndex: parseInt(wallet.keyPathMap.Info.keyPath.split('/')[1]),
-          },
-          outPutIndex: 0,
-        })
-      } else {
-        const { tx } = await wallet?.makeTx({
-          utxos: utxos,
-          opReturn: [],
-          change: wallet.rootAddress,
-          payTo,
-        })
-        broadcasts.push(transfer.toString())
-        utxo = await wallet?.utxoFromTx({
-          tx: tx,
-          addressInfo: {
-            addressType: parseInt(wallet.keyPathMap.Info.keyPath.split('/')[0]),
-            addressIndex: parseInt(wallet.keyPathMap.Info.keyPath.split('/')[1]),
-          },
-          outPutIndex: 0,
-        })
-      }
+      // const payTo = [
+      //   {
+      //     amount: 1000,
+      //     address: infoAddress,
+      //   },
+      // ]
+      // if (params.nft.avatarImage !== userStore.user!.avatarImage) {
+      //   debugger
+      //   payTo.push({
+      //     amount: 2000,
+      //     address: protocolAddress,
+      //   })
+      // }
+      // let transfer, utxo
+      //  const { tx, path } = await wallet?.makeTx({
+      //     utxos: utxos,
+      //     opReturn: [],
+      //     change: wallet.rootAddress,
+      //     payTo,
+      //   })
+      //   debugger
+      //   broadcasts.push({
+      //     hex: tx.toString(),
+      //     transation: tx,
+      //     path: path,
+      //   })
+      //   utxo = await wallet?.utxoFromTx({
+      //     tx: tx,
+      //     addressInfo: {
+      //       addressType: parseInt(wallet.keyPathMap.Info.keyPath.split('/')[0]),
+      //       addressIndex: parseInt(wallet.keyPathMap.Info.keyPath.split('/')[1]),
+      //     },
+      //     outPutIndex: 0,
+      //   })
       debugger
 
-      if (utxo) {
-        utxos = [utxo]
-        const createNameNode = await userStore.showWallet!.wallet!.createNode({
+      if (utxos.length) {
+        //utxos = [utxo]
+        const createNameNode = await wallet!.createNode({
           nodeName: 'name',
           parentTxId: userStore.user!.infoTxId,
           data: params.name ? params.name : `${import.meta.env.VITE_DefaultName}`,
           utxos: utxos,
-          change:
-            params.nft.avatarImage !== userStore.user!.avatarImage
-              ? infoAddress
-              : wallet!.rootAddress,
+          change: wallet!.rootAddress,
         })
-        if (userStore.metaletLogin) {
-          broadcasts.push(createNameNode!.txHex)
-        } else {
-          broadcasts.push(createNameNode!.transaction.toString())
+        debugger
+        const transaction = {
+          hex: createNameNode.transaction.toString(),
+          transation: createNameNode.transaction,
+          path: createNameNode.path,
+          // hasMetaId: true,
+          // dataDependsOn: 0,
         }
+        broadcasts.push(transaction)
       }
 
-      if (params.nft.avatarImage !== userStore.user!.avatarImage) {
-        // 创建 NFTAvatar brfc 节点
-        utxo = await wallet?.utxoFromTx({
-          tx: transfer,
-          addressInfo: {
-            addressType: parseInt(wallet.keyPathMap.Protocols.keyPath.split('/')[0]),
-            addressIndex: parseInt(wallet.keyPathMap.Protocols.keyPath.split('/')[1]),
-          },
-          outPutIndex: 1,
-        })
-        if (utxo) utxos = [utxo]
-        const NFTAvatarBrfcNodeBaseInfo = await wallet?.provider.getNewBrfcNodeBaseInfo(
-          wallet.wallet.xpubkey.toString(),
-          userStore.user!.infoTxId
-        )
-        const createNFTAvatarBrfcNode = await wallet!.createNode({
-          nodeName: NodeName.NFTAvatar,
-          parentTxId: userStore.user!.infoTxId,
-          data: AllNodeName[NodeName.NFTAvatar].brfcId,
-          utxos: utxos,
-          change: wallet!.createAddress('0/0').address,
-          node: NFTAvatarBrfcNodeBaseInfo,
-        })
-        broadcasts.push(createNFTAvatarBrfcNode!.hex!)
+      // if (params.nft.avatarImage !== userStore.user!.avatarImage) {
+      //   // 创建 NFTAvatar brfc 节点
+      //   utxo = await wallet?.utxoFromTx({
+      //     tx: transfer,
+      //     addressInfo: {
+      //       addressType: parseInt(wallet.keyPathMap.Protocols.keyPath.split('/')[0]),
+      //       addressIndex: parseInt(wallet.keyPathMap.Protocols.keyPath.split('/')[1]),
+      //     },
+      //     outPutIndex: 1,
+      //   })
+      //   if (utxo) utxos = [utxo]
+      //   const NFTAvatarBrfcNodeBaseInfo = await wallet?.provider.getNewBrfcNodeBaseInfo(
+      //     wallet.wallet.xpubkey.toString(),
+      //     userStore.user!.infoTxId
+      //   )
+      //   const createNFTAvatarBrfcNode = await wallet!.createNode({
+      //     nodeName: NodeName.NFTAvatar,
+      //     parentTxId: userStore.user!.infoTxId,
+      //     data: AllNodeName[NodeName.NFTAvatar].brfcId,
+      //     utxos: utxos,
+      //     change: wallet!.createAddress('0/0').address,
+      //     node: NFTAvatarBrfcNodeBaseInfo,
+      //   })
+      //   broadcasts.push(createNFTAvatarBrfcNode!.hex!)
 
-        // 创建 NFTAvatar 子节点
-        utxo = await wallet?.utxoFromTx({
-          tx: createNFTAvatarBrfcNode!.transaction!,
-          addressInfo: {
-            addressType: 0,
-            addressIndex: 0,
-          },
-        })
-        if (utxo) utxos = [utxo]
-        const createNFTAvatarBrfcChildNode = await wallet!.createBrfcChildNode(
-          {
-            nodeName: NodeName.NFTAvatar,
-            brfcTxId: createNFTAvatarBrfcNode!.txId,
-            data: JSON.stringify({
-              type: 'nft',
-              tx: params.nft.txId,
-              codehash: params.nft.codehash,
-              genesis: params.nft.genesis,
-              tokenIndex: params.nft.tokenIndex,
-              updateTime: new Date().getTime(),
-              memo: params.nft.desc,
-              image: params.nft.avatarImage,
-              chain: params.nft.avatarImage.split('://')[0],
-            }),
-            utxos: utxos,
-          },
-          { isBroadcast: false }
-        )
-        broadcasts.push(createNFTAvatarBrfcChildNode!.transaction.toString())
-      }
+      //   // 创建 NFTAvatar 子节点
+      //   utxo = await wallet?.utxoFromTx({
+      //     tx: createNFTAvatarBrfcNode!.transaction!,
+      //     addressInfo: {
+      //       addressType: 0,
+      //       addressIndex: 0,
+      //     },
+      //   })
+      //   if (utxo) utxos = [utxo]
+      //   const createNFTAvatarBrfcChildNode = await wallet!.createBrfcChildNode(
+      //     {
+      //       nodeName: NodeName.NFTAvatar,
+      //       brfcTxId: createNFTAvatarBrfcNode!.txId,
+      //       data: JSON.stringify({
+      //         type: 'nft',
+      //         tx: params.nft.txId,
+      //         codehash: params.nft.codehash,
+      //         genesis: params.nft.genesis,
+      //         tokenIndex: params.nft.tokenIndex,
+      //         updateTime: new Date().getTime(),
+      //         memo: params.nft.desc,
+      //         image: params.nft.avatarImage,
+      //         chain: params.nft.avatarImage.split('://')[0],
+      //       }),
+      //       utxos: utxos,
+      //     },
+      //     { isBroadcast: false }
+      //   )
+      //   broadcasts.push(createNFTAvatarBrfcChildNode!.transaction.toString())
+      // }
       //  广播
       let errorMsg: any
 
@@ -787,10 +785,44 @@ async function onSetBaseInfoSuccessForMetalet(params: { name: string; nft: NFTAv
       //       transactions: unSignTransations,
       //     })
       // }
+      console.log('wallet!.metaIDJsWallet', wallet!.metaIDJsWallet)
+      debugger
+      const unSignTransations: TransactionInfo[] = []
+      broadcasts.forEach(tx => {
+        const { transation } = tx
+        console.log('tx', tx)
+        debugger
+        if (tx.hasMetaId) {
+          unSignTransations.push({
+            txHex: transation.toString(),
+            address: transation.inputs[0].output!.script.toAddress(wallet!.network).toString(),
+            inputIndex: 0,
+            scriptHex: transation.inputs[0].output!.script.toHex(),
+            satoshis: transation.inputs[0].output!.satoshis,
+            path: tx.path,
+            hasMetaId: tx.hasMetaId,
+            dataDependsOn: tx.dataDependsOn,
+          })
+        } else {
+          unSignTransations.push({
+            txHex: transation.toString(),
+            address: transation.inputs[0].output!.script.toAddress(wallet!.network).toString(),
+            inputIndex: 0,
+            scriptHex: transation.inputs[0].output!.script.toHex(),
+            satoshis: transation.inputs[0].output!.satoshis,
+            path: tx.path,
+          })
+        }
+      })
+      const { signedTransactions } = await wallet!.metaIDJsWallet.signTransactions({
+        transactions: unSignTransations,
+      })
 
-      for (let i = 0; i < broadcasts.length; i++) {
+      for (let i = 0; i < signedTransactions.length; i++) {
         try {
-          await wallet?.provider.broadcast(broadcasts[i])
+          const tx = signedTransactions[i]
+          const { txid } = await wallet?.provider.broadcast(tx.txHex)
+          console.log('tx', tx.txid, txid)
         } catch (error) {
           errorMsg = error
           break
@@ -802,15 +834,18 @@ async function onSetBaseInfoSuccessForMetalet(params: { name: string; nft: NFTAv
         ...userStore.user!,
         name: params.name ? params.name : userStore.user!.name,
       }
+
       // @ts-ignore
-      userInfo.userType = userInfo.userType ? userInfo.userType : userInfo?.registerType
+      userInfo.userType = '' //userInfo.userType ? userInfo.userType : userInfo?.registerType
+
       // 上报修改的用户信息
-      await SetUserInfo({
-        metaid: userStore.user!.metaId,
-        accessKey: userStore.user!.token,
-        ...userInfo,
-        userName: params.name ? params.name : userStore.user!.name,
-      })
+      // await SetUserInfo({
+      //   metaid: userStore.user!.metaId,
+      //   accessKey: '', //userStore.user!.token,
+      //   ...userInfo,
+      //   userName: params.name ? params.name : userStore.user!.name,
+      // })
+      // debugger
       // 更新本地用户信息
       userStore.updateUserInfo({
         ...userStore.user!,
@@ -834,6 +869,7 @@ async function onSetBaseInfoSuccessForMetalet(params: { name: string; nft: NFTAv
 async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }) {
   loading.value = true
   try {
+    debugger
     const wallet = userStore.showWallet!.wallet
 
     if (userStore.isAuthorized) {
@@ -1057,7 +1093,9 @@ async function connectMetalet() {
 
   status.value = ConnectWalletStatus.Watting
   rootStore.$patch({ isShowLogin: false })
-  isShowSetBaseInfo.value = true
+  if (!metaIdInfo.name) {
+    isShowSetBaseInfo.value = true
+  }
   //metalet-SDK实例化
 }
 

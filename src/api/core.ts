@@ -101,6 +101,7 @@ export const SetUserInfo = (params: {
   accessKey: string
   userName?: string
 }): Promise<ApiResultTypes> => {
+  debugger
   return Core.post('/api/v1/user/setuserinfo', params, {
     headers: {
       'Content-Type': 'application/json',

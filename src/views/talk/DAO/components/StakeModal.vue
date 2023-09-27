@@ -239,6 +239,7 @@ async function stake() {
           .mul(currentSymbol.value!.rate)
           .toInteger()
           .toNumber()
+        debugger
         const result = await userStore.showWallet.createBrfcChildNode(
           {
             nodeName: NodeName.SendMoney,
@@ -258,6 +259,7 @@ async function stake() {
             isStake: true,
           }
         )
+        debugger
         if (result) {
           if (result.payToAddress?.transaction) {
             await userStore.showWallet.wallet?.provider.broadcast(
