@@ -354,6 +354,7 @@ export class SDK {
         utxos: [],
         useFeeb: DEFAULTS.feeb,
       }
+      debugger
       params = {
         ...initParams,
         ...params,

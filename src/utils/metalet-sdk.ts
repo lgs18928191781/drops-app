@@ -586,7 +586,7 @@ export class MetaletSDK {
               let errorMsg: any
 
               hexTxs.forEach((hexTx, index) => {
-                console.log('hexTx', hexTx.txkey, signedTransactions[index].txHex)
+                //console.log('hexTx', hexTx.txkey, signedTransactions[index].txHex)
                 // debugger
                 if (Array.isArray(hexTx)) {
                   hexTx.forEach((hexTxItem, i) => {
@@ -2066,7 +2066,7 @@ export class MetaletSDK {
                   let newUtxo = await this.wallet?.metaIDJsWallet.getUtxos({ path: '0/0' })
                   debugger
                   newUtxo = {
-                    ...newUtxo,
+                    ...newUtxo[0],
                     addressType: 0,
                     addressIndex: 0,
                   }

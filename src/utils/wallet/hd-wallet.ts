@@ -1116,7 +1116,7 @@ export class HdWallet {
   }: TransferTypes): Promise<mvc.Transaction> {
     return new Promise(async (resolve, reject) => {
       try {
-        const { tx } = await this.makeTxNotUtxos({
+        const tx = await this.makeTxNotUtxos({
           payTo,
           outputs,
           opReturn,
@@ -1219,9 +1219,7 @@ export class HdWallet {
       tx.from(utxos)
     }
 
-    return {
-      tx,
-    }
+    return tx
   }
 
   public async getOneUtxoFee(params?: { useFeeb?: number; utxo?: UtxoItem }) {

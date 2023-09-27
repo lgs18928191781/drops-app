@@ -71,7 +71,7 @@ type UtxoItem = {
   value: number
 }
 
-enum encodingType {
+export enum encodingType {
   hex = 'hex',
   utf8 = 'utf-8',
   base64 = 'base64',
