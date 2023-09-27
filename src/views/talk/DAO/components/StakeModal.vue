@@ -260,23 +260,30 @@ async function stake() {
             isStake: true,
           }
         )
-        debugger
+
         if (result) {
           if (result.payToRes?.transaction) {
-            await userStore.showWallet.wallet?.provider.broadcast(result.payToRes?.txHex as string)
+            if (userStore.metaletLogin) {
+              await userStore.showWallet.wallet?.provider.broadcast(
+                result.payToRes?.txHex as string
+              )
+            } else {
+              await userStore.showWallet.wallet?.provider.broadcast(
+                result.payToRes?.transaction.toString()
+              )
+            }
           }
-          // if (result.sendMoney?.transaction) {
-          //   await userStore.showWallet.wallet?.provider.broadcast(result.sendMoney?.txHex as string)
-          // }
-          debugger
+
           const res = await Pledge({
             symbol,
             requestIndex: stakeRes.data.requestIndex,
-            mvcRawTx: result.sendMoney!.txHex,
+            mvcRawTx: userStore.metaletLogin
+              ? result.sendMoney!.txHex
+              : result.sendMoney.transaction.toString(),
             mvcOutputIndex: 0,
             mvcAddAmount: amount,
           })
-          debugger
+
           if (res.code === 0) {
             emit('success')
             ElMessage.success(i18n.t('DAO.Pledge successful'))
