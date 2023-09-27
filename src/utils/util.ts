@@ -71,6 +71,7 @@ import { toUnicode } from 'idna-uts46-hx'
 import { email } from './reg'
 import zlib from 'zlib'
 import { string } from 'yup'
+import { MetaletWallet } from './wallet/Metalet-wallet'
 
 const emojiReg = /[\u{1F601}-\u{1F64F}\u{2702}-\u{27B0}\u{1F680}-\u{1F6C0}\u{1F170}-\u{1F251}\u{1F600}-\u{1F636}\u{1F681}-\u{1F6C5}\u{1F30D}-\u{1F567}]/gu
 
@@ -822,14 +823,11 @@ export function randomNumber(minNum: number, maxNum: number) {
     case 1:
       // @ts-ignore
       return parseInt(Math.random() * minNum + 1, 10)
-      break
     case 2:
       // @ts-ignore
       return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10)
-      break
     default:
       return 0
-      break
   }
 }
 
@@ -1776,7 +1774,13 @@ export function getBalance(params: { chain: Chains }) {
       : isETHChain
       ? import.meta.env.VITE_ETH_CHAIN
       : import.meta.env.VITE_POLYGON_CHAIN
-    if (isBtLink) {
+    if (userStore.metaletLogin) {
+      console.log(userStore)
+      const metaWallet = userStore.showWallet.wallet as MetaletWallet
+      _params.xpub = await metaWallet.metaIDJsWallet.getXPublicKey()
+    }
+    if (isBtLink && !userStore.metaletLogin) {
+      //@ts-ignore
       _params.xpub = userStore.showWallet.wallet?.wallet.xpubkey.toString()
     }
     if (!isBtLink && !userStore.user?.evmAddress) {

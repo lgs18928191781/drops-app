@@ -132,6 +132,7 @@ function getBlance() {
         space: Chains.MVC,
       }
       // @ts-ignore
+      console.log('start get balance')
       const res = await getBalance({ chain: chains[talk.activeCommunity!.dao!.governanceSymbol] })
 
       if (typeof res === 'number') {
@@ -261,19 +262,21 @@ async function stake() {
         )
         debugger
         if (result) {
-          if (result.payToAddress?.transaction) {
-            await userStore.showWallet.wallet?.provider.broadcast(
-              result.payToAddress?.transaction.toString()
-            )
+          if (result.payToRes?.transaction) {
+            await userStore.showWallet.wallet?.provider.broadcast(result.payToRes?.txHex as string)
           }
+          // if (result.sendMoney?.transaction) {
+          //   await userStore.showWallet.wallet?.provider.broadcast(result.sendMoney?.txHex as string)
+          // }
+          debugger
           const res = await Pledge({
             symbol,
             requestIndex: stakeRes.data.requestIndex,
-            mvcRawTx: result.sendMoney!.transaction.toString(),
+            mvcRawTx: result.sendMoney!.txHex,
             mvcOutputIndex: 0,
             mvcAddAmount: amount,
           })
-
+          debugger
           if (res.code === 0) {
             emit('success')
             ElMessage.success(i18n.t('DAO.Pledge successful'))
@@ -356,6 +359,7 @@ async function stake() {
       }
     }
   } catch (error) {
+    console.log('error', error)
     ElMessage.error((error as any).message)
     loading.value = false
   }

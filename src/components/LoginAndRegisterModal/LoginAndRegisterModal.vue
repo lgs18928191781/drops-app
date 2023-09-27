@@ -383,241 +383,241 @@ async function sendCode() {
   }
 }
 
-function submitForm() {
-  FormRef.value.validate(async (valid: boolean) => {
-    if (valid) {
-      loading.value = true
-      try {
-        const phoneNum = form.area !== '86' ? form.area + form.phone : form.phone
-        if (props.type === 'login') {
-          //  登录
-          const params = {
-            type: isApp ? 2 : 1,
-            userType: form.userType || 'phone',
-            phone: phoneNum,
-            email: form.email,
-            code: form.code,
-            password: encryptPassword(form.password),
-          }
-          const loginRes = await LoginCheck(params)
-          if (loginRes.code === 0 || loginRes.code === 601) {
-            const loginInfo = loginRes.data as BaseUserInfoTypes
-            const account = {
-              ...loginInfo,
-              userType: params.userType,
-              phone: phoneNum,
-              email: params.email,
-              pk2: loginInfo.pk2,
-              name: loginInfo.name,
-              password: form.password,
-            }
-            // @ts-ignore
-            const walletInfo = await hdWalletFromAccount(account, import.meta.env.VITE_NET_WORK)
-            const hdWallet = new HdWallet(walletInfo.wallet)
-            let metaIdInfo = await hdWallet.getMetaIdInfo(walletInfo.rootAddress)
-            if (!metaIdInfo.metaId || !metaIdInfo.infoTxId || !metaIdInfo.protocolTxId) {
-              // @ts-ignore
-              let userInfo = {
-                ...account,
-                role: 'BASIC',
-                path: parseInt(import.meta.env.VITE_WALLET_PATH),
-              }
+// function submitForm() {
+//   FormRef.value.validate(async (valid: boolean) => {
+//     if (valid) {
+//       loading.value = true
+//       try {
+//         const phoneNum = form.area !== '86' ? form.area + form.phone : form.phone
+//         if (props.type === 'login') {
+//           //  登录
+//           const params = {
+//             type: isApp ? 2 : 1,
+//             userType: form.userType || 'phone',
+//             phone: phoneNum,
+//             email: form.email,
+//             code: form.code,
+//             password: encryptPassword(form.password),
+//           }
+//           const loginRes = await LoginCheck(params)
+//           if (loginRes.code === 0 || loginRes.code === 601) {
+//             const loginInfo = loginRes.data as BaseUserInfoTypes
+//             const account = {
+//               ...loginInfo,
+//               userType: params.userType,
+//               phone: phoneNum,
+//               email: params.email,
+//               pk2: loginInfo.pk2,
+//               name: loginInfo.name,
+//               password: form.password,
+//             }
+//             // @ts-ignore
+//             const walletInfo = await hdWalletFromAccount(account, import.meta.env.VITE_NET_WORK)
+//             const hdWallet = new HdWallet(walletInfo.wallet)
+//             let metaIdInfo = await hdWallet.getMetaIdInfo(walletInfo.rootAddress)
+//             if (!metaIdInfo.metaId || !metaIdInfo.infoTxId || !metaIdInfo.protocolTxId) {
+//               // @ts-ignore
+//               let userInfo = {
+//                 ...account,
+//                 role: 'BASIC',
+//                 path: parseInt(import.meta.env.VITE_WALLET_PATH),
+//               }
 
-              metaIdInfo = await hdWallet.initMetaIdNode(userInfo)
+//               metaIdInfo = await hdWallet.initMetaIdNode(userInfo)
 
-              await SetUserInfo({
-                ...userInfo,
-                // @ts-ignore
-                metaid: metaIdInfo.metaId,
-                // @ts-ignore
-                accessKey: userInfo.token,
-              })
-            }
-            // if (!metaIdInfo.metaId) {
-            //   return ElMessageBox.alert(
-            //     `${i18n.t('FixAccountTips1')} ${import.meta.env.VITE_SHOW_MONEY_APP} ${i18n.t(
-            //       'FixAccountTips2'
-            //     )}`,
-            //     i18n.t('niceWarning'),
-            //     {
-            //       showClose: false,
-            //       confirmButtonText: `${i18n.t('FixAccountTips3')}`,
-            //     }
-            //   ).then(() => {
-            //     location.href = `${import.meta.env.VITE_SHOW_MONEY_APP}`
-            //   })
-            // }
+//               await SetUserInfo({
+//                 ...userInfo,
+//                 // @ts-ignore
+//                 metaid: metaIdInfo.metaId,
+//                 // @ts-ignore
+//                 accessKey: userInfo.token,
+//               })
+//             }
+//             // if (!metaIdInfo.metaId) {
+//             //   return ElMessageBox.alert(
+//             //     `${i18n.t('FixAccountTips1')} ${import.meta.env.VITE_SHOW_MONEY_APP} ${i18n.t(
+//             //       'FixAccountTips2'
+//             //     )}`,
+//             //     i18n.t('niceWarning'),
+//             //     {
+//             //       showClose: false,
+//             //       confirmButtonText: `${i18n.t('FixAccountTips3')}`,
+//             //     }
+//             //   ).then(() => {
+//             //     location.href = `${import.meta.env.VITE_SHOW_MONEY_APP}`
+//             //   })
+//             // }
 
-            // @ts-ignore
-            userStore.updateUserInfo({
-              ...account,
-              metaId: metaIdInfo.metaId,
-              infoTxId: metaIdInfo.infoTxId,
-              protocolTxId: metaIdInfo.protocolTxId,
-              userType: params.userType,
-              phone: phoneNum,
-              rootAddress: walletInfo.rootAddress,
-              password: form.password,
-            })
-            userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
-            userStore.showWallet.initWallet()
-            FormRef.value.resetFields()
-            loading.value = false
-            emit('update:modelValue', false)
-            emit('success', props.type)
-          } else {
-            loading.value = false
-            ElMessage.error(loginRes.msg)
-          }
-        } else {
-          // 注册
-          const params = {
-            type: 2, // 注册时必须加上图片验证码验证， 1 是给App用的的，App没有图片验证码
-            userType: form.userType || 'phone',
-            phone: phoneNum,
-            email: form.email,
-            code: form.code,
-            name: form.name,
-            promotion: '',
-            imageCode: form.imageCode,
-            characteristic: characteristic.value,
-          }
-          const loginName = params.userType === 'phone' ? phoneNum : params.email
-          const registerRes = await RegisterCheck(params)
-          // console.log(registerRes)
-          if (registerRes.code === 0) {
-            let userInfo = registerRes.result as BaseUserInfoTypes
-            const walletInfo = await hdWalletFromAccount(
-              {
-                ...userInfo,
-                userType: params.userType,
-                phone: phoneNum,
-                email: params.email,
-                pk2: userInfo.pk2,
-                name: params.name,
-                password: form.password,
-              },
-              import.meta.env.VITE_NET_WORK
-            )
+//             // @ts-ignore
+//             userStore.updateUserInfo({
+//               ...account,
+//               metaId: metaIdInfo.metaId,
+//               infoTxId: metaIdInfo.infoTxId,
+//               protocolTxId: metaIdInfo.protocolTxId,
+//               userType: params.userType,
+//               phone: phoneNum,
+//               rootAddress: walletInfo.rootAddress,
+//               password: form.password,
+//             })
+//             userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
+//             userStore.showWallet.initWallet()
+//             FormRef.value.resetFields()
+//             loading.value = false
+//             emit('update:modelValue', false)
+//             emit('success', props.type)
+//           } else {
+//             loading.value = false
+//             ElMessage.error(loginRes.msg)
+//           }
+//         } else {
+//           // 注册
+//           const params = {
+//             type: 2, // 注册时必须加上图片验证码验证， 1 是给App用的的，App没有图片验证码
+//             userType: form.userType || 'phone',
+//             phone: phoneNum,
+//             email: form.email,
+//             code: form.code,
+//             name: form.name,
+//             promotion: '',
+//             imageCode: form.imageCode,
+//             characteristic: characteristic.value,
+//           }
+//           const loginName = params.userType === 'phone' ? phoneNum : params.email
+//           const registerRes = await RegisterCheck(params)
+//           // console.log(registerRes)
+//           if (registerRes.code === 0) {
+//             let userInfo = registerRes.result as BaseUserInfoTypes
+//             const walletInfo = await hdWalletFromAccount(
+//               {
+//                 ...userInfo,
+//                 userType: params.userType,
+//                 phone: phoneNum,
+//                 email: params.email,
+//                 pk2: userInfo.pk2,
+//                 name: params.name,
+//                 password: form.password,
+//               },
+//               import.meta.env.VITE_NET_WORK
+//             )
 
-            const userInfoParams = {
-              userType: params.userType,
-              phone: phoneNum,
-              email: params.email,
-              remark: form.remark,
-              address: walletInfo.rootAddress,
-            }
-            const setWalletRes = await SetUserWalletInfo({
-              ...userInfoParams,
-              type: 2,
-              xpub: walletInfo.wallet.xpubkey,
-              pubkey: walletInfo.wallet.publicKey.toString(),
-              headers: {
-                accessKey: userInfo.token || '',
-                timestamp: Date.now(),
-                userName: loginName,
-              },
-              path: parseInt(import.meta.env.VITE_WALLET_PATH),
-            })
-            if (setWalletRes.code !== 0) {
-              throw new Error('保存钱包信息失败 -1')
-            }
-            const ePassword = encryptPassword(form.password)
-            const eMnemonic = encryptMnemonic(walletInfo.mnemonic, form.password)
-            const setPasswordRes = await SetUserPassword(
-              {
-                ...userInfoParams,
-                password: ePassword,
-                affirmPassword: ePassword,
-                enCryptedMnemonic: eMnemonic,
-              },
-              userInfo.token || '',
-              loginName
-            )
-            if (setPasswordRes.code !== 0) {
-              throw new Error('保存钱包信息失败 -2')
-            }
+//             const userInfoParams = {
+//               userType: params.userType,
+//               phone: phoneNum,
+//               email: params.email,
+//               remark: form.remark,
+//               address: walletInfo.rootAddress,
+//             }
+//             const setWalletRes = await SetUserWalletInfo({
+//               ...userInfoParams,
+//               type: 2,
+//               xpub: walletInfo.wallet.xpubkey,
+//               pubkey: walletInfo.wallet.publicKey.toString(),
+//               headers: {
+//                 accessKey: userInfo.token || '',
+//                 timestamp: Date.now(),
+//                 userName: loginName,
+//               },
+//               path: parseInt(import.meta.env.VITE_WALLET_PATH),
+//             })
+//             if (setWalletRes.code !== 0) {
+//               throw new Error('保存钱包信息失败 -1')
+//             }
+//             const ePassword = encryptPassword(form.password)
+//             const eMnemonic = encryptMnemonic(walletInfo.mnemonic, form.password)
+//             const setPasswordRes = await SetUserPassword(
+//               {
+//                 ...userInfoParams,
+//                 password: ePassword,
+//                 affirmPassword: ePassword,
+//                 enCryptedMnemonic: eMnemonic,
+//               },
+//               userInfo.token || '',
+//               loginName
+//             )
+//             if (setPasswordRes.code !== 0) {
+//               throw new Error('保存钱包信息失败 -2')
+//             }
 
-            const account = {
-              ...userInfo,
-              userType: params.userType,
-              phone: phoneNum,
-              email: params.email,
-              password: form.password,
-            }
-            const activityId = window.localStorage.getItem('activityId')
-            const referrerId = window.localStorage.getItem('referrerId')
-            if (activityId && referrerId) {
-              account.referrerId = referrerId
-            }
+//             const account = {
+//               ...userInfo,
+//               userType: params.userType,
+//               phone: phoneNum,
+//               email: params.email,
+//               password: form.password,
+//             }
+//             const activityId = window.localStorage.getItem('activityId')
+//             const referrerId = window.localStorage.getItem('referrerId')
+//             if (activityId && referrerId) {
+//               account.referrerId = referrerId
+//             }
 
-            const hdWallet = new HdWallet(walletInfo.wallet)
-            const metaIdInfo = await hdWallet.initMetaIdNode(account)
-            if (!metaIdInfo) {
-              throw new Error('Create MetaID Error')
-            }
-            userInfo = {
-              ...userInfo,
-              ...metaIdInfo,
-              phone: phoneNum,
-              email: params.email,
-              userType: params.userType,
-              enCryptedMnemonic: eMnemonic,
-              // @ts-ignore
-              rootAddress: walletInfo.rootAddress,
-              address: walletInfo.rootAddress,
-            }
-            userInfo.userType = userInfo.userType ? userInfo.userType : userInfo?.registerType
-            await SetUserInfo({
-              // @ts-ignore
-              userType: params.userType,
-              metaid: metaIdInfo.metaId,
-              // @ts-ignore
-              accessKey: userInfo.token,
-              phone: userInfo.phone,
-              email: userInfo.email,
-            })
-            // @ts-ignore
-            await userStore.updateUserInfo({
-              ...userInfo,
-              password: form.password,
-            })
-            userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
-            userStore.showWallet.initWallet()
-            // 处理活动邀请信息
-            if (activityId && referrerId) {
-              const result = await CommitActivity({
-                actionIndex: 5,
-                activityId: parseInt(activityId),
-                // @ts-ignore
-                address: userInfo!.address!,
-                // @ts-ignore
-                metaId: userInfo!.metaId!,
-                // @ts-ignore
-                publicKey: userInfo.pubKey,
-                refererMetaId: referrerId,
-                tag: InviteActivityTag.Rigisted,
-              })
-              // @ts-ignore
-              if (result.code !== 0) {
-                Error(result.data)
-              }
-              localStorage.removeItem('activityId')
-              localStorage.removeItem('referrerId')
-            }
-            FormRef.value.resetFields()
-            loading.value = false
-            emit('update:modelValue', false)
-            emit('success', props.type)
-          }
-        }
-      } catch (error) {
-        loading.value = false
-        ElMessage.error((error as any).message)
-      }
-    }
-  })
-}
+//             const hdWallet = new HdWallet(walletInfo.wallet)
+//             const metaIdInfo = await hdWallet.initMetaIdNode(account)
+//             if (!metaIdInfo) {
+//               throw new Error('Create MetaID Error')
+//             }
+//             userInfo = {
+//               ...userInfo,
+//               ...metaIdInfo,
+//               phone: phoneNum,
+//               email: params.email,
+//               userType: params.userType,
+//               enCryptedMnemonic: eMnemonic,
+//               // @ts-ignore
+//               rootAddress: walletInfo.rootAddress,
+//               address: walletInfo.rootAddress,
+//             }
+//             userInfo.userType = userInfo.userType ? userInfo.userType : userInfo?.registerType
+//             await SetUserInfo({
+//               // @ts-ignore
+//               userType: params.userType,
+//               metaid: metaIdInfo.metaId,
+//               // @ts-ignore
+//               accessKey: userInfo.token,
+//               phone: userInfo.phone,
+//               email: userInfo.email,
+//             })
+//             // @ts-ignore
+//             await userStore.updateUserInfo({
+//               ...userInfo,
+//               password: form.password,
+//             })
+//             userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
+//             userStore.showWallet.initWallet()
+//             // 处理活动邀请信息
+//             if (activityId && referrerId) {
+//               const result = await CommitActivity({
+//                 actionIndex: 5,
+//                 activityId: parseInt(activityId),
+//                 // @ts-ignore
+//                 address: userInfo!.address!,
+//                 // @ts-ignore
+//                 metaId: userInfo!.metaId!,
+//                 // @ts-ignore
+//                 publicKey: userInfo.pubKey,
+//                 refererMetaId: referrerId,
+//                 tag: InviteActivityTag.Rigisted,
+//               })
+//               // @ts-ignore
+//               if (result.code !== 0) {
+//                 Error(result.data)
+//               }
+//               localStorage.removeItem('activityId')
+//               localStorage.removeItem('referrerId')
+//             }
+//             FormRef.value.resetFields()
+//             loading.value = false
+//             emit('update:modelValue', false)
+//             emit('success', props.type)
+//           }
+//         }
+//       } catch (error) {
+//         loading.value = false
+//         ElMessage.error((error as any).message)
+//       }
+//     }
+//   })
+// }
 </script>
 
 <style lang="scss" scoped src="./LoginAndRegisterModal.scss"></style>
