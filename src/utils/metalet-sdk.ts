@@ -415,7 +415,7 @@ export class MetaletSDK {
           console.log('params', params)
           // debugger
           let transactions = await this.createBrfcChildNodeTransactions(params)
-
+          debugger
           let payToRes: CreateNodeBaseRes | undefined = undefined
           if (!params.utxos!.length) {
             // 计算总价 预估
@@ -948,6 +948,7 @@ export class MetaletSDK {
             utxos: params.utxos,
             chain: chain,
           })
+          debugger
           if (tx) {
             transactions.sendMoney = {
               txId: tx.id,
@@ -2040,7 +2041,7 @@ export class MetaletSDK {
               addressIndex: 0,
             }
           })
-          const useUtxos = []
+          let useUtxos = []
           if (allUtxos && allUtxos?.length > 0) {
             // 总价加个 最小金额  给转账费用
             let leftAmount = params.amount + mvc.Transaction.DUST_AMOUNT
@@ -2056,6 +2057,22 @@ export class MetaletSDK {
               // @ts-ignore
               throw new Error(i18n.global.t('Insufficient balance'))
             } else {
+              if (allUtxos.length > 1) {
+                useUtxos = []
+                const txid = await this.wallet?.metaIDJsWallet.merge()
+
+                if (txid) {
+                  debugger
+                  let newUtxo = await this.wallet?.metaIDJsWallet.getUtxos({ path: '0/0' })
+                  debugger
+                  newUtxo = {
+                    ...newUtxo,
+                    addressType: 0,
+                    addressIndex: 0,
+                  }
+                  useUtxos.push(newUtxo)
+                }
+              }
               const { tx, path } = await this.wallet?.makeTx({
                 utxos: useUtxos,
                 opReturn: [],
