@@ -167,6 +167,7 @@ export const useUserStore = defineStore('user', {
         if (rootStore.isShowLogin) rootStore.$patch({ isShowLogin: false })
         if (this.metaletLogin) {
           this.updateMetaletLoginState(false)
+          localStorage.removeItem('useMetaletLogin')
           const state = await window.metaidwallet.isConnected()
           if (state) {
             await window.metaidwallet.disconnect()

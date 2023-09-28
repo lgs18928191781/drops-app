@@ -875,7 +875,10 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
         ?.getPathPrivateKey(wallet.keyPathMap.Info.keyPath)
         .publicKey.toAddress(wallet.network)
         .toString()
-      protocolAddress = wallet!.protocolAddress
+      protocolAddress = wallet
+        ?.getPathPrivateKey(wallet.keyPathMap.Protocols.keyPath)
+        .publicKey.toAddress(wallet.network)
+        .toString()
 
       const broadcasts: string[] | mvc.Transaction[] = []
 

@@ -79,10 +79,12 @@ const walletPath = import.meta.env.VITE_WALLET_PATH
 watch(
   () => props.modelValue,
   () => {
-    mnemonic.value = decryptMnemonic(
-      userStore.user!.enCryptedMnemonic,
-      decode(localStorage.getItem(encode('password'))!)
-    )
+    if (!userStore.metaletLogin) {
+      mnemonic.value = decryptMnemonic(
+        userStore.user!.enCryptedMnemonic,
+        decode(localStorage.getItem(encode('password'))!)
+      )
+    }
   }
 )
 
