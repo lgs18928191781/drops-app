@@ -299,23 +299,23 @@ export class MetaletWallet {
           if (!metaIdInfo.metaId) {
             // TODO: 尝试获始资金
             if (!utxos.length) {
-              const { signature } = await this.metaIDJsWallet.signMessage({
-                message: import.meta.env.VITE_SIGN_MSG,
-                encoding: encodingType.hex,
-              })
-              const publicKey = await this.metaIDJsWallet.getPublicKey({ path: '0/0' })
-              console.log('signature', signature, publicKey)
+              // const { signature } = await this.metaIDJsWallet.signMessage({
+              //   message: import.meta.env.VITE_SIGN_MSG,
+              //   encoding: encodingType.hex,
+              // })
+              // const publicKey = await this.metaIDJsWallet.getPublicKey({ path: '0/0' })
+              // console.log('signature', signature, publicKey)
 
               const initUtxo = await this.provider.getInitAmount({
                 address: this.rootAddress,
                 xpub: this.xpub,
                 reqSource: GetInitAmountType.metalet,
-                sigInfo: {
-                  xSignature: signature,
-                  xPublickey: publicKey,
-                },
+                // sigInfo: {
+                //   xSignature: signature,
+                //   xPublickey: publicKey,
+                // },
               })
-              debugger
+
               utxos = [initUtxo]
             } else {
             }

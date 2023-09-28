@@ -334,10 +334,10 @@ export default class ShowmoneyProvider {
     } else {
       url = '/nodemvc/api/v1/pri/wallet/sendInitSatsForMetalet'
 
-      options.headers = {
-        ...options.headers,
-        ...params.sigInfo,
-      }
+      // options.headers = {
+      //   ...options.headers,
+      //   ...params.sigInfo,
+      // }
     }
 
     const res = await this.callApi({
