@@ -47,7 +47,7 @@ export class Session {
           const _address = await userStore.showWallet!.wallet!.metaIDJsWallet.getAddress({
             path: `0/${i}`,
           })
-          debugger
+
           console.log('_address', _address)
           if (_address === address) {
             console.log('path', i)

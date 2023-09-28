@@ -354,7 +354,7 @@ export class SDK {
         utxos: [],
         useFeeb: DEFAULTS.feeb,
       }
-      debugger
+
       params = {
         ...initParams,
         ...params,
@@ -945,7 +945,7 @@ export class SDK {
               // const FTGetFeeFunctionName = {
               //   [NodeName.FtTransfer]: 'getTransferEstimateFee',
               // }
-              debugger
+
               // @ts-ignore
               const feeNumber = 20000 //await ftManager[FTGetFeeFunctionName[params.nodeName]](_params)
               // @ts-ignore

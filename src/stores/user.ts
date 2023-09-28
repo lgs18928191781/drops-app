@@ -111,10 +111,14 @@ export const useUserStore = defineStore('user', {
       isSetedisTestUser: false,
       isTestUser: false,
       sdkPayConfirm: sdkPayConfirm,
-      metaletLogin: localStorage.getItem('useMetaletLogin') || false,
+      metaletLogin: Boolean(Number(localStorage.getItem('useMetaletLogin'))) || Boolean(0),
       sdkPayment: localStorage.getItem(sdkPayConfirmPaymentKey) || SdkPayType.ME,
     },
   getters: {
+    getMetaletloginState: state => {
+      console.log('222222', Boolean(0))
+      return state.metaletLogin
+    },
     getSdkPayment: state => {
       if (state.metaletLogin) {
         return SdkPayType.SPACE
@@ -149,11 +153,11 @@ export const useUserStore = defineStore('user', {
   },
   actions: {
     logout(route: RouteLocationNormalizedLoaded) {
-      return new Promise<void>(resolve => {
+      return new Promise<void>(async resolve => {
         const talkStore = useTalkStore()
         const rootStore = useRootStore()
         const genesStore = useGenesisStore()
-        // debugger
+        //
         // 只保存pwaInstall状态
         const pwaInstall = localStorage.getItem('pwaInstall')
         localStorage.clear()
@@ -163,6 +167,10 @@ export const useUserStore = defineStore('user', {
         if (rootStore.isShowLogin) rootStore.$patch({ isShowLogin: false })
         if (this.metaletLogin) {
           this.updateMetaletLoginState(false)
+          const state = await window.metaidwallet.isConnected()
+          if (state) {
+            await window.metaidwallet.disconnect()
+          }
         }
         if (window.provider) window.provider = undefined
         // localStorage.removeItem(encode('user'))
@@ -180,7 +188,7 @@ export const useUserStore = defineStore('user', {
 
         talkStore.reset()
         genesStore.initGenesis()
-        // debugger
+        //
         if (route.meta.isAuth) router.push('/')
         // talk的路由跳buzz推荐页
         if (route.path.includes('talk')) router.push('/buzz/recommend')
@@ -191,7 +199,7 @@ export const useUserStore = defineStore('user', {
     updateUserInfo(userInfo: Partial<SetUserInfo>) {
       return new Promise<void>(async resolve => {
         console.log('userInfo', userInfo)
-        // debugger
+        //
         const { password, ...data } = userInfo
 
         // 兼容处理
@@ -217,7 +225,7 @@ export const useUserStore = defineStore('user', {
         try {
           this.user = data
           console.log('this.uesr', this.user)
-          // debugger
+          //
         } catch {}
 
         const genesisStore = useGenesisStore()
@@ -228,7 +236,7 @@ export const useUserStore = defineStore('user', {
 
     updateMetaletLoginState(isUseMetalet: boolean) {
       this.metaletLogin = isUseMetalet
-      localStorage.setItem('useMetaletLogin', isUseMetalet)
+      localStorage.setItem('useMetaletLogin', Number(isUseMetalet).toString())
     },
 
     setKycInfo() {

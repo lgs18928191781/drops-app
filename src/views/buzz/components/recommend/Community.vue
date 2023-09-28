@@ -123,6 +123,7 @@ async function join(item: recommnedCommunity, index: number) {
       ElMessage.error(error.message)
       loading[index] = false
     })
+
   if (res) {
     sleep(2000).then(() => {
       talkStore.fetchCommunities()

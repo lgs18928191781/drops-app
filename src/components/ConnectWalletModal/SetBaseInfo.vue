@@ -115,7 +115,7 @@ const currentAvatar: { val: NFTAvatarItem } = reactive({
   },
 })
 console.log('currentAvatar', currentAvatar.val)
-debugger
+
 watch(
   () => userStore.isAuthorized,
   () => {

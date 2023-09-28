@@ -314,6 +314,10 @@ export default class ShowmoneyProvider {
     reqSource?: GetInitAmountType
     token?: string
     userName?: string
+    sigInfo?: {
+      xSignature: string
+      xPublickey: string
+    }
   }): Promise<BaseUtxo> {
     let url
     let options = {
@@ -329,6 +333,11 @@ export default class ShowmoneyProvider {
       url = '/nodemvc/api/v1/pri/wallet/sendInitSatsForMetaSV'
     } else {
       url = '/nodemvc/api/v1/pri/wallet/sendInitSatsForMetalet'
+
+      options.headers = {
+        ...options.headers,
+        ...params.sigInfo,
+      }
     }
 
     const res = await this.callApi({

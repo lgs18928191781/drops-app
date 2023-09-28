@@ -151,32 +151,62 @@ async function extract() {
       )
       if (transfer) {
         if (transfer.payToAddress?.transaction) {
-          await userStore.showWallet.wallet?.provider.broadcast(
-            transfer.payToAddress?.transaction.toString()
-          )
+          if (userStore.metaletLogin) {
+            await userStore.showWallet.wallet?.provider.broadcast(transfer.payToAddress?.txHex)
+          } else {
+            await userStore.showWallet.wallet?.provider.broadcast(
+              transfer.payToAddress?.transaction.toString()
+            )
+          }
         }
 
         const withdrawRes = await Withdraw({
           symbol,
           requestIndex: stakeRes.data.requestIndex,
-          mvcRawTx: transfer.sendMoney.transaction.toString(),
+          mvcRawTx: userStore.metaletLogin
+            ? transfer.sendMoney.txHex
+            : transfer.sendMoney.transaction.toString(),
           mvcOutputIndex: 0,
         })
         if (withdrawRes.code === 0) {
           const tx = new mvc.Transaction(withdrawRes.data.txHex)
           // @ts-ignore
           const script = mvc.Script.fromBuffer(Buffer.from(withdrawRes.data.scriptHex, 'hex'))
-          const pubKey = userStore.showWallet.wallet!.getPathPubliceKey('0/0').toHex()
-          const sig = toHex(
-            signTx(
-              // @ts-ignore
-              tx,
-              userStore.showWallet.wallet!.getPathPrivateKey('0/0'),
-              script,
-              Number(withdrawRes.data.satoshis),
-              withdrawRes.data.inputIndex
+          const pubKey = userStore.metaletLogin
+            ? await userStore.showWallet.wallet!.metaIDJsWallet.getPublicKey({
+                path: '0/0',
+              })
+            : userStore.showWallet.wallet!.getPathPubliceKey('0/0').toHex()
+
+          let signedTransaction
+          if (userStore.metaletLogin) {
+            const { signature } = await userStore.showWallet.wallet!.metaIDJsWallet.signTransaction(
+              {
+                transaction: {
+                  txHex: withdrawRes.data.txHex,
+                  inputIndex: withdrawRes.data.inputIndex,
+                  scriptHex: withdrawRes.data.scriptHex,
+                  satoshis: Number(withdrawRes.data.satoshis),
+                },
+              }
             )
-          )
+            console.log('signedTransactions', signature, pubKey)
+
+            signedTransaction = signature.sig
+          }
+
+          const sig = userStore.metaletLogin
+            ? signedTransaction
+            : toHex(
+                signTx(
+                  // @ts-ignore
+                  tx,
+                  userStore.showWallet.wallet!.getPathPrivateKey('0/0'),
+                  script,
+                  Number(withdrawRes.data.satoshis),
+                  withdrawRes.data.inputIndex
+                )
+              )
           const withdrawRes2 = await Withdraw2({
             symbol,
             requestIndex: stakeRes.data.requestIndex,

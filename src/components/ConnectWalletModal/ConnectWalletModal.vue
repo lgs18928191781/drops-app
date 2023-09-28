@@ -182,7 +182,7 @@ import AllNodeName from '@/utils/AllNodeName'
 import { computeStyles } from '@popperjs/core'
 import { setUser } from '@sentry/vue'
 import SPACEIcon from '@/assets/images/icon_mvc.png'
-import { MetaletWallet, TransactionInfo } from '@/utils/wallet/Metalet-wallet'
+import { encodingType, MetaletWallet, TransactionInfo } from '@/utils/wallet/Metalet-wallet'
 
 const rootStore = useRootStore()
 const userStore = useUserStore()
@@ -620,7 +620,6 @@ async function OnMetaIdSuccess(type: 'register' | 'login') {
 }
 
 async function onSetBaseInfoSuccessType(params: { name: string; nft: NFTAvatarItem }) {
-  debugger
   if (userStore.metaletLogin) {
     await onSetBaseInfoSuccessForMetalet(params)
   } else {
@@ -629,7 +628,6 @@ async function onSetBaseInfoSuccessType(params: { name: string; nft: NFTAvatarIt
 }
 
 async function onSetBaseInfoSuccessForMetalet(params: { name: string; nft: NFTAvatarItem }) {
-  debugger
   loading.value = true
   try {
     const wallet = userStore.showWallet!.wallet
@@ -637,7 +635,7 @@ async function onSetBaseInfoSuccessForMetalet(params: { name: string; nft: NFTAv
     if (userStore.isAuthorized) {
       let utxos, infoAddress, protocolAddress
       utxos = await wallet?.metaIDJsWallet.getUtxos({ path: '0/1' })
-      debugger
+
       infoAddress = await wallet?.metaIDJsWallet.getAddress({
         path: wallet.keyPathMap.Info.keyPath,
       })
@@ -661,7 +659,7 @@ async function onSetBaseInfoSuccessForMetalet(params: { name: string; nft: NFTAv
       //   },
       // ]
       // if (params.nft.avatarImage !== userStore.user!.avatarImage) {
-      //   debugger
+      //
       //   payTo.push({
       //     amount: 2000,
       //     address: protocolAddress,
@@ -674,7 +672,7 @@ async function onSetBaseInfoSuccessForMetalet(params: { name: string; nft: NFTAv
       //     change: wallet.rootAddress,
       //     payTo,
       //   })
-      //   debugger
+      //
       //   broadcasts.push({
       //     hex: tx.toString(),
       //     transation: tx,
@@ -688,7 +686,6 @@ async function onSetBaseInfoSuccessForMetalet(params: { name: string; nft: NFTAv
       //     },
       //     outPutIndex: 0,
       //   })
-      debugger
 
       if (utxos.length) {
         //utxos = [utxo]
@@ -699,7 +696,7 @@ async function onSetBaseInfoSuccessForMetalet(params: { name: string; nft: NFTAv
           utxos: utxos,
           change: wallet!.rootAddress,
         })
-        debugger
+
         const transaction = {
           hex: createNameNode.transaction.toString(),
           transation: createNameNode.transaction,
@@ -786,12 +783,12 @@ async function onSetBaseInfoSuccessForMetalet(params: { name: string; nft: NFTAv
       //     })
       // }
       console.log('wallet!.metaIDJsWallet', wallet!.metaIDJsWallet)
-      debugger
+
       const unSignTransations: TransactionInfo[] = []
       broadcasts.forEach(tx => {
         const { transation } = tx
         console.log('tx', tx)
-        debugger
+
         if (tx.hasMetaId) {
           unSignTransations.push({
             txHex: transation.toString(),
@@ -845,7 +842,7 @@ async function onSetBaseInfoSuccessForMetalet(params: { name: string; nft: NFTAv
       //   ...userInfo,
       //   userName: params.name ? params.name : userStore.user!.name,
       // })
-      // debugger
+      //
       // 更新本地用户信息
       userStore.updateUserInfo({
         ...userStore.user!,
@@ -869,7 +866,6 @@ async function onSetBaseInfoSuccessForMetalet(params: { name: string; nft: NFTAv
 async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }) {
   loading.value = true
   try {
-    debugger
     const wallet = userStore.showWallet!.wallet
 
     if (userStore.isAuthorized) {
@@ -912,7 +908,7 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
         },
         outPutIndex: 0,
       })
-      // debugger
+      //
 
       if (utxo) {
         utxos = [utxo]
@@ -1050,7 +1046,7 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
 
 async function connectMetalet() {
   const { address } = await window.metaidwallet.connect()
-  // debugger
+  //
   if (!address) {
     return ElMessage.error(`${i18n.t('wallet_addres_empty')}`)
   }
@@ -1073,7 +1069,7 @@ async function connectMetalet() {
   }
 
   console.log('metaletWallet', metaIdInfo)
-  // debugger
+  //
   userStore.updateUserInfo({
     ...metaIdInfo,
     metaId: metaIdInfo.metaId, // account 有时拿回来的metaId为空
@@ -1085,12 +1081,16 @@ async function connectMetalet() {
   console.log('metaidwallet', metaidWallet)
   userStore.updateMetaletLoginState(true)
   userStore.$patch({
+    wallet: null,
+  })
+
+  userStore.$patch({
     wallet: new MetaletSDK({
       network: import.meta.env.VITE_NET_WORK,
       wallet: metaidWallet,
     }),
   })
-  userStore.showWallet.initWallet()
+  //userStore.showWallet.initWallet()
 
   status.value = ConnectWalletStatus.Watting
   rootStore.$patch({ isShowLogin: false })
@@ -1329,7 +1329,7 @@ async function onModalClose() {
 //     chainId: 'eip155:1',
 //     nonce: generateNonce(),
 //   })
-//   // debugger
+//   //
 //   if (uri) {
 //     await authClient.core.pairing.pair({ uri })
 //     QRCodeModal.open(uri, res => {

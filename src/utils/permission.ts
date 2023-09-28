@@ -69,7 +69,7 @@ router.beforeEach(async (to, from, next) => {
   }
 
   if (!userStore.showWallet) {
-    if (userStore.metaletLogin) {
+    if (userStore.getMetaletloginState) {
       await sleep(2)
       const address = await window.metaidwallet.getAddress()
 
@@ -83,7 +83,9 @@ router.beforeEach(async (to, from, next) => {
         metaIDJsWallet: window.metaidwallet,
         network: network,
       })
-
+      userStore.$patch({
+        wallet: null,
+      })
       userStore.$patch({
         wallet: new MetaletSDK({
           network: import.meta.env.VITE_NET_WORK,
@@ -91,6 +93,9 @@ router.beforeEach(async (to, from, next) => {
         }),
       })
     } else {
+      userStore.$patch({
+        wallet: null,
+      })
       userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
     }
   }
@@ -212,5 +217,5 @@ function SetMeta(to: RouteLocationNormalized) {
 
 // router.afterEach((to, from, failure) => {
 //   console.log(window.history)
-//   // debugger
+//   //
 // })

@@ -1,4 +1,4 @@
-import { SignUserType, ToCurrency } from '@/enum'
+import { SignUserType, ToCurrency, NodeName } from '@/enum'
 import { defineStore } from 'pinia'
 import { GetCertMetaIdList } from '@/api/aggregation'
 import i18n from '@/utils/i18n'
@@ -37,6 +37,7 @@ interface RootState {
   isImportMnemonicLogin?: boolean
   isRereshData?: boolean
   myBlackList?: string[]
+  metaletWhiteProtocolList: NodeName[]
 }
 
 const UA = window.navigator.userAgent.toLowerCase()
@@ -99,6 +100,7 @@ export const useRootStore = defineStore('root', {
       isImportMnemonicLogin: localStorage.getItem('isImportMnemonicLogin') || false,
       isRereshData: false,
       myBlackList: [],
+      metaletWhiteProtocolList: [NodeName.SendMoney, NodeName.SimpleCommunityJoin, NodeName.Name],
       // showDiffLang:
       //   localStorage.getItem('showDiffLang') && Number(localStorage.getItem('showDiffLang')),
     },

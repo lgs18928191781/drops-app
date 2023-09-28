@@ -240,7 +240,7 @@ async function stake() {
           .mul(currentSymbol.value!.rate)
           .toInteger()
           .toNumber()
-        debugger
+
         const result = await userStore.showWallet.createBrfcChildNode(
           {
             nodeName: NodeName.SendMoney,
@@ -306,7 +306,6 @@ async function stake() {
         op: DAOStakeOperate.Unlock,
       })
       if (stakeRes.code === 0) {
-        debugger
         const transfer = await userStore.showWallet.createBrfcChildNode(
           {
             nodeName: NodeName.SendMoney,
@@ -337,39 +336,35 @@ async function stake() {
             mvcOutputIndex: 0,
             requestIndex: stakeRes.data.requestIndex,
           })
-          debugger
+
           if (unlockRes.code === 0) {
-            console.log('unlockRes', unlockRes)
-            debugger
             const tx = new mvc.Transaction(unlockRes.data.txHex)
             // @ts-ignore
+
             const script = mvc.Script.fromBuffer(Buffer.from(unlockRes.data.scriptHex, 'hex'))
             const pubKey = userStore.metaletLogin
               ? await userStore.showWallet.wallet!.metaIDJsWallet.getPublicKey({
                   path: '0/0',
                 })
               : userStore.showWallet.wallet!.getPathPubliceKey('0/0').toHex()
-            debugger
-            console.log('tx', tx)
-            debugger
+
             let signedTransaction
             if (userStore.metaletLogin) {
               const {
-                signedTransactions,
-              } = await userStore.showWallet.wallet!.metaIDJsWallet.signTransactions({
-                transactions: [
-                  {
-                    txHex: unlockRes.data.txHex,
-                    //address: unlockRes.data.,
-                    inputIndex: unlockRes.data.inputIndex,
-                    scriptHex: unlockRes.data.scriptHex,
-                    satoshis: Number(unlockRes.data.satoshis),
-                  },
-                ],
+                signature,
+              } = await userStore.showWallet.wallet!.metaIDJsWallet.signTransaction({
+                transaction: {
+                  txHex: unlockRes.data.txHex,
+                  inputIndex: unlockRes.data.inputIndex,
+                  scriptHex: unlockRes.data.scriptHex,
+                  satoshis: Number(unlockRes.data.satoshis),
+                },
               })
-              signedTransaction = signedTransactions[0].txHex
-            }
+              console.log('signedTransactions', signature, pubKey)
 
+              signedTransaction = signature.sig
+            }
+            console.log('zxxzczxcz', userStore.metaletLogin)
             const sig = userStore.metaletLogin
               ? signedTransaction
               : toHex(
@@ -382,7 +377,14 @@ async function stake() {
                     unlockRes.data.inputIndex
                   )
                 )
-            debugger
+            console.log('sig', sig)
+            //
+            // const txHeex = new mvc.Transaction(sig)
+            // // console.log('txHeex', txHeex)
+            // //
+            // // const txRes = await userStore.showWallet.wallet?.provider.broadcast(signedTransaction)
+            // console.log('txtxRes', txHeex)
+            //
             const unlock2Res = await Unlock2({
               symbol,
               requestIndex: stakeRes.data.requestIndex,

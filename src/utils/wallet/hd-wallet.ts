@@ -1116,7 +1116,7 @@ export class HdWallet {
   }: TransferTypes): Promise<mvc.Transaction> {
     return new Promise(async (resolve, reject) => {
       try {
-        const tx = await this.makeTxNotUtxos({
+        const { tx } = await this.makeTxNotUtxos({
           payTo,
           outputs,
           opReturn,
@@ -1165,8 +1165,8 @@ export class HdWallet {
         /**
          * metalet-change  以下步骤涉及签名 交给metalet处理
          */
-        // const privateKeys = this.getUtxosPrivateKeys(utxos)
-        // tx.sign(privateKeys)
+        const privateKeys = this.getUtxosPrivateKeys(utxos)
+        tx.sign(privateKeys)
 
         resolve(tx)
       } catch (error) {
@@ -1219,7 +1219,9 @@ export class HdWallet {
       tx.from(utxos)
     }
 
-    return tx
+    return {
+      tx,
+    }
   }
 
   public async getOneUtxoFee(params?: { useFeeb?: number; utxo?: UtxoItem }) {

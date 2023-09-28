@@ -1135,7 +1135,7 @@ function getSpaceBalance() {
       })
     }
 
-      debugger
+
     if (typeof res === 'number') {
       const item = wallets[2].list.find(item => item.name === 'SPACE')
       if (item) {
