@@ -70,7 +70,7 @@ router.beforeEach(async (to, from, next) => {
 
   if (!userStore.showWallet) {
     if (userStore.getMetaletloginState) {
-      await sleep(2)
+      await sleep(5)
       const address = await window.metaidwallet.getAddress()
 
       const { network } = await window.metaidwallet.getNetwork()

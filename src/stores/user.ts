@@ -193,6 +193,7 @@ export const useUserStore = defineStore('user', {
         if (route.meta.isAuth) router.push('/')
         // talk的路由跳buzz推荐页
         if (route.path.includes('talk')) router.push('/buzz/recommend')
+
         resolve()
       })
     },

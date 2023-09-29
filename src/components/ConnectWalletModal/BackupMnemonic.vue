@@ -94,6 +94,9 @@ function skip() {
   if (userStore.user!.name == `${import.meta.env.VITE_DefaultName}`) {
     window.location.reload()
   }
+  if (userStore.metaletLogin) {
+    window.location.reload()
+  }
 }
 
 function confirm() {

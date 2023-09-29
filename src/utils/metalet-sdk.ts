@@ -511,6 +511,7 @@ export class MetaletSDK {
 
               let receive = this.getNodeTransactionsFirstReceive(transactions, params)
               // 获取上链时的utxo metalet-change 以下getAmountUtxo 换成metalet相关
+
               const getUtxoRes = await this.getAmountUxto({
                 sdkPayType: option.payType!,
                 amount: useSatoshis,
@@ -543,7 +544,8 @@ export class MetaletSDK {
                 transactions[Txkey.payToRes] = payToRes
               }
               const hexTxs = this.getHexTxs(transactions)
-
+              console.log('hexTxs', hexTxs)
+              debugger
               const unSignTransations: TransactionInfo[] = []
               for (let i = 0; i < hexTxs.length; i++) {
                 if (Array.isArray(hexTxs[i])) {
@@ -552,6 +554,60 @@ export class MetaletSDK {
                     const { path } = await this.wallet.session.getAddressPath(
                       transation.inputs[0].output!.script.toAddress(this.network).toString()
                     )
+                    if (hexTxs[i].hasMetaId) {
+                      unSignTransations.push({
+                        txHex: transation.toString(),
+                        address: transation.inputs[0]
+                          .output!.script.toAddress(this.network)
+                          .toString(),
+                        inputIndex: 0,
+                        scriptHex: transation.inputs[0].output!.script.toHex(),
+                        satoshis: transation.inputs[0].output!.satoshis,
+                        path: `0/${path}`,
+                        hasMetaId: hexTxs[i].hasMetaId,
+                        dataDependsOn: hexTxs[i].dataDependsOn,
+                      })
+                    } else {
+                      unSignTransations.push({
+                        txHex: transation.toString(),
+                        address: transation.inputs[0]
+                          .output!.script.toAddress(this.network)
+                          .toString(),
+                        inputIndex: 0,
+                        scriptHex: transation.inputs[0].output!.script.toHex(),
+                        satoshis: transation.inputs[0].output!.satoshis,
+                        path: `0/${path}`,
+                      })
+                    }
+                  }
+
+                  // tx.forEach(txItem => {
+
+                  // })
+                } else {
+                  //
+                  const { transation } = hexTxs[i]
+                  console.log('transation', transation, hexTxs[i])
+                  debugger
+                  const { path } = await this.wallet.session.getAddressPath(
+                    transation.inputs[0].output!.script.toAddress(this.network).toString()
+                  )
+
+                  //
+                  if (hexTxs[i].hasMetaId) {
+                    unSignTransations.push({
+                      txHex: transation.toString(),
+                      address: transation.inputs[0]
+                        .output!.script.toAddress(this.network)
+                        .toString(),
+                      inputIndex: 0,
+                      scriptHex: transation.inputs[0].output!.script.toHex(),
+                      satoshis: transation.inputs[0].output!.satoshis,
+                      path: `0/${path}`,
+                      hasMetaId: hexTxs[i].hasMetaId,
+                      dataDependsOn: hexTxs[i].dataDependsOn,
+                    })
+                  } else {
                     unSignTransations.push({
                       txHex: transation.toString(),
                       address: transation.inputs[0]
@@ -563,27 +619,6 @@ export class MetaletSDK {
                       path: `0/${path}`,
                     })
                   }
-
-                  // tx.forEach(txItem => {
-
-                  // })
-                } else {
-                  //
-                  const { transation } = hexTxs[i]
-
-                  const { path } = await this.wallet.session.getAddressPath(
-                    transation.inputs[0].output!.script.toAddress(this.network).toString()
-                  )
-
-                  //
-                  unSignTransations.push({
-                    txHex: transation.toString(),
-                    address: transation.inputs[0].output!.script.toAddress(this.network).toString(),
-                    inputIndex: 0,
-                    scriptHex: transation.inputs[0].output!.script.toHex(),
-                    satoshis: transation.inputs[0].output!.satoshis,
-                    path: `0/${path}`,
-                  })
                 }
               }
               // hexTxs.forEach(async tx => {
@@ -1422,12 +1457,18 @@ export class MetaletSDK {
               console.log('transactions', transactions)
               //
               // 组装新 utxo
+              console.log(
+                'transactions.currentNodeBrfc!.transaction',
+                transactions.currentNodeBrfc!.transaction
+              )
+              debugger
               utxo = await this.wallet!.utxoFromTx({
                 tx: transactions.currentNodeBrfc!.transaction,
                 chain,
               })
 
               console.log('utxo', utxo)
+              debugger
               //
             }
 
@@ -1540,6 +1581,7 @@ export class MetaletSDK {
             } else {
               console.log('utxo', utxo)
               //
+              debugger
               const res = await this.wallet?.createBrfcChildNode(
                 // @ts-ignore
                 createCurrentNodeParams,
@@ -1560,7 +1602,7 @@ export class MetaletSDK {
               // 更新txId
               transactions.currentNode!.txId = transactions.currentNode!.transaction.id
               transactions.currentNode!.utxo = utxo
-
+              debugger
               if (params.nodeName === NodeName.NftIssue) {
                 // 组装新 utxo
                 utxo = await this.wallet!.utxoFromTx({
@@ -1604,6 +1646,7 @@ export class MetaletSDK {
           }
         }
         resolve(transactions)
+        debugger
       } catch (error) {
         reject(error)
       }
@@ -1880,11 +1923,22 @@ export class MetaletSDK {
       !option?.notBroadcastKeys?.includes('currentNode') &&
       transactions.currentNode?.transaction
     ) {
-      hexTxs.push({
-        hex: transactions.currentNode.transaction.toString(),
-        transation: transactions.currentNode.transaction,
-        txkey: Txkey.currentNode,
-      })
+      debugger
+      if (transactions.currentNodeBrfc?.transaction) {
+        hexTxs.push({
+          hex: transactions.currentNode.transaction.toString(),
+          transation: transactions.currentNode.transaction,
+          txkey: Txkey.currentNode,
+          hasMetaId: true,
+          dataDependsOn: 1,
+        })
+      } else {
+        hexTxs.push({
+          hex: transactions.currentNode.transaction.toString(),
+          transation: transactions.currentNode.transaction,
+          txkey: Txkey.currentNode,
+        })
+      }
     }
 
     // 广播 nft
@@ -2043,7 +2097,9 @@ export class MetaletSDK {
       try {
         if (params.sdkPayType === SdkPayType.SPACE || params.sdkPayType === SdkPayType.BSV) {
           const chain = params.sdkPayType === SdkPayType.BSV ? HdWalletChain.BSV : HdWalletChain.MVC
+
           let allUtxos = await this.wallet?.metaIDJsWallet.getUtxos({ path: '0/0' })
+
           allUtxos = allUtxos?.map(utxo => {
             return {
               ...utxo,
@@ -2051,6 +2107,8 @@ export class MetaletSDK {
               addressIndex: 0,
             }
           })
+          console.log('allUtxos', allUtxos)
+          debugger
           let useUtxos = []
           if (allUtxos && allUtxos?.length > 0) {
             // 总价加个 最小金额  给转账费用

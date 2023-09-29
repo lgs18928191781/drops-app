@@ -302,7 +302,7 @@ export class MetaletWallet {
           // 初始化 metaId
           if (!metaIdInfo.metaId) {
             // TODO: 尝试获始资金
-            if (!utxos.length) {
+            if (utxos?.status == 'not-connected' || !Array.isArray(utxos) || !utxos.length) {
               const { signature } = await this.metaIDJsWallet.signMessage({
                 message: import.meta.env.VITE_SIGN_MSG,
                 encoding: encodingType.hex,
@@ -632,6 +632,14 @@ export class MetaletWallet {
               },
             ]
           }
+          // if (nodeName == 'Protocols') {
+          //   payTo = [
+          //     {
+          //       address: address,
+          //       amount: 2000,
+          //     },
+          //   ]
+          // }
           node = {
             path: nodeInfo.keyPath,
             publicKey,
