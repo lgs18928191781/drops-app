@@ -545,7 +545,7 @@ export class MetaletSDK {
               }
               const hexTxs = this.getHexTxs(transactions)
               console.log('hexTxs', hexTxs)
-              debugger
+
               const unSignTransations: TransactionInfo[] = []
               for (let i = 0; i < hexTxs.length; i++) {
                 if (Array.isArray(hexTxs[i])) {
@@ -588,7 +588,7 @@ export class MetaletSDK {
                   //
                   const { transation } = hexTxs[i]
                   console.log('transation', transation, hexTxs[i])
-                  debugger
+
                   const { path } = await this.wallet.session.getAddressPath(
                     transation.inputs[0].output!.script.toAddress(this.network).toString()
                   )
@@ -1461,14 +1461,14 @@ export class MetaletSDK {
                 'transactions.currentNodeBrfc!.transaction',
                 transactions.currentNodeBrfc!.transaction
               )
-              debugger
+
               utxo = await this.wallet!.utxoFromTx({
                 tx: transactions.currentNodeBrfc!.transaction,
                 chain,
               })
 
               console.log('utxo', utxo)
-              debugger
+
               //
             }
 
@@ -1581,7 +1581,7 @@ export class MetaletSDK {
             } else {
               console.log('utxo', utxo)
               //
-              debugger
+
               const res = await this.wallet?.createBrfcChildNode(
                 // @ts-ignore
                 createCurrentNodeParams,
@@ -1602,7 +1602,7 @@ export class MetaletSDK {
               // 更新txId
               transactions.currentNode!.txId = transactions.currentNode!.transaction.id
               transactions.currentNode!.utxo = utxo
-              debugger
+
               if (params.nodeName === NodeName.NftIssue) {
                 // 组装新 utxo
                 utxo = await this.wallet!.utxoFromTx({
@@ -1646,7 +1646,6 @@ export class MetaletSDK {
           }
         }
         resolve(transactions)
-        debugger
       } catch (error) {
         reject(error)
       }
@@ -1923,7 +1922,6 @@ export class MetaletSDK {
       !option?.notBroadcastKeys?.includes('currentNode') &&
       transactions.currentNode?.transaction
     ) {
-      debugger
       if (transactions.currentNodeBrfc?.transaction) {
         hexTxs.push({
           hex: transactions.currentNode.transaction.toString(),
@@ -2108,7 +2106,7 @@ export class MetaletSDK {
             }
           })
           console.log('allUtxos', allUtxos)
-          debugger
+
           let useUtxos = []
           if (allUtxos && allUtxos?.length > 0) {
             // 总价加个 最小金额  给转账费用
