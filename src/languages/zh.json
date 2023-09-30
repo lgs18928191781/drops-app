@@ -1268,5 +1268,6 @@
     "bandUser": "对屏蔽用户不可发起操作",
     "blacktipsRepost": "此内容的转发者已屏蔽,转发内容不可见"
   },
-  "stakeAmountLimit": "质押数量不能低于100,000 Satoshi"
+  "stakeAmountLimit": "质押数量不能低于100,000 Satoshi",
+  "not_support_mobile_login_metalet": "暂不支持移动端Metalet登录"
 }

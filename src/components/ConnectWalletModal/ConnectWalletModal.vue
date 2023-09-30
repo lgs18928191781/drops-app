@@ -160,7 +160,7 @@ import MnemonicVue from './MnemonicLogin.vue'
 import SetBaseInfoVue from './SetBaseInfo.vue'
 import BackupMnemonicVue from './BackupMnemonic.vue'
 import BindMetaIdVue from './BindMetaId.vue'
-import { reactive, Ref, ref } from 'vue'
+import { reactive, Ref, ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { BindStatus, Network, NodeName, WalletOrigin } from '@/enum'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -183,6 +183,7 @@ import { computeStyles } from '@popperjs/core'
 import { setUser } from '@sentry/vue'
 import SPACEIcon from '@/assets/images/icon_mvc.png'
 import { encodingType, MetaletWallet, TransactionInfo } from '@/utils/wallet/Metalet-wallet'
+import { isAndroid, isIOS, isIosApp, isWechat } from '@/stores/root'
 
 const rootStore = useRootStore()
 const userStore = useUserStore()
@@ -224,7 +225,9 @@ const metaIdWalletRegisterBaseInfo: { val: undefined | MetaIdWalletRegisterBaseI
   val: undefined,
 })
 const isSHowBackupMnemonic = ref(false)
-
+const isMobile = computed(() => {
+  return isAndroid || isIOS || isWechat
+})
 const wallets = [
   {
     title: () => {
@@ -1048,6 +1051,10 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
 }
 
 async function connectMetalet() {
+  if (isMobile.value) {
+    return ElMessage.error(`${i18n.t('not_support_mobile_login_metalet')}`)
+  }
+
   const { address } = await window.metaidwallet.connect()
   //
   if (!address) {
