@@ -246,6 +246,7 @@
 
 
 
+
                 }}%)
               </div>
               <div class="amount">
@@ -256,6 +257,7 @@
               <div class="name flex1">
                 {{ $t('buyFeeTips2') }}({{
                   new Decimal(fee.val!.royaltyPercentage).mul(100).toNumber()
+
 
 
 

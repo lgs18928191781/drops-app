@@ -94,6 +94,7 @@ const communitys: recommnedCommunity[] = reactive([])
 const loading: boolean[] = reactive([])
 
 function getRecommendCommunitys() {
+  debugger
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetRecommendCommunitys({
       metaId: userStore.user?.metaId,

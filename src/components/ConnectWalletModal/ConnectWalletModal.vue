@@ -163,7 +163,8 @@ import BindMetaIdVue from './BindMetaId.vue'
 import { reactive, Ref, ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { BindStatus, Network, NodeName, WalletOrigin } from '@/enum'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox, ElLoading } from 'element-plus'
+
 import { router } from '@/router'
 import { useRoute } from 'vue-router'
 import { GetUserAllInfo, GetUserFollow } from '@/api/aggregation'
@@ -1054,59 +1055,73 @@ async function connectMetalet() {
   if (isMobile.value) {
     return ElMessage.error(`${i18n.t('not_support_mobile_login_metalet')}`)
   }
+  const loading = ElLoading.service({
+    lock: true,
+    text: 'Loading...',
+    spinner: 'el-icon-loading',
+    background: 'rgba(0, 0, 0, 0.7)',
+    customClass: 'full-loading',
+  })
+  try {
+    const { address } = await window.metaidwallet.connect()
+    //
+    if (!address) {
+      loading.close()
+      return ElMessage.error(`${i18n.t('wallet_addres_empty')}`)
+    }
+    let metaIdInfo
+    const { network } = await window.metaidwallet.getNetwork()
+    const xpub = await window.metaidwallet.getXPublicKey()
 
-  const { address } = await window.metaidwallet.connect()
-  //
-  if (!address) {
-    return ElMessage.error(`${i18n.t('wallet_addres_empty')}`)
+    const metaidWallet = new MetaletWallet({
+      xpub,
+      address: address,
+      metaIDJsWallet: window.metaidwallet,
+      network: network,
+    })
+    //304402204f83bd2372d09a99bbec51f1f7e3a1f647c132009d4cfc869df18ee0f7dbaf09022009cbc788ad026f3a9641c7b0c211849959a71b5013349d1
+
+    metaIdInfo = await metaidWallet.getMetaIdInfo(address)
+    if (!metaIdInfo.metaId && !metaIdInfo.infoTxId && !metaIdInfo.protocolTxId) {
+      metaIdInfo = await metaidWallet.initMetaIdNode()
+    }
+
+    console.log('metaletWallet', metaIdInfo)
+    //
+    userStore.updateUserInfo({
+      ...metaIdInfo,
+      metaId: metaIdInfo.metaId, // account 有时拿回来的metaId为空
+      name: metaIdInfo.name!, // account 有时拿回来的name 是旧 name
+      //password: form.password,
+      address: metaidWallet.rootAddress,
+      loginType: 'MetaID',
+    })
+    console.log('metaidwallet', metaidWallet)
+    userStore.updateMetaletLoginState(true)
+    userStore.$patch({
+      wallet: null,
+    })
+
+    userStore.$patch({
+      wallet: new MetaletSDK({
+        network: import.meta.env.VITE_NET_WORK,
+        wallet: metaidWallet,
+      }),
+    })
+    //userStore.showWallet.initWallet()
+
+    status.value = ConnectWalletStatus.Watting
+    rootStore.$patch({ isShowLogin: false })
+    loading.close()
+    if (!metaIdInfo.name) {
+      isShowSetBaseInfo.value = true
+    }
+  } catch (error) {
+    loading.close()
+    rootStore.$patch({ isShowLogin: true })
+    ElMessage.error(`${(error as any).toString()}`)
   }
 
-  let metaIdInfo
-  const { network } = await window.metaidwallet.getNetwork()
-  const xpub = await window.metaidwallet.getXPublicKey()
-
-  const metaidWallet = new MetaletWallet({
-    xpub,
-    address: address,
-    metaIDJsWallet: window.metaidwallet,
-    network: network,
-  })
-  //304402204f83bd2372d09a99bbec51f1f7e3a1f647c132009d4cfc869df18ee0f7dbaf09022009cbc788ad026f3a9641c7b0c211849959a71b5013349d1
-
-  metaIdInfo = await metaidWallet.getMetaIdInfo(address)
-  if (!metaIdInfo.metaId && !metaIdInfo.infoTxId && !metaIdInfo.protocolTxId) {
-    metaIdInfo = await metaidWallet.initMetaIdNode()
-  }
-
-  console.log('metaletWallet', metaIdInfo)
-  //
-  userStore.updateUserInfo({
-    ...metaIdInfo,
-    metaId: metaIdInfo.metaId, // account 有时拿回来的metaId为空
-    name: metaIdInfo.name!, // account 有时拿回来的name 是旧 name
-    //password: form.password,
-    address: metaidWallet.rootAddress,
-    loginType: 'MetaID',
-  })
-  console.log('metaidwallet', metaidWallet)
-  userStore.updateMetaletLoginState(true)
-  userStore.$patch({
-    wallet: null,
-  })
-
-  userStore.$patch({
-    wallet: new MetaletSDK({
-      network: import.meta.env.VITE_NET_WORK,
-      wallet: metaidWallet,
-    }),
-  })
-  //userStore.showWallet.initWallet()
-
-  status.value = ConnectWalletStatus.Watting
-  rootStore.$patch({ isShowLogin: false })
-  if (!metaIdInfo.name) {
-    isShowSetBaseInfo.value = true
-  }
   //metalet-SDK实例化
 }
 
