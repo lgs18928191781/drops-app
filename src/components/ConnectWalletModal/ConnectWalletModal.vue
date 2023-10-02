@@ -916,7 +916,6 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
         outPutIndex: 0,
       })
       //
-
       if (utxo) {
         utxos = [utxo]
         const createNameNode = await userStore.showWallet!.wallet!.createNode({
@@ -1056,8 +1055,8 @@ async function connectMetalet() {
     return ElMessage.error(`${i18n.t('not_support_mobile_login_metalet')}`)
   }
   const loading = ElLoading.service({
-    lock: true,
     text: 'Loading...',
+    lock: true,
     spinner: 'el-icon-loading',
     background: 'rgba(0, 0, 0, 0.7)',
     customClass: 'full-loading',

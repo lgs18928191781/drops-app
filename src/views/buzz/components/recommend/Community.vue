@@ -62,7 +62,7 @@
 import { GetRecommendCommunitys } from '@/api/aggregation'
 import { initPagination } from '@/config'
 import { useUserStore } from '@/stores/user'
-import { reactive, ref, watch, computed } from 'vue'
+import { reactive, ref, watch, computed, watchEffect } from 'vue'
 import CardVue from '@/components/Card/Card.vue'
 import { Loading } from '@element-plus/icons-vue'
 import { NodeName } from '@/enum'
@@ -88,19 +88,28 @@ const showDifferentLang = ref(Boolean(Number(localStorage.getItem('showDiffLang'
 //     rootStore.updateShowDiffLang(0)
 //   }
 // }
+watch(
+  () => userStore.metaletLogin,
+  val => {
+    if (val) {
+      getRecommendCommunitys()
+    }
+  }
+)
 
 const communitys: recommnedCommunity[] = reactive([])
 
 const loading: boolean[] = reactive([])
 
 function getRecommendCommunitys() {
-  debugger
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetRecommendCommunitys({
       metaId: userStore.user?.metaId,
       ...pagination,
     })
     if (res.code === 0) {
+      console.log('res', res)
+
       pagination.totalPages = Math.ceil(res.data.total / pagination.pageSize)
       communitys.length = 0
       communitys.push(...res.data.results.items)
