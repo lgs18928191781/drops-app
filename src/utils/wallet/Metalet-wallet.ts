@@ -307,6 +307,8 @@ export class MetaletWallet {
                 message: import.meta.env.VITE_SIGN_MSG,
                 encoding: encodingType.hex,
               })
+              console.log('signature', signature)
+
               const publicKey = await this.metaIDJsWallet.getPublicKey({ path: '0/0' })
 
               const initUtxo = await this.provider.getInitAmount({

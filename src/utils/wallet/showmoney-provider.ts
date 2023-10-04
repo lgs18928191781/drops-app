@@ -346,7 +346,7 @@ export default class ShowmoneyProvider {
         address: params.address,
         xpub: params.xpub,
       },
-      options: params?.token ? options : {},
+      options: params?.token || params.sigInfo ? options : {},
     })
 
     if (res.code === 0) {
