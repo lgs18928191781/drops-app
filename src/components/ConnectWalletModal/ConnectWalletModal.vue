@@ -639,7 +639,9 @@ async function onSetBaseInfoSuccessForMetalet(params: { name: string; nft: NFTAv
     if (userStore.isAuthorized) {
       let utxos, infoAddress, protocolAddress
       utxos = await wallet?.metaIDJsWallet.getUtxos({ path: '0/1' })
-
+      if (!utxos.length) {
+        utxos = await wallet?.metaIDJsWallet.getUtxos({ path: '0/1' })
+      }
       infoAddress = await wallet?.metaIDJsWallet.getAddress({
         path: wallet.keyPathMap.Info.keyPath,
       })
@@ -709,6 +711,8 @@ async function onSetBaseInfoSuccessForMetalet(params: { name: string; nft: NFTAv
           // dataDependsOn: 0,
         }
         broadcasts.push(transaction)
+      } else {
+        throw new Error('Get fee failed')
       }
 
       // if (params.nft.avatarImage !== userStore.user!.avatarImage) {
@@ -786,7 +790,6 @@ async function onSetBaseInfoSuccessForMetalet(params: { name: string; nft: NFTAv
       //       transactions: unSignTransations,
       //     })
       // }
-      console.log('wallet!.metaIDJsWallet', wallet!.metaIDJsWallet)
 
       const unSignTransations: TransactionInfo[] = []
       broadcasts.forEach(tx => {
