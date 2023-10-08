@@ -1,3 +1,11 @@
+import {
+  GetCertMetaIdListRes,
+  GetNftHolderListRes,
+  GetTopStakingRes,
+  GetUserNFTListRes,
+  MetaBotRes,
+  NFTApiGetNFTDetailRes,
+} from '@/@types/api'
 import { Chains, CollectionOrderType, CollectionSortType, NFTSellType } from '@/enum'
 import { PostTag } from '@/stores/buzz/tag'
 import HttpRequest from '@/utils/request'
@@ -50,6 +58,10 @@ export const MetaBotV2 = (params: {
   })
 }
 
+export const GetTopStakings = (): Promise<GetTopStakingRes> => {
+  return aggregation.get('/v2/app/show/stake/stakers')
+}
+
 export const GetUserNFTList = (params: {
   address: string
   page: string
@@ -75,7 +87,7 @@ export const GetGenesisAddressCount = (params: {
     const res = await aggregation.get(
       `/v2/app/sensible/getMyNftSummaryDetail/${params.codehash}/${params.genesis}/${params.address}/total`
     )
-    if (res.code === 0) {
+    if (res?.code === 0) {
       total = res.data.total
     }
     resolve(total)

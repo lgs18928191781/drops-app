@@ -1111,6 +1111,11 @@
   "PathMoreThan10000": "Path > 10000,請聯系客服修復",
   "DAO": {
     "Proposal": "提案",
+    "Leaderboard": "排行榜",
+    "Rank": "排序",
+    "Address": "地址",
+    "TokenAmount": "質押總額($vSPACE)",
+    "Top500": "質押總額排行榜Top500",
     "Entrust": "委托",
     "About": "關於",
     "New Proposal": "新提案",

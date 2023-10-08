@@ -1113,6 +1113,11 @@
   "DAO": {
     "Proposal": "Proposal",
     "Entrust": "Entrust",
+    "Leaderboard": "Leaderboard",
+    "Rank": "Rank",
+    "Address": "Address",
+    "TokenAmount": "TokenAmount($vSPACE)",
+    "Top500": "Top 500 List of Total Stakings",
     "About": "About",
     "New Proposal": "New Proposal",
     "Share": "Share",

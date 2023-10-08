@@ -1,3 +1,5 @@
+import { string } from 'yup'
+
 declare interface apiResponse {
   code: number
   msg: string
@@ -1688,6 +1690,24 @@ declare interface AvatarNFT {
   website: string
 }
 
+declare interface StakingItem {
+  sort?: number
+  address: string
+  tokenAmount: string
+}
+
+interface GetTopStakingRes extends apiResponse {
+  data: {
+    total: number
+    results: {
+      info: {
+        version: string
+        responseTime: string
+      }
+      items: StakingItem[]
+    }
+  }
+}
 declare interface GetUserNFTListRes extends apiResponse {
   data: {
     results: {

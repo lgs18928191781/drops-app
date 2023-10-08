@@ -43,6 +43,10 @@ const nav = [
     name: () => i18n.t('DAO.About'),
     routeName: 'talkDAOAbout',
   },
+  {
+    name: () => i18n.t('DAO.Leaderboard'),
+    routeName: 'talkDAOLeaderboard',
+  },
 ]
 
 // if (route.name === 'talkDAO' && talk.activeCommunity) {

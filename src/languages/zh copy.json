@@ -1083,6 +1083,11 @@
   "PathMoreThan10000": "Path > 10000,请联系客服修复",
   "DAO": {
     "Proposal": "提案",
+    "Leaderboard": "排行榜",
+    "Rank": "排序",
+    "Address": "地址",
+    "TokenAmount": "质押总额($vSPACE)",
+    "Top500": "质押总额排行榜Top500",
     "Entrust": "委托",
     "About": "关于",
     "New Proposal": "新提案",

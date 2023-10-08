@@ -238,6 +238,11 @@ export const router = createRouter({
               name: 'talkDAOAbout',
               component: () => import('@/views/talk/DAO/About.vue'),
             },
+            {
+              path: 'leaderboard',
+              name: 'talkDAOLeaderboard',
+              component: () => import('@/views/talk/DAO/Rank.vue'),
+            },
           ],
         },
         {
