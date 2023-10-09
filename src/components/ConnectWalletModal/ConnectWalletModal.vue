@@ -1085,7 +1085,9 @@ async function connectMetalet() {
 
     metaIdInfo = await metaidWallet.getMetaIdInfo(address)
     if (!metaIdInfo.metaId && !metaIdInfo.infoTxId && !metaIdInfo.protocolTxId) {
-      metaIdInfo = await metaidWallet.initMetaIdNode()
+      metaIdInfo = await metaidWallet.initMetaIdNode().catch(e => {
+        throw new Error(e.toString())
+      })
     }
 
     console.log('metaletWallet', metaIdInfo)

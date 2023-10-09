@@ -297,29 +297,43 @@ export class MetaletWallet {
             path: this.keyPathMap.Info.keyPath,
           }) //this.getPathPrivateKey(this.keyPathMap.Info.keyPath)
 
-          utxos = await this.metaIDJsWallet.getUtxos({ path: '0/0' })
+          utxos = await this.metaIDJsWallet.getUtxos({ path: '0/0' }).catch(error => {
+            throw new Error(error.toString())
+          })
 
           // 初始化 metaId
           if (!metaIdInfo.metaId) {
             // TODO: 尝试获始资金
             if (utxos?.status == 'not-connected' || !Array.isArray(utxos) || !utxos.length) {
-              const { signature } = await this.metaIDJsWallet.signMessage({
-                message: import.meta.env.VITE_SIGN_MSG,
-                encoding: encodingType.hex,
-              })
+              const { signature } = await this.metaIDJsWallet
+                .signMessage({
+                  message: import.meta.env.VITE_SIGN_MSG,
+                  encoding: encodingType.hex,
+                })
+                .catch(error => {
+                  throw new Error(error.toString())
+                })
               console.log('signature', signature)
 
-              const publicKey = await this.metaIDJsWallet.getPublicKey({ path: '0/0' })
+              const publicKey = await this.metaIDJsWallet
+                .getPublicKey({ path: '0/0' })
+                .catch(error => {
+                  throw new Error(error.toString())
+                })
 
-              const initUtxo = await this.provider.getInitAmount({
-                address: this.rootAddress,
-                xpub: this.xpub,
-                reqSource: GetInitAmountType.metalet,
-                sigInfo: {
-                  xSignature: signature.signature,
-                  xPublickey: publicKey,
-                },
-              })
+              const initUtxo = await this.provider
+                .getInitAmount({
+                  address: this.rootAddress,
+                  xpub: this.xpub,
+                  reqSource: GetInitAmountType.metalet,
+                  sigInfo: {
+                    xSignature: signature.signature,
+                    xPublickey: publicKey,
+                  },
+                })
+                .catch(error => {
+                  throw new Error(error.toString())
+                })
 
               utxos = [initUtxo]
             } else {
@@ -335,6 +349,8 @@ export class MetaletWallet {
               encoding: 'NULL',
               utxos: utxos,
               outputs: outputs,
+            }).catch(error => {
+              throw new Error(error.toString())
             })
 
             hexTxs.push({
@@ -352,6 +368,8 @@ export class MetaletWallet {
                 addressType: 0,
                 addressIndex: 0,
               },
+            }).catch(error => {
+              throw new Error(error.toString())
             })
 
             if (newUtxo) {
@@ -368,6 +386,8 @@ export class MetaletWallet {
               data: 'NULL',
               version: 'NULL',
               utxos: utxos,
+            }).catch(error => {
+              throw new Error(error.toString())
             })
 
             hexTxs.push({
@@ -386,6 +406,8 @@ export class MetaletWallet {
                 addressType: 0,
                 addressIndex: 0,
               },
+            }).catch(error => {
+              throw new Error(error.toString())
             })
 
             if (newUtxo) utxos = [newUtxo]
@@ -401,6 +423,8 @@ export class MetaletWallet {
               version: 'NULL',
               utxos: utxos,
               change: this.rootAddress, //infoAddress,
+            }).catch(error => {
+              throw new Error(error.toString())
             })
             hexTxs.push({
               hex: info.transaction.toString(),
@@ -418,6 +442,8 @@ export class MetaletWallet {
                 addressType: 0,
                 addressIndex: 1,
               },
+            }).catch(error => {
+              throw new Error(error.toString())
             })
             if (newUtxo) utxos = [newUtxo]
           }
@@ -527,17 +553,25 @@ export class MetaletWallet {
           //
           // }
 
-          const { signedTransactions } = await this.metaIDJsWallet.signTransactions({
-            transactions: unSignTransations,
-          })
+          const { signedTransactions } = await this.metaIDJsWallet
+            .signTransactions({
+              transactions: unSignTransations,
+            })
+            .catch(error => {
+              throw new Error(error.toString())
+            })
 
           // 广播
           const metaidInfoList = []
           for (let i = 0; i < unSignTransations.length; i++) {
             try {
-              const { txid } = await this.metaIDJsWallet.previewTransaction({
-                transaction: unSignTransations[i],
-              })
+              const { txid } = await this.metaIDJsWallet
+                .previewTransaction({
+                  transaction: unSignTransations[i],
+                })
+                .catch(error => {
+                  throw new Error(error.toString())
+                })
               console.log('txid', i, txid)
             } catch (error) {
               errorMsg = error
@@ -551,7 +585,9 @@ export class MetaletWallet {
             try {
               const tx = signedTransactions[i]
 
-              const { txid } = await this.provider.broadcast(tx.txHex)
+              const { txid } = await this.provider.broadcast(tx.txHex).catch(error => {
+                throw new Error(error.toString())
+              })
               console.log('tx', tx.txid, txid)
 
               metaidInfoList.push(txid)
@@ -581,7 +617,7 @@ export class MetaletWallet {
         if (retry <= 0) {
           reject(error)
         } else {
-          this.initMetaIdNode(account, retry)
+          this.initMetaIdNode(retry)
         }
       }
     })
