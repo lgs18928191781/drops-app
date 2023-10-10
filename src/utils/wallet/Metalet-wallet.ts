@@ -288,6 +288,7 @@ export class MetaletWallet {
         let metaIdInfo: any = await this.getMetaIdInfo(this.rootAddress)
         metaIdInfo.pubKey = await this.metaIDJsWallet.getPublicKey({ path: '0/0' }) //this._root.toPublicKey().toString()
         //  检查 metaidinfo 是否完整
+
         if (metaIdInfo.metaId && metaIdInfo.infoTxId && metaIdInfo.protocolTxId) {
           resolve(metaIdInfo)
         } else {
@@ -300,6 +301,8 @@ export class MetaletWallet {
           utxos = await this.metaIDJsWallet.getUtxos({ path: '0/0' }).catch(error => {
             throw new Error(error.toString())
           })
+
+          console.log('utxos', utxos)
 
           // 初始化 metaId
           if (!metaIdInfo.metaId) {
@@ -337,6 +340,34 @@ export class MetaletWallet {
 
               utxos = [initUtxo]
             } else {
+              if (utxos.length > 1) {
+                const mergeRes = await this.metaIDJsWallet.merge().catch(() => {
+                  throw new Error(`Cancel merge utxo`)
+                })
+                if (mergeRes.status !== 'canceled') {
+                  utxos = await this.metaIDJsWallet.getUtxos({ path: '0/0' }).catch(error => {
+                    throw new Error(error.toString())
+                  })
+                }
+              }
+              utxos = utxos.map(utxo => {
+                const script = mvc.Script.buildPublicKeyHashOut(utxo.address)
+                console.log('utxo', utxo)
+
+                utxo = {
+                  address: utxo.address,
+                  // utxo 所在的路径
+                  addressIndex: utxo?.addressIndex || 0,
+                  addressType: utxo?.addressType || 0,
+                  outputIndex: utxo.outIndex,
+                  txId: utxo.txid,
+                  xpub: this.xpub,
+                  script: script,
+                  satoshis: utxo.value,
+                  amount: utxo.value / 1e8,
+                }
+                return utxo
+              })
             }
 
             let outputs: any[] = []
@@ -965,25 +996,26 @@ export class MetaletWallet {
       if (utxoHashScript) {
         tx.from(utxos)
       } else {
-        // utxos = utxos.map(utxo => {
-        //   const script = mvc.Script.buildPublicKeyHashOut(utxo.address)
-        //   console.log('utxo', utxo)
-        //
-        //   utxo = {
-        //     address: utxo.address,
-        //     // utxo 所在的路径
-        //     addressIndex: utxo.addressIndex,
-        //     addressType: utxo.addressType,
-        //     outputIndex: utxo.outIndex,
-        //     txId: utxo.txid,
-        //     xpub: this.xpub,
-        //     script: script,
-        //     satoshis: utxo.value,
-        //     amount: utxo.value / 1e8,
-        //   }
-        //   return utxo
-        // })
-        // tx.from(utxos)
+        utxos = utxos.map(utxo => {
+          const script = mvc.Script.buildPublicKeyHashOut(utxo.address)
+          console.log('utxo', utxo)
+
+          utxo = {
+            address: utxo.address,
+            // utxo 所在的路径
+            addressIndex: utxo?.addressIndex || 0,
+            addressType: utxo?.addressType || 0,
+            outputIndex: utxo.outIndex,
+            txId: utxo.txid,
+            xpub: this.xpub,
+            script: script,
+            satoshis: utxo.value,
+            amount: utxo.value / 1e8,
+          }
+          return utxo
+        })
+
+        tx.from(utxos)
       }
     }
 
