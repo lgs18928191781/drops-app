@@ -284,7 +284,7 @@ export class MetaletWallet {
     return new Promise<MetaIdInfoTypes>(async (resolve, reject) => {
       try {
         console.log('this.rootAddress', this.rootAddress)
-
+        let getInitAmountFlag = false
         let metaIdInfo: any = await this.getMetaIdInfo(this.rootAddress)
         metaIdInfo.pubKey = await this.metaIDJsWallet.getPublicKey({ path: '0/0' }) //this._root.toPublicKey().toString()
         //  检查 metaidinfo 是否完整
@@ -307,7 +307,20 @@ export class MetaletWallet {
           // 初始化 metaId
           if (!metaIdInfo.metaId) {
             // TODO: 尝试获始资金
-            if (utxos?.status == 'not-connected' || !Array.isArray(utxos) || !utxos.length) {
+            if (utxos.length > 0) {
+              const balance = utxos.reduce((pre, cur) => {
+                return (pre += cur.value)
+              }, 0)
+              if (balance < 20000) {
+                getInitAmountFlag = true
+              }
+            }
+            if (
+              utxos?.status == 'not-connected' ||
+              !Array.isArray(utxos) ||
+              !utxos.length ||
+              getInitAmountFlag
+            ) {
               const { signature } = await this.metaIDJsWallet
                 .signMessage({
                   message: import.meta.env.VITE_SIGN_MSG,
@@ -350,6 +363,7 @@ export class MetaletWallet {
                   })
                 }
               }
+
               utxos = utxos.map(utxo => {
                 const script = mvc.Script.buildPublicKeyHashOut(utxo.address)
                 console.log('utxo', utxo)
