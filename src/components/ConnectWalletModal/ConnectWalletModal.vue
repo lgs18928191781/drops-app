@@ -1083,7 +1083,9 @@ async function connectMetalet() {
     })
     //304402204f83bd2372d09a99bbec51f1f7e3a1f647c132009d4cfc869df18ee0f7dbaf09022009cbc788ad026f3a9641c7b0c211849959a71b5013349d1
 
-    metaIdInfo = await metaidWallet.getMetaIdInfo(address)
+    metaIdInfo = await metaidWallet.getMetaIdInfo(address).catch(error => {
+      throw new Error(error)
+    })
     if (!metaIdInfo.metaId && !metaIdInfo.infoTxId && !metaIdInfo.protocolTxId) {
       metaIdInfo = await metaidWallet.initMetaIdNode().catch(e => {
         throw new Error(e.toString())

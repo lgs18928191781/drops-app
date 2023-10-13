@@ -208,17 +208,23 @@ export class MetaletWallet {
       phone: '',
       email: '',
     }
-    const metaId = await this.provider.getMetaId(rootAddress).catch(error => {
-      ElMessage.error(error.message)
-    })
-    if (metaId) {
-      const info = await this.provider.getMetaIdInfo(metaId)
-      metaIdInfo = {
-        ...metaIdInfo,
-        ...info,
+
+    try {
+      const metaId = await this.provider.getMetaId(rootAddress).catch(error => {
+        ElMessage.error(error.message)
+      })
+
+      if (metaId) {
+        const info = await this.provider.getMetaIdInfo(metaId)
+        metaIdInfo = {
+          ...metaIdInfo,
+          ...info,
+        }
       }
+      return metaIdInfo
+    } catch (error) {
+      throw new Error(`${error}`)
     }
-    return metaIdInfo
   }
 
   private utxoFromTx(params: {
