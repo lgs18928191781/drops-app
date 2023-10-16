@@ -58,6 +58,7 @@ const fetchCommunities = async () => {
   const selfMetaId = userStore.user?.metaId
   if (!selfMetaId) return
   const communities = await getCommunities({ metaId: selfMetaId })
+
   talk.$patch(state => {
     state.communities = [...communities, talk.atMeCommunity]
   })

@@ -364,13 +364,24 @@ const tryInitChannel = async (status: string) => {
 
         // 检查币数量
         // 获取餘额
-        const balance = await user
-          .showWallet!.wallet!.provider.getXpubBalance(
-            user.showWallet!.wallet!.wallet.xpubkey.toString()
-          )
-          .catch(error => {
-            ElMessage.error(error.message)
-          })
+        let balance
+        if (user.metaletLogin) {
+          const { total } = await user.showWallet
+            .wallet!.metaIDJsWallet.getBalance()
+            .catch(error => {
+              ElMessage.error(error.message)
+            })
+          balance = total
+        } else {
+          balance = await user
+            .showWallet!.wallet!.provider.getXpubBalance(
+              user.showWallet!.wallet!.wallet.xpubkey.toString()
+            )
+            .catch(error => {
+              ElMessage.error(error.message)
+            })
+        }
+
         let requiredAmount = Number(talk.activeChannel.roomLimitAmount)
         if (balance >= requiredAmount) {
           await checkAtLeastMinDuration()

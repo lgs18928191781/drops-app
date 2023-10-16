@@ -133,10 +133,10 @@ export const useTalkStore = defineStore('talk', {
       if (this.isActiveChannelGeneral) {
         return this.generalChannels.find(channel => channel.id === state.activeChannelId)
       }
-
-      return this.activeCommunity.channels?.find((channel: any) => {
-        return channel.id === state.activeChannelId
-      })
+      if (this.canAccessActiveChannel)
+        return this.activeCommunity.channels?.find((channel: any) => {
+          return channel.id === state.activeChannelId
+        })
     },
 
     channelType(channel) {
@@ -429,6 +429,7 @@ export const useTalkStore = defineStore('talk', {
       const latestChannelsRecords =
         localStorage.getItem('latestChannels-' + this.selfMetaId) || JSON.stringify({})
       const latestChannels = JSON.parse(latestChannelsRecords)
+
       if (!routeChannelId || routeChannelId === 'index') {
         let channelId
         if (routeCommunityId === '@me') {
