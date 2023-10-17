@@ -93,9 +93,9 @@ router.beforeEach(async (to, from, next) => {
         }),
       })
     } else {
-      userStore.$patch({
-        wallet: null,
-      })
+      // userStore.$patch({
+      //   wallet: null,
+      // })
       userStore.$patch({ wallet: new SDK(import.meta.env.VITE_NET_WORK) })
     }
   }
