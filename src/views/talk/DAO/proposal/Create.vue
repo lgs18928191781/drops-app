@@ -163,7 +163,7 @@ const rules = reactive<FormRules>({
     {
       validator: (rule: any, value: any, callback: any) => {
         if (form.options && form.options.length) {
-          if (form.options.length > 5) {
+          if (form.options.length > 10) {
             callback(new Error(i18n.t('DAO.Max five Vote Options')))
           } else {
             callback()
@@ -276,14 +276,15 @@ function onTypeChange() {
 }
 
 function submit() {
-  FormRef.value?.validate(async result => {
-    if (result) {
-      const result = await checkUserCanCreateProposal()
-      if (result) {
-        isShowConfirmModal.value = true
-      }
-    }
-  })
+  isShowConfirmModal.value = true
+  // FormRef.value?.validate(async result => {
+  //   if (result) {
+  //     const result = await checkUserCanCreateProposal()
+  //     if (result) {
+  //       isShowConfirmModal.value = true
+  //     }
+  //   }
+  // })
 }
 
 async function confirmPublish() {
@@ -363,6 +364,7 @@ async function confirmPublish() {
 }
 
 onMounted(() => {
+  debugger
   initMarkDown()
 
   headeroffSetTop.value = WarpRef.value.getBoundingClientRect().top

@@ -255,6 +255,10 @@ function getMore() {
 }
 
 async function toCreate() {
+router.push({
+      name: 'talkDAOProposalCreate',
+    })
+  return
   if (loading.value) return
   await checkUserLogin()
   loading.value = true

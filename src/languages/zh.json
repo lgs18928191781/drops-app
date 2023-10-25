@@ -1225,7 +1225,7 @@
     "Confirm Publish": "確認發布",
     "Confirm Publish Tips": "一旦發布後，提案將不可<a>修改</a>和<a>刪除</a>，請確認無誤後再發布！",
     "Single Vote Type": "單項選擇投票",
-    "Max five Vote Options": "最多只可以設置5個選項",
+    "Max five Vote Options": "最多只可以設置10個選項",
     "New Block Time": "最新出塊時間",
     "Edit Successful": "編輯成功",
     "Create Successful": "創建成功",
