@@ -70,7 +70,39 @@
 
           <Card>
             <template #default>
-              <div class="vote">
+              <div class="vote" v-if="isMultProposalType">
+                <div
+                  class="cover flex flex-align-center flex-pack-center"
+                  v-if="status !== DAOProposalStatus.Active && !votedInfo"
+                >
+                  {{ statusText }}
+                </div>
+                <div class="title">
+                  {{ votedInfo ? $t('DAO.Information About Your Vote') : $t('DAO.Vote Title') }}
+                </div>
+                <div class="vote-list" v-for="(item, index) in proposal.val!.options">
+                  <a
+                    class="main-border"
+                    :class="[
+                      {
+                        faded: votedInfo && index !== votedInfo.voteOption,
+                        voted: votedInfo,
+                      },
+                    ]"
+                    :key="item.name"
+                    @click="choiceVote(item)"
+                  >
+                    {{ $t(item.name) }}
+                    <el-icon v-if="item.visible"><SuccessFilled /></el-icon>
+                  </a>
+                </div>
+                <div :class="['main-border', 'vote-btn']" @click="preVote">
+                  <span>
+                    submit
+                  </span>
+                </div>
+              </div>
+              <div class="vote" v-else>
                 <div
                   class="cover flex flex-align-center flex-pack-center"
                   v-if="status !== DAOProposalStatus.Active && !votedInfo"
@@ -154,9 +186,9 @@
                   </div>
                 </ElSkeleton>
 
-                <div class="value flex1">
+                <!-- <div class="value flex1">
                   {{ $t(proposal.val!.options[item.voteOption]) }}
-                </div>
+                </div> -->
                 <div class="time">
                   {{ $filters.dateTimeFormat(item.time * 1000, 'UTC', 'YY-MM-DD HH:mm:ss') }}(UTC)
                 </div>
@@ -211,6 +243,81 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                       }}(UTC)
                     </div>
                   </div>
@@ -222,6 +329,81 @@
                     <div class="flex1 lable">{{ $t('DAO.End Time') }}</div>
                     <div class="value">
                       {{ $filters.dateTimeFormat(proposal!.val!.endBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -325,7 +507,7 @@
                   :key="index"
                 >
                   <div class="top flex flex-align-center">
-                    <div class="value flex1">{{ $t(item) }}</div>
+                    <div class="value flex1">{{ $t(item.name) }}</div>
                     <div class="count">
                       {{
                       proposal.val!.voteSumData[index] !== '0' 
@@ -333,6 +515,81 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -398,10 +655,95 @@
         <template #body>
           <div class="confirm-model">
             <div class="lable">{{ $t('DAO.You Will Vote') }}</div>
-            <div class="main-border option">{{ $t(currentOption) }}</div>
+            <div v-if="isMultProposalType">
+              <div
+                class="main-border option option-item"
+                v-for="(item, index) in VoteList"
+                :key="index"
+              >
+                <span>{{ item }}</span>
+              </div>
+            </div>
+            <div class="main-border option" v-else>{{ $t(currentOption) }}</div>
+
             <div class="value">
               {{ $t('DAO.Vote Number') }}:<span
                 >{{ new Decimal(userStake.val!.lockedTokenAmount).div(10**8).toNumber()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -460,7 +802,7 @@ import { signTx, toHex, mvc } from 'mvc-scrypt/dist'
 import { marked } from 'marked'
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
-
+import { SuccessFilled } from '@element-plus/icons-vue'
 const i18n = useI18n()
 const records: VoterItem[] = reactive([])
 const isSkeleton = ref(true)
@@ -486,7 +828,7 @@ const vditor = ref<Vditor | null>(null)
 const markdownRendering = ref(true)
 const ConetenWarpRef = ref()
 let markdownLoading: any
-
+let VoteList: string[] = reactive([])
 const dafaultVoteOptions = [
   {
     name: () => i18n.t('DAO.Approve'),
@@ -502,7 +844,12 @@ const dafaultVoteOptions = [
   },
 ]
 
+const isMultProposalType = computed(() => {
+  return !proposal.val?.options.includes('Yes' || 'No')
+})
+
 const statusText = computed(() => {
+  debugger
   return getStatusText(
     proposal.val!.beginBlockTime,
     proposal.val!.endBlockTime,
@@ -564,7 +911,8 @@ const resultClass = computed(() => {
 
 const status = computed(() => {
   if (proposal.val!.beginBlockTime * 1000 > blockTimeStamp.value) {
-    return DAOProposalStatus.UnStart
+    //return DAOProposalStatus.UnStart
+    return DAOProposalStatus.Active
   } else if (
     proposal.val!.beginBlockTime * 1000 <= blockTimeStamp.value &&
     proposal.val!.endBlockTime * 1000 > blockTimeStamp.value
@@ -617,6 +965,21 @@ const votedInfo = computed(() => {
   return result
 })
 
+async function choiceVote(item: any) {
+  if (VoteList.includes(item.name)) {
+    item.visible = false
+    VoteList = VoteList.filter(vote => {
+      return vote !== item.name
+    })
+    debugger
+  } else {
+    debugger
+    item.visible = true
+    VoteList.push(item.name)
+  }
+  console.log('VoteList', VoteList)
+}
+
 function getDetail() {
   return new Promise<void>(async (resolve, reject) => {
     const res = await Proposal({
@@ -634,7 +997,37 @@ function getDetail() {
           minPercent: 60,
         }
       }
-      console.log('res', res)
+      debugger
+      //伪代码 start
+      res.infos.resultOption = {
+        minAmount: 100000000,
+        minUser: 1,
+        minPercent: 20,
+      }
+      res.options = [
+        {
+          name: 'jacky',
+          visible: false,
+        },
+        {
+          name: 'pony',
+          visible: false,
+        },
+        {
+          name: 'eason',
+          visible: false,
+        },
+        {
+          name: 'dog',
+          visible: false,
+        },
+      ]
+      res.voteSumData = ['8028889347226', '8028889347226', '8028889347226', '8028889347226']
+      res.beginBlockTime = res.beginBlockTime * 1.1
+      res.endBlockTime = res.endBlockTime * 1.1
+
+      //end
+      console.log('res123456', res)
       debugger
 
       proposal.val = res
@@ -706,6 +1099,17 @@ function getMore() {
   })
 }
 
+async function preVote() {
+  await checkUserLogin()
+  if (votedInfo.value) return
+  if (!userStake.val!.lockedTokenAmount || userStake.val!.lockedTokenAmount === '0') {
+    return ElMessage.error(i18n.t('DAO.NOt Have Voting Quota'))
+  }
+  console.log('votelist', VoteList)
+  debugger
+  isShowVoteModal.value = true
+}
+
 async function vote(option: string) {
   await checkUserLogin()
   if (votedInfo.value) return
@@ -751,7 +1155,7 @@ async function confirmVote() {
           mvcRawTx: transfer.sendMoney.transaction.toString(),
           mvcOutputIndex: 0,
           voteID: route.params.id as string,
-          voteOption: proposal.val!.options.findIndex(item => item === currentOption.value),
+          voteOption: proposal.val!.options.findIndex(item => item.name === currentOption.value),
           confirmVote: true,
         })
         if (res.code === 0) {
@@ -781,7 +1185,9 @@ async function confirmVote() {
             getDetail()
             userStake.val!.voteInfo[route.params.id as string] = {
               voteAmount: userStake.val!.lockedTokenAmount,
-              voteOption: proposal.val!.options.findIndex(item => item === currentOption.value),
+              voteOption: proposal.val!.options.findIndex(
+                item => item.name === currentOption.value
+              ),
             }
             ElMessage.success(i18n.t('DAO.Vote Successful'))
             isShowVoteModal.value = false

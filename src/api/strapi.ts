@@ -4,6 +4,11 @@ import HttpRequest from '@/utils/request'
 // @ts-ignore
 const Strapi = new HttpRequest(import.meta.env.VITE_AdminBaseApi).request
 
+//查询禁用提案
+export const GetBandProposalList = async (): Promise<any> => {
+  return Strapi.get('/voteid-band-lists')
+}
+
 // 查询我的盲盒分类
 export const GetBlindboxClassify = (params: {
   [key: string]: number | string

@@ -5,7 +5,7 @@ export interface ProposalItem {
   endBlockTime: number
   genesisTxid: string
   minVoteAmount: string
-  options: string[]
+  options: any[]
   title: string
   voteID: string
   voteMainCodeHash: string
