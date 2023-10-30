@@ -4,6 +4,7 @@ import { ElMessage } from 'element-plus'
 import i18n from '@/utils/i18n'
 import { useUserStore } from './stores/user'
 import { useTalkStore } from './stores/talk'
+import { GetBandProposalList } from '@/api/strapi'
 export const routerHistory = createWebHistory()
 export const router = createRouter({
   history: routerHistory,
@@ -213,8 +214,9 @@ export const router = createRouter({
                   path: 'detail/:id',
                   name: 'talkDAOProposalDetail',
                   component: () => import('@/views/talk/DAO/proposal/Detail.vue'),
-                  beforeEnter: (to, from, next) => {
-                    if (import.meta.env.VITE_BAND_PROPOSAL_ID.includes(to.params.id)) {
+                  beforeEnter: async (to, from, next) => {
+                    const bandList = await GetBandProposalList()
+                    if (bandList[0].vote_id.includes(to.params.id)) {
                       next('/404')
                     } else {
                       next()

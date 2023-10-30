@@ -185,7 +185,7 @@ import ExtractModal from '../components/ExtractModal.vue'
 import { isMobile } from '@/stores/root'
 import { replaceMarkdownTag } from '@/utils/util'
 import { space } from '@/utils/filters'
-
+import { GetBandProposalList } from "@/api/strapi";
 const pagination = reactive({ ...initPagination })
 const proposals: ProposalItem[] = reactive([])
 const isSkeleton = ref(true)
@@ -225,7 +225,8 @@ function getDatas(isCover = false) {
     if (res) {
       if (isCover) proposals.length = 0
       if (res.length) {
-        res=res.filter((item)=> !import.meta.env.VITE_BAND_PROPOSAL_ID.includes(item.voteID))
+         const bandList = await GetBandProposalList()
+        res=res.filter((item)=> !bandList[0].vote_id.includes(item.voteID))
         proposals.push(...res)
         pagination.nothing = false
         setTimeout(() => {
