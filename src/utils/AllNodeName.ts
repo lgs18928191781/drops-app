@@ -203,6 +203,11 @@ const AllNodeName: {
     path: '/Protocols/ShareChatMessage',
     version: '1.0.0',
   },
+  [NodeName.SimpleVoting]: {
+    brfcId: 'cbe098946755',
+    path: '/Protocols/SimpleVoting',
+    version: '1.0.0',
+  },
 }
 
 export default AllNodeName

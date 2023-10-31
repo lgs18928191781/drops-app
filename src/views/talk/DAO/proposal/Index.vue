@@ -276,7 +276,8 @@ function getUserStakeInfo() {
   return new Promise<void>(async (resolve, reject) => {
 
     const res = await GetUserStakeInfo({
-      symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${talk.activeCommunity!.dao!.daoId}`,
+      symbol:'space_c96faa7fac17b68eab693bb2a4c43e921d169a21310d56ce6eefd51230e4e23d',
+      //symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${talk.activeCommunity!.dao!.daoId}`,
       address:userStore.user!.address!,
     })
     if (res.code === 0) {

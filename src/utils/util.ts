@@ -72,7 +72,7 @@ import { email } from './reg'
 import zlib from 'zlib'
 import { string } from 'yup'
 import { MetaletWallet } from './wallet/Metalet-wallet'
-
+import mvc from 'mvc-lib'
 const emojiReg = /[\u{1F601}-\u{1F64F}\u{2702}-\u{27B0}\u{1F680}-\u{1F6C0}\u{1F170}-\u{1F251}\u{1F600}-\u{1F636}\u{1F681}-\u{1F6C5}\u{1F30D}-\u{1F567}]/gu
 
 export function randomString() {
@@ -1388,6 +1388,17 @@ export function followUser(params: {
       resolve(res)
     }
   })
+}
+
+export function createBrfcid(params: { title: string; author: string; versions: string }) {
+  const content = `${params.title.trim()}${params.author.trim()}${params.versions.trim()}`
+  const res = mvc.crypto.Hash.sha256(mvc.crypto.Hash.sha256(Buffer.from(content)))
+    .reverse()
+    .toString('hex')
+    .substring(0, 12)
+  console.log('res', res)
+  debugger
+  return res
 }
 
 export async function confirmFollow(params: { address: string; metaId: string; value: boolean }) {

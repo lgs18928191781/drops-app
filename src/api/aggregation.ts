@@ -876,3 +876,17 @@ export const GetMyNftOnSale = (params: {
   const { address, ..._params } = params
   return aggregation.get(`v2/app/show/nft/${address}/details/sell`, { params: { ..._params } })
 }
+
+export const GetMetaidInfoBatch = (params: {
+  metaIds: string[]
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    users: BatchUserInfo[]
+  }
+}> => {
+  return aggregation.post(`v2/app/user/info/batch`, {
+    metaIds: params.metaIds,
+  })
+}

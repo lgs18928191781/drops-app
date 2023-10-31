@@ -66,7 +66,7 @@ const fetchCommunities = async () => {
 
 const tryCreateCommunity = async () => {
   if (!form.isFinished) return
-
+  debugger
   // function* createCommunityJob() {
   //   const { communityId } = yield createCommunity(form, userStore, userStore.showWallet)
   //   console.log({ communityId })

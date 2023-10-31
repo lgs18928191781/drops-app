@@ -295,7 +295,10 @@
         display: none;
        }
        a{
-            display: block;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
             text-align: center;
             margin-bottom: 15px;
             padding: 15px 0;
@@ -311,6 +314,10 @@
 
             .value {
                 color: var(--themeFadedTextColor);
+            }
+            &:deep(.el-icon){
+                margin-left: 5px;
+                color: var(--el-color-primary);
             }
           
         }

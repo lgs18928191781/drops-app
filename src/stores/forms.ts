@@ -30,7 +30,8 @@ export const useCommunityFormStore = defineStore('communityForm', {
 
   getters: {
     isStep1Finished(state) {
-      return !!state.icon && !!state.metaName && state.name.length > 0
+      return true
+      //return !!state.icon && !!state.metaName && state.name.length > 0
       // return !!state.icon && state.name.length > 0
     },
 
@@ -39,11 +40,13 @@ export const useCommunityFormStore = defineStore('communityForm', {
     },
 
     isFinished(state) {
-      // return !!state.icon && !!state.name
-      return !!state.icon && !!state.metaName && !!state.name
+      return true
+      return !!state.icon && !!state.name
+      //return !!state.icon && !!state.metaName && !!state.name
     },
 
     isAllFinished(state) {
+      return true
       return (
         !!state.icon && !!state.metaName && !!state.description && !!state.cover && !!state.name
       )

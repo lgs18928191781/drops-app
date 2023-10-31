@@ -239,9 +239,13 @@ const popSettingsModal = () => {
 const generalChannels = computed(() => {
   return talk.generalChannels
     .filter(channel => {
+      console.log('channel', channel, talk.activeCommunityId, import.meta.env.MODE)
+      debugger
       // 如果社区没有metaname，不显示topics頻道
       if (channel.id === 'topics' && !talk.activeCommunity?.metaName) {
         return false
+      } else if (import.meta.env.MODE == 'mainnetgray' && channel.id === 'DAO') {
+        return true
       } else if (
         channel.id === 'DAO' &&
         talk.activeCommunityId !==

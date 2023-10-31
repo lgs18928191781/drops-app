@@ -189,6 +189,16 @@ declare interface UserAllInfo {
   nameType: string
 }
 
+declare interface BatchUserInfo {
+  metaId: string
+  address: string
+  name: string
+  metaName: string
+  nameType: string
+  avatarImage: string
+  avatarType: string
+}
+
 declare interface UserSimpleInfo {
   metaId: string
   metaIdTag: string

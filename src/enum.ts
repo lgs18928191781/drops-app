@@ -330,6 +330,7 @@ export enum NodeName {
   Phone = 'phone',
   Email = 'email',
   ShareChatMessage = 'ShareChatMessage',
+  SimpleVoting = 'SimpleVoting',
   // DAO
 }
 

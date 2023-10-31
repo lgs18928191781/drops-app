@@ -312,6 +312,8 @@ export const CreateVote = async (params: {
   }
 }): Promise<{ code: number; data: { txid: string; voteID: string }; msg: string }> => {
   // return DAO.post('/createvote', params)
+  console.log('params1321321', params)
+  params.symbol = 'stake_dao_test'
   const compressData = await gzip(JSON.stringify(params))
   return Wxcore.post(
     '/dao/createvote',

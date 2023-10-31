@@ -25,6 +25,7 @@ const DAO = new HttpRequest(`${import.meta.env.VITE_DAO_API}`, {
 
 export function Proposals(params: { symbol: string; offset: number; limit: number }) {
   return new Promise<ProposalItem[]>(async (resolve, reject) => {
+    params.symbol = 'stake_dao_test'
     const res: any = await DAO.get(`/manyvoteinfo`, {
       params,
     }).catch(error => reject(error))
@@ -35,6 +36,7 @@ export function Proposals(params: { symbol: string; offset: number; limit: numbe
 }
 
 export function Proposal(params: { symbol: string; voteID: string }) {
+  params.symbol = `stake_dao_test`
   return new Promise<ProposalItem>(async (resolve, reject) => {
     const res: any = await DAO.get(`/onevoteinfo`, {
       params,
@@ -63,6 +65,7 @@ export const Vote = async (params: {
   }
   msg: string
 }> => {
+  params.symbol = `stake_dao_test`
   const compressData = await gzip(JSON.stringify(params))
   return DAO.post('/vote', { data: compressData })
 }
@@ -80,11 +83,13 @@ export const Vote2 = async (params: {
   }
   msg: string
 }> => {
+  params.symbol = `stake_dao_test`
   return DAO.post('/vote2', params)
 }
 
 export function Voters(params: { symbol: string; voteID: string; offset: number; limit: number }) {
   return new Promise<VoterItem[]>(async (resolve, reject) => {
+    params.symbol = `stake_dao_test`
     const res: any = await DAO.get(`/voters`, {
       params,
     }).catch(error => reject(error))
@@ -99,6 +104,7 @@ export const GetStake = async (params: {
   address: string
   op: DAOStakeOperate
 }): Promise<{ code: number; data: DAOStakeReqstakeArgs; msg: string }> => {
+  params.symbol = `stake_dao_test`
   return DAO.post('/reqstakeargs', params)
 }
 
@@ -115,6 +121,7 @@ export const CreateVote = async (params: {
   endBlockTime: number
 }): Promise<{ code: number; data: { txid: string; voteID: string }; msg: string }> => {
   // return DAO.post('/createvote', params)
+  params.symbol = `stake_dao_test`
   const compressData = await gzip(JSON.stringify(params))
   return DAO.post(
     '/createvote',
@@ -131,6 +138,9 @@ export const GetUserStakeInfo = async (params: {
   symbol: string
   address: string
 }): Promise<{ code: number; data: DAOUserStakeInfo; msg: string }> => {
+  //console.log('symbol', params)
+  // debugger
+  params.symbol = 'stake_dao_test'
   return DAO.get('/userinfo', { params })
 }
 
