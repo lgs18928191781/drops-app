@@ -203,10 +203,10 @@ const AllNodeName: {
     path: '/Protocols/ShareChatMessage',
     version: '1.0.0',
   },
-  [NodeName.SimpleVoting]: {
-    brfcId: 'cbe098946755',
-    path: '/Protocols/SimpleVoting',
-    version: '1.0.0',
+  [NodeName.SimpleVote]: {
+    brfcId: '206cbf182ee1',
+    path: '/Protocols/SimpleVote',
+    version: '1.0.1',
   },
 }
 

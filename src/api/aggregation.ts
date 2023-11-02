@@ -890,3 +890,37 @@ export const GetMetaidInfoBatch = (params: {
     metaIds: params.metaIds,
   })
 }
+
+export const GetMultpleVoteInfoById = (params: {
+  proposalTxId: string
+  symbol?: string
+}): Promise<{
+  code: number
+  data: {
+    currentTotal: number
+    optionsVoteInfoList: OptionVoteInfo[]
+  }
+}> => {
+  params.symbol = 'stake_dao_test'
+  return aggregation.get(`v2/app/metaDao/voteInfo/${params.proposalTxId}?symbol=${params.symbol}`)
+}
+
+export const GetMultipleVoteRecord = (params: {
+  proposalTxId: string
+  symbol?: string
+  page?: number
+  pageSize?: number
+  timestamp?: number
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    results: {
+      items: MultipleVoteRecord[]
+    }
+  }
+}> => {
+  const { proposalTxId, ..._params } = params
+  _params.symbol = 'stake_dao_test'
+  return aggregation.get(`v2/app/metaDao/votes/${proposalTxId}`, { params: { ..._params } })
+}

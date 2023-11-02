@@ -198,6 +198,7 @@ export const Pledge = async (params: {
   }
   msg: string
 }> => {
+  params.symbol = 'stake_dao_test'
   const compressData = await gzip(JSON.stringify(params))
   return DAO.post(
     '/deposit',

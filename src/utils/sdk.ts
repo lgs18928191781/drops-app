@@ -826,7 +826,7 @@ export class SDK {
           // 如果有附件
           if (params.attachments && params.attachments!.length > 0) {
             console.log('params123', params)
-            debugger
+
             transactions.metaFileBrfc = await this.getBrfcNode(
               {
                 nodeName: NodeName.MetaFile,

@@ -330,7 +330,7 @@ export enum NodeName {
   Phone = 'phone',
   Email = 'email',
   ShareChatMessage = 'ShareChatMessage',
-  SimpleVoting = 'SimpleVoting',
+  SimpleVote = 'SimpleVote',
   // DAO
 }
 
@@ -555,6 +555,13 @@ export enum DAOProposalType {
   DiySingleChoose = '1',
   DiyMultipleChoose = '2',
   Approve = '3',
+}
+
+export enum DAOVoteType {
+  Base = 'Base',
+  SingleChoose = 'SingleChoose',
+  MultipleChoose = 'MultipleChoose',
+  Approve = 'Approve',
 }
 
 export enum DAOStakeOperate {

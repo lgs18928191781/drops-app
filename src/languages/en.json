@@ -1134,7 +1134,7 @@
     "Vote Number": "Vote Number",
     "Proposal Title": "Proposal Title",
     "Basic Type Voting": "Yes or No",
-    "Custom Single Choice Voting": "Custom Multiple Choice",
+    "Custom Single Choice Voting": "Custom Single Choice",
     "Custom Multiple Choice Voting": "Custom Multiple Choice Voting",
     "Vote Options": "Vote Options",
     "Vote Time": "Vote Time",
@@ -1249,7 +1249,8 @@
     "People": "People",
     "Invalid": "Invalid",
     "pool_total_amout SPACE": "Total Staked Amount",
-    "Selft_stake_rate SPACE": "Your Staked Ratio"
+    "Selft_stake_rate SPACE": "Your Staked Ratio",
+    "Multiple Vote Type": "Multiple Choice Voting"
   },
   "Will send": "Will send on",
   "MoblePhone Not Support": "Mobile phone number registration is not currently supported",

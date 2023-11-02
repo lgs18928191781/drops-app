@@ -82,7 +82,7 @@
                 </div>
                 <div class="vote-list" v-if="proposalOptionsIsMetaid">
                   <a
-                    v-for="(item, index) in proposal.val!.options"
+                    v-for="(item, index) in proposalMetaidListInfo"
                     class="main-border"
                     :class="[
                       {
@@ -90,18 +90,28 @@
                         voted: votedInfo,
                       },
                     ]"
-                    :key="item"
+                    :key="index"
                     @click="choiceVote(item)"
                   >
-                    <UserAvatar
-                      :meta-id="userStore.user!.metaId"
-                      :image="userStore.user!.avatarImage"
-                      :name="userStore.user!.name"
-                      :meta-name="userStore.user!.metaName"
-                    />
-                    <!--
-                     <el-icon v-if="item"><SuccessFilled /></el-icon>
-                   -->
+                    <div class="user flex flex-align-center">
+                      <UserAvatar
+                        :meta-id="item!.metaId"
+                        :image="item!.avatarImage"
+                        :name="item!.name"
+                        :meta-name="item.metaName"
+                      />
+                      <div class="flex1">
+                        <div class="username">
+                          <UserName :name="item!.name" :meta-name="item.metaName" :no-tag="true" />
+                        </div>
+                        <div class="metaid">
+                          MetaID:
+                          {{ item!.metaId.slice(0,6) }}
+                        </div>
+                      </div>
+                    </div>
+
+                    <el-icon v-if="item.visiable" size="20"><SuccessFilled /></el-icon>
                   </a>
                 </div>
 
@@ -119,13 +129,13 @@
                     @click="choiceVote(item)"
                   >
                     {{ $t(item) }}
-                    <!--
-                     <el-icon v-if="item"><SuccessFilled /></el-icon>
-                   -->
                   </a>
                 </div>
 
-                <div :class="['main-border', 'vote-btn']" @click="preVote">
+                <div
+                  :class="['main-border', 'vote-btn', VoteList.length ? '' : 'disabled']"
+                  @click="preVote"
+                >
                   <span>
                     submit
                   </span>
@@ -160,8 +170,62 @@
 
           <div class="vote-record">
             <div class="title">{{ $t('DAO.Vote Records') }}</div>
-
             <div
+              class="vote-record-list"
+              v-if="isMultProposalType"
+              v-infinite-scroll="getMore"
+              :infinite-scroll-immediate="false"
+              :infinite-scroll-distance="100"
+              :infinite-scroll-disabled="!isMobile"
+            >
+              <div
+                class="vote-record-item flex flex-align-center"
+                v-for="(item, index) in multipleVoteRecords"
+                :key="index"
+              >
+                <ElSkeleton :loading="!item.metaId" animated>
+                  <template #template>
+                    <div class="user flex flex-align-center">
+                      <ElSkeletonItem :variant="'image'" class="avatar" />
+                      <div class="flex1">
+                        <div class="username"><ElSkeletonItem :variant="'text'" /></div>
+                        <div class="metaid"><ElSkeletonItem :variant="'text'" /></div>
+                      </div>
+                    </div>
+                  </template>
+                  <div class="user flex flex-align-center">
+                    <UserAvatar
+                      :meta-id="item.metaId"
+                      :image="item.avatarImage"
+                      :name="item.userName"
+                      :meta-name="''"
+                    />
+                    <div class="flex1">
+                      <div class="username">
+                        <UserName :name="item.userName" :meta-name="''" :no-tag="true" />
+                      </div>
+                      <div class="metaid">
+                        MetaID:
+                        {{item!.metaId.slice(0,6) }}
+                      </div>
+                    </div>
+                  </div>
+                </ElSkeleton>
+
+                <!-- <div class="value flex1">
+                  {{ $t(proposal.val!.options[item.voteOption]) }}
+                </div> -->
+                <div class="time">
+                  {{ $filters.dateTimeFormat(item.timestamp, 'UTC', 'YY-MM-DD HH:mm:ss') }}(UTC)
+                </div>
+                <!-- <Icon name="link" class="link" @click="tx(item.)"></Icon> -->
+              </div>
+
+              <LoadMore :pagination="pagination" v-if="multipleVoteRecords.length" />
+              <IsNull v-else />
+            </div>
+            <div
+              v-else
               class="vote-record-list"
               v-infinite-scroll="getMore"
               :infinite-scroll-immediate="false"
@@ -240,7 +304,13 @@
                 <div class="information-item ">
                   <div class="information-item-warp flex flex-align-center">
                     <div class="flex1 lable">{{ $t('DAO.Proposal Type') }}</div>
-                    <div class="value">{{ $t('DAO.Single Vote Type') }}</div>
+                    <div class="value">
+                      {{
+                        isMultProposalType
+                          ? $t('DAO.Multiple Vote Type')
+                          : $t('DAO.Single Vote Type')
+                      }}
+                    </div>
                   </div>
                 </div>
 
@@ -250,6 +320,73 @@
                     <div class="flex1 lable">{{ $t('DAO.Start Time') }}</div>
                     <div class="value">
                       {{ $filters.dateTimeFormat(proposal!.val!.beginBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -503,6 +640,73 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                       }}(UTC)
                     </div>
                   </div>
@@ -579,11 +783,47 @@
             <div class="cont">
               <div class="result-list h-full overflow-y-auto">
                 <div
-                  class="result-item "
-                  v-for="(item, index) in proposal.val!.options"
+                  class="result-item"
+                  v-for="(item, index) in proposalMetaidListInfo"
                   :key="index"
                 >
-                  <div class="top flex flex-align-center">
+                  <div class="top flex flex-align-center" v-if="proposalOptionsIsMetaid">
+                    <div class="user flex flex-align-center">
+                      <UserAvatar
+                        :meta-id="item!.metaId"
+                        :image="item!.avatarImage"
+                        :name="item!.name"
+                        :meta-name="item.metaName"
+                      />
+                      <div class="flex1">
+                        <div class="username">
+                          <UserName :name="item!.name" :meta-name="item.metaName" :no-tag="true" />
+                        </div>
+                        <div class="metaid">
+                          MetaID:
+                          {{ item!.metaId.slice(0,6) }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="count" v-if="isMultProposalType">{{ item.optionPercentage }}%</div>
+                    <div class="count" v-else>
+                      {{
+                      proposal.val!.voteSumData[index] !== '0' 
+                      ? 
+                      new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
+                      :
+                      0
+
+
+
+
+
+
+                      }}%
+                    </div>
+                  </div>
+
+                  <div class="top flex flex-align-center" v-else>
                     <div class="value flex1">{{ $t(item) }}</div>
                     <div class="count">
                       {{
@@ -598,148 +838,32 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                       }}%
                     </div>
                   </div>
-                  <div class="proccess">
+
+                  <div class="proccess" v-if="isMultProposalType">
+                    <ElProgress
+                      :percentage="
+                        item.optionPercentage !== '0.00'
+                          ? new Decimal(item.optionPercentage).toNumber()
+                          : 0
+                      "
+                      :show-text="false"
+                    />
+                  </div>
+                  <div class="proccess" v-else>
                     <ElProgress
                       :percentage="proposal.val!.voteSumData[index] !== '0' ? new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toNumber() : 0"
                       :show-text="false"
                     />
                   </div>
-                  <div class="vote-number">
+                  <div class="vote-number" v-if="isMultProposalType">
+                    {{ $t('DAO.Vote Number') }}: <br />
+                    {{ $filters.space(item.optionTotal) }} /
+                    {{ $filters.space(currentMultpleChooseTotaVote) }}
+                  </div>
+                  <div class="vote-number" v-else>
                     {{ $t('DAO.Vote Number') }}: <br />
                     {{ $filters.space(proposal.val!.voteSumData[index]) }} /
                     {{ $filters.space(totalVoteValue) }}
@@ -756,7 +880,7 @@
         <template #body>
           <div class="confirm-model">
             <div class="lable">{{ $t('DAO.You Will Vote') }}</div>
-            <div v-if="isMultProposalType">
+            <div v-if="isMultProposalType && !proposalOptionsIsMetaid" class="vote-list">
               <div
                 class="main-border option option-item"
                 v-for="(item, index) in VoteList"
@@ -765,122 +889,37 @@
                 <span>{{ item }}</span>
               </div>
             </div>
+
+            <div v-else-if="proposalOptionsIsMetaid" class="vote-list">
+              <div
+                class="main-border option option-item"
+                v-for="(item, index) in voteMetaidListInfo"
+                :key="index"
+              >
+                <div class="user flex flex-align-center">
+                  <UserAvatar
+                    :meta-id="item!.metaId"
+                    :image="item!.avatarImage"
+                    :name="item!.name"
+                    :meta-name="item.metaName"
+                  />
+                  <div>
+                    <div class="username">
+                      <UserName :name="item!.name" :meta-name="item.metaName" :no-tag="true" />
+                    </div>
+                    <div class="metaid">
+                      MetaID:
+                      {{ item!.metaId.slice(0,6) }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="main-border option" v-else>{{ $t(currentOption) }}</div>
 
             <div class="value">
               {{ $t('DAO.Vote Number') }}:<span
                 >{{ new Decimal(userStake.val!.lockedTokenAmount).div(10**8).toNumber()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -927,13 +966,20 @@ import { ProposalItem, VoterItem, DAOUserStakeInfo } from '@/@types/api/dao'
 import Decimal from 'decimal.js-light'
 import Modal from '@/components/Modal/Modal.vue'
 import { useUserStore } from '@/stores/user'
-import { checkUserLogin, getUserInfoByAddress, openLoading, tx } from '@/utils/util'
+import { checkUserLogin, getUserInfoByAddress, openLoading, tx, Orical } from '@/utils/util'
 import { signTx, toHex, mvc } from 'mvc-scrypt/dist'
 import { marked } from 'marked'
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 import { SuccessFilled } from '@element-plus/icons-vue'
-import { GetMetaIdByAddress, GetMetaidInfoBatch } from '@/api/aggregation'
+import { DAOVoteType } from '@/enum'
+import {
+  GetMetaIdByAddress,
+  GetMetaidInfoBatch,
+  GetMultpleVoteInfoById,
+  GetMultipleVoteRecord,
+} from '@/api/aggregation'
+
 const i18n = useI18n()
 const records: VoterItem[] = reactive([])
 const isSkeleton = ref(true)
@@ -948,21 +994,24 @@ const userStore = useUserStore()
 const loading = ref(false)
 const proposalOptionsIsMetaid = ref(false)
 const proposalMetaidListInfo: BatchUserInfo[] = reactive([])
+const voteMetaidListInfo: BatchUserInfo[] = reactive([])
 const userStake: { val: null | DAOUserStakeInfo } = reactive({ val: null })
 const createUser: {
   val: UserAllInfo | null
 } = reactive({
   val: null,
 })
-
+const currentMultpleChooseTotaVote = ref(0)
 const recordsUserInfo: UserAllInfo[] = reactive([])
 const ContentRef = ref()
 const blockTimeStamp = ref(0)
 const vditor = ref<Vditor | null>(null)
 const markdownRendering = ref(true)
 const ConetenWarpRef = ref()
+const multipleVoteResInfo: OptionVoteInfo[] = reactive([])
 let markdownLoading: any
 let VoteList: string[] = reactive([])
+const multipleVoteRecords: MultipleVoteRecord[] = reactive([])
 const dafaultVoteOptions = [
   {
     name: () => i18n.t('DAO.Approve'),
@@ -979,11 +1028,10 @@ const dafaultVoteOptions = [
 ]
 
 const isMultProposalType = computed(() => {
-  return !proposal.val?.options.includes('Yes' || 'No')
+  return proposal.val?.infos.voteType == DAOVoteType.MultipleChoose
 })
 
 const statusText = computed(() => {
-  debugger
   return getStatusText(
     proposal.val!.beginBlockTime,
     proposal.val!.endBlockTime,
@@ -1100,32 +1148,47 @@ const votedInfo = computed(() => {
 })
 
 async function choiceVote(item: any) {
-  if (VoteList.includes(item)) {
-    // item.visible = false
+  if (VoteList.includes(item.metaId)) {
+    item.visiable = false
     VoteList = VoteList.filter(vote => {
-      return vote !== item
+      return vote !== item.metaId
     })
   } else {
-    // item.visible = true
-    VoteList.push(item)
+    item.visiable = true
+    VoteList.push(item.metaId)
   }
   console.log('VoteList', VoteList)
 }
 
-async function checkProposalOptionsUseMetaid(options: string[]) {
+async function checkProposalOptionsUseMetaid(options: string[], isMultipleChoice: boolean) {
   const regex = /^[0-9A-Fa-f]{64}$/
   const isMetaid = options.every(option => {
     return regex.test(option)
   })
-  if (isMetaid) proposalOptionsIsMetaid.value = true
-  const res = await GetMetaidInfoBatch({
-    metaIds: options,
-  })
-  if (res.code == 0) {
-    proposalMetaidListInfo.push(...res.data.users)
+  if (isMetaid) {
+    proposalOptionsIsMetaid.value = true
+    const res = await GetMetaidInfoBatch({
+      metaIds: options,
+    })
+
+    if (res.code == 0) {
+      res.data.users = res.data.users.map(user => {
+        if (isMultipleChoice) {
+          multipleVoteResInfo.forEach(item => {
+            if (item.optionName == user.metaId) {
+              user = { ...user, ...item }
+            }
+          })
+        }
+        return {
+          ...user,
+          visiable: false,
+        }
+      })
+      proposalMetaidListInfo.push(...res.data.users)
+    }
+    console.log('proposalMetaidListInfo', proposalMetaidListInfo)
   }
-  console.log('proposalMetaidListInfo', proposalMetaidListInfo)
-  debugger
 }
 
 function getDetail() {
@@ -1145,10 +1208,25 @@ function getDetail() {
           minPercent: 60,
         }
       }
-      console.log('res123456', res)
-      debugger
-      checkProposalOptionsUseMetaid(res.options)
+      const isMultipleChoice = res.infos.voteType == DAOVoteType.MultipleChoose
+      if (isMultipleChoice) {
+        multipleVoteResInfo.length = 0
+        const voteinfo = await GetMultpleVoteInfoById({
+          proposalTxId: route.params.id as string,
+          symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${
+            talk.activeCommunity!.dao!.daoId
+          }`,
+        })
+        if (voteinfo.code == 0 && voteinfo.data.optionsVoteInfoList.length) {
+          currentMultpleChooseTotaVote.value = voteinfo.data.currentTotal
+          multipleVoteResInfo.push(...voteinfo.data.optionsVoteInfoList)
+        }
+      }
+
+      checkProposalOptionsUseMetaid(res.options, isMultipleChoice)
       proposal.val = res
+      //multipleVoteResInfo
+
       if (!createUser.val && typeof proposal.val!.creator === 'string') {
         getUserInfoByAddress(proposal.val!.creator).then(user => {
           createUser.val = user
@@ -1161,30 +1239,55 @@ function getDetail() {
 
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
-    const res = await Voters({
-      symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${talk.activeCommunity!.dao!.daoId}`,
-      voteID: route.params.id as string,
-      offset: (pagination.page - 1) * pagination.pageSize,
-      limit: pagination.pageSize,
-    })
-    if (res) {
-      if (isCover) records.length = 0
-      if (res.length) {
-        records.push(...res)
-        pagination.nothing = false
-        setTimeout(() => {
-          for (let i = 0; i < res.length; i++) {
-            if (!recordsUserInfo.some(item => item.address === res[i].address)) {
-              getUserInfoByAddress(res[i].address).then(user => {
-                recordsUserInfo.push(user)
-              })
-            }
-          }
-        }, 0)
-      } else {
-        pagination.nothing = true
+    if (isMultProposalType) {
+      const res = await GetMultipleVoteRecord({
+        proposalTxId: route.params.id as string,
+        symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${
+          talk.activeCommunity!.dao!.daoId
+        }`,
+        page: pagination.page,
+        pageSize: pagination.pageSize,
+      })
+      if (res.code == 0) {
+        if (isCover) multipleVoteRecords.length = 0
+        if (res.data.results.items.length) {
+          multipleVoteRecords.push(...res.data.results.items)
+          pagination.nothing = false
+        } else {
+          pagination.nothing = true
+        }
+        resolve()
       }
-      resolve()
+
+      console.log('ressssss', res)
+    } else {
+      const res = await Voters({
+        symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${
+          talk.activeCommunity!.dao!.daoId
+        }`,
+        voteID: route.params.id as string,
+        offset: (pagination.page - 1) * pagination.pageSize,
+        limit: pagination.pageSize,
+      })
+      if (res) {
+        if (isCover) records.length = 0
+        if (res.length) {
+          records.push(...res)
+          pagination.nothing = false
+          setTimeout(() => {
+            for (let i = 0; i < res.length; i++) {
+              if (!recordsUserInfo.some(item => item.address === res[i].address)) {
+                getUserInfoByAddress(res[i].address).then(user => {
+                  recordsUserInfo.push(user)
+                })
+              }
+            }
+          }, 0)
+        } else {
+          pagination.nothing = true
+        }
+        resolve()
+      }
     }
   })
 }
@@ -1201,7 +1304,7 @@ function getUserStake() {
       })
       if (res.code === 0) {
         console.log('res.data', res.data)
-        debugger
+
         userStake.val = res.data
         resolve()
       }
@@ -1221,14 +1324,19 @@ function getMore() {
 }
 
 async function preVote() {
-  debugger
+  if (!VoteList.length) return
   await checkUserLogin()
   if (votedInfo.value) return
-  // if (!userStake.val!.lockedTokenAmount || userStake.val!.lockedTokenAmount === '0') {
-  //   return ElMessage.error(i18n.t('DAO.NOt Have Voting Quota'))
-  // }
+  if (!userStake.val!.lockedTokenAmount || userStake.val!.lockedTokenAmount === '0') {
+    return ElMessage.error(i18n.t('DAO.NOt Have Voting Quota'))
+  }
+  voteMetaidListInfo.length = 0
   console.log('votelist', VoteList)
-  // debugger
+  const seletedVoteUser = proposalMetaidListInfo.filter(item => {
+    return VoteList.includes(item.metaId)
+  })
+  voteMetaidListInfo.push(...seletedVoteUser)
+
   isShowVoteModal.value = true
 }
 
@@ -1243,39 +1351,57 @@ async function vote(option: string) {
 }
 
 async function confirmMultiVote() {
-  debugger
   loading.value = true
   try {
-    // const symbol = `${talk.activeCommunity!.dao!.governanceSymbol}_${
-    //   talk.activeCommunity!.dao!.daoId
-    // }`
-    const symbol = `space_c96faa7fac17b68eab693bb2a4c43e921d169a21310d56ce6eefd51230e4e23d`
-    // const stakeRes = await GetStake({
-    //   symbol,
-    //   address: userStore.user!.address,
-    //   op: DAOStakeOperate.Vote,
-    // })
+    const symbol = `${talk.activeCommunity!.dao!.governanceSymbol}_${
+      talk.activeCommunity!.dao!.daoId
+    }`
+    //const symbol = `space_c96faa7fac17b68eab693bb2a4c43e921d169a21310d56ce6eefd51230e4e23d`
+    const stakeRes = await GetStake({
+      symbol,
+      address: userStore.user!.address,
+      op: DAOStakeOperate.Vote,
+    })
+    console.log('stakeRes', stakeRes)
+
     console.log('votedInfo', proposal.val, userStake.val)
-    debugger
-    let votingInfos = []
-    for (let i of VoteList) {
-      const info = await GetMetaIdByAddress(i)
-      votingInfos.push({
-        metaid: info.data,
-        address: i,
-        votesAmount: userStake?.val?.lockedTokenAmount,
-      })
+
+    const oricalRes = await Orical([2, 3, 4])
+
+    const signaturelist: any[] = []
+    let digest: any = null
+
+    oricalRes?.forEach(res => {
+      if (res.status == 200) {
+        if (!digest) {
+          digest = res.data.digest
+        }
+        signaturelist.push({
+          publicKey: res.data.signatures.rabin.public_key,
+          signature: res.data.signatures.rabin.signature,
+          padding: res.data.signatures.rabin.padding,
+        })
+      }
+    })
+    const voteToOptionIdxs = []
+    for (let i = 0; i < proposal.val!.options.length; i++) {
+      if (VoteList.includes(proposal.val!.options[i])) {
+        voteToOptionIdxs.push(`${i}`)
+      }
     }
-    console.log('votingInfos', votingInfos)
-    debugger
+    console.log('voteToOptionIdxs', signaturelist, voteToOptionIdxs)
+
     const tx = await userStore.showWallet.createBrfcChildNode(
       {
-        nodeName: NodeName.SimpleVoting,
+        nodeName: NodeName.SimpleVote,
         data: JSON.stringify({
-          votingOptions: '1',
-          voteId: proposal?.val?.voteID,
-          votingInfos: votingInfos,
-          voteLimit: 5,
+          symbol: 'stake_dao_test',
+          voteTo: proposal?.val?.voteID,
+          voteToOptionIdxs: voteToOptionIdxs,
+          voteComment: '',
+          digest: digest,
+          signatures: signaturelist,
+          voteTime: new Date().getTime(),
         }),
       },
       {
@@ -1285,7 +1411,6 @@ async function confirmMultiVote() {
     )
 
     console.log('tx123', tx)
-    debugger
 
     pagination.page = 1
     getDatas(true)
@@ -1300,7 +1425,6 @@ async function confirmMultiVote() {
 
     // loading.value = false
   } catch (error) {
-    debugger
     ElMessage.error((error as any).message)
     loading.value = false
   }

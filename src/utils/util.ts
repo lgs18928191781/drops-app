@@ -74,7 +74,13 @@ import { string } from 'yup'
 import { MetaletWallet } from './wallet/Metalet-wallet'
 import mvc from 'mvc-lib'
 const emojiReg = /[\u{1F601}-\u{1F64F}\u{2702}-\u{27B0}\u{1F680}-\u{1F6C0}\u{1F170}-\u{1F251}\u{1F600}-\u{1F636}\u{1F681}-\u{1F6C5}\u{1F30D}-\u{1F567}]/gu
-
+const oricalUrl = [
+  'https://api.mvcswap.com/blockinfo1',
+  'https://api.mvcswap.com/blockinfo2',
+  'https://www.metaidservices.com/oracle/',
+  'https://www.metaidservices.com/block-oracle/',
+  'https://witnessonchain.com/v1/chain-info/mvc',
+]
 export function randomString() {
   return Math.random()
     .toString()
@@ -1396,8 +1402,7 @@ export function createBrfcid(params: { title: string; author: string; versions: 
     .reverse()
     .toString('hex')
     .substring(0, 12)
-  console.log('res', res)
-  debugger
+
   return res
 }
 
@@ -1831,4 +1836,17 @@ export function replaceMarkdownTag(markdown: string) {
     .replace(/-+/g, '')
     .replace(/\n(&gt;|\\>)/g, '')
     .replace(/^>{1}/g, '')
+}
+
+export function Orical(select: number[]) {
+  const seleted = oricalUrl.filter((item, index) => {
+    return select.includes(index)
+  })
+  const requestList = []
+  for (const request of seleted) {
+    requestList.push(axios.get(request))
+  }
+  if (requestList.length) {
+    return Promise.all([...requestList])
+  }
 }

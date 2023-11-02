@@ -1247,7 +1247,8 @@
     "People": "人",
     "Invalid": "无效",
     "pool_total_amout SPACE": "总质押数量",
-    "Selft_stake_rate SPACE": "你的质押占比"
+    "Selft_stake_rate SPACE": "你的质押占比",
+    "Multiple Vote Type": "多項選擇投票"
   },
   "Will send": "將發佈于",
   "MoblePhone Not Support": "暂不支持手机号注册",

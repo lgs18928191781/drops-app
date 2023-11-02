@@ -120,7 +120,7 @@ const loading = ref(false)
 const txFee = new Decimal(40000).div(Math.pow(10, 8)).toNumber()
 const extractTxFee = new Decimal(60000).div(Math.pow(10, 8)).toNumber()
 const currentSymbol = computed(() => {
-  //return symbols.find(item => item.symbol === talk.activeCommunity?.dao?.governanceToken)
+  return symbols.find(item => item.symbol === talk.activeCommunity?.dao?.governanceToken)
   return symbols.find(item => item.symbol === talk.activeCommunity?.dao?.governanceSymbol)
 })
 
@@ -232,7 +232,7 @@ async function stake() {
       talk.activeCommunity!.dao!.daoId
     }`
     console.log('symbol', symbol)
-    debugger
+
     if (props.type === StakeType.Pledge) {
       // 质押
       const stakeRes = await GetStake({

@@ -1,4 +1,4 @@
-import { BuyNFTStatus, PayPlatform } from '@/enum'
+import { BuyNFTStatus, PayPlatform, DAOVoteType } from '@/enum'
 import HttpRequest from '@/utils/request'
 import { alertCatchError } from '@/utils/util'
 import { ElMessage } from 'element-plus'
@@ -309,6 +309,7 @@ export const CreateVote = async (params: {
       minAmount: number
       minPercent: number
     }
+    voteType: DAOVoteType
   }
 }): Promise<{ code: number; data: { txid: string; voteID: string }; msg: string }> => {
   // return DAO.post('/createvote', params)

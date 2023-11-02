@@ -110,8 +110,8 @@
 </template>
 
 <script setup lang="ts">
-import { Chains, DAOProposalType, DAOStakeOperate, NodeName, SdkPayType } from '@/enum'
-import { onMounted, reactive, ref } from 'vue'
+import { Chains, DAOProposalType, DAOStakeOperate, NodeName, SdkPayType, DAOVoteType } from '@/enum'
+import { onMounted, reactive, ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
@@ -212,6 +212,16 @@ const rules = reactive<FormRules>({
 
 const MarkDownRef = ref()
 
+const currentVoteType = computed(() => {
+  if (form.type === DAOProposalType.Base) {
+    return DAOVoteType.Base
+  } else if (form.type === DAOProposalType.DiySingleChoose) {
+    return DAOVoteType.SingleChoose
+  } else if (form.type === DAOProposalType.DiyMultipleChoose) {
+    return DAOVoteType.MultipleChoose
+  } else return DAOVoteType.Approve
+})
+
 function initMarkDown() {
   vditor.value = new Vditor('vditor', {
     cache: {
@@ -291,6 +301,8 @@ async function confirmPublish() {
   isShowConfirmModal.value = false
   const loading = openLoading()
   try {
+    console.log('currentVoteType', currentVoteType.value)
+
     const res = await GetStake({
       symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${talk.activeCommunity!.dao!.daoId}`,
       address: userStore.user!.address!,
@@ -341,6 +353,7 @@ async function confirmPublish() {
                 .toInteger()
                 .toNumber(),
             },
+            voteType: currentVoteType.value,
           },
         })
         if (response.code === 0) {
@@ -364,7 +377,6 @@ async function confirmPublish() {
 }
 
 onMounted(() => {
-  debugger
   initMarkDown()
 
   headeroffSetTop.value = WarpRef.value.getBoundingClientRect().top

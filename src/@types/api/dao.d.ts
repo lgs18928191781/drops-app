@@ -19,6 +19,7 @@ export interface ProposalItem {
       minPercent: number
       minUser: number
     }
+    voteType: DAOVoteType
   }
 }
 
