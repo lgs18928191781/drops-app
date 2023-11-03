@@ -924,3 +924,19 @@ export const GetMultipleVoteRecord = (params: {
   _params.symbol = 'stake_dao_test'
   return aggregation.get(`v2/app/metaDao/votes/${proposalTxId}`, { params: { ..._params } })
 }
+
+export const GetSelfMultipleVote = (params: {
+  proposalTxId: string
+  symbol?: string
+  metaId?: string
+  address?: string
+}): Promise<{
+  code: number
+  data: {
+    ownOptionsVoteInfo: number[]
+  }
+}> => {
+  const { proposalTxId, ..._params } = params
+  _params.symbol = 'stake_dao_test'
+  return aggregation.get(`v2/app/metaDao/voteInfo/${proposalTxId}`, { params: { ..._params } })
+}

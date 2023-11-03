@@ -56,6 +56,7 @@
                 >{{ $filters.dateTimeFormat(proposal.val!.createTime * 1000) }}</span
               > -->
             </div>
+
             <span class="status" :class="statusClass">{{ statusText }}</span>
             <!-- <div class="share">
               {{ $t('DAO.Share') }}
@@ -133,6 +134,7 @@
                 </div>
 
                 <div
+                  v-if="!votedInfo"
                   :class="['main-border', 'vote-btn', VoteList.length ? '' : 'disabled']"
                   @click="preVote"
                 >
@@ -151,7 +153,40 @@
                 <div class="title">
                   {{ votedInfo ? $t('DAO.Information About Your Vote') : $t('DAO.Vote Title') }}
                 </div>
-                <div class="vote-list">
+
+                <div class="vote-list" v-if="proposalOptionsIsMetaid">
+                  <a
+                    v-for="(item, index) in proposalMetaidListInfo"
+                    class="main-border"
+                    :class="[
+                      {
+                        faded: votedInfo && index !== votedInfo.voteOption,
+                        voted: votedInfo,
+                      },
+                    ]"
+                    :key="index"
+                    @click="vote(item.metaId)"
+                  >
+                    <div class="user flex flex-align-center">
+                      <UserAvatar
+                        :meta-id="item!.metaId"
+                        :image="item!.avatarImage"
+                        :name="item!.name"
+                        :meta-name="item.metaName"
+                      />
+                      <div class="flex1">
+                        <div class="username">
+                          <UserName :name="item!.name" :meta-name="item.metaName" :no-tag="true" />
+                        </div>
+                        <div class="metaid">
+                          MetaID:
+                          {{ item!.metaId.slice(0,6) }}
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+                <div class="vote-list" v-else>
                   <a
                     class="main-border"
                     :class="{
@@ -320,6 +355,19 @@
                     <div class="flex1 lable">{{ $t('DAO.Start Time') }}</div>
                     <div class="value">
                       {{ $filters.dateTimeFormat(proposal!.val!.beginBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm')
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -707,6 +755,19 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
                       }}(UTC)
                     </div>
                   </div>
@@ -819,6 +880,19 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
                       }}%
                     </div>
                   </div>
@@ -832,6 +906,19 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -927,6 +1014,19 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
                 }}&nbsp;SPACEs</span
               >
             </div>
@@ -961,7 +1061,7 @@ import { isMobile } from '@/stores/root'
 import { getStatusClass, getStatusText, DAOtypeOptions } from '@/utils/DAO'
 import { GetBlockTime, GetStake, GetUserStakeInfo, Proposal, Vote, Vote2, Voters } from '@/api/dao'
 import { useTalkStore } from '@/stores/talk'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ProposalItem, VoterItem, DAOUserStakeInfo } from '@/@types/api/dao'
 import Decimal from 'decimal.js-light'
 import Modal from '@/components/Modal/Modal.vue'
@@ -978,9 +1078,11 @@ import {
   GetMetaidInfoBatch,
   GetMultpleVoteInfoById,
   GetMultipleVoteRecord,
+  GetSelfMultipleVote
 } from '@/api/aggregation'
 
 const i18n = useI18n()
+const router = useRouter()
 const records: VoterItem[] = reactive([])
 const isSkeleton = ref(true)
 const pagination = reactive({ ...initPagination })
@@ -1148,6 +1250,7 @@ const votedInfo = computed(() => {
 })
 
 async function choiceVote(item: any) {
+  if (votedInfo.value) return
   if (VoteList.includes(item.metaId)) {
     item.visiable = false
     VoteList = VoteList.filter(vote => {
@@ -1185,7 +1288,9 @@ async function checkProposalOptionsUseMetaid(options: string[], isMultipleChoice
           visiable: false,
         }
       })
-      proposalMetaidListInfo.push(...res.data.users)
+      if (!proposalMetaidListInfo.length) {
+        proposalMetaidListInfo.push(...res.data.users)
+      }
     }
     console.log('proposalMetaidListInfo', proposalMetaidListInfo)
   }
@@ -1199,6 +1304,15 @@ function getDetail() {
     })
 
     if (res) {
+      if (
+        res.infos.stakeHolderOnly &&
+        new Decimal(userStake.val!.lockedTokenAmount).div(10 ** 8).toNumber() <
+          +import.meta.env.VITE_STAKEHOLDER_ONLY_LIMIT
+      ) {
+        router.go(-1)
+        ElMessage.error(i18n.t('DAO.NOt Have Voting Quota_more_than_1_spaces'))
+        reject()
+      }
       // @ts-ignore
       if (!res.infos) res.infos = {}
       if (!res.infos?.resultOption) {

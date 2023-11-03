@@ -310,6 +310,7 @@ export const CreateVote = async (params: {
       minPercent: number
     }
     voteType: DAOVoteType
+    stakeHolderOnly: boolean
   }
 }): Promise<{ code: number; data: { txid: string; voteID: string }; msg: string }> => {
   // return DAO.post('/createvote', params)

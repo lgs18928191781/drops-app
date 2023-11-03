@@ -1225,7 +1225,7 @@
     "Confirm Publish": "確認發布",
     "Confirm Publish Tips": "一旦發布後，提案將不可<a>修改</a>和<a>刪除</a>，請確認無誤後再發布！",
     "Single Vote Type": "單項選擇投票",
-    "Max five Vote Options": "最多只可以設置10個選項",
+    "Max five Vote Options": "最多只可以設置30個選項",
     "New Block Time": "最新出塊時間",
     "Edit Successful": "編輯成功",
     "Create Successful": "創建成功",
@@ -1248,7 +1248,10 @@
     "Invalid": "无效",
     "pool_total_amout SPACE": "总质押数量",
     "Selft_stake_rate SPACE": "你的质押占比",
-    "Multiple Vote Type": "多項選擇投票"
+    "Multiple Vote Type": "多項選擇投票",
+    "Vote stake_holder_only": "提案只对质押用户可见",
+    "Enter Vote stake_only": "请选择是否只能质押用户可见",
+    "NOt Have Voting Quota_more_than_1_spaces": "提案仅对质押用户可见,请确保您的质押数量大于1 Space"
   },
   "Will send": "將發佈于",
   "MoblePhone Not Support": "暂不支持手机号注册",

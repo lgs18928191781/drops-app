@@ -20,6 +20,7 @@ export interface ProposalItem {
       minUser: number
     }
     voteType: DAOVoteType
+    stakeHolderOnly: boolean
   }
 }
 

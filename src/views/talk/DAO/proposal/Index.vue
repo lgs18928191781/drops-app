@@ -128,6 +128,9 @@
                 </span>
               </ElSkeleton>
             </div>
+            <span v-if="item?.infos?.stakeHolderOnly" class="visible-status">
+              {{ $t('DAO.Vote stake_holder_only') }}
+            </span>
             <span
               class="status"
               :class="getStatusClass(item.beginBlockTime, item.endBlockTime, blockTimeStamp)"

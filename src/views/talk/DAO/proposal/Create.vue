@@ -48,6 +48,18 @@
             :disabled="form.type === DAOProposalType.Base"
           />
         </ElFormItem>
+
+        <ElFormItem
+          :label="$t('DAO.Vote stake_holder_only')"
+          prop="stakeHolderOnly"
+          :class="[form.options.length ? 'is-success' : 'is-error']"
+        >
+          <ElSelect v-model="form.stakeHolderOnly" :placeholder="$t('DAO.Enter Vote stake_only')">
+            <el-option label="No" :value="false" />
+            <el-option label="Yes" :value="true" />
+          </ElSelect>
+        </ElFormItem>
+
         <ElFormItem :label="$t('DAO.Vote Time')" prop="time">
           <ElDatePicker
             v-model="(form.time as any)"
@@ -141,6 +153,7 @@ const form = reactive({
   title: '',
   type: DAOProposalType.Base,
   options: ['Yes', 'No'],
+  stakeHolderOnly: false,
   time: ['', ''],
   content: '',
   minVoteUser: 1,
@@ -163,7 +176,7 @@ const rules = reactive<FormRules>({
     {
       validator: (rule: any, value: any, callback: any) => {
         if (form.options && form.options.length) {
-          if (form.options.length > 10) {
+          if (form.options.length > 30) {
             callback(new Error(i18n.t('DAO.Max five Vote Options')))
           } else {
             callback()
@@ -301,8 +314,8 @@ async function confirmPublish() {
   isShowConfirmModal.value = false
   const loading = openLoading()
   try {
-    console.log('currentVoteType', currentVoteType.value)
-
+    console.log('currentVoteType', form, currentVoteType.value)
+    debugger
     const res = await GetStake({
       symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${talk.activeCommunity!.dao!.daoId}`,
       address: userStore.user!.address!,
@@ -354,6 +367,7 @@ async function confirmPublish() {
                 .toNumber(),
             },
             voteType: currentVoteType.value,
+            stakeHolderOnly: form.stakeHolderOnly,
           },
         })
         if (response.code === 0) {

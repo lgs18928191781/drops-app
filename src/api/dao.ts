@@ -4,6 +4,14 @@ import { DAOStakeOperate } from '@/enum'
 import pako from 'pako'
 import { gzip } from 'node-gzip'
 
+function changeSymbol(symbol: string) {
+  if (symbol.indexOf('stake_dao_test') !== -1) {
+    return `stake_dao_test`
+  } else {
+    return symbol
+  }
+}
+
 const DAO = new HttpRequest(`${import.meta.env.VITE_DAO_API}`, {
   responseHandel: response => {
     return new Promise((resolve, reject) => {
@@ -25,7 +33,7 @@ const DAO = new HttpRequest(`${import.meta.env.VITE_DAO_API}`, {
 
 export function Proposals(params: { symbol: string; offset: number; limit: number }) {
   return new Promise<ProposalItem[]>(async (resolve, reject) => {
-    params.symbol = 'stake_dao_test'
+    params.symbol = changeSymbol(params.symbol)
     const res: any = await DAO.get(`/manyvoteinfo`, {
       params,
     }).catch(error => reject(error))
@@ -36,7 +44,7 @@ export function Proposals(params: { symbol: string; offset: number; limit: numbe
 }
 
 export function Proposal(params: { symbol: string; voteID: string }) {
-  params.symbol = `stake_dao_test`
+  params.symbol = changeSymbol(params.symbol)
   return new Promise<ProposalItem>(async (resolve, reject) => {
     const res: any = await DAO.get(`/onevoteinfo`, {
       params,
@@ -65,7 +73,7 @@ export const Vote = async (params: {
   }
   msg: string
 }> => {
-  params.symbol = `stake_dao_test`
+  params.symbol = changeSymbol(params.symbol)
   const compressData = await gzip(JSON.stringify(params))
   return DAO.post('/vote', { data: compressData })
 }
@@ -83,13 +91,13 @@ export const Vote2 = async (params: {
   }
   msg: string
 }> => {
-  params.symbol = `stake_dao_test`
+  params.symbol = changeSymbol(params.symbol)
   return DAO.post('/vote2', params)
 }
 
 export function Voters(params: { symbol: string; voteID: string; offset: number; limit: number }) {
   return new Promise<VoterItem[]>(async (resolve, reject) => {
-    params.symbol = `stake_dao_test`
+    params.symbol = changeSymbol(params.symbol)
     const res: any = await DAO.get(`/voters`, {
       params,
     }).catch(error => reject(error))
@@ -104,7 +112,7 @@ export const GetStake = async (params: {
   address: string
   op: DAOStakeOperate
 }): Promise<{ code: number; data: DAOStakeReqstakeArgs; msg: string }> => {
-  params.symbol = `stake_dao_test`
+  params.symbol = changeSymbol(params.symbol)
   return DAO.post('/reqstakeargs', params)
 }
 
@@ -121,7 +129,7 @@ export const CreateVote = async (params: {
   endBlockTime: number
 }): Promise<{ code: number; data: { txid: string; voteID: string }; msg: string }> => {
   // return DAO.post('/createvote', params)
-  params.symbol = `stake_dao_test`
+  params.symbol = changeSymbol(params.symbol)
   const compressData = await gzip(JSON.stringify(params))
   return DAO.post(
     '/createvote',
@@ -140,7 +148,7 @@ export const GetUserStakeInfo = async (params: {
 }): Promise<{ code: number; data: DAOUserStakeInfo; msg: string }> => {
   //console.log('symbol', params)
   // debugger
-  params.symbol = 'stake_dao_test'
+  params.symbol = changeSymbol(params.symbol)
   return DAO.get('/userinfo', { params })
 }
 
@@ -164,6 +172,7 @@ export const Unlock = async (params: {
   }
   msg: string
 }> => {
+  params.symbol = changeSymbol(params.symbol)
   const compressData = await gzip(JSON.stringify(params))
   return DAO.post('/unlock', { data: compressData })
 }
@@ -181,6 +190,7 @@ export const Unlock2 = async (params: {
   }
   msg: string
 }> => {
+  params.symbol = changeSymbol(params.symbol)
   return DAO.post('/unlock2', params)
 }
 
@@ -198,7 +208,7 @@ export const Pledge = async (params: {
   }
   msg: string
 }> => {
-  params.symbol = 'stake_dao_test'
+  params.symbol = changeSymbol(params.symbol)
   const compressData = await gzip(JSON.stringify(params))
   return DAO.post(
     '/deposit',
@@ -226,6 +236,7 @@ export const Withdraw = async (params: {
   }
   msg: string
 }> => {
+  params.symbol = changeSymbol(params.symbol)
   const compressData = await gzip(JSON.stringify(params))
   return DAO.post('/withdraw', { data: compressData })
 }
@@ -243,5 +254,6 @@ export const Withdraw2 = async (params: {
   }
   msg: string
 }> => {
+  params.symbol = changeSymbol(params.symbol)
   return DAO.post('/withdraw2', params)
 }
