@@ -145,6 +145,15 @@
                 color: var(--themeBtnTextColor);
             }
         }
+         .visible-status{
+                font-size: 14px;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-weight: 700;
+                background: var(--divid-color);
+                display: inline-block;
+                margin-right: 5px;
+            }
 
         .time {
             color: var(--themeFadedTextColor);

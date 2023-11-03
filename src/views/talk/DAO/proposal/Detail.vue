@@ -56,7 +56,9 @@
                 >{{ $filters.dateTimeFormat(proposal.val!.createTime * 1000) }}</span
               > -->
             </div>
-
+            <span v-if="proposal.val?.infos?.stakeHolderOnly" class="visible-status">
+              {{ $t('DAO.Vote stake_holder_only') }}
+            </span>
             <span class="status" :class="statusClass">{{ statusText }}</span>
             <!-- <div class="share">
               {{ $t('DAO.Share') }}
@@ -574,6 +576,29 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                       }}(UTC)
                     </div>
                   </div>
@@ -585,6 +610,29 @@
                     <div class="flex1 lable">{{ $t('DAO.End Time') }}</div>
                     <div class="value">
                       {{ $filters.dateTimeFormat(proposal!.val!.endBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -943,6 +991,29 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                       }}%
                     </div>
                   </div>
@@ -956,6 +1027,29 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1073,6 +1167,29 @@
             <div class="value">
               {{ $t('DAO.Vote Number') }}:<span
                 >{{ new Decimal(userStake.val!.lockedTokenAmount).div(10**8).toNumber()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1320,6 +1437,7 @@ const totalVoteValue = computed(() => {
 
 const votedInfo = computed(() => {
   let result = null
+
   if (userStake.val) {
     for (let i in userStake.val!.voteInfo) {
       if (i === route.params.id && userStake.val!.voteInfo[i].voteAmount) {
@@ -1386,15 +1504,17 @@ function getDetail() {
     })
 
     if (res) {
-      if (
-        res.infos.stakeHolderOnly &&
-        new Decimal(userStake.val!.lockedTokenAmount).div(10 ** 8).toNumber() <
-          +import.meta.env.VITE_STAKEHOLDER_ONLY_LIMIT
-      ) {
-        router.go(-1)
-        ElMessage.error(i18n.t('DAO.NOt Have Voting Quota_more_than_1_spaces'))
-        reject()
-      }
+      setTimeout(() => {
+        if (
+          res.infos.stakeHolderOnly &&
+          new Decimal(userStake.val!.lockedTokenAmount).div(10 ** 8).toNumber() <
+            +import.meta.env.VITE_STAKEHOLDER_ONLY_LIMIT
+        ) {
+          router.go(-1)
+          ElMessage.error(i18n.t('DAO.NOt Have Voting Quota_more_than_1_spaces'))
+          reject()
+        }
+      }, 400)
       // @ts-ignore
       if (!res.infos) res.infos = {}
       if (!res.infos?.resultOption) {
@@ -1405,6 +1525,7 @@ function getDetail() {
         }
       }
       const isMultipleChoice = res.infos.voteType == DAOVoteType.MultipleChoose
+
       if (isMultipleChoice) {
         multipleVoteResInfo.length = 0
         const voteinfo = await GetMultpleVoteInfoById({
@@ -1435,27 +1556,17 @@ function getDetail() {
 
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
-    if (isMultProposalType) {
-      const res = await GetMultipleVoteRecord({
-        proposalTxId: route.params.id as string,
-        symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${
-          talk.activeCommunity!.dao!.daoId
-        }`,
-        page: pagination.page,
-        pageSize: pagination.pageSize,
-      })
-      if (res.code == 0) {
-        if (isCover) multipleVoteRecords.length = 0
-        if (res.data.results.items.length) {
-          multipleVoteRecords.push(...res.data.results.items)
-          pagination.nothing = false
-        } else {
-          pagination.nothing = true
-        }
-        resolve()
-      }
-
-      console.log('ressssss', res)
+    const res = await GetMultipleVoteRecord({
+      proposalTxId: route.params.id as string,
+      symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${talk.activeCommunity!.dao!.daoId}`,
+      page: pagination.page,
+      pageSize: pagination.pageSize,
+    })
+    if (res.code == 0 && res.data.results.items.length) {
+      if (isCover) multipleVoteRecords.length = 0
+      multipleVoteRecords.push(...res.data.results.items)
+      pagination.nothing = false
+      resolve()
     } else {
       const res = await Voters({
         symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${
@@ -1500,18 +1611,23 @@ function getUserStake() {
         address: userStore.user!.address,
       })
       if (res.code === 0) {
-        if (isMultProposalType) {
+        const selfStakeInfo = await GetSelfMultipleVote({
+          proposalTxId: route.params.id as string,
+          symbol: symbol,
+          metaId: userStore.user!.metaId,
+        })
+        console.log('selfStakeInfo', selfStakeInfo)
+
+        if (
+          isMultProposalType.value ||
+          (selfStakeInfo.code == 0 && selfStakeInfo.data.ownOptionsVoteInfo.length)
+        ) {
           userStake.val = res.data
-          const selfStakeInfo = await GetSelfMultipleVote({
-            proposalTxId: route.params.id as string,
-            symbol: symbol,
-            metaId: userStore.user!.metaId,
-          })
-          if (selfStakeInfo.code == 0 && selfStakeInfo.data.ownOptionsVoteInfo.length) {
-            userStake.val!.voteInfo[route.params.id as string] = {
-              voteAmount: userStake.val!.lockedTokenAmount,
-              voteOption: selfStakeInfo.data.ownOptionsVoteInfo,
-            }
+          console.log('userStake.val', userStake.val)
+
+          userStake.val!.voteInfo[route.params.id as string] = {
+            voteAmount: userStake.val!.lockedTokenAmount,
+            voteOption: selfStakeInfo.data.ownOptionsVoteInfo,
           }
         } else {
           userStake.val = res.data
