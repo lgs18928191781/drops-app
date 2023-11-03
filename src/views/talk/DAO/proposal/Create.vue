@@ -299,15 +299,14 @@ function onTypeChange() {
 }
 
 function submit() {
-  isShowConfirmModal.value = true
-  // FormRef.value?.validate(async result => {
-  //   if (result) {
-  //     const result = await checkUserCanCreateProposal()
-  //     if (result) {
-  //       isShowConfirmModal.value = true
-  //     }
-  //   }
-  // })
+  FormRef.value?.validate(async result => {
+    if (result) {
+      const result = await checkUserCanCreateProposal()
+      if (result) {
+        isShowConfirmModal.value = true
+      }
+    }
+  })
 }
 
 async function confirmPublish() {

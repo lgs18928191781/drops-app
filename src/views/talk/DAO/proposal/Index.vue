@@ -97,10 +97,11 @@
         :infinite-scroll-disabled="isMobile"
       >
         <RouterLink
-          :to="{ name: 'talkDAOProposalDetail', params: { id: item._id } }"
+          to=""
           class="proposal-item"
           v-for="item in proposals"
           :key="item._id"
+          @click="checkPermissionToDetail(item)"
         >
           <!-- top -->
           <div class="top flex flex-align-center">
@@ -213,6 +214,22 @@ function showStakeDialog() {
   isShowStake.value = true
 }
 
+function checkPermissionToDetail(proposal:ProposalItem) {
+      if (
+      proposal.infos.stakeHolderOnly &&
+      new Decimal(userStake.val!.lockedTokenAmount).div(10 ** 8).toNumber() <
+      +import.meta.env.VITE_STAKEHOLDER_ONLY_LIMIT
+      ) {
+      return  ElMessage.error(i18n.t('DAO.NOt Have Voting Quota_more_than_1_spaces'))
+      } else {
+      router.push({
+      name: 'talkDAOProposalDetail',
+        params: { id: proposal._id},
+      })
+      }
+
+}
+
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
 
@@ -259,10 +276,11 @@ function getMore() {
 }
 
 async function toCreate() {
-router.push({
+ router.push({
       name: 'talkDAOProposalCreate',
-    })
-  return
+ })
+
+ return
   if (loading.value) return
   await checkUserLogin()
   loading.value = true
@@ -279,8 +297,7 @@ function getUserStakeInfo() {
   return new Promise<void>(async (resolve, reject) => {
 
     const res = await GetUserStakeInfo({
-      symbol:'space_c96faa7fac17b68eab693bb2a4c43e921d169a21310d56ce6eefd51230e4e23d',
-      //symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${talk.activeCommunity!.dao!.daoId}`,
+      symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${talk.activeCommunity!.dao!.daoId}`,
       address:userStore.user!.address!,
     })
     if (res.code === 0) {

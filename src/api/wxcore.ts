@@ -1,6 +1,6 @@
 import { BuyNFTStatus, PayPlatform, DAOVoteType } from '@/enum'
 import HttpRequest from '@/utils/request'
-import { alertCatchError } from '@/utils/util'
+import { alertCatchError, changeSymbol } from '@/utils/util'
 import { ElMessage } from 'element-plus'
 import { getToken, getUserName, useUserStore } from '@/stores/user'
 import { Reqswapargs } from '@/utils/wallet/hd-wallet'
@@ -314,8 +314,8 @@ export const CreateVote = async (params: {
   }
 }): Promise<{ code: number; data: { txid: string; voteID: string }; msg: string }> => {
   // return DAO.post('/createvote', params)
-  console.log('params1321321', params)
-  params.symbol = 'stake_dao_test'
+
+  params.symbol = changeSymbol(params.symbol)
   const compressData = await gzip(JSON.stringify(params))
   return Wxcore.post(
     '/dao/createvote',

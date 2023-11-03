@@ -600,6 +600,9 @@
 
 
 
+
+
+
                       }}(UTC)
                     </div>
                   </div>
@@ -611,6 +614,9 @@
                     <div class="flex1 lable">{{ $t('DAO.End Time') }}</div>
                     <div class="value">
                       {{ $filters.dateTimeFormat(proposal!.val!.endBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm')
+
+
+
 
 
 
@@ -1017,6 +1023,9 @@
 
 
 
+
+
+
                       }}%
                     </div>
                   </div>
@@ -1030,6 +1039,9 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
+
+
+
 
 
 
@@ -1171,6 +1183,9 @@
             <div class="value">
               {{ $t('DAO.Vote Number') }}:<span
                 >{{ new Decimal(userStake.val!.lockedTokenAmount).div(10**8).toNumber()
+
+
+
 
 
 
@@ -1509,17 +1524,6 @@ function getDetail() {
     })
 
     if (res) {
-      setTimeout(() => {
-        if (
-          res.infos.stakeHolderOnly &&
-          new Decimal(userStake.val!.lockedTokenAmount).div(10 ** 8).toNumber() <
-            +import.meta.env.VITE_STAKEHOLDER_ONLY_LIMIT
-        ) {
-          router.go(-1)
-          ElMessage.error(i18n.t('DAO.NOt Have Voting Quota_more_than_1_spaces'))
-          reject()
-        }
-      }, 400)
       // @ts-ignore
       if (!res.infos) res.infos = {}
       if (!res.infos?.resultOption) {
