@@ -41,7 +41,7 @@ export interface DAOUserStakeInfo {
   unlockingTokens: { expired: number; amount: string }[]
   voteInfo: {
     [key: string]: {
-      voteOption: number
+      voteOption: number | number[]
       voteAmount: string
     }
   }

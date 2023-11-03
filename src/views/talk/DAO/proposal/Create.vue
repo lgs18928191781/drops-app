@@ -314,8 +314,6 @@ async function confirmPublish() {
   isShowConfirmModal.value = false
   const loading = openLoading()
   try {
-    console.log('currentVoteType', form, currentVoteType.value)
-    debugger
     const res = await GetStake({
       symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${talk.activeCommunity!.dao!.daoId}`,
       address: userStore.user!.address!,

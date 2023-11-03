@@ -3,14 +3,7 @@ import HttpRequest from '@/utils/request'
 import { DAOStakeOperate } from '@/enum'
 import pako from 'pako'
 import { gzip } from 'node-gzip'
-
-function changeSymbol(symbol: string) {
-  if (symbol.indexOf('stake_dao_test') !== -1) {
-    return `stake_dao_test`
-  } else {
-    return symbol
-  }
-}
+import { changeSymbol } from '@/utils/util'
 
 const DAO = new HttpRequest(`${import.meta.env.VITE_DAO_API}`, {
   responseHandel: response => {

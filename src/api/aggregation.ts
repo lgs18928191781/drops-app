@@ -11,7 +11,7 @@ import { PostTag } from '@/stores/buzz/tag'
 import HttpRequest from '@/utils/request'
 import { error } from 'console'
 import { ethers } from 'ethers'
-
+import { changeSymbol } from '@/utils/util'
 const aggregation = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation`, {
   header: {
     SiteConfigMetanetId: import.meta.env.VITE_SiteConfigMetanetId,
@@ -901,7 +901,7 @@ export const GetMultpleVoteInfoById = (params: {
     optionsVoteInfoList: OptionVoteInfo[]
   }
 }> => {
-  params.symbol = 'stake_dao_test'
+  params.symbol = changeSymbol(params.symbol!)
   return aggregation.get(`v2/app/metaDao/voteInfo/${params.proposalTxId}?symbol=${params.symbol}`)
 }
 
@@ -921,7 +921,7 @@ export const GetMultipleVoteRecord = (params: {
   }
 }> => {
   const { proposalTxId, ..._params } = params
-  _params.symbol = 'stake_dao_test'
+  _params.symbol = changeSymbol(_params.symbol!)
   return aggregation.get(`v2/app/metaDao/votes/${proposalTxId}`, { params: { ..._params } })
 }
 
@@ -937,6 +937,6 @@ export const GetSelfMultipleVote = (params: {
   }
 }> => {
   const { proposalTxId, ..._params } = params
-  _params.symbol = 'stake_dao_test'
-  return aggregation.get(`v2/app/metaDao/voteInfo/${proposalTxId}`, { params: { ..._params } })
+  _params.symbol = changeSymbol(_params.symbol!)
+  return aggregation.get(`v2/app/metaDao/voteInfo/${proposalTxId}/own`, { params: { ..._params } })
 }

@@ -87,7 +87,7 @@
                     class="main-border"
                     :class="[
                       {
-                        faded: votedInfo && index !== votedInfo.voteOption,
+                        faded: votedInfo && !(votedInfo.voteOption as number[]).includes(index),
                         voted: votedInfo,
                       },
                     ]"
@@ -112,7 +112,9 @@
                       </div>
                     </div>
 
-                    <el-icon v-if="item.visiable" size="20"><SuccessFilled /></el-icon>
+                    <el-icon v-if="item.visiable && !votedInfo" size="20"
+                      ><SuccessFilled
+                    /></el-icon>
                   </a>
                 </div>
 
@@ -122,7 +124,7 @@
                     class="main-border"
                     :class="[
                       {
-                        faded: votedInfo && index !== votedInfo.voteOption,
+                        faded: votedInfo && !(votedInfo.voteOption as number[]).includes(index),
                         voted: votedInfo,
                       },
                     ]"
@@ -556,6 +558,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                       }}(UTC)
                     </div>
                   </div>
@@ -567,6 +585,22 @@
                     <div class="flex1 lable">{{ $t('DAO.End Time') }}</div>
                     <div class="value">
                       {{ $filters.dateTimeFormat(proposal!.val!.endBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -893,6 +927,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                       }}%
                     </div>
                   </div>
@@ -906,6 +956,22 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1027,6 +1093,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 }}&nbsp;SPACEs</span
               >
             </div>
@@ -1078,7 +1160,7 @@ import {
   GetMetaidInfoBatch,
   GetMultpleVoteInfoById,
   GetMultipleVoteRecord,
-  GetSelfMultipleVote
+  GetSelfMultipleVote,
 } from '@/api/aggregation'
 
 const i18n = useI18n()
@@ -1409,17 +1491,32 @@ function getDatas(isCover = false) {
 function getUserStake() {
   return new Promise<void>(async (resolve, reject) => {
     if (userStore.isAuthorized) {
+      const symbol = `${talk.activeCommunity!.dao!.governanceSymbol}_${
+        talk.activeCommunity!.dao!.daoId
+      }`
       const res = await GetUserStakeInfo({
-        // symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${
-        //   talk.activeCommunity!.dao!.daoId
-        // }`,
-        symbol: 'space_c96faa7fac17b68eab693bb2a4c43e921d169a21310d56ce6eefd51230e4e23d',
+        symbol: symbol,
+        // symbol: 'space_c96faa7fac17b68eab693bb2a4c43e921d169a21310d56ce6eefd51230e4e23d',
         address: userStore.user!.address,
       })
       if (res.code === 0) {
-        console.log('res.data', res.data)
+        if (isMultProposalType) {
+          userStake.val = res.data
+          const selfStakeInfo = await GetSelfMultipleVote({
+            proposalTxId: route.params.id as string,
+            symbol: symbol,
+            metaId: userStore.user!.metaId,
+          })
+          if (selfStakeInfo.code == 0 && selfStakeInfo.data.ownOptionsVoteInfo.length) {
+            userStake.val!.voteInfo[route.params.id as string] = {
+              voteAmount: userStake.val!.lockedTokenAmount,
+              voteOption: selfStakeInfo.data.ownOptionsVoteInfo,
+            }
+          }
+        } else {
+          userStake.val = res.data
+        }
 
-        userStake.val = res.data
         resolve()
       }
     } else {
@@ -1529,10 +1626,19 @@ async function confirmMultiVote() {
     pagination.page = 1
     getDatas(true)
     getDetail()
-    userStake.val!.voteInfo[route.params.id as string] = {
-      voteAmount: userStake.val!.lockedTokenAmount,
-      voteOption: proposal.val!.options.findIndex(item => item === currentOption.value),
-    }
+    GetSelfMultipleVote({
+      proposalTxId: route.params.id as string,
+      symbol: symbol,
+      metaId: userStore.user!.metaId,
+    }).then(res => {
+      if (res.code == 0 && res.data.ownOptionsVoteInfo.length) {
+        userStake.val!.voteInfo[route.params.id as string] = {
+          voteAmount: userStake.val!.lockedTokenAmount,
+          voteOption: res.data.ownOptionsVoteInfo,
+        }
+      }
+    })
+
     ElMessage.success(i18n.t('DAO.Vote Successful'))
     isShowVoteModal.value = false
     loading.value = false

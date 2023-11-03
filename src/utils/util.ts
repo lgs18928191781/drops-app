@@ -1850,3 +1850,11 @@ export function Orical(select: number[]) {
     return Promise.all([...requestList])
   }
 }
+
+export function changeSymbol(symbol: string) {
+  if (symbol.indexOf('stake_dao_test') !== -1) {
+    return `stake_dao_test`
+  } else {
+    return symbol
+  }
+}
