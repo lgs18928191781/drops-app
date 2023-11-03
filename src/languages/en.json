@@ -1253,7 +1253,9 @@
     "Multiple Vote Type": "Multiple Choice Voting",
     "Vote stake_holder_only": "Stakeholder Only",
     "Enter Vote stake_only": "Please select whether it is only visible to staking users",
-    "NOt Have Voting Quota_more_than_1_spaces": "Proposals are only visible to staking users, please make sure your pledge amount is greater than 1 Space"
+    "NOt Have Voting Quota_more_than_1_spaces": "Proposals are only visible to staking users, please make sure your pledge amount is greater than 1 Space",
+    "Vote_No": "No",
+    "Vote_Yes": "Yes"
   },
   "Will send": "Will send on",
   "MoblePhone Not Support": "Mobile phone number registration is not currently supported",

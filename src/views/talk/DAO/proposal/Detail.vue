@@ -603,6 +603,15 @@
 
 
 
+
+
+
+
+
+
+
+
+
                       }}(UTC)
                     </div>
                   </div>
@@ -614,6 +623,15 @@
                     <div class="flex1 lable">{{ $t('DAO.End Time') }}</div>
                     <div class="value">
                       {{ $filters.dateTimeFormat(proposal!.val!.endBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm')
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1026,6 +1044,15 @@
 
 
 
+
+
+
+
+
+
+
+
+
                       }}%
                     </div>
                   </div>
@@ -1039,6 +1066,15 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1183,6 +1219,15 @@
             <div class="value">
               {{ $t('DAO.Vote Number') }}:<span
                 >{{ new Decimal(userStake.val!.lockedTokenAmount).div(10**8).toNumber()
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1727,26 +1772,32 @@ async function confirmMultiVote() {
     }
     console.log('voteToOptionIdxs', signaturelist, voteToOptionIdxs)
 
-    const tx = await userStore.showWallet.createBrfcChildNode(
-      {
-        nodeName: NodeName.SimpleVote,
-        data: JSON.stringify({
-          symbol: 'stake_dao_test',
-          voteTo: proposal?.val?.voteID,
-          voteToOptionIdxs: voteToOptionIdxs,
-          voteComment: '',
-          digest: digest,
-          signatures: signaturelist,
-          voteTime: new Date().getTime(),
-        }),
-      },
-      {
-        isBroadcast: true,
-        payType: SdkPayType.SPACE,
-      }
-    )
-
-    console.log('tx123', tx)
+    const tx = await userStore.showWallet
+      .createBrfcChildNode(
+        {
+          nodeName: NodeName.SimpleVote,
+          data: JSON.stringify({
+            symbol: 'stake_dao_test',
+            voteTo: proposal?.val?.voteID,
+            voteToOptionIdxs: voteToOptionIdxs,
+            voteComment: '',
+            digest: digest,
+            signatures: signaturelist,
+            voteTime: new Date().getTime(),
+          }),
+        },
+        {
+          payType: SdkPayType.SPACE,
+        }
+      )
+      .catch(e => {
+        loading.value = false
+        throw new Error(`${e}`)
+      })
+    if (!tx) {
+      loading.value = false
+      throw new Error(`Vote Cancel`)
+    }
 
     pagination.page = 1
     getDatas(true)

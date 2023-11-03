@@ -55,8 +55,8 @@
           :class="[form.options.length ? 'is-success' : 'is-error']"
         >
           <ElSelect v-model="form.stakeHolderOnly" :placeholder="$t('DAO.Enter Vote stake_only')">
-            <el-option label="No" :value="false" />
-            <el-option label="Yes" :value="true" />
+            <el-option :label="$t('DAO.Vote_No')" :value="false" />
+            <el-option :label="$t('DAO.Vote_Yes')" :value="true" />
           </ElSelect>
         </ElFormItem>
 

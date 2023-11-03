@@ -1251,7 +1251,9 @@
     "Multiple Vote Type": "多項選擇投票",
     "Vote stake_holder_only": "提案只对质押用户可见",
     "Enter Vote stake_only": "请选择是否只能质押用户可见",
-    "NOt Have Voting Quota_more_than_1_spaces": "提案仅对质押用户可见,请确保您的质押数量大于1 Space"
+    "NOt Have Voting Quota_more_than_1_spaces": "提案仅对质押用户可见,请确保您的质押数量大于1 Space",
+    "Vote_No": "否",
+    "Vote_Yes": "是"
   },
   "Will send": "將發佈于",
   "MoblePhone Not Support": "暂不支持手机号注册",

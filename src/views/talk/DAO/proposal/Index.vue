@@ -214,11 +214,13 @@ function showStakeDialog() {
   isShowStake.value = true
 }
 
-function checkPermissionToDetail(proposal:ProposalItem) {
-      if (
-      proposal.infos.stakeHolderOnly &&
-      new Decimal(userStake.val!.lockedTokenAmount).div(10 ** 8).toNumber() <
-      +import.meta.env.VITE_STAKEHOLDER_ONLY_LIMIT
+function checkPermissionToDetail(proposal: ProposalItem) {
+
+
+  if (
+     (proposal.infos.stakeHolderOnly &&
+      new Decimal(userStake.val?.lockedTokenAmount ? userStake.val.lockedTokenAmount : 0).div(10 ** 8).toNumber() <
+      +import.meta.env.VITE_STAKEHOLDER_ONLY_LIMIT )
       ) {
       return  ElMessage.error(i18n.t('DAO.NOt Have Voting Quota_more_than_1_spaces'))
       } else {
