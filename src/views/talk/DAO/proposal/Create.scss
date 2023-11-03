@@ -134,3 +134,12 @@
         }
     }
 }
+
+.label-wrap{
+    &:deep(.el-icon){
+        font-size: 17px;
+        margin-left: 3px;
+        cursor: pointer;
+        
+    }
+}

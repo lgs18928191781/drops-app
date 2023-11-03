@@ -50,10 +50,22 @@
         </ElFormItem>
 
         <ElFormItem
-          :label="$t('DAO.Vote stake_holder_only')"
           prop="stakeHolderOnly"
           :class="[form.options.length ? 'is-success' : 'is-error']"
         >
+          <div class="label-wrap flex flex-align-center" slot="label">
+            <span>{{ $t('DAO.Vote stake_holder_only') }}</span>
+            <el-popover
+              placement="top-start"
+              :width="300"
+              trigger="hover"
+              :content="$t('DAO.Vote stake_holder_only_tips')"
+            >
+              <template #reference>
+                <el-icon><QuestionFilled /></el-icon>
+              </template>
+            </el-popover>
+          </div>
           <ElSelect v-model="form.stakeHolderOnly" :placeholder="$t('DAO.Enter Vote stake_only')">
             <el-option :label="$t('DAO.Vote_No')" :value="false" />
             <el-option :label="$t('DAO.Vote_Yes')" :value="true" />
@@ -139,7 +151,7 @@ import { DAOtypeOptions, checkUserCanCreateProposal } from '@/utils/DAO'
 import { CreateVote } from '@/api/wxcore'
 import { space } from '@/utils/filters'
 import { getOneCommunity } from '@/api/talk'
-
+import { QuestionFilled } from '@element-plus/icons-vue'
 const vditor = ref<Vditor | null>(null)
 const headeroffSetTop = ref(0)
 const WarpRef = ref()

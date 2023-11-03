@@ -1253,9 +1253,10 @@
     "Multiple Vote Type": "Multiple Choice Voting",
     "Vote stake_holder_only": "Stakeholder Only",
     "Enter Vote stake_only": "Please select whether it is only visible to staking users",
-    "NOt Have Voting Quota_more_than_1_spaces": "Proposals are only visible to staking users, please make sure your pledge amount is greater than 1 Space",
+    "NOt Have Voting Quota_more_than_1_spaces": "Please stake at least 1 SPACE to view this proposal.",
     "Vote_No": "No",
-    "Vote_Yes": "Yes"
+    "Vote_Yes": "Yes",
+    "Vote stake_holder_only_tips": "If 'Yes' is selected, the proposal will only be visible to users who have staked SPACE. If 'No' is selected, the proposal will be visible to all users."
   },
   "Will send": "Will send on",
   "MoblePhone Not Support": "Mobile phone number registration is not currently supported",
