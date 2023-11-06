@@ -97,10 +97,11 @@
         :infinite-scroll-disabled="isMobile"
       >
         <RouterLink
-          :to="{ name: 'talkDAOProposalDetail', params: { id: item._id } }"
+          to=""
           class="proposal-item"
           v-for="item in proposals"
           :key="item._id"
+          @click="checkPermissionToDetail(item)"
         >
           <!-- top -->
           <div class="top flex flex-align-center">
@@ -128,6 +129,9 @@
                 </span>
               </ElSkeleton>
             </div>
+            <span v-if="item?.infos?.stakeHolderOnly" class="visible-status">
+              {{ $t('DAO.Vote stake_holder_only') }}
+            </span>
             <span
               class="status"
               :class="getStatusClass(item.beginBlockTime, item.endBlockTime, blockTimeStamp)"
@@ -208,6 +212,24 @@ function showStakeDialog() {
 
   stakeType.value = StakeType.Pledge
   isShowStake.value = true
+}
+
+function checkPermissionToDetail(proposal: ProposalItem) {
+
+
+  if (
+     (proposal.infos.stakeHolderOnly &&
+      new Decimal(userStake.val?.lockedTokenAmount ? userStake.val.lockedTokenAmount : 0).div(10 ** 8).toNumber() <
+      +import.meta.env.VITE_STAKEHOLDER_ONLY_LIMIT )
+      ) {
+      return  ElMessage.error(i18n.t('DAO.NOt Have Voting Quota_more_than_1_spaces'))
+      } else {
+      router.push({
+      name: 'talkDAOProposalDetail',
+        params: { id: proposal._id},
+      })
+      }
+
 }
 
 function getDatas(isCover = false) {

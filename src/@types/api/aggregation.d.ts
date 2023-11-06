@@ -189,6 +189,17 @@ declare interface UserAllInfo {
   nameType: string
 }
 
+declare interface BatchUserInfo extends OptionVoteInfo {
+  metaId: string
+  address: string
+  name: string
+  metaName: string
+  nameType: string
+  avatarImage: string
+  avatarType: string
+  visiable?: boolean
+}
+
 declare interface UserSimpleInfo {
   metaId: string
   metaIdTag: string
@@ -288,4 +299,38 @@ declare interface SearchItem {
   metaId: string
   address: string
   userInfo: UserAllInfo
+}
+
+declare interface OptionVoteInfo {
+  optionName: string
+  optionIndex: number
+  optionTotal: number
+  optionPercentage: string
+}
+
+declare interface MultipleVoteRecord {
+  metaId: string
+  userName: string
+  avatarTxId: string
+  avatarImage: string
+  avatarType: string
+  proposalTxId: string
+  voteToOptionsIdxs: number[]
+  voteToOptionIdxsInt: number[]
+  voteComment: string
+  voteTime: number
+  votePowerIndex: number
+  voteFtPower: number
+  voteNftPower: number
+  voteDelegateFtPower: number
+  voteDelegateNftPower: number
+  voteFtPowerTotal: number
+  voteNftPowerTotal: number
+  timestamp: number
+  oracleDigest: string
+  oracleBlockHeight: number
+  oracleBlockHeightTime: number
+  oracleBlockHash: string
+  oracleVerifyCount: number
+  oracleVerifyIndex: number
 }

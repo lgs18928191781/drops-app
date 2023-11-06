@@ -64,20 +64,20 @@ export const createCommunity = async (form: any, userStore: any, sdk: SDK) => {
     // const communityId = metaName.communityId || SHA256(realRandomString(64)).toString()
     const communityId = SHA256(realRandomString(64)).toString()
 
-    const metaNameNft = metaName.genesis
+    const metaNameNft = metaName?.genesis
       ? `${metaName.solution}://${metaName.codeHash}/${metaName.genesis}/${metaName.tokenIndex}`
       : ''
 
     const dataCarrier: CommunityData = {
       communityId,
       name,
-      metaName: metaName.name || '',
+      metaName: metaName?.name || '',
       metaNameNft,
       icon: iconPlaceholder,
       admins,
       description,
       cover: coverPlaceholder || '',
-      reserved: metaName.signature || '',
+      reserved: metaName?.signature || '',
       disabled: 0,
     }
     console.log('dataCarrier', dataCarrier, attachments)

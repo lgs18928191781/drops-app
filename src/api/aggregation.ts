@@ -11,7 +11,7 @@ import { PostTag } from '@/stores/buzz/tag'
 import HttpRequest from '@/utils/request'
 import { error } from 'console'
 import { ethers } from 'ethers'
-
+import { changeSymbol } from '@/utils/util'
 const aggregation = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation`, {
   header: {
     SiteConfigMetanetId: import.meta.env.VITE_SiteConfigMetanetId,
@@ -875,4 +875,68 @@ export const GetMyNftOnSale = (params: {
 }> => {
   const { address, ..._params } = params
   return aggregation.get(`v2/app/show/nft/${address}/details/sell`, { params: { ..._params } })
+}
+
+export const GetMetaidInfoBatch = (params: {
+  metaIds: string[]
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    users: BatchUserInfo[]
+  }
+}> => {
+  return aggregation.post(`v2/app/user/info/batch`, {
+    metaIds: params.metaIds,
+  })
+}
+
+export const GetMultpleVoteInfoById = (params: {
+  proposalTxId: string
+  symbol?: string
+}): Promise<{
+  code: number
+  data: {
+    currentTotal: number
+    optionsVoteInfoList: OptionVoteInfo[]
+  }
+}> => {
+  params.symbol = changeSymbol(params.symbol!)
+  return aggregation.get(`v2/app/metaDao/voteInfo/${params.proposalTxId}?symbol=${params.symbol}`)
+}
+
+export const GetMultipleVoteRecord = (params: {
+  proposalTxId: string
+  symbol?: string
+  page?: number
+  pageSize?: number
+  timestamp?: number
+}): Promise<{
+  code: number
+  data: {
+    total: number
+    results: {
+      items: MultipleVoteRecord[]
+    }
+  }
+}> => {
+  const { proposalTxId, ..._params } = params
+  _params.symbol = changeSymbol(_params.symbol!)
+  return aggregation.get(`v2/app/metaDao/votes/${proposalTxId}`, { params: { ..._params } })
+}
+
+export const GetSelfMultipleVote = (params: {
+  proposalTxId: string
+  symbol?: string
+  metaId?: string
+  address?: string
+}): Promise<{
+  code: number
+  data: {
+    ownOptionsVoteInfo: number[]
+  }
+}> => {
+  const { proposalTxId, ..._params } = params
+  _params.symbol = changeSymbol(_params.symbol!)
+  return aggregation.get(`v2/app/metaDao/voteInfo/${proposalTxId}/own`, { params: { ..._params } })
 }

@@ -58,10 +58,10 @@ export const DAOtypeOptions = [
     name: () => i18n.global.t('DAO.Custom Single Choice Voting'),
     value: DAOProposalType.DiySingleChoose,
   },
-  // {
-  //   name: () => i18n.global.t('DAO.Custom Multiple Choice Voting'),
-  //   value: DAOProposalType.DiyMultipleChoose,
-  // },
+  {
+    name: () => i18n.global.t('DAO.Custom Multiple Choice Voting'),
+    value: DAOProposalType.DiyMultipleChoose,
+  },
 ]
 
 export function checkUserCanCreateProposal() {

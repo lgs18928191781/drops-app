@@ -48,6 +48,37 @@
             :disabled="form.type === DAOProposalType.Base"
           />
         </ElFormItem>
+
+        <ElFormItem
+          prop="stakeHolderOnly"
+          :class="[form.options.length ? 'is-success' : 'is-error']"
+        >
+          <div class="label-wrap flex flex-align-center" slot="label">
+            <span>{{ $t('DAO.Vote stake_holder_only') }}</span>
+            <el-popover
+              placement="top-start"
+              :width="300"
+              trigger="hover"
+              :content="$t('DAO.Vote stake_holder_only_tips')"
+            >
+              <template #reference>
+                <el-icon><QuestionFilled /></el-icon>
+              </template>
+            </el-popover>
+          </div>
+          <ElSelect v-model="form.stakeHolderOnly" :placeholder="$t('DAO.Enter Vote stake_only')">
+            <el-option :label="$t('DAO.Vote_No')" :value="false" />
+            <el-option :label="$t('DAO.Vote_Yes')" :value="true" />
+          </ElSelect>
+        </ElFormItem>
+        <ElFormItem :label="$t('DAO.Vote Option_limit')" prop="LimitMaximum">
+          <el-input-number
+            v-model="form.limitMaximum"
+            :min="1"
+            :max="form.type !== DAOProposalType.DiyMultipleChoose ? 1 : 30"
+            :disabled="form.type !== DAOProposalType.DiyMultipleChoose"
+          />
+        </ElFormItem>
         <ElFormItem :label="$t('DAO.Vote Time')" prop="time">
           <ElDatePicker
             v-model="(form.time as any)"
@@ -110,8 +141,8 @@
 </template>
 
 <script setup lang="ts">
-import { Chains, DAOProposalType, DAOStakeOperate, NodeName, SdkPayType } from '@/enum'
-import { onMounted, reactive, ref } from 'vue'
+import { Chains, DAOProposalType, DAOStakeOperate, NodeName, SdkPayType, DAOVoteType } from '@/enum'
+import { onMounted, reactive, ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
@@ -127,7 +158,7 @@ import { DAOtypeOptions, checkUserCanCreateProposal } from '@/utils/DAO'
 import { CreateVote } from '@/api/wxcore'
 import { space } from '@/utils/filters'
 import { getOneCommunity } from '@/api/talk'
-
+import { QuestionFilled } from '@element-plus/icons-vue'
 const vditor = ref<Vditor | null>(null)
 const headeroffSetTop = ref(0)
 const WarpRef = ref()
@@ -141,8 +172,10 @@ const form = reactive({
   title: '',
   type: DAOProposalType.Base,
   options: ['Yes', 'No'],
+  stakeHolderOnly: false,
   time: ['', ''],
   content: '',
+  limitMaximum: 1,
   minVoteUser: 1,
   result: {
     minUser: 1,
@@ -163,7 +196,7 @@ const rules = reactive<FormRules>({
     {
       validator: (rule: any, value: any, callback: any) => {
         if (form.options && form.options.length) {
-          if (form.options.length > 5) {
+          if (form.options.length > 30) {
             callback(new Error(i18n.t('DAO.Max five Vote Options')))
           } else {
             callback()
@@ -211,6 +244,25 @@ const rules = reactive<FormRules>({
 })
 
 const MarkDownRef = ref()
+
+watch(
+  () => form.type,
+  type => {
+    if (type !== DAOProposalType.DiyMultipleChoose) {
+      form.limitMaximum = 1
+    }
+  }
+)
+
+const currentVoteType = computed(() => {
+  if (form.type === DAOProposalType.Base) {
+    return DAOVoteType.Base
+  } else if (form.type === DAOProposalType.DiySingleChoose) {
+    return DAOVoteType.SingleChoose
+  } else if (form.type === DAOProposalType.DiyMultipleChoose) {
+    return DAOVoteType.MultipleChoose
+  } else return DAOVoteType.Approve
+})
 
 function initMarkDown() {
   vditor.value = new Vditor('vditor', {
@@ -340,6 +392,9 @@ async function confirmPublish() {
                 .toInteger()
                 .toNumber(),
             },
+            voteType: currentVoteType.value,
+            stakeHolderOnly: form.stakeHolderOnly,
+            limitMaximum: form.type !== DAOProposalType.DiyMultipleChoose ? 1 : form.limitMaximum,
           },
         })
         if (response.code === 0) {

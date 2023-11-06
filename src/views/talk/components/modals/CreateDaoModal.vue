@@ -368,7 +368,7 @@ const form = reactive({
   daoTypes: [], //array, 值: "protocol/service/social/investment/grant/collector/culture",
   daoLogo: '', //string, logo所在的metafile
   governanceType: 'space', //string, 治理类型：ft/nft/bsv/space/none
-  governanceSymbol: 'space', // {space/ft-symbol} string, Symbol of Governance Token.治理代币的Symbol。
+  governanceSymbol: import.meta.env.MODE === 'mainnetgray' ? 'stake_dao_test' : 'space', // {space/ft-symbol} string, Symbol of Governance Token.治理代币的Symbol。
   governanceToken: 'space', //string, 治理tokenId,若为源生币为"space", 如没有则为"none",
   daoWebsite: '', //string, DAO官网
   daoTwitter: '', //string, 推特账号
@@ -376,8 +376,8 @@ const form = reactive({
   daoTelegram: '', //string, telegrame地址
   daoTerms: '', //string,
   daoTermsContentType: 'text/markdwon', //string, 进入条款的内容格式
-  joinDaoRequireTokenNumber: 1, //number, 加入该DAO的时候，需要最少治理token数量，如果治理Token为none，则忽略此值
-  createProposalRequireTokenNumber: 10000, //number, 创建议题需要的治理Token数量，如果治理Token为none，则忽略此值
+  joinDaoRequireTokenNumber: 1, //1 //number, 加入该DAO的时候，需要最少治理token数量，如果治理Token为none，则忽略此值
+  createProposalRequireTokenNumber: 10000, //10000, //number, 创建议题需要的治理Token数量，如果治理Token为none，则忽略此值
   publiceKey: '',
   txId: '',
 })
@@ -439,7 +439,7 @@ function rest() {
   form.daoTypes = [] //array, 值: "protocol/service/social/investment/grant/collector/culture",
   form.daoLogo = '' //string, logo所在的metafile
   form.governanceType = 'space' //string, 治理类型：ft/nft/bsv/space/none
-  form.governanceSymbol = 'space' // {space/ft-symbol} string, Symbol of Governance Token.治理代币的Symbol。
+  form.governanceSymbol = import.meta.env.MODE === 'mainnetgray' ? 'stake_dao_test' : 'space' // {space/ft-symbol} string, Symbol of Governance Token.治理代币的Symbol。
   form.governanceToken = 'space' //string, 治理tokenId,若为源生币为"space", 如没有则为"none",
   form.daoWebsite = '' //string, DAO官网
   form.daoTwitter = '' //string, 推特账号

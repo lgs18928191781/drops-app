@@ -109,7 +109,17 @@ function getRecommendCommunitys() {
     })
     if (res.code === 0) {
       console.log('res', res)
-
+      // const tempItem = [
+      //   {
+      //     communityId: `5325a20b05f135ed4e945387538506d04b15799c6f72672b37551d36df69ac1a`,
+      //     cover: '',
+      //     description: 'Test_mvc',
+      //     icon: '',
+      //     memberTotal: 10,
+      //     name: 'Test_mvc',
+      //     isMyJoin: false,
+      //   },
+      // ]
       pagination.totalPages = Math.ceil(res.data.total / pagination.pageSize)
       communitys.length = 0
       communitys.push(...res.data.results.items)

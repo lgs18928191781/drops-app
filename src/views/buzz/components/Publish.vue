@@ -260,6 +260,7 @@ async function onChooseImage(e: any) {
   loading.value = true
   const files: File[] = [...e.target.files]
   inputFileRef.value[0].value = ''
+
   for (let i = 0; i < files.length; i++) {
     if (attachments.length < 9) {
       // 压缩图片

@@ -120,11 +120,13 @@ const loading = ref(false)
 const txFee = new Decimal(40000).div(Math.pow(10, 8)).toNumber()
 const extractTxFee = new Decimal(60000).div(Math.pow(10, 8)).toNumber()
 const currentSymbol = computed(() => {
+  //return symbols.find(item => item.symbol === talk.activeCommunity?.dao?.governanceToken)
   return symbols.find(item => item.symbol === talk.activeCommunity?.dao?.governanceSymbol)
 })
 
 function getBlance() {
   return new Promise<void>(async (resolve, reject) => {
+    //const item = symbols.find(_item => _item.symbol === talk.activeCommunity!.dao!.governanceToken)
     const item = symbols.find(_item => _item.symbol === talk.activeCommunity!.dao!.governanceSymbol)
     if (props.type === StakeType.Pledge) {
       // 质押
@@ -134,7 +136,7 @@ function getBlance() {
       // @ts-ignore
       console.log('start get balance')
       const res = await getBalance({ chain: chains[talk.activeCommunity!.dao!.governanceSymbol] })
-
+      //const res = await getBalance({ chain: chains[talk.activeCommunity!.dao!.governanceToken] })
       if (typeof res === 'number') {
         if (res) {
           balance.value = new Decimal(
@@ -225,9 +227,12 @@ async function stake() {
       .mul(currentSymbol.value!.rate)
       .toInteger()
       .toNumber()
+
     const symbol = `${talk.activeCommunity!.dao!.governanceSymbol}_${
       talk.activeCommunity!.dao!.daoId
     }`
+    console.log('symbol', symbol)
+
     if (props.type === StakeType.Pledge) {
       // 质押
       const stakeRes = await GetStake({

@@ -91,6 +91,7 @@ export const useTalkStore = defineStore('talk', {
 
     activeCommunity(state) {
       if (!state.communities) return null
+
       return state.communities.find(community => community.id === state.activeCommunityId)
     },
 

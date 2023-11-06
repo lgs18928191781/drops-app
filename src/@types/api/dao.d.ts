@@ -5,7 +5,7 @@ export interface ProposalItem {
   endBlockTime: number
   genesisTxid: string
   minVoteAmount: string
-  options: string[]
+  options: any[]
   title: string
   voteID: string
   voteMainCodeHash: string
@@ -19,6 +19,9 @@ export interface ProposalItem {
       minPercent: number
       minUser: number
     }
+    voteType: DAOVoteType
+    stakeHolderOnly: boolean
+    limitMaximum: number
   }
 }
 
@@ -39,7 +42,7 @@ export interface DAOUserStakeInfo {
   unlockingTokens: { expired: number; amount: string }[]
   voteInfo: {
     [key: string]: {
-      voteOption: number
+      voteOption: number | number[]
       voteAmount: string
     }
   }
