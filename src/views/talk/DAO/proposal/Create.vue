@@ -71,7 +71,14 @@
             <el-option :label="$t('DAO.Vote_Yes')" :value="true" />
           </ElSelect>
         </ElFormItem>
-
+        <ElFormItem :label="$t('DAO.Vote Option_limit')" prop="LimitMaximum">
+          <el-input-number
+            v-model="form.limitMaximum"
+            :min="1"
+            :max="form.type !== DAOProposalType.DiyMultipleChoose ? 1 : 30"
+            :disabled="form.type !== DAOProposalType.DiyMultipleChoose"
+          />
+        </ElFormItem>
         <ElFormItem :label="$t('DAO.Vote Time')" prop="time">
           <ElDatePicker
             v-model="(form.time as any)"
@@ -135,7 +142,7 @@
 
 <script setup lang="ts">
 import { Chains, DAOProposalType, DAOStakeOperate, NodeName, SdkPayType, DAOVoteType } from '@/enum'
-import { onMounted, reactive, ref, computed } from 'vue'
+import { onMounted, reactive, ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
@@ -168,6 +175,7 @@ const form = reactive({
   stakeHolderOnly: false,
   time: ['', ''],
   content: '',
+  limitMaximum: 1,
   minVoteUser: 1,
   result: {
     minUser: 1,
@@ -236,6 +244,15 @@ const rules = reactive<FormRules>({
 })
 
 const MarkDownRef = ref()
+
+watch(
+  () => form.type,
+  type => {
+    if (type !== DAOProposalType.DiyMultipleChoose) {
+      form.limitMaximum = 1
+    }
+  }
+)
 
 const currentVoteType = computed(() => {
   if (form.type === DAOProposalType.Base) {
@@ -377,6 +394,7 @@ async function confirmPublish() {
             },
             voteType: currentVoteType.value,
             stakeHolderOnly: form.stakeHolderOnly,
+            limitMaximum: form.type !== DAOProposalType.DiyMultipleChoose ? 1 : form.limitMaximum,
           },
         })
         if (response.code === 0) {

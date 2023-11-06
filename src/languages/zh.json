@@ -1254,7 +1254,9 @@
     "NOt Have Voting Quota_more_than_1_spaces": "提案仅对质押用户可见,请确保您的质押数量大于1 Space",
     "Vote_No": "否",
     "Vote_Yes": "是",
-    "Vote stake_holder_only_tips": "如果选择“是”，则该提案仅对已质押 SPACE 的用户可见。如果选择“否”，则该提案将对所有用户可见。"
+    "Vote stake_holder_only_tips": "如果选择“是”，则该提案仅对已质押 SPACE 的用户可见。如果选择“否”，则该提案将对所有用户可见。",
+    "Vote Option_limit": "Limit on the number of voting options",
+    "Over_limited": "超出提案限制选项上限"
   },
   "Will send": "將發佈于",
   "MoblePhone Not Support": "暂不支持手机号注册",
@@ -1281,5 +1283,8 @@
     "blacktipsRepost": "此内容的转发者已屏蔽,转发内容不可见"
   },
   "stakeAmountLimit": "质押数量不能低于100,000 Satoshi",
-  "not_support_mobile_login_metalet": "暂不支持移动端Metalet登录"
+  "not_support_mobile_login_metalet": "暂不支持移动端Metalet登录",
+  "Dao": {
+    "Optional quantity limit": "可选数量限制"
+  }
 }

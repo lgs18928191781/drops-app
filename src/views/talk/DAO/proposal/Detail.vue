@@ -59,6 +59,9 @@
             <span v-if="proposal.val?.infos?.stakeHolderOnly" class="visible-status">
               {{ $t('DAO.Vote stake_holder_only') }}
             </span>
+            <span class="visible-status" v-if="proposal.val?.infos?.limitMaximum > 1"
+              >{{ $t('Dao.Optional quantity limit') }}:{{ proposal.val?.infos.limitMaximum }}</span
+            >
             <span class="status" :class="statusClass">{{ statusText }}</span>
             <!-- <div class="share">
               {{ $t('DAO.Share') }}
@@ -81,7 +84,10 @@
                   {{ statusText }}
                 </div>
                 <div class="title">
-                  {{ votedInfo ? $t('DAO.Information About Your Vote') : $t('DAO.Vote Title') }}
+                  <span>
+                    {{ votedInfo ? $t('DAO.Information About Your Vote') : $t('DAO.Vote Title') }}
+                  </span>
+                  <span> ( {{ VoteList.length }} / {{ proposal.val?.infos.limitMaximum }}) </span>
                 </div>
                 <div class="vote-list" v-if="proposalOptionsIsMetaid">
                   <a
@@ -361,6 +367,18 @@
                       {{ $filters.dateTimeFormat(proposal!.val!.beginBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm')
 
 
+
+
+
+
+
+
+
+
+
+
+
+
                       }}(UTC)
                     </div>
                   </div>
@@ -372,6 +390,18 @@
                     <div class="flex1 lable">{{ $t('DAO.End Time') }}</div>
                     <div class="value">
                       {{ $filters.dateTimeFormat(proposal!.val!.endBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm')
+
+
+
+
+
+
+
+
+
+
+
+
 
                       }}(UTC)
                     </div>
@@ -482,6 +512,18 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
                       }}%
                     </div>
                   </div>
@@ -495,6 +537,18 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -581,6 +635,18 @@
             <div class="value">
               {{ $t('DAO.Vote Number') }}:<span
                 >{{ new Decimal(userStake.val!.lockedTokenAmount).div(10**8).toNumber()
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -881,12 +947,16 @@ const votedInfo = computed(() => {
 
 async function choiceVote(item: any) {
   if (votedInfo.value) return
+  console.log('proposal.val', VoteList, proposal.val)
   if (VoteList.includes(item.metaId)) {
     item.visiable = false
     VoteList = VoteList.filter(vote => {
       return vote !== item.metaId
     })
   } else {
+    if (VoteList.length >= proposal.val!.infos.limitMaximum) {
+      return ElMessage.error(`${i18n.t('DAO.Over_limited')}`)
+    }
     item.visiable = true
     VoteList.push(item.metaId)
   }

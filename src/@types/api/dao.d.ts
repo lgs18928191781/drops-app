@@ -21,6 +21,7 @@ export interface ProposalItem {
     }
     voteType: DAOVoteType
     stakeHolderOnly: boolean
+    limitMaximum: number
   }
 }
 
