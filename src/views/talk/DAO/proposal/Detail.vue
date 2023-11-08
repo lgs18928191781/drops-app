@@ -379,6 +379,8 @@
 
 
 
+
+
                       }}(UTC)
                     </div>
                   </div>
@@ -390,6 +392,8 @@
                     <div class="flex1 lable">{{ $t('DAO.End Time') }}</div>
                     <div class="value">
                       {{ $filters.dateTimeFormat(proposal!.val!.endBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm')
+
+
 
 
 
@@ -480,7 +484,9 @@
               <div class="result-list h-full overflow-y-auto">
                 <div
                   class="result-item"
-                  v-for="(item, index) in proposalMetaidListInfo"
+                  v-for="(item, index) in isMultProposalType
+                    ? proposalMetaidListInfo
+                    : proposal.val?.options"
                   :key="index"
                 >
                   <div class="top flex flex-align-center" v-if="proposalOptionsIsMetaid">
@@ -524,6 +530,8 @@
 
 
 
+
+
                       }}%
                     </div>
                   </div>
@@ -537,6 +545,8 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
+
+
 
 
 
@@ -635,6 +645,8 @@
             <div class="value">
               {{ $t('DAO.Vote Number') }}:<span
                 >{{ new Decimal(userStake.val!.lockedTokenAmount).div(10**8).toNumber()
+
+
 
 
 
