@@ -278,7 +278,7 @@ const cells = [
 ]
 const cell = reactive({ val: cells[0] })
 const sellType = ref(NFTSellType.All)
-const priceRange: [string, string] = reactive(['', ''])
+let priceRange: [string, string] = reactive(['', ''])
 const isShowFilterWarp = ref(isMobile ? false : true)
 const isListLoading = ref(false)
 
