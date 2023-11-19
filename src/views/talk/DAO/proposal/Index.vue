@@ -190,6 +190,7 @@ import { isMobile } from '@/stores/root'
 import { replaceMarkdownTag } from '@/utils/util'
 import { space } from '@/utils/filters'
 import { GetBandProposalList } from "@/api/strapi";
+import {useRootStore} from '@/stores/root'
 const pagination = reactive({ ...initPagination })
 const proposals: ProposalItem[] = reactive([])
 const isSkeleton = ref(true)
@@ -198,6 +199,7 @@ const talk = useTalkStore()
 const i18n = useI18n()
 const now = new Date().getTime()
 const userStore = useUserStore()
+const root=useRootStore()
 const stakeType = ref(StakeType.Pledge)
 const users: UserAllInfo[] = reactive([])
 
@@ -247,8 +249,10 @@ function getDatas(isCover = false) {
     if (res) {
       if (isCover) proposals.length = 0
       if (res.length) {
-         const bandList = await GetBandProposalList()
-        res=res.filter((item)=> !bandList[0].vote_id.includes(item.voteID))
+        //  const bandList = await GetBandProposalList()
+        //res=res.filter((item)=> !bandList[0].vote_id.includes(item.voteID))
+        res = res.filter((item) => !root.bandProposalList.includes(item.voteID))
+
         proposals.push(...res)
         pagination.nothing = false
         setTimeout(() => {

@@ -38,6 +38,7 @@ interface RootState {
   isRereshData?: boolean
   myBlackList?: string[]
   metaletWhiteProtocolList: NodeName[]
+  bandProposalList: string[]
 }
 
 const UA = window.navigator.userAgent.toLowerCase()
@@ -101,6 +102,16 @@ export const useRootStore = defineStore('root', {
       isRereshData: false,
       myBlackList: [],
       metaletWhiteProtocolList: [NodeName.SendMoney, NodeName.SimpleCommunityJoin, NodeName.Name],
+      bandProposalList: [
+        'a6931c4487cf0728cb2a63357fe88a2f156d2225',
+        'ae3063476b431ca43df8574b05095f9a3721b40f',
+        'b6c2d447f308aa02225f2938d1551c3c6891f9ec',
+        '160c8b1b10839d7d5ccde756d0f9c01fb894945c',
+        '2ba561b144b1db16d866e0801cbf44c8a4a5cb62',
+        'bc4e1e7875a9f776dc493a0ae023866d829ef030',
+        '6d5e30f1d4c84f0e11fa06aca341a7183d431008',
+      ],
+
       // showDiffLang:
       //   localStorage.getItem('showDiffLang') && Number(localStorage.getItem('showDiffLang')),
     },
@@ -130,6 +141,7 @@ export const useRootStore = defineStore('root', {
     //   this.showDiffLang = payload
     //   localStorage.setItem('showDiffLang', String(payload))
     // },
+
     refreshData(payload: boolean) {
       this.isRereshData = payload
     },

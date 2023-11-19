@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouterView } from 'vue-router'
 const NotFoundPage = () => import('@/views/404.vue')
 import { ElMessage } from 'element-plus'
 import i18n from '@/utils/i18n'
+import { useRootStore } from './stores/root'
 import { useUserStore } from './stores/user'
 import { useTalkStore } from './stores/talk'
 import { GetBandProposalList } from '@/api/strapi'
@@ -215,17 +216,23 @@ export const router = createRouter({
                   name: 'talkDAOProposalDetail',
                   component: () => import('@/views/talk/DAO/proposal/Detail.vue'),
                   beforeEnter: async (to, from, next) => {
-                    try {
-                      const bandList = await GetBandProposalList()
-                      if (bandList[0].vote_id.includes(to.params.id)) {
-                        next('/404')
-                      } else {
-                        next()
-                      }
-                    } catch (error) {
-                      ElMessage.error(`Network error:${error?.toString()}`)
+                    const root = useRootStore()
+                    if (root.bandProposalList.includes(to.params.id as string)) {
+                      next('/404')
+                    } else {
                       next()
                     }
+                    // try {
+                    //   const bandList = await GetBandProposalList()
+                    //   if (bandList[0].vote_id.includes(to.params.id)) {
+                    //     next('/404')
+                    //   } else {
+                    //     next()
+                    //   }
+                    // } catch (error) {
+                    //   ElMessage.error(`Network error:${error?.toString()}`)
+                    //   next()
+                    // }
                   },
                 },
                 {
