@@ -30,7 +30,7 @@ interface KeyPathObjTypes {
 type TransferOutput = {
   genesis?: string
   codehash?: string
-  receviers: Array<{ amount: string; address: string }>
+  receivers: Array<{ amount: string; address: string }>
 }
 
 type TaskResponse = {
@@ -101,7 +101,7 @@ interface metaIDJsWallet {
    */
   getUtxos: (params: { path: string }) => Promise<UtxoItem[]>
   transfer: (parmas: {
-    task: TransferOutput[]
+    tasks: TransferOutput[]
     broadcast?: boolean
   }) => Promise<{ res: TaskResponse[]; txids: string[]; broadcasted: boolean }>
   signTransaction: (params: { transaction: TransactionInfo }) => Promise<{ signature: SigInfo }>

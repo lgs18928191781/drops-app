@@ -1,4 +1,6 @@
 <template>
+  <div @click="transfer">转账</div>
+
   <div class="h-full flex flex-v ">
     <div class="header">
       <a class="back flex flex-align-center" @click="$router.back()">
@@ -383,6 +385,36 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                       }}(UTC)
                     </div>
                   </div>
@@ -394,6 +426,36 @@
                     <div class="flex1 lable">{{ $t('DAO.End Time') }}</div>
                     <div class="value">
                       {{ $filters.dateTimeFormat(proposal!.val!.endBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -538,6 +600,36 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                       }}%
                     </div>
                   </div>
@@ -551,6 +643,36 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -653,6 +775,36 @@
             <div class="value">
               {{ $t('DAO.Vote Number') }}:<span
                 >{{ new Decimal(userStake.val!.lockedTokenAmount).div(10**8).toNumber()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1189,6 +1341,9 @@ async function vote(option: string) {
 }
 
 async function confirmMultiVote() {
+  if (userStore.metaletLogin) {
+    return ElMessage.error(i18n.t('DAO.Proposal Not Allow'))
+  }
   loading.value = true
   try {
     const symbol = `${talk.activeCommunity!.dao!.governanceSymbol}_${
@@ -1295,70 +1450,144 @@ async function confirmVote() {
       op: DAOStakeOperate.Vote,
     })
     if (stakeRes.code === 0) {
-      const transfer = await userStore.showWallet.createBrfcChildNode(
-        {
-          nodeName: NodeName.SendMoney,
-          payTo: [{ address: stakeRes.data.mvcToAddress, amount: stakeRes.data.txFee }],
-        },
-        {
-          isBroadcast: false,
-          payType: SdkPayType.SPACE,
-          isTransfer: true,
-        }
-      )
-      if (transfer) {
-        if (transfer.payToAddress?.transaction) {
-          await userStore.showWallet.wallet?.provider.broadcast(
-            transfer.payToAddress?.transaction.toString()
-          )
-        }
-        const res = await Vote({
-          symbol,
-          requestIndex: stakeRes.data.requestIndex,
-          mvcRawTx: transfer.sendMoney.transaction.toString(),
-          mvcOutputIndex: 0,
-          voteID: route.params.id as string,
-          voteOption: proposal.val!.options.findIndex(item => item === currentOption.value),
-          confirmVote: true,
-        })
-        if (res.code === 0) {
-          const tx = new mvc.Transaction(res.data.txHex)
-          // @ts-ignore
-          const script = mvc.Script.fromBuffer(Buffer.from(res.data.scriptHex, 'hex'))
-          const pubKey = userStore.showWallet.wallet!.getPathPubliceKey('0/0').toHex()
-          const sig = toHex(
-            signTx(
-              // @ts-ignore
-              tx,
-              userStore.showWallet.wallet!.getPathPrivateKey('0/0'),
-              script,
-              Number(res.data.satoshis),
-              res.data.inputIndex
-            )
-          )
-          const response = await Vote2({
-            symbol,
-            requestIndex: stakeRes.data.requestIndex,
-            pubKey: pubKey,
-            sig,
+      if (userStore.metaletLogin) {
+        try {
+          //@ts-ignore
+          const transferRes = await userStore.showWallet.wallet?.metaIDJsWallet?.transfer({
+            tasks: [
+              {
+                receivers: [
+                  {
+                    amount: stakeRes.data.txFee,
+                    address: stakeRes.data.mvcToAddress,
+                  },
+                ],
+              },
+            ],
+            broadcast: true,
           })
-          if (response.code === 0) {
-            pagination.page = 1
-            getDatas(true)
-            getDetail()
-            userStake.val!.voteInfo[route.params.id as string] = {
-              voteAmount: userStake.val!.lockedTokenAmount,
-              voteOption: proposal.val!.options.findIndex(
-                item => item.name === currentOption.value
-              ),
+          if (transferRes.res.length) {
+            const res = await Vote({
+              symbol,
+              requestIndex: stakeRes.data.requestIndex,
+              mvcRawTx: transferRes.res[0].txHex,
+              mvcOutputIndex: 0,
+              voteID: route.params.id as string,
+              voteOption: proposal.val!.options.findIndex(item => item === currentOption.value),
+              confirmVote: true,
+            })
+            if (res.code === 0) {
+              //@ts-ignore
+              const {
+                signature,
+              } = await userStore.showWallet.wallet?.metaIDJsWallet?.signTransaction({
+                transaction: {
+                  txHex: res.data.txHex,
+                  inputIndex: res.data.inputIndex,
+                  scriptHex: res.data.scriptHex,
+                  satoshis: Number(res.data.satoshis),
+                },
+              })
+
+              //@ts-ignore
+              const pubKey = await userStore.showWallet.wallet?.metaIDJsWallet?.getPublicKey({
+                path: '0/0',
+              })
+              const response = await Vote2({
+                symbol,
+                requestIndex: stakeRes.data.requestIndex,
+                pubKey,
+                sig: signature.sig,
+              })
+
+              if (response.code === 0) {
+                pagination.page = 1
+                getDatas(true)
+                getDetail()
+                userStake.val!.voteInfo[route.params.id as string] = {
+                  voteAmount: userStake.val!.lockedTokenAmount,
+                  voteOption: proposal.val!.options.findIndex(
+                    item => item.name === currentOption.value
+                  ),
+                }
+                ElMessage.success(i18n.t('DAO.Vote Successful'))
+                isShowVoteModal.value = false
+                loading.value = false
+              }
             }
-            ElMessage.success(i18n.t('DAO.Vote Successful'))
-            isShowVoteModal.value = false
+          } else {
             loading.value = false
           }
+        } catch (error) {
+          loading.value = false
+          throw new Error(error as any)
         }
-      } else if (transfer === null) {
-        loading.value = false
+      } else {
+        const transfer = await userStore.showWallet.createBrfcChildNode(
+          {
+            nodeName: NodeName.SendMoney,
+            payTo: [{ address: stakeRes.data.mvcToAddress, amount: stakeRes.data.txFee }],
+          },
+          {
+            isBroadcast: false,
+            payType: SdkPayType.SPACE,
+            isTransfer: true,
+          }
+        )
+        if (transfer) {
+          if (transfer.payToAddress?.transaction) {
+            await userStore.showWallet.wallet?.provider.broadcast(
+              transfer.payToAddress?.transaction.toString()
+            )
+          }
+          const res = await Vote({
+            symbol,
+            requestIndex: stakeRes.data.requestIndex,
+            mvcRawTx: transfer.sendMoney.transaction.toString(),
+            mvcOutputIndex: 0,
+            voteID: route.params.id as string,
+            voteOption: proposal.val!.options.findIndex(item => item === currentOption.value),
+            confirmVote: true,
+          })
+          if (res.code === 0) {
+            const tx = new mvc.Transaction(res.data.txHex)
+            // @ts-ignore
+            const script = mvc.Script.fromBuffer(Buffer.from(res.data.scriptHex, 'hex'))
+            const pubKey = userStore.showWallet.wallet!.getPathPubliceKey('0/0').toHex()
+            const sig = toHex(
+              signTx(
+                // @ts-ignore
+                tx,
+                userStore.showWallet.wallet!.getPathPrivateKey('0/0'),
+                script,
+                Number(res.data.satoshis),
+                res.data.inputIndex
+              )
+            )
+            const response = await Vote2({
+              symbol,
+              requestIndex: stakeRes.data.requestIndex,
+              pubKey: pubKey,
+              sig,
+            })
+            if (response.code === 0) {
+              pagination.page = 1
+              getDatas(true)
+              getDetail()
+              userStake.val!.voteInfo[route.params.id as string] = {
+                voteAmount: userStake.val!.lockedTokenAmount,
+                voteOption: proposal.val!.options.findIndex(
+                  item => item.name === currentOption.value
+                ),
+              }
+              ElMessage.success(i18n.t('DAO.Vote Successful'))
+              isShowVoteModal.value = false
+              loading.value = false
+            }
+          }
+        } else if (transfer === null) {
+          loading.value = false
+        }
       }
     }
   } catch (error) {
@@ -1366,6 +1595,8 @@ async function confirmVote() {
     loading.value = false
   }
 }
+
+async function transfer() {}
 
 function getLeastBlockTimestamp() {
   return new Promise<void>(async (resolve, reject) => {

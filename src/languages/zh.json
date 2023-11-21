@@ -1256,7 +1256,8 @@
     "Vote_Yes": "是",
     "Vote stake_holder_only_tips": "如果选择“是”，则该提案仅对已质押 SPACE 的用户可见。如果选择“否”，则该提案将对所有用户可见。",
     "Vote Option_limit": "Limit on the number of voting options",
-    "Over_limited": "超出提案限制选项上限"
+    "Over_limited": "超出提案限制选项上限",
+    "Proposal Not Allow": "暂不支持Metalet登录用户进行多选投票,请更换为MetaID登录"
   },
   "Will send": "將發佈于",
   "MoblePhone Not Support": "暂不支持手机号注册",

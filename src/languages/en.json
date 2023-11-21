@@ -1258,7 +1258,8 @@
     "Vote_Yes": "Yes",
     "Vote stake_holder_only_tips": "If 'Yes' is selected, the proposal will only be visible to users who have staked SPACE. If 'No' is selected, the proposal will be visible to all users.",
     "Vote Option_limit": "Limit on the number of voting options",
-    "Over_limited": "Proposal limit option limit exceeded"
+    "Over_limited": "Proposal limit option limit exceeded",
+    "Proposal Not Allow": "Metalet login users are not supported for multi-select voting, please change to MetaID login."
   },
   "Will send": "Will send on",
   "MoblePhone Not Support": "Mobile phone number registration is not currently supported",
