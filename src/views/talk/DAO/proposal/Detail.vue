@@ -190,7 +190,7 @@
                         </div>
                         <div class="metaid">
                           MetaID:
-                          {{ item!.metaId.slice(0,6) }}
+                          {{item.metaId ?  item!.metaId.slice(0,6) : '' }}
                         </div>
                       </div>
                     </div>
@@ -257,9 +257,27 @@
                   </div>
                 </ElSkeleton>
 
-                <!-- <div class="value flex1">
-                  {{ $t(proposal.val!.options[item.voteOption]) }}
-                </div> -->
+                <div class="vote-record-result" v-if="proposalOptionsIsMetaid">
+                  <a class="user-wrap" :key="id" v-for="(option, id) in item.voteToOptionIdxsInt">
+                    <div class="user">
+                      <UserAvatar
+                        :meta-id="proposalMetaidListInfo[option]!.metaId"
+                        :image="proposalMetaidListInfo[option]!.avatarImage"
+                        :name="proposalMetaidListInfo[option]!.name"
+                        :meta-name="proposalMetaidListInfo[option].metaName"
+                      />
+                    </div>
+                  </a>
+                </div>
+                <div class="vote-record-result" v-else>
+                  <span
+                    class="text-content"
+                    v-for="(option, id) in item.voteToOptionIdxsInt"
+                    :key="id"
+                  >
+                    [ {{ $filters.omitMiddle(proposal?.val?.options[option]) }}]
+                  </span>
+                </div>
                 <div class="time">
                   {{ $filters.dateTimeFormat(item.timestamp, 'UTC', 'YY-MM-DD HH:mm:ss') }}(UTC)
                 </div>
@@ -323,8 +341,17 @@
                     </div>
                   </div>
                 </ElSkeleton>
-
-                <div class="value flex1">
+                <div class="value flex1" v-if="proposalOptionsIsMetaid">
+                  <div class="user">
+                    <UserAvatar
+                      :meta-id="proposalMetaidListInfo[item.voteOption]!.metaId"
+                      :image="proposalMetaidListInfo[item.voteOption]!.avatarImage"
+                      :name="proposalMetaidListInfo[item.voteOption]!.name"
+                      :meta-name="proposalMetaidListInfo[item.voteOption].metaName"
+                    />
+                  </div>
+                </div>
+                <div class="value flex1" v-else>
                   {{ $t(proposal.val!.options[item.voteOption]) }}
                 </div>
                 <div class="time">
@@ -415,6 +442,35 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                       }}(UTC)
                     </div>
                   </div>
@@ -426,6 +482,35 @@
                     <div class="flex1 lable">{{ $t('DAO.End Time') }}</div>
                     <div class="value">
                       {{ $filters.dateTimeFormat(proposal!.val!.endBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -571,7 +656,7 @@
                         </div>
                         <div class="metaid">
                           MetaID:
-                          {{ item!.metaId.slice(0,6) }}
+                          {{item?.metaId ? item!.metaId.slice(0,6) : '' }}
                         </div>
                       </div>
                     </div>
@@ -583,6 +668,35 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -647,6 +761,35 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -770,7 +913,7 @@
                     </div>
                     <div class="metaid">
                       MetaID:
-                      {{ item!.metaId.slice(0,6) }}
+                      {{item?.metaId ? item!.metaId.slice(0,6) : '' }}
                     </div>
                   </div>
                 </div>
@@ -781,6 +924,35 @@
             <div class="value">
               {{ $t('DAO.Vote Number') }}:<span
                 >{{ new Decimal(userStake.val!.lockedTokenAmount).div(10**8).toNumber()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1213,6 +1385,7 @@ function getDetail() {
 
       checkProposalOptionsUseMetaid(res.options, isMultipleChoice)
       proposal.val = res
+
       //multipleVoteResInfo
 
       if (!createUser.val && typeof proposal.val!.creator === 'string') {

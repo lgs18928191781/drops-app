@@ -237,6 +237,19 @@
                 .value {
                     margin: 0 15px;
                     text-align: center;
+                       .user{
+                        margin-right: 20px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width:inherit;
+                        min-width: 80px;
+                          .image{
+  
+                        width: 35px;
+                        height: 35px;
+                    }
+                       }
                 }
 
                 .link {
@@ -252,6 +265,37 @@
                         color: var(--color-hover);
                     }
                 }
+
+                .vote-record-result{
+                    display: flex;
+                    width: 40%;
+                    flex-direction: row;
+                    
+                    flex-wrap: wrap;
+                    margin: 20px;
+                    .text-content{
+                        margin-right: 10px;
+                    }
+                    .user-wrap{
+                        width: 35px !important;
+                        height: 35px !important;
+                        .user{
+                          
+                             .image{
+                                    width: 35px !important;
+                                    height: 35px !important;
+                                      
+                            }
+                        }
+                             &:not(:first-child){
+                                margin-left: -10px !important;
+                        
+                            }
+                          
+                    }
+                
+                }
+
             }
         }
     }

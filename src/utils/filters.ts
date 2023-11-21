@@ -210,3 +210,20 @@ export function Currency(amount: number, unit: string) {
       return new Decimal(amount).div(Math.pow(10, 18)).toString()
   }
 }
+
+export function omitMiddle(str: string, maxLength: number = 20) {
+  if (str.length <= maxLength) {
+    return str
+  }
+
+  const ellipsis = '...'
+  const ellipsisLength = ellipsis.length
+
+  const startLength = Math.ceil((maxLength - ellipsisLength) / 4)
+  const endLength = Math.floor((maxLength - ellipsisLength) / 4)
+
+  const start = str.substring(0, startLength)
+  const end = str.substring(str.length - endLength)
+
+  return start + ellipsis + end
+}
