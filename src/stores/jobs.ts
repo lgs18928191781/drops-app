@@ -77,6 +77,7 @@ export const useJobsStore = defineStore('jobs', {
         id: job.id,
         list: [] as any[],
       }
+
       job.steps.forEach((step: JobStep) => {
         body.list.push({
           hex: step.txHex,
@@ -99,6 +100,9 @@ export const useJobsStore = defineStore('jobs', {
           const stepInMessage = message.list[i]
           step.metanetId = stepInMessage.resultMetanetId
           step.status = stepInMessage.resultTxId ? JobStepStatus.Success : JobStepStatus.Failed
+          if (step.status == JobStepStatus.Failed) {
+            step.resultTxMessage = stepInMessage.resultMessage
+          }
         }
 
         // 更新任务状态

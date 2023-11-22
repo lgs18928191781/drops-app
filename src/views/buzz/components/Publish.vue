@@ -376,6 +376,7 @@ async function submit() {
         ElMessage.error(error.message)
         loading.value = false
       })
+
       if (response) {
         ElMessage.success(i18n.t('Buzz.Publish Schedule Success'))
         content.value = ''
@@ -402,9 +403,15 @@ async function submit() {
           } else if (status === JobStatus.Failed) {
             watchJobStatus()
             Mitt.emit(MittEvent.RemoveBuzz, { txId: res.currentNode!.txId })
+            const jobErrorList = jobsStore.waitingNotify.find(job => job.id === res.subscribeId)
+            const jobErrorMsg = jobErrorList?.steps?.find(
+              step => step.txId == res.currentNode!.txId
+            )
+            ElMessage.error(`${jobErrorMsg?.resultTxMessage}`)
           }
         }
       )
+
       Mitt.emit(MittEvent.AddBuzz, {
         applauseCount: 0,
         attachments: [...attachments],
