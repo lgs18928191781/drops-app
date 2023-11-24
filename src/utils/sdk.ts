@@ -399,7 +399,7 @@ export class SDK {
             // 计算总价
             let totalAmount = this.getNodeTransactionsAmount(transactions, params.payTo)
             if (params.nodeName == NodeName.FtTransfer) {
-              totalAmount += 50000
+              totalAmount += 80000
             }
             const useSatoshis = totalAmount
 
@@ -449,7 +449,7 @@ export class SDK {
                 if (ftUtxo.length && ftUtxo.length > 3) {
                   const getUtxoForMerge = await this.getAmountUxto({
                     sdkPayType: option.payType!,
-                    amount: 50000,
+                    amount: 80000,
                     nodeName: params.nodeName,
                     receive: {
                       address: this.wallet!.rootAddress,
