@@ -11,6 +11,7 @@ declare module '@vue/runtime-core' {
       space: (satoshi: string | number) => number
       handleWhiteSpace: (str: string, genesis: string) => string
       Currency: (amount: number, unit: string) => string
+      omitMiddle: (str: string, maxLength?: number) => string
     }
   }
 }
