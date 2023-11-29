@@ -342,6 +342,12 @@ function submit() {
 async function confirmPublish() {
   isShowConfirmModal.value = false
   const loading = openLoading()
+  const desc = toRaw(vditor.value!.getValue())
+  if (desc.match(/^\n/)) {
+    loading.close()
+    return ElMessage.error(i18n.t('DAO.Proposal descnull'))
+  }
+
   try {
     const res = await GetStake({
       symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${talk.activeCommunity!.dao!.daoId}`,
@@ -366,6 +372,7 @@ async function confirmPublish() {
             transfer.payToAddress?.transaction.toString()
           )
         }
+
         const response = await CreateVote({
           symbol: `${talk.activeCommunity!.dao!.governanceSymbol}_${
             talk.activeCommunity!.dao!.daoId
@@ -374,7 +381,7 @@ async function confirmPublish() {
           mvcRawTx: transfer.sendMoney!.transaction!.toString(),
           mvcOutputIndex: 0,
           title: form.title,
-          desc: toRaw(vditor.value!.getValue()),
+          desc: desc,
           options: form.options,
           minVoteAmount: '1',
           beginBlockTime: new Decimal(new Date(form.time[0]).getTime())
