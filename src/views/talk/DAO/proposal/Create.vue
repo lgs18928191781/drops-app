@@ -142,7 +142,7 @@
 
 <script setup lang="ts">
 import { Chains, DAOProposalType, DAOStakeOperate, NodeName, SdkPayType, DAOVoteType } from '@/enum'
-import { onMounted, reactive, ref, computed, watch } from 'vue'
+import { onMounted, reactive, ref, computed, watch, toRaw } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
@@ -159,6 +159,7 @@ import { CreateVote } from '@/api/wxcore'
 import { space } from '@/utils/filters'
 import { getOneCommunity } from '@/api/talk'
 import { QuestionFilled } from '@element-plus/icons-vue'
+
 const vditor = ref<Vditor | null>(null)
 const headeroffSetTop = ref(0)
 const WarpRef = ref()
@@ -373,7 +374,7 @@ async function confirmPublish() {
           mvcRawTx: transfer.sendMoney!.transaction!.toString(),
           mvcOutputIndex: 0,
           title: form.title,
-          desc: vditor.value!.getValue(),
+          desc: toRaw(vditor.value!.getValue()),
           options: form.options,
           minVoteAmount: '1',
           beginBlockTime: new Decimal(new Date(form.time[0]).getTime())
