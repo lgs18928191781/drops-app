@@ -140,6 +140,8 @@
                     @click="choiceVote(item)"
                   >
                     {{ $t(item) }}
+
+                    <el-icon v-if="VoteList.includes(item)" size="20"><SuccessFilled /></el-icon>
                   </a>
                 </div>
 
@@ -481,6 +483,21 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                       }}(UTC)
                     </div>
                   </div>
@@ -492,6 +509,21 @@
                     <div class="flex1 lable">{{ $t('DAO.End Time') }}</div>
                     <div class="value">
                       {{ $filters.dateTimeFormat(proposal!.val!.endBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -778,6 +810,21 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                       }}%
                     </div>
                   </div>
@@ -791,6 +838,21 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1126,6 +1188,21 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 }}&nbsp;SPACEs</span
               >
             </div>
@@ -1210,6 +1287,7 @@ const vditor = ref<Vditor | null>(null)
 const markdownRendering = ref(true)
 const ConetenWarpRef = ref()
 const multipleVoteResInfo: OptionVoteInfo[] = reactive([])
+const multipleVoteSelectedList: string[] = reactive([])
 let markdownLoading: any
 let VoteList: string[] = reactive([])
 const multipleVoteRecords: MultipleVoteRecord[] = reactive([])
@@ -1357,14 +1435,26 @@ async function choiceVote(item: any) {
     VoteList = VoteList.filter(vote => {
       return vote !== item.metaId
     })
-  } else {
+  } else if (item.metaId) {
     if (VoteList.length >= proposal.val!.infos.limitMaximum) {
       return ElMessage.error(`${i18n.t('DAO.Over_limited')}`)
     }
+
     item.visiable = true
     VoteList.push(item.metaId)
+  } else {
+    if (VoteList.includes(item)) {
+      const traget = VoteList.findIndex(ele => {
+        return ele === item
+      })
+      VoteList.splice(traget, 1)
+    } else {
+      if (VoteList.length >= proposal.val!.infos.limitMaximum) {
+        return ElMessage.error(`${i18n.t('DAO.Over_limited')}`)
+      }
+      VoteList.push(item)
+    }
   }
-  console.log('VoteList', VoteList)
 }
 
 async function checkProposalOptionsUseMetaid(options: string[], isMultipleChoice: boolean) {
@@ -1620,7 +1710,7 @@ async function confirmMultiVote() {
         {
           nodeName: NodeName.SimpleVote,
           data: JSON.stringify({
-            symbol: 'stake_dao_test',
+            symbol: symbol,
             voteTo: proposal?.val?.voteID,
             voteToOptionIdxs: voteToOptionIdxs,
             voteComment: '',
