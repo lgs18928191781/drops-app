@@ -141,7 +141,9 @@
                   >
                     {{ $t(item) }}
 
-                    <el-icon v-if="VoteList.includes(item)" size="20"><SuccessFilled /></el-icon>
+                    <el-icon v-if="VoteList.includes(item) && !votedInfo" size="20"
+                      ><SuccessFilled
+                    /></el-icon>
                   </a>
                 </div>
 
@@ -498,6 +500,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                       }}(UTC)
                     </div>
                   </div>
@@ -509,6 +530,25 @@
                     <div class="flex1 lable">{{ $t('DAO.End Time') }}</div>
                     <div class="value">
                       {{ $filters.dateTimeFormat(proposal!.val!.endBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -690,7 +730,9 @@
                 <div
                   class="result-item"
                   v-for="(item, index) in isMultProposalType
-                    ? proposalMetaidListInfo
+                    ? proposalOptionsIsMetaid
+                      ? proposalMetaidListInfo
+                      : multiProposalCommonList
                     : proposal.val?.options"
                   :key="index"
                 >
@@ -825,6 +867,42 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                      }}%
+                    </div>
+                  </div>
+
+                  <div
+                    class="top flex flex-align-center"
+                    v-else-if="isMultProposalType && !proposalOptionsIsMetaid"
+                  >
+                    <div class="value flex1">{{ item.optionName }}</div>
+                    <div class="count">
+                      {{
+                        item.optionTotal !== '0'
+                          ? new Decimal(item.optionTotal)
+                              .div(currentMultpleChooseTotaVote)
+                              .mul(100)
+                              .toFixed(2)
+                          : 0
                       }}%
                     </div>
                   </div>
@@ -838,6 +916,25 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1203,6 +1300,25 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 }}&nbsp;SPACEs</span
               >
             </div>
@@ -1272,6 +1388,7 @@ const userStore = useUserStore()
 const loading = ref(false)
 const proposalOptionsIsMetaid = ref(false)
 const proposalMetaidListInfo: BatchUserInfo[] = reactive([])
+const multiProposalCommonList: OptionVoteInfo[] = reactive([])
 const voteMetaidListInfo: BatchUserInfo[] = reactive([])
 const userStake: { val: null | DAOUserStakeInfo } = reactive({ val: null })
 const createUser: {
@@ -1287,7 +1404,7 @@ const vditor = ref<Vditor | null>(null)
 const markdownRendering = ref(true)
 const ConetenWarpRef = ref()
 const multipleVoteResInfo: OptionVoteInfo[] = reactive([])
-const multipleVoteSelectedList: string[] = reactive([])
+
 let markdownLoading: any
 let VoteList: string[] = reactive([])
 const multipleVoteRecords: MultipleVoteRecord[] = reactive([])
@@ -1410,6 +1527,7 @@ const totalVoteValue = computed(() => {
       value += parseInt(proposal.val!.voteSumData[i])
     }
   }
+
   return value
 })
 
@@ -1486,7 +1604,10 @@ async function checkProposalOptionsUseMetaid(options: string[], isMultipleChoice
         proposalMetaidListInfo.push(...res.data.users)
       }
     }
-    console.log('proposalMetaidListInfo', proposalMetaidListInfo)
+  } else if (isMultipleChoice && !isMetaid) {
+    if (!multiProposalCommonList.length) {
+      multiProposalCommonList.push(...multipleVoteResInfo)
+    }
   }
 }
 
