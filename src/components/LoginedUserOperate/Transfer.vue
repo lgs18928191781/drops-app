@@ -217,60 +217,65 @@ async function confirmTransfer() {
   loading.value = true
   let value
   let res
-  if (props.ftInfo?.genesis) {
-    value = new Decimal(form.amount).mul(Math.pow(10, props.ftInfo.decimalNum!)).toString()
-    res = await userStore.showWallet.createBrfcChildNode(
-      {
-        nodeName: NodeName.FtTransfer,
-        data: JSON.stringify({
-          codehash: props.ftInfo.codehash,
-          genesis: props.ftInfo.genesis,
-          receivers: [
-            {
-              address: userInfo.val!.address,
-              amount: value,
-            },
-          ],
-        }),
-      }
-      // {
-      //   payType: SdkPayType.SPACE,
-      // }
-    )
-  } else {
-    value =
-      unit.value === TransferUnit.Satoshi
-        ? new Decimal(form.amount).toNumber()
-        : new Decimal(form.amount).mul(Math.pow(10, 8)).toNumber()
-    res = await userStore.showWallet
-      .createBrfcChildNode(
+  try {
+    if (props.ftInfo?.genesis) {
+      value = new Decimal(form.amount).mul(Math.pow(10, props.ftInfo.decimalNum!)).toString()
+      res = await userStore.showWallet.createBrfcChildNode(
         {
-          nodeName: NodeName.SendMoney,
-          payTo: [
-            {
-              amount: value,
-              address: userInfo.val!.address,
-            },
-          ],
-        },
-        {
-          payType: SdkPayType.SPACE,
-          isTransfer: true,
+          nodeName: NodeName.FtTransfer,
+          data: JSON.stringify({
+            codehash: props.ftInfo.codehash,
+            genesis: props.ftInfo.genesis,
+            receivers: [
+              {
+                address: userInfo.val!.address,
+                amount: value,
+              },
+            ],
+          }),
         }
+        // {
+        //   payType: SdkPayType.SPACE,
+        // }
       )
-      .catch(error => {
-        ElMessage.error(error.message)
-        loading.value = false
-      })
-  }
+    } else {
+      value =
+        unit.value === TransferUnit.Satoshi
+          ? new Decimal(form.amount).toNumber()
+          : new Decimal(form.amount).mul(Math.pow(10, 8)).toNumber()
+      res = await userStore.showWallet
+        .createBrfcChildNode(
+          {
+            nodeName: NodeName.SendMoney,
+            payTo: [
+              {
+                amount: value,
+                address: userInfo.val!.address,
+              },
+            ],
+          },
+          {
+            payType: SdkPayType.SPACE,
+            isTransfer: true,
+          }
+        )
+        .catch(error => {
+          ElMessage.error(error.message)
+          loading.value = false
+        })
+    }
 
-  if (res) {
-    form.amount = ''
-    form.target = ''
-    userInfo.val = undefined
-    ElMessage.success(i18n.t('Wallet.Transfer Success'))
-    loading.value = false
-  } else {
+    if (res) {
+      form.amount = ''
+      form.target = ''
+      userInfo.val = undefined
+      ElMessage.success(i18n.t('Wallet.Transfer Success'))
+      loading.value = false
+    } else {
+      loading.value = false
+    }
+  } catch (error) {
+    ElMessage.error(`${(error as any).message}`)
     loading.value = false
   }
 }

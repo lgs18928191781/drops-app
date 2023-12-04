@@ -399,7 +399,7 @@ export class SDK {
             // 计算总价
             let totalAmount = this.getNodeTransactionsAmount(transactions, params.payTo)
             if (params.nodeName == NodeName.FtTransfer) {
-              totalAmount += 80000
+              totalAmount += 50000
             }
             const useSatoshis = totalAmount
 
@@ -439,38 +439,41 @@ export class SDK {
 
               //合并ftuxto
               if (params.nodeName == NodeName.FtTransfer) {
-                const ftParams = JSON.parse(params.data!)
-                const ftUtxo = await getFtUtxo({
-                  address: this.wallet!.rootAddress,
-                  codehash: ftParams.codehash,
-                  genesis: ftParams.genesis,
-                })
-
-                if (ftUtxo.length && ftUtxo.length > 3) {
-                  const getUtxoForMerge = await this.getAmountUxto({
-                    sdkPayType: option.payType!,
-                    amount: 80000,
-                    nodeName: params.nodeName,
-                    receive: {
-                      address: this.wallet!.rootAddress,
-                      addressIndex: 0,
-                      addressType: 0,
-                    },
-                  })
-                  const mergeFtUtxoParams = {
-                    codehash: ftParams.codehash,
-                    genesis: ftParams.genesis,
-                    utxos: [getUtxoForMerge.utxo],
-                    noBroadcast: false,
-                    ownerWif: this.getPathPrivateKey('0/0')?.toString(),
-                    changeAddress: this.wallet!.rootAddress,
-                  }
-                  const ftManager = this.wallet!.getFtManager()
-                  const mergeRes = await ftManager.merge(mergeFtUtxoParams)
-                  if (!mergeRes) {
-                    throw new Error('merge FtUtxo failed')
-                  }
-                }
+                // const ftParams = JSON.parse(params.data!)
+                // const ftUtxo = await getFtUtxo({
+                //   address: this.wallet!.rootAddress,
+                //   codehash: ftParams.codehash,
+                //   genesis: ftParams.genesis,
+                // })
+                // if (ftUtxo.length && ftUtxo.length > 3) {
+                //   debugger
+                //   const getUtxoForMerge = await this.getAmountUxto({
+                //     sdkPayType: option.payType!,
+                //     amount: 50000,
+                //     nodeName: params.nodeName,
+                //     receive: {
+                //       address: this.wallet!.rootAddress,
+                //       addressIndex: 0,
+                //       addressType: 0,
+                //     },
+                //   })
+                //   const mergeFtUtxoParams = {
+                //     codehash: ftParams.codehash,
+                //     genesis: ftParams.genesis,
+                //     utxos: [getUtxoForMerge.utxo],
+                //     noBroadcast: false,
+                //     ownerWif: this.getPathPrivateKey('0/0')?.toString(),
+                //     changeAddress: this.wallet!.rootAddress,
+                //   }
+                //   debugger
+                //   const ftManager = this.wallet!.getFtManager()
+                //   const mergeRes = await ftManager.merge(mergeFtUtxoParams)
+                //   console.log('mergeRes', mergeRes)
+                //   debugger
+                //   if (!mergeRes) {
+                //     throw new Error('merge FtUtxo failed')
+                //   }
+                // }
               }
 
               let receive = this.getNodeTransactionsFirstReceive(transactions, params)
