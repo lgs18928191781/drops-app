@@ -816,16 +816,15 @@ export class MetaletSDK {
         utxos: [],
         useFeeb: DEFAULTS.feeb,
       }
+      const userStore = useUserStore()
       const initOption = {
         isBroadcast: true,
-        payType: SdkPayType.ME,
+        payType: userStore.getSdkPayment,
       }
       option = {
         ...initOption,
         ...option,
       }
-
-      const userStore = useUserStore()
 
       // 初始化 参数
       for (let i = 0; i < params.length; i++) {

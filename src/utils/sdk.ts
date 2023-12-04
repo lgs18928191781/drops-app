@@ -634,16 +634,15 @@ export class SDK {
         utxos: [],
         useFeeb: DEFAULTS.feeb,
       }
+      const userStore = useUserStore()
       const initOption = {
         isBroadcast: true,
-        payType: SdkPayType.ME,
+        payType: userStore.getSdkPayment,
       }
       option = {
         ...initOption,
         ...option,
       }
-
-      const userStore = useUserStore()
 
       // 初始化 参数
       for (let i = 0; i < params.length; i++) {
@@ -682,8 +681,14 @@ export class SDK {
       }
 
       // 获取餘额
-      const balance = await this.getBalance(option.payType!)
+      let balance = await this.getBalance(option.payType!)
+      //  获取餘额
 
+      if (balance < totalAmount && option.payType === SdkPayType.ME) {
+        option.payType = SdkPayType.SPACE
+        totalAmount = useSatoshis
+        balance = await this.getBalance(option.payType!)
+      }
       // 等待 确认支付
       const result = await this.awitSdkPayconfirm(option.payType!, totalAmount, balance!)
       if (result) {
