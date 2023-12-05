@@ -1121,8 +1121,10 @@ function getSpaceBalance() {
     // 获取餘额
     let res
     if (userStore.metaletLogin) {
-      const {total}=await userStore.showWallet.wallet!.metaIDJsWallet.getBalance()
-      res=total
+      const {total} = await userStore.showWallet.wallet!.metaIDJsWallet.getBalance()
+
+      res = total
+
       //res=await .metaidWa
     } else {
      res=await userStore

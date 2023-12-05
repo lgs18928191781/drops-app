@@ -22,10 +22,20 @@
           <div
             class="result flex flex-align-center flex-pack-center"
             :class="resultClass"
-            v-if="status === DAOProposalStatus.Ended"
+            v-if="status === DAOProposalStatus.Ended && !isMultProposalType"
           >
             {{ resultText }}
           </div>
+
+          <div
+            v-else-if="status === DAOProposalStatus.Ended && isMultProposalType"
+            class="multi-result-wrap  flex flex-align-center flex-pack-center"
+          >
+            <div v-for="item in MultipleResText" class="multi-result-container">
+              <span> {{ item }}</span>
+            </div>
+          </div>
+
           <div class="msg flex flex-align-center">
             <div class="flex1 flex flex-align-center">
               <ElSkeleton :loading="!createUser.val" animated>
@@ -519,6 +529,44 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                       }}(UTC)
                     </div>
                   </div>
@@ -530,6 +578,44 @@
                     <div class="flex1 lable">{{ $t('DAO.End Time') }}</div>
                     <div class="value">
                       {{ $filters.dateTimeFormat(proposal!.val!.endBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -886,6 +972,44 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                       }}%
                     </div>
                   </div>
@@ -916,6 +1040,44 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1319,6 +1481,44 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 }}&nbsp;SPACEs</span
               >
             </div>
@@ -1372,6 +1572,7 @@ import {
   GetMultipleVoteRecord,
   GetSelfMultipleVote,
 } from '@/api/aggregation'
+import console from 'console'
 
 const i18n = useI18n()
 const router = useRouter()
@@ -1404,7 +1605,7 @@ const vditor = ref<Vditor | null>(null)
 const markdownRendering = ref(true)
 const ConetenWarpRef = ref()
 const multipleVoteResInfo: OptionVoteInfo[] = reactive([])
-
+const MultipleResText: string[] = reactive([])
 let markdownLoading: any
 let VoteList: string[] = reactive([])
 const multipleVoteRecords: MultipleVoteRecord[] = reactive([])
@@ -1435,35 +1636,61 @@ const statusText = computed(() => {
   )
 })
 
+function GetMultipleResText() {
+  const symbol = `${talk.activeCommunity!.dao!.governanceSymbol}_${
+    talk.activeCommunity!.dao!.daoId
+  }`
+  GetMultpleVoteInfoById({
+    proposalTxId: route.params.id as string,
+    symbol: symbol,
+  })
+    .then(voteInfo => {
+      if (voteInfo.code == 0) {
+        const FinalVoteOption = voteInfo.data.optionsVoteInfoList.sort((a, b) => {
+          return b.optionTotal - a.optionTotal
+        })
+        const res = FinalVoteOption.slice(0, proposal.val?.infos.limitMaximum)
+        res.length && res.map(item => MultipleResText.push(item.optionName))
+      }
+    })
+    .catch(error => {
+      throw new Error(error)
+    })
+}
+
 const resultText = computed(() => {
   let text = ''
-  if (proposal.val!) {
-    let max = new Decimal(proposal.val!.voteSumData[0]).toNumber()
-    let maxIndex = 0
-    for (let i = 1; i < proposal.val!.voteSumData.length; i++) {
-      const value = new Decimal(proposal.val!.voteSumData[i]).toNumber()
-      if (value > max) {
-        max = value
-        maxIndex = i
+  if (!isMultProposalType.value) {
+    if (proposal.val!) {
+      let max = new Decimal(proposal.val!.voteSumData[0]).toNumber()
+      let maxIndex = 0
+      for (let i = 1; i < proposal.val!.voteSumData.length; i++) {
+        const value = new Decimal(proposal.val!.voteSumData[i]).toNumber()
+        if (value > max) {
+          max = value
+          maxIndex = i
+        }
+      }
+      if (
+        max < proposal.val.infos.resultOption.minAmount ||
+        new Decimal(max)
+          .div(totalVoteValue.value)
+          .mul(100)
+          .toNumber() < proposal.val.infos.resultOption.minPercent
+      ) {
+        text = i18n.t('DAO.Invalid')
+      } else {
+        text = proposal.val!.options[maxIndex]
       }
     }
-    if (
-      max < proposal.val.infos.resultOption.minAmount ||
-      new Decimal(max)
-        .div(totalVoteValue.value)
-        .mul(100)
-        .toNumber() < proposal.val.infos.resultOption.minPercent
-    ) {
-      text = i18n.t('DAO.Invalid')
-    } else {
-      text = proposal.val!.options[maxIndex]
-    }
   }
+
   return text
 })
 
 const resultClass = computed(() => {
   let text = ''
+
   if (proposal.val!) {
     let max = new Decimal(proposal.val!.voteSumData[0]).toNumber()
     let maxIndex = 0
@@ -1654,6 +1881,9 @@ function getDetail() {
           createUser.val = user
         })
       }
+
+      GetMultipleResText()
+
       resolve()
     }
   })
