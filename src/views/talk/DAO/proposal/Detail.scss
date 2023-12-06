@@ -566,7 +566,8 @@
     align-items: center;
     justify-content: space-evenly;
     flex-wrap: wrap;
-    
+     opacity: 0.8;
+    z-index: 9;
     .multi-result-container{
         margin-bottom: 30px;
         
@@ -588,8 +589,7 @@
     box-shadow: 0 0 5px var(--themeTextColor);
     text-shadow: 0 0 5px var(--themeTextColor);
    
-    opacity: 0.8;
-    z-index: 9;
+   
       &.faded {
         border-color: var(--themeFadedTextColor);
         color: var(--themeFadedTextColor);

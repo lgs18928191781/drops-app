@@ -570,6 +570,9 @@
 
 
 
+
+
+
                       }}(UTC)
                     </div>
                   </div>
@@ -581,6 +584,9 @@
                     <div class="flex1 lable">{{ $t('DAO.End Time') }}</div>
                     <div class="value">
                       {{ $filters.dateTimeFormat(proposal!.val!.endBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm')
+
+
+
 
 
 
@@ -1019,6 +1025,9 @@
 
 
 
+
+
+
                       }}%
                     </div>
                   </div>
@@ -1049,6 +1058,9 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
+
+
+
 
 
 
@@ -1534,6 +1546,9 @@
 
 
 
+
+
+
                 }}&nbsp;SPACEs</span
               >
             </div>
@@ -1651,27 +1666,27 @@ const statusText = computed(() => {
   )
 })
 
-// function GetMultipleResText() {
-//   const symbol = `${talk.activeCommunity!.dao!.governanceSymbol}_${
-//     talk.activeCommunity!.dao!.daoId
-//   }`
-//   GetMultpleVoteInfoById({
-//     proposalTxId: route.params.id as string,
-//     symbol: symbol,
-//   })
-//     .then(voteInfo => {
-//       if (voteInfo.code == 0) {
-//         const FinalVoteOption = voteInfo.data.optionsVoteInfoList.sort((a, b) => {
-//           return b.optionTotal - a.optionTotal
-//         })
-//         const res = FinalVoteOption.slice(0, proposal.val?.infos.limitMaximum)
-//         res.length && res.map(item => MultipleResText.push(item.optionName))
-//       }
-//     })
-//     .catch(error => {
-//       throw new Error(error)
-//     })
-// }
+function GetMultipleResText() {
+  const symbol = `${talk.activeCommunity!.dao!.governanceSymbol}_${
+    talk.activeCommunity!.dao!.daoId
+  }`
+  GetMultpleVoteInfoById({
+    proposalTxId: route.params.id as string,
+    symbol: symbol,
+  })
+    .then(voteInfo => {
+      if (voteInfo.code == 0) {
+        const FinalVoteOption = voteInfo.data.optionsVoteInfoList.sort((a, b) => {
+          return b.optionTotal - a.optionTotal
+        })
+        const res = FinalVoteOption.slice(0, proposal.val?.infos.limitMaximum)
+        res.length && res.map(item => MultipleResText.push(item.optionName))
+      }
+    })
+    .catch(error => {
+      throw new Error(error)
+    })
+}
 
 const resultText = computed(() => {
   let text = ''
@@ -1884,17 +1899,19 @@ function getDetail() {
           currentMultpleChooseTotaVote.value = voteinfo.data.currentTotal
           multipleVoteResInfo.push(...voteinfo.data.optionsVoteInfoList)
 
-          const FinalVoteOption = voteinfo.data.optionsVoteInfoList.sort((a, b) => {
-            return b.optionTotal - a.optionTotal
-          })
-          const sortList = FinalVoteOption.slice(0, proposal.val?.infos.limitMaximum)
-          sortList.length && sortList.map(item => MultipleResText.push(item.optionName))
+          // const FinalVoteOption = voteinfo.data.optionsVoteInfoList.sort((a, b) => {
+          //   return b.optionTotal - a.optionTotal
+          // })
+          // const sortList = FinalVoteOption.slice(0, proposal.val?.infos.limitMaximum)
+          // sortList.length && sortList.map(item => MultipleResText.push(item.optionName))
         }
-        //GetMultipleResText()
       }
 
       checkProposalOptionsUseMetaid(res.options, isMultipleChoice)
       proposal.val = res
+      if (isMultipleChoice) {
+        GetMultipleResText()
+      }
 
       //multipleVoteResInfo
 
