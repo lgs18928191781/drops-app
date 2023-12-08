@@ -216,6 +216,9 @@ function refreshDatas() {
 }
 
 function renewItem(item: MetaNameItem) {
+  if (userStore.metaletLogin) {
+    return ElMessage.error(`${i18n.t('metaname_not allow_renew')}`)
+  }
   currentMetaName.val = item
   isShowRenew.value = true
 }

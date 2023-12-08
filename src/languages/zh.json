@@ -1288,5 +1288,8 @@
   "not_support_mobile_login_metalet": "暂不支持移动端Metalet登录",
   "Dao": {
     "Optional quantity limit": "可选数量限制"
-  }
+  },
+  "metaname_not allow": "暂不支持Metalet登录注册",
+  "metaname_not allow_edit": "暂不支持Metalet登录编辑",
+  "metaname_not allow_renew": "暂不支持Metalet登录续费"
 }

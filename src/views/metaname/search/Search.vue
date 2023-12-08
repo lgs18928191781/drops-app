@@ -247,6 +247,9 @@ function getExporeDate() {
 }
 
 function toRegister() {
+  if (userStore.metaletLogin) {
+    return ElMessage.error(`${i18n.t('metaname_not allow')}`)
+  }
   if (metaNameConfig.val!.isOpen === false) return ElMessage.info(i18n.t('Comming Soon'))
   isShowRegister.value = true
 }

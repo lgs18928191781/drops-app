@@ -52,8 +52,9 @@
           <div class="flex1">
             {{ $t('MetaName.Domain name registration information') }}
           </div>
-          <a class="btn primary" @click="isShowRenew = true">{{ $t('MetaName.Renew') }}</a>
+          <a class="btn primary" @click="renewMetaName">{{ $t('MetaName.Renew') }}</a>
         </div>
+
         <div class="content">
           <div class="info-list">
             <div class="info-item flex flex-align-center">
@@ -259,6 +260,13 @@ function getInfo() {
 const expireDate = ref('')
 const registerDate = ref(0)
 
+function renewMetaName() {
+  if (userStore.metaletLogin) {
+    return ElMessage.error(`${i18n.t('metaname_not allow_renew')}`)
+  }
+  isShowRenew.value = true
+}
+
 function copyValue(value: () => string) {
   if (!value()) return
   copy(value())
@@ -267,6 +275,10 @@ const isGetExpireDateLoading = ref(true)
 const isGetRegisterDateLoading = ref(true)
 
 function edit(item: any) {
+  if (userStore.metaletLogin) {
+    return ElMessage.error(`${i18n.t('metaname_not allow_edit')}`)
+  }
+
   ElMessageBox.prompt('', i18n.t(item.name), {
     confirmButtonText: i18n.t('Confirm'),
     cancelButtonText: i18n.t('Cancel'),

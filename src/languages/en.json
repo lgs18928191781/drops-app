@@ -1294,5 +1294,8 @@
   "not_support_mobile_login_metalet": "Mobile Metalet login is not currently supported.",
   "Dao": {
     "Optional quantity limit": "Optional quantity limit"
-  }
+  },
+  "metaname_not allow": "Metalet login and registration are not currently supported.",
+  "metaname_not allow_edit": "Metalet login editing is not currently supported.",
+  "metaname_not allow_renew": "Metalet login renewal is not currently supported."
 }
