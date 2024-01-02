@@ -137,7 +137,7 @@
                   <a
                     class="add flex flex-align-center"
                     v-if="index === 1"
-                    @click="isShowMERecharge = true"
+                    @click="openRechargeDialog"
                   >
                     {{ $t('Wallet.Add Funds') }}
                     <Icon name="down" />
@@ -1029,6 +1029,15 @@ function getFts(isCover = false) {
       }
     }
   })
+}
+
+function openRechargeDialog() {
+  if (!window.ethereum) {
+   return ElMessage.error(`${i18n.t('notSupportMobileRecharge')}`)
+  } else {
+    isShowMERecharge.value = true
+  }
+
 }
 
 function getNFTs(isCover = false) {

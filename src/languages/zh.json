@@ -1291,5 +1291,6 @@
   },
   "metaname_not allow": "暂不支持Metalet登录注册",
   "metaname_not allow_edit": "暂不支持Metalet登录编辑",
-  "metaname_not allow_renew": "暂不支持Metalet登录续费"
+  "metaname_not allow_renew": "暂不支持Metalet登录续费",
+  "notSupportMobileRecharge": "暂不支持移动端网页用户充值"
 }

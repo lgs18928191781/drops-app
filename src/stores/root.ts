@@ -97,6 +97,8 @@ export const useRootStore = defineStore('root', {
       updatePlanWhiteList: [
         '0x0c45B536C69AB0B8806a65C94BA8C8e6e71Ba7c',
         '0x4E5e9F98089De7f953FD099a54b04d218B3f08eb',
+        '0x1391aeb954c2a85e69a29b39cd78b47f7cc6aec9',
+        '0xEB2db37BAEA78f6eBB10ec80Ff96caD9f86dfe7C',
       ],
       isImportMnemonicLogin: localStorage.getItem('isImportMnemonicLogin') || false,
       isRereshData: false,
