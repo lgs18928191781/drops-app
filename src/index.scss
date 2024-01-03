@@ -346,3 +346,20 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+.vditor-reset{
+    table{
+       max-width: 80vh !important;
+    width: 80vh !important;
+   @media screen and (max-width:1480PX) {
+    table{
+        max-width: 60vh;
+    width: 60vh !important;
+    }
+   }
+
+
+    }
+    
+    
+}
