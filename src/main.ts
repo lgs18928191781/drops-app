@@ -28,9 +28,9 @@ import { StartSentry } from './utils/sentry'
 import VueVirtualScroller from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import VConsole from 'vconsole'
-if (import.meta.env.MODE !== 'prod') {
-  const vConsole = new VConsole()
-}
+// if (import.meta.env.MODE !== 'prod') {
+//   const vConsole = new VConsole()
+// }
 const app = createApp(App)
 const head = createHead()
 
