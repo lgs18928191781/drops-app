@@ -31,7 +31,7 @@ import {
 } from '@/enum'
 import { GetMeUtxos, GetMyMEBalance, GetProtocolMeInfo } from '@/api/v3'
 import * as bsv from '@sensible-contract/bsv'
-import { getLocalAccount } from './util'
+import { getLocalAccount, sleep } from './util'
 import { Transaction } from 'dexie'
 import { useUserStore } from '@/stores/user'
 import { useJobsStore } from '@/stores/jobs'
@@ -45,6 +45,7 @@ import { GetTx } from '@/api/metaid-base'
 import AllNodeName from './AllNodeName'
 import { GetMetafileBySha256 } from '@/api/aggregation'
 import { getFtUtxo } from '@/api'
+
 enum AppMode {
   PROD = 'prod',
   GRAY = 'gray',
@@ -439,41 +440,42 @@ export class SDK {
 
               //合并ftuxto
               if (params.nodeName == NodeName.FtTransfer) {
-                // const ftParams = JSON.parse(params.data!)
-                // const ftUtxo = await getFtUtxo({
-                //   address: this.wallet!.rootAddress,
-                //   codehash: ftParams.codehash,
-                //   genesis: ftParams.genesis,
-                // })
-                // if (ftUtxo.length && ftUtxo.length > 3) {
-                //   debugger
-                //   const getUtxoForMerge = await this.getAmountUxto({
-                //     sdkPayType: option.payType!,
-                //     amount: 50000,
-                //     nodeName: params.nodeName,
-                //     receive: {
-                //       address: this.wallet!.rootAddress,
-                //       addressIndex: 0,
-                //       addressType: 0,
-                //     },
-                //   })
-                //   const mergeFtUtxoParams = {
-                //     codehash: ftParams.codehash,
-                //     genesis: ftParams.genesis,
-                //     utxos: [getUtxoForMerge.utxo],
-                //     noBroadcast: false,
-                //     ownerWif: this.getPathPrivateKey('0/0')?.toString(),
-                //     changeAddress: this.wallet!.rootAddress,
-                //   }
-                //   debugger
-                //   const ftManager = this.wallet!.getFtManager()
-                //   const mergeRes = await ftManager.merge(mergeFtUtxoParams)
-                //   console.log('mergeRes', mergeRes)
-                //   debugger
-                //   if (!mergeRes) {
-                //     throw new Error('merge FtUtxo failed')
-                //   }
-                // }
+                const ftParams = JSON.parse(params.data!)
+                const ftUtxo = await getFtUtxo({
+                  address: this.wallet!.rootAddress,
+                  codehash: ftParams.codehash,
+                  genesis: ftParams.genesis,
+                })
+                if (ftUtxo.length && ftUtxo.length > 3) {
+                  const getUtxoForMerge = await this.getAmountUxto({
+                    sdkPayType: option.payType!,
+                    amount: 50000,
+                    nodeName: params.nodeName,
+                    receive: {
+                      address: this.wallet!.rootAddress,
+                      addressIndex: 0,
+                      addressType: 0,
+                    },
+                  })
+                  const mergeFtUtxoParams = {
+                    codehash: ftParams.codehash,
+                    genesis: ftParams.genesis,
+                    utxos: [getUtxoForMerge.utxo],
+                    noBroadcast: false,
+                    ownerWif: this.getPathPrivateKey('0/0')?.toString(),
+                    changeAddress: this.wallet!.rootAddress,
+                  }
+
+                  const ftManager = this.wallet!.getFtManager()
+                  const mergeRes = await ftManager.merge(mergeFtUtxoParams)
+                  console.log('mergeRes', mergeRes)
+
+                  if (!mergeRes) {
+                    throw new Error('merge FtUtxo failed')
+                  }
+
+                  await sleep(3000)
+                }
               }
 
               let receive = this.getNodeTransactionsFirstReceive(transactions, params)
