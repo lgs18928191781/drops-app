@@ -1229,7 +1229,7 @@
     "New Block Time": "最新出塊時間",
     "Edit Successful": "編輯成功",
     "Create Successful": "創建成功",
-    "createProposalRequireTokenNumber tips1": "需持有大於等於",
+    "createProposalRequireTokenNumber tips1": "需持有（包含质押）大於等於",
     "Create Proposal Require Token Number": "創建提案所需Token數量(Satoshi)",
     "Total Staking": "總投票數",
     "My Stakeding": "我的投票數",

@@ -835,8 +835,6 @@ export class SDK {
 
           // 如果有附件
           if (params.attachments && params.attachments!.length > 0) {
-            console.log('params123', params)
-
             transactions.metaFileBrfc = await this.getBrfcNode(
               {
                 nodeName: NodeName.MetaFile,
@@ -849,6 +847,7 @@ export class SDK {
                 chain,
               }
             )
+
             transactions.metaFiles = await this.createMetaFilesTransactions(
               transactions.metaFileBrfc!.txId,
               params.attachments,
@@ -1172,6 +1171,7 @@ export class SDK {
                 this.metaFileSha256TxIdList.splice(index, 1)
               }
             }
+
             transactions.metaFiles = await this.createMetaFilesTransactions(
               transactions.metaFileBrfc!.txId,
               params.attachments,
@@ -1243,6 +1243,8 @@ export class SDK {
             }
 
             // 再循环一边， 把每个metafile txId 更新到最新的， 防止没有更新 ： batchCreateBrfcChildNode 的时候
+
+            console.log('this.metaFileSha256TxIdList', this.metaFileSha256TxIdList)
             for (let i = 0; i < transactions.metaFiles.length; i++) {
               if (!transactions.metaFiles[i].transaction) {
                 const index = this.metaFileSha256TxIdList.findIndex(
@@ -1496,6 +1498,7 @@ export class SDK {
                 parentTxId: metaFileBrfcTxId,
                 chain,
               })
+
               if (res) {
                 this.metaFileSha256TxIdList.push({
                   sha256: item.sha256,

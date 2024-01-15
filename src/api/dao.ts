@@ -4,6 +4,7 @@ import { DAOStakeOperate } from '@/enum'
 import pako from 'pako'
 import { gzip } from 'node-gzip'
 import { changeSymbol } from '@/utils/util'
+import Decimal from 'decimal.js-light'
 
 const DAO = new HttpRequest(`${import.meta.env.VITE_DAO_API}`, {
   responseHandel: response => {
@@ -141,6 +142,19 @@ export const GetUserStakeInfo = async (params: {
 }): Promise<{ code: number; data: DAOUserStakeInfo; msg: string }> => {
   params.symbol = changeSymbol(params.symbol)
   return DAO.get('/userinfo', { params })
+}
+
+export const GetOwnerStakeInfo = async (params: {
+  symbol: string
+  address: string
+}): Promise<number> => {
+  params.symbol = changeSymbol(params.symbol)
+  const res = await DAO.get('/userinfo', { params })
+  if (res?.code == 0) {
+    return new Decimal(res.data.lockedTokenAmount).toNumber()
+  } else {
+    return 0
+  }
 }
 
 export const GetBlockTime = async (): Promise<{ code: number; data: number }> => {

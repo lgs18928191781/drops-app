@@ -1231,7 +1231,7 @@
     "New Block Time": "Latest block time",
     "Edit Successful": "Edit Successful",
     "Create Successful": "Create Successful",
-    "createProposalRequireTokenNumber tips1": "You need to hold at least",
+    "createProposalRequireTokenNumber tips1": "You need to hold and stake at least",
     "Create Proposal Require Token Number": "Create Proposal Require Token Number(Satoshi)",
     "Total Staking": "Total Staking",
     "My Stakeding": "My Staking Amount(space)",

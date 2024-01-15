@@ -3,7 +3,10 @@ import i18n from './i18n'
 import { getOneCommunity } from '@/api/talk'
 import { getBalance } from './util'
 import { useTalkStore } from '@/stores/talk'
+import { useUserStore } from '@/stores/user'
 import { space } from './filters'
+import { GetOwnerStakeInfo } from '@/api/dao'
+import Decimal from 'decimal.js-light'
 
 export const DAOTypes = [
   {
@@ -67,15 +70,23 @@ export const DAOtypeOptions = [
 export function checkUserCanCreateProposal() {
   return new Promise<boolean>(async (resolve, reject) => {
     const talk = useTalkStore()
+    const userStore = useUserStore()
     Promise.all([
       getOneCommunity(talk.activeCommunityId),
       getBalance({
         chain: Chains.MVC,
       }),
+      GetOwnerStakeInfo({
+        symbol: import.meta.env.VITE_MY_STAKE_SYMBOL,
+        address: userStore.user!.address!,
+      }),
     ])
-      .then(([community, balance]) => {
-        if (typeof balance === 'number') {
-          if (balance >= community.dao!.createProposalRequireTokenNumber) {
+      .then(([community, balance, stakeAmount]) => {
+        if (typeof balance === 'number' && typeof stakeAmount === 'number') {
+          if (
+            new Decimal(balance).add(stakeAmount).toNumber() >=
+            community.dao!.createProposalRequireTokenNumber
+          ) {
             resolve(true)
           } else {
             ElMessage.error(

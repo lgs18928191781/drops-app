@@ -554,6 +554,7 @@ export class MetaletSDK {
                     const { path } = await this.wallet.session.getAddressPath(
                       transation.inputs[0].output!.script.toAddress(this.network).toString()
                     )
+
                     if (hexTxs[i].hasMetaId) {
                       unSignTransations.push({
                         txHex: transation.toString(),
@@ -586,6 +587,7 @@ export class MetaletSDK {
                   // })
                 } else {
                   //
+
                   const { transation } = hexTxs[i]
                   console.log('transation', transation, hexTxs[i])
 
@@ -1684,6 +1686,7 @@ export class MetaletSDK {
               })
             } else {
               // 本地 和 链上 都没有
+
               const res = await this.wallet?.createNode({
                 nodeName: item.fileName,
                 metaIdTag: import.meta.env.VITE_METAID_TAG,
