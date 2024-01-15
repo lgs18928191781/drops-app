@@ -1239,6 +1239,7 @@
     "Stake Title1": "Stake",
     "Stake Title2": "to Vote",
     "createProposalRequireTokenNumber tips2": "to propose.",
+    "createProposalRequireTokenNumber tips3": "The total amount you currently own and pledge:",
     "Prevew Attachment": "Prevew Attachment",
     "Min vote user": "Min vote user",
     "Result Pass Min User Number": "Minimum number of votes required for the result to pass",

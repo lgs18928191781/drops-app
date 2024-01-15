@@ -92,7 +92,9 @@ export function checkUserCanCreateProposal() {
             ElMessage.error(
               `${i18n.global.t('DAO.createProposalRequireTokenNumber tips1')} ${space(
                 community.dao!.createProposalRequireTokenNumber
-              )} ${community.dao!.governanceSymbol!.toUpperCase()}`
+              )} ${community.dao!.governanceSymbol!.toUpperCase()},${i18n.global.t(
+                'DAO.createProposalRequireTokenNumber tips3'
+              )} ${space(new Decimal(balance).add(stakeAmount).toNumber())} SPACES`
             )
             reject(false)
           }

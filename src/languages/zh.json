@@ -1236,6 +1236,7 @@
     "The community has not opened a DAO": "該社區並未開通DAO",
     "Stake Title2": "去投票",
     "createProposalRequireTokenNumber tips2": "才可以创建提案",
+    "createProposalRequireTokenNumber tips3": "您目前拥有量和质押总量合计：",
     "Prevew Attachment": "查看附件",
     "Stake Title1": "質押",
     "Min vote user": "最少投票人数",
