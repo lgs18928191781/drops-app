@@ -178,7 +178,8 @@
       "leave_club": "Leave Club",
       "leave_tip": "Are you sure you want to leave this club?",
       "leave_confirm": "Leave",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "you_stake": "You staked"
     },
     "Channel": {
       "core_members": "core members",

@@ -19,7 +19,7 @@ import { sleep } from '@/utils/util'
 import ChannelSettings from './ChannelSettings.vue'
 import ChannelWelcome from './ChannelWelcome.vue'
 import ChannelContent from './ChannelContent.vue'
-
+import { GetOwnerStakeInfo } from '@/api/dao'
 const talk = useTalkStore()
 const layout = useLayoutStore()
 const user = useUserStore()
@@ -377,13 +377,18 @@ const tryInitChannel = async (status: string) => {
             .showWallet!.wallet!.provider.getXpubBalance(
               user.showWallet!.wallet!.wallet.xpubkey.toString()
             )
+
             .catch(error => {
               ElMessage.error(error.message)
             })
         }
+        const stakeAmount = await GetOwnerStakeInfo({
+          symbol: import.meta.env.VITE_MY_STAKE_SYMBOL,
+          address: user.user?.address,
+        })
 
         let requiredAmount = Number(talk.activeChannel.roomLimitAmount)
-        if (balance >= requiredAmount) {
+        if (balance >= requiredAmount || stakeAmount >= requiredAmount) {
           await checkAtLeastMinDuration()
           talk.hasActiveChannelConsent = true
         } else {

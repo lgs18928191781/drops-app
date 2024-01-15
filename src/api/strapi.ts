@@ -2,8 +2,8 @@ import i18n from '@/utils/i18n'
 import HttpRequest from '@/utils/request'
 
 // @ts-ignore
-const Strapi = new HttpRequest(import.meta.env.VITE_AdminBaseApi).request
-
+//const Strapi = new HttpRequest(import.meta.env.VITE_AdminBaseApi).request
+const Strapi = new HttpRequest('https://www.show3.io/strapi').request
 //查询禁用提案
 export const GetBandProposalList = async (): Promise<any> => {
   return Strapi.get('/voteid-band-lists')
@@ -21,7 +21,7 @@ export const GetProdTestMetaIds = (params: {
 }): Promise<GetProdTestMetaIdsItem[]> => {
   return Strapi.get('/ruoxi-dev-meta-ids', { params })
 }
-
+;``
 export const GetBalanceUser = (params: {
   [key: string]: any
 }): Promise<GetProdTestMetaIdsItem[]> => {

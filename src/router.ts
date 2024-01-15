@@ -217,22 +217,22 @@ export const router = createRouter({
                   component: () => import('@/views/talk/DAO/proposal/Detail.vue'),
                   beforeEnter: async (to, from, next) => {
                     const root = useRootStore()
-                    if (root.bandProposalList.includes(to.params.id as string)) {
-                      next('/404')
-                    } else {
-                      next()
-                    }
-                    // try {
-                    //   const bandList = await GetBandProposalList()
-                    //   if (bandList[0].vote_id.includes(to.params.id)) {
-                    //     next('/404')
-                    //   } else {
-                    //     next()
-                    //   }
-                    // } catch (error) {
-                    //   ElMessage.error(`Network error:${error?.toString()}`)
+                    // if (root.bandProposalList.includes(to.params.id as string)) {
+                    //   next('/404')
+                    // } else {
                     //   next()
                     // }
+                    try {
+                      const bandList = await GetBandProposalList()
+                      if (bandList[0].vote_id.includes(to.params.id)) {
+                        next('/404')
+                      } else {
+                        next()
+                      }
+                    } catch (error) {
+                      ElMessage.error(`Network error:${error?.toString()}`)
+                      next()
+                    }
                   },
                 },
                 {

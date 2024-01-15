@@ -41,6 +41,11 @@
                 {{ talk.consensualNative.balance / 10 ** (activeChain?.precision || 8) }}
                 {{ activeChain?.unit }}
               </p>
+              <p>
+                {{ $t('Talk.Modals.you_stake') }}
+                {{ stakeValue / 10 ** (activeChain?.precision || 8) }}
+                {{ activeChain?.unit }}
+              </p>
             </div>
           </div>
 
@@ -59,19 +64,29 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 import chains from '@/utils/chains'
 import { ShowControl } from '@/enum'
 import { useTalkStore } from '@/stores/talk'
 import { useLayoutStore } from '@/stores/layout'
-
+import { useUserStore } from '@/stores/user'
 import BaseModal from '../BaseModal.vue'
-
+import { GetOwnerStakeInfo } from '@/api/dao'
 const talk = useTalkStore()
 const layout = useLayoutStore()
 const router = useRouter()
+const userStore = useUserStore()
+const stakeValue = ref(0)
+async function getStakeAmount() {
+  stakeValue.value = await GetOwnerStakeInfo({
+    symbol: import.meta.env.VITE_MY_STAKE_SYMBOL,
+    address: userStore.user!.address!,
+  })
+}
+
+getStakeAmount()
 
 const activeChain = computed(() => {
   return chains?.find(chain => chain.key === talk.consensualNative?.chain)
@@ -80,6 +95,7 @@ const activeChain = computed(() => {
 const goBack = () => {
   // 清空consensualNative
   talk.consensualNative = null
+  stakeValue.value = 0
   layout.isShowRequireNativeModal = false
 
   // 去 index

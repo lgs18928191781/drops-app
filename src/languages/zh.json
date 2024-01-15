@@ -212,7 +212,8 @@
       "leave_club": "離開社區",
       "leave_tip": "你確定要離開社區嗎？",
       "leave_confirm": "離開",
-      "cancel": "取消"
+      "cancel": "取消",
+      "you_stake": "當前质押"
     },
     "Channel": {
       "core_members": "核心成員",

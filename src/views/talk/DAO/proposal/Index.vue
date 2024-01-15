@@ -249,9 +249,9 @@ function getDatas(isCover = false) {
     if (res) {
       if (isCover) proposals.length = 0
       if (res.length) {
-        //  const bandList = await GetBandProposalList()
-        //res=res.filter((item)=> !bandList[0].vote_id.includes(item.voteID))
-        res = res.filter((item) => !root.bandProposalList.includes(item.voteID))
+         const bandList = await GetBandProposalList()
+        res=res.filter((item)=> !bandList[0].vote_id.includes(item.voteID))
+       // res = res.filter((item) => !root.bandProposalList.includes(item.voteID))
 
         proposals.push(...res)
         pagination.nothing = false
