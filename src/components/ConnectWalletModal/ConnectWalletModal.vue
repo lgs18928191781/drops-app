@@ -259,7 +259,7 @@ const wallets = [
       },
       {
         name: () => {
-          return 'WallteConnect'
+          return 'WalletConnect'
         },
         desc: () => {
           return ``
