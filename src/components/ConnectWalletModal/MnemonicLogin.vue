@@ -146,7 +146,10 @@ function submitForm() {
             sign,
             word: word.data.word,
             type: 1,
+            path:+form.path
+            
           })
+          
           if (loginRes.code == 0) {
             const loginInfo = (loginRes.data as unknown) as BaseUserInfoTypes
             const account = {
@@ -162,7 +165,7 @@ function submitForm() {
             const hdWallet = new HdWallet(hdWalletMnemonic)
 
             let metaIdInfo = await hdWallet.getMetaIdInfo(hdWallet.rootAddress)
-
+            
             if (!metaIdInfo.metaId || !metaIdInfo.infoTxId || !metaIdInfo.protocolTxId) {
               // @ts-ignore
               let userInfo = {

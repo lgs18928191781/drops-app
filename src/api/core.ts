@@ -202,6 +202,7 @@ export const MnemoicLogin = (params: {
   sign: string //publickey+word签名
   word: string
   type: number // 1.web 2.app
+  path:number
 }): Promise<{
   code: number
   data: BindUserInfo
