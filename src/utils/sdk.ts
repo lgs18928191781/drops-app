@@ -45,6 +45,7 @@ import { GetTx } from '@/api/metaid-base'
 import AllNodeName from './AllNodeName'
 import { GetMetafileBySha256 } from '@/api/aggregation'
 import { getFtUtxo } from '@/api'
+import Decimal from 'decimal.js-light'
 
 enum AppMode {
   PROD = 'prod',
@@ -446,35 +447,50 @@ export class SDK {
                   codehash: ftParams.codehash,
                   genesis: ftParams.genesis,
                 })
-                if (ftUtxo.length && ftUtxo.length > 3) {
-                  const getUtxoForMerge = await this.getAmountUxto({
-                    sdkPayType: option.payType!,
-                    amount: 50000,
-                    nodeName: params.nodeName,
-                    receive: {
-                      address: this.wallet!.rootAddress,
-                      addressIndex: 0,
-                      addressType: 0,
-                    },
-                  })
-                  const mergeFtUtxoParams = {
+                if (ftUtxo.length && ftUtxo.length > 20) {
+                  let mergeAmount = '0'
+                  // const getUtxoForMerge = await this.getAmountUxto({
+                  //   sdkPayType: option.payType!,
+                  //   amount: 50000,
+                  //   nodeName: params.nodeName,
+                  //   receive: {
+                  //     address: this.wallet!.rootAddress,
+                  //     addressIndex: 0,
+                  //     addressType: 0,
+                  //   },
+                  // })
+                  // const mergeFtUtxoParams = {
+                  //   codehash: ftParams.codehash,
+                  //   genesis: ftParams.genesis,
+                  //   utxos: [getUtxoForMerge.utxo],
+                  //   noBroadcast: false,
+                  //   ownerWif: this.getPathPrivateKey('0/0')?.toString(),
+                  //   changeAddress: this.wallet!.rootAddress,
+                  // }
+                  for (let utxo of ftUtxo) {
+                    mergeAmount = new Decimal(mergeAmount).add(utxo.value).toString()
+                  }
+                  const mergeTransferUtxoParams = {
                     codehash: ftParams.codehash,
                     genesis: ftParams.genesis,
-                    utxos: [getUtxoForMerge.utxo],
-                    noBroadcast: false,
-                    ownerWif: this.getPathPrivateKey('0/0')?.toString(),
-                    changeAddress: this.wallet!.rootAddress,
+                    isMerge: true,
+                    senderWif: this.getPathPrivateKey('0/0')?.toString(),
+                    receivers: [
+                      {
+                        amount: mergeAmount,
+                        address: this.wallet!.rootAddress,
+                      },
+                    ],
                   }
 
                   const ftManager = this.wallet!.getFtManager()
-                  const mergeRes = await ftManager.merge(mergeFtUtxoParams)
-                  console.log('mergeRes', mergeRes)
+                  const mergeRes = await ftManager.transfer(mergeTransferUtxoParams)
 
                   if (!mergeRes) {
                     throw new Error('merge FtUtxo failed')
                   }
 
-                  await sleep(3000)
+                  await sleep(1000)
                 }
               }
 

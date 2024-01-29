@@ -220,6 +220,7 @@ async function confirmTransfer() {
   try {
     if (props.ftInfo?.genesis) {
       value = new Decimal(form.amount).mul(Math.pow(10, props.ftInfo.decimalNum!)).toString()
+
       res = await userStore.showWallet.createBrfcChildNode(
         {
           nodeName: NodeName.FtTransfer,

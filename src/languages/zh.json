@@ -1294,5 +1294,6 @@
   "metaname_not allow": "暂不支持Metalet登录注册",
   "metaname_not allow_edit": "暂不支持Metalet登录编辑",
   "metaname_not allow_renew": "暂不支持Metalet登录续费",
-  "notSupportMobileRecharge": "暂不支持移动端网页用户充值"
+  "notSupportMobileRecharge": "暂不支持移动端网页用户充值",
+  "ftUtxo more than limited": "Token UTXO 超过20个,转账失败，请使用助记词或Show账户登录方式转账"
 }

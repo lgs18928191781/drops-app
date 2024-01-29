@@ -30,6 +30,7 @@ interface KeyPathObjTypes {
 type TransferOutput = {
   genesis?: string
   codehash?: string
+  isMerge?: boolean
   receivers: Array<{ amount: string; address: string }>
 }
 

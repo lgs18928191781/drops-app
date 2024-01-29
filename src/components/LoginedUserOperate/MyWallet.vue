@@ -792,6 +792,9 @@ function refreshList() {
   }
 }
 
+
+
+
 function openTransferMenu(ftInfo: ftListType) {
   if (ftInfo.name == 'vSPACE') {
     return
@@ -1001,6 +1004,7 @@ function getFts(isCover = false) {
         page: 1,
         pageSize: 30,
       })
+
       if (res.code === 0) {
         if (isCover) FtList.length = 0
         if (res.data.results.items.length === 0) pagination.nothing = true
