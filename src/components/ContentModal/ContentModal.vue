@@ -11,7 +11,24 @@
     :z-index="zIndex"
   >
     <template #title>
-      <span :class="[extrafooter ? 'center' : '']">{{ title }}</span>
+      <div :class="[extrafooter ? 'title' : '']">
+        <span :class="[extrafooter ? 'center' : '']">{{ title }}</span>
+        <el-popover
+          z-index="999999"
+          placement="bottom-start"
+          :title="title"
+          :width="250"
+          trigger="hover"
+          v-if="titleIntro"
+        >
+          <template #reference>
+            <Icon name="question_circle" />
+          </template>
+          <div class="titleIntro">
+            {{ titleIntro }}
+          </div>
+        </el-popover>
+      </div>
     </template>
     <template v-if="content"
       ><pre class="content">{{ content }}</pre></template
@@ -32,10 +49,14 @@
         <div
           class="item main-border"
           @click="
-            showMnemonic ? emit('update:modelValue', !modelValue) : emit('updateShowMnemonic', true)
+            showMnemonic
+              ? emit('update:modelValue', !modelValue)
+              : titleIntro
+              ? emit('update:modelValue', !modelValue)
+              : emit('updateShowMnemonic', true)
           "
         >
-          {{ showMnemonic ? $t('already_backup') : $t('Generate') }}
+          {{ showMnemonic ? $t('already_backup') : titleIntro ? $t('back') : $t('Generate') }}
         </div>
       </div>
     </template>
@@ -55,6 +76,7 @@ interface Props {
   zIndex?: number
   extrafooter?: boolean
   showMnemonic?: boolean
+  titleIntro?: string
 }
 const props = withDefaults(defineProps<Props>(), {})
 

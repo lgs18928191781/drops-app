@@ -1,0 +1,69 @@
+.ftWrap {
+    height: 400px;
+    max-height: 400px;
+    overflow-y: auto;
+
+
+    .noData {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #303133;
+        opacity: .6;
+        font-size: 24px;
+        font-weight: 500;
+    }
+}
+
+.ftContanier {
+    padding-right: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+
+
+
+    .left {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        .ftIcon {
+            border-radius: 50%;
+            background: #fff;
+            width: 50px;
+            height: 50px;
+            margin-right: 6px;
+            border: 1px solid #EDEFF2;
+
+            img {
+                max-width: 40px;
+                max-height: 40px;
+            }
+
+
+
+        }
+
+        .ftName {
+            font-size: 18px;
+        }
+    }
+
+    .right {
+
+
+        .mergeBtn {
+            text-align: center;
+            padding: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            background: var(--el-color-primary);
+        }
+    }
+
+}

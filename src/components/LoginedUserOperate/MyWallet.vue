@@ -126,6 +126,9 @@
                       @click="isShowMeIntro = true"
                     />
                   </div>
+                  <a @click="showMergeFt" class="add flex flex-align-center" v-if="item.opBtn">
+                    {{ item?.opBtn }}<Icon name="down" />
+                  </a>
                   <a
                     class="add flex flex-align-center"
                     v-if="index === 0 && !item?.disabled"
@@ -363,7 +366,8 @@
       :seriesName="seriesNFTList.seriesName"
       @link="emit('update:modelValue', false)"
     />
-
+    <!--MergeFt-->
+    <MergeFtDialog v-model="isShowMergeFt" />
     <!-- ME Intro -->
     <MEIntroVue v-model="isShowMeIntro" />
     <!-- Wallet backup-->
@@ -414,6 +418,7 @@ import { Loading } from '@element-plus/icons-vue'
 import ContentModalVue from '../ContentModal/ContentModal.vue'
 import { currentSupportChain } from '@/config'
 import MEIntroVue from '../MEIntro/MEIntro.vue'
+import MergeFtDialog from '@/components/MergeFtUtxo/MergeFtDialog.vue'
 import WalletBackupVue from '../WalletBackup/index.vue'
 import Transfer from './Transfer.vue'
 import { Chains, CurrentSupportChain, NodeName } from '@/enum'
@@ -658,6 +663,7 @@ const wallets = reactive([
   },
   {
     title: i18n.t('Wallet.MvcFt'),
+    opBtn:i18n.t('check merge Ft'),
     list: FtList,
   },
   {
@@ -678,6 +684,7 @@ const currentFtInfo: { val: ftListType | null } = reactive({
   val: null,
 })
 const isShowMeIntro = ref(false)
+const isShowMergeFt=ref(false)
 const isShowBackUp=ref(false)
 const totalBalance = computed(() => {
 
@@ -707,6 +714,13 @@ const totalBalanceLoading = computed(() => {
   }
   return value
 })
+
+function showMergeFt() {
+  if (userStore.metaletLogin) {
+    return ElMessage.error(`${i18n.t('not support metalet merge ft')}`)
+  }
+  isShowMergeFt.value = true
+}
 
 function getLeastBlockTimestamp() {
   return new Promise<void>(async (resolve, reject) => {
