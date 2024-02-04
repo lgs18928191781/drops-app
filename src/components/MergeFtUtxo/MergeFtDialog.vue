@@ -19,6 +19,15 @@
               {{ item.name }}
             </div>
           </div>
+          <div class="center">
+            <el-progress
+              :percentage="(item.mergedProcess!/item.mergeTotal!)*100"
+              :stroke-width="12"
+              striped
+            >
+              {{ item.mergedProcess }}/{{ item.mergeTotal }}
+            </el-progress>
+          </div>
           <div class="right">
             <el-button
               class="main-border mergeBtn"
@@ -42,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue'
+import { ref, reactive, watch, toRaw } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/stores/user'
 import ContentModalVue from '../ContentModal/ContentModal.vue'
@@ -78,31 +87,46 @@ const userStore = useUserStore()
 const pagination = reactive({ ...initPagination })
 const currentChain = ref(Chains.MVC)
 
-async function MergeFt(tokenInfo: Partial<ftListType> & { ftUtxos: any }) {
+async function MergeFt(
+  tokenInfo: Partial<ftListType> & { ftUtxos: any; mergeTotal: number; mergedProcess: number }
+) {
   tokenInfo.loading = true
+
   try {
     const ftManager = userStore.showWallet?.wallet?.getFtManager()
-    let mergeAmount = '0'
-    for (let utxo of tokenInfo.ftUtxos) {
-      mergeAmount = new Decimal(mergeAmount).add(utxo.value).toString()
-    }
     const mergeTransferUtxoParams = {
       codehash: tokenInfo.codehash,
       genesis: tokenInfo.genesis,
-      isMerge: true,
-      senderWif: userStore.showWallet?.wallet?.getPathPrivateKey('0/0').toString(),
-      receivers: [
-        {
-          amount: mergeAmount,
-          address: userStore.user?.address,
-        },
-      ],
+      ownerWif: userStore.showWallet?.wallet?.getPathPrivateKey('0/0').toString(),
+      changeAddress: userStore.user!.address,
     }
-    const mergeRes = await ftManager.transfer(mergeTransferUtxoParams)
+    let mergeFlag = true
+    await userStore.showWallet?.wallet?.checkNeedMergeUtxo()
 
-    if (!mergeRes) {
-      throw new Error('merge FtUtxo failed')
+    while (mergeFlag) {
+      try {
+        let ftUtxo = await getFtUtxo({
+          address: userStore.user!.address,
+          codehash: tokenInfo.codehash!,
+          genesis: tokenInfo.genesis!,
+        })
+        if (ftUtxo.length < 30) {
+          mergeFlag = false
+          break
+        }
+        const mergeRes = await ftManager.merge(mergeTransferUtxoParams)
+
+        if (mergeRes) {
+          tokenInfo.mergedProcess += 1
+        } else {
+          continue
+        }
+      } catch (error) {
+        ElMessage.error(error as any)
+        throw new Error(error as any)
+      }
     }
+
     FtList = FtList.filter(ft => {
       return ft.genesis != tokenInfo.genesis
     })
@@ -139,13 +163,27 @@ function getFts(isCover = false) {
           if (res.data.results.items.length === 0) pagination.nothing = true
           const mspGenesis = `b2d75931958114e48c9927160f80363eae78e2dc`
           for (let ft of res.data.results.items) {
-            const ftUtxo = await getFtUtxo({
+            let ftUtxo = await getFtUtxo({
               address: userStore.user!.address,
               codehash: ft.codehash,
               genesis: ft.genesis,
             })
+            let moreFtUtxoFlag = true
+            while (moreFtUtxoFlag) {
+              const moreFtUtxo = await getFtUtxo({
+                address: userStore.user!.address,
+                codehash: ft.codehash,
+                genesis: ft.genesis,
+                flag: ftUtxo[ftUtxo.length - 1].flag,
+              })
+              if (moreFtUtxo.length > 0) {
+                ftUtxo = [...ftUtxo, ...moreFtUtxo]
+              } else {
+                moreFtUtxoFlag = false
+              }
+            }
 
-            if (ftUtxo.length > 1) {
+            if (ftUtxo.length > 30) {
               FtList.push({
                 icon: ft.genesis == mspGenesis ? MSP : metafile(ft.icon),
                 name: ft.name,
@@ -157,6 +195,8 @@ function getFts(isCover = false) {
                 ftSymbol: ft.symbol,
                 ftName: ft.name,
                 ftUtxos: ftUtxo,
+                mergeTotal: Math.floor(ftUtxo.length / 20),
+                mergedProcess: 0,
               })
             }
           }

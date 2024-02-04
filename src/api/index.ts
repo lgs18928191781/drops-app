@@ -145,6 +145,7 @@ export const getFtUtxo = (params: {
   address: string
   codehash: string
   genesis: string
+  flag?: string
 }): Promise<any> => {
   const { address, ..._params } = params
 

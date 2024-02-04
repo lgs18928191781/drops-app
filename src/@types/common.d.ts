@@ -414,6 +414,8 @@ declare interface ftListType {
   decimalNum?: number
   ftSymbol?: string
   ftName?: string
+  mergeTotal?: number
+  mergedProcess?: number
 }
 
 declare interface stakeListType extends ftListType {}

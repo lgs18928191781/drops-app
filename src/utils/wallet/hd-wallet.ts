@@ -18,6 +18,7 @@ import { isBtcAddress, isNaturalNumber } from '@/utils/wallet/is'
 import ShowmoneyProvider from './showmoney-provider'
 // @ts-ignore
 import * as ECIES from 'mvc-lib/ecies'
+
 import { englishWords } from './english'
 import { SA_utxo } from 'sensible-sdk/dist/sensible-api'
 import { isEmail, sleep } from '../util'
@@ -33,7 +34,7 @@ import {
   CreateNodeBrfcRes,
 } from '@/@types/sdk'
 import { ElMessage } from 'element-plus'
-import { NftManager, FtManager, API_TARGET } from 'meta-contract'
+import { NftManager, FtManager, API_TARGET, Wallet, API_NET } from 'meta-contract'
 import { useUserStore } from '@/stores/user'
 import { GetTxChainInfo } from '@/api/metaid-base'
 import AllNodeName from '../AllNodeName'
@@ -561,6 +562,28 @@ export class HdWallet {
       }
     }
     return metaIdInfo
+  }
+
+  checkNeedMergeUtxo() {
+    return new Promise<void>(async (resolve, reject) => {
+      try {
+        const utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
+        if (utxos.length > 3) {
+          const originWallet = new Wallet(this._root.toString(), API_NET.MAIN, 1, API_TARGET.MVC)
+          console.log('this.wallet', originWallet)
+          const { txId } = await originWallet.merge()
+          if (txId) {
+            resolve()
+          } else {
+            reject('merge utxo fail')
+          }
+        } else {
+          resolve()
+        }
+      } catch (error) {
+        reject(error)
+      }
+    })
   }
 
   //单独创建metaid

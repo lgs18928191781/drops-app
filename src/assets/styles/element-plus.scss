@@ -43,35 +43,40 @@ html.dark {
     height: 100%;
 }
 
-.el-switch__core{
-    border:2PX solid #303133 !important;
-     width: 22px !important;
+.el-switch__core {
+    border: 2PX solid #303133 !important;
+    width: 22px !important;
     height: 22px !important;
 }
 
-.el-switch__action{
-     border:2PX solid #303133 !important;
+.el-switch__action {
+    border: 2PX solid #303133 !important;
     width: 15px !important;
     height: 15px !important;
 }
 
+.el-progress-bar {
+    width: 60px !important;
+}
 
-.nft-tab-wrap{
-            .el-tabs__item{
-            color: var(--color-tab) !important;
-            font-size: 16px !important;
-            font-weight: 400 !important;
-            width: 80%;
-            text-align: center;
-            margin-bottom: 10px;
-           
-            }
-            .el-tabs__active-bar{
-                height: 3px;
-            }
-            .el-tabs__nav-wrap::after{
-                height: 3px;
-            }
+.nft-tab-wrap {
+    .el-tabs__item {
+        color: var(--color-tab) !important;
+        font-size: 16px !important;
+        font-weight: 400 !important;
+        width: 80%;
+        text-align: center;
+        margin-bottom: 10px;
+
+    }
+
+    .el-tabs__active-bar {
+        height: 3px;
+    }
+
+    .el-tabs__nav-wrap::after {
+        height: 3px;
+    }
 }
 
 
