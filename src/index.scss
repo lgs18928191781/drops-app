@@ -109,6 +109,26 @@ html {
   max-width: 280PX;
 }
 
+.is-message-box {
+  position: relative;
+  z-index: 999999 !important;
+
+  .el-message-box {
+    background-color: rgba($color: #000000, $alpha: 0.01);
+    border-radius: 16px;
+    box-shadow: 0 0 10px rgba($color: #000000, $alpha: 0.6);
+
+    .el-message-box__message {
+
+      font-size: 17px;
+
+      span {
+        font-weight: bold;
+      }
+    }
+  }
+}
+
 @media screen and (max-width: 750PX) {
   .user-card-warp {
     position: fixed !important;
@@ -347,19 +367,20 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-.vditor-reset{
-    table{
-       max-width: 80vh !important;
+.vditor-reset {
+  table {
+    max-width: 80vh !important;
     width: 80vh !important;
-   @media screen and (max-width:1480PX) {
-    table{
+
+    @media screen and (max-width:1480PX) {
+      table {
         max-width: 60vh;
-    width: 60vh !important;
+        width: 60vh !important;
+      }
     }
-   }
 
 
-    }
-    
-    
+  }
+
+
 }

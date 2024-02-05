@@ -1301,11 +1301,13 @@
   "metaname_not allow_edit": "Metalet login editing is not currently supported.",
   "metaname_not allow_renew": "Metalet login renewal is not currently supported.",
   "notSupportMobileRecharge": "Recharge for mobile web users is not currently supported.",
-  "ftUtxo more than limited": "There are more than 20 Token UTXOs and the transfer failed. Please use a mnemonic or display account login method to transfer.",
+  "ftUtxo more than limited": "There are more than 30 Token UTXOs and the transfer failed. Please use a mnemonic or display account login method to transfer.",
   "check merge Ft": "Merge Token UTXO",
   "why merge utxo": " Why merge token utxo",
   "title intro": "Yes, when the number of UTXOs of a single Token on the wallet address exceeds 20, it will be displayed on the list. Click Merge to merge a single Token. Warm reminder: When the UTXO of a certain Token exceeds 20, operations such as Token transfer cannot be performed.",
   "ft merge": "Merge",
   "Merge Utxo Success": "Merge Success!",
-  "not support metalet merge ft": "The function of merging token utxo for Metalet login users is not currently supported. Please switch to account or mnemonic phrase login."
+  "not support metalet merge ft": "The function of merging token utxo for Metalet login users is not currently supported. Please switch to account or mnemonic phrase login.",
+  "MergeFtEstimate": "The estimated total cost of this merger Token UTXO:",
+  "MergeFtEstimateTitle": "Cost estimation tips"
 }

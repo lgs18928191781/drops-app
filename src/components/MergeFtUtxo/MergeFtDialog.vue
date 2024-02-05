@@ -1,10 +1,11 @@
 <template>
   <ContentModalVue
+    ref="contentModal"
     :model-value="modelValue"
     @update:model-value="val => emit('update:modelValue', val)"
     :title="$t('why merge utxo')"
     :i18n="i18n"
-    :z-index="99999"
+    :z-index="10000"
     :extrafooter="true"
     :titleIntro="$t('title intro')"
   >
@@ -63,6 +64,7 @@ import LoadMoreVue from '../LoadMore/LoadMore.vue'
 import { initPagination } from '@/config'
 import { getFtUtxo } from '@/api'
 import Decimal from 'decimal.js-light'
+import { ElMessageBox } from 'element-plus'
 interface Props {
   modelValue: boolean
   i18n?: any
@@ -80,6 +82,7 @@ watch(
 const props = withDefaults(defineProps<Props>(), {})
 const $i18n = props.i18n ? props.i18n : useI18n()
 const $t = $i18n.t
+const contentModal = ref()
 const ftDataLoading = ref(true)
 let FtList: Array<Partial<ftListType> & { ftUtxos: any }> = reactive([])
 const emit = defineEmits(['update:modelValue'])
@@ -103,35 +106,70 @@ async function MergeFt(
     let mergeFlag = true
     await userStore.showWallet?.wallet?.checkNeedMergeUtxo()
 
-    while (mergeFlag) {
-      try {
-        let ftUtxo = await getFtUtxo({
-          address: userStore.user!.address,
-          codehash: tokenInfo.codehash!,
-          genesis: tokenInfo.genesis!,
-        })
-        if (ftUtxo.length < 30) {
-          mergeFlag = false
-          break
-        }
-        const mergeRes = await ftManager.merge(mergeTransferUtxoParams)
+    const estimatedFee = await ftManager
+      .getMergeEstimateFee({
+        codehash: tokenInfo.codehash,
+        genesis: tokenInfo.genesis,
+        ownerWif: userStore.showWallet?.wallet?.getPathPrivateKey('0/0').toString(),
+      })
+      .catch(error => {
+        throw new Error(error)
+      })
 
-        if (mergeRes) {
-          tokenInfo.mergedProcess += 1
-        } else {
-          continue
-        }
-      } catch (error) {
-        ElMessage.error(error as any)
-        throw new Error(error as any)
+    const estimateTototalFee = new Decimal(tokenInfo.mergeTotal)
+      .div(20)
+      .mul(estimatedFee ?? 0)
+      .div(Math.pow(10, 8))
+      .toNumber()
+    ElMessageBox.confirm(
+      `${$t('MergeFtEstimate')} <span>${estimateTototalFee}</span> SPACE`,
+      `${$t('MergeFtEstimateTitle')}`,
+
+      {
+        cancelButtonText: $t('Cancel'),
+        confirmButtonText: $t('Confirm'),
+        cancelButtonClass: 'main-border',
+        confirmButtonClass: 'main-border primary',
+        appendTo: contentModal.value,
+        dangerouslyUseHTMLString: true,
+        closeOnClickModal: false,
       }
-    }
+    )
+      .then(async () => {
+        while (mergeFlag) {
+          try {
+            let ftUtxo = await getFtUtxo({
+              address: userStore.user!.address,
+              codehash: tokenInfo.codehash!,
+              genesis: tokenInfo.genesis!,
+            })
+            if (ftUtxo.length < 30) {
+              mergeFlag = false
+              break
+            }
+            const mergeRes = await ftManager.merge(mergeTransferUtxoParams)
 
-    FtList = FtList.filter(ft => {
-      return ft.genesis != tokenInfo.genesis
-    })
-    tokenInfo.loading = false
-    ElMessage.success($t('Merge Utxo Success'))
+            if (mergeRes) {
+              tokenInfo.mergedProcess += 1
+            } else {
+              continue
+            }
+          } catch (error) {
+            tokenInfo.loading = false
+            ElMessage.error(error as any)
+            throw new Error(error as any)
+          }
+        }
+
+        FtList = FtList.filter(ft => {
+          return ft.genesis != tokenInfo.genesis
+        })
+        tokenInfo.loading = false
+        ElMessage.success($t('Merge Utxo Success'))
+      })
+      .catch(() => {
+        tokenInfo.loading = false
+      })
   } catch (error) {
     ElMessage.error(error as any)
     tokenInfo.loading = false

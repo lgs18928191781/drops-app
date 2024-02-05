@@ -447,8 +447,12 @@ export class SDK {
                   codehash: ftParams.codehash,
                   genesis: ftParams.genesis,
                 })
-                if (ftUtxo.length && ftUtxo.length > 20) {
-                  let mergeAmount = '0'
+
+                if (ftUtxo.length && ftUtxo.length > 30) {
+                  if (option.payType == SdkPayType.SPACE) {
+                    await userStore.showWallet?.wallet?.checkNeedMergeUtxo()
+                  }
+
                   // const getUtxoForMerge = await this.getAmountUxto({
                   //   sdkPayType: option.payType!,
                   //   amount: 50000,
@@ -467,24 +471,15 @@ export class SDK {
                   //   ownerWif: this.getPathPrivateKey('0/0')?.toString(),
                   //   changeAddress: this.wallet!.rootAddress,
                   // }
-                  for (let utxo of ftUtxo) {
-                    mergeAmount = new Decimal(mergeAmount).add(utxo.value).toString()
-                  }
+
                   const mergeTransferUtxoParams = {
                     codehash: ftParams.codehash,
                     genesis: ftParams.genesis,
-                    isMerge: true,
-                    senderWif: this.getPathPrivateKey('0/0')?.toString(),
-                    receivers: [
-                      {
-                        amount: mergeAmount,
-                        address: this.wallet!.rootAddress,
-                      },
-                    ],
+                    ownerWif: this.getPathPrivateKey('0/0')?.toString(),
                   }
 
                   const ftManager = this.wallet!.getFtManager()
-                  const mergeRes = await ftManager.transfer(mergeTransferUtxoParams)
+                  const mergeRes = await ftManager.merge(mergeTransferUtxoParams)
 
                   if (!mergeRes) {
                     throw new Error('merge FtUtxo failed')

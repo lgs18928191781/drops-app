@@ -1295,11 +1295,13 @@
   "metaname_not allow_edit": "暂不支持Metalet登录编辑",
   "metaname_not allow_renew": "暂不支持Metalet登录续费",
   "notSupportMobileRecharge": "暂不支持移动端网页用户充值",
-  "ftUtxo more than limited": "Token UTXO 超过20个,转账失败，请使用助记词或Show账户登录方式转账",
+  "ftUtxo more than limited": "Token UTXO 超过30个,转账失败，请使用助记词或Show账户登录方式转账",
   "check merge Ft": "合并Token UTXO",
   "why merge utxo": "为什么要合并token utxo",
   "title intro": "有且当钱包地址上的单个Token的utxo数量超过20个时显示到列表上，点击合并即可进行单个Token合并，温馨提示，当某个Token utxo超过20个后无法进行Token转移等操作",
   "ft merge": "合并",
   "Merge Utxo Success": "合并成功",
-  "not support metalet merge ft": "暂不支持Metalet登录用户合并token utxo功能，请切换至账户或助记词登录"
+  "not support metalet merge ft": "暂不支持Metalet登录用户合并token utxo功能，请切换至账户或助记词登录",
+  "MergeFtEstimate": "本次合并预估总花费：",
+  "MergeFtEstimateTitle": "费用预估提示"
 }
