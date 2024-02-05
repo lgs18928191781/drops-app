@@ -449,9 +449,7 @@ export class SDK {
                 })
 
                 if (ftUtxo.length && ftUtxo.length > 30) {
-                  if (option.payType == SdkPayType.SPACE) {
-                    await userStore.showWallet?.wallet?.checkNeedMergeUtxo()
-                  }
+                  await userStore.showWallet?.wallet?.checkNeedMergeUtxo()
 
                   // const getUtxoForMerge = await this.getAmountUxto({
                   //   sdkPayType: option.payType!,
