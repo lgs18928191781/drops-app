@@ -143,7 +143,7 @@ async function MergeFt(
               codehash: tokenInfo.codehash!,
               genesis: tokenInfo.genesis!,
             })
-            if (ftUtxo.length < 30) {
+            if (ftUtxo.length < 20) {
               mergeFlag = false
               break
             }
@@ -221,7 +221,7 @@ function getFts(isCover = false) {
               }
             }
 
-            if (ftUtxo.length > 30) {
+            if (ftUtxo.length > 20) {
               FtList.push({
                 icon: ft.genesis == mspGenesis ? MSP : metafile(ft.icon),
                 name: ft.name,

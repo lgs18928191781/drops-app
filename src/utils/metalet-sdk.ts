@@ -483,7 +483,7 @@ export class MetaletSDK {
                   genesis: ftParams.genesis,
                 })
 
-                if (ftUtxo.length && ftUtxo.length > 30) {
+                if (ftUtxo.length && ftUtxo.length > 20) {
                   throw new Error(i18n.global.t('ftUtxo more than limited'))
                   let mergeAmount = '0'
                   // const getUtxoForMerge = await this.getAmountUxto({

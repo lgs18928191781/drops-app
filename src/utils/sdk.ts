@@ -448,7 +448,7 @@ export class SDK {
                   genesis: ftParams.genesis,
                 })
 
-                if (ftUtxo.length && ftUtxo.length > 30) {
+                if (ftUtxo.length && ftUtxo.length > 20) {
                   await userStore.showWallet?.wallet?.checkNeedMergeUtxo()
 
                   // const getUtxoForMerge = await this.getAmountUxto({
