@@ -103,7 +103,12 @@ export const useRootStore = defineStore('root', {
       isImportMnemonicLogin: localStorage.getItem('isImportMnemonicLogin') || false,
       isRereshData: false,
       myBlackList: [],
-      metaletWhiteProtocolList: [NodeName.SendMoney, NodeName.SimpleCommunityJoin, NodeName.Name],
+      metaletWhiteProtocolList: [
+        NodeName.SendMoney,
+        NodeName.SimpleCommunityJoin,
+        NodeName.Name,
+        NodeName.SimpleVote,
+      ],
       bandProposalList: [
         'a6931c4487cf0728cb2a63357fe88a2f156d2225',
         'ae3063476b431ca43df8574b05095f9a3721b40f',

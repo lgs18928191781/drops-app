@@ -584,6 +584,12 @@
 
 
 
+
+
+
+
+
+
                       }}(UTC)
                     </div>
                   </div>
@@ -595,6 +601,12 @@
                     <div class="flex1 lable">{{ $t('DAO.End Time') }}</div>
                     <div class="value">
                       {{ $filters.dateTimeFormat(proposal!.val!.endBlockTime * 1000, 'UTC', 'YY-MM-DD HH:mm')
+
+
+
+
+
+
 
 
 
@@ -1061,6 +1073,12 @@
 
 
 
+
+
+
+
+
+
                       }}%
                     </div>
                   </div>
@@ -1091,6 +1109,12 @@
                       new Decimal(proposal.val!.voteSumData[index]).div(totalVoteValue).mul(100).toFixed(2) 
                       :
                       0
+
+
+
+
+
+
 
 
 
@@ -1353,6 +1377,12 @@
             <div class="value">
               {{ $t('DAO.Vote Number') }}:<span
                 >{{ new Decimal(userStake.val!.lockedTokenAmount).div(10**8).toNumber()
+
+
+
+
+
+
 
 
 
@@ -2105,9 +2135,10 @@ async function vote(option: string) {
 }
 
 async function confirmMultiVote() {
-  if (userStore.metaletLogin) {
-    return ElMessage.error(i18n.t('DAO.Proposal Not Allow'))
-  }
+  // if (userStore.metaletLogin) {
+  //   return ElMessage.error(i18n.t('DAO.Proposal Not Allow'))
+  // }
+
   loading.value = true
   try {
     const symbol = `${talk.activeCommunity!.dao!.governanceSymbol}_${
@@ -2147,6 +2178,7 @@ async function confirmMultiVote() {
       }
     }
     console.log('voteToOptionIdxs', signaturelist, voteToOptionIdxs)
+    console.log('userStore.showWallet', userStore.showWallet)
 
     const tx = await userStore.showWallet
       .createBrfcChildNode(
