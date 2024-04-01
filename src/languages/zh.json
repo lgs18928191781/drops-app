@@ -1303,5 +1303,6 @@
   "Merge Utxo Success": "合并成功",
   "not support metalet merge ft": "暂不支持Metalet登录用户合并token utxo功能，请切换至账户或助记词登录",
   "MergeFtEstimate": "本次合并预估总花费：",
-  "MergeFtEstimateTitle": "费用预估提示"
+  "MergeFtEstimateTitle": "费用预估提示",
+  "Editor not allow from metalet": "暂不支持Metalet登录编辑Metaname。"
 }
