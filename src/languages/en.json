@@ -1310,5 +1310,5 @@
   "not support metalet merge ft": "The function of merging token utxo for Metalet login users is not currently supported. Please switch to account or mnemonic phrase login.",
   "MergeFtEstimate": "The estimated total cost of this merger Token UTXO:",
   "MergeFtEstimateTitle": "Cost estimation tips",
-  "Editor not allow from metalet": "Editing Metaname through Metalet login is not currently supported."
+  "Editor not allow from metalet": "Editing Metaname through Metalet login is not currently supported,please switch to another login method for editing."
 }
