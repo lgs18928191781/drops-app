@@ -167,7 +167,7 @@ async function confirm() {
   if (userStore.metaletLogin) {
     return ElMessage.error(i18n.t(`Editor not allow from metalet`))
   }
-
+  //
   if (
     form.name === '' ||
     (form.name === userStore.user!.name &&
