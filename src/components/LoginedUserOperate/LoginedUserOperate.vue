@@ -202,7 +202,7 @@ const userOperates = computed(() => {
 
   return result
 })
-console.log("route",route)
+
 const isNftPage=computed(()=>{
  return route.path.indexOf("/nft") > -1
 })
