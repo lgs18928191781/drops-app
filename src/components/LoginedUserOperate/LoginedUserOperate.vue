@@ -215,6 +215,9 @@ const toMetaName = () => {
 }
 
 function toMintNft(){
+  if(userStore.metaletLogin){
+    return ElMessage.error(`${i18n.t('nosupportmetaletissue')}`)
+  }
   router.push('/nft/issue')
 }
 </script>

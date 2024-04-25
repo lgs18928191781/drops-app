@@ -5,7 +5,7 @@
         <div class="flex1">
           <span class="title">{{ $t('NFT.Issue NFT') }}</span>
         </div>
-        <a class="main-border primary" @click="isShowOption = true">{{ $t('NFT.Add Issue') }}</a>
+        <a class="main-border primary" @click="showOption">{{ $t('NFT.Add Issue') }}</a>
         <a
           class="main-border"
           :class="[list.filter(item => !item.isSuccess).length ? 'primary' : 'faded']"
@@ -184,6 +184,13 @@ const isShowOption = ref(false)
 const list: IssueItem[] = reactive([])
 
 const genesisList: GenesisItem[] = reactive([])
+
+function showOption(){
+  if(userStore.metaletLogin){
+    return ElMessage.error(`${i18n.t('nosupportmetaletissue')}`)
+  }
+  isShowOption.value = true
+}
 
 function getGenesisList() {
   return new Promise<void>(async (resolve, reject) => {
