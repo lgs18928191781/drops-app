@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, RouterView } from 'vue-router'
 const NotFoundPage = () => import('@/views/404.vue')
+//
 import { ElMessage } from 'element-plus'
 import i18n from '@/utils/i18n'
 import { useRootStore } from './stores/root'
