@@ -83,6 +83,7 @@ async function genesis() {
       loading.value = false
     })
   if (res) {
+    debugger
     genesisStore.add({
       codehash: res.nft!.genesis!.codehash,
       count: 0,

@@ -20,6 +20,22 @@
           <img class="metanameLogo" :src="MetaNameLogo" alt="" />
         </a>
 
+          <!-- MintCollect -->
+          <el-tooltip
+        class="box-item"
+        effect="dark"
+        content="Mint Collection"
+        placement="bottom"
+        v-if="isNftPage"
+      >
+          <a
+          @click="toMintNft"
+          class="outsideMore flex flex-align-center flex-pack-center user-warp-item"
+        >
+          <span class="new-tag">New</span>
+          <img class="MintLogo" :src="MintLogo" alt="" />
+        </a>
+      </el-tooltip>
         <!-- 🔍 搜索 -->
         <a
           class="flex flex-align-center flex-pack-center user-warp-item"
@@ -91,6 +107,7 @@
           <div class="flex flex-align-center user-operate-item">
             <Icon :name="item.icon" />
             <span class="name">{{ item.name }}</span>
+            <span class="isnew" v-if="item.isNew">New</span>
           </div>
         </ElDropdownItem>
       </ElDropdownMenu>
@@ -120,7 +137,7 @@ import UserPersonaVue from '../UserPersona/UserPersona.vue'
 import UserCardVue from '../UserCard/UserCard.vue'
 import { router } from '@/router'
 import MetaNameLogo from '@/assets/svg/meta_name.svg?url'
-
+import MintLogo from '@/assets/svg/mint.svg?url'
 const i18n = useI18n()
 const rootStore = useRootStore()
 const userStore = useUserStore()
@@ -153,6 +170,12 @@ const userOperates = computed(() => {
       },
     },
     {
+      name: 'Mint Collection',
+      icon: 'mint',
+      func: toMintNft,
+      isNew:true
+    },
+    {
       name: 'MetaName',
       icon: 'meta_name',
       func: toMetaName,
@@ -179,12 +202,20 @@ const userOperates = computed(() => {
 
   return result
 })
+console.log("route",route)
+const isNftPage=computed(()=>{
+ return route.path.indexOf("/nft") > -1
+})
 
 const toMetaName = () => {
   const routerUrl = router.resolve({
     path: '/metaname',
   })
   window.open(routerUrl.href, '_blank')
+}
+
+function toMintNft(){
+  router.push('/nft/issue')
 }
 </script>
 

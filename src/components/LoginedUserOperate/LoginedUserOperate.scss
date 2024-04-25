@@ -1,9 +1,23 @@
 .outsideMore {
     margin-right: 14px;
-
+    position: relative;
     .metanameLogo {
         width: 22px;
         height: 22px;
+    }
+    .MintLogo{
+        width: 22px;
+        height: 22px;
+    }
+    .new-tag{
+        position: absolute;
+        top: -37%;
+        right: -50%;
+        font-size: 11px;
+        color: #fff;
+        padding: 3px 5px;
+        background-color: #fc6d5e;
+        border-radius: 8px;
     }
 }
 
@@ -64,6 +78,14 @@
     }
 
     .name {}
+    .isnew{
+        margin-left: 8px;
+        background-color: #fc6d5e;
+        color: #fff;
+        padding: 2px 5px;
+        border-radius: 10px;
+        font-size: 12px;
+    }
 }
 
 .balance {

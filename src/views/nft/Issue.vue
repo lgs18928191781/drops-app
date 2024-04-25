@@ -192,6 +192,9 @@ function getGenesisList() {
       page: 1,
       pageSize: 9999,
     })
+    
+
+    
     if (res.code === 0) {
       genesisList.length = 0
       genesisList.push(...res.data.results.items)
