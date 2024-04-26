@@ -6,7 +6,7 @@
     :close-on-click-modal="false"
     @close="emit('update:modelValue', false)"
   >
-    <ElForm :model="form" :label-position="'top'" ref="FormRef">
+    <ElForm :model="form" :label-position="'top'" ref="FormRef" :rules="rules">
       <!-- count -->
       <ElFormItem :label="$t('NFT.Issue Count')" prop="count">
         <div class="form-item flex flex-align-center flex1">
@@ -46,8 +46,11 @@
                 @click="form.genesis = item"
               ></ElOption>
             </ElSelect>
+            
           </div>
         </div>
+        <div class="issueTips">* <span>{{ $t('issue_before_serires') }}</span></div>
+       
       </ElFormItem>
 
       <!-- cover -->
@@ -120,6 +123,8 @@
         <div class="form-item flex flex-align-center flex1">
           <div class="flex1"><ElInput type="text" v-model="form.name" /></div>
         </div>
+
+        <div class="issueTips">* <span>{{ $t('issue_before_NFT_name') }}</span></div>
       </ElFormItem>
 
       <!-- desc -->
@@ -195,7 +200,7 @@
       <ElFormItem>
         <a
           class="main-border primary flex1 flex flex-align-center flex-pack-center"
-          @click="confirm"
+          @click="confirm(FormRef)"
         >
           {{ $t('Confirm') }}
         </a>
@@ -230,18 +235,18 @@ export interface IssueNFTOption {
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { GetUserGenesisList } from '@/api/aggregation'
 import { useUserStore } from '@/stores/user'
-import { ElSwitch, FormInstance } from 'element-plus'
+import { ElSwitch, FormInstance,FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
 import AddImageWarpVue from '@/components/AddImageWarp/AddImageWarp.vue'
 import CreateGenesis from './CreateGenesis.vue'
 import { useGenesisStore } from '@/stores/genesis'
 import { classifyList } from '@/config'
-
+import { useI18n } from 'vue-i18n'
 interface Props {
   modelValue: boolean
 }
 const props = withDefaults(defineProps<Props>(), {})
-
+const i18n = useI18n()
 const emit = defineEmits(['confirm', 'update:modelValue'])
 const FormRef = ref<FormInstance>()
 const userStore = useUserStore()
@@ -265,6 +270,16 @@ const form: IssueNFTOption = reactive({
   isSameClassifyList: false,
   classifyList: [],
 })
+
+const rules=reactive<FormRules<IssueNFTOption>>({
+  genesis:[
+  { required: true, message: 'Series name cannot be empty', trigger: 'blur' },
+  ],
+  name:[
+  { required: true, message: 'NFT name cannot be empty', trigger: 'blur' },
+  ],
+ 
+})
 const isShowCreateGenesis = ref(false)
 
 function getGenesisList() {
@@ -284,10 +299,18 @@ function getGenesisList() {
 
 getGenesisList()
 
-function confirm() {
-  emit('confirm', form)
+async function confirm(formEl: FormInstance | undefined) {
+await formEl?.validate((valid,fields)=>{
+  if(!valid){
+    ElMessage.error(`${i18n.t('issue_check_vaild')}`)
+  }else{
+    emit('confirm', form)
   FormRef.value?.resetFields()
   emit('update:modelValue', false)
+  }
+})
+
+
 }
 </script>
 

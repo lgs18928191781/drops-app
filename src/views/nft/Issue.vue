@@ -44,8 +44,9 @@
 
         <ElForm
           :model="item"
+         
           :label-position="'top'"
-          ref="FormRef"
+        
           class="flex flex-align-center flex1"
         >
           <!-- genesis -->
@@ -162,7 +163,7 @@ interface IssueItem {
 <script setup lang="ts">
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { GetUserGenesisList } from '@/api/aggregation'
-import { Chains, NodeName } from '@/enum'
+import { Chains, NodeName  } from '@/enum'
 import { useUserStore } from '@/stores/user'
 import { ElOption, ElSelect } from 'element-plus'
 import { reactive, ref } from 'vue'
@@ -179,9 +180,13 @@ const userStore = useUserStore()
 const genesisStore = useGenesisStore()
 const i18n = useI18n()
 
+
+
 const isShowOption = ref(false)
 
 const list: IssueItem[] = reactive([])
+
+
 
 const genesisList: GenesisItem[] = reactive([])
 

@@ -47,7 +47,7 @@
     "decimal.js-light": "^2.5.1",
     "dexie": "^3.2.2",
     "dotenv": "^16.0.3",
-    "element-plus": "2.3.0",
+    "element-plus": "2.3.7",
     "eth-ens-namehash": "^2.0.8",
     "ethers": "^5.7.2",
     "html2canvas": "^1.4.1",
