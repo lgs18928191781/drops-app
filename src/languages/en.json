@@ -1311,5 +1311,8 @@
   "MergeFtEstimate": "The estimated total cost of this merger Token UTXO:",
   "MergeFtEstimateTitle": "Cost estimation tips",
   "Editor not allow from metalet": "Editing Metaname through Metalet login is not currently supported,please switch to another login method for editing.",
-  "nosupportmetaletissue": "Mining NFT via Metalet login method is not currently supported. Please switch to account or mnemonic phrase login to operate."
+  "nosupportmetaletissue": "Mining NFT via Metalet login method is not currently supported. Please switch to account or mnemonic phrase login to operate.",
+  "issue_check_vaild": "Please check whether the form items are filled in completely",
+  "issue_before_serires": "NFT series needs to be created before minting",
+  "issue_before_NFT_name": "NFT name needs to be created before minting"
 }

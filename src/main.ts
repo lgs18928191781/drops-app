@@ -25,6 +25,7 @@ import { createPinia } from 'pinia'
 import { VueQueryPlugin } from '@tanstack/vue-query' // TanStack Query
 import { createHead } from '@vueuse/head'
 import { StartSentry } from './utils/sentry'
+//@ts-ignore
 import VueVirtualScroller from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import VConsole from 'vconsole'
