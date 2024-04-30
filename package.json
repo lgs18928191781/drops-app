@@ -7,7 +7,7 @@
     "mainnetgray": "yarn vite --mode mainnetgray",
     "build:gray": "node --max_old_space_size=10336 ./node_modules/vite/bin/vite.js build --mode gray",
     "build:mainnetgray": "node --max_old_space_size=10336 ./node_modules/vite/bin/vite.js build --mode mainnetgray",
-    "build:mainnet": "node ./build/createCommitId.js && node --max_old_space_size=10336 ./node_modules/vite/bin/vite.js build --mode mainnet"
+    "build:mainnet": "node ./build/createCommitId.js && node --max_old_space_size=14336 ./node_modules/vite/bin/vite.js build --mode mainnet"
   },
   "dependencies": {
     "@better-scroll/core": "^2.5.0",
@@ -47,7 +47,7 @@
     "decimal.js-light": "^2.5.1",
     "dexie": "^3.2.2",
     "dotenv": "^16.0.3",
-    "element-plus": "2.3.7",
+    "element-plus": "2.3.0",
     "eth-ens-namehash": "^2.0.8",
     "ethers": "^5.7.2",
     "html2canvas": "^1.4.1",
@@ -119,6 +119,7 @@
     "postcss-pxtorem": "^6.0.0",
     "prettier-stylelint": "^0.4.2",
     "rollup-plugin-polyfill-node": "^0.11.0",
+    "rollup-plugin-visualizer": "^5.12.0",
     "sass": "^1.35.1",
     "stylelint": "^13.13.1",
     "svg-sprite-loader": "^6.0.9",
