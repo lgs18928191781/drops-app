@@ -329,6 +329,8 @@ function onTypeChange() {
 }
 
 function submit() {
+  isShowConfirmModal.value = true
+
   FormRef.value?.validate(async result => {
     if (result) {
       const result = await checkUserCanCreateProposal()
@@ -354,6 +356,7 @@ async function confirmPublish() {
       address: userStore.user!.address!,
       op: DAOStakeOperate.CreateVote,
     })
+
     if (res.code === 0) {
       const transfer = await userStore.showWallet.createBrfcChildNode(
         {
@@ -366,11 +369,18 @@ async function confirmPublish() {
           isTransfer: true,
         }
       )
+
       if (transfer) {
         if (transfer.payToAddress?.transaction) {
-          await userStore.showWallet.wallet?.provider.broadcast(
-            transfer.payToAddress?.transaction.toString()
-          )
+          if (userStore.metaletLogin) {
+            await userStore.showWallet.wallet?.provider.broadcast(
+              transfer.payToAddress?.txHex as string
+            )
+          } else {
+            await userStore.showWallet.wallet?.provider.broadcast(
+              transfer.payToAddress?.transaction.toString()
+            )
+          }
         }
 
         const response = await CreateVote({
@@ -378,7 +388,9 @@ async function confirmPublish() {
             talk.activeCommunity!.dao!.daoId
           }`,
           requestIndex: res.data.requestIndex,
-          mvcRawTx: transfer.sendMoney!.transaction!.toString(),
+          mvcRawTx: userStore.metaletLogin
+            ? transfer.sendMoney!.txHex
+            : transfer.sendMoney!.transaction!.toString(),
           mvcOutputIndex: 0,
           title: form.title,
           desc: desc,

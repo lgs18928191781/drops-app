@@ -285,6 +285,7 @@ async function toCreate() {
   if (loading.value) return
   await checkUserLogin()
   loading.value = true
+
   const result = await checkUserCanCreateProposal().catch(() => {loading.value = false})
   if (result) {
     loading.value = false

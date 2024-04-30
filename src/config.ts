@@ -48,10 +48,10 @@ export const classifyList = [
   // @ts-ignore
   { classify: 'art', disabled: false, name: () => i18n.global.t('NFT.ClassifyList.art') },
   { classify: 'game', disabled: false, name: () => i18n.global.t('NFT.ClassifyList.game') },
-  { classify: 'card', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.card') },
+  { classify: 'card', disabled: false, name: () => i18n.global.t('NFT.ClassifyList.card') },
   { classify: 'alias', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.alias') },
-  { classify: 'avatar', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.avatar') },
-  { classify: 'rights', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.rights') },
+  { classify: 'avatar', disabled: false, name: () => i18n.global.t('NFT.ClassifyList.avatar') },
+  { classify: 'rights', disabled: false, name: () => i18n.global.t('NFT.ClassifyList.rights') },
   { classify: 'music', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.music') },
   { classify: 'Name', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.Name') },
 ]
