@@ -20,6 +20,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 // import { sentryVitePlugin } from '@sentry/vite-plugin'
 import type { ViteSentryPluginOptions } from 'vite-plugin-sentry'
 import viteSentry from 'vite-plugin-sentry'
+
 // import dns from 'dns'
 // dns.setDefaultResultOrder('verbatim')
 const pathSrc = path.resolve(__dirname, 'src')
