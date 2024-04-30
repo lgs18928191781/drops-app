@@ -995,6 +995,7 @@ export class SDK {
                 const data = JSON.parse(params.data!)
                 const nftManager = this.wallet!.getNftManager()
                 const response = await nftManager!.mint({
+                  version: 1,
                   sensibleId: data.sensibleId,
                   metaTxId: transactions.currentNode!.txId,
                   noBroadcast: true,
@@ -1317,6 +1318,7 @@ export class SDK {
               const nftManager = this.wallet!.getNftManager()
               const _params = {
                 ...JSON.parse(params.data!),
+                version: 1,
                 opreturnData: scriptPlayload,
                 noBroadcast: true,
                 utxos: [utxo],
@@ -1328,8 +1330,11 @@ export class SDK {
                 ...this.transactionsNFTKey,
                 [NodeName.NftCancel]: 'cancelSell',
               }
+
               // @ts-ignore
+
               const res = await nftManager![NFTOperateFunName[params.nodeName]](_params)
+
               if (res && typeof res !== 'number') {
                 if (params.nodeName === NodeName.NftGenesis) {
                   transactions.nft!.genesis = {
@@ -1425,6 +1430,7 @@ export class SDK {
                 const data = JSON.parse(params.data!)
                 const nftManager = this.wallet!.getNftManager()
                 const res = await nftManager!.mint({
+                  version: 1,
                   sensibleId: data.sensibleId,
                   metaTxId: transactions.currentNode!.txId,
                   noBroadcast: true,

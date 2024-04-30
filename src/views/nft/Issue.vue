@@ -42,13 +42,7 @@
 
         <div class="success-cover" v-if="item.isSuccess"></div>
 
-        <ElForm
-          :model="item"
-         
-          :label-position="'top'"
-        
-          class="flex flex-align-center flex1"
-        >
+        <ElForm :model="item" :label-position="'top'" class="flex flex-align-center flex1">
           <!-- genesis -->
           <ElFormItem prop="genesis" class="w-50">
             <div class="form-item flex flex-align-center flex1">
@@ -163,7 +157,7 @@ interface IssueItem {
 <script setup lang="ts">
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { GetUserGenesisList } from '@/api/aggregation'
-import { Chains, NodeName  } from '@/enum'
+import { Chains, NodeName } from '@/enum'
 import { useUserStore } from '@/stores/user'
 import { ElOption, ElSelect } from 'element-plus'
 import { reactive, ref } from 'vue'
@@ -180,18 +174,14 @@ const userStore = useUserStore()
 const genesisStore = useGenesisStore()
 const i18n = useI18n()
 
-
-
 const isShowOption = ref(false)
 
 const list: IssueItem[] = reactive([])
 
-
-
 const genesisList: GenesisItem[] = reactive([])
 
-function showOption(){
-  if(userStore.metaletLogin){
+function showOption() {
+  if (userStore.metaletLogin) {
     return ElMessage.error(`${i18n.t('nosupportmetaletissue')}`)
   }
   isShowOption.value = true
@@ -204,9 +194,7 @@ function getGenesisList() {
       page: 1,
       pageSize: 9999,
     })
-    
 
-    
     if (res.code === 0) {
       genesisList.length = 0
       genesisList.push(...res.data.results.items)
