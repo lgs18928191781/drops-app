@@ -480,7 +480,14 @@ const StakeList: stakeListType[] = reactive([
     showBindBtn: false,
     address: () => userStore.user?.address || '',
     isCanTransfer: true,
-    price: () => '--',
+    price: function() {
+          const rate = rootStore.exchangeRate[0]
+          if (rate) {
+            // @ts-ignore
+            return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
+          }
+          return '--'
+        },
     loading: false,
     tokenType: '',
     codehash: '',
@@ -699,8 +706,11 @@ const totalBalance = computed(() => {
   }
 
   if(StakeList[0].value > 0){
-    value +=StakeList[0].value
+
+    value += new Decimal(StakeList[0].value).mul(rootStore.exchangeRate[0].price[rootStore.currentPrice]).toNumber()
+
   }
+
 
   return value.toFixed(2)
 })
