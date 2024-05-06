@@ -697,6 +697,11 @@ const totalBalance = computed(() => {
       }
     }
   }
+
+  if(StakeList[0].value > 0){
+    value +=StakeList[0].value
+  }
+
   return value.toFixed(2)
 })
 const totalBalanceLoading = computed(() => {
@@ -712,6 +717,7 @@ const totalBalanceLoading = computed(() => {
       break
     }
   }
+
   return value
 })
 
