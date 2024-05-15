@@ -20,6 +20,9 @@ import { VitePWA } from 'vite-plugin-pwa'
 // import { sentryVitePlugin } from '@sentry/vite-plugin'
 import type { ViteSentryPluginOptions } from 'vite-plugin-sentry'
 import viteSentry from 'vite-plugin-sentry'
+import wasm from "vite-plugin-wasm";
+import topLevelAwait from "vite-plugin-top-level-await";
+
 // import dns from 'dns'
 // dns.setDefaultResultOrder('verbatim')
 const pathSrc = path.resolve(__dirname, 'src')
@@ -99,6 +102,8 @@ export default ({ mode, command }) => {
         // you need to set i18n resource including paths !
         include: path.resolve(__dirname, './src/languages/**'),
       }),
+      wasm(),
+      topLevelAwait(),
       svgLoader(),
       VitePluginHtmlEnv(),
       createSvgIconsPlugin({
@@ -203,6 +208,16 @@ export default ({ mode, command }) => {
     },
     optimizeDeps: {
       include: ['buffer', 'process'],
+      esbuildOptions:{
+        target:'esnext',
+        define:{
+          global:'globalThis',
+        },
+        supported:{
+          bigint:true
+        }
+
+      }
     },
     define: {
       _APP_VERSION: JSON.stringify(pkg.version),

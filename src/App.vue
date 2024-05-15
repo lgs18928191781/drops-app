@@ -54,9 +54,12 @@ import PWA from './components/PWA/PWA.vue'
 import UserCardFloater from './components/UserCard/Floater.vue'
 import PullDownVue from './layout/PullDown/PullDown.vue'
 import ImagePreviewVue from '@/components/ImagePreview/ImagePreview.vue'
+import { useBtcJsStore } from '@/stores/btcjs'
+import * as secp256k1 from 'tiny-secp256k1'
 
 const rootStore = useRootStore()
 const userStore = useUserStore()
+const btcJsStore = useBtcJsStore()
 const route = useRoute()
 const blackRoute = reactive(['home'])
 
@@ -69,7 +72,15 @@ const routeKey = (route: any) => {
 //   localStorage.setItem('showDiffLang', String(1))
 // }
 
-onMounted(() => {})
+onMounted(async () => {
+  // initialize btcjs
+  const btcjs = window.bitcoinjs
+  btcJsStore.set(btcjs)
+
+  // initialize related btc modules
+  const ECPair = window.ecpair.ECPairFactory(secp256k1)
+  btcJsStore.setECPair(ECPair)
+})
 </script>
 <style lang="css" src="@/assets/styles/tailwind.css"></style>
 <style lang="scss" scoped>

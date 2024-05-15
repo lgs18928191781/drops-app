@@ -20,6 +20,7 @@ import detectEthereumProvider from '@metamask/detect-provider'
 import { useGenesisStore } from './genesis'
 import { setUser } from '@sentry/vue'
 import { MetaletSDK } from '@/utils/metalet-sdk'
+import { getCurrentInstance } from 'vue'
 
 export interface KycInfoTypes {
   name: string
@@ -96,7 +97,7 @@ if (user && password) {
   setTimeout(() => {
     const genesisStore = useGenesisStore()
     genesisStore.initGenesis()
-  })
+  }, 500)
 }
 
 export const useUserStore = defineStore('user', {

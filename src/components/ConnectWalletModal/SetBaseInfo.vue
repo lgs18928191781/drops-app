@@ -23,12 +23,12 @@
               <div class="cont flex1 flex flex-align-center flex-pack-end">
                 <div class="flex flex-align-center avatar-warp" @click="openAvatarList">
                   <UserAvatar
-                    :metaId="userStore.user!.metaId"
+                    :metaId="userStore.user?.metaId"
                     :disabled="true"
                     :image="currentAvatar.val.avatarImage"
-                    :name="userStore.user!.name"
+                    :name="userStore.user?.name"
                     class="main-border"
-                    :meta-name="userStore.user!.metaName"
+                    :meta-name="userStore.user?.metaName"
                   />
                   <Icon name="down" />
                 </div>

@@ -186,8 +186,13 @@ import SPACEIcon from '@/assets/images/icon_mvc.png'
 import { encodingType, MetaletWallet, TransactionInfo } from '@/utils/wallet/Metalet-wallet'
 import { isAndroid, isIOS, isIosApp, isWechat } from '@/stores/root'
 
+import { useNetworkStore } from '@/stores/network'
+import { useConnectionStore } from '@/stores/connection'
+import { connect } from '@/utils/metalet'
 const rootStore = useRootStore()
 const userStore = useUserStore()
+const networkStore = useNetworkStore()
+const connectStore = useConnectionStore()
 const route = useRoute()
 const i18n = useI18n()
 const emit = defineEmits(['metamask'])
@@ -1065,14 +1070,54 @@ async function connectMetalet() {
     customClass: 'full-loading',
   })
   try {
-    const { address } = await window.metaidwallet.connect()
-    //
-    if (!address) {
+    const btcConnector = await connectStore.connect()
+
+    if (!btcConnector._isConnected) {
       loading.close()
       return ElMessage.error(`${i18n.t('wallet_addres_empty')}`)
     }
+
+    userStore.updateUserInfo({
+      address: btcConnector.address,
+      loginType: 'MetaID',
+    })
+
+    try {
+      console.log('btcConnector', btcConnector)
+      debugger
+      const currentMetaId = btcConnector.getMetaid()
+      console.log('btcConnector.internal', currentMetaId)
+
+      return
+      if (!currentMetaId) {
+        loading.close()
+
+        console.log('btcConnector.internal', btcConnector)
+
+        debugger
+        try {
+          const createMetaidRes = await btcConnector.createMetaid({
+            name: 'Frist account',
+          })
+          console.log('createMetaidRes', createMetaidRes)
+          debugger
+        } catch (error) {
+          console.log('error', error)
+          debugger
+        }
+
+        // isShowSetBaseInfo.value = true
+      }
+    } catch (error) {
+      console.log('error', error)
+    }
+
+    debugger
+    return
+
+    return
+    debugger
     let metaIdInfo
-    const { network } = await window.metaidwallet.getNetwork()
     const xpub = await window.metaidwallet.getXPublicKey()
 
     const metaidWallet = new MetaletWallet({
