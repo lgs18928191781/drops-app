@@ -1,5 +1,5 @@
 import { Network } from '@/stores/network'
-
+import  {type CreateOptions} from '@metaid/metaid'
 export const NETWORK: Network = import.meta.env.VITE_NETWORK || 'regtest'
 
 export type BufferEncoding =
@@ -16,18 +16,6 @@ export type BufferEncoding =
   | 'binary'
   | 'hex'
 
-export type EntityCreateOptions = {
-  body?: string | Buffer
-  contentType?: string
-  encryption?: '0' | '1' | '2'
-  version?: string
-  encoding?: BufferEncoding
-}
 
-export type EntityItem = {
-  [key: string]: EntityCreateOptions
-}
 
-export const EntityOption: EntityItem = {
-  buzz: {},
-}
+
