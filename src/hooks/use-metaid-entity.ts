@@ -50,7 +50,7 @@ export function useMetaIDEntity(){
    }
 
    return{
-    createEntity
+    fileEntity
    }
 
 
