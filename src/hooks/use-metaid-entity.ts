@@ -3,7 +3,7 @@ import { useConnectionStore } from '@/stores/connection'
 import  {type CreateOptions} from '@metaid/metaid'
 import { BufferEncoding,fileSchema} from '@/data/constants'
 import { AttachmentItem } from '@/@types/hd-wallet'
-
+import { useI18n } from 'vue-i18n'
 
 export type EntityOptions={
     noBroadcast:'yes' | 'no'
@@ -18,28 +18,34 @@ function isEmpty(attachments:AttachmentItem[]){
 
 
 export function useMetaIDEntity(){
-
-    const connectStore = useConnectionStore()
-
+    const i18n = useI18n()
     
 
+
+    // if(!connectStore.connected){
+    //     debugger
+    //     //Metalet Wallet connection failed
+    //     return ElMessage.error(`${i18n.t('Metalet.connect.fail')}`)
+    // }
+
+
     async function buzzEntity(body:{content:string,attachments:AttachmentItem[] | []}) {
+        const connectStore = useConnectionStore()
         const buzzEntity =connectStore.last.use('buzz')
         const finalBody:any = body.content
-        
         if(!isEmpty(body.attachments)){
             const imageRes= await fileEntity(body.attachments)
             finalBody.attachments=imageRes.revealTxIds.map(rid=>{
                 return `metafile://${rid}i0`
             })
         }
-
         const createRes =(await buzzEntity).create({
             options: [{ body: JSON.stringify(finalBody) }],
 		    noBroadcast:'no',
         })
         return createRes
     }
+
 
 
 
@@ -51,6 +57,7 @@ export function useMetaIDEntity(){
     revealCost: string;
     status?: string;
    }> {
+    const connectStore = useConnectionStore()
         const fileOptions=[]
         for(const image of images){
             fileOptions.push({
@@ -70,6 +77,11 @@ export function useMetaIDEntity(){
         return imageRes
 
    }
+
+//    async function likeEntity(body:{likeTo:string}) {
+//     const likeEntity =await connectStore.last.use('like')
+//     const likeRes = await likeEntity.create({ likeTo: body.likeTo, isLike: '1' })
+//    }
 
    return{
     fileEntity,
