@@ -189,12 +189,16 @@ import { isAndroid, isIOS, isIosApp, isWechat } from '@/stores/root'
 import { useNetworkStore } from '@/stores/network'
 import { useConnectionStore } from '@/stores/connection'
 import { connect } from '@/utils/metalet'
+import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const networkStore = useNetworkStore()
 const connectStore = useConnectionStore()
 const route = useRoute()
 const i18n = useI18n()
+
+const entityHooks = useMetaIDEntity()
+
 const emit = defineEmits(['metamask'])
 const MetaMaskRef = ref()
 const loading = ref(false)

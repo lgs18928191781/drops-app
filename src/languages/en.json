@@ -1316,5 +1316,10 @@
   "nosupportmetaletissue": "Mining NFT via Metalet login method is not currently supported. Please switch to account or mnemonic phrase login to operate.",
   "issue_check_vaild": "Please check whether the form items are filled in completely",
   "issue_before_serires": "NFT series needs to be created before minting",
-  "issue_before_NFT_name": "NFT name needs to be created before minting"
+  "issue_before_NFT_name": "NFT name needs to be created before minting",
+  "Metalet": {
+    "connect": {
+      "fail": "Metalet Wallet connection failed"
+    }
+  }
 }

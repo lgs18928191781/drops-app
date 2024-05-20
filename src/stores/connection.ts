@@ -6,14 +6,30 @@ import { Network, useNetworkStore } from './network'
 import type { Psbt } from 'bitcoinjs-lib'
 import {  btcConnect,MetaletWalletForBtc,IBtcConnector } from '@metaid/metaid'
 
-
+type BaseUserInfo={
+      address:string
+      avatar:string
+      avatarId:string
+      bio:string
+      bioId:string
+      isInit:boolean
+      metaid:string
+      name:string
+      nameId:string
+      number:number
+      rootTxId:string
+      soulbondToken:string
+      unconfirmed:string
+}
 
 export type WalletConnectionBaseType={ 
     _isConnected:boolean,
+    metaid:string,
     pubkey:string
     wallet:MetaletWalletForBtc['internal']
     address:string
-    network:Network
+    user:BaseUserInfo,
+    network?:Network
   }
 
 export type PickBtcConnector=Pick<IBtcConnector,'createMetaid' | 'getMetaid' | 'getUser' | 'hasMetaid' | 'hasUser' | 'disconnect' | 'inscribe' | 'isConnected' | 'load' | 'updateUserInfo' | 'use'>
@@ -37,6 +53,8 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
           _isConnected: false,
           address: '',
           pubkey: '',
+          metaid:'',
+          user:{},
           network: 'testnet'
         } as WalletConnection) as RemovableRef<WalletConnection>  ,
       }
@@ -146,12 +164,22 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
   
       async disconnect() {
         if (!this.last) return
-  
-        this.last._isConnected = false
-        this.last.address = ''
-        this.last.wallet = {}
-        this.last.pubkey=''
-        this.last.network=''
+        this.last= {
+          wallet: {},
+          _isConnected: false,
+          address: '',
+          pubkey: '',
+          metaid:'',
+          user:{},
+          network: 'testnet'
+        }
+        // this.last._isConnected = false
+        // this.last.address = ''
+        // this.last.wallet = {}
+        // this.last.pubkey=''
+        // this.last.network=''
+        // this.last.metaid=''
+
       },
     },
   })
