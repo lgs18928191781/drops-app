@@ -78,14 +78,25 @@ export function useMetaIDEntity(){
 
    }
 
-//    async function likeEntity(body:{likeTo:string}) {
-//     const likeEntity =await connectStore.last.use('like')
-//     const likeRes = await likeEntity.create({ likeTo: body.likeTo, isLike: '1' })
-//    }
+   async function likeEntity(body:{likeTo:string}) {
+    const connectStore = useConnectionStore()
+    const likeEntity =await connectStore.last.use('like')
+    const finalBody={
+        likeTo:body.likeTo,
+        isLike:'1'
+    }
+    const likeRes = await likeEntity.create({
+        options: [{ body: JSON.stringify(finalBody) }],
+        noBroadcast:'no',
+    })
+
+    return likeRes
+   }
 
    return{
     fileEntity,
-    buzzEntity
+    buzzEntity,
+    likeEntity
    }
 
 
