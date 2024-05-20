@@ -368,6 +368,8 @@
       "setNFTAvatar": "設置NFT頭像",
       "setUserName": "設置昵稱",
       "setUserNamePlac": "請輸入你的昵稱",
+      "setBio": "簡介",
+      "setBioPlac": "請輸入你的簡介",
       "chooseNFTTitle": "選擇NFT頭像",
       "Choose NFT Profile Picture": "選擇NFT頭像"
     },

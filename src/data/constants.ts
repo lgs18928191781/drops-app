@@ -1,6 +1,6 @@
 import { Network } from '@/stores/network'
 
-export const NETWORK: Network = import.meta.env.VITE_NETWORK || 'regtest'
+export const NETWORK: Network = import.meta.env.VITE_NETWORK || 'testnet'
 
 export type BufferEncoding =
   | 'ascii'

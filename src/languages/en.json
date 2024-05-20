@@ -360,6 +360,8 @@
       "setNFTAvatar": "NFT Profile Picture",
       "setUserName": "User Name",
       "setUserNamePlac": "What's Your Web3 User Name?",
+      "setBio": "Bio",
+      "setBioPlac": "What's Your Web3 Bio?",
       "title": "🎉 Welcome to Show3! \n Get Your Account Ready for More Followers!",
       "Choose NFT Profile Picture": "Choose NFT Profile Picture"
     },

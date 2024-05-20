@@ -628,11 +628,22 @@ async function OnMetaIdSuccess(type: 'register' | 'login') {
   }
 }
 
-async function onSetBaseInfoSuccessType(params: { name: string; nft: NFTAvatarItem }) {
-  if (userStore.metaletLogin) {
-    await onSetBaseInfoSuccessForMetalet(params)
-  } else {
-    await onSetBaseInfoSuccess(params)
+async function onSetBaseInfoSuccessType(params: { name: string; nft: NFTAvatarItem; bio: string }) {
+  try {
+    const btcConnector = await connectStore.connect()
+    console.log(btcConnector)
+    const userInfo = {
+      name: params.name,
+      bio: params.bio,
+      avatar: params.nft,
+      network: 'testnet',
+      feeRate: 60,
+    }
+    const createMetaidRes = await btcConnector.createMetaid({ ...userInfo })
+    console.log(createMetaidRes)
+    getUserInfo(btcConnector)
+  } catch (error) {
+    console.log(error)
   }
 }
 
@@ -1071,12 +1082,10 @@ async function connectMetalet() {
   })
   try {
     const btcConnector = await connectStore.connect()
-
     if (!btcConnector._isConnected) {
       loading.close()
       return ElMessage.error(`${i18n.t('wallet_addres_empty')}`)
     }
-
     userStore.updateUserInfo({
       address: btcConnector.address,
       loginType: 'MetaID',
@@ -1084,89 +1093,46 @@ async function connectMetalet() {
 
     try {
       console.log('btcConnector', btcConnector)
-      debugger
       const currentMetaId = btcConnector.getMetaid()
       console.log('btcConnector.internal', currentMetaId)
-
-      return
+      // return
       if (!currentMetaId) {
         loading.close()
-
         console.log('btcConnector.internal', btcConnector)
-
-        debugger
-        try {
-          const createMetaidRes = await btcConnector.createMetaid({
-            name: 'Frist account',
-          })
-          console.log('createMetaidRes', createMetaidRes)
-          debugger
-        } catch (error) {
-          console.log('error', error)
-          debugger
-        }
-
-        // isShowSetBaseInfo.value = true
+        isShowSetBaseInfo.value = true
+      } else {
+        getUserInfo(btcConnector)
+        rootStore.$patch({ isShowLogin: false })
+        loading.close()
       }
     } catch (error) {
       console.log('error', error)
     }
 
-    debugger
-    return
-
-    return
-    debugger
-    let metaIdInfo
-    const xpub = await window.metaidwallet.getXPublicKey()
-
-    const metaidWallet = new MetaletWallet({
-      xpub,
-      address: address,
-      metaIDJsWallet: window.metaidwallet,
-      network: network,
-    })
-    //304402204f83bd2372d09a99bbec51f1f7e3a1f647c132009d4cfc869df18ee0f7dbaf09022009cbc788ad026f3a9641c7b0c211849959a71b5013349d1
-
-    metaIdInfo = await metaidWallet.getMetaIdInfo(address).catch(error => {
-      throw new Error(error)
-    })
-    if (!metaIdInfo.metaId && !metaIdInfo.infoTxId && !metaIdInfo.protocolTxId) {
-      metaIdInfo = await metaidWallet.initMetaIdNode().catch(e => {
-        throw new Error(e.toString())
-      })
-    }
-
-    console.log('metaletWallet', metaIdInfo)
-    //
-    userStore.updateUserInfo({
-      ...metaIdInfo,
-      metaId: metaIdInfo.metaId, // account 有时拿回来的metaId为空
-      name: metaIdInfo.name!, // account 有时拿回来的name 是旧 name
-      //password: form.password,
-      address: metaidWallet.rootAddress,
-      loginType: 'MetaID',
-    })
-    console.log('metaidwallet', metaidWallet)
-    userStore.updateMetaletLoginState(true)
-    userStore.$patch({
-      wallet: null,
-    })
-
-    userStore.$patch({
-      wallet: new MetaletSDK({
-        network: import.meta.env.VITE_NET_WORK,
-        wallet: metaidWallet,
-      }),
-    })
-    //userStore.showWallet.initWallet()
-
-    status.value = ConnectWalletStatus.Watting
-    rootStore.$patch({ isShowLogin: false })
-    loading.close()
-    if (!metaIdInfo.name) {
-      isShowSetBaseInfo.value = true
-    }
+    // userStore.updateUserInfo({
+    //   ...metaIdInfo,
+    //   metaId: metaIdInfo.metaId, // account 有时拿回来的metaId为空
+    //   name: metaIdInfo.name!, // account 有时拿回来的name 是旧 name
+    //   //password: form.password,
+    //   address: metaidWallet.rootAddress,
+    //   loginType: 'MetaID',
+    // })
+    // userStore.updateMetaletLoginState(true)
+    // userStore.$patch({
+    //   wallet: null,
+    // })
+    // userStore.$patch({
+    //   wallet: new MetaletSDK({
+    //     network: import.meta.env.VITE_NET_WORK,
+    //     wallet: metaidWallet,
+    //   }),
+    // })
+    // status.value = ConnectWalletStatus.Watting
+    // rootStore.$patch({ isShowLogin: false })
+    // loading.close()
+    // if (!metaIdInfo.name) {
+    //   isShowSetBaseInfo.value = true
+    // }
   } catch (error) {
     loading.close()
     rootStore.$patch({ isShowLogin: true })
@@ -1174,6 +1140,53 @@ async function connectMetalet() {
   }
 
   //metalet-SDK实例化
+}
+async function getUserInfo(btcConnector) {
+  const needInfo = { network: 'testnet', address: btcConnector.address }
+  const currentUserInfo = await btcConnector.getUser({ ...needInfo })
+  pushToBuzz(currentUserInfo)
+}
+async function pushToBuzz(data) {
+  userStore.updateMetaletLoginState(true)
+  console.log(userStore.isAuthorized)
+  console.log('pushToBuzz', data)
+  // return
+  // 登陆了要设置sentry 用户
+  setUser({
+    id: data.metaid,
+    email: data!.phone || data!.email,
+    username: data!.name,
+  })
+
+  userStore.updateUserInfo({
+    ...data,
+    metaId: data.metaid, // account 有时拿回来的metaId为空
+    name: data.name!, // account 有时拿回来的name 是旧 name
+    //password: form.password,
+    address: data.address,
+    loginType: 'MetaID',
+  })
+  // userStore.isAuthorized = true
+  // 如果在首页登录完，要自动跳转到buzz
+  if (route.name === 'home') {
+    console.log(data.metaId)
+    const res = await GetUserFollow(data!.metaid).catch(() => {
+      router.push({
+        name: 'buzz',
+      })
+    })
+    if (res?.code === 0) {
+      if (res.data.followingList && res.data.followingList.length) {
+        router.push({
+          name: 'buzzIndex',
+        })
+      } else {
+        router.push({
+          name: 'buzzRecommend',
+        })
+      }
+    }
+  }
 }
 
 async function connectWalletConnect(isUpdate: boolean = false) {

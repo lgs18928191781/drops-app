@@ -49,6 +49,22 @@
                 </ElForm>
               </div>
             </div>
+
+            <div class="info-item flex flex-align-center">
+              <div class="key">{{ $t('Login.setBaseInfo.setBio') }}</div>
+              <div class="cont flex1 flex flex-align-center flex-pack-end">
+                <ElForm :model="form" :rules="rules" ref="FormRef">
+                  <ElFormItem>
+                    <ElInput
+                      v-model="form.bio"
+                      type="text"
+                      :placeholder="$t('Login.setBaseInfo.setBioPlac')"
+                    />
+                  </ElFormItem>
+                </ElForm>
+              </div>
+            </div>
+
           </div>
           <div class="operate">
             <a class="main-border" :class="{ faded: form.name === '' }" @click="submitForm">
@@ -129,6 +145,7 @@ const FormRef = ref()
 const form = reactive({
   name: '',
   avatarTx: '',
+  bio: ''
 })
 const rules = {
   name: [
@@ -149,6 +166,7 @@ function submitForm() {
       emit('success', {
         name: form.name,
         nft: currentAvatar.val,
+        bio: form.bio
       })
     }
   })
