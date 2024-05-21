@@ -1,6 +1,6 @@
 import { Network } from '@/stores/network'
 import  {type CreateOptions} from '@metaid/metaid'
-export const NETWORK: Network = import.meta.env.VITE_NETWORK || 'regtest'
+export const NETWORK: Network = import.meta.env.VITE_NETWORK || 'testnet'
 
 
 type EntitySchema = {
