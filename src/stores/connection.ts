@@ -5,6 +5,7 @@ import * as metaletAdapter from '@/utils/metalet'
 import { Network, useNetworkStore } from './network'
 import type { Psbt } from 'bitcoinjs-lib'
 import {  btcConnect,MetaletWalletForBtc,IBtcConnector } from '@metaid/metaid'
+import { object } from 'yup'
 
 type BaseUserInfo={
       address:string
@@ -32,7 +33,7 @@ export type WalletConnectionBaseType={
     network?:Network
   }
 
-export type PickBtcConnector=Pick<IBtcConnector,'createMetaid' | 'getMetaid' | 'getUser' | 'hasMetaid' | 'hasUser' | 'disconnect' | 'inscribe' | 'isConnected' | 'load' | 'updateUserInfo' | 'use'>
+export type PickBtcConnector=Pick<IBtcConnector & 'metaid','createMetaid' | 'getMetaid' | 'getUser' | 'hasMetaid' | 'hasUser' | 'disconnect' | 'inscribe' | 'isConnected' | 'load' | 'updateUserInfo' | 'use'>
 
 export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
 
@@ -54,13 +55,16 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
           address: '',
           pubkey: '',
           metaid:'',
-          user:{},
+          user:{
+           
+          },
           network: 'testnet'
         } as WalletConnection) as RemovableRef<WalletConnection>  ,
       }
     },
   
     getters: {
+    
       has: (state) => !!state.last,
       connected: (state) =>
         state.last._isConnected && !!state.last.address,
@@ -118,21 +122,24 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
     actions: {
       async connect() {
         let connection = this.last
-          ? (JSON.parse(JSON.stringify(this.last)) )
+          ? this.last 
           : {
             _isConnected: false,
               address: '',
               pubkey:'',
               wallet:{},
+              user:{},
+              metaid:'',
               network:''
             }
         const networkStore = useNetworkStore()
-        let _wallet:MetaletWalletForBtc['internal']=await MetaletWalletForBtc.create()
+          
+        let _wallet:MetaletWalletForBtc['internal'] =await MetaletWalletForBtc.create()
         let connectRes = await btcConnect({
           wallet:_wallet,
           network:networkStore.network
         })
-            
+
         try {
           if (connectRes) {
             // check if network suits app's current environment;
@@ -147,9 +154,17 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
               // re-connect to get new address
               connectRes = await getWalletAdapter().connect()
             }
+            console.log("connectRes",connectRes)
+         
             const pubkey=await getWalletAdapter().getPubKey()
-            connection=connectRes
-            connection.pubkey=pubkey
+            
+            connection=Object.assign(connectRes,{
+              metaid:connectRes.user.metaid,
+              pubkey:pubkey,
+              _isConnected:true
+            })
+            
+            
             this.last = connection
             return this.last
           }
@@ -181,5 +196,45 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
         // this.last.metaid=''
 
       },
+
+      async syncConnector(){
+        
+        if(!this.last._isConnected) return
+        let connectRes = await btcConnect({
+          wallet:this.last.wallet,
+          network:this.last.network!
+        })
+        const networkStore = useNetworkStore()
+        try {
+          if (connectRes) {
+            // check if network suits app's current environment;
+            // if not, call switchNetwork
+            
+            const appNetwork = networkStore.network
+            const metaNetwork = await getWalletAdapter().getNetwork()
+            if (metaNetwork !== appNetwork) {
+              
+              await getWalletAdapter().switchNetwork(appNetwork)
+
+              // re-connect to get new address
+              connectRes = await getWalletAdapter().connect()
+            }
+            console.log("connectRes",connectRes)
+         
+            const pubkey=await getWalletAdapter().getPubKey()
+            
+            this.last=Object.assign(connectRes,{
+              metaid:connectRes.user.metaid,
+              pubkey:pubkey,
+              _isConnected:true
+            })
+            
+          }
+        } catch (e: any) {
+          ElMessage.error(e.message)
+          this.last._isConnected = false
+          
+        }
+      }
     },
   })

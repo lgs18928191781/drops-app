@@ -56,13 +56,13 @@ import PullDownVue from './layout/PullDown/PullDown.vue'
 import ImagePreviewVue from '@/components/ImagePreview/ImagePreview.vue'
 import { useBtcJsStore } from '@/stores/btcjs'
 import * as secp256k1 from 'tiny-secp256k1'
-
+import { useConnectionStore } from '@/stores/connection'
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const btcJsStore = useBtcJsStore()
 const route = useRoute()
 const blackRoute = reactive(['home'])
-
+const connectorStore = useConnectionStore()
 const routeKey = (route: any) => {
   if (route.params.communityId) return route.params.communityId
   return route.fullPath
@@ -80,6 +80,8 @@ onMounted(async () => {
   // initialize related btc modules
   const ECPair = window.ecpair.ECPairFactory(secp256k1)
   btcJsStore.setECPair(ECPair)
+
+  await connectorStore.syncConnector()
 })
 </script>
 <style lang="css" src="@/assets/styles/tailwind.css"></style>
