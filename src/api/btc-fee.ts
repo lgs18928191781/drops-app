@@ -1,0 +1,60 @@
+import HttpRequest from '@/utils/request'
+
+// @ts-ignore
+const feeb = new HttpRequest(`${import.meta.env.VITE_MEMPOOL_BASE_URL}/fees`, {
+  header: {
+    'Content-Type': 'application/json',
+  },
+  responseHandel: response => {
+    return new Promise((resolve, reject) => {
+      if (response?.data && typeof response.data?.code === 'number') {
+        if (response.data.code === 0 || response.data.code === 601) {
+          resolve(response.data)
+        } else {
+          reject({
+            code: response.data.code,
+            message: response.data.data,
+          })
+        }
+      } else {
+        resolve(response.data)
+      }
+    })
+  },
+}).request
+
+export type FeebPlan = {
+  feeRate: number
+  title: 'Eco' | 'Slow' | 'Avg' | 'Fast' | 'Custom'
+  fullTitle?: string
+}
+
+export const getFeebPlans = async (): Promise<FeebPlan[]> => {
+  const res: {
+    economyFee: number
+    fastestFee: number
+    halfHourFee: number
+    hourFee: number
+    minimumFee: number
+  } = await feeb.get(`/recommended`)
+  if (!res) return []
+  return [
+    {
+      title: 'Eco',
+      fullTitle: 'Economy',
+      feeRate: res.economyFee,
+    },
+    {
+      title: 'Slow',
+      feeRate: res.hourFee,
+    },
+    {
+      title: 'Avg',
+      feeRate: res.halfHourFee,
+    },
+    {
+      title: 'Fast',
+      feeRate: res.fastestFee,
+    },
+  ]
+}

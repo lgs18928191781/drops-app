@@ -49,7 +49,7 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
   export const useConnectionStore = defineStore('connection', {
     state: () => {
       return {
-        last: useLocalStorage('last-connection', {
+        last:{
           wallet: {},
           _isConnected: false,
           address: '',
@@ -59,7 +59,11 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
            
           },
           network: 'testnet'
-        } as WalletConnection) as RemovableRef<WalletConnection>  ,
+        } as WalletConnection,
+        userInfo: useLocalStorage('last-connection', {
+         address:'',
+         pubkey:''
+        } )   ,
       }
     },
   
@@ -135,6 +139,7 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
         const networkStore = useNetworkStore()
           
         let _wallet:MetaletWalletForBtc['internal'] =await MetaletWalletForBtc.create()
+       
         let connectRes = await btcConnect({
           wallet:_wallet,
           network:networkStore.network
@@ -166,6 +171,8 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
             
             
             this.last = connection
+            this.userInfo.address=connectRes.user.address
+            this.userInfo.pubkey=pubkey
             return this.last
           }
         } catch (e: any) {
@@ -197,11 +204,16 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
 
       },
 
-      async syncConnector(){
-        
-        if(!this.last._isConnected) return
+      async sync(){
+      
+      if(!this.last._isConnected) return
+
+      const _wallet= await MetaletWalletForBtc.restore({
+        address:this.userInfo.address,
+        pub:this.userInfo.pubkey
+       })
         let connectRes = await btcConnect({
-          wallet:this.last.wallet,
+          wallet:_wallet,
           network:this.last.network!
         })
         const networkStore = useNetworkStore()
@@ -232,7 +244,17 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
           }
         } catch (e: any) {
           ElMessage.error(e.message)
-          this.last._isConnected = false
+          if(!this.last._isConnected){
+            this.last= {
+              wallet: {},
+              _isConnected: false,
+              address: '',
+              pubkey: '',
+              metaid:'',
+              user:{},
+              network: 'testnet'
+            }
+          }
           
         }
       }
