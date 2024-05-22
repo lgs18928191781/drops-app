@@ -22,7 +22,7 @@ import {type FeebPlan,getFeebPlans} from '@/api/btc-fee'
   
     actions: {
         async set(feeType:'Eco' | 'Slow' | 'Avg' | 'Fast' | 'Custom',customFeeb?:number){
-            debugger
+            
            if(feeType == 'Custom'){
             this.last.currentFeeb={
                 feeRate:customFeeb!,

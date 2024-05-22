@@ -56,7 +56,7 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
           pubkey: '',
           metaid:'',
           user:{
-           
+          
           },
           network: 'testnet'
         } as WalletConnection,
@@ -162,7 +162,6 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
             console.log("connectRes",connectRes)
          
             const pubkey=await getWalletAdapter().getPubKey()
-            
             connection=Object.assign(connectRes,{
               metaid:connectRes.user.metaid,
               pubkey:pubkey,
@@ -170,6 +169,7 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
             })
             
             
+           
             this.last = connection
             this.userInfo.address=connectRes.user.address
             this.userInfo.pubkey=pubkey
@@ -206,7 +206,7 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
 
       async sync(){
       
-      if(!this.last._isConnected) return
+      //if(!this.last._isConnected) return
 
       const _wallet= await MetaletWalletForBtc.restore({
         address:this.userInfo.address,
@@ -216,6 +216,7 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
           wallet:_wallet,
           network:this.last.network!
         })
+        
         const networkStore = useNetworkStore()
         try {
           if (connectRes) {
@@ -240,6 +241,7 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
               pubkey:pubkey,
               _isConnected:true
             })
+            
             
           }
         } catch (e: any) {

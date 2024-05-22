@@ -4,7 +4,7 @@ import  {type CreateOptions} from '@metaid/metaid'
 import { BufferEncoding,fileSchema} from '@/data/constants'
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { useI18n } from 'vue-i18n'
-
+import {MetaletWalletForBtc,btcConnect} from '@metaid/metaid'
 export type EntityOptions={
     noBroadcast:'yes' | 'no'
     feeRate?:number
@@ -31,9 +31,19 @@ export function useMetaIDEntity(){
 
     async function buzzEntity(body:{content:string,attachments:AttachmentItem[] | []}) {
         const connectStore = useConnectionStore()
+        //  await connectStore.syncConnector()
+        // const _wallet=await MetaletWalletForBtc.restore({
+        //     address:connectStore.userInfo.address,
+        //     pub:connectStore.userInfo.pubkey
+        //   })
+          
+        //   let connectRes = await btcConnect({
+        //     wallet:_wallet,
+        //     network:connectStore.last.network!
+        //   })
         const buzzEntity =connectStore.last.use('buzz')
         const finalBody:any = body.content
-        if(!isEmpty(body.attachments)){
+        if(isEmpty(body.attachments)){
             const imageRes= await fileEntity(body.attachments)
             finalBody.attachments=imageRes.revealTxIds.map(rid=>{
                 return `metafile://${rid}i0`
@@ -42,6 +52,7 @@ export function useMetaIDEntity(){
         const createRes =(await buzzEntity).create({
             options: [{ body: JSON.stringify(finalBody) }],
 		    noBroadcast:'no',
+            feeRate:60
         })
         return createRes
     }
@@ -72,6 +83,7 @@ export function useMetaIDEntity(){
         const imageRes=await fileEntity.create({
             options: fileOptions,
 		    noBroadcast: 'no',
+            feeRate:60
         })
 
         return imageRes

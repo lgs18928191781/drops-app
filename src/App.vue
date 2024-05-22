@@ -85,6 +85,8 @@ onMounted(async () => {
 
   await connectorStore.sync()
   await feeStore.set(feeStore.last.currentFeeb.title)
+
+  console.log('sync', connectorStore.last)
 })
 </script>
 <style lang="css" src="@/assets/styles/tailwind.css"></style>
