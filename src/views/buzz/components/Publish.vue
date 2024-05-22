@@ -147,6 +147,7 @@ import { useJobsStore } from '@/stores/jobs'
 import { metafile } from '@/utils/filters'
 import PublishSchedule from './PublishSchedule.vue'
 import { CreateBroadcastTask } from '@/api/dashbroad'
+import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
 
 interface Props {
   modelValue: boolean
@@ -169,6 +170,8 @@ const router = useRouter()
 const loading = ref(false)
 const inputFileRef = ref()
 const isShowSchedule = ref(false)
+const {} = useMetaIDEntity()
+const { buzzEntity } = useMetaIDEntity()
 const publishOperates = reactive([
   {
     icon: 'buzzn_emoji',
@@ -327,6 +330,11 @@ function chooseNFT(nft: BaseNFT) {
 const throttleChooseNFT = throttle(chooseNFT, 500)
 
 async function submit() {
+  const sendInfo = { content: content.value, attachments: [] }
+  const sendRes = buzzEntity(sendInfo)
+  console.log(sendRes)
+
+  return
   if (content.value === '' && attachments.length <= 0) {
     return ElMessage.error(i18n.t('Buzz.publish.empty'))
   }

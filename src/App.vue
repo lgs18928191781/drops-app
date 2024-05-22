@@ -85,7 +85,6 @@ onMounted(async () => {
 
   await connectorStore.sync()
   await feeStore.set(feeStore.last.currentFeeb.title)
-  await feeStore.get()
 })
 </script>
 <style lang="css" src="@/assets/styles/tailwind.css"></style>
