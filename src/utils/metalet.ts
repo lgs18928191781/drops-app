@@ -2,6 +2,7 @@ import { ElMessage } from 'element-plus'
 import { useBtcJsStore } from '@/stores/btcjs'
 import { Buffer } from 'buffer'
 import { btcConnect, MetaletWalletForBtc } from '@metaid/metaid'
+import {type Network} from '@/stores/network'
 // Add into life circle
 //
 
@@ -19,10 +20,13 @@ function checkMetaletStatus(res: any, actionName: string) {
   return res
 }
 
-export const connect: () => ReturnType<typeof btcConnect> = async () => {
+export const connect:(network:Network) => ReturnType<typeof btcConnect> = async (network:Network) => {
   checkMetalet()
   const _wallet = await MetaletWalletForBtc.create()
-  const _btcConnector = await btcConnect(_wallet)
+  const _btcConnector = await btcConnect({
+    wallet:_wallet,
+    network:network
+  })
   return _btcConnector
 }
 

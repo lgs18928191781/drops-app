@@ -26,9 +26,9 @@ type BaseUserInfo={
 export type WalletConnectionBaseType={ 
     _isConnected:boolean,
     metaid:string,
-    pubkey:string
+    // pubkey:string
     wallet:MetaletWalletForBtc['internal']
-    address:string
+    // address:string
     user:BaseUserInfo,
     network?:Network
   }
@@ -52,8 +52,6 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
         last:{
           wallet: {},
           _isConnected: false,
-          address: '',
-          pubkey: '',
           metaid:'',
           user:{
            
@@ -62,7 +60,8 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
         } as WalletConnection,
         userInfo: useLocalStorage('last-connection', {
          address:'',
-         pubkey:''
+         pubkey:'',
+         metaid:'',
         } )   ,
       }
     },
@@ -71,13 +70,13 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
     
       has: (state) => !!state.last,
       connected: (state) =>
-        state.last._isConnected && !!state.last.address,
+        state.last._isConnected && !!state.userInfo.address,
       getAddress: (state) => {
-        return state.last.address
+        return state.userInfo.address
       },
       isTaproot: (state) =>
-        state.last.address.startsWith('bc1p') ||
-        state.last.address.startsWith('tb1p'),
+        state.userInfo.address.startsWith('bc1p') ||
+        state.userInfo.address.startsWith('tb1p'),
       // getPubKey: (state) => state.last.pubKey,
       provider: (state) => {
         if (!state.last) return null
@@ -97,7 +96,7 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
           signMvcMessage: (message: any) => Promise<any>
           getMvcPublickey: () => Promise<string>
           getPubKey: () => Promise<string>
-          connect: () => Promise<{
+          connect: (network: Network) => Promise<{
             address: string
             
           }>
@@ -129,11 +128,10 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
           ? this.last 
           : {
             _isConnected: false,
-              address: '',
-              pubkey:'',
+            metaid:'',
               wallet:{},
               user:{},
-              metaid:'',
+             
               network:''
             }
         const networkStore = useNetworkStore()
@@ -144,7 +142,7 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
           wallet:_wallet,
           network:networkStore.network
         })
-
+        
         try {
           if (connectRes) {
             // check if network suits app's current environment;
@@ -157,20 +155,15 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
               await getWalletAdapter().switchNetwork(appNetwork)
 
               // re-connect to get new address
-              connectRes = await getWalletAdapter().connect()
+              connectRes = await getWalletAdapter().connect(appNetwork)
             }
             console.log("connectRes",connectRes)
          
             const pubkey=await getWalletAdapter().getPubKey()
             
-            connection=Object.assign(connectRes,{
-              metaid:connectRes.user.metaid,
-              pubkey:pubkey,
-              _isConnected:true
-            })
-            
-            
-            this.last = connection
+          
+            this.last = connectRes
+            this.last.metaid=connectRes.user.metaid
             this.userInfo.address=connectRes.user.address
             this.userInfo.pubkey=pubkey
             return this.last
@@ -181,7 +174,7 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
           this.last = connection
         }
   
-        return this.last
+        return this
       },
   
       async disconnect() {
@@ -189,8 +182,6 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
         this.last= {
           wallet: {},
           _isConnected: false,
-          address: '',
-          pubkey: '',
           metaid:'',
           user:{},
           network: 'testnet'
@@ -229,33 +220,21 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
               await getWalletAdapter().switchNetwork(appNetwork)
 
               // re-connect to get new address
-              connectRes = await getWalletAdapter().connect()
+              connectRes = await getWalletAdapter().connect(appNetwork)
             }
             console.log("connectRes",connectRes)
          
             const pubkey=await getWalletAdapter().getPubKey()
             
-            this.last=Object.assign(connectRes,{
-              metaid:connectRes.user.metaid,
-              pubkey:pubkey,
-              _isConnected:true
-            })
+            this.last=connectRes
+            this.last.metaid=connectRes.user.metaid
+            this.userInfo.pubkey=pubkey
+            this.userInfo.address=connectRes.user.address
+            
             
           }
         } catch (e: any) {
-          ElMessage.error(e.message)
-          if(!this.last._isConnected){
-            this.last= {
-              wallet: {},
-              _isConnected: false,
-              address: '',
-              pubkey: '',
-              metaid:'',
-              user:{},
-              network: 'testnet'
-            }
-          }
-          
+         return ElMessage.error(e.message)
         }
       }
     },
