@@ -805,3 +805,9 @@ html.dark {
 .el-affix--fixed {
     position: fixed;
 }
+
+.gas-warp {
+    &:deep(.el-dropdown-menu) {
+        padding: 50px !important;
+    }
+}

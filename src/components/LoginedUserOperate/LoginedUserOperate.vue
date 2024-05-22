@@ -1,7 +1,51 @@
 <template>
-  <div class="version-warp hidden lg:block">
+  <!-- <div class="version-warp hidden lg:block">
     <VersionVue />
+  </div> -->
+
+  <div class="gas-warp mr-3">
+    <div>
+      <!-- 更多操作 -->
+      <ElDropdown trigger="click">
+        <a
+          class="more flex flex-align-center flex-pack-center border text-white font-medium text-sm rounded-xl bg-[#FC6D5E] px-2 py-1.5 "
+        >
+          <LucideIcon name="Fuel" :size="20" class="text-white font-bold mr-1.5" strokeWidth="2" />
+          <span class="mr-1">{{ feebStore.last.currentFeeb.title }}</span>
+          <div>
+            <span class="mr-1">{{ feebStore.last.currentFeeb.feeRate }}</span
+            ><span>sat/vB</span>
+          </div>
+        </a>
+        <template #dropdown>
+          <ElDropdownMenu>
+            <ElDropdownItem
+              v-for="(item, index) in feebStore.last.feeRateList"
+              :key="index"
+              @click="trggleFeeb(item)"
+            >
+              <div class="flex flex-align-center user-operate-item">
+                <LucideIcon
+                  :name="item.icon"
+                  :size="20"
+                  class="text-zinc-700 mr-3"
+                  strokeWidth="2"
+                />
+                <span class="name text-zinc-700 font-bold text-sm mr-3">{{
+                  item.fullTitle ?? item.title
+                }}</span>
+                <div class="feeRate ">
+                  <span class="mr-1 text-[#FC6D5E] text-base font-bold"> {{ item.feeRate }} </span
+                  ><span>sat/vB</span>
+                </div>
+              </div>
+            </ElDropdownItem>
+          </ElDropdownMenu>
+        </template>
+      </ElDropdown>
+    </div>
   </div>
+
   <a
     @click="toMetaName"
     class="outsideMore flex flex-align-center flex-pack-center user-warp-item"
@@ -20,22 +64,22 @@
           <img class="metanameLogo" :src="MetaNameLogo" alt="" />
         </a>
 
-          <!-- MintCollect -->
-          <el-tooltip
-        class="box-item"
-        effect="dark"
-        content="Mint Collection"
-        placement="bottom"
-        v-if="isNftPage"
-      >
-          <a
-          @click="toMintNft"
-          class="outsideMore flex flex-align-center flex-pack-center user-warp-item"
+        <!-- MintCollect -->
+        <el-tooltip
+          class="box-item"
+          effect="dark"
+          content="Mint Collection"
+          placement="bottom"
+          v-if="isNftPage"
         >
-          <span class="new-tag">New</span>
-          <img class="MintLogo" :src="MintLogo" alt="" />
-        </a>
-      </el-tooltip>
+          <a
+            @click="toMintNft"
+            class="outsideMore flex flex-align-center flex-pack-center user-warp-item"
+          >
+            <span class="new-tag">New</span>
+            <img class="MintLogo" :src="MintLogo" alt="" />
+          </a>
+        </el-tooltip>
         <!-- 🔍 搜索 -->
         <a
           class="flex flex-align-center flex-pack-center user-warp-item"
@@ -138,13 +182,16 @@ import UserCardVue from '../UserCard/UserCard.vue'
 import { router } from '@/router'
 import MetaNameLogo from '@/assets/svg/meta_name.svg?url'
 import MintLogo from '@/assets/svg/mint.svg?url'
+import { useFeebStore } from '@/stores/feeb'
+import LucideIcon from '@/components/LucideIcon/index.vue'
+import { type FeebPlan} from '@/api/btc-fee'
 const i18n = useI18n()
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const layout = useLayoutStore()
 const route = useRoute()
 const isProduction = import.meta.env.MODE === 'mainnet'
-
+const feebStore = useFeebStore()
 const isShowUserMenu = ref(false)
 const userOperates = computed(() => {
   const result = [
@@ -173,7 +220,7 @@ const userOperates = computed(() => {
       name: 'Mint Collection',
       icon: 'mint',
       func: toMintNft,
-      isNew:true
+      isNew: true,
     },
     {
       name: 'MetaName',
@@ -202,9 +249,9 @@ const userOperates = computed(() => {
 
   return result
 })
-console.log("route",route)
-const isNftPage=computed(()=>{
- return route.path.indexOf("/nft") > -1
+console.log('route', route)
+const isNftPage = computed(() => {
+  return route.path.indexOf('/nft') > -1
 })
 
 const toMetaName = () => {
@@ -214,11 +261,16 @@ const toMetaName = () => {
   window.open(routerUrl.href, '_blank')
 }
 
-function toMintNft(){
-  if(userStore.metaletLogin){
+function toMintNft() {
+  if (userStore.metaletLogin) {
     return ElMessage.error(`${i18n.t('nosupportmetaletissue')}`)
   }
   router.push('/nft/issue')
+}
+
+async function trggleFeeb(feeb:FeebPlan){
+  if(feeb.title == feebStore.last.currentFeeb.title) return
+  await feebStore.set(feeb.title)
 }
 </script>
 

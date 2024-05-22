@@ -1,15 +1,18 @@
 .outsideMore {
     margin-right: 14px;
     position: relative;
+
     .metanameLogo {
         width: 22px;
         height: 22px;
     }
-    .MintLogo{
+
+    .MintLogo {
         width: 22px;
         height: 22px;
     }
-    .new-tag{
+
+    .new-tag {
         position: absolute;
         top: -37%;
         right: -50%;
@@ -78,7 +81,8 @@
     }
 
     .name {}
-    .isnew{
+
+    .isnew {
         margin-left: 8px;
         background-color: #fc6d5e;
         color: #fff;
@@ -104,6 +108,8 @@
 .version-warp {
     margin-right: 15px;
 }
+
+
 
 @media only screen and (max-width: 1024PX) {
 

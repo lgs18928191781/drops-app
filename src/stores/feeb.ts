@@ -9,8 +9,28 @@ import {type FeebPlan,getFeebPlans} from '@/api/btc-fee'
             currentFeeb:{
                 title: 'Fast',
                 feeRate: 0,
-            }
-        } as {currentFeeb:FeebPlan} ),
+            },
+            feeRateList:[
+                {
+                    title: 'Eco',
+                    fullTitle: 'Economy',
+                    feeRate: 0,
+                    
+                  },
+                  {
+                    title: 'Slow',
+                    feeRate: 0,
+                  },
+                  {
+                    title: 'Avg',
+                    feeRate:0,
+                  },
+                  {
+                    title: 'Fast',
+                    feeRate:0,
+                  },
+            ]
+        } as {currentFeeb:FeebPlan,feeRateList:FeebPlan[]} ),
       }
     },
   
@@ -30,6 +50,10 @@ import {type FeebPlan,getFeebPlans} from '@/api/btc-fee'
             }
            }else{
             const feeList=await getFeebPlans()
+            feeList.forEach((item)=>{
+                
+            })
+            this.last.feeRateList=feeList
             const selectFeeb=feeList.filter((item)=>{
                 return item.title == feeType
                })

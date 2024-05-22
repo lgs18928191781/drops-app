@@ -27,6 +27,7 @@ export type FeebPlan = {
   feeRate: number
   title: 'Eco' | 'Slow' | 'Avg' | 'Fast' | 'Custom'
   fullTitle?: string
+  icon?: string
 }
 
 export const getFeebPlans = async (): Promise<FeebPlan[]> => {
@@ -43,18 +44,22 @@ export const getFeebPlans = async (): Promise<FeebPlan[]> => {
       title: 'Eco',
       fullTitle: 'Economy',
       feeRate: res.economyFee,
+      icon: 'Snail',
     },
     {
       title: 'Slow',
       feeRate: res.hourFee,
+      icon: 'Turtle',
     },
     {
       title: 'Avg',
       feeRate: res.halfHourFee,
+      icon: 'Rabbit',
     },
     {
       title: 'Fast',
       feeRate: res.fastestFee,
+      icon: 'Bird',
     },
   ]
 }
