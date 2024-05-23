@@ -12,7 +12,6 @@
                 'menu-select-item',
                 'flex',
                 'flex-align-center',
-
                 route.path == item.path ? 'isActive' : '',
               ]"
               v-for="(item, index) in newMenu"
@@ -83,7 +82,11 @@ import { useRoute } from 'vue-router'
 import BuzzListVue from './components/BuzzList.vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-
+import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
+import { useConnectionStore } from '@/stores/connection'
+import { btcConnect, MetaletWalletForBtc } from '@metaid/metaid'
+const { getAllBuzz } = useMetaIDEntity()
+const listData = ref([])
 const route = useRoute()
 const postTagStore = usePostTagStore()
 const userStore = useUserStore()
@@ -124,49 +127,94 @@ function toBuzzTag(path: string) {
   if (!path) return
   router.push(path)
 }
-function getDatas(isCover = false) {
-  return new Promise<void>(async (resolve, reject) => {
-    const res = await GetTagBuzzs({
-      tag: tag.value!.tag,
-      langId: '', //localStorage.getItem('lang') === 'zh' ? 2 : 1,
-      metaId: userStore.user?.metaId,
-      subTag: tabActive.value ? tabActive.value : '',
-      ...pagination,
-    }).catch(error => {
-      ElMessage.error(error.message)
-      resolve()
-    })
-
-    if (res?.code === 0) {
-      if (isCover) list.length = 0
-
-      if (res.data.results.items.length) {
-        res.data.results.items.forEach(buzz => {
-          if (rootStore.myBlackList?.includes(buzz.metaId)) {
-            //此内容用户被屏蔽
-            buzz.content = `${i18n.t('buzz.blacktips')}`
-            buzz.attachments = []
-          }
-          if (buzz.quoteItem && rootStore.myBlackList?.includes(buzz.metaId)) {
-            buzz.quoteItem.content = `${i18n.t('buzz.blacktipsRepost')}`
-            buzz.quoteItem.attachments = []
-          }
-          if (buzz.quoteItem && rootStore.myBlackList?.includes(buzz.quoteItem.metaId)) {
-            buzz.quoteItem.content = `${i18n.t('buzz.blacktips')}`
-            buzz.quoteItem.attachments = []
-          }
-        })
-
-        list.push(...res.data.results.items)
-        pagination.nothing = false
-        pagination.timestamp = res.data.results.items[res.data.results.items.length - 1].timestamp
-      } else {
-        pagination.nothing = true
-      }
-
-      resolve()
-    }
+async function getDatas(isCover = false) {
+  const network = 'testnet'
+  const _btcConnector = await btcConnect({
+    network,
   })
+
+  // const currentUserInfo = await _btcConnector.getUser({ ...needInfo })
+  // console.log(_btcConnector)
+  // console.log(currentUserInfo)
+
+  // return new Promise<void>(async (resolve, reject) => {
+  //   const res = await GetTagBuzzs({
+  //     tag: tag.value!.tag,
+  //     langId: '', //localStorage.getItem('lang') === 'zh' ? 2 : 1,
+  //     metaId: userStore.user?.metaId,
+  //     subTag: tabActive.value ? tabActive.value : '',
+  //     ...pagination,
+  //   }).catch(error => {
+  //     ElMessage.error(error.message)
+  //     resolve()
+  //   })
+
+  //   if (res?.code === 0) {
+  //     if (isCover) list.length = 0
+
+  //     if (res.data.results.items.length) {
+  //       res.data.results.items.forEach(buzz => {
+  //         if (rootStore.myBlackList?.includes(buzz.metaId)) {
+  //           //此内容用户被屏蔽
+  //           buzz.content = `${i18n.t('buzz.blacktips')}`
+  //           buzz.attachments = []
+  //         }
+  //         if (buzz.quoteItem && rootStore.myBlackList?.includes(buzz.metaId)) {
+  //           buzz.quoteItem.content = `${i18n.t('buzz.blacktipsRepost')}`
+  //           buzz.quoteItem.attachments = []
+  //         }
+  //         if (buzz.quoteItem && rootStore.myBlackList?.includes(buzz.quoteItem.metaId)) {
+  //           buzz.quoteItem.content = `${i18n.t('buzz.blacktips')}`
+  //           buzz.quoteItem.attachments = []
+  //         }
+  //       })
+
+  //       list.push(...res.data.results.items)
+  //       pagination.nothing = false
+  //       pagination.timestamp = res.data.results.items[res.data.results.items.length - 1].timestamp
+  //     } else {
+  //       pagination.nothing = true
+  //     }
+
+  //     resolve()
+  //   }
+  // })
+  const allBuzz = await getAllBuzz(pagination)
+  console.log(allBuzz)
+
+  const finalData = await Promise.all(
+    allBuzz.map(async item => {
+      const needInfo = {
+        network: 'testnet',
+        currentAddress: item.address,
+      }
+      const currentUserInfo = await _btcConnector.getUser({ ...needInfo })
+
+      return {
+        metaId: item.metaid,
+        contentSummary: JSON.parse(item.contentSummary),
+        timestamp: item.timestamp,
+        name: currentUserInfo.name,
+        avatar: currentUserInfo.avatar,
+      }
+    })
+  )
+
+  // const finalData = allBuzz.map(item => {
+  //   const needInfo = {
+  //     network: 'testnet',
+  //     currentAddress: item.address,
+  //   }
+  //   const currentUserInfo = await _btcConnector.getUser({ ...needInfo })
+  //   return {
+  //     metaId: item.metaid,
+  //     contentSummary: JSON.parse(item.contentSummary),
+  //     timestamp: item.timestamp,
+  //   }
+  // })
+  console.log(finalData)
+  list.push(...finalData)
+  listData.value.push(...finalData)
 }
 
 async function changeSubTag(tag: string) {

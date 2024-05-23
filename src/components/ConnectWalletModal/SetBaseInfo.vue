@@ -31,18 +31,13 @@
                     :name="userStore.user?.name"
                     class="main-border"
                     :meta-name="userStore.user?.metaName"
-                  />
-                  <Icon name="down" /> -->
-                  <el-upload
-                    class="avatar-uploader"
-                    action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-                    :show-file-list="false"
-                    :on-success="handleAvatarSuccess"
-                    :before-upload="beforeAvatarUpload"
-                  >
-                    <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-                    <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
-                  </el-upload>
+                  /> -->
+                  <div class="show-img">
+                    <img :src="imgPic" />
+                  </div>
+
+                  <input type="file" @change="onChooseImage" class="img-upload" ref="inputRef" />
+                  <Icon name="down" />
                 </div>
               </div>
             </div>
@@ -128,27 +123,29 @@ import type { UploadProps } from 'element-plus'
 import ModalVue from '../Modal/Modal.vue'
 import NFTAvatarListVue from '@/components/NFTAvatarList/NFTAvatarList.vue'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
+import { compressImage, throttle, FileToAttachmentItem, getAttachmentsMark } from '@/utils/util'
+import DefaultAvatar from '@/assets/images/default_user.png'
 
 interface Props {
   modelValue: boolean
   loading: boolean
 }
-
+const imgAttachments = reactive([])
 const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits(['success'])
 const userStore = useUserStore()
 const imageUrl = ref('')
-
-const handleAvatarSuccess: UploadProps['onSuccess'] = (
-  response,
-  uploadFile
-) => {
+const inputRef = ref()
+const fileBase64 = ref(null)
+const imgPic = ref(DefaultAvatar)
+const imghex = ref('')
+const handleAvatarSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
   console.log(response)
   console.log(uploadFile)
   imageUrl.value = URL.createObjectURL(uploadFile.raw!)
 }
 
-const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
+const beforeAvatarUpload: UploadProps['beforeUpload'] = rawFile => {
   console.log(rawFile)
   if (rawFile.type !== 'image/png') {
     ElMessage.error('Avatar picture must be JPG format!')
@@ -200,7 +197,7 @@ function submitForm() {
     if (valid) {
       emit('success', {
         name: form.name,
-        nft: currentAvatar.val,
+        nft: imghex.value,
         bio: form.bio,
       })
     }
@@ -209,6 +206,43 @@ function submitForm() {
 
 function openAvatarList() {
   isShowAvatasList.value = !isShowAvatasList.value
+}
+// function handleImgUpload(event:any) {
+//   console.log(event)
+//   const file = event.target.files[0];
+//   convertToBase64(file);
+// }
+// function convertToBase64(file:any){
+//   const reader = new FileReader();
+//   reader.readAsDataURL(file);
+//   reader.onload = () => {
+//     fileBase64.value = reader.result;
+//     imgPic.value = fileBase64.value
+//   };
+//   reader.onerror = (error) => {
+//     console.error('Error: ', error);
+//   };
+// }
+
+async function onChooseImage(e: any) {
+  const files: File[] = [...e.target.files]
+  imgAttachments.length = 0
+  for (let i = 0; i < files.length; i++) {
+    console.log('files', files)
+    if (imgAttachments.length < 9) {
+      // 压缩图片
+      const compressed = await compressImage(files[i])
+      const result = await FileToAttachmentItem(compressed)
+      if (result) imgAttachments.push(result)
+      console.log(imgAttachments)
+    // console.log(imgAttachments[0].data)
+      imgPic.value = imgAttachments[0].url
+      imghex.value = Buffer.from(imgAttachments[0].data, 'hex').toString('base64')
+      console.log(imghex.value)
+    } else {
+      break
+    }
+  }
 }
 
 defineExpose({

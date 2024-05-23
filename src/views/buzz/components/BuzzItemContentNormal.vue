@@ -1,11 +1,7 @@
 <template>
   <!-- text -->
-  <div class="content-item" v-if="displayItemData?.content">
-    <BuzzItemText
-      :buzz="buzz"
-      :isQuote="isQuote"
-      @translate="(txId, callback) => emit('translate', txId, callback)"
-    />
+  <div class="content-item">
+    <BuzzItemText :buzz="buzz" />
   </div>
 
   <!-- Attachment -->
@@ -21,9 +17,9 @@
   </div>
 
   <!-- 引用buzz -->
-  <div class="content-item" v-if="isHasQuote">
+  <!-- <div class="content-item" v-if="isHasQuote">
     <QuoteVue :buzz="buzz.quoteItem" @play="val => emit('play', val)" :playFile="playFile" />
-  </div>
+  </div> -->
 </template>
 
 <script setup lang="ts">
@@ -43,23 +39,24 @@ const emit = defineEmits<{
   (e: 'play', txId: any): void
   (e: 'translate', txId: any, callback?: (result: boolean) => void): void
 }>()
-
+console.log(props.buzz)
 const displayItemData = computed(() => {
-  if (!props.buzz) {
-    return null
-  }
-  switch (props.buzz.protocol) {
-    case 'SimpleRePost': {
-      if (props.buzz.displayType === 'quickRePost') {
-        return props.buzz.quoteItem
-      } else {
-        return props.buzz
-      }
-    }
-    default: {
-      return props.buzz
-    }
-  }
+  // if (!props.buzz) {
+  //   return null
+  // }
+  // switch (props.buzz.protocol) {
+  //   case 'SimpleRePost': {
+  //     if (props.buzz.displayType === 'quickRePost') {
+  //       return props.buzz.quoteItem
+  //     } else {
+  //       return props.buzz
+  //     }
+  //   }
+  //   default: {
+  //     return props.buzz
+  //   }
+  // }
+  return props.buzz
 })
 
 const isHasQuote = computed(() => {

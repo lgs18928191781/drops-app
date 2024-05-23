@@ -56,9 +56,18 @@ export const classifyList = [
   { classify: 'Name', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.Name') },
 ]
 
+// export const initPagination: Pagination = {
+//   page: 1,
+//   pageSize: 16,
+//   loading: false,
+//   nothing: false,
+//   totalPages: 0,
+//   flag: '',
+// }
 export const initPagination: Pagination = {
   page: 1,
-  pageSize: 16,
+  limit: 16,
+  network: 'testnet',
   loading: false,
   nothing: false,
   totalPages: 0,

@@ -170,7 +170,6 @@ const router = useRouter()
 const loading = ref(false)
 const inputFileRef = ref()
 const isShowSchedule = ref(false)
-const {} = useMetaIDEntity()
 const { buzzEntity, likeEntity, getAllBuzz } = useMetaIDEntity()
 const publishOperates = reactive([
   {
@@ -273,15 +272,12 @@ async function onChooseImage(e: any) {
     if (attachments.length < 9) {
       // 压缩图片
       const compressed = await compressImage(files[i])
-
       const result = await FileToAttachmentItem(compressed)
-
       if (result) attachments.push(result)
     } else {
       break
     }
   }
-
   loading.value = false
 }
 
@@ -333,10 +329,11 @@ function chooseNFT(nft: BaseNFT) {
 const throttleChooseNFT = throttle(chooseNFT, 500)
 
 async function submit() {
-  // const sendInfo = {
-  //   content: content.value,
-  //   attachments: attachments,
-  // }
+  const sendInfo = {
+    content: content.value,
+    attachments: attachments,
+  }
+  console.log(sendInfo)
   // const sendRes = await buzzEntity(sendInfo)
   // if (sendRes.revealTxIds.length) {
   //   content.value = ''

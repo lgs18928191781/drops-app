@@ -56,6 +56,7 @@ watch(
 )
 
 async function getImageUrl() {
+  console.log(props.src)
   isSkeleton.value = true
   let src = props.src
 

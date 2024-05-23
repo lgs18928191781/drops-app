@@ -635,24 +635,27 @@ async function OnMetaIdSuccess(type: 'register' | 'login') {
 }
 
 async function onSetBaseInfoSuccessType(params: { name: string; nft: NFTAvatarItem; bio: string }) {
+  const btcConnector = await connectStore.connect()
+  const userInfo = {
+    name: params.name,
+    bio: params.bio,
+    avatar: params.nft,
+    network: 'testnet',
+    feeRate: feebStore.last.currentFeeb.feeRate,
+    service: {
+      address: 'myp2iMt6NeGQxMLt6Hzx1Ho6NbMkiigZ8D',
+      satoshis: '1999',
+    },
+  }
   try {
-    const btcConnector = await connectStore.connect()
-    const userInfo = {
-      name: params.name,
-      bio: params.bio,
-      avatar: params.nft,
-      network: 'testnet',
-      feeRate: feebStore.last.currentFeeb.feeRate,
-      service: {
-        address: 'myp2iMt6NeGQxMLt6Hzx1Ho6NbMkiigZ8D',
-        satoshis: '1999',
-      },
-    }
-    console.log(userInfo)
-    return
     const setUserInfoRes = await btcConnector.createUserInfo({ ...userInfo })
     // const createMetaidRes = await btcConnector.createMetaid({ ...userInfo })
     console.log(setUserInfoRes)
+    if (setUserInfoRes) {
+      isShowSetBaseInfo.value = false
+      rootStore.$patch({ isShowLogin: false })
+      ElMessage.success('Successful')
+    }
     getUserInfo(btcConnector)
   } catch (error) {
     console.log(error)
