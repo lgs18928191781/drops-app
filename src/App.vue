@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, onMounted, nextTick, watch, provide } from 'vue'
+import { reactive, ref, onMounted, nextTick, watch, provide, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { useRootStore } from '@/stores/root'
@@ -58,6 +58,7 @@ import { useBtcJsStore } from '@/stores/btcjs'
 import * as secp256k1 from 'tiny-secp256k1'
 import { useConnectionStore } from '@/stores/connection'
 import { useFeebStore } from '@/stores/feeb'
+
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const btcJsStore = useBtcJsStore()
@@ -65,6 +66,7 @@ const feeStore = useFeebStore()
 const route = useRoute()
 const blackRoute = reactive(['home'])
 const connectorStore = useConnectionStore()
+const feebInterval = ref()
 const routeKey = (route: any) => {
   if (route.params.communityId) return route.params.communityId
   return route.fullPath
@@ -80,11 +82,20 @@ onMounted(async () => {
   btcJsStore.set(btcjs)
 
   // initialize related btc modules
+
   const ECPair = window.ecpair.ECPairFactory(secp256k1)
   btcJsStore.setECPair(ECPair)
 
   await connectorStore.sync()
-  await feeStore.set(feeStore.last.currentFeeb.title)
+  feeStore.set(feeStore.last.currentFeeb.title).then()
+
+  feebInterval.value = setInterval(() => {
+    feeStore.update().then()
+  }, 60 * 1000)
+})
+
+onUnmounted(() => {
+  clearInterval(feebInterval.value)
 })
 </script>
 <style lang="css" src="@/assets/styles/tailwind.css"></style>

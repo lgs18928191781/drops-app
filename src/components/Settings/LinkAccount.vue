@@ -105,6 +105,7 @@ const sections = [
             : ''
         },
         fun: () => {
+          return
           AccountType.value = 'phone'
           isShowChangePhone.value = true
         },
@@ -120,6 +121,7 @@ const sections = [
             : ''
         },
         fun: () => {
+          return
           AccountType.value = 'email'
           isShowChangePhone.value = true
         },
@@ -129,21 +131,21 @@ const sections = [
   {
     title: () => i18n.t('LinkAccount.Wallets'),
     list: [
-      {
-        icon: '',
-        img: MetaMask,
-        name: () => {
-          return 'MetaMask'
-        },
-        value: () => {
-          return userStore.user?.evmAddress
-            ? userStore.user!.evmAddress.slice(0, 6) + '...' + userStore.user!.evmAddress.slice(-3)
-            : ''
-        },
-        fun: () => {
-          copy(userStore.user?.metaId)
-        },
-      },
+      // {
+      //   icon: '',
+      //   img: MetaMask,
+      //   name: () => {
+      //     return 'MetaMask'
+      //   },
+      //   value: () => {
+      //     return userStore.user?.evmAddress
+      //       ? userStore.user!.evmAddress.slice(0, 6) + '...' + userStore.user!.evmAddress.slice(-3)
+      //       : ''
+      //   },
+      //   fun: () => {
+      //     copy(userStore.user?.metaId)
+      //   },
+      // },
     ],
   },
 ]

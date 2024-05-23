@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { GetCertMetaIdList } from '@/api/aggregation'
 import i18n from '@/utils/i18n'
 import { GetCertifiedMetaId } from '@/api/strapi'
-
+import { getBtcRate } from '@/api/btc-fee'
 export interface SignBaseInfo {
   userType: SignUserType
   areaCode: string
@@ -14,7 +14,7 @@ interface RootState {
   signBaseInfo: SignBaseInfo
   sendCodeTimer: number
   redirectUri: string
-  exchangeRate: ExchangeRate[]
+  exchangeRate: string //ExchangeRate[]
   isGetedExchangeRate: boolean
   isShowLogin: boolean
   isShowMetaMak: boolean
@@ -81,7 +81,7 @@ export const useRootStore = defineStore('root', {
       signBaseInfo: emptySignBaseInfo,
       sendCodeTimer: 60,
       redirectUri: '/',
-      exchangeRate: [],
+      exchangeRate: '', //[],
       isGetedExchangeRate: false,
       isShowLogin: false,
       isShowMetaMak: false,
@@ -129,21 +129,23 @@ export const useRootStore = defineStore('root', {
       return state.isImportMnemonicLogin || localStorage.getItem('isImportMnemonicLogin')
     },
     GetCurrentChain: state => {
-      window.ethereum && polygonChian.includes(window.ethereum?.chainId)
-        ? (state.currentChain = 'polygon')
-        : window.ethereum && ethChian.includes(window.ethereum?.chainId)
-        ? (state.currentChain = 'eth')
-        : ''
+      // window.ethereum && polygonChian.includes(window.ethereum?.chainId)
+      //   ? (state.currentChain = 'polygon')
+      //   : window.ethereum && ethChian.includes(window.ethereum?.chainId)
+      //   ? (state.currentChain = 'eth')
+      //   : ''
+      return ''
     },
     currentPriceSymbol: state => {
       const Symbols = {
         USD: '$',
         CNY: '￥',
       }
-      return Symbols[state.currentPrice]
+      return Symbols.USD
+      //return Symbols[state.currentPrice]
     },
-    currentExchangeRate: state =>
-      state.exchangeRate.find(item => item.symbol === state.currentPrice),
+    currentExchangeRate: state => '',
+    //state.exchangeRate.find(item => item.symbol === state.currentPrice),
   },
   actions: {
     // updateShowDiffLang(payload: number) {
@@ -170,9 +172,9 @@ export const useRootStore = defineStore('root', {
     },
     getExchangeRate() {
       this.isGetedExchangeRate = true
-      fetchExchangeRate().then((res: any) => {
-        if (res) {
-          this.exchangeRate = res
+      getBtcRate().then((res: any) => {
+        if (res.code == 0) {
+          this.exchangeRate = res.data.usd.btc
         }
       })
       // setInterval(() => {

@@ -137,18 +137,18 @@ const list = computed(() => {
       },
     },
   ]
-  if (userStore.isAuthorized) {
-    result.unshift({
-      name: i18n.t('Setting.Uplink settings'),
-      icon: 'link',
-      value: () => {
-        return ''
-      },
-      fun: function() {
-        isShowUploadLinkSet.value = true
-      },
-    })
-  }
+  // if (userStore.isAuthorized) {
+  //   result.unshift({
+  //     name: i18n.t('Setting.Uplink settings'),
+  //     icon: 'link',
+  //     value: () => {
+  //       return ''
+  //     },
+  //     fun: function() {
+  //       isShowUploadLinkSet.value = true
+  //     },
+  //   })
+  // }
 
   return result
 })

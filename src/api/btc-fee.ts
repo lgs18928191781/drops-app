@@ -23,6 +23,29 @@ const feeb = new HttpRequest(`${import.meta.env.VITE_MEMPOOL_BASE_URL}/fees`, {
   },
 }).request
 
+// @ts-ignore
+const rate = new HttpRequest(`${import.meta.env.VITE_RATE_URL}/api-book/brc20/common`, {
+  header: {
+    'Content-Type': 'application/json',
+  },
+  responseHandel: response => {
+    return new Promise((resolve, reject) => {
+      if (response?.data && typeof response.data?.code === 'number') {
+        if (response.data.code === 0 || response.data.code === 601) {
+          resolve(response.data)
+        } else {
+          reject({
+            code: response.data.code,
+            message: response.data.data,
+          })
+        }
+      } else {
+        resolve(response.data)
+      }
+    })
+  },
+}).request
+
 export type FeebPlan = {
   feeRate: number
   title: 'Eco' | 'Slow' | 'Avg' | 'Fast' | 'Custom'
@@ -62,4 +85,17 @@ export const getFeebPlans = async (): Promise<FeebPlan[]> => {
       icon: 'Bird',
     },
   ]
+}
+
+export const getBtcRate = async (): Promise<{
+  code: number
+  message: string
+  processingTime: number
+  data: {
+    usd: {
+      btc: string
+    }
+  }
+}> => {
+  return await rate.get(`/rate/btc`)
 }

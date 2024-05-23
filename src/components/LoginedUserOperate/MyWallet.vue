@@ -129,14 +129,14 @@
                   <a @click="showMergeFt" class="add flex flex-align-center" v-if="item.opBtn">
                     {{ item?.opBtn }}<Icon name="down" />
                   </a>
-                  <a
+                  <!-- <a
                     class="add flex flex-align-center"
                     v-if="index === 0 && !item?.disabled"
                     @click="item?.disabled ? false : (isShowBackUp = true)"
                   >
                     {{ $t('Wallet.to backup') }}
                     <Icon name="down" />
-                  </a>
+                  </a> -->
                   <a
                     class="add flex flex-align-center"
                     v-if="index === 1"
@@ -433,10 +433,13 @@ import { debounce } from '@/utils/util'
 import walletBackup from '@/assets/images/wallet_backup.svg?url'
 import { GetUserStakeInfo, GetBlockTime } from '@/api/dao'
 import MSP from '@/assets/images/msp.png'
+import { useConnectionStore } from "@/stores/connection";
+import BTC from "@/assets/icons/btc.svg?url";
 const props = defineProps<{
   modelValue: boolean
 }>()
 const emit = defineEmits(['update:modelValue'])
+const connecionStore=useConnectionStore()
 const isDestroyShowWallet = ref(false)
 const isShowUserWalletOperates = ref(false)
 const userStore = useUserStore()
@@ -543,7 +546,7 @@ const tabs = [
 ]
 const blockTimeStamp = ref(0)
 const isSkeleton = ref(true)
-const currentChain = ref(Chains.MVC)
+const currentChain = ref(Chains.BTC)
 const genesisList: UserNFTItem[] = reactive([])
 const userFtList: FungibleToken[] = reactive([])
 const pagination = reactive({ ...initPagination })
@@ -554,125 +557,153 @@ const isShowMERecharge = ref(false)
 const isShowTransfer = ref(false)
 const MyNftOnSaleList: GenesisNFTItem[] = reactive([])
 const disableSaleTab = computed(() => {
-  return currentChain.value !== Chains.MVC
+  return currentChain.value !== Chains.BTC
 })
-const wallets = reactive([
-  {
-    title: i18n.t('Wallet.backup'),
-    list: [],
-    disabled: userStore.metaletLogin ? true :  false
-  },
-  {
-    title: i18n.t('Wallet.Action Points'),
-    list: [
-      {
-        icon: '',
-        name: 'ME',
+
+const wallets=reactive([
+{
+  title: i18n.t('Wallet.Balance Details'),
+  list:[
+    {
+        icon: BTC,
+        name: 'BTC',
         value: 0,
         showBindBtn: false,
-        address: () => '',
+        address: () => connecionStore.userInfo.address || '',
         isCanTransfer: false,
         price: function() {
-          const rate = rootStore.exchangeRate.find(item => item.symbol === 'ME')
+          const rate =rootStore.exchangeRate //rootStore.exchangeRate.find(item => item.symbol === Chains.MVC)
           if (rate) {
+            return new Decimal(this.value).mul(rate).toFixed(2)
             // @ts-ignore
-            return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
+            //return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
           }
           return '--'
         },
         loading: true,
-      },
-    ],
-  },
-  {
-    title: i18n.t('Wallet.Balance Details'),
-    list: [
-      {
-        icon: ETH,
-        name: import.meta.env.VITE_ETH_CHAIN.toUpperCase(),
-        value: 0,
-        showBindBtn: true,
-        address: () => userStore.user?.evmAddress || '',
-        isCanTransfer: false,
-        price: function() {
-          const rate = rootStore.exchangeRate.find(
-            item => item.symbol === import.meta.env.VITE_ETH_CHAIN
-          )
-          if (rate) {
-            // @ts-ignore
-            return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
-          }
-          return '--'
-        },
-        loading: true,
-      },
-      {
-        icon: Polygon,
-        name: import.meta.env.VITE_POLYGON_CHAIN.toUpperCase(),
-        value: 0,
-        showBindBtn: true,
-        address: () => userStore.user?.evmAddress || '',
-        isCanTransfer: false,
-        price: function() {
-          const rate = rootStore.exchangeRate.find(
-            item => item.symbol === import.meta.env.VITE_POLYGON_CHAIN
-          )
-          if (rate) {
-            // @ts-ignore
-            return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
-          }
-          return '--'
-        },
-        loading: true,
-      },
-      {
-        icon: MVC,
-        name: 'SPACE',
-        value: 0,
-        showBindBtn: false,
-        address: () => userStore.user?.address || '',
-        isCanTransfer: true,
-        price: function() {
-          const rate = rootStore.exchangeRate.find(item => item.symbol === Chains.MVC)
-          if (rate) {
-            // @ts-ignore
-            return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
-          }
-          return '--'
-        },
-        loading: true,
-      },
-      // {
-      //   icon: BSV,
-      //   name: 'BSV',
-      //   value: 0,
-      //   showBindBtn: false,
-      //   address: () => userStore.user?.address || '',
-      //   isCanTransfer: false,
-      //   price: function() {
-      //     const rate = rootStore.exchangeRate.find(item => item.symbol === Chains.BSV)
-      //     if (rate) {
-      //       // @ts-ignore
-      //       return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
-      //     }
-      //     return '--'
-      //   },
-      //   loading: true,
-      // },
-    ],
-  },
-  {
-    title: i18n.t('Wallet.MvcFt'),
-    opBtn:i18n.t('check merge Ft'),
-    list: FtList,
-  },
-  {
-      title: i18n.t('Wallet.Stake'),
-      list: StakeList,
+    }
+  ]
 
-  }
-
+      },
 ])
+
+// const wallets = reactive([
+//   {
+//     title: i18n.t('Wallet.backup'),
+//     list: [],
+//     disabled: userStore.metaletLogin ? true :  false
+//   },
+//   {
+//     title: i18n.t('Wallet.Action Points'),
+//     list: [
+//       {
+//         icon: '',
+//         name: 'ME',
+//         value: 0,
+//         showBindBtn: false,
+//         address: () => '',
+//         isCanTransfer: false,
+//         price: function() {
+//           const rate = rootStore.exchangeRate.find(item => item.symbol === 'ME')
+//           if (rate) {
+//             // @ts-ignore
+//             return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
+//           }
+//           return '--'
+//         },
+//         loading: true,
+//       },
+//     ],
+//   },
+//   {
+//     title: i18n.t('Wallet.Balance Details'),
+//     list: [
+//       {
+//         icon: ETH,
+//         name: import.meta.env.VITE_ETH_CHAIN.toUpperCase(),
+//         value: 0,
+//         showBindBtn: true,
+//         address: () => userStore.user?.evmAddress || '',
+//         isCanTransfer: false,
+//         price: function() {
+//           const rate = rootStore.exchangeRate.find(
+//             item => item.symbol === import.meta.env.VITE_ETH_CHAIN
+//           )
+//           if (rate) {
+//             // @ts-ignore
+//             return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
+//           }
+//           return '--'
+//         },
+//         loading: true,
+//       },
+//       {
+//         icon: Polygon,
+//         name: import.meta.env.VITE_POLYGON_CHAIN.toUpperCase(),
+//         value: 0,
+//         showBindBtn: true,
+//         address: () => userStore.user?.evmAddress || '',
+//         isCanTransfer: false,
+//         price: function() {
+//           const rate = rootStore.exchangeRate.find(
+//             item => item.symbol === import.meta.env.VITE_POLYGON_CHAIN
+//           )
+//           if (rate) {
+//             // @ts-ignore
+//             return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
+//           }
+//           return '--'
+//         },
+//         loading: true,
+//       },
+//       {
+//         icon: MVC,
+//         name: 'SPACE',
+//         value: 0,
+//         showBindBtn: false,
+//         address: () => userStore.user?.address || '',
+//         isCanTransfer: true,
+//         price: function() {
+//           const rate = rootStore.exchangeRate.find(item => item.symbol === Chains.MVC)
+//           if (rate) {
+//             // @ts-ignore
+//             return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
+//           }
+//           return '--'
+//         },
+//         loading: true,
+//       },
+//       // {
+//       //   icon: BSV,
+//       //   name: 'BSV',
+//       //   value: 0,
+//       //   showBindBtn: false,
+//       //   address: () => userStore.user?.address || '',
+//       //   isCanTransfer: false,
+//       //   price: function() {
+//       //     const rate = rootStore.exchangeRate.find(item => item.symbol === Chains.BSV)
+//       //     if (rate) {
+//       //       // @ts-ignore
+//       //       return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
+//       //     }
+//       //     return '--'
+//       //   },
+//       //   loading: true,
+//       // },
+//     ],
+//   },
+//   {
+//     title: i18n.t('Wallet.MvcFt'),
+//     opBtn:i18n.t('check merge Ft'),
+//     list: FtList,
+//   },
+//   {
+//       title: i18n.t('Wallet.Stake'),
+//       list: StakeList,
+
+//   }
+
+// ])
 const isShowChains = ref(false)
 const seriesNFTList = reactive({
   visible: false,
@@ -1143,6 +1174,19 @@ function getMEBalance() {
   })
 }
 
+async function getBtcBalance(){
+try {
+  const res= await connecionStore.last.wallet.internal.btc.getBalance()
+  if(res.total){
+    wallets[0].list[0].value=new Decimal(res.total).div(10**8).toNumber()
+  }
+  wallets[0].list[0].loading=false
+} catch (error) {
+  wallets[0].list[0].loading=false
+  ElMessage.error(error as any)
+}
+}
+
 function getSpaceBalance() {
   return new Promise<void>(async resolve => {
     // 获取餘额
@@ -1259,9 +1303,10 @@ watch(
   () => props.modelValue,
   () => {
     if (props.modelValue) {
-      getAllBalace()
-      getFts(true)
-      getUserStakeInfo()
+      // getAllBalace()
+      // getFts(true)
+      // getUserStakeInfo()
+      getBtcBalance()
     }
   }
 )

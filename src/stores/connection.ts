@@ -131,7 +131,6 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
               metaid:'',
               wallet:{},
               user:{},
-             
               network:''
             }
         const networkStore = useNetworkStore()
@@ -161,9 +160,9 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
          
             const pubkey=await getWalletAdapter().getPubKey()
             
-          
+            
             this.last = connectRes
-            this.last.metaid=connectRes.user.metaid
+            this.userInfo.metaid=connectRes.user.metaid
             this.userInfo.address=connectRes.user.address
             this.userInfo.pubkey=pubkey
             return this.last
@@ -224,11 +223,11 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
               connectRes = await getWalletAdapter().connect(appNetwork)
             }
             console.log("connectRes",connectRes)
-         
+            
             const pubkey=await getWalletAdapter().getPubKey()
             
             this.last=connectRes
-            this.last.metaid=connectRes.user.metaid
+            this.userInfo.metaid=connectRes.user.metaid
             this.userInfo.pubkey=pubkey
             this.userInfo.address=connectRes.user.address
             

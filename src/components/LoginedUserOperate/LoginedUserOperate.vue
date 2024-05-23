@@ -25,15 +25,8 @@
               @click="trggleFeeb(item)"
             >
               <div class="flex flex-align-center user-operate-item">
-                <LucideIcon
-                  :name="item.icon"
-                  :size="20"
-                  class="text-zinc-700 mr-3"
-                  strokeWidth="2"
-                />
-                <span class="name text-zinc-700 font-bold text-sm mr-3">{{
-                  item.fullTitle ?? item.title
-                }}</span>
+                <LucideIcon :name="item.icon" :size="20" class=" mr-3" strokeWidth="2" />
+                <span class="name  font-bold text-sm mr-3">{{ item.fullTitle ?? item.title }}</span>
                 <div class="feeRate ">
                   <span class="mr-1 text-[#FC6D5E] text-base font-bold"> {{ item.feeRate }} </span
                   ><span>sat/vB</span>
@@ -216,17 +209,17 @@ const userOperates = computed(() => {
         window.open('https://www.metaso.network/', '_blank')
       },
     },
-    {
-      name: 'Mint Collection',
-      icon: 'mint',
-      func: toMintNft,
-      isNew: true,
-    },
-    {
-      name: 'MetaName',
-      icon: 'meta_name',
-      func: toMetaName,
-    },
+    // {
+    //   name: 'Mint Collection',
+    //   icon: 'mint',
+    //   func: toMintNft,
+    //   isNew: true,
+    // },
+    // {
+    //   name: 'MetaName',
+    //   icon: 'meta_name',
+    //   func: toMetaName,
+    // },
     {
       name: i18n.t('UserOperate.help'),
       icon: 'question_circle',

@@ -469,6 +469,7 @@ export enum Chains {
   MUMBAI = 'mumbai',
   POLYGON = 'polygon',
   BSV = 'bsv',
+  BTC = 'btc',
 }
 
 export enum ProductType {

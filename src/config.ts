@@ -7,7 +7,7 @@ import ETHIcon from '@/assets/svg/eth.svg?url'
 import MVC from '@/assets/svg/mvc.svg?url'
 import POLYGON from '@/assets/svg/polygon.svg?url'
 import BSV from '@/assets/images/bsv.png'
-
+import BTC from '@/assets/icons/btc.svg?url'
 import { useUserStore } from './stores/user'
 import { useRootStore } from './stores/root'
 export interface Unit {
@@ -277,36 +277,42 @@ export const currentSupportChain: Array<{
 
 export const chains = [
   {
-    name: 'MVC',
-    icon: MVC,
-    value: 'mvc',
+    name: 'BTC',
+    icon: BTC,
+    value: 'btc',
     disabled: () => false,
   },
-  {
-    name: import.meta.env.VITE_ETH_CHAIN.toUpperCase(),
-    icon: ETHIcon,
-    value: import.meta.env.VITE_ETH_CHAIN,
-    address: () => {
-      const userStore = useUserStore()
-      return userStore.user?.evmAddress || ''
-    },
-    disabled: () => {
-      const userStore = useUserStore()
-      return !(userStore.isAuthorized && (userStore.user!.evmAddress || userStore.user!.ethAddress))
-    },
-  },
-  {
-    name: import.meta.env.MODE == 'gray' ? 'MUMBAI' : 'POLYGON',
-    icon: POLYGON,
-    value: import.meta.env.VITE_POLYGON_CHAIN,
-    disabled: () => {
-      const userStore = useUserStore()
-      return !(userStore.isAuthorized && (userStore.user!.evmAddress || userStore.user!.ethAddress))
-    },
-    address: () => {
-      return ''
-    },
-  },
+  // {
+  //   name: 'MVC',
+  //   icon: MVC,
+  //   value: 'mvc',
+  //   disabled: () => false,
+  // },
+  // {
+  //   name: import.meta.env.VITE_ETH_CHAIN.toUpperCase(),
+  //   icon: ETHIcon,
+  //   value: import.meta.env.VITE_ETH_CHAIN,
+  //   address: () => {
+  //     const userStore = useUserStore()
+  //     return userStore.user?.evmAddress || ''
+  //   },
+  //   disabled: () => {
+  //     const userStore = useUserStore()
+  //     return !(userStore.isAuthorized && (userStore.user!.evmAddress || userStore.user!.ethAddress))
+  //   },
+  // },
+  // {
+  //   name: import.meta.env.MODE == 'gray' ? 'MUMBAI' : 'POLYGON',
+  //   icon: POLYGON,
+  //   value: import.meta.env.VITE_POLYGON_CHAIN,
+  //   disabled: () => {
+  //     const userStore = useUserStore()
+  //     return !(userStore.isAuthorized && (userStore.user!.evmAddress || userStore.user!.ethAddress))
+  //   },
+  //   address: () => {
+  //     return ''
+  //   },
+  // },
 
   // {
   //   name: 'BSV',

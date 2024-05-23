@@ -35,7 +35,8 @@ import {type FeebPlan,getFeebPlans} from '@/api/btc-fee'
     },
   
     getters: {
-    
+
+      get: (state) => !!state.last,
       
       
     },
@@ -50,9 +51,7 @@ import {type FeebPlan,getFeebPlans} from '@/api/btc-fee'
             }
            }else{
             const feeList=await getFeebPlans()
-            feeList.forEach((item)=>{
-                
-            })
+            
             this.last.feeRateList=feeList
             const selectFeeb=feeList.filter((item)=>{
                 return item.title == feeType
@@ -63,8 +62,14 @@ import {type FeebPlan,getFeebPlans} from '@/api/btc-fee'
 
         },
         
-        async get(){
-            return await getFeebPlans()
+        async update(){
+          
+            const feeList= await getFeebPlans()
+            this.last.feeRateList=feeList
+            const selectFeeb=feeList.filter((item)=>{
+              return item.title == this.last.currentFeeb.title
+             })
+             this.last.currentFeeb=selectFeeb[0]
         }
   
 

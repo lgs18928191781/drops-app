@@ -177,7 +177,7 @@ const publishOperates = reactive([
     icon: 'buzzn_emoji',
     fun: () => {},
     disabled: () => {
-      return false
+      return true
     },
   },
   {
@@ -197,6 +197,7 @@ const publishOperates = reactive([
     icon: 'music',
     fun: () => {},
     disabled: () => {
+      return true
       return attachments.length > 0
     },
   },
@@ -217,6 +218,7 @@ const publishOperates = reactive([
       isShowTopic.value = true
     },
     disabled: () => {
+      return true
       return false
     },
   },
@@ -228,6 +230,7 @@ if (import.meta.env.MODE !== EnvMode.Mainnet) {
       isShowSchedule.value = true
     },
     disabled: () => {
+      return true
       return false
     },
   })
