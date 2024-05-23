@@ -50,7 +50,7 @@
       <div class="w-7.5 border-b-2 border-solid border-dark-100 dark:border-gray-600"></div>
     </div>
 
-    <div class="space-y-4.5 flex flex-col items-center justify-center">
+    <!-- <div class="space-y-4.5 flex flex-col items-center justify-center">
       <el-tooltip
         effect="light"
         popper-class="text-dark-800 dark:text-dark-200 !bg-white dark:!bg-gray-800 text-base font-medium py-2 px-4 shadow-md rounded-lg"
@@ -103,7 +103,7 @@
       >
         <Icon name="plus" class="w-[24PX] h-[24PX]" />
       </div>
-    </div>
+    </div> -->
 
     <!-- modals -->
     <CreateCommunityModal v-if="layout.isShowCreateCommunityModal" />
@@ -154,18 +154,18 @@ const apps = reactive([
     title: () => i18n.t('Talk.Community.feed'),
     symbol: 'buzz',
   },
-  {
-    icon: 'talk',
-    path: '/talk/channels/@me',
-    title: () => i18n.t('Talk.Community.atme'),
-    symbol: '@me',
-  },
-  {
-    icon: 'market',
-    path: '/nft/collection/index',
-    title: () => i18n.t('NFT.NFT Market'),
-    symbol: 'nft',
-  },
+  // {
+  //   icon: 'talk',
+  //   path: '/talk/channels/@me',
+  //   title: () => i18n.t('Talk.Community.atme'),
+  //   symbol: '@me',
+  // },
+  // {
+  //   icon: 'market',
+  //   path: '/nft/collection/index',
+  //   title: () => i18n.t('NFT.NFT Market'),
+  //   symbol: 'nft',
+  // },
 ])
 
 if (userStore.isAuthorized) {

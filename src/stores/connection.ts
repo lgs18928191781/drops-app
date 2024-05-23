@@ -173,7 +173,7 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
           this.last = connection
         }
   
-        return this
+        return this.last
       },
   
       async disconnect() {
@@ -206,7 +206,6 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
           wallet:_wallet,
           network:this.last.network!
         })
-        
         const networkStore = useNetworkStore()
         try {
           if (connectRes) {
