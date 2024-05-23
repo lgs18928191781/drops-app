@@ -190,6 +190,8 @@ import { useNetworkStore } from '@/stores/network'
 import { useConnectionStore } from '@/stores/connection'
 import { connect } from '@/utils/metalet'
 import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
+import { useFeebStore } from '@/stores/feeb'
+const feebStore = useFeebStore()
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const networkStore = useNetworkStore()
@@ -635,19 +637,31 @@ async function OnMetaIdSuccess(type: 'register' | 'login') {
 async function onSetBaseInfoSuccessType(params: { name: string; nft: NFTAvatarItem; bio: string }) {
   try {
     const btcConnector = await connectStore.connect()
-    console.log(btcConnector)
     const userInfo = {
       name: params.name,
       bio: params.bio,
       avatar: params.nft,
       network: 'testnet',
-      feeRate: 60,
+      feeRate: feebStore.last.currentFeeb.feeRate,
+      service: {
+        address: 'myp2iMt6NeGQxMLt6Hzx1Ho6NbMkiigZ8D',
+        satoshis: '1999',
+      },
     }
-    const createMetaidRes = await btcConnector.createMetaid({ ...userInfo })
-    console.log(createMetaidRes)
+    console.log(userInfo)
+    return
+    const setUserInfoRes = await btcConnector.createUserInfo({ ...userInfo })
+    // const createMetaidRes = await btcConnector.createMetaid({ ...userInfo })
+    console.log(setUserInfoRes)
     getUserInfo(btcConnector)
   } catch (error) {
     console.log(error)
+    const errorMessage = TypeError(error).message
+    const toastMessage = errorMessage?.includes('Cannot read properties of undefined')
+      ? 'User Canceled'
+      : errorMessage
+    ElMessage.error(toastMessage)
+    isShowSetBaseInfo.value = false
   }
 }
 
@@ -1096,19 +1110,29 @@ async function connectMetalet() {
     })
 
     try {
-      console.log('btcConnector', btcConnector)
-      const currentMetaId = btcConnector.getMetaid()
-      console.log('btcConnector.internal', currentMetaId)
-      // return
-      if (!currentMetaId) {
+      const needInfo = { network: 'testnet', address: btcConnector.address }
+      const currentUserInfo = await btcConnector.getUser({ ...needInfo })
+      console.log(currentUserInfo)
+      const currentUserName = currentUserInfo.name
+      if (!currentUserName) {
         loading.close()
-        console.log('btcConnector.internal', btcConnector)
         isShowSetBaseInfo.value = true
       } else {
-        getUserInfo(btcConnector)
+        pushToBuzz(currentUserInfo)
         rootStore.$patch({ isShowLogin: false })
         loading.close()
       }
+
+      // return
+      // if (!currentMetaId) {
+      //   loading.close()
+      //   console.log('btcConnector.internal', btcConnector)
+      //   isShowSetBaseInfo.value = true
+      // } else {
+      //   getUserInfo(btcConnector)
+      //   rootStore.$patch({ isShowLogin: false })
+      //   loading.close()
+      // }
     } catch (error) {
       console.log('error', error)
     }
@@ -1148,6 +1172,7 @@ async function connectMetalet() {
 async function getUserInfo(btcConnector) {
   const needInfo = { network: 'testnet', address: btcConnector.address }
   const currentUserInfo = await btcConnector.getUser({ ...needInfo })
+  console.log(currentUserInfo)
   pushToBuzz(currentUserInfo)
 }
 async function pushToBuzz(data) {

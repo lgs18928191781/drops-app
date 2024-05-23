@@ -358,6 +358,7 @@
     "setBaseInfo": {
       "chooseNFTTitle": "Select NFT avatar",
       "setNFTAvatar": "NFT Profile Picture",
+      "setAvatar": "Set Avatar",
       "setUserName": "User Name",
       "setUserNamePlac": "What's Your Web3 User Name?",
       "setBio": "Bio",

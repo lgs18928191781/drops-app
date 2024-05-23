@@ -98,14 +98,14 @@ const newMenu = [
     name: () => i18n.t('Buzz.newbuzz'),
     path: '/buzz/tag/1',
   },
-  {
-    name: () => i18n.t('Buzz.newnft'),
-    path: '/buzz/tag/2',
-  },
-  {
-    name: () => i18n.t('Buzz.newtalk'),
-    path: '/buzz/tag/3',
-  },
+  // {
+  //   name: () => i18n.t('Buzz.newnft'),
+  //   path: '/buzz/tag/2',
+  // },
+  // {
+  //   name: () => i18n.t('Buzz.newtalk'),
+  //   path: '/buzz/tag/3',
+  // },
 ]
 
 function toBuzzTag(path: string) {

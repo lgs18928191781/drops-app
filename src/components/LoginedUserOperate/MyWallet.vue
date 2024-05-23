@@ -587,44 +587,44 @@ const wallets = reactive([
   {
     title: i18n.t('Wallet.Balance Details'),
     list: [
-      {
-        icon: ETH,
-        name: import.meta.env.VITE_ETH_CHAIN.toUpperCase(),
-        value: 0,
-        showBindBtn: true,
-        address: () => userStore.user?.evmAddress || '',
-        isCanTransfer: false,
-        price: function() {
-          const rate = rootStore.exchangeRate.find(
-            item => item.symbol === import.meta.env.VITE_ETH_CHAIN
-          )
-          if (rate) {
-            // @ts-ignore
-            return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
-          }
-          return '--'
-        },
-        loading: true,
-      },
-      {
-        icon: Polygon,
-        name: import.meta.env.VITE_POLYGON_CHAIN.toUpperCase(),
-        value: 0,
-        showBindBtn: true,
-        address: () => userStore.user?.evmAddress || '',
-        isCanTransfer: false,
-        price: function() {
-          const rate = rootStore.exchangeRate.find(
-            item => item.symbol === import.meta.env.VITE_POLYGON_CHAIN
-          )
-          if (rate) {
-            // @ts-ignore
-            return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
-          }
-          return '--'
-        },
-        loading: true,
-      },
+      // {
+      //   icon: ETH,
+      //   name: import.meta.env.VITE_ETH_CHAIN.toUpperCase(),
+      //   value: 0,
+      //   showBindBtn: true,
+      //   address: () => userStore.user?.evmAddress || '',
+      //   isCanTransfer: false,
+      //   price: function() {
+      //     const rate = rootStore.exchangeRate.find(
+      //       item => item.symbol === import.meta.env.VITE_ETH_CHAIN
+      //     )
+      //     if (rate) {
+      //       // @ts-ignore
+      //       return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
+      //     }
+      //     return '--'
+      //   },
+      //   loading: true,
+      // },
+      // {
+      //   icon: Polygon,
+      //   name: import.meta.env.VITE_POLYGON_CHAIN.toUpperCase(),
+      //   value: 0,
+      //   showBindBtn: true,
+      //   address: () => userStore.user?.evmAddress || '',
+      //   isCanTransfer: false,
+      //   price: function() {
+      //     const rate = rootStore.exchangeRate.find(
+      //       item => item.symbol === import.meta.env.VITE_POLYGON_CHAIN
+      //     )
+      //     if (rate) {
+      //       // @ts-ignore
+      //       return new Decimal(this.value).mul(rate!.price[rootStore.currentPrice]).toFixed(2)
+      //     }
+      //     return '--'
+      //   },
+      //   loading: true,
+      // },
       {
         icon: MVC,
         name: 'SPACE',

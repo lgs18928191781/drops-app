@@ -282,31 +282,31 @@ export const chains = [
     value: 'mvc',
     disabled: () => false,
   },
-  {
-    name: import.meta.env.VITE_ETH_CHAIN.toUpperCase(),
-    icon: ETHIcon,
-    value: import.meta.env.VITE_ETH_CHAIN,
-    address: () => {
-      const userStore = useUserStore()
-      return userStore.user?.evmAddress || ''
-    },
-    disabled: () => {
-      const userStore = useUserStore()
-      return !(userStore.isAuthorized && (userStore.user!.evmAddress || userStore.user!.ethAddress))
-    },
-  },
-  {
-    name: import.meta.env.MODE == 'gray' ? 'MUMBAI' : 'POLYGON',
-    icon: POLYGON,
-    value: import.meta.env.VITE_POLYGON_CHAIN,
-    disabled: () => {
-      const userStore = useUserStore()
-      return !(userStore.isAuthorized && (userStore.user!.evmAddress || userStore.user!.ethAddress))
-    },
-    address: () => {
-      return ''
-    },
-  },
+  // {
+  //   name: import.meta.env.VITE_ETH_CHAIN.toUpperCase(),
+  //   icon: ETHIcon,
+  //   value: import.meta.env.VITE_ETH_CHAIN,
+  //   address: () => {
+  //     const userStore = useUserStore()
+  //     return userStore.user?.evmAddress || ''
+  //   },
+  //   disabled: () => {
+  //     const userStore = useUserStore()
+  //     return !(userStore.isAuthorized && (userStore.user!.evmAddress || userStore.user!.ethAddress))
+  //   },
+  // },
+  // {
+  //   name: import.meta.env.MODE == 'gray' ? 'MUMBAI' : 'POLYGON',
+  //   icon: POLYGON,
+  //   value: import.meta.env.VITE_POLYGON_CHAIN,
+  //   disabled: () => {
+  //     const userStore = useUserStore()
+  //     return !(userStore.isAuthorized && (userStore.user!.evmAddress || userStore.user!.ethAddress))
+  //   },
+  //   address: () => {
+  //     return ''
+  //   },
+  // },
 
   // {
   //   name: 'BSV',

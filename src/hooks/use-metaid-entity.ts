@@ -4,7 +4,8 @@ import  {type CreateOptions} from '@metaid/metaid'
 import { BufferEncoding,fileSchema} from '@/data/constants'
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { useI18n } from 'vue-i18n'
-import {MetaletWalletForBtc,btcConnect} from '@metaid/metaid'
+
+import {useFeebStore} from '@/stores/feeb'
 export type EntityOptions={
     noBroadcast:'yes' | 'no'
     feeRate?:number
@@ -19,7 +20,7 @@ function isEmpty(attachments:AttachmentItem[]){
 
 export function useMetaIDEntity(){
     const i18n = useI18n()
-    
+    const feebStore=useFeebStore()
 
 
     // if(!connectStore.connected){
@@ -31,31 +32,34 @@ export function useMetaIDEntity(){
 
     async function buzzEntity(body:{content:string,attachments:AttachmentItem[] | []}) {
         const connectStore = useConnectionStore()
-        //  await connectStore.syncConnector()
-        // const _wallet=await MetaletWalletForBtc.restore({
-        //     address:connectStore.userInfo.address,
-        //     pub:connectStore.userInfo.pubkey
-        //   })
-          
-        //   let connectRes = await btcConnect({
-        //     wallet:_wallet,
-        //     network:connectStore.last.network!
-        //   })
+       
         const buzzEntity =connectStore.last.use('buzz')
-        const finalBody:any = body.content
+        // const finalBody:any = body.content
+        const finalBody: any = {
+            content: body.content,
+            contentType: 'text/plain',
+          }
         if(isEmpty(body.attachments)){
             const imageRes= await fileEntity(body.attachments)
             finalBody.attachments=imageRes.revealTxIds.map(rid=>{
                 return `metafile://${rid}i0`
             })
         }
+        // return
         const createRes =(await buzzEntity).create({
-            options: [{ body: JSON.stringify(finalBody) }],
+            options: [{ body: JSON.stringify(finalBody),contentType: 'text/plain', flag: 'testid'}],
 		    noBroadcast:'no',
-            feeRate:60
+            feeRate: feebStore.last.currentFeeb.feeRate,
+            service: {
+                address: 'myp2iMt6NeGQxMLt6Hzx1Ho6NbMkiigZ8D',
+                satoshis: '1999',
+            }
         })
         return createRes
     }
+
+
+
 
 
 
@@ -70,12 +74,13 @@ export function useMetaIDEntity(){
    }> {
     const connectStore = useConnectionStore()
         const fileOptions=[]
-        for(const image of images){
+        for(const image of images){  
             fileOptions.push({
                 body:Buffer.from(image.data, "hex").toString("base64"),
                 encoding: BufferEncoding.base64,
                 contentType:image.fileType,
-                toEncodeing:fileSchema.encoding
+                // toEncodeing:fileSchema.encoding,
+                flag:'testid',
             })
         }
         
@@ -83,9 +88,12 @@ export function useMetaIDEntity(){
         const imageRes=await fileEntity.create({
             options: fileOptions,
 		    noBroadcast: 'no',
-            feeRate:60
+            feeRate: feebStore.last.currentFeeb.feeRate,
+            service: {
+                address:'myp2iMt6NeGQxMLt6Hzx1Ho6NbMkiigZ8D',
+                satoshis: '1999',
+              },
         })
-
         return imageRes
 
    }
@@ -98,18 +106,30 @@ export function useMetaIDEntity(){
         isLike:'1'
     }
     const likeRes = await likeEntity.create({
-        options: [{ body: JSON.stringify(finalBody) }],
+        options: [{ body: JSON.stringify(finalBody),flag:"testid" }],
         noBroadcast:'no',
+        feeRate: feebStore.last.currentFeeb.feeRate,
+        service: {
+            address:"myp2iMt6NeGQxMLt6Hzx1Ho6NbMkiigZ8D",
+            satoshis: "1999",
+        }
     })
 
     return likeRes
    }
 
+
+   async function getAllBuzz(body:{page:number,limit:number,network:string}){
+        const connectStore = useConnectionStore()
+        const buzzEntity =connectStore.last.use('buzz')
+        const allBuzzRes = (await buzzEntity).list({page:body.page,limit:body.limit,network:body.network})
+        return allBuzzRes
+   }
+
    return{
     fileEntity,
     buzzEntity,
-    likeEntity
+    likeEntity,
+    getAllBuzz
    }
-
-
 }
