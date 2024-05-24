@@ -47,12 +47,12 @@ export function useMetaIDEntity(){
         }
         // return
         const createRes =(await buzzEntity).create({
-            options: [{ body: JSON.stringify(finalBody),contentType: 'text/plain', flag: 'testid'}],
+            options: [{ body: JSON.stringify(finalBody),contentType: 'text/plain', flag: import.meta.env.VITE_BTC_METAID_FLAG}],
 		    noBroadcast:'no',
             feeRate: feebStore.last.currentFeeb.feeRate,
             service: {
-                address: 'myp2iMt6NeGQxMLt6Hzx1Ho6NbMkiigZ8D',
-                satoshis: '1999',
+                address: import.meta.env.VITE_BTC_SERVICE_ADDRESS,
+                satoshis: import.meta.env.VITE_BTC_SERVICE_FEEB,
             }
         })
         return createRes
@@ -80,7 +80,7 @@ export function useMetaIDEntity(){
                 encoding: BufferEncoding.base64,
                 contentType:image.fileType,
                 // toEncodeing:fileSchema.encoding,
-                flag:'testid',
+                flag:import.meta.env.VITE_BTC_METAID_FLAG,
             })
         }
         
@@ -90,8 +90,8 @@ export function useMetaIDEntity(){
 		    noBroadcast: 'no',
             feeRate: feebStore.last.currentFeeb.feeRate,
             service: {
-                address:'myp2iMt6NeGQxMLt6Hzx1Ho6NbMkiigZ8D',
-                satoshis: '1999',
+                address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
+                satoshis: import.meta.env.VITE_BTC_SERVICE_FEEB,
               },
         })
         return imageRes
@@ -106,12 +106,12 @@ export function useMetaIDEntity(){
         isLike:'1'
     }
     const likeRes = await likeEntity.create({
-        options: [{ body: JSON.stringify(finalBody),flag:"testid" }],
+        options: [{ body: JSON.stringify(finalBody),flag:import.meta.env.VITE_BTC_METAID_FLAG }],
         noBroadcast:'no',
         feeRate: feebStore.last.currentFeeb.feeRate,
         service: {
-            address:"myp2iMt6NeGQxMLt6Hzx1Ho6NbMkiigZ8D",
-            satoshis: "1999",
+            address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
+            satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
         }
     })
 

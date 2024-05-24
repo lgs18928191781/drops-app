@@ -127,6 +127,7 @@ import { useLayoutStore } from '@/stores/layout'
 import { useConnectionStore } from '@/stores/connection'
 import { compressImage, throttle, FileToAttachmentItem, getAttachmentsMark } from '@/utils/util'
 import { useFeebStore } from '@/stores/feeb'
+import { useNetworkStore } from '@/stores/network'
 interface Props {
   modelValue: boolean
 }
@@ -140,6 +141,7 @@ const avatarInfo = ref({
 
 const feebStore = useFeebStore()
 const userStore = useUserStore()
+const networkStore = useNetworkStore()
 const layout = useLayoutStore()
 const isShowSecondModal = ref(false)
 const loading = ref(false)
@@ -300,11 +302,11 @@ async function confirm() {
       name: form.name,
 
       avatar: avatarInfo.value.hex,
-      network: 'testnet',
+      network: networkStore.network,
       feeRate: feebStore.last.currentFeeb.feeRate,
       service: {
-        address: 'myp2iMt6NeGQxMLt6Hzx1Ho6NbMkiigZ8D',
-        satoshis: '1999',
+        address: import.meta.env.VITE_BTC_SERVICE_ADDRESS,
+        satoshis: import.meta.env.VITE_BTC_SERVICE_FEEB,
       },
     }
     console.log('connectStore', connectStore)

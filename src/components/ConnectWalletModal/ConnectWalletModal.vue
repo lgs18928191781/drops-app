@@ -639,11 +639,11 @@ async function onSetBaseInfoSuccessType(params: { name: string; nft: NFTAvatarIt
     name: params.name,
     bio: params.bio,
     avatar: params.nft,
-    network: 'testnet',
+    network: networkStore.network,
     feeRate: feebStore.last.currentFeeb.feeRate,
     service: {
-      address: 'myp2iMt6NeGQxMLt6Hzx1Ho6NbMkiigZ8D',
-      satoshis: '1999',
+      address: import.meta.env.VITE_BTC_SERVICE_ADDRESS,
+      satoshis: import.meta.env.VITE_BTC_SERVICE_FEEB,
     },
   }
   try {
