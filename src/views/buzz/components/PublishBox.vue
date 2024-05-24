@@ -2,7 +2,7 @@
   <div class="publish flex " v-if="userStore.isAuthorized" @click="publish">
     <UserAvatar
       :meta-id="userStore.user!.metaId"
-      :image="userStore.user!.avatarImage"
+      :image="connectionStore.last.user.avatarId"
       :name="userStore.user!.name"
       :meta-name="userStore.user!.metaName"
       :disabled="true"
@@ -25,12 +25,12 @@
 import { useLayoutStore } from '@/stores/layout'
 import { useUserStore } from '@/stores/user'
 import { inject, Ref } from 'vue'
-
+import { useConnectionStore } from '@/stores/connection'
 interface Props {
   topic?: string
 }
 const props = withDefaults(defineProps<Props>(), {})
-
+const connectionStore = useConnectionStore()
 const layout = useLayoutStore()
 const userStore = useUserStore()
 const isShowBuzzPublish: Ref<boolean> = inject('isShowBuzzPublish')!
