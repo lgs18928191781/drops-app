@@ -12,6 +12,29 @@ import HttpRequest from '@/utils/request'
 import { error } from 'console'
 import { ethers } from 'ethers'
 import { changeSymbol } from '@/utils/util'
+
+const aggregationForBtc = new HttpRequest(`https://testmvc.showmoney.app/aggregation`, {
+  header: {
+    SiteConfigMetanetId: import.meta.env.VITE_SiteConfigMetanetId,
+  },
+  responseHandel: response => {
+    return new Promise((resolve, reject) => {
+      if (response?.data && typeof response.data?.code === 'number') {
+        if (response.data.code === 0 || response.data.code === 601) {
+          resolve(response.data)
+        } else {
+          reject({
+            code: response.data.code,
+            message: response.data.data,
+          })
+        }
+      } else {
+        resolve(response.data)
+      }
+    })
+  },
+}).request
+
 const aggregation = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation`, {
   header: {
     SiteConfigMetanetId: import.meta.env.VITE_SiteConfigMetanetId,
@@ -286,6 +309,7 @@ export const GetTagBuzzs = (params: {
   subTag?: string
   timeType?: string
   buzzType?: string
+  chain: string
 }): Promise<{
   code: number
   data: {
@@ -296,7 +320,7 @@ export const GetTagBuzzs = (params: {
   }
 }> => {
   const { tag, ..._params } = params
-  return aggregation.get(`/v2/app/show/posts/${tag}`, {
+  return aggregationForBtc.get(`/v2/app/show/posts/${tag}`, {
     params: _params,
   })
 }

@@ -21,7 +21,7 @@
         <DynamicScroller
           :items="list"
           :min-item-size="1"
-          key-field="contentSummary"
+          key-field="txId"
           :pageMode="true"
           :buffer="1000"
         >
@@ -182,224 +182,224 @@ const translatedTx: {
   originalQuiteText?: string
 }[] = []
 
-// const operates: {
-//   [key: string]: {
-//     name: () => string
-//     fun: () => void
-//   }[]
-// } = {
-//   repost: [
-//     {
-//       name: () => i18n.t('Buzz.repost.quick'),
-//       fun: async () => {
-//         await checkUserLogin()
-//         try {
-//           let isQuoteItem = false
-//           const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
-//           let index = props.list.findIndex(item => item.txId === currentTxId.value)
-//           if (index === -1) {
-//             index = props.list.findIndex(
-//               item => item.quoteItem && item.quoteItem.txId === currentTxId.value
-//             )
-//             if (index === -1) {
-//               throw new Error('TxId Not Found')
-//             } else {
-//               isQuoteItem = true
-//             }
-//           }
-//           const targetBuzz = isQuoteItem
-//             ? { ...props.list[index].quoteItem }
-//             : { ...props.list[index] }
+const operates: {
+  [key: string]: {
+    name: () => string
+    fun: () => void
+  }[]
+} = {
+  repost: [
+    {
+      name: () => i18n.t('Buzz.repost.quick'),
+      fun: async () => {
+        await checkUserLogin()
+        try {
+          let isQuoteItem = false
+          const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
+          let index = props.list.findIndex(item => item.txId === currentTxId.value)
+          if (index === -1) {
+            index = props.list.findIndex(
+              item => item.quoteItem && item.quoteItem.txId === currentTxId.value
+            )
+            if (index === -1) {
+              throw new Error('TxId Not Found')
+            } else {
+              isQuoteItem = true
+            }
+          }
+          const targetBuzz = isQuoteItem
+            ? { ...props.list[index].quoteItem }
+            : { ...props.list[index] }
 
-//           const time = new Date().getTime()
-//           const res = await userStore.showWallet.createBrfcChildNode(
-//             {
-//               nodeName: NodeName.SimpleRePost,
-//               data: JSON.stringify({
-//                 createTime: time,
-//                 rePostTx: currentTxId.value,
-//                 rePostProtocol: targetBuzz.protocol,
-//                 rePostComment: '',
-//               }),
-//               payTo: [{ amount: payAmount, address: targetBuzz.zeroAddress }],
-//             },
-//             {
-//               useQueue: true,
-//             }
-//           )
-//           if (res) {
-//             const watchJobStatus = watch(
-//               () => jobsStore.waitingNotify.find(job => job.id === res.subscribeId)?.status,
-//               status => {
-//                 if (status === JobStatus.Success) {
-//                   watchJobStatus()
-//                   GetBuzz({
-//                     txId: res.currentNode!.txId,
-//                     metaId: userStore.user!.metaId,
-//                   }).then(respones => {
-//                     if (respones.data.results.items.length) {
-//                       emit('updateItem', respones.data.results.items[0])
-//                     }
-//                   })
-//                 } else if (status === JobStatus.Failed) {
-//                   watchJobStatus()
-//                   emit('removeItem', { txId: res.currentNode!.txId })
-//                 }
-//               }
-//             )
-//             targetBuzz.rePost.push({
-//               metaId: userStore.user!.metaId!,
-//               timestamp: time,
-//               txId: res.currentNode!.txId,
-//               userName: userStore.user!.name!,
-//               value: payAmount,
-//             })
-//             emit(
-//               'updateItem',
-//               isQuoteItem
-//                 ? {
-//                     ...props.list[index],
-//                     quoteItem: targetBuzz,
-//                   }
-//                 : targetBuzz
-//             )
-//             Mitt.emit(MittEvent.AddBuzz, {
-//               applauseCount: 0,
-//               attachments: [],
-//               avatarImage: userStore.user!.avatarImage,
-//               avatarTxId: userStore.user!.avatarTxId,
-//               avatarType: userStore.user!.avatarType,
-//               blockHeight: -1,
-//               buzzCard: null,
-//               comment: [],
-//               commentCount: 0,
-//               confirmState: 0,
-//               content: '',
-//               contentType: 'text/plain',
-//               data: '',
-//               displayType: 'quickRePost',
-//               donate: [],
-//               encrypt: '0',
-//               history: [],
-//               isEdit: false,
-//               isFull: true,
-//               isMyFollow: true,
-//               isNew: true,
-//               isSelling: false,
-//               isValid: true,
-//               like: [],
-//               likeCount: 0,
-//               metaAccessCodeHash: '',
-//               metaAccessContentAmount: '',
-//               metaAccessContentEncryptContent: '',
-//               metaAccessContentOwnerAvatarTxId: '',
-//               metaAccessContentOwnerAvatarType: '',
-//               metaAccessContentOwnerMetaId: '',
-//               metaAccessContentOwnerName: '',
-//               metaAccessContentRevenueAmount: 0,
-//               metaAccessGenesisId: '',
-//               metaAccessHasPay: false,
-//               metaAccessMetanetId: '',
-//               metaAccessPayTx: '',
-//               metaAccessPutAway: false,
-//               metaAccessSellTx: '',
-//               metaAccessServiceConfigMetanetId: '',
-//               metaAccessServiceConfigTxId: '',
-//               metaAccessServiceFee: '',
-//               metaAccessServiceMetaId: '',
-//               metaAccessServiceName: '',
-//               metaAccessServiceUrl: '',
-//               metaAccessTokenIndex: '',
-//               metaAccessTxId: '',
-//               metaId: userStore.user!.metaId,
-//               metanetId: '',
-//               postTag: 'buzz',
-//               postTagId: 1,
-//               protocol: 'SimpleRePost',
-//               publicKey: '',
-//               quoteItem: targetBuzz,
-//               rePost: [],
-//               rePostCount: 0,
-//               serverCode: '',
-//               serverPublicKey: '',
-//               shareProtocol: '',
-//               timestamp: 1671866186541,
-//               totalValue: 0,
-//               txId: res.currentNode!.txId,
-//               userName: userStore.user!.name,
-//               zeroAddress: userStore.user!.address,
-//               userInfo: {
-//                 address: userStore.user!.address,
-//                 avatarImage: userStore.user!.avatarImage,
-//                 avatarTxId: userStore.user!.avatarTxId,
-//                 avatarType: userStore.user!.avatarType,
-//                 coverPublicKey: '',
-//                 coverType: userStore.user!.avatarType,
-//                 coverUrl: '',
-//                 metaIdTimestamp: '',
-//                 name: userStore.user!.name,
-//                 nameType: '',
-//                 nftNamePublicKey: '',
-//                 publicKey: '',
-//                 metaName: userStore.user!.metaName,
-//               },
-//             })
-//             ElMessage.success(i18n.t('Buzz.repost.success'))
-//             operateLoading.value = false
-//             isShowOperateModal.value = false
-//           } else {
-//             operateLoading.value = false
-//           }
-//         } catch (error) {
-//           operateLoading.value = false
-//           ElMessage.error((error as any).message)
-//         }
-//       },
-//     },
-//     {
-//       name: () => i18n.t('Buzz.repost.comment'),
-//       fun: () => {
-//         operateLoading.value = false
-//         isShowOperateModal.value = false
-//         repostTxId.value = currentTxId.value
-//         isShowBuzzPublish.value = true
-//       },
-//     },
-//   ],
-//   more: [
-//     {
-//       name: () => i18n.t('Buzz.repost.share'),
-//       fun: () => {
-//         copy(
-//           `${location.origin}${
-//             router.resolve({
-//               name: 'buzzDetail',
-//               params: {
-//                 txId: currentTxId.value,
-//               },
-//             }).fullPath
-//           }`
-//         ).then(() => {
-//           isShowOperateModal.value = false
-//         })
-//       },
-//     },
-//     {
-//       name: () =>
-//         translatedTx.some(item => item.txId === currentTxId.value)
-//           ? i18n.t('Buzz.repost.Show original text')
-//           : i18n.t('Buzz.repost.Translate'),
-//       fun: async () => {},
-//     },
-//     {
-//       name: () => i18n.t('Buzz.repost.lookTx'),
-//       fun: () => {
-//         tx(currentTxId.value)
-//         isShowOperateModal.value = false
-//       },
-//     },
-//   ],
-// }
+          const time = new Date().getTime()
+          const res = await userStore.showWallet.createBrfcChildNode(
+            {
+              nodeName: NodeName.SimpleRePost,
+              data: JSON.stringify({
+                createTime: time,
+                rePostTx: currentTxId.value,
+                rePostProtocol: targetBuzz.protocol,
+                rePostComment: '',
+              }),
+              payTo: [{ amount: payAmount, address: targetBuzz.zeroAddress }],
+            },
+            {
+              useQueue: true,
+            }
+          )
+          if (res) {
+            const watchJobStatus = watch(
+              () => jobsStore.waitingNotify.find(job => job.id === res.subscribeId)?.status,
+              status => {
+                if (status === JobStatus.Success) {
+                  watchJobStatus()
+                  GetBuzz({
+                    txId: res.currentNode!.txId,
+                    metaId: userStore.user!.metaId,
+                  }).then(respones => {
+                    if (respones.data.results.items.length) {
+                      emit('updateItem', respones.data.results.items[0])
+                    }
+                  })
+                } else if (status === JobStatus.Failed) {
+                  watchJobStatus()
+                  emit('removeItem', { txId: res.currentNode!.txId })
+                }
+              }
+            )
+            targetBuzz.rePost.push({
+              metaId: userStore.user!.metaId!,
+              timestamp: time,
+              txId: res.currentNode!.txId,
+              userName: userStore.user!.name!,
+              value: payAmount,
+            })
+            emit(
+              'updateItem',
+              isQuoteItem
+                ? {
+                    ...props.list[index],
+                    quoteItem: targetBuzz,
+                  }
+                : targetBuzz
+            )
+            Mitt.emit(MittEvent.AddBuzz, {
+              applauseCount: 0,
+              attachments: [],
+              avatarImage: userStore.user!.avatarImage,
+              avatarTxId: userStore.user!.avatarTxId,
+              avatarType: userStore.user!.avatarType,
+              blockHeight: -1,
+              buzzCard: null,
+              comment: [],
+              commentCount: 0,
+              confirmState: 0,
+              content: '',
+              contentType: 'text/plain',
+              data: '',
+              displayType: 'quickRePost',
+              donate: [],
+              encrypt: '0',
+              history: [],
+              isEdit: false,
+              isFull: true,
+              isMyFollow: true,
+              isNew: true,
+              isSelling: false,
+              isValid: true,
+              like: [],
+              likeCount: 0,
+              metaAccessCodeHash: '',
+              metaAccessContentAmount: '',
+              metaAccessContentEncryptContent: '',
+              metaAccessContentOwnerAvatarTxId: '',
+              metaAccessContentOwnerAvatarType: '',
+              metaAccessContentOwnerMetaId: '',
+              metaAccessContentOwnerName: '',
+              metaAccessContentRevenueAmount: 0,
+              metaAccessGenesisId: '',
+              metaAccessHasPay: false,
+              metaAccessMetanetId: '',
+              metaAccessPayTx: '',
+              metaAccessPutAway: false,
+              metaAccessSellTx: '',
+              metaAccessServiceConfigMetanetId: '',
+              metaAccessServiceConfigTxId: '',
+              metaAccessServiceFee: '',
+              metaAccessServiceMetaId: '',
+              metaAccessServiceName: '',
+              metaAccessServiceUrl: '',
+              metaAccessTokenIndex: '',
+              metaAccessTxId: '',
+              metaId: userStore.user!.metaId,
+              metanetId: '',
+              postTag: 'buzz',
+              postTagId: 1,
+              protocol: 'SimpleRePost',
+              publicKey: '',
+              quoteItem: targetBuzz,
+              rePost: [],
+              rePostCount: 0,
+              serverCode: '',
+              serverPublicKey: '',
+              shareProtocol: '',
+              timestamp: 1671866186541,
+              totalValue: 0,
+              txId: res.currentNode!.txId,
+              userName: userStore.user!.name,
+              zeroAddress: userStore.user!.address,
+              userInfo: {
+                address: userStore.user!.address,
+                avatarImage: userStore.user!.avatarImage,
+                avatarTxId: userStore.user!.avatarTxId,
+                avatarType: userStore.user!.avatarType,
+                coverPublicKey: '',
+                coverType: userStore.user!.avatarType,
+                coverUrl: '',
+                metaIdTimestamp: '',
+                name: userStore.user!.name,
+                nameType: '',
+                nftNamePublicKey: '',
+                publicKey: '',
+                metaName: userStore.user!.metaName,
+              },
+            })
+            ElMessage.success(i18n.t('Buzz.repost.success'))
+            operateLoading.value = false
+            isShowOperateModal.value = false
+          } else {
+            operateLoading.value = false
+          }
+        } catch (error) {
+          operateLoading.value = false
+          ElMessage.error((error as any).message)
+        }
+      },
+    },
+    {
+      name: () => i18n.t('Buzz.repost.comment'),
+      fun: () => {
+        operateLoading.value = false
+        isShowOperateModal.value = false
+        repostTxId.value = currentTxId.value
+        isShowBuzzPublish.value = true
+      },
+    },
+  ],
+  more: [
+    {
+      name: () => i18n.t('Buzz.repost.share'),
+      fun: () => {
+        copy(
+          `${location.origin}${
+            router.resolve({
+              name: 'buzzDetail',
+              params: {
+                txId: currentTxId.value,
+              },
+            }).fullPath
+          }`
+        ).then(() => {
+          isShowOperateModal.value = false
+        })
+      },
+    },
+    {
+      name: () =>
+        translatedTx.some(item => item.txId === currentTxId.value)
+          ? i18n.t('Buzz.repost.Show original text')
+          : i18n.t('Buzz.repost.Translate'),
+      fun: async () => {},
+    },
+    {
+      name: () => i18n.t('Buzz.repost.lookTx'),
+      fun: () => {
+        tx(currentTxId.value)
+        isShowOperateModal.value = false
+      },
+    },
+  ],
+}
 
 async function onRepost(txId: string) {
   await checkUserLogin()

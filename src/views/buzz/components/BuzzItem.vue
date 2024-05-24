@@ -41,20 +41,30 @@
               :meta-name="displayItemData.userInfo.metaName"
               :image-class="'w-12 h-12'"
             /> -->
+            <UserAvatar
+              :meta-id="displayItemData.metaId"
+              :image="displayItemData.userInfo.avatarImage"
+              :name="displayItemData.userName"
+              :image-class="'w-12 h-12'"
+            />
           </div>
           <div class="info">
             <div class="name">
-              <UserName :name="itemData.name" :metaName="itemData.metaName" />
+              <UserName
+                :name="displayItemData.userInfo.name"
+                :metaName="displayItemData?.userInfo?.metaName"
+                :metaId="displayItemData.metaId"
+              />
             </div>
             <div class="desc">
-              <span>MetaID: {{ sliceStr(itemData.metaId) }}</span>
+              <span>MetaID: {{ sliceStr(displayItemData.metaId) }}</span>
               <span class="time">{{
-                $filters.dateTimeFormat(itemData.timestamp, 'YY-MM-DD HH:mm:ss')
+                $filters.dateTimeFormat(displayItemData.timestamp, 'YY-MM-DD HH:mm:ss')
               }}</span>
             </div>
           </div>
         </div>
-        <!-- <div class="operate" v-if="!isQuote">
+        <div class="operate" v-if="!isQuote">
           <div
             class="follow main-border primary small"
             :class="{ disabled: following }"
@@ -68,11 +78,10 @@
             </template>
             <template v-else>{{ $t('Follow') }}</template>
           </div>
-        </div> -->
+        </div>
       </div>
       <div class="content">
-        <!-- {{ itemData.contentSummary.content }} -->
-        <!-- <template v-if="displayItemData.protocol === NodeName.MetaNote">
+        <template v-if="displayItemData.protocol === NodeName.MetaNote">
           <BuzzItemContentMetaNoteVue :buzz="displayItemData" />
         </template>
         <template v-else-if="displayItemData.protocol === NodeName.SimplePublicShare">
@@ -88,15 +97,16 @@
         </template>
         <template v-else-if="displayItemData.protocol === NodeName.ShareChatMessage">
           <BuzzItemContentShreChatMessage :buzz="data!" />
-        </template> -->
-        <!-- <template> -->
-        <BuzzItemContentNormalVue
-          :buzz="itemData.contentSummary"
-          :play-file="playFile"
-          @play="val => emit('play', val)"
-          @translate="(txId, callback) => emit('translate', txId, callback)"
-        />
-        <!-- </template> -->
+        </template>
+        <template v-else>
+          <BuzzItemContentNormalVue
+            :buzz="data!"
+            :play-file="playFile"
+            :isQuote="isQuote"
+            @play="val => emit('play', val)"
+            @translate="(txId, callback) => emit('translate', txId, callback)"
+          />
+        </template>
 
         <!-- 标签 -->
         <!-- <div class="tags flex flex-align-center" v-if="!isQuote">
@@ -111,15 +121,15 @@
           </a>
         </div> -->
 
-        <!-- <BuzzItemControlVue
-          :buzz="itemData"
+        <BuzzItemControlVue
+          :buzz="displayItemData"
           @repost="params => (blacklistOperation ? bandUser() : emit('repost', params))"
           @update="params => emit('update', params)"
           @more="params => emit('more', params)"
           @like="params => (blacklistOperation ? bandUser() : emit('like', params))"
           @replay="params => (blacklistOperation ? bandUser() : emit('replay', params))"
           v-if="!isHideControl && !isQuote && !isNFTLegalBuzz"
-        /> -->
+        />
 
         <slot name="comment"></slot>
       </div>

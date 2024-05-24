@@ -1,15 +1,10 @@
 <template>
   <div
     class="text"
-    v-html="
-      displayItemData
-        ? $filters.buzzTextContent(
-            displayItemData.content ? displayItemData.content : displayItemData
-          )
-        : ''
-    "
+    :class="{ quote: isQuote }"
+    v-html="displayItemData ? $filters.buzzTextContent(displayItemData.content) : ''"
   ></div>
-  <!-- <div class="translate" v-if="!isQuote">
+  <div class="translate" v-if="!isQuote">
     <template v-if="isTranslateing">
       <ElIcon class="is-loading">
         <Loading />
@@ -20,7 +15,7 @@
         isTranslated ? $t('Buzz.repost.Show original text') : $t('Buzz.repost.Translate')
       }}</span>
     </template>
-  </div> -->
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -29,6 +24,7 @@ import { Loading } from '@element-plus/icons-vue'
 
 interface Props {
   buzz: BuzzItem
+  isQuote?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {})
 
@@ -38,22 +34,21 @@ const emit = defineEmits<{
 const isTranslateing = ref(false)
 const isTranslated = ref(false)
 const displayItemData = computed(() => {
-  // if (!props.buzz) {
-  //   return null
-  // }
-  // switch (props.buzz.protocol) {
-  //   case 'SimpleRePost': {
-  //     if (props.buzz.displayType === 'quickRePost') {
-  //       return props.buzz.quoteItem
-  //     } else {
-  //       return props.buzz
-  //     }
-  //   }
-  //   default: {
-  //     return props.buzz
-  //   }
-  // }
-  return props.buzz
+  if (!props.buzz) {
+    return null
+  }
+  switch (props.buzz.protocol) {
+    case 'SimpleRePost': {
+      if (props.buzz.displayType === 'quickRePost') {
+        return props.buzz.quoteItem
+      } else {
+        return props.buzz
+      }
+    }
+    default: {
+      return props.buzz
+    }
+  }
 })
 
 function translate() {
