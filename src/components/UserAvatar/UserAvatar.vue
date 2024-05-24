@@ -70,7 +70,9 @@ function openUserCard(e: any) {
         metaId: props.metaId,
         name: props.name,
         metaName: props.metaName,
-        onHide: () => {},
+        onHide: () => {
+          destroy()
+        },
       }),
       document.getElementById(userCardWarpId)!
     )

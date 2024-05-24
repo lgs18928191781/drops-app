@@ -329,11 +329,11 @@ function chooseNFT(nft: BaseNFT) {
 const throttleChooseNFT = throttle(chooseNFT, 500)
 
 async function submit() {
-  const sendInfo = {
-    content: content.value,
-    attachments: attachments,
-  }
-  console.log(sendInfo)
+  // const sendInfo = {
+  //   content: content.value,
+  //   attachments: attachments,
+  // }
+  // console.log(sendInfo)
   // const sendRes = await buzzEntity(sendInfo)
   // if (sendRes.revealTxIds.length) {
   //   content.value = ''
@@ -348,12 +348,12 @@ async function submit() {
   //   ElMessage.error('fail')
   // }
 
-  // const info = { likeTo: '647ff0d9c9fadcc64a6690dd6aa9380559ab96e640bf880cb4082fc3ecc14d38i0' }
-  // const likeRes = await likeEntity(info)
-  // console.log(likeRes)
+  const info = { likeTo: '63344fd9b2e604bbd36f2a9b405198a643374013d37481aacdecd63ed55c9348i0' }
+  const likeRes = await likeEntity(info)
+  console.log(likeRes)
 
-  const allBuzz = await getAllBuzz({ page: 1, limit: 10, network: 'testnet' })
-  console.log(allBuzz)
+  // const allBuzz = await getAllBuzz({ page: 1, limit: 10, network: 'testnet' })
+  // console.log(allBuzz)
 
   return
   if (content.value === '' && attachments.length <= 0) {

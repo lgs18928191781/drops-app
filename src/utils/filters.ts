@@ -138,7 +138,7 @@ export function metafile(metafile: string, width = 235, type: 'metafile' | 'meta
     path = '/metafile/'
   } else {
     //  普通txId
-    path = '/metafile/'
+    path = '/content/'
   }
   const fileUrl = `${import.meta.env.VITE_AppImgApi}${path}${metafile.replace('ipfs://', '')}`
   // 文件后缀
