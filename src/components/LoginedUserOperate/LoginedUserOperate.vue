@@ -95,7 +95,7 @@
       <el-popover placement="bottom" :width="'auto'" trigger="hover">
         <template #reference>
           <UserAvatar
-            :image="userStore.user!.avatarImage"
+            :image="connectStore.last.user.avatarId"
             :meta-id="userStore.user!.metaId"
             :name="userStore.user!.name"
             class="user-warp-item overflow-hidden"
@@ -178,6 +178,7 @@ import MintLogo from '@/assets/svg/mint.svg?url'
 import { useFeebStore } from '@/stores/feeb'
 import LucideIcon from '@/components/LucideIcon/index.vue'
 import { type FeebPlan} from '@/api/btc-fee'
+import { useConnectionStore } from '@/stores/connection'
 const i18n = useI18n()
 const rootStore = useRootStore()
 const userStore = useUserStore()
@@ -185,6 +186,7 @@ const layout = useLayoutStore()
 const route = useRoute()
 const isProduction = import.meta.env.MODE === 'mainnet'
 const feebStore = useFeebStore()
+const connectStore=useConnectionStore()
 const isShowUserMenu = ref(false)
 const userOperates = computed(() => {
   const result = [

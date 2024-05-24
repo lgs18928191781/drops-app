@@ -14,7 +14,22 @@
         {{ $t('EditProfile.intro') }}
       </div>
       <div class="avatar">
-        <div class="avatar-warp" @click="choose(EditType.Avatar)">
+        <div class="avatar-warp">
+          <UserAvatar
+            :meta-id="userStore.user!.metaId"
+            :image="currentAvatar.val.avatarImage"
+            :name="userStore.user!.name"
+            :meta-name="userStore.user!.metaName"
+            :type="'metafile'"
+            :disabled="true"
+          >
+          </UserAvatar>
+          <a class="edit flex flex-align-center flex-pack-center">
+            <input type="file" @change="onChooseImage" class="img-upload" ref="inputRef" />
+            <Icon name="edit" />
+          </a>
+        </div>
+        <!-- <div class="avatar-warp" @click="choose(EditType.Avatar)">
           <UserAvatar
             :meta-id="userStore.user!.metaId"
             :image="currentAvatar.val.avatarImage"
@@ -26,7 +41,7 @@
           <a class="edit flex flex-align-center flex-pack-center">
             <Icon name="edit" />
           </a>
-        </div>
+        </div> -->
       </div>
 
       <ElForm :model="form" :rules="rule" label-width="0">
@@ -109,18 +124,26 @@ import { createBrfcChildNodeParams } from '@/@types/sdk'
 import { useI18n } from 'vue-i18n'
 import ChooseMetaNameVue from '@/components/ChooseMetaName/ChooseMetaName.vue'
 import { useLayoutStore } from '@/stores/layout'
-
+import { useConnectionStore } from '@/stores/connection'
+import { compressImage, throttle, FileToAttachmentItem, getAttachmentsMark } from '@/utils/util'
+import { useFeebStore } from '@/stores/feeb'
 interface Props {
   modelValue: boolean
 }
 const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits(['update:modelValue'])
 const i18n = useI18n()
+const avatarInfo = ref({
+  blobUrl: '',
+  hex: '',
+})
 
+const feebStore = useFeebStore()
 const userStore = useUserStore()
 const layout = useLayoutStore()
 const isShowSecondModal = ref(false)
 const loading = ref(false)
+const connectStore = useConnectionStore()
 enum EditType {
   Avatar = 'avatar',
   MetaName = 'MetaName',
@@ -130,7 +153,7 @@ const editType = ref(EditType.Avatar)
 // @ts-ignore
 const currentAvatar: { val: NFTAvatarItem } = reactive({
   val: {
-    avatarImage: userStore.user?.avatarImage,
+    avatarImage: connectStore.last.user.avatarId, //'946d1bd0adb6a734eac6a06ff610237f5361d13ff69f18ab6d6c196a3ace2d03i0', //connectStore.last.user.avatar, //userStore.user?.avatarImage,
   },
 })
 // @ts-ignore
@@ -144,7 +167,8 @@ watch(
   () => userStore.isAuthorized,
   () => {
     if (userStore.isAuthorized) {
-      currentAvatar.val.avatarImage = userStore.user!.avatarImage
+      currentAvatar.val.avatarImage = connectStore.last.user.avatarId
+      //currentAvatar.val.avatarImage = userStore.user!.avatarImage
     }
   }
 )
@@ -163,75 +187,188 @@ const rule = {
   ],
 }
 
-async function confirm() {
-  if (userStore.metaletLogin) {
-    return ElMessage.error(i18n.t(`Editor not allow from metalet`))
+async function onChooseImage(e: any) {
+  if (e.target!.files > 1) {
+    return ElMessage.error(`${i18n.t('avatar.notsupport.multi')}`)
   }
+  const files: File[] = [...e.target.files]
+  // 压缩图片
+  const compressed = await compressImage(files[0])
+  const result = await FileToAttachmentItem(compressed)
+
+  // console.log(imgAttachments[0].data)
+  avatarInfo.value.blobUrl = result.url
+  avatarInfo.value.hex = Buffer.from(result.data, 'hex').toString('base64')
+  console.log(avatarInfo.value)
+  currentAvatar.val.avatarImage = result.url
+}
+
+// async function confirm() {
+//   if (userStore.metaletLogin) {
+//     return ElMessage.error(i18n.t(`Editor not allow from metalet`))
+//   }
+//   //
+//   if (
+//     form.name === '' ||
+//     (form.name === userStore.user!.name &&
+//       currentAvatar.val.avatarImage === userStore.user?.avatarImage &&
+//       userStore.user!.metaName === currentMetaName.val!.name)
+//   )
+//     return
+//   loading.value = true
+
+//   try {
+//     const paramsList: createBrfcChildNodeParams[] = []
+//     if (currentAvatar.val!.avatarImage !== userStore.user?.avatarImage) {
+//       paramsList.push({
+//         nodeName: NodeName.NFTAvatar,
+//         data: JSON.stringify({
+//           type: `nft`,
+//           codehash: currentAvatar.val!.codehash,
+//           genesis: currentAvatar.val!.genesis,
+//           tokenIndex: currentAvatar.val!.tokenIndex,
+//           updateTime: new Date().getTime(),
+//           memo: currentAvatar.val.desc,
+//           image: currentAvatar.val.avatarImage,
+//           chain:
+//             currentAvatar.val.avatarImage.split('://')[0] === 'metacontract'
+//               ? 'mvc'
+//               : currentAvatar.val.avatarImage.split('://')[0],
+//         }),
+//       })
+//     }
+
+//     if (form.name !== userStore.user!.name) {
+//       paramsList.push({
+//         nodeName: NodeName.Name,
+//         data: form.name,
+//       })
+//     }
+
+//     if (currentMetaName.val.name !== userStore.user!.metaName) {
+//       console.log({ currentMetaName })
+//       paramsList.push({
+//         nodeName: NodeName.NftName,
+//         data: JSON.stringify({
+//           type: currentMetaName.val.name === '' ? 'name' : 'nft', //string type 取值⻅下⽅
+//           chain: currentMetaName.val.chain, //string type 链类型
+//           name: currentMetaName.val.name, //string type, 图片路由
+//           codehash: currentMetaName.val.codeHash, //string type nft的codehash
+//           genesis: currentMetaName.val.genesis, //string type nft的genesis 或 nft的tokenAddress
+//           tokenIndex: currentMetaName.val.tokenIndex, //string type nft的tokenIndex 或 nft的tokenId
+//           updateTime: new Date().getTime(), //long type 更新时间
+//           memo: '', //string type 备注 预留字段
+//         }),
+//       })
+//     }
+
+//     const res = await userStore.showWallet.batchCreateBrfcChildNode(paramsList)
+//     if (res) {
+//       emit('update:modelValue', false)
+
+//       // @ts-ignore
+//       userStore.updateUserInfo({
+//         ...userStore.user,
+//         name: form.name,
+//         avatarImage: currentAvatar.val.avatarImage,
+//         metaName: currentMetaName.val.name,
+//       })
+//       ElMessage.success(i18n.t('Setting.Edit Profile') + ' ' + i18n.t('Success'))
+//       loading.value = false
+//     }
+//   } catch (error) {
+//     ElMessage.error((error as any).message)
+//     loading.value = false
+//   }
+// }
+
+async function confirm() {
+  // if (userStore.metaletLogin) {
+  //   return ElMessage.error(i18n.t(`Editor not allow from metalet`))
+  // }
   //
   if (
     form.name === '' ||
-    (form.name === userStore.user!.name &&
-      currentAvatar.val.avatarImage === userStore.user?.avatarImage &&
-      userStore.user!.metaName === currentMetaName.val!.name)
+    (form.name === connectStore.last.user.name &&
+      currentAvatar.val.avatarImage === connectStore.last.user.avatarId)
   )
     return
   loading.value = true
 
   try {
-    const paramsList: createBrfcChildNodeParams[] = []
-    if (currentAvatar.val!.avatarImage !== userStore.user?.avatarImage) {
-      paramsList.push({
-        nodeName: NodeName.NFTAvatar,
-        data: JSON.stringify({
-          type: `nft`,
-          codehash: currentAvatar.val!.codehash,
-          genesis: currentAvatar.val!.genesis,
-          tokenIndex: currentAvatar.val!.tokenIndex,
-          updateTime: new Date().getTime(),
-          memo: currentAvatar.val.desc,
-          image: currentAvatar.val.avatarImage,
-          chain:
-            currentAvatar.val.avatarImage.split('://')[0] === 'metacontract'
-              ? 'mvc'
-              : currentAvatar.val.avatarImage.split('://')[0],
-        }),
-      })
-    }
+    const updateInfo = {
+      name: form.name,
 
-    if (form.name !== userStore.user!.name) {
-      paramsList.push({
-        nodeName: NodeName.Name,
-        data: form.name,
-      })
+      avatar: avatarInfo.value.hex,
+      network: 'testnet',
+      feeRate: feebStore.last.currentFeeb.feeRate,
+      service: {
+        address: 'myp2iMt6NeGQxMLt6Hzx1Ho6NbMkiigZ8D',
+        satoshis: '1999',
+      },
     }
+    console.log('connectStore', connectStore)
 
-    if (currentMetaName.val.name !== userStore.user!.metaName) {
-      console.log({ currentMetaName })
-      paramsList.push({
-        nodeName: NodeName.NftName,
-        data: JSON.stringify({
-          type: currentMetaName.val.name === '' ? 'name' : 'nft', //string type 取值⻅下⽅
-          chain: currentMetaName.val.chain, //string type 链类型
-          name: currentMetaName.val.name, //string type, 图片路由
-          codehash: currentMetaName.val.codeHash, //string type nft的codehash
-          genesis: currentMetaName.val.genesis, //string type nft的genesis 或 nft的tokenAddress
-          tokenIndex: currentMetaName.val.tokenIndex, //string type nft的tokenIndex 或 nft的tokenId
-          updateTime: new Date().getTime(), //long type 更新时间
-          memo: '', //string type 备注 预留字段
-        }),
-      })
-    }
+    const res = await connectStore.last.updateUserInfo({ ...updateInfo })
 
-    const res = await userStore.showWallet.batchCreateBrfcChildNode(paramsList)
+    // const paramsList: createBrfcChildNodeParams[] = []
+    // if (currentAvatar.val!.avatarImage !== connectStore.last.user.avatarId) {
+    //   paramsList.push({
+    //     nodeName: NodeName.NFTAvatar,
+    //     data: JSON.stringify({
+    //       type: `nft`,
+    //       codehash: currentAvatar.val!.codehash,
+    //       genesis: currentAvatar.val!.genesis,
+    //       tokenIndex: currentAvatar.val!.tokenIndex,
+    //       updateTime: new Date().getTime(),
+    //       memo: currentAvatar.val.desc,
+    //       image: currentAvatar.val.avatarImage,
+    //       chain:
+    //         currentAvatar.val.avatarImage.split('://')[0] === 'metacontract'
+    //           ? 'mvc'
+    //           : currentAvatar.val.avatarImage.split('://')[0],
+    //     }),
+    //   })
+    // }
+
+    // if (form.name !== userStore.user!.name) {
+    //   paramsList.push({
+    //     nodeName: NodeName.Name,
+    //     data: form.name,
+    //   })
+    // }
+
+    // if (currentMetaName.val.name !== userStore.user!.metaName) {
+    //   console.log({ currentMetaName })
+    //   paramsList.push({
+    //     nodeName: NodeName.NftName,
+    //     data: JSON.stringify({
+    //       type: currentMetaName.val.name === '' ? 'name' : 'nft', //string type 取值⻅下⽅
+    //       chain: currentMetaName.val.chain, //string type 链类型
+    //       name: currentMetaName.val.name, //string type, 图片路由
+    //       codehash: currentMetaName.val.codeHash, //string type nft的codehash
+    //       genesis: currentMetaName.val.genesis, //string type nft的genesis 或 nft的tokenAddress
+    //       tokenIndex: currentMetaName.val.tokenIndex, //string type nft的tokenIndex 或 nft的tokenId
+    //       updateTime: new Date().getTime(), //long type 更新时间
+    //       memo: '', //string type 备注 预留字段
+    //     }),
+    //   })
+    // }
+
+    // const res = await userStore.showWallet.batchCreateBrfcChildNode(paramsList)
     if (res) {
       emit('update:modelValue', false)
 
       // @ts-ignore
-      userStore.updateUserInfo({
-        ...userStore.user,
+      // userStore.updateUserInfo({
+      //   ...userStore.user,
+      //   name: form.name,
+      //   avatarImage: currentAvatar.val.avatarImage,
+      //   metaName: currentMetaName.val.name,
+      // })
+      connectStore.updateUserInfo({
+        avatarId: avatarInfo.value.blobUrl,
         name: form.name,
-        avatarImage: currentAvatar.val.avatarImage,
-        metaName: currentMetaName.val.name,
       })
       ElMessage.success(i18n.t('Setting.Edit Profile') + ' ' + i18n.t('Success'))
       loading.value = false

@@ -39,8 +39,9 @@ export class DBClass extends Dexie {
         const fileUrl =
           width !== -1
             ? tranformMetafile(metafile, width)
-            : `${import.meta.env.VITE_AppImgApi}/metafile/${txId}`
+            : `${import.meta.env.VITE_AppImgApi}/content/${txId}`
         const result = await axios.get(fileUrl, { responseType: 'blob' })
+
         if (result.status === 200) {
           resolve({
             txId,

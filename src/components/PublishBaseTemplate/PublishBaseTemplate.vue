@@ -16,7 +16,7 @@
         <div class="user flex flex-align-center flex1">
           <UserAvatar
             :meta-id="userStore.user!.metaId"
-            :image="userStore.user!.avatarImage"
+            :image="connectStore.last.user.avatarId"
             :name="userStore.user!.name"
             :meta-name="userStore.user!.metaName"
             :disabled="true"
@@ -59,6 +59,7 @@
 import { useUserStore } from '@/stores/user'
 import { ref, watch } from 'vue'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
+import { useConnectionStore } from '@/stores/connection'
 
 const props = defineProps<{
   modelValue: boolean
@@ -71,7 +72,7 @@ const props = defineProps<{
 const emit = defineEmits(['update:modelValue', 'update:text', 'close'])
 const userStore = useUserStore()
 const content = ref(props.text)
-
+const connectStore = useConnectionStore()
 watch(
   () => props.text,
   () => {

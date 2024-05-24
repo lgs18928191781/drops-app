@@ -1316,5 +1316,10 @@
     "connect": {
       "fail": "钱包连接失败"
     }
+  },
+  "avatar": {
+    "notsupport": {
+      "multi": "不允许使用多张图片作为头像封面"
+    }
   }
 }

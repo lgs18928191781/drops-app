@@ -12,6 +12,8 @@
         display: inline-block;
         position: relative;
 
+
+
         .avatar {
             width: 120px;
             height: 120px;
@@ -30,9 +32,24 @@
             border-radius: 50%;
             cursor: pointer;
 
+            &:hover {
+                scale: 1.1;
+            }
+
+            .img-upload {
+                width: 1.1rem;
+                height: 1.1rem;
+                position: absolute;
+                opacity: 0;
+                cursor: pointer;
+                z-index: 999;
+            }
+
             .icon {
                 width: 16px;
                 height: 16px;
+
+
             }
         }
     }

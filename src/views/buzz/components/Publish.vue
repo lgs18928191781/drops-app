@@ -267,10 +267,9 @@ async function onChooseImage(e: any) {
   inputFileRef.value[0].value = ''
 
   for (let i = 0; i < files.length; i++) {
-    console.log('files', files)
-
     if (attachments.length < 9) {
       // 压缩图片
+
       const compressed = await compressImage(files[i])
       const result = await FileToAttachmentItem(compressed)
       if (result) attachments.push(result)

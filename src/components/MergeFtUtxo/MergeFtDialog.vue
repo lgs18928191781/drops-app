@@ -70,14 +70,14 @@ interface Props {
   i18n?: any
 }
 
-watch(
-  () => props.modelValue,
-  () => {
-    if (props.modelValue) {
-      getFts(true)
-    }
-  }
-)
+// watch(
+//   () => props.modelValue,
+//   () => {
+//     if (props.modelValue) {
+//       getFts(true)
+//     }
+//   }
+// )
 
 const props = withDefaults(defineProps<Props>(), {})
 const $i18n = props.i18n ? props.i18n : useI18n()

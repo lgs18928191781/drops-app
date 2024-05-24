@@ -1322,5 +1322,10 @@
     "connect": {
       "fail": "Metalet Wallet connection failed"
     }
+  },
+  "avatar": {
+    "notsupport": {
+      "multi": "Not allowed to use multiple images as avatar covers."
+    }
   }
 }

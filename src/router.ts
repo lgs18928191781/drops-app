@@ -475,7 +475,7 @@ router.beforeEach((to, from, next) => {
   const target = whiteList.includes(to.fullPath)
   if (target) {
     if (to.query.to) {
-      next(to.query.to as string)
+      return next(to.query.to as string)
     }
     next()
   } else {

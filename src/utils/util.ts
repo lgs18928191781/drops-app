@@ -165,7 +165,7 @@ export function getMetaFileUrl(metafile: string) {
   if (typeof metafile !== 'string') return ''
   metafile = metafile.replace('metafile://', '')
   if (metafile === '') return ''
-  return `${import.meta.env.VITE_AppImgApi}/metafile/${metafile}`
+  return `${import.meta.env.VITE_AppImgApi}/content/${metafile}`
 }
 
 export function setDataStrclassify(data: any) {
@@ -877,6 +877,10 @@ export function throttle(func, delay = 500) {
 //   })
 // }
 export async function compressImage(image: File) {
+  if (image.type == 'image/gif') {
+    return image
+  }
+
   const compress = (quality: number): Promise<File> =>
     new Promise((resolve, reject) => {
       new Compressor(image, {

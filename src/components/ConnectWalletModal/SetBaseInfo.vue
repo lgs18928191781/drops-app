@@ -125,12 +125,14 @@ import NFTAvatarListVue from '@/components/NFTAvatarList/NFTAvatarList.vue'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
 import { compressImage, throttle, FileToAttachmentItem, getAttachmentsMark } from '@/utils/util'
 import DefaultAvatar from '@/assets/images/default_user.png'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   modelValue: boolean
   loading: boolean
 }
 const imgAttachments = reactive([])
+const i18n = useI18n()
 const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits(['success'])
 const userStore = useUserStore()
@@ -225,24 +227,28 @@ function openAvatarList() {
 // }
 
 async function onChooseImage(e: any) {
+  if(e.target.files > 1){
+    return ElMessage.error(`${i18n.t('avatar.notsupport.multi')}`)
+  }
   const files: File[] = [...e.target.files]
-  imgAttachments.length = 0
-  for (let i = 0; i < files.length; i++) {
-    console.log('files', files)
-    if (imgAttachments.length < 9) {
-      // 压缩图片
-      const compressed = await compressImage(files[i])
+     // 压缩图片
+     const compressed = await compressImage(files[0])
       const result = await FileToAttachmentItem(compressed)
-      if (result) imgAttachments.push(result)
+
       console.log(imgAttachments)
     // console.log(imgAttachments[0].data)
-      imgPic.value = imgAttachments[0].url
-      imghex.value = Buffer.from(imgAttachments[0].data, 'hex').toString('base64')
+      imgPic.value = result.url
+      imghex.value = Buffer.from(result.data, 'hex').toString('base64')
       console.log(imghex.value)
-    } else {
-      break
-    }
-  }
+  // imgAttachments.length = 0
+  // for (let i = 0; i < files.length; i++) {
+  //   console.log('files', files)
+  //   if (imgAttachments.length < 9) {
+
+  //   } else {
+  //     break
+  //   }
+  // }
 }
 
 defineExpose({

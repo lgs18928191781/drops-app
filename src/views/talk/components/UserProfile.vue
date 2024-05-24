@@ -5,7 +5,7 @@
         <!-- 头像 -->
         <UserAvatar
           :meta-id="userStore.user!.metaId"
-          :image="userStore.user!.avatarImage"
+          :image="connectStore.last.user.avatarId"
           :name="userStore.user!.name"
           :meta-name="userStore.user!.metaName"
           class="w-12 h-12 shrink-0"
@@ -41,8 +41,9 @@
 import { useUserStore } from '@/stores/user'
 import { ref } from 'vue'
 import SettingsModal from './modals/SettingsModal.vue'
+import { useConnectionStore } from '@/stores/connection'
 const userStore = useUserStore()
-
+const connectStore = useConnectionStore()
 const showSetting = ref(false)
 const user = ref({
   name: 'Riverrun46',

@@ -31,7 +31,7 @@
         <span class="icon-warp flex flex-align-center flex-pack-center">
           <UserAvatar
             :meta-id="userStore.user!.metaId"
-            :image="userStore.user!.avatarImage"
+            :image="connectionStore.last.user.avatarId"
             :name="userStore.user!.name"
             :meta-name="userStore.user!.metaName"
           />
@@ -92,6 +92,7 @@ import LanguageVue from './Language.vue'
 import ThemeVue from './Theme.vue'
 import LinkAccount from './LinkAccount.vue'
 import { EnvMode } from '@/enum'
+import { useConnectionStore } from '@/stores/connection'
 
 interface Props {
   modelValue: boolean
@@ -107,7 +108,7 @@ const isShowThemeSet = ref(false)
 const isShowUploadLinkSet = ref(false)
 const isShowLinkAccount = ref(false)
 const isMainnet = import.meta.env.MODE === EnvMode.Mainnet
-
+const connectionStore = useConnectionStore()
 const switchLanguage = (lang: string) => {
   i18n.locale.value = lang
   currentLanguage.value = lang

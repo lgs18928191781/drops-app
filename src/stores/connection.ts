@@ -194,6 +194,10 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
 
       },
 
+      updateUserInfo(newInfo:BaseUserInfo){
+        this.last.user={...this.last.user,...newInfo}
+      },
+
       async sync(){
       
       //if(!this.last._isConnected) return
