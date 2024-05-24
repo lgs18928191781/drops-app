@@ -976,15 +976,26 @@ export function copy(
 }
 
 export async function tx(txId: string | undefined) {
-  if (!txId) return
-  const chainInfoRes = await GetTxChainInfo(txId)
-  const chain =
-    chainInfoRes.code === 0 && chainInfoRes.data.chainFlag
-      ? chainInfoRes.data.chainFlag
-      : Chains.MVC
-  const url =
-    chain === Chains.MVC ? `https://mvcscan.com/tx/${txId}` : `https://whatsonchain.com/tx/${txId}`
-  toUrl(url)
+  // if (!txId) return
+  // const chainInfoRes = await GetTxChainInfo(txId)
+  // const chain =
+  //   chainInfoRes.code === 0 && chainInfoRes.data.chainFlag
+  //     ? chainInfoRes.data.chainFlag
+  //     : Chains.MVC
+  // const url =
+  //   chain === Chains.MVC ? `https://mvcscan.com/tx/${txId}` : `https://whatsonchain.com/tx/${txId}`
+  // toUrl(url)
+  // const btcTxId = txId
+  // console.log(btcTxId)
+  // if (btcTxId.endsWith('i0')) {
+  //   btcTxId = btcTxId.slice(0, -2)
+  // }
+
+  let str = txId
+  if (str.slice(-2) === 'i0') {
+    str = str.slice(0, -2)
+  }
+  window.open(`https://mempool.space/testnet/tx/${str}`, '_blank')
 }
 
 // 随机数

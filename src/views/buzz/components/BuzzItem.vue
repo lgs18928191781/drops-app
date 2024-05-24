@@ -43,7 +43,7 @@
             /> -->
             <UserAvatar
               :meta-id="displayItemData.metaId"
-              :image="displayItemData.avatarImage"
+              :image="displayItemData.userInfo.avatarImage"
               :name="displayItemData.userName"
               :image-class="'w-12 h-12'"
             />
@@ -51,8 +51,9 @@
           <div class="info">
             <div class="name">
               <UserName
-                :name="displayItemData.userName"
+                :name="displayItemData.userInfo.name"
                 :metaName="displayItemData?.userInfo?.metaName"
+                :metaId="displayItemData.metaId"
               />
             </div>
             <div class="desc">
@@ -108,7 +109,7 @@
         </template>
 
         <!-- 标签 -->
-        <div class="tags flex flex-align-center" v-if="!isQuote">
+        <!-- <div class="tags flex flex-align-center" v-if="!isQuote">
           <a
             class="flex flex-align-center"
             @click.stop="
@@ -118,7 +119,7 @@
             <Icon name="flag" />
             {{ displayItemData.postTag }}
           </a>
-        </div>
+        </div> -->
 
         <BuzzItemControlVue
           :buzz="displayItemData"
