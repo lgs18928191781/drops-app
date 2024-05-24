@@ -416,6 +416,7 @@
   "Buzz": {
     "Timeline": "时间轴",
     "Recommend": "推荐",
+    "Follower": "关注",
     "publish": {
       "placeholder": "分享您的buzz ~",
       "addImage": "添加图片",

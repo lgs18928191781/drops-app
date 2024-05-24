@@ -471,7 +471,7 @@ export function go(delta: number) {
 window._go = go
 
 router.beforeEach((to, from, next) => {
-  const whiteList = ['/buzz/recommend', '/404', '/home', '/buzz/index', '/buzz/tag/1']
+  const whiteList = ['/404', '/home', '/buzz/tag/1']
   const target = whiteList.includes(to.fullPath)
   if (target) {
     if (to.query.to) {

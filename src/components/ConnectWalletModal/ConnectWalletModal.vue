@@ -1197,27 +1197,28 @@ async function pushToBuzz(data) {
     address: data.address,
     loginType: 'MetaID',
   })
+  router.push('/buzz/tag/1')
   // userStore.isAuthorized = true
   // 如果在首页登录完，要自动跳转到buzz
-  if (route.name === 'home') {
-    console.log(data.metaId)
-    const res = await GetUserFollow(data!.metaid).catch(() => {
-      router.push({
-        name: 'buzz',
-      })
-    })
-    if (res?.code === 0) {
-      if (res.data.followingList && res.data.followingList.length) {
-        router.push({
-          name: 'buzzIndex',
-        })
-      } else {
-        router.push({
-          name: 'buzzRecommend',
-        })
-      }
-    }
-  }
+  // if (route.name === 'home') {
+  //   console.log(data.metaId)
+  //   const res = await GetUserFollow(data!.metaid).catch(() => {
+  //     router.push({
+  //       name: 'buzz',
+  //     })
+  //   })
+  //   if (res?.code === 0) {
+  //     if (res.data.followingList && res.data.followingList.length) {
+  //       router.push({
+  //         name: 'buzzIndex',
+  //       })
+  //     } else {
+  //       router.push({
+  //         name: 'buzzRecommend',
+  //       })
+  //     }
+  //   }
+  // }
 }
 
 async function connectWalletConnect(isUpdate: boolean = false) {
@@ -1392,34 +1393,34 @@ async function connectWalletConnect(isUpdate: boolean = false) {
 async function onModalClose() {
   rootStore.$patch({ isShowLogin: false })
 
-  if (userStore.isAuthorized) {
-    // 登陆了要设置sentry 用户
-    setUser({
-      id: userStore.user!.metaId,
-      email: userStore.user!.phone || userStore.user!.email,
-      username: userStore.user!.name,
-    })
+  // if (userStore.isAuthorized) {
+  //   // 登陆了要设置sentry 用户
+  //   setUser({
+  //     id: userStore.user!.metaId,
+  //     email: userStore.user!.phone || userStore.user!.email,
+  //     username: userStore.user!.name,
+  //   })
 
-    // 如果在首页登录完，要自动跳转到buzz
-    if (route.name === 'home') {
-      const res = await GetUserFollow(userStore.user!.metaId).catch(() => {
-        router.push({
-          name: 'buzz',
-        })
-      })
-      if (res?.code === 0) {
-        if (res.data.followingList && res.data.followingList.length) {
-          router.push({
-            name: 'buzzIndex',
-          })
-        } else {
-          router.push({
-            name: 'buzzRecommend',
-          })
-        }
-      }
-    }
-  }
+  //   // 如果在首页登录完，要自动跳转到buzz
+  //   if (route.name === 'home') {
+  //     const res = await GetUserFollow(userStore.user!.metaId).catch(() => {
+  //       router.push({
+  //         name: 'buzz',
+  //       })
+  //     })
+  //     if (res?.code === 0) {
+  //       if (res.data.followingList && res.data.followingList.length) {
+  //         router.push({
+  //           name: 'buzzIndex',
+  //         })
+  //       } else {
+  //         router.push({
+  //           name: 'buzzRecommend',
+  //         })
+  //       }
+  //     }
+  //   }
+  // }
 }
 
 // onMounted(async () => {

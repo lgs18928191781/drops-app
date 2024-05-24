@@ -23,7 +23,7 @@ export function handleWhiteSpace(str: string, genesis: string) {
 
 export function dateTimeFormat(
   timestamp: Date | number | string,
-  type: string = 'local',
+  type: string = 'UTC',
   format: string = 'YYYY-MM-DD HH:mm:ss'
 ) {
   if (!timestamp) {
@@ -40,8 +40,13 @@ export function dateTimeFormat(
       .utc()
       .format(format)
   } else {
+    console.log(dayjs(timestamp).format(format))
     return dayjs(timestamp).format(format)
   }
+}
+
+export function dateFormat(timestamp: number) {
+  return dayjs.unix(timestamp).format('YYYY-MM-DD HH:mm:ss')
 }
 
 export function legalNftConverterCNY(amount: number | string) {

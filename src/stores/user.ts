@@ -49,6 +49,7 @@ interface UserState {
     }
   }
   sdkPayment: SdkPayType
+  isNeedRefresh: boolean
 }
 
 const userkey = encode('user')
@@ -114,6 +115,7 @@ export const useUserStore = defineStore('user', {
       sdkPayConfirm: sdkPayConfirm,
       metaletLogin: Boolean(Number(localStorage.getItem('useMetaletLogin'))) || Boolean(0),
       sdkPayment: localStorage.getItem(sdkPayConfirmPaymentKey) || SdkPayType.ME,
+      isNeedRefresh: false,
     },
   getters: {
     getMetaletloginState: state => {

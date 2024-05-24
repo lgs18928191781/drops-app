@@ -58,9 +58,7 @@
             </div>
             <div class="desc">
               <span>MetaID: {{ sliceStr(displayItemData.metaId) }}</span>
-              <span class="time">{{
-                $filters.dateTimeFormat(displayItemData.timestamp, 'YY-MM-DD HH:mm:ss')
-              }}</span>
+              <span class="time">{{ $filters.dateFormat(displayItemData.timestamp) }}</span>
             </div>
           </div>
         </div>
