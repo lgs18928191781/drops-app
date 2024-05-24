@@ -39,23 +39,23 @@
     </div>
   </div>
 
-  <a
+  <!-- <a
     @click="toMetaName"
     class="outsideMore flex flex-align-center flex-pack-center user-warp-item"
     v-if="!userStore.isAuthorized"
   >
     <img class="metanameLogo" :src="MetaNameLogo" alt="" />
-  </a>
+  </a> -->
   <template v-if="userStore.isAuthorized">
     <div class="user-warp flex flex-align-center">
       <template v-if="!isMobile">
         <!-- MetaName -->
-        <a
+        <!-- <a
           @click="toMetaName"
           class="outsideMore flex flex-align-center flex-pack-center user-warp-item"
         >
           <img class="metanameLogo" :src="MetaNameLogo" alt="" />
-        </a>
+        </a> -->
 
         <!-- MintCollect -->
         <el-tooltip
