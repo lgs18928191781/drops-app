@@ -1,7 +1,7 @@
 
 import { useConnectionStore } from '@/stores/connection'
-import  {type CreateOptions} from '@metaid/metaid'
-import { BufferEncoding,fileSchema} from '@/data/constants'
+import  {type CreateOptions,IBtcEntity} from '@metaid/metaid'
+import { BufferEncoding,followSchema} from '@/data/constants'
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { useI18n } from 'vue-i18n'
 
@@ -118,18 +118,31 @@ export function useMetaIDEntity(){
     return likeRes
    }
 
+   async function followEntity() {
+    const connectStore = useConnectionStore()
+    const iFollowEntity=new IBtcEntity('follow',followSchema)
+    
+    //const followEntity =await connectStore.last.use('follow')
+    console.log("followEntity",iFollowEntity)
+    debugger
+   }
+
 
    async function getAllBuzz(body:{page:number,limit:number,network:string}){
         const connectStore = useConnectionStore()
+        
         const buzzEntity =connectStore.last.use('buzz')
         const allBuzzRes = (await buzzEntity).list({page:body.page,limit:body.limit,network:body.network})
         return allBuzzRes
    }
 
+   
+
    return{
     fileEntity,
     buzzEntity,
     likeEntity,
-    getAllBuzz
+    getAllBuzz,
+    followEntity
    }
 }
