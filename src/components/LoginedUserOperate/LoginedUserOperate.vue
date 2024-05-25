@@ -1,7 +1,7 @@
 <template>
-  <!-- <div class="version-warp hidden lg:block">
+  <div class="version-warp hidden lg:block">
     <VersionVue />
-  </div> -->
+  </div>
 
   <div class="gas-warp mr-3">
     <div>
