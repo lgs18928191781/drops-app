@@ -23,6 +23,22 @@ type BaseUserInfo={
       unconfirmed:string
 }
 
+export const isUnsupportedAddress = (address: string) => {
+  const networkStore=useNetworkStore()
+  const isLegacyOrScript =
+    address.startsWith('1') ||
+    address.startsWith('3') ||
+    address.startsWith('m') 
+  //||  address.startsWith('n')
+  // 
+
+  const isIncompatibleNetwork =
+  networkStore.network === 'testnet' ? address.startsWith('bc') : address.startsWith('tb')
+
+  return isLegacyOrScript || isIncompatibleNetwork
+}
+
+
 export type WalletConnectionBaseType={ 
     _isConnected:boolean,
     metaid:string,
@@ -134,9 +150,11 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
               network:''
             }
         const networkStore = useNetworkStore()
-          
+      
         let _wallet:MetaletWalletForBtc['internal'] =await MetaletWalletForBtc.create()
        
+         
+
         let connectRes = await btcConnect({
           wallet:_wallet,
           network:networkStore.network
@@ -201,7 +219,11 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
       async sync(){
       
       //if(!this.last._isConnected) return
-
+      const providerAddress= await window.metaidwallet.btc.getAddress()
+      if(isUnsupportedAddress(providerAddress)){
+       
+        ElMessage.error( 'Please use a native SegWit or Taproot or Legacy address (Starts with tb1 or n )',)
+      }
       const _wallet= await MetaletWalletForBtc.restore({
         address:this.userInfo.address,
         pub:this.userInfo.pubkey

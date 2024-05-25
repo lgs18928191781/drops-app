@@ -229,9 +229,9 @@
                         flex-direction: row;
                         align-items: center;
                         padding: 16px 21px;
-                        background-color: #fff !important;
+                        background-color: rgb(187, 186, 186) !important;
                         margin-right: 15px;
-
+                        cursor: not-allowed;
                         &:last-child {
                             margin-right: 0;
                         }

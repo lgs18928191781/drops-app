@@ -76,7 +76,7 @@
             </div>
           </div>
           <div class="foot-warp">
-            <div class="foot">
+            <div class="foot bg-slate-300">
               <div class="title">
                 {{ i18n.t('group1-foot-title') }}
               </div>
@@ -361,6 +361,7 @@ function comming() {
 }
 
 function download(item: any) {
+  return
   if (item.link) {
     toUrl(item.link)
   } else {

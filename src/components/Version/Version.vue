@@ -1,5 +1,5 @@
 <template>
-  <span class="version">Public Beta</span>
+  <span class="version">MetaIDv2 Beta</span>
 </template>
 
 <script setup lang="ts"></script>

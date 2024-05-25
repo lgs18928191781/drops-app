@@ -36,6 +36,7 @@ export const usePostTagStore = defineStore('postTag', {
           resolve()
         })
         if (res?.code === 0) {
+          
           this.list.push(...res.data.results)
           resolve()
         }

@@ -85,13 +85,19 @@ onMounted(async () => {
 
   const ECPair = window.ecpair.ECPairFactory(secp256k1)
   btcJsStore.setECPair(ECPair)
-
+ 
   await connectorStore.sync()
+
+
+  
   feeStore.set(feeStore.last.currentFeeb.title).then()
 
   feebInterval.value = setInterval(() => {
     feeStore.update().then()
   }, 60 * 1000)
+
+
+
 })
 
 onUnmounted(() => {

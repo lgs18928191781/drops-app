@@ -1093,6 +1093,15 @@ async function connectMetalet() {
   if (isMobile.value) {
     return ElMessage.error(`${i18n.t('not_support_mobile_login_metalet')}`)
   }
+  if(!window.metaidwallet){
+    ElMessage.error(`Detected that Metalet wallet is not installed on your local device`)
+    setTimeout(() => {
+      window.open(`https://chromewebstore.google.com/detail/metalet/lbjapbcmmceacocpimbpbidpgmlmoaao?hl=zh-CN&utm_source=ext_sidebar`,'_blank')
+    }, 2000);
+    return 
+  }
+
+
   const loading = ElLoading.service({
     text: 'Loading...',
     lock: true,

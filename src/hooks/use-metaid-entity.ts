@@ -119,12 +119,12 @@ export function useMetaIDEntity(){
    }
 
    async function followEntity() {
-    const connectStore = useConnectionStore()
-    const iFollowEntity=new IBtcEntity('follow',followSchema)
+    // const connectStore = useConnectionStore()
+    // const iFollowEntity=new IBtcEntity('follow',followSchema)
     
-    //const followEntity =await connectStore.last.use('follow')
-    console.log("followEntity",iFollowEntity)
-    debugger
+    // //const followEntity =await connectStore.last.use('follow')
+    // console.log("followEntity",iFollowEntity)
+    // debugger
    }
 
 
