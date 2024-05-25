@@ -88,12 +88,12 @@ const menus = [
     // path: '/buzz/index',
     path: '/buzz/tag/1',
   },
-  {
-    // name: () => i18n.t('Buzz.Recommend'),
-    name: () => i18n.t('Buzz.Follower'),
-    icon: 'star',
-    path: '/buzz/recommend',
-  },
+  // {
+  //   // name: () => i18n.t('Buzz.Recommend'),
+  //   name: () => i18n.t('Buzz.Follower'),
+  //   icon: 'star',
+  //   path: '/buzz/recommend',
+  // },
 ]
 
 const newMenu = [

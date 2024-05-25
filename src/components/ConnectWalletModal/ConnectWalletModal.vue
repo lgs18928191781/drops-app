@@ -256,90 +256,90 @@ const wallets = [
         icon: SPACEIcon,
         fun: connectMetalet,
       },
-      {
-        name: () => {
-          return 'MetaMask'
-        },
-        desc: () => {
-          return ``
-        },
-        icon: IconMetaMask,
-        fun: () => {
-          rootStore.$patch({ isShowLogin: false, isShowMetaMak: true })
-        },
-      },
-      {
-        name: () => {
-          return 'WalletConnect'
-        },
-        desc: () => {
-          return ``
-        },
-        icon: IconWallteConnect,
-        fun: connectWalletConnect,
-      },
+      // {
+      //   name: () => {
+      //     return 'MetaMask'
+      //   },
+      //   desc: () => {
+      //     return ``
+      //   },
+      //   icon: IconMetaMask,
+      //   fun: () => {
+      //     rootStore.$patch({ isShowLogin: false, isShowMetaMak: true })
+      //   },
+      // },
+      // {
+      //   name: () => {
+      //     return 'WalletConnect'
+      //   },
+      //   desc: () => {
+      //     return ``
+      //   },
+      //   icon: IconWallteConnect,
+      //   fun: connectWalletConnect,
+      // },
     ],
   },
   {
     title: () => {
-      return i18n.t('Login.connectMetaIdWallet')
+      // return i18n.t('Login.connectMetaIdWallet')
     },
     list: [
-      {
-        name: () => {
-          return i18n.t('Login.connectMetaIdWallet')
-        },
-        desc: () => {
-          return ''
-        },
-        icon: IconLine,
-        fun: () => {
-          type.value = 'login'
-          // rootStore.$patch({ isShowLogin: false })
-          // isShowLoginAndRegister.value = true
-          status.value = ConnectWalletStatus.UseMetaId
-        },
-      },
+      // {
+      //   name: () => {
+      //     return i18n.t('Login.connectMetaIdWallet')
+      //   },
+      //   desc: () => {
+      //     return ''
+      //   },
+      //   icon: IconLine,
+      //   fun: () => {
+      //     type.value = 'login'
+      //     // rootStore.$patch({ isShowLogin: false })
+      //     // isShowLoginAndRegister.value = true
+      //     status.value = ConnectWalletStatus.UseMetaId
+      //   },
+      // },
     ],
   },
   {
     title: () => {
-      return `${i18n.t('Login.mnemonic')} (MVC)`
+      // return `${i18n.t('Login.mnemonic')} (MVC)`
     },
     list: [
-      {
-        name: () => {
-          return i18n.t('Login.Mnemonic')
-        },
-        desc: () => {
-          return ''
-        },
-        icon: Iconmnemonic,
-        fun: () => {
-          type.value = 'login'
-          status.value = ConnectWalletStatus.Mnemonic
-        },
-      },
+      // {
+      //   name: () => {
+      //     return i18n.t('Login.Mnemonic')
+      //   },
+      //   desc: () => {
+      //     return ''
+      //   },
+      //   icon: Iconmnemonic,
+      //   fun: () => {
+      //     type.value = 'login'
+      //     status.value = ConnectWalletStatus.Mnemonic
+      //   },
+      // },
     ],
   },
   {
     title: () => {
-      return i18n.t('Login.No wallet')
+      // return i18n.t('Login.No wallet')
     },
     list: [
-      {
-        name: () => {
-          return i18n.t('Login.createWallet')
-        },
-        desc: () => {
-          return ''
-        },
-        icon: IconAdd,
-        fun: () => {
-          type.value = 'register'
-          status.value = ConnectWalletStatus.UseMetaId
-        },
-      },
+      // {
+      //   name: () => {
+      //     return i18n.t('Login.createWallet')
+      //   },
+      //   desc: () => {
+      //     return ''
+      //   },
+      //   icon: IconAdd,
+      //   fun: () => {
+      //     type.value = 'register'
+      //     status.value = ConnectWalletStatus.UseMetaId
+      //   },
+      // },
     ],
   },
 ]

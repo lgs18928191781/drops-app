@@ -149,7 +149,8 @@ function getCommunityKey(community: Community) {
 const apps = reactive([
   {
     icon: 'feed',
-    path: '/buzz',
+    // path: '/buzz',
+    path: '/buzz/tag/1',
     extraClass: 'left-navigation-item',
     title: () => i18n.t('Talk.Community.feed'),
     symbol: 'buzz',

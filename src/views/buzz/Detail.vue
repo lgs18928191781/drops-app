@@ -11,7 +11,7 @@
   >
     <template #comment>
       <!--  NFT 法币 Buzz 不给评论 -->
-      <div class="comment" v-if="!isNFTLegalBuzz">
+      <!-- <div class="comment" v-if="!isNFTLegalBuzz">
         <div class="dived"></div>
         <div class="publish-comment flex flex-align-center">
           <UserAvatar
@@ -36,7 +36,7 @@
           @replay="replyComment"
           @like="likeComment"
         ></BuzzCommentListVue>
-      </div>
+      </div> -->
     </template>
   </BuzzListVue>
 </template>
@@ -81,6 +81,7 @@ function fetchData(count = 1, parentResolve?: () => void) {
     const res = await GetBuzz({
       txId: route.params.txId as string,
       metaId: userStore.user?.metaId,
+      chain: 'btc',
     }).catch(error => {
       ElMessage.error(error.message)
     })
