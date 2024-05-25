@@ -471,19 +471,20 @@ export function go(delta: number) {
 window._go = go
 
 router.beforeEach((to, from, next) => {
-  // const whiteList = ['/404', '/home', '/buzz/tag/1', 'buzz/tx/']
-  // const target = whiteList.includes(to.fullPath)
-  // if (target) {
-  //   if (to.query.to) {
-  //     return next(to.query.to as string)
-  //   }
-  //   next()
-  // } else {
-  //   next('/404')
-  // }
+  console.log(to)
+  const whiteList = ['404', 'home', 'buzzTag', 'buzzDetail']
+  const target = whiteList.includes(to.name)
+  if (target) {
+    if (to.query.to) {
+      return next(to.query.to as string)
+    }
+    next()
+  } else {
+    next('/404')
+  }
 
-  if (to.query.to) next(to.query.to as string)
-  else next()
+  // if (to.query.to) next(to.query.to as string)
+  // else next()
 })
 
 const dirLog = {

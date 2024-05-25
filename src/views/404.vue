@@ -2,7 +2,7 @@
   <div class="container">
     <img class="img404" :src="NotFoundSvg" />
     <div class="tips-btn">
-      <router-link to="/">{{ $t('backHome') }}</router-link>
+      <router-link to="/buzz/tag/1">{{ $t('backHome') }}</router-link>
     </div>
   </div>
 </template>
