@@ -481,7 +481,7 @@ router.beforeEach((to, from, next) => {
   // } else {
   //   next('/404')
   // }
-
+  
   if (to.query.to) next(to.query.to as string)
   else next()
 })
