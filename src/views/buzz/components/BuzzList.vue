@@ -138,7 +138,7 @@ import { LoadingTEXT } from '@/utils/LoadingSVGText'
 import { Translate } from '@/api/core'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-
+import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
 interface Props {
   list: BuzzItem[]
   loading?: boolean
@@ -173,6 +173,7 @@ const replayMsg = reactive({
     replyTo: '',
   },
 })
+const { likeEntity } = useMetaIDEntity()
 let audio: HTMLAudioElement | null
 const isShowBuzzPublish: Ref<boolean> = inject('isShowBuzzPublish')!
 const repostTxId: Ref<string> = inject('repostTxId')!
@@ -427,6 +428,26 @@ function onReplay(params: {
 }
 
 async function onLike(params: { txId: string; address: string; done: () => void }) {
+  const LikeBuzzTxId = {
+    likeTo: params.txId,
+  }
+  const likeRes = await likeEntity(LikeBuzzTxId)
+  console.log(likeRes)
+  if (likeRes.revealTxIds.length) {
+    let itemIndex = props.list.findIndex(item => item.txId === params.txId)
+    if (itemIndex !== -1) {
+      const buzz = { ...props.list[itemIndex] }
+      buzz.hasMyLike = true
+      buzz.likeCount += 1
+      console.log(buzz)
+      emit('updateItem', buzz)
+      ElMessage.success(i18n.t('PayLike') + ' ' + i18n.t('Success'))
+    }
+  } else {
+    ElMessage.error('fail')
+  }
+
+  return
   await checkUserLogin()
   let isQuote = false
   let index = props.list.findIndex(item => item.txId === params.txId)

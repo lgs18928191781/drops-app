@@ -62,7 +62,7 @@
             </div>
           </div>
         </div>
-        <div class="operate" v-if="!isQuote">
+        <!-- <div class="operate" v-if="!isQuote">
           <div
             class="follow main-border primary small"
             :class="{ disabled: following }"
@@ -76,7 +76,7 @@
             </template>
             <template v-else>{{ $t('Follow') }}</template>
           </div>
-        </div>
+        </div> -->
       </div>
       <div class="content">
         <template v-if="displayItemData.protocol === NodeName.MetaNote">

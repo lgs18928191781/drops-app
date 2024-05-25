@@ -148,15 +148,21 @@ const commentText = computed(() => {
 })
 
 const isILike = computed(() => {
-  if (props.buzz.like && props.buzz.like.length) {
-    return props.buzz.like.some(v => v.metaId === userStore.user?.metaId)
+  // if (props.buzz.like && props.buzz.like.length) {
+  //   return props.buzz.like.some(v => v.metaId === userStore.user?.metaId)
+  // }
+  if (props.buzz.hasMyLike) {
+    return true
   }
   return false
 })
 
 const likeText = computed(() => {
-  if (props.buzz.like && props.buzz.like.length) {
-    return props.buzz.like.length
+  // if (props.buzz.like && props.buzz.like.length) {
+  //   return props.buzz.like.length
+  // }
+  if (props.buzz.likeCount !== 0) {
+    return props.buzz.likeCount
   }
   return i18n.t('Like')
 })

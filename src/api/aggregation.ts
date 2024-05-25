@@ -286,6 +286,7 @@ export const GetNftHolderList = (params: {
 export const GetBuzz = (params: {
   txId: string
   metaId?: string
+  chain: string
 }): Promise<{
   code: number
   data: {
@@ -296,7 +297,7 @@ export const GetBuzz = (params: {
   }
 }> => {
   return aggregation.get(`/v2/app/buzz/getOneBuzz/${params.txId}`, {
-    params: { metaId: params.metaId },
+    params: { metaId: params.metaId, chain: params.chain },
   })
 }
 
