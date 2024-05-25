@@ -78,6 +78,7 @@ import { initPagination } from '@/config'
 import { usePostTagStore } from '@/stores/buzz/tag'
 import { useUserStore } from '@/stores/user'
 import { useRootStore } from '@/stores/root'
+import { useConnectionStore } from '@/stores/connection'
 import { computed, inject, onActivated, reactive, ref, onMounted, watch, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import BuzzListVue from './components/BuzzList.vue'
@@ -87,6 +88,7 @@ import { useRouter } from 'vue-router'
 const route = useRoute()
 const postTagStore = usePostTagStore()
 const userStore = useUserStore()
+const connectStore = useConnectionStore()
 const i18n = useI18n()
 const list: BuzzItem[] = reactive([])
 const pagination = reactive({ ...initPagination, timestamp: 0 })
@@ -126,6 +128,11 @@ function toBuzzTag(path: string) {
 }
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
+    console.log(userStore.user?.metaId)
+    // console.log(connectStore.last.metaI)
+
+    // return
+
     const res = await GetTagBuzzs({
       tag: tag.value!.tag,
       langId: '', //localStorage.getItem('lang') === 'zh' ? 2 : 1,
