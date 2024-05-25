@@ -33,7 +33,7 @@
   <SearchModal />
   <ConnectWalletModalVue />
   <!-- <UserCardFloater /> -->
-  <PWA />
+  <!-- <PWA /> -->
 
   <!-- 图片预览 -->
   <ImagePreviewVue />
@@ -50,7 +50,7 @@ import ConnectWalletModalVue from './components/ConnectWalletModal/ConnectWallet
 import LeftNavigationVue from './components/LeftNavigation/LeftNavigation.vue'
 import DragonBall from './views/talk/components/DragonBall.vue'
 import SearchModal from './components/Search/Index.vue'
-import PWA from './components/PWA/PWA.vue'
+//import PWA from './components/PWA/PWA.vue'
 import UserCardFloater from './components/UserCard/Floater.vue'
 import PullDownVue from './layout/PullDown/PullDown.vue'
 import ImagePreviewVue from '@/components/ImagePreview/ImagePreview.vue'

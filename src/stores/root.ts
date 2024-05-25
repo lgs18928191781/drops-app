@@ -172,11 +172,11 @@ export const useRootStore = defineStore('root', {
     },
     getExchangeRate() {
       this.isGetedExchangeRate = true
-      getBtcRate().then((res: any) => {
-        if (res.code == 0) {
-          this.exchangeRate = res.data.usd.btc
-        }
-      })
+      // getBtcRate().then((res: any) => {
+      //   if (res.code == 0) {
+      //     this.exchangeRate = res.data.usd.btc
+      //   }
+      // })
       // setInterval(() => {
       //   fetchExchangeRate().then((res: any) => {
       //     if (res) {

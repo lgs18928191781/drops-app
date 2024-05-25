@@ -17,7 +17,8 @@ export const router = createRouter({
       redirect: () => {
         const userStore = useUserStore()
         if (userStore.isAuthorized) {
-          return { name: 'buzzIndex' }
+          return { name: 'buzzIndex'}
+        
         } else {
           return { name: 'home' }
         }
@@ -47,6 +48,7 @@ export const router = createRouter({
           name: 'buzzIndex',
           component: () => import('@/views/buzz/Index.vue'),
           meta: { isAuth: true, keepAlive: true },
+         
         },
         {
           path: 'recommend',
@@ -61,6 +63,7 @@ export const router = createRouter({
         },
         {
           path: 'tag/:tagId',
+         
           name: 'buzzTag',
           meta: { keepAlive: false },
           component: () => import('@/views/buzz/Tag.vue'),
@@ -472,9 +475,13 @@ window._go = go
 
 router.beforeEach((to, from, next) => {
   console.log(to)
+  if(to.name == 'buzzIndex'){
+    return next('/buzz/tag/1')
+  }
   const whiteList = ['404', 'home', 'buzzTag', 'buzzDetail']
   const target = whiteList.includes(to?.name)
   if (target) {
+    
     if (to.query.to) {
       return next(to.query.to as string)
     }

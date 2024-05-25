@@ -19,7 +19,7 @@
     <meta http-equiv="Cache" content="no-store" />
     <!-- <link rel="alternate icon" href="/favicon.ico" type="image/png" sizes="16x16" /> -->
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
-    <link rel="mask-icon" href="pwa-512x512.png" color="#FFFFFF" />
+    <!-- <link rel="mask-icon" href="pwa-512x512.png" color="#FFFFFF" /> -->
     <meta name="theme-color" content="#ffffff" />
     <title>Show3, the World's First NFT-Universal Web3 Social Application.</title>
     <meta
@@ -70,7 +70,10 @@
   </head>
 
   <body>
-    <script type="module" src="/bitcoin.js"></script>
+    <script type="module" src="/bitcoin.js">
+
+
+    </script>
     <script type="module" src="/ecpair.js"></script>
     <div id="app"></div>
     <script src="/mvc.min.js"></script>
@@ -85,8 +88,13 @@
       window.mvc = mvc
       window.ECIES = mvc.ECIES
       window.Mnemonic = mvc.Mnemonic
+     
     </script>
-    <script src="/bip39.min.js"></script>
+    <script src="/bip39.min.js">
+
+
+
+    </script>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

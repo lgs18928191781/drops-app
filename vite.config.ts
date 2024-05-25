@@ -16,7 +16,7 @@ import stdLibBrowser from 'node-stdlib-browser'
 import { viteExternalsPlugin } from 'vite-plugin-externals'
 import nodePolyfills from 'rollup-plugin-polyfill-node'
 import basicSsl from '@vitejs/plugin-basic-ssl'
-import { VitePWA } from 'vite-plugin-pwa'
+//import { VitePWA } from 'vite-plugin-pwa'
 // import { sentryVitePlugin } from '@sentry/vite-plugin'
 import type { ViteSentryPluginOptions } from 'vite-plugin-sentry'
 import viteSentry from 'vite-plugin-sentry'
@@ -129,66 +129,69 @@ export default ({ mode, command }) => {
         'mvc-lib/ecies': 'ECIES',
         'mvc-lib/mnemonic': 'Mnemonic',
         bip39: 'bip39',
+        'bitcoinjs-lib':"bitcoinjs",
+        ecpair:'ecpair',
+
       }),
 
-      VitePWA({
-        registerType: 'autoUpdate',
-        includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'show3.svg'],
-        devOptions: {
-          enabled: true,
-          navigateFallbackAllowlist: [/^index.html$/],
-        },
-        manifest: {
-          name: 'Show3',
-          short_name: 'Show3',
-          description:
-            "Show3 is the World's First NFT-Universal Web3 Social Application. It is the first decentralized social platform based on the DID protocol with fully on-chain data.",
-          theme_color: '#ffffff',
-          icons: [
-            {
-              src: 'pwa-48x48.png',
-              sizes: '48x48',
-              type: 'image/png',
-            },
-            {
-              src: 'pwa-72x72.png',
-              sizes: '72x72',
-              type: 'image/png',
-            },
-            {
-              src: 'pwa-96x96.png',
-              sizes: '96x96',
-              type: 'image/png',
-            },
-            {
-              src: 'pwa-144x144.png',
-              sizes: '144x144',
-              type: 'image/png',
-            },
-            {
-              src: 'pwa-168x168.png',
-              sizes: '168x168',
-              type: 'image/png',
-            },
-            {
-              src: 'pwa-192x192.png',
-              sizes: '192x192',
-              type: 'image/png',
-            },
-            {
-              src: 'pwa-512x512.png',
-              sizes: '512x512',
-              type: 'image/png',
-            },
-            {
-              src: 'pwa-512x512.png',
-              sizes: '512x512',
-              type: 'image/png',
-              purpose: 'any maskable',
-            },
-          ],
-        },
-      }),
+      // VitePWA({
+      //   registerType: 'autoUpdate',
+      //   includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'show3.svg'],
+      //   devOptions: {
+      //     enabled: true,
+      //     navigateFallbackAllowlist: [/^index.html$/],
+      //   },
+      //   manifest: {
+      //     name: 'Show3',
+      //     short_name: 'Show3',
+      //     description:
+      //       "Show3 is the World's First NFT-Universal Web3 Social Application. It is the first decentralized social platform based on the DID protocol with fully on-chain data.",
+      //     theme_color: '#ffffff',
+      //     icons: [
+      //       {
+      //         src: 'pwa-48x48.png',
+      //         sizes: '48x48',
+      //         type: 'image/png',
+      //       },
+      //       {
+      //         src: 'pwa-72x72.png',
+      //         sizes: '72x72',
+      //         type: 'image/png',
+      //       },
+      //       {
+      //         src: 'pwa-96x96.png',
+      //         sizes: '96x96',
+      //         type: 'image/png',
+      //       },
+      //       {
+      //         src: 'pwa-144x144.png',
+      //         sizes: '144x144',
+      //         type: 'image/png',
+      //       },
+      //       {
+      //         src: 'pwa-168x168.png',
+      //         sizes: '168x168',
+      //         type: 'image/png',
+      //       },
+      //       {
+      //         src: 'pwa-192x192.png',
+      //         sizes: '192x192',
+      //         type: 'image/png',
+      //       },
+      //       {
+      //         src: 'pwa-512x512.png',
+      //         sizes: '512x512',
+      //         type: 'image/png',
+      //       },
+      //       {
+      //         src: 'pwa-512x512.png',
+      //         sizes: '512x512',
+      //         type: 'image/png',
+      //         purpose: 'any maskable',
+      //       },
+      //     ],
+      //   },
+      // }),
       // basicSsl(),
 
       // sentryVitePlugin({

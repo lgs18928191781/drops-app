@@ -97,15 +97,15 @@ const publiseSuccessCallBack = ref(() => {
 
 const menus = [
   {
-    name: i18n.t('Buzz.Timeline'),
+    name:'New Buzz', //i18n.t('Buzz.Timeline'),
     icon: 'feed',
-    path: '/buzz/index',
+    path:'/buzz/tag/1' //'/buzz/index',
   },
-  {
-    name: i18n.t('Buzz.Recommend'),
-    icon: 'star',
-    path: '/buzz/recommend',
-  },
+  // {
+  //   name: i18n.t('Buzz.Recommend'),
+  //   icon: 'star',
+  //   path: '/buzz/recommend',
+  // },
 ]
 
 const BuzzContainerRef = ref()
