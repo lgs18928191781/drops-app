@@ -58,6 +58,20 @@ export const fileSchema = {
   ],
 }
 
+export const followSchema = {
+  name: 'follow',
+  nodeName: 'follow',
+  path: '/follow',
+  encoding: 'utf8',
+  versions: [
+    {
+      version: '1.0.1',
+      id:'',
+      body: '',
+    },
+  ],
+}
+
 export const likeSchema = {
   name: 'like',
   path: '/protocols/payLike',

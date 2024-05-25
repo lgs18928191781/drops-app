@@ -167,7 +167,8 @@ import BuzzItemContentSimplePublicShareVue from './BuzzItemContentSimplePublicSh
 import BuzzItemContentSellNftVue from './BuzzItemContentSellNft.vue'
 import BuzzItemContentShreChatMessage from './BuzzItemContentShreChatMessage.vue'
 import { ElMessage } from 'element-plus'
-
+import {useConnectionStore} from '@/stores/connection'
+import {useMetaIDEntity} from '@/hooks/use-metaid-entity'
 interface Props {
   data?: BuzzItem
   isInDetailPage?: boolean
@@ -198,6 +199,8 @@ const props = withDefaults(defineProps<Props>(), {
 })
 const showPopup = ref(false)
 const popupType = ref('more')
+const connetionStore=useConnectionStore()
+const metaidEntity=useMetaIDEntity()
 const isShowConfirm = ref(false)
 const payMe: PayMeParams = reactive({
   amount: 0,
@@ -288,6 +291,9 @@ function sliceStr(str?: string, len = 8) {
 }
 
 async function follow() {
+  // await metaidEntity.followEntity()
+  // debugger
+  return
   await checkUserLogin()
   if (following.value) return
   following.value = true
