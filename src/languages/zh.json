@@ -423,6 +423,7 @@
   "Buzz": {
     "Timeline": "時間軸",
     "Recommend": "推薦",
+    "Follower": "關注",
     "publish": {
       "placeholder": "分享您的buzz ~",
       "addImage": "添加圖片",

@@ -88,9 +88,11 @@ const isShowBuzzPublish = ref(false)
 const publishTopic = ref('')
 const publishRepostTxId = ref('')
 const publiseSuccessCallBack = ref(() => {
-  router.push({
-    name: 'buzz',
-  })
+  // router.push({
+  //   name: 'buzz',
+  // })
+
+  router.push('/buzz/tag/1')
 })
 
 const menus = [

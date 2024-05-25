@@ -78,7 +78,7 @@ import { initPagination } from '@/config'
 import { usePostTagStore } from '@/stores/buzz/tag'
 import { useUserStore } from '@/stores/user'
 import { useRootStore } from '@/stores/root'
-import { computed, inject, onActivated, reactive, ref, onMounted, watch } from 'vue'
+import { computed, inject, onActivated, reactive, ref, onMounted, watch, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import BuzzListVue from './components/BuzzList.vue'
 import { useI18n } from 'vue-i18n'
@@ -159,6 +159,7 @@ function getDatas(isCover = false) {
         })
 
         list.push(...res.data.results.items)
+        userStore.isNeedRefresh = false
         pagination.nothing = false
         pagination.timestamp = res.data.results.items[res.data.results.items.length - 1].timestamp
       } else {
@@ -215,6 +216,13 @@ onActivated(() => {
 
 getDatas(true).then(() => {
   isSkeleton.value = false
+})
+watchEffect(() => {
+  if (userStore.isNeedRefresh) {
+    // 一旦登录成功，重新获取用户头像的逻辑
+    list.length = 0
+    getDatas()
+  }
 })
 </script>
 

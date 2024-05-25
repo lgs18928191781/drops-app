@@ -386,6 +386,7 @@
   "Buzz": {
     "Timeline": "Timeline",
     "Recommend": "Trending🔥",
+    "Follower": "Follow",
     "publish": {
       "placeholder": "Anything Buzzworthy to share?",
       "addAttachment": "Add Image",

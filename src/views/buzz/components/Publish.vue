@@ -334,12 +334,14 @@ async function submit() {
   }
   console.log(sendInfo)
   const sendRes = await buzzEntity(sendInfo)
+
   if (sendRes.revealTxIds.length) {
     content.value = ''
     attachments.length = 0
     emit('update:modelValue', false)
     ElMessage.success('success')
     emit('success')
+    userStore.isNeedRefresh = true
   } else {
     content.value = ''
     attachments.length = 0

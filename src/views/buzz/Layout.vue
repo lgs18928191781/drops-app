@@ -82,22 +82,25 @@ const route = useRoute()
 const rootStore = useRootStore()
 const menus = [
   {
-    name: () => i18n.t('Buzz.Timeline'),
+    // name: () => i18n.t('Buzz.Timeline'),
+    name: () => i18n.t('Buzz.newbuzz'),
     icon: 'feed',
-    path: '/buzz/index',
+    // path: '/buzz/index',
+    path: '/buzz/tag/1',
   },
   {
-    name: () => i18n.t('Buzz.Recommend'),
+    // name: () => i18n.t('Buzz.Recommend'),
+    name: () => i18n.t('Buzz.Follower'),
     icon: 'star',
     path: '/buzz/recommend',
   },
 ]
 
 const newMenu = [
-  {
-    name: () => i18n.t('Buzz.newbuzz'),
-    path: '/buzz/tag/1',
-  },
+  // {
+  //   name: () => i18n.t('Buzz.newbuzz'),
+  //   path: '/buzz/tag/1',
+  // },
   // {
   //   name: () => i18n.t('Buzz.newnft'),
   //   path: '/buzz/tag/2',
