@@ -174,6 +174,7 @@ export const useUserStore = defineStore('user', {
           const state = await window.metaidwallet.isConnected()
           if (state) {
             await window.metaidwallet.disconnect()
+            this.isNeedRefresh = true
           }
         }
         if (window.provider) window.provider = undefined
@@ -193,10 +194,10 @@ export const useUserStore = defineStore('user', {
         talkStore.reset()
         genesStore.initGenesis()
         //
+
         if (route.meta.isAuth) router.push('/')
         // talk的路由跳buzz推荐页
         if (route.path.includes('talk')) router.push('/buzz/recommend')
-
         resolve()
       })
     },
@@ -230,6 +231,7 @@ export const useUserStore = defineStore('user', {
         try {
           this.user = data
           console.log('this.uesr', this.user)
+          this.isNeedRefresh = true
           //
         } catch {}
 
