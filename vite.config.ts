@@ -243,7 +243,7 @@ export default ({ mode, command }) => {
       drop: isProduction ? ['console', 'debugger'] : [],
     },
     build: {
-      target: isProduction ? 'es2015' : 'modules',
+      target: isProduction ? 'esnext' : 'modules',
       minify: isProduction,
       sourcemap: isProduction ? false : 'inline',
       // sourcemap: true,

@@ -31,7 +31,7 @@ pnpm-debug.log*
 
 *.local
 LOCAL_NOTES.md
-
+dist
 dev-dist
 
 
