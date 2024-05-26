@@ -52,6 +52,7 @@ export default ({ mode, command }) => {
   // const isProduction = productionEnvs.includes(mode) && command === 'build' ? true : false
   const isProduction = command === 'build'
   return defineConfig({
+    base:env.VITE_PUBLIC_PATH,
     plugins: [
       command === 'serve' &&
         nodePolyfills({
@@ -129,7 +130,8 @@ export default ({ mode, command }) => {
         'mvc-lib/ecies': 'ECIES',
         'mvc-lib/mnemonic': 'Mnemonic',
         bip39: 'bip39',
-        'bitcoinjs-lib':"bitcoinjs",
+        "bitcoin":"bitcoin",
+        'bitcoinjs':"bitcoinjs",
         ecpair:'ecpair',
 
       }),
@@ -210,9 +212,9 @@ export default ({ mode, command }) => {
       },
     },
     optimizeDeps: {
-      include: ['buffer', 'process'],
+      include: ['buffer', 'process','bitcoinjs','ecpair'],
       esbuildOptions:{
-        target:'esnext',
+        target:'es2015',
         define:{
           global:'globalThis',
         },
@@ -243,16 +245,20 @@ export default ({ mode, command }) => {
       drop: isProduction ? ['console', 'debugger'] : [],
     },
     build: {
-      target: isProduction ? 'esnext' : 'modules',
+      
+      target: isProduction ? 'esnext' : 'module',
       minify: isProduction,
       sourcemap: isProduction ? false : 'inline',
+      
       // sourcemap: true,
       rollupOptions: {
+        //external: ['bitcoin', 'bitcoin.js'],
         // @ts-ignore
         plugins: [nodePolyfills()],
         output: {
           sourcemap: isProduction ? false : 'inline',
         },
+       
       },
       commonjsOptions: {
         transformMixedEsModules: true,
