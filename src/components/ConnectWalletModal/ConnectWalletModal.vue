@@ -1105,83 +1105,84 @@ async function connectMetalet() {
     return
   }
 
-  const loading = ElLoading.service({
-    text: 'Loading...',
-    lock: true,
-    spinner: 'el-icon-loading',
-    background: 'rgba(0, 0, 0, 0.7)',
-    customClass: 'full-loading',
-  })
-  try {
-    const btcConnector = await connectStore.connect()
+  // const loading = ElLoading.service({
+  //   text: 'Loading...',
+  //   lock: true,
+  //   spinner: 'el-icon-loading',
+  //   background: 'rgba(0, 0, 0, 0.7)',
+  //   customClass: 'full-loading',
+  // })
 
-    if (!btcConnector._isConnected) {
-      loading.close()
-      return ElMessage.error(`${i18n.t('wallet_addres_empty')}`)
-    }
-    // userStore.updateUserInfo({
-    //   address: btcConnector.address,
-    //   loginType: 'MetaID',
-    // })
+  console.log(loading)
 
-    const needInfo = { network: btcConnector.network, address: btcConnector.address }
-    const currentUserInfo = await btcConnector.getUser({ ...needInfo })
+  // try {
+  const btcConnector = await connectStore.connect()
 
-    const currentUserName = currentUserInfo.name
-    if (!currentUserName) {
-      loading.close()
-      isShowSetBaseInfo.value = true
-    } else {
-      pushToBuzz(currentUserInfo)
-      rootStore.$patch({ isShowLogin: false })
-      loading.close()
-    }
-
-    // try {
-
-    //   // return
-    //   // if (!currentMetaId) {
-    //   //   loading.close()
-    //   //   console.log('btcConnector.internal', btcConnector)
-    //   //   isShowSetBaseInfo.value = true
-    //   // } else {
-    //   //   getUserInfo(btcConnector)
-    //   //   rootStore.$patch({ isShowLogin: false })
-    //   //   loading.close()
-    //   // }
-    // } catch (error) {
-
-    // }
-
-    // userStore.updateUserInfo({
-    //   ...metaIdInfo,
-    //   metaId: metaIdInfo.metaId, // account 有时拿回来的metaId为空
-    //   name: metaIdInfo.name!, // account 有时拿回来的name 是旧 name
-    //   //password: form.password,
-    //   address: metaidWallet.rootAddress,
-    //   loginType: 'MetaID',
-    // })
-    // userStore.updateMetaletLoginState(true)
-    // userStore.$patch({
-    //   wallet: null,
-    // })
-    // userStore.$patch({
-    //   wallet: new MetaletSDK({
-    //     network: import.meta.env.VITE_NET_WORK,
-    //     wallet: metaidWallet,
-    //   }),
-    // })
-    // status.value = ConnectWalletStatus.Watting
-    // rootStore.$patch({ isShowLogin: false })
+  if (!btcConnector._isConnected) {
     // loading.close()
-    // if (!metaIdInfo.name) {
-    //   isShowSetBaseInfo.value = true
-    // }
-  } catch (error) {
-    loading.close()
-    rootStore.$patch({ isShowLogin: true })
-    ElMessage.error(`${(error as any).toString()}`)
+    return ElMessage.error(`${i18n.t('wallet_addres_empty')}`)
   }
+  // userStore.updateUserInfo({
+  //   address: btcConnector.address,
+  //   loginType: 'MetaID',
+  // })
+
+  // const needInfo = { network: btcConnector.network, address: btcConnector.address }
+  const currentUserInfo = await btcConnector.getUser({ network: btcConnector.network })
+  const currentUserName = currentUserInfo.name
+  if (!currentUserName) {
+    isShowSetBaseInfo.value = true
+  } else {
+    pushToBuzz(currentUserInfo)
+    rootStore.$patch({ isShowLogin: false })
+    // loading.close()
+  }
+
+  // try {
+
+  //   // return
+  //   // if (!currentMetaId) {
+  //   //   loading.close()
+  //   //   console.log('btcConnector.internal', btcConnector)
+  //   //   isShowSetBaseInfo.value = true
+  //   // } else {
+  //   //   getUserInfo(btcConnector)
+  //   //   rootStore.$patch({ isShowLogin: false })
+  //   //   loading.close()
+  //   // }
+  // } catch (error) {
+
+  // }
+
+  // userStore.updateUserInfo({
+  //   ...metaIdInfo,
+  //   metaId: metaIdInfo.metaId, // account 有时拿回来的metaId为空
+  //   name: metaIdInfo.name!, // account 有时拿回来的name 是旧 name
+  //   //password: form.password,
+  //   address: metaidWallet.rootAddress,
+  //   loginType: 'MetaID',
+  // })
+  // userStore.updateMetaletLoginState(true)
+  // userStore.$patch({
+  //   wallet: null,
+  // })
+  // userStore.$patch({
+  //   wallet: new MetaletSDK({
+  //     network: import.meta.env.VITE_NET_WORK,
+  //     wallet: metaidWallet,
+  //   }),
+  // })
+  // status.value = ConnectWalletStatus.Watting
+  // rootStore.$patch({ isShowLogin: false })
+  // loading.close()
+  // if (!metaIdInfo.name) {
+  //   isShowSetBaseInfo.value = true
+  // }
+  // } catch (error) {
+  //   loading.close()
+  //   rootStore.$patch({ isShowLogin: true })
+  //   ElMessage.error(`${(error as any).toString()}`)
+  // // }
 
   //metalet-SDK实例化
 }
@@ -1472,10 +1473,9 @@ async function onModalClose() {
 //     })
 //   }
 // })
-function closeSetInfoModal(){
+function closeSetInfoModal() {
   isShowSetBaseInfo.value = false
   connectStore.disconnect()
-  
 }
 </script>
 <style lang="scss" scoped src="./ConnectWalletModal.scss"></style>
