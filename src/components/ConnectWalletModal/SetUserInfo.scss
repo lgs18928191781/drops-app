@@ -1,0 +1,113 @@
+.modal-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 7777;
+    width: 50vh;
+    // height: 50vh;
+    border-radius: 24px;
+
+    .close {
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--themeBgSecondColor);
+        cursor: pointer;
+        margin-left: -17px;
+        margin-bottom: -50px;
+
+        .icon {
+            width: 12px;
+            height: 12px;
+            transition: all 0.5s;
+        }
+
+        &:hover {
+            .icon {
+                transform: rotate(180deg);
+            }
+        }
+    }
+
+    .header-content {
+        margin-bottom: 1rem;
+    }
+
+    .form-info {
+        width: 100%;
+
+
+        .avatar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+
+            .show-img {
+                width: 1.1rem;
+                height: 1.1rem;
+                border-radius: 40%;
+            }
+
+            .img-upload {
+                width: 1.1rem;
+                height: 1.1rem;
+                position: absolute;
+                opacity: 0;
+                cursor: pointer;
+                top: 1.6rem;
+            }
+        }
+
+        .name {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.3rem;
+
+        }
+
+        .bio {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.3rem;
+
+        }
+    }
+
+    .operate {
+        margin-top: 40px;
+        text-align: right;
+
+        .main-border {
+            cursor: pointer;
+            padding: 16px;
+            display: inline-block;
+            background: var(--el-color-primary);
+
+            .icon {
+                width: 24px;
+                height: 24px;
+            }
+
+            &.faded {
+                background: #EDEFF2;
+
+
+                :deep(.icon) {
+                    use {
+                        fill: var(--el-border-color);
+                    }
+                }
+            }
+        }
+    }
+}

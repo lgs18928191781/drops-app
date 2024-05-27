@@ -70,12 +70,18 @@
   />
 
   <!-- setBaseInfo -->
-  <SetBaseInfoVue
+  <!-- <SetBaseInfoVue
     v-model="isShowSetBaseInfo"
     :loading="loading"
     @success="onSetBaseInfoSuccessType"
     @closeSetInfoModal="closeSetInfoModal"
     ref="setBaseInfoRef"
+  /> -->
+
+  <SetUserInfoVue
+    v-if="isShowSetUserInfo"
+    @success="onSetBaseInfoSuccessType"
+    @closeSetInfoModal="closeSetInfoModal"
   />
 
   <!-- send buzz -->
@@ -158,7 +164,8 @@ import FirstBuzzImg from '@/assets/images/first_buzz.svg?url'
 import { toMvcScan } from '@/utils/util'
 import MetaIdWalletVue, { MetaIdWalletRegisterBaseInfo } from './MetaIdWallet.vue'
 import MnemonicVue from './MnemonicLogin.vue'
-import SetBaseInfoVue from './SetBaseInfo.vue'
+// import SetBaseInfoVue from './SetBaseInfo.vue'
+import SetUserInfoVue from './SetUserInfo.vue'
 import BackupMnemonicVue from './BackupMnemonic.vue'
 import BindMetaIdVue from './BindMetaId.vue'
 import { reactive, Ref, ref, computed } from 'vue'
@@ -238,6 +245,8 @@ const metaIdWalletRegisterBaseInfo: { val: undefined | MetaIdWalletRegisterBaseI
   val: undefined,
 })
 const isSHowBackupMnemonic = ref(false)
+
+const isShowSetUserInfo = ref(false)
 const isMobile = computed(() => {
   return isAndroid || isIOS || isWechat
 })
@@ -652,7 +661,8 @@ async function onSetBaseInfoSuccessType(params: { name: string; nft: NFTAvatarIt
     // const createMetaidRes = await btcConnector.createMetaid({ ...userInfo })
     console.log(setUserInfoRes)
     if (setUserInfoRes) {
-      isShowSetBaseInfo.value = false
+      // isShowSetBaseInfo.value = false
+      isShowSetUserInfo.value = false
       rootStore.$patch({ isShowLogin: false })
       ElMessage.success('Successful')
     }
@@ -1128,14 +1138,19 @@ async function connectMetalet() {
   // })
 
   // const needInfo = { network: btcConnector.network, address: btcConnector.address }
-  const currentUserInfo = await btcConnector.getUser({ network: btcConnector.network })
-  const currentUserName = currentUserInfo.name
-  if (!currentUserName) {
-    isShowSetBaseInfo.value = true
-  } else {
-    pushToBuzz(currentUserInfo)
-    rootStore.$patch({ isShowLogin: false })
-    // loading.close()
+  try {
+    const currentUserInfo = await btcConnector.getUser({ network: btcConnector.network })
+    const currentUserName = currentUserInfo.name
+    if (!currentUserName) {
+      // isShowSetBaseInfo.value = true
+      isShowSetUserInfo.value = true
+    } else {
+      pushToBuzz(currentUserInfo)
+      rootStore.$patch({ isShowLogin: false })
+      // loading.close()
+    }
+  } catch (error) {
+    console.error('Error fetching user info:', error)
   }
 
   // try {
@@ -1474,7 +1489,7 @@ async function onModalClose() {
 //   }
 // })
 function closeSetInfoModal() {
-  isShowSetBaseInfo.value = false
+  isShowSetUserInfo.value = false
   connectStore.disconnect()
 }
 </script>

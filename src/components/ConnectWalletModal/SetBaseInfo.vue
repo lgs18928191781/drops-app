@@ -13,10 +13,7 @@
         :element-loading-svg="LoadingTEXT"
         :element-loading-text="$t('Loading')"
       >
-        <a
-          class="close flex flex-align-center flex-pack-center"
-          @click="closeSetInfoModal"
-        >
+        <a class="close flex flex-align-center flex-pack-center" @click="closeSetInfoModal">
           <Icon name="x_mark" />
         </a>
 
