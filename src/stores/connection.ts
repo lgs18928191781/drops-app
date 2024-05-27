@@ -3,7 +3,7 @@ import { useLocalStorage, type RemovableRef } from '@vueuse/core'
 import { ElMessage } from 'element-plus'
 import * as metaletAdapter from '@/utils/metalet'
 import { Network, useNetworkStore } from './network'
-import type { Psbt } from 'bitcoinjs-lib'
+//import type { Psbt } from 'bitcoinjs-lib'
 import {  btcConnect,MetaletWalletForBtc,IBtcConnector } from '@metaid/metaid'
 import { object } from 'yup'
 
@@ -102,7 +102,7 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
         if (!state.last) throw new Error('No connection')
   
         const adapter: {
-          initPsbt: () => Psbt
+          initPsbt: () => any//Psbt
           getMvcBalance: () => Promise<any>
           getMvcAddress: () => Promise<string>
   
@@ -219,11 +219,11 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
       async sync(){
       
       //if(!this.last._isConnected) return
-      const providerAddress= await window.metaidwallet.btc.getAddress()
-      if(isUnsupportedAddress(providerAddress)){
+      // const providerAddress= await window.metaidwallet.btc.getAddress()
+      // if(isUnsupportedAddress(providerAddress)){
        
-        ElMessage.error( 'Please use a native SegWit or Taproot or Legacy address (Starts with tb1 or n )',)
-      }
+      //   ElMessage.error( 'Please use a native SegWit or Taproot or Legacy address (Starts with tb1 or n )',)
+      // }
       const _wallet= await MetaletWalletForBtc.restore({
         address:this.userInfo.address,
         pub:this.userInfo.pubkey

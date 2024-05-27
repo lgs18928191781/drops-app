@@ -29,41 +29,68 @@ import { StartSentry } from './utils/sentry'
 import VueVirtualScroller from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import VConsole from 'vconsole'
-import * as secp256k1 from 'tiny-secp256k1'
+// import * as secp256k1 from 'tiny-secp256k1'
 // if (import.meta.env.MODE !== 'prod') {
 //   const vConsole = new VConsole()
 // }
 
 const head = createHead()
 const pinia = createPinia()
-const launchInterval = setInterval(() => {
-  if (window.bitcoinjs && window.ecpair) {
-    window.bitcoinjs.initEccLib(secp256k1)
-    const app = createApp(App)
 
-    StartSentry({ app, router })
-    // 挂载全局过滤器
-    // @ts-ignore
-    app.config.globalProperties.$filters = {
-      ...filters,
-    }
-    // 全局组件
-    app.component('UserAvatar', UserAvatar)
-    app.component('Image', Image)
-    app.component('UserName', UserName)
-    app.component('Icon', Icon)
+const app = createApp(App)
 
-    app.use(VueVirtualScroller)
-    // app.component('Dialog', GlobalDialog)
+StartSentry({ app, router })
+// 挂载全局过滤器
+// @ts-ignore
+app.config.globalProperties.$filters = {
+  ...filters,
+}
+// 全局组件
+app.component('UserAvatar', UserAvatar)
+app.component('Image', Image)
+app.component('UserName', UserName)
+app.component('Icon', Icon)
 
-    app
-      .use(pinia)
-      .use(router)
-      .use(ElLoading)
-      .use(i18n)
-      .use(VueQueryPlugin)
-      .use(head)
-      .mount('#app')
-    clearInterval(launchInterval)
-  }
-}, 200)
+app.use(VueVirtualScroller)
+// app.component('Dialog', GlobalDialog)
+
+app
+  .use(pinia)
+  .use(router)
+  .use(ElLoading)
+  .use(i18n)
+  .use(VueQueryPlugin)
+  .use(head)
+  .mount('#app')
+
+// const launchInterval = setInterval(() => {
+//   if (window.bitcoinjs && window.ecpair) {
+//     window.bitcoinjs.initEccLib(secp256k1)
+//     const app = createApp(App)
+
+//     StartSentry({ app, router })
+//     // 挂载全局过滤器
+//     // @ts-ignore
+//     app.config.globalProperties.$filters = {
+//       ...filters,
+//     }
+//     // 全局组件
+//     app.component('UserAvatar', UserAvatar)
+//     app.component('Image', Image)
+//     app.component('UserName', UserName)
+//     app.component('Icon', Icon)
+
+//     app.use(VueVirtualScroller)
+//     // app.component('Dialog', GlobalDialog)
+
+//     app
+//       .use(pinia)
+//       .use(router)
+//       .use(ElLoading)
+//       .use(i18n)
+//       .use(VueQueryPlugin)
+//       .use(head)
+//       .mount('#app')
+//     clearInterval(launchInterval)
+//   }
+// }, 200)

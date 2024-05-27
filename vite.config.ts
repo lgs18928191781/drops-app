@@ -20,8 +20,8 @@ import basicSsl from '@vitejs/plugin-basic-ssl'
 // import { sentryVitePlugin } from '@sentry/vite-plugin'
 import type { ViteSentryPluginOptions } from 'vite-plugin-sentry'
 import viteSentry from 'vite-plugin-sentry'
-import wasm from "vite-plugin-wasm";
-import topLevelAwait from "vite-plugin-top-level-await";
+//import wasm from 'vite-plugin-wasm'
+//import topLevelAwait from 'vite-plugin-top-level-await'
 
 // import dns from 'dns'
 // dns.setDefaultResultOrder('verbatim')
@@ -38,21 +38,21 @@ export default ({ mode, command }) => {
     project: env.VITE_SENTRY_PROJECT,
     release: env.VITE_COMMIT_ID,
     deploy: {
-      env: 'production'
+      env: 'production',
     },
     setCommits: {
-      auto: true
+      auto: true,
     },
     sourceMaps: {
       include: ['./dist/assets'],
       ignore: ['node_modules'],
-      urlPrefix: '~/assets'
-    }
+      urlPrefix: '~/assets',
+    },
   }
   // const isProduction = productionEnvs.includes(mode) && command === 'build' ? true : false
   const isProduction = command === 'build'
   return defineConfig({
-    base:env.VITE_PUBLIC_PATH,
+    base: env.VITE_PUBLIC_PATH,
     plugins: [
       command === 'serve' &&
         nodePolyfills({
@@ -69,7 +69,7 @@ export default ({ mode, command }) => {
       vue({
         template: {
           compilerOptions: {
-            isCustomElement: tag => tag.includes('show-'),
+            isCustomElement: (tag) => tag.includes('show-'),
           },
         },
       }),
@@ -103,8 +103,7 @@ export default ({ mode, command }) => {
         // you need to set i18n resource including paths !
         include: path.resolve(__dirname, './src/languages/**'),
       }),
-      wasm(),
-      topLevelAwait(),
+    
       svgLoader(),
       VitePluginHtmlEnv(),
       createSvgIconsPlugin({
@@ -130,10 +129,6 @@ export default ({ mode, command }) => {
         'mvc-lib/ecies': 'ECIES',
         'mvc-lib/mnemonic': 'Mnemonic',
         bip39: 'bip39',
-        "bitcoin":"bitcoin",
-        'bitcoinjs':"bitcoinjs",
-        ecpair:'ecpair',
-
       }),
 
       // VitePWA({
@@ -203,7 +198,7 @@ export default ({ mode, command }) => {
       //   project: env.VITE_SENTRY_PROJECT,
       //   authToken: env.VITE_SENTRY_AUTH_TOKEN,
       // }),
-      viteSentry(sentryConfig)
+      viteSentry(sentryConfig),
     ],
     resolve: {
       alias: {
@@ -212,17 +207,16 @@ export default ({ mode, command }) => {
       },
     },
     optimizeDeps: {
-      include: ['buffer', 'process','bitcoinjs','ecpair'],
-      esbuildOptions:{
-        target:'es2015',
-        define:{
-          global:'globalThis',
-        },
-        supported:{
-          bigint:true
-        }
-
-      }
+      // include: ['buffer', 'process'],
+      // esbuildOptions:{
+      //   target:'es2015',
+      //   define:{
+      //     global:'globalThis',
+      //   },
+      //   supported:{
+      //     bigint:true
+      //   }
+      // }
     },
     define: {
       _APP_VERSION: JSON.stringify(pkg.version),
@@ -245,11 +239,10 @@ export default ({ mode, command }) => {
       drop: isProduction ? ['console', 'debugger'] : [],
     },
     build: {
-      
       target: isProduction ? 'esnext' : 'module',
       minify: isProduction,
       sourcemap: isProduction ? false : 'inline',
-      
+
       // sourcemap: true,
       rollupOptions: {
         //external: ['bitcoin', 'bitcoin.js'],
@@ -258,7 +251,6 @@ export default ({ mode, command }) => {
         output: {
           sourcemap: isProduction ? false : 'inline',
         },
-       
       },
       commonjsOptions: {
         transformMixedEsModules: true,

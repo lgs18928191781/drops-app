@@ -1,5 +1,5 @@
 import { ElMessage } from 'element-plus'
-import { useBtcJsStore } from '@/stores/btcjs'
+//import { useBtcJsStore } from '@/stores/btcjs'
 import { Buffer } from 'buffer'
 import { btcConnect, MetaletWalletForBtc } from '@metaid/metaid'
 import {type Network} from '@/stores/network'
@@ -84,10 +84,10 @@ export const getAddress = async () => {
   return address
 }
 
-export function initPsbt() {
-  const bitcoinJs = useBtcJsStore().get!
-  return new bitcoinJs.Psbt()
-}
+// export function initPsbt() {
+//   const bitcoinJs = useBtcJsStore().get!
+//   return new bitcoinJs.Psbt()
+// }
 
 export function finishPsbt<T>(psbt: T): T {
   return psbt
