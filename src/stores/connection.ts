@@ -202,8 +202,15 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
           _isConnected: false,
           metaid:'',
           user:{},
+          
+
           network: 'testnet'
         }
+       this.userInfo={
+        address:'',
+        pubkey:'',
+        metaid:'',
+       }
         // this.last._isConnected = false
         // this.last.address = ''
         // this.last.wallet = {}
