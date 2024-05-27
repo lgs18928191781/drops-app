@@ -97,7 +97,7 @@ import { useRoute } from 'vue-router'
 import BuzzListVue from './components/BuzzList.vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-
+import { checkUserLogin } from '@/utils/util'
 const route = useRoute()
 const postTagStore = usePostTagStore()
 const userStore = useUserStore()
@@ -217,7 +217,9 @@ function updateItem(buzz: BuzzItem) {
     list[index] = buzz
   }
 }
-function openPublish() {
+async function openPublish() {
+  //  console.log(connectStore.userInfo.metaid)
+  await checkUserLogin()
   isShowBuzzPublish.value = true
 }
 
