@@ -225,6 +225,7 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
       },
 
       async sync(){
+        
       
       //if(!this.last._isConnected) return
       // const providerAddress= await window.metaidwallet.btc.getAddress()
@@ -232,10 +233,15 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
        
       //   ElMessage.error( 'Please use a native SegWit or Taproot or Legacy address (Starts with tb1 or n )',)
       // }
-      const _wallet= await MetaletWalletForBtc.restore({
+
+    if(!this.userInfo.address) return
+
+      const _wallet = await MetaletWalletForBtc.restore({
         address:this.userInfo.address,
         pub:this.userInfo.pubkey
        })
+      
+
         let connectRes = await btcConnect({
           wallet:_wallet,
           network:this.last.network!
