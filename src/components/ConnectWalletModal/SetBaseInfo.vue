@@ -13,6 +13,13 @@
         :element-loading-svg="LoadingTEXT"
         :element-loading-text="$t('Loading')"
       >
+        <a
+          class="close flex flex-align-center flex-pack-center"
+          @click="closeSetInfoModal"
+        >
+          <Icon name="x_mark" />
+        </a>
+
         <div class="flex1 set-base-user-info-item set-warp">
           <div class="title">
             {{ $t('Login.setBaseInfo.title') }}
@@ -205,7 +212,9 @@ function submitForm() {
     }
   })
 }
-
+function closeSetInfoModal(){
+  emit('closeSetInfoModal')
+}
 function openAvatarList() {
   isShowAvatasList.value = !isShowAvatasList.value
 }

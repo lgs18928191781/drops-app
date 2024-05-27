@@ -74,6 +74,7 @@
     v-model="isShowSetBaseInfo"
     :loading="loading"
     @success="onSetBaseInfoSuccessType"
+    @closeSetInfoModal="closeSetInfoModal"
     ref="setBaseInfoRef"
   />
 
@@ -1471,5 +1472,10 @@ async function onModalClose() {
 //     })
 //   }
 // })
+function closeSetInfoModal(){
+  isShowSetBaseInfo.value = false
+  connectStore.disconnect()
+  
+}
 </script>
 <style lang="scss" scoped src="./ConnectWalletModal.scss"></style>
