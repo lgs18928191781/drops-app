@@ -196,6 +196,7 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
   
       async disconnect() {
         if (!this.last) return
+        
         this.last= {
           wallet: {},
           _isConnected: false,
@@ -212,7 +213,7 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
 
       },
 
-      updateUserInfo(newInfo:BaseUserInfo){
+      updateUser(newInfo:BaseUserInfo){
         this.last.user={...this.last.user,...newInfo}
       },
 

@@ -155,7 +155,7 @@ const editType = ref(EditType.Avatar)
 // @ts-ignore
 const currentAvatar: { val: NFTAvatarItem } = reactive({
   val: {
-    avatarImage: connectStore.last.user.avatarId, //'946d1bd0adb6a734eac6a06ff610237f5361d13ff69f18ab6d6c196a3ace2d03i0', //connectStore.last.user.avatar, //userStore.user?.avatarImage,
+    avatarImage: connectStore.last?.user?.avatarId, //'946d1bd0adb6a734eac6a06ff610237f5361d13ff69f18ab6d6c196a3ace2d03i0', //connectStore.last.user.avatar, //userStore.user?.avatarImage,
   },
 })
 // @ts-ignore
@@ -169,7 +169,7 @@ watch(
   () => userStore.isAuthorized,
   () => {
     if (userStore.isAuthorized) {
-      currentAvatar.val.avatarImage = connectStore.last.user.avatarId
+      currentAvatar.val.avatarImage = connectStore.last?.user?.avatarId
       //currentAvatar.val.avatarImage = userStore.user!.avatarImage
     }
   }
@@ -292,7 +292,7 @@ async function confirm() {
   if (
     form.name === '' ||
     (form.name === connectStore.last.user.name &&
-      currentAvatar.val.avatarImage === connectStore.last.user.avatarId)
+      currentAvatar.val.avatarImage === connectStore.last?.user?.avatarId)
   )
     return
   loading.value = true

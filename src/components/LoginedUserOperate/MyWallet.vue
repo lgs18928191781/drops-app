@@ -21,7 +21,7 @@
             >
               <UserAvatar
                 :meta-id="userStore.user!.metaId"
-                :image="connecionStore.last.user.avatarId"
+                :image="connecionStore.last?.user?.avatarId"
                 :disabled="true"
                 :name="userStore.user!.name"
                 :meta-name="userStore.user!.metaName"

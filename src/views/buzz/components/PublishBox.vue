@@ -2,7 +2,7 @@
   <div class="publish flex " v-if="userStore.isAuthorized" @click="publish">
     <UserAvatar
       :meta-id="userStore.user!.metaId"
-      :image="connectionStore.last.user.avatarId"
+      :image="connectionStore.last?.user?.avatarId"
       :name="userStore.user!.name"
       :meta-name="userStore.user!.metaName"
       :disabled="true"

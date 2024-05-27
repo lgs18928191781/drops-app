@@ -236,7 +236,7 @@ export default ({ mode, command }) => {
       // },
     },
     esbuild: {
-      drop: isProduction ? ['console', 'debugger'] : [],
+      drop: isProduction ? ['debugger'] : [], //['console', 'debugger']
     },
     build: {
       target: isProduction ? 'esnext' : 'module',

@@ -31,7 +31,7 @@
         <span class="icon-warp flex flex-align-center flex-pack-center">
           <UserAvatar
             :meta-id="userStore.user!.metaId"
-            :image="connectionStore.last.user.avatarId"
+            :image="connectionStore.last?.user?.avatarId"
             :name="userStore.user!.name"
             :meta-name="userStore.user!.metaName"
           />

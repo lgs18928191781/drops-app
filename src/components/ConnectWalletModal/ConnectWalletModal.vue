@@ -1093,14 +1093,16 @@ async function connectMetalet() {
   if (isMobile.value) {
     return ElMessage.error(`${i18n.t('not_support_mobile_login_metalet')}`)
   }
-  if(!window.metaidwallet){
+  if (!window.metaidwallet) {
     ElMessage.error(`Detected that Metalet wallet is not installed on your local device`)
     setTimeout(() => {
-      window.open(`https://chromewebstore.google.com/detail/metalet/lbjapbcmmceacocpimbpbidpgmlmoaao?hl=zh-CN&utm_source=ext_sidebar`,'_blank')
-    }, 2000);
-    return 
+      window.open(
+        `https://chromewebstore.google.com/detail/metalet/lbjapbcmmceacocpimbpbidpgmlmoaao?hl=zh-CN&utm_source=ext_sidebar`,
+        '_blank'
+      )
+    }, 2000)
+    return
   }
-
 
   const loading = ElLoading.service({
     text: 'Loading...',
@@ -1111,42 +1113,44 @@ async function connectMetalet() {
   })
   try {
     const btcConnector = await connectStore.connect()
+
     if (!btcConnector._isConnected) {
       loading.close()
       return ElMessage.error(`${i18n.t('wallet_addres_empty')}`)
     }
-    userStore.updateUserInfo({
-      address: btcConnector.address,
-      loginType: 'MetaID',
-    })
+    // userStore.updateUserInfo({
+    //   address: btcConnector.address,
+    //   loginType: 'MetaID',
+    // })
 
-    try {
-      const needInfo = { network: 'testnet', address: btcConnector.address }
-      const currentUserInfo = await btcConnector.getUser({ ...needInfo })
-      console.log(currentUserInfo)
-      const currentUserName = currentUserInfo.name
-      if (!currentUserName) {
-        loading.close()
-        isShowSetBaseInfo.value = true
-      } else {
-        pushToBuzz(currentUserInfo)
-        rootStore.$patch({ isShowLogin: false })
-        loading.close()
-      }
+    const needInfo = { network: btcConnector.network, address: btcConnector.address }
+    const currentUserInfo = await btcConnector.getUser({ ...needInfo })
 
-      // return
-      // if (!currentMetaId) {
-      //   loading.close()
-      //   console.log('btcConnector.internal', btcConnector)
-      //   isShowSetBaseInfo.value = true
-      // } else {
-      //   getUserInfo(btcConnector)
-      //   rootStore.$patch({ isShowLogin: false })
-      //   loading.close()
-      // }
-    } catch (error) {
-      console.log('error', error)
+    const currentUserName = currentUserInfo.name
+    if (!currentUserName) {
+      loading.close()
+      isShowSetBaseInfo.value = true
+    } else {
+      pushToBuzz(currentUserInfo)
+      rootStore.$patch({ isShowLogin: false })
+      loading.close()
     }
+
+    // try {
+
+    //   // return
+    //   // if (!currentMetaId) {
+    //   //   loading.close()
+    //   //   console.log('btcConnector.internal', btcConnector)
+    //   //   isShowSetBaseInfo.value = true
+    //   // } else {
+    //   //   getUserInfo(btcConnector)
+    //   //   rootStore.$patch({ isShowLogin: false })
+    //   //   loading.close()
+    //   // }
+    // } catch (error) {
+
+    // }
 
     // userStore.updateUserInfo({
     //   ...metaIdInfo,
