@@ -20,8 +20,7 @@ import basicSsl from '@vitejs/plugin-basic-ssl'
 // import { sentryVitePlugin } from '@sentry/vite-plugin'
 import type { ViteSentryPluginOptions } from 'vite-plugin-sentry'
 import viteSentry from 'vite-plugin-sentry'
-import wasm from "vite-plugin-wasm";
-import topLevelAwait from "vite-plugin-top-level-await";
+
 
 // import dns from 'dns'
 // dns.setDefaultResultOrder('verbatim')
@@ -103,8 +102,7 @@ export default ({ mode, command }) => {
         // you need to set i18n resource including paths !
         include: path.resolve(__dirname, './src/languages/**'),
       }),
-      wasm(),
-      topLevelAwait(),
+    
       svgLoader(),
       VitePluginHtmlEnv(),
       createSvgIconsPlugin({
@@ -130,9 +128,9 @@ export default ({ mode, command }) => {
         'mvc-lib/ecies': 'ECIES',
         'mvc-lib/mnemonic': 'Mnemonic',
         bip39: 'bip39',
-        "bitcoin":"bitcoin",
-        'bitcoinjs':"bitcoinjs",
-        ecpair:'ecpair',
+        // "bitcoin":"bitcoin",
+        // 'bitcoinjs':"bitcoinjs",
+        // ecpair:'ecpair',
 
       }),
 
@@ -212,17 +210,17 @@ export default ({ mode, command }) => {
       },
     },
     optimizeDeps: {
-      include: ['buffer', 'process','bitcoinjs','ecpair'],
-      esbuildOptions:{
-        target:'es2015',
-        define:{
-          global:'globalThis',
-        },
-        supported:{
-          bigint:true
-        }
+      // include: ['buffer', 'process','bitcoinjs','ecpair'],
+      // esbuildOptions:{
+      //   target:'es2015',
+      //   define:{
+      //     global:'globalThis',
+      //   },
+      //   supported:{
+      //     bigint:true
+      //   }
 
-      }
+      // }
     },
     define: {
       _APP_VERSION: JSON.stringify(pkg.version),
@@ -246,7 +244,7 @@ export default ({ mode, command }) => {
     },
     build: {
       
-      target: isProduction ? 'esnext' : 'module',
+      target: isProduction ? 'es2015' : 'module',
       minify: isProduction,
       sourcemap: isProduction ? false : 'inline',
       
