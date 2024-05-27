@@ -76,7 +76,7 @@ const routeKey = (route: any) => {
 //   localStorage.setItem('showDiffLang', String(1))
 // }
 
-onMounted(async () => {
+onMounted(() => {
   // initialize btcjs
   // const btcjs = window.bitcoinjs
   // btcJsStore.set(btcjs)
@@ -86,13 +86,15 @@ onMounted(async () => {
   // const ECPair = window.ecpair.ECPairFactory(secp256k1)
   // btcJsStore.setECPair(ECPair)
 
-  await connectorStore.sync()
+  setTimeout(async () => {
+    await connectorStore.sync()
 
-  feeStore.set(feeStore.last.currentFeeb.title).then()
+    feeStore.set(feeStore.last.currentFeeb.title).then()
 
-  feebInterval.value = setInterval(() => {
-    feeStore.update().then()
-  }, 60 * 1000)
+    feebInterval.value = setInterval(() => {
+      feeStore.update().then()
+    }, 60 * 1000)
+  }, 200)
 })
 
 onUnmounted(() => {
