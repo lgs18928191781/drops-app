@@ -654,13 +654,14 @@ async function onSetBaseInfoSuccessType(params: {
     name: params.name,
     bio: params.bio,
     avatar: params.nft,
-    network: networkStore.network,
+    network: connectStore.last.network,
     feeRate: feebStore.last.currentFeeb.feeRate,
     service: {
       address: import.meta.env.VITE_BTC_SERVICE_ADDRESS,
       satoshis: import.meta.env.VITE_BTC_SERVICE_FEEB,
     },
   }
+
   try {
     const setUserInfoRes = await connectStore.last.createUserInfo({ ...userInfo })
     // const createMetaidRes = await btcConnector.createMetaid({ ...userInfo })
@@ -1150,6 +1151,7 @@ async function connectMetalet() {
   // const needInfo = { network: btcConnector.network, address: btcConnector.address }
   try {
     const currentUserInfo = await btcConnector.getUser({ network: btcConnector.network })
+
     const currentUserName = currentUserInfo.name
     if (!currentUserName) {
       // isShowSetBaseInfo.value = true
@@ -1212,7 +1214,10 @@ async function connectMetalet() {
   //metalet-SDK实例化
 }
 async function getUserInfo() {
-  const needInfo = { network: 'testnet', address: connectStore.userInfo.address }
+  const needInfo = {
+    network: connectStore.last.network || networkStore.network,
+    address: connectStore.userInfo.address,
+  }
   const currentUserInfo = await connectStore.last.getUser({ ...needInfo })
   console.log(currentUserInfo)
   pushToBuzz(currentUserInfo)

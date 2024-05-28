@@ -159,7 +159,7 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
           wallet:_wallet,
           network:networkStore.network
         })
-          
+       
         try {
           if (connectRes) {
             // check if network suits app's current environment;
@@ -220,7 +220,7 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
 
       },
 
-      updateUser(newInfo:Omit<BaseUserInfo,'name' | 'bio' | 'avatarId'>){
+      updateUser(newInfo:Partial<BaseUserInfo>){
         this.last.user={...this.last.user,...newInfo}
       },
 

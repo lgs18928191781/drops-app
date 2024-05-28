@@ -114,13 +114,13 @@ export const getNetwork = async () => {
   const { network }=await window.metaidwallet.getNetwork()
   switch (network) {
     case 'mainnet':
-      return 'livenet'
+      return 'mainnet'
     case 'testnet':
       return 'testnet'
     case 'regtest':
       return 'regtest'
     default:
-      return 'livenet'
+      return 'mainnet'
   }
 }
 
