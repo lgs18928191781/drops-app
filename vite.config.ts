@@ -52,6 +52,7 @@ export default ({ mode, command }) => {
   // const isProduction = productionEnvs.includes(mode) && command === 'build' ? true : false
   const isProduction = command === 'build'
   return defineConfig({
+    base:env.VITE_PUBLIC_PATH,
    
     plugins: [
       command === 'serve' &&
