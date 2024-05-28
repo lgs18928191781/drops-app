@@ -13,7 +13,7 @@ import { error } from 'console'
 import { ethers } from 'ethers'
 import { changeSymbol } from '@/utils/util'
 
-const aggregationForBtc = new HttpRequest(`https://testmvc.showmoney.app/aggregation`, {
+const aggregationForBtc = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation`, {
   header: {
     SiteConfigMetanetId: import.meta.env.VITE_SiteConfigMetanetId,
   },
