@@ -28,8 +28,8 @@ export const isUnsupportedAddress = (address: string) => {
   const isLegacyOrScript =
     address.startsWith('1') ||
     address.startsWith('3') ||
-    address.startsWith('m') 
-  //||  address.startsWith('n')
+    address.startsWith('m') ||
+    address.startsWith('n')
   // 
 
   const isIncompatibleNetwork =
@@ -204,7 +204,7 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
           user:{},
           
 
-          network: 'testnet'
+          network: 'livenet'
         }
        this.userInfo={
         address:'',
@@ -220,7 +220,7 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
 
       },
 
-      updateUser(newInfo:BaseUserInfo){
+      updateUser(newInfo:Omit<BaseUserInfo,'name' | 'bio' | 'avatarId'>){
         this.last.user={...this.last.user,...newInfo}
       },
 

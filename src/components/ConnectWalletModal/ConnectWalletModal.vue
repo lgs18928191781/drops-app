@@ -644,7 +644,12 @@ async function OnMetaIdSuccess(type: 'register' | 'login') {
   }
 }
 
-async function onSetBaseInfoSuccessType(params: { name: string; nft: NFTAvatarItem; bio: string }) {
+async function onSetBaseInfoSuccessType(params: {
+  name: string
+  nft: NFTAvatarItem
+  bio: string
+  avatarId: string
+}) {
   const userInfo = {
     name: params.name,
     bio: params.bio,
@@ -662,6 +667,11 @@ async function onSetBaseInfoSuccessType(params: { name: string; nft: NFTAvatarIt
     console.log(setUserInfoRes)
     if (setUserInfoRes) {
       // isShowSetBaseInfo.value = false
+      connectStore.updateUser({
+        name: params.name,
+        bio: params.bio,
+        avatarId: params.avatarId,
+      })
       isShowSetUserInfo.value = false
       rootStore.$patch({ isShowLogin: false })
       ElMessage.success('Successful')

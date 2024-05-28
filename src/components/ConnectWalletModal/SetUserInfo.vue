@@ -66,6 +66,7 @@ function submitForm() {
     name: form.name,
     nft: imghex.value,
     bio: form.bio,
+    avatarId: imgPic.value,
   })
 }
 const rules = {
