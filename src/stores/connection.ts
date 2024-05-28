@@ -159,7 +159,7 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
           wallet:_wallet,
           network:networkStore.network
         })
-        
+          
         try {
           if (connectRes) {
             // check if network suits app's current environment;
@@ -180,8 +180,8 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
             
             
             this.last = connectRes
-            this.userInfo.metaid=connectRes.user.metaid
-            this.userInfo.address=connectRes.user.address
+            this.userInfo.metaid=connectRes.metaid
+            this.userInfo.address=connectRes.address
             this.userInfo.pubkey=pubkey
             return this.last
           }
@@ -266,9 +266,9 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
             const pubkey=await getWalletAdapter().getPubKey()
             
             this.last=connectRes
-            this.userInfo.metaid=connectRes.user.metaid
+            this.userInfo.metaid=connectRes.metaid
             this.userInfo.pubkey=pubkey
-            this.userInfo.address=connectRes.user.address
+            this.userInfo.address=connectRes.address
             
             
             
