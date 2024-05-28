@@ -192,47 +192,47 @@ const publishOperates = reactive([
       )
     },
   },
-  {
-    icon: 'music',
-    fun: () => {},
-    disabled: () => {
-      return true
-      return attachments.length > 0
-    },
-  },
-  {
-    icon: 'buzz_nft',
-    fun: () => {
-      if (attachments.length <= 0) {
-        isShowNFTList.value = true
-      }
-    },
-    disabled: () => {
-      return attachments.length > 0
-    },
-  },
-  {
-    icon: 'buzz_hashtag',
-    fun: () => {
-      isShowTopic.value = true
-    },
-    disabled: () => {
-      return true
-      return false
-    },
-  },
+  // {
+  //   icon: 'music',
+  //   fun: () => {},
+  //   disabled: () => {
+  //     return true
+  //     return attachments.length > 0
+  //   },
+  // },
+  // {
+  //   icon: 'buzz_nft',
+  //   fun: () => {
+  //     if (attachments.length <= 0) {
+  //       isShowNFTList.value = true
+  //     }
+  //   },
+  //   disabled: () => {
+  //     return attachments.length > 0
+  //   },
+  // },
+  // {
+  //   icon: 'buzz_hashtag',
+  //   fun: () => {
+  //     isShowTopic.value = true
+  //   },
+  //   disabled: () => {
+  //     return true
+  //     return false
+  //   },
+  // },
 ])
 if (import.meta.env.MODE !== EnvMode.Mainnet) {
-  publishOperates.push({
-    icon: 'calendar_days',
-    fun: () => {
-      isShowSchedule.value = true
-    },
-    disabled: () => {
-      return true
-      return false
-    },
-  })
+  // publishOperates.push({
+  //   icon: 'calendar_days',
+  //   fun: () => {
+  //     isShowSchedule.value = true
+  //   },
+  //   disabled: () => {
+  //     return true
+  //     return false
+  //   },
+  // })
 }
 const playFile = ref('')
 let audio: HTMLAudioElement | null
@@ -333,20 +333,28 @@ async function submit() {
     attachments: attachments,
   }
   console.log(sendInfo)
-  const sendRes = await buzzEntity(sendInfo)
-
-  if (sendRes.revealTxIds.length) {
-    content.value = ''
-    attachments.length = 0
-    emit('update:modelValue', false)
-    ElMessage.success('success')
-    emit('success')
-    userStore.isNeedRefresh = true
-  } else {
-    content.value = ''
-    attachments.length = 0
-    emit('update:modelValue', false)
-    ElMessage.error('fail')
+  try {
+    const sendRes = await buzzEntity(sendInfo)
+    if (sendRes.revealTxIds.length) {
+      content.value = ''
+      attachments.length = 0
+      emit('update:modelValue', false)
+      ElMessage.success('success')
+      emit('success')
+      userStore.isNeedRefresh = true
+    } else {
+      content.value = ''
+      attachments.length = 0
+      emit('update:modelValue', false)
+      ElMessage.error('fail')
+    }
+  } catch (error) {
+    const errorMessage = error.message
+    // console.log(errorMessage)
+    const toastMessage = errorMessage?.includes('Cannot read properties of undefined')
+      ? 'User Canceled'
+      : error
+    ElMessage.error(toastMessage)
   }
 
   // const info = { likeTo: '63344fd9b2e604bbd36f2a9b405198a643374013d37481aacdecd63ed55c9348i0' }

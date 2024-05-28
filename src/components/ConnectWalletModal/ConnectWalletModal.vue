@@ -1144,6 +1144,7 @@ async function connectMetalet() {
     if (!currentUserName) {
       // isShowSetBaseInfo.value = true
       isShowSetUserInfo.value = true
+      rootStore.$patch({ isShowLogin: false })
     } else {
       pushToBuzz(currentUserInfo)
       rootStore.$patch({ isShowLogin: false })

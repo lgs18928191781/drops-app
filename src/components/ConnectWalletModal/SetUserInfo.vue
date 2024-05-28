@@ -1,49 +1,54 @@
 <template>
   <div class="modal-container">
-    <a class="close flex flex-align-center flex-pack-center" @click="closeSetInfoModal">
-      <Icon name="x_mark" />
-    </a>
-    <div class="header-content">
-      {{ $t('Login.setBaseInfo.title') }}
-    </div>
-    <div class="form-info">
-      <div class="avatar">
-        <div class="key">{{ $t('Login.setBaseInfo.setAvatar') }}</div>
-        <div>
-          <div class="show-img">
-            <img :src="imgPic" />
+    <div class="content-container">
+      <a class="close flex flex-align-center flex-pack-center" @click="closeSetInfoModal">
+        <Icon name="x_mark" />
+      </a>
+      <div class="header-content">
+        {{ $t('Login.setBaseInfo.title') }}
+      </div>
+      <div class="form-info">
+        <div class="avatar">
+          <div class="key">{{ $t('Login.setBaseInfo.setAvatar') }}</div>
+          <div>
+            <div class="show-img">
+              <img :src="imgPic" />
+            </div>
+            <input type="file" @change="onChooseImage" class="img-upload" ref="inputRef" />
           </div>
-          <input type="file" @change="onChooseImage" class="img-upload" ref="inputRef" />
+        </div>
+        <div class="name">
+          <div class="key">{{ $t('Login.setBaseInfo.setUserName') }}</div>
+          <ElForm :model="form" :rules="rules" ref="FormRef">
+            <ElFormItem prop="name">
+              <el-input
+                v-model="form.name"
+                :placeholder="$t('Login.setBaseInfo.setUserNamePlac')"
+              />
+            </ElFormItem>
+          </ElForm>
+        </div>
+        <div class="bio">
+          <div class="key">{{ $t('Login.setBaseInfo.setBio') }}</div>
+          <ElForm :model="form" :rules="rules" ref="FormRef">
+            <ElFormItem>
+              <el-input
+                v-model="form.bio"
+                type="textarea"
+                :placeholder="$t('Login.setBaseInfo.setBioPlac')"
+              />
+            </ElFormItem>
+          </ElForm>
         </div>
       </div>
-      <div class="name">
-        <div class="key">{{ $t('Login.setBaseInfo.setUserName') }}</div>
-        <ElForm :model="form" :rules="rules" ref="FormRef">
-          <ElFormItem prop="name">
-            <el-input v-model="form.name" :placeholder="$t('Login.setBaseInfo.setUserNamePlac')" />
-          </ElFormItem>
-        </ElForm>
-      </div>
-      <div class="bio">
-        <div class="key">{{ $t('Login.setBaseInfo.setBio') }}</div>
-        <ElForm :model="form" :rules="rules" ref="FormRef">
-          <ElFormItem>
-            <el-input
-              v-model="form.bio"
-              type="textarea"
-              :placeholder="$t('Login.setBaseInfo.setBioPlac')"
-            />
-          </ElFormItem>
-        </ElForm>
-      </div>
-    </div>
 
-    <div class="operate">
-      <a class="main-border" :class="{ faded: form.name === '' }" @click="submitForm">
-        <Icon name="right" />
-      </a>
+      <div class="operate">
+        <a class="main-border" :class="{ faded: form.name === '' }" @click="submitForm">
+          <Icon name="right" />
+        </a>
+      </div>
+      <!-- <div class="sub-btn" @click="submitForm">btn</div> -->
     </div>
-    <!-- <div class="sub-btn" @click="submitForm">btn</div> -->
   </div>
 </template>
 
