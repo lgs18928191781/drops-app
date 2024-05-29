@@ -62,12 +62,16 @@
             </div>
           </div>
         </div>
-        <!-- <div class="operate" v-if="!isQuote">
+        <div class="operate" v-if="!isQuote">
           <div
             class="follow main-border primary small"
             :class="{ disabled: following }"
             @click.stop="follow"
-            v-if="!displayItemData.isMyFollow && (!userStore.isAuthorized || (userStore.isAuthorized && displayItemData.metaId !== userStore.user!.metaId))"
+            v-if="
+              !displayItemData.isMyFollow &&
+                (!userStore.isAuthorized ||
+                  (userStore.isAuthorized && displayItemData.metaId !== connetionStore.last.metaid))
+            "
           >
             <template v-if="following">
               <el-icon class="is-loading">
@@ -76,7 +80,7 @@
             </template>
             <template v-else>{{ $t('Follow') }}</template>
           </div>
-        </div> -->
+        </div>
       </div>
       <div class="content">
         <template v-if="displayItemData.protocol === NodeName.MetaNote">
@@ -167,8 +171,8 @@ import BuzzItemContentSimplePublicShareVue from './BuzzItemContentSimplePublicSh
 import BuzzItemContentSellNftVue from './BuzzItemContentSellNft.vue'
 import BuzzItemContentShreChatMessage from './BuzzItemContentShreChatMessage.vue'
 import { ElMessage } from 'element-plus'
-import {useConnectionStore} from '@/stores/connection'
-import {useMetaIDEntity} from '@/hooks/use-metaid-entity'
+import { useConnectionStore } from '@/stores/connection'
+import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
 interface Props {
   data?: BuzzItem
   isInDetailPage?: boolean
@@ -199,8 +203,8 @@ const props = withDefaults(defineProps<Props>(), {
 })
 const showPopup = ref(false)
 const popupType = ref('more')
-const connetionStore=useConnectionStore()
-const metaidEntity=useMetaIDEntity()
+const connetionStore = useConnectionStore()
+const metaidEntity = useMetaIDEntity()
 const isShowConfirm = ref(false)
 const payMe: PayMeParams = reactive({
   amount: 0,
@@ -291,8 +295,12 @@ function sliceStr(str?: string, len = 8) {
 }
 
 async function follow() {
-  // await metaidEntity.followEntity()
-  // debugger
+  await metaidEntity.followEntity({
+    body: {
+      followMetaId: displayItemData.value!.metaId,
+    },
+  })
+  debugger
   return
   await checkUserLogin()
   if (following.value) return

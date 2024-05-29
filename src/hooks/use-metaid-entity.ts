@@ -1,7 +1,7 @@
 
 import { useConnectionStore } from '@/stores/connection'
 import  {type CreateOptions,IBtcEntity} from '@metaid/metaid'
-import { BufferEncoding,followSchema} from '@/data/constants'
+import { BufferEncoding} from '@/data/constants'
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { useI18n } from 'vue-i18n'
 
@@ -11,8 +11,8 @@ export type EntityOptions={
     feeRate?:number
 }
 
-function isEmpty(attachments:AttachmentItem[]){
-    return Array.isArray(attachments) && attachments.length
+function isEmpty(attachments:AttachmentItem[] | string[]){
+    return Array.isArray(attachments) && attachments.length 
 }
 
 
@@ -118,13 +118,36 @@ export function useMetaIDEntity(){
     return likeRes
    }
 
-   async function followEntity() {
-    // const connectStore = useConnectionStore()
-    // const iFollowEntity=new IBtcEntity('follow',followSchema)
+   async function followEntity(params:{body:{followMetaId:string}}) {
+    const connectStore = useConnectionStore()
+    try {
+        const followRes=await connectStore.last.inscribe(
+            [
+                {
+                    operation: 'create',
+                  path: '/follow',
+                  body: params.body.followMetaId,
+                  contentType: 'text/plain;utf-8',
+                  flag: import.meta.env.VITE_BTC_METAID_FLAG,
+                }
+            ],
+            'no',
+            feebStore.last.currentFeeb.feeRate,
+            {
+                address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
+                satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
+            }
     
-    // //const followEntity =await connectStore.last.use('follow')
-    // console.log("followEntity",iFollowEntity)
-    // debugger
+        )
+        if(!isEmpty(followRes.revealTxIds)){
+            
+        }
+        console.log("followRes",followRes)
+        debugger  
+    } catch (error) {
+        throw new Error(error as any)
+    }
+   
    }
 
 
