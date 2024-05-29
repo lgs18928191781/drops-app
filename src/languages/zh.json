@@ -1308,5 +1308,6 @@
   "nosupportmetaletissue": "暂不支持以Metalet登陆方式铸造NFT,请切换到账号或助记词登陆进行操作",
   "issue_check_vaild": "请检查表单项目填写是否完善",
   "issue_before_serires": "铸造前需创建专辑系列",
-  "issue_before_NFT_name": "铸造前需创建NFT名称"
+  "issue_before_NFT_name": "铸造前需创建NFT名称",
+  "not allow_join_commutity": "暂不支持使用Metalet钱包加入社区"
 }

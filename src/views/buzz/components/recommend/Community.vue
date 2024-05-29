@@ -129,6 +129,9 @@ function getRecommendCommunitys() {
 }
 
 async function join(item: recommnedCommunity, index: number) {
+  if (userStore.metaletLogin) {
+    return ElMessage.error(`${i18n.t('not allow_join_commutity')}`)
+  }
   if (loading.includes(true) || item.isMyJoin) return
   loading[index] = true
   const res = await userStore.showWallet
