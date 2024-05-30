@@ -634,21 +634,28 @@ async function onSetBaseInfoSuccessType(params: { name: string; nft: NFTAvatarIt
 async function onSetBaseInfoSuccessForMetalet(params: { name: string; nft: NFTAvatarItem }) {
   loading.value = true
   try {
+    
     const wallet = userStore.showWallet!.wallet
 
     if (userStore.isAuthorized) {
       let utxos, infoAddress, protocolAddress
-      utxos = await wallet?.metaIDJsWallet.getUtxos({ path: '0/1' })
+      utxos = await wallet?.provider.getAddressUtxos({
+        address:wallet.infoAddress,
+        xpub:wallet?.xpub,
+        addressType:0,
+        addressIndex:1,
+      })
       if (!utxos.length) {
-        utxos = await wallet?.metaIDJsWallet.getUtxos({ path: '0/1' })
-      }
-      infoAddress = await wallet?.metaIDJsWallet.getAddress({
-        path: wallet.keyPathMap.Info.keyPath,
+        utxos =await wallet?.provider.getAddressUtxos({
+        address:wallet.infoAddress,
+        xpub:wallet?.xpub,
+        addressType:0,
+        addressIndex:1,
       })
-      protocolAddress = await wallet?.metaIDJsWallet.getAddress({
-        path: wallet.keyPathMap.Protocols.keyPath,
-      })
-
+    }
+      infoAddress = wallet!.infoAddress 
+      protocolAddress =  wallet!.protocolAddress
+      
       const broadcasts: Array<{
         hex: string
         transation: mvc.Transaction
