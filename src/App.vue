@@ -1,4 +1,7 @@
 <template>
+
+
+
   <RouterView
     v-if="
       $route.path === '/' ||
@@ -7,6 +10,8 @@
     "
   />
   <div class="flex main" v-else>
+
+   
     <LeftNavigationVue v-if="!blackRoute.includes(route.name)" />
     <PullDownVue class="flex1">
       <template #default>
@@ -55,6 +60,8 @@ import UserCardFloater from './components/UserCard/Floater.vue'
 import PullDownVue from './layout/PullDown/PullDown.vue'
 import ImagePreviewVue from '@/components/ImagePreview/ImagePreview.vue'
 
+
+
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const route = useRoute()
@@ -69,7 +76,10 @@ const routeKey = (route: any) => {
 //   localStorage.setItem('showDiffLang', String(1))
 // }
 
-onMounted(() => {})
+
+onMounted(() => {
+
+})
 </script>
 <style lang="css" src="@/assets/styles/tailwind.css"></style>
 <style lang="scss" scoped>

@@ -42,12 +42,14 @@ export class Session {
     if (item) {
       return item
     } else {
+      
       if (userStore.metaletLogin) {
         for (let i = 0; i <= 10000; i++) {
-          const _address = await userStore.showWallet!.wallet!.metaIDJsWallet.getAddress({
-            path: `0/${i}`,
-          })
-
+          // const _address = await userStore.showWallet!.wallet!.metaIDJsWallet.getAddress({
+          //   path: `0/${i}`,
+          // })
+          const _address=userStore.showWallet!.wallet!.getAddressFromPath(i)
+            
           console.log('_address', _address)
           if (_address === address) {
             console.log('path', i)
