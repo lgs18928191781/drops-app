@@ -52,7 +52,8 @@ export default ({ mode, command }) => {
   // const isProduction = productionEnvs.includes(mode) && command === 'build' ? true : false
   const isProduction = command === 'build'
   return defineConfig({
-    base: env.VITE_PUBLIC_PATH,
+    
+   
     plugins: [
       command === 'serve' &&
         nodePolyfills({
@@ -228,15 +229,15 @@ export default ({ mode, command }) => {
       https: false,
       // open: true,
       // proxy: {
-      //   '^/metasv/': {
-      //     target: 'https://192.168.168.147:443',
+      //   '^/rate-services/': {
+      //     target: 'https://www.orders.exchange/api-book/brc20/common/rate/btc',
       //     changeOrigin: true,
-      //     rewrite: path => path.replace(/^\/metasv/, ''),
+      //     rewrite: path => path.replace(/^\/rate-services/, ''),
       //   },
       // },
     },
     esbuild: {
-      drop: isProduction ? ['debugger'] : [], //['console', 'debugger']
+      drop: isProduction ? ['console','debugger'] : [], //['console', 'debugger']
     },
     build: {
       target: isProduction ? 'esnext' : 'module',

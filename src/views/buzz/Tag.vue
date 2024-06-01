@@ -42,13 +42,14 @@
       </div>
 
       <div class="tab flex flex-align-center" v-if="tag?.subTag && tag?.subTag.length">
-        <a
+        <!-- <a
           :class="{ active: item.tag === tabActive }"
           v-for="item in tag?.subTag"
           :key="item.tag"
           @click="changeSubTag(item.tag)"
           >{{ item[$i18n.locale] }}</a
-        >
+        > -->
+        <a class="active">Newest</a>
       </div>
     </div>
   </div>

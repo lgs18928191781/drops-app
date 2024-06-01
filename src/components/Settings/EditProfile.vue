@@ -368,7 +368,7 @@ async function confirm() {
       //   avatarImage: currentAvatar.val.avatarImage,
       //   metaName: currentMetaName.val.name,
       // })
-      connectStore.updateUserInfo({
+      connectStore.updateUser({
         avatarId: avatarInfo.value.blobUrl,
         name: form.name,
       })

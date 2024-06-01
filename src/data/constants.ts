@@ -1,6 +1,6 @@
 import { Network } from '@/stores/network'
 
-export const NETWORK: Network = import.meta.env.VITE_NETWORK || 'testnet'
+export const NETWORK: Network = import.meta.env.VITE_NETWORK || 'mainnet'
 
 type EntitySchema = {
   name: string
@@ -52,21 +52,7 @@ export const fileSchema = {
   encoding: 'binary',
   versions: [
     {
-      version: '1.0.1',
-      body: '',
-    },
-  ],
-}
-
-export const followSchema = {
-  name: 'follow',
-  nodeName: 'follow',
-  path: '/follow',
-  encoding: 'utf8',
-  versions: [
-    {
-      version: '1.0.1',
-      id:'',
+      version: 1,
       body: '',
     },
   ],

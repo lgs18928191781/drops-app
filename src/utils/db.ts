@@ -2,6 +2,7 @@ import axios from 'axios'
 import Dexie, { Table } from 'dexie'
 import { reject } from 'lodash'
 import { metafile, metafile as tranformMetafile } from './filters'
+import {type MyFollow} from '@/stores/follow'
 export interface MetafileSchems {
   txId?: string
   data?: Blob
@@ -13,11 +14,14 @@ export interface MetafileSchems {
 export class DBClass extends Dexie {
   metafiles!: Table<MetafileSchems>
   genesis!: Table<GenesisItem>
+
+ 
   constructor() {
     super('show3.0')
     this.version(4).stores({
       metafiles: 'txId', // Primary key and indexed props
       genesis: 'genesis, metaId', // Primary key and indexed props
+    
     })
     this.maintenanceData()
   }

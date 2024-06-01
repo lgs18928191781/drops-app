@@ -208,7 +208,7 @@ function SetMeta(to: RouteLocationNormalized) {
         {
           rel: 'icon',
           key: 'favicon',
-          href: '/favicon.ico',
+          href: '/pwa-512x512.png',
         },
       ],
     })

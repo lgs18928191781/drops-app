@@ -15,7 +15,9 @@
 
 <script setup lang="ts">
 import MetaNameDisplay from '@/components/MetaName/Display.vue'
+import { useConnectionStore } from '@/stores/connection'
 import { computed } from 'vue'
+
 interface Props {
   name: string
   metaName?: string
@@ -23,9 +25,11 @@ interface Props {
   noTag?: boolean
   metaId: string
 }
+const connetionStore = useConnectionStore()
 const props = withDefaults(defineProps<Props>(), {})
 const subMetaId = computed(() => {
-  return props.metaId.substr(0, 4)
+  //return props.metaId.substr(0, 4)
+  return connetionStore.last.metaid.substring(0, 4)
 })
 </script>
 
