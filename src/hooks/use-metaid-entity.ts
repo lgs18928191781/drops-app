@@ -4,7 +4,7 @@ import  {type CreateOptions,IBtcEntity} from '@metaid/metaid'
 import { BufferEncoding} from '@/data/constants'
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { useI18n } from 'vue-i18n'
-
+import {useFollowStore} from '@/stores/follow'
 import {useFeebStore} from '@/stores/feeb'
 export type EntityOptions={
     noBroadcast:'yes' | 'no'
@@ -139,11 +139,18 @@ export function useMetaIDEntity(){
             }
     
         )
-        if(!isEmpty(followRes.revealTxIds)){
+        if(isEmpty(followRes.revealTxIds)){
             
+            const followStore=useFollowStore()
+           
+             await followStore.add({
+                followedMetaId:params.body.followMetaId,
+                txId:followRes.revealTxIds[0]
+            })
+           
+
         }
-        console.log("followRes",followRes)
-        debugger  
+       
     } catch (error) {
         throw new Error(error as any)
     }

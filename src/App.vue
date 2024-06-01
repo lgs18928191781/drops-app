@@ -58,6 +58,7 @@ import ImagePreviewVue from '@/components/ImagePreview/ImagePreview.vue'
 //import * as secp256k1 from 'tiny-secp256k1'
 import { useConnectionStore } from '@/stores/connection'
 import { useFeebStore } from '@/stores/feeb'
+import { useFollowStore } from './stores/follow'
 
 const rootStore = useRootStore()
 const userStore = useUserStore()
@@ -67,6 +68,7 @@ const route = useRoute()
 const blackRoute = reactive(['home'])
 const connectorStore = useConnectionStore()
 const feebInterval = ref()
+const followStore = useFollowStore()
 const routeKey = (route: any) => {
   if (route.params.communityId) return route.params.communityId
   return route.fullPath
@@ -89,7 +91,12 @@ onMounted(() => {
   setTimeout(async () => {
     await connectorStore.sync()
 
-    feeStore.set(feeStore.last.currentFeeb.title).then()
+
+    if(connectorStore.last._isConnected){
+      followStore.get().then()
+    }
+   
+ feeStore.set(feeStore.last.currentFeeb.title).then()
 
     feebInterval.value = setInterval(() => {
       feeStore.update().then()

@@ -5,35 +5,63 @@ import { useConnectionStore } from './connection'
 
 export type MyFollow = {
   followingList: string[]
-  followedList: string[]
-  blackList: string[]
-  friendList: []
+  followedList?: string[]
+  blackList?: string[]
+  friendList?: []
+}
+
+export interface FollowItem{
+  userMetaId:string
+  followedMetaId:string
+  txId:string
 }
 
 export const useFollowStore = defineStore('myFollow', {
   state: () => {
     return {
-      list: {
-        followingList: [],
-        followedList: [],
-        blackList: [],
-        friendList: [],
-      },
-    } as { list: MyFollow }
+      followingList:[]
+    } as {followingList: FollowItem[]}
   },
-  getters: {},
+  getters: {
+   
+  },
   actions: {
-    add: function(followMetaid: string) {
-      this.list.followingList.unshift(followMetaid)
-      DB.follow.add(followMetaid)
+    add: function(params:{
+      followedMetaId:string,
+      txId:string
+    }) {
+      const connectionStore=useConnectionStore()
+      this.followingList.unshift({
+        userMetaId:connectionStore.last.metaid,
+        followedMetaId:params.followedMetaId,
+        txId:params.txId
+      })
+      DB.follow.add({
+        userMetaId:connectionStore.last.metaid,
+        followedMetaId:params.followedMetaId,
+        txId:params.txId
+      })
     },
+
+    get:async function(){
+      try {
+        const connectionStore=useConnectionStore()
+        const query= DB.follow.where('userMetaId').equals(connectionStore.last.metaid)
+        this.followingList= await query.toArray()
+      } catch (error) {
+        
+      }
+      
+    },
+
     revoke: function(unFollowMetaid: string) {
-      this.list.followingList.map((item, i) => {
-        if (item == unFollowMetaid) {
-          this.list.followingList.splice(i, 1)
+      this.followingList.map((item, i) => {
+        if (item.followedMetaId == unFollowMetaid) {
+          this.followingList.splice(i, 1)
         }
       })
-      DB.follow.add(unFollowMetaid)
+     
+      DB.follow.delete(unFollowMetaid)
     },
     // update:async function(){
     //     DB.follow.update()
@@ -44,17 +72,12 @@ export const useFollowStore = defineStore('myFollow', {
       const userStore = useUserStore()
       if (userStore.isAuthorized) {
         const followLlist = await DB.follow
-          .where('metaId')
+          .where('userMetaId')
           .equals(connectionStore.last.metaid)
           .toArray()
-        this.list = followLlist
+        this.followingList = followLlist
       } else {
-        this.list = {
-          followingList: [],
-          followedList: [],
-          blackList: [],
-          friendList: [],
-        }
+        this.followingList=[]
       }
     },
   },
