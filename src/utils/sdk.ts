@@ -523,7 +523,13 @@ export class SDK {
 
               // 如果使用队列，则不进行广播，而是收集当次Job的所有交易作为step，推进队列
               if (option.useQueue) {
-                this.convertTransactionsIntoJob(transactions, payToRes, option!.subscribeId!)
+                if (!!window.WebSocket && window.WebSocket.prototype.send) {
+                  this.convertTransactionsIntoJob(transactions, payToRes, option!.subscribeId!)
+                } else {
+                  throw new Error(
+                    `The current browser environment does not support the WSS protocol. Please switch to another browser (Chrome or Firefox) for operation.`
+                  )
+                }
               }
 
               resolve({
