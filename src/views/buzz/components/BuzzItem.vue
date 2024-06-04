@@ -72,9 +72,7 @@
             class="follow main-border primary small"
             :class="{ disabled: following }"
             @click.stop="follow"
-            v-if="
-              !myFollow  && displayItemData.metaId !== connetionStore.last.metaid
-            "
+            v-if="!myFollow && displayItemData.metaId !== connetionStore.last.metaid"
           >
             <template v-if="following">
               <el-icon class="is-loading">
@@ -208,7 +206,7 @@ const props = withDefaults(defineProps<Props>(), {
 const showPopup = ref(false)
 const popupType = ref('more')
 const connetionStore = useConnectionStore()
-const followStore=useFollowStore()
+const followStore = useFollowStore()
 const metaidEntity = useMetaIDEntity()
 const isShowConfirm = ref(false)
 const payMe: PayMeParams = reactive({
@@ -225,13 +223,11 @@ const itemData = computed(() => {
   return props.data
 })
 
-
-
 const displayItemData = computed(() => {
   if (!itemData.value) {
     return null
   }
-  
+
   switch (itemData.value.protocol) {
     case 'SimpleRePost': {
       if (itemData.value.displayType === 'quickRePost') {
@@ -246,10 +242,12 @@ const displayItemData = computed(() => {
   }
 })
 
-const myFollow=computed(()=>{
- return followStore.followingList.find((item)=>{
-    return item.followedMetaId == displayItemData.value?.metaId
-  })
+const myFollow = computed(() => {
+  if (followStore.followingList.length) {
+    return followStore.followingList.find(item => {
+      return item.followedMetaId == displayItemData.value?.metaId
+    })
+  } else return
 })
 
 const isNFTLegalBuzz = computed(() => {
@@ -312,18 +310,18 @@ async function follow() {
   try {
     if (following.value) return
     following.value = true
-     await metaidEntity.followEntity({
-    body: {
-      followMetaId: displayItemData.value!.metaId,
-    },
-  })
-  following.value = false
-  ElMessage.success(i18n.t('Buzz.follow.success'))
+    await metaidEntity.followEntity({
+      body: {
+        followMetaId: displayItemData.value!.metaId,
+      },
+    })
+    following.value = false
+    ElMessage.success(i18n.t('Buzz.follow.success'))
   } catch (error) {
     following.value = false
-    ElMessage.error((error as any).message) 
+    ElMessage.error((error as any).message)
   }
-  
+
   return
   await checkUserLogin()
   if (following.value) return

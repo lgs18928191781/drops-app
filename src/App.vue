@@ -91,12 +91,11 @@ onMounted(() => {
   setTimeout(async () => {
     await connectorStore.sync()
 
-
-    if(connectorStore.last._isConnected){
-      followStore.get().then()
+    if (connectorStore.last._isConnected) {
+      await followStore.get()
     }
-   
- feeStore.set(feeStore.last.currentFeeb.title).then()
+
+    feeStore.set(feeStore.last.currentFeeb.title).then()
 
     feebInterval.value = setInterval(() => {
       feeStore.update().then()
