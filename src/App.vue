@@ -1,7 +1,4 @@
 <template>
-
-
-
   <RouterView
     v-if="
       $route.path === '/' ||
@@ -10,8 +7,6 @@
     "
   />
   <div class="flex main" v-else>
-
-   
     <LeftNavigationVue v-if="!blackRoute.includes(route.name)" />
     <PullDownVue class="flex1">
       <template #default>
@@ -46,7 +41,7 @@
 
 <script setup lang="ts">
 import { reactive, ref, onMounted, nextTick, watch, provide } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import { useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
@@ -60,13 +55,11 @@ import UserCardFloater from './components/UserCard/Floater.vue'
 import PullDownVue from './layout/PullDown/PullDown.vue'
 import ImagePreviewVue from '@/components/ImagePreview/ImagePreview.vue'
 
-
-
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const route = useRoute()
 const blackRoute = reactive(['home'])
-
+const router = useRouter()
 const routeKey = (route: any) => {
   if (route.params.communityId) return route.params.communityId
   return route.fullPath
@@ -76,9 +69,17 @@ const routeKey = (route: any) => {
 //   localStorage.setItem('showDiffLang', String(1))
 // }
 
-
 onMounted(() => {
-
+  setTimeout(async () => {
+    if (userStore.metaletLogin) {
+      const res = await window.metaidwallet.getAddress()
+      if (res?.status == 'not-connected' || userStore.user?.address !== res) {
+        ElMessage.error('We detected changes to your account. Please log in again.')
+        await userStore.logout(route)
+        window.location.reload()
+      }
+    }
+  }, 500)
 })
 </script>
 <style lang="css" src="@/assets/styles/tailwind.css"></style>
