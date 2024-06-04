@@ -78,6 +78,17 @@ onMounted(() => {
         await userStore.logout(route)
         window.location.reload()
       }
+
+      window.metaidwallet.on(
+        'accountsChanged',
+        async (res: { mvcAddress: string; btcAddress: string }) => {
+          if (res.mvcAddress !== userStore.user?.address) {
+            ElMessage.error('We detected changes to your account. Please log in again.')
+            await userStore.logout(route)
+            window.location.reload()
+          }
+        }
+      )
     }
   }, 500)
 })
