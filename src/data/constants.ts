@@ -46,27 +46,69 @@ export const buzzSchema: EntitySchema = {
   ],
 }
 
+export const commentSchema: EntitySchema = {
+  name: 'comment',
+  path: '/protocols/payComment',
+  versions: [
+    {
+      version: 1,
+      body: [
+        {
+          name: 'content',
+          type: 'string',
+        },
+        {
+          name: 'commentTo',
+          type: 'string',
+        },
+        {
+          name: 'replyTo',
+          type: 'string',
+        },
+        {
+          name: 'pay',
+          type: 'string',
+        },
+        {
+          name: 'payTo',
+          type: 'string',
+        },
+      ],
+    },
+  ],
+}
+
+export const simpleRePostSchema: EntitySchema = {
+  name: 'comment',
+  path: '/protocols/simplerepost',
+  versions: [
+    {
+      version: 1,
+      body: [
+        {
+          name: 'rePostComment',
+          type: 'string',
+        },
+        {
+          name: 'rePostTx',
+          type: 'string',
+        },
+        {
+          name: 'rePostProtocol',
+          type: 'string',
+        },
+      ],
+    },
+  ],
+}
+
 export const fileSchema = {
   name: 'file',
   nodeName: 'MetaFile',
   encoding: 'binary',
   versions: [
     {
-      version: '1.0.1',
-      body: '',
-    },
-  ],
-}
-
-export const followSchema = {
-  name: 'follow',
-  nodeName: 'follow',
-  path: '/follow',
-  encoding: 'utf8',
-  versions: [
-    {
-      version: '1.0.1',
-      id: '',
+      version: 1,
       body: '',
     },
   ],

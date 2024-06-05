@@ -21,6 +21,7 @@ import { useGenesisStore } from './genesis'
 import { setUser } from '@sentry/vue'
 import { MetaletSDK } from '@/utils/metalet-sdk'
 import { getCurrentInstance } from 'vue'
+import { useFollowStore } from './follow'
 
 export interface KycInfoTypes {
   name: string
@@ -97,7 +98,9 @@ const sdkPayConfirm = {
 if (user && password) {
   setTimeout(() => {
     const genesisStore = useGenesisStore()
+    const followStore=useFollowStore()
     genesisStore.initGenesis()
+    followStore.initFollowList()
   }, 500)
 }
 
@@ -160,6 +163,9 @@ export const useUserStore = defineStore('user', {
         const talkStore = useTalkStore()
         const rootStore = useRootStore()
         const genesStore = useGenesisStore()
+        const followStore=useFollowStore()
+       
+      
         //
         // 只保存pwaInstall状态
         const pwaInstall = localStorage.getItem('pwaInstall')
@@ -193,6 +199,7 @@ export const useUserStore = defineStore('user', {
 
         talkStore.reset()
         genesStore.initGenesis()
+        followStore.initFollowList()
         //
 
         if (route.meta.isAuth) router.push('/')
@@ -236,7 +243,9 @@ export const useUserStore = defineStore('user', {
         } catch {}
 
         const genesisStore = useGenesisStore()
+        const followStore=useFollowStore()
         genesisStore.initGenesis()
+        followStore.initFollowList()
         resolve()
       })
     },

@@ -4,8 +4,8 @@ import { ElMessage } from 'element-plus'
 import * as metaletAdapter from '@/utils/metalet'
 import { Network, useNetworkStore } from './network'
 //import type { Psbt } from 'bitcoinjs-lib'
-import {  btcConnect,MetaletWalletForBtc,IBtcConnector } from '@metaid/metaid'
-import { object } from 'yup'
+import {  btcConnect,mvcConnect,MetaletWalletForBtc,IBtcConnector,MetaletWalletForMvc } from '@metaid/metaid'
+
 
 type BaseUserInfo={
       address:string
@@ -46,12 +46,19 @@ export type WalletConnectionBaseType={
     wallet:MetaletWalletForBtc['internal']
     // address:string
     user:BaseUserInfo,
-    network?:Network
+   
+    network?:Network,
+  
   }
 
 export type PickBtcConnector=Pick<IBtcConnector & 'metaid','createMetaid' | 'getMetaid' | 'getUser' | 'hasMetaid' | 'hasUser' | 'disconnect' | 'inscribe' | 'isConnected' | 'load' | 'updateUserInfo' | 'use'>
 
 export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
+
+export enum ConnectChain{
+  mvc='mvc',
+  btc='btc'
+}
 
   function getWalletProvider() {
     return window.metaidwallet
@@ -72,13 +79,17 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
           user:{
           
           },
+          
           network: 'testnet'
         } as WalletConnection,
         userInfo: useLocalStorage('last-connection', {
          address:'',
          pubkey:'',
          metaid:'',
-        } )   ,
+         currentChain:''
+        },
+       
+      )   ,
       }
     },
   
@@ -139,7 +150,7 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
     },
   
     actions: {
-      async connect() {
+      async connect(chain=ConnectChain.btc) {
         let connection = this.last
           ? this.last 
           : {
@@ -148,17 +159,25 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
               wallet:{},
               user:{},
               network:''
+              
             }
         const networkStore = useNetworkStore()
-      
-        let _wallet:MetaletWalletForBtc['internal'] =await MetaletWalletForBtc.create()
+        
+        let connectRes
+        let pubkey
        
-         
-
-        let connectRes = await btcConnect({
-          wallet:_wallet,
-          network:networkStore.network
-        })
+        if(chain == ConnectChain.btc ){
+         const _wallet:MetaletWalletForBtc['internal'] =await MetaletWalletForBtc.create()
+       
+          connectRes = await btcConnect({
+            wallet:_wallet,
+            network:networkStore.network
+          })
+        }else{
+          const _wallet =await MetaletWalletForMvc.create()
+          connectRes = await mvcConnect(_wallet)
+        }
+      
        
         try {
           if (connectRes) {
@@ -176,13 +195,14 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
             }
             console.log("connectRes",connectRes)
          
-            const pubkey=await getWalletAdapter().getPubKey()
+            pubkey=chain == ConnectChain.btc ?  await getWalletAdapter().getPubKey() : await getWalletAdapter().getMvcPublickey()
             
             
             this.last = connectRes
             this.userInfo.metaid=connectRes.metaid
             this.userInfo.address=connectRes.address
             this.userInfo.pubkey=pubkey
+            this.userInfo.currentChain=chain
             return this.last
           }
         } catch (e: any) {
@@ -202,14 +222,13 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
           _isConnected: false,
           metaid:'',
           user:{},
-          
-
           network: 'livenet'
         }
        this.userInfo={
         address:'',
         pubkey:'',
         metaid:'',
+        currentChain:''
        }
         // this.last._isConnected = false
         // this.last.address = ''
@@ -235,17 +254,32 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
       // }
 
     if(!this.userInfo.address) return
+        
+        let connectRes
+        let xpub
 
-      const _wallet = await MetaletWalletForBtc.restore({
-        address:this.userInfo.address,
-        pub:this.userInfo.pubkey
-       })
-      
-
-        let connectRes = await btcConnect({
-          wallet:_wallet,
-          network:this.last.network!
-        })
+        if(this.userInfo.currentChain == ConnectChain.btc){
+         const _wallet = await MetaletWalletForBtc.restore({
+            address:this.userInfo.address,
+            pub:this.userInfo.pubkey
+           })
+          
+    
+           connectRes= await btcConnect({
+              wallet:_wallet,
+              network:this.last.network!
+            })
+        }else{
+           xpub=await getWalletAdapter().getXPublicKey()
+          const _wallet = await MetaletWalletForMvc.restore({
+            address:this.userInfo.address,
+            xpub:xpub
+           })
+          
+    
+           connectRes= await mvcConnect(_wallet)
+        }
+    
         const networkStore = useNetworkStore()
         try {
           if (connectRes) {
@@ -269,8 +303,6 @@ export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
             this.userInfo.metaid=connectRes.metaid
             this.userInfo.pubkey=pubkey
             this.userInfo.address=connectRes.address
-            
-            
             
           }
         } catch (e: any) {

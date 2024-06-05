@@ -333,7 +333,8 @@ async function submit() {
     attachments: attachments,
   }
   console.log(sendInfo)
-  const sendRes = await buzzEntity(sendInfo)
+  try {
+    const sendRes = await buzzEntity(sendInfo)
 
   if (sendRes.revealTxIds.length) {
     content.value = ''
@@ -346,8 +347,12 @@ async function submit() {
     content.value = ''
     attachments.length = 0
     emit('update:modelValue', false)
-    ElMessage.error('fail')
+    ElMessage.error('Post fail')
   }
+  } catch (error) {
+    ElMessage.error((error as any).message) 
+  }
+  
 
   // const info = { likeTo: '63344fd9b2e604bbd36f2a9b405198a643374013d37481aacdecd63ed55c9348i0' }
   // const likeRes = await likeEntity(info)

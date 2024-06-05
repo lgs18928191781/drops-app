@@ -195,7 +195,7 @@ import { encodingType, MetaletWallet, TransactionInfo } from '@/utils/wallet/Met
 import { isAndroid, isIOS, isIosApp, isWechat } from '@/stores/root'
 
 import { useNetworkStore } from '@/stores/network'
-import { useConnectionStore } from '@/stores/connection'
+import { useConnectionStore, ConnectChain } from '@/stores/connection'
 import { connect } from '@/utils/metalet'
 import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
 import { useFeebStore } from '@/stores/feeb'
@@ -665,6 +665,7 @@ async function onSetBaseInfoSuccessType(params: {
   try {
     const setUserInfoRes = await connectStore.last.createUserInfo({ ...userInfo })
     // const createMetaidRes = await btcConnector.createMetaid({ ...userInfo })
+
     console.log(setUserInfoRes)
     if (setUserInfoRes) {
       // isShowSetBaseInfo.value = false
@@ -1143,6 +1144,8 @@ async function connectMetalet() {
     // loading.close()
     return ElMessage.error(`${i18n.t('wallet_addres_empty')}`)
   }
+  console.log('btcConnector', btcConnector)
+
   // userStore.updateUserInfo({
   //   address: btcConnector.address,
   //   loginType: 'MetaID',

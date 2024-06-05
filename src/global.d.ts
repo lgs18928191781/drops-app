@@ -17,6 +17,7 @@ declare interface Window {
   metaidwallet: {
     verifySignature(verifyObj: { message: unknown; signature: any; encoding: string }): any
     getPublicKey(): any
+    getXPublicKey(): string
     signMessage(arg0: {
       message: string
       encoding?: string

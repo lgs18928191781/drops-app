@@ -227,13 +227,13 @@ export default ({ mode, command }) => {
 
       https: false,
       // open: true,
-      // proxy: {
-      //   '^/rate-services/': {
-      //     target: 'https://www.orders.exchange/api-book/brc20/common/rate/btc',
-      //     changeOrigin: true,
-      //     rewrite: path => path.replace(/^\/rate-services/, ''),
-      //   },
-      // },
+      proxy: {
+        '^/followapi/': {
+          target: `https://man-test.metaid.io`,
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/followapi/, '/api'),
+        },
+      },
     },
     esbuild: {
       drop: isProduction ? ['console','debugger'] : [], //['console', 'debugger']

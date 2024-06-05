@@ -58,15 +58,18 @@ import ImagePreviewVue from '@/components/ImagePreview/ImagePreview.vue'
 //import * as secp256k1 from 'tiny-secp256k1'
 import { useConnectionStore } from '@/stores/connection'
 import { useFeebStore } from '@/stores/feeb'
-
+import { useFollowStore } from './stores/follow'
+import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
 const rootStore = useRootStore()
 const userStore = useUserStore()
+const metaidEntity = useMetaIDEntity()
 //const btcJsStore = useBtcJsStore()
 const feeStore = useFeebStore()
 const route = useRoute()
 const blackRoute = reactive(['home'])
 const connectorStore = useConnectionStore()
 const feebInterval = ref()
+const followStore = useFollowStore()
 const routeKey = (route: any) => {
   if (route.params.communityId) return route.params.communityId
   return route.fullPath
@@ -88,6 +91,26 @@ onMounted(() => {
 
   setTimeout(async () => {
     await connectorStore.sync()
+
+    if (connectorStore.last._isConnected) {
+      await followStore.get()
+      // await metaidEntity.payCommentEntity({
+      //   body: {
+      //     content: `评论了一下下`,
+      //     commentTo: `c36feccf58b1a83c4df8a0b1517b74cf147509c1e25f4796ec493b1579a263f5i0`,
+      //     replyTo: '', //对某条评论进行回复的pinid,一级评论则留空
+      //     pay: '', //暂时留空
+      //     payTo: '', //暂时留空
+      //   },
+      // })
+      // await metaidEntity.simpleRepostEntity({
+      //   body: {
+      //     rePostComment: 'let me repost this buzz',
+      //     rePostTx: `c36feccf58b1a83c4df8a0b1517b74cf147509c1e25f4796ec493b1579a263f5i0`,
+      //     rePostProtocol: 'simplebuzz',
+      //   },
+      // })
+    }
 
     feeStore.set(feeStore.last.currentFeeb.title).then()
 

@@ -43,7 +43,7 @@
             /> -->
             <UserAvatar
               :meta-id="displayItemData.metaId"
-              :image="displayItemData.userInfo.avatarImage"
+              :image="displayItemData?.userInfo?.avatarImage"
               :name="displayItemData.userName"
               :image-class="'w-12 h-12'"
             />
@@ -51,7 +51,7 @@
           <div class="info">
             <div class="name">
               <UserName
-                :name="displayItemData.userInfo.name"
+                :name="displayItemData.userInfo?.name"
                 :metaName="displayItemData?.userInfo?.metaName"
                 :metaId="displayItemData.metaId"
               />
@@ -62,12 +62,17 @@
             </div>
           </div>
         </div>
-        <!-- <div class="operate" v-if="!isQuote">
+        <div class="operate" v-if="!isQuote">
+          <!--
+            !displayItemData.isMyFollow &&
+                (!userStore.isAuthorized ||
+                  (userStore.isAuthorized ))
+          -->
           <div
             class="follow main-border primary small"
             :class="{ disabled: following }"
             @click.stop="follow"
-            v-if="!displayItemData.isMyFollow && (!userStore.isAuthorized || (userStore.isAuthorized && displayItemData.metaId !== userStore.user!.metaId))"
+            v-if="!myFollow && displayItemData.metaId !== connetionStore.last.metaid"
           >
             <template v-if="following">
               <el-icon class="is-loading">
@@ -76,7 +81,7 @@
             </template>
             <template v-else>{{ $t('Follow') }}</template>
           </div>
-        </div> -->
+        </div>
       </div>
       <div class="content">
         <template v-if="displayItemData.protocol === NodeName.MetaNote">
@@ -167,8 +172,9 @@ import BuzzItemContentSimplePublicShareVue from './BuzzItemContentSimplePublicSh
 import BuzzItemContentSellNftVue from './BuzzItemContentSellNft.vue'
 import BuzzItemContentShreChatMessage from './BuzzItemContentShreChatMessage.vue'
 import { ElMessage } from 'element-plus'
-import {useConnectionStore} from '@/stores/connection'
-import {useMetaIDEntity} from '@/hooks/use-metaid-entity'
+import { useConnectionStore } from '@/stores/connection'
+import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
+import { useFollowStore } from '@/stores/follow'
 interface Props {
   data?: BuzzItem
   isInDetailPage?: boolean
@@ -199,8 +205,9 @@ const props = withDefaults(defineProps<Props>(), {
 })
 const showPopup = ref(false)
 const popupType = ref('more')
-const connetionStore=useConnectionStore()
-const metaidEntity=useMetaIDEntity()
+const connetionStore = useConnectionStore()
+const followStore = useFollowStore()
+const metaidEntity = useMetaIDEntity()
 const isShowConfirm = ref(false)
 const payMe: PayMeParams = reactive({
   amount: 0,
@@ -220,6 +227,7 @@ const displayItemData = computed(() => {
   if (!itemData.value) {
     return null
   }
+
   switch (itemData.value.protocol) {
     case 'SimpleRePost': {
       if (itemData.value.displayType === 'quickRePost') {
@@ -232,6 +240,14 @@ const displayItemData = computed(() => {
       return itemData.value
     }
   }
+})
+
+const myFollow = computed(() => {
+  if (followStore.followingList.length) {
+    return followStore.followingList.find(item => {
+      return item.followedMetaId == displayItemData.value?.metaId
+    })
+  } else return
 })
 
 const isNFTLegalBuzz = computed(() => {
@@ -259,18 +275,18 @@ function handleGoDetail(txId: string) {
   })
 }
 
-function handleShare() {
-  copy(
-    location.origin +
-      router.resolve({
-        name: 'buzzDetail',
-        params: {
-          txId: displayItemData.value!.txId,
-        },
-      }).href
-  )
-  showPopup.value = false
-}
+// function handleShare() {
+//   copy(
+//     location.origin +
+//       router.resolve({
+//         name: 'buzzDetail',
+//         params: {
+//           txId: displayItemData.value!.txId,
+//         },
+//       }).href
+//   )
+//   showPopup.value = false
+// }
 function handleGoToWoc() {
   const url = `https://whatsonchain.com/tx/${itemData.value.txId}`
   showPopup.value = false
@@ -291,8 +307,21 @@ function sliceStr(str?: string, len = 8) {
 }
 
 async function follow() {
-  // await metaidEntity.followEntity()
-  // debugger
+  try {
+    if (following.value) return
+    following.value = true
+    await metaidEntity.followEntity({
+      body: {
+        followMetaId: displayItemData.value!.metaId,
+      },
+    })
+    following.value = false
+    ElMessage.success(i18n.t('Buzz.follow.success'))
+  } catch (error) {
+    following.value = false
+    ElMessage.error((error as any).message)
+  }
+
   return
   await checkUserLogin()
   if (following.value) return

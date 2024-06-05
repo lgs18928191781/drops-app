@@ -431,7 +431,8 @@ async function onLike(params: { txId: string; address: string; done: () => void 
   const LikeBuzzTxId = {
     likeTo: params.txId,
   }
-  const likeRes = await likeEntity(LikeBuzzTxId)
+  try {
+    const likeRes = await likeEntity(LikeBuzzTxId)
   console.log(likeRes)
   if (likeRes.revealTxIds.length) {
     let itemIndex = props.list.findIndex(item => item.txId === params.txId)
@@ -444,8 +445,13 @@ async function onLike(params: { txId: string; address: string; done: () => void 
       ElMessage.success(i18n.t('PayLike') + ' ' + i18n.t('Success'))
     }
   } else {
-    ElMessage.error('fail')
+   
+    ElMessage.error('Post fail')
   }
+  } catch (error) {
+    ElMessage.error((error as any).message) 
+  }
+
 
   return
   await checkUserLogin()

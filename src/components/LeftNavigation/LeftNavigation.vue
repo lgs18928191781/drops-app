@@ -155,12 +155,12 @@ const apps = reactive([
     title: () => i18n.t('Talk.Community.feed'),
     symbol: 'buzz',
   },
-  // {
-  //   icon: 'talk',
-  //   path: '/talk/channels/@me',
-  //   title: () => i18n.t('Talk.Community.atme'),
-  //   symbol: '@me',
-  // },
+  {
+    icon: 'talk',
+    path: '/talk/channels/@me',
+    title: () => i18n.t('Talk.Community.atme'),
+    symbol: '@me',
+  },
   // {
   //   icon: 'market',
   //   path: '/nft/collection/index',
