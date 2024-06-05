@@ -229,10 +229,10 @@ export default ({ mode, command }) => {
       https: false,
       // open: true,
       proxy: {
-        '^/follow/': {
+        '^/followapi/': {
           target: `https://man-test.metaid.io`,
           changeOrigin: true,
-          rewrite: path => path.replace(/^\/follow/, '/api'),
+          rewrite: path => path.replace(/^\/followapi/, '/api'),
         },
       },
     },

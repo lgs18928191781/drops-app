@@ -62,7 +62,13 @@ export const useFollowStore = defineStore('myFollow', {
         }
 
         if (localList.length && queryList.length) {
-          this.followingList = Array.from(new Set([...localList, ...queryList]))
+          this.followingList.length = 0
+          const newArr = Array.from(new Set([...localList, ...queryList]))
+          for (let i = 0; i < newArr.length; i++) {
+            if (newArr[i].followedMetaId !== newArr[i + 1].followedMetaId) {
+              this.followingList.push(newArr[i])
+            }
+          }
         } else if (localList.length && !queryList.length) {
           this.followingList = localList
         } else if (!localList.length && queryList.length) {
@@ -75,12 +81,14 @@ export const useFollowStore = defineStore('myFollow', {
         const followMe = await FollowMe()
         if (followMe.data.list.length) {
           this.followMeList = followMe.data.list
-          if (this.followingList.length) {
-            this.friendList = this.followingList.filter(item => {
-              if (this.followMeList.indexOf(item.followedMetaId) > -1) {
-                return item
+          if (this.followMeList.length && this.followingList.length) {
+            for (let item of this.followingList) {
+              for (let user of this.followMeList) {
+                if (item.followedMetaId == user) {
+                  this.friendList.push(user)
+                }
               }
-            })
+            }
           }
         }
       } catch (error) {}
@@ -90,14 +98,16 @@ export const useFollowStore = defineStore('myFollow', {
       this.followingList.map((item, i) => {
         if (item.followedMetaId == unFollowMetaid) {
           this.followingList.splice(i, 1)
+          if (this.friendList.length) {
+            this.friendList = this.friendList.filter(item => {
+              return item !== unFollowMetaid
+            })
+          }
         }
       })
 
       DB.follow.delete(unFollowMetaid)
     },
-    // update:async function(){
-    //     DB.follow.update()
-    // },
 
     initFollowList: async function() {
       const connectionStore = useConnectionStore()

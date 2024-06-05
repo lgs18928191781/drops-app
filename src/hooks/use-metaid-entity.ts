@@ -6,6 +6,7 @@ import { AttachmentItem } from '@/@types/hd-wallet'
 import { useI18n } from 'vue-i18n'
 import {useFollowStore} from '@/stores/follow'
 import {useFeebStore} from '@/stores/feeb'
+import {FollowInfo} from '@/api/follow'
 export type EntityOptions={
     noBroadcast:'yes' | 'no'
     feeRate?:number
@@ -124,7 +125,7 @@ export function useMetaIDEntity(){
         const followRes=await connectStore.last.inscribe(
             [
                 {
-                    operation: 'create',
+                operation: 'create',
                   path: '/follow',
                   body: params.body.followMetaId,
                   contentType: 'text/plain;utf-8',
@@ -157,6 +158,111 @@ export function useMetaIDEntity(){
    
    }
 
+   async function unFollowEntity(followMetaid:string){
+    const connectStore = useConnectionStore()
+    try {
+        const {data:{followPinId}}= await FollowInfo({
+            metaId:followMetaid,
+            followerMetaId:connectStore.last.metaid
+        })
+        const unFollowRes=await connectStore.last.inscribe([
+            {
+                operation: 'revoke',
+                path: `@${followPinId}`,
+                contentType: 'text/plain;utf-8',
+                flag: import.meta.env.VITE_BTC_METAID_FLAG,
+            }
+        ],
+        'no',
+        feebStore.last.currentFeeb.feeRate,
+        {
+            address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
+            satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
+        }
+        
+    )
+    if(isEmpty(unFollowRes.revealTxIds)){
+        const followStore=useFollowStore()
+        await followStore.revoke(followMetaid)
+    }
+     
+    } catch (error) {
+        throw new Error(error as any)
+    }
+   }
+
+   async function payCommentEntity(params:{body:{
+    content:string //评论内容
+    commentTo:string //要评论的buzz pinid
+    replyTo:string //对某条评论进行回复的pinid,一级评论则留空  
+    pay:string  //暂时留空    
+    payTo:string //暂时留空
+   }}) {
+
+    try {
+        const connectStore = useConnectionStore()
+    const commentRes=await connectStore.last.inscribe([
+        {
+            operation: 'create',
+              path: '/protocols/paycomment',
+              body: JSON.stringify(params.body),
+              contentType: 'text/plain;utf-8',
+              flag: import.meta.env.VITE_BTC_METAID_FLAG,
+            }
+    ],
+    'no',
+    feebStore.last.currentFeeb.feeRate,
+    {
+        address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
+        satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
+    })
+    
+    if(isEmpty(commentRes.revealTxIds)){
+        return commentRes.revealTxIds[0]
+    }
+    } catch (error) {
+        throw new Error(error as any)
+    }
+    
+   }
+
+   async function simpleRepostEntity(params:{body:{
+    rePostComment:string //带评论转发，不带评论可空
+    rePostTx:string //要转发的buzz pinid
+    rePostProtocol:string //转发的协议类型，例如：simplebuzz  
+   }}) {
+
+    try {
+        const connectStore = useConnectionStore()
+    const repostRes=await connectStore.last.inscribe([
+        {
+            operation: 'create',
+              path: '/protocols/simplerepost',
+              body: JSON.stringify(params.body),
+              contentType: 'text/plain;utf-8',
+              flag: import.meta.env.VITE_BTC_METAID_FLAG,
+            }
+    ],
+    'no',
+    feebStore.last.currentFeeb.feeRate,
+    {
+        address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
+        satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
+    })
+    console.log("repostRes.revealTxIds",repostRes.revealTxIds)
+        
+    if(isEmpty(repostRes.revealTxIds)){
+
+        return repostRes.revealTxIds[0]
+    }
+    } catch (error) {
+        throw new Error(error as any)
+    }
+    
+   }
+
+
+
 
    async function getAllBuzz(body:{page:number,limit:number,network:string}){
         const connectStore = useConnectionStore()
@@ -173,6 +279,9 @@ export function useMetaIDEntity(){
     buzzEntity,
     likeEntity,
     getAllBuzz,
-    followEntity
+    followEntity,
+    unFollowEntity,
+    payCommentEntity,
+    simpleRepostEntity
    }
 }

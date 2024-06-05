@@ -21,10 +21,10 @@ export class DBClass extends Dexie {
   }>
   constructor() {
     super('show3')
-    this.version(1).stores({
+    this.version(2).stores({
       metafiles: 'txId', // Primary key and indexed props
       genesis: 'genesis, metaId', // Primary key and indexed props
-      follow:'txId,userMetaId'
+      follow:'followedMetaId,userMetaId' //Primary key and indexed props
     })
     this.maintenanceData()
   }
