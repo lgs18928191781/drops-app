@@ -23,7 +23,7 @@
 
     <div class="list">
       <!-- Edit Profile -->
-      <div
+      <!-- <div
         class="item flex flex-align-center"
         @click="isShowEditProfile = true"
         v-if="userStore.isAuthorized"
@@ -38,7 +38,7 @@
         </span>
         <span class="flex1 name">{{ $t('Setting.Edit Profile') }}</span>
         <Icon class="right" name="down" />
-      </div>
+      </div> -->
 
       <!-- Link Account -->
       <div
@@ -55,8 +55,8 @@
 
       <div
         class="item flex flex-align-center"
-        v-for="item in list"
-        :key="item.icon"
+        v-for="(item, index) in list"
+        :key="index"
         @click="item.fun()"
       >
         <span class="icon-warp flex flex-align-center flex-pack-center">

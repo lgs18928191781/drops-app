@@ -20,8 +20,7 @@ import basicSsl from '@vitejs/plugin-basic-ssl'
 // import { sentryVitePlugin } from '@sentry/vite-plugin'
 import type { ViteSentryPluginOptions } from 'vite-plugin-sentry'
 import viteSentry from 'vite-plugin-sentry'
-//import wasm from 'vite-plugin-wasm'
-//import topLevelAwait from 'vite-plugin-top-level-await'
+
 
 // import dns from 'dns'
 // dns.setDefaultResultOrder('verbatim')
@@ -52,7 +51,8 @@ export default ({ mode, command }) => {
   // const isProduction = productionEnvs.includes(mode) && command === 'build' ? true : false
   const isProduction = command === 'build'
   return defineConfig({
-    base: env.VITE_PUBLIC_PATH,
+    
+   
     plugins: [
       command === 'serve' &&
         nodePolyfills({
@@ -227,16 +227,16 @@ export default ({ mode, command }) => {
 
       https: false,
       // open: true,
-      // proxy: {
-      //   '^/metasv/': {
-      //     target: 'https://192.168.168.147:443',
-      //     changeOrigin: true,
-      //     rewrite: path => path.replace(/^\/metasv/, ''),
-      //   },
-      // },
+      proxy: {
+        '^/followapi/': {
+          target: `https://man-test.metaid.io`,
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/followapi/, '/api'),
+        },
+      },
     },
     esbuild: {
-      drop: isProduction ? ['debugger'] : [], //['console', 'debugger']
+      drop: isProduction ? ['console','debugger'] : [], //['console', 'debugger']
     },
     build: {
       target: isProduction ? 'esnext' : 'module',

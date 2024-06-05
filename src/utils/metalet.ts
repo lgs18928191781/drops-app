@@ -41,6 +41,13 @@ export const metaletConnect: () => Promise<connectRes> = async () => {
   return checkMetaletStatus(connectRes, 'connect')
 }
 
+export const getXPublicKey:()=>Promise<string>=async()=>{
+  checkMetalet()
+
+  const xpub = await window.metaidwallet.getXPublicKey()
+  return xpub
+}
+
 export const getMvcAddress = async () => {
   checkMetalet()
   const addressRes = await window.metaidwallet.getAddress()
@@ -114,13 +121,13 @@ export const getNetwork = async () => {
   const { network }=await window.metaidwallet.getNetwork()
   switch (network) {
     case 'mainnet':
-      return 'livenet'
+      return 'mainnet'
     case 'testnet':
       return 'testnet'
     case 'regtest':
       return 'regtest'
     default:
-      return 'livenet'
+      return 'mainnet'
   }
 }
 

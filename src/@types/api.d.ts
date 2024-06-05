@@ -1,5 +1,3 @@
-import { string } from 'yup'
-
 declare interface apiResponse {
   code: number
   msg: string
@@ -1867,4 +1865,22 @@ declare interface TypeCollction {
   created_at: string
   updated_at: string
   show_3_collection: Collect
+}
+
+declare interface MyFollowList extends apiResponse {
+  data: {
+    list: string[]
+    total: number
+  }
+}
+
+declare interface FollowInfo extends apiResponse {
+  data: {
+    metaId: string
+    followMetaId: string
+    followTime: string
+    followPinId: string
+    unFollowPinId: string
+    status: boolean
+  }
 }

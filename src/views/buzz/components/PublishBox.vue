@@ -3,7 +3,7 @@
     <UserAvatar
       :meta-id="userStore.user!.metaId"
       :image="connectionStore.last?.user?.avatarId"
-      :name="userStore.user!.name"
+      :name="userStore.user!.name || connectionStore.last?.user?.name"
       :meta-name="userStore.user!.metaName"
       :disabled="true"
       class="mr-2 !border-0"

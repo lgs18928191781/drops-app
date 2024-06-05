@@ -13,7 +13,10 @@ export const useGenesisStore = defineStore('genesis', {
     >{
       list: [],
     },
-  getters: {},
+  getters: {
+   
+
+  },
   actions: {
     add: function(genesis: GenesisItem) {
       this.list.unshift(genesis)

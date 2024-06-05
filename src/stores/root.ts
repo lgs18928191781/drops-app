@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { GetCertMetaIdList } from '@/api/aggregation'
 import i18n from '@/utils/i18n'
 import { GetCertifiedMetaId } from '@/api/strapi'
-import { getBtcRate } from '@/api/btc-fee'
+//import { getBtcRate } from '@/api/btc-fee'
 export interface SignBaseInfo {
   userType: SignUserType
   areaCode: string

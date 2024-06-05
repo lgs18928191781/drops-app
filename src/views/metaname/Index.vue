@@ -205,7 +205,7 @@ const apps = [
   {
     icon: Show,
     name: 'Show3',
-    link: 'https://www.show3.io',
+    link: 'https://v2.show3.io',
   },
   {
     icon: MetaSo,

@@ -473,13 +473,14 @@ window._go = go
 
 router.beforeEach((to, from, next) => {
   console.log(to)
+
   if (to.name == 'buzzIndex') {
     return next('/buzz/tag/1')
   }
   if (to.name == 'home') {
     return next('/buzz/tag/1')
   }
-  const whiteList = ['404', 'home', 'buzzTag', 'buzzDetail']
+  const whiteList = ['404', 'home', 'buzzTag', 'buzzDetail', 'talkAtMe', 'talkAtMeDefault']
   const target = whiteList.includes(to?.name)
   if (target) {
     if (to.query.to) {

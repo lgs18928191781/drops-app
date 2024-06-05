@@ -195,7 +195,7 @@ import { encodingType, MetaletWallet, TransactionInfo } from '@/utils/wallet/Met
 import { isAndroid, isIOS, isIosApp, isWechat } from '@/stores/root'
 
 import { useNetworkStore } from '@/stores/network'
-import { useConnectionStore } from '@/stores/connection'
+import { useConnectionStore, ConnectChain } from '@/stores/connection'
 import { connect } from '@/utils/metalet'
 import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
 import { useFeebStore } from '@/stores/feeb'
@@ -644,24 +644,36 @@ async function OnMetaIdSuccess(type: 'register' | 'login') {
   }
 }
 
-async function onSetBaseInfoSuccessType(params: { name: string; nft: NFTAvatarItem; bio: string }) {
+async function onSetBaseInfoSuccessType(params: {
+  name: string
+  nft: NFTAvatarItem
+  bio: string
+  avatarId: string
+}) {
   const userInfo = {
     name: params.name,
     bio: params.bio,
     avatar: params.nft,
-    network: networkStore.network,
+    network: connectStore.last.network,
     feeRate: feebStore.last.currentFeeb.feeRate,
     service: {
       address: import.meta.env.VITE_BTC_SERVICE_ADDRESS,
       satoshis: import.meta.env.VITE_BTC_SERVICE_FEEB,
     },
   }
+
   try {
     const setUserInfoRes = await connectStore.last.createUserInfo({ ...userInfo })
     // const createMetaidRes = await btcConnector.createMetaid({ ...userInfo })
+
     console.log(setUserInfoRes)
     if (setUserInfoRes) {
       // isShowSetBaseInfo.value = false
+      connectStore.updateUser({
+        name: params.name,
+        bio: params.bio,
+        avatarId: params.avatarId,
+      })
       isShowSetUserInfo.value = false
       rootStore.$patch({ isShowLogin: false })
       ElMessage.success('Successful')
@@ -1132,6 +1144,8 @@ async function connectMetalet() {
     // loading.close()
     return ElMessage.error(`${i18n.t('wallet_addres_empty')}`)
   }
+  console.log('btcConnector', btcConnector)
+
   // userStore.updateUserInfo({
   //   address: btcConnector.address,
   //   loginType: 'MetaID',
@@ -1140,6 +1154,7 @@ async function connectMetalet() {
   // const needInfo = { network: btcConnector.network, address: btcConnector.address }
   try {
     const currentUserInfo = await btcConnector.getUser({ network: btcConnector.network })
+
     const currentUserName = currentUserInfo.name
     if (!currentUserName) {
       // isShowSetBaseInfo.value = true
@@ -1203,7 +1218,10 @@ async function connectMetalet() {
   //metalet-SDK实例化
 }
 async function getUserInfo() {
-  const needInfo = { network: 'testnet', address: connectStore.userInfo.address }
+  const needInfo = {
+    network: connectStore.last.network || networkStore.network,
+    address: connectStore.userInfo.address,
+  }
   const currentUserInfo = await connectStore.last.getUser({ ...needInfo })
   console.log(currentUserInfo)
   pushToBuzz(currentUserInfo)
