@@ -95,7 +95,7 @@
       <el-popover placement="bottom" :width="'auto'" trigger="hover">
         <template #reference>
           <UserAvatar
-            :image="connectStore.last.user.avatarId"
+            :image="connectStore.last?.user?.avatarId"
             :meta-id="userStore.user!.metaId"
             :name="userStore.user!.name"
             class="user-warp-item overflow-hidden"
@@ -238,6 +238,7 @@ const userOperates = computed(() => {
       icon: 'logout',
       func: () => {
         userStore.logout(route)
+        connectStore.disconnect()
       },
     })
   }

@@ -24,7 +24,7 @@ const feeb = new HttpRequest(`${import.meta.env.VITE_MEMPOOL_BASE_URL}/fees`, {
 }).request
 
 // @ts-ignore
-const rate = new HttpRequest(`${import.meta.env.VITE_RATE_URL}/api-book/brc20/common`, {
+const rate = new HttpRequest(`${import.meta.env.VITE_HOST_URL}`, {
   header: {
     'Content-Type': 'application/json',
   },
@@ -97,5 +97,5 @@ export const getBtcRate = async (): Promise<{
     }
   }
 }> => {
-  return await rate.get(`/rate/btc`)
+  return await rate.get(`/rate-services`)
 }

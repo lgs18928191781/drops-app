@@ -1,6 +1,6 @@
 import { Network } from '@/stores/network'
 
-export const NETWORK: Network = import.meta.env.VITE_NETWORK || 'testnet'
+export const NETWORK: Network = import.meta.env.VITE_NETWORK || 'mainnet'
 
 type EntitySchema = {
   name: string
@@ -66,7 +66,7 @@ export const followSchema = {
   versions: [
     {
       version: '1.0.1',
-      id:'',
+      id: '',
       body: '',
     },
   ],

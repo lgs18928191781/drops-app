@@ -70,11 +70,18 @@
   />
 
   <!-- setBaseInfo -->
-  <SetBaseInfoVue
+  <!-- <SetBaseInfoVue
     v-model="isShowSetBaseInfo"
     :loading="loading"
     @success="onSetBaseInfoSuccessType"
+    @closeSetInfoModal="closeSetInfoModal"
     ref="setBaseInfoRef"
+  /> -->
+
+  <SetUserInfoVue
+    v-if="isShowSetUserInfo"
+    @success="onSetBaseInfoSuccessType"
+    @closeSetInfoModal="closeSetInfoModal"
   />
 
   <!-- send buzz -->
@@ -157,7 +164,8 @@ import FirstBuzzImg from '@/assets/images/first_buzz.svg?url'
 import { toMvcScan } from '@/utils/util'
 import MetaIdWalletVue, { MetaIdWalletRegisterBaseInfo } from './MetaIdWallet.vue'
 import MnemonicVue from './MnemonicLogin.vue'
-import SetBaseInfoVue from './SetBaseInfo.vue'
+// import SetBaseInfoVue from './SetBaseInfo.vue'
+import SetUserInfoVue from './SetUserInfo.vue'
 import BackupMnemonicVue from './BackupMnemonic.vue'
 import BindMetaIdVue from './BindMetaId.vue'
 import { reactive, Ref, ref, computed } from 'vue'
@@ -237,6 +245,8 @@ const metaIdWalletRegisterBaseInfo: { val: undefined | MetaIdWalletRegisterBaseI
   val: undefined,
 })
 const isSHowBackupMnemonic = ref(false)
+
+const isShowSetUserInfo = ref(false)
 const isMobile = computed(() => {
   return isAndroid || isIOS || isWechat
 })
@@ -634,24 +644,36 @@ async function OnMetaIdSuccess(type: 'register' | 'login') {
   }
 }
 
-async function onSetBaseInfoSuccessType(params: { name: string; nft: NFTAvatarItem; bio: string }) {
+async function onSetBaseInfoSuccessType(params: {
+  name: string
+  nft: NFTAvatarItem
+  bio: string
+  avatarId: string
+}) {
   const userInfo = {
     name: params.name,
     bio: params.bio,
     avatar: params.nft,
-    network: networkStore.network,
+    network: connectStore.last.network,
     feeRate: feebStore.last.currentFeeb.feeRate,
     service: {
       address: import.meta.env.VITE_BTC_SERVICE_ADDRESS,
       satoshis: import.meta.env.VITE_BTC_SERVICE_FEEB,
     },
   }
+
   try {
     const setUserInfoRes = await connectStore.last.createUserInfo({ ...userInfo })
     // const createMetaidRes = await btcConnector.createMetaid({ ...userInfo })
     console.log(setUserInfoRes)
     if (setUserInfoRes) {
-      isShowSetBaseInfo.value = false
+      // isShowSetBaseInfo.value = false
+      connectStore.updateUser({
+        name: params.name,
+        bio: params.bio,
+        avatarId: params.avatarId,
+      })
+      isShowSetUserInfo.value = false
       rootStore.$patch({ isShowLogin: false })
       ElMessage.success('Successful')
     }
@@ -1093,95 +1115,109 @@ async function connectMetalet() {
   if (isMobile.value) {
     return ElMessage.error(`${i18n.t('not_support_mobile_login_metalet')}`)
   }
-  if(!window.metaidwallet){
+  if (!window.metaidwallet) {
     ElMessage.error(`Detected that Metalet wallet is not installed on your local device`)
     setTimeout(() => {
-      window.open(`https://chromewebstore.google.com/detail/metalet/lbjapbcmmceacocpimbpbidpgmlmoaao?hl=zh-CN&utm_source=ext_sidebar`,'_blank')
-    }, 2000);
-    return 
+      window.open(
+        `https://chromewebstore.google.com/detail/metalet/lbjapbcmmceacocpimbpbidpgmlmoaao?hl=zh-CN&utm_source=ext_sidebar`,
+        '_blank'
+      )
+    }, 2000)
+    return
   }
 
+  // const loading = ElLoading.service({
+  //   text: 'Loading...',
+  //   lock: true,
+  //   spinner: 'el-icon-loading',
+  //   background: 'rgba(0, 0, 0, 0.7)',
+  //   customClass: 'full-loading',
+  // })
 
-  const loading = ElLoading.service({
-    text: 'Loading...',
-    lock: true,
-    spinner: 'el-icon-loading',
-    background: 'rgba(0, 0, 0, 0.7)',
-    customClass: 'full-loading',
-  })
-  try {
-    const btcConnector = await connectStore.connect()
-    if (!btcConnector._isConnected) {
-      loading.close()
-      return ElMessage.error(`${i18n.t('wallet_addres_empty')}`)
-    }
-    userStore.updateUserInfo({
-      address: btcConnector.address,
-      loginType: 'MetaID',
-    })
+  console.log(loading)
 
-    try {
-      const needInfo = { network: 'testnet', address: btcConnector.address }
-      const currentUserInfo = await btcConnector.getUser({ ...needInfo })
-      console.log(currentUserInfo)
-      const currentUserName = currentUserInfo.name
-      if (!currentUserName) {
-        loading.close()
-        isShowSetBaseInfo.value = true
-      } else {
-        pushToBuzz(currentUserInfo)
-        rootStore.$patch({ isShowLogin: false })
-        loading.close()
-      }
+  // try {
+  const btcConnector = await connectStore.connect()
 
-      // return
-      // if (!currentMetaId) {
-      //   loading.close()
-      //   console.log('btcConnector.internal', btcConnector)
-      //   isShowSetBaseInfo.value = true
-      // } else {
-      //   getUserInfo(btcConnector)
-      //   rootStore.$patch({ isShowLogin: false })
-      //   loading.close()
-      // }
-    } catch (error) {
-      console.log('error', error)
-    }
-
-    // userStore.updateUserInfo({
-    //   ...metaIdInfo,
-    //   metaId: metaIdInfo.metaId, // account 有时拿回来的metaId为空
-    //   name: metaIdInfo.name!, // account 有时拿回来的name 是旧 name
-    //   //password: form.password,
-    //   address: metaidWallet.rootAddress,
-    //   loginType: 'MetaID',
-    // })
-    // userStore.updateMetaletLoginState(true)
-    // userStore.$patch({
-    //   wallet: null,
-    // })
-    // userStore.$patch({
-    //   wallet: new MetaletSDK({
-    //     network: import.meta.env.VITE_NET_WORK,
-    //     wallet: metaidWallet,
-    //   }),
-    // })
-    // status.value = ConnectWalletStatus.Watting
-    // rootStore.$patch({ isShowLogin: false })
+  if (!btcConnector._isConnected) {
     // loading.close()
-    // if (!metaIdInfo.name) {
-    //   isShowSetBaseInfo.value = true
-    // }
-  } catch (error) {
-    loading.close()
-    rootStore.$patch({ isShowLogin: true })
-    ElMessage.error(`${(error as any).toString()}`)
+    return ElMessage.error(`${i18n.t('wallet_addres_empty')}`)
   }
+  // userStore.updateUserInfo({
+  //   address: btcConnector.address,
+  //   loginType: 'MetaID',
+  // })
+
+  // const needInfo = { network: btcConnector.network, address: btcConnector.address }
+  try {
+    const currentUserInfo = await btcConnector.getUser({ network: btcConnector.network })
+
+    const currentUserName = currentUserInfo.name
+    if (!currentUserName) {
+      // isShowSetBaseInfo.value = true
+      isShowSetUserInfo.value = true
+    } else {
+      pushToBuzz(currentUserInfo)
+      rootStore.$patch({ isShowLogin: false })
+      // loading.close()
+    }
+  } catch (error) {
+    console.error('Error fetching user info:', error)
+  }
+
+  // try {
+
+  //   // return
+  //   // if (!currentMetaId) {
+  //   //   loading.close()
+  //   //   console.log('btcConnector.internal', btcConnector)
+  //   //   isShowSetBaseInfo.value = true
+  //   // } else {
+  //   //   getUserInfo(btcConnector)
+  //   //   rootStore.$patch({ isShowLogin: false })
+  //   //   loading.close()
+  //   // }
+  // } catch (error) {
+
+  // }
+
+  // userStore.updateUserInfo({
+  //   ...metaIdInfo,
+  //   metaId: metaIdInfo.metaId, // account 有时拿回来的metaId为空
+  //   name: metaIdInfo.name!, // account 有时拿回来的name 是旧 name
+  //   //password: form.password,
+  //   address: metaidWallet.rootAddress,
+  //   loginType: 'MetaID',
+  // })
+  // userStore.updateMetaletLoginState(true)
+  // userStore.$patch({
+  //   wallet: null,
+  // })
+  // userStore.$patch({
+  //   wallet: new MetaletSDK({
+  //     network: import.meta.env.VITE_NET_WORK,
+  //     wallet: metaidWallet,
+  //   }),
+  // })
+  // status.value = ConnectWalletStatus.Watting
+  // rootStore.$patch({ isShowLogin: false })
+  // loading.close()
+  // if (!metaIdInfo.name) {
+  //   isShowSetBaseInfo.value = true
+  // }
+  // } catch (error) {
+  //   loading.close()
+  //   rootStore.$patch({ isShowLogin: true })
+  //   ElMessage.error(`${(error as any).toString()}`)
+  // // }
 
   //metalet-SDK实例化
 }
 async function getUserInfo() {
-  const needInfo = { network: 'testnet', address: connectStore.userInfo.address }
+  const needInfo = {
+    network: connectStore.last.network || networkStore.network,
+    address: connectStore.userInfo.address,
+  }
   const currentUserInfo = await connectStore.last.getUser({ ...needInfo })
   console.log(currentUserInfo)
   pushToBuzz(currentUserInfo)
@@ -1467,5 +1503,9 @@ async function onModalClose() {
 //     })
 //   }
 // })
+function closeSetInfoModal() {
+  isShowSetUserInfo.value = false
+  connectStore.disconnect()
+}
 </script>
 <style lang="scss" scoped src="./ConnectWalletModal.scss"></style>

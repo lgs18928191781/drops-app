@@ -1,14 +1,18 @@
 import { ElMessage } from 'element-plus'
-import { useBtcJsStore } from '@/stores/btcjs'
+//import { useBtcJsStore } from '@/stores/btcjs'
 import { Buffer } from 'buffer'
 import { btcConnect, MetaletWalletForBtc } from '@metaid/metaid'
 import {type Network} from '@/stores/network'
 // Add into life circle
 //
 
+
+
+
 export function checkMetalet() {
+  
   if (!window.metaidwallet) {
-    ElMessage.warning('Please install the Metalet wallet extension first.')
+    //ElMessage.warning('Please install the Metalet wallet extension first.')
     throw new Error('Please install the Metalet wallet extension first.')
   }
 }
@@ -84,10 +88,10 @@ export const getAddress = async () => {
   return address
 }
 
-export function initPsbt() {
-  const bitcoinJs = useBtcJsStore().get!
-  return new bitcoinJs.Psbt()
-}
+// export function initPsbt() {
+//   const bitcoinJs = useBtcJsStore().get!
+//   return new bitcoinJs.Psbt()
+// }
 
 export function finishPsbt<T>(psbt: T): T {
   return psbt
@@ -106,18 +110,18 @@ interface connectRes {
 
 export const getNetwork = async () => {
   checkMetalet()
-  return await window.metaidwallet.getNetwork().then(({ network }) => {
-    switch (network) {
-      case 'mainnet':
-        return 'livenet'
-      case 'testnet':
-        return 'testnet'
-      case 'regtest':
-        return 'regtest'
-      default:
-        return 'livenet'
-    }
-  })
+  
+  const { network }=await window.metaidwallet.getNetwork()
+  switch (network) {
+    case 'mainnet':
+      return 'mainnet'
+    case 'testnet':
+      return 'testnet'
+    case 'regtest':
+      return 'regtest'
+    default:
+      return 'mainnet'
+  }
 }
 
 export const switchNetwork = async (network: 'livenet' | 'testnet' | 'regtest') => {

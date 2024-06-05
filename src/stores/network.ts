@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { networks } from 'bitcoinjs-lib'
+//import { networks } from 'bitcoinjs-lib'
 import { NETWORK } from '@/data/constants'
 
 export type Network = 'livenet' | 'testnet' | 'regtest'
@@ -10,11 +10,7 @@ export const useNetworkStore = defineStore('network', {
     btcNetwork: () =>
       NETWORK === 'livenet' ? 'bitcoin' : NETWORK === 'regtest' ? 'regtest' : 'testnet',
     typedNetwork: () =>
-      NETWORK === 'livenet'
-        ? networks.bitcoin
-        : NETWORK === 'regtest'
-        ? networks.regtest
-        : networks.testnet,
+      NETWORK === 'livenet' ? 'livenet' : NETWORK === 'regtest' ? 'regtest' : 'testnet',
     isTestnet: () => NETWORK === 'testnet',
   },
 })

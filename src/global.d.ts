@@ -1,6 +1,6 @@
 /// <reference types="chrome" />
-type BitcoinJs = typeof import('bitcoinjs-lib')
-type ECPairFactory = typeof import('ecpair')
+// type BitcoinJs = typeof import('bitcoinjs-lib')
+// type ECPairFactory = typeof import('ecpair')
 
 declare interface IDialog {
   outsideName: string
@@ -8,8 +8,8 @@ declare interface IDialog {
 }
 
 declare interface Window {
-  bitcoinjs: BitcoinJs
-  ecpair: ECPairFactory
+  // bitcoinjs: BitcoinJs
+  // ecpair: ECPairFactory
   appMetaIdJs?: any
   appMetaIdJsV2?: any
   ethereum: import('ethers').providers.ExternalProvider

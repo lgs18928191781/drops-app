@@ -999,7 +999,7 @@ export async function tx(txId: string | undefined) {
   if (str.slice(-2) === 'i0') {
     str = str.slice(0, -2)
   }
-  window.open(`https://mempool.space/testnet/tx/${str}`, '_blank')
+  window.open(`${import.meta.env.VITE_MEMPOOL_URL}/${str}`, '_blank')
 }
 
 // 随机数

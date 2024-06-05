@@ -25,7 +25,7 @@
         </div>
       </div>
 
-      <div class="msg flex">
+      <div class="msg flex" @click="openPublish">
         <div class="icon-warp">
           <div class="box-shadow" :style="{ background: tag?.color }"></div>
           <div class="content-warp flex flex-align-center flex-pack-center">
@@ -34,18 +34,22 @@
         </div>
         <div class="cont">
           <div class="name">{{ tag?.tagName[$i18n.locale] }}</div>
-          <div class="intro">{{ tag?.info[$i18n.locale] }}</div>
+          <!-- <div class="intro">{{ tag?.info[$i18n.locale] }}</div> -->
+          <div class="input">
+            <ElInput type="text" :placeholder="$t('Buzz.publish.placeholder')" />
+          </div>
         </div>
       </div>
 
       <div class="tab flex flex-align-center" v-if="tag?.subTag && tag?.subTag.length">
-        <a
+        <!-- <a
           :class="{ active: item.tag === tabActive }"
           v-for="item in tag?.subTag"
           :key="item.tag"
           @click="changeSubTag(item.tag)"
           >{{ item[$i18n.locale] }}</a
-        >
+        > -->
+        <a class="active">Newest</a>
       </div>
     </div>
   </div>
@@ -79,12 +83,22 @@ import { usePostTagStore } from '@/stores/buzz/tag'
 import { useUserStore } from '@/stores/user'
 import { useRootStore } from '@/stores/root'
 import { useConnectionStore } from '@/stores/connection'
-import { computed, inject, onActivated, reactive, ref, onMounted, watch, watchEffect } from 'vue'
+import {
+  computed,
+  inject,
+  onActivated,
+  reactive,
+  ref,
+  onMounted,
+  watch,
+  watchEffect,
+  Ref,
+} from 'vue'
 import { useRoute } from 'vue-router'
 import BuzzListVue from './components/BuzzList.vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-
+import { checkUserLogin } from '@/utils/util'
 const route = useRoute()
 const postTagStore = usePostTagStore()
 const userStore = useUserStore()
@@ -97,6 +111,7 @@ const pulldown: PullDownVal = inject('Pulldown')!
 const refreshBox = ref()
 const isChangeTag = ref(false)
 const router = useRouter()
+const isShowBuzzPublish: Ref<boolean> = inject('isShowBuzzPublish')!
 const rootStore = useRootStore()
 const newMenu = [
   {
@@ -202,6 +217,11 @@ function updateItem(buzz: BuzzItem) {
   if (index !== -1) {
     list[index] = buzz
   }
+}
+async function openPublish() {
+  //  console.log(connectStore.userInfo.metaid)
+  await checkUserLogin()
+  isShowBuzzPublish.value = true
 }
 
 onActivated(() => {

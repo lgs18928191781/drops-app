@@ -1,6 +1,31 @@
 .set-base-user-info {
     margin-top: -30PX;
 
+    .close {
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--themeBgSecondColor);
+        cursor: pointer;
+        margin-left: -17px;
+        margin-bottom: -50px;
+
+        .icon {
+            width: 12px;
+            height: 12px;
+            transition: all 0.5s;
+        }
+
+        &:hover {
+            .icon {
+                transform: rotate(180deg);
+            }
+        }
+    }
+
     .set-base-user-info-item {
         // background: #FFFFFF;
         border-radius: 24px;

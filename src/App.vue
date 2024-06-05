@@ -54,14 +54,14 @@ import SearchModal from './components/Search/Index.vue'
 import UserCardFloater from './components/UserCard/Floater.vue'
 import PullDownVue from './layout/PullDown/PullDown.vue'
 import ImagePreviewVue from '@/components/ImagePreview/ImagePreview.vue'
-import { useBtcJsStore } from '@/stores/btcjs'
-import * as secp256k1 from 'tiny-secp256k1'
+//import { useBtcJsStore } from '@/stores/btcjs'
+//import * as secp256k1 from 'tiny-secp256k1'
 import { useConnectionStore } from '@/stores/connection'
 import { useFeebStore } from '@/stores/feeb'
 
 const rootStore = useRootStore()
 const userStore = useUserStore()
-const btcJsStore = useBtcJsStore()
+//const btcJsStore = useBtcJsStore()
 const feeStore = useFeebStore()
 const route = useRoute()
 const blackRoute = reactive(['home'])
@@ -76,28 +76,25 @@ const routeKey = (route: any) => {
 //   localStorage.setItem('showDiffLang', String(1))
 // }
 
-onMounted(async () => {
+onMounted(() => {
   // initialize btcjs
-  const btcjs = window.bitcoinjs
-  btcJsStore.set(btcjs)
+  // const btcjs = window.bitcoinjs
+  // btcJsStore.set(btcjs)
 
   // initialize related btc modules
 
-  const ECPair = window.ecpair.ECPairFactory(secp256k1)
-  btcJsStore.setECPair(ECPair)
- 
-  await connectorStore.sync()
+  // const ECPair = window.ecpair.ECPairFactory(secp256k1)
+  // btcJsStore.setECPair(ECPair)
 
+  setTimeout(async () => {
+    await connectorStore.sync()
 
-  
-  feeStore.set(feeStore.last.currentFeeb.title).then()
+    feeStore.set(feeStore.last.currentFeeb.title).then()
 
-  feebInterval.value = setInterval(() => {
-    feeStore.update().then()
-  }, 60 * 1000)
-
-
-
+    feebInterval.value = setInterval(() => {
+      feeStore.update().then()
+    }, 60 * 1000)
+  }, 200)
 })
 
 onUnmounted(() => {

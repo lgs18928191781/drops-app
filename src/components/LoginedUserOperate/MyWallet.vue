@@ -21,7 +21,7 @@
             >
               <UserAvatar
                 :meta-id="userStore.user!.metaId"
-                :image="connecionStore.last.user.avatarId"
+                :image="connecionStore.last?.user?.avatarId"
                 :disabled="true"
                 :name="userStore.user!.name"
                 :meta-name="userStore.user!.metaName"
@@ -542,7 +542,7 @@ const userWalletOperates = [
 const tabActive = ref(0)
 const tabs = [
   { name: i18n.t('Wallet.Balance'), value: 0 },
-  { name: 'NFT', value: 1 },
+  // { name: 'NFT', value: 1 },
 ]
 const blockTimeStamp = ref(0)
 const isSkeleton = ref(true)

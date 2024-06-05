@@ -37,21 +37,22 @@ export default ({ mode, command }) => {
     project: env.VITE_SENTRY_PROJECT,
     release: env.VITE_COMMIT_ID,
     deploy: {
-      env: 'production'
+      env: 'production',
     },
     setCommits: {
-      auto: true
+      auto: true,
     },
     sourceMaps: {
       include: ['./dist/assets'],
       ignore: ['node_modules'],
-      urlPrefix: '~/assets'
-    }
+      urlPrefix: '~/assets',
+    },
   }
   // const isProduction = productionEnvs.includes(mode) && command === 'build' ? true : false
   const isProduction = command === 'build'
   return defineConfig({
-    base:env.VITE_PUBLIC_PATH,
+    
+   
     plugins: [
       command === 'serve' &&
         nodePolyfills({
@@ -68,7 +69,7 @@ export default ({ mode, command }) => {
       vue({
         template: {
           compilerOptions: {
-            isCustomElement: tag => tag.includes('show-'),
+            isCustomElement: (tag) => tag.includes('show-'),
           },
         },
       }),
@@ -128,10 +129,6 @@ export default ({ mode, command }) => {
         'mvc-lib/ecies': 'ECIES',
         'mvc-lib/mnemonic': 'Mnemonic',
         bip39: 'bip39',
-        // "bitcoin":"bitcoin",
-        // 'bitcoinjs':"bitcoinjs",
-        // ecpair:'ecpair',
-
       }),
 
       // VitePWA({
@@ -201,7 +198,7 @@ export default ({ mode, command }) => {
       //   project: env.VITE_SENTRY_PROJECT,
       //   authToken: env.VITE_SENTRY_AUTH_TOKEN,
       // }),
-      viteSentry(sentryConfig)
+      viteSentry(sentryConfig),
     ],
     resolve: {
       alias: {
@@ -210,7 +207,7 @@ export default ({ mode, command }) => {
       },
     },
     optimizeDeps: {
-      // include: ['buffer', 'process','bitcoinjs','ecpair'],
+      // include: ['buffer', 'process'],
       // esbuildOptions:{
       //   target:'es2015',
       //   define:{
@@ -219,7 +216,6 @@ export default ({ mode, command }) => {
       //   supported:{
       //     bigint:true
       //   }
-
       // }
     },
     define: {
@@ -232,22 +228,21 @@ export default ({ mode, command }) => {
       https: false,
       // open: true,
       // proxy: {
-      //   '^/metasv/': {
-      //     target: 'https://192.168.168.147:443',
+      //   '^/rate-services/': {
+      //     target: 'https://www.orders.exchange/api-book/brc20/common/rate/btc',
       //     changeOrigin: true,
-      //     rewrite: path => path.replace(/^\/metasv/, ''),
+      //     rewrite: path => path.replace(/^\/rate-services/, ''),
       //   },
       // },
     },
     esbuild: {
-      drop: isProduction ? ['console', 'debugger'] : [],
+      drop: isProduction ? ['console','debugger'] : [], //['console', 'debugger']
     },
     build: {
-      
-      target: isProduction ? 'es2015' : 'module',
+      target: isProduction ? 'esnext' : 'module',
       minify: isProduction,
       sourcemap: isProduction ? false : 'inline',
-      
+
       // sourcemap: true,
       rollupOptions: {
         //external: ['bitcoin', 'bitcoin.js'],
@@ -256,7 +251,6 @@ export default ({ mode, command }) => {
         output: {
           sourcemap: isProduction ? false : 'inline',
         },
-       
       },
       commonjsOptions: {
         transformMixedEsModules: true,
