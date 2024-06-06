@@ -150,7 +150,7 @@
               ><Icon name="calendar_days" />
               {{ $filters.dateTimeFormat(item.createTime * 1000) }}</span
             >
-            <span class="txid flex flex-align-center" @click.stop="tx(item.txid)"
+            <span class="txid flex flex-align-center" @click.stop="tx($event,item.txid)"
               ><Icon name="link" /> {{ item.txid?.slice(0, 6) }}</span
             >
           </div>
