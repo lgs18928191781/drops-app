@@ -488,6 +488,7 @@ export function isTabarPage(routeName: any) {
 }
 
 export function toUrl(url: string | undefined) {
+  
   if (!url) return
   try {
     const Url = new URL(url!)
@@ -974,13 +975,15 @@ export function copy(
   })
 }
 
-export async function tx(txId: string | undefined) {
+export async function tx(e:Event,txId: string | undefined) {
   if (!txId) return
+  e.preventDefault()
   const chainInfoRes = await GetTxChainInfo(txId)
   const chain =
     chainInfoRes.code === 0 && chainInfoRes.data.chainFlag
       ? chainInfoRes.data.chainFlag
       : Chains.MVC
+
   const url =
     chain === Chains.MVC ? `https://mvcscan.com/tx/${txId}` : `https://whatsonchain.com/tx/${txId}`
   toUrl(url)
