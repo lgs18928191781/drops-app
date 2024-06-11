@@ -162,6 +162,7 @@ export function openLoginConfirm(path: string, params?: ElMessageBoxOptions) {
 }
 
 export function getMetaFileUrl(metafile: string) {
+  
   if (typeof metafile !== 'string') return ''
   metafile = metafile.replace('metafile://', '')
   if (metafile === '') return ''

@@ -41,6 +41,8 @@ const props = withDefaults(defineProps<Props>(), {
   type: 'metaId',
 })
 
+
+
 const customClass = computed(() => {
   return props.imageClass ? props.imageClass + ' avatar-rounded' : 'avatar-rounded'
 })

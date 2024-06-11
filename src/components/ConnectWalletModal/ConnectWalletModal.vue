@@ -650,23 +650,28 @@ async function onSetBaseInfoSuccessType(params: {
   bio: string
   avatarId: string
 }) {
+
+  console.log('connectStore',connectStore)
+  debugger
   const userInfo = {
     name: params.name,
     bio: params.bio,
     avatar: params.nft,
-    network: connectStore.last.network,
+    network:connectStore.last.network,
     feeRate: feebStore.last.currentFeeb.feeRate,
     service: {
       address: import.meta.env.VITE_BTC_SERVICE_ADDRESS,
       satoshis: import.meta.env.VITE_BTC_SERVICE_FEEB,
     },
   }
-
+  
   try {
+   
     const setUserInfoRes = await connectStore.last.createUserInfo({ ...userInfo })
     // const createMetaidRes = await btcConnector.createMetaid({ ...userInfo })
-
+    
     console.log(setUserInfoRes)
+    debugger
     if (setUserInfoRes) {
       // isShowSetBaseInfo.value = false
       connectStore.updateUser({
@@ -1138,7 +1143,7 @@ async function connectMetalet() {
   console.log(loading)
 
   // try {
-  const btcConnector = await connectStore.connect()
+  const btcConnector = await connectStore.connect(ConnectChain.mvc)
 
   if (!btcConnector._isConnected) {
     // loading.close()
@@ -1154,7 +1159,7 @@ async function connectMetalet() {
   // const needInfo = { network: btcConnector.network, address: btcConnector.address }
   try {
     const currentUserInfo = await btcConnector.getUser({ network: btcConnector.network })
-
+    debugger
     const currentUserName = currentUserInfo.name
     if (!currentUserName) {
       // isShowSetBaseInfo.value = true
@@ -1223,6 +1228,7 @@ async function getUserInfo() {
   }
   const currentUserInfo = await connectStore.last.getUser({ ...needInfo })
   console.log(currentUserInfo)
+  
   pushToBuzz(currentUserInfo)
 }
 async function pushToBuzz(data) {
@@ -1236,7 +1242,7 @@ async function pushToBuzz(data) {
     email: data!.phone || data!.email,
     username: data!.name,
   })
-
+  connectStore.updateUser(data)
   userStore.updateUserInfo({
     ...data,
     metaId: data.metaid, // account 有时拿回来的metaId为空

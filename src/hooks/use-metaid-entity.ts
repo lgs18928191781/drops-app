@@ -34,7 +34,9 @@ export function useMetaIDEntity(){
     async function buzzEntity(body:{content:string,attachments:AttachmentItem[] | []}) {
         const connectStore = useConnectionStore()
        
-        const buzzEntity =connectStore.last.use('buzz')
+        const buzzEntity =await connectStore.last.use('buzz')
+        
+      
         // const finalBody:any = body.content
         const finalBody: any = {
             content: body.content,
@@ -42,10 +44,13 @@ export function useMetaIDEntity(){
           }
         if(isEmpty(body.attachments)){
             const imageRes= await fileEntity(body.attachments)
+            debugger
             finalBody.attachments=imageRes.revealTxIds.map(rid=>{
                 return `metafile://${rid}i0`
             })
         }
+
+        debugger
         // return
         const createRes =(await buzzEntity).create({
             options: [{ body: JSON.stringify(finalBody),contentType: 'text/plain', flag: import.meta.env.VITE_BTC_METAID_FLAG}],
@@ -95,6 +100,8 @@ export function useMetaIDEntity(){
                 satoshis: import.meta.env.VITE_BTC_SERVICE_FEEB,
               },
         })
+        console.log("imageRes",imageRes)
+        debugger
         return imageRes
 
    }

@@ -175,7 +175,10 @@ export enum ConnectChain{
           })
         }else{
           const _wallet =await MetaletWalletForMvc.create()
-          connectRes = await mvcConnect(_wallet)
+          connectRes = await mvcConnect({
+            wallet:_wallet,
+            network:networkStore.network
+          })
         }
       
        
@@ -199,6 +202,9 @@ export enum ConnectChain{
             
             
             this.last = connectRes
+            if(chain == ConnectChain.mvc){
+              this.last.network=networkStore.network
+            }
             this.userInfo.metaid=connectRes.metaid
             this.userInfo.address=connectRes.address
             this.userInfo.pubkey=pubkey
@@ -277,7 +283,10 @@ export enum ConnectChain{
            })
           
     
-           connectRes= await mvcConnect(_wallet)
+           connectRes= await mvcConnect({
+            wallet:_wallet,
+            network:this.last.network!
+           })
         }
     
         const networkStore = useNetworkStore()
@@ -300,6 +309,10 @@ export enum ConnectChain{
             const pubkey=await getWalletAdapter().getPubKey()
             
             this.last=connectRes
+            if(this.userInfo.currentChain == ConnectChain.mvc){
+              this.last.network=networkStore.network
+            }
+            this.last.network=networkStore.network
             this.userInfo.metaid=connectRes.metaid
             this.userInfo.pubkey=pubkey
             this.userInfo.address=connectRes.address

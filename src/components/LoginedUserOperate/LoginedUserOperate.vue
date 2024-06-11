@@ -102,7 +102,9 @@
             :meta-name="userStore.user!.metaName"
             :disabled="true"
           />
+          
         </template>
+        <img src="blob:http://localhost:5173/ab85144a-e3f3-4dd0-b3c2-3ba478e4b46e" alt="">
         <UserCardVue
           :name="userStore.user!.name"
           :meta-id="userStore.user!.metaId"
