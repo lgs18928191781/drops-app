@@ -53,6 +53,7 @@ function toQuote() {
 
 provide('Reply', quote)
 onMounted(async () => {
+  
   layout.isShowUserInfo = false
   await talk.initCommunity('@me')
 
