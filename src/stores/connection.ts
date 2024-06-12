@@ -5,9 +5,10 @@ import * as metaletAdapter from '@/utils/metalet'
 import { Network, useNetworkStore } from './network'
 //import type { Psbt } from 'bitcoinjs-lib'
 import {  btcConnect,mvcConnect,MetaletWalletForBtc,IBtcConnector,MetaletWalletForMvc } from '@metaid/metaid'
+import { InscribeResultForYesBroadcast} from '@/hooks/use-metaid-entity'
 
 
-type BaseUserInfo={
+export type BaseUserInfo={
       address:string
       avatar:string
       avatarId:string
@@ -79,17 +80,17 @@ export enum ConnectChain{
           user:{
           
           },
-          
           network: 'testnet'
         } as WalletConnection,
         userInfo: useLocalStorage('last-connection', {
          address:'',
          pubkey:'',
          metaid:'',
-         currentChain:''
+         name:'',
+         avatarId:''
         },
-       
-      )   ,
+      ),
+      currentChain: useLocalStorage('last-chain','') 
       }
     },
   
@@ -113,6 +114,30 @@ export enum ConnectChain{
         if (!state.last) throw new Error('No connection')
   
         const adapter: {
+
+          createUserInfo:({
+            userData,
+            options
+          }:{
+            userData:{
+              name: string
+              bio?: string
+              avatar?: string
+            },
+            options: {
+              network?: 'livenet' | 'testnet' | 'regtest',
+              feeRate?: number
+              service?: {
+                address: string
+                satoshis: string
+              }
+            }
+          })=> Promise<{
+            nameRes: InscribeResultForYesBroadcast
+            bioRes:  InscribeResultForYesBroadcast | undefined
+            avatarRes: InscribeResultForYesBroadcast | undefined
+          }>
+
           initPsbt: () => any//Psbt
           getMvcBalance: () => Promise<any>
           getMvcAddress: () => Promise<string>
@@ -180,7 +205,7 @@ export enum ConnectChain{
             network:networkStore.network
           })
         }
-      
+        debugger
        
         try {
           if (connectRes) {
@@ -208,7 +233,7 @@ export enum ConnectChain{
             this.userInfo.metaid=connectRes.metaid
             this.userInfo.address=connectRes.address
             this.userInfo.pubkey=pubkey
-            this.userInfo.currentChain=chain
+            this.currentChain=chain
             return this.last
           }
         } catch (e: any) {
@@ -234,8 +259,15 @@ export enum ConnectChain{
         address:'',
         pubkey:'',
         metaid:'',
-        currentChain:''
+        name:'',
+        avatarId:''
        }
+       this.currentChain=''
+         
+
+
+
+
         // this.last._isConnected = false
         // this.last.address = ''
         // this.last.wallet = {}
@@ -245,8 +277,22 @@ export enum ConnectChain{
 
       },
 
+      setUserNameAndAvatar(payload:{
+        name:string,
+        avatarId:string
+      }){
+        if(payload.name){
+          this.userInfo.name=payload.name
+          this.userInfo.avatarId=payload.avatarId
+        }
+      },
+
       updateUser(newInfo:Partial<BaseUserInfo>){
-        this.last.user={...this.last.user,...newInfo}
+        debugger
+        if(newInfo.name){
+          this.last.user={...this.last.user,...newInfo}
+        }
+        
       },
 
       async sync(){
@@ -264,7 +310,7 @@ export enum ConnectChain{
         let connectRes
         let xpub
 
-        if(this.userInfo.currentChain == ConnectChain.btc){
+        if(this.currentChain == ConnectChain.btc){
          const _wallet = await MetaletWalletForBtc.restore({
             address:this.userInfo.address,
             pub:this.userInfo.pubkey
@@ -309,7 +355,7 @@ export enum ConnectChain{
             const pubkey=await getWalletAdapter().getPubKey()
             
             this.last=connectRes
-            if(this.userInfo.currentChain == ConnectChain.mvc){
+            if(this.currentChain == ConnectChain.mvc){
               this.last.network=networkStore.network
             }
             this.last.network=networkStore.network

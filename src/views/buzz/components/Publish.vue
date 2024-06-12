@@ -335,24 +335,23 @@ async function submit() {
   console.log(sendInfo)
   try {
     const sendRes = await buzzEntity(sendInfo)
-
-  if (sendRes.revealTxIds.length) {
-    content.value = ''
-    attachments.length = 0
-    emit('update:modelValue', false)
-    ElMessage.success('success')
-    emit('success')
-    userStore.isNeedRefresh = true
-  } else {
-    content.value = ''
-    attachments.length = 0
-    emit('update:modelValue', false)
-    ElMessage.error('Post fail')
-  }
+    debugger
+    if (sendRes?.revealTxIds?.length || sendRes.txid) {
+      content.value = ''
+      attachments.length = 0
+      emit('update:modelValue', false)
+      ElMessage.success('success')
+      emit('success')
+      userStore.isNeedRefresh = true
+    } else {
+      content.value = ''
+      attachments.length = 0
+      emit('update:modelValue', false)
+      ElMessage.error('Post fail')
+    }
   } catch (error) {
-    ElMessage.error((error as any).message) 
+    ElMessage.error((error as any).message)
   }
-  
 
   // const info = { likeTo: '63344fd9b2e604bbd36f2a9b405198a643374013d37481aacdecd63ed55c9348i0' }
   // const likeRes = await likeEntity(info)

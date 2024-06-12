@@ -87,7 +87,7 @@ export class DBClass extends Dexie {
 
   getMetaFile(metafileTxId: string, width = 235, type: 'metafile' | 'metaId' = 'metafile') {
     return new Promise<string>(async resolve => {
-      
+        
       if (!metafileTxId) {
         resolve('')
       } else if (

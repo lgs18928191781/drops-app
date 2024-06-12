@@ -433,25 +433,22 @@ async function onLike(params: { txId: string; address: string; done: () => void 
   }
   try {
     const likeRes = await likeEntity(LikeBuzzTxId)
-  console.log(likeRes)
-  if (likeRes.revealTxIds.length) {
-    let itemIndex = props.list.findIndex(item => item.txId === params.txId)
-    if (itemIndex !== -1) {
-      const buzz = { ...props.list[itemIndex] }
-      buzz.hasMyLike = true
-      buzz.likeCount += 1
-      console.log(buzz)
-      emit('updateItem', buzz)
-      ElMessage.success(i18n.t('PayLike') + ' ' + i18n.t('Success'))
+    if (likeRes?.revealTxIds?.length || likeRes.txid) {
+      let itemIndex = props.list.findIndex(item => item.txId === params.txId)
+      if (itemIndex !== -1) {
+        const buzz = { ...props.list[itemIndex] }
+        buzz.hasMyLike = true
+        buzz.likeCount += 1
+        console.log(buzz)
+        emit('updateItem', buzz)
+        ElMessage.success(i18n.t('PayLike') + ' ' + i18n.t('Success'))
+      }
+    } else {
+      ElMessage.error('Post fail')
     }
-  } else {
-   
-    ElMessage.error('Post fail')
-  }
   } catch (error) {
-    ElMessage.error((error as any).message) 
+    ElMessage.error((error as any).message)
   }
-
 
   return
   await checkUserLogin()
