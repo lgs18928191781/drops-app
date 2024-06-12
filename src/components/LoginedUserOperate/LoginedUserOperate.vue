@@ -3,19 +3,65 @@
     <VersionVue />
   </div>
 
+  <div class="net-warp mr-3">
+    <ElDropdown class="network-style" trigger="click">
+      <span class="el-dropdown-link flex items-center text-sm font-medium">
+        <img
+          src="@/assets/images/logo_chain_btc.png"
+          alt=""
+          class="show-coin w-6 h-6 mr-1.5"
+          v-if="connectStore.currentChain == 'btc'"
+        />
+        <img
+          src="@/assets/images/logo_chain_mvc.png"
+          alt=""
+          class="show-coin w-6 h-6 mr-1.5"
+          v-else
+        />
+        <!-- {{ store.currentShowWallet }} -->
+        {{ connectStore.currentChain == 'btc' ? 'Bitcoin' : 'MicrovisionChain' }}
+        <img src="@/assets/images/list_icon.png" alt="" class="w-3 h-3 ml-1.5" />
+      </span>
+
+      <template #dropdown>
+        <div class="tab-wallet box-border p-6 ">
+          <div
+            class="wallet-type flex mb-2 last:mb-0 justify-between items-center text-sm font-medium cursor-pointer"
+            v-for="(item, index) in chainType"
+            :key="index"
+            @click="selectChain(item.key)"
+          >
+            <div class="left-content flex items-center mr-6">
+              <img :src="getChainImageUrl(item.icon)" alt="" class="chain-icon w-6 h-6 mr-1.5" />
+              <div class="text">{{ item.name }}</div>
+            </div>
+            <img
+              src="@/assets/images/btn_check.png"
+              alt=""
+              class="right-content w-5 h-5"
+              :class="connectStore.currentChain === item.key ? 'opacity-100' : 'opacity-0'"
+            />
+          </div>
+        </div>
+      </template>
+    </ElDropdown>
+  </div>
+
   <div class="gas-warp mr-3">
     <div>
       <!-- 更多操作 -->
       <ElDropdown trigger="click">
         <a
-          class="more flex flex-align-center flex-pack-center border text-white font-medium text-sm rounded-xl bg-[#FC6D5E] px-2 py-1.5 "
+          class="more flex flex-align-center flex-pack-center text-[#303133] font-medium text-sm px-2 py-1.5 "
         >
-          <LucideIcon name="Fuel" :size="20" class="text-white font-bold mr-1.5" strokeWidth="2" />
-          <span class="mr-1">{{ feebStore.last.currentFeeb.title }}</span>
+          <img src="@/assets/images/icon_gas.png" alt="" class="w-[18px] h-[18px] mr-1.5" />
+          <!-- <LucideIcon name="Fuel" :size="20" class="text-white font-bold mr-1.5" strokeWidth="2" /> -->
+          <span class="mr-1">{{ feebStore.last.currentFeeb.title }}:</span>
           <div>
             <span class="mr-1">{{ feebStore.last.currentFeeb.feeRate }}</span
             ><span>sat/vB</span>
           </div>
+          <img src="@/assets/images/list_icon.png" alt="" class="w-3 h-3 ml-1.5" />
         </a>
         <template #dropdown>
           <ElDropdownMenu>
@@ -24,12 +70,25 @@
               :key="index"
               @click="trggleFeeb(item)"
             >
-              <div class="flex flex-align-center user-operate-item">
-                <LucideIcon :name="item.icon" :size="20" class=" mr-3" strokeWidth="2" />
-                <span class="name  font-bold text-sm mr-3">{{ item.fullTitle ?? item.title }}</span>
-                <div class="feeRate ">
-                  <span class="mr-1 text-[#FC6D5E] text-base font-bold"> {{ item.feeRate }} </span
+              <div class="flex flex-align-center user-operate-item justify-between">
+                <!-- <LucideIcon :name="item.icon" :size="20" class=" mr-3" strokeWidth="2" /> -->
+                <div class="flex items-center">
+                  <img :src="getFeeImageUrl(item.title)" alt="" class="w-[18px] h-[18px] mr-1.5" />
+                  <span class="name  font-medium text-sm mr-3">{{
+                    item.fullTitle ?? item.title
+                  }}</span>
+                </div>
+                <div class="feeRate flex items-center">
+                  <span class="mr-1 text-sm font-medium"> {{ item.feeRate }} </span
                   ><span>sat/vB</span>
+                  <img
+                    src="@/assets/images/btn_check.png"
+                    alt=""
+                    class="w-5 h-5 ml-3"
+                    :class="
+                      feebStore.last.currentFeeb.title == item.title ? 'opacity-100' : 'opacity-0'
+                    "
+                  />
                 </div>
               </div>
             </ElDropdownItem>
@@ -188,6 +247,10 @@ const isProduction = import.meta.env.MODE === 'mainnet'
 const feebStore = useFeebStore()
 const connectStore=useConnectionStore()
 const isShowUserMenu = ref(false)
+const chainType = ref([
+  { name: 'Bitcoin', icon: 'logo_chain_btc',key:'btc' },
+  { name: 'MicrovisionChain', icon: 'logo_chain_mvc',key:'mvc' },
+])
 const userOperates = computed(() => {
   const result = [
     {
@@ -256,13 +319,23 @@ const toMetaName = () => {
   })
   window.open(routerUrl.href, '_blank')
 }
-
+const getChainImageUrl = (name: string, type: string = 'png') => {
+  return new URL(`/src/assets/images/${name}.${type}`, import.meta.url).href
+}
+const getFeeImageUrl = (name: string, type: string = 'png') => {
+  return new URL(`/src/assets/images/icon_${name}.${type}`, import.meta.url).href
+}
 function toMintNft() {
   if (userStore.metaletLogin) {
     return ElMessage.error(`${i18n.t('nosupportmetaletissue')}`)
   }
   router.push('/nft/issue')
 }
+
+function selectChain(chain){
+  connectStore.changeChain(chain)
+}
+
 
 async function trggleFeeb(feeb:FeebPlan){
   if(feeb.title == feebStore.last.currentFeeb.title) return

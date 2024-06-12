@@ -53,8 +53,7 @@ export type WalletConnectionBaseType={
 
 export type PickBtcConnector=Pick<IBtcConnector & 'metaid','createMetaid' | 'getMetaid' | 'getUser' | 'hasMetaid' | 'hasUser' | 'disconnect' | 'inscribe' | 'isConnected' | 'load' | 'updateUserInfo' | 'use'>
 
-export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
-
+export type WalletConnection=WalletConnectionBaseType & PickBtcConnector 
 export enum ConnectChain{
   mvc='mvc',
   btc='btc'
@@ -86,10 +85,9 @@ export enum ConnectChain{
          address:'',
          pubkey:'',
          metaid:'',
-         currentChain:''
-        },
-       
-      )   ,
+        }
+      ),
+      currentChain: useLocalStorage('last-chain','btc')
       }
     },
   
@@ -202,7 +200,7 @@ export enum ConnectChain{
             this.userInfo.metaid=connectRes.metaid
             this.userInfo.address=connectRes.address
             this.userInfo.pubkey=pubkey
-            this.userInfo.currentChain=chain
+            this.currentChain=chain
             return this.last
           }
         } catch (e: any) {
@@ -228,7 +226,6 @@ export enum ConnectChain{
         address:'',
         pubkey:'',
         metaid:'',
-        currentChain:''
        }
         // this.last._isConnected = false
         // this.last.address = ''
@@ -241,6 +238,9 @@ export enum ConnectChain{
 
       updateUser(newInfo:Partial<BaseUserInfo>){
         this.last.user={...this.last.user,...newInfo}
+      },
+      changeChain(chain:ConnectChain){
+        this.currentChain = chain 
       },
 
       async sync(){
@@ -258,7 +258,7 @@ export enum ConnectChain{
         let connectRes
         let xpub
 
-        if(this.userInfo.currentChain == ConnectChain.btc){
+        if(this.currentChain == ConnectChain.btc){
          const _wallet = await MetaletWalletForBtc.restore({
             address:this.userInfo.address,
             pub:this.userInfo.pubkey
