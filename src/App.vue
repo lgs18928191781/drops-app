@@ -8,6 +8,7 @@
   />
   <div class="flex main" v-else>
     <LeftNavigationVue v-if="!blackRoute.includes(route.name)" />
+
     <PullDownVue class="flex1">
       <template #default>
         <div class="flex1 main-right" ref="MainRightRef">
@@ -56,10 +57,11 @@ import PullDownVue from './layout/PullDown/PullDown.vue'
 import ImagePreviewVue from '@/components/ImagePreview/ImagePreview.vue'
 //import { useBtcJsStore } from '@/stores/btcjs'
 //import * as secp256k1 from 'tiny-secp256k1'
-import { useConnectionStore } from '@/stores/connection'
+import { useConnectionStore, ConnectChain } from '@/stores/connection'
 import { useFeebStore } from '@/stores/feeb'
 import { useFollowStore } from './stores/follow'
 import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
+
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const metaidEntity = useMetaIDEntity()
@@ -94,6 +96,7 @@ onMounted(() => {
 
     if (connectorStore.last._isConnected) {
       await followStore.get()
+
       // await metaidEntity.payCommentEntity({
       //   body: {
       //     content: `评论了一下下`,
@@ -113,10 +116,14 @@ onMounted(() => {
     }
 
     feeStore.set(feeStore.last.currentFeeb.title).then()
-
-    feebInterval.value = setInterval(() => {
-      feeStore.update().then()
-    }, 60 * 1000)
+    if (
+      connectorStore.userInfo.currentChain &&
+      connectorStore.userInfo.currentChain !== ConnectChain.mvc
+    ) {
+      feebInterval.value = setInterval(() => {
+        feeStore.update().then()
+      }, 60 * 1000)
+    }
   }, 200)
 })
 

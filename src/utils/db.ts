@@ -42,11 +42,13 @@ export class DBClass extends Dexie {
       data: Blob
     }>(async resolve => {
       try {
+        
         const txId = this.getMetaFileTxId(metafile)
         const fileUrl =
           width !== -1
             ? tranformMetafile(metafile, width)
             : `${import.meta.env.VITE_AppImgApi}/content/${txId}`
+            
         const result = await axios.get(fileUrl, { responseType: 'blob' })
 
         if (result.status === 200) {
@@ -85,6 +87,7 @@ export class DBClass extends Dexie {
 
   getMetaFile(metafileTxId: string, width = 235, type: 'metafile' | 'metaId' = 'metafile') {
     return new Promise<string>(async resolve => {
+        
       if (!metafileTxId) {
         resolve('')
       } else if (
@@ -122,6 +125,8 @@ export class DBClass extends Dexie {
             // 缩略图
             if (file.thumbnail) {
               // 存在缩略图
+            
+              
               resolve(URL.createObjectURL(file.thumbnail))
             } else {
               // 不存在略索取， 则存缩略图且获取图片

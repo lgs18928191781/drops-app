@@ -1,15 +1,34 @@
 import { Network } from '@/stores/network'
-
+import {type EntitySchema} from '@metaid/metaid'
 export const NETWORK: Network = import.meta.env.VITE_NETWORK || 'mainnet'
 
-type EntitySchema = {
-  name: string
-  path: string
-  versions: {
-    version: number
-    body: any[]
-  }[]
+// type EntitySchema = {
+//   name: string
+//   path: string
+//   versions: {
+//     version: number
+//     body: any[]
+//   }[]
+// }
+
+export const followSchema:EntitySchema = {
+  name: 'follow',
+  nodeName: 'follow',
+  path:'/follow',
+  versions: [
+    {
+      version: 1,
+      id:'',
+      body: [
+        {
+          name: 'followTo',
+          type: 'string',
+        },
+      ],
+    },
+  ],
 }
+
 
 export enum BufferEncoding {
   ascii = 'ascii',
@@ -26,110 +45,4 @@ export enum BufferEncoding {
   hex = 'hex',
 }
 
-export const buzzSchema: EntitySchema = {
-  name: 'buzz',
-  path: '/protocols/simplebuzz',
-  versions: [
-    {
-      version: 1,
-      body: [
-        {
-          name: 'content',
-          type: 'string',
-        },
-        {
-          name: 'attachments',
-          type: 'array',
-        },
-      ],
-    },
-  ],
-}
 
-export const commentSchema: EntitySchema = {
-  name: 'comment',
-  path: '/protocols/payComment',
-  versions: [
-    {
-      version: 1,
-      body: [
-        {
-          name: 'content',
-          type: 'string',
-        },
-        {
-          name: 'commentTo',
-          type: 'string',
-        },
-        {
-          name: 'replyTo',
-          type: 'string',
-        },
-        {
-          name: 'pay',
-          type: 'string',
-        },
-        {
-          name: 'payTo',
-          type: 'string',
-        },
-      ],
-    },
-  ],
-}
-
-export const simpleRePostSchema: EntitySchema = {
-  name: 'comment',
-  path: '/protocols/simplerepost',
-  versions: [
-    {
-      version: 1,
-      body: [
-        {
-          name: 'rePostComment',
-          type: 'string',
-        },
-        {
-          name: 'rePostTx',
-          type: 'string',
-        },
-        {
-          name: 'rePostProtocol',
-          type: 'string',
-        },
-      ],
-    },
-  ],
-}
-
-export const fileSchema = {
-  name: 'file',
-  nodeName: 'MetaFile',
-  encoding: 'binary',
-  versions: [
-    {
-      version: 1,
-      body: '',
-    },
-  ],
-}
-
-export const likeSchema = {
-  name: 'like',
-  path: '/protocols/payLike',
-  versions: [
-    {
-      version: 1,
-      body: [
-        {
-          name: 'likeTo',
-          type: 'string',
-        },
-        {
-          name: 'isLike',
-          type: 'string',
-        },
-      ],
-    },
-  ],
-}

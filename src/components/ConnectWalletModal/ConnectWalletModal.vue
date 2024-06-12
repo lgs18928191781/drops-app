@@ -195,7 +195,7 @@ import { encodingType, MetaletWallet, TransactionInfo } from '@/utils/wallet/Met
 import { isAndroid, isIOS, isIosApp, isWechat } from '@/stores/root'
 
 import { useNetworkStore } from '@/stores/network'
-import { useConnectionStore, ConnectChain } from '@/stores/connection'
+import { useConnectionStore, ConnectChain,type BaseUserInfo } from '@/stores/connection'
 import { connect } from '@/utils/metalet'
 import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
 import { useFeebStore } from '@/stores/feeb'
@@ -654,20 +654,25 @@ async function onSetBaseInfoSuccessType(params: {
     name: params.name,
     bio: params.bio,
     avatar: params.nft,
-    network: connectStore.last.network,
-    feeRate: feebStore.last.currentFeeb.feeRate,
-    service: {
-      address: import.meta.env.VITE_BTC_SERVICE_ADDRESS,
-      satoshis: import.meta.env.VITE_BTC_SERVICE_FEEB,
-    },
   }
 
-  try {
-    const setUserInfoRes = await connectStore.last.createUserInfo({ ...userInfo })
-    // const createMetaidRes = await btcConnector.createMetaid({ ...userInfo })
+  debugger
 
+  try {
+    const setUserInfoRes = await connectStore.last.createUserInfo({
+      userData:userInfo,
+      options: {
+        network: networkStore.network,
+        feeRate: feebStore.last.currentFeeb.feeRate,
+        service: {
+          address: import.meta.env.VITE_BTC_SERVICE_ADDRESS,
+          satoshis: import.meta.env.VITE_BTC_SERVICE_FEEB,
+        },
+      },
+    })
     console.log(setUserInfoRes)
-    if (setUserInfoRes) {
+    debugger
+    if (setUserInfoRes.nameRes) {
       // isShowSetBaseInfo.value = false
       connectStore.updateUser({
         name: params.name,
@@ -676,8 +681,11 @@ async function onSetBaseInfoSuccessType(params: {
       })
       isShowSetUserInfo.value = false
       rootStore.$patch({ isShowLogin: false })
+      connectStore.setUserNameAndAvatar({ name: params.name,
+        avatarId:params.avatarId })
       ElMessage.success('Successful')
     }
+
     getUserInfo()
   } catch (error) {
     console.log(error)
@@ -1138,8 +1146,8 @@ async function connectMetalet() {
   console.log(loading)
 
   // try {
-  const btcConnector = await connectStore.connect()
-
+  const btcConnector = await connectStore.connect(ConnectChain.mvc)
+  debugger
   if (!btcConnector._isConnected) {
     // loading.close()
     return ElMessage.error(`${i18n.t('wallet_addres_empty')}`)
@@ -1154,16 +1162,15 @@ async function connectMetalet() {
   // const needInfo = { network: btcConnector.network, address: btcConnector.address }
   try {
     const currentUserInfo = await btcConnector.getUser({ network: btcConnector.network })
-
+debugger
     const currentUserName = currentUserInfo.name
+    debugger
     if (!currentUserName) {
-      // isShowSetBaseInfo.value = true
       isShowSetUserInfo.value = true
       rootStore.$patch({ isShowLogin: false })
     } else {
       pushToBuzz(currentUserInfo)
       rootStore.$patch({ isShowLogin: false })
-      // loading.close()
     }
   } catch (error) {
     console.error('Error fetching user info:', error)
@@ -1220,13 +1227,16 @@ async function connectMetalet() {
 async function getUserInfo() {
   const needInfo = {
     network: connectStore.last.network || networkStore.network,
-    address: connectStore.userInfo.address,
+    currentAddress: connectStore.userInfo.address,
   }
   const currentUserInfo = await connectStore.last.getUser({ ...needInfo })
+
+  debugger
   console.log(currentUserInfo)
-  pushToBuzz(currentUserInfo)
+
+  pushToBuzz(currentUserInfo as BaseUserInfo)
 }
-async function pushToBuzz(data) {
+async function pushToBuzz(data:BaseUserInfo) {
   userStore.updateMetaletLoginState(true)
   console.log(userStore.isAuthorized)
   console.log('pushToBuzz', data)
@@ -1234,10 +1244,13 @@ async function pushToBuzz(data) {
   // 登陆了要设置sentry 用户
   setUser({
     id: data.metaid,
-    email: data!.phone || data!.email,
+    email: '',
     username: data!.name,
   })
 
+  debugger
+
+  connectStore.updateUser(data)
   userStore.updateUserInfo({
     ...data,
     metaId: data.metaid, // account 有时拿回来的metaId为空

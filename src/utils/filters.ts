@@ -142,6 +142,7 @@ export function metafile(metafile: string, width = 235, type: 'metafile' | 'meta
     metafile = metafile.replace('mumbai://', 'evm/mumbai/')
     path = '/metafile/'
   } else {
+    
     //  普通txId
     path = '/content/'
   }
