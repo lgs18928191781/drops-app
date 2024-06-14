@@ -54,7 +54,8 @@ export type WalletConnectionBaseType={
 
 export type PickBtcConnector=Pick<IBtcConnector & 'metaid','createMetaid' | 'getMetaid' | 'getUser' | 'hasMetaid' | 'hasUser' | 'disconnect' | 'inscribe' | 'isConnected' | 'load' | 'updateUserInfo' | 'use'>
 
-export type WalletConnection=WalletConnectionBaseType & PickBtcConnector 
+export type WalletConnection=WalletConnectionBaseType & PickBtcConnector
+
 export enum ConnectChain{
   mvc='mvc',
   btc='btc'
@@ -85,17 +86,11 @@ export enum ConnectChain{
          address:'',
          pubkey:'',
          metaid:'',
-<<<<<<< HEAD
-        }
-      ),
-      currentChain: useLocalStorage('last-chain','btc')
-=======
          name:'',
          avatarId:''
         },
       ),
       currentChain: useLocalStorage('last-chain','') 
->>>>>>> feature/metaidv2-test
       }
     },
   
@@ -210,7 +205,6 @@ export enum ConnectChain{
             network:networkStore.network
           })
         }
-        debugger
        
         try {
           if (connectRes) {
@@ -264,11 +258,8 @@ export enum ConnectChain{
         address:'',
         pubkey:'',
         metaid:'',
-<<<<<<< HEAD
-=======
         name:'',
         avatarId:''
->>>>>>> feature/metaidv2-test
        }
        this.currentChain=''
          
@@ -296,7 +287,6 @@ export enum ConnectChain{
       },
 
       updateUser(newInfo:Partial<BaseUserInfo>){
-        debugger
         if(newInfo.name){
           this.last.user={...this.last.user,...newInfo}
         }

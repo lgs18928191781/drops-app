@@ -8,17 +8,20 @@
     @close="onModalClose"
   >
     <div class="login-warp flex">
-      <a
-        class="close flex flex-align-center flex-pack-center"
-        @click="rootStore.$patch({ isShowLogin: false })"
-      >
+      <a class="close flex flex-align-center flex-pack-center" @click="closeModal">
         <Icon name="x_mark" />
       </a>
-
       <div class="flex1 login-cover">
         <img src="@/assets/images/login_img.png" />
       </div>
       <div class="flex1">
+        <div class="flex items-center mb-16">
+          <img src="@/assets/images/welcome.png" class="w-[45px] h-[50px] mr-6" />
+          <div>
+            <div class="text-[26px] font-medium text-[#303133] mb-[2px]">Welcome to Show3！</div>
+            <div class="text-[14px] text-[#909399]">NFTize Your Social Life.</div>
+          </div>
+        </div>
         <!-- 选择钱包 -->
         <div class="connect-wallet flex flex-v" v-if="status === ConnectWalletStatus.Watting">
           <div class="connect-wallet-section" v-for="(item, index) in wallets" :key="index">
@@ -35,6 +38,30 @@
                 <span class="desc">{{ wallet.desc() }}</span>
               </div>
             </div>
+          </div>
+        </div>
+
+        <div v-if="status === ConnectWalletStatus.SelectChain">
+          <div class="text-base text-[#303133]">
+            Show3 is a social app that supports multiple links, make sure you are using your home
+            network.
+          </div>
+          <el-select
+            v-model="chainType"
+            placeholder="Select"
+            size="large"
+            style="width: 100%"
+            class="mt-12 mb-12"
+          >
+            <el-option
+              v-for="item in chainTypeArray"
+              :key="item.key"
+              :label="item.name"
+              :value="item.key"
+            />
+          </el-select>
+          <div class="main-border primary p-4 w-full text-center" @click="confirmConnect">
+            Confirm
           </div>
         </div>
 
@@ -136,6 +163,40 @@
     </div>
   </ElDialog>
 
+  <!-- <ElDialog class="sm none-header p-3" v-model="isShowSelectChain" :show-close="false">
+    <div class="login-warp flex flex-col">
+      <a class="close flex flex-align-center flex-pack-center" @click="closeConfirmModal">
+        <Icon name="x_mark" />
+      </a>
+      <div class="flex items-center mb-16">
+        <img src="@/assets/images/welcome.png" class="w-[45px] h-[50px] mr-6" />
+        <div>
+          <div class="text-[26px] font-medium text-[#303133] mb-[2px]">Welcome to Show3！</div>
+          <div class="text-[14px] text-[#909399]">NFTize Your Social Life.</div>
+        </div>
+      </div>
+      <div class="text-base text-[#303133]">
+        Show3 is a social app that supports multiple links, make sure you are using your home
+        network.
+      </div>
+      <el-select
+        v-model="chainType"
+        placeholder="Select"
+        size="large"
+        style="width: 100%"
+        class="mt-12 mb-12"
+      >
+        <el-option
+          v-for="item in chainTypeArray"
+          :key="item.key"
+          :label="item.name"
+          :value="item.key"
+        />
+      </el-select>
+      <div class="main-border primary p-4 w-full text-center" @click="confirmConnect">Confirm</div>
+    </div>
+  </ElDialog> -->
+
   <!-- 助记词备份 -->
   <BackupMnemonicVue v-model="isSHowBackupMnemonic" @finish="onModalClose" />
 
@@ -190,7 +251,7 @@ import { currentSupportChain } from '@/config'
 import AllNodeName from '@/utils/AllNodeName'
 import { computeStyles } from '@popperjs/core'
 import { setUser } from '@sentry/vue'
-import SPACEIcon from '@/assets/images/icon_mvc.png'
+import SPACEIcon from '@/assets/images/metaletIcon.png'
 import { encodingType, MetaletWallet, TransactionInfo } from '@/utils/wallet/Metalet-wallet'
 import { isAndroid, isIOS, isIosApp, isWechat } from '@/stores/root'
 
@@ -218,6 +279,8 @@ const isShowSendBuzz = ref(false)
 const buzz = ref('')
 const isSendBuzzLoading = ref(false)
 const isShowSendBuzzSuccess = ref(false)
+const isShowSelectChain =ref(false)
+const chainType =ref('btc')
 const buzzResult = reactive({
   time: '',
   txId: '',
@@ -230,6 +293,7 @@ const enum ConnectWalletStatus {
   WallteConnect,
   UseMetaId,
   Mnemonic,
+  SelectChain
 }
 
 const status: Ref<ConnectWalletStatus> = ref(ConnectWalletStatus.Watting)
@@ -250,6 +314,17 @@ const isShowSetUserInfo = ref(false)
 const isMobile = computed(() => {
   return isAndroid || isIOS || isWechat
 })
+const chainTypeArray = ref([
+  { name: 'Bitcoin', icon: 'select_logo_btc',key:'btc' },
+  { name: 'MicrovisionChain', icon: 'select_logo_mvc',key:'mvc' },
+])
+const mateImageUrl = () => {
+  if (chainType.value == 'btc') {
+    return new URL(`@/assets/images/select_logo_btc.png`, import.meta.url).href
+  } else {
+    return new URL(`@/assets/images/select_logo_mvc.png`, import.meta.url).href
+  }
+}
 const wallets = [
   {
     title: () => {
@@ -356,7 +431,9 @@ const wallets = [
 
 // setbaseinfo
 const isShowSetBaseInfo = ref(false)
-
+const getChainImageUrl = (name: string, type: string = 'png') => {
+  return new URL(`/src/assets/images/${name}.${type}`, import.meta.url).href
+}
 // async function metaMaskLoginSuccess(res: MetaMaskLoginRes) {
 //   const response = await GetUserAllInfo(res.userInfo.metaId).catch(error => {
 //     ElMessage.error(error.message)
@@ -381,6 +458,13 @@ function register() {
   rootStore.$patch({ isShowLogin: false })
   type.value = 'register'
   isShowLoginAndRegister.value = true
+}
+function closeConfirmModal(){
+  isShowSelectChain.value = false
+}
+function closeModal(){
+  rootStore.$patch({ isShowLogin: false })
+  status.value = ConnectWalletStatus.Watting
 }
 
 async function sendBuzz() {
@@ -434,7 +518,74 @@ function onLoginAndRegisterSuccess(type: 'register' | 'login') {
 //   //   hDPrivateKey.deriveChild(0).deriveChild(4).privateKey
 //   // )
 // }
+async function confirmConnect(){
+  if(chainType.value == 'btc'){
+    const btcConnector = await connectStore.connect(ConnectChain.btc)
+    console.log(btcConnector)
+  // debugger
+  if (!btcConnector._isConnected) {
+    return ElMessage.error(`${i18n.t('wallet_addres_empty')}`)
+  }
+  // console.log('btcConnector', btcConnector)
 
+  userStore.updateUserInfo({
+    address: btcConnector.address,
+    loginType: 'MetaID',
+  })
+
+  // // const needInfo = { network: btcConnector.network, address: btcConnector.address }
+  try {
+    const currentUserInfo = await btcConnector.getUser({ network: btcConnector.network })
+    console.log(currentUserInfo)
+    const currentUserName = currentUserInfo.name
+    if (!currentUserName) {
+      // isShowSelectChain.value = false
+      isShowSetUserInfo.value = true
+      rootStore.$patch({ isShowLogin: false })
+      status.value = ConnectWalletStatus.Watting
+    } else {
+      // isShowSelectChain.value = false
+      pushToBuzz(currentUserInfo)
+      rootStore.$patch({ isShowLogin: false })
+      status.value = ConnectWalletStatus.Watting
+    }
+  } catch (error) {
+    console.error('Error fetching user info:', error)
+  }
+
+
+  }else{
+    const mvcConnector = await connectStore.connect(ConnectChain.mvc)
+    console.log(mvcConnector)
+    if (!mvcConnector._isConnected) {
+    return ElMessage.error(`${i18n.t('wallet_addres_empty')}`)
+  }
+  // console.log('btcConnector', btcConnector)
+
+  userStore.updateUserInfo({
+    address: mvcConnector.address,
+    loginType: 'MetaID',
+  })
+  try {
+    const currentUserInfo = await mvcConnector.getUser({ network: mvcConnector.network })
+    const currentUserName = currentUserInfo.name
+    if (!currentUserName) {
+      isShowSetUserInfo.value = true
+      rootStore.$patch({ isShowLogin: false })
+      status.value = ConnectWalletStatus.Watting
+      // isShowSelectChain.value = false
+    } else {
+      // isShowSelectChain.value= false
+      pushToBuzz(currentUserInfo)
+      rootStore.$patch({ isShowLogin: false })
+      status.value = ConnectWalletStatus.Watting
+    }
+  } catch (error) {
+    console.error('Error fetching user info:', error)
+  }
+  }
+
+}
 async function onThreePartLinkSuccess(params: {
   signAddressHash: string
   address: string
@@ -656,8 +807,7 @@ async function onSetBaseInfoSuccessType(params: {
     avatar: params.nft,
   }
 
-  debugger
-
+  console.log(connectStore.currentChain)
   try {
     const setUserInfoRes = await connectStore.last.createUserInfo({
       userData:userInfo,
@@ -670,8 +820,8 @@ async function onSetBaseInfoSuccessType(params: {
         },
       },
     })
+
     console.log(setUserInfoRes)
-    debugger
     if (setUserInfoRes.nameRes) {
       // isShowSetBaseInfo.value = false
       connectStore.updateUser({
@@ -1121,6 +1271,10 @@ async function onSetBaseInfoSuccess(params: { name: string; nft: NFTAvatarItem }
 }
 
 async function connectMetalet() {
+  // isShowSelectChain.value = true
+  status.value =  ConnectWalletStatus.SelectChain
+  // rootStore.$patch({ isShowLogin: false })
+  return
   if (isMobile.value) {
     return ElMessage.error(`${i18n.t('not_support_mobile_login_metalet')}`)
   }
@@ -1134,7 +1288,6 @@ async function connectMetalet() {
     }, 2000)
     return
   }
-
   // const loading = ElLoading.service({
   //   text: 'Loading...',
   //   lock: true,
@@ -1162,9 +1315,7 @@ async function connectMetalet() {
   // const needInfo = { network: btcConnector.network, address: btcConnector.address }
   try {
     const currentUserInfo = await btcConnector.getUser({ network: btcConnector.network })
-debugger
     const currentUserName = currentUserInfo.name
-    debugger
     if (!currentUserName) {
       isShowSetUserInfo.value = true
       rootStore.$patch({ isShowLogin: false })
@@ -1230,10 +1381,7 @@ async function getUserInfo() {
     currentAddress: connectStore.userInfo.address,
   }
   const currentUserInfo = await connectStore.last.getUser({ ...needInfo })
-
-  debugger
   console.log(currentUserInfo)
-
   pushToBuzz(currentUserInfo as BaseUserInfo)
 }
 async function pushToBuzz(data:BaseUserInfo) {
@@ -1247,8 +1395,6 @@ async function pushToBuzz(data:BaseUserInfo) {
     email: '',
     username: data!.name,
   })
-
-  debugger
 
   connectStore.updateUser(data)
   userStore.updateUserInfo({

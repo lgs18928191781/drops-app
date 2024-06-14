@@ -153,7 +153,7 @@ function getDatas(isCover = false) {
       langId: '', //localStorage.getItem('lang') === 'zh' ? 2 : 1,
       metaId: userStore.user?.metaId,
       subTag: tabActive.value ? tabActive.value : '',
-      chain: 'btc',
+      chain: 'man',
       ...pagination,
     }).catch(error => {
       ElMessage.error(error.message)
