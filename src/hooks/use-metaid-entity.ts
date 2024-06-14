@@ -324,7 +324,7 @@ export function useMetaIDEntity(){
                     signMessage: 'comment buzz'
                 }
             })
-            if(isEmpty(payCommentRes?.txid)){
+            if(payCommentRes?.txid){
                 return {
                     txid:payCommentRes.txid
                 }
@@ -397,7 +397,7 @@ export function useMetaIDEntity(){
                     signMessage: 'repost buzz'
                 }
             })
-            if(isEmpty(repostRes?.txid)){
+            if(repostRes?.txid){
                 return {
                     txid:repostRes.txid
                 }
