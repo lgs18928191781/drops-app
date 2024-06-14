@@ -335,7 +335,7 @@ async function submit() {
   console.log(sendInfo)
   try {
     const sendRes = await buzzEntity(sendInfo)
-    debugger
+    
     if (sendRes?.revealTxIds?.length || sendRes.txid) {
       content.value = ''
       attachments.length = 0

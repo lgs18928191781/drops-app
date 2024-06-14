@@ -44,24 +44,22 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
   
     actions: {
         async set(feeType:'Eco' | 'Slow' | 'Avg' | 'Fast' | 'Custom',customFeeb?:number){
+          
             const connectionStore=useConnectionStore()
            if(feeType == 'Custom'){
             this.last.currentFeeb={
                 feeRate:customFeeb!,
                 title:'Custom'
             }
-           }else if(connectionStore.userInfo.currentChain && connectionStore.userInfo.currentChain == ConnectChain.mvc){
+           }else if(connectionStore.currentChain && connectionStore.currentChain == ConnectChain.mvc){
             this.last.currentFeeb={
               title: 'Fast',
               feeRate: 1,
             }
 
-           }else{
-            this.last.currentFeeb={
-              title: 'Fast',
-              feeRate: 1,
-            }
-            return
+           }else if(connectionStore.currentChain == ConnectChain.btc){
+            
+            
             const feeList=await getFeebPlans()
             
             this.last.feeRateList=feeList
@@ -69,6 +67,11 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
                 return item.title == feeType
                })
                this.last.currentFeeb=selectFeeb[0]
+           }else{
+            this.last.currentFeeb={
+              title: 'Fast',
+              feeRate: 1,
+            }
            }
            
 
@@ -76,7 +79,7 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
         
         async update(){
           const connectionStore=useConnectionStore()
-          if(connectionStore.userInfo.currentChain && connectionStore.userInfo.currentChain == ConnectChain.mvc){
+          if(connectionStore.currentChain && connectionStore.currentChain == ConnectChain.mvc){
             return
           }else{
             const feeList= await getFeebPlans()

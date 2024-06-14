@@ -1,7 +1,7 @@
 
 import { useConnectionStore,ConnectChain } from '@/stores/connection'
 import  {type CreateOptions,IBtcEntity,MvcTransaction,loadMvc,loadBtc } from '@metaid/metaid'
-import { BufferEncoding,followSchema} from '@/data/constants'
+import { BufferEncoding,followSchema,payCommentSchema,simpleRepostSchema} from '@/data/constants'
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { useI18n } from 'vue-i18n'
 import {useFollowStore} from '@/stores/follow'
@@ -35,6 +35,7 @@ export function useMetaIDEntity(){
     const connectStore=useConnectionStore()
 
     const currentChain=computed(()=>{
+      
         return connectStore.currentChain
     })
 
@@ -48,11 +49,8 @@ export function useMetaIDEntity(){
             contentType: 'text/plain',
           }
        
-          debugger
-          
-            debugger
             if(currentChain.value ==ConnectChain.btc ){
-                debugger
+                
                 if(isEmpty(body.attachments)){
                     const imageRes= await BtcFileEntity(body.attachments)
                     finalBody.attachments=imageRes.revealTxIds.map(rid=>{
@@ -73,13 +71,13 @@ export function useMetaIDEntity(){
                 })
                 return createRes
             }else{
-                debugger
+                
                 if(isEmpty(body.attachments)){
                     const attachMetafileUri= await MvcFileEntity(body.attachments)
                     finalBody.attachments=attachMetafileUri
                 }
                 
-                debugger
+                
                 const { txid } = await buzzEntity.create({
                     data: { body: JSON.stringify(body), contentType: 'application/json;utf-8', flag: import.meta.env.VITE_BTC_METAID_FLAG },
                     options: {
@@ -88,19 +86,13 @@ export function useMetaIDEntity(){
                       serialAction: 'finish',
                     },
                   })
-                  debugger
+                  
                   return {
                     txid
                   }
             }
         
     }
-
-
-
-
-
-
 
 
    async function BtcFileEntity(images:AttachmentItem[]):Promise<InscribeResultForYesBroadcast> {
@@ -133,7 +125,7 @@ export function useMetaIDEntity(){
    async function MvcFileEntity(images:AttachmentItem[]):Promise<string[]> {
     const connectStore = useConnectionStore()
     const networkStore=useNetworkStore()
-    debugger
+    
     let fileTransactions: MvcTransaction[] = []
  
     const fileEntity=await connectStore.last.use('file')
@@ -210,8 +202,8 @@ export function useMetaIDEntity(){
     const networkStore=useNetworkStore()
     try {
         let followEntity
-        if(currentChain.value == ConnectChain.btc){
-            followEntity=await loadBtc(followSchema,{
+        if(currentChain.value == ConnectChain.mvc){
+            followEntity=await loadMvc(followSchema,{
                 connector:connectStore.last
             })
             const followRes=await followEntity.create({
@@ -221,70 +213,55 @@ export function useMetaIDEntity(){
                 },
                 options:{
                     noBroadcast:'no',
-                    network:networkStore.network
+                    network:networkStore.network,
+                    signMessage: 'follow user'
                 }
             })
-            if(isEmpty(followRes.revealTxIds)){
-            
-                const followStore=useFollowStore()
-               
-                 await followStore.add({
-                    followedMetaId:params.body.followMetaId,
-                    txId:followRes.revealTxIds[0]
-                })
-               
-    
-            }
-        }else{
-            debugger
-            followEntity=await loadMvc(followSchema,{
-                connector:connectStore.last
-            })
-        }
-
-        
-
-        debugger
-      
-        debugger
-        // const followRes=await connectStore.last.inscribe(
-        //     [
-        //         {
-        //         operation: 'create',
-        //           path: '/follow',
-        //           body: params.body.followMetaId,
-        //           contentType: 'text/plain;utf-8',
-        //           flag: import.meta.env.VITE_BTC_METAID_FLAG,
-        //         }
-        //     ],
-        //     'no',
-        //     feebStore.last.currentFeeb.feeRate,
-        //     {
-        //         address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
-        //         satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
-        //     }
-    
-        // )
-        if(currentChain.value ==ConnectChain.mvc){
             if(followRes?.txid){
-            
                 const followStore=useFollowStore()
-               
                  await followStore.add({
                     followedMetaId:params.body.followMetaId,
                     txId:followRes.txid
                 })
-               
-    
-        }else{
-           
         }
-      
-       
-    } catch (error) {
-        throw new Error(error as any)
-    }
+          
+        }else{
+            followEntity=await loadBtc(followSchema,{
+                connector:connectStore.last
+            })
+
+            const followRes=await followEntity.create({
+                dataArray:[
+                   {
+                    body:params.body.followMetaId,
+                    flag:import.meta.env.VITE_BTC_METAID_FLAG
+                   }
+                ],
+                options:{
+                    noBroadcast:'no',
+                    feeRate: feebStore.last.currentFeeb.feeRate,
+                    service: {
+                        address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
+                        satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
+                    }
+                }
+            })
+        if(isEmpty(followRes.revealTxIds)){
+            const followStore=useFollowStore()
+             await followStore.add({
+                followedMetaId:params.body.followMetaId,
+                txId:followRes.revealTxIds[0]
+            })
+        }
+        }
+
+
+
    
+   
+   }catch (error) {
+    throw new Error(error as any)
+}
    }
 
    async function unFollowEntity(followMetaid:string){
@@ -328,83 +305,140 @@ export function useMetaIDEntity(){
     payTo:string //暂时留空
    }}) {
 
-    try {
     const connectStore = useConnectionStore()
-    const commentRes=await connectStore.last.inscribe([
-        {
-            operation: 'create',
-              path: '/protocols/paycomment',
-              body: JSON.stringify(params.body),
-              contentType: 'text/plain;utf-8',
-              flag: import.meta.env.VITE_BTC_METAID_FLAG,
+    const networkStore=useNetworkStore()
+    try {
+        let payCommentEntity
+        if(currentChain.value == ConnectChain.mvc){
+            payCommentEntity=await loadMvc(payCommentSchema,{
+                connector:connectStore.last
+            })
+            const payCommentRes=await payCommentEntity.create({
+                data:{
+                    body:JSON.stringify(params.body),
+                    contentType: 'text/plain;utf-8',
+                },
+                options:{
+                    noBroadcast:'no',
+                    network:networkStore.network,
+                    signMessage: 'comment buzz'
+                }
+            })
+            if(isEmpty(payCommentRes?.txid)){
+                return {
+                    txid:payCommentRes.txid
+                }
             }
-    ],
-    'no',
-    feebStore.last.currentFeeb.feeRate,
-    {
-        address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
-        satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
-    })
-    
-    if(isEmpty(commentRes.revealTxIds)){
-        return commentRes.revealTxIds[0]
-    }
-    } catch (error) {
-        throw new Error(error as any)
-    }
+        }else{
+            
+            payCommentEntity=await loadBtc(payCommentSchema,{
+                connector:connectStore.last
+            })
+            const payCommentRes=await payCommentEntity.create({
+                dataArray:[
+                   {
+                    body:JSON.stringify(params.body),
+                    flag:import.meta.env.VITE_BTC_METAID_FLAG
+                   }
+                ],
+                options:{
+                    noBroadcast:'no',
+                    feeRate: feebStore.last.currentFeeb.feeRate,
+                    service: {
+                        address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
+                        satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
+                    }
+                }
+            })
+        if(isEmpty(payCommentRes.revealTxIds)){
+            return payCommentRes
+        }
+
+        }
+   }catch (error) {
+    throw new Error(error as any)
     
    }
+}
 
    async function simpleRepostEntity(params:{body:{
     content:string //带评论转发，不带评论可空
     quoteTx:string//要转发的buzz pinid
-    attachments?:AttachmentItem[] | [] //评论带附件转发
+    attachments:AttachmentItem[] | [] //评论带附件转发
     //rePostProtocol:string //转发的协议类型，例如：simplebuzz  
    }}) {
+    const connectStore = useConnectionStore()
+    const networkStore=useNetworkStore()
+    const finalBody: any = {
+        content: params.body.content,
+        quoteTx:params.body.quoteTx,
+        contentType: 'text/plain',
+      }
     try {
-        const connectStore = useConnectionStore()
-
-        const finalBody: any = {
-            content: params.body.content,
-            contentType: 'text/plain',
-          }
-        if(isEmpty(params.body.attachments!)){
-            const imageRes= await BtcFileEntity(params.body.attachments!)
-            
-            finalBody.attachments=imageRes.revealTxIds.map(rid=>{
-                return `metafile://${rid}i0`
+        let repostEntity
+        if(currentChain.value == ConnectChain.mvc){
+            repostEntity=await loadMvc(simpleRepostSchema,{
+                connector:connectStore.last
             })
+
+            if(isEmpty(params.body.attachments)){
+                const attachMetafileUri= await MvcFileEntity(params.body.attachments)
+                finalBody.attachments=attachMetafileUri
+            }
+
+            const repostRes=await repostEntity.create({
+                data:{
+                    body:JSON.stringify(finalBody),
+                    contentType: 'text/plain;utf-8',
+                },
+                options:{
+                    noBroadcast:'no',
+                    network:networkStore.network,
+                    signMessage: 'repost buzz'
+                }
+            })
+            if(isEmpty(repostRes?.txid)){
+                return {
+                    txid:repostRes.txid
+                }
+            }
+        }else{
+            if(isEmpty(params.body.attachments)){
+                const imageRes= await BtcFileEntity(params.body.attachments)
+                finalBody.attachments=imageRes.revealTxIds.map(rid=>{
+                    return `metafile://${rid}i0`
+                })
+            }
+            repostEntity=await loadBtc(simpleRepostSchema,{
+                connector:connectStore.last
+            })
+            const repostRes=await repostEntity.create({
+                dataArray:[
+                   {
+                    body:JSON.stringify(finalBody),
+                    flag:import.meta.env.VITE_BTC_METAID_FLAG
+                   }
+                ],
+                options:{
+                    noBroadcast:'no',
+                    feeRate: feebStore.last.currentFeeb.feeRate,
+                    service: {
+                        address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
+                        satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
+                    }
+                }
+            })
+        if(isEmpty(repostRes.revealTxIds)){
+            return repostRes
         }
 
-        const repostRes=await connectStore.last.inscribe([
-        {
-            operation: 'create',
-              path: '/protocols/simplebuzz',
-              body: JSON.stringify(finalBody),
-              contentType: 'text/plain;utf-8',
-              flag: import.meta.env.VITE_BTC_METAID_FLAG,
-            }
-    ],
-    'no',
-    feebStore.last.currentFeeb.feeRate,
-    {
-        address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
-        satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
-    })
-    console.log("repostRes.revealTxIds",repostRes.revealTxIds)
-        
-    if(isEmpty(repostRes.revealTxIds)){
-
-        return repostRes.revealTxIds[0]
-    }
-    } catch (error) {
-        throw new Error(error as any)
-    }
+        }
+   }catch (error) {
+    throw new Error(error as any)
     
    }
-
-
-
+    
+   }
 
    async function getAllBuzz(body:{page:number,limit:number,network:string}){
         const connectStore = useConnectionStore()
@@ -427,4 +461,5 @@ export function useMetaIDEntity(){
     payCommentEntity,
     simpleRepostEntity
    }
+
 }
