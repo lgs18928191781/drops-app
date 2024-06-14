@@ -6,6 +6,8 @@ import { Network, useNetworkStore } from './network'
 //import type { Psbt } from 'bitcoinjs-lib'
 import {  btcConnect,mvcConnect,MetaletWalletForBtc,IBtcConnector,MetaletWalletForMvc } from '@metaid/metaid'
 import { InscribeResultForYesBroadcast} from '@/hooks/use-metaid-entity'
+import { useUserStore } from '@/stores/user'
+import { useRoute } from 'vue-router'
 
 
 export type BaseUserInfo={
@@ -263,11 +265,6 @@ export enum ConnectChain{
         avatarId:''
        }
        this.currentChain=''
-         
-
-
-
-
         // this.last._isConnected = false
         // this.last.address = ''
         // this.last.wallet = {}
@@ -295,7 +292,16 @@ export enum ConnectChain{
         
       },
       changeChain(chain:ConnectChain){
-        this.currentChain = chain 
+        const userStore = useUserStore()
+        const route = useRoute()
+        userStore.logout(route)
+        this.disconnect()
+        this.currentChain = chain
+        if(chain == ConnectChain.btc){
+          this.connect(ConnectChain.btc)
+        }else{
+          this.connect(ConnectChain.mvc)
+        }
       },
 
       async sync(){

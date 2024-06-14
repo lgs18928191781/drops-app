@@ -1,10 +1,22 @@
 <template>
   <div class="control flex flex-align-center">
     <div class="flex1 flex flex-align-center">
-      <!-- <a class="more flex flex-align-center flex-pack-center">
+      <a class="more flex flex-align-center flex-pack-center">
         <Icon name="more" @click.stop="emit('more', buzz.txId)" />
-      </a> -->
+      </a>
 
+      <img
+        src="@/assets/images/tx_chain_btc.png"
+        alt=""
+        class="w-[18px] h-[18px] ml-4 mr-2"
+        v-if="buzz.chain === 'btc'"
+      />
+      <img
+        src="@/assets/images/tx_chain_mvc.png"
+        alt=""
+        class="w-[18px] h-[18px] ml-4 mr-2"
+        v-else
+      />
       <a class="tx" @click.stop="tx(buzz.txId)"
         >{{ buzz.txId.slice(0, 6) }}...{{ buzz.txId.slice(-3) }}</a
       >
@@ -64,45 +76,45 @@ const emit = defineEmits(['update', 'repost', 'buzz', 'more', 'like', 'replay'])
 const isLikeIng = ref(false)
 
 const operates = [
-  // {
-  //   icon: ShareIcon,
-  //   value: () => {
-  //     return forwardText
-  //   },
-  //   class: () => {
-  //     return ''
-  //   },
-  //   active: () => {
-  //     return isIForward.value
-  //   },
-  //   fun: async () => {
-  //     await checkUserLogin()
-  //     emit('repost', props.buzz.txId)
-  //   },
-  // },
-  // {
-  //   icon: CommentIcon,
-  //   value: () => {
-  //     return commentText
-  //   },
-  //   class: () => {
-  //     return ''
-  //   },
-  //   active: () => {
-  //     return false
-  //   },
-  //   fun: async () => {
-  //     await checkUserLogin()
-  //     emit('replay', {
-  //       txId: props.buzz.txId,
-  //       username: props.buzz.userName,
-  //       userAddress: props.buzz.zeroAddress,
-  //       commentTo: props.buzz.txId,
-  //       replyTo: '',
-  //       buzzTxId: props.buzz.txId,
-  //     })
-  //   },
-  // },
+  {
+    icon: ShareIcon,
+    value: () => {
+      return forwardText
+    },
+    class: () => {
+      return ''
+    },
+    active: () => {
+      return isIForward.value
+    },
+    fun: async () => {
+      await checkUserLogin()
+      emit('repost', props.buzz.txId)
+    },
+  },
+  {
+    icon: CommentIcon,
+    value: () => {
+      return commentText
+    },
+    class: () => {
+      return ''
+    },
+    active: () => {
+      return false
+    },
+    fun: async () => {
+      await checkUserLogin()
+      emit('replay', {
+        txId: props.buzz.txId,
+        username: props.buzz.userName,
+        userAddress: props.buzz.zeroAddress,
+        commentTo: props.buzz.txId,
+        replyTo: '',
+        buzzTxId: props.buzz.txId,
+      })
+    },
+  },
   {
     icon: LikeIcon,
     value: () => {

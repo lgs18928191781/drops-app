@@ -161,9 +161,8 @@
             :meta-name="userStore.user!.metaName"
             :disabled="true"
           />
-          
         </template>
-        <img src="blob:http://localhost:5173/ab85144a-e3f3-4dd0-b3c2-3ba478e4b46e" alt="">
+        <img src="blob:http://localhost:5173/ab85144a-e3f3-4dd0-b3c2-3ba478e4b46e" alt="" />
         <UserCardVue
           :name="connectStore.userInfo.name"
           :meta-id="connectStore.userInfo.metaid"
@@ -337,7 +336,9 @@ function toMintNft() {
 }
 
 function selectChain(chain){
-  connectStore.changeChain(chain)
+  if(chain != connectStore.currentChain){
+    connectStore.changeChain(chain)
+  }
 }
 
 

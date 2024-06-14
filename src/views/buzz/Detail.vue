@@ -81,7 +81,7 @@ function fetchData(count = 1, parentResolve?: () => void) {
     const res = await GetBuzz({
       txId: route.params.txId as string,
       metaId: userStore.user?.metaId,
-      chain: 'btc',
+      chain: 'man',
     }).catch(error => {
       ElMessage.error(error.message)
     })
