@@ -205,6 +205,7 @@ export enum ConnectChain{
             network:networkStore.network
           })
         }
+        
        
         try {
           if (connectRes) {
@@ -287,6 +288,7 @@ export enum ConnectChain{
       },
 
       updateUser(newInfo:Partial<BaseUserInfo>){
+        
         if(newInfo.name){
           this.last.user={...this.last.user,...newInfo}
         }

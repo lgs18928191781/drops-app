@@ -23,7 +23,7 @@
           />
           <div class="cont flex1">
             <div class="name">
-              <UserName :name="userStore.user!.name" :meta-name="userStore.user!.metaName" />
+              <UserName :name="userStore.user!.name " :meta-name="userStore.user!.metaName" />
             </div>
             <div class="metaid">
               {{replayUser ? $t('Replying to') :  'MetaID: ' + userStore.user!.metaId!.slice(0, 6)}}

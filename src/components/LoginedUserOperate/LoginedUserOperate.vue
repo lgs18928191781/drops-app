@@ -154,9 +154,9 @@
       <el-popover placement="bottom" :width="'auto'" trigger="hover">
         <template #reference>
           <UserAvatar
-            :image="connectStore.last?.user?.avatarId"
-            :meta-id="userStore.user!.metaId"
-            :name="userStore.user!.name"
+            :image="connectStore.userInfo.avatarId || connectStore.last.user.avatarId"
+            :meta-id="connectStore.userInfo!.metaid"
+            :name="connectStore.userInfo!.name || connectStore.last.user.name"
             class="user-warp-item overflow-hidden"
             :meta-name="userStore.user!.metaName"
             :disabled="true"
@@ -165,8 +165,8 @@
         </template>
         <img src="blob:http://localhost:5173/ab85144a-e3f3-4dd0-b3c2-3ba478e4b46e" alt="">
         <UserCardVue
-          :name="userStore.user!.name"
-          :meta-id="userStore.user!.metaId"
+          :name="connectStore.userInfo.name"
+          :meta-id="connectStore.userInfo.metaid"
           :meta-name="userStore.user!.metaName"
           :model-value="true"
         />
@@ -248,6 +248,8 @@ const route = useRoute()
 const isProduction = import.meta.env.MODE === 'mainnet'
 const feebStore = useFeebStore()
 const connectStore=useConnectionStore()
+
+
 const isShowUserMenu = ref(false)
 const chainType = ref([
   { name: 'Bitcoin', icon: 'logo_chain_btc',key:'btc' },

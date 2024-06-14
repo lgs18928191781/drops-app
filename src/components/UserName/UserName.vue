@@ -27,6 +27,9 @@ interface Props {
 }
 const connetionStore = useConnectionStore()
 const props = withDefaults(defineProps<Props>(), {})
+
+
+
 const subMetaId = computed(() => {
   //return props.metaId.substr(0, 4)
   return connetionStore.last.metaid.substring(0, 4)

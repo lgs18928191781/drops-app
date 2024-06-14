@@ -115,6 +115,7 @@ export class DBClass extends Dexie {
             } else {
               // 不存在原图， 则存原图且先去获取图片
               const res = await this.updateMetaFileData(txId, width)
+              
               if (res) {
                 resolve(res)
               } else {
@@ -131,6 +132,7 @@ export class DBClass extends Dexie {
             } else {
               // 不存在略索取， 则存缩略图且获取图片
               const res = await this.updateMetaFileData(txId, width)
+              
               if (res) {
                 resolve(res)
               } else {
@@ -144,6 +146,7 @@ export class DBClass extends Dexie {
             } else {
               // 不存在正常图， 则存正常图且先去获取图片
               const res = await this.updateMetaFileData(txId, width)
+              
               if (res) {
                 resolve(res)
               } else {

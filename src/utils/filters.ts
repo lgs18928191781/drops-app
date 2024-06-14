@@ -114,6 +114,7 @@ export function space(stas: number | string) {
 }
 
 export function metafile(metafile: string, width = 235, type: 'metafile' | 'metaId' = 'metafile') {
+  
   if (typeof metafile !== 'string') return ''
   if (metafile.indexOf('http://') !== -1 || metafile.indexOf('https://') !== -1) return metafile
   metafile = metafile.replace('metafile://', '')

@@ -1300,7 +1300,7 @@ async function connectMetalet() {
 
   // try {
   const btcConnector = await connectStore.connect(ConnectChain.mvc)
-  debugger
+
   if (!btcConnector._isConnected) {
     // loading.close()
     return ElMessage.error(`${i18n.t('wallet_addres_empty')}`)
@@ -1315,7 +1315,9 @@ async function connectMetalet() {
   // const needInfo = { network: btcConnector.network, address: btcConnector.address }
   try {
     const currentUserInfo = await btcConnector.getUser({ network: btcConnector.network })
+
     const currentUserName = currentUserInfo.name
+
     if (!currentUserName) {
       isShowSetUserInfo.value = true
       rootStore.$patch({ isShowLogin: false })
@@ -1381,13 +1383,16 @@ async function getUserInfo() {
     currentAddress: connectStore.userInfo.address,
   }
   const currentUserInfo = await connectStore.last.getUser({ ...needInfo })
+
+
   console.log(currentUserInfo)
   pushToBuzz(currentUserInfo as BaseUserInfo)
 }
 async function pushToBuzz(data:BaseUserInfo) {
   userStore.updateMetaletLoginState(true)
   console.log(userStore.isAuthorized)
-  console.log('pushToBuzz', data)
+  console.log('pushToBuzz', connectStore)
+
   // return
   // 登陆了要设置sentry 用户
   setUser({
@@ -1396,11 +1401,13 @@ async function pushToBuzz(data:BaseUserInfo) {
     username: data!.name,
   })
 
+
+
   connectStore.updateUser(data)
   userStore.updateUserInfo({
     ...data,
-    metaId: data.metaid, // account 有时拿回来的metaId为空
-    name: data.name!, // account 有时拿回来的name 是旧 name
+    metaId: data.metaid , // account 有时拿回来的metaId为空
+    name: data.name! || connectStore.last.user.name, // account 有时拿回来的name 是旧 name
     //password: form.password,
     address: data.address,
     loginType: 'MetaID',

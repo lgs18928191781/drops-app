@@ -30,6 +30,71 @@ export const followSchema:EntitySchema = {
 }
 
 
+
+export const payCommentSchema:EntitySchema = {
+  name: 'paycomment',
+  nodeName: 'paycomment',
+  path:'/paycomment',
+  versions: [
+    {
+      version: 1,
+      id:'',
+      body: [
+        {
+          name: 'content',
+          type: 'string',
+        },
+        {
+          name: 'commentTo',
+          type: 'string',
+        },
+        {
+          name: 'replyTo',
+          type: 'string',
+        },
+        {
+          name: 'pay',
+          type: 'string',
+        },
+        {
+          name: 'payTo',
+          type: 'string',
+        },
+      ],
+    },
+  ],
+}
+
+
+
+export const simpleRepostSchema:EntitySchema = {
+  name: 'simplebuzz',
+  nodeName: 'simplebuzz',
+  path:'/simplebuzz',
+  versions: [
+    {
+      version: 1,
+      id:'',
+      body: [
+        {
+          name: 'content',
+          type: 'string',
+        },
+        {
+          name: 'quoteTx',
+          type: 'string',
+        },
+        {
+          name: 'attachments',
+          type: 'array',
+        },
+       
+      ],
+    },
+  ],
+}
+
+
 export enum BufferEncoding {
   ascii = 'ascii',
   utf8 = 'utf8',

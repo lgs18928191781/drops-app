@@ -2,8 +2,8 @@
   <div class="publish flex " v-if="userStore.isAuthorized" @click="publish">
     <UserAvatar
       :meta-id="userStore.user!.metaId"
-      :image="connectionStore.last?.user?.avatarId"
-      :name="userStore.user!.name || connectionStore.last?.user?.name"
+      :image="connectionStore.userInfo.avatarId"
+      :name="connectionStore.userInfo!.name"
       :meta-name="userStore.user!.metaName"
       :disabled="true"
       class="mr-2 !border-0"
@@ -31,6 +31,8 @@ interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {})
 const connectionStore = useConnectionStore()
+
+
 const layout = useLayoutStore()
 const userStore = useUserStore()
 const isShowBuzzPublish: Ref<boolean> = inject('isShowBuzzPublish')!
