@@ -34,7 +34,7 @@ export const followSchema:EntitySchema = {
 export const payCommentSchema:EntitySchema = {
   name: 'paycomment',
   nodeName: 'paycomment',
-  path:'/paycomment',
+  path:'/protocal/paycomment',
   versions: [
     {
       version: 1,
@@ -70,7 +70,7 @@ export const payCommentSchema:EntitySchema = {
 export const simpleRepostSchema:EntitySchema = {
   name: 'simplebuzz',
   nodeName: 'simplebuzz',
-  path:'/simplebuzz',
+  path:'/protocal/simplebuzz',
   versions: [
     {
       version: 1,
