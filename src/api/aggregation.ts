@@ -583,6 +583,7 @@ export const GetBuzzInteractive = (params: {
   pageSize: number
   protocols: string[]
   metaId?: string
+  chain: string
 }): Promise<{
   code: number
   data: {

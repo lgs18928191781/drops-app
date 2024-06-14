@@ -7,14 +7,14 @@
             <div class="head">
               <UserAvatar
                 :meta-id="item.metaId"
-                :image="item.avatarImage"
+                :image="item.userInfo.avatarImage"
                 :name="item.userName"
                 :meta-name="item.userInfo.metaName"
               />
             </div>
             <div class="info">
               <div class="name">
-                <UserName :name="item.userName" :meta-name="item.userInfo.metaName" />
+                <UserName :name="item.userInfo.name" :meta-name="item.userInfo.metaName" />
               </div>
               <div class="desc">
                 <span>MetaID: {{ sliceStr(item.metaId) }}</span>

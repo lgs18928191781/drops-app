@@ -3,7 +3,7 @@
     <VersionVue />
   </div>
 
-  <div class="net-warp mr-3">
+  <div class="net-warp mr-3" v-show="connectStore.currentChain !== ''">
     <ElDropdown class="network-style" trigger="click">
       <span class="el-dropdown-link flex items-center text-sm font-medium">
         <img
@@ -47,7 +47,7 @@
     </ElDropdown>
   </div>
 
-  <div class="gas-warp mr-3">
+  <div class="gas-warp mr-3" v-show="connectStore.currentChain == 'btc'">
     <div>
       <!-- 更多操作 -->
       <ElDropdown trigger="click">
@@ -74,7 +74,7 @@
                 <!-- <LucideIcon :name="item.icon" :size="20" class=" mr-3" strokeWidth="2" /> -->
                 <div class="flex items-center">
                   <img :src="getFeeImageUrl(item.title)" alt="" class="w-[18px] h-[18px] mr-1.5" />
-                  <span class="name  font-medium text-sm mr-3">{{
+                  <span class="name font-medium text-sm mr-3">{{
                     item.fullTitle ?? item.title
                   }}</span>
                 </div>
@@ -158,7 +158,7 @@
             :meta-id="connectStore.userInfo!.metaid"
             :name="connectStore.userInfo!.name || connectStore.last.user.name"
             class="user-warp-item overflow-hidden"
-            :meta-name="userStore.user!.metaName"
+            :meta-name="''"
             :disabled="true"
           />
         </template>
@@ -166,7 +166,7 @@
         <UserCardVue
           :name="connectStore.userInfo.name"
           :meta-id="connectStore.userInfo.metaid"
-          :meta-name="userStore.user!.metaName"
+          :meta-name="''"
           :model-value="true"
         />
         <!-- <UserPersonaVue /> -->
@@ -211,6 +211,12 @@
     </template>
   </ElDropdown>
 
+  <SetUserInfoVue
+    v-if="isShowSetUserInfo"
+    @success="onSetBaseInfoSuccessType"
+    @closeSetInfoModal="closeSetInfoModal"
+  />
+
   <Teleport to="body">
     <SettingsModalVue v-model="layout.isShowSettingsModal" />
   </Teleport>
@@ -238,16 +244,20 @@ import MintLogo from '@/assets/svg/mint.svg?url'
 import { useFeebStore } from '@/stores/feeb'
 import LucideIcon from '@/components/LucideIcon/index.vue'
 import { type FeebPlan} from '@/api/btc-fee'
-import { useConnectionStore } from '@/stores/connection'
+import SetUserInfoVue from '../ConnectWalletModal/SetUserInfo.vue'
+import { useConnectionStore, ConnectChain,type BaseUserInfo } from '@/stores/connection'
+import { useNetworkStore } from '@/stores/network'
+import { setUser } from '@sentry/vue'
 const i18n = useI18n()
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const layout = useLayoutStore()
 const route = useRoute()
+const networkStore = useNetworkStore()
 const isProduction = import.meta.env.MODE === 'mainnet'
 const feebStore = useFeebStore()
 const connectStore=useConnectionStore()
-
+const isShowSetUserInfo = ref(false)
 
 const isShowUserMenu = ref(false)
 const chainType = ref([
@@ -335,16 +345,147 @@ function toMintNft() {
   router.push('/nft/issue')
 }
 
-function selectChain(chain){
+async function selectChain(chain){
   if(chain != connectStore.currentChain){
+    userStore.logout(route)
+    connectStore.disconnect()
+
+
+
     connectStore.changeChain(chain)
+
+    if(chain == 'btc'){
+      const btcConnector = await connectStore.connect(ConnectChain.btc)
+      userStore.updateUserInfo({
+    address: btcConnector.address,
+    loginType: 'MetaID',
+    })
+    try {
+    const currentUserInfo = await btcConnector.getUser({ network: btcConnector.network })
+    console.log(currentUserInfo)
+    const currentUserName = currentUserInfo.name
+    if (!currentUserName) {
+      isShowSetUserInfo.value = true
+    } else {
+      pushToBuzz(currentUserInfo)
+    }
+  } catch (error) {
+    console.error('Error fetching user info:', error)
   }
+
+    }else{
+      const mvcConnector = await connectStore.connect(ConnectChain.mvc)
+      userStore.updateUserInfo({
+    address: mvcConnector.address,
+    loginType: 'MetaID',
+    })
+    try {
+    const currentUserInfo = await mvcConnector.getUser({ network: mvcConnector.network })
+    const currentUserName = currentUserInfo.name
+    if (!currentUserName) {
+      isShowSetUserInfo.value = true
+    } else {
+      pushToBuzz(currentUserInfo)
+    }
+  } catch (error) {
+    console.error('Error fetching user info:', error)
+  }
+
+
+    }
+  }
+}
+
+
+function closeSetInfoModal() {
+  isShowSetUserInfo.value = false
+  connectStore.disconnect()
 }
 
 
 async function trggleFeeb(feeb:FeebPlan){
   if(feeb.title == feebStore.last.currentFeeb.title) return
   await feebStore.set(feeb.title)
+}
+async function onSetBaseInfoSuccessType(params: {
+  name: string
+  nft: NFTAvatarItem
+  bio: string
+  avatarId: string
+}) {
+  const userInfo = {
+    name: params.name,
+    bio: params.bio,
+    avatar: params.nft,
+  }
+
+  console.log(connectStore.currentChain)
+  try {
+    const setUserInfoRes = await connectStore.last.createUserInfo({
+      userData:userInfo,
+      options: {
+        network: networkStore.network,
+        feeRate: feebStore.last.currentFeeb.feeRate,
+        service: {
+          address: import.meta.env.VITE_BTC_SERVICE_ADDRESS,
+          satoshis: import.meta.env.VITE_BTC_SERVICE_FEEB,
+        },
+      },
+    })
+
+    console.log(setUserInfoRes)
+    if (setUserInfoRes.nameRes) {
+      // isShowSetBaseInfo.value = false
+      connectStore.updateUser({
+        name: params.name,
+        bio: params.bio,
+        avatarId: params.avatarId,
+      })
+      isShowSetUserInfo.value = false
+      connectStore.setUserNameAndAvatar({ name: params.name,
+        avatarId:params.avatarId })
+      ElMessage.success('Successful')
+    }
+    getUserInfo()
+  } catch (error) {
+    console.log(error)
+    const errorMessage = TypeError(error).message
+    const toastMessage = errorMessage?.includes('Cannot read properties of undefined')
+      ? 'User Canceled'
+      : errorMessage
+    ElMessage.error(toastMessage)
+    isShowSetBaseInfo.value = false
+  }
+}
+async function getUserInfo() {
+  const needInfo = {
+    network: connectStore.last.network || networkStore.network,
+    currentAddress: connectStore.userInfo.address,
+  }
+  const currentUserInfo = await connectStore.last.getUser({ ...needInfo })
+  console.log(currentUserInfo)
+  pushToBuzz(currentUserInfo as BaseUserInfo)
+}
+async function pushToBuzz(data:BaseUserInfo) {
+  userStore.updateMetaletLoginState(true)
+  console.log(userStore.isAuthorized)
+  console.log('pushToBuzz', connectStore)
+
+  setUser({
+    id: data.metaid,
+    email: '',
+    username: data!.name,
+  })
+
+  connectStore.updateUser(data)
+  userStore.updateUserInfo({
+    ...data,
+    metaId: data.metaid , // account 有时拿回来的metaId为空
+    name: data.name! || connectStore.last.user.name, // account 有时拿回来的name 是旧 name
+    address: data.address,
+    loginType: 'MetaID',
+  })
+  router.push('/buzz/tag/1')
 }
 </script>
 

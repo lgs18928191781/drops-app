@@ -173,7 +173,7 @@ const replayMsg = reactive({
     replyTo: '',
   },
 })
-const { likeEntity } = useMetaIDEntity()
+const { likeEntity, payCommentEntity } = useMetaIDEntity()
 let audio: HTMLAudioElement | null
 const isShowBuzzPublish: Ref<boolean> = inject('isShowBuzzPublish')!
 const repostTxId: Ref<string> = inject('repostTxId')!
@@ -624,7 +624,34 @@ function onPlay(params: { file: string; type: 'audio' | 'video' }) {
   }
 }
 
-function replay() {
+async function replay() {
+  const commentBody = {
+    body: {
+      content: comment.value,
+      commentTo: replayMsg.val.commentTo,
+      replyTo: replayMsg.val.replyTo,
+      pay: '',
+      payTo: '',
+    },
+  }
+  try {
+    const CommentRes = await payCommentEntity(commentBody)
+    if (CommentRes?.revealTxIds?.length || CommentRes.txid) {
+      isShowCommentModal.value = false
+      ElMessage.success(i18n.t('Buzz.comment.success'))
+      comment.value = ''
+    } else {
+      isShowCommentModal.value = false
+      ElMessage.error('fail')
+      comment.value = ''
+    }
+  } catch (error) {
+    ElMessage.error((error as any).message)
+  }
+
+  console.log(CommentRes)
+
+  return
   return new Promise<void>(async resolve => {
     if (comment.value === '') return
     operateLoading.value = true

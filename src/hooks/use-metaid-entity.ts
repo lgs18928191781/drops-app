@@ -190,7 +190,6 @@ export function useMetaIDEntity(){
             }
             
         })
-        
     }
   
 
@@ -353,7 +352,6 @@ export function useMetaIDEntity(){
         if(isEmpty(payCommentRes.revealTxIds)){
             return payCommentRes
         }
-
         }
    }catch (error) {
     throw new Error(error as any)
@@ -363,15 +361,15 @@ export function useMetaIDEntity(){
 
    async function simpleRepostEntity(params:{body:{
     content:string //带评论转发，不带评论可空
-    quoteTx:string//要转发的buzz pinid
+    quotePin:string//要转发的buzz pinid
     attachments:AttachmentItem[] | [] //评论带附件转发
     //rePostProtocol:string //转发的协议类型，例如：simplebuzz  
    }}) {
     const connectStore = useConnectionStore()
-    const networkStore=useNetworkStore()
+    const networkStore = useNetworkStore()
     const finalBody: any = {
         content: params.body.content,
-        quoteTx:params.body.quoteTx,
+        quotePin:params.body.quotePin,
         contentType: 'text/plain',
       }
     try {
@@ -435,7 +433,7 @@ export function useMetaIDEntity(){
         }
    }catch (error) {
     throw new Error(error as any)
-    
+
    }
     
    }

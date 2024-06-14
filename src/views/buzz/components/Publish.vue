@@ -170,7 +170,7 @@ const router = useRouter()
 const loading = ref(false)
 const inputFileRef = ref()
 const isShowSchedule = ref(false)
-const { buzzEntity, likeEntity, getAllBuzz } = useMetaIDEntity()
+const { buzzEntity, simpleRepostEntity } = useMetaIDEntity()
 const publishOperates = reactive([
   {
     icon: 'buzzn_emoji',
@@ -328,35 +328,76 @@ function chooseNFT(nft: BaseNFT) {
 const throttleChooseNFT = throttle(chooseNFT, 500)
 
 async function submit() {
-  const sendInfo = {
-    content: content.value,
-    attachments: attachments,
-  }
-  console.log(sendInfo)
-  try {
-    const sendRes = await buzzEntity(sendInfo)
-    
-    if (sendRes?.revealTxIds?.length || sendRes.txid) {
-      content.value = ''
-      attachments.length = 0
-      emit('update:modelValue', false)
-      ElMessage.success('success')
-      emit('success')
-      userStore.isNeedRefresh = true
-    } else {
-      content.value = ''
-      attachments.length = 0
-      emit('update:modelValue', false)
-      ElMessage.error('fail')
+  console.log(respostBuzz.val)
+  if (respostBuzz.val) {
+    const repostBody = {
+      body: {
+        content: content.value,
+        quotePin: respostBuzz.val.txId,
+        // rePostProtocol: 'simplebuzz',
+        attachments: attachments,
+      },
     }
-  } catch (error) {
-    const errorMessage = error.message
-    // console.log(errorMessage)
-    const toastMessage = errorMessage?.includes('Cannot read properties of undefined')
-      ? 'User Canceled'
-      : error
-    ElMessage.error(toastMessage)
+    try {
+      const repostRes = await simpleRepostEntity(repostBody)
+      if (repostRes?.revealTxIds?.length || repostRes.txid) {
+        content.value = ''
+        attachments.length = 0
+        emit('update:modelValue', false)
+        ElMessage.success('success')
+        emit('success')
+        userStore.isNeedRefresh = true
+      } else {
+        content.value = ''
+        attachments.length = 0
+        emit('update:modelValue', false)
+        ElMessage.error('fail')
+      }
+    } catch (error) {
+      ElMessage.error(error.message)
+    }
+
+    console.log(repostRes)
+
+    // await metaidEntity.simpleRepostEntity({
+    //   body: {
+    //     rePostComment: 'let me repost this buzz',
+    //     rePostTx: `c36feccf58b1a83c4df8a0b1517b74cf147509c1e25f4796ec493b1579a263f5i0`,
+    //     rePostProtocol: 'simplebuzz',
+    //   },
+    // })
+  } else {
+    const sendInfo = {
+      content: content.value,
+      attachments: attachments,
+    }
+    console.log(sendInfo)
+    try {
+      const sendRes = await buzzEntity(sendInfo)
+
+      if (sendRes?.revealTxIds?.length || sendRes.txid) {
+        content.value = ''
+        attachments.length = 0
+        emit('update:modelValue', false)
+        ElMessage.success('success')
+        emit('success')
+        userStore.isNeedRefresh = true
+      } else {
+        content.value = ''
+        attachments.length = 0
+        emit('update:modelValue', false)
+        ElMessage.error('fail')
+      }
+    } catch (error) {
+      const errorMessage = error.message
+      // console.log(errorMessage)
+      const toastMessage = errorMessage?.includes('Cannot read properties of undefined')
+        ? 'User Canceled'
+        : error
+      ElMessage.error(toastMessage)
+    }
   }
+  return
 
   // const info = { likeTo: '63344fd9b2e604bbd36f2a9b405198a643374013d37481aacdecd63ed55c9348i0' }
   // const likeRes = await likeEntity(info)
@@ -580,7 +621,7 @@ watch(
   () => props.repostTxId,
   repostTxId => {
     if (repostTxId) {
-      GetBuzz({ txId: repostTxId, metaId: userStore.user?.metaId }).then(res => {
+      GetBuzz({ txId: repostTxId, metaId: userStore.user?.metaId, chain: 'man' }).then(res => {
         if (res.code === 0) {
           respostBuzz.val = res.data.results.items[0]
         }

@@ -285,23 +285,21 @@ export enum ConnectChain{
       },
 
       updateUser(newInfo:Partial<BaseUserInfo>){
-        
         if(newInfo.name){
           this.last.user={...this.last.user,...newInfo}
         }
-        
       },
       changeChain(chain:ConnectChain){
-        const userStore = useUserStore()
-        const route = useRoute()
-        userStore.logout(route)
-        this.disconnect()
+        // const userStore = useUserStore()
+        // const route = useRoute()
+        // userStore.logout(route)
+        // this.disconnect()
         this.currentChain = chain
-        if(chain == ConnectChain.btc){
-          this.connect(ConnectChain.btc)
-        }else{
-          this.connect(ConnectChain.mvc)
-        }
+        // if(chain == ConnectChain.btc){
+        //   this.connect(ConnectChain.btc)
+        // }else{
+        //   this.connect(ConnectChain.mvc)
+        // }
       },
 
       async sync(){
