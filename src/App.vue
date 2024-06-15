@@ -93,9 +93,9 @@ onMounted(() => {
   // btcJsStore.setECPair(ECPair)
 
   setTimeout(async () => {
-    await connectorStore.sync()
-
+    
     if (connectorStore.last._isConnected) {
+      await connectorStore.sync()
       await followStore.get()
 
       // await metaidEntity.payCommentEntity({
@@ -118,14 +118,14 @@ onMounted(() => {
 
     feeStore.set(feeStore.last.currentFeeb.title).then()
     if (
-      connectorStore.userInfo.currentChain &&
-      connectorStore.userInfo.currentChain !== ConnectChain.mvc
+      connectorStore.currentChain &&
+      connectorStore.currentChain !== ConnectChain.mvc
     ) {
       feebInterval.value = setInterval(() => {
         feeStore.update().then()
       }, 60 * 1000)
     }
-  }, 200)
+  }, 500)
 })
 
 onUnmounted(() => {

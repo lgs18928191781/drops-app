@@ -835,7 +835,7 @@ async function onSetBaseInfoSuccessType(params: {
         avatarId:params.avatarId })
       ElMessage.success('Successful')
     }
-
+    
     getUserInfo()
   } catch (error) {
     console.log(error)
@@ -1382,17 +1382,16 @@ async function getUserInfo() {
     network: connectStore.last.network || networkStore.network,
     currentAddress: connectStore.userInfo.address,
   }
+  
   const currentUserInfo = await connectStore.last.getUser({ ...needInfo })
-
-
   console.log(currentUserInfo)
+  debugger
   pushToBuzz(currentUserInfo as BaseUserInfo)
 }
 async function pushToBuzz(data:BaseUserInfo) {
   userStore.updateMetaletLoginState(true)
   console.log(userStore.isAuthorized)
   console.log('pushToBuzz', connectStore)
-
   // return
   // 登陆了要设置sentry 用户
   setUser({
@@ -1400,13 +1399,11 @@ async function pushToBuzz(data:BaseUserInfo) {
     email: '',
     username: data!.name,
   })
-
-
-
   connectStore.updateUser(data)
+  debugger
   userStore.updateUserInfo({
     ...data,
-    metaId: data.metaid , // account 有时拿回来的metaId为空
+    metaId: data.metaid, // account 有时拿回来的metaId为空
     name: data.name! || connectStore.last.user.name, // account 有时拿回来的name 是旧 name
     //password: form.password,
     address: data.address,

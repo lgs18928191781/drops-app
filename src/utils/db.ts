@@ -50,7 +50,7 @@ export class DBClass extends Dexie {
             : `${import.meta.env.VITE_AppImgApi}/content/${txId}`
             
         const result = await axios.get(fileUrl, { responseType: 'blob' })
-
+        
         if (result.status === 200) {
           resolve({
             txId,

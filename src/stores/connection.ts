@@ -6,6 +6,8 @@ import { Network, useNetworkStore } from './network'
 //import type { Psbt } from 'bitcoinjs-lib'
 import {  btcConnect,mvcConnect,MetaletWalletForBtc,IBtcConnector,MetaletWalletForMvc } from '@metaid/metaid'
 import { InscribeResultForYesBroadcast} from '@/hooks/use-metaid-entity'
+import { useUserStore } from '@/stores/user'
+import { useRoute } from 'vue-router'
 
 
 export type BaseUserInfo={
@@ -227,12 +229,15 @@ export enum ConnectChain{
             
             
             this.last = connectRes
+            
             if(chain == ConnectChain.mvc){
               this.last.network=networkStore.network
             }
             this.userInfo.metaid=connectRes.metaid
             this.userInfo.address=connectRes.address
             this.userInfo.pubkey=pubkey
+            this.userInfo.avatarId=connectRes.user.avatarId
+            this.userInfo.name=connectRes.user.name
             this.currentChain=chain
             return this.last
           }
@@ -263,11 +268,6 @@ export enum ConnectChain{
         avatarId:''
        }
        this.currentChain=''
-         
-
-
-
-
         // this.last._isConnected = false
         // this.last.address = ''
         // this.last.wallet = {}
@@ -288,14 +288,25 @@ export enum ConnectChain{
       },
 
       updateUser(newInfo:Partial<BaseUserInfo>){
-        
         if(newInfo.name){
           this.last.user={...this.last.user,...newInfo}
         }
-        
       },
       changeChain(chain:ConnectChain){
-        this.currentChain = chain 
+        // const userStore = useUserStore()
+        // const route = useRoute()
+        // userStore.logout(route)
+        // this.disconnect()
+        
+        if(this.currentChain == chain){
+          return
+        }
+        this.currentChain = chain
+        // if(chain == ConnectChain.btc){
+        //   this.connect(ConnectChain.btc)
+        // }else{
+        //   this.connect(ConnectChain.mvc)
+        // }
       },
 
       async sync(){
@@ -307,7 +318,7 @@ export enum ConnectChain{
        
       //   ElMessage.error( 'Please use a native SegWit or Taproot or Legacy address (Starts with tb1 or n )',)
       // }
-
+        
     if(!this.userInfo.address) return
         
         let connectRes
@@ -358,13 +369,16 @@ export enum ConnectChain{
             const pubkey=await getWalletAdapter().getPubKey()
             
             this.last=connectRes
+            
             if(this.currentChain == ConnectChain.mvc){
               this.last.network=networkStore.network
             }
-            this.last.network=networkStore.network
+            // this.last.network=networkStore.network
             this.userInfo.metaid=connectRes.metaid
             this.userInfo.pubkey=pubkey
             this.userInfo.address=connectRes.address
+            this.userInfo.avatarId=connectRes.user.avatar
+            this.userInfo.name=connectRes.user.name
             
           }
         } catch (e: any) {

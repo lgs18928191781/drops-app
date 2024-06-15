@@ -192,7 +192,6 @@ export function useMetaIDEntity(){
             }
             
         })
-        
     }
   
 
@@ -355,7 +354,6 @@ export function useMetaIDEntity(){
         if(isEmpty(payCommentRes.revealTxIds)){
             return payCommentRes
         }
-
         }
    }catch (error) {
     throw new Error(error as any)
@@ -370,7 +368,7 @@ export function useMetaIDEntity(){
     //rePostProtocol:string //转发的协议类型，例如：simplebuzz  
    }}) {
     const connectStore = useConnectionStore()
-    const networkStore=useNetworkStore()
+    const networkStore = useNetworkStore()
     const finalBody: any = {
         content: params.body.content,
         quotePin:params.body.quotePin,
@@ -437,7 +435,7 @@ export function useMetaIDEntity(){
         }
    }catch (error) {
     throw new Error(error as any)
-    
+
    }
     
    }

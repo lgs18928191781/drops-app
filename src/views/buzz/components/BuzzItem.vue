@@ -229,8 +229,9 @@ const displayItemData = computed(() => {
   }
 
   switch (itemData.value.protocol) {
-    case 'SimpleRePost': {
-      if (itemData.value.displayType === 'quickRePost') {
+    case '/protocols/simplebuzz': {
+      if (itemData.value.displayType === 'rePost') {
+       
         return itemData.value.quoteItem
       } else {
         return itemData.value

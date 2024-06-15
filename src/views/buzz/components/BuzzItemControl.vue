@@ -1,10 +1,22 @@
 <template>
   <div class="control flex flex-align-center">
     <div class="flex1 flex flex-align-center">
-      <!-- <a class="more flex flex-align-center flex-pack-center">
+      <a class="more flex flex-align-center flex-pack-center">
         <Icon name="more" @click.stop="emit('more', buzz.txId)" />
-      </a> -->
+      </a>
 
+      <img
+        src="@/assets/images/tx_chain_btc.png"
+        alt=""
+        class="w-[18px] h-[18px] ml-4 mr-2"
+        v-if="buzz.chain === 'btc'"
+      />
+      <img
+        src="@/assets/images/tx_chain_mvc.png"
+        alt=""
+        class="w-[18px] h-[18px] ml-4 mr-2"
+        v-else
+      />
       <a class="tx" @click.stop="tx(buzz.txId)"
         >{{ buzz.txId.slice(0, 6) }}...{{ buzz.txId.slice(-3) }}</a
       >

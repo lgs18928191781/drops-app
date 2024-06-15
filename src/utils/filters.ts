@@ -177,9 +177,29 @@ export function toUserHome(metaId: string) {
   })
 }
 
-export function buzzTextContent(content: string) {
+function isJsonString(str:string){
+  if(str){
+try {
+  if(typeof JSON.parse(str) == 'object'){
+      return true
+  }else {
+    return false
+  }
   
-  const result = content
+} catch (error) {
+  return false
+}
+  }else return false
+}
+
+export function buzzTextContent(content: string) {
+  let tempContent
+  if(isJsonString(content)){
+    tempContent=JSON.parse(content).content
+  }else{
+    tempContent=content
+  }
+  const result = tempContent
     // 替换换行
     .replace(/\\n/g, '\n')
     // 话题处理

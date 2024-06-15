@@ -91,10 +91,6 @@ async function onChooseImage(e: any) {
   // 压缩图片
   const compressed = await compressImage(files[0])
   const result = await FileToAttachmentItem(compressed)
-  
-  // console.log(imgAttachments[0].data)
-  console.log(result)
-
   imghex.value = Buffer.from(result.data, 'hex').toString('base64')
   imgPic.value = result.url
  

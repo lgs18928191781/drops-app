@@ -210,8 +210,11 @@ export const useUserStore = defineStore('user', {
     },
 
     updateUserInfo(userInfo: Partial<SetUserInfo>) {
+
+      
       return new Promise<void>(async resolve => {
         console.log('userInfo', userInfo)
+        
         //
         const { password, ...data } = userInfo
 

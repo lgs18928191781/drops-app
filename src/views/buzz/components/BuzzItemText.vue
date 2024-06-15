@@ -40,7 +40,7 @@ const displayItemData = computed(() => {
   switch (props.buzz.protocol) {
     case '/protocols/simplebuzz': {
       
-      if (props.buzz.displayType === 'quickRePost') {
+      if (props.buzz.displayType === 'rePost') {
         return props.buzz.quoteItem
       } else {
         return props.buzz
