@@ -1384,8 +1384,7 @@ async function getUserInfo() {
   }
   
   const currentUserInfo = await connectStore.last.getUser({ ...needInfo })
-  console.log(currentUserInfo)
-  debugger
+  
   pushToBuzz(currentUserInfo as BaseUserInfo)
 }
 async function pushToBuzz(data:BaseUserInfo) {
@@ -1400,7 +1399,7 @@ async function pushToBuzz(data:BaseUserInfo) {
     username: data!.name,
   })
   connectStore.updateUser(data)
-  debugger
+  
   userStore.updateUserInfo({
     ...data,
     metaId: data.metaid, // account 有时拿回来的metaId为空
