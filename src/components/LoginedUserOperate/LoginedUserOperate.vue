@@ -353,9 +353,10 @@ async function selectChain(chain){
 
 
 
-   
+
 
     if(chain == 'btc'){
+      feebStore.update()
       const btcConnector = await connectStore.connect(ConnectChain.btc)
       userStore.updateUserInfo({
     address: btcConnector.address,

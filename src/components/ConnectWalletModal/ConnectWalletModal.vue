@@ -520,6 +520,7 @@ function onLoginAndRegisterSuccess(type: 'register' | 'login') {
 // }
 async function confirmConnect(){
   if(chainType.value == 'btc'){
+    feebStore.update()
     const btcConnector = await connectStore.connect(ConnectChain.btc)
     console.log(btcConnector)
   // debugger
@@ -835,7 +836,7 @@ async function onSetBaseInfoSuccessType(params: {
         avatarId:params.avatarId })
       ElMessage.success('Successful')
     }
-    
+
     getUserInfo()
   } catch (error) {
     console.log(error)
@@ -1382,9 +1383,9 @@ async function getUserInfo() {
     network: connectStore.last.network || networkStore.network,
     currentAddress: connectStore.userInfo.address,
   }
-  
+
   const currentUserInfo = await connectStore.last.getUser({ ...needInfo })
-  
+
   pushToBuzz(currentUserInfo as BaseUserInfo)
 }
 async function pushToBuzz(data:BaseUserInfo) {
@@ -1399,7 +1400,7 @@ async function pushToBuzz(data:BaseUserInfo) {
     username: data!.name,
   })
   connectStore.updateUser(data)
-  
+
   userStore.updateUserInfo({
     ...data,
     metaId: data.metaid, // account 有时拿回来的metaId为空
