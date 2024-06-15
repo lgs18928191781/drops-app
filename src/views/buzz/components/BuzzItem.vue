@@ -12,7 +12,7 @@
       </div>
       <!-- 快速转发 -->
       <template
-        v-if="itemData.protocol === 'SimpleRePost' && itemData.displayType === 'quickRePost'"
+        v-if="itemData.protocol === '/protocols/simplebuzz' && itemData.displayType === 'quickRePost'"
       >
         <div class="forward-head">
           <ShareIcon />

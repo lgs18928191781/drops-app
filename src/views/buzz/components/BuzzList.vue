@@ -173,7 +173,7 @@ const replayMsg = reactive({
     replyTo: '',
   },
 })
-const { likeEntity } = useMetaIDEntity()
+const { likeEntity,simpleRepostEntity } = useMetaIDEntity()
 let audio: HTMLAudioElement | null
 const isShowBuzzPublish: Ref<boolean> = inject('isShowBuzzPublish')!
 const repostTxId: Ref<string> = inject('repostTxId')!
@@ -195,6 +195,8 @@ const operates: {
       fun: async () => {
         await checkUserLogin()
         try {
+          console.log("currentTxId",props.list)
+          
           let isQuoteItem = false
           const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
           let index = props.list.findIndex(item => item.txId === currentTxId.value)
@@ -211,50 +213,64 @@ const operates: {
           const targetBuzz = isQuoteItem
             ? { ...props.list[index].quoteItem }
             : { ...props.list[index] }
-
+          
           const time = new Date().getTime()
-          const res = await userStore.showWallet.createBrfcChildNode(
-            {
-              nodeName: NodeName.SimpleRePost,
-              data: JSON.stringify({
-                createTime: time,
-                rePostTx: currentTxId.value,
-                rePostProtocol: targetBuzz.protocol,
-                rePostComment: '',
-              }),
-              payTo: [{ amount: payAmount, address: targetBuzz.zeroAddress }],
-            },
-            {
-              useQueue: true,
+          
+         
+          const res=await simpleRepostEntity({
+            body:{
+              content:'',
+              quotePin:currentTxId.value,
+              attachments:[]
             }
-          )
+          })
+
+         
+          // const res = await userStore.showWallet.createBrfcChildNode(
+          //   {
+          //     nodeName: NodeName.SimpleRePost,
+          //     data: JSON.stringify({
+          //       createTime: time,
+          //       rePostTx: currentTxId.value,
+          //       rePostProtocol: targetBuzz.protocol,
+          //       rePostComment: '',
+          //     }),
+          //     payTo: [{ amount: payAmount, address: targetBuzz.zeroAddress }],
+          //   },
+          //   {
+          //     useQueue: true,
+          //   }
+          // )
           if (res) {
-            const watchJobStatus = watch(
-              () => jobsStore.waitingNotify.find(job => job.id === res.subscribeId)?.status,
-              status => {
-                if (status === JobStatus.Success) {
-                  watchJobStatus()
-                  GetBuzz({
-                    txId: res.currentNode!.txId,
-                    metaId: userStore.user!.metaId,
-                  }).then(respones => {
-                    if (respones.data.results.items.length) {
-                      emit('updateItem', respones.data.results.items[0])
-                    }
-                  })
-                } else if (status === JobStatus.Failed) {
-                  watchJobStatus()
-                  emit('removeItem', { txId: res.currentNode!.txId })
-                }
-              }
-            )
-            targetBuzz.rePost.push({
+            // const watchJobStatus = watch(
+            //   () => jobsStore.waitingNotify.find(job => job.id === res.subscribeId)?.status,
+            //   status => {
+            //     if (status === JobStatus.Success) {
+            //       watchJobStatus()
+            //       GetBuzz({
+            //         txId: res.currentNode!.txId,
+            //         metaId: userStore.user!.metaId,
+            //       }).then(respones => {
+            //         if (respones.data.results.items.length) {
+            //           emit('updateItem', respones.data.results.items[0])
+            //         }
+            //       })
+            //     } else if (status === JobStatus.Failed) {
+            //       watchJobStatus()
+            //       emit('removeItem', { txId: res.currentNode!.txId })
+            //     }
+            //   }
+            // )
+            //emit('updateItem', respones.data.results.items[0])
+            const repostlist=[]
+            repostlist.push({
               metaId: userStore.user!.metaId!,
               timestamp: time,
-              txId: res.currentNode!.txId,
+              txId: res.txid,
               userName: userStore.user!.name!,
               value: payAmount,
             })
+            targetBuzz.rePost!=repostlist
             emit(
               'updateItem',
               isQuoteItem
@@ -264,6 +280,8 @@ const operates: {
                   }
                 : targetBuzz
             )
+                  console.log("userStore.user",userStore.user)
+            
             Mitt.emit(MittEvent.AddBuzz, {
               applauseCount: 0,
               attachments: [],
@@ -316,7 +334,7 @@ const operates: {
               metanetId: '',
               postTag: 'buzz',
               postTagId: 1,
-              protocol: 'SimpleRePost',
+              protocol: '/protocols/simplebuzz',
               publicKey: '',
               quoteItem: targetBuzz,
               rePost: [],
@@ -326,7 +344,7 @@ const operates: {
               shareProtocol: '',
               timestamp: 1671866186541,
               totalValue: 0,
-              txId: res.currentNode!.txId,
+              txId:res.txid, //res.currentNode!.txId,
               userName: userStore.user!.name,
               zeroAddress: userStore.user!.address,
               userInfo: {
@@ -433,6 +451,7 @@ async function onLike(params: { txId: string; address: string; done: () => void 
   }
   try {
     const likeRes = await likeEntity(LikeBuzzTxId)
+    
     if (likeRes?.revealTxIds?.length || likeRes.txid) {
       let itemIndex = props.list.findIndex(item => item.txId === params.txId)
       if (itemIndex !== -1) {

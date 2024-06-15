@@ -65,7 +65,9 @@ const displayItemData = computed(() => {
 const isHasQuote = computed(() => {
   let result = false
   if (props.buzz.quoteItem && !props.isQuote) {
-    if (props.buzz.protocol === 'SimpleRePost') {
+    
+    //'SimpleRePost'
+    if (props.buzz.protocol === '/protocols/simplebuzz' ) {
       if (props.buzz.displayType !== 'quickRePost') {
         result = true
       }

@@ -161,6 +161,7 @@ export function useMetaIDEntity(){
     const likeEntity =await connectStore.last.use('like')
    
     if(connectStore.currentChain == ConnectChain.btc){
+        
         const finalBody={
             likeTo:body.likeTo,
             isLike:'1'
@@ -178,6 +179,7 @@ export function useMetaIDEntity(){
             
         })
     }else{
+        
         likeRes = await likeEntity.create({
            
             data:{
@@ -363,7 +365,7 @@ export function useMetaIDEntity(){
 
    async function simpleRepostEntity(params:{body:{
     content:string //带评论转发，不带评论可空
-    quoteTx:string//要转发的buzz pinid
+    quotePin:string//要转发的buzz pinid
     attachments:AttachmentItem[] | [] //评论带附件转发
     //rePostProtocol:string //转发的协议类型，例如：simplebuzz  
    }}) {
@@ -371,7 +373,7 @@ export function useMetaIDEntity(){
     const networkStore=useNetworkStore()
     const finalBody: any = {
         content: params.body.content,
-        quoteTx:params.body.quoteTx,
+        quotePin:params.body.quotePin,
         contentType: 'text/plain',
       }
     try {

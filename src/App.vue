@@ -59,8 +59,9 @@ import ImagePreviewVue from '@/components/ImagePreview/ImagePreview.vue'
 //import * as secp256k1 from 'tiny-secp256k1'
 import { useConnectionStore, ConnectChain } from '@/stores/connection'
 import { useFeebStore } from '@/stores/feeb'
-import { useFollowStore } from './stores/follow'
+import { useFollowStore ,} from './stores/follow'
 import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
+
 
 const rootStore = useRootStore()
 const userStore = useUserStore()
