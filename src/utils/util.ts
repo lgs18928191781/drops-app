@@ -162,7 +162,6 @@ export function openLoginConfirm(path: string, params?: ElMessageBoxOptions) {
 }
 
 export function getMetaFileUrl(metafile: string) {
-  
   if (typeof metafile !== 'string') return ''
   metafile = metafile.replace('metafile://', '')
   if (metafile === '') return ''
@@ -980,7 +979,7 @@ export function copy(
   })
 }
 
-export async function tx(txId: string | undefined) {
+export async function tx(txId: string | undefined, chain: string | undefined) {
   // if (!txId) return
   // const chainInfoRes = await GetTxChainInfo(txId)
   // const chain =
@@ -1000,7 +999,12 @@ export async function tx(txId: string | undefined) {
   if (str.slice(-2) === 'i0') {
     str = str.slice(0, -2)
   }
-  window.open(`${import.meta.env.VITE_MEMPOOL_URL}/${str}`, '_blank')
+
+  if (chain == 'btc') {
+    window.open(`${import.meta.env.VITE_MEMPOOL_URL}/${str}`, '_blank')
+  } else {
+    window.open(`${import.meta.env.VITE_MVCSCAN_URL}/${str}`, '_blank')
+  }
 }
 
 // 随机数
