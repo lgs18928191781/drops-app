@@ -1,23 +1,18 @@
 <template>
   <div class="control flex flex-align-center">
     <div class="flex1 flex flex-align-center">
-      <a class="more flex flex-align-center flex-pack-center">
+      <!-- <a class="more flex flex-align-center flex-pack-center">
         <Icon name="more" @click.stop="emit('more', buzz.txId)" />
-      </a>
+      </a> -->
 
       <img
         src="@/assets/images/tx_chain_btc.png"
         alt=""
-        class="w-[18px] h-[18px] ml-4 mr-2"
+        class="w-[18px] h-[18px] mr-2"
         v-if="buzz.chain === 'btc'"
       />
-      <img
-        src="@/assets/images/tx_chain_mvc.png"
-        alt=""
-        class="w-[18px] h-[18px] ml-4 mr-2"
-        v-else
-      />
-      <a class="tx" @click.stop="tx(buzz.txId)"
+      <img src="@/assets/images/tx_chain_mvc.png" alt="" class="w-[18px] h-[18px] mr-2" v-else />
+      <a class="tx" @click.stop="tx(buzz.txId, buzz.chain)"
         >{{ buzz.txId.slice(0, 6) }}...{{ buzz.txId.slice(-3) }}</a
       >
     </div>
@@ -146,15 +141,22 @@ const isIForward = computed(() => {
 })
 
 const forwardText = computed(() => {
-  if (props.buzz.rePost && props.buzz.rePost.length) {
-    return props.buzz.rePost.length
+  // if (props.buzz.rePost && props.buzz.rePost.length) {
+  //   return props.buzz.rePost.length
+  // }
+  if (props.buzz.rePostCount !== 0) {
+    return props.buzz.rePostCount
   }
   return i18n.t('Forward')
 })
 
 const commentText = computed(() => {
-  if (props.buzz.comment && props.buzz.comment.length) {
-    return props.buzz.comment.length
+  // if (props.buzz.comment && props.buzz.comment.length) {
+  //   return props.buzz.comment.length
+  // }
+
+  if (props.buzz.commentCount !== 0) {
+    return props.buzz.commentCount
   }
   return i18n.t('Comment')
 })

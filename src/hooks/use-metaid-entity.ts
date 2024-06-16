@@ -159,7 +159,6 @@ export function useMetaIDEntity(){
     const networkStore=useNetworkStore()
     let likeRes
     const likeEntity =await connectStore.last.use('like')
-   
     if(connectStore.currentChain == ConnectChain.btc){
         
         const finalBody={

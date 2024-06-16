@@ -174,7 +174,7 @@ const replayMsg = reactive({
   },
 })
 
-const { likeEntity, payCommentEntity,simpleRepostEntity } = useMetaIDEntity()
+const { likeEntity, payCommentEntity, simpleRepostEntity } = useMetaIDEntity()
 let audio: HTMLAudioElement | null
 const isShowBuzzPublish: Ref<boolean> = inject('isShowBuzzPublish')!
 const repostTxId: Ref<string> = inject('repostTxId')!
@@ -196,8 +196,8 @@ const operates: {
       fun: async () => {
         await checkUserLogin()
         try {
-          console.log("currentTxId",props.list)
-          
+          console.log('currentTxId', props.list)
+
           let isQuoteItem = false
           const payAmount = parseInt(import.meta.env.VITE_PAY_AMOUNT)
           let index = props.list.findIndex(item => item.txId === currentTxId.value)
@@ -214,19 +214,17 @@ const operates: {
           const targetBuzz = isQuoteItem
             ? { ...props.list[index].quoteItem }
             : { ...props.list[index] }
-          
+
           const time = new Date().getTime()
-          
-         
-          const res=await simpleRepostEntity({
-            body:{
-              content:'',
-              quotePin:currentTxId.value,
-              attachments:[]
-            }
+
+          const res = await simpleRepostEntity({
+            body: {
+              content: '',
+              quotePin: currentTxId.value,
+              attachments: [],
+            },
           })
 
-         
           // const res = await userStore.showWallet.createBrfcChildNode(
           //   {
           //     nodeName: NodeName.SimpleRePost,
@@ -263,7 +261,7 @@ const operates: {
             //   }
             // )
             //emit('updateItem', respones.data.results.items[0])
-            const repostlist=[]
+            const repostlist = []
             repostlist.push({
               metaId: userStore.user!.metaId!,
               timestamp: time,
@@ -271,7 +269,7 @@ const operates: {
               userName: userStore.user!.name!,
               value: payAmount,
             })
-            targetBuzz.rePost!=repostlist
+            targetBuzz.rePost != repostlist
             emit(
               'updateItem',
               isQuoteItem
@@ -281,8 +279,8 @@ const operates: {
                   }
                 : targetBuzz
             )
-                  console.log("userStore.user",userStore.user)
-            
+            console.log('userStore.user', userStore.user)
+
             Mitt.emit(MittEvent.AddBuzz, {
               applauseCount: 0,
               attachments: [],
@@ -345,7 +343,7 @@ const operates: {
               shareProtocol: '',
               timestamp: 1671866186541,
               totalValue: 0,
-              txId:res.txid, //res.currentNode!.txId,
+              txId: res.txid, //res.currentNode!.txId,
               userName: userStore.user!.name,
               zeroAddress: userStore.user!.address,
               userInfo: {
@@ -452,7 +450,6 @@ async function onLike(params: { txId: string; address: string; done: () => void 
   }
   try {
     const likeRes = await likeEntity(LikeBuzzTxId)
-    
     if (likeRes?.revealTxIds?.length || likeRes.txid) {
       let itemIndex = props.list.findIndex(item => item.txId === params.txId)
       if (itemIndex !== -1) {
@@ -467,6 +464,7 @@ async function onLike(params: { txId: string; address: string; done: () => void 
       ElMessage.error('Post fail')
     }
   } catch (error) {
+    alert('点赞catch到错误')
     ElMessage.error((error as any).message)
   }
 
@@ -657,9 +655,16 @@ async function replay() {
   try {
     const CommentRes = await payCommentEntity(commentBody)
     if (CommentRes?.revealTxIds?.length || CommentRes.txid) {
-      isShowCommentModal.value = false
-      ElMessage.success(i18n.t('Buzz.comment.success'))
-      comment.value = ''
+      let itemIndex = props.list.findIndex(item => item.txId === replayMsg.val.commentTo)
+      if (itemIndex !== -1) {
+        const buzz = { ...props.list[itemIndex] }
+        buzz.commentCount += 1
+        console.log(buzz)
+        emit('updateItem', buzz)
+        isShowCommentModal.value = false
+        ElMessage.success(i18n.t('Buzz.comment.success'))
+        comment.value = ''
+      }
     } else {
       isShowCommentModal.value = false
       ElMessage.error('fail')

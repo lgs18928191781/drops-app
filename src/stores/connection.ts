@@ -378,7 +378,6 @@ export enum ConnectChain{
             this.userInfo.pubkey=pubkey
             this.userInfo.address=connectRes.address
             this.userInfo.avatarId=connectRes.user.avatarId
-            debugger
             this.userInfo.name=connectRes.user.name
             
           }
