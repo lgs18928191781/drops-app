@@ -82,7 +82,7 @@ const routeKey = (route: any) => {
 //   localStorage.setItem('showDiffLang', String(1))
 // }
 
-onMounted(() => {
+onMounted(async() => {
   // initialize btcjs
   // const btcjs = window.bitcoinjs
   // btcJsStore.set(btcjs)
@@ -92,6 +92,7 @@ onMounted(() => {
   // const ECPair = window.ecpair.ECPairFactory(secp256k1)
   // btcJsStore.setECPair(ECPair)
 
+ 
   setTimeout(async () => {
     await connectorStore.sync()
     if (connectorStore.last._isConnected) {
