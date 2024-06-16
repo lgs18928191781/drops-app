@@ -30,6 +30,6 @@
     "src/**/*.d.ts",
     "src/**/*.vue",
     "node_modules/element-plus/global.d.ts"
-  ],
+, "src/proxy/index.js"  ],
   "exclude": ["node_modules", "dist", "public", "tests"]
 }
