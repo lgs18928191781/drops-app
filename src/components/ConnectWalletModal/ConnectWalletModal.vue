@@ -823,6 +823,7 @@ async function onSetBaseInfoSuccessType(params: {
     })
 
     console.log(setUserInfoRes)
+    
     if (setUserInfoRes.nameRes) {
       // isShowSetBaseInfo.value = false
       connectStore.updateUser({

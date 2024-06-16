@@ -37,10 +37,12 @@ const displayItemData = computed(() => {
   if (!props.buzz) {
     return null
   }
+  console.log("props.buzz",props.buzz)
+  
   switch (props.buzz.protocol) {
     case '/protocols/simplebuzz': {
       
-      if (props.buzz.displayType === 'rePost') {
+      if (props.buzz.displayType === 'rePost' && !props.buzz.quoteItem) {
         return props.buzz.quoteItem
       } else {
         return props.buzz

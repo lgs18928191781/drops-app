@@ -355,14 +355,15 @@ async function selectChain(chain){
 
 
 
-    if(chain == 'btc'){
+    if(chain == ConnectChain.btc){
       feebStore.update()
+     
+    try {
       const btcConnector = await connectStore.connect(ConnectChain.btc)
       userStore.updateUserInfo({
     address: btcConnector.address,
     loginType: 'MetaID',
     })
-    try {
     const currentUserInfo = await btcConnector.getUser({ network: btcConnector.network })
     console.log(currentUserInfo)
     const currentUserName = currentUserInfo.name
@@ -376,12 +377,13 @@ async function selectChain(chain){
   }
 
     }else{
+    
+    try {
       const mvcConnector = await connectStore.connect(ConnectChain.mvc)
       userStore.updateUserInfo({
     address: mvcConnector.address,
     loginType: 'MetaID',
     })
-    try {
     const currentUserInfo = await mvcConnector.getUser({ network: mvcConnector.network })
     const currentUserName = currentUserInfo.name
     if (!currentUserName) {

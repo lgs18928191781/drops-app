@@ -227,11 +227,12 @@ const displayItemData = computed(() => {
   if (!itemData.value) {
     return null
   }
-
+ 
   switch (itemData.value.protocol) {
+    
     case '/protocols/simplebuzz': {
       if (itemData.value.displayType === 'rePost') {
-       
+        
         return itemData.value.quoteItem
       } else {
         return itemData.value
@@ -241,6 +242,7 @@ const displayItemData = computed(() => {
       return itemData.value
     }
   }
+  
 })
 
 const myFollow = computed(() => {

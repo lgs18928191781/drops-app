@@ -93,9 +93,9 @@ onMounted(() => {
   // btcJsStore.setECPair(ECPair)
 
   setTimeout(async () => {
-    
+    await connectorStore.sync()
     if (connectorStore.last._isConnected) {
-      await connectorStore.sync()
+      
       await followStore.get()
 
       // await metaidEntity.payCommentEntity({

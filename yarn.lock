@@ -1945,10 +1945,10 @@
     ramda "^0.29.1"
     uuid "^9.0.1"
 
-"@metaid/metaid@^1.3.5":
-  version "1.3.5"
-  resolved "https://registry.yarnpkg.com/@metaid/metaid/-/metaid-1.3.5.tgz#1d0781768a1146d760c3dabc7a7c8d50b41b4287"
-  integrity sha512-zLZpTdn3nmxGWLeKVA/zvNY4bfRKYQkuQxDHcGyPS585xFFTPERbV2wPhe/33M+ua6js0DcVYei9zx2pfEo6eg==
+"@metaid/metaid@^1.3.7":
+  version "1.3.7"
+  resolved "https://registry.npmmirror.com/@metaid/metaid/-/metaid-1.3.7.tgz#0a646f75e200459bc088ecb641fc831fbdc53c87"
+  integrity sha512-5EkBkF9cpecgoSLqYFt+XZak89BK53T/GQe7FBKGpvvslKLw5AaFVHgxLESi6MMpSuElkgyPop8Xp+XQ3PZgiQ==
   dependencies:
     "@bitcoin-js/tiny-secp256k1-asmjs" "^2.2.3"
     "@metaid/metaid" "^1.2.7"
