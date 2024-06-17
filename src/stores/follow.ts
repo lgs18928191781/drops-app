@@ -46,19 +46,19 @@ export const useFollowStore = defineStore('myFollow', {
         const connectionStore = useConnectionStore()
         const query = DB.follow.where('userMetaId').equals(connectionStore.last.metaid)
         const localList = await query.toArray()
-        const {
-          data: { list },
-        } = await MyFollow()
-
-        if (list.length) {
-          list.forEach((item: string) => {
-            queryList.push({
-              userMetaId: connectionStore.last.metaid,
-              followedMetaId: item,
-              txId: '',
-            })
-          })
-        }
+        // const {
+        //   data: { list },
+        // } = await MyFollow()
+      
+        // if (list.length) {
+        //   list.forEach((item: string) => {
+        //     queryList.push({
+        //       userMetaId: connectionStore.last.metaid,
+        //       followedMetaId: item,
+        //       txId: '',
+        //     })
+        //   })
+        // }
 
         if (localList.length && queryList.length) {
           this.followingList.length = 0
