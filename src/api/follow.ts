@@ -1,6 +1,6 @@
 import { useConnectionStore } from '@/stores/connection'
 import HttpRequest from '@/utils/request'
- //
+ ////
 const follow = new HttpRequest(`http://localhost:5173/followapi`, {
   header: {
     SiteConfigMetanetId: import.meta.env.VITE_SiteConfigMetanetId,
