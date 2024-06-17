@@ -1,7 +1,8 @@
 import { useConnectionStore } from '@/stores/connection'
 import HttpRequest from '@/utils/request'
- ////
-const follow = new HttpRequest(`http://localhost:5173/followapi`, {
+
+////
+const follow = new HttpRequest(`${import.meta.env.VITE_BASE_URL}/followapi`, {
   header: {
     SiteConfigMetanetId: import.meta.env.VITE_SiteConfigMetanetId,
   },
@@ -39,5 +40,3 @@ export const FollowInfo = (params: {
 }): Promise<FollowInfo> => {
   return follow.get(`/follow/record`, { params })
 }
-
-
