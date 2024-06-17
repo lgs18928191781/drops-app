@@ -464,7 +464,6 @@ async function onLike(params: { txId: string; address: string; done: () => void 
       ElMessage.error('Post fail')
     }
   } catch (error) {
-    alert('点赞catch到错误')
     ElMessage.error((error as any).message)
   }
 
