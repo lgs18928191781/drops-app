@@ -162,7 +162,6 @@
             :disabled="true"
           />
         </template>
-        <img src="blob:http://localhost:5173/ab85144a-e3f3-4dd0-b3c2-3ba478e4b46e" alt="" />
         <UserCardVue
           :name="connectStore.userInfo.name"
           :meta-id="connectStore.userInfo.metaid"
@@ -357,7 +356,7 @@ async function selectChain(chain){
 
     if(chain == ConnectChain.btc){
       feebStore.update()
-     
+
     try {
       const btcConnector = await connectStore.connect(ConnectChain.btc)
       userStore.updateUserInfo({
@@ -377,7 +376,7 @@ async function selectChain(chain){
   }
 
     }else{
-    
+
     try {
       const mvcConnector = await connectStore.connect(ConnectChain.mvc)
       userStore.updateUserInfo({
