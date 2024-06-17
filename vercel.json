@@ -1,27 +1,27 @@
 {
-    "headers": [
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
         {
-            "source": "/(.*)",
-            "headers": [
-                {
-                    "key": "Access-Control-Allow-Origin",
-                    "value": "*"
-                },
-                {
-                    "key": "Access-Control-Allow-Headers",
-                    "value": "content-type"
-                },
-                {
-                    "key": "Access-Control-Allow-Methods",
-                    "value": "DELETE,PUT,POST,GET,OPTIONS"
-                }
-            ]
-        }
-    ],
-    "rewrites": [
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
         {
-            "source": "/followapi",
-            "destination": "/proxy/index"
+          "key": "Access-Control-Allow-Headers",
+          "value": "content-type"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "DELETE,PUT,POST,GET,OPTIONS"
         }
-    ]
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/followapi/:path(.*)",
+      "destination": "https://man-test.metaid.io/api"
+    }
+  ]
 }
