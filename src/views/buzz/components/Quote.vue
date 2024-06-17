@@ -23,12 +23,7 @@ interface Props {
   playFile?: string
 }
 
-
-
 const props = withDefaults(defineProps<Props>(), {})
-
-
-
 </script>
 
 <style lang="scss" scoped src="./Quote.scss"></style>

@@ -12,7 +12,9 @@
       </div>
       <!-- 快速转发 -->
       <template
-        v-if="itemData.protocol === '/protocols/simplebuzz' && itemData.displayType === 'quickRePost'"
+        v-if="
+          itemData.protocol === '/protocols/simplebuzz' && itemData.displayType === 'quickRePost'
+        "
       >
         <div class="forward-head">
           <ShareIcon />
@@ -21,12 +23,13 @@
             :meta-id="itemData.metaId"
             :image="itemData.avatarImage"
             :name="itemData.userName"
-            :meta-name="itemData.userInfo.metaName"
+            :metaName="''"
           />
           <div class="name">
             <UserName
-              :name="itemData.userName"
-              :metaName="itemData?.userInfo?.metaName"
+              :name="itemData.userInfo.name"
+              :metaName="''"
+              :metaId="itemData.metaId"
             />&nbsp;|&nbsp;{{ $t('Forwarded') }}
           </div>
         </div>
@@ -45,6 +48,7 @@
               :meta-id="displayItemData.metaId"
               :image="displayItemData?.userInfo?.avatarImage"
               :name="displayItemData.userName"
+              :metaName="''"
               :image-class="'w-12 h-12'"
             />
           </div>
@@ -52,7 +56,7 @@
             <div class="name">
               <UserName
                 :name="displayItemData.userInfo?.name"
-                :metaName="displayItemData?.userInfo?.metaName"
+                :metaName="''"
                 :metaId="displayItemData.metaId"
               />
             </div>
@@ -227,22 +231,27 @@ const displayItemData = computed(() => {
   if (!itemData.value) {
     return null
   }
- 
-  switch (itemData.value.protocol) {
-    
-    case '/protocols/simplebuzz': {
-      if (itemData.value.displayType === 'rePost') {
-        
-        return itemData.value.quoteItem
-      } else {
-        return itemData.value
-      }
-    }
-    default: {
-      return itemData.value
-    }
+
+  if (itemData.value.displayType === 'quickRePost') {
+    return itemData.value.quoteItem
+  } else {
+    return itemData.value
   }
-  
+  // switch (itemData.value.protocol) {
+  //   case 'SimpleRePost': {
+  //     if (itemData.value.displayType === 'quickRePost') {
+  //       // case '/protocols/simplebuzz': {
+  //       //   if (itemData.value.displayType === 'rePost') {
+
+  //       return itemData.value.quoteItem
+  //     } else {
+  //       return itemData.value
+  //     }
+  //   }
+  //   default: {
+  //     return itemData.value
+  //   }
+  // }
 })
 
 const myFollow = computed(() => {

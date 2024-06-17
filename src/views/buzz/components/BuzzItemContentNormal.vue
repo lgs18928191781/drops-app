@@ -1,6 +1,6 @@
 <template>
   <!-- text -->
-  <div class="content-item" v-if="displayItemData?.content">
+  <div class="content-item" v-if="displayItemData?.content || displayItemData?.data">
     <BuzzItemText
       :buzz="buzz"
       :isQuote="isQuote"
@@ -51,6 +51,7 @@ const displayItemData = computed(() => {
   switch (props.buzz.protocol) {
     case 'SimpleRePost': {
       if (props.buzz.displayType === 'quickRePost') {
+        alert(11111)
         return props.buzz.quoteItem
       } else {
         return props.buzz
@@ -65,8 +66,9 @@ const displayItemData = computed(() => {
 const isHasQuote = computed(() => {
   let result = false
   if (props.buzz.quoteItem && !props.isQuote) {
-    //'SimpleRePost'
     if (props.buzz.protocol === '/protocols/simplebuzz') {
+      //'SimpleRePost'
+      // if (props.buzz.protocol === '/protocols/simplebuzz' ) {
       if (props.buzz.displayType !== 'quickRePost') {
         result = true
       }
