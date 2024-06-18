@@ -95,6 +95,32 @@ export const simpleRepostSchema:EntitySchema = {
 }
 
 
+
+export const customizeSchema=(params:{
+  nodeName:string
+  isProtocolSub:boolean
+  version:number
+  body:Array<{
+    name:string
+    type:'string' | 'number' | 'array'
+  }>
+}):EntitySchema=>{
+  const {nodeName,isProtocolSub,version,body}=params
+  return {
+    name:nodeName,
+    nodeName:nodeName,
+    path:isProtocolSub ? `/protocols/${nodeName}` : nodeName,
+    versions:[
+      {
+          version:version ?? 1,
+          id:'',
+          body:body
+      }
+    ]
+  }
+}
+
+
 export enum BufferEncoding {
   ascii = 'ascii',
   utf8 = 'utf8',

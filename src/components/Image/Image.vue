@@ -36,6 +36,7 @@ const props = withDefaults(defineProps<Props>(), {
   width: 235,
   type: 'metafile',
 })
+console.log('props', props)
 
 const Default = {
   metafile: props.defaultImage ? props.defaultImage : DefaultMetafile,
@@ -58,12 +59,11 @@ watch(
 async function getImageUrl() {
   isSkeleton.value = true
   let src = props.src
-  
+
   DB.getMetaFile(src, props.width, 'metafile').then(res => {
     url.value = res
     isSkeleton.value = false
   })
- 
 }
 
 function fail(event: any) {

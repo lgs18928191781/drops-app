@@ -200,7 +200,9 @@ interface Props {
   playFile?: string
   isEdit?: boolean
 }
+
 const props = withDefaults(defineProps<Props>(), {})
+
 const loading = ref(true)
 
 const emit = defineEmits(['remove', 'play'])

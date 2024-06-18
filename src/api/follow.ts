@@ -2,7 +2,7 @@ import { useConnectionStore } from '@/stores/connection'
 import HttpRequest from '@/utils/request'
 
 ////
-const follow = new HttpRequest(`${import.meta.env.VITE_BASE_URL}/followapi`, {
+const follow = new HttpRequest(`${import.meta.env.VITE_PROXY_URL}`, {
   header: {
     SiteConfigMetanetId: import.meta.env.VITE_SiteConfigMetanetId,
   },
@@ -26,12 +26,20 @@ const follow = new HttpRequest(`${import.meta.env.VITE_BASE_URL}/followapi`, {
 
 export const MyFollow = (): Promise<MyFollowList> => {
   const connectStore = useConnectionStore()
-  return follow.get(`/metaid/followingList/${connectStore.last.metaid}`)
+  return follow.get(`/followingList`, {
+    params: {
+      metaid: connectStore.last.metaid,
+    },
+  })
 }
 
 export const FollowMe = (): Promise<MyFollowList> => {
   const connectStore = useConnectionStore()
-  return follow.get(`/metaid/followerList/${connectStore.last.metaid}`)
+  return follow.get(`/followerList`, {
+    params: {
+      metaid: connectStore.last.metaid,
+    },
+  })
 }
 
 export const FollowInfo = (params: {

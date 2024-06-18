@@ -114,7 +114,6 @@ export function space(stas: number | string) {
 }
 
 export function metafile(metafile: string, width = 235, type: 'metafile' | 'metaId' = 'metafile') {
-  
   if (typeof metafile !== 'string') return ''
   if (metafile.indexOf('http://') !== -1 || metafile.indexOf('https://') !== -1) return metafile
   metafile = metafile.replace('metafile://', '')
@@ -143,8 +142,8 @@ export function metafile(metafile: string, width = 235, type: 'metafile' | 'meta
     metafile = metafile.replace('mumbai://', 'evm/mumbai/')
     path = '/metafile/'
   } else {
-    
     //  普通txId
+
     path = '/content/'
   }
 
@@ -177,27 +176,26 @@ export function toUserHome(metaId: string) {
   })
 }
 
-function isJsonString(str:string){
-  if(str){
-try {
-  if(typeof JSON.parse(str) == 'object'){
-      return true
-  }else {
-    return false
-  }
-  
-} catch (error) {
-  return false
-}
-  }else return false
+function isJsonString(str: string) {
+  if (str) {
+    try {
+      if (typeof JSON.parse(str) == 'object') {
+        return true
+      } else {
+        return false
+      }
+    } catch (error) {
+      return false
+    }
+  } else return false
 }
 
 export function buzzTextContent(content: string) {
   let tempContent
-  if(isJsonString(content)){
-    tempContent=JSON.parse(content).content
-  }else{
-    tempContent=content
+  if (isJsonString(content)) {
+    tempContent = JSON.parse(content).content
+  } else {
+    tempContent = content
   }
   const result = tempContent
     // 替换换行

@@ -71,19 +71,20 @@ export function useMetaIDEntity(){
                 })
                 return createRes
             }else{
-                
+                let transactions=[]
                 if(isEmpty(body.attachments)){
-                    const attachMetafileUri= await MvcFileEntity(body.attachments)
+                    const {attachMetafileUri,fileTransactions}= await MvcFileEntity(body.attachments)
                     finalBody.attachments=attachMetafileUri
+                    transactions=fileTransactions
+                    
                 }
-                
-                
                 const { txid } = await buzzEntity.create({
-                    data: { body: JSON.stringify(body), contentType: 'application/json;utf-8', flag: import.meta.env.VITE_BTC_METAID_FLAG },
+                    data: { body: JSON.stringify(finalBody) },
                     options: {
                     network: networkStore.network ,
                       signMessage: 'create buzz',
                       serialAction: 'finish',
+                      transactions:transactions
                     },
                   })
                   
@@ -122,7 +123,10 @@ export function useMetaIDEntity(){
         return imageRes
    }
 
-   async function MvcFileEntity(images:AttachmentItem[]):Promise<string[]> {
+   async function MvcFileEntity(images:AttachmentItem[]):Promise<{
+    fileTransactions:any[]
+    attachMetafileUri:string[]
+   }> {
     const connectStore = useConnectionStore()
     const networkStore=useNetworkStore()
     
@@ -139,19 +143,23 @@ export function useMetaIDEntity(){
             flag:import.meta.env.VITE_BTC_METAID_FLAG,
             },
             options:{
-            dataType: image.fileType,
+            //dataType: image.fileType,
             signMessage: 'upload image file',
-            serialAction: 'combo',
+            serialAction:'combo', //'combo',
             transactions: fileTransactions,
             network:networkStore.network
             }
             })
+            
             attachMetafileUri.push('metafile://' + txs[txs.length - 1].txComposer.getTxId() + 'i0')
             fileTransactions = txs
             }
        
             
-        return attachMetafileUri
+        return {
+            fileTransactions,
+            attachMetafileUri
+        }
    
         }
    async function likeEntity(body:{likeTo:string}):Promise<InscribeResultForYesBroadcast & {txid:string}> {
@@ -373,6 +381,7 @@ export function useMetaIDEntity(){
         quotePin:params.body.quotePin,
         contentType: 'text/plain',
       }
+      let transactions=[]
     try {
         let repostEntity
         if(currentChain.value == ConnectChain.mvc){
@@ -381,8 +390,11 @@ export function useMetaIDEntity(){
             })
 
             if(isEmpty(params.body.attachments)){
-                const attachMetafileUri= await MvcFileEntity(params.body.attachments)
+             
+                const {attachMetafileUri,fileTransactions}= await MvcFileEntity(params.body.attachments)
+                    
                 finalBody.attachments=attachMetafileUri
+                transactions=fileTransactions
             }
 
             const repostRes=await repostEntity.create({
@@ -393,9 +405,11 @@ export function useMetaIDEntity(){
                 options:{
                     noBroadcast:'no',
                     network:networkStore.network,
-                    signMessage: 'repost buzz'
+                    signMessage: 'repost buzz',
+                    transactions:transactions
                 }
             })
+            
             if(repostRes?.txid){
                 return {
                     txid:repostRes.txid
@@ -437,6 +451,85 @@ export function useMetaIDEntity(){
 
    }
     
+   }
+
+
+   async function customizeEntity(params:{
+    body:any
+   }) {
+    const connectStore = useConnectionStore()
+    const networkStore = useNetworkStore()
+    const finalBody: any = {
+        content: params.body.content,
+        quotePin:params.body.quotePin,
+        contentType: 'text/plain',
+      }
+    try {
+        let repostEntity
+        if(currentChain.value == ConnectChain.mvc){
+            repostEntity=await loadMvc(simpleRepostSchema,{
+                connector:connectStore.last
+            })
+
+            if(isEmpty(params.body.attachments)){
+                const attachMetafileUri= await MvcFileEntity(params.body.attachments)
+                    
+                finalBody.attachments=attachMetafileUri
+             
+            }
+
+            const repostRes=await repostEntity.create({
+                data:{
+                    body:JSON.stringify(finalBody),
+                    contentType: 'text/plain;utf-8',
+                },
+                options:{
+                    noBroadcast:'no',
+                    network:networkStore.network,
+                    signMessage: 'repost buzz'
+                }
+            })
+            
+            if(repostRes?.txid){
+                return {
+                    txid:repostRes.txid
+                }
+            }
+        }else{
+            if(isEmpty(params.body.attachments)){
+                const imageRes= await BtcFileEntity(params.body.attachments)
+                finalBody.attachments=imageRes.revealTxIds.map(rid=>{
+                    return `metafile://${rid}i0`
+                })
+            }
+            repostEntity=await loadBtc(simpleRepostSchema,{
+                connector:connectStore.last
+            })
+            const repostRes=await repostEntity.create({
+                dataArray:[
+                   {
+                    body:JSON.stringify(finalBody),
+                    flag:import.meta.env.VITE_BTC_METAID_FLAG
+                   }
+                ],
+                options:{
+                    noBroadcast:'no',
+                    feeRate: feebStore.last.currentFeeb.feeRate,
+                    service: {
+                        address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
+                        satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
+                    }
+                }
+            })
+        if(isEmpty(repostRes.revealTxIds)){
+            return repostRes
+        }
+
+        }
+   }catch (error) {
+    throw new Error(error as any)
+
+   }
    }
 
    async function getAllBuzz(body:{page:number,limit:number,network:string}){
