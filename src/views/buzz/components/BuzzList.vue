@@ -185,7 +185,7 @@ const translatedTx: {
 const operates: {
   [key: string]: {
     name: () => string
-    fun: () => void
+    fun: (e:Event) => void
   }[]
 } = {
   repost: [
@@ -393,8 +393,8 @@ const operates: {
     },
     {
       name: () => i18n.t('Buzz.repost.lookTx'),
-      fun: () => {
-        tx(currentTxId.value)
+      fun: (e:Event) => {
+        tx(e,currentTxId.value)
         isShowOperateModal.value = false
       },
     },

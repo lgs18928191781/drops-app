@@ -80,6 +80,7 @@ const getMetasvSig = async (path: string): Promise<MetasvSigTypes> => {
   return Http.postFetch<BaseApiResultTypes<MetasvSigTypes>>(url, {
     path: path,
   }).then(res => {
+    
     if (res.code === 0) {
       const sigObj = res.data as MetasvSigTypes
       _cachedSigs[path] = sigObj

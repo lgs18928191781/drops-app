@@ -371,7 +371,7 @@
                 <div class="time">
                   {{ $filters.dateTimeFormat(item.time * 1000, 'UTC', 'YY-MM-DD HH:mm:ss') }}(UTC)
                 </div>
-                <Icon name="link" class="link" @click="tx(item.txid)"></Icon>
+                <Icon name="link" class="link" @click="tx($event,item.txid)"></Icon>
               </div>
 
               <LoadMore :pagination="pagination" v-if="records.length" />
@@ -2151,7 +2151,7 @@ async function confirmMultiVote() {
       op: DAOStakeOperate.Vote,
     })
     console.log('stakeRes', stakeRes)
-
+    
     console.log('votedInfo', proposal.val, userStake.val)
 
     const oricalRes = await Orical([2, 3, 4])
@@ -2179,7 +2179,7 @@ async function confirmMultiVote() {
     }
     console.log('voteToOptionIdxs', signaturelist, voteToOptionIdxs)
     console.log('userStore.showWallet', userStore.showWallet)
-
+    
     const tx = await userStore.showWallet
       .createBrfcChildNode(
         {

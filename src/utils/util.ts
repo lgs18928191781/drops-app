@@ -977,6 +977,7 @@ export function copy(
 
 export async function tx(e:Event,txId: string | undefined) {
   if (!txId) return
+  
   e.preventDefault()
   const chainInfoRes = await GetTxChainInfo(txId)
   const chain =
