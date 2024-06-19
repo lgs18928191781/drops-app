@@ -239,7 +239,7 @@
                     <div class="value flex1 nowrap">
                       {{ nft.val!.nftSellTxId }}
                       <a class="copy" @click="copy(nft.val!.nftSellTxId)">{{ $t('copy') }}</a>
-                      <a class="copy" @click="tx(nft.val!.nftSellTxId)">{{ $t('look') }}</a>
+                      <a class="copy" @click="tx($event,nft.val!.nftSellTxId)">{{ $t('look') }}</a>
                     </div>
                   </div>
                   <div class="work-detail-item flex flex-align-center">
@@ -258,7 +258,7 @@
                         <a class="copy" @click="copy(nft.val!.nftIssueMetaTxId)">{{
                           $t('copy')
                         }}</a>
-                        <a class="copy" @click="tx(nft.val!.nftIssueMetaTxId)">
+                        <a class="copy" @click="tx($event,nft.val!.nftIssueMetaTxId)">
                           {{ $t('look') }}
                         </a>
                       </template>
@@ -372,7 +372,7 @@
                         : $t('noPaid')
                     }}
                   </span>
-                  <a class="link" @click="tx(record.txId)"><img :src="LinkIcon"/></a>
+                  <a class="link" @click="tx($event,record.txId)"><img :src="LinkIcon"/></a>
                 </div>
 
                 <LoadMore

@@ -222,6 +222,7 @@ export default class ShowmoneyProvider {
   ): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
+        
         const signature = await this.getMetasvSig(path)
         const headers = {
           'Content-Type': 'application/json',
@@ -230,6 +231,7 @@ export default class ShowmoneyProvider {
           'MetaSV-Nonce': signature.nonce,
           'MetaSV-Signature': signature.signEncoded,
         }
+        
         const origin = chain === HdWalletChain.MVC ? this.metaSvApi : this.bsvMetaSvApi
         const url = `${origin}${path}`
         const Http = new HttpRequests()

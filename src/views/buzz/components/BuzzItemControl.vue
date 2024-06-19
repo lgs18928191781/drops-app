@@ -5,7 +5,7 @@
         <Icon name="more" @click.stop="emit('more', buzz.txId)" />
       </a>
 
-      <a class="tx" @click.stop="tx(buzz.txId)"
+      <a class="tx" @click.stop="tx($event,buzz.txId)"
         >{{ buzz.txId.slice(0, 6) }}...{{ buzz.txId.slice(-3) }}</a
       >
     </div>

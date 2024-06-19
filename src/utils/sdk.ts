@@ -334,6 +334,8 @@ export class SDK {
       isTransfer?: boolean
     }
   ) {
+
+    
     return new Promise<NodeTransactions | null>(async (resolve, reject) => {
       const userStore = useUserStore()
       const initOption = {

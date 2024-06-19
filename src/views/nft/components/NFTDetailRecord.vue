@@ -87,7 +87,7 @@
                 </template>
               </span>
               <span class="link td">
-                <Icon name="link" @click="tx(item.txId)" />
+                <Icon name="link" @click="tx($event,item.txId)" />
               </span>
             </div>
           </div>
