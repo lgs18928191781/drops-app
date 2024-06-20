@@ -93,8 +93,6 @@ async function onChooseImage(e: any) {
   const result = await FileToAttachmentItem(compressed)
   imghex.value = Buffer.from(result.data, 'hex').toString('base64')
   imgPic.value = result.url
- 
-  
 }
 function closeSetInfoModal() {
   emit('closeSetInfoModal')

@@ -519,7 +519,7 @@ function onLoginAndRegisterSuccess(type: 'register' | 'login') {
 //   // )
 // }
 async function confirmConnect(){
-  if(chainType.value == 'btc'){
+  if(chainType.value == ConnectChain.btc){
     feebStore.update()
     const btcConnector = await connectStore.connect(ConnectChain.btc)
     console.log(btcConnector)
@@ -546,7 +546,7 @@ async function confirmConnect(){
       status.value = ConnectWalletStatus.Watting
     } else {
       // isShowSelectChain.value = false
-      pushToBuzz(currentUserInfo)
+      pushToBuzz(currentUserInfo as BaseUserInfo)
       rootStore.$patch({ isShowLogin: false })
       status.value = ConnectWalletStatus.Watting
     }
@@ -823,7 +823,7 @@ async function onSetBaseInfoSuccessType(params: {
     })
 
     console.log(setUserInfoRes)
-    
+
     if (setUserInfoRes.nameRes) {
       // isShowSetBaseInfo.value = false
       connectStore.updateUser({
