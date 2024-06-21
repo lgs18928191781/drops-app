@@ -11,6 +11,16 @@ export const NETWORK: Network = import.meta.env.VITE_NETWORK || 'mainnet'
 //   }[]
 // }
 
+export type CustomSchemaParams={
+  nodeName:string
+  isProtocolSub:boolean
+  version:number
+  body:Array<{
+    name:string
+    type:'string' | 'number' | 'array'
+  }>
+}
+
 export const followSchema:EntitySchema = {
   name: 'follow',
   nodeName: 'follow',
@@ -96,15 +106,7 @@ export const simpleRepostSchema:EntitySchema = {
 
 
 
-export const customizeSchema=(params:{
-  nodeName:string
-  isProtocolSub:boolean
-  version:number
-  body:Array<{
-    name:string
-    type:'string' | 'number' | 'array'
-  }>
-}):EntitySchema=>{
+export const customizeSchema=(params:CustomSchemaParams):EntitySchema=>{
   const {nodeName,isProtocolSub,version,body}=params
   return {
     name:nodeName,
