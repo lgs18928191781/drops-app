@@ -314,6 +314,7 @@ function toNFT() {
 }
 
 function getAttachmentType(attachment: string | AttachmentItem) {
+  
   if (typeof attachment === 'string') {
     const fileSuffix = attachment.split('.')[attachment.split('.').length - 1].toLowerCase()
     const videoSuffixs = ['mov', 'mp4']

@@ -1,7 +1,7 @@
 
 import { useConnectionStore,ConnectChain } from '@/stores/connection'
 import  {type CreateOptions,IBtcEntity,MvcTransaction,loadMvc,loadBtc } from '@metaid/metaid'
-import { BufferEncoding,followSchema,payCommentSchema,simpleRepostSchema} from '@/data/constants'
+import { BufferEncoding,followSchema,payCommentSchema,simpleRepostSchema,customizeSchema,type CustomSchemaParams} from '@/data/constants'
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { useI18n } from 'vue-i18n'
 import {useFollowStore} from '@/stores/follow'
@@ -12,6 +12,22 @@ import {computed} from 'vue'
 export type EntityOptions={
     noBroadcast:'yes' | 'no'
     feeRate?:number
+}
+
+export type NftItem={
+    nftName:string
+    content:string //metafile://[PINID]
+    intro:string 
+}
+
+export type NftCollection={
+    totalSupple:string
+    collectionName:string
+    intro:string
+    cover:string
+    website:string
+    metaData:any
+    items:NftItem[]
 }
 
 export interface InscribeResultForYesBroadcast {
@@ -131,15 +147,17 @@ export function useMetaIDEntity(){
     const networkStore=useNetworkStore()
     
     let fileTransactions: MvcTransaction[] = []
- 
+
+    console.log("images",images)
+    debugger
     const fileEntity=await connectStore.last.use('file')
      const attachMetafileUri = []
         for(const image of images){  
             const {transactions: txs }=await fileEntity.create({
             data:{
-            body: Buffer.from(image.data, 'hex').toString('base64'),
+            body: Buffer.from(image.data, 'hex'),
             contentType: `${image.fileType};binary`,
-            encoding: BufferEncoding.base64,
+            encoding: BufferEncoding.hex,
             flag:import.meta.env.VITE_BTC_METAID_FLAG,
             },
             options:{
@@ -453,30 +471,38 @@ export function useMetaIDEntity(){
     
    }
 
+   async function mintNFTEntity(params:NftCollection){
+    const connectStore = useConnectionStore()
+    const networkStore = useNetworkStore()
+    try {
+        
+    } catch (error) {
+        
+    }
+   }
 
-   async function customizeEntity(params:{
-    body:any
-   }) {
+
+   async function customizeEntity(params:CustomSchemaParams) {
     const connectStore = useConnectionStore()
     const networkStore = useNetworkStore()
     const finalBody: any = {
-        content: params.body.content,
-        quotePin:params.body.quotePin,
+        ...params.body,
         contentType: 'text/plain',
       }
     try {
         let repostEntity
         if(currentChain.value == ConnectChain.mvc){
-            repostEntity=await loadMvc(simpleRepostSchema,{
+            repostEntity=await loadMvc(customizeSchema(params),{
                 connector:connectStore.last
             })
 
-            if(isEmpty(params.body.attachments)){
-                const attachMetafileUri= await MvcFileEntity(params.body.attachments)
+            // if(isEmpty(params.body.attachments)){
+            //     const attachMetafileUri= await MvcFileEntity(params.body.attachments)
                     
-                finalBody.attachments=attachMetafileUri
+            //     finalBody.attachments=attachMetafileUri
              
-            }
+
+            // }
 
             const repostRes=await repostEntity.create({
                 data:{
