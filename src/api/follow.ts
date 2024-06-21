@@ -1,6 +1,6 @@
 import { useConnectionStore } from '@/stores/connection'
 import HttpRequest from '@/utils/request'
-
+import { useNetworkStore } from '@/stores/network'
 ////
 const follow = new HttpRequest(`${import.meta.env.VITE_PROXY_URL}`, {
   header: {
@@ -26,18 +26,22 @@ const follow = new HttpRequest(`${import.meta.env.VITE_PROXY_URL}`, {
 
 export const MyFollow = (): Promise<MyFollowList> => {
   const connectStore = useConnectionStore()
+  const networkStore = useNetworkStore()
   return follow.get(`/followingList`, {
     params: {
       metaid: connectStore.last.metaid,
+      network: networkStore.network,
     },
   })
 }
 
 export const FollowMe = (): Promise<MyFollowList> => {
   const connectStore = useConnectionStore()
+  const networkStore = useNetworkStore()
   return follow.get(`/followerList`, {
     params: {
       metaid: connectStore.last.metaid,
+      network: networkStore.network,
     },
   })
 }
@@ -46,5 +50,6 @@ export const FollowInfo = (params: {
   metaId: string //被follow的metaid
   followerMetaId: string //用户的metaid
 }): Promise<FollowInfo> => {
-  return follow.get(`/follow/record`, { params })
+  const networkStore = useNetworkStore()
+  return follow.get(`/follow/record`, { ...params, network: networkStore.network })
 }
