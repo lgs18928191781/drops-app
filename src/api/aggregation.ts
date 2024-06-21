@@ -242,6 +242,7 @@ export const GetBuzzs = (params: {
   pageSize: string | number
   timestamp: number
   timeType?: 'today' | 'week' | 'month'
+  chain: string
 }): Promise<{
   code: number
   data: {

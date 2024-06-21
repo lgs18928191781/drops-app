@@ -37,7 +37,6 @@ const displayItemData = computed(() => {
   if (!props.buzz) {
     return null
   }
-  console.log('props.buzz', props.buzz)
 
   switch (props.buzz.protocol) {
     case '/protocols/simplebuzz': {

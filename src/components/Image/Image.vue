@@ -36,6 +36,7 @@ const props = withDefaults(defineProps<Props>(), {
   width: 235,
   type: 'metafile',
 })
+
 console.log('props', props)
 
 const Default = {

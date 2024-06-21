@@ -49,6 +49,7 @@ function getDatas(isCover = false) {
       langId: localStorage.getItem('lang') === 'zh' ? 2 : 1,
       ...pagination,
       metaId: userStore.user?.metaId,
+      chain: 'man',
     })
     if (res.code === 0) {
       if (isCover) list.length = 0
