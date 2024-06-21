@@ -808,7 +808,7 @@ async function onSetBaseInfoSuccessType(params: {
     avatar: params.nft,
   }
 
-  console.log(connectStore.currentChain)
+
   try {
     const setUserInfoRes = await connectStore.last.createUserInfo({
       userData:userInfo,

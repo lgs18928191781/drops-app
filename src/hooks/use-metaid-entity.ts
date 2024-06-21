@@ -1,7 +1,7 @@
 
 import { useConnectionStore,ConnectChain } from '@/stores/connection'
 import  {type CreateOptions,IBtcEntity,MvcTransaction,loadMvc,loadBtc } from '@metaid/metaid'
-import { BufferEncoding,followSchema,payCommentSchema,simpleRepostSchema,customizeSchema,type CustomSchemaParams} from '@/data/constants'
+import { BufferEncoding,followSchema,payCommentSchema,simpleRepostSchema,minNtfSchema,customizeSchema,type CustomSchemaParams} from '@/data/constants'
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { useI18n } from 'vue-i18n'
 import {useFollowStore} from '@/stores/follow'
@@ -21,12 +21,12 @@ export type NftItem={
 }
 
 export type NftCollection={
-    totalSupple:string
+    totalSupply:string
     collectionName:string
     intro:string
     cover:string
     website:string
-    metaData:any
+    metaData:Object
     items:NftItem[]
 }
 
@@ -148,8 +148,8 @@ export function useMetaIDEntity(){
     
     let fileTransactions: MvcTransaction[] = []
 
-    console.log("images",images)
-    debugger
+   
+    
     const fileEntity=await connectStore.last.use('file')
      const attachMetafileUri = []
         for(const image of images){  
@@ -157,7 +157,7 @@ export function useMetaIDEntity(){
             data:{
             body: Buffer.from(image.data, 'hex'),
             contentType: `${image.fileType};binary`,
-            encoding: BufferEncoding.hex,
+            encoding: BufferEncoding.base64,
             flag:import.meta.env.VITE_BTC_METAID_FLAG,
             },
             options:{
@@ -471,15 +471,81 @@ export function useMetaIDEntity(){
     
    }
 
-   async function mintNFTEntity(params:NftCollection){
+
+
+   async function mintNftEntity(params:{body:NftCollection,attachments:AttachmentItem[] | []}) {
     const connectStore = useConnectionStore()
-    const networkStore = useNetworkStore()
+    const networkStore=useNetworkStore()
+
     try {
-        
-    } catch (error) {
-        
-    }
+        let nftEntity
+        const finalBody: NftCollection = {
+            ...params.body
+          }
+        if(currentChain.value == ConnectChain.mvc){
+            let transactions=[]
+            if(isEmpty(params.attachments)){
+                const {attachMetafileUri,fileTransactions}= await MvcFileEntity(params.attachments)
+                finalBody.cover=attachMetafileUri[0]
+                transactions=fileTransactions
+            }
+
+            nftEntity=await loadMvc(minNtfSchema,{
+                connector:connectStore.last
+            })
+            const mintRes=await nftEntity.create({
+                data:{
+                    body:JSON.stringify(finalBody),
+                    contentType: 'text/plain;utf-8',
+                },
+                options:{
+                    noBroadcast:'no',
+                    network:networkStore.network,
+                    signMessage: 'mint nftcollect',
+                    serialAction: 'finish',
+                    transactions:transactions
+                }
+            })
+           if(mintRes.txid){
+            
+           }
+          
+        }else{
+            nftEntity=await loadBtc(minNtfSchema,{
+                connector:connectStore.last
+            })
+
+            const mintRes=await nftEntity.create({
+                dataArray:[
+                   {
+                    body:JSON.stringify(params.body),
+                    flag:import.meta.env.VITE_BTC_METAID_FLAG
+                   }
+                ],
+                options:{
+                    noBroadcast:'no',
+                    feeRate: feebStore.last.currentFeeb.feeRate,
+                    service: {
+                        address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
+                        satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
+                    }
+                }
+            })
+        if(isEmpty(mintRes.revealTxIds)){
+          
+        }
+        }
+
+
+
+   
+   
+   }catch (error) {
+    throw new Error(error as any)
+}
    }
+
+  
 
 
    async function customizeEntity(params:CustomSchemaParams) {

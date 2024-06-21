@@ -56,6 +56,7 @@
 import { reactive, ref } from 'vue'
 import DefaultAvatar from '@/assets/images/default_user.png'
 import { compressImage, FileToAttachmentItem } from '@/utils/util'
+import { useConnectionStore, ConnectChain } from '@/stores/connection'
 const form = reactive({
   name: '',
   avatarTx: '',
@@ -65,6 +66,7 @@ const emit = defineEmits(['success', 'closeSetInfoModal'])
 const imgPic = ref(DefaultAvatar)
 const imghex = ref('')
 const FormRef = ref()
+const connectionStore = useConnectionStore()
 function submitForm() {
   if (form.name === '') return
   emit('success', {
@@ -91,7 +93,11 @@ async function onChooseImage(e: any) {
   // 压缩图片
   const compressed = await compressImage(files[0])
   const result = await FileToAttachmentItem(compressed)
-  imghex.value = Buffer.from(result.data, 'hex').toString('base64')
+  imghex.value =
+    connectionStore.currentChain == ConnectChain.btc
+      ? Buffer.from(result.data, 'hex').toString('base64')
+      : Buffer.from(result.data, 'hex')
+
   imgPic.value = result.url
 }
 function closeSetInfoModal() {

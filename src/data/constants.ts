@@ -77,6 +77,50 @@ export const payCommentSchema:EntitySchema = {
 
 
 
+export const minNtfSchema:EntitySchema = {
+  name: 'collection',
+  nodeName: 'collection',
+  path:'/nft/collection',
+  versions: [
+    {
+      version: 1,
+      id:'',
+      body: [
+        {
+          name: 'totalSupply',
+          type: 'string',
+        },
+        {
+          name: 'collectionName',
+          type: 'string',
+        },
+        {
+          name: 'intro',
+          type: 'string',
+        },
+        {
+          name: 'cover',
+          type: 'string',
+        },
+        {
+          name: 'website',
+          type: 'string',
+        },
+        {
+          name:'metaData',
+          type: 'object'
+        },
+        {
+          name: 'items',
+          type: 'array',
+        },
+      ],
+    },
+  ],
+}
+
+
+
 export const simpleRepostSchema:EntitySchema = {
   name: 'simplebuzz',
   nodeName: 'simplebuzz',

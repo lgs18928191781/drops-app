@@ -59,9 +59,8 @@ import ImagePreviewVue from '@/components/ImagePreview/ImagePreview.vue'
 //import * as secp256k1 from 'tiny-secp256k1'
 import { useConnectionStore, ConnectChain } from '@/stores/connection'
 import { useFeebStore } from '@/stores/feeb'
-import { useFollowStore ,} from './stores/follow'
+import { useFollowStore } from './stores/follow'
 import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
-
 
 const rootStore = useRootStore()
 const userStore = useUserStore()
@@ -73,6 +72,7 @@ const blackRoute = reactive(['home'])
 const connectorStore = useConnectionStore()
 const feebInterval = ref()
 const followStore = useFollowStore()
+
 const routeKey = (route: any) => {
   if (route.params.communityId) return route.params.communityId
   return route.fullPath
@@ -82,7 +82,7 @@ const routeKey = (route: any) => {
 //   localStorage.setItem('showDiffLang', String(1))
 // }
 
-onMounted(async() => {
+onMounted(async () => {
   // initialize btcjs
   // const btcjs = window.bitcoinjs
   // btcJsStore.set(btcjs)
@@ -92,11 +92,9 @@ onMounted(async() => {
   // const ECPair = window.ecpair.ECPairFactory(secp256k1)
   // btcJsStore.setECPair(ECPair)
 
- 
   setTimeout(async () => {
     await connectorStore.sync()
     if (connectorStore.last._isConnected) {
-      
       await followStore.get()
 
       // await metaidEntity.payCommentEntity({
@@ -118,10 +116,7 @@ onMounted(async() => {
     }
 
     feeStore.set(feeStore.last.currentFeeb.title).then()
-    if (
-      connectorStore.currentChain &&
-      connectorStore.currentChain !== ConnectChain.mvc
-    ) {
+    if (connectorStore.currentChain && connectorStore.currentChain !== ConnectChain.mvc) {
       feebInterval.value = setInterval(() => {
         feeStore.update().then()
       }, 60 * 1000)

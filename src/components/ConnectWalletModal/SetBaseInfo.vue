@@ -130,7 +130,7 @@ import { LoadingTEXT } from '@/utils/LoadingSVGText'
 import { compressImage, throttle, FileToAttachmentItem, getAttachmentsMark } from '@/utils/util'
 import DefaultAvatar from '@/assets/images/default_user.png'
 import { useI18n } from 'vue-i18n'
-
+import { useConnectionStore, ConnectChain, } from '@/stores/connection'
 interface Props {
   modelValue: boolean
   loading: boolean
@@ -145,6 +145,7 @@ const inputRef = ref()
 const fileBase64 = ref(null)
 const imgPic = ref(DefaultAvatar)
 const imghex = ref('')
+const connectionStore=useConnectionStore()
 const handleAvatarSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
   console.log(response)
   console.log(uploadFile)
@@ -241,11 +242,11 @@ async function onChooseImage(e: any) {
      const compressed = await compressImage(files[0])
       const result = await FileToAttachmentItem(compressed)
 
-      console.log(imgAttachments)
+
     // console.log(imgAttachments[0].data)
       imgPic.value = result.url
-      imghex.value = Buffer.from(result.data, 'hex').toString('base64')
-      console.log(imghex.value)
+      imghex.value =connectionStore.currentChain == ConnectChain.btc ?  Buffer.from(result.data, 'hex').toString('base64') : Buffer.from(result.data, 'hex').toString('binary')
+
   // imgAttachments.length = 0
   // for (let i = 0; i < files.length; i++) {
   //   console.log('files', files)
