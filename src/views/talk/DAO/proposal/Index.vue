@@ -84,9 +84,13 @@
         <div class="flex1">
           <span class="title">{{ $t('DAO.Proposal') }}</span>
         </div>
-        <a class="main-border primary" @click="toCreate" v-loading="loading">{{
-          $t('DAO.New Proposal')
-        }}</a>
+        <a
+          v-if="createProposalWhiteList"
+          class="main-border primary"
+          @click="toCreate"
+          v-loading="loading"
+          >{{ $t('DAO.New Proposal') }}</a
+        >
       </div>
 
       <div
@@ -150,7 +154,7 @@
               ><Icon name="calendar_days" />
               {{ $filters.dateTimeFormat(item.createTime * 1000) }}</span
             >
-            <span class="txid flex flex-align-center" @click.stop="tx($event,item.txid)"
+            <span class="txid flex flex-align-center" @click.stop="tx($event, item.txid)"
               ><Icon name="link" /> {{ item.txid?.slice(0, 6) }}</span
             >
           </div>
@@ -209,6 +213,10 @@ const isShowExtractModal = ref(false)
 const blockTimeStamp = ref(0)
 
 const loading = ref(false)
+
+const createProposalWhiteList=computed(()=>{
+  return userStore.user?.metaId == `1f983cc536a5378952e7977c7dda26db52e1804c8d95efa4820144d6e823f5c9`
+})
 
 function showStakeDialog() {
 
@@ -282,6 +290,8 @@ function getMore() {
 }
 
 async function toCreate() {
+
+
   if (loading.value) return
   await checkUserLogin()
   loading.value = true
