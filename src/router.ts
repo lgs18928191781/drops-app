@@ -75,6 +75,43 @@ export const router = createRouter({
       ],
     },
     {
+      path: '/nfts',
+      name: 'nfts',
+      component: () => import('@/views/nfts/Layout.vue'),
+      meta: { keepAlive: true },
+      redirect: {
+        name: 'launchpad',
+      },
+      children: [
+        {
+          path: 'launchpad',
+          name: 'launchpad',
+          component: () => import('@/views/nfts/LaunchPad.vue'),
+        },
+
+        {
+          path: 'collection',
+          name: 'nftCollection',
+          component: () => import('@/layout/BaseRouterView/BaseRouterView.vue'),
+          meta: { keepAlive: true },
+          children: [
+            {
+              path: 'index',
+              name: 'nftCollectionIndex',
+              component: () => import('@/views/nft/collection/Index.vue'),
+              meta: { keepAlive: true },
+            },
+            {
+              path: 'detail/:topicType',
+              name: 'nftCollectionDetail',
+              component: () => import('@/views/nft/collection/Collection.vue'),
+              meta: { keepAlive: true },
+            },
+          ],
+        },
+      ],
+    },
+    {
       path: '/nft',
       name: 'nft',
       component: () => import('@/views/nft/Layout.vue'),
@@ -488,6 +525,8 @@ router.beforeEach((to, from, next) => {
     'talkAtMe',
     'talkAtMeDefault',
     'buzzIndex',
+    'nfts',
+    'launchpad',
   ]
   const target = whiteList.includes(to?.name)
   if (target) {

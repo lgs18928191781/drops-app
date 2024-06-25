@@ -20,7 +20,7 @@ import basicSsl from '@vitejs/plugin-basic-ssl'
 // import { sentryVitePlugin } from '@sentry/vite-plugin'
 import type { ViteSentryPluginOptions } from 'vite-plugin-sentry'
 import viteSentry from 'vite-plugin-sentry'
-
+import VueDevTools from 'vite-plugin-vue-devtools'
 
 // import dns from 'dns'
 // dns.setDefaultResultOrder('verbatim')
@@ -73,6 +73,7 @@ export default ({ mode, command }) => {
           },
         },
       }),
+      VueDevTools(),
       // element-plus 按需加载
       AutoImport({
         resolvers: [

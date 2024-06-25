@@ -11,6 +11,12 @@ export const NETWORK: Network = import.meta.env.VITE_NETWORK || 'mainnet'
 //   }[]
 // }
 
+export enum NftsLaunchPadChain{
+  btc='Bitcoin',
+  mvc='MicrovisionChain'
+}
+
+
 export type CustomSchemaParams={
   nodeName:string
   isProtocolSub:boolean

@@ -295,7 +295,8 @@
       "general_channels": "功能頻道",
       "announcements": "公告",
       "topics": "話題",
-      "DAO": "DAO"
+      "DAO": "DAO",
+      "NFTs": "NFTs"
     },
     "Input": {
       "nft_stickers": "NFT表情",
@@ -1322,5 +1323,11 @@
     "notsupport": {
       "multi": "不允许使用多张图片作为头像封面"
     }
+  },
+  "NFTS": {
+    "NFTs Launch Pad": "NFTs Launch Pad"
+  },
+  "NFTs": {
+    "genesis_nfts": "创建NFTs系列"
   }
 }

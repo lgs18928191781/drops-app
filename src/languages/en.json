@@ -261,7 +261,8 @@
       "edit_consensual_channel": "Edit Pass Channel",
       "announcements": "Announcements",
       "topics": "Topics",
-      "DAO": "DAO"
+      "DAO": "DAO",
+      "NFTs": "NFTs"
     },
     "Input": {
       "nft_stickers": "NFT Emoji",
@@ -1328,5 +1329,11 @@
     "notsupport": {
       "multi": "Not allowed to use multiple images as avatar covers."
     }
+  },
+  "NFTS": {
+    "NFTs Launch Pad": "NFTs Launch Pad"
+  },
+  "NFTs": {
+    "genesis_nfts": "Creating a series of NFTs"
   }
 }
