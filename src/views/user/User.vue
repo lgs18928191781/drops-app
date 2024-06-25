@@ -93,7 +93,7 @@
               <span class="id" @click="copy(userInfo.val!.metaId)"
                 >MetaID: {{userInfo.val!.metaId.slice(0, 6)}}</span
               >
-              <span class="tag" @click="tx(userInfo.val!.metaId)">TX</span>
+              <span class="tag" @click="tx($event,userInfo.val!.metaId)">TX</span>
             </div>
             <div class="follow-list flex flex-align-center">
               <span class="follow-item">

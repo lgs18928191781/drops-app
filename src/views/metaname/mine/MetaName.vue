@@ -98,7 +98,7 @@
                 <span class="label">{{ $t('MetaName.Transaction TX') }}</span>
               </div>
               <span class="value"
-                ><a @click="tx(metaName.val!.txid)"
+                ><a @click="tx($event,metaName.val!.txid)"
                   >{{metaName.val!.txid.slice(0,6)}}...{{metaName.val!.txid.slice(-6)}}</a
                 ></span
               >

@@ -157,7 +157,7 @@
                         <template v-if="nft.val.nftTokenId">
                           {{ nft.val.nftTokenId }}
                           <a @click="copy(nft.val!.nftTokenId)">{{ $t('Copy') }}</a
-                          ><a @click="tx(nft.val!.nftTokenId)">{{ $t('NFT.Check') }}</a>
+                          ><a @click="tx($event,nft.val!.nftTokenId)">{{ $t('NFT.Check') }}</a>
                         </template>
                         <template v-else>
                           --
@@ -177,7 +177,7 @@
                         <template v-if="nft.val!.nftIssueMetaTxId">
                           {{ nft.val!.nftIssueMetaTxId}}
                           <a @click="copy(nft.val!.nftIssueMetaTxId)">{{ $t('Copy') }}</a>
-                          <a @click="tx(nft.val!.nftIssueMetaTxId)">{{ $t('NFT.Check') }}</a>
+                          <a @click="tx($event,nft.val!.nftIssueMetaTxId)">{{ $t('NFT.Check') }}</a>
                         </template>
                         <template v-else>--</template>
                       </span>

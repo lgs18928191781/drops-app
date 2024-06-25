@@ -353,6 +353,8 @@ export class MetaletSDK {
       isTransfer?: boolean
     }
   ) {
+
+    
     return new Promise<NodeTransactions | null>(async (resolve, reject) => {
       //
       console.log('option', option?.payType)
@@ -576,7 +578,7 @@ export class MetaletSDK {
                     const { path } = await this.wallet.session.getAddressPath(
                       transation.inputs[0].output!.script.toAddress(this.network).toString()
                     )
-
+                      
                     if (hexTxs[i].hasMetaId) {
                       unSignTransations.push({
                         txHex: transation.toString(),
@@ -1768,6 +1770,8 @@ export class MetaletSDK {
     return new Promise<void>(async (resolve, reject) => {
       //
       try {
+
+        
         //  廣播  payToAddress
         if (
           !option?.notBroadcastKeys?.includes('payToAddress') &&
