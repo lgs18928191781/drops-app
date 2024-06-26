@@ -241,7 +241,7 @@ import { router } from '@/router'
 import MetaNameLogo from '@/assets/svg/meta_name.svg?url'
 import MintLogo from '@/assets/svg/mint.svg?url'
 import { useFeebStore } from '@/stores/feeb'
-import LucideIcon from '@/components/LucideIcon/index.vue'
+
 import { type FeebPlan} from '@/api/btc-fee'
 import SetUserInfoVue from '../ConnectWalletModal/SetUserInfo.vue'
 import { useConnectionStore, ConnectChain,type BaseUserInfo } from '@/stores/connection'

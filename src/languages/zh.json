@@ -1328,6 +1328,23 @@
     "NFTs Launch Pad": "NFTs Launch Pad"
   },
   "NFTs": {
-    "genesis_nfts": "创建NFTs系列"
+    "genesis_nfts": "创建NFTs系列",
+    "lanuch_title1": "选择您所发行的NFTs基于的区块链",
+    "lanuch_title2": "是否启用自动做市机制"
+  },
+  "Nfts": {
+    "launch_noSupport": "Bitcoin资产暂不支持自动做市机制",
+    "launch_no": "否",
+    "launch_yes": "是",
+    "launch_next": "下一步",
+    "launch_create": "铸造NFTs",
+    "launch_form_title1": "NFTs封面",
+    "launch_title2": "NFTs名称",
+    "launch_placeholder1": "请输入NFTs名称",
+    "launch_title3": "NFTs简介",
+    "launch_placeholder2": "请输入NFTs简介",
+    "launch_title4": "NFTs发行总量",
+    "launch_placeholder3": "请输入NFTs总量",
+    "lauch_delete": "删除"
   }
 }

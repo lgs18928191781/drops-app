@@ -1,58 +1,21 @@
-header {
-    padding: 0 18px;
-    height: var(--header-height);
-    background: var(--themeBgSecondColor);
-    position: sticky;
-    left: 0;
-    top: 0;
-    z-index: 3;
-
-    &::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        height: 1px;
-        background: var(--faded-border-color);
-        opacity: 0.3;
-    }
-
-    .name {
-        font-size: 18px;
-        white-space: nowrap;
-
-        .icon {
-            width: 18px;
-            height: 18px;
-            min-width: 18px;
-            margin-right: 10px;
-        }
-    }
-}
-
-.nft-warp {
-    padding: 0 18px 18px 18px;
-}
-
-
-
-.top-bar-warp {
-    height: var(--nft-topbar-height);
+.collection-wrap {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    // height: var(--nft-topbar-height);
     box-sizing: border-box;
-    padding-top: 18px;
-    padding-bottom: 18px;
-    position: sticky;
-    left: 0;
-    top: calc(var(--header-height));
-    z-index: 3;
-    background: var(--themeBgThreeColor);
+    padding: 18px;
+    // position: sticky;
+    // left: 0;
+    // top: calc(var(--header-height));
+    // z-index: 3;
+    background: var(--themeBgSecondColor);
 }
 
 .top-bar {
     background: var(--themeBgSecondColor);
-    border-radius: var(--rounded);
-    padding: 18px;
+    border-bottom: 1px solid var(--themeBgThreeColor);
+    padding-bottom: 27px;
 
     .back {
         cursor: pointer;
@@ -140,7 +103,6 @@ header {
         }
     }
 }
-
 
 @media only screen and (max-width: 750PX) {
 

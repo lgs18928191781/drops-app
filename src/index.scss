@@ -211,6 +211,7 @@ pre {
     background: var(--el-color-primary);
   }
 
+
   .dark &.primary {
     --border-color: var(--primary-border-color);
     color: var(--normal-border-color);
@@ -223,6 +224,12 @@ pre {
     color: var(--faded-border-color);
   }
 
+  &.gray {
+    --border-color: var(--gray-border-color);
+
+    color: var(--gray-border-color);
+  }
+
   .dark &.faded {
     --border-color: var(--faded-border-color);
     background: #1F2937;
@@ -230,8 +237,8 @@ pre {
   }
 
   &.faded-switch:not(:active, :hover):placeholder-shown {
-    --border-color: var(--faded-border-color);
-  }
+  --border-color: var(--faded-border-color);
+}
 
   &.small {
     --standard-offset: 2PX;

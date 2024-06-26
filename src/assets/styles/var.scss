@@ -15,8 +15,8 @@ $themeTextColor: var(--themeTextColor);
 
 
 :root {
-    --color-display:#F5F7FA;
-    --color-tab:#303133;
+    --color-display: #F5F7FA;
+    --color-tab: #303133;
     --color-primary: #ffdc51;
     --color-primaryRgb: 255, 220, 81;
     --color-hover: #5586BB;
@@ -28,7 +28,7 @@ $themeTextColor: var(--themeTextColor);
     --themeBgThreeColor: #F5F7F9;
     --themeBgThreeColor-rgb: 245, 247, 249;
     --themeTextColor: #303133;
-     --themeTextColor2: #303133;
+    --themeTextColor2: #303133;
     --themeTextColorRgb: 48, 49, 51;
     --themeFadedTextColor: rgba(var(--themeTextColorRgb), 0.5);
     --themeBtnTextColor: #303133;
@@ -49,13 +49,13 @@ $themeTextColor: var(--themeTextColor);
     --nft-topbar-height: 108px; // --nft-topbar-height: 0px
     --padding-normal: 18px;
     --padding-lg: 30px;
-    --color-switch:#909399
-    --max-width:800px;
+    --gray-border-color: #BFC2CC;
+    --color-switch: #909399 --max-width:800px;
 }
 
 html.dark {
-    --color-display:#142030;
-     --color-tab:#F4F7F9;
+    --color-display: #142030;
+    --color-tab: #F4F7F9;
     --themeBgColor: #142030;
     --themeBgSecondColor: #1f2937;
     --themeBgSecondColorRgb: 31, 41, 55;
@@ -65,11 +65,12 @@ html.dark {
     --faded-border-color: #6b7280;
     --el-color-primary: #FFDC51;
     --themeTextColor: #fff;
-     --themeTextColor2: #303133;
+    --themeTextColor2: #303133;
     --themeTextColorRgb: 255, 255, 255;
     --primary-border-color: #6b7280;
+    --gray-border-color: #BFC2CC;
     --divid-color: #4a576c;
-     --color-switch:#fff
+    --color-switch: #fff
 }
 
 
@@ -114,13 +115,13 @@ html.dark {
 }
 
 
-.country-select .iti-flag{
+.country-select .iti-flag {
     display: none !important;
 }
 
-.vue-country-item{
-    .iti-flag{
-         display: none !important;
+.vue-country-item {
+    .iti-flag {
+        display: none !important;
     }
 }
 

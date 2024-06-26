@@ -16,6 +16,11 @@ export enum NftsLaunchPadChain{
   mvc='MicrovisionChain'
 }
 
+export enum NftsLaunchPadChainSymbol{
+  btc='btc',
+  mvc='mvc'
+}
+
 
 export type CustomSchemaParams={
   nodeName:string

@@ -1334,6 +1334,23 @@
     "NFTs Launch Pad": "NFTs Launch Pad"
   },
   "NFTs": {
-    "genesis_nfts": "Creating a series of NFTs"
+    "genesis_nfts": "Creating a series of NFTs",
+    "lanuch_title1": "Select the blockchain your NFTs will be based on",
+    "lanuch_title2": "Enable automatic market-making mechanism"
+  },
+  "Nfts": {
+    "launch_yes": "Yes",
+    "launch_no": "No",
+    "launch_noSupport": "The Bitcoin asset does not currently support automatic market-making mechanisms.",
+    "launch_next": "Next",
+    "launch_create": "Create NFTs",
+    "launch_form_title1": "NFTs cover",
+    "launch_title2": "NFTs name",
+    "launch_placeholder1": "Please enter the NFTs name",
+    "launch_title3": "NFTs description",
+    "launch_placeholder2": "Please enter the NFTs description",
+    "launch_title4": "Total supply of NFTs",
+    "launch_placeholder3": "Please enter the total supply of NFTs",
+    "lauch_delete": "Remove"
   }
 }

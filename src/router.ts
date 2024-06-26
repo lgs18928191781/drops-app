@@ -88,25 +88,30 @@ export const router = createRouter({
           name: 'launchpad',
           component: () => import('@/views/nfts/LaunchPad.vue'),
         },
+        {
+          path: 'genesis/:chain/:type',
+          name: 'genesisNfts',
+          component: () => import('@/views/nfts/GenesisNfts.vue'),
+        },
 
         {
           path: 'collection',
-          name: 'nftCollection',
-          component: () => import('@/layout/BaseRouterView/BaseRouterView.vue'),
+          name: 'nftsCollection',
+          component: () => import('@/views/nfts/collection.vue'),
           meta: { keepAlive: true },
           children: [
-            {
-              path: 'index',
-              name: 'nftCollectionIndex',
-              component: () => import('@/views/nft/collection/Index.vue'),
-              meta: { keepAlive: true },
-            },
-            {
-              path: 'detail/:topicType',
-              name: 'nftCollectionDetail',
-              component: () => import('@/views/nft/collection/Collection.vue'),
-              meta: { keepAlive: true },
-            },
+            // {
+            //   path: 'index',
+            //   name: 'nftCollectionIndex',
+            //   component: () => import('@/views/nft/collection/Index.vue'),
+            //   meta: { keepAlive: true },
+            // },
+            // {
+            //   path: 'detail/:topicType',
+            //   name: 'nftCollectionDetail',
+            //   component: () => import('@/views/nft/collection/Collection.vue'),
+            //   meta: { keepAlive: true },
+            // },
           ],
         },
       ],
@@ -527,6 +532,8 @@ router.beforeEach((to, from, next) => {
     'buzzIndex',
     'nfts',
     'launchpad',
+    'genesisNfts',
+    'nftsCollection',
   ]
   const target = whiteList.includes(to?.name)
   if (target) {
