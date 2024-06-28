@@ -109,6 +109,7 @@ declare interface BuzzInteractiveItem {
   userName: string
   zeroAddress: string
   subInteractiveItem: BuzzInteractiveItem[]
+  replyToUserInfo: object
   commentTo?: string
   userInfo: {
     address: string

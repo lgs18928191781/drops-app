@@ -59,7 +59,7 @@
                 @click.stop="
                   emit('replay', {
                     txId: item.buzzTxId,
-                    username: child.userName,
+                    username: child.userInfo.name,
                     userAddress: child.zeroAddress,
                     commentTo: item.txId,
                     replyTo: child.metaId,
@@ -68,22 +68,22 @@
               >
                 <UserAvatar
                   :meta-id="child.metaId"
-                  :image="child.avatarImage"
+                  :image="child.userInfo.avatarImage"
                   :name="child.userName"
                   :metaName="child.userInfo.metaName"
                 ></UserAvatar>
                 <div class="name flex flex-align-center">
                   <a class="flex flex-align-center"
                     ><UserName
-                      :name="child.userName"
+                      :name="child.userInfo.name"
                       :meta-name="child.userInfo.metaName"
                       :no-tag="true"
                   /></a>
-                  <template v-if="child.replyToUserName"
+                  <template v-if="child.replyToUserInfo?.name"
                     ><span>{{ $t('Replay') }}</span
                     ><a class="flex flex-align-center"
                       ><UserName
-                        :name="child.replyToUserName"
+                        :name="child.replyToUserInfo?.name"
                         :meta-name="child.replyToUserMetaName"
                         :no-tag="true"/></a></template
                   >：

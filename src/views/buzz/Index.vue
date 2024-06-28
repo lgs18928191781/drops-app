@@ -30,7 +30,8 @@ import { Mitt, MittEvent } from '@/utils/mitt'
 import PublishBoxVue from './components/PublishBox.vue'
 import { useRootStore } from '@/stores/root'
 import { useI18n } from 'vue-i18n'
-const pagination = reactive({ ...initPagination, timestamp: 0, page: undefined })
+// const pagination = reactive({ ...initPagination, timestamp: 0, page: undefined })
+const pagination = reactive({ ...initPagination, timestamp: 0 })
 const userStore = useUserStore()
 const layout = useLayoutStore()
 const route = useRoute()
@@ -76,7 +77,8 @@ function getDatas(isCover = false) {
         pagination.nothing = true
       } else {
         pagination.nothing = false
-        pagination.timestamp = res.data.results.items[res.data.results.items.length - 1].timestamp
+        // pagination.timestamp = res.data.results.items[res.data.results.items.length - 1].timestamp
+        pagination.timestamp = 0
       }
     }
     resolve()
@@ -115,6 +117,7 @@ const publishOperates = [
 function getMore() {
   if (isSkeleton.value || pagination.loading || pagination.nothing) return
   pagination.loading = true
+  pagination.page++
   getDatas().then(() => {
     pagination.loading = false
   })
