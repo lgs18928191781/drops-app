@@ -104,6 +104,34 @@
     }
 }
 
+.nfts-detail {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+}
+
+.nfts-intro {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    text-overflow: ellipsis;
+    width: 100%;
+    max-width: 100%;
+    word-break: break-all;
+
+}
+
+.nfts-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+
+
 @media only screen and (max-width: 750PX) {
 
     .top-bar-warp {

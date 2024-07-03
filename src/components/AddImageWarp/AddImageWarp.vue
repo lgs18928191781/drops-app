@@ -1,6 +1,6 @@
 <template>
-  <div class="add-image-warp">
-    <div class="add-image flex flex-align-center flex-pack-center">
+  <div class="add-image-warp  " v-if="!onlyFileName">
+    <div class="add-image  main-border gray flex flex-align-center flex-pack-center">
       <div class="image-warp" v-if="attachment">
         <img :src="attachment.url" />
         <div class="remove" @click="emit('update:attachment', undefined)">
@@ -8,11 +8,21 @@
           <div class="name">{{ $t('NFT.Remove') }}</div>
         </div>
       </div>
+
       <div class="add-content" v-else>
         <input type="file" accept="image/*" @change="onChangeFile" ref="inputFileRef" />
         <Icon class="add" name="plus_2" />
-        <div class="tips">{{ $t('NFT.Choose Image') }}</div>
+        <!-- <div class="tips">{{ $t('NFT.Choose Image') }}</div> -->
       </div>
+    </div>
+  </div>
+
+  <div v-else class="main-border h-14  gray cursor-pointer flex flex-align-center flex-pack-center">
+    <div class="file-wrap ">
+      <input type="file" accept="image/*" @change="onChangeFile" ref="inputFileRef" />
+      <span class="text-[#303133] font-medium">{{
+        attachment?.fileName ?? $t('Nfts.lanuch_upload')
+      }}</span>
     </div>
   </div>
 </template>
@@ -24,6 +34,7 @@ import { ref } from 'vue'
 
 interface Props {
   attachment: AttachmentItem | undefined | null
+  onlyFileName: boolean
 }
 const props = withDefaults(defineProps<Props>(), {})
 const emit = defineEmits(['update:attachment'])

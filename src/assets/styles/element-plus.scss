@@ -152,6 +152,22 @@ html.dark {
 }
 
 
+
+.form-wrap {
+    .el-table th.el-table__cell.is-leaf {
+        border: none !important;
+    }
+
+    .el-table__row>td {
+        border: none !important;
+    }
+
+    .el-table__inner-wrapper::before {
+        height: 0px !important;
+    }
+}
+
+
 .el-select {}
 
 .el-input {

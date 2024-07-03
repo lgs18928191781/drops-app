@@ -1014,6 +1014,10 @@ export function randomRange(min: number, max: number) {
   return Math.floor(Math.random() * (max - min)) + min
 }
 
+export const prettyAddress = (address: string, len = 6) => {
+  return `${address.slice(0, len)}...${address.slice(-len)}`
+}
+
 export function getCurrencyAmount(
   price: string | number, // 最小单位
   currency: ToCurrency,
