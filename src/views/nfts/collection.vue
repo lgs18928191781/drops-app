@@ -142,12 +142,22 @@
             </template>
           </el-table-column>
 
-          <el-table-column prop="op" :label="$t('Nfts.lanuch_operation')" width="100">
+          <el-table-column prop="op" :label="$t('Nfts.lanuch_operation')" width="150">
             <template #default="scope">
-              <div>
-                <span class="text-[#FC6D5E] cursor-pointer" @click="removeItem(scope.row)">{{
-                  scope.row.op
-                }}</span>
+              <div class="flex items-center ">
+                <span
+                  @click="removeItem(scope.row)"
+                  :class="[
+                    'ml-4',
+                    'cursor-pointer',
+                    'text-[#FC6D5E]',
+                    'text-center',
+                    'opacity-100',
+                    ' hover:opacity-80',
+                    'font-medium',
+                  ]"
+                  >{{ scope.row.op }}</span
+                >
               </div>
             </template>
           </el-table-column>
@@ -369,10 +379,7 @@ const rules = reactive<FormRules<MintInfo>>({
   ]
 })
 
-type MintListInfo=Omit<MintInfo,'mintAmount'> & {id:number, op:[{
-  value:string
-  fn:Function
-}]}
+type MintListInfo=Omit<MintInfo,'mintAmount'> & {id:number, op:string}
 
 const mintData=reactive<MintInfo & UseSameOption>({
   mintAmount:0,
@@ -391,20 +398,11 @@ const mintData=reactive<MintInfo & UseSameOption>({
 const tableData = reactive<MintListInfo[]>([
   {
     cover: btc,
-    source: '123',
+    source: '',
     desc: '1321321',
     classify: ['Avatar'],
     receiver: 'sdasdadsaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaad',
-    op: [
-      {
-        value:i18n.t('Nfts.lanuch_delete'),
-        fn:(val)=>removeItem(val)
-      },
-      {
-        value:i18n.t('Nfts.lanuch_edit_op'),
-        fn:(val)=>editNft(val)
-      }
-    ],
+    op: i18n.t('Nfts.lanuch_delete'),
     id: 1,
   },
 
@@ -421,8 +419,19 @@ function removeItem(item: any) {
   tableData.push(...newArr)
 }
 
-function editNft(item: any){
+function editNft(item:MintListInfo){
+  isEdit.value=true
+  fillMintData(item)
+  modelValue.value = true
 
+}
+
+function fillMintData(item:MintListInfo){
+ mintData.cover=item.cover
+ mintData.classify=item.classify
+ mintData.desc=item.desc
+ mintData.receiver=item.receiver
+ mintData.source=item.source
 }
 
 function selectChange(newSelection: any) {
