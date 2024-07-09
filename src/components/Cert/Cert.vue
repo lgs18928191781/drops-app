@@ -46,7 +46,7 @@
 <script lang="ts" setup>
 import { ref, computed } from '@vue/runtime-core'
 
-import { useI18n } from 'vue-i18n'
+
 import { useRootStore } from '@/stores/root'
 import { GetCertUserInfo } from '@/api'
 import CertIcon from '@/assets/images/icon_cer.svg?url'

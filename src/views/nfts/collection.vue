@@ -14,8 +14,15 @@
               {{ $t('NFTS.NFTs Launch Pad') }}
             </div> -->
         </div>
-        <div class="flex1 flex items-center justify-center">
-          <span>Autie the Duck</span>
+        <div class="collection-selector flex1 flex items-center justify-center">
+          <el-select v-model="genesisCollection" >
+                  <el-option
+                    v-for="(item,index) in MyCollectionList"
+                    :key="index"
+                    :label="item.name"
+                    :value="item.name"
+                  />
+                </el-select>
         </div>
         <div class=" flex flex1  justify-end cursor-pointer text-[#5586BB]" @click="genesisNfts">
           {{ $t('NFTs.genesis_nfts') }}
@@ -74,23 +81,26 @@
             {{ $t('Nfts.lanuch_addMint') }}
           </button>
           <button
-            class="py-1 px-3 rounded-md border border-transparent flex items-center justify-center bg-[#EDEFF2] text-[#BFC2CC]"
-          >
-            {{ $t('Nfts.lanuch_confirm_minting') }}
+            class="py-1 px-3 rounded-md border border-transparent flex items-center justify-center "
+            :class="[tableData.length  ? 'bg-[#FFDC51]' : 'bg-[#EDEFF2] text-[#BFC2CC]']"
+            >
+            <span class="mr-1">{{ $t('Nfts.lanuch_confirm_minting') }}</span>
+            <span v-if="tableData.length ">{{ tableData.length  }}</span>
           </button>
         </div>
       </div>
       <div class="form-wrap mt-6">
+  
         <el-table
           @cell-click="selectChange"
           :data="tableData"
-          style="width: 100%"
+          style="width: 100%;height:500px"
           header-row-class-name="text-sm text-[#303133]"
         >
           <el-table-column prop="cover" :label="$t('Nfts.lanuch_nftcover')" width="120">
             <template #default="scope">
               <div
-                class="main-border gray-exclued-text p-2 max-h-14 flex justify-between items-center "
+                class="main-border gray-exclued-text p-2 min-h-14  flex justify-between items-center "
               >
                 <div class="w-8 h-8 rounded-md ">
                   <img class="" :src="scope.row.cover" alt="" />
@@ -102,27 +112,28 @@
           <el-table-column prop="source" :label="$t('Nfts.lanuch_source')" width="180">
             <template #default="scope">
               <div
-                class="main-border gray-exclued-text p-2 max-h-14 flex justify-between items-center truncate"
+                class="main-border gray-exclued-text  p-2 min-h-14 flex justify-between items-center truncate"
               >
                 <div class="w-8 h-8 rounded-md ">
-                  <span>{{ scope.row.source }}</span>
+                  <span>{{ prettyAddress(scope.row.source) }}</span>
                 </div>
                 <el-icon class="cursor-pointer" @click="deleteCover(scope.row)"><Close /></el-icon>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="desc" :label="$t('Nfts.lanuch_desc')" width="200">
+          <el-table-column prop="desc" :label="$t('Nfts.lanuch_desc')" width="250">
             <template #default="scope">
-              <div class="main-border py-3.5 gray-exclued-text p-2 max-h-14 truncate ">
-                <span>{{ scope.row.desc }}</span>
+              <div class="main-border gray-exclued-text py-3.5  p-2 min-h-14 truncate  ">
+                <span>{{ scope.row.desc ?? '' }}</span>
               </div>
             </template>
           </el-table-column>
 
           <el-table-column prop="classify" :label="$t('Nfts.lanuch_classify')" width="180">
             <template #default="scope">
-              <div class=" gray-exclued-text p-2 max-h-14 flex items-center justify-center">
-                <el-select v-model="scope.row.classify" placeholder="Select">
+              <div class=" gray-exclued-text p-2 min-h-14  flex items-center justify-center">
+           
+                <el-select multiple v-model="scope.row.classify" placeholder="Select">
                   <el-option
                     v-for="item in classifyList"
                     :key="item.classify"
@@ -134,10 +145,10 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="receiver" :label="$t('Nfts.lanuch_receive_address')" width="200">
+          <el-table-column prop="receiver" :label="$t('Nfts.lanuch_receive_address')" width="250">
             <template #default="scope">
-              <div class="main-border py-3.5 gray-exclued-text p-2 max-h-14 ">
-                <span class="">{{ prettyAddress(scope.row.receiver) }}</span>
+              <div class="main-border py-3.5 gray-exclued-text p-2 min-h-14  ">
+                <span class="">{{ prettyAddress(scope.row.receiver,12) }}</span>
               </div>
             </template>
           </el-table-column>
@@ -148,7 +159,7 @@
                 <span
                   @click="removeItem(scope.row)"
                   :class="[
-                    'ml-4',
+                    'ml-3',
                     'cursor-pointer',
                     'text-[#FC6D5E]',
                     'text-center',
@@ -162,7 +173,9 @@
             </template>
           </el-table-column>
           <template #empty>
-            <span class="text-base">{{ $t('Nfts.lanuch_mint_blank') }}</span>
+            <div class="h-80 flex items-center justify-center ">
+              <span class="text-base">{{ $t('Nfts.lanuch_mint_blank') }}</span>
+            </div>
           </template>
         </el-table>
       </div>
@@ -171,11 +184,9 @@
 
   <CollectionDialog
     v-model="modelValue"
+    :defiendFooter="defiendFooter"
     :isHideCancelBtn="false"
-    :confirmBtnText="isEdit ? $t('Nfts.lanuch_confrimEdit') : ''"
-    confirm-btn-class="primary"
-    :operate-warp-margin-top="12"
-    @confirm="confirm"
+    :operateWarpMarginTop="12"
   >
     <template #title>
       <div class="title text-center flex1" :style="{ fontSize: '24px' }">
@@ -192,7 +203,7 @@
           :model="mintData"
           style="max-width: 600px"
         >
-          <el-form-item v-if="!isEdit">
+          <el-form-item>
             <template #label>
               <div class="flex items-center justify-between">
                 <span class="text-base text-[#303133] font-medium">{{
@@ -294,7 +305,7 @@
 
           <!--Receiver-->
           <el-form-item>
-            <div class="flex  items-center justify-between">
+            <div class="flex items-center justify-between">
               <span class="text-base font-medium">{{ $t('Nfts.lanuch_receive_address') }}</span>
               <div class="text-[#909399]">
                 <div class="switch-list flex flex-align-center" v-if="!isEdit">
@@ -310,9 +321,24 @@
               <ElInput type="text" v-model="mintData.receiver" />
             </div>
           </el-form-item>
+
+
+          
+            <el-form-item >
+              <div class="operate flex items-center justify-between font-medium text-base">
+                <div class="main-border  cursor-pointer text-center py-2.5  mr-2.5 darkGray flex-1" @click="cancel(ruleFormRef)">{{$t('Cancel')}}</div>
+                <div  class="main-border primary cursor-pointer text-center  py-2.5 flex-1" @click="confirm(ruleFormRef)">
+        {{$t('Nfts.launch_OK')}}
+                </div>
+     
+              </div>
+    </el-form-item>
+         
+
         </el-form>
       </div>
     </template>
+  
   </CollectionDialog>
 </template>
 
@@ -320,25 +346,28 @@
 import LucideIcon from '@/components/LucideIcon/index.vue'
 import btc from '@/assets/nft/btc.png'
 import { Close } from '@element-plus/icons-vue'
-import { reactive, ref } from 'vue'
-import { compressImage, FileToAttachmentItem, prettyAddress } from '@/utils/util'
+import { reactive, ref,computed } from 'vue'
+import { compressImage, FileToAttachmentItem, prettyAddress, sleep } from '@/utils/util'
 import { useI18n } from 'vue-i18n'
 import CollectionDialog from './collection-dialog.vue'
 import type { FormProps } from 'element-plus'
 import AddImageWarpVue from '@/components/AddImageWarp/AddImageWarp.vue'
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { classifyList } from '@/config'
-import type {  FormInstance, FormRules } from 'element-plus'
+import type {  FormInstance, FormRules, Column } from 'element-plus'
+import { useConnectionStore } from '@/stores/connection'
+import { ElLoading } from 'element-plus'
 const i18n = useI18n()
+const connectionStore=useConnectionStore()
 const modelValue = ref(false)
 const ruleFormRef = ref<FormInstance>()
 const labelPosition = ref<FormProps['labelPosition']>('top')
-const isEdit=ref(true)
-
+const isEdit=ref(false)
+const defiendFooter=ref(true)
 type MintInfo={
   mintAmount:number
-  cover:AttachmentItem | undefined
-  source:AttachmentItem | undefined
+  cover:AttachmentItem
+  source:AttachmentItem 
   desc:string
   classify:string[]
   receiver:string
@@ -352,42 +381,29 @@ type UseSameOption={
   isSameReceiver:boolean
 }
 
+const tableData = reactive<MintListInfo[]>([
 
+])
 
+const genesisCollection=ref('Autie the Duck')
 
-const rules = reactive<FormRules<MintInfo>>({
-  mintAmount:[
-  { required: true, message: 'Please input minting amount', trigger: 'blur' },
-
-  ],
-  cover:[
+const MyCollectionList=reactive([
   {
-      required: true,
-      message: 'Please select NFT cover',
-      trigger: 'change',
+    name:'Autie the Duck'
   },
-  ],
-  source:[
   {
-      required: true,
-      message: 'Please select NFT source file',
-      trigger: 'change',
-  },
-  ],
-  receiver:[
-  { required: true, message: 'Please input receiver address', trigger: 'blur' },
-  ]
-})
+    name:'MetaBot X'
+  }
+])
 
-type MintListInfo=Omit<MintInfo,'mintAmount'> & {id:number, op:string}
 
 const mintData=reactive<MintInfo & UseSameOption>({
   mintAmount:0,
-  cover:undefined,
-  source:undefined,
+  cover:'',
+  source:'',
   desc:'',
   classify:[],
-  receiver:'',
+  receiver:connectionStore.userInfo.address ?? '',
   isSameCover:false,
   isSameSource:false,
   isSameDesc:false,
@@ -395,23 +411,56 @@ const mintData=reactive<MintInfo & UseSameOption>({
   isSameReceiver:false
 })
 
-const tableData = reactive<MintListInfo[]>([
-  {
-    cover: btc,
-    source: '',
-    desc: '1321321',
-    classify: ['Avatar'],
-    receiver: 'sdasdadsaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaad',
-    op: i18n.t('Nfts.lanuch_delete'),
-    id: 1,
-  },
+const mintBtnState=computed(()=>{
+  return mintData.mintAmount > 0 && tableData.length < 10
+})
 
-])
+
+const rules = reactive<FormRules<MintInfo>>({
+  // mintAmount:[
+  // { required: true, message: 'Please input minting amount', trigger: 'blur' },
+  // ],
+  // cover:[
+  // {
+  //     required: true,
+  //     message: 'Please select NFT cover',
+  //     trigger: 'change',
+  // },
+  // ],
+  // source:[
+  // {
+  //     required: true,
+  //     message: 'Please select NFT source file',
+  //     trigger: 'change',
+  // },
+  // ],
+  // desc:[
+  // {
+  //     required: false,
+  //     message: 'Please select NFT source file',
+  //     trigger: 'blur',
+  // },
+  // ],
+  // classify:[
+  // {
+  //     required: false,
+  //     message: 'Please select NFT source file',
+  //     trigger: 'blur',
+  // },
+  // ],
+  // receiver:[
+  // { required: true, message: 'Please input receiver address', trigger: 'blur' },
+  // ]
+})
+
+
+type MintListInfo=Omit<MintInfo,'mintAmount'> & {id:number, op:string}
 
 
 function genesisNfts() {}
 
 function removeItem(item: any) {
+  
   const newArr = tableData.filter(ele => {
     return ele.id !== item.id
   })
@@ -434,10 +483,11 @@ function fillMintData(item:MintListInfo){
  mintData.source=item.source
 }
 
-function selectChange(newSelection: any) {
+async function selectChange(newSelection: any) {
   if (!newSelection.cover) {
     let input = document.createElement('input')
     input.type = 'file'
+    await sleep(300)
     input.click()
     input.onchange = async (e: Event) => {
       const files: File[] = [...e.target!.files!]
@@ -454,7 +504,43 @@ function deleteCover(item: any) {
   item.source = ''
 }
 
-async function confirm() {}
+const confirm = async(formEl: FormInstance | undefined) =>{
+  
+  if(!formEl) return
+  if(!mintData.mintAmount)return 
+  
+  let currentlength=tableData.length
+  const tableList:MintListInfo[]=[]
+  for(let i=0;i<mintData.mintAmount;i++){
+    tableList.push({
+        id:i+currentlength,
+        op:i18n.t('Nfts.lanuch_delete'),
+        cover:mintData.cover?.url,
+        source:mintData.cover?.fileName,
+        desc:mintData.desc,
+        receiver:mintData.receiver ?? connectionStore.userInfo.address,
+        classify:mintData.classify
+      })
+    }
+    const loadingInstance = ElLoading.service({
+      target:'.form-wrap',
+      text:'loading'
+    })
+    setTimeout(() => {
+      tableData.push(...tableList)
+      loadingInstance.close()
+    }, 500);
+    modelValue.value = false
+  //tableData
+
+}
+
+function cancel(formEl: FormInstance | undefined){
+  if (!formEl) return
+  formEl.resetFields()
+  modelValue.value = false
+
+}
 </script>
 
 <style scoped src="./collection.scss"></style>
