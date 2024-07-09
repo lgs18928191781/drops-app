@@ -101,7 +101,9 @@ import type { UploadProps  } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import { compressImage, FileToAttachmentItem } from '@/utils/util'
 import { useRouter,useRoute } from 'vue-router'
-
+import { useGenesisStore } from '@/stores/genesis'
+import {CollectionMintChain} from '@/enum'
+import { useConnectionStore } from '@/stores/connection'
 const fileType=[
     'image/jpeg',
     'image/jpg',
@@ -111,16 +113,40 @@ const fileType=[
 ]
 const router=useRouter()
 const route=useRoute()
-
+const genesisStore = useGenesisStore()
+const connectionStore=useConnectionStore()
 const form = reactive({
   name: '',
   cover: '',
   coverHex:'',
   desc: '',
-  totalSupply:"0"
+  totalSupply:"0",
+  website:''
 })
-const onSubmit = () => {
+
+console.log("route",route.params)
+
+
+
+const onSubmit = async() => {
   //router.push({name:''})
+
+  genesisStore.add({
+    totalSupply:form.totalSupply,
+    collectionName:form.name,
+    intro:form.desc,
+    cover:form.cover,
+    website:form.website,
+    metaData:'',
+    chain:route.params.chain == 'btc' ? CollectionMintChain.btc : CollectionMintChain.mvc,
+    collectionPinId:'12345',
+    currentTotalSupply:form.totalSupply,
+    autoMarket:route.params.type == '0' ? false : true,
+    genesisTimestamp:Date.now(),
+    metaId:connectionStore.last.metaid
+  })
+
+
   router.push({name:'nftsCollection'})
 }
 

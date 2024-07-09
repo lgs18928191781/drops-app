@@ -652,6 +652,21 @@ declare interface GenesisItem {
   metaId: string
 }
 
+declare interface Mrc20CollectionItem {
+  totalSupply: string
+  collectionName: string
+  intro: string
+  cover: string
+  website: string
+  metaData: any
+  chain: import('@/enum').CollectionMintChain
+  collectionPinId: string
+  currentTotalSupply: string
+  autoMarket: boolean
+  genesisTimestamp: number
+  metaId: string
+}
+
 declare interface Order {
   status: number
   order_id: string

@@ -63,6 +63,8 @@ export enum ConnectChain{
   btc='btc'
 }
 
+
+
   function getWalletProvider() {
     return window.metaidwallet
   }

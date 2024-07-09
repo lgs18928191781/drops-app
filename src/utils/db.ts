@@ -13,7 +13,7 @@ export interface MetafileSchems {
 
 export class DBClass extends Dexie {
   metafiles!: Table<MetafileSchems>
-  genesis!: Table<GenesisItem>
+  genesis!: Table<Mrc20CollectionItem>
   follow!:Table<{
     userMetaId:string, //关注者
     followedMetaId:string //被关注者
@@ -21,9 +21,9 @@ export class DBClass extends Dexie {
   }>
   constructor() {
     super('show3')
-    this.version(2).stores({
+    this.version(3).stores({
       metafiles: 'txId', // Primary key and indexed props
-      genesis: 'genesis, metaId', // Primary key and indexed props
+      genesis: 'collectionPinId, metaId', // Primary key and indexed props
       follow:'followedMetaId,userMetaId' //Primary key and indexed props
     })
     this.maintenanceData()

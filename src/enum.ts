@@ -6,6 +6,11 @@ export enum CollectionSortType {
   Time = 0,
 }
 
+export enum CollectionMintChain {
+  btc = 'Bitcoin',
+  mvc = 'MicrovisionChain',
+}
+
 export const enum CollectionOrderType {
   ASC = 1,
   DESC = -1,

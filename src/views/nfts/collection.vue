@@ -320,7 +320,7 @@
 import LucideIcon from '@/components/LucideIcon/index.vue'
 import btc from '@/assets/nft/btc.png'
 import { Close } from '@element-plus/icons-vue'
-import { reactive, ref } from 'vue'
+import { reactive, ref,onMounted,computed } from 'vue'
 import { compressImage, FileToAttachmentItem, prettyAddress } from '@/utils/util'
 import { useI18n } from 'vue-i18n'
 import CollectionDialog from './collection-dialog.vue'
@@ -328,7 +328,9 @@ import type { FormProps } from 'element-plus'
 import AddImageWarpVue from '@/components/AddImageWarp/AddImageWarp.vue'
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { classifyList } from '@/config'
+import { useGenesisStore } from '@/stores/genesis'
 import type {  FormInstance, FormRules } from 'element-plus'
+const genesisStore = useGenesisStore()
 const i18n = useI18n()
 const modelValue = ref(false)
 const ruleFormRef = ref<FormInstance>()
@@ -352,7 +354,15 @@ type UseSameOption={
   isSameReceiver:boolean
 }
 
+const currentNftsCollect=computed(()=>{
+  return genesisStore.getList[0]
+})
 
+onMounted(() => {
+
+  console.log("currentNftsCollect",currentNftsCollect.value)
+
+})
 
 
 const rules = reactive<FormRules<MintInfo>>({
