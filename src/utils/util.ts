@@ -906,7 +906,11 @@ export async function compressImage(image: File) {
 }
 
 // 降文件转为 AttachmentItem， 便于操作/上链
-export function FileToAttachmentItem(file: File, encrypt: IsEncrypt = IsEncrypt.No) {
+export function FileToAttachmentItem(
+  file: File,
+  encrypt: IsEncrypt = IsEncrypt.No,
+  getBase64: boolean = false
+) {
   return new Promise<AttachmentItem>(async (resolve, reject) => {
     function readResult(blob: Blob) {
       return new Promise<void>((resolve, reject) => {
@@ -924,21 +928,37 @@ export function FileToAttachmentItem(file: File, encrypt: IsEncrypt = IsEncrypt.
         reader.readAsArrayBuffer(blob)
       })
     }
+
+    function readResultToBase64(file: File) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => resolve(reader.result)
+        reader.onerror = reject
+      })
+    }
+
     // 分块读取，防止内存溢出，这里设置为20MB,可以根据实际情况进行配置
     const chunkSize = 20 * 1024 * 1024
 
     let hex = '' // 二进制
+    let base64
     const sha256Algo = CryptoJs.algo.SHA256.create()
 
     for (let index = 0; index < file.size; index += chunkSize) {
       await readResult(file.slice(index, index + chunkSize))
     }
+    if (getBase64) {
+      base64 = await readResultToBase64(file)
+    }
+
     resolve({
       data: hex,
       fileName: file.name,
       fileType: file.type,
       sha256: encHex.stringify(sha256Algo.finalize()),
       url: URL.createObjectURL(file),
+      base64: base64 ?? '',
       encrypt,
       size: file.size,
     })

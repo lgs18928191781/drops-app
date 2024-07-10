@@ -104,6 +104,7 @@ import { useRouter,useRoute } from 'vue-router'
 import { useGenesisStore } from '@/stores/genesis'
 import {CollectionMintChain} from '@/enum'
 import { useConnectionStore } from '@/stores/connection'
+import {urlToBase64}  from '@/utils/util'
 const fileType=[
     'image/jpeg',
     'image/jpg',
@@ -139,7 +140,7 @@ const onSubmit = async() => {
     website:form.website,
     metaData:'',
     chain:route.params.chain == 'btc' ? CollectionMintChain.btc : CollectionMintChain.mvc,
-    collectionPinId:'12345',
+    collectionPinId:'456789',
     currentTotalSupply:form.totalSupply,
     autoMarket:route.params.type == '0' ? false : true,
     genesisTimestamp:Date.now(),
@@ -173,9 +174,10 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = async(rawFile) => {
   }
 
     const compressed = await compressImage(rawFile)
-    const result = await FileToAttachmentItem(compressed)
+    const result = await FileToAttachmentItem(compressed,0,true)
 
-    form.cover = result.url
+    form.cover =result.base64!
+
     form.coverHex=result.data
 
   return true

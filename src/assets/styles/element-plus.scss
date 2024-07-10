@@ -165,7 +165,8 @@ html.dark {
     .el-table__inner-wrapper::before {
         height: 0px !important;
     }
-    .el-table__body-wrapper .el-scrollbar .el-scrollbar__wrap .el-scrollbar__view{
+
+    .el-table__body-wrapper .el-scrollbar .el-scrollbar__wrap .el-scrollbar__view {
         margin-bottom: 15px !important;
     }
 
@@ -550,11 +551,79 @@ html.dark {
     }
 }
 
-.collection-selector{
-    .el-select{
-        .el-input .el-input--suffix{
-            
+.collection-selector {
+
+
+
+    .el-select {
+        --el-select-border-color-hover: #fff;
+
+        .el-input.is-focus .el-input__wrapper {
+            box-shadow: 0 0 0 0px !important;
         }
+
+        .el-input__wrapper.is-focus {
+            box-shadow: 0 0 0 0px !important;
+        }
+
+        .el-input {
+
+
+            border: none !important;
+            box-shadow: 0 0 0 !important;
+            font-size: 18px;
+            font-weight: 500;
+            color: #303133;
+
+            &:hover {
+                border: none !important;
+            }
+        }
+
+
+
+        .el-input .el-input--suffix {
+            .el-input__wrapper {
+                border: none !important;
+            }
+
+
+        }
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+}
+
+.select-trigger {
+    .el-input .el-input__wrapper .el-input__suffix .el-input__suffix-inner .el-icon {
+        color: #303133 !important;
+
+    }
+}
+
+
+.select-wrap {
+
+    border: 2px solid var(--themeTextColor);
+    box-shadow: 3px 3px 3px var(--themeTextColor);
+    border-color: var(--themeTextColor);
+
+    .el-select-dropdown__item {
+        padding: 25px 16px !important;
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        font-weight: 500;
     }
 }
 
@@ -565,6 +634,9 @@ html.dark {
 .el-popper {
     --el-popper-border-radius: 12px;
     background: #fff;
+
+
+
 }
 
 

@@ -14,14 +14,33 @@
               {{ $t('NFTS.NFTs Launch Pad') }}
             </div> -->
         </div>
-        <div class="collection-selector flex1 flex items-center justify-center">
-          <el-select v-model="genesisCollection">
+        <div class="collection-selector flex1 flex items-center justify-center text-lg">
+          <el-select
+            @change="triggleCollection"
+            popper-class="select-wrap"
+            v-model="genesisCollection"
+          >
             <el-option
               v-for="(item, index) in MyCollectionList"
               :key="index"
-              :label="item.name"
-              :value="item.name"
-            />
+              :label="item.collectionName"
+              :value="item.collectionPinId"
+            >
+              <template #default>
+                <div class="flex w-full items-center justify-between">
+                  <div class="flex items-center">
+                    <img class="w-8 h-8 mr-1 rounded-md object-cover" :src="item.cover" alt="" />
+                    <span>{{ item.collectionName }}</span>
+                  </div>
+                  <div
+                    v-if="genesisCollection == item.collectionName"
+                    class="w-5 h-5 flex items-center justify-center bg-[#FFDC51] p-1.5 rounded-md"
+                  >
+                    <el-icon :size="9" color="#303133"><Select /></el-icon>
+                  </div>
+                </div>
+              </template>
+            </el-option>
           </el-select>
         </div>
         <div class=" flex flex1  justify-end cursor-pointer text-[#5586BB]" @click="genesisNfts">
@@ -35,8 +54,8 @@
 
     <div class="content-wrap p-[18px] border-2 border-solid border-[#303133] rounded-xl mt-5 ">
       <div class="nfts-card flex">
-        <div class="nfts-cover w-24 h-24 rounded-lg ">
-          <img class="w-full" :src="currentNftsCollect.cover" alt="" />
+        <div class="nfts-cover flex items-center justify-center w-24 h-24 rounded-lg ">
+          <img class="w-full " :src="currentNftsCollect.cover" alt="" />
         </div>
         <div class="nfts-detail w-full ml-4">
           <div class="flex-col">
@@ -50,30 +69,32 @@
               </span>
             </div>
           </div>
-          <div class="nfts-footer flex items-center text-sm">
-            <div class="blockchain flex items-center mr-6">
-              <span class="mr-2">{{ $t('Nfts.lanuch_chain') }}</span>
-              <img
-                class="w-5 h-5 mr-1"
-                :src="currentNftsCollect.chain == CollectionMintChain.btc ? btc : mvc"
-                alt=""
-              />
-              <span class="font-medium">{{ currentNftsCollect.chain }}</span>
-            </div>
-            <div class="market-option flex mr-6">
-              <span class="mr-1">{{ $t('Nfts.lanuch_makemarket') }}</span>
-              <span>{{ currentNftsCollect.autoMarket }}</span>
-            </div>
-            <div class="total-supply flex mr-6">
-              <span class="mr-1">{{ $t('Nfts.lanuch_totalSupply') }}</span>
-              <span>{{ currentNftsCollect.totalSupply }}</span>
-            </div>
-            <div class="mint-amount flex ">
-              <span class="mr-1">{{ $t('Nfts.lanuch_minted') }}</span>
-              <span>{{
-                Number(currentNftsCollect.totalSupply) -
-                  Number(currentNftsCollect.currentTotalSupply)
-              }}</span>
+          <div class="nfts-footer flex items-center text-sm ">
+            <div class="flex items-center justify-start flex-wrap">
+              <div class="blockchain flex items-center mr-6">
+                <span class="mr-2">{{ $t('Nfts.lanuch_chain') }}</span>
+                <img
+                  class="w-5 h-5 mr-1"
+                  :src="currentNftsCollect.chain == CollectionMintChain.btc ? btc : mvc"
+                  alt=""
+                />
+                <span class="font-medium">{{ currentNftsCollect.chain }}</span>
+              </div>
+              <div class="market-option flex mr-6">
+                <span class="mr-1">{{ $t('Nfts.lanuch_makemarket') }}</span>
+                <span>{{ currentNftsCollect.autoMarket }}</span>
+              </div>
+              <div class="total-supply flex mr-6">
+                <span class="mr-1">{{ $t('Nfts.lanuch_totalSupply') }}</span>
+                <span>{{ currentNftsCollect.totalSupply }}</span>
+              </div>
+              <div class="mint-amount flex ">
+                <span class="mr-1">{{ $t('Nfts.lanuch_minted') }}</span>
+                <span>{{
+                  Number(currentNftsCollect.totalSupply) -
+                    Number(currentNftsCollect.currentTotalSupply)
+                }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -93,6 +114,7 @@
           <button
             class="py-1 px-3 rounded-md border border-transparent flex items-center justify-center "
             :class="[tableData.length ? 'bg-[#FFDC51]' : 'bg-[#EDEFF2] text-[#BFC2CC]']"
+            @click="finallyMint"
           >
             <span class="mr-1">{{ $t('Nfts.lanuch_confirm_minting') }}</span>
             <span v-if="tableData.length">{{ tableData.length }}</span>
@@ -217,9 +239,11 @@
                 <span class="text-base text-[#303133] font-medium">{{
                   $t('Nfts.lanuch_addMintAmount')
                 }}</span>
-                <div class="text-[#909399]">
-                  <span>{{ $t('Nfts.lanuch_mintLimited') }}</span>
-                  <span>1000</span>
+                <div class="text-[#909399] flex items-center">
+                  <span class="mr-1">{{ $t('Nfts.lanuch_mintLimited') }}</span>
+                  <span>{{
+                    Number(currentNftsCollect.currentTotalSupply) - tableData.length
+                  }}</span>
                 </div>
               </div>
             </template>
@@ -368,9 +392,9 @@ import { classifyList } from '@/config'
 import { useGenesisStore } from '@/stores/genesis'
 import type {  FormInstance, FormRules } from 'element-plus'
 import {CollectionMintChain} from '@/enum'
-
+import { Select } from '@element-plus/icons-vue'
 import { useConnectionStore } from '@/stores/connection'
-import { ElLoading } from 'element-plus'
+import { ElLoading, ElMessage } from 'element-plus'
 const i18n = useI18n()
 const genesisStore = useGenesisStore()
 const connectionStore=useConnectionStore()
@@ -396,30 +420,24 @@ type UseSameOption={
   isSameReceiver:boolean
 }
 
-const currentNftsCollect=computed(()=>{
-  return genesisStore.getList[0]
-})
 
-onMounted(() => {
-
-  console.log("currentNftsCollect",currentNftsCollect.value)
-
-})
-
+const genesisCollection=ref(genesisStore.getList[genesisStore.getList.length -1].collectionName)
+const currentNftsCollect=ref(genesisStore.getList[genesisStore.getList.length -1])
 const tableData = reactive<MintListInfo[]>([
 
 ])
 
-const genesisCollection=ref('Autie the Duck')
-
-const MyCollectionList=reactive([
-  {
-    name:'Autie the Duck'
-  },
-  {
-    name:'MetaBot X'
+const MyCollectionList=computed(()=>{
+  if(genesisStore.getList.length){
+   return genesisStore.getList
+  }else{
+    return []
   }
-])
+
+
+})
+
+
 
 
 const mintData=reactive<MintInfo & UseSameOption>({
@@ -429,17 +447,12 @@ const mintData=reactive<MintInfo & UseSameOption>({
   desc:'',
   classify:[],
   receiver:connectionStore.userInfo.address ?? '',
-  isSameCover:false,
-  isSameSource:false,
-  isSameDesc:false,
-  isSameClassify:false,
-  isSameReceiver:false
+  isSameCover:true,
+  isSameSource:true,
+  isSameDesc:true,
+  isSameClassify:true,
+  isSameReceiver:true
 })
-
-const mintBtnState=computed(()=>{
-  return mintData.mintAmount > 0 && tableData.length < 10
-})
-
 
 const rules = reactive<FormRules<MintInfo>>({
   // mintAmount:[
@@ -533,6 +546,8 @@ const confirm = async(formEl: FormInstance | undefined) =>{
 
   if(!formEl) return
   if(!mintData.mintAmount)return
+  if(mintData.mintAmount > Number(currentNftsCollect.value.currentTotalSupply)) return ElMessage.error(`${i18n.t('Nfts.lanuch_overLimit_amount')}`)
+  if(!mintData.cover) return ElMessage.error(`${i18n.t('Nfts.lanuch_cover_null')}`)
 
   let currentlength=tableData.length
   const tableList:MintListInfo[]=[]
@@ -565,6 +580,23 @@ function cancel(formEl: FormInstance | undefined){
   formEl.resetFields()
   modelValue.value = false
 
+}
+
+
+function triggleCollection(pinId:string){
+  if( pinId == currentNftsCollect.value.collectionPinId) return
+  currentNftsCollect.value=MyCollectionList.value.find(item=>{
+      return item.collectionPinId == pinId
+    })
+
+}
+
+async function finallyMint() {
+    try {
+
+    } catch (error) {
+
+    }
 }
 </script>
 

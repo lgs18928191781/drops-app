@@ -1374,6 +1374,8 @@
     "lanuch_useSameReceiver": "使用相同地址",
     "launch_OK": "确认添加",
     "lanuch_confrimEdit": "确认修改",
-    "lanuch_edit_op": "编辑"
+    "lanuch_edit_op": "编辑",
+    "lanuch_overLimit_amount": "当前铸造数量大于最大铸造上限",
+    "lanuch_cover_null": "图片/文件不能为空"
   }
 }

@@ -11,4 +11,5 @@ export interface AttachmentItem {
   sha256: string
   size: number
   url: string
+  base64?: string
 }

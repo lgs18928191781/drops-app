@@ -1381,6 +1381,8 @@
     "launch_OK": "Confirm add",
     "lanuch_edit": "Modify NFT info",
     "lanuch_confrimEdit": "Confirm modification",
-    "lanuch_edit_op": "Edit"
+    "lanuch_edit_op": "Edit",
+    "lanuch_overLimit_amount": "The current minting amount exceeds the maximum minting limit.",
+    "lanuch_cover_null": "The image/file cannot be empty."
   }
 }
