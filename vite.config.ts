@@ -73,6 +73,7 @@ export default ({ mode, command }) => {
           },
         },
       }),
+     
       VueDevTools(),
       // element-plus 按需加载
       AutoImport({

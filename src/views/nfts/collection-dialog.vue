@@ -9,8 +9,8 @@
       <slot name="title"></slot>
     </template>
     <slot name="content"></slot>
-
     <div
+     v-if="!defiendFooter"
       class="operate flex text-base flex-align-center"
       :style="{ marginTop: operateWarpMarginTop + 'px' }"
     >
@@ -37,11 +37,13 @@
         >{{ confirmBtnText || $t('Nfts.launch_OK') }}</a
       >
     </div>
+   
   </ElDialog>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import type {  FormInstance, FormRules } from 'element-plus'
 interface Props {
   modelValue: boolean
   confirmBtnText?: string
@@ -49,16 +51,20 @@ interface Props {
   cancelBtnText?: string
   cancelBtnClass?: string
   isHideCancelBtn?: boolean
-  operateWarpMarginTop: number
+  operateWarpMarginTop: number 
+  defiendFooter?:boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   confirmBtnClass: 'primary',
   operateWarpMarginTop: 60,
   isEdit: false,
+  defiendFooter:false
 })
 
 const emit = defineEmits(['update:modelValue', 'confirm', 'cancel'])
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+
+</style>

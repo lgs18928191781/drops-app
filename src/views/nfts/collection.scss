@@ -131,6 +131,22 @@
 }
 
 
+.operate {
+    margin-top: 35px;
+
+    a {
+        padding: 18px;
+        text-align: center;
+        margin-right: 10px;
+        cursor: pointer;
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+}
+
+
 
 @media only screen and (max-width: 750PX) {
 

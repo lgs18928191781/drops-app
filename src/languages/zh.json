@@ -1361,7 +1361,7 @@
     "lanuch_operation": "操作",
     "lanuch_delete": "删除",
     "lanuch_addMint": "添加铸造",
-    "lanuch_confirm_minting": "确认铸造",
+    "lanuch_confirm_minting": "确认发行",
     "lanuch_addMintAmount": "添加铸造数量",
     "lanuch_mintLimited": "可铸造量:",
     "lanuch_useSameCover": "使用相同封面",
