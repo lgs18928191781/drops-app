@@ -55,7 +55,7 @@
     <div class="content-wrap p-[18px] border-2 border-solid border-[#303133] rounded-xl mt-5 ">
       <div class="nfts-card flex">
         <div class="nfts-cover flex items-center justify-center w-24 h-24 rounded-lg ">
-          <img class="w-full " :src="currentNftsCollect.cover" alt="" />
+          <img class="w-full rounded-lg " :src="currentNftsCollect.cover" alt="" />
         </div>
         <div class="nfts-detail w-full ml-4">
           <div class="flex-col">
@@ -374,35 +374,195 @@
       </div>
     </template>
   </CollectionDialog>
+
+  <!--create Nfts-->
+  <CollectionDialog
+    v-model="createNftsModel"
+    :defiendFooter="defiendFooter"
+    :isHideCancelBtn="false"
+    :operateWarpMarginTop="12"
+  >
+  <template #title>
+    <header class="flex w-full  items-center justify-center">
+     
+      <div class="text-lg font-medium ">
+        {{ $t('Nfts.launch_create') }}
+      </div>
+    </header>
+  </template>
+
+  <template #content>
+    <div class="form-wrap py-7">
+      <el-form :model="createCollectionform">
+        <el-form-item class="flex items-center  " label-width="50%">
+          <template #label>
+            <span class="flex-1 text-base font-medium"> {{ $t('Nfts.launch_form_title1') }}</span>
+          </template>
+          <template #default>
+            <div class="flex relative justify-end">
+              <el-upload
+                :multiple="false"
+                action="#"
+                class="avatar-uploader  w-24 h-24 flex items-center justify-center  border-2 border-[#BFC2CC] rounded-xl"
+                :show-file-list="false"
+                :before-upload="beforeAvatarUpload"
+              >
+                <img v-if="createCollectionform.cover" :src="createCollectionform.cover" class="avatar rounded-lg" />
+                <el-icon v-else class="avatar-uploader-icon " color="#BFC2CC" :size="35"
+                  ><Plus
+                /></el-icon>
+                <div
+                  v-if="createCollectionform.cover"
+                  @click="removeCollectionCover"
+                  class="absolute flex items-center justify-center bottom-0.5 py-0.5 bg-[rgba(0,0,0,0.4)] w-24 rounded-b-lg hover:bg-[rgba(0,0,0,0.3)]"
+                >
+                  <span class="text-[#FFFFFF]">{{ $t('Nfts.lauch_delete') }}</span>
+                </div>
+              </el-upload>
+            </div>
+          </template>
+        </el-form-item>
+
+        <el-form-item class="flex flex-col " label-width="auto">
+          <template #label>
+            <span class="flex text-base font-medium">{{ $t('Nfts.launch_title2') }}</span>
+          </template>
+          <template #default>
+            <el-input v-model="createCollectionform.name" :placeholder="$t('Nfts.launch_placeholder1')" />
+          </template>
+        </el-form-item>
+
+        <el-form-item class="flex flex-col " label-width="auto">
+          <template #label>
+            <span class="flex text-base font-medium">{{ $t('Nfts.launch_title3') }}</span>
+          </template>
+          <template #default>
+            <el-input
+              :rows="10"
+              v-model="createCollectionform.desc"
+              type="textarea"
+              :placeholder="$t('Nfts.launch_placeholder2')"
+            />
+          </template>
+        </el-form-item>
+
+        <el-form-item class="flex flex-col " label-width="auto">
+          
+
+          <template #label>
+            <span class="flex text-base font-medium">{{ $t('Nfts.launch_title4') }}</span>
+          </template>
+          <template #default>
+            <el-input
+              v-model="createCollectionform.totalSupply"
+              :formatter="(value:string) => `${value}`.replace(/\D+$/g, '')"
+              :parser="(value:string) => value.replace(/\D+$/g, '')"
+              :placeholder="$t('Nfts.launch_placeholder3')"
+            />
+          </template>
+        </el-form-item>
+
+        <el-form-item class="flex flex-col " label-width="auto">
+          <template #label>
+            <span class="flex text-base font-medium">{{ $t('NFTs.lanuch_title1') }}</span>
+          </template>
+          <template #default>
+            <el-select v-model="chain" placeholder="Select" style="width:100%">
+          <template #prefix>
+            <span>
+              <img class="w-6 h-6" :src="chain == NftsLaunchPadChain.btc ? btc : mvc" alt="" />
+            </span>
+          </template>
+
+          <el-option
+            class="flex items-center my-2"
+            v-for="item in chainOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          >
+            <Icon :name="item.icon" custom-class="h-6 w-6 mr-2" />
+            <span class="text-sm">{{ item.label }}</span>
+          </el-option>
+        </el-select>
+          </template>
+        </el-form-item>
+
+        <el-form-item class="flex flex-col " label-width="auto">
+          <template #label>
+            <span class="flex text-base font-medium">{{ $t('NFTs.lanuch_title2') }}</span>
+          </template>
+          <template #default>
+            <el-select v-model="createCollectionform.autoMakeMarket" placeholder="Select" style="width: 100%">
+          <el-option
+            v-for="item in optionMakeMarket"
+            :label="item.label"
+            :value="item.value"
+            :disabled="item.disabled"
+          />
+        </el-select>
+          </template>
+        </el-form-item>
+
+
+        <el-form-item>
+          <div
+            class="mt-5 text-base font-medium py-4 flex items-center cursor-pointer justify-center main-border primary"
+            @click="onSubmitNewCollection"
+          >
+            {{ $t('Nfts.launch_next') }}
+          </div>
+        </el-form-item>
+      </el-form>
+    </div>
+  </template>
+ 
+  
+  </CollectionDialog>
 </template>
 
 <script setup lang="ts">
 import LucideIcon from '@/components/LucideIcon/index.vue'
 import btc from '@/assets/nft/btc.png'
 import mvc from '@/assets/nft/mvc.png'
-import { Close } from '@element-plus/icons-vue'
-import { reactive, ref,computed,onMounted } from 'vue'
+import { Close ,Plus} from '@element-plus/icons-vue'
+import { useRouter,useRoute} from 'vue-router'
+import { reactive, ref,computed,onMounted ,watch} from 'vue'
 import { compressImage, FileToAttachmentItem, prettyAddress, sleep } from '@/utils/util'
 import { useI18n } from 'vue-i18n'
 import CollectionDialog from './collection-dialog.vue'
 import type { FormProps } from 'element-plus'
 import AddImageWarpVue from '@/components/AddImageWarp/AddImageWarp.vue'
 import { AttachmentItem } from '@/@types/hd-wallet'
-import { classifyList } from '@/config'
+import { classifyList,fileType } from '@/config'
 import { useGenesisStore } from '@/stores/genesis'
 import type {  FormInstance, FormRules } from 'element-plus'
 import {CollectionMintChain} from '@/enum'
 import { Select } from '@element-plus/icons-vue'
 import { useConnectionStore } from '@/stores/connection'
-import { ElLoading, ElMessage } from 'element-plus'
+import { ElLoading, ElMessage,type UploadProps} from 'element-plus'
+import { NftsLaunchPadChain, NftsLaunchPadChainSymbol } from '@/data/constants'
+
 const i18n = useI18n()
 const genesisStore = useGenesisStore()
 const connectionStore=useConnectionStore()
 const modelValue = ref(false)
+const createNftsModel=ref(false)
 const ruleFormRef = ref<FormInstance>()
 const labelPosition = ref<FormProps['labelPosition']>('top')
 const isEdit=ref(false)
 const defiendFooter=ref(true)
+const chain = ref<string>(NftsLaunchPadChain.btc)
+const router=useRouter()
+const route=useRoute()
+watch(()=>route.params.pinid,(newValue)=>{
+  currentNftsCollect.value=genesisStore.getList.find((item)=>{
+    return item.collectionPinId == newValue
+  })
+  genesisCollection.value= currentNftsCollect.value.collectionName
+})
+
+
 type MintInfo={
   mintAmount:number
   cover:AttachmentItem
@@ -420,11 +580,52 @@ type UseSameOption={
   isSameReceiver:boolean
 }
 
+const chainOptions = [
+  {
+    value: NftsLaunchPadChain.btc,
+    label: NftsLaunchPadChain.btc,
+    icon: 'logo_btc',
+  },
+  {
+    value: NftsLaunchPadChain.mvc,
+    label: NftsLaunchPadChain.mvc,
+    icon: 'logo_mvc',
+  },
+]
 
-const genesisCollection=ref(genesisStore.getList[genesisStore.getList.length -1].collectionName)
-const currentNftsCollect=ref(genesisStore.getList[genesisStore.getList.length -1])
+const createCollectionform = reactive({
+  name: '',
+  cover: '',
+  coverHex:'',
+  desc: '',
+  totalSupply:"0",
+  website:'',
+  chain:NftsLaunchPadChain.btc,
+  autoMakeMarket:true
+})
+
+
+
+const genesisCollection=ref('')
+const currentNftsCollect=ref()
 const tableData = reactive<MintListInfo[]>([
 
+])
+
+const optionMakeMarket = reactive([
+  {
+    value: true,
+    label: computed(() =>
+      chain.value == NftsLaunchPadChain.btc
+        ? i18n.t('Nfts.launch_noSupport')
+        : i18n.t('Nfts.launch_yes')
+    ),
+    disabled: computed(() => chain.value == NftsLaunchPadChain.btc),
+  },
+  {
+    value: false,
+    label: computed(() => i18n.t('Nfts.launch_no')),
+  },
 ])
 
 const MyCollectionList=computed(()=>{
@@ -495,7 +696,19 @@ const rules = reactive<FormRules<MintInfo>>({
 type MintListInfo=Omit<MintInfo,'mintAmount'> & {id:number, op:string}
 
 
-function genesisNfts() {}
+function getCollectionData(){
+  currentNftsCollect.value= genesisStore.getList.find((item)=>{
+    return item.collectionPinId == route.params.pinid
+  })
+ 
+  genesisCollection.value= currentNftsCollect.value.collectionName
+}
+
+
+
+function genesisNfts() {
+  createNftsModel.value = true
+}
 
 function removeItem(item: any) {
 
@@ -584,10 +797,31 @@ function cancel(formEl: FormInstance | undefined){
 
 
 function triggleCollection(pinId:string){
-  if( pinId == currentNftsCollect.value.collectionPinId) return
-  currentNftsCollect.value=MyCollectionList.value.find(item=>{
+  if( pinId == currentNftsCollect.value.collectionPinId) {
+    let collection=MyCollectionList.value.find(item=>{
       return item.collectionPinId == pinId
     })
+    genesisCollection.value=collection?.collectionName
+  }else{
+    const loadingInstance = ElLoading.service({
+      target:'.body'
+    })
+
+   setTimeout(() => {
+    router.push({
+    name: 'nftsCollection',
+    params: {
+      pinid:pinId
+    },
+  })
+
+  loadingInstance.close()
+   }, 300);
+    // currentNftsCollect.value=MyCollectionList.value.find(item=>{
+    //   return item.collectionPinId == pinId
+    // })
+  }
+
 
 }
 
@@ -598,6 +832,67 @@ async function finallyMint() {
 
     }
 }
+
+
+const onSubmitNewCollection = async() => {
+  
+
+  genesisStore.add({
+    totalSupply:createCollectionform.totalSupply,
+    collectionName:createCollectionform.name,
+    intro:createCollectionform.desc,
+    cover:createCollectionform.cover,
+    website:createCollectionform.website,
+    metaData:'',
+    chain:createCollectionform.chain == 'Bitcoin' ? CollectionMintChain.btc  : CollectionMintChain.mvc,
+    collectionPinId:'66666',
+    currentTotalSupply:createCollectionform.totalSupply,
+    autoMarket:createCollectionform.autoMakeMarket,
+    genesisTimestamp:Date.now(),
+    metaId:connectionStore.last.metaid
+  })
+
+  router.push({
+    name: 'nftsCollection',
+    params: {
+      pinid:'66666'
+    },
+  })
+
+
+  
+}
+
+function removeCollectionCover(e:any){
+    e.stopPropagation();
+    if(createCollectionform.cover){
+      createCollectionform.cover =''
+      createCollectionform.coverHex=''
+    }else return
+}
+
+
+const beforeAvatarUpload: UploadProps['beforeUpload'] = async(rawFile) => {
+  if (!fileType.includes(rawFile.type) ) {
+    ElMessage.error('Avatar picture must be JPG/PNG/GIF/WEBP format!')
+    return false
+  } else if (rawFile.size / 1024 / 1024 > 1) {
+    ElMessage.error('Avatar picture size can not exceed 1MB!')
+    return false
+  }
+
+    const compressed = await compressImage(rawFile)
+    const result = await FileToAttachmentItem(compressed,0,true)
+
+    createCollectionform.cover =result.base64!
+
+    createCollectionform.coverHex=result.data
+
+  return true
+}
+
+getCollectionData()
+
 </script>
 
 <style scoped src="./collection.scss"></style>

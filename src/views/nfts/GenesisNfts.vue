@@ -104,14 +104,8 @@ import { useRouter,useRoute } from 'vue-router'
 import { useGenesisStore } from '@/stores/genesis'
 import {CollectionMintChain} from '@/enum'
 import { useConnectionStore } from '@/stores/connection'
-import {urlToBase64}  from '@/utils/util'
-const fileType=[
-    'image/jpeg',
-    'image/jpg',
-    'image/png',
-    'image/gif',
-    'image/webp'
-]
+
+import { fileType } from '@/config'
 const router=useRouter()
 const route=useRoute()
 const genesisStore = useGenesisStore()
@@ -140,7 +134,7 @@ const onSubmit = async() => {
     website:form.website,
     metaData:'',
     chain:route.params.chain == 'btc' ? CollectionMintChain.btc : CollectionMintChain.mvc,
-    collectionPinId:'456789',
+    collectionPinId:'77777',
     currentTotalSupply:form.totalSupply,
     autoMarket:route.params.type == '0' ? false : true,
     genesisTimestamp:Date.now(),
@@ -148,7 +142,10 @@ const onSubmit = async() => {
   })
 
 
-  router.push({name:'nftsCollection'})
+
+  router.push({name:'nftsCollection',params: {
+      pinid:'77777'
+    },})
 }
 
 function back(){

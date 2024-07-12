@@ -321,3 +321,11 @@ export const chains = [
   //   disabled: () => false,
   // },
 ]
+
+export const fileType=[
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/gif',
+  'image/webp'
+]

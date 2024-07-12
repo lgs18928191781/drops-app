@@ -95,7 +95,7 @@ export const router = createRouter({
         },
 
         {
-          path: 'collection',
+          path: 'collection/:pinid',
           name: 'nftsCollection',
           component: () => import('@/views/nfts/collection.vue'),
           meta: { keepAlive: true },
