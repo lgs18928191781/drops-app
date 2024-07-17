@@ -38,6 +38,18 @@ export interface InscribeResultForYesBroadcast {
     status?: string
   }
 
+  export interface InscribeResultForNoBroadcast {
+    commitTxHex: string;
+    revealTxsHex: string[];
+    commitCost: string;
+    revealCost: string;
+    status?: string;
+}
+
+export type InscribeResultForIfBroadcasting<T>=T extends `yes` ? InscribeResultForNoBroadcast : InscribeResultForYesBroadcast
+
+export type noBroadcast='yes' | 'no'
+
 function isEmpty(attachments:AttachmentItem[] | string[]){
     return Array.isArray(attachments) && attachments.length 
 }
@@ -112,7 +124,7 @@ export function useMetaIDEntity(){
     }
 
 
-   async function BtcFileEntity(images:AttachmentItem[]):Promise<InscribeResultForYesBroadcast> {
+   async function BtcFileEntity(images:AttachmentItem[],noBroadcast:noBroadcast='no'):Promise<InscribeResultForIfBroadcasting<noBroadcast>> {
     const connectStore = useConnectionStore()
         const fileOptions=[]
         for(const image of images){  
@@ -127,7 +139,7 @@ export function useMetaIDEntity(){
         const imageRes=await fileEntity.create({
             dataArray:fileOptions,
             options:{
-                noBroadcast: 'no',
+                noBroadcast: noBroadcast,
                 feeRate: feebStore.last.currentFeeb.feeRate,
                 service: {
                     address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
@@ -436,6 +448,7 @@ export function useMetaIDEntity(){
         }else{
             if(isEmpty(params.body.attachments)){
                 const imageRes= await BtcFileEntity(params.body.attachments)
+                
                 finalBody.attachments=imageRes.revealTxIds.map(rid=>{
                     return `metafile://${rid}i0`
                 })
@@ -473,10 +486,9 @@ export function useMetaIDEntity(){
 
 
 
-   async function mintNftEntity(params:{body:NftCollection,attachments:AttachmentItem[] | []}) {
+   async function mintNftEntity(params:{body:NftCollection,attachments:AttachmentItem[] | [], noBroadcast:boolean}) {
     const connectStore = useConnectionStore()
     const networkStore=useNetworkStore()
-
     try {
         let nftEntity
         const finalBody: NftCollection = {
@@ -514,6 +526,12 @@ export function useMetaIDEntity(){
             nftEntity=await loadBtc(minNtfSchema,{
                 connector:connectStore.last
             })
+            if(isEmpty(params.attachments)){
+                const imageRes= await BtcFileEntity(params.attachments,params.noBroadcast ? 'no' : 'yes')
+                if(!params.noBroadcast){
+                    finalBody.cover=`metafile://${imageRes.revealTxIds[0]}i0`  
+                }
+            }
 
             const mintRes=await nftEntity.create({
                 dataArray:[
@@ -523,7 +541,7 @@ export function useMetaIDEntity(){
                    }
                 ],
                 options:{
-                    noBroadcast:'no',
+                    noBroadcast:params.noBroadcast ? 'no' : 'yes',
                     feeRate: feebStore.last.currentFeeb.feeRate,
                     service: {
                         address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
@@ -531,8 +549,8 @@ export function useMetaIDEntity(){
                     }
                 }
             })
-        if(isEmpty(mintRes.revealTxIds)){
-          
+        if(isEmpty(mintRes.revealTxIds || mintRes.revealTxsHex )){
+          return mintRes
         }
         }
 
@@ -643,7 +661,8 @@ export function useMetaIDEntity(){
     followEntity,
     unFollowEntity,
     payCommentEntity,
-    simpleRepostEntity
+    simpleRepostEntity,
+    mintNftEntity,
    }
 
 }

@@ -12,4 +12,5 @@ export interface AttachmentItem {
   size: number
   url: string
   base64?: string
+  originFile?: File
 }

@@ -121,10 +121,6 @@ export const minNtfSchema:EntitySchema = {
           name:'metaData',
           type: 'object'
         },
-        {
-          name: 'items',
-          type: 'array',
-        },
       ],
     },
   ],

@@ -104,12 +104,13 @@ import { useRouter,useRoute } from 'vue-router'
 import { useGenesisStore } from '@/stores/genesis'
 import {CollectionMintChain} from '@/enum'
 import { useConnectionStore } from '@/stores/connection'
-
+import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
 import { fileType } from '@/config'
 const router=useRouter()
 const route=useRoute()
 const genesisStore = useGenesisStore()
 const connectionStore=useConnectionStore()
+const {mintNftEntity}=useMetaIDEntity()
 const form = reactive({
   name: '',
   cover: '',
@@ -125,6 +126,9 @@ console.log("route",route.params)
 
 const onSubmit = async() => {
   //router.push({name:''})
+
+
+
 
   genesisStore.add({
     totalSupply:form.totalSupply,

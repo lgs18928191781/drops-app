@@ -183,6 +183,20 @@
             </template>
           </el-table-column>
 
+          <el-table-column prop="process" :label="$t('Nfts.lanuch_upload_process')" width="150">
+            <template #default="scope">
+              <!-- <div class="main-border py-3.5 gray-exclued-text p-2 min-h-14  ">
+                <span class="">{{ prettyAddress(scope.row.receiver, 12) }}</span>
+              </div> -->
+              <el-progress
+                :text-inside="true"
+                :stroke-width="15"
+                :percentage="scope.row.process"
+                color="#FFDC51"
+              />
+            </template>
+          </el-table-column>
+
           <el-table-column prop="op" :label="$t('Nfts.lanuch_operation')" width="150">
             <template #default="scope">
               <div class="flex items-center ">
@@ -382,142 +396,151 @@
     :isHideCancelBtn="false"
     :operateWarpMarginTop="12"
   >
-  <template #title>
-    <header class="flex w-full  items-center justify-center">
-     
-      <div class="text-lg font-medium ">
-        {{ $t('Nfts.launch_create') }}
-      </div>
-    </header>
-  </template>
+    <template #title>
+      <header class="flex w-full  items-center justify-center">
+        <div class="text-lg font-medium ">
+          {{ $t('Nfts.launch_create') }}
+        </div>
+      </header>
+    </template>
 
-  <template #content>
-    <div class="form-wrap py-7">
-      <el-form :model="createCollectionform">
-        <el-form-item class="flex items-center  " label-width="50%">
-          <template #label>
-            <span class="flex-1 text-base font-medium"> {{ $t('Nfts.launch_form_title1') }}</span>
-          </template>
-          <template #default>
-            <div class="flex relative justify-end">
-              <el-upload
-                :multiple="false"
-                action="#"
-                class="avatar-uploader  w-24 h-24 flex items-center justify-center  border-2 border-[#BFC2CC] rounded-xl"
-                :show-file-list="false"
-                :before-upload="beforeAvatarUpload"
-              >
-                <img v-if="createCollectionform.cover" :src="createCollectionform.cover" class="avatar rounded-lg" />
-                <el-icon v-else class="avatar-uploader-icon " color="#BFC2CC" :size="35"
-                  ><Plus
-                /></el-icon>
-                <div
-                  v-if="createCollectionform.cover"
-                  @click="removeCollectionCover"
-                  class="absolute flex items-center justify-center bottom-0.5 py-0.5 bg-[rgba(0,0,0,0.4)] w-24 rounded-b-lg hover:bg-[rgba(0,0,0,0.3)]"
+    <template #content>
+      <div class="form-wrap py-7">
+        <el-form :model="createCollectionform">
+          <el-form-item class="flex items-center  " label-width="50%">
+            <template #label>
+              <span class="flex-1 text-base font-medium"> {{ $t('Nfts.launch_form_title1') }}</span>
+            </template>
+            <template #default>
+              <div class="flex relative justify-end">
+                <el-upload
+                  :multiple="false"
+                  action="#"
+                  class="avatar-uploader  w-24 h-24 flex items-center justify-center  border-2 border-[#BFC2CC] rounded-xl"
+                  :show-file-list="false"
+                  :before-upload="beforeAvatarUpload"
                 >
-                  <span class="text-[#FFFFFF]">{{ $t('Nfts.lauch_delete') }}</span>
-                </div>
-              </el-upload>
+                  <img
+                    v-if="createCollectionform.cover"
+                    :src="createCollectionform.cover"
+                    class="avatar rounded-lg"
+                  />
+                  <el-icon v-else class="avatar-uploader-icon " color="#BFC2CC" :size="35"
+                    ><Plus
+                  /></el-icon>
+                  <div
+                    v-if="createCollectionform.cover"
+                    @click="removeCollectionCover"
+                    class="absolute flex items-center justify-center bottom-0.5 py-0.5 bg-[rgba(0,0,0,0.4)] w-24 rounded-b-lg hover:bg-[rgba(0,0,0,0.3)]"
+                  >
+                    <span class="text-[#FFFFFF]">{{ $t('Nfts.lauch_delete') }}</span>
+                  </div>
+                </el-upload>
+              </div>
+            </template>
+          </el-form-item>
+
+          <el-form-item class="flex flex-col " label-width="auto">
+            <template #label>
+              <span class="flex text-base font-medium">{{ $t('Nfts.launch_title2') }}</span>
+            </template>
+            <template #default>
+              <el-input
+                v-model="createCollectionform.name"
+                :placeholder="$t('Nfts.launch_placeholder1')"
+              />
+            </template>
+          </el-form-item>
+
+          <el-form-item class="flex flex-col " label-width="auto">
+            <template #label>
+              <span class="flex text-base font-medium">{{ $t('Nfts.launch_title3') }}</span>
+            </template>
+            <template #default>
+              <el-input
+                :rows="10"
+                v-model="createCollectionform.desc"
+                type="textarea"
+                :placeholder="$t('Nfts.launch_placeholder2')"
+              />
+            </template>
+          </el-form-item>
+
+          <el-form-item class="flex flex-col " label-width="auto">
+            <template #label>
+              <span class="flex text-base font-medium">{{ $t('Nfts.launch_title4') }}</span>
+            </template>
+            <template #default>
+              <el-input
+                v-model="createCollectionform.totalSupply"
+                :formatter="(value:string) => `${value}`.replace(/\D+$/g, '')"
+                :parser="(value:string) => value.replace(/\D+$/g, '')"
+                :placeholder="$t('Nfts.launch_placeholder3')"
+              />
+            </template>
+          </el-form-item>
+
+          <el-form-item class="flex flex-col " label-width="auto">
+            <template #label>
+              <span class="flex text-base font-medium">{{ $t('NFTs.lanuch_title1') }}</span>
+            </template>
+            <template #default>
+              <el-select v-model="chain" placeholder="Select" style="width:100%">
+                <template #prefix>
+                  <span>
+                    <img
+                      class="w-6 h-6"
+                      :src="chain == NftsLaunchPadChain.btc ? btc : mvc"
+                      alt=""
+                    />
+                  </span>
+                </template>
+
+                <el-option
+                  class="flex items-center my-2"
+                  v-for="item in chainOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                  <Icon :name="item.icon" custom-class="h-6 w-6 mr-2" />
+                  <span class="text-sm">{{ item.label }}</span>
+                </el-option>
+              </el-select>
+            </template>
+          </el-form-item>
+
+          <el-form-item class="flex flex-col " label-width="auto">
+            <template #label>
+              <span class="flex text-base font-medium">{{ $t('NFTs.lanuch_title2') }}</span>
+            </template>
+            <template #default>
+              <el-select
+                v-model="createCollectionform.autoMakeMarket"
+                placeholder="Select"
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="item in optionMakeMarket"
+                  :label="item.label"
+                  :value="item.value"
+                  :disabled="item.disabled"
+                />
+              </el-select>
+            </template>
+          </el-form-item>
+
+          <el-form-item>
+            <div
+              class="mt-5 text-base font-medium py-4 flex items-center cursor-pointer justify-center main-border primary"
+              @click="onSubmitNewCollection"
+            >
+              {{ $t('Nfts.launch_next') }}
             </div>
-          </template>
-        </el-form-item>
-
-        <el-form-item class="flex flex-col " label-width="auto">
-          <template #label>
-            <span class="flex text-base font-medium">{{ $t('Nfts.launch_title2') }}</span>
-          </template>
-          <template #default>
-            <el-input v-model="createCollectionform.name" :placeholder="$t('Nfts.launch_placeholder1')" />
-          </template>
-        </el-form-item>
-
-        <el-form-item class="flex flex-col " label-width="auto">
-          <template #label>
-            <span class="flex text-base font-medium">{{ $t('Nfts.launch_title3') }}</span>
-          </template>
-          <template #default>
-            <el-input
-              :rows="10"
-              v-model="createCollectionform.desc"
-              type="textarea"
-              :placeholder="$t('Nfts.launch_placeholder2')"
-            />
-          </template>
-        </el-form-item>
-
-        <el-form-item class="flex flex-col " label-width="auto">
-          
-
-          <template #label>
-            <span class="flex text-base font-medium">{{ $t('Nfts.launch_title4') }}</span>
-          </template>
-          <template #default>
-            <el-input
-              v-model="createCollectionform.totalSupply"
-              :formatter="(value:string) => `${value}`.replace(/\D+$/g, '')"
-              :parser="(value:string) => value.replace(/\D+$/g, '')"
-              :placeholder="$t('Nfts.launch_placeholder3')"
-            />
-          </template>
-        </el-form-item>
-
-        <el-form-item class="flex flex-col " label-width="auto">
-          <template #label>
-            <span class="flex text-base font-medium">{{ $t('NFTs.lanuch_title1') }}</span>
-          </template>
-          <template #default>
-            <el-select v-model="chain" placeholder="Select" style="width:100%">
-          <template #prefix>
-            <span>
-              <img class="w-6 h-6" :src="chain == NftsLaunchPadChain.btc ? btc : mvc" alt="" />
-            </span>
-          </template>
-
-          <el-option
-            class="flex items-center my-2"
-            v-for="item in chainOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          >
-            <Icon :name="item.icon" custom-class="h-6 w-6 mr-2" />
-            <span class="text-sm">{{ item.label }}</span>
-          </el-option>
-        </el-select>
-          </template>
-        </el-form-item>
-
-        <el-form-item class="flex flex-col " label-width="auto">
-          <template #label>
-            <span class="flex text-base font-medium">{{ $t('NFTs.lanuch_title2') }}</span>
-          </template>
-          <template #default>
-            <el-select v-model="createCollectionform.autoMakeMarket" placeholder="Select" style="width: 100%">
-          <el-option
-            v-for="item in optionMakeMarket"
-            :label="item.label"
-            :value="item.value"
-            :disabled="item.disabled"
-          />
-        </el-select>
-          </template>
-        </el-form-item>
-
-
-        <el-form-item>
-          <div
-            class="mt-5 text-base font-medium py-4 flex items-center cursor-pointer justify-center main-border primary"
-            @click="onSubmitNewCollection"
-          >
-            {{ $t('Nfts.launch_next') }}
-          </div>
-        </el-form-item>
-      </el-form>
-    </div>
-  </template>
- 
-  
+          </el-form-item>
+        </el-form>
+      </div>
+    </template>
   </CollectionDialog>
 </template>
 
@@ -542,6 +565,7 @@ import { Select } from '@element-plus/icons-vue'
 import { useConnectionStore } from '@/stores/connection'
 import { ElLoading, ElMessage,type UploadProps} from 'element-plus'
 import { NftsLaunchPadChain, NftsLaunchPadChainSymbol } from '@/data/constants'
+import axios from 'axios'
 
 const i18n = useI18n()
 const genesisStore = useGenesisStore()
@@ -605,6 +629,8 @@ const createCollectionform = reactive({
 })
 
 
+const newFile:Array<{file:File,picId:string}>=reactive([])
+
 
 const genesisCollection=ref('')
 const currentNftsCollect=ref()
@@ -634,8 +660,6 @@ const MyCollectionList=computed(()=>{
   }else{
     return []
   }
-
-
 })
 
 
@@ -652,7 +676,8 @@ const mintData=reactive<MintInfo & UseSameOption>({
   isSameSource:true,
   isSameDesc:true,
   isSameClassify:true,
-  isSameReceiver:true
+  isSameReceiver:true,
+
 })
 
 const rules = reactive<FormRules<MintInfo>>({
@@ -693,14 +718,14 @@ const rules = reactive<FormRules<MintInfo>>({
 })
 
 
-type MintListInfo=Omit<MintInfo,'mintAmount'> & {id:number, op:string}
+type MintListInfo=Omit<MintInfo,'mintAmount'> & {id:number, op:string,process:number}
 
 
 function getCollectionData(){
   currentNftsCollect.value= genesisStore.getList.find((item)=>{
     return item.collectionPinId == route.params.pinid
   })
- 
+
   genesisCollection.value= currentNftsCollect.value.collectionName
 }
 
@@ -742,11 +767,18 @@ async function selectChange(newSelection: any) {
     input.click()
     input.onchange = async (e: Event) => {
       const files: File[] = [...e.target!.files!]
-      const compressed = await compressImage(files[0])
+      for(let item of files){
+        debugger
+        const compressed = await compressImage(item)
       const result = await FileToAttachmentItem(compressed)
       newSelection.cover = result.url
       newSelection.source = result.fileName
+
+      }
+
+
     }
+
   }
 }
 
@@ -761,20 +793,27 @@ const confirm = async(formEl: FormInstance | undefined) =>{
   if(!mintData.mintAmount)return
   if(mintData.mintAmount > Number(currentNftsCollect.value.currentTotalSupply)) return ElMessage.error(`${i18n.t('Nfts.lanuch_overLimit_amount')}`)
   if(!mintData.cover) return ElMessage.error(`${i18n.t('Nfts.lanuch_cover_null')}`)
-
+  newFile.length=0
   let currentlength=tableData.length
   const tableList:MintListInfo[]=[]
   for(let i=0;i<mintData.mintAmount;i++){
     tableList.push({
+
         id:i+currentlength,
         op:i18n.t('Nfts.lanuch_delete'),
+        process:0,
         cover:mintData.cover?.url,
         source:mintData.cover?.fileName,
         desc:mintData.desc,
         receiver:mintData.receiver ?? connectionStore.userInfo.address,
         classify:mintData.classify
       })
+      newFile.push({
+        file:mintData.cover.originFile!,
+        picId:mintData.cover.sha256
+      })
     }
+    console.log("newFile",newFile)
     const loadingInstance = ElLoading.service({
       target:'.form-wrap',
       text:'loading'
@@ -827,6 +866,22 @@ function triggleCollection(pinId:string){
 
 async function finallyMint() {
     try {
+      let params=new FormData()
+      newFile.forEach((item)=>{
+      params.append('file',item.file)
+      params.append('id',item.picId)
+      })
+      let config={
+        headers:{'Content-Type':'multipart/form-data'}
+      }
+      axios.post('http://127.0.0.1:3001/uploads',params,config).then((res)=>{
+
+        if(res.data.code == 200){
+          tableData.forEach((item)=>{
+            item.process = 100
+          })
+        }
+      })
 
     } catch (error) {
 
@@ -835,7 +890,7 @@ async function finallyMint() {
 
 
 const onSubmitNewCollection = async() => {
-  
+
 
   genesisStore.add({
     totalSupply:createCollectionform.totalSupply,
@@ -860,7 +915,7 @@ const onSubmitNewCollection = async() => {
   })
 
 
-  
+
 }
 
 function removeCollectionCover(e:any){
@@ -880,19 +935,15 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = async(rawFile) => {
     ElMessage.error('Avatar picture size can not exceed 1MB!')
     return false
   }
-
     const compressed = await compressImage(rawFile)
     const result = await FileToAttachmentItem(compressed,0,true)
-
     createCollectionform.cover =result.base64!
-
     createCollectionform.coverHex=result.data
 
   return true
 }
 
 getCollectionData()
-
 </script>
 
 <style scoped src="./collection.scss"></style>

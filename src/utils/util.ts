@@ -961,6 +961,7 @@ export function FileToAttachmentItem(
       base64: base64 ?? '',
       encrypt,
       size: file.size,
+      originFile: file,
     })
   })
 }
