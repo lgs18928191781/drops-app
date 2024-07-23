@@ -59,11 +59,31 @@
           </template>
           <template #default>
             <el-input
-              :rows="10"
+              :rows="5"
               v-model="form.desc"
               type="textarea"
               :placeholder="$t('Nfts.launch_placeholder2')"
             />
+          </template>
+        </el-form-item>
+
+        <el-form-item class="flex flex-col " label-width="auto">
+          <template #label>
+            <span class="flex text-base font-medium">{{ $t('Nfts.launch_title5') }}</span>
+          </template>
+          <template #default>
+            <el-select v-model="form.royaltyRate" placeholder="Select" style="width: 100%">
+              <el-option v-for="item in royaltyRate" :label="item + ' ' + '%'" :value="item" />
+            </el-select>
+          </template>
+        </el-form-item>
+
+        <el-form-item class="flex flex-col " label-width="auto">
+          <template #label>
+            <span class="flex text-base font-medium">{{ $t('Nfts.launch_title6') }}</span>
+          </template>
+          <template #default>
+            <el-input v-model="form.website" :placeholder="$t('Nfts.launch_placeholder6')" />
           </template>
         </el-form-item>
 
@@ -83,7 +103,7 @@
 
         <el-form-item>
           <div
-            class="mt-20 text-base font-medium py-4 flex items-center cursor-pointer justify-center main-border primary"
+            class="mt-10 text-base font-medium py-4 flex items-center cursor-pointer justify-center main-border primary"
             @click="onSubmit"
           >
             {{ $t('Nfts.launch_next') }}
@@ -102,54 +122,152 @@ import { ElMessage } from 'element-plus'
 import { compressImage, FileToAttachmentItem } from '@/utils/util'
 import { useRouter,useRoute } from 'vue-router'
 import { useGenesisStore } from '@/stores/genesis'
-import {CollectionMintChain} from '@/enum'
+import {CollectionMintChain,SdkPayType,NFTsError} from '@/enum'
 import { useConnectionStore } from '@/stores/connection'
 import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
-import { fileType } from '@/config'
+import { fileType,royaltyRate } from '@/config'
+import {usePayModalEntity} from '@/hooks/use-pay-modal-entity'
+import { useI18n } from 'vue-i18n'
+
 const router=useRouter()
 const route=useRoute()
+const i18n = useI18n()
 const genesisStore = useGenesisStore()
 const connectionStore=useConnectionStore()
 const {mintNftEntity}=useMetaIDEntity()
+const {awaitPayConfrim}=usePayModalEntity()
 const form = reactive({
   name: '',
-  cover: '',
-  coverHex:'',
+  cover:'',
+  originFile:null,
   desc: '',
-  totalSupply:"0",
-  website:''
+  totalSupply:'0',
+  royaltyRate:'0',
+  website:'',
+  metadata:null
 })
-
-console.log("route",route.params)
-
 
 
 const onSubmit = async() => {
-  //router.push({name:''})
+  //const result=await awaitPayConfrim(SdkPayType.BTC,1000,10000)
+  const existNfts= genesisStore.getList.find((item)=>item.name == form.name)
+  debugger
+  let mintRes
+  try {
+  if(existNfts?.collectionPinId){
+    return ElMessage.error(`${i18n.t('Nfts.lanuch_existNfts')}`)
+  }else if(existNfts?.name){
+
+    mintRes = await mintNftEntity({
+    body:{
+      name:form.name,
+      totalSupply:+form.totalSupply,
+      royaltyRate:+form.royaltyRate,
+      desc:form.desc,
+      website:form.website,
+      cover:'',
+      metadata:form.metadata
+    },
+    attachments:[form.originFile],
+    noBroadcast:false,
+    collectionName:existNfts.name
+  })
+  }else{
+    mintRes = await mintNftEntity({
+    body:{
+      name:form.name,
+      totalSupply:+form.totalSupply,
+      royaltyRate:+form.royaltyRate,
+      desc:form.desc,
+      website:form.website,
+      cover:'',
+      metadata:form.metadata
+    },
+    attachments:[form.originFile],
+  })
+  }
 
 
 
-
-  genesisStore.add({
+  console.log("mintRes",mintRes)
+  debugger
+  if(mintRes?.createCollectionNameRes?.revealTxIds.length && !mintRes?.createCollectionDescRes && !existNfts?.name){
+    genesisStore.add({
     totalSupply:form.totalSupply,
-    collectionName:form.name,
-    intro:form.desc,
+    name:form.name,
+    desc:form.desc,
     cover:form.cover,
     website:form.website,
-    metaData:'',
+    royaltyRate:form.royaltyRate,
+    metaData:form.metadata,
     chain:route.params.chain == 'btc' ? CollectionMintChain.btc : CollectionMintChain.mvc,
-    collectionPinId:'77777',
+    collectionPinId:'',
     currentTotalSupply:form.totalSupply,
     autoMarket:route.params.type == '0' ? false : true,
     genesisTimestamp:Date.now(),
     metaId:connectionStore.last.metaid
   })
+  debugger
+  throw new Error(NFTsError.createNameSuccButDescError)
+  }else if(existNfts?.name && mintRes?.createCollectionDescRes?.revealTxIds.length){
+    genesisStore.updateItem({
+    totalSupply:form.totalSupply,
+    name:form.name,
+    desc:form.desc,
+    cover:form.cover,
+    website:form.website,
+    royaltyRate:form.royaltyRate,
+    metaData:form.metadata,
+    chain:route.params.chain == 'btc' ? CollectionMintChain.btc : CollectionMintChain.mvc,
+    collectionPinId:mintRes?.createCollectionDescRes?.revealTxIds[0]!,
+    currentTotalSupply:form.totalSupply,
+    autoMarket:route.params.type == '0' ? false : true,
+    genesisTimestamp:Date.now(),
+    metaId:connectionStore.last.metaid
+  })
+  debugger
+  toNftsDetail(mintRes?.createCollectionDescRes?.revealTxIds[0]!)
 
 
+  }else if(mintRes?.createCollectionNameRes?.revealTxIds.length && mintRes?.createCollectionDescRes?.revealTxIds.length){
+    genesisStore.add({
+    totalSupply:form.totalSupply,
+    name:form.name,
+    desc:form.desc,
+    cover:form.cover,
+    website:form.website,
+    royaltyRate:form.royaltyRate,
+    metaData:form.metadata,
+    chain:route.params.chain == 'btc' ? CollectionMintChain.btc : CollectionMintChain.mvc,
+    collectionPinId:mintRes?.createCollectionDescRes?.revealTxIds[0]!,
+    currentTotalSupply:form.totalSupply,
+    autoMarket:route.params.type == '0' ? false : true,
+    genesisTimestamp:Date.now(),
+    metaId:connectionStore.last.metaid
+  })
+  debugger
 
+  toNftsDetail(mintRes?.createCollectionDescRes?.revealTxIds[0]!)
+
+  }
+
+
+  }catch (error:any) {
+    if(error.message == NFTsError.createNameSuccButDescError){
+      ElMessage.error(`${i18n.t('Nfts.lanuch_created_desc_fail')}`)
+    }else{
+      ElMessage.error(error)
+    }
+    console.log("error",error)
+    debugger
+  }
+
+}
+
+function toNftsDetail(pinid:string){
   router.push({name:'nftsCollection',params: {
-      pinid:'77777'
-    },})
+      pinid
+    }})
 }
 
 function back(){
@@ -161,7 +279,8 @@ function remove(e:any){
     e.stopPropagation();
     if(form.cover){
         form.cover =''
-    form.coverHex=''
+        form.originFile=null
+    // form.coverHex=''
     }else return
 }
 
@@ -178,8 +297,9 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = async(rawFile) => {
     const result = await FileToAttachmentItem(compressed,0,true)
 
     form.cover =result.base64!
+    form.originFile=result
 
-    form.coverHex=result.data
+    // form.coverHex=result.data
 
   return true
 }

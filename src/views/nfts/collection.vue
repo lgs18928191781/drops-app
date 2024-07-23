@@ -60,12 +60,12 @@
         <div class="nfts-detail w-full ml-4">
           <div class="flex-col">
             <div class="nfts-name">
-              <span class="text-2xl font-medium">{{ currentNftsCollect.collectionName }}</span>
+              <span class="text-2xl font-medium">{{ currentNftsCollect.name }}</span>
               <LucideIcon name="external-link"></LucideIcon>
             </div>
             <div class="nfts-intro flex text-[#909399] text-xs">
               <span>
-                {{ currentNftsCollect.intro }}
+                {{ currentNftsCollect.desc }}
               </span>
             </div>
           </div>
@@ -583,7 +583,7 @@ watch(()=>route.params.pinid,(newValue)=>{
   currentNftsCollect.value=genesisStore.getList.find((item)=>{
     return item.collectionPinId == newValue
   })
-  genesisCollection.value= currentNftsCollect.value.collectionName
+  genesisCollection.value= currentNftsCollect.value.name
 })
 
 
@@ -726,7 +726,7 @@ function getCollectionData(){
     return item.collectionPinId == route.params.pinid
   })
 
-  genesisCollection.value= currentNftsCollect.value.collectionName
+  genesisCollection.value= currentNftsCollect.value.name
 }
 
 
@@ -840,7 +840,7 @@ function triggleCollection(pinId:string){
     let collection=MyCollectionList.value.find(item=>{
       return item.collectionPinId == pinId
     })
-    genesisCollection.value=collection?.collectionName
+    genesisCollection.value=collection?.name
   }else{
     const loadingInstance = ElLoading.service({
       target:'.body'

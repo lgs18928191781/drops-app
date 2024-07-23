@@ -8,7 +8,7 @@ export const useGenesisStore = defineStore('genesis', {
   state: () =>
     <
       {
-        list: Mrc20CollectionItem[]
+        list: Mrc721CollectionItem[]
         currentMetaId?: string
       }
     >{
@@ -20,12 +20,15 @@ export const useGenesisStore = defineStore('genesis', {
     },
   },
   actions: {
-    add: function(genesis: Mrc20CollectionItem) {
+    add: function(genesis: Mrc721CollectionItem) {
       this.list.unshift(genesis)
       DB.genesis.add(genesis)
     },
-    updateCurrentTotalSupply: function(params: { collectionPinId: string; count: number }) {
-      const index = this.list.findIndex(item => item.collectionPinId === params.collectionPinId)
+    updateItem: function(genesis: Mrc721CollectionItem) {
+      DB.genesis.update(genesis.name, genesis)
+    },
+    updateCurrentTotalSupply: function(params: { name: string; count: number }) {
+      const index = this.list.findIndex(item => item.name === params.name)
       if (index !== -1) {
         this.list[index].currentTotalSupply = new Decimal(this.list[index].totalSupply)
           .sub(this.list[index].currentTotalSupply)
@@ -33,7 +36,7 @@ export const useGenesisStore = defineStore('genesis', {
           .toString()
 
         //  更新本地数据
-        DB.genesis.update(params.collectionPinId, this.list[index])
+        DB.genesis.update(params.name, this.list[index])
       }
     },
     initGenesis: async function() {

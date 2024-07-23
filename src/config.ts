@@ -10,6 +10,7 @@ import BSV from '@/assets/images/bsv.png'
 import BTC from '@/assets/icons/btc.svg?url'
 import { useUserStore } from './stores/user'
 import { useRootStore } from './stores/root'
+
 export interface Unit {
   unit: string
   sats: number
@@ -322,10 +323,6 @@ export const chains = [
   // },
 ]
 
-export const fileType=[
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/gif',
-  'image/webp'
-]
+export const fileType = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+
+export const royaltyRate = [0, 1, 1.5, 2, 2.5, 3, 5]

@@ -252,6 +252,7 @@ export enum SdkPayType {
   ME = 'ME',
   SPACE = 'SPACE',
   BSV = 'BSV',
+  BTC = 'BTC',
 }
 
 export enum BuzzTabType {
@@ -588,4 +589,8 @@ export const enum DAOProposalStatus {
   UnStart = 0,
   Active = 1,
   Ended = 2,
+}
+
+export const enum NFTsError {
+  createNameSuccButDescError = 'createNameSuccButDescError',
 }

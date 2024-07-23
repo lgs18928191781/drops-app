@@ -652,12 +652,13 @@ declare interface GenesisItem {
   metaId: string
 }
 
-declare interface Mrc20CollectionItem {
+declare interface Mrc721CollectionItem {
   totalSupply: string
-  collectionName: string
-  intro: string
+  name: string
+  desc: string
   cover: string
   website: string
+  royaltyRate: string
   metaData: any
   chain: import('@/enum').CollectionMintChain
   collectionPinId: string

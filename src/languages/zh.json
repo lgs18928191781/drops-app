@@ -1378,6 +1378,11 @@
     "lanuch_overLimit_amount": "当前铸造数量大于最大铸造上限",
     "lanuch_cover_null": "图片/文件不能为空",
     "lanuch_upload_process": "上传进度",
-    "lanuch_edit": "编辑"
+    "lanuch_edit": "编辑",
+    "launch_title5": "NFTs版税",
+    "launch_title6": "NFTs 网站",
+    "launch_placeholder6": "请输入NFTs的网站",
+    "lanuch_created_desc_fail": "专辑名称已创建成功但专辑信息创建失败，请重新点击创建",
+    "lanuch_existNfts": "专辑名称已被创建"
   }
 }

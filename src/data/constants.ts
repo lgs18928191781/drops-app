@@ -1,5 +1,6 @@
 import { Network } from '@/stores/network'
 import {type EntitySchema} from '@metaid/metaid'
+
 export const NETWORK: Network = import.meta.env.VITE_NETWORK || 'mainnet'
 
 // type EntitySchema = {
@@ -87,44 +88,69 @@ export const payCommentSchema:EntitySchema = {
 }
 
 
-
-export const minNtfSchema:EntitySchema = {
-  name: 'collection',
-  nodeName: 'collection',
-  path:'/nft/collection',
-  versions: [
-    {
-      version: 1,
-      id:'',
-      body: [
-        {
-          name: 'totalSupply',
-          type: 'string',
-        },
-        {
-          name: 'collectionName',
-          type: 'string',
-        },
-        {
-          name: 'intro',
-          type: 'string',
-        },
-        {
-          name: 'cover',
-          type: 'string',
-        },
-        {
-          name: 'website',
-          type: 'string',
-        },
-        {
-          name:'metaData',
-          type: 'object'
-        },
-      ],
-    },
-  ],
+export const mintNftNameSchema = (collectionName:string):EntitySchema =>{
+  return {
+    name:'collection',
+    nodeName: 'collection',
+    path:`/nft/mrc721/${collectionName}`,
+    versions:[
+      {
+        version: 1,
+        id:'',
+        body:[
+          
+        ]
+      }
+    ]
+  }
 }
+
+export const mintNftDescSchema = (collectionName:string):EntitySchema =>{
+  return {
+    name:'collectionDesc',
+    nodeName: 'collectionDesc',
+    path:`/nft/mrc721/${collectionName}/collection_desc`,
+    versions:[
+      {
+        version: 1,
+        id:'',
+        body:[
+          {
+            name:'name',
+            type:'string'
+          },
+          {
+            name:'totalSupply',
+            type:'number'
+          },
+          {
+            name:'royaltyRate',
+            type:'number'
+          },
+          {
+            name:'desc',
+            type:'string'
+          },
+          {
+            name:'website',
+            type:'string'
+          },
+          {
+            name:'cover',
+            type:'string'
+          },
+          {
+            name:'metadata',
+            type:'object'
+          },
+        ]
+      }
+    ]
+  }
+}
+
+
+
 
 
 

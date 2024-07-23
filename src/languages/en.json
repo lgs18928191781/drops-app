@@ -1384,6 +1384,11 @@
     "lanuch_edit_op": "Edit",
     "lanuch_overLimit_amount": "The current minting amount exceeds the maximum minting limit.",
     "lanuch_cover_null": "The image/file cannot be empty.",
-    "lanuch_upload_process": "Upload progress"
+    "lanuch_upload_process": "Upload progress",
+    "launch_title5": "NFTs royaltyRate",
+    "launch_title6": "NFTs website",
+    "launch_placeholder6": "Please enter the website for NFTs",
+    "lanuch_created_desc_fail": "Collect name creation succeeded but Collect information creation failed, please click create again.",
+    "lanuch_existNfts": "Collection name has been created."
   }
 }
