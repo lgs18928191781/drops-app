@@ -23,17 +23,17 @@
             <el-option
               v-for="(item, index) in MyCollectionList"
               :key="index"
-              :label="item.collectionName"
+              :label="item.name"
               :value="item.collectionPinId"
             >
               <template #default>
                 <div class="flex w-full items-center justify-between">
                   <div class="flex items-center">
                     <img class="w-8 h-8 mr-1 rounded-md object-cover" :src="item.cover" alt="" />
-                    <span>{{ item.collectionName }}</span>
+                    <span>{{ item.name }}</span>
                   </div>
                   <div
-                    v-if="genesisCollection == item.collectionName"
+                    v-if="genesisCollection == item.name"
                     class="w-5 h-5 flex items-center justify-center bg-[#FFDC51] p-1.5 rounded-md"
                   >
                     <el-icon :size="9" color="#303133"><Select /></el-icon>
@@ -43,8 +43,10 @@
             </el-option>
           </el-select>
         </div>
-        <div class=" flex flex1  justify-end cursor-pointer text-[#5586BB]" @click="genesisNfts">
-          {{ $t('NFTs.genesis_nfts') }}
+        <div class=" flex flex1  justify-end cursor-pointer text-[#5586BB]">
+          <span @click="genesisNfts" class="p-1 rounded hover:bg-[#5586BB] hover:text-white">{{
+            $t('NFTs.genesis_nfts')
+          }}</span>
         </div>
       </div>
       <!-- <nav>
@@ -458,7 +460,7 @@
             </template>
             <template #default>
               <el-input
-                :rows="10"
+                :rows="5"
                 v-model="createCollectionform.desc"
                 type="textarea"
                 :placeholder="$t('Nfts.launch_placeholder2')"
@@ -476,6 +478,33 @@
                 :formatter="(value:string) => `${value}`.replace(/\D+$/g, '')"
                 :parser="(value:string) => value.replace(/\D+$/g, '')"
                 :placeholder="$t('Nfts.launch_placeholder3')"
+              />
+            </template>
+          </el-form-item>
+
+          <el-form-item class="flex flex-col " label-width="auto">
+            <template #label>
+              <span class="flex text-base font-medium">{{ $t('Nfts.launch_title5') }}</span>
+            </template>
+            <template #default>
+              <el-select
+                v-model="createCollectionform.royaltyRate"
+                placeholder="Select"
+                style="width: 100%"
+              >
+                <el-option v-for="item in royaltyRate" :label="item + ' ' + '%'" :value="item" />
+              </el-select>
+            </template>
+          </el-form-item>
+
+          <el-form-item class="flex flex-col " label-width="auto">
+            <template #label>
+              <span class="flex text-base font-medium">{{ $t('Nfts.launch_title6') }}</span>
+            </template>
+            <template #default>
+              <el-input
+                v-model="createCollectionform.website"
+                :placeholder="$t('Nfts.launch_placeholder6')"
               />
             </template>
           </el-form-item>
@@ -557,7 +586,7 @@ import CollectionDialog from './collection-dialog.vue'
 import type { FormProps } from 'element-plus'
 import AddImageWarpVue from '@/components/AddImageWarp/AddImageWarp.vue'
 import { AttachmentItem } from '@/@types/hd-wallet'
-import { classifyList,fileType } from '@/config'
+import { classifyList,fileType,royaltyRate } from '@/config'
 import { useGenesisStore } from '@/stores/genesis'
 import type {  FormInstance, FormRules } from 'element-plus'
 import {CollectionMintChain} from '@/enum'
@@ -623,6 +652,7 @@ const createCollectionform = reactive({
   coverHex:'',
   desc: '',
   totalSupply:"0",
+  royaltyRate:"0",
   website:'',
   chain:NftsLaunchPadChain.btc,
   autoMakeMarket:true
@@ -894,13 +924,14 @@ const onSubmitNewCollection = async() => {
 
   genesisStore.add({
     totalSupply:createCollectionform.totalSupply,
-    collectionName:createCollectionform.name,
-    intro:createCollectionform.desc,
+    name:createCollectionform.name,
+    desc:createCollectionform.desc,
     cover:createCollectionform.cover,
     website:createCollectionform.website,
-    metaData:'',
+    metaData:null,
+    royaltyRate:createCollectionform.royaltyRate,
     chain:createCollectionform.chain == 'Bitcoin' ? CollectionMintChain.btc  : CollectionMintChain.mvc,
-    collectionPinId:'66666',
+    collectionPinId:'',
     currentTotalSupply:createCollectionform.totalSupply,
     autoMarket:createCollectionform.autoMakeMarket,
     genesisTimestamp:Date.now(),
