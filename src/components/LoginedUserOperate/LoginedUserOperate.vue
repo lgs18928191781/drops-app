@@ -261,7 +261,7 @@ const isShowSetUserInfo = ref(false)
 const isShowUserMenu = ref(false)
 const chainType = ref([
   { name: 'Bitcoin', icon: 'logo_chain_btc',key:'btc' },
-  { name: 'MicrovisionChain', icon: 'logo_chain_mvc',key:'mvc' },
+  // { name: 'MicrovisionChain', icon: 'logo_chain_mvc',key:'mvc' },
 ])
 const userOperates = computed(() => {
   const result = [

@@ -11,10 +11,12 @@ import {type Network} from '@/stores/network'
 
 export function checkMetalet() {
   
+ setTimeout(() => {
   if (!window.metaidwallet) {
     //ElMessage.warning('Please install the Metalet wallet extension first.')
     throw new Error('Please install the Metalet wallet extension first.')
   }
+ }, 300);
 }
 
 function checkMetaletStatus(res: any, actionName: string) {
