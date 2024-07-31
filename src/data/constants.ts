@@ -150,16 +150,52 @@ export const mintNftDescSchema = (collectionName:string):EntitySchema =>{
 }
 
 
-export const mintNftItemSchema = (collectionName:string,nftPinId:string):EntitySchema =>{
+export const mintNftItemSchema = (collectionName:string):EntitySchema =>{
   return {
     name:'nftsItem',
     nodeName: 'nftsItem',
-    path:`/nft/mrc721/${collectionName}/${nftPinId}`,
+    path:`/nft/mrc721/${collectionName}`,
     versions:[
       {
         version: 1,
         id:'',
         body:[]
+      }
+    ]
+  }
+}
+
+export const mintNftItemDescSchema = (collectionName:string):EntitySchema =>{
+  return {
+    name:'nftsItemDesc',
+    nodeName: 'nftsItemDesc',
+    path:`/nft/mrc721/${collectionName}/item_desc`,
+    versions:[
+      {
+        version: 1,
+        id:'',
+        body:[
+          {
+            name:'pinid',
+            type:'string'
+          },
+          {
+            name:'name',
+            type:'string'
+          },
+          {
+            name:'desc',
+            type:'string'
+          },
+          {
+            name:'cover',
+            type:'string'
+          },
+          {
+            name:'metadata',
+            type:'object'
+          },
+        ]
       }
     ]
   }

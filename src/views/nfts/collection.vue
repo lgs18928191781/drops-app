@@ -9,11 +9,13 @@
             </span>
             {{ $t('back') }}
           </a>
+
           <!-- <div class="flex flex-align-center text-sm" v-else>
               <Icon name="shapexs" customClass="h-4 w-3.5 mr-2" />
               {{ $t('NFTS.NFTs Launch Pad') }}
             </div> -->
         </div>
+
         <div class="collection-selector flex1 flex items-center justify-center text-lg">
           <el-select
             @change="triggleCollection"
@@ -136,7 +138,7 @@
                 class="main-border gray-exclued-text p-2 min-h-14  flex justify-between items-center "
               >
                 <div class="w-8 h-8 rounded-md ">
-                  <img class="" :src="scope.row.cover" alt="" />
+                  <img class="" :src="scope.row.cover.url" alt="" />
                 </div>
                 <el-icon class="cursor-pointer" @click="deleteCover(scope.row)"><Close /></el-icon>
               </div>
@@ -579,7 +581,7 @@ import btc from '@/assets/nft/btc.png'
 import mvc from '@/assets/nft/mvc.png'
 import { Close ,Plus} from '@element-plus/icons-vue'
 import { useRouter,useRoute} from 'vue-router'
-import { reactive, ref,computed,onMounted ,watch} from 'vue'
+import { reactive, ref,computed,onMounted ,watch,toRaw} from 'vue'
 import { compressImage, FileToAttachmentItem, prettyAddress, sleep } from '@/utils/util'
 import { useI18n } from 'vue-i18n'
 import CollectionDialog from './collection-dialog.vue'
@@ -594,7 +596,7 @@ import { Select } from '@element-plus/icons-vue'
 import { useConnectionStore } from '@/stores/connection'
 import { ElLoading, ElMessage,type UploadProps} from 'element-plus'
 import { NftsLaunchPadChain, NftsLaunchPadChainSymbol } from '@/data/constants'
-import axios from 'axios'
+import {useMetaIDEntity}  from '@/hooks/use-metaid-entity'
 
 const i18n = useI18n()
 const genesisStore = useGenesisStore()
@@ -608,12 +610,16 @@ const defiendFooter=ref(true)
 const chain = ref<string>(NftsLaunchPadChain.btc)
 const router=useRouter()
 const route=useRoute()
+const {mintNftItemEntity}=useMetaIDEntity()
 watch(()=>route.params.pinid,(newValue)=>{
   currentNftsCollect.value=genesisStore.getList.find((item)=>{
     return item.collectionPinId == newValue
   })
   genesisCollection.value= currentNftsCollect.value.name
 })
+
+
+
 
 
 type MintInfo={
@@ -832,7 +838,7 @@ const confirm = async(formEl: FormInstance | undefined) =>{
         id:i+currentlength,
         op:i18n.t('Nfts.lanuch_delete'),
         process:0,
-        cover:mintData.cover?.url,
+        cover:mintData.cover,
         source:mintData.cover?.fileName,
         desc:mintData.desc,
         receiver:mintData.receiver ?? connectionStore.userInfo.address,
@@ -848,8 +854,11 @@ const confirm = async(formEl: FormInstance | undefined) =>{
       target:'.form-wrap',
       text:'loading'
     })
-    setTimeout(() => {
+    setTimeout(async() => {
       tableData.push(...tableList)
+
+
+
       loadingInstance.close()
     }, 500);
     modelValue.value = false
@@ -895,27 +904,57 @@ function triggleCollection(pinId:string){
 }
 
 async function finallyMint() {
-    try {
-      let params=new FormData()
-      newFile.forEach((item)=>{
-      params.append('file',item.file)
-      params.append('id',item.picId)
-      })
-      let config={
-        headers:{'Content-Type':'multipart/form-data'}
-      }
-      axios.post('http://127.0.0.1:3001/uploads',params,config).then((res)=>{
-
-        if(res.data.code == 200){
-          tableData.forEach((item)=>{
-            item.process = 100
-          })
+  try {
+    const attachments:AttachmentItem[]=[]
+    const body=tableData.map((item,index)=>{
+      attachments.push(item.cover)
+      return {
+        pinid: '',
+        name: `#${index+1}`,
+        desc: item.desc,
+        cover: '',
+        metadata:{
+        classify:toRaw(item.classify)
         }
-      })
+        }
+    })
+    console.log("body",body,attachments)
+    debugger
+   const mintItemRes= await mintNftItemEntity({
+      collectionName:genesisCollection.value,
+      body:body,
+      attachments:attachments,
 
-    } catch (error) {
+      noBroadcast:false
+    })
+    console.log("mintItemRes",mintItemRes)
+    debugger
+  } catch (error) {
+    console.log("error",error)
+    debugger
+  }
 
-    }
+    // try {
+    //   let params=new FormData()
+    //   newFile.forEach((item)=>{
+    //   params.append('file',item.file)
+    //   params.append('id',item.picId)
+    //   })
+    //   let config={
+    //     headers:{'Content-Type':'multipart/form-data'}
+    //   }
+    //   axios.post('http://127.0.0.1:3001/uploads',params,config).then((res)=>{
+
+    //     if(res.data.code == 200){
+    //       tableData.forEach((item)=>{
+    //         item.process = 100
+    //       })
+    //     }
+    //   })
+
+    // } catch (error) {
+
+    // }
 }
 
 

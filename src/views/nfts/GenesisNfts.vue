@@ -190,8 +190,7 @@ const onSubmit = async() => {
 
 
   console.log("mintRes",mintRes)
-  debugger
-  if(mintRes?.createCollectionNameRes?.revealTxIds.length && !mintRes?.createCollectionDescRes && !existNfts?.name){
+  if( mintRes?.revealTxIds.length){
     genesisStore.add({
     totalSupply:form.totalSupply,
     name:form.name,
@@ -201,45 +200,7 @@ const onSubmit = async() => {
     royaltyRate:form.royaltyRate,
     metaData:form.metadata,
     chain:route.params.chain == 'btc' ? CollectionMintChain.btc : CollectionMintChain.mvc,
-    collectionPinId:'',
-    currentTotalSupply:form.totalSupply,
-    autoMarket:route.params.type == '0' ? false : true,
-    genesisTimestamp:Date.now(),
-    metaId:connectionStore.last.metaid
-  })
-  debugger
-  throw new Error(NFTsError.createNameSuccButDescError)
-  }else if(existNfts?.name && mintRes?.createCollectionDescRes?.revealTxIds.length){
-    genesisStore.updateItem({
-    totalSupply:form.totalSupply,
-    name:form.name,
-    desc:form.desc,
-    cover:form.cover,
-    website:form.website,
-    royaltyRate:form.royaltyRate,
-    metaData:form.metadata,
-    chain:route.params.chain == 'btc' ? CollectionMintChain.btc : CollectionMintChain.mvc,
-    collectionPinId:mintRes?.createCollectionDescRes?.revealTxIds[0]!,
-    currentTotalSupply:form.totalSupply,
-    autoMarket:route.params.type == '0' ? false : true,
-    genesisTimestamp:Date.now(),
-    metaId:connectionStore.last.metaid
-  })
-  debugger
-  toNftsDetail(mintRes?.createCollectionDescRes?.revealTxIds[0]!)
-
-
-  }else if(mintRes?.createCollectionNameRes?.revealTxIds.length && mintRes?.createCollectionDescRes?.revealTxIds.length){
-    genesisStore.add({
-    totalSupply:form.totalSupply,
-    name:form.name,
-    desc:form.desc,
-    cover:form.cover,
-    website:form.website,
-    royaltyRate:form.royaltyRate,
-    metaData:form.metadata,
-    chain:route.params.chain == 'btc' ? CollectionMintChain.btc : CollectionMintChain.mvc,
-    collectionPinId:mintRes?.createCollectionDescRes?.revealTxIds[0]!,
+    collectionPinId:mintRes?.revealTxIds[0]!,
     currentTotalSupply:form.totalSupply,
     autoMarket:route.params.type == '0' ? false : true,
     genesisTimestamp:Date.now(),
@@ -247,7 +208,7 @@ const onSubmit = async() => {
   })
   debugger
 
-  toNftsDetail(mintRes?.createCollectionDescRes?.revealTxIds[0]!)
+  toNftsDetail(mintRes?.revealTxIds[0]!)
 
   }
 

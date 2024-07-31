@@ -1,7 +1,7 @@
 
 import { useConnectionStore,ConnectChain } from '@/stores/connection'
 import  {type CreateOptions,IBtcEntity,MvcTransaction,loadMvc,loadBtc } from '@metaid/metaid'
-import { BufferEncoding,followSchema,payCommentSchema,simpleRepostSchema,mintNftNameSchema,mintNftDescSchema,customizeSchema,type CustomSchemaParams} from '@/data/constants'
+import { BufferEncoding,followSchema,payCommentSchema,simpleRepostSchema,mintNftItemSchema,mintNftItemDescSchema,mintNftDescSchema,customizeSchema,type CustomSchemaParams} from '@/data/constants'
 import { AttachmentItem } from '@/@types/hd-wallet'
 import { useI18n } from 'vue-i18n'
 import {useFollowStore} from '@/stores/follow'
@@ -28,6 +28,15 @@ export type NftCollection={
     cover:string
     website:string
     metadata:Object
+}
+
+export type NftItemDesc={
+    pinid:string
+    name:string
+    desc:string
+    cover:string
+    metadata:Object
+
 }
 
 export interface InscribeResultForYesBroadcast {
@@ -489,89 +498,18 @@ export function useMetaIDEntity(){
 
 
 
-   async function mintNftEntity(params:{body:NftCollection,attachments:AttachmentItem[] | [],noBroadcast:boolean,collectionName:string}) {
+   async function mintNftEntity(params:{body:NftCollection,attachments:AttachmentItem[] | [],noBroadcast:boolean}) {
     const connectStore = useConnectionStore()
     const networkStore=useNetworkStore()
-    debugger
+    
     try {
-        let nftCollectionNameEntity
+       
         let nftCollecitonDescEntity
-        let createCollectionNameRes
+      
         const finalBody: NftCollection = {
             ...params.body
           }
-        if(currentChain.value == ConnectChain.mvc){
-            let transactions=[]
-            nftCollectionNameEntity=await loadMvc(mintNftNameSchema(finalBody.name),{
-                connector:connectStore.last
-            })
-            const createCollectionNameRes=await nftCollectionNameEntity.create({
-                data:{
-                    body:'',
-                    contentType: 'text/plain;utf-8',
-                },
-                options:{
-                    noBroadcast:'no',
-                    network:networkStore.network,
-                    signMessage: 'create nft collection name',
-                    serialAction: 'finish',
-                    transactions:[]
-                }
-            })
-           if(createCollectionNameRes.txid){
-            if(isEmpty(params.attachments)){
-                const {attachMetafileUri,fileTransactions}= await MvcFileEntity(params.attachments)
-                finalBody.cover=attachMetafileUri[0]
-                transactions=fileTransactions
-            }
-            nftCollecitonDescEntity=await loadMvc(mintNftDescSchema(finalBody.name),{
-                connector:connectStore.last
-            })
-            debugger
-            const createCollectionDescRes=await nftCollecitonDescEntity.create({
-                data:{
-                    body:JSON.stringify(finalBody),
-                    contentType: 'text/plain;utf-8',
-                },
-                options:{
-                    noBroadcast:'no',
-                    network:networkStore.network,
-                    signMessage: 'create nft desc name',
-                    serialAction: 'finish',
-                    transactions:transactions
-                }
-            })
-            if(createCollectionDescRes.txid){
-                debugger
-                return {
-                    collectionNameTxid:createCollectionNameRes.txid,
-                    collectionDescTxid:createCollectionDescRes.txid
-                }
-            }
-           }
-        }else{
-            if(!params.collectionName){
-                nftCollectionNameEntity=await loadBtc(mintNftNameSchema(finalBody.name),{
-                    connector:connectStore.last
-                })
-                 createCollectionNameRes=await nftCollectionNameEntity.create({
-                    dataArray:[
-                       {
-                        body:finalBody.name,
-                        flag:import.meta.env.VITE_BTC_METAID_FLAG
-                       }
-                    ],
-                    options:{
-                        noBroadcast:'no',//params.noBroadcast ? 'no' : 'yes',
-                        feeRate: feebStore.last.currentFeeb.feeRate,
-                        service: {
-                            address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
-                            satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
-                        }
-                    }
-                })
-            }
-            if(params.collectionName || isEmpty(createCollectionNameRes.revealTxIds)){
+   
                     if(isEmpty(params.attachments)){
                         const imageRes= await BtcFileEntity(params.attachments,'no')//params.noBroadcast ? 'no' : 'yes'
                         finalBody.cover=`metafile://${imageRes.revealTxIds[0]}i0`  
@@ -595,33 +533,90 @@ export function useMetaIDEntity(){
                             }
                         }
                     })
-                    if(isEmpty(createCollectionNameRes.revealTxIds) && !isEmpty(createCollectionDescRes.revealTxIds)){
-                        return {
-                            createCollectionNameRes
-                        }
-                    }else if(isEmpty(createCollectionDescRes.revealTxIds) && isEmpty(createCollectionNameRes.revealTxIds)){
-                        return {
-                            createCollectionNameRes,
-                            createCollectionDescRes
-                        }
+                     if(isEmpty(createCollectionDescRes.revealTxIds)){
+                        return createCollectionDescRes
                     }
 
-                   
-
-
-                }
-
-
-       
-        }
-
-
-
-   
-   
    }catch (error) {
     throw new Error(error as any)
 }
+   }
+
+
+   
+
+
+   async function mintNftItemEntity(params:{collectionName:string,body:NftItemDesc[],attachments:AttachmentItem[] | [],noBroadcast:boolean}) {
+    const connectStore = useConnectionStore()
+    const {body,attachments,collectionName}=params
+    const finalBody: NftItemDesc[] = [...params.body]
+    try {
+
+
+        const nftItemEntity=await loadBtc(mintNftItemSchema(collectionName),{
+            connector:connectStore.last
+        })
+
+        const nftItemDescEntity=await loadBtc(mintNftItemDescSchema(collectionName),{
+            connector:connectStore.last
+        })
+        const imageRes= await BtcFileEntity(attachments,'no')//params.noBroadcast ? 'no' : 'yes'
+    
+        for(let i=0;i<body.length;i++){
+       
+           
+            finalBody[i].cover=`metafile://${imageRes.revealTxIds[i]}i0`  
+            const createItemRes=await nftItemEntity.create({
+                dataArray:[
+                   {
+                    body:`${imageRes.revealTxIds[i]}i0`,
+                    flag:import.meta.env.VITE_BTC_METAID_FLAG
+                   }
+                ],
+                options:{
+                    noBroadcast:'no',//params.noBroadcast ? 'no' : 'yes',
+                    feeRate: feebStore.last.currentFeeb.feeRate,
+                    service: {
+                        address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
+                        satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
+                    }
+                }
+            })
+           
+            if(isEmpty(createItemRes.revealTxIds)){
+                finalBody[i].pinid=`${createItemRes.revealTxIds[0]}i0`
+            }
+
+        }
+
+        const createItemDescRes=await nftItemDescEntity.create({
+            dataArray:[
+               {
+                body:JSON.stringify({
+                    items:finalBody
+                }),
+                flag:import.meta.env.VITE_BTC_METAID_FLAG
+               }
+            ],
+            options:{
+                noBroadcast:'no',//params.noBroadcast ? 'no' : 'yes',
+                feeRate: feebStore.last.currentFeeb.feeRate,
+                service: {
+                    address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
+                    satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
+                }
+            }
+        })
+       
+        if(isEmpty(createItemDescRes.revealTxIds)){
+           return createItemDescRes
+        }
+
+
+    } catch (error) {
+        console.log(error)
+        debugger
+    }
    }
 
   
@@ -724,6 +719,7 @@ export function useMetaIDEntity(){
     payCommentEntity,
     simpleRepostEntity,
     mintNftEntity,
+    mintNftItemEntity
    }
 
 }
