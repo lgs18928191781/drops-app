@@ -47,7 +47,7 @@
             <UserAvatar
               :meta-id="displayItemData.metaId"
               :image="displayItemData?.userInfo?.avatarImage"
-              :name="displayItemData.userName"
+              :name="displayItemData.userInfo?.name"
               :metaName="''"
               :image-class="'w-12 h-12'"
             />

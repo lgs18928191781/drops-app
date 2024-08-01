@@ -11,12 +11,29 @@ import {type Network} from '@/stores/network'
 
 export function checkMetalet() {
   
- setTimeout(() => {
-  if (!window.metaidwallet) {
-    //ElMessage.warning('Please install the Metalet wallet extension first.')
-    throw new Error('Please install the Metalet wallet extension first.')
-  }
- }, 300);
+  // if (!window.metaidwallet) {
+  //   //ElMessage.warning('Please install the Metalet wallet extension first.')
+  //  // throw new Error('Please install the Metalet wallet extension first.')
+   
+  // }
+  // console.log(window.metaidwallet)
+  const maxRetries = 10
+  return new Promise((resolve, reject) => {
+    let attempts = 0;
+    const intervalId = setInterval(() => {
+      attempts++;
+      if (window.metaidwallet) {
+        clearInterval(intervalId);
+        resolve(window.metaidwallet);
+      } else if (attempts >= maxRetries) {
+        clearInterval(intervalId);
+        ElMessage.warning('Please install the Metalet wallet extension first.')
+        throw new Error('Please install the Metalet wallet extension first.')
+      }
+    }, 100);
+  });
+
+
 }
 
 function checkMetaletStatus(res: any, actionName: string) {
@@ -27,7 +44,7 @@ function checkMetaletStatus(res: any, actionName: string) {
 }
 
 export const connect:(network:Network) => ReturnType<typeof btcConnect> = async (network:Network) => {
-  checkMetalet()
+  await checkMetalet()
   const _wallet = await MetaletWalletForBtc.create()
   const _btcConnector = await btcConnect({
     wallet:_wallet,
@@ -37,34 +54,34 @@ export const connect:(network:Network) => ReturnType<typeof btcConnect> = async 
 }
 
 export const metaletConnect: () => Promise<connectRes> = async () => {
-  checkMetalet()
+  await checkMetalet()
 
   const connectRes = await window.metaidwallet.connect()
   return checkMetaletStatus(connectRes, 'connect')
 }
 
 export const getXPublicKey:()=>Promise<string>=async()=>{
-  checkMetalet()
+  await checkMetalet()
 
   const xpub = await window.metaidwallet.getXPublicKey()
   return xpub
 }
 
 export const getMvcAddress = async () => {
-  checkMetalet()
+  await checkMetalet()
   const addressRes = await window.metaidwallet.getAddress()
   const address = checkMetaletStatus(addressRes, 'get address')
   return address
 }
 
 export const getMvcBalance = async () => {
-  checkMetalet()
+  await checkMetalet()
   const balance = await window.metaidwallet.getMvcBalance()
   return balance
 }
 
 export const signMvcMessage = async (Message: { message: string }) => {
-  checkMetalet()
+  await checkMetalet()
   const { message } = Message
   const { signature } = await window.metaidwallet.signMessage({
     message: message,
@@ -76,14 +93,14 @@ export const signMvcMessage = async (Message: { message: string }) => {
 }
 
 export const getMvcPublickey = async () => {
-  checkMetalet()
+  await checkMetalet()
   const MvcPubkey = await window.metaidwallet.getPublicKey()
   const publickey = checkMetaletStatus(MvcPubkey, 'get mvc publickey')
   return publickey
 }
 
 export const getAddress = async () => {
-  checkMetalet()
+  await checkMetalet()
   const addressRes = await window.metaidwallet.btc.getAddress()
   const address = checkMetaletStatus(addressRes, 'get address')
 
@@ -107,7 +124,7 @@ export function finishPsbt<T>(psbt: T): T {
 }
 
 export const getPubKey = async () => {
-  checkMetalet()
+  await checkMetalet()
   const pubKeyRes = await window.metaidwallet.btc.getPublicKey()
   return checkMetaletStatus(pubKeyRes, 'get public key')
 }
@@ -118,7 +135,7 @@ interface connectRes {
 }
 
 export const getNetwork = async () => {
-  checkMetalet()
+  await checkMetalet()
   
   const { network }=await window.metaidwallet.getNetwork()
   switch (network) {
@@ -134,7 +151,7 @@ export const getNetwork = async () => {
 }
 
 export const switchNetwork = async (network: 'livenet' | 'testnet' | 'regtest') => {
-  checkMetalet()
+  await checkMetalet()
   return await window.metaidwallet.switchNetwork(network).then(res => {
     if (res.status === 'canceled') {
       throw new Error('Switch network canceled')
@@ -156,7 +173,7 @@ export const switchNetwork = async (network: 'livenet' | 'testnet' | 'regtest') 
 export const disconnect = async () => {}
 
 export const getBalance = async () => {
-  checkMetalet()
+  await checkMetalet()
 
   return await window.metaidwallet.btc
     .getBalance('btc')
@@ -164,31 +181,31 @@ export const getBalance = async () => {
 }
 
 export const inscribe = async (tick: string): Promise<string> => {
-  checkMetalet()
+  await checkMetalet()
 
   return await window.metaidwallet.btc.inscribeTransfer(tick)
 }
 
 export const signPsbt = async (psbtHex: string, options?: any): Promise<string> => {
-  checkMetalet()
+  await checkMetalet()
 
   return await window.metaidwallet.btc.signPsbt({ psbtHex, options })
 }
 
 export const signPsbts = async (psbtHexs: string[], options?: any[]): Promise<string[]> => {
-  checkMetalet()
+  await checkMetalet()
 
   return await window.metaidwallet.btc.signPsbts(psbtHexs, options)
 }
 
 export const pushPsbt = async (psbtHex: string): Promise<string> => {
-  checkMetalet()
+  await checkMetalet()
 
   return await window.metaidwallet.btc.pushPsbt(psbtHex)
 }
 
 export const signMessage = async (message: string): Promise<string> => {
-  checkMetalet()
+  await checkMetalet()
   const messageBase64 = await window.metaidwallet.btc.signMessage(message)
   return checkMetaletStatus(messageBase64, 'get signature')
 }

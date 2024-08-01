@@ -6,10 +6,13 @@
         <div class="text-xs text-dark-300">MetaID:{{ metaId ? metaId.slice(0, 6) : '--' }}</div>
       </div>
       <div class="h-full flex gap-x-2">
-        <!-- <button class="main-border primary !rounded-full py-1 px-3 text-xs" @click="toUser">
+        <button class="main-border primary !rounded-full py-1 px-3 text-xs" @click="toUser">
           {{ i18n.t('User.Home') }}
+        </button>
+        <!-- <button class="main-border primary !rounded-full py-1 px-3 text-xs" @click="toChat">
+          {{ i18n.t('User.Chat') }}
         </button> -->
-        <button
+        <!-- <button
           class="main-border primary !rounded-full py-1 px-3 text-xs"
           :class="[isMyFollowed ? 'faded' : '']"
           v-if="userStore.user?.metaId !== metaId"
@@ -23,7 +26,7 @@
           <template v-else>
             {{ isMyFollowed ? i18n.t('Cancel Follow') : i18n.t('Follow') }}
           </template>
-        </button>
+        </button> -->
       </div>
     </div>
 
@@ -130,6 +133,11 @@ async function follow() {
   } else {
     loading.value = false
   }
+}
+
+function toChat() {
+  console.log(props.metaId)
+  router.push(`/talk/channels/@me/${props.metaId}`)
 }
 
 watch(
