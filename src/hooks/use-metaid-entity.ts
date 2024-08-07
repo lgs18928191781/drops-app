@@ -136,7 +136,7 @@ export function useMetaIDEntity(){
    async function BtcFileEntity(images:AttachmentItem[],noBroadcast:noBroadcast='no'):Promise<InscribeResultForIfBroadcasting<noBroadcast>> {
     const connectStore = useConnectionStore()
         const fileOptions=[]
-        debugger
+        
         for(const image of images){  
             fileOptions.push({
                 body:Buffer.from(image.data, "hex").toString("base64"),
@@ -615,7 +615,7 @@ export function useMetaIDEntity(){
 
     } catch (error) {
         console.log(error)
-        debugger
+        
     }
    }
 

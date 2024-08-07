@@ -30,8 +30,7 @@ export const useGenesisStore = defineStore('genesis', {
     updateCurrentTotalSupply: function(params: { name: string; count: number }) {
       const index = this.list.findIndex(item => item.name === params.name)
       if (index !== -1) {
-        this.list[index].currentTotalSupply = new Decimal(this.list[index].totalSupply)
-          .sub(this.list[index].currentTotalSupply)
+        this.list[index].currentTotalSupply = new Decimal(this.list[index].currentTotalSupply)
           .sub(params.count)
           .toString()
 

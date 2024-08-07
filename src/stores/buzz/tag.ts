@@ -1,6 +1,6 @@
 import { GetPostTags } from '@/api/aggregation'
 import { defineStore } from 'pinia'
-
+import { ElMessage } from 'element-plus'
 export interface PostTag {
   id: number
   tag: string
@@ -36,7 +36,6 @@ export const usePostTagStore = defineStore('postTag', {
           resolve()
         })
         if (res?.code === 0) {
-          
           this.list.push(...res.data.results)
           resolve()
         }

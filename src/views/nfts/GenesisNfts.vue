@@ -204,7 +204,9 @@ const onSubmit = async() => {
     currentTotalSupply:form.totalSupply,
     autoMarket:route.params.type == '0' ? false : true,
     genesisTimestamp:Date.now(),
-    metaId:connectionStore.last.metaid
+    metaId:connectionStore.last.metaid,
+    initialPrice:'',
+    priceGrowth:''
   })
   debugger
 

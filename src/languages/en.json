@@ -1389,6 +1389,14 @@
     "launch_title6": "NFTs website",
     "launch_placeholder6": "Please enter the website for NFTs",
     "lanuch_created_desc_fail": "Collect name creation succeeded but Collect information creation failed, please click create again.",
-    "lanuch_existNfts": "Collection name has been created."
+    "lanuch_existNfts": "Collection name has been created.",
+    "lanuch_auto_market_title": "Automated Market Maker (AMM)",
+    "lanuch_auto_market_setprice": "Establish Initial Price",
+    "lanuch_auto_market_setpriceAdd": "Set the Price Growth Exponent",
+    "lanuch_X": "Index",
+    "lanuch_Y": "Price",
+    "lanuch_set_price_increase": "Please enter the Price Growth Exponent",
+    "lanuch_set_init_price": "Please enter the Initial Price",
+    "lanuch_nftIndex": "Id"
   }
 }

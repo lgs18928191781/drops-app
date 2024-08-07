@@ -666,6 +666,8 @@ declare interface Mrc721CollectionItem {
   autoMarket: boolean
   genesisTimestamp: number
   metaId: string
+  initialPrice?: string
+  priceGrowth?: string
 }
 
 declare interface Order {

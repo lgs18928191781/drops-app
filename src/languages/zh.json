@@ -1383,6 +1383,14 @@
     "launch_title6": "NFTs 网站",
     "launch_placeholder6": "请输入NFTs的网站",
     "lanuch_created_desc_fail": "专辑名称已创建成功但专辑信息创建失败，请重新点击创建",
-    "lanuch_existNfts": "专辑名称已被创建"
+    "lanuch_existNfts": "专辑名称已被创建",
+    "lanuch_auto_market_title": "自动做市机制",
+    "lanuch_auto_market_setprice": "设置初始价格",
+    "lanuch_auto_market_setpriceAdd": "设置价格增长指数",
+    "lanuch_X": "序号",
+    "lanuch_Y": "价格",
+    "lanuch_set_init_price": "请输入初始价格",
+    "lanuch_set_price_increase": "请输入价格增长指数",
+    "lanuch_nftIndex": "序号"
   }
 }

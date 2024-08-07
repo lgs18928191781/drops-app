@@ -59,17 +59,22 @@
     <div class="content-wrap p-[18px] border-2 border-solid border-[#303133] rounded-xl mt-5 ">
       <div class="nfts-card flex">
         <div class="nfts-cover flex items-center justify-center w-24 h-24 rounded-lg ">
-          <img class="w-full rounded-lg " :src="currentNftsCollect.cover" alt="" />
+          <img class="w-full rounded-lg " :src="currentNftsCollect?.cover" alt="" />
         </div>
         <div class="nfts-detail w-full ml-4">
           <div class="flex-col">
-            <div class="nfts-name">
-              <span class="text-2xl font-medium">{{ currentNftsCollect.name }}</span>
-              <LucideIcon name="external-link"></LucideIcon>
+            <div class="nfts-name flex items-center justify-between">
+              <span class="text-2xl font-medium">{{ currentNftsCollect?.name }}</span>
+
+              <ExternalLink
+                :size="18"
+                color="#909399"
+                class="cursor-pointer hover:scale-110"
+              ></ExternalLink>
             </div>
             <div class="nfts-intro flex text-[#909399] text-xs">
               <span>
-                {{ currentNftsCollect.desc }}
+                {{ currentNftsCollect?.desc }}
               </span>
             </div>
           </div>
@@ -79,28 +84,71 @@
                 <span class="mr-2">{{ $t('Nfts.lanuch_chain') }}</span>
                 <img
                   class="w-5 h-5 mr-1"
-                  :src="currentNftsCollect.chain == CollectionMintChain.btc ? btc : mvc"
+                  :src="currentNftsCollect?.chain == CollectionMintChain.btc ? btc : mvc"
                   alt=""
                 />
-                <span class="font-medium">{{ currentNftsCollect.chain }}</span>
+                <span class="font-medium">{{ currentNftsCollect?.chain }}</span>
               </div>
               <div class="market-option flex mr-6">
                 <span class="mr-1">{{ $t('Nfts.lanuch_makemarket') }}</span>
-                <span>{{ currentNftsCollect.autoMarket }}</span>
+                <span>{{ currentNftsCollect?.autoMarket }}</span>
               </div>
               <div class="total-supply flex mr-6">
                 <span class="mr-1">{{ $t('Nfts.lanuch_totalSupply') }}</span>
-                <span>{{ currentNftsCollect.totalSupply }}</span>
+                <span>{{ currentNftsCollect?.totalSupply }}</span>
               </div>
               <div class="mint-amount flex ">
                 <span class="mr-1">{{ $t('Nfts.lanuch_minted') }}</span>
-                <span>{{
-                  Number(currentNftsCollect.totalSupply) -
-                    Number(currentNftsCollect.currentTotalSupply)
-                }}</span>
+                <span>{{ mintedAmount }}</span>
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="auto-market-wrap  mt-8">
+      <div class="title text-lg py-4 font-medium">
+        {{ $t('Nfts.lanuch_auto_market_title') }}
+      </div>
+      <div class="content flex items-center py-6 border-t border-[#EDEFF2] flex-row">
+        <div class="config-wrap pr-10 border-r border-[#EDEFF2] w-1/5">
+          <div class="flex flex-col">
+            <div class="">
+              <span>{{ $t('Nfts.lanuch_auto_market_setprice') }}</span>
+              <el-input
+                :placeholder="$t('Nfts.lanuch_set_init_price')"
+                class="h-12 mt-2"
+                v-model="autoMaketData.initialPrice"
+                :disabled="
+                  !currentNftsCollect?.autoMarket || Boolean(currentNftsCollect?.initialPrice)
+                "
+              ></el-input>
+            </div>
+            <div class="mt-3.5">
+              <span>{{ $t('Nfts.lanuch_auto_market_setpriceAdd') }}</span>
+              <el-input
+                :placeholder="$t('Nfts.lanuch_set_price_increase')"
+                class="h-12 mt-2"
+                v-model="autoMaketData.priceGrowth"
+                :disabled="
+                  !currentNftsCollect?.autoMarket || Boolean(currentNftsCollect?.priceGrowth)
+                "
+              ></el-input>
+            </div>
+          </div>
+          <div class="mt-3.5 text-[#909399] flex flex-row items-center justify-center">
+            <div class="mr-4">
+              <span class="mr-1">X:</span> <span>{{ $t('Nfts.lanuch_X') }}</span>
+            </div>
+            <div>
+              <span class="mr-1"> Y:</span>
+              <span>{{ $t('Nfts.lanuch_Y') }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="echart-wrap pl-10 w-4/5 ">
+          <Line ref="chartRef" :style="customStyle" :data="data" :options="options" />
         </div>
       </div>
     </div>
@@ -132,6 +180,18 @@
           style="width: 100%;height:500px"
           header-row-class-name="text-sm text-[#303133]"
         >
+          <el-table-column prop="id" :label="$t('Nfts.lanuch_nftIndex')" width="100">
+            <template #default="scope">
+              <div
+                class="main-border gray-exclued-text p-2 min-h-14  flex justify-between items-center "
+              >
+                <div class="w-8 h-8 rounded-md ">
+                  <span>#{{ scope.row.id }}</span>
+                </div>
+              </div>
+            </template>
+          </el-table-column>
+
           <el-table-column prop="cover" :label="$t('Nfts.lanuch_nftcover')" width="120">
             <template #default="scope">
               <div
@@ -179,19 +239,17 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="receiver" :label="$t('Nfts.lanuch_receive_address')" width="250">
+          <!-- <el-table-column prop="receiver" :label="$t('Nfts.lanuch_receive_address')" width="250">
             <template #default="scope">
               <div class="main-border py-3.5 gray-exclued-text p-2 min-h-14  ">
                 <span class="">{{ prettyAddress(scope.row.receiver, 12) }}</span>
               </div>
             </template>
-          </el-table-column>
+          </el-table-column> -->
 
-          <el-table-column prop="process" :label="$t('Nfts.lanuch_upload_process')" width="150">
+          <!-- <el-table-column prop="process" :label="$t('Nfts.lanuch_upload_process')" width="150">
             <template #default="scope">
-              <!-- <div class="main-border py-3.5 gray-exclued-text p-2 min-h-14  ">
-                <span class="">{{ prettyAddress(scope.row.receiver, 12) }}</span>
-              </div> -->
+             
               <el-progress
                 :text-inside="true"
                 :stroke-width="15"
@@ -199,7 +257,7 @@
                 color="#FFDC51"
               />
             </template>
-          </el-table-column>
+          </el-table-column> -->
 
           <el-table-column prop="op" :label="$t('Nfts.lanuch_operation')" width="150">
             <template #default="scope">
@@ -260,7 +318,7 @@
                 <div class="text-[#909399] flex items-center">
                   <span class="mr-1">{{ $t('Nfts.lanuch_mintLimited') }}</span>
                   <span>{{
-                    Number(currentNftsCollect.currentTotalSupply) - tableData.length
+                    Number(currentNftsCollect?.currentTotalSupply) - tableData.length
                   }}</span>
                 </div>
               </div>
@@ -354,7 +412,7 @@
           </el-form-item>
 
           <!--Receiver-->
-          <el-form-item>
+          <!-- <el-form-item>
             <div class="flex items-center justify-between">
               <span class="text-base font-medium">{{ $t('Nfts.lanuch_receive_address') }}</span>
               <div class="text-[#909399]">
@@ -370,7 +428,7 @@
             <div class="mt-1">
               <ElInput type="text" v-model="mintData.receiver" />
             </div>
-          </el-form-item>
+          </el-form-item> -->
 
           <el-form-item>
             <div class="operate flex items-center justify-between font-medium text-base">
@@ -576,67 +634,91 @@
 </template>
 
 <script setup lang="ts">
-import LucideIcon from '@/components/LucideIcon/index.vue'
+
+import { ExternalLink } from 'lucide-vue-next'
 import btc from '@/assets/nft/btc.png'
 import mvc from '@/assets/nft/mvc.png'
-import { Close ,Plus} from '@element-plus/icons-vue'
-import { useRouter,useRoute} from 'vue-router'
-import { reactive, ref,computed,onMounted ,watch,toRaw} from 'vue'
+import { Close, Plus } from '@element-plus/icons-vue'
+import { useRouter, useRoute } from 'vue-router'
+import { reactive, ref, computed, onMounted, watch, toRaw } from 'vue'
 import { compressImage, FileToAttachmentItem, prettyAddress, sleep } from '@/utils/util'
 import { useI18n } from 'vue-i18n'
 import CollectionDialog from './collection-dialog.vue'
-import type { FormProps } from 'element-plus'
+
 import AddImageWarpVue from '@/components/AddImageWarp/AddImageWarp.vue'
 import { AttachmentItem } from '@/@types/hd-wallet'
-import { classifyList,fileType,royaltyRate } from '@/config'
+import { classifyList, fileType, royaltyRate } from '@/config'
 import { useGenesisStore } from '@/stores/genesis'
-import type {  FormInstance, FormRules } from 'element-plus'
-import {CollectionMintChain} from '@/enum'
+
+import { CollectionMintChain } from '@/enum'
 import { Select } from '@element-plus/icons-vue'
 import { useConnectionStore } from '@/stores/connection'
-import { ElLoading, ElMessage,type UploadProps} from 'element-plus'
+import { ElLoading, ElMessage } from 'element-plus'
 import { NftsLaunchPadChain, NftsLaunchPadChainSymbol } from '@/data/constants'
-import {useMetaIDEntity}  from '@/hooks/use-metaid-entity'
+import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
+import { Line } from 'vue-chartjs'
+import { useEchart } from '@/hooks/use-echart-tool'
+import type {  FormInstance, FormRules,UploadProps } from 'element-plus'
 
+import { uploadNftsFile} from '@/api/mrc721-api'
+import Decimal from 'decimal.js-light'
 const i18n = useI18n()
 const genesisStore = useGenesisStore()
-const connectionStore=useConnectionStore()
+const connectionStore = useConnectionStore()
 const modelValue = ref(false)
-const createNftsModel=ref(false)
+const createNftsModel = ref(false)
 const ruleFormRef = ref<FormInstance>()
-const labelPosition = ref<FormProps['labelPosition']>('top')
-const isEdit=ref(false)
-const defiendFooter=ref(true)
+const labelPosition = ref('top')
+const isEdit = ref(false)
+const defiendFooter = ref(true)
 const chain = ref<string>(NftsLaunchPadChain.btc)
-const router=useRouter()
-const route=useRoute()
-const {mintNftItemEntity}=useMetaIDEntity()
-watch(()=>route.params.pinid,(newValue)=>{
-  currentNftsCollect.value=genesisStore.getList.find((item)=>{
-    return item.collectionPinId == newValue
-  })
-  genesisCollection.value= currentNftsCollect.value.name
+const router = useRouter()
+const route = useRoute()
+const { mintNftItemEntity } = useMetaIDEntity()
+const { data, options } = useEchart()
+const chartRef = ref()
+const autoMaketData=ref({
+  initialPrice:'',
+  priceGrowth:''
 })
 
 
+watch(
+  () => route.params.pinid,
+  newValue => {
+    currentNftsCollect.value = genesisStore.getList.find(item => {
+      return item.collectionPinId == newValue
+    })
+    autoMaketData.value.initialPrice=currentNftsCollect.value?.initialPrice!
+    autoMaketData.value.priceGrowth=currentNftsCollect.value?.priceGrowth!
+    genesisCollection.value = currentNftsCollect.value!.name
+  }
+)
 
+onMounted(() => {
+  // genesisStore.updateItem({
+  //   ...currentNftsCollect.value,
+  //   initialPrice:'',
+  //   priceGrowth:""
+  // })
 
+})
 
-type MintInfo={
-  mintAmount:number
-  cover:AttachmentItem
-  source:AttachmentItem
-  desc:string
-  classify:string[]
-  receiver:string
+type MintInfo = {
+  mintAmount: number
+  cover: AttachmentItem
+  source: AttachmentItem
+  desc: string
+  classify: string[]
+  receiver: string
 }
 
-type UseSameOption={
-  isSameCover:boolean
-  isSameSource:boolean
-  isSameDesc:boolean
-  isSameClassify:boolean
-  isSameReceiver:boolean
+type UseSameOption = {
+  isSameCover: boolean
+  isSameSource: boolean
+  isSameDesc: boolean
+  isSameClassify: boolean
+  isSameReceiver: boolean
 }
 
 const chainOptions = [
@@ -655,24 +737,26 @@ const chainOptions = [
 const createCollectionform = reactive({
   name: '',
   cover: '',
-  coverHex:'',
+  coverHex: '',
   desc: '',
-  totalSupply:"0",
-  royaltyRate:"0",
-  website:'',
-  chain:NftsLaunchPadChain.btc,
-  autoMakeMarket:true
+  totalSupply: '0',
+  royaltyRate: '0',
+  website: '',
+  chain: NftsLaunchPadChain.btc,
+  autoMakeMarket: true,
 })
 
+const newFile: Array<{ file: File; picId: string }> = reactive([])
 
-const newFile:Array<{file:File,picId:string}>=reactive([])
+const genesisCollection = ref('')
+const currentNftsCollect = ref<Mrc721CollectionItem>()
+const tableData = reactive<MintListInfo[]>([])
 
-
-const genesisCollection=ref('')
-const currentNftsCollect=ref()
-const tableData = reactive<MintListInfo[]>([
-
-])
+const customStyle = computed(() => {
+  return {
+    height: '230px',
+  }
+})
 
 const optionMakeMarket = reactive([
   {
@@ -690,30 +774,30 @@ const optionMakeMarket = reactive([
   },
 ])
 
-const MyCollectionList=computed(()=>{
-  if(genesisStore.getList.length){
-   return genesisStore.getList
-  }else{
+const MyCollectionList = computed(() => {
+  if (genesisStore.getList.length) {
+    return genesisStore.getList
+  } else {
     return []
   }
 })
 
+const mintedAmount=computed(()=>{
+  return new Decimal(currentNftsCollect.value!.totalSupply).sub(currentNftsCollect.value!.currentTotalSupply).toNumber()
+})
 
-
-
-const mintData=reactive<MintInfo & UseSameOption>({
-  mintAmount:0,
-  cover:'',
-  source:'',
-  desc:'',
-  classify:[],
-  receiver:connectionStore.userInfo.address ?? '',
-  isSameCover:true,
-  isSameSource:true,
-  isSameDesc:true,
-  isSameClassify:true,
-  isSameReceiver:true,
-
+const mintData = reactive<MintInfo & UseSameOption>({
+  mintAmount: 0,
+  cover: '',
+  source: '',
+  desc: '',
+  classify: [],
+  receiver: connectionStore.userInfo.address ?? '',
+  isSameCover: true,
+  isSameSource: true,
+  isSameDesc: true,
+  isSameClassify: true,
+  isSameReceiver: true,
 })
 
 const rules = reactive<FormRules<MintInfo>>({
@@ -753,46 +837,49 @@ const rules = reactive<FormRules<MintInfo>>({
   // ]
 })
 
+type MintListInfo = Omit<MintInfo, 'mintAmount'> & { id: number; op: string; }
 
-type MintListInfo=Omit<MintInfo,'mintAmount'> & {id:number, op:string,process:number}
-
-
-function getCollectionData(){
-  currentNftsCollect.value= genesisStore.getList.find((item)=>{
+function getCollectionData() {
+  currentNftsCollect.value = genesisStore.getList.find(item => {
     return item.collectionPinId == route.params.pinid
   })
+  if(currentNftsCollect.value?.name){
+    genesisCollection.value = currentNftsCollect.value!.name
+    autoMaketData.value.initialPrice=currentNftsCollect.value?.initialPrice!
+    autoMaketData.value.priceGrowth=currentNftsCollect.value?.priceGrowth!
+  }
 
-  genesisCollection.value= currentNftsCollect.value.name
 }
-
-
 
 function genesisNfts() {
   createNftsModel.value = true
 }
 
 function removeItem(item: any) {
-
-  const newArr = tableData.filter(ele => {
+  let newArr = tableData.filter(ele => {
     return ele.id !== item.id
   })
+  debugger
   tableData.length = 0
+  newArr.map((item,index)=>{
+      item.id=index+1+mintedAmount.value
+  })
+
   tableData.push(...newArr)
 }
 
-function editNft(item:MintListInfo){
-  isEdit.value=true
+function editNft(item: MintListInfo) {
+  isEdit.value = true
   fillMintData(item)
   modelValue.value = true
-
 }
 
-function fillMintData(item:MintListInfo){
- mintData.cover=item.cover
- mintData.classify=item.classify
- mintData.desc=item.desc
- mintData.receiver=item.receiver
- mintData.source=item.source
+function fillMintData(item: MintListInfo) {
+  mintData.cover = item.cover
+  mintData.classify = item.classify
+  mintData.desc = item.desc
+  mintData.receiver = item.receiver
+  mintData.source = item.source
 }
 
 async function selectChange(newSelection: any) {
@@ -803,18 +890,14 @@ async function selectChange(newSelection: any) {
     input.click()
     input.onchange = async (e: Event) => {
       const files: File[] = [...e.target!.files!]
-      for(let item of files){
+      for (let item of files) {
         debugger
         const compressed = await compressImage(item)
-      const result = await FileToAttachmentItem(compressed)
-      newSelection.cover = result.url
-      newSelection.source = result.fileName
-
+        const result = await FileToAttachmentItem(compressed)
+        newSelection.cover = result.url
+        newSelection.source = result.fileName
       }
-
-
     }
-
   }
 }
 
@@ -823,192 +906,231 @@ function deleteCover(item: any) {
   item.source = ''
 }
 
-const confirm = async(formEl: FormInstance | undefined) =>{
-
-  if(!formEl) return
-  if(!mintData.mintAmount)return
-  if(mintData.mintAmount > Number(currentNftsCollect.value.currentTotalSupply)) return ElMessage.error(`${i18n.t('Nfts.lanuch_overLimit_amount')}`)
-  if(!mintData.cover) return ElMessage.error(`${i18n.t('Nfts.lanuch_cover_null')}`)
-  newFile.length=0
-  let currentlength=tableData.length
-  const tableList:MintListInfo[]=[]
-  for(let i=0;i<mintData.mintAmount;i++){
-    tableList.push({
-
-        id:i+currentlength,
-        op:i18n.t('Nfts.lanuch_delete'),
-        process:0,
-        cover:mintData.cover,
-        source:mintData.cover?.fileName,
-        desc:mintData.desc,
-        receiver:mintData.receiver ?? connectionStore.userInfo.address,
-        classify:mintData.classify
-      })
-      newFile.push({
-        file:mintData.cover.originFile!,
-        picId:mintData.cover.sha256
+function performChunk(datas: MintListInfo[]) {
+  return new Promise<void>(resolve => {
+    if (datas.length == 0) {
+      return
+    }
+    let i = 0
+    function _run() {
+      if (i == datas.length) {
+        return
+      }
+      requestIdleCallback(idle => {
+        while (idle.timeRemaining() > 0 && i < datas.length) {
+          const item = datas[i]
+          tableData.push(item)
+          i++
+        }
+        _run()
       })
     }
-    console.log("newFile",newFile)
-    const loadingInstance = ElLoading.service({
-      target:'.form-wrap',
-      text:'loading'
-    })
-    setTimeout(async() => {
-      tableData.push(...tableList)
-
-
-
-      loadingInstance.close()
-    }, 500);
-    modelValue.value = false
-  //tableData
-
+    _run()
+    resolve()
+  })
 }
 
-function cancel(formEl: FormInstance | undefined){
+const confirm = async (formEl: any) => {
+  if (!formEl) return
+  if (!mintData.mintAmount) return
+  if (mintData.mintAmount > Number(currentNftsCollect.value!.currentTotalSupply))
+    return ElMessage.error(`${i18n.t('Nfts.lanuch_overLimit_amount')}`)
+  if (!mintData.cover) return ElMessage.error(`${i18n.t('Nfts.lanuch_cover_null')}`)
+  newFile.length = 0
+  let currentlength = tableData.length
+
+  const tableList: MintListInfo[] = []
+  for (let i = 1; i <= mintData.mintAmount; i++) {
+    tableList.push({
+      id: i + currentlength + mintedAmount.value ,
+      op: i18n.t('Nfts.lanuch_delete'),
+
+      cover: mintData.cover,
+      source: mintData.cover?.fileName,
+      desc: mintData.desc,
+      //receiver: mintData.receiver ?? connectionStore.userInfo.address,
+      classify: mintData.classify,
+    })
+    newFile.push({
+      file: mintData.cover.originFile!,
+      picId: mintData.cover.sha256,
+    })
+  }
+  console.log('newFile', newFile)
+  const loadingInstance = ElLoading.service({
+    target: '.form-wrap',
+    text: 'loading',
+  })
+
+  setTimeout(() => {
+    performChunk(tableList).then(() => loadingInstance.close())
+  }, 500)
+
+  // setTimeout(async() => {
+  //   tableData.push(...tableList)
+
+  //   loadingInstance.close()
+  // }, 500);
+  modelValue.value = false
+  //tableData
+}
+
+function cancel(formEl: any) {
   if (!formEl) return
   formEl.resetFields()
   modelValue.value = false
-
 }
 
-
-function triggleCollection(pinId:string){
-  if( pinId == currentNftsCollect.value.collectionPinId) {
-    let collection=MyCollectionList.value.find(item=>{
+function triggleCollection(pinId: string) {
+  if (pinId == currentNftsCollect.value!.collectionPinId) {
+    let collection = MyCollectionList.value.find(item => {
       return item.collectionPinId == pinId
     })
-    genesisCollection.value=collection?.name
-  }else{
+    genesisCollection.value = collection?.name
+  } else {
     const loadingInstance = ElLoading.service({
-      target:'.body'
+      target: '.body',
     })
 
-   setTimeout(() => {
-    router.push({
-    name: 'nftsCollection',
-    params: {
-      pinid:pinId
-    },
-  })
+    setTimeout(() => {
+      router.push({
+        name: 'nftsCollection',
+        params: {
+          pinid: pinId,
+        },
+      })
 
-  loadingInstance.close()
-   }, 300);
+      loadingInstance.close()
+    }, 300)
     // currentNftsCollect.value=MyCollectionList.value.find(item=>{
     //   return item.collectionPinId == pinId
     // })
   }
+}
 
-
+function checkIsSameFile(pre:{file: File;
+    picId: string},cur:{file: File;
+    picId: string}){
+  if(cur.picId == pre.picId){
+    return true
+  }else return false
 }
 
 async function finallyMint() {
-  try {
-    const attachments:AttachmentItem[]=[]
-    const body=tableData.map((item,index)=>{
-      attachments.push(item.cover)
-      return {
-        pinid: '',
-        name: `#${index+1}`,
-        desc: item.desc,
-        cover: '',
-        metadata:{
-        classify:toRaw(item.classify)
-        }
-        }
-    })
-    console.log("body",body,attachments)
-    debugger
-   const mintItemRes= await mintNftItemEntity({
-      collectionName:genesisCollection.value,
-      body:body,
-      attachments:attachments,
+    try {
+    let params=new FormData()
+    for(let i=0;i<newFile.length;i++){
+      params.append('file',newFile[i].file)
+      params.append('id',newFile[i].picId)
+    }
+    uploadNftsFile(params).then((res)=>{
+      tableData.length=0
+      if(currentNftsCollect.value?.autoMarket && !currentNftsCollect.value?.initialPrice){
+        genesisStore.updateItem({
+          ...currentNftsCollect.value,
+          // initialPrice:autoMaketData.value.initialPrice!,
+          // priceGrowth:autoMaketData.value.priceGrowth!
+        })
+        currentNftsCollect.value.initialPrice=autoMaketData.value.initialPrice
+        currentNftsCollect.value.priceGrowth=autoMaketData.value.priceGrowth
+      }
+      genesisStore.updateCurrentTotalSupply({
+            name:currentNftsCollect.value!.name,
+            count:newFile.length
+          })
 
-      noBroadcast:false
     })
-    console.log("mintItemRes",mintItemRes)
-    debugger
+
   } catch (error) {
-    console.log("error",error)
-    debugger
+
   }
 
-    // try {
-    //   let params=new FormData()
-    //   newFile.forEach((item)=>{
-    //   params.append('file',item.file)
-    //   params.append('id',item.picId)
-    //   })
-    //   let config={
-    //     headers:{'Content-Type':'multipart/form-data'}
-    //   }
-    //   axios.post('http://127.0.0.1:3001/uploads',params,config).then((res)=>{
 
-    //     if(res.data.code == 200){
-    //       tableData.forEach((item)=>{
-    //         item.process = 100
-    //       })
-    //     }
-    //   })
 
-    // } catch (error) {
+  // try {
 
-    // }
+
+
+  //   const attachments: AttachmentItem[] = []
+  //   const body = tableData.map((item, index) => {
+  //     attachments.push(item.cover)
+  //     return {
+  //       pinid: '',
+  //       name: `#${index + 1}`,
+  //       desc: item.desc,
+  //       cover: '',
+  //       metadata: {
+  //         classify: toRaw(item.classify),
+  //       },
+  //     }
+  //   })
+  //   console.log('body', body, attachments)
+  //   debugger
+  //   const mintItemRes = await mintNftItemEntity({
+  //     collectionName: genesisCollection.value,
+  //     body: body,
+  //     attachments: attachments,
+
+  //     noBroadcast: false,
+  //   })
+  //   console.log('mintItemRes', mintItemRes)
+  //   debugger
+  // } catch (error) {
+  //   console.log('error', error)
+  //   debugger
+  // }
+
+
 }
 
-
-const onSubmitNewCollection = async() => {
-
-
+const onSubmitNewCollection = async () => {
   genesisStore.add({
-    totalSupply:createCollectionform.totalSupply,
-    name:createCollectionform.name,
-    desc:createCollectionform.desc,
-    cover:createCollectionform.cover,
-    website:createCollectionform.website,
-    metaData:null,
-    royaltyRate:createCollectionform.royaltyRate,
-    chain:createCollectionform.chain == 'Bitcoin' ? CollectionMintChain.btc  : CollectionMintChain.mvc,
-    collectionPinId:'',
-    currentTotalSupply:createCollectionform.totalSupply,
-    autoMarket:createCollectionform.autoMakeMarket,
-    genesisTimestamp:Date.now(),
-    metaId:connectionStore.last.metaid
+    totalSupply: createCollectionform.totalSupply,
+    name: createCollectionform.name,
+    desc: createCollectionform.desc,
+    cover: createCollectionform.cover,
+    website: createCollectionform.website,
+    metaData: null,
+    royaltyRate: createCollectionform.royaltyRate,
+    chain:
+      createCollectionform.chain == 'Bitcoin' ? CollectionMintChain.btc : CollectionMintChain.mvc,
+    collectionPinId: '',
+    currentTotalSupply: createCollectionform.totalSupply,
+    autoMarket: createCollectionform.autoMakeMarket,
+    genesisTimestamp: Date.now(),
+    metaId: connectionStore.last.metaid,
+    initialPrice:'',
+    priceGrowth:''
   })
 
   router.push({
     name: 'nftsCollection',
     params: {
-      pinid:'66666'
+      pinid: '66666',
     },
   })
-
-
-
 }
 
-function removeCollectionCover(e:any){
-    e.stopPropagation();
-    if(createCollectionform.cover){
-      createCollectionform.cover =''
-      createCollectionform.coverHex=''
-    }else return
+function removeCollectionCover(e: any) {
+  e.stopPropagation()
+  if (createCollectionform.cover) {
+    createCollectionform.cover = ''
+    createCollectionform.coverHex = ''
+  } else return
 }
 
-
-const beforeAvatarUpload: UploadProps['beforeUpload'] = async(rawFile) => {
-  if (!fileType.includes(rawFile.type) ) {
+const beforeAvatarUpload:UploadProps['beforeUpload'] = async (rawFile) => {
+  if (!fileType.includes(rawFile.type)) {
     ElMessage.error('Avatar picture must be JPG/PNG/GIF/WEBP format!')
     return false
   } else if (rawFile.size / 1024 / 1024 > 1) {
     ElMessage.error('Avatar picture size can not exceed 1MB!')
     return false
   }
-    const compressed = await compressImage(rawFile)
-    const result = await FileToAttachmentItem(compressed,0,true)
-    createCollectionform.cover =result.base64!
-    createCollectionform.coverHex=result.data
+  const compressed = await compressImage(rawFile)
+  const result = await FileToAttachmentItem(compressed, 0, true)
+  createCollectionform.cover = result.base64!
+  createCollectionform.coverHex = result.data
 
   return true
 }
