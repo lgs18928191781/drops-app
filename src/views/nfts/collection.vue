@@ -746,7 +746,7 @@ const createCollectionform = reactive({
   autoMakeMarket: true,
 })
 
-const newFile: Array<{ file: File; picId: string }> = reactive([])
+const newFile: Array<{ file: File; picId: string,itemDesc:string,classify:string[] }> = reactive([])
 
 const genesisCollection = ref('')
 const currentNftsCollect = ref<Mrc721CollectionItem>()
@@ -954,6 +954,8 @@ const confirm = async (formEl: any) => {
     newFile.push({
       file: mintData.cover.originFile!,
       picId: mintData.cover.sha256,
+      itemDesc:mintData.desc,
+      classify:mintData.classify
     })
   }
   console.log('newFile', newFile)
@@ -1021,8 +1023,12 @@ async function finallyMint() {
     let params=new FormData()
     for(let i=0;i<newFile.length;i++){
       params.append('file',newFile[i].file)
-      params.append('id',newFile[i].picId)
+      params.append('picId',newFile[i].picId)
+      params.append('itemDesc',newFile[i].itemDesc)
+      params.append('classify',JSON.stringify(newFile[i].classify))
     }
+    params.append('metaid',currentNftsCollect.value?.metaId!)
+    params.append('name',currentNftsCollect.value?.name!)
     uploadNftsFile(params).then((res)=>{
       tableData.length=0
       if(currentNftsCollect.value?.autoMarket && !currentNftsCollect.value?.initialPrice){

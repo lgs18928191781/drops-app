@@ -64,10 +64,8 @@ app
   .mount('#app')
 
 // const launchInterval = setInterval(() => {
-//   if (window.bitcoinjs && window.ecpair) {
-//     window.bitcoinjs.initEccLib(secp256k1)
+//   if (!window.metaidwallet) {
 //     const app = createApp(App)
-
 //     StartSentry({ app, router })
 //     // 挂载全局过滤器
 //     // @ts-ignore
@@ -79,10 +77,8 @@ app
 //     app.component('Image', Image)
 //     app.component('UserName', UserName)
 //     app.component('Icon', Icon)
-
 //     app.use(VueVirtualScroller)
-//     // app.component('Dialog', GlobalDialog)
-
+//     // @ts-ignore
 //     app
 //       .use(pinia)
 //       .use(router)
