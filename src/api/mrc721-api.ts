@@ -25,3 +25,11 @@ const NftOrders = new HttpRequest(`http://127.0.0.1:3001/nfts-orders`, {
 export const uploadNftsFile = async (params: FormData) => {
   return NftOrders.post('/uploads', params, { headers: { 'Content-Type': 'multipart/form-data' } })
 }
+
+export const genesisCollection = async (params: { metaId: string; name: string }) => {
+  return NftOrders.post('/genesis-collection', params)
+}
+
+export const issueCollection = async (params: { collectionInfo: Mrc721CollectionItem }) => {
+  return NftOrders.post('/issue-collection', params)
+}

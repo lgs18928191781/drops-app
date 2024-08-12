@@ -534,7 +534,10 @@ export function useMetaIDEntity(){
                         }
                     })
                      if(isEmpty(createCollectionDescRes.revealTxIds)){
-                        return createCollectionDescRes
+                        return {
+                            createCollectionDescRes,
+                            coverPinId:finalBody.cover
+                        }
                     }
 
    }catch (error) {

@@ -128,7 +128,7 @@ import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
 import { fileType,royaltyRate } from '@/config'
 import {usePayModalEntity} from '@/hooks/use-pay-modal-entity'
 import { useI18n } from 'vue-i18n'
-
+import {genesisCollection,issueCollection} from '@/api/mrc721-api'
 const router=useRouter()
 const route=useRoute()
 const i18n = useI18n()
@@ -149,16 +149,17 @@ const form = reactive({
 
 
 const onSubmit = async() => {
+  debugger
   //const result=await awaitPayConfrim(SdkPayType.BTC,1000,10000)
   const existNfts= genesisStore.getList.find((item)=>item.name == form.name)
   debugger
-  let mintRes
+  // let mintRes
   try {
   if(existNfts?.collectionPinId){
     return ElMessage.error(`${i18n.t('Nfts.lanuch_existNfts')}`)
   }else if(existNfts?.name){
 
-    mintRes = await mintNftEntity({
+    var {createCollectionDescRes,coverPinId} = await mintNftEntity({
     body:{
       name:form.name,
       totalSupply:+form.totalSupply,
@@ -173,7 +174,8 @@ const onSubmit = async() => {
     collectionName:existNfts.name
   })
   }else{
-    mintRes = await mintNftEntity({
+    debugger
+    var {createCollectionDescRes,coverPinId} = await mintNftEntity({
     body:{
       name:form.name,
       totalSupply:+form.totalSupply,
@@ -185,22 +187,53 @@ const onSubmit = async() => {
     },
     attachments:[form.originFile],
   })
+
+
   }
 
 
 
-  console.log("mintRes",mintRes)
-  if( mintRes?.revealTxIds.length){
+  console.log("createCollectionDescRes",createCollectionDescRes)
+  debugger
+  if( createCollectionDescRes?.revealTxIds.length){
+    const genesisRes= await genesisCollection({
+        metaId:connectionStore.last.metaid,
+        name:form.name
+      })
+
+      console.log("genesisRes",genesisRes)
+      debugger
+      const collectionInfo={
+        name:form.name,
+        coverPinid:coverPinId,
+        desc:form.desc,
+        website:form.website,
+        metaData:JSON.stringify(form.metadata),
+        totalSupply:+form.totalSupply,
+        chain:route.params.chain as CollectionMintChain,
+        autoMarket:route.params.type == '0' ? false : true,
+        royaltyRate:+form.royaltyRate,
+        collectionPinId:`${createCollectionDescRes?.revealTxIds[0]!}i0`,
+        metaId:connectionStore.last.metaid,
+        address:connectionStore.last.user.address
+      }
+      const issueRes=await issueCollection({
+        collectionInfo
+      })
+
+      console.log("issueRes",issueRes)
+
+      debugger
     genesisStore.add({
-    totalSupply:form.totalSupply,
+    totalSupply:+form.totalSupply,
     name:form.name,
     desc:form.desc,
     cover:form.cover,
     website:form.website,
-    royaltyRate:form.royaltyRate,
+    royaltyRate:+form.royaltyRate,
     metaData:form.metadata,
     chain:route.params.chain == 'btc' ? CollectionMintChain.btc : CollectionMintChain.mvc,
-    collectionPinId:mintRes?.revealTxIds[0]!,
+    collectionPinId:`${createCollectionDescRes?.revealTxIds[0]!}i0`,
     currentTotalSupply:form.totalSupply,
     autoMarket:route.params.type == '0' ? false : true,
     genesisTimestamp:Date.now(),
@@ -210,7 +243,7 @@ const onSubmit = async() => {
   })
   debugger
 
-  toNftsDetail(mintRes?.revealTxIds[0]!)
+  toNftsDetail(`${createCollectionDescRes?.revealTxIds[0]!}i0`)
 
   }
 

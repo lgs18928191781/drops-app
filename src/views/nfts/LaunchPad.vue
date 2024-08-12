@@ -80,12 +80,14 @@ const options = [
 const optionMakeMarket = reactive([
   {
     value: true,
-    label: computed(() =>
-      chain.value == NftsLaunchPadChain.btc
-        ? i18n.t('Nfts.launch_noSupport')
-        : i18n.t('Nfts.launch_yes')
+    label: computed(
+      () => i18n.t('Nfts.launch_yes')
+      // chain.value == NftsLaunchPadChain.btc
+      //   ? i18n.t('Nfts.launch_noSupport')
+      //   : i18n.t('Nfts.launch_yes')
     ),
-    disabled: computed(() => chain.value == NftsLaunchPadChain.btc),
+    disabled: false,
+    // disabled: computed(() => chain.value == NftsLaunchPadChain.btc),
   },
   {
     value: false,
@@ -98,7 +100,8 @@ function next() {
     name: 'genesisNfts',
     params: {
       chain: chainSymbol.value,
-      type: chainSymbol.value == NftsLaunchPadChainSymbol.btc ? 0 : useMakeMarket.value ? 1 : 0,
+      type: useMakeMarket.value ? 1 : 0,
+      // type: chainSymbol.value == NftsLaunchPadChainSymbol.btc ? 0 : useMakeMarket.value ? 1 : 0,
     },
   })
 }
