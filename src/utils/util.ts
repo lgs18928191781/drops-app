@@ -87,6 +87,10 @@ export function randomString() {
     .replace('.', '')
 }
 
+export const raise = (err: string): never => {
+  throw new Error(err)
+}
+
 export function getTimestampInSeconds() {
   return Math.floor(Date.now() / 1000)
 }

@@ -1397,6 +1397,9 @@
     "lanuch_Y": "Price",
     "lanuch_set_price_increase": "Please enter the Price Growth Exponent",
     "lanuch_set_init_price": "Please enter the Initial Price",
-    "lanuch_nftIndex": "Id"
+    "lanuch_nftIndex": "Id",
+    "lanuch_generate_commit_address_fail": "Generate commit address fail",
+    "mint_price_unit": "Unit : BTC",
+    "lanuch_automarket_set": "The initial price and price growth rate for the automated market maker cannot be empty."
   }
 }

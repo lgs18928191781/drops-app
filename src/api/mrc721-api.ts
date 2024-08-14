@@ -22,6 +22,12 @@ const NftOrders = new HttpRequest(`http://127.0.0.1:3001/nfts-orders`, {
   },
 }).request
 
+export const generateCommitAddress = async (params: FormData) => {
+  return NftOrders.post('/generate-commit-address', params, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+}
+
 export const uploadNftsFile = async (params: FormData) => {
   return NftOrders.post('/uploads', params, { headers: { 'Content-Type': 'multipart/form-data' } })
 }
@@ -32,4 +38,12 @@ export const genesisCollection = async (params: { metaId: string; name: string }
 
 export const issueCollection = async (params: { collectionInfo: Mrc721CollectionItem }) => {
   return NftOrders.post('/issue-collection', params)
+}
+
+export const estimatedMintFee = async (params: {
+  address: string
+  outputAmount: number
+  feeb: number
+}) => {
+  return NftOrders.post('/get-fees', params)
 }

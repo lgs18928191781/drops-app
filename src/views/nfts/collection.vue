@@ -115,7 +115,10 @@
         <div class="config-wrap pr-10 border-r border-[#EDEFF2] w-1/5">
           <div class="flex flex-col">
             <div class="">
-              <span>{{ $t('Nfts.lanuch_auto_market_setprice') }}</span>
+              <div>
+                <span>{{ $t('Nfts.lanuch_auto_market_setprice') }}</span>
+                <span class="ml-1 font-medium">({{ $t('Nfts.mint_price_unit') }})</span>
+              </div>
               <el-input
                 :placeholder="$t('Nfts.lanuch_set_init_price')"
                 class="h-12 mt-2"
@@ -654,14 +657,19 @@ import { CollectionMintChain } from '@/enum'
 import { Select } from '@element-plus/icons-vue'
 import { useConnectionStore } from '@/stores/connection'
 import { ElLoading, ElMessage } from 'element-plus'
-import { NftsLaunchPadChain, NftsLaunchPadChainSymbol } from '@/data/constants'
+import { NftsLaunchPadChain, NftsLaunchPadChainSymbol,SIGHASH_ALL } from '@/data/constants'
 import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
 import { Line } from 'vue-chartjs'
 import { useEchart } from '@/hooks/use-echart-tool'
 import type {  FormInstance, FormRules,UploadProps } from 'element-plus'
-
-import { uploadNftsFile} from '@/api/mrc721-api'
+import { useFeebStore } from '@/stores/feeb'
+import { uploadNftsFile,generateCommitAddress,estimatedMintFee} from '@/api/mrc721-api'
 import Decimal from 'decimal.js-light'
+import {exclusiveChange} from '@/hooks/use-buildtx-entity'
+import { useNetworkStore } from '@/stores/network'
+import { useBtcJsStore } from '@/stores/btcjs'
+import * as secp256k1 from 'tiny-secp256k1'
+
 const i18n = useI18n()
 const genesisStore = useGenesisStore()
 const connectionStore = useConnectionStore()
@@ -674,8 +682,10 @@ const defiendFooter = ref(true)
 const chain = ref<string>(NftsLaunchPadChain.btc)
 const router = useRouter()
 const route = useRoute()
+const networkStore=useNetworkStore()
 const { mintNftItemEntity } = useMetaIDEntity()
 const { data, options } = useEchart()
+const feeStore = useFeebStore()
 const chartRef = ref()
 const autoMaketData=ref({
   initialPrice:'',
@@ -742,11 +752,12 @@ const createCollectionform = reactive({
   totalSupply: '0',
   royaltyRate: '0',
   website: '',
+  metadata:null,
   chain: NftsLaunchPadChain.btc,
   autoMakeMarket: true,
 })
 
-const newFile: Array<{ file: File; picId: string,itemDesc:string,classify:string[] }> = reactive([])
+const newFile: Array<{id:number, file: File; picId: string,itemDesc:string,classify:string[] }> = reactive([])
 
 const genesisCollection = ref('')
 const currentNftsCollect = ref<Mrc721CollectionItem>()
@@ -858,20 +869,32 @@ function getCollectionData() {
 }
 
 function genesisNfts() {
-  createNftsModel.value = true
+  //createNftsModel.value = true
+  router.push('/nfts')
 }
 
 function removeItem(item: any) {
   let newArr = tableData.filter(ele => {
     return ele.id !== item.id
   })
+  let newFileList=newFile.filter(ele => {
+    return ele.id !== item.id
+  })
+  console.log("newFILE",newFile)
   debugger
   tableData.length = 0
+  newFile.length=0
   newArr.map((item,index)=>{
       item.id=index+1+mintedAmount.value
   })
+  newFileList.map((item,index)=>{
+      item.id=index+1+mintedAmount.value
+  })
+
+
 
   tableData.push(...newArr)
+  newFile.push(...newFileList)
 }
 
 function editNft(item: MintListInfo) {
@@ -942,7 +965,7 @@ const confirm = async (formEl: any) => {
   if (mintData.mintAmount > Number(currentNftsCollect.value!.currentTotalSupply))
     return ElMessage.error(`${i18n.t('Nfts.lanuch_overLimit_amount')}`)
   if (!mintData.cover) return ElMessage.error(`${i18n.t('Nfts.lanuch_cover_null')}`)
-  newFile.length = 0
+  //newFile.length = 0
   let currentlength = tableData.length
 
   const tableList: MintListInfo[] = []
@@ -958,6 +981,7 @@ const confirm = async (formEl: any) => {
       classify: mintData.classify,
     })
     newFile.push({
+      id:i + currentlength + mintedAmount.value,
       file: mintData.cover.originFile!,
       picId: mintData.cover.sha256,
       itemDesc:mintData.desc,
@@ -1024,8 +1048,60 @@ function checkIsSameFile(pre:{file: File;
   }else return false
 }
 
-async function finallyMint() {
+async function preMint() {
     try {
+      let params=new FormData()
+
+      for(let i=0;i<newFile.length;i++){
+      params.append('file',newFile[i].file)
+    }
+    params.append('name',currentNftsCollect.value?.name!)
+    if(!currentNftsCollect.value?.initialPrice && autoMaketData.value.initialPrice){
+        params.append('initialPrice',new Decimal(autoMaketData.value.initialPrice).mul(10**8).toString())
+        params.append('priceGrowth',autoMaketData.value.priceGrowth)
+      }
+    const res= await generateCommitAddress(params)
+    console.log("res",res)
+    debugger
+    if(res?.code == 200){
+      return res.data
+    }else return []
+
+
+    } catch (error) {
+
+    }
+}
+
+async function finallyMint() {
+
+    // await estimatedMintFee({
+    //   address:connectionStore.last.user.address,
+    //   outputAmount:newFile.length,
+    //   feeb:feeStore.last.currentFeeb.feeRate
+    // })
+    // return
+    const bitcoinjs = useBtcJsStore().get!
+    const psbt =new bitcoinjs.Psbt({ network: networkStore.typedNetwork })
+    for(let i =0;i<newFile.length;i++){
+      psbt.addOutput({
+        value: 546,
+        address: connectionStore.last.user.address,
+      })
+    }
+  const estiomateresult= await exclusiveChange({
+      psbt: psbt,
+      maxUtxosCount:3,
+      sighashType:SIGHASH_ALL,
+      feeb:feeStore.last.currentFeeb.feeRate,
+   })
+
+   console.log("estiomateresult",estiomateresult)
+      return
+    try {
+    if(!autoMaketData.value.initialPrice && !autoMaketData.value.priceGrowth){
+      return ElMessage.error(`${i18n.t('Nfts.lanuch_automarket_set')}`)
+    }
     let params=new FormData()
     for(let i=0;i<newFile.length;i++){
       params.append('file',newFile[i].file)
@@ -1035,8 +1111,23 @@ async function finallyMint() {
     }
     params.append('metaid',currentNftsCollect.value?.metaId!)
     params.append('name',currentNftsCollect.value?.name!)
+
+    const commitAddressList =await preMint()
+    debugger
+    if(commitAddressList.length){
+
+      params.append('commitAddress',JSON.stringify(commitAddressList))
+
+
+    }else{
+      throw new Error(`${i18n.t('Nfts.lanuch_generate_commit_address_fail')}`)
+    }
+
+    debugger
     uploadNftsFile(params).then((res)=>{
-      tableData.length=0
+      if(res.code == 200){
+        tableData.length=0
+        newFile.length=0
       if(currentNftsCollect.value?.autoMarket && !currentNftsCollect.value?.initialPrice){
         genesisStore.updateItem({
           ...currentNftsCollect.value,
@@ -1050,6 +1141,9 @@ async function finallyMint() {
             name:currentNftsCollect.value!.name,
             count:newFile.length
           })
+      }
+
+
 
     })
 
@@ -1096,24 +1190,66 @@ async function finallyMint() {
 }
 
 const onSubmitNewCollection = async () => {
-  genesisStore.add({
-    totalSupply: createCollectionform.totalSupply,
-    name: createCollectionform.name,
-    desc: createCollectionform.desc,
-    cover: createCollectionform.cover,
-    website: createCollectionform.website,
-    metaData: null,
-    royaltyRate: createCollectionform.royaltyRate,
-    chain:
-      createCollectionform.chain == 'Bitcoin' ? CollectionMintChain.btc : CollectionMintChain.mvc,
-    collectionPinId: '',
-    currentTotalSupply: createCollectionform.totalSupply,
-    autoMarket: createCollectionform.autoMakeMarket,
-    genesisTimestamp: Date.now(),
-    metaId: connectionStore.last.metaid,
-    initialPrice:'',
-    priceGrowth:''
-  })
+  router.push('/nfts')
+  // const existNfts= genesisStore.getList.find((item)=>item.name == createCollectionform.name)
+  // try {
+  //   if(existNfts?.collectionPinId){
+  //   return ElMessage.error(`${i18n.t('Nfts.lanuch_existNfts')}`)
+  // }else if(existNfts?.name){
+
+  //   var {createCollectionDescRes,coverPinId} = await mintNftEntity({
+  //   body:{
+  //     name:createCollectionform.name,
+  //     totalSupply:+createCollectionform.totalSupply,
+  //     royaltyRate:+createCollectionform.royaltyRate,
+  //     desc:createCollectionform.desc,
+  //     website:createCollectionform.website,
+  //     cover:'',
+  //     metadata:createCollectionform.metadata
+  //   },
+  //   attachments:[form.originFile],
+  //   noBroadcast:false,
+  //   collectionName:existNfts.name
+  // })
+  // }else{
+  //   debugger
+  //   var {createCollectionDescRes,coverPinId} = await mintNftEntity({
+  //   body:{
+  //     name:form.name,
+  //     totalSupply:+form.totalSupply,
+  //     royaltyRate:+form.royaltyRate,
+  //     desc:form.desc,
+  //     website:form.website,
+  //     cover:'',
+  //     metadata:form.metadata
+  //   },
+  //   attachments:[form.originFile],
+  // })
+
+
+  // }
+  // } catch (error) {
+
+  // }
+  // genesisStore.add({
+  //   totalSupply: +createCollectionform.totalSupply,
+  //   coverPinid:'',
+  //   name: createCollectionform.name,
+  //   desc: createCollectionform.desc,
+  //   cover: createCollectionform.cover,
+  //   website: createCollectionform.website,
+  //   metaData: 'null',
+  //   royaltyRate: +createCollectionform.royaltyRate,
+  //   chain:
+  //     createCollectionform.chain == 'Bitcoin' ? CollectionMintChain.btc : CollectionMintChain.mvc,
+  //   collectionPinId: '',
+  //   currentTotalSupply: createCollectionform.totalSupply,
+  //   autoMarket: createCollectionform.autoMakeMarket,
+  //   genesisTimestamp: Date.now(),
+  //   metaId: connectionStore.last.metaid,
+  //   initialPrice:'',
+  //   priceGrowth:''
+  // })
 
   // router.push({
   //   name: 'nftsCollection',

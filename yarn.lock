@@ -6066,6 +6066,15 @@ ecc-jsbn@~0.1.1:
     jsbn "~0.1.0"
     safer-buffer "^2.1.0"
 
+ecpair@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.npmmirror.com/ecpair/-/ecpair-2.1.0.tgz#673f826b1d80d5eb091b8e2010c6b588e8d2cb45"
+  integrity sha512-cL/mh3MtJutFOvFc27GPZE2pWL3a3k4YvzUWEOvilnfZVlH3Jwgx/7d6tlD7/75tNk8TG2m+7Kgtz0SI1tWcqw==
+  dependencies:
+    randombytes "^2.1.0"
+    typeforce "^1.18.0"
+    wif "^2.0.6"
+
 edge-runtime@2.5.9:
   version "2.5.9"
   resolved "https://registry.npmmirror.com/edge-runtime/-/edge-runtime-2.5.9.tgz#9daeb329f0339b8377483f230789b3d68f45f1d9"
@@ -13047,6 +13056,13 @@ tiny-emitter@^2.0.0:
   resolved "https://registry.npmmirror.com/tiny-emitter/-/tiny-emitter-2.1.0.tgz#1d1a56edfc51c43e863cbb5382a72330e3555423"
   integrity sha512-NB6Dk1A9xgQPMoGqC5CVXn123gWyte215ONT5Pp5a0yt4nlEoO1ZWeCwpncaekPHXO60i47ihFnZPiRPjRMq4Q==
 
+tiny-secp256k1@^2.2.3:
+  version "2.2.3"
+  resolved "https://registry.npmmirror.com/tiny-secp256k1/-/tiny-secp256k1-2.2.3.tgz#fe1dde11a64fcee2091157d4b78bcb300feb9b65"
+  integrity sha512-SGcL07SxcPN2nGKHTCvRMkQLYPSoeFcvArUSCYtjVARiFAWU44cCIqYS0mYAU6nY7XfvwURuTIGo2Omt3ZQr0Q==
+  dependencies:
+    uint8array-tools "0.0.7"
+
 tmp@^0.0.33:
   version "0.0.33"
   resolved "https://registry.npmmirror.com/tmp/-/tmp-0.0.33.tgz#6d34335889768d21b2bcda0aa277ced3b1bfadf9"
@@ -13399,7 +13415,7 @@ typedarray.prototype.slice@^1.0.3:
     typed-array-buffer "^1.0.2"
     typed-array-byte-offset "^1.0.2"
 
-typeforce@^1.11.3, typeforce@^1.11.5:
+typeforce@^1.11.3, typeforce@^1.11.5, typeforce@^1.18.0:
   version "1.18.0"
   resolved "https://registry.npmmirror.com/typeforce/-/typeforce-1.18.0.tgz#d7416a2c5845e085034d70fcc5b6cc4a90edbfdc"
   integrity sha512-7uc1O8h1M1g0rArakJdf0uLRSSgFcYexrVoKo+bzJd32gd4gDy2L/Z+8/FjPnU9ydY3pEnVPtr9FyscYY60K1g==
@@ -14103,6 +14119,11 @@ vite-plugin-vue-inspector@^5.1.2:
     "@vue/compiler-dom" "^3.3.4"
     kolorist "^1.8.0"
     magic-string "^0.30.4"
+
+vite-plugin-wasm@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.npmmirror.com/vite-plugin-wasm/-/vite-plugin-wasm-3.3.0.tgz#2908ef2529bf8f33f4e549c8c6fda26ad273ca15"
+  integrity sha512-tVhz6w+W9MVsOCHzxo6SSMSswCeIw4HTrXEi6qL3IRzATl83jl09JVO1djBqPSwfjgnpVHNLYcaMbaDX5WB/pg==
 
 vite-svg-loader@^3.1.0:
   version "3.6.0"

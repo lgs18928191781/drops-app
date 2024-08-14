@@ -39,6 +39,7 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
 
       get: (state) => !!state.last,
       
+      getCurrentFeeb:(state)=>state.last.currentFeeb.feeRate
       
     },
   

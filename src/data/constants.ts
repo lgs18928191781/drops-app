@@ -1,6 +1,37 @@
 import { Network } from '@/stores/network'
 import {type EntitySchema} from '@metaid/metaid'
 
+// Sighash types
+export const SIGHASH_DEFAULT = 0x00
+export const SIGHASH_ALL = 0x01
+export const SIGHASH_NONE = 0x02
+export const SIGHASH_SINGLE = 0x03
+export const SIGHASH_ANYONECANPAY = 0x80
+export const SIGHASH_SINGLE_ANYONECANPAY = 0x83
+export const SIGHASH_NONE_ANYONECANPAY = 0x82
+export const SIGHASH_ALL_ANYONECANPAY = 0x81
+
+export const RELEASE_PAYLOAD_SIZE = 391
+export const RELEASE_TX_SIZE = RELEASE_PAYLOAD_SIZE + 68 + 31
+export const RECOVER_TX_SIZE = 363
+export const BUY_TX_SIZE = 500
+export const SELL_TX_SIZE = 673
+export const BID_TX_SIZE = 111 + 154 // pay + grant
+export const SEND_TX_SIZE = 140
+export const SWAP_TX_SIZE = 298
+export const SWAP_2X_TX_SIZE = 212 + 240 // 3 inputs
+export const RUNES_SWAP_2X_TX_SIZE = 260 + 280 // 3 inputs
+export const SWAP_POOL_ADD_TX_SIZE = 255
+export const INSCRIBE_TX_SIZE_FACTOR = 380
+export const TX_BASE_SIZE = 300
+
+export const DUMMY_UTXO_VALUE = 600
+export const DUST_UTXO_VALUE = 546
+export const MS_BRC20_UTXO_VALUE = 1000
+export const ONE_SERVICE_FEE = 10_000
+export const SELL_SERVICE_FEE = 16_000
+export const EXTRA_INPUT_MIN_VALUE = 600
+
 export const NETWORK: Network = import.meta.env.VITE_NETWORK || 'mainnet'
 
 // type EntitySchema = {

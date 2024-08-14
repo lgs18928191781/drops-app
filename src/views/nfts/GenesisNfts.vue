@@ -149,10 +149,10 @@ const form = reactive({
 
 
 const onSubmit = async() => {
-  debugger
+
   //const result=await awaitPayConfrim(SdkPayType.BTC,1000,10000)
   const existNfts= genesisStore.getList.find((item)=>item.name == form.name)
-  debugger
+
   // let mintRes
   try {
   if(existNfts?.collectionPinId){
@@ -215,7 +215,8 @@ const onSubmit = async() => {
         royaltyRate:+form.royaltyRate,
         collectionPinId:`${createCollectionDescRes?.revealTxIds[0]!}i0`,
         metaId:connectionStore.last.metaid,
-        address:connectionStore.last.user.address
+        address:connectionStore.last.user.address,
+
       }
       const issueRes=await issueCollection({
         collectionInfo

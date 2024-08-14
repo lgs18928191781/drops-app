@@ -7,6 +7,16 @@ declare interface IDialog {
   insideName?: string
 }
 
+declare interface BtcUtxos {
+  confirmed: boolean
+  inscriptions: any
+  outputIndex: number
+  satoshi: number
+  satoshis: number
+  txId: string
+  vout: number
+}
+
 declare interface Window {
   // bitcoinjs: BitcoinJs
   // ecpair: ECPairFactory
@@ -56,6 +66,7 @@ declare interface Window {
         status?: string
       }>
       getBalance: (chain: string) => Promise<{ total: number }>
+      getUtxos: () => Promise<BtcUtxos[]>
       inscribeTransfer: (tick: string) => Promise<string>
       signMessage: (message: string) => Promise<string>
       signPsbt: ({ psbtHex, options }: { psbtHex: string; options?: any }) => Promise<string>
