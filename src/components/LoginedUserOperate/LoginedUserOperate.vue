@@ -47,7 +47,7 @@
     </ElDropdown>
   </div>
 
-  <div class="gas-warp mr-3" v-show="connectStore.currentChain == 'btc'">
+  <div class="gas-warp mr-3 hidden md:block" v-show="connectStore.currentChain == 'btc'">
     <div>
       <!-- 更多操作 -->
       <ElDropdown trigger="click">
@@ -133,8 +133,13 @@
           </a>
         </el-tooltip>
         <!-- 🔍 搜索 -->
-        <a
+        <!-- <a
           class="flex flex-align-center flex-pack-center user-warp-item"
+          @click="layout.$patch({ isShowSearchModal: true })"
+          v-if="userStore.isAuthorized"
+        > -->
+        <a
+          class="hidden"
           @click="layout.$patch({ isShowSearchModal: true })"
           v-if="userStore.isAuthorized"
         >
@@ -143,15 +148,15 @@
       </template>
 
       <!-- 💰 钱包 -->
-      <a
+      <!-- <a
         class="flex flex-align-center flex-pack-center user-warp-item"
         @click="layout.$patch({ isShowWallet: true })"
       >
         <Icon name="wallet_fill" />
-      </a>
+      </a> -->
 
       <!-- 👤 头像 -->
-      <el-popover placement="bottom" :width="'auto'" trigger="hover">
+      <el-popover placement="bottom" :width="'auto'" trigger="hover" ref="popover">
         <template #reference>
           <UserAvatar
             :image="connectStore.userInfo.avatarId || connectStore.last.user.avatarId"
@@ -167,6 +172,7 @@
           :meta-id="connectStore.userInfo.metaid"
           :meta-name="''"
           :model-value="true"
+          @hide="hidePopover"
         />
         <!-- <UserPersonaVue /> -->
       </el-popover>
@@ -257,11 +263,12 @@ const isProduction = import.meta.env.MODE === 'mainnet'
 const feebStore = useFeebStore()
 const connectStore=useConnectionStore()
 const isShowSetUserInfo = ref(false)
+const popover = ref(null);
 
 const isShowUserMenu = ref(false)
 const chainType = ref([
   { name: 'Bitcoin', icon: 'logo_chain_btc',key:'btc' },
-  // { name: 'MicrovisionChain', icon: 'logo_chain_mvc',key:'mvc' },
+  { name: 'MicrovisionChain', icon: 'logo_chain_mvc',key:'mvc' },
 ])
 const userOperates = computed(() => {
   const result = [
@@ -353,6 +360,7 @@ async function selectChain(chain){
       feebStore.update()
     try {
       const btcConnector = await connectStore.connect(ConnectChain.btc)
+      console.log(btcConnector)
       userStore.updateUserInfo({
         address: btcConnector.address,
         loginType: 'MetaID',
@@ -372,6 +380,7 @@ async function selectChain(chain){
     }else{
       try {
         const mvcConnector = await connectStore.connect(ConnectChain.mvc)
+        console.log(mvcConnector)
         userStore.updateUserInfo({
           address: mvcConnector.address,
           loginType: 'MetaID',
@@ -388,6 +397,9 @@ async function selectChain(chain){
       }
     }
   }
+}
+function hidePopover(){
+  popover.value.hide();
 }
 
 

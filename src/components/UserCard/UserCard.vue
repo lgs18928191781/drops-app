@@ -66,13 +66,15 @@ const i18n = props.i18n ? props.i18n.global : useI18n()
 const emit = defineEmits(['hide'])
 
 function toUser(e: Event) {
-  router.push({
-    name: 'user',
-    params: {
-      metaId: props.metaId,
-    },
-  })
-  emit('hide')
+  console.log(props.metaId)
+  // router.push({
+  //   name: 'user',
+  //   params: {
+  //     metaId: props.metaId,
+  //   },
+  // })
+  // emit('hide')
+  window.open(`${import.meta.env.VITE_METAID_URL}/${props.metaId}`, '_blank')
 }
 
 async function toMessage() {

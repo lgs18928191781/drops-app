@@ -98,7 +98,7 @@ const sdkPayConfirm = {
 if (user && password) {
   setTimeout(() => {
     const genesisStore = useGenesisStore()
-    const followStore=useFollowStore()
+    const followStore = useFollowStore()
     genesisStore.initGenesis()
     followStore.initFollowList()
   }, 500)
@@ -163,9 +163,8 @@ export const useUserStore = defineStore('user', {
         const talkStore = useTalkStore()
         const rootStore = useRootStore()
         const genesStore = useGenesisStore()
-        const followStore=useFollowStore()
-       
-      
+        const followStore = useFollowStore()
+
         //
         // 只保存pwaInstall状态
         const pwaInstall = localStorage.getItem('pwaInstall')
@@ -179,7 +178,7 @@ export const useUserStore = defineStore('user', {
           localStorage.removeItem('useMetaletLogin')
           const state = await window.metaidwallet.isConnected()
           if (state) {
-            await window.metaidwallet.disconnect()
+            // await window.metaidwallet.disconnect()
             this.isNeedRefresh = true
           }
         }
@@ -208,13 +207,12 @@ export const useUserStore = defineStore('user', {
         resolve()
       })
     },
+    changeWalletAccount() {},
 
     updateUserInfo(userInfo: Partial<SetUserInfo>) {
-
-      
       return new Promise<void>(async resolve => {
         console.log('userInfo', userInfo)
-        
+
         //
         const { password, ...data } = userInfo
 
@@ -246,7 +244,7 @@ export const useUserStore = defineStore('user', {
         } catch {}
 
         const genesisStore = useGenesisStore()
-        const followStore=useFollowStore()
+        const followStore = useFollowStore()
         genesisStore.initGenesis()
         followStore.initFollowList()
         resolve()

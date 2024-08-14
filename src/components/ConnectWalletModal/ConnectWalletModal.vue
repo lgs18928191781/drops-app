@@ -316,7 +316,7 @@ const isMobile = computed(() => {
 })
 const chainTypeArray = ref([
   { name: 'Bitcoin', icon: 'select_logo_btc',key:'btc' },
-  // { name: 'MicrovisionChain', icon: 'select_logo_mvc',key:'mvc' },
+  { name: 'MicrovisionChain', icon: 'select_logo_mvc',key:'mvc' },
 ])
 const mateImageUrl = () => {
   if (chainType.value == 'btc') {

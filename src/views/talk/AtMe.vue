@@ -33,6 +33,8 @@ import AtMeHeader from './components/AtMeHeader.vue'
 import TheInput from './components/TheInput.vue'
 import TheErrorBox from './components/TheErrorBox.vue'
 import { useLayoutStore } from '@/stores/layout'
+import { useConnectionStore } from '@/stores/connection'
+import { useFeebStore } from '@/stores/feeb'
 
 const MessageList = defineAsyncComponent({
   loader: () => import('./components/MessageList.vue'),
@@ -43,6 +45,8 @@ const talk = useTalkStore()
 const router = useRouter()
 const layout = useLayoutStore()
 const MessageListRef = ref()
+const connectStore = useConnectionStore()
+const feebStore = useFeebStore()
 
 const { channelId } = route.params
 const quote: { val: any } = reactive({ val: undefined })
@@ -53,7 +57,23 @@ function toQuote() {
 
 provide('Reply', quote)
 onMounted(async () => {
-  
+  // const setUserInfoRes = await connectStore.last.inscribe(
+  //   [
+  //   {
+  //                   body:params.body.followMetaId,
+  //                   flag:import.meta.env.VITE_BTC_METAID_FLAG
+  //                  }
+  //   ],
+  //   {
+  //                   noBroadcast:'no',
+  //                   feeRate: feebStore.last.currentFeeb.feeRate,
+  //                   service: {
+  //                       address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
+  //                       satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
+  //                   }
+  //               }
+  // )
+
   layout.isShowUserInfo = false
   await talk.initCommunity('@me')
 
