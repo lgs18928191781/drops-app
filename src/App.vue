@@ -108,10 +108,8 @@ onMounted(async () => {
     await connectorStore.sync()
     console.log(connectorStore.last._isConnected)
     if (connectorStore.last._isConnected) {
-      alert(666666)
       await followStore.get()
       console.log(window.metaidwallet)
-
       // await metaidEntity.payCommentEntity({
       //   body: {
       //     content: `评论了一下下`,
