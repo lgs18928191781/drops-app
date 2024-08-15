@@ -66,7 +66,7 @@ declare interface Window {
         status?: string
       }>
       getBalance: (chain: string) => Promise<{ total: number }>
-      getUtxos: () => Promise<BtcUtxos[]>
+      getUtxos: (needRawTx?: boolean, useUnconfirmed?: boolean) => Promise<BtcUtxos[]>
       inscribeTransfer: (tick: string) => Promise<string>
       signMessage: (message: string) => Promise<string>
       signPsbt: ({ psbtHex, options }: { psbtHex: string; options?: any }) => Promise<string>

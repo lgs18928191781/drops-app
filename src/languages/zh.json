@@ -1394,6 +1394,12 @@
     "lanuch_nftIndex": "序号",
     "lanuch_generate_commit_address_fail": "生成地址失败",
     "mint_price_unit": "单位 ：BTC",
-    "lanuch_automarket_set": "自动造市初始价格和价格增长不能为空"
+    "lanuch_automarket_set": "自动造市初始价格和价格增长不能为空",
+    "lanuch_baseFee": "基础费用",
+    "service_fee": "服务费",
+    "miner_fee": "上链费",
+    "feebs": "费率",
+    "total_fee": "总费用",
+    "cancel_transation": "交易取消"
   }
 }

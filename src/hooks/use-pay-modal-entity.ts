@@ -6,8 +6,16 @@ import { router } from '@/router'
 import { useLayoutStore } from '@/stores/layout'
 import GlobalPayConfirmModalVue from '@/components/PayModal/globalPayConfrim.vue'
 
+export type feeInfoType = {
+  basic: number
+  service: number
+  miner: number
+  feeb: number
+  total: number
+}
+
 export function usePayModalEntity() {
-  function awaitPayConfrim(payType: SdkPayType, useAmount: number, balance: number) {
+  function awaitPayConfrim(payType: SdkPayType, useAmount: number, feeInfo: feeInfoType) {
     return new Promise<boolean>((resolve, reject) => {
       const userStore = useUserStore()
       if (
@@ -26,7 +34,7 @@ export function usePayModalEntity() {
           h(GlobalPayConfirmModalVue, {
             i18n: i18n.global,
             useAmount,
-            balance,
+            feeInfo,
             router,
             payType,
 

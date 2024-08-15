@@ -7,11 +7,7 @@
   >
     <div class="global-pay-confirm">
       <div class="header">
-        <span class="title">
-          {{
-            balance >= useAmount ? i18n.t('SDK.payconfirm.Payment') : i18n.t('Insufficient balance')
-          }}</span
-        >
+        <span class="title"> {{ i18n.t('SDK.payconfirm.Payment') }}</span>
 
         <a class="close flex flex-align-center flex-pack-center" @click="cancel">
           <Icon name="x_mark" />
@@ -31,9 +27,52 @@
         </div>
       </div>
 
-      <div class="balance">
-        <span>{{ i18n.t('SDK.payconfirm.My') }}{{ payType }}：</span>{{ space(balance) }}
+      <div class="text-sm">
+        <div class="py-4 flex flex-col">
+          <div class="py-2 flex flex-row items-center justify-between">
+            <div class="text-[#909399]">{{ i18n.t('Nfts.lanuch_baseFee') }}</div>
+            <div>
+              <span class="mr-1">{{ space(feeInfo.basic) }}</span>
+              <span>{{ payType }}</span>
+            </div>
+          </div>
+          <div class="py-2 flex flex-row items-center justify-between">
+            <div class="text-[#909399]">{{ i18n.t('Nfts.service_fee') }}</div>
+            <div>
+              <span class="mr-1">{{ space(feeInfo.service) }}</span>
+              <span>{{ payType }}</span>
+            </div>
+          </div>
+
+          <div class="py-2 flex flex-row items-center justify-between">
+            <div class="text-[#909399]">{{ i18n.t('Nfts.miner_fee') }}</div>
+            <div>
+              <span class="mr-1">{{ space(feeInfo.miner) }}</span>
+              <span>{{ payType }}</span>
+            </div>
+          </div>
+
+          <div class="py-2 flex flex-row items-center justify-between">
+            <div class="text-[#909399]">{{ i18n.t('Nfts.feebs') }}</div>
+            <div>
+              <span class="mr-1">{{ feeInfo.feeb }}</span>
+              <span>sat/vB</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-row items-center justify-between">
+          <div class="text-[#909399]">{{ i18n.t('Nfts.total_fee') }}</div>
+          <div>
+            <span class="mr-1">{{ space(feeInfo.total) }}</span>
+            <span>{{ payType }}</span>
+          </div>
+        </div>
       </div>
+
+      <!-- <div class="balance">
+        <span>{{ i18n.t('SDK.payconfirm.My') }}{{ payType }}：</span>{{ space(balance) }}
+      </div> -->
 
       <!-- <div
         class="check flex flex-align-center"
@@ -55,7 +94,7 @@
         <a class="main-border flex1" @click="cancel">
           {{ i18n.t('Cancel') }}
         </a>
-        <a class="main-border flex1 primary" v-if="balance >= useAmount" @click="confirm">
+        <a class="main-border flex1 primary" @click="confirm">
           {{ i18n.t('SDK.payconfirm.Confirm') }}
         </a>
       </div>
@@ -68,15 +107,18 @@ import { SdkPayType } from '@/enum'
 import { ref } from 'vue'
 import { Router } from 'vue-router'
 import { space } from '@/utils/filters'
+import {type feeInfoType} from '@/hooks/use-pay-modal-entity'
+
 
 interface Props {
   confirmVisible: boolean
   i18n: any
   useAmount: number
   maxCount: number
-  balance: number
+  //balance: number
   router: Router
   payType: SdkPayType
+  feeInfo: feeInfoType
 }
 
 const props = withDefaults(defineProps<Props>(), {

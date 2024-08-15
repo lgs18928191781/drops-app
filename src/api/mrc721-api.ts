@@ -40,6 +40,16 @@ export const issueCollection = async (params: { collectionInfo: Mrc721Collection
   return NftOrders.post('/issue-collection', params)
 }
 
+export const mintNftItem = async (params: {
+  creatorMetaId: string
+  name: string
+  commitAddress: string
+  feeb: number
+  receiverAddress: string
+}) => {
+  return NftOrders.post('/mint-nft-item', params)
+}
+
 export const estimatedMintFee = async (params: {
   address: string
   outputAmount: number

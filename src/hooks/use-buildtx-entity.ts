@@ -166,7 +166,9 @@ export async function exclusiveChange({
   if (useSize && maxUtxosCount > 1) {
     raise('useSize and maxUtxosCount cannot be set at the same time.')
   }
-  const paymentUtxos = await connectionStore.provider?.btc.getUtxos().then((result) => {
+  debugger
+  const paymentUtxos = await connectionStore.provider?.btc.getUtxos(false,true).then((result) => {
+    debugger
     // first, filter out all the utxos that are currently listing
     const filtered = result.filter((utxo) => {
       return !utxo.inscriptions
@@ -216,13 +218,14 @@ export async function exclusiveChange({
     fillInternalKey(paymentInput)
 
     psbt.addInput(paymentInput)
-
+    debugger
     // Add change output
     let fee = useSize
       ? Math.round(useSize * feeb)
       : calcFee(psbt, feeb, extraSize)
     let totalInput, totalOutput
     if (partialPay) {
+      debugger
       // we only pay for the fee and some extra value, not the whole transaction
       totalOutput = 0
       // totalInput = the inputs we add in now
@@ -277,7 +280,7 @@ export async function exclusiveChange({
       fee += safeOutputValue(changeValue)
     }
     console.log({ psbt })
-
+    debugger
     return {
       psbt,
       fee,

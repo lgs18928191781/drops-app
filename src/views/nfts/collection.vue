@@ -159,7 +159,15 @@
     <div class="mt-12 ">
       <div class="mint-wrap flex items-center justify-between border-b pb-5 border-[#EDEFF2]">
         <div class="text-lg font-medium">{{ $t('Nfts.lanuch_bulkMint') }}</div>
+
         <div class="mint-btn flex text-sm font-medium">
+          <button
+            @click="mintOne"
+            class="py-1 px-3 rounded-md border border-transparent flex items-center justify-center mr-2 bg-[#FFDC51] "
+          >
+            铸造单个
+          </button>
+
           <button
             @click="modelValue = true"
             class="py-1 px-3 rounded-md border border-transparent flex items-center justify-center mr-2 bg-[#FFDC51] "
@@ -653,23 +661,23 @@ import { AttachmentItem } from '@/@types/hd-wallet'
 import { classifyList, fileType, royaltyRate } from '@/config'
 import { useGenesisStore } from '@/stores/genesis'
 
-import { CollectionMintChain } from '@/enum'
+import { CollectionMintChain,SdkPayType } from '@/enum'
 import { Select } from '@element-plus/icons-vue'
 import { useConnectionStore } from '@/stores/connection'
 import { ElLoading, ElMessage } from 'element-plus'
-import { NftsLaunchPadChain, NftsLaunchPadChainSymbol,SIGHASH_ALL } from '@/data/constants'
+import { NftsLaunchPadChain, NftsLaunchPadChainSymbol,SIGHASH_ALL,SIGHASH_ALL_ANYONECANPAY } from '@/data/constants'
 import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
 import { Line } from 'vue-chartjs'
 import { useEchart } from '@/hooks/use-echart-tool'
 import type {  FormInstance, FormRules,UploadProps } from 'element-plus'
 import { useFeebStore } from '@/stores/feeb'
-import { uploadNftsFile,generateCommitAddress,estimatedMintFee} from '@/api/mrc721-api'
+import { uploadNftsFile,generateCommitAddress,mintNftItem} from '@/api/mrc721-api'
 import Decimal from 'decimal.js-light'
 import {exclusiveChange} from '@/hooks/use-buildtx-entity'
 import { useNetworkStore } from '@/stores/network'
 import { useBtcJsStore } from '@/stores/btcjs'
 import * as secp256k1 from 'tiny-secp256k1'
-
+import {usePayModalEntity} from '@/hooks/use-pay-modal-entity'
 const i18n = useI18n()
 const genesisStore = useGenesisStore()
 const connectionStore = useConnectionStore()
@@ -687,6 +695,7 @@ const { mintNftItemEntity } = useMetaIDEntity()
 const { data, options } = useEchart()
 const feeStore = useFeebStore()
 const chartRef = ref()
+const payModalEntity=usePayModalEntity()
 const autoMaketData=ref({
   initialPrice:'',
   priceGrowth:''
@@ -855,6 +864,31 @@ const rules = reactive<FormRules<MintInfo>>({
 })
 
 type MintListInfo = Omit<MintInfo, 'mintAmount'> & { id: number; op: string; }
+
+
+  async function mintOne(){
+    try {
+      const psbtHex=`70736274ff0100b402000000012b1ef615b20972b36d268328dd0c47748c088353d83d8636e651982fb72c449e0000000000ffffffff032202000000000000225120fdea6446d0f493818cc5b87a5c98631034801658a9e6fc62f53af065afe10f3be803000000000000225120fdea6446d0f493818cc5b87a5c98631034801658a9e6fc62f53af065afe10f3bcf07000000000000225120fdea6446d0f493818cc5b87a5c98631034801658a9e6fc62f53af065afe10f3b000000000001012b22020000000000002251207c46c0b2a997a109f0d547a920ed35001ab56ddb536c51aac8709becfab0d6712215c01552a5b1134cf1b22640f0e687510555f693ae322384d3fccf3c31c74b34ecc1fdb804201552a5b1134cf1b22640f0e687510555f693ae322384d3fccf3c31c74b34ecc1ac0063066d6574616964066372656174651a2f6e66742f6d72633732312f437970746f50756e6b5061727479013005312e302e3010696d6167652f706e673b62696e6172794d080289504e470d0a1a0a0000000d49484452000000e1000000e10803000000096d2248000000d8504c5445638596dbb180794b11000000f0f0f0502f05fd3232328dfd7a48007c4d127646004c2c0397795ef6f7f8e1b684735d4326333961899dbd986ee0bf9cd1a97a794a0aeff9f975593d785023f9f6ef6b72734b65726e6a63fc48484895fc5f7f8f9eb0b95573816b420d4f2900a686615d6b728e7353a3c2f7f1e6e6fe0f0fd9ac75687a8289b4f865829040566134464f54463ad7dcdfe6d2bd5b5b5b29211813191c7162512d2d2d7e7e7e5343317b4300784d1988b3f81f87fe77522b625e584e2200222222806d56b0997f715b42130f0b00071528414e35621eb50000032c49444154789cedddeb52d3501440e1d22a4494602ae166b52050c582800a4a11f182fafe6f2433f4a4a527d9244d9ab313d69ae11787cefe9acea4b94c68348888888888888888888888e8e115d815b85c4141737db26b61e6436bf9c5997262306886cd9bc2e14f33f4d624a137b6f276b97aa1d79c28bc47381142e7219c08a1c2104eac6e5446d8ef98ac919bdf3b42316f48f43bd7a83b6d0ebc6116f066b308d9ab43f3ab81aa8db91927cb9987b0d4102244e83e840811ba0f214284ee438810a1fb102244e83e8408d50b835908677ccefb70d324adda335d2dbe29bcc5e8d5bbc208fd5483c6fda1b91031384c5e149cef989ece20f3da3ff684414d08023b66d08b8c9bbc6f3e769e243c7e5c463ba2d00cba8e10214284081d0ae36e90341dcf623768ef17f78411f20bc5fb0cc227a5248d10cd39bdb02a2144a83f8408f5975928dd8aa7a9e846bfac47c0a3b31817ae0d62e1d9b46731a28275d70831af93fb7c957a615e2042d72144f840845e98d86249254f5084f07a2db967e5b42c8c30f58e7e8c2874b2544a5bc208f98152dd934765b4b4255d7c428810214284ea85d12ecb9e6b4368b46a554881b071f4e5b69f5f2de2c6c1ebc416de9a55efe65f2536bfaa40f8bc352c46f8ed7221a9cb91707f3eb17dedc283442042840811221c2ba8adf083e9576fd8ef8fa65a08bb66cbb5dabe696ed8fba59a09e726438810214284450aab7c7c98721b56f8183f95b0d2e769d2098b0b2142840811565c987c045c842cba8eef4e786eea45c417c5f5c9d42f1938268cbaf6adcf6beefce8d55f2a102e2344881021c2d285be952ee191e9744a617bd76a4593306a74ed299bd0efd99f02fb2bae0661032142840811224438b530e64b9bae6f6df985e9de06840811224488102142840811224488b0a2c2b690ceeb161985fe9f5672b5384fe37f46881021428408ef15d67e7f38b72214f3865450982d840811224488509099ea2a6c9b2751f4a287536cd74ae8ef469b4ec37f96438810a1fb1022ac8b503ab4b7dbfd7b7a5b7584ed56a6fe95f420eb74cd4278e41a7527840811ba0f21c2da3909b7d3e4ee69ac716514ea1a3e550811ea0f2142fd2144a83f8408f58710a1fe10aa11fe07f86ca8a6254bc4920000000049454e44ae42608268c000000000`
+      const feeb=10
+
+
+    } catch (error) {
+
+    }
+
+    // try {
+    //   await mintNftItem({
+    //     creatorMetaId:`fd596734d8949a661997eaee3639eb4fa01aa335c70d0777d919d589f3afee34`,
+    //   name:`CyptoPunkParty`,
+    //   feeb:feeStore.last.currentFeeb.feeRate,
+    //   commitAddress:`tb1p7w4rz53djajg9re0pxdycxz4t7l2zjyaq2yvcm06zxhgw5ln9gqqn5jte8`,
+    //   receiverAddress:connectionStore.last.user.address
+    // })
+    // } catch (error) {
+    //   debugger
+    // }
+  }
+
 
 function getCollectionData() {
   currentNftsCollect.value = genesisStore.getList.find(item => {
@@ -1073,35 +1107,66 @@ async function preMint() {
     }
 }
 
-async function finallyMint() {
-
-    // await estimatedMintFee({
-    //   address:connectionStore.last.user.address,
-    //   outputAmount:newFile.length,
-    //   feeb:feeStore.last.currentFeeb.feeRate
-    // })
-    // return
-    const bitcoinjs = useBtcJsStore().get!
+async function estimateBuildTxFee(targetAddress:string[] = [],feeb:number,checkOnly:boolean=false){
+  const bitcoinjs = useBtcJsStore().get!
+  try {
+    if(!targetAddress.length){
+    for(let i=0;i<newFile.length;i++){
+      targetAddress.push(connectionStore.last.user.address)
+    }
+  }
     const psbt =new bitcoinjs.Psbt({ network: networkStore.typedNetwork })
     for(let i =0;i<newFile.length;i++){
       psbt.addOutput({
         value: 546,
-        address: connectionStore.last.user.address,
+        address:targetAddress[i],
       })
     }
-  const estiomateresult= await exclusiveChange({
+    psbt.addOutput({
+      value:1999,
+      address:connectionStore.last.user.address
+    })
+  const estiomateResult= await exclusiveChange({
       psbt: psbt,
       maxUtxosCount:3,
-      sighashType:SIGHASH_ALL,
-      feeb:feeStore.last.currentFeeb.feeRate,
+      sighashType:SIGHASH_ALL_ANYONECANPAY,
+      feeb:feeb ?? feeStore.last.currentFeeb.feeRate,
    })
 
-   console.log("estiomateresult",estiomateresult)
-      return
+   console.log("estiomateResult",estiomateResult)
+   debugger
+   if(checkOnly){
+    const feeInfo={
+      basic:newFile.length * 546,
+      service:import.meta.env.VITE_MINT_NFT_SERVICE_FEE,
+      miner:estiomateResult!.fee,
+      feeb:estiomateResult!.feeb,
+      total:new Decimal(estiomateResult!.fee).add(newFile.length * 546).add(import.meta.env.VITE_MINT_NFT_SERVICE_FEE).toNumber()
+    }
+    const result= await payModalEntity.awaitPayConfrim(SdkPayType.BTC,feeInfo.total,feeInfo)
+
+    return result
+   }
+   console.log("estiomateresult",estiomateResult)
+   return estiomateResult
+  } catch (error) {
+    debugger
+  }
+}
+
+async function finallyMint() {
+
     try {
     if(!autoMaketData.value.initialPrice && !autoMaketData.value.priceGrowth){
       return ElMessage.error(`${i18n.t('Nfts.lanuch_automarket_set')}`)
     }
+    debugger
+    const estiomateResult= await estimateBuildTxFee([],true)
+
+    if(!estiomateResult){
+      return ElMessage.error(`${i18n.t('Nfts.cancel_transation')}`)
+    }
+
     let params=new FormData()
     for(let i=0;i<newFile.length;i++){
       params.append('file',newFile[i].file)
@@ -1113,7 +1178,7 @@ async function finallyMint() {
     params.append('name',currentNftsCollect.value?.name!)
 
     const commitAddressList =await preMint()
-    debugger
+
     if(commitAddressList.length){
 
       params.append('commitAddress',JSON.stringify(commitAddressList))
@@ -1123,8 +1188,22 @@ async function finallyMint() {
       throw new Error(`${i18n.t('Nfts.lanuch_generate_commit_address_fail')}`)
     }
 
-    debugger
+   const {psbt:Psbt1}=await estimateBuildTxFee(commitAddressList)
+
+   const rawTx= await connectionStore.adapter.signPsbt(Psbt1.toHex())
+    console.log("signRes",rawTx)
+   debugger
+
+  if(rawTx?.status == 'canceled'){
+    return ElMessage.error('sign error')
+    throw new Error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
+
+  }else if(rawTx){
+    params.append('rawTx',rawTx)
+  }
+
     uploadNftsFile(params).then((res)=>{
+      debugger
       if(res.code == 200){
         tableData.length=0
         newFile.length=0
