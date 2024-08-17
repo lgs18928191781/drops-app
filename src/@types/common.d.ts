@@ -662,7 +662,6 @@ declare interface Mrc721CollectionItem {
   metaData: any
   chain: import('@/enum').CollectionMintChain
   collectionPinId: string
-  currentTotalSupply?: string
   autoMarket: boolean
   genesisTimestamp?: number
   metaId: string
@@ -670,6 +669,9 @@ declare interface Mrc721CollectionItem {
   priceGrowth?: string
   coverPinid?: string
   address?: string
+  minted:number
+  currentSupply: number
+
 }
 
 declare interface Order {

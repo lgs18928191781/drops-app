@@ -1406,6 +1406,9 @@
     "miner_fee": "Miner's fee",
     "feebs": "Fee rate",
     "total_fee": "Total fee",
-    "cancel_transation": "Transaction cancellation"
+    "cancel_transation": "Transaction cancellation",
+    "lanuch_mintable_Supply": "Mintable supply:",
+    "psbt_empty": "Mint order is not exist",
+    "lanuch_MintFee": "NFT mint fee"
   }
 }

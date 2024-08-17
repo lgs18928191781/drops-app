@@ -97,10 +97,14 @@ const sdkPayConfirm = {
 
 if (user) {
   setTimeout(() => {
+    
     const genesisStore = useGenesisStore()
     const followStore = useFollowStore()
     genesisStore.initGenesis()
     followStore.initFollowList()
+    genesisStore.sync()
+
+    
   }, 500)
 }
 
@@ -238,6 +242,7 @@ export const useUserStore = defineStore('user', {
         try {
           this.user = data
           console.log('this.uesr', this.user)
+         
           this.isNeedRefresh = true
           //
         } catch {}
@@ -246,6 +251,7 @@ export const useUserStore = defineStore('user', {
         const followStore = useFollowStore()
         genesisStore.initGenesis()
         followStore.initFollowList()
+        // genesisStore.sync()
         resolve()
       })
     },

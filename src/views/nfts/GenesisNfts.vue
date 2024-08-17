@@ -174,7 +174,7 @@ const onSubmit = async() => {
     collectionName:existNfts.name
   })
   }else{
-    debugger
+    
     var {createCollectionDescRes,coverPinId} = await mintNftEntity({
     body:{
       name:form.name,
@@ -194,7 +194,7 @@ const onSubmit = async() => {
 
 
   console.log("createCollectionDescRes",createCollectionDescRes)
-  debugger
+  
   if( createCollectionDescRes?.revealTxIds.length){
     const genesisRes= await genesisCollection({
         metaId:connectionStore.last.metaid,
@@ -202,7 +202,7 @@ const onSubmit = async() => {
       })
 
       console.log("genesisRes",genesisRes)
-      debugger
+      
       const collectionInfo={
         name:form.name,
         coverPinid:coverPinId,
@@ -224,7 +224,7 @@ const onSubmit = async() => {
 
       console.log("issueRes",issueRes)
 
-      debugger
+      
     genesisStore.add({
     totalSupply:+form.totalSupply,
     name:form.name,
@@ -242,7 +242,7 @@ const onSubmit = async() => {
     initialPrice:'',
     priceGrowth:''
   })
-  debugger
+  
 
   toNftsDetail(`${createCollectionDescRes?.revealTxIds[0]!}i0`)
 
@@ -256,7 +256,7 @@ const onSubmit = async() => {
       ElMessage.error(error)
     }
     console.log("error",error)
-    debugger
+    
   }
 
 }

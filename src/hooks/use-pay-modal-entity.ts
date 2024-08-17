@@ -11,11 +11,12 @@ export type feeInfoType = {
   service: number
   miner: number
   feeb: number
-  total: number
+  total: number,
+
 }
 
 export function usePayModalEntity() {
-  function awaitPayConfrim(payType: SdkPayType, useAmount: number, feeInfo: feeInfoType) {
+  function awaitPayConfrim(payType: SdkPayType, useAmount: number, feeInfo: feeInfoType, basicType:'basic' | 'mint') {
     return new Promise<boolean>((resolve, reject) => {
       const userStore = useUserStore()
       if (
@@ -37,7 +38,7 @@ export function usePayModalEntity() {
             feeInfo,
             router,
             payType,
-
+            basicType,
             onConfirm: () => {
               setTimeout(() => {
                 document.getElementById(divId)?.remove()

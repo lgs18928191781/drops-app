@@ -7,6 +7,8 @@ import { useRootStore } from './stores/root'
 import { useUserStore } from './stores/user'
 import { useTalkStore } from './stores/talk'
 import { GetBandProposalList } from '@/api/strapi'
+import { useConnectionStore } from './stores/connection'
+import { useGenesisStore } from './stores/genesis'
 export const routerHistory = createWebHistory()
 export const router = createRouter({
   history: routerHistory,
@@ -87,6 +89,28 @@ export const router = createRouter({
           path: 'launchpad',
           name: 'launchpad',
           component: () => import('@/views/nfts/LaunchPad.vue'),
+          beforeEnter: async (to, from, next) => {
+           
+            const genesisStore=useGenesisStore()
+         
+            // if (root.bandProposalList.includes(to.params.id as string)) {
+            //   next('/404')
+            // } else {
+            //   next()
+            // }
+            try {
+              const list = genesisStore.getList
+              if (list.length) {
+                next(`/nfts/collection/${list[0].collectionPinId}`)
+              } else {
+                next()
+              }
+            } catch (error) {
+              ElMessage.error(`${error?.toString()}`)
+              next('/404')
+            }
+          },
+
         },
         {
           path: 'genesis/:chain/:type',

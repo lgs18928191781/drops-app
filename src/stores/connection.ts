@@ -163,7 +163,7 @@ export enum ConnectChain{
           disconnect: () => Promise<void>
           getBalance: () => Promise<number>
           inscribe: (tick: string) => Promise<string | undefined>
-          signPsbt: (psbt: string, options?: any) => Promise<string>
+          signPsbt: (psbt: string, options?: {toSignInputs?:any[],autoFinalized:boolean}) => Promise<string>
           signPsbts: (psbts: string[], options?: any) => Promise<string[]>
           pushPsbt: (psbt: string) => Promise<string>
           signMessage: (message: string) => Promise<string>

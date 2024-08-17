@@ -1400,6 +1400,9 @@
     "miner_fee": "上链费",
     "feebs": "费率",
     "total_fee": "总费用",
-    "cancel_transation": "交易取消"
+    "cancel_transation": "交易取消",
+    "lanuch_mintable_Supply": "当前可铸造量：",
+    "psbt_empty": "铸造订单不存在！",
+    "lanuch_MintFee": "NFT铸造费用"
   }
 }

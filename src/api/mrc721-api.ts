@@ -50,10 +50,33 @@ export const mintNftItem = async (params: {
   return NftOrders.post('/mint-nft-item', params)
 }
 
+export const submitMintOrder=async(params:{
+  creatorMetaId: string
+  name: string
+  commitAddress: string
+  psbtHex:string
+  feeb:number
+})=>{
+  return NftOrders.post('/submit-mint-order', params)
+}
+
 export const estimatedMintFee = async (params: {
   address: string
   outputAmount: number
   feeb: number
 }) => {
   return NftOrders.post('/get-fees', params)
+}
+
+export const getMyCollectionList =async (params:{
+  metaid:string
+})=>{
+  return NftOrders.post('/get-my-collections', params)
+}
+
+export const getCollectionMintAmout =async (params:{
+  metaid:string,
+  name:string
+})=>{
+  return NftOrders.post('/get-collection-mint', params)
 }
