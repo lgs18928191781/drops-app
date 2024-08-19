@@ -144,38 +144,35 @@ const form = reactive({
   totalSupply:'0',
   royaltyRate:'0',
   website:'',
-  metadata:null
+  metadata:{}
 })
 
 
 const onSubmit = async() => {
+//   else if(existNfts?.name){
 
+// var {createCollectionDescRes,coverPinId} = await mintNftEntity({
+// body:{
+//   name:form.name,
+//   totalSupply:+form.totalSupply,
+//   royaltyRate:+form.royaltyRate,
+//   desc:form.desc,
+//   website:form.website,
+//   cover:'',
+//   metadata:form.metadata
+// },
+// attachments:[form.originFile],
+// noBroadcast:false,
+// collectionName:existNfts.name
+// })
+// }
   //const result=await awaitPayConfrim(SdkPayType.BTC,1000,10000)
   const existNfts= genesisStore.getList.find((item)=>item.name == form.name)
-
-  // let mintRes
   try {
   if(existNfts?.collectionPinId){
     return ElMessage.error(`${i18n.t('Nfts.lanuch_existNfts')}`)
-  }else if(existNfts?.name){
-
-    var {createCollectionDescRes,coverPinId} = await mintNftEntity({
-    body:{
-      name:form.name,
-      totalSupply:+form.totalSupply,
-      royaltyRate:+form.royaltyRate,
-      desc:form.desc,
-      website:form.website,
-      cover:'',
-      metadata:form.metadata
-    },
-    attachments:[form.originFile],
-    noBroadcast:false,
-    collectionName:existNfts.name
-  })
   }else{
-    
-    var {createCollectionDescRes,coverPinId} = await mintNftEntity({
+    const {createCollectionDescRes,coverPinId} = await mintNftEntity({
     body:{
       name:form.name,
       totalSupply:+form.totalSupply,
@@ -187,14 +184,6 @@ const onSubmit = async() => {
     },
     attachments:[form.originFile],
   })
-
-
-  }
-
-
-
-  console.log("createCollectionDescRes",createCollectionDescRes)
-  
   if( createCollectionDescRes?.revealTxIds.length){
     const genesisRes= await genesisCollection({
         metaId:connectionStore.last.metaid,
@@ -223,30 +212,44 @@ const onSubmit = async() => {
       })
 
       console.log("issueRes",issueRes)
-
-      
-    genesisStore.add({
-    totalSupply:+form.totalSupply,
-    name:form.name,
-    desc:form.desc,
-    cover:form.cover,
-    website:form.website,
-    royaltyRate:+form.royaltyRate,
-    metaData:form.metadata,
-    chain:route.params.chain == 'btc' ? CollectionMintChain.btc : CollectionMintChain.mvc,
-    collectionPinId:`${createCollectionDescRes?.revealTxIds[0]!}i0`,
-    currentTotalSupply:form.totalSupply,
-    autoMarket:route.params.type == '0' ? false : true,
-    genesisTimestamp:Date.now(),
-    metaId:connectionStore.last.metaid,
-    initialPrice:'',
-    priceGrowth:''
-  })
+      debugger
+        if(issueRes.code == 200){
+          genesisStore.add({
+        totalSupply:+form.totalSupply,
+        name:form.name,
+        desc:form.desc,
+        cover:form.cover,
+        website:form.website,
+        royaltyRate:+form.royaltyRate,
+        metaData:form.metadata,
+        chain:route.params.chain == 'btc' ? CollectionMintChain.btc : CollectionMintChain.mvc,
+        collectionPinId:`${createCollectionDescRes?.revealTxIds[0]!}i0`,
+        autoMarket:route.params.type == '0' ? false : true,
+        genesisTimestamp:Date.now(),
+        metaId:connectionStore.last.metaid,
+        initialPrice:'',
+        priceGrowth:'',
+        minted:0,
+        currentSupply:0
+        })
   
 
   toNftsDetail(`${createCollectionDescRes?.revealTxIds[0]!}i0`)
+        }else{
+          return ElMessage.error(issueRes.msg)
+        }
+   
 
   }
+  }
+
+
+
+  //console.log("createCollectionDescRes",createCollectionDescRes)
+  
+    
+
+ 
 
 
   }catch (error:any) {

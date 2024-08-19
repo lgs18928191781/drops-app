@@ -27,13 +27,15 @@ export const useGenesisStore = defineStore('genesis', {
       DB.genesis.add(genesis)
     },
     updateItem: function(genesis: Mrc721CollectionItem) {
+      
       DB.genesis.update(genesis.name, genesis)
     },
     updateCurrentTotalSupply: function(params: { name: string; count: number }) {
+      
       const index = this.list.findIndex(item => item.name === params.name)
       if (index !== -1) {
-        this.list[index].currentSupply = new Decimal(this.list[index].currentSupply)
-          .sub(params.count)
+        this.list[index].currentSupply = new Decimal(this.list[index].currentSupply!)
+          .add(params.count).sub(this.list[index].minted!)
           .toNumber()
 
         //  更新本地数据
@@ -49,12 +51,12 @@ export const useGenesisStore = defineStore('genesis', {
         })
         if(result.code == 200 && result.data.result.length ){
          
-          if(this.list.length == result.data.result.length ){
-            return
-          }
+          // if(this.list.length !== result.data.result.length ){
+            
+          // }
           //let genesislist:Mrc721CollectionItem[]=[]
         
-
+          this.list.length=0
           for(let item of result.data.result){
             const mintRes= await getCollectionMintAmout({
               metaid:userStore.user!.metaId,
@@ -66,6 +68,7 @@ export const useGenesisStore = defineStore('genesis', {
               break
             }
             const {data:{mintAmout,currentSupply}}=mintRes
+            
             const collectionItem={
               totalSupply:item.total_supply,
               name:item.name,
@@ -85,8 +88,16 @@ export const useGenesisStore = defineStore('genesis', {
               minted:mintAmout,
               currentSupply:currentSupply
             }
-            
             this.add(collectionItem)
+            // const index= this.list.findIndex((ele)=>{
+            //   return ele.name == item.name
+            // })
+            // if(index > 0){
+            
+            // }else{
+            //   this.updateItem(collectionItem)
+            // }
+            
 
           }
 

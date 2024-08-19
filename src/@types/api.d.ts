@@ -1221,6 +1221,29 @@ declare interface Collect {
   floorPrice?: number
 }
 
+declare interface NftsCollection{
+  address:string
+  auto_market:number
+  chain:string
+  collection_pinid:string
+  cover_pinid:string
+  created_at:string
+  id:number
+  init_price:number
+  meta_data:string
+  metaid:string
+  name:string
+  nft_desc:string
+  price_growth:number
+  royalty_rate:number
+  total_supply:number
+  updated_at:string
+  website:string
+  current_supply?:number
+  minted?:number
+  current_mint_price?:number
+}
+
 declare interface HomeActivityItem {
   cover: PIC
   created_at: string

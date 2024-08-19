@@ -1331,7 +1331,8 @@
     }
   },
   "NFTS": {
-    "NFTs Launch Pad": "NFTs Launch Pad"
+    "NFTs Launch Pad": "NFTs Launch Pad",
+    "NFTs mint_success": "Minted success!"
   },
   "NFTs": {
     "genesis_nfts": "Creating a series of NFTs",
@@ -1409,6 +1410,10 @@
     "cancel_transation": "Transaction cancellation",
     "lanuch_mintable_Supply": "Mintable supply:",
     "psbt_empty": "Mint order is not exist",
-    "lanuch_MintFee": "NFT mint fee"
+    "lanuch_MintFee": "NFT mint fee",
+    "lanuch_sign_tx_fail": "Sign psbt canceled",
+    "lanuch_nft_name": "NFT name",
+    "lanuch_useSameName": "use same NFT name",
+    "lanuch_upload_file_success": "Upload NFTs success!"
   }
 }

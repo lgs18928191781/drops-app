@@ -25,6 +25,7 @@ declare interface Window {
   ethereum: import('ethers').providers.ExternalProvider
   provider?: MetaMaskEthereumProvider
   metaidwallet: {
+    getUtxos: (parmas:{needRawTx?: boolean, useUnconfirmed?: boolean}) => Promise<BtcUtxos[]>
     verifySignature(verifyObj: { message: unknown; signature: any; encoding: string }): any
     getPublicKey(): any
     getXPublicKey(): string
@@ -66,7 +67,7 @@ declare interface Window {
         status?: string
       }>
       getBalance: (chain: string) => Promise<{ total: number }>
-      getUtxos: (needRawTx?: boolean, useUnconfirmed?: boolean) => Promise<BtcUtxos[]>
+      getUtxos: (params:{needRawTx?: boolean, useUnconfirmed?: boolean}) => Promise<BtcUtxos[]>
       inscribeTransfer: (tick: string) => Promise<string>
       signMessage: (message: string) => Promise<string>
       signPsbt: ({ psbtHex, options }: { psbtHex: string; options?: any }) => Promise<string>

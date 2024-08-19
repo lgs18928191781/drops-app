@@ -1,5 +1,5 @@
 import HttpRequest from '@/utils/request'
-
+import {NftsLaunchPadChainSymbol} from '@/data/constants'
 const NftOrders = new HttpRequest(`http://127.0.0.1:3001/nfts-orders`, {
   header: {
     //SiteConfigMetanetId: import.meta.env.VITE_SiteConfigMetanetId,
@@ -79,4 +79,33 @@ export const getCollectionMintAmout =async (params:{
   name:string
 })=>{
   return NftOrders.post('/get-collection-mint', params)
+}
+
+
+export const getMarketCollectionList=async(params:{
+  chain:NftsLaunchPadChainSymbol,
+  page:number,
+  pageSize:number
+})=>{
+  return NftOrders.get(`/collection-list`, {
+    params,
+  })
+}
+
+
+export const getCollectionDetail =async (params:{
+  collectionPinid:string
+})=>{
+  return NftOrders.get('/get-collection-detail', {
+    params
+  })
+}
+
+export const getCollectionMintableList=async(params:{
+  metaid:string
+  name:string
+  page:number
+  pageSize:number
+})=>{
+  return NftOrders.post('/get-collection-mintable',params)
 }

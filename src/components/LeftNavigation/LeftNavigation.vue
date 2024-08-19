@@ -167,12 +167,12 @@ const apps = reactive([
   //   title: () => i18n.t('Talk.Community.atme'),
   //   symbol: '@me',
   // },
-  // {
-  //   icon: 'market',
-  //   path: '/nft/collection/index',
-  //   title: () => i18n.t('NFT.NFT Market'),
-  //   symbol: 'nft',
-  // },
+  {
+    icon: 'market',
+    path: '/nft/collection/index',
+    title: () => i18n.t('NFT.NFT Market'),
+    symbol: 'nft',
+  },
 ])
 
 if (userStore.isAuthorized) {

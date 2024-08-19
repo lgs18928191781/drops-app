@@ -122,6 +122,30 @@ export const router = createRouter({
           path: 'collection/:pinid',
           name: 'nftsCollection',
           component: () => import('@/views/nfts/collection.vue'),
+          beforeEnter: async (to, from, next) => {
+           
+            const genesisStore=useGenesisStore()
+         
+            try {
+              if(genesisStore.getList.length){
+                //Insufficient permissions
+               const permission =genesisStore.getList.filter((item)=>{
+                   return item.collectionPinId == to.params.pinid
+                })
+                if(!permission.length){
+                  ElMessage.error(`Insufficient permissions`)
+                  next('/404')
+                }else{
+                  next()
+                }
+              }
+           
+              
+            } catch (error) {
+              ElMessage.error(`${error?.toString()}`)
+              next('/404')
+            }
+          },
           meta: { keepAlive: true },
           children: [
             // {
@@ -558,6 +582,11 @@ router.beforeEach((to, from, next) => {
     'launchpad',
     'genesisNfts',
     'nftsCollection',
+    'nft',
+    'nftIndex',
+    "nftCollection",
+    "nftCollectionIndex",
+    'nftCollectionDetail'
   ]
   const target = whiteList.includes(to?.name)
   if (target) {

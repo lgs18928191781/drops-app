@@ -167,7 +167,9 @@ export async function exclusiveChange({
     raise('useSize and maxUtxosCount cannot be set at the same time.')
   }
   debugger
-  const paymentUtxos = await connectionStore.provider?.btc.getUtxos(false,true).then((result) => {
+  const paymentUtxos = await connectionStore.provider?.btc.getUtxos({
+    useUnconfirmed:true
+  }).then((result) => {
     debugger
     // first, filter out all the utxos that are currently listing
     const filtered = result.filter((utxo) => {

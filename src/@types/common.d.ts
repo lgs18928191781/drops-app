@@ -669,8 +669,8 @@ declare interface Mrc721CollectionItem {
   priceGrowth?: string
   coverPinid?: string
   address?: string
-  minted:number
-  currentSupply: number
+  minted?:number
+  currentSupply?: number
 
 }
 

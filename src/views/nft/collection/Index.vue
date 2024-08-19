@@ -13,16 +13,18 @@
             <!--
               :class="{ all: currentChain === -1 }"
             -->
-            <img
+            <!-- <img
               class="chain-icon"
               :src="currentChain === -1 ? mvcIcon : $filters.strapiImage(chains.find(item => item.id === currentChain)!.icon?.url)"
+            /> -->
+            <img
+              class="chain-icon"
+              :src="btc"
             />
           </template>
-          <ElOption v-for="item in chains" :key="item.id" :label="item.name" :value="item.id">
+          <!-- <ElOption v-for="item in chains" :key="item.id" :label="item.name" :value="item.id">
             <div class="option-item flex flex-align-center">
-              <!--
-                
-              -->
+              
               <img
                 class="chain-icon"
                 :class="{ all: item.id === -1 }"
@@ -36,7 +38,7 @@
                 <Icon name="check" />
               </span>
             </div>
-          </ElOption>
+          </ElOption> -->
         </ElSelect>
       </div>
     </div>
@@ -50,13 +52,13 @@
         :infinite-scroll-distance="100"
       >
         <RouterLink
-          :to="{ name: 'nftCollectionDetail', params: { topicType: item.topicType } }"
+          :to="{ name: 'nftCollectionDetail', params: { topicType: item.collection_pinid } }"
           class="collection-item"
           v-for="item in collections"
           :key="item.id"
         >
           <div class="cover">
-            <img :src="$filters.strapiImage(item.cover.url)" />
+            <Image :src="item.cover_pinid"  />  
             <div class="seriesName">
               <span>{{ item.name }}</span>
             </div>
@@ -65,17 +67,17 @@
           <div class="cont">
             <div class="author flex flex-align-center">
               <UserAvatar
-                :name="item.creatorName"
-                :image="item.creatorAvatarImage"
-                :meta-id="item.creatorMetaId"
-                :meta-name="item.creatorMetaName"
+                :name="''"
+                :image="''"
+                :meta-id="item.metaid"
+                :meta-name="''"
               />
               <div class="flex1">
                 <div class="name flex flex-align-center">
-                  <UserName :name="item.creatorName" :meta-name="item.creatorMetaName" />
+                  <UserName :name="''" :meta-name="''" />
                   <Icon name="center_star" />
                 </div>
-                <div class="metaid">MetaID：{{ item.creatorMetaId.slice(0, 6) }}</div>
+                <div class="metaid">MetaID：{{ item.metaid.slice(0, 6) }}</div>
               </div>
             </div>
 
@@ -83,14 +85,14 @@
               <div class="flex1 msg-item">
                 <div class="label">{{ $t('Collection.Floor price') }}</div>
                 <div class="value">
-                  {{ $filters.Currency(item.floorPrice!,CurrencyUnit) }}
+                  {{ $filters.Currency(item.current_mint_price!,CurrencyUnit) }}
                   {{ CurrencyUnit.toLocaleUpperCase() }}
                 </div>
               </div>
               <div class="flex1 msg-item">
                 <div class="label">{{ $t('Collection.Total volume') }}</div>
                 <div class="value">
-                  {{ item.circulatingSupply ? item.circulatingSupply : '--' }}
+                  {{ item.total_supply ? item.total_supply : '--' }}
                 </div>
               </div>
             </div>
@@ -116,27 +118,32 @@ import LoadMore from '@/components/LoadMore/LoadMore.vue'
 import IsNull from '@/components/IsNull/IsNull.vue'
 import { Chains } from '@/enum'
 import { GetGenesisStatistics } from '@/api/broad'
+import btc from '@/assets/nft/btc.png'
+import {NftsLaunchPadChain,NftsLaunchPadChainSymbol} from '@/data/constants'
+import {getMarketCollectionList,getCollectionMintAmout} from '@/api/mrc721-api'
 const chains: Chain[] = reactive([])
-const currentChain = ref(-1)
+const currentChain = ref(NftsLaunchPadChain.btc)
 const i18n = useI18n()
 const pagination = reactive({ ...initPagination })
-const collections: Collect[] = reactive([])
+// const collections: Collect[] = reactive([])
+const collections:NftsCollection[]=reactive([])
 const isSkeleton = ref(true)
 const topicTypeListInfo: GenesisVolumeInfo[] = reactive([])
 const mvcIcon = computed(() => {
   return `${import.meta.env.VITE_AdminBaseApi}/uploads/icon_1_ff2def8e32.png`
 })
 const currentChainById = computed(() => {
-  switch (currentChain.value) {
-    case -1:
-      return Chains.MVC
-    case 1:
-      return Chains.ETH
-    case 2:
-      return Chains.POLYGON
-    default:
-      return Chains.MVC
-  }
+  return Chains.BTC
+  // switch (currentChain.value) {
+  //   case -1:
+  //     return Chains.MVC
+  //   case 1:
+  //     return Chains.ETH
+  //   case 2:
+  //     return Chains.POLYGON
+  //   default:
+  //     return Chains.MVC
+  
 })
 
 const CurrencyUnit = computed(() => {
@@ -171,38 +178,75 @@ function getChains() {
   })
 }
 
-function getDatas(isCover = false) {
-  return new Promise<void>(async (resolve, reject) => {
-    const res = await GetCollects({
-      _start: (pagination.page - 1) * pagination.pageSize,
-      _limit: pagination.pageSize,
-      _sort: 'index:ASC',
-      chain: currentChain.value === -1 ? undefined : currentChain.value,
-    })
+// function getDatas(isCover = false) {
+//   return new Promise<void>(async (resolve, reject) => {
+//     const res = await GetCollects({
+//       _start: (pagination.page - 1) * pagination.pageSize,
+//       _limit: pagination.pageSize,
+//       _sort: 'index:ASC',
+//       chain: currentChain.value === -1 ? undefined : currentChain.value,
+//     })
 
-    if (res) {
-      let newRes: Collect[] = []
-      if (isCover) collections.length = 0
-      if (res.length === 0) {
-        pagination.nothing = true
-      } else {
-        pagination.nothing = false
-        for (let i = 0; i < res.length; i++) {
-          const TopicRes = await GetGenesisStatistics(res[i].topicType)
-          if (TopicRes.code == 0) {
-            res[i] = Object.assign(res[i], {
-              floorPrice: TopicRes.data.minPriceOnSell ? TopicRes.data.minPriceOnSell : 0,
-              circulatingSupply: TopicRes.data.totalSupply ? TopicRes.data.totalSupply : 0,
+//     if (res) {
+//       let newRes: Collect[] = []
+//       if (isCover) collections.length = 0
+//       if (res.length === 0) {
+//         pagination.nothing = true
+//       } else {
+//         pagination.nothing = false
+//         for (let i = 0; i < res.length; i++) {
+//           const TopicRes = await GetGenesisStatistics(res[i].topicType)
+//           if (TopicRes.code == 0) {
+//             res[i] = Object.assign(res[i], {
+//               floorPrice: TopicRes.data.minPriceOnSell ? TopicRes.data.minPriceOnSell : 0,
+//               circulatingSupply: TopicRes.data.totalSupply ? TopicRes.data.totalSupply : 0,
+//             })
+//             newRes.push(res[i])
+//           }
+//         }
+//         collections.push(...newRes)
+//       }
+//       resolve()
+//     }
+//   })
+// }
+
+function getDatas(isCover = false){
+  return new Promise<void>(async(resolve,reject)=>{
+   const res= await getMarketCollectionList({
+      chain:NftsLaunchPadChainSymbol.btc,
+      page:pagination.page,
+      pageSize:pagination.pageSize
+    })
+    if(res.code == 200){
+        if(res.data.result.length){
+          pagination.nothing = false
+          for(let item of res.data.result){
+            const mintRes= await getCollectionMintAmout({
+              metaid:item.metaid,
+              name:item.name
             })
-            newRes.push(res[i])
+            
+            if(mintRes.code == 200){
+              const {mintAmout,currentSupply,currentMintPrice}=mintRes.data
+              collections.push({...item,current_supply:currentSupply,minted:mintAmout,current_mint_price:currentMintPrice ? currentMintPrice : item.init_price})
+            }
+            
           }
+        
+
+
+       
+        }else{
+          pagination.nothing = true
         }
-        collections.push(...newRes)
-      }
-      resolve()
+        resolve()
     }
+    debugger
   })
 }
+
+
 
 function getMore() {
   if (pagination.loading || pagination.nothing) return
@@ -222,7 +266,8 @@ function onChangeChain() {
   })
 }
 
-getChains()
+isSkeleton.value = false
+// getChains()
 getDatas().then(() => {
   isSkeleton.value = false
 })

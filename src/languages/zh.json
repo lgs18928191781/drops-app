@@ -1325,7 +1325,8 @@
     }
   },
   "NFTS": {
-    "NFTs Launch Pad": "NFTs Launch Pad"
+    "NFTs Launch Pad": "NFTs Launch Pad",
+    "NFTs mint_success": "铸造成功"
   },
   "NFTs": {
     "genesis_nfts": "创建NFTs系列",
@@ -1403,6 +1404,10 @@
     "cancel_transation": "交易取消",
     "lanuch_mintable_Supply": "当前可铸造量：",
     "psbt_empty": "铸造订单不存在！",
-    "lanuch_MintFee": "NFT铸造费用"
+    "lanuch_MintFee": "NFT铸造费用",
+    "lanuch_sign_tx_fail": "签名交易取消",
+    "lanuch_nft_name": "NFT名称",
+    "lanuch_useSameName": "使用相同的NFT名称",
+    "lanuch_upload_file_success": "上传NFTs成功"
   }
 }

@@ -60,7 +60,7 @@ watch(
 async function getImageUrl() {
   isSkeleton.value = true
   let src = props.src
-  debugger
+  
   DB.getMetaFile(src, props.width, 'metafile').then(res => {
     url.value = res
     isSkeleton.value = false

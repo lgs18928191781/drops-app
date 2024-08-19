@@ -150,7 +150,7 @@ export function useMetaIDEntity(){
             dataArray:fileOptions,
             options:{
                 noBroadcast: noBroadcast,
-                feeRate: feebStore.last.currentFeeb.feeRate,
+                feeRate:feebStore.last.currentFeeb.feeRate,
                 service: {
                     address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
                     satoshis: import.meta.env.VITE_BTC_SERVICE_FEEB,
@@ -526,7 +526,7 @@ export function useMetaIDEntity(){
                         ],
                         options:{
                             noBroadcast:'no',//params.noBroadcast ? 'no' : 'yes',
-                            feeRate: feebStore.last.currentFeeb.feeRate,
+                            feeRate:feebStore.last.currentFeeb.feeRate,
                             service: {
                                 address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
                                 satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,

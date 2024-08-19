@@ -7,12 +7,12 @@
     <template #default>
       <div class="collection" id="collection">
         <!-- cover -->
-        <Image class="cover" :src="$filters.strapiImage(collection.val!.banner.url)" />
+        <Image class="cover" :src="collection.val?.cover_pinid" />
 
         <div class="collection-content">
           <!-- collection-avatar -->
           <div class="collection-avatar">
-            <img :src="$filters.strapiImage(collection.val!.icon.url)" />
+            <img :src="''" />
           </div>
 
           <!-- collection-msg -->
@@ -23,19 +23,19 @@
               </div>
               <div class="creator flex flex-align-center">
                 {{ $t('NFT.Creater') }}:
-                <RouterLink :to="{ name: 'user', params: {metaId: collection.val!.creatorMetaId}}"
+                <RouterLink :to="{ name: 'user', params: {metaId: collection.val!.metaid}}"
                   ><UserName
-                    :name="collection.val!.name"
-                    :meta-name="collection.val!.creatorMetaName"
+                    :name="''"
+                    :meta-name="''"
                 /></RouterLink>
                 <Icon name="center_star" />
               </div>
               <div class="drsc">
-                <template v-if="collection.val!.intro.length > 100">
-                  <span class="text"> {{ collection.val!.intro.slice(0, 100) }}...</span
+                <template v-if="collection.val!.nft_desc.length > 100">
+                  <span class="text"> {{ collection.val!.nft_desc.slice(0, 100) }}...</span
                   ><a @click="isShowContent = true">{{ $t('NFT.Discover More') }}</a>
                 </template>
-                <template v-else>{{ collection.val!.intro }}</template>
+                <template v-else>{{ collection.val!.nft_desc }}</template>
               </div>
             </div>
             <div class="">
@@ -73,26 +73,26 @@
 
           <!-- CollectionWorks -->
           <template v-if="tabActive === NFTCollectTab.CollectionWorks">
-            <!-- screen -->
+           
             <ElAffix :offset="scrrentWarpOffsetTop">
               <div class="screen flex flex-align-center" id="screen">
                 <div class="flex1">
-                  <a
+                  <!-- <a
                     class="main-border flex flex-align-center"
                     @click="isShowFilterWarp = !isShowFilterWarp"
                   >
                     <Icon name="filter" />
                     <template v-if="isShowFilterWarp">{{ $t('NFT.Filter') }}</template>
-                  </a>
+                  </a> -->
                 </div>
-                <ElSelect v-model="sortIndex" @change="refreshDatas">
+                <!-- <ElSelect v-model="sortIndex" @change="refreshDatas">
                   <ElOption
                     v-for="(item, index) in sorts"
                     :key="index"
                     :label="item.name()"
                     :value="index"
                   />
-                </ElSelect>
+                </ElSelect> -->
                 <div class="display flex flex-align-center">
                   <a
                     @click="changeCell(item.value)"
@@ -154,9 +154,9 @@
             <LoadMore :pagination="pagination" v-if="!isListLoading && nfts.length > 0" />
           </template>
           <!-- PriceTrend -->
-          <template v-else>
+          <!-- <template v-else>
             <CollectionChart />
-          </template>
+          </template> -->
         </div>
       </div>
 
@@ -195,7 +195,7 @@ import NFTSellVue from '@/components/NFTSell/NFTSell.vue'
 import { GetGenesisStatistics } from '@/api/broad'
 import CollectionChart from '../components/CollectionChart.vue'
 import { NFTOffSale } from '@/utils/nft'
-
+import {getCollectionDetail,getCollectionMintAmout,getCollectionMintableList} from '@/api/mrc721-api'
 const i18n = useI18n()
 const route = useRoute()
 enum NFTCollectTab {
@@ -210,27 +210,27 @@ const tabs = [
     name: () => i18n.t('NFT.Collection works'),
     value: NFTCollectTab.CollectionWorks,
   },
-  {
-    name: () => i18n.t('NFT.Price Trend'),
-    value: NFTCollectTab.PriceTrend,
-  },
+  // {
+  //   name: () => i18n.t('NFT.Price Trend'),
+  //   value: NFTCollectTab.PriceTrend,
+  // },
 ]
 const tabActive = ref(NFTCollectTab.CollectionWorks)
 const statiscs = reactive([
   {
     name: () => i18n.t('NFT.Initial Price'),
     value: '--',
-    unit: 'Space',
+    unit: 'BTC',
   },
   {
     name: () => i18n.t('NFT.Floor Price'),
     value: '--',
-    unit: 'Space',
+    unit: 'BTC',
   },
   {
     name: () => i18n.t('NFT.Highest Price'),
     value: '--',
-    unit: 'Space',
+    unit: 'BTC',
   },
   {
     name: () => i18n.t('NFT.Circulation'),
@@ -244,11 +244,11 @@ const statiscs = reactive([
   },
   {
     name: () => i18n.t('NFT.Blockchain'),
-    value: 'MVC',
+    value: 'Bitcoin',
     unit: '',
   },
 ])
-const collection: { val: null | Collect } = reactive({ val: null })
+const collection: { val: null | NftsCollection } = reactive({ val: null })
 const isSkeleton = ref(true)
 const isShowContent = ref(false)
 const pagination = reactive({ ...initPagination, pageSize: 24 })
@@ -329,40 +329,100 @@ const isShowNFTList = computed(() => {
   }
 })
 
-function getCollection() {
-  return new Promise<void>(async resolve => {
-    const res = await GetCollectByTopicType(route.params.topicType as string).catch(error => {
+function getDatas(isCover=false){
+  return new Promise<void>(async(resolve,reject)=>{
+    const res= await getCollectionMintableList({
+      metaid:collection.val?.metaid!,
+      name:collection.val?.name!,
+      page:pagination.page,
+      pageSize:pagination.pageSize,
+    }).catch(error => {
       ElMessage.error(error.message)
     })
-    if (res) {
-      collection.val = res
+    if(res.code == 200){
+      debugger
+      if (isCover) nfts.length = 0
+      if (res.data.result.length === 0) pagination.nothing = true
+      nfts.push(...res.data.result)
       resolve()
     }
   })
 }
 
-function getDatas(isCover = false) {
-  return new Promise<void>(async (resolve, reject) => {
-    const sort = sorts[sortIndex.value]
-    const res = await GetCollectionNFTs({
-      topicType: collection.val!.topicType,
-      sortType: sort.sortType,
-      orderType: sort.orderType,
-      sellType: sellType.value,
-      startPrice: priceRange[0] ? satoshi(priceRange[0]).toString() : '',
-      endPrice: priceRange[1] ? satoshi(priceRange[1]).toString() : '',
-      ...pagination,
-    }).catch(error => {
-      ElMessage.error(error.message)
-    })
-    if (res?.code === 0) {
-      if (isCover) nfts.length = 0
-      if (res.data.results.items.length === 0) pagination.nothing = true
-      nfts.push(...res.data.results.items)
-      resolve()
-    }
+function getCollection() {
+  return new Promise<void>(async (resolve,reject) => {
+      const res=await getCollectionDetail({
+        collectionPinid:route.params.topicType as string
+      })
+      if(res.code == 200){
+        const mintRes=await getCollectionMintAmout({
+          metaid:res.data.result.metaid,
+          name:res.data.result.name
+        })
+        if(mintRes.code ==200){
+          debugger
+          const {mintAmout,currentSupply,currentMintPrice}=mintRes.data
+          collection.val ={
+            ...res.data.result,
+            current_supply:currentSupply,
+            minted:mintAmout,
+            current_mint_price:currentMintPrice ? currentMintPrice : res.data.result.init_price
+          }
+          
+          statiscs[0].value = space(res.data.result.init_price).toString()
+          statiscs[1].value = space(res.data.result.init_price).toString()
+          statiscs[2].value = space(currentMintPrice).toString()
+          statiscs[3].value = res.data.result.total_supply.toString()
+          statiscs[4].value = mintAmout.toString()
+
+          resolve()
+          
+        }else{
+          ElMessage.error(mintRes.msg)
+          reject()
+        }
+      }else{
+        ElMessage.error(res.msg)
+        reject()
+      }
+      
+     
+
+    // const res = await GetCollectByTopicType(route.params.topicType as string).catch(error => {
+    //   ElMessage.error(error.message)
+    // })
+    // if (res) {
+    //   collection.val = res
+    //   resolve()
+    // }
   })
 }
+
+// function getDatas(isCover = false) {
+//   return new Promise<void>(async (resolve, reject) => {
+//     const sort = sorts[sortIndex.value]
+//     const res = await GetCollectionNFTs({
+//       topicType: collection.val!.topicType,
+//       sortType: sort.sortType,
+//       orderType: sort.orderType,
+//       sellType: sellType.value,
+//       startPrice: priceRange[0] ? satoshi(priceRange[0]).toString() : '',
+//       endPrice: priceRange[1] ? satoshi(priceRange[1]).toString() : '',
+//       ...pagination,
+//     }).catch(error => {
+//       ElMessage.error(error.message)
+//     })
+//     if (res?.code === 0) {
+//       if (isCover) nfts.length = 0
+//       if (res.data.results.items.length === 0) pagination.nothing = true
+//       nfts.push(...res.data.results.items)
+//       resolve()
+//     }
+//   })
+// }
+
+
+
 
 function getMore() {
   if (isSkeleton.value || pagination.loading || pagination.nothing || isListLoading.value) return
@@ -446,18 +506,25 @@ function changeTab(value: NFTCollectTab) {
   }
 }
 
-getCollection().then(() => {
-  getDatas(true).then(() => {
+getCollection().then(()=>{
+  getDatas(true).then(()=>{
     isSkeleton.value = false
-    nextTick(() => {
-      // scrrentWarpOffsetTop.value = document.getElementById('collection')!.offsetTop - 18
-      // filterWarpOffsetTop.value =
-      //   document.getElementById('collection')!.offsetTop +
-      //   document.getElementById('screen')!.clientHeight
-    })
   })
+
 })
-getGenesisStatistics()
+
+// getCollection().then(() => {
+//   getDatas(true).then(() => {
+//     isSkeleton.value = false
+//     nextTick(() => {
+//       // scrrentWarpOffsetTop.value = document.getElementById('collection')!.offsetTop - 18
+//       // filterWarpOffsetTop.value =
+//       //   document.getElementById('collection')!.offsetTop +
+//       //   document.getElementById('screen')!.clientHeight
+//     })
+//   })
+// })
+// getGenesisStatistics()
 </script>
 
 <style lang="scss" scoped src="./Collection.scss"></style>

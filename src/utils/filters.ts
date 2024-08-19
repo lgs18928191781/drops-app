@@ -235,6 +235,8 @@ export function Currency(amount: number, unit: string) {
       return new Decimal(amount).div(Math.pow(10, 18)).toString()
     case Chains.POLYGON:
       return new Decimal(amount).div(Math.pow(10, 18)).toString()
+    case Chains.BTC:
+      return new Decimal(amount).div(Math.pow(10, 8)).toString()
   }
 }
 
