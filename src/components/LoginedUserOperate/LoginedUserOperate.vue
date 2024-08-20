@@ -148,12 +148,12 @@
       </template>
 
       <!-- 💰 钱包 -->
-      <!-- <a
+      <a
         class="flex flex-align-center flex-pack-center user-warp-item"
         @click="layout.$patch({ isShowWallet: true })"
       >
         <Icon name="wallet_fill" />
-      </a> -->
+      </a>
 
       <!-- 👤 头像 -->
       <el-popover placement="bottom" :width="'auto'" trigger="hover" ref="popover">
