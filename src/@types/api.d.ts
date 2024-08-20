@@ -5,6 +5,16 @@ declare interface apiResponse {
   data: any
   error?: string
 }
+
+
+declare interface apiMrc721Response {
+  code: number
+  msg: string
+  count: number
+  data: any
+  error?: string
+}
+
 declare interface TransactionRecordItem {
   headUrl: string
   username: string
@@ -1243,6 +1253,24 @@ declare interface NftsCollection{
   minted?:number
   current_mint_price?:number
 }
+
+declare interface NftMintItemType{
+ id:number
+ item_pinid:string
+ item_cover:string
+ pic_path:string
+ pic_id:string
+ nft_name:string
+ item_desc:string
+ classify:Array<string>
+ meta_data:any
+ mint_price:number
+ commit_address:string
+ reveal_address:string
+ is_minted:number
+ is_destroy:number
+}
+
 
 declare interface HomeActivityItem {
   cover: PIC

@@ -1331,7 +1331,8 @@
   "NFTs": {
     "genesis_nfts": "创建NFTs系列",
     "lanuch_title1": "选择您所发行的NFTs基于的区块链",
-    "lanuch_title2": "是否启用自动做市机制"
+    "lanuch_title2": "是否启用自动做市机制",
+    "lanuch_mint": "铸造"
   },
   "Nfts": {
     "launch_noSupport": "Bitcoin资产暂不支持自动做市机制",
