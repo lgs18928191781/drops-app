@@ -182,7 +182,7 @@ export const useUserStore = defineStore('user', {
           localStorage.removeItem('useMetaletLogin')
           const state = await window.metaidwallet.isConnected()
           if (state) {
-            await window.metaidwallet.disconnect()
+            // await window.metaidwallet.disconnect()
             this.isNeedRefresh = true
           }
         }
@@ -211,6 +211,7 @@ export const useUserStore = defineStore('user', {
         resolve()
       })
     },
+    changeWalletAccount() {},
 
     updateUserInfo(userInfo: Partial<SetUserInfo>) {
       return new Promise<void>(async resolve => {

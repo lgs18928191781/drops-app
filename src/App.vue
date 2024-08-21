@@ -41,7 +41,17 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, onMounted, nextTick, watch, provide, onUnmounted } from 'vue'
+import {
+  reactive,
+  ref,
+  onMounted,
+  nextTick,
+  watch,
+  provide,
+  onUnmounted,
+  onBeforeUnmount,
+  watchEffect,
+} from 'vue'
 import { useRoute } from 'vue-router'
 
 import { useRootStore } from '@/stores/root'
@@ -101,12 +111,15 @@ onMounted(async () => {
   // const ECPair = window.ecpair.ECPairFactory(secp256k1)
   // btcJsStore.setECPair(ECPair)
 
+  // window.metaidwallet.on('accountsChanged', handleAcccountsChanged)
+
   setTimeout(async () => {
     initBitcoin()
     await connectorStore.sync()
+    console.log(connectorStore.last._isConnected)
     if (connectorStore.last._isConnected) {
       await followStore.get()
-
+      console.log(window.metaidwallet)
       // await metaidEntity.payCommentEntity({
       //   body: {
       //     content: `评论了一下下`,
@@ -136,6 +149,25 @@ onMounted(async () => {
 
 onUnmounted(() => {
   clearInterval(feebInterval.value)
+})
+
+onBeforeUnmount(() => {
+  window.metaidwallet?.removeListener('accountsChanged', handleAcccountsChanged)
+})
+
+function handleAcccountsChanged() {
+  ElMessage.warning('Metalet account changed,Please reconnect...')
+  userStore.logout(route)
+  connectorStore.disconnect()
+  // console.log(connectorStore.last._isConnected)
+}
+
+watchEffect(() => {
+  if (connectorStore.last._isConnected) {
+    window.metaidwallet.on('accountsChanged', handleAcccountsChanged)
+  } else {
+    window.metaidwallet?.removeListener('accountsChanged', handleAcccountsChanged)
+  }
 })
 </script>
 <style lang="css" src="@/assets/styles/tailwind.css"></style>

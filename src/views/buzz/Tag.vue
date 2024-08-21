@@ -4,7 +4,7 @@
     <div class="bg"></div>
     <div class="content">
       <div class="back">
-        <a @click="$router.back()"><Icon name="down"/></a>
+        <!-- <a @click="$router.back()"><Icon name="down"/></a> -->
         <div class="menu-select-wrap">
           <div class="menu-select">
             <div

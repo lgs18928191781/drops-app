@@ -391,10 +391,10 @@ async function submit() {
     } catch (error) {
       const errorMessage = error.message
       // console.log(errorMessage)
-      const toastMessage = errorMessage?.includes('Cannot read properties of undefined')
-        ? 'User Canceled'
-        : error
-      ElMessage.error(toastMessage)
+      // const toastMessage = errorMessage?.includes('Cannot read properties of undefined')
+      //   ? 'User Canceled'
+      //   : error
+      ElMessage.error(errorMessage)
     }
   }
   return

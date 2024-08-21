@@ -115,7 +115,7 @@ function fetchData(count = 1, parentResolve?: () => void) {
           }
         }
         list[0] = detailRes
-         fetchCommentList(detailRes.txId, true).then()
+        fetchCommentList(detailRes.txId, true).then()
         if (parentResolve) parentResolve()
         else resolve()
       } else {

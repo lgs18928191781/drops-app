@@ -650,6 +650,8 @@ const _sendTextMessageForSession = async (messageDto: MessageDto) => {
   // 1.3 content: done
   // 1.4 contentType
   const contentType = 'text/plain'
+
+  // const contenTypeForFile='png/image;binary'
   // 1.5 encrypt
   const encrypt = '1'
   const dataCarrier = {

@@ -652,7 +652,9 @@ async function replay() {
     },
   }
   try {
+    console.log(commentBody)
     const CommentRes = await payCommentEntity(commentBody)
+    console.log(CommentRes)
     if (CommentRes?.revealTxIds?.length || CommentRes.txid) {
       let itemIndex = props.list.findIndex(item => item.txId === replayMsg.val.commentTo)
       if (itemIndex !== -1) {
@@ -660,6 +662,10 @@ async function replay() {
         buzz.commentCount += 1
         console.log(buzz)
         emit('updateItem', buzz)
+        isShowCommentModal.value = false
+        ElMessage.success(i18n.t('Buzz.comment.success'))
+        comment.value = ''
+      } else {
         isShowCommentModal.value = false
         ElMessage.success(i18n.t('Buzz.comment.success'))
         comment.value = ''
@@ -672,8 +678,6 @@ async function replay() {
   } catch (error) {
     ElMessage.error((error as any).message)
   }
-
-  console.log(CommentRes)
 
   return
   return new Promise<void>(async resolve => {
