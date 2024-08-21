@@ -102,6 +102,8 @@ function initBitcoin() {
 }
 
 onMounted(async () => {
+  console.log('VITE_TEST_TEXT',import.meta.env.VITE_TEST_TEXT)
+  console.log('VITE_TEST_TEXT',import.meta.env.VITE_METALET_API)
   // initialize btcjs
   // const btcjs = window.bitcoinjs
   // btcJsStore.set(btcjs)
