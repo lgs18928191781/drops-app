@@ -168,7 +168,7 @@ export const router = createRouter({
       path: '/nft',
       name: 'nft',
       component: () => import('@/views/nft/Layout.vue'),
-      meta: { keepAlive: true },
+      // meta: { keepAlive: true },
       redirect: {
         name: 'nftIndex',
       },
@@ -197,19 +197,19 @@ export const router = createRouter({
           path: 'collection',
           name: 'nftCollection',
           component: () => import('@/layout/BaseRouterView/BaseRouterView.vue'),
-          meta: { keepAlive: true },
+          // meta: { keepAlive: true },
           children: [
             {
               path: 'index',
               name: 'nftCollectionIndex',
               component: () => import('@/views/nft/collection/Index.vue'),
-              meta: { keepAlive: true },
+              // meta: { keepAlive: true },
             },
             {
               path: 'detail/:topicType',
               name: 'nftCollectionDetail',
               component: () => import('@/views/nft/collection/Collection.vue'),
-              meta: { keepAlive: true },
+              // meta: { keepAlive: false },
             },
           ],
         },

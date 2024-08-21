@@ -69,6 +69,7 @@
               <span class="text-2xl font-medium">{{ currentNftsCollect?.name }}</span>
 
               <ExternalLink
+              @click="toMarketCollection"
                 :size="18"
                 color="#909399"
                 class="cursor-pointer hover:scale-110"
@@ -135,6 +136,13 @@
                   !currentNftsCollect?.autoMarket || Boolean(currentNftsCollect?.initialPrice)
                 "
               ></el-input>
+                <div class="flex items-center mt-2 text-[#909399]">
+                  <span class="mr-1">{{ autoMaketData.initialPrice ?? 0 }}</span>
+                  <span class="mr-1">BTC</span>
+                  <span class="mr-1">=</span>
+                  <span class="mr-1">{{ btcConverSats }}</span>
+                  <span>Sats</span>
+                </div>
             </div>
             <div class="mt-3.5">
               <span>{{ $t('Nfts.lanuch_auto_market_setpriceAdd') }}</span>
@@ -169,12 +177,7 @@
         <div class="text-lg font-medium">{{ $t('Nfts.lanuch_bulkMint') }}</div>
 
         <div class="mint-btn flex text-sm font-medium">
-          <button
-            @click="mintOne"
-            class="py-1 px-3 rounded-md border border-transparent flex items-center justify-center mr-2 bg-[#FFDC51] "
-          >
-            铸造单个
-          </button>
+       
 
           <button
             @click="modelValue = true"
@@ -719,6 +722,7 @@ import { useBtcJsStore } from '@/stores/btcjs'
 import * as secp256k1 from 'tiny-secp256k1'
 import {usePayModalEntity} from '@/hooks/use-pay-modal-entity'
 import {  type Psbt } from 'bitcoinjs-lib'
+ import { openLoading } from '@/utils/util'
 const i18n = useI18n()
 const genesisStore = useGenesisStore()
 const connectionStore = useConnectionStore()
@@ -790,11 +794,11 @@ const chainOptions = [
     label: NftsLaunchPadChain.btc,
     icon: 'logo_btc',
   },
-  {
-    value: NftsLaunchPadChain.mvc,
-    label: NftsLaunchPadChain.mvc,
-    icon: 'logo_mvc',
-  },
+  // {
+  //   value: NftsLaunchPadChain.mvc,
+  //   label: NftsLaunchPadChain.mvc,
+  //   icon: 'logo_mvc',
+  // },
 ]
 
 const createCollectionform = reactive({
@@ -807,7 +811,7 @@ const createCollectionform = reactive({
   website: '',
   metadata:{},
   originFile:null,
-  chain: CollectionMintChain.btc,
+  chain: NftsLaunchPadChainSymbol.btc,
   autoMakeMarket: true,
 })
 
@@ -816,6 +820,14 @@ const newFile: Array<{id:number, file: File; picId: string,itemDesc:string,class
 const genesisCollection = ref('')
 const currentNftsCollect = ref<Mrc721CollectionItem>()
 const tableData = reactive<MintListInfo[]>([])
+
+const btcConverSats=computed(()=>{
+  if(autoMaketData.value.initialPrice){
+    return new Decimal(autoMaketData.value.initialPrice).mul(10**8).toNumber()
+  }else{
+    return 0
+  }
+})
 
 const customStyle = computed(() => {
   return {
@@ -834,10 +846,10 @@ const optionMakeMarket = reactive([
     disabled:false
     //  disabled: computed(() => chain.value == NftsLaunchPadChain.btc),
   },
-  {
-    value: false,
-    label: computed(() => i18n.t('Nfts.launch_no')),
-  },
+  // {
+  //   value: false,
+  //   label: computed(() => i18n.t('Nfts.launch_no')),
+  // },
 ])
 
 const MyCollectionList = computed(() => {
@@ -856,6 +868,8 @@ const mintedAmount=computed(()=>{
   }
 
 })
+
+
 
 const mintData = reactive<MintInfo & UseSameOption>({
   mintAmount: 0,
@@ -916,7 +930,7 @@ type MintListInfo = Omit<MintInfo, 'mintAmount'> & { id: number; op: string; }
   async function formatToSignInputs(psbt:Psbt){
     try {
       const pubkey=await connectionStore.provider?.btc.getPublicKey()
-      debugger
+      
     const toSignInputs=[]
     if(psbt.inputCount == 1){
       throw new Error('No input to Sign')
@@ -939,53 +953,53 @@ type MintListInfo = Omit<MintInfo, 'mintAmount'> & { id: number; op: string; }
     }
   }
 
-  async function mintOne(params:{
-    creatorMetaId:string
-    name:string
-    commitAddress:string
-    receiverAddress:string
-    feeb:number
-  }){
-    try {
-    const getOrderPsbtRes= await mintNftItem(params)
-    if(getOrderPsbtRes.code == 200){
-    const psbtHex=getOrderPsbtRes.data.psbtHex
-     const estiomateResult=await estimatePsbtFee(psbtHex,feeStore.last.currentFeeb.feeRate,true)
-     if(estiomateResult){
-      const {psbt,feeb}=await estimatePsbtFee(psbtHex,feeStore.last.currentFeeb.feeRate)
-      const toSignInputs=await formatToSignInputs(psbt)
-      const rawTx= await connectionStore.adapter.signPsbt(psbt.toHex(),{
-        toSignInputs:toSignInputs,
-        autoFinalized:false
-      })
-      console.log("signRes",rawTx)
-      if(rawTx?.status == 'canceled'){
-        throw new Error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
-      }else{
-        const submitRes= await submitMintOrder({
-        creatorMetaId:params.creatorMetaId,
-        name:params.name,
-        commitAddress:params.commitAddress,
-        psbtHex:rawTx,
-        feeb:params.feeb
-      })
-      if(submitRes.code == 200){
-        debugger
-        return ElMessage.success(`${i18n.t('NFTS.NFTs mint_success')}`)
-      }else{
-        throw new Error(submitRes?.msg)
-      }
-      }
+  // async function mintOne(params:{
+  //   creatorMetaId:string
+  //   name:string
+  //   commitAddress:string
+  //   receiverAddress:string
+  //   feeb:number
+  // }){
+  //   try {
+  //   const getOrderPsbtRes= await mintNftItem(params)
+  //   if(getOrderPsbtRes.code == 200){
+  //   const psbtHex=getOrderPsbtRes.data.psbtHex
+  //    const estiomateResult=await estimatePsbtFee(psbtHex,feeStore.last.currentFeeb.feeRate,true)
+  //    if(estiomateResult){
+  //     const {psbt,feeb}=await estimatePsbtFee(psbtHex,feeStore.last.currentFeeb.feeRate)
+  //     const toSignInputs=await formatToSignInputs(psbt)
+  //     const rawTx= await connectionStore.adapter.signPsbt(psbt.toHex(),{
+  //       toSignInputs:toSignInputs,
+  //       autoFinalized:false
+  //     })
+  //     console.log("signRes",rawTx)
+  //     if(rawTx?.status == 'canceled'){
+  //       throw new Error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
+  //     }else{
+  //       const submitRes= await submitMintOrder({
+  //       creatorMetaId:params.creatorMetaId,
+  //       name:params.name,
+  //       commitAddress:params.commitAddress,
+  //       psbtHex:rawTx,
+  //       feeb:params.feeb
+  //     })
+  //     if(submitRes.code == 200){
+  //       
+  //       return ElMessage.success(`${i18n.t('NFTS.NFTs mint_success')}`)
+  //     }else{
+  //       throw new Error(submitRes?.msg)
+  //     }
+  //     }
      
-    }
+  //   }
     
-    } }catch (error) {
-      debugger
+  //   } }catch (error) {
+  //     
       
-     return ElMessage.error(error as any)
-    }
+  //    return ElMessage.error(error as any)
+  //   }
 
-  }
+  // }
 
 
 function getCollectionData() {
@@ -1027,6 +1041,20 @@ function removeItem(item: any) {
 
   tableData.push(...newArr)
   newFile.push(...newFileList)
+}
+
+
+function toMarketCollection(){
+  if(currentNftsCollect.value?.initialPrice){
+    router.push({
+    name:"nftCollectionDetail",
+    params: { topicType: currentNftsCollect.value?.collectionPinId}
+  })
+  }else{
+    return ElMessage.error(`${i18n.t('NFTs.lanuch_price_exist')}`)
+  }
+  //    :to="{ name: 'nftCollectionDetail', params: { topicType: item.collection_pinid } }"
+
 }
 
 function editNft(item: MintListInfo) {
@@ -1234,7 +1262,7 @@ async function estimateBuildTxFee(targetAddress:string[] = [],feeb:number,checkO
    })
 
    console.log("estiomateResult",estiomateResult)
-   debugger
+   
    if(checkOnly){
     const feeInfo={
       basic:newFile.length * 546,
@@ -1250,7 +1278,7 @@ async function estimateBuildTxFee(targetAddress:string[] = [],feeb:number,checkO
    console.log("estiomateresult",estiomateResult)
    return estiomateResult
   } catch (error) {
-    debugger
+    
   }
 }
 
@@ -1297,7 +1325,7 @@ async function finallyMint() {
     if(!autoMaketData.value.initialPrice && !autoMaketData.value.priceGrowth){
       return ElMessage.error(`${i18n.t('Nfts.lanuch_automarket_set')}`)
     }
-    debugger
+    
     const estiomateResult= await estimateBuildTxFee([],feeStore.last.currentFeeb.feeRate,true)
 
     if(!estiomateResult){
@@ -1327,13 +1355,16 @@ async function finallyMint() {
     }
 
    const {psbt:Psbt1}=await estimateBuildTxFee(commitAddressList,feeStore.last.currentFeeb.feeRate)
-
+  
+   const loading = openLoading()
    const rawTx= await connectionStore.adapter.signPsbt(Psbt1.toHex())
     console.log("signRes",rawTx)
-   debugger
+   
+
+
 
   if(rawTx?.status == 'canceled'){
-    
+    loading.close()
     throw new Error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
 
   }else if(rawTx){
@@ -1343,7 +1374,7 @@ async function finallyMint() {
     uploadNftsFile(params).then((res)=>{
       
       if(res.code == 200){
-     
+        loading.close()
       if(currentNftsCollect.value?.autoMarket && !currentNftsCollect.value?.initialPrice){
         genesisStore.updateItem({
           ...currentNftsCollect.value,
@@ -1366,10 +1397,15 @@ async function finallyMint() {
 
 
 
+    }).catch(err=>{
+      loading.close()
+      throw new Error(`${err.toString()}`)
+     
     })
 
   } catch (error) {
     return ElMessage.error(error as any)
+    
   }
 
 
@@ -1392,7 +1428,7 @@ async function finallyMint() {
   //     }
   //   })
   //   console.log('body', body, attachments)
-  //   debugger
+  //   
   //   const mintItemRes = await mintNftItemEntity({
   //     collectionName: genesisCollection.value,
   //     body: body,
@@ -1401,10 +1437,10 @@ async function finallyMint() {
   //     noBroadcast: false,
   //   })
   //   console.log('mintItemRes', mintItemRes)
-  //   debugger
+  //   
   // } catch (error) {
   //   console.log('error', error)
-  //   debugger
+  //   
   // }
 
 
@@ -1413,13 +1449,13 @@ async function finallyMint() {
 const onSubmitNewCollection = async () => {
   //router.push('/nfts')
   console.log("createCollectionform",createCollectionform)
-  debugger
+  
   const existNfts= genesisStore.getList.find((item)=>item.name == createCollectionform.name)
   try {
     if(existNfts?.collectionPinId){
     return ElMessage.error(`${i18n.t('Nfts.lanuch_existNfts')}`)
   }else{
-    debugger
+    
     const {createCollectionDescRes,coverPinId} = await mintNftEntity({
     body:{
       name:createCollectionform.name,
@@ -1432,7 +1468,7 @@ const onSubmitNewCollection = async () => {
     },
     attachments:[createCollectionform.originFile],
   })
-  debugger
+  
   if( createCollectionDescRes?.revealTxIds.length){
     const genesisRes= await genesisCollect({
         metaId:connectionStore.last.metaid,
@@ -1444,7 +1480,7 @@ const onSubmitNewCollection = async () => {
       const collectionInfo={
         name:createCollectionform.name,
         coverPinid:coverPinId,
-        desc:createCollectionform.desc,
+        desc:`${createCollectionform.desc}`,
         website:createCollectionform.website,
         metaData:JSON.stringify(createCollectionform.metadata),
         totalSupply:createCollectionform.totalSupply,
@@ -1456,16 +1492,18 @@ const onSubmitNewCollection = async () => {
         address:connectionStore.last.user.address,
 
       }
+
+      
       const issueRes=await issueCollection({
         collectionInfo
       })
       if(issueRes.code == 200){
         console.log("issueRes",issueRes)
-      debugger
+      
       
       genesisStore.add({
     totalSupply: +createCollectionform.totalSupply,
-    coverPinid:'',
+    coverPinid:coverPinId,
     name: createCollectionform.name,
     desc: createCollectionform.desc,
     cover: createCollectionform.cover,

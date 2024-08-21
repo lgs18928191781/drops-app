@@ -821,7 +821,8 @@
     "Chosse PayType": "Choose another payment method",
     "NFT Order Locked": "Locked",
     "NFT Has been purchased": "NFT Has been purchased",
-    "Get Msg Error": "Get Msg Error"
+    "Get Msg Error": "Get Msg Error",
+    "Minted": "Minted"
   },
   "My NFT": "My NFT",
   "Done": "Done",
@@ -1113,7 +1114,8 @@
     "Blockchain": "Blockchain",
     "AllChain": "All Chain",
     "Floor price": "Floor price",
-    "Total volume": "Total volume"
+    "Total volume": "Total volume",
+    "display": "Only display collections with provided minting quantities"
   },
   "PathMoreThan10000": "Path>10000, please contact customer service for repair",
   "DAO": {
@@ -1338,7 +1340,9 @@
     "genesis_nfts": "Creating a series of NFTs",
     "lanuch_title1": "Select the blockchain your NFTs will be based on",
     "lanuch_title2": "Enable automatic market-making mechanism",
-    "lanuch_mint": "Mint"
+    "lanuch_mint": "Mint",
+    "lanuch_minted": "Minted",
+    "lanuch_price_exist": "Please upload the NFTs to be minted first."
   },
   "Nfts": {
     "launch_yes": "Yes",

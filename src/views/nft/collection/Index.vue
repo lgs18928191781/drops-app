@@ -3,7 +3,10 @@
     <!-- header -->
     <div class="header flex flex-align-center">
       <div class="flex1">
-        <div class="title">{{ $t('Collection.title') }}</div>
+        <div class="title flex items-center ">
+          <span>{{ $t('Collection.title') }}</span>
+          <span class="ml-1 text-[#303133] text-base">({{ $t("Collection.display") }})</span>
+        </div>
         <div class="drsc">{{ $t('Collection.drsc') }}</div>
       </div>
       <div class="flex flex-align-center chain">
@@ -216,13 +219,16 @@ function getDatas(isCover = false){
    const res= await getMarketCollectionList({
       chain:NftsLaunchPadChainSymbol.btc,
       page:pagination.page,
-      pageSize:pagination.pageSize
+      pageSize:pagination.pageSize,
+      canMint:true
     })
     if(res.code == 200){
         if(res.data.result.length){
           pagination.nothing = false
           for(let item of res.data.result){
-            const mintRes= await getCollectionMintAmout({
+            
+            if(item.init_price){
+              const mintRes= await getCollectionMintAmout({
               metaid:item.metaid,
               name:item.name
             })
@@ -231,6 +237,9 @@ function getDatas(isCover = false){
               const {mintAmout,currentSupply,currentMintPrice}=mintRes.data
               collections.push({...item,current_supply:currentSupply,minted:mintAmout,current_mint_price:currentMintPrice ? currentMintPrice : item.init_price})
             }
+            }
+            
+            
             
           }
         
@@ -242,7 +251,7 @@ function getDatas(isCover = false){
         }
         resolve()
     }
-    debugger
+    
   })
 }
 

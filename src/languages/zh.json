@@ -811,7 +811,8 @@
     "Chosse PayType": "選擇其他付款方式",
     "NFT Order Locked": "訂單鎖定中",
     "NFT Has been purchased": "NFT已被購買",
-    "Get Msg Error": "獲取信息失敗"
+    "Get Msg Error": "獲取信息失敗",
+    "Minted": "已铸造数量"
   },
   "My NFT": "我的NFT",
   "Done": "完成",
@@ -1112,7 +1113,8 @@
     "Blockchain": "區塊鏈",
     "AllChain": "所有鏈",
     "Floor price": "地板價",
-    "Total volume": "發行量"
+    "Total volume": "發行量",
+    "display": "仅展示已提供铸造数量的专辑"
   },
   "PathMoreThan10000": "Path > 10000,請聯系客服修復",
   "DAO": {
@@ -1332,7 +1334,9 @@
     "genesis_nfts": "创建NFTs系列",
     "lanuch_title1": "选择您所发行的NFTs基于的区块链",
     "lanuch_title2": "是否启用自动做市机制",
-    "lanuch_mint": "铸造"
+    "lanuch_mint": "铸造",
+    "lanuch_minted": "已铸造",
+    "lanuch_price_exist": "请先上传要铸造的NFTs"
   },
   "Nfts": {
     "launch_noSupport": "Bitcoin资产暂不支持自动做市机制",

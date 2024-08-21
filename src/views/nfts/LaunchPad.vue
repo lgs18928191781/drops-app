@@ -71,11 +71,11 @@ const options = [
     label: NftsLaunchPadChain.btc,
     icon: 'logo_btc',
   },
-  {
-    value: NftsLaunchPadChain.mvc,
-    label: NftsLaunchPadChain.mvc,
-    icon: 'logo_mvc',
-  },
+  // {
+  //   value: NftsLaunchPadChain.mvc,
+  //   label: NftsLaunchPadChain.mvc,
+  //   icon: 'logo_mvc',
+  // },
 ]
 const optionMakeMarket = reactive([
   {
@@ -89,10 +89,10 @@ const optionMakeMarket = reactive([
     disabled: false,
     // disabled: computed(() => chain.value == NftsLaunchPadChain.btc),
   },
-  {
-    value: false,
-    label: computed(() => i18n.t('Nfts.launch_no')),
-  },
+  // {
+  //   value: false,
+  //   label: computed(() => i18n.t('Nfts.launch_no')),
+  // },
 ])
 
 function next() {

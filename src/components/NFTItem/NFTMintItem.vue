@@ -20,16 +20,16 @@
           <div class="user-list" v-if="!isSimple">
             <div class="user-item flex flex-align-center">
               <UserAvatar
-                :meta-id="collection.metaid"
-                :image="''"
-                :name="''"
+                :meta-id="collection.collection_creator?.metaid"
+                :image="collection.collection_creator?.avatarId"
+                :name="collection.collection_creator?.name"
                 :disabled="true"
                 :meta-name="''"
               />
               <div class="flex1 flex flex-align-center info">
                 <span class="user-name-warp"
                   ><UserName
-                    :name="''"
+                    :name="collection.collection_creator?.name"
                     :meta-name="''"
                     :noTag="true"
                 /></span>
@@ -55,8 +55,8 @@
               </div>
             </div> -->
           </div>
-  
-          <div class="main-border primary" @click.stop="btnFun">
+          
+          <div :class="['main-border', nft.is_minted == 0 ? 'primary' : 'gray' ]" @click.stop="btnFun">
             {{ btnText }}
           </div>
         </div>
@@ -98,7 +98,13 @@ const emit = defineEmits(['mint'])
 //   })
   
   const btnText = computed(() => {
-    return i18n.t('NFTs.lanuch_mint')
+    if(props.nft.is_minted == 0){
+        return i18n.t('NFTs.lanuch_mint')
+        }else if(props.nft.is_minted){
+            return i18n.t('NFTs.lanuch_minted')
+        }
+
+
     // if (props.nft.nftIsOrderLock) {
     //   return i18n.t('NFT.NFT Order Locked')
     // } else if (isMyNFT.value) {
@@ -117,7 +123,10 @@ const emit = defineEmits(['mint'])
   })
   
   async function btnFun() {
-    emit('mint', props.nft)
+    if( props.nft.is_minted == 0){
+        emit('mint', props.nft)
+    }else return
+  
     // if (props.nft.nftIsOrderLock) {
     //   toNFT()
     // } else if (isMyNFT.value) {

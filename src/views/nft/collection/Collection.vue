@@ -7,35 +7,35 @@
     <template #default>
       <div class="collection" id="collection">
         <!-- cover -->
-        <Image class="cover" :src="collection.val?.cover_pinid" />
+        <Image class="cover" :src="collection.val.cover_pinid" />
 
         <div class="collection-content">
           <!-- collection-avatar -->
           <div class="collection-avatar">
-            <Image :src="collectionCreatorInfo.avatarId" class="w-28 h-28 box-border border-4 border-[#fff] shadow-[0px 4px 6px 0px rgba(48, 49, 51, 0.2)]" />
+            <Image :src="collection.val.cover_pinid" class="w-28 h-28 box-border border-4 border-[#fff] shadow-[0px 4px 6px 0px rgba(48, 49, 51, 0.2)] rounded-lg object-cover" />
           </div>
 
           <!-- collection-msg -->
           <div class="collection-msg flex">
             <div class="flex1">
               <div class="name flex flex-align-center">
-                {{ collection.val!.name }} <Icon name="certed" />
+                {{ collection.val.name }} <Icon name="certed" />
               </div>
               <div class="creator flex flex-align-center">
                 {{ $t('NFT.Creater') }}:
-                <RouterLink :to="{ name: 'user', params: {metaId: collectionCreatorInfo.metaid}}"
+                <RouterLink :to="{ name: 'user', params: {metaId: collection.val.collection_creator!.metaid}}"
                   ><UserName
-                    :name="collectionCreatorInfo.name"
+                    :name="collection.val?.collection_creator!.name"
                     :meta-name="''"
                 /></RouterLink>
                 <Icon name="center_star" />
               </div>
               <div class="drsc">
-                <template v-if="collection.val!.nft_desc.length > 100">
-                  <span class="text"> {{ collection.val!.nft_desc.slice(0, 100) }}...</span
+                <template v-if="collection.val.nft_desc.length > 100">
+                  <span class="text"> {{ collection.val?.nft_desc.slice(0, 100) }}...</span
                   ><a @click="isShowContent = true">{{ $t('NFT.Discover More') }}</a>
                 </template>
-                <template v-else>{{ collection.val!.nft_desc }}</template>
+                <template v-else>{{ collection.val.nft_desc }}</template>
               </div>
             </div>
             <div class="">
@@ -138,7 +138,7 @@
                 >
                   <NFTMintItemVue
                     :nft="item"
-                    :collection="collection.val!"
+                    :collection="collection.val"
                     @mint="mintItem"
                     :loading="isListLoading"
                   />
@@ -161,8 +161,8 @@
 
       <ContentModal
         v-model="isShowContent"
-        :title="collection.val!.name"
-        :content="collection.val!.nft_desc"
+        :title="collection.val?.name"
+        :content="collection.val?.nft_desc"
       />
 
       <!-- NFTBuy -->
@@ -198,7 +198,12 @@ import {getCollectionDetail,getCollectionMintAmout,getCollectionMintableList} fr
 import { ElMessage } from 'element-plus'
 import { useConnectionStore, ConnectChain } from '@/stores/connection'
 import { useNetworkStore } from '@/stores/network'
+import {useNFTEntity} from '@/hooks/use-nft-entity'
+import { useFeebStore } from '@/stores/feeb'
+import {openLoading } from '@/utils/util'
 const networkStore = useNetworkStore()
+const feeStore = useFeebStore()
+const nftEntity=useNFTEntity()
 const i18n = useI18n()
 const route = useRoute()
 enum NFTCollectTab {
@@ -242,10 +247,15 @@ const statiscs = reactive([
     unit: '',
   },
   {
-    name: () => i18n.t('NFT.Owner'),
+    name: () => i18n.t('NFT.Minted'),
     value: '--',
     unit: '',
   },
+  // {
+  //   name: () => i18n.t('NFT.Owner'),
+  //   value: '--',
+  //   unit: '',
+  // },
   {
     name: () => i18n.t('NFT.Blockchain'),
     value: 'Bitcoin',
@@ -257,7 +267,7 @@ const isSkeleton = ref(true)
 const isShowContent = ref(false)
 const pagination = reactive({ ...initPagination, pageSize: 24 })
 const nfts: NftMintItemType[] = reactive([])
-const collectionCreatorInfo=ref()
+
 const nft: { val: NftMintItemType | null } = reactive({ val: null })
 const isShowNftBuy = ref(false)
 const isShowNftSale = ref(false)
@@ -284,7 +294,7 @@ const cells = [
 const cell = reactive({ val: cells[0] })
 const sellType = ref(NFTSellType.All)
 let priceRange: [string, string] = reactive(['', ''])
-const isShowFilterWarp = ref(isMobile ? false : true)
+const isShowFilterWarp = ref(false)
 const isListLoading = ref(false)
 
 const sorts = [
@@ -319,7 +329,7 @@ const sorts = [
 const sortIndex = ref(0)
 
 const list = computed(() => {
-  debugger
+  
   if (isListLoading.value) {
     return Array.from({ length: pagination.pageSize }) as NftMintItemType[]
   } else {
@@ -335,26 +345,73 @@ const isShowNFTList = computed(() => {
   }
 })
 
-function mintItem(){
+async function mintItem(nft:NftMintItemType){
+  console.log("aaaa",nft)
+  const loading = openLoading()
+  try {
+   
+    const res= await nftEntity.mintItem({
+    creatorMetaId:collection.val?.metaid!,
+    name:collection.val?.name!,
+    commitAddress:nft.commit_address,
+    receiverAddress:connectionStore.userInfo.address,
+    feeb:feeStore.last.currentFeeb.feeRate
+  })
+  
+  if(res?.code == 200){
+   
+    loading.close()
+    nfts.forEach((item)=>{
+      if(item.commit_address == nft.commit_address){
+        item.is_minted =1
+      }
+    })
+    // refreshDatas()
+  }else{
+    loading.close()
+    return ElMessage.error(res?.msg)
+  }
+  console.log("res",res)
+  
+  } catch (error) {
+    loading.close()
+    return ElMessage.error(`${(error as any).toString()}`)
+  }
   
 }
 
 function getCollectionCreator(address:string){
-  const needInfo = {
+  return new Promise<void>((resolve,reject)=>{
+    try {
+    const needInfo = {
     network: connectionStore.last.network || networkStore.network,
     currentAddress: address
   }
 
  connectionStore.last.getUser({ ...needInfo }).then(user=>{
-  collectionCreatorInfo.value=user
-  console.log("user",user)
-  debugger
+  
+  if(collection.val){
+    collection.val.collection_creator=user
+    resolve()
+  }else{
+    reject()
+  }
+
+
   })
-debugger
+  } catch (error) {
+    reject()
+  }
+  })
+  
+
 }
 
 function getDatas(isCover=false){
   return new Promise<void>(async(resolve,reject)=>{
+    if(!collection.val){
+      reject()
+    }
     const res= await getCollectionMintableList({
       metaid:collection.val?.metaid!,
       name:collection.val?.name!,
@@ -364,12 +421,13 @@ function getDatas(isCover=false){
       ElMessage.error(error.message)
     })
     if(res?.code == 200){
-      debugger
+      
       if (isCover) nfts.length = 0
       if (res.data.result.length === 0) pagination.nothing = true
       nfts.push(...res.data.result)
-      resolve()
+      
     }
+    resolve()
   })
 }
 
@@ -379,13 +437,19 @@ function getCollection() {
         collectionPinid:route.params.topicType as string
       })
       if(res.code == 200){
+        
         const mintRes=await getCollectionMintAmout({
           metaid:res.data.result.metaid,
           name:res.data.result.name
         })
-        getCollectionCreator(res.data.result.address)
-        if(mintRes.code ==200){
-          debugger
+        getCollectionCreator(res.data.result.address).then((res)=>{
+
+        }).catch(()=>{
+          
+          reject()
+        })
+        if(mintRes.code ==200 && mintRes.data.currentSupply > 0){
+          
           const {mintAmout,currentSupply,currentMintPrice}=mintRes.data
           collection.val ={
             ...res.data.result,
@@ -399,13 +463,14 @@ function getCollection() {
           statiscs[2].value = space(currentMintPrice).toString()
           statiscs[3].value = res.data.result.total_supply.toString()
           statiscs[4].value = mintAmout.toString()
-
           resolve()
+    
           
-        }else{
-          ElMessage.error(mintRes.msg)
+        }else if(mintRes.code != 200){
           reject()
+          ElMessage.error(mintRes.msg)
         }
+        
       }else{
         ElMessage.error(res.msg)
         reject()
@@ -453,7 +518,7 @@ function getMore() {
   if (isSkeleton.value || pagination.loading || pagination.nothing || isListLoading.value) return
   pagination.loading = true
   pagination.page++
-  debugger
+  
   getDatas().then(() => {
     pagination.loading = false
   })
@@ -535,8 +600,12 @@ function changeTab(value: NFTCollectTab) {
 getCollection().then(()=>{
   getDatas(true).then(()=>{
     isSkeleton.value = false
+  }).catch(()=>{
+    isSkeleton.value = false
   })
 
+}).catch(()=>{
+  isSkeleton.value = false
 })
 
 

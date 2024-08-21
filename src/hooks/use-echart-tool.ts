@@ -16,7 +16,7 @@ export function useEchart() {
       {
         label: 'Market Price',
         backgroundColor: '#FFDC51',
-        data: [1, 2, 1, 4, 1, 6, 7],
+        data: [],
         borderColor: '#FFDC51',
       },
     ],

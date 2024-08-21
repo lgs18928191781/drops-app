@@ -1,3 +1,5 @@
+
+
 declare interface apiResponse {
   code: number
   msg: string
@@ -1231,6 +1233,23 @@ declare interface Collect {
   floorPrice?: number
 }
 
+declare interface NFTCreatore{
+  number: number;
+  rootTxId: string;
+  name: string;
+  nameId: string;
+  address: string;
+  avatar: string | null;
+  avatarId: string;
+  bio: string;
+  bioId: string;
+  soulbondToken: string;
+  unconfirmed: string;
+  isInit: boolean;
+  metaid: string;
+
+}
+
 declare interface NftsCollection{
   address:string
   auto_market:number
@@ -1252,6 +1271,7 @@ declare interface NftsCollection{
   current_supply?:number
   minted?:number
   current_mint_price?:number
+  collection_creator?:NFTCreatore
 }
 
 declare interface NftMintItemType{

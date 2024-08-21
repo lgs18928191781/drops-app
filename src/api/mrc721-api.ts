@@ -1,6 +1,6 @@
 import HttpRequest from '@/utils/request'
 import {NftsLaunchPadChainSymbol} from '@/data/constants'
-const NftOrders = new HttpRequest(`http://127.0.0.1:3001/nfts-orders`, {
+const NftOrders = new HttpRequest(`https://general.mvcscan.com/mrc721/nfts-orders`, {
   header: {
     //SiteConfigMetanetId: import.meta.env.VITE_SiteConfigMetanetId,
   },
@@ -78,6 +78,7 @@ export const getCollectionMintAmout =async (params:{
   metaid:string,
   name:string
 }):Promise<apiMrc721Response>=>{
+  
   return NftOrders.post('/get-collection-mint', params)
 }
 
@@ -86,6 +87,7 @@ export const getMarketCollectionList=async(params:{
   chain:NftsLaunchPadChainSymbol,
   page:number,
   pageSize:number
+  canMint:boolean
 }):Promise<apiMrc721Response>=>{
   return NftOrders.get(`/collection-list`, {
     params,

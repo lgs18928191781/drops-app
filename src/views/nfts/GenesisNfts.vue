@@ -212,13 +212,13 @@ const onSubmit = async() => {
       })
 
       console.log("issueRes",issueRes)
-      debugger
+      
         if(issueRes.code == 200){
           genesisStore.add({
         totalSupply:+form.totalSupply,
         name:form.name,
         desc:form.desc,
-        cover:form.cover,
+        cover:coverPinId,
         website:form.website,
         royaltyRate:+form.royaltyRate,
         metaData:form.metadata,
