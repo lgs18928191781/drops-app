@@ -822,7 +822,8 @@
     "NFT Order Locked": "Locked",
     "NFT Has been purchased": "NFT Has been purchased",
     "Get Msg Error": "Get Msg Error",
-    "Minted": "Minted"
+    "Minted": "Minted",
+    "PoolAmount": "Total Liquidity Pool"
   },
   "My NFT": "My NFT",
   "Done": "Done",

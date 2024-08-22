@@ -58,7 +58,7 @@
           <!-- <LucideIcon name="Fuel" :size="20" class="text-white font-bold mr-1.5" strokeWidth="2" /> -->
           <span class="mr-1">{{ feebStore.last.currentFeeb.title }}:</span>
           <div>
-            <span class="mr-1">{{ feebStore.last.currentFeeb.feeRate }}</span
+            <span class="mr-1">{{ feebStore.getCurrentFeeb}}</span
             ><span>sat/vB</span>
           </div>
           <img src="@/assets/images/list_icon.png" alt="" class="w-3 h-3 ml-1.5" />
@@ -432,7 +432,7 @@ async function onSetBaseInfoSuccessType(params: {
       userData:userInfo,
       options: {
         network: networkStore.network,
-        feeRate: feebStore.last.currentFeeb.feeRate,
+        feeRate: feebStore.getCurrentFeeb,
         service: {
           address: import.meta.env.VITE_BTC_SERVICE_ADDRESS,
           satoshis: import.meta.env.VITE_BTC_SERVICE_FEEB,

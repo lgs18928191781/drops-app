@@ -713,7 +713,7 @@ import { Line } from 'vue-chartjs'
 import { useEchart } from '@/hooks/use-echart-tool'
 import type {  FormInstance, FormRules,UploadProps } from 'element-plus'
 import { useFeebStore } from '@/stores/feeb'
-import { uploadNftsFile,generateCommitAddress,mintNftItem,submitMintOrder,issueCollection,genesisCollection as genesisCollect} from '@/api/mrc721-api'
+import { uploadNftsFile,uploadNftsFilePath,generateCommitAddress,mintNftItem,submitMintOrder,issueCollection,genesisCollection as genesisCollect,getPoolInfo} from '@/api/mrc721-api'
 
 import Decimal from 'decimal.js-light'
 import {exclusiveChange} from '@/hooks/use-buildtx-entity'
@@ -723,6 +723,7 @@ import * as secp256k1 from 'tiny-secp256k1'
 import {usePayModalEntity} from '@/hooks/use-pay-modal-entity'
 import {  type Psbt } from 'bitcoinjs-lib'
  import { openLoading } from '@/utils/util'
+ import {space} from "@/utils/filters"
 const i18n = useI18n()
 const genesisStore = useGenesisStore()
 const connectionStore = useConnectionStore()
@@ -755,12 +756,15 @@ watch(
       return item.collectionPinId == newValue
     })
     autoMaketData.value.initialPrice=currentNftsCollect.value?.initialPrice!
+    
     autoMaketData.value.priceGrowth=currentNftsCollect.value?.priceGrowth!
     genesisCollection.value = currentNftsCollect.value!.name
   }
 )
 
 onMounted(() => {
+
+  
   // genesisStore.updateItem({
   //   ...currentNftsCollect.value,
   //   initialPrice:'',
@@ -1007,9 +1011,12 @@ function getCollectionData() {
     return item.collectionPinId == route.params.pinid
   })
   if(currentNftsCollect.value?.name){
+    
     genesisCollection.value = currentNftsCollect.value!.name
-    autoMaketData.value.initialPrice=currentNftsCollect.value?.initialPrice!
+    autoMaketData.value.initialPrice=currentNftsCollect.value?.initialPrice! ? `${space(currentNftsCollect.value?.initialPrice!)}` : "0"
     autoMaketData.value.priceGrowth=currentNftsCollect.value?.priceGrowth!
+    
+ 
   }
 
 }
@@ -1258,7 +1265,7 @@ async function estimateBuildTxFee(targetAddress:string[] = [],feeb:number,checkO
       psbt: psbt,
       maxUtxosCount:3,
       sighashType:SIGHASH_ALL_ANYONECANPAY,
-      feeb:feeb ?? feeStore.last.currentFeeb.feeRate,
+      feeb:feeb ?? feeStore.getCurrentFeeb,
    })
 
    console.log("estiomateResult",estiomateResult)
@@ -1294,7 +1301,7 @@ async function estimatePsbtFee(psbtHex:string,feeb:number,checkOnly:boolean=fals
       psbt: psbt,
       maxUtxosCount:3,
       sighashType:SIGHASH_ALL_ANYONECANPAY,
-      feeb:feeb ?? feeStore.last.currentFeeb.feeRate,
+      feeb:feeb ?? feeStore.getCurrentFeeb,
    })
 
  
@@ -1320,88 +1327,131 @@ async function estimatePsbtFee(psbtHex:string,feeb:number,checkOnly:boolean=fals
 }
 
 async function finallyMint() {
-
+  
     try {
     if(!autoMaketData.value.initialPrice && !autoMaketData.value.priceGrowth){
       return ElMessage.error(`${i18n.t('Nfts.lanuch_automarket_set')}`)
     }
     
-    const estiomateResult= await estimateBuildTxFee([],feeStore.last.currentFeeb.feeRate,true)
+    const estiomateResult= await estimateBuildTxFee([],feeStore.getCurrentFeeb,true)
 
     if(!estiomateResult){
       return ElMessage.error(`${i18n.t('Nfts.cancel_transation')}`)
     }
 
     let params=new FormData()
+    let nftListInfo:UploadFileData={
+      picId:[],
+      picPath:[],
+      itemDesc:[],
+      classify:[],
+      nftName:[],
+      metaid:'',
+      name:'',
+      rawTx:'',
+      commitAddress:[]
+    }
+     
     for(let i=0;i<newFile.length;i++){
       params.append('file',newFile[i].file)
-      params.append('picId',newFile[i].picId)
-      params.append('itemDesc',newFile[i].itemDesc)
-      params.append('classify',JSON.stringify(newFile[i].classify))
-      params.append('nftName',newFile[i].nftName)
+      nftListInfo.classify.push(JSON.stringify(newFile[i].classify))
+      nftListInfo.itemDesc.push(newFile[i].itemDesc)
+      nftListInfo.nftName.push(newFile[i].nftName)
+      nftListInfo.picId.push(newFile[i].picId)
+      // params.append('picId',newFile[i].picId)
+      // params.append('itemDesc',newFile[i].itemDesc)
+      // params.append('classify',JSON.stringify(newFile[i].classify))
+      // params.append('nftName',newFile[i].nftName)
     }
-    params.append('metaid',currentNftsCollect.value?.metaId!)
-    params.append('name',currentNftsCollect.value?.name!)
+    nftListInfo.metaid=currentNftsCollect.value?.metaId!
+    nftListInfo.name=currentNftsCollect.value?.name!
+    
+    uploadNftsFile(params).then(async (response)=>{
+      
+        if(response.code == 200 && response.data.length){
+          for(let item of response.data){
+            nftListInfo.picPath.push(item.picPath)
+          }
+            // for(let i=0;i<newFile.length;i++){
+    //   params.append('file',newFile[i].file)
+    //   params.append('picId',newFile[i].picId)
+    //   params.append('itemDesc',newFile[i].itemDesc)
+    //   params.append('classify',JSON.stringify(newFile[i].classify))
+    //   params.append('nftName',newFile[i].nftName)
+    // }
+    // params.append('metaid',currentNftsCollect.value?.metaId!)
+    // params.append('name',currentNftsCollect.value?.name!)
 
     const commitAddressList =await preMint()
 
-    if(commitAddressList.length){
+if(commitAddressList.length){
+  nftListInfo.commitAddress=commitAddressList
+  // params.append('commitAddress',JSON.stringify(commitAddressList))
 
-      params.append('commitAddress',JSON.stringify(commitAddressList))
+
+}else{
+  throw new Error(`${i18n.t('Nfts.lanuch_generate_commit_address_fail')}`)
+}
+
+const {psbt:Psbt1}=await estimateBuildTxFee(commitAddressList,feeStore.getCurrentFeeb)
+
+const loading = openLoading()
+const rawTx= await connectionStore.adapter.signPsbt(Psbt1.toHex())
+console.log("signRes",rawTx)
 
 
-    }else{
-      throw new Error(`${i18n.t('Nfts.lanuch_generate_commit_address_fail')}`)
-    }
 
-   const {psbt:Psbt1}=await estimateBuildTxFee(commitAddressList,feeStore.last.currentFeeb.feeRate)
+
+if(rawTx?.status == 'canceled'){
+loading.close()
+throw new Error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
+
+}else if(rawTx){
+nftListInfo.rawTx = rawTx
+//params.append('rawTx',rawTx)
+}
+//uploadNftsFilePath
+uploadNftsFilePath(nftListInfo).then((res)=>{
   
-   const loading = openLoading()
-   const rawTx= await connectionStore.adapter.signPsbt(Psbt1.toHex())
-    console.log("signRes",rawTx)
-   
-
-
-
-  if(rawTx?.status == 'canceled'){
+  if(res.code == 200){
     loading.close()
-    throw new Error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
-
-  }else if(rawTx){
-    params.append('rawTx',rawTx)
+  if(currentNftsCollect.value?.autoMarket && !currentNftsCollect.value?.initialPrice){
+    genesisStore.updateItem({
+      ...currentNftsCollect.value,
+      // initialPrice:autoMaketData.value.initialPrice!,
+      // priceGrowth:autoMaketData.value.priceGrowth!
+    })
+    currentNftsCollect.value.initialPrice=autoMaketData.value.initialPrice
+    currentNftsCollect.value.priceGrowth=autoMaketData.value.priceGrowth
+  }
+  genesisStore.updateCurrentTotalSupply({
+        name:currentNftsCollect.value!.name,
+        count:newFile.length
+      })
+      tableData.length=0
+      newFile.length=0
+      ElMessage.success(`${i18n.t('Nfts.lanuch_upload_file_success')}`)
+  }else{
+    ElMessage.error(`${res.msg}`)
   }
 
-    uploadNftsFile(params).then((res)=>{
-      
-      if(res.code == 200){
-        loading.close()
-      if(currentNftsCollect.value?.autoMarket && !currentNftsCollect.value?.initialPrice){
-        genesisStore.updateItem({
-          ...currentNftsCollect.value,
-          // initialPrice:autoMaketData.value.initialPrice!,
-          // priceGrowth:autoMaketData.value.priceGrowth!
-        })
-        currentNftsCollect.value.initialPrice=autoMaketData.value.initialPrice
-        currentNftsCollect.value.priceGrowth=autoMaketData.value.priceGrowth
-      }
-      genesisStore.updateCurrentTotalSupply({
-            name:currentNftsCollect.value!.name,
-            count:newFile.length
-          })
-          tableData.length=0
-          newFile.length=0
-          ElMessage.success(`${i18n.t('Nfts.lanuch_upload_file_success')}`)
-      }else{
-        ElMessage.error(`${res.msg}`)
-      }
 
 
+}).catch(err=>{
+  loading.close()
+  throw new Error(`${err.toString()}`)
+ 
+})
 
+         
+        }else{
+          throw new Error(response.msg)
+        }
     }).catch(err=>{
-      loading.close()
       throw new Error(`${err.toString()}`)
-     
     })
+
+  
 
   } catch (error) {
     return ElMessage.error(error as any)

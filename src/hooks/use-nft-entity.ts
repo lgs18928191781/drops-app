@@ -31,7 +31,7 @@ export function useNFTEntity(){
             psbt: psbt,
             maxUtxosCount:3,
             sighashType:SIGHASH_ALL_ANYONECANPAY,
-            feeb:feeb ?? feeStore.last.currentFeeb.feeRate,
+            feeb:feeb ?? feeStore.getCurrentFeeb,
          })
       
        
@@ -61,6 +61,7 @@ export function useNFTEntity(){
         creatorMetaId:string
         name:string
         commitAddress:string
+        collectionPinId:string
         receiverAddress:string
         feeb:number
       }){
@@ -71,9 +72,9 @@ export function useNFTEntity(){
         const getOrderPsbtRes= await mintNftItem(params)
         if(getOrderPsbtRes.code == 200){
         const psbtHex=getOrderPsbtRes.data.psbtHex
-         const estiomateResult=await estimatePsbtFee(psbtHex,feeStore.last.currentFeeb.feeRate,true)
+         const estiomateResult=await estimatePsbtFee(psbtHex,feeStore.getCurrentFeeb,true)
          if(estiomateResult){
-          const {psbt,feeb}=await estimatePsbtFee(psbtHex,feeStore.last.currentFeeb.feeRate)
+          const {psbt,feeb}=await estimatePsbtFee(psbtHex,feeStore.getCurrentFeeb)
           const toSignInputs=await formatToSignInputs(psbt)
           const rawTx= await connectionStore.adapter.signPsbt(psbt.toHex(),{
             toSignInputs:toSignInputs,
@@ -86,6 +87,7 @@ export function useNFTEntity(){
             const submitRes= await submitMintOrder({
             creatorMetaId:params.creatorMetaId,
             name:params.name,
+            collectionPinId:params.collectionPinId,
             commitAddress:params.commitAddress,
             psbtHex:rawTx,
             feeb:params.feeb

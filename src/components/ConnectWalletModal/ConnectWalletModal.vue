@@ -814,7 +814,7 @@ async function onSetBaseInfoSuccessType(params: {
       userData:userInfo,
       options: {
         network: networkStore.network,
-        feeRate: feebStore.last.currentFeeb.feeRate,
+        feeRate: feebStore.getCurrentFeeb,
         service: {
           address: import.meta.env.VITE_BTC_SERVICE_ADDRESS,
           satoshis: import.meta.env.VITE_BTC_SERVICE_FEEB,

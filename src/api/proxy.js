@@ -1,18 +1,18 @@
- import { createProxyMiddleware }  from 'http-proxy-middleware'
+// import { createProxyMiddleware }  from 'http-proxy-middleware'
 
-export default (req,res)=>{
-    let target = ''
-    if (req.url.startsWith('/mrc721proxy')) {
-        target = ''
-    }
-    createProxyMiddleware({
-        target,
-        changeOrigin: true,
-        pathRewrite:{
-            '^/mrc721proxy/':"/"
-        }
-    })(req,res)
-}
+// export default (req,res)=>{
+//     let target = ''
+//     if (req.url.startsWith('/mrc721proxy')) {
+//         target = 'https://general.mvcscan.com/mrc721'
+//     }
+//     createProxyMiddleware({
+//         target,
+//         changeOrigin: true,
+//         pathRewrite:{
+//             '^/mrc721proxy/':"/"
+//         }
+//     })(req,res)
+// }
 
 // module.exports = (req, res) => {
 //     let target = ''

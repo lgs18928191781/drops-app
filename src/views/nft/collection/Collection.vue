@@ -194,7 +194,7 @@ import NFTSellVue from '@/components/NFTSell/NFTSell.vue'
 import { GetGenesisStatistics } from '@/api/broad'
 import CollectionChart from '../components/CollectionChart.vue'
 import { NFTOffSale } from '@/utils/nft'
-import {getCollectionDetail,getCollectionMintAmout,getCollectionMintableList} from '@/api/mrc721-api'
+import {getCollectionDetail,getCollectionMintAmout,getCollectionMintableList,getPoolInfo} from '@/api/mrc721-api'
 import { ElMessage } from 'element-plus'
 import { useConnectionStore, ConnectChain } from '@/stores/connection'
 import { useNetworkStore } from '@/stores/network'
@@ -250,6 +250,11 @@ const statiscs = reactive([
     name: () => i18n.t('NFT.Minted'),
     value: '--',
     unit: '',
+  },
+  {
+    name: () => i18n.t('NFT.PoolAmount'),
+    value: '--',
+    unit: 'BTC',
   },
   // {
   //   name: () => i18n.t('NFT.Owner'),
@@ -354,8 +359,9 @@ async function mintItem(nft:NftMintItemType){
     creatorMetaId:collection.val?.metaid!,
     name:collection.val?.name!,
     commitAddress:nft.commit_address,
+    collectionPinId:collection.val?.collection_pinid,
     receiverAddress:connectionStore.userInfo.address,
-    feeb:feeStore.last.currentFeeb.feeRate
+    feeb:feeStore.getCurrentFeeb
   })
   
   if(res?.code == 200){
@@ -463,6 +469,12 @@ function getCollection() {
           statiscs[2].value = space(currentMintPrice).toString()
           statiscs[3].value = res.data.result.total_supply.toString()
           statiscs[4].value = mintAmout.toString()
+          getPoolInfo({
+          collectionPinid:collection.val?.collection_pinid!
+          }).then((pool)=>{
+            const {pool_total,redeem_total}=pool.data.result
+            statiscs[5].value=`${space(pool_total-redeem_total)}`
+          })
           resolve()
     
           

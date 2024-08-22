@@ -812,7 +812,8 @@
     "NFT Order Locked": "訂單鎖定中",
     "NFT Has been purchased": "NFT已被購買",
     "Get Msg Error": "獲取信息失敗",
-    "Minted": "已铸造数量"
+    "Minted": "已铸造数量",
+    "PoolAmount": "流动池总量"
   },
   "My NFT": "我的NFT",
   "Done": "完成",

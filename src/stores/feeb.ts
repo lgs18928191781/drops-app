@@ -15,20 +15,20 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
                 {
                     title: 'Eco',
                     fullTitle: 'Economy',
-                    feeRate: 1,
+                    feeRate: 3,
                     
                   },
                   {
                     title: 'Slow',
-                    feeRate: 1,
+                    feeRate: 3,
                   },
                   {
                     title: 'Avg',
-                    feeRate:1,
+                    feeRate:3,
                   },
                   {
                     title: 'Fast',
-                    feeRate:1,
+                    feeRate:3,
                   },
             ]
         } as {currentFeeb:FeebPlan,feeRateList:FeebPlan[]} ),
@@ -39,7 +39,11 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
 
       get: (state) => !!state.last,
       
-      getCurrentFeeb:(state)=>state.last.currentFeeb.feeRate
+      getCurrentFeeb:(state)=>{
+        if(state.last.currentFeeb.feeRate <=1){
+          return 3
+        }else return state.last.currentFeeb.feeRate
+      }
       
     },
   
@@ -55,13 +59,14 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
            }else if(connectionStore.currentChain && connectionStore.currentChain == ConnectChain.mvc){
             this.last.currentFeeb={
               title: 'Fast',
-              feeRate: 1,
+              feeRate: 3,
             }
 
            }else if(connectionStore.currentChain == ConnectChain.btc){
             
             
-            const feeList=await getFeebPlans()
+            let feeList=await getFeebPlans()
+            
             
             this.last.feeRateList=feeList
             const selectFeeb=feeList.filter((item)=>{
@@ -71,7 +76,7 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
            }else{
             this.last.currentFeeb={
               title: 'Fast',
-              feeRate: 1,
+              feeRate: 3,
             }
            }
            

@@ -1250,6 +1250,18 @@ declare interface NFTCreatore{
 
 }
 
+declare interface UploadFileData{
+  picId:string[]
+      picPath:string[]
+      itemDesc:string[]
+      classify:string[]
+      nftName:string[]
+      metaid:string
+      name:string
+      rawTx:string
+      commitAddress:string[]
+}
+
 declare interface NftsCollection{
   address:string
   auto_market:number
