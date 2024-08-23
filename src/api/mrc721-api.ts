@@ -151,3 +151,13 @@ export const getPoolInfo= async (params:{
     params
   })
 }
+
+
+export const getNFTItemDetail=async(params:{
+  collectionPinid:string //专辑的pinid
+  nftPinid:string //nft pinid
+})=>{
+  return NftOrders.get('/get-nft-item',{
+    params
+  })
+}
