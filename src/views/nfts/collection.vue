@@ -216,8 +216,10 @@
 
           <el-table-column prop="nftName" :label="$t('Nfts.lanuch_nft_name')" width="180">
             <template #default="scope">
-              <div class="main-border gray-exclued-text py-3.5  p-2 min-h-14 truncate  ">
-                <span>{{ scope.row.nftName ?? '' }}</span>
+         
+              <div class="main-border flex items-center   gray-exclued-text   min-h-14 truncate  ">
+         
+                <el-input v-model="scope.row.nftName" ></el-input>
               </div>
             </template>
           </el-table-column>
@@ -713,7 +715,7 @@ import { Line } from 'vue-chartjs'
 import { useEchart } from '@/hooks/use-echart-tool'
 import type {  FormInstance, FormRules,UploadProps } from 'element-plus'
 import { useFeebStore } from '@/stores/feeb'
-import { uploadNftsFile,uploadNftsFilePath,generateCommitAddress,mintNftItem,submitMintOrder,issueCollection,genesisCollection as genesisCollect,getPoolInfo} from '@/api/mrc721-api'
+import { uploadNftsFile,uploadNftsFilePath,generateCommitAddress,getCollectionDetail,mintNftItem,submitMintOrder,issueCollection,genesisCollection as genesisCollect,getPoolInfo} from '@/api/mrc721-api'
 
 import Decimal from 'decimal.js-light'
 import {exclusiveChange} from '@/hooks/use-buildtx-entity'
@@ -755,6 +757,15 @@ watch(
     currentNftsCollect.value = genesisStore.getList.find(item => {
       return item.collectionPinId == newValue
     })
+  //   if(!currentNftsCollect.value?.cover){
+  //     getCollectionDetail({
+  //   collectionPinid:route.params.pinid as string
+  // }).then((res)=>{
+  //   if(res.code == 0){
+  //     currentNftsCollect.value!.cover = res.data.result.cover_pinid
+  //   }
+  // })
+  //   }
     autoMaketData.value.initialPrice=currentNftsCollect.value?.initialPrice!
     
     autoMaketData.value.priceGrowth=currentNftsCollect.value?.priceGrowth!
@@ -763,7 +774,7 @@ watch(
 )
 
 onMounted(() => {
-
+ 
   
   // genesisStore.updateItem({
   //   ...currentNftsCollect.value,
@@ -1549,7 +1560,6 @@ const onSubmitNewCollection = async () => {
       })
       if(issueRes.code == 200){
         console.log("issueRes",issueRes)
-      
       
       genesisStore.add({
     totalSupply: +createCollectionform.totalSupply,

@@ -184,6 +184,7 @@ const onSubmit = async() => {
     },
     attachments:[form.originFile],
   })
+  
   if( createCollectionDescRes?.revealTxIds.length){
     const genesisRes= await genesisCollection({
         metaId:connectionStore.last.metaid,
@@ -214,11 +215,13 @@ const onSubmit = async() => {
       console.log("issueRes",issueRes)
       
         if(issueRes.code == 200){
+       
           genesisStore.add({
         totalSupply:+form.totalSupply,
         name:form.name,
+        coverPinid:coverPinId,
         desc:form.desc,
-        cover:coverPinId,
+        cover:form.cover,
         website:form.website,
         royaltyRate:+form.royaltyRate,
         metaData:form.metadata,

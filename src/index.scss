@@ -227,6 +227,10 @@ pre {
 
 
 .main-border {
+  .el-input{
+    box-shadow: 0 !important;
+    border: none !important;
+  }
 
   &.primary {
     background: var(--el-color-primary);
