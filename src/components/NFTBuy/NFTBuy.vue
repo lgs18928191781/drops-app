@@ -12,36 +12,36 @@
       <ElSkeleton :loading="isSkeleton" animated>
         <div class="nft-buy">
           <div class="msg flex">
-            <div class="cover-warp"><NFTCover :cover="[nft.nftIcon]" /></div>
+            <div class="cover-warp"><NFTCover :cover="[nft.pic_path || nft.item_cover]" /></div>
             <div class="content flex1">
-              <div class="name">{{ $filters.handleWhiteSpace(nft.nftName, nft.nftGenesis) }}</div>
+              <div class="name">{{ nft.nft_name }}</div>
               <div class="user-list">
                 <div class="user-item flex flex-align-center">
                   <UserAvatar
-                    :meta-id="nft.nftIssueMetaId"
-                    :name="nft.nftIssuer"
-                    :image="nft.nftIssueAvatarImage"
-                    :meta-name="nft.nftIssueUserInfo.metaName"
+                    :meta-id="nft.creator_info.metaid"
+                    :name="nft.creator_info.name"
+                    :image="nft.creator_info.avatarId"
+                    :meta-name="''"
                   />
                   <span class="username"
                     ><UserName
-                      :name="nft.nftIssuer"
-                      :meta-name="nft.nftIssueUserInfo.metaName"
+                      :name="nft.creator_info.name"
+                      :meta-name="''"
                       :no-tag="true"
                   /></span>
                   <span class="role">({{ $t('NFT.Creater') }})</span>
                 </div>
                 <div class="user-item flex flex-align-center">
                   <UserAvatar
-                    :meta-id="nft.nftOwnerMetaId"
-                    :name="nft.nftOwnerName"
-                    :image="nft.nftOwnerAvatarImage"
-                    :meta-name="nft.nftOwnerUserInfo.metaName"
+                    :meta-id="nft.owner_info.metaid"
+                    :name="nft.owner_info.name"
+                    :image="nft.owner_info.avatarId"
+                    :meta-name="''"
                   />
                   <span class="username"
                     ><UserName
-                      :name="nft.nftOwnerName"
-                      :meta-name="nft.nftOwnerUserInfo.metaName"
+                      :name="nft.owner_info.name"
+                      :meta-name="''"
                       :no-tag="true"
                   /></span>
                   <span class="role">({{ $t('NFT.Owner') }})</span>
@@ -52,25 +52,25 @@
 
           <div
             class="choose-pay flex flex-align-center flex-pack-center"
-            @click="isShowPayList = !isShowPayList"
-            v-if="mode !== EnvMode.Mainnet"
+            
+           
           >
-            <Icon name="wallet_fill" class="wallet" />
+            <!-- <Icon name="wallet_fill" class="wallet" />
             <span>{{ $t('NFT.Chosse PayType') }}</span>
-            <Icon name="down" class="right" />
+            <Icon name="down" class="right" /> -->
           </div>
 
           <div class="price-list" :class="{ 'mt-7': mode === EnvMode.Mainnet }">
             <div class="price-item flex flex-alian-center">
               <div class="label flex1">{{ $t('NFT.Price') }}</div>
-              <div class="value">{{ nftPrice }} {{ amountSymbol }}</div>
+              <div class="value">{{$filters.space(realSalePrice.salePrice) }} {{ amountSymbol }}</div>
             </div>
             <div class="price-item flex flex-alian-center">
               <div class="label flex1">
                 {{ $t('NFT.Platform Fee') }}<span class="rate">({{ platformFeeRate }}%)</span>
               </div>
               <div class="value">
-                {{ platformFee.toFixed(payPlatformAmountFix[currentPayPlatform]) }}
+                {{$filters.space(realSalePrice.platformFee)  }}
                 {{ amountSymbol }}
               </div>
             </div>
@@ -79,14 +79,14 @@
                 {{ $t('NFT.Royalties') }}<span class="rate">({{ royalyFeeRate }}%)</span>
               </div>
               <div class="value">
-                {{ royalyFee.toFixed(payPlatformAmountFix[currentPayPlatform]) }} {{ amountSymbol }}
+               {{$filters.space(realSalePrice.royaltyFee)  }} {{ amountSymbol }}
               </div>
             </div>
           </div>
 
           <div class="total-price flex flex-align-center">
             <span class="label flex1">{{ $t('NFT.Total') }}</span>
-            <span class="value">{{ totalPrice }} {{ amountSymbol }}</span>
+            <span class="value">  {{$filters.space(realSalePrice.total)  }}  {{ amountSymbol }}</span>
           </div>
 
           <a
@@ -120,7 +120,7 @@
           class="pay-item flex flex-align-center"
           v-for="(item, index) in payPlatformList"
           :key="index"
-          @click="changePlatform(item.platform)"
+         
         >
           <div class="flex1 flex flex-align-center">
             <img class="logo" :src="item.icon" />
@@ -223,6 +223,7 @@ import {
   getCurrencyAmount,
   setPayQuitUrl,
   getPlatformSymbol,
+  calcNftRealSalePrice
 } from '@/utils/util'
 import { useRoute, useRouter } from 'vue-router'
 import StartPayVue from '../StartPay/StartPay.vue'
@@ -236,12 +237,18 @@ import { Loading } from '@element-plus/icons-vue'
 import { useLayoutStore } from '@/stores/layout'
 import { CheckNFTStatus } from '@/api/wxcore'
 import { isNFTCanOperate } from '@/utils/nft'
+import {useNFTEntity} from '@/hooks/use-nft-entity'
+import {NftsLaunchPadChainSymbol,PlatformRate} from '@/data/constants'
+import { useConnectionStore } from '@/stores/connection'
 
 const props = defineProps<{
   modelValue: boolean
-  nft: GenesisNFTItem
+  nft: NftOrderType
   isHideDetail?: boolean
 }>()
+
+console.log("propsprops",props.nft)
+
 
 const emit = defineEmits(['update:modelValue', 'success'])
 const route = useRoute()
@@ -250,7 +257,9 @@ const rootStore = useRootStore()
 const userStore = useUserStore()
 const i18n = useI18n()
 const isShowPayTypes = ref(false)
-const currentPayPlatform = ref(PayPlatform.SPACE)
+const nftEntity=useNFTEntity()
+const connectionStore=useConnectionStore()
+const currentPayPlatform = ref(PayPlatform.BTC)
 const isGetBalanceing = ref(false)
 const toCurrency: Ref<undefined | ToCurrency> = ref(
   currentPayPlatform.value === PayPlatform.ETH ? ToCurrency.ETH : undefined
@@ -264,7 +273,7 @@ const payMsg = reactive({
   pay_decimal_num: 0,
 })
 const nftFee: { val: NFTFeeInfo | null } = reactive({ val: null })
-const isSkeleton = ref(true)
+const isSkeleton = ref(false)
 const buying = ref(false)
 const isShowSuccess = ref(false)
 const isShowPayList = ref(false)
@@ -281,9 +290,16 @@ const ToCurrencyAmounMin = {
   [ToCurrency.MVC]: 0.00000001,
   [ToCurrency.POLYGON]: 0.000000001,
   [ToCurrency.USD]: 0.01,
+  [ToCurrency.BTC]: 0.00001,
 }
 const mode = import.meta.env.MODE
 const layout = useLayoutStore()
+
+const realSalePrice=computed(()=>{
+  return calcNftRealSalePrice(props.nft.sale_price,props.nft.royalty_rate)
+
+})
+
 
 function choosePayPlatform(item: PayPlatformItem) {
   if (item.disabled()) return
@@ -328,84 +344,109 @@ async function confirmBuy() {
 
     try {
       const result = await isNFTCanOperate({
-        codehash: props.nft.nftCodehash,
-        genesis: props.nft.nftGenesis,
-        tokenIndex: props.nft.nftTokenIndex,
-        contract: props.nft.nftSellContractTxId,
-        metaId: userStore.user!.metaId,
+        nftPinid:props.nft.item_pinid
       })
       if (result) {
-        if (currentPayPlatform.value === PayPlatform.SPACE) {
-          const params: any = {
-            genesis: props.nft.nftGenesis,
-            codehash: props.nft.nftCodehash,
-            tokenIndex: props.nft.nftTokenIndex,
-            sellTxId: props.nft.nftSellTxId,
-            sellContractTxId: props.nft.nftSellContractTxId,
-            sellUtxo: {
-              txId: props.nft.nftSellContractTxId,
-              outputIndex: 0,
-              sellerAddress: props.nft.nftOwnerAddress,
-              price: props.nft.nftPrice,
-            },
+        console.log("props.nft",props.nft)
+        
+        const buyRes= await nftEntity.buyNft({
+          psbtHex:props.nft.order_id,
+          buyerAddress:connectionStore.last.user.address,
+          nftPinid:props.nft.item_pinid,
+          chain:NftsLaunchPadChainSymbol.btc,
+          extraFee:{
+            salePrice:realSalePrice.value.salePrice,
+            platformFee:realSalePrice.value.platformFee,
+            royalFee:realSalePrice.value.royaltyFee,
+            platformRate:PlatformRate
           }
-          const publisherFeeRate = platformFeeRate.value / 100
-          const creatorFeeRate = royalyFeeRate.value / 100
-          if (publisherFeeRate) {
-            params.publisherFeeRate = publisherFeeRate
-            params.publisherAddress = nftFee.val!.platformAddress
-          }
-          if (creatorFeeRate) {
-            params.creatorFeeRate = creatorFeeRate
-            params.creatorAddress = props.nft.nftIssueAddress
-          }
-          const res = await userStore.showWallet.createBrfcChildNode(
-            {
-              nodeName: NodeName.nftBuy,
-              data: JSON.stringify(params),
-            },
-            {
-              payType: SdkPayType.SPACE,
+        })
+        
+            if(buyRes){
+              ElMessage.success(i18n.t('NFT.Buy Success'))
+            emit('update:modelValue', false)
+            buying.value = false
+            //isShowSuccess.value = true
+            emit('success')
+            }else{
+              buying.value = false
             }
-          )
-          if (res) {
-            ElMessage.success(i18n.t('NFT.Buy Success'))
-            emit('update:modelValue', false)
-            buying.value = false
-            isShowSuccess.value = true
-          } else if (res === null) {
-            buying.value = false
-          }
-        } else {
-          const res = await CreatePayOrder({
-            platform: currentPayPlatform.value,
-            fullPath: setPayQuitUrl({
-              payPlatform: currentPayPlatform.value!,
-              fullPath: route.fullPath,
-              isBlindbox: false,
-            }),
-            goods_name: props.nft!.nftName,
-            count: 1,
-            product_type: ProductType.LegalNft, // 100-ME, 200-Legal_NFT,
 
-            // 购买合约 NFT
-            genesis: props.nft.nftGenesis,
-            codehash: props.nft.nftCodehash,
-            contract: props.nft.nftSellContractTxId,
-            tokenIndex: props.nft.nftTokenIndex,
-          })
-          if (res) {
-            payMsg.amount = res.pay_amount!.toString()
-            payMsg.orderId = res.order_id
-            payMsg.pay_decimal_num = res.pay_decimal_num
-            payMsg.url = res.url
-            buying.value = false
-            emit('update:modelValue', false)
-            nextTick(() => {
-              isShowPayModal.value = true
-            })
-          }
-        }
+          
+       
+
+
+        // if (currentPayPlatform.value === PayPlatform.SPACE) {
+        //   const params: any = {
+        //     genesis: props.nft.nftGenesis,
+        //     codehash: props.nft.nftCodehash,
+        //     tokenIndex: props.nft.nftTokenIndex,
+        //     sellTxId: props.nft.nftSellTxId,
+        //     sellContractTxId: props.nft.nftSellContractTxId,
+        //     sellUtxo: {
+        //       txId: props.nft.nftSellContractTxId,
+        //       outputIndex: 0,
+        //       sellerAddress: props.nft.nftOwnerAddress,
+        //       price: props.nft.nftPrice,
+        //     },
+        //   }
+        //   const publisherFeeRate = platformFeeRate.value / 100
+        //   const creatorFeeRate = royalyFeeRate.value / 100
+        //   if (publisherFeeRate) {
+        //     params.publisherFeeRate = publisherFeeRate
+        //     params.publisherAddress = nftFee.val!.platformAddress
+        //   }
+        //   if (creatorFeeRate) {
+        //     params.creatorFeeRate = creatorFeeRate
+        //     params.creatorAddress = props.nft.nftIssueAddress
+        //   }
+        //   const res = await userStore.showWallet.createBrfcChildNode(
+        //     {
+        //       nodeName: NodeName.nftBuy,
+        //       data: JSON.stringify(params),
+        //     },
+        //     {
+        //       payType: SdkPayType.SPACE,
+        //     }
+        //   )
+        //   if (res) {
+        //     ElMessage.success(i18n.t('NFT.Buy Success'))
+        //     emit('update:modelValue', false)
+        //     buying.value = false
+        //     isShowSuccess.value = true
+        //   } else if (res === null) {
+        //     buying.value = false
+        //   }
+        // } else {
+        //   const res = await CreatePayOrder({
+        //     platform: currentPayPlatform.value,
+        //     fullPath: setPayQuitUrl({
+        //       payPlatform: currentPayPlatform.value!,
+        //       fullPath: route.fullPath,
+        //       isBlindbox: false,
+        //     }),
+        //     goods_name: props.nft!.nftName,
+        //     count: 1,
+        //     product_type: ProductType.LegalNft, // 100-ME, 200-Legal_NFT,
+
+        //     // 购买合约 NFT
+        //     genesis: props.nft.nftGenesis,
+        //     codehash: props.nft.nftCodehash,
+        //     contract: props.nft.nftSellContractTxId,
+        //     tokenIndex: props.nft.nftTokenIndex,
+        //   })
+        //   if (res) {
+        //     payMsg.amount = res.pay_amount!.toString()
+        //     payMsg.orderId = res.order_id
+        //     payMsg.pay_decimal_num = res.pay_decimal_num
+        //     payMsg.url = res.url
+        //     buying.value = false
+        //     emit('update:modelValue', false)
+        //     nextTick(() => {
+        //       isShowPayModal.value = true
+        //     })
+        //   }
+        // }
       }
     } catch (error) {
       ElMessage.error((error as any).message)
@@ -418,9 +459,10 @@ async function confirmBuy() {
 }
 
 const nftPrice = computed(() => {
+ 
   return getCurrencyAmount(
-    props.nft.nftPrice,
-    ToCurrency.MVC,
+    props.nft.sale_price,
+    ToCurrency.BTC,
     payPlatformToCurrency[currentPayPlatform.value]
   )
 })
@@ -430,37 +472,36 @@ const amountSymbol = computed(() => {
 })
 
 const platformFeeRate = computed(() => {
-  let rate = 0
-  if (nftFee.val) {
-    rate = props.nft.nftIsFirstSell
-      ? nftFee.val.firstSellPlatformFeeRate
-      : nftFee.val.platformFeeRate
-  }
+  let rate = 0.06
+  
+  // if (nftFee.val) {
+  //   rate = props.nft.nftIsFirstSell
+  //     ? nftFee.val.firstSellPlatformFeeRate
+  //     : nftFee.val.platformFeeRate
+  // }
   return new Decimal(new Decimal(rate).mul(100).toFixed(2)).toNumber()
 })
 
 const royalyFeeRate = computed(() => {
-  let rate = 0
-  if (nftFee.val) {
-    rate = props.nft.nftIsFirstSell ? nftFee.val.firstSellRoyaltyFeeRate : nftFee.val.royaltyFeeRate
-  }
-  return new Decimal(new Decimal(rate).mul(100).toFixed(2)).toNumber()
+  
+  // if (nftFee.val) {
+  //   rate = props.nft.nftIsFirstSell ? nftFee.val.firstSellRoyaltyFeeRate : nftFee.val.royaltyFeeRate
+  // }
+  return new Decimal(new Decimal(props.nft.royalty_rate)).toNumber()
 })
 
 const platformFee = computed(() => {
   let fee = 0
-  if (nftFee.val) {
-    const spaceFee = new Decimal(props.nft.nftPrice)
+  const btcFee = new Decimal(props.nft.sale_price)
       .mul(platformFeeRate.value / 100)
       .toInteger()
       .toNumber()
-
+   
     fee = getCurrencyAmount(
-      spaceFee,
-      ToCurrency.MVC,
+      btcFee,
+      ToCurrency.BTC,
       payPlatformToCurrency[currentPayPlatform.value]
     )
-  }
 
   if (fee < ToCurrencyAmounMin[payPlatformToCurrency[currentPayPlatform.value]]) {
     fee = ToCurrencyAmounMin[payPlatformToCurrency[currentPayPlatform.value]]
@@ -470,18 +511,21 @@ const platformFee = computed(() => {
 
 const royalyFee = computed(() => {
   let fee = 0
-  if (nftFee.val) {
-    const spaceFee = new Decimal(props.nft.nftPrice)
+  
+    const BTCfee = new Decimal(props.nft.sale_price)
       .mul(royalyFeeRate.value / 100)
       .toInteger()
       .toNumber()
 
+    
+
     fee = getCurrencyAmount(
-      spaceFee,
-      ToCurrency.MVC,
+      BTCfee,
+      ToCurrency.BTC,
       payPlatformToCurrency[currentPayPlatform.value]
     )
-  }
+   
+  
 
   if (fee < ToCurrencyAmounMin[payPlatformToCurrency[currentPayPlatform.value]]) {
     fee = ToCurrencyAmounMin[payPlatformToCurrency[currentPayPlatform.value]]
@@ -559,67 +603,67 @@ function emitSuccess() {
   })
 }
 
-function checkIsEnough() {
-  return new Promise<void>(async (resolve, reject) => {
-    // @ts-ignore
-    if (payPlatformChain[currentPayPlatform.value]) {
-      // @ts-ignore
-      const res = await getBalance({ chain: payPlatformChain[currentPayPlatform.value] }).catch(
-        error => {
-          ElMessage.error(error.message)
-        }
-      )
-      if (typeof res === 'number') {
-        if (
-          res <
-          new Decimal(totalPrice.value)
-            .mul(payPlatformAmountRate[currentPayPlatform.value])
-            .toNumber()
-        ) {
-          isEnough.value = false
-          resolve()
-        } else {
-          isEnough.value = true
-          resolve()
-        }
-      }
-    } else {
-      isEnough.value = true
-      resolve()
-    }
-  })
-}
+// function checkIsEnough() {
+//   return new Promise<void>(async (resolve, reject) => {
+//     // @ts-ignore
+//     if (payPlatformChain[currentPayPlatform.value]) {
+//       // @ts-ignore
+//       const res = await getBalance({ chain: payPlatformChain[currentPayPlatform.value] }).catch(
+//         error => {
+//           ElMessage.error(error.message)
+//         }
+//       )
+//       if (typeof res === 'number') {
+//         if (
+//           res <
+//           new Decimal(totalPrice.value)
+//             .mul(payPlatformAmountRate[currentPayPlatform.value])
+//             .toNumber()
+//         ) {
+//           isEnough.value = false
+//           resolve()
+//         } else {
+//           isEnough.value = true
+//           resolve()
+//         }
+//       }
+//     } else {
+//       isEnough.value = true
+//       resolve()
+//     }
+//   })
+// }
 
-function changePlatform(platform: PayPlatform) {
-  if (currentPayPlatform.value === platform) return
-  currentPayPlatform.value = platform
-  isGetBalanceing.value = true
-  nextTick(() => {
-    checkIsEnough().then(() => {
-      isGetBalanceing.value = false
-    })
-  })
-  isShowPayList.value = false
-}
+// function changePlatform(platform: PayPlatform) {
+//   if (currentPayPlatform.value === platform) return
+//   currentPayPlatform.value = platform
+//   isGetBalanceing.value = true
+//   nextTick(() => {
+//     checkIsEnough().then(() => {
+//       isGetBalanceing.value = false
+//     })
+//   })
+//   isShowPayList.value = false
+// }
 
 watch(
   () => props.modelValue,
   val => {
     if (val) {
-      isSkeleton.value = true
-      GetNFTFee().then(async res => {
-        if (res) {
-          const response = await GetGenesisFee(props.nft.nftGenesis)
-          nftFee.val = {
-            ...res,
-            ...response,
-          }
-          nextTick(async () => {
-            await checkIsEnough()
-            isSkeleton.value = false
-          })
-        }
-      })
+      isSkeleton.value = false
+      // GetNFTFee().then(async res => {
+      //   if (res) {
+      //     const response = await GetGenesisFee(props.nft.nftGenesis)
+      //     nftFee.val = {
+      //       ...res,
+      //       ...response,
+      //     }
+      //     nextTick(async () => {
+      //       // await checkIsEnough()
+      //       isSkeleton.value = false
+      //     })
+      //   }
+      // })
     }
   }
 )

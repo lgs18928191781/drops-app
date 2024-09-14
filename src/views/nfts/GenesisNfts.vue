@@ -129,6 +129,7 @@ import { fileType,royaltyRate } from '@/config'
 import {usePayModalEntity} from '@/hooks/use-pay-modal-entity'
 import { useI18n } from 'vue-i18n'
 import {genesisCollection,issueCollection} from '@/api/mrc721-api'
+import {NftsLaunchPadChain,NftsLaunchPadChainSymbol} from '@/data/constants'
 const router=useRouter()
 const route=useRoute()
 const i18n = useI18n()
@@ -184,12 +185,19 @@ const onSubmit = async() => {
     },
     attachments:[form.originFile],
   })
+ 
   
   if( createCollectionDescRes?.revealTxIds.length){
+    const collectionPinid=`${createCollectionDescRes.revealTxIds[0]}i0`
     const genesisRes= await genesisCollection({
-        metaId:connectionStore.last.metaid,
-        name:form.name
+      collectionPinid:collectionPinid,
+      collectionName:form.name,
+      address:connectionStore.last.user.address
       })
+      
+      if(genesisRes.code !== 200){
+        return ElMessage.error(genesisRes.msg)
+      }
 
       console.log("genesisRes",genesisRes)
       
@@ -200,10 +208,10 @@ const onSubmit = async() => {
         website:form.website,
         metaData:JSON.stringify(form.metadata),
         totalSupply:+form.totalSupply,
-        chain:route.params.chain as CollectionMintChain,
+        chain:route.params.chain,
         autoMarket:route.params.type == '0' ? false : true,
         royaltyRate:+form.royaltyRate,
-        collectionPinId:`${createCollectionDescRes?.revealTxIds[0]!}i0`,
+        collectionPinId:collectionPinid,
         metaId:connectionStore.last.metaid,
         address:connectionStore.last.user.address,
 
@@ -216,7 +224,7 @@ const onSubmit = async() => {
       
         if(issueRes.code == 200){
        
-          genesisStore.add({
+      genesisStore.add({
         totalSupply:+form.totalSupply,
         name:form.name,
         coverPinid:coverPinId,
@@ -225,8 +233,8 @@ const onSubmit = async() => {
         website:form.website,
         royaltyRate:+form.royaltyRate,
         metaData:form.metadata,
-        chain:route.params.chain == 'btc' ? CollectionMintChain.btc : CollectionMintChain.mvc,
-        collectionPinId:`${createCollectionDescRes?.revealTxIds[0]!}i0`,
+        chain:route.params.chain == 'btc' ? NftsLaunchPadChainSymbol.btc : NftsLaunchPadChainSymbol.mvc,
+        collectionPinId:collectionPinid,
         autoMarket:route.params.type == '0' ? false : true,
         genesisTimestamp:Date.now(),
         metaId:connectionStore.last.metaid,
@@ -237,7 +245,7 @@ const onSubmit = async() => {
         })
   
 
-  toNftsDetail(`${createCollectionDescRes?.revealTxIds[0]!}i0`)
+  toNftsDetail(collectionPinid)
         }else{
           return ElMessage.error(issueRes.msg)
         }

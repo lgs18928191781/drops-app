@@ -123,7 +123,7 @@ export const router = createRouter({
           name: 'nftsCollection',
           component: () => import('@/views/nfts/collection.vue'),
           beforeEnter: async (to, from, next) => {
-           
+          
             const genesisStore=useGenesisStore()
          
             try {
@@ -146,20 +146,17 @@ export const router = createRouter({
               next('/404')
             }
           },
-          meta: { keepAlive: true },
+          meta: { keepAlive: false },
           children: [
+        
             // {
             //   path: 'index',
             //   name: 'nftCollectionIndex',
             //   component: () => import('@/views/nft/collection/Index.vue'),
-            //   meta: { keepAlive: true },
+            //   meta: { keepAlive: false },
             // },
-            // {
-            //   path: 'detail/:topicType',
-            //   name: 'nftCollectionDetail',
-            //   component: () => import('@/views/nft/collection/Collection.vue'),
-            //   meta: { keepAlive: true },
-            // },
+
+            
           ],
         },
       ],
@@ -189,9 +186,10 @@ export const router = createRouter({
           component: () => import('@/views/nft/Genesis.vue'),
         },
         {
-          path: 'detail/:chain/:genesis/:codehash/:tokenIndex',
+          path: 'detail/:collectionpinid/:nftpinid',
           name: 'nftDetail',
           component: () => import('@/views/nft/Detail.vue'),
+         
         },
         {
           path: 'collection',
@@ -209,8 +207,10 @@ export const router = createRouter({
               path: 'detail/:topicType',
               name: 'nftCollectionDetail',
               component: () => import('@/views/nft/collection/Collection.vue'),
+             
               // meta: { keepAlive: false },
             },
+          
           ],
         },
       ],
@@ -586,7 +586,9 @@ router.beforeEach((to, from, next) => {
     'nftIndex',
     "nftCollection",
     "nftCollectionIndex",
-    'nftCollectionDetail'
+    'nftCollectionDetail',
+    "nftCollectionSale",
+    "nftDetail"
   ]
   const target = whiteList.includes(to?.name)
   if (target) {
@@ -607,6 +609,8 @@ const dirLog = {
   back: '⏪',
   forward: '⏩',
 }
+
+
 routerHistory.listen((to, from, info) => {
   console.log(`${dirLog[info.direction]} as a ${info.type}`)
 })

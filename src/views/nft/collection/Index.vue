@@ -70,14 +70,14 @@
           <div class="cont">
             <div class="author flex flex-align-center">
               <UserAvatar
-                :name="''"
-                :image="''"
-                :meta-id="item.metaid"
+                :name="item.collection_creator?.name"
+                :image="item.collection_creator?.avatarId"
+                :meta-id="item.collection_creator?.metaid"
                 :meta-name="''"
               />
               <div class="flex1">
                 <div class="name flex flex-align-center">
-                  <UserName :name="''" :meta-name="''" />
+                  <UserName :name="item.collection_creator?.name" :meta-name="''" />
                   <Icon name="center_star" />
                 </div>
                 <div class="metaid">MetaID：{{ item.metaid.slice(0, 6) }}</div>
@@ -88,7 +88,7 @@
               <div class="flex1 msg-item">
                 <div class="label">{{ $t('Collection.Floor price') }}</div>
                 <div class="value">
-                  {{ $filters.Currency(item.current_mint_price!,CurrencyUnit) }}
+                  {{ $filters.Currency(item.floor_price,CurrencyUnit) }}
                   {{ CurrencyUnit.toLocaleUpperCase() }}
                 </div>
               </div>
@@ -124,9 +124,11 @@ import { GetGenesisStatistics } from '@/api/broad'
 import btc from '@/assets/nft/btc.png'
 import {NftsLaunchPadChain,NftsLaunchPadChainSymbol} from '@/data/constants'
 import {getMarketCollectionList,getCollectionMintAmout} from '@/api/mrc721-api'
+import {useMetaIDEntity} from '@/hooks/use-metaid-entity'
 const chains: Chain[] = reactive([])
 const currentChain = ref(NftsLaunchPadChain.btc)
 const i18n = useI18n()
+const {getUserAllInfo}=useMetaIDEntity()
 const pagination = reactive({ ...initPagination })
 // const collections: Collect[] = reactive([])
 const collections:NftsCollection[]=reactive([])
@@ -229,14 +231,16 @@ function getDatas(isCover = false){
             
             if(item.init_price){
               const mintRes= await getCollectionMintAmout({
-              metaid:item.metaid,
-              name:item.name
+                collectionPinid:item.collection_pinid
             })
             
             if(mintRes.code == 200){
+              const creator_info= await getUserAllInfo(item.address)
+              item.collection_creator=creator_info
               const {mintAmout,currentSupply,currentMintPrice}=mintRes.data
-              collections.push({...item,current_supply:currentSupply,minted:mintAmout,current_mint_price:currentMintPrice ? currentMintPrice : item.init_price})
+              collections.push({...item,current_supply:currentSupply,minted:mintAmout})
             }
+            
             }
             
             

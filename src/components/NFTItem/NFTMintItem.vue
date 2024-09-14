@@ -4,9 +4,9 @@
         <NFTItemSkeleton />
       </template>
       <template #default>
-        <div class="nft-item" >
+        <div class="nft-item" @click="toNFT">
           <NFTCover :cover="[nft.pic_path]" />
-  
+          
           <div class="name" :class="{ simple: isSimple }">
             {{ nft.nft_name }}
           </div>
@@ -17,13 +17,14 @@
             <template v-else>--</template>
           </div> -->
   
-          <div class="user-list" v-if="!isSimple">
+          <div class="user-list" >
             <div class="user-item flex flex-align-center">
+              
               <UserAvatar
                 :meta-id="collection.collection_creator?.metaid"
                 :image="collection.collection_creator?.avatarId"
                 :name="collection.collection_creator?.name"
-                :disabled="true"
+                
                 :meta-name="''"
               />
               <div class="flex1 flex flex-align-center info">
@@ -31,6 +32,7 @@
                   ><UserName
                     :name="collection.collection_creator?.name"
                     :meta-name="''"
+                    :metaId="collection.collection_creator?.metaid"
                     :noTag="true"
                 /></span>
                 <span class="role">({{ $t('NFT.Creater') }})</span>
@@ -69,23 +71,24 @@
   import Amount from '../Amount/Amount.vue'
   import { Chains, NFTSellState, ToCurrency } from '@/enum'
   import { computed } from 'vue'
-  import { useRouter } from 'vue-router'
+  import { useRouter ,useRoute} from 'vue-router'
   import NFTItemSkeleton from './NFTItemSkeleton.vue'
   import { useUserStore } from '@/stores/user'
   import { IsMyNFT, IsSale } from '@/utils/nft'
   import { useI18n } from 'vue-i18n'
   import { checkUserLogin } from '@/utils/util'
-  
+  import { ElMessage } from 'element-plus'
   const props = defineProps<{
     nft: NftMintItemType
     collection:NftsCollection
     loading?: boolean
     isSimple?: boolean
   }>()
-  
+ 
 //   const emit = defineEmits(['buy', 'offsale', 'sale'])
 const emit = defineEmits(['mint'])
   const router = useRouter()
+  const route=useRoute()
   const userStore = useUserStore()
   const i18n = useI18n()
   
@@ -145,17 +148,18 @@ const emit = defineEmits(['mint'])
     // }
   }
   
-//   function toNFT() {
-//     router.push({
-//       name: 'nftDetail',
-//       params: {
-//         chain: props.nft.nftChain,
-//         genesis: props.nft.nftGenesis,
-//         tokenIndex: props.nft.nftTokenIndex,
-//         codehash: props.nft.nftCodehash ? props.nft.nftCodehash : props.nft.nftChain,
-//       },
-//     })
-//   }
+  function toNFT() {
+    if(!props.nft.item_pinid){
+      return ElMessage.error(`${i18n.t('Nfts.not_allow_todetail')}`)
+    }
+    router.push({
+      name: 'nftDetail',
+      params: {
+        collectionpinid:route.params.topicType as string,
+        nftpinid:props.nft.item_pinid,
+      },
+    })
+  }
   </script>
   
   <style lang="scss" scoped src="./NFTMintItem.scss"></style>

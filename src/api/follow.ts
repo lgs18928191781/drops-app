@@ -27,6 +27,7 @@ const follow = new HttpRequest(`${import.meta.env.VITE_PROXY_URL}`, {
 export const MyFollow = (): Promise<MyFollowList> => {
   const connectStore = useConnectionStore()
   const networkStore = useNetworkStore()
+  
   return follow.get(`/followingList`, {
     params: {
       metaid: connectStore.last.metaid,

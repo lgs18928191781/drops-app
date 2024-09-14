@@ -30,16 +30,27 @@
       <div class="text-sm">
         <div class="py-4 flex flex-col">
           <div class="py-2 flex flex-row items-center justify-between">
-            <div class="text-[#909399]">{{basicType == 'basic' ? i18n.t('Nfts.lanuch_baseFee') :  i18n.t('Nfts.lanuch_MintFee')}}</div>
+            <div class="text-[#909399]">{{basicType == 'basic' ? i18n.t('Nfts.lanuch_baseFee') : basicType == 'mint' ? i18n.t('Nfts.lanuch_MintFee') : i18n.t('Nfts.lanuch_MintFee') }}</div>
             <div>
               <span class="mr-1">{{ space(feeInfo.basic) }}</span>
+            
               <span>{{ payType }}</span>
             </div>
           </div>
           <div class="py-2 flex flex-row items-center justify-between">
-            <div class="text-[#909399]">{{ i18n.t('Nfts.service_fee') }}</div>
+            <div class="text-[#909399]">{{ i18n.t('Nfts.service_fee') }}({{ feeInfo.platformRate }}%)</div>
             <div>
               <span class="mr-1">{{ space(feeInfo.service) }}</span>
+              <span class="mr-1" v-if="feeInfo.platformRate"></span>
+              <span>{{ payType }}</span>
+            </div>
+          </div>
+
+          <div class="py-2 flex flex-row items-center justify-between" v-if="feeInfo.royaltyRate">
+            <div class="text-[#909399]">{{ i18n.t('Nfts.service_royalty_fee') }}({{ feeInfo.royaltyRate }}%) </div>
+            <div>
+              <span class="mr-1">{{ space(feeInfo.royalty) }}</span>
+              <span class="mr-1" v-if="feeInfo.royaltyRate"></span>
               <span>{{ payType }}</span>
             </div>
           </div>
@@ -119,7 +130,7 @@ interface Props {
   router: Router
   payType: SdkPayType
   feeInfo: feeInfoType
-  basicType:'basic' | 'mint'
+  basicType:'basic' | 'mint' | 'buy'
 }
 
 const props = withDefaults(defineProps<Props>(), {

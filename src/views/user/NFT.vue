@@ -30,12 +30,12 @@
     </ElCol>
 
     <template v-if="nft.val">
-      <NFTBuyVue
+      <!-- <NFTBuyVue
         :nft="nft.val!"
         v-model="isShowNftBuy"
         :is-hide-detail="true"
         @success="onOperateSuccess"
-      />
+      /> -->
 
       <!-- NFTSellVue -->
       <NFTSellVue :nft="nft.val!" v-model="isShowNftSale" @success="onOperateSuccess" />

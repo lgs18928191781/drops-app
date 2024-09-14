@@ -23,8 +23,9 @@
               </div>
               <div class="creator flex flex-align-center">
                 {{ $t('NFT.Creater') }}:
-                <RouterLink :to="{ name: 'user', params: {metaId: collection.val.collection_creator!.metaid}}"
+                <RouterLink :to="{ name: 'user', params: {metaId: collection.val?.collection_creator?.metaid || ''}}"
                   ><UserName
+                  :metaid="collection.val?.collection_creator!.metaid"
                     :name="collection.val?.collection_creator!.name"
                     :meta-name="''"
                 /></RouterLink>
@@ -140,6 +141,7 @@
                     :nft="item"
                     :collection="collection.val"
                     @mint="mintItem"
+                    :isSimple=false
                     :loading="isListLoading"
                   />
                 </ElCol>
@@ -153,9 +155,81 @@
             <LoadMore :pagination="pagination" v-if="!isListLoading && nfts.length > 0" />
           </template>
           <!-- PriceTrend -->
-          <!-- <template v-else>
-            <CollectionChart />
-          </template> -->
+          <template v-else>
+            
+            <ElAffix :offset="scrrentWarpOffsetTop">
+              <div class="screen flex flex-align-center" id="screen">
+                <div class="flex1">
+                  <!-- <a
+                    class="main-border flex flex-align-center"
+                    @click="isShowFilterWarp = !isShowFilterWarp"
+                  >
+                    <Icon name="filter" />
+                    <template v-if="isShowFilterWarp">{{ $t('NFT.Filter') }}</template>
+                  </a> -->
+                </div>
+                <!-- <ElSelect v-model="sortIndex" @change="refreshDatas">
+                  <ElOption
+                    v-for="(item, index) in sorts"
+                    :key="index"
+                    :label="item.name()"
+                    :value="index"
+                  />
+                </ElSelect> -->
+                <div class="display flex flex-align-center">
+                  <a
+                    @click="changeCell(item.value)"
+                    v-for="item in cells"
+                    :key="item.value"
+                    :class="{ active: item.value === cell.val.value }"
+                  >
+                    <Icon :name="item.icon" />
+                  </a>
+                </div>
+              </div>
+            </ElAffix>
+            <div class="collection-nft-content flex">
+            
+
+              <ElRow
+                :gutter="gutter"
+                class="nft-list flex1"
+                v-infinite-scroll="getMore"
+                :infinite-scroll-immediate="false"
+                :infinite-scroll-distance="100"
+                  v-if="!isShowNFTList"
+              >
+                <ElCol
+                  :xs="cell.val.xs"
+                  :sm="cell.val.sm"
+                  :md="cell.val.md"
+                  :lg="cell.val.lg"
+                  :xl="cell.val.xl"
+                  v-for="(nft, index) in saleNfts"
+                  :key="
+                    isSaleListLoading ? index : nft.item_pinid
+                  "
+                >
+                  <NFTItemVue
+                    :nft="nft"
+                    @buy="buyNFT" @sale="onSale" @offsale="onOffsale"
+                    
+                    :loading="isSaleListLoading"
+                   
+                  />
+                </ElCol>
+
+                <ElCol v-if="!isSaleListLoading && saleNfts.length === 0">
+                  <IsNull />
+                </ElCol>
+              </ElRow>
+            </div>
+
+            <LoadMore :pagination="pagination" v-if="!isSaleListLoading && saleNfts.length > 0" />
+
+
+            <!-- <CollectionChart /> -->
+          </template>
         </div>
       </div>
 
@@ -166,9 +240,9 @@
       />
 
       <!-- NFTBuy -->
-      <!-- <NFTBuy :nft="nft.val!" v-model="isShowNftBuy" @success="onOperateSuccess" /> -->
+      <NFTBuy :nft="saleNftItem.val!" v-model="isShowNftBuy" @success="onOperateSuccess" />
       <!-- NFTSlae -->
-      <!-- <NFTSellVue :nft="nft.val!" v-model="isShowNftSale" @success="onOperateSuccess" /> -->
+      <NFTSellVue :nft="saleNftItem.val!" v-model="isShowNftSale" @success="onOperateSuccess" />
     </template>
   </ElSkeleton>
 </template>
@@ -177,8 +251,9 @@
 import { nextTick, onMounted, reactive, ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NFTMintItemVue from '@/components/NFTItem/NFTMintItem.vue'
+import NFTItemVue from '@/components/NFTItem/NFTItem.vue'
 import { GetCollect, GetCollectByTopicType } from '@/api/strapi'
-import { useRoute } from 'vue-router'
+import { useRoute,useRouter } from 'vue-router'
 import ContentModal from '@/components/ContentModal/ContentModal.vue'
 import { GetCollectionNFTs } from '@/api/aggregation'
 import { initPagination } from '@/config'
@@ -193,19 +268,27 @@ import { satoshi, space } from '@/utils/filters'
 import NFTSellVue from '@/components/NFTSell/NFTSell.vue'
 import { GetGenesisStatistics } from '@/api/broad'
 import CollectionChart from '../components/CollectionChart.vue'
-import { NFTOffSale } from '@/utils/nft'
-import {getCollectionDetail,getCollectionMintAmout,getCollectionMintableList,getPoolInfo} from '@/api/mrc721-api'
+import { NFTOffSale, IsMyNFT, IsSale,NFTRedeem,isDestory ,isNFTCanOperate,IsReady } from '@/utils/nft'
+import {getCollectionDetail,getCollectionMintAmout,getCollectionMintableList,getPoolInfo,getSaleOrderList,getPriceRecord} from '@/api/mrc721-api'
 import { ElMessage } from 'element-plus'
 import { useConnectionStore, ConnectChain } from '@/stores/connection'
 import { useNetworkStore } from '@/stores/network'
 import {useNFTEntity} from '@/hooks/use-nft-entity'
 import { useFeebStore } from '@/stores/feeb'
-import {openLoading } from '@/utils/util'
+
+import {openLoading ,calcNftRealSalePrice,sleep,checkUserLogin} from '@/utils/util'
+
+import {NftsLaunchPadChainSymbol,PlatformRate} from '@/data/constants'
+import {useMetaIDEntity} from '@/hooks/use-metaid-entity'
+import {checkDummyAmount} from '@/hooks/use-buildtx-entity'
 const networkStore = useNetworkStore()
 const feeStore = useFeebStore()
 const nftEntity=useNFTEntity()
 const i18n = useI18n()
 const route = useRoute()
+const router=useRouter()
+const {getUserAllInfo}=useMetaIDEntity()
+
 enum NFTCollectTab {
   CollectionWorks = 0,
   PriceTrend = 1,
@@ -219,10 +302,10 @@ const tabs = [
     name: () => i18n.t('NFT.Collection works'),
     value: NFTCollectTab.CollectionWorks,
   },
-  // {
-  //   name: () => i18n.t('NFT.Price Trend'),
-  //   value: NFTCollectTab.PriceTrend,
-  // },
+  {
+    name: () => i18n.t('NFT.Collection sale'),
+    value: NFTCollectTab.PriceTrend,
+  },
 ]
 const tabActive = ref(NFTCollectTab.CollectionWorks)
 const statiscs = reactive([
@@ -272,8 +355,9 @@ const isSkeleton = ref(true)
 const isShowContent = ref(false)
 const pagination = reactive({ ...initPagination, pageSize: 24 })
 const nfts: NftMintItemType[] = reactive([])
-
+const saleNfts:NftOrderType[]=reactive([])
 const nft: { val: NftMintItemType | null } = reactive({ val: null })
+const saleNftItem: { val: NftOrderType | null } = reactive({ val: null })
 const isShowNftBuy = ref(false)
 const isShowNftSale = ref(false)
 const cells = [
@@ -301,7 +385,7 @@ const sellType = ref(NFTSellType.All)
 let priceRange: [string, string] = reactive(['', ''])
 const isShowFilterWarp = ref(false)
 const isListLoading = ref(false)
-
+const isSaleListLoading=ref(false)
 const sorts = [
   {
     name: () => i18n.t('NFT.Sort.Price low to high'),
@@ -342,8 +426,20 @@ const list = computed(() => {
   }
 })
 
+const saleOrderList = computed(() => {
+  if (isSaleListLoading.value) {
+    return Array.from({ length: pagination.pageSize }) as NftOrderType[]
+  } else {
+    return saleNfts
+  }
+})
+
+
+
 const isShowNFTList = computed(() => {
-  if (isMobile && isShowFilterWarp.value) {
+ 
+
+  if ((isMobile && isShowFilterWarp.value )|| tabActive.value == NFTCollectTab.PriceTrend)  {
     return false
   } else {
     return true
@@ -352,16 +448,26 @@ const isShowNFTList = computed(() => {
 
 async function mintItem(nft:NftMintItemType){
   console.log("aaaa",nft)
+  
   const loading = openLoading()
   try {
-   
+    await checkUserLogin()
+    //const checkDummyRes= await checkDummyAmount()
+
+    
+    // if(!checkDummyRes){
+    //   throw new Error(`get dummy utxo error`)
+    // }
+
+    // await sleep(500)
+
+
     const res= await nftEntity.mintItem({
-    creatorMetaId:collection.val?.metaid!,
-    name:collection.val?.name!,
     commitAddress:nft.commit_address,
-    collectionPinId:collection.val?.collection_pinid,
+    collectionPinid:collection.val?.collection_pinid!,
     receiverAddress:connectionStore.userInfo.address,
-    feeb:feeStore.getCurrentFeeb
+    feeb:feeStore.getCurrentFeeb,
+   
   })
   
   if(res?.code == 200){
@@ -372,39 +478,37 @@ async function mintItem(nft:NftMintItemType){
         item.is_minted =1
       }
     })
-    // refreshDatas()
+    await sleep(1000)
+    refreshDatas()
   }else{
+    
     loading.close()
-    return ElMessage.error(res?.msg)
+   
   }
-  console.log("res",res)
+ 
   
   } catch (error) {
     loading.close()
-    return ElMessage.error(`${(error as any).toString()}`)
+    return ElMessage.error(`${(error as any).message}`)
   }
   
 }
 
 function getCollectionCreator(address:string){
-  return new Promise<void>((resolve,reject)=>{
+  return new Promise<void>(async(resolve,reject)=>{
     try {
     const needInfo = {
     network: connectionStore.last.network || networkStore.network,
     currentAddress: address
   }
 
- connectionStore.last.getUser({ ...needInfo }).then(user=>{
-  
+  const user=await connectionStore.last.getUser({ ...needInfo })
   if(collection.val){
     collection.val.collection_creator=user
     resolve()
   }else{
     reject()
   }
-
-
-  })
   } catch (error) {
     reject()
   }
@@ -419,8 +523,7 @@ function getDatas(isCover=false){
       reject()
     }
     const res= await getCollectionMintableList({
-      metaid:collection.val?.metaid!,
-      name:collection.val?.name!,
+      collectionPinid:collection.val?.collection_pinid!,
       page:pagination.page,
       pageSize:pagination.pageSize,
     }).catch(error => {
@@ -437,6 +540,40 @@ function getDatas(isCover=false){
   })
 }
 
+function getSaleDatas(isCover=false){
+  
+  return new Promise<void>(async(resolve,reject)=>{
+
+    const res= await getSaleOrderList({
+      collectionPinid:collection.val?.collection_pinid!,
+      page:pagination.page,
+      pageSize:pagination.pageSize,
+    }).catch(error => {
+      ElMessage.error(error.message)
+    })
+    
+    if(res?.code == 200){
+      
+      if (isCover) saleNfts.length = 0
+      if (res.data.length === 0) pagination.nothing = true
+      for(let item of res.data){
+        if(connectionStore.last.user.address){
+          item.creator_info=await getUserAllInfo(item.creator_info.address)
+          item.owner_info=await getUserAllInfo(item.saler_address)
+        }
+      
+      }
+      
+      saleNfts.push(...res.data)
+      
+      
+      
+      
+    }
+    resolve()
+  })
+}
+
 function getCollection() {
   return new Promise<void>(async (resolve,reject) => {
       const res=await getCollectionDetail({
@@ -445,28 +582,50 @@ function getCollection() {
       if(res.code == 200){
         
         const mintRes=await getCollectionMintAmout({
-          metaid:res.data.result.metaid,
-          name:res.data.result.name
-        })
-        getCollectionCreator(res.data.result.address).then((res)=>{
-
-        }).catch(()=>{
+          collectionPinid:res.data.result.collection_pinid,
           
-          reject()
         })
+        
+        // for(let item of res.data.result){
+        //   getUserAllInfo(item.collection_creator.address).then(res=>{
+
+        //   })
+        // }
+        
+        // getCollectionCreator(res.data.result.address).then((res)=>{
+
+        // }).catch(()=>{
+          
+        //   reject()
+        // })
         if(mintRes.code ==200 && mintRes.data.currentSupply > 0){
           
+          const collectionCreator= await getUserAllInfo(res.data.result.address)
           const {mintAmout,currentSupply,currentMintPrice}=mintRes.data
+          if(connectionStore.last.user.address){
+            res.data.result.collection_creator=collectionCreator
+          }else{
+            res.data.result.collection_creator=mintRes.data.creatorInfo
+          }
+         
           collection.val ={
             ...res.data.result,
             current_supply:currentSupply,
             minted:mintAmout,
             current_mint_price:currentMintPrice ? currentMintPrice : res.data.result.init_price
           }
+
+          const priceRes= await getPriceRecord({
+            collectionPinid:route.params.topicType as string
+          })
+          if(priceRes.code == 200 && priceRes.data.floor_price){
+            statiscs[1].value = space(priceRes.data.floor_price).toString()
+            statiscs[2].value = space(priceRes.data.high_price).toString()
+          }
           
           statiscs[0].value = space(res.data.result.init_price).toString()
-          statiscs[1].value = space(res.data.result.init_price).toString()
-          statiscs[2].value = space(currentMintPrice).toString()
+          // statiscs[1].value = space(res.data.result.init_price).toString()
+          // statiscs[2].value = space(currentMintPrice).toString()
           statiscs[3].value = res.data.result.total_supply.toString()
           statiscs[4].value = mintAmout.toString()
           getPoolInfo({
@@ -541,10 +700,130 @@ function changeCell(cellValue: number) {
   cell.val = cells.find(item => item.value === cellValue)!
 }
 
-// function buyNFT(item: GenesisNFTItem) {
-//   nft.val = item
-//   isShowNftBuy.value = true
-// }
+const realbuyPrice=computed(()=>{
+  return calcNftRealSalePrice(saleNftItem.val!.sale_price,saleNftItem.val!.royalty_rate)
+
+})
+
+async function buyNFT(item: NftOrderType) {
+  saleNftItem.val = item
+  await checkUserLogin()
+  try {
+      const result = await isNFTCanOperate({
+        nftPinid:item.item_pinid
+      })
+      if (result) {
+        
+        
+        const buyRes= await nftEntity.buyNft({
+          psbtHex:item.order_id,
+          buyerAddress:connectionStore.last.user.address,
+          nftPinid:item.item_pinid,
+          chain:NftsLaunchPadChainSymbol.btc,
+          extraFee:{
+            salePrice:realbuyPrice.value.salePrice,
+            platformFee:realbuyPrice.value.platformFee,
+            royalFee:realbuyPrice.value.royaltyFee,
+            platformRate:PlatformRate
+          }
+        })
+        
+            if(buyRes){
+              ElMessage.success(i18n.t('NFT.Buy Success'))
+              onOperateSuccess(item)
+            // emit('update:modelValue', false)
+            // buying.value = false
+            //isShowSuccess.value = true
+            // emit('success',)
+            }else{
+              //ElMessage.success(buyRes)
+              //buying.value = false
+            }
+
+          
+       
+
+
+        // if (currentPayPlatform.value === PayPlatform.SPACE) {
+        //   const params: any = {
+        //     genesis: props.nft.nftGenesis,
+        //     codehash: props.nft.nftCodehash,
+        //     tokenIndex: props.nft.nftTokenIndex,
+        //     sellTxId: props.nft.nftSellTxId,
+        //     sellContractTxId: props.nft.nftSellContractTxId,
+        //     sellUtxo: {
+        //       txId: props.nft.nftSellContractTxId,
+        //       outputIndex: 0,
+        //       sellerAddress: props.nft.nftOwnerAddress,
+        //       price: props.nft.nftPrice,
+        //     },
+        //   }
+        //   const publisherFeeRate = platformFeeRate.value / 100
+        //   const creatorFeeRate = royalyFeeRate.value / 100
+        //   if (publisherFeeRate) {
+        //     params.publisherFeeRate = publisherFeeRate
+        //     params.publisherAddress = nftFee.val!.platformAddress
+        //   }
+        //   if (creatorFeeRate) {
+        //     params.creatorFeeRate = creatorFeeRate
+        //     params.creatorAddress = props.nft.nftIssueAddress
+        //   }
+        //   const res = await userStore.showWallet.createBrfcChildNode(
+        //     {
+        //       nodeName: NodeName.nftBuy,
+        //       data: JSON.stringify(params),
+        //     },
+        //     {
+        //       payType: SdkPayType.SPACE,
+        //     }
+        //   )
+        //   if (res) {
+        //     ElMessage.success(i18n.t('NFT.Buy Success'))
+        //     emit('update:modelValue', false)
+        //     buying.value = false
+        //     isShowSuccess.value = true
+        //   } else if (res === null) {
+        //     buying.value = false
+        //   }
+        // } else {
+        //   const res = await CreatePayOrder({
+        //     platform: currentPayPlatform.value,
+        //     fullPath: setPayQuitUrl({
+        //       payPlatform: currentPayPlatform.value!,
+        //       fullPath: route.fullPath,
+        //       isBlindbox: false,
+        //     }),
+        //     goods_name: props.nft!.nftName,
+        //     count: 1,
+        //     product_type: ProductType.LegalNft, // 100-ME, 200-Legal_NFT,
+
+        //     // 购买合约 NFT
+        //     genesis: props.nft.nftGenesis,
+        //     codehash: props.nft.nftCodehash,
+        //     contract: props.nft.nftSellContractTxId,
+        //     tokenIndex: props.nft.nftTokenIndex,
+        //   })
+        //   if (res) {
+        //     payMsg.amount = res.pay_amount!.toString()
+        //     payMsg.orderId = res.order_id
+        //     payMsg.pay_decimal_num = res.pay_decimal_num
+        //     payMsg.url = res.url
+        //     buying.value = false
+        //     emit('update:modelValue', false)
+        //     nextTick(() => {
+        //       isShowPayModal.value = true
+        //     })
+        //   }
+        // }
+      }
+    } catch (error) {
+      ElMessage.error((error as any).message)
+      //buying.value = false
+    }
+
+
+  //isShowNftBuy.value = true
+}
 
 function refreshDatas() {
   isListLoading.value = true
@@ -559,31 +838,32 @@ function refreshDatas() {
   })
 }
 
-// async function onOffsale(item: GenesisNFTItem) {
-//   const result = await NFTOffSale(item).catch(error => {
-//     ElMessage.error(error.message)
-//   })
-//   if (result) {
-//     onOperateSuccess(result)
-//   }
-// }
+async function onOffsale(item: NftOrderType) {
+  await checkUserLogin()
+  const result = await NFTOffSale(item).catch(error => {
+    ElMessage.error(error.message)
+  })
+  if (result) {
+    onOperateSuccess(result)
+    getSaleDatas(true).then()
+  }
+}
 
-// function onSale(item: GenesisNFTItem) {
-//   nft.val = item
-//   isShowNftSale.value = true
-// }
+async function onSale(item: NftOrderType) {
+  await checkUserLogin()
+  saleNftItem.val = item
+  isShowNftSale.value = true
+}
 
-// function onOperateSuccess(item: GenesisNFTItem) {
-//   const index = nfts.findIndex(
-//     _item =>
-//       _item.nftGenesis === item.nftGenesis &&
-//       _item.nftCodehash === item.nftCodehash &&
-//       _item.nftTokenIndex === item.nftTokenIndex
-//   )
-//   if (index > -1) {
-//     nfts[index] = item
-//   }
-// }
+function onOperateSuccess(item: NftOrderType) {
+  const index = saleNfts.findIndex(
+    _item =>
+      _item.order_id === item.order_id 
+  )
+  if (index > -1) {
+    saleNfts[index] = item
+  }
+}
 
 function getGenesisStatistics() {
   return new Promise<void>(async resolve => {
@@ -603,13 +883,26 @@ function getGenesisStatistics() {
 
 function changeTab(value: NFTCollectTab) {
   if (tabActive.value === value) return
-  // tabActive.value = value
   if (value === NFTCollectTab.PriceTrend) {
-    return ElMessage.info(i18n.t('Comming Soon'))
+    tabActive.value=value
+    pagination.page = 1
+  pagination.loading = false
+  pagination.nothing = false
+  saleNfts.length=0
+  
+    getSaleDatas().then()
+  }else{
+    tabActive.value=value
+    pagination.page = 1
+    pagination.loading = false
+    pagination.nothing = false
+  
+    
   }
 }
 
 getCollection().then(()=>{
+  
   getDatas(true).then(()=>{
     isSkeleton.value = false
   }).catch(()=>{

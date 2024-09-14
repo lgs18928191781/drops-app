@@ -36,12 +36,12 @@
           </ElInput>
         </ElFormItem>
 
-        <!-- <div class="price-info-list">
+        <div class="price-info-list">
           <div class="price-info-item flex flex-align-center">
             <div class="label flex1">{{ $t('NFT.Set actual income') }}</div>
             <div class="value flex flex-align-center">
-              <ElInput type="number" v-model="form.actualincomePrice" @change="setSellPrice" />
-              {{ rootStore.currentPrice }}
+              <ElInput type="number"  v-model="form.actualincomePrice" @change="setSellPrice" />
+             <span class="ml-1"> {{ ToCurrency.BTC }}</span>
             </div>
           </div>
 
@@ -49,11 +49,11 @@
             <div class="label flex1">
               {{
                 $t('NFT.Platform fee')
-              }}({{  new Decimal(extraFee.val!.platformPercentage).mul(100).toFixed(2) }}%)
+              }}({{  new Decimal(extraFee.platformPercentage).mul(100).toFixed(2) }}%)
             </div>
             <div class="value">
               {{ platformFee }}
-              {{ rootStore.currentPrice }}
+              {{ ToCurrency.BTC }}
             </div>
           </div>
 
@@ -61,14 +61,14 @@
             <div class="label flex1">
               {{
                 $t('NFT.Royalty fee')
-              }}({{ new Decimal(extraFee.val!.royaltyPercentage).mul(100).toFixed(2) }}%)
+              }}({{ new Decimal(extraFee.royaltyPercentage).mul(100).toFixed(2) }}%)
             </div>
             <div class="value">
               {{ royaltyFee }}
-              {{ rootStore.currentPrice }}
+             {{ ToCurrency.BTC }}
             </div>
           </div>
-        </div> -->
+        </div>
       </ElForm>
 
       <div class="operate">
@@ -94,43 +94,44 @@ import { useI18n } from 'vue-i18n'
 import NFTCoverVue from '../NFTCover/NFTCover.vue'
 import NFTMsgVue from '../NFTMsg/NFTMsg.vue'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
-import { Chains, NodeName, SdkPayType } from '@/enum'
+import { Chains, NodeName, SdkPayType,ToCurrency } from '@/enum'
 import { FormInstance } from 'element-plus'
-
+import { ElMessage } from 'element-plus'
+import {useNFTEntity} from '@/hooks/use-nft-entity'
 const props = defineProps<{
   modelValue: boolean
-  nft: GenesisNFTItem
+  nft: NftOrderType
 }>()
 
 const emit = defineEmits(['update:modelValue', 'success'])
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const i18n = useI18n()
-const minSatoshi = 22000
+const minSatoshi = 10000
 const FormRef = ref<FormInstance>()
-
+const nftEntity=useNFTEntity()
 enum Unit {
-  Space = 'SPACE',
+  BTC = 'BTC',
   Satoshi = 'Satoshi',
 }
 const units = [
-  { value: Unit.Space, rate: Math.pow(10, -8), toFixed: 8 },
-  { value: Unit.Satoshi, rate: Math.pow(10, 8), toFixed: 0 },
+  { value: Unit.BTC, rate: Math.pow(10, -8), toFixed: 8 },
+  // { value: Unit.Satoshi, rate: Math.pow(10, 8), toFixed: 0 },
 ]
-const unit = ref(Unit.Space)
+const unit = ref(Unit.BTC)
 const form = reactive({
   sellPrice: '',
   actualincomePrice: '',
+
 })
-const extraFee: {
-  val: null | {
-    platformPercentage: number
-    royaltyPercentage: number
-    platformFee: number
-    royaltyFee: number
-    total: number
+
+const extraFee=computed(()=>{
+  return {
+    platformPercentage:new Decimal(6).div(100).toNumber(),
+    royaltyPercentage:new Decimal(props.nft.royalty_rate).div(100).toNumber()
   }
-} = reactive({ val: null })
+})
+
 const loading = ref(false)
 
 const rule = {
@@ -165,45 +166,66 @@ const rule = {
 }
 
 const platformFee = computed(() => {
-  if (!form.actualincomePrice || !extraFee.val) {
+  if(!form.actualincomePrice){
     return 0
-  } else {
-    let price = new Decimal(form.actualincomePrice).mul(extraFee.val!.platformPercentage).toNumber()
-    if (price < 0.01) price = 0.01
-    price = new Decimal(new Decimal(price).toFixed(2)).toNumber()
-    return price
   }
+  let price = new Decimal(form.actualincomePrice).mul(extraFee.value.platformPercentage).toNumber()
+  if(price < 0.00002){
+    price=0.00002
+  }
+  return price
+  // if (!form.actualincomePrice || !extraFee.val) {
+  //   return 0
+  // } else {
+  //   let price = new Decimal(form.actualincomePrice).mul(extraFee.val!.platformPercentage).toNumber()
+  //   if (price < 0.01) price = 0.01
+  //   price = new Decimal(new Decimal(price).toFixed(2)).toNumber()
+  //   return price
+  // }
 })
 
 const royaltyFee = computed(() => {
-  if (!form.actualincomePrice || !extraFee.val) {
-    return 0.0
-  } else {
-    let price = new Decimal(form.actualincomePrice).mul(extraFee.val!.royaltyPercentage).toNumber()
-    if (price < 0.01) price = 0.01
-    price = new Decimal(new Decimal(price).toFixed(2)).toNumber()
-    return price
+  if(!form.actualincomePrice){
+    return 0
   }
+  if(extraFee.value.royaltyPercentage == 0){
+    return 0
+  }
+  let price = new Decimal(form.actualincomePrice).mul(extraFee.value.royaltyPercentage).toNumber()
+  if(price < 0.00001){
+    price = 0.00001
+    
+  }
+  return price
+  // if (!form.actualincomePrice || !extraFee.val) {
+  //   return 0.0
+  // } else {
+  //   let price = new Decimal(form.actualincomePrice).mul(extraFee.val!.royaltyPercentage).toNumber()
+  //   if (price < 0.01) price = 0.01
+  //   price = new Decimal(new Decimal(price).toFixed(2)).toNumber()
+  //   return price
+  // }
 })
 
-function getyExtraFee() {
-  return new Promise<void>(async (resolve, reject) => {
-    const res = await getUserBuyExtraFee({
-      codehash: props.nft.nftCodehash,
-      genesis: props.nft.nftGenesis,
-      isFirstSell: false,
-      amount: 0,
-      ignoreIndex: 1,
-      isNotCache: true,
-    }).catch(error => {
-      ElMessage.error(error.message)
-    })
-    if (res) {
-      extraFee.val = res
-      resolve()
-    }
-  })
-}
+// function getyExtraFee() {
+
+//   // return new Promise<void>(async (resolve, reject) => {
+//   //   const res = await getUserBuyExtraFee({
+//   //     codehash: props.nft.nftCodehash,
+//   //     genesis: props.nft.nftGenesis,
+//   //     isFirstSell: false,
+//   //     amount: 0,
+//   //     ignoreIndex: 1,
+//   //     isNotCache: true,
+//   //   }).catch(error => {
+//   //     ElMessage.error(error.message)
+//   //   })
+//   //   if (res) {
+//   //     extraFee.val = res
+//   //     resolve()
+//   //   }
+//   // })
+// }
 
 function setPrice() {
   let price = new Decimal(form.sellPrice)
@@ -213,12 +235,12 @@ function setPrice() {
 
 function setSellPrice() {
   let price = new Decimal(form.actualincomePrice).toNumber()
-  if (price < 0.01) price = 0.01
-  form.actualincomePrice = new Decimal(price).toFixed(2)
+  form.actualincomePrice = new Decimal(price).toFixed(8)
   form.sellPrice = new Decimal(form.actualincomePrice)
     .plus(platformFee.value)
     .plus(royaltyFee.value)
-    .toFixed(2)
+    .toFixed(8)
+    console.log("form.sellPrice",form.sellPrice)
 }
 
 function onChangeUnit() {
@@ -229,19 +251,17 @@ function onChangeUnit() {
 }
 
 function submitForm() {
-  if (props.nft.nftChain !== Chains.MVC) {
-    return ElMessage.info(
-      i18n.t('NFT.Not support this chain for sell:' + ' ' + props.nft.nftChain.toUpperCase())
-    )
-  }
+
   FormRef.value?.validate(async (valid, fields) => {
     if (valid) {
-      if (props.nft.nftCanSellTimestamp > new Date().getTime()) {
-        return ElMessage.error(
-          `此NFT冻结到 ${dateTimeFormat(props.nft.nftCanSellTimestamp)}, 才可上架销售`
-        )
-      }
+      // if (props.nft.nftCanSellTimestamp > new Date().getTime()) {
+      //   return ElMessage.error(
+      //     `此NFT冻结到 ${dateTimeFormat(props.nft.nftCanSellTimestamp)}, 才可上架销售`
+      //   )
+      // }
+      
       try {
+        
         loading.value = true
         // 法币上架
         // const getAddressRes = await GetLegalRecevierAddress()
@@ -281,34 +301,28 @@ function submitForm() {
         // }
 
         // Space 上架
-        const sellPriceSatoshi = new Decimal(form.sellPrice)
-          .mul(unit.value === Unit.Satoshi ? 1 : Math.pow(10, 8))
+        const sellPriceSatoshi = new Decimal(form.actualincomePrice)
+          .mul(Math.pow(10, 8))
           .toNumber()
-        const res = await userStore.showWallet.createBrfcChildNode(
-          {
-            nodeName: NodeName.NftSell,
-            data: JSON.stringify({
-              codehash: props.nft.nftCodehash, // nft的codehash
-              genesis: props.nft.nftGenesis, // nft的genesisId
-              tokenIndex: props.nft.nftTokenIndex, // nft的tokenIndex
-              price: sellPriceSatoshi, // nft的出售价格 单位聪
-              sensibleId: props.nft.nftSensibleId, // nft的sensibleId
-              sellDesc: 'ShowV3',
-            }),
+          console.log("props.nft",props.nft)
+          
+        const res=await nftEntity.saleNft({
+          collectionPinid:props.nft.collection_pinid,
+          nftPinid:props.nft.item_pinid,
+          salePrice:sellPriceSatoshi,
+          extraFee:{
+            royaltyRateFee:royaltyFee.value > 0 ? new Decimal(royaltyFee.value).mul(Math.pow(10, 8)).toNumber() : 0,
+            platformFee:platformFee.value > 0 ? new Decimal(platformFee.value).mul(Math.pow(10, 8)).toNumber() : 0,
           }
-          // {
-          //   payType: SdkPayType.ME,
-          // }
-        )
+        })
+        
         if (res) {
           loading.value = false
           emit('success', {
             ...props.nft,
             nftPrice: sellPriceSatoshi,
-            nftSellState: 0,
+            nftSellState: 1,
             nftIsReady: true,
-            nftSellTxId: res.nft!.sell!.txId,
-            nftSellContractTxId: res.nft!.sell!.sellTxId,
           })
           emit('update:modelValue', false)
           form.sellPrice = ''

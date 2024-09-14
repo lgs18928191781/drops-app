@@ -110,47 +110,59 @@ function GetChain() {
 
 export const payPlatformList: PayPlatformItem[] = [
   {
-    icon: ETHIcon,
+    icon: BTC,
     name: () => {
       // @ts-ignore
-      return `${import.meta.env.VITE_ETH_CHAIN.toUpperCase()}${
-        // @ts-ignore
-        i18n.global.locale === Lang.ZH ? '' : ' '
-        // @ts-ignore
-      }${i18n.global.t('Pay')}`
+      return `BTC${i18n.global.locale === Lang.ZH ? '' : ' '}${i18n.global.t('Pay')}`
     },
-    platform: PayPlatform.ETH,
+    platform: PayPlatform.BTC,
     background: '#108EE9',
-    key: import.meta.env.VITE_ETH_CHAIN,
-    disabled: () => {
-      let result = true
-      const userStore = useUserStore()
-      if (userStore.isAuthorized && userStore.user?.evmAddress && GetChain() === Chains.ETH) {
-        result = false
-      }
-      return result
-    },
+    key: 'BTC',
+    disabled: () => false,
     suffix: false,
   },
-  {
-    icon: POLYGON,
-    name: () => {
-      // @ts-ignore
-      return `MATIC${i18n.global.locale === Lang.ZH ? '' : ' '}${i18n.global.t('Pay')}`
-    },
-    platform: PayPlatform.POLYGON,
-    background: '#108EE9',
-    key: 'MATIC',
-    disabled: () => {
-      let result = true
-      const userStore = useUserStore()
-      if (userStore.isAuthorized && userStore.user?.evmAddress && GetChain() === Chains.POLYGON) {
-        result = false
-      }
-      return result
-    },
-    suffix: false,
-  },
+  // {
+  //   icon: ETHIcon,
+  //   name: () => {
+  //     // @ts-ignore
+  //     return `${import.meta.env.VITE_ETH_CHAIN.toUpperCase()}${
+  //       // @ts-ignore
+  //       i18n.global.locale === Lang.ZH ? '' : ' '
+  //       // @ts-ignore
+  //     }${i18n.global.t('Pay')}`
+  //   },
+  //   platform: PayPlatform.ETH,
+  //   background: '#108EE9',
+  //   key: import.meta.env.VITE_ETH_CHAIN,
+  //   disabled: () => {
+  //     let result = true
+  //     const userStore = useUserStore()
+  //     if (userStore.isAuthorized && userStore.user?.evmAddress && GetChain() === Chains.ETH) {
+  //       result = false
+  //     }
+  //     return result
+  //   },
+  //   suffix: false,
+  // },
+  // {
+  //   icon: POLYGON,
+  //   name: () => {
+  //     // @ts-ignore
+  //     return `MATIC${i18n.global.locale === Lang.ZH ? '' : ' '}${i18n.global.t('Pay')}`
+  //   },
+  //   platform: PayPlatform.POLYGON,
+  //   background: '#108EE9',
+  //   key: 'MATIC',
+  //   disabled: () => {
+  //     let result = true
+  //     const userStore = useUserStore()
+  //     if (userStore.isAuthorized && userStore.user?.evmAddress && GetChain() === Chains.POLYGON) {
+  //       result = false
+  //     }
+  //     return result
+  //   },
+  //   suffix: false,
+  // },
   // {
   //   icon: BSV,
   //   name: () => {
@@ -163,18 +175,18 @@ export const payPlatformList: PayPlatformItem[] = [
   //   disabled: () => false,
   //   suffix: false,
   // },
-  {
-    icon: MVC,
-    name: () => {
-      // @ts-ignore
-      return `MVC${i18n.global.locale === Lang.ZH ? '' : ' '}${i18n.global.t('Pay')}`
-    },
-    platform: PayPlatform.SPACE,
-    background: '#108EE9',
-    key: 'MVC',
-    disabled: () => false,
-    suffix: false,
-  },
+  // {
+  //   icon: MVC,
+  //   name: () => {
+  //     // @ts-ignore
+  //     return `MVC${i18n.global.locale === Lang.ZH ? '' : ' '}${i18n.global.t('Pay')}`
+  //   },
+  //   platform: PayPlatform.SPACE,
+  //   background: '#108EE9',
+  //   key: 'MVC',
+  //   disabled: () => false,
+  //   suffix: false,
+  // },
   // {
   //   icon: SandPayIcon,
   //   name: () => {
@@ -219,6 +231,7 @@ export const payPlatformAmountRate = {
   [PayPlatform.ETH]: Math.pow(10, 18),
   [PayPlatform.POLYGON]: Math.pow(10, 18),
   [PayPlatform.BSV]: Math.pow(10, 8),
+  [PayPlatform.BTC]: Math.pow(10, 8),
   [PayPlatform.SPACE]: Math.pow(10, 8),
   [PayPlatform.AliPay]: 100,
   [PayPlatform.AliPaySelf]: 100,
@@ -232,6 +245,7 @@ export const payPlatformAmountFix = {
   [PayPlatform.ETH]: 9,
   [PayPlatform.POLYGON]: 9,
   [PayPlatform.BSV]: 8,
+  [PayPlatform.BTC]: 8,
   [PayPlatform.SPACE]: 8,
   [PayPlatform.AliPay]: 2,
   [PayPlatform.AliPaySelf]: 2,
@@ -252,6 +266,7 @@ export const payPlatformToCurrency = {
   [PayPlatform.SPACE]: ToCurrency.MVC,
   [PayPlatform.UnionPay]: ToCurrency.CNY,
   [PayPlatform.WechatPay]: ToCurrency.CNY,
+  [PayPlatform.BTC]: ToCurrency.BTC,
 }
 
 export const currentSupportChain: Array<{

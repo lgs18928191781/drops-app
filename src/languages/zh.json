@@ -718,7 +718,7 @@
     "Supply": "總發行量",
     "Blockchain": "所在鏈",
     "Price Trend": "價格趨勢",
-    "Collection works": "專輯作品",
+    "Collection works": "專輯铸造",
     "Filter": "篩選",
     "Sort": {
       "Default Ranking": "默認排序",
@@ -813,7 +813,15 @@
     "NFT Has been purchased": "NFT已被購買",
     "Get Msg Error": "獲取信息失敗",
     "Minted": "已铸造数量",
-    "PoolAmount": "流动池总量"
+    "PoolAmount": "流动池总量",
+    "Collection sale": "专辑购买",
+    "Redeem": "赎回",
+    "redeeming": "赎回中",
+    "redeem Success": "赎回成功",
+    "redeeem Success": "NFT赎回成功",
+    "isDestory": "NFT已被赎回销毁",
+    "isDestroyed": "已赎回",
+    "in_mempool": "NFT确认中"
   },
   "My NFT": "我的NFT",
   "Done": "完成",
@@ -1329,7 +1337,8 @@
   },
   "NFTS": {
     "NFTs Launch Pad": "NFTs Launch Pad",
-    "NFTs mint_success": "铸造成功"
+    "NFTs mint_success": "铸造成功",
+    "NFTs onsale_success": "上架成功"
   },
   "NFTs": {
     "genesis_nfts": "创建NFTs系列",
@@ -1337,7 +1346,10 @@
     "lanuch_title2": "是否启用自动做市机制",
     "lanuch_mint": "铸造",
     "lanuch_minted": "已铸造",
-    "lanuch_price_exist": "请先上传要铸造的NFTs"
+    "lanuch_price_exist": "请先上传要铸造的NFTs",
+    "lanuch_growth_content1": "举个例子：",
+    "lanuch_growth_content2": "1.  当前铸造价格为0.001个BTC，若我们设置价格指数为0.00001个BTC时候，那么下一个NFT铸造的价格则为(当前铸造价格 + 价格增长指数，即0.001 + 0.00001 = 0.00101 BTC)，如此类推。",
+    "lanuch_growth_content3": "2.  每个NFT的赎回将不会影响当前铸造价格"
   },
   "Nfts": {
     "launch_noSupport": "Bitcoin资产暂不支持自动做市机制",
@@ -1401,19 +1413,38 @@
     "lanuch_nftIndex": "序号",
     "lanuch_generate_commit_address_fail": "生成地址失败",
     "mint_price_unit": "单位 ：BTC",
-    "lanuch_automarket_set": "自动造市初始价格和价格增长不能为空",
+    "lanuch_automarket_set": "自动造市初始价格不能为空",
     "lanuch_baseFee": "基础费用",
-    "service_fee": "服务费",
+    "service_fee": "平台服务费",
     "miner_fee": "上链费",
     "feebs": "费率",
     "total_fee": "总费用",
     "cancel_transation": "交易取消",
     "lanuch_mintable_Supply": "当前可铸造量：",
     "psbt_empty": "铸造订单不存在！",
-    "lanuch_MintFee": "NFT铸造费用",
+    "lanuch_MintFee": "NFT售价",
     "lanuch_sign_tx_fail": "签名交易取消",
     "lanuch_nft_name": "NFT名称",
     "lanuch_useSameName": "使用相同的NFT名称",
-    "lanuch_upload_file_success": "上传NFTs成功"
+    "lanuch_upload_file_success": "上传NFTs成功",
+    "lanuch_growth_price_desc": "什么是价格增长指数",
+    "psbt_buy_empty": "购买订单Id为空",
+    "service_royalty_fee": "版税",
+    "redeem_psbt_empty": "NFT赎回订单不存在",
+    "lanuch_morethan_amount": "单笔交易最大铸造数量不允许超过30个",
+    "not_allow_todetail": "未铸造完成的NFT暂不支持查看详情",
+    "transfer_success": "NFT转账成功"
+  },
+  "offsale not allowed": "请先下架后再进行赎回操作",
+  "redeemConfirm": "你确认要赎回",
+  "redeemWaring1": "赎回操作会销毁该NFT，请谨慎考虑！",
+  "redeemWaring2": "赎回后流动池会按当时铸造的价格返还，并会影响当前流动池的价格",
+  "redeemWaring3": "NFT的赎回价格：",
+  "is_destory not allowed": "NFT已赎回，无法继续操作",
+  "dummy": {
+    "not_enough": "可用DummyUtxo不足,需要进行拆分操作后继续交易",
+    "warning": "温馨提示",
+    "confirm": "确认",
+    "build_error": "DummyUtxo构建失败"
   }
 }

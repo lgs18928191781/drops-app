@@ -283,18 +283,18 @@
               <div class="nft-tab-wrap">
                 <el-tabs v-model="nftTab" class="demo-tabs" @tab-click="triggleNftTab">
                   <el-tab-pane label="My NFT" :name="1"></el-tab-pane>
-                  <el-tab-pane label="On Sale" :name="2" :disabled="disableSaleTab"></el-tab-pane>
+                  <el-tab-pane label="On Sale"  :name="2" :disabled="disableSaleTab"></el-tab-pane>
                 </el-tabs>
                 <el-icon :size="16" color="#303133" @click="refreshList"><Refresh /></el-icon>
               </div>
               <div class="nft-genesis-list" v-if="nftTab === 1">
-                <div class="nft-genesis-item" v-for="item in genesisList" :key="item.nftTimestamp">
+                <div class="nft-genesis-item" v-for="item in genesisList" :key="item.collection_pinid">
                   <div class="top flex flex-align-center" @click="chooseSeries(item)">
                     <div class="name flex1">
-                      {{ item.nftSeriesName ? item.nftSeriesName : item.nftIssuer }}
+                      {{ item.name }}
                     </div>
                     <div class="num flex flex-align-center">
-                      <span class="count">{{ item.nftMyCount }}</span>
+                      <span class="count">{{ item.total }}</span>
                       <Icon name="down" />
                     </div>
                   </div>
@@ -303,18 +303,20 @@
                       :to="{
                         name: 'nftDetail',
                         params: {
-                          chain: currentChain,
-                          genesis: nft.nftGenesis,
-                          codehash: nft.nftCodehash ? nft.nftCodehash : currentChain,
-                          tokenIndex: nft.nftTokenIndex,
+                          nftpinid:nft.id,
+                          collectionpinid:item.collection_pinid
                         },
                       }"
                       class="item"
-                      v-for="nft in item.nftDetailItemList"
-                      :key="nft.nftIssueMetaTxId"
-                      @click.stop="toNFT(nft)"
+                      v-for="nft in item.itemList"
+                      :key="nft.id"
+                      @click.stop="toNFT(nft.id,item.collection_pinid)"
                     >
-                      <NFTCoverVue :cover="[nft.nftIcon]" />
+                    <!-- <img class="rounded-lg" :src="formatDataUrltoBase64(nft.contentBody,nft.contentTypeDetect)" alt=""> -->
+                      <NFTCoverVue :cover="[formatDataUrl(nft.id)]" />
+                      <!-- <div class="saleNftName">
+                        <span>{{ nft.nft_name }}</span>
+                      </div> -->
                     </RouterLink>
                   </div>
                 </div>
@@ -329,23 +331,21 @@
                       :to="{
                         name: 'nftDetail',
                         params: {
-                          chain: currentChain,
-                          genesis: item.nftGenesis,
-                          codehash: item.nftCodehash ? item.nftCodehash : currentChain,
-                          tokenIndex: item.nftTokenIndex,
+                          nftpinid:item.item_pinid,
+                          collectionpinid:item.collection_pinid
                         },
                       }"
                       class="item"
-                      @click.stop="toNFT(item)"
+                      @click.stop="toNFT(item.item_pinid,item.collection_pinid)"
                     >
-                      <NFTCoverVue :cover="[item.nftIcon]" />
+                      <NFTCoverVue :cover="[item.item_cover]" />
                       <div class="saleNftName">
-                        <span>{{ item.nftName }}</span>
+                        <span>{{ item.nft_name }}</span>
                       </div>
                     </RouterLink>
                   </div>
                 </div>
-                <IsNullVue v-if="genesisList.length <= 0" />
+                <IsNullVue v-if="MyNftOnSaleList.length <= 0" />
               </div>
               <LoadMoreVue :pagination="pagination" />
             </ElSkeleton>
@@ -360,9 +360,7 @@
     <!-- NFTlist -->
     <NFTLlistVue
       v-model="seriesNFTList.visible"
-      :chain="chains.find(item => item.value === currentChain)?.value"
-      :codehash="seriesNFTList.codehash"
-      :genesis="seriesNFTList.genesis"
+      :collectionPinid="seriesNFTList.collectionPinid"
       :seriesName="seriesNFTList.seriesName"
       @link="emit('update:modelValue', false)"
     />
@@ -396,7 +394,7 @@ import {
   openLoading,
   getBalance,
 } from '@/utils/util'
-import { GetBalance, GetNFTs, GetBindMetaidAddressList, GetFTs,GetMyNftOnSale } from '@/api/aggregation'
+import { GetBalance, GetBindMetaidAddressList, GetFTs,GetMyNftOnSale } from '@/api/aggregation'
 import { setHashData, LoginByEthAddress } from '@/api/core'
 import ETH from '@/assets/images/eth.png'
 import MVC from '@/assets/images/icon_mvc.png'
@@ -429,12 +427,14 @@ import { MetaMaskLoginUserInfo } from '@/plugins/utils/api'
 import { ErrorDescription } from '@ethersproject/abi/lib/interface'
 import { metafile } from '@/utils/filters'
 import type { TabsPaneContext } from 'element-plus'
-import { debounce } from '@/utils/util'
+import { debounce,formatDataUrltoBase64,formatDataUrl } from '@/utils/util'
 import walletBackup from '@/assets/images/wallet_backup.svg?url'
 import { GetUserStakeInfo, GetBlockTime } from '@/api/dao'
 import MSP from '@/assets/images/msp.png'
 import { useConnectionStore } from "@/stores/connection";
 import BTC from "@/assets/icons/btc.svg?url";
+import {GetMyNFTs,getOwnerNftOnsale} from '@/api/mrc721-api'
+import { ElMessage } from 'element-plus'
 const props = defineProps<{
   modelValue: boolean
 }>()
@@ -542,7 +542,7 @@ const userWalletOperates = [
 const tabActive = ref(0)
 const tabs = [
   { name: i18n.t('Wallet.Balance'), value: 0 },
-  // { name: 'NFT', value: 1 },
+  { name: 'NFT', value: 1 },
 ]
 const blockTimeStamp = ref(0)
 const isSkeleton = ref(true)
@@ -551,13 +551,13 @@ const genesisList: UserNFTItem[] = reactive([])
 const userFtList: FungibleToken[] = reactive([])
 const pagination = reactive({ ...initPagination })
 const onSalePagenation = reactive({
-  flag:""
+  ...initPagination
 })
 const isShowMERecharge = ref(false)
 const isShowTransfer = ref(false)
-const MyNftOnSaleList: GenesisNFTItem[] = reactive([])
+const MyNftOnSaleList: Partial<NftOrderType>[] = reactive([])
 const disableSaleTab = computed(() => {
-  return currentChain.value !== Chains.BTC
+  return false
 })
 
 const wallets=reactive([
@@ -707,8 +707,7 @@ const wallets=reactive([
 const isShowChains = ref(false)
 const seriesNFTList = reactive({
   visible: false,
-  codehash: '',
-  genesis: '',
+  collectionPinid:'',
   seriesName: '',
 })
 const currentFtInfo: { val: ftListType | null } = reactive({
@@ -745,6 +744,8 @@ const totalBalanceLoading = computed(() => {
   }
   return value
 })
+
+
 
 function showMergeFt() {
   if (userStore.metaletLogin) {
@@ -792,23 +793,40 @@ function getUserStakeInfo() {
   })
 }
 
-function MyNftOnSale(flag = "") {
+function MyNftOnSale(page:number = 1) {
   return new Promise<void>((resolve, reject) => {
-    GetMyNftOnSale({
-      chain:currentChain.value,
-      address:userStore.user?.address!,
-      pageSize:`${pagination.pageSize}`,
-      flag
-    }).then((res) => {
-      if (res.code == 0) {
-        onSalePagenation.flag=res.data.flag!
-        MyNftOnSaleList.push(...res.data.results.items)
+    getOwnerNftOnsale({
+      address:connecionStore.last.user.address,
+      page:page,
+      pageSize:onSalePagenation.pageSize,
+    }).then((result)=>{
+      if(result.code == 200){
+        MyNftOnSaleList.push(...result.data)
+        
         resolve()
-     }
-    }).catch(() => {
+      }else{
+        reject()
+      }
+    }).catch(()=>{
       MyNftOnSaleList.length=0
       reject()
     })
+
+    // GetMyNftOnSale({
+    //   chain:currentChain.value,
+    //   address:userStore.user?.address!,
+    //   pageSize:`${pagination.pageSize}`,
+    //   flag
+    // }).then((res) => {
+    //   if (res.code == 0) {
+    //     onSalePagenation.flag=res.data.flag!
+    //     MyNftOnSaleList.push(...res.data.results.items)
+    //     resolve()
+    //  }
+    // }).catch(() => {
+    //   MyNftOnSaleList.length=0
+    //   reject()
+    // })
   })
 }
 
@@ -821,6 +839,7 @@ const triggleNftTab = async (tab: TabsPaneContext, event: Event) => {
     getNFTs(true)
   } else if (nftTab.value == 2) {
     if (MyNftOnSaleList.length) return
+    onSalePagenation.page=1
     MyNftOnSale()
   }
 }
@@ -833,6 +852,7 @@ function refreshList() {
     debounce(getNFTs(true),2000)
   } else if (nftTab.value == 2) {
     MyNftOnSaleList.length = 0
+    onSalePagenation.page=1
     debounce(MyNftOnSale(),2000)
   }
 }
@@ -1023,6 +1043,7 @@ function BindEvmAccount(chain: string) {
 }
 
 function changeTab(value: number) {
+  
   if (tabActive.value === value) return
   tabActive.value = value
   if (tabActive.value === 1 && isSkeleton.value) {
@@ -1091,33 +1112,22 @@ function openRechargeDialog() {
 
 function getNFTs(isCover = false) {
   if (isCover) {
-    pagination.flag=''
+    pagination.page=1
   }
   return new Promise<void>(async resolve => {
-    if (
-      currentChain.value !== Chains.MVC &&
-      currentChain.value !== Chains.BSV &&
-      (!userStore.user!.evmAddress)
-    ) {
-      genesisList.length = 0
-      resolve()
-    } else {
-      const res = await GetNFTs({
-        address:
-          currentChain.value === Chains.MVC || currentChain.value === Chains.BSV
-            ? userStore.user!.address!
-            : userStore.user!.evmAddress! || userStore.user?.ethAddress,
-        chain: currentChain.value,
-        ...pagination,
+    const res = await GetMyNFTs({
+        metaid:connecionStore.last.user.metaid,
+        page:String(pagination.page - 1),
+        size:'3'
       })
-      if (res.code === 0) {
+      
+      if (res.code === 200) {
         if (isCover) genesisList.length = 0
-        if (res.data.results.items.length === 0) pagination.nothing = true
-        pagination.flag=res.data.cursor ? res.data.cursor : ''
-        genesisList.push(...res.data.results.items)
+        if (res.data.length === 0) pagination.nothing = true
+        
+        genesisList.push(...res.data)
         resolve()
       }
-    }
   })
 }
 
@@ -1144,9 +1154,8 @@ function changeChain(item: { name: string; value: string }) {
 }
 
 function chooseSeries(item: UserNFTItem) {
-  seriesNFTList.codehash = item.nftCodehash
-  seriesNFTList.genesis = item.nftGenesis
-  seriesNFTList.seriesName = item.nftSeriesName
+  seriesNFTList.collectionPinid=item.collection_pinid
+  seriesNFTList.seriesName = item.name
   seriesNFTList.visible = true
 }
 
@@ -1276,21 +1285,22 @@ function load() {
     pagination.loading = false
     })
   }else if (nftTab.value == 2) {
-    if (currentChain.value == Chains.MVC && userStore.user!.address) {
-      MyNftOnSale(onSalePagenation.flag)
-    }
+    
+    MyNftOnSale(onSalePagenation.page++)
+    // if (currentChain.value == Chains.MVC && userStore.user!.address) {
+      
+    // }
   }
 }
 
-function toNFT(nft: GenesisNFTItem) {
+function toNFT(nftPinid: string,collectionPinid:string) {
+  debugger
   emit('update:modelValue', false)
   router.push({
     name: 'nftDetail',
     params: {
-      chain: currentChain.value,
-      genesis: nft.nftGenesis,
-      codehash: nft.nftCodehash ? nft.nftCodehash : currentChain.value,
-      tokenIndex: nft.nftTokenIndex,
+      nftpinid:nftPinid,
+      collectionpinid:collectionPinid
     },
   })
 }

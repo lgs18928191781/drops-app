@@ -3,7 +3,7 @@ import { useLocalStorage, type RemovableRef } from '@vueuse/core'
 import { ElMessage } from 'element-plus'
 import * as metaletAdapter from '@/utils/metalet'
 import { Network, useNetworkStore } from './network'
-//import type { Psbt } from 'bitcoinjs-lib'
+import  {type Psbt } from 'bitcoinjs-lib'
 import {  btcConnect,mvcConnect,MetaletWalletForBtc,IBtcConnector,MetaletWalletForMvc } from '@metaid/metaid'
 import { InscribeResultForYesBroadcast} from '@/hooks/use-metaid-entity'
 import { useUserStore } from '@/stores/user'
@@ -142,7 +142,7 @@ export enum ConnectChain{
             avatarRes: InscribeResultForYesBroadcast | undefined
           }>
 
-          initPsbt: () => any//Psbt
+          initPsbt: () => Psbt
           getMvcBalance: () => Promise<any>
           getMvcAddress: () => Promise<string>
   

@@ -5,32 +5,31 @@
     </template>
     <template #default>
       <div class="nft-item" @click="toNFT">
-        <NFTCover :cover="[nft.nftIcon]" />
+        <NFTCover :cover="[nft.item_cover]" />
 
         <div class="name" :class="{ simple: isSimple }">
-          {{ $filters.handleWhiteSpace(nft.nftName, nft.nftGenesis) }}
+          {{ nft.nft_name }}
         </div>
 
-        <div class="token-index">#{{ parseInt(nft.nftTokenIndex) + 1 }}</div>
         <div class="amount" :class="{ simple: isSimple }">
-          <template v-if="isSale"> {{ $filters.space(nft.nftPrice) }} Space </template>
+          <template v-if="isSale"> {{ $filters.space(realSalePrice) }} BTC </template>
           <template v-else>--</template>
         </div>
 
         <div class="user-list" v-if="!isSimple">
           <div class="user-item flex flex-align-center">
             <UserAvatar
-              :meta-id="nft.nftIssueMetaId"
-              :image="nft.nftIssueAvatarImage"
-              :name="nft.nftIssuer"
+              :meta-id="nft.creator_info.metaid"
+              :image="nft.creator_info.avatarId"
+              :name="nft.creator_info.name"
               :disabled="true"
-              :meta-name="nft.nftIssueUserInfo?.metaName"
+              :meta-name="''"
             />
             <div class="flex1 flex flex-align-center info">
               <span class="user-name-warp"
                 ><UserName
-                  :name="nft.nftIssuer"
-                  :meta-name="nft.nftIssueUserInfo?.metaName"
+                  :name="nft.creator_info.name"
+                  :meta-name="''"
                   :noTag="true"
               /></span>
               <span class="role">({{ $t('NFT.Creater') }})</span>
@@ -38,17 +37,17 @@
           </div>
           <div class="user-item flex flex-align-center">
             <UserAvatar
-              :meta-id="nft.nftOwnerMetaId"
-              :image="nft.nftOwnerAvatarImage"
-              :name="nft.nftOwnerName"
+              :meta-id="nft.owner_info?.metaid"
+              :image="nft.owner_info?.avatarId"
+              :name="nft.owner_info?.name"
               :disabled="true"
-              :meta-name="nft.nftOwnerUserInfo?.metaName"
+              :meta-name="''"
             />
             <div class="flex1 flex flex-align-center info">
               <span class="user-name-warp"
                 ><UserName
-                  :name="nft.nftOwnerName"
-                  :meta-name="nft.nftOwnerUserInfo?.metaName"
+                  :name="nft.owner_info?.name"
+                  :meta-name="''"
                   :noTag="true"
               /></span>
               <span class="role">({{ $t('NFT.Owner') }})</span>
@@ -56,7 +55,9 @@
           </div>
         </div>
 
-        <div class="main-border primary" @click.stop="btnFun">
+        <div class="main-border " 
+        :class="[nft.is_ready ? 'primary'  :  'fade']"
+        @click.stop="btnFun">
           {{ btnText }}
         </div>
       </div>
@@ -72,12 +73,13 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import NFTItemSkeleton from './NFTItemSkeleton.vue'
 import { useUserStore } from '@/stores/user'
-import { IsMyNFT, IsSale } from '@/utils/nft'
+import { IsMyNFT, IsSale,IsReady } from '@/utils/nft'
 import { useI18n } from 'vue-i18n'
-import { checkUserLogin } from '@/utils/util'
+import { checkUserLogin,calcNftRealSalePrice } from '@/utils/util'
 
+import Decimal from 'decimal.js-light'
 const props = defineProps<{
-  nft: GenesisNFTItem
+  nft: NftOrderType
   loading?: boolean
   isSimple?: boolean
 }>()
@@ -91,14 +93,17 @@ const isMyNFT = computed(() => {
   return IsMyNFT(props.nft)
 })
 
+const isReady=computed(()=>{
+  return IsReady(props.nft)
+})
+
 const isSale = computed(() => {
   return IsSale(props.nft)
 })
 
 const btnText = computed(() => {
-  if (props.nft.nftIsOrderLock) {
-    return i18n.t('NFT.NFT Order Locked')
-  } else if (isMyNFT.value) {
+  
+  if (isMyNFT.value) {
     if (isSale.value) {
       return i18n.t('NFT.Off Sale')
     } else {
@@ -106,6 +111,10 @@ const btnText = computed(() => {
     }
   } else {
     if (isSale.value) {
+      
+      if(!isReady.value){
+        return i18n.t('NFT.in_mempool')
+      }
       return i18n.t('NFT.Buy Now')
     } else {
       return i18n.t('NFT.Discover More')
@@ -113,10 +122,14 @@ const btnText = computed(() => {
   }
 })
 
+const realSalePrice=computed(()=>{
+  const {total}=calcNftRealSalePrice(props.nft.sale_price,props.nft.royalty_rate)
+ return total
+
+})
+
 async function btnFun() {
-  if (props.nft.nftIsOrderLock) {
-    toNFT()
-  } else if (isMyNFT.value) {
+ if (isMyNFT.value) {
     if (isSale.value) {
       emit('offsale', props.nft)
     } else {
@@ -125,6 +138,9 @@ async function btnFun() {
   } else {
     if (isSale.value) {
       await checkUserLogin()
+      if(!isReady.value){
+        return
+      }
       emit('buy', props.nft)
     } else {
       toNFT()
@@ -136,10 +152,9 @@ function toNFT() {
   router.push({
     name: 'nftDetail',
     params: {
-      chain: props.nft.nftChain,
-      genesis: props.nft.nftGenesis,
-      tokenIndex: props.nft.nftTokenIndex,
-      codehash: props.nft.nftCodehash ? props.nft.nftCodehash : props.nft.nftChain,
+      collectionpinid:props.nft.collection_pinid,
+      nftpinid:props.nft.item_pinid,
+    
     },
   })
 }

@@ -87,10 +87,10 @@
                 <span class="mr-2">{{ $t('Nfts.lanuch_chain') }}</span>
                 <img
                   class="w-5 h-5 mr-1"
-                  :src="currentNftsCollect?.chain == CollectionMintChain.btc ? btc : mvc"
+                  :src="currentNftsCollect?.chain == NftsLaunchPadChainSymbol.btc ? btc : mvc"
                   alt=""
                 />
-                <span class="font-medium">{{ currentNftsCollect?.chain }}</span>
+                <span class="font-medium">{{ currentNftsCollect?.chain == NftsLaunchPadChainSymbol.btc ? NftsLaunchPadChain.btc : NftsLaunchPadChain.mvc  }}</span>
               </div>
               <div class="market-option flex mr-6">
                 <span class="mr-1">{{ $t('Nfts.lanuch_makemarket') }}</span>
@@ -145,7 +145,32 @@
                 </div>
             </div>
             <div class="mt-3.5">
-              <span>{{ $t('Nfts.lanuch_auto_market_setpriceAdd') }}</span>
+              <div >
+                <span  class="align-middle">{{ $t('Nfts.lanuch_auto_market_setpriceAdd') }}</span>
+                <span class="ml-1 font-medium">({{ $t('Nfts.mint_price_unit') }})</span>
+                <el-popover
+    placement="top-start"
+    :title="$t('Nfts.lanuch_growth_price_desc')"
+    :width="250"
+    trigger="hover"
+    
+  >
+  
+    <template #reference>
+      <el-icon :size="18" class="align-middle ml-1 cursor-pointer"><QuestionFilled /></el-icon>
+      
+    </template>
+
+    <div class="flex flex-col text-sm font-medium" >
+      <span >{{ $t('NFTs.lanuch_growth_content1') }}</span>
+      <span class="mt-2 whitespace-normal break-words">{{ $t('NFTs.lanuch_growth_content2') }}</span>
+      <span class="mt-2">{{ $t('NFTs.lanuch_growth_content3') }}</span>
+      
+    </div>
+  </el-popover>
+                
+              </div>
+             
               <el-input
                 :placeholder="$t('Nfts.lanuch_set_price_increase')"
                 class="h-12 mt-2"
@@ -154,6 +179,13 @@
                   !currentNftsCollect?.autoMarket || Boolean(currentNftsCollect?.priceGrowth)
                 "
               ></el-input>
+              <div class="flex items-center mt-2 text-[#909399]">
+                  <span class="mr-1">{{ autoMaketData.priceGrowth ?? 0 }}</span>
+                  <span class="mr-1">BTC</span>
+                  <span class="mr-1">=</span>
+                  <span class="mr-1">{{ btcConverSatsPriceGrowth }}</span>
+                  <span>Sats</span>
+                </div>
             </div>
           </div>
           <div class="mt-3.5 text-[#909399] flex flex-row items-center justify-center">
@@ -177,10 +209,16 @@
         <div class="text-lg font-medium">{{ $t('Nfts.lanuch_bulkMint') }}</div>
 
         <div class="mint-btn flex text-sm font-medium">
-       
+          <!-- <button
+            @click="deviceutxo"
+            class="py-1 px-3 rounded-md border border-transparent flex items-center justify-center mr-2 bg-[#FFDC51] "
+          >
+            
+          deviceutxo
+          </button> -->
 
           <button
-            @click="modelValue = true"
+            @click="modelValue = true,mintData.mintAmount = 0"
             class="py-1 px-3 rounded-md border border-transparent flex items-center justify-center mr-2 bg-[#FFDC51] "
           >
             {{ $t('Nfts.lanuch_addMint') }}
@@ -230,9 +268,9 @@
                 class="main-border gray-exclued-text p-2 min-h-14  flex justify-between items-center "
               >
                 <div class="w-8 h-8 rounded-md ">
-                  <img class="" :src="scope.row.cover.url" alt="" />
+                  <img class="" :src="scope.row.cover.url || scope.row.cover" alt="" />
                 </div>
-                <el-icon class="cursor-pointer" @click="deleteCover(scope.row)"><Close /></el-icon>
+                <!-- <el-icon class="cursor-pointer" @click="deleteCover(scope.row)"><Close /></el-icon> -->
               </div>
             </template>
           </el-table-column>
@@ -244,7 +282,7 @@
                 <div class="w-8 h-8 rounded-md ">
                   <span>{{ prettyAddress(scope.row.source) }}</span>
                 </div>
-                <el-icon class="cursor-pointer" @click="deleteCover(scope.row)"><Close /></el-icon>
+                <!-- <el-icon class="cursor-pointer" @click="deleteCover(scope.row)"><Close /></el-icon> -->
               </div>
             </template>
           </el-table-column>
@@ -341,7 +379,7 @@
           :model="mintData"
           style="max-width: 600px"
         >
-          <el-form-item>
+          <el-form-item props="mintAmount">
             <template #label>
               <div class="flex items-center justify-between">
                 <span class="text-base text-[#303133] font-medium">{{
@@ -355,8 +393,9 @@
                 </div>
               </div>
             </template>
-            <div class="mt-1">
-              <el-input v-model="mintData.mintAmount" />
+            <div class="mt-1 flex flex-col">
+              <el-input v-model="mintData.mintAmount" @input="validateInput" />
+              <span v-if="errorMsg" style="color: #fc6d5e;">{{ errorMsg }}</span>
             </div>
           </el-form-item>
           <!--nft name-->
@@ -706,19 +745,19 @@ import { classifyList, fileType, royaltyRate } from '@/config'
 import { useGenesisStore } from '@/stores/genesis'
 
 import { CollectionMintChain,SdkPayType } from '@/enum'
-import { Select } from '@element-plus/icons-vue'
+import { Select ,QuestionFilled} from '@element-plus/icons-vue'
 import { useConnectionStore } from '@/stores/connection'
 import { ElLoading, ElMessage } from 'element-plus'
-import { NftsLaunchPadChain, NftsLaunchPadChainSymbol,SIGHASH_ALL,SIGHASH_ALL_ANYONECANPAY } from '@/data/constants'
+import { NftsLaunchPadChain, NftsLaunchPadChainSymbol,SIGHASH_ALL,SIGHASH_ALL_ANYONECANPAY ,SIGHASH_SINGLE_ANYONECANPAY,DUMMY_UTXO_INPUT_LEGACY,MinPlatformFee,MRC721PlatformAddress} from '@/data/constants'
 import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
 import { Line } from 'vue-chartjs'
 import { useEchart } from '@/hooks/use-echart-tool'
 import type {  FormInstance, FormRules,UploadProps } from 'element-plus'
 import { useFeebStore } from '@/stores/feeb'
-import { uploadNftsFile,uploadNftsFilePath,generateCommitAddress,getCollectionDetail,mintNftItem,submitMintOrder,issueCollection,genesisCollection as genesisCollect,getPoolInfo} from '@/api/mrc721-api'
+import { uploadNftsFile,uploadNftsFilePath,generateCommitAddress,getCollectionDetail,mintNftItem,submitMintOrder,issueCollection,genesisCollection as genesisCollect,getPoolInfo,getDummyForCommit} from '@/api/mrc721-api'
 
 import Decimal from 'decimal.js-light'
-import {exclusiveChange} from '@/hooks/use-buildtx-entity'
+import {exclusiveChange,deviceDummy,getDummyUtxoforLegacy} from '@/hooks/use-buildtx-entity'
 import { useNetworkStore } from '@/stores/network'
 import { useBtcJsStore } from '@/stores/btcjs'
 import * as secp256k1 from 'tiny-secp256k1'
@@ -726,9 +765,11 @@ import {usePayModalEntity} from '@/hooks/use-pay-modal-entity'
 import {  type Psbt } from 'bitcoinjs-lib'
  import { openLoading } from '@/utils/util'
  import {space} from "@/utils/filters"
+ 
 const i18n = useI18n()
 const genesisStore = useGenesisStore()
 const connectionStore = useConnectionStore()
+const bitcoinjs = useBtcJsStore().get!
 const modelValue = ref(false)
 const createNftsModel = ref(false)
 const ruleFormRef = ref<FormInstance>()
@@ -744,10 +785,11 @@ const { data, options } = useEchart()
 const feeStore = useFeebStore()
 const chartRef = ref()
 const payModalEntity=usePayModalEntity()
-
+const errorMsg=ref('')
 const autoMaketData=ref({
-  initialPrice:'',
-  priceGrowth:''
+  initialPrice:0,
+  priceGrowth:0,
+  
 })
 
 
@@ -766,12 +808,19 @@ watch(
   //   }
   // })
   //   }
-    autoMaketData.value.initialPrice=currentNftsCollect.value?.initialPrice!
+    // autoMaketData.value.initialPrice=currentNftsCollect.value?.initialPrice!
     
-    autoMaketData.value.priceGrowth=currentNftsCollect.value?.priceGrowth!
+    // autoMaketData.value.priceGrowth=currentNftsCollect.value?.priceGrowth!
+     autoMaketData.value.initialPrice=currentNftsCollect.value?.initialPrice! ? space(currentNftsCollect.value?.initialPrice!) : 0
+    autoMaketData.value.priceGrowth=currentNftsCollect.value?.priceGrowth! ? space(currentNftsCollect.value?.priceGrowth!) : 0
+    
     genesisCollection.value = currentNftsCollect.value!.name
   }
 )
+
+// async function deviceutxo(){
+//     await deviceDummy()
+// }
 
 onMounted(() => {
  
@@ -805,7 +854,7 @@ type UseSameOption = {
 
 const chainOptions = [
   {
-    value: NftsLaunchPadChain.btc,
+    value: NftsLaunchPadChainSymbol.btc,
     label: NftsLaunchPadChain.btc,
     icon: 'logo_btc',
   },
@@ -844,6 +893,14 @@ const btcConverSats=computed(()=>{
   }
 })
 
+const btcConverSatsPriceGrowth=computed(()=>{
+  if(autoMaketData.value.priceGrowth){
+    return new Decimal(autoMaketData.value.priceGrowth).mul(10**8).toNumber()
+  }else{
+    return 0
+  }
+})
+
 const customStyle = computed(() => {
   return {
     height: '230px',
@@ -869,6 +926,7 @@ const optionMakeMarket = reactive([
 
 const MyCollectionList = computed(() => {
   if (genesisStore.getList.length) {
+    
     return genesisStore.getList
   } else {
     return []
@@ -903,9 +961,7 @@ const mintData = reactive<MintInfo & UseSameOption>({
 })
 
 const rules = reactive<FormRules<MintInfo>>({
-  // mintAmount:[
-  // { required: true, message: 'Please input minting amount', trigger: 'blur' },
-  // ],
+  //mintAmount:[{validator:validatorMintAmount,trigger:'blur'}],
   // cover:[
   // {
   //     required: true,
@@ -941,6 +997,15 @@ const rules = reactive<FormRules<MintInfo>>({
 
 type MintListInfo = Omit<MintInfo, 'mintAmount'> & { id: number; op: string; }
 
+function validateInput(){
+  mintData.mintAmount = Number(String(mintData.mintAmount).replace(/[^0-9]/g, ''))
+  if(mintData.mintAmount + tableData.length > 30){
+    mintData.mintAmount =new Decimal(30).sub(tableData.length).toNumber()
+    errorMsg.value=`${i18n.t('Nfts.lanuch_morethan_amount')}`
+  }else{
+    errorMsg.value=''
+  }
+}
 
   async function formatToSignInputs(psbt:Psbt){
     try {
@@ -950,23 +1015,27 @@ type MintListInfo = Omit<MintInfo, 'mintAmount'> & { id: number; op: string; }
     if(psbt.inputCount == 1){
       throw new Error('No input to Sign')
     }
+    
     if(psbt.inputCount > 0){
-        for(let i=1;i<psbt.inputCount;i++){
+        for(let i=0;i<psbt.inputCount;i++){
           toSignInputs.push({
             index:i,
         address:connectionStore.last.user.address,
         publickey:pubkey,
-        sighashTypes:[129],
+        sighashTypes:[SIGHASH_ALL_ANYONECANPAY],
         disableTweakSigner:false
           })
         }
       }
       console.log("toSignInputs",toSignInputs)
+      
       return toSignInputs
     } catch (error) {
       throw new Error(error as any)
     }
   }
+
+ 
 
   // async function mintOne(params:{
   //   creatorMetaId:string
@@ -1024,9 +1093,10 @@ function getCollectionData() {
   if(currentNftsCollect.value?.name){
     
     genesisCollection.value = currentNftsCollect.value!.name
-    autoMaketData.value.initialPrice=currentNftsCollect.value?.initialPrice! ? `${space(currentNftsCollect.value?.initialPrice!)}` : "0"
-    autoMaketData.value.priceGrowth=currentNftsCollect.value?.priceGrowth!
     
+    autoMaketData.value.initialPrice=currentNftsCollect.value?.initialPrice! ? space(currentNftsCollect.value?.initialPrice!) : 0
+    autoMaketData.value.priceGrowth=currentNftsCollect.value?.priceGrowth! ? space(currentNftsCollect.value?.priceGrowth!) : 0
+      
  
   }
 
@@ -1110,6 +1180,7 @@ async function selectChange(newSelection: any) {
 }
 
 function deleteCover(item: any) {
+  
   item.cover = ''
   item.source = ''
 }
@@ -1144,7 +1215,12 @@ const confirm = async (formEl: any) => {
   if (mintData.mintAmount > (currentNftsCollect.value?.totalSupply! - currentNftsCollect?.value?.minted!))
     return ElMessage.error(`${i18n.t('Nfts.lanuch_overLimit_amount')}`)
   if (!mintData.cover) return ElMessage.error(`${i18n.t('Nfts.lanuch_cover_null')}`)
+  if(mintData.mintAmount > 30){
+    return ElMessage.error(`${i18n.t('Nfts.lanuch_morethan_amount')}`)
+  }
   //newFile.length = 0
+
+ 
   let currentlength = tableData.length
 
   const tableList: MintListInfo[] = []
@@ -1231,15 +1307,17 @@ function checkIsSameFile(pre:{file: File;
 async function preMint() {
     try {
       let params=new FormData()
-
+      console.log("autoMaketData.value.initialPrice",autoMaketData.value.initialPrice)
+      
       for(let i=0;i<newFile.length;i++){
       params.append('file',newFile[i].file)
     }
     params.append('name',currentNftsCollect.value?.name!)
     if(!currentNftsCollect.value?.initialPrice && autoMaketData.value.initialPrice){
         params.append('initialPrice',new Decimal(autoMaketData.value.initialPrice).mul(10**8).toString())
-        params.append('priceGrowth',autoMaketData.value.priceGrowth)
+        params.append('priceGrowth',new Decimal(autoMaketData.value.priceGrowth).mul(10**8).toString())
       }
+      
     const res= await generateCommitAddress(params)
     console.log("res",res)
     
@@ -1254,14 +1332,21 @@ async function preMint() {
 }
 
 async function estimateBuildTxFee(targetAddress:string[] = [],feeb:number,checkOnly:boolean=false){
-  const bitcoinjs = useBtcJsStore().get!
+  
   try {
     if(!targetAddress.length){
     for(let i=0;i<newFile.length;i++){
       targetAddress.push(connectionStore.last.user.address)
     }
   }
-    const psbt =new bitcoinjs.Psbt({ network: networkStore.typedNetwork })
+   
+    const psbt=new bitcoinjs.Psbt({ network: networkStore.typedNetwork })
+    //const psbt:Psbt =await getDummyUtxoforLegacy(1,SIGHASH_ALL_ANYONECANPAY,true)
+    //第一个output
+    // psbt.addOutput({
+    //   value:DUMMY_UTXO_INPUT_LEGACY,
+    //   address:connectionStore.last.user.address
+    // })    
     for(let i =0;i<newFile.length;i++){
       psbt.addOutput({
         value: 546,
@@ -1269,8 +1354,8 @@ async function estimateBuildTxFee(targetAddress:string[] = [],feeb:number,checkO
       })
     }
     psbt.addOutput({
-      value:1999,
-      address:connectionStore.last.user.address
+      value:MinPlatformFee,
+      address:MRC721PlatformAddress
     })
   const estiomateResult= await exclusiveChange({
       psbt: psbt,
@@ -1301,7 +1386,7 @@ async function estimateBuildTxFee(targetAddress:string[] = [],feeb:number,checkO
 }
 
 async function estimatePsbtFee(psbtHex:string,feeb:number,checkOnly:boolean=false){
-  const bitcoinjs = useBtcJsStore().get!
+  
   try {
    if(!psbtHex){
     throw new Error(`${i18n.t('Nfts.psbt_empty')}`)
@@ -1338,18 +1423,18 @@ async function estimatePsbtFee(psbtHex:string,feeb:number,checkOnly:boolean=fals
 }
 
 async function finallyMint() {
-  
+    
     try {
-    if(!autoMaketData.value.initialPrice && !autoMaketData.value.priceGrowth){
+    if(Number(autoMaketData.value.initialPrice) == 0){
       return ElMessage.error(`${i18n.t('Nfts.lanuch_automarket_set')}`)
     }
     
     const estiomateResult= await estimateBuildTxFee([],feeStore.getCurrentFeeb,true)
-
+    
     if(!estiomateResult){
       return ElMessage.error(`${i18n.t('Nfts.cancel_transation')}`)
     }
-
+    
     let params=new FormData()
     let nftListInfo:UploadFileData={
       picId:[],
@@ -1357,8 +1442,7 @@ async function finallyMint() {
       itemDesc:[],
       classify:[],
       nftName:[],
-      metaid:'',
-      name:'',
+      collectionPinid:'',
       rawTx:'',
       commitAddress:[]
     }
@@ -1374,12 +1458,14 @@ async function finallyMint() {
       // params.append('classify',JSON.stringify(newFile[i].classify))
       // params.append('nftName',newFile[i].nftName)
     }
-    nftListInfo.metaid=currentNftsCollect.value?.metaId!
-    nftListInfo.name=currentNftsCollect.value?.name!
+    
+   
+    nftListInfo.collectionPinid=currentNftsCollect.value?.collectionPinId!
     
     uploadNftsFile(params).then(async (response)=>{
-      
+        
         if(response.code == 200 && response.data.length){
+          
           for(let item of response.data){
             nftListInfo.picPath.push(item.picPath)
           }
@@ -1407,6 +1493,7 @@ if(commitAddressList.length){
 const {psbt:Psbt1}=await estimateBuildTxFee(commitAddressList,feeStore.getCurrentFeeb)
 
 const loading = openLoading()
+//const toSignInputs=await formatToSignInputs(Psbt1)
 const rawTx= await connectionStore.adapter.signPsbt(Psbt1.toHex())
 console.log("signRes",rawTx)
 
@@ -1418,6 +1505,7 @@ loading.close()
 throw new Error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
 
 }else if(rawTx){
+  
 nftListInfo.rawTx = rawTx
 //params.append('rawTx',rawTx)
 }
@@ -1513,9 +1601,14 @@ const onSubmitNewCollection = async () => {
   
   const existNfts= genesisStore.getList.find((item)=>item.name == createCollectionform.name)
   try {
+    //
     if(existNfts?.collectionPinId){
-    return ElMessage.error(`${i18n.t('Nfts.lanuch_existNfts')}`)
+     return ElMessage.error(`${i18n.t('Nfts.lanuch_existNfts')}`)
   }else{
+
+
+
+
     
     const {createCollectionDescRes,coverPinId} = await mintNftEntity({
     body:{
@@ -1529,13 +1622,19 @@ const onSubmitNewCollection = async () => {
     },
     attachments:[createCollectionform.originFile],
   })
+
   
   if( createCollectionDescRes?.revealTxIds.length){
+    const collectionPinid=`${createCollectionDescRes.revealTxIds[0]}i0`
     const genesisRes= await genesisCollect({
-        metaId:connectionStore.last.metaid,
-        name:createCollectionform.name
+        collectionPinid:collectionPinid,
+        collectionName:createCollectionform.name,
+        address:connectionStore.last.user.address
       })
-
+      
+      if(genesisRes.code !== 200){
+        return ElMessage.error(genesisRes.msg)
+      }
       console.log("genesisRes",genesisRes)
       
       const collectionInfo={
@@ -1548,7 +1647,7 @@ const onSubmitNewCollection = async () => {
         chain:createCollectionform.chain ,
         autoMarket:createCollectionform.autoMakeMarket,
         royaltyRate:createCollectionform.royaltyRate,
-        collectionPinId:`${createCollectionDescRes?.revealTxIds[0]!}i0`,
+        collectionPinId:collectionPinid,
         metaId:connectionStore.last.metaid,
         address:connectionStore.last.user.address,
 
@@ -1571,8 +1670,8 @@ const onSubmitNewCollection = async () => {
     metaData: createCollectionform.metadata,
     royaltyRate: +createCollectionform.royaltyRate,
     chain:
-      createCollectionform.chain == 'Bitcoin' ? CollectionMintChain.btc : CollectionMintChain.mvc,
-    collectionPinId: `${createCollectionDescRes?.revealTxIds[0]!}i0`,
+      createCollectionform.chain == 'btc' ? NftsLaunchPadChainSymbol.btc : NftsLaunchPadChainSymbol.mvc,
+    collectionPinId: `${collectionPinid}`,
     minted:0,
     currentSupply:0,
     autoMarket: createCollectionform.autoMakeMarket,
@@ -1581,7 +1680,7 @@ const onSubmitNewCollection = async () => {
     initialPrice:'',
     priceGrowth:''
   })
-  toNftsDetail(`${createCollectionDescRes?.revealTxIds[0]!}i0`)
+  toNftsDetail(`${collectionPinid}`)
 }
    
 
@@ -1589,6 +1688,7 @@ const onSubmitNewCollection = async () => {
 
   }
   } catch (error) {
+    
     ElMessage.error((error as any).toString())
   }
  

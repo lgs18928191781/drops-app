@@ -117,7 +117,7 @@ import { useUserStore } from '@/stores/user'
 import { isMobile, useRootStore } from '@/stores/root'
 import CreateCommunityModal from '@/views/talk/components/modals/community/Create.vue'
 import { onBeforeUnmount, reactive, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute,useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useWsStore } from '@/stores/ws'
 import { Community } from '@/@types/talk'
@@ -127,6 +127,7 @@ const ws = useWsStore()
 const userStore = useUserStore()
 const route = useRoute()
 const rootStore = useRootStore()
+const router=useRouter()
 const i18n = useI18n()
 const isProduction = import.meta.env.MODE === 'mainnet'
 const whiteList = [
@@ -174,6 +175,8 @@ const apps = reactive([
     symbol: 'nft',
   },
 ])
+
+
 
 if (userStore.isAuthorized) {
   talk.fetchCommunities()

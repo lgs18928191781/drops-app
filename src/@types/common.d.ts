@@ -335,47 +335,137 @@ declare interface RecommnedUser {
   }
 }
 
-declare interface UserNFTItem {
-  nftCodehash: string
-  nftDataStr: string
-  nftDesc: string
-  nftDetailItemList: GenesisNFTItem[]
-  nftGenesis: string
-  nftGenesisTxId: string
-  nftGenesisType: string
-  nftHasCompound: boolean
-  nftIcon: string
-  nftIsReady: boolean
-  nftIssueAvatarTxId: string
-  nftIssueAvatarType: string
-  nftIssueMetaId: string
-  nftIssueVersion: string
-  nftIssuer: string
-  nftMyCount: number
-  nftMyPendingCount: number
-  nftName: string
-  nftSensibleId: string
-  nftSeriesName: string
-  nftSymbol: string
-  nftTimestamp: number
-  nftTotalSupply: number
-  nftWebsite: string
-  nftIssueUserInfo: {
-    address: string
-    avatarImage: string
-    avatarTxId: string
-    avatarType: string
-    coverPublicKey: string
-    coverType: string
-    coverUrl: string
-    infoAvatarTxIdOssUrl: string
-    metaIdTimestamp: number
-    metaName: string
-    name: string
-    nameType: string
-    nftNamePublicKey: string
-    publicKey: string
+// declare interface UserNFTItem {
+//   nftCodehash: string
+//   nftDataStr: string
+//   nftDesc: string
+//   nftDetailItemList: GenesisNFTItem[]
+//   nftGenesis: string
+//   nftGenesisTxId: string
+//   nftGenesisType: string
+//   nftHasCompound: boolean
+//   nftIcon: string
+//   nftIsReady: boolean
+//   nftIssueAvatarTxId: string
+//   nftIssueAvatarType: string
+//   nftIssueMetaId: string
+//   nftIssueVersion: string
+//   nftIssuer: string
+//   nftMyCount: number
+//   nftMyPendingCount: number
+//   nftName: string
+//   nftSensibleId: string
+//   nftSeriesName: string
+//   nftSymbol: string
+//   nftTimestamp: number
+//   nftTotalSupply: number
+//   nftWebsite: string
+//   nftIssueUserInfo: {
+//     address: string
+//     avatarImage: string
+//     avatarTxId: string
+//     avatarType: string
+//     coverPublicKey: string
+//     coverType: string
+//     coverUrl: string
+//     infoAvatarTxIdOssUrl: string
+//     metaIdTimestamp: number
+//     metaName: string
+//     name: string
+//     nameType: string
+//     nftNamePublicKey: string
+//     publicKey: string
+//   }
+// }
+
+declare interface feeDetailType{
+  salePrice:number,
+  platformFee:number,
+  royalFee:number,
+  platformRate:number
+  royaltyRate?:number,
+}
+
+declare interface Mrc721PinItemType{
+  id:string
+  number:number
+  metaid:string
+  address:string
+  creator:string
+  createMetaId:string
+  initialOwner:string
+  output:string
+  outputValue:number
+  timestamp:number
+  genesisFee:number
+  genesisHeight:number
+  genesisTransaction:string
+  txIndex:number
+  txInIndex:number
+  offset:number
+  location:number
+  operation:string
+  path:string
+  parentPath:string
+  originalPath:string
+  encryption:string
+  version:string
+  contentType:string
+  contentTypeDetect:string
+  contentBody:string
+  contentLength:number
+  contentSummary:string
+  status:number
+  originalId:string
+  isTransfered:boolean
+  preview:string
+  content:string
+  pop:string
+  popLv:number
+  chainName:string
+  dataValue:number
+  mrc20MintId:any[]
+
+
+}
+
+
+declare interface Mrc721PinListType{
+  [k as string]:{
+    where:string
+    address:string
+    metaId:string
+    creator:string
+    transfer:boolean
+    output:string
+    transferFromAddress:string
   }
+}
+
+declare interface UserNFTItem{
+  address:string
+  auto_market:number
+  chain:string
+  collection_pinid:string
+  cover_pinid:string
+  created_at:string
+  id:number
+  init_price:number
+  meta_data:string
+  metaid:string
+  name:string
+  nft_desc:string
+  price_growth:number
+  royalty_rate:number
+  total_supply:number
+  updated_at:string
+  website:string
+  current_supply?:number
+  minted?:number
+  current_mint_price?:number
+  collection_creator?:NFTCreatore
+  itemList:Mrc721PinItemType[]
+  total:number
 }
 
 declare interface FungibleToken {
@@ -660,13 +750,13 @@ declare interface Mrc721CollectionItem {
   website: string
   royaltyRate: number
   metaData: any
-  chain: import('@/enum').CollectionMintChain
+  chain: import('@/enum').NftsLaunchPadChainSymbol
   collectionPinId: string
   autoMarket: boolean
   genesisTimestamp?: number
   metaId: string
-  initialPrice?: string
-  priceGrowth?: string
+  initialPrice?: number
+  priceGrowth?: number
   coverPinid?: string
   address?: string
   minted?:number

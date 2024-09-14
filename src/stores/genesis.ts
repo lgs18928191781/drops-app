@@ -5,7 +5,8 @@ import { Mitt, MittEvent } from '@/utils/mitt'
 import Decimal from 'decimal.js-light'
 import {getMyCollectionList,getCollectionMintAmout} from '@/api/mrc721-api'
 import { useConnectionStore } from './connection'
-import {CollectionMintChain} from '@/enum'
+
+import {NftsLaunchPadChainSymbol} from '@/data/constants'
 export const useGenesisStore = defineStore('genesis', {
   state: () =>
     <
@@ -58,9 +59,9 @@ export const useGenesisStore = defineStore('genesis', {
         
           this.list.length=0
           for(let item of result.data.result){
+            
             const mintRes= await getCollectionMintAmout({
-              metaid:userStore.user!.metaId,
-              name:item.name
+              collectionPinid:item.collection_pinid
             })
             
             if(mintRes.code !== 200){
@@ -77,7 +78,7 @@ export const useGenesisStore = defineStore('genesis', {
               website:item.website,
               royaltyRate:item.royalty_rate,
               metaData:item.meta_data,
-              chain:item.chain == 'btc' ? CollectionMintChain.btc : CollectionMintChain.mvc,
+              chain:item.chain == 'btc' ? NftsLaunchPadChainSymbol.btc : NftsLaunchPadChainSymbol.mvc,
               collectionPinId:item.collection_pinid,
               autoMarket:Boolean(item.auto_market),
               metaId:item.metaid,

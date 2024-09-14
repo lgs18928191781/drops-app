@@ -295,9 +295,9 @@
                       <div class="author flex flex-align-center">
                         <UserAvatar
                           class="avatar"
-                          :meta-id="nft.val!.nftOwnerMetaId"
-                          :image="nft.val!.nftOwnerAvatarImage"
-                          :name="nft.val!.nftOwnerName"
+                          :meta-id="nft.val!.owner_info.metaid"
+                          :image="nft.val!.owner_info.avatar"
+                          :name="nft.val!.owner_info.name"
                           :meta-name="nft.val!.nftOwnerUserInfo.metaName"
                         />
                         <div class="author-msg flex1">
@@ -387,12 +387,12 @@
         </div>
 
         <NFTSellVue :nft="nft.val!" v-model="isShowSell" @success="getDetail" />
-        <NFTBuyVue
+        <!-- <NFTBuyVue
           :nft="nft.val!"
           v-model="isShowBuy"
           :is-hide-detail="true"
           @success="getDetail"
-        />
+        /> -->
         <NFTTransferVue :nft="nft.val!" v-model="isShowTransfer" @success="getDetail" />
       </template>
     </ElSkeleton>
@@ -442,7 +442,8 @@ import NFTTransferVue from '@/components/NFTTransfer/NFTTransfer.vue'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
 import { Chains, ToCurrency } from '@/enum'
 import { NFTOffSale } from '@/utils/nft'
-
+import { ElMessage } from 'element-plus'
+import {getNFTItemDetail} from '@/api/mrc721-api'
 const isShowSkeleton = ref(true)
 const isShowDrscDetail = ref(false)
 const userStore = useUserStore()
@@ -495,7 +496,7 @@ const blindBoxPage = computed(() => {
   return route.name === 'blindBoxDetail'
 })
 const price = ref('0')
-const nft: { val: GenesisNFTItem | null } = reactive({
+const nft: { val: NftOrderType | null } = reactive({
   val: null,
 })
 const tabs = [
@@ -600,17 +601,17 @@ async function startBuy() {
 }
 
 function getDetail() {
+  
   return new Promise<void>(async resolve => {
-    const res = await GetNFT({
-      genesis: route.params.genesis as string,
-      codehash: route.params.codehash as string,
-      chain: route.params.chain as string,
-      tokenIndex: route.params.tokenIndex as string,
+    const res = await getNFTItemDetail({
+      collectionPinid:route.params.collectionpinid as string,
+      nftPinid:route.params.nftpinid as string,
     }).catch(error => {
       ElMessage.error(error.message)
     })
-    if (res?.code === 0) {
-      nft.val = res.data.results.items[0]
+    
+    if (res?.code === 200) {
+      nft.val = res.data
       resolve()
     }
   })
@@ -636,11 +637,11 @@ function getDetail() {
 
 async function offSale() {
   // return ElMessage.info(i18n.t('Comming Soon'))
-  const result = await NFTOffSale(nft.val!)
-  if (result) {
-    nft.val!.nftSellState = 1
-    // getDetail()
-  }
+  // const result = await NFTOffSale(nft.val!)
+  // if (result) {
+  //   nft.val!.nftSellState = 1
+  //   // getDetail()
+  // }
 }
 
 function toSale() {
@@ -710,15 +711,18 @@ function getMoreRecords() {
 
 onMounted(() => {
   console.log(userStore.user)
-  if (route.params.genesis && route.params.codehash && route.params.tokenIndex) {
+  
+  if (route.params.collectionpinid && route.params.nftpinid ) {
     getDetail().then(() => {
       isShowSkeleton.value = false
     })
-    if (route.params.chain == Chains.MVC) {
-      getNftHolderList()
-    }
+    // if (route.params.chain == Chains.MVC) {
+    //   getNftHolderList()
+    // }
   }
 })
+
+
 
 watch(
   () => userStore.isAuthorized,

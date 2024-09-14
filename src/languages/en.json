@@ -727,7 +727,7 @@
     "Supply": "Supply",
     "Owner": "Owner",
     "Blockchain": "Blockchain",
-    "Collection works": "Collection works",
+    "Collection works": "Collection mint",
     "Price Trend": "Price Trend",
     "Filter": "Filter",
     "Sort": {
@@ -823,7 +823,15 @@
     "NFT Has been purchased": "NFT Has been purchased",
     "Get Msg Error": "Get Msg Error",
     "Minted": "Minted",
-    "PoolAmount": "Total Liquidity Pool"
+    "PoolAmount": "Total Liquidity Pool",
+    "Collection sale": "Collection sale",
+    "Redeem": "Redeem",
+    "redeeming": "Redeeming",
+    "redeem Success": "Redemption successful",
+    "redeeem Success": "NFT redeem success",
+    "isDestory": "NFT is redeem and destory",
+    "isDestroyed": "Redeemed",
+    "in_mempool": "NFT Unconfirmed"
   },
   "My NFT": "My NFT",
   "Done": "Done",
@@ -1335,7 +1343,8 @@
   },
   "NFTS": {
     "NFTs Launch Pad": "NFTs Launch Pad",
-    "NFTs mint_success": "Minted success!"
+    "NFTs mint_success": "Minted success!",
+    "NFTs onsale_success": "Successfully listed"
   },
   "NFTs": {
     "genesis_nfts": "Creating a series of NFTs",
@@ -1343,7 +1352,10 @@
     "lanuch_title2": "Enable automatic market-making mechanism",
     "lanuch_mint": "Mint",
     "lanuch_minted": "Minted",
-    "lanuch_price_exist": "Please upload the NFTs to be minted first."
+    "lanuch_price_exist": "Please upload the NFTs to be minted first.",
+    "lanuch_growth_content1": "For example:",
+    "lanuch_growth_content2": "1.  The current minting price is 0.001 BTC. If we set the price index to 0.00001 BTC, then the price for the next NFT minting will be (current minting price + price growth index, which is 0.001 + 0.00001 = 0.00101 BTC), and so on.",
+    "lanuch_growth_content3": "2.  The redemption of each NFT will not affect the current minting price."
   },
   "Nfts": {
     "launch_yes": "Yes",
@@ -1407,19 +1419,37 @@
     "lanuch_nftIndex": "Id",
     "lanuch_generate_commit_address_fail": "Generate commit address fail",
     "mint_price_unit": "Unit : BTC",
-    "lanuch_automarket_set": "The initial price and price growth rate for the automated market maker cannot be empty.",
+    "lanuch_automarket_set": "The initial price  for the automated market maker cannot be empty.",
     "lanuch_baseFee": "Basic fee",
-    "service_fee": "Service fee",
+    "service_fee": "Platform service fee",
     "miner_fee": "Miner's fee",
     "feebs": "Fee rate",
     "total_fee": "Total fee",
     "cancel_transation": "Transaction cancellation",
     "lanuch_mintable_Supply": "Mintable supply:",
     "psbt_empty": "Mint order is not exist",
-    "lanuch_MintFee": "NFT mint fee",
+    "lanuch_MintFee": "NFT sale price",
     "lanuch_sign_tx_fail": "Sign psbt canceled",
     "lanuch_nft_name": "NFT name",
     "lanuch_useSameName": "use same NFT name",
-    "lanuch_upload_file_success": "Upload NFTs success!"
+    "lanuch_upload_file_success": "Upload NFTs success!",
+    "lanuch_growth_price_desc": "What is the price growth index?",
+    "psbt_buy_empty": "Buy orderId is not exist",
+    "redeem_psbt_empty": "The NFT redemption order does not exist.",
+    "service_royalty_fee": "Royalty_Rate",
+    "lanuch_morethan_amount": "Maximum minting per transaction is not allowed to exceed 30",
+    "not_allow_todetail": "NFTs that have not been minted yet do not support viewing details",
+    "transfer_success": "NFT transfer success"
+  },
+  "offsale not allowed": "Please unlist before proceeding with the redemption operation.",
+  "redeemWaring1": "The redemption operation will destroy the NFT. Please consider carefully!",
+  "redeemWaring2": "After redemption, the liquidity pool will return based on the minting price at that time, which will affect the current price of the liquidity pool.",
+  "redeemWaring3": " Redemption price :",
+  "is_destory not allowed": "The NFT has been redeemed and cannot be operated on further",
+  "dummy": {
+    "build_error": "Dummy UTXO construction failed.",
+    "not_enough": "Insufficient available Dummy UTXOs, please perform a split operation before continuing the transaction.",
+    "warning": "Friendly Reminder",
+    "confirm": "Confirm"
   }
 }

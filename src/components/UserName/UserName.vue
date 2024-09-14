@@ -23,7 +23,7 @@ interface Props {
   metaName?: string
   textClass?: string
   noTag?: boolean
-  metaId: string
+  metaId?: string
 }
 const connetionStore = useConnectionStore()
 const props = withDefaults(defineProps<Props>(), {})
@@ -31,8 +31,12 @@ const props = withDefaults(defineProps<Props>(), {})
 
 
 const subMetaId = computed(() => {
-  //return props.metaId.substr(0, 4)
+ if(props.metaId){
+  return props.metaId.substr(0, 4)
+ }else{
   return connetionStore.last.metaid.substring(0, 4)
+ }
+  //
 })
 </script>
 

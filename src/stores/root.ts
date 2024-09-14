@@ -19,7 +19,7 @@ interface RootState {
   isShowLogin: boolean
   isShowMetaMak: boolean
   isCertedMetaIds: string[]
-  currentPrice: ToCurrency
+  currentPrice: ToCurrency.BTC
   theme: 'light' | 'dark'
 
   showLoginBindEvmAccount: {

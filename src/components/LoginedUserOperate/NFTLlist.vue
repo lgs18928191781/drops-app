@@ -26,18 +26,20 @@
             :to="{
               name: 'nftDetail',
               params: {
-                chain: chain,
-                genesis: nft.nftGenesis,
-                codehash: codehash || chain,
-                tokenIndex: nft.nftTokenIndex,
+                collectionpinid:collectionPinid,
+                nftpinid:nft.id
               },
             }"
             class="nft-item"
             v-for="nft in nfts"
-            :key="nft.nftIssueMetaTxId"
-            @click.stop="toNFT(nft)"
+            :key="nft.id"
+            @click.stop="toNFT(nft,collectionPinid)"
           >
-            <NFTCover :cover="[nft.nftIcon]" />
+          <!-- <div class="rounded-lg w-full h-full ">
+            <img class="w-full h-full object-contain" :src="formatDataUrl(nft.id)" alt="">
+          </div> -->
+          
+            <NFTCover :cover="[formatDataUrl(nft.id)]" />
           </RouterLink>
         </ElSkeleton>
 
@@ -55,47 +57,44 @@ import { useUserStore } from '@/stores/user'
 import { reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import LoadMore from '../LoadMore/LoadMore.vue'
-
+import {GetMyNFTs} from '@/api/mrc721-api'
+import { ElMessage } from 'element-plus'
+import {useConnectionStore} from '@/stores/connection'
+import { formatDataUrltoBase64 ,formatDataUrl} from '@/utils/util'
 const props = defineProps<{
   modelValue: boolean
-  codehash: string
-  chain: string
-  genesis?: string
+  collectionPinid:string
   seriesName: string
 }>()
 
 const route = useRoute()
 const pagination = reactive({ ...initPagination, pageSize: 27, flag: '' })
 const userStore = useUserStore()
-const nfts: GenesisNFTItem[] = reactive([])
+const nfts: Mrc721PinItemType[] = reactive([])
 const isSkeleton = ref(true)
-
+const connectionStore=useConnectionStore()
 const emit = defineEmits(['update:modelValue', 'close', 'link'])
 
 function getDatas(isCover = false) {
   if (isCover) {
-    pagination.flag = ''
+    pagination.page = 0
   }
   return new Promise<void>(async (resolve, reject) => {
-    const res = await GetGenesisNFTs({
-      ...pagination,
-      chain: props.chain,
-      address:
-        props.chain === 'mvc'
-          ? userStore.user!.address
-          : userStore.user!.evmAddress! || userStore.user?.ethAddress,
-      codehash: props.codehash,
-      genesis: props.genesis,
+    const res = await GetMyNFTs({
+      page:String(pagination.page),
+      size:String(pagination.pageSize),
+      metaid:connectionStore.last.user.metaid,
+      collectionPinid:props.collectionPinid
     }).catch(error => {
       ElMessage.error(error.message)
     })
-    if (res?.code === 0) {
+    if (res?.code === 200) {
       if (isCover) nfts.length = 0
-      if (res.data.results.items.length === 0) {
+      if (res.data.length === 0) {
         pagination.nothing = true
       } else {
-        pagination.flag = res.data.cursor ? res.data.cursor : ''
-        nfts.push(...res.data.results.items)
+        //pagination.flag = res.data.cursor ? res.data.cursor : ''
+        nfts.push(...res.data[0].itemList)
       }
       resolve()
     }
@@ -111,15 +110,13 @@ function load() {
   })
 }
 
-function toNFT(nft: GenesisNFTItem) {
+function toNFT(nft: Mrc721PinItemType,collectionPinid:string) {
   emit('link')
   router.push({
     name: 'nftDetail',
     params: {
-      chain: nft.nftChain,
-      genesis: nft.nftGenesis,
-      codehash: nft.nftCodehash ? nft.nftCodehash : nft.nftChain,
-      tokenIndex: nft.nftTokenIndex,
+      nftpinid:nft.id,
+      collectionpinid:collectionPinid
     },
   })
 }

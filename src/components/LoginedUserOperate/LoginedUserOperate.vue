@@ -1,7 +1,19 @@
 <template>
-  <div class="version-warp hidden lg:block">
+  <!-- <div class="version-warp hidden lg:block">
     <VersionVue />
-  </div>
+  </div> -->
+
+     <!--Dummy--->
+     <!-- <div v-if="connectStore.last.user.address" class="flex items-center mr-6 dummy p-1 bg-[#fc6d5e] text-[#fff]  text-sm  rounded-lg font-medium">
+            <CircleFadingPlus
+              
+                :size="18"
+                color="#fff"
+                class=" mr-1"
+              ></CircleFadingPlus>
+            <span class="mr-1 ">Dummy :</span>
+            <span class="new-tag">{{ dummyAmount }}</span>
+          </div> -->
 
   <div class="net-warp mr-3" v-show="connectStore.currentChain !== ''">
     <ElDropdown class="network-style" trigger="click">
@@ -80,7 +92,9 @@
                 </div>
                 <div class="feeRate flex items-center">
                   <span class="mr-1 text-sm font-medium"> {{ item.feeRate }} </span
-                  ><span>sat/vB</span>
+                  >
+                
+                  <span>sat/vB</span>
                   <img
                     src="@/assets/images/btn_check.png"
                     alt=""
@@ -116,8 +130,10 @@
           <img class="metanameLogo" :src="MetaNameLogo" alt="" />
         </a> -->
 
+       
+
         <!-- MintCollect -->
-        <el-tooltip
+        <!-- <el-tooltip
           class="box-item"
           effect="dark"
           content="Mint Collection"
@@ -131,7 +147,10 @@
             <span class="new-tag">New</span>
             <img class="MintLogo" :src="MintLogo" alt="" />
           </a>
-        </el-tooltip>
+        </el-tooltip> -->
+
+      
+
         <!-- 🔍 搜索 -->
         <!-- <a
           class="flex flex-align-center flex-pack-center user-warp-item"
@@ -234,7 +253,7 @@
 import { useRootStore, isMobile } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
 import { ElDropdown } from 'element-plus'
-import { computed, ref } from 'vue'
+import { computed, ref,onMounted,onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import SettingsModalVue from '@/components/Settings/SettingsModal.vue'
 import { useLayoutStore } from '@/stores/layout'
@@ -253,6 +272,8 @@ import SetUserInfoVue from '../ConnectWalletModal/SetUserInfo.vue'
 import { useConnectionStore, ConnectChain,type BaseUserInfo } from '@/stores/connection'
 import { useNetworkStore } from '@/stores/network'
 import { setUser } from '@sentry/vue'
+import {DUMMY_UTXO_INPUT_LEGACY} from '@/data/constants'
+ import { CircleFadingPlus } from 'lucide-vue-next'
 const i18n = useI18n()
 const rootStore = useRootStore()
 const userStore = useUserStore()
@@ -264,7 +285,8 @@ const feebStore = useFeebStore()
 const connectStore=useConnectionStore()
 const isShowSetUserInfo = ref(false)
 const popover = ref(null);
-
+// const dummyAmount=ref(0)
+// const dummyInterval=ref()
 const isShowUserMenu = ref(false)
 const chainType = ref([
   { name: 'Bitcoin', icon: 'logo_chain_btc',key:'btc' },
@@ -342,8 +364,10 @@ const getChainImageUrl = (name: string, type: string = 'png') => {
   return new URL(`/src/assets/images/${name}.${type}`, import.meta.url).href
 }
 const getFeeImageUrl = (name: string, type: string = 'png') => {
+  
   return new URL(`/src/assets/images/icon_${name}.${type}`, import.meta.url).href
 }
+
 function toMintNft() {
   if (userStore.metaletLogin) {
     return ElMessage.error(`${i18n.t('nosupportmetaletissue')}`)
@@ -412,7 +436,12 @@ function closeSetInfoModal() {
 
 async function trggleFeeb(feeb:FeebPlan){
   if(feeb.title == feebStore.last.currentFeeb.title) return
-  await feebStore.set(feeb.title)
+  if(feeb.title  == 'Custom'){
+    await feebStore.set(feeb.title,1000)
+  }else{
+    await feebStore.set(feeb.title)
+  }
+ 
 }
 async function onSetBaseInfoSuccessType(params: {
   name: string
@@ -494,6 +523,33 @@ async function pushToBuzz(data:BaseUserInfo) {
   })
   router.push('/buzz/tag/1')
 }
+
+// function getDummyAmount(){
+//   window.metaidwallet.btc.getUtxos({
+//     useUnconfirmed:true
+//   }).then((result)=>{
+//     const filtered = result.filter((utxo) => {
+//       return !utxo.inscriptions && utxo.satoshis == DUMMY_UTXO_INPUT_LEGACY
+//     })
+    
+//     dummyAmount.value =filtered.length
+//   })
+// }
+
+// onMounted(()=>{
+//   if(connectStore.last.user.address){
+//     dummyInterval.value=setInterval(() => {
+//     getDummyAmount()
+//   }, 60 * 1000);
+//   getDummyAmount()
+//   }
+// })
+
+// onUnmounted(()=>{
+//   clearInterval(dummyInterval.value)
+// })
+
+
 </script>
 
 <style lang="scss" scoped src="./LoginedUserOperate.scss"></style>

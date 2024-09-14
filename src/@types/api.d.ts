@@ -1256,8 +1256,8 @@ declare interface UploadFileData{
       itemDesc:string[]
       classify:string[]
       nftName:string[]
-      metaid:string
-      name:string
+      
+      collectionPinid:string
       rawTx:string
       commitAddress:string[]
 }
@@ -1271,6 +1271,7 @@ declare interface NftsCollection{
   created_at:string
   id:number
   init_price:number
+ 
   meta_data:string
   metaid:string
   name:string
@@ -1280,6 +1281,7 @@ declare interface NftsCollection{
   total_supply:number
   updated_at:string
   website:string
+  floor_price:number
   current_supply?:number
   minted?:number
   current_mint_price?:number
@@ -1301,6 +1303,40 @@ declare interface NftMintItemType{
  reveal_address:string
  is_minted:number
  is_destroy:number
+}
+
+declare interface NftOrderType extends NftMintItemType{
+  id:number
+  buyer_address:string
+  chain:import('@/data/constants').NftsLaunchPadChainSymbol
+  collection_pinid:string
+  creator_info:{
+    metaid:string,
+    address:string,
+    avatar?:string,
+    avatarId?:string,
+    name?:string
+  },
+  owner_info:{
+    metaid:string,
+    address:string,
+    avatar?:string,
+    avatarId?:string,
+    name?:string
+  }
+  is_ready:boolean
+  created_at:string
+  item_cover:string
+  item_pinid:string
+  nft_name:string
+  order_id:string
+  order_status:import('@/data/constants').NftOrderState
+  reveal_txid:string
+  royalty_rate:number
+  sale_price:number
+  saler_address:string
+  saler_metaid:string
+  updated_at:string
 }
 
 

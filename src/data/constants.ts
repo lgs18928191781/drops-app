@@ -26,14 +26,21 @@ export const INSCRIBE_TX_SIZE_FACTOR = 380
 export const TX_BASE_SIZE = 300
 
 export const DUMMY_UTXO_VALUE = 600
+export const DUMMY_UTXO_OUTPUT_VALUE = 1200
 export const DUST_UTXO_VALUE = 546
+export const PIN_UTXO_VALUE=546
 export const MS_BRC20_UTXO_VALUE = 1000
 export const ONE_SERVICE_FEE = 10_000
 export const SELL_SERVICE_FEE = 16_000
 export const EXTRA_INPUT_MIN_VALUE = 600
-
+export const DUMMY_UTXO_INPUT_LEGACY=1001
+export const DUMMY_UTXO_OUTPUT_LEGACY=2002
 export const NETWORK: Network = import.meta.env.VITE_NETWORK || 'mainnet'
-
+export const PlatformRate=6
+export const MinPlatformFee=2000
+export const MinRoyaltyFee=1000
+export const REDEEM_SERVICE_FEE=1000
+export const MRC721PlatformAddress=`tb1plh4xg3ks7jfcrrx9hpa9exrrzq6gq9jc48n0cch48tcxttlppuas9trkyh`
 // type EntitySchema = {
 //   name: string
 //   path: string
@@ -51,6 +58,14 @@ export enum NftsLaunchPadChain{
 export enum NftsLaunchPadChainSymbol{
   btc='btc',
   mvc='mvc'
+}
+
+export enum NftOrderState{
+  empty=0,
+  onSale=1,
+  isSaled=2,
+  offSale=3,
+  destory=4
 }
 
 

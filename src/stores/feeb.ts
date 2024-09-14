@@ -30,6 +30,10 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
                     title: 'Fast',
                     feeRate:3,
                   },
+                  {
+                    title: 'Custom',
+                    feeRate:3,
+                  },
             ]
         } as {currentFeeb:FeebPlan,feeRateList:FeebPlan[]} ),
       }
@@ -40,6 +44,7 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
       get: (state) => !!state.last,
       
       getCurrentFeeb:(state)=>{
+        
         if(state.last.currentFeeb.feeRate <=1){
           return 3
         }else return state.last.currentFeeb.feeRate
@@ -53,7 +58,7 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
             const connectionStore=useConnectionStore()
            if(feeType == 'Custom'){
             this.last.currentFeeb={
-                feeRate:customFeeb!,
+                feeRate:customFeeb ? customFeeb : 1000,
                 title:'Custom'
             }
            }else if(connectionStore.currentChain && connectionStore.currentChain == ConnectChain.mvc){
@@ -66,7 +71,10 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
             
             
             let feeList=await getFeebPlans()
-            
+            feeList.push({
+              feeRate:1000,
+              title:'Custom'
+            })
             
             this.last.feeRateList=feeList
             const selectFeeb=feeList.filter((item)=>{
@@ -85,10 +93,15 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
         
         async update(){
           const connectionStore=useConnectionStore()
+          
           if(connectionStore.currentChain && connectionStore.currentChain == ConnectChain.mvc){
             return
           }else{
             const feeList= await getFeebPlans()
+            feeList.push({
+              feeRate:1000,
+              title:'Custom'
+            })
             this.last.feeRateList=feeList
             const selectFeeb=feeList.filter((item)=>{
               return item.title == this.last.currentFeeb.title

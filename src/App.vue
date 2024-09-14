@@ -73,6 +73,9 @@ import { useFollowStore } from './stores/follow'
 import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
 import * as bitcoin from 'bitcoinjs-lib'
 import { ECPairFactory } from 'ecpair'
+import { getPinfromPinid,getPinfromPinidList } from "@/api/mrc721-api";
+import { useNetworkStore } from '@/stores/network'
+import {exclusiveChange} from '@/hooks/use-buildtx-entity'
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const metaidEntity = useMetaIDEntity()
@@ -101,8 +104,49 @@ function initBitcoin() {
   btcJsStore.setECPair(ECPair)
 }
 
+
+// async function test(){
+//   const bitcoinjs = useBtcJsStore().get!
+
+//   const network=useNetworkStore()
+  
+//   const psbt=new bitcoinjs.Psbt({ network:bitcoinjs.networks.testnet })
+
+//   psbt.addOutput({
+//     address:connectorStore.last.user.address,
+//     value:2000
+//   })
+//   psbt.addOutput({
+//     address:connectorStore.last.user.address,
+//     value:2000
+//   })
+
+ 
+//   const estiomateResult= await exclusiveChange({
+//           psbt: psbt,
+//           maxUtxosCount:20,
+//           sighashType:129,
+//           feeb:feeStore.getCurrentFeeb,
+//        })
+//        const psbthex=estiomateResult?.psbt.toHex()
+//        const signRes= await connectorStore.adapter.signPsbt(psbthex!)
+//        console.log('signRes',signRes)
+//       //  debugger
+//       const newPsbt= bitcoinjs.Psbt.fromHex(signRes,{ network: bitcoinjs.networks.testnet })
+//       console.log("newPsbt",newPsbt)
+//       debugger
+//        const rawTx=newPsbt.extractTransaction().toHex()
+//        console.log('rawTx',rawTx)
+//        debugger
+
+// }
+
 onMounted(async () => {
-  console.log('VITE_TEST_TEXT',import.meta.env.VITE_TEST_TEXT)
+  setTimeout(async() => {
+  
+  }, 3000);
+ console.log('VITE_TEST_TEXT',import.meta.env.MODE)
+
   console.log('VITE_TEST_TEXT',import.meta.env.VITE_METALET_API)
   // initialize btcjs
   // const btcjs = window.bitcoinjs
@@ -140,7 +184,7 @@ onMounted(async () => {
       // })
     }
 
-    feeStore.set(feeStore.last.currentFeeb.title).then()
+    feeStore.set(feeStore.last?.currentFeeb?.title || 'Fast').then()
     if (connectorStore.currentChain && connectorStore.currentChain !== ConnectChain.mvc) {
       feebInterval.value = setInterval(() => {
         feeStore.update().then()

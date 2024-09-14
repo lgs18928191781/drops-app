@@ -73,6 +73,8 @@ import zlib from 'zlib'
 import { string } from 'yup'
 import { MetaletWallet } from './wallet/Metalet-wallet'
 import mvc from 'mvc-lib'
+import {PlatformRate,MinPlatformFee,MinRoyaltyFee} from "@/data/constants"
+import { useConnectionStore } from '@/stores/connection'
 const emojiReg = /[\u{1F601}-\u{1F64F}\u{2702}-\u{27B0}\u{1F680}-\u{1F6C0}\u{1F170}-\u{1F251}\u{1F600}-\u{1F636}\u{1F681}-\u{1F6C5}\u{1F30D}-\u{1F567}]/gu
 const oricalUrl = [
   'https://api.mvcswap.com/blockinfo1',
@@ -130,10 +132,13 @@ export function checkSdkStatus(path: string, params?: ElMessageBoxOptions) {
 
 export function checkUserLogin() {
   return new Promise<void>((resolve, reject) => {
-    const userStore = useUserStore()
+    // const userStore = useUserStore()
     const rootStore = useRootStore()
-    if (!userStore.isAuthorized) {
+    const connectionStore=useConnectionStore()
+    if (!connectionStore.last.user.address) {
       rootStore.$patch({ isShowLogin: true })
+      reject(new Error(i18n.global.t('Please Login First')))
+      
       // reject(new Error(i18n.global.t('Please Login First')))
     } else {
       resolve()
@@ -1053,6 +1058,7 @@ export function getCurrencyAmount(
   if (!price) return 0
   const ToCurrencyAmountFix = {
     [ToCurrency.BSV]: 8,
+    [ToCurrency.BTC]: 8,
     [ToCurrency.CNY]: 2,
     [ToCurrency.ETH]: 9,
     [ToCurrency.MVC]: 8,
@@ -1061,6 +1067,7 @@ export function getCurrencyAmount(
   }
   const ToCurrencyAmounRate = {
     [ToCurrency.BSV]: Math.pow(10, 8),
+    [ToCurrency.BTC]: Math.pow(10, 8),
     [ToCurrency.CNY]: 100,
     [ToCurrency.ETH]: Math.pow(10, 9),
     [ToCurrency.MVC]: Math.pow(10, 8),
@@ -1071,68 +1078,72 @@ export function getCurrencyAmount(
     toCurrency = rootStore.currentPrice
   }
   let amount
-  if (currency === toCurrency) {
-    amount = new Decimal(
-      new Decimal(price).div(ToCurrencyAmounRate[currency].toFixed(ToCurrencyAmountFix[currency]))
-    ).toNumber()
-  } else if (currency === ToCurrency.CNY || currency === ToCurrency.USD) {
-    if (currency === ToCurrency.CNY && toCurrency === ToCurrency.USD) {
-      //  cny -> usd
-      amount = new Decimal(
-        new Decimal(rootStore.exchangeRate[0].price.USD)
-          .div(rootStore.exchangeRate[0].price.CNY)
-          .mul(price)
-          .div(ToCurrencyAmounRate[currency])
-          .toFixed(ToCurrencyAmountFix[toCurrency])
-      ).toNumber()
-    } else if (currency === ToCurrency.USD && toCurrency === ToCurrency.CNY) {
-      // usd -> cny
+  
+  amount = new Decimal(
+    new Decimal(price).div(ToCurrencyAmounRate[currency].toFixed(ToCurrencyAmountFix[currency]))
+  ).toNumber()
+  // if (currency === toCurrency) {
+  //   amount = new Decimal(
+  //     new Decimal(price).div(ToCurrencyAmounRate[currency].toFixed(ToCurrencyAmountFix[currency]))
+  //   ).toNumber()
+  // } else if (currency === ToCurrency.CNY || currency === ToCurrency.USD) {
+  //   if (currency === ToCurrency.CNY && toCurrency === ToCurrency.USD) {
+  //     //  cny -> usd
+  //     amount = new Decimal(
+  //       new Decimal(rootStore.exchangeRate[0].price.USD)
+  //         .div(rootStore.exchangeRate[0].price.CNY)
+  //         .mul(price)
+  //         .div(ToCurrencyAmounRate[currency])
+  //         .toFixed(ToCurrencyAmountFix[toCurrency])
+  //     ).toNumber()
+  //   } else if (currency === ToCurrency.USD && toCurrency === ToCurrency.CNY) {
+  //     // usd -> cny
 
-      amount = new Decimal(
-        new Decimal(rootStore.exchangeRate[0].price.CNY)
-          .div(rootStore.exchangeRate[0].price.USD)
-          .mul(price)
-          .div(ToCurrencyAmounRate[currency])
-          .toFixed(ToCurrencyAmountFix[toCurrency])
-      ).toNumber()
-    } else {
-      // * -> cny/ usd
-      const rate = rootStore.exchangeRate.find(
-        item => item.symbol.toUpperCase() === toCurrency!.toUpperCase()
-      )
-      amount = new Decimal(
-        new Decimal(price)
-          .div(ToCurrencyAmounRate[currency])
-          .div(rate!.price[currency])
-          .toFixed(ToCurrencyAmountFix[toCurrency])
-      ).toNumber()
-    }
-  } else if (toCurrency === ToCurrency.CNY || toCurrency === ToCurrency.USD) {
-    const currenyRate = rootStore.exchangeRate.find(
-      item => item.symbol.toUpperCase() === currency!.toUpperCase()
-    )
-    amount = new Decimal(
-      new Decimal(currenyRate!.price[toCurrency])
-        .mul(price)
-        .div(ToCurrencyAmounRate[currency])
-        .toFixed(ToCurrencyAmountFix[toCurrency])
-    ).toNumber()
-  } else {
-    const currenyRate = rootStore.exchangeRate.find(
-      item => item.symbol.toUpperCase() === currency!.toUpperCase()
-    )
-    const toCurrencyRate = rootStore.exchangeRate.find(
-      item => item.symbol.toUpperCase() === toCurrency!.toUpperCase()
-    )
+  //     amount = new Decimal(
+  //       new Decimal(rootStore.exchangeRate[0].price.CNY)
+  //         .div(rootStore.exchangeRate[0].price.USD)
+  //         .mul(price)
+  //         .div(ToCurrencyAmounRate[currency])
+  //         .toFixed(ToCurrencyAmountFix[toCurrency])
+  //     ).toNumber()
+  //   } else {
+  //     // * -> cny/ usd
+  //     const rate = rootStore.exchangeRate.find(
+  //       item => item.symbol.toUpperCase() === toCurrency!.toUpperCase()
+  //     )
+  //     amount = new Decimal(
+  //       new Decimal(price)
+  //         .div(ToCurrencyAmounRate[currency])
+  //         .div(rate!.price[currency])
+  //         .toFixed(ToCurrencyAmountFix[toCurrency])
+  //     ).toNumber()
+  //   }
+  // } else if (toCurrency === ToCurrency.CNY || toCurrency === ToCurrency.USD) {
+  //   const currenyRate = rootStore.exchangeRate.find(
+  //     item => item.symbol.toUpperCase() === currency!.toUpperCase()
+  //   )
+  //   amount = new Decimal(
+  //     new Decimal(currenyRate!.price[toCurrency])
+  //       .mul(price)
+  //       .div(ToCurrencyAmounRate[currency])
+  //       .toFixed(ToCurrencyAmountFix[toCurrency])
+  //   ).toNumber()
+  // } else {
+  //   const currenyRate = rootStore.exchangeRate.find(
+  //     item => item.symbol.toUpperCase() === currency!.toUpperCase()
+  //   )
+  //   const toCurrencyRate = rootStore.exchangeRate.find(
+  //     item => item.symbol.toUpperCase() === toCurrency!.toUpperCase()
+  //   )
 
-    amount = new Decimal(
-      new Decimal(currenyRate!.price.CNY)
-        .div(toCurrencyRate!.price.CNY)
-        .mul(price)
-        .div(ToCurrencyAmounRate[currency])
-        .toFixed(ToCurrencyAmountFix[toCurrency])
-    ).toNumber()
-  }
+  //   amount = new Decimal(
+  //     new Decimal(currenyRate!.price.CNY)
+  //       .div(toCurrencyRate!.price.CNY)
+  //       .mul(price)
+  //       .div(ToCurrencyAmounRate[currency])
+  //       .toFixed(ToCurrencyAmountFix[toCurrency])
+  //   ).toNumber()
+  // }
 
   return amount
 
@@ -1740,6 +1751,7 @@ export const nativePayPlatforms = [
   PayPlatform.POLYGON,
   PayPlatform.BSV,
   PayPlatform.SPACE,
+  PayPlatform.BTC
 ]
 
 export function getPlatformSymbol(platform: PayPlatform, defaultValue = '') {
@@ -1908,3 +1920,50 @@ export function changeSymbol(symbol: string) {
     return symbol
   }
 }
+
+export function calcNftRealSalePrice(salePrice:number,royaltyRate:number=0):{
+  salePrice:number
+  platformFee:number
+  royaltyFee:number
+  total:number
+}{
+  if(!salePrice){
+    return {
+      salePrice:0,
+    platformFee:0,
+    royaltyFee:0,
+    total:0
+    }
+  }
+  const platformFee=new Decimal(salePrice).mul(PlatformRate).div(100).toNumber()
+  const realplatformFee=platformFee > MinPlatformFee ? platformFee : MinPlatformFee
+  const royaltyFee = royaltyRate > 0 ? new Decimal(salePrice).mul(royaltyRate).div(100).toNumber() : 0
+  let realroyaltyFee=0
+  if(royaltyRate== 0){
+    realroyaltyFee=0
+  }else{
+    if(royaltyFee < MinRoyaltyFee){
+      realroyaltyFee=MinRoyaltyFee
+    }else{
+      realroyaltyFee=royaltyFee
+    }
+  }
+ 
+  return {
+    salePrice:salePrice,
+    platformFee:realplatformFee,
+    royaltyFee:realroyaltyFee,
+    total:new Decimal(salePrice).add(realplatformFee).add(realroyaltyFee).toNumber()
+  }
+}
+
+export function formatDataUrltoBase64(content:string,type:string){
+  return `data:${type};base64,${content}`
+}
+
+export function formatDataUrl(pinid:string){
+  return `${import.meta.env.VITE_MAN_API}/content/${pinid}`
+}
+
+
+

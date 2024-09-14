@@ -1,5 +1,5 @@
 
-import { useConnectionStore,ConnectChain } from '@/stores/connection'
+import { useConnectionStore,ConnectChain ,type BaseUserInfo} from '@/stores/connection'
 import  {type CreateOptions,IBtcEntity,MvcTransaction,loadMvc,loadBtc } from '@metaid/metaid'
 import { BufferEncoding,followSchema,payCommentSchema,simpleRepostSchema,mintNftItemSchema,mintNftItemDescSchema,mintNftDescSchema,customizeSchema,type CustomSchemaParams} from '@/data/constants'
 import { AttachmentItem } from '@/@types/hd-wallet'
@@ -99,7 +99,8 @@ export function useMetaIDEntity(){
                 dataArray: [{ body: JSON.stringify(finalBody),contentType: 'text/plain', flag: import.meta.env.VITE_BTC_METAID_FLAG}],
                 options:{
                 noBroadcast:'no',
-                feeRate: feebStore.last.currentFeeb.feeRate,
+                //getCurrentFeeb
+                feeRate: feebStore.getCurrentFeeb,
                 service: {
                     address: import.meta.env.VITE_BTC_SERVICE_ADDRESS,
                     satoshis: import.meta.env.VITE_BTC_SERVICE_FEEB,
@@ -150,7 +151,7 @@ export function useMetaIDEntity(){
             dataArray:fileOptions,
             options:{
                 noBroadcast: noBroadcast,
-                feeRate:feebStore.last.currentFeeb.feeRate,
+                feeRate:feebStore.getCurrentFeeb,
                 service: {
                     address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
                     satoshis: import.meta.env.VITE_BTC_SERVICE_FEEB,
@@ -219,7 +220,7 @@ export function useMetaIDEntity(){
             dataArray: [{ body: JSON.stringify(finalBody),flag:import.meta.env.VITE_BTC_METAID_FLAG }],
             options:{
                 noBroadcast:'no',
-                feeRate: feebStore.last.currentFeeb.feeRate,
+                feeRate: feebStore.getCurrentFeeb,
                 service: {
                     address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
                     satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
@@ -289,7 +290,7 @@ export function useMetaIDEntity(){
                 ],
                 options:{
                     noBroadcast:'no',
-                    feeRate: feebStore.last.currentFeeb.feeRate,
+                    feeRate: feebStore.getCurrentFeeb,
                     service: {
                         address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
                         satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
@@ -330,7 +331,7 @@ export function useMetaIDEntity(){
             }
         ],
         'no',
-        feebStore.last.currentFeeb.feeRate,
+        feebStore.getCurrentFeeb,
         {
             address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
             satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
@@ -393,7 +394,7 @@ export function useMetaIDEntity(){
                 ],
                 options:{
                     noBroadcast:'no',
-                    feeRate: feebStore.last.currentFeeb.feeRate,
+                    feeRate: feebStore.getCurrentFeeb,
                     service: {
                         address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
                         satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
@@ -477,7 +478,7 @@ export function useMetaIDEntity(){
                 ],
                 options:{
                     noBroadcast:'no',
-                    feeRate: feebStore.last.currentFeeb.feeRate,
+                    feeRate: feebStore.getCurrentFeeb,
                     service: {
                         address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
                         satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
@@ -526,7 +527,7 @@ export function useMetaIDEntity(){
                         ],
                         options:{
                             noBroadcast:'no',//params.noBroadcast ? 'no' : 'yes',
-                            feeRate:feebStore.last.currentFeeb.feeRate,
+                            feeRate:feebStore.getCurrentFeeb,
                             service: {
                                 address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
                                 satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
@@ -578,7 +579,7 @@ export function useMetaIDEntity(){
                 ],
                 options:{
                     noBroadcast:'no',//params.noBroadcast ? 'no' : 'yes',
-                    feeRate: feebStore.last.currentFeeb.feeRate,
+                    feeRate: feebStore.getCurrentFeeb,
                     service: {
                         address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
                         satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
@@ -603,7 +604,7 @@ export function useMetaIDEntity(){
             ],
             options:{
                 noBroadcast:'no',//params.noBroadcast ? 'no' : 'yes',
-                feeRate: feebStore.last.currentFeeb.feeRate,
+                feeRate: feebStore.getCurrentFeeb,
                 service: {
                     address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
                     satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
@@ -683,7 +684,7 @@ export function useMetaIDEntity(){
                 ],
                 options:{
                     noBroadcast:'no',
-                    feeRate: feebStore.last.currentFeeb.feeRate,
+                    feeRate: feebStore.getCurrentFeeb,
                     service: {
                         address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
                         satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
@@ -709,6 +710,51 @@ export function useMetaIDEntity(){
         return allBuzzRes
    }
 
+   async function getUserAllInfo(address:string){
+    const connectStore = useConnectionStore()
+    const networkStore=useNetworkStore()
+        return new Promise<BaseUserInfo>((resolve,reject)=>{
+            if(!connectStore.last.user.address){
+               return resolve({
+                address:'',
+                avatar:'',
+                avatarId:'',
+                bio:'',
+                bioId:'',
+                isInit:false,
+                metaid:'',
+                name:'',
+                nameId:'',
+                number:0,
+                rootTxId:'',
+                soulbondToken:'',
+                unconfirmed:'',
+               })
+            }
+            const needInfo = {
+                network: connectStore.last.network || networkStore.network,
+                currentAddress: address
+              }
+               connectStore.last.getUser({ ...needInfo }).then((user)=>{
+                resolve(user)
+               }).catch((err)=>{resolve({
+                address:'',
+                avatar:'',
+                avatarId:'',
+                bio:'',
+                bioId:'',
+                isInit:false,
+                metaid:'',
+                name:'',
+                nameId:'',
+                number:0,
+                rootTxId:'',
+                soulbondToken:'',
+                unconfirmed:'',
+               })})
+        })
+   } 
+
    
 
    return{
@@ -722,7 +768,8 @@ export function useMetaIDEntity(){
     payCommentEntity,
     simpleRepostEntity,
     mintNftEntity,
-    mintNftItemEntity
+    mintNftItemEntity,
+    getUserAllInfo
    }
 
 }
