@@ -1,7 +1,7 @@
 import HttpRequest from '@/utils/request'
 import {NftsLaunchPadChainSymbol} from '@/data/constants'
 const manHost=import.meta.env.VITE_MAN_API
-const nftOrderHost=`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//` //`http://127.0.0.1:3001`// //https://general.mvcscan.com/mrc721
+const nftOrderHost=`https://general.mvcscan.com/mrc721`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//` //`http://127.0.0.1:3001`// //https://general.mvcscan.com/mrc721
 const nftFilerHost=`https://general.mvcscan.com/mrc721-file` //https://general.mvcscan.com/mrc721
 const NftOrders = new HttpRequest(`${nftOrderHost}/nfts-orders`, {
   header: {

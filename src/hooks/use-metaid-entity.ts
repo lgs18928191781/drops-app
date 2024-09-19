@@ -711,6 +711,7 @@ export function useMetaIDEntity(){
    }
 
    async function getUserAllInfo(address:string){
+    
     const connectStore = useConnectionStore()
     const networkStore=useNetworkStore()
         return new Promise<BaseUserInfo>((resolve,reject)=>{

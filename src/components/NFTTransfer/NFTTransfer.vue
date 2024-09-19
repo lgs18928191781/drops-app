@@ -14,14 +14,14 @@
         <template v-if="transferUser.val">
           <div class="tranfer-user flex flex-align-center">
             <UserAvatar
-              :meta-id="transferUser.val!.metaId"
-              :image="transferUser.val!.avatarImage"
+              :meta-id="transferUser.val!.metaid"
+              :image="transferUser.val!.avatarId"
               :name="transferUser.val!.name"
-              :meta-name="transferUser.val!.metaName"
+              :meta-name="''"
               :disabled="true"
             />
             <div class="flex1">
-              <template v-if="transferUser.val!.metaId === ''">
+              <template v-if="transferUser.val!.metaid === ''">
                 Address:
                 <div>{{ transferUser.val!.address }}</div>
               </template>
@@ -29,13 +29,13 @@
                 <div class="name">
                   <UserName
                     :name="transferUser.val!.name"
-                    :meta-name="transferUser.val!.metaName"
+                    :meta-name="''"
                   />
                 </div>
                 <div class="metaid">
-                  MetaID:{{ transferUser.val!.metaId.slice(0,6)}}
+                  MetaID:{{ transferUser.val!.metaid.slice(0,6)}}
                   ...
-                  {{ transferUser.val!.metaId.slice(-6) }}
+                  {{ transferUser.val!.metaid.slice(-6) }}
                 </div>
               </template>
             </div>
@@ -78,6 +78,7 @@
 
 <script setup lang="ts">
 import { NodeName, PayPlatform, SdkPayType } from '@/enum'
+import { useConnectionStore ,type BaseUserInfo} from '@/stores/connection'
 import { useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
 import { reactive, ref } from 'vue'
@@ -89,19 +90,24 @@ import { LoadingTEXT } from '@/utils/LoadingSVGText'
 import { email } from '@/utils/reg'
 import { mvc } from 'mvc-scrypt/dist'
 import { getAccountUserInfo } from '@/utils/util'
-
+import { ElMessage } from 'element-plus'
+import {useMetaIDEntity} from '@/hooks/use-metaid-entity'
+import {useNFTEntity} from '@/hooks/use-nft-entity'
+import { format } from 'path'
 const props = defineProps<{
   modelValue: boolean
-  nft: GenesisNFTItem
+  nft: NftOrderType
   isHideDetail?: boolean
 }>()
 
 const emit = defineEmits(['update:modelValue', 'success'])
 const rootStore = useRootStore()
 const userStore = useUserStore()
+const {getUserAllInfo}=useMetaIDEntity()
 const i18n = useI18n()
 const isShowPayTypes = ref(false)
-const transferUser: { val: UserAllInfo | null } = reactive({
+const nftEntity= useNFTEntity() 
+const transferUser: { val: BaseUserInfo | null } = reactive({
   val: null,
 })
 const form = reactive({
@@ -121,76 +127,94 @@ function choosePayPlatform(item: PayPlatformItem) {
 
 async function transfer() {
   if (form.target === '' || loading.value) return
-
-  if (props.nft.nftChain === 'mvc' || props.nft.nftChain === 'bsv') {
-    loading.value = true
-    const res = await getAccountUserInfo(form.target).catch(error => {
-      ElMessage.error(error.message)
+  loading.value = true
+  // if (props.nft.nftChain === 'mvc' || props.nft.nftChain === 'bsv') {
+  const res=await getUserAllInfo(form.target).catch((error)=>{
+         ElMessage.error(error.message)
       loading.value = false
-    })
-    if (res) {
+  })
+  if(res){
       transferUser.val = res
-      loading.value = false
-      form.target = ''
-    }
-  } else {
-    return ElMessage.info(i18n.t('NFT.Not Support Current Chain NFT Transfer'))
+     loading.value = false
+    form.target = ''
   }
+  //   const res = await getAccountUserInfo(form.target).catch(error => {
+  //     ElMessage.error(error.message)
+  //     loading.value = false
+  //   })
+  //   if (res) {
+  //     transferUser.val = res
+  //     loading.value = false
+  //     form.target = ''
+  //   }
+  // } else {
+  //   return ElMessage.info(i18n.t('NFT.Not Support Current Chain NFT Transfer'))
+  // }
 }
 
 async function confirmTransfer() {
   if (loading.value) return
   loading.value = true
-  const res = await userStore.showWallet
-    .createBrfcChildNode(
-      {
-        nodeName: NodeName.NftTransfer,
-        data: JSON.stringify({
-          receiverAddress: transferUser.val!.address,
-          codehash: props.nft.nftCodehash,
-          genesis: props.nft.nftGenesis,
-          tokenIndex: props.nft.nftTokenIndex,
-        }),
-      }
-      // {
-      //   payType: SdkPayType.ME, //props.nft.nftChain === 'bsv' ? SdkPayType.BSV : SdkPayType.ME,
-      // }
-    )
-    .catch(error => {
-      ElMessage.error(error.message)
-      loading.value = false
-    })
+  
+try {
+  const res=await nftEntity.transferNft({
+    nftPinid:props.nft.item_pinid,
+    receiverAddress:transferUser.val?.address
+  })
+  // const res = await userStore.showWallet
+  //   .createBrfcChildNode(
+  //     {
+  //       nodeName: NodeName.NftTransfer,
+  //       data: JSON.stringify({
+  //         receiverAddress: transferUser.val!.address,
+  //         codehash: props.nft.nftCodehash,
+  //         genesis: props.nft.nftGenesis,
+  //         tokenIndex: props.nft.nftTokenIndex,
+  //       }),
+  //     }
+  //     // {
+  //     //   payType: SdkPayType.ME, //props.nft.nftChain === 'bsv' ? SdkPayType.BSV : SdkPayType.ME,
+  //     // }
+  //   )
+  //   .catch(error => {
+  //     ElMessage.error(error.message)
+  //     loading.value = false
+  //   })
   if (res) {
     emit('success', {
-      ...props.nft,
-      nftOwnerUserInfo: {
-        address: transferUser.val!.address,
-        avatarTxId: transferUser.val!.avatarTxId,
-        avatarType: transferUser.val!.coverType,
-        avatarImage: transferUser.val!.avatarImage,
-        coverPublicKey: '',
-        coverType: transferUser.val!.coverType,
-        coverUrl: '',
-        metaIdTimestamp: '',
-        name: transferUser.val!.name,
-        nameType: '',
-        metaName: transferUser.val!.metaName,
-        nftNamePublicKey: '',
-        publicKey: '',
-      },
-      nftOwnerAddress: transferUser.val!.address,
-      nftOwnerAvatarTxId: transferUser.val!.avatarTxId,
-      nftOwnerAvatarType: transferUser.val!.coverType,
-      nftOwnerAvatarImage: transferUser.val!.avatarImage,
-      nftOwnerMetaId: transferUser.val!.metaId,
-      nftOwnerName: transferUser.val!.name,
+      ...props.nft
+      // nftOwnerUserInfo: {
+      //   address: transferUser.val!.address,
+      //   avatarTxId: transferUser.val!.avatarTxId,
+      //   avatarType: transferUser.val!.coverType,
+      //   avatarImage: transferUser.val!.avatarImage,
+      //   coverPublicKey: '',
+      //   coverType: transferUser.val!.coverType,
+      //   coverUrl: '',
+      //   metaIdTimestamp: '',
+      //   name: transferUser.val!.name,
+      //   nameType: '',
+      //   metaName: transferUser.val!.metaName,
+      //   nftNamePublicKey: '',
+      //   publicKey: '',
+      // },
+      // nftOwnerAddress: transferUser.val!.address,
+      // nftOwnerAvatarTxId: transferUser.val!.avatarTxId,
+      // nftOwnerAvatarType: transferUser.val!.coverType,
+      // nftOwnerAvatarImage: transferUser.val!.avatarImage,
+      // nftOwnerMetaId: transferUser.val!.metaId,
+      // nftOwnerName: transferUser.val!.name,
     })
-    ElMessage.success(i18n.t('NFT.Transfer Success'))
+    //ElMessage.success(i18n.t('NFT.Transfer Success'))
     emit('update:modelValue', false)
     loading.value = false
   } else {
     loading.value = false
   }
+} catch (error) {
+  ElMessage.error((error as any).message)
+  loading.value = false
+}
   // const res = await userStore.showWallet
   //   .transferNFT({
   //     receiverAddress: transferUser.val!.address,

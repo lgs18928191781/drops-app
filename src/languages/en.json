@@ -1428,7 +1428,7 @@
     "cancel_transation": "Transaction cancellation",
     "lanuch_mintable_Supply": "Mintable supply:",
     "psbt_empty": "Mint order is not exist",
-    "lanuch_MintFee": "NFT sale price",
+    "lanuch_MintFee": "NFT mint fee",
     "lanuch_sign_tx_fail": "Sign psbt canceled",
     "lanuch_nft_name": "NFT name",
     "lanuch_useSameName": "use same NFT name",
@@ -1439,7 +1439,8 @@
     "service_royalty_fee": "Royalty_Rate",
     "lanuch_morethan_amount": "Maximum minting per transaction is not allowed to exceed 30",
     "not_allow_todetail": "NFTs that have not been minted yet do not support viewing details",
-    "transfer_success": "NFT transfer success"
+    "transfer_success": "NFT transfer success",
+    "lanuch_saleFee": "NFT sale price"
   },
   "offsale not allowed": "Please unlist before proceeding with the redemption operation.",
   "redeemWaring1": "The redemption operation will destroy the NFT. Please consider carefully!",

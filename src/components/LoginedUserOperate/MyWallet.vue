@@ -1294,7 +1294,7 @@ function load() {
 }
 
 function toNFT(nftPinid: string,collectionPinid:string) {
-  debugger
+  
   emit('update:modelValue', false)
   router.push({
     name: 'nftDetail',

@@ -103,6 +103,11 @@ const cells = [
   },
 ]
 const cell = reactive({ val: cells[0] })
+
+function buyNFT(){
+  
+}
+
 </script>
 
 <style lang="scss" scoped src="./CollectionSkeleton.scss"></style>

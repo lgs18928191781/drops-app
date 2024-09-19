@@ -37,7 +37,7 @@ const TX_OUTPUT_SCRIPTHASH = 23
 const TX_OUTPUT_SEGWIT = 22
 const TX_OUTPUT_SEGWIT_SCRIPTHASH = 34
 const DefaultTxVersion = 2
-
+const safeFee=1221
 function inputBytes(input: PsbtInput) {
   // todo: script length
   if (isTaprootInput(input)) {
@@ -71,11 +71,11 @@ export async function calcTotalInputValue(psbt: Psbt): Promise<number> {
   const btcjs = useBtcJsStore().get!
 
   const inputs = psbt.data.inputs
-  debugger
+  
   let totalInputValue = 0
   for (let i = 0; i < inputs.length; i++) {
     const input = inputs[i]
-    debugger
+    
     if (input.witnessUtxo) {
       totalInputValue += input.witnessUtxo.value
     } else if (input.nonWitnessUtxo) {
@@ -83,7 +83,7 @@ export async function calcTotalInputValue(psbt: Psbt): Promise<number> {
       const outputIndex = psbt.txInputs[i].index
       
       const output = tx.outs[outputIndex]
-      debugger
+      
       totalInputValue += output.value
     } else {
       throw new Error('Input has no utxo')
@@ -343,7 +343,7 @@ export async function exclusiveChange({
   const paymentUtxos = await window.metaidwallet.btc.getUtxos({
     useUnconfirmed:true
   }).then((result) => {
-      debugger
+      
     // first, filter out all the utxos that are currently listing
     const filtered = result.filter((utxo) => {
       return !utxo.inscriptions 
@@ -420,6 +420,10 @@ export async function exclusiveChange({
     
     }
 
+    if(fee < safeFee){
+      throw new Error(`tx feeb must be more than ${safeFee},but only ${fee},please select a higher rate to continue the transaction`)
+    }
+
     const changeValue = totalInput - totalOutput - fee + (extraInputValue || 0)
     
     if (changeValue < 0) {
@@ -456,6 +460,33 @@ export async function exclusiveChange({
 
 
 }
+export function fillInternalKeyForOtherAccount<T extends PsbtInput | PsbtInputExtended>(
+  input: T,
+  address:string,
+  pubkey:string
+): T {
+  //const connectionStore=useConnectionStore()
+  // check if the input is mine, and address is Taproot
+  // if so, fill in the internal key
+  //const address =address
+
+  const isP2TR = address.startsWith('bc1p') || address.startsWith('tb1p')
+  const lostInternalPubkey = !input.tapInternalKey
+
+  if (isP2TR && lostInternalPubkey) {
+    const tapInternalKey = toXOnly(
+      Buffer.from(pubkey, 'hex'),
+    )
+    const { output } = useBtcJsStore().get!.payments.p2tr({
+      internalPubkey: tapInternalKey,
+    })
+    if (input.witnessUtxo?.script.toString('hex') == output!.toString('hex')) {
+      input.tapInternalKey = tapInternalKey
+    }
+  }
+
+  return input
+}
 
 
 export function fillInternalKey<T extends PsbtInput | PsbtInputExtended>(
@@ -491,7 +522,9 @@ export async function fillInputUtxo<T extends PsbtInputExtended>(
   input: T,
   address: string,
   satoshis: number,
+  fillNonWitnessUtxo:boolean=true,
   paramPreTxRaw?: string,
+ 
 ): Promise<T> {
   const btcjs = useBtcJsStore().get! || raise('btcjs not initialized')
   const network = useNetworkStore().typedNetwork
@@ -502,7 +535,7 @@ export async function fillInputUtxo<T extends PsbtInputExtended>(
   if (
     addressType === 'p2tr' ||
     addressType === 'p2wpkh' ||
-    addressType === 'p2sh' 
+    addressType === 'p2sh' || !fillNonWitnessUtxo
   ) {
     const outputScript = btcjs.address.toOutputScript(address, network)
     const witnessUtxo = {
@@ -530,13 +563,18 @@ export async function fillInputUtxo<T extends PsbtInputExtended>(
   }
   
   // p2pkh, fetch nonWitnessUtxo
-  const preTxRaw =
+  if(fillNonWitnessUtxo){
+    const preTxRaw =
     paramPreTxRaw || (await getRawTx(input.hash, useNetworkStore().network))
   const preTx = btcjs.Transaction.fromHex(preTxRaw?.data ? preTxRaw.data : preTxRaw)
   const nonWitnessUtxo = preTx.toBuffer()
   
   input.nonWitnessUtxo = nonWitnessUtxo
   return input
+  }else{
+    return input
+  }
+ 
 }
 
 export function determineAddressInfo(address: string): AddressInfo {
@@ -629,11 +667,12 @@ export async function buildFillUtxoPsbt(pinid:string,salePrice:number,extraFee:{
       hash:'aa4f6752bb40bd7699fdc6ae9a78dcb41a990c55b20070462c7771825d72fcec',
       index:3,
     }
-  
-    await fillInputUtxo(fakerInput1, address,DUMMY_UTXO_VALUE )
-    await fillInputUtxo(fakerInput2, address,DUMMY_UTXO_VALUE )
-    fillInternalKey(fakerInput1)
-    fillInternalKey(fakerInput2)
+    const utxoAddress=import.meta.env.VITE_UTXO_MANAGER_ADDRESS
+    const utxoPubkey=import.meta.env.VITE_UTXO_MANAGER_PUBKEY
+    await fillInputUtxo(fakerInput1, utxoAddress,DUMMY_UTXO_VALUE,false )
+    await fillInputUtxo(fakerInput2, utxoAddress,DUMMY_UTXO_VALUE,false )
+    fillInternalKeyForOtherAccount(fakerInput1,utxoAddress,utxoPubkey)
+    fillInternalKeyForOtherAccount(fakerInput2,utxoAddress,utxoPubkey)
     psbt.addInput(fakerInput1)
     psbt.addInput(fakerInput2)
     psbt.addOutput({
@@ -655,9 +694,9 @@ export async function buildFillUtxoPsbt(pinid:string,salePrice:number,extraFee:{
       sighashType:SIGHASH_SINGLE_ANYONECANPAY
     }
     await fillInputUtxo(paymentInput,address,DUST_UTXO_VALUE)
-    await fillInputUtxo(fakerInput3, address,DUMMY_UTXO_OUTPUT_VALUE )
+    await fillInputUtxo(fakerInput3, utxoAddress,DUMMY_UTXO_OUTPUT_VALUE,false )
     fillInternalKey(paymentInput)
-    fillInternalKey(fakerInput3)
+    fillInternalKeyForOtherAccount(fakerInput3,utxoAddress,utxoPubkey)
     psbt.addInput(paymentInput)
     psbt.addInput(fakerInput3)
     psbt.addOutput({
@@ -686,6 +725,8 @@ export async function buildFillUtxoPsbt(pinid:string,salePrice:number,extraFee:{
       value:extraFee.royaltyRateFee
     })
    }
+   console.log("psbt",psbt.data.inputs)
+   
     return psbt
   } catch (err) {
     return ElMessage.error(`${(err as any).toString()}`)

@@ -30,7 +30,7 @@
       <div class="text-sm">
         <div class="py-4 flex flex-col">
           <div class="py-2 flex flex-row items-center justify-between">
-            <div class="text-[#909399]">{{basicType == 'basic' ? i18n.t('Nfts.lanuch_baseFee') : basicType == 'mint' ? i18n.t('Nfts.lanuch_MintFee') : i18n.t('Nfts.lanuch_MintFee') }}</div>
+            <div class="text-[#909399]">{{basicType == 'basic' ? i18n.t('Nfts.lanuch_baseFee') : basicType == 'mint' ? i18n.t('Nfts.lanuch_MintFee') : i18n.t('Nfts.lanuch_saleFee') }}</div>
             <div>
               <span class="mr-1">{{ space(feeInfo.basic) }}</span>
             

@@ -1423,7 +1423,7 @@ async function estimatePsbtFee(psbtHex:string,feeb:number,checkOnly:boolean=fals
 }
 
 async function finallyMint() {
-    
+  
     try {
     if(Number(autoMaketData.value.initialPrice) == 0){
       return ElMessage.error(`${i18n.t('Nfts.lanuch_automarket_set')}`)
@@ -1432,6 +1432,7 @@ async function finallyMint() {
     const estiomateResult= await estimateBuildTxFee([],feeStore.getCurrentFeeb,true)
     
     if(!estiomateResult){
+  
       return ElMessage.error(`${i18n.t('Nfts.cancel_transation')}`)
     }
     
@@ -1463,7 +1464,7 @@ async function finallyMint() {
     nftListInfo.collectionPinid=currentNftsCollect.value?.collectionPinId!
     
     uploadNftsFile(params).then(async (response)=>{
-        
+     
         if(response.code == 200 && response.data.length){
           
           for(let item of response.data){
@@ -1487,6 +1488,7 @@ if(commitAddressList.length){
 
 
 }else{
+  
   throw new Error(`${i18n.t('Nfts.lanuch_generate_commit_address_fail')}`)
 }
 
@@ -1531,6 +1533,7 @@ uploadNftsFilePath(nftListInfo).then((res)=>{
       newFile.length=0
       ElMessage.success(`${i18n.t('Nfts.lanuch_upload_file_success')}`)
   }else{
+    loading.close()
     ElMessage.error(`${res.msg}`)
   }
 
@@ -1544,15 +1547,18 @@ uploadNftsFilePath(nftListInfo).then((res)=>{
 
          
         }else{
+          
           throw new Error(response.msg)
         }
     }).catch(err=>{
+      
       throw new Error(`${err.toString()}`)
     })
 
   
 
   } catch (error) {
+   
     return ElMessage.error(error as any)
     
   }

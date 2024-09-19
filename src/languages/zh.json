@@ -1422,7 +1422,7 @@
     "cancel_transation": "交易取消",
     "lanuch_mintable_Supply": "当前可铸造量：",
     "psbt_empty": "铸造订单不存在！",
-    "lanuch_MintFee": "NFT售价",
+    "lanuch_MintFee": "NFT铸造费用",
     "lanuch_sign_tx_fail": "签名交易取消",
     "lanuch_nft_name": "NFT名称",
     "lanuch_useSameName": "使用相同的NFT名称",
@@ -1433,7 +1433,8 @@
     "redeem_psbt_empty": "NFT赎回订单不存在",
     "lanuch_morethan_amount": "单笔交易最大铸造数量不允许超过30个",
     "not_allow_todetail": "未铸造完成的NFT暂不支持查看详情",
-    "transfer_success": "NFT转账成功"
+    "transfer_success": "NFT转账成功",
+    "lanuch_saleFee": "NFT售价"
   },
   "offsale not allowed": "请先下架后再进行赎回操作",
   "redeemConfirm": "你确认要赎回",

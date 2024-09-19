@@ -575,6 +575,7 @@ function getSaleDatas(isCover=false){
 }
 
 function getCollection() {
+  
   return new Promise<void>(async (resolve,reject) => {
       const res=await getCollectionDetail({
         collectionPinid:route.params.topicType as string
@@ -598,7 +599,8 @@ function getCollection() {
           
         //   reject()
         // })
-        if(mintRes.code ==200 && mintRes.data.currentSupply > 0){
+        
+        if(mintRes.code ==200 && (mintRes.data.mintAmout > 0 || mintRes.data.currentSupply > 0)){
           
           const collectionCreator= await getUserAllInfo(res.data.result.address)
           const {mintAmout,currentSupply,currentMintPrice}=mintRes.data
@@ -640,6 +642,9 @@ function getCollection() {
         }else if(mintRes.code != 200){
           reject()
           ElMessage.error(mintRes.msg)
+        }else{
+          reject()
+          
         }
         
       }else{
@@ -904,6 +909,7 @@ function changeTab(value: NFTCollectTab) {
 getCollection().then(()=>{
   
   getDatas(true).then(()=>{
+    
     isSkeleton.value = false
   }).catch(()=>{
     isSkeleton.value = false

@@ -107,13 +107,13 @@
                 {{ nftBtnText }}
               </div>
 
-              <!-- <div
+              <div
                 class="main-border primary flex1 flex flex-align-center flex-pack-center"
                 @click="transfer"
-                v-if="isMyNFT && !isSale"
+                v-if="isMyNFT && !isSale && isReady && !isDestroyed"
               >
                 {{ $t('NFT.Transfer') }}
-              </div> -->
+              </div>
             </div>
 
            
@@ -269,7 +269,7 @@
         :is-hide-detail="true"
         @success="onOperateSuccess"
       />
-      <!-- <NFTTransferVue :nft="nft.val!" v-model="isShowTransfer" @success="onOperateSuccess" /> -->
+      <NFTTransferVue :nft="nft.val!" v-model="isShowTransfer" @success="onOperateSuccess" />
     </template>
   </ElSkeleton>
 </template>
@@ -444,43 +444,11 @@ async function redeeem(){
   if(isDestroyed.value){
     return ElMessage.error(`${i18n.t('is_destory not allowed')}`)
   }
-
+  const loading = openLoading({ text: i18n.t('NFT.redeeming') })
   try {
   await checkUserLogin()
 
-const checkDummyRes= await checkDummyAmount()
-  if(!checkDummyRes){
-    throw new Error(`get dummy utxo error`)
-  }else{
-
-    ElMessageBox.confirm(
-      // @ts-ignore
-      `
-      <div class="flex flex-col">
-        <span >1.${i18n.t(`redeemWaring1`)}</span>
-          <span class='mt-2'>2.${i18n.t(`redeemWaring2`)}</span>
-          <span class='mt-2'>${i18n.t(`redeemWaring3`)} <span >${nft.val!.mint_price / 10 ** 8}</span> BTC</span>
-      </div>
-      `,
-      i18n.t('niceWarning'),
-      {
-        // @ts-ignore
-        dangerouslyUseHTMLString:true,
-        confirmButtonText: i18n.t('confirm'),
-        cancelButtonText: i18n.t('Cancel'),
-        closeOnClickModal: false,
-        customStyle:'background:#fff',
-        cancelButtonClass: 'main-border',
-        confirmButtonClass: 'main-border primary',
-      }
-    )
-      .then(async () => {
-        const loading = openLoading({ text: i18n.t('NFT.redeeming') })
-        
-        try {
-        
-          
-         const redeeemRes=await nftEntity.redeemNft({
+  const redeeemRes=await nftEntity.redeemNft({
           nftPinid:nft.val!.item_pinid,
           collectionPinid:nft.val!.collection_pinid,
           psbtHex:nft.val!.order_id,
@@ -495,19 +463,9 @@ const checkDummyRes= await checkDummyAmount()
           loading.close()
           throw new Error(redeeemRes.msg)
          }
-        } catch (error) {
-          loading.close()
-          ElMessage.error(error as any)
-         
-          // resolve(false)
-        }
       
-      })
-      .catch(error => {
-        //ElMessage.error(error as any)
-      })
-  }
   } catch (error) {
+    loading.close()
     ElMessage.error(error as any)
   }
 
@@ -621,16 +579,10 @@ function share() {
     })
 }
 
-// function transfer() {
-//   // return ElMessage.info(i18n.t('Comming Soon'))
-//   if (nft.val!.nftChain === 'bsv' || nft.val!.nftChain === 'mvc') {
-//     isShowTransfer.value = true
-//   } else {
-//     ElMessage.info(
-//       `${i18n.t('NotSupportCurrentChainNFTTransfer')}: ${nft.val!.nftChain.toUpperCase()}`
-//     )
-//   }
-// }
+function transfer() {
+  // return ElMessage.info(i18n.t('Comming Soon'))
+  isShowTransfer.value = true
+}
 
 function onChangeDetails() {
   isShowDetails.value = !isShowDetails.value

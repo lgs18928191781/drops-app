@@ -58,7 +58,7 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
             const connectionStore=useConnectionStore()
            if(feeType == 'Custom'){
             this.last.currentFeeb={
-                feeRate:customFeeb ? customFeeb : 1000,
+                feeRate:customFeeb ? customFeeb : 5,
                 title:'Custom'
             }
            }else if(connectionStore.currentChain && connectionStore.currentChain == ConnectChain.mvc){
@@ -72,7 +72,7 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
             
             let feeList=await getFeebPlans()
             feeList.push({
-              feeRate:1000,
+              feeRate:5,
               title:'Custom'
             })
             

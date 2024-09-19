@@ -28,7 +28,7 @@ export function useNFTEntity(){
          return ElMessage.error((`${i18n.t('Nfts.psbt_empty')}`))
          }
           const psbt =bitcoinjs.Psbt.fromHex(psbtHex,{ network: networkStore.typedNetwork })
-       
+         
           const estiomateResult= await exclusiveChange({
             psbt: psbt,
             maxUtxosCount:3,
@@ -72,7 +72,7 @@ export function useNFTEntity(){
         return ElMessage.error((`${i18n.t('Nfts.psbt_buy_empty')}`))
        }
         const psbt =bitcoinjs.Psbt.fromHex(orderInfo.psbtHex,{ network: networkStore.typedNetwork })
-        debugger
+        
         const estiomateResult= await exclusiveChange({
           psbt: psbt,
           maxUtxosCount:20,
@@ -219,6 +219,8 @@ export function useNFTEntity(){
          
          if(estiomateResult){
           const {psbt,feeb}=await estimatePsbtFee(psbtHex,feeStore.getCurrentFeeb)
+          console.log('feee',feeb,feeStore.getCurrentFeeb)
+          
           const toSignInputs=await formatToSignInputs(psbt)
           
           const rawTx= await connectionStore.adapter.signPsbt(psbt.toHex(),{
@@ -400,7 +402,7 @@ export function useNFTEntity(){
             buyerAddress:parmas.buyerAddress,
             chain:parmas.chain
           })
-          debugger
+          
           if(orderRes.code == 200){
             const sevicePsbtHex=orderRes.data.psbtHex
             // const bitcoinjs = useBtcJsStore().get!
@@ -411,7 +413,7 @@ export function useNFTEntity(){
               psbtHex:sevicePsbtHex,
               feeDetail:parmas.extraFee
             },true)
-            debugger
+            
             if(estimateResult){
               const revealPsbt= await estimateBuyFee({
                 psbtHex:sevicePsbtHex,
@@ -420,7 +422,7 @@ export function useNFTEntity(){
               
               const targetIndex:number[]=[]
               revealPsbt!.psbt!.data.inputs.forEach((item:any,index:number)=>{
-                if(index > 2){
+                if(index > 3){
                   targetIndex.push(index)
                 }
               })
@@ -433,7 +435,7 @@ export function useNFTEntity(){
                 autoFinalized:false
               })
               console.log("signRes",rawTx)
-              
+                
               if(rawTx?.status == 'canceled'){
                 
                 await cancelBuyNft({
@@ -443,6 +445,7 @@ export function useNFTEntity(){
                ElMessage.error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
                throw new Error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
               }else{
+                
                 const revealBuyRes= await finalySignAndBuyNft({
                   revealPsbtHex:rawTx,
                   originalPsbtHex:parmas.psbtHex,
@@ -583,28 +586,23 @@ export function useNFTEntity(){
         nftPinid:string,
         receiverAddress:string
       }){
+       
+        const feebStore=useFeebStore()
         const connectionStore=useConnectionStore()
         const networkStore=useNetworkStore()
         const bitcoinjs=useBtcJsStore().get!
         const {nftPinid,receiverAddress}=params
         if(!nftPinid || !receiverAddress){
-          return ElMessage.error(`${i18n.t}`)
+          return ElMessage.error(`lost required parameters`)
         } 
         try {
-         const isDummyExist= await checkDummyAmount()
-         const psbt:Psbt= await getDummyUtxoforLegacy(1,SIGHASH_ALL_ANYONECANPAY,true)
-           //第一个output
-           psbt.addOutput({
-            value:DUMMY_UTXO_INPUT_LEGACY,
-            address:connectionStore.last.user.address
-          })  
+         
+          const psbt=new bitcoinjs.Psbt({ network: networkStore.typedNetwork })
+         
 
           const pinInfo=await getPinfromPinidList({
             pinList:[params.nftPinid]
           })
-
-
-
           const nftUtxo= extractTxAndOutputIndex(pinInfo[nftPinid].output)
           
           console.log("pinInfo",pinInfo)
@@ -614,6 +612,7 @@ export function useNFTEntity(){
             sighashType:SIGHASH_ALL_ANYONECANPAY
           }
           // 
+          
           await fillInputUtxo(paymentInput,connectionStore.last.user.address,PIN_UTXO_VALUE)
           fillInternalKey(paymentInput)
           psbt.addInput(paymentInput)
@@ -622,18 +621,19 @@ export function useNFTEntity(){
             value:PIN_UTXO_VALUE
           }) 
 
-         const estimateRes= await estimateTransferFee(psbt,true)
-         if(estimateRes){
-          const {psbt:estimatePsbt}=await estimateTransferFee(estimateRes.psbt)
+         //const estimateRes= await estimateTransferFee(psbt,true)
+         const {psbt:estimatePsbt}=await estimateTransferFee(psbt)
           const rawTx= await connectionStore.adapter.signPsbt(estimatePsbt.toHex())
          
           console.log("signRes",rawTx)
           if(rawTx?.status == 'canceled'){
             return ElMessage.error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
           }else{
+            
             const signPsbt=bitcoinjs.Psbt.fromHex(rawTx,{ network: networkStore.typedNetwork })
             const signHex= signPsbt.extractTransaction().toHex()
              const broadcastRes= await broadcastBTCTx(signHex,networkStore.network)
+             
             if(broadcastRes.code == 200){
               if( broadcastRes.data){
                 return ElMessage.success(`${i18n.t('Nfts.transfer_success')}`)
@@ -643,9 +643,6 @@ export function useNFTEntity(){
             return ElMessage.error(broadcastRes.msg)
             }
           }
-         }else{
-          return ElMessage.error('Cancel transfer')
-         }
 
           
         } catch (error) {
@@ -662,7 +659,8 @@ export function useNFTEntity(){
         mintItem,
         saleNft,
         buyNft,
-        redeemNft
+        redeemNft,
+        transferNft
     }
 
 
