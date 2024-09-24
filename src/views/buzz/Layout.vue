@@ -1,7 +1,7 @@
 <template>
   <BuzzWarpVue>
     <!-- menu -->
-    <div class="buzz-menu-warp" ref="MenuRef">
+    <!-- <div class="buzz-menu-warp" ref="MenuRef">
       <div class="buzz-menu">
         <router-link
           :to="item.path"
@@ -16,11 +16,11 @@
           <span class="name">{{ item.name() }}</span>
         </router-link>
       </div>
-    </div>
+    </div> -->
 
-    <div class="menu-select-wrap" ref="SelectRef">
+    <!-- <div class="menu-select-wrap" ref="SelectRef">
       <div class="menu-select">
-        <!-- <div class="spilt-line"></div> -->
+       
         <div
           :class="[
             'menu-select-item',
@@ -35,7 +35,7 @@
           <span class="name">{{ item.name() }}</span>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- router view -->
     <RouterView v-slot="{ Component, route }">

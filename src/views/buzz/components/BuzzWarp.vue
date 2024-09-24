@@ -27,14 +27,14 @@
     </div>
 
     <!--   -->
-    <div class="fast-btn" ref="FastBtnRef">
+    <!-- <div class="fast-btn" ref="FastBtnRef">
       <a class="top" @click="scrollTop">
         <Icon name="buzz_icon_top" />
       </a>
       <a class="main-border primary" @click="toPublish">
         <Icon name="buzz_icon_post" />
       </a>
-    </div>
+    </div> -->
     <!--   -->
   </div>
 

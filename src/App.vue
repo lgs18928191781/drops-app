@@ -7,7 +7,7 @@
     "
   />
   <div class="flex main" v-else>
-    <LeftNavigationVue v-if="!blackRoute.includes(route.name)" />
+    <!-- <LeftNavigationVue v-if="!blackRoute.includes(route.name)" /> -->
 
     <PullDownVue class="flex1">
       <template #default>
