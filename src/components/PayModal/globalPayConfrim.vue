@@ -63,6 +63,14 @@
             </div>
           </div>
 
+          <div class="py-2 flex flex-row items-center justify-between" v-if="extractFee > 0">
+            <div class="text-[#909399]">{{ i18n.t('Nfts.space_fee') }}</div>
+            <div>
+              <span class="mr-1">{{ space(extractFee) }}</span>
+              <span>Space</span>
+            </div>
+          </div>
+
           <div class="py-2 flex flex-row items-center justify-between">
             <div class="text-[#909399]">{{ i18n.t('Nfts.feebs') }}</div>
             <div>
@@ -75,8 +83,13 @@
         <div class="flex flex-row items-center justify-between">
           <div class="text-[#909399]">{{ i18n.t('Nfts.total_fee') }}</div>
           <div>
-            <span class="mr-1">{{ space(feeInfo.total) }}</span>
+            <span class="mr-1">{{ space(feeInfo.total) }}  </span>
             <span>{{ payType }}</span>
+            <div v-if="extractFee > 0">
+              <span>+</span>
+            <span class="mr-1">{{ space(extractFee) }}  </span>
+            <span>Space</span>
+            </div>
           </div>
         </div>
       </div>
@@ -119,6 +132,8 @@ import { ref } from 'vue'
 import { Router } from 'vue-router'
 import { space } from '@/utils/filters'
 import {type feeInfoType} from '@/hooks/use-pay-modal-entity'
+import { ElMessage } from 'element-plus'
+//import i18n from '@/utils/i18n'
 
 
 interface Props {
@@ -131,19 +146,24 @@ interface Props {
   payType: SdkPayType
   feeInfo: feeInfoType
   basicType:'basic' | 'mint' | 'buy'
+  extractFee:number
 }
 
 const props = withDefaults(defineProps<Props>(), {
   payType: SdkPayType.BTC,
 })
 
+console.log("props",props.i18n)
+
 const isShow = ref(true)
 
 const emit = defineEmits(['changeConfirmVisible', 'confirm', 'cancel', 'recharge'])
 
-function confirm() {
-  emit('confirm')
-  isShow.value = false
+async function confirm() {
+
+    emit('confirm')
+    isShow.value = false
+  
 }
 
 function cancel() {

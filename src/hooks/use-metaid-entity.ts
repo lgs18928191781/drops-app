@@ -9,6 +9,10 @@ import {useFeebStore} from '@/stores/feeb'
 import {FollowInfo} from '@/api/follow'
 import { useNetworkStore } from '@/stores/network'
 import {computed} from 'vue'
+import {  createCollectionCover} from "@/api/mrc721-api";
+import Decimal from 'decimal.js-light'
+import {usePayModalEntity,type feeInfoType} from '@/hooks/use-pay-modal-entity'
+import { CollectionMintChain,SdkPayType } from '@/enum'
 export type EntityOptions={
     noBroadcast:'yes' | 'no'
     feeRate?:number
@@ -499,10 +503,13 @@ export function useMetaIDEntity(){
 
 
 
-   async function mintNftEntity(params:{body:NftCollection,attachments:AttachmentItem[] | [],noBroadcast:boolean}) {
+   async function mintNftEntity(params:{body:NftCollection,attachments:AttachmentItem[] | [],lockAddress:string,noBroadcast:boolean}) {
+    console.log("params.noBroadcast",params.noBroadcast)
+    
     const connectStore = useConnectionStore()
     const networkStore=useNetworkStore()
-    
+    const payModalEntity=usePayModalEntity()
+    let coverRes
     try {
        
         let nftCollecitonDescEntity
@@ -512,36 +519,93 @@ export function useMetaIDEntity(){
           }
    
                     if(isEmpty(params.attachments)){
-                        const imageRes= await BtcFileEntity(params.attachments,'no')//params.noBroadcast ? 'no' : 'yes'
-                        finalBody.cover=`metafile://${imageRes.revealTxIds[0]}i0`  
+                        let paramsData=new FormData()
+                        paramsData.append('file',params.attachments[0].originFile)
+                        paramsData.append('checkonly',params.noBroadcast ? 0 : 1)
+                        paramsData.append('lockAddress',params.lockAddress)
+                         coverRes= await createCollectionCover(paramsData)
+                        
+                        if(coverRes.code == 200){
+                            finalBody.cover=`metafile://${coverRes.data.pinId}`
+                            console.log(" finalBody.cover", finalBody.cover)
+                            
+                        }else{
+                            throw new Error(`create collection cover fail`)
+                        }
+                        // const imageRes= await BtcFileEntity(params.attachments,'no')//params.noBroadcast ? 'no' : 'yes'
+                        // finalBody.cover=`metafile://${imageRes.revealTxIds[0]}i0`  
                     }
-                    nftCollecitonDescEntity=await loadBtc(mintNftDescSchema(finalBody.name),{
-                        connector:connectStore.last
-                    })
-                    const createCollectionDescRes=await nftCollecitonDescEntity.create({
-                        dataArray:[
-                           {
-                            body:JSON.stringify(finalBody),
-                            flag:import.meta.env.VITE_BTC_METAID_FLAG
-                           }
-                        ],
-                        options:{
-                            noBroadcast:'no',//params.noBroadcast ? 'no' : 'yes',
-                            feeRate:feebStore.getCurrentFeeb,
-                            service: {
-                                address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
-                                satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
+                    if(!params.noBroadcast){
+                        nftCollecitonDescEntity=await loadBtc(mintNftDescSchema(finalBody.name),{
+                            connector:connectStore.last
+                        })
+                    }
+                    let createCollectionDescRes
+                    if(!params.noBroadcast){
+                        createCollectionDescRes =await nftCollecitonDescEntity.create({
+                            dataArray:[
+                               {
+                                body:JSON.stringify(finalBody),
+                                flag:import.meta.env.VITE_BTC_METAID_FLAG
+                               }
+                            ],
+                            options:{
+                                noBroadcast:params.noBroadcast == true ? 'yes'  : 'no',
+                                feeRate:feebStore.getCurrentFeeb,
+                                service: {
+                                    address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
+                                    satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
+                                }
+                            }
+                        })
+                    }
+                 
+                    
+
+                    if(params.noBroadcast){
+                        const {txFee}=coverRes!.data
+                        //const extractFee=new Decimal(txFee!).div(10**8).toNumber()
+                        const feeInfo={
+                          basic:0,
+                          service:0,//import.meta.env.VITE_MINT_NFT_SERVICE_FEE,
+                          miner:0,
+                          feeb:1,
+                          total:txFee
+                        }
+                        const result= await payModalEntity.awaitPayConfrim(SdkPayType.SPACE,feeInfo.total,feeInfo,'basic',0)
+                        
+                        if(result){
+                            return {
+                                isPay:result,
+                                coverPinId:finalBody.cover,
+                                txFee:coverRes!.data.txFee,
+                                receiverAddress:coverRes!.data.receiverAddress
+                            }
+                        }else{
+                            return {
+                                isPay:result,
+                                
                             }
                         }
-                    })
-                     if(isEmpty(createCollectionDescRes.revealTxIds)){
+                       
+                      
+                       }
+
+
+                     if(isEmpty(createCollectionDescRes!.revealTxIds)){
+                        console.log("finalBody.cover",finalBody.cover)
+                        
                         return {
                             createCollectionDescRes,
-                            coverPinId:finalBody.cover
+                            coverPinId:finalBody.cover,
+                            txFee:coverRes!.data.txFee,
+                            receiverAddress:coverRes!.data.receiverAddress
                         }
                     }
 
    }catch (error) {
+
+    
     throw new Error(error as any)
 }
    }

@@ -173,6 +173,53 @@ const onSubmit = async() => {
   if(existNfts?.collectionPinId){
     return ElMessage.error(`${i18n.t('Nfts.lanuch_existNfts')}`)
   }else{
+    const preMint = await mintNftEntity({
+    body:{
+      name:form.name,
+      totalSupply:+form.totalSupply,
+      royaltyRate:+form.royaltyRate,
+      desc:form.desc,
+      website:form.website,
+      cover:'',
+      metadata:form.metadata
+    },
+    attachments:[form.originFile],
+    lockAddress:'',
+    noBroadcast:true
+  })
+  if(preMint!.isPay){
+
+    if(preMint!.txFee > 0){
+    
+    const mvcBalance= await window.metaidwallet.getMvcBalance()
+    
+    if(Number(mvcBalance.total) < preMint!.txFee ){
+      return ElMessage.error(`${i18n.t('Nts.mvc_balance_noenough')},${i18n.t('Nts.mvc_balance_need')} ${new Decimal(totalFee).div(10**8).toNumber()} Space`)
+    }
+  }
+  const mvcTransfer=await window.metaidwallet.transfer({
+  tasks:[
+    {
+      receivers:[
+        {
+          address:preMint!.receiverAddress,
+          amount:preMint!.txFee
+        }
+      ]
+    }
+  ]
+})  
+
+      if(mvcTransfer?.status == "canceled"){
+        return ElMessage.error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
+      }
+
+      if(!mvcTransfer.txids.length){
+ 
+        return ElMessage.error(`${i18n.t(`Nfts.pay_file_fail`)}`)
+        }
+
+
     const {createCollectionDescRes,coverPinId} = await mintNftEntity({
     body:{
       name:form.name,
@@ -184,9 +231,10 @@ const onSubmit = async() => {
       metadata:form.metadata
     },
     attachments:[form.originFile],
+    lockAddress:preMint!.receiverAddress,
+    noBroadcast:false
   })
- 
-  
+
   if( createCollectionDescRes?.revealTxIds.length){
     const collectionPinid=`${createCollectionDescRes.revealTxIds[0]}i0`
     const genesisRes= await genesisCollection({
@@ -219,10 +267,10 @@ const onSubmit = async() => {
       const issueRes=await issueCollection({
         collectionInfo
       })
-
+      
       console.log("issueRes",issueRes)
       
-        if(issueRes.code == 200){
+      if(issueRes.code == 200){
        
       genesisStore.add({
         totalSupply:+form.totalSupply,
@@ -238,8 +286,8 @@ const onSubmit = async() => {
         autoMarket:route.params.type == '0' ? false : true,
         genesisTimestamp:Date.now(),
         metaId:connectionStore.last.metaid,
-        initialPrice:'',
-        priceGrowth:'',
+        initialPrice:0,
+        priceGrowth:0,
         minted:0,
         currentSupply:0
         })
@@ -252,6 +300,13 @@ const onSubmit = async() => {
    
 
   }
+
+
+
+  }else{
+    return ElMessage.error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
+  }
+
   }
 
 

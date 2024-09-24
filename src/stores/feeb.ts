@@ -99,7 +99,7 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
           }else{
             const feeList= await getFeebPlans()
             feeList.push({
-              feeRate:1000,
+              feeRate:5,
               title:'Custom'
             })
             this.last.feeRateList=feeList

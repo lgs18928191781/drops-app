@@ -1260,6 +1260,7 @@ declare interface UploadFileData{
       collectionPinid:string
       rawTx:string
       commitAddress:string[]
+      lockAddress:string
 }
 
 declare interface NftsCollection{

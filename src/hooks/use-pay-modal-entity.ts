@@ -19,7 +19,7 @@ export type feeInfoType = {
 }
 
 export function usePayModalEntity() {
-  function awaitPayConfrim(payType: SdkPayType, useAmount: number, feeInfo: feeInfoType, basicType:'basic' | 'mint' | 'buy') {
+  function awaitPayConfrim(payType: SdkPayType, useAmount: number, feeInfo: feeInfoType, basicType:'basic' | 'mint' | 'buy',extractFee:number=0) {
     return new Promise<boolean>((resolve, reject) => {
       const userStore = useUserStore()
       if (
@@ -42,6 +42,7 @@ export function usePayModalEntity() {
             router,
             payType,
             basicType,
+            extractFee,
             onConfirm: () => {
               setTimeout(() => {
                 document.getElementById(divId)?.remove()

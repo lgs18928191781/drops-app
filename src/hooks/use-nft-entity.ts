@@ -48,14 +48,14 @@ export function useNFTEntity(){
             total:new Decimal(estiomateResult!.fee).add(mintPrice).add(import.meta.env.VITE_MINT_NFT_SERVICE_FEE).toNumber()
           }
           const result= await payModalEntity.awaitPayConfrim(SdkPayType.BTC,feeInfo.total,feeInfo,'mint')
-      
+        
           return result
          }
          
          return estiomateResult
         } catch (error) {
-          
-          throw new Error(error as any)
+          ElMessage.error((error as any).message)
+          return false
         }
       }
 
@@ -102,7 +102,8 @@ export function useNFTEntity(){
        
        return estiomateResult
       } catch (error) {
-        throw new Error(error as any)
+        ElMessage.error((error as any).message)
+        return false
       }
     }
 
@@ -142,7 +143,8 @@ export function useNFTEntity(){
        
        return estiomateResult
       } catch (error) {
-        throw new Error(error as any)
+        ElMessage.error((error as any).message)
+        return false
       }
     }
 
@@ -177,7 +179,8 @@ export function useNFTEntity(){
        
        return estiomateResult
       } catch (error) {
-        throw new Error(error as any)
+        ElMessage.error((error as any).message)
+        return false
       }
     }
 

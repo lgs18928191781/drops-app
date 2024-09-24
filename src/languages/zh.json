@@ -1342,7 +1342,7 @@
   },
   "NFTs": {
     "genesis_nfts": "创建NFTs系列",
-    "lanuch_title1": "选择您所发行的NFTs基于的区块链",
+    "lanuch_title1": "选择您所发行的专辑基于的区块链",
     "lanuch_title2": "是否启用自动做市机制",
     "lanuch_mint": "铸造",
     "lanuch_minted": "已铸造",
@@ -1356,14 +1356,14 @@
     "launch_no": "否",
     "launch_yes": "是",
     "launch_next": "下一步",
-    "launch_create": "铸造NFTs",
-    "launch_form_title1": "NFTs封面",
-    "launch_title2": "NFTs名称",
-    "launch_placeholder1": "请输入NFTs名称",
+    "launch_create": "铸造专辑",
+    "launch_form_title1": "专辑封面",
+    "launch_title2": "专辑名称",
+    "launch_placeholder1": "请输入专辑名称",
     "launch_title3": "NFTs简介",
-    "launch_placeholder2": "请输入NFTs简介",
-    "launch_title4": "NFTs发行总量",
-    "launch_placeholder3": "请输入NFTs总量",
+    "launch_placeholder2": "请输入专辑简介",
+    "launch_title4": "专辑发行总量",
+    "launch_placeholder3": "请输入专辑总量",
     "lauch_delete": "删除",
     "lanuch_chain": "所在链：",
     "lanuch_makemarket": "是否自动做市:",
@@ -1398,9 +1398,9 @@
     "lanuch_cover_null": "图片/文件不能为空",
     "lanuch_upload_process": "上传进度",
     "lanuch_edit": "编辑",
-    "launch_title5": "NFTs版税",
-    "launch_title6": "NFTs 网站",
-    "launch_placeholder6": "请输入NFTs的网站",
+    "launch_title5": "专辑版税",
+    "launch_title6": "专辑网站",
+    "launch_placeholder6": "请输入专辑的网站",
     "lanuch_created_desc_fail": "专辑名称已创建成功但专辑信息创建失败，请重新点击创建",
     "lanuch_existNfts": "专辑名称已被创建",
     "lanuch_auto_market_title": "自动做市机制",
@@ -1434,7 +1434,9 @@
     "lanuch_morethan_amount": "单笔交易最大铸造数量不允许超过30个",
     "not_allow_todetail": "未铸造完成的NFT暂不支持查看详情",
     "transfer_success": "NFT转账成功",
-    "lanuch_saleFee": "NFT售价"
+    "lanuch_saleFee": "NFT售价",
+    "space_fee": "NFT文件铸造上链费",
+    "pay_file_fail": "NFT文件广播失败"
   },
   "offsale not allowed": "请先下架后再进行赎回操作",
   "redeemConfirm": "你确认要赎回",
@@ -1447,5 +1449,9 @@
     "warning": "温馨提示",
     "confirm": "确认",
     "build_error": "DummyUtxo构建失败"
+  },
+  "Nts": {
+    "mvc_balance_noenough": "铸造NFT需要使用到Space作为NFT文件上链时手续费，检测到你的Space余额不足支付，请充值后再发起操作",
+    "mvc_balance_need": "至少需要上链手续费："
   }
 }

@@ -39,7 +39,7 @@
             <img class="w-full h-full object-contain" :src="formatDataUrl(nft.id)" alt="">
           </div> -->
           
-            <NFTCover :cover="[formatDataUrl(nft.id)]" />
+            <NFTCover :cover="[formatDataUrl(nft.contentSummary)]" />
           </RouterLink>
         </ElSkeleton>
 

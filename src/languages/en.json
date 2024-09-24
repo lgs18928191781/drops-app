@@ -1347,8 +1347,8 @@
     "NFTs onsale_success": "Successfully listed"
   },
   "NFTs": {
-    "genesis_nfts": "Creating a series of NFTs",
-    "lanuch_title1": "Select the blockchain your NFTs will be based on",
+    "genesis_nfts": "Creating a collection of NFTs",
+    "lanuch_title1": "Select the blockchain your collection will be based on",
     "lanuch_title2": "Enable automatic market-making mechanism",
     "lanuch_mint": "Mint",
     "lanuch_minted": "Minted",
@@ -1362,14 +1362,14 @@
     "launch_no": "No",
     "launch_noSupport": "The Bitcoin asset does not currently support automatic market-making mechanisms.",
     "launch_next": "Next",
-    "launch_create": "Create NFTs",
-    "launch_form_title1": "NFTs cover",
-    "launch_title2": "NFTs name",
-    "launch_placeholder1": "Please enter the NFTs name",
+    "launch_create": "Create Collection",
+    "launch_form_title1": "Collection cover",
+    "launch_title2": "Collection name",
+    "launch_placeholder1": "Please enter the collection name",
     "launch_title3": "NFTs description",
-    "launch_placeholder2": "Please enter the NFTs description",
-    "launch_title4": "Total supply of NFTs",
-    "launch_placeholder3": "Please enter the total supply of NFTs",
+    "launch_placeholder2": "Please enter the collection description",
+    "launch_title4": "Total supply of collection",
+    "launch_placeholder3": "Please enter the total supply of collection",
     "lauch_delete": "Remove",
     "lanuch_chain": "Blockchain:",
     "lanuch_makemarket": "Provides automated liquidity:",
@@ -1404,9 +1404,9 @@
     "lanuch_overLimit_amount": "The current minting amount exceeds the maximum minting limit.",
     "lanuch_cover_null": "The image/file cannot be empty.",
     "lanuch_upload_process": "Upload progress",
-    "launch_title5": "NFTs royaltyRate",
-    "launch_title6": "NFTs website",
-    "launch_placeholder6": "Please enter the website for NFTs",
+    "launch_title5": "Collection royaltyRate",
+    "launch_title6": "Collection website",
+    "launch_placeholder6": "Please enter the website for collection",
     "lanuch_created_desc_fail": "Collect name creation succeeded but Collect information creation failed, please click create again.",
     "lanuch_existNfts": "Collection name has been created.",
     "lanuch_auto_market_title": "Automated Market Maker (AMM)",
@@ -1440,7 +1440,9 @@
     "lanuch_morethan_amount": "Maximum minting per transaction is not allowed to exceed 30",
     "not_allow_todetail": "NFTs that have not been minted yet do not support viewing details",
     "transfer_success": "NFT transfer success",
-    "lanuch_saleFee": "NFT sale price"
+    "lanuch_saleFee": "NFT sale price",
+    "space_fee": "NFT minting and miner fee",
+    "pay_file_fail": "NFT file broadcasting failed"
   },
   "offsale not allowed": "Please unlist before proceeding with the redemption operation.",
   "redeemWaring1": "The redemption operation will destroy the NFT. Please consider carefully!",
@@ -1452,5 +1454,9 @@
     "not_enough": "Insufficient available Dummy UTXOs, please perform a split operation before continuing the transaction.",
     "warning": "Friendly Reminder",
     "confirm": "Confirm"
+  },
+  "Nts": {
+    "mvc_balance_noenough": "To mint an NFT, you need to use Space as the fee for uploading the NFT file to the blockchain. Your Space balance is insufficient to cover the fee; please recharge before proceeding.",
+    "mvc_balance_need": "At least a miner fee is required:"
   }
 }

@@ -33,7 +33,7 @@
               </div>
               <div class="drsc">
                 <template v-if="collection.val.nft_desc.length > 100">
-                  <span class="text"> {{ collection.val?.nft_desc.slice(0, 100) }}...</span
+                  <span class="text break-words"> {{ collection.val?.nft_desc.slice(0, 100) }}...</span
                   ><a @click="isShowContent = true">{{ $t('NFT.Discover More') }}</a>
                 </template>
                 <template v-else>{{ collection.val.nft_desc }}</template>

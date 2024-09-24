@@ -1,7 +1,7 @@
 import HttpRequest from '@/utils/request'
 import {NftsLaunchPadChainSymbol} from '@/data/constants'
 const manHost=import.meta.env.VITE_MAN_API
-const nftOrderHost=`https://general.mvcscan.com/mrc721`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//` //`http://127.0.0.1:3001`// //https://general.mvcscan.com/mrc721
+const nftOrderHost=`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//` //`http://127.0.0.1:3001`// //https://general.mvcscan.com/mrc721
 const nftFilerHost=`https://general.mvcscan.com/mrc721-file` //https://general.mvcscan.com/mrc721
 const NftOrders = new HttpRequest(`${nftOrderHost}/nfts-orders`, {
   header: {
@@ -117,6 +117,11 @@ export const uploadNftsFile = async (params: FormData):Promise<apiMrc721Response
 
 export const uploadNftsFilePath = async (params: UploadFileData):Promise<apiMrc721Response> => {
   return NftOrders.post('/uploads', params )
+}
+
+
+export const createCollectionCover = async (params: FormData):Promise<apiMrc721Response> => {
+  return NftOrders.post('/build-collection-cover', params, { headers: { 'Content-Type': 'multipart/form-data' } })
 }
 
 export const genesisCollection = async (params: { collectionPinid: string,collectionName:string,address:string }):Promise<apiMrc721Response> => {

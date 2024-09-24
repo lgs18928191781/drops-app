@@ -17,6 +17,13 @@ declare interface BtcUtxos {
   vout: number
 }
 
+declare interface tasksType{
+  receivers:Array<{
+    address:string
+    amount:number
+  }>
+}
+
 declare interface Window {
   // bitcoinjs: BitcoinJs
   // ecpair: ECPairFactory
@@ -25,6 +32,15 @@ declare interface Window {
   ethereum: import('ethers').providers.ExternalProvider
   provider?: MetaMaskEthereumProvider
   metaidwallet: {
+    transfer:(params:{tasks:tasksType[]})=>Promise<{
+      brodcasted:boolean
+      res:Array<{
+        id:number
+        txHex:string
+        txid:string
+      }>
+      txids:string[]
+    }>
     getUtxos: (parmas:{needRawTx?: boolean, useUnconfirmed?: boolean}) => Promise<BtcUtxos[]>
     verifySignature(verifyObj: { message: unknown; signature: any; encoding: string }): any
     getPublicKey(): any

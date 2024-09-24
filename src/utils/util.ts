@@ -1962,7 +1962,17 @@ export function formatDataUrltoBase64(content:string,type:string){
 }
 
 export function formatDataUrl(pinid:string){
-  return `${import.meta.env.VITE_MAN_API}/content/${pinid}`
+  try {
+    const imgPin=JSON.parse(pinid)
+    if(!imgPin?.attachment[0]){
+      return ``
+    }else{
+      return `${imgPin.attachment[0].content}`
+    }
+  } catch (error) {
+     return ``
+  }
+   //`${import.meta.env.VITE_MAN_API}/content/${pinid}`
 }
 
 

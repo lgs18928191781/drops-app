@@ -1323,7 +1323,11 @@ async function preMint() {
     
     if(res?.code == 200){
       return res.data
-    }else return []
+    }else return {
+      commitAddressList:[],
+      totalFee:0,
+      receiverAddress:''
+    }
 
 
     } catch (error) {
@@ -1331,7 +1335,7 @@ async function preMint() {
     }
 }
 
-async function estimateBuildTxFee(targetAddress:string[] = [],feeb:number,checkOnly:boolean=false){
+async function estimateBuildTxFee(targetAddress:string[] = [],feeb:number,extractFee:number,checkOnly:boolean=false){
   
   try {
     if(!targetAddress.length){
@@ -1374,14 +1378,17 @@ async function estimateBuildTxFee(targetAddress:string[] = [],feeb:number,checkO
       feeb:estiomateResult!.feeb,
       total:new Decimal(estiomateResult!.fee).add(newFile.length * 546).add(import.meta.env.VITE_MINT_NFT_SERVICE_FEE).toNumber()
     }
-    const result= await payModalEntity.awaitPayConfrim(SdkPayType.BTC,feeInfo.total,feeInfo,'basic')
+    const result= await payModalEntity.awaitPayConfrim(SdkPayType.BTC,feeInfo.total,feeInfo,'basic',extractFee)
 
     return result
    }
    console.log("estiomateresult",estiomateResult)
    return estiomateResult
   } catch (error) {
-    
+    ElMessage.error((error as any).message)
+    return false
+    // debugger
+    // return false
   }
 }
 
@@ -1423,18 +1430,20 @@ async function estimatePsbtFee(psbtHex:string,feeb:number,checkOnly:boolean=fals
 }
 
 async function finallyMint() {
-  
+  const preloading = openLoading()
     try {
     if(Number(autoMaketData.value.initialPrice) == 0){
+      preloading.close()
       return ElMessage.error(`${i18n.t('Nfts.lanuch_automarket_set')}`)
     }
     
-    const estiomateResult= await estimateBuildTxFee([],feeStore.getCurrentFeeb,true)
-    
-    if(!estiomateResult){
+    // const estiomateResult= await estimateBuildTxFee([],feeStore.getCurrentFeeb,0,true)
+    // 
+    // if(!estiomateResult){
   
-      return ElMessage.error(`${i18n.t('Nfts.cancel_transation')}`)
-    }
+    //   return ElMessage.error(`${i18n.t('Nfts.cancel_transation')}`)
+    // }
+    let lockAddress=''
     
     let params=new FormData()
     let nftListInfo:UploadFileData={
@@ -1445,7 +1454,8 @@ async function finallyMint() {
       nftName:[],
       collectionPinid:'',
       rawTx:'',
-      commitAddress:[]
+      commitAddress:[],
+      lockAddress:''
     }
      
     for(let i=0;i<newFile.length;i++){
@@ -1480,20 +1490,62 @@ async function finallyMint() {
     // params.append('metaid',currentNftsCollect.value?.metaId!)
     // params.append('name',currentNftsCollect.value?.name!)
 
-    const commitAddressList =await preMint()
-
+    const {commitAddressList,totalFee,receiverAddress} =await preMint()
+    lockAddress=receiverAddress
 if(commitAddressList.length){
   nftListInfo.commitAddress=commitAddressList
   // params.append('commitAddress',JSON.stringify(commitAddressList))
 
 
 }else{
-  
+  preloading.close()
   throw new Error(`${i18n.t('Nfts.lanuch_generate_commit_address_fail')}`)
 }
 
-const {psbt:Psbt1}=await estimateBuildTxFee(commitAddressList,feeStore.getCurrentFeeb)
+if(totalFee > 0){
+    
+    const mvcBalance= await window.metaidwallet.getMvcBalance()
+    
+    if(Number(mvcBalance.total) < totalFee ){
+      preloading.close()
+      return ElMessage.error(`${i18n.t('Nts.mvc_balance_noenough')},${i18n.t('Nts.mvc_balance_need')} ${new Decimal(totalFee).div(10**8).toNumber()} Space`)
+    }
+  }
 
+
+
+const estiomateResultAndMvc= await estimateBuildTxFee(commitAddressList,feeStore.getCurrentFeeb,totalFee,true)
+
+if(!estiomateResultAndMvc){
+  preloading.close()
+  return 
+}
+
+const mvcTransfer=await window.metaidwallet.transfer({
+  tasks:[
+    {
+      receivers:[
+        {
+          address:receiverAddress,
+          amount:totalFee
+        }
+      ]
+    }
+  ]
+})
+
+if(mvcTransfer?.status == "canceled"){
+  preloading.close()
+  return ElMessage.error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
+}
+
+if(!mvcTransfer.txids.length){
+  preloading.close()
+  return ElMessage.error(`${i18n.t(`Nfts.pay_file_fail`)}`)
+}
+
+const {psbt:Psbt1}=await estimateBuildTxFee(commitAddressList,feeStore.getCurrentFeeb,totalFee)
+preloading.close()
 const loading = openLoading()
 //const toSignInputs=await formatToSignInputs(Psbt1)
 const rawTx= await connectionStore.adapter.signPsbt(Psbt1.toHex())
@@ -1511,6 +1563,8 @@ throw new Error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
 nftListInfo.rawTx = rawTx
 //params.append('rawTx',rawTx)
 }
+nftListInfo.lockAddress=lockAddress
+
 //uploadNftsFilePath
 uploadNftsFilePath(nftListInfo).then((res)=>{
   
@@ -1547,18 +1601,18 @@ uploadNftsFilePath(nftListInfo).then((res)=>{
 
          
         }else{
-          
+          preloading.close()
           throw new Error(response.msg)
         }
     }).catch(err=>{
-      
+      preloading.close()
       throw new Error(`${err.toString()}`)
     })
 
   
 
   } catch (error) {
-   
+    preloading.close()
     return ElMessage.error(error as any)
     
   }
@@ -1616,7 +1670,7 @@ const onSubmitNewCollection = async () => {
 
 
     
-    const {createCollectionDescRes,coverPinId} = await mintNftEntity({
+    const preMint = await mintNftEntity({
     body:{
       name:createCollectionform.name,
       totalSupply:createCollectionform.totalSupply,
@@ -1627,9 +1681,55 @@ const onSubmitNewCollection = async () => {
       metadata:createCollectionform.metadata
     },
     attachments:[createCollectionform.originFile],
+    lockAddress:'',
+    noBroadcast:true
   })
 
-  
+  if(preMint!.isPay){
+    if(preMint!.txFee > 0){
+    
+    const mvcBalance= await window.metaidwallet.getMvcBalance()
+    
+    if(Number(mvcBalance.total) < preMint!.txFee ){
+      return ElMessage.error(`${i18n.t('Nts.mvc_balance_noenough')},${i18n.t('Nts.mvc_balance_need')} ${new Decimal(totalFee).div(10**8).toNumber()} Space`)
+    }
+    const mvcTransfer=await window.metaidwallet.transfer({
+  tasks:[
+    {
+      receivers:[
+        {
+          address:preMint!.receiverAddress,
+          amount:preMint!.txFee
+        }
+      ]
+    }
+  ]
+}) 
+
+if(mvcTransfer?.status == "canceled"){
+        return ElMessage.error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
+      }
+
+      if(!mvcTransfer.txids.length){
+ 
+        return ElMessage.error(`${i18n.t(`Nfts.pay_file_fail`)}`)
+        }
+
+        const {createCollectionDescRes,coverPinId} = await mintNftEntity({
+    body:{
+      name:createCollectionform.name,
+      totalSupply:createCollectionform.totalSupply,
+      royaltyRate:createCollectionform.royaltyRate,
+      desc:createCollectionform.desc,
+      website:createCollectionform.website,
+      cover:'',
+      metadata:createCollectionform.metadata
+    },
+    attachments:[createCollectionform.originFile],
+    lockAddress:preMint!.receiverAddress,
+    noBroadcast:false
+  })
+
   if( createCollectionDescRes?.revealTxIds.length){
     const collectionPinid=`${createCollectionDescRes.revealTxIds[0]}i0`
     const genesisRes= await genesisCollect({
@@ -1683,15 +1783,20 @@ const onSubmitNewCollection = async () => {
     autoMarket: createCollectionform.autoMakeMarket,
     genesisTimestamp: Date.now(),
     metaId: connectionStore.last.metaid,
-    initialPrice:'',
-    priceGrowth:''
+    initialPrice:0,
+    priceGrowth:0
   })
   toNftsDetail(`${collectionPinid}`)
 }
    
-
   }
 
+
+
+  }
+  }else{
+    return ElMessage.error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
+  }
   }
   } catch (error) {
     

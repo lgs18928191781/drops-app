@@ -313,7 +313,7 @@
                       @click.stop="toNFT(nft.id,item.collection_pinid)"
                     >
                     <!-- <img class="rounded-lg" :src="formatDataUrltoBase64(nft.contentBody,nft.contentTypeDetect)" alt=""> -->
-                      <NFTCoverVue :cover="[formatDataUrl(nft.id)]" />
+                      <NFTCoverVue :cover="[formatDataUrl(nft.contentSummary)]" />
                       <!-- <div class="saleNftName">
                         <span>{{ nft.nft_name }}</span>
                       </div> -->
