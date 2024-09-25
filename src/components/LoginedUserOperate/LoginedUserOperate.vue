@@ -15,7 +15,7 @@
             <span class="new-tag">{{ dummyAmount }}</span>
           </div> -->
 
-  <div class="net-warp mr-3" v-show="connectStore.currentChain !== ''">
+  <div class="net-warp bg-[#312f35] py-1 px-1.5 rounded-md mr-3" v-show="connectStore.currentChain !== ''">
     <ElDropdown class="network-style" trigger="click">
       <span class="el-dropdown-link flex items-center text-sm font-medium">
         <img
@@ -59,19 +59,19 @@
     </ElDropdown>
   </div>
 
-  <div class="gas-warp mr-3 hidden md:block" v-show="connectStore.currentChain == 'btc'">
+  <div class="gas-warp  mr-3 hidden md:block" v-show="connectStore.currentChain == 'btc'">
     <div>
       <!-- 更多操作 -->
       <ElDropdown trigger="click">
         <a
-          class="more flex flex-align-center flex-pack-center text-[#303133] font-medium text-sm px-2 py-1.5 "
+          class="more text-[#fff] flex flex-align-center flex-pack-center text-[#303133] font-medium text-sm px-2 py-1.5 "
         >
-          <img src="@/assets/images/icon_gas.png" alt="" class="w-[18px] h-[18px] mr-1.5" />
+          <img src="@/assets/images/icon_gas.png" alt="" class="w-[18px] h-[18px] mr-2.5" />
           <!-- <LucideIcon name="Fuel" :size="20" class="text-white font-bold mr-1.5" strokeWidth="2" /> -->
-          <span class="mr-1">{{ feebStore.last.currentFeeb.title }}:</span>
+          <!-- <span class="mr-1">{{ feebStore.last.currentFeeb.title }}:</span> -->
           <div>
-            <span class="mr-1">{{ feebStore.getCurrentFeeb}}</span
-            ><span>sat/vB</span>
+            <span class="mr-1 py-1 px-2 w-7 bg-[#312E35] rounded-md">{{ feebStore.getCurrentFeeb}}</span
+            ><span class="text-[#CACACA]">sat/vB</span>
           </div>
           <img src="@/assets/images/list_icon.png" alt="" class="w-3 h-3 ml-1.5" />
         </a>
@@ -206,7 +206,7 @@
   </template>
 
   <!-- 更多操作 -->
-  <ElDropdown trigger="click" @visible-change="val => (isShowUserMenu = val)">
+  <!-- <ElDropdown trigger="click" @visible-change="val => (isShowUserMenu = val)">
     <a
       class="more flex flex-align-center flex-pack-center user-warp-item"
       :class="{ active: isShowUserMenu }"
@@ -233,7 +233,7 @@
         </ElDropdownItem>
       </ElDropdownMenu>
     </template>
-  </ElDropdown>
+  </ElDropdown> -->
 
   <SetUserInfoVue
     v-if="isShowSetUserInfo"

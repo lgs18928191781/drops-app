@@ -1,51 +1,62 @@
 <template>
   <!-- 连接钱包 -->
   <ElDialog
+  width="560px"
     :model-value="rootStore.isShowLogin"
     :close-on-click-modal="false"
-    :show-close="!loading"
-    class="none-header"
+    :show-close="true"
+   
     @close="onModalClose"
   >
     <div class="login-warp flex">
-      <a class="close flex flex-align-center flex-pack-center" @click="closeModal">
-        <Icon name="x_mark" />
-      </a>
-      <div class="flex1 login-cover">
+      <!-- <a class="close flex flex-align-center " @click="closeModal">
+       
+         <img :src="closeIcon" alt="">
+      </a> -->
+      <!-- <div class="flex1 login-cover">
         <img src="@/assets/images/login_img.png" />
-      </div>
+      </div> -->
       <div class="flex1">
-        <div class="flex items-center mb-16">
-          <img src="@/assets/images/welcome.png" class="w-[45px] h-[50px] mr-6" />
+       
+       <div class="flex items-center justify-center mb-10">
+        <div class="text-2xl text-[#94909F] font-semibold">{{ $t('connect_your_wallet') }}</div>
+          <!-- <img src="@/assets/images/welcome.png" class="w-[45px] h-[50px] mr-6" />
           <div>
             <div class="text-[26px] font-medium text-[#303133] mb-[2px]">Welcome to Show3！</div>
             <div class="text-[14px] text-[#909399]">NFTize Your Social Life.</div>
-          </div>
+          </div>  -->
         </div>
         <!-- 选择钱包 -->
-        <div class="connect-wallet flex flex-v" v-if="status === ConnectWalletStatus.Watting">
+        <div class="connect-wallet flex items-center justify-center  flex-v" v-if="status === ConnectWalletStatus.Watting">
           <div class="connect-wallet-section" v-for="(item, index) in wallets" :key="index">
-            <div class="title">{{ item.title() }}</div>
+            <!-- <div class="title">{{ item.title() }}</div> -->
             <div class="btn-list flex flex-v">
               <div
-                class="main-border flex flex-align-center"
+                class="main-border  bg-[#1b1b20] cursor-pointer px-11 rounded-xl py-4 flex flex-align-center "
                 @click="wallet.fun()"
                 v-for="(wallet, walletIndex) in item.list"
                 :key="walletIndex"
               >
-                <img class="icon" :src="wallet.icon" />
-                {{ wallet.name() }}
+                <img class="icon mr-3.5" :src="wallet.icon" />
+                <span class="text-base"> {{ wallet.name() }}</span>
+               
                 <span class="desc">{{ wallet.desc() }}</span>
               </div>
             </div>
           </div>
+
+          <div class="policy-warp mb-4 flex flex-col items-center justify-center text-sm" >
+            <span class="text-[#817B8F]">{{ $t('policy-aggree') }}</span>
+            <span class="text-[#fff] cursor-pointer mt-1.5">{{ $t('termuse') }}</span>
+          </div>
+          
         </div>
 
         <div v-if="status === ConnectWalletStatus.SelectChain">
-          <div class="text-base text-[#303133]">
+          <!-- <div class="text-base text-[#303133]">
             Show3 is a social app that supports multiple links, make sure you are using your home
             network.
-          </div>
+          </div> -->
           <el-select
             v-model="chainType"
             placeholder="Select"
@@ -260,6 +271,7 @@ import { useConnectionStore, ConnectChain,type BaseUserInfo } from '@/stores/con
 import { connect } from '@/utils/metalet'
 import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
 import { useFeebStore } from '@/stores/feeb'
+import closeIcon from '@/assets/images/close-o@1x.png'
 const feebStore = useFeebStore()
 const rootStore = useRootStore()
 const userStore = useUserStore()
@@ -316,7 +328,7 @@ const isMobile = computed(() => {
 })
 const chainTypeArray = ref([
   { name: 'Bitcoin', icon: 'select_logo_btc',key:'btc' },
-  { name: 'MicrovisionChain', icon: 'select_logo_mvc',key:'mvc' },
+  //{ name: 'MicrovisionChain', icon: 'select_logo_mvc',key:'mvc' },
 ])
 const mateImageUrl = () => {
   if (chainType.value == 'btc') {
@@ -327,19 +339,19 @@ const mateImageUrl = () => {
 }
 const wallets = [
   {
-    title: () => {
-      return i18n.t('Login.connectWallet')
-    },
+    // title: () => {
+    //   return i18n.t('Login.connectWallet')
+    // },
     list: [
       {
         name: () => {
-          return 'Metalet'
+          return 'Metalet  Wallet'
         },
         desc: () => {
           return ``
         },
         icon: SPACEIcon,
-        fun: connectMetalet,
+        fun: confirmConnect,
       },
       // {
       //   name: () => {

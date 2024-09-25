@@ -1453,5 +1453,8 @@
   "Nts": {
     "mvc_balance_noenough": "铸造NFT需要使用到Space作为NFT文件上链时手续费，检测到你的Space余额不足支付，请充值后再发起操作",
     "mvc_balance_need": "至少需要上链手续费："
-  }
+  },
+  "connect_your_wallet": "连接你的钱包",
+  "policy-aggree": "通过连接，我接受",
+  "termuse": "使用条款"
 }

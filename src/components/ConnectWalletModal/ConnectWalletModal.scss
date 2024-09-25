@@ -1,5 +1,6 @@
 .login-warp {
-    padding: 28px 0;
+    padding: 0;
+    padding-bottom: 28px;
     position: relative;
 
     .close {
@@ -9,19 +10,19 @@
         width: 34px;
         height: 34px;
         border-radius: 50%;
-        background: var(--themeBgSecondColor);
+        background:var(--themeBgSecondColor);
         cursor: pointer;
         margin-left: -17px;
         margin-bottom: -70px;
 
-        .icon {
-            width: 12px;
-            height: 12px;
+        img {
+            width: 100%;
+            height: 100%;
             transition: all 0.5s;
         }
 
         &:hover {
-            .icon {
+            img {
                 transform: rotate(180deg);
             }
         }
@@ -58,9 +59,9 @@
                 margin-top: 12px;
 
                 .main-border {
-                    padding: 12px;
+                    // padding: 12px;
                     font-size: 16px;
-                    margin-bottom: 12px;
+                    //margin-bottom: 12px;
                     cursor: pointer;
 
                     &:last-child {

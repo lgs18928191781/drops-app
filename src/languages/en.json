@@ -310,7 +310,7 @@
   },
   "Not install MetaLet Wallet": "Not Install MetaLet Wallet",
   "Login": {
-    "connectWallet": "Connect Wallet",
+    "connectWallet": "Connect",
     "bindMetaId": {
       "title1": "🌍 Wallet Connected! Link to a MetaID Now.",
       "title2": "Link MetaID",
@@ -1458,5 +1458,8 @@
   "Nts": {
     "mvc_balance_noenough": "To mint an NFT, you need to use Space as the fee for uploading the NFT file to the blockchain. Your Space balance is insufficient to cover the fee; please recharge before proceeding.",
     "mvc_balance_need": "At least a miner fee is required:"
-  }
+  },
+  "connect_your_wallet": "Connect Your Wallet",
+  "policy-aggree": "By connecting, I accept",
+  "termuse": "Terms of Use"
 }
