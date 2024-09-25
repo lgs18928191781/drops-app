@@ -17,32 +17,34 @@ export const router = createRouter({
     {
       path: '/',
       redirect: () => {
-        const userStore = useUserStore()
-        if (userStore.isAuthorized) {
-          return { name: 'buzzIndex' }
-        } else {
-          return { name: 'home' }
-        }
+        return { name: 'home' }
+        // const userStore = useUserStore()
+        // if (userStore.isAuthorized) {
+        //   return { name: 'buzzIndex' }
+        // } else {
+        //   return { name: 'home' }
+        // }
       },
       children: [],
     },
 
     // { path: '/', name: 'home', redirect: '/buzz' },
-    { path: '/home', name: 'home', component: () => import('@/views/home/index.vue') },
+    //{ path: '/home', name: 'home', component: () => import('@/views/home/index.vue') },
     { path: '/randomly-dev', name: 'dev', component: import('@/views/dev/Index.vue') },
     {
-      path: '/buzz',
-      name: 'buzz',
+      path: '/home',
+      name: 'home',
       component: () => import('@/views/buzz/Layout.vue'),
       meta: { keepAlive: true },
-      redirect: () => {
-        const userStore = useUserStore()
-        if (userStore.isAuthorized) {
-          return { name: 'buzzIndex' }
-        } else {
-          return { name: 'buzzRecommend' }
-        }
-      },
+      // redirect: () => {
+      //   return { name: 'buzzIndex' }
+      //   //const userStore = useUserStore()
+      //   // if (userStore.isAuthorized) {
+      //   //   return { name: 'buzzIndex' }
+      //   // } else {
+      //   //   return { name: 'buzzRecommend' }
+      //   // }
+      // },
       children: [
         {
           path: 'index',
@@ -567,9 +569,9 @@ router.beforeEach((to, from, next) => {
   // if (to.name == 'buzzIndex') {
   //   return next('/buzz/tag/1')
   // }
-  if (to.name == 'home') {
-    return next('/buzz/tag/1')
-  }
+  // if (to.name == 'home') {
+  //   return next('/')
+  // }
   const whiteList = [
     '404',
     'home',

@@ -1,7 +1,22 @@
 <template>
   <header class="flex flex-align-center" v-if="!isHideHeader">
     <div class="flex1">
-      <PhoneMenuBtnVue>
+      <HeaderNavVue>
+
+        <div class="nav-menu flex flex-align-center">
+          <router-link
+            :to="item.path"
+            class="nav-menu-item flex flex-align-center"
+            v-for="(item, index) in navMenus"
+            :key="index"
+          >
+         
+            <span class="name">{{ item.name }}</span>
+          </router-link>
+        </div>
+        
+      </HeaderNavVue>
+      <!-- <PhoneMenuBtnVue>
         <div class="buzz-menu flex flex-align-center">
           <router-link
             :to="item.path"
@@ -17,7 +32,7 @@
             <span class="name">{{ item.name }}</span>
           </router-link>
         </div>
-      </PhoneMenuBtnVue>
+      </PhoneMenuBtnVue> -->
     </div>
     <LoginedUserOperateVue />
   </header>
@@ -39,12 +54,12 @@
   </div>
 
   <!-- publish -->
-  <PublishVue
+  <!-- <PublishVue
     v-model="isShowBuzzPublish"
     :topic="publishTopic"
     v-model:repost-tx-id="publishRepostTxId"
     @success="onPublishSuccess"
-  />
+  /> -->
 </template>
 
 <script setup lang="ts">
@@ -71,6 +86,7 @@ import { useI18n } from 'vue-i18n'
 import { useLayoutStore } from '@/stores/layout'
 import PublishVue from '@/views/buzz/components/Publish.vue'
 import PhoneMenuBtnVue from '@/components/PhoneMenuBtn/PhoneMenuBtn.vue'
+import HeaderNavVue from  '@/components/HeaderNavWrap/HeaderNavWrap.vue'
 import { useRouter } from 'vue-router'
 import { checkUserLogin } from '@/utils/util'
 
@@ -108,6 +124,24 @@ const menus = [
   // },
 ]
 
+const navMenus=[
+{
+    name:'Explore', //i18n.t('Buzz.Timeline'),
+    
+    path:'/home',
+  },
+  {
+    name:'Collection',
+    
+    path:'/buzz/tag/1' //'/buzz/index',
+  },
+  {
+    name:'Create', //i18n.t('Buzz.Timeline'),
+  
+    path:'/buzz/tag/1' //'/buzz/index',
+  },
+]
+
 const BuzzContainerRef = ref()
 const FastBtnRef = ref()
 const BuuzWarpRef = ref()
@@ -137,14 +171,14 @@ async function toPublish() {
 }
 
 onMounted(() => {
-  setPosition()
+  // setPosition()
 
-  resizeObserver = new ResizeObserver(entries => {
-    setPosition()
-  })
+  // resizeObserver = new ResizeObserver(entries => {
+  //   setPosition()
+  // })
 
-  //监听对应的dom
-  resizeObserver.observe(document.getElementById('buzz-warp')!)
+  // //监听对应的dom
+  // resizeObserver.observe(document.getElementById('buzz-warp')!)
 })
 
 function onPublishSuccess() {

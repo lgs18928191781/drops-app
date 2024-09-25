@@ -4,7 +4,7 @@ header {
     top: 0;
     height: var(--header-height);
     background: var(--themeBgSecondColor);
-    padding: 0 18px;
+    padding: 0 80px;
     z-index: 10;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     --tw-bg-opacity: 1;
@@ -14,6 +14,13 @@ header {
         border-radius: 8px;
         padding: 8px 15px;
         cursor: pointer;
+    }
+
+    .nav-menu{
+        .nav-menu-item{
+            position: relative;
+            white-space: nowrap;
+        }
     }
 
     .buzz-menu {

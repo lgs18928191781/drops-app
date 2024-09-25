@@ -1,10 +1,10 @@
 <template>
   <header class="flex flex-align-center">
     <div class="flex1 flex flex-align-center">
-      <PhoneMenuBtnVue />
+      <!-- <PhoneMenuBtnVue />
       <div class="name flex flex-align-center">
         <Icon name="market" /> {{ $t('NFT.NFT Market') }}
-      </div>
+      </div> -->
     </div>
     <LoginedUserOperateVue />
   </header>

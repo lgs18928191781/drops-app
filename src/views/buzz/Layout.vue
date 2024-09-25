@@ -140,13 +140,13 @@ function refreshData(path: string) {
 }
 
 onMounted(() => {
-  setPosition()
-  resizeObserver = new ResizeObserver(entries => {
-    setPosition()
-  })
+  // setPosition()
+  // resizeObserver = new ResizeObserver(entries => {
+  //   setPosition()
+  // })
 
-  //监听对应的dom
-  resizeObserver.observe(document.getElementById('buzz-warp')!)
+  // //监听对应的dom
+  // resizeObserver.observe(document.getElementById('buzz-warp')!)
 })
 
 onBeforeUnmount(() => {

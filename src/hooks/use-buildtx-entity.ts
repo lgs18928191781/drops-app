@@ -654,6 +654,7 @@ export async function buildFillUtxoPsbt(pinid:string,salePrice:number,extraFee:{
      psbt.setVersion(DefaultTxVersion)
     const address=useConnectionStore().getAddress
     
+    
     let fakerInput1={
       hash:'aa4f6752bb40bd7699fdc6ae9a78dcb41a990c55b20070462c7771825d72fcec',
       index:1,
