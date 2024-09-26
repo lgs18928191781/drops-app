@@ -34,23 +34,23 @@
 }
 
 .user-warp-item {
-    margin-right: 8PX;
+    //margin-right: 8PX;
 
     @media (min-width: 768PX) {
-        margin-right: 12PX;
+        //margin-right: 12PX;
     }
 
-    width: 36px;
-    height: 36px;
-
-    border-radius: calc(100% / 2.5);
-    border: var(--standard-border-width) solid #6b7280;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    // border-radius: calc(100% / 2.5);
+    // border: var(--standard-border-width) solid #6b7280;
     box-sizing: border-box;
     cursor: pointer;
 
     &:hover,
     &.active {
-        border-color: var(--border-color);
+        // border-color: var(--border-color);
     }
 
     .icon {

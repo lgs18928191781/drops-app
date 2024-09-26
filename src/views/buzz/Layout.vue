@@ -166,5 +166,7 @@ html .buzz-warp {
   font-family: TwitterChirp, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
     sans-serif;
   font-weight: 400;
+  padding:  0 80px;
+  
 }
 </style>

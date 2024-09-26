@@ -256,3 +256,12 @@ export function omitMiddle(str: string, maxLength: number = 20) {
 
   return start + ellipsis + end
 }
+
+export function truncateString(str:string) {
+  if (str.length <= 8) {
+      return str; // 如果字符串长度小于等于 8，直接返回原字符串
+  }
+  const start = str.slice(0, 5); // 截取前 5 个字符
+  const end = str.slice(-3); // 截取后 3 个字符
+  return `${start}...${end}`; // 拼接并返回结果
+}

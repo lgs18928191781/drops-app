@@ -12,6 +12,7 @@ declare module '@vue/runtime-core' {
       handleWhiteSpace: (str: string, genesis: string) => string
       Currency: (amount: number, unit: string) => string
       omitMiddle: (str: string, maxLength?: number) => string
+      truncateString:(str:string)=>String
     }
   }
 }

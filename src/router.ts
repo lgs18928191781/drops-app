@@ -16,68 +16,92 @@ export const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: () => {
-        return { name: 'home' }
-        // const userStore = useUserStore()
-        // if (userStore.isAuthorized) {
-        //   return { name: 'buzzIndex' }
-        // } else {
-        //   return { name: 'home' }
-        // }
-      },
-      children: [],
+      name: 'home',
+      //     redirect: () => {
+      //   return { name: 'explore' }
+      //   // const userStore = useUserStore()
+      //   // if (userStore.isAuthorized) {
+      //   //   return { name: 'buzzIndex' }
+      //   // } else {
+      //   //   return { name: 'home' }
+      //   // }
+      // },
+     component: () => import('@/views/buzz/Layout.vue'),
+      meta: { keepAlive: true },
+      children: [
+        {
+          path: 'home',
+          name: 'explore',
+          component: () => import('@/views/buzz/Index.vue'),
+          meta: { isAuth: true, keepAlive: true },
+        },
+        {
+          path: 'collection',
+          name: 'collection',
+          component: () => import('@/views/buzz/Recomment.vue'),
+          meta: { keepAlive: true },
+        },
+        {
+          path: 'create',
+          name: 'create',
+          component: () => import('@/views/buzz/Detail.vue'),
+        },
+       
+      ],
+  
+    
     },
 
     // { path: '/', name: 'home', redirect: '/buzz' },
     //{ path: '/home', name: 'home', component: () => import('@/views/home/index.vue') },
     { path: '/randomly-dev', name: 'dev', component: import('@/views/dev/Index.vue') },
-    {
-      path: '/home',
-      name: 'home',
-      component: () => import('@/views/buzz/Layout.vue'),
-      meta: { keepAlive: true },
-      // redirect: () => {
-      //   return { name: 'buzzIndex' }
-      //   //const userStore = useUserStore()
-      //   // if (userStore.isAuthorized) {
-      //   //   return { name: 'buzzIndex' }
-      //   // } else {
-      //   //   return { name: 'buzzRecommend' }
-      //   // }
-      // },
-      children: [
-        {
-          path: 'index',
-          name: 'buzzIndex',
-          component: () => import('@/views/buzz/Index.vue'),
-          meta: { isAuth: true, keepAlive: true },
-        },
-        {
-          path: 'recommend',
-          name: 'buzzRecommend',
-          component: () => import('@/views/buzz/Recomment.vue'),
-          meta: { keepAlive: true },
-        },
-        {
-          path: 'tx/:txId',
-          name: 'buzzDetail',
-          component: () => import('@/views/buzz/Detail.vue'),
-        },
-        {
-          path: 'tag/:tagId',
+    // {
+    //   path: '/home',
+    //   name: 'home',
+    //   component: () => import('@/views/buzz/Layout.vue'),
+    //   meta: { keepAlive: true },
+    //   // redirect: () => {
+    //   //   return { name: 'buzzIndex' }
+    //   //   //const userStore = useUserStore()
+    //   //   // if (userStore.isAuthorized) {
+    //   //   //   return { name: 'buzzIndex' }
+    //   //   // } else {
+    //   //   //   return { name: 'buzzRecommend' }
+    //   //   // }
+    //   // },
+    //   children: [
+    //     {
+    //       path: 'index',
+    //       name: 'buzzIndex',
+    //       component: () => import('@/views/buzz/Index.vue'),
+    //       meta: { isAuth: true, keepAlive: true },
+    //     },
+    //     {
+    //       path: 'recommend',
+    //       name: 'buzzRecommend',
+    //       component: () => import('@/views/buzz/Recomment.vue'),
+    //       meta: { keepAlive: true },
+    //     },
+    //     {
+    //       path: 'tx/:txId',
+    //       name: 'buzzDetail',
+    //       component: () => import('@/views/buzz/Detail.vue'),
+    //     },
+    //     {
+    //       path: 'tag/:tagId',
 
-          name: 'buzzTag',
-          meta: { keepAlive: false },
-          component: () => import('@/views/buzz/Tag.vue'),
-        },
-        {
-          path: 'topic/:topic',
-          name: 'buzzTopic',
-          component: () => import('@/views/buzz/Topic.vue'),
-          meta: { keepAlive: true },
-        },
-      ],
-    },
+    //       name: 'buzzTag',
+    //       meta: { keepAlive: false },
+    //       component: () => import('@/views/buzz/Tag.vue'),
+    //     },
+    //     {
+    //       path: 'topic/:topic',
+    //       name: 'buzzTopic',
+    //       component: () => import('@/views/buzz/Topic.vue'),
+    //       meta: { keepAlive: true },
+    //     },
+    //   ],
+    // },
     {
       path: '/nfts',
       name: 'nfts',
@@ -574,6 +598,7 @@ router.beforeEach((to, from, next) => {
   // }
   const whiteList = [
     '404',
+    'explore',
     'home',
     'buzzTag',
     'buzzDetail',

@@ -1,6 +1,8 @@
 <template>
   <div ref="pulldownWarpRef"></div>
-  <PublishBoxVue />
+  <NFTlistVue></NFTlistVue>
+  <!-- <PublishBoxVue />
+   
   <BuzzListVue
     :list="list"
     :loading="isSkeleton"
@@ -15,7 +17,7 @@
           1
         )
     "
-  ></BuzzListVue>
+  ></BuzzListVue> -->
 </template>
 
 <script setup lang="ts">
@@ -26,6 +28,7 @@ import { useUserStore } from '@/stores/user'
 import { inject, onActivated, onMounted, reactive, ref, watch, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import BuzzListVue from './components/BuzzList.vue'
+import NFTlistVue from './components/NFTlist/NFTlist.vue'
 import { Mitt, MittEvent } from '@/utils/mitt'
 import PublishBoxVue from './components/PublishBox.vue'
 import { useRootStore } from '@/stores/root'
@@ -40,7 +43,7 @@ const myFollowNum = ref(0)
 const pulldownWarpRef = ref()
 const i18n = useI18n()
 const list: BuzzItem[] = reactive([])
-const isSkeleton = ref(true)
+const isSkeleton = ref(false)
 const pulldown: PullDownVal = inject('Pulldown')!
 
 function getDatas(isCover = false) {
@@ -90,7 +93,7 @@ watch(
   () => userStore.isAuthorized,
   () => {
     if (userStore.isAuthorized) {
-      refreshDatas()
+      //refreshDatas()
     }
   }
 )
@@ -159,31 +162,32 @@ function updateItem(buzz: BuzzItem) {
 rootStore.$subscribe(
   async (mutation, state) => {
     if (mutation.type == 'patch function' && state.isRereshData) {
-      await refreshDatas()
+      //await refreshDatas()
     }
   },
   { detached: true }
 )
 
-getUserFollow().then(() => {
-  getDatas(true).then(() => {
-    isSkeleton.value = false
-  })
-})
+// getUserFollow().then(() => {
+//   getDatas(true).then(() => {
+//     isSkeleton.value = false
+//   })
+// })
 
 onActivated(() => {
-  pulldown.refreshSlot = pulldownWarpRef.value
-  pulldown.onRefresh = () => {
-    return new Promise<void>(async resolve => {
-      await refreshDatas()
-        .then(() => {
-          resolve()
-        })
-        .catch(() => {
-          resolve()
-        })
-    })
-  }
+  // pulldown.refreshSlot = pulldownWarpRef.value
+  // pulldown.onRefresh = () => {
+  //   return new Promise<void>(async resolve => {
+  //     resolve()
+  //     // await refreshDatas()
+  //     //   .then(() => {
+  //     //     resolve()
+  //     //   })
+  //     //   .catch(() => {
+  //     //     resolve()
+  //     //   })
+  //   })
+  // }
 })
 </script>
 

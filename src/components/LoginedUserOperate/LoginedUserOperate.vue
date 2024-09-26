@@ -15,8 +15,25 @@
             <span class="new-tag">{{ dummyAmount }}</span>
           </div> -->
 
-  <div class="net-warp bg-[#312f35] py-1 px-1.5 rounded-md mr-3" v-show="connectStore.currentChain !== ''">
-    <ElDropdown class="network-style" trigger="click">
+  <div class="net-warp bg-[#312f35] py-1 px-2 rounded-md mr-3" v-show="connectStore.currentChain !== ''">
+    <span class="el-dropdown-link flex items-center text-sm font-medium">
+        <img
+          src="@/assets/images/logo_chain_btc.png"
+          alt=""
+          class="show-coin w-6 h-6 mr-1.5"
+          v-if="connectStore.currentChain == 'btc'"
+        />
+        <img
+          src="@/assets/images/logo_chain_mvc.png"
+          alt=""
+          class="show-coin w-6 h-6 mr-1.5"
+          v-else
+        />
+     
+        {{ connectStore.currentChain == 'btc' ? 'BTC' : 'MVC' }}
+        <!-- <img src="@/assets/images/list_icon.png" alt="" class="w-3 h-3 ml-1.5" /> -->
+      </span>
+    <!-- <ElDropdown class="network-style" trigger="click">
       <span class="el-dropdown-link flex items-center text-sm font-medium">
         <img
           src="@/assets/images/logo_chain_btc.png"
@@ -30,7 +47,7 @@
           class="show-coin w-6 h-6 mr-1.5"
           v-else
         />
-        <!-- {{ store.currentShowWallet }} -->
+     
         {{ connectStore.currentChain == 'btc' ? 'Bitcoin' : 'MicrovisionChain' }}
         <img src="@/assets/images/list_icon.png" alt="" class="w-3 h-3 ml-1.5" />
       </span>
@@ -56,7 +73,7 @@
           </div>
         </div>
       </template>
-    </ElDropdown>
+    </ElDropdown> -->
   </div>
 
   <div class="gas-warp  mr-3 hidden md:block" v-show="connectStore.currentChain == 'btc'">
@@ -167,17 +184,17 @@
       </template>
 
       <!-- 💰 钱包 -->
-      <a
+      <!-- <a
         class="flex flex-align-center flex-pack-center user-warp-item"
         @click="layout.$patch({ isShowWallet: true })"
       >
         <Icon name="wallet_fill" />
-      </a>
+      </a> -->
 
       <!-- 👤 头像 -->
-      <el-popover placement="bottom" :width="'auto'" trigger="hover" ref="popover">
-        <template #reference>
-          <UserAvatar
+      <div class="flex bg-[#242227] items-center justify-between rounded-3xl px-3">
+        <span class="mr-4 text-base">{{$filters.truncateString(connectStore.last.user.address)  }}</span>
+        <UserAvatar
             :image="connectStore.userInfo.avatarId || connectStore.last.user.avatarId"
             :meta-id="connectStore.userInfo!.metaid"
             :name="connectStore.userInfo!.name || connectStore.last.user.name"
@@ -185,6 +202,11 @@
             :meta-name="''"
             :disabled="true"
           />
+
+      </div>
+      <!-- <el-popover placement="bottom" :width="'auto'" trigger="hover" ref="popover">
+        <template #reference>
+         
         </template>
         <UserCardVue
           :name="connectStore.userInfo.name"
@@ -192,9 +214,9 @@
           :meta-name="''"
           :model-value="true"
           @hide="hidePopover"
-        />
-        <!-- <UserPersonaVue /> -->
-      </el-popover>
+        /> 
+       
+      </el-popover> -->
     </div>
   </template>
   <template v-else>

@@ -62,14 +62,15 @@ header {
 }
 
 .buzz-warp {
-    padding-top: 12px;
-    box-sizing: border-box;
+    padding-top: 60px;
+    //padding-top: 80px 0;
+    //box-sizing: border-box;
 
     .buzz-container {
         position: relative;
-        width: 95%;
+       width: 100%;
         max-width: var(--sm-content-width);
-        margin: 0 auto;
+        //margin: 0 auto;
 
     }
 
