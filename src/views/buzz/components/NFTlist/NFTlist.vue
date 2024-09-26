@@ -5,12 +5,48 @@
            
             <span class="text-3xl">🔥{{ $t('NFT.Hot Series') }}</span>
         </div>
-        <div class="swaper w-full">
-            <el-carousel :interval="4000" type="card" height="200px">
-    <el-carousel-item v-for="item in 6" :key="item">
-      <h3 text="2xl" justify="center">{{ item }}</h3>
-    </el-carousel-item>
-  </el-carousel>
+        <div class="swaper w-full h-120">
+          <Swiper
+            :autoHeight="true"
+            :modules="[Pagination, Navigation, A11y]"
+            :navigation="{
+              nextEl: '.latest-next',
+              prevEl: '.latest-pre',
+            }"
+            :pagination="{ clickable: true }"
+            :autoplay="false"
+            :loop="true"
+            :slidesPerView="5"
+            :spaceBetween="15"
+            class="latest-collection"
+          >
+            <SwiperSlide
+              v-for="(item, index) in 5"
+              :key="index"
+              class="latest-collection-item"
+             
+            >
+              <div class="cover">
+                <img :src="banner" />
+              </div>
+              <div class="content flex flex-align-center">
+                <!-- <UserAvatar
+                  :metaId="item.show_3_collection.creatorMetaId"
+                  :image="item.show_3_collection.creatorAvatarImage"
+                  :name="item.show_3_collection.creatorName"
+                  :meta-name="item.show_3_collection.creatorMetaName"
+                /> -->
+                <div class="flex1">
+                  <div class="name flex flex-align-center">
+                    <!-- <span class="text">{{ item.show_3_collection.name }} </span><IconCert /> -->
+                  </div>
+                  <div class="metaid">
+                    <!-- MetaID：{{ item.show_3_collection.creatorMetaId.slice(0, 6) }} -->
+                  </div>
+                </div>
+              </div>
+            </SwiperSlide>
+          </Swiper>
 
 
 
@@ -22,27 +58,15 @@
   </div>
 </template>
 <script setup lang='ts'>
-
-
-
+import { Pagination, Autoplay, Grid, Navigation, A11y } from 'swiper'
+import { Swiper, SwiperSlide } from 'swiper/vue'
+import 'swiper/css'
+import 'swiper/css/pagination'
+import banner from '@/assets/images/login_img.png'
 
 
 
 </script>
-<style lang='scss' scoped>
-.el-carousel__item h3 {
-  color: #475669;
-  opacity: 0.75;
-  line-height: 200px;
-  margin: 0;
-  text-align: center;
-}
+<style lang='scss' scoped src="./NFTlist.scss">
 
-.el-carousel__item:nth-child(2n) {
-  background-color: #99a9bf;
-}
-
-.el-carousel__item:nth-child(2n + 1) {
-  background-color: #d3dce6;
-}
 </style>
