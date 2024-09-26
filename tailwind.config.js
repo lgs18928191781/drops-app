@@ -126,6 +126,7 @@ module.exports = {
           850: '#142030',
           950: '#0B1323',
         },
+        normalColor: '#C1BFC8',
       },
       lineHeight: {
         'kinda-loose': '1.83',
@@ -158,6 +159,9 @@ module.exports = {
         'wiggle-subtle': 'wiggle-subtle 1s ease-in-out infinite',
         'wiggle-subtle-once': 'wiggle-subtle 1s ease-in-out',
         'bounce-subtle': 'bounce-subtle 1s infinite',
+      },
+      fontFamily: {
+        sora: ['Sora', 'sans-serif'],
       },
     },
   },

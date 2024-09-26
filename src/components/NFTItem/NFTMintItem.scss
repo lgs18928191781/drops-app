@@ -1,14 +1,16 @@
 @import '@/assets/styles/var.scss';
 
 .nft-item {
-    border: 2px solid var(--themeTextColor);
+    box-sizing: border-box;
+    border: 2px solid #303133;
     padding: 18px;
     border-radius: var(--rounded);
+    background: #242227;
     cursor: pointer;
 
     :deep(.nft-cover) {
-        border: 2px solid var(--themeTextColor);
-        border-radius: var(--rounded);
+        border: 2px solid #303133;
+        border-radius: 8px;
     }
 
     .token-index {
@@ -20,6 +22,7 @@
     .name {
         margin-top: 18px;
         font-size: 20px;
+        font-weight: 400;
         @extend %text-ellipsis;
 
         &.simple {
@@ -73,7 +76,7 @@
             }
 
             .info {
-                opacity: 0.6;
+                // opacity: 0.6;
             }
 
             .user-name-warp {
@@ -94,10 +97,16 @@
         padding: 13px 0;
         text-align: center;
         cursor: pointer;
+        font-weight: 400;
+        font-family: Sora;
     }
 
     .el-skeleton__button {
         width: 100%;
+    }
+
+    .gray {
+        background-color: #656170;
     }
 }
 

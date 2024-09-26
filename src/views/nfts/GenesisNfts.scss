@@ -1,7 +1,34 @@
 .genesis-wrap {
-    width: 50vw;
+    width: 35vw;
     height: auto;
-    background: #fff;
-    border-radius: 12px;
+    // background: #fff;
+    // border-radius: 12px;
     padding: 18px;
+
+    // .el-form-item {
+    //     .el-input__wrapper {
+    //         background-color: red !important;
+    //     }
+
+    // }
+    :deep(.el-input) {
+        border: none;
+        box-shadow: none;
+    }
+
+    :deep(.el-input__wrapper) {
+        background-color: #29272E;
+        opacity: 1;
+    }
+
+    :deep(.el-textarea__inner) {
+        background-color: #29272E;
+        opacity: 1;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    :deep(.el-select) {
+    --el-select-input-focus-border-color: #fff !important;
+}
 }

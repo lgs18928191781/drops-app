@@ -15,21 +15,22 @@
         <div class="flex1 flex flex-align-center">
           <div class="flex1">
             <a
-              class="back flex flex-align-center"
+              class="back flex flex-align-center font-sora text-[#909399] text-base font-normal"
               @click="$router.back()"
               v-if="$route.name !== 'nftIndex'"
             >
-              <span class="flex flex-align-center flex-pack-center">
+              <!-- <span class="flex flex-align-center flex-pack-center">
                 <Icon name="down" />
-              </span>
+              </span> -->
+              <img src="@/assets/images/icon_left@2x.png" alt="" class="w-[42px] h-[42px] mr-2" />
               {{ $t('back') }}
             </a>
           </div>
 
-          <div class="search flex flex-align-center" @click="commonSoon">
+          <!-- <div class="search flex flex-align-center" @click="commonSoon">
             <Icon name="search" />
             <input class="flex1" type="text" :placeholder="$t('NFT.SearchPlace')" />
-          </div>
+          </div> -->
         </div>
         <!-- <nav>
           <a v-for="(item, index) in navs" :key="index" @click="commonSoon">{{ item.name }}</a>

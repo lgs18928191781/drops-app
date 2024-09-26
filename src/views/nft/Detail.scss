@@ -1,9 +1,10 @@
 .nft-detail {
-    background: var(--themeBgSecondColor);
+    background: #29272E;
     border-radius: var(--rounded);
     padding: 30px 60px;
-    max-width: 1200PX;
+    // max-width: 1200PX;
     margin: 0 auto 0 auto;
+    font-family: Sora;
 }
 
 .nft-msg {
@@ -72,6 +73,7 @@
     .name {
         margin-top: 18px;
         font-size: 30px;
+        font-weight: 500;
 
         .el-skeleton__item {
             height: 30px;
@@ -103,10 +105,18 @@
             .label {
                 font-size: 16px;
                 margin-right: 10px;
+                font-weight: normal;
+                color: #C1BFC8;
             }
 
             .user-name {
                 color: var(--themeTextColor);
+            }
+
+            .value {
+                font-size: 16px;
+                font-weight: 300;
+                color: #fff;
             }
 
             a {
@@ -122,6 +132,7 @@
         .title {
             color: #909399;
             font-size: 18px;
+            font-weight: normal;
 
             .el-skeleton__item {
                 height: 18px;
@@ -147,6 +158,8 @@
                 font-size: 18px;
                 margin-left: 18px;
 
+
+
                 .el-skeleton__item {
                     height: 18px;
                     width: 100px;
@@ -155,9 +168,9 @@
         }
     }
 
-    .redeem{
+    .redeem {
         margin-top: 20px;
-        
+
     }
 
 
@@ -190,6 +203,7 @@
         border: 2px solid #EDEFF2;
         border-radius: var(--rounded);
         overflow: hidden;
+        background: #151417;
 
         .nft-other-msg-item {
             .title {
@@ -197,6 +211,8 @@
                 padding: 0 18px;
                 border-bottom: 2px solid #EDEFF2;
                 user-select: none;
+                color: #909399;
+
 
                 .el-skeleton__item {
                     height: 18px;
@@ -234,9 +250,9 @@
         }
 
         .label {
-            color: #909399;
             margin-right: 12px;
             width: 100px;
+            color: #94909F;
 
             .el-skeleton__item {
                 height: 14px;

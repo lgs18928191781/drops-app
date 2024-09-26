@@ -1,5 +1,5 @@
 <template>
-  <div class="add-image-warp  " v-if="!onlyFileName">
+  <div class="add-image-warp" v-if="!onlyFileName">
     <div class="add-image  main-border gray flex flex-align-center flex-pack-center">
       <div class="image-warp" v-if="attachment">
         <img :src="attachment.url" />

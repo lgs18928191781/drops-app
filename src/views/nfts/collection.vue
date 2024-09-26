@@ -2,7 +2,7 @@
   <div class="collection-wrap">
     <div class="top-bar flex flex-align-center">
       <div class="flex1 flex flex-align-center">
-        <div class="flex1">
+        <!-- <div class="flex1">
           <a class="back flex flex-align-center" @click="$router.back()">
             <span class="flex flex-align-center flex-pack-center ">
               <Icon name="down" />
@@ -10,13 +10,13 @@
             {{ $t('back') }}
           </a>
 
-          <!-- <div class="flex flex-align-center text-sm" v-else>
+          <div class="flex flex-align-center text-sm" v-else>
               <Icon name="shapexs" customClass="h-4 w-3.5 mr-2" />
               {{ $t('NFTS.NFTs Launch Pad') }}
-            </div> -->
-        </div>
+            </div>
+        </div> -->
 
-        <div class="collection-selector flex1 flex items-center justify-center text-lg">
+        <div class="collection-selector flex items-center text-lg">
           <el-select
             @change="triggleCollection"
             popper-class="select-wrap"
@@ -31,8 +31,11 @@
               <template #default>
                 <div class="flex w-full items-center justify-between">
                   <div class="flex items-center">
-                    <Image :src="item?.coverPinid" custom-class="w-8 h-8 mr-1 rounded-md object-cover" />  
-                   
+                    <Image
+                      :src="item?.coverPinid"
+                      custom-class="w-8 h-8 mr-1 rounded-md object-cover"
+                    />
+
                     <span>{{ item.name }}</span>
                   </div>
                   <div
@@ -46,10 +49,12 @@
             </el-option>
           </el-select>
         </div>
-        <div class=" flex flex1  justify-end cursor-pointer text-[#5586BB]">
-          <span @click="genesisNfts" class="p-1 rounded hover:bg-[#5586BB] hover:text-white">{{
-            $t('NFTs.genesis_nfts')
-          }}</span>
+        <div
+          class=" flex cursor-pointer items-center border border-[#656170] box-border px-4 rounded-lg ml-2 h-11 lead-[44px]"
+          @click="genesisNfts"
+        >
+          <img src="@/assets/images/icon@1x.png" alt="" class="w-[18px] h-[18px] mr-2" />
+          <div class="text-base font-light font-sora text-white">Create NFTs</div>
         </div>
       </div>
       <!-- <nav>
@@ -57,11 +62,11 @@
           </nav> -->
     </div>
 
-    <div class="content-wrap p-[18px] border-2 border-solid border-[#303133] rounded-xl mt-5 ">
-      <div class="nfts-card flex">
+    <div class="content-wrap p-[30px] rounded-[6px] mt-5 bg-[#29272E]">
+      <!-- <div class="nfts-card flex">
         <div class="nfts-cover flex items-center justify-center w-24 h-24 rounded-lg ">
-          <Image :src="currentNftsCollect?.coverPinid" custom-class="w-full rounded-lg" />  
-          <!-- <img class="w-full rounded-lg " :src="currentNftsCollect?.cover" alt="" /> -->
+          <Image :src="currentNftsCollect?.coverPinid" custom-class="w-full rounded-lg" />
+          <img class="w-full rounded-lg " :src="currentNftsCollect?.cover" alt="" />
         </div>
         <div class="nfts-detail w-full ml-4">
           <div class="flex-col">
@@ -69,7 +74,7 @@
               <span class="text-2xl font-medium">{{ currentNftsCollect?.name }}</span>
 
               <ExternalLink
-              @click="toMarketCollection"
+                @click="toMarketCollection"
                 :size="18"
                 color="#909399"
                 class="cursor-pointer hover:scale-110"
@@ -90,7 +95,11 @@
                   :src="currentNftsCollect?.chain == NftsLaunchPadChainSymbol.btc ? btc : mvc"
                   alt=""
                 />
-                <span class="font-medium">{{ currentNftsCollect?.chain == NftsLaunchPadChainSymbol.btc ? NftsLaunchPadChain.btc : NftsLaunchPadChain.mvc  }}</span>
+                <span class="font-medium">{{
+                  currentNftsCollect?.chain == NftsLaunchPadChainSymbol.btc
+                    ? NftsLaunchPadChain.btc
+                    : NftsLaunchPadChain.mvc
+                }}</span>
               </div>
               <div class="market-option flex mr-6">
                 <span class="mr-1">{{ $t('Nfts.lanuch_makemarket') }}</span>
@@ -113,11 +122,133 @@
             </div>
           </div>
         </div>
+      </div> -->
+
+      <div class="nfts-card flex justify-between space-x-4">
+        <div class="flex flex-1 flex-row">
+          <div
+            class="nfts-cover flex items-center justify-center w-[150px] h-[150px] rounded-lg flex-shrink-0 mr-[30px]"
+          >
+            <Image :src="currentNftsCollect?.coverPinid" custom-class="w-full rounded-lg" />
+            <!-- <img class="w-full rounded-lg " :src="currentNftsCollect?.cover" alt="" /> -->
+          </div>
+
+          <div class="flex-col">
+            <div class="nfts-name flex">
+              <span class="text-4xl font-bold font-sora text-white mb-3">{{
+                currentNftsCollect?.name
+              }}</span>
+            </div>
+            <div class="nfts-intro flex font-sora text-white text-sm mb-5">
+              <span>
+                {{ currentNftsCollect?.desc }}
+              </span>
+            </div>
+            <div>
+              <img src="@/assets/images/share@2x.png" alt="" class="w-[18px] h-[18px] " />
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-1 justify-end">
+          <!-- <div class="nfts-footer flex items-center text-sm ">
+            <div class="flex items-center justify-start flex-wrap">
+              <div class="blockchain flex items-center mr-6">
+                <span class="mr-2">{{ $t('Nfts.lanuch_chain') }}</span>
+                <img
+                  class="w-5 h-5 mr-1"
+                  :src="currentNftsCollect?.chain == NftsLaunchPadChainSymbol.btc ? btc : mvc"
+                  alt=""
+                />
+                <span class="font-medium">{{
+                  currentNftsCollect?.chain == NftsLaunchPadChainSymbol.btc
+                    ? NftsLaunchPadChain.btc
+                    : NftsLaunchPadChain.mvc
+                }}</span>
+              </div>
+              <div class="market-option flex mr-6">
+                <span class="mr-1">{{ $t('Nfts.lanuch_makemarket') }}</span>
+                <span>{{ currentNftsCollect?.autoMarket }}</span>
+              </div>
+              <div class="total-supply flex mr-6">
+                <span class="mr-1">{{ $t('Nfts.lanuch_totalSupply') }}</span>
+                <span>{{ currentNftsCollect?.totalSupply }}</span>
+              </div>
+
+              <div class="total-supply flex mr-6">
+                <span class="mr-1">{{ $t('Nfts.lanuch_mintable_Supply') }}</span>
+                <span>{{ currentNftsCollect?.currentSupply }}</span>
+              </div>
+
+              <div class="mint-amount flex ">
+                <span class="mr-1">{{ $t('Nfts.lanuch_minted') }}</span>
+                <span>{{ mintedAmount }}</span>
+              </div>
+            </div>
+          </div> -->
+
+          <div class="grid grid-cols-2 gap-4 sm:grid-cols-3">
+            <div class="text-center">
+              <p class="text-[20px] font-semibold font-sora text-white mb-2">
+                {{ currentNftsCollect?.autoMarket }}
+              </p>
+              <p class="text-[16px] font-thin font-sora text-[#909399]">
+                {{ $t('Nfts.lanuch_makemarket') }}
+              </p>
+            </div>
+            <div class="text-center">
+              <p class="text-[20px] font-semibold font-sora text-white mb-2">
+                {{ currentNftsCollect?.totalSupply }}
+              </p>
+              <p class="text-[16px] font-thin font-sora text-[#909399]">
+                {{ $t('Nfts.lanuch_totalSupply') }}
+              </p>
+            </div>
+            <div class="text-center">
+              <p class="text-[20px] font-semibold font-sora text-white mb-2">
+                {{ currentNftsCollect?.currentSupply }}
+              </p>
+              <p class="text-[16px] font-thin font-sora text-[#909399]">
+                {{ $t('Nfts.lanuch_mintable_Supply') }}
+              </p>
+            </div>
+            <div class="text-center">
+              <p class="text-[20px] font-semibold font-sora text-white mb-2">{{ mintedAmount }}</p>
+              <p class="text-[16px] font-thin font-sora text-[#909399]">
+                {{ $t('Nfts.lanuch_minted') }}
+              </p>
+            </div>
+            <!-- <div class="text-center">
+              <p class="text-[20px] font-semibold font-sora text-white mb-2">0</p>
+              <p class="text-[16px] font-thin font-sora text-[#909399]">Owner</p>
+            </div> -->
+            <div class="text-center">
+              <div
+                class="text-[20px] font-semibold font-sora text-white mb-2 flex items-center justify-center"
+              >
+                <img
+                  class="w-5 h-5 mr-2"
+                  :src="currentNftsCollect?.chain == NftsLaunchPadChainSymbol.btc ? btc : mvc"
+                  alt=""
+                />
+                <span class="font-medium">{{
+                  currentNftsCollect?.chain == NftsLaunchPadChainSymbol.btc
+                    ? NftsLaunchPadChain.btc
+                    : NftsLaunchPadChain.mvc
+                }}</span>
+              </div>
+              <p class="text-[16px] font-thin font-sora text-[#909399]">
+                {{ $t('Nfts.lanuch_chain') }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div class="nfts-detail w-full ml-4"></div> -->
       </div>
     </div>
 
     <div class="auto-market-wrap  mt-8">
-      <div class="title text-lg py-4 font-medium">
+      <!-- <div class="title text-lg py-4 font-medium">
         {{ $t('Nfts.lanuch_auto_market_title') }}
       </div>
       <div class="content flex items-center py-6 border-t border-[#EDEFF2] flex-row">
@@ -136,41 +267,40 @@
                   !currentNftsCollect?.autoMarket || Boolean(currentNftsCollect?.initialPrice)
                 "
               ></el-input>
-                <div class="flex items-center mt-2 text-[#909399]">
-                  <span class="mr-1">{{ autoMaketData.initialPrice ?? 0 }}</span>
-                  <span class="mr-1">BTC</span>
-                  <span class="mr-1">=</span>
-                  <span class="mr-1">{{ btcConverSats }}</span>
-                  <span>Sats</span>
-                </div>
+              <div class="flex items-center mt-2 text-[#909399]">
+                <span class="mr-1">{{ autoMaketData.initialPrice ?? 0 }}</span>
+                <span class="mr-1">BTC</span>
+                <span class="mr-1">=</span>
+                <span class="mr-1">{{ btcConverSats }}</span>
+                <span>Sats</span>
+              </div>
             </div>
             <div class="mt-3.5">
-              <div >
-                <span  class="align-middle">{{ $t('Nfts.lanuch_auto_market_setpriceAdd') }}</span>
+              <div>
+                <span class="align-middle">{{ $t('Nfts.lanuch_auto_market_setpriceAdd') }}</span>
                 <span class="ml-1 font-medium">({{ $t('Nfts.mint_price_unit') }})</span>
                 <el-popover
-    placement="top-start"
-    :title="$t('Nfts.lanuch_growth_price_desc')"
-    :width="250"
-    trigger="hover"
-    
-  >
-  
-    <template #reference>
-      <el-icon :size="18" class="align-middle ml-1 cursor-pointer"><QuestionFilled /></el-icon>
-      
-    </template>
+                  placement="top-start"
+                  :title="$t('Nfts.lanuch_growth_price_desc')"
+                  :width="250"
+                  trigger="hover"
+                >
+                  <template #reference>
+                    <el-icon :size="18" class="align-middle ml-1 cursor-pointer"
+                      ><QuestionFilled
+                    /></el-icon>
+                  </template>
 
-    <div class="flex flex-col text-sm font-medium" >
-      <span >{{ $t('NFTs.lanuch_growth_content1') }}</span>
-      <span class="mt-2 whitespace-normal break-words">{{ $t('NFTs.lanuch_growth_content2') }}</span>
-      <span class="mt-2">{{ $t('NFTs.lanuch_growth_content3') }}</span>
-      
-    </div>
-  </el-popover>
-                
+                  <div class="flex flex-col text-sm font-medium">
+                    <span>{{ $t('NFTs.lanuch_growth_content1') }}</span>
+                    <span class="mt-2 whitespace-normal break-words">{{
+                      $t('NFTs.lanuch_growth_content2')
+                    }}</span>
+                    <span class="mt-2">{{ $t('NFTs.lanuch_growth_content3') }}</span>
+                  </div>
+                </el-popover>
               </div>
-             
+
               <el-input
                 :placeholder="$t('Nfts.lanuch_set_price_increase')"
                 class="h-12 mt-2"
@@ -180,12 +310,12 @@
                 "
               ></el-input>
               <div class="flex items-center mt-2 text-[#909399]">
-                  <span class="mr-1">{{ autoMaketData.priceGrowth ?? 0 }}</span>
-                  <span class="mr-1">BTC</span>
-                  <span class="mr-1">=</span>
-                  <span class="mr-1">{{ btcConverSatsPriceGrowth }}</span>
-                  <span>Sats</span>
-                </div>
+                <span class="mr-1">{{ autoMaketData.priceGrowth ?? 0 }}</span>
+                <span class="mr-1">BTC</span>
+                <span class="mr-1">=</span>
+                <span class="mr-1">{{ btcConverSatsPriceGrowth }}</span>
+                <span>Sats</span>
+              </div>
             </div>
           </div>
           <div class="mt-3.5 text-[#909399] flex flex-row items-center justify-center">
@@ -201,12 +331,77 @@
         <div class="echart-wrap pl-10 w-4/5 ">
           <Line ref="chartRef" :style="customStyle" :data="data" :options="options" />
         </div>
+      </div> -->
+      <div class="price-area flex justify-between space-x-4">
+        <div class="flex-1">
+          <div class="font-sora text-white text-sm font-light">
+            <span>{{ $t('Nfts.lanuch_auto_market_setprice') }}</span>
+            <span class="ml-1">({{ $t('Nfts.mint_price_unit') }})</span>
+          </div>
+          <el-input
+            :placeholder="$t('Nfts.lanuch_set_init_price')"
+            class="h-12 mt-2"
+            v-model="autoMaketData.initialPrice"
+            :disabled="!currentNftsCollect?.autoMarket || Boolean(currentNftsCollect?.initialPrice)"
+          ></el-input>
+          <div class="flex items-center mt-2 text-[#909399]">
+            <span class="mr-1">{{ autoMaketData.initialPrice ?? 0 }}</span>
+            <span class="mr-1">BTC</span>
+            <span class="mr-1">=</span>
+            <span class="mr-1">{{ btcConverSats }}</span>
+            <span>Sats</span>
+          </div>
+        </div>
+        <div class="flex-1">
+          <div class="font-sora text-white text-sm font-light">
+            <span class="align-middle font-sora text-white text-sm font-light">{{
+              $t('Nfts.lanuch_auto_market_setpriceAdd')
+            }}</span>
+            <span class="ml-1 font-sora text-white text-sm font-light"
+              >({{ $t('Nfts.mint_price_unit') }})</span
+            >
+            <el-popover placement="top-start" :width="250" trigger="hover">
+              <template #reference>
+                <el-icon :size="18" class="align-middle ml-1 cursor-pointer"
+                  ><QuestionFilled
+                /></el-icon>
+              </template>
+
+              <div class="flex flex-col font-sora text-white text-sm font-light">
+                <div>{{ $t('Nfts.lanuch_growth_price_desc') }}</div>
+                <span class="font-sora text-white text-sm font-light">{{
+                  $t('NFTs.lanuch_growth_content1')
+                }}</span>
+                <span class="mt-2 whitespace-normal break-words">{{
+                  $t('NFTs.lanuch_growth_content2')
+                }}</span>
+                <span class="mt-2">{{ $t('NFTs.lanuch_growth_content3') }}</span>
+              </div>
+            </el-popover>
+          </div>
+
+          <el-input
+            :placeholder="$t('Nfts.lanuch_set_price_increase')"
+            class="h-12 mt-2"
+            v-model="autoMaketData.priceGrowth"
+            :disabled="!currentNftsCollect?.autoMarket || Boolean(currentNftsCollect?.priceGrowth)"
+          ></el-input>
+          <div class="flex items-center mt-2 text-[#909399]">
+            <span class="mr-1">{{ autoMaketData.priceGrowth ?? 0 }}</span>
+            <span class="mr-1">BTC</span>
+            <span class="mr-1">=</span>
+            <span class="mr-1">{{ btcConverSatsPriceGrowth }}</span>
+            <span>Sats</span>
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="mt-12 ">
       <div class="mint-wrap flex items-center justify-between border-b pb-5 border-[#EDEFF2]">
-        <div class="text-lg font-medium">{{ $t('Nfts.lanuch_bulkMint') }}</div>
+        <div class="font-sora text-white text-[30px] font-semibold">
+          {{ $t('Nfts.lanuch_bulkMint') }}
+        </div>
 
         <div class="mint-btn flex text-sm font-medium">
           <!-- <button
@@ -218,14 +413,19 @@
           </button> -->
 
           <button
-            @click="modelValue = true,mintData.mintAmount = 0"
-            class="py-1 px-3 rounded-md border border-transparent flex items-center justify-center mr-2 bg-[#FFDC51] "
+            @click=";(modelValue = true), (mintData.mintAmount = 0)"
+            class="py-2 px-6 rounded-[12px] border border-[#656170] flex mr-4"
           >
             {{ $t('Nfts.lanuch_addMint') }}
           </button>
-          <button
+          <!-- <button
             class="py-1 px-3 rounded-md border border-transparent flex items-center justify-center "
             :class="[tableData.length ? 'bg-[#FFDC51]' : 'bg-[#EDEFF2] text-[#BFC2CC]']"
+            @click="finallyMint"
+          > -->
+          <button
+            class="py-2 px-6 rounded-[12px] border border-[#656170] flex"
+            :class="[tableData.length ? 'text-white' : 'text-[#656170]']"
             @click="finallyMint"
           >
             <span class="mr-1">{{ $t('Nfts.lanuch_confirm_minting') }}</span>
@@ -238,31 +438,32 @@
           @cell-click="selectChange"
           :data="tableData"
           style="width: 100%;height:500px"
-          header-row-class-name="text-sm text-[#303133]"
+          header-row-class-name="text-[16px] text-[#A9A8AC] font-sora font-light bg-[#17161A]"
+          :header-cell-style="{ background: '#17161A', fontWeight: '300' }"
         >
-          <el-table-column prop="id" :label="$t('Nfts.lanuch_nftIndex')" width="100">
+          <el-table-column prop="id" :label="$t('Nfts.lanuch_nftIndex')" width="auto">
             <template #default="scope">
               <div
                 class="main-border gray-exclued-text p-2 min-h-14  flex justify-between items-center "
               >
-                <div class="w-8 h-8 rounded-md ">
+                <div class="w-8 h-8 rounded-md text-white">
                   <span>#{{ scope.row.id }}</span>
                 </div>
               </div>
             </template>
           </el-table-column>
 
-          <el-table-column prop="nftName" :label="$t('Nfts.lanuch_nft_name')" width="180">
+          <el-table-column prop="nftName" :label="$t('Nfts.lanuch_nft_name')" width="auto">
             <template #default="scope">
-         
-              <div class="main-border flex items-center   gray-exclued-text   min-h-14 truncate  ">
-         
-                <el-input v-model="scope.row.nftName" ></el-input>
+              <div
+                class="main-border flex items-center gray-exclued-text min-h-14 truncate text-white"
+              >
+                <el-input v-model="scope.row.nftName"></el-input>
               </div>
             </template>
           </el-table-column>
 
-          <el-table-column prop="cover" :label="$t('Nfts.lanuch_nftcover')" width="120">
+          <el-table-column prop="cover" :label="$t('Nfts.lanuch_nftcover')" width="auto">
             <template #default="scope">
               <div
                 class="main-border gray-exclued-text p-2 min-h-14  flex justify-between items-center "
@@ -274,29 +475,29 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="source" :label="$t('Nfts.lanuch_source')" width="180">
+          <el-table-column prop="source" :label="$t('Nfts.lanuch_source')" width="auto">
             <template #default="scope">
               <div
                 class="main-border gray-exclued-text  p-2 min-h-14 flex justify-between items-center truncate"
               >
-                <div class="w-8 h-8 rounded-md ">
+                <div class="w-8 h-8 rounded-md text-white">
                   <span>{{ prettyAddress(scope.row.source) }}</span>
                 </div>
                 <!-- <el-icon class="cursor-pointer" @click="deleteCover(scope.row)"><Close /></el-icon> -->
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="desc" :label="$t('Nfts.lanuch_desc')" width="250">
+          <el-table-column prop="desc" :label="$t('Nfts.lanuch_desc')" width="auto">
             <template #default="scope">
-              <div class="main-border gray-exclued-text py-3.5  p-2 min-h-14 truncate  ">
-                <span>{{ scope.row.desc ?? '' }}</span>
+              <div class="main-border gray-exclued-text py-3.5  p-2 min-h-14 truncate text-white">
+                <span class="text-white">{{ scope.row.desc ?? '' }}</span>
               </div>
             </template>
           </el-table-column>
 
-          <el-table-column prop="classify" :label="$t('Nfts.lanuch_classify')" width="180">
+          <el-table-column prop="classify" :label="$t('Nfts.lanuch_classify')" width="auto">
             <template #default="scope">
-              <div class=" gray-exclued-text p-2 min-h-14  flex items-center justify-center">
+              <div class=" gray-exclued-text p-2 min-h-14  flex">
                 <el-select multiple v-model="scope.row.classify" placeholder="Select">
                   <el-option
                     v-for="item in classifyList"
@@ -329,7 +530,7 @@
             </template>
           </el-table-column> -->
 
-          <el-table-column prop="op" :label="$t('Nfts.lanuch_operation')" width="150">
+          <el-table-column prop="op" :label="$t('Nfts.lanuch_operation')" width="auto">
             <template #default="scope">
               <div class="flex items-center ">
                 <span
@@ -361,16 +562,16 @@
   <CollectionDialog
     v-model="modelValue"
     :defiendFooter="defiendFooter"
-    :isHideCancelBtn="false"
+    :isHideCancelBtn="true"
     :operateWarpMarginTop="12"
   >
     <template #title>
-      <div class="title text-center flex1" :style="{ fontSize: '24px' }">
+      <div class="title flex1" :style="{ fontSize: '24px' }">
         {{ isEdit ? $t('Nfts.lanuch_edit') : $t('Nfts.lanuch_addMint') }}
       </div>
     </template>
     <template #content>
-      <div>
+      <div class="mintDialog-style">
         <el-form
           ref="ruleFormRef"
           :label-position="labelPosition"
@@ -379,10 +580,77 @@
           :model="mintData"
           style="max-width: 600px"
         >
+          <!--cover-->
+          <el-form-item>
+            <div class="flex justify-between">
+              <span class="text-sm font-light font-sora text-normalColor">{{
+                $t('Nfts.lanuch_nftcover')
+              }}</span>
+              <!-- <div class="text-[#909399]">
+                <div class="switch-list flex flex-align-center" v-if="!isEdit">
+                  <div class="switch-item flex flex-align-center">
+                    <span class="mr-2">{{ $t('Nfts.lanuch_useSameCover') }}</span>
+                    <ElSwitch v-model="mintData.isSameCover" />
+                  </div>
+                </div>
+              </div> -->
+              <div class="w-30 mt-1">
+                <AddImageWarpVue v-model:attachment="mintData.cover" :onlyFileName="false" />
+              </div>
+            </div>
+            <!-- <div class="w-30 mt-1">
+              <AddImageWarpVue v-model:attachment="mintData.cover" :onlyFileName="false" />
+            </div> -->
+          </el-form-item>
+          <!--nft name-->
+          <el-form-item>
+            <template #label>
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-light font-sora text-normalColor">{{
+                  $t('Nfts.lanuch_nft_name')
+                }}</span>
+                <!-- <div class="text-[#909399]">
+                  <div class="switch-list flex flex-align-center">
+                    <div class="switch-item flex flex-align-center">
+                      <span class="mr-2">{{ $t('Nfts.lanuch_useSameName') }}</span>
+                      <ElSwitch v-model="mintData.isSameName" />
+                    </div>
+                  </div>
+                </div> -->
+              </div>
+            </template>
+            <div class="mt-1">
+              <el-input v-model="mintData.nftName" />
+            </div>
+          </el-form-item>
+          <!--desc-->
+          <el-form-item>
+            <div class="flex  items-center justify-between">
+              <span class="text-sm font-light font-sora text-normalColor">{{
+                $t('Nfts.lanuch_desc')
+              }}</span>
+              <!-- <div class="text-[#909399]">
+                <div class="switch-list flex flex-align-center" v-if="!isEdit">
+                  <div class="switch-item flex flex-align-center">
+                    <span class="mr-2">{{ $t('Nfts.lanuch_useSameDesc') }}</span>
+                    <ElSwitch v-model="mintData.isSameDesc" />
+                  </div>
+                </div>
+              </div> -->
+            </div>
+            <div class="nfts-desc main-border gray mt-1">
+              <ElInput
+                :placeholder="$t('Nfts.lanuch_descPlaceholder')"
+                type="textarea"
+                v-model="mintData.desc"
+              />
+            </div>
+          </el-form-item>
+
           <el-form-item props="mintAmount">
             <template #label>
               <div class="flex items-center justify-between">
-                <span class="text-base text-[#303133] font-medium">{{
+                <span class="text-sm font-light font-sora text-normalColor">{{
                   $t('Nfts.lanuch_addMintAmount')
                 }}</span>
                 <div class="text-[#909399] flex items-center">
@@ -398,49 +666,9 @@
               <span v-if="errorMsg" style="color: #fc6d5e;">{{ errorMsg }}</span>
             </div>
           </el-form-item>
-          <!--nft name-->
-          <el-form-item>
-            <template #label>
-              <div class="flex items-center justify-between">
-                <span class="text-base text-[#303133] font-medium">{{
-                  $t('Nfts.lanuch_nft_name')
-                }}</span>
-               <div class="text-[#909399]">
-                <div class="switch-list flex flex-align-center" >
-                  <div class="switch-item flex flex-align-center">
-                    <span class="mr-2">{{ $t('Nfts.lanuch_useSameName') }}</span>
-                    <ElSwitch v-model="mintData.isSameName" />
-                  </div>
-                </div>
-              </div>
-              </div>
-            </template>
-            <div class="mt-1">
-              <el-input v-model="mintData.nftName" />
-            </div>
-          </el-form-item>
-
-
-          <!--cover-->
-          <el-form-item>
-            <div class="flex items-center justify-between">
-              <span class="text-base font-medium">{{ $t('Nfts.lanuch_nftcover') }}</span>
-              <div class="text-[#909399]">
-                <div class="switch-list flex flex-align-center" v-if="!isEdit">
-                  <div class="switch-item flex flex-align-center">
-                    <span class="mr-2">{{ $t('Nfts.lanuch_useSameCover') }}</span>
-                    <ElSwitch v-model="mintData.isSameCover" />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="w-30 mt-1">
-              <AddImageWarpVue v-model:attachment="mintData.cover" :onlyFileName="false" />
-            </div>
-          </el-form-item>
 
           <!--sourece file-->
-          <el-form-item>
+          <!-- <el-form-item>
             <div class="flex items-center justify-between">
               <span class="text-base font-medium">{{ $t('Nfts.lanuch_Nftsource') }}</span>
               <div class="text-[#909399]">
@@ -455,41 +683,22 @@
             <div class="mt-1">
               <AddImageWarpVue v-model:attachment="mintData.cover" :onlyFileName="true" />
             </div>
-          </el-form-item>
-          <!--desc-->
-          <el-form-item>
-            <div class="flex  items-center justify-between">
-              <span class="text-base font-medium">{{ $t('Nfts.lanuch_desc') }}</span>
-              <div class="text-[#909399]">
-                <div class="switch-list flex flex-align-center" v-if="!isEdit">
-                  <div class="switch-item flex flex-align-center">
-                    <span class="mr-2">{{ $t('Nfts.lanuch_useSameDesc') }}</span>
-                    <ElSwitch v-model="mintData.isSameDesc" />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="nfts-desc main-border gray mt-1">
-              <ElInput
-                :placeholder="$t('Nfts.lanuch_descPlaceholder')"
-                type="textarea"
-                v-model="mintData.desc"
-              />
-            </div>
-          </el-form-item>
+          </el-form-item> -->
 
           <!--Classify-->
           <el-form-item>
-            <div class="flex  items-center justify-between">
-              <span class="text-base font-medium">{{ $t('Nfts.lanuch_classify') }}</span>
-              <div class="text-[#909399]">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-light font-sora text-normalColor">{{
+                $t('Nfts.lanuch_classify')
+              }}</span>
+              <!-- <div class="text-[#909399]">
                 <div class="switch-list flex flex-align-center" v-if="!isEdit">
                   <div class="switch-item flex flex-align-center">
                     <span class="mr-2">{{ $t('Nfts.lanuch_useSameClassify') }}</span>
                     <ElSwitch v-model="mintData.isSameClassify" />
                   </div>
                 </div>
-              </div>
+              </div> -->
             </div>
 
             <div class="mt-1">
@@ -525,13 +734,13 @@
           </el-form-item> -->
 
           <el-form-item>
-            <div class="operate flex items-center justify-between font-medium text-base">
-              <div
+            <div class="operate flex items-center font-medium text-base">
+              <!-- <div
                 class="main-border  cursor-pointer text-center py-2.5  mr-2.5 darkGray flex-1"
                 @click="cancel(ruleFormRef)"
               >
                 {{ $t('Cancel') }}
-              </div>
+              </div> -->
               <div
                 class="main-border primary cursor-pointer text-center  py-2.5 flex-1"
                 @click="confirm(ruleFormRef)"
@@ -553,7 +762,7 @@
     :operateWarpMarginTop="12"
   >
     <template #title>
-      <header class="flex w-full  items-center justify-center">
+      <header class="flex w-full items-center">
         <div class="text-lg font-medium ">
           {{ $t('Nfts.launch_create') }}
         </div>
@@ -561,9 +770,9 @@
     </template>
 
     <template #content>
-      <div class="form-wrap py-7">
+      <div class="form-wrap pt-7">
         <el-form :model="createCollectionform">
-          <el-form-item class="flex items-center  " label-width="50%">
+          <el-form-item class="flex" label-width="50%">
             <template #label>
               <span class="flex-1 text-base font-medium"> {{ $t('Nfts.launch_form_title1') }}</span>
             </template>
@@ -572,7 +781,7 @@
                 <el-upload
                   :multiple="false"
                   action="#"
-                  class="avatar-uploader  w-24 h-24 flex items-center justify-center  border-2 border-[#BFC2CC] rounded-xl"
+                  class="avatar-uploader  w-30 h-30 flex items-center justify-center rounded-[8px] bg-[#151417]"
                   :show-file-list="false"
                   :before-upload="beforeAvatarUpload"
                 >
@@ -581,7 +790,7 @@
                     :src="createCollectionform.cover"
                     class="avatar rounded-lg"
                   />
-                  <el-icon v-else class="avatar-uploader-icon " color="#BFC2CC" :size="35"
+                  <el-icon v-else class="avatar-uploader-icon " color="#BFC2CC" :size="25"
                     ><Plus
                   /></el-icon>
                   <div
@@ -621,35 +830,41 @@
               />
             </template>
           </el-form-item>
-
-          <el-form-item class="flex flex-col " label-width="auto">
-            <template #label>
-              <span class="flex text-base font-medium">{{ $t('Nfts.launch_title4') }}</span>
-            </template>
-            <template #default>
-              <el-input
-                v-model="createCollectionform.totalSupply"
-                :formatter="(value:string) => `${value}`.replace(/\D+$/g, '')"
-                :parser="(value:string) => value.replace(/\D+$/g, '')"
-                :placeholder="$t('Nfts.launch_placeholder3')"
-              />
-            </template>
-          </el-form-item>
-
-          <el-form-item class="flex flex-col " label-width="auto">
-            <template #label>
-              <span class="flex text-base font-medium">{{ $t('Nfts.launch_title5') }}</span>
-            </template>
-            <template #default>
-              <el-select
-                v-model="createCollectionform.royaltyRate"
-                placeholder="Select"
-                style="width: 100%"
-              >
-                <el-option v-for="item in royaltyRate" :label="item + ' ' + '%'" :value="item" />
-              </el-select>
-            </template>
-          </el-form-item>
+          <div class="flex flex-col">
+            <div class="flex items-center justify-between space-x-4">
+              <el-form-item class="flex flex-col flex-1" label-width="auto">
+                <template #label>
+                  <span class="flex text-base font-medium">{{ $t('Nfts.launch_title4') }}</span>
+                </template>
+                <template #default>
+                  <el-input
+                    v-model="createCollectionform.totalSupply"
+                    :formatter="(value:string) => `${value}`.replace(/\D+$/g, '')"
+                    :parser="(value:string) => value.replace(/\D+$/g, '')"
+                    :placeholder="$t('Nfts.launch_placeholder3')"
+                  />
+                </template>
+              </el-form-item>
+              <el-form-item class="flex flex-col flex-1" label-width="auto">
+                <template #label>
+                  <span class="flex text-base font-medium">{{ $t('Nfts.launch_title5') }}</span>
+                </template>
+                <template #default>
+                  <el-select
+                    v-model="createCollectionform.royaltyRate"
+                    placeholder="Select"
+                    style="width: 100%"
+                  >
+                    <el-option
+                      v-for="item in royaltyRate"
+                      :label="item + ' ' + '%'"
+                      :value="item"
+                    />
+                  </el-select>
+                </template>
+              </el-form-item>
+            </div>
+          </div>
 
           <el-form-item class="flex flex-col " label-width="auto">
             <template #label>
@@ -663,7 +878,7 @@
             </template>
           </el-form-item>
 
-          <el-form-item class="flex flex-col " label-width="auto">
+          <!-- <el-form-item class="flex flex-col " label-width="auto">
             <template #label>
               <span class="flex text-base font-medium">{{ $t('NFTs.lanuch_title1') }}</span>
             </template>
@@ -691,9 +906,9 @@
                 </el-option>
               </el-select>
             </template>
-          </el-form-item>
+          </el-form-item> -->
 
-          <el-form-item class="flex flex-col " label-width="auto">
+          <!-- <el-form-item class="flex flex-col " label-width="auto">
             <template #label>
               <span class="flex text-base font-medium">{{ $t('NFTs.lanuch_title2') }}</span>
             </template>
@@ -711,7 +926,7 @@
                 />
               </el-select>
             </template>
-          </el-form-item>
+          </el-form-item> -->
 
           <el-form-item>
             <div
@@ -765,7 +980,7 @@ import {usePayModalEntity} from '@/hooks/use-pay-modal-entity'
 import {  type Psbt } from 'bitcoinjs-lib'
  import { openLoading } from '@/utils/util'
  import {space} from "@/utils/filters"
- 
+
 const i18n = useI18n()
 const genesisStore = useGenesisStore()
 const connectionStore = useConnectionStore()
@@ -789,7 +1004,7 @@ const errorMsg=ref('')
 const autoMaketData=ref({
   initialPrice:0,
   priceGrowth:0,
-  
+
 })
 
 
@@ -809,11 +1024,11 @@ watch(
   // })
   //   }
     // autoMaketData.value.initialPrice=currentNftsCollect.value?.initialPrice!
-    
+
     // autoMaketData.value.priceGrowth=currentNftsCollect.value?.priceGrowth!
      autoMaketData.value.initialPrice=currentNftsCollect.value?.initialPrice! ? space(currentNftsCollect.value?.initialPrice!) : 0
     autoMaketData.value.priceGrowth=currentNftsCollect.value?.priceGrowth! ? space(currentNftsCollect.value?.priceGrowth!) : 0
-    
+
     genesisCollection.value = currentNftsCollect.value!.name
   }
 )
@@ -823,8 +1038,8 @@ watch(
 // }
 
 onMounted(() => {
- 
-  
+
+
   // genesisStore.updateItem({
   //   ...currentNftsCollect.value,
   //   initialPrice:'',
@@ -926,7 +1141,7 @@ const optionMakeMarket = reactive([
 
 const MyCollectionList = computed(() => {
   if (genesisStore.getList.length) {
-    
+
     return genesisStore.getList
   } else {
     return []
@@ -1010,12 +1225,12 @@ function validateInput(){
   async function formatToSignInputs(psbt:Psbt){
     try {
       const pubkey=await connectionStore.provider?.btc.getPublicKey()
-      
+
     const toSignInputs=[]
     if(psbt.inputCount == 1){
       throw new Error('No input to Sign')
     }
-    
+
     if(psbt.inputCount > 0){
         for(let i=0;i<psbt.inputCount;i++){
           toSignInputs.push({
@@ -1028,14 +1243,14 @@ function validateInput(){
         }
       }
       console.log("toSignInputs",toSignInputs)
-      
+
       return toSignInputs
     } catch (error) {
       throw new Error(error as any)
     }
   }
 
- 
+
 
   // async function mintOne(params:{
   //   creatorMetaId:string
@@ -1068,18 +1283,18 @@ function validateInput(){
   //       feeb:params.feeb
   //     })
   //     if(submitRes.code == 200){
-  //       
+  //
   //       return ElMessage.success(`${i18n.t('NFTS.NFTs mint_success')}`)
   //     }else{
   //       throw new Error(submitRes?.msg)
   //     }
   //     }
-     
+
   //   }
-    
+
   //   } }catch (error) {
-  //     
-      
+  //
+
   //    return ElMessage.error(error as any)
   //   }
 
@@ -1091,13 +1306,13 @@ function getCollectionData() {
     return item.collectionPinId == route.params.pinid
   })
   if(currentNftsCollect.value?.name){
-    
+
     genesisCollection.value = currentNftsCollect.value!.name
-    
+
     autoMaketData.value.initialPrice=currentNftsCollect.value?.initialPrice! ? space(currentNftsCollect.value?.initialPrice!) : 0
     autoMaketData.value.priceGrowth=currentNftsCollect.value?.priceGrowth! ? space(currentNftsCollect.value?.priceGrowth!) : 0
-      
- 
+
+
   }
 
 }
@@ -1115,7 +1330,7 @@ function removeItem(item: any) {
     return ele.id !== item.id
   })
   console.log("newFILE",newFile)
-  
+
   tableData.length = 0
   newFile.length=0
   newArr.map((item,index)=>{
@@ -1169,7 +1384,7 @@ async function selectChange(newSelection: any) {
     input.onchange = async (e: Event) => {
       const files: File[] = [...e.target!.files!]
       for (let item of files) {
-        
+
         const compressed = await compressImage(item)
         const result = await FileToAttachmentItem(compressed)
         newSelection.cover = result.url
@@ -1180,7 +1395,7 @@ async function selectChange(newSelection: any) {
 }
 
 function deleteCover(item: any) {
-  
+
   item.cover = ''
   item.source = ''
 }
@@ -1220,7 +1435,7 @@ const confirm = async (formEl: any) => {
   }
   //newFile.length = 0
 
- 
+
   let currentlength = tableData.length
 
   const tableList: MintListInfo[] = []
@@ -1308,7 +1523,7 @@ async function preMint() {
     try {
       let params=new FormData()
       console.log("autoMaketData.value.initialPrice",autoMaketData.value.initialPrice)
-      
+
       for(let i=0;i<newFile.length;i++){
       params.append('file',newFile[i].file)
     }
@@ -1317,10 +1532,10 @@ async function preMint() {
         params.append('initialPrice',new Decimal(autoMaketData.value.initialPrice).mul(10**8).toString())
         params.append('priceGrowth',new Decimal(autoMaketData.value.priceGrowth).mul(10**8).toString())
       }
-      
+
     const res= await generateCommitAddress(params)
     console.log("res",res)
-    
+
     if(res?.code == 200){
       return res.data
     }else return {
@@ -1336,21 +1551,21 @@ async function preMint() {
 }
 
 async function estimateBuildTxFee(targetAddress:string[] = [],feeb:number,extractFee:number,checkOnly:boolean=false){
-  
+
   try {
     if(!targetAddress.length){
     for(let i=0;i<newFile.length;i++){
       targetAddress.push(connectionStore.last.user.address)
     }
   }
-   
+
     const psbt=new bitcoinjs.Psbt({ network: networkStore.typedNetwork })
     //const psbt:Psbt =await getDummyUtxoforLegacy(1,SIGHASH_ALL_ANYONECANPAY,true)
     //第一个output
     // psbt.addOutput({
     //   value:DUMMY_UTXO_INPUT_LEGACY,
     //   address:connectionStore.last.user.address
-    // })    
+    // })
     for(let i =0;i<newFile.length;i++){
       psbt.addOutput({
         value: 546,
@@ -1369,7 +1584,7 @@ async function estimateBuildTxFee(targetAddress:string[] = [],feeb:number,extrac
    })
 
    console.log("estiomateResult",estiomateResult)
-   
+
    if(checkOnly){
     const feeInfo={
       basic:newFile.length * 546,
@@ -1393,13 +1608,13 @@ async function estimateBuildTxFee(targetAddress:string[] = [],feeb:number,extrac
 }
 
 async function estimatePsbtFee(psbtHex:string,feeb:number,checkOnly:boolean=false){
-  
+
   try {
    if(!psbtHex){
     throw new Error(`${i18n.t('Nfts.psbt_empty')}`)
    }
     const psbt =bitcoinjs.Psbt.fromHex(psbtHex,{ network: networkStore.typedNetwork })
- 
+
     const estiomateResult= await exclusiveChange({
       psbt: psbt,
       maxUtxosCount:3,
@@ -1407,7 +1622,7 @@ async function estimatePsbtFee(psbtHex:string,feeb:number,checkOnly:boolean=fals
       feeb:feeb ?? feeStore.getCurrentFeeb,
    })
 
- 
+
    if(checkOnly){
     const {paymentValue,fee,changeValue}=estiomateResult
     const mintPrice=new Decimal(paymentValue!).sub(changeValue).sub(fee).sub(import.meta.env.VITE_MINT_NFT_SERVICE_FEE).toNumber()
@@ -1422,7 +1637,7 @@ async function estimatePsbtFee(psbtHex:string,feeb:number,checkOnly:boolean=fals
 
     return result
    }
-   
+
    return estiomateResult
   } catch (error) {
     throw new Error(error)
@@ -1436,15 +1651,15 @@ async function finallyMint() {
       preloading.close()
       return ElMessage.error(`${i18n.t('Nfts.lanuch_automarket_set')}`)
     }
-    
+
     // const estiomateResult= await estimateBuildTxFee([],feeStore.getCurrentFeeb,0,true)
-    // 
+    //
     // if(!estiomateResult){
-  
+
     //   return ElMessage.error(`${i18n.t('Nfts.cancel_transation')}`)
     // }
     let lockAddress=''
-    
+
     let params=new FormData()
     let nftListInfo:UploadFileData={
       picId:[],
@@ -1457,7 +1672,7 @@ async function finallyMint() {
       commitAddress:[],
       lockAddress:''
     }
-     
+
     for(let i=0;i<newFile.length;i++){
       params.append('file',newFile[i].file)
       nftListInfo.classify.push(JSON.stringify(newFile[i].classify))
@@ -1469,14 +1684,14 @@ async function finallyMint() {
       // params.append('classify',JSON.stringify(newFile[i].classify))
       // params.append('nftName',newFile[i].nftName)
     }
-    
-   
+
+
     nftListInfo.collectionPinid=currentNftsCollect.value?.collectionPinId!
-    
+
     uploadNftsFile(params).then(async (response)=>{
-     
+
         if(response.code == 200 && response.data.length){
-          
+
           for(let item of response.data){
             nftListInfo.picPath.push(item.picPath)
           }
@@ -1503,9 +1718,9 @@ if(commitAddressList.length){
 }
 
 if(totalFee > 0){
-    
+
     const mvcBalance= await window.metaidwallet.getMvcBalance()
-    
+
     if(Number(mvcBalance.total) < totalFee ){
       preloading.close()
       return ElMessage.error(`${i18n.t('Nts.mvc_balance_noenough')},${i18n.t('Nts.mvc_balance_need')} ${new Decimal(totalFee).div(10**8).toNumber()} Space`)
@@ -1518,7 +1733,7 @@ const estiomateResultAndMvc= await estimateBuildTxFee(commitAddressList,feeStore
 
 if(!estiomateResultAndMvc){
   preloading.close()
-  return 
+  return
 }
 
 const mvcTransfer=await window.metaidwallet.transfer({
@@ -1559,7 +1774,7 @@ loading.close()
 throw new Error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
 
 }else if(rawTx){
-  
+
 nftListInfo.rawTx = rawTx
 //params.append('rawTx',rawTx)
 }
@@ -1567,7 +1782,7 @@ nftListInfo.lockAddress=lockAddress
 
 //uploadNftsFilePath
 uploadNftsFilePath(nftListInfo).then((res)=>{
-  
+
   if(res.code == 200){
     loading.close()
   if(currentNftsCollect.value?.autoMarket && !currentNftsCollect.value?.initialPrice){
@@ -1596,10 +1811,10 @@ uploadNftsFilePath(nftListInfo).then((res)=>{
 }).catch(err=>{
   loading.close()
   throw new Error(`${err.toString()}`)
- 
+
 })
 
-         
+
         }else{
           preloading.close()
           throw new Error(response.msg)
@@ -1609,12 +1824,12 @@ uploadNftsFilePath(nftListInfo).then((res)=>{
       throw new Error(`${err.toString()}`)
     })
 
-  
+
 
   } catch (error) {
     preloading.close()
     return ElMessage.error(error as any)
-    
+
   }
 
 
@@ -1637,7 +1852,7 @@ uploadNftsFilePath(nftListInfo).then((res)=>{
   //     }
   //   })
   //   console.log('body', body, attachments)
-  //   
+  //
   //   const mintItemRes = await mintNftItemEntity({
   //     collectionName: genesisCollection.value,
   //     body: body,
@@ -1646,10 +1861,10 @@ uploadNftsFilePath(nftListInfo).then((res)=>{
   //     noBroadcast: false,
   //   })
   //   console.log('mintItemRes', mintItemRes)
-  //   
+  //
   // } catch (error) {
   //   console.log('error', error)
-  //   
+  //
   // }
 
 
@@ -1658,7 +1873,7 @@ uploadNftsFilePath(nftListInfo).then((res)=>{
 const onSubmitNewCollection = async () => {
   //router.push('/nfts')
   console.log("createCollectionform",createCollectionform)
-  
+
   const existNfts= genesisStore.getList.find((item)=>item.name == createCollectionform.name)
   try {
     //
@@ -1669,7 +1884,7 @@ const onSubmitNewCollection = async () => {
 
 
 
-    
+
     const preMint = await mintNftEntity({
     body:{
       name:createCollectionform.name,
@@ -1687,9 +1902,9 @@ const onSubmitNewCollection = async () => {
 
   if(preMint!.isPay){
     if(preMint!.txFee > 0){
-    
+
     const mvcBalance= await window.metaidwallet.getMvcBalance()
-    
+
     if(Number(mvcBalance.total) < preMint!.txFee ){
       return ElMessage.error(`${i18n.t('Nts.mvc_balance_noenough')},${i18n.t('Nts.mvc_balance_need')} ${new Decimal(totalFee).div(10**8).toNumber()} Space`)
     }
@@ -1704,14 +1919,14 @@ const onSubmitNewCollection = async () => {
       ]
     }
   ]
-}) 
+})
 
 if(mvcTransfer?.status == "canceled"){
         return ElMessage.error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
       }
 
       if(!mvcTransfer.txids.length){
- 
+
         return ElMessage.error(`${i18n.t(`Nfts.pay_file_fail`)}`)
         }
 
@@ -1737,12 +1952,12 @@ if(mvcTransfer?.status == "canceled"){
         collectionName:createCollectionform.name,
         address:connectionStore.last.user.address
       })
-      
+
       if(genesisRes.code !== 200){
         return ElMessage.error(genesisRes.msg)
       }
       console.log("genesisRes",genesisRes)
-      
+
       const collectionInfo={
         name:createCollectionform.name,
         coverPinid:coverPinId,
@@ -1759,13 +1974,13 @@ if(mvcTransfer?.status == "canceled"){
 
       }
 
-      
+
       const issueRes=await issueCollection({
         collectionInfo
       })
       if(issueRes.code == 200){
         console.log("issueRes",issueRes)
-      
+
       genesisStore.add({
     totalSupply: +createCollectionform.totalSupply,
     coverPinid:coverPinId,
@@ -1788,7 +2003,7 @@ if(mvcTransfer?.status == "canceled"){
   })
   toNftsDetail(`${collectionPinid}`)
 }
-   
+
   }
 
 
@@ -1799,10 +2014,10 @@ if(mvcTransfer?.status == "canceled"){
   }
   }
   } catch (error) {
-    
+
     ElMessage.error((error as any).toString())
   }
- 
+
 
 
 }

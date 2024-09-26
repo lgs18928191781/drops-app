@@ -4,13 +4,15 @@
     class="sm"
     @close="emit('update:modelValue', false)"
     :closeOnClickModal="false"
+    :style="{ height: '80vh', overflowY: 'auto' }"
+    align-center
   >
     <template #title>
       <slot name="title"></slot>
     </template>
     <slot name="content"></slot>
     <div
-     v-if="!defiendFooter"
+      v-if="!defiendFooter"
       class="operate flex text-base flex-align-center"
       :style="{ marginTop: operateWarpMarginTop + 'px' }"
     >
@@ -37,7 +39,6 @@
         >{{ confirmBtnText || $t('Nfts.launch_OK') }}</a
       >
     </div>
-   
   </ElDialog>
 </template>
 
@@ -51,7 +52,7 @@ interface Props {
   cancelBtnText?: string
   cancelBtnClass?: string
   isHideCancelBtn?: boolean
-  operateWarpMarginTop: number 
+  operateWarpMarginTop: number
   defiendFooter?:boolean
 }
 
@@ -65,6 +66,4 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits(['update:modelValue', 'confirm', 'cancel'])
 </script>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

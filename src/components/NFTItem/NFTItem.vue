@@ -27,10 +27,7 @@
             />
             <div class="flex1 flex flex-align-center info">
               <span class="user-name-warp"
-                ><UserName
-                  :name="nft.creator_info.name"
-                  :meta-name="''"
-                  :noTag="true"
+                ><UserName :name="nft.creator_info.name" :meta-name="''" :noTag="true"
               /></span>
               <span class="role">({{ $t('NFT.Creater') }})</span>
             </div>
@@ -45,19 +42,14 @@
             />
             <div class="flex1 flex flex-align-center info">
               <span class="user-name-warp"
-                ><UserName
-                  :name="nft.owner_info?.name"
-                  :meta-name="''"
-                  :noTag="true"
+                ><UserName :name="nft.owner_info?.name" :meta-name="''" :noTag="true"
               /></span>
               <span class="role">({{ $t('NFT.Owner') }})</span>
             </div>
           </div>
         </div>
 
-        <div class="main-border " 
-        :class="[nft.is_ready ? 'primary'  :  'fade']"
-        @click.stop="btnFun">
+        <div class="main-border " :class="[nft.is_ready ? 'primary' : 'fade']" @click.stop="btnFun">
           {{ btnText }}
         </div>
       </div>
@@ -73,9 +65,9 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import NFTItemSkeleton from './NFTItemSkeleton.vue'
 import { useUserStore } from '@/stores/user'
-import { IsMyNFT, IsSale,IsReady } from '@/utils/nft'
+import { IsMyNFT, IsSale, IsReady } from '@/utils/nft'
 import { useI18n } from 'vue-i18n'
-import { checkUserLogin,calcNftRealSalePrice } from '@/utils/util'
+import { checkUserLogin, calcNftRealSalePrice } from '@/utils/util'
 
 import Decimal from 'decimal.js-light'
 const props = defineProps<{
@@ -93,7 +85,7 @@ const isMyNFT = computed(() => {
   return IsMyNFT(props.nft)
 })
 
-const isReady=computed(()=>{
+const isReady = computed(() => {
   return IsReady(props.nft)
 })
 
@@ -102,7 +94,6 @@ const isSale = computed(() => {
 })
 
 const btnText = computed(() => {
-  
   if (isMyNFT.value) {
     if (isSale.value) {
       return i18n.t('NFT.Off Sale')
@@ -111,8 +102,7 @@ const btnText = computed(() => {
     }
   } else {
     if (isSale.value) {
-      
-      if(!isReady.value){
+      if (!isReady.value) {
         return i18n.t('NFT.in_mempool')
       }
       return i18n.t('NFT.Buy Now')
@@ -122,14 +112,13 @@ const btnText = computed(() => {
   }
 })
 
-const realSalePrice=computed(()=>{
-  const {total}=calcNftRealSalePrice(props.nft.sale_price,props.nft.royalty_rate)
- return total
-
+const realSalePrice = computed(() => {
+  const { total } = calcNftRealSalePrice(props.nft.sale_price, props.nft.royalty_rate)
+  return total
 })
 
 async function btnFun() {
- if (isMyNFT.value) {
+  if (isMyNFT.value) {
     if (isSale.value) {
       emit('offsale', props.nft)
     } else {
@@ -138,7 +127,7 @@ async function btnFun() {
   } else {
     if (isSale.value) {
       await checkUserLogin()
-      if(!isReady.value){
+      if (!isReady.value) {
         return
       }
       emit('buy', props.nft)
@@ -152,9 +141,8 @@ function toNFT() {
   router.push({
     name: 'nftDetail',
     params: {
-      collectionpinid:props.nft.collection_pinid,
-      nftpinid:props.nft.item_pinid,
-    
+      collectionpinid: props.nft.collection_pinid,
+      nftpinid: props.nft.item_pinid,
     },
   })
 }

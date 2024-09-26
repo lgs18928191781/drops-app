@@ -3,29 +3,29 @@
     <!-- header -->
     <div class="header flex flex-align-center">
       <div class="flex1">
-        <div class="title flex items-center ">
+        <div class="title flex items-center font-sora text-white">
           <span>{{ $t('Collection.title') }}</span>
-          <span class="ml-1 text-[#303133] text-base">({{ $t("Collection.display") }})</span>
+          <span class="ml-1 text-base">({{ $t('Collection.display') }})</span>
         </div>
-        <div class="drsc">{{ $t('Collection.drsc') }}</div>
+        <div class="drsc text-[#A9A8AC]">{{ $t('Collection.drsc') }}</div>
       </div>
-      <div class="flex flex-align-center chain">
+      <!-- <div class="flex flex-align-center chain">
         <span class="label">{{ $t('Collection.Blockchain') }}:</span>
         <ElSelect v-model="currentChain" popper-class="custom-select" @change="onChangeChain">
           <template #prefix>
-            <!--
+            
               :class="{ all: currentChain === -1 }"
-            -->
-            <!-- <img
+           
+            <img
               class="chain-icon"
               :src="currentChain === -1 ? mvcIcon : $filters.strapiImage(chains.find(item => item.id === currentChain)!.icon?.url)"
-            /> -->
+            />
             <img
               class="chain-icon"
               :src="btc"
             />
           </template>
-          <!-- <ElOption v-for="item in chains" :key="item.id" :label="item.name" :value="item.id">
+          <ElOption v-for="item in chains" :key="item.id" :label="item.name" :value="item.id">
             <div class="option-item flex flex-align-center">
               
               <img
@@ -41,9 +41,9 @@
                 <Icon name="check" />
               </span>
             </div>
-          </ElOption> -->
+          </ElOption>
         </ElSelect>
-      </div>
+      </div> -->
     </div>
 
     <!-- collection-list -->
@@ -61,7 +61,7 @@
           :key="item.id"
         >
           <div class="cover">
-            <Image :src="item.cover_pinid"  />  
+            <Image :src="item.cover_pinid" />
             <div class="seriesName">
               <span>{{ item.name }}</span>
             </div>
@@ -88,7 +88,7 @@
               <div class="flex1 msg-item">
                 <div class="label">{{ $t('Collection.Floor price') }}</div>
                 <div class="value">
-                  {{ $filters.Currency(item.floor_price,CurrencyUnit) }}
+                  {{ $filters.Currency(item.floor_price, CurrencyUnit) }}
                   {{ CurrencyUnit.toLocaleUpperCase() }}
                 </div>
               </div>
@@ -122,16 +122,16 @@ import IsNull from '@/components/IsNull/IsNull.vue'
 import { Chains } from '@/enum'
 import { GetGenesisStatistics } from '@/api/broad'
 import btc from '@/assets/nft/btc.png'
-import {NftsLaunchPadChain,NftsLaunchPadChainSymbol} from '@/data/constants'
-import {getMarketCollectionList,getCollectionMintAmout} from '@/api/mrc721-api'
-import {useMetaIDEntity} from '@/hooks/use-metaid-entity'
+import { NftsLaunchPadChain, NftsLaunchPadChainSymbol } from '@/data/constants'
+import { getMarketCollectionList, getCollectionMintAmout } from '@/api/mrc721-api'
+import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
 const chains: Chain[] = reactive([])
 const currentChain = ref(NftsLaunchPadChain.btc)
 const i18n = useI18n()
-const {getUserAllInfo}=useMetaIDEntity()
+const { getUserAllInfo } = useMetaIDEntity()
 const pagination = reactive({ ...initPagination })
 // const collections: Collect[] = reactive([])
-const collections:NftsCollection[]=reactive([])
+const collections: NftsCollection[] = reactive([])
 const isSkeleton = ref(true)
 const topicTypeListInfo: GenesisVolumeInfo[] = reactive([])
 const mvcIcon = computed(() => {
@@ -148,7 +148,6 @@ const currentChainById = computed(() => {
   //     return Chains.POLYGON
   //   default:
   //     return Chains.MVC
-  
 })
 
 const CurrencyUnit = computed(() => {
@@ -216,50 +215,38 @@ function getChains() {
 //   })
 // }
 
-function getDatas(isCover = false){
-  return new Promise<void>(async(resolve,reject)=>{
-   const res= await getMarketCollectionList({
-      chain:NftsLaunchPadChainSymbol.btc,
-      page:pagination.page,
-      pageSize:pagination.pageSize,
-      canMint:true
+function getDatas(isCover = false) {
+  return new Promise<void>(async (resolve, reject) => {
+    const res = await getMarketCollectionList({
+      chain: NftsLaunchPadChainSymbol.btc,
+      page: pagination.page,
+      pageSize: pagination.pageSize,
+      canMint: true,
     })
-    if(res.code == 200){
-        if(res.data.result.length){
-          pagination.nothing = false
-          for(let item of res.data.result){
-            
-            if(item.init_price){
-              const mintRes= await getCollectionMintAmout({
-                collectionPinid:item.collection_pinid
+    if (res.code == 200) {
+      if (res.data.result.length) {
+        pagination.nothing = false
+        for (let item of res.data.result) {
+          if (item.init_price) {
+            const mintRes = await getCollectionMintAmout({
+              collectionPinid: item.collection_pinid,
             })
-            
-            if(mintRes.code == 200){
-              const creator_info= await getUserAllInfo(item.address)
-              item.collection_creator=creator_info
-              const {mintAmout,currentSupply,currentMintPrice}=mintRes.data
-              collections.push({...item,current_supply:currentSupply,minted:mintAmout})
+
+            if (mintRes.code == 200) {
+              const creator_info = await getUserAllInfo(item.address)
+              item.collection_creator = creator_info
+              const { mintAmout, currentSupply, currentMintPrice } = mintRes.data
+              collections.push({ ...item, current_supply: currentSupply, minted: mintAmout })
             }
-            
-            }
-            
-            
-            
           }
-        
-
-
-       
-        }else{
-          pagination.nothing = true
         }
-        resolve()
+      } else {
+        pagination.nothing = true
+      }
+      resolve()
     }
-    
   })
 }
-
-
 
 function getMore() {
   if (pagination.loading || pagination.nothing) return

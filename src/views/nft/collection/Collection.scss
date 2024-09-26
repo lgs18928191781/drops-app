@@ -3,7 +3,7 @@
 .collection {
     border-radius: var(--rounded) var(--rounded) 0px 0px;
     overflow: hidden;
-    background: var(--themeBgSecondColor);
+    background: #29272E;
 
     .cover {
         width: 100%;
@@ -45,6 +45,7 @@
             }
 
             font-size: 24px;
+            font-weight: 600;
 
             .icon {
                 width: 18px;
@@ -56,6 +57,7 @@
         .creator {
             margin-top: 13px;
             font-size: 16px;
+            font-weight: 300;
 
             .el-skeleton__item {
                 height: 16px;
@@ -63,7 +65,7 @@
             }
 
             a {
-                color: var(--color-hover);
+                color: #fff;
                 margin-left: 5px;
                 cursor: pointer;
             }
@@ -81,6 +83,7 @@
             margin-top: 13px;
             font-size: 16px;
             max-width: 480PX;
+            font-weight: 300;
 
             .el-skeleton__item {
                 height: 16px;
@@ -153,7 +156,23 @@
             }
 
             .statiscs-item-warp {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+
+                .value {
+                    font-size: 20px;
+                    font-weight: 600;
+                    color: #FFFFFF;
+                }
+
                 // width: 150px;
+                .label {
+                    font-size: 16px;
+                    font-weight: 100;
+                    color: #909399;
+                }
             }
         }
     }
@@ -175,6 +194,7 @@
             margin-right: 30px;
             font-size: 16px;
             cursor: pointer;
+            font-weight: 300;
 
             &:last-child {
                 margin-right: 0;
@@ -183,6 +203,7 @@
             &.active {
                 opacity: 1;
                 position: relative;
+                font-weight: 600;
 
                 &::before {
                     content: '';
@@ -199,7 +220,7 @@
     }
 
     .screen {
-        background: var(--themeBgSecondColor);
+        background: #29272E;
         padding-top: 18px;
         padding-bottom: 18px;
         margin-top: 18px;
@@ -221,7 +242,7 @@
         }
 
         .display {
-            background: var(--color-display);
+            background: #151417;
             border-radius: var(--rounded);
             margin-left: 23px;
 
@@ -245,7 +266,7 @@
                 }
 
                 &.active {
-                    background: var(--color-primary);
+                    background: #FFFFFF;
                     border-radius: var(--rounded);
                     border: 2px solid #303133;
 

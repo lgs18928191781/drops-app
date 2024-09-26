@@ -11,7 +11,7 @@
 
     .drsc {
         font-size: 16px;
-        color: var(--themeFadedTextColor);
+        // color: var(--themeFadedTextColor);
         margin-top: 6px;
     }
 
@@ -41,11 +41,11 @@
     border-radius: 50%;
     margin-right: 10px;
     border: 1px solid var(--divid-color);
-   
+
     // &.all {
     //     background: #fff;
     //     padding: 8px;
-        
+
     // }
 
 }
@@ -86,10 +86,11 @@
     gap: 18px;
 
     .collection-item {
-        border-radius: var(--rounded);
+        border-radius: 24px;
         box-shadow: 2px 0px 10px 0px rgba(var(--themeTextColorRgb), 0.3);
-        background: var(--themeBgSecondColor);
+        background: #29272E;
         cursor: pointer;
+        padding: 24px;
 
         .cover {
             width: 100%;
@@ -97,7 +98,7 @@
             padding-bottom: 50%;
             position: relative;
             overflow: hidden;
-            border-radius: var(--rounded) var(--rounded) 0 0;
+            border-radius: 16px;
 
             img {
                 position: absolute;
@@ -109,33 +110,35 @@
                 object-fit: cover;
                 transition: all 0.5s;
             }
-            .seriesName{
+
+            .seriesName {
                 position: absolute;
                 bottom: 0;
-                color:#fff; //var(--themeBgSecondColor);
-                font-size:18px;
+                color: #fff; //var(--themeBgSecondColor);
+                font-size: 18px;
                 width: 100%;
                 height: 42px;
                 display: flex;
                 align-items: center;
-               
-                  background: linear-gradient(0deg, #303133 0%, rgba(48,49,51,0.00) 99%);
-               
+
+                background: linear-gradient(0deg, #303133 0%, rgba(48, 49, 51, 0.00) 99%);
+
                 border-radius: 0px 0px 12px 12px;
-                span{
+
+                span {
                     width: 90%;
                     padding-left: 18px;
-                     text-overflow: ellipsis;
-                overflow: hidden;
-                white-space: nowrap;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap;
                 }
-              
+
             }
         }
 
         .cont {
             padding: 18px;
-
+            font-family: Sora;
 
             .author {
                 .avatar {
@@ -156,7 +159,7 @@
 
                 .metaid {
                     font-size: 12px;
-                    color: var(--themeFadedTextColor);
+                    color: rgba(255, 255, 255, 0.5);
                     margin-top: 2px;
                 }
             }
@@ -167,7 +170,7 @@
                 .msg-item {
                     .label {
                         font-size: 16px;
-                        color: var(--themeFadedTextColor);
+                        color: rgba(255, 255, 255, 0.5);
                     }
 
                     .value {

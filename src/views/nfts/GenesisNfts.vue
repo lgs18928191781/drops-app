@@ -1,6 +1,6 @@
 <template>
   <div class="genesis-wrap">
-    <header class="flex items-center border-b pb-3 border-[#EDEFF2]">
+    <!-- <header class="flex items-center border-b pb-3 border-[#EDEFF2]">
       <div class="w-5/12">
         <span
           @click="back"
@@ -12,19 +12,21 @@
       <div class="w-7/12 text-base font-medium ">
         {{ $t('Nfts.launch_create') }}
       </div>
-    </header>
+    </header> -->
     <div class="form-wrap py-7">
       <el-form :model="form">
-        <el-form-item class="flex items-center  " label-width="50%">
+        <el-form-item class="flex" label-width="50%">
           <template #label>
-            <span class="flex-1 text-base font-medium"> {{ $t('Nfts.launch_form_title1') }}</span>
+            <span class="flex-1 text-sm font-light font-sora text-normalColor">
+              {{ $t('Nfts.launch_form_title1') }}</span
+            >
           </template>
           <template #default>
             <div class="flex relative justify-end">
               <el-upload
                 :multiple="false"
                 action="#"
-                class="avatar-uploader  w-24 h-24 flex items-center justify-center  border-2 border-[#BFC2CC] rounded-xl"
+                class="avatar-uploader w-30 h-30 flex items-center justify-center border-none rounded-[8px] bg-[#29272E]"
                 :show-file-list="false"
                 :before-upload="beforeAvatarUpload"
               >
@@ -46,7 +48,9 @@
 
         <el-form-item class="flex flex-col " label-width="auto">
           <template #label>
-            <span class="flex text-base font-medium">{{ $t('Nfts.launch_title2') }}</span>
+            <span class="flex text-sm font-light font-sora text-normalColor">{{
+              $t('Nfts.launch_title2')
+            }}</span>
           </template>
           <template #default>
             <el-input v-model="form.name" :placeholder="$t('Nfts.launch_placeholder1')" />
@@ -55,7 +59,9 @@
 
         <el-form-item class="flex flex-col " label-width="auto">
           <template #label>
-            <span class="flex text-base font-medium">{{ $t('Nfts.launch_title3') }}</span>
+            <span class="flex text-sm font-light font-sora text-normalColor">{{
+              $t('Nfts.launch_title3')
+            }}</span>
           </template>
           <template #default>
             <el-input
@@ -67,37 +73,46 @@
           </template>
         </el-form-item>
 
-        <el-form-item class="flex flex-col " label-width="auto">
-          <template #label>
-            <span class="flex text-base font-medium">{{ $t('Nfts.launch_title5') }}</span>
-          </template>
-          <template #default>
-            <el-select v-model="form.royaltyRate" placeholder="Select" style="width: 100%">
-              <el-option v-for="item in royaltyRate" :label="item + ' ' + '%'" :value="item" />
-            </el-select>
-          </template>
-        </el-form-item>
+        <div class="flex flex-col">
+          <div class="flex items-center justify-between space-x-4">
+            <el-form-item class="flex flex-col flex-1" label-width="auto">
+              <template #label>
+                <span class="flex text-sm font-light font-sora text-normalColor">{{
+                  $t('Nfts.launch_title4')
+                }}</span>
+              </template>
+              <template #default>
+                <el-input
+                  v-model="form.totalSupply"
+                  :formatter="(value:string) => `${value}`.replace(/\D+$/g, '')"
+                  :parser="(value:string) => value.replace(/\D+$/g, '')"
+                  :placeholder="$t('Nfts.launch_placeholder3')"
+                />
+              </template>
+            </el-form-item>
+            <el-form-item class="flex flex-col flex-1" label-width="auto">
+              <template #label>
+                <span class="flex text-sm font-light font-sora text-normalColor">{{
+                  $t('Nfts.launch_title5')
+                }}</span>
+              </template>
+              <template #default>
+                <el-select v-model="form.royaltyRate" placeholder="Select" style="width: 100%">
+                  <el-option v-for="item in royaltyRate" :label="item + ' ' + '%'" :value="item" />
+                </el-select>
+              </template>
+            </el-form-item>
+          </div>
+        </div>
 
         <el-form-item class="flex flex-col " label-width="auto">
           <template #label>
-            <span class="flex text-base font-medium">{{ $t('Nfts.launch_title6') }}</span>
+            <span class="flex text-sm font-light font-sora text-normalColor">{{
+              $t('Nfts.launch_title6')
+            }}</span>
           </template>
           <template #default>
             <el-input v-model="form.website" :placeholder="$t('Nfts.launch_placeholder6')" />
-          </template>
-        </el-form-item>
-
-        <el-form-item class="flex flex-col " label-width="auto">
-          <template #label>
-            <span class="flex text-base font-medium">{{ $t('Nfts.launch_title4') }}</span>
-          </template>
-          <template #default>
-            <el-input
-              v-model="form.totalSupply"
-              :formatter="(value:string) => `${value}`.replace(/\D+$/g, '')"
-              :parser="(value:string) => value.replace(/\D+$/g, '')"
-              :placeholder="$t('Nfts.launch_placeholder3')"
-            />
           </template>
         </el-form-item>
 
@@ -190,9 +205,9 @@ const onSubmit = async() => {
   if(preMint!.isPay){
 
     if(preMint!.txFee > 0){
-    
+
     const mvcBalance= await window.metaidwallet.getMvcBalance()
-    
+
     if(Number(mvcBalance.total) < preMint!.txFee ){
       return ElMessage.error(`${i18n.t('Nts.mvc_balance_noenough')},${i18n.t('Nts.mvc_balance_need')} ${new Decimal(totalFee).div(10**8).toNumber()} Space`)
     }
@@ -208,14 +223,14 @@ const onSubmit = async() => {
       ]
     }
   ]
-})  
+})
 
       if(mvcTransfer?.status == "canceled"){
         return ElMessage.error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
       }
 
       if(!mvcTransfer.txids.length){
- 
+
         return ElMessage.error(`${i18n.t(`Nfts.pay_file_fail`)}`)
         }
 
@@ -242,13 +257,13 @@ const onSubmit = async() => {
       collectionName:form.name,
       address:connectionStore.last.user.address
       })
-      
+
       if(genesisRes.code !== 200){
         return ElMessage.error(genesisRes.msg)
       }
 
       console.log("genesisRes",genesisRes)
-      
+
       const collectionInfo={
         name:form.name,
         coverPinid:coverPinId,
@@ -267,11 +282,11 @@ const onSubmit = async() => {
       const issueRes=await issueCollection({
         collectionInfo
       })
-      
+
       console.log("issueRes",issueRes)
-      
+
       if(issueRes.code == 200){
-       
+
       genesisStore.add({
         totalSupply:+form.totalSupply,
         name:form.name,
@@ -291,13 +306,13 @@ const onSubmit = async() => {
         minted:0,
         currentSupply:0
         })
-  
+
 
   toNftsDetail(collectionPinid)
         }else{
           return ElMessage.error(issueRes.msg)
         }
-   
+
 
   }
 
@@ -312,10 +327,10 @@ const onSubmit = async() => {
 
 
   //console.log("createCollectionDescRes",createCollectionDescRes)
-  
-    
 
- 
+
+
+
 
 
   }catch (error:any) {
@@ -325,7 +340,7 @@ const onSubmit = async() => {
       ElMessage.error(error)
     }
     console.log("error",error)
-    
+
   }
 
 }

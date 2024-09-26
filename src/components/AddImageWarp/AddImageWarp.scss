@@ -10,9 +10,10 @@
         height: 100%;
         left: 0;
         top: 0;
-        border-radius: var(--rounded);
-        border: 1px solid var(--faded-border-color);
+        border-radius: 8px;
+        border: none;
         overflow: hidden;
+        background-color: #151417;
 
         .add {
             width: 1em;

@@ -415,14 +415,14 @@ html.dark {
         width: 34px;
         height: 34px;
         border-radius: 50%;
-        background:#94909F;//var(--faded-border-color);
+        background: #94909F; //var(--faded-border-color);
         top: 50%;
         margin-top: -17px;
         right: 0;
         margin-right: 30px;
 
         .el-dialog__close {
-            color:#fff; //var(--themeTextColor);
+            color: #fff; //var(--themeTextColor);
         }
 
         // &:hover {
@@ -560,49 +560,47 @@ html.dark {
 
 .collection-selector {
 
+    // .el-select {
+    //     --el-select-border-color-hover: #fff;
+
+    //     .el-input.is-focus .el-input__wrapper {
+    //         box-shadow: 0 0 0 0px !important;
+    //     }
+
+    //     .el-input__wrapper.is-focus {
+    //         box-shadow: 0 0 0 0px !important;
+    //     }
+
+    //     .el-input {
 
 
-    .el-select {
-        --el-select-border-color-hover: #fff;
+    //         border: none !important;
+    //         box-shadow: 0 0 0 !important;
+    //         font-size: 18px;
+    //         font-weight: 500;
+    //         color: #303133;
 
-        .el-input.is-focus .el-input__wrapper {
-            box-shadow: 0 0 0 0px !important;
-        }
-
-        .el-input__wrapper.is-focus {
-            box-shadow: 0 0 0 0px !important;
-        }
-
-        .el-input {
-
-
-            border: none !important;
-            box-shadow: 0 0 0 !important;
-            font-size: 18px;
-            font-weight: 500;
-            color: #303133;
-
-            &:hover {
-                border: none !important;
-            }
-        }
+    //         &:hover {
+    //             border: none !important;
+    //         }
+    //     }
 
 
 
-        .el-input .el-input--suffix {
-            .el-input__wrapper {
-                border: none !important;
-            }
+    //     .el-input .el-input--suffix {
+    //         .el-input__wrapper {
+    //             border: none !important;
+    //         }
 
 
-        }
+    //     }
 
 
 
 
 
 
-    }
+    // }
 
 
 

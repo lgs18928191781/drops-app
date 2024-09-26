@@ -13,8 +13,8 @@
 }
 
 .top-bar {
-    background: var(--themeBgSecondColor);
-    border-bottom: 1px solid var(--themeBgThreeColor);
+    // background: var(--themeBgSecondColor);
+    // border-bottom: 1px solid var(--themeBgThreeColor);
     padding-bottom: 27px;
 
     .back {
@@ -108,7 +108,6 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-
 }
 
 .nfts-intro {
@@ -121,6 +120,15 @@
     max-width: 100%;
     word-break: break-all;
 
+}
+
+.line-clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    /* 限制显示2行 */
+    overflow: hidden;
+    /* 隐藏超出部分 */
 }
 
 .nfts-footer {
@@ -145,6 +153,129 @@
         }
     }
 }
+
+.form-wrap {
+    :deep(.el-input) {
+        border: none;
+        box-shadow: none;
+    }
+
+    :deep(.el-input__wrapper) {
+        background-color: #151417;
+        opacity: 1;
+    }
+
+    :deep(.el-textarea__inner) {
+        background-color: #151417;
+        opacity: 1;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    :deep(.el-select) {
+        --el-select-input-focus-border-color: #fff !important;
+    }
+
+    // :deep(.el-select) {
+
+    // }
+    // .el-table th.el-table__cell{
+    //     background-color: #17161A;
+    // }
+    // .el-table__header-wrapper {}
+
+    :deep(.el-table__inner-wrapper) {
+        background-color: #17161A !important;
+    }
+
+    :deep(.el-table tr) {
+        background-color: #17161A !important;
+    }
+
+    :deep(.el-table__body-wrapper tbody tr:hover) {
+        background-color: transparent !important;
+    }
+
+    :deep(.el-input__inner) {
+        color: #ffffff;
+    }
+
+    :deep(.el-table) {
+        --el-table-row-hover-bg-color: transparent;
+    }
+
+
+
+}
+
+.mintDialog-style {
+    :deep(.el-input) {
+        border: none;
+        box-shadow: none;
+        height: 48px;
+    }
+
+    :deep(.el-input__wrapper) {
+        background-color: #151417;
+        opacity: 1;
+    }
+
+    :deep(.el-textarea__inner) {
+        background-color: #151417;
+        opacity: 1;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    :deep(.el-select) {
+        --el-select-input-focus-border-color: #fff !important;
+    }
+
+    :deep(.el-dialog__body) {
+        padding-bottom: 0 !important;
+    }
+}
+
+.price-area {
+    :deep(.el-input) {
+        // border: none;
+        box-shadow: none;
+        height: 48px;
+        border: 1px solid #656170;
+    }
+
+    :deep(.el-input__wrapper) {
+        background-color: transparent;
+        opacity: 1;
+    }
+}
+
+:deep(.el-loading-mask) {
+    background-color: transparent;
+}
+
+
+
+
+.collection-selector {
+    :deep(.el-input) {
+        border: none;
+        box-shadow: none;
+        height: 44px;
+    }
+
+    :deep(.el-input__wrapper) {
+        background-color: #151417;
+        opacity: 1;
+        border: 1px solid #656170;
+    }
+
+    :deep(.el-select) {
+        --el-select-input-focus-border-color: #fff !important;
+    }
+
+}
+
 
 
 
