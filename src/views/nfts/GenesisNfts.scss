@@ -26,9 +26,15 @@
         opacity: 1;
         border: none !important;
         box-shadow: none !important;
+        color: #fff;
     }
 
+    :deep(.el-input__inner) {
+        color: #fff;
+    }
+
+
     :deep(.el-select) {
-    --el-select-input-focus-border-color: #fff !important;
-}
+        --el-select-input-focus-border-color: #fff !important;
+    }
 }

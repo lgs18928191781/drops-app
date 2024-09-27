@@ -170,6 +170,7 @@
         opacity: 1;
         border: none !important;
         box-shadow: none !important;
+        color: #fff;
     }
 
     :deep(.el-select) {
@@ -225,6 +226,7 @@
         opacity: 1;
         border: none !important;
         box-shadow: none !important;
+        color: #fff;
     }
 
     :deep(.el-select) {
@@ -234,6 +236,15 @@
     :deep(.el-dialog__body) {
         padding-bottom: 0 !important;
     }
+
+    :deep(.el-input__inner) {
+        color: #ffffff;
+    }
+
+    :deep(.el-select-dropdown__item) {
+        color: red;
+    }
+
 }
 
 .price-area {
@@ -247,6 +258,10 @@
     :deep(.el-input__wrapper) {
         background-color: transparent;
         opacity: 1;
+    }
+
+    :deep(.el-input__inner) {
+        color: #ffffff;
     }
 }
 
@@ -274,11 +289,92 @@
         --el-select-input-focus-border-color: #fff !important;
     }
 
+    :deep(.el-input__inner) {
+        color: #ffffff;
+    }
+
 }
 
 
 
+.msg-overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9;
 
+    .modal {
+        opacity: 1;
+        background: #242227;
+        text-align: center;
+        position: relative;
+        width: 25vw;
+        // height: 50vh;
+        // box-sizing: border-box;
+        line-height: 1.4;
+        border-radius: 12px;
+        box-sizing: border-box;
+        color: red;
+        padding: 30px 20px;
+
+        @media screen and (max-width: 1440px) {
+            width: 35vw;
+        }
+
+        @media screen and (max-width: 750px) {
+            width: 80vw;
+        }
+
+        .close-style {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            cursor: pointer;
+        }
+
+        .title-line {
+            font-family: Sora;
+            font-size: 24px;
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+
+        .button-area {
+            padding: 0 20px;
+            box-sizing: border-boxs;
+
+            .send-button {
+                background: #0f7bff;
+                border-radius: 12px;
+                border: 2px solid #303133;
+                font-size: 16px;
+                font-family: PingFang SC, PingFang SC;
+                font-weight: 500;
+                color: #ffffff;
+                box-sizing: border-box;
+                padding: 15px;
+                cursor: pointer;
+                box-shadow: 3px 3px 0px #303133;
+            }
+
+            .isComplete {
+                background-color: #edeff2 !important;
+                color: #bfc2cc !important;
+                border: 2px solid #bfc2cc !important;
+                box-shadow: 3px 3px 0px #bfc2cc !important;
+            }
+        }
+    }
+}
 
 
 @media only screen and (max-width: 750PX) {

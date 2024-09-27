@@ -557,6 +557,35 @@
         </el-table>
       </div>
     </div>
+
+    <div v-if="isShowmsgModal" class="msg-overlay">
+      <div class="modal">
+        <!-- <img
+          src="@/assets/image/pop_icon_close.png"
+          alt=""
+          @click="closeModal"
+          class="close-style"
+        /> -->
+        <img
+          src="@/assets/images/close-o@1x.png"
+          alt=""
+          class="w-[30px] h-[30px] absolute top-[30px] right-[20px] cursor-pointer"
+          @click="closeModal"
+        />
+        <img
+          src="@/assets/images/yes@2x.png"
+          alt=""
+          class="w-[110px] h-[78px] m-auto mt-15 mb-12"
+        />
+        <div class="title-line mb-8">Created Successfully</div>
+        <div
+          class="mt-5 text-base font-medium py-4 flex items-center cursor-pointer justify-center main-border primary text-white"
+          @click="closeModal"
+        >
+          OK
+        </div>
+      </div>
+    </div>
   </div>
 
   <CollectionDialog
@@ -1006,7 +1035,7 @@ const autoMaketData=ref({
   priceGrowth:0,
 
 })
-
+const isShowmsgModal = ref(true)
 
 watch(
   () => route.params.pinid,
@@ -1250,7 +1279,10 @@ function validateInput(){
     }
   }
 
+function closeModal(){
+  isShowmsgModal.value = false
 
+}
 
   // async function mintOne(params:{
   //   creatorMetaId:string
@@ -1800,7 +1832,8 @@ uploadNftsFilePath(nftListInfo).then((res)=>{
       })
       tableData.length=0
       newFile.length=0
-      ElMessage.success(`${i18n.t('Nfts.lanuch_upload_file_success')}`)
+      // ElMessage.success(`${i18n.t('Nfts.lanuch_upload_file_success')}`)
+      isShowmsgModal.value = true
   }else{
     loading.close()
     ElMessage.error(`${res.msg}`)
