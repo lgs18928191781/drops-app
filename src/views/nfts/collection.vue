@@ -124,10 +124,10 @@
         </div>
       </div> -->
 
-      <div class="nfts-card flex justify-between space-x-4">
-        <div class="flex flex-1 flex-row">
+      <div class="nfts-card flex flex-col sm:justify-between sm:flex-row space-x-4">
+        <div class="flex flex-1 items-center flex-col sm:flex-row">
           <div
-            class="nfts-cover flex items-center justify-center w-[150px] h-[150px] rounded-lg flex-shrink-0 mr-[30px]"
+            class="nfts-cover flex items-center w-[150px] h-[150px] rounded-lg flex-shrink-0 mr-[30px]"
           >
             <Image :src="currentNftsCollect?.coverPinid" custom-class="w-full rounded-lg" />
             <!-- <img class="w-full rounded-lg " :src="currentNftsCollect?.cover" alt="" /> -->
@@ -149,7 +149,7 @@
             </div>
           </div>
         </div>
-        <div class="flex flex-1 justify-end">
+        <div class="flex flex-1 justify-end mt-8 sm:mt-0">
           <!-- <div class="nfts-footer flex items-center text-sm ">
             <div class="flex items-center justify-start flex-wrap">
               <div class="blockchain flex items-center mr-6">
@@ -398,7 +398,7 @@
     </div>
 
     <div class="mt-12 ">
-      <div class="mint-wrap flex items-center justify-between border-b pb-5 border-[#EDEFF2]">
+      <div class="mint-wrap flex items-center justify-between border-b pb-8 border-[#656170]">
         <div class="font-sora text-white text-[30px] font-semibold">
           {{ $t('Nfts.lanuch_bulkMint') }}
         </div>
@@ -414,7 +414,7 @@
 
           <button
             @click=";(modelValue = true), (mintData.mintAmount = 0)"
-            class="py-2 px-6 rounded-[12px] border border-[#656170] flex mr-4"
+            class="py-3 px-6 rounded-[12px] border border-[#656170] flex mr-4"
           >
             {{ $t('Nfts.lanuch_addMint') }}
           </button>
@@ -424,8 +424,8 @@
             @click="finallyMint"
           > -->
           <button
-            class="py-2 px-6 rounded-[12px] border border-[#656170] flex"
-            :class="[tableData.length ? 'text-white' : 'text-[#656170]']"
+            class="py-3 px-6 rounded-[12px] border border-[#656170] flex"
+            :class="[tableData.length ? 'text-white main-border primary' : 'text-[#656170]']"
             @click="finallyMint"
           >
             <span class="mr-1">{{ $t('Nfts.lanuch_confirm_minting') }}</span>
@@ -1035,7 +1035,7 @@ const autoMaketData=ref({
   priceGrowth:0,
 
 })
-const isShowmsgModal = ref(true)
+const isShowmsgModal = ref(false)
 
 watch(
   () => route.params.pinid,

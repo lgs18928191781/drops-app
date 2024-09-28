@@ -7,10 +7,9 @@
     </div>
     <LoginedUserOperateVue />
   </header>
-
+  <div class="pl-[18px] pt-[18px] text-[30px] font-semibold font-sora text-white">Create NFTs</div>
   <div class="nft-warp">
     <!-- topBar -->
-
     <div class="nft-router-view-warp">
       <RouterView v-slot="{ Component, route }">
         <KeepAlive>

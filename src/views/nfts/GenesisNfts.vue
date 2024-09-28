@@ -1,5 +1,5 @@
 <template>
-  <div class="genesis-wrap">
+  <div class="genesis-wrap w-[90vw] sm:w-[70vw] lg:w-[40vw]">
     <!-- <header class="flex items-center border-b pb-3 border-[#EDEFF2]">
       <div class="w-5/12">
         <span
