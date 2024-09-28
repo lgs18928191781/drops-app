@@ -1455,7 +1455,8 @@ async function finallyMint() {
       collectionPinid:'',
       rawTx:'',
       commitAddress:[],
-      lockAddress:''
+      lockAddress:'',
+      mvcRawTx:''
     }
      
     for(let i=0;i<newFile.length;i++){
@@ -1479,6 +1480,7 @@ async function finallyMint() {
           
           for(let item of response.data){
             nftListInfo.picPath.push(item.picPath)
+            
           }
             // for(let i=0;i<newFile.length;i++){
     //   params.append('file',newFile[i].file)
@@ -1531,7 +1533,8 @@ const mvcTransfer=await window.metaidwallet.transfer({
         }
       ]
     }
-  ]
+  ],
+  broadcast:false
 })
 
 if(mvcTransfer?.status == "canceled"){
@@ -1539,12 +1542,13 @@ if(mvcTransfer?.status == "canceled"){
   return ElMessage.error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
 }
 
-if(!mvcTransfer.txids.length){
+if(!mvcTransfer.res.length){
   preloading.close()
   return ElMessage.error(`${i18n.t(`Nfts.pay_file_fail`)}`)
 }
-
+const mvcRawTx=mvcTransfer.res[0].txHex
 const {psbt:Psbt1}=await estimateBuildTxFee(commitAddressList,feeStore.getCurrentFeeb,totalFee)
+
 preloading.close()
 const loading = openLoading()
 //const toSignInputs=await formatToSignInputs(Psbt1)
@@ -1564,7 +1568,7 @@ nftListInfo.rawTx = rawTx
 //params.append('rawTx',rawTx)
 }
 nftListInfo.lockAddress=lockAddress
-
+nftListInfo.mvcRawTx=mvcRawTx
 //uploadNftsFilePath
 uploadNftsFilePath(nftListInfo).then((res)=>{
   

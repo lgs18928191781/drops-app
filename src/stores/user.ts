@@ -180,6 +180,7 @@ export const useUserStore = defineStore('user', {
         if (this.metaletLogin) {
           this.updateMetaletLoginState(false)
           localStorage.removeItem('useMetaletLogin')
+          localStorage.removeItem('last-feeb')
           const state = await window.metaidwallet.isConnected()
           if (state) {
             // await window.metaidwallet.disconnect()
