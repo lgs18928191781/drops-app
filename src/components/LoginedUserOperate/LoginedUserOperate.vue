@@ -195,8 +195,8 @@
       </a> -->
 
       <!-- 👤 头像 -->
-      <div class="flex bg-[#242227] items-center justify-between rounded-3xl px-3">
-        <el-popover placement="bottom" :width="'auto'" trigger="hover" ref="popover" popper-style="border:none !important">
+      <div class="flex bg-[#303133] items-center justify-between rounded-3xl px-3">
+        <el-popover placement="bottom" :width="'auto'" trigger="click" ref="popover" popper-style="border:none !important">
        
           
             <template #reference>

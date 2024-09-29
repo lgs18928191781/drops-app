@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4.5 bg-white bg-[#1A1B18] rounded-xl relative">
+  <div class="p-4.5 bg-[#1A1B18] rounded-xl relative">
     <div class="header flex flex-col  ">
       <div class="flex1 flex flex-row cont mr-2">
 
@@ -43,7 +43,7 @@
         <span class="text-base">Profile</span>
         <el-icon color="#A9A8AC" :size="12"><ArrowRightBold /></el-icon>
       </div>
-      <div class="flex cursor-pointer text-base mt-7 items-center justify-center hover:opacity-80">
+      <div @click="logout" class="flex cursor-pointer text-base mt-7 items-center justify-center hover:opacity-80">
         <span class="disconnet">Disconnect</span>
       </div>
     </div>
@@ -68,6 +68,7 @@ import { Mitt, MittEvent } from '@/utils/mitt'
 import { router } from '@/router'
 import {useConnectionStore} from '@/stores/connection'
 import { ArrowRightBold } from '@element-plus/icons-vue'
+import { useRoute, useRouter } from 'vue-router'
 const props = defineProps<{
   modelValue: boolean
   metaId: string
@@ -85,6 +86,7 @@ const i18n = props.i18n ? props.i18n.global : useI18n()
 const emit = defineEmits(['hide'])
 const connectionStore=useConnectionStore()
 
+const route = useRoute()
 function toUser(e: Event) {
   console.log(props.metaId)
   // router.push({
@@ -95,6 +97,12 @@ function toUser(e: Event) {
   // })
   // emit('hide')
   window.open(`${import.meta.env.VITE_METAID_URL}/${props.metaId}`, '_blank')
+}
+
+function logout(){
+  setTimeout(() => {
+        userStore.logout(route)
+      }, 500)
 }
 
 async function toMessage() {

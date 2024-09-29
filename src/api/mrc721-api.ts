@@ -1,7 +1,7 @@
 import HttpRequest from '@/utils/request'
 import {NftsLaunchPadChainSymbol} from '@/data/constants'
 const manHost=import.meta.env.VITE_MAN_API
-const nftOrderHost=`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//` //`http://127.0.0.1:3001`// //https://general.mvcscan.com/mrc721
+const nftOrderHost=`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//` //`http://127.0.0.1:3001`// //https://general.mvcscan.com/mrc721
 const nftFilerHost=`https://general.mvcscan.com/mrc721-file` //https://general.mvcscan.com/mrc721
 const NftOrders = new HttpRequest(`${nftOrderHost}/nfts-orders`, {
   header: {
@@ -378,4 +378,12 @@ export const broadcastBTCTx=async(rawTx:string,net:string):Promise<apiMrc721Resp
     rawTx,
     net
   })
+}
+
+export const getHotCollection=async():Promise<apiMrc721Response>=>{
+  return NftOrders.get('/get-hot-collection')
+}
+
+export const getNotableCollection=async():Promise<apiMrc721Response>=>{
+  return NftOrders.get('/get-notable-collection')
 }
