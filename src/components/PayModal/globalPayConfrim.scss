@@ -2,9 +2,9 @@
     padding: 30px;
 
     .header {
-        text-align: center;
-        font-size: 24px;
-        font-weight: 500;
+        // text-align: center;
+        font-size: 30px;
+        font-weight: 600;
         position: relative;
 
         .close {
@@ -33,6 +33,20 @@
         }
     }
 
+    .buyNftInfo {
+        :deep(.nft-cover) {
+            width: 120px;
+            height: 120px;
+        }
+
+        .avatar {
+            width: 24px;
+            height: 24px;
+            min-height: 24px;
+            min-width: 24px;
+        }
+    }
+
     .pay-count {
         margin-top: 26px;
         padding: 30px 0;
@@ -40,7 +54,7 @@
         text-align: center;
 
         .count {
-            font-size: 36px;
+            font-size: 34px;
             line-height: 36px;
         }
 
@@ -115,16 +129,18 @@
             text-align: center;
             padding: 16px 0;
             cursor: pointer;
-            margin-right: 14px;
-            color: var(--themeBtnTextColor);
+            // margin-right: 14px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
 
-            &:first-child {
-                background: #EDEFF2;
-            }
+            // &:first-child {
+            //     background: #EDEFF2;
+            // }
 
-            &:last-child {
-                margin-right: 0;
-            }
+            // &:last-child {
+            //     margin-right: 0;
+            // }
         }
     }
 }

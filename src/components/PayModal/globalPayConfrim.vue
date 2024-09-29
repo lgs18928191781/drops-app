@@ -7,19 +7,78 @@
   >
     <div class="global-pay-confirm">
       <div class="header">
-        <span class="title"> {{ i18n.t('SDK.payconfirm.Payment') }}</span>
+        <span class="title" v-if="basicType == 'buy'"> {{ i18n.t('SDK.payconfirm.buy') }}</span>
+        <span class="title" v-if="basicType == 'mint'"> {{ i18n.t('SDK.payconfirm.mint') }}</span>
 
-        <a class="close flex flex-align-center flex-pack-center" @click="cancel">
+        <!-- <a class="close flex flex-align-center flex-pack-center" @click="cancel">
           <Icon name="x_mark" />
-        </a>
+        </a> -->
+        <img
+          src="@/assets/images/close-o@1x.png"
+          alt=""
+          class="w-[30px] h-[30px] absolute top-0 right-0 cursor-pointer"
+          @click="cancel"
+        />
       </div>
-      <div class="pay-count flex flex-align-end flex-pack-center">
+
+      <!--加图片-->
+      <div v-if="feeInfo.extraInfo" class="buyNftInfo flex mt-10 mb-10">
+        <!-- <NFTCover :cover="[feeInfo.extraInfo.item_cover]" /> -->
+        <img :src="feeInfo.extraInfo.item_cover" alt="" class="w-[120px] h-[120px] mr-7" />
+        <div class="font-sora flex flex-col justify-between">
+          <div>
+            <div class="text-[20px] font-light mb-2">{{ feeInfo.extraInfo.nft_name }}</div>
+            <div class="text-[20px] font-bold">{{ space(realSalePrice) }} BTC</div>
+          </div>
+          <div class="">
+            <div class="flex">
+              <UserAvatar
+                :meta-id="feeInfo.extraInfo.creator_info.metaid"
+                :image="feeInfo.extraInfo.creator_info.avatarId"
+                :name="feeInfo.extraInfo.creator_info.name"
+                :disabled="true"
+                :meta-name="''"
+              />
+              <div class="flex1 flex flex-align-center info ml-2">
+                <span class="user-name-warp"
+                  ><UserName
+                    :name="feeInfo.extraInfo.creator_info.name"
+                    :meta-name="''"
+                    :noTag="true"
+                /></span>
+                <span class="role">({{ i18n.t('NFT.Creater') }})</span>
+              </div>
+            </div>
+            <div class="flex mt-1">
+              <UserAvatar
+                :meta-id="feeInfo.extraInfo.owner_info?.metaid"
+                :image="feeInfo.extraInfo.owner_info?.avatarId"
+                :name="feeInfo.extraInfo.owner_info?.name"
+                :disabled="true"
+                :meta-name="''"
+              />
+              <div class="flex1 flex flex-align-center info ml-2">
+                <span class="user-name-warp"
+                  ><UserName
+                    :name="feeInfo.extraInfo.owner_info?.name"
+                    :meta-name="''"
+                    :noTag="true"
+                /></span>
+                <span class="role">({{ i18n.t('NFT.Owner') }})</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pay-count flex flex-align-end flex-pack-center" v-if="!feeInfo.extraInfo">
         <div>
           <div class="msg flex flex-align-end flex-pack-center">
-            <div class="count">
-              {{ space(useAmount) }}
+            <div class="count font-bold">
+              <span class="mr-2">{{ space(useAmount) }}</span>
+              <span>{{ payType }}</span>
             </div>
-            <div class="lable">{{ payType }}</div>
+            <!-- <div class="lable"></div> -->
           </div>
           <div class="text">
             {{ i18n.t('SDK.payconfirm.Payment required') }}
@@ -30,15 +89,25 @@
       <div class="text-sm">
         <div class="py-4 flex flex-col">
           <div class="py-2 flex flex-row items-center justify-between">
-            <div class="text-[#909399]">{{basicType == 'basic' ? i18n.t('Nfts.lanuch_baseFee') : basicType == 'mint' ? i18n.t('Nfts.lanuch_MintFee') : i18n.t('Nfts.lanuch_saleFee') }}</div>
+            <div class="text-[#909399]">
+              {{
+                basicType == 'basic'
+                  ? i18n.t('Nfts.lanuch_baseFee')
+                  : basicType == 'mint'
+                  ? i18n.t('Nfts.lanuch_MintFee')
+                  : i18n.t('Nfts.lanuch_saleFee')
+              }}
+            </div>
             <div>
               <span class="mr-1">{{ space(feeInfo.basic) }}</span>
-            
+
               <span>{{ payType }}</span>
             </div>
           </div>
           <div class="py-2 flex flex-row items-center justify-between">
-            <div class="text-[#909399]">{{ i18n.t('Nfts.service_fee') }}({{ feeInfo.platformRate }}%)</div>
+            <div class="text-[#909399]">
+              {{ i18n.t('Nfts.service_fee') }}({{ feeInfo.platformRate }}%)
+            </div>
             <div>
               <span class="mr-1">{{ space(feeInfo.service) }}</span>
               <span class="mr-1" v-if="feeInfo.platformRate"></span>
@@ -47,7 +116,9 @@
           </div>
 
           <div class="py-2 flex flex-row items-center justify-between" v-if="feeInfo.royaltyRate">
-            <div class="text-[#909399]">{{ i18n.t('Nfts.service_royalty_fee') }}({{ feeInfo.royaltyRate }}%) </div>
+            <div class="text-[#909399]">
+              {{ i18n.t('Nfts.service_royalty_fee') }}({{ feeInfo.royaltyRate }}%)
+            </div>
             <div>
               <span class="mr-1">{{ space(feeInfo.royalty) }}</span>
               <span class="mr-1" v-if="feeInfo.royaltyRate"></span>
@@ -83,12 +154,12 @@
         <div class="flex flex-row items-center justify-between">
           <div class="text-[#909399]">{{ i18n.t('Nfts.total_fee') }}</div>
           <div>
-            <span class="mr-1">{{ space(feeInfo.total) }}  </span>
+            <span class="mr-1">{{ space(feeInfo.total) }} </span>
             <span>{{ payType }}</span>
             <div v-if="extractFee > 0">
               <span>+</span>
-            <span class="mr-1">{{ space(extractFee) }}  </span>
-            <span>Space</span>
+              <span class="mr-1">{{ space(extractFee) }} </span>
+              <span>Space</span>
             </div>
           </div>
         </div>
@@ -115,9 +186,9 @@
       </div> -->
 
       <div class="operate flex flex-align-center">
-        <a class="main-border flex1" @click="cancel">
+        <!-- <a class="main-border flex1" @click="cancel">
           {{ i18n.t('Cancel') }}
-        </a>
+        </a> -->
         <a class="main-border flex1 primary" @click="confirm">
           {{ i18n.t('SDK.payconfirm.Confirm') }}
         </a>
@@ -128,11 +199,14 @@
 
 <script setup lang="ts">
 import { SdkPayType } from '@/enum'
-import { ref } from 'vue'
+import { ref,computed } from 'vue'
 import { Router } from 'vue-router'
 import { space } from '@/utils/filters'
 import {type feeInfoType} from '@/hooks/use-pay-modal-entity'
 import { ElMessage } from 'element-plus'
+import NFTCover from '../NFTCover/NFTCover.vue'
+import { checkUserLogin, calcNftRealSalePrice } from '@/utils/util'
+
 //import i18n from '@/utils/i18n'
 
 
@@ -159,11 +233,14 @@ const isShow = ref(true)
 
 const emit = defineEmits(['changeConfirmVisible', 'confirm', 'cancel', 'recharge'])
 
+const realSalePrice = computed(() => {
+  const { total } = calcNftRealSalePrice(props.feeInfo.extraInfo.sale_price, props.feeInfo.extraInfo.royalty_rate)
+  return total
+})
 async function confirm() {
 
     emit('confirm')
     isShow.value = false
-  
 }
 
 function cancel() {

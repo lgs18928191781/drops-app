@@ -470,7 +470,9 @@
       "Learn More": "Learn More",
       "stake": "Staking amount",
       "Stakement required": "Staking required",
-      "isTransfer": "Transfer Amount"
+      "isTransfer": "Transfer Amount",
+      "buy": "Payment confirmation",
+      "mint": "Payment Mint"
     },
     "Stakeconfirm": {
       "Confirm": "Stake"

@@ -78,7 +78,12 @@
               <div class="flex1">
                 <div class="name flex flex-align-center">
                   <UserName :name="item.collection_creator?.name" :meta-name="''" />
-                  <Icon name="center_star" />
+                  <!-- <Icon name="center_star" /> -->
+                  <img
+                    src="@/assets/images/creatorIcon.png"
+                    alt=""
+                    class="w-[26px] h-[24px] ml-1"
+                  />
                 </div>
                 <div class="metaid">MetaID：{{ item.metaid.slice(0, 6) }}</div>
               </div>

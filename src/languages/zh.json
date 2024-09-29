@@ -542,7 +542,9 @@
       "Learn More": "了解更多",
       "stake": " 质押数量",
       "Stakement required": "需要质押",
-      "isTransfer": "转账金额"
+      "isTransfer": "转账金额",
+      "buy": "支付",
+      "mint": "鑄造"
     },
     "Stakeconfirm": {
       "Confirm": "质押"

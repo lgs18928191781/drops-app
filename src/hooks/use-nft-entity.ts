@@ -60,6 +60,7 @@ export function useNFTEntity(){
       }
 
     async function estimateBuyFee(orderInfo:{
+      nftItem:NftOrderType
       psbtHex:string,
       feeDetail:feeDetailType
     },checkOnly:boolean=false){
@@ -92,6 +93,7 @@ export function useNFTEntity(){
           service:orderInfo.feeDetail.platformFee,
           miner:estiomateResult!.fee,
           feeb:estiomateResult!.feeb,
+          extraInfo:orderInfo.nftItem,
           total:new Decimal(estiomateResult!.fee).add(salePrice).add(orderInfo.feeDetail.platformFee).add(orderInfo.feeDetail.royalFee).toNumber()
         }
        
@@ -387,6 +389,7 @@ export function useNFTEntity(){
       }
 
       async function buyNft(parmas:{
+        nftItem:NftOrderType
         psbtHex:string
         buyerAddress:string
         nftPinid:string
@@ -413,6 +416,7 @@ export function useNFTEntity(){
             // const feeStore = useFeebStore()
             // const psbt=bitcoinjs.Psbt.fromHex(revealPsbtHex,{network: networkStore.typedNetwork})
            const estimateResult=  await estimateBuyFee({
+              nftItem:parmas.nftItem,
               psbtHex:sevicePsbtHex,
               feeDetail:parmas.extraFee
             },true)

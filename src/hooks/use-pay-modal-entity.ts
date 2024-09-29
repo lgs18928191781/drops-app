@@ -11,15 +11,21 @@ export type feeInfoType = {
   service: number
   miner: number
   feeb: number
-  total: number,
-  royalty?:number
-  royaltyRate?:number
-  platformRate?:number
-
+  total: number
+  extraInfo?: NftOrderType
+  royalty?: number
+  royaltyRate?: number
+  platformRate?: number
 }
 
 export function usePayModalEntity() {
-  function awaitPayConfrim(payType: SdkPayType, useAmount: number, feeInfo: feeInfoType, basicType:'basic' | 'mint' | 'buy',extractFee:number=0) {
+  function awaitPayConfrim(
+    payType: SdkPayType,
+    useAmount: number,
+    feeInfo: feeInfoType,
+    basicType: 'basic' | 'mint' | 'buy',
+    extractFee: number = 0
+  ) {
     return new Promise<boolean>((resolve, reject) => {
       const userStore = useUserStore()
       if (

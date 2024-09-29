@@ -686,6 +686,8 @@ const realbuyPrice = computed(() => {
 })
 
 async function buyNFT(item: NftOrderType) {
+  // alert(111)
+  console.log(item)
   saleNftItem.val = item
   await checkUserLogin()
   try {
@@ -694,6 +696,7 @@ async function buyNFT(item: NftOrderType) {
     })
     if (result) {
       const buyRes = await nftEntity.buyNft({
+        nftItem: item,
         psbtHex: item.order_id,
         buyerAddress: connectionStore.last.user.address,
         nftPinid: item.item_pinid,

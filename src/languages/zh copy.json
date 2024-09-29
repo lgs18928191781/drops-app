@@ -519,7 +519,9 @@
       "Recharge": "充值",
       "Confirm": "支付",
       "ME is used to pay for Gas Fee": "ME是用于支付Gas Fee的积分，",
-      "Learn More": "了解更多"
+      "Learn More": "了解更多",
+      "buy": "支付",
+      "mint": "鑄造"
     }
   },
   "Please Login First": "请先登录",
