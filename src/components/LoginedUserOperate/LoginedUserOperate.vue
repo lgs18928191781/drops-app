@@ -474,7 +474,7 @@ function closeSetInfoModal() {
 async function trggleFeeb(feeb:FeebPlan){
   if(feeb.title == feebStore.last.currentFeeb.title) return
   if(feeb.title  == 'Custom'){
-    await feebStore.set(feeb.title,5)
+    await feebStore.set(feeb.title,15)
   }else{
     await feebStore.set(feeb.title)
   }

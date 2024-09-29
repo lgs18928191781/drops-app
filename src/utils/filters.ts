@@ -241,7 +241,7 @@ export function Currency(amount: number, unit: string) {
 }
 
 export function omitMiddle(str: string, maxLength: number = 20) {
-  if (str.length <= maxLength) {
+  if (!str || str.length <= maxLength) {
     return str
   }
 
