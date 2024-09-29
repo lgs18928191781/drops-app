@@ -1,8 +1,11 @@
 .image {
-  border: 1px solid var(--divid-color);
-
+  //border: 1px solid var(--divid-color);
+  
+  img{
+    object-fit: cover;
+  }
   :deep(.el-skeleton__image) {
-    border-radius: calc(100% / 2.5);
+    //border-radius: calc(100% / 2.5);
 
     svg {
       width: 50%;

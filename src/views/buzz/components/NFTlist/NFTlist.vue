@@ -1,60 +1,86 @@
 <template>
   <div class="nft-list-wrap">
-    <div class="hot-series">
+    <div class="nft-home-module">
         <div class="title ">
            
-            <span class="text-3xl">🔥{{ $t('NFT.Hot Series') }}</span>
+          🔥{{ $t('NFT.Hot Series') }}
         </div>
-        <div class="swaper w-full h-120">
+        <div class="cont">
+          <span class="swiper-button-next hot-next flex flex-align-center flex-pack-center">
+            <Icon name="down" color="#fff"  />
+          </span>
+          <span class="swiper-button-prev hot-prev flex flex-align-center flex-pack-center">
+            <Icon name="down" color="#fff" />
+          </span>
           <Swiper
-            :autoHeight="true"
+            :autoHeight="false"
             :modules="[Pagination, Navigation, A11y]"
-            :navigation="{
-              nextEl: '.latest-next',
-              prevEl: '.latest-pre',
-            }"
             :pagination="{ clickable: true }"
+            :navigation="{
+              nextEl: '.hot-next',
+              prevEl: '.hot-prev',
+            }"
             :autoplay="false"
             :loop="true"
-            :slidesPerView="5"
-            :spaceBetween="15"
-            class="latest-collection"
+            :slidesPerView="3"
+            :spaceBetween="24"
+            class="hot-collection"
           >
             <SwiperSlide
-              v-for="(item, index) in 5"
+              v-for="(item, index) in 6"
               :key="index"
-              class="latest-collection-item"
-             
+              class="hot-collection-item"
+              @click=""
             >
-              <div class="cover">
-                <img :src="banner" />
+              <div class="cover"></div>
+              <div class="image">
+                <img class="collection-cover" :src="banner" />
               </div>
-              <div class="content flex flex-align-center">
-                <!-- <UserAvatar
-                  :metaId="item.show_3_collection.creatorMetaId"
-                  :image="item.show_3_collection.creatorAvatarImage"
-                  :name="item.show_3_collection.creatorName"
-                  :meta-name="item.show_3_collection.creatorMetaName"
-                /> -->
-                <div class="flex1">
-                  <div class="name flex flex-align-center">
-                    <!-- <span class="text">{{ item.show_3_collection.name }} </span><IconCert /> -->
-                  </div>
-                  <div class="metaid">
-                    <!-- MetaID：{{ item.show_3_collection.creatorMetaId.slice(0, 6) }} -->
-                  </div>
+              <div class="mt-7">
+                <div class="name ">123132132132</div>
+              <div class="collection-info flex flex-row items-center mt-5">
+                <div class="mr-3 ">
+                  <img class="w-[39px] h-[39px] rounded-full " :src="banner" alt="">
                 </div>
+                <div class="flex flex-col ">
+                  <span class="text-lg">23132</span>
+                  <span class="text-xs opacity-50 ">MetaID: {{  }}</span>
+                </div>
+              </div>
               </div>
             </SwiperSlide>
           </Swiper>
-
-
-
         </div>
+     
+
+    </div>
+    <div class="notable-collections">
+      <div class="title text-3xl">
+        
+        💫{{ $t('NFT.notable') }}
+         </div>
+         <div class="notable-item-wrap ">
+          <div class="notable-item" v-for="item in 10">
+           <div class="image">
+            <img class="collection-cover" :src="banner" alt="">
+           </div>
+            <div class="mt-7">
+                <div class="name ">123132132132</div>
+              <div class="collection-info flex flex-row items-center mt-5">
+                <div class="mr-3 ">
+                  <img class="w-[39px] h-[39px] rounded-full " :src="banner" alt="">
+                </div>
+                <div class="flex flex-col ">
+                  <span class="text-lg">23132</span>
+                  <span class="text-xs opacity-50 ">MetaID: {{  }}</span>
+                </div>
+              </div>
+              </div>
+          </div>
+         </div>
 
 
     </div>
-    <div class="notable-collections"></div>
   </div>
 </template>
 <script setup lang='ts'>

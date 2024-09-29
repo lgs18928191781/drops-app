@@ -9,7 +9,7 @@
     --el-color-primary: #FFDC51;
     --el-color-primary-light-5: rgba(255, 220, 81, 0.5);
     --el-color-primary-light-4: rgba(255, 220, 81, 0.4);
-    --el-color-primary-light-3: rgba(255, 220, 81, 0.3);
+    --el-color-primary-light-3: rgba(222, 89, 252, 0.3);
     --el-color-primary-light-2: rgba(255, 220, 81, 0.2);
     --el-color-primary-light-1: rgba(255, 220, 81, 0.1);
     --el-border-radius-sm: 2px;
@@ -26,7 +26,7 @@ html.dark {
     --el-border-color: var(--faded-border-color) --el-color-primary: #FFDC51;
     --el-color-primary-light-5: rgba(255, 220, 81, 0.5);
     --el-color-primary-light-4: rgba(255, 220, 81, 0.4);
-    --el-color-primary-light-3: rgba(255, 220, 81, 0.3);
+    --el-color-primary-light-3: rgba(222, 89, 252, 0.3);
     --el-color-primary-light-2: rgba(255, 220, 81, 0.2);
     --el-color-primary-light-1: rgba(255, 220, 81, 0.1);
     --el-fill-color-blank: var(--themeBgColor);
@@ -520,6 +520,7 @@ html.dark {
     box-shadow: var(--el-box-shadow-dark);
     border: none;
     padding: 0 !important;
+    
 
     .el-dropdown-menu__item {
         display: block;
@@ -910,6 +911,10 @@ html.dark {
     --el-popover-border-radius: var(--el-input-border-radius) !important;
 }
 
+.el-popover.popoverStyle{
+   border: none !important;
+}
+
 
 .el-affix--fixed {
     position: fixed;
@@ -919,4 +924,6 @@ html.dark {
     &:deep(.el-dropdown-menu) {
         padding: 50px !important;
     }
+ 
 }
+

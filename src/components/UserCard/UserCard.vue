@@ -1,14 +1,25 @@
 <template>
-  <div class="p-4.5 bg-white dark:bg-gray-700 rounded-xl relative">
-    <div class="header flex flex-align-center pb-4.5">
-      <div class="flex1 cont mr-2">
-        <div class="text-base "><UserName :name="name" :meta-name="metaName" /></div>
-        <div class="text-xs text-dark-300">MetaID:{{ metaId ? metaId.slice(0, 6) : '--' }}</div>
+  <div class="p-4.5 bg-white bg-[#1A1B18] rounded-xl relative">
+    <div class="header flex flex-col  ">
+      <div class="flex1 flex flex-row cont mr-2">
+
+            <UserAvatar
+            :image="connectionStore.userInfo.avatarId || connectionStore.last.user.avatarId"
+            :meta-id="connectionStore.userInfo!.metaid"
+            :name="connectionStore.userInfo!.name || connectionStore.last.user.name"
+            class="user-warp-item overflow-hidden mr-3"
+            :meta-name="''"
+            :disabled="true"
+          />
+        <div class="flex flex-col text-[#fff]">
+          <div class="text-base "><UserName    :name="connectionStore.userInfo!.name || connectionStore.last.user.name" :meta-name="''" /></div>
+          <div class="text-xs text-dark-300">MetaID: {{ connectionStore.userInfo!.metaid ? connectionStore.userInfo!.metaid.slice(0, 6) : '--' }}</div>
+        </div>
       </div>
       <div class="h-full flex gap-x-2">
-        <button class="main-border primary !rounded-full py-1 px-3 text-xs" @click="toUser">
+        <!-- <button class="main-border primary !rounded-full py-1 px-3 text-xs" @click="toUser">
           {{ i18n.t('User.Home') }}
-        </button>
+        </button> -->
         <!-- <button class="main-border primary !rounded-full py-1 px-3 text-xs" @click="toChat">
           {{ i18n.t('User.Chat') }}
         </button> -->
@@ -28,9 +39,16 @@
           </template>
         </button> -->
       </div>
+      <div class="flex cursor-pointer mt-10 flex-row items-center justify-between hover:opacity-80">
+        <span class="text-base">Profile</span>
+        <el-icon color="#A9A8AC" :size="12"><ArrowRightBold /></el-icon>
+      </div>
+      <div class="flex cursor-pointer text-base mt-7 items-center justify-center hover:opacity-80">
+        <span class="disconnet">Disconnect</span>
+      </div>
     </div>
 
-    <UserPersonaVue class="mt-4.5" :i18n="propsI18n" />
+    <!-- <UserPersonaVue class="mt-4.5" :i18n="propsI18n" /> -->
 
     <div class="close flex flex-align-center flex-pack-center" @click.stop="$emit('hide')">
       <Icon name="x_mark" />
@@ -48,7 +66,8 @@ import { GetUserAllInfo, GetUserFollow } from '@/api/aggregation'
 import { useI18n } from 'vue-i18n'
 import { Mitt, MittEvent } from '@/utils/mitt'
 import { router } from '@/router'
-
+import {useConnectionStore} from '@/stores/connection'
+import { ArrowRightBold } from '@element-plus/icons-vue'
 const props = defineProps<{
   modelValue: boolean
   metaId: string
@@ -64,6 +83,7 @@ const userInfo: { val: null | UserAllInfo } = reactive({ val: null })
 const propsI18n = props.i18n
 const i18n = props.i18n ? props.i18n.global : useI18n()
 const emit = defineEmits(['hide'])
+const connectionStore=useConnectionStore()
 
 function toUser(e: Event) {
   console.log(props.metaId)
@@ -184,6 +204,20 @@ watch(
     }
   }
 }
+
+.user-warp-item {
+    width: 46px ;
+    height: 46px;
+    border-radius: 50%;
+}
+.disconnet{
+  background: linear-gradient(100deg, #825AFC 0%, #EB4C93 99%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+text-fill-color: transparent;
+}
+
 @media screen and (max-width: 750px) {
   .relative {
     .close {

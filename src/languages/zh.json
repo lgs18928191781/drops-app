@@ -821,7 +821,8 @@
     "redeeem Success": "NFT赎回成功",
     "isDestory": "NFT已被赎回销毁",
     "isDestroyed": "已赎回",
-    "in_mempool": "NFT确认中"
+    "in_mempool": "NFT确认中",
+    "notable": "值得关注专辑"
   },
   "My NFT": "我的NFT",
   "Done": "完成",
