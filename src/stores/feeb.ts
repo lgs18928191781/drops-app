@@ -32,7 +32,7 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
                   },
                   {
                     title: 'Custom',
-                    feeRate:3,
+                    feeRate:15,
                   },
             ]
         } as {currentFeeb:FeebPlan,feeRateList:FeebPlan[]} ),
@@ -58,7 +58,7 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
             const connectionStore=useConnectionStore()
            if(feeType == 'Custom'){
             this.last.currentFeeb={
-                feeRate:customFeeb ? customFeeb : 5,
+                feeRate: 15,
                 title:'Custom'
             }
            }else if(connectionStore.currentChain && connectionStore.currentChain == ConnectChain.mvc){
@@ -72,7 +72,7 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
             
             let feeList=await getFeebPlans()
             feeList.push({
-              feeRate:5,
+              feeRate:15,
               title:'Custom'
             })
             
@@ -99,7 +99,7 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
           }else{
             const feeList= await getFeebPlans()
             feeList.push({
-              feeRate:5,
+              feeRate:15,
               title:'Custom'
             })
             this.last.feeRateList=feeList

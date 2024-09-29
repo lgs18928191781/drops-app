@@ -1,70 +1,161 @@
 <template>
   <div class="nft-list-wrap">
-    <div class="hot-series">
+    <div class="nft-home-module">
         <div class="title ">
            
-            <span class="text-3xl">🔥{{ $t('NFT.Hot Series') }}</span>
+          🔥{{ $t('NFT.Hot Series') }}
         </div>
-        <div class="swaper w-full h-120">
+        <div class="cont">
+          <span class="swiper-button-next hot-next flex flex-align-center flex-pack-center">
+            <Icon name="down" color="#fff"  />
+          </span>
+          <span class="swiper-button-prev hot-prev flex flex-align-center flex-pack-center">
+            <Icon name="down" color="#fff" />
+          </span>
           <Swiper
-            :autoHeight="true"
+            :autoHeight="false"
             :modules="[Pagination, Navigation, A11y]"
-            :navigation="{
-              nextEl: '.latest-next',
-              prevEl: '.latest-pre',
-            }"
             :pagination="{ clickable: true }"
+            :navigation="{
+              nextEl: '.hot-next',
+              prevEl: '.hot-prev',
+            }"
             :autoplay="false"
             :loop="true"
-            :slidesPerView="5"
-            :spaceBetween="15"
-            class="latest-collection"
+            :slidesPerView="3"
+            :spaceBetween="24"
+            class="hot-collection"
           >
             <SwiperSlide
-              v-for="(item, index) in 5"
+              v-for="(item, index) in hotList"
               :key="index"
-              class="latest-collection-item"
-             
+              class="hot-collection-item"
+              @click=""
             >
-              <div class="cover">
-                <img :src="banner" />
-              </div>
-              <div class="content flex flex-align-center">
-                <!-- <UserAvatar
-                  :metaId="item.show_3_collection.creatorMetaId"
-                  :image="item.show_3_collection.creatorAvatarImage"
-                  :name="item.show_3_collection.creatorName"
-                  :meta-name="item.show_3_collection.creatorMetaName"
-                /> -->
-                <div class="flex1">
-                  <div class="name flex flex-align-center">
-                    <!-- <span class="text">{{ item.show_3_collection.name }} </span><IconCert /> -->
-                  </div>
-                  <div class="metaid">
-                    <!-- MetaID：{{ item.show_3_collection.creatorMetaId.slice(0, 6) }} -->
-                  </div>
+              <div class="cover"></div>
+              <Image class="collection-cover" :src="item.cover_pinid" />
+              <!-- <div class="image">
+                <img class="collection-cover" :src="banner" />
+              </div> -->
+              <div class="mt-7">
+                <div class="name ">{{item.name}}</div>
+              <div class="collection-info flex flex-row items-center mt-5">
+                <div class="mr-3 ">
+                  <UserAvatar
+                  customClass="w-[39px] h-[39px] rounded-full"
+              :meta-id="''"
+              :image="item.collection_creator?.avatarId"
+              :name="''"
+              :meta-name="''"
+            />
+                  <!-- <Image class="w-[39px] h-[39px] rounded-full" :src="item.collection_creator?.avatarId" /> -->
+                  <!-- <img class=" " :src="banner" alt=""> -->
                 </div>
+                <div class="flex flex-col ">
+                  <span class="text-lg">{{  item.collection_creator?.name}}</span>
+                  <span class="text-xs opacity-50 ">MetaID: {{ item.collection_creator?.metaid.slice(0,6) }}</span>
+                </div>
+              </div>
               </div>
             </SwiperSlide>
           </Swiper>
-
-
-
         </div>
+     
+
+    </div>
+    <div class="notable-collections">
+      <div class="title text-3xl">
+        
+        💫{{ $t('NFT.notable') }}
+         </div>
+         <div class="notable-item-wrap ">
+          <div class="notable-item" v-for="item in notableList">
+            <Image class="collection-cover  notable-cover " :src="item.cover_pinid" />
+            <div class="mt-7">
+                <div class="name ">{{ item.name }}</div>
+              <div class="collection-info flex flex-row items-center mt-5">
+                <div class="mr-3 ">
+                  <UserAvatar
+                  customClass="w-[39px] h-[39px] rounded-full"
+              :meta-id="''"
+              :image="item.collection_creator?.avatarId"
+              :name="''"
+              :meta-name="''"
+            />
+                </div>
+                <div class="flex flex-col ">
+                  <span class="text-lg">{{ item.collection_creator?.name }}</span>
+                  <span class="text-xs opacity-50 ">MetaID: {{ item.collection_creator?.metaid.slice(0,6) }}</span>
+                </div>
+              </div>
+              </div>
+          </div>
+         </div>
 
 
     </div>
-    <div class="notable-collections"></div>
   </div>
 </template>
 <script setup lang='ts'>
+import { onMounted,reactive,ref,nextTick } from 'vue'
 import { Pagination, Autoplay, Grid, Navigation, A11y } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
 import 'swiper/css/pagination'
 import banner from '@/assets/images/login_img.png'
+import {  getHotCollection,getNotableCollection} from "@/api/mrc721-api";
+import {useMetaIDEntity} from '@/hooks/use-metaid-entity'
+const hotList:NftsCollection[]=reactive([])
+const notableList:NftsCollection[]=reactive([])
+const {getUserAllInfo}=useMetaIDEntity()
+
+async function getDataList(isCover:boolean=false){
+  const res= await Promise.all([getHotCollection(),getNotableCollection()])
+  if(res.length && isCover){
+    if(res[0].code == 200 ){
+        if(res[0].data.length){
+          for(let item of res[0].data){
+            const creatorInfo=await getUserAllInfo(item.address)
+            hotList.push({
+              ...item,
+              collection_creator:creatorInfo
+            })
+          }
+        }
+        console.log("hotList",hotList)
+        
+
+    }
+
+    if(res[1].code == 200 ){
+        if(res[1].data.length){
+          for(let item of res[1].data){
+            const creatorInfo=await getUserAllInfo(item.address)
+            notableList.push({
+              ...item,
+              collection_creator:creatorInfo
+            })
+          }
+        }
 
 
+    }
+
+
+  }
+
+
+
+}
+
+function toCollection(collectionPinId:string){
+  
+}
+
+
+onMounted( ()=>{
+  getDataList(true)
+})
 
 </script>
 <style lang='scss' scoped src="./NFTlist.scss">

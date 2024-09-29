@@ -32,7 +32,7 @@ declare interface Window {
   ethereum: import('ethers').providers.ExternalProvider
   provider?: MetaMaskEthereumProvider
   metaidwallet: {
-    transfer:(params:{tasks:tasksType[]})=>Promise<{
+    transfer:(params:{tasks:tasksType[],broadcast?:boolean})=>Promise<{
       brodcasted:boolean
       res:Array<{
         id:number

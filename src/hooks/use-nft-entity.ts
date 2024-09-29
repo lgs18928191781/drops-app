@@ -287,6 +287,7 @@ export function useNFTEntity(){
         if(psbt.inputCount > 0){
             for(let i=0;i<psbt.inputCount;i++){
               if(i !== 0){
+                
                 toSignInputs.push({
                   index:i,
               address:connectionStore.last.user.address,

@@ -21,7 +21,7 @@
     <div class="file-wrap ">
       <input type="file" accept="image/*" @change="onChangeFile" ref="inputFileRef" />
       <span class="text-[#303133] font-medium">{{
-        attachment?.fileName ?? $t('Nfts.lanuch_upload')
+       $filters.omitMiddle(attachment?.fileName)  ?? $t('Nfts.lanuch_upload')
       }}</span>
     </div>
   </div>

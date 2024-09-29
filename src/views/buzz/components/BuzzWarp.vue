@@ -40,7 +40,7 @@
     <div class="buzz-container" id="buzz-container" ref="BuzzContainerRef">
       <slot></slot>
     </div>
-
+   <footer class="flex items-center justify-center py-5 text-[#8A8A8A]">MetaID.market@2024 All Rights Reserved</footer>
     <!--   -->
     <!-- <div class="fast-btn" ref="FastBtnRef">
       <a class="top" @click="scrollTop">

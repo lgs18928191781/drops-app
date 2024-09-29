@@ -79,7 +79,7 @@
   <div class="gas-warp  mr-3 hidden md:block" v-show="connectStore.currentChain == 'btc'">
     <div>
       <!-- 更多操作 -->
-      <ElDropdown trigger="click">
+      <ElDropdown trigger="click" >
         <a
           class="more text-[#fff] flex flex-align-center flex-pack-center text-[#303133] font-medium text-sm px-2 py-1.5 "
         >
@@ -99,7 +99,7 @@
               :key="index"
               @click="trggleFeeb(item)"
             >
-              <div class="flex flex-align-center user-operate-item justify-between">
+              <div class="flex flex-align-center user-operate-item justify-between text-[#fff]">
                 <!-- <LucideIcon :name="item.icon" :size="20" class=" mr-3" strokeWidth="2" /> -->
                 <div class="flex items-center">
                   <img :src="getFeeImageUrl(item.title)" alt="" class="w-[18px] h-[18px] mr-1.5" />
@@ -112,14 +112,17 @@
                   >
                 
                   <span>sat/vB</span>
-                  <img
+                  <div class="ml-3 flex items-center w-5 h-5" :class="feebStore.last.currentFeeb.title == item.title ? 'opacity-100' : 'opacity-0'">
+                    <el-icon :size="20" color="#DA5AFC"><CircleCheckFilled  /></el-icon>
+                  </div>
+                  <!-- <img
                     src="@/assets/images/btn_check.png"
                     alt=""
-                    class="w-5 h-5 ml-3"
+                    class="w-5 h-5 ml-3 "
                     :class="
-                      feebStore.last.currentFeeb.title == item.title ? 'opacity-100' : 'opacity-0'
+                      
                     "
-                  />
+                  /> -->
                 </div>
               </div>
             </ElDropdownItem>
@@ -192,9 +195,14 @@
       </a> -->
 
       <!-- 👤 头像 -->
-      <div class="flex bg-[#242227] items-center justify-between rounded-3xl px-3">
-        <span class="mr-4 text-base">{{$filters.truncateString(connectStore.last.user.address)  }}</span>
-        <UserAvatar
+      <div class="flex bg-[#303133] items-center justify-between rounded-3xl px-3">
+        <el-popover placement="bottom" :width="'auto'" trigger="click" ref="popover" popper-style="border:none !important">
+       
+          
+            <template #reference>
+              <div class="flex items-center">
+                <span class="mr-4 text-base">{{$filters.truncateString(connectStore.last.user.address)  }}</span>
+              <UserAvatar
             :image="connectStore.userInfo.avatarId || connectStore.last.user.avatarId"
             :meta-id="connectStore.userInfo!.metaid"
             :name="connectStore.userInfo!.name || connectStore.last.user.name"
@@ -202,12 +210,11 @@
             :meta-name="''"
             :disabled="true"
           />
-
-      </div>
-      <!-- <el-popover placement="bottom" :width="'auto'" trigger="hover" ref="popover">
-        <template #reference>
+              </div>
          
         </template>
+        
+      
         <UserCardVue
           :name="connectStore.userInfo.name"
           :meta-id="connectStore.userInfo.metaid"
@@ -215,6 +222,13 @@
           :model-value="true"
           @hide="hidePopover"
         /> 
+       
+      </el-popover>
+      </div>
+   
+      <!-- <el-popover placement="bottom" :width="'auto'" trigger="hover" ref="popover">
+    
+      
        
       </el-popover> -->
     </div>
@@ -296,6 +310,7 @@ import { useNetworkStore } from '@/stores/network'
 import { setUser } from '@sentry/vue'
 import {DUMMY_UTXO_INPUT_LEGACY} from '@/data/constants'
  import { CircleFadingPlus } from 'lucide-vue-next'
+ import { CircleCheckFilled } from '@element-plus/icons-vue'
 const i18n = useI18n()
 const rootStore = useRootStore()
 const userStore = useUserStore()
@@ -459,7 +474,7 @@ function closeSetInfoModal() {
 async function trggleFeeb(feeb:FeebPlan){
   if(feeb.title == feebStore.last.currentFeeb.title) return
   if(feeb.title  == 'Custom'){
-    await feebStore.set(feeb.title,5)
+    await feebStore.set(feeb.title,15)
   }else{
     await feebStore.set(feeb.title)
   }

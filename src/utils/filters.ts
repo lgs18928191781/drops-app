@@ -241,7 +241,7 @@ export function Currency(amount: number, unit: string) {
 }
 
 export function omitMiddle(str: string, maxLength: number = 20) {
-  if (str.length <= maxLength) {
+  if (!str || str.length <= maxLength) {
     return str
   }
 
@@ -258,6 +258,8 @@ export function omitMiddle(str: string, maxLength: number = 20) {
 }
 
 export function truncateString(str:string) {
+  if(!str) return
+
   if (str.length <= 8) {
       return str; // 如果字符串长度小于等于 8，直接返回原字符串
   }

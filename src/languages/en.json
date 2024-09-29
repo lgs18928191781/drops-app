@@ -833,7 +833,8 @@
     "redeeem Success": "NFT redeem success",
     "isDestory": "NFT is redeem and destory",
     "isDestroyed": "Redeemed",
-    "in_mempool": "NFT Unconfirmed"
+    "in_mempool": "NFT Unconfirmed",
+    "notable": "Notable Collections "
   },
   "My NFT": "My NFT",
   "Done": "Done",
