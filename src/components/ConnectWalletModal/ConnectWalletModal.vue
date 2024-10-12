@@ -38,7 +38,7 @@
                 :key="walletIndex"
               >
                 <img class="icon mr-3.5" :src="wallet.icon" />
-                <span class="text-base"> {{ wallet.name() }}</span>
+                <span class="text-base text-[#fff]"> {{ wallet.name() }}</span>
                
                 <span class="desc">{{ wallet.desc() }}</span>
               </div>
@@ -541,13 +541,14 @@ async function confirmConnect(){
   }
   // console.log('btcConnector', btcConnector)
 
-  userStore.updateUserInfo({
-    address: btcConnector.address,
-    loginType: 'MetaID',
-  })
+ 
 
   // // const needInfo = { network: btcConnector.network, address: btcConnector.address }
   try {
+    userStore.updateUserInfo({
+    address: btcConnector.address,
+    loginType: 'MetaID',
+  })
     const currentUserInfo = await btcConnector.getUser({ network: btcConnector.network })
     console.log(currentUserInfo)
     const currentUserName = currentUserInfo.name
@@ -563,7 +564,8 @@ async function confirmConnect(){
       status.value = ConnectWalletStatus.Watting
     }
   } catch (error) {
-    console.error('Error fetching user info:', error)
+    ElMessage.error(`Error fetching user info:${(error as any).toString()}` )
+    
   }
 
 
@@ -575,11 +577,12 @@ async function confirmConnect(){
   }
   // console.log('btcConnector', btcConnector)
 
-  userStore.updateUserInfo({
+
+  try {
+    userStore.updateUserInfo({
     address: mvcConnector.address,
     loginType: 'MetaID',
   })
-  try {
     const currentUserInfo = await mvcConnector.getUser({ network: mvcConnector.network })
     const currentUserName = currentUserInfo.name
     if (!currentUserName) {
@@ -594,7 +597,7 @@ async function confirmConnect(){
       status.value = ConnectWalletStatus.Watting
     }
   } catch (error) {
-    console.error('Error fetching user info:', error)
+    ElMessage.error(`Error fetching user info:${(error as any).toString()}` )
   }
   }
 
@@ -1422,7 +1425,7 @@ async function pushToBuzz(data:BaseUserInfo) {
     address: data.address,
     loginType: 'MetaID',
   })
-  router.push('/buzz/tag/1')
+  router.push('/home')
   // userStore.isAuthorized = true
   // 如果在首页登录完，要自动跳转到buzz
   // if (route.name === 'home') {

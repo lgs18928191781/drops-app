@@ -1,42 +1,13 @@
 <template>
-  <header class="flex flex-align-center">
+  <!-- <header class="flex flex-align-center">
     <div class="flex1 flex flex-align-center">
-      <!-- <PhoneMenuBtnVue />
-      <div class="name flex flex-align-center">
-        <Icon name="market" /> {{ $t('NFT.NFT Market') }}
-      </div> -->
+   
     </div>
     <LoginedUserOperateVue />
-  </header>
+  </header> -->
   <div class="nft-warp">
     <!-- topBar -->
-    <div class="top-bar-warp">
-      <div class="top-bar flex flex-align-center">
-        <div class="flex1 flex flex-align-center">
-          <div class="flex1">
-            <a
-              class="back flex flex-align-center font-sora text-[#909399] text-base font-normal"
-              @click="$router.back()"
-              v-if="$route.name !== 'nftIndex'"
-            >
-              <!-- <span class="flex flex-align-center flex-pack-center">
-                <Icon name="down" />
-              </span> -->
-              <img src="@/assets/images/icon_left@2x.png" alt="" class="w-[42px] h-[42px] mr-2" />
-              {{ $t('back') }}
-            </a>
-          </div>
-
-          <!-- <div class="search flex flex-align-center" @click="commonSoon">
-            <Icon name="search" />
-            <input class="flex1" type="text" :placeholder="$t('NFT.SearchPlace')" />
-          </div> -->
-        </div>
-        <!-- <nav>
-          <a v-for="(item, index) in navs" :key="index" @click="commonSoon">{{ item.name }}</a>
-        </nav> -->
-      </div>
-    </div>
+  
 
     <div class="nft-router-view-warp">
       <RouterView v-slot="{ Component, route }">

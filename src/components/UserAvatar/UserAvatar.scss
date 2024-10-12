@@ -1,8 +1,9 @@
 .image {
   //border: 1px solid var(--divid-color);
-  
+
   img{
     object-fit: cover;
+    border-radius: 50% !important;
   }
   :deep(.el-skeleton__image) {
     //border-radius: calc(100% / 2.5);

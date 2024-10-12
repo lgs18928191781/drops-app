@@ -1,5 +1,5 @@
 {
-  "name": "show3.0",
+  "name": "drops",
   "version": "0.0.1",
   "scripts": {
     "gray": "yarn vite --mode gray",

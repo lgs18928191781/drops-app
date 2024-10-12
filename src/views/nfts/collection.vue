@@ -29,20 +29,20 @@
               :value="item.collectionPinId"
             >
               <template #default>
-                <div class="flex w-full items-center justify-between">
-                  <div class="flex items-center">
+                <div class="flex w-full items-center justify-between text-white  hover:text-[#303133]">
+                  <div class="flex items-center ">
                     <Image
                       :src="item?.coverPinid"
                       custom-class="w-8 h-8 mr-1 rounded-md object-cover"
                     />
 
-                    <span>{{ item.name }}</span>
+                    <span class="">{{ item.name }}</span>
                   </div>
                   <div
                     v-if="genesisCollection == item.name"
-                    class="w-5 h-5 flex items-center justify-center bg-[#FFDC51] p-1.5 rounded-md"
+                    class="w-5 h-5 flex items-center justify-center bg-[#EB4C93] p-1.5 rounded-md"
                   >
-                    <el-icon :size="9" color="#303133"><Select /></el-icon>
+                    <el-icon :size="9" color="#fff"><Select /></el-icon>
                   </div>
                 </div>
               </template>
@@ -50,7 +50,7 @@
           </el-select>
         </div>
         <div
-          class=" flex cursor-pointer items-center border border-[#656170] box-border px-4 rounded-lg ml-2 h-11 lead-[44px]"
+          class=" flex cursor-pointer items-center border border-[#656170] box-border px-4 rounded-lg ml-2 h-10 lead-[44px]"
           @click="genesisNfts"
         >
           <img src="@/assets/images/icon@1x.png" alt="" class="w-[18px] h-[18px] mr-2" />
@@ -144,8 +144,9 @@
                 {{ currentNftsCollect?.desc }}
               </span>
             </div>
-            <div>
-              <img src="@/assets/images/share@2x.png" alt="" class="w-[18px] h-[18px] " />
+            <div class="cursor-pointer ">
+              <el-icon v-if="currentNftsCollect?.website" @click="toCollectionWork" class="hover:scale-110" :size="18"><Promotion /></el-icon>
+              <!-- <img @click="" src="@/assets/images/share@2x.png" alt="" class="w-[18px] h-[18px] " /> -->
             </div>
           </div>
         </div>
@@ -187,19 +188,19 @@
           </div> -->
 
           <div class="grid grid-cols-2 gap-4 sm:grid-cols-3">
-            <div class="text-center">
+            <!-- <div class="text-center">
               <p class="text-[20px] font-semibold font-sora text-white mb-2">
-                {{ currentNftsCollect?.autoMarket }}
+                {{ currentNftsCollect?.autoMarket == true ? 'Yes' : 'No' }}
               </p>
               <p class="text-[16px] font-thin font-sora text-[#909399]">
                 {{ $t('Nfts.lanuch_makemarket') }}
               </p>
-            </div>
+            </div> -->
             <div class="text-center">
               <p class="text-[20px] font-semibold font-sora text-white mb-2">
                 {{ currentNftsCollect?.totalSupply }}
               </p>
-              <p class="text-[16px] font-thin font-sora text-[#909399]">
+              <p class="text-[16px] font-semiboldfont-sora text-[#909399]">
                 {{ $t('Nfts.lanuch_totalSupply') }}
               </p>
             </div>
@@ -207,13 +208,13 @@
               <p class="text-[20px] font-semibold font-sora text-white mb-2">
                 {{ currentNftsCollect?.currentSupply }}
               </p>
-              <p class="text-[16px] font-thin font-sora text-[#909399]">
+              <p class="text-[16px] font-semibold font-sora text-[#909399]">
                 {{ $t('Nfts.lanuch_mintable_Supply') }}
               </p>
             </div>
             <div class="text-center">
               <p class="text-[20px] font-semibold font-sora text-white mb-2">{{ mintedAmount }}</p>
-              <p class="text-[16px] font-thin font-sora text-[#909399]">
+              <p class="text-[16px] font-semibold font-sora text-[#909399]">
                 {{ $t('Nfts.lanuch_minted') }}
               </p>
             </div>
@@ -226,7 +227,7 @@
                 class="text-[20px] font-semibold font-sora text-white mb-2 flex items-center justify-center"
               >
                 <img
-                  class="w-5 h-5 mr-2"
+                  class="w-5 h-5 mr-1"
                   :src="currentNftsCollect?.chain == NftsLaunchPadChainSymbol.btc ? btc : mvc"
                   alt=""
                 />
@@ -236,7 +237,7 @@
                     : NftsLaunchPadChain.mvc
                 }}</span>
               </div>
-              <p class="text-[16px] font-thin font-sora text-[#909399]">
+              <p class="text-[16px] font-semibold font-sora text-[#909399]">
                 {{ $t('Nfts.lanuch_chain') }}
               </p>
             </div>
@@ -334,17 +335,17 @@
       </div> -->
       <div class="price-area flex justify-between space-x-4">
         <div class="flex-1">
-          <div class="font-sora text-white text-sm font-light">
+          <div class="font-sora  text-sm text-[#A9A8AC] font-light">
             <span>{{ $t('Nfts.lanuch_auto_market_setprice') }}</span>
             <span class="ml-1">({{ $t('Nfts.mint_price_unit') }})</span>
           </div>
           <el-input
             :placeholder="$t('Nfts.lanuch_set_init_price')"
-            class="h-12 mt-2"
+            :class="['h-12 mt-2 ',initialPriceEmpty ? '' : 'shake input-error']"
             v-model="autoMaketData.initialPrice"
             :disabled="!currentNftsCollect?.autoMarket || Boolean(currentNftsCollect?.initialPrice)"
           ></el-input>
-          <div class="flex items-center mt-2 text-[#909399]">
+          <div class="flex ml-4 items-center mt-2 text-[#909399]">
             <span class="mr-1">{{ autoMaketData.initialPrice ?? 0 }}</span>
             <span class="mr-1">BTC</span>
             <span class="mr-1">=</span>
@@ -353,16 +354,16 @@
           </div>
         </div>
         <div class="flex-1">
-          <div class="font-sora text-white text-sm font-light">
-            <span class="align-middle font-sora text-white text-sm font-light">{{
+          <div class="font-sora text-[#A9A8AC] font-light">
+            <span class="align-middle font-sora  font-light">{{
               $t('Nfts.lanuch_auto_market_setpriceAdd')
             }}</span>
-            <span class="ml-1 font-sora text-white text-sm font-light"
+            <span class="ml-1 font-sora   font-light"
               >({{ $t('Nfts.mint_price_unit') }})</span
             >
             <el-popover placement="top-start" :width="250" trigger="hover">
               <template #reference>
-                <el-icon :size="18" class="align-middle ml-1 cursor-pointer"
+                <el-icon :size="18" color="#fff" class="align-middle ml-1 mb-0.5 cursor-pointer"
                   ><QuestionFilled
                 /></el-icon>
               </template>
@@ -382,11 +383,11 @@
 
           <el-input
             :placeholder="$t('Nfts.lanuch_set_price_increase')"
-            class="h-12 mt-2"
+           :class="['h-12 mt-2 ',priceGrowthEmpty ? '' : 'shake input-error']"
             v-model="autoMaketData.priceGrowth"
             :disabled="!currentNftsCollect?.autoMarket || Boolean(currentNftsCollect?.priceGrowth)"
           ></el-input>
-          <div class="flex items-center mt-2 text-[#909399]">
+          <div class="flex ml-4 items-center mt-2 text-[#909399]">
             <span class="mr-1">{{ autoMaketData.priceGrowth ?? 0 }}</span>
             <span class="mr-1">BTC</span>
             <span class="mr-1">=</span>
@@ -468,8 +469,8 @@
               <div
                 class="main-border gray-exclued-text p-2 min-h-14  flex justify-between items-center "
               >
-                <div class="w-8 h-8 rounded-md ">
-                  <img class="" :src="scope.row.cover.url || scope.row.cover" alt="" />
+                <div class="w-8 h-8  ">
+                  <img class="rounded-lg" :src="scope.row.cover.url || scope.row.cover" alt="" />
                 </div>
                 <!-- <el-icon class="cursor-pointer" @click="deleteCover(scope.row)"><Close /></el-icon> -->
               </div>
@@ -495,10 +496,10 @@
             </template>
           </el-table-column>
 
-          <el-table-column prop="classify" :label="$t('Nfts.lanuch_classify')" width="auto">
+          <el-table-column prop="classify" :label="$t('Nfts.lanuch_classify')" width="auto" >
             <template #default="scope">
               <div class=" gray-exclued-text p-2 min-h-14  flex">
-                <el-select multiple v-model="scope.row.classify" placeholder="Select">
+                <el-select  v-model="scope.row.classify" placeholder="Select" >
                   <el-option
                     v-for="item in classifyList"
                     :key="item.classify"
@@ -575,7 +576,7 @@
         <img
           src="@/assets/images/yes@2x.png"
           alt=""
-          class="w-[110px] h-[78px] m-auto mt-15 mb-12"
+          class="w-[90px] h-[58px] m-auto mt-15 mb-12"
         />
         <div class="title-line mb-8">Created Successfully</div>
         <div
@@ -731,7 +732,7 @@
             </div>
 
             <div class="mt-1">
-              <ElSelect multiple v-model="mintData.classify" style="width:100%">
+              <ElSelect  v-model="mintData.classify" style="width:100%" class="class-select">
                 <ElOption
                   v-for="item in classifyList"
                   :key="item.classify"
@@ -959,7 +960,8 @@
 
           <el-form-item>
             <div
-              class="mt-5 text-base font-medium py-4 flex items-center cursor-pointer justify-center main-border primary"
+              class="mt-5 text-base font-medium py-4 flex items-center cursor-pointer justify-center main-border "
+              :class="[createCollectionDisabled ? 'primary' : 'gray']"
               @click="onSubmitNewCollection"
             >
               {{ $t('Nfts.launch_next') }}
@@ -976,10 +978,10 @@
 import { ExternalLink } from 'lucide-vue-next'
 import btc from '@/assets/nft/btc.png'
 import mvc from '@/assets/nft/mvc.png'
-import { Close, Plus } from '@element-plus/icons-vue'
+import { Close, Plus,Promotion } from '@element-plus/icons-vue'
 import { useRouter, useRoute } from 'vue-router'
 import { reactive, ref, computed, onMounted, watch, toRaw } from 'vue'
-import { compressImage, FileToAttachmentItem, prettyAddress, sleep } from '@/utils/util'
+import { compressImage, FileToAttachmentItem, prettyAddress, sleep,openLoading } from '@/utils/util'
 import { useI18n } from 'vue-i18n'
 import CollectionDialog from './collection-dialog.vue'
 
@@ -998,7 +1000,7 @@ import { Line } from 'vue-chartjs'
 import { useEchart } from '@/hooks/use-echart-tool'
 import type {  FormInstance, FormRules,UploadProps } from 'element-plus'
 import { useFeebStore } from '@/stores/feeb'
-import { uploadNftsFile,uploadNftsFilePath,generateCommitAddress,getCollectionDetail,mintNftItem,submitMintOrder,issueCollection,genesisCollection as genesisCollect,getPoolInfo,getDummyForCommit} from '@/api/mrc721-api'
+import { uploadNftsFile,uploadNftsFilePath,generateCommitAddress,getCollectionDetail,mintNftItem,submitMintOrder,issueCollection,genesisCollection as genesisCollect,getPoolInfo} from '@/api/mrc721-api'
 
 import Decimal from 'decimal.js-light'
 import {exclusiveChange,deviceDummy,getDummyUtxoforLegacy} from '@/hooks/use-buildtx-entity'
@@ -1007,7 +1009,7 @@ import { useBtcJsStore } from '@/stores/btcjs'
 import * as secp256k1 from 'tiny-secp256k1'
 import {usePayModalEntity} from '@/hooks/use-pay-modal-entity'
 import {  type Psbt } from 'bitcoinjs-lib'
- import { openLoading } from '@/utils/util'
+
  import {space} from "@/utils/filters"
 
 const i18n = useI18n()
@@ -1145,6 +1147,14 @@ const btcConverSatsPriceGrowth=computed(()=>{
   }
 })
 
+const initialPriceEmpty=computed(()=>{
+  return autoMaketData.value.initialPrice
+})
+
+const priceGrowthEmpty=computed(()=>{
+  return autoMaketData.value.priceGrowth
+})
+
 const customStyle = computed(() => {
   return {
     height: '230px',
@@ -1202,6 +1212,10 @@ const mintData = reactive<MintInfo & UseSameOption>({
   isSameClassify: true,
   isSameReceiver: true,
   isSameName:true
+})
+
+const createCollectionDisabled=computed(()=>{
+  return createCollectionform.name && createCollectionform.totalSupply && createCollectionform.originFile
 })
 
 const rules = reactive<FormRules<MintInfo>>({
@@ -1523,9 +1537,7 @@ function triggleCollection(pinId: string) {
     })
     genesisCollection.value = collection?.name
   } else {
-    const loadingInstance = ElLoading.service({
-      target: '.body',
-    })
+    const loadingInstance =openLoading()
 
     setTimeout(() => {
       router.push({
@@ -1907,10 +1919,18 @@ uploadNftsFilePath(nftListInfo).then((res)=>{
 
 }
 
+function toCollectionWork(){
+ 
+  window.open(currentNftsCollect.value?.website,'_blank')
+  //router.push(`/nft/collection/detail/${currentNftsCollect.value?.collectionPinId}`)
+}
+
 const onSubmitNewCollection = async () => {
   //router.push('/nfts')
   console.log("createCollectionform",createCollectionform)
-
+  if(!createCollectionDisabled.value){
+    return ElMessage.error(`${i18n.t('Nfts.onSubmitNewCollection_fail')}`)
+  }
   const existNfts= genesisStore.getList.find((item)=>item.name == createCollectionform.name)
   try {
     //

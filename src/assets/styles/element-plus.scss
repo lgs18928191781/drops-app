@@ -33,6 +33,11 @@ html.dark {
     --el-bg-color-overlay: var(--themeBgSecondColor);
 }
 
+.el-table__body tr:hover>td.el-table__cell{
+    background: transparent !important;
+}
+
+
 // 兼容旧手机浏览器 尤其是安卓微信内的兼容
 .el-overlay,
 .el-overlay-dialog,
@@ -100,6 +105,7 @@ html.dark {
 
 
     .el-loading-mask {
+       
         .el-loading-spinner {
             top: 0;
             left: 0;
@@ -112,6 +118,7 @@ html.dark {
                 width: 30px;
                 height: 30px;
             }
+           
         }
     }
 
@@ -159,18 +166,22 @@ html.dark {
 .form-wrap {
     .el-table th.el-table__cell.is-leaf {
         border: none !important;
+        background: transparent !important;
     }
 
     .el-table__row>td {
         border: none !important;
+        background: transparent !important;
     }
 
     .el-table__inner-wrapper::before {
         height: 0px !important;
+        background: transparent !important;
     }
 
     .el-table__body-wrapper .el-scrollbar .el-scrollbar__wrap .el-scrollbar__view {
         margin-bottom: 15px !important;
+        background: transparent !important;
     }
 
 
@@ -190,6 +201,7 @@ html.dark {
     border-radius: var(--el-input-border-radius);
 
 
+
     .el-input__wrapper {
         box-shadow: none;
         border: none;
@@ -207,8 +219,9 @@ html.dark {
     .el-input-group__append {
         box-shadow: none;
         border: none;
-
-
+        background: #151417;
+        display: flex;
+        justify-content: end;
         .el-select,
         .el-input {
             box-shadow: none;
@@ -356,6 +369,27 @@ html.dark {
 
     &.sm {
         --el-dialog-width: 456px;
+      .el-dialog__header{
+        .el-dialog__title{
+            color: #fff !important;
+            font-size: 30px;
+            font-weight: 600;
+        }
+        .el-dialog__headerbtn{
+          background: transparent !important;
+            border: 3px solid #94909F;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            .el-icon {
+                color: #94909F !important;
+                font-size: 20px;
+            }
+        }
+        
+      }
     }
 
     &.none-bg-color {
@@ -442,7 +476,11 @@ html.dark {
 
     }
 
-    .el-loading-mask {}
+    .el-loading-mask {
+        background: #242227 !important;
+        opacity: .95;
+        box-shadow: none !important;
+    }
 
     &.metaname {
         --el-dialog-border-radius: 12px;
@@ -612,8 +650,8 @@ html.dark {
 
 .select-trigger {
     .el-input .el-input__wrapper .el-input__suffix .el-input__suffix-inner .el-icon {
-        color: #303133 !important;
-
+        color: #fff !important;
+       
     }
 }
 
@@ -622,7 +660,7 @@ html.dark {
 
     border: 2px solid var(--themeTextColor);
     box-shadow: 3px 3px 3px var(--themeTextColor);
-    border-color: var(--themeTextColor);
+    border-color:var(--themeTextColor);
 
     .el-select-dropdown__item {
         padding: 25px 16px !important;
@@ -701,8 +739,12 @@ html.dark {
         }
     }
 }
+.el-skeleton{
+    background: #29272E !important;
+}
 
 .el-skeleton__item {
+    background: #29272E !important;
     border-radius: 4px;
 
     &.el-skeleton__circle {
@@ -711,6 +753,7 @@ html.dark {
 }
 
 .el-loading-mask {
+   
 
     .el-loading-spinner {
         top: 0;
@@ -723,10 +766,13 @@ html.dark {
         flex-direction: column;
 
         .el-loading-text {
-            color: var(--themeTextColor);
-            font-weight: 700;
-            text-shadow: 1px 1px var(--themeBgColor);
+            margin-top: 20px !important;
+            color:#DE59FC; //var(--themeTextColor);
+            //font-weight: 700;
+            font-size: 18px;
+            text-shadow: 1px 1px #DE59FC;//var(--themeBgColor);
         }
+        
     }
 }
 
@@ -906,7 +952,23 @@ html.dark {
 }
 
 .el-popover {
+    color: #fff !important;
+
+    word-break: keep-all !important;
     --el-popover-border-radius: var(--el-input-border-radius) !important;
+}
+
+.el-popover__title{
+    color: #fff;
+    font-weight: 700;
+}
+
+.el-message-box__title{
+    color: #fff !important;
+}
+.el-message-box__container{
+    color: #fff !important;
+    opacity: .9;
 }
 
 .el-popover.popoverStyle{
@@ -924,4 +986,21 @@ html.dark {
     }
  
 }
+
+
+.el-select-dropdown .el-select-dropdown__item {
+   color: #fff;
+   background:transparent;
+}
+
+.el-select-dropdown .el-select-dropdown__item:hover {
+   background:#423F49 !important ;
+    color: #DE59FC; /* 修改悬停时文字颜色 */
+}
+
+.class-select .el-select-dropdown .el-select-dropdown__item.is-selected {
+    color: #DE59FC !important; /* 修改悬停时文字颜色 */
+}
+
+
 

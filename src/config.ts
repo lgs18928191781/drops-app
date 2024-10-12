@@ -50,11 +50,11 @@ export const classifyList = [
   { classify: 'art', disabled: false, name: () => i18n.global.t('NFT.ClassifyList.art') },
   { classify: 'game', disabled: false, name: () => i18n.global.t('NFT.ClassifyList.game') },
   { classify: 'avatar', disabled: false, name: () => i18n.global.t('NFT.ClassifyList.avatar') },
-  { classify: 'card', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.card') },
-  { classify: 'alias', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.alias') },
-  { classify: 'rights', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.rights') },
-  { classify: 'music', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.music') },
-  { classify: 'Name', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.Name') },
+  { classify: 'card', disabled: false, name: () => i18n.global.t('NFT.ClassifyList.card') },
+  // { classify: 'alias', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.alias') },
+  { classify: 'rights', disabled: false, name: () => i18n.global.t('NFT.ClassifyList.rights') },
+  { classify: 'music', disabled: false, name: () => i18n.global.t('NFT.ClassifyList.music') },
+  // { classify: 'Name', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.Name') },
 ]
 
 export const initPagination: Pagination = {

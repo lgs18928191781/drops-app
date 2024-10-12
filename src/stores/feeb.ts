@@ -9,26 +9,26 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
         last: useLocalStorage('last-feeb', {
             currentFeeb:{
                 title: 'Fast',
-                feeRate: 0,
+                feeRate: 10,
             },
             feeRateList:[
                 {
                     title: 'Eco',
                     fullTitle: 'Economy',
-                    feeRate: 3,
+                    feeRate: 10,
                     
                   },
                   {
                     title: 'Slow',
-                    feeRate: 3,
+                    feeRate: 10,
                   },
                   {
                     title: 'Avg',
-                    feeRate:3,
+                    feeRate:10,
                   },
                   {
                     title: 'Fast',
-                    feeRate:3,
+                    feeRate:10,
                   },
                   {
                     title: 'Custom',
@@ -45,9 +45,7 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
       
       getCurrentFeeb:(state)=>{
         
-        if(state.last.currentFeeb.feeRate <=1){
-          return 3
-        }else return state.last.currentFeeb.feeRate
+        return state.last.currentFeeb.feeRate
       }
       
     },
@@ -58,13 +56,13 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
             const connectionStore=useConnectionStore()
            if(feeType == 'Custom'){
             this.last.currentFeeb={
-                feeRate: 15,
+                feeRate: this.getCurrentFeeb,
                 title:'Custom'
             }
            }else if(connectionStore.currentChain && connectionStore.currentChain == ConnectChain.mvc){
             this.last.currentFeeb={
               title: 'Fast',
-              feeRate: 3,
+              feeRate: 10,
             }
 
            }else if(connectionStore.currentChain == ConnectChain.btc){
@@ -72,7 +70,7 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
             
             let feeList=await getFeebPlans()
             feeList.push({
-              feeRate:15,
+              feeRate:this.getCurrentFeeb,
               title:'Custom'
             })
             
@@ -80,11 +78,11 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
             const selectFeeb=feeList.filter((item)=>{
                 return item.title == feeType
                })
-               this.last.currentFeeb=selectFeeb[0]
+               this.last.currentFeeb=selectFeeb[0] 
            }else{
             this.last.currentFeeb={
               title: 'Fast',
-              feeRate: 3,
+              feeRate: 10,
             }
            }
            
@@ -99,7 +97,7 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
           }else{
             const feeList= await getFeebPlans()
             feeList.push({
-              feeRate:15,
+              feeRate:this.getCurrentFeeb,
               title:'Custom'
             })
             this.last.feeRateList=feeList

@@ -15,7 +15,7 @@
             <span class="new-tag">{{ dummyAmount }}</span>
           </div> -->
 
-  <div class="net-warp bg-[#312f35] py-1 px-2 rounded-md mr-3" v-show="connectStore.currentChain !== ''">
+  <div class="net-warp bg-[#312f35] py-1 px-2 rounded-md mr-3" v-if="connectStore.currentChain !== ''">
     <span class="el-dropdown-link flex items-center text-sm font-medium">
         <img
           src="@/assets/images/logo_chain_btc.png"
@@ -87,8 +87,9 @@
           <!-- <LucideIcon name="Fuel" :size="20" class="text-white font-bold mr-1.5" strokeWidth="2" /> -->
           <!-- <span class="mr-1">{{ feebStore.last.currentFeeb.title }}:</span> -->
           <div>
-            <span class="mr-1 py-1 px-2 w-7 bg-[#312E35] rounded-md">{{ feebStore.getCurrentFeeb}}</span
-            ><span class="text-[#CACACA]">sat/vB</span>
+            <span class="mr-1 py-1 px-5 w-7 bg-[#312E35] rounded-md"  >
+                {{ feebStore.getCurrentFeeb }}
+            </span><span class="text-[#CACACA]">sat/vB</span>
           </div>
           <img src="@/assets/images/list_icon.png" alt="" class="w-3 h-3 ml-1.5" />
         </a>
@@ -97,7 +98,7 @@
             <ElDropdownItem
               v-for="(item, index) in feebStore.last.feeRateList"
               :key="index"
-              @click="trggleFeeb(item)"
+              @click.stop="trggleFeeb($event,item)"
             >
               <div class="flex flex-align-center user-operate-item justify-between text-[#fff]">
                 <!-- <LucideIcon :name="item.icon" :size="20" class=" mr-3" strokeWidth="2" /> -->
@@ -108,8 +109,9 @@
                   }}</span>
                 </div>
                 <div class="feeRate flex items-center">
-                  <span class="mr-1 text-sm font-medium"> {{ item.feeRate }} </span
+                  <span class="mr-1 text-sm font-medium" v-if="item.title !== 'Custom'"> {{ item.feeRate }} </span
                   >
+                  <input v-else type="text" class="bg-[#29272E] py-2 px-1 rounded-lg w-[60px] mr-2"   v-model="customFeeb" />
                 
                   <span>sat/vB</span>
                   <div class="ml-3 flex items-center w-5 h-5" :class="feebStore.last.currentFeeb.title == item.title ? 'opacity-100' : 'opacity-0'">
@@ -195,7 +197,7 @@
       </a> -->
 
       <!-- 👤 头像 -->
-      <div class="flex bg-[#303133] items-center justify-between rounded-3xl px-3">
+      <div class="flex bg-[#303133] items-center cursor-pointer justify-between rounded-3xl px-3">
         <el-popover placement="bottom" :width="'auto'" trigger="click" ref="popover" popper-style="border:none !important">
        
           
@@ -203,6 +205,7 @@
               <div class="flex items-center">
                 <span class="mr-4 text-base">{{$filters.truncateString(connectStore.last.user.address)  }}</span>
               <UserAvatar
+              :address="connectStore.userInfo.address || connectStore.last.user.address"
             :image="connectStore.userInfo.avatarId || connectStore.last.user.avatarId"
             :meta-id="connectStore.userInfo!.metaid"
             :name="connectStore.userInfo!.name || connectStore.last.user.name"
@@ -216,6 +219,8 @@
         
       
         <UserCardVue
+          :showDisconnect="true"
+          :address="connectStore.userInfo.address"
           :name="connectStore.userInfo.name"
           :meta-id="connectStore.userInfo.metaid"
           :meta-name="''"
@@ -322,6 +327,21 @@ const feebStore = useFeebStore()
 const connectStore=useConnectionStore()
 const isShowSetUserInfo = ref(false)
 const popover = ref(null);
+const customFeeb=computed({
+  get(){
+    return feebStore.getCurrentFeeb
+  },
+  set(val){
+    feebStore.$patch({
+      last:{
+        currentFeeb:{
+          title: 'Custom',
+          feeRate: val,
+        }
+      }
+    })
+  }
+})
 // const dummyAmount=ref(0)
 // const dummyInterval=ref()
 const isShowUserMenu = ref(false)
@@ -329,6 +349,30 @@ const chainType = ref([
   { name: 'Bitcoin', icon: 'logo_chain_btc',key:'btc' },
   { name: 'MicrovisionChain', icon: 'logo_chain_mvc',key:'mvc' },
 ])
+
+// const currentFeeb=computed({
+
+
+//   get(){
+//     debugger
+//     return feebStore.getCurrentFeeb
+//   },
+
+//   set(val){
+//     feebStore.$patch({
+//         last:{
+//           currentFeeb:{
+//             title: 'Custom',
+//             feeRate: val,
+//           }
+//         }
+//       })
+   
+//   }
+
+// })
+
+
 const userOperates = computed(() => {
   const result = [
     {
@@ -405,12 +449,16 @@ const getFeeImageUrl = (name: string, type: string = 'png') => {
   return new URL(`/src/assets/images/icon_${name}.${type}`, import.meta.url).href
 }
 
+
+
 function toMintNft() {
   if (userStore.metaletLogin) {
     return ElMessage.error(`${i18n.t('nosupportmetaletissue')}`)
   }
   router.push('/nft/issue')
 }
+
+
 
 async function selectChain(chain){
   if(chain !== connectStore.currentChain){
@@ -471,9 +519,13 @@ function closeSetInfoModal() {
 }
 
 
-async function trggleFeeb(feeb:FeebPlan){
+async function trggleFeeb(e:Event,feeb:FeebPlan){
+  e.preventDefault()
+  e.stopPropagation()
   if(feeb.title == feebStore.last.currentFeeb.title) return
   if(feeb.title  == 'Custom'){
+    e.preventDefault()
+    e.stopPropagation()
     await feebStore.set(feeb.title,15)
   }else{
     await feebStore.set(feeb.title)

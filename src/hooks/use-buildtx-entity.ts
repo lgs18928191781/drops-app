@@ -145,6 +145,7 @@ export function calcFee(
   const outputs = psbt.txOutputs
 
   let bytes = transactionBytes(inputs, outputs)
+  
   if (extraSize) {
     bytes += extraSize
   }
@@ -163,6 +164,8 @@ function transactionBytes(inputs: PsbtInput[], outputs: PsbtTxOutput[]) {
   const outputsSize = outputs.reduce(function (a, x, index) {
     return a + outputBytes(x)
   }, 0)
+
+  
 
   console.log({
     inputsSize,
@@ -400,6 +403,8 @@ export async function exclusiveChange({
     psbt.addInput(paymentInput)
     
     // Add change output
+    console.log("useSize",useSize)
+    
     let fee = useSize
       ? Math.round(useSize * feeb)
       : calcFee(psbt, feeb, extraSize)

@@ -15,7 +15,7 @@
 
     .content-container {
 
-        background: #fff;
+        background: #29272E;
         text-align: center;
         position: relative;
         box-sizing: border-box;
@@ -63,7 +63,23 @@
 
         .form-info {
             width: 100%;
+            &:deep(.el-input){
+                border: none !important;
+                box-shadow: none !important;
+                .el-input__wrapper{
+                    background: #656170 !important;
+                    .el-input__inner{
+                        color: #fff !important;
+                    }
+                }
+            }
 
+            &:deep(.el-textarea__inner){
+                border: none !important;
+                box-shadow: none !important;
+                background: #656170 !important;
+                color: #fff !important;
+            }
 
             .avatar {
                 display: flex;
@@ -72,12 +88,18 @@
                 margin-bottom: 0.5rem;
 
                 .show-img {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: #656170 !important;
                     width: 1.1rem;
                     height: 1.1rem;
                     border-radius: 40%;
+                   
                 }
 
                 .img-upload {
+                  
                     width: 1.1rem;
                     height: 1.1rem;
                     position: absolute;
@@ -112,7 +134,7 @@
                 cursor: pointer;
                 padding: 16px;
                 display: inline-block;
-                background: var(--el-color-primary);
+                background: linear-gradient(88deg, #7C59FC 0%, #DE59FC 98%);
 
                 .icon {
                     width: 24px;

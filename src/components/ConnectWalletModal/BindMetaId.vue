@@ -40,6 +40,7 @@
         <div class="cont">
           <div class="userInfo">
             <UserAvatar
+              :address="userStore.user!.address"
               :meta-id="userStore.user!.metaId"
               :image="userStore.user!.avatarImage"
               :name="userStore.user!.name"

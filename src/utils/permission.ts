@@ -138,7 +138,7 @@ router.beforeEach(async (to, from, next) => {
 
   //  buzz 页面先获取一次 postTag 信息
   if (postTagStroe.list.length <= 0) {
-    await postTagStroe.getPostTags()
+    //await postTagStroe.getPostTags()
   }
 
   // 检查跳转 路由是否有权限
@@ -193,22 +193,22 @@ function SetMeta(to: RouteLocationNormalized) {
     })
   } else {
     useHead({
-      title: `Show3, the World's First NFT-Universal Web3 Social Application.`,
+      title: `Drops`,
       meta: [
         {
           name: 'description',
-          content: `Show3 is the World's First NFT-Universal Web3 Social Application. It is the first decentralized social platform based on the DID protocol with fully on-chain data.`,
+          content: `Drops`,
         },
         {
           name: 'keywords',
-          content: 'did,web3,social,NFT,decentralized,socail,metaid,social-fi,show3',
+          content: 'did,web3,social,NFT,decentralized,metaid,social-fi',
         },
       ],
       link: [
         {
           rel: 'icon',
           key: 'favicon',
-          href: '/pwa-512x512.png',
+          href: '/show3.svg',
         },
       ],
     })

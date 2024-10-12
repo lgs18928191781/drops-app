@@ -14,6 +14,7 @@
         <template v-if="transferUser.val">
           <div class="tranfer-user flex flex-align-center">
             <UserAvatar
+              :address="transferUser.val!.address"
               :meta-id="transferUser.val!.metaid"
               :image="transferUser.val!.avatarId"
               :name="transferUser.val!.name"
@@ -42,7 +43,7 @@
           </div>
 
           <div class="operate flex flex-align-center flex-pack-center" @click="transfer">
-            <a class="main-border flex1" @click="cancelTransfer" :class="{ faded: loading }">
+            <a class="main-border primary flex1" @click="cancelTransfer" :class="{ faded: loading }">
               {{ $t('Cancel') }}</a
             >
             <a class="main-border primary flex1" @click="confirmTransfer" v-loading="loading">
@@ -56,6 +57,7 @@
             <ElFormItem :label="$t('NFT.Transfer Account')">
               <ElInput
                 type="text"
+                class="transfer-input"
                 v-model="form.target"
                 placeholder="MetaID/Address/Paymail/MetaName"
               />

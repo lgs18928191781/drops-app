@@ -109,6 +109,17 @@
     flex-direction: column;
     justify-content: space-between;
 }
+.nfts-name{
+    width: 80%;
+    
+    // width: 25%;
+    // max-width: 25%;
+    span{
+        white-space: nowrap;   /* 防止换行 */
+            overflow: hidden;      /* 隐藏溢出文本 */
+            text-overflow: ellipsis;
+    }
+}
 
 .nfts-intro {
     overflow: hidden;
@@ -161,7 +172,7 @@
     }
 
     :deep(.el-input__wrapper) {
-        background-color: #151417;
+        background-color: #29272E;
         opacity: 1;
     }
 
@@ -283,14 +294,21 @@
         background-color: #151417;
         opacity: 1;
         border: 1px solid #656170;
+        font-size: 18px !important;
+        
+      
     }
 
     :deep(.el-select) {
+        
         --el-select-input-focus-border-color: #fff !important;
     }
 
     :deep(.el-input__inner) {
+       
         color: #ffffff;
+        font-size: 18px !important;
+       
     }
 
 }

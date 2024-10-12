@@ -5,6 +5,11 @@
     </template>
 
     <template #default>
+
+      <div class="back mb-5 cursor-pointer flex bg-[#29272E] rounded-full items-center justify-center p-5 w-[24px] h-[24px] hover:opacity-80 " @click="back">
+        <el-icon :size="20"><ArrowLeftBold /></el-icon>
+      </div>
+
       <div class="nft-detail">
         <div class="nft-msg flex">
           <div class="cover-warp">
@@ -43,7 +48,7 @@
                   </div>
                 </div>
               </div>
-              <div class="text-[18px] font-medium text-[#A9CDF4]">
+              <div class="text-[18px] font-medium text-[#EB4C93]">
                 {{nft.val!.collection_name }}
               </div>
               <div class="name">
@@ -52,10 +57,12 @@
 
               <div class="owner flex flex-align-center">
                 <UserAvatar
+                  :address="nft.val?.owner_info.address"
                   :meta-id="nft.val?.owner_info.metaid"
                   :image="nft.val?.owner_info.avatarId"
                   :name="nft.val?.owner_info.name"
                   :meta-name="''"
+                  custom-class="w-9 h-9 rounded-full"
                 />
                 <div class="flex1">
                   <div class="owner-msg-item flex flex-align-center">
@@ -64,7 +71,7 @@
                       ><UserName :name="nft.val?.owner_info.name" :meta-name="''" />
                     </span>
                   </div>
-                  <div class="owner-msg-item">
+                  <div class="owner-msg-item ">
                     <span class="label">MetaID:</span>
                     <span class="value">{{ nft.val!.owner_info.metaid.slice(0, 6) }}</span>
                   </div>
@@ -154,7 +161,7 @@
               <div class="nft-other-msg-item">
                 <div class="title hover flex flex-align-center" @click="onChangeDetails">
                   <div class="flex1">{{ $t('NFT.Details') }}</div>
-                  <Icon name="down" :class="{ active: isShowDetails }" />
+                  <Icon name="down" color="#fff" :class="{ active: isShowDetails }" />
                 </div>
                 <div class="content" v-if="isShowDetails">
                   <div class="description-list">
@@ -178,13 +185,13 @@
                         >{{ nft.val!.nftTimestamp ? $filters.dateTimeFormat(nft.val!.nftTimestamp) : '--'}}</span
                       >
                     </div> -->
-                    <div class="description-item flex">
+                    <div class="description-item  flex ">
                       <span class="label">{{ $t('NFT.Issue TXID') }}:</span>
                       <span class="value flex1">
                         <template v-if="nft.val!.item_pinid">
-                          {{ nft.val!.item_pinid}}
-                          <a @click="copy(nft.val!.item_pinid)">{{ $t('Copy') }}</a>
-                          <a @click="tx(nft.val!.item_pinid)">{{ $t('NFT.Check') }}</a>
+                          {{$filters.omitMiddle(nft.val!.item_pinid,30) }}
+                          <a  @click="copy(nft.val!.item_pinid)">{{ $t('Copy') }}</a>
+                          <a   @click="tx(nft.val!.item_pinid)">{{ $t('NFT.Check') }}</a>
                         </template>
                         <template v-else>--</template>
                       </span>
@@ -195,14 +202,16 @@
                       <span class="value flex1 flex flex-align-center">
                         <div class="creator flex flex-align-center">
                           <UserAvatar
-                            :meta-id="nft.val!.creator_info.metaid"
-                            :image="''"
+                            :address="nft.val!.creator_info.address"
+                            :meta-id="''"
+                            :image="nft.val!.creator_info.avatarId"
                             :name="''"
                             :meta-name="''"
+                            custom-class="w-9 h-9 rounded-full"
                           />
                           <div class="flex1">
                             <div class="username">
-                              <UserName :name="''" :meta-name="''" />
+                              <UserName :name="nft.val!.creator_info.name" :meta-name="''" />
                             </div>
                             <div class="meta-id">
                               MetaID: {{ nft.val!.creator_info.metaid.slice(0, 6) }}
@@ -263,19 +272,27 @@
         @success="onOperateSuccess"
       />
       <NFTTransferVue :nft="nft.val!" v-model="isShowTransfer" @success="onOperateSuccess" />
+
+       <!--NFTSaleSuccess-->
+       <NFTSaleSuccessVue v-model="isShowSaleSuccess" @success="listSuccessful"></NFTSaleSuccessVue>
+
     </template>
+
+
   </ElSkeleton>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, computed, watch, nextTick } from 'vue'
 import DetailSkeletonVue from './DetailSkeleton.vue'
+import { ArrowLeftBold} from '@element-plus/icons-vue'
 import NFTCover from '@/components/NFTCover/NFTCover.vue'
 import CertTemp from '@/components/Cert/Cert.vue'
 import { useUserStore } from '@/stores/user'
 import { useRoute } from 'vue-router'
 import NFTDetail from '@/utils/nftDetail'
 import { GetLegalNftDetail } from '@/api/legal'
+  import NFTSaleSuccessVue from '@/components/NFTsaleSuccess/SaleSuccess.vue'
 import ShareIcon from '@/assets/images/icon_share.svg?url'
 import { useI18n } from 'vue-i18n'
 import ListIcon from '@/assets/images/list_icon_ins.svg?url'
@@ -317,6 +334,7 @@ import { useNFTEntity } from '@/hooks/use-nft-entity'
 import { NftsLaunchPadChainSymbol, PlatformRate } from '@/data/constants'
 import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
 import { checkDummyAmount } from '@/hooks/use-buildtx-entity'
+import { router } from '@/router'
 const isShowSkeleton = ref(true)
 const isShowDrscDetail = ref(false)
 const userStore = useUserStore()
@@ -335,6 +353,7 @@ const currentNFT: { val: null | NftOrderType } = reactive({ val: null })
 const gutter = window.innerWidth > 750 ? 22 : 10
 const connectionStore = useConnectionStore()
 const nftEntity = useNFTEntity()
+const isShowSaleSuccess=ref(false)
 const isSale = computed(() => {
   return IsSale(nft.val)
 })
@@ -408,7 +427,7 @@ const nftBtnClass = computed(() => {
   if (isDestroyed.value) {
     return 'gray'
   } else if (isMyNFT.value) {
-    return ''
+    return 'primary'
   } else {
     if (isSale.value) {
       if (!isReady.value) {
@@ -422,6 +441,10 @@ const nftBtnClass = computed(() => {
 })
 
 const isShowSell = ref(false)
+
+function back(){
+  router.back()
+}
 
 async function redeeem() {
   if (isSale.value) {
@@ -530,6 +553,7 @@ async function offSale(item: NftOrderType) {
     const result = await NFTOffSale(item).catch(error => {
       ElMessage.error(error.message)
     })
+    
     if (result) {
       onOperateSuccess(result)
     }
@@ -632,6 +656,7 @@ async function onBuy(item: NftOrderType) {
     })
     if (result) {
       const buyRes = await nftEntity.buyNft({
+        nftItem:item,
         psbtHex: item.order_id,
         buyerAddress: connectionStore.last.user.address,
         nftPinid: item.item_pinid,
@@ -742,7 +767,10 @@ function onOffSale(item: NftOrderType) {
   offSale(item)
 }
 
-async function onOperateSuccess(item: NftOrderType) {
+async function onOperateSuccess(item: NftOrderType,type?:string) {
+
+
+
   if (
     nft.val!.item_pinid === item.item_pinid &&
     nft.val!.collection_pinid === item.collection_pinid
@@ -757,11 +785,25 @@ async function onOperateSuccess(item: NftOrderType) {
       nfts[index] = item
     }
   }
+
+  if(type == 'onSale'){
+        isShowSaleSuccess.value = true
+        return
+    }
+
+
   await sleep(500)
   getDetail()
     .then()
     .catch(e => ElMessage.error(e))
 }
+
+function listSuccessful(){
+  getDetail()
+    .then()
+    .catch(e => ElMessage.error(e))
+}
+
 
 onMounted(() => {
   if (route.params.collectionpinid && route.params.nftpinid) {

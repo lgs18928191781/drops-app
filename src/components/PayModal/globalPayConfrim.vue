@@ -24,7 +24,11 @@
       <!--加图片-->
       <div v-if="feeInfo.extraInfo" class="buyNftInfo flex mt-10 mb-10">
         <!-- <NFTCover :cover="[feeInfo.extraInfo.item_cover]" /> -->
-        <img :src="feeInfo.extraInfo.item_cover" alt="" class="w-[120px] h-[120px] mr-7" />
+         <Image
+         :src="feeInfo.extraInfo.item_cover"
+         class="w-[120px] h-[120px] mr-7"
+         ></Image>
+       
         <div class="font-sora flex flex-col justify-between">
           <div>
             <div class="text-[20px] font-light mb-2">{{ feeInfo.extraInfo.nft_name }}</div>
@@ -33,6 +37,7 @@
           <div class="">
             <div class="flex">
               <UserAvatar
+                :address="feeInfo.extraInfo.creator_info.address"
                 :meta-id="feeInfo.extraInfo.creator_info.metaid"
                 :image="feeInfo.extraInfo.creator_info.avatarId"
                 :name="feeInfo.extraInfo.creator_info.name"
@@ -51,6 +56,7 @@
             </div>
             <div class="flex mt-1">
               <UserAvatar
+                :address="feeInfo.extraInfo.owner_info?.address"
                 :meta-id="feeInfo.extraInfo.owner_info?.metaid"
                 :image="feeInfo.extraInfo.owner_info?.avatarId"
                 :name="feeInfo.extraInfo.owner_info?.name"

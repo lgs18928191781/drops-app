@@ -169,6 +169,7 @@
                 <div class="user-list">
                   <div class="user-item flex flex-align-center">
                     <UserAvatar
+                   
                       :meta-id="nft.val!.nftIssueMetaId!"
                       :image="nft.val!.nftIssueAvatarImage"
                       :name="nft.val!.nftIssuer!"

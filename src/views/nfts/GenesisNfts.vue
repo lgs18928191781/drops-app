@@ -1,5 +1,5 @@
 <template>
-  <div class="genesis-wrap w-[90vw] sm:w-[70vw] lg:w-[40vw]">
+  <div class="genesis-wrap z-10 flex items-center justify-center">
     <!-- <header class="flex items-center border-b pb-3 border-[#EDEFF2]">
       <div class="w-5/12">
         <span
@@ -13,7 +13,7 @@
         {{ $t('Nfts.launch_create') }}
       </div>
     </header> -->
-    <div class="form-wrap py-7">
+    <div class="form-wrap z-10  py-7 w-[90vw] sm:w-[70vw] lg:w-[40vw]">
       <el-form :model="form">
         <el-form-item class="flex" label-width="50%">
           <template #label>
@@ -118,7 +118,8 @@
 
         <el-form-item>
           <div
-            class="mt-10 text-base font-medium py-4 flex items-center cursor-pointer justify-center main-border primary"
+            class="mt-10 text-base font-medium py-4 flex items-center cursor-pointer justify-center main-border"
+            :class="[createCollectionDisabled ? 'primary' : 'gray']"
             @click="onSubmit"
           >
             {{ $t('Nfts.launch_next') }}
@@ -131,10 +132,11 @@
 
 <script setup lang="ts">
 import { ArrowLeftBold,Delete,Plus } from '@element-plus/icons-vue'
-import { reactive,ref } from 'vue'
+import { reactive,ref ,computed} from 'vue'
 import type { UploadProps  } from 'element-plus'
-import { ElMessage } from 'element-plus'
-import { compressImage, FileToAttachmentItem } from '@/utils/util'
+import { ElMessage,ElLoading } from 'element-plus'
+import { compressImage, FileToAttachmentItem ,openLoading} from '@/utils/util'
+
 import { useRouter,useRoute } from 'vue-router'
 import { useGenesisStore } from '@/stores/genesis'
 import {CollectionMintChain,SdkPayType,NFTsError} from '@/enum'
@@ -145,6 +147,8 @@ import {usePayModalEntity} from '@/hooks/use-pay-modal-entity'
 import { useI18n } from 'vue-i18n'
 import {genesisCollection,issueCollection} from '@/api/mrc721-api'
 import {NftsLaunchPadChain,NftsLaunchPadChainSymbol} from '@/data/constants'
+
+import Decimal from 'decimal.js-light'
 const router=useRouter()
 const route=useRoute()
 const i18n = useI18n()
@@ -157,14 +161,24 @@ const form = reactive({
   cover:'',
   originFile:null,
   desc: '',
-  totalSupply:'0',
-  royaltyRate:'0',
+  totalSupply: 0,
+  royaltyRate: 0,
   website:'',
   metadata:{}
 })
 
+const createCollectionDisabled=computed(()=>{
+  return form.name && form.totalSupply && form.originFile
+})
 
 const onSubmit = async() => {
+  const loading = openLoading()
+  if(!createCollectionDisabled.value){
+     ElMessage.error(`${i18n.t('Nfts.onSubmitNewCollection_fail')}`)
+     loading.close()
+     return
+  }
+  
 //   else if(existNfts?.name){
 
 // var {createCollectionDescRes,coverPinId} = await mintNftEntity({
@@ -186,8 +200,11 @@ const onSubmit = async() => {
   const existNfts= genesisStore.getList.find((item)=>item.name == form.name)
   try {
   if(existNfts?.collectionPinId){
+    loading.close()
     return ElMessage.error(`${i18n.t('Nfts.lanuch_existNfts')}`)
   }else{
+
+    
     const preMint = await mintNftEntity({
     body:{
       name:form.name,
@@ -202,15 +219,19 @@ const onSubmit = async() => {
     lockAddress:'',
     noBroadcast:true
   })
+  loading.close()
+
+  
   if(preMint!.isPay){
-
+    
     if(preMint!.txFee > 0){
-
+      
     const mvcBalance= await window.metaidwallet.getMvcBalance()
-
+    
     if(Number(mvcBalance.total) < preMint!.txFee ){
-      return ElMessage.error(`${i18n.t('Nts.mvc_balance_noenough')},${i18n.t('Nts.mvc_balance_need')} ${new Decimal(totalFee).div(10**8).toNumber()} Space`)
+      return ElMessage.error(`${i18n.t('Nts.mvc_balance_noenough')},${i18n.t('Nts.mvc_balance_need')} ${new Decimal(preMint!.txFee).div(10**8).toNumber()} Space`)
     }
+    
   }
   const mvcTransfer=await window.metaidwallet.transfer({
   tasks:[
@@ -271,8 +292,8 @@ const onSubmit = async() => {
         website:form.website,
         metaData:JSON.stringify(form.metadata),
         totalSupply:+form.totalSupply,
-        chain:route.params.chain,
-        autoMarket:route.params.type == '0' ? false : true,
+        chain:'btc',
+        autoMarket:true,
         royaltyRate:+form.royaltyRate,
         collectionPinId:collectionPinid,
         metaId:connectionStore.last.metaid,
@@ -296,9 +317,9 @@ const onSubmit = async() => {
         website:form.website,
         royaltyRate:+form.royaltyRate,
         metaData:form.metadata,
-        chain:route.params.chain == 'btc' ? NftsLaunchPadChainSymbol.btc : NftsLaunchPadChainSymbol.mvc,
+        chain: NftsLaunchPadChainSymbol.btc,
         collectionPinId:collectionPinid,
-        autoMarket:route.params.type == '0' ? false : true,
+        autoMarket:true, //route.params.type == '0' ? false : true,
         genesisTimestamp:Date.now(),
         metaId:connectionStore.last.metaid,
         initialPrice:0,
@@ -310,6 +331,7 @@ const onSubmit = async() => {
 
   toNftsDetail(collectionPinid)
         }else{
+          loading.close()
           return ElMessage.error(issueRes.msg)
         }
 
@@ -319,6 +341,7 @@ const onSubmit = async() => {
 
 
   }else{
+    loading.close()
     return ElMessage.error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
   }
 
@@ -334,6 +357,7 @@ const onSubmit = async() => {
 
 
   }catch (error:any) {
+    loading.close()
     if(error.message == NFTsError.createNameSuccButDescError){
       ElMessage.error(`${i18n.t('Nfts.lanuch_created_desc_fail')}`)
     }else{

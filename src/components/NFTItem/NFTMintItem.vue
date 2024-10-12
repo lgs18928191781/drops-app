@@ -20,6 +20,7 @@
         <div class="user-list">
           <div class="user-item flex flex-align-center">
             <UserAvatar
+              :address="collection.collection_creator?.address"            
               :meta-id="collection.collection_creator?.metaid"
               :image="collection.collection_creator?.avatarId"
               :name="collection.collection_creator?.name"

@@ -1,0 +1,143 @@
+@import '@/assets/styles/var.scss';
+
+.nft-item {
+     border: 1px solid #1A1B18;
+   
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: Sora;
+    background: #1A1B18;
+    position: relative;
+    :deep(.nft-cover) {
+        //border: 2px solid #303133;
+        border-radius: 16px;
+    }
+    .pin-num{
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        width: 79px;
+height: 30px;
+border-radius: 4px;
+background: rgba(51, 51, 51, 0.38);
+padding: 8px;
+color: #fff;
+z-index: 999;
+    }
+
+    .token-index {
+        opacity: 0.5;
+        font-size: 12px;
+        margin-top: 4px;
+    }
+
+    .name {
+       // margin-top: 18px;
+        font-size: 18px;
+        font-weight: 500;
+        color: #DE59FC;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        @extend %text-ellipsis;
+        .lv{
+            font-size: 14px;
+            font-style: italic; 
+        }
+        &.simple {
+            font-size: 14px;
+        }
+
+        .el-skeleton__item {
+            height: 20px;
+            width: 80%;
+        }
+    }
+
+    .list-btn{
+        margin-top: 18px;
+        background:linear-gradient(98deg, #825AFC 0%, #EB4C93 99%);
+        
+        color: #fff;
+        &:hover{
+            opacity: 1;
+        }
+    }
+
+    .amount {
+        font-size: 20px;
+        line-height: 24px;
+        margin-top: 18px;
+        font-weight: bold;
+
+        &.simple {
+            font-size: 12px;
+            color: var(--color-hover);
+            margin-top: 4px;
+        }
+
+        .el-skeleton__item {
+            height: 20px;
+            width: 60px;
+        }
+    }
+
+    .user-list {
+        margin-top: 18px;
+
+        .el-skeleton__item {
+            height: 24px;
+            width: 80%;
+        }
+
+        .user-item {
+            line-height: 24px;
+            margin-bottom: 6px;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+
+            .avatar {
+                width: 24px;
+                height: 24px;
+                min-height: 24px;
+                min-width: 24px;
+            }
+
+            .info {
+                // opacity: 0.6;
+                font-size: 14px;
+                font-weight: 300;
+            }
+
+            .user-name-warp {
+                @extend %text-ellipsis;
+                margin: 0 5px;
+            }
+
+            .role {
+                white-space: nowrap;
+            }
+        }
+    }
+
+    .main-border,
+    .el-skeleton__button {
+        margin-top: 18px;
+        font-size: 16px;
+        padding: 13px 0;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .el-skeleton__button {
+        width: 100%;
+    }
+
+    .fade {
+        background-color: #656170;
+    }
+}
+
+@media screen and (max-width:750PX) {}

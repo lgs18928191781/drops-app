@@ -3,11 +3,11 @@
     <!-- header -->
     <div class="header flex flex-align-center">
       <div class="flex1">
-        <div class="title flex items-center font-sora text-white">
+        <div class="title flex w-7/12 items-center  flex-wrap font-sora text-white">
           <span>{{ $t('Collection.title') }}</span>
           <span class="ml-1 text-base">({{ $t('Collection.display') }})</span>
         </div>
-        <div class="drsc text-[#A9A8AC]">{{ $t('Collection.drsc') }}</div>
+        <div class="drsc  text-[#A9A8AC]">{{ $t('Collection.drsc') }}</div>
       </div>
       <!-- <div class="flex flex-align-center chain">
         <span class="label">{{ $t('Collection.Blockchain') }}:</span>
@@ -70,6 +70,7 @@
           <div class="cont">
             <div class="author flex flex-align-center">
               <UserAvatar
+                :address="item.collection_creator?.address"
                 :name="item.collection_creator?.name"
                 :image="item.collection_creator?.avatarId"
                 :meta-id="item.collection_creator?.metaid"
@@ -79,13 +80,13 @@
                 <div class="name flex flex-align-center">
                   <UserName :name="item.collection_creator?.name" :meta-name="''" />
                   <!-- <Icon name="center_star" /> -->
-                  <img
+                  <!-- <img
                     src="@/assets/images/creatorIcon.png"
                     alt=""
                     class="w-[26px] h-[24px] ml-1"
-                  />
+                  /> -->
                 </div>
-                <div class="metaid">MetaID：{{ item.metaid.slice(0, 6) }}</div>
+                <div class="metaid ">MetaID：{{ item.metaid.slice(0, 6) }}</div>
               </div>
             </div>
 
@@ -241,7 +242,10 @@ function getDatas(isCover = false) {
               const creator_info = await getUserAllInfo(item.address)
               item.collection_creator = creator_info
               const { mintAmout, currentSupply, currentMintPrice } = mintRes.data
-              collections.push({ ...item, current_supply: currentSupply, minted: mintAmout })
+              if(currentSupply > 0){
+                collections.push({ ...item, current_supply: currentSupply, minted: mintAmout })
+              }
+            
             }
           }
         }

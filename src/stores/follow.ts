@@ -41,58 +41,58 @@ export const useFollowStore = defineStore('myFollow', {
     },
 
     get: async function() {
-      try {
-        const queryList: FollowItem[] = []
-        const connectionStore = useConnectionStore()
-        const query = DB.follow.where('userMetaId').equals(connectionStore.last.metaid)
-        const localList = await query.toArray()
-        const {
-          data: { list },
-        } = await MyFollow()
+      // try {
+      //   const queryList: FollowItem[] = []
+      //   const connectionStore = useConnectionStore()
+      //   const query = DB.follow.where('userMetaId').equals(connectionStore.last.metaid)
+      //   const localList = await query.toArray()
+      //   const {
+      //     data: { list },
+      //   } = await MyFollow()
 
-        if (list.length) {
-          list.forEach((item: string) => {
-            queryList.push({
-              userMetaId: connectionStore.last.metaid,
-              followedMetaId: item,
-              txId: '',
-            })
-          })
-        }
+      //   if (list.length) {
+      //     list.forEach((item: string) => {
+      //       queryList.push({
+      //         userMetaId: connectionStore.last.metaid,
+      //         followedMetaId: item,
+      //         txId: '',
+      //       })
+      //     })
+      //   }
 
-        if (localList.length && queryList.length) {
-          this.followingList.length = 0
-          const newArr = Array.from(new Set([...localList, ...queryList]))
-          for (let i = 0; i < newArr.length; i++) {
-            if (newArr[i].followedMetaId !== newArr[i + 1].followedMetaId) {
-              this.followingList.push(newArr[i])
-            } else if (newArr[i].followedMetaId == newArr[i + 1].followedMetaId) {
-              this.followingList.push(newArr[i + 1])
-            }
-          }
-        } else if (localList.length && !queryList.length) {
-          this.followingList = localList
-        } else if (!localList.length && queryList.length) {
-          this.followingList = queryList
-        } else {
-          this.followingList = []
-        }
+      //   if (localList.length && queryList.length) {
+      //     this.followingList.length = 0
+      //     const newArr = Array.from(new Set([...localList, ...queryList]))
+      //     for (let i = 0; i < newArr.length; i++) {
+      //       if (newArr[i].followedMetaId !== newArr[i + 1].followedMetaId) {
+      //         this.followingList.push(newArr[i])
+      //       } else if (newArr[i].followedMetaId == newArr[i + 1].followedMetaId) {
+      //         this.followingList.push(newArr[i + 1])
+      //       }
+      //     }
+      //   } else if (localList.length && !queryList.length) {
+      //     this.followingList = localList
+      //   } else if (!localList.length && queryList.length) {
+      //     this.followingList = queryList
+      //   } else {
+      //     this.followingList = []
+      //   }
 
-        //关注我的
-        const followMe = await FollowMe()
-        if (followMe.data.list.length) {
-          this.followMeList = followMe.data.list
-          if (this.followMeList.length && this.followingList.length) {
-            for (let item of this.followingList) {
-              for (let user of this.followMeList) {
-                if (item.followedMetaId == user) {
-                  this.friendList.push(user)
-                }
-              }
-            }
-          }
-        }
-      } catch (error) {}
+      //   //关注我的
+      //   const followMe = await FollowMe()
+      //   if (followMe.data.list.length) {
+      //     this.followMeList = followMe.data.list
+      //     if (this.followMeList.length && this.followingList.length) {
+      //       for (let item of this.followingList) {
+      //         for (let user of this.followMeList) {
+      //           if (item.followedMetaId == user) {
+      //             this.friendList.push(user)
+      //           }
+      //         }
+      //       }
+      //     }
+      //   }
+      // } catch (error) {}
     },
 
     revoke: function(unFollowMetaid: string) {

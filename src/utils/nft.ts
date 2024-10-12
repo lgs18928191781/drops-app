@@ -8,7 +8,7 @@ import { openLoading } from './util'
 import {getNftStatus,submitNftOffSale} from '@/api/mrc721-api'
 import {NftOrderState} from '@/data/constants'
 import { useConnectionStore } from '@/stores/connection'
-export function IsMyNFT(nft: NftOrderType | null) {
+export function IsMyNFT(nft: NftItemType | null) {
   
   let result = false
   const userStore = useUserStore()
@@ -23,7 +23,7 @@ export function IsMyNFT(nft: NftOrderType | null) {
   return result
 }
 
-export function IsReady(nft?: NftOrderType | null) {
+export function IsReady(nft?: NftItemType | null) {
   let result = false
   
   if (nft) {
@@ -35,7 +35,7 @@ export function IsReady(nft?: NftOrderType | null) {
   
 }
 
-export function IsSale(nft?: NftOrderType | null) {
+export function IsSale(nft?: NftItemType | null) {
   let result = false
   
   if (nft) {
@@ -46,7 +46,7 @@ export function IsSale(nft?: NftOrderType | null) {
   return result
 }
 
-export function isDestory(nft?: NftOrderType | null) {
+export function isDestory(nft?: NftItemType | null) {
   let result = false
   
   if (nft) {
@@ -80,9 +80,9 @@ export function isNFTCanOperate(params:{
   })
 }
 
-export function NFTOffSale(nft: NftOrderType) {
+export function NFTOffSale(nft: NftItemType) {
   
-  return new Promise<NftOrderType | false>(async (resolve, reject) => {
+  return new Promise<NftItemType | false>(async (resolve, reject) => {
     const userStore = useUserStore()
     const result = await isNFTCanOperate({
       nftPinid:nft.item_pinid
@@ -99,7 +99,7 @@ export function NFTOffSale(nft: NftOrderType) {
           confirmButtonText: i18n.global.t('confirm'),
           cancelButtonText: i18n.global.t('Cancel'),
           closeOnClickModal: false,
-          customStyle:'background:#fff',
+          customStyle:'background:#242227',
           cancelButtonClass: 'main-border',
           confirmButtonClass: 'main-border primary',
         }

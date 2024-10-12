@@ -71,7 +71,7 @@ function isEmpty(attachments:AttachmentItem[] | string[]){
 
 
 export function useMetaIDEntity(){
-    const i18n = useI18n()
+   //const i18n = useI18n()
     const feebStore=useFeebStore()
     const connectStore=useConnectionStore()
 
@@ -272,13 +272,13 @@ export function useMetaIDEntity(){
                     signMessage: 'follow user'
                 }
             })
-            if(followRes?.txid){
-                const followStore=useFollowStore()
-                 await followStore.add({
-                    followedMetaId:params.body.followMetaId,
-                    txId:followRes.txid
-                })
-        }
+        //     if(followRes?.txid){
+        //         const followStore=useFollowStore()
+        //          await followStore.add({
+        //             followedMetaId:params.body.followMetaId,
+        //             txId:followRes.txid
+        //         })
+        // }
           
         }else{
             followEntity=await loadBtc(followSchema,{
@@ -302,11 +302,11 @@ export function useMetaIDEntity(){
                 }
             })
         if(isEmpty(followRes.revealTxIds)){
-            const followStore=useFollowStore()
-             await followStore.add({
-                followedMetaId:params.body.followMetaId,
-                txId:followRes.revealTxIds[0]
-            })
+            // const followStore=useFollowStore()
+            //  await followStore.add({
+            //     followedMetaId:params.body.followMetaId,
+            //     txId:followRes.revealTxIds[0]
+            // })
         }
         }
 
@@ -343,8 +343,8 @@ export function useMetaIDEntity(){
         
     )
     if(isEmpty(unFollowRes.revealTxIds)){
-        const followStore=useFollowStore()
-        await followStore.revoke(followMetaid)
+        // const followStore=useFollowStore()
+        // await followStore.revoke(followMetaid)
     }
      
     } catch (error) {

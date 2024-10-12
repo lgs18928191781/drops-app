@@ -20,6 +20,7 @@
               <div class="value">
                 <div class="user flex flex-align-center">
                   <UserAvatar
+                  :address="userInfo.val!.address"
                     :meta-id="userInfo.val!.metaId"
                     :image="userInfo.val!.avatarImage"
                     :name="userInfo.val!.name"

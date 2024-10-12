@@ -150,7 +150,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  resizeObserver.unobserve(document.getElementById('buzz-warp')!)
+  //resizeObserver.unobserve(document.getElementById('buzz-warp')!)
 })
 </script>
 

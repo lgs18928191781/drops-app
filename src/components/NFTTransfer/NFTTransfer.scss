@@ -5,7 +5,23 @@
 
 .cont-warp {
     margin-top: 30px;
+
+    &:deep(.el-input){
+        border: none !important;
+        box-shadow: none !important;
+        .el-input__wrapper{
+            background: #29272E !important;
+            .el-input__inner{
+                color: #fff !important;
+            }
+            
+        }
+    }
 }
+
+
+
+
 
 
 .operate {
@@ -29,7 +45,7 @@
 }
 
 .tranfer-user {
-    background: var(--divid-color);
+    background:#29272E; //var(--divid-color);
     border-radius: var(--rounded);
     padding: 18px;
 

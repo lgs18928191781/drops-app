@@ -128,7 +128,7 @@ import ModalVue from '../Modal/Modal.vue'
 import NFTAvatarListVue from '@/components/NFTAvatarList/NFTAvatarList.vue'
 import { LoadingTEXT } from '@/utils/LoadingSVGText'
 import { compressImage, throttle, FileToAttachmentItem, getAttachmentsMark } from '@/utils/util'
-import DefaultAvatar from '@/assets/images/default_user.png'
+import DefaultAvatar from '@/assets/images/default_user.svg?url'
 import { useI18n } from 'vue-i18n'
 import { useConnectionStore, ConnectChain, } from '@/stores/connection'
 interface Props {

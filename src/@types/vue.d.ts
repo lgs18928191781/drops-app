@@ -13,6 +13,7 @@ declare module '@vue/runtime-core' {
       Currency: (amount: number, unit: string) => string
       omitMiddle: (str: string, maxLength?: number) => string
       truncateString:(str:string)=>String
+      fomatISODate:(isoString:string)=>string
     }
   }
 }

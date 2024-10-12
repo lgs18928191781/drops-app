@@ -1,22 +1,24 @@
 <template>
   <div class="p-4.5 bg-[#1A1B18] rounded-xl relative">
     <div class="header flex flex-col  ">
-      <div class="flex1 flex flex-row cont mr-2">
+      <div  class="flex1 flex flex-row cont mr-2">
 
             <UserAvatar
-            :image="connectionStore.userInfo.avatarId || connectionStore.last.user.avatarId"
-            :meta-id="connectionStore.userInfo!.metaid"
-            :name="connectionStore.userInfo!.name || connectionStore.last.user.name"
+            :address="address "
+            :image="userInfo.val?.avatarId "
+            :meta-id="metaId"
+            :name="userInfo.val?.name"
             class="user-warp-item overflow-hidden mr-3"
             :meta-name="''"
             :disabled="true"
+       
           />
         <div class="flex flex-col text-[#fff]">
-          <div class="text-base "><UserName    :name="connectionStore.userInfo!.name || connectionStore.last.user.name" :meta-name="''" /></div>
-          <div class="text-xs text-dark-300">MetaID: {{ connectionStore.userInfo!.metaid ? connectionStore.userInfo!.metaid.slice(0, 6) : '--' }}</div>
+          <div class="text-base "><UserName    :name="userInfo.val?.name " :meta-name="''" /></div>
+          <div class="text-xs text-dark-300">MetaID: {{ metaId? metaId.slice(0, 6) : '--' }}</div>
         </div>
       </div>
-      <div class="h-full flex gap-x-2">
+      <div :class="['h-full ','flex','gap-x-2']">
         <!-- <button class="main-border primary !rounded-full py-1 px-3 text-xs" @click="toUser">
           {{ i18n.t('User.Home') }}
         </button> -->
@@ -39,11 +41,11 @@
           </template>
         </button> -->
       </div>
-      <div class="flex cursor-pointer mt-10 flex-row items-center justify-between hover:opacity-80">
+      <div @click="toProfile" class="flex cursor-pointer  flex-row items-center justify-between mt-10 hover:opacity-80" :class="[showDisconnect ? ' ' : '' ]">
         <span class="text-base">Profile</span>
         <el-icon color="#A9A8AC" :size="12"><ArrowRightBold /></el-icon>
       </div>
-      <div @click="logout" class="flex cursor-pointer text-base mt-7 items-center justify-center hover:opacity-80">
+      <div v-if="showDisconnect" @click="logout" class="flex cursor-pointer text-base mt-7 items-center justify-center hover:opacity-80">
         <span class="disconnet">Disconnect</span>
       </div>
     </div>
@@ -66,27 +68,48 @@ import { GetUserAllInfo, GetUserFollow } from '@/api/aggregation'
 import { useI18n } from 'vue-i18n'
 import { Mitt, MittEvent } from '@/utils/mitt'
 import { router } from '@/router'
-import {useConnectionStore} from '@/stores/connection'
+import {useConnectionStore,type BaseUserInfo } from '@/stores/connection'
 import { ArrowRightBold } from '@element-plus/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
+
 const props = defineProps<{
   modelValue: boolean
+  address:string
   metaId: string
   name: string
+ 
+  showDisconnect?:boolean
   metaName?: string
   i18n?: any
 }>()
 
+const {getUserAllInfo}=useMetaIDEntity()
+
 const userStore = useUserStore()
 const isMyFollowed = ref(false)
 const loading = ref(true)
-const userInfo: { val: null | UserAllInfo } = reactive({ val: null })
+const userInfo: { val: null | BaseUserInfo } = reactive({ val: null })
 const propsI18n = props.i18n
 const i18n = props.i18n ? props.i18n.global : useI18n()
 const emit = defineEmits(['hide'])
 const connectionStore=useConnectionStore()
 
 const route = useRoute()
+
+function toProfile(){
+  console.log("userInfo.val",props)
+  
+  router.push({
+    name:'profile',
+    params:{
+      metaid:props.metaId,
+    address:props.address
+    }
+  })
+}
+
+
 function toUser(e: Event) {
   console.log(props.metaId)
   // router.push({
@@ -117,13 +140,13 @@ async function toMessage() {
 
 function getUserInfo() {
   return new Promise<void>(async (resolve, reject) => {
-    const res = await GetUserAllInfo(props.metaId).catch(error => {
+    
+    const res = await getUserAllInfo(props.address).catch(error => {
       ElMessage.error(error.message)
     })
-    if (res?.code === 0) {
-      userInfo.val = res.data
-      resolve()
-    }
+    
+    userInfo.val = res!
+    resolve()
   })
 }
 
@@ -175,7 +198,7 @@ watch(
   async result => {
     if (result) {
       loading.value = true
-      await Promise.all([checkUserIsFollowed(), getUserInfo()])
+      await Promise.all([ getUserInfo()])
       loading.value = false
     }
   },

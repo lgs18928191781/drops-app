@@ -60,7 +60,7 @@ export function useNFTEntity(){
       }
 
     async function estimateBuyFee(orderInfo:{
-      nftItem:NftOrderType
+      nftItem?:NftOrderType
       psbtHex:string,
       feeDetail:feeDetailType
     },checkOnly:boolean=false){
@@ -214,6 +214,7 @@ export function useNFTEntity(){
         // }else{
         //   return ElMessage.error(`${i18n.t('dummy.build_error')}`)
         // }
+        
           
         const getOrderPsbtRes= await mintNftItem(params)
         
@@ -221,6 +222,7 @@ export function useNFTEntity(){
         const psbtHex=getOrderPsbtRes.data.psbtHex
         
          const estiomateResult=await estimatePsbtFee(psbtHex,feeStore.getCurrentFeeb,true)
+         console.log("feeStore.getCurrentFeeb",feeStore.getCurrentFeeb,)
          
          if(estiomateResult){
           const {psbt,feeb}=await estimatePsbtFee(psbtHex,feeStore.getCurrentFeeb)
@@ -360,7 +362,8 @@ export function useNFTEntity(){
       console.log("signRes",rawTx)
       
       if(rawTx?.status == 'canceled'){
-        return ElMessage.error((`${i18n.t('Nfts.lanuch_sign_tx_fail')}`))
+        throw new Error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
+       
       }else{
         
         const submitRes= await submitSaleOrder({
@@ -397,7 +400,7 @@ export function useNFTEntity(){
         extraFee:feeDetailType
         chain?:NftsLaunchPadChainSymbol
       }){
-       
+      
         try {
           if(!parmas.chain){
             parmas.chain=NftsLaunchPadChainSymbol.btc
@@ -424,6 +427,7 @@ export function useNFTEntity(){
             
             if(estimateResult){
               const revealPsbt= await estimateBuyFee({
+                
                 psbtHex:sevicePsbtHex,
                 feeDetail:parmas.extraFee
               })
@@ -450,7 +454,7 @@ export function useNFTEntity(){
                   psbtHex:sevicePsbtHex
                 })
 
-               ElMessage.error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
+               //ElMessage.error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
                throw new Error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
               }else{
                 
@@ -477,17 +481,19 @@ export function useNFTEntity(){
               await cancelBuyNft({
                 psbtHex:sevicePsbtHex
               })
-              ElMessage.error(`cancel transaction`)
-             throw new Error(`cancel transaction`)
+              //ElMessage.error(`cancel transaction`)
+             throw new Error(`${i18n.t('cancel')}`)
             }
 
           }else{
-         
-             ElMessage.error(orderRes.msg)
+           
+             //ElMessage.error(orderRes.msg)
              throw new Error(orderRes.msg)
           }
         } catch (error) {
-          ElMessage.error((error as any).message)
+          
+         
+          //ElMessage.error((error as any).message)
           throw new Error((error as any).message)
         }
 

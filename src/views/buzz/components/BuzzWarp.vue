@@ -11,7 +11,7 @@
             :key="index"
           >
          
-            <span class="name">{{ item.name }}</span>
+            <span class="name" v-if="!item.disable">{{ item.name }}</span>
           </router-link>
         </div>
         
@@ -21,14 +21,10 @@
           <router-link
             :to="item.path"
             class="buzz-menu-item flex flex-align-center"
-            v-for="(item, index) in menus"
+            v-for="(item, index) in navMenus"
             :key="index"
           >
-            <span
-              class="icon-warp flex flex-align-center flex-pack-center main-border small still !rounded-lg"
-            >
-              <Icon :name="item.icon" />
-            </span>
+         
             <span class="name">{{ item.name }}</span>
           </router-link>
         </div>
@@ -36,11 +32,11 @@
     </div>
     <LoginedUserOperateVue />
   </header>
-  <div class="buzz-warp" ref="BuuzWarpRef" id="buzz-warp">
-    <div class="buzz-container" id="buzz-container" ref="BuzzContainerRef">
+  <div class="buzz-warp z-10 " ref="BuuzWarpRef" id="buzz-warp">
+    <div class="buzz-container  " id="buzz-container" ref="BuzzContainerRef">
       <slot></slot>
     </div>
-   <footer class="flex items-center justify-center py-5 text-[#8A8A8A]">MetaID.market@2024 All Rights Reserved</footer>
+   <footer class="flex z-0 fixed  bottom-0 items-center justify-center py-5 text-[#8A8A8A]">MetaID.market@2024 All Rights Reserved</footer>
     <!--   -->
     <!-- <div class="fast-btn" ref="FastBtnRef">
       <a class="top" @click="scrollTop">
@@ -127,18 +123,23 @@ const menus = [
 const navMenus=[
 {
     name:'Explore', //i18n.t('Buzz.Timeline'),
-    
+    disable:false,
     path:'/home',
   },
   {
     name:'Collection',
-    
-    path:'/buzz/tag/1' //'/buzz/index',
+    disable:false,
+    path:'/nft/collection/index' //'/buzz/index',
   },
   {
     name:'Create', //i18n.t('Buzz.Timeline'),
-  
-    path:'/buzz/tag/1' //'/buzz/index',
+    disable:false,
+    path:'/create' //'/buzz/index',
+  },
+  {
+    name:'Profile', //i18n.t('Buzz.Timeline'),
+      disable:true,
+    path:'/create' //'/buzz/index',
   },
 ]
 
@@ -186,7 +187,7 @@ function onPublishSuccess() {
 }
 
 onBeforeUnmount(() => {
-  resizeObserver.unobserve(document.getElementById('buzz-warp')!)
+  //resizeObserver.unobserve(document.getElementById('buzz-warp')!)
 })
 
 provide('isShowBuzzPublish', isShowBuzzPublish)

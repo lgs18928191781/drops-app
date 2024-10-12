@@ -429,6 +429,56 @@ declare interface Mrc721PinItemType{
 
 }
 
+declare interface NftItemType{
+  id:number
+  item_pinid:string
+  item_cover:string
+  pic_path:string
+  pic_id:string
+  nft_name:string
+  item_desc:string
+  classify:Array<string>
+  meta_data:any
+  mint_price:number
+  commit_address:string
+  reveal_address:string
+  is_minted:number
+  is_destroy:number
+  buyer_address:string
+  chain:import('@/data/constants').NftsLaunchPadChainSymbol
+  collection_pinid:string
+  creator_info:{
+    metaid:string,
+    address:string,
+    avatar?:string,
+    avatarId?:string,
+    name?:string
+  },
+  owner_info:{
+    metaid:string,
+    address:string,
+    avatar?:string,
+    avatarId?:string,
+    name?:string
+  }
+  is_ready:boolean
+  created_at:string
+  item_cover:string
+  item_pinid:string
+  nft_name:string
+  order_id:string
+  order_status:import('@/data/constants').NftOrderState
+  reveal_txid:string
+  royalty_rate:number
+  sale_price:number
+  saler_address:string
+  saler_metaid:string
+  updated_at:string
+  nftPinInfo:Mrc721PinItemType
+}
+
+
+
 
 declare interface Mrc721PinListType{
   [k as string]:{

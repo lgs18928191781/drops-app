@@ -76,6 +76,7 @@
                   <div class="author flex flex-align-center">
                     <div class="msg flex1 flex flex-align-center">
                       <UserAvatar
+                        :address="item.nftIssueUserInfo.address"
                         :meta-id="item.nftIssueMetaId"
                         :image="item.nftIssueUserInfo?.avatarImage"
                         :meta-name="item.nftIssueUserInfo?.metaName"

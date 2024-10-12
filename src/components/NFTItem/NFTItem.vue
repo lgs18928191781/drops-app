@@ -19,6 +19,7 @@
         <div class="user-list" v-if="!isSimple">
           <div class="user-item flex flex-align-center">
             <UserAvatar
+            :address="nft.creator_info.address"
               :meta-id="nft.creator_info.metaid"
               :image="nft.creator_info.avatarId"
               :name="nft.creator_info.name"
@@ -34,6 +35,7 @@
           </div>
           <div class="user-item flex flex-align-center">
             <UserAvatar
+            :address="nft.owner_info.address"
               :meta-id="nft.owner_info?.metaid"
               :image="nft.owner_info?.avatarId"
               :name="nft.owner_info?.name"

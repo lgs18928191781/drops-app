@@ -43,7 +43,7 @@ const layout = useLayoutStore()
 const route = useRoute()
 const rootStore = useRootStore()
 const list: BuzzItem[] = reactive([])
-const isSkeleton = ref(true)
+const isSkeleton = ref(false)
 const i18n = useI18n()
 function getDatas(isCover = false) {
   console.log('rootStore.myBlackList', rootStore.myBlackList)
@@ -114,24 +114,24 @@ watch(
 )
 
 function getMore() {
-  if (isSkeleton.value || pagination.loading || pagination.nothing) return
-  pagination.loading = true
-  pagination.page++
-  getDatas().then(() => {
-    pagination.loading = false
-  })
+  // if (isSkeleton.value || pagination.loading || pagination.nothing) return
+  // pagination.loading = true
+  // pagination.page++
+  // getDatas().then(() => {
+  //   pagination.loading = false
+  // })
 }
 
 async function refreshDatas() {
-  return new Promise<void>(async resolve => {
-    isSkeleton.value = true
-    pagination.page = 1
-    pagination.loading = false
-    pagination.nothing = false
-    await getDatas(true)
-    isSkeleton.value = false
-    resolve()
-  })
+  // return new Promise<void>(async resolve => {
+  //   isSkeleton.value = true
+  //   pagination.page = 1
+  //   pagination.loading = false
+  //   pagination.nothing = false
+  //   await getDatas(true)
+  //   isSkeleton.value = false
+  //   resolve()
+  // })
 }
 
 function updateItem(buzz: BuzzItem) {
@@ -144,9 +144,9 @@ function updateItem(buzz: BuzzItem) {
 defineExpose({
   refreshDatas,
 })
-getDatas(true).then(() => {
-  isSkeleton.value = false
-})
+// getDatas(true).then(() => {
+//   isSkeleton.value = false
+// })
 </script>
 
 <style lang="scss" scoped src="./HomeBuzzList.scss"></style>

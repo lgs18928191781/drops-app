@@ -17,40 +17,185 @@ export const router = createRouter({
     {
       path: '/',
       name: 'home',
-      //     redirect: () => {
-      //   return { name: 'explore' }
-      //   // const userStore = useUserStore()
-      //   // if (userStore.isAuthorized) {
-      //   //   return { name: 'buzzIndex' }
-      //   // } else {
-      //   //   return { name: 'home' }
-      //   // }
-      // },
+          redirect: () => {
+        return { name: 'explore' }
+        // const userStore = useUserStore()
+        // if (userStore.isAuthorized) {
+        //   return { name: 'buzzIndex' }
+        // } else {
+        //   return { name: 'home' }
+        // }
+      },
      component: () => import('@/views/buzz/Layout.vue'),
-      meta: { keepAlive: true },
+      //meta: { keepAlive: true },
       children: [
         {
           path: 'home',
           name: 'explore',
           component: () => import('@/views/buzz/Index.vue'),
-          meta: { isAuth: true, keepAlive: true },
+         // meta: { isAuth: true, keepAlive: true },
         },
         {
+          path: '/nft',
+          name: 'nft',
+          component: () => import('@/views/nft/Layout.vue'),
+      // meta: { keepAlive: true },
+      redirect: {
+        name: 'nftCollection',
+      },
+      children: [
+        {
           path: 'collection',
-          name: 'collection',
-          component: () => import('@/views/buzz/Recomment.vue'),
-          meta: { keepAlive: true },
+          name: 'nftCollection',
+          component: () => import('@/layout/BaseRouterView/BaseRouterView.vue'),
+          redirect: {
+            name: 'nftCollectionIndex',
+          },
+          // meta: { keepAlive: true },
+          children: [
+            {
+              path: 'index',
+              name: 'nftCollectionIndex',
+              component: () => import('@/views/nft/collection/Index.vue'),
+              // meta: { keepAlive: true },
+            },
+            {
+              path: 'detail/:topicType',
+              name: 'nftCollectionDetail',
+              component: () => import('@/views/nft/collection/Collection.vue'),
+             
+              // meta: { keepAlive: false },
+            },
+          
+          ],
+        },
+        
+        {
+          path: 'detail/:collectionpinid/:nftpinid',
+          name: 'nftDetail',
+          component: () => import('@/views/nft/Detail.vue'),
+         
+        },
+       
+      ],
         },
         {
           path: 'create',
           name: 'create',
-          component: () => import('@/views/buzz/Detail.vue'),
+          redirect:{
+            name:'genesisNfts'
+          },
+          //component: () => import('@/views/buzz/Detail.vue'),
+          children: [
+            
+            {
+              path: 'genesis',
+              name: 'genesisNfts',
+              component: () => import('@/views/nfts/GenesisNfts.vue'),
+              beforeEnter: async (to, from, next) => {
+               
+                const genesisStore=useGenesisStore()
+             
+                // if (root.bandProposalList.includes(to.params.id as string)) {
+                //   next('/404')
+                // } else {
+                //   next()
+                // }
+                try {
+                  const list = genesisStore.getList
+                  if (list.length) {
+                    next(`/create/collection/${list[0].collectionPinId}`)
+                  } else {
+                    
+                    next()
+                  }
+                } catch (error) {
+                  ElMessage.error(`${error?.toString()}`)
+                  next('/404')
+                }
+              },
+            },
+    
+            {
+              path: 'collection/:pinid',
+              name: 'nftsCollection',
+              component: () => import('@/views/nfts/collection.vue'),
+              beforeEnter: async (to, from, next) => {
+              
+                const genesisStore=useGenesisStore()
+             
+                try {
+                  if(genesisStore.getList.length){
+                    //Insufficient permissions
+                   const permission =genesisStore.getList.filter((item)=>{
+                       return item.collectionPinId == to.params.pinid
+                    })
+                    if(!permission.length){
+                      ElMessage.error(`Insufficient permissions`)
+                      next('/404')
+                    }else{
+                      next()
+                    }
+                  }
+               
+                  
+                } catch (error) {
+                  ElMessage.error(`${error?.toString()}`)
+                  next('/404')
+                }
+              },
+             // meta: { keepAlive: false },
+              children: [
+            
+                // {
+                //   path: 'index',
+                //   name: 'nftCollectionIndex',
+                //   component: () => import('@/views/nft/collection/Index.vue'),
+                //   meta: { keepAlive: false },
+                // },
+    
+                
+              ],
+            },
+
+              {
+      path: '/profile/:metaid/:address',
+      name: 'profile',
+      redirect: {
+        name: 'ownerItems',
+      },
+      children: [
+        {
+          path: 'owner',
+          name: 'ownerItems',
+          component: () => import('@/layout/BaseRouterView/BaseRouterView.vue'),
+          redirect: {
+            name: 'list',
+          },
+          // meta: { keepAlive: true },
+          children: [
+           
+            {
+              path: 'index',
+              name: 'list',
+              component: () => import('@/views/profile/index.vue'),
+             
+              // meta: { keepAlive: false },
+            },
+          
+          ],
+        },
+        
+      ],
+    },
+          ],
         },
        
       ],
   
     
     },
+  
 
     // { path: '/', name: 'home', redirect: '/buzz' },
     //{ path: '/home', name: 'home', component: () => import('@/views/home/index.vue') },
@@ -102,145 +247,145 @@ export const router = createRouter({
     //     },
     //   ],
     // },
-    {
-      path: '/nfts',
-      name: 'nfts',
-      component: () => import('@/views/nfts/Layout.vue'),
-      meta: { keepAlive: true },
-      redirect: {
-        name: 'launchpad',
-      },
-      children: [
-        {
-          path: 'launchpad',
-          name: 'launchpad',
-          component: () => import('@/views/nfts/LaunchPad.vue'),
-          beforeEnter: async (to, from, next) => {
+    // {
+    //   path: '/nfts',
+    //   name: 'nfts',
+    //   component: () => import('@/views/nfts/Layout.vue'),
+    //   meta: { keepAlive: true },
+    //   redirect: {
+    //     name: 'launchpad',
+    //   },
+    //   children: [
+    //     {
+    //       path: 'launchpad',
+    //       name: 'launchpad',
+    //       component: () => import('@/views/nfts/LaunchPad.vue'),
+    //       beforeEnter: async (to, from, next) => {
            
-            const genesisStore=useGenesisStore()
+    //         const genesisStore=useGenesisStore()
          
-            // if (root.bandProposalList.includes(to.params.id as string)) {
-            //   next('/404')
-            // } else {
-            //   next()
-            // }
-            try {
-              const list = genesisStore.getList
-              if (list.length) {
-                next(`/nfts/collection/${list[0].collectionPinId}`)
-              } else {
-                next()
-              }
-            } catch (error) {
-              ElMessage.error(`${error?.toString()}`)
-              next('/404')
-            }
-          },
+    //         // if (root.bandProposalList.includes(to.params.id as string)) {
+    //         //   next('/404')
+    //         // } else {
+    //         //   next()
+    //         // }
+    //         try {
+    //           const list = genesisStore.getList
+    //           if (list.length) {
+    //             next(`/nfts/collection/${list[0].collectionPinId}`)
+    //           } else {
+    //             next()
+    //           }
+    //         } catch (error) {
+    //           ElMessage.error(`${error?.toString()}`)
+    //           next('/404')
+    //         }
+    //       },
 
-        },
-        {
-          path: 'genesis/:chain/:type',
-          name: 'genesisNfts',
-          component: () => import('@/views/nfts/GenesisNfts.vue'),
-        },
+    //     },
+    //     {
+    //       path: 'genesis/:chain/:type',
+    //       name: 'genesisNfts',
+    //       component: () => import('@/views/nfts/GenesisNfts.vue'),
+    //     },
 
-        {
-          path: 'collection/:pinid',
-          name: 'nftsCollection',
-          component: () => import('@/views/nfts/collection.vue'),
-          beforeEnter: async (to, from, next) => {
+    //     {
+    //       path: 'collection/:pinid',
+    //       name: 'nftsCollection',
+    //       component: () => import('@/views/nfts/collection.vue'),
+    //       beforeEnter: async (to, from, next) => {
           
-            const genesisStore=useGenesisStore()
+    //         const genesisStore=useGenesisStore()
          
-            try {
-              if(genesisStore.getList.length){
-                //Insufficient permissions
-               const permission =genesisStore.getList.filter((item)=>{
-                   return item.collectionPinId == to.params.pinid
-                })
-                if(!permission.length){
-                  ElMessage.error(`Insufficient permissions`)
-                  next('/404')
-                }else{
-                  next()
-                }
-              }
+    //         try {
+    //           if(genesisStore.getList.length){
+    //             //Insufficient permissions
+    //            const permission =genesisStore.getList.filter((item)=>{
+    //                return item.collectionPinId == to.params.pinid
+    //             })
+    //             if(!permission.length){
+    //               ElMessage.error(`Insufficient permissions`)
+    //               next('/404')
+    //             }else{
+    //               next()
+    //             }
+    //           }
            
               
-            } catch (error) {
-              ElMessage.error(`${error?.toString()}`)
-              next('/404')
-            }
-          },
-          meta: { keepAlive: false },
-          children: [
+    //         } catch (error) {
+    //           ElMessage.error(`${error?.toString()}`)
+    //           next('/404')
+    //         }
+    //       },
+    //       meta: { keepAlive: false },
+    //       children: [
         
-            // {
-            //   path: 'index',
-            //   name: 'nftCollectionIndex',
-            //   component: () => import('@/views/nft/collection/Index.vue'),
-            //   meta: { keepAlive: false },
-            // },
+    //         // {
+    //         //   path: 'index',
+    //         //   name: 'nftCollectionIndex',
+    //         //   component: () => import('@/views/nft/collection/Index.vue'),
+    //         //   meta: { keepAlive: false },
+    //         // },
 
             
-          ],
-        },
-      ],
-    },
-    {
-      path: '/nft',
-      name: 'nft',
-      component: () => import('@/views/nft/Layout.vue'),
-      // meta: { keepAlive: true },
-      redirect: {
-        name: 'nftIndex',
-      },
-      children: [
-        {
-          path: 'index',
-          name: 'nftIndex',
-          component: () => import('@/views/nft/Index.vue'),
-        },
-        {
-          path: 'issue',
-          name: 'nftIssue',
-          component: () => import('@/views/nft/Issue.vue'),
-        },
-        {
-          path: 'genesis',
-          name: 'nftGenesis',
-          component: () => import('@/views/nft/Genesis.vue'),
-        },
-        {
-          path: 'detail/:collectionpinid/:nftpinid',
-          name: 'nftDetail',
-          component: () => import('@/views/nft/Detail.vue'),
+    //       ],
+    //     },
+    //   ],
+    // },
+    // {
+    //   path: '/nft',
+    //   name: 'nft',
+    //   component: () => import('@/views/nft/Layout.vue'),
+    //   // meta: { keepAlive: true },
+    //   redirect: {
+    //     name: 'nftIndex',
+    //   },
+    //   children: [
+    //     {
+    //       path: 'index',
+    //       name: 'nftIndex',
+    //       component: () => import('@/views/nft/Index.vue'),
+    //     },
+    //     {
+    //       path: 'issue',
+    //       name: 'nftIssue',
+    //       component: () => import('@/views/nft/Issue.vue'),
+    //     },
+    //     {
+    //       path: 'genesis',
+    //       name: 'nftGenesis',
+    //       component: () => import('@/views/nft/Genesis.vue'),
+    //     },
+    //     {
+    //       path: 'detail/:collectionpinid/:nftpinid',
+    //       name: 'nftDetail',
+    //       component: () => import('@/views/nft/Detail.vue'),
          
-        },
-        {
-          path: 'collection',
-          name: 'nftCollection',
-          component: () => import('@/layout/BaseRouterView/BaseRouterView.vue'),
-          // meta: { keepAlive: true },
-          children: [
-            {
-              path: 'index',
-              name: 'nftCollectionIndex',
-              component: () => import('@/views/nft/collection/Index.vue'),
-              // meta: { keepAlive: true },
-            },
-            {
-              path: 'detail/:topicType',
-              name: 'nftCollectionDetail',
-              component: () => import('@/views/nft/collection/Collection.vue'),
+    //     },
+    //     {
+    //       path: 'collection',
+    //       name: 'nftCollection',
+    //       component: () => import('@/layout/BaseRouterView/BaseRouterView.vue'),
+    //       // meta: { keepAlive: true },
+    //       children: [
+    //         {
+    //           path: 'index',
+    //           name: 'nftCollectionIndex',
+    //           component: () => import('@/views/nft/collection/Index.vue'),
+    //           // meta: { keepAlive: true },
+    //         },
+    //         {
+    //           path: 'detail/:topicType',
+    //           name: 'nftCollectionDetail',
+    //           component: () => import('@/views/nft/collection/Collection.vue'),
              
-              // meta: { keepAlive: false },
-            },
+    //           // meta: { keepAlive: false },
+    //         },
           
-          ],
-        },
-      ],
-    },
+    //       ],
+    //     },
+    //   ],
+    // },
 
     // ShowTalk
     {
@@ -615,7 +760,12 @@ router.beforeEach((to, from, next) => {
     "nftCollectionIndex",
     'nftCollectionDetail',
     "nftCollectionSale",
-    "nftDetail"
+    "nftDetail",
+    "create",
+    "collection",
+    "profile",
+"ownerItems",
+"list"
   ]
   const target = whiteList.includes(to?.name)
   if (target) {

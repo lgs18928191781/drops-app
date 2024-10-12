@@ -99,9 +99,9 @@ if (user) {
   setTimeout(() => {
     
     const genesisStore = useGenesisStore()
-    const followStore = useFollowStore()
+    //const followStore = useFollowStore()
     genesisStore.initGenesis()
-    followStore.initFollowList()
+    //followStore.initFollowList()
     genesisStore.sync()
 
     
@@ -167,7 +167,7 @@ export const useUserStore = defineStore('user', {
         const talkStore = useTalkStore()
         const rootStore = useRootStore()
         const genesStore = useGenesisStore()
-        const followStore = useFollowStore()
+        //const followStore = useFollowStore()
 
         //
         // 只保存pwaInstall状态
@@ -201,9 +201,9 @@ export const useUserStore = defineStore('user', {
           this.password = null
         } catch {}
 
-        talkStore.reset()
+        //talkStore.reset()
         genesStore.initGenesis()
-        followStore.initFollowList()
+        //followStore.initFollowList()
         //
 
         if (route.meta.isAuth) router.push('/')
@@ -250,9 +250,9 @@ export const useUserStore = defineStore('user', {
         } catch {}
 
         const genesisStore = useGenesisStore()
-        const followStore = useFollowStore()
+       // const followStore = useFollowStore()
         genesisStore.initGenesis()
-        followStore.initFollowList()
+       // followStore.initFollowList()
         // genesisStore.sync()
         resolve()
       })

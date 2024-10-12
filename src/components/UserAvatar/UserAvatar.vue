@@ -12,7 +12,7 @@
 <script lang="ts" setup>
 import { computed, render, h, ref, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
-import DefaultAvatar from '@/assets/images/default_user.png'
+import DefaultAvatar from '@/assets/images/default_user.svg?url'
 import UserCard from '../UserCard/UserCard.vue'
 import { v1 } from 'uuid'
 import i18n from '@/utils/i18n'
@@ -32,6 +32,7 @@ interface Props {
   metaName: string
   metaId?: string
   image: string
+  address:string
   type?: 'metaId' | 'metafile'
   disabled?: boolean
   imageClass?: string
@@ -67,6 +68,7 @@ function openUserCard(e: any) {
       h(UserCard, {
         i18n: i18n,
         modelValue: true,
+        address:props.address,
         metaId: props.metaId,
         name: props.name,
         metaName: props.metaName,

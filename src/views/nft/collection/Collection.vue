@@ -7,13 +7,21 @@
     <template #default>
       <div class="collection font-sora" id="collection">
         <!-- cover -->
-        <Image class="cover" :src="collection.val.cover_pinid" />
-
+        <Image class="cover" :src="collection.val?.cover_pinid" />
+       
         <div class="collection-content">
           <!-- collection-avatar -->
           <div class="collection-avatar">
+            <!-- <UserAvatar
+              :address="collection.val?.collection_creator?.address"
+              :meta-id="''"
+              :image="collection.val?.collection_creator?.avatarId"
+              :name="''"
+              :meta-name="''"
+              custom-class="w-28 h-28 box-border border-4 border-[#fff] shadow-[0px 4px 6px 0px rgba(48, 49, 51, 0.2)] rounded-lg object-cover"
+            /> -->
             <Image
-              :src="collection.val.cover_pinid"
+              :src="collection.val?.cover_pinid"
               class="w-28 h-28 box-border border-4 border-[#fff] shadow-[0px 4px 6px 0px rgba(48, 49, 51, 0.2)] rounded-lg object-cover"
             />
           </div>
@@ -22,30 +30,25 @@
           <div class="collection-msg flex">
             <div class="flex1">
               <div class="name flex flex-align-center">
-                {{ collection.val.name }} <Icon name="certed" />
+                {{ collection.val?.name }} <Icon name="certed" />
               </div>
               <div class="creator flex flex-align-center">
                 {{ $t('NFT.Creater') }}:
-                <RouterLink
-                  :to="{
-                    name: 'user',
-                    params: { metaId: collection.val?.collection_creator?.metaid || '' },
-                  }"
-                  ><UserName
+              <UserName
                     :metaid="collection.val?.collection_creator!.metaid"
                     :name="collection.val?.collection_creator!.name"
                     :meta-name="''"
-                /></RouterLink>
+                />
                 <!-- <Icon name="center_star" /> -->
-                <img src="@/assets/images/creatorIcon.png" alt="" class="w-[26px] h-[24px] ml-1" />
+                <!-- <img src="@/assets/images/creatorIcon.png" alt="" class="w-[26px] h-[24px] ml-1" /> -->
               </div>
               <div class="drsc">
-                <template v-if="collection.val.nft_desc.length > 100">
+                <template v-if="collection.val?.nft_desc?.length > 100">
                   <span class="text break-words">
                     {{ collection.val?.nft_desc.slice(0, 100) }}...</span
                   ><a @click="isShowContent = true">{{ $t('NFT.Discover More') }}</a>
                 </template>
-                <template v-else>{{ collection.val.nft_desc }}</template>
+                <template v-else>{{ collection.val?.nft_desc }}</template>
               </div>
             </div>
             <div class="">
@@ -55,14 +58,16 @@
                     <div class="statiscs-item-warp">
                       <template v-if="item.value !== '0' && item.value !== ''">
                         <div class="value flex flex-align-center">
+                          <img class="mr-1" v-if="item.icon" :src="BTC" alt="">
                           <span class="amount">{{ item.value }} </span>
                           <span class="unit">{{ item.unit }}</span>
+                          
                         </div>
                       </template>
                       <template v-else>
                         <div class="value">--</div>
                       </template>
-                      <div class="label">{{ item.name() }}</div>
+                      <div class="label font-bold">{{ item.name() }}</div>
                     </div>
                   </div>
                 </div>
@@ -173,14 +178,14 @@
                     <template v-if="isShowFilterWarp">{{ $t('NFT.Filter') }}</template>
                   </a> -->
                 </div>
-                <!-- <ElSelect v-model="sortIndex" @change="refreshDatas">
+                <ElSelect v-model="sortIndex" @change="refreshSaleDatas">
                   <ElOption
                     v-for="(item, index) in sorts"
                     :key="index"
                     :label="item.name()"
-                    :value="index"
+                    :value="index + 1"
                   />
-                </ElSelect> -->
+                </ElSelect>
                 <div class="display flex flex-align-center">
                   <a
                     @click="changeCell(item.value)"
@@ -293,9 +298,10 @@ import { useFeebStore } from '@/stores/feeb'
 
 import { openLoading, calcNftRealSalePrice, sleep, checkUserLogin } from '@/utils/util'
 
-import { NftsLaunchPadChainSymbol, PlatformRate } from '@/data/constants'
+import { NftsLaunchPadChainSymbol, PlatformRate,MinRoyaltyFee,MinPlatformFee } from '@/data/constants'
 import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
 import { checkDummyAmount } from '@/hooks/use-buildtx-entity'
+import BTC from '@/assets/icons/btc.svg?url'
 const networkStore = useNetworkStore()
 const feeStore = useFeebStore()
 const nftEntity = useNFTEntity()
@@ -363,6 +369,7 @@ const statiscs = reactive([
     name: () => i18n.t('NFT.Blockchain'),
     value: 'Bitcoin',
     unit: '',
+    icon:'BTC'
   },
 ])
 const collection: { val: null | NftsCollection } = reactive({ val: null })
@@ -418,19 +425,19 @@ const sorts = [
     orderType: CollectionOrderType.ASC,
   },
 
-  {
-    name: () => i18n.t('NFT.Sort.Number: X to 1'),
-    sortType: CollectionSortType.TokenIndex,
-    orderType: CollectionOrderType.DESC,
-  },
-  {
-    name: () => i18n.t('NFT.Sort.Number: 1 to X'),
-    sortType: CollectionSortType.TokenIndex,
-    orderType: CollectionOrderType.ASC,
-  },
+  // {
+  //   name: () => i18n.t('NFT.Sort.Number: X to 1'),
+  //   sortType: CollectionSortType.TokenIndex,
+  //   orderType: CollectionOrderType.DESC,
+  // },
+  // {
+  //   name: () => i18n.t('NFT.Sort.Number: 1 to X'),
+  //   sortType: CollectionSortType.TokenIndex,
+  //   orderType: CollectionOrderType.ASC,
+  // },
 ]
 
-const sortIndex = ref(0)
+const sortIndex = ref(1)
 
 const list = computed(() => {
   if (isListLoading.value) {
@@ -517,6 +524,7 @@ function getCollectionCreator(address: string) {
 }
 
 function getDatas(isCover = false) {
+  
   return new Promise<void>(async (resolve, reject) => {
     if (!collection.val) {
       reject()
@@ -539,15 +547,21 @@ function getDatas(isCover = false) {
 
 function getSaleDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {
+    if(isCover){
+      pagination.page = 1
+    }
+    
     const res = await getSaleOrderList({
       collectionPinid: collection.val?.collection_pinid!,
       page: pagination.page,
       pageSize: pagination.pageSize,
+      orderType:sortIndex.value
     }).catch(error => {
       ElMessage.error(error.message)
     })
 
     if (res?.code == 200) {
+      
       if (isCover) saleNfts.length = 0
       if (res.data.length === 0) pagination.nothing = true
       for (let item of res.data) {
@@ -556,7 +570,7 @@ function getSaleDatas(isCover = false) {
           item.owner_info = await getUserAllInfo(item.saler_address)
         }
       }
-
+      
       saleNfts.push(...res.data)
     }
     resolve()
@@ -564,11 +578,15 @@ function getSaleDatas(isCover = false) {
 }
 
 function getCollection() {
+  
   return new Promise<void>(async (resolve, reject) => {
+    
     const res = await getCollectionDetail({
       collectionPinid: route.params.topicType as string,
     })
+    
     if (res.code == 200) {
+      
       const mintRes = await getCollectionMintAmout({
         collectionPinid: res.data.result.collection_pinid,
       })
@@ -585,7 +603,7 @@ function getCollection() {
 
       //   reject()
       // })
-
+      
       if (mintRes.code == 200 && (mintRes.data.mintAmout > 0 || mintRes.data.currentSupply > 0)) {
         const collectionCreator = await getUserAllInfo(res.data.result.address)
         const { mintAmout, currentSupply, currentMintPrice } = mintRes.data
@@ -601,13 +619,24 @@ function getCollection() {
           minted: mintAmout,
           current_mint_price: currentMintPrice ? currentMintPrice : res.data.result.init_price,
         }
+        
 
         const priceRes = await getPriceRecord({
           collectionPinid: route.params.topicType as string,
         })
+        
         if (priceRes.code == 200 && priceRes.data.floor_price) {
-          statiscs[1].value = space(priceRes.data.floor_price).toString()
-          statiscs[2].value = space(priceRes.data.high_price).toString()
+      
+          const floorRoyaltyFee=collection.val?.royalty_rate > 0 ? priceRes.data.floor_price * (collection.val?.royalty_rate / 100) > MinRoyaltyFee ? priceRes.data.floor_price * (collection.val?.royalty_rate / 100) : MinRoyaltyFee : 0
+          const floorPlatFormRate=priceRes.data.floor_price * (PlatformRate / 100) > MinPlatformFee ? priceRes.data.floor_price * (PlatformRate / 100) : MinPlatformFee
+
+          const hignRoyaltyFee=+collection.val?.royalty_rate > 0 ? priceRes.data.high_price * (collection.val?.royalty_rate / 100) > MinRoyaltyFee ? priceRes.data.high_price * (collection.val?.royalty_rate / 100) : MinRoyaltyFee : 0
+          const highPlatFormRate=priceRes.data.high_price * (PlatformRate / 100) > MinPlatformFee ? priceRes.data.high_price * (PlatformRate / 100) > MinPlatformFee : MinPlatformFee
+
+          const floorPirce=priceRes.data.floor_price + floorRoyaltyFee + floorPlatFormRate
+          const hignPrice=priceRes.data.high_price + hignRoyaltyFee + highPlatFormRate
+          statiscs[1].value = space(floorPirce).toString()
+          statiscs[2].value = space(hignPrice).toString()
         }
 
         statiscs[0].value = space(res.data.result.init_price).toString()
@@ -666,14 +695,23 @@ function getCollection() {
 //   })
 // }
 
-function getMore() {
-  if (isSkeleton.value || pagination.loading || pagination.nothing || isListLoading.value) return
+ function getMore() {
+  
+  if (isSkeleton.value || pagination.loading || pagination.nothing || isListLoading.value || isSaleListLoading.value) return
   pagination.loading = true
   pagination.page++
-
-  getDatas().then(() => {
+  if(tabActive.value == 1){
+   
+    getSaleDatas().then(()=>{
+      
+      pagination.loading = false
+    })
+  }else{
+    getDatas().then(() => {
     pagination.loading = false
   })
+  }
+  
 }
 
 function changeCell(cellValue: number) {
@@ -711,7 +749,7 @@ async function buyNFT(item: NftOrderType) {
 
       if (buyRes) {
         ElMessage.success(i18n.t('NFT.Buy Success'))
-        onOperateSuccess(item)
+        onOperateSuccess(item,'buy')
         // emit('update:modelValue', false)
         // buying.value = false
         //isShowSuccess.value = true
@@ -801,6 +839,23 @@ async function buyNFT(item: NftOrderType) {
   //isShowNftBuy.value = true
 }
 
+async function refreshSaleDatas(){
+  console.log("isSkeleton.value",isSkeleton.value)
+  isSaleListLoading.value=true
+  pagination.page = 1
+  pagination.loading = false
+  pagination.nothing = false
+
+ 
+  await getSaleDatas(true)
+  isSaleListLoading.value=false
+  // getSaleDatas(true).then(()=>{
+  //   isSaleListLoading.value=true
+  // }).catch(()=>{
+  //   isSaleListLoading.value=true
+  // })
+}
+
 function refreshDatas() {
   isListLoading.value = true
   if (isMobile && isShowFilterWarp.value) {
@@ -810,6 +865,8 @@ function refreshDatas() {
   pagination.loading = false
   pagination.nothing = false
   getDatas(true).then(() => {
+    isListLoading.value = false
+  }).catch(()=>{
     isListLoading.value = false
   })
 }
@@ -821,7 +878,9 @@ async function onOffsale(item: NftOrderType) {
   })
   if (result) {
     onOperateSuccess(result)
-    getSaleDatas(true).then()
+    
+    await sleep(500)
+     await getSaleDatas(true)
   }
 }
 
@@ -831,10 +890,14 @@ async function onSale(item: NftOrderType) {
   isShowNftSale.value = true
 }
 
-function onOperateSuccess(item: NftOrderType) {
+function onOperateSuccess(item: NftOrderType,type?:string) {
+  
   const index = saleNfts.findIndex(_item => _item.order_id === item.order_id)
   if (index > -1) {
     saleNfts[index] = item
+  }
+  if(type == 'buy'){
+    getSaleDatas(true).then()
   }
 }
 
@@ -876,6 +939,7 @@ getCollection()
   .then(() => {
     getDatas(true)
       .then(() => {
+        
         isSkeleton.value = false
       })
       .catch(() => {

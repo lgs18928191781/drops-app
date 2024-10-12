@@ -20,6 +20,7 @@
               :class="{ active: isShowUserWalletOperates }"
             >
               <UserAvatar
+              :address="connecionStore.last?.user?.address"
                 :meta-id="userStore.user!.metaId"
                 :image="connecionStore.last?.user?.avatarId"
                 :disabled="true"

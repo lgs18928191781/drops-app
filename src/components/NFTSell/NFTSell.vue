@@ -13,10 +13,26 @@
       :element-loading-svg="LoadingTEXT"
       :element-loading-text="$t('Loading')"
     >
-      <NFTMsgVue :nft="nft" />
+      <NFTMsgVue :nft="nft" >
+        <div class="price-wrap flex flex-col">
+          <div class="text-sm mt-[17px] text-[#C1BFC8]">{{ $t('Nfts.price') }}</div>
+        <ElInput
+            type="number"
+            v-model="sellPrice"
+            :placeholder="$t('NFT.Set selling price')"
+            @change="setPrice"
+          >
+
+          <template #append>
+            <img :src="BTC" alt="">
+            </template>
+
+        </ElInput>
+        </div>
+      </NFTMsgVue>
 
       <ElForm :model="form" :rules="rule" ref="FormRef">
-        <ElFormItem prop="sellPrice">
+        <!-- <ElFormItem prop="sellPrice">
           <ElInput
             type="number"
             v-model="form.sellPrice"
@@ -34,22 +50,38 @@
               </ElSelect>
             </template>
           </ElInput>
-        </ElFormItem>
+        </ElFormItem> -->
 
         <div class="price-info-list">
           <div class="price-info-item flex flex-align-center">
-            <div class="label flex1">{{ $t('NFT.Set actual income') }}</div>
-            <div class="value flex flex-align-center">
-              <ElInput type="number"  v-model="form.actualincomePrice" @change="setSellPrice" />
-             <span class="ml-1"> {{ ToCurrency.BTC }}</span>
+            <div class="label  flex1">{{ $t('NFT.Set actual income') }}</div>
+            <div class="value  flex flex-align-center">
+              <div >{{ form.actualincomePrice }}</div>
+              <!-- <ElInput type="number"  :model-value="form.actualincomePrice" @change="setSellPrice" /> -->
+             <span class="ml-1 "> {{ ToCurrency.BTC }}</span>
             </div>
           </div>
 
           <div class="price-info-item flex flex-align-center">
-            <div class="label flex1">
+            <div class="label flex items-center flex1">
+             <span class="mr-1">
               {{
                 $t('NFT.Platform fee')
               }}({{  new Decimal(extraFee.platformPercentage).mul(100).toFixed(2) }}%)
+             </span>
+
+            <el-popover
+            placement="right"
+            :title="$t('NFT.Platform fee')"
+            :width="200"
+            trigger="hover"
+            :content="$t('Nfts.platform_desc')"
+            >
+            <template #reference>
+              <el-icon><QuestionFilled /></el-icon>
+            </template>
+            </el-popover>
+
             </div>
             <div class="value">
               {{ platformFee }}
@@ -58,10 +90,25 @@
           </div>
 
           <div class="price-info-item flex flex-align-center">
-            <div class="label flex1">
+            <div class="label flex items-center flex1">
+             <span class="mr-1">
               {{
                 $t('NFT.Royalty fee')
               }}({{ new Decimal(extraFee.royaltyPercentage).mul(100).toFixed(2) }}%)
+             </span>
+
+
+<el-popover
+            placement="right"
+            :title="$t('NFT.royalte fee')"
+            :width="200"
+            trigger="hover"
+            :content="$t('Nfts.royalte_desc')"
+            >
+            <template #reference>
+              <el-icon><QuestionFilled /></el-icon>
+            </template>
+            </el-popover>
             </div>
             <div class="value">
               {{ royaltyFee }}
@@ -72,8 +119,8 @@
       </ElForm>
 
       <div class="operate">
-        <a class="main-border primary" @click="submitForm">
-          {{ $t('NFT.Sell') }}
+        <a :class="['main-border primary',sellPrice ? '' : 'opacity-50']" @click="submitForm">
+          {{ $t('NFT.submit_Sell') }}
         </a>
       </div>
     </div>
@@ -98,6 +145,8 @@ import { Chains, NodeName, SdkPayType,ToCurrency } from '@/enum'
 import { FormInstance } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import {useNFTEntity} from '@/hooks/use-nft-entity'
+import BTC from '@/assets/icons/btc.svg?url'
+import { QuestionFilled} from '@element-plus/icons-vue'
 const props = defineProps<{
   modelValue: boolean
   nft: NftOrderType
@@ -119,9 +168,9 @@ const units = [
   // { value: Unit.Satoshi, rate: Math.pow(10, 8), toFixed: 0 },
 ]
 const unit = ref(Unit.BTC)
+const  sellPrice=ref('')
 const form = reactive({
-  sellPrice: '',
-  actualincomePrice: '',
+  actualincomePrice: '0',
 
 })
 
@@ -135,27 +184,27 @@ const extraFee=computed(()=>{
 const loading = ref(false)
 
 const rule = {
-  sellPrice: [
-    {
-      required: true,
-      message: i18n.t('NFT.Set selling price'),
-      trigger: 'blur',
-    },
-    {
-      required: true,
-      validator: (rule: any, value: any, callback: any) => {
-        const minPrice = new Decimal(minSatoshi)
-          .div(unit.value === Unit.Satoshi ? 1 : Math.pow(10, 8))
-          .toNumber()
-        if (new Decimal(value).toNumber() < minPrice) {
-          callback(new Error(i18n.t('NFT.Selling price must be greater than ') + minPrice))
-        } else {
-          callback()
-        }
-      },
-      trigger: 'blur',
-    },
-  ],
+  // sellPrice: [
+  //   {
+  //     required: true,
+  //     message: i18n.t('NFT.Set selling price'),
+  //     trigger: 'blur',
+  //   },
+  //   {
+  //     required: true,
+  //     validator: (rule: any, value: any, callback: any) => {
+  //       const minPrice = new Decimal(minSatoshi)
+  //         .div(unit.value === Unit.Satoshi ? 1 : Math.pow(10, 8))
+  //         .toNumber()
+  //       if (new Decimal(value).toNumber() < minPrice) {
+  //         callback(new Error(i18n.t('NFT.Selling price must be greater than ') + minPrice))
+  //       } else {
+  //         callback()
+  //       }
+  //     },
+  //     trigger: 'blur',
+  //   },
+  // ],
   actualincomePrice: [
     {
       required: true,
@@ -166,10 +215,10 @@ const rule = {
 }
 
 const platformFee = computed(() => {
-  if(!form.actualincomePrice){
+  if(!sellPrice.value){
     return 0
   }
-  let price = new Decimal(form.actualincomePrice).mul(extraFee.value.platformPercentage).toNumber()
+  let price = new Decimal(sellPrice.value).mul(extraFee.value.platformPercentage).toNumber()
   if(price < 0.00002){
     price=0.00002
   }
@@ -185,13 +234,13 @@ const platformFee = computed(() => {
 })
 
 const royaltyFee = computed(() => {
-  if(!form.actualincomePrice){
+  if(!sellPrice.value){
     return 0
   }
   if(extraFee.value.royaltyPercentage == 0){
     return 0
   }
-  let price = new Decimal(form.actualincomePrice).mul(extraFee.value.royaltyPercentage).toNumber()
+  let price = new Decimal(sellPrice.value).mul(extraFee.value.royaltyPercentage).toNumber()
   if(price < 0.00001){
     price = 0.00001
     
@@ -228,25 +277,27 @@ const royaltyFee = computed(() => {
 // }
 
 function setPrice() {
-  let price = new Decimal(form.sellPrice)
-  const uninItem = units.find(item => item.value === unit.value)
-  form.sellPrice = price.toFixed(uninItem!.toFixed)
+   //let price = new Decimal(sellPrice.value).toString()
+  // //const uninItem = units.find(item => item.value === unit.value)
+  
+  // sellPrice.value = price
+  form.actualincomePrice=new Decimal(sellPrice.value).sub(platformFee.value).sub(royaltyFee.value).toString()
 }
 
 function setSellPrice() {
-  let price = new Decimal(form.actualincomePrice).toNumber()
-  form.actualincomePrice = new Decimal(price).toFixed(8)
-  form.sellPrice = new Decimal(form.actualincomePrice)
+  // let price = new Decimal(form.actualincomePrice).toNumber()
+  // form.actualincomePrice = new Decimal(price).toFixed(8)
+  sellPrice.value = new Decimal(form.actualincomePrice)
     .plus(platformFee.value)
     .plus(royaltyFee.value)
-    .toFixed(8)
-    console.log("form.sellPrice",form.sellPrice)
+    .toString()
+    console.log("form.sellPrice",sellPrice.value)
 }
 
 function onChangeUnit() {
-  if (form.sellPrice) {
+  if (sellPrice.value) {
     const uninItem = units.find(item => item.value === unit.value)
-    form.sellPrice = new Decimal(form.sellPrice).mul(uninItem!.rate).toFixed(uninItem!.toFixed)
+    sellPrice.value= new Decimal(sellPrice.value).mul(uninItem!.rate).toFixed(uninItem!.toFixed)
   }
 }
 
@@ -259,7 +310,12 @@ function submitForm() {
       //     `此NFT冻结到 ${dateTimeFormat(props.nft.nftCanSellTimestamp)}, 才可上架销售`
       //   )
       // }
-      
+      if(!sellPrice.value){
+        return ElMessage.error(`${i18n.t('Nfts.salePrice_empty')}`)
+      }
+      if(+form.actualincomePrice < 0){
+        return ElMessage.error(`${i18n.t('Nfts.salePrice_overlimited')}`)
+      }
       try {
         
         loading.value = true
@@ -316,6 +372,7 @@ function submitForm() {
           }
         })
         
+        
         if (res) {
           loading.value = false
           emit('success', {
@@ -323,14 +380,15 @@ function submitForm() {
             nftPrice: sellPriceSatoshi,
             nftSellState: 1,
             nftIsReady: true,
-          })
+          },'onSale')
           emit('update:modelValue', false)
-          form.sellPrice = ''
-          ElMessage.success(i18n.t('NFT.Sale Success'))
+          sellPrice.value = ''
+           //ElMessage.success(i18n.t('NFT.Sale Success'))
         } else {
           loading.value = false
         }
       } catch (error) {
+        
         loading.value = false
         ElMessage.error((error as any).message)
       }

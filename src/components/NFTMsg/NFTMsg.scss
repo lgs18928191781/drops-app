@@ -1,20 +1,28 @@
 @import '@/assets/styles/var.scss';
 
 .nft-msg {
+    display: flex;
     .cover-warp {
-        width: 96px;
-        height: 96px;
-        margin-right: 12px;
+        flex: 1;
+        width: 120px;
+        height: 120px;
+        margin-right: 15px;
 
         :deep(.cover) {
             border-radius: 8px;
         }
+    }
+    .info{
+        flex: 2;
     }
 
     .name {
         line-height: 27px;
         font-size: 18px;
         @include text-many-ellipsis(2);
+    }
+    .price{
+
     }
 
     .cont {
@@ -27,9 +35,9 @@
     }
 
     .price {
-        text-align: right;
-        color: #FC6D5E;
-        font-size: 24px;
-        font-weight: bold;
+        // text-align: right;
+        // color: #FC6D5E;
+        // font-size: 24px;
+        // font-weight: bold;
     }
 }

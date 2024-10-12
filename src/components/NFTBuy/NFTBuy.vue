@@ -18,6 +18,7 @@
               <div class="user-list">
                 <div class="user-item flex flex-align-center">
                   <UserAvatar
+                  :address="nft.creator_info.address"
                     :meta-id="nft.creator_info.metaid"
                     :name="nft.creator_info.name"
                     :image="nft.creator_info.avatarId"
@@ -33,6 +34,7 @@
                 </div>
                 <div class="user-item flex flex-align-center">
                   <UserAvatar
+                   :address="nft.owner_info.address"
                     :meta-id="nft.owner_info.metaid"
                     :name="nft.owner_info.name"
                     :image="nft.owner_info.avatarId"
@@ -350,6 +352,7 @@ async function confirmBuy() {
         console.log("props.nft",props.nft)
         
         const buyRes= await nftEntity.buyNft({
+          nftItem:props.nft,
           psbtHex:props.nft.order_id,
           buyerAddress:connectionStore.last.user.address,
           nftPinid:props.nft.item_pinid,

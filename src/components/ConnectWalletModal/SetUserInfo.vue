@@ -43,7 +43,7 @@
       </div>
 
       <div class="operate">
-        <a class="main-border" :class="{ faded: form.name === '' }" @click="submitForm">
+        <a class="main-border primary" :class="{ faded: form.name === '' }" @click="submitForm">
           <Icon name="right" />
         </a>
       </div>
@@ -54,7 +54,7 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import DefaultAvatar from '@/assets/images/default_user.png'
+import DefaultAvatar from '@/assets/images/default_user.svg?url'
 import { compressImage, FileToAttachmentItem } from '@/utils/util'
 import { useConnectionStore, ConnectChain } from '@/stores/connection'
 const form = reactive({

@@ -136,6 +136,7 @@ const switchFollow = async () => {
   const process = async () => {
     // 获取地址
     const res = await GetUserAllInfo(metaId)
+    
     if (res.code !== 0) return
     const address = res.data?.address
     if (!address) return

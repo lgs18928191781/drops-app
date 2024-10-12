@@ -69,8 +69,11 @@
         .collection-cover {
            z-index: 4;
             width:100% !important;
-            max-width: 460px !important;
-            height: 387px !important;
+           max-width: 460px !important;
+           // max-width: 380px !important;
+            //height: auto !important;
+            height: 380px !important;
+            // max-height: 380px !important;
             box-sizing: border-box !important;
             //padding-bottom: 75%;
            
@@ -258,6 +261,7 @@
 
 .notable-collections{
     margin-top: 70px;
+    margin-bottom: 200px;
     .notable-item-wrap{
         margin-top: 40px;
         display: flex;

@@ -6,6 +6,7 @@
         <DetailSkeletonVue />
       </template>
       <template #default>
+        
         <div class="top flex nftDetailContainer">
           <!-- 封面图 -->
           <div class="cover-warp">

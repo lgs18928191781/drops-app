@@ -76,6 +76,7 @@ import { ECPairFactory } from 'ecpair'
 import { getPinfromPinid,getPinfromPinidList } from "@/api/mrc721-api";
 import { useNetworkStore } from '@/stores/network'
 import {exclusiveChange} from '@/hooks/use-buildtx-entity'
+import { ElMessage } from 'element-plus'
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const metaidEntity = useMetaIDEntity()
@@ -164,7 +165,7 @@ onMounted(async () => {
     await connectorStore.sync()
     console.log(connectorStore.last._isConnected)
     if (connectorStore.last._isConnected) {
-      await followStore.get()
+      //await followStore.get()
       console.log(window.metaidwallet)
       // await metaidEntity.payCommentEntity({
       //   body: {
@@ -183,7 +184,7 @@ onMounted(async () => {
       //   },
       // })
     }
-
+    feeStore.update().then()
     feeStore.set(feeStore.last?.currentFeeb?.title || 'Fast').then()
     if (connectorStore.currentChain && connectorStore.currentChain !== ConnectChain.mvc) {
       feebInterval.value = setInterval(() => {
@@ -210,8 +211,10 @@ function handleAcccountsChanged() {
 
 watchEffect(() => {
   if (connectorStore.last._isConnected) {
+    
     window.metaidwallet.on('accountsChanged', handleAcccountsChanged)
   } else {
+    
     window.metaidwallet?.removeListener('accountsChanged', handleAcccountsChanged)
   }
 })

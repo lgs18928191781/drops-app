@@ -3,8 +3,11 @@
     <div class="cover-warp">
       <NFTCoverVue :cover="[nft.pic_path]" />
     </div>
-    <div class="flex1">
+    <div class="flex flex-col info ">
       <div class="name">{{ nft.nft_name }}</div>
+      <div class="price flex-col ">
+        <slot></slot>
+      </div>
       <!-- <div class="cont flex flex-align-center">
         <div class="flex1">
           <div class="token-index">#{{ parseInt(nft.nftTokenIndex) + 1 }}</div>

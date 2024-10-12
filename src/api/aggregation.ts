@@ -414,7 +414,8 @@ export const GetUserFollow = (
     friendList: string[]
   }
 }> => {
-  return aggregation.get(`/v2/app/show/follow/${metaId}`)
+  return {} 
+  //return aggregation.get(`/v2/app/show/follow/${metaId}`)
 }
 
 export const GetMetaFile = (

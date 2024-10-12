@@ -53,6 +53,7 @@
               <div class="flex1">
                 <div class="avatar-warp flex flex-align-center flex-pack-center">
                   <UserAvatar
+                    :addres="userInfo.val!.address"
                     :meta-id="userInfo.val!.metaId"
                     :image="userInfo.val!.avatarImage"
                     :name="userInfo.val!.name"
@@ -280,7 +281,7 @@ function toChat() {
   router.push(`/talk/channels/@me/${route.params.metaId}`)
 }
 
-Promise.all([getUserInfo(), getUserFoller(), checkUserIsFollowed()]).then(() => {
+Promise.all([getUserInfo()]).then(() => {
   isSkeleton.value = false
 })
 </script>
