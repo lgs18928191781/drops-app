@@ -1924,23 +1924,28 @@ export function changeSymbol(symbol: string) {
   }
 }
 
-export function calcNftRealSalePrice(salePrice:number,royaltyRate:number=0):{
+export function calcNftRealSalePrice(salePrice:number,totalSalePrice:number,royaltyRate:number=0):{
   salePrice:number
   platformFee:number
   royaltyFee:number
   total:number
+  royaltyRate?:number
 }{
-  if(!salePrice){
+
+  
+  if(!totalSalePrice){
     return {
       salePrice:0,
     platformFee:0,
     royaltyFee:0,
+    royaltyRate:0,
     total:0
     }
   }
-  const platformFee=new Decimal(salePrice).mul(PlatformRate).div(100).toNumber()
+  
+  const platformFee=parseInt(new Decimal(totalSalePrice).mul(PlatformRate).div(100).toString())
   const realplatformFee=platformFee > MinPlatformFee ? platformFee : MinPlatformFee
-  const royaltyFee = royaltyRate > 0 ? new Decimal(salePrice).mul(royaltyRate).div(100).toNumber() : 0
+  const royaltyFee = royaltyRate > 0 ? parseInt(new Decimal(totalSalePrice).mul(royaltyRate).div(100).toString()) : 0
   let realroyaltyFee=0
   if(royaltyRate== 0){
     realroyaltyFee=0
@@ -1956,7 +1961,8 @@ export function calcNftRealSalePrice(salePrice:number,royaltyRate:number=0):{
     salePrice:salePrice,
     platformFee:realplatformFee,
     royaltyFee:realroyaltyFee,
-    total:new Decimal(salePrice).add(realplatformFee).add(realroyaltyFee).toNumber()
+    royaltyRate:royaltyRate,
+    total:totalSalePrice //parseInt(new Decimal(salePrice).add(realplatformFee).add(realroyaltyFee).toString())
   }
 }
 

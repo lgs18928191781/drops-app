@@ -1336,6 +1336,7 @@ declare interface NftOrderType extends NftMintItemType{
   reveal_txid:string
   royalty_rate:number
   sale_price:number
+  total_sale_price:number
   saler_address:string
   saler_metaid:string
   updated_at:string

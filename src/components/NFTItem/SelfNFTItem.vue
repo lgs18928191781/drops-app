@@ -125,10 +125,10 @@
     }
   })
   
-  const realSalePrice = computed(() => {
-    const { total } = calcNftRealSalePrice(props.nft.sale_price, props.nft.royalty_rate)
-    return total
-  })
+  // const realSalePrice = computed(() => {
+  //   const { total } = calcNftRealSalePrice(props.nft.sale_price,props.nft.total ,props.nft.royalty_rate)
+  //   return total
+  // })
   
   async function btnFun() {
     if (isMyNFT.value) {

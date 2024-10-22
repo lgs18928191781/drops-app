@@ -626,17 +626,17 @@ function getCollection() {
         })
         
         if (priceRes.code == 200 && priceRes.data.floor_price) {
-      
-          const floorRoyaltyFee=collection.val?.royalty_rate > 0 ? priceRes.data.floor_price * (collection.val?.royalty_rate / 100) > MinRoyaltyFee ? priceRes.data.floor_price * (collection.val?.royalty_rate / 100) : MinRoyaltyFee : 0
-          const floorPlatFormRate=priceRes.data.floor_price * (PlatformRate / 100) > MinPlatformFee ? priceRes.data.floor_price * (PlatformRate / 100) : MinPlatformFee
+          // debugger
+          // const floorRoyaltyFee=collection.val?.royalty_rate > 0 ? priceRes.data.floor_price * (collection.val?.royalty_rate / 100) > MinRoyaltyFee ? priceRes.data.floor_price * (collection.val?.royalty_rate / 100) : MinRoyaltyFee : 0
+          // const floorPlatFormRate=priceRes.data.floor_price * (PlatformRate / 100) > MinPlatformFee ? priceRes.data.floor_price * (PlatformRate / 100) : MinPlatformFee
 
-          const hignRoyaltyFee=+collection.val?.royalty_rate > 0 ? priceRes.data.high_price * (collection.val?.royalty_rate / 100) > MinRoyaltyFee ? priceRes.data.high_price * (collection.val?.royalty_rate / 100) : MinRoyaltyFee : 0
-          const highPlatFormRate=priceRes.data.high_price * (PlatformRate / 100) > MinPlatformFee ? priceRes.data.high_price * (PlatformRate / 100) > MinPlatformFee : MinPlatformFee
+          // const hignRoyaltyFee=+collection.val?.royalty_rate > 0 ? priceRes.data.high_price * (collection.val?.royalty_rate / 100) > MinRoyaltyFee ? priceRes.data.high_price * (collection.val?.royalty_rate / 100) : MinRoyaltyFee : 0
+          // const highPlatFormRate=priceRes.data.high_price * (PlatformRate / 100) > MinPlatformFee ? priceRes.data.high_price * (PlatformRate / 100) > MinPlatformFee : MinPlatformFee
 
-          const floorPirce=priceRes.data.floor_price + floorRoyaltyFee + floorPlatFormRate
-          const hignPrice=priceRes.data.high_price + hignRoyaltyFee + highPlatFormRate
-          statiscs[1].value = space(floorPirce).toString()
-          statiscs[2].value = space(hignPrice).toString()
+          // const floorPirce=priceRes.data.floor_price + floorRoyaltyFee + floorPlatFormRate
+          // const hignPrice=priceRes.data.high_price + hignRoyaltyFee + highPlatFormRate
+          statiscs[1].value = space(priceRes.data.floor_price).toString()
+          statiscs[2].value = space(priceRes.data.high_price).toString()
         }
 
         statiscs[0].value = space(res.data.result.init_price).toString()
@@ -720,7 +720,7 @@ function changeCell(cellValue: number) {
 }
 
 const realbuyPrice = computed(() => {
-  return calcNftRealSalePrice(saleNftItem.val!.sale_price, saleNftItem.val!.royalty_rate)
+  return calcNftRealSalePrice(saleNftItem.val!.sale_price,saleNftItem.val!.total_sale_price,saleNftItem.val!.royalty_rate)
 })
 
 async function buyNFT(item: NftOrderType) {
@@ -743,6 +743,7 @@ async function buyNFT(item: NftOrderType) {
           salePrice: realbuyPrice.value.salePrice,
           platformFee: realbuyPrice.value.platformFee,
           royalFee: realbuyPrice.value.royaltyFee,
+          royaltyRate:realbuyPrice.value.royaltyRate,
           platformRate: PlatformRate,
         },
       })

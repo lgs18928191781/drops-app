@@ -136,10 +136,15 @@ const navMenus=[
     disable:false,
     path:'/create' //'/buzz/index',
   },
+  // {
+  //   name:'Profile', //i18n.t('Buzz.Timeline'),
+  //     disable:true,
+  //   path:'/create' //'/buzz/index',
+  // },
   {
-    name:'Profile', //i18n.t('Buzz.Timeline'),
-      disable:true,
-    path:'/create' //'/buzz/index',
+    name:'Convert', //i18n.t('Buzz.Timeline'),
+      disable:false,
+    path:'/convert' //'/buzz/index',
   },
 ]
 

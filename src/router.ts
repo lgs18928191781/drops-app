@@ -66,6 +66,13 @@ export const router = createRouter({
              
               // meta: { keepAlive: false },
             },
+            {
+              path: '/convert',
+              name: 'convert',
+              component: () => import('@/views/nft/convert/index.vue'),
+             
+              // meta: { keepAlive: false },
+            },
           
           ],
         },
@@ -765,7 +772,8 @@ router.beforeEach((to, from, next) => {
     "collection",
     "profile",
 "ownerItems",
-"list"
+"list",
+"convert"
   ]
   const target = whiteList.includes(to?.name)
   if (target) {

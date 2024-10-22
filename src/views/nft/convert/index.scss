@@ -1,0 +1,371 @@
+@import '@/assets/styles/var.scss';
+
+.collection {
+    border-radius: var(--rounded) var(--rounded) 0px 0px;
+    overflow: hidden;
+    //background: #29272E;
+    
+    .cover {
+        width: 100%;
+        height: 240px;
+
+        :deep(img) {
+            object-fit: cover;
+        }
+    }
+
+    .collection-content {
+        padding: 60px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .collection-avatar {
+        margin-top: -140px;
+
+        img,
+        .el-skeleton__item {
+            box-sizing: border-box;
+            border: 4px solid #FFFFFF;
+            box-shadow: 0px 4px 6px 0px rgba(48, 49, 51, 0.2);
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+    }
+
+    .collection-msg {
+        margin-top: 30px;
+
+        .name {
+            .el-skeleton__item {
+                height: 24px;
+                width: 150px;
+            }
+
+            font-size: 24px;
+            font-weight: 600;
+
+            .icon {
+                width: 18px;
+                height: 18px;
+                margin-left: 12px;
+            }
+        }
+
+        .creator {
+            margin-top: 13px;
+            font-size: 16px;
+            font-weight: 300;
+
+            .el-skeleton__item {
+                height: 16px;
+                width: 100px;
+            }
+
+            a {
+                color: #fff;
+                margin-left: 5px;
+                cursor: pointer;
+            }
+
+            .icon {
+                width: 24px;
+                height: 24px;
+                margin-left: 6px;
+            }
+
+
+        }
+
+        .drsc {
+            margin-top: 13px;
+            font-size: 16px;
+            max-width: 480PX;
+            font-weight: 300;
+
+            .el-skeleton__item {
+                height: 16px;
+                width: 100%;
+                margin-bottom: 5px;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+
+                &:nth-child(2) {
+                    width: 60%;
+                }
+
+                &:nth-child(3) {
+                    width: 80%;
+                }
+            }
+
+            .text {
+                opacity: 0.6;
+            }
+
+            a {
+                color: var(--color-hover);
+                cursor: pointer;
+            }
+        }
+    }
+
+    .statiscs-list {
+        .statiscs-item {
+
+            display: inline-block;
+            vertical-align: middle;
+            // margin-right: 38px;
+            width: calc(100% / 3);
+            margin: 9px 0;
+
+            .value,
+            .label {
+                text-align: center;
+                
+            }
+         
+
+            .value {
+                font-size: 20px;
+
+                .amount {
+                    @extend %text-ellipsis;
+                }
+
+                .unit {
+                    margin-left: 5px;
+                }
+
+                .el-skeleton__item {
+                    height: 20px;
+                    width: 100px;
+                }
+            }
+
+            .label {
+                opacity: 0.6;
+                margin-top: 4px;
+
+                .el-skeleton__item {
+                    height: 14px;
+                    width: 100%;
+                }
+            }
+
+            .statiscs-item-warp {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+
+                .value {
+                    font-size: 20px;
+                    font-weight: 600;
+                    color: #FFFFFF;
+                }
+
+                // width: 150px;
+                .label {
+                    font-size: 16px;
+                    font-weight: 500;
+                    color: #909399;
+                }
+            }
+        }
+    }
+
+
+    .tab {
+        margin-top: 60px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #BFC2CC;
+
+        .el-skeleton__item {
+            height: 16px;
+            width: 100px;
+            margin-right: 30px;
+        }
+
+        a {
+            opacity: 0.6;
+            margin-right: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: 300;
+
+            &:last-child {
+                margin-right: 0;
+            }
+
+            &.active {
+                opacity: 1;
+                position: relative;
+                font-weight: 600;
+
+                &::before {
+                    content: '';
+                    position: absolute;
+                    left: 0;
+                    bottom: 0;
+                    width: 100%;
+                    height: 2px;
+                    background-color: var(--themeTextColor);
+                    margin-bottom: -12px;
+                }
+            }
+        }
+    }
+
+    .screen {
+        //background: #29272E;
+        padding-top: 18px;
+        padding-bottom: 18px;
+        margin-top: 18px;
+
+        .main-border {
+            display: inline-flex;
+            cursor: pointer;
+            padding: 13px 24px;
+
+            .icon {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        &:deep(.el-select){
+            --el-select-input-focus-border-color: #fff !important;
+            .el-input{
+                border:none !important;
+                box-shadow: none !important;
+               
+                .el-input__wrapper{
+                    background: #29272E !important;
+                    .el-input__inner{
+                        color: #fff !important;
+                    }
+                }
+            }
+        }
+
+        .el-skeleton__item {
+            height: 50px;
+            width: 100px;
+        }
+
+        .display {
+            background: #29272E;
+            border-radius: var(--rounded);
+            margin-left: 23px;
+           
+            a {
+              
+                padding: 12px 24px;
+                cursor: pointer;
+
+                .icon {
+                    width: 24px;
+                    height: 24px;
+                   
+                    :deep(use) {
+                        opacity: 0.6;
+                    }
+                }
+
+                &:hover {
+                    :deep(use) {
+                        opacity: 1;
+                    }
+                }
+
+                &.active {
+                    background:#fff; //var(--color-primary);
+                    border-radius: var(--rounded);
+                    border: 2px solid #303133;
+
+                    :deep(use) {
+                        opacity: 1;
+                    }
+
+                }
+            }
+        }
+    }
+
+    .el-row {
+        .el-col {
+            margin-bottom: 22px;
+        }
+    }
+}
+
+
+.collection-nft-content {}
+
+
+
+
+@media only screen and (max-width: 750PX) {
+    .collection {
+        .collection-avatar {
+            margin-top: -100px;
+        }
+
+        .collection-content {
+            padding: 18px;
+        }
+
+        .collection-msg {
+            flex-direction: column;
+
+            .statiscs-list {
+                margin-top: 30px;
+
+                .statiscs-item {
+
+
+                    .flex {
+                        justify-content: center;
+                    }
+                }
+            }
+        }
+
+        .screen {
+            --input-height: 50px;
+
+            .el-select {
+                width: 120PX;
+            }
+
+            .display {
+                margin-left: 10px;
+
+                a {
+                    height: 50px;
+                    padding: 0 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+            }
+        }
+
+        .collection-nft-content {
+            .el-affix {
+                flex: 1;
+            }
+        }
+
+        .el-row {
+            .el-col {
+                margin-bottom: 10PX;
+            }
+        }
+    }
+}

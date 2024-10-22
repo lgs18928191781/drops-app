@@ -115,7 +115,7 @@ const btnText = computed(() => {
 })
 
 const realSalePrice = computed(() => {
-  const { total } = calcNftRealSalePrice(props.nft.sale_price, props.nft.royalty_rate)
+  const { total } = calcNftRealSalePrice(props.nft.sale_price,props.nft.total_sale_price,props.nft.royalty_rate)
   return total
 })
 

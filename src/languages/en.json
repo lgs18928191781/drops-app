@@ -839,7 +839,8 @@
     "Profile_other_items": "Items",
     "Profile_listing": "NFT listing",
     "submit_Sell": "Submit Listings",
-    "royalte fee": "Royalty Fee Explanation"
+    "royalte fee": "Royalty Fee Explanation",
+    "My_collection works": "My MetaBot"
   },
   "My NFT": "My NFT",
   "Done": "Done",
@@ -1444,7 +1445,7 @@
     "lanuch_growth_price_desc": "What is the price growth index?",
     "psbt_buy_empty": "Buy orderId is not exist",
     "redeem_psbt_empty": "The NFT redemption order does not exist.",
-    "service_royalty_fee": "Royalty_Rate",
+    "service_royalty_fee": "Royalty rate",
     "lanuch_morethan_amount": "Maximum minting per transaction is not allowed to exceed 30",
     "not_allow_todetail": "NFTs that have not been minted yet do not support viewing details",
     "transfer_success": "NFT transfer success",

@@ -1,38 +1,79 @@
 <template>
-    <div class="profile-wrap">
-        <ElSkeleton :loading="isSkeleton" animated>
+    <ElSkeleton :loading="isSkeleton" animated>
       <template #template>
         <CollectionSkeleton />
       </template>
   
       <template #default>
         <div class="collection font-sora" id="collection">
-        
+          <!-- cover -->
+          <Image class="cover" :src="MetabotCollection.banner" />
+         
           <div class="collection-content">
             <!-- collection-avatar -->
-            <div class="user-wrap flex items-center justify-between">
-                <div class="collection-avatar flex flex-row items-center">
-              <UserAvatar
-                    :address="currentUser.val.address"
+            <div class="collection-avatar">
+              <!-- <UserAvatar
+                :address="collection.val?.collection_creator?.address"
                 :meta-id="''"
-                :image="currentUser.val.avatarId"
+                :image="collection.val?.collection_creator?.avatarId"
                 :name="''"
                 :meta-name="''"
-                custom-class="w-[100px] h-[100px] rounded-full mr-5"
+                custom-class="w-28 h-28 box-border border-4 border-[#fff] shadow-[0px 4px 6px 0px rgba(48, 49, 51, 0.2)] rounded-lg object-cover"
+              /> -->
+              <Image
+                :src="MetabotCollection.icon"
+                class="w-28 h-28 box-border border-4 border-[#fff] shadow-[0px 4px 6px 0px rgba(48, 49, 51, 0.2)] rounded-lg object-cover"
               />
-              <div class="flex flex-col ">
-                <div class="text-3xl">{{  currentUser.val.name  }}</div>
-                <div class="mt-3 text-lg text-[#807B8D]">MetaID:{{  currentUser.val.metaid.slice(0,6)  }}</div>
-              </div>
-              
-            </div>
-            <div @click="copyProfile" class="cursor-pointer hover:scale-110">
-                <el-icon :size="18" color="#fff"><Share /></el-icon>
-              </div>
-
             </div>
   
-           
+            <!-- collection-msg -->
+            <div class="collection-msg flex">
+              <div class="flex1">
+                <div class="name flex flex-align-center">
+                  {{ MetabotCollection.collectionName }} <Icon name="certed" />
+                </div>
+                <div class="creator flex flex-align-center">
+                  {{ $t('NFT.Creater') }}:
+                <UserName
+                      :metaid="MetabotCollection.metaid"
+                      :name="MetabotCollection.collectionName"
+                      :meta-name="''"
+                  />
+                  <!-- <Icon name="center_star" /> -->
+                  <!-- <img src="@/assets/images/creatorIcon.png" alt="" class="w-[26px] h-[24px] ml-1" /> -->
+                </div>
+                <div class="drsc">
+                  <template v-if="MetabotCollection.desc.length > 100">
+                    <span class="text break-words">
+                      {{ MetabotCollection.desc.slice(0, 100) }}...</span
+                    ><a @click="isShowContent = true">{{ $t('NFT.Discover More') }}</a>
+                  </template>
+                  <template v-else>{{ MetabotCollection.desc }}</template>
+                </div>
+              </div>
+              <div class="">
+                <div class="statiscs-list">
+                  <div class="statiscs-item" v-for="(item, index) in statiscs" :key="index">
+                    <div class="flex flex-align-center flex-pack-center">
+                      <div class="statiscs-item-warp">
+                        <template v-if="item.value !== '0' && item.value !== ''">
+                          <div class="value flex flex-align-center">
+                            <img class="mr-1" v-if="item.icon" :src="BTC" alt="">
+                            <span class="amount">{{ item.value }} </span>
+                            <span class="unit">{{ item.unit }}</span>
+                            
+                          </div>
+                        </template>
+                        <template v-else>
+                          <div class="value">--</div>
+                        </template>
+                        <div class="label font-bold">{{ item.name() }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
   
             <!-- tab -->
             <div class="tab flex flex-align-center">
@@ -46,10 +87,10 @@
             </div>
   
             <!-- CollectionWorks -->
-            <template v-if="tabActive === ProfileTab.Items">
-              <!-- <ElAffix :offset="scrrentWarpOffsetTop">
+            <template v-if="tabActive === NFTCollectTab.CollectionWorks">
+              <ElAffix :offset="scrrentWarpOffsetTop">
                 <div class="screen flex flex-align-center" id="screen">
-                  <div class="flex1"> -->
+                  <div class="flex1">
                     <!-- <a
                       class="main-border flex flex-align-center"
                       @click="isShowFilterWarp = !isShowFilterWarp"
@@ -57,7 +98,7 @@
                       <Icon name="filter" />
                       <template v-if="isShowFilterWarp">{{ $t('NFT.Filter') }}</template>
                     </a> -->
-                  <!-- </div> -->
+                  </div>
                   <!-- <ElSelect v-model="sortIndex" @change="refreshDatas">
                     <ElOption
                       v-for="(item, index) in sorts"
@@ -66,7 +107,7 @@
                       :value="index"
                     />
                   </ElSelect> -->
-                  <!-- <div class="display flex flex-align-center">
+                  <div class="display flex flex-align-center">
                     <a
                       @click="changeCell(item.value)"
                       v-for="item in cells"
@@ -77,7 +118,7 @@
                     </a>
                   </div>
                 </div>
-              </ElAffix> -->
+              </ElAffix>
   
               <div class="collection-nft-content flex">
                 <template v-if="isShowFilterWarp">
@@ -105,16 +146,15 @@
                     :lg="cell.val.lg"
                     :xl="cell.val.xl"
                     v-for="(item, index) in list"
-                    :key="isListLoading ? index : item.item_pinid"
+                    :key="isListLoading ? index : item.commit_address"
                   >
-                  <NFTItemVue
+                    <NFTMintItemVue
                       :nft="item"
-                      @buy="buyNFT"
-                      @sale="onSale"
-                      @offsale="onOffsale"
+                      :collection="collection.val"
+                      @mint="mintItem"
+                      :isSimple="false"
                       :loading="isListLoading"
                     />
-                  
                   </ElCol>
   
                   <ElCol v-if="!isListLoading && nfts.length === 0">
@@ -127,64 +167,9 @@
             </template>
             <!-- PriceTrend -->
             <template v-else>
-
-            <div class="table-wrap">
-                <el-table :data="saleNfts" height="250" style="width: 100%" row-class-name="table-row-wrap">
-                     <!--collection-->
-                <el-table-column label="Collection" width="200">
-                        <template #default="scope">
-                        <div class="flex w-full">
-                            <Image class="mr-[6px]" :src="scope.row.item_cover"></Image>
-                            <div class="flex w-7/12 flex-col justify-between text-[#fff]">
-                                <span class="text-base overflow-ellipsis overflow-hidden whitespace-nowrap">{{ scope.row.nft_name }}</span>
-                                <span class="text-xs ml-[8px]">#{{ scope.row.nftPinInfo.number }}</span>
-                            </div>
-      
-                       
-                        </div>
-                        </template>
-                        </el-table-column>
-                        <!--type-->
-                        <el-table-column label="Type" width="180">
-                        <template #default="scope">
-                            <div class="text-[#fff] text-sm ">{{ $t('Nfts.sell') }}</div>
-                        </template>
-                        </el-table-column>
-                          <!--price-->
-                          <el-table-column label="Price" width="180">
-                        <template #default="scope">
-                            <div class="text-[#fff] text-sm ">{{ $filters.space(scope.row.total_sale_price) }} BTC</div>
-                        </template>
-                        </el-table-column>
-                          <!--From-->
-                          <el-table-column label="From" width="180">
-                        <template #default="scope">
-                            <div class="text-[#fff] text-sm ">{{ $filters.omitMiddle(scope.row.saler_address) }}</div>
-                        </template>
-                        </el-table-column>
-                            <!--Time-->
-                            <el-table-column label="Time" width="200">
-                        <template #default="scope">
-                            <div class="text-[#fff] text-sm ">{{$filters.fomatISODate(scope.row.updated_at)  }}</div>
-                        </template>
-                        </el-table-column>
-
-                            <!--Time-->
-                            <el-table-column  width="180">
-                        <template #default="scope">
-                            <div @click="btnFun(scope.row)"  class="cursor-pointer cancel-list w-[120px] text-[#fff] text-sm ">
-                                <span>{{btnText }}</span>
-                            </div>
-                        </template>
-                        </el-table-column>
-            </el-table>
-            </div>
-
-
-
-              <!-- <ElAffix :offset="scrrentWarpOffsetTop">
-                <div class="screen flex flex-align-center" id="screen"> -->
-                  <!-- <div class="flex1"> -->
+              <ElAffix :offset="scrrentWarpOffsetTop">
+                <div class="screen flex flex-align-center" id="screen">
+                  <div class="flex1">
                     <!-- <a
                       class="main-border flex flex-align-center"
                       @click="isShowFilterWarp = !isShowFilterWarp"
@@ -192,16 +177,16 @@
                       <Icon name="filter" />
                       <template v-if="isShowFilterWarp">{{ $t('NFT.Filter') }}</template>
                     </a> -->
-                  <!-- </div> -->
-                  <!-- <ElSelect v-model="sortIndex" @change="refreshDatas">
+                  </div>
+                  <ElSelect v-model="sortIndex" @change="refreshSaleDatas">
                     <ElOption
                       v-for="(item, index) in sorts"
                       :key="index"
                       :label="item.name()"
-                      :value="index"
+                      :value="index + 1"
                     />
-                  </ElSelect> -->
-                  <!-- <div class="display flex flex-align-center">
+                  </ElSelect>
+                  <div class="display flex flex-align-center">
                     <a
                       @click="changeCell(item.value)"
                       v-for="item in cells"
@@ -212,8 +197,8 @@
                     </a>
                   </div>
                 </div>
-              </ElAffix> -->
-              <!-- <div class="collection-nft-content flex">
+              </ElAffix>
+              <div class="collection-nft-content flex">
                 <ElRow
                   :gutter="gutter"
                   class="nft-list flex1"
@@ -230,26 +215,23 @@
                     :xl="cell.val.xl"
                     v-for="(nft, index) in saleNfts"
                     :key="isSaleListLoading ? index : nft.item_pinid"
-                  > -->
-
-
-
-                    <!-- <NFTItemVue
+                  >
+                    <NFTItemVue
                       :nft="nft"
                       @buy="buyNFT"
                       @sale="onSale"
                       @offsale="onOffsale"
                       :loading="isSaleListLoading"
-                    /> -->
-                  <!-- </ElCol>
+                    />
+                  </ElCol>
   
                   <ElCol v-if="!isSaleListLoading && saleNfts.length === 0">
                     <IsNull />
                   </ElCol>
                 </ElRow>
-              </div> -->
+              </div>
   
-              <!-- <LoadMore :pagination="pagination" v-if="!isSaleListLoading && saleNfts.length > 0" /> -->
+              <LoadMore :pagination="pagination" v-if="!isSaleListLoading && saleNfts.length > 0" />
   
               <!-- <CollectionChart /> -->
             </template>
@@ -266,21 +248,15 @@
         <NFTBuy :nft="saleNftItem.val!" v-model="isShowNftBuy" @success="onOperateSuccess" />
         <!-- NFTSlae -->
         <NFTSellVue :nft="saleNftItem.val!" v-model="isShowNftSale" @success="onOperateSuccess" />
-        <!--NFTSaleSuccess-->
-        <NFTSaleSuccessVue v-model="isShowSaleSuccess" @success="listSuccessful"></NFTSaleSuccessVue>
       </template>
     </ElSkeleton>
-
-    </div>
-
   </template>
   
   <script setup lang="ts">
   import { nextTick, onMounted, reactive, ref, computed } from 'vue'
-  import { Share} from '@element-plus/icons-vue'
   import { useI18n } from 'vue-i18n'
   import NFTMintItemVue from '@/components/NFTItem/NFTMintItem.vue'
-  import NFTItemVue from '@/components/NFTItem/SelfNFTItem.vue'
+  import NFTItemVue from '@/components/NFTItem/NFTItem.vue'
   import { GetCollect, GetCollectByTopicType } from '@/api/strapi'
   import { useRoute, useRouter } from 'vue-router'
   import ContentModal from '@/components/ContentModal/ContentModal.vue'
@@ -295,9 +271,9 @@
   import { isMobile } from '@/stores/root'
   import { satoshi, space } from '@/utils/filters'
   import NFTSellVue from '@/components/NFTSell/NFTSell.vue'
-  import NFTSaleSuccessVue from '@/components/NFTsaleSuccess/SaleSuccess.vue'
   import { GetGenesisStatistics } from '@/api/broad'
   import CollectionChart from '../components/CollectionChart.vue'
+  import { GetGenesisNFTs, GetNFTs } from '@/api/aggregation'
   import {
     NFTOffSale,
     IsMyNFT,
@@ -314,61 +290,46 @@
     getPoolInfo,
     getSaleOrderList,
     getPriceRecord,
-    GetMyNFTs,getOwnerNftOnsale,
-    GetOwnerNFTsListing
   } from '@/api/mrc721-api'
- 
   import { ElMessage } from 'element-plus'
-
-  import { useConnectionStore, ConnectChain,type BaseUserInfo } from '@/stores/connection'
+  import { useConnectionStore, ConnectChain } from '@/stores/connection'
   import { useNetworkStore } from '@/stores/network'
   import { useNFTEntity } from '@/hooks/use-nft-entity'
   import { useFeebStore } from '@/stores/feeb'
   
-  import { openLoading, calcNftRealSalePrice, sleep, checkUserLogin,copy } from '@/utils/util'
-
-  import { NftsLaunchPadChainSymbol, PlatformRate } from '@/data/constants'
+  import { openLoading, calcNftRealSalePrice, sleep, checkUserLogin } from '@/utils/util'
+  
+  import { NftsLaunchPadChainSymbol, PlatformRate,MinRoyaltyFee,MinPlatformFee } from '@/data/constants'
   import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
   import { checkDummyAmount } from '@/hooks/use-buildtx-entity'
   import BTC from '@/assets/icons/btc.svg?url'
-
   const networkStore = useNetworkStore()
   const feeStore = useFeebStore()
   const nftEntity = useNFTEntity()
   const i18n = useI18n()
   const route = useRoute()
   const router = useRouter()
-  const currentUser:{val:BaseUserInfo}=reactive({
-    val:{
-
-    }
-  })
   const { getUserAllInfo } = useMetaIDEntity()
-  
-  enum ProfileTab {
-    Items = 0,
-    Listing = 1,
+  const nftPagination = reactive({ ...initPagination })
+  enum NFTCollectTab {
+    CollectionWorks = 0,
+    PriceTrend = 1,
   }
-
- 
-
-
-
   const connectionStore = useConnectionStore()
   const scrrentWarpOffsetTop = ref(0)
   const filterWarpOffsetTop = ref(0)
   const gutter = window.innerWidth > 750 ? 22 : 10
   const tabs = [
     {
-      name: () => isSelf.value ? i18n.t('NFT.Profile_items') : i18n.t('NFT.Profile_other_items'),
-      value: ProfileTab.Items,
+      name: () => i18n.t('NFT.My_collection works'),
+      value: NFTCollectTab.CollectionWorks,
     },
     {
-      name: () => i18n.t('NFT.Profile_listing'),
-      value: ProfileTab.Listing,
+      name: () => i18n.t('NFT.Collection sale'),
+      value: NFTCollectTab.PriceTrend,
     },
   ]
-  const tabActive = ref(ProfileTab.Items)
+  const tabActive = ref(NFTCollectTab.CollectionWorks)
   const statiscs = reactive([
     {
       name: () => i18n.t('NFT.Initial Price'),
@@ -413,16 +374,31 @@
     },
   ])
   const collection: { val: null | NftsCollection } = reactive({ val: null })
-  const isSkeleton = ref(true)
+  const MetabotCollection={
+    banner:`https://cmsapi.nos.art/uploads/metabot_banner_5a940cece6.png`,
+    icon:`https://cmsapi.nos.art/uploads/metabot_icon_656afcf2f0.jpeg`,
+    metaid:`974e2977d5c9446f7f48fd82c9ea51f82749b9ef7c00d26b73bc450d167d5f31`,
+    collectionName:`MetaBot V1 `,
+    desc:`Introducing MetaBot, the pioneering robot of the future, residing on the MVC blockchain. It came into existence during the transitional phase between the old and new century of the Internet, carrying the paramount mission of revolutionizing the traditional online world. At its core, MetaBot embodies values like creativity, freedom, and a daring spirit of adventure and combat.
+
+The first-generation MetaBot series consists of remarkable NFTs, boasting a limited total of 999 pieces. Within this collection, 997 pieces are available for purchase on the market, while the exclusive #1 and #2 NFTs remain reserved.
+
+One of the most outstanding aspects of MetaBot is its unique approach to identity. It breaks free from conventional boundaries such as gender, race, and age, celebrating diversity and individuality. Each MetaBot flaunts a distinct appearance that is inviolable, making them truly one-of-a-kind. A MetaBot comprises seven components, including body, head, clothing, ears, mouth, eyes, and hair, each contributing to its distinctive allure.
+
+Furthermore, the true essence of MetaBot lies in the rare ultimate set, comprised of a total of 15 prized pieces. Among these exclusive components, you'll find ShowBot, Tycoon, Athlete, Gangster, Player, Cat, Incomplete Bot, Musician, Godfather, Child, Rapper, Joker, Thief, Vigilante, and Police, each with its own extraordinary traits and characteristics.
+
+MetaBot stands as an emblem of innovation and limitless possibilities, captivating the hearts of both collectors and enthusiasts within the MetaNet blockchain community. Step into the future and unlock the power of MetaBot – where creativity knows no bounds!`,
+
+  }
+  const isSkeleton = ref(false)
   const isShowContent = ref(false)
   const pagination = reactive({ ...initPagination, pageSize: 24 })
-  const nfts: NftItemType[] = reactive([])
-  const saleNfts: NftItemType[] = reactive([])
+  const nfts: GenesisNFTItem[] = reactive([])
+  const saleNfts: NftOrderType[] = reactive([])
   const nft: { val: NftMintItemType | null } = reactive({ val: null })
   const saleNftItem: { val: NftOrderType | null } = reactive({ val: null })
   const isShowNftBuy = ref(false)
   const isShowNftSale = ref(false)
-  const isShowSaleSuccess=ref(false)
   const cells = [
     {
       value: 1,
@@ -466,69 +442,37 @@
       orderType: CollectionOrderType.ASC,
     },
   
-    {
-      name: () => i18n.t('NFT.Sort.Number: X to 1'),
-      sortType: CollectionSortType.TokenIndex,
-      orderType: CollectionOrderType.DESC,
-    },
-    {
-      name: () => i18n.t('NFT.Sort.Number: 1 to X'),
-      sortType: CollectionSortType.TokenIndex,
-      orderType: CollectionOrderType.ASC,
-    },
+    // {
+    //   name: () => i18n.t('NFT.Sort.Number: X to 1'),
+    //   sortType: CollectionSortType.TokenIndex,
+    //   orderType: CollectionOrderType.DESC,
+    // },
+    // {
+    //   name: () => i18n.t('NFT.Sort.Number: 1 to X'),
+    //   sortType: CollectionSortType.TokenIndex,
+    //   orderType: CollectionOrderType.ASC,
+    // },
   ]
   
-  const sortIndex = ref(0)
+  const sortIndex = ref(1)
   
   const list = computed(() => {
     if (isListLoading.value) {
-      return Array.from({ length: pagination.pageSize }) as NftItemType[]
+      return Array.from({ length: pagination.pageSize }) as NftMintItemType[]
     } else {
       return nfts
     }
   })
-
-
-  const isSelf=computed(()=>{
-   
-    return connectionStore.last.user.metaid == route.params.metaid
-  })
   
-  const saleOrderList = computed(() => {
-    if (isSaleListLoading.value) {
-      return Array.from({ length: pagination.pageSize }) as NftOrderType[]
-    } else {
-      return saleNfts
-    }
-  })
+
   
   const isShowNFTList = computed(() => {
-    if ((isMobile && isShowFilterWarp.value) || tabActive.value == ProfileTab.Listing) {
+    if ((isMobile && isShowFilterWarp.value) || tabActive.value == NFTCollectTab.PriceTrend) {
       return false
     } else {
       return true
     }
   })
-
-  const btnText=computed(()=>{
-    if(isSelf.value) {
-        return `${i18n.t('Nfts.cancel_list')}`
-    }else{
-         return `${i18n.t('NFT.Discover More')}`
-    }
-  })
-
-  async function copyProfile(){
-    const value=`${window.location.origin}${route.fullPath}`
-   await copy(value)
-  }
-
-
-  async function getProfileUser(){
-    const address=route.params.address
-    
-    currentUser.val = await getUserAllInfo(address as string)
-  }
   
   async function mintItem(nft: NftMintItemType) {
     console.log('aaaa', nft)
@@ -589,40 +533,48 @@
       }
     })
   }
+
+  function getGenesisNTFs(isCover = false) {
+  if (isCover) {
+    nftPagination.flag = ''
+  }
+  return new Promise<void>(async (resolve, reject) => {
+    const res = await GetGenesisNFTs({
+      address:`176C9RPWDggnvdVcWG3wrZEJcm1bHTcKM5`,
+      chain: `mvc`,
+      codehash: `e205939ad9956673ce7da9fbd40514b30f66dc35`,
+      genesis: `df66586978b088af6c75e13fadb14191fcb5276c`,
+      ...nftPagination,
+    })
+    if (res.code === 0) {
+        debugger
+      if (isCover) nfts.length = 0
+      if (res.data.results.items.length === 0) nftPagination.nothing = true
+      nftPagination.flag = res.data?.cursor ? res.data.cursor : ''
+      nfts.push(...res.data.results.items)
+      resolve()
+    }
+  })
+}
+
   
   function getDatas(isCover = false) {
     
     return new Promise<void>(async (resolve, reject) => {
-      if (!route.params.metaid) {
+      if (!collection.val) {
         reject()
       }
-      if(isCover){
-        pagination.page = 1
-      }
-      const res = await GetMyNFTs({
-        page: String(pagination.page-1),
-        size: String(pagination.pageSize),
-        metaid:route.params.metaid as string
+      const res = await getCollectionMintableList({
+        collectionPinid: collection.val?.collection_pinid!,
+        page: pagination.page,
+        pageSize: pagination.pageSize,
       }).catch(error => {
         ElMessage.error(error.message)
       })
       if (res?.code == 200) {
-        
         if (isCover) nfts.length = 0
-        if (res.data.length === 0){
-            
-            pagination.nothing = true
-        }
-        for (let item of res.data) {
-            item.creator_info = await getUserAllInfo(item.creator_info.address)
-            item.owner_info = await getUserAllInfo(item.owner_info.address)
-            nfts.push(item)
-            
-        }
-
-
-
-        
+        if (res.data.result.length === 0) pagination.nothing = true
+        nfts.push(...res.data.result)
       }
       resolve()
     })
@@ -630,10 +582,15 @@
   
   function getSaleDatas(isCover = false) {
     return new Promise<void>(async (resolve, reject) => {
-      const res = await GetOwnerNFTsListing({
-        page: pagination.page-1,
+      if(isCover){
+        pagination.page = 1
+      }
+      
+      const res = await getSaleOrderList({
+        collectionPinid: collection.val?.collection_pinid!,
+        page: pagination.page,
         pageSize: pagination.pageSize,
-        metaid:route.params.metaid as string
+        orderType:sortIndex.value
       }).catch(error => {
         ElMessage.error(error.message)
       })
@@ -648,7 +605,7 @@
             item.owner_info = await getUserAllInfo(item.saler_address)
           }
         }
-  
+        
         saleNfts.push(...res.data)
       }
       resolve()
@@ -662,7 +619,9 @@
       const res = await getCollectionDetail({
         collectionPinid: route.params.topicType as string,
       })
+      
       if (res.code == 200) {
+        
         const mintRes = await getCollectionMintAmout({
           collectionPinid: res.data.result.collection_pinid,
         })
@@ -679,7 +638,7 @@
   
         //   reject()
         // })
-  
+        
         if (mintRes.code == 200 && (mintRes.data.mintAmout > 0 || mintRes.data.currentSupply > 0)) {
           const collectionCreator = await getUserAllInfo(res.data.result.address)
           const { mintAmout, currentSupply, currentMintPrice } = mintRes.data
@@ -695,11 +654,22 @@
             minted: mintAmout,
             current_mint_price: currentMintPrice ? currentMintPrice : res.data.result.init_price,
           }
+          
   
           const priceRes = await getPriceRecord({
             collectionPinid: route.params.topicType as string,
           })
+          
           if (priceRes.code == 200 && priceRes.data.floor_price) {
+            // debugger
+            // const floorRoyaltyFee=collection.val?.royalty_rate > 0 ? priceRes.data.floor_price * (collection.val?.royalty_rate / 100) > MinRoyaltyFee ? priceRes.data.floor_price * (collection.val?.royalty_rate / 100) : MinRoyaltyFee : 0
+            // const floorPlatFormRate=priceRes.data.floor_price * (PlatformRate / 100) > MinPlatformFee ? priceRes.data.floor_price * (PlatformRate / 100) : MinPlatformFee
+  
+            // const hignRoyaltyFee=+collection.val?.royalty_rate > 0 ? priceRes.data.high_price * (collection.val?.royalty_rate / 100) > MinRoyaltyFee ? priceRes.data.high_price * (collection.val?.royalty_rate / 100) : MinRoyaltyFee : 0
+            // const highPlatFormRate=priceRes.data.high_price * (PlatformRate / 100) > MinPlatformFee ? priceRes.data.high_price * (PlatformRate / 100) > MinPlatformFee : MinPlatformFee
+  
+            // const floorPirce=priceRes.data.floor_price + floorRoyaltyFee + floorPlatFormRate
+            // const hignPrice=priceRes.data.high_price + hignRoyaltyFee + highPlatFormRate
             statiscs[1].value = space(priceRes.data.floor_price).toString()
             statiscs[2].value = space(priceRes.data.high_price).toString()
           }
@@ -760,18 +730,23 @@
   //   })
   // }
   
-  function getMore() {
+   function getMore() {
     
-    if (isSkeleton.value || pagination.loading || pagination.nothing || isListLoading.value) return
+    if (isSkeleton.value || pagination.loading || pagination.nothing || isListLoading.value || isSaleListLoading.value) return
     pagination.loading = true
     pagination.page++
-  
-    getDatas().then(() => {
+    if(tabActive.value == 1){
+     
+      getSaleDatas().then(()=>{
+        
+        pagination.loading = false
+      })
+    }else{
+      getDatas().then(() => {
       pagination.loading = false
-    
-    }).catch(()=>{
-        isListLoading.value = false
     })
+    }
+    
   }
   
   function changeCell(cellValue: number) {
@@ -783,17 +758,6 @@
     return calcNftRealSalePrice(saleNftItem.val!.sale_price,saleNftItem.val!.total_sale_price,saleNftItem.val!.royalty_rate)
   })
   
-async function listSuccessful(){
-  try {
-    await sleep(500)
-    await  getDatas(true)
-    isListLoading.value = false
-  } catch (error) {
-    isListLoading.value = false
-  }
-  
-}
-
   async function buyNFT(item: NftOrderType) {
     // alert(111)
     console.log(item)
@@ -814,14 +778,14 @@ async function listSuccessful(){
             salePrice: realbuyPrice.value.salePrice,
             platformFee: realbuyPrice.value.platformFee,
             royalFee: realbuyPrice.value.royaltyFee,
-            platformRate: PlatformRate,
             royaltyRate:realbuyPrice.value.royaltyRate,
+            platformRate: PlatformRate,
           },
         })
   
         if (buyRes) {
           ElMessage.success(i18n.t('NFT.Buy Success'))
-          onOperateSuccess(item)
+          onOperateSuccess(item,'buy')
           // emit('update:modelValue', false)
           // buying.value = false
           //isShowSuccess.value = true
@@ -911,6 +875,23 @@ async function listSuccessful(){
     //isShowNftBuy.value = true
   }
   
+  async function refreshSaleDatas(){
+    console.log("isSkeleton.value",isSkeleton.value)
+    isSaleListLoading.value=true
+    pagination.page = 1
+    pagination.loading = false
+    pagination.nothing = false
+  
+   
+    await getSaleDatas(true)
+    isSaleListLoading.value=false
+    // getSaleDatas(true).then(()=>{
+    //   isSaleListLoading.value=true
+    // }).catch(()=>{
+    //   isSaleListLoading.value=true
+    // })
+  }
+  
   function refreshDatas() {
     isListLoading.value = true
     if (isMobile && isShowFilterWarp.value) {
@@ -922,41 +903,20 @@ async function listSuccessful(){
     getDatas(true).then(() => {
       isListLoading.value = false
     }).catch(()=>{
-        isListLoading.value = false
+      isListLoading.value = false
     })
   }
-
-  async function btnFun(item: NftItemType){
-    if(isSelf.value){
-        await onOffsale(item)
-    }else{
-        router.push({
-    name: 'nftDetail',
-    params: {
-      collectionpinid:item.collection_pinid,
-      nftpinid: item.item_pinid,
-    },
-  })
-    }
-  }
-
- 
-
-
   
-  async function onOffsale(item: NftItemType) {
-    try {
-        await checkUserLogin()
+  async function onOffsale(item: NftOrderType) {
+    await checkUserLogin()
     const result = await NFTOffSale(item).catch(error => {
-     throw new Error(error)
+      ElMessage.error(error.message)
     })
     if (result) {
       onOperateSuccess(result)
-      getSaleDatas(true).then()
-    }
-    } catch (error) {
-        
-        ElMessage.error((error as any).message)
+      
+      await sleep(500)
+       await getSaleDatas(true)
     }
   }
   
@@ -966,14 +926,14 @@ async function listSuccessful(){
     isShowNftSale.value = true
   }
   
-  function onOperateSuccess(item: NftItemType,type?:string) {
-    if(type == 'onSale'){
-        isShowSaleSuccess.value = true
-    }
+  function onOperateSuccess(item: NftOrderType,type?:string) {
     
     const index = saleNfts.findIndex(_item => _item.order_id === item.order_id)
     if (index > -1) {
       saleNfts[index] = item
+    }
+    if(type == 'buy'){
+      getSaleDatas(true).then()
     }
   }
   
@@ -993,40 +953,34 @@ async function listSuccessful(){
     })
   }
   
-  function changeTab(value: ProfileTab) {
+  function changeTab(value: NFTCollectTab) {
     if (tabActive.value === value) return
-    if (value === ProfileTab.Listing) {
+    if (value === NFTCollectTab.PriceTrend) {
       tabActive.value = value
       pagination.page = 1
       pagination.loading = false
       pagination.nothing = false
       saleNfts.length = 0
   
-      getSaleDatas(true).then()
+      getSaleDatas().then()
     } else {
       tabActive.value = value
       pagination.page = 1
       pagination.loading = false
       pagination.nothing = false
-      getDatas(true).then(()=>{
-        isListLoading.value = false
-      }).catch(()=>{
-        isListLoading.value = false
-      })
     }
   }
-  getDatas(true)
-        .then(() => {
-          
-          isSkeleton.value = false
-        })
-        .catch(() => {
-          isSkeleton.value = false
-        })
-        getProfileUser()
+  
 //   getCollection()
 //     .then(() => {
-    
+//       getDatas(true)
+//         .then(() => {
+          
+//           isSkeleton.value = false
+//         })
+//         .catch(() => {
+//           isSkeleton.value = false
+//         })
 //     })
 //     .catch(() => {
 //       isSkeleton.value = false
@@ -1044,6 +998,9 @@ async function listSuccessful(){
   //   })
   // })
   // getGenesisStatistics()
+  getGenesisNTFs().then(() => {
+      nftPagination.loading = false
+    })
   </script>
   
   <style lang="scss" scoped src="./index.scss"></style>

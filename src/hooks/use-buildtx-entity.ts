@@ -334,6 +334,7 @@ export async function exclusiveChange({
   feeb?: number
   
 }){
+  
   const connectionStore=useConnectionStore()
   
   feeb = feeb ?? useFeebStore().getCurrentFeeb ??  raise('Choose a fee rate first.')
@@ -364,6 +365,11 @@ export async function exclusiveChange({
       .slice(0, maxUtxosCount)
 
     return utxos
+  }).catch((e)=>{
+    
+    raise(
+      'You have no usable BTC UTXO. Please deposit more BTC into your address to receive additional UTXO. utxo',
+    )
   })
 
   if (!paymentUtxos!.length) {

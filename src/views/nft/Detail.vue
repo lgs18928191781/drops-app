@@ -391,12 +391,12 @@ const isShowBuy = ref(false)
 const isShowTransfer = ref(false)
 
 const realSalePrice = computed(() => {
-  const { total } = calcNftRealSalePrice(nft.val!.sale_price, nft.val!.royalty_rate)
+  const { total } = calcNftRealSalePrice(nft.val!.sale_price,nft.val!.total_sale_price,nft.val!.royalty_rate)
   return total
 })
 
 const realbuyPrice = computed(() => {
-  return calcNftRealSalePrice(nft.val!.sale_price, nft.val!.royalty_rate)
+  return calcNftRealSalePrice(nft.val!.sale_price,nft.val!.total_sale_price,nft.val!.royalty_rate)
 })
 
 const nftBtnText = computed(() => {
@@ -665,6 +665,7 @@ async function onBuy(item: NftOrderType) {
           salePrice: realbuyPrice.value.salePrice,
           platformFee: realbuyPrice.value.platformFee,
           royalFee: realbuyPrice.value.royaltyFee,
+          royaltyRate:realSalePrice.value.royaltyRate,
           platformRate: PlatformRate,
         },
       })

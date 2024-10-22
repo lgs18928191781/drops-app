@@ -298,7 +298,7 @@ const mode = import.meta.env.MODE
 const layout = useLayoutStore()
 
 const realSalePrice=computed(()=>{
-  return calcNftRealSalePrice(props.nft.sale_price,props.nft.royalty_rate)
+  return calcNftRealSalePrice(props.nft.sale_price,props.nft.total_sale_price,props.nft.royalty_rate)
 
 })
 
@@ -361,7 +361,8 @@ async function confirmBuy() {
             salePrice:realSalePrice.value.salePrice,
             platformFee:realSalePrice.value.platformFee,
             royalFee:realSalePrice.value.royaltyFee,
-            platformRate:PlatformRate
+            platformRate:PlatformRate,
+            royaltyRate:realSalePrice.value.royaltyRate
           }
         })
         

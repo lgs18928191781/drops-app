@@ -338,6 +338,7 @@ export function useNFTEntity(){
         collectionPinid:string,
         nftPinid:string,
         salePrice:number,
+        totalPrice:number,
         extraFee:{
         royaltyRateFee: number;
         platformFee: number;
@@ -371,6 +372,7 @@ export function useNFTEntity(){
         nftPinid:params.nftPinid,
         psbtHex:rawTx,
         salePrice:params.salePrice,
+  totalPrice:params.totalPrice,
         salerAddress:connectionStore.getAddress,
         salerMetaid:connectionStore.last.metaid
         
@@ -426,6 +428,7 @@ export function useNFTEntity(){
             },true)
             
             if(estimateResult){
+              
               const revealPsbt= await estimateBuyFee({
                 
                 psbtHex:sevicePsbtHex,

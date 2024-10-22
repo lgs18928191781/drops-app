@@ -121,7 +121,7 @@
             </div>
           </div>
 
-          <div class="py-2 flex flex-row items-center justify-between" v-if="feeInfo.royaltyRate">
+          <div class="py-2 flex flex-row items-center justify-between" v-if="feeInfo.royalty">
             <div class="text-[#909399]">
               {{ i18n.t('Nfts.service_royalty_fee') }}({{ feeInfo.royaltyRate }}%)
             </div>
@@ -233,14 +233,15 @@ const props = withDefaults(defineProps<Props>(), {
   payType: SdkPayType.BTC,
 })
 
-console.log("props",props.i18n)
+
+
 
 const isShow = ref(true)
 
 const emit = defineEmits(['changeConfirmVisible', 'confirm', 'cancel', 'recharge'])
 
 const realSalePrice = computed(() => {
-  const { total } = calcNftRealSalePrice(props.feeInfo.extraInfo.sale_price, props.feeInfo.extraInfo.royalty_rate)
+  const { total } = calcNftRealSalePrice(props.feeInfo.extraInfo?.sale_price,props.feeInfo.extraInfo?.total_sale_price,props.feeInfo.extraInfo?.royalty_rate)
   return total
 })
 async function confirm() {

@@ -20,6 +20,7 @@
             type="number"
             v-model="sellPrice"
             :placeholder="$t('NFT.Set selling price')"
+            @input="limitDecimalPlaces"
             @change="setPrice"
           >
 
@@ -84,7 +85,7 @@
 
             </div>
             <div class="value">
-              {{ platformFee }}
+              {{ $filters.space(platformFee) }}
               {{ ToCurrency.BTC }}
             </div>
           </div>
@@ -111,7 +112,7 @@
             </el-popover>
             </div>
             <div class="value">
-              {{ royaltyFee }}
+              {{ $filters.space(royaltyFee) }}
              {{ ToCurrency.BTC }}
             </div>
           </div>
@@ -218,9 +219,10 @@ const platformFee = computed(() => {
   if(!sellPrice.value){
     return 0
   }
-  let price = new Decimal(sellPrice.value).mul(extraFee.value.platformPercentage).toNumber()
-  if(price < 0.00002){
-    price=0.00002
+  let price = parseInt(new Decimal(sellPrice.value).mul(10 ** 8).mul(extraFee.value.platformPercentage).toString())  
+ 
+  if(price < 2000){
+    price=2000
   }
   return price
   // if (!form.actualincomePrice || !extraFee.val) {
@@ -240,9 +242,9 @@ const royaltyFee = computed(() => {
   if(extraFee.value.royaltyPercentage == 0){
     return 0
   }
-  let price = new Decimal(sellPrice.value).mul(extraFee.value.royaltyPercentage).toNumber()
-  if(price < 0.00001){
-    price = 0.00001
+  let price = parseInt(new Decimal(sellPrice.value).mul(10 ** 8).mul(extraFee.value.royaltyPercentage).toString())  
+  if(price < 1000){
+    price = 1000
     
   }
   return price
@@ -276,12 +278,23 @@ const royaltyFee = computed(() => {
 //   // })
 // }
 
+function limitDecimalPlaces(){
+  const regex = /^\d*\.?\d{0,8}$/;
+  if (!regex.test(sellPrice.value)) {
+    sellPrice.value= sellPrice.value.slice(0, -1);
+      }
+}
+
 function setPrice() {
    //let price = new Decimal(sellPrice.value).toString()
   // //const uninItem = units.find(item => item.value === unit.value)
   
   // sellPrice.value = price
-  form.actualincomePrice=new Decimal(sellPrice.value).sub(platformFee.value).sub(royaltyFee.value).toString()
+  if(+sellPrice.value < 0.00004){
+    sellPrice.value = '0.00004'
+  }
+
+  form.actualincomePrice=new Decimal(sellPrice.value).sub(new Decimal(platformFee.value).div(10**8)).sub(new Decimal(royaltyFee.value).div(10**8)).toNumber().toFixed(8)
 }
 
 function setSellPrice() {
@@ -361,14 +374,17 @@ function submitForm() {
           .mul(Math.pow(10, 8))
           .toNumber()
           console.log("props.nft",props.nft)
+          const totalPriceSatoshi=new Decimal(sellPrice.value).mul(Math.pow(10, 8)).toNumber()
+       
           
         const res=await nftEntity.saleNft({
           collectionPinid:props.nft.collection_pinid,
           nftPinid:props.nft.item_pinid,
           salePrice:sellPriceSatoshi,
+          totalPrice:totalPriceSatoshi,
           extraFee:{
-            royaltyRateFee:royaltyFee.value > 0 ? new Decimal(royaltyFee.value).mul(Math.pow(10, 8)).toNumber() : 0,
-            platformFee:platformFee.value > 0 ? new Decimal(platformFee.value).mul(Math.pow(10, 8)).toNumber() : 0,
+            royaltyRateFee:royaltyFee.value > 0 ? parseInt(new Decimal(royaltyFee.value).toString()) : 0,
+            platformFee:platformFee.value > 0 ? parseInt(new Decimal(platformFee.value).toString()) : 0,
           }
         })
         
