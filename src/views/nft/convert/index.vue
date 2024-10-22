@@ -146,12 +146,10 @@
                     :lg="cell.val.lg"
                     :xl="cell.val.xl"
                     v-for="(item, index) in list"
-                    :key="isListLoading ? index : item.commit_address"
+                    :key="isListLoading ? index : item.nftTokenIndex"
                   >
-                    <NFTMintItemVue
+                    <MetabotItem
                       :nft="item"
-                      :collection="collection.val"
-                      @mint="mintItem"
                       :isSimple="false"
                       :loading="isListLoading"
                     />
@@ -255,7 +253,7 @@
   <script setup lang="ts">
   import { nextTick, onMounted, reactive, ref, computed } from 'vue'
   import { useI18n } from 'vue-i18n'
-  import NFTMintItemVue from '@/components/NFTItem/NFTMintItem.vue'
+  import MetabotItem from '@/components/NFTItem/MetabotItem.vue'
   import NFTItemVue from '@/components/NFTItem/NFTItem.vue'
   import { GetCollect, GetCollectByTopicType } from '@/api/strapi'
   import { useRoute, useRouter } from 'vue-router'
@@ -458,7 +456,7 @@ MetaBot stands as an emblem of innovation and limitless possibilities, captivati
   
   const list = computed(() => {
     if (isListLoading.value) {
-      return Array.from({ length: pagination.pageSize }) as NftMintItemType[]
+      return Array.from({ length: pagination.pageSize }) as GenesisNFTItem[]
     } else {
       return nfts
     }
