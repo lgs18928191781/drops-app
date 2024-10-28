@@ -538,12 +538,13 @@ MetaBot stands as an emblem of innovation and limitless possibilities, captivati
   }
   return new Promise<void>(async (resolve, reject) => {
     const res = await GetGenesisNFTs({
-      address:`176C9RPWDggnvdVcWG3wrZEJcm1bHTcKM5`,
+      address:`n11W7vY8JnmXpx73Sr4wimP2fHwKQg61A7`,
       chain: `mvc`,
       codehash: `e205939ad9956673ce7da9fbd40514b30f66dc35`,
-      genesis: `df66586978b088af6c75e13fadb14191fcb5276c`,
+      genesis: `45bedfa465383df5711ce8d3ca7521e69931040a`,
       ...nftPagination,
     })
+    debugger
     if (res.code === 0) {
         debugger
       if (isCover) nfts.length = 0
