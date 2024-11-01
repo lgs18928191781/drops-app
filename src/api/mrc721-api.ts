@@ -405,3 +405,40 @@ export const getNotableCollection=async(params:{rank:number}):Promise<apiMrc721R
     params
   })
 }
+
+export const preConvert=async(params:{
+  codehash:string
+  genesis:string
+  tokenIndex:string
+  nftAddress:string
+  nftRawTx:string
+}):Promise<apiMrc721Response>=>{
+  return NftOrders.post('/submit-convert-order',params)
+}
+
+export const submitConvert=async(params:{
+  commitAddress:string
+  lockAddress:string
+  nftRecevierAddress:string
+  collectionPinid:string
+  feeb:number
+  buildCommitFee:number
+}):Promise<apiMrc721Response>=>{
+  return NftOrders.post('/submit-final-convert',params)
+}
+
+export const finalConvert=async(params:{
+  psbtHex:string
+  commitAddress:string
+  collectionPinId:string
+  feeb:number
+  nftRawTx:string
+  fileRawTx:string
+  commitId:string
+  filePinid:string
+  convertAddress:string
+  tokenIndex:string
+  genesis:string
+}):Promise<apiMrc721Response>=>{
+  return NftOrders.post('/final-convert',params)
+}
