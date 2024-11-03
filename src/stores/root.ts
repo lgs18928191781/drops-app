@@ -108,6 +108,7 @@ export const useRootStore = defineStore('root', {
         NodeName.SimpleCommunityJoin,
         NodeName.Name,
         NodeName.SimpleVote,
+        NodeName.NftTransfer
       ],
       bandProposalList: [
         'a6931c4487cf0728cb2a63357fe88a2f156d2225',

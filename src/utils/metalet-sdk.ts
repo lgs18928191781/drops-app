@@ -1062,6 +1062,7 @@ export class MetaletSDK {
             // 当前节点的brfc 节点
             if (params.publickey && params.txId) {
               // 修改
+              
               const res = await GetTx(params.txId)
               if (res.code === 0) {
                 const protocol = await this.wallet!.getProtocolInfo(
@@ -1081,7 +1082,7 @@ export class MetaletSDK {
               console.log('userStore.user', userStore.user)
               // 新增
               //
-
+              debugger
               transactions.currentNodeBrfc = await this.getBrfcNode(
                 {
                   nodeName: params.nodeName,

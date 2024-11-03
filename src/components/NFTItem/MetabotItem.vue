@@ -4,33 +4,33 @@
         <NFTItemSkeleton />
       </template>
       <template #default>
-        <div class="nft-item" @click="toNFT">
-          <NFTCover :cover="[nft.nftIcon]" />
+        <div class="nft-item" >
+          <NFTCover :cover="[getNftIcon( nft.nftIcon) ]" />
   
           <div class="name" :class="{ simple: isSimple }">
             {{ $filters.handleWhiteSpace(nft.nftName, nft.nftGenesis) }}
           </div>
   
-          <div class="token-index">#{{ parseInt(nft.nftTokenIndex) + 1 }}</div>
-          <div class="amount" :class="{ simple: isSimple }">
+          <div class="token-index">#{{ parseInt(nft.nftTokenIndex) }}</div>
+          <!-- <div class="amount" :class="{ simple: isSimple }">
             <template v-if="isSale"> {{ $filters.space(nft.nftPrice) }} Space </template>
             <template v-else>--</template>
-          </div>
+          </div> -->
   
           <div class="user-list" v-if="!isSimple">
             <div class="user-item flex flex-align-center">
               <UserAvatar
-                :meta-id="nft.nftIssueMetaId"
-                :image="nft.nftIssueAvatarImage"
-                :name="nft.nftIssuer"
+                :meta-id="metabotIssuerInfo.metaid"
+                :image="metabotIssuerInfo.avatarId"
+                :name="metabotIssuerInfo.name"
                 :disabled="true"
-                :meta-name="nft.nftIssueUserInfo?.metaName"
+                :meta-name="''"
               />
               <div class="flex1 flex flex-align-center info">
                 <span class="user-name-warp"
                   ><UserName
-                    :name="nft.nftIssuer"
-                    :meta-name="nft.nftIssueUserInfo?.metaName"
+                    :name="metabotIssuerInfo.name"
+                    :meta-name="''"
                     :noTag="true"
                 /></span>
                 <span class="role">({{ $t('NFT.Creater') }})</span>
@@ -38,17 +38,17 @@
             </div>
             <div class="user-item flex flex-align-center">
               <UserAvatar
-                :meta-id="nft.nftOwnerMetaId"
-                :image="nft.nftOwnerAvatarImage"
-                :name="nft.nftOwnerName"
+                :meta-id="nftOwnerInfo.metaid"
+                :image="nftOwnerInfo.avatarId"
+                :name="nftOwnerInfo.name"
                 :disabled="true"
-                :meta-name="nft.nftOwnerUserInfo?.metaName"
+                :meta-name="''"
               />
               <div class="flex1 flex flex-align-center info">
                 <span class="user-name-warp"
                   ><UserName
-                    :name="nft.nftOwnerName"
-                    :meta-name="nft.nftOwnerUserInfo?.metaName"
+                    :name="nftOwnerInfo.name"
+                    :meta-name="''"
                     :noTag="true"
                 /></span>
                 <span class="role">({{ $t('NFT.Owner') }})</span>
@@ -75,61 +75,78 @@
   import { IsMyNFT, IsSale } from '@/utils/nft'
   import { useI18n } from 'vue-i18n'
   import { checkUserLogin } from '@/utils/util'
-  
+    import {type BaseUserInfo } from '@/stores/connection'
   const props = defineProps<{
     nft: GenesisNFTItem
+    nftOwnerInfo:BaseUserInfo
     loading?: boolean
     isSimple?: boolean
   }>()
   
-  const emit = defineEmits(['buy', 'offsale', 'sale'])
+  const emit = defineEmits(['convert'])
   const router = useRouter()
   const userStore = useUserStore()
   const i18n = useI18n()
+
+  const metabotIssuerInfo={
+    metaid:`7d129bcb274a255591cf600148e898650cddf81f131aa1485c42757007eff3b7`,
+    name:`ShowPayTeam`,
+    avatarId:`606eb9c30fb7de2d413ee20ae8beae5e196b195a096f7b9fcec49cae98d1e4a0i0`
+  }
   
   const isMyNFT = computed(() => {
     return IsMyNFT(props.nft)
   })
+
+  function getNftIcon(url:string){
+    if(!url){
+        return url
+    }
+    const icon=url.split('metafile://')[1]
+    return `${import.meta.env.VITE_BASEAPI}/metafile/${icon}`
+  }
   
   const isSale = computed(() => {
     return IsSale(props.nft)
   })
   
   const btnText = computed(() => {
-    if (props.nft.nftIsOrderLock) {
-      return i18n.t('NFT.NFT Order Locked')
-    } else if (isMyNFT.value) {
-      if (isSale.value) {
-        return i18n.t('NFT.Off Sale')
-      } else {
-        return i18n.t('NFT.Sale')
-      }
-    } else {
-      if (isSale.value) {
-        return i18n.t('NFT.Buy Now')
-      } else {
-        return i18n.t('NFT.Discover More')
-      }
-    }
+    return i18n.t('Nfts.convert')
+    // if (props.nft.nftIsOrderLock) {
+    //   return i18n.t('NFT.NFT Order Locked')
+    // } else if (isMyNFT.value) {
+    //   if (isSale.value) {
+    //     return i18n.t('NFT.Off Sale')
+    //   } else {
+    //     return i18n.t('NFT.Sale')
+    //   }
+    // } else {
+    //   if (isSale.value) {
+    //     return i18n.t('NFT.Buy Now')
+    //   } else {
+    //     return i18n.t('NFT.Discover More')
+    //   }
+    // }
   })
   
   async function btnFun() {
-    if (props.nft.nftIsOrderLock) {
-      toNFT()
-    } else if (isMyNFT.value) {
-      if (isSale.value) {
-        emit('offsale', props.nft)
-      } else {
-        emit('sale', props.nft)
-      }
-    } else {
-      if (isSale.value) {
-        await checkUserLogin()
-        emit('buy', props.nft)
-      } else {
-        toNFT()
-      }
-    }
+    emit('convert',props.nft)
+    // if (props.nft.nftIsOrderLock) {
+    //   toNFT()
+    // } else if (isMyNFT.value) {
+    //   if (isSale.value) {
+    //     emit('offsale', props.nft)
+    //   } else {
+    //     emit('sale', props.nft)
+    //   }
+    // } else {
+    //   if (isSale.value) {
+    //     await checkUserLogin()
+    //     emit('buy', props.nft)
+    //   } else {
+    //     toNFT()
+    //   }
+    // }
   }
   
   function toNFT() {

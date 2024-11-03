@@ -126,7 +126,7 @@
               <LoadMore :pagination="pagination" v-if="!isListLoading && nfts.length > 0" />
             </template>
             <!-- PriceTrend -->
-            <template v-else>
+            <template v-else-if="tabActive === ProfileTab.Listing">
 
             <div class="table-wrap">
                 <el-table :data="saleNfts" height="250" style="width: 100%" row-class-name="table-row-wrap">
@@ -253,6 +253,56 @@
   
               <!-- <CollectionChart /> -->
             </template>
+            <!--Convert-->
+            <template v-else>
+             
+  
+              <div class="collection-nft-content flex">
+                <!-- <template v-if="isShowFilterWarp">
+                  <ElAffix :offset="filterWarpOffsetTop">
+                    <CollectionFilterWarp
+                      v-model:sell-type="sellType"
+                      v-model:price-range="priceRange"
+                      @change="refreshDatas"
+                    />
+                  </ElAffix>
+                </template> -->
+  
+                <ElRow
+                  :gutter="gutter"
+                  class="nft-list flex1"
+                  v-infinite-scroll="getMore"
+                  :infinite-scroll-immediate="false"
+                  :infinite-scroll-distance="100"
+                  v-if="isShowNFTList"
+                >
+                  <ElCol
+                    :xs="cell.val.xs"
+                    :sm="cell.val.sm"
+                    :md="cell.val.md"
+                    :lg="cell.val.lg"
+                    :xl="cell.val.xl"
+                    v-for="(item, index) in convertList"
+                    :key="index"
+                  >
+                  <MetabotItem
+                  :nftOwnerInfo="nftOwnerInfo.val"
+                      :nft="item"
+                      :isSimple="false"
+                      :loading="isListLoading"
+                      @convert="convertNft"
+                    />
+                  
+                  </ElCol>
+  
+                  <ElCol v-if="!isListLoading && convertList.length === 0">
+                    <IsNull />
+                  </ElCol>
+                </ElRow>
+              </div>
+  
+              <LoadMore :pagination="pagination" v-if="!isListLoading && convertList.length > 0" />
+            </template>
           </div>
         </div>
   
@@ -299,6 +349,11 @@
   import { GetGenesisStatistics } from '@/api/broad'
   import CollectionChart from '../components/CollectionChart.vue'
   import {
+
+  NodeName,
+  SdkPayType,
+} from '@/enum'
+  import {
     NFTOffSale,
     IsMyNFT,
     IsSale,
@@ -326,12 +381,13 @@
   import { useFeebStore } from '@/stores/feeb'
   
   import { openLoading, calcNftRealSalePrice, sleep, checkUserLogin,copy } from '@/utils/util'
-
+import MetabotItem from '@/components/NFTItem/MetabotItem.vue'
   import { NftsLaunchPadChainSymbol, PlatformRate } from '@/data/constants'
   import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
   import { checkDummyAmount } from '@/hooks/use-buildtx-entity'
   import BTC from '@/assets/icons/btc.svg?url'
-
+import { GetGenesisNFTs } from '@/api/aggregation'
+import { useUserStore } from '@/stores/user'
   const networkStore = useNetworkStore()
   const feeStore = useFeebStore()
   const nftEntity = useNFTEntity()
@@ -344,10 +400,11 @@
     }
   })
   const { getUserAllInfo } = useMetaIDEntity()
-  
+  const userStore = useUserStore()
   enum ProfileTab {
     Items = 0,
     Listing = 1,
+    Convert = 2
   }
 
  
@@ -357,6 +414,7 @@
   const connectionStore = useConnectionStore()
   const scrrentWarpOffsetTop = ref(0)
   const filterWarpOffsetTop = ref(0)
+  const convertNfts: GenesisNFTItem[] = reactive([])
   const gutter = window.innerWidth > 750 ? 22 : 10
   const tabs = [
     {
@@ -366,6 +424,10 @@
     {
       name: () => i18n.t('NFT.Profile_listing'),
       value: ProfileTab.Listing,
+    },
+    {
+      name: () => i18n.t('NFT.Profile_Convert'),
+      value: ProfileTab.Convert,
     },
   ]
   const tabActive = ref(ProfileTab.Items)
@@ -423,6 +485,23 @@
   const isShowNftBuy = ref(false)
   const isShowNftSale = ref(false)
   const isShowSaleSuccess=ref(false)
+  const nftOwnerInfo:{val:BaseUserInfo}=reactive({
+    val:{
+    address: '',
+    avatar: '',
+    avatarId: '',
+    bio: '',
+    bioId: '',
+    isInit: false,
+    metaid:'',
+    name: '',
+    nameId: '',
+    number: '',
+    rootTxId: '',
+    soulbondToken: '',
+    unconfirmed: '',
+  }
+  })
   const cells = [
     {
       value: 1,
@@ -479,6 +558,15 @@
   ]
   
   const sortIndex = ref(0)
+
+  const convertList = computed(() => {
+    debugger
+    if (isListLoading.value) {
+      return Array.from({ length: pagination.pageSize })
+    } else {
+      return convertNfts
+    }
+  })
   
   const list = computed(() => {
     if (isListLoading.value) {
@@ -503,7 +591,7 @@
   })
   
   const isShowNFTList = computed(() => {
-    if ((isMobile && isShowFilterWarp.value) || tabActive.value == ProfileTab.Listing) {
+    if ((isMobile && isShowFilterWarp.value) || tabActive.value == ProfileTab.Listing ) {
       return false
     } else {
       return true
@@ -517,6 +605,41 @@
          return `${i18n.t('NFT.Discover More')}`
     }
   })
+
+async function convertNft(nft:GenesisNFTItem){
+  //1.转移
+  console.log("nft",nft)
+  debugger
+  //mhgReAXohNMYeSLyQBECq76v7fCkYHzean
+  console.log("userStore.showWallet",userStore.showWallet)
+    const res = await userStore.showWallet
+    .createBrfcChildNode(
+      {
+        nodeName: NodeName.NftTransfer,
+        data: JSON.stringify({
+          receiverAddress: `n11W7vY8JnmXpx73Sr4wimP2fHwKQg61A7`,
+          codehash:nft.nftCodehash ,
+          genesis: nft.nftGenesis,
+          tokenIndex: nft.nftTokenIndex,
+        }),
+      },
+      {
+    isBroadcast: false,
+     
+      checkOnly: true, //false弹窗，true不弹窗
+      isTransfer: true
+      }
+    )
+    .catch(error => {
+      ElMessage.error(error.message)
+      debugger
+      //loading.value = false
+    })
+    console.log("res",res)
+    debugger
+
+}
+
 
   async function copyProfile(){
     const value=`${window.location.origin}${route.fullPath}`
@@ -587,6 +710,52 @@
       } catch (error) {
         reject()
       }
+    })
+  }
+
+ async function getConvertNft(isCover = false){
+    return new Promise<void>(async (resolve, reject) => {
+      const mvcAddress=await window.metaidwallet.getAddress()
+      if (!mvcAddress) {
+        reject()
+      }
+      if(isCover){
+        pagination.page = 1
+      }
+ 
+      const res = await GetGenesisNFTs({
+        address:mvcAddress,
+      chain: 'mvc',
+      codehash: `e205939ad9956673ce7da9fbd40514b30f66dc35`,
+      genesis: `92cbffdd55ae32b4bd68e8a3394815c22c98e2b6`,
+      ...pagination,
+       
+      })
+      if (res?.code == 0) {
+        debugger
+        if (isCover) nfts.length = 0
+        if (res.data.results.items.length === 0){
+            pagination.nothing = true
+        }
+        pagination.flag = res.data?.cursor ? res.data.cursor : ''
+        convertNfts.push(...res.data.results.items)
+        
+        nftOwnerInfo.val= await getUserAllInfo(route.params.address as string)
+        console.log("nftOwnerAvatarId.value",nftOwnerInfo.val)
+        debugger
+        resolve()
+        // for (let item of res.data) {
+        //     item.creator_info = await getUserAllInfo(item.creator_info.address)
+        //     item.owner_info = await getUserAllInfo(item.owner_info.address)
+        //     nfts.push(item)
+            
+        // }
+
+
+
+        
+      }
+     
     })
   }
   
@@ -765,13 +934,23 @@
     if (isSkeleton.value || pagination.loading || pagination.nothing || isListLoading.value) return
     pagination.loading = true
     pagination.page++
-  
-    getDatas().then(() => {
+    
+    if(tabActive.value == ProfileTab.Items){
+      getDatas().then(() => {
       pagination.loading = false
     
     }).catch(()=>{
         isListLoading.value = false
     })
+    }else if(tabActive.value == ProfileTab.Convert){
+      getConvertNft().then(() => {
+      pagination.loading = false
+    
+    }).catch(()=>{
+        isListLoading.value = false
+    })
+    }
+  
   }
   
   function changeCell(cellValue: number) {
@@ -1003,12 +1182,22 @@ async function listSuccessful(){
       saleNfts.length = 0
   
       getSaleDatas(true).then()
-    } else {
+    } else if(value === ProfileTab.Items) {
       tabActive.value = value
       pagination.page = 1
       pagination.loading = false
       pagination.nothing = false
       getDatas(true).then(()=>{
+        isListLoading.value = false
+      }).catch(()=>{
+        isListLoading.value = false
+      })
+    }else if(value === ProfileTab.Convert){
+      tabActive.value = value
+      pagination.page = 1
+      pagination.loading = false
+      pagination.nothing = false
+      getConvertNft(true).then(()=>{
         isListLoading.value = false
       }).catch(()=>{
         isListLoading.value = false

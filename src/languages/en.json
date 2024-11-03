@@ -840,7 +840,8 @@
     "Profile_listing": "NFT listing",
     "submit_Sell": "Submit Listings",
     "royalte fee": "Royalty Fee Explanation",
-    "My_collection works": "My MetaBot"
+    "My_collection works": "My MetaBot",
+    "Profile_Convert": "Convert"
   },
   "My NFT": "My NFT",
   "Done": "Done",
@@ -1464,7 +1465,8 @@
     "list_success": " List Successful",
     "toDetail": "NFT Details",
     "salePrice_overlimited": "The price is set too low to cover the additional costs. Please reset it.",
-    "onSubmitNewCollection_fail": "Collection name, totalSupply, cover, etc. cannot be empty."
+    "onSubmitNewCollection_fail": "Collection name, totalSupply, cover, etc. cannot be empty.",
+    "convert": "Convert"
   },
   "offsale not allowed": "Please unlist before proceeding with the redemption operation.",
   "redeemWaring1": "The redemption operation will destroy the NFT. Please consider carefully!",

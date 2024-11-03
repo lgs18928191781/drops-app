@@ -830,7 +830,8 @@
     "Profile_other_items": "拥有的NFT列表",
     "submit_Sell": "提交上架",
     "royalte fee": "版税费用说明",
-    "My_collection works": "我的MetaBot"
+    "My_collection works": "我的MetaBot",
+    "Profile_Convert": "转换器"
   },
   "My NFT": "我的NFT",
   "Done": "完成",
@@ -1457,7 +1458,8 @@
     "list_success": "上架成功",
     "toDetail": "查看详情",
     "salePrice_overlimited": "价格设置过低，不足以覆盖附加费用，请重新设置",
-    "onSubmitNewCollection_fail": "专辑名称，铸造总量，封面等不能为空"
+    "onSubmitNewCollection_fail": "专辑名称，铸造总量，封面等不能为空",
+    "convert": "转换"
   },
   "offsale not allowed": "请先下架后再进行赎回操作",
   "redeemConfirm": "你确认要赎回",
