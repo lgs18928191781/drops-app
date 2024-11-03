@@ -1,10 +1,10 @@
-import { mintNftItem,submitMintOrder,submitSaleOrder,submitBuyOrder,finalySignAndBuyNft,getRedeemOrder,submitRedeemOrder,getPinfromPinid,getPinfromPinidList,cancelBuyNft,cancelOrder,broadcastBTCTx} from '@/api/mrc721-api'
+import {finalConvert, mintNftItem,submitMintOrder,submitSaleOrder,submitBuyOrder,finalySignAndBuyNft,getRedeemOrder,submitRedeemOrder,getPinfromPinid,getPinfromPinidList,cancelBuyNft,cancelOrder,broadcastBTCTx} from '@/api/mrc721-api'
 import { useBtcJsStore } from '@/stores/btcjs'
 import { useI18n } from 'vue-i18n'
 import { useNetworkStore } from '@/stores/network'
 import {exclusiveChange,buildFillUtxoPsbt,extractTxAndOutputIndex,fillInputUtxo,fillInternalKey,getDummyUtxoforLegacy,checkDummyAmount} from '@/hooks/use-buildtx-entity'
 import Decimal from 'decimal.js-light'
-import { NftsLaunchPadChain, NftsLaunchPadChainSymbol,SIGHASH_ALL,SIGHASH_ALL_ANYONECANPAY,SIGHASH_SINGLE_ANYONECANPAY,SIGHASH_DEFAULT,REDEEM_SERVICE_FEE,DUMMY_UTXO_INPUT_LEGACY ,PIN_UTXO_VALUE} from '@/data/constants'
+import { NftsLaunchPadChain, NftsLaunchPadChainSymbol,SIGHASH_ALL,SIGHASH_ALL_ANYONECANPAY,SIGHASH_SINGLE_ANYONECANPAY,SIGHASH_DEFAULT,REDEEM_SERVICE_FEE,DUMMY_UTXO_INPUT_LEGACY ,PIN_UTXO_VALUE,CONVERT_SERVICE_FEE} from '@/data/constants'
 import {usePayModalEntity,type feeInfoType} from '@/hooks/use-pay-modal-entity'
 import { CollectionMintChain,SdkPayType } from '@/enum'
 import { useFeebStore } from '@/stores/feeb'
@@ -99,6 +99,47 @@ export function useNFTEntity(){
        
         const result= await payModalEntity.awaitPayConfrim(SdkPayType.BTC,feeInfo.total,feeInfo,'buy')
         
+        return result
+       }
+       
+       return estiomateResult
+      } catch (error) {
+        ElMessage.error((error as any).message)
+        return false
+      }
+    }
+
+    async function estimateConvertFee(psbtHex:string,feeb:number,extraFee:number,checkOnly:boolean=false){
+      const bitcoinjs = useBtcJsStore().get!
+      const networkStore=useNetworkStore()
+      const feeStore = useFeebStore()
+
+      try {
+       if(!psbtHex){
+        return ElMessage.error(`${i18n.t('Nfts.convert_psbt_empty')}`)
+       }
+        const psbt =bitcoinjs.Psbt.fromHex(psbtHex,{ network: networkStore.typedNetwork })
+      
+        const estiomateResult= await exclusiveChange({
+          psbt: psbt,
+          maxUtxosCount:3,
+          sighashType:SIGHASH_ALL_ANYONECANPAY,
+          feeb:feeb ?? feeStore.getCurrentFeeb,
+       })
+       
+     
+       if(checkOnly){
+        //const {paymentValue,fee,changeValue}=estiomateResult
+        const basic=estiomateResult!.fee
+        const feeInfo={
+          basic:basic,
+          service:CONVERT_SERVICE_FEE,
+          miner: extraFee ,
+          feeb:estiomateResult!.feeb,
+          total:new Decimal(estiomateResult!.fee).add(extraFee).add(CONVERT_SERVICE_FEE).toNumber()
+        }
+        const result= await payModalEntity.awaitPayConfrim(SdkPayType.BTC,feeInfo.total,feeInfo,'convert')
+    
         return result
        }
        
@@ -502,6 +543,68 @@ export function useNFTEntity(){
 
       }
 
+      async function convertNft(params:{
+        convertPsbtHex:string
+        extraFee:number
+        commitAddress:string
+        collectionPinid:string
+        nftRawTx:string
+        fileRawTx:string
+        commitId:string
+        filePinid:string
+        convertAddress:string
+        genesis:string
+        tokenIndex:string
+
+      }){
+        const {convertPsbtHex,extraFee,commitAddress,collectionPinid,nftRawTx,fileRawTx,commitId,filePinid,convertAddress,genesis,tokenIndex}=params
+        try {
+          const connectionStore=useConnectionStore()
+          const feebStore=useFeebStore()
+        // const bitcoinJs=useBtcJsStore().get!
+        // const networkStore=useNetworkStore()
+        const feeb=feebStore.getCurrentFeeb
+        const estimatedRes=await estimateConvertFee(convertPsbtHex,feeb,extraFee,true)
+        if(estimatedRes){
+            
+          const {psbt}=await estimateConvertFee(convertPsbtHex,feeb,extraFee)
+          const toSignInputs=await formatToSignInputs(psbt)
+          const rawTx= await connectionStore.adapter.signPsbt(psbt.toHex(),{
+            toSignInputs:toSignInputs,
+            autoFinalized:false
+          })
+         
+          console.log("signRes",rawTx)
+          if(rawTx?.status == 'canceled'){
+            return ElMessage.error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
+          }else{
+            const finalSignRevealRes= await finalConvert({
+              psbtHex:rawTx,
+              commitAddress,
+              collectionPinid,
+              feeb,
+              nftRawTx,
+              fileRawTx,
+              commitId,
+              filePinid,
+              convertAddress,
+              tokenIndex,
+              genesis
+            })
+            if(finalSignRevealRes.code == 200){
+              return finalSignRevealRes.data
+            }else{
+              return ElMessage.error(finalSignRevealRes.msg)
+            }
+        }
+
+
+      }
+        } catch (error) {
+         return ElMessage.error((error as any))
+        }
+      }
+
 
       async function redeemNft(params:{
         nftPinid:string,
@@ -673,6 +776,7 @@ export function useNFTEntity(){
 
 
     return {
+        convertNft,
         mintItem,
         saleNft,
         buyNft,

@@ -370,7 +370,10 @@
     getSaleOrderList,
     getPriceRecord,
     GetMyNFTs,getOwnerNftOnsale,
-    GetOwnerNFTsListing
+    GetOwnerNFTsListing,
+    preConvert,
+    submitConvert,
+    
   } from '@/api/mrc721-api'
  
   import { ElMessage } from 'element-plus'
@@ -388,6 +391,7 @@ import MetabotItem from '@/components/NFTItem/MetabotItem.vue'
   import BTC from '@/assets/icons/btc.svg?url'
 import { GetGenesisNFTs } from '@/api/aggregation'
 import { useUserStore } from '@/stores/user'
+import Decimal from 'decimal.js-light'
   const networkStore = useNetworkStore()
   const feeStore = useFeebStore()
   const nftEntity = useNFTEntity()
@@ -610,33 +614,53 @@ async function convertNft(nft:GenesisNFTItem){
   //1.转移
   console.log("nft",nft)
   debugger
-  //mhgReAXohNMYeSLyQBECq76v7fCkYHzean
-  console.log("userStore.showWallet",userStore.showWallet)
-    const res = await userStore.showWallet
-    .createBrfcChildNode(
-      {
-        nodeName: NodeName.NftTransfer,
-        data: JSON.stringify({
-          receiverAddress: `n11W7vY8JnmXpx73Sr4wimP2fHwKQg61A7`,
-          codehash:nft.nftCodehash ,
-          genesis: nft.nftGenesis,
-          tokenIndex: nft.nftTokenIndex,
-        }),
-      },
-      {
-    isBroadcast: false,
-     
-      checkOnly: true, //false弹窗，true不弹窗
-      isTransfer: true
-      }
-    )
-    .catch(error => {
-      ElMessage.error(error.message)
-      debugger
-      //loading.value = false
-    })
-    console.log("res",res)
+
+  const preConvertRes= await preConvert({
+    codehash:nft.nftCodehash,
+    genesis:nft.nftGenesis,
+    tokenIndex:nft.nftTokenIndex,
+    nftAddress:connectionStore.userInfo.address,
+    nftRawTx:'123'
+  })
+  if(preConvertRes.code == 200){
     debugger
+    const {commitAddress,lockAddress,totalFee,nftRawTx}=preConvertRes.data
+    const submitConvertRes= await submitConvert({
+      commitAddress:commitAddress,
+      lockAddress:lockAddress,
+      nftRecevierAddress:connectionStore.userInfo.address,
+      collectionPinid:`f673ba2fdcbc478fef736cb120a6ac487a0fedf4c3828296af6a25c57bcf822ei0`,
+      feeb:feeStore.getCurrentFeeb,
+      buildCommitFee:totalFee
+        })
+        if(submitConvertRes.code == 200){
+          const {commitId,filePinid,psbtHex,fileRawTx,preFee,buildCommitFee,commitAddress,collectionPinid}=submitConvertRes.data
+          debugger
+          const finalSignRevealRes= await nftEntity.convertNft({
+            convertPsbtHex:psbtHex,
+            extraFee:new Decimal(preFee).add(buildCommitFee).toNumber(),
+            commitAddress,
+            collectionPinid,
+            nftRawTx:'123',
+            fileRawTx,
+            commitId,
+            filePinid,
+            convertAddress:connectionStore.userInfo.address,
+            genesis:nft.nftGenesis,
+            tokenIndex:nft.nftTokenIndex
+          })
+          debugger
+          if(finalSignRevealRes.revealTxId){
+            debugger
+            ElMessage.success(`${i18n.t('Nfts.convert_success')}`)
+          }
+
+
+        }
+
+  }
+  //mhgReAXohNMYeSLyQBECq76v7fCkYHzean
+ 
 
 }
 

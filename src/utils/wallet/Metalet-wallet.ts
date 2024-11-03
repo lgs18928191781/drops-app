@@ -200,6 +200,8 @@ export class MetaletWallet {
     //this.metaIDJsWallet.getXPublicKey().then((xpub: string) => (this.xpubkey = xpub))
   }
 
+
+
   public async getMetaIdInfo(rootAddress: string): Promise<MetaIdInfoTypes> {
     let metaIdInfo: MetaIdInfoTypes = {
       metaId: '',

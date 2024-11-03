@@ -472,7 +472,8 @@
       "Stakement required": "Staking required",
       "isTransfer": "Transfer Amount",
       "buy": "Payment confirmation",
-      "mint": "Payment Mint"
+      "mint": "Payment Mint",
+      "convert": "Convert fee"
     },
     "Stakeconfirm": {
       "Confirm": "Stake"
@@ -1466,7 +1467,10 @@
     "toDetail": "NFT Details",
     "salePrice_overlimited": "The price is set too low to cover the additional costs. Please reset it.",
     "onSubmitNewCollection_fail": "Collection name, totalSupply, cover, etc. cannot be empty.",
-    "convert": "Convert"
+    "convert": "Convert",
+    "convert_psbt_empty": "The NFT transaction for conversion does not exist.",
+    "lanuch_convert": "Convert fee",
+    "convert_success": "Convert successful"
   },
   "offsale not allowed": "Please unlist before proceeding with the redemption operation.",
   "redeemWaring1": "The redemption operation will destroy the NFT. Please consider carefully!",

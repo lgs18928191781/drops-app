@@ -40,6 +40,7 @@ export const PlatformRate=6
 export const MinPlatformFee=2000
 export const MinRoyaltyFee=1000
 export const REDEEM_SERVICE_FEE=1000
+export const CONVERT_SERVICE_FEE=2000
 export const MRC721PlatformAddress=`tb1plh4xg3ks7jfcrrx9hpa9exrrzq6gq9jc48n0cch48tcxttlppuas9trkyh`
 // type EntitySchema = {
 //   name: string

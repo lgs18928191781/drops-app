@@ -430,7 +430,7 @@ export const submitConvert=async(params:{
 export const finalConvert=async(params:{
   psbtHex:string
   commitAddress:string
-  collectionPinId:string
+  collectionPinid:string
   feeb:number
   nftRawTx:string
   fileRawTx:string

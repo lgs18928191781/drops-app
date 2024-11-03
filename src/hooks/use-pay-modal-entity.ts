@@ -23,7 +23,7 @@ export function usePayModalEntity() {
     payType: SdkPayType,
     useAmount: number,
     feeInfo: feeInfoType,
-    basicType: 'basic' | 'mint' | 'buy',
+    basicType: 'basic' | 'mint' | 'buy' | 'convert',
     extractFee: number = 0
   ) {
     return new Promise<boolean>((resolve, reject) => {

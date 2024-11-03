@@ -9,6 +9,7 @@
       <div class="header">
         <span class="title" v-if="basicType == 'buy'"> {{ i18n.t('SDK.payconfirm.buy') }}</span>
         <span class="title" v-if="basicType == 'mint'"> {{ i18n.t('SDK.payconfirm.mint') }}</span>
+        <span class="title" v-if="basicType == 'convert'"> {{ i18n.t('SDK.payconfirm.convert') }}</span>
 
         <!-- <a class="close flex flex-align-center flex-pack-center" @click="cancel">
           <Icon name="x_mark" />
@@ -100,8 +101,8 @@
                 basicType == 'basic'
                   ? i18n.t('Nfts.lanuch_baseFee')
                   : basicType == 'mint'
-                  ? i18n.t('Nfts.lanuch_MintFee')
-                  : i18n.t('Nfts.lanuch_saleFee')
+                  ? i18n.t('Nfts.lanuch_MintFee') :  basicType == 'convert' ? i18n.t('Nfts.lanuch_convert')  : i18n.t('Nfts.lanuch_saleFee')
+                 
               }}
             </div>
             <div>
@@ -225,7 +226,7 @@ interface Props {
   router: Router
   payType: SdkPayType
   feeInfo: feeInfoType
-  basicType:'basic' | 'mint' | 'buy'
+  basicType:'basic' | 'mint' | 'buy' | 'convert'
   extractFee:number
 }
 

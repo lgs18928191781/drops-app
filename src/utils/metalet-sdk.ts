@@ -1086,7 +1086,7 @@ export class MetaletSDK {
               transactions.currentNodeBrfc = await this.getBrfcNode(
                 {
                   nodeName: params.nodeName,
-                  parentTxId:`8dcf03cead7378040da470bc7866c0fcd774f15a09a46e9fe029e0e93c4e0491` ,//userStore.user?.protocolTxId!
+                  parentTxId:userStore.user?.protocolTxId!,
                   utxos: params.utxos,
                   useFeeb: params.useFeeb,
                 },
