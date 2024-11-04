@@ -1082,7 +1082,7 @@ export class MetaletSDK {
               console.log('userStore.user', userStore.user)
               // 新增
               //
-              debugger
+              
               transactions.currentNodeBrfc = await this.getBrfcNode(
                 {
                   nodeName: params.nodeName,

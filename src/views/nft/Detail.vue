@@ -99,7 +99,7 @@
                     isSale || !isReady ? 'faded' : 'primary',
                     isSale ? 'cursor-not-allowed' : 'cursor-pointer',
                   ]"
-                  v-if="isMyNFT && !isDestroyed"
+                  v-if="isMyNFT && !isDestroyed && !isConvertCollection"
                 >
                   {{ $t('NFT.Redeem') }}
                 </div>
@@ -356,6 +356,10 @@ const nftEntity = useNFTEntity()
 const isShowSaleSuccess=ref(false)
 const isSale = computed(() => {
   return IsSale(nft.val)
+})
+
+const isConvertCollection=computed(()=>{
+  return nft.val?.collection_pinid == import.meta.env.VITE_WHITELIST_COLLECTION
 })
 
 const isDestroyed = computed(() => {

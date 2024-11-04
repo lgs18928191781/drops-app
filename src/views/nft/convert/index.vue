@@ -544,9 +544,9 @@ MetaBot stands as an emblem of innovation and limitless possibilities, captivati
       genesis: `45bedfa465383df5711ce8d3ca7521e69931040a`,
       ...nftPagination,
     })
-    debugger
+    
     if (res.code === 0) {
-        debugger
+        
       if (isCover) nfts.length = 0
       if (res.data.results.items.length === 0) nftPagination.nothing = true
       nftPagination.flag = res.data?.cursor ? res.data.cursor : ''

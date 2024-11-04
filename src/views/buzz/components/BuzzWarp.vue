@@ -5,7 +5,8 @@
 
         <div class="nav-menu flex flex-align-center">
           <router-link
-            :to="item.path"
+            :to="''"
+            @click="toTarget(item.path)"
             class="nav-menu-item flex flex-align-center"
             v-for="(item, index) in navMenus"
             :key="index"
@@ -147,6 +148,21 @@ const navMenus=[
     path:'/convert' //'/buzz/index',
   },
 ]
+
+function toTarget(path:string){
+  if(path == '/convert'){
+    router.push({
+    name:'profile',
+    params:{
+      metaid:`6e3ea09c98fbf310fef9804eccf5be1b372644bdb9758061c933c91884ee66cd`,
+    address:`tb1py2wj034mk72rwpl6j8c24hz50gsyh8r2vwckyzzyd3z5q0mvwxsqkfrzgl`,
+    type:'convert'
+  }})
+  }else{
+    router.push(path)
+  }
+ 
+}
 
 const BuzzContainerRef = ref()
 const FastBtnRef = ref()

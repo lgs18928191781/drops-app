@@ -382,8 +382,8 @@
   import { useNetworkStore } from '@/stores/network'
   import { useNFTEntity } from '@/hooks/use-nft-entity'
   import { useFeebStore } from '@/stores/feeb'
-  
-  import { openLoading, calcNftRealSalePrice, sleep, checkUserLogin,copy } from '@/utils/util'
+
+  import {debounce, openLoading, calcNftRealSalePrice, sleep, checkUserLogin,copy } from '@/utils/util'
 import MetabotItem from '@/components/NFTItem/MetabotItem.vue'
   import { NftsLaunchPadChainSymbol, PlatformRate } from '@/data/constants'
   import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
@@ -434,7 +434,7 @@ import Decimal from 'decimal.js-light'
       value: ProfileTab.Convert,
     },
   ]
-  const tabActive = ref(ProfileTab.Items)
+  const tabActive = ref(route.params.type ? ProfileTab.Convert : ProfileTab.Items)
   const statiscs = reactive([
     {
       name: () => i18n.t('NFT.Initial Price'),
@@ -564,7 +564,7 @@ import Decimal from 'decimal.js-light'
   const sortIndex = ref(0)
 
   const convertList = computed(() => {
-    debugger
+    
     if (isListLoading.value) {
       return Array.from({ length: pagination.pageSize })
     } else {
@@ -613,19 +613,25 @@ import Decimal from 'decimal.js-light'
 async function convertNft(nft:GenesisNFTItem){
   //1.转移
   console.log("nft",nft)
-  debugger
+  try {
+    const mvcNftAddress=await window.metaidwallet.getAddress()
+
+
+  
 
   const preConvertRes= await preConvert({
     codehash:nft.nftCodehash,
     genesis:nft.nftGenesis,
     tokenIndex:nft.nftTokenIndex,
-    nftAddress:connectionStore.userInfo.address,
-    nftRawTx:'123'
+    nftAddress:mvcNftAddress,
+    
   })
+  
   if(preConvertRes.code == 200){
-    debugger
-    const {commitAddress,lockAddress,totalFee,nftRawTx}=preConvertRes.data
+    
+    const {commitAddress,lockAddress,totalFee,picPath}=preConvertRes.data
     const submitConvertRes= await submitConvert({
+      picPath:picPath,
       commitAddress:commitAddress,
       lockAddress:lockAddress,
       nftRecevierAddress:connectionStore.userInfo.address,
@@ -633,32 +639,54 @@ async function convertNft(nft:GenesisNFTItem){
       feeb:feeStore.getCurrentFeeb,
       buildCommitFee:totalFee
         })
+        
         if(submitConvertRes.code == 200){
           const {commitId,filePinid,psbtHex,fileRawTx,preFee,buildCommitFee,commitAddress,collectionPinid}=submitConvertRes.data
-          debugger
+          
+          const nftRes= await window.metaidwallet.transferNFT({
+    codehash:nft.nftCodehash,
+    genesis:nft.nftGenesis,
+    tokenIndex:nft.nftTokenIndex,
+    recipient:`mhgReAXohNMYeSLyQBECq76v7fCkYHzean`,
+    options:{
+      noBroadcast:true
+    }
+  })
+ 
+  
           const finalSignRevealRes= await nftEntity.convertNft({
             convertPsbtHex:psbtHex,
             extraFee:new Decimal(preFee).add(buildCommitFee).toNumber(),
             commitAddress,
             collectionPinid,
-            nftRawTx:'123',
+            nftRawTx:nftRes.txHex,
             fileRawTx,
             commitId,
             filePinid,
             convertAddress:connectionStore.userInfo.address,
             genesis:nft.nftGenesis,
-            tokenIndex:nft.nftTokenIndex
+            tokenIndex:nft.nftTokenIndex,
+            codehash:nft.nftCodehash
           })
-          debugger
+          
           if(finalSignRevealRes.revealTxId){
-            debugger
+            
             ElMessage.success(`${i18n.t('Nfts.convert_success')}`)
+            await sleep(1000)
+            refreshDatas()
           }
 
 
+        }else{
+          return ElMessage.error(submitConvertRes.msg)
         }
-
+  }else{
+    return ElMessage.error(preConvertRes.msg)
   }
+  } catch (error) {
+    ElMessage.error((error as any).message)
+  }
+  
   //mhgReAXohNMYeSLyQBECq76v7fCkYHzean
  
 
@@ -745,6 +773,7 @@ async function convertNft(nft:GenesisNFTItem){
       }
       if(isCover){
         pagination.page = 1
+         pagination.pageSize = 999
       }
  
       const res = await GetGenesisNFTs({
@@ -756,17 +785,17 @@ async function convertNft(nft:GenesisNFTItem){
        
       })
       if (res?.code == 0) {
-        debugger
-        if (isCover) nfts.length = 0
+        
+        if (isCover) convertNfts.length = 0
         if (res.data.results.items.length === 0){
             pagination.nothing = true
         }
-        pagination.flag = res.data?.cursor ? res.data.cursor : ''
+        // pagination.flag = res.data?.cursor ? res.data.cursor : ''
         convertNfts.push(...res.data.results.items)
         
         nftOwnerInfo.val= await getUserAllInfo(route.params.address as string)
-        console.log("nftOwnerAvatarId.value",nftOwnerInfo.val)
-        debugger
+      
+        
         resolve()
         // for (let item of res.data) {
         //     item.creator_info = await getUserAllInfo(item.creator_info.address)
@@ -791,6 +820,7 @@ async function convertNft(nft:GenesisNFTItem){
       }
       if(isCover){
         pagination.page = 1
+        
       }
       const res = await GetMyNFTs({
         page: String(pagination.page-1),
@@ -959,6 +989,7 @@ async function convertNft(nft:GenesisNFTItem){
     pagination.loading = true
     pagination.page++
     
+    
     if(tabActive.value == ProfileTab.Items){
       getDatas().then(() => {
       pagination.loading = false
@@ -966,14 +997,18 @@ async function convertNft(nft:GenesisNFTItem){
     }).catch(()=>{
         isListLoading.value = false
     })
-    }else if(tabActive.value == ProfileTab.Convert){
-      getConvertNft().then(() => {
-      pagination.loading = false
-    
-    }).catch(()=>{
-        isListLoading.value = false
-    })
     }
+
+    // else if(tabActive.value == ProfileTab.Convert){
+    //   debugger
+    //   getConvertNft().then(() => {
+    //   pagination.loading = false
+    
+    // }).catch(()=>{
+    //     isListLoading.value = false
+    // })
+    
+    // }
   
   }
   
@@ -1122,11 +1157,20 @@ async function listSuccessful(){
     pagination.page = 1
     pagination.loading = false
     pagination.nothing = false
-    getDatas(true).then(() => {
+    if(tabActive.value == ProfileTab.Items){
+      getDatas(true).then(() => {
       isListLoading.value = false
     }).catch(()=>{
         isListLoading.value = false
     })
+    }else if(tabActive.value == ProfileTab.Convert){
+      
+      getConvertNft(true).then(()=>{
+        isListLoading.value = false
+      }).catch(()=>{
+        isListLoading.value = false
+      })
+    }
   }
 
   async function btnFun(item: NftItemType){
@@ -1219,6 +1263,7 @@ async function listSuccessful(){
     }else if(value === ProfileTab.Convert){
       tabActive.value = value
       pagination.page = 1
+      // pagination.flag=''
       pagination.loading = false
       pagination.nothing = false
       getConvertNft(true).then(()=>{
@@ -1228,6 +1273,7 @@ async function listSuccessful(){
       })
     }
   }
+if(tabActive.value == ProfileTab.Items){
   getDatas(true)
         .then(() => {
           
@@ -1236,6 +1282,14 @@ async function listSuccessful(){
         .catch(() => {
           isSkeleton.value = false
         })
+}else if(tabActive.value == ProfileTab.Convert){
+
+  getConvertNft(true).then(()=>{
+    isSkeleton.value = false
+      }).catch(()=>{
+        isSkeleton.value = false
+      })
+}
         getProfileUser()
 //   getCollection()
 //     .then(() => {

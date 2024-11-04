@@ -66,13 +66,13 @@ export const router = createRouter({
              
               // meta: { keepAlive: false },
             },
-            {
-              path: '/convert',
-              name: 'convert',
-              component: () => import('@/views/nft/convert/index.vue'),
+            // {
+            //   path: '/convert',
+            //   name: 'convert',
+            //   component: () => import('@/views/nft/convert/index.vue'),
              
-              // meta: { keepAlive: false },
-            },
+            //   // meta: { keepAlive: false },
+            // },
           
           ],
         },
@@ -166,7 +166,7 @@ export const router = createRouter({
             },
 
               {
-      path: '/profile/:metaid/:address',
+      path: '/profile/:metaid/:address/:type?',
       name: 'profile',
       redirect: {
         name: 'ownerItems',

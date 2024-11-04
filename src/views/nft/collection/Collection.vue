@@ -625,7 +625,7 @@ function getCollection() {
           collectionPinid: route.params.topicType as string,
         })
         
-        if (priceRes.code == 200 && priceRes.data.floor_price) {
+        if (priceRes.code == 200 && (priceRes.data.floor_price || res.data.result.collection_pinid == import.meta.env.VITE_WHITELIST_COLLECTION)) {
           // debugger
           // const floorRoyaltyFee=collection.val?.royalty_rate > 0 ? priceRes.data.floor_price * (collection.val?.royalty_rate / 100) > MinRoyaltyFee ? priceRes.data.floor_price * (collection.val?.royalty_rate / 100) : MinRoyaltyFee : 0
           // const floorPlatFormRate=priceRes.data.floor_price * (PlatformRate / 100) > MinPlatformFee ? priceRes.data.floor_price * (PlatformRate / 100) : MinPlatformFee
@@ -635,21 +635,28 @@ function getCollection() {
 
           // const floorPirce=priceRes.data.floor_price + floorRoyaltyFee + floorPlatFormRate
           // const hignPrice=priceRes.data.high_price + hignRoyaltyFee + highPlatFormRate
-          statiscs[1].value = space(priceRes.data.floor_price).toString()
+          if(priceRes.data.floor_price || res.data.result.collection_pinid !== import.meta.env.VITE_WHITELIST_COLLECTION){
+            statiscs[1].value = space(priceRes.data.floor_price).toString()
           statiscs[2].value = space(priceRes.data.high_price).toString()
+          }
         }
 
-        statiscs[0].value = space(res.data.result.init_price).toString()
+        if( res.data.result.collection_pinid !== import.meta.env.VITE_WHITELIST_COLLECTION){
+          statiscs[0].value = space(res.data.result.init_price).toString()
+          }
+        
         // statiscs[1].value = space(res.data.result.init_price).toString()
         // statiscs[2].value = space(currentMintPrice).toString()
         statiscs[3].value = res.data.result.total_supply.toString()
         statiscs[4].value = mintAmout.toString()
-        getPoolInfo({
+        if(res.data.result.collection_pinid !== import.meta.env.VITE_WHITELIST_COLLECTION){
+          getPoolInfo({
           collectionPinid: collection.val?.collection_pinid!,
         }).then(pool => {
           const { pool_total, redeem_total } = pool.data.result
           statiscs[5].value = `${space(pool_total - redeem_total)}`
         })
+        }
         resolve()
       } else if (mintRes.code != 200) {
         reject()

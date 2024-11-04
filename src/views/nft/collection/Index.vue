@@ -233,7 +233,7 @@ function getDatas(isCover = false) {
       if (res.data.result.length) {
         pagination.nothing = false
         for (let item of res.data.result) {
-          if (item.init_price) {
+          if (item.init_price || item.collection_pinid == import.meta.env.VITE_WHITELIST_COLLECTION) {
             const mintRes = await getCollectionMintAmout({
               collectionPinid: item.collection_pinid,
             })
@@ -242,7 +242,7 @@ function getDatas(isCover = false) {
               const creator_info = await getUserAllInfo(item.address)
               item.collection_creator = creator_info
               const { mintAmout, currentSupply, currentMintPrice } = mintRes.data
-              if(currentSupply > 0){
+              if(currentSupply > 0 || item.collection_pinid == import.meta.env.VITE_WHITELIST_COLLECTION){
                 collections.push({ ...item, current_supply: currentSupply, minted: mintAmout })
               }
             

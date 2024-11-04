@@ -555,12 +555,13 @@ export function useNFTEntity(){
         convertAddress:string
         genesis:string
         tokenIndex:string
-
+        codehash:string
       }){
-        const {convertPsbtHex,extraFee,commitAddress,collectionPinid,nftRawTx,fileRawTx,commitId,filePinid,convertAddress,genesis,tokenIndex}=params
+        const {convertPsbtHex,extraFee,commitAddress,collectionPinid,nftRawTx,fileRawTx,commitId,filePinid,convertAddress,codehash,genesis,tokenIndex}=params
         try {
           const connectionStore=useConnectionStore()
           const feebStore=useFeebStore()
+          const mvcAddress=await window.metaidwallet.getAddress()
         // const bitcoinJs=useBtcJsStore().get!
         // const networkStore=useNetworkStore()
         const feeb=feebStore.getCurrentFeeb
@@ -589,12 +590,14 @@ export function useNFTEntity(){
               filePinid,
               convertAddress,
               tokenIndex,
-              genesis
+              genesis,
+              codehash,
+              mvcNftOwnerAddress:mvcAddress
             })
             if(finalSignRevealRes.code == 200){
               return finalSignRevealRes.data
             }else{
-              return ElMessage.error(finalSignRevealRes.msg)
+              throw new Error(finalSignRevealRes.msg)
             }
         }
 

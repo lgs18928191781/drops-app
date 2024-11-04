@@ -119,6 +119,7 @@ async function getDataList(isCover:boolean=false){
     if(res[0].code == 200 ){
         if(res[0].data.length){
           for(let item of res[0].data){
+            
             const creatorInfo=await getUserAllInfo(item.address)
             hotList.push({
               ...item,

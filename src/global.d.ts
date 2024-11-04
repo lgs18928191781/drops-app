@@ -41,6 +41,20 @@ declare interface Window {
       }>
       txids:string[]
     }>
+
+    transferNFT:(params:{
+      codehash:string
+      genesis:string
+      tokenIndex:string
+      recipient:string,
+      options?:{
+        noBroadcast?:boolean
+        feeRate?:string | number
+        useUnconfirmed?:boolean
+      }
+    })=>Promise<{
+      txHex:string
+    }>
     getUtxos: (parmas:{needRawTx?: boolean, useUnconfirmed?: boolean}) => Promise<BtcUtxos[]>
     verifySignature(verifyObj: { message: unknown; signature: any; encoding: string }): any
     getPublicKey(): any
