@@ -129,6 +129,19 @@ export function satoshi(amount: number | string) {
     .toNumber()
 }
 
+
+export function toSats(amount: number | string) {
+  if(amount == 0){
+    return 0
+  }else{
+    return new Decimal(amount)
+  .mul(Math.pow(10, 8))
+  .toInteger()
+  .toNumber()
+  }
+  
+}
+
 export function space(stas: number | string) {
   return bsv(stas)
 }
@@ -277,13 +290,14 @@ export function omitMiddle(str: string, maxLength: number = 20) {
   return start + ellipsis + end
 }
 
-export function truncateString(str:string) {
+export function truncateString(str:string,len?:number) {
   if(!str) return
 
   if (str.length <= 8) {
       return str; // 如果字符串长度小于等于 8，直接返回原字符串
   }
-  const start = str.slice(0, 5); // 截取前 5 个字符
+  const sliceLen=len ?? 5
+  const start = str.slice(0, sliceLen); // 截取前 5 个字符
   const end = str.slice(-3); // 截取后 3 个字符
   return `${start}...${end}`; // 拼接并返回结果
 }

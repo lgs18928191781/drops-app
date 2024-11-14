@@ -6,4 +6,22 @@
        min-height: 32PX;
        }
     }
+
+    @media only screen and (max-width: 980px) {
+        .icon-warp{
+            margin-right: 25px;
+          
+         }
+    }
+
+    @media only screen and (max-width: 500px) {
+        .icon-warp{
+            margin-right: 15px;
+            img{
+                width: 90PX;
+            min-width:90PX;
+            min-height: 32PX;
+            }
+         }
+    }
 }

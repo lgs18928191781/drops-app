@@ -3,9 +3,9 @@
     <!-- header -->
     <div class="header flex flex-align-center">
       <div class="flex1">
-        <div class="title flex w-7/12 items-center  flex-wrap font-sora text-white">
+        <div class="title flex flex-col items-start flex-wrap font-sora text-white">
           <span>{{ $t('Collection.title') }}</span>
-          <span class="ml-1 text-base">({{ $t('Collection.display') }})</span>
+          <span class="mt-1 text-base ">({{ $t('Collection.display') }})</span>
         </div>
         <div class="drsc  text-[#A9A8AC]">{{ $t('Collection.drsc') }}</div>
       </div>

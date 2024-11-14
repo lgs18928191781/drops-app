@@ -1,7 +1,35 @@
 @import '@/assets/styles/var.scss';
 .profile-wrap{
+    height: 100vh;
+    min-height: 100vh;
+  
    // margin-top: 150px;
 }
+
+.user-warp-item {
+    //margin-right: 8PX;
+   
+ 
+
+  
+    
+    // border-radius: calc(100% / 2.5);
+    // border: var(--standard-border-width) solid #6b7280;
+    box-sizing: border-box;
+    cursor: pointer;
+
+    &:hover,
+    &.active {
+        // border-color: var(--border-color);
+    }
+
+    .icon {
+        width: 22px;
+        height: 22px;
+    }
+   
+}
+
 .collection {
     //border-radius: var(--rounded) var(--rounded) 0px 0px;
     overflow: hidden;
@@ -21,6 +49,7 @@
         //padding: 60px;
         position: relative;
         z-index: 2;
+       
     }
     .user-wrap{
        
@@ -52,6 +81,13 @@
                 height: 120px;
                 object-fit: cover;
                 border-radius: 8px;
+            }
+            @media screen and (max-width:500px) {
+                img,
+                .el-skeleton__item {
+                    width: 60px;
+                height: 60px;
+                }
             }
         }
     }

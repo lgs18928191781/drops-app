@@ -22,7 +22,7 @@
             }"
             :autoplay="true"
             :loop="false"
-            :slidesPerView="3"
+            :slidesPerView="'auto'"
             :spaceBetween="24"
             class="hot-collection"
           >
@@ -53,7 +53,7 @@
                   <!-- <img class=" " :src="banner" alt=""> -->
                 </div>
                 <div class="flex flex-col ">
-                  <span class="text-lg">{{  item.collection_creator?.name}}</span>
+                  <span :class="layout.isMobilePhone ? 'text-base' :  'text-lg'">{{  item.collection_creator?.name}}</span>
                   <span class="text-xs opacity-50 ">MetaID: {{ item.collection_creator?.metaid.slice(0,6) }}</span>
                 </div>
               </div>
@@ -86,7 +86,7 @@
             />
                 </div>
                 <div class="flex flex-col ">
-                  <span class="text-lg">{{ item.collection_creator?.name }}</span>
+                  <span :class="layout.isMobilePhone ? 'text-base' :  'text-lg'">{{ item.collection_creator?.name }}</span>
                   <span class="text-xs opacity-50 ">MetaID: {{ item.collection_creator?.metaid.slice(0,6) }}</span>
                 </div>
               </div>
@@ -108,10 +108,12 @@ import banner from '@/assets/images/login_img.png'
 import {  getHotCollection,getNotableCollection} from "@/api/mrc721-api";
 import {useMetaIDEntity} from '@/hooks/use-metaid-entity'
 import { router } from '@/router'
-
+import { useLayoutStore } from '@/stores/layout'
 const hotList:NftsCollection[]=reactive([])
 const notableList:NftsCollection[]=reactive([])
 const {getUserAllInfo}=useMetaIDEntity()
+
+const layout = useLayoutStore()
 
 async function getDataList(isCover:boolean=false){
   const res= await Promise.all([getHotCollection({rank:6}),getNotableCollection({rank:16})])

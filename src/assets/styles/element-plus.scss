@@ -6,7 +6,7 @@
     --el-font-size-large: 20px;
     --el-border-color: var(--faded-border-color);
     --el-border-width: var(--standard-border-width);
-    --el-color-primary: #FFDC51;
+    --el-color-primary: #EB4C93;
     --el-color-primary-light-5: rgba(255, 220, 81, 0.5);
     --el-color-primary-light-4: rgba(255, 220, 81, 0.4);
     --el-color-primary-light-3: rgba(222, 89, 252, 0.3);
@@ -35,6 +35,18 @@ html.dark {
 
 .el-table__body tr:hover>td.el-table__cell{
     background: transparent !important;
+}
+
+.el-input .el-input__count .el-input__count-inner{
+    background: none !important;
+}
+
+.el-input-group__append{
+    background: #29272E !important;
+}
+
+.el-table .cell{
+    word-break: keep-all !important;
 }
 
 
@@ -357,7 +369,7 @@ html.dark {
 
 .el-dialog {
     background: #252227;
-
+    
     --el-dialog-width: 912px;
     --el-dialog-border-radius: 24px;
     --el-dialog-padding-primary: 30px;
@@ -530,6 +542,17 @@ html.dark {
 
 }
 
+@media only screen and (max-width: 500px) {
+    .el-dialog {
+      // margin-top: -100px !important;
+
+        .el-dialog__body {
+            padding: 20px;
+        }
+    }
+
+}
+
 .el-container {
     margin-top: 9PX !important;
     width: 70%;
@@ -596,6 +619,8 @@ html.dark {
         line-height: auto;
     }
 }
+
+
 
 .collection-selector {
 

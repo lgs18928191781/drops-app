@@ -15,9 +15,9 @@ export function useEchart() {
     datasets: [
       {
         label: 'Market Price',
-        backgroundColor: '#FFDC51',
+        backgroundColor: '#EB4C93',
         data: [],
-        borderColor: '#FFDC51',
+        borderColor: '#EB4C93',
       },
     ],
   }

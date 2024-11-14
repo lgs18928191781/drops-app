@@ -1,12 +1,12 @@
 <template>
-  <header class="flex flex-align-center" v-if="!isHideHeader">
+  <header class="flex flex-align-center " v-if="!isHideHeader">
     <div class="flex1">
       <HeaderNavVue>
 
-        <div class="nav-menu flex flex-align-center">
+        <div class="nav-menu flex flex-align-center" v-if="!layout.isColspanHeader">
           <router-link
             :to="''"
-            @click="toTarget(item.path)"
+            @click="toTarget(item)"
             class="nav-menu-item flex flex-align-center"
             v-for="(item, index) in navMenus"
             :key="index"
@@ -15,6 +15,43 @@
             <span class="name" v-if="!item.disable">{{ item.name }}</span>
           </router-link>
         </div>
+
+
+
+        <div  v-else>
+          <el-dropdown trigger="click">
+            <div class="flex items-center">
+              <span class="font-bold text-[#fff] text-sm el-dropdown-link">
+     {{ currentPage }}
+      <el-icon  class="el-icon--right top-[3px]">
+        <arrow-down  />
+      </el-icon>
+    </span>
+            </div >
+    <template #dropdown>
+      <div class="drop-menu-colspan-wrap">
+        <el-dropdown-menu >
+        <router-link
+            :to="''"
+            @click="toTarget(item)"
+            class=" nav-menu-colspan-item flex flex-align-center "
+            v-for="(item, index) in navMenus"
+            :key="index"
+          >
+          <el-dropdown-item  ><span class=" text-sm  text-[#fff]">
+            {{ item.name }}
+          </span></el-dropdown-item>
+           
+          </router-link>
+       
+      
+      </el-dropdown-menu>
+      </div>
+    </template>
+  </el-dropdown>
+        </div>
+
+
         
       </HeaderNavVue>
       <!-- <PhoneMenuBtnVue>
@@ -33,11 +70,13 @@
     </div>
     <LoginedUserOperateVue />
   </header>
-  <div class="buzz-warp z-10 " ref="BuuzWarpRef" id="buzz-warp">
-    <div class="buzz-container  " id="buzz-container" ref="BuzzContainerRef">
+  <div class="buzz-warp  " ref="BuuzWarpRef" id="buzz-warp">
+    <div class="buzz-container   " id="buzz-container" ref="BuzzContainerRef">
       <slot></slot>
     </div>
-   <footer class="flex z-0 fixed  bottom-0 items-center justify-center py-5 text-[#8A8A8A]">MetaID.market@2024 All Rights Reserved</footer>
+
+    
+   
     <!--   -->
     <!-- <div class="fast-btn" ref="FastBtnRef">
       <a class="top" @click="scrollTop">
@@ -49,7 +88,7 @@
     </div> -->
     <!--   -->
   </div>
-
+  <footer v-if="isShowFooter" class="flex items-center justify-center py-5 text-[#8A8A8A]">MetaID.market@2024 All Rights Reserved</footer>
   <!-- publish -->
   <!-- <PublishVue
     v-model="isShowBuzzPublish"
@@ -70,6 +109,7 @@ import {
   provide,
   onUnmounted,
   reactive,
+  computed
 } from 'vue'
 import Header from './components/Header/Header.vue'
 import Footer from './components/Footer/Footer.vue'
@@ -84,19 +124,23 @@ import { useLayoutStore } from '@/stores/layout'
 import PublishVue from '@/views/buzz/components/Publish.vue'
 import PhoneMenuBtnVue from '@/components/PhoneMenuBtn/PhoneMenuBtn.vue'
 import HeaderNavVue from  '@/components/HeaderNavWrap/HeaderNavWrap.vue'
-import { useRouter } from 'vue-router'
+import { useRouter,useRoute } from 'vue-router'
 import { checkUserLogin } from '@/utils/util'
-
+import { ArrowDown } from '@element-plus/icons-vue'
+import { useConnectionStore, } from '@/stores/connection'
 interface Props {
   isHideHeader?: boolean
 }
 const props = withDefaults(defineProps<Props>(), {})
 
 const router = useRouter()
+const route=useRoute()
+
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const layout = useLayoutStore()
 const i18n = useI18n()
+const connectionStore=useConnectionStore()
 const isShowBuzzPublish = ref(false)
 const publishTopic = ref('')
 const publishRepostTxId = ref('')
@@ -121,7 +165,13 @@ const menus = [
   // },
 ]
 
-const navMenus=[
+type navType={
+  name:string
+  disable:boolean,
+  path:string
+}
+
+const navMenus:navType[]=[
 {
     name:'Explore', //i18n.t('Buzz.Timeline'),
     disable:false,
@@ -149,17 +199,45 @@ const navMenus=[
   },
 ]
 
-function toTarget(path:string){
-  if(path == '/convert'){
+const isShowFooter=computed(()=>{
+  
+  if(route.fullPath.indexOf('/profile') > -1){
+    return false
+  }else{
+    return true
+  }
+})
+
+
+const currentPage=computed(()=>{
+  
+
+  switch (route.name) {
+    case 'explore':
+      return 'Explore';
+      case 'nftsCollection':
+      return 'Create';
+      case 'genesisNfts':
+      return 'Create';
+      case 'nftCollectionIndex':
+      return 'Collection';
+      case 'list':
+      return 'Convert';
+  }
+})
+
+function toTarget(item:navType){
+
+  if(item.path == '/convert'){
     router.push({
     name:'profile',
     params:{
-      metaid:`6e3ea09c98fbf310fef9804eccf5be1b372644bdb9758061c933c91884ee66cd`,
-    address:`tb1py2wj034mk72rwpl6j8c24hz50gsyh8r2vwckyzzyd3z5q0mvwxsqkfrzgl`,
+      metaid:connectionStore.userInfo.metaid,
+    address:connectionStore.userInfo.address,
     type:'convert'
   }})
   }else{
-    router.push(path)
+    router.push(item.path)
   }
  
 }

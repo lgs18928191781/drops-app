@@ -28,8 +28,12 @@
           </RouterView>
         </div>
       </template>
+ 
     </PullDownVue>
+
+   
   </div>
+    
   <DragonBall />
   <SearchModal />
   <ConnectWalletModalVue />
@@ -77,6 +81,7 @@ import { getPinfromPinid,getPinfromPinidList } from "@/api/mrc721-api";
 import { useNetworkStore } from '@/stores/network'
 import {exclusiveChange} from '@/hooks/use-buildtx-entity'
 import { ElMessage } from 'element-plus'
+import { useLayoutStore } from '@/stores/layout'
 const rootStore = useRootStore()
 const userStore = useUserStore()
 const metaidEntity = useMetaIDEntity()
@@ -87,7 +92,7 @@ const blackRoute = reactive(['home'])
 const connectorStore = useConnectionStore()
 const feebInterval = ref()
 const followStore = useFollowStore()
-
+const layout = useLayoutStore()
 const routeKey = (route: any) => {
   if (route.params.communityId) return route.params.communityId
   return route.fullPath
@@ -143,9 +148,35 @@ function initBitcoin() {
 // }
 
 onMounted(async () => {
-  setTimeout(async() => {
+  const width = window.innerWidth;
+  if(width < 500){
+    layout.$patch({isMobilePhone:true})
+    
+  }else{
+    layout.$patch({isMobilePhone:false})
+  }
+
+  if(width < 980){
+    layout.$patch({isColspanHeader:true})
+  }else{
+    layout.$patch({isColspanHeader:false})
+  }
+  window.addEventListener('resize', () => {
+    const newWidth = window.innerWidth;
   
-  }, 3000);
+    if(newWidth < 500){
+      layout.$patch({isMobilePhone:true})
+    }
+    if(newWidth < 980){
+      layout.$patch({isColspanHeader:true})
+    }else{
+      layout.$patch({isColspanHeader:false,isMobilePhone:false})
+    }
+   
+    
+});
+
+
  console.log('VITE_TEST_TEXT',import.meta.env.MODE)
 
   console.log('VITE_TEST_TEXT',import.meta.env.VITE_METALET_API)

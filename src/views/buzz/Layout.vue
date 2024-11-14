@@ -169,4 +169,16 @@ html .buzz-warp {
   padding:  0 80px;
   
 }
+
+@media only screen and (max-width: 750px) {
+  html .buzz-warp {
+  
+  
+  padding:  0 30px;
+  
+}
+
+}
+
+
 </style>

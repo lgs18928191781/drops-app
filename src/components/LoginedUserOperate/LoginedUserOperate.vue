@@ -15,22 +15,29 @@
             <span class="new-tag">{{ dummyAmount }}</span>
           </div> -->
 
-  <div class="net-warp bg-[#312f35] py-1 px-2 rounded-md mr-3" v-if="connectStore.currentChain !== ''">
+  <div  class="net-warp  py-1 px-2 rounded-md " v-if="connectStore.currentChain !== '' "
+  :class="layout.isMobilePhone ? '' : 'bg-[#312f35] mr-3'"
+  >
     <span class="el-dropdown-link flex items-center text-sm font-medium">
         <img
           src="@/assets/images/logo_chain_btc.png"
           alt=""
-          class="show-coin w-6 h-6 mr-1.5"
+          class="show-coin "
+           :class="[layout.isMobilePhone ? 'w-5 h-5 ' : 'mr-1.5 w-6 h-6 ']"
           v-if="connectStore.currentChain == 'btc'"
         />
         <img
           src="@/assets/images/logo_chain_mvc.png"
           alt=""
-          class="show-coin w-6 h-6 mr-1.5"
+          class="show-coin "
+          :class="[layout.isMobilePhone ? 'w-5 h-5 ' : 'mr-1.5 w-6 h-6 ']"
           v-else
         />
+        <span v-if="!layout.isMobilePhone">
+          {{ connectStore.currentChain == 'btc' ? 'BTC' : 'MVC' }}
+        </span>
      
-        {{ connectStore.currentChain == 'btc' ? 'BTC' : 'MVC' }}
+      
         <!-- <img src="@/assets/images/list_icon.png" alt="" class="w-3 h-3 ml-1.5" /> -->
       </span>
     <!-- <ElDropdown class="network-style" trigger="click">
@@ -76,22 +83,31 @@
     </ElDropdown> -->
   </div>
 
-  <div class="gas-warp  mr-3 hidden md:block" v-show="connectStore.currentChain == 'btc'">
+  <div class="gas-warp   " :class="layout.isMobilePhone ? '' : 'mr-3'" v-show="connectStore.currentChain == 'btc'">
     <div>
       <!-- 更多操作 -->
       <ElDropdown trigger="click" >
         <a
           class="more text-[#fff] flex flex-align-center flex-pack-center text-[#303133] font-medium text-sm px-2 py-1.5 "
         >
-          <img src="@/assets/images/icon_gas.png" alt="" class="w-[18px] h-[18px] mr-2.5" />
+          <img  src="@/assets/images/icon_gas.png" alt="" class="w-[18px] h-[18px] "
+          :class="[layout.isMobilePhone ? 'mr-1.5' : 'mr-2.5']"
+          />
           <!-- <LucideIcon name="Fuel" :size="20" class="text-white font-bold mr-1.5" strokeWidth="2" /> -->
           <!-- <span class="mr-1">{{ feebStore.last.currentFeeb.title }}:</span> -->
+         <div  class="flex items-center">
           <div>
-            <span class="mr-1 py-1 px-5 w-7 bg-[#312E35] rounded-md"  >
-                {{ feebStore.getCurrentFeeb }}
-            </span><span class="text-[#CACACA]">sat/vB</span>
+            <span class="mr-1 py-1  bg-[#312E35] rounded-md" 
+            :class="[layout.isMobilePhone ? 'px-3 w-3' : 'px-5 w-7']"
+            >
+            {{ feebStore.getCurrentFeeb }}
+               
+          </span><span  class="text-[#CACACA]">{{ layout.isMobilePhone ? '' : 'sat/vB' }}</span>
+           
           </div>
-          <img src="@/assets/images/list_icon.png" alt="" class="w-3 h-3 ml-1.5" />
+          <img v-if="!layout.isMobilePhone " src="@/assets/images/list_icon.png" alt="" class="w-3 h-3 ml-1" />
+         
+         </div>
         </a>
         <template #dropdown>
           <ElDropdownMenu>
@@ -131,6 +147,7 @@
           </ElDropdownMenu>
         </template>
       </ElDropdown>
+     
     </div>
   </div>
 
@@ -197,13 +214,17 @@
       </a> -->
 
       <!-- 👤 头像 -->
-      <div class="flex bg-[#303133] items-center cursor-pointer justify-between rounded-3xl px-3">
+      <div class="flex 
+      
+      items-center cursor-pointer justify-between rounded-3xl "
+      :class="layout.isMobilePhone ? '' : 'bg-[#303133] px-3'"
+      >
         <el-popover placement="bottom" :width="'auto'" trigger="click" ref="popover" popper-style="border:none !important">
        
           
             <template #reference>
               <div class="flex items-center">
-                <span class="mr-4 text-base">{{$filters.truncateString(connectStore.last.user.address)  }}</span>
+                <span v-if="!layout.isMobilePhone" class="mr-4 text-base"  >{{$filters.truncateString(connectStore.last.user.address)  }}</span>
               <UserAvatar
               :address="connectStore.userInfo.address || connectStore.last.user.address"
             :image="connectStore.userInfo.avatarId || connectStore.last.user.avatarId"
@@ -315,7 +336,7 @@ import { useNetworkStore } from '@/stores/network'
 import { setUser } from '@sentry/vue'
 import {DUMMY_UTXO_INPUT_LEGACY} from '@/data/constants'
  import { CircleFadingPlus } from 'lucide-vue-next'
- import { CircleCheckFilled } from '@element-plus/icons-vue'
+ import { CircleCheckFilled,ArrowDownBold } from '@element-plus/icons-vue'
 const i18n = useI18n()
 const rootStore = useRootStore()
 const userStore = useUserStore()

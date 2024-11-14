@@ -805,6 +805,7 @@ declare interface Mrc721CollectionItem {
   autoMarket: boolean
   genesisTimestamp?: number
   metaId: string
+  classify:string[] | string
   initialPrice?: number
   priceGrowth?: number
   coverPinid?: string

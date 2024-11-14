@@ -41,20 +41,24 @@
           </template>
         </button> -->
       </div>
-      <div @click="toProfile" class="flex cursor-pointer  flex-row items-center justify-between mt-10 hover:opacity-80" :class="[showDisconnect ? ' ' : '' ]">
-        <span class="text-base">Profile</span>
+      <div class="flex  flex-row items-center justify-between mt-10" :class="layout.isMobilePhone ? 'text-sm' : 'text-base'" v-if="layout.isMobilePhone">
+        <span>{{ $t('Profile.wallet_address') }}</span>
+        <span @click="copy(address)">{{$filters.truncateString(address)  }}</span>
+      </div>
+      <div @click="toProfile"  class="flex cursor-pointer  flex-row items-center justify-between mt-10 hover:opacity-80" >
+        <span :class="layout.isMobilePhone ? 'text-sm' : 'text-base'">Profile</span>
         <el-icon color="#A9A8AC" :size="12"><ArrowRightBold /></el-icon>
       </div>
-      <div v-if="showDisconnect" @click="logout" class="flex cursor-pointer text-base mt-7 items-center justify-center hover:opacity-80">
+      <div v-if="showDisconnect" @click="logout" :class="layout.isMobilePhone ? 'text-sm' : 'text-base'" class="flex cursor-pointer  mt-7 items-center justify-center hover:opacity-80">
         <span class="disconnet">Disconnect</span>
       </div>
     </div>
 
     <!-- <UserPersonaVue class="mt-4.5" :i18n="propsI18n" /> -->
 
-    <div class="close flex flex-align-center flex-pack-center" @click.stop="$emit('hide')">
+    <!-- <div class="close flex flex-align-center flex-pack-center" @click.stop="$emit('hide')">
       <Icon name="x_mark" />
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -72,7 +76,9 @@ import {useConnectionStore,type BaseUserInfo } from '@/stores/connection'
 import { ArrowRightBold } from '@element-plus/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
-
+import { useLayoutStore } from '@/stores/layout'
+import { copy } from '@/utils/util'
+const layout = useLayoutStore()
 const props = defineProps<{
   modelValue: boolean
   address:string

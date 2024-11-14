@@ -4,7 +4,7 @@
     class="sm"
     @close="emit('update:modelValue', false)"
     :closeOnClickModal="false"
-    :style="{ height: '80vh', overflowY: 'auto' }"
+    :style="{width:layout.isMobilePhone ? '80vw' : customWidth ? '60vw' : '' , height:customHeight ? '75vh' : '80vh', overflowY: 'auto' }"
     align-center
   >
     <template #title>
@@ -45,6 +45,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type {  FormInstance, FormRules } from 'element-plus'
+import { useLayoutStore } from '@/stores/layout'
 interface Props {
   modelValue: boolean
   confirmBtnText?: string
@@ -54,14 +55,19 @@ interface Props {
   isHideCancelBtn?: boolean
   operateWarpMarginTop: number
   defiendFooter?:boolean
+  customWidth?:boolean
+  customHeight?:boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   confirmBtnClass: 'primary',
   operateWarpMarginTop: 60,
   isEdit: false,
-  defiendFooter:false
+  defiendFooter:false,
+  customWidth:false
 })
+
+const layout = useLayoutStore()
 
 const emit = defineEmits(['update:modelValue', 'confirm', 'cancel'])
 </script>

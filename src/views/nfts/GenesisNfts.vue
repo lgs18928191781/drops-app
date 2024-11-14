@@ -1,5 +1,5 @@
 <template>
-  <div class="genesis-wrap z-10 flex items-center justify-center">
+  <div class="genesis-wrap  flex items-center justify-center">
     <!-- <header class="flex items-center border-b pb-3 border-[#EDEFF2]">
       <div class="w-5/12">
         <span
@@ -13,7 +13,7 @@
         {{ $t('Nfts.launch_create') }}
       </div>
     </header> -->
-    <div class="form-wrap z-10  py-7 w-[90vw] sm:w-[70vw] lg:w-[40vw]">
+    <div class="form-wrap   py-7 w-[90vw] sm:w-[70vw] lg:w-[40vw]">
       <el-form :model="form">
         <el-form-item class="flex" label-width="50%">
           <template #label>
@@ -22,7 +22,7 @@
             >
           </template>
           <template #default>
-            <div class="flex relative justify-end">
+            <div class="flex  relative justify-end">
               <el-upload
                 :multiple="false"
                 action="#"
@@ -34,10 +34,11 @@
                 <el-icon v-else class="avatar-uploader-icon " color="#BFC2CC" :size="35"
                   ><Plus
                 /></el-icon>
+                
                 <div
                   v-if="form.cover"
                   @click="remove"
-                  class="absolute flex items-center justify-center bottom-0.5 py-0.5 bg-[rgba(0,0,0,0.4)] w-24 rounded-b-lg hover:bg-[rgba(0,0,0,0.3)]"
+                  class="absolute w-[120PX] flex items-center justify-center  bottom-[0px] py-0.5 bg-[rgba(0,0,0,0.4)]  rounded-b-lg hover:bg-[rgba(0,0,0,0.3)]"
                 >
                   <span class="text-[#FFFFFF]">{{ $t('Nfts.lauch_delete') }}</span>
                 </div>
@@ -53,7 +54,10 @@
             }}</span>
           </template>
           <template #default>
-            <el-input v-model="form.name" :placeholder="$t('Nfts.launch_placeholder1')" />
+            <el-input
+            maxlength="20"
+            show-word-limit
+            v-model="form.name" :placeholder="$t('Nfts.launch_placeholder1')" />
           </template>
         </el-form-item>
 
@@ -83,11 +87,13 @@
               </template>
               <template #default>
                 <el-input
-                  v-model="form.totalSupply"
-                  :formatter="(value:string) => `${value}`.replace(/\D+$/g, '')"
-                  :parser="(value:string) => value.replace(/\D+$/g, '')"
-                  :placeholder="$t('Nfts.launch_placeholder3')"
-                />
+                    v-model="form.totalSupply"
+                    maxlength="4"
+                    show-word-limit
+                    :formatter="(value:string) => `${value}`.replace(/\D$/g, '').slice(0,4)"
+                    :parser="(value:string) => `${value}`.replace(/\D$/g, '').slice(0,4)"
+                    :placeholder="$t('Nfts.launch_placeholder3')"
+                  />
               </template>
             </el-form-item>
             <el-form-item class="flex flex-col flex-1" label-width="auto">
@@ -105,6 +111,28 @@
           </div>
         </div>
 
+
+            <el-form-item class="flex flex-col"   label-width="auto" >
+              <template #label>
+            <span class="flex text-sm font-light font-sora text-normalColor">{{
+              $t('Nfts.lanuch_classify')
+            }}</span>
+          </template>
+            <template #default>
+              <div class=" gray-exclued-text  min-h-14  flex">
+                <el-select class="custom-select" multiple v-model="form.classify" placeholder="Select" style="width: 100%">
+                  <el-option
+                    v-for="item in classifyList"
+                    :key="item.classify"
+                    :disabled="item.disabled"
+                    :label="item.name()"
+                    :value="item.classify"
+                  />
+                </el-select>
+              </div>
+            </template>
+          </el-form-item >
+
         <el-form-item class="flex flex-col " label-width="auto">
           <template #label>
             <span class="flex text-sm font-light font-sora text-normalColor">{{
@@ -115,6 +143,70 @@
             <el-input v-model="form.website" :placeholder="$t('Nfts.launch_placeholder6')" />
           </template>
         </el-form-item>
+
+
+        <div class="flex flex-col ">
+            <div class="flex set-price-wrap items-center justify-between space-x-4">
+              <el-form-item class="flex flex-col flex-1" label-width="auto">
+                <template #label>
+                  <span class="flex text-base font-medium">{{ $t('Nfts.lanuch_auto_market_setprice') }}</span>
+                  <span class="ml-1  text-base font-medium">({{ $t('Nfts.mint_price_unit') }})</span>
+                </template>
+                <template #default>
+                
+   
+                  <el-input
+                    v-model="form.initialPrice"
+                   :formatter="(value:string) => `${value}`.replace(regex,(match,p1,p2,p3)=>`${p1}${p2}`)"
+                    :parser="(value:string) => `${value}`.replace(regex,(match,p1,p2,p3)=>`${p1}${p2}`)"
+                    :placeholder="$t('Nfts.lanuch_set_init_price')"
+                  >
+                  <template #append>
+       = {{$filters.toSats(form.initialPrice)}} Sats
+      </template>
+                </el-input>
+                </template>
+              </el-form-item>
+              <el-form-item class="flex flex-col flex-1" label-width="auto">
+                <template #label>
+                  <span class="flex text-base font-medium">{{ $t('Nfts.lanuch_auto_market_setpriceAdd') }}</span>
+                  <span class="ml-1 text-base font-medium">({{ $t('Nfts.mint_price_unit') }})</span>
+                  <el-popover
+                  placement="top-start"
+                  :title="$t('Nfts.lanuch_growth_price_desc')"
+                  :width="250"
+                  trigger="hover"
+                >
+                  <template #reference>
+                    <el-icon :size="18" class="align-middle ml-1 cursor-pointer"
+                      ><QuestionFilled
+                    /></el-icon>
+                  </template>
+
+                  <div class="flex flex-col text-sm font-medium">
+                    <span>{{ $t('NFTs.lanuch_growth_content1') }}</span>
+                    <span class="mt-2 whitespace-normal break-words">{{
+                      $t('NFTs.lanuch_growth_content2')
+                    }}</span>
+                    <span class="mt-2">{{ $t('NFTs.lanuch_growth_content3') }}</span>
+                  </div>
+                </el-popover>
+                </template>
+                <template #default>
+                  <el-input
+                    v-model="form.priceGrowth"
+                   :formatter="(value:string) => `${value}`.replace(regex,(match,p1,p2,p3)=>`${p1}${p2}`)"
+                    :parser="(value:string) => `${value}`.replace(regex,(match,p1,p2,p3)=>`${p1}${p2}`)"
+                    :placeholder="$t('Nfts.lanuch_set_price_increase')"
+                  >
+                  <template #append>
+       = {{$filters.toSats(form.priceGrowth)}} Sats
+      </template>
+                </el-input>
+                </template>
+              </el-form-item>
+            </div>
+          </div>
 
         <el-form-item>
           <div
@@ -142,12 +234,12 @@ import { useGenesisStore } from '@/stores/genesis'
 import {CollectionMintChain,SdkPayType,NFTsError} from '@/enum'
 import { useConnectionStore } from '@/stores/connection'
 import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
-import { fileType,royaltyRate } from '@/config'
+import { fileType,royaltyRate,classifyList } from '@/config'
 import {usePayModalEntity} from '@/hooks/use-pay-modal-entity'
 import { useI18n } from 'vue-i18n'
 import {genesisCollection,issueCollection} from '@/api/mrc721-api'
 import {NftsLaunchPadChain,NftsLaunchPadChainSymbol} from '@/data/constants'
-
+import {toSats} from '@/utils/filters'
 import Decimal from 'decimal.js-light'
 const router=useRouter()
 const route=useRoute()
@@ -164,8 +256,13 @@ const form = reactive({
   totalSupply: 0,
   royaltyRate: 0,
   website:'',
+  initialPrice:0.0001,
+  priceGrowth:0.0001,
+  classify:[],
   metadata:{}
 })
+
+const regex=/(\d+)(\.\d{5})(\d+)/
 
 const createCollectionDisabled=computed(()=>{
   return form.name && form.totalSupply && form.originFile
@@ -213,7 +310,8 @@ const onSubmit = async() => {
       desc:form.desc,
       website:form.website,
       cover:'',
-      metadata:form.metadata
+      classify:form.classify,
+      metadata:form.metadata,
     },
     attachments:[form.originFile],
     lockAddress:'',
@@ -263,6 +361,7 @@ const onSubmit = async() => {
       royaltyRate:+form.royaltyRate,
       desc:form.desc,
       website:form.website,
+      classify:form.classify,
       cover:'',
       metadata:form.metadata
     },
@@ -291,10 +390,13 @@ const onSubmit = async() => {
         desc:form.desc,
         website:form.website,
         metaData:JSON.stringify(form.metadata),
+        classify:JSON.stringify(form.classify),
         totalSupply:+form.totalSupply,
         chain:'btc',
         autoMarket:false,
         royaltyRate:+form.royaltyRate,
+        initialPrice:toSats(form.initialPrice),
+        priceGrowth:toSats(form.priceGrowth),
         collectionPinId:collectionPinid,
         metaId:connectionStore.last.metaid,
         address:connectionStore.last.user.address,
@@ -317,13 +419,14 @@ const onSubmit = async() => {
         website:form.website,
         royaltyRate:+form.royaltyRate,
         metaData:form.metadata,
+        classify:form.classify,
         chain: NftsLaunchPadChainSymbol.btc,
         collectionPinId:collectionPinid,
         autoMarket:false, //route.params.type == '0' ? false : true,
         genesisTimestamp:Date.now(),
         metaId:connectionStore.last.metaid,
-        initialPrice:0,
-        priceGrowth:0,
+        initialPrice:toSats(form.initialPrice),
+        priceGrowth:toSats(form.priceGrowth),
         minted:0,
         currentSupply:0
         })
@@ -390,11 +493,12 @@ function remove(e:any){
 }
 
 const beforeAvatarUpload: UploadProps['beforeUpload'] = async(rawFile) => {
+  
   if (!fileType.includes(rawFile.type) ) {
-    ElMessage.error('Avatar picture must be JPG/PNG/GIF/WEBP format!')
+    ElMessage.error('Upload image must be JPG/PNG/GIF/WEBP format!')
     return false
-  } else if (rawFile.size / 1024 / 1024 > 1) {
-    ElMessage.error('Avatar picture size can not exceed 1MB!')
+  } else if (rawFile.size / 1024 / 1024 > 0.2) {
+    ElMessage.error('Upload image size can not exceed 200KB!')
     return false
   }
 

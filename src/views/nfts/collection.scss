@@ -10,6 +10,8 @@
     // top: calc(var(--header-height));
     // z-index: 3;
     background: var(--themeBgSecondColor);
+
+ 
 }
 
 .top-bar {
@@ -132,6 +134,39 @@
     word-break: break-all;
 
 }
+
+@media screen and (max-width: 500px){
+    .nfts-name{
+        width: 50%;
+        max-width: 50%;
+        // width: 25%;
+        // max-width: 25%;
+        span{
+           
+            white-space: nowrap;   /* 防止换行 */
+                overflow: hidden;      /* 隐藏溢出文本 */
+                text-overflow: ellipsis;
+        }
+    }
+    .nfts-intro {
+       
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        text-overflow: ellipsis;
+        width: 50%;
+        max-width: 50%;
+        word-break: break-all;
+        span{
+           
+          
+        }
+    
+    }
+}
+
+
 
 .line-clamp {
     display: -webkit-box;
@@ -299,6 +334,8 @@
       
     }
 
+
+
     :deep(.el-select) {
         
         --el-select-input-focus-border-color: #fff !important;
@@ -394,6 +431,27 @@
     }
 }
 
+@media screen and (max-width: 980px){
+    .nfts-card{
+        display: flex;
+        flex-direction: column;
+        .nfts-cover-container {
+            display: flex;
+            flex-direction: row;
+        }
+        .nfts-detail{
+            margin-top: 30px;
+            justify-content: flex-start;
+            .grip-wrap{
+                display: grid;
+                grid-template-columns: repeat(4,1fr);
+            }
+         
+           
+        }
+    }
+}
+
 
 @media only screen and (max-width: 750PX) {
 
@@ -417,3 +475,75 @@
 
     }
 }
+
+@media only screen and (max-width: 750px) {
+    .collection-wrap {
+       
+        padding: 0 !important;
+       
+    }
+
+    .set-price-wrap{
+        display: flex;
+        flex-direction: column;
+        &:deep(.el-form-item){
+            width: 100% !important;
+        }
+    }
+ 
+}
+
+
+@media screen and (max-width: 500px){
+    .nfts-card{
+        display: flex;
+        flex-direction: column;
+        .nfts-cover-container{
+            
+      }
+        .nfts-detail{
+            margin-left: 0 !important;
+            margin-top: 40px;
+            justify-content: flex-start;
+            .grip-wrap{
+                display: grid;
+                grid-template-columns: repeat(2,1fr);
+            }
+         
+           
+        }
+    }
+
+    .collection-selector {
+        :deep(.el-input) {
+            border: none;
+            box-shadow: none;
+            height: 44px;
+        }
+    
+        :deep(.el-input__wrapper) {
+            background-color: #151417;
+            opacity: 1;
+            border: 1px solid #656170;
+            font-size: 14px !important;
+            
+          
+        }
+    
+        
+    
+        :deep(.el-select) {
+            
+            --el-select-input-focus-border-color: #fff !important;
+        }
+    
+        :deep(.el-input__inner) {
+           
+            color: #ffffff;
+            font-size: 14px !important;
+           
+        }
+    
+    }
+}
+

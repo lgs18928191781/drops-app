@@ -16,7 +16,7 @@
             </div>
         </div> -->
 
-        <div class="collection-selector flex items-center text-lg">
+        <div class="collection-selector  flex items-center text-sm" :class="layout.isMobilePhone ? 'flex1' : '' ">
           <el-select
             @change="triggleCollection"
             popper-class="select-wrap"
@@ -50,11 +50,12 @@
           </el-select>
         </div>
         <div
-          class=" flex cursor-pointer items-center border border-[#656170] box-border px-4 rounded-lg ml-2 h-10 lead-[44px]"
+        :class="layout.isMobilePhone ? 'flex1' : '' "
+          class=" flex cursor-pointer  items-center border border-[#656170] box-border px-4 rounded-lg ml-2 h-10 lead-[44px]"
           @click="genesisNfts"
         >
           <img src="@/assets/images/icon@1x.png" alt="" class="w-[18px] h-[18px] mr-2" />
-          <div class="text-base font-light font-sora text-white">Create NFTs</div>
+          <div :class="layout.isMobilePhone ? 'text-sm' : 'text-base ' " class="font-500 font-sora text-white">Create NFTs</div>
         </div>
       </div>
       <!-- <nav>
@@ -125,17 +126,17 @@
       </div> -->
 
       <div class="nfts-card flex flex-col sm:justify-between sm:flex-row space-x-4">
-        <div class="flex flex-1 items-center flex-col sm:flex-row">
+        <div class="flex nfts-cover-container  flex-1 items-center flex-col sm:flex-row">
           <div
             class="nfts-cover flex items-center w-[150px] h-[150px] rounded-lg flex-shrink-0 mr-[30px]"
           >
-            <Image :src="currentNftsCollect?.coverPinid" custom-class="w-full rounded-lg" />
+            <Image :src="currentNftsCollect?.coverPinid" custom-class="w-full  rounded-lg" />
             <!-- <img class="w-full rounded-lg " :src="currentNftsCollect?.cover" alt="" /> -->
           </div>
 
           <div class="flex-col">
             <div class="nfts-name flex">
-              <span class="text-4xl font-bold font-sora text-white mb-3">{{
+              <span class=" font-bold font-sora text-white mb-3" :class="layout.isMobilePhone ? 'text-2xl' : 'text-4xl' ">{{
                 currentNftsCollect?.name
               }}</span>
             </div>
@@ -150,7 +151,7 @@
             </div>
           </div>
         </div>
-        <div class="flex flex-1 justify-end mt-8 sm:mt-0">
+        <div class="flex nfts-detail flex-1 justify-end mt-8 sm:mt-0">
           <!-- <div class="nfts-footer flex items-center text-sm ">
             <div class="flex items-center justify-start flex-wrap">
               <div class="blockchain flex items-center mr-6">
@@ -187,7 +188,7 @@
             </div>
           </div> -->
 
-          <div class="grid grid-cols-2 gap-4 sm:grid-cols-3">
+          <div class="grid grip-wrap grid-cols-2 gap-4 sm:grid-cols-3">
             <!-- <div class="text-center">
               <p class="text-[20px] font-semibold font-sora text-white mb-2">
                 {{ currentNftsCollect?.autoMarket == true ? 'Yes' : 'No' }}
@@ -333,7 +334,7 @@
           <Line ref="chartRef" :style="customStyle" :data="data" :options="options" />
         </div>
       </div> -->
-      <div class="price-area flex justify-between space-x-4">
+      <!-- <div class="price-area flex justify-between space-x-4">
         <div class="flex-1">
           <div class="font-sora  text-sm text-[#A9A8AC] font-light">
             <span>{{ $t('Nfts.lanuch_auto_market_setprice') }}</span>
@@ -395,12 +396,12 @@
             <span>Sats</span>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
 
     <div class="mt-12 ">
       <div class="mint-wrap flex items-center justify-between border-b pb-8 border-[#656170]">
-        <div class="font-sora text-white text-[30px] font-semibold">
+        <div class="font-sora text-white  font-semibold" :class="layout.isMobilePhone ? 'text-[20px]' : 'text-[30px]'">
           {{ $t('Nfts.lanuch_bulkMint') }}
         </div>
 
@@ -496,7 +497,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column prop="classify" :label="$t('Nfts.lanuch_classify')" width="auto" >
+          <!-- <el-table-column prop="classify" :label="$t('Nfts.lanuch_classify')" width="auto" >
             <template #default="scope">
               <div class=" gray-exclued-text p-2 min-h-14  flex">
                 <el-select  v-model="scope.row.classify" placeholder="Select" >
@@ -510,7 +511,7 @@
                 </el-select>
               </div>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <!-- <el-table-column prop="receiver" :label="$t('Nfts.lanuch_receive_address')" width="250">
             <template #default="scope">
               <div class="main-border py-3.5 gray-exclued-text p-2 min-h-14  ">
@@ -590,10 +591,12 @@
   </div>
 
   <CollectionDialog
+    
     v-model="modelValue"
     :defiendFooter="defiendFooter"
     :isHideCancelBtn="true"
     :operateWarpMarginTop="12"
+    :customHeight="true"
   >
     <template #title>
       <div class="title flex1" :style="{ fontSize: '24px' }">
@@ -716,19 +719,12 @@
           </el-form-item> -->
 
           <!--Classify-->
-          <el-form-item>
+          <!-- <el-form-item>
             <div class="flex items-center justify-between">
               <span class="text-sm font-light font-sora text-normalColor">{{
                 $t('Nfts.lanuch_classify')
               }}</span>
-              <!-- <div class="text-[#909399]">
-                <div class="switch-list flex flex-align-center" v-if="!isEdit">
-                  <div class="switch-item flex flex-align-center">
-                    <span class="mr-2">{{ $t('Nfts.lanuch_useSameClassify') }}</span>
-                    <ElSwitch v-model="mintData.isSameClassify" />
-                  </div>
-                </div>
-              </div> -->
+             
             </div>
 
             <div class="mt-1">
@@ -742,7 +738,7 @@
                 />
               </ElSelect>
             </div>
-          </el-form-item>
+          </el-form-item> -->
 
           <!--Receiver-->
           <!-- <el-form-item>
@@ -786,6 +782,7 @@
 
   <!--create Nfts-->
   <CollectionDialog
+  :customWidth="true"
     v-model="createNftsModel"
     :defiendFooter="defiendFooter"
     :isHideCancelBtn="false"
@@ -823,10 +820,11 @@
                   <el-icon v-else class="avatar-uploader-icon " color="#BFC2CC" :size="25"
                     ><Plus
                   /></el-icon>
+                 
                   <div
                     v-if="createCollectionform.cover"
                     @click="removeCollectionCover"
-                    class="absolute flex items-center justify-center bottom-0.5 py-0.5 bg-[rgba(0,0,0,0.4)] w-24 rounded-b-lg hover:bg-[rgba(0,0,0,0.3)]"
+                    class="absolute w-[120PX] flex items-center justify-center bottom-[0px] py-0.5 bg-[rgba(0,0,0,0.4)] rounded-b-lg hover:bg-[rgba(0,0,0,0.3)]"
                   >
                     <span class="text-[#FFFFFF]">{{ $t('Nfts.lauch_delete') }}</span>
                   </div>
@@ -841,6 +839,8 @@
             </template>
             <template #default>
               <el-input
+              maxlength="20"
+              show-word-limit
                 v-model="createCollectionform.name"
                 :placeholder="$t('Nfts.launch_placeholder1')"
               />
@@ -869,8 +869,10 @@
                 <template #default>
                   <el-input
                     v-model="createCollectionform.totalSupply"
-                    :formatter="(value:string) => `${value}`.replace(/\D+$/g, '')"
-                    :parser="(value:string) => value.replace(/\D+$/g, '')"
+                    maxlength="4"
+                    show-word-limit
+                    :formatter="(value:string) => `${value}`.replace(/\D$/g, '').slice(0,4)"
+                    :parser="(value:string) => `${value}`.replace(/\D$/g, '').slice(0,4)"
                     :placeholder="$t('Nfts.launch_placeholder3')"
                   />
                 </template>
@@ -896,6 +898,28 @@
             </div>
           </div>
 
+
+          <el-form-item class="flex flex-col"   label-width="auto" >
+              <template #label>
+            <span class="flex text-sm font-light font-sora text-normalColor">{{
+              $t('Nfts.lanuch_classify')
+            }}</span>
+          </template>
+            <template #default>
+              <div class=" gray-exclued-text  min-h-14  flex">
+                <el-select class="custom-select" multiple v-model="createCollectionform.classify" placeholder="Select" style="width: 100%">
+                  <el-option
+                    v-for="item in classifyList"
+                    :key="item.classify"
+                    :disabled="item.disabled"
+                    :label="item.name()"
+                    :value="item.classify"
+                  />
+                </el-select>
+              </div>
+            </template>
+          </el-form-item >
+
           <el-form-item class="flex flex-col " label-width="auto">
             <template #label>
               <span class="flex text-base font-medium">{{ $t('Nfts.launch_title6') }}</span>
@@ -907,6 +931,70 @@
               />
             </template>
           </el-form-item>
+
+
+          <div class="flex flex-col ">
+            <div class="flex set-price-wrap items-center justify-between space-x-4">
+              <el-form-item class="flex flex-col flex-1" label-width="auto">
+                <template #label>
+                  <span class="flex text-base font-medium">{{ $t('Nfts.lanuch_auto_market_setprice') }}</span>
+                  <span class="ml-1  text-base font-medium">({{ $t('Nfts.mint_price_unit') }})</span>
+                </template>
+                <template #default>
+                
+   
+                  <el-input
+                    v-model="createCollectionform.initialPrice"
+                   :formatter="(value:string) => `${value}`.replace(regex,(match,p1,p2,p3)=>`${p1}${p2}`)"
+                    :parser="(value:string) => `${value}`.replace(regex,(match,p1,p2,p3)=>`${p1}${p2}`)"
+                    :placeholder="$t('Nfts.lanuch_set_init_price')"
+                  >
+                  <template #append>
+       = {{$filters.toSats(createCollectionform.initialPrice)}} Sats
+      </template>
+                </el-input>
+                </template>
+              </el-form-item>
+              <el-form-item class="flex flex-col flex-1" label-width="auto">
+                <template #label>
+                  <span class="flex text-base font-medium">{{ $t('Nfts.lanuch_auto_market_setpriceAdd') }}</span>
+                  <span class="ml-1 text-base font-medium">({{ $t('Nfts.mint_price_unit') }})</span>
+                  <el-popover
+                  placement="top-start"
+                  :title="$t('Nfts.lanuch_growth_price_desc')"
+                  :width="250"
+                  trigger="hover"
+                >
+                  <template #reference>
+                    <el-icon :size="18" class="align-middle ml-1 cursor-pointer"
+                      ><QuestionFilled
+                    /></el-icon>
+                  </template>
+
+                  <div class="flex flex-col text-sm font-medium">
+                    <span>{{ $t('NFTs.lanuch_growth_content1') }}</span>
+                    <span class="mt-2 whitespace-normal break-words">{{
+                      $t('NFTs.lanuch_growth_content2')
+                    }}</span>
+                    <span class="mt-2">{{ $t('NFTs.lanuch_growth_content3') }}</span>
+                  </div>
+                </el-popover>
+                </template>
+                <template #default>
+                  <el-input
+                    v-model="createCollectionform.priceGrowth"
+                   :formatter="(value:string) => `${value}`.replace(regex,(match,p1,p2,p3)=>`${p1}${p2}`)"
+                    :parser="(value:string) => `${value}`.replace(regex,(match,p1,p2,p3)=>`${p1}${p2}`)"
+                    :placeholder="$t('Nfts.lanuch_set_price_increase')"
+                  >
+                  <template #append>
+       = {{$filters.toSats(createCollectionform.priceGrowth)}} Sats
+      </template>
+                </el-input>
+                </template>
+              </el-form-item>
+            </div>
+          </div>
 
           <!-- <el-form-item class="flex flex-col " label-width="auto">
             <template #label>
@@ -994,6 +1082,7 @@ import { CollectionMintChain,SdkPayType } from '@/enum'
 import { Select ,QuestionFilled} from '@element-plus/icons-vue'
 import { useConnectionStore } from '@/stores/connection'
 import { ElLoading, ElMessage } from 'element-plus'
+import {toSats} from '@/utils/filters',
 import { NftsLaunchPadChain, NftsLaunchPadChainSymbol,SIGHASH_ALL,SIGHASH_ALL_ANYONECANPAY ,SIGHASH_SINGLE_ANYONECANPAY,DUMMY_UTXO_INPUT_LEGACY,MinPlatformFee,MRC721PlatformAddress} from '@/data/constants'
 import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
 import { Line } from 'vue-chartjs'
@@ -1009,11 +1098,13 @@ import { useBtcJsStore } from '@/stores/btcjs'
 import * as secp256k1 from 'tiny-secp256k1'
 import {usePayModalEntity} from '@/hooks/use-pay-modal-entity'
 import {  type Psbt } from 'bitcoinjs-lib'
-
+import { useLayoutStore } from '@/stores/layout'
  import {space} from "@/utils/filters"
+import { p2ms } from '@metaid/metaid/dist/utils/btc-inscribe/bitcoinjs-lib/payments'
 
 const i18n = useI18n()
 const genesisStore = useGenesisStore()
+const layout = useLayoutStore()
 const connectionStore = useConnectionStore()
 const bitcoinjs = useBtcJsStore().get!
 const modelValue = ref(false)
@@ -1032,11 +1123,13 @@ const feeStore = useFeebStore()
 const chartRef = ref()
 const payModalEntity=usePayModalEntity()
 const errorMsg=ref('')
-const autoMaketData=ref({
-  initialPrice:0,
-  priceGrowth:0,
+// const autoMaketData=ref({
+//   initialPrice:0,
+//   priceGrowth:0,
 
-})
+// })
+const regex=/(\d+)(\.\d{5})(\d+)/
+const totalSupplyRegex=/^\d{0,4}$/
 const isShowmsgModal = ref(false)
 
 watch(
@@ -1057,8 +1150,8 @@ watch(
     // autoMaketData.value.initialPrice=currentNftsCollect.value?.initialPrice!
 
     // autoMaketData.value.priceGrowth=currentNftsCollect.value?.priceGrowth!
-     autoMaketData.value.initialPrice=currentNftsCollect.value?.initialPrice! ? space(currentNftsCollect.value?.initialPrice!) : 0
-    autoMaketData.value.priceGrowth=currentNftsCollect.value?.priceGrowth! ? space(currentNftsCollect.value?.priceGrowth!) : 0
+    //  autoMaketData.value.initialPrice=currentNftsCollect.value?.initialPrice! ? space(currentNftsCollect.value?.initialPrice!) : 0
+    // autoMaketData.value.priceGrowth=currentNftsCollect.value?.priceGrowth! ? space(currentNftsCollect.value?.priceGrowth!) : 0
 
     genesisCollection.value = currentNftsCollect.value!.name
   }
@@ -1084,7 +1177,7 @@ type MintInfo = {
   cover: AttachmentItem
   source: AttachmentItem
   desc: string
-  classify: string[]
+  //classify: string[]
   receiver: string
   nftName:string
 }
@@ -1093,7 +1186,7 @@ type UseSameOption = {
   isSameCover: boolean
   isSameSource: boolean
   isSameDesc: boolean
-  isSameClassify: boolean
+  // isSameClassify: boolean
   isSameReceiver: boolean
   isSameName:boolean
 }
@@ -1121,39 +1214,42 @@ const createCollectionform = reactive({
   website: '',
   metadata:{},
   originFile:null,
+  initialPrice:0.0001,
+  priceGrowth:0.0001,
   chain: NftsLaunchPadChainSymbol.btc,
+  classify:[],
   autoMakeMarket: true,
 })
 
-const newFile: Array<{id:number, file: File; picId: string,itemDesc:string,classify:string[],nftName:string }> = reactive([])
+const newFile: Array<{id:number, file: File; picId: string,itemDesc:string,nftName:string }> = reactive([])
 
 const genesisCollection = ref('')
 const currentNftsCollect = ref<Mrc721CollectionItem>()
 const tableData = reactive<MintListInfo[]>([])
 
-const btcConverSats=computed(()=>{
-  if(autoMaketData.value.initialPrice){
-    return new Decimal(autoMaketData.value.initialPrice).mul(10**8).toNumber()
-  }else{
-    return 0
-  }
-})
+// const btcConverSats=computed(()=>{
+//   if(autoMaketData.value.initialPrice){
+//     return new Decimal(autoMaketData.value.initialPrice).mul(10**8).toNumber()
+//   }else{
+//     return 0
+//   }
+// })
 
-const btcConverSatsPriceGrowth=computed(()=>{
-  if(autoMaketData.value.priceGrowth){
-    return new Decimal(autoMaketData.value.priceGrowth).mul(10**8).toNumber()
-  }else{
-    return 0
-  }
-})
+// const btcConverSatsPriceGrowth=computed(()=>{
+//   if(autoMaketData.value.priceGrowth){
+//     return new Decimal(autoMaketData.value.priceGrowth).mul(10**8).toNumber()
+//   }else{
+//     return 0
+//   }
+// })
 
-const initialPriceEmpty=computed(()=>{
-  return autoMaketData.value.initialPrice
-})
+// const initialPriceEmpty=computed(()=>{
+//   return autoMaketData.value.initialPrice
+// })
 
-const priceGrowthEmpty=computed(()=>{
-  return autoMaketData.value.priceGrowth
-})
+// const priceGrowthEmpty=computed(()=>{
+//   return autoMaketData.value.priceGrowth
+// })
 
 const customStyle = computed(() => {
   return {
@@ -1204,7 +1300,7 @@ const mintData = reactive<MintInfo & UseSameOption>({
   source: '',
   desc: '',
   nftName:'',
-  classify: [],
+  //classify: [],
   receiver: connectionStore.userInfo.address ?? '',
   isSameCover: true,
   isSameSource: true,
@@ -1254,6 +1350,14 @@ const rules = reactive<FormRules<MintInfo>>({
 })
 
 type MintListInfo = Omit<MintInfo, 'mintAmount'> & { id: number; op: string; }
+
+
+
+
+
+
+
+
 
 function validateInput(){
   mintData.mintAmount = Number(String(mintData.mintAmount).replace(/[^0-9]/g, ''))
@@ -1355,8 +1459,8 @@ function getCollectionData() {
 
     genesisCollection.value = currentNftsCollect.value!.name
 
-    autoMaketData.value.initialPrice=currentNftsCollect.value?.initialPrice! ? space(currentNftsCollect.value?.initialPrice!) : 0
-    autoMaketData.value.priceGrowth=currentNftsCollect.value?.priceGrowth! ? space(currentNftsCollect.value?.priceGrowth!) : 0
+    // autoMaketData.value.initialPrice=currentNftsCollect.value?.initialPrice! ? space(currentNftsCollect.value?.initialPrice!) : 0
+    // autoMaketData.value.priceGrowth=currentNftsCollect.value?.priceGrowth! ? space(currentNftsCollect.value?.priceGrowth!) : 0
 
 
   }
@@ -1414,7 +1518,7 @@ function editNft(item: MintListInfo) {
 
 function fillMintData(item: MintListInfo) {
   mintData.cover = item.cover
-  mintData.classify = item.classify
+  //mintData.classify = item.classify
   mintData.desc = item.desc
   mintData.receiver = item.receiver
   mintData.source = item.source
@@ -1494,14 +1598,14 @@ const confirm = async (formEl: any) => {
       source: mintData.cover?.fileName,
       desc: mintData.desc,
       //receiver: mintData.receiver ?? connectionStore.userInfo.address,
-      classify: mintData.classify,
+      //classify: mintData.classify,
     })
     newFile.push({
       id:i + currentlength + mintedAmount.value!,
       file: mintData.cover.originFile!,
       picId: mintData.cover.sha256,
       itemDesc:mintData.desc,
-      classify:mintData.classify,
+      //classify:mintData.classify,
       nftName: mintData.nftName
     })
   }
@@ -1566,16 +1670,16 @@ function checkIsSameFile(pre:{file: File;
 async function preMint() {
     try {
       let params=new FormData()
-      console.log("autoMaketData.value.initialPrice",autoMaketData.value.initialPrice)
+     
 
       for(let i=0;i<newFile.length;i++){
       params.append('file',newFile[i].file)
     }
     params.append('name',currentNftsCollect.value?.name!)
-    if(!currentNftsCollect.value?.initialPrice && autoMaketData.value.initialPrice){
-        params.append('initialPrice',new Decimal(autoMaketData.value.initialPrice).mul(10**8).toString())
-        params.append('priceGrowth',new Decimal(autoMaketData.value.priceGrowth).mul(10**8).toString())
-      }
+    // if(!currentNftsCollect.value?.initialPrice && autoMaketData.value.initialPrice){
+    //     params.append('initialPrice',new Decimal(autoMaketData.value.initialPrice).mul(10**8).toString())
+    //     params.append('priceGrowth',new Decimal(autoMaketData.value.priceGrowth).mul(10**8).toString())
+    //   }
 
     const res= await generateCommitAddress(params)
     console.log("res",res)
@@ -1590,7 +1694,7 @@ async function preMint() {
 
 
     } catch (error) {
-
+      throw new Error(error as any)
     }
 }
 
@@ -1684,17 +1788,17 @@ async function estimatePsbtFee(psbtHex:string,feeb:number,checkOnly:boolean=fals
 
    return estiomateResult
   } catch (error) {
-    throw new Error(error)
+    throw new Error(error as any)
   }
 }
 
 async function finallyMint() {
   const preloading = openLoading()
     try {
-    if(Number(autoMaketData.value.initialPrice) == 0){
-      preloading.close()
-      return ElMessage.error(`${i18n.t('Nfts.lanuch_automarket_set')}`)
-    }
+    // if(Number(autoMaketData.value.initialPrice) == 0){
+    //   preloading.close()
+    //   return ElMessage.error(`${i18n.t('Nfts.lanuch_automarket_set')}`)
+    // }
 
     // const estiomateResult= await estimateBuildTxFee([],feeStore.getCurrentFeeb,0,true)
     //
@@ -1709,7 +1813,7 @@ async function finallyMint() {
       picId:[],
       picPath:[],
       itemDesc:[],
-      classify:[],
+      // classify:[],
       nftName:[],
       collectionPinid:'',
       rawTx:'',
@@ -1720,7 +1824,7 @@ async function finallyMint() {
 
     for(let i=0;i<newFile.length;i++){
       params.append('file',newFile[i].file)
-      nftListInfo.classify.push(JSON.stringify(newFile[i].classify))
+      //nftListInfo.classify.push(JSON.stringify(newFile[i].classify))
       nftListInfo.itemDesc.push(newFile[i].itemDesc)
       nftListInfo.nftName.push(newFile[i].nftName)
       nftListInfo.picId.push(newFile[i].picId)
@@ -1833,14 +1937,14 @@ uploadNftsFilePath(nftListInfo).then((res)=>{
 
   if(res.code == 200){
     loading.close()
-  if(currentNftsCollect.value?.autoMarket && !currentNftsCollect.value?.initialPrice){
+  if(currentNftsCollect.value?.autoMarket){
     genesisStore.updateItem({
       ...currentNftsCollect.value,
       // initialPrice:autoMaketData.value.initialPrice!,
       // priceGrowth:autoMaketData.value.priceGrowth!
     })
-    currentNftsCollect.value.initialPrice=autoMaketData.value.initialPrice
-    currentNftsCollect.value.priceGrowth=autoMaketData.value.priceGrowth
+    // currentNftsCollect.value.initialPrice=autoMaketData.value.initialPrice
+    // currentNftsCollect.value.priceGrowth=autoMaketData.value.priceGrowth
   }
   genesisStore.updateCurrentTotalSupply({
         name:currentNftsCollect.value!.name,
@@ -1949,6 +2053,7 @@ const onSubmitNewCollection = async () => {
       royaltyRate:createCollectionform.royaltyRate,
       desc:createCollectionform.desc,
       website:createCollectionform.website,
+      classify:createCollectionform.classify,
       cover:'',
       metadata:createCollectionform.metadata
     },
@@ -1994,6 +2099,7 @@ if(mvcTransfer?.status == "canceled"){
       royaltyRate:createCollectionform.royaltyRate,
       desc:createCollectionform.desc,
       website:createCollectionform.website,
+      classify:createCollectionform.classify,
       cover:'',
       metadata:createCollectionform.metadata
     },
@@ -2021,9 +2127,12 @@ if(mvcTransfer?.status == "canceled"){
         desc:`${createCollectionform.desc}`,
         website:createCollectionform.website,
         metaData:JSON.stringify(createCollectionform.metadata),
+        classify:JSON.stringify(createCollectionform.classify),
         totalSupply:createCollectionform.totalSupply,
         chain:createCollectionform.chain ,
         autoMarket:createCollectionform.autoMakeMarket,
+        initialPrice:toSats(createCollectionform.initialPrice),
+        priceGrowth:toSats(createCollectionform.priceGrowth),
         royaltyRate:createCollectionform.royaltyRate,
         collectionPinId:collectionPinid,
         metaId:connectionStore.last.metaid,
@@ -2052,11 +2161,12 @@ if(mvcTransfer?.status == "canceled"){
     collectionPinId: `${collectionPinid}`,
     minted:0,
     currentSupply:0,
+    classify:createCollectionform.classify,
     autoMarket: createCollectionform.autoMakeMarket,
     genesisTimestamp: Date.now(),
     metaId: connectionStore.last.metaid,
-    initialPrice:0,
-    priceGrowth:0
+    initialPrice:toSats(createCollectionform.initialPrice),
+    priceGrowth:toSats(createCollectionform.priceGrowth),
   })
   toNftsDetail(`${collectionPinid}`)
 }
@@ -2097,8 +2207,8 @@ const beforeAvatarUpload:UploadProps['beforeUpload'] = async (rawFile) => {
   if (!fileType.includes(rawFile.type)) {
     ElMessage.error('Avatar picture must be JPG/PNG/GIF/WEBP format!')
     return false
-  } else if (rawFile.size / 1024 / 1024 > 1) {
-    ElMessage.error('Avatar picture size can not exceed 1MB!')
+  } else if (rawFile.size / 1024 / 1024 > 0.2) {
+    ElMessage.error('Avatar picture size can not exceed 200KB!')
     return false
   }
   const compressed = await compressImage(rawFile)

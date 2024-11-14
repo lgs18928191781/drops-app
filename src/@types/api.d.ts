@@ -1254,7 +1254,7 @@ declare interface UploadFileData{
   picId:string[]
       picPath:string[]
       itemDesc:string[]
-      classify:string[]
+      // classify:string[]
       nftName:string[]
       
       collectionPinid:string

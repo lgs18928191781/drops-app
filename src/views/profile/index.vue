@@ -1,5 +1,5 @@
 <template>
-    <div class="profile-wrap">
+    <div class="profile-wrap ">
         <ElSkeleton :loading="isSkeleton" animated>
       <template #template>
         <CollectionSkeleton />
@@ -18,11 +18,11 @@
                 :image="currentUser.val.avatarId"
                 :name="''"
                 :meta-name="''"
-                custom-class="w-[100px] h-[100px] rounded-full mr-5"
+                :custom-class="[layout.isMobilePhone ? 'w-[70px] h-[70px]' :'w-[100px] h-[100px]','rounded-full', 'mr-5'] "
               />
               <div class="flex flex-col ">
-                <div class="text-3xl">{{  currentUser.val.name  }}</div>
-                <div class="mt-3 text-lg text-[#807B8D]">MetaID:{{  currentUser.val.metaid.slice(0,6)  }}</div>
+                <div :class="layout.isMobilePhone ? 'text-xl' : 'text-3xl'">{{  currentUser.val.name  }}</div>
+                <div class="mt-3  text-[#807B8D]" :class="layout.isMobilePhone ?  'text-base' : 'text-lg'">MetaID:{{  currentUser.val.metaid.slice(0,6)  }}</div>
               </div>
               
             </div>
@@ -131,7 +131,7 @@
             <div class="table-wrap">
                 <el-table :data="saleNfts" height="250" style="width: 100%" row-class-name="table-row-wrap">
                      <!--collection-->
-                <el-table-column label="Collection" width="200">
+                <el-table-column label="Collection" min-width="200">
                         <template #default="scope">
                         <div class="flex w-full">
                             <Image class="mr-[6px]" :src="scope.row.item_cover"></Image>
@@ -145,36 +145,58 @@
                         </template>
                         </el-table-column>
                         <!--type-->
-                        <el-table-column label="Type" width="180">
+                        <el-table-column label="Type" min-width="180">
                         <template #default="scope">
                             <div class="text-[#fff] text-sm ">{{ $t('Nfts.sell') }}</div>
                         </template>
                         </el-table-column>
                           <!--price-->
-                          <el-table-column label="Price" width="180">
+                          <el-table-column label="Price" min-width="180">
                         <template #default="scope">
                             <div class="text-[#fff] text-sm ">{{ $filters.space(scope.row.total_sale_price) }} BTC</div>
                         </template>
                         </el-table-column>
                           <!--From-->
-                          <el-table-column label="From" width="180">
+                          <el-table-column label="From" min-width="250">
                         <template #default="scope">
-                            <div class="text-[#fff] text-sm ">{{ $filters.omitMiddle(scope.row.saler_address) }}</div>
+                          <div  class="flex1 flex items-center flex-row cont mr-2">
+
+<UserAvatar
+:address="''"
+:image="scope.row.owner_info?.avatarId "
+:meta-id="scope.row.saler_metaid"
+:name="scope.row.owner_info?.name"
+class="user-warp-item   overflow-hidden mr-3"
+:meta-name="''"
+:disabled="true"
+
+/>
+
+<div class="flex flex-col text-[#fff]">
+<div class="text-base "><UserName    :name="scope.row.owner_info?.name " :meta-name="''" /></div>
+<div class="text-xs  text-dark-300">MetaID: {{ scope.row.saler_metaid ? scope.row.saler_metaid.slice(0, 6) : '--' }}</div>
+</div>
+</div>
+
+
+                            <!-- <div class="text-[#fff] text-sm ">{{ $filters.omitMiddle(scope.row.saler_address) }}</div> -->
                         </template>
                         </el-table-column>
                             <!--Time-->
-                            <el-table-column label="Time" width="200">
+                            <el-table-column label="Time" min-width="200">
                         <template #default="scope">
                             <div class="text-[#fff] text-sm ">{{$filters.fomatISODate(scope.row.updated_at)  }}</div>
                         </template>
                         </el-table-column>
 
                             <!--Time-->
-                            <el-table-column  width="180">
+                            <el-table-column  min-width="180">
                         <template #default="scope">
+                           <div class="flex justify-end">
                             <div @click="btnFun(scope.row)"  class="cursor-pointer cancel-list w-[120px] text-[#fff] text-sm ">
                                 <span>{{btnText }}</span>
                             </div>
+                           </div>
                         </template>
                         </el-table-column>
             </el-table>
@@ -320,9 +342,9 @@
         <NFTSaleSuccessVue v-model="isShowSaleSuccess" @success="listSuccessful"></NFTSaleSuccessVue>
       </template>
     </ElSkeleton>
-
+    
     </div>
-
+    
   </template>
   
   <script setup lang="ts">
@@ -392,6 +414,8 @@ import MetabotItem from '@/components/NFTItem/MetabotItem.vue'
 import { GetGenesisNFTs } from '@/api/aggregation'
 import { useUserStore } from '@/stores/user'
 import Decimal from 'decimal.js-light'
+import { useLayoutStore } from '@/stores/layout'
+const layout = useLayoutStore()
   const networkStore = useNetworkStore()
   const feeStore = useFeebStore()
   const nftEntity = useNFTEntity()
@@ -649,11 +673,14 @@ async function convertNft(nft:GenesisNFTItem){
     tokenIndex:nft.nftTokenIndex,
     recipient:`mhgReAXohNMYeSLyQBECq76v7fCkYHzean`,
     options:{
-      noBroadcast:true
+      noBroadcast:true,
+      useUnconfirmed:true
     }
   })
- 
-  
+        if(nftRes?.status == 'canceled'){
+          return ElMessage.error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
+        }
+
           const finalSignRevealRes= await nftEntity.convertNft({
             convertPsbtHex:psbtHex,
             extraFee:new Decimal(preFee).add(buildCommitFee).toNumber(),
@@ -669,11 +696,13 @@ async function convertNft(nft:GenesisNFTItem){
             codehash:nft.nftCodehash
           })
           
-          if(finalSignRevealRes.revealTxId){
+          if(finalSignRevealRes?.revealTxId){
             
             ElMessage.success(`${i18n.t('Nfts.convert_success')}`)
             await sleep(1000)
             refreshDatas()
+          }else{
+            return ElMessage.error(finalSignRevealRes?.msg)
           }
 
 
@@ -869,6 +898,7 @@ async function convertNft(nft:GenesisNFTItem){
           if (connectionStore.last.user.address) {
             item.creator_info = await getUserAllInfo(item.creator_info.address)
             item.owner_info = await getUserAllInfo(item.saler_address)
+            
           }
         }
   

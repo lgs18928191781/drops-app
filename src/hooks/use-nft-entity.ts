@@ -594,10 +594,11 @@ export function useNFTEntity(){
               codehash,
               mvcNftOwnerAddress:mvcAddress
             })
+            
             if(finalSignRevealRes.code == 200){
               return finalSignRevealRes.data
             }else{
-              throw new Error(finalSignRevealRes.msg)
+              return finalSignRevealRes.msg
             }
         }
 

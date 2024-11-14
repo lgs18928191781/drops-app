@@ -31,6 +31,7 @@ export type NftCollection={
     desc:string
     cover:string
     website:string
+    classify:string[],
     metadata:Object
 }
 

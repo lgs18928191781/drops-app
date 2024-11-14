@@ -248,6 +248,7 @@
         <NFTSellVue :nft="saleNftItem.val!" v-model="isShowNftSale" @success="onOperateSuccess" />
       </template>
     </ElSkeleton>
+    
   </template>
   
   <script setup lang="ts">

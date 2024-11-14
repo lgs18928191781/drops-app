@@ -108,8 +108,8 @@ module.exports = {
     },
     extend: {
       colors: {
-        primary: '#FFDC51',
-        'primary-border': '#FFC051',
+        primary: '#EB4C93',
+        'primary-border': '#EB4C93',
         link: '#5586BB',
         dark: {
           100: '#F5F7FA',
