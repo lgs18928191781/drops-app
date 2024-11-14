@@ -281,11 +281,14 @@ export function useNFTEntity(){
             return ElMessage.error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
             
           }else{
+            const { poolAddress,path}=getOrderPsbtRes.data
             const submitRes= await submitMintOrder({
             collectionPinId:params.collectionPinid,
             commitAddress:params.commitAddress,
             psbtHex:rawTx,
-            feeb:feeb
+            feeb:feeb,
+            poolAddress,
+            path
           })
           
           if(submitRes.code == 200){
@@ -383,6 +386,8 @@ export function useNFTEntity(){
         extraFee:{
         royaltyRateFee: number;
         platformFee: number;
+        royalteRate:number,
+        platformRate:number,
         }
       }) {
         try {
@@ -415,8 +420,11 @@ export function useNFTEntity(){
         salePrice:params.salePrice,
   totalPrice:params.totalPrice,
         salerAddress:connectionStore.getAddress,
-        salerMetaid:connectionStore.last.metaid
-        
+        salerMetaid:connectionStore.last.metaid,
+        royalteRate:params.extraFee.royalteRate,
+        platformRate:params.extraFee.platformRate,
+        royaltyRateFee:params.extraFee.royaltyRateFee,
+        platformFee:params.extraFee.platformFee
       })
       
       if(submitRes.code == 200){

@@ -148,6 +148,7 @@ import { ElMessage } from 'element-plus'
 import {useNFTEntity} from '@/hooks/use-nft-entity'
 import BTC from '@/assets/icons/btc.svg?url'
 import { QuestionFilled} from '@element-plus/icons-vue'
+import {PlatformRate} from '@/data/constants'
 const props = defineProps<{
   modelValue: boolean
   nft: NftOrderType
@@ -383,6 +384,8 @@ function submitForm() {
           salePrice:sellPriceSatoshi,
           totalPrice:totalPriceSatoshi,
           extraFee:{
+            royalteRate:props.nft.royalty_rate,
+            platformRate:PlatformRate,
             royaltyRateFee:royaltyFee.value > 0 ? parseInt(new Decimal(royaltyFee.value).toString()) : 0,
             platformFee:platformFee.value > 0 ? parseInt(new Decimal(platformFee.value).toString()) : 0,
           }

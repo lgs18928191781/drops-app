@@ -147,7 +147,9 @@ export const submitMintOrder=async(params:{
   commitAddress: string
   collectionPinId:string
   psbtHex:string,
-  feeb:number
+  feeb:number,
+  poolAddress:string,
+  path:number
 }):Promise<apiMrc721Response>=>{
  return NftOrders.post('/submit-mint-order', params)
 }
@@ -299,6 +301,12 @@ export const submitSaleOrder=async(params:{
   totalPrice:number
   salerAddress:string
   salerMetaid:string
+  royalteRate:number,
+  platformRate:number,
+  royaltyRateFee:number,
+  platformFee:number
+
+
 }):Promise<apiMrc721Response>=>{
   return NftOrders.post('/submit-nft-sale', params)
 }
