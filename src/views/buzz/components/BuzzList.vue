@@ -241,8 +241,10 @@ const operates: {
                       emit('updateItem', respones.data.results.items[0])
                     }
                   })
+              
                 } else if (status === JobStatus.Failed) {
                   watchJobStatus()
+                
                   emit('removeItem', { txId: res.currentNode!.txId })
                 }
               }
