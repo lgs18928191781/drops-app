@@ -240,6 +240,22 @@ export const router = createRouter({
                   path: 'create',
                   name: 'talkDAOProposalCreate',
                   component: () => import('@/views/talk/DAO/proposal/Create.vue'),
+                  beforeEnter: (to, from, next) => {
+                    const userStore = useUserStore()
+                    try {
+                      if (
+                        userStore.user?.metaId !==
+                        '1f983cc536a5378952e7977c7dda26db52e1804c8d95efa4820144d6e823f5c9'
+                      ) {
+                        next('/404')
+                      } else {
+                        next()
+                      }
+                    } catch (error) {
+                      ElMessage.error(`${error?.toString()}`)
+                      next()
+                    }
+                  },
                 },
               ],
             },
