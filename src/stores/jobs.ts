@@ -102,7 +102,10 @@ export const useJobsStore = defineStore('jobs', {
           step.status = stepInMessage.resultTxId ? JobStepStatus.Success : JobStepStatus.Failed
           if (step.status == JobStepStatus.Failed) {
             step.resultTxMessage = stepInMessage.resultMessage
+            ElMessage.error(step.resultTxMessage)
+            
           }
+          
         }
 
         // 更新任务状态

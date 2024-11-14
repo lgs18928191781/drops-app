@@ -9,11 +9,7 @@
     @update-item="updateItem"
     @add-item="val => list.unshift(val)"
     @remove-item="
-      txId =>
-        list.splice(
-          list.findIndex(item => item.txId === txId),
-          1
-        )
+      reportJobsFail
     "
   ></BuzzListVue>
 </template>
@@ -30,6 +26,7 @@ import { Mitt, MittEvent } from '@/utils/mitt'
 import PublishBoxVue from './components/PublishBox.vue'
 import { useRootStore } from '@/stores/root'
 import { useI18n } from 'vue-i18n'
+import { ElMessage } from 'element-plus'
 const pagination = reactive({ ...initPagination, timestamp: 0, page: undefined })
 const userStore = useUserStore()
 const layout = useLayoutStore()
@@ -41,6 +38,16 @@ const i18n = useI18n()
 const list: BuzzItem[] = reactive([])
 const isSkeleton = ref(true)
 const pulldown: PullDownVal = inject('Pulldown')!
+
+
+function reportJobsFail(txId:string){
+  list.splice(
+          list.findIndex(item => item.txId === txId),
+          1
+        )
+  
+     
+}
 
 function getDatas(isCover = false) {
   return new Promise<void>(async (resolve, reject) => {

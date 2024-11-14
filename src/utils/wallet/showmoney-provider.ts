@@ -214,6 +214,57 @@ export default class ShowmoneyProvider {
     })
   }
 
+
+  async callmetaidBaseApi(
+    path: string,
+    params: ObjTypes<string | number> = {},
+    method = 'get',
+    chain: HdWalletChain = HdWalletChain.MVC
+  ): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        
+        // const signature = await this.getMetasvSig(path)
+        // const headers = {
+        //   'Content-Type': 'application/json',
+        //   'MetaSV-Timestamp': signature.timestamp,
+        //   'MetaSV-Client-Pubkey': signature.publicKey,
+        //   'MetaSV-Nonce': signature.nonce,
+        //   'MetaSV-Signature': signature.signEncoded,
+        // }
+     
+        const origin = `https://api.metaid.io/metaid-base/v1`
+        const url = `${origin}${path}`
+        const Http = new HttpRequests()
+        let res
+        try {
+          if (method === 'get') {
+            res = await Http.getFetch(url, params)
+          } else {
+            res = await Http.postFetch(url, params)
+          }
+        } catch (error) {
+          const mirror = chain === HdWalletChain.MVC ? MVCMetaSvMirror : BSVMetaSvMirror
+          if (mirror[this.network] === origin) {
+            throw error
+          } else {
+            const mirrorUrl = mirror[this.network] + path
+            if (method === 'get') {
+              res = await Http.getFetch(mirrorUrl, params)
+            } else {
+              res = await Http.postFetch(mirrorUrl, params)
+            }
+          }
+        }
+        if (res) {
+          resolve(res)
+        }
+      } catch (error) {
+        reject(error)
+      }
+    })
+  }
+
   async callMetasvApi(
     path: string,
     params: ObjTypes<string | number> = {},
@@ -416,7 +467,8 @@ export default class ShowmoneyProvider {
     chain: HdWalletChain = HdWalletChain.MVC,
     needUseReadyUtxo: boolean = false
   ): Promise<UtxoItem[]> {
-    let res = await this.callMetasvApi(`/xpubLite/${xpub}/utxo`, {}, 'get', chain)
+    let res = await this.callmetaidBaseApi(`/meta/xpub/utxo/${xpub}`, {}, 'get')
+    
     if (needUseReadyUtxo) {
       const getUseReadyUtxoRes = await Utxos({ pageSize: 50 }).catch(error => {
         throw new Error(`${error.toString()}`)
