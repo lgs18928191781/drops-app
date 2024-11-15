@@ -353,9 +353,11 @@ async function confirmBuy() {
         
         const buyRes= await nftEntity.buyNft({
           nftItem:props.nft,
-          psbtHex:props.nft.order_id,
+          psbtHex:props.nft.psbt_hex,
+          orderId:props.nft.order_id,
           buyerAddress:connectionStore.last.user.address,
           nftPinid:props.nft.item_pinid,
+          collectionPinid:props.nft.collection_pinid,
           chain:NftsLaunchPadChainSymbol.btc,
           extraFee:{
             salePrice:realSalePrice.value.salePrice,

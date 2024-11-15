@@ -2044,18 +2044,21 @@ const onSubmitNewCollection = async () => {
 
 
 
-
+    const metaData={
+      royaltyRate:createCollectionform.royaltyRate,
+      classify:createCollectionform.classify
+    }
 
     const preMint = await mintNftEntity({
     body:{
       name:createCollectionform.name,
       totalSupply:createCollectionform.totalSupply,
-      royaltyRate:createCollectionform.royaltyRate,
+      //royaltyRate:createCollectionform.royaltyRate,
       desc:createCollectionform.desc,
       website:createCollectionform.website,
-      classify:createCollectionform.classify,
+      //classify:createCollectionform.classify,
       cover:'',
-      metadata:createCollectionform.metadata
+      metadata:metaData
     },
     attachments:[createCollectionform.originFile],
     lockAddress:'',
@@ -2096,12 +2099,12 @@ if(mvcTransfer?.status == "canceled"){
     body:{
       name:createCollectionform.name,
       totalSupply:createCollectionform.totalSupply,
-      royaltyRate:createCollectionform.royaltyRate,
+      //royaltyRate:createCollectionform.royaltyRate,
       desc:createCollectionform.desc,
       website:createCollectionform.website,
-      classify:createCollectionform.classify,
+      //classify:createCollectionform.classify,
       cover:'',
-      metadata:createCollectionform.metadata
+      metadata:metaData
     },
     attachments:[createCollectionform.originFile],
     lockAddress:preMint!.receiverAddress,
@@ -2126,7 +2129,7 @@ if(mvcTransfer?.status == "canceled"){
         coverPinid:coverPinId,
         desc:`${createCollectionform.desc}`,
         website:createCollectionform.website,
-        metaData:JSON.stringify(createCollectionform.metadata),
+        metaData:JSON.stringify(metaData),
         classify:JSON.stringify(createCollectionform.classify),
         totalSupply:createCollectionform.totalSupply,
         chain:createCollectionform.chain ,
@@ -2154,7 +2157,7 @@ if(mvcTransfer?.status == "canceled"){
     desc: createCollectionform.desc,
     cover: createCollectionform.cover,
     website: createCollectionform.website,
-    metaData: createCollectionform.metadata,
+    metaData: metaData,
     royaltyRate: +createCollectionform.royaltyRate,
     chain:
       createCollectionform.chain == 'btc' ? NftsLaunchPadChainSymbol.btc : NftsLaunchPadChainSymbol.mvc,

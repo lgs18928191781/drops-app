@@ -314,6 +314,9 @@ export const submitSaleOrder=async(params:{
 export const submitBuyOrder=async(params:{
   psbtHex:string
   buyerAddress:string
+  orderId:string,
+ 
+  itemPinid:string,
   chain?: NftsLaunchPadChainSymbol
 }):Promise<apiMrc721Response>=>{
   return NftOrders.post('/submit-nft-buy', params)
@@ -322,6 +325,7 @@ export const submitBuyOrder=async(params:{
 export const finalySignAndBuyNft=async(params:{
   revealPsbtHex:string
   originalPsbtHex:string
+  orderId:string
   buyerAddress: string
   nftPinid:string
 }):Promise<apiMrc721Response>=>{
@@ -337,6 +341,7 @@ export const submitNftOffSale=async(params:{
   salerMetaid:string,
       salerAddress:string,
       itemPinid:string,
+      collectionPinid:string,
       psbtHex:string
 }):Promise<apiMrc721Response>=>{
   return NftOrders.post('/submit-nft-offsale',params)
@@ -357,6 +362,7 @@ export const getRedeemOrder=async(params:{
 export const submitRedeemOrder=async(params:{
   psbtHex:string,
   nftPinid:string,
+  collectionPinid:string
 }):Promise<apiMrc721Response>=>{
   return NftOrders.post('/submit-redeem-order',params)
 }

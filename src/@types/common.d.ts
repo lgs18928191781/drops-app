@@ -467,6 +467,7 @@ declare interface NftItemType{
   item_pinid:string
   nft_name:string
   order_id:string
+  psbt_hex:string
   order_status:import('@/data/constants').NftOrderState
   reveal_txid:string
   royalty_rate:number

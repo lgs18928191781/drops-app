@@ -112,8 +112,9 @@ export function NFTOffSale(nft: NftItemType) {
             const offsaleRes= await submitNftOffSale({
               salerMetaid: connectionStore.last.user.metaid,
               salerAddress: connectionStore.last.user.address,
+              collectionPinid:nft.collection_pinid,
               itemPinid: nft.item_pinid,
-              psbtHex:nft.order_id
+              psbtHex:nft.psbt_hex
             })
             if(offsaleRes.code == 200){
             loading.close()

@@ -170,10 +170,10 @@ export const mintNftDescSchema = (collectionName:string):EntitySchema =>{
             name:'totalSupply',
             type:'number'
           },
-          {
-            name:'royaltyRate',
-            type:'number'
-          },
+          // {
+          //   name:'royaltyRate',
+          //   type:'number'
+          // },
           {
             name:'desc',
             type:'string'

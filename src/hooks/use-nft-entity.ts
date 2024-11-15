@@ -446,8 +446,10 @@ export function useNFTEntity(){
       async function buyNft(parmas:{
         nftItem:NftOrderType
         psbtHex:string
+        orderId:string
         buyerAddress:string
         nftPinid:string
+        collectionPinid:string
         extraFee:feeDetailType
         chain?:NftsLaunchPadChainSymbol
       }){
@@ -460,6 +462,8 @@ export function useNFTEntity(){
           
           const orderRes= await submitBuyOrder({
             psbtHex:parmas.psbtHex,
+            orderId:parmas.orderId,
+            itemPinid:parmas.nftPinid,
             buyerAddress:parmas.buyerAddress,
             chain:parmas.chain
           })
@@ -513,6 +517,7 @@ export function useNFTEntity(){
                 const revealBuyRes= await finalySignAndBuyNft({
                   revealPsbtHex:rawTx,
                   originalPsbtHex:parmas.psbtHex,
+                  orderId:parmas.orderId,
                   buyerAddress:parmas.buyerAddress,
                   nftPinid:parmas.nftPinid
                 })
@@ -691,7 +696,8 @@ export function useNFTEntity(){
             }else{
               const submitRes= await submitRedeemOrder({
                 psbtHex:rawTx,
-                nftPinid:params.nftPinid
+                nftPinid:params.nftPinid,
+                collectionPinid:params.collectionPinid
               })
               if(submitRes.code == 200){
                 return submitRes.data

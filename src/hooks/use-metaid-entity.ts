@@ -27,11 +27,11 @@ export type NftItem={
 export type NftCollection={
     name:string
     totalSupply:number
-    royaltyRate:number
+    //royaltyRate:number
     desc:string
     cover:string
     website:string
-    classify:string[],
+    //classify:string[],
     metadata:Object
 }
 

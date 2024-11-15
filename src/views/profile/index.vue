@@ -659,7 +659,7 @@ async function convertNft(nft:GenesisNFTItem){
       commitAddress:commitAddress,
       lockAddress:lockAddress,
       nftRecevierAddress:connectionStore.userInfo.address,
-      collectionPinid:`f673ba2fdcbc478fef736cb120a6ac487a0fedf4c3828296af6a25c57bcf822ei0`,
+      collectionPinid:import.meta.env.VITE_WHITELIST_COLLECTION,
       feeb:feeStore.getCurrentFeeb,
       buildCommitFee:totalFee
         })

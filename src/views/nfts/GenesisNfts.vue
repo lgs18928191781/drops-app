@@ -300,18 +300,21 @@ const onSubmit = async() => {
     loading.close()
     return ElMessage.error(`${i18n.t('Nfts.lanuch_existNfts')}`)
   }else{
-
+    const metadata={
+      royaltyRate:+form.royaltyRate,
+      classify:form.classify
+    }
     
     const preMint = await mintNftEntity({
     body:{
       name:form.name,
       totalSupply:+form.totalSupply,
-      royaltyRate:+form.royaltyRate,
+      //royaltyRate:+form.royaltyRate,
       desc:form.desc,
       website:form.website,
       cover:'',
-      classify:form.classify,
-      metadata:form.metadata,
+      //classify:form.classify,
+      metadata:metadata,
     },
     attachments:[form.originFile],
     lockAddress:'',
@@ -358,12 +361,12 @@ const onSubmit = async() => {
     body:{
       name:form.name,
       totalSupply:+form.totalSupply,
-      royaltyRate:+form.royaltyRate,
+      //royaltyRate:+form.royaltyRate,
       desc:form.desc,
       website:form.website,
-      classify:form.classify,
+      //classify:form.classify,
       cover:'',
-      metadata:form.metadata
+      metadata:metadata
     },
     attachments:[form.originFile],
     lockAddress:preMint!.receiverAddress,
@@ -389,7 +392,7 @@ const onSubmit = async() => {
         coverPinid:coverPinId,
         desc:form.desc,
         website:form.website,
-        metaData:JSON.stringify(form.metadata),
+        metaData:JSON.stringify(metadata),
         classify:JSON.stringify(form.classify),
         totalSupply:+form.totalSupply,
         chain:'btc',
@@ -418,7 +421,7 @@ const onSubmit = async() => {
         cover:form.cover,
         website:form.website,
         royaltyRate:+form.royaltyRate,
-        metaData:form.metadata,
+        metaData:metadata,
         classify:form.classify,
         chain: NftsLaunchPadChainSymbol.btc,
         collectionPinId:collectionPinid,
