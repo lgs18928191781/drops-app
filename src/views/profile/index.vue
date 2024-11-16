@@ -276,7 +276,7 @@ class="user-warp-item   overflow-hidden mr-3"
               <!-- <CollectionChart /> -->
             </template>
             <!--Convert-->
-            <template v-else>
+            <template v-else-if="tabActive === ProfileTab.Convert">
              
   
               <div class="collection-nft-content flex">
@@ -325,6 +325,167 @@ class="user-warp-item   overflow-hidden mr-3"
   
               <LoadMore :pagination="pagination" v-if="!isListLoading && convertList.length > 0" />
             </template>
+
+            <!--Conver order-->
+            <template v-else-if="tabActive === ProfileTab.ConvertOrder">
+
+<div class="table-wrap">
+    <el-table :data="convertOrderList" height="250" style="width: 100%" row-class-name="table-row-wrap">
+         <!--collection-->
+    <el-table-column label="NFT" min-width="200">
+            <template #default="scope">
+            <div class="flex w-full">
+                <Image class="mr-[6px]" :src="scope.row.nft_icon"></Image>
+                <!-- <div class="flex w-7/12 flex-col justify-between text-[#fff]">
+                    <span class="text-base overflow-ellipsis overflow-hidden whitespace-nowrap">{{ scope.row.nft_name }}</span>
+                    <span class="text-xs ml-[8px]">#{{ scope.row.nftPinInfo.number }}</span>
+                </div> -->
+
+           
+            </div>
+            </template>
+            </el-table-column>
+            <!--type-->
+            <el-table-column label="Type" min-width="180">
+            <template #default="scope">
+                <div class="text-[#fff] text-sm ">{{ $t('Nfts.convert') }}</div>
+            </template>
+            </el-table-column>
+           
+              <!--From-->
+              <el-table-column label="From" min-width="250">
+            <template #default="scope">
+              <div  class="flex1 flex items-center flex-row cont mr-2">
+
+  <div class="text-[#fff] text-sm ">{{ $filters.omitMiddle(scope.row.mvc_nft_owner_address) }}</div>
+
+
+</div>
+
+
+              
+            </template>
+            </el-table-column>
+
+                 <!--From-->
+                 <el-table-column label="To" min-width="250">
+            <template #default="scope">
+              <div  class="flex1 flex items-center flex-row cont mr-2">
+
+  <div class="text-[#fff] text-sm ">{{ $filters.omitMiddle(scope.row.convert_address) }}</div>
+
+
+</div>
+
+
+              
+            </template>
+            </el-table-column>
+
+
+                <!--Time-->
+                <el-table-column label="Time" min-width="200">
+            <template #default="scope">
+                <div class="text-[#fff] text-sm ">{{$filters.fomatISODate(scope.row.updated_at)  }}</div>
+            </template>
+            </el-table-column>
+
+                <!--status-->
+                <el-table-column label="Status" min-width="200">
+            <template #default="scope">
+                <div class="flex  text-sm " :class="scope.row.order_status == 1 ? 'text-[#807B8D]' : scope.row.order_status == 2 ? 'text-[#DE59FC]' : 'text-rose-500'">
+                  <span class="mr-1">{{stateText(scope.row.order_status)  }}</span>
+                  <span>({{ scope.row.order_status == 2 ? 1 : 0}}/1)</span>
+                </div>
+            </template>
+            </el-table-column>
+
+                <!--Time-->
+                <!-- <el-table-column  min-width="180">
+            <template #default="scope">
+               <div class="flex justify-end">
+                <div @click="btnFun(scope.row)"  class="cursor-pointer cancel-list w-[120px] text-[#fff] text-sm ">
+                    <span>{{btnText }}</span>
+                </div>
+               </div>
+            </template>
+            </el-table-column> -->
+</el-table>
+</div>
+
+
+
+  <!-- <ElAffix :offset="scrrentWarpOffsetTop">
+    <div class="screen flex flex-align-center" id="screen"> -->
+      <!-- <div class="flex1"> -->
+        <!-- <a
+          class="main-border flex flex-align-center"
+          @click="isShowFilterWarp = !isShowFilterWarp"
+        >
+          <Icon name="filter" />
+          <template v-if="isShowFilterWarp">{{ $t('NFT.Filter') }}</template>
+        </a> -->
+      <!-- </div> -->
+      <!-- <ElSelect v-model="sortIndex" @change="refreshDatas">
+        <ElOption
+          v-for="(item, index) in sorts"
+          :key="index"
+          :label="item.name()"
+          :value="index"
+        />
+      </ElSelect> -->
+      <!-- <div class="display flex flex-align-center">
+        <a
+          @click="changeCell(item.value)"
+          v-for="item in cells"
+          :key="item.value"
+          :class="{ active: item.value === cell.val.value }"
+        >
+          <Icon :name="item.icon" />
+        </a>
+      </div>
+    </div>
+  </ElAffix> -->
+  <!-- <div class="collection-nft-content flex">
+    <ElRow
+      :gutter="gutter"
+      class="nft-list flex1"
+      v-infinite-scroll="getMore"
+      :infinite-scroll-immediate="false"
+      :infinite-scroll-distance="100"
+      v-if="!isShowNFTList"
+    >
+      <ElCol
+        :xs="cell.val.xs"
+        :sm="cell.val.sm"
+        :md="cell.val.md"
+        :lg="cell.val.lg"
+        :xl="cell.val.xl"
+        v-for="(nft, index) in saleNfts"
+        :key="isSaleListLoading ? index : nft.item_pinid"
+      > -->
+
+
+
+        <!-- <NFTItemVue
+          :nft="nft"
+          @buy="buyNFT"
+          @sale="onSale"
+          @offsale="onOffsale"
+          :loading="isSaleListLoading"
+        /> -->
+      <!-- </ElCol>
+
+      <ElCol v-if="!isSaleListLoading && saleNfts.length === 0">
+        <IsNull />
+      </ElCol>
+    </ElRow>
+  </div> -->
+
+  <!-- <LoadMore :pagination="pagination" v-if="!isSaleListLoading && saleNfts.length > 0" /> -->
+
+  <!-- <CollectionChart /> -->
+</template>
           </div>
         </div>
   
@@ -395,7 +556,7 @@ class="user-warp-item   overflow-hidden mr-3"
     GetOwnerNFTsListing,
     preConvert,
     submitConvert,
-    
+    getMyConvertOrders
   } from '@/api/mrc721-api'
  
   import { ElMessage } from 'element-plus'
@@ -422,6 +583,7 @@ const layout = useLayoutStore()
   const i18n = useI18n()
   const route = useRoute()
   const router = useRouter()
+  const convertOrderList:ConverOrderType[]=reactive([])
   const currentUser:{val:BaseUserInfo}=reactive({
     val:{
 
@@ -432,8 +594,10 @@ const layout = useLayoutStore()
   enum ProfileTab {
     Items = 0,
     Listing = 1,
-    Convert = 2
+    Convert = 2,
+    ConvertOrder=3
   }
+
 
  
 
@@ -456,6 +620,10 @@ const layout = useLayoutStore()
     {
       name: () => i18n.t('NFT.Profile_Convert'),
       value: ProfileTab.Convert,
+    },
+    {
+      name: () => i18n.t('NFT.Profile_Convert_Order'),
+      value: ProfileTab.ConvertOrder,
     },
   ]
   const tabActive = ref(route.params.type ? ProfileTab.Convert : ProfileTab.Items)
@@ -556,6 +724,9 @@ const layout = useLayoutStore()
   const isShowFilterWarp = ref(false)
   const isListLoading = ref(false)
   const isSaleListLoading = ref(false)
+
+  
+
   const sorts = [
     {
       name: () => i18n.t('NFT.Sort.Price low to high'),
@@ -586,6 +757,22 @@ const layout = useLayoutStore()
   ]
   
   const sortIndex = ref(0)
+
+  function stateText(status:number){
+    switch (status) {
+      case 1:
+        
+        return i18n.t('NFTs.status_confirming')
+        case 2:
+        
+        return i18n.t('NFTs.status_confirmed')
+        case 3:
+        
+        return i18n.t('NFTs.status_failed')
+      default:
+      return i18n.t('NFTs.status_confirming');
+    }
+  }
 
   const convertList = computed(() => {
     
@@ -811,7 +998,7 @@ async function convertNft(nft:GenesisNFTItem){
         address:mvcAddress,
       chain: 'mvc',
       codehash: `e205939ad9956673ce7da9fbd40514b30f66dc35`,
-      genesis: `92cbffdd55ae32b4bd68e8a3394815c22c98e2b6`,
+      genesis: `2cca335f6091f35bb833453ae8915bafc89ae16b`,
       ...pagination,
        
       })
@@ -1271,6 +1458,22 @@ async function listSuccessful(){
       }
     })
   }
+
+ async function getConverOrderList(isCover=true){
+    try {
+      if(isCover){
+        convertOrderList.length = 0
+      }
+     const res=await getMyConvertOrders({
+        ownerAddress:connectionStore.userInfo.address
+      })
+      if(res.code == 200){
+        convertOrderList.push(...res.data)
+      }
+    } catch (error) {
+      throw new Error(error as any)
+    }
+  }
   
   function changeTab(value: ProfileTab) {
     if (tabActive.value === value) return
@@ -1303,9 +1506,17 @@ async function listSuccessful(){
       }).catch(()=>{
         isListLoading.value = false
       })
+    }else if(value ===  ProfileTab.ConvertOrder){
+      tabActive.value = value
+      pagination.page = 1
+      // pagination.flag=''
+      pagination.loading = false
+      pagination.nothing = false
+      getConverOrderList()
     }
   }
-if(tabActive.value == ProfileTab.Items){
+
+  if(tabActive.value == ProfileTab.Items){
   getDatas(true)
         .then(() => {
           

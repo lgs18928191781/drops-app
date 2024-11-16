@@ -842,7 +842,8 @@
     "submit_Sell": "Submit Listings",
     "royalte fee": "Royalty Fee Explanation",
     "My_collection works": "My MetaBot",
-    "Profile_Convert": "Convert"
+    "Profile_Convert": "Convert",
+    "Profile_Convert_Order": "Convert Order"
   },
   "My NFT": "My NFT",
   "Done": "Done",
@@ -1366,7 +1367,10 @@
     "lanuch_price_exist": "Please upload the NFTs to be minted first.",
     "lanuch_growth_content1": "For example:",
     "lanuch_growth_content2": "1.  The current minting price is 0.001 BTC. If we set the price index to 0.00001 BTC, then the price for the next NFT minting will be (current minting price + price growth index, which is 0.001 + 0.00001 = 0.00101 BTC), and so on.",
-    "lanuch_growth_content3": "2.  The redemption of each NFT will not affect the current minting price."
+    "lanuch_growth_content3": "2.  The redemption of each NFT will not affect the current minting price.",
+    "status_confirming": "Confirming",
+    "status_confirmed": "Completed",
+    "status_failed": "Failed"
   },
   "Nfts": {
     "launch_yes": "Yes",

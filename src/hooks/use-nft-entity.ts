@@ -582,7 +582,7 @@ export function useNFTEntity(){
         const feeb=feebStore.getCurrentFeeb
         const estimatedRes=await estimateConvertFee(convertPsbtHex,feeb,extraFee,true)
         if(estimatedRes){
-
+          debugger
           //这里应该是要打铸造的总额手续费
            const {fee}=await estimateConvertFee(convertPsbtHex,feeb,extraFee)
           const bitcoinJs=useBtcJsStore().get!
@@ -601,10 +601,10 @@ export function useNFTEntity(){
             sighashType:SIGHASH_ALL_ANYONECANPAY,
             feeb:feeb ?? feebStore.getCurrentFeeb,
          })
-       
+         debugger
           //  const toSignInputs=await formatToSignInputs(psbt)
           const rawTx= await connectionStore.adapter.signPsbt(psbt.toHex())
-         
+          debugger
           console.log("signRes",rawTx)
           if(rawTx?.status == 'canceled'){
             return ElMessage.error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)

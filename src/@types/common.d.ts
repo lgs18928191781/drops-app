@@ -690,6 +690,27 @@ declare interface GenesisNFTItem {
   nftTopicType: string
 }
 
+declare interface ConverOrderType {
+  build_commit_fee:number
+codehash:string
+collection_pinid:string
+commit_address:string
+commit_id:string
+convert_address:string
+convert_order_id:string
+created_at:string
+feeb:number
+genesis:string
+id:number
+lock_address:string
+mvc_nft_owner_address:string
+nft_icon:string
+nft_transfer_txid:string
+order_status:number
+token_index:number
+updated_at:string
+}
+
 declare interface TopicTypeInfo {
   chain: string
   topicKey: string

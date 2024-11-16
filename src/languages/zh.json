@@ -832,7 +832,8 @@
     "submit_Sell": "提交上架",
     "royalte fee": "版税费用说明",
     "My_collection works": "我的MetaBot",
-    "Profile_Convert": "转换器"
+    "Profile_Convert": "转换器",
+    "Profile_Convert_Order": "转换订单"
   },
   "My NFT": "我的NFT",
   "Done": "完成",
@@ -1360,7 +1361,10 @@
     "lanuch_price_exist": "请先上传要铸造的NFTs",
     "lanuch_growth_content1": "举个例子：",
     "lanuch_growth_content2": "1.  当前铸造价格为0.001个BTC，若我们设置价格指数为0.00001个BTC时候，那么下一个NFT铸造的价格则为(当前铸造价格 + 价格增长指数，即0.001 + 0.00001 = 0.00101 BTC)，如此类推。",
-    "lanuch_growth_content3": "2.  每个NFT的赎回将不会影响当前铸造价格"
+    "lanuch_growth_content3": "2.  每个NFT的赎回将不会影响当前铸造价格",
+    "status_confirming": "确认中",
+    "status_confirmed": "完成",
+    "status_failed": "失败"
   },
   "Nfts": {
     "launch_noSupport": "Bitcoin资产暂不支持自动做市机制",
