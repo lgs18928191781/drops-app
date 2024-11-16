@@ -134,7 +134,7 @@ export function useNFTEntity(){
         const feeInfo={
           basic:basic,
           service:CONVERT_SERVICE_FEE,
-          miner: extraFee ,
+          miner: extraFee,
           feeb:estiomateResult!.feeb,
           total:new Decimal(estiomateResult!.fee).add(extraFee).add(CONVERT_SERVICE_FEE).toNumber()
         }
@@ -559,10 +559,12 @@ export function useNFTEntity(){
       async function convertNft(params:{
         convertPsbtHex:string
         extraFee:number
+        buildCommitFee:number
         commitAddress:string
         collectionPinid:string
         nftRawTx:string
         fileRawTx:string
+        lockAddress:string
         commitId:string
         filePinid:string
         convertAddress:string
@@ -570,9 +572,9 @@ export function useNFTEntity(){
         tokenIndex:string
         codehash:string
       }){
-        const {convertPsbtHex,extraFee,commitAddress,collectionPinid,nftRawTx,fileRawTx,commitId,filePinid,convertAddress,codehash,genesis,tokenIndex}=params
+        const {convertPsbtHex,lockAddress,extraFee,commitAddress,buildCommitFee,collectionPinid,nftRawTx,fileRawTx,commitId,filePinid,convertAddress,codehash,genesis,tokenIndex}=params
         try {
-          const connectionStore=useConnectionStore()
+         
           const feebStore=useFeebStore()
           const mvcAddress=await window.metaidwallet.getAddress()
         // const bitcoinJs=useBtcJsStore().get!
@@ -580,13 +582,28 @@ export function useNFTEntity(){
         const feeb=feebStore.getCurrentFeeb
         const estimatedRes=await estimateConvertFee(convertPsbtHex,feeb,extraFee,true)
         if(estimatedRes){
-            
-          const {psbt}=await estimateConvertFee(convertPsbtHex,feeb,extraFee)
-          const toSignInputs=await formatToSignInputs(psbt)
-          const rawTx= await connectionStore.adapter.signPsbt(psbt.toHex(),{
-            toSignInputs:toSignInputs,
-            autoFinalized:false
+
+          //这里应该是要打铸造的总额手续费
+           const {fee}=await estimateConvertFee(convertPsbtHex,feeb,extraFee)
+          const bitcoinJs=useBtcJsStore().get!
+          const networkStore=useNetworkStore()
+          const connectionStore=useConnectionStore()
+          const psbt=new bitcoinJs.Psbt({ network: networkStore.typedNetwork })
+          const totalPayValue=new Decimal(extraFee).add(fee).add(CONVERT_SERVICE_FEE).toNumber()
+          psbt.addOutput({
+            address:import.meta.env.VITE_PAY_MINT_ADDRESS,
+            value:totalPayValue
           })
+
+          const payMintFeeResult= await exclusiveChange({
+            psbt: psbt,
+            maxUtxosCount:3,
+            sighashType:SIGHASH_ALL_ANYONECANPAY,
+            feeb:feeb ?? feebStore.getCurrentFeeb,
+         })
+       
+          //  const toSignInputs=await formatToSignInputs(psbt)
+          const rawTx= await connectionStore.adapter.signPsbt(psbt.toHex())
          
           console.log("signRes",rawTx)
           if(rawTx?.status == 'canceled'){
@@ -597,6 +614,8 @@ export function useNFTEntity(){
               commitAddress,
               collectionPinid,
               feeb,
+              buildCommitFee,
+              lockAddress,
               nftRawTx,
               fileRawTx,
               commitId,
@@ -636,6 +655,7 @@ export function useNFTEntity(){
         const bitcoinJs=useBtcJsStore().get!
         const networkStore=useNetworkStore()
         const psbt=new bitcoinJs.Psbt({ network: networkStore.typedNetwork })
+    
         //const psbt:Psbt =await getDummyUtxoforLegacy(1,SIGHASH_ALL_ANYONECANPAY,true)
         
         //第一个output

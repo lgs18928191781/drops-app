@@ -1463,7 +1463,7 @@
     "convert": "转换",
     "convert_psbt_empty": "转换NFT交易不存在",
     "lanuch_convert": "转换费用",
-    "convert_success": "转换成功"
+    "convert_success": "转换订单提交成功"
   },
   "offsale not allowed": "请先下架后再进行赎回操作",
   "redeemConfirm": "你确认要赎回",

@@ -1082,7 +1082,7 @@ import { CollectionMintChain,SdkPayType } from '@/enum'
 import { Select ,QuestionFilled} from '@element-plus/icons-vue'
 import { useConnectionStore } from '@/stores/connection'
 import { ElLoading, ElMessage } from 'element-plus'
-import {toSats} from '@/utils/filters',
+import {toSats} from '@/utils/filters'
 import { NftsLaunchPadChain, NftsLaunchPadChainSymbol,SIGHASH_ALL,SIGHASH_ALL_ANYONECANPAY ,SIGHASH_SINGLE_ANYONECANPAY,DUMMY_UTXO_INPUT_LEGACY,MinPlatformFee,MRC721PlatformAddress} from '@/data/constants'
 import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
 import { Line } from 'vue-chartjs'

@@ -1470,7 +1470,7 @@
     "convert": "Convert",
     "convert_psbt_empty": "The NFT transaction for conversion does not exist.",
     "lanuch_convert": "Convert fee",
-    "convert_success": "Convert successful"
+    "convert_success": "Order submission successful"
   },
   "offsale not allowed": "Please unlist before proceeding with the redemption operation.",
   "redeemWaring1": "The redemption operation will destroy the NFT. Please consider carefully!",

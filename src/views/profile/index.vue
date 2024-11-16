@@ -665,7 +665,7 @@ async function convertNft(nft:GenesisNFTItem){
         })
         
         if(submitConvertRes.code == 200){
-          const {commitId,filePinid,psbtHex,fileRawTx,preFee,buildCommitFee,commitAddress,collectionPinid}=submitConvertRes.data
+          const {commitId,filePinid,lockAddress,psbtHex,fileRawTx,preFee,buildCommitFee,commitAddress,collectionPinid}=submitConvertRes.data
           
           const nftRes= await window.metaidwallet.transferNFT({
     codehash:nft.nftCodehash,
@@ -684,19 +684,21 @@ async function convertNft(nft:GenesisNFTItem){
           const finalSignRevealRes= await nftEntity.convertNft({
             convertPsbtHex:psbtHex,
             extraFee:new Decimal(preFee).add(buildCommitFee).toNumber(),
+            buildCommitFee:buildCommitFee,
             commitAddress,
             collectionPinid,
             nftRawTx:nftRes.txHex,
             fileRawTx,
             commitId,
             filePinid,
+            lockAddress,
             convertAddress:connectionStore.userInfo.address,
             genesis:nft.nftGenesis,
             tokenIndex:nft.nftTokenIndex,
             codehash:nft.nftCodehash
           })
           
-          if(finalSignRevealRes?.revealTxId){
+          if(finalSignRevealRes?.order_id){
             
             ElMessage.success(`${i18n.t('Nfts.convert_success')}`)
             await sleep(1000)

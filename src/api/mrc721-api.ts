@@ -447,7 +447,9 @@ export const finalConvert=async(params:{
   commitAddress:string
   collectionPinid:string
   feeb:number
+  buildCommitFee:number
   nftRawTx:string
+  lockAddress:string
   fileRawTx:string
   commitId:string
   filePinid:string
@@ -458,4 +460,10 @@ export const finalConvert=async(params:{
   mvcNftOwnerAddress:string
 }):Promise<apiMrc721Response>=>{
   return NftOrders.post('/final-convert',params)
+}
+
+export const getMyConvertOrders=async(params:{ownerAddress:string}):Promise<apiMrc721Response>=>{
+  return NftOrders.get('/get-self-convert-list',{
+    params
+  })
 }
