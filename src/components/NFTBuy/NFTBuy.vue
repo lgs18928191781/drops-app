@@ -357,7 +357,7 @@ async function confirmBuy() {
           orderId:props.nft.order_id,
           buyerAddress:connectionStore.last.user.address,
           nftPinid:props.nft.item_pinid,
-          collectionPinid:props.nft.collection_pinid,
+        
           chain:NftsLaunchPadChainSymbol.btc,
           extraFee:{
             salePrice:realSalePrice.value.salePrice,

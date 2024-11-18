@@ -47,7 +47,7 @@
 
           <div class="policy-warp mb-4 flex flex-col items-center justify-center text-sm" >
             <span class="text-[#817B8F]">{{ $t('policy-aggree') }}</span>
-            <span class="text-[#fff] cursor-pointer mt-1.5">{{ $t('termuse') }}</span>
+            <span @click="isShowContent = true" class="text-[#fff] cursor-pointer mt-1.5">{{ $t('termuse') }}</span>
           </div>
           
         </div>
@@ -219,6 +219,12 @@
     @register="isShowSetBaseInfo = true"
     @finish="onModalClose"
   />
+
+  <ContentModal
+          v-model="isShowContent"
+          :title="policy.title"
+          :content="policy.content"
+        />
 </template>
 
 <script setup lang="ts">
@@ -244,7 +250,7 @@ import { reactive, Ref, ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { BindStatus, Network, NodeName, WalletOrigin } from '@/enum'
 import { ElMessage, ElMessageBox, ElLoading } from 'element-plus'
-
+import ContentModal from '@/components/ContentModal/ContentModal.vue'
 import { router } from '@/router'
 import { useRoute } from 'vue-router'
 import { GetUserAllInfo, GetUserFollow } from '@/api/aggregation'
@@ -272,6 +278,7 @@ import { connect } from '@/utils/metalet'
 import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
 import { useFeebStore } from '@/stores/feeb'
 import closeIcon from '@/assets/images/close-o@1x.png'
+import {policy} from '@/data/constants'
 const feebStore = useFeebStore()
 const rootStore = useRootStore()
 const userStore = useUserStore()
@@ -279,7 +286,7 @@ const networkStore = useNetworkStore()
 const connectStore = useConnectionStore()
 const route = useRoute()
 const i18n = useI18n()
-
+const isShowContent=ref(false)
 const entityHooks = useMetaIDEntity()
 
 const emit = defineEmits(['metamask'])

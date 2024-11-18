@@ -260,7 +260,7 @@ export function useNFTEntity(){
         const getOrderPsbtRes= await mintNftItem(params)
         
         if(getOrderPsbtRes.code == 200){
-        const psbtHex=getOrderPsbtRes.data.psbtHex
+        const psbtHex=getOrderPsbtRes.data.revealTxRes.psbtHex
         
          const estiomateResult=await estimatePsbtFee(psbtHex,feeStore.getCurrentFeeb,true)
          console.log("feeStore.getCurrentFeeb",feeStore.getCurrentFeeb,)
@@ -449,7 +449,7 @@ export function useNFTEntity(){
         orderId:string
         buyerAddress:string
         nftPinid:string
-        collectionPinid:string
+        
         extraFee:feeDetailType
         chain?:NftsLaunchPadChainSymbol
       }){
@@ -463,6 +463,7 @@ export function useNFTEntity(){
           const orderRes= await submitBuyOrder({
             psbtHex:parmas.psbtHex,
             orderId:parmas.orderId,
+            collectionPinid:parmas.collectionPinid,
             itemPinid:parmas.nftPinid,
             buyerAddress:parmas.buyerAddress,
             chain:parmas.chain
@@ -582,7 +583,7 @@ export function useNFTEntity(){
         const feeb=feebStore.getCurrentFeeb
         const estimatedRes=await estimateConvertFee(convertPsbtHex,feeb,extraFee,true)
         if(estimatedRes){
-          debugger
+          
           //这里应该是要打铸造的总额手续费
            const {fee}=await estimateConvertFee(convertPsbtHex,feeb,extraFee)
           const bitcoinJs=useBtcJsStore().get!
@@ -601,10 +602,10 @@ export function useNFTEntity(){
             sighashType:SIGHASH_ALL_ANYONECANPAY,
             feeb:feeb ?? feebStore.getCurrentFeeb,
          })
-         debugger
+         
           //  const toSignInputs=await formatToSignInputs(psbt)
           const rawTx= await connectionStore.adapter.signPsbt(psbt.toHex())
-          debugger
+          
           console.log("signRes",rawTx)
           if(rawTx?.status == 'canceled'){
             return ElMessage.error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)

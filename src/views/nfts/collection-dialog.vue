@@ -4,7 +4,7 @@
     class="sm"
     @close="emit('update:modelValue', false)"
     :closeOnClickModal="false"
-    :style="{width:layout.isMobilePhone ? '80vw' : customWidth ? '60vw' : '' , height:customHeight ? '75vh' : '80vh', overflowY: 'auto' }"
+    :style="{width:layout.isMobilePhone ? '80vw' : customWidth ? '60vw' : '' , height:customHeight ? '70vh' : '80vh', overflowY: 'auto' }"
     align-center
   >
     <template #title>

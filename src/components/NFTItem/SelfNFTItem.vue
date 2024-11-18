@@ -57,7 +57,8 @@
           </div> -->
   
           <div class="py-4 list-btn rounded text-center" @click.stop="btnFun">
-           {{ btnText }}
+            <span>  {{ btnText }}</span>
+            <span class="ml-1" v-if="!nft.is_ready">({{ $t('NFTS.pengding') }})</span>
           </div>
   
   

@@ -9,9 +9,8 @@
   >
     <div
       class="sell-nft"
-      v-loading="loading"
-      :element-loading-svg="LoadingTEXT"
-      :element-loading-text="$t('Loading')"
+      id="sell-nft"
+     
     >
       <NFTMsgVue :nft="nft" >
         <div class="price-wrap flex flex-col">
@@ -134,7 +133,7 @@ import { useRootStore } from '@/stores/root'
 import { useUserStore } from '@/stores/user'
 import { dateTimeFormat } from '@/utils/filters'
 import { Mitt, MittEvent } from '@/utils/mitt'
-import { getUserBuyExtraFee } from '@/utils/util'
+import { getUserBuyExtraFee,openLoading } from '@/utils/util'
 import NftDetail from '@/views/nft/NftDetail.vue'
 import Decimal from 'decimal.js-light'
 import { computed, reactive, ref } from 'vue'
@@ -331,8 +330,8 @@ function submitForm() {
         return ElMessage.error(`${i18n.t('Nfts.salePrice_overlimited')}`)
       }
       try {
-        
-        loading.value = true
+        const loading = openLoading({ text: i18n.t('NFT.sale'),target:document.getElementById('sell-nft')! })
+        //loading.value = true
         // 法币上架
         // const getAddressRes = await GetLegalRecevierAddress()
         // if (getAddressRes.code === 0) {

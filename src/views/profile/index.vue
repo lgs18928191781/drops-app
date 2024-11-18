@@ -163,17 +163,18 @@
 
 <UserAvatar
 :address="''"
-:image="scope.row.owner_info?.avatarId "
+:image="scope.row.owner_info?.avatarId"
 :meta-id="scope.row.saler_metaid"
 :name="scope.row.owner_info?.name"
-class="user-warp-item   overflow-hidden mr-3"
+class="user-warp-item   mr-3"
 :meta-name="''"
 :disabled="true"
 
 />
 
+
 <div class="flex flex-col text-[#fff]">
-<div class="text-base "><UserName    :name="scope.row.owner_info?.name " :meta-name="''" /></div>
+<div class="text-sm "><UserName    :name="scope.row.owner_info?.name " :meta-name="''" /></div>
 <div class="text-xs  text-dark-300">MetaID: {{ scope.row.saler_metaid ? scope.row.saler_metaid.slice(0, 6) : '--' }}</div>
 </div>
 </div>
@@ -311,7 +312,7 @@ class="user-warp-item   overflow-hidden mr-3"
                   :nftOwnerInfo="nftOwnerInfo.val"
                       :nft="item"
                       :isSimple="false"
-                      :loading="isListLoading"
+                      
                       @convert="convertNft"
                     />
                   
@@ -824,7 +825,10 @@ const layout = useLayoutStore()
 async function convertNft(nft:GenesisNFTItem){
   //1.转移
   console.log("nft",nft)
+  const loading = openLoading({ text: i18n.t('NFT.converting') })
   try {
+  
+
     const mvcNftAddress=await window.metaidwallet.getAddress()
 
 
@@ -858,16 +862,17 @@ async function convertNft(nft:GenesisNFTItem){
     codehash:nft.nftCodehash,
     genesis:nft.nftGenesis,
     tokenIndex:nft.nftTokenIndex,
-    recipient:`mhgReAXohNMYeSLyQBECq76v7fCkYHzean`,
+    recipient:import.meta.env.VITE_METABOT_RECEIVER_ADDRESS,
     options:{
       noBroadcast:true,
       useUnconfirmed:true
     }
   })
         if(nftRes?.status == 'canceled'){
+           loading.close()
           return ElMessage.error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
         }
-
+          loading.close()
           const finalSignRevealRes= await nftEntity.convertNft({
             convertPsbtHex:psbtHex,
             extraFee:new Decimal(preFee).add(buildCommitFee).toNumber(),
@@ -886,22 +891,27 @@ async function convertNft(nft:GenesisNFTItem){
           })
           
           if(finalSignRevealRes?.order_id){
-            
+            loading.close()
             ElMessage.success(`${i18n.t('Nfts.convert_success')}`)
+            
             await sleep(1000)
             refreshDatas()
           }else{
+            loading.close()
             return ElMessage.error(finalSignRevealRes?.msg)
           }
 
 
         }else{
+          loading.close()
           return ElMessage.error(submitConvertRes.msg)
         }
   }else{
+    loading.close()
     return ElMessage.error(preConvertRes.msg)
   }
   } catch (error) {
+    loading.close()
     ElMessage.error((error as any).message)
   }
   
@@ -997,8 +1007,8 @@ async function convertNft(nft:GenesisNFTItem){
       const res = await GetGenesisNFTs({
         address:mvcAddress,
       chain: 'mvc',
-      codehash: `e205939ad9956673ce7da9fbd40514b30f66dc35`,
-      genesis: `2cca335f6091f35bb833453ae8915bafc89ae16b`,
+      codehash: import.meta.env.VITE_METABOT_CODEHASH,
+      genesis: import.meta.env.VITE_METABOT_GENESIS,
       ...pagination,
        
       })
@@ -1263,7 +1273,9 @@ async function listSuccessful(){
       if (result) {
         const buyRes = await nftEntity.buyNft({
           nftItem: item,
-          psbtHex: item.order_id,
+          orderId:item.order_id,
+         
+          psbtHex: item.psbt_hex,
           buyerAddress: connectionStore.last.user.address,
           nftPinid: item.item_pinid,
           chain: NftsLaunchPadChainSymbol.btc,

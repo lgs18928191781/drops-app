@@ -249,6 +249,10 @@
       </div>
     </div>
 
+    <div class="echart-wrap bg-[#1E1E1E] mt-[50px] w-full " v-if="chart.vals?.data">
+          <Line ref="chartRef" :style="customStyle" :data="chart.vals?.data" :options="chart.vals?.options" />
+        </div>
+
     <div class="auto-market-wrap  mt-8">
       <!-- <div class="title text-lg py-4 font-medium">
         {{ $t('Nfts.lanuch_auto_market_title') }}
@@ -330,9 +334,7 @@
             </div>
           </div>
         </div>
-        <div class="echart-wrap pl-10 w-4/5 ">
-          <Line ref="chartRef" :style="customStyle" :data="data" :options="options" />
-        </div>
+     
       </div> -->
       <!-- <div class="price-area flex justify-between space-x-4">
         <div class="flex-1">
@@ -468,10 +470,10 @@
           <el-table-column prop="cover" :label="$t('Nfts.lanuch_nftcover')" width="auto">
             <template #default="scope">
               <div
-                class="main-border gray-exclued-text p-2 min-h-14  flex justify-between items-center "
+                class="main-border gray-exclued-text px-2 min-h-14  flex justify-between items-center "
               >
-                <div class="w-8 h-8  ">
-                  <img class="rounded-lg" :src="scope.row.cover.url || scope.row.cover" alt="" />
+                <div class="w-[56px] h-[56px] tb-img-wrap">
+                  <img class="rounded-lg " :src="scope.row.cover.url || scope.row.cover" alt="" />
                 </div>
                 <!-- <el-icon class="cursor-pointer" @click="deleteCover(scope.row)"><Close /></el-icon> -->
               </div>
@@ -768,7 +770,7 @@
                 {{ $t('Cancel') }}
               </div> -->
               <div
-                class="main-border primary cursor-pointer text-center  py-2.5 flex-1"
+                class="main-border primary cursor-pointer text-center mt-3  py-2.5 flex-1"
                 @click="confirm(ruleFormRef)"
               >
                 {{ $t('Nfts.launch_OK') }}
@@ -1063,7 +1065,7 @@
 
 <script setup lang="ts">
 
-import { ExternalLink } from 'lucide-vue-next'
+
 import btc from '@/assets/nft/btc.png'
 import mvc from '@/assets/nft/mvc.png'
 import { Close, Plus,Promotion } from '@element-plus/icons-vue'
@@ -1099,8 +1101,9 @@ import * as secp256k1 from 'tiny-secp256k1'
 import {usePayModalEntity} from '@/hooks/use-pay-modal-entity'
 import {  type Psbt } from 'bitcoinjs-lib'
 import { useLayoutStore } from '@/stores/layout'
- import {space} from "@/utils/filters"
-import { p2ms } from '@metaid/metaid/dist/utils/btc-inscribe/bitcoinjs-lib/payments'
+import { settings } from 'cluster'
+
+
 
 const i18n = useI18n()
 const genesisStore = useGenesisStore()
@@ -1118,11 +1121,27 @@ const router = useRouter()
 const route = useRoute()
 const networkStore=useNetworkStore()
 const { mintNftEntity } = useMetaIDEntity()
-const { data, options } = useEchart()
+
+const chartData=reactive({
+  labelNum:0,
+  growth:0
+})
+
+const chart=reactive({vals:{
+
+}})
+
+
+
+
 const feeStore = useFeebStore()
 const chartRef = ref()
 const payModalEntity=usePayModalEntity()
 const errorMsg=ref('')
+
+
+
+
 // const autoMaketData=ref({
 //   initialPrice:0,
 //   priceGrowth:0,
@@ -1132,12 +1151,16 @@ const regex=/(\d+)(\.\d{5})(\d+)/
 const totalSupplyRegex=/^\d{0,4}$/
 const isShowmsgModal = ref(false)
 
+
+
 watch(
   () => route.params.pinid,
   newValue => {
     currentNftsCollect.value = genesisStore.getList.find(item => {
       return item.collectionPinId == newValue
     })
+
+
   //   if(!currentNftsCollect.value?.cover){
   //     getCollectionDetail({
   //   collectionPinid:route.params.pinid as string
@@ -1156,6 +1179,8 @@ watch(
     genesisCollection.value = currentNftsCollect.value!.name
   }
 )
+
+
 
 // async function deviceutxo(){
 //     await deviceDummy()
@@ -1455,6 +1480,12 @@ function getCollectionData() {
   currentNftsCollect.value = genesisStore.getList.find(item => {
     return item.collectionPinId == route.params.pinid
   })
+
+  console.log("currentNftsCollect.value",currentNftsCollect.value)
+  chartData.growth=currentNftsCollect.value?.priceGrowth ? new Decimal(currentNftsCollect.value?.priceGrowth).div(10 ** 8).toNumber() : 0
+  chartData.labelNum=currentNftsCollect.value!.totalSupply + 1
+  chart.vals= useEchart(chartData)
+  
   if(currentNftsCollect.value?.name){
 
     genesisCollection.value = currentNftsCollect.value!.name

@@ -8,6 +8,7 @@
     :class="['sm']"
     center
     @close="close"
+    custom-class="height:auto"
     :z-index="zIndex"
   >
     <template #title>
@@ -35,7 +36,7 @@
     >
     <template v-else><slot name="content"></slot></template>
     <template v-if="!extrafooter">
-      <div class="flex flex-align-center flex-pack-end">
+      <div class="flex mt-5 flex-align-center flex-pack-end">
         <a class="confirm-btn" @click="emit('update:modelValue', !modelValue)">{{
           confirmBtnText ? confirmBtnText : $t('Confirm')
         }}</a>

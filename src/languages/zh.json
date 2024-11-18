@@ -769,7 +769,7 @@
     "Current price": "當前價格",
     "Off Sale": "下架",
     "Sale": "上架",
-    "NotCanBuy": "已被購買或下架",
+    "NotCanBuy": "下架",
     "Description": "描述",
     "Category": "分類",
     "Introduction": "介紹",
@@ -833,7 +833,11 @@
     "royalte fee": "版税费用说明",
     "My_collection works": "我的MetaBot",
     "Profile_Convert": "转换器",
-    "Profile_Convert_Order": "转换订单"
+    "Profile_Convert_Order": "转换订单",
+    "sale": "上架中",
+    "CurrentMintPrice": "当前铸造价格",
+    "nextMintPrice": "预估下个铸造价格",
+    "converting": "转换中"
   },
   "My NFT": "我的NFT",
   "Done": "完成",
@@ -1350,7 +1354,8 @@
   "NFTS": {
     "NFTs Launch Pad": "NFTs Launch Pad",
     "NFTs mint_success": "铸造成功",
-    "NFTs onsale_success": "上架成功"
+    "NFTs onsale_success": "上架成功",
+    "pengding": "未确认"
   },
   "NFTs": {
     "genesis_nfts": "创建NFTs系列",
@@ -1467,7 +1472,10 @@
     "convert": "转换",
     "convert_psbt_empty": "转换NFT交易不存在",
     "lanuch_convert": "转换费用",
-    "convert_success": "转换订单提交成功"
+    "convert_success": "转换订单提交成功",
+    "blockHeight": "块高：",
+    "pedding": "未确认",
+    "conver_transfer_nft_fee": "NFT转账费用"
   },
   "offsale not allowed": "请先下架后再进行赎回操作",
   "redeemConfirm": "你确认要赎回",

@@ -28,8 +28,8 @@
 
           <!-- collection-msg -->
           <div class="collection-msg flex">
-            <div class="flex1">
-              <div class="name flex flex-align-center">
+            <div class="mr-5">
+              <div class="name flex ">
                 {{ collection.val?.name }} <Icon name="certed" />
               </div>
               <div class="creator flex flex-align-center">
@@ -51,7 +51,7 @@
                 <template v-else>{{ collection.val?.nft_desc }}</template>
               </div>
             </div>
-            <div class="">
+            <div class="statiscs-wrap">
               <div class="statiscs-list">
                 <div class="statiscs-item" v-for="(item, index) in statiscs" :key="index">
                   <div class="flex flex-align-center flex-pack-center">
@@ -365,11 +365,22 @@ const statiscs = reactive([
   //   value: '--',
   //   unit: '',
   // },
+
   {
     name: () => i18n.t('NFT.Blockchain'),
     value: 'Bitcoin',
     unit: '',
     icon:'BTC'
+  },
+  {
+    name: () => i18n.t('NFT.CurrentMintPrice'),
+    value: '--',
+    unit: 'BTC',
+  },
+  {
+    name: () => i18n.t('NFT.nextMintPrice'),
+    value: '--',
+    unit: 'BTC',
   },
 ])
 const collection: { val: null | NftsCollection } = reactive({ val: null })
@@ -539,6 +550,8 @@ function getDatas(isCover = false) {
     if (res?.code == 200) {
       if (isCover) nfts.length = 0
       if (res.data.result.length === 0) pagination.nothing = true
+      statiscs[7].value = space(res.data.mintInfo.currentMintPrice).toString()
+      statiscs[8].value = space(res.data.mintInfo.nextMintPirce).toString()
       nfts.push(...res.data.result)
     }
     resolve()
@@ -742,7 +755,9 @@ async function buyNFT(item: NftOrderType) {
     if (result) {
       const buyRes = await nftEntity.buyNft({
         nftItem: item,
-        psbtHex: item.order_id,
+        orderId:item.order_id,
+        psbtHex: item.psbt_hex,
+        
         buyerAddress: connectionStore.last.user.address,
         nftPinid: item.item_pinid,
         chain: NftsLaunchPadChainSymbol.btc,

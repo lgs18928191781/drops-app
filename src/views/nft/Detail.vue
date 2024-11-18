@@ -14,12 +14,22 @@
         <div class="nft-msg flex">
           <div class="cover-warp">
             <NFTCover
+              class="cover-item"
               :needGizp="true"
               :cover="[nft.val?.pic_path]"
               :is-show-prew="true"
               :is-lazy="false"
             />
+            <!-- <div class="flex items-center block-height">
+            <span class="mr-1 ">{{ $t('Nfts.blockHeight') }}</span>
+            <span>#{{ nft.val?.block_height }}</span>
+          </div> -->
           </div>
+       
+
+
+       
+       
           <div class="flex1 nft-msg-right flex flex-v">
             <div class="flex1">
               <div class="top flex flex-align-center">
@@ -91,6 +101,7 @@
                 </div>
               </div>
 
+
               <div class="redeem">
                 <div
                   class="main-border w-20 cursor-pointer py-2 cur primary flex1 flex flex-align-center flex-pack-center"
@@ -108,11 +119,12 @@
 
             <div class="nft-operate flex flex-align-center">
               <div
-                class="main-border  flex1 flex flex-align-center flex-pack-center"
+                class="main-border  flex1 flex flex-align-center flex-wrap flex-pack-center"
                 :class="nftBtnClass"
                 @click="nftBtnFunction"
               >
-                {{ nftBtnText }}
+               <span > {{ nftBtnText }}</span>
+               <span class="ml-1" v-if="!isReady">({{ $t('Nfts.pedding') }})</span>
               </div>
 
               <div
@@ -659,9 +671,12 @@ async function onBuy(item: NftOrderType) {
       nftPinid: item.item_pinid,
     })
     if (result) {
+      
       const buyRes = await nftEntity.buyNft({
         nftItem:item,
-        psbtHex: item.order_id,
+        orderId:item.order_id,
+        psbtHex: item.psbt_hex,
+       
         buyerAddress: connectionStore.last.user.address,
         nftPinid: item.item_pinid,
         chain: NftsLaunchPadChainSymbol.btc,

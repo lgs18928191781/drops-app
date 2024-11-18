@@ -255,6 +255,13 @@
 
 }
 
+.tb-img-wrap{
+    img{
+        width: 56px !important;
+        height: 56px !important;
+    }
+}
+
 .mintDialog-style {
     :deep(.el-input) {
         border: none;

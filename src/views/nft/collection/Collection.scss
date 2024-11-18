@@ -37,7 +37,8 @@
 
     .collection-msg {
         margin-top: 30px;
-
+       display: flex;
+       justify-content: space-between;
         .name {
             .el-skeleton__item {
                 height: 24px;
@@ -84,7 +85,11 @@
             font-size: 16px;
             max-width: 480PX;
             font-weight: 300;
-
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3; /* 限制为三行 */
+            overflow: hidden;
+            text-overflow: ellipsis; /* 省略号 */
             .el-skeleton__item {
                 height: 16px;
                 width: 100%;
@@ -113,8 +118,12 @@
             }
         }
     }
+    .statiscs-wrap{
+        max-width:60%;
+    }
 
     .statiscs-list {
+       
         .statiscs-item {
 
             display: inline-block;
@@ -322,7 +331,9 @@
 
         .collection-msg {
             flex-direction: column;
-
+            .statiscs-wrap{
+                max-width:100%;
+            }
             .statiscs-list {
                 margin-top: 30px;
 

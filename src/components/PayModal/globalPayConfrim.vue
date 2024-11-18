@@ -149,6 +149,17 @@
             </div>
           </div>
 
+
+          <div v-if="basicType == 'convert'" class="py-2 flex flex-row items-center justify-between" >
+            <div class="text-[#909399]">{{ i18n.t('Nfts.conver_transfer_nft_fee') }}</div>
+            <div>
+              <span class="mr-1">{{ transferNftFixFee }}</span>
+              <span>Space</span>
+            </div>
+          </div>
+
+          
+
           <div class="py-2 flex flex-row items-center justify-between">
             <div class="text-[#909399]">{{ i18n.t('Nfts.feebs') }}</div>
             <div>
@@ -235,7 +246,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 
-
+const transferNftFixFee=0.00013492
 
 const isShow = ref(true)
 

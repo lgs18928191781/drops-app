@@ -779,7 +779,7 @@
     "Current price": "Current price",
     "Off Sale": "Off Sale",
     "Sale": "Sale",
-    "NotCanBuy": "Has been purchased or removed",
+    "NotCanBuy": "Off sale",
     "Description": "Description",
     "Category": "Category",
     "Introduction": "Introduction",
@@ -843,7 +843,11 @@
     "royalte fee": "Royalty Fee Explanation",
     "My_collection works": "My MetaBot",
     "Profile_Convert": "Convert",
-    "Profile_Convert_Order": "Convert Order"
+    "Profile_Convert_Order": "Convert Order",
+    "sale": "Listing",
+    "CurrentMintPrice": "Current Minting Price",
+    "nextMintPrice": "Estimated Next Minting Price",
+    "converting": "Converting"
   },
   "My NFT": "My NFT",
   "Done": "Done",
@@ -1356,7 +1360,8 @@
   "NFTS": {
     "NFTs Launch Pad": "NFTs Launch Pad",
     "NFTs mint_success": "Minted success!",
-    "NFTs onsale_success": "Successfully listed"
+    "NFTs onsale_success": "Successfully listed",
+    "pengding": "Unconfirmed"
   },
   "NFTs": {
     "genesis_nfts": "Creating a collection of NFTs",
@@ -1474,7 +1479,10 @@
     "convert": "Convert",
     "convert_psbt_empty": "The NFT transaction for conversion does not exist.",
     "lanuch_convert": "Convert fee",
-    "convert_success": "Order submission successful"
+    "convert_success": "Order submission successful",
+    "blockHeight": "Block:",
+    "pedding": "Unconfirmed",
+    "conver_transfer_nft_fee": "NFT transfer fee"
   },
   "offsale not allowed": "Please unlist before proceeding with the redemption operation.",
   "redeemWaring1": "The redemption operation will destroy the NFT. Please consider carefully!",

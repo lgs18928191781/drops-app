@@ -770,6 +770,8 @@ MetaBot stands as an emblem of innovation and limitless possibilities, captivati
       if (result) {
         const buyRes = await nftEntity.buyNft({
           nftItem: item,
+          orderId:item.order_id,
+         
           psbtHex: item.order_id,
           buyerAddress: connectionStore.last.user.address,
           nftPinid: item.item_pinid,
