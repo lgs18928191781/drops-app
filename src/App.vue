@@ -177,9 +177,6 @@ onMounted(async () => {
 });
 
 
- console.log('VITE_TEST_TEXT',import.meta.env.MODE)
-
-  console.log('VITE_TEST_TEXT',import.meta.env.VITE_METALET_API)
   // initialize btcjs
   // const btcjs = window.bitcoinjs
   // btcJsStore.set(btcjs)
