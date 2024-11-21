@@ -1471,8 +1471,9 @@ async function listSuccessful(){
     })
   }
 
- async function getConverOrderList(isCover=true){
-    try {
+  function getConverOrderList(isCover=true){
+    return new Promise<void>(async(resolve,reject)=>{
+      try {
       if(isCover){
         convertOrderList.length = 0
       }
@@ -1482,9 +1483,12 @@ async function listSuccessful(){
       if(res.code == 200){
         convertOrderList.push(...res.data)
       }
+      resolve()
     } catch (error) {
-      throw new Error(error as any)
+      reject(error as any)
+      
     }
+    })
   }
   
   function changeTab(value: ProfileTab) {
