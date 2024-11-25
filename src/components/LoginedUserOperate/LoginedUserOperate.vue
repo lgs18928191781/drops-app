@@ -617,11 +617,11 @@ async function pushToBuzz(data:BaseUserInfo) {
   console.log(userStore.isAuthorized)
   console.log('pushToBuzz', connectStore)
 
-  setUser({
-    id: data.metaid,
-    email: '',
-    username: data!.name,
-  })
+  // setUser({
+  //   id: data.metaid,
+  //   email: '',
+  //   username: data!.name,
+  // })
 
   connectStore.updateUser(data)
   userStore.updateUserInfo({

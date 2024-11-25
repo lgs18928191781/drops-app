@@ -5,7 +5,12 @@
            
           🔥{{ $t('NFT.Hot Series') }}
         </div>
-        <div class="cont">
+    
+        <div v-if="!hotList.length" class="h-60 no-data w-full flex flex-col items-center justify-center">
+          <NullIcon  />
+          <span class="text-base mt-2 ">No collection data</span>
+        </div>
+        <div class="cont" v-else>
           <span class="swiper-button-next hot-next flex flex-align-center flex-pack-center">
             <Icon name="down" color="#fff"  />
           </span>
@@ -32,11 +37,14 @@
               class="hot-collection-item cursor-pointer"
               @click="toCollection(item.collection_pinid)"
             >
+           
+     
+
+         
+        
               <div class="cover"></div>
               <Image class="collection-cover object-cover" :src="item.cover_pinid" />
-              <!-- <div class="image">
-                <img class="collection-cover" :src="banner" />
-              </div> -->
+          
               <div class="mt-7">
                 <div class="name ">{{item.name}}</div>
               <div class="collection-info flex flex-row items-center mt-5">
@@ -58,6 +66,8 @@
                 </div>
               </div>
               </div>
+           
+             
             </SwiperSlide>
           </Swiper>
         </div>
@@ -70,7 +80,11 @@
         💫{{ $t('NFT.notable') }}
          </div>
          <div class="notable-item-wrap ">
-          <div class="notable-item " v-for="item in notableList" @click="toCollection(item.collection_pinid)">
+          <div v-if="!notableList.length" class="h-60 no-data  w-full flex flex-col items-center justify-center">
+            <NullIcon  />
+            <span class="text-base mt-2 ">No collection data</span>
+        </div>
+          <div class="notable-item " v-else v-for="item in notableList" @click="toCollection(item.collection_pinid)">
             <Image class="collection-cover  notable-cover " :src="item.cover_pinid" />
             <div class="mt-7">
                 <div class="name ">{{ item.name }}</div>
@@ -109,6 +123,7 @@ import {  getHotCollection,getNotableCollection} from "@/api/mrc721-api";
 import {useMetaIDEntity} from '@/hooks/use-metaid-entity'
 import { router } from '@/router'
 import { useLayoutStore } from '@/stores/layout'
+import NullIcon from '@/assets/images/null.svg'
 const hotList:NftsCollection[]=reactive([])
 const notableList:NftsCollection[]=reactive([])
 const {getUserAllInfo}=useMetaIDEntity()

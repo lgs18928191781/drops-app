@@ -59,11 +59,11 @@ let user: any = null
 if (window.localStorage.getItem(userkey)) {
   user = decode(window.localStorage.getItem(userkey)!)
   user = JSON.parse(user)
-  setUser({
-    id: user.metaId,
-    email: user.phone || user.email,
-    username: user.name,
-  })
+  // setUser({
+  //   id: user.metaId,
+  //   email: user.phone || user.email,
+  //   username: user.name,
+  // })
 }
 const passwordkey = encode('password')
 let password = ''

@@ -1417,11 +1417,11 @@ async function pushToBuzz(data:BaseUserInfo) {
   console.log('pushToBuzz', connectStore)
   // return
   // 登陆了要设置sentry 用户
-  setUser({
-    id: data.metaid,
-    email: '',
-    username: data!.name,
-  })
+  // setUser({
+  //   id: data.metaid,
+  //   email: '',
+  //   username: data!.name,
+  // })
   connectStore.updateUser(data)
 
   userStore.updateUserInfo({

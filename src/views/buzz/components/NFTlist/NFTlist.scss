@@ -30,6 +30,18 @@
         }
     }
 
+    .no-data{
+        svg {
+            width: 30px;
+            height: 30px;
+            margin: 0 auto;
+    
+            :deep(path) {
+                fill: var(--faded-border-color);
+            }
+        }
+    }
+
     .cont {
         margin-top: 30px;
         position: relative;
@@ -347,6 +359,20 @@
         flex-wrap: wrap;
         
         gap: 30px;
+
+        .no-data{
+            svg {
+                width: 30px;
+                height: 30px;
+                margin: 0 auto;
+        
+                :deep(path) {
+                    fill: var(--faded-border-color);
+                }
+            }
+        }
+
+
         .notable-item{
             cursor: pointer;
          // flex: 33% ;

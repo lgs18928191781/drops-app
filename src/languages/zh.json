@@ -1391,7 +1391,7 @@
     "lanuch_minted": "已铸造:",
     "lanuch_mint_blank": "暂无发行列表",
     "lanuch_bulkMint": "批量发行",
-    "lanuch_nftcover": "NFT源文件",
+    "lanuch_nftcover": "NFT图片",
     "lanuch_source": "源文件",
     "lanuch_desc": "描述",
     "lanuch_classify": "专辑分类",
@@ -1475,7 +1475,8 @@
     "convert_success": "转换订单提交成功",
     "blockHeight": "块高：",
     "pedding": "未确认",
-    "conver_transfer_nft_fee": "NFT转账费用"
+    "conver_transfer_nft_fee": "NFT转账费用",
+    "no_collections": "暂无专辑数据"
   },
   "offsale not allowed": "请先下架后再进行赎回操作",
   "redeemConfirm": "你确认要赎回",

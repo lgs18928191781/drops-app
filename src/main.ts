@@ -39,7 +39,7 @@ const pinia = createPinia()
 
 const app = createApp(App)
 
-StartSentry({ app, router })
+// StartSentry({ app, router })
 // 挂载全局过滤器
 // @ts-ignore
 app.config.globalProperties.$filters = {
