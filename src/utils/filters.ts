@@ -108,6 +108,12 @@ export function space(stas: number | string) {
   return bsv(stas)
 }
 
+export function handlerFileService(url:string){
+  if (typeof url !== 'string') return ''
+  if (url === '') return ''
+  return `${import.meta.env.VITE_MVC_BASEAPI}${url}`
+}
+
 export function metafile(metafile: string, width = 235, type: 'metafile' | 'metaId' = 'metafile') {
   if (typeof metafile !== 'string') return ''
   if (metafile.indexOf('http://') !== -1 || metafile.indexOf('https://') !== -1) return metafile

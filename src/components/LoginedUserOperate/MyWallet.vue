@@ -427,7 +427,7 @@ import { decode, encode } from 'js-base64'
 import { MD5 } from 'crypto-js'
 import { MetaMaskLoginUserInfo } from '@/plugins/utils/api'
 import { ErrorDescription } from '@ethersproject/abi/lib/interface'
-import { metafile } from '@/utils/filters'
+import { metafile,handlerFileService } from '@/utils/filters'
 import type { TabsPaneContext } from 'element-plus'
 import { debounce } from '@/utils/util'
 import walletBackup from '@/assets/images/wallet_backup.svg?url'
@@ -1028,22 +1028,26 @@ function getFts(isCover = false) {
       userFtList.length = 0
       resolve()
     } else {
+      
       const res = await GetFTs({
         address: userStore.user!.address!,
-        chain: Chains.MVC,
-        page: 1,
-        pageSize: 30,
+        // chain: Chains.MVC,
+        // page: 1,
+        // pageSize: 30,
       })
+
+      
 
       if (res.code === 0) {
         if (isCover) FtList.length = 0
-        if (res.data.results.items.length === 0) pagination.nothing = true
+        if (res.data.data.length === 0) pagination.nothing = true
         const mspGenesis=`b2d75931958114e48c9927160f80363eae78e2dc`
-        res.data.results.items.map(ft => {
+        res.data.data.map(ft => {
+          
           FtList.push({
-            icon:ft.genesis == mspGenesis ? MSP: metafile(ft.icon),
+            icon:ft.genesis == mspGenesis ? MSP: handlerFileService(ft.icon),
             name: ft.name,
-            value: +ft.balance,
+            value:new Decimal(new Decimal(ft.confirmed).add(ft.unconfirmed)).div(10 ** +ft.decimal).toNumber(),
             showBindBtn: false,
             address: () => userStore.user?.address || '',
             isCanTransfer: true,
@@ -1052,9 +1056,9 @@ function getFts(isCover = false) {
             },
             loading: false,
             tokenType: 'FT',
-            codehash: ft.codehash,
+            codehash: ft.codeHash,
             genesis: ft.genesis,
-            decimalNum: ft.decimalNum,
+            decimalNum: ft.decimal,
             ftSymbol: ft.symbol,
             ftName: ft.name,
           })

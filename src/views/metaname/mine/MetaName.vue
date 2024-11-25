@@ -346,6 +346,7 @@ function getExporeDate(height: number) {
 }
 
 function getData() {
+  
   getInfo().then(() => {
     isSkeleton.value = false
     getExporeDate(metaName.val!.expiredBlockTime).then(res => {
@@ -353,8 +354,16 @@ function getData() {
       isGetExpireDateLoading.value = false
     })
     GetTx(metaName.val!.txid).then(res => {
-      registerDate.value = res.txDetail.timestamp * 1000
+      
+      if(res.code == 0){
+        registerDate.value = res.data.txDetail.timestamp * 1000
       isGetRegisterDateLoading.value = false
+      }else{
+        isGetRegisterDateLoading.value = false
+      }
+    }).catch((error)=>{
+      isGetRegisterDateLoading.value = false
+      ElMessage.error(error)
     })
   })
 }

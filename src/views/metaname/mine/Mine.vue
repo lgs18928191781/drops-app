@@ -187,13 +187,17 @@ function getDatas(isCover = false) {
 }
 
 function getBlock() {
+  
   return new Promise<void>(async (resolve, reject) => {
     const res = await getBlockHeight().catch(error => {
       ElMessage.error(error.message)
     })
-    if (res) {
-      blockHeight = res
+    if (res.code == 0) {
+      blockHeight = res.data.data[0].height
+      
       resolve()
+    }else{
+      reject()
     }
   })
 }

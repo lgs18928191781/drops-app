@@ -51,7 +51,7 @@ interface SetUserPasswordParams extends BaseUserInfoParams {
 const baseApi = import.meta.env.VITE_BASEAPI
 const metasvApi = import.meta.env.VITE_META_SV_API
 const wxcoreApi = import.meta.env.VITE_WXCOREAPI
-
+const mvcBaseApi=import.meta.env.VITE_MVC_BASEAPI
 const callApi = async (config: ApiRequestTypes): Promise<ApiResultTypes> => {
   const Http = new HttpRequests()
   const apiPrefix = config.apiPrefix || baseApi
@@ -89,6 +89,36 @@ const getMetasvSig = async (path: string): Promise<MetasvSigTypes> => {
       throw new Error(res.message + ' (01-getMetasvSig)')
     }
   })
+}
+
+
+export const mvcApi=async( 
+  path: string,
+  params: ObjTypes<string | number> = {},
+  method = 'get'
+): Promise<{
+  code:number,
+  data:any
+}> =>{
+  const url = mvcBaseApi + path
+  const Http = new HttpRequests()
+  if (method === 'post') {
+    return Http.postFetch(url, params)
+      .then(res => {
+        return res
+      })
+      .catch(error => {
+        throw new Error('Request Error -- ' + error.message)
+      })
+  } else {
+    return Http.getFetch(url, params)
+      .then(res => {
+        return res
+      })
+      .catch(error => {
+        throw new Error('Request Error -- ' + error.message)
+      })
+  }
 }
 
 export const callMetasvApi = async (
@@ -139,7 +169,7 @@ export const callMetasvApi = async (
 }
 
 export const getBlockHeight = (): Promise<any> => {
-  return callMetasvApi('/block/info')
+  return mvcApi('/v1/chain/block/info')
 }
 
 export const getFtUtxo = (params: {
@@ -593,5 +623,5 @@ export const MetaNameBeforeReqRes = (parmas: {
 }
 
 export const GetTx = (txId: string): Promise<any> => {
-  return callMetasvApi(`/tx/${txId}`)
+  return mvcApi(`/v1/chain/tx/${txId}`)
 }

@@ -237,7 +237,7 @@ const tryInitChannel = async (status: string) => {
         if (!selfAddress) {
           const {
             data: {
-              results: { items },
+              data: items,
             },
           } = await GetFT({
             codehash: consensualCodehash,
@@ -259,22 +259,22 @@ const tryInitChannel = async (status: string) => {
 
         const {
           data: {
-            results: { items: userFts },
+            data: userFts,
           },
         } = await GetFTs({
           address: selfAddress,
           codehash: consensualCodehash,
           genesis: consensualGenesis,
-          chain,
-          page: 1,
-          pageSize: 3,
+          // chain,
+          // page: 1,
+          // pageSize: 3,
         })
 
         if (userFts.length > 0) {
           // 所需数量
           const needAmount = talk.activeChannel.roomLimitAmount
           // 用户拥有数量
-          const userAmount = parseInt(userFts[0].balance.split('.')[0])
+          const userAmount = parseInt(userFts[0].confirmedString.split('.')[0])
           if (userAmount < needAmount) {
             // const {
             //   data: {

@@ -58,7 +58,7 @@ import { useUserStore } from '@/stores/user'
 import ContentModalVue from '../ContentModal/ContentModal.vue'
 import { Chains } from '@/enum'
 import { GetFTs } from '@/api/aggregation'
-import { metafile } from '@/utils/filters'
+import { metafile ,handlerFileService} from '@/utils/filters'
 import MSP from '@/assets/images/msp.png'
 import LoadMoreVue from '../LoadMore/LoadMore.vue'
 import { initPagination } from '@/config'
@@ -191,26 +191,26 @@ function getFts(isCover = false) {
       try {
         const res = await GetFTs({
           address: userStore.user!.address!,
-          chain: Chains.MVC,
-          page: 1,
-          pageSize: 30,
+          // chain: Chains.MVC,
+          // page: 1,
+          // pageSize: 30,
         })
 
         if (res.code === 0) {
           if (isCover) FtList.length = 0
-          if (res.data.results.items.length === 0) pagination.nothing = true
+          if (res.data.data.length === 0) pagination.nothing = true
           const mspGenesis = `b2d75931958114e48c9927160f80363eae78e2dc`
-          for (let ft of res.data.results.items) {
+          for (let ft of res.data.data) {
             let ftUtxo = await getFtUtxo({
               address: userStore.user!.address,
-              codehash: ft.codehash,
+              codehash: ft.codeHash,
               genesis: ft.genesis,
             })
             let moreFtUtxoFlag = true
             while (moreFtUtxoFlag) {
               const moreFtUtxo = await getFtUtxo({
                 address: userStore.user!.address,
-                codehash: ft.codehash,
+                codehash: ft.codeHash,
                 genesis: ft.genesis,
                 flag: ftUtxo[ftUtxo.length - 1].flag,
               })
@@ -223,13 +223,13 @@ function getFts(isCover = false) {
 
             if (ftUtxo.length > 20) {
               FtList.push({
-                icon: ft.genesis == mspGenesis ? MSP : metafile(ft.icon),
+                icon: ft.genesis == mspGenesis ? MSP : handlerFileService(ft.icon),
                 name: ft.name,
-                value: +ft.balance,
+                value: new Decimal(new Decimal(ft.confirmed).add(ft.unconfirmed)).div(10 ** +ft.decimal).toNumber(),
                 loading: false,
-                codehash: ft.codehash,
+                codehash: ft.codeHash,
                 genesis: ft.genesis,
-                decimalNum: ft.decimalNum,
+                decimalNum: ft.decimal,
                 ftSymbol: ft.symbol,
                 ftName: ft.name,
                 ftUtxos: ftUtxo,

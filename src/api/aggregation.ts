@@ -12,6 +12,7 @@ import HttpRequest from '@/utils/request'
 import { error } from 'console'
 import { ethers } from 'ethers'
 import { changeSymbol } from '@/utils/util'
+import { mvcApi } from "@/api";
 const aggregation = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation`, {
   header: {
     SiteConfigMetanetId: import.meta.env.VITE_SiteConfigMetanetId,
@@ -35,6 +36,9 @@ const aggregation = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation
 }).request
 
 const metanameApi = new HttpRequest(`${import.meta.env.VITE_MetaName_BaseApi}`, {}).request
+
+
+const cyber3api=new HttpRequest(`${import.meta.env.VITE_CYBER3_API}`, {}).request
 
 export const MetaBotV1 = (params: {
   address: string
@@ -426,22 +430,40 @@ export const GetNFTs = (params: {
 
 export const GetFTs = (params: {
   address: string
-  chain?: string
-  page: number | string
-  pageSize: number | string
+  //chain?: string
+  //page: number | string
+  //pageSize: number | string
   codehash?: string
   genesis?: string
 }): Promise<{
   code: number
   data: {
     total: number
-    results: {
-      items: FungibleToken[]
-    }
+    data:Array<{
+      codeHash: string,
+      confirmed: number,
+      confirmedString: string,
+      decimal: number,
+      genesis: string,
+      icon: string,
+      name: string,
+      sensibleId: string,
+      symbol:string,
+      unconfirmed: number,
+      unconfirmedString: string,
+      utxoCount: string
+    }>
+    // results: {
+    //   items: FungibleToken[]
+    // }
   }
 }> => {
   const { address, ..._params } = params
-  return aggregation.get(`/v2/app/show/ft/${address}/summaries`, { params: _params })
+  
+  //return aggregation.get(`/v2/app/show/ft/${address}/summaries`, { params: _params })
+   
+    debugger
+  return mvcApi(`/v1/contract/ft/address/${address}/balance`,_params)
 }
 
 export const GetBalance = (params: {
