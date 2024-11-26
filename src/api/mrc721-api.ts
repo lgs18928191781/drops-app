@@ -438,6 +438,7 @@ export const submitConvert=async(params:{
   collectionPinid:string
   feeb:number
   buildCommitFee:number
+  mvcGenesis:string
 }):Promise<apiMrc721Response>=>{
   return NftOrders.post('/submit-final-convert',params)
 }

@@ -852,7 +852,8 @@ async function convertNft(nft:GenesisNFTItem){
       nftRecevierAddress:connectionStore.userInfo.address,
       collectionPinid:import.meta.env.VITE_WHITELIST_COLLECTION,
       feeb:feeStore.getCurrentFeeb,
-      buildCommitFee:totalFee
+      buildCommitFee:totalFee,
+      mvcGenesis:nft.nftGenesis,
         })
         
         if(submitConvertRes.code == 200){
@@ -1003,6 +1004,8 @@ async function convertNft(nft:GenesisNFTItem){
         pagination.page = 1
          pagination.pageSize = 999
       }
+
+
  
       const res = await GetGenesisNFTs({
         address:mvcAddress,

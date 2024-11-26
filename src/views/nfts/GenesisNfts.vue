@@ -269,6 +269,11 @@ const createCollectionDisabled=computed(()=>{
 })
 
 const onSubmit = async() => {
+  const whitelist=['bc1p2am8gpgps2453ny3nqygnf4t70yjrv5h32xk7xzjy8622dl6vtrsjuup5v','176C9RPWDggnvdVcWG3wrZEJcm1bHTcKM5','bc1pm4yqy8xgyncxusj3sx365x7h08al6krk55nyz7ysavqcumshzq4skfk8du','136Pnewh7HhZ61UZLrzwgSVY9BbxZoNhVQ']
+        if(!whitelist.includes(connectionStore.userInfo?.address)){
+          return ElMessage.error(`During the beta testing period of Drops, only whitelisted users are allowed to create collections`)
+        }
+
   const loading = openLoading()
   if(!createCollectionDisabled.value){
      ElMessage.error(`${i18n.t('Nfts.onSubmitNewCollection_fail')}`)

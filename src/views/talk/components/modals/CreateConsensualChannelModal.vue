@@ -593,13 +593,13 @@ const fetchFtSeries = async () => {
   if (!selfAddress.value) return
   const {
     data: {
-      results: { items: _fts },
+      data: _fts,
     },
   } = await GetFTs({
     address: selfAddress.value,
-    chain: selectedChain.value.value,
-    page: 1,
-    pageSize: 100,
+    // chain: selectedChain.value.value,
+    // page: 1,
+    // pageSize: 100,
   })
   ftSeries.value = _fts
 }

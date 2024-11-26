@@ -335,209 +335,68 @@ declare interface RecommnedUser {
   }
 }
 
-// declare interface UserNFTItem {
-//   nftCodehash: string
-//   nftDataStr: string
-//   nftDesc: string
-//   nftDetailItemList: GenesisNFTItem[]
-//   nftGenesis: string
-//   nftGenesisTxId: string
-//   nftGenesisType: string
-//   nftHasCompound: boolean
-//   nftIcon: string
-//   nftIsReady: boolean
-//   nftIssueAvatarTxId: string
-//   nftIssueAvatarType: string
-//   nftIssueMetaId: string
-//   nftIssueVersion: string
-//   nftIssuer: string
-//   nftMyCount: number
-//   nftMyPendingCount: number
-//   nftName: string
-//   nftSensibleId: string
-//   nftSeriesName: string
-//   nftSymbol: string
-//   nftTimestamp: number
-//   nftTotalSupply: number
-//   nftWebsite: string
-//   nftIssueUserInfo: {
-//     address: string
-//     avatarImage: string
-//     avatarTxId: string
-//     avatarType: string
-//     coverPublicKey: string
-//     coverType: string
-//     coverUrl: string
-//     infoAvatarTxIdOssUrl: string
-//     metaIdTimestamp: number
-//     metaName: string
-//     name: string
-//     nameType: string
-//     nftNamePublicKey: string
-//     publicKey: string
-//   }
-// }
-
-declare interface feeDetailType{
-  salePrice:number,
-  platformFee:number,
-  royalFee:number,
-  platformRate:number
-  royaltyRate?:number,
-}
-
-declare interface Mrc721PinItemType{
-  id:string
-  number:number
-  metaid:string
-  address:string
-  creator:string
-  createMetaId:string
-  initialOwner:string
-  output:string
-  outputValue:number
-  timestamp:number
-  genesisFee:number
-  genesisHeight:number
-  genesisTransaction:string
-  txIndex:number
-  txInIndex:number
-  offset:number
-  location:number
-  operation:string
-  path:string
-  parentPath:string
-  originalPath:string
-  encryption:string
-  version:string
-  contentType:string
-  contentTypeDetect:string
-  contentBody:string
-  contentLength:number
-  contentSummary:string
-  status:number
-  originalId:string
-  isTransfered:boolean
-  preview:string
-  content:string
-  pop:string
-  popLv:number
-  chainName:string
-  dataValue:number
-  mrc20MintId:any[]
-
-
-}
-
-declare interface NftItemType{
-  id:number
-  item_pinid:string
-  item_cover:string
-  pic_path:string
-  pic_id:string
-  nft_name:string
-  item_desc:string
-  classify:Array<string>
-  meta_data:any
-  mint_price:number
-  commit_address:string
-  reveal_address:string
-  is_minted:number
-  is_destroy:number
-  buyer_address:string
-  chain:import('@/data/constants').NftsLaunchPadChainSymbol
-  collection_pinid:string
-  creator_info:{
-    metaid:string,
-    address:string,
-    avatar?:string,
-    avatarId?:string,
-    name?:string
-  },
-  owner_info:{
-    metaid:string,
-    address:string,
-    avatar?:string,
-    avatarId?:string,
-    name?:string
+declare interface UserNFTItem {
+  nftCodehash: string
+  nftDataStr: string
+  nftDesc: string
+  nftDetailItemList: GenesisNFTItem[]
+  nftGenesis: string
+  nftGenesisTxId: string
+  nftGenesisType: string
+  nftHasCompound: boolean
+  nftIcon: string
+  nftIsReady: boolean
+  nftIssueAvatarTxId: string
+  nftIssueAvatarType: string
+  nftIssueMetaId: string
+  nftIssueVersion: string
+  nftIssuer: string
+  nftMyCount: number
+  nftMyPendingCount: number
+  nftName: string
+  nftSensibleId: string
+  nftSeriesName: string
+  nftSymbol: string
+  nftTimestamp: number
+  nftTotalSupply: number
+  nftWebsite: string
+  nftIssueUserInfo: {
+    address: string
+    avatarImage: string
+    avatarTxId: string
+    avatarType: string
+    coverPublicKey: string
+    coverType: string
+    coverUrl: string
+    infoAvatarTxIdOssUrl: string
+    metaIdTimestamp: number
+    metaName: string
+    name: string
+    nameType: string
+    nftNamePublicKey: string
+    publicKey: string
   }
-  is_ready:boolean
-  created_at:string
-  item_cover:string
-  item_pinid:string
-  nft_name:string
-  order_id:string
-  psbt_hex:string
-  order_status:import('@/data/constants').NftOrderState
-  reveal_txid:string
-  royalty_rate:number
-  sale_price:number
-  saler_address:string
-  saler_metaid:string
-  updated_at:string
-  nftPinInfo:Mrc721PinItemType
-}
-
-
-
-
-declare interface Mrc721PinListType{
-  [k as string]:{
-    where:string
-    address:string
-    metaId:string
-    creator:string
-    transfer:boolean
-    output:string
-    transferFromAddress:string
-  }
-}
-
-declare interface UserNFTItem{
-  address:string
-  auto_market:number
-  chain:string
-  collection_pinid:string
-  cover_pinid:string
-  created_at:string
-  id:number
-  init_price:number
-  meta_data:string
-  metaid:string
-  name:string
-  nft_desc:string
-  price_growth:number
-  royalty_rate:number
-  total_supply:number
-  updated_at:string
-  website:string
-  current_supply?:number
-  minted?:number
-  current_mint_price?:number
-  collection_creator?:NFTCreatore
-  itemList:Mrc721PinItemType[]
-  total:number
 }
 
 declare interface FungibleToken {
-  balance: string
-  codehash: string
-  decimalNum: number
-  desc: string
-  genesis: string
-  genesisTxId: string
-  icon: string
-  iconUrl: string
-  issueList: any[]
-  issueVersion: string
-  issuer: string
-  name: string
-  sensibleId: string
-  symbol: string
-  timestamp: number
-  totalSupply: number
-  totalSupplyStr: string
-  website: string
+  // balance: string
+  // codehash: string
+  // decimalNum: number
+  // desc: string
+  // genesis: string
+  // genesisTxId: string
+  // icon: string
+  // iconUrl: string
+  // issueList: any[]
+  // issueVersion: string
+  // issuer: string
+  // name: string
+  // sensibleId: string
+  // symbol: string
+  // timestamp: number
+  // totalSupply: number
+  // totalSupplyStr: string
+  // website: string
 }
 
 declare interface ftListType {
@@ -690,27 +549,6 @@ declare interface GenesisNFTItem {
   nftTopicType: string
 }
 
-declare interface ConverOrderType {
-  build_commit_fee:number
-codehash:string
-collection_pinid:string
-commit_address:string
-commit_id:string
-convert_address:string
-convert_order_id:string
-created_at:string
-feeb:number
-genesis:string
-id:number
-lock_address:string
-mvc_nft_owner_address:string
-nft_icon:string
-nft_transfer_txid:string
-order_status:number
-token_index:number
-updated_at:string
-}
-
 declare interface TopicTypeInfo {
   chain: string
   topicKey: string
@@ -812,29 +650,6 @@ declare interface GenesisItem {
   totalSupply: number
   sensibleId: string
   metaId: string
-}
-
-declare interface Mrc721CollectionItem {
-  totalSupply: number
-  name: string
-  desc: string
-  cover?: string
-  website: string
-  royaltyRate: number
-  metaData: any
-  chain: import('@/enum').NftsLaunchPadChainSymbol
-  collectionPinId: string
-  autoMarket: boolean
-  genesisTimestamp?: number
-  metaId: string
-  classify:string[] | string
-  initialPrice?: number
-  priceGrowth?: number
-  coverPinid?: string
-  address?: string
-  minted?:number
-  currentSupply?: number
-
 }
 
 declare interface Order {

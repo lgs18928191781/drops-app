@@ -102,7 +102,7 @@ export const router = createRouter({
               beforeEnter: async (to, from, next) => {
                
                 const genesisStore=useGenesisStore()
-             
+                
                 // if (root.bandProposalList.includes(to.params.id as string)) {
                 //   next('/404')
                 // } else {
