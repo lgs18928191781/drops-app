@@ -51,9 +51,11 @@ export const classifyList = [
   { classify: 'game', disabled: false, name: () => i18n.global.t('NFT.ClassifyList.game') },
   { classify: 'avatar', disabled: false, name: () => i18n.global.t('NFT.ClassifyList.avatar') },
   { classify: 'card', disabled: false, name: () => i18n.global.t('NFT.ClassifyList.card') },
-  // { classify: 'alias', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.alias') },
+  { classify: 'emoji', disabled: false, name: () => i18n.global.t('NFT.ClassifyList.emoji') },
   { classify: 'rights', disabled: false, name: () => i18n.global.t('NFT.ClassifyList.rights') },
   { classify: 'music', disabled: false, name: () => i18n.global.t('NFT.ClassifyList.music') },
+  { classify: 'background', disabled: false, name: () => i18n.global.t('NFT.ClassifyList.background') },
+  { classify: 'fragment', disabled: false, name: () => i18n.global.t('NFT.ClassifyList.fragment') },
   // { classify: 'Name', disabled: true, name: () => i18n.global.t('NFT.ClassifyList.Name') },
 ]
 

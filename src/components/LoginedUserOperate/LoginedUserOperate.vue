@@ -547,7 +547,7 @@ async function trggleFeeb(e:Event,feeb:FeebPlan){
   if(feeb.title  == 'Custom'){
     e.preventDefault()
     e.stopPropagation()
-    await feebStore.set(feeb.title,15)
+    await feebStore.set(feeb.title,3)
   }else{
     await feebStore.set(feeb.title)
   }

@@ -42,6 +42,39 @@ export const MinRoyaltyFee=1000
 export const REDEEM_SERVICE_FEE=1000
 export const CONVERT_SERVICE_FEE=2000
 export const MRC721PlatformAddress=import.meta.env.VITE_MRC721_PLATFORM_ADDRESS
+
+
+export const whiteListMvcGenesisMapCollectionpinid=[
+  {
+    genesis:'529cf41a72a1b61fe9c2fb91e7bc05616f9b769c',
+    collectionPinid:'',
+  },
+  {
+    genesis:'84e74476d9490c1483baa5463742868950505aab',
+    collectionPinid:'3c5a2c8437908f45e4c942d42546b7d17f2d34e9622462cb3a93d5e5e1f2641fi0',
+  },
+  {
+    genesis:'1897212dadf3c734b9a19c4430f3fbf0cdc07aa4',
+    collectionPinid:'be7caa5bf95d88aa9cc1778abf7a2b67318c3a468cfa01ec7f8f2b463c13ca27i0',
+  }
+]
+
+export const whiteListConverCollection=[
+  {
+    genesis:'529cf41a72a1b61fe9c2fb91e7bc05616f9b769c',
+    codehash:'e205939ad9956673ce7da9fbd40514b30f66dc35',
+  },
+  {
+    genesis:'84e74476d9490c1483baa5463742868950505aab',
+    codehash:'e205939ad9956673ce7da9fbd40514b30f66dc35',
+  },
+  {
+    genesis:'1897212dadf3c734b9a19c4430f3fbf0cdc07aa4',
+    codehash:'e205939ad9956673ce7da9fbd40514b30f66dc35',
+  }
+
+]
+
 // type EntitySchema = {
 //   name: string
 //   path: string

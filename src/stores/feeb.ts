@@ -9,30 +9,30 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
         last: useLocalStorage('last-feeb', {
             currentFeeb:{
                 title: 'Fast',
-                feeRate: 10,
+                feeRate: 3,
             },
             feeRateList:[
                 {
                     title: 'Eco',
                     fullTitle: 'Economy',
-                    feeRate: 10,
+                    feeRate: 3,
                     
                   },
                   {
                     title: 'Slow',
-                    feeRate: 10,
+                    feeRate: 3,
                   },
                   {
                     title: 'Avg',
-                    feeRate:10,
+                    feeRate:3,
                   },
                   {
                     title: 'Fast',
-                    feeRate:10,
+                    feeRate:3,
                   },
                   {
                     title: 'Custom',
-                    feeRate:15,
+                    feeRate:3,
                   },
             ]
         } as {currentFeeb:FeebPlan,feeRateList:FeebPlan[]} ),
@@ -62,7 +62,7 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
            }else if(connectionStore.currentChain && connectionStore.currentChain == ConnectChain.mvc){
             this.last.currentFeeb={
               title: 'Fast',
-              feeRate: 10,
+              feeRate: 3,
             }
 
            }else if(connectionStore.currentChain == ConnectChain.btc){
@@ -82,7 +82,7 @@ import { useConnectionStore, ConnectChain } from '@/stores/connection'
            }else{
             this.last.currentFeeb={
               title: 'Fast',
-              feeRate: 10,
+              feeRate: 3,
             }
            }
            

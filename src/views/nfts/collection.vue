@@ -841,7 +841,7 @@
             </template>
             <template #default>
               <el-input
-              maxlength="20"
+              maxlength="30"
               show-word-limit
                 v-model="createCollectionform.name"
                 :placeholder="$t('Nfts.launch_placeholder1')"
@@ -2063,6 +2063,9 @@ function toCollectionWork(){
 const onSubmitNewCollection = async () => {
   //router.push('/nfts')
   console.log("createCollectionform",createCollectionform)
+
+
+
   if(!createCollectionDisabled.value){
     return ElMessage.error(`${i18n.t('Nfts.onSubmitNewCollection_fail')}`)
   }
@@ -2241,8 +2244,8 @@ const beforeAvatarUpload:UploadProps['beforeUpload'] = async (rawFile) => {
   if (!fileType.includes(rawFile.type)) {
     ElMessage.error('Avatar picture must be JPG/PNG/GIF/WEBP format!')
     return false
-  } else if (rawFile.size / 1024 / 1024 > 0.2) {
-    ElMessage.error('Avatar picture size can not exceed 200KB!')
+  } else if (rawFile.size / 1024 / 1024 > 1) {
+    ElMessage.error('Avatar picture size can not exceed 1MB!')
     return false
   }
   const compressed = await compressImage(rawFile)

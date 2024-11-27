@@ -541,7 +541,7 @@ async function confirmConnect(){
   if(chainType.value == ConnectChain.btc){
     feebStore.update()
     const btcConnector = await connectStore.connect(ConnectChain.btc)
-    console.log(btcConnector)
+ 
   // debugger
   if (!btcConnector._isConnected) {
     return ElMessage.error(`${i18n.t('wallet_addres_empty')}`)
@@ -556,8 +556,11 @@ async function confirmConnect(){
     address: btcConnector.address,
     loginType: 'MetaID',
   })
+  console.log("btcConnector.network ",btcConnector.network )
     const currentUserInfo = await btcConnector.getUser({ network: btcConnector.network })
     console.log(currentUserInfo)
+    
+    
     const currentUserName = currentUserInfo.name
     if (!currentUserName) {
       // isShowSelectChain.value = false
@@ -1401,9 +1404,14 @@ async function connectMetalet() {
 
   //metalet-SDK实例化
 }
+
+
+
+
+
 async function getUserInfo() {
   const needInfo = {
-    network: connectStore.last.network || networkStore.network,
+    network: networkStore.network || 'mainnet',//connectStore.last.network || networkStore.network,
     currentAddress: connectStore.userInfo.address,
   }
 

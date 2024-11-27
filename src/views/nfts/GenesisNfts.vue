@@ -55,7 +55,7 @@
           </template>
           <template #default>
             <el-input
-            maxlength="20"
+            maxlength="30"
             show-word-limit
             v-model="form.name" :placeholder="$t('Nfts.launch_placeholder1')" />
           </template>
@@ -269,7 +269,10 @@ const createCollectionDisabled=computed(()=>{
 })
 
 const onSubmit = async() => {
-  const whitelist=['bc1p2am8gpgps2453ny3nqygnf4t70yjrv5h32xk7xzjy8622dl6vtrsjuup5v','176C9RPWDggnvdVcWG3wrZEJcm1bHTcKM5','bc1pm4yqy8xgyncxusj3sx365x7h08al6krk55nyz7ysavqcumshzq4skfk8du','136Pnewh7HhZ61UZLrzwgSVY9BbxZoNhVQ']
+  const whitelist=['bc1ppzdcjgkyk57kd39w8nwmv92strkmf2dvd876n0xxne9wcycvg06satvw0c',
+  'bc1p2am8gpgps2453ny3nqygnf4t70yjrv5h32xk7xzjy8622dl6vtrsjuup5v','176C9RPWDggnvdVcWG3wrZEJcm1bHTcKM5',
+  'bc1pm4yqy8xgyncxusj3sx365x7h08al6krk55nyz7ysavqcumshzq4skfk8du',
+  '136Pnewh7HhZ61UZLrzwgSVY9BbxZoNhVQ','17LK4XoemSdVDtoZforjb9bf2RiDQzvYGq','1K1Heqm7qgisKhtsGsDq9TPhoV6JXw6BVu']
         if(!whitelist.includes(connectionStore.userInfo?.address)){
           return ElMessage.error(`During the beta testing period of Drops, only whitelisted users are allowed to create collections`)
         }
@@ -505,8 +508,8 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = async(rawFile) => {
   if (!fileType.includes(rawFile.type) ) {
     ElMessage.error('Upload image must be JPG/PNG/GIF/WEBP format!')
     return false
-  } else if (rawFile.size / 1024 / 1024 > 0.2) {
-    ElMessage.error('Upload image size can not exceed 200KB!')
+  } else if (rawFile.size / 1024 / 1024 > 1) {
+    ElMessage.error('Upload image size can not exceed 1MB!')
     return false
   }
 

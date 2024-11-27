@@ -554,8 +554,8 @@ export function useMetaIDEntity(){
                                 noBroadcast:params.noBroadcast == true ? 'yes'  : 'no',
                                 feeRate:feebStore.getCurrentFeeb,
                                 service: {
-                                    address:import.meta.env.VITE_BTC_SERVICE_ADDRESS,
-                                    satoshis:import.meta.env.VITE_BTC_SERVICE_FEEB,
+                                    address:import.meta.env.VITE_MRC721_PLATFORM_ADDRESS,
+                                    satoshis:import.meta.env.VITE_MINT_NFT_SERVICE_FEE,
                                 }
                             }
                         })
@@ -798,7 +798,7 @@ export function useMetaIDEntity(){
                })
             }
             const needInfo = {
-                network: connectStore.last.network || networkStore.network,
+                network:  networkStore.network || 'mainnet',
                 currentAddress: address
               }
                connectStore.last.getUser({ ...needInfo }).then((user)=>{

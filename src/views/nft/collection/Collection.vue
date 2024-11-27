@@ -535,8 +535,9 @@ function getCollectionCreator(address: string) {
 }
 
 function getDatas(isCover = false) {
-  
+
   return new Promise<void>(async (resolve, reject) => {
+    
     if (!collection.val) {
       reject()
     }
@@ -616,8 +617,8 @@ function getCollection() {
 
       //   reject()
       // })
-      
-      if (mintRes.code == 200 && (mintRes.data.mintAmout > 0 || mintRes.data.currentSupply > 0)) {
+      // && (mintRes.data.mintAmout > 0 || mintRes.data.currentSupply > 0)
+      if (mintRes.code == 200 ) {
         const collectionCreator = await getUserAllInfo(res.data.result.address)
         const { mintAmout, currentSupply, currentMintPrice } = mintRes.data
         if (connectionStore.last.user.address) {
@@ -625,7 +626,7 @@ function getCollection() {
         } else {
           res.data.result.collection_creator = mintRes.data.creatorInfo
         }
-
+      
         collection.val = {
           ...res.data.result,
           current_supply: currentSupply,
@@ -727,6 +728,7 @@ function getCollection() {
       pagination.loading = false
     })
   }else{
+    
     getDatas().then(() => {
     pagination.loading = false
   })
@@ -960,6 +962,7 @@ function changeTab(value: NFTCollectTab) {
 
 getCollection()
   .then(() => {
+    
     getDatas(true)
       .then(() => {
         

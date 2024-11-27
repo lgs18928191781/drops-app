@@ -66,22 +66,22 @@ export const getFeebPlans = async (): Promise<FeebPlan[]> => {
     {
       title: 'Eco',
       fullTitle: 'Economy',
-      feeRate: res.economyFee < 10 ? 10 : res.economyFee ,
+      feeRate: res.economyFee < 3 ? 3 : res.economyFee ,
       icon: 'Snail',
     },
     {
       title: 'Slow',
-      feeRate: res.hourFee < 10 ? 10 : res.hourFee,
+      feeRate: res.hourFee < 3 ? 3 : res.hourFee,
       icon: 'Turtle',
     },
     {
       title: 'Avg',
-      feeRate: res.halfHourFee < 10 ? 10 : res.halfHourFee,
+      feeRate: res.halfHourFee < 3 ? 3 : res.halfHourFee,
       icon: 'Rabbit',
     },
     {
       title: 'Fast',
-      feeRate: res.fastestFee < 10 ? 10 : res.fastestFee,
+      feeRate: res.fastestFee < 3 ? 3 : res.fastestFee,
       icon: 'Bird',
     },
   ]

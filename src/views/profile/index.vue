@@ -569,7 +569,7 @@ class="user-warp-item   mr-3"
 
   import {debounce, openLoading, calcNftRealSalePrice, sleep, checkUserLogin,copy } from '@/utils/util'
 import MetabotItem from '@/components/NFTItem/MetabotItem.vue'
-  import { NftsLaunchPadChainSymbol, PlatformRate } from '@/data/constants'
+  import { NftsLaunchPadChainSymbol, PlatformRate,whiteListConverCollection,whiteListMvcGenesisMapCollectionpinid } from '@/data/constants'
   import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
   import { checkDummyAmount } from '@/hooks/use-buildtx-entity'
   import BTC from '@/assets/icons/btc.svg?url'
@@ -831,6 +831,13 @@ async function convertNft(nft:GenesisNFTItem){
 
     const mvcNftAddress=await window.metaidwallet.getAddress()
 
+    const targetCollectionPinid=whiteListMvcGenesisMapCollectionpinid.filter((item)=>{
+      return item.genesis == nft.nftGenesis
+    })
+
+    if(!targetCollectionPinid.length){
+      return ElMessage.error('Cannot find the conversion target album for this NFT colllection.')
+    }
 
   
 
@@ -843,6 +850,8 @@ async function convertNft(nft:GenesisNFTItem){
   })
   
   if(preConvertRes.code == 200){
+
+
     
     const {commitAddress,lockAddress,totalFee,picPath}=preConvertRes.data
     const submitConvertRes= await submitConvert({
@@ -850,7 +859,7 @@ async function convertNft(nft:GenesisNFTItem){
       commitAddress:commitAddress,
       lockAddress:lockAddress,
       nftRecevierAddress:connectionStore.userInfo.address,
-      collectionPinid:import.meta.env.VITE_WHITELIST_COLLECTION,
+      collectionPinid:targetCollectionPinid[0].collectionPinid,//import.meta.env.VITE_WHITELIST_COLLECTION,
       feeb:feeStore.getCurrentFeeb,
       buildCommitFee:totalFee,
       mvcGenesis:nft.nftGenesis,
@@ -1000,45 +1009,41 @@ async function convertNft(nft:GenesisNFTItem){
       if (!mvcAddress) {
         reject()
       }
+      const templist=[]
       if(isCover){
         pagination.page = 1
          pagination.pageSize = 999
       }
 
+      if (isCover) convertNfts.length = 0
 
- 
-      const res = await GetGenesisNFTs({
+      for(let i = 0;i< whiteListConverCollection.length;i++){
+        const res = await GetGenesisNFTs({
         address:mvcAddress,
       chain: 'mvc',
-      codehash: import.meta.env.VITE_METABOT_CODEHASH,
-      genesis: import.meta.env.VITE_METABOT_GENESIS,
+      codehash: whiteListConverCollection[i].codehash,
+      genesis: whiteListConverCollection[i].genesis,
       ...pagination,
        
       })
       if (res?.code == 0) {
-        
-        if (isCover) convertNfts.length = 0
         if (res.data.results.items.length === 0){
             pagination.nothing = true
         }
-        // pagination.flag = res.data?.cursor ? res.data.cursor : ''
-        convertNfts.push(...res.data.results.items)
-        
-        nftOwnerInfo.val= await getUserAllInfo(route.params.address as string)
-      
-        
-        resolve()
-        // for (let item of res.data) {
-        //     item.creator_info = await getUserAllInfo(item.creator_info.address)
-        //     item.owner_info = await getUserAllInfo(item.owner_info.address)
-        //     nfts.push(item)
-            
-        // }
-
-
-
-        
+        templist.push(...res.data.results.items)
       }
+      }
+
+      for(let item of templist){
+        if(!item.nftIsReady && !item.nftIsLegal){
+          convertNfts.push(item)
+        }
+      }
+
+      nftOwnerInfo.val= await getUserAllInfo(route.params.address as string)
+      resolve()
+     
+    
      
     })
   }

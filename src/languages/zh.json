@@ -751,7 +751,10 @@
       "avatar": "頭像",
       "alias": "別名",
       "card": "紀念卡",
-      "Name": "MetaName"
+      "Name": "MetaName",
+      "emoji": "表情包",
+      "background": "背景",
+      "fragment": "碎片"
     },
     "FilterItem": {
       "Status": "狀態",

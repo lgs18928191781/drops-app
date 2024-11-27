@@ -761,7 +761,10 @@
       "avatar": "Avatar",
       "rights": "Right",
       "music": "Music",
-      "Name": "MetaName"
+      "Name": "MetaName",
+      "emoji": "Emoji",
+      "background": "Background",
+      "fragment": "Fragment"
     },
     "FilterItem": {
       "Status": "Status",

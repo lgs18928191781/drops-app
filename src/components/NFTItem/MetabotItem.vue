@@ -18,7 +18,7 @@
           </div> -->
   
           <div class="user-list" v-if="!isSimple">
-            <div class="user-item flex flex-align-center">
+            <!-- <div class="user-item flex flex-align-center">
               <UserAvatar
                 :meta-id="metabotIssuerInfo.metaid"
                 :image="metabotIssuerInfo.avatarId"
@@ -35,7 +35,7 @@
                 /></span>
                 <span class="role">({{ $t('NFT.Creater') }})</span>
               </div>
-            </div>
+            </div> -->
             <div class="user-item flex flex-align-center">
               <UserAvatar
                 :meta-id="nftOwnerInfo.metaid"
@@ -88,11 +88,11 @@
   const userStore = useUserStore()
   const i18n = useI18n()
 
-  const metabotIssuerInfo={
-    metaid:`7d129bcb274a255591cf600148e898650cddf81f131aa1485c42757007eff3b7`,
-    name:`ShowPayTeam`,
-    avatarId:`606eb9c30fb7de2d413ee20ae8beae5e196b195a096f7b9fcec49cae98d1e4a0i0`
-  }
+  // const metabotIssuerInfo={
+  //   metaid:`7d129bcb274a255591cf600148e898650cddf81f131aa1485c42757007eff3b7`,
+  //   name:`ShowPayTeam`,
+  //   avatarId:`606eb9c30fb7de2d413ee20ae8beae5e196b195a096f7b9fcec49cae98d1e4a0i0`
+  // }
   
   const isMyNFT = computed(() => {
     return IsMyNFT(props.nft)
