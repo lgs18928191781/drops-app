@@ -339,6 +339,7 @@ export async function exclusiveChange({
   
   feeb = feeb ?? useFeebStore().getCurrentFeeb ??  raise('Choose a fee rate first.')
   const address =connectionStore.getAddress ?? raise('Please connect to your wallet first.')
+  
   if (useSize && maxUtxosCount > 1) {
     raise('useSize and maxUtxosCount cannot be set at the same time.')
   }
@@ -378,12 +379,12 @@ export async function exclusiveChange({
     )
   }
 
-  const networkStore = useNetworkStore()
-  const btcjs = useBtcJsStore().get!
-  const paymentPrevOutputScript = btcjs.address.toOutputScript(
-    address,
-    networkStore.typedNetwork,
-  )
+  // const networkStore = useNetworkStore()
+  // const btcjs = useBtcJsStore().get!
+  // const paymentPrevOutputScript = btcjs.address.toOutputScript(
+  //   address,
+  //   networkStore.typedNetwork,
+  // )
   console.log({ paymentUtxos })
   console.log("paymentUtxos",paymentUtxos)
   
@@ -451,11 +452,13 @@ export async function exclusiveChange({
 
     // we have enough satoshis to pay here, let's change now
     if (changeValue >= DUST_UTXO_VALUE) {
+      
       psbt.addOutput({
-        address,
+        address:address,
         value: safeOutputValue(changeValue),
       })
     } else {
+      
       fee += safeOutputValue(changeValue)
     }
     console.log({ psbt })
@@ -665,7 +668,7 @@ export async function buildFillUtxoPsbt(pinid:string,salePrice:number,extraFee:{
     const connectionStore=useConnectionStore()
     const psbt=new bitcoinJs.Psbt({ network: network.typedNetwork })
      psbt.setVersion(DefaultTxVersion)
-    const address=useConnectionStore().getAddress
+    const address=connectionStore.userInfo.address
     
     
     let fakerInput1={

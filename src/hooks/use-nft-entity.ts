@@ -118,8 +118,10 @@ export function useNFTEntity(){
        if(!psbtHex){
         return ElMessage.error(`${i18n.t('Nfts.convert_psbt_empty')}`)
        }
+       console.log("networkStore.typedNetwork ",networkStore.typedNetwork )
+       
         const psbt =bitcoinjs.Psbt.fromHex(psbtHex,{ network: networkStore.typedNetwork })
-      
+       
         const estiomateResult= await exclusiveChange({
           psbt: psbt,
           maxUtxosCount:3,
@@ -127,7 +129,7 @@ export function useNFTEntity(){
           feeb:feeb ?? feeStore.getCurrentFeeb,
        })
        
-     
+       
        if(checkOnly){
         //const {paymentValue,fee,changeValue}=estiomateResult
         const basic=estiomateResult!.fee
@@ -629,8 +631,10 @@ export function useNFTEntity(){
             })
             
             if(finalSignRevealRes.code == 200){
+              
               return finalSignRevealRes.data
             }else{
+              
               return finalSignRevealRes.msg
             }
         }
@@ -638,6 +642,7 @@ export function useNFTEntity(){
 
       }
         } catch (error) {
+          
          return ElMessage.error((error as any))
         }
       }

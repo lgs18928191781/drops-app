@@ -145,27 +145,30 @@
                 <div class="title">{{ $t('NFT.Description') }}</div>
                 <div class="content">
                   <div class="description-list">
-                    <div class="description-item flex">
-                      <span class="label">{{ $t('NFT.Name') }}:</span>
-                      <span class="value flex1">{{ nft.val?.nft_name }}</span>
-                    </div>
-                    <!-- <div class="description-item flex">
+                       <div class="description-item flex">
                       <span class="label">{{ $t('NFT.Category') }}:</span>
                       <span class="value flex1">
                         <template
-                          v-if="nft.val!.nftClassifyList && nft.val!.nftClassifyList.length"
+                          v-if="nft.val!.classify && nft.val!.classify.length"
                         >
-                          <span v-for="item in nft.val!.nftClassifyList" class="mr-1" :key="item">{{
+                          <span v-for="item in nft.val!.classify" class="mr-1" :key="item">{{
                             classifyList.find(_item => _item.classify === item)?.name()
                           }}</span>
                         </template>
                         <template v-else>--</template>
                       </span>
-                    </div> -->
-                    <!-- <div class="description-item flex">
+                    </div>
+                  <div class="description-item flex">
                       <span class="label">{{ $t('NFT.Introduction') }}:</span>
-                      <span class="value flex1 drsc">{{ nft.val. || '--' }}</span>
-                    </div> -->
+                      <span class="value flex1 drsc">{{ nft.val?.item_desc || '--' }}</span>
+                    </div>
+
+
+                    <div class="description-item flex">
+                      <span class="label">{{ $t('NFT.Name') }}:</span>
+                      <span class="value flex1">{{ nft.val?.nft_name }}</span>
+                    </div>
+                 
                   </div>
                 </div>
               </div>
@@ -177,33 +180,21 @@
                 </div>
                 <div class="content" v-if="isShowDetails">
                   <div class="description-list">
-                    <!-- <div class="description-item flex">
-                      <span class="label">TokenID:</span>
-                      <span class="value flex1">
-                        <template v-if="nft.val.nftTokenId">
-                          {{ nft.val.nftTokenId }}
-                          <a @click="copy(nft.val!.nftTokenId)">{{ $t('Copy') }}</a
-                          ><a @click="tx(nft.val!.nftTokenId)">{{ $t('NFT.Check') }}</a>
-                        </template>
-                        <template v-else>
-                          --
-                        </template>
-                      </span>
-                    </div> -->
-                    <!-- <div class="description-item flex">
+                  
+                    <div class="description-item flex">
                       <span class="label">{{ $t('NFT.Create Time') }}:</span>
                       <span
                         class="value flex1"
-                        >{{ nft.val!.nftTimestamp ? $filters.dateTimeFormat(nft.val!.nftTimestamp) : '--'}}</span
+                        >{{ nft.val!.updated_at ? $filters.dateTimeFormat(nft.val!.updated_at) : '--'}}</span
                       >
-                    </div> -->
+                    </div>
                     <div class="description-item  flex ">
                       <span class="label">{{ $t('NFT.Issue TXID') }}:</span>
                       <span class="value flex1">
                         <template v-if="nft.val!.item_pinid">
                           {{$filters.omitMiddle(nft.val!.item_pinid,30) }}
                           <a  @click="copy(nft.val!.item_pinid)">{{ $t('Copy') }}</a>
-                          <a   @click="tx(nft.val!.item_pinid)">{{ $t('NFT.Check') }}</a>
+                          <a   @click="tx(nft.val!.item_pinid,'btc')">{{ $t('NFT.Check') }}</a>
                         </template>
                         <template v-else>--</template>
                       </span>

@@ -158,6 +158,12 @@ html {
 }
 
 
+.collection-cover{
+  img{
+    object-fit: cover !important;
+  }
+}
+
 
 pre {
   white-space: break-spaces;

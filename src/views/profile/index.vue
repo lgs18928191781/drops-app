@@ -383,6 +383,13 @@ class="user-warp-item   mr-3"
             </template>
             </el-table-column>
 
+                   <!--ToTxid-->
+                   <el-table-column label="FromTxId" min-width="200">
+            <template #default="scope">
+                <div  @click="tx(scope.row.nft_transfer_txid,'mvc')" class="text-[#fff] text-sm cursor-pointer hover:text-[#DE59FC] ">{{$filters.omitMiddle(scope.row.nft_transfer_txid)  }}</div>
+            </template>
+            </el-table-column>
+
 
                 <!--Time-->
                 <el-table-column label="Time" min-width="200">
@@ -567,7 +574,7 @@ class="user-warp-item   mr-3"
   import { useNFTEntity } from '@/hooks/use-nft-entity'
   import { useFeebStore } from '@/stores/feeb'
 
-  import {debounce, openLoading, calcNftRealSalePrice, sleep, checkUserLogin,copy } from '@/utils/util'
+  import {debounce, openLoading, calcNftRealSalePrice, sleep, checkUserLogin,copy,tx } from '@/utils/util'
 import MetabotItem from '@/components/NFTItem/MetabotItem.vue'
   import { NftsLaunchPadChainSymbol, PlatformRate,whiteListConverCollection,whiteListMvcGenesisMapCollectionpinid } from '@/data/constants'
   import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
@@ -823,6 +830,22 @@ const layout = useLayoutStore()
   })
 
 async function convertNft(nft:GenesisNFTItem){
+ 
+  // const nftRes= await window.metaidwallet.transferNFT({
+  //   codehash:`e205939ad9956673ce7da9fbd40514b30f66dc35`,
+  //   genesis:`1897212dadf3c734b9a19c4430f3fbf0cdc07aa4`,
+  //   tokenIndex:'0',
+  //   recipient:`17LK4XoemSdVDtoZforjb9bf2RiDQzvYGq`,
+  //   options:{
+  //     noBroadcast:false,
+  //     useUnconfirmed:true
+  //   }})
+  //   console.log("nftRes",nftRes)
+
+  //   debugger
+
+  // return
+
   //1.转移
   console.log("nft",nft)
   const loading = openLoading({ text: i18n.t('NFT.converting') })
@@ -901,14 +924,16 @@ async function convertNft(nft:GenesisNFTItem){
           })
           
           if(finalSignRevealRes?.order_id){
+            
             loading.close()
             ElMessage.success(`${i18n.t('Nfts.convert_success')}`)
             
             await sleep(1000)
             refreshDatas()
           }else{
+            
             loading.close()
-            return ElMessage.error(finalSignRevealRes?.msg)
+            return ElMessage.error(finalSignRevealRes)
           }
 
 
@@ -1237,7 +1262,7 @@ async function convertNft(nft:GenesisNFTItem){
     }
 
     // else if(tabActive.value == ProfileTab.Convert){
-    //   debugger
+    //   
     //   getConvertNft().then(() => {
     //   pagination.loading = false
     

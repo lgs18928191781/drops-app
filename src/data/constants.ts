@@ -64,10 +64,10 @@ export const whiteListConverCollection=[
     genesis:'529cf41a72a1b61fe9c2fb91e7bc05616f9b769c',
     codehash:'e205939ad9956673ce7da9fbd40514b30f66dc35',
   },
-  {
-    genesis:'84e74476d9490c1483baa5463742868950505aab',
-    codehash:'e205939ad9956673ce7da9fbd40514b30f66dc35',
-  },
+  // {
+  //   genesis:'84e74476d9490c1483baa5463742868950505aab',
+  //   codehash:'e205939ad9956673ce7da9fbd40514b30f66dc35',
+  // },
   {
     genesis:'1897212dadf3c734b9a19c4430f3fbf0cdc07aa4',
     codehash:'e205939ad9956673ce7da9fbd40514b30f66dc35',

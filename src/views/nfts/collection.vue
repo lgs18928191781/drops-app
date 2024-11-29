@@ -1480,7 +1480,7 @@ function getCollectionData() {
   currentNftsCollect.value = genesisStore.getList.find(item => {
     return item.collectionPinId == route.params.pinid
   })
-
+  debugger
   console.log("currentNftsCollect.value",currentNftsCollect.value)
   chartData.growth=currentNftsCollect.value?.priceGrowth ? new Decimal(currentNftsCollect.value?.priceGrowth).div(10 ** 8).toNumber() : 0
   chartData.labelNum=currentNftsCollect.value!.totalSupply + 1

@@ -8,7 +8,7 @@ import {  btcConnect,mvcConnect,MetaletWalletForBtc,IBtcConnector,MetaletWalletF
 import { InscribeResultForYesBroadcast} from '@/hooks/use-metaid-entity'
 import { useUserStore } from '@/stores/user'
 import { useRoute } from 'vue-router'
-
+import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
 
 export type BaseUserInfo={
       address:string
@@ -375,11 +375,19 @@ export enum ConnectChain{
             if(this.currentChain == ConnectChain.mvc){
               this.last.network=networkStore.network
             }
+            const {getUserAllInfo}=useMetaIDEntity()
+            
+
+            const res = await getUserAllInfo(connectRes.address).catch(error => {
+              ElMessage.error(error.message)
+            })
+           
+            // userInfo.val = res!
             // this.last.network=networkStore.network
             this.userInfo.metaid=connectRes.metaid
             this.userInfo.pubkey=pubkey
             this.userInfo.address=connectRes.address
-            this.userInfo.avatarId=connectRes.user.avatarId
+            this.userInfo.avatarId=res!.avatarId || ''
             this.userInfo.name=connectRes.user.name
             
           }
