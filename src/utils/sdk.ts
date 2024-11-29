@@ -449,7 +449,7 @@ export class SDK {
                   codehash: ftParams.codehash,
                   genesis: ftParams.genesis,
                 })
-
+                
                 if (ftUtxo.length && ftUtxo.length > 20) {
                   await userStore.showWallet?.wallet?.checkNeedMergeUtxo()
 
@@ -1717,8 +1717,10 @@ export class SDK {
           // 使用bsv 上链时，不需要检查权限
           // 获取餘额
           const res = await this.wallet?.provider.getXpubBalance(
-            this.wallet.wallet.xpubkey.toString()
+            // this.wallet.wallet.xpubkey.toString()
+            userStore.showWallet!.wallet!.rootAddress
           )
+          
           if (typeof res === 'number') balance = res
         } else if (type === SdkPayType.ME) {
           const userMeRes = await GetMyMEBalance({
@@ -1729,7 +1731,8 @@ export class SDK {
           }
         } else if (type === SdkPayType.BSV) {
           const res = await this.wallet?.provider.getXpubBalance(
-            this.wallet.wallet.xpubkey.toString(),
+            //this.wallet.wallet.xpubkey.toString(),
+            userStore.showWallet!.wallet!.rootAddress,
             HdWalletChain.BSV
           )
           if (typeof res === 'number') balance = res
@@ -2149,7 +2152,7 @@ export class SDK {
       change: this.wallet.rootAddress,
       payTo: payTo,
     })
-
+    
     return await this.wallet?.provider.broadcast(res!.toString())
   }
 

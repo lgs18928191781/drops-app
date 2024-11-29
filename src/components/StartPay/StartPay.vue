@@ -337,7 +337,8 @@ function drawePayCode() {
             const chain =
               props.payPlatform === PayPlatform.BSV ? HdWalletChain.BSV : HdWalletChain.MVC
             const balance = await userStore.showWallet.wallet!.provider.getXpubBalance(
-              userStore.showWallet.wallet!.wallet.xpubkey.toString(),
+              //userStore.showWallet.wallet!.wallet.xpubkey.toString(),
+              userStore.showWallet!.wallet!.rootAddress,
               chain
             )
             if (balance < new Decimal(props.amount).plus(560).toNumber()) {

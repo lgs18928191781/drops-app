@@ -486,7 +486,8 @@ const checkSpaceBalance = () => {
     // 获取餘额
     const res = await userStore
       .showWallet!.wallet!.provider.getXpubBalance(
-        userStore.showWallet!.wallet!.wallet.xpubkey.toString()
+        userStore.showWallet!.wallet!.rootAddress
+        // userStore.showWallet!.wallet!.wallet.xpubkey.toString()
       )
       .catch(error => {
         ElMessage.error(error.message)

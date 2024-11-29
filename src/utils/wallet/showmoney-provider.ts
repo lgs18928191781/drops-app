@@ -11,6 +11,9 @@ import i18n from '../i18n'
 import { GetTxChainInfo } from '@/api/metaid-base'
 import { Session } from './session'
 import { Utxos } from '@/api/dashbroad'
+import Decimal from 'decimal.js-light'
+const mvcBaseApi=import.meta.env.VITE_MVC_BASEAPI
+const cyber3api=import.meta.env.VITE_CYBER3_API
 interface BaseApiResultTypes<T> {
   code: number
   msg?: string
@@ -315,6 +318,62 @@ export default class ShowmoneyProvider {
     })
   }
 
+  async mvcApi( 
+    path: string,
+    params: ObjTypes<string | number> = {},
+    method = 'get'
+  ): Promise<{
+    code:number,
+    data:any
+  }>{
+    const url = mvcBaseApi + path
+    const Http = new HttpRequests()
+    if (method === 'post') {
+      return Http.postFetch(url, params)
+        .then(res => {
+          return res
+        })
+        .catch(error => {
+          throw new Error('Request Error -- ' + error.message)
+        })
+    } else {
+      return Http.getFetch(url, params)
+        .then(res => {
+          return res
+        })
+        .catch(error => {
+          throw new Error('Request Error -- ' + error.message)
+        })
+    }
+  }
+
+
+ async cyber3Api( 
+    path: string,
+    params: ObjTypes<string | number> = {},
+    method = 'get'
+  ): Promise<any>{
+    const url = cyber3api + path
+    const Http = new HttpRequests()
+    if (method === 'post') {
+      return Http.postFetch(url, params)
+        .then(res => {
+          return res
+        })
+        .catch(error => {
+          throw new Error('Request Error -- ' + error.message)
+        })
+    } else {
+      return Http.getFetch(url, params)
+        .then(res => {
+          return res
+        })
+        .catch(error => {
+          throw new Error('Request Error -- ' + error.message)
+        })
+    }
+  }
+
   public async getMetaId(rootAddress: string): Promise<string | null> {
     const res = await this.callApi({
       url: '/serviceapi/api/v1/metago/getMetaIdByZoreAddress',
@@ -504,15 +563,17 @@ export default class ShowmoneyProvider {
     return utxos
   }
 
-  public getXpubBalance(xpub: string, chain = HdWalletChain.MVC): Promise<number> {
+  public getXpubBalance(address: string, chain = HdWalletChain.MVC): Promise<number> {
     return new Promise(async (resolve, reject) => {
-      const res = await this.callMetasvApi(`/xpubLite/${xpub}/balance`, {}, 'get', chain).catch(
+      const res = await this.cyber3Api(`/address/${address}/balance`, {}, 'get').catch(
         error => {
           reject(error)
         }
       )
+      
       if (res) {
-        resolve(res.balance)
+        const balance=new Decimal(res.confirmed).add(res.unconfirmed).toNumber()
+        resolve(balance)
       }
     })
   }
@@ -574,26 +635,30 @@ export default class ShowmoneyProvider {
 
   public async broadcast(txHex: string, chain: HdWalletChain = HdWalletChain.MVC) {
     return new Promise<{
-      txid: string
+      data:{
+        txId:string,
+        message:string
+      }
     }>(async (resolve, reject) => {
-      const res = await this.callMetasvApi(
-        '/tx/broadcast',
+      const res = await this.mvcApi(
+        '/v1/chain/tx/broadcast',
         {
-          hex: txHex,
+          rawTx: txHex,
         },
         'post',
-        chain
+        //chain
       ).catch(error => {
         // 广播容错，忽略返回
         // this.sendRawTx(txHex)
         reject(error)
       })
-      if (res?.txid) {
+      
+      if (res.code == 0) {
         await this.sendRawTx(txHex)
-        resolve(res)
+        resolve(res.data)
       } else {
-        let message =
-          typeof res?.message === 'string' ? res.message : JSON.parse(res.message).message
+        let message =res.data.message
+         
         reject({
           message: message,
         })

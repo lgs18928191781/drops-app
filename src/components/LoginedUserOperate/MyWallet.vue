@@ -1176,7 +1176,8 @@ function getSpaceBalance() {
     } else {
      res=await userStore
       .showWallet!.wallet!.provider.getXpubBalance(
-        userStore.showWallet!.wallet!.wallet.xpubkey.toString()
+        //userStore.showWallet!.wallet!.wallet.xpubkey.toString()
+        userStore.showWallet!.wallet!.rootAddress
       )
       .catch(error => {
         ElMessage.error(error.message)
@@ -1184,7 +1185,7 @@ function getSpaceBalance() {
       })
     }
 
-
+    
     if (typeof res === 'number') {
       const item = wallets[2].list.find(item => item.name === 'SPACE')
       if (item) {

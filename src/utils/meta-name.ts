@@ -17,6 +17,7 @@ export async function getMetaNameAddress(metaNameNft: string): Promise<{ address
 
   // 查询nft地址
   const nftInfo = await getOneNft({ codehash, genesis, tokenIndex })
+  
   const address = nftInfo?.address
 
   return { address: address || '' }

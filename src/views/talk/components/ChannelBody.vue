@@ -375,7 +375,8 @@ const tryInitChannel = async (status: string) => {
         } else {
           balance = await user
             .showWallet!.wallet!.provider.getXpubBalance(
-              user.showWallet!.wallet!.wallet.xpubkey.toString()
+              user.showWallet!.wallet!.rootAddress
+              //user.showWallet!.wallet!.wallet.xpubkey.toString()
             )
 
             .catch(error => {

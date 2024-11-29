@@ -462,7 +462,7 @@ export const GetFTs = (params: {
   
   //return aggregation.get(`/v2/app/show/ft/${address}/summaries`, { params: _params })
    
-    debugger
+    
   return mvcApi(`/v1/contract/ft/address/${address}/balance`,_params)
 }
 

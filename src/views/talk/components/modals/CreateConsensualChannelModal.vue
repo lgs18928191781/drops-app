@@ -621,7 +621,8 @@ const updateNativeAmount = async (event: any) => {
 }
 const fetchNativeBalance = async () => {
   const balance = await userStore.showWallet!.wallet!.provider.getXpubBalance(
-    userStore.showWallet!.wallet!.wallet.xpubkey.toString()
+    // userStore.showWallet!.wallet!.wallet.xpubkey.toString()
+    userStore.showWallet!.wallet!.rootAddress
   )
   nativeBalance.value = balance
 }

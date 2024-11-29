@@ -1,4 +1,4 @@
-import { callMetasvApi } from './index'
+import { callMetasvApi,cyber3Api } from './index'
 
 export async function getOneNft({
   codehash,
@@ -11,7 +11,7 @@ export async function getOneNft({
 }) {
   const path = `/contract/nft/genesis/${codehash}/${genesis}/utxo`
   const params = { tokenIndex }
-  return callMetasvApi(path, params).then((res: any) => {
+  return cyber3Api(path, params).then((res: any) => {
     return res[0]
   })
 }

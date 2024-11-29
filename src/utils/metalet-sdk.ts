@@ -2077,7 +2077,7 @@ export class MetaletSDK {
 
           const res = await this.wallet?.provider.getXpubBalance(
             //this.wallet.wallet.xpubkey.toString()
-            this.wallet.xpub
+            this.wallet.rootAddress
           )
           console.log('res', res)
           //
@@ -2091,7 +2091,7 @@ export class MetaletSDK {
           }
         } else if (type === SdkPayType.BSV) {
           const res = await this.wallet?.provider.getXpubBalance(
-            this.wallet.xpubkey,
+            this.wallet.rootAddress,
             HdWalletChain.BSV
           )
           if (typeof res === 'number') balance = res

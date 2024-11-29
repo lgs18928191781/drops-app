@@ -569,7 +569,7 @@ export class HdWallet {
       try {
         const utxos = await this.provider.getUtxos(this.wallet.xpubkey.toString())
         if (utxos.length > 3) {
-          const originWallet = new Wallet(this._root.toString(), API_NET.MAIN, 1, API_TARGET.MVC)
+          const originWallet = new Wallet(this._root.toString(), API_NET.MAIN, 1, API_TARGET.CYBER3)
           console.log('this.wallet', originWallet)
           const { txId } = await originWallet.merge()
           if (txId) {
@@ -904,6 +904,7 @@ export class HdWallet {
       isBroadcast: boolean
     }
   ) {
+    
     return new Promise<{
       txHex: string
       txid: string
@@ -1585,7 +1586,7 @@ export class HdWallet {
   }
 
   private getSensibleWallet = (): Wallet => {
-    const wallet = new Wallet(this._root.toString(), API_NET.MAIN, 0.05, API_TARGET.METASV)
+    const wallet = new Wallet(this._root.toString(), API_NET.MAIN, 0.05, API_TARGET.CYBER3)
     wallet.blockChainApi.authorize({
       privateKey: metasvServiceSecret,
     })
@@ -1595,28 +1596,28 @@ export class HdWallet {
 
   public getNftManager = (): NftManager => {
     const nftManager = new NftManager({
-      apiTarget: API_TARGET.MVC,
+      apiTarget: API_TARGET.CYBER3,
       // @ts-ignore
       network: this.network,
       purse: this.wallet!.deriveChild(0)
         .deriveChild(0)
         .privateKey.toString(),
       feeb: DEFAULTS.feeb,
-      apiHost: import.meta.env.VITE_META_SV_API,
+      apiHost: import.meta.env.VITE_CYBER3_API,
     })
     return nftManager
   }
 
   public getFtManager = (): FtManager => {
     const ftManager = new FtManager({
-      apiTarget: API_TARGET.MVC,
+      apiTarget: API_TARGET.CYBER3,
       // @ts-ignore
       network: this.network,
       purse: this.wallet!.deriveChild(0)
         .deriveChild(0)
         .privateKey.toString(),
       feeb: DEFAULTS.feeb,
-      apiHost: import.meta.env.VITE_META_SV_API,
+      apiHost: import.meta.env.VITE_CYBER3_API,
     })
     return ftManager
   }

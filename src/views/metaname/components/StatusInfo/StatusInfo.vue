@@ -235,7 +235,7 @@ function getOrder() {
 }
 
 function getTimeInfo() {
-  debugger
+  
   setTimeout(async () => {
     const expiredBlockTime = GetExpiredUTC(metaName.val!.expiredBlockTime)
     if (expiredBlockTime) {
@@ -248,7 +248,7 @@ function getTimeInfo() {
     const res: any = await loopExecution(GetTx, metaName.val!.txid).catch(error => {
       ElMessage.error(error.message)
     })
-    debugger
+    
     if (res.code == 0) {
       registerDate.value = res.data.txDetail.timestamp * 1000
       isGetRegisterDateLoading.value = false

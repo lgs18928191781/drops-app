@@ -1,6 +1,7 @@
 import { HttpRequests, ApiRequestTypes } from '@/utils/wallet/request2'
 import { ElMessage } from 'element-plus'
 import { Reqswapargs } from '@/utils/wallet/hd-wallet'
+
 export interface ApiResultTypes {
   code: number
   msg: string
@@ -52,6 +53,7 @@ const baseApi = import.meta.env.VITE_BASEAPI
 const metasvApi = import.meta.env.VITE_META_SV_API
 const wxcoreApi = import.meta.env.VITE_WXCOREAPI
 const mvcBaseApi=import.meta.env.VITE_MVC_BASEAPI
+const cyber3api=import.meta.env.VITE_CYBER3_API
 const callApi = async (config: ApiRequestTypes): Promise<ApiResultTypes> => {
   const Http = new HttpRequests()
   const apiPrefix = config.apiPrefix || baseApi
@@ -101,6 +103,32 @@ export const mvcApi=async(
   data:any
 }> =>{
   const url = mvcBaseApi + path
+  const Http = new HttpRequests()
+  if (method === 'post') {
+    return Http.postFetch(url, params)
+      .then(res => {
+        return res
+      })
+      .catch(error => {
+        throw new Error('Request Error -- ' + error.message)
+      })
+  } else {
+    return Http.getFetch(url, params)
+      .then(res => {
+        return res
+      })
+      .catch(error => {
+        throw new Error('Request Error -- ' + error.message)
+      })
+  }
+}
+
+export const cyber3Api=async( 
+  path: string,
+  params: ObjTypes<string | number> = {},
+  method = 'get'
+): Promise<any> =>{
+  const url = cyber3api + path
   const Http = new HttpRequests()
   if (method === 'post') {
     return Http.postFetch(url, params)
@@ -180,7 +208,7 @@ export const getFtUtxo = (params: {
 }): Promise<any> => {
   const { address, ..._params } = params
 
-  return callMetasvApi(
+  return cyber3Api(
     `/contract/ft/address/${address}/utxo`,
     {
       ..._params,
