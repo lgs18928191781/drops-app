@@ -73,9 +73,11 @@ export function checkUserCanCreateProposal() {
     const userStore = useUserStore()
     Promise.all([
       getOneCommunity(talk.activeCommunityId),
-      getBalance({
-        chain: Chains.MVC,
-      }),
+      userStore
+      .showWallet!.wallet!.provider.getXpubBalance(
+        //userStore.showWallet!.wallet!.wallet.xpubkey.toString()
+        userStore.showWallet!.wallet!.rootAddress
+      ),
       GetOwnerStakeInfo({
         symbol: import.meta.env.VITE_MY_STAKE_SYMBOL,
         address: userStore.user!.address!,
