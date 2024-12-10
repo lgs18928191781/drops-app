@@ -57,7 +57,7 @@
             </div> -->
         </div>
 
-        <div :class="['main-border', nft.is_minted == 0 ? 'primary' : 'gray']" @click.stop="btnFun">
+        <div :class="['main-border', nft.is_minted == 0 && nft.item_cover !== 'metafile://nulli0' ? 'primary' :  'gray']" @click.stop="btnFun">
           {{ btnText }}
         </div>
       </div>
@@ -100,6 +100,9 @@ const i18n = useI18n()
 //   })
 
 const btnText = computed(() => {
+  if(props.nft.item_cover == 'metafile://nulli0'){
+    return i18n.t('NFTs.lanuch_error')
+  }
   if (props.nft.is_minted == 0) {
     return i18n.t('NFTs.lanuch_mint')
   } else if (props.nft.is_minted) {
@@ -124,6 +127,10 @@ const btnText = computed(() => {
 })
 
 async function btnFun() {
+  if(props.nft.item_cover == 'metafile://nulli0'){
+    return
+  }
+
   if (props.nft.is_minted == 0) {
     emit('mint', props.nft)
   } else return

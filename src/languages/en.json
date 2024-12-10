@@ -1378,7 +1378,8 @@
     "lanuch_growth_content3": "2.  The redemption of each NFT will not affect the current minting price.",
     "status_confirming": "Confirming",
     "status_confirmed": "Completed",
-    "status_failed": "Failed"
+    "status_failed": "Failed",
+    "lanuch_error": "Pending Fix"
   },
   "Nfts": {
     "launch_yes": "Yes",
@@ -1486,7 +1487,10 @@
     "blockHeight": "Block:",
     "pedding": "Unconfirmed",
     "conver_transfer_nft_fee": "NFT transfer fee",
-    "no_collections": "No collection data available."
+    "no_collections": "No collection data available.",
+    "lanuch_status": "Upload Status",
+    "lanuch_upload_file_partial_success": "Partially uploaded NFTs success",
+    "lanuch_not_found_creator": "Collection creator address is missing"
   },
   "offsale not allowed": "Please unlist before proceeding with the redemption operation.",
   "redeemWaring1": "The redemption operation will destroy the NFT. Please consider carefully!",

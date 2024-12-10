@@ -59,6 +59,12 @@ const aggregation = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation
 
 const metanameApi = new HttpRequest(`${import.meta.env.VITE_MetaName_BaseApi}`, {}).request
 
+// const cyber3Api = new HttpRequest(`https://mvcapi-testnet.cyber3.space`, {}).request
+
+
+
+
+
 export const MetaBotV1 = (params: {
   address: string
   page: number
@@ -505,6 +511,22 @@ export const GetGenesisNFTs = (params: {
   const { address, ..._params } = params
   return aggregation.get(`/v2/app/show/nft/${address}/details`, { params: _params })
 }
+
+// export const GetGenesisNFTs = (params: {
+//   address: string
+//   codehash: string
+//   genesis?: string
+//   chain?: string
+//   page: number | string
+//   pageSize: number | string
+//   flag?: string
+// }): Promise<{
+//   code: number
+//   data: any
+// }> => {
+//   const { address, codehash,genesis } = params
+//   return cyber3Api.get(`/contract/nft/address/${address}/utxo?codeHash=${codehash}&genesis=${genesis}`)
+// }
 
 export const GetNFT = (params: {
   chain?: string

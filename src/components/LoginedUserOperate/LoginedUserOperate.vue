@@ -83,6 +83,9 @@
     </ElDropdown> -->
   </div>
 
+ 
+
+
   <div class="gas-warp   " :class="layout.isMobilePhone ? '' : 'mr-3'" v-show="connectStore.currentChain == 'btc'">
     <div>
       <!-- 更多操作 -->
@@ -105,8 +108,10 @@
           </span><span  class="text-[#CACACA]">{{ layout.isMobilePhone ? '' : 'sat/vB' }}</span>
            
           </div>
-          <img v-if="!layout.isMobilePhone " src="@/assets/images/list_icon.png" alt="" class="w-3 h-3 ml-1" />
-         
+          <!-- <img v-if="!layout.isMobilePhone " src="@/assets/images/list_icon.png" alt="" class="w-3 h-3 ml-1" /> -->
+          <el-icon v-if="!layout.isMobilePhone ">
+            <CaretBottom />
+          </el-icon>
          </div>
         </a>
         <template #dropdown>
@@ -149,6 +154,15 @@
       </ElDropdown>
      
     </div>
+  </div>
+
+  <div  :class='["lang-wrap","cursor-pointer","flex","items-center","py-1","rounded-md","bg-[#312f35]",!layout.isMobilePhone ? "px-2" : "px-1",!layout.isMobilePhone ? "mr-3" : " mr-1" ]' @click="setLang">
+    
+
+    <span >{{ currentLang }}</span>
+    <el-icon v-if="!layout.isMobilePhone ">
+            <CaretBottom />
+          </el-icon>
   </div>
 
   <!-- <a
@@ -258,6 +272,9 @@
        
       </el-popover> -->
     </div>
+
+
+
   </template>
   <template v-else>
     <a
@@ -266,6 +283,9 @@
       >{{ $t('Login.connectWallet') }}</a
     >
   </template>
+
+  
+
 
   <!-- 更多操作 -->
   <!-- <ElDropdown trigger="click" @visible-change="val => (isShowUserMenu = val)">
@@ -336,7 +356,9 @@ import { useNetworkStore } from '@/stores/network'
 import { setUser } from '@sentry/vue'
 import {DUMMY_UTXO_INPUT_LEGACY} from '@/data/constants'
  import { CircleFadingPlus } from 'lucide-vue-next'
+ import { CaretBottom, Search } from '@element-plus/icons-vue'
  import { CircleCheckFilled,ArrowDownBold } from '@element-plus/icons-vue'
+ import { SetLang } from '@/utils/util'
 const i18n = useI18n()
 const rootStore = useRootStore()
 const userStore = useUserStore()
@@ -348,6 +370,18 @@ const feebStore = useFeebStore()
 const connectStore=useConnectionStore()
 const isShowSetUserInfo = ref(false)
 const popover = ref(null);
+const localLang=ref(window.localStorage.getItem('lang') || 'en')
+const currentLang = computed(()=>{
+
+  if(localLang.value == 'en'){
+   return 'EN'
+  }else if(localLang.value  == 'zh'){
+    return 'CN'
+  }else{
+    return 'EN'
+  }
+
+})
 const customFeeb=computed({
   get(){
     return feebStore.getCurrentFeeb
@@ -371,6 +405,12 @@ const chainType = ref([
   { name: 'MicrovisionChain', icon: 'logo_chain_mvc',key:'mvc' },
 ])
 
+function setLang() {
+  const lang = i18n.locale.value === 'en' ? 'zh' : 'en'
+
+  localLang.value=lang
+  SetLang(lang)
+}
 
 
 // const currentFeeb=computed({

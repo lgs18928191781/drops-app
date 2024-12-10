@@ -1277,10 +1277,10 @@ export function SetLang(lang: string) {
   if (i18n.global.locale.value === lang) return
   i18n.global.locale.value = lang
   window.localStorage.setItem('lang', lang)
-  if (!window.localStorage.getItem('currentPrice')) {
-    const rootStore = useRootStore()
-    rootStore.$patch({ currentPrice: i18n.global.locale.value === 'en' ? 'USD' : 'CNY' })
-  }
+  // if (!window.localStorage.getItem('currentPrice')) {
+  //   const rootStore = useRootStore()
+  //   rootStore.$patch({ currentPrice: i18n.global.locale.value === 'en' ? 'USD' : 'CNY' })
+  // }
 }
 
 export function CreatePayOrder(params: {
@@ -1982,6 +1982,34 @@ export function formatDataUrl(pinid:string){
      return ``
   }
    //`${import.meta.env.VITE_MAN_API}/content/${pinid}`
+}
+
+
+export async function urlToFile(url:string, filename:string) {
+  // Fetch the URL
+  const response = await fetch(url);
+  
+  // Check if the response is successful
+  if (!response.ok) {
+      throw new Error('Network response was not ok');
+  }
+  
+  // Get the response as a Blob
+  const blob = await response.blob();
+  
+  // Create a File from the Blob
+  const file = new File([blob], filename, { type: blob.type });
+  
+  return file;
+}
+
+
+export function getLastSegment(str:string) {
+  const lastIndex = str.lastIndexOf('/'); // 找到最后一个斜杠的位置
+  if (lastIndex === -1) {
+      return str; // 如果没有斜杠，返回整个字符串
+  }
+  return str.substring(lastIndex + 1); // 提取最后一个斜杠后面的内容
 }
 
 

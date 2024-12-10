@@ -831,6 +831,8 @@ const layout = useLayoutStore()
 
 async function convertNft(nft:GenesisNFTItem){
  
+
+  
   // const nftRes= await window.metaidwallet.transferNFT({
   //   codehash:`e205939ad9956673ce7da9fbd40514b30f66dc35`,
   //   genesis:`1897212dadf3c734b9a19c4430f3fbf0cdc07aa4`,
@@ -848,6 +850,9 @@ async function convertNft(nft:GenesisNFTItem){
 
   //1.转移
   console.log("nft",nft)
+
+  
+ 
   const loading = openLoading({ text: i18n.t('NFT.converting') })
   try {
   
@@ -869,7 +874,6 @@ async function convertNft(nft:GenesisNFTItem){
     genesis:nft.nftGenesis,
     tokenIndex:nft.nftTokenIndex,
     nftAddress:mvcNftAddress,
-    
   })
   
   if(preConvertRes.code == 200){
@@ -889,6 +893,8 @@ async function convertNft(nft:GenesisNFTItem){
         })
         
         if(submitConvertRes.code == 200){
+
+          
           const {commitId,filePinid,lockAddress,psbtHex,fileRawTx,preFee,buildCommitFee,commitAddress,collectionPinid}=submitConvertRes.data
           
           const nftRes= await window.metaidwallet.transferNFT({
@@ -906,6 +912,12 @@ async function convertNft(nft:GenesisNFTItem){
           return ElMessage.error(`${i18n.t('Nfts.lanuch_sign_tx_fail')}`)
         }
           loading.close()
+        try {
+          if(!nft.nftIssueUserInfo.address){
+            return ElMessage.error(`${i18n.t('Nfts.lanuch_not_found_creator')}`)
+          }
+
+
           const finalSignRevealRes= await nftEntity.convertNft({
             convertPsbtHex:psbtHex,
             extraFee:new Decimal(preFee).add(buildCommitFee).toNumber(),
@@ -920,9 +932,10 @@ async function convertNft(nft:GenesisNFTItem){
             convertAddress:connectionStore.userInfo.address,
             genesis:nft.nftGenesis,
             tokenIndex:nft.nftTokenIndex,
-            codehash:nft.nftCodehash
+            codehash:nft.nftCodehash,
+            collectionCreatorAddress:nft.nftIssueUserInfo.address
           })
-          
+
           if(finalSignRevealRes?.order_id){
             
             loading.close()
@@ -935,6 +948,11 @@ async function convertNft(nft:GenesisNFTItem){
             loading.close()
             return ElMessage.error(finalSignRevealRes)
           }
+        } catch (error) {
+          
+        }
+          
+       
 
 
         }else{
@@ -946,6 +964,7 @@ async function convertNft(nft:GenesisNFTItem){
     return ElMessage.error(preConvertRes.msg)
   }
   } catch (error) {
+    
     loading.close()
     ElMessage.error((error as any).message)
   }
@@ -1051,13 +1070,18 @@ async function convertNft(nft:GenesisNFTItem){
       ...pagination,
        
       })
+
+
+    
       if (res?.code == 0) {
         if (res.data.results.items.length === 0){
             pagination.nothing = true
         }
         templist.push(...res.data.results.items)
       }
+    
       }
+
 
       for(let item of templist){
         if(!item.nftIsReady && !item.nftIsLegal){

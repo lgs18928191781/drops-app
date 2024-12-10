@@ -237,7 +237,7 @@ import { useMetaIDEntity } from '@/hooks/use-metaid-entity'
 import { fileType,royaltyRate,classifyList } from '@/config'
 import {usePayModalEntity} from '@/hooks/use-pay-modal-entity'
 import { useI18n } from 'vue-i18n'
-import {genesisCollection,issueCollection} from '@/api/mrc721-api'
+import {genesisCollection,issueCollection,getPinfromPath} from '@/api/mrc721-api'
 import {NftsLaunchPadChain,NftsLaunchPadChainSymbol} from '@/data/constants'
 import {toSats} from '@/utils/filters'
 import Decimal from 'decimal.js-light'
@@ -269,6 +269,8 @@ const createCollectionDisabled=computed(()=>{
 })
 
 const onSubmit = async() => {
+
+  
   const whitelist=['bc1ppzdcjgkyk57kd39w8nwmv92strkmf2dvd876n0xxne9wcycvg06satvw0c',
   'bc1p2am8gpgps2453ny3nqygnf4t70yjrv5h32xk7xzjy8622dl6vtrsjuup5v','176C9RPWDggnvdVcWG3wrZEJcm1bHTcKM5',
   'bc1pm4yqy8xgyncxusj3sx365x7h08al6krk55nyz7ysavqcumshzq4skfk8du',
@@ -303,8 +305,15 @@ const onSubmit = async() => {
 // }
   //const result=await awaitPayConfrim(SdkPayType.BTC,1000,10000)
   const existNfts= genesisStore.getList.find((item)=>item.name == form.name)
+  const collectionName=form.name.toLowerCase()
+ 
+ const checkCollectionName= await getPinfromPath({
+   path:`/nft/mrc721/${collectionName}`,
+   metaIdList:[connectionStore.last.metaid]
+ })
+
   try {
-  if(existNfts?.collectionPinId){
+  if(existNfts && checkCollectionName?.list != 'null' ){
     loading.close()
     return ElMessage.error(`${i18n.t('Nfts.lanuch_existNfts')}`)
   }else{

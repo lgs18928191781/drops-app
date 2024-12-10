@@ -553,6 +553,29 @@
               </div>
             </template>
           </el-table-column>
+
+          <el-table-column  prop="status" :label="$t('Nfts.lanuch_status')" width="auto">
+            <template #default="scope">
+              <div class="flex items-center ">
+                <span
+                 
+                  :class="[
+                    'ml-3',
+                    
+                    'text-center',
+                    'opacity-100',
+                    ' hover:opacity-80',
+                    'font-medium',
+
+                    scope.row.status == UploadStatus.Fail ?  'text-[#FC6D5E]' : 'text-[#de59fc]' 
+                  ]"
+                  >{{ scope.row.status }}</span
+                >
+              </div>
+            </template>
+          </el-table-column>
+
+
           <template #empty>
             <div class="h-80 flex items-center justify-center ">
               <span class="text-base">{{ $t('Nfts.lanuch_mint_blank') }}</span>
@@ -1071,7 +1094,7 @@ import mvc from '@/assets/nft/mvc.png'
 import { Close, Plus,Promotion } from '@element-plus/icons-vue'
 import { useRouter, useRoute } from 'vue-router'
 import { reactive, ref, computed, onMounted, watch, toRaw } from 'vue'
-import { compressImage, FileToAttachmentItem, prettyAddress, sleep,openLoading } from '@/utils/util'
+import { compressImage, FileToAttachmentItem, prettyAddress, sleep,openLoading,urlToFile,getLastSegment } from '@/utils/util'
 import { useI18n } from 'vue-i18n'
 import CollectionDialog from './collection-dialog.vue'
 
@@ -1091,7 +1114,7 @@ import { Line } from 'vue-chartjs'
 import { useEchart } from '@/hooks/use-echart-tool'
 import type {  FormInstance, FormRules,UploadProps } from 'element-plus'
 import { useFeebStore } from '@/stores/feeb'
-import { uploadNftsFile,uploadNftsFilePath,generateCommitAddress,getCollectionDetail,mintNftItem,submitMintOrder,issueCollection,genesisCollection as genesisCollect,getPoolInfo} from '@/api/mrc721-api'
+import { uploadNftsFile,uploadNftsFilePath,generateCommitAddress,getCollectionDetail,mintNftItem,submitMintOrder,issueCollection,genesisCollection as genesisCollect,getPoolInfo,getMyUploadFailList,getPinfromPath} from '@/api/mrc721-api'
 
 import Decimal from 'decimal.js-light'
 import {exclusiveChange,deviceDummy,getDummyUtxoforLegacy} from '@/hooks/use-buildtx-entity'
@@ -1187,7 +1210,50 @@ watch(
 // }
 
 onMounted(() => {
+  getMyUploadFailList({
+    collectionPinid: route.params.pinid as string
+  }).then(async(res)=>{
+    if(res.code == 200 && res.data.length){
+      for(let i = 0; i < res.data.length; i++){
+        const item=res.data[i]
+      
+        const fileName=getLastSegment(item.pic_path)
+        
+        const file= await urlToFile(item.pic_path,fileName)
+        
 
+        tableData.push({
+      id: item.id,
+      // op: i18n.t('Nfts.lanuch_delete'),
+      nftName:item.nft_name,
+      cover: item.pic_path,
+      source:fileName,
+      desc: item.item_desc,
+      status:UploadStatus.Fail
+      //receiver: mintData.receiver ?? connectionStore.userInfo.address,
+      //classify: mintData.classify,
+    })
+
+
+    newFile.push({
+      id:item.id,
+      file: file,
+      picId: item.pic_id,
+      itemDesc:item.item_desc,
+      //classify:mintData.classify,
+      nftName: item.nft_name,
+      originalCommitAddress:item.commit_address
+    })
+
+
+      }
+
+   
+
+    }
+
+    
+  })
 
   // genesisStore.updateItem({
   //   ...currentNftsCollect.value,
@@ -1246,11 +1312,11 @@ const createCollectionform = reactive({
   autoMakeMarket: true,
 })
 
-const newFile: Array<{id:number, file: File; picId: string,itemDesc:string,nftName:string }> = reactive([])
+let newFile: Array<{id:number, file: File; picId: string,itemDesc:string,nftName:string,originalCommitAddress?:string }> = reactive([])
 
 const genesisCollection = ref('')
 const currentNftsCollect = ref<Mrc721CollectionItem>()
-const tableData = reactive<MintListInfo[]>([])
+let tableData = reactive<MintListInfo[]>([])
 
 // const btcConverSats=computed(()=>{
 //   if(autoMaketData.value.initialPrice){
@@ -1374,7 +1440,13 @@ const rules = reactive<FormRules<MintInfo>>({
   // ]
 })
 
-type MintListInfo = Omit<MintInfo, 'mintAmount'> & { id: number; op: string; }
+enum UploadStatus{
+  Default='pending',
+  Success='success',
+  Fail='fail'
+}
+
+type MintListInfo = Omit<MintInfo, 'mintAmount'> & { id: number; op: string;status:UploadStatus }
 
 
 
@@ -1480,7 +1552,7 @@ function getCollectionData() {
   currentNftsCollect.value = genesisStore.getList.find(item => {
     return item.collectionPinId == route.params.pinid
   })
-  debugger
+  
   console.log("currentNftsCollect.value",currentNftsCollect.value)
   chartData.growth=currentNftsCollect.value?.priceGrowth ? new Decimal(currentNftsCollect.value?.priceGrowth).div(10 ** 8).toNumber() : 0
   chartData.labelNum=currentNftsCollect.value!.totalSupply + 1
@@ -1515,6 +1587,7 @@ function removeItem(item: any) {
   tableData.length = 0
   newFile.length=0
   newArr.map((item,index)=>{
+      item.status=UploadStatus.Default
       item.id=index+1+mintedAmount.value
   })
   newFileList.map((item,index)=>{
@@ -1594,7 +1667,7 @@ function performChunk(datas: MintListInfo[]) {
       requestIdleCallback(idle => {
         while (idle.timeRemaining() > 0 && i < datas.length) {
           const item = datas[i]
-          tableData.push(item)
+          tableData.push({...item,status:UploadStatus.Default})
           i++
         }
         _run()
@@ -1850,7 +1923,8 @@ async function finallyMint() {
       rawTx:'',
       commitAddress:[],
       lockAddress:'',
-      mvcRawTx:''
+      mvcRawTx:'',
+      originalCommitAddress:[]
     }
 
     for(let i=0;i<newFile.length;i++){
@@ -1859,6 +1933,11 @@ async function finallyMint() {
       nftListInfo.itemDesc.push(newFile[i].itemDesc)
       nftListInfo.nftName.push(newFile[i].nftName)
       nftListInfo.picId.push(newFile[i].picId)
+      if(newFile[i].originalCommitAddress){
+        nftListInfo.originalCommitAddress.push(newFile[i].originalCommitAddress)
+      }
+
+
       // params.append('picId',newFile[i].picId)
       // params.append('itemDesc',newFile[i].itemDesc)
       // params.append('classify',JSON.stringify(newFile[i].classify))
@@ -1977,14 +2056,50 @@ uploadNftsFilePath(nftListInfo).then((res)=>{
     // currentNftsCollect.value.initialPrice=autoMaketData.value.initialPrice
     // currentNftsCollect.value.priceGrowth=autoMaketData.value.priceGrowth
   }
-  genesisStore.updateCurrentTotalSupply({
+  
+  if(res.data.uploadSuccessImgList.length !== tableData.length){
+    
+    tableData=tableData.filter((item,id)=>{
+      return item.cover.sha256 !== res.data.uploadSuccessImgList[id].pic_id
+    })
+
+    tableData=tableData.map((item)=>{
+      return {
+        ...item,
+        status:UploadStatus.Fail
+      }
+    })
+
+    newFile=newFile.map((item,id)=>{
+      
+      if(item.picId !== res.data.uploadSuccessImgList[id].pic_id ){
+        return {
+          ...item,
+          originalCommitAddress:res.data.uploadSuccessImgList[id].commit_address
+        }
+      }
+    })
+    genesisStore.updateCurrentTotalSupply({
+        name:currentNftsCollect.value!.name,
+        count:res.data.uploadSuccessImgList.length
+      })
+      // tableData.length=0
+      // newFile.length=0
+       ElMessage.success(`${i18n.t('Nfts.lanuch_upload_file_partial_success')}`)
+      isShowmsgModal.value = true
+  }else{
+    
+    genesisStore.updateCurrentTotalSupply({
         name:currentNftsCollect.value!.name,
         count:newFile.length
       })
       tableData.length=0
       newFile.length=0
-      // ElMessage.success(`${i18n.t('Nfts.lanuch_upload_file_success')}`)
+       ElMessage.success(`${i18n.t('Nfts.lanuch_upload_file_success')}`)
       isShowmsgModal.value = true
+  }
+
+
   }else{
     loading.close()
     ElMessage.error(`${res.msg}`)
@@ -2065,18 +2180,30 @@ const onSubmitNewCollection = async () => {
   console.log("createCollectionform",createCollectionform)
 
 
+ 
+
+
 
   if(!createCollectionDisabled.value){
     return ElMessage.error(`${i18n.t('Nfts.onSubmitNewCollection_fail')}`)
   }
   const existNfts= genesisStore.getList.find((item)=>item.name == createCollectionform.name)
+
+  const collectionName=createCollectionform.name.toLowerCase()
+ 
+ const checkCollectionName= await getPinfromPath({
+   path:`/nft/mrc721/${collectionName}`,
+   metaIdList:[connectionStore.last.metaid]
+ })
+
   try {
     //
-    if(existNfts?.collectionPinId){
+    if(existNfts && checkCollectionName?.list != 'null' ){
+   
      return ElMessage.error(`${i18n.t('Nfts.lanuch_existNfts')}`)
   }else{
 
-
+ 
 
     const metaData={
       royaltyRate:createCollectionform.royaltyRate,

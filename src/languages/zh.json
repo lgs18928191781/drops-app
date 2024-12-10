@@ -1372,7 +1372,8 @@
     "lanuch_growth_content3": "2.  每个NFT的赎回将不会影响当前铸造价格",
     "status_confirming": "确认中",
     "status_confirmed": "完成",
-    "status_failed": "失败"
+    "status_failed": "失败",
+    "lanuch_error": "待修复"
   },
   "Nfts": {
     "launch_noSupport": "Bitcoin资产暂不支持自动做市机制",
@@ -1479,7 +1480,10 @@
     "blockHeight": "块高：",
     "pedding": "未确认",
     "conver_transfer_nft_fee": "NFT转账费用",
-    "no_collections": "暂无专辑数据"
+    "no_collections": "暂无专辑数据",
+    "lanuch_status": "上传状态",
+    "lanuch_upload_file_partial_success": "上传NFTs部分成功",
+    "lanuch_not_found_creator": "专辑创建者地址缺失"
   },
   "offsale not allowed": "请先下架后再进行赎回操作",
   "redeemConfirm": "你确认要赎回",

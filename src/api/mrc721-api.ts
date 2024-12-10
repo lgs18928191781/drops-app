@@ -1,8 +1,8 @@
 import HttpRequest from '@/utils/request'
 import {NftsLaunchPadChainSymbol} from '@/data/constants'
 const manHost=import.meta.env.VITE_MAN_API
-const nftOrderHost=`https://api.show3.io/mrc721` //`https://general.mvcscan.com/mrc721`////`http://127.0.0.1:3001` ////`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//` //`http://127.0.0.1:3001`// //https://general.mvcscan.com/mrc721
-const nftFilerHost=`https://api.show3.io/mrc721-file` //`https://general.mvcscan.com/mrc721`
+const nftOrderHost=`https://api.show3.io/mrc721`//`http://127.0.0.1:3001`// //`https://general.mvcscan.com/mrc721`////`http://127.0.0.1:3001` ////`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//` //`http://127.0.0.1:3001`// //https://general.mvcscan.com/mrc721
+const nftFilerHost=`https://api.show3.io/mrc721-file` //`https://general.mvcscan.com/mrc721` //`https://general.mvcscan.com/mrc721-file`
 const NftOrders = new HttpRequest(`${nftOrderHost}/nfts-orders`, {
   header: {
     //SiteConfigMetanetId: import.meta.env.VITE_SiteConfigMetanetId,
@@ -247,6 +247,16 @@ export const getPinfromPinidList=async (params:{
   return manService.post(`/pin/check`,params)
 }
 
+export const getPinfromPath=async (params:{
+  path:string,
+  metaIdList:string[]
+  page?:number
+  size?:number
+}):Promise<Mrc721PinListType>=>{
+    
+  return manService.post(`/getAllPinByPathAndMetaId`,params)
+}
+
 export const getSaleOrderList=async(params:{
   collectionPinid:string
   page:number,
@@ -315,7 +325,7 @@ export const submitBuyOrder=async(params:{
   psbtHex:string
   buyerAddress:string
   orderId:string,
-  collectionPinid:string
+  
   itemPinid:string,
   chain?: NftsLaunchPadChainSymbol
 }):Promise<apiMrc721Response>=>{
@@ -467,4 +477,10 @@ export const getMyConvertOrders=async(params:{ownerAddress:string}):Promise<apiM
   return NftOrders.get('/get-self-convert-list',{
     params
   })
+}
+
+export const getMyUploadFailList=async(params:{
+  collectionPinid:string
+}):Promise<apiMrc721Response>=>{
+  return NftOrders.post('/get-fail-upload',params)
 }

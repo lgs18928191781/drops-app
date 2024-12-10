@@ -72,15 +72,17 @@ export function useNFTEntity(){
        if(!orderInfo.psbtHex){
         return ElMessage.error((`${i18n.t('Nfts.psbt_buy_empty')}`))
        }
+       console.log("orderInfo.psbtHex",orderInfo.psbtHex)
+       
         const psbt =bitcoinjs.Psbt.fromHex(orderInfo.psbtHex,{ network: networkStore.typedNetwork })
         
         const estiomateResult= await exclusiveChange({
           psbt: psbt,
-          maxUtxosCount:20,
+          maxUtxosCount:3,
           sighashType:SIGHASH_ALL_ANYONECANPAY,
           feeb:feeStore.getCurrentFeeb,
        })
-    
+       
      
        if(checkOnly){
         
@@ -451,7 +453,6 @@ export function useNFTEntity(){
         orderId:string
         buyerAddress:string
         nftPinid:string
-        
         extraFee:feeDetailType
         chain?:NftsLaunchPadChainSymbol
       }){
@@ -465,7 +466,7 @@ export function useNFTEntity(){
           const orderRes= await submitBuyOrder({
             psbtHex:parmas.psbtHex,
             orderId:parmas.orderId,
-            collectionPinid:parmas.collectionPinid,
+            
             itemPinid:parmas.nftPinid,
             buyerAddress:parmas.buyerAddress,
             chain:parmas.chain
@@ -473,6 +474,8 @@ export function useNFTEntity(){
           
           if(orderRes.code == 200){
             const sevicePsbtHex=orderRes.data.psbtHex
+            console.log("sevicePsbtHex",sevicePsbtHex)
+            
             // const bitcoinjs = useBtcJsStore().get!
             // const networkStore=useNetworkStore()
             // const feeStore = useFeebStore()
@@ -501,6 +504,8 @@ export function useNFTEntity(){
               const toSignInputs=await formatToSignTargetInput(targetIndex,SIGHASH_ALL_ANYONECANPAY)
               
               const connectionStore=useConnectionStore()
+              console.log("revealPsbt!.psbt.data",revealPsbt!.psbt.data)
+              
               const rawTx= await connectionStore.adapter.signPsbt(revealPsbt!.psbt.data.toHex(),{
                 toSignInputs:toSignInputs,
                 autoFinalized:false
@@ -574,8 +579,9 @@ export function useNFTEntity(){
         genesis:string
         tokenIndex:string
         codehash:string
+        collectionCreatorAddress:string
       }){
-        const {convertPsbtHex,lockAddress,extraFee,commitAddress,buildCommitFee,collectionPinid,nftRawTx,fileRawTx,commitId,filePinid,convertAddress,codehash,genesis,tokenIndex}=params
+        const {convertPsbtHex,lockAddress,extraFee,commitAddress,buildCommitFee,collectionPinid,nftRawTx,fileRawTx,commitId,filePinid,convertAddress,codehash,genesis,tokenIndex,collectionCreatorAddress}=params
         try {
          
           const feebStore=useFeebStore()
@@ -584,6 +590,7 @@ export function useNFTEntity(){
         // const networkStore=useNetworkStore()
         const feeb=feebStore.getCurrentFeeb
         const estimatedRes=await estimateConvertFee(convertPsbtHex,feeb,extraFee,true)
+        
         if(estimatedRes){
           
           //这里应该是要打铸造的总额手续费
@@ -593,16 +600,29 @@ export function useNFTEntity(){
           const connectionStore=useConnectionStore()
           const psbt=new bitcoinJs.Psbt({ network: networkStore.typedNetwork })
           const totalPayValue=new Decimal(extraFee).add(fee).add(CONVERT_SERVICE_FEE).toNumber()
+          const deviceDummyfee=new Decimal(extraFee).sub(buildCommitFee).toNumber()
+          const payMintFee=new Decimal(totalPayValue).sub(deviceDummyfee).toNumber()
           psbt.addOutput({
             address:import.meta.env.VITE_PAY_MINT_ADDRESS,
-            value:totalPayValue
+            value:payMintFee
           })
-
-          const payMintFeeResult= await exclusiveChange({
+          psbt.addOutput({
+            address:collectionCreatorAddress,
+            value:deviceDummyfee
+          })
+          psbt.addOutput({
+            address:connectionStore.userInfo.address,
+            value:CONVERT_SERVICE_FEE
+          })
+      
+          // const payMintFeeResult= 
+        await exclusiveChange({
             psbt: psbt,
             maxUtxosCount:3,
             sighashType:SIGHASH_ALL_ANYONECANPAY,
             feeb:feeb ?? feebStore.getCurrentFeeb,
+         }).catch((err)=>{
+            throw new Error((err.message))
          })
          
           //  const toSignInputs=await formatToSignInputs(psbt)

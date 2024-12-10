@@ -1262,6 +1262,7 @@ declare interface UploadFileData{
       commitAddress:string[]
       lockAddress:string
       mvcRawTx:string
+      originalCommitAddress:[]
 }
 
 declare interface NftsCollection{

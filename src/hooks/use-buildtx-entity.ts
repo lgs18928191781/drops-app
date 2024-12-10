@@ -433,7 +433,8 @@ export async function exclusiveChange({
     }
 
     if(fee < safeFee){
-      throw new Error(`tx feeb must be more than ${safeFee},but only ${fee},please select a higher rate to continue the transaction`)
+     
+       throw new Error(`tx feeb must be more than ${safeFee},but only ${fee},please select a higher rate to continue the transaction`)
     }
 
     const changeValue = totalInput - totalOutput - fee + (extraInputValue || 0)

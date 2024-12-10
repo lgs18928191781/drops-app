@@ -40,7 +40,7 @@ export const PlatformRate=6
 export const MinPlatformFee=2000
 export const MinRoyaltyFee=1000
 export const REDEEM_SERVICE_FEE=1000
-export const CONVERT_SERVICE_FEE=2000
+export const CONVERT_SERVICE_FEE=1000
 export const MRC721PlatformAddress=import.meta.env.VITE_MRC721_PLATFORM_ADDRESS
 
 
@@ -49,17 +49,27 @@ export const whiteListMvcGenesisMapCollectionpinid=[
     genesis:'529cf41a72a1b61fe9c2fb91e7bc05616f9b769c',
     collectionPinid:'',
   },
-  {
-    genesis:'84e74476d9490c1483baa5463742868950505aab',
-    collectionPinid:'3c5a2c8437908f45e4c942d42546b7d17f2d34e9622462cb3a93d5e5e1f2641fi0',
-  },
+  // {
+  //   genesis:'84e74476d9490c1483baa5463742868950505aab',
+  //   collectionPinid:'3c5a2c8437908f45e4c942d42546b7d17f2d34e9622462cb3a93d5e5e1f2641fi0',
+  // },
   {
     genesis:'1897212dadf3c734b9a19c4430f3fbf0cdc07aa4',
     collectionPinid:'be7caa5bf95d88aa9cc1778abf7a2b67318c3a468cfa01ec7f8f2b463c13ca27i0',
   }
+
+  //   {
+  //   genesis:'92cbffdd55ae32b4bd68e8a3394815c22c98e2b6',
+  //   collectionPinid:'3c6c58d7d11a0fc6a8f26a257bd577501b33477e46a14c1bac4d16dfc13e06a8i0',
+  // },
+
 ]
 
 export const whiteListConverCollection=[
+  // {
+  //   genesis:`92cbffdd55ae32b4bd68e8a3394815c22c98e2b6`,
+  //    codehash:'e205939ad9956673ce7da9fbd40514b30f66dc35'
+  // }
   {
     genesis:'529cf41a72a1b61fe9c2fb91e7bc05616f9b769c',
     codehash:'e205939ad9956673ce7da9fbd40514b30f66dc35',
