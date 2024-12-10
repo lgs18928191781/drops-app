@@ -9,7 +9,7 @@ export const useNetworkStore = defineStore('network', {
     network: () => NETWORK,
     btcNetwork: () =>
       NETWORK === 'livenet' ? 'bitcoin' : NETWORK === 'regtest' ? 'regtest' : 'testnet',
-    typedNetwork: () => networks.bitcoin, //((NETWORK === 'livenet' || NETWORK === 'mainnet'  ) ? networks.bitcoin : networks.testnet), // , //((NETWORK === 'livenet' || NETWORK === 'mainnet'  ) ? networks.bitcoin : networks.testnet)
+    typedNetwork: () => ((NETWORK === 'livenet' || NETWORK === 'mainnet'  ) ? networks.bitcoin : networks.testnet), // , //((NETWORK === 'livenet' || NETWORK === 'mainnet'  ) ? networks.bitcoin : networks.testnet)
     isTestnet: () => NETWORK === 'testnet',
   },
 })

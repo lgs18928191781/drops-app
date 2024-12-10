@@ -1,8 +1,8 @@
 import HttpRequest from '@/utils/request'
 import {NftsLaunchPadChainSymbol} from '@/data/constants'
 const manHost=import.meta.env.VITE_MAN_API
-const nftOrderHost=`https://api.show3.io/mrc721`//`http://127.0.0.1:3001`// //`https://general.mvcscan.com/mrc721`////`http://127.0.0.1:3001` ////`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//` //`http://127.0.0.1:3001`// //https://general.mvcscan.com/mrc721
-const nftFilerHost=`https://api.show3.io/mrc721-file` //`https://general.mvcscan.com/mrc721` //`https://general.mvcscan.com/mrc721-file`
+const nftOrderHost=`https://general.mvcscan.com/mrc721`////`http://127.0.0.1:3001` ////`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//`https://general.mvcscan.com/mrc721`//`https://general.mvcscan.com/mrc721`//`http://127.0.0.1:3001`//` //`http://127.0.0.1:3001`// //https://general.mvcscan.com/mrc721
+const nftFilerHost=`https://general.mvcscan.com/mrc721-file`
 const NftOrders = new HttpRequest(`${nftOrderHost}/nfts-orders`, {
   header: {
     //SiteConfigMetanetId: import.meta.env.VITE_SiteConfigMetanetId,
