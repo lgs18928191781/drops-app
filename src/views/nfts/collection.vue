@@ -2206,20 +2206,20 @@ const onSubmitNewCollection = async () => {
  
 
     const metaData={
-      royaltyRate:createCollectionform.royaltyRate,
+      //royaltyRate:createCollectionform.royaltyRate,
       classify:createCollectionform.classify
     }
 
     const preMint = await mintNftEntity({
     body:{
       name:createCollectionform.name,
-      totalSupply:createCollectionform.totalSupply,
-      //royaltyRate:createCollectionform.royaltyRate,
+      totalSupply:+createCollectionform.totalSupply,
+      royaltyRate:+createCollectionform.royaltyRate,
       desc:createCollectionform.desc,
       website:createCollectionform.website,
       //classify:createCollectionform.classify,
       cover:'',
-      metadata:metaData
+      metadata:JSON.stringify(metaData)
     },
     attachments:[createCollectionform.originFile],
     lockAddress:'',
@@ -2259,13 +2259,13 @@ if(mvcTransfer?.status == "canceled"){
         const {createCollectionDescRes,coverPinId} = await mintNftEntity({
     body:{
       name:createCollectionform.name,
-      totalSupply:createCollectionform.totalSupply,
-      //royaltyRate:createCollectionform.royaltyRate,
+      totalSupply:+createCollectionform.totalSupply,
+      royaltyRate:+createCollectionform.royaltyRate,
       desc:createCollectionform.desc,
       website:createCollectionform.website,
       //classify:createCollectionform.classify,
       cover:'',
-      metadata:metaData
+      metadata:JSON.stringify(metaData)
     },
     attachments:[createCollectionform.originFile],
     lockAddress:preMint!.receiverAddress,
@@ -2292,12 +2292,12 @@ if(mvcTransfer?.status == "canceled"){
         website:createCollectionform.website,
         metaData:JSON.stringify(metaData),
         classify:JSON.stringify(createCollectionform.classify),
-        totalSupply:createCollectionform.totalSupply,
+        totalSupply:+createCollectionform.totalSupply,
         chain:createCollectionform.chain ,
         autoMarket:createCollectionform.autoMakeMarket,
         initialPrice:toSats(createCollectionform.initialPrice),
         priceGrowth:toSats(createCollectionform.priceGrowth),
-        royaltyRate:createCollectionform.royaltyRate,
+        royaltyRate:+createCollectionform.royaltyRate,
         collectionPinId:collectionPinid,
         metaId:connectionStore.last.metaid,
         address:connectionStore.last.user.address,
