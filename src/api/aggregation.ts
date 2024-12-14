@@ -13,6 +13,7 @@ import { error } from 'console'
 import { ethers } from 'ethers'
 import { changeSymbol } from '@/utils/util'
 import { mvcApi } from "@/api";
+import Decimal from 'decimal.js-light'
 const aggregation = new HttpRequest(`${import.meta.env.VITE_BASEAPI}/aggregation`, {
   header: {
     SiteConfigMetanetId: import.meta.env.VITE_SiteConfigMetanetId,
@@ -466,17 +467,17 @@ export const GetFTs = (params: {
   return mvcApi(`/v1/contract/ft/address/${address}/balance`,_params)
 }
 
-export const GetBalance = (params: {
-  chain: string
-  address?: string
-  xpub?: string
-}): Promise<{
-  code: number
-  data: {
-    balance: number
-  }
-}> => {
-  return aggregation.get(`/v2/app/show/balance`, { params: params })
+export const GetBalance = async(  address?: string
+): Promise<number> => {
+    const res = await cyber3api.get(`/address/${address}/balance`)
+    if (res) {
+      const balance=new Decimal(res?.confirmed).add(res?.unconfirmed).toNumber()
+      return balance
+    }else{
+      return 0
+    }
+ 
+  //return aggregation.get(`/v2/app/show/balance`, { params: params })
 }
 
 export const GetGenesisNFTs = (params: {

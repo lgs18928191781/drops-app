@@ -235,11 +235,14 @@ async function stake() {
 
     if (props.type === StakeType.Pledge) {
       // 质押
+      
       const stakeRes = await GetStake({
         symbol,
         address: userStore.user!.address!,
         op: DAOStakeOperate.Pledge,
       })
+
+      
       if (stakeRes.code === 0) {
         const amount = new Decimal(amountNumber.value)
           .mul(currentSymbol.value!.rate)

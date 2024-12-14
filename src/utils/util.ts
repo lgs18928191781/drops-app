@@ -1677,14 +1677,11 @@ export function mappingChainId(chainId: string) {
 export function getUserBsvBalance() {
   return new Promise<number>(async (resolve, reject) => {
     const userStore = useUserStore()
-    const res = await GetBalance({
-      chain: Chains.BSV,
-      xpub: userStore.showWallet.wallet?.wallet.xpubkey.toString(),
-    }).catch(error => {
+    const res = await GetBalance(userStore.showWallet!.wallet!.rootAddress).catch(error => {
       reject(error)
     })
-    if (res?.code === 0) {
-      resolve(new Decimal(res.data.balance).toNumber())
+    if (res) {
+      resolve(res)
     }
   })
 }
@@ -1782,6 +1779,7 @@ export function getAccountUserInfo(account: string) {
 }
 
 export function getBalance(params: { chain: Chains }) {
+  
   return new Promise<number>(async (resolve, reject) => {
     const userStore = useUserStore()
     const isBtLink = params.chain === Chains.BSV || params.chain === Chains.MVC
@@ -1809,10 +1807,9 @@ export function getBalance(params: { chain: Chains }) {
       //  BSV 沒有測試網
       resolve(0)
     } else {
-      const res = await GetBalance(_params).catch(error => reject(error))
-      if (res?.code === 0) {
-        resolve(res.data.balance)
-      }
+      
+      const res = await GetBalance( _params.address ).catch(error => reject(error))
+      resolve(res!)
     }
   })
 }

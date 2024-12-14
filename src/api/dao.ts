@@ -107,6 +107,7 @@ export const GetStake = async (params: {
   op: DAOStakeOperate
 }): Promise<{ code: number; data: DAOStakeReqstakeArgs; msg: string }> => {
   params.symbol = changeSymbol(params.symbol)
+  
   return DAO.post('/reqstakeargs', params)
 }
 

@@ -6,15 +6,8 @@ export function eth(params?: { isPolygon?: boolean }) {
   return new Promise<number>(async resolve => {
     const userStore = useUserStore()
     if (userStore.user!.evmAddress) {
-      const res = await GetBalance({
-        chain: params?.isPolygon
-          ? import.meta.env.VITE_POLYGON_CHAIN
-          : import.meta.env.VITE_ETH_CHAIN,
-        address: userStore.user!.evmAddress! || userStore.user?.ethAddress,
-      })
-      if (res?.code === 0) {
-        resolve(res.data.balance)
-      }
+      const res = await GetBalance(userStore.user!.evmAddress! || userStore.user?.ethAddress,)
+      resolve(res)
     } else {
       resolve(0)
     }
